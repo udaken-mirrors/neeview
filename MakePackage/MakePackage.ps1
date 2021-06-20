@@ -15,7 +15,7 @@ trap { break }
 $ErrorActionPreference = "stop"
 
 # MSI作成時にMainComponents.wsxを更新する?
-$isCreateMainComponentsWxs = $false;
+$isCreateMainComponentsWxs = $true;
 
 #
 $product = 'NeeView'

@@ -7,17 +7,18 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using PdfiumViewer;
 using System.Windows;
 using System.Runtime.Serialization;
 using NeeView.Windows.Property;
 using System.ComponentModel;
 using System.Windows.Media.Imaging;
+using Windows.Data.Pdf;
+using Windows.Storage;
 
 namespace NeeView
 {
     /// <summary>
-    /// アーカイバー：PdfiumViewer によるPDFアーカイバ
+    /// アーカイバー：WinRT によるPDFアーカイバ
     /// </summary>
     public class PdfArchiver : Archiver
     {
@@ -33,7 +34,7 @@ namespace NeeView
 
         public override string ToString()
         {
-            return "Pdfium";
+            return "WinRT";
         }
 
         // サポート判定
@@ -49,30 +50,27 @@ namespace NeeView
 
             // TODO: ウィンドウが非アクティブになるまではインスタンスを持ちづつけるようにする？要速度調査
 
-            using (var stream = new FileStream(Path, FileMode.Open, FileAccess.Read))
-            using (var pdfDocument = PdfDocument.Load(stream))
+            StorageFile file = await StorageFile.GetFileFromPathAsync(Path);
+            var pdfDocument = await PdfDocument.LoadFromFileAsync(file);
+            var creationTime = file.DateCreated;
+            var modifiedTime = (await file.GetBasicPropertiesAsync()).DateModified;
+            for (int id = 0; id < pdfDocument.PageCount; ++id)
             {
-                var information = pdfDocument.GetInformation();
+                token.ThrowIfCancellationRequested();
 
-                for (int id = 0; id < pdfDocument.PageCount; ++id)
+                list.Add(new ArchiveEntry()
                 {
-                    token.ThrowIfCancellationRequested();
-
-                    list.Add(new ArchiveEntry()
-                    {
-                        IsValid = true,
-                        Archiver = this,
-                        Id = id,
-                        Instance = null,
-                        RawEntryName = $"{id + 1:000}.png",
-                        Length = 0,
-                        CreationTime = information.CreationDate ?? default,
-                        LastWriteTime = information.ModificationDate ?? default,
-                    });
-                }
+                    IsValid = true,
+                    Archiver = this,
+                    Id = id,
+                    Instance = null,
+                    RawEntryName = $"{id + 1:000}.png",
+                    Length = 0,
+                    CreationTime = creationTime.DateTime,
+                    LastWriteTime = modifiedTime.DateTime,
+                });
             }
 
-            await Task.CompletedTask;
             return list;
         }
 
@@ -80,49 +78,44 @@ namespace NeeView
         // PDFは画像化したものをストリームにして返す
         protected override Stream OpenStreamInner(ArchiveEntry entry)
         {
-            using (var stream = new FileStream(Path, FileMode.Open, FileAccess.Read))
-            using (var pdfDocument = PdfDocument.Load(stream))
+            var ms = new MemoryStream();
+            using (var pdfPage = GetPageAsync(entry.Id).GetAwaiter().GetResult())
             {
-                var size = GetRenderSize(pdfDocument, entry.Id);
-                var image = pdfDocument.Render(entry.Id, (int)size.Width, (int)size.Height, 96, 96, false);
-
-                var ms = new MemoryStream();
-                image.Save(ms, System.Drawing.Imaging.ImageFormat.Bmp);
-                ms.Seek(0, SeekOrigin.Begin);
-                return ms;
+                pdfPage.RenderToStreamAsync(ms.AsRandomAccessStream()).AsTask().GetAwaiter().GetResult();
             }
+            ms.Seek(0, SeekOrigin.Begin);
+            return ms;
+        }
+
+        private async Task<PdfPage> GetPageAsync(int page)
+        {
+            StorageFile file = await StorageFile.GetFileFromPathAsync(Path);
+            var pdfDocument = await PdfDocument.LoadFromFileAsync(file);
+            return pdfDocument.GetPage((uint)page);
         }
 
         // サイズ取得
         public Size GetSourceSize(ArchiveEntry entry)
         {
-            using (var stream = new FileStream(Path, FileMode.Open, FileAccess.Read))
-            using (var pdfDocument = PdfDocument.Load(stream))
+            using (var pdfPage = GetPageAsync(entry.Id).GetAwaiter().GetResult())
             {
-                return GetSourceSize(pdfDocument, entry.Id);
+                return SizeExtensions.FromFoundationSize(pdfPage.Size);
             }
-        }
-
-        // サイズ取得
-        private Size GetSourceSize(PdfDocument pdfDocument, int page)
-        {
-            return SizeExtensions.FromDrawingSize(pdfDocument.PageSizes[page]);
         }
 
         // 標準サイズで取得
         public Size GetRenderSize(ArchiveEntry entry)
         {
-            using (var stream = new FileStream(Path, FileMode.Open, FileAccess.Read))
-            using (var pdfDocument = PdfDocument.Load(stream))
+            using (var pdfPage = GetPageAsync(entry.Id).GetAwaiter().GetResult())
             {
-                return GetRenderSize(pdfDocument, entry.Id);
+                return GetRenderSize(pdfPage);
             }
         }
 
         // 標準サイズで取得
-        private Size GetRenderSize(PdfDocument pdfDocument, int page)
+        private Size GetRenderSize(PdfPage pdfPage)
         {
-            var size = SizeExtensions.FromDrawingSize(pdfDocument.PageSizes[page]);
+            var size = SizeExtensions.FromFoundationSize(pdfPage.Size);
             if (PdfArchiverProfile.Current.SizeLimitedRenderSize.IsContains(size))
             {
                 size = size.Uniformed(PdfArchiverProfile.Current.SizeLimitedRenderSize);
@@ -134,23 +127,32 @@ namespace NeeView
         // ファイルとして出力
         protected override void ExtractToFileInner(ArchiveEntry entry, string exportFileName, bool isOverwrite)
         {
-            using (var stream = new FileStream(Path, FileMode.Open, FileAccess.Read))
-            using (var pdfDocument = PdfDocument.Load(stream))
+            using (var pdfPage = GetPageAsync(entry.Id).GetAwaiter().GetResult())
             {
-                var size = GetRenderSize(pdfDocument, entry.Id);
-                var image = pdfDocument.Render(entry.Id, (int)size.Width, (int)size.Height, 96, 96, false);
-
-                image.Save(exportFileName, System.Drawing.Imaging.ImageFormat.Png);
+                using (var fs = File.Create(exportFileName))
+                {
+                    pdfPage.RenderToStreamAsync(fs.AsRandomAccessStream()).AsTask().GetAwaiter().GetResult();
+                }
             }
         }
 
         // サイズを指定して画像を取得する
-        public System.Drawing.Image CraeteBitmapSource(ArchiveEntry entry, Size size)
+        public Stream CraeteBitmapAsStream(ArchiveEntry entry, Size size)
         {
-            using (var stream = new FileStream(Path, FileMode.Open, FileAccess.Read))
-            using (var pdfDocument = PdfDocument.Load(stream))
+            using (var pdfPage = GetPageAsync(entry.Id).GetAwaiter().GetResult())
             {
-                return pdfDocument.Render(entry.Id, (int)size.Width, (int)size.Height, 96, 96, false);
+                var options = new PdfPageRenderOptions()
+                {
+                    DestinationHeight = (uint)size.Height,
+                    DestinationWidth = (uint)size.Width,
+                    // https://docs.microsoft.com/en-us/windows/win32/wic/-wic-guids-clsids
+                    // CLSID_WICPngEncoder
+                    //BitmapEncoderId = new Guid(0x27949969, 0x876a, 0x41d7, 0x94, 0x47, 0x56, 0x8f, 0x6a, 0x35, 0xa4, 0x6a),
+                };
+                var ms = new MemoryStream();
+                pdfPage.RenderToStreamAsync(ms.AsRandomAccessStream(), options).AsTask().GetAwaiter().GetResult();
+                ms.Seek(0, SeekOrigin.Begin);
+                return ms;
             }
         }
 

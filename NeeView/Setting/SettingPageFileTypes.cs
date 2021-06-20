@@ -117,10 +117,18 @@ namespace NeeView.Setting
         {
             var section = new SettingItemSection(Properties.Resources.SettingPage_Archive_PdfFeature);
 
-            section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.Archive.Pdf, nameof(PdfArchiveConfig.IsEnabled))));
-            section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.Archive.Pdf, nameof(PdfArchiveConfig.SupportFileTypes)),
-                 new SettingItemCollectionControl() { Collection = Config.Current.Archive.Pdf.SupportFileTypes, AddDialogHeader = Properties.Resources.Word_Extension, DefaultCollection = PdfArchiveConfig.DefaultSupportFileTypes }));
-            section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.Archive.Pdf, nameof(PdfArchiveConfig.RenderSize))));
+            if (PdfArchiveConfig.RunningOsIsSupportVersion)
+            {
+                section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.Archive.Pdf, nameof(PdfArchiveConfig.IsEnabled))));
+                section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.Archive.Pdf, nameof(PdfArchiveConfig.SupportFileTypes)),
+                     new SettingItemCollectionControl() { Collection = Config.Current.Archive.Pdf.SupportFileTypes, AddDialogHeader = Properties.Resources.Word_Extension, DefaultCollection = PdfArchiveConfig.DefaultSupportFileTypes }));
+                section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.Archive.Pdf, nameof(PdfArchiveConfig.RenderSize))));
+            }
+            else
+            {
+                section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.Archive.Pdf, nameof(PdfArchiveConfig.IsEnabled))) { IsEnabled = new IsEnabledPropertyValue(false)});
+                section.Children.Add(new SettingItemHeader("Not supported on this OS."));
+            }
 
             this.Items = new List<SettingItem>() { section };
 

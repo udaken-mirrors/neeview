@@ -134,6 +134,14 @@ namespace NeeView
             return new Size(size.Width, size.Height);
         }
 
+        // Foundation.Size -> Size
+        public static Size FromFoundationSize(global::Windows.Foundation.Size size)
+        {
+            if (size.IsEmpty) return Size.Empty;
+
+            return new Size(size.Width, size.Height);
+        }
+
         // Drawing.SizeF -> Size
         public static Size FromDrawingSize(System.Drawing.SizeF size)
         {

@@ -29,9 +29,9 @@ namespace NeeView
             var size = (Config.Current.Performance.IsLimitSourceSize && !maxSize.IsContains(originalSize)) ? originalSize.Uniformed(maxSize) : originalSize;
             pictureInfo.Size = size;
             pictureInfo.BitsPerPixel = 32;
-            pictureInfo.Decoder = "PDFium";
+            pictureInfo.Decoder = "WinRT";
             this.PictureInfo = pictureInfo;
-            
+
             return PictureInfo;
         }
 
@@ -45,37 +45,57 @@ namespace NeeView
             return PictureInfo.Size;
         }
 
-
         public override ImageSource CreateImageSource(Size size, BitmapCreateSetting setting, CancellationToken token)
         {
             size = size.IsEmpty ? GetImageSize() : size;
-            var bitmapSource = _pdfArchive.CraeteBitmapSource(ArchiveEntry, size).ToBitmapSource();
+            using (var stream = _pdfArchive.CraeteBitmapAsStream(ArchiveEntry, size))
+            {
+                // Bitmap生成
+                var bitmap = new BitmapImage();
+                bitmap.BeginInit();
+                bitmap.CreateOptions = BitmapCreateOptions.None;
+                bitmap.CacheOption = BitmapCacheOption.OnLoad;
+                bitmap.StreamSource = stream;
+                bitmap.EndInit();
+                bitmap.Freeze();
 
-            // 色情報設定
-            PictureInfo.SetPixelInfo(bitmapSource);
+                // 色情報設定
+                PictureInfo.SetPixelInfo(bitmap);
 
-            return bitmapSource;
+                return bitmap;
+            }
         }
+
 
         public override byte[] CreateImage(Size size, BitmapCreateSetting setting, BitmapImageFormat format, int quality, CancellationToken token)
         {
+            size = size.IsEmpty ? GetImageSize() : size;
+
             using (var outStream = new MemoryStream())
             {
-                size = size.IsEmpty ? GetImageSize() : size;
-                _pdfArchive.CraeteBitmapSource(ArchiveEntry, size).SaveWithQuality(outStream, CreateFormat(format), quality);
+                using (Stream bitmapStream = _pdfArchive.CraeteBitmapAsStream(ArchiveEntry, size))
+                {
+                    var bitmap = BitmapFrame.Create(bitmapStream, BitmapCreateOptions.None, BitmapCacheOption.OnLoad);
+                    var encoder = CreateFormat(format, quality);
+                    encoder.Frames.Add(bitmap);
+                    encoder.Save(outStream);
+                }
+
                 return outStream.ToArray();
             }
         }
 
-        private System.Drawing.Imaging.ImageFormat CreateFormat(BitmapImageFormat format)
+
+
+        private BitmapEncoder CreateFormat(BitmapImageFormat format, int quality)
         {
             switch (format)
             {
                 default:
                 case BitmapImageFormat.Jpeg:
-                    return System.Drawing.Imaging.ImageFormat.Jpeg;
+                    return new JpegBitmapEncoder() { QualityLevel = quality };
                 case BitmapImageFormat.Png:
-                    return System.Drawing.Imaging.ImageFormat.Png;
+                    return new PngBitmapEncoder();
             }
         }
 

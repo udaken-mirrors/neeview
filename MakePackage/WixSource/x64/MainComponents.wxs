@@ -14,6 +14,9 @@
       <Component Id="cmpE8FED90CED1421945EE3B33C56800EBD" Guid="*">
         <File Id="fil64126079255E16D62F7D5FFC0D02433F" KeyPath="yes" Source="$(var.ContentDir)\Microsoft.Expression.Effects.dll" />
       </Component>
+      <Component Id="cmp5A07035FA52F4F9E1424BE35CC16915F" Guid="*">
+        <File Id="fil72C197D43EC7996E816CEB4279B7388C" KeyPath="yes" Source="$(var.ContentDir)\Microsoft.Windows.SDK.NET.dll" />
+      </Component>
       <Component Id="cmp8AC833CFB7DC6722697152FE46DA157A" Guid="*">
         <File Id="filD3CAD095889A5DE7EAAE25C73BC9910A" KeyPath="yes" Source="$(var.ContentDir)\Microsoft.Xaml.Behaviors.dll" />
       </Component>
@@ -40,9 +43,6 @@
       </Component>
       <Component Id="cmp3105E7032A1F432DA2A9ACACC3049772" Guid="*">
         <File Id="fil26DC96F1596AA6661D1D59C8726A2FD9" KeyPath="yes" Source="$(var.ContentDir)\NeeView.Susie.dll" />
-      </Component>
-      <Component Id="cmp71610846D41DA0F78A7BD98E9FF6F86C" Guid="*">
-        <File Id="filBBDAC98C620E87BD186EFA8658670165" KeyPath="yes" Source="$(var.ContentDir)\PdfiumViewer.dll" />
       </Component>
       <Component Id="cmp7440A245F223F1CD93BA9900F818E336" Guid="*">
         <File Id="fil14FA528C7B3565CABB4BAC07F592F3FB" KeyPath="yes" Source="$(var.ContentDir)\PhotoSauce.MagicScaler.dll" />
@@ -86,6 +86,9 @@
       <Component Id="cmp6B7CE49F5F3A518047B74FB6AC2251C5" Guid="*">
         <File Id="fil86030949C08D40073D1F77D572C14B0D" KeyPath="yes" Source="$(var.ContentDir)\System.Data.SQLite.dll" />
       </Component>
+      <Component Id="cmp33C30AAD37872CE4355CA33B0DDA2127" Guid="*">
+        <File Id="filEBB43C021EAE67A8D0F42ED495F441FF" KeyPath="yes" Source="$(var.ContentDir)\WinRT.Runtime.dll" />
+      </Component>
       <Component Id="cmp7AAD167AF28B00F512B8879F3F0BD93D" Guid="*">
         <File Id="fil828A7A54ACD0C302B49084D6AD7070D1" KeyPath="yes" Source="$(var.ContentDir)\XmpCore.dll" />
       </Component>
@@ -115,11 +118,6 @@
             <File Id="filD4F502BF0360C6194F1F3C10E266FB51" KeyPath="yes" Source="$(var.ContentDir)\Libraries\Themes\LightTheme.json" />
           </Component>
         </Directory>
-      </Directory>
-      <Directory Id="dir2F3D431E0ED26930C4D37E679C7700A1" Name="nl">
-        <Component Id="cmp7C0AB73FF3A37EF27D20CE14CF0C9574" Guid="*">
-          <File Id="fil94EBBC1F411AB89CFA6318F5D1D743BB" KeyPath="yes" Source="$(var.ContentDir)\nl\PdfiumViewer.resources.dll" />
-        </Component>
       </Directory>
       <Directory Id="dir475254C19E835F4A59A0E85CB38B60C3" Name="SusieServer">
         <Component Id="cmp8795C8DF5858DC10E179B0AF368A818B" Guid="*">
@@ -151,9 +149,6 @@
         <Component Id="cmp5407035CF10622807020A08C96FB6E0C" Guid="*">
           <File Id="filAECB192441C2ABBD5AD0E761683C3412" KeyPath="yes" Source="$(var.ContentDir)\x64\NeeView.Interop.dll" />
         </Component>
-        <Component Id="cmp1527E1CF25E7038A88F05B3A4BA1A849" Guid="*">
-          <File Id="fil6B14815C474FD52BB389446D17ED5754" KeyPath="yes" Source="$(var.ContentDir)\x64\pdfium.dll" />
-        </Component>
       </Directory>
       <Directory Id="dir4A8DD77DBC79775EC39CACBC8AA06107" Name="zh-Hans">
         <Component Id="cmp04F56CB91472CC3AE3A8B56EFEA374DD" Guid="*">
@@ -173,6 +168,7 @@
       <ComponentRef Id="cmp4EF347C4F9445E9C039128F17B101763" />
       <ComponentRef Id="cmpFDD409D63AAED0F59378D2207BDBD3E4" />
       <ComponentRef Id="cmpE8FED90CED1421945EE3B33C56800EBD" />
+      <ComponentRef Id="cmp5A07035FA52F4F9E1424BE35CC16915F" />
       <ComponentRef Id="cmp8AC833CFB7DC6722697152FE46DA157A" />
       <ComponentRef Id="cmpF64FB6DF33BE7A9C7FE7C743C8580316" />
       <ComponentRef Id="cmp5E9E85A68485DDFFE361D4609B5119A4" />
@@ -182,7 +178,6 @@
       <ComponentRef Id="cmpC5AA313C87CA98DD3EE244788606E1B3" />
       <ComponentRef Id="cmpA3FCF16F2E20DA494D7CF6D407CBF180" />
       <ComponentRef Id="cmp3105E7032A1F432DA2A9ACACC3049772" />
-      <ComponentRef Id="cmp71610846D41DA0F78A7BD98E9FF6F86C" />
       <ComponentRef Id="cmp7440A245F223F1CD93BA9900F818E336" />
       <ComponentRef Id="cmp4118AC6D52E8B8B69D7F6C32F68325D8" />
       <ComponentRef Id="cmp290C4AF8975CE73DC75DA1C734ACCCE4" />
@@ -197,6 +192,7 @@
       <ComponentRef Id="cmpC1119906A8080810EDEBCBFD3B1B38F1" />
       <ComponentRef Id="cmp49125E5013602B31260BC5A53372B428" />
       <ComponentRef Id="cmp6B7CE49F5F3A518047B74FB6AC2251C5" />
+      <ComponentRef Id="cmp33C30AAD37872CE4355CA33B0DDA2127" />
       <ComponentRef Id="cmp7AAD167AF28B00F512B8879F3F0BD93D" />
       <ComponentRef Id="cmpE61E631FB4D9B5607DB3871EAC766ADA" />
       <ComponentRef Id="cmpE99940A9C89B2B2C9D6F072E51A114A4" />
@@ -205,7 +201,6 @@
       <ComponentRef Id="cmp3A8061AB8EA93D93C58E96E280C6F23D" />
       <ComponentRef Id="cmp17A919F686DC0817DE75F7CE2D29CA44" />
       <ComponentRef Id="cmp95A438EB3336A6879800366B519D228D" />
-      <ComponentRef Id="cmp7C0AB73FF3A37EF27D20CE14CF0C9574" />
       <ComponentRef Id="cmp8795C8DF5858DC10E179B0AF368A818B" />
       <ComponentRef Id="cmp8BF3E42410A381F5697206338B849FE2" />
       <ComponentRef Id="cmp32F961959205DCDBF81A0C0DAABBE0A3" />
@@ -215,7 +210,6 @@
       <ComponentRef Id="cmp740B502C09BD6305A98F9AC3D45492C8" />
       <ComponentRef Id="cmp93376EE54A201CE8EFB62F355E94E24F" />
       <ComponentRef Id="cmp5407035CF10622807020A08C96FB6E0C" />
-      <ComponentRef Id="cmp1527E1CF25E7038A88F05B3A4BA1A849" />
       <ComponentRef Id="cmp04F56CB91472CC3AE3A8B56EFEA374DD" />
       <ComponentRef Id="cmp8BC4DF58689D669A201DCB46A9A1216B" />
     </ComponentGroup>
