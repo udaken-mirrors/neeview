@@ -482,7 +482,7 @@ namespace NeeView
             // Webアクセス時はNowLoading表示を行う
             nowloading(Properties.Resources.Notice_DropContent);
 
-            using (var wc = new System.Net.WebClient())
+            using (var client = new System.Net.Http.HttpClient())
             {
                 // from HTML format
                 if (data.GetDataPresent("HTML Format"))
@@ -493,7 +493,7 @@ namespace NeeView
                         if (url.StartsWith("http://") || url.StartsWith("https://"))
                         {
                             // download
-                            var bytes = await wc.DownloadDataTaskAsync(new Uri(url));
+                            var bytes = await client.GetByteArrayAsync(new Uri(url));
 
                             // ファイル化
                             string fileName = await DownloadToFileAsync(bytes, null, downloadPath);
@@ -513,7 +513,7 @@ namespace NeeView
                     if (url.StartsWith("http://") || url.StartsWith("https://"))
                     {
                         // download
-                        var bytes = await wc.DownloadDataTaskAsync(new Uri(url));
+                        var bytes = await client.GetByteArrayAsync(new Uri(url));
 
                         // ファイル化
                         return new List<string>() { DownloadToFile(bytes, null, downloadPath) };

@@ -37,7 +37,6 @@ namespace NeeView
 
         public string Extension { get; set; }
 
-        [SecurityPermission(SecurityAction.Demand, SerializationFormatter = true)]
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             base.GetObjectData(info, context);
