@@ -14,16 +14,13 @@ trap { break }
 
 $ErrorActionPreference = "stop"
 
-# MSI作成時にDllComponents.wsxを更新する?
-$isCreateDllComponentsWxs = $false;
-
-# AnyCPU版ZIPを作成する？
-$isAnyCPU = $false;
+# MSI作成時にMainComponents.wsxを更新する?
+$isCreateMainComponentsWxs = $false;
 
 #
 $product = 'NeeView'
 $configuration = 'Release'
-$framework = 'net48'
+$framework = 'net6.0-windows'
 
 #
 $Win10SDK = "C:\Program Files (x86)\Windows Kits\10\bin\10.0.17763.0\x64"
@@ -131,7 +128,7 @@ $solution = "$solutionDir\$product.sln"
 $projectDir = "$solutionDir\$product"
 $project = "$projectDir\$product.csproj"
 $projectSusieDir = "$solutionDir\NeeView.Susie.Server"
-
+$projectSusie = "$projectSusieDir\NeeView.Susie.Server.csproj"
 
 #-----------------------
 # procject output dir
@@ -151,92 +148,30 @@ function Get-ProjectOutputDir($projectDir, $platform)
 # build
 function Build-Project($platform)
 {
-	$vswhere = "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe"
-	$msbuild = & $vswhere -latest -requires Microsoft.Component.MSBuild -find MSBuild\**\Bin\MSBuild.exe | select-object -first 1
-
-	$output = Get-ProjectOutputDir $projectDir $platform
-	if (Test-Path $output)
-	{
-		Remove-Item $output -Recurse
-	}
-
-	$output = Get-ProjectOutputDir $projectSusieDir $platform
-	if (Test-Path $output)
-	{
-		Remove-Item $output -Recurse
-	}
-
-	$msPlatform = $platform
-	if ($platform -eq "AnyCPU")
-	{
-		$msPlatform = "Any CPU"
-	}
-
-	"$msbuild -restore $solution /p:Configuration=$configuration /p:Platform=""$msPlatform"" /t:Clean,Build"
-
-	& $msbuild -restore $solution /p:Configuration=$configuration /p:Platform="$msPlatform" /t:Clean,Build
-	if ($? -ne $true)
-	{
-		throw "build error"
-	}
+	& dotnet publish $project -p:PublishProfile=FolderProfile-$platform.pubxml
+	& dotnet publish $projectSusie -p:PublishProfile=FolderProfile-$platform.pubxml
 }
-
-#----------------------
-# publish
-function Export-Publish($platform, $projectDir, $export)
-{
-	$output = Get-ProjectOutputDir $projectDir $platform
-
-	Copy-Item $output $export -Recurse
-}
-
-
 
 #----------------------
 # package section
 function New-Package($platform, $productName, $productDir, $publishSusieDir, $packageDir)
 {
-	$packageLibraryDir = $packageDir + "\Libraries"
-	$packageSusieDir = $packageLibraryDir + "\Susie"
-
-	# make package folder
 	$temp = New-Item $packageDir -ItemType Directory
-	$temp = New-Item $packageLibraryDir -ItemType Directory
-	$temp = New-Item $packageSusieDir -ItemType Directory
 
-	# copy
-	Copy-Item "$productDir\$productName.exe" $packageDir
-	Copy-Item "$productDir\Libraries\*" $packageLibraryDir -Recurse
-	Copy-Item "$productDir\*.dll" $packageLibraryDir
+	Copy-Item $productDir\* $packageDir -Recurse -Exclude ("*.pdb", "NeeView.dll.config")
+	
+	# fix native dll
+	if ($platform -eq "x86")
+	{
+		Remove-Item $packageDir\x64 -Recurse
+	}
+	if ($platform -eq "x64")
+	{
+		Remove-Item $packageDir\x86 -Recurse
+	}
 
 	# custom config
-	New-ConfigForZip $productDir "$productName.exe.config" $packageDir
-
-	# copy NeeView.Susie.Server
-	Copy-Item "$publishSusieDir\NeeView.Susie.Server.exe" $packageSusieDir
-	Copy-Item "$publishSusieDir\NeeView.Susie.Server.exe.config" $packageSusieDir
-	Copy-Item "$publishSusieDir\*.dll" $packageSusieDir
-
-	# copy language dll
-	$langs = Get-CulturesFromConfig $productDir "$productName.exe.config"
-	foreach($lang in $langs)
-	{
-		if ($lang -ne "en")
-		{
-			Copy-Item "$productDir\$lang" $packageLibraryDir -Recurse
-		}
-	}
-
-	# copy platform dll
-	if ($platform -eq "AnyCPU")
-	{
-		Copy-Item "$productDir\x86" $packageLibraryDir -Recurse
-		Copy-Item "$productDir\x64" $packageLibraryDir -Recurse
-	}
-	else
-	{
-		Copy-Item "$productDir\$platform" $packageLibraryDir -Recurse
-	}
+	New-ConfigForZip $productDir "$productName.dll.config" $packageDir
 
 	# generate README.html
 	New-Readme $packageDir "en-us" ".zip"
@@ -250,7 +185,6 @@ function New-Readme($packageDir, $culture, $target)
 	$readmeSource = "Readme\$culture"
 
 	$readmeDir = $packageDir + "\readme.$culture"
-	
 
 	$temp = New-Item $readmeDir -ItemType Directory 
 
@@ -344,8 +278,8 @@ function New-ConfigForZip($inputDir, $config, $outputDir)
 	$add = $xml.configuration.appSettings.add | Where { $_.key -eq 'UseLocalApplicationData' } | Select -First 1
 	$add.value = 'False'
 
-	$add = $xml.configuration.appSettings.add | Where { $_.key -eq 'LibrariesPath' } | Select -First 1
-	$add.value = 'Libraries'
+	#$add = $xml.configuration.appSettings.add | Where { $_.key -eq 'LibrariesPath' } | Select -First 1
+	#$add.value = 'Libraries'
 
 	$add = $xml.configuration.appSettings.add | Where { $_.key -eq 'Revision' } | Select -First 1
 	$add.value = $revision
@@ -374,8 +308,8 @@ function New-ConfigForMsi($inputDir, $config, $outputDir)
 	$add = $xml.configuration.appSettings.add | Where { $_.key -eq 'UseLocalApplicationData' } | Select -First 1
 	$add.value = 'True'
 
-	$add = $xml.configuration.appSettings.add | Where { $_.key -eq 'LibrariesPath' } | Select -First 1
-	$add.value = 'Libraries'
+	#$add = $xml.configuration.appSettings.add | Where { $_.key -eq 'LibrariesPath' } | Select -First 1
+	#$add.value = 'Libraries'
 
 	$add = $xml.configuration.appSettings.add | Where { $_.key -eq 'Revision' } | Select -First 1
 	$add.value = $revision
@@ -404,8 +338,8 @@ function New-ConfigForAppx($inputDir, $config, $outputDir)
 	$add = $xml.configuration.appSettings.add | Where { $_.key -eq 'UseLocalApplicationData' } | Select -First 1
 	$add.value = 'True'
 
-	$add = $xml.configuration.appSettings.add | Where { $_.key -eq 'LibrariesPath' } | Select -First 1
-	$add.value = 'Libraries'
+	#$add = $xml.configuration.appSettings.add | Where { $_.key -eq 'LibrariesPath' } | Select -First 1
+	#$add.value = 'Libraries'
 
 	$add = $xml.configuration.appSettings.add | Where { $_.key -eq 'Revision' } | Select -First 1
 	$add.value = $revision
@@ -434,8 +368,8 @@ function New-ConfigForDevPackage($inputDir, $config, $target, $outputDir)
 	$add = $xml.configuration.appSettings.add | Where { $_.key -eq 'UseLocalApplicationData' } | Select -First 1
 	$add.value = 'False'
 
-	$add = $xml.configuration.appSettings.add | Where { $_.key -eq 'LibrariesPath' } | Select -First 1
-	$add.value = 'Libraries'
+	#$add = $xml.configuration.appSettings.add | Where { $_.key -eq 'LibrariesPath' } | Select -First 1
+	#$add.value = 'Libraries'
 
 	$add = $xml.configuration.appSettings.add | Where { $_.key -eq 'Revision' } | Select -First 1
 	$add.value = $revision
@@ -473,7 +407,7 @@ function New-PackageAppend($packageDir, $packageAppendDir)
 	New-EmptyFolder $packageAppendDir
 
 	# configure customize
-	New-ConfigForMsi $packageDir "${product}.exe.config" $packageAppendDir
+	New-ConfigForMsi $packageDir "${product}.dll.config" $packageAppendDir
 
 	# icons
 	Copy-Item "$projectDir\Resources\App.ico" $packageAppendDir
@@ -501,13 +435,40 @@ function New-Msi($arch, $packageDir, $packageAppendDir, $packageMsi)
 
 	$ErrorActionPreference = "stop"
 
-	function New-DllComponents
+	function New-MainComponents
 	{
-		& $heat dir "$packageDir\Libraries" -cg DllComponents -ag -pog:Binaries -sfrag -sreg -var var.LibrariesDir -dr INSTALLFOLDER -out WixSource\$arch\DllComponents.wxs
+		$wxs = "WixSource\$arch\MainComponents.wxs";
+		& $heat dir "$packageDir" -cg MainComponents -ag -pog:Binaries -sfrag -srd -sreg -var var.ContentDir -dr INSTALLFOLDER -out $wxs
 		if ($? -ne $true)
 		{
 			throw "heat error"
 		}
+
+		[xml]$xml = Get-Content $wxs
+
+		# remove NeeView.exe
+		$node = $xml.Wix.Fragment[0].DirectoryRef.Component | Where-Object{$_.File.Source -match "NeeView\.exe"}
+		if ($null -ne $node)
+		{
+			$componentId = $node.Id
+			$xml.Wix.Fragment[0].DirectoryRef.RemoveChild($node)
+
+			$node = $xml.Wix.Fragment[1].ComponentGroup.ComponentRef | Where-Object{$_.Id -eq $componentId}
+			$xml.Wix.Fragment[1].ComponentGroup.RemoveChild($node)
+		}
+
+		# remove NeeView.dll.config
+		$node = $xml.Wix.Fragment[0].DirectoryRef.Component | Where-Object{$_.File.Source -match "NeeView\.dll\.config"}
+		if ($null -ne $node)
+		{
+			$componentId = $node.Id
+			$xml.Wix.Fragment[0].DirectoryRef.RemoveChild($node)
+
+			$node = $xml.Wix.Fragment[1].ComponentGroup.ComponentRef | Where-Object{$_.Id -eq $componentId}
+			$xml.Wix.Fragment[1].ComponentGroup.RemoveChild($node)
+		}
+
+		$xml.Save($wxs)
 	}
 
 	function New-MsiSub($packageMsi, $culture)
@@ -530,10 +491,10 @@ function New-Msi($arch, $packageDir, $packageAppendDir, $packageMsi)
 		}
 	}
 
-	## Create DllComponents.wxs
-	if ($isCreateDllComponentsWxs)
+	## Create MainComponents.wxs
+	if ($isCreateMainComponentsWxs)
 	{
-		New-DllComponents
+		New-MainComponents
 	}
 
 	New-MsiSub $packageMsi "en-us"
@@ -568,8 +529,6 @@ function New-Msi($arch, $packageDir, $packageAppendDir, $packageMsi)
 # Appx 
 function New-Appx($arch, $packageDir, $packageAppendDir, $appx)
 {
-
-
 	$packgaeFilesDir = "$packageAppendDir/PackageFiles"
 	$contentDir = "$packgaeFilesDir/NeeView"
 
@@ -578,7 +537,7 @@ function New-Appx($arch, $packageDir, $packageAppendDir, $appx)
 
 	# update assembly
 	Copy-Item $packageDir $contentDir -Recurse -Force
-	New-ConfigForAppx $packageDir "${product}.exe.config" $contentDir
+	New-ConfigForAppx $packageDir "${product}.dll.config" $contentDir
 
 	# generate README.html
 	New-Readme $contentDir "en-us" ".appx"
@@ -640,7 +599,7 @@ function New-DevPackage($packageDir, $devPackageDir, $devPackage, $target)
 {
 	# update assembly
 	Copy-Item $packageDir $devPackageDir -Recurse
-	New-ConfigForDevPackage $packageDir "${product}.exe.config" $target $devPackageDir
+	New-ConfigForDevPackage $packageDir "${product}.dll.config" $target $devPackageDir
 
 	# generate README.html
 	New-Readme $devPackageDir "en-us" $target
@@ -693,31 +652,13 @@ function Build-PackageSorce
 	
 	# build
 	Write-Host "`n[Build] ...`n" -fore Cyan
-
-
 	Build-Project "x64"
-	Export-Publish "x64" $projectDir $publishDir_x64
-	
 	Build-Project "x86"
-	Export-Publish "x86" $projectDir $publishDir_x86
-	Export-Publish "x86" $projectSusieDir $publishSusieDir
-
-	if ($isAnyCPU)
-	{
-		Build-Project "AnyCPU"
-		Export-Publish "AnyCPU" $projectDir $publishDir_AnyCPU
-		Export-Publish "AnyCPU" $projectSusieDir $publishSusieDir_AnyCPU
-	}
 	
 	# create package source
 	Write-Host "`n[Package] ...`n" -fore Cyan
 	New-Package "x64" $product $publishDir_x64 $publishSusieDir $packageDir_x64
 	New-Package "x86" $product $publishDir_x86 $publishSusieDir $packageDir_x86
-
-	if ($isAnyCPU)
-	{
-		New-Package "AnyCPU" $product $publishDir_AnyCPU $publishSusieDir_AnyCPU $packageDir_AnyCPU
-	}
 }
 
 
@@ -730,12 +671,6 @@ function Build-Zip
 
 	New-Zip $packageDir_x86 $packageZip_x86
 	Write-Host "`nExport $packageZip_x86 successed.`n" -fore Green
-	
-	if ($isAnyCPU)
-	{
-		New-Zip $packageDir_AnyCPU $packageZip_AnyCPU
-		Write-Host "`nExport $packageZip_AnyCPU successed.`n" -fore Green
-	}
 }
 
 
@@ -776,12 +711,6 @@ function Build-Canary
 	Write-Host "`n[Canary] ...`n" -fore Cyan
 	New-Canary $packageDir_x64
 	Write-Host "`nExport $packageCanary successed.`n" -fore Green
-
-	if ($isAnyCPU)
-	{
-		New-CanaryAnyCPU $packageDir_AnyCPU
-		Write-Host "`nExport $packageCanary successed.`n" -fore Green
-	}
 }
 
 function Build-Beta
@@ -823,18 +752,13 @@ $revision = (& git rev-parse --short HEAD).ToString()
 $dateVersion = (Get-Date).ToString("MMdd")
 
 $publishDir = "Publish"
-$publishDir_AnyCPU = "$publishDir\NeeView-AnyCPU"
 $publishDir_x64 = "$publishDir\NeeView-x64"
 $publishDir_x86 = "$publishDir\NeeView-x86"
-$publishSusieDir = "$publishDir\NeeView.Susie.Server"
-$publishSusieDir_AnyCPU = "$publishDir\NeeView.Susie.Server-AnyCPU"
 $packagePrefix = "$product$version"
-$packageDir_AnyCPU = "$product$version-AnyCPU"
 $packageDir_x64 = "$product$version-x64"
 $packageDir_x86 = "$product$version-x86"
 $packageAppendDir_x64 = "$packageDir_x64.append"
 $packageAppendDir_x86 = "$packageDir_x86.append"
-$packageZip_AnyCPU = "${product}${version}-AnyCPU.zip"
 $packageZip_x64 = "${product}${version}-x64.zip"
 $packageZip_x86 = "${product}${version}-x86.zip"
 $packageMsi_x64 = "${product}${version}-x64.msi"
