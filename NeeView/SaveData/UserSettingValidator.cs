@@ -107,6 +107,20 @@ namespace NeeView
                 self.ContextMenu?.ValidateRename(CommandNameValidator.RenameMap_39_0_0);
             }
 
+            // ver.40
+            if (self.Format.CompareTo(new FormatVersion(Environment.SolutionName, 40, 0, 0)) < 0)
+            {
+                switch (self.Config.System.Language)
+                {
+                    case "zh-TW":
+                        self.Config.System.Language = "zh-Hant";
+                        break;
+                    case "zh-CN":
+                        self.Config.System.Language = "zh-Hans";
+                        break;
+                }
+            }
+
             return self;
 #pragma warning restore CS0612 // 型またはメンバーが旧型式です
         }
