@@ -1253,6 +1253,12 @@ nv.Command.ViewRotateLeft.TouchGesture = "TouchCenter"</value>
   <data name="CommandConfig.IsAccessKeyEnabled.Remarks" xml:space="preserve">
     <value>オフにすると、Alt キーによるシステム操作が無効になりコマンドのショートカットで使用したときの誤動作がなくなります。ただし Alt+F4 は常に有効です。</value>
   </data>
+  <data name="CommandConfig.IsHorizontalWheelLimitedOnce" xml:space="preserve">
+    <value>チルトホイール操作を 1 回に制限する</value>
+  </data>
+  <data name="CommandConfig.IsHorizontalWheelLimitedOnce.Remarks" xml:space="preserve">
+    <value>チルトホイールの 1 回の操作で 1 コマンドを実行します。無段階マウスを使用している場合はオフにしてください。</value>
+  </data>
   <data name="CommandConfig.IsReversePageMove" xml:space="preserve">
     <value>スライダー方向によってページ移動コマンドの移動方向を入れ替える</value>
   </data>
@@ -1514,6 +1520,12 @@ nv.Values.Test = "Hello!"</value>
   </data>
   <data name="CopyFileCommandParameter.MultiPagePolicy" xml:space="preserve">
     <value>2 ページの場合</value>
+  </data>
+  <data name="CopyFileCommandParameter.TextCopyPolicy" xml:space="preserve">
+    <value>テキスト コピー</value>
+  </data>
+  <data name="CopyFileCommandParameter.TextCopyPolicy.Remarks" xml:space="preserve">
+    <value>「@TextCopyPolicy.OriginalPath」にすると、一時ファイルのテキストは元のファイルのパス名になります。</value>
   </data>
   <data name="CopyImageCommand" xml:space="preserve">
     <value>画像をコピー</value>
@@ -5854,6 +5866,15 @@ $Name は 2 ページ表示時には主となるページ (ページ番号の小
   <data name="SystemConfig.WebBrowser.Remarks" xml:space="preserve">
     <value>設定されていない場合、既定のWeb ブラウザーを使用します。</value>
   </data>
+  <data name="TextCopyPolicy.CopyFilePath" xml:space="preserve">
+    <value>コピーファイルのパス</value>
+  </data>
+  <data name="TextCopyPolicy.None" xml:space="preserve">
+    <value>なし</value>
+  </data>
+  <data name="TextCopyPolicy.OriginalPath" xml:space="preserve">
+    <value>もとのパス</value>
+  </data>
   <data name="ThemeConfig.CustomThemeFolder" xml:space="preserve">
     <value>カスタム テーマ フォルダーの場所</value>
   </data>
@@ -7360,26 +7381,5 @@ nv.ShowToast(nv.Book.ViewPages[0].Path)</value>
   </data>
   <data name="ZipArchiveConfig.SupportFileTypes.Remarks" xml:space="preserve">
     <value>ZIP 形式のみ対応しています。</value>
-  </data>
-  <data name="CommandConfig.IsHorizontalWheelLimitedOnce" xml:space="preserve">
-    <value>チルトホイール操作を 1 回に制限する</value>
-  </data>
-  <data name="CommandConfig.IsHorizontalWheelLimitedOnce.Remarks" xml:space="preserve">
-    <value>チルトホイールの 1 回の操作で 1 コマンドを実行します。無段階マウスを使用している場合はオフにしてください。</value>
-  </data>
-  <data name="TextCopyPolicy.OriginalPath" xml:space="preserve">
-    <value>もとのパス</value>
-  </data>
-  <data name="TextCopyPolicy.CopyFilePath" xml:space="preserve">
-    <value>コピーファイルのパス</value>
-  </data>
-  <data name="TextCopyPolicy.None" xml:space="preserve">
-    <value>なし</value>
-  </data>
-  <data name="CopyFileCommandParameter.TextCopyPolicy" xml:space="preserve">
-    <value>テキスト コピー</value>
-  </data>
-  <data name="CopyFileCommandParameter.TextCopyPolicy.Remarks" xml:space="preserve">
-    <value>「@TextCopyPolicy.OriginalPath」にすると、一時ファイルのテキストは元のファイルのパス名になります。</value>
   </data>
 </root>

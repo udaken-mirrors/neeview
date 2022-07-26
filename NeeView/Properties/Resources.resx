@@ -1250,6 +1250,12 @@ nv.Command.ViewRotateLeft.TouchGesture = "TouchCenter"</value>
   <data name="CommandConfig.IsAccessKeyEnabled.Remarks" xml:space="preserve">
     <value>If it is set to OFF, system operation by Alt key will be invalid and malfunction will be eliminated when used with command shortcut. However Alt+F4 is always active.</value>
   </data>
+  <data name="CommandConfig.IsHorizontalWheelLimitedOnce" xml:space="preserve">
+    <value>Limit tilt wheel operation to one time</value>
+  </data>
+  <data name="CommandConfig.IsHorizontalWheelLimitedOnce.Remarks" xml:space="preserve">
+    <value>Tilt wheel Executes one command with one operation. If you are using a stepless mouse, turn it off.</value>
+  </data>
   <data name="CommandConfig.IsReversePageMove" xml:space="preserve">
     <value>Swap movement direction of page movement command according to slider direction</value>
   </data>
@@ -1509,6 +1515,12 @@ nv.Values.Test = "Hello!"</value>
   </data>
   <data name="CopyFileCommandParameter.MultiPagePolicy" xml:space="preserve">
     <value>For 2 pages</value>
+  </data>
+  <data name="CopyFileCommandParameter.TextCopyPolicy" xml:space="preserve">
+    <value>Text copy</value>
+  </data>
+  <data name="CopyFileCommandParameter.TextCopyPolicy.Remarks" xml:space="preserve">
+    <value>If "@TextCopyPolicy.OriginalPath" is set, the text for temporary files will be the pathname of the original file.</value>
   </data>
   <data name="CopyImageCommand" xml:space="preserve">
     <value>Copy image</value>
@@ -5849,6 +5861,15 @@ $Name is the main page (the smaller page number) when displaying 2 pages.</value
   <data name="SystemConfig.WebBrowser.Remarks" xml:space="preserve">
     <value>If not set, use default web browser.</value>
   </data>
+  <data name="TextCopyPolicy.CopyFilePath" xml:space="preserve">
+    <value>Copy file path</value>
+  </data>
+  <data name="TextCopyPolicy.None" xml:space="preserve">
+    <value>None</value>
+  </data>
+  <data name="TextCopyPolicy.OriginalPath" xml:space="preserve">
+    <value>Original path</value>
+  </data>
   <data name="ThemeConfig.CustomThemeFolder" xml:space="preserve">
     <value>Custom theme folder</value>
   </data>
@@ -7355,26 +7376,5 @@ nv.ShowToast(nv.Book.ViewPages[0].Path)</value>
   </data>
   <data name="ZipArchiveConfig.SupportFileTypes.Remarks" xml:space="preserve">
     <value>Only ZIP format is supported.</value>
-  </data>
-  <data name="CommandConfig.IsHorizontalWheelLimitedOnce" xml:space="preserve">
-    <value>Limit tilt wheel operation to one time</value>
-  </data>
-  <data name="CommandConfig.IsHorizontalWheelLimitedOnce.Remarks" xml:space="preserve">
-    <value>Tilt wheel Executes one command with one operation. If you are using a stepless mouse, turn it off.</value>
-  </data>
-  <data name="TextCopyPolicy.OriginalPath" xml:space="preserve">
-    <value>Original path</value>
-  </data>
-  <data name="TextCopyPolicy.CopyFilePath" xml:space="preserve">
-    <value>Copy file path</value>
-  </data>
-  <data name="TextCopyPolicy.None" xml:space="preserve">
-    <value>None</value>
-  </data>
-  <data name="CopyFileCommandParameter.TextCopyPolicy" xml:space="preserve">
-    <value>Text copy</value>
-  </data>
-  <data name="CopyFileCommandParameter.TextCopyPolicy.Remarks" xml:space="preserve">
-    <value>If "@TextCopyPolicy.OriginalPath" is set, the text for temporary files will be the pathname of the original file.</value>
   </data>
 </root>
