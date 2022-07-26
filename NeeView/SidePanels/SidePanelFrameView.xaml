@@ -1,8 +1,15 @@
-﻿<UserControl x:Class="NeeView.SidePanelFrameView" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
-        xmlns:local="clr-namespace:NeeView" xmlns:osc="clr-namespace:OpenSourceControls" xmlns:nw="clr-namespace:NeeView.Windows;assembly=NeeView.Runtime"
-        xmlns:nwd="clr-namespace:NeeView.Windows.Data" xmlns:nrlp="clr-namespace:NeeView.Runtime.LayoutPanel;assembly=NeeView.Runtime" xmlns:behaviors="http://schemas.microsoft.com/xaml/behaviors"
-        mc:Ignorable="d" d:DesignHeight="480" d:DesignWidth="640">
+﻿<UserControl x:Class="NeeView.SidePanelFrameView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
+             xmlns:local="clr-namespace:NeeView"
+             xmlns:nw="clr-namespace:NeeView.Windows;assembly=NeeView.Runtime"
+             xmlns:nwd="clr-namespace:NeeView.Windows.Data"
+             xmlns:nrlp="clr-namespace:NeeView.Runtime.LayoutPanel;assembly=NeeView.Runtime"
+             xmlns:behaviors="http://schemas.microsoft.com/xaml/behaviors"
+             mc:Ignorable="d" d:DesignHeight="480" d:DesignWidth="640">
 
     <UserControl.Resources>
 
@@ -44,28 +51,27 @@
             <Setter Property="Opacity" Value="{Binding VM.Opacity}" />
         </Style>
 
-        <Style x:Key="NVVerticalBevelGrip" TargetType="{x:Type osc:DockPanelSplitter}">
-            <Setter Property="Thickness" Value="{Binding SplitterWidth}" />
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="{x:Type osc:DockPanelSplitter}">
-                        <Grid SnapsToDevicePixels="True" Background="#0800" />
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
+        <Style x:Key="PanelGridSplitterStyle" TargetType="{x:Type GridSplitter}">
+            <Setter Property="Width" Value="{Binding SplitterWidth, Mode=OneTime}"/>
+            <Setter Property="VerticalAlignment" Value="Stretch"/>
+            <Setter Property="Background" Value="Transparent"/>
         </Style>
-
 
     </UserControl.Resources>
 
 
-    <Grid x:Name="Root" SizeChanged="Root_SizeChanged">
+    <Grid x:Name="Root">
 
         <ContentControl x:Name="RootEntryPoint" IsTabStop="False" />
 
-        <DockPanel>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
 
-            <Grid DockPanel.Dock="Left" Visibility="{Binding VM.IsSideBarVisible, Converter={StaticResource BooleanToVisibilityConverter}}" KeyboardNavigation.TabNavigation="Local"
+            <Grid Grid.Column="0" Visibility="{Binding VM.IsSideBarVisible, Converter={StaticResource BooleanToVisibilityConverter}}" KeyboardNavigation.TabNavigation="Local"
                     KeyboardNavigation.TabIndex="1">
                 <Grid x:Name="LeftIconGrid" Visibility="{Binding ElementName=LeftPanelContent, Path=Visibility}" Background="Transparent" AllowDrop="True"
                         MouseLeftButtonDown="LeftIconGrid_MouseLeftButtonDown" MouseLeftButtonUp="LeftIconGrid_MouseLeftButtonUp">
@@ -81,7 +87,7 @@
                 </Grid>
             </Grid>
 
-            <Grid DockPanel.Dock="Right" Visibility="{Binding VM.IsSideBarVisible, Converter={StaticResource BooleanToVisibilityConverter}}" KeyboardNavigation.TabNavigation="Local"
+            <Grid Grid.Column="2" Visibility="{Binding VM.IsSideBarVisible, Converter={StaticResource BooleanToVisibilityConverter}}" KeyboardNavigation.TabNavigation="Local"
                     KeyboardNavigation.TabIndex="4">
                 <Grid x:Name="RightIconGrid" Visibility="{Binding ElementName=RightPanelContent, Path=Visibility}" Background="Transparent" AllowDrop="True"
                         MouseLeftButtonDown="RightIconGrid_MouseLeftButtonDown" MouseLeftButtonUp="RightIconGrid_MouseLeftButtonUp">
@@ -97,14 +103,24 @@
                 </Grid>
             </Grid>
 
-            <DockPanel x:Name="Screen">
+            <Grid x:Name="ScreenRect" Grid.Column="1" />
 
-                <Grid x:Name="LeftPanel" DockPanel.Dock="Left" UseLayoutRounding="True" Width="{Binding VM.Left.Width, Mode=TwoWay}" Visibility="{Binding VM.Left.PanelVisibility}"
-                        SizeChanged="LeftPanel_SizeChanged" KeyboardNavigation.TabNavigation="Local" KeyboardNavigation.TabIndex="2">
+            <Grid x:Name="Screen" Grid.Column="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition x:Name="LeftColumn"
+                                      Width="{Binding RelativeSource={RelativeSource AncestorType=local:SidePanelFrameView}, Path=LeftColumnWidth, Mode=TwoWay}"/>
+                    <ColumnDefinition x:Name="CenterColumn"
+                                      Width="*" MinWidth="{Binding SplitterWidth, Mode=OneTime}"/>
+                    <ColumnDefinition x:Name="RightColumn"
+                                      Width="{Binding RelativeSource={RelativeSource AncestorType=local:SidePanelFrameView}, Path=RightColumnWidth, Mode=TwoWay}"/>
+                </Grid.ColumnDefinitions>
+
+                <Grid x:Name="LeftPanel" Grid.Column="0" UseLayoutRounding="True"  Visibility="{Binding VM.Left.PanelVisibility}"
+                        KeyboardNavigation.TabNavigation="Local" KeyboardNavigation.TabIndex="2">
                     <Border Style="{StaticResource PanelBorderStyle}" BorderThickness="0,0,1,0" />
                     <Border x:Name="LeftPanelContent" Background="Transparent" Margin="0,0,1,0">
                         <behaviors:Interaction.Behaviors>
-                            <local:AutoHideBehavior Name="LeftPanel" Screen="{Binding ElementName=Screen}" SubTarget="{Binding ElementName=LeftPanelSplitter}" Dock="Left"
+                            <local:AutoHideBehavior Name="LeftPanel" Screen="{Binding ElementName=Screen}" SubTarget="{Binding ElementName=LeftSplitter}" Dock="Left"
                                     IsEnabled="{Binding VM.Left.IsAutoHide}" DelayTime="{Binding VM.AutoHideConfig.AutoHideDelayTime}"
                                     DelayVisibleTime="{Binding VM.AutoHideConfig.AutoHideDelayVisibleTime}" FocusLockMode="{Binding VM.AutoHideConfig.AutoHideFocusLockMode}"
                                     IsKeyDownDelayEnabled="{Binding VM.AutoHideConfig.IsAutoHideKeyDownDelay}" HitTestMargin="{Binding VM.AutoHideConfig.AutoHideHitTestHorizontalMargin}"
@@ -121,19 +137,14 @@
                                 BorderBrush="{DynamicResource Panel.Splitter}">
                         </nrlp:LayoutDockPanel>
                     </Border>
-
                 </Grid>
 
-
-                <osc:DockPanelSplitter x:Name="LeftPanelSplitter" DockPanel.Dock="Left" Style="{StaticResource NVVerticalBevelGrip}" ProportionalResize="False" UseLayoutRounding="True"
-                        Visibility="{Binding VM.Left.PanelVisibility}" IsTabStop="False" />
-
-                <Grid x:Name="RightPanel" DockPanel.Dock="Right" Width="{Binding VM.Right.Width, Mode=TwoWay}" UseLayoutRounding="True" Visibility="{Binding VM.Right.PanelVisibility}"
-                        SizeChanged="RightPanel_SizeChanged" KeyboardNavigation.TabNavigation="Local" KeyboardNavigation.TabIndex="3">
+                <Grid x:Name="RightPanel" Grid.Column="2" UseLayoutRounding="True" Visibility="{Binding VM.Right.PanelVisibility}"
+                        KeyboardNavigation.TabNavigation="Local" KeyboardNavigation.TabIndex="3">
                     <Border Style="{StaticResource PanelBorderStyle}" BorderThickness="1,0,0,0" />
                     <Border x:Name="RightPanelContent" Background="Transparent" Margin="1,0,0,0">
                         <behaviors:Interaction.Behaviors>
-                            <local:AutoHideBehavior Name="RightPanel" Screen="{Binding ElementName=Screen}" SubTarget="{Binding ElementName=RightPanelSplitter}" Dock="Right"
+                            <local:AutoHideBehavior Name="RightPanel" Screen="{Binding ElementName=Screen}" SubTarget="{Binding ElementName=RightSplitter}" Dock="Right"
                                     IsEnabled="{Binding VM.Right.IsAutoHide}" DelayTime="{Binding VM.AutoHideConfig.AutoHideDelayTime}"
                                     DelayVisibleTime="{Binding VM.AutoHideConfig.AutoHideDelayVisibleTime}" FocusLockMode="{Binding VM.AutoHideConfig.AutoHideFocusLockMode}"
                                     IsKeyDownDelayEnabled="{Binding VM.AutoHideConfig.IsAutoHideKeyDownDelay}" HitTestMargin="{Binding VM.AutoHideConfig.AutoHideHitTestHorizontalMargin}"
@@ -152,19 +163,14 @@
                     </Border>
                 </Grid>
 
-                <osc:DockPanelSplitter x:Name="RightPanelSplitter" DockPanel.Dock="Right" Style="{StaticResource NVVerticalBevelGrip}" ProportionalResize="False" UseLayoutRounding="True"
-                        Visibility="{Binding VM.Right.PanelVisibility}" IsTabStop="False" />
+                <Grid x:Name="CenterPanel" Grid.Column="1"/>
 
-                <Grid x:Name="Viewport" Grid.Column="1" SizeChanged="Viewport_SizeChanged" Margin="{Binding ViewpoartMargin}">
-                    <!--
-                    <ContentControl x:Name="ViewportEntryPoint" Panel.ZIndex="-1" IsTabStop="False"/>
-                    <Border BorderBrush="Yellow" BorderThickness="5"/>
-                    -->
-                </Grid>
+                <GridSplitter x:Name="RightSplitter" Grid.Column="1" Style="{StaticResource PanelGridSplitterStyle}"  HorizontalAlignment="Right"
+                              Visibility="{Binding ElementName=RightPanel, Path=Visibility}"/>
 
-            </DockPanel>
-
-        </DockPanel>
-
+                <GridSplitter x:Name="LeftSplitter" Grid.Column="1" Style="{StaticResource PanelGridSplitterStyle}" HorizontalAlignment="Left"
+                              Visibility="{Binding ElementName=LeftPanel, Path=Visibility}"/>
+            </Grid>
+        </Grid>
     </Grid>
 </UserControl>

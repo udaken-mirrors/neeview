@@ -25,7 +25,6 @@ namespace NeeView
         private LayoutDockPanelContent _dock;
         private SidePanelDropAcceptor _dropAcceptor;
         private double _width = 300.0;
-        private double _maxWidth;
         private bool _isDragged;
         private bool _isAutoHide;
         private Visibility _visibility;
@@ -64,13 +63,7 @@ namespace NeeView
         public virtual double Width
         {
             get { return _width; }
-            set { SetProperty(ref _width, Math.Min(value, MaxWidth)); }
-        }
-
-        public double MaxWidth
-        {
-            get { return _maxWidth; }
-            set { if (_maxWidth != value) { _maxWidth = value; RaisePropertyChanged(); } }
+            set { SetProperty(ref _width, value); }
         }
 
         public bool IsDragged

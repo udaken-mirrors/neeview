@@ -3,6 +3,7 @@ using NeeView.Windows.Media;
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -155,7 +156,36 @@ namespace NeeView
             DependencyProperty.Register("CanvasTop", typeof(double), typeof(SidePanelFrameView), new PropertyMetadata(0.0));
 
 
+        /// <summary>
+        /// Screen LeftColumn Width
+        /// </summary>
+        public GridLength LeftColumnWidth
+        {
+            get { return (GridLength)GetValue(LeftColumnWidthProperty); }
+            set { SetValue(LeftColumnWidthProperty, value); }
+        }
+
+        public static readonly DependencyProperty LeftColumnWidthProperty =
+            DependencyProperty.Register("LeftColumnWidth", typeof(GridLength), typeof(SidePanelFrameView), new PropertyMetadata(new GridLength(0.0)));
+
+
+        /// <summary>
+        /// Screen RightColumn Width
+        /// </summary>
+        public GridLength RightColumnWidth
+        {
+            get { return (GridLength)GetValue(RightColumnWidthProperty); }
+            set { SetValue(RightColumnWidthProperty, value); }
+        }
+
+        public static readonly DependencyProperty RightColumnWidthProperty =
+            DependencyProperty.Register("RightColumnWidth", typeof(GridLength), typeof(SidePanelFrameView), new PropertyMetadata(new GridLength(0.0)));
+
         #endregion DependencyProperties
+
+
+        // パネル幅自動調整用。右パネル幅を優先させる
+        private bool _isKeepRightPanelWidth;
 
 
         /// <summary>
@@ -205,27 +235,12 @@ namespace NeeView
             var rightPanelViewModel = new RightPanelViewModel(this.RightIconList, CustomLayoutPanelManager.Current.RightDock, RightPanelElementContains);
             this.VM = new SidePanelFrameViewModel(model, leftPanelViewModel, rightPanelViewModel);
             this.VM.PanelVisibilityChanged += (s, e) => UpdateCanvas();
-            UpdateWidth();
+
+            InitializeColumnWidth(this.VM);
+
             UpdateAutoHide();
-            UpdateViewpoartMargin();
         }
 
-        /// <summary>
-        /// キャンバスのマージン更新
-        /// </summary>
-        private void UpdateViewpoartMargin()
-        {
-            if (_vm == null || _vm.IsAutoHide)
-            {
-                ViewpoartMargin = new Thickness(0.0);
-            }
-            else
-            {
-                var leftMargin = (_vm.Left.PanelVisibility == Visibility.Visible) ? -_splitterWidth : 0.0;
-                var rightMargin = (_vm.Right.PanelVisibility == Visibility.Visible) ? -_splitterWidth : 0.0;
-                ViewpoartMargin = new Thickness(leftMargin, 0.0, rightMargin, 0.0);
-            }
-        }
 
         /// <summary>
         /// 左パネルに含まれる要素判定
@@ -253,50 +268,10 @@ namespace NeeView
         }
 
         /// <summary>
-        /// 領域サイズ変更イベント処理
-        /// </summary>
-        private void Root_SizeChanged(object sender, SizeChangedEventArgs e)
-        {
-            UpdateWidth();
-        }
-
-        /// <summary>
-        /// 領域幅更新。パネル幅制限に使用される
-        /// </summary>
-        private void UpdateWidth()
-        {
-            if (_vm == null) return;
-            _vm.Width = Math.Max(this.Root.ActualWidth - (PanelIconGridWidth + SplitterWidth) * 2, 0);
-            UpdateCanvas();
-        }
-
-        /// <summary>
-        /// パネルコンテンツサイズ変更イベント処理
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void Viewport_SizeChanged(object sender, SizeChangedEventArgs e)
-        {
-            UpdateCanvas();
-        }
-
-        private void LeftPanel_SizeChanged(object sender, SizeChangedEventArgs e)
-        {
-            UpdateCanvas();
-        }
-
-        private void RightPanel_SizeChanged(object sender, SizeChangedEventArgs e)
-        {
-            UpdateCanvas();
-        }
-
-        /// <summary>
         /// コンテンツ表示領域サイズ更新
         /// </summary>
         private void UpdateCanvas()
         {
-            UpdateViewpoartMargin();
-
             if (_vm == null || _vm.IsAutoHide)
             {
                 CanvasLeft = 0;
@@ -306,9 +281,10 @@ namespace NeeView
             }
             else
             {
-                var point0 = this.Viewport.TranslatePoint(new Point(0, 0), this.Root);
-                var point1 = this.Viewport.TranslatePoint(new Point(this.Viewport.ActualWidth, this.Viewport.ActualHeight), this.Root);
-
+                var panel0 = this.LeftPanel.IsVisible ? this.CenterPanel : this.ScreenRect;
+                var panel1 = this.RightPanel.IsVisible ? this.CenterPanel : this.ScreenRect;
+                var point0 = panel0.TranslatePoint(new Point(0, 0), this.Root);
+                var point1 = panel1.TranslatePoint(new Point(panel1.ActualWidth, panel1.ActualHeight), this.Root);
                 var rect = new Rect(point0, point1);
 
                 CanvasLeft = rect.Left;
@@ -374,5 +350,127 @@ namespace NeeView
             var pos = Mouse.GetPosition(this.RightPanelContent);
             return this.RightPanelContent.IsMouseOver || pos.X >= 0.0;
         }
+
+
+        #region ColumnWidth
+
+        public void InitializeColumnWidth(SidePanelFrameViewModel vm)
+        {
+            this.SetBinding(LeftColumnWidthProperty, new Binding(nameof(vm.LeftPanelWidth)) { Source = vm, Mode = BindingMode.TwoWay });
+            this.SetBinding(RightColumnWidthProperty, new Binding(nameof(vm.RightPanelWidth)) { Source = vm, Mode = BindingMode.TwoWay });
+
+            this.ScreenRect.SizeChanged += ScreenRect_SizeChanged;
+            this.Screen.SizeChanged += Screen_SizeChanged;
+            this.CenterPanel.SizeChanged += CenterPanel_SizeChanged;
+            this.LeftPanel.IsVisibleChanged += LeftPanel_IsVisibleChanged;
+            this.RightPanel.IsVisibleChanged += RightPanel_IsVisibleChanged;
+
+            UpdateCanvas();
+        }
+
+        private void LeftPanel_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            if ((bool)e.NewValue && this.LeftColumnWidth.Value <= 0.1)
+            {
+                _isKeepRightPanelWidth = false;
+                this.LeftColumnWidth = new GridLength(300.0);
+            }
+
+            UpdateCanvas();
+        }
+
+        private void RightPanel_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            if ((bool)e.NewValue && this.RightColumnWidth.Value <= 0.1)
+            {
+                _isKeepRightPanelWidth = true;
+                this.RightColumnWidth = new GridLength(300.0);
+            }
+
+            UpdateCanvas();
+        }
+
+        private void ScreenRect_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            UpdateCanvas();
+        }
+
+        private void Screen_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            if (!e.WidthChanged) return;
+
+            if (this.RightSplitter.IsDragging)
+            {
+                AdjustRightPanelWidth();
+                return;
+            }
+
+            if (this.LeftSplitter.IsDragging)
+            {
+                AdjustLeftPanelWidth();
+                return;
+            }
+
+            if (_isKeepRightPanelWidth)
+            {
+                AdjustRightPanelWidth();
+            }
+            else
+            {
+                AdjustLeftPanelWidth();
+            }
+        }
+
+        private void CenterPanel_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            UpdateCanvas();
+        }
+
+        private void AdjustLeftPanelWidth()
+        {
+            if (this.LeftColumnWidth.Value <= 0.0) return;
+
+            var over = this.Screen.ActualWidth - this.ScreenRect.ActualWidth;
+            over = AdjustRightColumn(over);
+            over = AdjustLeftColumn(over);
+            UpdateCanvas();
+        }
+
+        private void AdjustRightPanelWidth()
+        {
+            if (this.RightColumnWidth.Value <= 0.0) return;
+
+            var over = this.Screen.ActualWidth - this.ScreenRect.ActualWidth;
+            over = AdjustLeftColumn(over);
+            over = AdjustRightColumn(over);
+            UpdateCanvas();
+        }
+
+        private double AdjustLeftColumn(double over)
+        {
+            Debug.Assert(this.LeftColumnWidth.IsAbsolute);
+
+            if (over <= 0.1) return over;
+
+            var width = this.LeftColumnWidth.Value;
+            var delta = Math.Min(width, over);
+            this.LeftColumnWidth = new GridLength(width - delta);
+            return over - delta;
+        }
+
+        private double AdjustRightColumn(double over)
+        {
+            Debug.Assert(this.RightColumnWidth.IsAbsolute);
+
+            if (over <= 0.1) return over;
+
+            var width = this.RightColumnWidth.Value;
+            var delta = Math.Min(width, over);
+            this.RightColumnWidth = new GridLength(width - delta);
+            return over - delta;
+        }
+
+        #endregion ColumnWidth
     }
+
 }

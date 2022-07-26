@@ -1,6 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
-using System.Windows.Controls;
+using System.Windows;
 using NeeLaboratory.ComponentModel;
 using NeeView.Windows;
 
@@ -11,7 +11,6 @@ namespace NeeView
     /// </summary>
     public class SidePanelFrameViewModel : BindableBase
     {
-        private double _width;
         private bool _isAutoHide;
         private SidePanelFrame _model;
 
@@ -60,28 +59,22 @@ namespace NeeView
             set => Config.Current.Panels.IsSideBarEnabled = value;
         }
 
-        public double Width
-        {
-            get { return _width; }
-            set
-            {
-                if (_width != value)
-                {
-                    _width = Math.Max(value, Left.Width + Right.Width);
-                    UpdateLeftMaxWidth();
-                    UpdateRightMaxWidth();
-                    RaisePropertyChanged();
-                }
-            }
-        }
-
-
         public double Opacity
         {
             get => MainWindowModel.Current.CanHidePanel ? Config.Current.Panels.Opacity : 1.0;
         }
 
+        public GridLength LeftPanelWidth
+        {
+            get => new GridLength(this.Left.Width);
+            set => this.Left.Width = value.Value;
+        }
 
+        public GridLength RightPanelWidth
+        {
+            get => new GridLength(this.Right.Width);
+            set => this.Right.Width = value.Value;
+        }
 
 
         /// <summary>
@@ -105,22 +98,6 @@ namespace NeeView
             {
                 Right.VisibleOnce();
             }
-        }
-
-        /// <summary>
-        /// 左パネルの最大幅更新
-        /// </summary>
-        private void UpdateLeftMaxWidth()
-        {
-            Left.MaxWidth = _width - Right.Width;
-        }
-
-        /// <summary>
-        /// 右パネルの最大幅更新
-        /// </summary>
-        private void UpdateRightMaxWidth()
-        {
-            Right.MaxWidth = _width - Left.Width;
         }
 
         public bool IsAutoHide
@@ -185,7 +162,7 @@ namespace NeeView
             switch (e.PropertyName)
             {
                 case nameof(Right.Width):
-                    UpdateLeftMaxWidth();
+                    RaisePropertyChanged(nameof(RightPanelWidth));
                     break;
                 case nameof(Right.PanelVisibility):
                     PanelVisibilityChanged?.Invoke(this, null);
@@ -201,7 +178,7 @@ namespace NeeView
             switch (e.PropertyName)
             {
                 case nameof(Left.Width):
-                    UpdateRightMaxWidth();
+                    RaisePropertyChanged(nameof(LeftPanelWidth));
                     break;
                 case nameof(Left.PanelVisibility):
                     PanelVisibilityChanged?.Invoke(this, null);
