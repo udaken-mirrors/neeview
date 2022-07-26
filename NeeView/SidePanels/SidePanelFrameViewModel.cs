@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Windows;
 using NeeLaboratory.ComponentModel;
 using NeeView.Windows;
@@ -39,6 +40,9 @@ namespace NeeView
             Config.Current.Panels.AddPropertyChanged(nameof(PanelsConfig.IsSideBarEnabled),
                 (s, e) => RaisePropertyChanged(nameof(IsSideBarVisible)));
 
+            Config.Current.Panels.AddPropertyChanged(nameof(PanelsConfig.IsLimitPanelWidth),
+                (s, e) => RaisePropertyChanged(nameof(IsLimitPanelWidth)));
+
             MainLayoutPanelManager.DragBegin +=
                 (s, e) => DragBegin(this, null);
             MainLayoutPanelManager.DragEnd +=
@@ -74,6 +78,22 @@ namespace NeeView
         {
             get => new GridLength(this.Right.Width);
             set => this.Right.Width = value.Value;
+        }
+
+        public bool IsLeftPanelActived
+        {
+            get => this.Left.IsPanelActived;
+        }
+
+        public bool IsRightPanelActived
+        {
+            get => this.Right.IsPanelActived;
+        }
+
+        public bool IsLimitPanelWidth
+        {
+            get => Config.Current.Panels.IsLimitPanelWidth;
+            set => Config.Current.Panels.IsLimitPanelWidth = value;
         }
 
 
@@ -130,9 +150,8 @@ namespace NeeView
 
         public AutoHideConfig AutoHideConfig => Config.Current.AutoHide;
 
-
-
         public CustomLayoutPanelManager MainLayoutPanelManager { get; private set; }
+
 
         /// <summary>
         /// ドラッグ開始イベント処理.
@@ -167,6 +186,9 @@ namespace NeeView
                 case nameof(Right.PanelVisibility):
                     PanelVisibilityChanged?.Invoke(this, null);
                     break;
+                case nameof(Right.IsPanelActived):
+                    RaisePropertyChanged(nameof(IsRightPanelActived));
+                    break;
             }
         }
 
@@ -182,6 +204,9 @@ namespace NeeView
                     break;
                 case nameof(Left.PanelVisibility):
                     PanelVisibilityChanged?.Invoke(this, null);
+                    break;
+                case nameof(Left.IsPanelActived):
+                    RaisePropertyChanged(nameof(IsLeftPanelActived));
                     break;
             }
         }

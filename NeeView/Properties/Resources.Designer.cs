@@ -12037,6 +12037,24 @@ namespace NeeView.Properties {
         }
         
         /// <summary>
+        ///   Limit panel width に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string PanelsConfig_IsLimitPanelWidth {
+            get {
+                return ResourceManager.GetString("PanelsConfig.IsLimitPanelWidth", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Limit the width of the panel to fit in the window に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string PanelsConfig_IsLimitPanelWidth_Remarks {
+            get {
+                return ResourceManager.GetString("PanelsConfig.IsLimitPanelWidth.Remarks", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Touch scroll termination bound on side panel に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string PanelsConfig_IsManipulationBoundaryFeedbackEnabled {

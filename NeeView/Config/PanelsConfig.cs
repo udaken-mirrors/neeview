@@ -21,6 +21,7 @@ namespace NeeView
         private double _mouseWheelSpeedRate = 1.0;
         private double _leftPanelWidth = 300.0;
         private double _rightPanelWidth = 300.0;
+        private bool _isLimitPanelWidth;
 
         /// <summary>
         /// パネルを自動的に隠す
@@ -110,6 +111,16 @@ namespace NeeView
         {
             get { return _mouseWheelSpeedRate; }
             set { SetProperty(ref _mouseWheelSpeedRate, Math.Max(value, 0.1)); }
+        }
+
+        /// <summary>
+        /// ウィンドウに収まるようにパネル幅を制限する
+        /// </summary>
+        [PropertyMember]
+        public bool IsLimitPanelWidth
+        {
+            get { return _isLimitPanelWidth; }
+            set { SetProperty(ref _isLimitPanelWidth, value); }
         }
 
 

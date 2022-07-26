@@ -24,6 +24,8 @@ namespace NeeView
     public partial class SidePanelFrameView : UserControl, INotifyPropertyChanged
     {
         private const double _splitterWidth = 8.0;
+        private const double _panelDefaultWidth = 300.0;
+        private const double _panelMinWidth = 100.0;
 
 
         #region INotifyPropertyChanged Support
@@ -184,9 +186,16 @@ namespace NeeView
         #endregion DependencyProperties
 
 
-        // パネル幅自動調整用。右パネル幅を優先させる
-        private bool _isKeepRightPanelWidth;
+        // パネル幅自動調整用
+        enum AdjustPanelWidthOrder
+        {
+            None,
+            KeepLeft,
+            KeepRight,
+        };
 
+        // パネル幅自動調整用
+        private AdjustPanelWidthOrder _adjustPanelWidthOrder;
 
         /// <summary>
         /// コンストラクター
@@ -365,40 +374,58 @@ namespace NeeView
             this.LeftPanel.IsVisibleChanged += LeftPanel_IsVisibleChanged;
             this.RightPanel.IsVisibleChanged += RightPanel_IsVisibleChanged;
 
+            vm.AddPropertyChanged(nameof(vm.IsLeftPanelActived), ViewModel_IsLeftPanelActivedChanged);
+            vm.AddPropertyChanged(nameof(vm.IsRightPanelActived), ViewModel_IsRightPanelActivedChanged);
+
+            UpdateCanvas();
+        }
+
+        private void ViewModel_IsLeftPanelActivedChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (_vm.IsLeftPanelActived && this.LeftColumnWidth.Value <= _panelMinWidth)
+            {
+                var length = Math.Max(Math.Min(this.CenterColumn.ActualWidth - _splitterWidth, _panelDefaultWidth), _panelMinWidth);
+                _adjustPanelWidthOrder = AdjustPanelWidthOrder.KeepLeft;
+                this.LeftColumnWidth = new GridLength(length);
+            }
+
+            UpdateCanvas();
+        }
+
+        private void ViewModel_IsRightPanelActivedChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (_vm.IsRightPanelActived && this.RightColumnWidth.Value <= _panelMinWidth)
+            {
+                var length = Math.Max(Math.Min(this.CenterColumn.ActualWidth - _splitterWidth, _panelDefaultWidth), _panelMinWidth);
+                _adjustPanelWidthOrder = AdjustPanelWidthOrder.KeepRight;
+                this.RightColumnWidth = new GridLength(length);
+            }
+
             UpdateCanvas();
         }
 
         private void LeftPanel_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
-            if ((bool)e.NewValue && this.LeftColumnWidth.Value <= 0.1)
-            {
-                _isKeepRightPanelWidth = false;
-                this.LeftColumnWidth = new GridLength(300.0);
-            }
-
             UpdateCanvas();
         }
 
         private void RightPanel_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
-            if ((bool)e.NewValue && this.RightColumnWidth.Value <= 0.1)
-            {
-                _isKeepRightPanelWidth = true;
-                this.RightColumnWidth = new GridLength(300.0);
-            }
-
             UpdateCanvas();
         }
 
         private void ScreenRect_SizeChanged(object sender, SizeChangedEventArgs e)
         {
+            if (_vm.IsLimitPanelWidth)
+            {
+                AdjustPanelWidthFromOrder(true);
+            }
+
             UpdateCanvas();
         }
 
         private void Screen_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            if (!e.WidthChanged) return;
-
             if (this.RightSplitter.IsDragging)
             {
                 AdjustRightPanelWidth();
@@ -411,14 +438,27 @@ namespace NeeView
                 return;
             }
 
-            if (_isKeepRightPanelWidth)
+            AdjustPanelWidthFromOrder(false);
+        }
+        
+        private void AdjustPanelWidthFromOrder(bool isForce)
+        {
+            if (isForce && _adjustPanelWidthOrder == AdjustPanelWidthOrder.None)
             {
-                AdjustRightPanelWidth();
+                _adjustPanelWidthOrder = AdjustPanelWidthOrder.KeepLeft;
             }
-            else
+
+            switch (_adjustPanelWidthOrder)
             {
-                AdjustLeftPanelWidth();
+                case AdjustPanelWidthOrder.KeepLeft:
+                    AdjustLeftPanelWidth();
+                    break;
+                case AdjustPanelWidthOrder.KeepRight:
+                    AdjustRightPanelWidth();
+                    break;
             }
+
+            _adjustPanelWidthOrder = AdjustPanelWidthOrder.None;
         }
 
         private void CenterPanel_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -428,7 +468,7 @@ namespace NeeView
 
         private void AdjustLeftPanelWidth()
         {
-            if (this.LeftColumnWidth.Value <= 0.0) return;
+            //if (this.LeftColumnWidth.Value <= 0.0) return;
 
             var over = this.Screen.ActualWidth - this.ScreenRect.ActualWidth;
             over = AdjustRightColumn(over);
@@ -438,7 +478,7 @@ namespace NeeView
 
         private void AdjustRightPanelWidth()
         {
-            if (this.RightColumnWidth.Value <= 0.0) return;
+            //if (this.RightColumnWidth.Value <= 0.0) return;
 
             var over = this.Screen.ActualWidth - this.ScreenRect.ActualWidth;
             over = AdjustLeftColumn(over);

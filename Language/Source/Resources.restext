@@ -2317,3 +2317,5 @@ Word.Yes=Yes
 ZipArchiveConfig.IsEnabled=Use ZIP compressed file expansion with standard function
 ZipArchiveConfig.SupportFileTypes=Compressed file extension
 ZipArchiveConfig.SupportFileTypes.Remarks=Only ZIP format is supported.
+PanelsConfig.IsLimitPanelWidth=Limit panel width
+PanelsConfig.IsLimitPanelWidth.Remarks=Limit the width of the panel to fit in the window

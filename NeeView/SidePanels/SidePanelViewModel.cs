@@ -29,7 +29,9 @@ namespace NeeView
         private bool _isAutoHide;
         private Visibility _visibility;
         private Func<DependencyObject, bool> _elementContainsFunc;
-
+        private bool _isPanelActived;
+        
+        
         public SidePanelViewModel(ItemsControl itemsControl, LayoutDockPanelContent dock, Func<DependencyObject, bool> elementContainsFunc)
         {
             _dock = dock;
@@ -41,6 +43,11 @@ namespace NeeView
                 if (_dock.SelectedItem != null)
                 {
                     AutoHideDescription.VisibleOnce();
+                    IsPanelActived = true;
+                }
+                else
+                {
+                    IsPanelActived = false;
                 }
             });
 
@@ -131,6 +138,17 @@ namespace NeeView
                 return Visibility == Visibility.Visible && _dock.SelectedItem != null ? Visibility.Visible : Visibility.Collapsed;
             }
         }
+
+
+        /// <summary>
+        /// パネルがなにか選択されている
+        /// </summary>
+        public bool IsPanelActived
+        {
+            get { return _isPanelActived; }
+            set { SetProperty(ref _isPanelActived, value); }
+        }
+
 
 
         /// <summary>

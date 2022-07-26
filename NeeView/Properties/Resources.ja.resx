@@ -7382,4 +7382,10 @@ nv.ShowToast(nv.Book.ViewPages[0].Path)</value>
   <data name="ZipArchiveConfig.SupportFileTypes.Remarks" xml:space="preserve">
     <value>ZIP 形式のみ対応しています。</value>
   </data>
+  <data name="PanelsConfig.IsLimitPanelWidth" xml:space="preserve">
+    <value>パネル幅を制限</value>
+  </data>
+  <data name="PanelsConfig.IsLimitPanelWidth.Remarks" xml:space="preserve">
+    <value>ウィンドウに収まるようにパネル幅を制限する</value>
+  </data>
 </root>
