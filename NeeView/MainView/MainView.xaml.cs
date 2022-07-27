@@ -209,7 +209,6 @@ namespace NeeView
             this.View.PreviewMouseMove += MainView_PreviewMouseMove;
             this.View.PreviewMouseDown += MainView_PreviewMouseAction;
             this.View.PreviewMouseUp += MainView_PreviewMouseAction;
-            this.View.PreviewMouseWheel += MainView_PreviewMouseAction;
             this.View.MouseEnter += MainView_MouseEnter;
 
             _nonActiveTimer = new DispatcherTimer(DispatcherPriority.Normal, this.Dispatcher);
