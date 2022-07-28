@@ -4539,8 +4539,20 @@ The Susie archive does not determine this size, but only pre-extraction in the p
   <data name="PlaylistErrorDialog.FolderIsNotSet" xml:space="preserve">
     <value>Folder is not set.</value>
   </data>
+  <data name="PlaylistItem.Menu.Copy" xml:space="preserve">
+    <value>_Copy</value>
+  </data>
+  <data name="PlaylistItem.Menu.CopyToFolder" xml:space="preserve">
+    <value>Cop_y to folder</value>
+  </data>
   <data name="PlaylistItem.Menu.Delete" xml:space="preserve">
     <value>_Delete</value>
+  </data>
+  <data name="PlaylistItem.Menu.Explorer" xml:space="preserve">
+    <value>Open in e_xplorer</value>
+  </data>
+  <data name="PlaylistItem.Menu.MoveToFolder" xml:space="preserve">
+    <value>Mov_e to folder</value>
   </data>
   <data name="PlaylistItem.Menu.MoveToAnother" xml:space="preserve">
     <value>Move to another playlist</value>

@@ -66,12 +66,21 @@ namespace NeeView
         public readonly static RoutedCommand RenameCommand = new RoutedCommand(nameof(RenameCommand), typeof(PlaylistListBox));
         public readonly static RoutedCommand RemoveCommand = new RoutedCommand(nameof(RemoveCommand), typeof(PlaylistListBox));
         public readonly static RoutedCommand MoveToAnotherCommand = new RoutedCommand(nameof(MoveToAnotherCommand), typeof(PlaylistListBox));
+        public static readonly RoutedCommand OpenExplorerCommand = new RoutedCommand(nameof(OpenExplorerCommand), typeof(PlaylistListBox));
+        public static readonly RoutedCommand OpenExternalAppCommand = new RoutedCommand(nameof(OpenExternalAppCommand), typeof(PlaylistListBox));
+        public static readonly RoutedCommand CopyCommand = new RoutedCommand(nameof(CopyCommand), typeof(PlaylistListBox));
+        public static readonly RoutedCommand CopyToFolderCommand = new RoutedCommand(nameof(CopyToFolderCommand), typeof(PlaylistListBox));
+        public static readonly RoutedCommand MoveToFolderCommand = new RoutedCommand(nameof(MoveToFolderCommand), typeof(PlaylistListBox));
+        public static readonly RoutedCommand OpenDestinationFolderCommand = new RoutedCommand(nameof(OpenDestinationFolderCommand), typeof(PlaylistListBox));
+        public static readonly RoutedCommand OpenExternalAppDialogCommand = new RoutedCommand(nameof(OpenExternalAppDialogCommand), typeof(PlaylistListBox));
 
+        private PlaylistPageCommandResource _commandResource = new PlaylistPageCommandResource();
 
         private static void InitializeCommandStatic()
         {
             RenameCommand.InputGestures.Add(new KeyGesture(Key.F2));
             RemoveCommand.InputGestures.Add(new KeyGesture(Key.Delete));
+            CopyCommand.InputGestures.Add(new KeyGesture(Key.C, ModifierKeys.Control));
         }
 
         private void InitializeCommand()
@@ -83,6 +92,13 @@ namespace NeeView
             this.ListBox.CommandBindings.Add(new CommandBinding(RenameCommand, RenameCommand_Execute, RenameCommand_CanExecute));
             this.ListBox.CommandBindings.Add(new CommandBinding(RemoveCommand, RemoveCommand_Execute, RemoveCommand_CanExecute));
             this.ListBox.CommandBindings.Add(new CommandBinding(MoveToAnotherCommand, MoveToAnotherCommand_Execute, MoveToAnotherCommand_CanExecute));
+            this.ListBox.CommandBindings.Add(_commandResource.CreateCommandBinding(OpenExplorerCommand));
+            this.ListBox.CommandBindings.Add(_commandResource.CreateCommandBinding(OpenExternalAppCommand));
+            this.ListBox.CommandBindings.Add(_commandResource.CreateCommandBinding(CopyCommand));
+            this.ListBox.CommandBindings.Add(_commandResource.CreateCommandBinding(CopyToFolderCommand));
+            this.ListBox.CommandBindings.Add(_commandResource.CreateCommandBinding(MoveToFolderCommand));
+            this.ListBox.CommandBindings.Add(_commandResource.CreateCommandBinding(OpenDestinationFolderCommand));
+            this.ListBox.CommandBindings.Add(_commandResource.CreateCommandBinding(OpenExternalAppDialogCommand));
         }
 
 
@@ -530,8 +546,15 @@ namespace NeeView
             var contextMenu = (sender as ListBoxItem)?.ContextMenu;
             if (contextMenu is null) return;
 
+            var listBox = this.ListBox;
             contextMenu.Items.Clear();
             contextMenu.Items.Add(new MenuItem() { Header = Properties.Resources.PlaylistItem_Menu_Open, Command = OpenCommand });
+            contextMenu.Items.Add(new Separator());
+            contextMenu.Items.Add(new MenuItem() { Header = Properties.Resources.PlaylistItem_Menu_Explorer, Command = OpenExplorerCommand });
+            contextMenu.Items.Add(ExternalAppCollectionUtility.CreateExternalAppItem(_commandResource.OpenExternalApp_CanExecute(listBox), OpenExternalAppCommand, OpenExternalAppDialogCommand));
+            contextMenu.Items.Add(new MenuItem() { Header = Properties.Resources.PlaylistItem_Menu_Copy, Command = CopyCommand });
+            contextMenu.Items.Add(DestinationFolderCollectionUtility.CreateDestinationFolderItem(Properties.Resources.PlaylistItem_Menu_CopyToFolder, _commandResource.CopyToFolder_CanExecute(listBox), CopyToFolderCommand, OpenDestinationFolderCommand));
+            contextMenu.Items.Add(DestinationFolderCollectionUtility.CreateDestinationFolderItem(Properties.Resources.PlaylistItem_Menu_MoveToFolder, _commandResource.MoveToFolder_CanExecute(listBox), MoveToFolderCommand, OpenDestinationFolderCommand));
             contextMenu.Items.Add(new Separator());
             contextMenu.Items.Add(new MenuItem() { Header = Properties.Resources.PlaylistItem_Menu_Delete, Command = RemoveCommand });
             contextMenu.Items.Add(new MenuItem() { Header = Properties.Resources.PlaylistItem_Menu_Rename, Command = RenameCommand });
@@ -654,5 +677,27 @@ namespace NeeView
         }
 
         #endregion UI Accessor
+    }
+
+    public class PlaylistPageCommandResource : PageCommandResource
+    {
+        protected override Page GetSelectedPage(object sender)
+        {
+            return ((sender as ListBox)?.SelectedItem as PlaylistItem)?.ArchivePage;
+        }
+
+        protected override List<Page> GetSelectedPages(object sender)
+        {
+            return (sender as ListBox)?.SelectedItems?
+                .Cast<PlaylistItem>()
+                .Where(e => e != null)
+                .Select(e => e.ArchivePage)
+                .ToList();
+        }
+
+        protected override bool CanMoveToFolder(IEnumerable<Page> pages)
+        {
+            return false;
+        }
     }
 }

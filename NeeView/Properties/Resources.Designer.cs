@@ -12578,6 +12578,24 @@ namespace NeeView.Properties {
         }
         
         /// <summary>
+        ///   _Copy に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string PlaylistItem_Menu_Copy {
+            get {
+                return ResourceManager.GetString("PlaylistItem.Menu.Copy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Cop_y to folder に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string PlaylistItem_Menu_CopyToFolder {
+            get {
+                return ResourceManager.GetString("PlaylistItem.Menu.CopyToFolder", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   _Delete に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string PlaylistItem_Menu_Delete {
@@ -12587,11 +12605,29 @@ namespace NeeView.Properties {
         }
         
         /// <summary>
+        ///   Open in e_xplorer に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string PlaylistItem_Menu_Explorer {
+            get {
+                return ResourceManager.GetString("PlaylistItem.Menu.Explorer", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Move to another playlist に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string PlaylistItem_Menu_MoveToAnother {
             get {
                 return ResourceManager.GetString("PlaylistItem.Menu.MoveToAnother", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Mov_e to folder に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string PlaylistItem_Menu_MoveToFolder {
+            get {
+                return ResourceManager.GetString("PlaylistItem.Menu.MoveToFolder", resourceCulture);
             }
         }
         

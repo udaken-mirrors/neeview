@@ -4544,8 +4544,20 @@ Susie 書庫はこのサイズで判別せず、プラグインの設定での�
   <data name="PlaylistErrorDialog.FolderIsNotSet" xml:space="preserve">
     <value>フォルダーが設定されていません。</value>
   </data>
+  <data name="PlaylistItem.Menu.Copy" xml:space="preserve">
+    <value>コピー(_C)</value>
+  </data>
+  <data name="PlaylistItem.Menu.CopyToFolder" xml:space="preserve">
+    <value>フォルダーにコピー(_Y)</value>
+  </data>
   <data name="PlaylistItem.Menu.Delete" xml:space="preserve">
     <value>削除(_D)</value>
+  </data>
+  <data name="PlaylistItem.Menu.Explorer" xml:space="preserve">
+    <value>エクスプローラーで開く(_X)</value>
+  </data>
+  <data name="PlaylistItem.Menu.MoveToFolder" xml:space="preserve">
+    <value>フォルダーに移動(_E)</value>
   </data>
   <data name="PlaylistItem.Menu.MoveToAnother" xml:space="preserve">
     <value>ほかのプレイリストに移動</value>

@@ -294,9 +294,9 @@ namespace NeeView
             }
         }
 
-        private bool CanMoveToFolder(IEnumerable<Page> pages)
+        protected virtual bool CanMoveToFolder(IEnumerable<Page> pages)
         {
-            return pages.All(e => e.Entry.IsFileSystem);
+            return pages.All(e => e.Entry.IsFileSystem && e.Entry.Archiver is not PlaylistArchive);
         }
 
         private void MoveToFolder(IEnumerable<Page> pages, string destDirPath)

@@ -4544,8 +4544,20 @@ Susie 檔案無法辨別這個大小，僅在擴充套件設定上辨別預先�
   <data name="PlaylistErrorDialog.FolderIsNotSet" xml:space="preserve">
     <value>沒有資料夾被設定。</value>
   </data>
+  <data name="PlaylistItem.Menu.Copy" xml:space="preserve">
+    <value>複製(_C)</value>
+  </data>
+  <data name="PlaylistItem.Menu.CopyToFolder" xml:space="preserve">
+    <value>複製到資料夾(_Y)</value>
+  </data>
   <data name="PlaylistItem.Menu.Delete" xml:space="preserve">
     <value>刪除(_D)</value>
+  </data>
+  <data name="PlaylistItem.Menu.Explorer" xml:space="preserve">
+    <value>以檔案總管開啟(_X)</value>
+  </data>
+  <data name="PlaylistItem.Menu.MoveToFolder" xml:space="preserve">
+    <value>移動到資料夾(_E)</value>
   </data>
   <data name="PlaylistItem.Menu.MoveToAnother" xml:space="preserve">
     <value>移動到別的播放列表</value>
