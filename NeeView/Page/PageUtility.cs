@@ -65,6 +65,7 @@ namespace NeeView
                             else
                             {
                                 Debug.WriteLine($"CreateFilePathList: Not support archive folder: {page.EntryName}");
+                                files.Add(page.Entry.EntryFullName);
                             }
                             break;
 

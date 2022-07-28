@@ -414,8 +414,8 @@ namespace NeeView
                 return;
             }
 
-            // 全てのファイルがファイルシステムであった場合のみ
-            if (pages.All(p => p.Entry.IsFileSystem))
+            // 全てのファイルがファイルシステムであった場合のみ。プレイリスト以外。
+            if (pages.All(p => p.Entry.IsFileSystem && p.Entry.Archiver is not PlaylistArchive) )
             {
                 // 右クリックドラッグでファイル移動を許可
                 if (Config.Current.System.IsFileWriteAccessEnabled && e.MouseEventArgs.RightButton == MouseButtonState.Pressed)

@@ -35,7 +35,7 @@ namespace NeeView
     {
         private ArchivePolicy _archivePolicy = ArchivePolicy.SendExtractFile;
         private MultiPagePolicy _multiPagePolicy = MultiPagePolicy.Once;
-        private TextCopyPolicy _textCopyPolicy = TextCopyPolicy.OriginalPath;
+        private TextCopyPolicy _textCopyPolicy = TextCopyPolicy.None;
 
 
         // 複数ページのときの動作
