@@ -123,13 +123,6 @@ namespace NeeView
             // ブックマーク監視
             BookmarkCollection.Current.BookmarkChanged += BookmarkCollection_BookmarkChanged;
 
-            _folderListConfig.AddPropertyChanged(nameof(FolderListConfig.FolderTreeLayout), (s, e) =>
-            {
-                RaisePropertyChanged(nameof(FolderTreeDock));
-                RaisePropertyChanged(nameof(FolderTreeAreaWidth));
-                RaisePropertyChanged(nameof(FolderTreeAreaHeight));
-            });
-
             _folderListConfig.AddPropertyChanged(nameof(FolderListConfig.PanelListItemStyle), (s, e) =>
             {
                 RaisePropertyChanged(nameof(PanelListItemStyle));
@@ -138,11 +131,15 @@ namespace NeeView
             _folderListConfig.AddPropertyChanged(nameof(FolderListConfig.IsFolderTreeVisible), (s, e) =>
             {
                 RaisePropertyChanged(nameof(IsFolderTreeVisible));
+                RaisePropertyChanged(nameof(FolderTreeAreaWidth));
+                RaisePropertyChanged(nameof(FolderTreeAreaHeight));
             });
 
             _folderListConfig.AddPropertyChanged(nameof(FolderListConfig.FolderTreeLayout), (s, e) =>
             {
                 RaisePropertyChanged(nameof(FolderTreeLayout));
+                RaisePropertyChanged(nameof(FolderTreeAreaWidth));
+                RaisePropertyChanged(nameof(FolderTreeAreaHeight));
             });
         }
 
@@ -285,14 +282,14 @@ namespace NeeView
         /// </summary>
         public string SearchKeywordErrorMessage
         {
-            get { return _searchKeywordErrorMessage; }
-            set { SetProperty(ref _searchKeywordErrorMessage, value); }
+            get => _searchKeywordErrorMessage;
+            set => SetProperty(ref _searchKeywordErrorMessage, value);
         }
 
         public bool IsFolderTreeVisible
         {
-            get { return _folderListConfig.IsFolderTreeVisible; }
-            set { _folderListConfig.IsFolderTreeVisible = value; }
+            get => _folderListConfig.IsFolderTreeVisible;
+            set => _folderListConfig.IsFolderTreeVisible = value;
         }
 
         public FolderTreeLayout FolderTreeLayout
@@ -301,24 +298,32 @@ namespace NeeView
             set => FolderListConfig.FolderTreeLayout = value;
         }
 
-        public Dock FolderTreeDock
-        {
-            get { return _folderListConfig.FolderTreeLayout == FolderTreeLayout.Left ? Dock.Left : Dock.Top; }
-        }
-
         /// <summary>
         /// フォルダーツリーエリアの幅
         /// </summary>
         public double FolderTreeAreaWidth
         {
-            get { return _folderListConfig.FolderTreeAreaWidth; }
+            get
+            {
+                if (this.IsFolderTreeVisible && this.FolderTreeLayout == FolderTreeLayout.Left)
+                {
+                    return _folderListConfig.FolderTreeAreaWidth;
+                }
+                else
+                {
+                    return 0.0;
+                }
+            }
             set
             {
-                var width = Math.Max(Math.Min(value, _areaWidth - 32.0), 32.0 - 6.0);
-                if (_folderListConfig.FolderTreeAreaWidth != width)
+                if (this.IsFolderTreeVisible && this.FolderTreeLayout == FolderTreeLayout.Left)
                 {
-                    _folderListConfig.FolderTreeAreaWidth = width;
-                    RaisePropertyChanged();
+                    var width = Math.Max(Math.Min(value, _areaWidth - 32.0), 32.0 - 6.0);
+                    if (_folderListConfig.FolderTreeAreaWidth != width)
+                    {
+                        _folderListConfig.FolderTreeAreaWidth = width;
+                        RaisePropertyChanged();
+                    }
                 }
             }
         }
@@ -345,14 +350,27 @@ namespace NeeView
         /// </summary>
         public double FolderTreeAreaHeight
         {
-            get { return _folderListConfig.FolderTreeAreaHeight; }
+            get
+            {
+                if (this.IsFolderTreeVisible && this.FolderTreeLayout == FolderTreeLayout.Top)
+                {
+                    return _folderListConfig.FolderTreeAreaHeight;
+                }
+                else
+                {
+                    return 0.0;
+                }
+            }
             set
             {
-                var height = Math.Max(Math.Min(value, _areaHeight - 32.0), 32.0 - 6.0);
-                if (_folderListConfig.FolderTreeAreaHeight != height)
+                if (this.IsFolderTreeVisible && this.FolderTreeLayout == FolderTreeLayout.Top)
                 {
-                    _folderListConfig.FolderTreeAreaHeight = height;
-                    RaisePropertyChanged();
+                    var height = Math.Max(Math.Min(value, _areaHeight - 32.0), 32.0 - 6.0);
+                    if (_folderListConfig.FolderTreeAreaHeight != height)
+                    {
+                        _folderListConfig.FolderTreeAreaHeight = height;
+                        RaisePropertyChanged();
+                    }
                 }
             }
         }

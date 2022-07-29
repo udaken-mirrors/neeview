@@ -41,6 +41,18 @@ namespace NeeView
             _model.CollectionChanged +=
                 Model_CollectionChanged;
 
+            _model.AddPropertyChanged(nameof(_model.IsFolderTreeVisible),
+                (s, e) => RaisePropertyChanged(nameof(IsFolderTreeVisible)));
+
+            _model.AddPropertyChanged(nameof(_model.FolderTreeLayout),
+                (s, e) => RaisePropertyChanged(nameof(FolderTreeLayout)));
+
+            _model.AddPropertyChanged(nameof(_model.FolderTreeAreaWidth),
+                (s, e) => RaisePropertyChanged(nameof(FolderTreeAreaWidth)));
+
+            _model.AddPropertyChanged(nameof(_model.FolderTreeAreaHeight),
+                (s, e) => RaisePropertyChanged(nameof(FolderTreeAreaHeight)));
+
             MoreMenuDescription = new FolderListMoreMenuDescription(this);
         }
 
@@ -74,6 +86,30 @@ namespace NeeView
         {
             get { return _dpi; }
             set { SetProperty(ref _dpi, value); }
+        }
+
+        public bool IsFolderTreeVisible
+        {
+            get => _model.IsFolderTreeVisible;
+            set => _model.IsFolderTreeVisible = value;
+        }
+
+        public FolderTreeLayout FolderTreeLayout
+        {
+            get => _model.FolderTreeLayout;
+            set => _model.FolderTreeLayout = value;
+        }
+
+        public GridLength FolderTreeAreaWidth
+        {
+            get => new GridLength(_model.FolderTreeAreaWidth);
+            set => _model.FolderTreeAreaWidth = value.Value;
+        }
+
+        public GridLength FolderTreeAreaHeight
+        {
+            get => new GridLength(_model.FolderTreeAreaHeight);
+            set => _model.FolderTreeAreaHeight = value.Value;
         }
 
 

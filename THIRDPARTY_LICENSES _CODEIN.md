@@ -13,12 +13,6 @@
 * License: [CC BY-SA 3.0](http://creativecommons.org/licenses/by-sa/3.0/deed.ja)
 
 
-### OpenSourceControls/DockPanelSplitter.cs
-
-* URL: [DockPanel Splitter Control for WPF](http://www.codeproject.com/Articles/34377/DockPanel-Splitter-Control-for-WPF)
-* License: [CPOL](http://www.codeproject.com/info/cpol10.aspx)
-
-
 ### Utility/ComboColorPicker.xaml(.cs)
 
 * URL: [Small ColorPicker for WPF](http://www.codeproject.com/Articles/34376/Small-ColorPicker-for-WPF)

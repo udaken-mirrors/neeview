@@ -25,14 +25,11 @@ namespace NeeView
     /// </summary>
     public class BookmarkListViewModel : BindableBase
     {
-        #region Fields
-
         private CancellationTokenSource _removeUnlinkedCommandCancellationTokenSource;
         private DpiScaleProvider _dpiProvider = new DpiScaleProvider();
+        private FolderList _model;
+        private ContextMenu _moreMenu;
 
-        #endregion
-
-        #region Constructor
 
         public BookmarkListViewModel(FolderList model)
         {
@@ -47,17 +44,24 @@ namespace NeeView
             _dpiProvider.DpiChanged +=
                 (s, e) => RaisePropertyChanged(nameof(DpiScale));
 
+            _model.AddPropertyChanged(nameof(_model.IsFolderTreeVisible),
+                (s, e) => RaisePropertyChanged(nameof(IsFolderTreeVisible)));
+
+            _model.AddPropertyChanged(nameof(_model.FolderTreeLayout),
+                (s, e) => RaisePropertyChanged(nameof(FolderTreeLayout)));
+
+            _model.AddPropertyChanged(nameof(_model.FolderTreeAreaWidth),
+                (s, e) => RaisePropertyChanged(nameof(FolderTreeAreaWidth)));
+
+            _model.AddPropertyChanged(nameof(_model.FolderTreeAreaHeight),
+                (s, e) => RaisePropertyChanged(nameof(FolderTreeAreaHeight)));
+
             MoreMenuDescription = new BookmarkListMoreMenu(this);
         }
 
-        #endregion
-
-        #region Properties
 
         public FolderCollection FolderCollection => _model.FolderCollection;
 
-
-        private FolderList _model;
         public FolderList Model
         {
             get { return _model; }
@@ -72,16 +76,38 @@ namespace NeeView
         /// <summary>
         /// MoreMenu property.
         /// </summary>
-        private ContextMenu _MoreMenu;
         public ContextMenu MoreMenu
         {
-            get { return _MoreMenu; }
-            set { if (_MoreMenu != value) { _MoreMenu = value; RaisePropertyChanged(); } }
+            get { return _moreMenu; }
+            set { if (_moreMenu != value) { _moreMenu = value; RaisePropertyChanged(); } }
         }
 
         public DpiScale DpiScale => _dpiProvider.DpiScale;
 
-        #endregion Properties
+        public bool IsFolderTreeVisible
+        {
+            get => _model.IsFolderTreeVisible;
+            set => _model.IsFolderTreeVisible = value;
+        }
+
+        public FolderTreeLayout FolderTreeLayout
+        {
+            get => _model.FolderTreeLayout;
+            set => _model.FolderTreeLayout = value;
+        }
+
+        public GridLength FolderTreeAreaWidth
+        {
+            get => new GridLength(_model.FolderTreeAreaWidth);
+            set => _model.FolderTreeAreaWidth = value.Value;
+        }
+
+        public GridLength FolderTreeAreaHeight
+        {
+            get => new GridLength(_model.FolderTreeAreaHeight);
+            set => _model.FolderTreeAreaHeight = value.Value;
+        }
+
 
         #region Commands
 
@@ -222,7 +248,6 @@ namespace NeeView
 
         #endregion MoreMenu
 
-        #region Methods
 
         public void SetDpiScale(DpiScale dpiScale)
         {
@@ -234,6 +259,5 @@ namespace NeeView
             return Config.Current.Panels.IsLeftRightKeyEnabled || _model.PanelListItemStyle == PanelListItemStyle.Thumbnail;
         }
 
-        #endregion Methods
     }
 }
