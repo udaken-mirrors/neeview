@@ -43,6 +43,10 @@ namespace NeeView
 
             InitializeComponent();
 
+            MouseInputHelper.AddMouseButtonBlock(this.MenuArea);
+            MouseInputHelper.AddMouseButtonBlock(this.SliderArea);
+            MouseInputHelper.AddMouseButtonBlock(this.ThumbnailListArea);
+
             // TextBox の ContextMenu のスタイルを変更する ... やりすぎ？
             // ThemeProfile.InitializeEditorContextMenuStyle(this);
         }
@@ -95,6 +99,7 @@ namespace NeeView
             _viewComponent = MainViewComponent.Current;
             _viewComponent.Initialize();
 
+            // ViewComponent Mouse/TouchCommand
             RoutedCommandTable.Current.AddMouseInput(_viewComponent.MouseInput);
             RoutedCommandTable.Current.AddTouchInput(_viewComponent.TouchInput);
 
@@ -110,6 +115,10 @@ namespace NeeView
 
             // コマンド初期化
             _routedCommandBinding = new RoutedCommandBinding(this, RoutedCommandTable.Current);
+
+            // MainWindow MouseCommand Terminator
+            var mouseInput = new MouseInput(new MouseInputContext(this, MouseGestureCommandCollection.Current, null, null, null));
+            RoutedCommandTable.Current.AddMouseInput(mouseInput);
 
             // サイドパネル初期化
             CustomLayoutPanelManager.Current.Initialize();

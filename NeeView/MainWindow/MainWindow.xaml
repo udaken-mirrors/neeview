@@ -58,7 +58,7 @@
 
                 <!-- メニューエリア-->
                 <ContentControl x:Name="DockMenuSocket" DockPanel.Dock="Top" Focusable="False" KeyboardNavigation.TabNavigation="Local" KeyboardNavigation.TabIndex="1">
-                    <Border x:Name="MenuArea" BorderBrush="{DynamicResource MenuBar.Border}" BorderThickness="0,0,0,1">
+                    <Border x:Name="MenuArea" Background="Transparent" BorderBrush="{DynamicResource MenuBar.Border}" BorderThickness="0,0,0,1">
                         <StackPanel>
                             <!-- メニューバー-->
                             <local:MenuBarView x:Name="MenuBar" />
@@ -78,7 +78,7 @@
 
                         <!-- スライダー -->
                         <ContentControl x:Name="DockPageSliderSocket" DockPanel.Dock="Bottom" IsTabStop="False">
-                            <Grid x:Name="SliderArea">
+                            <Grid x:Name="SliderArea" Background="Transparent">
                                 <local:PageSliderView x:Name="PageSliderView" VerticalAlignment="Bottom" KeyboardNavigation.TabNavigation="Local" TabIndex="2">
                                     <local:PageSliderView.Style>
                                         <Style TargetType="local:PageSliderView">
@@ -97,7 +97,7 @@
 
                         <!-- フィルムストリップ -->
                         <ContentControl x:Name="DockThumbnailListSocket" DockPanel.Dock="Bottom" IsTabStop="False">
-                            <local:ThumbnailListView x:Name="ThumbnailListArea" KeyboardNavigation.TabNavigation="Local" TabIndex="1" />
+                            <local:ThumbnailListView x:Name="ThumbnailListArea" KeyboardNavigation.TabNavigation="Local" TabIndex="1" Background="Transparent" />
                         </ContentControl>
 
                     </DockPanel>

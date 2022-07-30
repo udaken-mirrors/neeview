@@ -328,13 +328,19 @@ namespace NeeView
         private void WheelCommandExecute(object sender, MouseWheelEventArgs arg, MouseWheelDeltaOption wheelOoptions, RoutedUICommand command)
         {
             int turn = Math.Abs(_mouseWheelDelta.NotchCount(arg, wheelOoptions));
-            if (turn == 0) return;
-
-            // Debug.WriteLine($"WheelCommand: {turn}({arg.Delta})");
-            var param = new CommandParameterArgs(null, Config.Current.Command.IsReversePageMoveWheel);
-            for (int i = 0; i < turn; i++)
+            if (turn > 0)
             {
-                command.Execute(param, (sender as IInputElement) ?? MainWindow.Current);
+                // Debug.WriteLine($"WheelCommand: {turn}({arg.Delta})");
+                var param = new CommandParameterArgs(null, Config.Current.Command.IsReversePageMoveWheel);
+                for (int i = 0; i < turn; i++)
+                {
+                    command.Execute(param, (sender as IInputElement) ?? MainWindow.Current);
+                }
+            }
+
+            if (arg.RoutedEvent != null)
+            {
+                arg.Handled = true;
             }
         }
 

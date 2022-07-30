@@ -71,8 +71,9 @@
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
 
-            <Grid Grid.Column="0" Visibility="{Binding VM.IsSideBarVisible, Converter={StaticResource BooleanToVisibilityConverter}}" KeyboardNavigation.TabNavigation="Local"
-                    KeyboardNavigation.TabIndex="1">
+            <Grid x:Name="LeftSidePanel" Grid.Column="0" Visibility="{Binding VM.IsSideBarVisible, Converter={StaticResource BooleanToVisibilityConverter}}" KeyboardNavigation.TabNavigation="Local"
+                  KeyboardNavigation.TabIndex="1"
+                  Background="Transparent">
                 <Grid x:Name="LeftIconGrid" Visibility="{Binding ElementName=LeftPanelContent, Path=Visibility}" Background="Transparent" AllowDrop="True"
                         MouseLeftButtonDown="LeftIconGrid_MouseLeftButtonDown" MouseLeftButtonUp="LeftIconGrid_MouseLeftButtonUp">
                     <b:Interaction.Behaviors>
@@ -87,8 +88,9 @@
                 </Grid>
             </Grid>
 
-            <Grid Grid.Column="2" Visibility="{Binding VM.IsSideBarVisible, Converter={StaticResource BooleanToVisibilityConverter}}" KeyboardNavigation.TabNavigation="Local"
-                    KeyboardNavigation.TabIndex="4">
+            <Grid x:Name="RightSidePanel" Grid.Column="2" Visibility="{Binding VM.IsSideBarVisible, Converter={StaticResource BooleanToVisibilityConverter}}" KeyboardNavigation.TabNavigation="Local"
+                  KeyboardNavigation.TabIndex="4"
+                  Background="Transparent">
                 <Grid x:Name="RightIconGrid" Visibility="{Binding ElementName=RightPanelContent, Path=Visibility}" Background="Transparent" AllowDrop="True"
                         MouseLeftButtonDown="RightIconGrid_MouseLeftButtonDown" MouseLeftButtonUp="RightIconGrid_MouseLeftButtonUp">
                     <b:Interaction.Behaviors>
@@ -116,7 +118,8 @@
                 </Grid.ColumnDefinitions>
 
                 <Grid x:Name="LeftPanel" Grid.Column="0" UseLayoutRounding="True"  Visibility="{Binding VM.Left.PanelVisibility}"
-                        KeyboardNavigation.TabNavigation="Local" KeyboardNavigation.TabIndex="2">
+                      KeyboardNavigation.TabNavigation="Local" KeyboardNavigation.TabIndex="2"
+                      Background="Transparent">
                     <Border Style="{StaticResource PanelBorderStyle}" BorderThickness="0,0,1,0" />
                     <Border x:Name="LeftPanelContent" Background="Transparent" Margin="0,0,1,0">
                         <behaviors:Interaction.Behaviors>
@@ -140,7 +143,8 @@
                 </Grid>
 
                 <Grid x:Name="RightPanel" Grid.Column="2" UseLayoutRounding="True" Visibility="{Binding VM.Right.PanelVisibility}"
-                        KeyboardNavigation.TabNavigation="Local" KeyboardNavigation.TabIndex="3">
+                      KeyboardNavigation.TabNavigation="Local" KeyboardNavigation.TabIndex="3"
+                      Background="Transparent">
                     <Border Style="{StaticResource PanelBorderStyle}" BorderThickness="1,0,0,0" />
                     <Border x:Name="RightPanelContent" Background="Transparent" Margin="1,0,0,0">
                         <behaviors:Interaction.Behaviors>

@@ -38,6 +38,8 @@ namespace NeeView
         }
 
 
+        public static readonly RoutedEvent MouseHorizontalWheelEvent = EventManager.RegisterRoutedEvent("MouseHorizontalWheel", RoutingStrategy.Bubble, typeof(RoutedEventHandler), typeof(MouseHorizontalWheelService));
+
         private Window _window;
 
 
@@ -81,7 +83,7 @@ namespace NeeView
                         if (Mouse.PrimaryDevice != null)
                         {
                             var delta = NativeMethods.GET_WHEEL_DELTA_WPARAM(wParam);
-                            args = new MouseWheelEventArgs(Mouse.PrimaryDevice, System.Environment.TickCount, delta);
+                            args = new MouseWheelEventArgs(Mouse.PrimaryDevice, System.Environment.TickCount, delta) { RoutedEvent = MouseHorizontalWheelEvent };
                         }
                     }
                     catch (Exception ex)
