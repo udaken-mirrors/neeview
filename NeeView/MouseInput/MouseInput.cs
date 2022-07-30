@@ -285,7 +285,10 @@ namespace NeeView
             }
 
             // 右クリックでのコンテキストメニュー無効
-            e.Handled = true;
+            if (!_context.IsContextMenuEnabled)
+            {
+                e.Handled = true;
+            }
         }
 
         /// <summary>

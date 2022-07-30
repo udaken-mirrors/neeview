@@ -8,13 +8,14 @@ namespace NeeView
 {
     public class MouseInputContext : BindableBase
     {
-        public MouseInputContext(FrameworkElement sender, MouseGestureCommandCollection gestureCommandCollection, DragTransformControl dragTransformControl, DragTransform dragTransform, LoupeTransform loupeTransform)
+        public MouseInputContext(FrameworkElement sender, MouseGestureCommandCollection gestureCommandCollection, DragTransformControl dragTransformControl, DragTransform dragTransform, LoupeTransform loupeTransform, bool isContextMenuEnabled)
         {
             this.Sender = sender;
             this.GestureCommandCollection = gestureCommandCollection;
             this.DragTransformControl = dragTransformControl;
             this.DragTransform = dragTransform;
             this.LoupeTransform = loupeTransform;
+            this.IsContextMenuEnabled = isContextMenuEnabled;
         }
 
 
@@ -38,6 +39,11 @@ namespace NeeView
         /// ドラッグ開始座標
         /// </summary>
         public Point StartPoint { get; set; }
+
+        /// <summary>
+        /// 右クリックコンテキストメニュー有効
+        /// </summary>
+        public bool IsContextMenuEnabled { get; set; }
     }
 
 }

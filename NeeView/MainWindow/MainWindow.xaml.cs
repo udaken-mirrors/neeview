@@ -117,7 +117,7 @@ namespace NeeView
             _routedCommandBinding = new RoutedCommandBinding(this, RoutedCommandTable.Current);
 
             // MainWindow MouseCommand Terminator
-            var mouseInput = new MouseInput(new MouseInputContext(this, MouseGestureCommandCollection.Current, null, null, null));
+            var mouseInput = new MouseInput(new MouseInputContext(this, MouseGestureCommandCollection.Current, null, null, null, true));
             RoutedCommandTable.Current.AddMouseInput(mouseInput);
 
             // サイドパネル初期化

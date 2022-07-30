@@ -31,7 +31,7 @@ namespace NeeView
             LoupeTransform = new LoupeTransform();
 
             TouchInput = new TouchInput(new TouchInputContext(_mainView.View, _mainView.MainContentShadow, mouseGestureCommandCollection, DragTransform, DragTransformControl, LoupeTransform));
-            MouseInput = new MouseInput(new MouseInputContext(_mainView.View, mouseGestureCommandCollection, DragTransformControl, DragTransform, LoupeTransform));
+            MouseInput = new MouseInput(new MouseInputContext(_mainView.View, mouseGestureCommandCollection, DragTransformControl, DragTransform, LoupeTransform, false));
 
             var scrollPageController = new ScrollPageController(this, BookSettingPresenter.Current, BookOperation.Current);
             var printController = new PrintController(this, _mainView);

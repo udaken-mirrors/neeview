@@ -58,7 +58,6 @@ namespace NeeView
         public static void AddMouseButtonBlock(FrameworkElement element)
         {
             element.MouseDown += OnMouseButtonChanged;
-            element.MouseUp += OnMouseButtonChanged;
             element.MouseWheel += (s, e) => e.Handled = true;
 
             void OnMouseButtonChanged(object sender, MouseButtonEventArgs e)
