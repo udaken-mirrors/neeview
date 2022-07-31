@@ -7395,4 +7395,7 @@ nv.ShowToast(nv.Book.ViewPages[0].Path)</value>
   <data name="PanelsConfig.IsLimitPanelWidth.Remarks" xml:space="preserve">
     <value>Limit the width of the panel to fit in the window</value>
   </data>
+  <data name="ThumbnailConfig.IsVideoThumbnailEnabled" xml:space="preserve">
+    <value>Create a video thumbnail</value>
+  </data>
 </root>

@@ -117,7 +117,7 @@ namespace NeeView.Setting
         {
             var section = new SettingItemSection(Properties.Resources.SettingPage_Archive_PdfFeature);
 
-            if (PdfArchiveConfig.RunningOsIsSupportVersion)
+            if (PdfArchiveConfig.IsPdfArchiveSupported)
             {
                 section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.Archive.Pdf, nameof(PdfArchiveConfig.IsEnabled))));
                 section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.Archive.Pdf, nameof(PdfArchiveConfig.SupportFileTypes)),

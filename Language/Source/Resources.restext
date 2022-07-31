@@ -2323,3 +2323,4 @@ ZipArchiveConfig.SupportFileTypes=Compressed file extension
 ZipArchiveConfig.SupportFileTypes.Remarks=Only ZIP format is supported.
 PanelsConfig.IsLimitPanelWidth=Limit panel width
 PanelsConfig.IsLimitPanelWidth.Remarks=Limit the width of the panel to fit in the window
+ThumbnailConfig.IsVideoThumbnailEnabled=Create a video thumbnail

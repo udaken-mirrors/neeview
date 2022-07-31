@@ -7,9 +7,7 @@ namespace NeeView
 {
     public class PdfArchiveConfig : BindableBase
     {
-        private static Version MinimumSupportVersion = new Version(10, 0, 10240);
-        // NOTE: マニフェストでWindows 10をサポートする様に宣言する必要がある
-        public static bool RunningOsIsSupportVersion => System.Environment.OSVersion.Version >= MinimumSupportVersion;
+        public static bool IsPdfArchiveSupported => Windows10Tools.IsWindows10_OrGreater(10240);
 
         public static FileTypeCollection DefaultSupportFileTypes { get; } = new FileTypeCollection(".pdf");
 
@@ -21,7 +19,7 @@ namespace NeeView
         [PropertyMember]
         public bool IsEnabled
         {
-            get { return _isEnabled && RunningOsIsSupportVersion; }
+            get { return _isEnabled && IsPdfArchiveSupported; }
             set { if (_isEnabled != value) { _isEnabled = value; RaisePropertyChanged(); } }
         }
 

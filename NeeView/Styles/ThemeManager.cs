@@ -204,7 +204,7 @@ namespace NeeView
                     {
                         return LoadThemeProfile(new TheneSource(ThemeType.HighContrast));
                     }
-                    else if (Windows10Tools.IsWindows10_OrGreater)
+                    else if (Windows10Tools.IsWindows10_OrGreater())
                     {
                         ThemeProfile themeProfile;
                         switch (SystemVisualParameters.Current.Theme)

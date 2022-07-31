@@ -16735,6 +16735,15 @@ namespace NeeView.Properties {
         }
         
         /// <summary>
+        ///   Create a video thumbnail に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string ThumbnailConfig_IsVideoThumbnailEnabled {
+            get {
+                return ResourceManager.GetString("ThumbnailConfig.IsVideoThumbnailEnabled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Thumbnail quality に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string ThumbnailConfig_Quality {

@@ -1,7 +1,12 @@
-﻿using System;
+﻿using NeeView.Threading;
+using System;
 using System.Diagnostics;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Media.Imaging;
+using Windows.Storage;
+using Windows.Storage.FileProperties;
 
 namespace NeeView
 {
@@ -12,6 +17,8 @@ namespace NeeView
 
     public class ArchiveContentLoader : BitmapContentLoader, IHasInitializeEntry
     {
+        private static readonly AsyncLock _lock = new AsyncLock();
+
         private ArchiveContent _content;
 
         public ArchiveContentLoader(ArchiveContent content) : base(content)
@@ -66,8 +73,17 @@ namespace NeeView
         {
             await InitializeEntryAsync(token);
 
-            _content.Thumbnail.Initialize(_content.Entry, null);
-            if (_content.Thumbnail.IsValid) return;
+            bool isLoadCache = true;
+            if (!Config.Current.Thumbnail.IsVideoThumbnailEnabled && _content.Entry.IsMedia())
+            {
+                isLoadCache = false;
+            }
+
+            if (isLoadCache)
+            {
+                _content.Thumbnail.Initialize(_content.Entry, null);
+                if (_content.Thumbnail.IsValid) return;
+            }
 
             if (!_content.Entry.IsValid && !_content.Entry.IsArchivePath)
             {
@@ -112,7 +128,7 @@ namespace NeeView
         {
             if (_content.Entry.Archiver != null && _content.Entry.Archiver is MediaArchiver)
             {
-                return new ThumbnailPicture(ThumbnailType.Media);
+                return await LoadMediaPictureAsync(_content.Entry, token);
             }
             if (_content.Entry.IsArchivePath)
             {
@@ -145,7 +161,7 @@ namespace NeeView
             {
                 if (ArchiverManager.Current.GetSupportedType(entry.SystemPath) == ArchiverType.MediaArchiver)
                 {
-                    return new ThumbnailPicture(ThumbnailType.Media);
+                    return await LoadMediaPictureAsync(entry, token);
                 }
 
                 var select = await ArchiveEntryUtility.CreateFirstImageArchiveEntryAsync(entry, searchRange, token);
@@ -170,6 +186,64 @@ namespace NeeView
             return MemoryControl.Current.RetryFuncWithMemoryCleanup(() => source.CreateThumbnail(ThumbnailProfile.Current, token));
         }
 
+
+        private async ValueTask<ThumbnailPicture> LoadMediaPictureAsync(ArchiveEntry entry, CancellationToken token)
+        {
+            if (Config.Current.Thumbnail.IsVideoThumbnailEnabled && entry.IsFileSystem)
+            {
+                var thumbnail = await CreateMediaThumbnailAsync(entry, token);
+                if (thumbnail != null)
+                {
+                    return new ThumbnailPicture(thumbnail);
+                }
+            }
+            return new ThumbnailPicture(ThumbnailType.Media);
+        }
+
+        private async Task<byte[]> CreateMediaThumbnailAsync(ArchiveEntry entry, CancellationToken token)
+        {
+            var storage = await StorageFile.GetFileFromPathAsync(entry.SystemPath).AsTask(token);
+            if (storage is null)
+            {
+                return null;
+            }
+            // NOTE: 複数同時に取得しようとすると失敗することがあるので排他制御にする
+            using (await _lock.LockAsync(token))
+            {
+                using var thumbnail = await storage.GetScaledImageAsThumbnailAsync(ThumbnailMode.VideosView, (uint)Config.Current.Thumbnail.ImageWidth, ThumbnailOptions.ResizeThumbnail).AsTask(token);
+                if (thumbnail is null)
+                {
+                    return null;
+                }
+                return CreateThumbnailImage(thumbnail.AsStream(), Config.Current.Thumbnail.Format, Config.Current.Thumbnail.Quality);
+            }
+        }
+
+        private byte[] CreateThumbnailImage(Stream bitmapStream, BitmapImageFormat format, int quality)
+        {
+            using (var outStream = new MemoryStream())
+            {
+                var bitmap = BitmapFrame.Create(bitmapStream, BitmapCreateOptions.None, BitmapCacheOption.OnLoad);
+                var encoder = CreateFormat(format, quality);
+                encoder.Frames.Add(bitmap);
+                encoder.Save(outStream);
+                return outStream.ToArray();
+            }
+        }
+
+        // from PdfPictureSource.cs
+        private BitmapEncoder CreateFormat(BitmapImageFormat format, int quality)
+        {
+            switch (format)
+            {
+                default:
+                case BitmapImageFormat.Jpeg:
+                    return new JpegBitmapEncoder() { QualityLevel = quality };
+                case BitmapImageFormat.Png:
+                    return new PngBitmapEncoder();
+            }
+        }
+
         /// <summary>
         /// 画像、もしくはサムネイルタイプを指定するもの
         /// </summary>
@@ -190,5 +264,4 @@ namespace NeeView
             }
         }
     }
-
 }

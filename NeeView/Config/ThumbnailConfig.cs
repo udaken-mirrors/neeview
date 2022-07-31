@@ -9,6 +9,8 @@ namespace NeeView
 {
     public class ThumbnailConfig : BindableBase
     {
+        public static bool IsVideoThumbnailSupported => Windows10Tools.IsWindows10_OrGreater(10240);
+
         private bool _isCacheEnabled = true;
         private TimeSpan _cacheLimitSpan;
         private BitmapImageFormat _format = BitmapImageFormat.Jpeg;
@@ -16,6 +18,7 @@ namespace NeeView
         private int _thumbnailBookCapacity = 200;
         private int _thumbnailPageCapacity = 100;
         private int _imageWidth = 256;
+        private bool _isVideoThumbnailEnabled = true;
 
         [JsonInclude, JsonPropertyName(nameof(ThumbnailCacheFilePath))]
         public string _thumbnailCacheFilePath;
@@ -90,6 +93,16 @@ namespace NeeView
             get { return _thumbnailPageCapacity; }
             set { SetProperty(ref _thumbnailPageCapacity, value); }
         }
+
+        [PropertyMember]
+        public bool IsVideoThumbnailEnabled
+        {
+            get { return _isVideoThumbnailEnabled && IsVideoThumbnailSupported; }
+            set { SetProperty(ref _isVideoThumbnailEnabled, value); }
+        }
+
+
+
 
 
         #region Obsolete

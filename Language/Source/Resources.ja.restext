@@ -2323,3 +2323,4 @@ ZipArchiveConfig.SupportFileTypes=圧縮ファイルの拡張子
 ZipArchiveConfig.SupportFileTypes.Remarks=ZIP 形式のみ対応しています。
 PanelsConfig.IsLimitPanelWidth=パネル幅を制限
 PanelsConfig.IsLimitPanelWidth.Remarks=ウィンドウに収まるようにパネル幅を制限する
+ThumbnailConfig.IsVideoThumbnailEnabled=動画サムネイルを作成する
