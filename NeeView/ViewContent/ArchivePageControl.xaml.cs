@@ -70,8 +70,8 @@ namespace NeeView
             if (e.StylusDevice == null && e.ClickCount == 2)
             {
                 _vm.OpenBook();
-                e.Handled = true;
             }
+            e.Handled = true;
         }
 
         private void OpenBookButton_MouseRightButtonUp(object sender, MouseButtonEventArgs e)
@@ -129,8 +129,8 @@ namespace NeeView
             _content = content;
         }
 
-        
-        public Thumbnail Thumbnail  => _content.Thumbnail;
+
+        public Thumbnail Thumbnail => _content.Thumbnail;
 
         public string Name => _content.Entry.EntryName?.TrimEnd('\\').Replace("\\", " > ");
 
