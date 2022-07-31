@@ -378,11 +378,6 @@ namespace NeeView
                     _lastActionPoint = nowPoint;
                 }
             }
-
-            if (_context.IsMouseEventTerminated)
-            {
-                e.Handled = true;
-            }
         }
 
         /// <summary>
