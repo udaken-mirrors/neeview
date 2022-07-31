@@ -4,6 +4,7 @@ using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Runtime.Serialization;
+using System.Timers;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Threading;
@@ -50,10 +51,10 @@ namespace NeeView
         /// <summary>
         /// 長押し判定用タイマー
         /// </summary>
-        private DispatcherTimer _timer = new DispatcherTimer();
+        private Timer _timer;
 
-        private DispatcherTimer _timerRepeat = new DispatcherTimer();
         private MouseButtonEventArgs _mouseButtonEventArgs;
+
 
         /// <summary>
         /// コンストラクター
@@ -61,52 +62,64 @@ namespace NeeView
         /// <param name="context"></param>
         public MouseInputNormal(MouseInputContext context) : base(context)
         {
-            _timer.Interval = TimeSpan.FromMilliseconds(1000);
-            _timer.Tick += OnTimeout;
-
-            _timerRepeat.Interval = TimeSpan.FromMilliseconds(50);
-            _timerRepeat.Tick += TimerRepeat_Tick;
         }
 
-        /// <summary>
-        /// マウスボタンが一定時間押され続けた時の処理
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void OnTimeout(object sender, object e)
+        private bool IsLongButtonPressed()
         {
-            _timer.Stop();
+            return Config.Current.Mouse.LongButtonDownMode != LongButtonDownMode.None
+                && (CreateMouseButtonBits() & Config.Current.Mouse.LongButtonMask.ToMouseButtonBits()) != 0;
+        }
 
-            if ((CreateMouseButtonBits() & Config.Current.Mouse.LongButtonMask.ToMouseButtonBits()) == 0)
+        private void StartTimer()
+        {
+            if (_timer is null)
             {
-                return;
+                _timer = new Timer();
+                _timer.Elapsed += OnTimeout;
             }
 
+            _timer.Interval = Config.Current.Mouse.LongButtonDownTime * 1000.0;
+            _timer.Start();
+        }
+
+        private void StopTimer()
+        {
+            if (_timer is not null)
+            {
+                _timer.Stop();
+            }
+        }
+
+        private void OnTimeout(object sender, object e)
+        {
             switch (Config.Current.Mouse.LongButtonDownMode)
             {
                 case LongButtonDownMode.Loupe:
-                    SetState(MouseInputState.Loupe, true);
+                    StopTimer();
+                    AppDispatcher.Invoke(() =>
+                    {
+                        SetState(MouseInputState.Loupe, true);
+                    });
                     break;
 
                 case LongButtonDownMode.Repeat:
-                    // 最初のコマンド発行
-                    MouseButtonChanged?.Invoke(sender, _mouseButtonEventArgs);
-                    // その後の操作は全て無効
-                    _isButtonDown = false;
+                    var interval = Config.Current.Mouse.LongButtonRepeatTime * 1000.0;
+                    if (_timer.Interval != interval)
+                    {
+                        _timer.Interval = interval;
+                    }
+                    AppDispatcher.Invoke(() =>
+                    {
+                        MouseButtonChanged?.Invoke(sender, _mouseButtonEventArgs);
+                        _isButtonDown = false;
+                    });
+                    break;
 
-                    _timerRepeat.Interval = TimeSpan.FromSeconds(Config.Current.Mouse.LongButtonRepeatTime);
-                    _timerRepeat.Start();
+                default:
+                    StopTimer();
                     break;
             }
         }
-
-        //
-        private void TimerRepeat_Tick(object sender, EventArgs e)
-        {
-            // リピートコマンド発行
-            MouseButtonChanged?.Invoke(sender, _mouseButtonEventArgs);
-        }
-
 
         /// <summary>
         /// 状態開始
@@ -131,14 +144,10 @@ namespace NeeView
             Cancel();
         }
 
-
-        //
         public override bool IsCaptured()
         {
             return _isButtonDown;
         }
-
-
 
         /// <summary>
         /// マウスボタンが押されたときの処理
@@ -151,8 +160,6 @@ namespace NeeView
             _context.Sender.Focus();
 
             _context.StartPoint = e.GetPosition(_context.Sender);
-
-            _timerRepeat.Stop();
 
             // ダブルクリック？
             if (e.ClickCount >= 2)
@@ -169,11 +176,13 @@ namespace NeeView
             if (e.StylusDevice == null)
             {
                 // 長押し判定開始
-                _timer.Interval = TimeSpan.FromSeconds(Config.Current.Mouse.LongButtonDownTime);
-                _timer.Start();
+                if (IsLongButtonPressed())
+                {
+                    StartTimer();
 
-                // リピート用にパラメータ保存
-                _mouseButtonEventArgs = new MouseButtonEventArgs(e.MouseDevice, e.Timestamp, e.ChangedButton);
+                    // リピート用にパラメータ保存
+                    _mouseButtonEventArgs = new MouseButtonEventArgs(e.MouseDevice, e.Timestamp, e.ChangedButton);
+                }
             }
         }
 
@@ -184,8 +193,7 @@ namespace NeeView
         /// <param name="e"></param>
         public override void OnMouseButtonUp(object sender, MouseButtonEventArgs e)
         {
-            _timer.Stop();
-            _timerRepeat.Stop();
+            StopTimer();
 
             if (!_isButtonDown) return;
 
@@ -282,8 +290,7 @@ namespace NeeView
         public override void Cancel()
         {
             _isButtonDown = false;
-            _timer.Stop();
-            _timerRepeat.Stop();
+            StopTimer();
         }
 
 
