@@ -254,7 +254,7 @@ namespace NeeView
                 if (string.IsNullOrEmpty(action))
                 {
                 }
-                else if (Config.Current.Mouse.IsGestureEnabled && action == DragActionTable.GestureDragActionName)
+                else if (Config.Current.Mouse.IsGestureEnabled && _context.IsGestureEnabled && action == DragActionTable.GestureDragActionName)
                 {
                     SetState(MouseInputState.Gesture);
                 }

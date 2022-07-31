@@ -8,42 +8,48 @@ namespace NeeView
 {
     public class MouseInputContext : BindableBase
     {
-        public MouseInputContext(FrameworkElement sender, MouseGestureCommandCollection gestureCommandCollection, DragTransformControl dragTransformControl, DragTransform dragTransform, LoupeTransform loupeTransform, bool isContextMenuEnabled)
+        public MouseInputContext(FrameworkElement sender, MouseGestureCommandCollection gestureCommandCollection, DragTransformControl dragTransformControl, DragTransform dragTransform, LoupeTransform loupeTransform)
         {
             this.Sender = sender;
             this.GestureCommandCollection = gestureCommandCollection;
             this.DragTransformControl = dragTransformControl;
             this.DragTransform = dragTransform;
             this.LoupeTransform = loupeTransform;
-            this.IsContextMenuEnabled = isContextMenuEnabled;
         }
 
 
         /// <summary>
         /// イベント受取エレメント
         /// </summary>
-        public FrameworkElement Sender { get; set; }
+        public FrameworkElement Sender { get; init; }
         
         /// <summary>
         /// ジェスチャーコマンドテーブル
         /// </summary>
-        public MouseGestureCommandCollection GestureCommandCollection { get; set; }
+        public MouseGestureCommandCollection GestureCommandCollection { get; init; }
 
-        public DragTransformControl DragTransformControl { get; set; }
+        public DragTransformControl DragTransformControl { get; init; }
             
-        public DragTransform DragTransform { get; set; }
+        public DragTransform DragTransform { get; init; }
             
-        public LoupeTransform LoupeTransform { get; set; }
+        public LoupeTransform LoupeTransform { get; init; }
+
+        public bool IsGestureEnabled { get; init; } = true;
+
+        public bool IsLeftButtonDownEnabled { get; init; } = true;
+
+        public bool IsRightButtonDownEnabled { get; init; } = true;
+
+        public bool IsVerticalWheelEnabled { get; init; } = true;
+
+        public bool IsHorizontalWheelEnabled { get; init; } = true;
+
+        public bool IsMouseEventTerminated { get; init; } = true;
 
         /// <summary>
         /// ドラッグ開始座標
         /// </summary>
         public Point StartPoint { get; set; }
-
-        /// <summary>
-        /// 右クリックコンテキストメニュー有効
-        /// </summary>
-        public bool IsContextMenuEnabled { get; set; }
     }
 
 }

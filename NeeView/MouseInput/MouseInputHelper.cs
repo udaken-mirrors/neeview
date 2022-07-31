@@ -50,20 +50,5 @@ namespace NeeView
         }
 
         #endregion MouseCapture Helper
-
-        /// <summary>
-        /// マウスボタン入力イベントをブロック。コマンド制御用。
-        /// </summary>
-        /// <param name="element"></param>
-        public static void AddMouseButtonBlock(FrameworkElement element)
-        {
-            element.MouseDown += OnMouseButtonChanged;
-            element.MouseWheel += (s, e) => e.Handled = true;
-
-            void OnMouseButtonChanged(object sender, MouseButtonEventArgs e)
-            {
-                e.Handled = e.ChangedButton == MouseButton.Left || e.ChangedButton == MouseButton.Right;
-            }
-        }
     }
 }

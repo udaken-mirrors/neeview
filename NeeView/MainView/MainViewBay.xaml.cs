@@ -37,7 +37,7 @@ namespace NeeView
             // mouse / touch command gesture binding
             var mouseGestureCommandCollection = MouseGestureCommandCollection.Current;
             _touchInput = new TouchInput(new TouchInputContext(this, null, mouseGestureCommandCollection, null, null, null));
-            _mouseInput = new MouseInput(new MouseInputContext(this, mouseGestureCommandCollection, null, null, null, false));
+            _mouseInput = new MouseInput(new MouseInputContext(this, mouseGestureCommandCollection, null, null, null));
             RoutedCommandTable.Current.AddMouseInput(_mouseInput);
             RoutedCommandTable.Current.AddTouchInput(_touchInput);
 

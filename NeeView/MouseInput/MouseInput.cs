@@ -87,13 +87,16 @@ namespace NeeView
                 this.Drag.MouseHorizontalWheelChanged += (s, e) => MouseHorizontalWheelChanged?.Invoke(_sender, e);
             }
 
-            this.Gesture = new MouseInputGesture(_context);
-            this.Gesture.StateChanged += StateChanged;
-            this.Gesture.MouseButtonChanged += (s, e) => MouseButtonChanged?.Invoke(_sender, e);
-            this.Gesture.MouseWheelChanged += (s, e) => MouseWheelChanged?.Invoke(_sender, e);
-            this.Gesture.MouseHorizontalWheelChanged += (s, e) => MouseHorizontalWheelChanged?.Invoke(_sender, e);
-            this.Gesture.GestureChanged += (s, e) => _context.GestureCommandCollection.Execute(e.Sequence);
-            this.Gesture.GestureProgressed += (s, e) => _context.GestureCommandCollection.ShowProgressed(e.Sequence);
+            if (context.IsGestureEnabled)
+            {
+                this.Gesture = new MouseInputGesture(_context);
+                this.Gesture.StateChanged += StateChanged;
+                this.Gesture.MouseButtonChanged += (s, e) => MouseButtonChanged?.Invoke(_sender, e);
+                this.Gesture.MouseWheelChanged += (s, e) => MouseWheelChanged?.Invoke(_sender, e);
+                this.Gesture.MouseHorizontalWheelChanged += (s, e) => MouseHorizontalWheelChanged?.Invoke(_sender, e);
+                this.Gesture.GestureChanged += (s, e) => _context.GestureCommandCollection.Execute(e.Sequence);
+                this.Gesture.GestureProgressed += (s, e) => _context.GestureCommandCollection.ShowProgressed(e.Sequence);
+            }
 
             // initialize state
             _mouseInputCollection = new Dictionary<MouseInputState, MouseInputBase>();
@@ -260,16 +263,38 @@ namespace NeeView
             return e.StylusDevice != null && Config.Current.Touch.IsEnabled;
         }
 
+        private bool IsMouseButtonEnabled(MouseButtonEventArgs e)
+        {
+            if (e.ChangedButton == MouseButton.Left && !_context.IsLeftButtonDownEnabled)
+            {
+                return false;
+            }
+            if (e.ChangedButton == MouseButton.Right && !_context.IsRightButtonDownEnabled)
+            {
+                return false;
+            }
+            return true;
+        }
+
         /// <summary>
         /// OnMouseButtonDown
         /// </summary>
         private void OnMouseButtonDown(object sender, MouseButtonEventArgs e)
         {
-            if (sender != _sender) return;
-            if (IsStylusDevice(e)) return;
-            if (MainWindow.Current.IsMouseActivate) return;
+            bool isEnabled = (sender == _sender)
+                && !IsStylusDevice(e)
+                && IsMouseButtonEnabled(e)
+                && !MainWindow.Current.IsMouseActivate;
 
-            _current.OnMouseButtonDown(_sender, e);
+            if (isEnabled)
+            {
+                _current.OnMouseButtonDown(_sender, e);
+            }
+
+            if (_context.IsMouseEventTerminated)
+            {
+                e.Handled = true;
+            }
         }
 
         /// <summary>
@@ -277,15 +302,17 @@ namespace NeeView
         /// </summary>
         private void OnMouseButtonUp(object sender, MouseButtonEventArgs e)
         {
-            if (sender != _sender) return;
+            bool isEnabled = (sender == _sender)
+                && !IsStylusDevice(e)
+                && IsMouseButtonEnabled(e);
 
-            if (!IsStylusDevice(e))
+            if (isEnabled)
             {
                 _current.OnMouseButtonUp(_sender, e);
             }
 
             // 右クリックでのコンテキストメニュー無効
-            if (!_context.IsContextMenuEnabled)
+            if (_context.IsMouseEventTerminated)
             {
                 e.Handled = true;
             }
@@ -296,10 +323,19 @@ namespace NeeView
         /// </summary>
         private void OnMouseWheel(object sender, MouseWheelEventArgs e)
         {
-            if (sender != _sender) return;
-            if (IsStylusDevice(e)) return;
+            bool isEnabled = (sender == _sender)
+                && !IsStylusDevice(e)
+                && _context.IsVerticalWheelEnabled;
 
-            _current.OnMouseWheel(_sender, e);
+            if (isEnabled)
+            {
+                _current.OnMouseWheel(_sender, e);
+            }
+
+            if (_context.IsMouseEventTerminated)
+            {
+                e.Handled = true;
+            }
         }
 
         /// <summary>
@@ -307,10 +343,19 @@ namespace NeeView
         /// </summary>
         private void OnMouseHorizontalWheel(object sender, MouseWheelEventArgs e)
         {
-            if (sender != _sender) return;
+            bool isEnabled = (sender == _sender)
+                && _context.IsHorizontalWheelEnabled;
 
-            ////Debug.WriteLine($"MouseInput: OnMouseHorizontalWheel: {e.Delta} ({e.Timestamp})");
-            _current.OnMouseHorizontalWheel(_sender, e);
+            if (isEnabled)
+            {
+                ////Debug.WriteLine($"MouseInput: OnMouseHorizontalWheel: {e.Delta} ({e.Timestamp})");
+                _current.OnMouseHorizontalWheel(_sender, e);
+            }
+
+            if (_context.IsMouseEventTerminated)
+            {
+                e.Handled = true;
+            }
         }
 
         /// <summary>
@@ -318,17 +363,25 @@ namespace NeeView
         /// </summary>
         private void OnMouseMove(object sender, MouseEventArgs e)
         {
-            if (sender != _sender) return;
-            if (IsStylusDevice(e)) return;
+            bool isEnabled = (sender == _sender)
+                && !IsStylusDevice(e);
 
-            _current.OnMouseMove(_sender, e);
-
-            // マウス移動を通知
-            var nowPoint = e.GetPosition(_sender);
-            if (Math.Abs(nowPoint.X - _lastActionPoint.X) > SystemParameters.MinimumHorizontalDragDistance || Math.Abs(nowPoint.Y - _lastActionPoint.Y) > SystemParameters.MinimumVerticalDragDistance)
+            if (isEnabled)
             {
-                MouseMoved?.Invoke(this, e);
-                _lastActionPoint = nowPoint;
+                _current.OnMouseMove(_sender, e);
+
+                // マウス移動を通知
+                var nowPoint = e.GetPosition(_sender);
+                if (Math.Abs(nowPoint.X - _lastActionPoint.X) > SystemParameters.MinimumHorizontalDragDistance || Math.Abs(nowPoint.Y - _lastActionPoint.Y) > SystemParameters.MinimumVerticalDragDistance)
+                {
+                    MouseMoved?.Invoke(this, e);
+                    _lastActionPoint = nowPoint;
+                }
+            }
+
+            if (_context.IsMouseEventTerminated)
+            {
+                e.Handled = true;
             }
         }
 
@@ -337,8 +390,12 @@ namespace NeeView
         /// </summary>
         private void OnKeyDown(object sender, KeyEventArgs e)
         {
-            if (sender != _sender) return;
-            _current.OnKeyDown(_sender, e);
+            bool isEnabled = (sender == _sender);
+
+            if (isEnabled)
+            {
+                _current.OnKeyDown(_sender, e);
+            }
         }
 
         /// <summary>

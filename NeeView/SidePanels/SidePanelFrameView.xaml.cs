@@ -204,11 +204,6 @@ namespace NeeView
         {
             InitializeComponent();
 
-            MouseInputHelper.AddMouseButtonBlock(this.LeftSidePanel);
-            MouseInputHelper.AddMouseButtonBlock(this.RightSidePanel);
-            MouseInputHelper.AddMouseButtonBlock(this.LeftPanel);
-            MouseInputHelper.AddMouseButtonBlock(this.RightPanel);
-
             InitializeViewModel(this.Source);
 
             this.Root.DataContext = this;
