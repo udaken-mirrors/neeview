@@ -76,7 +76,7 @@ namespace NeeView.Text
                     }
 
                     // 数字文字で等しいというのはありえない
-                    Debug.Assert(!char.IsDigit(cx));
+                    Debug.Assert(!KanaEmbedded.IsDigit(cx));
                 }
 
                 xresult = ix.MoveNext();
