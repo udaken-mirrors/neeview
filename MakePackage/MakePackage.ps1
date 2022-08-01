@@ -148,8 +148,8 @@ function Get-ProjectOutputDir($projectDir, $platform)
 # build
 function Build-Project($platform)
 {
-	& dotnet publish $project -p:PublishProfile=FolderProfile-$platform.pubxml
-	& dotnet publish $projectSusie -p:PublishProfile=FolderProfile-$platform.pubxml
+	& dotnet publish $project -p:PublishProfile=FolderProfile-$platform.pubxml -c Release
+	& dotnet publish $projectSusie -p:PublishProfile=FolderProfile-$platform.pubxml -c Release
 }
 
 #----------------------
@@ -494,6 +494,7 @@ function New-Msi($arch, $packageDir, $packageAppendDir, $packageMsi)
 	## Create MainComponents.wxs
 	if ($isCreateMainComponentsWxs)
 	{
+		Write-Host "Create MainComponents.wsx`n" -fore Cyan
 		New-MainComponents
 	}
 
