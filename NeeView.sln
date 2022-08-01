@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.28803.452
+# Visual Studio Version 17
+VisualStudioVersion = 17.2.32630.192
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NeeView", "NeeView\NeeView.csproj", "{4F680598-E096-4474-99A7-1747AFD771B2}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -30,6 +30,8 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NeeView.Runtime", "NeeView.Runtime\NeeView.Runtime.csproj", "{804F4141-E289-43A9-8471-4D3EB01104B5}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NeeLaboratory.Runtime", "NeeLaboratory.Runtime\NeeLaboratory.Runtime.csproj", "{D58D1CF3-E36C-41CC-9E58-B45DE7C1EFD2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NeeView.UnitTest", "NeeView.UnitTest\NeeView.UnitTest.csproj", "{9B417988-8D34-40CB-AE64-42B69701E290}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -188,6 +190,24 @@ Global
 		{D58D1CF3-E36C-41CC-9E58-B45DE7C1EFD2}.Remote|x64.Build.0 = Debug|Any CPU
 		{D58D1CF3-E36C-41CC-9E58-B45DE7C1EFD2}.Remote|x86.ActiveCfg = Debug|Any CPU
 		{D58D1CF3-E36C-41CC-9E58-B45DE7C1EFD2}.Remote|x86.Build.0 = Debug|Any CPU
+		{9B417988-8D34-40CB-AE64-42B69701E290}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9B417988-8D34-40CB-AE64-42B69701E290}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9B417988-8D34-40CB-AE64-42B69701E290}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{9B417988-8D34-40CB-AE64-42B69701E290}.Debug|x64.Build.0 = Debug|Any CPU
+		{9B417988-8D34-40CB-AE64-42B69701E290}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{9B417988-8D34-40CB-AE64-42B69701E290}.Debug|x86.Build.0 = Debug|Any CPU
+		{9B417988-8D34-40CB-AE64-42B69701E290}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9B417988-8D34-40CB-AE64-42B69701E290}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9B417988-8D34-40CB-AE64-42B69701E290}.Release|x64.ActiveCfg = Release|Any CPU
+		{9B417988-8D34-40CB-AE64-42B69701E290}.Release|x64.Build.0 = Release|Any CPU
+		{9B417988-8D34-40CB-AE64-42B69701E290}.Release|x86.ActiveCfg = Release|Any CPU
+		{9B417988-8D34-40CB-AE64-42B69701E290}.Release|x86.Build.0 = Release|Any CPU
+		{9B417988-8D34-40CB-AE64-42B69701E290}.Remote|Any CPU.ActiveCfg = Release|Any CPU
+		{9B417988-8D34-40CB-AE64-42B69701E290}.Remote|Any CPU.Build.0 = Release|Any CPU
+		{9B417988-8D34-40CB-AE64-42B69701E290}.Remote|x64.ActiveCfg = Release|Any CPU
+		{9B417988-8D34-40CB-AE64-42B69701E290}.Remote|x64.Build.0 = Release|Any CPU
+		{9B417988-8D34-40CB-AE64-42B69701E290}.Remote|x86.ActiveCfg = Release|Any CPU
+		{9B417988-8D34-40CB-AE64-42B69701E290}.Remote|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
