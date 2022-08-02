@@ -28,10 +28,14 @@ namespace NeeView
         private static bool? _isUseLocalApplicationDataFolder;
         private static List<string> _cultures;
         private static string _logFile;
+        private static Encoding _encoding;
 
 
         static Environment()
         {
+            // エンコーディングプロバイダの登録
+            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+
             ProcessId = Process.GetCurrentProcess().Id;
 
             var module = Process.GetCurrentProcess().MainModule;
@@ -323,6 +327,23 @@ namespace NeeView
                 return _cultures;
             }
         }
+
+        /// <summary>
+        /// システムのエンコーディング
+        /// </summary>
+        public static Encoding Encoding
+        {
+            get
+            {
+                if (_encoding is null)
+                {
+
+                    _encoding = Encoding.GetEncoding(System.Globalization.CultureInfo.CurrentCulture.TextInfo.ANSICodePage);
+                }
+                return _encoding;
+            }
+        }
+
 
         // [開発用] 出力用ログファイル名
         public static string LogFile

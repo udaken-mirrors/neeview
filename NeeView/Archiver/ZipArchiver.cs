@@ -17,15 +17,10 @@ namespace NeeView
     /// </summary>
     public class ZipArchiver : Archiver
     {
-        #region Constructors
-
         public ZipArchiver(string path, ArchiveEntry source) : base(path, source)
         {
         }
 
-        #endregion
-
-        #region Methods
 
         public override string ToString()
         {
@@ -72,7 +67,7 @@ namespace NeeView
                 }
 
                 // エントリー取得
-                using (var archiver = new ZipArchive(stream, ZipArchiveMode.Read))
+                using (var archiver = new ZipArchive(stream, ZipArchiveMode.Read, false, Environment.Encoding))
                 {
                     stream = null;
 
@@ -151,8 +146,6 @@ namespace NeeView
                 archiveEntry.ExtractToFile(exportFileName, isOverwrite);
             }
         }
-
-        #endregion
     }
 
     //
