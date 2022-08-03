@@ -20,7 +20,7 @@ namespace NeeView
             _source = source ?? throw new ArgumentNullException(nameof(source));
         }
 
-        public ImageExporterContent CreateView()
+        public ImageExporterContent? CreateView()
         {
             if (_source == null) return null;
 
@@ -87,6 +87,8 @@ namespace NeeView
             var canvas = new Canvas();
 
             var content = CreateView();
+            if (content is null) throw new InvalidOperationException();
+
             canvas.Children.Add(content.View);
 
             // calc content size

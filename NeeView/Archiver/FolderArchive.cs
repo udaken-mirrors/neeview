@@ -17,7 +17,7 @@ namespace NeeView
     {
         #region Constructors
 
-        public FolderArchive(string path, ArchiveEntry source) : base(path, source)
+        public FolderArchive(string path, ArchiveEntry? source) : base(path, source)
         {
         }
 
@@ -70,7 +70,7 @@ namespace NeeView
                     Archiver = this,
                     Id = list.Count,
                     RawEntryName = name,
-                    Length = isDirectory ? -1 : fileInfo.Length,
+                    Length = isDirectory ? -1 : fileInfo?.Length ?? 0,
                     CreationTime = info.CreationTime,
                     LastWriteTime = info.LastWriteTime,
                 };

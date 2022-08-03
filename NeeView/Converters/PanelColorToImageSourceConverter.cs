@@ -7,10 +7,10 @@ namespace NeeView
 {
     public class PanelColorToImageSourceConverter : IValueConverter
     {
-        public ImageSource Dark { get; set; }
-        public ImageSource Light { get; set; }
+        public ImageSource? Dark { get; set; }
+        public ImageSource? Light { get; set; }
 
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        public object? Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value is ThemeType panelColor)
             {

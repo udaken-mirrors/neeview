@@ -2,6 +2,7 @@
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Windows.Media;
 
@@ -13,6 +14,8 @@ namespace NeeView
         public RootQuickAccessNode()
         {
             // NOTE: need call Initialize()
+
+            Icon = new SingleImageSourceCollection(ResourceTools.GetElementResource<ImageSource>(MainWindow.Current, "ic_lightning"));
         }
 
 
@@ -20,9 +23,11 @@ namespace NeeView
 
         public override string DispName { get => Properties.Resources.Word_QuickAccess; set { } }
 
-        public override IImageSourceCollection Icon => new SingleImageSourceCollection(MainWindow.Current.Resources["ic_lightning"] as ImageSource);
+        public override IImageSourceCollection Icon { get; } 
 
-        public override ObservableCollection<FolderTreeNodeBase> Children
+
+        [NotNull]
+        public override ObservableCollection<FolderTreeNodeBase>? Children
         {
             get { return _children = _children ?? new ObservableCollection<FolderTreeNodeBase>(QuickAccessCollection.Current.Items.Select(e => new QuickAccessNode(e, this))); }
             set { SetProperty(ref _children, value); }
@@ -37,9 +42,8 @@ namespace NeeView
             QuickAccessCollection.Current.CollectionChanged += QuickAccessCollection_CollectionChanged;
         }
 
-        private void QuickAccessCollection_CollectionChanged(object sender, System.ComponentModel.CollectionChangeEventArgs e)
+        private void QuickAccessCollection_CollectionChanged(object? sender, System.ComponentModel.CollectionChangeEventArgs e)
         {
-            var item = e.Element as QuickAccess;
 
             switch (e.Action)
             {
@@ -48,13 +52,15 @@ namespace NeeView
                     break;
 
                 case CollectionChangeAction.Add:
-                    var index = QuickAccessCollection.Current.Items.IndexOf(item);
-                    var node = new QuickAccessNode(item, null) { IsSelected = true }; // NOTE: 選択項目として追加
+                    var addItem = e.Element as QuickAccess ?? throw new InvalidOperationException();
+                    var index = QuickAccessCollection.Current.Items.IndexOf(addItem);
+                    var node = new QuickAccessNode(addItem, null) { IsSelected = true }; // NOTE: 選択項目として追加
                     Insert(index, node);
                     break;
 
                 case CollectionChangeAction.Remove:
-                    Remove(item);
+                    var removeItem = e.Element as QuickAccess ?? throw new InvalidOperationException();
+                    Remove(removeItem);
                     break;
             }
         }

@@ -40,7 +40,7 @@ namespace NeeView
 
 
         private bool _isSliderDirectionReversed;
-        private ObservableCollection<Page> _items;
+        private ObservableCollection<Page>? _items;
         private int _selectedIndex;
         private List<Page> _viewItems = new List<Page>();
         private PageThumbnailJobClient _jobClient;
@@ -76,14 +76,14 @@ namespace NeeView
         }
 
 
-        public event EventHandler CollectionChanging;
-        public event EventHandler CollectionChanged;
-        public event EventHandler<ViewItemsChangedEventArgs> ViewItemsChanged;
-        public event EventHandler<VisibleEventArgs> VisibleEvent;
+        public event EventHandler? CollectionChanging;
+        public event EventHandler? CollectionChanged;
+        public event EventHandler<ViewItemsChangedEventArgs>? ViewItemsChanged;
+        public event EventHandler<VisibleEventArgs>? VisibleEvent;
 
 
 
-        public IVisibleElement VisibleElement { get; set; }
+        public IVisibleElement? VisibleElement { get; set; }
 
         public bool IsVisible => VisibleElement?.IsVisible == true;
 
@@ -118,7 +118,7 @@ namespace NeeView
 
         public PageSelector PageSelector => PageSelector.Current;
 
-        public ObservableCollection<Page> Items
+        public ObservableCollection<Page>? Items
         {
             get { return _items; }
             set
@@ -128,7 +128,7 @@ namespace NeeView
                     _items = value;
                     IsItemsDarty = true;
                     RaisePropertyChanged();
-                    CollectionChanged?.Invoke(this, null);
+                    CollectionChanged?.Invoke(this, EventArgs.Empty);
                 }
             }
         }
@@ -197,7 +197,7 @@ namespace NeeView
         #endregion
 
 
-        private void PageSelector_CollectionChanging(object sender, EventArgs e)
+        private void PageSelector_CollectionChanging(object? sender, EventArgs e)
         {
             // 未処理のサムネイル要求を解除
             _jobClient.CancelOrder();
@@ -206,7 +206,7 @@ namespace NeeView
             CollectionChanging?.Invoke(sender, e);
         }
 
-        private void PageSelector_CollectionChanged(object sender, EventArgs e)
+        private void PageSelector_CollectionChanged(object? sender, EventArgs e)
         {
             Update();
         }
@@ -217,13 +217,13 @@ namespace NeeView
             RaisePropertyChanged(nameof(ThumbnailListVisibility));
         }
 
-        private void PageSelector_SelectionChanged(object sender, EventArgs e)
+        private void PageSelector_SelectionChanged(object? sender, EventArgs e)
         {
             if (sender == this) return;
             UpdateSelectedIndex();
         }
 
-        private void PageSelector_ViewContentsChanged(object sender, ViewContentsChangedEventArgs e)
+        private void PageSelector_ViewContentsChanged(object? sender, ViewContentsChangedEventArgs e)
         {
             var contents = e?.ViewPageCollection?.Collection;
             if (contents == null) return;
@@ -258,11 +258,17 @@ namespace NeeView
 
         public void MoveSelectedIndex(int delta)
         {
+            if (this.Items is null) return;
+
             int index = SelectedIndex + delta;
             if (index < 0)
+            {
                 index = 0;
+            }
             if (index >= this.Items.Count)
+            {
                 index = this.Items.Count - 1;
+            }
 
             SelectedIndex = index;
         }
@@ -338,7 +344,7 @@ namespace NeeView
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        public void ScrollViewer_ManipulationBoundaryFeedback(object sender, ManipulationBoundaryFeedbackEventArgs e)
+        public void ScrollViewer_ManipulationBoundaryFeedback(object? sender, ManipulationBoundaryFeedbackEventArgs e)
         {
             if (!Config.Current.FilmStrip.IsManipulationBoundaryFeedbackEnabled)
             {

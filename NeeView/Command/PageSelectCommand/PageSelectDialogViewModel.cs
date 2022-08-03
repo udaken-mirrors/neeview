@@ -19,8 +19,8 @@ namespace NeeView
     public class PageSelectDialogViewModel : BindableBase 
     {
         private PageSelecteDialogModel _model;
-        private RelayCommand _decideCommand;
-        private RelayCommand _cancelCommand;
+        private RelayCommand? _decideCommand;
+        private RelayCommand? _cancelCommand;
 
         public PageSelectDialogViewModel(PageSelecteDialogModel model)
         {
@@ -31,7 +31,7 @@ namespace NeeView
         }
 
 
-        public event EventHandler<PageSelectDialogDecidedEventArgs> Decided;
+        public event EventHandler<PageSelectDialogDecidedEventArgs>? Decided;
 
 
         public string Caption => Properties.Resources.JumpPageCommand;

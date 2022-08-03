@@ -17,7 +17,7 @@ namespace NeeView
         {
         }
 
-        public event EventHandler<MediaPlayerChanged> Changed;
+        public event EventHandler<MediaPlayerChanged>? Changed;
 
 
         public void RiaseContentChanged(object sender, MediaPlayerChanged e)
@@ -82,8 +82,8 @@ namespace NeeView
             IsLastStart = isLastStart;
         }
 
-        public MediaPlayer MediaPlayer { get; set; }
-        public Uri Uri { get; set; }
+        public MediaPlayer? MediaPlayer { get; set; }
+        public Uri? Uri { get; set; }
         public bool IsLastStart { get; set; }
         public bool IsValid => MediaPlayer != null;
     }

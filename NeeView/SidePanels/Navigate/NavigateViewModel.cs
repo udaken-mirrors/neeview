@@ -181,7 +181,7 @@ namespace NeeView
 
 
 
-        private void Model_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        private void Model_PropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
             switch (e.PropertyName)
             {
@@ -214,7 +214,7 @@ namespace NeeView
             }
         }
 
-        private void ViewConfig_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        private void ViewConfig_PropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
             switch (e.PropertyName)
             {
@@ -249,7 +249,7 @@ namespace NeeView
             }
         }
 
-        private void NavigatorConfig_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        private void NavigatorConfig_PropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
             switch (e.PropertyName)
             {
@@ -268,7 +268,7 @@ namespace NeeView
             }
         }
 
-        private void DragTransform_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        private void DragTransform_PropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
             switch (e.PropertyName)
             {

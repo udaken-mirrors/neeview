@@ -13,7 +13,7 @@ namespace NeeView
         }
 
         // 再読み込みを要求
-        public event EventHandler DartyBook;
+        public event EventHandler? DartyBook;
 
         // この本のアーカイバ
         public ArchiveEntryCollection ArchiveEntryCollection { get; private set; }
@@ -50,7 +50,7 @@ namespace NeeView
                 if (_isRecursiveFolder != value)
                 {
                     _isRecursiveFolder = value;
-                    DartyBook?.Invoke(this, null);
+                    DartyBook?.Invoke(this, EventArgs.Empty);
                 }
             }
         }
@@ -83,7 +83,7 @@ namespace NeeView
             var archiver = ArchiveEntryCollection?.Archiver;
             if (archiver == null)
             {
-                return null;
+                return "";
             }
 
             var inner = archiver.Parent != null ? Properties.Resources.Word_Inner + " " : "";
@@ -118,7 +118,7 @@ namespace NeeView
             return text;
         }
 
-        public string GetFolderPlace()
+        public string? GetFolderPlace()
         {
             return ArchiveEntryCollection.GetFolderPlace();
         }

@@ -30,9 +30,9 @@ namespace NeeView
 
         #region INotifyPropertyChanged Support
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
-        protected bool SetProperty<T>(ref T storage, T value, [System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
+        protected bool SetProperty<T>(ref T storage, T value, [System.Runtime.CompilerServices.CallerMemberName] string? propertyName = null)
         {
             if (object.Equals(storage, value)) return false;
             storage = value;
@@ -40,7 +40,7 @@ namespace NeeView
             return true;
         }
 
-        protected void RaisePropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string name = null)
+        protected void RaisePropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string? name = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
@@ -221,8 +221,8 @@ namespace NeeView
         public double SplitterWidth => _splitterWidth;
 
 
-        private SidePanelFrameViewModel _vm;
-        public SidePanelFrameViewModel VM
+        private SidePanelFrameViewModel? _vm;
+        public SidePanelFrameViewModel? VM
         {
             get { return _vm; }
             private set { if (_vm != value) { _vm = value; RaisePropertyChanged(); } }
@@ -240,7 +240,7 @@ namespace NeeView
         {
             if (model == null) return;
 
-            CustomLayoutPanelManager.Current.Initialize();
+            CustomLayoutPanelManager.Initialize();
             var leftPanelViewModel = new LeftPanelViewModel(this.LeftIconList, CustomLayoutPanelManager.Current.LeftDock, LeftPanelElementContains);
             var rightPanelViewModel = new RightPanelViewModel(this.RightIconList, CustomLayoutPanelManager.Current.RightDock, RightPanelElementContains);
             this.VM = new SidePanelFrameViewModel(model, leftPanelViewModel, rightPanelViewModel);
@@ -304,38 +304,46 @@ namespace NeeView
             }
         }
 
-        private void LeftIconGrid_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        private void LeftIconGrid_MouseLeftButtonDown(object? sender, MouseButtonEventArgs e)
         {
-            ((UIElement)sender).Focus();
+            ((UIElement?)sender)?.Focus();
         }
 
-        private void LeftIconGrid_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        private void LeftIconGrid_MouseLeftButtonUp(object? sender, MouseButtonEventArgs e)
         {
+            if (_vm is null) return;
+
             _vm.Left.Toggle();
         }
 
-        private void RightIconGrid_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        private void RightIconGrid_MouseLeftButtonDown(object? sender, MouseButtonEventArgs e)
         {
-            ((UIElement)sender).Focus();
+            ((UIElement?)sender)?.Focus();
         }
 
-        private void RightIconGrid_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        private void RightIconGrid_MouseLeftButtonUp(object? sender, MouseButtonEventArgs e)
         {
+            if (_vm is null) return;
+
             _vm.Right.Toggle();
         }
 
-        private void PanelIconItemsControl_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        private void PanelIconItemsControl_MouseLeftButtonUp(object? sender, MouseButtonEventArgs e)
         {
             e.Handled = true;
         }
 
-        private void DragStartBehavior_DragBegin(object sender, DragStartEventArgs e)
+        private void DragStartBehavior_DragBegin(object? sender, DragStartEventArgs e)
         {
+            if (_vm is null) return;
+
             _vm.DragBegin(sender, e);
         }
 
-        private void DragStartBehavior_DragEnd(object sender, EventArgs e)
+        private void DragStartBehavior_DragEnd(object? sender, EventArgs e)
         {
+            if (_vm is null) return;
+
             _vm.DragEnd(sender, e);
         }
 
@@ -381,8 +389,10 @@ namespace NeeView
             UpdateCanvas();
         }
 
-        private void ViewModel_IsLeftPanelActivedChanged(object sender, PropertyChangedEventArgs e)
+        private void ViewModel_IsLeftPanelActivedChanged(object? sender, PropertyChangedEventArgs e)
         {
+            if (_vm is null) return;
+
             if (_vm.IsLeftPanelActived && this.LeftColumnWidth.Value <= _panelMinWidth)
             {
                 var length = Math.Max(Math.Min(this.CenterColumn.ActualWidth - _splitterWidth, _panelDefaultWidth), _panelMinWidth);
@@ -393,8 +403,10 @@ namespace NeeView
             UpdateCanvas();
         }
 
-        private void ViewModel_IsRightPanelActivedChanged(object sender, PropertyChangedEventArgs e)
+        private void ViewModel_IsRightPanelActivedChanged(object? sender, PropertyChangedEventArgs e)
         {
+            if (_vm is null) return;
+
             if (_vm.IsRightPanelActived && this.RightColumnWidth.Value <= _panelMinWidth)
             {
                 var length = Math.Max(Math.Min(this.CenterColumn.ActualWidth - _splitterWidth, _panelDefaultWidth), _panelMinWidth);
@@ -405,18 +417,20 @@ namespace NeeView
             UpdateCanvas();
         }
 
-        private void LeftPanel_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+        private void LeftPanel_IsVisibleChanged(object? sender, DependencyPropertyChangedEventArgs e)
         {
             UpdateCanvas();
         }
 
-        private void RightPanel_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+        private void RightPanel_IsVisibleChanged(object? sender, DependencyPropertyChangedEventArgs e)
         {
             UpdateCanvas();
         }
 
-        private void ScreenRect_SizeChanged(object sender, SizeChangedEventArgs e)
+        private void ScreenRect_SizeChanged(object? sender, SizeChangedEventArgs e)
         {
+            if (_vm is null) return;
+
             if (_vm.IsLimitPanelWidth)
             {
                 AdjustPanelWidthFromOrder(true);
@@ -425,7 +439,7 @@ namespace NeeView
             UpdateCanvas();
         }
 
-        private void Screen_SizeChanged(object sender, SizeChangedEventArgs e)
+        private void Screen_SizeChanged(object? sender, SizeChangedEventArgs e)
         {
             if (this.RightSplitter.IsDragging)
             {
@@ -462,7 +476,7 @@ namespace NeeView
             _adjustPanelWidthOrder = AdjustPanelWidthOrder.None;
         }
 
-        private void CenterPanel_SizeChanged(object sender, SizeChangedEventArgs e)
+        private void CenterPanel_SizeChanged(object? sender, SizeChangedEventArgs e)
         {
             UpdateCanvas();
         }

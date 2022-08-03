@@ -17,7 +17,7 @@ namespace NeeView
 
 
         // 設定の変更通知
-        public event EventHandler<BookSettingEventArgs> SettingChanged;
+        public event EventHandler<BookSettingEventArgs>? SettingChanged;
 
 
         public BookSettingConfig DefaultSetting => Config.Current.BookSettingDefault;
@@ -35,13 +35,13 @@ namespace NeeView
             if (!LatestSetting.Equals(setting))
             {
                 setting.CopyTo(LatestSetting);
-                LatestSetting.Page = null;
-                SettingChanged?.Invoke(this, null);
+                LatestSetting.Page = "";
+                SettingChanged?.Invoke(this, BookSettingEventArgs.Empty);
             }
         }
 
         // 新しい本の設定
-        public BookSettingConfig GetSetting(BookSettingConfig restore, bool isDefaultRecursive)
+        public BookSettingConfig GetSetting(BookSettingConfig? restore, bool isDefaultRecursive)
         {
             // TODO: isRecursived
             return Generater.Mix(DefaultSetting, LatestSetting, restore, isDefaultRecursive);
@@ -198,13 +198,13 @@ namespace NeeView
         public class Memento : IMemento
         {
             [DataMember]
-            public BookSettingConfig DefaultSetting { get; set; }
+            public BookSettingConfig? DefaultSetting { get; set; }
 
             [DataMember]
-            public BookSettingConfig LatestSetting { get; set; }
+            public BookSettingConfig? LatestSetting { get; set; }
 
             [DataMember]
-            public BookSettingPolicyConfig Generater { get; set; }
+            public BookSettingPolicyConfig? Generater { get; set; }
 
 
             [OnDeserializing]

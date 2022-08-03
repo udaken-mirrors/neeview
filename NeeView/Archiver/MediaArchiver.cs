@@ -11,15 +11,10 @@ namespace NeeView
 {
     public class MediaArchiver : Archiver
     {
-        #region Constructors
-
-        public MediaArchiver(string path, ArchiveEntry source) : base(path, source)
+        public MediaArchiver(string path, ArchiveEntry? source) : base(path, source)
         {
         }
 
-        #endregion
-
-        #region Methods
 
         public override string ToString()
         {
@@ -66,7 +61,5 @@ namespace NeeView
         {
             File.Copy(GetFileSystemPath(entry), exportFileName, isOverwrite);
         }
-
-        #endregion
     }
 }

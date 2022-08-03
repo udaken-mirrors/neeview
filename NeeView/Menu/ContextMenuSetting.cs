@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
@@ -12,13 +13,20 @@ namespace NeeView
 {
     public class MenuNode
     {
-        public string Name { get; set; }
+        public MenuNode(string? name, MenuElementType menuElementType, string? commandName)
+        {
+            Name = name;
+            MenuElementType = menuElementType;
+            CommandName = commandName;
+        }
+
+        public string? Name { get; set; }
 
         public MenuElementType MenuElementType { get; set; }
 
-        public string CommandName { get; set; }
+        public string? CommandName { get; set; }
 
-        public List<MenuNode> Children { get; set; }
+        public List<MenuNode>? Children { get; set; }
 
 
         public IEnumerable<MenuNode> GetEnumerator()
@@ -43,14 +51,14 @@ namespace NeeView
     {
         static ContextMenuManager() => Current = new ContextMenuManager();
         public static ContextMenuManager Current { get; }
-     
 
-        public MenuNode CreateContextMenuNode()
+
+        public MenuNode? CreateContextMenuNode()
         {
             return SourceTreeRaw?.CreateMenuNode();
         }
 
-        internal void Resotre(MenuNode contextMenuNode)
+        internal void Resotre(MenuNode? contextMenuNode)
         {
             var sourceTree = contextMenuNode != null ? MenuTree.CreateMenuTree(contextMenuNode) : null;
             sourceTree?.Validate();
@@ -62,11 +70,11 @@ namespace NeeView
     [DataContract]
     public class ContextMenuSetting : BindableBase
     {
-        private ContextMenu _contextMenu;
+        private ContextMenu? _contextMenu;
         private bool _isDarty = true;
 
         [DataMember]
-        private MenuTree _sourceTree;
+        private MenuTree? _sourceTree;
 
         [DataMember]
         public int _Version { get; set; } = Environment.ProductVersionNumber;
@@ -76,13 +84,13 @@ namespace NeeView
         {
         }
 
-        public ContextMenuSetting(MenuTree source)
+        public ContextMenuSetting(MenuTree? source)
         {
             _sourceTree = source;
         }
 
 
-        public ContextMenu ContextMenu
+        public ContextMenu? ContextMenu
         {
             get
             {
@@ -92,13 +100,14 @@ namespace NeeView
             }
         }
 
-        public MenuTree SourceTreeRaw
+        public MenuTree? SourceTreeRaw
         {
             get => _sourceTree;
             set => _sourceTree = value;
         }
 
-        public MenuTree SourceTree
+        [NotNull]
+        public MenuTree? SourceTree
         {
             get { return _sourceTree ?? MenuTree.CreateDefault(); }
             set
@@ -139,7 +148,7 @@ namespace NeeView
                 {
                     if (node.MenuElementType == MenuElementType.Command)
                     {
-                        if (CommandTable.Memento.RenameMap_37_0_0.TryGetValue(node.CommandName, out string newName))
+                        if (node.CommandName is not null && CommandTable.Memento.RenameMap_37_0_0.TryGetValue(node.CommandName, out string? newName))
                         {
                             node.CommandName = newName;
                         }

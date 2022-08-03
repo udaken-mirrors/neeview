@@ -49,6 +49,7 @@ namespace NeeView
                 param.FileName = dialogParam.FileName;
             }
 
+            if (string.IsNullOrEmpty(param.FileName)) return;
             using (var importer = new Importer(param))
             {
                 if (!param.IsImportActionValid())

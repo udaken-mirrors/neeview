@@ -12,13 +12,8 @@ namespace NeeView.Threading
 {
     public class DelayVisibility : BindableBase
     {
-        #region Fields
-
         private DelayValue<Visibility> _visibility;
 
-        #endregion
-
-        #region Constructors
 
         public DelayVisibility() : this(Visibility.Collapsed)
         {
@@ -34,15 +29,9 @@ namespace NeeView.Threading
             };
         }
 
-        #endregion
 
-        #region Events
+        public event EventHandler? Changed;
 
-        public event EventHandler Changed;
-
-        #endregion
-
-        #region Properties
 
         public Visibility Visibility
         {
@@ -52,9 +41,6 @@ namespace NeeView.Threading
 
         public double DefaultDelayTime { get; set; } = 1.0;
 
-        #endregion
-
-        #region Methods
 
         public Visibility Get()
         {
@@ -81,7 +67,5 @@ namespace NeeView.Threading
         {
             return _visibility.ToDetail();
         }
-
-        #endregion
     }
 }

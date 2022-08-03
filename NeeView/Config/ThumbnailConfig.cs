@@ -21,7 +21,7 @@ namespace NeeView
         private bool _isVideoThumbnailEnabled = true;
 
         [JsonInclude, JsonPropertyName(nameof(ThumbnailCacheFilePath))]
-        public string _thumbnailCacheFilePath;
+        public string? _thumbnailCacheFilePath;
 
 
         [PropertyMember]

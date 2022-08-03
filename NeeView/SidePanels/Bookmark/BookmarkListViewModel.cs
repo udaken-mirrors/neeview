@@ -25,10 +25,10 @@ namespace NeeView
     /// </summary>
     public class BookmarkListViewModel : BindableBase
     {
-        private CancellationTokenSource _removeUnlinkedCommandCancellationTokenSource;
+        private CancellationTokenSource? _removeUnlinkedCommandCancellationTokenSource;
         private DpiScaleProvider _dpiProvider = new DpiScaleProvider();
         private FolderList _model;
-        private ContextMenu _moreMenu;
+        private ContextMenu? _moreMenu;
 
 
         public BookmarkListViewModel(FolderList model)
@@ -60,7 +60,7 @@ namespace NeeView
         }
 
 
-        public FolderCollection FolderCollection => _model.FolderCollection;
+        public FolderCollection? FolderCollection => _model.FolderCollection;
 
         public FolderList Model
         {
@@ -76,7 +76,7 @@ namespace NeeView
         /// <summary>
         /// MoreMenu property.
         /// </summary>
-        public ContextMenu MoreMenu
+        public ContextMenu? MoreMenu
         {
             get { return _moreMenu; }
             set { if (_moreMenu != value) { _moreMenu = value; RaisePropertyChanged(); } }
@@ -114,7 +114,7 @@ namespace NeeView
         /// <summary>
         /// MoveTo command.
         /// </summary>
-        private RelayCommand<QueryPath> _MoveTo;
+        private RelayCommand<QueryPath>? _MoveTo;
         public RelayCommand<QueryPath> MoveTo
         {
             get { return _MoveTo = _MoveTo ?? new RelayCommand<QueryPath>(_model.MoveTo); }
@@ -123,13 +123,13 @@ namespace NeeView
         /// <summary>
         /// MoveToUp command.
         /// </summary>
-        private RelayCommand _MoveToUp;
+        private RelayCommand? _MoveToUp;
         public RelayCommand MoveToUp
         {
             get { return _MoveToUp = _MoveToUp ?? new RelayCommand(_model.MoveToParent, _model.CanMoveToParent); }
         }
 
-        private RelayCommand<FolderTreeLayout> _SetFolderTreeLayout;
+        private RelayCommand<FolderTreeLayout>? _SetFolderTreeLayout;
         public RelayCommand<FolderTreeLayout> SetFolderTreeLayout
         {
             get
@@ -144,7 +144,7 @@ namespace NeeView
             }
         }
 
-        private RelayCommand _NewFolderCommand;
+        private RelayCommand? _NewFolderCommand;
         public RelayCommand NewFolderCommand
         {
             get { return _NewFolderCommand = _NewFolderCommand ?? new RelayCommand(NewFolderCommand_Executed); }
@@ -156,7 +156,7 @@ namespace NeeView
         }
 
 
-        private RelayCommand _AddBookmarkCommand;
+        private RelayCommand? _AddBookmarkCommand;
         public RelayCommand AddBookmarkCommand
         {
             get { return _AddBookmarkCommand = _AddBookmarkCommand ?? new RelayCommand(AddBookmarkCommand_Executed); }
@@ -168,7 +168,7 @@ namespace NeeView
         }
 
 
-        private RelayCommand _removeUnlinkedCommand;
+        private RelayCommand? _removeUnlinkedCommand;
         public RelayCommand RemoveUnlinkedCommand
         {
             get { return _removeUnlinkedCommand = _removeUnlinkedCommand ?? new RelayCommand(RemoveUnlinkedCommand_Executed); }
@@ -182,7 +182,7 @@ namespace NeeView
             await BookmarkCollection.Current.RemoveUnlinkedAsync(_removeUnlinkedCommandCancellationTokenSource.Token);
         }
 
-        private RelayCommand _ToggleVisibleFoldersTree;
+        private RelayCommand? _ToggleVisibleFoldersTree;
         public RelayCommand ToggleVisibleFoldersTree
         {
             get { return _ToggleVisibleFoldersTree = _ToggleVisibleFoldersTree ?? new RelayCommand(ToggleVisibleFoldersTree_Executed); }
@@ -193,7 +193,7 @@ namespace NeeView
             _model.FolderListConfig.IsFolderTreeVisible = !_model.FolderListConfig.IsFolderTreeVisible;
         }
 
-        private RelayCommand<PanelListItemStyle> _SetListItemStyle;
+        private RelayCommand<PanelListItemStyle>? _SetListItemStyle;
         public RelayCommand<PanelListItemStyle> SetListItemStyle
         {
             get { return _SetListItemStyle = _SetListItemStyle ?? new RelayCommand<PanelListItemStyle>(SetListItemStyle_Executed); }

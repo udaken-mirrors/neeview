@@ -31,7 +31,7 @@ namespace NeeView
         /// <summary>
         /// 検索エンジン
         /// </summary>
-        private NeeLaboratory.IO.Search.SearchEngine _engine;
+        private NeeLaboratory.IO.Search.SearchEngine? _engine;
 
         #endregion
 
@@ -123,7 +123,7 @@ namespace NeeView
         }
 
         //
-        public async Task<SearchResultWatcher> SearchAsync(string keyword, NeeLaboratory.IO.Search.SearchOption option = null)
+        public async Task<SearchResultWatcher> SearchAsync(string keyword, NeeLaboratory.IO.Search.SearchOption? option = null)
         {
             if (_engine == null) throw new InvalidOperationException();
 

@@ -5,7 +5,7 @@ namespace NeeView.Threading
 {
     public class SimpleDelayAction
     {
-        private Action _action;
+        private Action? _action;
         private DispatcherTimer _timer;
         private object _lock = new object();
 
@@ -52,7 +52,7 @@ namespace NeeView.Threading
             }
         }
 
-        private void Timer_Tick(object sender, EventArgs e)
+        private void Timer_Tick(object? sender, EventArgs e)
         {
             lock (_lock)
             {

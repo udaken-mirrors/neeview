@@ -4,6 +4,8 @@ namespace NeeView
 {
     public class BookSettingEventArgs : EventArgs
     {
+        public static new readonly BookSettingEventArgs Empty = new BookSettingEventArgs();
+
         public BookSettingEventArgs()
         {
         }

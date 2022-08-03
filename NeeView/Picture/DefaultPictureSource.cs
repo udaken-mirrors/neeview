@@ -15,7 +15,7 @@ namespace NeeView
         private static BitmapFactory _bitmapFactory = new BitmapFactory();
         private PictureNamedStreamSource _streamSource;
 
-        public DefaultPictureSource(ArchiveEntry entry, PictureInfo pictureInfo, PictureSourceCreateOptions createOptions) : base(entry, pictureInfo, createOptions)
+        public DefaultPictureSource(ArchiveEntry entry, PictureInfo? pictureInfo, PictureSourceCreateOptions createOptions) : base(entry, pictureInfo, createOptions)
         {
             _streamSource = new PictureNamedStreamSource(entry);
         }
@@ -72,7 +72,7 @@ namespace NeeView
                 var bitmapSource = _bitmapFactory.CreateBitmapSource(stream, PictureInfo?.BitmapInfo, size, setting, token);
 
                 // 色情報とBPP設定。
-                this.PictureInfo.SetPixelInfo(bitmapSource);
+                this.PictureInfo?.SetPixelInfo(bitmapSource);
 
                 return bitmapSource;
             }
@@ -102,7 +102,7 @@ namespace NeeView
             token.ThrowIfCancellationRequested();
 
             Size size;
-            BitmapInfo bitmapInfo;
+            BitmapInfo? bitmapInfo;
             if (PictureInfo != null)
             {
                 size = PictureInfo.Size;

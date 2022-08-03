@@ -30,13 +30,13 @@ namespace NeeView.Setting
         /// <summary>
         /// GestoreTokenNote property.
         /// </summary>
-        public string GestureTokenNote
+        public string? GestureTokenNote
         {
             get { return _gestureTokenNote; }
             set { if (_gestureTokenNote != value) { _gestureTokenNote = value; RaisePropertyChanged(); } }
         }
 
-        private string _gestureTokenNote;
+        private string? _gestureTokenNote;
 
 
         public TouchAreaMap TouchAreaMap { get; set; }

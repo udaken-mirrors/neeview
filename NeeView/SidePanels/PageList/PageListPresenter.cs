@@ -6,7 +6,7 @@ namespace NeeView
     {
         private PageListView _pageListView;
         private PageList _pageList;
-        private PageListBox _pageListBox;
+        private PageListBox? _pageListBox;
         private PageListBoxViewModel _listBoxViewModel;
 
 
@@ -27,7 +27,7 @@ namespace NeeView
 
         public PageListView PageListView => _pageListView;
 
-        public PageListBox PageListBox => _pageListBox;
+        public PageListBox? PageListBox => _pageListBox;
 
 
         private void UpdateListBoxContent()

@@ -21,11 +21,12 @@ namespace NeeView
             _view = new FileInformationView(model);
             _model = model;
 
-            Icon = App.Current.MainWindow.Resources["pic_info_24px"] as ImageSource;
+            Icon = App.Current.MainWindow.Resources["pic_info_24px"] as ImageSource
+                ?? throw new InvalidOperationException("Cannot found resource `pic_info_24px`");
         }
 
 #pragma warning disable CS0067
-        public event EventHandler IsVisibleLockChanged;
+        public event EventHandler? IsVisibleLockChanged;
 #pragma warning restore CS0067
 
 

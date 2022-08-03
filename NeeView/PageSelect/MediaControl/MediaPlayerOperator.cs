@@ -18,9 +18,8 @@ namespace NeeView
         /// 現在有効なMediaPlayerOperator。
         /// シングルトンではない。
         /// </summary>
-        public static MediaPlayerOperator Current { get; set; }
+        public static MediaPlayerOperator? Current { get; set; }
 
-        #region Fields
 
         private MediaPlayer _player;
         private DispatcherTimer _timer;
@@ -39,9 +38,6 @@ namespace NeeView
         private double _volume = 0.5;
         private double _delay;
 
-        #endregion
-
-        #region Constructors
 
         public MediaPlayerOperator(MediaPlayer player)
         {
@@ -79,14 +75,11 @@ namespace NeeView
         }
 
 
-        #endregion
-
         /// <summary>
         /// 再生が終端に達したときのイベント
         /// </summary>
-        public event EventHandler MediaEnded;
+        public event EventHandler? MediaEnded;
 
-        #region Properties
 
         public MediaPlayer MediaPlayer
         {
@@ -170,7 +163,7 @@ namespace NeeView
             set { if (_isTimeLeftDisp != value) { _isTimeLeftDisp = value; RaisePropertyChanged(); RaisePropertyChanged(nameof(DispTime)); } }
         }
 
-        public string DispTime
+        public string? DispTime
         {
             get
             {
@@ -253,12 +246,11 @@ namespace NeeView
             }
         }
 
-        #endregion
 
         #region Commands
 
         //
-        private RelayCommand _PlayCommand;
+        private RelayCommand? _PlayCommand;
         public RelayCommand PlayCommand
         {
             get { return _PlayCommand = _PlayCommand ?? new RelayCommand(PlayCommand_Executed); }
@@ -277,7 +269,7 @@ namespace NeeView
         }
 
         //
-        private RelayCommand _RepeatCommand;
+        private RelayCommand? _RepeatCommand;
         public RelayCommand RepeatCommand
         {
             get { return _RepeatCommand = _RepeatCommand ?? new RelayCommand(RepeatCommand_Executed); }
@@ -289,7 +281,7 @@ namespace NeeView
         }
 
         //
-        private RelayCommand _MuteCommand;
+        private RelayCommand? _MuteCommand;
         public RelayCommand MuteCommand
         {
             get { return _MuteCommand = _MuteCommand ?? new RelayCommand(MuteCommand_Executed); }
@@ -302,15 +294,13 @@ namespace NeeView
 
         #endregion
 
-        #region Methods
 
-
-        private void Player_MediaFailed(object sender, ExceptionEventArgs e)
+        private void Player_MediaFailed(object? sender, ExceptionEventArgs e)
         {
             Dispose();
         }
 
-        private void Player_MediaEnded(object sender, EventArgs e)
+        private void Player_MediaEnded(object? sender, EventArgs e)
         {
             if (_isRepeat)
             {
@@ -324,11 +314,11 @@ namespace NeeView
                 {
                     _player.Position = _durationTimeSpan;
                 }
-                MediaEnded?.Invoke(this, null);
+                MediaEnded?.Invoke(this, EventArgs.Empty);
             }
         }
 
-        private void Player_MediaOpened(object sender, EventArgs e)
+        private void Player_MediaOpened(object? sender, EventArgs e)
         {
             Duration = _player.NaturalDuration;
 
@@ -358,7 +348,7 @@ namespace NeeView
 
 
         // 遅延再生開始用のタイマー処理
-        private void DispatcherTimer_StartTick(object sender, EventArgs e)
+        private void DispatcherTimer_StartTick(object? sender, EventArgs e)
         {
             _delay -= _timer.Interval.TotalMilliseconds;
             if (_delay < 0.0)
@@ -369,7 +359,7 @@ namespace NeeView
         }
 
         // 通常用タイマー処理
-        private void DispatcherTimer_Tick(object sender, EventArgs e)
+        private void DispatcherTimer_Tick(object? sender, EventArgs e)
         {
             if (_disposed) return;
             if (!_isActive || _isScrubbing) return;
@@ -517,7 +507,6 @@ namespace NeeView
             Volume = MathUtility.Clamp(Volume + delta, 0.0, 1.0);
         }
 
-        #endregion
 
         #region IDisposable Support
 

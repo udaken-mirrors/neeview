@@ -16,9 +16,9 @@ namespace NeeView.Setting
     public class SettingWindowViewModel : BindableBase
     {
         private SettingWindowModel _model;
-        private string _searchKeyword;
-        private SettingPage _currentPage;
-        private SettingPage _lastPage;
+        private string _searchKeyword = "";
+        private SettingPage? _currentPage;
+        private SettingPage? _lastPage;
 
 
         public SettingWindowViewModel(SettingWindowModel model)
@@ -62,7 +62,7 @@ namespace NeeView.Setting
             }
         }
 
-        public SettingPage CurrentPage
+        public SettingPage? CurrentPage
         {
             get { return _currentPage; }
             set

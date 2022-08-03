@@ -18,9 +18,9 @@ namespace NeeView
     public class BookMementoCollectionChangedArgs : EventArgs
     {
         public BookMementoCollectionChangedType HistoryChangedType { get; set; }
-        public string Key { get; set; }
+        public string? Key { get; set; }
 
-        public BookMementoCollectionChangedArgs(BookMementoCollectionChangedType type, string key)
+        public BookMementoCollectionChangedArgs(BookMementoCollectionChangedType type, string? key)
         {
             HistoryChangedType = type;
             Key = key;

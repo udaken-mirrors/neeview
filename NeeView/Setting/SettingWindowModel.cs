@@ -41,27 +41,13 @@ namespace NeeView.Setting
         }
 
 
-        private static Type _latestSelectedPageType;
+        private static Type? _latestSelectedPageType;
 
         private List<SettingPage> _pages;
         private List<SettingItemRecord> _records;
 
 
         public SettingWindowModel()
-        {
-            Initialize();
-        }
-
-
-        public List<SettingPage> Pages
-        {
-            get { return _pages; }
-        }
-
-        public SettingPage SearchPage { get; } = new SettingPage(Properties.Resources.SettingPage_SearchResult);
-
-
-        private void Initialize()
         {
             _pages = new List<SettingPage>();
 
@@ -86,20 +72,32 @@ namespace NeeView.Setting
         }
 
 
+        public List<SettingPage> Pages
+        {
+            get { return _pages; }
+        }
+
+        public SettingPage SearchPage { get; } = new SettingPage(Properties.Resources.SettingPage_SearchResult);
+
+
+
         private List<SettingItemRecord> CreateSettingItemRecordList(IEnumerable<SettingPage> pages)
         {
             var list = new List<SettingItemRecord>();
 
             foreach (var page in GetSettingPagesEnumerator(pages))
             {
-                foreach (var item in page.Items)
+                if (page.Items != null)
                 {
-                    var section = item as SettingItemSection;
-                    Debug.Assert(section != null);
-
-                    foreach (var child in section.Children)
+                    foreach (var item in page.Items)
                     {
-                        list.Add(new SettingItemRecord(page, section, child));
+                        var section = item as SettingItemSection;
+                        Debug.Assert(section != null);
+
+                        foreach (var child in section.Children)
+                        {
+                            list.Add(new SettingItemRecord(page, section, child));
+                        }
                     }
                 }
             }
@@ -108,7 +106,7 @@ namespace NeeView.Setting
         }
 
 
-        public void SetSelectedPage(SettingPage page)
+        public void SetSelectedPage(SettingPage? page)
         {
             if (page == null) return;
             _latestSelectedPageType = page != SearchPage ? page.GetType() : null;

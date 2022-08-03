@@ -15,9 +15,9 @@ namespace NeeView
     {
         #region INotifyPropertyChanged Support
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
-        protected bool SetProperty<T>(ref T storage, T value, [System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
+        protected bool SetProperty<T>(ref T storage, T value, [System.Runtime.CompilerServices.CallerMemberName] string? propertyName = null)
         {
             if (object.Equals(storage, value)) return false;
             storage = value;
@@ -25,7 +25,7 @@ namespace NeeView
             return true;
         }
 
-        protected void RaisePropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string name = null)
+        protected void RaisePropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string? name = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
@@ -61,12 +61,12 @@ namespace NeeView
         private IAccessDiagnostics _accessDiagnostics;
 
 
-        public PropertyMap(object source, IAccessDiagnostics accessDiagnostics, string prefix)
+        public PropertyMap(object source, IAccessDiagnostics? accessDiagnostics, string prefix)
             : this(source, accessDiagnostics, prefix, null, null)
         {
         }
 
-        public PropertyMap(object source, IAccessDiagnostics accessDiagnostics, string prefix, string label, PropertyMapOptions options)
+        public PropertyMap(object source, IAccessDiagnostics? accessDiagnostics, string prefix, string? label, PropertyMapOptions? options)
         {
             _source = source;
             _accessDiagnostics = accessDiagnostics ?? new DefaultAccessDiagnostics();
@@ -79,11 +79,11 @@ namespace NeeView
             {
                 if (property.GetCustomAttribute(typeof(PropertyMapIgnoreAttribute)) != null) continue;
 
-                var nameAttribute = (PropertyMapNameAttribute)property.GetCustomAttribute(typeof(PropertyMapNameAttribute));
+                var nameAttribute = (PropertyMapNameAttribute?)property.GetCustomAttribute(typeof(PropertyMapNameAttribute));
                 var key = nameAttribute?.Name ?? property.Name;
                 var converter = _options.Converters.FirstOrDefault(e => e.CanConvert(property.PropertyType));
 
-                var obsolete = (ObsoleteAttribute)property.GetCustomAttribute(typeof(ObsoleteAttribute));
+                var obsolete = (ObsoleteAttribute?)property.GetCustomAttribute(typeof(ObsoleteAttribute));
                 if (obsolete != null)
                 {
                     ////Debug.WriteLine($"[OBSOLETE] {prefix}.{key}: {obsolete.Message}");
@@ -92,10 +92,11 @@ namespace NeeView
                 }
                 else if (converter == null && property.PropertyType.IsClass && property.PropertyType != typeof(string))
                 {
-                    var labelAttribute = (PropertyMapLabelAttribute)property.GetCustomAttribute(typeof(PropertyMapLabelAttribute));
+                    var propertyValue = property.GetValue(_source) ?? throw new InvalidOperationException();
+                    var labelAttribute = (PropertyMapLabelAttribute?)property.GetCustomAttribute(typeof(PropertyMapLabelAttribute));
                     var newPrefix = prefix + "." + key;
                     var newLabel = labelAttribute != null ? label + ResourceService.GetString(labelAttribute.Label) + ": " : label;
-                    _items.Add(key, new PropertyMap(property.GetValue(_source), accessDiagnostics, newPrefix, newLabel, options));
+                    _items.Add(key, new PropertyMap(propertyValue, _accessDiagnostics, newPrefix, newLabel, options));
                 }
                 else
                 {
@@ -104,7 +105,7 @@ namespace NeeView
             }
         }
 
-        public object this[string key]
+        public object? this[string key]
         {
             get { return GetValue(_items[key]); }
             set { SetValue(_items[key], value); RaisePropertyChanged(key); }
@@ -120,7 +121,7 @@ namespace NeeView
             return _items[key];
         }
 
-        internal object GetValue(PropertyMapNode node)
+        internal object? GetValue(PropertyMapNode node)
         {
             if (node is PropertyMapObsolete obsolete)
             {
@@ -136,7 +137,7 @@ namespace NeeView
             }
         }
 
-        internal void SetValue(PropertyMapNode node, object value)
+        internal void SetValue(PropertyMapNode node, object? value)
         {
             if (node is PropertyMapObsolete obsolete)
             {
@@ -157,10 +158,11 @@ namespace NeeView
         /// <summary>
         /// 外部からのプロパティの追加
         /// </summary>
-        internal void AddProperty(object source, string propertyName, string memberName = null)
+        internal void AddProperty(object source, string propertyName, string? memberName = null)
         {
             var type = source.GetType();
             var property = type.GetProperty(propertyName);
+            if (property is null) throw new ArgumentException("not support property name", nameof(propertyName));
             var converter = _options.Converters.FirstOrDefault(e => e.CanConvert(property.PropertyType)) ?? _defaultConverter;
 
             _items.Add(memberName ?? propertyName, new PropertyMapSource(source, property, converter, null));

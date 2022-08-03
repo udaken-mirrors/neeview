@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using System.Windows;
@@ -15,7 +16,7 @@ namespace NeeView
     /// </summary>
     public class ViewContent : BindableBase, IDisposable
     {
-        private ViewContentControl _view;
+        private ViewContentControl? _view;
         private double _width;
         private double _height;
         private Size _size;
@@ -23,6 +24,8 @@ namespace NeeView
         private Visibility _AnimationImageVisibility = Visibility.Collapsed;
         private Visibility _AnimationPlayerVisibility = Visibility.Visible;
 
+        private MainViewComponent? _viewComponent;
+        private ViewContentSource? _source;
 
         public ViewContent()
         {
@@ -36,25 +39,34 @@ namespace NeeView
             this.Color = Colors.Black;
         }
 
-        public MainViewComponent ViewComponent { get; private set; }
+        [NotNull]
+        public MainViewComponent? ViewComponent
+        {
+            get => _viewComponent ?? throw new InvalidOperationException();
+            private set => _viewComponent = value;
+        }
 
         /// <summary>
         /// ViewContentSource
         /// TODO: 他のパラメータとあわせて整備
         /// </summary>
-        public ViewContentSource Source { get; set; }
+        public ViewContentSource? Source
+        {
+            get => _source;
+            private set => _source = value;
+        }
 
         /// <summary>
         /// ページ
         /// </summary>
-        public Page Page => Source?.Page;
+        public Page? Page => Source?.Page;
 
         /// <summary>
         /// コンテンツ
         /// </summary>
-        public PageContent Content => Source?.Content;
+        public PageContent? Content => Source?.Content;
 
-        public ViewContentControl View
+        public ViewContentControl? View
         {
             get { return _view; }
             set { _view = value; RaisePropertyChanged(); }
@@ -91,21 +103,21 @@ namespace NeeView
         public Color Color = Colors.Black;
 
         // フルパス名
-        public string FullPath => Page?.EntryName;
+        public string? FullPath => Page?.EntryName;
 
         // ファイル名
         public string FileName => LoosePath.GetFileName(Page?.EntryName.TrimEnd('\\'));
 
         // フォルダーの場所
-        public string FolderPlace => Page?.GetFolderPlace();
+        public string? FolderPlace => Page?.GetFolderPlace();
 
 
         // ファイルプロキシ(必要であれば)
         // 寿命確保用。GCされてファイルが消えないように。
-        public FileProxy FileProxy { get; set; }
+        public FileProxy? FileProxy { get; set; }
 
         // ページの場所
-        public PagePosition Position => Source.PagePart.Position;
+        public PagePosition Position => Source?.PagePart.Position ?? PagePosition.Empty;
 
 
         // スケールモード
@@ -181,7 +193,7 @@ namespace NeeView
         // ページパーツ文字
         public string GetPartString()
         {
-            if (Source.PagePart.PartSize == 1)
+            if (Source?.PagePart.PartSize == 1)
             {
                 int part = Source.PagePart.PartOrder == PageReadOrder.LeftToRight ? 1 - Source.PagePart.Position.Part : Source.PagePart.Position.Part;
                 return part == 0 ? "(R)" : "(L)";
@@ -194,14 +206,13 @@ namespace NeeView
 
         protected ViewContentParameters CreateBindingParameter()
         {
-            var parameter = new ViewContentParameters()
-            {
-                ForegroundBrush = new Binding(nameof(ContentCanvasBrush.ForegroundBrush)) { Source = this.ViewComponent.ContentCanvasBrush },
-                PageBackgroundBrush = new Binding(nameof(ContentCanvasBrush.PageBackgroundBrush)) { Source = this.ViewComponent.ContentCanvasBrush },
-                BitmapScalingMode = new Binding(nameof(BitmapScalingMode)) { Source = this },
-                AnimationImageVisibility = new Binding(nameof(AnimationImageVisibility)) { Source = this },
-                AnimationPlayerVisibility = new Binding(nameof(AnimationPlayerVisibility)) { Source = this },
-            };
+            var parameter = new ViewContentParameters(
+                foregroundBrush: new Binding(nameof(ContentCanvasBrush.ForegroundBrush)) { Source = this.ViewComponent.ContentCanvasBrush },
+                pageBackgroundBrush: new Binding(nameof(ContentCanvasBrush.PageBackgroundBrush)) { Source = this.ViewComponent.ContentCanvasBrush },
+                bitmapScalingMode: new Binding(nameof(BitmapScalingMode)) { Source = this },
+                animationImageVisibility: new Binding(nameof(AnimationImageVisibility)) { Source = this },
+                animationPlayerVisibility: new Binding(nameof(AnimationPlayerVisibility)) { Source = this }
+            );
 
             return parameter;
         }
@@ -282,6 +293,13 @@ namespace NeeView
     /// </summary>
     public class ViewContentReserver
     {
+        public ViewContentReserver(ImageBrush brush, Size size, Color color)
+        {
+            Brush = brush;
+            Size = size;
+            Color = color;
+        }
+
         public ImageBrush Brush { get; set; }
         public Size Size { get; set; }
         public Color Color { get; set; }
@@ -292,6 +310,15 @@ namespace NeeView
     /// </summary>
     public class ViewContentParameters
     {
+        public ViewContentParameters(Binding foregroundBrush, Binding pageBackgroundBrush, Binding bitmapScalingMode, Binding animationImageVisibility, Binding animationPlayerVisibility)
+        {
+            ForegroundBrush = foregroundBrush;
+            PageBackgroundBrush = pageBackgroundBrush;
+            BitmapScalingMode = bitmapScalingMode;
+            AnimationImageVisibility = animationImageVisibility;
+            AnimationPlayerVisibility = animationPlayerVisibility;
+        }
+
         public Binding ForegroundBrush { get; set; }
         public Binding PageBackgroundBrush { get; set; }
         public Binding BitmapScalingMode { get; set; }

@@ -15,7 +15,7 @@ namespace NeeView
         private IHasFolderListBox _folderListView;
         private FolderList _folderList;
 
-        private FolderListBox _folderListBox;
+        private FolderListBox? _folderListBox;
         private FolderListBoxViewModel _folderListBoxViewModel;
 
 
@@ -30,7 +30,7 @@ namespace NeeView
         }
 
 
-        public FolderListBox FolderListBox => _folderListBox;
+        public FolderListBox? FolderListBox => _folderListBox;
 
 
         public void UpdateFolderListBox()

@@ -22,26 +22,26 @@ namespace NeeView
         public int _Version { get; set; } = Environment.ProductVersionNumber;
 
         [DataMember(Order = 1)]
-        public SusiePluginManager.Memento SusieMemento { get; set; }
+        public SusiePluginManager.Memento? SusieMemento { get; set; }
 
         [DataMember(Order = 9998)]
-        public CommandTable.Memento CommandMememto { set; get; }
+        public CommandTable.Memento? CommandMememto { set; get; }
 
         [DataMember(Order = 9998)]
-        public DragActionTable.Memento DragActionMemento { set; get; }
+        public DragActionTable.Memento? DragActionMemento { set; get; }
 
         [DataMember]
-        public Models.Memento Memento { get; set; }
+        public Models.Memento? Memento { get; set; }
 
         [DataMember]
-        public WindowShape.Memento WindowShape { get; set; }
+        public WindowShape.Memento? WindowShape { get; set; }
 
         // NOTE: 旧WindowPlacementは非互換 (ver38.0)
         //[DataMember]
         //public WindowPlacement.Memento WindowPlacement { get; set; }
 
         [DataMember]
-        public App.Memento App { get; set; }
+        public App.Memento? App { get; set; }
 
 
         // ファイルに保存
@@ -58,7 +58,7 @@ namespace NeeView
         }
 
         // ファイルから読み込み
-        public static UserSettingV1 LoadV1(string path)
+        public static UserSettingV1? LoadV1(string path)
         {
             using (var stream = new FileStream(path, FileMode.Open, FileAccess.Read))
             {
@@ -68,25 +68,28 @@ namespace NeeView
         }
 
         // ストリームから読み込み
-        public static UserSettingV1 LoadV1(Stream stream)
+        public static UserSettingV1? LoadV1(Stream stream)
         {
             using (XmlReader xr = XmlReader.Create(stream))
             {
                 DataContractSerializer serializer = new DataContractSerializer(typeof(UserSettingV1));
-                UserSettingV1 setting = (UserSettingV1)serializer.ReadObject(xr);
+                UserSettingV1? setting = (UserSettingV1?)serializer.ReadObject(xr);
                 return setting;
             }
         }
 
         public void RestoreConfig(UserSetting setting)
         {
-            App?.RestoreConfig(setting.Config);
-            //WindowPlacement?.RestoreConfig(setting.Config);
-            WindowShape?.RestoreConfig(setting.Config);
-            Memento?.RestoreConfig(setting.Config);
-            SusieMemento?.RestoreConfig(setting.Config);
-            CommandMememto?.RestoreConfig(setting.Config);
-            DragActionMemento?.RestoreConfig(setting.Config);
+            if (setting.Config is not null)
+            {
+                App?.RestoreConfig(setting.Config);
+                //WindowPlacement?.RestoreConfig(setting.Config);
+                WindowShape?.RestoreConfig(setting.Config);
+                Memento?.RestoreConfig(setting.Config);
+                SusieMemento?.RestoreConfig(setting.Config);
+                CommandMememto?.RestoreConfig(setting.Config);
+                DragActionMemento?.RestoreConfig(setting.Config);
+            }
 
             setting.ContextMenu = this.Memento?.MainWindowModel?.ContextMenuSetting?.SourceTreeRaw?.CreateMenuNode();
             setting.SusiePlugins = this.SusieMemento?.CreateSusiePluginCollection() ?? new SusiePluginCollection();
@@ -97,17 +100,17 @@ namespace NeeView
             if (setting.Commands.TryGetValue("OpenExternalApp", out var openExternalAppCommand))
             {
                 var parameter = new OpenExternalAppCommandParameter();
-                parameter.Command = this.Memento.BookOperation.ExternalApplication.Command;
-                parameter.Parameter = this.Memento.BookOperation.ExternalApplication.Parameter;
-                parameter.MultiPagePolicy = this.Memento.BookOperation.ExternalApplication.MultiPageOption;
-                parameter.ArchivePolicy = this.Memento.BookOperation.ExternalApplication.ArchiveOption;
+                parameter.Command = this.Memento?.BookOperation?.ExternalApplication?.Command;
+                parameter.Parameter = this.Memento?.BookOperation?.ExternalApplication?.Parameter ?? "";
+                parameter.MultiPagePolicy = this.Memento?.BookOperation?.ExternalApplication?.MultiPageOption ?? MultiPagePolicy.Once;
+                parameter.ArchivePolicy = this.Memento?.BookOperation?.ExternalApplication?.ArchiveOption ?? ArchivePolicy.None;
                 openExternalAppCommand.Parameter = parameter;
             }
             if (setting.Commands.TryGetValue("CopyFile", out var copyFileCommand))
             {
                 var parameter = new CopyFileCommandParameter();
-                parameter.MultiPagePolicy = this.Memento.BookOperation.ClipboardUtility.MultiPageOption;
-                parameter.ArchivePolicy = this.Memento.BookOperation.ClipboardUtility.ArchiveOption;
+                parameter.MultiPagePolicy = this.Memento?.BookOperation?.ClipboardUtility?.MultiPageOption ?? MultiPagePolicy.Once;
+                parameter.ArchivePolicy = this.Memento?.BookOperation?.ClipboardUtility?.ArchiveOption ?? ArchivePolicy.None;
                 copyFileCommand.Parameter = parameter;
             }
         }

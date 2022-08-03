@@ -13,9 +13,9 @@ namespace NeeView
             this.ParameterSource = new CommandParameterSource(new FocusMainViewCommandParameter());
         }
 
-        public override void Execute(object sender, CommandContext e)
+        public override void Execute(object? sender, CommandContext e)
         {
-            MainWindowModel.Current.FocusMainView((FocusMainViewCommandParameter)e.Parameter, e.Options.HasFlag(CommandOption.ByMenu));
+            MainWindowModel.Current.FocusMainView(e.Parameter.Cast<FocusMainViewCommandParameter>(), e.Options.HasFlag(CommandOption.ByMenu));
         }
     }
 

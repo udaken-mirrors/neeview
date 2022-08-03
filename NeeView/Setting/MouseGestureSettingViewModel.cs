@@ -36,7 +36,7 @@ namespace NeeView.Setting
         /// <summary>
         /// NewGesture property.
         /// </summary>
-        private string _NewGesture;
+        private string _NewGesture = "";
         public string NewGesture
         {
             get { return _NewGesture; }
@@ -69,7 +69,7 @@ namespace NeeView.Setting
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void Gesture_MouseGestureProgressed(object sender, MouseGestureEventArgs e)
+        private void Gesture_MouseGestureProgressed(object? sender, MouseGestureEventArgs e)
         {
             NewGesture = e.Sequence.ToString();
             UpdateGestureToken(NewGesture);
@@ -83,8 +83,7 @@ namespace NeeView.Setting
         public void UpdateGestureToken(string gesture)
         {
             // Check Conflict
-            var token = new GestureToken();
-            token.Gesture = gesture;
+            var token = new GestureToken(gesture);
 
             if (!string.IsNullOrEmpty(token.Gesture))
             {
@@ -115,7 +114,7 @@ namespace NeeView.Setting
         /// <summary>
         /// Command: ClearCommand
         /// </summary>
-        private RelayCommand _clearCommand;
+        private RelayCommand? _clearCommand;
         public RelayCommand ClearCommand
         {
             get { return _clearCommand = _clearCommand ?? new RelayCommand(ClearCommand_Executed); }
@@ -123,7 +122,7 @@ namespace NeeView.Setting
 
         private void ClearCommand_Executed()
         {
-            _commandMap[_key].MouseGesture = null;
+            _commandMap[_key].MouseGesture = "";
             _mouseGesture.Gesture.Reset();
         }
     }

@@ -12,7 +12,7 @@ namespace NeeView
     public static class NvDebug
     {
         [Conditional("DEBUG")]
-        public static void __DumpThread(string s = null)
+        public static void __DumpThread(string? s = null)
         {
             Debug.WriteLine($"> ThreadId: {Thread.CurrentThread.ManagedThreadId}: {s}");
         }

@@ -80,7 +80,7 @@ namespace NeeView
 
         [WordNodeMember]
         [Obsolete, Alternative(nameof(Playlist), 39)] // ver.39
-        public object Pagemark
+        public object? Pagemark
         {
             get
             {
@@ -144,12 +144,12 @@ namespace NeeView
         }
 
         [WordNodeMember]
-        public string ShowInputDialog(string title, string text = null)
+        public string? ShowInputDialog(string title, string? text = null)
         {
             return AppDispatcher.Invoke(() => ShowInputDialogIneer(title, text));
         }
 
-        private string ShowInputDialogIneer(string title, string text)
+        private string? ShowInputDialogIneer(string title, string? text)
         {
             var component = new InputDialogComponent(text);
             var dialog = new MessageDialog(component, title);
@@ -163,7 +163,8 @@ namespace NeeView
         internal WordNode CreateWordNode(string name)
         {
             var node = WordNodeHelper.CreateClassWordNode(name, this.GetType());
-
+            if (node.Children is null) throw new InvalidOperationException();
+            
             node.Children.Add(new WordNode(nameof(Args)));
             node.Children.Add(new WordNode(nameof(Values)));
             node.Children.Add(Config.CreateWordNode(nameof(Config)));
@@ -187,7 +188,7 @@ namespace NeeView
         {
             private TextBox _textBox;
 
-            public InputDialogComponent(string text)
+            public InputDialogComponent(string? text)
             {
                 _textBox = new TextBox() { Text = text ?? "", Padding = new Thickness(5.0) };
                 _textBox.PreviewKeyDown += TextBox_PreviewKeyDown;
@@ -197,12 +198,12 @@ namespace NeeView
             {
                 if (e.Key == Key.Return)
                 {
-                    Decide?.Invoke(this, null);
+                    Decide?.Invoke(this, EventArgs.Empty);
                     e.Handled = true;
                 }
             }
 
-            public event EventHandler Decide;
+            public event EventHandler? Decide;
 
             public object Content => _textBox;
 

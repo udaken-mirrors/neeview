@@ -47,7 +47,7 @@ namespace NeeView
 
     public class DirectoryChangedEventArgs : EventArgs
     {
-        public DirectoryChangedEventArgs(DirectoryChangeType changeType, string fullPath, string oldFullpath)
+        public DirectoryChangedEventArgs(DirectoryChangeType changeType, string fullPath, string? oldFullpath)
         {
             if (changeType == DirectoryChangeType.All) throw new ArgumentOutOfRangeException(nameof(changeType));
 
@@ -73,19 +73,19 @@ namespace NeeView
 
         public DirectoryChangeType ChangeType { get; set; }
         public string FullPath { get; set; }
-        public string OldFullPath { get; set; }
+        public string? OldFullPath { get; set; }
     }
 
     public class SettingChangedEventArgs : EventArgs
     {
-        public SettingChangedEventArgs(uint action, string message)
+        public SettingChangedEventArgs(uint action, string? message)
         {
             Action = action;
             Message = message;
         }
 
         public uint Action { get; private set; }
-        public string Message { get; private set; }
+        public string? Message { get; private set; }
     }
 
     public class WindowMessage
@@ -232,18 +232,18 @@ namespace NeeView
         public static WindowMessage Current { get; }
 
 
-        private Window _window;
+        private Window? _window;
 
         public WindowMessage()
         {
         }
 
-        public event EventHandler<DriveChangedEventArgs> DriveChanged;
-        public event EventHandler<MediaChangedEventArgs> MediaChanged;
-        public event EventHandler<DirectoryChangedEventArgs> DirectoryChanged;
-        public event EventHandler<SettingChangedEventArgs> SettingChanged;
-        public event EventHandler EnterSizeMove;
-        public event EventHandler ExitSizeMove;
+        public event EventHandler<DriveChangedEventArgs>? DriveChanged;
+        public event EventHandler<MediaChangedEventArgs>? MediaChanged;
+        public event EventHandler<DirectoryChangedEventArgs>? DirectoryChanged;
+        public event EventHandler<SettingChangedEventArgs>? SettingChanged;
+        public event EventHandler? EnterSizeMove;
+        public event EventHandler? ExitSizeMove;
 
         // ウィンドウプロシージャ初期化
         public void Initialize(Window window)
@@ -251,6 +251,8 @@ namespace NeeView
             if (_window != null) throw new InvalidOperationException();
 
             var hsrc = HwndSource.FromVisual(window) as HwndSource;
+            if (hsrc is null) throw new InvalidOperationException("Cannot get window handle");
+
             _window = window;
 
             var notifyEntry = new NativeMethods.SHChangeNotifyEntry() { pIdl = IntPtr.Zero, Recursively = true };
@@ -274,10 +276,10 @@ namespace NeeView
                 switch (msg)
                 {
                     case NativeMethods.WM_ENTERSIZEMOVE:
-                        EnterSizeMove?.Invoke(this, null);
+                        EnterSizeMove?.Invoke(this, EventArgs.Empty);
                         break;
                     case NativeMethods.WM_EXITSIZEMOVE:
-                        ExitSizeMove?.Invoke(this, null);
+                        ExitSizeMove?.Invoke(this, EventArgs.Empty);
                         break;
                     case NativeMethods.WM_DEVICECHANGE:
                         OnDeviceChange(wParam, lParam);
@@ -306,7 +308,7 @@ namespace NeeView
         private void OnSettingChange(IntPtr wParam, IntPtr lParam)
         {
             var action = (uint)wParam;
-            string str = Marshal.PtrToStringAuto(lParam);
+            string? str = Marshal.PtrToStringAuto(lParam);
             ////Trace.WriteLine($"WM_SETTINGCHANGE: {action:X4}, {str}");
 
             SettingChanged?.Invoke(this, new SettingChangedEventArgs(action, str));
@@ -332,8 +334,10 @@ namespace NeeView
                 return;
             }
 
-            var volume = (NativeMethods.DEV_BROADCAST_VOLUME)Marshal.PtrToStructure(lParam, typeof(NativeMethods.DEV_BROADCAST_VOLUME));
-            var driveName = UnitMaskToDriveName(volume.dbcv_unitmask);
+            var volume = (NativeMethods.DEV_BROADCAST_VOLUME?)Marshal.PtrToStructure(lParam, typeof(NativeMethods.DEV_BROADCAST_VOLUME));
+            if (volume is null) return;
+
+            var driveName = UnitMaskToDriveName(volume.Value.dbcv_unitmask);
             if (driveName == null)
             {
                 return;
@@ -352,7 +356,7 @@ namespace NeeView
             }
         }
 
-        private string UnitMaskToDriveName(uint unitmask)
+        private string? UnitMaskToDriveName(uint unitmask)
         {
             for (int i = 0; i < 32; ++i)
             {
@@ -368,7 +372,7 @@ namespace NeeView
         // TODO: 重い処理が多いので、集積かBeginInvokeかする。
         private void OnSHNotify(IntPtr wParam, IntPtr lParam)
         {
-            var shNotify = (NativeMethods.SHNOTIFYSTRUCT)Marshal.PtrToStructure(wParam, typeof(NativeMethods.SHNOTIFYSTRUCT));
+            var shNotify = (NativeMethods.SHNOTIFYSTRUCT)Marshal.PtrToStructure(wParam, typeof(NativeMethods.SHNOTIFYSTRUCT))!;
 
             var shcne = (NativeMethods.SHCNE)lParam;
 
@@ -379,13 +383,19 @@ namespace NeeView
                 case NativeMethods.SHCNE.SHCNE_MEDIAINSERTED:
                     {
                         var path = PIDLToString(shNotify.dwItem1);
-                        MediaChanged?.Invoke(this, new MediaChangedEventArgs(path, true));
+                        if (path is not null)
+                        {
+                            MediaChanged?.Invoke(this, new MediaChangedEventArgs(path, true));
+                        }
                     }
                     break;
                 case NativeMethods.SHCNE.SHCNE_MEDIAREMOVED:
                     {
                         var path = PIDLToString(shNotify.dwItem1);
-                        MediaChanged?.Invoke(this, new MediaChangedEventArgs(path, false));
+                        if (path is not null)
+                        {
+                            MediaChanged?.Invoke(this, new MediaChangedEventArgs(path, false));
+                        }
                     }
                     break;
 
@@ -413,7 +423,7 @@ namespace NeeView
                     {
                         var path1 = PIDLToString(shNotify.dwItem1);
                         var path2 = PIDLToString(shNotify.dwItem2);
-                        if (!string.IsNullOrEmpty(path1) && path1 != path2)
+                        if (!string.IsNullOrEmpty(path1) && !string.IsNullOrEmpty(path2) && path1 != path2)
                         {
                             // path1 is new, path2 is old, maybe.
                             DirectoryChanged?.Invoke(this, new DirectoryChangedEventArgs(DirectoryChangeType.Renamed, path2, path1));
@@ -426,7 +436,7 @@ namespace NeeView
             }
         }
 
-        private string PIDLToString(IntPtr dwItem)
+        private string? PIDLToString(IntPtr dwItem)
         {
             if (dwItem == IntPtr.Zero)
             {

@@ -101,7 +101,7 @@ namespace NeeView.Windows.Property
 
 
         //
-        private void Reset(object sender, RoutedEventArgs e)
+        private void Reset(object? sender, RoutedEventArgs e)
         {
             foreach (var item in Document.Elements.OfType<PropertyMemberElement>())
             {

@@ -72,6 +72,7 @@ namespace NeeView
         public async Task<FolderCollection> CreateSearchFolderCollectionAsync(QueryPath path, bool isActive, CancellationToken token)
         {
             if (SearchEngine == null) throw new InvalidOperationException("SearchEngine not initialized.");
+            if (path.Search is null) throw new InvalidOperationException("path.Search must not be null.");
 
             try
             {

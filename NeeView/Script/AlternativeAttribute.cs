@@ -8,11 +8,13 @@ namespace NeeView
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct | AttributeTargets.Enum | AttributeTargets.Constructor | AttributeTargets.Method | AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Event | AttributeTargets.Interface | AttributeTargets.Delegate, Inherited = false)]
     public class AlternativeAttribute : Attribute
     {
+#if false
         public AlternativeAttribute()
         {
         }
+#endif
 
-        public AlternativeAttribute(string alternative, int version)
+        public AlternativeAttribute(string? alternative, int version)
         {
             Alternative = alternative;
             Version = version;
@@ -21,7 +23,7 @@ namespace NeeView
         /// <summary>
         /// 代替案
         /// </summary>
-        public string Alternative { get; }
+        public string? Alternative { get; }
 
         /// <summary>
         /// 完全な形でAlternativeが記述されている。

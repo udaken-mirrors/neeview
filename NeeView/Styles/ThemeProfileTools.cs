@@ -27,7 +27,7 @@ namespace NeeView
             }
         }
 
-        public static ThemeProfile Load(Stream stream)
+        private static ThemeProfile? Load(Stream stream)
         {
             using (var ms = new MemoryStream())
             {
@@ -43,14 +43,18 @@ namespace NeeView
             Uri uri = new Uri(contentPath, UriKind.Relative);
             var info = Application.GetRemoteStream(uri);
             if (info is null) throw new FileNotFoundException($"No such theme: {contentPath}");
-            return Load(info.Stream);
+            var profile = Load(info.Stream);
+            if (profile is null) throw new FormatException($"Wrong theme profile format: {contentPath}");
+            return profile;
         }
 
         public static ThemeProfile LoadFromFile(string path)
         {
-            using (var fs = File.OpenRead(path))
+            using (var stream = File.OpenRead(path))
             {
-                return Load(fs);
+                var profile = Load(stream);
+                if (profile is null) throw new FormatException($"Wrong theme profile format: {path}");
+                return profile;
             }
         }
 

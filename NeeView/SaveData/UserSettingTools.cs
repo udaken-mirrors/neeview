@@ -47,13 +47,13 @@ namespace NeeView
 
 
 
-        public static UserSetting Load(string path)
+        public static UserSetting? Load(string path)
         {
             var json = File.ReadAllBytes(path);
             return Load(new ReadOnlySpan<byte>(json));
         }
 
-        public static UserSetting Load(Stream stream)
+        public static UserSetting? Load(Stream stream)
         {
             using (var ms = new MemoryStream())
             {
@@ -62,9 +62,9 @@ namespace NeeView
             }
         }
 
-        public static UserSetting Load(ReadOnlySpan<byte> json)
+        public static UserSetting? Load(ReadOnlySpan<byte> json)
         {
-            return JsonSerializer.Deserialize<UserSetting>(json, GetSerializerOptions()).Validate();
+            return JsonSerializer.Deserialize<UserSetting>(json, GetSerializerOptions())?.Validate();
         }
 
         public static JsonSerializerOptions GetSerializerOptions()
@@ -87,7 +87,7 @@ namespace NeeView
             return options;
         }
 
-        public static void Restore(UserSetting setting, ObjectMergeOption options = null)
+        public static void Restore(UserSetting setting, ObjectMergeOption? options = null)
         {
             if (setting == null) return;
             if (setting.Config == null) return;
@@ -96,7 +96,7 @@ namespace NeeView
             ObjectMerge.Merge(Config.Current, setting.Config, options);
 
             // レイアウト反映
-            CustomLayoutPanelManager.Current.Restore();
+            CustomLayoutPanelManager.RestoreMaybe();
 
             // コマンド設定反映
             CommandTable.Current.RestoreCommandCollection(setting.Commands);

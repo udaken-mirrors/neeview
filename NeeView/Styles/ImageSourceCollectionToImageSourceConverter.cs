@@ -12,7 +12,7 @@ namespace NeeView
     {
         public double Width { get; set; } = 16.0;
 
-        public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
+        public object? Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
         {
             if (values.Length < 2) throw new InvalidOperationException();
 

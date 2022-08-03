@@ -9,12 +9,12 @@ namespace NeeView
             return "\".ex1;.ex2;.ex3\"";
         }
 
-        public override object Read(PropertyMapSource source, Type typeToConvert, PropertyMapOptions options)
+        public override object? Read(PropertyMapSource source, Type typeToConvert, PropertyMapOptions options)
         {
-            return source.GetValue().ToString();
+            return source.GetValue()?.ToString();
         }
 
-        public override void Write(PropertyMapSource source, object value, PropertyMapOptions options)
+        public override void Write(PropertyMapSource source, object? value, PropertyMapOptions options)
         {
             if (value is string s)
             {

@@ -19,7 +19,7 @@ namespace NeeView
         private bool _isNotifyPageLoop;
         private bool _isConfirmRecursive;
         private double _contentSpace = -1.0;
-        private string _terminalSound;
+        private string? _terminalSound;
         private bool _isAutoRecursive = false;
         private bool _isSortFileFirst;
         private double _bookPageSize = 300.0;
@@ -88,7 +88,7 @@ namespace NeeView
         }
 
         [PropertyPath(Filter = "Wave|*.wav")]
-        public string TerminalSound
+        public string? TerminalSound
         {
             get { return _terminalSound; }
             set { SetProperty(ref  _terminalSound , string.IsNullOrWhiteSpace(value) ? null : value); }

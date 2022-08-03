@@ -14,7 +14,7 @@ namespace NeeView
         private static readonly SemaphoreSlim _semaphore = new SemaphoreSlim(1, 1);
 
 
-        public static string CreateTempPlaylist(IEnumerable<string> files)
+        public static string? CreateTempPlaylist(IEnumerable<string> files)
         {
             if (files is null || !files.Any())
             {
@@ -47,6 +47,7 @@ namespace NeeView
                 var json = JsonSerializer.SerializeToUtf8Bytes(playlist, UserSettingTools.GetSerializerOptions());
 
                 var directory = Path.GetDirectoryName(path);
+                if (directory is null) throw new IOException();
                 if (!Directory.Exists(directory))
                 {
                     Directory.CreateDirectory(directory);
@@ -79,23 +80,26 @@ namespace NeeView
             var fileHeader = JsonSerializer.Deserialize<PlaylistFileHeader>(json, UserSettingTools.GetSerializerOptions());
 
 #pragma warning disable CS0612 // 型またはメンバーが旧型式です
-            if (fileHeader.Format.Name == PlaylistSourceV1.FormatVersion)
+            if (fileHeader?.Format != null && fileHeader.Format.Name == PlaylistSourceV1.FormatVersion)
             {
                 var playlistV1 = JsonSerializer.Deserialize<PlaylistSourceV1>(json, UserSettingTools.GetSerializerOptions());
+                if (playlistV1 is null) throw new FormatException();
                 return playlistV1.ToPlaylist();
             }
 #pragma warning restore CS0612 // 型またはメンバーが旧型式です
 
             else
             {
-                return JsonSerializer.Deserialize<PlaylistSource>(json, UserSettingTools.GetSerializerOptions());
+                var playlistSource = JsonSerializer.Deserialize<PlaylistSource>(json, UserSettingTools.GetSerializerOptions());
+                if (playlistSource is null) throw new FormatException();
+                return playlistSource;
             }
         }
 
 
         private class PlaylistFileHeader
         {
-            public FormatVersion Format { get; set; }
+            public FormatVersion? Format { get; set; }
         }
     }
 

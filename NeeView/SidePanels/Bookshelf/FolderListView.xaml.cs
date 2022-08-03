@@ -33,14 +33,15 @@ namespace NeeView
         private FolderListViewModel _vm;
         private int _requestSearchBoxFocusValue;
 
+        //public FolderListView()
+        //{
+        //    InitializeComponent();
+        //}
 
-        public FolderListView()
+        public FolderListView(BookshelfFolderList model)
         {
             InitializeComponent();
-        }
 
-        public FolderListView(BookshelfFolderList model) : this()
-        {
             this.FolderTree.Model = new BookshelfFolderTreeModel(model);
 
             _vm = new FolderListViewModel(model);
@@ -51,7 +52,7 @@ namespace NeeView
         }
 
 
-        public event EventHandler<FocusChangedEventArgs> SearchBoxFocusChanged;
+        public event EventHandler<FocusChangedEventArgs>? SearchBoxFocusChanged;
 
 
         protected override void OnDpiChanged(DpiScale oldDpi, DpiScale newDpi)
@@ -65,7 +66,7 @@ namespace NeeView
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void FolderList_FolderTreeFocus(object sender, System.IO.ErrorEventArgs e)
+        private void FolderList_FolderTreeFocus(object? sender, EventArgs e)
         {
             if (!_vm.Model.FolderListConfig.IsFolderTreeVisible) return;
 
@@ -77,7 +78,7 @@ namespace NeeView
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void FolderList_SearchBoxFocus(object sender, EventArgs e)
+        private void FolderList_SearchBoxFocus(object? sender, EventArgs e)
         {
             if (!_vm.Model.IsFolderSearchBoxVisible) return;
 
@@ -118,7 +119,7 @@ namespace NeeView
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void FolderPrevButton_ContextMenuOpening(object sender, ContextMenuEventArgs e)
+        private void FolderPrevButton_ContextMenuOpening(object? sender, ContextMenuEventArgs e)
         {
             var menu = (sender as FrameworkElement)?.ContextMenu;
             if (menu == null) return;
@@ -130,14 +131,14 @@ namespace NeeView
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void FolderNextButton_ContextMenuOpening(object sender, ContextMenuEventArgs e)
+        private void FolderNextButton_ContextMenuOpening(object? sender, ContextMenuEventArgs e)
         {
             var menu = (sender as FrameworkElement)?.ContextMenu;
             if (menu == null) return;
             menu.ItemsSource = _vm.GetHistory(+1, 10);
         }
 
-        private void FolderListView_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+        private void FolderListView_IsVisibleChanged(object? sender, DependencyPropertyChangedEventArgs e)
         {
         }
 
@@ -146,7 +147,7 @@ namespace NeeView
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void Control_KeyDown_IgnoreSingleKeyGesture(object sender, KeyEventArgs e)
+        private void Control_KeyDown_IgnoreSingleKeyGesture(object? sender, KeyEventArgs e)
         {
             KeyExGesture.AllowSingleKey = false;
         }
@@ -156,7 +157,7 @@ namespace NeeView
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void SearchBox_KeyDown(object sender, KeyEventArgs e)
+        private void SearchBox_KeyDown(object? sender, KeyEventArgs e)
         {
             KeyExGesture.AllowSingleKey = false;
 
@@ -171,7 +172,7 @@ namespace NeeView
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void SearchBox_IsKeyboardFocusWithinChanged(object sender, DependencyPropertyChangedEventArgs e)
+        private void SearchBox_IsKeyboardFocusWithinChanged(object? sender, DependencyPropertyChangedEventArgs e)
         {
             //Debug.WriteLine($"SBF.K: {this.SearchBox.IsKeyboardFocusWithin}");
 
@@ -185,7 +186,7 @@ namespace NeeView
             }
         }
 
-        private void Grid_SizeChanged(object sender, SizeChangedEventArgs e)
+        private void Grid_SizeChanged(object? sender, SizeChangedEventArgs e)
         {
             if (e.WidthChanged)
             {
@@ -203,19 +204,19 @@ namespace NeeView
         private bool _isButtonDown;
         private Point _buttonDownPos;
 
-        private void PlaceIcon_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        private void PlaceIcon_MouseLeftButtonDown(object? sender, MouseButtonEventArgs e)
         {
             var element = sender as UIElement;
             _buttonDownPos = e.GetPosition(element);
             _isButtonDown = true;
         }
 
-        private void PlaceIcon_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        private void PlaceIcon_MouseLeftButtonUp(object? sender, MouseButtonEventArgs e)
         {
             _isButtonDown = false;
         }
 
-        private void PlaceIcon_MouseMove(object sender, MouseEventArgs e)
+        private void PlaceIcon_MouseMove(object? sender, MouseEventArgs e)
         {
             if (!_isButtonDown)
             {
@@ -253,14 +254,14 @@ namespace NeeView
             }
         }
 
-        private void PlaceIcon_QueryContinueDrag(object sender, QueryContinueDragEventArgs e)
+        private void PlaceIcon_QueryContinueDrag(object? sender, QueryContinueDragEventArgs e)
         {
             _goast.QueryContinueDrag(sender, e);
         }
 
         #endregion
 
-        private void SearchBox_TextChanged(object sender, TextChangedEventArgs e)
+        private void SearchBox_TextChanged(object? sender, TextChangedEventArgs e)
         {
             if (e.OriginalSource is TextBox textBox)
             {
@@ -274,7 +275,7 @@ namespace NeeView
         }
 
         // TODO: 共通化
-        private void Root_KeyDown(object sender, KeyEventArgs e)
+        private void Root_KeyDown(object? sender, KeyEventArgs e)
         {
             // このパネルで使用するキーのイベントを止める
             if (Keyboard.Modifiers == ModifierKeys.None)

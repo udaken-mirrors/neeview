@@ -12,14 +12,14 @@ namespace NeeView
     {
         private LoupeTransform _loupe;
         private Point _loupeBasePosition;
-        private TouchContext _touch;
-        private TouchDragContext _origin;
+        private TouchContext? _touch;
+        private TouchDragContext? _origin;
         private double _originScale;
 
 
         public TouchInputLoupe(TouchInputContext context) : base(context)
         {
-            _loupe = context.LoupeTransform;
+            _loupe = context.LoupeTransform ?? throw new InvalidOperationException("context.LoupeTransform must not be null");
         }
 
 
@@ -28,12 +28,12 @@ namespace NeeView
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="parameter">TouchContext</param>
-        public override void OnOpened(FrameworkElement sender, object parameter)
+        public override void OnOpened(FrameworkElement sender, object? parameter)
         {
             sender.Focus();
             sender.Cursor = Cursors.None;
 
-            _touch = (TouchContext)parameter;
+            _touch = parameter as TouchContext ?? throw new InvalidOperationException("parameter must be TouchContext");
 
             var center = new Point(sender.ActualWidth * 0.5, sender.ActualHeight * 0.5);
             Vector v = _touch.StartPoint - center;
@@ -67,6 +67,7 @@ namespace NeeView
         public override void OnStylusUp(object sender, StylusEventArgs e)
         {
             if (e.Handled) return;
+            if (_touch is null) return;
 
             if (!_context.TouchMap.ContainsKey(_touch.StylusDevice))
             {
@@ -77,6 +78,8 @@ namespace NeeView
         public override void OnStylusMove(object sender, StylusEventArgs e)
         {
             if (e.Handled) return;
+            if (_touch is null) return;
+            if (_origin is null) return;
 
             if (e.StylusDevice == _touch.StylusDevice)
             {

@@ -21,7 +21,7 @@ namespace NeeView.Windows
         /// <summary>
         /// ドラッグが端にある時に自動スクロールさせる.
         /// </summary>
-        public static void AutoScroll(object sender, DragEventArgs e)
+        public static void AutoScroll(object? sender, DragEventArgs e)
         {
             // NOTE: エクスプローラーからのドラッグにはScrollフラグがついていないので判定しない
             ////if ((e.AllowedEffects & DragDropEffects.Scroll) == 0)

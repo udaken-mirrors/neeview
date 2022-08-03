@@ -14,11 +14,11 @@ namespace NeeView
         /// @で始まる文字列はリソースキーとしてその値を返す。
         /// そうでない場合はそのまま返す。
         /// </summary>
-        public static string GetString(string key)
+        public static string GetString(string? key)
         {
             if (string.IsNullOrWhiteSpace(key) || key[0] != '@')
             {
-                return key;
+                return key ?? "";
             }
             else
             {
@@ -54,7 +54,7 @@ namespace NeeView
         /// </summary>
         /// <param name="key">@で始まるリソースキー</param>
         /// <returns>存在しない場合はnull</returns>
-        public static string GetResourceString(string key)
+        public static string? GetResourceString(string key)
         {
             if (key is null || key[0] != '@') return null;
             return Properties.Resources.ResourceManager.GetString(key.Substring(1), Properties.Resources.Culture);
@@ -66,7 +66,7 @@ namespace NeeView
         /// <param name="key">@で始まるリソースキー</param>
         /// <param name="isRecursive">結果に含まれるキーを変換する</param>
         /// <returns>存在しない場合はnull</returns>
-        public static string GetResourceString(string key, bool isRecursive)
+        public static string? GetResourceString(string key, bool isRecursive)
         {
             var text = GetResourceString(key);
 

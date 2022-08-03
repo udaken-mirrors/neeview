@@ -69,25 +69,26 @@ namespace NeeView.Setting
         }
 
 
-        private void Add_Exec(object sender, ExecutedRoutedEventArgs e)
+        private void Add_Exec(object? sender, ExecutedRoutedEventArgs e)
         {
             var element = this.SourceComboBox.SelectedItem as MenuTree;
             if (element == null) return;
 
             var node = this.ContextMenuTreeView.SelectedItem as MenuTree;
+            if (node == null) return;
 
             _vm.AddNode(MenuTree.Create(element), node);
         }
 
         //
-        private void SelectedItem_CanExec(object sender, CanExecuteRoutedEventArgs e)
+        private void SelectedItem_CanExec(object? sender, CanExecuteRoutedEventArgs e)
         {
             var node = this.ContextMenuTreeView.SelectedItem as MenuTree;
             e.CanExecute = node != null && node.MenuElementType != MenuElementType.None;
         }
 
         //
-        private void Remove_Exec(object sender, ExecutedRoutedEventArgs e)
+        private void Remove_Exec(object? sender, ExecutedRoutedEventArgs e)
         {
             var node = this.ContextMenuTreeView.SelectedItem as MenuTree;
             if (node == null) return;
@@ -96,19 +97,19 @@ namespace NeeView.Setting
         }
 
         //
-        private void Rename_CanExec(object sender, CanExecuteRoutedEventArgs e)
+        private void Rename_CanExec(object? sender, CanExecuteRoutedEventArgs e)
         {
             var node = this.ContextMenuTreeView.SelectedItem as MenuTree;
             e.CanExecute = node != null && node.MenuElementType != MenuElementType.None && node.MenuElementType != MenuElementType.Separator;
         }
 
         //
-        private void Rename_Exec(object sender, ExecutedRoutedEventArgs e)
+        private void Rename_Exec(object? sender, ExecutedRoutedEventArgs e)
         {
             var node = this.ContextMenuTreeView.SelectedItem as MenuTree;
             if (node == null) return;
 
-            var param = new RenameWindowParam() { Text = node.Label, DefaultText = node.DefaultLabel };
+            var param = new RenameWindowParam(node.Label, node.DefaultLabel);
 
             var dialog = new RenameWindow(param);
             dialog.Owner = Window.GetWindow(this);
@@ -121,7 +122,7 @@ namespace NeeView.Setting
         }
 
         //
-        private void MoveUp_Exec(object sender, ExecutedRoutedEventArgs e)
+        private void MoveUp_Exec(object? sender, ExecutedRoutedEventArgs e)
         {
             var node = this.ContextMenuTreeView.SelectedItem as MenuTree;
             if (node == null) return;
@@ -130,7 +131,7 @@ namespace NeeView.Setting
         }
 
         //
-        private void MoveDown_Exec(object sender, ExecutedRoutedEventArgs e)
+        private void MoveDown_Exec(object? sender, ExecutedRoutedEventArgs e)
         {
             var node = this.ContextMenuTreeView.SelectedItem as MenuTree;
             if (node == null) return;
@@ -143,7 +144,7 @@ namespace NeeView.Setting
             _vm.Decide();
         }
 
-        private void ResetButton_Click(object sender, RoutedEventArgs e)
+        private void ResetButton_Click(object? sender, RoutedEventArgs e)
         {
             _vm.Reset();
         }

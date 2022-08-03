@@ -25,9 +25,9 @@ namespace NeeView.Setting
     {
         #region INotifyPropertyChanged Support
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
-        protected bool SetProperty<T>(ref T storage, T value, [System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
+        protected bool SetProperty<T>(ref T storage, T value, [System.Runtime.CompilerServices.CallerMemberName] string? propertyName = null)
         {
             if (object.Equals(storage, value)) return false;
             storage = value;
@@ -35,7 +35,7 @@ namespace NeeView.Setting
             return true;
         }
 
-        protected void RaisePropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string name = null)
+        protected void RaisePropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string? name = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
@@ -59,7 +59,7 @@ namespace NeeView.Setting
         }
 
 
-        public event EventHandler<CollectionChangeEventArgs> CollectionChanged;
+        public event EventHandler<CollectionChangeEventArgs>? CollectionChanged;
 
 
         #region DependencyProperties
@@ -140,29 +140,29 @@ namespace NeeView.Setting
         #endregion DependencyProperties
 
 
-        public string AddDialogTitle { get; set; }
-        public string AddDialogHeader { get; set; }
+        public string? AddDialogTitle { get; set; }
+        public string? AddDialogHeader { get; set; }
 
 
-        public List<string> Items => Collection?.Items;
+        public List<string>? Items => Collection?.Items;
 
         public bool IsResetEnabled => IsAlwaysResetEnabled || (DefaultCollection != null && !DefaultCollection.Equals(Collection));
 
         public bool IsResetVisible => IsAlwaysResetEnabled || DefaultCollection != null;
 
 
-        private void SettingItemCollectionControl_CollectionChanged(object sender, CollectionChangeEventArgs e)
+        private void SettingItemCollectionControl_CollectionChanged(object? sender, CollectionChangeEventArgs e)
         {
             RaisePropertyChanged(nameof(IsResetEnabled));
         }
 
-        private void AddButton_Click(object sender, RoutedEventArgs e)
+        private void AddButton_Click(object? sender, RoutedEventArgs e)
         {
             if (Collection == null) return;
 
             var dialog = new AddParameterDialog();
             dialog.Title = AddDialogTitle ?? Properties.Resources.AddParameterDialog_Tile;
-            dialog.Header = AddDialogHeader;
+            dialog.Header = AddDialogHeader ?? "";
             dialog.Owner = Window.GetWindow(this);
             dialog.WindowStartupLocation = WindowStartupLocation.CenterOwner;
             var result = dialog.ShowDialog();
@@ -178,7 +178,7 @@ namespace NeeView.Setting
             }
         }
 
-        private void RemoveButton_Click(object sender, RoutedEventArgs e)
+        private void RemoveButton_Click(object? sender, RoutedEventArgs e)
         {
             if (Collection == null) return;
 
@@ -203,7 +203,7 @@ namespace NeeView.Setting
             CollectionChanged?.Invoke(this, new CollectionChangeEventArgs(CollectionChangeAction.Remove, item));
         }
 
-        private void ResetButton_Click(object sender, RoutedEventArgs e)
+        private void ResetButton_Click(object? sender, RoutedEventArgs e)
         {
             var defaultCollection = DefaultCollection ?? Description?.GetDefaultCollection();
 
@@ -216,7 +216,7 @@ namespace NeeView.Setting
             CollectionChanged?.Invoke(this, new CollectionChangeEventArgs(CollectionChangeAction.Refresh, null));
         }
 
-        private void CollectionListBox_PreviewKeyDown(object sender, KeyEventArgs e)
+        private void CollectionListBox_PreviewKeyDown(object? sender, KeyEventArgs e)
         {
             if (e.Key == Key.Delete)
             {

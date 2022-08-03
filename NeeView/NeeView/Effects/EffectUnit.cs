@@ -14,9 +14,9 @@ namespace NeeView.Effects
     [DataContract]
     public class EffectUnit : BindableBase
     {
-        public virtual Effect GetEffect() => null;
+        public virtual Effect? GetEffect() => null;
 
-        protected void RaiseEffectPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string name = null)
+        protected void RaiseEffectPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string? name = null)
         {
             RaisePropertyChanged(name);
             RaisePropertyChanged(nameof(Effect));

@@ -21,7 +21,7 @@ namespace NeeView.Collections
         private int _current;
 
 
-        public event EventHandler Changed;
+        public event EventHandler? Changed;
 
 
         public void Add(T path)
@@ -32,7 +32,7 @@ namespace NeeView.Collections
             }
             _history.Add(path);
             _current = _history.Count;
-            Changed?.Invoke(this, null);
+            Changed?.Invoke(this, EventArgs.Empty);
         }
 
         public void TrimEnd(T element)
@@ -50,10 +50,10 @@ namespace NeeView.Collections
         public void Move(int delta)
         {
             _current = MathUtility.Clamp(_current + delta, 0, _history.Count);
-            Changed?.Invoke(this, null);
+            Changed?.Invoke(this, EventArgs.Empty);
         }
 
-        public T GetCurrent()
+        public T? GetCurrent()
         {
             var index = _current - 1;
             return (index >= 0) ? _history[index] : default(T);
@@ -64,7 +64,7 @@ namespace NeeView.Collections
             return _current - 2 >= 0;
         }
 
-        public T GetPrevious()
+        public T? GetPrevious()
         {
             var index = _current - 2;
             return (index >= 0) ? _history[index] : default(T);
@@ -75,7 +75,7 @@ namespace NeeView.Collections
             return _current < _history.Count;
         }
 
-        public T GetNext()
+        public T? GetNext()
         {
             return (_current < _history.Count) ? _history[_current] : default(T);
         }
@@ -91,7 +91,7 @@ namespace NeeView.Collections
         public void SetCurrent(int index)
         {
             _current = MathUtility.Clamp(index, 0, _history.Count);
-            Changed?.Invoke(this, null);
+            Changed?.Invoke(this, EventArgs.Empty);
         }
 
         //

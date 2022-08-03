@@ -5,7 +5,7 @@
     /// </summary>
     public class BookmarkFolderTreeModel : FolderTreeModel
     {
-        public static BookmarkFolderTreeModel Current { get; private set; }
+        public static BookmarkFolderTreeModel? Current { get; private set; }
 
         public BookmarkFolderTreeModel(FolderList folderList) : base(folderList, FolderTreeCategory.BookmarkFolder)
         {

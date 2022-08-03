@@ -13,7 +13,7 @@ namespace NeeView
         public static PageTitle Current { get; }
 
 
-        private string _defaultPageTitle = null;
+        private string _defaultPageTitle = "";
         private string _title = "";
 
         private BookHub _bookHub;
@@ -64,7 +64,7 @@ namespace NeeView
         }
 
 
-        private void TitleString_TitleChanged(object sender, PropertyChangedEventArgs e)
+        private void TitleString_TitleChanged(object? sender, PropertyChangedEventArgs e)
         {
             UpdateTitle();
         }

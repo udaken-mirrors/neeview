@@ -23,5 +23,12 @@ namespace NeeView
                 input.CopyTo(output);
             }
         }
+
+        public static T GetElementResource<T>(FrameworkElement element, string resourceKey)
+            where T : class
+        {
+            return element.Resources[resourceKey] as T
+                ?? throw new InvalidOperationException($"Cannot found resource: {resourceKey}, type={typeof(T).Name}");
+        }
     }
 }

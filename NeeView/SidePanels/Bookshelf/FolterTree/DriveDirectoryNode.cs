@@ -25,7 +25,7 @@ namespace NeeView
 
         public string DriveName => Name + '\\';
 
-        private string _dispName;
+        private string _dispName = "";
         public override string DispName
         {
             get { return _dispName; }
@@ -33,7 +33,8 @@ namespace NeeView
         }
 
 
-        public IImageSourceCollection _icon;
+        public IImageSourceCollection? _icon;
+
         public override IImageSourceCollection Icon
         {
             get

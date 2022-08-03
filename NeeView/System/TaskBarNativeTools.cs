@@ -73,7 +73,7 @@ namespace NeeView
             internal static extern IntPtr SHAppBarMessage(uint dwMessage, [In] ref APPBARDATA pData);
 
             [DllImport("user32", SetLastError = true)]
-            internal static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
+            internal static extern IntPtr FindWindow(string lpClassName, string? lpWindowName);
         }
 
 

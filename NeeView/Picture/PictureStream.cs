@@ -17,10 +17,10 @@ namespace NeeView
     public sealed class NamedStream : IDisposable
     {
         public Stream Stream { get; set; }
-        public string Name { get; set; }
-        public byte[] RawData { get; set; }
+        public string? Name { get; set; }
+        public byte[]? RawData { get; set; }
 
-        public NamedStream(Stream stream, string name, byte[] rawData)
+        public NamedStream(Stream stream, string? name, byte[]? rawData)
         {
             this.Stream = stream;
             this.Name = name;
@@ -43,7 +43,7 @@ namespace NeeView
         /// </summary>
         /// <param name="entry"></param>
         /// <returns></returns>
-        NamedStream Create(ArchiveEntry entry);
+        NamedStream? Create(ArchiveEntry entry);
     }
 
     /// <summary>
@@ -51,20 +51,10 @@ namespace NeeView
     /// </summary>
     public class PictureStream : BindableBase, IPictureStream
     {
-        #region Fields
-
-        //
         private DefaultPictureStream _default = new DefaultPictureStream();
-
-        //
         private SusiePictureStream _susie = new SusiePictureStream();
+        private List<IPictureStream> _orderList = new List<IPictureStream>();
 
-        //
-        private List<IPictureStream> _orderList;
-
-        #endregion
-
-        #region Constructors
 
         // コンストラクタ
         public PictureStream()
@@ -77,9 +67,6 @@ namespace NeeView
             UpdateOrderList();
         }
 
-        #endregion
-
-        #region Methods
 
         // 適用する画像ストリームの順番を更新
         private void UpdateOrderList()
@@ -101,7 +88,7 @@ namespace NeeView
         // 画像ストリームを取得
         public NamedStream Create(ArchiveEntry entry)
         {
-            Exception exception = null;
+            Exception? exception = null;
 
             foreach (var pictureStream in _orderList)
             {
@@ -123,8 +110,6 @@ namespace NeeView
 
             throw exception ?? new IOException(Properties.Resources.ImageLoadFailedException_Message);
         }
-
-        #endregion
     }
 
 }

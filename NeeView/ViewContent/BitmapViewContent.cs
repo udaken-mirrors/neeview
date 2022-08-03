@@ -17,16 +17,16 @@ namespace NeeView
     /// </summary>
     public class BitmapViewContent : ViewContent
     {
-        private Rectangle _scaleRectangle;
-        private Rectangle _pixeledRectangle;
-        private ImageSource _viewImage;
+        private Rectangle? _scaleRectangle;
+        private Rectangle? _pixeledRectangle;
+        private ImageSource? _viewImage;
 
 
         public BitmapViewContent(MainViewComponent viewComponent, ViewContentSource source) : base(viewComponent, source)
         {
         }
 
-        
+
         public override bool IsBitmapScalingModeSupported => true;
 
         public override bool IsViewContent => true;
@@ -38,25 +38,26 @@ namespace NeeView
         {
             Debug.Assert(this.Content is BitmapContent bitmapContent_ && bitmapContent_.ImageSource != null);
 
-            var bitmapContent = this.Content as BitmapContent;
+            var bitmapContent = this.Content as BitmapContent ?? throw new InvalidOperationException("Content must be BitmapContent");
             this.IsSvg = bitmapContent.PictureSource is SvgPictureSource;
 
             // binding parameter
             var parameter = CreateBindingParameter();
 
             // create view
+            if (this.Source is null) throw new InvalidOperationException();
             this.View = new ViewContentControl(CreateView(this.Source, parameter), IsSvg);
 
             // content setting
             this.Color = bitmapContent.Color;
         }
 
-        protected FrameworkElement CreateView(ViewContentSource source, ViewContentParameters parameter)
+        protected FrameworkElement? CreateView(ViewContentSource source, ViewContentParameters parameter)
         {
             return CreateView(source, parameter, GetPicture()?.ImageSource);
         }
 
-        protected FrameworkElement CreateView(ViewContentSource source, ViewContentParameters parameter, ImageSource image)
+        protected FrameworkElement? CreateView(ViewContentSource source, ViewContentParameters parameter, ImageSource? image)
         {
             if (image == null)
             {
@@ -128,6 +129,9 @@ namespace NeeView
         /// <param name="viewScale">Pixeled時に適用するスケール</param>
         public override void SetViewMode(ContentViewMode mode, double viewScale)
         {
+            if (_pixeledRectangle is null) return;
+            if (_scaleRectangle is null) return;
+
             var sacaleInverse = 1.0 / viewScale;
             _pixeledRectangle.RenderTransform = new ScaleTransform(sacaleInverse, sacaleInverse);
 
@@ -143,12 +147,12 @@ namespace NeeView
             }
         }
 
-        public Picture GetPicture()
+        public Picture? GetPicture()
         {
-            return ((BitmapContent)this.Content)?.Picture;
+            return ((BitmapContent?)this.Content)?.Picture;
         }
 
-        public ImageSource GetViewImage()
+        public ImageSource? GetViewImage()
         {
             return _viewImage;
         }
@@ -161,11 +165,13 @@ namespace NeeView
 
         public override bool Rebuild(double scale)
         {
+            if (this.Source is null) return false;
+
             var size = Config.Current.ImageResizeFilter.IsEnabled ? GetScaledSize(scale) : Size.Empty;
 
             // TODO: 判定サイズの修正
             if (Config.Current.ImageDotKeep.IsImgeDotKeep(size, this.Source.Size))
-            { 
+            {
                 size = Size.Empty;
             }
 
@@ -190,21 +196,24 @@ namespace NeeView
             {
                 try
                 {
-                    var picture = ((BitmapContent)this.Content)?.Picture;
+                    var picture = ((BitmapContent?)this.Content)?.Picture;
                     picture?.CreateImageSource(size, CancellationToken.None);
 
-                    // ##
-                    this.Source.Page.DebugRaiseContentPropertyChanged();
-
-                    AppDispatcher.Invoke(() =>
+                    if (this.Source is not null)
                     {
-                        var content = CreateView(this.Source, CreateBindingParameter());
-                        if (content != null)
+                        // ##
+                        this.Source.Page.DebugRaiseContentPropertyChanged();
+
+                        AppDispatcher.Invoke(() =>
                         {
-                            this.View.SetContent(content);
-                            this.ViewComponent.ContentCanvas.UpdateContentScalingMode(this);
-                        }
-                    });
+                            var content = CreateView(this.Source, CreateBindingParameter());
+                            if (this.View != null && content != null)
+                            {
+                                this.View.SetContent(content);
+                                this.ViewComponent.ContentCanvas.UpdateContentScalingMode(this);
+                            }
+                        });
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -224,15 +233,16 @@ namespace NeeView
         public override void UpdateViewBox()
         {
             if (_viewImage == null) return;
+            if (this.Source is null) return;
 
             if (_scaleRectangle != null)
             {
-                _scaleRectangle.Fill = Source.CreatePageImageBrush(_viewImage, true);
+                _scaleRectangle.Fill = this.Source.CreatePageImageBrush(_viewImage, true);
             }
 
             if (_pixeledRectangle != null)
             {
-                _pixeledRectangle.Fill = Source.CreatePageImageBrush(_viewImage, true);
+                _pixeledRectangle.Fill = this.Source.CreatePageImageBrush(_viewImage, true);
             }
         }
 

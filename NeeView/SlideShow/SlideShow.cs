@@ -142,7 +142,7 @@ namespace NeeView
         /// <summary>
         /// 再生中のタイマー処理
         /// </summary>
-        private void DispatcherTimer_Tick(object sender, EventArgs e)
+        private void DispatcherTimer_Tick(object? sender, EventArgs e)
         {
             // マウスボタンが押されていたらキャンセル
             if (Mouse.LeftButton == MouseButtonState.Pressed || Mouse.RightButton == MouseButtonState.Pressed)

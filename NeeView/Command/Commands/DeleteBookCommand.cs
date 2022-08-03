@@ -8,12 +8,12 @@
             this.IsShowMessage = false;
         }
 
-        public override bool CanExecute(object sender, CommandContext e)
+        public override bool CanExecute(object? sender, CommandContext e)
         {
             return BookOperation.Current.CanDeleteBook();
         }
 
-        public override void Execute(object sender, CommandContext e)
+        public override void Execute(object? sender, CommandContext e)
         {
             BookOperation.Current.DeleteBook();
         }

@@ -14,14 +14,25 @@ namespace NeeView.Setting
     /// </summary>
     public class GestureToken
     {
+        public GestureToken()
+        {
+            Gesture = "";
+        }
+
+        public GestureToken(string gesture)
+        {
+            Gesture = gesture;
+        }
+
+
         // ジェスチャー文字列（１ジェスチャー）
         public string Gesture { get; set; }
 
         // 競合しているコマンド群
-        public List<string> Conflicts { get; set; }
+        public List<string>? Conflicts { get; set; }
 
         // 競合メッセージ
-        public string OverlapsText { get; set; }
+        public string? OverlapsText { get; set; }
 
         public bool IsConflict => Conflicts != null && Conflicts.Count > 0;
 
@@ -61,13 +72,18 @@ namespace NeeView.Setting
             Command = command;
             Header = $"{CommandTable.Current.GetElement(Command).Text} - {Properties.Resources.InputGestureControl_Title}";
 
-            UpdateGestures();
+            _gestureTokens = CreateGestures();
         }
 
         /// <summary>
         /// ジェスチャーリスト更新
         /// </summary>
         public void UpdateGestures()
+        {
+            GestureTokens = CreateGestures();
+        }
+
+        private ObservableCollection<GestureToken> CreateGestures()
         {
             var items = new ObservableCollection<GestureToken>();
             if (!string.IsNullOrEmpty(_commandMap[Command].ShortCutKey))
@@ -79,7 +95,7 @@ namespace NeeView.Setting
                     items.Add(element);
                 }
             }
-            GestureTokens = items;
+            return items;
         }
 
         /// <summary>
@@ -89,7 +105,7 @@ namespace NeeView.Setting
         /// <returns></returns>
         public GestureToken CreateShortCutElement(string gesture)
         {
-            var element = new GestureToken() { Gesture = gesture };
+            var element = new GestureToken(gesture);
 
             var overlaps = _commandMap
                 .Where(e => !string.IsNullOrEmpty(e.Value.ShortCutKey) && e.Key != Command && e.Value.ShortCutKey.Split(',').Contains(gesture))
@@ -140,7 +156,7 @@ namespace NeeView.Setting
         {
             _commandMap[Command].ShortCutKey = GestureTokens.Count > 0
                 ? string.Join(",", GestureTokens.Select(e => e.Gesture))
-                : null;
+                : "";
         }
 
 
@@ -150,6 +166,8 @@ namespace NeeView.Setting
         public void ResolveConflict(GestureToken item, System.Windows.Window owner)
         {
             Flush();
+            
+            if (item.Conflicts is null) return;
 
             var conflicts = new List<string>(item.Conflicts);
             conflicts.Insert(0, Command);
@@ -168,7 +186,7 @@ namespace NeeView.Setting
                     if (!conflictItem.IsChecked)
                     {
                         var newGesture = string.Join(",", _commandMap[conflictItem.CommandName].ShortCutKey.Split(',').Where(i => i != item.Gesture));
-                        _commandMap[conflictItem.CommandName].ShortCutKey = string.IsNullOrEmpty(newGesture) ? null : newGesture;
+                        _commandMap[conflictItem.CommandName].ShortCutKey = string.IsNullOrEmpty(newGesture) ? "" : newGesture;
                     }
                 }
                 UpdateGestures();

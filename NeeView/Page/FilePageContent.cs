@@ -22,7 +22,7 @@ namespace NeeView
     public class FilePageContent
     {
         public FilePageIcon Icon { get; set; }
-        public string FileName { get; set; }
-        public string Message { get; set; }
+        public string? FileName { get; set; }
+        public string? Message { get; set; }
     }
 }

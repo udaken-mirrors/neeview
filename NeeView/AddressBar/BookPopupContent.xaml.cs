@@ -26,7 +26,7 @@ namespace NeeView
         }
 
 
-        public event EventHandler SelfClosed;
+        public event EventHandler? SelfClosed;
 
 
         #region DependencyProperties
@@ -66,7 +66,7 @@ namespace NeeView
 
         private void Close()
         {
-            SelfClosed?.Invoke(this, null);
+            SelfClosed?.Invoke(this, EventArgs.Empty);
 
             if (ParentPopup != null)
             {

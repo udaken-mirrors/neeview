@@ -16,7 +16,7 @@ namespace NeeView
             return BindingGenerator.FolderOrder(FolderOrder.EntryTimeDescending);
         }
 
-        public override void Execute(object sender, CommandContext e)
+        public override void Execute(object? sender, CommandContext e)
         {
             BookshelfFolderList.Current.SetFolderOrder(FolderOrder.EntryTimeDescending);
         }

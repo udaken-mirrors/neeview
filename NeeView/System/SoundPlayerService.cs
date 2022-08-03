@@ -48,7 +48,7 @@ namespace NeeView
         public class Memento : IMemento
         {
             [DataMember]
-            public string SeCannotMove { get; set; }
+            public string? SeCannotMove { get; set; }
 
             public void RestoreConfig(Config config)
             {

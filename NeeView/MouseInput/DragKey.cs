@@ -20,7 +20,7 @@ namespace NeeView
             ModifierKeys = modifiers;
         }
 
-        public DragKey(string gesture)
+        public DragKey(string? gesture)
         {
             if (string.IsNullOrWhiteSpace(gesture)) return;
 
@@ -41,7 +41,7 @@ namespace NeeView
         /// </summary>
         /// <param name="obj"></param>
         /// <returns></returns>
-        public override bool Equals(System.Object obj)
+        public override bool Equals(object? obj)
         {
             // If parameter is null return false.
             if (obj == null)
@@ -50,8 +50,8 @@ namespace NeeView
             }
 
             // If parameter cannot be cast to Point return false.
-            DragKey p = obj as DragKey;
-            if ((System.Object)p == null)
+            DragKey? p = obj as DragKey;
+            if ((object?)p == null)
             {
                 return false;
             }
@@ -65,10 +65,10 @@ namespace NeeView
         /// </summary>
         /// <param name="p"></param>
         /// <returns></returns>
-        public bool Equals(DragKey p)
+        public bool Equals(DragKey? p)
         {
             // If parameter is null return false:
-            if ((object)p == null)
+            if ((object?)p == null)
             {
                 return false;
             }

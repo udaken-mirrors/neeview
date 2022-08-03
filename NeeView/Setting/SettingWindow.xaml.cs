@@ -25,9 +25,9 @@ namespace NeeView.Setting
         /// <summary>
         /// このウィンドウが存在する間だけ設定されるインスタンス
         /// </summary>
-        public static SettingWindow Current { get; private set; }
+        public static SettingWindow? Current { get; private set; }
 
-        public SettingWindowViewModel _vm;
+        public SettingWindowViewModel? _vm;
 
         public SettingWindow()
         {
@@ -70,7 +70,7 @@ namespace NeeView.Setting
         }
 
 
-        private void SettingWindow_KeyDown(object sender, KeyEventArgs e)
+        private void SettingWindow_KeyDown(object? sender, KeyEventArgs e)
         {
             if (e.Key == Key.Escape && Keyboard.Modifiers == ModifierKeys.None)
             {
@@ -79,13 +79,13 @@ namespace NeeView.Setting
             }
         }
 
-        private void SettingWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        private void SettingWindow_Closing(object? sender, System.ComponentModel.CancelEventArgs e)
         {
             // 設定を閉じるとメインウィンドウが背後に隠れてしまう現象を抑制
             MainWindow.Current?.Activate();
         }
 
-        private void SettingWindow_Closed(object sender, EventArgs e)
+        private void SettingWindow_Closed(object? sender, EventArgs e)
         {
             if (this.AllowSave)
             {
@@ -93,19 +93,25 @@ namespace NeeView.Setting
             }
         }
 
-        private void Window_Deactivated(object sender, EventArgs e)
+        private void Window_Deactivated(object? sender, EventArgs e)
         {
             this.PageContent.Focus();
         }
 
-        private void IndexTree_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
+        private void IndexTree_SelectedItemChanged(object? sender, RoutedPropertyChangedEventArgs<object> e)
         {
+            if (_vm is null) return;
+
             var settingPage = this.IndexTree.SelectedItem as SettingPage;
+            if (settingPage is null) return;
+
             _vm.SelectedItemChanged(settingPage);
         }
 
-        private void UpdateIndexTreeSelected(object sender, PropertyChangedEventArgs e)
+        private void UpdateIndexTreeSelected(object? sender, PropertyChangedEventArgs e)
         {
+            if (_vm is null) return;
+
             var settingPage = this.IndexTree.SelectedItem as SettingPage;
 
             if (_vm.IsSearchPageSelected && settingPage != null)

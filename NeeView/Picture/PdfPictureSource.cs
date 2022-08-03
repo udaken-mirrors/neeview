@@ -1,6 +1,7 @@
 ﻿using NeeView.Drawing;
 using System;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Threading;
 using System.Windows;
@@ -13,9 +14,9 @@ namespace NeeView
     {
         private PdfArchiver _pdfArchive;
 
-        public PdfPictureSource(ArchiveEntry entry, PictureInfo pictureInfo, PictureSourceCreateOptions createOptions) : base(entry, pictureInfo, createOptions)
+        public PdfPictureSource(ArchiveEntry entry, PictureInfo? pictureInfo, PictureSourceCreateOptions createOptions) : base(entry, pictureInfo, createOptions)
         {
-            _pdfArchive = (PdfArchiver)entry.Archiver;
+            _pdfArchive = entry.Archiver as PdfArchiver ?? throw new InvalidOperationException();
         }
 
         public override PictureInfo CreatePictureInfo(CancellationToken token)
@@ -60,7 +61,7 @@ namespace NeeView
                 bitmap.Freeze();
 
                 // 色情報設定
-                PictureInfo.SetPixelInfo(bitmap);
+                PictureInfo?.SetPixelInfo(bitmap);
 
                 return bitmap;
             }

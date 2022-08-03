@@ -19,7 +19,7 @@ namespace NeeView
         }
 
 
-        public string Name
+        public string? Name
         {
             get => _model.Name ?? _model.DispName;
             set
@@ -33,7 +33,7 @@ namespace NeeView
             }
         }
 
-        public string Command
+        public string? Command
         {
             get { return _model.Command; }
             set { if (_model.Command != value)

@@ -46,11 +46,11 @@ namespace NeeView
         /// 指定したキーの削除
         /// </summary>
         /// <returns>削除されたオブジェクトを返す。ない場合はnull</returns>
-        private ArchiveEntryExtractor Remove(string key)
+        private ArchiveEntryExtractor? Remove(string key)
         {
             lock (_lock)
             {
-                ArchiveEntryExtractor extractor;
+                ArchiveEntryExtractor? extractor;
                 if (_collection.TryGetValue(key, out extractor))
                 {
                     _collection.Remove(key);
@@ -98,7 +98,7 @@ namespace NeeView
         {
             ////Debug.WriteLine($"EXT: {entry.Ident}");
 
-            ArchiveEntryExtractor extractor = null;
+            ArchiveEntryExtractor? extractor = null;
 
             try
             {
@@ -107,9 +107,9 @@ namespace NeeView
                 {
                     //Debug.WriteLine("EXT: Extract...");
                     var tempFileName = Temporary.Current.CreateCountedTempFileName("arcv", Path.GetExtension(entry.EntryName));
-                    extractor = new ArchiveEntryExtractor(entry);
+                    extractor = new ArchiveEntryExtractor(entry, tempFileName);
                     extractor.Completed += Extractor_Completed;
-                    return await extractor.ExtractAsync(tempFileName, token);
+                    return await extractor.ExtractAsync(token);
                 }
                 else
                 {
@@ -120,7 +120,10 @@ namespace NeeView
             catch (OperationCanceledException)
             {
                 //Debug.WriteLine("EXT: Add to Reserver");
-                this.Add(entry.Ident, extractor);
+                if (extractor != null)
+                {
+                    this.Add(entry.Ident, extractor);
+                }
                 throw;
             }
         }
@@ -129,7 +132,7 @@ namespace NeeView
         /// 展開後処理
         /// 不要ならば展開ファイルを削除
         /// </summary>
-        private void Extractor_Completed(object sender, ArchiveEntryExtractorEventArgs e)
+        private void Extractor_Completed(object? sender, ArchiveEntryExtractorEventArgs e)
         {
             var key = (sender as ArchiveEntryExtractor)?.Entry.Ident;
             if (key == null) return;

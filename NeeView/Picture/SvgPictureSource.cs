@@ -5,6 +5,7 @@ using SharpVectors.Converters;
 using SharpVectors.Renderers.Wpf;
 using System;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -19,10 +20,10 @@ namespace NeeView
         private static object _lock = new object();
 
         private PictureStreamSource _streamSource;
-        private ImageSource _imageSource;
+        private ImageSource? _imageSource;
 
 
-        public SvgPictureSource(ArchiveEntry entry, PictureInfo pictureInfo, PictureSourceCreateOptions createOptions) : base(entry, pictureInfo, createOptions)
+        public SvgPictureSource(ArchiveEntry entry, PictureInfo? pictureInfo, PictureSourceCreateOptions createOptions) : base(entry, pictureInfo, createOptions)
         {
             _streamSource = new PictureStreamSource(entry);
         }
@@ -33,6 +34,7 @@ namespace NeeView
             return _streamSource.GetMemorySize();
         }
 
+        [MemberNotNull(nameof(_imageSource))]
         private void Initialize(CancellationToken token)
         {
             if (_imageSource != null) return;
@@ -92,7 +94,7 @@ namespace NeeView
 
             Initialize(token);
 
-            BitmapSource bitmap = null;
+            BitmapSource? bitmap = null;
             var task = new Task(() =>
             {
                 bitmap = _imageSource.CreateThumbnail(size);

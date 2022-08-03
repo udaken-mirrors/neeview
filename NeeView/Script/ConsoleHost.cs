@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Windows;
 
@@ -15,12 +16,14 @@ namespace NeeView
         public ConsoleHost(Window owner)
         {
             _owner = owner;
-            UpdateEngine();
+
+            _engine = CreateJavascriptEngine();
+            _wordTree = CreateWordTree(_engine);
         }
 
 
 #pragma warning disable CS0067
-        public event EventHandler<ConsoleHostOutputEventArgs> Output;
+        public event EventHandler<ConsoleHostOutputEventArgs>? Output;
 #pragma warning restore CS0067
 
 
@@ -38,9 +41,20 @@ namespace NeeView
         {
             if (_engine != null && !_engine.IsDarty) return;
 
+            _engine = CreateJavascriptEngine();
+            _wordTree = CreateWordTree(_engine);
+        }
+
+        private JavascriptEngine CreateJavascriptEngine()
+        {
             var engine = new JavascriptEngine();
             engine.CurrentFolder = Config.Current.Script.ScriptFolder;
 
+            return engine;
+        }
+
+        private WordTree CreateWordTree(JavascriptEngine engine)
+        {
             var wordTreeRoot = new WordNode()
             {
                 Children = new List<WordNode>()
@@ -55,11 +69,10 @@ namespace NeeView
                 },
             };
 
-            _engine = engine;
-            _wordTree = new WordTree(wordTreeRoot);
+            return new WordTree(wordTreeRoot);
         }
 
-        public string Execute(string input, CancellationToken token)
+        public string? Execute(string input, CancellationToken token)
         {
             switch (input.Trim())
             {
@@ -93,7 +106,7 @@ namespace NeeView
             }
         }
 
-        private static string ToJavascriptString(object source)
+        private static string ToJavascriptString(object? source)
         {
             var builder = new JsonStringBulder();
             return builder.AppendObject(source).ToString();

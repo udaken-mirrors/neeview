@@ -1,4 +1,5 @@
-﻿using NeeLaboratory.ComponentModel;
+﻿
+using NeeLaboratory.ComponentModel;
 using NeeView.Text;
 using NeeView.Windows.Property;
 using System;
@@ -89,7 +90,7 @@ namespace NeeView
             public bool IsMultiplePageMove { get; set; }
 
             [DataMember, DefaultValue("__MACOSX;.DS_Store")]
-            public string ExcludePath { get; set; }
+            public string? ExcludePath { get; set; }
 
             [DataMember, DefaultValue(2)]
             public int PreLoadSize { get; set; }
@@ -153,7 +154,7 @@ namespace NeeView
                 config.Image.Standard.IsAnimatedGifEnabled = IsEnableAnimatedGif;
                 config.Image.Standard.IsAllFileSupported = IsAllFileAnImage;
                 config.Book.WideRatio = WideRatio;
-                config.Book.Excludes.OneLine = ExcludePath;
+                config.Book.Excludes.OneLine = ExcludePath ?? "";
                 config.Book.IsPrioritizePageMove = IsPrioritizePageMove;
                 config.Book.IsMultiplePageMove = IsMultiplePageMove;
                 config.Book.IsSortFileFirst = IsSortFileFirst;

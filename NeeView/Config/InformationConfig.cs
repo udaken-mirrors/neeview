@@ -27,12 +27,12 @@ namespace NeeView
         };
 
         [JsonInclude, JsonPropertyName(nameof(DateTimeFormat))]
-        public string _dateTimeFormat = null;
+        public string? _dateTimeFormat = null;
         [JsonInclude, JsonPropertyName(nameof(MapProgramFormat))]
-        public string _mapProgramFormat;
+        public string? _mapProgramFormat;
 
 
-        private bool SetVisibleGroup(InformationGroup group, bool isVisible, [CallerMemberName] string propertyName = null)
+        private bool SetVisibleGroup(InformationGroup group, bool isVisible, [CallerMemberName] string? propertyName = null)
         {
             if (_groupVisibilityMap[group] == isVisible) return false;
 

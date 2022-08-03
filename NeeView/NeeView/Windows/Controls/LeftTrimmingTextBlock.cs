@@ -19,7 +19,7 @@ namespace NeeView.Windows.Controls
     /// </remarks>
     public class LeftTrimmingTextBlock : TextBlock 
     {
-        private FrameworkElement _parentElement;
+        private FrameworkElement? _parentElement;
 
 
         public LeftTrimmingTextBlock()

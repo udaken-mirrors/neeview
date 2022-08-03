@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using System.Windows.Media;
 
@@ -35,7 +36,8 @@ namespace NeeView
             }
         }
 
-        public override ObservableCollection<FolderTreeNodeBase> Children
+        [NotNull]
+        public override ObservableCollection<FolderTreeNodeBase>? Children
         {
             get
             {
@@ -71,10 +73,10 @@ namespace NeeView
     /// </summary>
     public class DummyNode : FolderTreeNodeBase
     {
-        public override string Name { get => null; set { } }
-        public override string DispName { get => null; set { } }
+        public override string Name { get => ""; set { } }
+        public override string DispName { get => ""; set { } }
 
-        public override IImageSourceCollection Icon => null;
+        public override IImageSourceCollection? Icon => null;
     }
 }
 

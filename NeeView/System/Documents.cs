@@ -12,7 +12,10 @@ namespace NeeView
         {
             var groups = new Dictionary<string, List<MenuTree.TableData>>();
 
-            foreach (var group in MainMenu.Current.MenuSource.Children)
+            var children = MainMenu.Current.MenuSource.Children;
+            if (children is null) throw new InvalidOperationException("MenuSource.Children must not be null");
+
+            foreach (var group in children)
             {
                 groups.Add(group.Label, group.GetTable(0));
             }

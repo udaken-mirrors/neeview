@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System;
+using System.Windows;
 using System.Windows.Controls;
 using NeeView.Runtime.LayoutPanel;
 
@@ -22,12 +23,12 @@ namespace NeeView
 
         public void DragBegin()
         {
-            _vm.DragBegin(this, null);
+            _vm.DragBegin(this, EventArgs.Empty);
         }
 
         public void DragEnd()
         {
-            _vm.DragEnd(this, null);
+            _vm.DragEnd(this, EventArgs.Empty);
         }
 
         public void ToggleLayoutPanel(LayoutPanel panel)

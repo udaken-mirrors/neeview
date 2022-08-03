@@ -57,16 +57,17 @@ namespace NeeView
 
             try
             {
-                var context = new PrintContext();
-                context.MainContent = mainContent;
-                context.Contents = contents;
-                context.View = element;
-                context.ViewTransform = transform;
-                context.ViewWidth = width;
-                context.ViewHeight = height;
-                context.ViewEffect = ImageEffect.Current.Effect;
-                context.Background = _viewComponent.ContentCanvasBrush.CreateBackgroundBrush();
-                context.BackgroundFront = _viewComponent.ContentCanvasBrush.CreateBackgroundFrontBrush(new DpiScale(1, 1));
+                var context = new PrintContext(
+                    mainContent: mainContent,
+                    contents: contents,
+                    view: element,
+                    viewTransform: transform,
+                    viewWidth: width,
+                    viewHeight: height,
+                    viewEffect: ImageEffect.Current.Effect,
+                    background: _viewComponent.ContentCanvasBrush.CreateBackgroundBrush(),
+                    backgroundFront: _viewComponent.ContentCanvasBrush.CreateBackgroundFrontBrush(new DpiScale(1, 1))
+                );
 
                 var dialog = new PrintWindow(context);
                 dialog.Owner = owner;

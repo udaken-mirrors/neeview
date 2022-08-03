@@ -1,4 +1,5 @@
-﻿namespace NeeView
+﻿
+namespace NeeView
 {
     // ページサムネイル寿命管理
     public class PageThumbnailPool : ThumbnailPool

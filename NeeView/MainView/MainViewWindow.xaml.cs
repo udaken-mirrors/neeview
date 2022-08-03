@@ -27,9 +27,9 @@ namespace NeeView
     {
         #region INotifyPropertyChanged Support
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
-        protected bool SetProperty<T>(ref T storage, T value, [System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
+        protected bool SetProperty<T>(ref T storage, T value, [System.Runtime.CompilerServices.CallerMemberName] string? propertyName = null)
         {
             if (object.Equals(storage, value)) return false;
             storage = value;
@@ -37,7 +37,7 @@ namespace NeeView
             return true;
         }
 
-        protected void RaisePropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string name = null)
+        protected void RaisePropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string? name = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
@@ -54,7 +54,7 @@ namespace NeeView
         private WindowStateManager _windowStateManager;
         private bool _canHideMenu;
         private WindowController _windowController;
-        private RoutedCommandBinding _routedCommandBinding;
+        private RoutedCommandBinding? _routedCommandBinding;
         private WeakBindableBase<MainViewConfig> _mainViewConfig;
 
         public MainViewWindow()
@@ -97,11 +97,11 @@ namespace NeeView
             UpdateCaptionBar();
 
             var mouseHorizontalWheel = new MouseHorizontalWheelService(this);
-            mouseHorizontalWheel.MouseHorizontalWheelChanged += (s, e) => MouseHorizontalWheelChanged.Invoke(s, e);
+            mouseHorizontalWheel.MouseHorizontalWheelChanged += (s, e) => MouseHorizontalWheelChanged?.Invoke(s, e);
         }
 
 
-        public event MouseWheelEventHandler MouseHorizontalWheelChanged;
+        public event MouseWheelEventHandler? MouseHorizontalWheelChanged;
 
 
         public WindowController WindowController => _windowController;
@@ -142,7 +142,7 @@ namespace NeeView
         }
 
 
-        private void MainViewWindow_SourceInitialized(object sender, EventArgs e)
+        private void MainViewWindow_SourceInitialized(object? sender, EventArgs e)
         {
             _windowChrome.IsEnabled = true;
 
@@ -155,28 +155,28 @@ namespace NeeView
             RestoreWindowPlacement(placement);
         }
 
-        private void MainViewWindow_Loaded(object sender, RoutedEventArgs e)
+        private void MainViewWindow_Loaded(object? sender, RoutedEventArgs e)
         {
             _dpiProvider.SetDipScale(VisualTreeHelper.GetDpi(this));
         }
 
-        private void MainViewWindow_DpiChanged(object sender, DpiChangedEventArgs e)
+        private void MainViewWindow_DpiChanged(object? sender, DpiChangedEventArgs e)
         {
             _dpiProvider.SetDipScale(e.NewDpi);
         }
 
-        private void MainViewWindow_Activated(object sender, EventArgs e)
+        private void MainViewWindow_Activated(object? sender, EventArgs e)
         {
             RoutedCommandTable.Current.UpdateInputGestures();
         }
 
-        private void WindowStateManager_StateChanged(object sender, EventArgs e)
+        private void WindowStateManager_StateChanged(object? sender, EventArgs e)
         {
             UpdateCaptionBar();
             RaisePropertyChanged(nameof(IsFullScreen));
         }
 
-        private void MainViewWindow_Closed(object sender, EventArgs e)
+        private void MainViewWindow_Closed(object? sender, EventArgs e)
         {
             if (_routedCommandBinding != null)
             {

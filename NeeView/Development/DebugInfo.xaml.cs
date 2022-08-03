@@ -24,7 +24,7 @@ namespace NeeView
     /// </summary>
     public partial class DebugInfo : UserControl
     {
-        public static DebugInfo Current { get; private set; }
+        public static DebugInfo? Current { get; private set; }
 
         private DevInfoViewModel _vm;
 
@@ -60,7 +60,7 @@ namespace NeeView
             {
                 if (e.PropertyName == nameof(JobEngine.Workers))
                 {
-                    WorkersChanged?.Invoke(this, null);
+                    WorkersChanged?.Invoke(this, EventArgs.Empty);
                 }
             };
         }
@@ -75,14 +75,14 @@ namespace NeeView
             MainWindow.Current.MouseMove -= MainWindow_MouseMove;
         }
 
-        private void MainWindow_MouseMove(object sender, MouseEventArgs e)
+        private void MainWindow_MouseMove(object? sender, MouseEventArgs e)
         {
             CursorPointWindow = e.GetPosition(MainWindow.Current);
             CursorPointRoot = e.GetPosition(MainWindow.Current.Root);
         }
 
 
-        public event EventHandler WorkersChanged;
+        public event EventHandler? WorkersChanged;
 
 
         public JobEngine JobEngine => JobEngine.Current;
@@ -103,14 +103,15 @@ namespace NeeView
         // 開発用：コンテンツ座標情報更新
         public void UpdateContentPosition()
         {
-            ContentPosition = MainViewComponent.Current.ContentCanvas.MainContent.View.PointToScreen(new Point(0, 0));
+            var mainContent = MainViewComponent.Current.ContentCanvas.MainContent;
+            ContentPosition = mainContent?.View is not null ? mainContent.View.PointToScreen(new Point(0, 0)) : new Point(double.NegativeInfinity, double.NegativeInfinity);
         }
 
         /// <summary>
         /// Message property.
         /// </summary>
-        private string _Message;
-        public string Message
+        private string? _Message;
+        public string? Message
         {
             get { return _Message; }
             set { if (_Message != value) { _Message = value; RaisePropertyChanged(); } }
@@ -140,7 +141,7 @@ namespace NeeView
         /// <summary>
         /// DevUpdateContentPosition command.
         /// </summary>
-        private RelayCommand _DevUpdateContentPosition;
+        private RelayCommand? _DevUpdateContentPosition;
         public RelayCommand DevUpdateContentPosition
         {
             get { return _DevUpdateContentPosition = _DevUpdateContentPosition ?? new RelayCommand(DevUpdateContentPosition_Executed); }

@@ -29,18 +29,18 @@ namespace NeeView
         /// <summary>
         /// 状態遷移通知
         /// </summary>
-        public EventHandler<TouchInputStateEventArgs> StateChanged;
+        public EventHandler<TouchInputStateEventArgs>? StateChanged;
 
         /// <summary>
         /// タッチによるコマンド発動
         /// </summary>
-        public EventHandler<TouchGestureEventArgs> TouchGestureChanged;
+        public EventHandler<TouchGestureEventArgs>? TouchGestureChanged;
 
         
         /// <summary>
         /// 状態開始時処理
         /// </summary>
-        public virtual void OnOpened(FrameworkElement sender, object parameter) { }
+        public virtual void OnOpened(FrameworkElement sender, object? parameter) { }
 
         /// <summary>
         /// 状態終了時処理
@@ -72,7 +72,7 @@ namespace NeeView
         /// </summary>
         /// <param name="state"></param>
         /// <param name="parameter"></param>
-        protected void SetState(TouchInputState state, object parameter = null)
+        protected void SetState(TouchInputState state, object? parameter = null)
         {
             StateChanged?.Invoke(this, new TouchInputStateEventArgs(state, parameter));
         }

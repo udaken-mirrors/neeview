@@ -1,4 +1,5 @@
-﻿using NeeLaboratory.ComponentModel;
+﻿
+using NeeLaboratory.ComponentModel;
 using NeeView.IO;
 using System.Windows.Controls;
 
@@ -9,16 +10,16 @@ namespace NeeView
     /// </summary>
     public class AddressBar : BindableBase
     {
-        private string _address;
+        private string _address = "";
 
 
         public AddressBar()
         {
             BookHub.Current.AddressChanged +=
-                (s, e) => SetAddress(BookHub.Current.Address);
+                (s, e) => SetAddress(BookHub.Current.Address ?? "");
 
             BookHub.Current.BookChanged +=
-                (s, e) => SetAddress(BookHub.Current.Address);
+                (s, e) => SetAddress(BookHub.Current.Address ?? "");
 
             BookHub.Current.BookmarkChanged +=
                 (s, e) => RaisePropertyChanged(nameof(IsBookmark));
@@ -85,7 +86,9 @@ namespace NeeView
             if (FileShortcut.IsShortcut(path) && (System.IO.File.Exists(path) || System.IO.Directory.Exists(path)))
             {
                 var shortcut = new FileShortcut(path);
-                path = shortcut.TargetPath;
+                var target = shortcut.TargetPath;
+                if (target is null) return;
+                path = target;
             }
 
             BookHub.Current.RequestLoad(this, path, null, option | BookLoadOption.IsBook, true);

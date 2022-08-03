@@ -14,28 +14,22 @@ namespace NeeView
     /// </summary>
     public abstract class Archiver
     {
-        #region Fields
-
         /// <summary>
         /// ArchiveEntry Cache
         /// </summary>
-        private List<ArchiveEntry> _entries;
+        private List<ArchiveEntry>? _entries;
 
         /// <summary>
         /// 事前展開フォルダー
         /// </summary>
-        private TempDirectory _preExtractDirectory;
-
-        #endregion Fields
-
-        #region Constructors
+        private TempDirectory? _preExtractDirectory;
 
         /// <summary>
         /// コンストラクタ
         /// </summary>
         /// <param name="path">アーカイブ実体へのパス</param>
         /// <param name="source">基となるエントリ</param>
-        public Archiver(string path, ArchiveEntry source)
+        public Archiver(string path, ArchiveEntry? source)
         {
             Path = path;
 
@@ -74,21 +68,19 @@ namespace NeeView
             }
         }
 
-        #endregion
-
-        #region Properties
 
         // アーカイブ実体のパス
         public string Path { get; protected set; }
 
         // 内部アーカイブのテンポラリファイル。インスタンス保持用
-        public TempFile TempFile { get; set; }
+        public TempFile? TempFile { get; set; }
 
         // ファイルシステムの場合はtrue
         public virtual bool IsFileSystem { get; } = false;
 
         // ファイルシステムでのパスを取得
-        public virtual string GetFileSystemPath(ArchiveEntry entry) { return null; }
+        // アーカイブ内パスの場合は null を返す
+        public virtual string? GetFileSystemPath(ArchiveEntry entry) { return null; }
 
         // 対応判定
         public abstract bool IsSupported();
@@ -96,12 +88,12 @@ namespace NeeView
         /// <summary>
         /// 親アーカイブ
         /// </summary>
-        public Archiver Parent { get; private set; }
+        public Archiver? Parent { get; private set; }
 
         /// <summary>
         /// 親アーカイブのエントリ表記
         /// </summary>
-        public ArchiveEntry Source { get; private set; }
+        public ArchiveEntry? Source { get; private set; }
 
 
         /// <summary>
@@ -137,7 +129,7 @@ namespace NeeView
         /// <summary>
         /// ルートアーカイバー取得
         /// </summary>
-        public Archiver RootArchiver => IsRoot ? this : Parent.RootArchiver;
+        public Archiver? RootArchiver => IsRoot ? this : Parent?.RootArchiver;
 
         /// <summary>
         /// エクスプローラーで指定可能な絶対パス
@@ -149,14 +141,11 @@ namespace NeeView
         /// </summary>
         public string Ident => (Parent == null || Parent is FolderArchive) ? Path : LoosePath.Combine(Parent.Ident, $"{Id}.{EntryName}");
 
-        #endregion
-
-        #region Methods
 
         // 本来のファイルシスでのパスを取得
         public string GetSourceFileSystemPath()
         {
-            if (IsCompressedChild())
+            if (IsCompressedChild() && this.Parent is not null)
             {
                 return this.Parent.GetSourceFileSystemPath();
             }
@@ -336,7 +325,7 @@ namespace NeeView
                     Instance = null,
                     RawEntryName = e.Path,
                     Length = -1,
-                    IsEmpty = !e.HasChild,
+                    ////IsEmpty = !e.HasChild,
                     CreationTime = e.CreationTime,
                     LastWriteTime = e.LastWriteTime,
                 })
@@ -392,7 +381,6 @@ namespace NeeView
             return IsFileSystem || entry.Link != null;
         }
 
-        #endregion
     }
 
     /// <summary>

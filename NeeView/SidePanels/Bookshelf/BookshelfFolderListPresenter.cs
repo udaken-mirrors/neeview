@@ -20,8 +20,10 @@
         public BookshelfFolderList FolderList => _folderList;
 
 
-        private void FolderListView_SearchBoxFocusChanged(object sender, FocusChangedEventArgs e)
+        private void FolderListView_SearchBoxFocusChanged(object? sender, FocusChangedEventArgs e)
         {
+            if (FolderListBox is null) return;
+
             // リストのフォーカス更新を停止
             FolderListBox.IsFocusEnabled = !e.IsFocused;
         }

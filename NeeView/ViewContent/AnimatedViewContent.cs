@@ -10,8 +10,8 @@ namespace NeeView
     public class AnimatedViewContent : BitmapViewContent
     {
         private AnimatedContent _animatedContent;
-        private ViewContentParameters _parameter;
-        private AnimatedView _animatedView;
+        private ViewContentParameters? _parameter;
+        private AnimatedView? _animatedView;
 
 
         public AnimatedViewContent(MainViewComponent viewComponent, ViewContentSource source) : base(viewComponent, source)
@@ -26,6 +26,7 @@ namespace NeeView
             _parameter = CreateBindingParameter();
 
             // create view
+            if (this.Source is null) throw new InvalidOperationException();
             this.View = new ViewContentControl(CreateAnimatedView(this.Source, _parameter));
 
             // content setting
@@ -36,7 +37,7 @@ namespace NeeView
         /// <summary>
         /// アニメーションビュー生成
         /// </summary>
-        private FrameworkElement CreateAnimatedView(ViewContentSource source, ViewContentParameters parameter)
+        private FrameworkElement? CreateAnimatedView(ViewContentSource source, ViewContentParameters parameter)
         {
             var imageView = base.CreateView(source, parameter);
 
@@ -47,6 +48,7 @@ namespace NeeView
             }
 
 #pragma warning disable CS0618 // 型またはメンバーが旧型式です
+            if (_animatedContent.FileProxy is null) throw new InvalidOperationException("FileProxy must not be null");
             var uri = new Uri(_animatedContent.FileProxy.Path, true);
 #pragma warning restore CS0618 // 型またはメンバーが旧型式です
 

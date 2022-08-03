@@ -10,9 +10,9 @@ namespace NeeView
     public class FileInformationContentViewModel : BindableBase
     {
         private Dictionary<InformationKey, FileInformationRecord> _database;
-        private FileInformationSource _source;
+        private FileInformationSource? _source;
         private CollectionViewSource _collectionViewSource;
-        private FileInformationRecord _selectedItem;
+        private FileInformationRecord? _selectedItem;
         private bool _IsVisibleImage;
         private bool _isVisibleMetadata;
 
@@ -29,7 +29,7 @@ namespace NeeView
         }
 
 
-        public FileInformationSource Source
+        public FileInformationSource? Source
         {
             get { return _source; }
             set
@@ -47,7 +47,7 @@ namespace NeeView
             set { SetProperty(ref _collectionViewSource, value); }
         }
 
-        public FileInformationRecord SelectedItem
+        public FileInformationRecord? SelectedItem
         {
             get { return _selectedItem; }
             set { SetProperty(ref _selectedItem, value); }
@@ -78,7 +78,7 @@ namespace NeeView
         }
 
 
-        private void Information_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        private void Information_PropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
             switch (e.PropertyName)
             {
@@ -100,7 +100,7 @@ namespace NeeView
 
         private void UpdateDatabase()
         {
-            if (_source != null)
+            if (_source?.Properties != null)
             {
                 foreach (var item in _source.Properties)
                 {
@@ -120,7 +120,7 @@ namespace NeeView
         }
 
 
-        private void CollectionViewSource_Filter(object sender, FilterEventArgs e)
+        private void CollectionViewSource_Filter(object? sender, FilterEventArgs e)
         {
             if (e.Item is FileInformationRecord record)
             {

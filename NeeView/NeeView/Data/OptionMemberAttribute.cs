@@ -8,14 +8,14 @@ namespace NeeView.Data
     [AttributeUsage(AttributeTargets.Property)]
     public class OptionMemberAttribute : OptionBaseAttribute
     {
-        public string ShortName;
-        public string LongName;
-        public string Default;
+        public string? ShortName;
+        public string? LongName;
+        public string? Default;
         public bool HasParameter;
         public bool RequireParameter;
 
         public OptionMemberAttribute() { }
-        public OptionMemberAttribute(string shortName, string longName)
+        public OptionMemberAttribute(string? shortName, string? longName)
         {
             ShortName = shortName;
             LongName = longName;
@@ -26,12 +26,12 @@ namespace NeeView.Data
     //
     public class OptionMemberElement
     {
-        public string LongName => _attribute.LongName;
-        public string ShortName => _attribute.ShortName;
-        public string Default => _attribute.Default;
+        public string? LongName => _attribute.LongName;
+        public string? ShortName => _attribute.ShortName;
+        public string? Default => _attribute.Default;
         public bool HasParameter => _attribute.HasParameter;
         public bool RequireParameter => _attribute.RequireParameter;
-        public string HelpText => ResourceService.GetString(_attribute.HelpText);
+        public string? HelpText => ResourceService.GetString(_attribute.HelpText);
 
         public string PropertyName => _info.Name;
 
@@ -57,7 +57,7 @@ namespace NeeView.Data
                 return string.Join("|", Enum.GetNames(_info.PropertyType));
             }
 
-            Type nullable = Nullable.GetUnderlyingType(_info.PropertyType);
+            Type? nullable = Nullable.GetUnderlyingType(_info.PropertyType);
             if ((nullable != null) && nullable.IsEnum)
             {
                 return string.Join("|", Enum.GetNames(nullable));
@@ -88,7 +88,7 @@ namespace NeeView.Data
                 return;
             }
 
-            Type nullable = Nullable.GetUnderlyingType(_info.PropertyType);
+            Type? nullable = Nullable.GetUnderlyingType(_info.PropertyType);
             if ((nullable != null) && nullable.IsEnum)
             {
                 _info.SetValue(_source, Enum.Parse(nullable, value));

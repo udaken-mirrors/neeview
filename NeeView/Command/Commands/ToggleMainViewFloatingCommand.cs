@@ -16,12 +16,12 @@ namespace NeeView
             return new Binding(nameof(MainViewConfig.IsFloating)) { Source = Config.Current.MainView, Mode = BindingMode.OneWay };
         }
 
-        public override string ExecuteMessage(object sender, CommandContext e)
+        public override string ExecuteMessage(object? sender, CommandContext e)
         {
             return Config.Current.MainView.IsFloating ? Properties.Resources.ToggleMainViewFloatingCommand_Off : Properties.Resources.ToggleMainViewFloatingCommand_On;
         }
 
-        public override void Execute(object sender, CommandContext e)
+        public override void Execute(object? sender, CommandContext e)
         {
             Config.Current.MainView.IsFloating = !Config.Current.MainView.IsFloating;
         }

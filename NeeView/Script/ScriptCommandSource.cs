@@ -23,11 +23,11 @@ namespace NeeView
         public string Path { get; private set; }
         public string Name => LoosePath.GetFileNameWithoutExtension(Path);
         public bool IsCloneable { get; private set; }
-        public string Text { get; private set; }
-        public string Remarks { get; private set; }
-        public string ShortCutKey { get; private set; }
-        public string MouseGesture { get; private set; }
-        public string TouchGesture { get; private set; }
+        public string Text { get; private set; } = "";
+        public string Remarks { get; private set; } = "";
+        public string ShortCutKey { get; private set; } = "";
+        public string MouseGesture { get; private set; } = "";
+        public string TouchGesture { get; private set; } = "";
 
 
 
@@ -57,8 +57,8 @@ namespace NeeView
             using (var reader = new StreamReader(path))
             {
                 bool isComment = false;
-                string line;
-                while ((line = reader.ReadLine()) != null)
+                string? line;
+                while ((line = reader?.ReadLine()) != null)
                 {
                     if (_regexCommentLine.IsMatch(line))
                     {

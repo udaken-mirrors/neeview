@@ -1,4 +1,5 @@
 ﻿using NeeLaboratory.ComponentModel;
+using System;
 using System.Collections.ObjectModel;
 using System.Windows.Media;
 
@@ -6,13 +7,13 @@ namespace NeeView
 {
     public class QuickAccessNode : FolderTreeNodeBase
     {
-        public QuickAccessNode(QuickAccess source, RootQuickAccessNode parent)
+        public QuickAccessNode(QuickAccess source, RootQuickAccessNode? parent)
         {
             Source = source;
             Parent = parent;
         }
 
-        public QuickAccess QuickAccessSource => (QuickAccess)Source;
+        public QuickAccess QuickAccessSource => (QuickAccess?)Source ?? throw new InvalidOperationException();
 
         public override string Name { get => QuickAccessSource.Name; set { } }
 

@@ -179,13 +179,13 @@ namespace NeeView
 
 
 
-        public event EventHandler ContentChanged;
+        public event EventHandler? ContentChanged;
 
-        public event EventHandler ContentSizeChanged;
+        public event EventHandler? ContentSizeChanged;
 
-        public event EventHandler ContentStretchChanged;
+        public event EventHandler? ContentStretchChanged;
 
-        public event EventHandler DpiChanged;
+        public event EventHandler? DpiChanged;
 
 
         // 空フォルダー通知表示のON/OFF
@@ -197,8 +197,8 @@ namespace NeeView
         }
 
         // 空フォルダー通知表示の詳細テキスト
-        private string _emptyPageMessage;
-        public string EmptyPageMessage
+        private string? _emptyPageMessage;
+        public string? EmptyPageMessage
         {
             get { return _emptyPageMessage; }
             set { _emptyPageMessage = value; RaisePropertyChanged(); }
@@ -269,8 +269,8 @@ namespace NeeView
         }
 
         // 見開き時のメインとなるコンテンツ
-        private ViewContent _mainContent;
-        public ViewContent MainContent
+        private ViewContent? _mainContent;
+        public ViewContent? MainContent
         {
             get { return _mainContent; }
             set
@@ -362,7 +362,7 @@ namespace NeeView
 
 
         // トランスフォーム変更イベント処理
-        private void Transform_TransformChanged(object sender, TransformEventArgs e)
+        private void Transform_TransformChanged(object? sender, TransformEventArgs e)
         {
             UpdateContentScalingMode();
             _viewComponent.MouseInput.ShowMessage(e.ActionType, MainContent);
@@ -394,7 +394,7 @@ namespace NeeView
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void OnViewContentsChanged(object sender, ViewContentSourceCollectionChangedEventArgs e)
+        private void OnViewContentsChanged(object? sender, ViewContentSourceCollectionChangedEventArgs e)
         {
             var contents = new List<ViewContent>();
 
@@ -473,7 +473,7 @@ namespace NeeView
                 NextViewOrigin = DragViewOrigin.None;
             }
 
-            ContentChanged?.Invoke(this, null);
+            ContentChanged?.Invoke(this, EventArgs.Empty);
 
             // GC
             MemoryControl.Current.GarbageCollect();
@@ -489,7 +489,7 @@ namespace NeeView
 
         // 先読みコンテンツ更新
         // 表示サイズを確定し、フィルター適用時にリサイズ処理を行う
-        private void OnNextContentsChanged(object sender, ViewContentSourceCollectionChangedEventArgs source)
+        private void OnNextContentsChanged(object? sender, ViewContentSourceCollectionChangedEventArgs source)
         {
             if (source?.ViewPageCollection?.Collection == null) return;
 
@@ -567,7 +567,7 @@ namespace NeeView
         public void ResetContentSize()
         {
             UpdateContentSize();
-            ContentSizeChanged?.Invoke(this, null);
+            ContentSizeChanged?.Invoke(this, EventArgs.Empty);
             ResetTransformRaw(true, false, false, 0.0, false);
         }
 
@@ -579,7 +579,7 @@ namespace NeeView
             var angleResetMode = GetAngleResetMode(true);
 
             UpdateContentSize(GetAutoRotateAngle(angleResetMode));
-            ContentSizeChanged?.Invoke(this, null);
+            ContentSizeChanged?.Invoke(this, EventArgs.Empty);
             ResetTransform(0, DragViewOrigin.None, angleResetMode, condition);
         }
 
@@ -658,7 +658,7 @@ namespace NeeView
 
             UpdateContentSize();
 
-            ContentSizeChanged?.Invoke(this, null);
+            ContentSizeChanged?.Invoke(this, EventArgs.Empty);
         }
 
         /// <summary>
@@ -723,7 +723,7 @@ namespace NeeView
 
 
         // コンテンツスケーリングモードを更新
-        public void UpdateContentScalingMode(ViewContent target = null)
+        public void UpdateContentScalingMode(ViewContent? target = null)
         {
             double finalScale = _viewComponent.DragTransform.Scale * _viewComponent.LoupeTransform.FixedScale * _dpiProvider.DpiScale.DpiScaleX;
 
@@ -731,7 +731,7 @@ namespace NeeView
             {
                 if (target != null && target != content) continue;
 
-                if (content.View != null && content.IsBitmapScalingModeSupported)
+                if (content.View != null && content.Source != null && content.IsBitmapScalingModeSupported)
                 {
                     var bitmapContent = content as BitmapViewContent;
                     if (bitmapContent == null) continue;
@@ -766,7 +766,7 @@ namespace NeeView
 
                     if (bitmapContent.IsDarty())
                     {
-                        ContentSizeChanged?.Invoke(this, null);
+                        ContentSizeChanged?.Invoke(this, EventArgs.Empty);
                     }
                 }
             }
@@ -863,8 +863,8 @@ namespace NeeView
         public void Stretch(bool ignoreViewOrigin = false)
         {
             UpdateContentSize(_viewComponent.DragTransform.Angle);
-            ContentSizeChanged?.Invoke(this, null);
-            ContentStretchChanged?.Invoke(this, null);
+            ContentSizeChanged?.Invoke(this, EventArgs.Empty);
+            ContentStretchChanged?.Invoke(this, EventArgs.Empty);
             ResetTransformRaw(true, false, false, 0.0, ignoreViewOrigin);
         }
 
@@ -872,7 +872,7 @@ namespace NeeView
 
         #region クリップボード関連
 
-        private ImageSource CurrentImageSource
+        private ImageSource? CurrentImageSource
         {
             get { return (this.MainContent?.Content as BitmapContent)?.ImageSource; }
         }
@@ -961,7 +961,7 @@ namespace NeeView
             public AutoRotateType AutoRotateType { get; set; }
 
             [DataMember]
-            public GridLine.Memento GridLine { get; set; }
+            public GridLine.Memento? GridLine { get; set; }
 
 
             [Obsolete, DataMember(EmitDefaultValue = false)]
@@ -1002,7 +1002,7 @@ namespace NeeView
                 config.View.AllowStretchScaleDown = AllowReduce;
                 config.View.AutoRotate = AutoRotateType;
 
-                this.GridLine.RestoreConfig(config);
+                this.GridLine?.RestoreConfig(config);
             }
         }
 

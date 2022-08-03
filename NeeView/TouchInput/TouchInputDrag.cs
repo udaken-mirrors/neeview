@@ -32,7 +32,7 @@ namespace NeeView
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="parameter"></param>
-        public override void OnOpened(FrameworkElement sender, object parameter)
+        public override void OnOpened(FrameworkElement sender, object? parameter)
         {
             _manipulation.Start();
         }
@@ -53,7 +53,7 @@ namespace NeeView
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        public override void OnStylusDown(object sender, StylusDownEventArgs e)
+        public override void OnStylusDown(object? sender, StylusDownEventArgs e)
         {
             _manipulation.Start();
         }
@@ -63,7 +63,7 @@ namespace NeeView
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        public override void OnStylusUp(object sender, StylusEventArgs e)
+        public override void OnStylusUp(object? sender, StylusEventArgs e)
         {
             // タッチされなくなったら解除
             if (_context.TouchMap.Count < 1)
@@ -82,7 +82,7 @@ namespace NeeView
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        public override void OnStylusMove(object sender, StylusEventArgs e)
+        public override void OnStylusMove(object? sender, StylusEventArgs e)
         {
             _manipulation.Update();
         }
@@ -93,11 +93,11 @@ namespace NeeView
         public class Memento : IMemento
         {
             [DataMember]
-            public TouchDragManipulation.Memento Manipulation { get; set; }
+            public TouchDragManipulation.Memento? Manipulation { get; set; }
 
             public void RestoreConfig(Config config)
             {
-                Manipulation.RestoreConfig(config);
+                Manipulation?.RestoreConfig(config);
             }
         }
 

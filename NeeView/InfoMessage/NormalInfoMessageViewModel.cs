@@ -51,7 +51,7 @@ namespace NeeView
             set { SetProperty(ref _changeCount, value); }
         }
 
-        public string Message => _model.Model.Message;
+        public string? Message => _model.Model.Message;
 
         public TimeSpan DispTime => TimeSpan.FromSeconds(_model.Model.DispTime);
 

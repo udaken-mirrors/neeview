@@ -11,7 +11,7 @@ namespace NeeView.Collections
     /// <typeparam name="T"></typeparam>
     public class HistoryLimitedCollection<T>
     {
-        private T[] _buffer;
+        private T?[] _buffer;
         private int _bufferCapacity;
         private int _bufferTop;
         private int _bufferSize;
@@ -25,11 +25,11 @@ namespace NeeView.Collections
         public HistoryLimitedCollection(int capacity)
         {
             _bufferCapacity = capacity;
-            _buffer = new T[capacity];
+            _buffer = new T?[capacity];
         }
 
 
-        public event EventHandler Changed;
+        public event EventHandler? Changed;
 
 
         private int GetRawIndex(int index)
@@ -37,7 +37,7 @@ namespace NeeView.Collections
             return (_bufferTop + index) % _bufferCapacity;
         }
 
-        private void Set(int index, T value)
+        private void Set(int index, T? value)
         {
             Debug.Assert(index >= 0 && index < _bufferSize);
 
@@ -45,7 +45,7 @@ namespace NeeView.Collections
             _buffer[rawIndex] = value;
         }
 
-        private T Get(int index)
+        private T? Get(int index)
         {
             if (index < 0 || index >= _bufferSize)
             {
@@ -57,7 +57,7 @@ namespace NeeView.Collections
         }
 
 
-        public void Add(T element)
+        public void Add(T? element)
         {
             if (_current != _bufferSize)
             {
@@ -73,10 +73,10 @@ namespace NeeView.Collections
 
             Set(_bufferSize - 1, element);
             _current = _bufferSize;
-            Changed?.Invoke(this, null);
+            Changed?.Invoke(this, EventArgs.Empty);
         }
 
-        public void TrimEnd(T element)
+        public void TrimEnd(T? element)
         {
             while (_bufferSize > 0 && EqualityComparer<T>.Default.Equals(Get(_bufferSize - 1), element))
             {
@@ -91,10 +91,10 @@ namespace NeeView.Collections
         public void Move(int delta)
         {
             _current = MathUtility.Clamp(_current + delta, 0, _bufferSize);
-            Changed?.Invoke(this, null);
+            Changed?.Invoke(this, EventArgs.Empty);
         }
 
-        public T GetCurrent()
+        public T? GetCurrent()
         {
             return Get(_current - 1);
         }
@@ -104,7 +104,7 @@ namespace NeeView.Collections
             return _current - 2 >= 0;
         }
 
-        public T GetPrevious()
+        public T? GetPrevious()
         {
             return Get(_current - 2);
         }
@@ -114,12 +114,12 @@ namespace NeeView.Collections
             return _current < _bufferSize;
         }
 
-        public T GetNext()
+        public T? GetNext()
         {
             return Get(_current);
         }
 
-        public T GetHistory(int index)
+        public T? GetHistory(int index)
         {
             return Get(index);
         }
@@ -127,7 +127,7 @@ namespace NeeView.Collections
         public void SetCurrent(int index)
         {
             _current = MathUtility.Clamp(index, 0, _bufferSize);
-            Changed?.Invoke(this, null);
+            Changed?.Invoke(this, EventArgs.Empty);
         }
 
         internal List<KeyValuePair<int, T>> GetHistory(int direction, int size)
@@ -142,7 +142,9 @@ namespace NeeView.Collections
             {
                 var index = _current - 2 - i;
                 if (index < 0) break;
-                list.Add(new KeyValuePair<int, T>(index, Get(index)));
+                var item = Get(index);
+                if (item is null) continue;
+                list.Add(new KeyValuePair<int, T>(index, item));
             }
             return list;
         }
@@ -154,7 +156,9 @@ namespace NeeView.Collections
             {
                 var index = _current + i;
                 if (index >= _bufferSize) break;
-                list.Add(new KeyValuePair<int, T>(index, Get(index)));
+                var item = Get(index);
+                if (item is null) continue;
+                list.Add(new KeyValuePair<int, T>(index, item));
             }
             return list;
         }

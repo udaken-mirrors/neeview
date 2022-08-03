@@ -2,6 +2,7 @@
 using NeeView.Collections;
 using System;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Runtime.Serialization;
 using System.Threading;
@@ -12,7 +13,7 @@ namespace NeeView
     [Obsolete]
     public interface IPagemarkEntry : IHasName
     {
-        string Path { get; }
+        string? Path { get; }
         string DispName { get; }
     }
 
@@ -25,8 +26,8 @@ namespace NeeView
 
         public Pagemark(string path, string entryName)
         {
-            Path = path;
-            EntryName = entryName;
+            _path = path;
+            _entryName = entryName;
         }
 
 
@@ -58,14 +59,15 @@ namespace NeeView
 
 
         [DataMember(Name = "DispName", EmitDefaultValue = false)]
-        private string _dispName;
-        public string DispName
+        private string? _dispName;
+        [NotNull]
+        public string? DispName
         {
             get { return _dispName ?? LoosePath.GetFileName(EntryName); }
             set { SetProperty(ref _dispName, (string.IsNullOrWhiteSpace(value) || value == LoosePath.GetFileName(EntryName)) ? null : value); }
         }
 
-        public string DispNameRaw => _dispName;
+        public string? DispNameRaw => _dispName;
 
 
         [OnDeserialized]

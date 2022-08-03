@@ -16,13 +16,13 @@ namespace NeeView
             return new Binding(nameof(LoupeTransform.IsEnabled)) { Mode = BindingMode.OneWay, Source = MainViewComponent.Current.LoupeTransform };
         }
 
-        public override string ExecuteMessage(object sender, CommandContext e)
+        public override string ExecuteMessage(object? sender, CommandContext e)
         {
             return MainViewComponent.Current.ViewController.GetLoupeMode() ? Properties.Resources.ToggleIsLoupeCommand_Off : Properties.Resources.ToggleIsLoupeCommand_On;
         }
 
         [MethodArgument("@ToggleCommand.Execute.Remarks")]
-        public override void Execute(object sender, CommandContext e)
+        public override void Execute(object? sender, CommandContext e)
         {
             if (e.Args.Length > 0)
             {

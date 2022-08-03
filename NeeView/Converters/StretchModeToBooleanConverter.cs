@@ -9,8 +9,9 @@ namespace NeeView
     {
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
+            var s = parameter as string ?? throw new ArgumentException();
             PageStretchMode mode0 = (PageStretchMode)value;
-            PageStretchMode mode1 = (PageStretchMode)Enum.Parse(typeof(PageStretchMode), parameter as string);
+            PageStretchMode mode1 = (PageStretchMode)Enum.Parse(typeof(PageStretchMode), s);
             return (mode0 == mode1);
         }
 

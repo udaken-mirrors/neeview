@@ -15,17 +15,17 @@ namespace NeeView
             ExecuteTouchGesture(point);
         }
 
-        public override void OnStylusDown(object sender, StylusDownEventArgs e)
+        public override void OnStylusDown(object? sender, StylusDownEventArgs e)
         {
             throw new NotImplementedException();
         }
 
-        public override void OnStylusMove(object sender, StylusEventArgs e)
+        public override void OnStylusMove(object? sender, StylusEventArgs e)
         {
             throw new NotImplementedException();
         }
 
-        public override void OnStylusUp(object sender, StylusEventArgs e)
+        public override void OnStylusUp(object? sender, StylusEventArgs e)
         {
             throw new NotImplementedException();
         }

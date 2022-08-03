@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization;
@@ -32,7 +33,7 @@ namespace NeeView
         }
 
 
-        public event EventHandler<BookMementoCollectionChangedArgs> HistoryChanged;
+        public event EventHandler<BookMementoCollectionChangedArgs>? HistoryChanged;
 
 
         // 履歴コレクション
@@ -45,10 +46,10 @@ namespace NeeView
         public int SerialNumber { get; private set; }
 
         // 先頭の要素
-        public LinkedListNode<BookHistory> First => Items.First;
+        public LinkedListNode<BookHistory>? First => Items.First;
 
 
-        private void BookHistoryCollection_HistoryChanged(object sender, BookMementoCollectionChangedArgs e)
+        private void BookHistoryCollection_HistoryChanged(object? sender, BookMementoCollectionChangedArgs e)
         {
             SerialNumber++;
             RaisePropertyChanged(nameof(Count));
@@ -82,7 +83,7 @@ namespace NeeView
                 {
                     try
                     {
-                        var newItem = new BookHistory() { Path = item.Path, LastAccessTime = item.LastAccessTime };
+                        var newItem = new BookHistory(item.Path, item.LastAccessTime);
                         Items.AddLastRaw(newItem.Path, newItem);
                     }
                     catch (Exception ex)
@@ -108,7 +109,7 @@ namespace NeeView
 
 
         // 履歴検索
-        public LinkedListNode<BookHistory> FindNode(string place)
+        public LinkedListNode<BookHistory>? FindNode(string place)
         {
             if (place == null) return null;
 
@@ -118,12 +119,12 @@ namespace NeeView
             }
         }
 
-        public BookHistory Find(string place)
+        public BookHistory? Find(string place)
         {
             return FindNode(place)?.Value;
         }
 
-        public BookMementoUnit FindUnit(string place)
+        public BookMementoUnit? FindUnit(string place)
         {
             return Find(place)?.Unit;
         }
@@ -364,7 +365,7 @@ namespace NeeView
         {
             path = path ?? "<<root>>";
 
-            FolderParameter.Memento memento;
+            FolderParameter.Memento? memento;
             _folders.TryGetValue(path, out memento);
             return memento ?? FolderParameter.Memento.GetDefault(path);
         }
@@ -410,7 +411,7 @@ namespace NeeView
         public class Memento : BindableBase, IMemento
         {
             [JsonPropertyName("Format")]
-            public FormatVersion Format { get; set; }
+            public FormatVersion? Format { get; set; }
 
             [JsonIgnore]
             [DataMember]
@@ -424,7 +425,7 @@ namespace NeeView
 
             [JsonIgnore]
             [DataMember(Order = 8)]
-            public string LastFolder { get; set; }
+            public string? LastFolder { get; set; }
 
             [JsonIgnore]
             [DataMember(Order = 12)]
@@ -443,29 +444,31 @@ namespace NeeView
             public bool IsKeepLastFolder { get; set; }
 
             [DataMember]
-            public Dictionary<string, FolderParameter.Memento> Folders { get; set; }
+            public Dictionary<string, FolderParameter.Memento>? Folders { get; set; }
 
             [JsonIgnore]
             [DataMember]
-            public string LastAddress { get; set; }
+            public string? LastAddress { get; set; }
 
             [JsonIgnore]
             [DataMember]
             public bool IsKeepSearchHistory { get; set; }
 
             [DataMember(EmitDefaultValue = false)]
-            public List<string> SearchHistory { get; set; }
+            public List<string>? SearchHistory { get; set; }
 
             // no used
             [JsonIgnore]
             [Obsolete, DataMember(Order = 8, EmitDefaultValue = false)]
-            public Dictionary<string, FolderOrder> FolderOrders { get; set; } // no used (ver.22)
+            public Dictionary<string, FolderOrder>? FolderOrders { get; set; } // no used (ver.22)
 
             [JsonIgnore]
             [Obsolete, DataMember(Name = "History", EmitDefaultValue = false)]
-            public List<Book.Memento> OldBooks { get; set; } // no used (ver.31)
+            public List<Book.Memento>? OldBooks { get; set; } // no used (ver.31)
 
-            //
+
+            [MemberNotNull(nameof(Items))]
+            [MemberNotNull(nameof(Books))]
             private void Constructor()
             {
                 Items = new List<BookHistory>();
@@ -495,7 +498,7 @@ namespace NeeView
                 if (_Version < Environment.GenerateProductVersionNumber(31, 0, 0))
                 {
                     Items = OldBooks != null
-                        ? OldBooks.Select(e => new BookHistory() { Path = e.Path, LastAccessTime = e.LastAccessTime }).ToList()
+                        ? OldBooks.Select(e => new BookHistory(e.Path, e.LastAccessTime)).ToList()
                         : new List<BookHistory>();
 
                     Books = OldBooks ?? new List<Book.Memento>();
@@ -541,7 +544,9 @@ namespace NeeView
 
             public static Memento Load(ReadOnlySpan<byte> json)
             {
-                return JsonSerializer.Deserialize<Memento>(json, UserSettingTools.GetSerializerOptions());
+                var memento = JsonSerializer.Deserialize<Memento>(json, UserSettingTools.GetSerializerOptions());
+                if (memento is null) throw new FormatException();
+                return memento;
 
                 // TODO: v.38以後の互換性処理をここで？
             }
@@ -577,7 +582,8 @@ namespace NeeView
                 using (XmlReader xr = XmlReader.Create(stream))
                 {
                     DataContractSerializer serializer = new DataContractSerializer(typeof(Memento));
-                    Memento memento = (Memento)serializer.ReadObject(xr);
+                    var memento = serializer.ReadObject(xr) as Memento;
+                    if (memento is null) throw new FormatException();
                     return memento;
                 }
             }
@@ -585,7 +591,7 @@ namespace NeeView
             #endregion Legacy
 
             // 合成
-            public void Merge(Memento memento)
+            public void Merge(Memento? memento)
             {
                 if (memento == null) return;
 
@@ -630,8 +636,10 @@ namespace NeeView
                 }
             }
 
-            public void RestoreConfig(Config config)
+            public void RestoreConfig(Config? config)
             {
+                if (config is null) return;
+
                 config.StartUp.IsOpenLastFolder = IsKeepLastFolder;
                 config.StartUp.LastFolderPath = LastFolder;
                 config.StartUp.LastBookPath = LastAddress;
@@ -664,7 +672,7 @@ namespace NeeView
         }
 
         // memento適用
-        public void Restore(Memento memento, bool fromLoad)
+        public void Restore(Memento? memento, bool fromLoad)
         {
             if (memento == null) return;
 

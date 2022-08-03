@@ -33,7 +33,7 @@ namespace NeeView
 
         public ExplorerContextMenu()
         {
-            _root = Registry.CurrentUser.OpenSubKey(@"Software\Classes", true);
+            _root = Registry.CurrentUser.OpenSubKey(@"Software\Classes", true) ?? throw new InvalidOperationException("Cannot get registory");
 
             _isEnabled = Exists();
         }
@@ -74,8 +74,8 @@ namespace NeeView
 
         public void Create()
         {
-            var commandName = "\"" + Assembly.GetEntryAssembly().Location + "\"";
-            var label = Properties.Resources.ResourceManager.GetString("ExplorerContextMenu.OpenInNeeView", CultureInfo.CurrentCulture);
+            var commandName = "\"" + Environment.AssemblyLocation + "\"";
+            var label = Properties.Resources.ResourceManager.GetString("ExplorerContextMenu.OpenInNeeView", CultureInfo.CurrentCulture) ?? "Nee&View";
             var icon = commandName + ",0";
             var command = commandName + " \"%1\"";
             var commandTypeV = commandName + " \"%V\"";

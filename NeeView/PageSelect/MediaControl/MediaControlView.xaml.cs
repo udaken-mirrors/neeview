@@ -20,14 +20,13 @@ namespace NeeView
     /// </summary>
     public partial class MediaControlView : UserControl
     {
-        private MediaControlViewModel _vm;
+        private MediaControlViewModel? _vm;
 
         public MediaControlView()
         {
             InitializeComponent();
         }
 
-        #region Dependency Properties
 
         public MediaControl Source
         {
@@ -55,9 +54,7 @@ namespace NeeView
         public static readonly DependencyProperty IsBackgroundOpacityEnabledProperty =
             DependencyProperty.Register("IsBackgroundOpacityEnabled", typeof(bool), typeof(MediaControlView), new PropertyMetadata(false));
 
-        #endregion
 
-        #region Methods
 
         public void Initialize()
         {
@@ -67,49 +64,49 @@ namespace NeeView
             this.DataContext = _vm;
         }
 
-        private void VideoSlider_DragStarted(object sender, System.Windows.Controls.Primitives.DragStartedEventArgs e)
+        private void VideoSlider_DragStarted(object? sender, System.Windows.Controls.Primitives.DragStartedEventArgs e)
         {
-            _vm.SetScrubbing(true);
+            _vm?.SetScrubbing(true);
         }
 
-        private void VideoSlider_DragCompleted(object sender, System.Windows.Controls.Primitives.DragCompletedEventArgs e)
+        private void VideoSlider_DragCompleted(object? sender, System.Windows.Controls.Primitives.DragCompletedEventArgs e)
         {
-            _vm.SetScrubbing(false);
+            _vm?.SetScrubbing(false);
         }
 
-        private void VideoSlider_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        private void VideoSlider_PreviewMouseLeftButtonDown(object? sender, MouseButtonEventArgs e)
         {
             MainWindowModel.Current.FocusMainView();
         }
 
-        private void TimeTextBlock_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        private void TimeTextBlock_MouseLeftButtonDown(object? sender, MouseButtonEventArgs e)
         {
-            _vm.ToggleTimeFormat();
+            _vm?.ToggleTimeFormat();
         }
 
-        private void Root_MouseWheel(object sender, MouseWheelEventArgs e)
+        private void Root_MouseWheel(object? sender, MouseWheelEventArgs e)
         {
-            _vm.MouseWheel(sender, e);
+            _vm?.MouseWheel(sender, e);
             e.Handled = true;
         }
 
-        private void Volume_PreviewMouseDown(object sender, MouseButtonEventArgs e)
+        private void Volume_PreviewMouseDown(object? sender, MouseButtonEventArgs e)
         {
             this.VolumeSlider.Focus();
         }
 
-        private void Volume_MouseWheel(object sender, MouseWheelEventArgs e)
+        private void Volume_MouseWheel(object? sender, MouseWheelEventArgs e)
         {
-            _vm.MouseWheelVolume(sender, e);
+            _vm?.MouseWheelVolume(sender, e);
             e.Handled = true;
         }
 
-        private void Volume_KeyDown(object sender, KeyEventArgs e)
+        private void Volume_KeyDown(object? sender, KeyEventArgs e)
         {
+            if (_vm is null) return;
+
             e.Handled = _vm.KeyVolume(e.Key);
         }
-
-        #endregion
     }
 
 

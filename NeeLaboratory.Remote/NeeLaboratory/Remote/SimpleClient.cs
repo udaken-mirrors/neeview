@@ -70,7 +70,9 @@ namespace NeeLaboratory.Remote
 
                     if (result[0].Id < 0)
                     {
-                        throw new IOException(DefaultSerializer.Deserialize<string>(result[0].Data));
+                        var data = result[0].Data;
+                        var message = data != null ? DefaultSerializer.Deserialize<string>(data) : "Susie Exception";
+                        throw new IOException(message);
                     }
 
                     return result;

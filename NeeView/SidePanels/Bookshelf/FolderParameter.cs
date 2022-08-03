@@ -121,7 +121,7 @@ namespace NeeView
                 return memento;
             }
 
-            public bool Equals(Memento other)
+            public bool Equals(Memento? other)
             {
                 if (other == null) return false;
 

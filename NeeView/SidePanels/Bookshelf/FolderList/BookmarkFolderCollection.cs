@@ -1,6 +1,7 @@
 ﻿using NeeView.Collections;
 using NeeView.Collections.Generic;
 using NeeView.IO;
+using NeeLaboratory.Linq;
 using System;
 using System.Collections.ObjectModel;
 using System.IO;
@@ -15,7 +16,8 @@ namespace NeeView
     {
         // Fields
 
-        private TreeListNode<IBookmarkEntry> _bookmarkPlace;
+        private TreeListNode<IBookmarkEntry> _bookmarkPlace = CreateBookmarkPlaceEmpty();
+
 
         // Constructors
 
@@ -30,11 +32,11 @@ namespace NeeView
 
         public void InitializeItems(CancellationToken token)
         {
-            _bookmarkPlace = BookmarkCollection.Current.FindNode(Place.FullPath) ?? new TreeListNode<IBookmarkEntry>();
+            _bookmarkPlace = BookmarkCollection.Current.FindNode(Place.FullPath) ?? CreateBookmarkPlaceEmpty();
 
             var items = _bookmarkPlace.Children
                 .Select(e => CreateFolderItem(e))
-                .Where(e => e != null)
+                .WhereNotNull()
                 .ToList();
 
             var list = Sort(items, token);
@@ -61,18 +63,27 @@ namespace NeeView
 
         // Methods
 
-        private void BookmarkCollection_BookmarkChanged(object sender, BookmarkCollectionChangedEventArgs e)
+        private static TreeListNode<IBookmarkEntry> CreateBookmarkPlaceEmpty()
+        {
+            return new TreeListNode<IBookmarkEntry>(new BookmarkEmpty());
+        }
+
+        private void BookmarkCollection_BookmarkChanged(object? sender, BookmarkCollectionChangedEventArgs e)
         {
             switch (e.Action)
             {
                 case EntryCollectionChangedAction.Add:
+                    if (e.Item is null) throw new InvalidOperationException();
                     if (e.Parent == _bookmarkPlace)
                     {
                         var item = Items.FirstOrDefault(i => e.Item == i.Source);
                         if (item == null)
                         {
                             item = CreateFolderItem(e.Item);
-                            AddItem(item);
+                            if (item is not null)
+                            {
+                                AddItem(item);
+                            }
                         }
                     }
                     break;
@@ -89,6 +100,7 @@ namespace NeeView
                     break;
 
                 case EntryCollectionChangedAction.Rename:
+                    if (e.Item is null) throw new InvalidOperationException();
                     if (e.Parent == _bookmarkPlace)
                     {
                         var item = Items.FirstOrDefault(i => e.Item == i.Source);
@@ -119,8 +131,10 @@ namespace NeeView
         }
 
 
-        private FolderItem CreateFolderItem(TreeListNode<IBookmarkEntry> node)
+        private FolderItem? CreateFolderItem(TreeListNode<IBookmarkEntry>? node)
         {
+            if (node is null) return null;
+
             if (node.Value is BookmarkFolder)
             {
                 return CreateFolderItemBookmarkFolder(node);
@@ -135,7 +149,7 @@ namespace NeeView
             }
         }
 
-        private FolderItem CreateFolderItemBookmarkFolder(TreeListNode<IBookmarkEntry> node)
+        private FolderItem? CreateFolderItemBookmarkFolder(TreeListNode<IBookmarkEntry> node)
         {
             if (!(node?.Value is BookmarkFolder folder)) return null;
 
@@ -152,7 +166,7 @@ namespace NeeView
             };
         }
 
-        private FileSystemInfo GetFileSystemInfo(string path)
+        private FileSystemInfo? GetFileSystemInfo(string path)
         {
             try
             {
@@ -174,7 +188,7 @@ namespace NeeView
             return null;
         }
 
-        private FolderItem CreateFolderItemBookmark(TreeListNode<IBookmarkEntry> node)
+        private FolderItem? CreateFolderItemBookmark(TreeListNode<IBookmarkEntry> node)
         {
             if (!(node?.Value is Bookmark bookmark)) return null;
 

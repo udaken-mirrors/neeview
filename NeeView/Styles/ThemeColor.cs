@@ -25,12 +25,14 @@ namespace NeeView
         public ThemeColor()
         {
             ThemeColorType = ThemeColorType.Default;
+            Link = "";
         }
 
         public ThemeColor(Color color, double opacity)
         {
             ThemeColorType = ThemeColorType.Color;
             Color = color;
+            Link = "";
             Opacity = opacity;
         }
 
@@ -69,7 +71,7 @@ namespace NeeView
             return s + "/" + Opacity.ToString("F2");
         }
 
-        public static ThemeColor Parse(string s)
+        public static ThemeColor Parse(string? s)
         {
             try
             {
@@ -103,12 +105,12 @@ namespace NeeView
 
     public class ThemeColorTypeConverter : TypeConverter
     {
-        public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType)
+        public override bool CanConvertFrom(ITypeDescriptorContext? context, Type sourceType)
         {
             return sourceType == typeof(string);
         }
 
-        public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object value)
+        public override object? ConvertFrom(ITypeDescriptorContext? context, CultureInfo? culture, object value)
         {
             return ThemeColor.Parse(value as string);
         }
@@ -117,7 +119,7 @@ namespace NeeView
 
     public sealed class ThemeColorJsonConverter : JsonConverter<ThemeColor>
     {
-        public override ThemeColor Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+        public override ThemeColor? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
             return ThemeColor.Parse(reader.GetString());
         }

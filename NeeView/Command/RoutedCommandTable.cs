@@ -12,6 +12,11 @@ namespace NeeView
 {
     public class CommandExecutedEventArgs : EventArgs
     {
+        public CommandExecutedEventArgs(InputGesture gesture)
+        {
+            Gesture = gesture;
+        }
+
         public InputGesture Gesture { get; set; }
     }
 
@@ -25,7 +30,7 @@ namespace NeeView
         public static RoutedCommandTable Current { get; }
 
 
-        private Dictionary<Key, bool> _usedKeyMap;
+        private HashSet<Key> _usedKeyMap = new();
         private bool _isDarty = true;
         private List<EventHandler<KeyEventArgs>> _imeKeyHandlers = new List<EventHandler<KeyEventArgs>>();
         private MouseWheelDelta _mouseWheelDelta = new MouseWheelDelta();
@@ -51,12 +56,12 @@ namespace NeeView
         /// <summary>
         /// コマンドテーブルが更新されたときのイベント
         /// </summary>
-        public event EventHandler Changed;
+        public event EventHandler? Changed;
 
         /// <summary>
         /// コマンドが実行されたときのイベント
         /// </summary>
-        public event EventHandler<CommandExecutedEventArgs> CommandExecuted;
+        public event EventHandler<CommandExecutedEventArgs>? CommandExecuted;
 
         /// <summary>
         /// コマンド辞書
@@ -65,7 +70,7 @@ namespace NeeView
 
 
 
-        private void CommandTable_Changed(object sender, CommandChangedEventArgs e)
+        private void CommandTable_Changed(object? sender, CommandChangedEventArgs e)
         {
             _isDarty = true;
 
@@ -141,7 +146,7 @@ namespace NeeView
 
             UpdateKeyInputGestures();
 
-            Changed?.Invoke(this, null);
+            Changed?.Invoke(this, EventArgs.Empty);
         }
 
 
@@ -272,7 +277,7 @@ namespace NeeView
         // コマンドで使用されているキーマップ生成
         private void UpdateUsedKeyMap()
         {
-            var map = Enum.GetValues(typeof(Key)).Cast<Key>().Distinct().ToDictionary(e => e, e => false);
+            var map = new HashSet<Key>();
 
             foreach (var command in this.Commands)
             {
@@ -282,10 +287,10 @@ namespace NeeView
                     switch (gesture)
                     {
                         case KeyGesture keyGesture:
-                            map[keyGesture.Key] = true;
+                            map.Add(keyGesture.Key);
                             break;
                         case KeyExGesture keyExGesture:
-                            map[keyExGesture.Key] = true;
+                            map.Add(keyExGesture.Key);
                             break;
                     }
                 }
@@ -297,11 +302,11 @@ namespace NeeView
         // コマンドで使用されているキー？
         public bool IsUsedKey(Key key)
         {
-            return _usedKeyMap != null ? _usedKeyMap[key] : false;
+            return _usedKeyMap.Contains(key);
         }
 
         // IMEキーコマンドを直接実行
-        public void ExecuteImeKeyGestureCommand(object sender, KeyEventArgs args)
+        public void ExecuteImeKeyGestureCommand(object? sender, KeyEventArgs args)
         {
             foreach (var handle in _imeKeyHandlers)
             {
@@ -311,12 +316,12 @@ namespace NeeView
         }
 
         // コマンドのジェスチャー判定と実行
-        private void InputGestureCommandExecute(object sender, InputEventArgs x, InputGesture gesture, RoutedUICommand command)
+        private void InputGestureCommandExecute(object? sender, InputEventArgs x, InputGesture gesture, RoutedUICommand command)
         {
             if (!x.Handled && gesture.Matches(this, x))
             {
                 command.Execute(null, (sender as IInputElement) ?? MainWindow.Current);
-                CommandExecuted?.Invoke(this, new CommandExecutedEventArgs() { Gesture = gesture });
+                CommandExecuted?.Invoke(this, new CommandExecutedEventArgs(gesture));
                 if (x.RoutedEvent != null)
                 {
                     x.Handled = true;
@@ -325,7 +330,7 @@ namespace NeeView
         }
 
         // ホイールの回転数に応じたコマンド実行
-        private void WheelCommandExecute(object sender, MouseWheelEventArgs arg, MouseWheelDeltaOption wheelOoptions, RoutedUICommand command)
+        private void WheelCommandExecute(object? sender, MouseWheelEventArgs arg, MouseWheelDeltaOption wheelOoptions, RoutedUICommand command)
         {
             int turn = Math.Abs(_mouseWheelDelta.NotchCount(arg, wheelOoptions));
             if (turn > 0)
@@ -358,7 +363,7 @@ namespace NeeView
             if (command.IsShowMessage)
             {
                 string message = command.ExecuteMessage(sender, CommandArgs.Empty);
-                if (message != null)
+                if (!string.IsNullOrEmpty(message))
                 {
                     InfoMessage.Current.SetMessage(InfoMessageType.Command, message);
                 }
@@ -397,15 +402,15 @@ namespace NeeView
             }
         }
 
-        public CommandElement GetFixedCommandElement(string commandName, bool allowRecursive)
+        public CommandElement? GetFixedCommandElement(string commandName, bool allowRecursive)
         {
-            CommandTable.Current.TryGetValue(GetFixedCommandName(commandName, allowRecursive), out CommandElement command);
+            CommandTable.Current.TryGetValue(GetFixedCommandName(commandName, allowRecursive), out CommandElement? command);
             return command;
         }
 
-        public RoutedUICommand GetFixedRoutedCommand(string commandName, bool allowRecursive)
+        public RoutedUICommand? GetFixedRoutedCommand(string commandName, bool allowRecursive)
         {
-            this.Commands.TryGetValue(GetFixedCommandName(commandName, allowRecursive), out RoutedUICommand command);
+            this.Commands.TryGetValue(GetFixedCommandName(commandName, allowRecursive), out RoutedUICommand? command);
             return command;
         }
 
@@ -434,13 +439,13 @@ namespace NeeView
     /// </summary>
     public class CommandParameterArgs
     {
-        public CommandParameterArgs(object param)
+        public CommandParameterArgs(object? param)
         {
             ////Parameter = param;
             AllowFlip = true;
         }
 
-        public CommandParameterArgs(object param, bool allowRecursive)
+        public CommandParameterArgs(object? param, bool allowRecursive)
         {
             ////Parameter = param;
             AllowFlip = allowRecursive;

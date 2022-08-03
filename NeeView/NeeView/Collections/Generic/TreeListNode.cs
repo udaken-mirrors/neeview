@@ -12,15 +12,17 @@ namespace NeeView.Collections.Generic
     [DataContract]
     public class TreeListNode<T> : BindableBase, IEnumerable<TreeListNode<T>>, IHasValue<T>
     {
-        private TreeListNode<T> _parent;
+        private TreeListNode<T>? _parent;
         private ObservableCollection<TreeListNode<T>> _children;
         private bool _isExpanded;
         private T _value;
 
+#if false
         public TreeListNode()
         {
             _children = new ObservableCollection<TreeListNode<T>>();
         }
+#endif
 
         public TreeListNode(T value)
         {
@@ -28,7 +30,7 @@ namespace NeeView.Collections.Generic
             _value = value;
         }
 
-        public TreeListNode<T> Parent => _parent;
+        public TreeListNode<T>? Parent => _parent;
 
         public ObservableCollection<TreeListNode<T>> Children
         {
@@ -37,14 +39,14 @@ namespace NeeView.Collections.Generic
         }
 
         [DataMember(Name = "Children", EmitDefaultValue = false)]
-        private ObservableCollection<TreeListNode<T>> _NullableChildren
+        private ObservableCollection<TreeListNode<T>>? _NullableChildren
         {
             get => _children == null || _children.Count == 0 ? null : _children;
             set => _children = value ?? new ObservableCollection<TreeListNode<T>>();
         }
 
 
-        public TreeListNode<T> Previous
+        public TreeListNode<T>? Previous
         {
             get
             {
@@ -55,7 +57,7 @@ namespace NeeView.Collections.Generic
             }
         }
 
-        public TreeListNode<T> Next
+        public TreeListNode<T>? Next
         {
             get
             {
@@ -135,14 +137,14 @@ namespace NeeView.Collections.Generic
             return _parent == null ? false : _parent == target ? true : _parent.ParentContains(target);
         }
 
-        public TreeListNode<T> Find(T value)
+        public TreeListNode<T>? Find(T value)
         {
             return _children.FirstOrDefault(e => EqualityComparer<T>.Default.Equals(e.Value, value));
         }
 
         public int GetIndex()
         {
-            return _parent._children.IndexOf(this);
+            return _parent == null ? 0 : _parent._children.IndexOf(this);
         }
 
         public void Add(T value)
@@ -223,6 +225,7 @@ namespace NeeView.Collections.Generic
             return _parent.Remove(this);
         }
 
+#if false
         public void Clear()
         {
             Value = default(T);
@@ -232,6 +235,7 @@ namespace NeeView.Collections.Generic
                 _children.Clear();
             }
         }
+#endif
 
         public IEnumerable<TreeListNode<T>> GetExpandedCollection()
         {
@@ -277,7 +281,7 @@ namespace NeeView.Collections.Generic
         }
 
 
-        #region IEnumerable support
+#region IEnumerable support
 
         public IEnumerator<TreeListNode<T>> GetEnumerator()
         {
@@ -300,7 +304,7 @@ namespace NeeView.Collections.Generic
             return this.GetEnumerator();
         }
 
-        #endregion
+#endregion
     }
 
 

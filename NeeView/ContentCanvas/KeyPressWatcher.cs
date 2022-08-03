@@ -26,8 +26,8 @@ namespace NeeView
         }
 
 
-        public event EventHandler<KeyEventArgs> PreviewKeyDown;
-        public event EventHandler<KeyEventArgs> PreviewKeyUp;
+        public event EventHandler<KeyEventArgs>? PreviewKeyDown;
+        public event EventHandler<KeyEventArgs>? PreviewKeyUp;
 
 
         public bool IsPressed

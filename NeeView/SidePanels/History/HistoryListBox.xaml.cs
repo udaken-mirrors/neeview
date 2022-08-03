@@ -23,9 +23,9 @@ namespace NeeView
     /// </summary>
     public partial class HistoryListBox : UserControl, IPageListPanel, IDisposable
     {
-        private HistoryListBoxViewModel _vm;
-        private ListBoxThumbnailLoader _thumbnailLoader;
-        private PageThumbnailJobClient _jobClient;
+        private HistoryListBoxViewModel? _vm;
+        private ListBoxThumbnailLoader? _thumbnailLoader;
+        private PageThumbnailJobClient? _jobClient;
         private bool _focusRequest;
 
 
@@ -35,13 +35,15 @@ namespace NeeView
             InitializeCommandStatic();
         }
 
-        public HistoryListBox()
+        //public HistoryListBox()
+        //{
+        //    InitializeComponent();
+        //}
+
+        public HistoryListBox(HistoryListBoxViewModel vm)
         {
             InitializeComponent();
-        }
 
-        public HistoryListBox(HistoryListBoxViewModel vm) : this()
-        {
             _vm = vm;
             this.DataContext = vm;
 
@@ -83,7 +85,7 @@ namespace NeeView
 
         public ListBox PageCollectionListBox => this.ListBox;
 
-        public bool IsThumbnailVisibled => _vm.IsThumbnailVisibled;
+        public bool IsThumbnailVisibled => _vm is null ? false : _vm.IsThumbnailVisibled;
 
         public IEnumerable<IHasPage> CollectPageList(IEnumerable<object> objs) => objs.OfType<IHasPage>();
 
@@ -106,17 +108,21 @@ namespace NeeView
             this.ListBox.CommandBindings.Add(new CommandBinding(RemoveCommand, Remove_Exec));
         }
 
-        public void OpenBook_Exec(object sender, ExecutedRoutedEventArgs e)
+        public void OpenBook_Exec(object? sender, ExecutedRoutedEventArgs e)
         {
-            var item = this.ListBox.SelectedItem as BookHistory;
-            if (item == null) return;
+            if (_vm is null) return;
 
-            _vm.Load(item?.Path);
+            var item = this.ListBox.SelectedItem as BookHistory;
+            if (item?.Path == null) return;
+
+            _vm.Load(item.Path);
             e.Handled = true;
         }
 
-        public void Remove_Exec(object sender, ExecutedRoutedEventArgs e)
+        public void Remove_Exec(object? sender, ExecutedRoutedEventArgs e)
         {
+            if (_vm is null) return;
+
             var items = this.ListBox.SelectedItems?.Cast<BookHistory>().ToList();
             if (items == null || !items.Any()) return;
 
@@ -127,8 +133,10 @@ namespace NeeView
         #endregion
 
 
-        private void HistoryListBox_Loaded(object sender, RoutedEventArgs e)
+        private void HistoryListBox_Loaded(object? sender, RoutedEventArgs e)
         {
+            if (_vm is null) return;
+
             _jobClient = new PageThumbnailJobClient("HistoryList", JobCategories.BookThumbnailCategory);
             _thumbnailLoader = new ListBoxThumbnailLoader(this, _jobClient);
             _thumbnailLoader.Load();
@@ -141,8 +149,10 @@ namespace NeeView
         }
 
 
-        private void HistoryListBox_Unloaded(object sender, RoutedEventArgs e)
+        private void HistoryListBox_Unloaded(object? sender, RoutedEventArgs e)
         {
+            if (_vm is null) return;
+
             _vm.SelectedItemChanged -= ViewModel_SelectedItemChanged;
 
             Config.Current.Panels.ContentItemProfile.PropertyChanged -= PanelListtemProfile_PropertyChanged;
@@ -153,7 +163,7 @@ namespace NeeView
         }
 
 
-        private void ViewModel_SelectedItemChanged(object sender, EventArgs e)
+        private void ViewModel_SelectedItemChanged(object? sender, EventArgs e)
         {
             this.ListBox.SetAnchorItem(null);
 
@@ -165,7 +175,7 @@ namespace NeeView
             this.ListBox.ScrollIntoView(this.ListBox.SelectedItem);
         }
 
-        private void PanelListtemProfile_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        private void PanelListtemProfile_PropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
             this.ListBox.Items?.Refresh();
         }
@@ -204,46 +214,59 @@ namespace NeeView
 
 
         // 履歴項目決定
-        private void HistoryListItem_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        private void HistoryListItem_MouseLeftButtonDown(object? sender, MouseButtonEventArgs e)
         {
+            if (_vm is null) return;
+
             if (Keyboard.Modifiers != ModifierKeys.None) return;
 
             var item = ((sender as ListBoxItem)?.Content as BookHistory);
+            if (item?.Path is null) return;
+
             if (!Config.Current.Panels.OpenWithDoubleClick)
             {
-                _vm.Load(item?.Path);
+                _vm.Load(item.Path);
             }
         }
 
-        private void HistoryListItem_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private void HistoryListItem_MouseDoubleClick(object? sender, System.Windows.Input.MouseButtonEventArgs e)
         {
+            if (_vm is null) return;
+
             var item = ((sender as ListBoxItem)?.Content as BookHistory);
+            if (item?.Path is null) return;
+
             if (Config.Current.Panels.OpenWithDoubleClick)
             {
-                _vm.Load(item?.Path);
+                _vm.Load(item.Path);
             }
         }
 
 
 
         // 履歴項目決定(キー)
-        private void HistoryListItem_KeyDown(object sender, KeyEventArgs e)
+        private void HistoryListItem_KeyDown(object? sender, KeyEventArgs e)
         {
+            if (_vm is null) return;
+
             var item = ((sender as ListBoxItem)?.Content as BookHistory);
+            if (item?.Path is null) return;
 
             if (Keyboard.Modifiers == ModifierKeys.None)
             {
                 if (e.Key == Key.Return)
                 {
-                    _vm.Load(item?.Path);
+                    _vm.Load(item.Path);
                     e.Handled = true;
                 }
             }
         }
 
         // リストのキ入力
-        private void HistoryListBox_KeyDown(object sender, KeyEventArgs e)
+        private void HistoryListBox_KeyDown(object? sender, KeyEventArgs e)
         {
+            if (_vm is null) return;
+
             // このパネルで使用するキーのイベントを止める
             if (Keyboard.Modifiers == ModifierKeys.None)
             {
@@ -255,8 +278,10 @@ namespace NeeView
         }
 
         // 表示/非表示イベント
-        private async void HistoryListBox_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+        private async void HistoryListBox_IsVisibleChanged(object? sender, DependencyPropertyChangedEventArgs e)
         {
+            if (_vm is null) return;
+
             _vm.Visibility = (bool)e.NewValue ? Visibility.Visible : Visibility.Hidden;
 
             if (_vm.Visibility == Visibility.Visible)
@@ -272,20 +297,22 @@ namespace NeeView
             }
         }
 
-        private void HistoryListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void HistoryListBox_SelectionChanged(object? sender, SelectionChangedEventArgs e)
         {
         }
 
         // リスト全体が変化したときにサムネイルを更新する
-        private void HistoryListBox_TargetUpdated(object sender, DataTransferEventArgs e)
+        private void HistoryListBox_TargetUpdated(object? sender, DataTransferEventArgs e)
         {
             AppDispatcher.BeginInvoke(() => _thumbnailLoader?.Load());
         }
 
         #region UI Accessor
 
-        public List<BookHistory> GetItems()
+        public List<BookHistory>? GetItems()
         {
+            if (_vm is null) return null;
+
             _vm.UpdateItems();
             return this.ListBox.Items?.Cast<BookHistory>().ToList();
         }
@@ -295,9 +322,12 @@ namespace NeeView
             return this.ListBox.SelectedItems.Cast<BookHistory>().ToList();
         }
 
-        public void SetSelectedItems(IEnumerable<BookHistory> selectedItems)
+        public void SetSelectedItems(IEnumerable<BookHistory>? selectedItems)
         {
-            var items = selectedItems?.Intersect(GetItems()).ToList();
+            var sources = GetItems();
+            if (sources is null) return;
+
+            var items = selectedItems?.Intersect(sources).ToList();
             this.ListBox.SetSelectedItems(items);
             this.ListBox.ScrollItemsIntoView(items);
         }
@@ -307,7 +337,7 @@ namespace NeeView
 
     public class ArchiveEntryToDecoratePlaceNameConverter : IValueConverter
     {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        public object? Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value is ArchiveEntry entry)
             {

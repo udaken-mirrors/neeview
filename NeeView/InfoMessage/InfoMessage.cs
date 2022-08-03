@@ -69,7 +69,7 @@ namespace NeeView
 
         public TinyInfoMessage TinyInfoMessage { get; } = new TinyInfoMessage();
 
-        private void SetMessage(ShowMessageStyle style, string message, string tinyMessage = null, double dispTime = 1.0, BookMementoType bookmarkType = BookMementoType.None)
+        private void SetMessage(ShowMessageStyle style, string message, string? tinyMessage = null, double dispTime = 1.0, BookMementoType bookmarkType = BookMementoType.None)
         {
             switch (style)
             {
@@ -82,7 +82,7 @@ namespace NeeView
             }
         }
 
-        public void SetMessage(InfoMessageType type, string message, string tinyMessage = null, double dispTime = 1.0, BookMementoType bookmarkType = BookMementoType.None)
+        public void SetMessage(InfoMessageType type, string message, string? tinyMessage = null, double dispTime = 1.0, BookMementoType bookmarkType = BookMementoType.None)
         {
             SetMessage(GetShowMessageStyle(type), message, tinyMessage, dispTime, bookmarkType);
         }

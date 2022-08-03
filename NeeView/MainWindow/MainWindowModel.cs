@@ -25,14 +25,14 @@ namespace NeeView
     {
         public static LoadCommand Command { get; } = new LoadCommand();
 
-        public event EventHandler CanExecuteChanged;
+        public event EventHandler? CanExecuteChanged;
 
-        public bool CanExecute(object parameter)
+        public bool CanExecute(object? parameter)
         {
             return !BookHub.Current.IsLoading;
         }
 
-        public void Execute(object parameter)
+        public void Execute(object? parameter)
         {
             var path = parameter as string;
             if (parameter == null) return;
@@ -50,8 +50,8 @@ namespace NeeView
     /// </summary>
     public class MainWindowModel : BindableBase
     {
-        static MainWindowModel() => Current = new MainWindowModel();
-        public static MainWindowModel Current { get; }
+        private static MainWindowModel? _current;
+        public static MainWindowModel Current => _current ?? throw new InvalidOperationException();
 
 
         // パネル表示ロック
@@ -65,7 +65,7 @@ namespace NeeView
         private bool _canHidePanel;
         private bool _canHideMenu;
 
-        private volatile EditCommandWindow _editCommandWindow;
+        private volatile EditCommandWindow? _editCommandWindow;
 
         private MainViewComponent _viewComponent;
 
@@ -73,76 +73,17 @@ namespace NeeView
         private WindowStateManager _windowStateManamger;
 
 
-
-        private MainWindowModel()
+        public static void Initialize(WindowShape windowShape, WindowStateManager windowStateManamger)
         {
+            if (_current is not null) throw new InvalidOperationException();
+            _current = new MainWindowModel(windowShape, windowStateManamger);
         }
 
-
-        public event EventHandler CanHidePanelChanged;
-
-        public event EventHandler FocusMainViewCall;
-
-
-
-        public WindowShape WindowShape => _windowShape;
-
-
-        /// <summary>
-        /// メニューを自動非表示するか
-        /// </summary>
-        public bool CanHideMenu
+        private MainWindowModel(WindowShape windowShape, WindowStateManager windowStateManamger)
         {
-            get { return _canHideMenu; }
-            set { SetProperty(ref _canHideMenu, value); }
-        }
+            if (_current is not null) throw new InvalidOperationException();
+            _current = this;
 
-        /// <summary>
-        /// スライダーを自動非表示するか
-        /// </summary>
-        public bool CanHidePageSlider
-        {
-            get { return _canHidePageSlider; }
-            set { SetProperty(ref _canHidePageSlider, value); }
-        }
-
-        /// <summary>
-        /// パネルを自動非表示するか
-        /// </summary>
-        public bool CanHidePanel
-        {
-            get { return _canHidePanel; }
-            private set
-            {
-                if (SetProperty(ref _canHidePanel, value))
-                {
-                    CanHidePanelChanged?.Invoke(this, null);
-                }
-            }
-        }
-
-
-        /// <summary>
-        /// パネル表示状態をロックする
-        /// </summary>
-        public bool IsPanelVisibleLocked
-        {
-            get { return _isPanelVisibleLocked; }
-            set
-            {
-                if (_isPanelVisibleLocked != value)
-                {
-                    _isPanelVisibleLocked = value;
-                    RaisePropertyChanged();
-                    SidePanelFrame.Current.IsVisibleLocked = _isPanelVisibleLocked;
-                }
-            }
-        }
-
-
-
-        public void Initialize(WindowShape windowShape, WindowStateManager windowStateManamger)
-        {
             _windowShape = windowShape;
             _windowStateManamger = windowStateManamger;
 
@@ -194,8 +135,70 @@ namespace NeeView
             RefreshCanHidePanel();
             RefreshCanHidePageSlider();
 
-            PageViewRecorder.Current.Initialize();
+            PageViewRecorder.Initialize();
         }
+
+
+        public event EventHandler? CanHidePanelChanged;
+
+        public event EventHandler? FocusMainViewCall;
+
+
+
+        public WindowShape WindowShape => _windowShape;
+
+
+        /// <summary>
+        /// メニューを自動非表示するか
+        /// </summary>
+        public bool CanHideMenu
+        {
+            get { return _canHideMenu; }
+            set { SetProperty(ref _canHideMenu, value); }
+        }
+
+        /// <summary>
+        /// スライダーを自動非表示するか
+        /// </summary>
+        public bool CanHidePageSlider
+        {
+            get { return _canHidePageSlider; }
+            set { SetProperty(ref _canHidePageSlider, value); }
+        }
+
+        /// <summary>
+        /// パネルを自動非表示するか
+        /// </summary>
+        public bool CanHidePanel
+        {
+            get { return _canHidePanel; }
+            private set
+            {
+                if (SetProperty(ref _canHidePanel, value))
+                {
+                    CanHidePanelChanged?.Invoke(this, EventArgs.Empty);
+                }
+            }
+        }
+
+
+        /// <summary>
+        /// パネル表示状態をロックする
+        /// </summary>
+        public bool IsPanelVisibleLocked
+        {
+            get { return _isPanelVisibleLocked; }
+            set
+            {
+                if (_isPanelVisibleLocked != value)
+                {
+                    _isPanelVisibleLocked = value;
+                    RaisePropertyChanged();
+                    SidePanelFrame.Current.IsVisibleLocked = _isPanelVisibleLocked;
+                }
+            }
+        }
+
 
         private void RefreshCanHideMenu()
         {
@@ -261,7 +264,7 @@ namespace NeeView
             BookmarkFolderList.Current.UpdateItems();
 
             // オプション指定があればフォルダーリスト表示
-            if (App.Current.Option.FolderList != null)
+            if (!string.IsNullOrEmpty(App.Current.Option.FolderList))
             {
                 SidePanelFrame.Current.IsVisibleFolderList = true;
             }
@@ -310,7 +313,7 @@ namespace NeeView
             // 既に開いている場合、その場所を起点とする
             if (Config.Current.System.IsOpenbookAtCurrentPlace && BookHub.Current.Book != null)
             {
-                return System.IO.Path.GetDirectoryName(BookHub.Current.Book.Address);
+                return System.IO.Path.GetDirectoryName(BookHub.Current.Book.Address) ?? "";
             }
             else
             {
@@ -358,8 +361,7 @@ namespace NeeView
         // コマンド設定を開く
         public void OpenCommandParameterDialog(string command)
         {
-            var dialog = new EditCommandWindow();
-            dialog.Initialize(command, EditCommandWindowTab.Default);
+            var dialog = new EditCommandWindow(command, EditCommandWindowTab.Default);
             dialog.Owner = App.Current.MainWindow;
             dialog.WindowStartupLocation = WindowStartupLocation.CenterOwner;
 
@@ -469,7 +471,7 @@ namespace NeeView
                 ////SidePanel.Current.CloseAllPanels();
             }
 
-            FocusMainViewCall?.Invoke(this, null);
+            FocusMainViewCall?.Invoke(this, EventArgs.Empty);
         }
 
         /// <summary>
@@ -477,17 +479,17 @@ namespace NeeView
         /// </summary>
         public void FocusMainView()
         {
-            FocusMainViewCall?.Invoke(this, null);
+            FocusMainViewCall?.Invoke(this, EventArgs.Empty);
         }
 
 
-        #region Memento
+#region Memento
 
         [DataContract]
         public class Memento : IMemento
         {
             [DataMember]
-            public ContextMenuSetting ContextMenuSetting { get; set; }
+            public ContextMenuSetting? ContextMenuSetting { get; set; }
             [DataMember]
             public bool IsHideMenu { get; set; }
             [DataMember, DefaultValue(true)]
@@ -550,7 +552,7 @@ namespace NeeView
             }
         }
 
-        #endregion
+#endregion
     }
 
 }

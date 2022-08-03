@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Text.Json.Serialization;
@@ -15,7 +16,7 @@ namespace NeeView
     {
         public static CommandArgs Empty { get; } = new CommandArgs(null, CommandOption.None);
 
-        public CommandArgs(object[] args, CommandOption options)
+        public CommandArgs(object[]? args, CommandOption options)
         {
             this.Args = args ?? CommandElement.EmptyArgs;
             this.Options = options;
@@ -27,18 +28,18 @@ namespace NeeView
 
     public class CommandContext
     {
-        public CommandContext(CommandParameter parameter, object[] args, CommandOption options)
+        public CommandContext(CommandParameter? parameter, object[] args, CommandOption options)
         {
             this.Parameter = parameter;
             this.Args = args ?? CommandElement.EmptyArgs;
             this.Options = options;
         }
 
-        public CommandContext(CommandParameter parameter, CommandArgs args) : this(parameter, args.Args, args.Options)
+        public CommandContext(CommandParameter? parameter, CommandArgs args) : this(parameter, args.Args, args.Options)
         {
         }
 
-        public CommandParameter Parameter { get; private set; }
+        public CommandParameter? Parameter { get; private set; }
         public object[] Args { get; private set; }
         public CommandOption Options { get; private set; }
     }
@@ -75,7 +76,8 @@ namespace NeeView
 
         private static Regex _trimCommand = new Regex(@"Command$", RegexOptions.Compiled);
 
-        private string _menuText;
+        private string? _menuText;
+        private string? _remarksText;
         private string _shortCutKey = "";
         private string _touchGesture = "";
         private string _mouseGesture = "";
@@ -86,35 +88,41 @@ namespace NeeView
         {
         }
 
-        public CommandElement(string name)
+        public CommandElement(string? name)
         {
             NameSource = new CommandNameSource(name ?? _trimCommand.Replace(this.GetType().Name, ""));
 
-            Text = GetResourceText(null, null, true);
+            Text = GetResourceTextRequired(null, null);
             Menu = GetResourceText(nameof(Menu));
             Remarks = GetResourceText(nameof(Remarks));
         }
 
-        private string GetResourceKey(string property, string postfix = null)
+        private string GetResourceKey(string? property, string? postfix = null)
         {
             var period = (property is null) ? "" : ".";
             return "@" + this.GetType().Name + period + property + postfix;
         }
 
-        private string GetResourceText(string property, string postfix = null, bool isRequired = false)
+        private string? GetResourceText(string? property, string? postfix = null)
+        {
+            var resourceKey = GetResourceKey(property, postfix);
+            var resourceValue = ResourceService.GetResourceString(resourceKey, true);
+            return resourceValue;
+        }
+
+        private string GetResourceTextRequired(string? property, string? postfix = null)
         {
             var resourceKey = GetResourceKey(property, postfix);
             var resourceValue = ResourceService.GetResourceString(resourceKey, true);
 
 #if DEBUG
-            if (isRequired && resourceValue is null)
+            if (resourceValue is null)
             {
                 Debug.WriteLine($"Error: CommandName not found: {resourceKey}");
-                return resourceKey;
             }
 #endif
 
-            return resourceValue;
+            return resourceValue ?? resourceKey;
         }
 
 
@@ -128,22 +136,27 @@ namespace NeeView
         public string Name => NameSource.FullName;
 
         // コマンドのグループ
-        public string Group { get; set; }
+        public string Group { get; set; } = "";
 
         // コマンド表示名
         public string Text { get; set; }
 
         public string LongText => Group + "/" + Text;
 
-        public string Menu
+        [NotNull]
+        public string? Menu
         {
             get { return _menuText ?? Text; }
             set { _menuText = value; }
         }
 
         // コマンド説明
-        public string Remarks { get; set; }
-
+        [NotNull]
+        public string? Remarks
+        {
+            get { return _remarksText ?? ""; }
+            set { _remarksText = value; }
+        }
 
         /// <summary>
         /// 入力情報が変更されたフラグ。
@@ -205,18 +218,18 @@ namespace NeeView
 
         // ペアコマンド
         // TODO: CommandElementを直接指定
-        public string PairPartner { get; set; }
+        public string? PairPartner { get; set; }
 
-        public CommandParameterSource ParameterSource { get; set; }
+        public CommandParameterSource? ParameterSource { get; set; }
 
-        public CommandParameter Parameter
+        public CommandParameter? Parameter
         {
             get => ParameterSource?.Get();
             set => ParameterSource?.Set(value);
         }
 
 
-        public CommandElement Share { get; private set; }
+        public CommandElement? Share { get; private set; }
 
         public CommandElement SetShare(CommandElement share)
         {
@@ -227,43 +240,43 @@ namespace NeeView
 
 
         // フラグバインディング 
-        public virtual Binding CreateIsCheckedBinding()
+        public virtual Binding? CreateIsCheckedBinding()
         {
             return null;
         }
 
         // コマンド実行時表示デリゲート
-        public virtual string ExecuteMessage(object sender, CommandContext e)
+        public virtual string ExecuteMessage(object? sender, CommandContext e)
         {
             return Text;
         }
 
-        public string ExecuteMessage(object sender, CommandArgs args)
+        public string ExecuteMessage(object? sender, CommandArgs args)
         {
             return ExecuteMessage(sender, new CommandContext(this.Parameter, args));
         }
 
         // コマンド実行可能判定
-        public virtual bool CanExecute(object sender, CommandContext e)
+        public virtual bool CanExecute(object? sender, CommandContext e)
         {
             return true;
         }
 
-        public bool CanExecute(object sender, CommandArgs args)
+        public bool CanExecute(object? sender, CommandArgs args)
         {
             return CanExecute(sender, new CommandContext(this.Parameter, args));
         }
 
         // コマンド実行
-        public abstract void Execute(object sender, CommandContext args);
+        public abstract void Execute(object? sender, CommandContext args);
 
-        public void Execute(object sender, CommandArgs args)
+        public void Execute(object? sender, CommandArgs args)
         {
             Execute(sender, new CommandContext(this.Parameter, args));
         }
 
         // 一時コマンドパラメーター作成
-        public CommandParameter CreateOverwriteCommandParameter(IDictionary<string, object> args, IAccessDiagnostics accessDiagnostics)
+        public CommandParameter? CreateOverwriteCommandParameter(IDictionary<string, object> args, IAccessDiagnostics accessDiagnostics)
         {
             if (this.Parameter == null) return null;
 
@@ -287,7 +300,7 @@ namespace NeeView
             {
                 foreach (var key in ShortCutKey.Split(','))
                 {
-                    InputGesture inputGesture = InputGestureConverter.ConvertFromString(key);
+                    InputGesture? inputGesture = InputGestureConverter.ConvertFromString(key);
                     if (inputGesture != null)
                     {
                         list.Add(inputGesture);
@@ -325,7 +338,9 @@ namespace NeeView
         protected virtual CommandElement CloneInstance()
         {
             var type = this.GetType();
-            return (CommandElement)Activator.CreateInstance(type);
+            var element = Activator.CreateInstance(type) as CommandElement;
+            if (element is null) throw new InvalidOperationException();
+            return element;
         }
 
         // コマンドの複製
@@ -368,7 +383,7 @@ namespace NeeView
             return NameSource.IsClone;
         }
 
-        public override string ToString()
+        public override string? ToString()
         {
             return Name ?? base.ToString();
         }
@@ -380,17 +395,17 @@ namespace NeeView
         public class Memento
         {
             [DataMember]
-            public string ShortCutKey { get; set; }
+            public string? ShortCutKey { get; set; }
             [DataMember]
-            public string TouchGesture { get; set; }
+            public string? TouchGesture { get; set; }
             [DataMember]
-            public string MouseGesture { get; set; }
+            public string? MouseGesture { get; set; }
             [DataMember]
             public bool IsShowMessage { get; set; }
 
 
             [DataMember(Order = 15, EmitDefaultValue = false)]
-            public string Parameter { get; set; }
+            public string? Parameter { get; set; }
 
             [OnDeserializing]
             private void OnDeserializing(StreamingContext c)
@@ -413,17 +428,17 @@ namespace NeeView
         /// </summary>
         public class MementoV2 : ICloneable
         {
-            public string ShortCutKey { get; set; }
-            public string TouchGesture { get; set; }
-            public string MouseGesture { get; set; }
+            public string ShortCutKey { get; set; } = "";
+            public string TouchGesture { get; set; } = "";
+            public string MouseGesture { get; set; } = "";
             public bool IsShowMessage { get; set; }
-            public CommandParameter Parameter { get; set; }
+            public CommandParameter? Parameter { get; set; }
 
 
             public object Clone()
             {
                 var clone = (MementoV2)MemberwiseClone();
-                clone.Parameter = (CommandParameter)this.Parameter?.Clone();
+                clone.Parameter =this.Parameter?.Clone() as CommandParameter;
                 return clone;
             }
 
@@ -462,7 +477,7 @@ namespace NeeView
             memento.MouseGesture = MouseGesture ?? "";
             memento.IsShowMessage = IsShowMessage;
             ////memento.Parameter = (CommandParameter)ParameterSource?.GetRaw()?.Clone();
-            memento.Parameter = (CommandParameter)Parameter?.Clone();
+            memento.Parameter = Parameter?.Clone() as CommandParameter;
 
             Debug.Assert(Parameter == null || JsonCommandParameterConverter.KnownTypes.Contains(Parameter.GetType()));
 
@@ -473,9 +488,9 @@ namespace NeeView
         {
             if (memento == null) return;
 
-            ShortCutKey = memento.ShortCutKey?.TrimStart(',');
-            TouchGesture = memento.TouchGesture;
-            MouseGesture = memento.MouseGesture;
+            ShortCutKey = memento.ShortCutKey?.TrimStart(',') ?? "";
+            TouchGesture = memento.TouchGesture ?? "";
+            MouseGesture = memento.MouseGesture ?? "";
             IsShowMessage = memento.IsShowMessage;
             ParameterSource?.Set(memento.Parameter);
         }
@@ -486,9 +501,9 @@ namespace NeeView
 
         public class GesturesMemento
         {
-            public string ShortCutKey { get; set; }
-            public string MouseGesture { get; set; }
-            public string TouchGesture { get; set; }
+            public string ShortCutKey { get; set; } = "";
+            public string MouseGesture { get; set; } = "";
+            public string TouchGesture { get; set; } = "";
 
             public bool IsGesturesEquals(GesturesMemento other)
             {
@@ -518,9 +533,9 @@ namespace NeeView
         {
             if (memento == null) return;
 
-            ShortCutKey = memento.ShortCutKey?.TrimStart(',');
-            TouchGesture = memento.TouchGesture;
-            MouseGesture = memento.MouseGesture;
+            ShortCutKey = memento.ShortCutKey?.TrimStart(',') ?? "";
+            TouchGesture = memento.TouchGesture ?? "";
+            MouseGesture = memento.MouseGesture ?? "";
         }
 
         #endregion GesturesMemento

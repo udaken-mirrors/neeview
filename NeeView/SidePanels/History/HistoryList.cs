@@ -15,8 +15,8 @@ namespace NeeView
         public static HistoryList Current { get; }
 
 
-        private string _filterPath;
-        private List<BookHistory> _items;
+        private string? _filterPath;
+        private List<BookHistory> _items = new();
         private bool _isDarty = true;
         private int _serialNumber = -1;
 
@@ -53,7 +53,7 @@ namespace NeeView
             set => Config.Current.History.PanelListItemStyle = value;
         }
 
-        public string FilterPath
+        public string? FilterPath
         {
             get { return _filterPath; }
             set
@@ -75,7 +75,7 @@ namespace NeeView
         }
 
 
-        private void BookOperation_BookChanged(object sender, BookChangedEventArgs e)
+        private void BookOperation_BookChanged(object? sender, BookChangedEventArgs e)
         {
             UpdateFilterPath();
         }

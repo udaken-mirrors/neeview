@@ -19,19 +19,19 @@ namespace NeeView
             this.ParameterSource = new CommandParameterSource(new ToggleStretchModeCommandParameter());
         }
 
-        public override string ExecuteMessage(object sender, CommandContext e)
+        public override string ExecuteMessage(object? sender, CommandContext e)
         {
-            return MainViewComponent.Current.ViewController.GetToggleStretchMode((ToggleStretchModeCommandParameter)e.Parameter).ToAliasName();
+            return MainViewComponent.Current.ViewController.GetToggleStretchMode(e.Parameter.Cast<ToggleStretchModeCommandParameter>()).ToAliasName();
         }
 
-        public override bool CanExecute(object sender, CommandContext e)
+        public override bool CanExecute(object? sender, CommandContext e)
         {
             return !NowLoading.Current.IsDispNowLoading;
         }
 
-        public override void Execute(object sender, CommandContext e)
+        public override void Execute(object? sender, CommandContext e)
         {
-            Config.Current.View.StretchMode = MainViewComponent.Current.ViewController.GetToggleStretchMode((ToggleStretchModeCommandParameter)e.Parameter);
+            Config.Current.View.StretchMode = MainViewComponent.Current.ViewController.GetToggleStretchMode(e.Parameter.Cast<ToggleStretchModeCommandParameter>());
         }
     }
 

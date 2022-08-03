@@ -25,7 +25,7 @@ namespace NeeView
         }
 
 
-        public Window Owner { get; set; }
+        public Window? Owner { get; set; }
 
 
         public ObservableCollection<ExternalApp> Items

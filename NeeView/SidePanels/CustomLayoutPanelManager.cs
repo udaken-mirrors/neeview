@@ -15,28 +15,49 @@ using System.Windows.Threading;
 
 namespace NeeView
 {
+    // NOTE: Panels生成でインスタンスを参照しているため例外処理をCustomLayoutPanelManagerから分離させている
+    // PanelsSource -> SidePaneFatory > FolderPanel -> FolderListView -> FolderTreeVierw -> SidePanelFrame:42
+    public class CustomLayoutPanelMessenger
+    {
+        public static event EventHandler? CollectionChanged;
+
+        public static void RaiseCollectionChanged(object? sender, EventArgs e)
+        {
+            CollectionChanged?.Invoke(sender, e);
+        }
+    }
+
     public class CustomLayoutPanelManager : LayoutPanelManager
     {
-        public static CustomLayoutPanelManager Current { get; }
-        static CustomLayoutPanelManager() => Current = new CustomLayoutPanelManager();
+        private static CustomLayoutPanelManager? _current;
+        public static CustomLayoutPanelManager Current => _current ?? throw new InvalidOperationException();
 
+        public static void Initialize()
+        {
+            if (_current is not null) return;
+            _current = new CustomLayoutPanelManager();
 
+            // TODO: Panels生成でインスタンスを参照しているため処理をコンストラクタから分離させているがよろしくない
+            // PanelsSource -> SidePaneFatory > FolderPanel -> FolderListView -> FolderTreeVierw -> SidePanelFrame:42
+            //_current.InitializePanels();
+        }
+
+        // NTOE: 初期化前に復元を呼ばれる可能性があるためstaticメソッドを用意している
+        public static void RestoreMaybe()
+        {
+            if (_current is null) return;
+            _current.Restore();
+        }
+
+        // TODO: この変数は不要だと思う
         private bool _initialized;
+
         private bool _isStoreEnabled = true;
         private SidePanelProfile _sidePanelProfile;
 
 
-        public event EventHandler CollectionChanged;
-
-
-        public Dictionary<string, IPanel> PanelsSource { get; private set; }
-        public LayoutDockPanelContent LeftDock { get; private set; }
-        public LayoutDockPanelContent RightDock { get; private set; }
-
-
-        public void Initialize()
+        public CustomLayoutPanelManager()
         {
-            if (_initialized) return;
             _initialized = true;
 
             // NOTE: To be on the safe side, initialize the floating point processor.
@@ -88,9 +109,19 @@ namespace NeeView
         }
 
 
-        private void RaiseCollectionChanged(object sender, EventArgs e)
+        //public event EventHandler? CollectionChanged;
+
+
+        public Dictionary<string, IPanel> PanelsSource { get; private set; }
+        public LayoutDockPanelContent LeftDock { get; private set; }
+        public LayoutDockPanelContent RightDock { get; private set; }
+
+
+
+        private void RaiseCollectionChanged(object? sender, EventArgs e)
         {
-            CollectionChanged?.Invoke(sender, e);
+            //CollectionChanged?.Invoke(sender, e);
+            CustomLayoutPanelMessenger.RaiseCollectionChanged(sender, e);
         }
 
         public IPanel GetPanel(string key)

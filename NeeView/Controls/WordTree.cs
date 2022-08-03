@@ -48,7 +48,7 @@ namespace NeeView
             }
         }
 
-        private WordNode SearchWordNode(WordNode node, IEnumerable<string> tokens)
+        private WordNode? SearchWordNode(WordNode node, IEnumerable<string> tokens)
         {
             if (tokens.Count() == 1)
             {

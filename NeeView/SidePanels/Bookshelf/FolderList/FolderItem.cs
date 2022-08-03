@@ -82,11 +82,11 @@ namespace NeeView
     {
         private bool _isOverlayEnabled;
 
-        private QueryPath _place;
-        private string _name;
-        private string _dispName;
-        private QueryPath _targetPath;
-        private QueryPath _entityPath;
+        private QueryPath? _place;
+        private string? _name;
+        private string? _dispName;
+        private QueryPath _targetPath = QueryPath.Empty;
+        private QueryPath _entityPath = QueryPath.Empty;
         private bool _isReady;
         private bool _isRecursived;
         private FolderItemIconOverlay _iconOverlay = FolderItemIconOverlay.Uninitialized;
@@ -98,12 +98,11 @@ namespace NeeView
             _isOverlayEnabled = isOverlayEnabled;
         }
 
-        #region Properties
 
         /// <summary>
         /// このFolderItemと関係のある情報
         /// </summary>
-        public object Source { get; set; }
+        public object? Source { get; set; }
 
         // 属性
         public FolderItemAttribute Attributes { get; set; }
@@ -116,14 +115,14 @@ namespace NeeView
         public FolderItemType Type { get; set; }
 
         // このアイテムが存在しているディレクトリ。ほぼ未使用
-        public QueryPath Place
+        public QueryPath? Place
         {
             get { return _place; }
             set { SetProperty(ref _place, value); }
         }
 
         // アイテム名
-        public string Name
+        public string? Name
         {
             get { return _name; }
             set
@@ -137,7 +136,7 @@ namespace NeeView
         }
 
         // 表示名
-        public string DispName
+        public string? DispName
         {
             get { return _dispName ?? (IsHideExtension() ? System.IO.Path.GetFileNameWithoutExtension(_name) : _name); }
             set { SetProperty(ref _dispName, value); }
@@ -151,10 +150,11 @@ namespace NeeView
             get { return _targetPath; }
             set
             {
+                if (value is null) throw new ArgumentException(nameof(TargetPath));
                 if (_targetPath != value)
                 {
                     _targetPath = value;
-                    _entityPath = _targetPath?.ToEntityPath();
+                    _entityPath = _targetPath.ToEntityPath();
                     RaisePropertyChanged();
                 }
             }
@@ -223,9 +223,9 @@ namespace NeeView
             }
         }
 
-        public virtual string Detail => Name;
+        public virtual string? Detail => Name;
 
-        public abstract IThumbnail Thumbnail { get; }
+        public abstract IThumbnail? Thumbnail { get; }
 
         /// <summary>
         /// 現在ブック表示用
@@ -236,11 +236,10 @@ namespace NeeView
             set { SetProperty(ref _isVisibled, value); }
         }
 
-        #endregion Properties
 
-        #region Methods
+        // TODO: IHasPageなのにnullを返すのはおかしいのでダミーで対応？
+        public virtual Page? GetPage() => null;
 
-        public virtual Page GetPage() => null;
 
         public bool IsDrive() => (Attributes & FolderItemAttribute.Drive) == FolderItemAttribute.Drive;
         public bool IsEmpty() => (Attributes & FolderItemAttribute.Empty) == FolderItemAttribute.Empty;
@@ -249,7 +248,7 @@ namespace NeeView
         public bool IsFileSystem() => (Attributes & (FolderItemAttribute.System | FolderItemAttribute.Bookmark | FolderItemAttribute.QuickAccess | FolderItemAttribute.Empty | FolderItemAttribute.None)) == 0;
 
         // FolderCollection上のパス
-        public QueryPath GetFolderCollectionPath() => _place.ReplacePath(LoosePath.Combine(_place.Path, _name));
+        public QueryPath? GetFolderCollectionPath() => _place?.ReplacePath(LoosePath.Combine(_place.Path, _name));
 
         // 推定ディレクトリ
         public bool IsDirectoryMaybe() => IsDirectory || IsPlaylist || Length == -1;
@@ -334,17 +333,16 @@ namespace NeeView
             return false;
         }
 
-        public virtual string GetNote(FolderOrder order)
+        public virtual string? GetNote(FolderOrder order)
         {
             return null;
         }
 
-        public override string ToString()
+        public override string? ToString()
         {
             return $"FolderItem: {Name}, Place={Place}, TargetPath={TargetPath}";
         }
 
-        #endregion
     }
 
     /// <summary>
@@ -352,7 +350,7 @@ namespace NeeView
     /// </summary>
     public class FileFolderItem : FolderItem, IDisposable
     {
-        private Page _archivePage;
+        private Page? _archivePage;
 
 
         public FileFolderItem(bool isOverlayEnabled) : base(isOverlayEnabled)
@@ -363,14 +361,14 @@ namespace NeeView
         /// <summary>
         /// サムネイルロード完了時のイベント (開発用)
         /// </summary>
-        public event EventHandler ThumbnailLoaded;
+        public event EventHandler? ThumbnailLoaded;
 
 
         /// <summary>
         /// サムネイル.
         /// アクセスすることで自動でサムネイル読み込み処理が開始される
         /// </summary>
-        public override IThumbnail Thumbnail => GetArchivePage()?.Thumbnail;
+        public override IThumbnail? Thumbnail => GetArchivePage()?.Thumbnail;
 
         #region IDisposable Support
         private bool _disposedValue = false;
@@ -413,14 +411,14 @@ namespace NeeView
             return _archivePage;
         }
 
-        private void Thumbnail_Touched(object sender, EventArgs e)
+        private void Thumbnail_Touched(object? sender, EventArgs e)
         {
-            var thumbnail = (Thumbnail)sender;
+            var thumbnail = sender as Thumbnail ?? throw new InvalidOperationException();
             BookThumbnailPool.Current.Add(thumbnail);
             ThumbnailLoaded?.Invoke(sender, e);
         }
 
-        public override string GetNote(FolderOrder order)
+        public override string? GetNote(FolderOrder order)
         {
             if (!IsFileSystem() && IsDirectory) return null;
 

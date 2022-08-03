@@ -8,8 +8,8 @@ namespace NeeView
     /// </summary>
     public class FirstLoader
     {
-        private List<string> _bookPaths;
-        private string _folderPath;
+        private List<string>? _bookPaths;
+        private string? _folderPath;
         private bool _isFolderLink;
         private BookLoadOption _bookLoadOptions;
 

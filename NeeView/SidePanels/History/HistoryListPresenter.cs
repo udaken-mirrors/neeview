@@ -5,7 +5,7 @@
         private HistoryListView _historyListView;
         private HistoryList _historyList;
 
-        private HistoryListBox _historyListBox;
+        private HistoryListBox? _historyListBox;
         private HistoryListBoxViewModel _historyListBoxViewModel;
 
 
@@ -22,7 +22,7 @@
 
 
         public HistoryListView HistoryListView => _historyListView;
-        public HistoryListBox HistoryListBox => _historyListBox;
+        public HistoryListBox? HistoryListBox => _historyListBox;
         public HistoryList HistoryList => _historyList;
 
 

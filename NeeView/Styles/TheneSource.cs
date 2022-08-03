@@ -17,7 +17,7 @@ namespace NeeView
             FileName = null;
         }
 
-        public TheneSource(ThemeType themeType, string fileName)
+        public TheneSource(ThemeType themeType, string? fileName)
         {
             if (themeType == ThemeType.Custom && string.IsNullOrWhiteSpace(fileName))
                 throw new ArgumentException($"{ThemeType.Custom} requires {nameof(fileName)}.");
@@ -31,9 +31,24 @@ namespace NeeView
 
         public ThemeType Type { get; private set; }
 
-        public string FileName { get; private set; }
+        public string? FileName { get; private set; }
 
-        public string FullName => (Type == ThemeType.Custom && !string.IsNullOrEmpty(Config.Current.Theme.CustomThemeFolder)) ? Path.Combine(Config.Current.Theme.CustomThemeFolder, this.FileName) : null;
+#if false
+        public string? FullName => (Type == ThemeType.Custom && this.FileName != null)
+            ? Path.Combine(Config.Current.Theme.CustomThemeFolder, this.FileName)
+            : null;
+#endif
+
+        public string CustomThemeFilePath
+        {
+            get
+            {
+                if (Type != ThemeType.Custom) throw new InvalidOperationException($"{nameof(CustomThemeFilePath)} is required ChstomTmeme");
+                if (this.FileName is null) throw new InvalidOperationException("CustomTheme.FileName must not be null");
+                return Path.Combine(Config.Current.Theme.CustomThemeFolder, this.FileName);
+            }
+        }
+
 
 
         public override string ToString()
@@ -41,7 +56,7 @@ namespace NeeView
             return Type.ToString() + (FileName != null ? ("." + FileName) : "");
         }
 
-        public static TheneSource Parse(string s)
+        public static TheneSource Parse(string? s)
         {
             if (string.IsNullOrEmpty(s))
             {
@@ -66,7 +81,7 @@ namespace NeeView
 
     public sealed class JsonThemeSourceConverter : JsonConverter<TheneSource>
     {
-        public override TheneSource Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+        public override TheneSource? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
             return TheneSource.Parse(reader.GetString());
         }

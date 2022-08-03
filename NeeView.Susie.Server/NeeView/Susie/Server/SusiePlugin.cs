@@ -17,9 +17,15 @@ namespace NeeView.Susie.Server
     public class SusiePlugin : IDisposable
     {
         private object _lock = new object();
-        private SusiePluginApi _module;
+        private SusiePluginApi? _module;
         private bool _isCacheEnabled = true;
-        private FileExtensionCollection _userExtensions;
+        private FileExtensionCollection? _userExtensions;
+
+
+        public SusiePlugin(string fileName)
+        {
+            FileName = fileName;
+        }
 
 
         // 一連の処理をロックするときに使用
@@ -35,13 +41,14 @@ namespace NeeView.Susie.Server
         public string FileName { get; private set; }
 
         // プラグイン名
-        public string Name { get { return FileName != null ? Path.GetFileName(FileName) : null; } }
+        public string Name { get { return Path.GetFileName(FileName); } }
+        //public string? Name { get { return FileName != null ? Path.GetFileName(FileName) : null; } }
 
         // APIバージョン
-        public string ApiVersion { get; private set; }
+        public string? ApiVersion { get; private set; }
 
         // プラグインバージョン
-        public string PluginVersion { get; private set; }
+        public string? PluginVersion { get; private set; }
 
         // 詳細テキスト
         public string DetailText { get { return $"{Name} ( {string.Join(" ", Extensions)} )"; } }
@@ -84,7 +91,7 @@ namespace NeeView.Susie.Server
 
         // 標準拡張子
         public FileExtensionCollection DefaultExtensions { get; set; } = new FileExtensionCollection();
-        public FileExtensionCollection UserExtensions
+        public FileExtensionCollection? UserExtensions
         {
             get { return _userExtensions; }
             set
@@ -117,10 +124,10 @@ namespace NeeView.Susie.Server
         /// </summary>
         /// <param name="fileName">プラグインファイルのパス</param>
         /// <returns>プラグイン。失敗したらnullを返す</returns>
-        public static SusiePlugin Create(string fileName)
+        public static SusiePlugin? Create(string fileName)
         {
-            var spi = new SusiePlugin();
-            return spi.Initialize(fileName) ? spi : null;
+            var spi = new SusiePlugin(fileName);
+            return spi.Initialize() ? spi : null;
         }
 
         /// <summary>
@@ -136,20 +143,18 @@ namespace NeeView.Susie.Server
         /// </summary>
         /// <param name="fileName">プラグインファイルのパス</param>
         /// <returns>成功したらtrue</returns>
-        public bool Initialize(string fileName)
+        public bool Initialize()
         {
-            if (FileName != null) throw new InvalidOperationException();
-
             try
             {
-                using (var api = SusiePluginApi.Create(fileName))
+                using (var api = SusiePluginApi.Create(FileName))
                 {
                     ApiVersion = api.GetPluginInfo(0);
                     PluginVersion = api.GetPluginInfo(1);
 
                     if (string.IsNullOrEmpty(PluginVersion))
                     {
-                        PluginVersion = Path.GetFileName(fileName);
+                        PluginVersion = Path.GetFileName(FileName);
                     }
 
                     UpdateDefaultExtensions(api);
@@ -157,13 +162,11 @@ namespace NeeView.Susie.Server
                     HasConfigurationDlg = api.IsExistFunction("ConfigurationDlg");
                 }
 
-                FileName = fileName;
-
                 return true;
             }
             catch (Exception ex)
             {
-                Trace.WriteLine($"SusiePlugin.Initialze: FileName={fileName}: {ex.Message}");
+                Trace.WriteLine($"SusiePlugin.Initialze: FileName={FileName}: {ex.Message}");
                 return false;
             }
         }
@@ -412,7 +415,7 @@ namespace NeeView.Susie.Server
         /// </summary>
         /// <param name="fileName">アーカイブファイル名</param>
         /// <returns>アーカイブ情報。失敗した場合はnull</returns>
-        public ArchiveEntryCollection GetArchiveEntryCollection(string fileName, byte[] head)
+        public ArchiveEntryCollection? GetArchiveEntryCollection(string fileName, byte[] head)
         {
             if (FileName == null) throw new InvalidOperationException();
             if (!IsEnabled) return null;
@@ -446,7 +449,7 @@ namespace NeeView.Susie.Server
         /// <param name="buff">画像データ</param>
         /// <param name="isCheckExtension">拡張子をチェックする</param>
         /// <returns>Bitmap。失敗した場合はnull</returns>
-        public byte[] GetPicture(string fileName, byte[] buff, bool isCheckExtension)
+        public byte[]? GetPicture(string fileName, byte[] buff, bool isCheckExtension)
         {
             if (FileName == null) throw new InvalidOperationException();
             if (!IsEnabled) return null;
@@ -477,7 +480,7 @@ namespace NeeView.Susie.Server
         /// <param name="fileName">ファイルヘッダ2KB</param>
         /// <param name="isCheckExtension">拡張子をチェックする</param>
         /// <returns>Bitmap。失敗した場合はnull</returns>
-        public byte[] GetPictureFromFile(string fileName, byte[] head, bool isCheckExtension)
+        public byte[]? GetPictureFromFile(string fileName, byte[] head, bool isCheckExtension)
         {
             if (FileName == null) throw new InvalidOperationException();
             if (!IsEnabled) return null;
@@ -603,10 +606,9 @@ namespace NeeView.Susie.Server
 
         public SusiePluginInfo ToSusiePluginInfo()
         {
-            var info = new SusiePluginInfo();
+            var info = new SusiePluginInfo(this.Name);
 
             info.FileName = this.FileName;
-            info.Name = this.Name;
             info.ApiVersion = this.ApiVersion;
             info.PluginVersion = this.PluginVersion;
             info.PluginType = this.PluginType;
@@ -623,8 +625,7 @@ namespace NeeView.Susie.Server
 
         public SusiePluginSetting ToSusiePluginSetting()
         {
-            var setting = new SusiePluginSetting();
-            setting.Name = this.Name;
+            var setting = new SusiePluginSetting(this.Name);
             setting.IsEnabled = this.IsEnabled;
             setting.IsCacheEnabled = this.IsCacheEnabled;
             setting.IsPreExtract = this.IsPreExtract;

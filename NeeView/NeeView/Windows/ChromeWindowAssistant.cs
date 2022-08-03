@@ -39,12 +39,12 @@ namespace NeeView.Windows
             _window.Closed += Window_Closed;
         }
 
-        private void Window_SourceInitialized(object sender, EventArgs e)
+        private void Window_SourceInitialized(object? sender, EventArgs e)
         {
             _windowChrome.IsEnabled = true;
         }
 
-        private void Window_Loaded(object sender, RoutedEventArgs e)
+        private void Window_Loaded(object? sender, RoutedEventArgs e)
         {
             // CaptionBar があればその高さを設定
             var captionBar = _window.Template.FindName("PART_CaptionBar", _window) as CaptionBar;
@@ -54,7 +54,7 @@ namespace NeeView.Windows
             }
         }
 
-        private void Window_Closed(object sender, EventArgs e)
+        private void Window_Closed(object? sender, EventArgs e)
         {
         }
     }

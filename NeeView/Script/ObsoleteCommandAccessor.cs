@@ -41,7 +41,7 @@ namespace NeeView
             set { }
         }
 
-        public PropertyMap Parameter => null;
+        public PropertyMap? Parameter => null;
 
 
         public bool Execute(params object[] args)
@@ -49,7 +49,7 @@ namespace NeeView
             return false;
         }
 
-        public CommandAccessor Patch(IDictionary<string, object> patch)
+        public CommandAccessor? Patch(IDictionary<string, object> patch)
         {
             return null;
         }
@@ -60,12 +60,12 @@ namespace NeeView
             return new ObsoleteAttribute();
         }
 
-        internal AlternativeAttribute GetAlternativeAttribute()
+        internal AlternativeAttribute? GetAlternativeAttribute()
         {
             return _obsoleteInfo != null ? new AlternativeAttribute(_obsoleteInfo.Alternative, _obsoleteInfo.Version) : null;
         }
 
-        internal string CreateObsoleteCommandMessage()
+        internal string? CreateObsoleteCommandMessage()
         {
             return RefrectionTools.CreateObsoleteMessage(_name, GetObsoleteAttribute(), GetAlternativeAttribute());
         }

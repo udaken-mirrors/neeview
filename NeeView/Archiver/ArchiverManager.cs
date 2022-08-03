@@ -18,8 +18,6 @@ namespace NeeView
     [Serializable]
     public class NotSupportedFileTypeException : Exception
     {
-        public NotSupportedFileTypeException() { }
-
         public NotSupportedFileTypeException(string extension) : base(string.Format(Properties.Resources.Notice_NotSupportedFileType, extension))
         {
             Extension = extension;
@@ -53,8 +51,6 @@ namespace NeeView
         public static ArchiverManager Current { get; }
 
 
-        #region Fields
-
         /// <summary>
         /// アーカイバのサポート拡張子
         /// </summary>
@@ -70,13 +66,10 @@ namespace NeeView
 
         // アーカイバの適用順
         private List<ArchiverType> _orderList;
-        private bool _isDartyOrderList = true;
+        private bool _isDartyOrderList;
 
         private ArchiverCache _cache = new ArchiverCache();
 
-        #endregion
-
-        #region Constructors
 
         /// <summary>
         /// constructor
@@ -97,14 +90,11 @@ namespace NeeView
                 (s, e) => UpdateOrderList());
 
             // 検索順初期化
-            var tmp = OrderList;
+            _orderList = CreateOrderList();
 
             ApplicationDisposer.Current.Add(this);
         }
 
-        #endregion
-
-        #region Properties
 
         // 対応アーカイブ検索用リスト
         private List<ArchiverType> OrderList
@@ -121,7 +111,6 @@ namespace NeeView
             }
         }
 
-        #endregion
 
         #region IDisposable Support
         private bool _disposedValue = false;
@@ -145,9 +134,6 @@ namespace NeeView
         #endregion
 
 
-        #region Methods
-
-        //
         private void UpdateOrderList()
         {
             _isDartyOrderList = true;
@@ -247,7 +233,7 @@ namespace NeeView
         /// <param name="source">元となったアーカイブエントリ</param>
         /// <param name="isRoot">ルートアーカイブとする</param>
         /// <returns>作成されたアーカイバー</returns>
-        private Archiver CreateArchiver(ArchiverType type, string path, ArchiveEntry source)
+        private Archiver CreateArchiver(ArchiverType type, string path, ArchiveEntry? source)
         {
             Archiver archiver;
 
@@ -286,7 +272,7 @@ namespace NeeView
         }
 
         // アーカイバー作成
-        private Archiver CreateArchiver(string path, ArchiveEntry source)
+        private Archiver CreateArchiver(string path, ArchiveEntry? source)
         {
             if (Directory.Exists(path))
             {
@@ -312,14 +298,14 @@ namespace NeeView
             if (!ignoreCache && _cache.TryGetValue(systemPath, out var archiver))
             {
                 // 更新日、サイズを比較して再利用するかを判定
-                if (archiver.LastWriteTime == source.LastWriteTime && archiver.Length == source.Length)
+                if (archiver is not null && archiver.LastWriteTime == source.LastWriteTime && archiver.Length == source.Length)
                 {
                     ////Debug.WriteLine($"Archiver: Find cache: {systemPath}");
                     return archiver;
                 }
                 else
                 {
-                   //// Debug.WriteLine($"Archiver: Old cache: {systemPath}");
+                    //// Debug.WriteLine($"Archiver: Old cache: {systemPath}");
                 }
             }
             else
@@ -373,7 +359,7 @@ namespace NeeView
         /// </summary>
         /// <param name="path">アーカイブパス</param>
         /// <returns>実在するアーカイブファイルのパス。見つからなかった場合はnull</returns>
-        public string GetExistPathName(string path)
+        public string? GetExistPathName(string path)
         {
             if (Exists(path, true))
             {
@@ -447,9 +433,6 @@ namespace NeeView
             }
         }
 
-#endregion
-
-#region Debug
 
         [Conditional("DEBUG")]
         public void DumpCache()
@@ -457,7 +440,5 @@ namespace NeeView
             _cache.CleanUp();
             _cache.Dump();
         }
-
-#endregion
     }
 }

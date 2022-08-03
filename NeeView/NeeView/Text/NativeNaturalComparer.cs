@@ -12,16 +12,16 @@ namespace NeeView.Text
         private static class NativeMethods
         {
             [DllImport("shlwapi.dll", CharSet = CharSet.Unicode)]
-            public static extern int StrCmpLogicalW(string psz1, string psz2);
+            public static extern int StrCmpLogicalW(string? psz1, string? psz2);
         }
 
 
-        public int Compare(string x, string y)
+        public int Compare(string? x, string? y)
         {
             return NativeMethods.StrCmpLogicalW(x, y);
         }
 
-        public int Compare(object x, object y)
+        public int Compare(object? x, object? y)
         {
             return Compare(x as string, y as string);
         }

@@ -16,10 +16,10 @@ namespace NeeView
         static SaveData() => Current = new SaveData();
         public static SaveData Current { get; }
 
-        private string _settingFilenameToDelete;
-        private string _historyFilenameToDelete;
-        private string _bookmarkFilenameToDelete;
-        private string _pagemarkFilenameToDelete;
+        private string? _settingFilenameToDelete;
+        private string? _historyFilenameToDelete;
+        private string? _bookmarkFilenameToDelete;
+        private string? _pagemarkFilenameToDelete;
 
         // 設定のバックアップを１起動に付き１回に制限するフラグ
         private bool _keepBackup = false;
@@ -45,7 +45,7 @@ namespace NeeView
         public static string DefaultScriptsFolder => Environment.GetUserDataPath(ScriptsFolder);
 
 
-        public string UserSettingFilePath => App.Current.Option.SettingFilename;
+        public string UserSettingFilePath => App.Current.Option.SettingFilename ?? throw new InvalidOperationException("UserSettingFilePath must not be null");
         public string HistoryFilePath => Config.Current.History.HistoryFilePath;
         public string BookmarkFilePath => Config.Current.Bookmark.BookmarkFilePath;
 
@@ -65,14 +65,14 @@ namespace NeeView
                 MainWindowModel.Current.CloseCommandParameterDialog();
             }
 
-            UserSetting setting;
+            UserSetting? setting;
 
             try
             {
                 App.Current.SemaphoreWait();
 
                 var filename = App.Current.Option.SettingFilename;
-                var extension = Path.GetExtension(filename).ToLower();
+                var extension = Path.GetExtension(filename)?.ToLower();
                 var filenameV1 = Path.ChangeExtension(filename, ".xml");
 
                 var failedDialog = new LoadFailedDialog(Resources.Notice_LoadSettingFailed, Resources.Notice_LoadSettingFailedTitle);
@@ -90,20 +90,20 @@ namespace NeeView
                 else if (File.Exists(filenameV1))
                 {
                     var settingV1 = SafetyLoad(UserSettingV1.LoadV1, filenameV1, failedDialog, true);
-                    var settingV1Converted = settingV1.ConvertToV2();
+                    var settingV1Converted = settingV1?.ConvertToV2();
 
-                    var historyV1FilePath = Path.ChangeExtension(settingV1.App.HistoryFilePath ?? DefaultHistoryFilePath, ".xml");
+                    var historyV1FilePath = Path.ChangeExtension(settingV1?.App?.HistoryFilePath ?? DefaultHistoryFilePath, ".xml");
                     var historyV1 = SafetyLoad(BookHistoryCollection.Memento.LoadV1, historyV1FilePath, null); // 一部の履歴設定を反映
-                    historyV1?.RestoreConfig(settingV1Converted.Config);
+                    historyV1?.RestoreConfig(settingV1Converted?.Config);
 
 #pragma warning disable CS0612 // 型またはメンバーが旧型式です
-                    var pagemarkV1FilePath = Path.ChangeExtension(settingV1.App.PagemarkFilePath ?? DefaultPagemarkFilePath, ".xml");
+                    var pagemarkV1FilePath = Path.ChangeExtension(settingV1?.App?.PagemarkFilePath ?? DefaultPagemarkFilePath, ".xml");
                     var pagemarkV1 = SafetyLoad(PagemarkCollection.Memento.LoadV1, pagemarkV1FilePath, null); // 一部のページマーク設定を反映
-                    pagemarkV1?.RestoreConfig(settingV1Converted.Config);
+                    pagemarkV1?.RestoreConfig(settingV1Converted?.Config);
 #pragma warning restore CS0612 // 型またはメンバーが旧型式です
 
                     _settingFilenameToDelete = filenameV1;
-                    if (Path.GetExtension(App.Current.Option.SettingFilename).ToLower() == ".xml")
+                    if (Path.GetExtension(App.Current.Option.SettingFilename)?.ToLower() == ".xml")
                     {
                         App.Current.Option.SettingFilename = Path.ChangeExtension(App.Current.Option.SettingFilename, ".json");
                     }
@@ -120,7 +120,7 @@ namespace NeeView
                 App.Current.SemaphoreRelease();
             }
 
-            return setting;
+            return setting ?? new UserSetting();
         }
 
         private void LoadUserSettingBackupCallback()
@@ -143,13 +143,13 @@ namespace NeeView
 
                 if (extension == ".json" && File.Exists(filename))
                 {
-                    BookHistoryCollection.Memento memento = SafetyLoad(BookHistoryCollection.Memento.Load, HistoryFilePath, failedDialog);
+                    BookHistoryCollection.Memento? memento = SafetyLoad(BookHistoryCollection.Memento.Load, HistoryFilePath, failedDialog);
                     BookHistoryCollection.Current.Restore(memento, true);
                 }
                 // before v.37
                 else if (File.Exists(filenameV1))
                 {
-                    BookHistoryCollection.Memento memento = SafetyLoad(BookHistoryCollection.Memento.LoadV1, filenameV1, failedDialog);
+                    BookHistoryCollection.Memento? memento = SafetyLoad(BookHistoryCollection.Memento.LoadV1, filenameV1, failedDialog);
                     BookHistoryCollection.Current.Restore(memento, true);
 
                     _historyFilenameToDelete = filenameV1;
@@ -179,13 +179,13 @@ namespace NeeView
 
                 if (extension == ".json" && File.Exists(filename))
                 {
-                    BookmarkCollection.Memento memento = SafetyLoad(BookmarkCollection.Memento.Load, filename, failedDialog);
+                    BookmarkCollection.Memento? memento = SafetyLoad(BookmarkCollection.Memento.Load, filename, failedDialog);
                     BookmarkCollection.Current.Restore(memento);
                 }
                 // before v.37
                 else if (File.Exists(filenameV1))
                 {
-                    BookmarkCollection.Memento memento = SafetyLoad(BookmarkCollection.Memento.LoadV1, filenameV1, failedDialog);
+                    BookmarkCollection.Memento? memento = SafetyLoad(BookmarkCollection.Memento.LoadV1, filenameV1, failedDialog);
                     BookmarkCollection.Current.Restore(memento);
 
                     _bookmarkFilenameToDelete = filenameV1;
@@ -206,7 +206,7 @@ namespace NeeView
         /// エラー時にはダイアログ表示。選択によってはOperationCancelExceptionを発生させる。
         /// </summary>
         /// <param name="useDefault">データが読み込めなかった場合に初期化されたインスタンスを返す。falseの場合はnullを返す</param>
-        private T SafetyLoad<T>(Func<string, T> load, string path, LoadFailedDialog loadFailedDialog, bool useDefault = false, Action loadBackupCallback = null)
+        private T? SafetyLoad<T>(Func<string, T?> load, string path, LoadFailedDialog loadFailedDialog, bool useDefault = false, Action? loadBackupCallback = null)
             where T : class, new()
         {
             try
@@ -233,7 +233,7 @@ namespace NeeView
         /// <summary>
         /// 正規ファイルの読み込みに失敗したらバックアップからの復元を試みる
         /// </summary>
-        private T SafetyLoad<T>(Func<string, T> load, string path, Action loadBackupCallback)
+        private T? SafetyLoad<T>(Func<string, T?> load, string path, Action? loadBackupCallback)
             where T : class, new()
         {
             var old = path + ".bak";
@@ -281,7 +281,7 @@ namespace NeeView
             try
             {
                 App.Current.SemaphoreWait();
-                SafetySave(UserSettingTools.Save, App.Current.Option.SettingFilename, Config.Current.System.IsSettingBackup, _keepBackup);
+                SafetySave(UserSettingTools.Save, UserSettingFilePath, Config.Current.System.IsSettingBackup, _keepBackup);
             }
             catch
             {
@@ -530,7 +530,7 @@ namespace NeeView
         public string Title { get; set; }
         public string Message { get; set; }
         public UICommand OKCommand { get; set; } = UICommands.OK;
-        public UICommand CancelCommand { get; set; }
+        public UICommand? CancelCommand { get; set; }
 
 
         public bool ShowDialog(Exception ex)

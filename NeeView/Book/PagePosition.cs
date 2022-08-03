@@ -1,4 +1,5 @@
-﻿using System;
+﻿
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,13 +13,8 @@ namespace NeeView
     /// </summary>
     public struct PagePosition : IComparable<PagePosition>
     {
-        #region Fields
-
         private readonly int _value;
 
-        #endregion
-
-        #region Constructors
 
         public PagePosition(int value)
         {
@@ -30,9 +26,6 @@ namespace NeeView
             _value = index * 2 + part;
         }
 
-        #endregion
-
-        #region Properties
 
         /// <summary>
         /// ページの場所(0,0)
@@ -53,10 +46,6 @@ namespace NeeView
         // パーツ番号
         public int Part => _value % 2;
 
-        #endregion
-
-
-        #region Methods
 
         //
         public override string ToString()
@@ -103,7 +92,7 @@ namespace NeeView
         }
 
         // compare
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             if (obj == null) return false;
             if (!(obj is PagePosition)) return false;
@@ -149,7 +138,5 @@ namespace NeeView
         {
             return a._value >= b._value;
         }
-
-        #endregion
     }
 }

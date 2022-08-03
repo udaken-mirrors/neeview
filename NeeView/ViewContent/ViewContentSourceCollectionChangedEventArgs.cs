@@ -5,6 +5,12 @@ namespace NeeView
 {
     public class ViewContentSourceCollectionChangedEventArgs : EventArgs
     {
+        public ViewContentSourceCollectionChangedEventArgs()
+        {
+            BookAddress = "";
+            ViewPageCollection = new ViewContentSourceCollection();
+        }
+
         public ViewContentSourceCollectionChangedEventArgs(string bookAddress, ViewContentSourceCollection viewPageCollection)
         {
             BookAddress = bookAddress;

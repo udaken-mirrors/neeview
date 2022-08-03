@@ -62,7 +62,7 @@ namespace NeeView
             _panel.Presenter.PlaylistListBox?.SetSelectedItems(selectedItems.Select(e => e.Source));
         }
 
-        private PlaylistItemAccessor[] ToStringArray(IEnumerable<PlaylistItem> items)
+        private PlaylistItemAccessor[] ToStringArray(IEnumerable<PlaylistItem>? items)
         {
             return items?.Select(e => new PlaylistItemAccessor(e)).ToArray() ?? new PlaylistItemAccessor[] { };
         }

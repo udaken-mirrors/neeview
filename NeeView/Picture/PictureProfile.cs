@@ -105,7 +105,7 @@ namespace NeeView
             public bool IsResizeFilterEnabled { get; set; }
 
             [DataMember]
-            public PictureCustomSize.Memento CustomSize { get; set; }
+            public PictureCustomSize.Memento? CustomSize { get; set; }
 
             [DataMember]
             public bool IsAspectRatioEnabled { get; set; }
@@ -122,7 +122,7 @@ namespace NeeView
 
             public void RestoreConfig(Config config)
             {
-                CustomSize.RestoreConfig(config);
+                CustomSize?.RestoreConfig(config);
 
                 config.Performance.IsLimitSourceSize = IsLimitSourceSize;
                 config.Performance.MaximumSize = Maximum;

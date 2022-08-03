@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NeeLaboratory.Linq;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -12,9 +13,10 @@ namespace NeeView
     /// </summary>
     public class JobClient
     {
-        public JobClient(JobCategory category)
+        public JobClient(string name, JobCategory category)
         {
             Debug.Assert(category != null);
+            Name = name;
             Category = category;
         }
 
@@ -22,7 +24,7 @@ namespace NeeView
 
         public JobCategory Category { get; private set; }
 
-        public override string ToString()
+        public override string? ToString()
         {
             return Name ?? base.ToString();
         }
@@ -36,7 +38,7 @@ namespace NeeView
     {
         private List<JobSource> _sources = new List<JobSource>();
 
-        public PageContentJobClient(string name, JobCategory category) : base(category)
+        public PageContentJobClient(string name, JobCategory category) : base(name, category)
         {
             Name = name;
             JobEngine.Current.RegistClient(this);
@@ -68,7 +70,7 @@ namespace NeeView
 
             var tasks = pages
                 .Select(e => _sources.FirstOrDefault(a => a.Key == e)?.WaitAsync(millisecondsTimeout, token))
-                .Where(e => e != null)
+                .WhereNotNull()
                 .ToList();
 
             await Task.WhenAll(tasks);
@@ -110,7 +112,7 @@ namespace NeeView
     /// </summary>
     public class PageThumbnailJobClient : JobClient, IDisposable
     {
-        public PageThumbnailJobClient(string name, JobCategory category) : base(category)
+        public PageThumbnailJobClient(string name, JobCategory category) : base(name, category)
         {
             Name = name;
             JobEngine.Current.RegistClient(this);

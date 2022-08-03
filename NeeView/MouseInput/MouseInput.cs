@@ -32,17 +32,17 @@ namespace NeeView
     {
         private FrameworkElement _sender;
         private MouseInputState _state;
-        private MouseHorizontalWheelSource _mouseHorizontalWheelSource;
+        private MouseHorizontalWheelSource? _mouseHorizontalWheelSource;
 
         /// <summary>
         /// 現在状態（実体）
         /// </summary>
-        private MouseInputBase _current;
+        private MouseInputBase? _current;
 
         /// <summary>
         /// 遷移テーブル
         /// </summary>
-        private Dictionary<MouseInputState, MouseInputBase> _mouseInputCollection;
+        private Dictionary<MouseInputState, MouseInputBase?> _mouseInputCollection;
 
         /// <summary>
         /// 状態コンテキスト
@@ -69,7 +69,7 @@ namespace NeeView
             this.Normal.MouseWheelChanged += (s, e) => MouseWheelChanged?.Invoke(_sender, e);
             this.Normal.MouseHorizontalWheelChanged += (s, e) => MouseHorizontalWheelChanged?.Invoke(_sender, e);
 
-            if (context.LoupeTransform != null)
+            if (_context.LoupeTransform != null)
             {
                 this.Loupe = new MouseInputLoupe(_context);
                 this.Loupe.StateChanged += StateChanged;
@@ -78,7 +78,7 @@ namespace NeeView
                 this.Loupe.MouseHorizontalWheelChanged += (s, e) => MouseHorizontalWheelChanged?.Invoke(_sender, e);
             }
 
-            if (context.DragTransform != null)
+            if (_context.DragTransform != null)
             {
                 this.Drag = new MouseInputDrag(_context);
                 this.Drag.StateChanged += StateChanged;
@@ -87,19 +87,19 @@ namespace NeeView
                 this.Drag.MouseHorizontalWheelChanged += (s, e) => MouseHorizontalWheelChanged?.Invoke(_sender, e);
             }
 
-            if (context.IsGestureEnabled)
+            if (_context.IsGestureEnabled)
             {
                 this.Gesture = new MouseInputGesture(_context);
                 this.Gesture.StateChanged += StateChanged;
                 this.Gesture.MouseButtonChanged += (s, e) => MouseButtonChanged?.Invoke(_sender, e);
                 this.Gesture.MouseWheelChanged += (s, e) => MouseWheelChanged?.Invoke(_sender, e);
                 this.Gesture.MouseHorizontalWheelChanged += (s, e) => MouseHorizontalWheelChanged?.Invoke(_sender, e);
-                this.Gesture.GestureChanged += (s, e) => _context.GestureCommandCollection.Execute(e.Sequence);
-                this.Gesture.GestureProgressed += (s, e) => _context.GestureCommandCollection.ShowProgressed(e.Sequence);
+                this.Gesture.GestureChanged += (s, e) => _context.GestureCommandCollection?.Execute(e.Sequence);
+                this.Gesture.GestureProgressed += (s, e) => _context.GestureCommandCollection?.ShowProgressed(e.Sequence);
             }
 
             // initialize state
-            _mouseInputCollection = new Dictionary<MouseInputState, MouseInputBase>();
+            _mouseInputCollection = new Dictionary<MouseInputState, MouseInputBase?>();
             _mouseInputCollection.Add(MouseInputState.Normal, this.Normal);
             _mouseInputCollection.Add(MouseInputState.Loupe, this.Loupe);
             _mouseInputCollection.Add(MouseInputState.Drag, this.Drag);
@@ -127,22 +127,22 @@ namespace NeeView
         /// <summary>
         /// ボタン入力イベント
         /// </summary>
-        public event EventHandler<MouseButtonEventArgs> MouseButtonChanged;
+        public event EventHandler<MouseButtonEventArgs>? MouseButtonChanged;
 
         /// <summary>
         /// ホイール入力イベント
         /// </summary>
-        public event EventHandler<MouseWheelEventArgs> MouseWheelChanged;
+        public event EventHandler<MouseWheelEventArgs>? MouseWheelChanged;
 
         /// <summary>
         /// 水平ホイール入力イベント
         /// </summary>
-        public event EventHandler<MouseWheelEventArgs> MouseHorizontalWheelChanged;
+        public event EventHandler<MouseWheelEventArgs>? MouseHorizontalWheelChanged;
 
         /// <summary>
         /// 一定距離カーソルが移動したイベント
         /// </summary>
-        public event EventHandler<MouseEventArgs> MouseMoved;
+        public event EventHandler<MouseEventArgs>? MouseMoved;
 
 
         /// <summary>
@@ -153,22 +153,22 @@ namespace NeeView
         /// <summary>
         /// 状態：ルーペ
         /// </summary>
-        public MouseInputLoupe Loupe { get; private set; }
+        public MouseInputLoupe? Loupe { get; private set; }
 
         /// <summary>
         /// 状態：ドラッグ
         /// </summary>
-        public MouseInputDrag Drag { get; private set; }
+        public MouseInputDrag? Drag { get; private set; }
 
         /// <summary>
         /// 状態：ジェスチャー
         /// </summary>
-        public MouseInputGesture Gesture { get; private set; }
+        public MouseInputGesture? Gesture { get; private set; }
 
 
-        private void LoupeTransform_IsEnabledChanged(object sender, PropertyChangedEventArgs e)
+        private void LoupeTransform_IsEnabledChanged(object? sender, PropertyChangedEventArgs e)
         {
-            if (_state == MouseInputState.Loupe && !_context.LoupeTransform.IsEnabled)
+            if (_state == MouseInputState.Loupe && (_context.LoupeTransform is null || !_context.LoupeTransform.IsEnabled))
             {
                 SetState(MouseInputState.Normal, null);
             }
@@ -211,13 +211,13 @@ namespace NeeView
 
         public bool IsCaptured()
         {
-            return _current.IsCaptured();
+            return _current?.IsCaptured() == true;
         }
 
         /// <summary>
         /// 状態変更イベント処理
         /// </summary>
-        private void StateChanged(object sender, MouseInputStateEventArgs e)
+        private void StateChanged(object? sender, MouseInputStateEventArgs e)
         {
             SetState(e.State, e.Parameter);
         }
@@ -226,7 +226,7 @@ namespace NeeView
         /// <summary>
         /// 状態変更
         /// </summary>
-        public void SetState(MouseInputState state, object parameter, bool force = false)
+        public void SetState(MouseInputState state, object? parameter, bool force = false)
         {
             if (!force && state == _state) return;
             //Debug.WriteLine($"#MouseState: {state}");
@@ -288,7 +288,7 @@ namespace NeeView
 
             if (isEnabled)
             {
-                _current.OnMouseButtonDown(_sender, e);
+                _current?.OnMouseButtonDown(_sender, e);
             }
 
             if (_context.IsMouseEventTerminated)
@@ -308,7 +308,7 @@ namespace NeeView
 
             if (isEnabled)
             {
-                _current.OnMouseButtonUp(_sender, e);
+                _current?.OnMouseButtonUp(_sender, e);
             }
 
             // 右クリックでのコンテキストメニュー無効
@@ -329,7 +329,7 @@ namespace NeeView
 
             if (isEnabled)
             {
-                _current.OnMouseWheel(_sender, e);
+                _current?.OnMouseWheel(_sender, e);
             }
 
             if (_context.IsMouseEventTerminated)
@@ -349,7 +349,7 @@ namespace NeeView
             if (isEnabled)
             {
                 ////Debug.WriteLine($"MouseInput: OnMouseHorizontalWheel: {e.Delta} ({e.Timestamp})");
-                _current.OnMouseHorizontalWheel(_sender, e);
+                _current?.OnMouseHorizontalWheel(_sender, e);
             }
 
             if (_context.IsMouseEventTerminated)
@@ -368,7 +368,7 @@ namespace NeeView
 
             if (isEnabled)
             {
-                _current.OnMouseMove(_sender, e);
+                _current?.OnMouseMove(_sender, e);
 
                 // マウス移動を通知
                 var nowPoint = e.GetPosition(_sender);
@@ -389,7 +389,7 @@ namespace NeeView
 
             if (isEnabled)
             {
-                _current.OnKeyDown(_sender, e);
+                _current?.OnKeyDown(_sender, e);
             }
         }
 
@@ -398,13 +398,13 @@ namespace NeeView
         /// </summary>
         public void Cancel()
         {
-            _current.Cancel();
+            _current?.Cancel();
         }
 
 
         // メッセージとして状態表示
         // TODO: 外部への依存が強すぎるので、定義場所を別にする？
-        public void ShowMessage(TransformActionType ActionType, ViewContent mainContent)
+        public void ShowMessage(TransformActionType ActionType, ViewContent? mainContent)
         {
             var infoMessage = InfoMessage.Current; // TODO: not singleton
             if (Config.Current.Notice.ViewTransformShowMessageStyle == ShowMessageStyle.None) return;
@@ -415,6 +415,7 @@ namespace NeeView
             switch (ActionType)
             {
                 case TransformActionType.Scale:
+                    if (dragTransform is null) return;
                     var dpi = (Window.GetWindow(_sender) is IDpiScaleProvider dpiProvider) ? dpiProvider.GetDpiScale().ToFixedScale().DpiScaleX : 1.0;
                     string scaleText = Config.Current.Notice.IsOriginalScaleShowMessage && mainContent != null && mainContent.IsValid
                         ? $"{(int)(dragTransform.Scale * mainContent.Scale * dpi * 100 + 0.1)}%"
@@ -422,15 +423,19 @@ namespace NeeView
                     infoMessage.SetMessage(InfoMessageType.ViewTransform, scaleText);
                     break;
                 case TransformActionType.Angle:
+                    if (dragTransform is null) return;
                     infoMessage.SetMessage(InfoMessageType.ViewTransform, $"{(int)(dragTransform.Angle)}°");
                     break;
                 case TransformActionType.FlipHorizontal:
+                    if (dragTransform is null) return;
                     infoMessage.SetMessage(InfoMessageType.ViewTransform, Properties.Resources.Notice_FlipHorizontal + " " + (dragTransform.IsFlipHorizontal ? "ON" : "OFF"));
                     break;
                 case TransformActionType.FlipVertical:
+                    if (dragTransform is null) return;
                     infoMessage.SetMessage(InfoMessageType.ViewTransform, Properties.Resources.Notice_FlipVertical + " " + (dragTransform.IsFlipVertical ? "ON" : "OFF"));
                     break;
                 case TransformActionType.LoupeScale:
+                    if (loupeTransform is null) return;
                     if (loupeTransform.Scale != 1.0)
                     {
                         infoMessage.SetMessage(InfoMessageType.ViewTransform, $"×{loupeTransform.Scale:0.0}");
@@ -444,23 +449,23 @@ namespace NeeView
         public class Memento : IMemento
         {
             [DataMember]
-            public MouseInputNormal.Memento Normal { get; set; }
+            public MouseInputNormal.Memento? Normal { get; set; }
             [DataMember]
-            public MouseInputLoupe.Memento Loupe { get; set; }
+            public MouseInputLoupe.Memento? Loupe { get; set; }
             [DataMember]
-            public MouseInputGesture.Memento Gesture { get; set; }
+            public MouseInputGesture.Memento? Gesture { get; set; }
 
             #region Obsolete
             [Obsolete, DataMember(EmitDefaultValue = false)] // ver 34.0
-            public MouseInputDrag.Memento Drag { get; set; }
+            public MouseInputDrag.Memento? Drag { get; set; }
             #endregion
 
 
             public void RestoreConfig(Config config)
             {
-                Normal.RestoreConfig(config);
-                Loupe.RestoreConfig(config);
-                Gesture.RestoreConfig(config);
+                Normal?.RestoreConfig(config);
+                Loupe?.RestoreConfig(config);
+                Gesture?.RestoreConfig(config);
             }
         }
 

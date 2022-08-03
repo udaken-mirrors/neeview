@@ -39,7 +39,7 @@ namespace NeeView.Text
                 return Regex.Replace(s, ReplaceString);
             }
 
-            public override string ToString()
+            public override string? ToString()
             {
                 return Regex?.ToString() ?? base.ToString();
             }
@@ -54,7 +54,7 @@ namespace NeeView.Text
         }
 
 
-        public event EventHandler<ReplaceStringChangedEventArgs> Changed;
+        public event EventHandler<ReplaceStringChangedEventArgs>? Changed;
 
 
         public void Set(string key, string replaceString)

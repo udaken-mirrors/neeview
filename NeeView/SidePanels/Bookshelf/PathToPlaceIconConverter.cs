@@ -11,7 +11,7 @@ namespace NeeView
     {
         public double Width { get; set; } = 16.0;
 
-        public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
+        public object? Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
         {
             if (values.Length < 2) throw new InvalidOperationException();
 
@@ -42,11 +42,11 @@ namespace NeeView
                 }
                 else if (path.Search != null)
                 {
-                    return new SingleImageSourceCollection(MainWindow.Current.Resources["ic_search_24px"] as ImageSource);
+                    return new SingleImageSourceCollection(ResourceTools.GetElementResource<ImageSource>(MainWindow.Current, "ic_search_24px"));
                 }
                 else if (path.Scheme == QueryScheme.File && PlaylistArchive.IsSupportExtension(path.SimplePath))
                 {
-                    return new SingleImageSourceCollection(MainWindow.Current.Resources["ic_playlist"] as ImageSource);
+                    return new SingleImageSourceCollection(ResourceTools.GetElementResource<ImageSource>(MainWindow.Current, "ic_playlist"));
                 }
             }
 

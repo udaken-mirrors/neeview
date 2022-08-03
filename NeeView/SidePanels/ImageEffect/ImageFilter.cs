@@ -53,16 +53,19 @@ namespace NeeView
             [DataMember]
             public bool Sharpen { get; set; }
             [DataMember]
-            public UnsharpMaskConfig UnsharpMaskProfile { get; set; }
+            public UnsharpMaskConfig? UnsharpMaskProfile { get; set; }
 
             public void RestoreConfig(Config config)
             {
                 config.ImageResizeFilter.ResizeInterpolation = ResizeInterpolation;
                 config.ImageResizeFilter.IsUnsharpMaskEnabled = Sharpen;
 
-                config.ImageResizeFilter.UnsharpMask.Amount = UnsharpMaskProfile.Amount;
-                config.ImageResizeFilter.UnsharpMask.Radius = UnsharpMaskProfile.Radius;
-                config.ImageResizeFilter.UnsharpMask.Threshold = UnsharpMaskProfile.Threshold;
+                if (UnsharpMaskProfile is not null)
+                {
+                    config.ImageResizeFilter.UnsharpMask.Amount = UnsharpMaskProfile.Amount;
+                    config.ImageResizeFilter.UnsharpMask.Radius = UnsharpMaskProfile.Radius;
+                    config.ImageResizeFilter.UnsharpMask.Threshold = UnsharpMaskProfile.Threshold;
+                }
             }
         }
 

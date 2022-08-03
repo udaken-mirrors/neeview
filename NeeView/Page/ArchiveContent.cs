@@ -14,12 +14,11 @@ namespace NeeView
     {
         private string _path;
 
-        #region Constructors
 
         /// <param name="entry">対象アーカイブもしくはファイルのエントリ</param>
         public ArchiveContent(ArchiveEntry entry) : base(entry)
         {
-            _path = entry?.SystemPath;
+            _path = entry.SystemPath;
 
             // エントリが有効でない場合の処理
             if (!entry.IsValid && !entry.IsArchivePath)
@@ -28,7 +27,7 @@ namespace NeeView
             }
         }
 
-        public ArchiveContent(string path) : base(null)
+        public ArchiveContent(string path) : base(ArchiveEntry.Empty)
         {
             _path = path;
 
@@ -39,7 +38,6 @@ namespace NeeView
             });
         }
 
-        #endregion
 
         public string SourcePath => _path;
 
@@ -58,7 +56,7 @@ namespace NeeView
         public override bool CanResize => false;
 
 
-        public override string ToString()
+        public override string? ToString()
         {
             return _path != null ? LoosePath.GetFileName(_path) : base.ToString();
         }

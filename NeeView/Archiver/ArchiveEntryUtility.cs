@@ -29,7 +29,7 @@ namespace NeeView
                 try
                 {
                     var parts = LoosePath.Split(path);
-                    string archivePath = null;
+                    string? archivePath = null;
 
                     foreach (var part in parts)
                     {
@@ -74,7 +74,7 @@ namespace NeeView
             if (entry != null) return entry;
 
             var parts = LoosePath.Split(entryName);
-            string archivePath = null;
+            string? archivePath = null;
 
             foreach (var part in parts)
             {
@@ -97,13 +97,14 @@ namespace NeeView
         /// </summary>
         /// <param name="source">対象のエントリ</param>
         /// <param name="depth">検索範囲</param>
-        public static async Task<ArchiveEntry> CreateFirstImageArchiveEntryAsync(ArchiveEntry source, int depth, CancellationToken token)
+        public static async Task<ArchiveEntry?> CreateFirstImageArchiveEntryAsync(ArchiveEntry source, int depth, CancellationToken token)
         {
             try
             {
                 List<ArchiveEntry> entries;
                 if (!source.IsFileSystem && source.IsDirectory)
                 {
+                    if (source.Archiver is null) throw new InvalidOperationException();
                     entries = (await source.Archiver.GetEntriesAsync(token))
                         .Where(e => e.EntryName.StartsWith(LoosePath.TrimDirectoryEnd(source.EntryName)))
                         .ToList();
@@ -171,7 +172,7 @@ namespace NeeView
         /// </summary>
         /// <param name="path"></param>
         /// <returns></returns>
-        public static string GetExistDirectoryName(string path)
+        public static string? GetExistDirectoryName(string path)
         {
             if (Directory.Exists(path))
             {
@@ -195,7 +196,7 @@ namespace NeeView
         /// </summary>
         /// <param name="path"></param>
         /// <returns></returns>
-        public static string GetExistEntryName(string path)
+        public static string? GetExistEntryName(string path)
         {
             if (Directory.Exists(path) || File.Exists(path))
             {

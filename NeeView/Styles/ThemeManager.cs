@@ -31,8 +31,8 @@ namespace NeeView
         private static readonly string _highContrastThemeContentPath = "Libraries/Themes/HighContrastTheme.json";
         private static readonly string _customThemeTemplateContentPath = "Libraries/Themes/CustomThemeTemplate.json";
 
-        private ThemeProfile _themeProfile;
-        private string _selectedItem;
+        private ThemeProfile? _themeProfile;
+        private string? _selectedItem;
 
 
         private ThemeManager()
@@ -53,10 +53,10 @@ namespace NeeView
         }
 
 
-        public event EventHandler ThemeProfileChanged;
+        public event EventHandler? ThemeProfileChanged;
 
 
-        public ThemeProfile ThemeProfile
+        public ThemeProfile? ThemeProfile
         {
             get { return _themeProfile; }
             private set { SetProperty(ref _themeProfile, value); }
@@ -64,7 +64,7 @@ namespace NeeView
 
 
         [PropertyStrings(Name = "@ThemeConfig.ThemeType")]
-        public string SelectedItem
+        public string? SelectedItem
         {
             get { return _selectedItem; }
             set
@@ -85,7 +85,7 @@ namespace NeeView
                 .Select(e => new KeyValuePair<string, string>(e.ToString(), e.ToAliasName()));
 
             var customThemes = CollectCustomThemes()
-                .Select(e => new KeyValuePair<string, string>(e.ToString(), Path.GetFileNameWithoutExtension(e.FileName)));
+                .Select(e => new KeyValuePair<string, string>(e.ToString(), Path.GetFileNameWithoutExtension(e.CustomThemeFilePath)));
 
             var map = defaultThemes.Concat(customThemes)
                 .ToKeyValuePairList(e => e.Key, e => e.Value);
@@ -153,7 +153,7 @@ namespace NeeView
             }
 
             ThemeProfile = themeProfile;
-            ThemeProfileChanged?.Invoke(this, null);
+            ThemeProfileChanged?.Invoke(this, EventArgs.Empty);
         }
 
 
@@ -237,7 +237,7 @@ namespace NeeView
                     {
                         try
                         {
-                            var path = Path.Combine(Config.Current.Theme.CustomThemeFolder, themeId.FileName);
+                            var path = themeId.CustomThemeFilePath;
                             return ValidateBasedOn(ThemeProfileTools.LoadFromFile(path), Path.GetDirectoryName(path));
                         }
                         catch (Exception ex)
@@ -252,8 +252,10 @@ namespace NeeView
             }
         }
 
-        private ThemeProfile ValidateBasedOn(ThemeProfile themeProfile, string currentPath, IEnumerable<string> nests = null)
+        private ThemeProfile ValidateBasedOn(ThemeProfile themeProfile, string? currentPath, IEnumerable<string>? nests = null)
         {
+            if (currentPath is null) throw new ArgumentNullException(nameof(currentPath));
+
             if (string.IsNullOrWhiteSpace(themeProfile.BasedOn))
             {
                 return themeProfile;

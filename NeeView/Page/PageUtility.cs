@@ -39,7 +39,12 @@ namespace NeeView
                 // file
                 if (page.Entry.IsFileSystem)
                 {
-                    files.Add(page.GetFilePlace());
+                    // TODO: IsFileSystemのときはGetFilePlace()はnullでないはず
+                    var path = page.GetFilePlace();
+                    if (path is not null)
+                    {
+                        files.Add(path);
+                    }
                 }
                 else if (page.Entry.Instance is ArchiveEntry archiveEntry && archiveEntry.IsFileSystem)
                 {
@@ -54,7 +59,11 @@ namespace NeeView
                             break;
 
                         case ArchivePolicy.SendArchiveFile:
-                            files.Add(page.GetFilePlace());
+                            var path = page.GetFilePlace();
+                            if (path is not null)
+                            {
+                                files.Add(path);
+                            }
                             break;
 
                         case ArchivePolicy.SendExtractFile:

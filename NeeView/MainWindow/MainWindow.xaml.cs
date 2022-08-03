@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -24,7 +25,8 @@ namespace NeeView
     /// </summary>
     public partial class MainWindow : Window, IDpiScaleProvider, IHasWindowController, INotifyMouseHorizontalWheelChanged, IHasRenameManager, IMainViewWindow
     {
-        public static MainWindow Current { get; private set; }
+        private static MainWindow? _current;
+        public static MainWindow Current => _current ?? throw new InvalidOperationException();
 
         private MainWindowViewModel _vm;
         private RoutedCommandBinding _routedCommandBinding;
@@ -45,26 +47,11 @@ namespace NeeView
 
             // TextBox の ContextMenu のスタイルを変更する ... やりすぎ？
             // ThemeProfile.InitializeEditorContextMenuStyle(this);
-        }
 
-
-        public event MouseWheelEventHandler MouseHorizontalWheelChanged;
-
-
-        public WindowStateManager WindowStateManager => _windowStateManager;
-        public WindowController WindowController => _windowController;
-
-
-        #region 初期化処理
-
-        /// <summary>
-        /// 初期化
-        /// </summary>
-        public void Initialize()
-        {
             Debug.WriteLine($"App.MainWndow.Initialize: {App.Current.Stopwatch.ElapsedMilliseconds}ms");
 
-            Current = this;
+            if (_current is not null) throw new InvalidOperationException();
+            _current = this;
 
             DragDropHelper.AttachDragOverTerminator(this);
 
@@ -92,16 +79,16 @@ namespace NeeView
             //ContentDropManager.Current.SetDragDropEvent(MainView);
 
             // ViewComponent
+            MainViewComponent.Initlialize();
             _viewComponent = MainViewComponent.Current;
-            _viewComponent.Initialize();
 
             // ViewComponent Mouse/TouchCommand
             RoutedCommandTable.Current.AddMouseInput(_viewComponent.MouseInput);
             RoutedCommandTable.Current.AddTouchInput(_viewComponent.TouchInput);
 
-            MainViewManager.Current.Initialize(_viewComponent, this.MainViewSocket);
+            MainViewManager.Initialize(_viewComponent, this.MainViewSocket);
 
-            MainWindowModel.Current.Initialize(_windowShape, _windowStateManager);
+            MainWindowModel.Initialize(_windowShape, _windowStateManager);
 
             // MainWindow : ViewModel
             _vm = new MainWindowViewModel(MainWindowModel.Current);
@@ -124,7 +111,7 @@ namespace NeeView
             RoutedCommandTable.Current.AddMouseInput(new MouseInput(mouseContext));
 
             // サイドパネル初期化
-            CustomLayoutPanelManager.Current.Initialize();
+            CustomLayoutPanelManager.Initialize();
 
             // 各コントロールとモデルを関連付け
             this.PageSliderView.Source = PageSlider.Current;
@@ -204,6 +191,15 @@ namespace NeeView
             Debug.WriteLine($"App.MainWndow.Initialize.Done: {App.Current.Stopwatch.ElapsedMilliseconds}ms");
         }
 
+
+        public event MouseWheelEventHandler? MouseHorizontalWheelChanged;
+
+
+        public WindowStateManager WindowStateManager => _windowStateManager;
+        public WindowController WindowController => _windowController;
+
+
+        #region 初期化処理
 
         /// <summary>
         /// Window状態初期設定 
@@ -378,7 +374,7 @@ namespace NeeView
         /// <summary>
         /// フレーム処理
         /// </summary>
-        private void OnRendering(object sender, EventArgs e)
+        private void OnRendering(object? sender, EventArgs e)
         {
             LayoutFrame();
         }
@@ -748,7 +744,7 @@ namespace NeeView
             this.ThumbnailListArea.Visibility = Config.Current.FilmStrip.IsEnabled && !_viewComponent.ContentCanvas.IsMediaContent ? Visibility.Visible : Visibility.Collapsed;
         }
 
-        private void ThumbnailList_Visible(object sender, VisibleEventArgs e)
+        private void ThumbnailList_Visible(object? sender, VisibleEventArgs e)
         {
             _vm.StatusAutoHideDescrption.VisibleOnce();
             _vm.ThumbnailListusAutoHideDescrption.VisibleOnce();
@@ -777,6 +773,7 @@ namespace NeeView
 
         private DelayVisibility _pageCaptionVisibility;
 
+        [MemberNotNull(nameof(_pageCaptionVisibility))]
         private void InitializePageCaption()
         {
             this.DockStatusArea.SizeChanged += (s, e) => UpdatePageCaptionLayout();
@@ -798,7 +795,7 @@ namespace NeeView
             UpdatePageCaptionVisibility();
         }
 
-        private void PageCaptionVisibility_Changed(object sender, EventArgs e)
+        private void PageCaptionVisibility_Changed(object? sender, EventArgs e)
         {
             this.PageCaption.Visibility = _pageCaptionVisibility.Visibility;
         }

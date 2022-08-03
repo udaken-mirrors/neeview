@@ -37,16 +37,15 @@ namespace NeeView
         }
 
 
-        //
-        private PageMarkersViewModel _vm;
+        private PageMarkersViewModel? _vm;
 
-        //
+
         public PageMarkersView()
         {
             InitializeComponent();
         }
 
-        //
+
         private void Initialize()
         {
             _vm = new PageMarkersViewModel(this.Source, this.RootCanvas);

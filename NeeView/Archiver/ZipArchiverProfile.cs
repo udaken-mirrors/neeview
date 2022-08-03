@@ -21,12 +21,12 @@ namespace NeeView
             public bool IsEnabled { get; set; }
 
             [DataMember, DefaultValue(".zip")]
-            public string SupportFileTypes { get; set; }
+            public string? SupportFileTypes { get; set; }
 
             public void RestoreConfig(Config config) 
             {
                 config.Archive.Zip.IsEnabled = IsEnabled;
-                config.Archive.Zip.SupportFileTypes.OneLine = SupportFileTypes;
+                config.Archive.Zip.SupportFileTypes.OneLine = SupportFileTypes ?? "";
             }
         }
 

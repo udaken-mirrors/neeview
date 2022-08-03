@@ -15,11 +15,11 @@ namespace NeeView
         }
 
 
-        public event EventHandler SelectedItemChanged;
+        public event EventHandler? SelectedItemChanged;
 
 
-        private FolderTreeModel _model;
-        public FolderTreeModel Model
+        private FolderTreeModel? _model;
+        public FolderTreeModel? Model
         {
             get { return _model; }
             set
@@ -56,7 +56,7 @@ namespace NeeView
             DpiScale = newDpi.DpiScaleX;
         }
 
-        private void Model_SelectedItemChanged(object sender, EventArgs e)
+        private void Model_SelectedItemChanged(object? sender, EventArgs e)
         {
             SelectedItemChanged?.Invoke(sender, e);
         }
@@ -86,7 +86,7 @@ namespace NeeView
             Model?.RemoveQuickAccess(item);
         }
 
-        public BookmarkFolderNode NewBookmarkFolder(BookmarkFolderNode item)
+        public BookmarkFolderNode? NewBookmarkFolder(BookmarkFolderNode item)
         {
             return Model?.NewBookmarkFolder(item);
         }

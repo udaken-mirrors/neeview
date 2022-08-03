@@ -18,7 +18,7 @@ namespace NeeView
 
     public class FileInformationSource : BindableBase
     {
-        private List<FileInformationRecord> _properties;
+        private List<FileInformationRecord>? _properties;
 
 
         public FileInformationSource(ViewContent viewContent)
@@ -31,31 +31,33 @@ namespace NeeView
 
         public ViewContent ViewContent { get; private set; }
 
-        public Page Page => ViewContent?.Page;
+        public Page? Page => ViewContent?.Page;
 
-        public BitmapContent BitmapContent => ViewContent?.Content as BitmapContent;
+        public BitmapContent? BitmapContent => ViewContent?.Content as BitmapContent;
 
-        public PictureInfo PictureInfo => BitmapContent?.PictureInfo;
+        public PictureInfo? PictureInfo => BitmapContent?.PictureInfo;
 
-        public BitmapMetadataDatabase Metadata => PictureInfo?.Metadata;
+        public BitmapMetadataDatabase? Metadata => PictureInfo?.Metadata;
 
         public double IconMaxSize => 96.0;
 
-        public FrameworkElement Icon => CreateIcon();
+        public FrameworkElement? Icon => CreateIcon();
 
-        public List<FileInformationRecord> Properties
+        public List<FileInformationRecord>? Properties
         {
             get { return _properties; }
             set { SetProperty(ref _properties, value); }
         }
 
-        public GpsLocation GpsLocation { get; private set; }
+        public GpsLocation? GpsLocation { get; private set; }
 
 
 
         public static List<FileInformationRecord> CreatePropertiesTemplate()
         {
-            return new List<FileInformationRecord>(Enum.GetValues(typeof(InformationKey)).Cast<InformationKey>().Select(e => new FileInformationRecord(e, null)));
+            return new List<FileInformationRecord>(Enum.GetValues(typeof(InformationKey))
+                .Cast<InformationKey>()
+                .Select(e => new FileInformationRecord(e, null)));
         }
 
         public void Update()
@@ -70,7 +72,7 @@ namespace NeeView
             return new List<FileInformationRecord>(Enum.GetValues(typeof(InformationKey)).Cast<InformationKey>().Select(e => new FileInformationRecord(e, factory.Create(e))));
         }
 
-        private GpsLocation CreateGpsLocate()
+        private GpsLocation? CreateGpsLocate()
         {
             if (Metadata != null && Metadata[BitmapMetadataKey.GPSLatitude] is ExifGpsDegree lat && Metadata[BitmapMetadataKey.GPSLongitude] is ExifGpsDegree lon)
             {
@@ -80,7 +82,7 @@ namespace NeeView
         }
 
 
-        public FrameworkElement CreateIcon()
+        public FrameworkElement? CreateIcon()
         {
             if (BitmapContent?.ImageSource != null)
             {
@@ -110,7 +112,7 @@ namespace NeeView
             return null;
         }
 
-        private FrameworkElement CreateBitmapContentIcon(BitmapContent bitmapContent)
+        private FrameworkElement? CreateBitmapContentIcon(BitmapContent bitmapContent)
         {
             if (bitmapContent?.ImageSource is null) return null;
 

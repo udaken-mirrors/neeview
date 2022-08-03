@@ -34,7 +34,7 @@ namespace NeeView.Setting
         /// <summary>
         /// NewGesture property.
         /// </summary>
-        private string _NewDrag;
+        private string _NewDrag = "";
         public string NewDrag
         {
             get { return _NewDrag; }
@@ -105,7 +105,7 @@ namespace NeeView.Setting
         /// <summary>
         /// Command: ClearCommand
         /// </summary>
-        private RelayCommand _clearCommand;
+        private RelayCommand? _clearCommand;
         public RelayCommand ClearCommand
         {
             get { return _clearCommand = _clearCommand ?? new RelayCommand(ClearCommand_Executed); }
@@ -113,7 +113,7 @@ namespace NeeView.Setting
 
         private void ClearCommand_Executed()
         {
-            UpdateGestureToken(null);
+            UpdateGestureToken("");
         }
     }
 }

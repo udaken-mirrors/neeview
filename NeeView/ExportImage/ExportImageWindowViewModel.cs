@@ -37,7 +37,7 @@ namespace NeeView
             set { _model.HasBackground = value; }
         }
 
-        public FrameworkElement Preview
+        public FrameworkElement? Preview
         {
             get { return _model.Preview; }
         }
@@ -48,17 +48,18 @@ namespace NeeView
         }
 
 
-        private List<DestinationFolder> _destinationFolderList;
-        public List<DestinationFolder> DestinationFolderList
+        // NOTE: 未使用？
+        private List<DestinationFolder>? _destinationFolderList;
+        public List<DestinationFolder>? DestinationFolderList
         {
             get { return _destinationFolderList; }
             set { SetProperty(ref _destinationFolderList, value); }
         }
 
 
-        private static DestinationFolder _lastSelectedDestinationFolder;
-        private DestinationFolder _selectedDestinationFolder = _lastSelectedDestinationFolder;
-        public DestinationFolder SelectedDestinationFolder
+        private static DestinationFolder? _lastSelectedDestinationFolder;
+        private DestinationFolder? _selectedDestinationFolder = _lastSelectedDestinationFolder;
+        public DestinationFolder? SelectedDestinationFolder
         {
             get { return _selectedDestinationFolder; }
             set
@@ -84,7 +85,7 @@ namespace NeeView
         }
 
 
-        private void Model_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        private void Model_PropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
             switch (e.PropertyName)
             {
@@ -113,10 +114,9 @@ namespace NeeView
 
         public bool? ShowSelectSaveFileDialog(Window owner)
         {
-            var dialog = new ExportImageSeveFileDialog();
-            dialog.InitialDirectory = _model.ExportFolder;
-            dialog.FileName = _model.CreateFileName(ExportImageFileNameMode.Default, ExportImageFormat.Png);
-            dialog.CanSelectFormat = _model.Mode == ExportImageMode.View;
+            var dialog = new ExportImageSeveFileDialog(_model.ExportFolder,
+                _model.CreateFileName(ExportImageFileNameMode.Default, ExportImageFormat.Png),
+                _model.Mode == ExportImageMode.View);
 
             if (SelectedDestinationFolder != null && SelectedDestinationFolder.IsValid())
             {

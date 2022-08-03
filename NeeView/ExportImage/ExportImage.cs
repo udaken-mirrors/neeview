@@ -3,6 +3,7 @@
 using NeeLaboratory.ComponentModel;
 using System;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -27,7 +28,7 @@ namespace NeeView
             UpdatePreview();
         }
 
-        public string ExportFolder { get; set; }
+        public string? ExportFolder { get; set; }
 
         private ExportImageMode _mode;
         public ExportImageMode Mode
@@ -60,14 +61,14 @@ namespace NeeView
             }
         }
 
-        private FrameworkElement _preview;
-        public FrameworkElement Preview
+        private FrameworkElement? _preview;
+        public FrameworkElement? Preview
         {
             get { return _preview; }
             set { SetProperty(ref _preview, value); }
         }
 
-        private string _imageFormatNote;
+        private string _imageFormatNote = "";
         public string ImageFormatNote
         {
             get { return _imageFormatNote; }
@@ -93,6 +94,7 @@ namespace NeeView
         }
 
 
+        [MemberNotNull(nameof(_exporter))]
         public void UpdateExporter()
         {
             _exporter = CreateExporter(_mode, _source, _hasBackground);
@@ -107,6 +109,7 @@ namespace NeeView
                 try
                 {
                     var content = _exporter.CreateView();
+                    if (content is null) throw new InvalidOperationException();
                     Preview = content.View;
                     ImageFormatNote = content.Size.IsEmpty ? "" : $"{(int)content.Size.Width} x {(int)content.Size.Height}";
                 }

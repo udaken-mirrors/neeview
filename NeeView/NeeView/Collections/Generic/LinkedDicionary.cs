@@ -10,13 +10,14 @@ namespace NeeView.Collections.Generic
     /// <typeparam name="TKey">検索用キー</typeparam>
     /// <typeparam name="TValue">収納型</typeparam>
     public class LinkedDicionary<TKey, TValue> : IEnumerable<TValue>
+        where TKey : notnull
     {
         private Dictionary<TKey, LinkedListNode<TValue>> _map = new Dictionary<TKey, LinkedListNode<TValue>>();
         private LinkedList<TValue> _list = new LinkedList<TValue>();
 
         public int Count => _map.Count;
-        public LinkedListNode<TValue> First => _list.First;
-        public LinkedListNode<TValue> Last => _list.Last;
+        public LinkedListNode<TValue>? First => _list.First;
+        public LinkedListNode<TValue>? Last => _list.Last;
 
         public void AddFirst(TKey key, TValue item)
         {
@@ -60,7 +61,7 @@ namespace NeeView.Collections.Generic
             _list.AddLast(node);
         }
 
-        public LinkedListNode<TValue> Find(TKey key)
+        public LinkedListNode<TValue>? Find(TKey key)
         {
             _map.TryGetValue(key, out var node);
             return node;

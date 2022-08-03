@@ -24,7 +24,7 @@ namespace NeeView
     {
         private WindowChromeAccessor _windowChrome;
         private WindowStateManager _windowStateManager;
-        private RoutedCommandBinding _routedCommandBinding;
+        private RoutedCommandBinding? _routedCommandBinding;
         private bool _disposedValue;
 
 

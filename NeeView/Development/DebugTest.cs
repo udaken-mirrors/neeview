@@ -123,6 +123,7 @@ namespace NeeView
             }
         }
 
+#if false
         class SevenZiPTest
         {
             private Dictionary<ArchiveFileInfo, MemoryStream> _map = new Dictionary<ArchiveFileInfo, MemoryStream>();
@@ -147,7 +148,7 @@ namespace NeeView
 
                 Debug.WriteLine("done.");
 
-                #region NEXT
+#region NEXT
 
                 using (var extractor = new SevenZipExtractor(path))
                 {
@@ -158,15 +159,15 @@ namespace NeeView
                     temp.ExtractArchive(extractor, directory);
                 }
 
-                void Temp_TempFileExtractionFinished(object sender, SevenZipTempFileExtractionArgs e)
+                void Temp_TempFileExtractionFinished(object? sender, SevenZipTempFileExtractionArgs e)
                 {
                     Debug.WriteLine($"{e.FileInfo.Index}: {e.FileName}");
                 }
 
-                #endregion
+#endregion
             }
 
-            private void Extractor_FileExtractionFinished(object sender, FileInfoEventArgs e)
+            private void Extractor_FileExtractionFinished(object? sender, FileInfoEventArgs e)
             {
                 var info = e.FileInfo;
                 Debug.WriteLine($"{info.Index}: {info.FileName}");
@@ -193,9 +194,8 @@ namespace NeeView
                 _map.Add(info, ms);
                 return ms;
             }
-
-
         }
+#endif
     }
 
 

@@ -22,15 +22,10 @@ namespace NeeView
     /// </summary>
     public class PdfArchiver : Archiver
     {
-        #region Constructors
-
-        public PdfArchiver(string path, ArchiveEntry source) : base(path, source)
+        public PdfArchiver(string path, ArchiveEntry? source) : base(path, source)
         {
         }
 
-        #endregion
-
-        #region Methods
 
         public override string ToString()
         {
@@ -155,7 +150,5 @@ namespace NeeView
                 return ms;
             }
         }
-
-        #endregion
     }
 }

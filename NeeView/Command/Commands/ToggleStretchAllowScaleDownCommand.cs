@@ -17,18 +17,18 @@ namespace NeeView
             return new Binding(nameof(ViewConfig.AllowStretchScaleDown)) { Source = Config.Current.View };
         }
 
-        public override string ExecuteMessage(object sender, CommandContext e)
+        public override string ExecuteMessage(object? sender, CommandContext e)
         {
             return this.Text + (Config.Current.View.AllowStretchScaleDown ? " OFF" : "");
         }
 
-        public override bool CanExecute(object sender, CommandContext e)
+        public override bool CanExecute(object? sender, CommandContext e)
         {
             return !NowLoading.Current.IsDispNowLoading;
         }
 
         [MethodArgument("@ToggleCommand.Execute.Remarks")]
-        public override void Execute(object sender, CommandContext e)
+        public override void Execute(object? sender, CommandContext e)
         {
             if (e.Args.Length > 0)
             {

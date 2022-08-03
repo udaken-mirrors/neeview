@@ -7,7 +7,7 @@ namespace NeeView
 {
     public class BookSettingConfig : BindableBase, ICloneable, IEquatable<BookSettingConfig>
     {
-        private string _page;
+        private string _page = "";
         private PageMode _pageMode = PageMode.SinglePage;
         private PageReadOrder _bookReadOrder = PageReadOrder.RightToLeft;
         private bool _isSupportedDividePage;
@@ -97,7 +97,7 @@ namespace NeeView
             return MemberwiseClone();
         }
 
-        public bool Equals(BookSettingConfig other)
+        public bool Equals(BookSettingConfig? other)
         {
             return other != null &&
                 this.Page == other.Page &&

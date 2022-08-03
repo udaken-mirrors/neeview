@@ -4,13 +4,13 @@ namespace NeeView
 {
     public class PlaylistPresenter
     {
-        public static PlaylistPresenter Current { get; private set; }
+        public static PlaylistPresenter? Current { get; private set; }
 
 
         private PlaylistView _playliseView;
         private PlaylistHub _playlistHub;
 
-        private PlaylistListBox _playlistListBox;
+        private PlaylistListBox? _playlistListBox;
         private PlaylistListBoxViewModel _playlistListBoxViewModel = new PlaylistListBoxViewModel();
 
 
@@ -33,12 +33,14 @@ namespace NeeView
 
 
         public PlaylistView PlaylistView => _playliseView;
-        public PlaylistListBox PlaylistListBox=> _playlistListBox;
+        public PlaylistListBox? PlaylistListBox=> _playlistListBox;
         public PlaylistHub PlaylistHub => _playlistHub;
 
 
         private void UpdateListBox()
         {
+            if (_playlistHub.Playlist is null) return;
+
             _playlistListBoxViewModel.SetModel(_playlistHub.Playlist);
             UpdateListBoxContent();
         }

@@ -7,7 +7,7 @@ namespace NeeView
 {
     public class ScriptFolderWatcher : IDisposable
     {
-        private FileSystemWatcher _watcher;
+        private FileSystemWatcher? _watcher;
         private SimpleDelayAction _delayUpdate = new SimpleDelayAction();
         private bool _disposedValue;
 
@@ -17,7 +17,7 @@ namespace NeeView
         }
 
 
-        public event FileSystemEventHandler Changed;
+        public event FileSystemEventHandler? Changed;
 
 
         public void Start(string path)
@@ -59,7 +59,7 @@ namespace NeeView
 
         private void RaiseChanged(object sender, FileSystemEventArgs e)
         {
-            Changed?.Invoke(this, null);
+            Changed?.Invoke(this, e);
         }
 
         protected virtual void Dispose(bool disposing)

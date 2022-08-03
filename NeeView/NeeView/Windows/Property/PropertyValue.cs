@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
 using System.Text;
@@ -31,7 +32,7 @@ namespace NeeView.Windows.Property
         /// <summary>
         /// 表示形式を指定する文字列
         /// </summary>
-        public string VisualType { get; set; }
+        public string? VisualType { get; set; }
     }
 
 
@@ -48,18 +49,18 @@ namespace NeeView.Windows.Property
             Setter.ValueChanged += (s, e) => RaisePropertyChanged(nameof(Value));
         }
 
-        public T Value
+        public T? Value
         {
             get { return GetValue(); }
             set { SetValue(value); }
         }
 
-        public virtual T GetValue()
+        public virtual T? GetValue()
         {
-            return (T)Setter.GetValue();
+            return (T?)Setter.GetValue();
         }
 
-        public virtual void SetValue(object value)
+        public virtual void SetValue(object? value)
         {
             Setter.SetValue(value);
         }
@@ -67,7 +68,7 @@ namespace NeeView.Windows.Property
 
         public override string GetValueString()
         {
-            return Value.ToString();
+            return Value?.ToString() ?? "";
         }
     }
 
@@ -97,7 +98,7 @@ namespace NeeView.Windows.Property
     {
         private PropertyMemberElement _setter;
 
-        public string EmptyMessage { get; private set; }
+        public string? EmptyMessage { get; private set; }
 
         public PropertyValue_String(PropertyMemberElement setter) : base(setter)
         {
@@ -105,7 +106,7 @@ namespace NeeView.Windows.Property
             EmptyMessage = setter.EmptyMessage;
         }
 
-        public override string GetValue()
+        public override string? GetValue()
         {
             var value = base.GetValue();
             if (_setter.Options.EmptyValue != null && string.IsNullOrEmpty(value))
@@ -126,8 +127,9 @@ namespace NeeView.Windows.Property
 
     public class PropertyValue_StringMap : PropertyValue<string>
     {
-        private Func<KeyValuePairList<string, string>> _getMap;
+        private Func<KeyValuePairList<string, string>>? _getMap;
         private KeyValuePairList<string, string> _map;
+
 
         public KeyValuePairList<string, string> Map
         {
@@ -136,16 +138,19 @@ namespace NeeView.Windows.Property
         }
 
 
-        public string SelectedValue
+        public string? SelectedValue
         {
-            get { return (string)Value; }
+            get { return (string?)Value; }
             set { Value = value; }
         }
 
-        public PropertyValue_StringMap(PropertyMemberElement setter, IEnumerable<string> strings) : base(setter)
+        public PropertyValue_StringMap(PropertyMemberElement setter, IEnumerable<string>? strings) : base(setter)
         {
             _getMap = setter.Options?.GetStringMapFunc;
-            this.Map = _getMap?.Invoke() ?? setter.Options?.StringMap ?? strings.ToKeyValuePairList(e => e, e => e);
+            _map = _getMap?.Invoke()
+                ?? setter.Options?.StringMap
+                ?? strings?.ToKeyValuePairList(e => e, e => e)
+                ?? new KeyValuePairList<string, string>();
         }
 
         public override void SetValueFromString(string value)
@@ -199,7 +204,7 @@ namespace NeeView.Windows.Property
 
         public Enum SelectedValue
         {
-            get { return (Enum)Value; }
+            get { return Value is null ? Map.Keys.First() : (Enum)Value; }
             set { Value = value; }
         }
 
@@ -279,7 +284,7 @@ namespace NeeView.Windows.Property
     /// </summary>
     public class RangeProfile<T> : PropertyValue<T>
     {
-        public RangeProfile(IValueSetter setter, double min, double max, double tickFrequency, bool isEditable, string format) : base(setter)
+        public RangeProfile(IValueSetter setter, double min, double max, double tickFrequency, bool isEditable, string? format) : base(setter)
         {
             this.Minimum = min;
             this.Maximum = max;
@@ -317,11 +322,11 @@ namespace NeeView.Windows.Property
         /// <summary>
         /// 表示文字列フォーマット
         /// </summary>
-        public string Format { get; private set; }
+        public string? Format { get; private set; }
 
-        public IValueConverter Converter { get; private set; }
+        public IValueConverter? Converter { get; private set; }
 
-        public IValueConverter FormatConverter { get; private set; }
+        public IValueConverter? FormatConverter { get; private set; }
 
         public IValueDeltaCalculator WheelCalculator { get; private set; }
 
@@ -346,14 +351,14 @@ namespace NeeView.Windows.Property
 
     public class RangeProfile_Double : RangeProfile<double>
     {
-        public RangeProfile_Double(IValueSetter setter, double min, double max, double tickFrequency, bool isEditable, string format) : base(setter, min, max, tickFrequency, isEditable, format)
+        public RangeProfile_Double(IValueSetter setter, double min, double max, double tickFrequency, bool isEditable, string? format) : base(setter, min, max, tickFrequency, isEditable, format)
         {
         }
     }
 
     public class RangeProfile_Integer : RangeProfile<int>
     {
-        public RangeProfile_Integer(IValueSetter setter, double min, double max, double tickFrequency, bool isEditable, string format) : base(setter, min, max, tickFrequency, isEditable, format)
+        public RangeProfile_Integer(IValueSetter setter, double min, double max, double tickFrequency, bool isEditable, string? format) : base(setter, min, max, tickFrequency, isEditable, format)
         {
         }
     }
@@ -417,11 +422,11 @@ namespace NeeView.Windows.Property
     public class PropertyValue_FilePath : PropertyValue_String
     {
         public FileDialogType FileDialogType { get; set; }
-        public string Filter { get; set; }
-        public string Note { get; set; }
-        public string DefaultFileName { get; set; }
+        public string? Filter { get; set; }
+        public string? Note { get; set; }
+        public string? DefaultFileName { get; set; }
 
-        public PropertyValue_FilePath(PropertyMemberElement setter, FileDialogType fileDialogType, string filter, string note, string defaultFileName) : base(setter)
+        public PropertyValue_FilePath(PropertyMemberElement setter, FileDialogType fileDialogType, string? filter, string? note, string? defaultFileName) : base(setter)
         {
             FileDialogType = fileDialogType;
             Filter = filter;

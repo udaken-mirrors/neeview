@@ -12,6 +12,14 @@ namespace NeeView
     /// </summary>
     public class FixedContentSize
     {
+        public FixedContentSize(List<Size> sourceSizeList, List<Size> contentSizeList, double angle, Thickness margin)
+        {
+            SourceSizeList = sourceSizeList;
+            ContentSizeList = contentSizeList;
+            ContentAngle = angle;
+            ContentsMargin = margin;
+        }
+
         /// <summary>
         /// コンテンツのオリジナルサイズ
         /// </summary>
@@ -98,11 +106,8 @@ namespace NeeView
             // Viewにあわせたコンテンツサイズ
             var sizes = CalcContentSize(source, viewSize.Width, viewSize.Height, offsetWidth, angle, dpiScale);
 
-            var result = new FixedContentSize();
-            result.SourceSizeList = source;
-            result.ContentAngle = angle;
-            result.ContentsMargin = new Thickness(offsetWidth, 0, 0, 0);
-            result.ContentSizeList = sizes.Select(e => e.IsEmpty ? SizeExtensions.Zero : new Size(e.Width, e.Height)).ToList();
+            var contentSizeList = sizes.Select(e => e.IsEmpty ? SizeExtensions.Zero : new Size(e.Width, e.Height)).ToList();
+            var result = new FixedContentSize(source, contentSizeList, angle, new Thickness(offsetWidth, 0, 0, 0));
             return result;
         }
 

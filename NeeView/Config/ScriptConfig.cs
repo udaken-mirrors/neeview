@@ -13,7 +13,7 @@ namespace NeeView
 
         [JsonInclude]
         [JsonPropertyName(nameof(ScriptFolder))]
-        public string _scriptFolder = null;
+        public string? _scriptFolder = null;
 
 
         [PropertyMember]

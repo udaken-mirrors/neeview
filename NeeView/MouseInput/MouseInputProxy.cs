@@ -16,11 +16,11 @@ namespace NeeView
         private List<MouseInput> _mouseInputs = new List<MouseInput>();
 
 
-        public event EventHandler<MouseButtonEventArgs> MouseButtonChanged;
+        public event EventHandler<MouseButtonEventArgs>? MouseButtonChanged;
 
-        public event EventHandler<MouseWheelEventArgs> MouseWheelChanged;
+        public event EventHandler<MouseWheelEventArgs>? MouseWheelChanged;
 
-        public event EventHandler<MouseEventArgs> MouseMoved;
+        public event EventHandler<MouseEventArgs>? MouseMoved;
 
 
         public void Add(MouseInput mouseInput)

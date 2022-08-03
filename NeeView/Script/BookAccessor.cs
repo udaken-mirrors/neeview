@@ -22,7 +22,7 @@ namespace NeeView
         }
 
         [WordNodeMember]
-        public string Path => BookOperation.Current.Book?.Address;
+        public string? Path => BookOperation.Current.Book?.Address;
 
         [WordNodeMember]
         public bool IsMedia => BookOperation.Current.Book?.IsMedia == true;
@@ -82,14 +82,14 @@ namespace NeeView
 
         [WordNodeMember]
         [Obsolete, Alternative("Pages[]", 38)] // ver.38
-        public PageAccessor Page(int index)
+        public PageAccessor? Page(int index)
         {
             return _accessDiagnostics.Throw<PageAccessor>(new NotSupportedException(RefrectionTools.CreateMethodObsoleteMessage(this.GetType())));
         }
 
         [WordNodeMember]
         [Obsolete, Alternative("ViewPages[]", 38)] // ver.38
-        public PageAccessor ViewPage(int index)
+        public PageAccessor? ViewPage(int index)
         {
             return _accessDiagnostics.Throw<PageAccessor>(new NotSupportedException(RefrectionTools.CreateMethodObsoleteMessage(this.GetType())));
         }
@@ -104,8 +104,8 @@ namespace NeeView
         internal WordNode CreateWordNode(string name)
         {
             var node = WordNodeHelper.CreateClassWordNode(name, this.GetType());
-
-            node.Children.Add(Config.CreateWordNode(nameof(Config)));
+            
+            node.Children?.Add(Config.CreateWordNode(nameof(Config)));
 
             return node;
         }

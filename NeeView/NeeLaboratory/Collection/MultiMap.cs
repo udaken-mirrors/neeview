@@ -10,7 +10,7 @@ namespace NeeLaboratory.Collection
     /// <summary>
     /// キーの重複を許容するDictionary。高速検索用
     /// </summary>
-    public class MultiMap<TKey, TValue>
+    public class MultiMap<TKey, TValue> where TKey : notnull
     {
         private readonly Dictionary<TKey, List<TValue>> _map = new Dictionary<TKey, List<TValue>>();
 
@@ -92,7 +92,7 @@ namespace NeeLaboratory.Collection
             return _map.ContainsKey(key);
         }
 
-        public bool TryGetValue(TKey key, out TValue value)
+        public bool TryGetValue(TKey key, out TValue? value)
         {
             if (_map.TryGetValue(key, out var list))
             {
@@ -105,7 +105,7 @@ namespace NeeLaboratory.Collection
             return false;
         }
 
-        public bool TryGetValueCollection(TKey key, out List<TValue> list)
+        public bool TryGetValueCollection(TKey key, out List<TValue>? list)
         {
             return _map.TryGetValue(key, out list);
         }
@@ -127,6 +127,7 @@ namespace NeeLaboratory.Collection
     public static class MultiMapTools
     {
         public static MultiMap<TKey, TElement> ToMultiMap<TSource, TKey, TElement>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector, Func<TSource, TElement> elementSelector)
+            where TKey : notnull
         {
             var multiMap = new MultiMap<TKey, TElement>();
             foreach (TSource element in source)

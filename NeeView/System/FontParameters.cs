@@ -1,6 +1,7 @@
 ﻿using NeeLaboratory.ComponentModel;
 using System;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Windows.Media;
 
 namespace NeeView
@@ -28,10 +29,13 @@ namespace NeeView
 
             SystemVisualParameters.Current.PropertyChanged += Current_PropertyChanged;
 
+            _defaultFontName = Config.Current.Fonts.FontName ?? "";
+            InitializeDefaultFont();
+
             UpdateFonts();
         }
 
-        private void Current_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        private void Current_PropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             switch (e.PropertyName)
             {
@@ -51,18 +55,11 @@ namespace NeeView
             {
                 if (SetProperty(ref _defaultFontName, value))
                 {
-                    App.Current.Resources["DefaultFontFamily"] = new FontFamily(_defaultFontName ?? "");
-
-                    var arrowFontFamily = new FontFamily();
-                    arrowFontFamily.FamilyMaps.Add(new FontFamilyMap() { Unicode = "2190-2193", Target = "Calibri" }); // 矢印フォントだけ變更
-                    if (!string.IsNullOrWhiteSpace(_defaultFontName))
-                    {
-                        arrowFontFamily.FamilyMaps.Add(new FontFamilyMap() { Unicode = "0000-10ffff", Target = _defaultFontName });
-                    }
-                    App.Current.Resources["ArrowFontFamily"] = arrowFontFamily;
+                    InitializeDefaultFont();
                 }
             }
         }
+
 
         public double SystemFontSize
         {
@@ -152,6 +149,19 @@ namespace NeeView
             }
         }
 
+
+        private void InitializeDefaultFont()
+        {
+            App.Current.Resources["DefaultFontFamily"] = new FontFamily(_defaultFontName);
+
+            var arrowFontFamily = new FontFamily();
+            arrowFontFamily.FamilyMaps.Add(new FontFamilyMap() { Unicode = "2190-2193", Target = "Calibri" }); // 矢印フォントだけ變更
+            if (!string.IsNullOrWhiteSpace(_defaultFontName))
+            {
+                arrowFontFamily.FamilyMaps.Add(new FontFamilyMap() { Unicode = "0000-10ffff", Target = _defaultFontName });
+            }
+            App.Current.Resources["ArrowFontFamily"] = arrowFontFamily;
+        }
 
         private void UpdateFonts()
         {

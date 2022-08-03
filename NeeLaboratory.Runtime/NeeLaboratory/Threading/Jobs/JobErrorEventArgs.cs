@@ -8,40 +8,34 @@ namespace NeeLaboratory.Threading.Jobs
     /// </summary>
     public class JobErrorEventArgs : ErrorEventArgs
     {
-        #region Fields
-
         /// <summary>
         /// 例外が発生したJOB
         /// </summary>
-        private IJob _job;
+        private IJob? _job;
 
         /// <summary>
         /// 例外処理済みフラグ
         /// </summary>
         private bool _handled;
 
-        #endregion
 
-        #region Construcotrs
 
         /// <summary>
         /// construcotr
         /// </summary>
         /// <param name="exception"></param>
         /// <param name="job"></param>
-        public JobErrorEventArgs(Exception exception, IJob job) : base(exception)
+        public JobErrorEventArgs(Exception exception, IJob? job) : base(exception)
         {
             _job = job;
         }
 
-        #endregion
 
-        #region Properties
 
         /// <summary>
         /// 例外が発生したJOB
         /// </summary>
-        public IJob Job => _job;
+        public IJob? Job => _job;
 
         /// <summary>
         /// 例外処理済みフラグ.
@@ -61,6 +55,5 @@ namespace NeeLaboratory.Threading.Jobs
             }
         }
 
-        #endregion
     }
 }

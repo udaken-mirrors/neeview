@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NeeLaboratory.Linq;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -39,28 +40,31 @@ namespace NeeLaboratory.Collections.Specialized
 
         public bool Contains(string item)
         {
-            item = ValidateItem(item);
-            return _items.Contains(item);
+            var s = ValidateItem(item);
+            if (s is null) return false;
+
+            return _items.Contains(s);
         }
 
 
-        public string ToOneLine()
+        public string? ToOneLine()
         {
             return _items.Count > 0 ? string.Join(";", _items) : null;
         }
 
-        private string ValidateItem(string item)
+        private string? ValidateItem(string item)
         {
             return string.IsNullOrWhiteSpace(item) ? null : "." + item.Trim().TrimStart('.').ToLower();
         }
 
-        private List<string> ValidateCollection(IEnumerable<string> items)
+        private List<string> ValidateCollection(IEnumerable<string>? items)
         {
             if (items == null) return new List<string>();
 
             return items
                 .Select(e => ValidateItem(e))
                 .Where(e => !string.IsNullOrEmpty(e))
+                .MyWhereNotNull()
                 .Distinct()
                 .OrderBy(e => e)
                 .ToList();
@@ -76,12 +80,14 @@ namespace NeeLaboratory.Collections.Specialized
             return ((IEnumerable<string>)_items).GetEnumerator();
         }
 
-        public bool Equals(FileExtensionCollection other)
+        public bool Equals(FileExtensionCollection? other)
         {
+            if (other is null) return false;
+
             return _items.SequenceEqual(other._items);
         }
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             if (obj is FileExtensionCollection other)
             {

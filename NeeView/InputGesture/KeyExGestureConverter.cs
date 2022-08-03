@@ -12,7 +12,7 @@ namespace NeeView
         private static KeyExConverter _keyConverter = new KeyExConverter();
         private static ModifierKeysConverter _modifierKeysConverter = new ModifierKeysConverter();
 
-        public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType)
+        public override bool CanConvertFrom(ITypeDescriptorContext? context, Type sourceType)
         {
             if (sourceType == typeof(string))
             {
@@ -24,7 +24,7 @@ namespace NeeView
             }
         }
 
-        public override bool CanConvertTo(ITypeDescriptorContext context, Type destinationType)
+        public override bool CanConvertTo(ITypeDescriptorContext? context, Type? destinationType)
         {
             if (destinationType == typeof(string) && context?.Instance is KeyExGesture)
             {
@@ -36,7 +36,7 @@ namespace NeeView
             }
         }
 
-        public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object source)
+        public override object? ConvertFrom(ITypeDescriptorContext? context, CultureInfo? culture, object source)
         {
             if (source != null && source is string)
             {
@@ -62,7 +62,7 @@ namespace NeeView
                 }
 
                 ModifierKeys modifiers = ModifierKeys.None;
-                object resultkey = _keyConverter.ConvertFrom(context, culture, keyToken);
+                object? resultkey = _keyConverter.ConvertFrom(context, culture, keyToken);
                 if (resultkey != null)
                 {
                     object temp = _modifierKeysConverter.ConvertFrom(context, culture, modifiersToken);
@@ -77,7 +77,7 @@ namespace NeeView
         }
 
 
-        public override object ConvertTo(ITypeDescriptorContext context, CultureInfo culture, object value, Type destinationType)
+        public override object? ConvertTo(ITypeDescriptorContext? context, CultureInfo? culture, object? value, Type destinationType)
         {
             if (destinationType == null)
             {
@@ -88,14 +88,14 @@ namespace NeeView
             {
                 if (value != null)
                 {
-                    KeyExGesture keyGesture = value as KeyExGesture;
+                    KeyExGesture? keyGesture = value as KeyExGesture;
                     if (keyGesture != null)
                     {
                         if (keyGesture.Key == Key.None)
                             return string.Empty;
 
                         string strBinding = "";
-                        string strKey = _keyConverter.ConvertTo(context, culture, keyGesture.Key, destinationType) as string;
+                        string? strKey = _keyConverter.ConvertTo(context, culture, keyGesture.Key, destinationType) as string;
                         if (strKey != string.Empty)
                         {
                             strBinding += _modifierKeysConverter.ConvertTo(context, culture, keyGesture.ModifierKeys, destinationType) as string;

@@ -13,7 +13,7 @@ namespace NeeView.Data
     [AttributeUsage(AttributeTargets.Property)]
     public class OptionBaseAttribute : Attribute
     {
-        public string HelpText;
+        public string? HelpText;
     }
 
 
@@ -28,7 +28,7 @@ namespace NeeView.Data
         private List<OptionMemberElement> _elements;
 
         // values
-        private OptionValuesElement _values;
+        private OptionValuesElement? _values;
 
         /// <summary>
         /// constructor
@@ -42,7 +42,7 @@ namespace NeeView.Data
 
             foreach (PropertyInfo info in type.GetProperties())
             {
-                var attribute = (OptionBaseAttribute)Attribute.GetCustomAttributes(info, typeof(OptionBaseAttribute)).FirstOrDefault();
+                var attribute = (OptionBaseAttribute?)Attribute.GetCustomAttributes(info, typeof(OptionBaseAttribute)).FirstOrDefault();
                 if (attribute != null)
                 {
                     switch (attribute)
@@ -59,7 +59,7 @@ namespace NeeView.Data
         }
 
         //
-        public OptionMemberElement GetElement(string key)
+        public OptionMemberElement? GetElement(string key)
         {
             var word = key.TrimStart('-');
 
@@ -92,7 +92,7 @@ namespace NeeView.Data
             foreach (var element in _elements)
             {
                 // key
-                var keys = new List<string> { element.ShortName != null ? "-" + element.ShortName : null, element.LongName != null ? "--" + element.LongName : null };
+                var keys = new List<string?> { element.ShortName != null ? "-" + element.ShortName : null, element.LongName != null ? "--" + element.LongName : null };
                 var key = string.Join(", ", keys.Where(e => e != null));
 
                 // key value
@@ -124,7 +124,7 @@ namespace NeeView.Data
         {
             bool isOptionTerminated = false;
 
-            var options = new Dictionary<string, string>();
+            var options = new Dictionary<string, string?>();
             var values = new List<string>();
 
             for (int i = 0; i < args.Length; ++i)
@@ -207,7 +207,7 @@ namespace NeeView.Data
         }
 
         //
-        private void Mapping(T source, Dictionary<string, string> options, List<string> values)
+        private void Mapping(T source, Dictionary<string, string?> options, List<string> values)
         {
             foreach (var item in options)
             {

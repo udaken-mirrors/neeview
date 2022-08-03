@@ -32,7 +32,7 @@ namespace NeeView
 
         public string Name { get; set; }
 
-        public string Note { get; set; }
+        public string Note { get; set; } = "";
 
         public bool IsLocked { get; set; }
 
@@ -42,9 +42,9 @@ namespace NeeView
 
         public DragActionGroup Group { get; set; }
 
-        public DragActionParameterSource ParameterSource { get; set; }
+        public DragActionParameterSource? ParameterSource { get; set; }
 
-        public DragActionParameter Parameter
+        public DragActionParameter? Parameter
         {
             get => ParameterSource?.Get();
             set => ParameterSource?.Set(value);
@@ -71,10 +71,10 @@ namespace NeeView
         public class Memento : IMemento
         {
             [DataMember(Name = "Key")]
-            public string MouseButton { get; set; }
+            public string MouseButton { get; set; } = "";
 
             [DataMember]
-            public DragActionParameter Parameter { get; set; }
+            public DragActionParameter? Parameter { get; set; }
 
 
             private void Constructor()
@@ -103,14 +103,14 @@ namespace NeeView
         {
             var memento = new Memento();
             memento.MouseButton = DragKey.ToString();
-            memento.Parameter = (DragActionParameter)Parameter?.Clone();
+            memento.Parameter = (DragActionParameter?)Parameter?.Clone();
             return memento;
         }
 
         public void Restore(Memento element)
         {
             DragKey = new DragKey(element.MouseButton);
-            Parameter = (DragActionParameter)element.Parameter?.Clone();
+            Parameter = (DragActionParameter?)element.Parameter?.Clone();
         }
 
         #endregion

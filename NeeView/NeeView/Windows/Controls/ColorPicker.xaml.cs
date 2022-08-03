@@ -24,13 +24,27 @@ namespace NeeView.Windows.Controls
     public partial class ColorPicker : UserControl, INotifyPropertyChanged
     {
         #region NotifyPropertyChanged
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
-        protected void RaisePropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string name = "")
+        protected void RaisePropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string? name = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
         #endregion
+
+
+        private bool _isPropertyLocked;
+        private Color _rgb;
+        public HSVColor _hsv;
+
+
+        public ColorPicker()
+        {
+            InitializeComponent();
+
+            this.Root.DataContext = this;
+        }
+
 
         /// <summary>
         /// Color property
@@ -54,9 +68,6 @@ namespace NeeView.Windows.Controls
             }
         }
 
-
-
-
         public bool IsHsvMode
         {
             get { return (bool)GetValue(IsHsvModeProperty); }
@@ -77,19 +88,6 @@ namespace NeeView.Windows.Controls
             }
         }
 
-        private bool _isPropertyLocked;
-
-        private void Flush()
-        {
-            if (!_isPropertyLocked)
-            {
-                _rgb = Color;
-                _hsv = Color.ToHSV();
-            }
-            RaisePropertyChanged(null);
-        }
-
-        private Color _rgb;
 
         /// <summary>
         /// Property: R
@@ -118,10 +116,6 @@ namespace NeeView.Windows.Controls
             set { UpdateColor(Color.FromArgb(_rgb.A, _rgb.R, _rgb.G, value)); }
         }
 
-
-
-        public HSVColor _hsv;
-
         public int H
         {
             get { return (int)_hsv.H; }
@@ -149,6 +143,28 @@ namespace NeeView.Windows.Controls
             }
         }
 
+        /// <summary>
+        /// Property: IsRgbVisible
+        /// </summary>
+        public bool IsRgbVisible => !IsHsvMode;
+
+        /// <summary>
+        /// Property: IsHsvVisible
+        /// </summary>
+        public bool IsHsvVisible => IsHsvMode;
+
+
+
+        private void Flush()
+        {
+            if (!_isPropertyLocked)
+            {
+                _rgb = Color;
+                _hsv = Color.ToHSV();
+            }
+            RaisePropertyChanged(null);
+        }
+
         private void UpdateColor(Color rgb)
         {
             _rgb = rgb;
@@ -169,28 +185,6 @@ namespace NeeView.Windows.Controls
             Color = _rgb;
             _isPropertyLocked = false;
         }
-
-
-        /// <summary>
-        /// Property: IsRgbVisible
-        /// </summary>
-        public bool IsRgbVisible => !IsHsvMode;
-
-        /// <summary>
-        /// Property: IsHsvVisible
-        /// </summary>
-        public bool IsHsvVisible => IsHsvMode;
-
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public ColorPicker()
-        {
-            InitializeComponent();
-
-            this.Root.DataContext = this;
-        }
     }
 
 
@@ -200,7 +194,7 @@ namespace NeeView.Windows.Controls
     [ValueConversion(typeof(Color), typeof(string))]
     public class ColorToStringConverter : IValueConverter
     {
-        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        public object? Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
             return value.ToString();
         }

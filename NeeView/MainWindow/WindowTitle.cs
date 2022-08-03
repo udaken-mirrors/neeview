@@ -73,7 +73,7 @@ namespace NeeView
         }
 
 
-        private void TitleString_TitleChanged(object sender, PropertyChangedEventArgs e)
+        private void TitleString_TitleChanged(object? sender, PropertyChangedEventArgs e)
         {
             UpdateTitle();
         }
@@ -122,13 +122,13 @@ namespace NeeView
             public int _Version { get; set; } = Environment.ProductVersionNumber;
 
             [DataMember(EmitDefaultValue = false)]
-            public string WindowTitleFormat1 { get; set; }
+            public string? WindowTitleFormat1 { get; set; }
 
             [DataMember(EmitDefaultValue = false)]
-            public string WindowTitleFormat2 { get; set; }
+            public string? WindowTitleFormat2 { get; set; }
 
             [DataMember(EmitDefaultValue = false)]
-            public string WindowTitleFormatMedia { get; set; }
+            public string? WindowTitleFormatMedia { get; set; }
 
 
             [OnDeserialized]
@@ -158,9 +158,9 @@ namespace NeeView
 
             public void RestoreConfig(Config config)
             {
-                config.WindowTitle.WindowTitleFormat1 = WindowTitleFormat1;
-                config.WindowTitle.WindowTitleFormat2 = WindowTitleFormat2;
-                config.WindowTitle.WindowTitleFormatMedia = WindowTitleFormatMedia;
+                config.WindowTitle.WindowTitleFormat1 = WindowTitleFormat1 ?? "";
+                config.WindowTitle.WindowTitleFormat2 = WindowTitleFormat2 ?? "";
+                config.WindowTitle.WindowTitleFormatMedia = WindowTitleFormatMedia ?? "";
             }
         }
 

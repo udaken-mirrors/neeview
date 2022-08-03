@@ -95,12 +95,12 @@ namespace NeeView
             _scrollPageControl.ScrollNTypeDown(parameter);
         }
 
-        public void PrevScrollPage(object sender, ScrollPageCommandParameter parameter)
+        public void PrevScrollPage(object? sender, ScrollPageCommandParameter parameter)
         {
             _scrollPageControl.PrevScrollPage(sender, parameter);
         }
 
-        public void NextScrollPage(object sender, ScrollPageCommandParameter parameter)
+        public void NextScrollPage(object? sender, ScrollPageCommandParameter parameter)
         {
             _scrollPageControl.NextScrollPage(sender, parameter);
         }
@@ -210,7 +210,7 @@ namespace NeeView
             _printControl.Print();
         }
 
-        public void TouchInputEmutrate(object sender)
+        public void TouchInputEmutrate(object? sender)
         {
             _touchEmurlateController.Execute(sender);
         }
@@ -220,27 +220,27 @@ namespace NeeView
             _viewComponent.RaiseOpenContextMenuRequest();
         }
 
-        public void ToggleTopmost(object sender)
+        public void ToggleTopmost(object? sender)
         {
             _windowStateController.ToggleTopmost(sender);
         }
 
-        public void ToggleWindowMinimize(object sender)
+        public void ToggleWindowMinimize(object? sender)
         {
             _windowStateController.ToggleMinimize(sender);
         }
 
-        public void ToggleWindowMaximize(object sender)
+        public void ToggleWindowMaximize(object? sender)
         {
             _windowStateController.ToggleMaximize(sender);
         }
 
-        public void ToggleWindowFullScreen(object sender)
+        public void ToggleWindowFullScreen(object? sender)
         {
             _windowStateController.ToggleFullScreen(sender);
         }
 
-        public void SetFullScreen(object sender, bool isFullScreen)
+        public void SetFullScreen(object? sender, bool isFullScreen)
         {
             _windowStateController.SetFullScreen(sender, isFullScreen);
         }

@@ -7,9 +7,9 @@ namespace NeeView
 {
     public class PropertyMapSource : PropertyMapNode
     {
-        private string _prefix;
+        private string? _prefix;
 
-        public PropertyMapSource(object source, PropertyInfo property, PropertyMapConverter converter, string prefix)
+        public PropertyMapSource(object source, PropertyInfo property, PropertyMapConverter converter, string? prefix)
         {
             Source = source;
             PropertyInfo = property;
@@ -25,23 +25,23 @@ namespace NeeView
         public PropertyMapConverter Converter { get; private set; }
 
 
-        public object Read(PropertyMapOptions options)
+        public object? Read(PropertyMapOptions options)
         {
             return Converter.Read(this, PropertyInfo.PropertyType, options);
         }
 
-        public void Write(object value, PropertyMapOptions options)
+        public void Write(object? value, PropertyMapOptions options)
         {
             if (IsReadOnly) return;
             Converter.Write(this, value, options);
         }
 
-        public object GetValue()
+        public object? GetValue()
         {
             return PropertyInfo.GetValue(Source);
         }
 
-        public void SetValue(object value)
+        public void SetValue(object? value)
         {
             PropertyInfo.SetValue(Source, value);
         }

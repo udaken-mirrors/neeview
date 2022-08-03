@@ -93,9 +93,11 @@ namespace NeeView.Drawing
         /// </summary>
         /// <param name="image"></param>
         /// <returns></returns>
-        public static BitmapSource ToBitmapSource(this System.Drawing.Image image)
+        public static BitmapSource? ToBitmapSource(this System.Drawing.Image image)
         {
-            return ToBitmapSource(image as System.Drawing.Bitmap);
+            var bitmap = image as System.Drawing.Bitmap;
+            if (bitmap is null) return null;
+            return ToBitmapSource(bitmap);
         }
 
         /// <summary>
@@ -105,8 +107,6 @@ namespace NeeView.Drawing
         /// <returns></returns>
         public static BitmapSource ToBitmapSource(this System.Drawing.Bitmap bitmap)
         {
-            if (bitmap == null) return null;
-
             var hBitmap = bitmap.GetHbitmap();
             try
             {

@@ -12,8 +12,9 @@ namespace NeeView.Setting
     /// </summary>
     public class SettingPage : BindableBase
     {
-        private UIElement _content;
+        private UIElement? _content;
         private bool _isSelected;
+
 
         public SettingPage(string header)
         {
@@ -41,12 +42,12 @@ namespace NeeView.Setting
         /// <summary>
         /// 子ページ
         /// </summary>
-        public List<SettingPage> Children { get; protected set; }
+        public List<SettingPage>? Children { get; protected set; }
 
         /// <summary>
         /// 項目
         /// </summary>
-        public List<SettingItem> Items { get; protected set; }
+        public List<SettingItem>? Items { get; protected set; }
 
         /// <summary>
         /// TreeViewで、このノードが選択されているか
@@ -63,7 +64,7 @@ namespace NeeView.Setting
         /// <summary>
         /// 表示コンテンツ
         /// </summary>
-        public UIElement Content
+        public UIElement? Content
         {
             get { return _content ?? (_content = CreateContent()); }
         }
@@ -77,7 +78,7 @@ namespace NeeView.Setting
         /// 表示ページ。
         /// コンテンツがない場合、子のページを返す
         /// </summary>
-        public SettingPage DispPage
+        public SettingPage? DispPage
         {
             get { return (this.Items != null) ? this : this.Children?.FirstOrDefault(); }
         }
@@ -87,7 +88,7 @@ namespace NeeView.Setting
             _content = null;
         }
 
-        private UIElement CreateContent()
+        private UIElement? CreateContent()
         {
             if (this.Items == null)
             {

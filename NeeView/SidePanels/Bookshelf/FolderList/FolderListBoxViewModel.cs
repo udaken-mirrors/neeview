@@ -14,7 +14,7 @@ namespace NeeView
     {
         private FolderList _model;
         private bool _isRenaming;
-        private RenameManager _renameManager;
+        private RenameManager? _renameManager;
 
 
         public FolderListBoxViewModel(FolderList folderList)
@@ -27,14 +27,14 @@ namespace NeeView
         }
 
 
-        public event EventHandler<FolderListBusyChangedEventArgs> BusyChanged;
-        public event EventHandler<FolderListSelectedChangedEventArgs> SelectedChanging;
-        public event EventHandler<FolderListSelectedChangedEventArgs> SelectedChanged;
+        public event EventHandler<FolderListBusyChangedEventArgs>? BusyChanged;
+        public event EventHandler<FolderListSelectedChangedEventArgs>? SelectedChanging;
+        public event EventHandler<FolderListSelectedChangedEventArgs>? SelectedChanged;
 
 
-        public FolderCollection FolderCollection => _model.FolderCollection;
+        public FolderCollection? FolderCollection => _model.FolderCollection;
 
-        public FolderOrder FolderOrder => _model.FolderCollection.FolderOrder;
+        public FolderOrder FolderOrder => _model.FolderCollection?.FolderOrder ?? FolderOrder.FileName;
 
         public bool IsFocusAtOnce
         {
@@ -57,7 +57,7 @@ namespace NeeView
             set { SetProperty(ref _isRenaming, value); }
         }
 
-        public RenameManager RenameManager
+        public RenameManager? RenameManager
         {
             get { return _renameManager; }
             set { SetProperty(ref _renameManager, value); }
@@ -66,8 +66,8 @@ namespace NeeView
 
         #region RelayCommands
 
-        private RelayCommand _toggleFolderRecursive;
-        private RelayCommand _newFolderCommand;
+        private RelayCommand? _toggleFolderRecursive;
+        private RelayCommand? _newFolderCommand;
 
 
         public RelayCommand ToggleFolderRecursive
@@ -92,7 +92,7 @@ namespace NeeView
         #endregion RelayCommands
 
 
-        private void Model_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        private void Model_PropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
             switch (e.PropertyName)
             {
@@ -112,12 +112,12 @@ namespace NeeView
             }
         }
 
-        private void Model_SelectedChanging(object sender, FolderListSelectedChangedEventArgs e)
+        private void Model_SelectedChanging(object? sender, FolderListSelectedChangedEventArgs e)
         {
             SelectedChanging?.Invoke(sender, e);
         }
 
-        private void Model_SelectedChanged(object sender, FolderListSelectedChangedEventArgs e)
+        private void Model_SelectedChanged(object? sender, FolderListSelectedChangedEventArgs e)
         {
             SelectedChanged?.Invoke(sender, e);
         }
@@ -141,7 +141,7 @@ namespace NeeView
         /// 可能な場合のみ、フォルダー移動
         /// </summary>
         /// <param name="item"></param>
-        public void MoveToSafety(FolderItem item)
+        public void MoveToSafety(FolderItem? item)
         {
             if (item != null && item.CanOpenFolder())
             {

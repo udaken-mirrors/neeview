@@ -20,7 +20,7 @@ namespace NeeView
     /// </summary>
     public partial class PrintWindow : Window
     {
-        private PrintWindowViewModel _vm;
+        private PrintWindowViewModel? _vm;
 
 
         public PrintWindow()
@@ -41,12 +41,12 @@ namespace NeeView
         }
 
 
-        private void PrintWindow_Loaded(object sender, RoutedEventArgs e)
+        private void PrintWindow_Loaded(object? sender, RoutedEventArgs e)
         {
             this.PrintButton.Focus();
         }
 
-        private void PrintWindow_KeyDown(object sender, KeyEventArgs e)
+        private void PrintWindow_KeyDown(object? sender, KeyEventArgs e)
         {
             if (e.Key == Key.Escape && Keyboard.Modifiers == ModifierKeys.None)
             {
@@ -58,15 +58,15 @@ namespace NeeView
         /// <summary>
         /// ウィンドウ終了イベント処理
         /// </summary>
-        private void PrintWindow_Closed(object sender, EventArgs e)
+        private void PrintWindow_Closed(object? sender, EventArgs e)
         {
-            _vm.Closed();
+            _vm?.Closed();
         }
 
         /// <summary>
         /// ウィンドウ終了リクエスト処理
         /// </summary>
-        private void ViewModel_Close(object sender, PrintWindowCloseEventArgs e)
+        private void ViewModel_Close(object? sender, PrintWindowCloseEventArgs e)
         {
             this.DialogResult = e.Result;
             this.Close();

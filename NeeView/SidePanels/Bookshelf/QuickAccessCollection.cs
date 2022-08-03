@@ -16,7 +16,8 @@ namespace NeeView
         public static QuickAccessCollection Current { get; }
 
 
-        public event CollectionChangeEventHandler CollectionChanged;
+        public event CollectionChangeEventHandler? CollectionChanged;
+
 
         private ObservableCollection<QuickAccess> _items = new ObservableCollection<QuickAccess>();
         public ObservableCollection<QuickAccess> Items
@@ -63,7 +64,7 @@ namespace NeeView
         public class Memento : IMemento
         {
             [DataMember(EmitDefaultValue = false)]
-            public List<QuickAccess> Items { get; set; }
+            public List<QuickAccess>? Items { get; set; }
 
             [OnDeserializing]
             private void OnDeserializing(StreamingContext c)
@@ -81,9 +82,10 @@ namespace NeeView
             return memento;
         }
 
-        public void Restore(Memento memento)
+        public void Restore(Memento? memento)
         {
             if (memento == null) return;
+            if (memento.Items is null) return;
 
             this.Items = new ObservableCollection<QuickAccess>(memento.Items);
             CollectionChanged?.Invoke(this, new CollectionChangeEventArgs(CollectionChangeAction.Refresh, null));

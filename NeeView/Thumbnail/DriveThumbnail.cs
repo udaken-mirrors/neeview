@@ -15,7 +15,7 @@ namespace NeeView
     public class DriveThumbnail : BindableBase, IThumbnail
     {
         private string _path;
-        private ImageSource _bitmapSource;
+        private ImageSource? _bitmapSource;
         private bool _initialized;
 
         public DriveThumbnail(string path)
@@ -23,14 +23,14 @@ namespace NeeView
             _path = path;
         }
 
-        public ImageSource ImageSource => CreateBitmap();
+        public ImageSource? ImageSource => CreateBitmap();
         public double Width => ImageSource is BitmapSource bitmap ? bitmap.PixelWidth : ImageSource != null ? ImageSource.Width : 0.0;
         public double Height => ImageSource is BitmapSource bitmap ? bitmap.PixelHeight : ImageSource != null ? ImageSource.Height : 0.0;
         public bool IsUniqueImage => true;
         public bool IsNormalImage => false;
         public Brush Background => Brushes.Transparent;
 
-        private ImageSource CreateBitmap()
+        private ImageSource? CreateBitmap()
         {
             if (!_initialized)
             {
@@ -87,14 +87,16 @@ namespace NeeView
         }
 
 
-        public static void SetDriveIconCache(string path, ImageSource bitmapSource)
+        public static void SetDriveIconCache(string path, ImageSource? bitmapSource)
         {
+            if (bitmapSource is null) return;
+
             _iconCache[path] = bitmapSource;
         }
 
-        public static ImageSource GetDriveIconCache(string path)
+        public static ImageSource? GetDriveIconCache(string path)
         {
-            if (_iconCache.TryGetValue(path, out ImageSource bitmapSource))
+            if (_iconCache.TryGetValue(path, out ImageSource? bitmapSource))
             {
                 return bitmapSource;
             }

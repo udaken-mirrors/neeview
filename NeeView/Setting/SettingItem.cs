@@ -1,4 +1,5 @@
 ﻿using NeeView.Data;
+using NeeLaboratory.Linq;
 using NeeView.Susie;
 using NeeView.Windows.Property;
 using System.Collections.Generic;
@@ -19,30 +20,31 @@ namespace NeeView.Setting
     /// </summary>
     public class SettingItem 
     {
-        private SettingItem _searchResultItem;
+        private SettingItem? _searchResultItem;
 
 
         public SettingItem()
         {
+            Header = "";
         }
 
-        public SettingItem(string header)
+        public SettingItem(string? header)
         {
-            this.Header = header;
+            this.Header = header ?? "";
         }
 
-        public SettingItem(string header, string tips)
+        public SettingItem(string? header, string? tips)
         {
-            this.Header = header;
+            this.Header = header ?? "";
             this.Tips = tips;
         }
 
 
         public string Header { get; set; }
-        public string Tips { get; set; }
-        public IsEnabledPropertyValue IsEnabled { get; set; }
-        public VisibilityPropertyValue Visibility { get; set; }
-        public object SubContent { get; set; }
+        public string? Tips { get; set; }
+        public IsEnabledPropertyValue? IsEnabled { get; set; }
+        public VisibilityPropertyValue? Visibility { get; set; }
+        public object? SubContent { get; set; }
 
         /// <summary>
         /// 検索結果の項目表示用
@@ -54,7 +56,7 @@ namespace NeeView.Setting
         }
 
 
-        public UIElement CreateContent()
+        public UIElement? CreateContent()
         {
             var control = CreateContentInner();
             if (control == null)
@@ -69,7 +71,7 @@ namespace NeeView.Setting
             return control;
         }
 
-        protected virtual UIElement CreateContentInner()
+        protected virtual UIElement? CreateContentInner()
         {
             return null;
         }
@@ -123,14 +125,14 @@ namespace NeeView.Setting
         {
         }
 
-        public SettingItemGroup(string header, string tips) : base(header, tips)
+        public SettingItemGroup(string header, string? tips) : base(header, tips)
         {
         }
 
 
         public List<SettingItem> Children { get; private set; } = new List<SettingItem>();
 
-        public DataTriggerSource IsEnabledTrigger { get; set; }
+        public DataTriggerSource? IsEnabledTrigger { get; set; }
 
         protected override UIElement CreateContentInner()
         {
@@ -176,7 +178,7 @@ namespace NeeView.Setting
         protected IEnumerable<UIElement> CreateChildContenCollection()
         {
             return this.Children != null
-                ? this.Children.Where(e => e != null).Select(e => e.CreateContent())
+                ? this.Children.Select(e => e.CreateContent()).WhereNotNull()
                 : Enumerable.Empty<UIElement>();
         }
 
@@ -209,7 +211,7 @@ namespace NeeView.Setting
         {
         }
 
-        public SettingItemSection(string header, string tips)
+        public SettingItemSection(string header, string? tips)
             : base(header, tips)
         {
         }
@@ -287,7 +289,7 @@ namespace NeeView.Setting
     public class SettingItemProperty : SettingItem
     {
         private PropertyMemberElement _element;
-        private object _content;
+        private object? _content;
 
         public SettingItemProperty(PropertyMemberElement element) : base(element.Name)
         {
@@ -348,8 +350,8 @@ namespace NeeView.Setting
             _element2 = element2;
         }
 
-        public object Content1 { get; set; }
-        public object Content2 { get; set; }
+        public object? Content1 { get; set; }
+        public object? Content2 { get; set; }
 
         protected override UIElement CreateContentInner()
         {
@@ -370,7 +372,7 @@ namespace NeeView.Setting
     public class SettingItemSubProperty : SettingItem
     {
         private PropertyMemberElement _element;
-        private object _content;
+        private object? _content;
 
         public SettingItemSubProperty(PropertyMemberElement element) : base(element.Name)
         {
@@ -436,6 +438,7 @@ namespace NeeView.Setting
     /// IndexValueに対応したプロパティの設定項目
     /// </summary>
     public class SettingItemIndexValue<T> : SettingItem
+        where T : struct
     {
         private PropertyMemberElement _element;
         private IndexValue<T> _indexValue;
@@ -475,7 +478,7 @@ namespace NeeView.Setting
     /// </summary>
     public class SettingItemButton : SettingItem
     {
-        private object _buttonContent;
+        private object? _buttonContent;
         private ICommand _command;
 
         public bool IsContentOnly { get; set; }

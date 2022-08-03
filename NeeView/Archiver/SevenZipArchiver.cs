@@ -35,7 +35,7 @@ namespace NeeView
             }
 
             [Conditional("DEBUG")]
-            internal static void Decrement(string name)
+            internal static void Decrement(string? name)
             {
                 lock (_lock)
                 {
@@ -47,16 +47,11 @@ namespace NeeView
 
         #endregion
 
-        #region Fields
-
-        private SevenZipExtractor _extractor;
-        private string _fileName;
-        private Stream _stream;
+        private SevenZipExtractor? _extractor;
+        private string? _fileName;
+        private Stream? _stream;
         private object _lock = new object();
 
-        #endregion
-
-        #region Constructors
 
         public SevenZipSource(string fileName)
         {
@@ -70,19 +65,11 @@ namespace NeeView
             Initialize();
         }
 
-        #endregion
 
-        #region Properties
-
-        public bool IsStream => _stream != null;
-
-        public string Format => _extractor?.Format.ToString();
+        public string? Format => _extractor?.Format.ToString();
 
         public object Lock => _lock;
 
-        #endregion
-
-        #region Methods
 
         private void Initialize()
         {
@@ -92,10 +79,21 @@ namespace NeeView
         {
             lock (_lock)
             {
-                if (_extractor == null)
+                if (_extractor is null)
                 {
-                    _extractor = IsStream ? new SevenZipExtractor(_stream) : new SevenZipExtractor(_fileName);
-                    Dev.Inclement(_fileName);
+                    if (_stream is not null)
+                    {
+                        _extractor = new SevenZipExtractor(_stream);
+                    }
+                    else if (_fileName is not null)
+                    {
+                        _extractor = new SevenZipExtractor(_fileName);
+                        Dev.Inclement(_fileName);
+                    }
+                    else
+                    {
+                        throw new InvalidOperationException();
+                    }
                 }
 
                 return _extractor;
@@ -117,7 +115,6 @@ namespace NeeView
             }
         }
 
-        #endregion
 
         #region IDisposable Support
         private bool disposedValue = false;
@@ -157,7 +154,8 @@ namespace NeeView
     public class SevenZipDescriptor : IDisposable
     {
         private SevenZipSource _source;
-        private SevenZipExtractor _extractor;
+        private SevenZipExtractor? _extractor;
+
 
         public SevenZipDescriptor(SevenZipSource source)
         {
@@ -165,19 +163,26 @@ namespace NeeView
             _extractor = _source.Open();
         }
 
+
         public ReadOnlyCollection<ArchiveFileInfo> ArchiveFileData
         {
-            get { return _extractor.ArchiveFileData; }
+            get
+            {
+                if (_extractor is null) throw new InvalidOperationException();
+
+                return _extractor.ArchiveFileData;
+            }
         }
 
+        public string Format => _extractor?.Format.ToString() ?? "";
 
-        public string Format => _extractor.Format.ToString();
-
-        public bool IsSolid => _extractor.IsSolid;
+        public bool IsSolid => _extractor?.IsSolid ?? false;
 
 
         public void ExtractFile(int index, Stream extractStream)
         {
+            if (_extractor is null) throw new InvalidOperationException();
+
             _extractor.ExtractFile(index, extractStream);
         }
 
@@ -237,25 +242,16 @@ namespace NeeView
 
         #endregion
 
-        #region Fields
-
         private SevenZipSource _source;
-        private string _format;
+        private string? _format;
 
-        #endregion
-
-        #region Constructors
-
-        public SevenZipArchiver(string path, ArchiveEntry source) : base(path, source)
+        public SevenZipArchiver(string path, ArchiveEntry? source) : base(path, source)
         {
             InitializeLibrary();
 
             _source = new SevenZipSource(Path);
         }
 
-        #endregion
-
-        #region Methods
 
         public override string ToString()
         {
@@ -436,7 +432,7 @@ namespace NeeView
                 tempExtractor.ExtractArchive(extractor, directory);
             }
 
-            void Temp_TempFileExtractionFinished(object sender, SevenZipTempFileExtractionArgs e)
+            void Temp_TempFileExtractionFinished(object? sender, SevenZipTempFileExtractionArgs e)
             {
                 var entry = entries.FirstOrDefault(a => a.Id == e.FileInfo.Index);
                 if (entry != null)
@@ -457,7 +453,7 @@ namespace NeeView
                 tempExtractor.ExtractArchive(extractor);
             }
 
-            void Temp_TempFileExtractionFinished(object sender, SevenZipMemoryExtractionArgs e)
+            void Temp_TempFileExtractionFinished(object? sender, SevenZipMemoryExtractionArgs e)
             {
                 var entry = entries.FirstOrDefault(a => a.Id == e.FileInfo.Index);
                 if (entry != null)
@@ -467,7 +463,6 @@ namespace NeeView
             }
         }
 
-        #endregion
 
         #region IDisposable Support
         private bool _disposedValue = false;

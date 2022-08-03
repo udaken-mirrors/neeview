@@ -20,7 +20,7 @@ namespace NeeView
     /// </summary>
     public partial class QuickAccessPropertyDialog : Window
     {
-        private QuickAccessPropertyDialogViewModel _vm;
+        private QuickAccessPropertyDialogViewModel? _vm;
 
 
         public QuickAccessPropertyDialog()

@@ -14,20 +14,17 @@ namespace NeeView
     /// </summary>
     public class TouchDragManipulation
     {
-        #region FrameState
-
-        //
         private interface IState
         {
             void Initialize(TouchDragManipulation context);
             void Execute(TouchDragManipulation context);
         }
 
-        //
+
         private class StateMachine
         {
             public TouchDragManipulation _context;
-            private IState _state;
+            private IState? _state;
 
             //
             public StateMachine(TouchDragManipulation context)
@@ -36,7 +33,7 @@ namespace NeeView
             }
 
             //
-            public void SetState(IState state)
+            public void SetState(IState? state)
             {
                 if (_state?.GetType() == state?.GetType()) return;
 
@@ -51,17 +48,16 @@ namespace NeeView
             }
         }
 
-        #endregion
 
-        #region Fields
+        // Fields
 
         private DragTransform _transform;
-        private TouchDragContext _origin;
+        private TouchDragContext? _origin;
 
-        TouchDragTransform _base;
-        TouchDragTransform _start;
-        TouchDragTransform _goal;
-        TouchDragTransform _now;
+        private TouchDragTransform? _base;
+        private TouchDragTransform? _start;
+        private TouchDragTransform? _goal;
+        private TouchDragTransform? _now;
 
         private Vector _speed;
 
@@ -78,11 +74,9 @@ namespace NeeView
 
         private StateMachine _stateMachine;
 
-        #endregion
 
-        #region Constructors
+        // Constructors
 
-        //
         public TouchDragManipulation(TouchInputContext context)
         {
             if (context is null) throw new ArgumentNullException();
@@ -95,9 +89,8 @@ namespace NeeView
             _stateMachine = new StateMachine(this);
         }
 
-        #endregion
 
-        #region Methods
+        // Methods
 
         /// <summary>
         /// タッチ操作開始
@@ -115,6 +108,8 @@ namespace NeeView
             };
 
             _goal = _start.Clone();
+            _base = _start.Clone();
+            _now = _start.Clone();
 
             _darty = true;
 
@@ -163,7 +158,7 @@ namespace NeeView
         }
 
         //
-        private void OnRendering(object sender, EventArgs e)
+        private void OnRendering(object? sender, EventArgs e)
         {
             _stateMachine.Execute();
         }
@@ -188,6 +183,8 @@ namespace NeeView
         //
         private void StateControl_Initialize()
         {
+            if (_start is null) throw new InvalidOperationException("TouchDragManipulation must be started");
+
             _base = _start.Clone();
             _now = _start.Clone();
 
@@ -200,6 +197,9 @@ namespace NeeView
         //
         private void StateControl_Execute()
         {
+            if (_now is null) throw new InvalidOperationException("TouchDragManipulation must be started");
+            if (_goal is null) throw new InvalidOperationException("TouchDragManipulation must be started");
+
             if (_darty)
             {
                 _darty = false;
@@ -254,6 +254,8 @@ namespace NeeView
         //
         private void StateIntertia_Execute()
         {
+            if (_now is null) throw new InvalidOperationException("TouchDragManipulation must be started");
+
             // trans
             _speed *= 0.9;
             _now.Trans += _speed;
@@ -307,6 +309,9 @@ namespace NeeView
         /// <returns></returns>
         private TouchDragTransform GetTransform()
         {
+            if (_origin is null) throw new InvalidOperationException("TouchDragManipulation must be started");
+            if (_start is null) throw new InvalidOperationException("TouchDragManipulation must be started");
+
             var current = new TouchDragContext(_context.Sender, _context.TouchMap.Keys);
             var area = _context.GetArea();
 
@@ -359,6 +364,9 @@ namespace NeeView
         /// <returns></returns>
         private double GetSnapAngle()
         {
+            if (_goal is null) throw new InvalidOperationException("TouchDragManipulation must be started");
+            if (_base is null) throw new InvalidOperationException("TouchDragManipulation must be started");
+
             if (Config.Current.View.AngleFrequency > 0.0)
             {
                 var delta = _goal.Angle - _base.Angle;
@@ -373,7 +381,6 @@ namespace NeeView
             return _goal.Angle;
         }
 
-        #endregion
 
 
         #region Memento

@@ -66,13 +66,13 @@ namespace NeeView.Susie
     [DataContract]
     public class SusiePluginCommandGetPlugin
     {
-        public SusiePluginCommandGetPlugin(List<string> pluginNames)
+        public SusiePluginCommandGetPlugin(List<string>? pluginNames)
         {
             PluginNames = pluginNames;
         }
 
         [DataMember]
-        public List<string> PluginNames { get; set; }
+        public List<string>? PluginNames { get; set; }
     }
 
     [DataContract]
@@ -151,13 +151,13 @@ namespace NeeView.Susie
     [DataContract]
     public class SusiePluginCommandGetArchivePluginResult
     {
-        public SusiePluginCommandGetArchivePluginResult(SusiePluginInfo pluginInfo)
+        public SusiePluginCommandGetArchivePluginResult(SusiePluginInfo? pluginInfo)
         {
             PluginInfo = pluginInfo;
         }
 
         [DataMember]
-        public SusiePluginInfo PluginInfo { get; set; }
+        public SusiePluginInfo? PluginInfo { get; set; }
     }
 
         [DataContract]
@@ -179,20 +179,20 @@ namespace NeeView.Susie
     [DataContract]
     public class SusiePluginCommandGetImagePluginResult
     {
-        public SusiePluginCommandGetImagePluginResult(SusiePluginInfo pluginInfo)
+        public SusiePluginCommandGetImagePluginResult(SusiePluginInfo? pluginInfo)
         {
             PluginInfo = pluginInfo;
         }
 
         [DataMember]
-        public SusiePluginInfo PluginInfo { get; set; }
+        public SusiePluginInfo? PluginInfo { get; set; }
     }
 
 
     [DataContract]
     public class SusiePluginCommandGetImage
     {
-        public SusiePluginCommandGetImage(string pluginName, string fileName, bool isCheckExtension)
+        public SusiePluginCommandGetImage(string? pluginName, string fileName, bool isCheckExtension)
         {
             PluginName = pluginName;
             FileName = fileName;
@@ -200,7 +200,7 @@ namespace NeeView.Susie
         }
 
         [DataMember]
-        public string PluginName { get; set; }
+        public string? PluginName { get; set; }
 
         [DataMember]
         public string FileName { get; set; }
@@ -213,13 +213,13 @@ namespace NeeView.Susie
     [DataContract]
     public class SusiePluginCommandGetImageResult
     {
-        public SusiePluginCommandGetImageResult(SusiePluginInfo pluginInfo)
+        public SusiePluginCommandGetImageResult(SusiePluginInfo? pluginInfo)
         {
             PluginInfo = pluginInfo;
         }
 
         [DataMember]
-        public SusiePluginInfo PluginInfo { get; set; }
+        public SusiePluginInfo? PluginInfo { get; set; }
     }
 
 

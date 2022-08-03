@@ -76,9 +76,9 @@ namespace NeeView
 
         #region ContextMenu
 
-        private ContextMenu _contextMenu;
+        private ContextMenu? _contextMenu;
 
-        public ContextMenu ContextMenu
+        public ContextMenu? ContextMenu
         {
             get
             {

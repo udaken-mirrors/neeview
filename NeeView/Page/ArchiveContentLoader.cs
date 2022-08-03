@@ -28,7 +28,7 @@ namespace NeeView
 
         public async Task InitializeEntryAsync(CancellationToken token)
         {
-            if (_content.Entry == null)
+            if (_content.Entry.IsEmpty)
             {
                 var query = new QueryPath(_content.SourcePath);
                 query = query.ToEntityPath();
@@ -124,7 +124,7 @@ namespace NeeView
         /// <summary>
         /// エントリに対応するサムネイル画像生成
         /// </summary>
-        private async Task<ThumbnailPicture> LoadPictureAsync(CancellationToken token)
+        private async Task<ThumbnailPicture?> LoadPictureAsync(CancellationToken token)
         {
             if (_content.Entry.Archiver != null && _content.Entry.Archiver is MediaArchiver)
             {
@@ -152,7 +152,7 @@ namespace NeeView
         /// アーカイブサムネイル読込
         /// 名前順で先頭のページ
         /// </summary>
-        private async Task<ThumbnailPicture> LoadArchivePictureAsync(ArchiveEntry entry, CancellationToken token)
+        private async Task<ThumbnailPicture?> LoadArchivePictureAsync(ArchiveEntry entry, CancellationToken token)
         {
             // ブックサムネイル検索範囲
             const int searchRange = 2;
@@ -200,7 +200,7 @@ namespace NeeView
             return new ThumbnailPicture(ThumbnailType.Media);
         }
 
-        private async Task<byte[]> CreateMediaThumbnailAsync(ArchiveEntry entry, CancellationToken token)
+        private async Task<byte[]?> CreateMediaThumbnailAsync(ArchiveEntry entry, CancellationToken token)
         {
             var storage = await StorageFile.GetFileFromPathAsync(entry.SystemPath).AsTask(token);
             if (storage is null)
@@ -250,7 +250,7 @@ namespace NeeView
         class ThumbnailPicture
         {
             public ThumbnailType Type { get; set; }
-            public byte[] RawData { get; set; }
+            public byte[]? RawData { get; set; }
 
             public ThumbnailPicture(ThumbnailType type)
             {

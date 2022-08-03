@@ -9,7 +9,7 @@ namespace NeeView
     /// </summary>
     public class FileContent : PageContent
     {
-        public FileContent(ArchiveEntry entry, FilePageIcon icon, string message) : base(entry)
+        public FileContent(ArchiveEntry entry, FilePageIcon icon, string? message) : base(entry)
         {
             SetPageMessage(new PageMessage()
             {

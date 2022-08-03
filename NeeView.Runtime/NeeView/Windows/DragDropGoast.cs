@@ -86,7 +86,7 @@ namespace NeeView.Windows
             _element = null;
         }
 
-        public void QueryContinueDrag(object sender, QueryContinueDragEventArgs e)
+        public void QueryContinueDrag(object? sender, QueryContinueDragEventArgs e)
         {
             if (_goast == null || _element == null)
             {

@@ -22,8 +22,6 @@ namespace NeeView.Windows.Controls
     /// </summary>
     public partial class ToggleSwitch : UserControl
     {
-        #region Fields
-
         private Storyboard _onAnimation;
         private Storyboard _offAnimation;
 
@@ -32,9 +30,16 @@ namespace NeeView.Windows.Controls
         private double _startX;
         private const double _max = 20;
 
-        #endregion
 
-        #region Dependency Properties
+        public ToggleSwitch()
+        {
+            InitializeComponent();
+            this.Root.DataContext = this;
+
+            _onAnimation = (Storyboard)this.Root.Resources["OnAnimation"];
+            _offAnimation = (Storyboard)this.Root.Resources["OffAnimation"];
+        }
+
 
         public Brush Stroke
         {
@@ -99,18 +104,6 @@ namespace NeeView.Windows.Controls
             }
         }
 
-        #endregion
-
-
-        public ToggleSwitch()
-        {
-            InitializeComponent();
-            this.Root.DataContext = this;
-
-            _onAnimation = this.Root.Resources["OnAnimation"] as Storyboard;
-            _offAnimation = this.Root.Resources["OffAnimation"] as Storyboard;
-        }
-
 
         private void UpdateBrush()
         {
@@ -151,11 +144,11 @@ namespace NeeView.Windows.Controls
             {
                 if (this.IsChecked)
                 {
-                    OnAnimation_Completed(this, null);
+                    OnAnimation_Completed(this, EventArgs.Empty);
                 }
                 else
                 {
-                    OffAnimation_Completed(this, null);
+                    OffAnimation_Completed(this, EventArgs.Empty);
                 }
             }
         }

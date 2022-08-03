@@ -79,7 +79,7 @@ namespace NeeView
         /// <param name="isLoop">ループ移動</param>
         /// <param name="isIncludeTerminal">終端を含める</param>
         /// <returns>一致するページ。見つからなければnull</returns>
-        public Page GetNearMarkedPage(int direction, bool isLoop, bool isIncludeTerminal)
+        public Page? GetNearMarkedPage(int direction, bool isLoop, bool isIncludeTerminal)
         {
             Debug.Assert(direction == 1 || direction == -1);
 
@@ -111,7 +111,7 @@ namespace NeeView
             return target;
         }
 
-        private void Pages_PageRemoved(object sender, PageRemovedEventArgs e)
+        private void Pages_PageRemoved(object? sender, PageRemovedEventArgs e)
         {
             foreach (var page in e.Pages)
             {

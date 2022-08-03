@@ -20,9 +20,9 @@ namespace NeeView
         }
 
 
-        public event EventHandler CollectionChanged;
+        public event EventHandler? CollectionChanged;
 
-        public event EventHandler<ViewItemsChangedEventArgs> ViewItemsChanged;
+        public event EventHandler<ViewItemsChangedEventArgs>? ViewItemsChanged;
 
 
         public PageList Model

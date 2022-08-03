@@ -25,10 +25,14 @@ namespace NeeView.Setting
     // TODO: 整備
     public class GestureElement
     {
-        public string Gesture { get; set; }
+        public GestureElement()
+        {
+        }
+
+        public string? Gesture { get; set; }
         public bool IsConflict { get; set; }
-        public string Splitter { get; set; }
-        public string Note { get; set; }
+        public string? Splitter { get; set; }
+        public string? Note { get; set; }
     }
 
 
@@ -39,9 +43,9 @@ namespace NeeView.Setting
     {
         #region INotifyPropertyChanged Support
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
-        protected bool SetProperty<T>(ref T storage, T value, [System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
+        protected bool SetProperty<T>(ref T storage, T value, [System.Runtime.CompilerServices.CallerMemberName] string? propertyName = null)
         {
             if (object.Equals(storage, value)) return false;
             storage = value;
@@ -49,7 +53,7 @@ namespace NeeView.Setting
             return true;
         }
 
-        protected void RaisePropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string name = null)
+        protected void RaisePropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string? name = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
@@ -64,17 +68,23 @@ namespace NeeView.Setting
         // コマンド項目
         public class CommandItem : BindableBase
         {
+            public CommandItem(string key, CommandElement command)
+            {
+                Key = key;
+                Command = command;
+            }
+
             public string Key { get; set; }
             public CommandElement Command { get; set; }
-            public string ShortCutNote { get; set; }
+            public string? ShortCutNote { get; set; }
             public ObservableCollection<GestureElement> ShortCuts { get; set; } = new ObservableCollection<GestureElement>();
-            public GestureElement MouseGestureElement { get; set; }
-            public string TouchGestureNote { get; set; }
+            public GestureElement? MouseGestureElement { get; set; }
+            public string? TouchGestureNote { get; set; }
             public ObservableCollection<GestureElement> TouchGestures { get; set; } = new ObservableCollection<GestureElement>();
             public bool HasParameter { get; set; }
-            public string ParameterShareCommandName { get; set; }
+            public string? ParameterShareCommandName { get; set; }
             public bool IsShareParameter => !string.IsNullOrEmpty(ParameterShareCommandName);
-            public string ShareTips => ParameterShareCommandName != null ? string.Format(Properties.Resources.CommandListItem_Message_ShareParameter, CommandTable.Current.GetElement(ParameterShareCommandName).Text) : null;
+            public string? ShareTips => ParameterShareCommandName != null ? string.Format(Properties.Resources.CommandListItem_Message_ShareParameter, CommandTable.Current.GetElement(ParameterShareCommandName).Text) : null;
         }
 
         private int _commandTableChangeCount;
@@ -117,7 +127,7 @@ namespace NeeView.Setting
             this.CommandListView.CommandBindings.Add(new CommandBinding(RemoveCommand, RemoveCommand_Execute, RemoveCommand_CanExecute));
         }
 
-        private void SettingCommand_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        private void SettingCommand_CanExecute(object? sender, CanExecuteRoutedEventArgs e)
         {
             if (this.CommandListView.SelectedItem is CommandItem item)
             {
@@ -129,7 +139,7 @@ namespace NeeView.Setting
             }
         }
 
-        private void SettingCommand_Execute(object sender, ExecutedRoutedEventArgs e)
+        private void SettingCommand_Execute(object? sender, ExecutedRoutedEventArgs e)
         {
             if (this.CommandListView.SelectedItem is CommandItem item)
             {
@@ -137,7 +147,7 @@ namespace NeeView.Setting
             }
         }
 
-        private void EditCommand_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        private void EditCommand_CanExecute(object? sender, CanExecuteRoutedEventArgs e)
         {
             if (this.CommandListView.SelectedItem is CommandItem item)
             {
@@ -149,7 +159,7 @@ namespace NeeView.Setting
             }
         }
 
-        private void EditCommand_Execute(object sender, ExecutedRoutedEventArgs e)
+        private void EditCommand_Execute(object? sender, ExecutedRoutedEventArgs e)
         {
             if (this.CommandListView.SelectedItem is CommandItem item && item.Command is ScriptCommand command)
             {
@@ -157,7 +167,7 @@ namespace NeeView.Setting
             }
         }
 
-        private void CloneCommand_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        private void CloneCommand_CanExecute(object? sender, CanExecuteRoutedEventArgs e)
         {
             if (this.CommandListView.SelectedItem is CommandItem item)
             {
@@ -169,7 +179,7 @@ namespace NeeView.Setting
             }
         }
 
-        private void CloneCommand_Execute(object sender, ExecutedRoutedEventArgs e)
+        private void CloneCommand_Execute(object? sender, ExecutedRoutedEventArgs e)
         {
             if (this.CommandListView.SelectedItem is CommandItem item)
             {
@@ -179,7 +189,7 @@ namespace NeeView.Setting
             }
         }
 
-        private void RemoveCommand_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        private void RemoveCommand_CanExecute(object? sender, CanExecuteRoutedEventArgs e)
         {
             if (this.CommandListView.SelectedItem is CommandItem item)
             {
@@ -191,7 +201,7 @@ namespace NeeView.Setting
             }
         }
 
-        private void RemoveCommand_Execute(object sender, ExecutedRoutedEventArgs e)
+        private void RemoveCommand_Execute(object? sender, ExecutedRoutedEventArgs e)
         {
             if (this.CommandListView.SelectedItem is CommandItem item)
             {
@@ -232,7 +242,7 @@ namespace NeeView.Setting
             listViewItem?.Focus();
         }
 
-        private void ItemsViewSource_Filter(object sender, FilterEventArgs eventArgs)
+        private void ItemsViewSource_Filter(object? sender, FilterEventArgs eventArgs)
         {
             if (_searchKeywordTokens.Count <= 0)
             {
@@ -246,7 +256,7 @@ namespace NeeView.Setting
             }
         }
 
-        private void SettingItemCommandControl_Loaded(object sender, RoutedEventArgs e)
+        private void SettingItemCommandControl_Loaded(object? sender, RoutedEventArgs e)
         {
             CommandTable.Current.Changed += CommandTable_Changed;
 
@@ -259,19 +269,19 @@ namespace NeeView.Setting
             Search();
         }
 
-        private void SettingItemCommandControl_Unloaded(object sender, RoutedEventArgs e)
+        private void SettingItemCommandControl_Unloaded(object? sender, RoutedEventArgs e)
         {
             CommandTable.Current.Changed -= CommandTable_Changed;
         }
 
-        private void CommandTable_Changed(object sender, CommandChangedEventArgs e)
+        private void CommandTable_Changed(object? sender, CommandChangedEventArgs e)
         {
             UpdateCommandList();
         }
 
 
         // 全コマンド初期化ボタン処理
-        private void ResetGestureSettingButton_Click(object sender, RoutedEventArgs e)
+        private void ResetGestureSettingButton_Click(object? sender, RoutedEventArgs e)
         {
             var dialog = new CommandResetWindow();
             dialog.Owner = Window.GetWindow(this);
@@ -297,11 +307,7 @@ namespace NeeView.Setting
             {
                 var command = element.Value;
 
-                var item = new CommandItem()
-                {
-                    Key = element.Key,
-                    Command = command,
-                };
+                var item = new CommandItem(element.Key, command);
 
                 if (command.ParameterSource != null)
                 {
@@ -454,34 +460,34 @@ namespace NeeView.Setting
         }
 
 
-        private void EditCommandParameterButton_Clock(object sender, RoutedEventArgs e)
+        private void EditCommandParameterButton_Clock(object? sender, RoutedEventArgs e)
         {
             var command = (sender as Button)?.Tag as CommandItem;
+            if (command is null) return;
+
             this.CommandListView.SelectedItem = command;
             OpenEditCommandWindow(command.Key, EditCommandWindowTab.Parameter);
         }
 
         private void OpenEditCommandWindow(string key, EditCommandWindowTab tab)
         {
-            var dialog = new EditCommandWindow();
-            dialog.Initialize(key, tab);
+            var dialog = new EditCommandWindow(key, tab);
             dialog.Owner = Window.GetWindow(this);
             dialog.WindowStartupLocation = WindowStartupLocation.CenterOwner;
             dialog.ShowDialog();
         }
 
-        private void ListViewItem_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        private void ListViewItem_MouseDoubleClick(object? sender, MouseButtonEventArgs e)
         {
-            var item = ((ListViewItem)sender).Content as CommandItem;
-            if (item == null)
-            {
-                return;
-            }
+            var listViewItem = sender as ListViewItem;
+            if (listViewItem is null) return;
+
+            var item = listViewItem.Content as CommandItem;
+            if (item == null) return;
 
             // カーソル位置から初期TABを選択
-            var listViewItem = (ListViewItem)sender;
             var hitResult = VisualTreeHelper.HitTest(listViewItem, e.GetPosition(listViewItem));
-            var tag = GetAncestorTag(hitResult?.VisualHit, "@");
+            var tag = GetAncestorTag(hitResult.VisualHit, "@");
             EditCommandWindowTab tab;
             switch (tag)
             {
@@ -502,13 +508,13 @@ namespace NeeView.Setting
             OpenEditCommandWindow(item.Key, tab);
         }
 
-        private void ListViewItem_KeyDown(object sender, KeyEventArgs e)
+        private void ListViewItem_KeyDown(object? sender, KeyEventArgs e)
         {
-            var item = ((ListViewItem)sender).Content as CommandItem;
-            if (item == null)
-            {
-                return;
-            }
+            var listViewItem = sender as ListViewItem;
+            if (listViewItem is null) return;
+
+            var item = listViewItem.Content as CommandItem;
+            if (item == null) return;
 
             if (e.Key == Key.Enter)
             {
@@ -517,9 +523,9 @@ namespace NeeView.Setting
             }
         }
 
-        private void ListViewItem_ContextMenuOpening(object sender, ContextMenuEventArgs e)
+        private void ListViewItem_ContextMenuOpening(object? sender, ContextMenuEventArgs e)
         {
-            ContextMenu contextMenu = (sender as ListViewItem)?.ContextMenu;
+            ContextMenu? contextMenu = (sender as ListViewItem)?.ContextMenu;
             if (contextMenu is null) return;
 
             var editMenu = contextMenu.Items.OfType<MenuItem>().FirstOrDefault(x => x.Name == "EditMenu");
@@ -537,11 +543,11 @@ namespace NeeView.Setting
         /// <param name="obj">検索開始要素</param>
         /// <param name="prefix">文字列のプレフィックス</param>
         /// <returns></returns>
-        private string GetAncestorTag(DependencyObject obj, string prefix)
+        private string? GetAncestorTag(DependencyObject obj, string prefix)
         {
             while (obj != null)
             {
-                var tag = (obj as FrameworkElement).Tag as string;
+                var tag = (obj as FrameworkElement)?.Tag as string;
                 if (tag != null && tag.StartsWith(prefix)) return tag;
 
                 obj = VisualTreeHelper.GetParent(obj);

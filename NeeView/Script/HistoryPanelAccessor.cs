@@ -53,7 +53,7 @@ namespace NeeView
             _panel.Presenter.HistoryListBox?.SetSelectedItems(selectedItems.Select(e => e.Source));
         }
 
-        private HistoryItemAccessor[] ToStringArray(IEnumerable<BookHistory> items)
+        private HistoryItemAccessor[] ToStringArray(IEnumerable<BookHistory>? items)
         {
             return items?.Select(e => new HistoryItemAccessor(e)).ToArray() ?? new HistoryItemAccessor[] { };
         }

@@ -11,12 +11,12 @@ namespace NeeView
             this.IsShowMessage = true;
         }
 
-        public override bool CanExecute(object sender, CommandContext e)
+        public override bool CanExecute(object? sender, CommandContext e)
         {
             return !NowLoading.Current.IsDispNowLoading;
         }
 
-        public override void Execute(object sender, CommandContext e)
+        public override void Execute(object? sender, CommandContext e)
         {
             var task = BookHistoryCollection.Current.RemoveUnlinkedAsync(CancellationToken.None);
             BookHistoryCollection.Current.ShowRemovedMessage(task.Result);

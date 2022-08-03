@@ -15,8 +15,8 @@ namespace NeeView
     /// </summary>
     public class ThumbnailBitmap : BindableBase
     {
-        private ImageSource _imageSource;
-        public ImageSource ImageSource
+        private ImageSource? _imageSource;
+        public ImageSource? ImageSource
         {
             get { return _imageSource; }
             set { if (_imageSource != value) { _imageSource = value; RaisePropertyChanged(); } }
@@ -25,8 +25,8 @@ namespace NeeView
         /// <summary>
         /// Thumbnail property.
         /// </summary>
-        private Thumbnail _thumbnail;
-        public Thumbnail Thumbnail
+        private Thumbnail? _thumbnail;
+        public Thumbnail? Thumbnail
         {
             get { return _thumbnail; }
             set { Set(value); }
@@ -36,7 +36,7 @@ namespace NeeView
         /// Thumbnail設定
         /// </summary>
         /// <param name="thumbnail"></param>
-        public void Set(Thumbnail thumbnail)
+        public void Set(Thumbnail? thumbnail)
         {
             if (_thumbnail == thumbnail) return;
 
@@ -74,7 +74,7 @@ namespace NeeView
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void Thumbnail_Changed(object sender, EventArgs e)
+        private void Thumbnail_Changed(object? sender, EventArgs e)
         {
             UpdateBitmapSourceAsync();
         }

@@ -16,7 +16,7 @@ namespace NeeView
         private bool _isSettingBackup;
         private bool _isHiddenFileVisibled;
         private bool _isFileWriteAccessEnabled = false;
-        private string _language;
+        private string? _language;
         private BookPageCollectMode _bookPageCollectMode = BookPageCollectMode.ImageAndBook;
         private bool _isRemoveConfirmed = true;
         private bool _isRemoveWantNukeWarning;
@@ -28,11 +28,11 @@ namespace NeeView
         private bool _isInputMehotdEnabled;
         private DestinationFolderCollection _destinationFolderCollection = new DestinationFolderCollection();
         private ExternalAppCollection _externalAppCollection = new ExternalAppCollection() { new ExternalApp() };
-        private string _textEditor;
-        private string _webBrowser;
+        private string? _textEditor;
+        private string? _webBrowser;
 
         [JsonInclude, JsonPropertyName(nameof(TemporaryDirectory))]
-        public string _temporaryDirectory;
+        public string? _temporaryDirectory;
 
 
         /// <summary>
@@ -188,7 +188,7 @@ namespace NeeView
 
         // テキストエディター
         [PropertyPath(Filter = "EXE|*.exe|All|*.*")]
-        public string TextEditor
+        public string? TextEditor
         {
             get { return _textEditor; }
             set { SetProperty(ref _textEditor, string.IsNullOrWhiteSpace(value) ? null : value.Trim()); }
@@ -196,7 +196,7 @@ namespace NeeView
 
         // ウェブブラウザー
         [PropertyPath(Filter = "EXE|*.exe|All|*.*")]
-        public string WebBrowser
+        public string? WebBrowser
         {
             get { return _webBrowser; }
             set { SetProperty(ref _webBrowser, string.IsNullOrWhiteSpace(value) ? null : value.Trim()); }

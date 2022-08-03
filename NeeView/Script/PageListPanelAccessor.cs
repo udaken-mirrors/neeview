@@ -17,7 +17,7 @@ namespace NeeView
         }
 
         [WordNodeMember]
-        public string Path
+        public string? Path
         {
             get { return _panel.Presenter.PageList.Path; }
         }
@@ -73,7 +73,7 @@ namespace NeeView
             _panel.Presenter.PageListBox?.SetSelectedItems(selectedItems.Select(e => e.Source));
         }
 
-        private PageAccessor[] ToStringArray(IEnumerable<Page> pages)
+        private PageAccessor[] ToStringArray(IEnumerable<Page>? pages)
         {
             return pages?.Select(e => new PageAccessor(e)).ToArray() ?? new PageAccessor[] { };
         }

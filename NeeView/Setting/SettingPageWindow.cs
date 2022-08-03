@@ -10,7 +10,7 @@ namespace NeeView.Setting
 {
     public class ObjectCompareConverter : IValueConverter
     {
-        public object Target { get; set; }
+        public object? Target { get; set; }
 
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
@@ -25,7 +25,7 @@ namespace NeeView.Setting
 
     public class ObjectCompareToVisibilityConverter : IValueConverter
     {
-        public object Target { get; set; }
+        public object? Target { get; set; }
 
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
@@ -80,7 +80,7 @@ namespace NeeView.Setting
         }
 
         #region Commands
-        private RelayCommand _openCustomThemeFolder;
+        private RelayCommand? _openCustomThemeFolder;
         public RelayCommand OpenCustomThemeFolder
         {
             get { return _openCustomThemeFolder = _openCustomThemeFolder ?? new RelayCommand(OpenCustomThemeFolder_Execute); }

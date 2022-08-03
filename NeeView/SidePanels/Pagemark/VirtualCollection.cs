@@ -61,7 +61,7 @@ namespace NeeView
         }
 
 
-        public EventHandler<NotifyCollectionChangedEventArgs> CollectionChanged { get; set; }
+        public EventHandler<NotifyCollectionChangedEventArgs>? CollectionChanged { get; set; }
 
 
         public List<IVirtualItem> Items => _items;
@@ -144,7 +144,7 @@ namespace NeeView
                 Visual child = (Visual)VisualTreeHelper.GetChild(visual, i);
                 if (child != null)
                 {
-                    T correctlyTyped = child as T;
+                    T? correctlyTyped = child as T;
                     if (correctlyTyped != null)
                     {
                         yield return correctlyTyped;

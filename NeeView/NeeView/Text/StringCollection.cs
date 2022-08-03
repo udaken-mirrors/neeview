@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Text.Json;
@@ -25,7 +26,7 @@ namespace NeeView.Text
         {
             Restore(items);
         }
-
+        
         public StringCollection(IEnumerable<string> items)
         {
             Restore(items);
@@ -103,6 +104,7 @@ namespace NeeView.Text
             return StringCollectionParser.Create(Items);
         }
 
+        [MemberNotNull(nameof(Items))]
         public void Restore(IEnumerable<string> items)
         {
             Items = ValidateCollection(items);
@@ -111,6 +113,7 @@ namespace NeeView.Text
         /// <summary>
         /// セミコロン区切りの文字列を分解してコレクションにする
         /// </summary>
+        [MemberNotNull(nameof(Items))]
         public void Restore(string items)
         {
             Items = ValidateCollection(StringCollectionParser.Parse(items));
@@ -167,7 +170,7 @@ namespace NeeView.Text
             return clone;
         }
 
-        public bool Equals(StringCollection other)
+        public bool Equals(StringCollection? other)
         {
             if (other == null) return false;
             return this.Items.SequenceEqual(other.Items);
@@ -182,9 +185,12 @@ namespace NeeView.Text
 
     public sealed class JsonStringCollectionConverter : JsonConverter<StringCollection>
     {
-        public override StringCollection Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+        public override StringCollection? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
-            return StringCollection.Parse(reader.GetString());
+            var s = reader.GetString();
+            if (s is null) return null;
+
+            return StringCollection.Parse(s);
         }
 
         public override void Write(Utf8JsonWriter writer, StringCollection value, JsonSerializerOptions options)

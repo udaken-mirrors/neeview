@@ -16,10 +16,10 @@ namespace NeeView
         }
 
 
-        public event EventHandler Loaded;
+        public event EventHandler? Loaded;
 
 
-        public PictureSource PictureSource => _content.PictureSource;
+        public PictureSource? PictureSource => _content.PictureSource;
 
         public bool IsPictureSourceLocked => _content.IsContentLocked;
 
@@ -52,7 +52,7 @@ namespace NeeView
 
         protected void RaiseLoaded()
         {
-            Loaded?.Invoke(this, null);
+            Loaded?.Invoke(this, EventArgs.Empty);
         }
 
         /// <summary>
@@ -146,7 +146,7 @@ namespace NeeView
         /// <summary>
         /// コンテンツロード (Template)
         /// </summary>
-        protected virtual async Task LoadContentAsyncTemplate(Action append, CancellationToken token)
+        protected virtual async Task LoadContentAsyncTemplate(Action? append, CancellationToken token)
         {
             if (_content.IsLoaded) return;
 
@@ -185,7 +185,7 @@ namespace NeeView
         /// </summary>
         public void UnloadContent()
         {
-            _content.SetPageMessage((PageMessage)null);
+            _content.SetPageMessage((PageMessage?)null);
             UnloadPicture();
             _content.UpdateDevStatus();
 
@@ -204,7 +204,7 @@ namespace NeeView
 
             var source = LoadPictureSource(token);
 
-            byte[] thumbnailRaw = null;
+            byte[]? thumbnailRaw = null;
 
             if (_content.PageMessage != null)
             {

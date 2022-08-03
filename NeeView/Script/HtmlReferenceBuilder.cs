@@ -48,7 +48,7 @@ namespace NeeView
         /// </summary>
         /// <param name="type">対象の型</param>
         /// <param name="name">型の表示面を指定。nullで標準</param>
-        public HtmlReferenceBuilder Append(Type type, string name = null)
+        public HtmlReferenceBuilder Append(Type type, string? name = null)
         {
             if (type.IsEnum)
             {
@@ -63,7 +63,7 @@ namespace NeeView
         /// <summary>
         /// 指定したEnum型のリファレンスを作成する
         /// </summary>
-        public HtmlReferenceBuilder AppendEnum(Type type, string name)
+        public HtmlReferenceBuilder AppendEnum(Type type, string? name)
         {
             if (!type.IsEnum) throw new ArgumentException();
 
@@ -86,7 +86,7 @@ namespace NeeView
         /// <param name="dictionary"></param>
         /// <param name="style">tableのclass。nullで標準</param>
         /// <returns></returns>
-        private HtmlReferenceBuilder AppendDictionary(Dictionary<string, string> dictionary, string style = null)
+        private HtmlReferenceBuilder AppendDictionary(Dictionary<string, string> dictionary, string? style = null)
         {
             style = style ?? "table-slim";
             builder.Append($"<p><table class=\"{style}\">").AppendLine();
@@ -168,7 +168,7 @@ namespace NeeView
         /// <summary>
         /// 指定したClass型のリファレンスを作成する
         /// </summary>
-        public HtmlReferenceBuilder AppendClass(Type type, string name = null)
+        public HtmlReferenceBuilder AppendClass(Type type, string? name = null)
         {
             var className = name ?? type.Name;
             var title = name ?? $"[Class] {type.Name}";
@@ -184,7 +184,7 @@ namespace NeeView
             AppendDataTable(PropertiesToDataTable(properties), false);
 
             // examples
-            AppendExamples(properties.Select(e => e.DeclaringType.Name + "." + e.Name).Prepend(type.Name));
+            AppendExamples(properties.Select(e => e.DeclaringType?.Name + "." + e.Name).Prepend(type.Name));
 
             // method
             var methods = type.GetMethods().Where(e => IsDocumentable(e));
@@ -199,7 +199,7 @@ namespace NeeView
         /// <summary>
         /// 指定したクラスのメソッドたちをリファレンス化する
         /// </summary>
-        public HtmlReferenceBuilder CreateMethods(Type type, string prefix)
+        public HtmlReferenceBuilder CreateMethods(Type type, string? prefix)
         {
             var methods = type.GetMethods().Where(e => IsDocumentable(e));
             foreach (var method in methods)
@@ -213,9 +213,9 @@ namespace NeeView
         /// <summary>
         /// メソッドのリファレンス化
         /// </summary>
-        private HtmlReferenceBuilder AppendMethod(MethodInfo method, string prefix)
+        private HtmlReferenceBuilder AppendMethod(MethodInfo method, string? prefix)
         {
-            var name = method.DeclaringType.Name + "." + method.Name;
+            var name = method.DeclaringType?.Name + "." + method.Name;
 
             var documentable = method.GetCustomAttribute<DocumentableAttribute>();
 
@@ -235,7 +235,7 @@ namespace NeeView
             {
                 builder.Append($"<h4>{ResourceService.GetString("@Word.Returns")}</h4>").AppendLine();
                 var typeString = TypeToString(method.ReturnType);
-                var summary = GetHtmlDocument(name, ".Returns");
+                var summary = GetHtmlDocument(name, ".Returns") ?? "";
                 AppendDictionary(new Dictionary<string, string> { [typeString] = summary }, "table-none");
             }
 
@@ -284,7 +284,7 @@ namespace NeeView
 
             foreach (var parameter in parameters)
             {
-                var name = string.Join(".", new string[] { method.DeclaringType.Name, method.Name, parameter.Name });
+                var name = string.Join(".", new string?[] { method.DeclaringType?.Name, method.Name, parameter.Name });
                 var typeString = TypeToString(parameter.ParameterType);
                 var summary = GetHtmlDocument(name, "");
 
@@ -307,9 +307,9 @@ namespace NeeView
 
             foreach (var property in properties)
             {
-                var name = property.DeclaringType.Name + "." + property.Name;
+                var name = property.DeclaringType?.Name + "." + property.Name;
                 var attribute = property.GetCustomAttribute<DocumentableAttribute>();
-                var typeString = TypeToString(property.PropertyType) + (attribute.DocumentType != null ? $" ({TypeToString(attribute.DocumentType)})" : "");
+                var typeString = TypeToString(property.PropertyType) + (attribute?.DocumentType != null ? $" ({TypeToString(attribute.DocumentType)})" : "");
                 var rw = (property.CanRead ? "r" : "") + (property.CanWrite ? "w" : "");
                 var summary = GetHtmlDocument(name, "");
 
@@ -325,7 +325,7 @@ namespace NeeView
         /// <remarks>
         /// 改行変換だけの簡単なもの
         /// </remarks>
-        private string TextToHtmlFormat(string src)
+        private string? TextToHtmlFormat(string? src)
         {
             if (src is null) return null;
 
@@ -340,7 +340,7 @@ namespace NeeView
         /// <param name="postfix">リソース属性名 (e.g. #Remarks)</param>
         /// <param name="notNull">trueの場合、リソースが存在しなければリソース名を返す</param>
         /// <returns>取得された文字列</returns>
-        private string GetDocument(string name, string postfix, bool notNull = true)
+        private string? GetDocument(string name, string postfix, bool notNull = true)
         {
             var resourceId = $"@{name}{postfix}";
             var text = ResourceService.GetResourceString(resourceId, true);
@@ -358,7 +358,7 @@ namespace NeeView
         /// <param name="postfix">リソース属性名 (e.g. #Remarks)</param>
         /// <param name="notNull">trueの場合、リソースが存在しなければリソース名を返す</param>
         /// <returns>HTML化された文字列</returns>
-        private string GetHtmlDocument(string name, string postfix, bool notNull = true)
+        private string? GetHtmlDocument(string name, string postfix, bool notNull = true)
         {
             var text = GetDocument(name, postfix, notNull);
             return TextToHtmlFormat(text);
@@ -381,7 +381,9 @@ namespace NeeView
 
             if (type.IsArray)
             {
-                var elementTypeString = TypeToString(type.GetElementType());
+                var elementType = type.GetElementType();
+                if (elementType is null) throw new InvalidOperationException();
+                var elementTypeString = TypeToString(elementType);
                 return elementTypeString + "[]";
             }
 
@@ -440,7 +442,9 @@ namespace NeeView
         {
             if (type.IsArray)
             {
-                return ToAnchor(GetFixedTypeName(type.GetElementType())) + "[]";
+                var elementType = type.GetElementType();
+                if (elementType is null) throw new InvalidOperationException();
+                return ToAnchor(GetFixedTypeName(elementType)) + "[]";
             }
             else
             {
@@ -453,7 +457,7 @@ namespace NeeView
         /// </summary>
         /// <param name="src"></param>
         /// <param name="id">参照先。nullで標準</param>
-        private string ToAnchor(string src, string id = null)
+        private string ToAnchor(string src, string? id = null)
         {
             id = id ?? "#" + src;
             return $"<a href=\"{id}\">{src}</a>";

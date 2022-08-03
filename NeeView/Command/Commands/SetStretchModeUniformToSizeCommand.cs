@@ -19,19 +19,19 @@ namespace NeeView
             return BindingGenerator.StretchMode(PageStretchMode.UniformToSize);
         }
 
-        public override string ExecuteMessage(object sender, CommandContext e)
+        public override string ExecuteMessage(object? sender, CommandContext e)
         {
-            return this.Text + (MainViewComponent.Current.ViewController.TestStretchMode(PageStretchMode.UniformToSize, ((StretchModeCommandParameter)e.Parameter).IsToggle) ? "" : " OFF");
+            return this.Text + (MainViewComponent.Current.ViewController.TestStretchMode(PageStretchMode.UniformToSize, (e.Parameter.Cast<StretchModeCommandParameter>()).IsToggle) ? "" : " OFF");
         }
 
-        public override bool CanExecute(object sender, CommandContext e)
+        public override bool CanExecute(object? sender, CommandContext e)
         {
             return !NowLoading.Current.IsDispNowLoading;
         }
 
-        public override void Execute(object sender, CommandContext e)
+        public override void Execute(object? sender, CommandContext e)
         {
-            MainViewComponent.Current.ViewController.SetStretchMode(PageStretchMode.UniformToSize, ((StretchModeCommandParameter)e.Parameter).IsToggle);
+            MainViewComponent.Current.ViewController.SetStretchMode(PageStretchMode.UniformToSize, (e.Parameter.Cast<StretchModeCommandParameter>()).IsToggle);
         }
     }
 }

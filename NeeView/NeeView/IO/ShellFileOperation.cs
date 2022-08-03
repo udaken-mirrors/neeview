@@ -51,15 +51,15 @@ namespace NeeView.IO
                 public IntPtr hwnd;
                 public FileFuncFlags wFunc;
                 [MarshalAs(UnmanagedType.LPWStr)]
-                public string pFrom;
+                public string? pFrom;
                 [MarshalAs(UnmanagedType.LPWStr)]
-                public string pTo;
+                public string? pTo;
                 public FILEOP_FLAGS fFlags;
                 [MarshalAs(UnmanagedType.Bool)]
                 public bool fAnyOperationsAborted;
                 public IntPtr hNameMappings;
                 [MarshalAs(UnmanagedType.LPWStr)]
-                public string lpszProgressTitle;
+                public string? lpszProgressTitle;
             }
 
             public const int DE_SAMEFILE = 0x71;

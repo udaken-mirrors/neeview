@@ -50,7 +50,7 @@ namespace NeeView
         }
 
         [WordNodeMember(IsAutoCollect = false)]
-        public PropertyMap Parameter { get; }
+        public PropertyMap? Parameter { get; }
 
 
         [WordNodeMember]
@@ -93,7 +93,7 @@ namespace NeeView
 
             if (Parameter != null)
             {
-                node.Children.Add(Parameter.CreateWordNode(nameof(Parameter)));
+                node.Children?.Add(Parameter.CreateWordNode(nameof(Parameter)));
             }
 
             return node;

@@ -15,7 +15,7 @@ namespace NeeView
 
         private string _filename;
         private string _args;
-        private Process _process;
+        private Process? _process;
 
         public SubProcess(string path, string args)
         {
@@ -23,9 +23,9 @@ namespace NeeView
             _args = args;
         }
 
-        public event EventHandler Exited;
+        public event EventHandler? Exited;
 
-        public Process Process => _process;
+        public Process? Process => _process;
 
         public bool IsActive => _process != null && !_process.HasExited;
 
@@ -39,7 +39,7 @@ namespace NeeView
             psInfo.CreateNoWindow = true;
             psInfo.UseShellExecute = false;
 
-            _process = Process.Start(psInfo);
+            _process = Process.Start(psInfo) ?? throw new InvalidOperationException($"Cannot start process: {_filename}");
             _processJobObject.AddProcess(_process.Handle);
             _process.Exited += (s, e) => Exited?.Invoke(s, e);
             _process.EnableRaisingEvents = true;

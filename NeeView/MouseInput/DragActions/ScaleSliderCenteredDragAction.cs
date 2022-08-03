@@ -11,8 +11,7 @@
 
         public override void Execute(DragTransformControl sender, DragTransformActionArgs e)
         {
-            var param = (SensitiveDragActionParameter)Parameter;
-            sender.DragScaleSliderCentered(e.Start, e.End, param.Sensitivity);
+            sender.DragScaleSliderCentered(e.Start, e.End, Parameter.Cast<SensitiveDragActionParameter>().Sensitivity);
         }
     }
 }

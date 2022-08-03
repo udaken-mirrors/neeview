@@ -11,7 +11,6 @@ namespace NeeView
     /// </summary>
     public class SevenZipTempFileExtractor
     {
-        #region inner class
         private struct StreamInfo
         {
             public StreamInfo(ArchiveFileInfo fileInfo, string fileName, FileStream stream)
@@ -25,12 +24,14 @@ namespace NeeView
             public string FileName { get; }
             public FileStream Stream { get; }
         }
-        #endregion
 
-        private string _directory;
-        private Dictionary<int, StreamInfo> _map;
 
-        public event EventHandler<SevenZipTempFileExtractionArgs> TempFileExtractionFinished;
+        private string? _directory;
+        private Dictionary<int, StreamInfo>? _map;
+
+
+        public event EventHandler<SevenZipTempFileExtractionArgs>? TempFileExtractionFinished;
+
 
         public void ExtractArchive(SevenZipExtractor extractor, string directory)
         {
@@ -54,8 +55,10 @@ namespace NeeView
             }
         }
 
-        private void Extractor_FileExtractionFinished(object sender, FileInfoEventArgs e)
+        private void Extractor_FileExtractionFinished(object? sender, FileInfoEventArgs e)
         {
+            if (_map is null) throw new InvalidOperationException();
+
             if (_map.TryGetValue(e.FileInfo.Index, out StreamInfo item))
             {
                 item.Stream.Dispose();
@@ -67,6 +70,9 @@ namespace NeeView
 
         private Stream GetStreamFunc(ArchiveFileInfo info)
         {
+            if (_map is null) throw new InvalidOperationException();
+            if (_directory is null) throw new InvalidOperationException();
+
             ////Debug.WriteLine($"{info.Index}: {info.FileName}");
 
             var path = Path.Combine(_directory, GetTempFileName(info));

@@ -25,9 +25,9 @@ namespace NeeView
             _itemsControl = itemsControl;
             _dock = dock;
 
-            this.Description = new DropAcceptDescription();
-            this.Description.DragOver += Description_DragOver;
-            this.Description.DragDrop += Description_DragDrop;
+            _description = new DropAcceptDescription();
+            _description.DragOver += Description_DragOver;
+            _description.DragDrop += Description_DragDrop;
         }
 
 
@@ -35,7 +35,7 @@ namespace NeeView
         /// <summary>
         /// ドロップイベント
         /// </summary>
-        public EventHandler<LayoutPanelDropedEventArgs> PanelDroped;
+        public EventHandler<LayoutPanelDropedEventArgs>? PanelDroped;
 
 
         /// <summary>
@@ -53,7 +53,7 @@ namespace NeeView
         /// ドロップ処理
         /// </summary>
         /// <param name="e"></param>
-        private void Description_DragDrop(object sender, DragEventArgs e)
+        private void Description_DragDrop(object? sender, DragEventArgs e)
         {
             try
             {
@@ -93,12 +93,15 @@ namespace NeeView
             for (int index = 0; index < count; ++index)
             {
                 var item = _itemsControl.ItemContainerGenerator.ContainerFromIndex(index) as ContentPresenter;
-                var center = item.TranslatePoint(new Point(0, item.ActualHeight), _itemsControl);
-
-                //Debug.WriteLine($"{i}: {pos}: {item.ActualWidth}x{item.ActualHeight}");
-                if (cursor.Y < center.Y)
+                if (item is not null)
                 {
-                    return index;
+                    var center = item.TranslatePoint(new Point(0, item.ActualHeight), _itemsControl);
+
+                    //Debug.WriteLine($"{i}: {pos}: {item.ActualWidth}x{item.ActualHeight}");
+                    if (cursor.Y < center.Y)
+                    {
+                        return index;
+                    }
                 }
             }
 
@@ -109,7 +112,7 @@ namespace NeeView
         /// ドロップ受け入れ判定
         /// </summary>
         /// <param name="e"></param>
-        private void Description_DragOver(object sender, DragEventArgs e)
+        private void Description_DragOver(object? sender, DragEventArgs e)
         {
             if (!e.Data.GetDataPresent(typeof(LayoutPanel)))
             {

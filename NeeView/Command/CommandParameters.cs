@@ -37,9 +37,20 @@ namespace NeeView
             return MemberwiseClone();
         }
 
-        public bool MemberwiseEquals(CommandParameter other)
+        public bool MemberwiseEquals(CommandParameter? other)
         {
+            if (other is null) return false;
             return _equals(this, other);
+        }
+    }
+
+    public static class CommandParameterExtensions
+    {
+        public static T Cast<T>(this CommandParameter? self ) where T : CommandParameter
+        {
+            var param = self as T;
+            if (param is null) throw new InvalidCastException();
+            return param;
         }
     }
 
@@ -100,7 +111,7 @@ namespace NeeView
         };
 
 
-        public override CommandParameter Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+        public override CommandParameter? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
             if (reader.TokenType != JsonTokenType.StartObject)
             {
@@ -118,8 +129,9 @@ namespace NeeView
             }
             var typeString = reader.GetString();
 
-            Type type = KnownTypes.FirstOrDefault(e => e.Name == typeString);
+            Type? type = KnownTypes.FirstOrDefault(e => e.Name == typeString);
             Debug.Assert(type != null);
+            if (type is null) throw new JsonException($"Nor support type: {typeString}");
 
             if (!reader.Read() || reader.GetString() != "Value")
             {
@@ -130,7 +142,7 @@ namespace NeeView
                 throw new JsonException();
             }
 
-            object instance;
+            object? instance;
             if (type != null)
             {
                 instance = JsonSerializer.Deserialize(ref reader, type, options);
@@ -147,7 +159,7 @@ namespace NeeView
                 throw new JsonException();
             }
 
-            return (CommandParameter)instance;
+            return instance as CommandParameter;
         }
 
         public override void Write(Utf8JsonWriter writer, CommandParameter value, JsonSerializerOptions options)
@@ -156,7 +168,9 @@ namespace NeeView
             var type = value.GetType();
             Debug.Assert(KnownTypes.Contains(type));
 
-            var def = (CommandParameter)Activator.CreateInstance(type);
+            var def = Activator.CreateInstance(type) as CommandParameter;
+            if (def is null) throw new InvalidOperationException();
+
             if (value.MemberwiseEquals(def))
             {
                 Debug.WriteLine($"{type} is default.");

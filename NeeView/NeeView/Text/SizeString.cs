@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -15,6 +16,20 @@ namespace NeeView.Text
     public class SizeString
     {
         /// <summary>
+        /// フォーマット正規表現
+        /// </summary>
+        private Regex _regex = new Regex(@"^(\d+)x(\d+)$");
+
+        private string _value;
+
+
+        public SizeString(string value)
+        {
+            SetValue(value);
+        }
+
+
+        /// <summary>
         /// "数値x数値"
         /// </summary>
         public string Value
@@ -24,35 +39,24 @@ namespace NeeView.Text
             {
                 if (_value != value)
                 {
-                    _value = value;
-
-                    var match = _regex.Match(this.Value);
-                    if (!match.Success) throw new ArgumentException();
-                    this.Width = int.Parse(match.Groups[1].Value);
-                    this.Height = int.Parse(match.Groups[2].Value);
+                    SetValue(value);
                 }
             }
         }
 
-        private string _value;
-
-        //
         public int Width { get; private set; }
         public int Height { get; private set; }
 
 
-        /// <summary>
-        /// フォーマット正規表現
-        /// </summary>
-        private Regex _regex = new Regex(@"^(\d+)x(\d+)$");
-
-        /// <summary>
-        /// コンストラクタ
-        /// </summary>
-        /// <param name="value"></param>
-        public SizeString(string value)
+        [MemberNotNull(nameof(_value))]
+        private void SetValue(string value)
         {
-            Value = value;
+            _value = value;
+
+            var match = _regex.Match(this.Value);
+            if (!match.Success) throw new ArgumentException();
+            this.Width = int.Parse(match.Groups[1].Value);
+            this.Height = int.Parse(match.Groups[2].Value);
         }
 
         /// <summary>

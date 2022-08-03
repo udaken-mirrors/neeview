@@ -15,14 +15,14 @@ namespace NeeView
             this.ParameterSource = new CommandParameterSource(new MoveSizePageCommandParameter());
         }
 
-        public override bool CanExecute(object sender, CommandContext e)
+        public override bool CanExecute(object? sender, CommandContext e)
         {
             return !NowLoading.Current.IsDispNowLoading;
         }
 
-        public override void Execute(object sender, CommandContext e)
+        public override void Execute(object? sender, CommandContext e)
         {
-            BookOperation.Current.NextSizePage(this, ((MoveSizePageCommandParameter)e.Parameter).Size);
+            BookOperation.Current.NextSizePage(this, e.Parameter.Cast<MoveSizePageCommandParameter>().Size);
         }
     }
 

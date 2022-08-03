@@ -136,7 +136,7 @@ namespace NeeView
                 }
             }
 
-            private void OnRendering(object sender, EventArgs e)
+            private void OnRendering(object? sender, EventArgs e)
             {
                 TickSmooth();
             }

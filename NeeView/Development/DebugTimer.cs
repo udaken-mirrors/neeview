@@ -6,22 +6,22 @@ namespace NeeView
 {
     public static class DebugTimer
     {
-        private static Stopwatch _sw;
+        private static Stopwatch? _sw;
 
-        private static string _label;
-        private static Dictionary<string, long> _timetable;
+        private static string? _label;
+        private static Dictionary<string, long> _timetable = new Dictionary<string, long>();
         private static int _count;
         private static bool _isSlient;
 
         [Conditional("DEBUG")]
-        public static void Start(string message = null, bool isSilent = false)
+        public static void Start(string? message = null, bool isSilent = false)
         {
             _label = message ?? "DebugTimer";
             _isSlient = isSilent;
 
             if (!_isSlient) Debug.WriteLine(message);
 
-            _timetable = new Dictionary<string, long>();
+            _timetable.Clear();
             _count = 0;
 
             _sw = Stopwatch.StartNew();
@@ -38,7 +38,7 @@ namespace NeeView
         public static void CheckRestart()
         {
             _count++;
-            _sw.Restart();
+            _sw?.Restart();
         }
 
         [Conditional("DEBUG")]

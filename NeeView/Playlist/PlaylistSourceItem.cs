@@ -1,4 +1,5 @@
-﻿using System.Text.Json.Serialization;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Text.Json.Serialization;
 
 namespace NeeView
 {
@@ -6,7 +7,7 @@ namespace NeeView
     {
         [JsonInclude, JsonPropertyName(nameof(Name))]
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-        public string _name;
+        public string? _name;
 
         public PlaylistSourceItem()
         {
@@ -17,16 +18,17 @@ namespace NeeView
             Path = path;
         }
 
-        public PlaylistSourceItem(string path, string name)
+        public PlaylistSourceItem(string path, string? name)
         {
             Path = path;
             Name = name;
         }
 
-        public string Path { get; set; }
+        public string Path { get; set; } = "";
 
         [JsonIgnore]
-        public string Name
+        [NotNull]
+        public string? Name
         {
             get { return _name ?? LoosePath.GetFileName(Path); }
             set { _name = (string.IsNullOrEmpty(value) || value.Trim() == LoosePath.GetFileName(Path)) ? null : value.Trim(); }

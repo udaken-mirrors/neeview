@@ -1,4 +1,5 @@
-﻿using NeeView.Windows.Media;
+﻿using NeeLaboratory.Linq;
+using NeeView.Windows.Media;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -71,8 +72,15 @@ namespace NeeView
             // 有効な ListBoxItem 収集
             var items = _panel.CollectPageList(listBoxItems.Select(i => i.DataContext)).ToList();
 
-            var pages = items.Select(e => e.GetPage()).ToList();
-            _jobClient?.Order(pages);
+            var pages = items
+                .Select(e => e.GetPage())
+                .WhereNotNull()
+                .ToList();
+
+            if (pages.Any())
+            {
+                _jobClient?.Order(pages);
+            }
 
             ////Debug.WriteLine($"ThumbLoad: {pages.Count}");
         }

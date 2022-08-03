@@ -6,6 +6,7 @@ namespace NeeView
     {
         public WordNode()
         {
+            Word = "";
         }
 
         public WordNode(string word)
@@ -15,7 +16,7 @@ namespace NeeView
 
         public string Word { get; set; }
 
-        public List<WordNode> Children { get; set; }
+        public List<WordNode>? Children { get; set; }
 
     }
 }

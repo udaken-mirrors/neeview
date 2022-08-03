@@ -17,7 +17,7 @@ namespace NeeView
                 // 保存されたファイルをzipにまとめて出力
                 using (ZipArchive archive = new ZipArchive(new FileStream(filename, FileMode.Create, FileAccess.ReadWrite), ZipArchiveMode.Update))
                 {
-                    archive.CreateEntryFromFile(App.Current.Option.SettingFilename, SaveData.UserSettingFileName);
+                    archive.CreateEntryFromFile(SaveData.UserSettingFileName, SaveData.UserSettingFileName);
 
                     if (File.Exists(SaveData.Current.HistoryFilePath))
                     {
@@ -40,7 +40,7 @@ namespace NeeView
                     {
                         foreach (var theme in themes)
                         {
-                            archive.CreateEntryFromFile(theme.FullName, LoosePath.Combine("Themes", theme.FileName));
+                            archive.CreateEntryFromFile(theme.CustomThemeFilePath, LoosePath.Combine("Themes", theme.FileName));
                         }
                     }
                     var scripts = ScriptCommandSourceMap.CollectScripts();

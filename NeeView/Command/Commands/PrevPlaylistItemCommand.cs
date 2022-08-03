@@ -8,14 +8,14 @@
             this.IsShowMessage = false;
         }
 
-        public override bool CanExecute(object sender, CommandContext e)
+        public override bool CanExecute(object? sender, CommandContext e)
         {
-            return !NowLoading.Current.IsDispNowLoading && PlaylistPresenter.Current.PlaylistListBox?.CanMovePrevious() == true;
+            return !NowLoading.Current.IsDispNowLoading && PlaylistPresenter.Current?.PlaylistListBox?.CanMovePrevious() == true;
         }
 
-        public override void Execute(object sender, CommandContext e)
+        public override void Execute(object? sender, CommandContext e)
         {
-            var isSuccess = PlaylistPresenter.Current.PlaylistListBox?.MovePrevious();
+            var isSuccess = PlaylistPresenter.Current?.PlaylistListBox?.MovePrevious();
             if (isSuccess != true)
             {
                 InfoMessage.Current.SetMessage(InfoMessageType.Command, Properties.Resources.Notice_PlaylistItemPrevFailed);

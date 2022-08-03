@@ -23,22 +23,22 @@ namespace NeeView.Windows
         }
 
 
-        private void MinimizeWindowCommand_Execute(object sender, ExecutedRoutedEventArgs e)
+        private void MinimizeWindowCommand_Execute(object? sender, ExecutedRoutedEventArgs e)
         {
             SystemCommands.MinimizeWindow(_window);
         }
 
-        private void RestoreWindowCommand_Execute(object sender, ExecutedRoutedEventArgs e)
+        private void RestoreWindowCommand_Execute(object? sender, ExecutedRoutedEventArgs e)
         {
             SystemCommands.RestoreWindow(_window);
         }
 
-        private void MaximizeWindowCommand_Execute(object sender, ExecutedRoutedEventArgs e)
+        private void MaximizeWindowCommand_Execute(object? sender, ExecutedRoutedEventArgs e)
         {
             SystemCommands.MaximizeWindow(_window);
         }
 
-        private void CloseWindowCommand_Execute(object sender, ExecutedRoutedEventArgs e)
+        private void CloseWindowCommand_Execute(object? sender, ExecutedRoutedEventArgs e)
         {
             SystemCommands.CloseWindow(_window);
         }

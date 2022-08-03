@@ -11,9 +11,9 @@
             this.ParameterSource = new CommandParameterSource(new ViewRotateCommandParameter());
         }
 
-        public override void Execute(object sender, CommandContext e)
+        public override void Execute(object? sender, CommandContext e)
         {
-            MainViewComponent.Current.ViewController.ViewRotateRight((ViewRotateCommandParameter)e.Parameter);
+            MainViewComponent.Current.ViewController.ViewRotateRight(e.Parameter.Cast<ViewRotateCommandParameter>());
         }
     }
 }

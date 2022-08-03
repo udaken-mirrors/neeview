@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
 namespace NeeView.Text
@@ -33,11 +34,11 @@ namespace NeeView.Text
 
         public char FirstChar { get; private set; }
 
-        public List<char> Chars { get; private set; }
+        public List<char>? Chars { get; private set; }
         
-        public List<long> Nums { get; private set; }
+        public List<long>? Nums { get; private set; }
 
-
+        [MemberNotNullWhen(true, nameof(Nums))]
         public bool IsNumber() => Nums != null;
 
 
@@ -87,10 +88,12 @@ namespace NeeView.Text
 
         public override int GetHashCode()
         {
-            return this.FirstChar ^ this.Chars.GetHashCode() ^ this.Nums.GetHashCode();
+            var charsHash = this.Chars is null ? 0 : this.Chars.GetHashCode();
+            var numsHash = this.Nums is null ? 0 : this.Nums.GetHashCode();
+            return this.FirstChar ^ charsHash ^ numsHash;
         }
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             if (obj is StringToken stringToken)
             {
@@ -108,7 +111,7 @@ namespace NeeView.Text
                 SequenceEqual(this.Chars, other.Chars) &&
                 SequenceEqual(this.Nums, other.Nums);
 
-            bool SequenceEqual<T>(IEnumerable<T> x, IEnumerable<T> y)
+            bool SequenceEqual<T>(IEnumerable<T>? x, IEnumerable<T>? y)
             {
                 if (x == null)
                 {

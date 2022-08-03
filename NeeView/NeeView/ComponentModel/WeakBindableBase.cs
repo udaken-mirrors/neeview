@@ -33,9 +33,9 @@ namespace NeeView.ComponentModel
 
         private class PropertyChangedWeakEventListener : IWeakEventListener
         {
-            private Action<string> _raisePropertyChangedAction;
+            private Action<string?> _raisePropertyChangedAction;
 
-            public PropertyChangedWeakEventListener(Action<string> raisePropertyChangedAction)
+            public PropertyChangedWeakEventListener(Action<string?> raisePropertyChangedAction)
             {
                 _raisePropertyChangedAction = raisePropertyChangedAction;
             }

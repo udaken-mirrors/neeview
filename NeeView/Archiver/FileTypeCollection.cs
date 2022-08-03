@@ -30,12 +30,12 @@ namespace NeeView
 
         public override string ValidateItem(string item)
         {
-            return string.IsNullOrWhiteSpace(item) ? null : "." + ReplaceInvalidFileNameChars(item).Trim().TrimStart('.').ToLower();
+            return string.IsNullOrWhiteSpace(item) ? "" : "." + ReplaceInvalidFileNameChars(item).Trim().TrimStart('.').ToLower();
         }
 
         private string ReplaceInvalidFileNameChars(string s)
         {
-            if (s is null) return null;
+            if (s is null) return "";
 
             var invalidChars = System.IO.Path.GetInvalidFileNameChars();
             return string.Concat(s.Select(c => invalidChars.Contains(c) ? '_' : c));
@@ -46,7 +46,7 @@ namespace NeeView
             return new FileTypeCollection(s);
         }
 
-        public bool Equals(FileTypeCollection other)
+        public bool Equals(FileTypeCollection? other)
         {
             if (other == null) return false;
             return this.ToString() == other.ToString();
@@ -60,9 +60,12 @@ namespace NeeView
 
     public sealed class JsonFileTypeCollectionConverter : JsonConverter<FileTypeCollection>
     {
-        public override FileTypeCollection Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+        public override FileTypeCollection? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
-            return FileTypeCollection.Parse(reader.GetString());
+            var s = reader.GetString();
+            if (s is null) return null;
+
+            return FileTypeCollection.Parse(s);
         }
 
         public override void Write(Utf8JsonWriter writer, FileTypeCollection value, JsonSerializerOptions options)

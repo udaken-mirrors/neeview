@@ -1,6 +1,7 @@
 ﻿using NeeView.Susie;
 using NeeView.Text;
 using NeeView.Windows.Property;
+using System;
 using System.Collections.Generic;
 using System.Windows;
 
@@ -54,9 +55,11 @@ namespace NeeView.Setting
             this.Items.Add(section);
         }
 
-        private void SupportFileTypeEditor_CollectionChanged(object sender, System.ComponentModel.CollectionChangeEventArgs e)
+        private void SupportFileTypeEditor_CollectionChanged(object? sender, System.ComponentModel.CollectionChangeEventArgs e)
         {
-            var editor = (SettingItemCollectionControl)sender;
+            var editor = (SettingItemCollectionControl?)sender;
+            if (editor is null) throw new InvalidOperationException();
+
             PictureProfile.Current.SupportFileTypes = (FileTypeCollection)editor.Collection;
         }
     }

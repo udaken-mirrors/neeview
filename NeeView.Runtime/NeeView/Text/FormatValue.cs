@@ -8,7 +8,7 @@ namespace NeeView.Text
     {
         private object? _value;
         private string? _format;
-        private Func<object, object>? _converter;
+        private Func<object, object?>? _converter;
 
         public FormatValue(object? value) : this(value, null, null)
         {
@@ -18,7 +18,7 @@ namespace NeeView.Text
         {
         }
 
-        public FormatValue(object? value, string? format, Func<object, object>? converter)
+        public FormatValue(object? value, string? format, Func<object, object?>? converter)
         { 
             _value = value;
             _format = format;

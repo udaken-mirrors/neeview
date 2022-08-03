@@ -31,7 +31,7 @@ namespace NeeView
         /// <summary>
         /// 角度、スケール変更イベント
         /// </summary>
-        public event EventHandler<TransformEventArgs> TransformChanged;
+        public event EventHandler<TransformEventArgs>? TransformChanged;
 
 
         /// <summary>

@@ -53,9 +53,9 @@ namespace NeeView
         }
 
 
-        public event EventHandler<WindowStateChangedEventArgs> StateChanged;
-        public event EventHandler<WindowStateChangedEventArgs> StateEditing;
-        public event EventHandler<WindowStateChangedEventArgs> StateEdited;
+        public event EventHandler<WindowStateChangedEventArgs>? StateChanged;
+        public event EventHandler<WindowStateChangedEventArgs>? StateEditing;
+        public event EventHandler<WindowStateChangedEventArgs>? StateEdited;
 
         public Window Window => _window;
         public WindowStateEx CurrentState => _currentState;
@@ -86,7 +86,7 @@ namespace NeeView
             UpdateIsFullScreen();
         }
 
-        private void Window_StateChanged(object sender, EventArgs e)
+        private void Window_StateChanged(object? sender, EventArgs e)
         {
             if (_isProgress) return;
 

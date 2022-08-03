@@ -7,13 +7,14 @@ namespace NeeView
     [DataContract]
     public class CommandParameterSource
     {
-        private CommandParameter _parameter;
+        private CommandParameter? _parameter;
         private Type _type;
 
-
+#if false
         public CommandParameterSource()
         {
         }
+#endif
 
         // TODO: 型を直接指定するように
         public CommandParameterSource(CommandParameter defaultParameter)
@@ -24,14 +25,16 @@ namespace NeeView
         }
 
 
-        public CommandParameter GetRaw()
+        public CommandParameter? GetRaw()
         {
             return _parameter;
         }
 
         public CommandParameter GetDefault()
         {
-            return (CommandParameter)Activator.CreateInstance(_type);
+            var parameter = Activator.CreateInstance(_type) as CommandParameter;
+            if (parameter is null) throw new InvalidOperationException();
+            return parameter;
         }
 
         public CommandParameter Get()
@@ -44,7 +47,7 @@ namespace NeeView
             return _parameter;
         }
 
-        public void Set(CommandParameter value)
+        public void Set(CommandParameter? value)
         {
             if (value != null && value.GetType() != _type)
             {
@@ -63,6 +66,7 @@ namespace NeeView
         [Obsolete]
         public string Store()
         {
+            if (_parameter is null) return "";
             return Json.Serialize(_parameter, _type);
         }
 
@@ -75,7 +79,7 @@ namespace NeeView
             }
             else
             { 
-                _parameter = (CommandParameter)Json.Deserialize(json, _type);
+                _parameter = (CommandParameter?)Json.Deserialize(json, _type);
             }
         }
     }

@@ -31,14 +31,14 @@ namespace NeeView
             QuickAccessCollection.Current.CollectionChanged += QuickAccessCollection_CollectionChanged;
         }
 
-        private void QuickAccessCollection_CollectionChanged(object sender, CollectionChangeEventArgs e)
+        private void QuickAccessCollection_CollectionChanged(object? sender, CollectionChangeEventArgs e)
         {
-            var target = e.Element as QuickAccess;
 
             switch (e.Action)
             {
                 case CollectionChangeAction.Add:
                     {
+                        var target = e.Element as QuickAccess ?? throw new InvalidOperationException("e.Element must be QuickAccess");
                         var item = Items.FirstOrDefault(i => target == i.Source);
                         if (item == null)
                         {
@@ -51,6 +51,7 @@ namespace NeeView
 
                 case CollectionChangeAction.Remove:
                     {
+                        var target = e.Element as QuickAccess ?? throw new InvalidOperationException("e.Element must be QuickAccess");
                         var item = Items.FirstOrDefault(i => target == i.Source);
                         if (item != null)
                         {

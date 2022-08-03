@@ -26,92 +26,92 @@ namespace NeeView
             public int _Version { get; set; }
 
             [DataMember]
-            public FileIOProfile.Memento FileIOProfile { get; set; }
+            public FileIOProfile.Memento? FileIOProfile { get; set; }
             [DataMember]
-            public JobEngine.Memento JobEngine { get; set; }
+            public JobEngine.Memento? JobEngine { get; set; }
             [DataMember]
-            public SoundPlayerService.Memento SoundPlayerService { get; set; }
+            public SoundPlayerService.Memento? SoundPlayerService { get; set; }
             [DataMember]
-            public PictureProfile.Memento PictureProfile { get; set; }
+            public PictureProfile.Memento? PictureProfile { get; set; }
             [DataMember]
-            public ZipArchiverProfile.Memento ZipArchiverProfile { get; set; }
+            public ZipArchiverProfile.Memento? ZipArchiverProfile { get; set; }
             [DataMember]
-            public SevenZipArchiverProfile.Memento SevenZipArchiverProfile { get; set; }
+            public SevenZipArchiverProfile.Memento? SevenZipArchiverProfile { get; set; }
             [DataMember]
-            public PdfArchiverProfile.Memento PdfArchiverProfile { get; set; }
+            public PdfArchiverProfile.Memento? PdfArchiverProfile { get; set; }
             [DataMember]
-            public MediaArchiverProfile.Memento MediaArchiverProfile { get; set; }
+            public MediaArchiverProfile.Memento? MediaArchiverProfile { get; set; }
             [DataMember]
-            public ThumbnailProfile.Memento ThumbnailProfile { get; set; }
+            public ThumbnailProfile.Memento? ThumbnailProfile { get; set; }
             [DataMember]
-            public InfoMessage.Memento InfoMessage { get; set; }
+            public InfoMessage.Memento? InfoMessage { get; set; }
             [DataMember]
-            public BookProfile.Memento BookProfile { get; set; }
+            public BookProfile.Memento? BookProfile { get; set; }
             [DataMember]
-            public BookHub.Memento BookHub { get; set; }
+            public BookHub.Memento? BookHub { get; set; }
             [DataMember]
-            public BookOperation.Memento BookOperation { get; set; }
+            public BookOperation.Memento? BookOperation { get; set; }
             [DataMember]
-            public BookSettingPresenter.Memento BookSettingPresenter { get; set; }
+            public BookSettingPresenter.Memento? BookSettingPresenter { get; set; }
             [DataMember]
-            public ThemeManager.Memento ThemeProfile { get; set; }
+            public ThemeManager.Memento? ThemeProfile { get; set; }
             [DataMember]
-            public MainWindowModel.Memento MainWindowModel { get; set; }
+            public MainWindowModel.Memento? MainWindowModel { get; set; }
             [DataMember]
-            public ContentCanvas.Memento ContentCanvas { get; set; }
+            public ContentCanvas.Memento? ContentCanvas { get; set; }
             [DataMember]
-            public ContentCanvasBrush.Memento ContentCanvasBrush { get; set; }
+            public ContentCanvasBrush.Memento? ContentCanvasBrush { get; set; }
             [DataMember]
-            public DragTransform.Memento DragTransform { get; set; }
+            public DragTransform.Memento? DragTransform { get; set; }
             [DataMember]
-            public DragTransformControl.Memento DragTransformControl { get; set; }
+            public DragTransformControl.Memento? DragTransformControl { get; set; }
             [DataMember]
-            public LoupeTransform.Memento LoupeTransform { get; set; }
+            public LoupeTransform.Memento? LoupeTransform { get; set; }
             [DataMember]
-            public MouseInput.Memento MouseInput { get; set; }
+            public MouseInput.Memento? MouseInput { get; set; }
             [DataMember]
-            public TouchInput.Memento TouchInput { get; set; }
+            public TouchInput.Memento? TouchInput { get; set; }
             [DataMember]
-            public SlideShow.Memento SlideShow { get; set; }
+            public SlideShow.Memento? SlideShow { get; set; }
             [DataMember]
-            public WindowTitle.Memento WindowTitle { get; set; }
+            public WindowTitle.Memento? WindowTitle { get; set; }
             [DataMember]
-            public PageSlider.Memento PageSlider { get; set; }
+            public PageSlider.Memento? PageSlider { get; set; }
             [DataMember]
-            public MediaControl.Memento MediaControl { get; set; }
+            public MediaControl.Memento? MediaControl { get; set; }
             [DataMember]
-            public ThumbnailList.Memento ThumbnailList { get; set; }
+            public ThumbnailList.Memento? ThumbnailList { get; set; }
             [DataMember]
-            public MenuBar.Memento MenuBar { get; set; }
+            public MenuBar.Memento? MenuBar { get; set; }
             [DataMember]
-            public SidePanelProfile.Memento SidePanelProfile { get; set; }
+            public SidePanelProfile.Memento? SidePanelProfile { get; set; }
             [DataMember]
-            public PageListPlacementService.Memento PageListPlacementService { get; set; }
+            public PageListPlacementService.Memento? PageListPlacementService { get; set; }
             [DataMember]
-            public FolderPanelModel.Memento FolderPanel { get; set; }
+            public FolderPanelModel.Memento? FolderPanel { get; set; }
             [DataMember]
-            public BookshelfFolderList.Memento BookshelfFolderList { get; set; }
+            public BookshelfFolderList.Memento? BookshelfFolderList { get; set; }
             [DataMember]
-            public BookmarkFolderList.Memento BookmarkFolderList { get; set; }
+            public BookmarkFolderList.Memento? BookmarkFolderList { get; set; }
             [DataMember]
-            public PageList.Memento PageList { get; set; }
+            public PageList.Memento? PageList { get; set; }
             [DataMember]
-            public HistoryList.Memento HistoryList { get; set; }
+            public HistoryList.Memento? HistoryList { get; set; }
             [DataMember]
-            public FileInformation.Memento FileInformation { get; set; }
+            public FileInformation.Memento? FileInformation { get; set; }
             [DataMember]
-            public ImageFilter.Memento ImageFilter { get; set; }
+            public ImageFilter.Memento? ImageFilter { get; set; }
             [DataMember]
-            public ImageEffect.Memento ImageEffect { get; set; }
+            public ImageEffect.Memento? ImageEffect { get; set; }
             [DataMember]
-            public SidePanelFrame.Memento SidePanel { get; set; }
+            public SidePanelFrame.Memento? SidePanel { get; set; }
             [DataMember]
-            public PageViewRecorder.Memento PageViewRecorder { get; set; }
+            public PageViewRecorder.Memento? PageViewRecorder { get; set; }
 
             [Obsolete, DataMember(EmitDefaultValue = false)]
-            public FolderListLegacy.Memento FolderList { get; set; }
+            public FolderListLegacy.Memento? FolderList { get; set; }
             [Obsolete, DataMember(Name = "BookSetting", EmitDefaultValue = false)]
-            public BookSettingPresenterLegacy.Memento BookSettingPresenterLegacy { get; set; }
+            public BookSettingPresenterLegacy.Memento? BookSettingPresenterLegacy { get; set; }
 
             [OnDeserialized]
             private void OnDeserialized(StreamingContext c)
@@ -119,18 +119,39 @@ namespace NeeView
 #pragma warning disable CS0612
 
                 // before ver.32
-                if (_Version < Environment.GenerateProductVersionNumber(32, 0, 0))
+                if (_Version < Environment.GenerateProductVersionNumber(32, 0, 0) && SidePanelProfile != null)
                 {
-                    SidePanelProfile.ContentItemProfile.ImageWidth = ThumbnailProfile.ThumbnailWidth > 0 ? ThumbnailProfile.ThumbnailWidth : 64;
-                    SidePanelProfile.BannerItemProfile.ImageWidth = ThumbnailProfile.BannerWidth > 0 ? ThumbnailProfile.BannerWidth : 200;
-                    SidePanelProfile.ContentItemProfile.IsImagePopupEnabled = ThumbnailProfile.IsThumbnailPopup;
+                    if (ThumbnailProfile is not null)
+                    {
+                        if (SidePanelProfile.ContentItemProfile is not null)
+                        {
+                            SidePanelProfile.ContentItemProfile.ImageWidth = ThumbnailProfile.ThumbnailWidth > 0 ? ThumbnailProfile.ThumbnailWidth : 64;
+                            SidePanelProfile.ContentItemProfile.IsImagePopupEnabled = ThumbnailProfile.IsThumbnailPopup;
+                        }
+                        if (SidePanelProfile.BannerItemProfile is not null)
+                        {
+                            SidePanelProfile.BannerItemProfile.ImageWidth = ThumbnailProfile.BannerWidth > 0 ? ThumbnailProfile.BannerWidth : 200;
+                        }
+                    }
 
-                    SidePanelProfile.FontName = SidePanel.FontName;
-                    SidePanelProfile.FontSize = SidePanel.FontSize > 0.0 ? SidePanel.FontSize : 15.0;
-                    SidePanelProfile.FolderTreeFontSize = SidePanel.FolderTreeFontSize > 0.0 ? SidePanel.FolderTreeFontSize : 12.0;
-                    SidePanelProfile.ContentItemProfile.IsTextWrapped = SidePanel.IsTextWrapped;
-                    SidePanelProfile.BannerItemProfile.IsTextWrapped = SidePanel.IsTextWrapped;
-                    SidePanelProfile.ThumbnailItemProfile.IsTextWrapped = SidePanel.IsTextWrapped;
+                    if (SidePanel is not null)
+                    {
+                        SidePanelProfile.FontName = SidePanel.FontName;
+                        SidePanelProfile.FontSize = SidePanel.FontSize > 0.0 ? SidePanel.FontSize : 15.0;
+                        SidePanelProfile.FolderTreeFontSize = SidePanel.FolderTreeFontSize > 0.0 ? SidePanel.FolderTreeFontSize : 12.0;
+                        if (SidePanelProfile.ContentItemProfile is not null)
+                        {
+                            SidePanelProfile.ContentItemProfile.IsTextWrapped = SidePanel.IsTextWrapped;
+                        }
+                        if (SidePanelProfile.BannerItemProfile is not null)
+                        {
+                            SidePanelProfile.BannerItemProfile.IsTextWrapped = SidePanel.IsTextWrapped;
+                        }
+                        if (SidePanelProfile.ThumbnailItemProfile is not null)
+                        {
+                            SidePanelProfile.ThumbnailItemProfile.IsTextWrapped = SidePanel.IsTextWrapped;
+                        }
+                    }
                 }
 
                 // before 33.0
@@ -147,7 +168,7 @@ namespace NeeView
                         BookSettingPresenter = BookSettingPresenterLegacy.ToBookSettingPresenter();
                     }
 
-                    if (MouseInput.Drag != null)
+                    if (MouseInput?.Drag != null && DragTransformControl != null)
                     {
                         DragTransformControl.IsOriginalScaleShowMessage = MouseInput.Drag.IsOriginalScaleShowMessage;
                         DragTransformControl.DragControlRotateCenter = MouseInput.Drag.IsControlCenterImage ? DragControlCenter.Target : DragControlCenter.View;

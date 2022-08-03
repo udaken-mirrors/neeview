@@ -17,18 +17,18 @@ namespace NeeView
             return BindingGenerator.BindingBookSetting(nameof(BookSettingPresenter.Current.LatestSetting.IsSupportedDividePage));
         }
 
-        public override string ExecuteMessage(object sender, CommandContext e)
+        public override string ExecuteMessage(object? sender, CommandContext e)
         {
             return BookSettingPresenter.Current.LatestSetting.IsSupportedDividePage ? Properties.Resources.ToggleIsSupportedDividePageCommand_Off : Properties.Resources.ToggleIsSupportedDividePageCommand_On;
         }
 
-        public override bool CanExecute(object sender, CommandContext e)
+        public override bool CanExecute(object? sender, CommandContext e)
         {
             return BookSettingPresenter.Current.CanPageModeSubSetting(PageMode.SinglePage);
         }
 
         [MethodArgument("@ToggleCommand.Execute.Remarks")]
-        public override void Execute(object sender, CommandContext e)
+        public override void Execute(object? sender, CommandContext e)
         {
             if (e.Args.Length > 0)
             {

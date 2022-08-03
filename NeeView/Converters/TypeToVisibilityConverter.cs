@@ -7,7 +7,7 @@ namespace NeeView
     [ValueConversion(typeof(Type), typeof(Visibility))]
     public class TypeToVisibilityConverter : IValueConverter
     {
-        public Type Type { get; set; }
+        public Type? Type { get; set; }
         
         public bool IsInversed { get; set; }
         

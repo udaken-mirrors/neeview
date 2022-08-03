@@ -23,10 +23,11 @@ namespace NeeView
 
                 DebugTimer.Start("CreateBookThumbnail", isSilent: true);
 
-                var items = BookshelfFolderList.Current.FolderCollection.Items.OfType<FileFolderItem>().Take(100);
+                var items = BookshelfFolderList.Current.FolderCollection?.Items.OfType<FileFolderItem>().Take(100);
+                if (items is null) throw new InvalidOperationException();
                 foreach (var item in items)
                 {
-                    Debug.WriteLine($"{item.GetFolderCollectionPath().DispName}...");
+                    Debug.WriteLine($"{item.GetFolderCollectionPath()?.DispName}...");
                     DebugTimer.CheckRestart();
                     item.ThumbnailLoaded += Item_ThumbnailLoaded;
                     mres.Reset();
@@ -46,7 +47,7 @@ namespace NeeView
                 ////Debug.WriteLine($"TestTime: {sw.ElapsedMilliseconds:#,0}");
                 ////Debug.WriteLine($"ItemCount: {items.Count()} thumb.");
 
-                void Item_ThumbnailLoaded(object sender, EventArgs e)
+                void Item_ThumbnailLoaded(object? sender, EventArgs e)
                 {
                     mres.Set();
                 }

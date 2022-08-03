@@ -4,6 +4,18 @@ namespace NeeView.Susie
 {
     public class SusieArchiveEntry
     {
+        public SusieArchiveEntry()
+        {
+            Path = "";
+            FileName = "";
+        }
+
+        public SusieArchiveEntry(string path, string fileName)
+        {
+            Path = path;
+            FileName = fileName;
+        }
+
         public int Position { get; set; }
 
         public string Path { get; set; }

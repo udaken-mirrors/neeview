@@ -46,7 +46,7 @@ namespace NeeView
         }
 
 
-        private void DestinationFolderDialog_Closed(object sender, EventArgs e)
+        private void DestinationFolderDialog_Closed(object? sender, EventArgs e)
         {
             _vm.Decide();
         }

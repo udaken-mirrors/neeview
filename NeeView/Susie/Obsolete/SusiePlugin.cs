@@ -21,7 +21,7 @@ namespace NeeView.Susie
             public bool IsPreExtract { get; set; }
 
             [DataMember(EmitDefaultValue = false)]
-            public string UserExtensions { get; set; }
+            public string? UserExtensions { get; set; }
 
 
             [OnDeserializing]
@@ -32,8 +32,7 @@ namespace NeeView.Susie
 
             public SusiePluginSetting ToSusiePluginSetting(string name, bool isCacheEnabled)
             {
-                var setting = new SusiePluginSetting();
-                setting.Name = name;
+                var setting = new SusiePluginSetting(name);
                 setting.IsEnabled = this.IsEnabled;
                 setting.IsCacheEnabled = isCacheEnabled;
                 setting.IsPreExtract = this.IsPreExtract;

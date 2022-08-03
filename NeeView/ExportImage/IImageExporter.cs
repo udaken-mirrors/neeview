@@ -7,7 +7,7 @@ namespace NeeView
         bool HasBackground { get; set; }
 
 
-        ImageExporterContent CreateView();
+        ImageExporterContent? CreateView();
 
         void Export(string path, bool isOverwrite, int qualityLevel);
 

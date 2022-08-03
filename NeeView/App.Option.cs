@@ -1,4 +1,5 @@
 ﻿using NeeView.Data;
+using NeeLaboratory.Linq;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -49,7 +50,7 @@ namespace NeeView
         public bool IsVersion { get; set; }
 
         [OptionMember("x", "setting", HasParameter = true, RequireParameter = true, HelpText = "@AppOption.SettingFilename")]
-        public string SettingFilename { get; set; }
+        public string? SettingFilename { get; set; }
 
         [OptionMember("b", "blank", Default = "on", HelpText = "@AppOption.IsBlank")]
         public SwitchOption IsBlank { get; set; }
@@ -64,24 +65,24 @@ namespace NeeView
         public SwitchOption? IsSlideShow { get; set; }
 
         [OptionMember("o", "folderlist", HasParameter = true, RequireParameter = true, HelpText = "@AppOption.FolderList")]
-        public string FolderList { get; set; }
+        public string? FolderList { get; set; }
 
         [OptionMember(null, "window", HasParameter = true, RequireParameter = true, HelpText = "@AppOption.WindowState")]
         public WindowStateOption? WindowState { get; set; }
 
         [OptionMember(null, "script", HasParameter = true, RequireParameter = true, HelpText = "@AppOption.ScriptFile")]
-        public string ScriptFile { get; set; }
+        public string? ScriptFile { get; set; }
 
 
         [OptionValues]
-        public List<string> Values { get; set; }
+        public List<string> Values { get; set; } = new List<string>();
 
 
         public void Validate()
         {
             try
             {
-                Values = Values.Select(e => GetFullPath(e)).ToList();
+                Values = Values.Select(e => GetFullPath(e)).WhereNotNull().ToList();
 
                 FolderList = GetFullQueryPath(FolderList)?.SimpleQuery;
                 ScriptFile = GetFullPath(ScriptFile);
@@ -107,7 +108,7 @@ namespace NeeView
         }
 
 
-        private QueryPath GetFullQueryPath(string src)
+        private QueryPath? GetFullQueryPath(string? src)
         {
             if (src is null) return null;
 
@@ -120,7 +121,7 @@ namespace NeeView
             return query.ReplacePath(GetFullPath(query.Path));
         }
 
-        private string GetFullPath(string src)
+        private string? GetFullPath(string? src)
         {
             if (src is null) return null;
 
@@ -141,7 +142,7 @@ namespace NeeView
             }
         }
 
-        private string GetFullArchivePath(string path)
+        private string? GetFullArchivePath(string path)
         {
             if (path is null) return null;
 

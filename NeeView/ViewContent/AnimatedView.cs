@@ -1,5 +1,6 @@
 ﻿using NeeView.Collections.Generic;
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -24,7 +25,7 @@ namespace NeeView
         private TextBlock _errorMessageTextBlock;
 
 
-        public AnimatedView(ViewContentSource source, ViewContentParameters parameter, Uri uri, FrameworkElement alternativeElement)
+        public AnimatedView(ViewContentSource source, ViewContentParameters parameter, Uri uri, FrameworkElement? alternativeElement)
         {
             _source = source;
             _uri = uri;
@@ -38,7 +39,8 @@ namespace NeeView
         /// <summary>
         /// アニメーションビュー生成
         /// </summary>
-        private FrameworkElement CreateAnimatedView(ViewContentParameters parameter, FrameworkElement alternativeElement)
+        [MemberNotNull(nameof(_brush), nameof(_mediaGrid), nameof(_errorMessageTextBlock))]
+        private FrameworkElement CreateAnimatedView(ViewContentParameters parameter, FrameworkElement? alternativeElement)
         {
             _brush = new VisualBrush();
             _brush.Stretch = Stretch.Fill;
@@ -122,7 +124,7 @@ namespace NeeView
             // NOTE: 一瞬黒い画像が表示されるのを防ぐために開放タイミングをずらす
             int count = 0;
             CompositionTarget.Rendering += OnRendering;
-            void OnRendering(object sender, EventArgs e)
+            void OnRendering(object? sender, EventArgs e)
             {
                 if (++count >= 3)
                 {
@@ -133,13 +135,15 @@ namespace NeeView
             }
         }
 
-        private void Media_MediaEnded(object sender, RoutedEventArgs e)
+        private void Media_MediaEnded(object? sender, RoutedEventArgs e)
         {
-            var media = (MediaElement)sender;
+            var media = sender as MediaElement;
+            if (media is null) return;
+
             media.Position = TimeSpan.FromMilliseconds(1);
         }
 
-        private void Media_MediaFailed(object sender, ExceptionRoutedEventArgs e)
+        private void Media_MediaFailed(object? sender, ExceptionRoutedEventArgs e)
         {
             _errorMessageTextBlock.Text = e.ErrorException != null ? e.ErrorException.Message : Properties.Resources.Notice_PlayFailed;
             _errorMessageTextBlock.Visibility = Visibility.Visible;

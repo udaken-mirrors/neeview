@@ -18,9 +18,9 @@ namespace NeeView
 
 
         [WordNodeMember]
-        public string Path
+        public string? Path
         {
-            get { return _model.Place.SimplePath; }
+            get { return _model.Place?.SimplePath; }
             set { AppDispatcher.Invoke(() => _model.RequestPlace(new QueryPath(value), null, FolderSetPlaceOption.UpdateHistory)); }
         }
 
@@ -76,7 +76,7 @@ namespace NeeView
             listBox?.SetSelectedItems(selectedItems.Select(e => e.Source));
         }
 
-        private BookshelfItemAccessor[] ToStringArray(IEnumerable<FolderItem> items)
+        private BookshelfItemAccessor[] ToStringArray(IEnumerable<FolderItem>? items)
         {
             return items?.Select(e => new BookshelfItemAccessor(e)).ToArray() ?? new BookshelfItemAccessor[] { };
         }

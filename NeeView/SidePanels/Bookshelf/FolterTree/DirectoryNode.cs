@@ -12,7 +12,7 @@ namespace NeeView
 {
     public class DirectoryNode : FolderTreeNodeDelayBase
     {
-        public DirectoryNode(string name, FolderTreeNodeBase parent)
+        public DirectoryNode(string name, FolderTreeNodeBase? parent)
         {
             _name = name;
             Source = name;
@@ -40,7 +40,7 @@ namespace NeeView
 
         public virtual string Path => Parent is DirectoryNode parent ? LoosePath.Combine(parent.Path, Name) : Name;
 
-        public DriveDirectoryNode Drive => this is DriveDirectoryNode drive ? drive : Parent is DirectoryNode parent ? parent.Drive : null;
+        public DriveDirectoryNode? Drive => this is DriveDirectoryNode drive ? drive : Parent is DirectoryNode parent ? parent.Drive : null;
 
         // 遅延生成を親から継承する
         public bool IsDelayCreateInheritance { get; set; } = true;
@@ -76,7 +76,7 @@ namespace NeeView
                     .OrderBy(e => e.Name, NaturalSort.Comparer)
                     .Select(e => new DirectoryNode(e.Name, this)));
 
-                OnChildrenChanged(this, null);
+                OnChildrenChanged(this, EventArgs.Empty);
             }
             catch (Exception ex)
             {
@@ -95,7 +95,7 @@ namespace NeeView
         }
 
 
-        public override FolderTreeNodeBase FindChild(object source)
+        public override FolderTreeNodeBase? FindChild(object? source)
         {
             return _children?.FirstOrDefault(e => e.Name.Equals(source));
         }

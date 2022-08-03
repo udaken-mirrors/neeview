@@ -12,7 +12,7 @@ namespace NeeView
 
 
         private Queue<Toast> _queue;
-        private ToastCard _toastCard;
+        private ToastCard? _toastCard;
         private DispatcherTimer _timer;
         private DateTime _timeLimit;
         private Dictionary<string, Toast> _slotMap = new Dictionary<string, Toast>();
@@ -28,7 +28,7 @@ namespace NeeView
         }
 
 
-        public ToastCard ToastCard
+        public ToastCard? ToastCard
         {
             get { return _toastCard; }
             set { SetProperty(ref _toastCard, value); }
@@ -37,9 +37,11 @@ namespace NeeView
 
         public void Show(string slot, Toast toast)
         {
+            if (toast is null) return;
+
             lock (_lock)
             {
-                if (_slotMap.TryGetValue(slot, out Toast oldToast))
+                if (_slotMap.TryGetValue(slot, out Toast? oldToast))
                 {
                     oldToast.Cancel();
                 }
@@ -52,6 +54,8 @@ namespace NeeView
 
         public void Show(Toast toast)
         {
+            if (toast is null) return;
+
             lock (_lock)
             {
                 _queue.Enqueue(toast);
@@ -66,7 +70,7 @@ namespace NeeView
             Update();
         }
 
-        private void Timer_Tick(object sender, EventArgs e)
+        private void Timer_Tick(object? sender, EventArgs e)
         {
             Update();
         }
@@ -98,12 +102,14 @@ namespace NeeView
 
         private void Open(Toast toast)
         {
+            if (toast is null) return;
+
             if (toast.IsCanceled)
             {
                 return;
             }
 
-            ToastCard = new ToastCard() { Toast = toast };
+            ToastCard = new ToastCard(toast);
             _timeLimit = DateTime.Now + toast.DisplayTime;
             _timer.Interval = new TimeSpan(0, 0, 1);
             _timer.Start();

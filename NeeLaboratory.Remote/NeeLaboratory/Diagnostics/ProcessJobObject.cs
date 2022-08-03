@@ -839,7 +839,7 @@ namespace NeeLaboratory.Diagnostics
             /// <param name="name"> Pointer to a null-terminated string specifying the name of the job. </param>
             /// <returns>If the function succeeds, the return value is a handle to the job object</returns>
             [DllImport("kernel32.dll", SetLastError = true)]
-            public static extern IntPtr CreateJobObject(IntPtr jobAttributes, string name);
+            public static extern IntPtr CreateJobObject(IntPtr jobAttributes, string? name);
 
             /// <summary>
             /// The AssignProcessToJobObject function assigns a process to an existing job object.

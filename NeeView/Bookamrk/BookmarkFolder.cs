@@ -7,10 +7,11 @@ namespace NeeView
     [DataContract]
     public class BookmarkFolder : BindableBase, IBookmarkEntry
     {
-        private string _name;
+        private string? _name;
+
 
         [DataMember(EmitDefaultValue = false)]
-        public string Name
+        public string? Name
         {
             get { return _name; }
             set { SetProperty(ref _name, value); }
@@ -25,5 +26,11 @@ namespace NeeView
         {
             return entry is BookmarkFolder folder && this.Name == folder.Name;
         }
+    }
+
+
+    public class BookmarkEmpty : IBookmarkEntry
+    {
+        public string? Name => "";
     }
 }

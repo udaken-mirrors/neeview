@@ -16,17 +16,23 @@ namespace NeeView
     /// </summary>
     public class BookMementoUnit : IHasPage
     {
-        private BookMementoUnit()
+        private Page? _archivePage;
+
+
+        private BookMementoUnit(Book.Memento memento)
         {
+            Memento = memento;
         }
+
 
         public Book.Memento Memento { get; set; }
 
-        public string Path => Memento?.Path;
+        public string Path => Memento.Path;
 
-        public override string ToString()
+        public override string? ToString()
         {
-            return Memento?.Path ?? base.ToString();
+            var s = Memento?.Path;
+            return string.IsNullOrEmpty(s) ? base.ToString() : s;
         }
 
         #region for Thumbnail
@@ -35,7 +41,6 @@ namespace NeeView
         /// ArchivePage Property.
         /// サムネイル用
         /// </summary>
-        private Page _archivePage;
         public Page ArchivePage
         {
             get
@@ -50,10 +55,11 @@ namespace NeeView
             }
         }
 
-        //
-        private void Thumbnail_Touched(object sender, EventArgs e)
+        private void Thumbnail_Touched(object? sender, EventArgs e)
         {
-            var thumbnail = (Thumbnail)sender;
+            var thumbnail = sender as Thumbnail;
+            if (thumbnail is null) return;
+
             BookThumbnailPool.Current.Add(thumbnail);
         }
 
@@ -70,7 +76,7 @@ namespace NeeView
 
         public static BookMementoUnit Create(Book.Memento memento)
         {
-            return new BookMementoUnit() { Memento = memento };
+            return new BookMementoUnit(memento);
         }
     }
 }

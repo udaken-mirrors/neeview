@@ -12,22 +12,18 @@ namespace NeeView
         static TempFileCache() => Current = new TempFileCache();
         public static TempFileCache Current { get; }
 
-        #region Fields
 
         private Dictionary<string, TempFile> _caches = new Dictionary<string, TempFile>();
 
         private object _lock = new object();
 
-        #endregion
-
-        #region Methods
 
         /// <summary>
         /// TempFileをキャッシュから取得。
         /// </summary>
         /// <param name="key">Ident</param>
         /// <returns>キャッシュに存在しない場合はnull</returns>
-        public TempFile Get(string key)
+        public TempFile? Get(string key)
         {
             lock (_lock)
             {
@@ -74,8 +70,6 @@ namespace NeeView
         {
             return _caches.ContainsValue(tempFile);
         }
-
-        #endregion
     }
 
 }

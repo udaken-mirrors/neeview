@@ -154,7 +154,7 @@ namespace NeeView
         }
 
 
-        private void WindowStateManager_StateChanged(object sender, WindowStateChangedEventArgs e)
+        private void WindowStateManager_StateChanged(object? sender, WindowStateChangedEventArgs e)
         {
             Config.Current.Window.State = e.NewState;
             UpdatePanelHideMode();

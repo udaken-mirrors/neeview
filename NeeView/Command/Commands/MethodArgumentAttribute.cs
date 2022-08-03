@@ -6,7 +6,7 @@ namespace NeeView
     [AttributeUsage(AttributeTargets.Method, Inherited = false, AllowMultiple = false)]
     public sealed class MethodArgumentAttribute : Attribute
     {
-        public string Note;
+        public string? Note;
 
         public MethodArgumentAttribute()
         {
@@ -21,12 +21,12 @@ namespace NeeView
 
     public static class MethodArgumentAttributeExtensions
     {
-        private static string GetResourceKey(MethodInfo method, string postfix = null)
+        private static string GetResourceKey(MethodInfo method, string? postfix = null)
         {
-            return $"@{method.DeclaringType.Name}.{method.Name}{postfix}";
+            return $"@{method.DeclaringType?.Name}.{method.Name}{postfix}";
         }
 
-        public static string GetMethodNote(MethodInfo property, MethodArgumentAttribute attribute)
+        public static string? GetMethodNote(MethodInfo property, MethodArgumentAttribute? attribute)
         {
             if (attribute is null)
             {
@@ -39,7 +39,7 @@ namespace NeeView
             return resourceValue;
         }
 
-        public static string GetMethodNote(MethodInfo property)
+        public static string? GetMethodNote(MethodInfo property)
         {
             return GetMethodNote(property, property.GetCustomAttribute<MethodArgumentAttribute>());
         }

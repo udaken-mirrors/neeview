@@ -11,7 +11,7 @@ namespace NeeView
 #if DEBUG
     public class DebugMenu : BindableBase
     {
-        private DebugWindow _debugWindow;
+        private DebugWindow? _debugWindow;
 
         private bool _isDebugWindowVisibled;
         public bool IsDebugWindowVisibled
@@ -90,6 +90,7 @@ namespace NeeView
         // [開発用] Colors.xaml 出力
         private void MenuItemDevExportColorsXaml_Click(object sender, RoutedEventArgs e)
         {
+            if (ThemeManager.Current.ThemeProfile is null) throw new InvalidOperationException();
             ThemeProfileTools.SaveColorsXaml(ThemeManager.Current.ThemeProfile, "Colors.xaml");
         }
 
@@ -114,7 +115,9 @@ namespace NeeView
         // 開発用コマンド：アプリケーションフォルダーを開く
         private void MenuItemDevApplicationFolder_Click(object sender, RoutedEventArgs e)
         {
-            DebugOpenFolder(System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location));
+            var path = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly()?.Location);
+            if (path is null) throw new InvalidOperationException();
+            DebugOpenFolder(path);
         }
 
         // 開発用コマンド：アプリケーションデータフォルダーを開く

@@ -132,13 +132,13 @@ namespace NeeView.Setting
 
         #region Commands
 
-        private RelayCommand<UIElement> _RemoveAllData;
+        private RelayCommand<UIElement>? _RemoveAllData;
         public RelayCommand<UIElement> RemoveAllData
         {
             get { return _RemoveAllData = _RemoveAllData ?? new RelayCommand<UIElement>(RemoveAllData_Executed); }
         }
 
-        private void RemoveAllData_Executed(UIElement element)
+        private void RemoveAllData_Executed(UIElement? element)
         {
             var window = element != null ? Window.GetWindow(element) : null;
             Environment.RemoveApplicationData(window);
@@ -197,13 +197,13 @@ namespace NeeView.Setting
 
         #region Commands
 
-        private RelayCommand<UIElement> _RemoveCache;
+        private RelayCommand<UIElement>? _RemoveCache;
         public RelayCommand<UIElement> RemoveCache
         {
             get { return _RemoveCache = _RemoveCache ?? new RelayCommand<UIElement>(RemoveCache_Executed); }
         }
 
-        private void RemoveCache_Executed(UIElement element)
+        private void RemoveCache_Executed(UIElement? element)
         {
             try
             {

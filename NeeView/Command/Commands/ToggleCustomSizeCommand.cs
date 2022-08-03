@@ -17,18 +17,18 @@ namespace NeeView
             return new Binding(nameof(ImageCustomSizeConfig.IsEnabled)) { Mode = BindingMode.OneWay, Source = Config.Current.ImageCustomSize };
         }
 
-        public override string ExecuteMessage(object sender, CommandContext e)
+        public override string ExecuteMessage(object? sender, CommandContext e)
         {
             return Config.Current.ImageCustomSize.IsEnabled ? Properties.Resources.ToggleCustomSizeCommand_Off : Properties.Resources.ToggleCustomSizeCommand_On;
         }
 
-        public override bool CanExecute(object sender, CommandContext e)
+        public override bool CanExecute(object? sender, CommandContext e)
         {
             return !NowLoading.Current.IsDispNowLoading;
         }
 
         [MethodArgument("@ToggleCommand.Execute.Remarks")]
-        public override void Execute(object sender, CommandContext e)
+        public override void Execute(object? sender, CommandContext e)
         {
             if (e.Args.Length > 0)
             {

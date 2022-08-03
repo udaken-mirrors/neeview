@@ -14,8 +14,8 @@ namespace NeeView
 {
     public class PlaylistListBoxViewModel : BindableBase
     {
-        private Playlist _model;
-        private ObservableCollection<PlaylistItem> _items;
+        private Playlist? _model;
+        private ObservableCollection<PlaylistItem>? _items;
         private Visibility _visibility = Visibility.Hidden;
 
 
@@ -41,21 +41,21 @@ namespace NeeView
         }
 
 
-        public bool IsThumbnailVisibled => _model.IsThumbnailVisibled;
+        public bool IsThumbnailVisibled => _model is null ? false : _model.IsThumbnailVisibled;
 
         public CollectionViewSource CollectionViewSource { get; private set; }
 
 
 
-        public ObservableCollection<PlaylistItem> Items
+        public ObservableCollection<PlaylistItem>? Items
         {
             get { return _items; }
             private set { SetProperty(ref _items, value); }
         }
 
-        private PlaylistItem _selectedItem;
+        private PlaylistItem? _selectedItem;
 
-        public PlaylistItem SelectedItem
+        public PlaylistItem? SelectedItem
         {
             get { return _selectedItem; }
             set { SetProperty(ref _selectedItem, value); }
@@ -70,7 +70,7 @@ namespace NeeView
 
         public bool IsEditable
         {
-            get { return _model.IsEditable; }
+            get { return _model is null ? false : _model.IsEditable; }
         }
 
         public bool IsGroupBy
@@ -97,7 +97,7 @@ namespace NeeView
             set { IsFirstIn = !value; }
         }
 
-        public string ErrorMessage => _model.ErrorMessage;
+        public string? ErrorMessage => _model?.ErrorMessage;
 
 
         private void UpdateIsFirstIn()
@@ -121,7 +121,7 @@ namespace NeeView
             UpdateItems();
         }
 
-        private void CollectionViewSourceFilter(object sender, FilterEventArgs e)
+        private void CollectionViewSourceFilter(object? sender, FilterEventArgs e)
         {
             if (e.Item is null)
             {
@@ -141,9 +141,9 @@ namespace NeeView
 
         private void UpdateDispPlace()
         {
-            if (this.Items is null) return;
+            if (_items is null) return;
 
-            foreach (var item in this.Items)
+            foreach (var item in _items)
             {
                 item.UpdateDispPlace();
             }
@@ -172,6 +172,8 @@ namespace NeeView
 
         private void UpdateItems()
         {
+            if (_model is null) return;
+
             if (this.Items != _model.Items)
             {
                 this.Items = _model.Items;
@@ -183,70 +185,84 @@ namespace NeeView
 
         public bool IsLRKeyEnabled()
         {
+            if (_model is null) return false;
+
             return Config.Current.Panels.IsLeftRightKeyEnabled || _model.PanelListItemStyle == PanelListItemStyle.Thumbnail;
         }
 
         private int GetSelectedIndex()
         {
-            return this.Items.IndexOf(this.SelectedItem);
+            if (_items is null) return -1;
+
+            return this.SelectedItem is null ? -1 : _items.IndexOf(this.SelectedItem);
         }
 
         private void SetSelectedIndex(int index)
         {
-            if (this.Items.Count > 0)
+            if (_items is null) return;
+
+            if (_items.Count > 0)
             {
-                index = MathUtility.Clamp(index, 0, this.Items.Count - 1);
-                this.SelectedItem = this.Items[index];
+                index = MathUtility.Clamp(index, 0, _items.Count - 1);
+                this.SelectedItem = _items[index];
             }
         }
 
-        public PlaylistItem AddCurrentPage()
+        public PlaylistItem? AddCurrentPage()
         {
+            if (_items is null) return null;
+
             var path = BookOperation.Current.GetPage()?.EntryFullName;
             if (path is null) return null;
 
-            var targetItem = this.IsFirstIn ? this.Items.FirstOrDefault() : null;
+            var targetItem = this.IsFirstIn ? _items.FirstOrDefault() : null;
             var result = Insert(new List<string> { path }, targetItem);
             return result?.FirstOrDefault();
         }
 
         public bool CanMoveUp()
         {
+            if (_model is null) return false;
+
             return _model.CanMoveUp(this.SelectedItem);
         }
 
         public void MoveUp()
         {
-            _model.MoveUp(this.SelectedItem);
+            _model?.MoveUp(this.SelectedItem);
         }
 
         public bool CanMoveDown()
         {
+            if (_model is null) return false;
+
             return _model.CanMoveDown(this.SelectedItem);
         }
 
         public void MoveDown()
         {
-            _model.MoveDown(this.SelectedItem);
+            _model?.MoveDown(this.SelectedItem);
         }
 
 
-        public List<PlaylistItem> Insert(IEnumerable<string> paths, PlaylistItem targetItem)
+        public List<PlaylistItem>? Insert(IEnumerable<string> paths, PlaylistItem? targetItem)
         {
-            if (_model.Items is null) return null;
+            if (_model is null) return null;
+            if (!_model.IsEditable) return null;
 
             this.SelectedItem = null;
 
             var items = _model.Insert(paths, targetItem);
 
-            this.SelectedItem = items.FirstOrDefault();
+            this.SelectedItem = items?.FirstOrDefault();
 
             return items;
         }
 
         public void Remove(IEnumerable<PlaylistItem> items)
         {
-            if (_model.Items is null) return;
+            if (_model is null) return;
+            if (!_model.IsEditable) return;
 
             var index = GetSelectedIndex();
             this.SelectedItem = null;
@@ -256,22 +272,26 @@ namespace NeeView
             SetSelectedIndex(index);
         }
 
-        public void Move(IEnumerable<PlaylistItem> items, PlaylistItem targetItem)
+        public void Move(IEnumerable<PlaylistItem> items, PlaylistItem? targetItem)
         {
-            if (_model.Items is null) return;
+            if (_model is null) return;
+            if (!_model.IsEditable) return;
 
             _model.Move(items, targetItem);
         }
 
         public List<string> CollectAnotherPlaylists()
         {
+            if (_model is null) return new List<string>();
+
             return _model.CollectAnotherPlaylists();
         }
 
 
         public void MoveToAnotherPlaylist(string path, List<PlaylistItem> items)
         {
-            if (_model.Items is null) return;
+            if (_model is null) return;
+            if (!_model.IsEditable) return;
 
             _model.MoveToAnotherPlaylist(path, items);
         }
@@ -279,21 +299,27 @@ namespace NeeView
 
         public bool Rename(PlaylistItem item, string newName)
         {
+            if (_model is null) return false;
+
             return _model.Rename(item, newName);
         }
 
         public void Open(PlaylistItem item)
         {
+            if (_model is null) return;
+
             _model.Open(item);
         }
 
         public bool CanMovePrevious()
         {
-            return this.Items != null;
+            return _items != null;
         }
 
         public bool MovePrevious()
         {
+            if (_model is null) return false;
+
             this.CollectionViewSource.View.MoveCurrentTo(this.SelectedItem);
             this.CollectionViewSource.View.MoveCurrentToPrevious();
             var item = this.CollectionViewSource.View.CurrentItem as PlaylistItem;
@@ -311,11 +337,13 @@ namespace NeeView
 
         public bool CanMoveNext()
         {
-            return this.Items != null;
+            return _items != null;
         }
 
         public bool MoveNext()
         {
+            if (_model is null) return false;
+
             this.CollectionViewSource.View.MoveCurrentTo(this.SelectedItem);
             this.CollectionViewSource.View.MoveCurrentToNext();
             var item = this.CollectionViewSource.View.CurrentItem as PlaylistItem;

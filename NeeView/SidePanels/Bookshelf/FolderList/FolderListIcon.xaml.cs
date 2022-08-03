@@ -77,7 +77,7 @@ namespace NeeView
     [ValueConversion(typeof(FolderItemIconOverlay), typeof(ImageSource))]
     public class FolderItemIconOverlayToImageSourceConverter : IValueConverter
     {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        public object? Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value is FolderItemIconOverlay overlay)
             {

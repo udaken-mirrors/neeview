@@ -18,9 +18,9 @@ namespace NeeView
             _source.MouseHorizontalWheelChanged += Source_MouseHorizontalWheel;
         }
 
-        public event MouseWheelEventHandler MouseHorizontalWheelChanged;
+        public event MouseWheelEventHandler? MouseHorizontalWheelChanged;
 
-        private void Source_MouseHorizontalWheel(object sender, MouseWheelEventArgs e)
+        private void Source_MouseHorizontalWheel(object? sender, MouseWheelEventArgs e)
         {
             if (_target.IsMouseOver)
             {

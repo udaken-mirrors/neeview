@@ -15,13 +15,13 @@ namespace NeeView
 
         private string _path;
         private ScriptCommandSourceMap _sourceMap;
-        private GesturesMemento _defaultGestures;
+        private GesturesMemento? _defaultGestures;
 
         public ScriptCommand(string path, ScriptCommandSourceMap sourceMap) : base(PathToScriptCommandName(path))
         {
             _path = path;
             _sourceMap = sourceMap ?? throw new ArgumentNullException(nameof(sourceMap));
-            
+
             this.Group = Properties.Resources.CommandGroup_Script;
             this.Text = LoosePath.GetFileNameWithoutExtension(_path);
 
@@ -53,9 +53,9 @@ namespace NeeView
             return command;
         }
 
-        public override void Execute(object sender, CommandContext e)
+        public override void Execute(object? sender, CommandContext e)
         {
-            CommandTable.Current.ScriptManager.Execute(sender, _path, ((ScriptCommandParameter)e.Parameter).Argument);
+            CommandTable.Current.ScriptManager.Execute(sender, _path, (e.Parameter.Cast<ScriptCommandParameter>()).Argument);
         }
 
         private void StoreDefault()
@@ -78,9 +78,9 @@ namespace NeeView
 
                 Remarks = source.Remarks;
 
-                if (isForce || (_defaultGestures.IsEquals(this) && !IsCloneCommand()))
+                if (isForce || (_defaultGestures != null && _defaultGestures.IsEquals(this) && !IsCloneCommand()))
                 {
-                   ShortCutKey = source.ShortCutKey ?? "";
+                    ShortCutKey = source.ShortCutKey ?? "";
                     MouseGesture = source.MouseGesture ?? "";
                     TouchGesture = source.TouchGesture ?? "";
 
@@ -99,10 +99,10 @@ namespace NeeView
 
     public class ScriptCommandParameter : CommandParameter
     {
-        private string _argument;
+        private string? _argument;
 
         [PropertyMember]
-        public string Argument
+        public string? Argument
         {
             get { return _argument; }
             set { SetProperty(ref _argument, string.IsNullOrWhiteSpace(value) ? null : value.Trim()); }

@@ -12,10 +12,8 @@ namespace NeeView
     /// </summary>
     public class TouchInputMouseDrag : TouchInputBase
     {
-        DragTransformControl _drag;
-
-        //
-        TouchContext _touch;
+        private DragTransformControl _drag;
+        private TouchContext? _touch;
 
 
         /// <summary>
@@ -35,9 +33,9 @@ namespace NeeView
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="parameter"></param>
-        public override void OnOpened(FrameworkElement sender, object parameter)
+        public override void OnOpened(FrameworkElement sender, object? parameter)
         {
-            _touch = (TouchContext)parameter;
+            _touch = parameter as TouchContext ?? throw new InvalidOperationException("parameter must be TouchContext");
 
             _drag.ResetState();
             _drag.UpdateState(MouseButtonBits.LeftButton, Keyboard.Modifiers, _touch.StartPoint);

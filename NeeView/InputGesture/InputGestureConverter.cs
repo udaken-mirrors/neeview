@@ -31,7 +31,7 @@ namespace NeeView
         }
 
 
-        private static readonly Dictionary<ConverterType, Func<string, InputGesture>> _converter = new Dictionary<ConverterType, Func<string, InputGesture>>
+        private static readonly Dictionary<ConverterType, Func<string, InputGesture?>> _converter = new()
         {
             [ConverterType.Key] = ConvertFromKeyGestureString,
             [ConverterType.Mouse] = ConvertFromMouseGestureString,
@@ -40,9 +40,9 @@ namespace NeeView
         };
 
 
-        private static InputGesture ConvertFromStringByOrder(string source, ConverterType type)
+        private static InputGesture? ConvertFromStringByOrder(string source, ConverterType type)
         {
-            List<ConverterType> order = null;
+            List<ConverterType> order;
 
             switch (type)
             {
@@ -74,7 +74,7 @@ namespace NeeView
         /// </summary>
         /// <param name="source">ショートカット定義文字列</param>
         /// <returns>InputGesture。変換出来なかった場合はnull</returns>
-        public static InputGesture ConvertFromString(string source)
+        public static InputGesture? ConvertFromString(string source)
         {
             // なるべく例外が発生しないようにコンバート順を考慮する
             if (source.Contains("Wheel"))
@@ -96,12 +96,13 @@ namespace NeeView
         /// </summary>
         /// <param name="source">ショートカット定義文字列</param>
         /// <returns>InputGesture。変換出来なかった場合はnull</returns>
-        public static InputGesture ConvertFromKeyGestureString(string source)
+        public static InputGesture? ConvertFromKeyGestureString(string source)
         {
             try
             {
                 KeyExGestureConverter converter = new KeyExGestureConverter();
-                return (InputGesture)converter.ConvertFromString(source);
+                var gesture =  converter.ConvertFromString(source) as InputGesture;
+                if (gesture is not null) return gesture;
             }
             catch (Exception e)
             {
@@ -116,12 +117,13 @@ namespace NeeView
         /// </summary>
         /// <param name="source">ショートカット定義文字列</param>
         /// <returns>InputGesture。変換出来なかった場合はnull</returns>
-        public static InputGesture ConvertFromMouseGestureString(string source)
+        public static InputGesture? ConvertFromMouseGestureString(string source)
         {
             try
             {
                 MouseGestureConverter converter = new MouseGestureConverter();
-                return (MouseGesture)converter.ConvertFromString(source);
+                var gesture = converter.ConvertFromString(source) as MouseGesture;
+                if (gesture is not null) return gesture;
             }
             catch (Exception e)
             {
@@ -131,7 +133,9 @@ namespace NeeView
             try
             {
                 MouseExGestureConverter converter = new MouseExGestureConverter();
-                return (InputGesture)converter.ConvertFromString(source);
+                var gesture = converter.ConvertFromString(source) as InputGesture;
+                if (gesture is not null) return gesture;
+
             }
             catch (Exception e)
             {
@@ -146,12 +150,13 @@ namespace NeeView
         /// </summary>
         /// <param name="source">ショートカット定義文字列</param>
         /// <returns>InputGesture。変換出来なかった場合はnull</returns>
-        public static InputGesture ConvertFromMouseWheelGestureString(string source)
+        public static InputGesture? ConvertFromMouseWheelGestureString(string source)
         {
             try
             {
                 MouseWheelGestureConverter converter = new MouseWheelGestureConverter();
-                return (InputGesture)converter.ConvertFromString(source);
+                var gesture = converter.ConvertFromString(source) as InputGesture;
+                if (gesture is not null) return gesture;
             }
             catch (Exception e)
             {
@@ -166,12 +171,13 @@ namespace NeeView
         /// </summary>
         /// <param name="source">ショートカット定義文字列</param>
         /// <returns>InputGesture。変換出来なかった場合はnull</returns>
-        public static InputGesture ConvertFromMouseHorizontalWheelGestureString(string source)
+        public static InputGesture? ConvertFromMouseHorizontalWheelGestureString(string source)
         {
             try
             {
                 MouseHorizontalWheelGestureConverter converter = new MouseHorizontalWheelGestureConverter();
-                return (InputGesture)converter.ConvertFromString(source);
+                var gesture = converter.ConvertFromString(source) as InputGesture;
+                if (gesture is not null) return gesture;
             }
             catch (Exception e)
             {
@@ -184,7 +190,7 @@ namespace NeeView
         /// <summary>
         /// InputGestureを文字列にする
         /// </summary>
-        public static string ConvertToString(InputGesture gesture)
+        public static string? ConvertToString(InputGesture? gesture)
         {
             switch (gesture)
             {
@@ -207,7 +213,7 @@ namespace NeeView
                     return _mouseHorizontalWheelGestureConverter.ConvertToString(e);
 
                 default:
-                    throw new NotSupportedException($"Not supported gesture type: {gesture.GetType()}");
+                    throw new NotSupportedException($"Not supported gesture type: {gesture?.GetType()}");
             }
 
         }

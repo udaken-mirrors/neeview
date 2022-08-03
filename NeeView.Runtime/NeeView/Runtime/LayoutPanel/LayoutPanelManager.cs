@@ -207,7 +207,7 @@ namespace NeeView.Runtime.LayoutPanel
             return memento;
         }
 
-        public void Restore(Memento memento)
+        public void Restore(Memento? memento)
         {
             if (memento == null) return;
 

@@ -67,12 +67,11 @@ namespace NeeView
 
         #endregion
 
-        #region Fields
 
         // フィルムストリップのパネルコントロール
-        private VirtualizingStackPanel _listPanel;
+        private VirtualizingStackPanel? _listPanel;
 
-        private ThumbnailListViewModel _vm;
+        private ThumbnailListViewModel? _vm;
         private bool _isThumbnailDarty;
 
 
@@ -83,9 +82,7 @@ namespace NeeView
 
         private MouseWheelDelta _mouseWheelDelta = new MouseWheelDelta();
 
-        #endregion
 
-        #region Constructors
 
         static ThumbnailListView()
         {
@@ -101,7 +98,6 @@ namespace NeeView
                 (s, e) => this.IsContentVisible = (bool)e.NewValue;
         }
 
-        #endregion
 
         #region Commands
 
@@ -145,7 +141,6 @@ namespace NeeView
 
         #endregion
 
-        #region Methods
 
         private void Initialize()
         {
@@ -165,17 +160,17 @@ namespace NeeView
         }
 
 
-        private void ViewModel_CollectionChanging(object sender, EventArgs e)
+        private void ViewModel_CollectionChanging(object? sender, EventArgs e)
         {
             _isFreezed = true;
         }
 
-        private void ViewModel_CollectionChanged(object sender, EventArgs e)
+        private void ViewModel_CollectionChanged(object? sender, EventArgs e)
         {
             _isFreezed = false;
         }
 
-        private void ViewModel_ViewItemsChanged(object sender, ViewItemsChangedEventArgs e)
+        private void ViewModel_ViewItemsChanged(object? sender, ViewItemsChangedEventArgs e)
         {
             if (!this.IsVisible) return;
 
@@ -283,7 +278,7 @@ namespace NeeView
 
             // 表示項目先頭指定
             var horizontalOffset = topIndex * itemWidth;
-            _listPanel.SetHorizontalOffset(horizontalOffset);
+            _listPanel?.SetHorizontalOffset(horizontalOffset);
         }
 
         /// <summary>
@@ -291,6 +286,7 @@ namespace NeeView
         /// </summary>
         private void ScrollIntoViewIndex(int index)
         {
+            if (_listPanel is null) return;
             if (index < 0) return;
 
             Debug.Assert(VirtualizingStackPanel.GetScrollUnit(this.ThumbnailListBox) == ScrollUnit.Pixel);
@@ -412,7 +408,7 @@ namespace NeeView
 
         private void MoveSelectedIndex(int delta)
         {
-            if (_listPanel == null || _vm.Model.SelectedIndex < 0) return;
+            if (_listPanel == null || _vm is null || _vm.Model.SelectedIndex < 0) return;
 
             if (_listPanel.FlowDirection == FlowDirection.RightToLeft)
                 delta = -delta;
@@ -420,21 +416,20 @@ namespace NeeView
             _vm.MoveSelectedIndex(delta);
         }
 
-        #endregion
 
         #region ThunbnailList event func
 
-        private void ThumbnailListArea_SizeChanged(object sender, SizeChangedEventArgs e)
+        private void ThumbnailListArea_SizeChanged(object? sender, SizeChangedEventArgs e)
         {
             UpdateThumbnailListLayout(false);
         }
 
-        private void ThumbnailListBox_Loaded(object sender, RoutedEventArgs e)
+        private void ThumbnailListBox_Loaded(object? sender, RoutedEventArgs e)
         {
             // nop.
         }
 
-        private void ThumbnailListBoxPanel_Loaded(object sender, RoutedEventArgs e)
+        private void ThumbnailListBoxPanel_Loaded(object? sender, RoutedEventArgs e)
         {
             // パネルコントロール取得
             _listPanel = sender as VirtualizingStackPanel;
@@ -496,6 +491,7 @@ namespace NeeView
 
         public void FocusSelectedItem()
         {
+            if (_vm is null) return;
             if (this.ThumbnailListBox.SelectedIndex < 0) this.ThumbnailListBox.SelectedIndex = 0;
             if (this.ThumbnailListBox.SelectedIndex < 0) return;
 

@@ -19,7 +19,7 @@ namespace NeeView
 
 
         // 注意: sourceは上書きされます
-        private ProcessImageSettings CreateSetting(Size size, string mimeType, ProcessImageSettings source)
+        private ProcessImageSettings CreateSetting(Size size, string mimeType, ProcessImageSettings? source)
         {
             var setting = source ?? new ProcessImageSettings();
 
@@ -35,13 +35,13 @@ namespace NeeView
         }
 
         //
-        public BitmapImage Create(Stream stream, BitmapInfo info, Size size, CancellationToken token)
+        public BitmapImage Create(Stream stream, BitmapInfo? info, Size size, CancellationToken token)
         {
             return Create(stream, info, size, null);
         }
 
         //
-        public BitmapImage Create(Stream stream, BitmapInfo info, Size size, ProcessImageSettings setting)
+        public BitmapImage Create(Stream stream, BitmapInfo? info, Size size, ProcessImageSettings? setting)
         {
             ////Debug.WriteLine($"MagicScalerImage: {size.Truncate()}");
             
@@ -72,7 +72,7 @@ namespace NeeView
         }
 
         //
-        public void CreateImage(Stream stream, BitmapInfo info, Stream outStream, Size size, BitmapImageFormat format, int quality, ProcessImageSettings setting)
+        public void CreateImage(Stream stream, BitmapInfo? info, Stream outStream, Size size, BitmapImageFormat format, int quality, ProcessImageSettings? setting)
         {
             ////Debug.WriteLine($"MagicScalerImage: {size.Truncate()}");
 

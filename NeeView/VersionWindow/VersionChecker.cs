@@ -14,12 +14,13 @@ namespace NeeView
     {
         private volatile bool _isCheching = false;
         private volatile bool _isChecked = false;
-        private string _message;
+        private string? _message;
 
 
         public VersionChecker()
         {
             CurrentVersion = new FormatVersion(Environment.SolutionName);
+            LastVersion = new FormatVersion(Environment.SolutionName, 0, 0, 0);
 
 #if DEBUG
             // for Debug
@@ -41,7 +42,7 @@ namespace NeeView
 
         public bool IsExistNewVersion { get; set; }
 
-        public string Message
+        public string? Message
         {
             get { return _message; }
             set { _message = value; RaisePropertyChanged(); }

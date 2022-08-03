@@ -21,13 +21,15 @@ namespace NeeView
     {
         private DestinationFolderEditDialogViewMdoel _vm;
 
-        public DestinationFolderEditDialog()
+        // for designer
+        public DestinationFolderEditDialog(): this(new DestinationFolder())
         {
-            InitializeComponent();
         }
 
-        public DestinationFolderEditDialog(DestinationFolder model) : this()
+        public DestinationFolderEditDialog(DestinationFolder model)
         {
+            InitializeComponent();
+
             _vm = new DestinationFolderEditDialogViewMdoel(model);
             this.DataContext = _vm;
         }

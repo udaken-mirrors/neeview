@@ -1,4 +1,5 @@
 ﻿using NeeView.IO;
+using NeeLaboratory.Linq;
 using NeeView.Properties;
 using System;
 using System.Collections.Generic;
@@ -56,7 +57,7 @@ namespace NeeView
             var path = source;
 
             bool isFile = File.Exists(path);
-            var directory = Path.GetDirectoryName(path);
+            var directory = Path.GetDirectoryName(path) ?? throw new InvalidOperationException("Cannot get parent directory");
             var filename = isFile ? Path.GetFileNameWithoutExtension(path) : Path.GetFileName(path);
             var extension = isFile ? Path.GetExtension(path) : "";
             int count = 1;
@@ -199,13 +200,13 @@ namespace NeeView
         /// </summary>
         public async Task<bool> RemovePageAsync(Page page)
         {
-            if (page == null)
-            {
-                return false;
-            }
+            if (page == null) return false;
+
+            var path = page.GetFilePlace();
+            if (path is null) return false;
 
             var thumbnail = await CreatePageVisualAsync(page);
-            return await RemoveFileAsync(page.GetFilePlace(), Resources.FileDeletePageDialog_Title, thumbnail);
+            return await RemoveFileAsync(path, Resources.FileDeletePageDialog_Title, thumbnail);
         }
 
         /// <summary>
@@ -224,14 +225,18 @@ namespace NeeView
             }
             else
             {
-                return await RemoveFileAsync(pages.Select(e => e.GetFilePlace()).ToList(), Resources.FileDeletePageDialog_Title);
+                var files = pages
+                    .Select(e => e.GetFilePlace())
+                    .WhereNotNull()
+                    .ToList();
+                return await RemoveFileAsync(files, Resources.FileDeletePageDialog_Title);
             }
         }
 
         /// <summary>
         /// ファイル削除
         /// </summary>
-        public async Task<bool> RemoveFileAsync(string path, string title, FrameworkElement thumbnail)
+        public async Task<bool> RemoveFileAsync(string path, string title, FrameworkElement? thumbnail)
         {
             if (Config.Current.System.IsRemoveConfirmed)
             {
@@ -250,7 +255,7 @@ namespace NeeView
         /// </summary>
         public async Task<bool> RemoveFileAsync(List<string> paths, string title)
         {
-            if (paths != null && !paths.Any())
+            if (paths is null || !paths.Any())
             {
                 return false;
             }
@@ -308,7 +313,7 @@ namespace NeeView
         /// <summary>
         /// 1ファイル用確認ダイアログコンテンツ
         /// </summary>
-        private FrameworkElement CreateRemoveDialogContent(string path, FrameworkElement thumbnail)
+        private FrameworkElement CreateRemoveDialogContent(string path, FrameworkElement? thumbnail)
         {
             var dockPanel = new DockPanel();
 
@@ -397,7 +402,8 @@ namespace NeeView
             try
             {
                 // 開いている本であるならば閉じる
-                if (paths.Contains(BookHub.Current.Address))
+                var bookAddress = BookHub.Current.Address;
+                if (bookAddress != null && paths.Contains(bookAddress))
                 {
                     await BookHub.Current.RequestUnload(this, true).WaitAsync();
                     await ArchiverManager.Current.UnlockAllArchivesAsync();
@@ -423,9 +429,11 @@ namespace NeeView
         #region Rename
 
         // ファイル名前変更
-        public async Task<string> RenameAsync(FolderItem file, string newName)
+        public async Task<string?> RenameAsync(FolderItem file, string newName)
         {
-            newName = newName?.Trim().TrimEnd(' ', '.');
+            if (newName is null) return null;
+
+            newName = newName.Trim().TrimEnd(' ', '.');
 
             // ファイル名に使用できない
             if (string.IsNullOrWhiteSpace(newName))
@@ -458,7 +466,8 @@ namespace NeeView
             }
 
             string src = file.TargetPath.SimplePath;
-            string dst = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(src), newName);
+            string folder = System.IO.Path.GetDirectoryName(src) ?? throw new InvalidOperationException("Cannot get parent directory");
+            string dst = System.IO.Path.Combine(folder, newName);
 
             // 全く同じ名前なら処理不要
             if (src == dst) return null;
@@ -491,7 +500,7 @@ namespace NeeView
             else if (System.IO.File.Exists(dst) || System.IO.Directory.Exists(dst))
             {
                 string dstBase = dst;
-                string dir = System.IO.Path.GetDirectoryName(dst);
+                string dir = System.IO.Path.GetDirectoryName(dst) ?? throw new InvalidOperationException("Cannot get parent directory");
                 string name = System.IO.Path.GetFileNameWithoutExtension(dst);
                 string ext = System.IO.Path.GetExtension(dst);
                 int count = 1;
@@ -633,7 +642,7 @@ namespace NeeView
         /// <summary>
         /// フォルダー選択ダイアログ
         /// </summary>
-        public static string OpenFolderBrowserDialog(Window owner, string description)
+        public static string? OpenFolderBrowserDialog(Window owner, string description)
         {
             var dialog = new System.Windows.Forms.FolderBrowserDialog();
             dialog.Description = description;

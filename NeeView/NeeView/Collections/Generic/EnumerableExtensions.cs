@@ -67,9 +67,10 @@ namespace NeeView.Collections.Generic
         /// Distinct をラムダ式で
         /// </summary>
         /// <remarks>http://neue.cc/2009/08/07_184.html</remarks>
-        public static IEnumerable<T> Distinct<T, TKey>(this IEnumerable<T> source, Func<T, TKey> selector)
+        public static IEnumerable<T> Distinct<T, TKey>(this IEnumerable<T> source, Func<T?, TKey> selector)
+            where TKey : notnull
         {
-            return source.Distinct(new CompareSelector<T, TKey>(selector));
+            return source.Distinct(new CompareSelector<T?, TKey>(selector));
         }
 
         /// <summary>
@@ -89,20 +90,21 @@ namespace NeeView.Collections.Generic
     /// <typeparam name="T"></typeparam>
     /// <typeparam name="TKey"></typeparam>
     public class CompareSelector<T, TKey> : IEqualityComparer<T>
+        where TKey : notnull
     {
-        private readonly Func<T, TKey> _selector;
+        private readonly Func<T?, TKey> _selector;
 
-        public CompareSelector(Func<T, TKey> selector)
+        public CompareSelector(Func<T?, TKey> selector)
         {
             _selector = selector;
         }
 
-        public bool Equals(T x, T y)
+        public bool Equals(T? x, T? y)
         {
             return _selector(x).Equals(_selector(y));
         }
 
-        public int GetHashCode(T obj)
+        public int GetHashCode(T? obj)
         {
             return _selector(obj).GetHashCode();
         }

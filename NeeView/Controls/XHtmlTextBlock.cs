@@ -64,6 +64,7 @@ namespace NeeView
             {
                 var xhtml = "<xhtml>" + (IsXHtml ? Source : System.Security.SecurityElement.Escape(Source)) + "</xhtml>";
                 var document = XDocument.Parse(xhtml);
+                if (document?.Root is null) throw new InvalidOperationException();
                 var inlines = ConvertFromChildren(document.Root);
                 this.Inlines.AddRange(inlines);
             }
@@ -89,7 +90,9 @@ namespace NeeView
                         var hyperlink = new Hyperlink();
                         try
                         {
-                            hyperlink.NavigateUri = new Uri(element.Attribute("href").Value);
+                            var href = element.Attribute("href");
+                            if (href is null) throw new InvalidOperationException();
+                            hyperlink.NavigateUri = new Uri(href.Value);
                         }
                         catch (Exception ex)
                         {

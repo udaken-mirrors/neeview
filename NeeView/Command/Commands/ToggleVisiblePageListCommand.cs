@@ -18,13 +18,13 @@ namespace NeeView
             return new Binding(nameof(SidePanelFrame.IsVisiblePageList)) { Source = SidePanelFrame.Current };
         }
 
-        public override string ExecuteMessage(object sender, CommandContext e)
+        public override string ExecuteMessage(object? sender, CommandContext e)
         {
             return SidePanelFrame.Current.IsVisiblePageList ? Properties.Resources.ToggleVisiblePageListCommand_Off : Properties.Resources.ToggleVisiblePageListCommand_On;
         }
 
         [MethodArgument("@ToggleCommand.Execute.Remarks")]
-        public override void Execute(object sender, CommandContext e)
+        public override void Execute(object? sender, CommandContext e)
         {
             if (e.Args.Length > 0)
             {

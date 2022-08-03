@@ -79,9 +79,9 @@ namespace NeeView
     {
         #region INotifyPropertyChanged Support
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
-        protected bool SetProperty<T>(ref T storage, T value, [System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
+        protected bool SetProperty<T>(ref T storage, T value, [System.Runtime.CompilerServices.CallerMemberName] string? propertyName = null)
         {
             if (object.Equals(storage, value)) return false;
             storage = value;
@@ -89,7 +89,7 @@ namespace NeeView
             return true;
         }
 
-        protected void RaisePropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string name = null)
+        protected void RaisePropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string? name = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
@@ -102,7 +102,7 @@ namespace NeeView
         #endregion
 
 
-        private UICommand _resultCommand;
+        private UICommand? _resultCommand;
 
 
         public MessageDialog()
@@ -156,12 +156,12 @@ namespace NeeView
             };
         }
 
-        private UICommand GetDefaultCommand()
+        private UICommand? GetDefaultCommand()
         {
             return (DefaultCommandIndex >= 0 && DefaultCommandIndex < Commands.Count) ? Commands[DefaultCommandIndex] : null;
         }
 
-        public UICommand ShowDialog(Window owner)
+        public UICommand? ShowDialog(Window? owner)
         {
             _resultCommand = null;
 
@@ -184,7 +184,7 @@ namespace NeeView
             this.Close();
         }
 
-        public new UICommand ShowDialog()
+        public new UICommand? ShowDialog()
         {
             return ShowDialog(null);
         }
@@ -250,14 +250,14 @@ namespace NeeView
         /// <summary>
         /// ButtonClickedCommand command.
         /// </summary>
-        private RelayCommand<UICommand> _ButtonClickedCommand;
+        private RelayCommand<UICommand>? _buttonClickedCommand;
         public RelayCommand<UICommand> ButtonClickedCommand
         {
             get
             {
-                return _ButtonClickedCommand = _ButtonClickedCommand ?? new RelayCommand<UICommand>(Execute);
+                return _buttonClickedCommand = _buttonClickedCommand ?? new RelayCommand<UICommand>(Execute);
 
-                void Execute(UICommand command)
+                void Execute(UICommand? command)
                 {
                     _resultCommand = command;
                     this.DialogResult = true;

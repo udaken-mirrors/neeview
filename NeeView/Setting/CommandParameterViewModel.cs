@@ -10,17 +10,17 @@ namespace NeeView.Setting
         private IDictionary<string, CommandElement> _commandMap;
         private string _key;
 
-        private CommandParameter _defaultParameter;
-        private PropertyDocument _propertyDocument;
+        private CommandParameter? _defaultParameter;
+        private PropertyDocument? _propertyDocument;
 
 
-        public PropertyDocument PropertyDocument
+        public PropertyDocument? PropertyDocument
         {
             get { return _propertyDocument; }
             set { if (_propertyDocument != value) { _propertyDocument = value; RaisePropertyChanged(); } }
         }
 
-        public string Note { get; private set; }
+        public string? Note { get; private set; }
 
 
 
@@ -29,34 +29,37 @@ namespace NeeView.Setting
             _commandMap = commandMap;
             _key = key;
 
-            if (CommandTable.Current.GetElement(_key).Share != null)
+            var commandElement = CommandTable.Current.GetElement(_key);
+            if (commandElement.Share != null)
             {
-                _key = CommandTable.Current.GetElement(_key).Share.Name;
+                _key = commandElement.Share.Name;
                 this.Note = string.Format(Properties.Resources.CommandParameter_Share, CommandTable.Current.GetElement(_key).Text);
             }
 
-            _defaultParameter = CommandTable.Current.GetElement(_key).ParameterSource?.GetDefault();
+            _defaultParameter = commandElement.ParameterSource?.GetDefault();
             if (_defaultParameter == null)
             {
                 return;
             }
 
-            var parameter = (CommandParameter)(_commandMap[_key].Parameter ?? _defaultParameter)?.Clone();
-
-            _propertyDocument = new PropertyDocument(parameter);
+            var parameter = (CommandParameter?)(_commandMap[_key].Parameter ?? _defaultParameter)?.Clone();
+            if (parameter is not null)
+            {
+                _propertyDocument = new PropertyDocument(parameter);
+            }
         }
 
         public void Flush()
         {
             if (_propertyDocument != null)
             {
-                _commandMap[_key].Parameter = (CommandParameter)_propertyDocument.Source;
+                _commandMap[_key].Parameter = (CommandParameter?)_propertyDocument.Source;
             }
         }
 
         public void Reset()
         {
-            if (_propertyDocument != null)
+            if (_propertyDocument != null && _defaultParameter != null)
             {
                 _propertyDocument.Set(_defaultParameter);
                 RaisePropertyChanged(nameof(PropertyDocument));

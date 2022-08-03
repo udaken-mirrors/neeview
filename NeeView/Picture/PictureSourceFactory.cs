@@ -4,7 +4,7 @@ namespace NeeView
 {
     public static class PictureSourceFactory
     {
-        public static PictureSource Create(ArchiveEntry entry, PictureInfo pictureInfo, PictureSourceCreateOptions createOptions, CancellationToken token)
+        public static PictureSource Create(ArchiveEntry entry, PictureInfo? pictureInfo, PictureSourceCreateOptions createOptions, CancellationToken token)
         {
             if (entry.Archiver is PdfArchiver)
             {

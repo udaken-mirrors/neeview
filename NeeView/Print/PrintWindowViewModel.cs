@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Windows;
 using System.Windows.Documents;
 
@@ -23,36 +24,10 @@ namespace NeeView
     public class PrintWindowViewModel : BindableBase
     {
         /// <summary>
-        /// Model property.
-        /// </summary>
-        private PrintModel _model;
-        public PrintModel Model => _model;
-
-        /// <summary>
-        /// MainContent property.
-        /// </summary>
-        private FrameworkElement _MainContent;
-        public FrameworkElement MainContent
-        {
-            get { return _MainContent; }
-            set { if (_MainContent != value) { _MainContent = value; RaisePropertyChanged(); } }
-        }
-
-        /// <summary>
-        /// PageCollection property.
-        /// </summary>
-        private List<FixedPage> _PageCollection;
-        public List<FixedPage> PageCollection
-        {
-            get { return _PageCollection; }
-            set { if (_PageCollection != value) { _PageCollection = value; RaisePropertyChanged(); } }
-        }
-
-
-        /// <summary>
         /// 設定保存
         /// </summary>
-        private static PrintModel.Memento _memento;
+        private static PrintModel.Memento? _memento;
+
 
         /// <summary>
         /// コンストラクター
@@ -69,6 +44,38 @@ namespace NeeView
             UpdatePreview();
         }
 
+
+        public event EventHandler<PrintWindowCloseEventArgs>? Close;
+
+
+        /// <summary>
+        /// Model property.
+        /// </summary>
+        private PrintModel _model;
+        public PrintModel Model => _model;
+
+        /// <summary>
+        /// MainContent property.
+        /// </summary>
+        private FrameworkElement? _MainContent;
+        public FrameworkElement? MainContent
+        {
+            get { return _MainContent; }
+            set { if (_MainContent != value) { _MainContent = value; RaisePropertyChanged(); } }
+        }
+
+        /// <summary>
+        /// PageCollection property.
+        /// </summary>
+        private List<FixedPage> _PageCollection = new List<FixedPage>();
+        public List<FixedPage> PageCollection
+        {
+            get { return _PageCollection; }
+            set { if (_PageCollection != value) { _PageCollection = value; RaisePropertyChanged(); } }
+        }
+
+
+
         /// <summary>
         /// 終了処理
         /// </summary>
@@ -82,7 +89,7 @@ namespace NeeView
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void PrintService_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        private void PrintService_PropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
             UpdatePreview();
         }
@@ -90,6 +97,7 @@ namespace NeeView
         /// <summary>
         /// プレビュー更新
         /// </summary>
+        [MemberNotNull(nameof(PageCollection))]
         private void UpdatePreview()
         {
             PageCollection = _model.CreatePageCollection();
@@ -98,7 +106,7 @@ namespace NeeView
         /// <summary>
         /// PrintCommand command.
         /// </summary>
-        private RelayCommand _PrintCommand;
+        private RelayCommand? _PrintCommand;
         public RelayCommand PrintCommand
         {
             get { return _PrintCommand = _PrintCommand ?? new RelayCommand(PrintCommand_Executed); }
@@ -114,13 +122,11 @@ namespace NeeView
         /// <summary>
         /// CancelCommand command.
         /// </summary>
-        private RelayCommand _CancelCommand;
+        private RelayCommand? _CancelCommand;
         public RelayCommand CancelCommand
         {
             get { return _CancelCommand = _CancelCommand ?? new RelayCommand(CancelCommand_Executed); }
         }
-
-        public event EventHandler<PrintWindowCloseEventArgs> Close;
 
         private void CancelCommand_Executed()
         {
@@ -131,7 +137,7 @@ namespace NeeView
         /// <summary>
         /// PrintDialogCommand command.
         /// </summary>
-        private RelayCommand _PrintDialogCommand;
+        private RelayCommand? _PrintDialogCommand;
         public RelayCommand PrintDialogCommand
         {
             get { return _PrintDialogCommand = _PrintDialogCommand ?? new RelayCommand(PrintDialogCommand_Executed); }

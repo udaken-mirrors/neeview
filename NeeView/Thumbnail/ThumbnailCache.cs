@@ -17,7 +17,7 @@ namespace NeeView
     /// </summary>
     public class ThumbnailCacheHeader
     {
-        public ThumbnailCacheHeader(string name, long length, string appendix, int generateHasn)
+        public ThumbnailCacheHeader(string name, long length, string? appendix, int generateHasn)
         {
             Key = appendix != null ? name + ":" + appendix : name;
             Size = length;
@@ -78,7 +78,7 @@ namespace NeeView
         public static string DefaultThumbnailCacheFilePath => Path.Combine(Environment.LocalApplicationDataPath, ThumbnailCacheFileName);
 
 
-        private SQLiteConnection _connection;
+        private SQLiteConnection? _connection;
         private object _lock = new object();
         private Dictionary<string, ThumbnailCacheItem> _saveQueue;
         private Dictionary<string, ThumbnailCacheHeader> _updateQueue;
@@ -193,6 +193,8 @@ namespace NeeView
         /// </summary>
         private void InitializePragma()
         {
+            if (_connection is null) return;
+
             using (SQLiteCommand command = _connection.CreateCommand())
             {
                 command.CommandText = "PRAGMA auto_vacuum = full";
@@ -205,6 +207,8 @@ namespace NeeView
         /// </summary>
         private void CreatePropertyTable()
         {
+            if (_connection is null) return;
+
             using (SQLiteCommand command = _connection.CreateCommand())
             {
                 // database property
@@ -224,6 +228,8 @@ namespace NeeView
         /// </summary>
         private void CreateThumbsTable()
         {
+            if (_connection is null) return;
+
             using (SQLiteCommand command = _connection.CreateCommand())
             {
                 // thumbnails 
@@ -260,6 +266,8 @@ namespace NeeView
         /// <param name="value"></param>
         internal void SaveProperty(string key, string value)
         {
+            if (_connection is null) return;
+
             using (SQLiteCommand command = _connection.CreateCommand())
             {
                 command.CommandText = $"REPLACE INTO property (key, value) VALUES (@key, @value)";
@@ -276,6 +284,8 @@ namespace NeeView
         /// <param name="value"></param>
         internal void SavePropertyIfNotExist(string key, string value)
         {
+            if (_connection is null) return;
+
             using (SQLiteCommand command = _connection.CreateCommand())
             {
                 command.CommandText = "INSERT OR IGNORE INTO property (key, value) VALUES(@key, @value)";
@@ -290,8 +300,10 @@ namespace NeeView
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
-        internal string LoadProperty(string key)
+        internal string? LoadProperty(string key)
         {
+            if (_connection is null) return null;
+
             using (SQLiteCommand command = _connection.CreateCommand())
             {
                 command.CommandText = "SELECT value FROM property WHERE key = @key";
@@ -319,6 +331,7 @@ namespace NeeView
             if (!IsEnabled) return;
 
             Open();
+            if (_connection is null) return;
 
             var limitDateTime = DateTime.Now - limitTime;
             Debug.WriteLine($"ThumbnailCache.Delete: before {limitDateTime}");
@@ -344,6 +357,7 @@ namespace NeeView
             if (!IsEnabled) return;
 
             Open();
+            if (_connection is null) return;
 
             using (SQLiteCommand command = _connection.CreateCommand())
             {
@@ -388,11 +402,12 @@ namespace NeeView
         /// </summary>
         /// <param name="header"></param>
         /// <returns></returns>
-        internal byte[] Load(ThumbnailCacheHeader header)
+        internal byte[]? Load(ThumbnailCacheHeader header)
         {
             if (!IsEnabled) return null;
 
             Open();
+            if (_connection is null) return null;
 
             var key = header.Key;
             var size = header.Size;
@@ -426,7 +441,7 @@ namespace NeeView
             // SaveQueueからも探す
             lock (_lockSaveQueue)
             {
-                if (_saveQueue.TryGetValue(key, out ThumbnailCacheItem item))
+                if (_saveQueue.TryGetValue(key, out ThumbnailCacheItem? item))
                 {
                     return item.Body;
                 }
@@ -486,6 +501,7 @@ namespace NeeView
             Debug.WriteLine($"ThumbnailCache.Save: {saveQueue.Count},{updateQueue.Count} ..");
 
             Open();
+            if (_connection is null) return;
 
             using (var transaction = _connection.BeginTransaction())
             {

@@ -22,9 +22,9 @@ namespace NeeView.Windows.Controls
     public partial class PointInspector : UserControl, INotifyPropertyChanged
     {
         #region NotifyPropertyChanged
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
-        protected void RaisePropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string name = "")
+        protected void RaisePropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string? name = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }

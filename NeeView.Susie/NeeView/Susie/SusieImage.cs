@@ -2,17 +2,17 @@
 {
     public class SusieImage
     {
-        public SusieImage()
-        {
-        }
+        //public SusieImage()
+        //{
+        //}
 
-        public SusieImage(SusiePluginInfo plugin, byte[] bitmapData)
+        public SusieImage(SusiePluginInfo? plugin, byte[]? bitmapData)
         {
             Plugin = plugin;
             BitmapData = bitmapData;
         }
 
-        public SusiePluginInfo Plugin { get; set; }
-        public byte[] BitmapData { get; set; }
+        public SusiePluginInfo? Plugin { get; set; }
+        public byte[]? BitmapData { get; set; }
     }
 }

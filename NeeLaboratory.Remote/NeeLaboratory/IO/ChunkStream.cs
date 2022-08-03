@@ -137,7 +137,7 @@ namespace NeeLaboratory.IO
         {
             WriteInt32(chunk.Id);
             WriteInt32(chunk.Length);
-            if (chunk.Length > 0)
+            if (chunk.Data != null && chunk.Length > 0)
             {
                 WriteData(chunk.Data);
             }
@@ -147,7 +147,7 @@ namespace NeeLaboratory.IO
         {
             await WriteInt32Async(chunk.Id, token);
             await WriteInt32Async(chunk.Length, token);
-            if (chunk.Length > 0)
+            if (chunk.Data != null && chunk.Length > 0)
             {
                 await WriteDataAsync(chunk.Data, token);
             }

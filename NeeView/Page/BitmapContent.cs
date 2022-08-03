@@ -13,7 +13,7 @@ namespace NeeView
     /// </summary>
     public class BitmapContent : PageContent
     {
-        private PictureInfo _pictureInfo;
+        private PictureInfo? _pictureInfo;
 
 
         public BitmapContent(ArchiveEntry entry) : base(entry)
@@ -22,16 +22,16 @@ namespace NeeView
 
 
         // picture source
-        public PictureSource PictureSource { get; protected set; }
+        public PictureSource? PictureSource { get; protected set; }
 
         // picture info
-        public virtual PictureInfo PictureInfo => _pictureInfo;
+        public virtual PictureInfo? PictureInfo => _pictureInfo;
 
         // picture
-        public Picture Picture { get; protected set; }
+        public Picture? Picture { get; protected set; }
 
         // image source
-        public ImageSource ImageSource => Picture?.ImageSource;
+        public ImageSource? ImageSource => Picture?.ImageSource;
 
         // bitmap color
         public Color Color => PictureInfo != null ? PictureInfo.Color : Colors.Black;
@@ -78,12 +78,12 @@ namespace NeeView
             _pictureInfo = pictureInfo;
         }
 
-        public void SetPictureSource(PictureSource pictureSource)
+        public void SetPictureSource(PictureSource? pictureSource)
         {
             PictureSource = pictureSource;
         }
 
-        public void SetPicture(Picture picture)
+        public void SetPicture(Picture? picture)
         {
             Picture = picture;
         }

@@ -2,7 +2,7 @@
 {
     public interface IHasDeviceInput
     {
-        MouseInput MouseInput { get; }
-        TouchInput TouchInput { get; }
+        MouseInput? MouseInput { get; }
+        TouchInput? TouchInput { get; }
     }
 }

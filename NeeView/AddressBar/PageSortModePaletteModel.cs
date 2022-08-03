@@ -13,7 +13,7 @@ namespace NeeView
             UpdatePageSortModeList();
         }
 
-        private List<PageSortMode> _pageSortModeList;
+        private List<PageSortMode> _pageSortModeList = new();
         public List<PageSortMode> PageSortModeList
         {
             get { return _pageSortModeList; }
@@ -36,9 +36,9 @@ namespace NeeView
         private void UpdatePageSortModeList()
         {
             PageSortModeList = _pageSortModeClass.GetPageSortModeMap().Select(e => e.Key).ToList();
-    }
+        }
 
-        private void BookOperation_BookChanged(object sender, BookChangedEventArgs e)
+        private void BookOperation_BookChanged(object? sender, BookChangedEventArgs e)
         {
             PageSortModeClass = e.Book != null ? e.Book.PageSortModeClass : PageSortModeClass.Full;
         }

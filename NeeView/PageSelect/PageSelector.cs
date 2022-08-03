@@ -28,10 +28,10 @@ namespace NeeView
 
 
         // NOTE: ChangingとChangedは必ずしもペアではない
-        public event EventHandler CollectionChanging;
-        public event EventHandler CollectionChanged;
-        public event EventHandler SelectionChanged;
-        public event EventHandler<ViewContentsChangedEventArgs> ViewContentsChanged;
+        public event EventHandler? CollectionChanging;
+        public event EventHandler? CollectionChanged;
+        public event EventHandler? SelectionChanged;
+        public event EventHandler<ViewContentsChangedEventArgs>? ViewContentsChanged;
 
 
         public PageMode PageMode => BookOperation.Current.Book?.Viewer.PageMode ?? PageMode.SinglePage;
@@ -49,12 +49,13 @@ namespace NeeView
             get { return _selectedIndex; }
         }
 
-        public Page SelectedItem
+        public Page? SelectedItem
         {
             get
             {
-                if (!BookOperation.Current.IsValid || _selectedIndex < 0 || BookOperation.Current.Book.Pages.Count <= _selectedIndex) return null;
-                return BookOperation.Current.Book.Pages[_selectedIndex];
+                var book = BookOperation.Current.Book;
+                if (book is null || _selectedIndex < 0 || book.Pages.Count <= _selectedIndex) return null;
+                return book.Pages[_selectedIndex];
             }
         }
 
@@ -64,7 +65,7 @@ namespace NeeView
             SetSelectedIndex(sender, BookOperation.Current.GetPageIndex(), true);
         }
 
-        public bool SetSelectedIndex(object sender, int value, bool raiseChangedEvent)
+        public bool SetSelectedIndex(object? sender, int value, bool raiseChangedEvent)
         {
             if (SetProperty(ref _selectedIndex, value, nameof(SelectedIndex)))
             {
@@ -72,7 +73,7 @@ namespace NeeView
 
                 if (raiseChangedEvent)
                 {
-                    SelectionChanged?.Invoke(sender, null);
+                    SelectionChanged?.Invoke(sender, EventArgs.Empty);
                 }
 
                 return true;
@@ -89,31 +90,33 @@ namespace NeeView
             BookOperation.Current.RequestPageIndex(sender, _selectedIndex);
         }
 
-        private void BookOperation_BookChanging(object sender, BookChangingEventArgs e)
+        private void BookOperation_BookChanging(object? sender, BookChangingEventArgs e)
         {
-            CollectionChanging?.Invoke(this, null);
+            CollectionChanging?.Invoke(this, EventArgs.Empty);
         }
 
-        private void BookOperation_BookChanged(object sender, BookChangedEventArgs e)
+        private void BookOperation_BookChanged(object? sender, BookChangedEventArgs e)
         {
             // NOTE: PageListChangedイベントで処理
         }
 
-        private void BookOperation_PageListChanged(object sender, EventArgs e)
+        private void BookOperation_PageListChanged(object? sender, EventArgs e)
         {
-            CollectionChanged?.Invoke(this, null);
+            CollectionChanged?.Invoke(this, EventArgs.Empty);
             RaisePropertyChanged(nameof(MaxIndex));
             RaiseViewContentsChanged(sender, BookOperation.Current.Book?.Viewer.ViewPageCollection, true);
         }
 
-        private void BookOperation_ViewContentsChanged(object sender, ViewContentSourceCollectionChangedEventArgs e)
+        private void BookOperation_ViewContentsChanged(object? sender, ViewContentSourceCollectionChangedEventArgs e)
         {
             RaiseViewContentsChanged(sender, e?.ViewPageCollection, false);
         }
 
-        private void RaiseViewContentsChanged(object sender, ViewContentSourceCollection viewPageCollection, bool isBookOpen)
-        { 
-            var contents = viewPageCollection?.Collection;
+        private void RaiseViewContentsChanged(object? sender, ViewContentSourceCollection? viewPageCollection, bool isBookOpen)
+        {
+            if (viewPageCollection is null) return;
+
+            var contents = viewPageCollection.Collection;
             if (contents == null) return;
 
             ViewContentsChanged?.Invoke(sender, new ViewContentsChangedEventArgs(viewPageCollection, isBookOpen));
@@ -122,7 +125,7 @@ namespace NeeView
             if (mainContent != null)
             {
                 SetSelectedIndex(sender, mainContent.Page.Index, false);
-                SelectionChanged?.Invoke(sender, null);
+                SelectionChanged?.Invoke(sender, EventArgs.Empty);
             }
         }
     }

@@ -26,7 +26,7 @@ namespace NeeView.Effects
 
         private ImageEffect()
         {
-            Effects = new Dictionary<EffectType, EffectUnit>();
+            Effects = new Dictionary<EffectType, EffectUnit?>();
 
             Effects[EffectType.None] = null;
             Effects[EffectType.Level] = Config.Current.ImageEffect.LevelEffect;
@@ -62,18 +62,18 @@ namespace NeeView.Effects
         #region Properties
 
         //
-        public Dictionary<EffectType, EffectUnit> Effects { get; private set; }
+        public Dictionary<EffectType, EffectUnit?> Effects { get; private set; }
 
         /// <summary>
         /// Property: Effect
         /// </summary>
-        public Effect Effect => Config.Current.ImageEffect.IsEnabled ? Effects[Config.Current.ImageEffect.EffectType]?.GetEffect() : null;
+        public Effect? Effect => Config.Current.ImageEffect.IsEnabled ? Effects[Config.Current.ImageEffect.EffectType]?.GetEffect() : null;
 
         /// <summary>
         /// Property: EffectParameters
         /// </summary>
-        private PropertyDocument _effectParameters;
-        public PropertyDocument EffectParameters
+        private PropertyDocument? _effectParameters;
+        public PropertyDocument? EffectParameters
         {
             get { return _effectParameters; }
             set { if (_effectParameters != value) { _effectParameters = value; RaisePropertyChanged(); } }
@@ -86,13 +86,14 @@ namespace NeeView.Effects
         //
         private void UpdateEffectParameters()
         {
-            if (Effects[Config.Current.ImageEffect.EffectType] == null)
+            var effect = Effects[Config.Current.ImageEffect.EffectType];
+            if (effect is null)
             {
                 EffectParameters = null;
             }
             else
             {
-                EffectParameters = new PropertyDocument(Effects[Config.Current.ImageEffect.EffectType]);
+                EffectParameters = new PropertyDocument(effect);
             }
         }
 
@@ -107,7 +108,7 @@ namespace NeeView.Effects
             public EffectType EffectType { get; set; }
 
             [DataMember]
-            public Dictionary<EffectType, string> Effects { get; set; }
+            public Dictionary<EffectType, string>? Effects { get; set; }
 
             [DataMember]
             public bool IsHsvMode { get; set; }

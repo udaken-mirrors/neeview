@@ -67,16 +67,16 @@ namespace NeeView
 
 
         [DataMember(EmitDefaultValue = false)]
-        public string Name { get; set; }
+        public string? Name { get; set; }
 
         [DataMember]
         public MenuElementType MenuElementType { get; set; }
 
         [DataMember(Name = "Command", EmitDefaultValue = false)]
-        public string CommandName { get; set; }
+        public string? CommandName { get; set; }
 
         [DataMember(EmitDefaultValue = false)]
-        public ObservableCollection<MenuTree> Children { get; set; }
+        public ObservableCollection<MenuTree>? Children { get; set; }
 
         public MenuTree()
         {
@@ -100,12 +100,12 @@ namespace NeeView
         #region Property: Label
         public string Label
         {
-            get { return Name ?? DefaultLabel; }
+            get { return string.IsNullOrEmpty(Name) ? DefaultLabel : Name; }
             set { Name = (value == DefaultLabel) ? null : value; RaisePropertyChanged(); RaisePropertyChanged(nameof(DispLabel)); }
         }
         #endregion
 
-        public string DispLabel => Label?.Replace("_", "");
+        public string? DispLabel => Label?.Replace("_", "");
 
 
         public string DefaultLongLabel
@@ -144,7 +144,7 @@ namespace NeeView
         public MenuTree Clone()
         {
             var clone = (MenuTree)this.MemberwiseClone();
-            if (clone.Children != null)
+            if (this.Children != null)
             {
                 clone.Children = new ObservableCollection<MenuTree>();
                 foreach (var element in this.Children)
@@ -210,7 +210,7 @@ namespace NeeView
 
 
         //
-        public MenuTree GetParent(MenuTree root)
+        public MenuTree? GetParent(MenuTree root)
         {
             if (root.Children == null) return null;
             if (root.Children.Contains(this)) return root;
@@ -224,12 +224,13 @@ namespace NeeView
         }
 
         //
-        public MenuTree GetNext(MenuTree root, bool isUseExpand = true)
+        public MenuTree? GetNext(MenuTree root, bool isUseExpand = true)
         {
             var parent = this.GetParent(root);
             if (parent == null) return null;
+            if (parent.Children is null) throw new InvalidOperationException();
 
-            if (isUseExpand && this.IsExpanded)
+            if (isUseExpand && this.IsExpanded && this.Children is not null)
             {
                 return this.Children.First();
             }
@@ -244,18 +245,20 @@ namespace NeeView
             }
         }
 
-        private MenuTree GetLastChild()
+        private MenuTree? GetLastChild()
         {
             if (!this.IsExpanded) return this;
+            if (this.Children is null) return this;
             return this.Children.Last().GetLastChild();
         }
 
 
         //
-        public MenuTree GetPrev(MenuTree root)
+        public MenuTree? GetPrev(MenuTree root)
         {
             var parent = this.GetParent(root);
             if (parent == null) return null;
+            if (parent.Children is null) throw new InvalidOperationException();
 
             if (parent.Children.First() == this)
             {
@@ -291,7 +294,7 @@ namespace NeeView
 
 
         //
-        public object CreateMenuControl()
+        public object? CreateMenuControl()
         {
             switch (this.MenuElementType)
             {
@@ -306,7 +309,7 @@ namespace NeeView
                         var item = new MenuItem();
                         item.Header = this.Label;
                         item.Tag = this.CommandName;
-                        item.Command = RoutedCommandTable.Current.Commands[this.CommandName];
+                        item.Command = RoutedCommandTable.Current.Commands[this.CommandName ?? "None"];
                         item.CommandParameter = MenuCommandTag.Tag; // コマンドがメニューからであることをパラメータで伝えてみる
                         var binding = CommandTable.Current.GetElement(this.CommandName).CreateIsCheckedBinding();
                         if (binding != null)
@@ -332,6 +335,7 @@ namespace NeeView
 
                 case MenuElementType.Group:
                     {
+                        if (this.Children is null) throw new InvalidOperationException();
                         var item = new MenuItem();
                         item.Header = this.Label;
                         foreach (var child in this.Children)
@@ -362,7 +366,7 @@ namespace NeeView
         }
 
         //
-        public ContextMenu CreateContextMenu()
+        public ContextMenu? CreateContextMenu()
         {
             if (this.Children == null) return null;
             var contextMenu = new ContextMenu();
@@ -377,7 +381,7 @@ namespace NeeView
         }
 
         //
-        public Menu CreateMenu()
+        public Menu? CreateMenu()
         {
             var menu = new Menu();
             foreach (var element in CreateMenuItems())
@@ -444,6 +448,7 @@ namespace NeeView
         public List<TableData> GetTable(int depth)
         {
             var list = new List<TableData>();
+            if (Children is null) return list;
 
             foreach (var child in Children)
             {
@@ -700,10 +705,7 @@ namespace NeeView
 
         public MenuNode CreateMenuNode()
         {
-            var node = new MenuNode();
-            node.Name = this.Name;
-            node.MenuElementType = this.MenuElementType;
-            node.CommandName = this.CommandName;
+            var node = new MenuNode(this.Name, this.MenuElementType, this.CommandName);
 
             if (this.Children != null)
             {

@@ -9,7 +9,7 @@ namespace NeeView.Runtime.Serialization
     /// </summary>
     /// <typeparam name="T"></typeparam>
     [DataContract]
-    public struct WebEnum<T>
+    public struct WebEnum<T> where T : struct, Enum
     {
         public WebEnum(T value) : this()
         {
@@ -19,7 +19,7 @@ namespace NeeView.Runtime.Serialization
         public T Value { get; set; }
 
         [DataMember]
-        internal string Name { get; set; }
+        internal string? Name { get; set; }
 
         public static implicit operator WebEnum<T>(T value)
         {

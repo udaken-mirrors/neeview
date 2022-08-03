@@ -11,9 +11,9 @@
             this.ParameterSource = new CommandParameterSource(new ViewScrollCommandParameter());
         }
 
-        public override void Execute(object sender, CommandContext e)
+        public override void Execute(object? sender, CommandContext e)
         {
-            MainViewComponent.Current.ViewController.ScrollRight((ViewScrollCommandParameter)e.Parameter);
+            MainViewComponent.Current.ViewController.ScrollRight(e.Parameter.Cast<ViewScrollCommandParameter>());
         }
     }
 }

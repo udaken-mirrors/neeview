@@ -1,4 +1,5 @@
 ﻿using NeeView.IO;
+using NeeLaboratory.Linq;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -17,8 +18,8 @@ namespace NeeView
     /// </summary>
     public class FolderEntryCollection : FolderCollection, IDisposable
     {
-        private FileSystemWatcher _fileSystemWatcher;
-        private FolderCollectionEngine _engine;
+        private FileSystemWatcher? _fileSystemWatcher;
+        private FolderCollectionEngine? _engine;
         private bool _isWatchFileSystem;
 
 
@@ -47,7 +48,7 @@ namespace NeeView
         {
             if (string.IsNullOrWhiteSpace(Place.SimplePath))
             {
-                this.Items = new ObservableCollection<FolderItem>(DriveInfo.GetDrives().Select(e => _folderItemFactory.CreateFolderItem(e)));
+                this.Items = new ObservableCollection<FolderItem>(DriveInfo.GetDrives().Select(e => _folderItemFactory.CreateFolderItem(e)).WhereNotNull());
                 return;
             }
             else
@@ -69,7 +70,7 @@ namespace NeeView
                         var items = fileSystemInfos
                             .Where(e => FileIOProfile.Current.IsFileValid(e.Attributes))
                             .Select(e => _folderItemFactory.CreateFolderItem(e))
-                            .Where(e => e != null)
+                            .WhereNotNull()
                             .ToList();
 
                         // RAR連番フィルター
@@ -87,7 +88,9 @@ namespace NeeView
                         // 除外フィルター
                         if (BookshelfFolderList.Current.ExcludeRegex != null)
                         {
-                            items = items.Where(e => !BookshelfFolderList.Current.ExcludeRegex.IsMatch(e.Name)).ToList();
+                            items = items
+                                .Where(e => e.Name != null && !BookshelfFolderList.Current.ExcludeRegex.IsMatch(e.Name))
+                                .ToList();
                         }
 
                         var list = Sort(items, token);
@@ -126,7 +129,7 @@ namespace NeeView
             private static Regex _regex = new Regex(@"^(.+)\.part(\d+)\.rar$", RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
             public FolderItem FolderItem { get; set; }
-            public string Key { get; set; }
+            public string? Key { get; set; }
             public int PartNumber { get; set; }
 
             public bool IsPart => Key != null;
@@ -134,6 +137,9 @@ namespace NeeView
             public MultipleArchive(FolderItem folderItem)
             {
                 FolderItem = folderItem;
+                
+                if (folderItem.Name is null) return;
+
                 var match = _regex.Match(folderItem.Name);
                 if (match.Success)
                 {
@@ -231,6 +237,8 @@ namespace NeeView
         /// <param name="e"></param>
         private void Watcher_Creaded(object sender, FileSystemEventArgs e)
         {
+            if (e.Name is null) return;
+
             // 除外フィルター
             var excludeRegex = BookshelfFolderList.Current.ExcludeRegex;
             if (excludeRegex != null && excludeRegex.IsMatch(e.Name))

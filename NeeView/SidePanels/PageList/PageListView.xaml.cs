@@ -24,13 +24,14 @@ namespace NeeView
         private PageListViewModel _vm;
 
 
-        public PageListView()
+        //public PageListView()
+        //{
+        //}
+
+        public PageListView(PageList model)
         {
             InitializeComponent();
-        }
 
-        public PageListView(PageList model) : this()
-        {
             _vm = new PageListViewModel(model);
             this.DockPanel.DataContext = _vm;
         }
@@ -102,11 +103,11 @@ namespace NeeView
     /// </summary>
     public class PageNameConverter : IValueConverter
     {
-        public Style SmartTextStyle { get; set; }
-        public Style DefaultTextStyle { get; set; }
-        public Style NameOnlyTextStyle { get; set; }
+        public Style? SmartTextStyle { get; set; }
+        public Style? DefaultTextStyle { get; set; }
+        public Style? NameOnlyTextStyle { get; set; }
 
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        public object? Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             try
             {

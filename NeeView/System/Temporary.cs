@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Reflection;
+using System.Diagnostics.CodeAnalysis;
 
 namespace NeeView
 {
@@ -25,6 +26,7 @@ namespace NeeView
 
         private Temporary()
         {
+            SetDirectory(TempRootPathDefault, false);
         }
 
 
@@ -54,14 +56,15 @@ namespace NeeView
         /// テンポラリフォルダーの場所を指定
         /// </summary>
         /// <param name="path">場所。nullの場合はシステム既定</param>
-        public string SetDirectory(string path)
+        [MemberNotNull(nameof(TempRootPath), nameof(TempDirectoryBaseName), nameof(TempDirectory), nameof(TempDownloadDirectory), nameof(TempSystemDirectory), nameof(TempCacheDirectory))]
+        public string SetDirectory(string path, bool validate)
         {
             var assembly = Assembly.GetExecutingAssembly();
 
-            //AssemblyCompanyの取得
-            var asmcmp = (AssemblyCompanyAttribute)Attribute.GetCustomAttribute(assembly, typeof(AssemblyCompanyAttribute));
-            //AssemblyProductの取得
-            var asmprd = (AssemblyProductAttribute)Attribute.GetCustomAttribute(assembly, typeof(AssemblyProductAttribute));
+            ////AssemblyCompanyの取得
+            //var asmcmp = (AssemblyCompanyAttribute?)Attribute.GetCustomAttribute(assembly, typeof(AssemblyCompanyAttribute));
+            ////AssemblyProductの取得
+            //var asmprd = (AssemblyProductAttribute?)Attribute.GetCustomAttribute(assembly, typeof(AssemblyProductAttribute));
 
             //ProcessIDの取得
             var processId = Process.GetCurrentProcess().Id;
@@ -69,7 +72,7 @@ namespace NeeView
             var processName = Process.GetCurrentProcess().ProcessName;
 
             TempRootPath = path ?? TempRootPathDefault;
-            if (TempRootPath != TempRootPathDefault)
+            if (validate && TempRootPath != TempRootPathDefault)
             {
                 if (!Directory.Exists(TempRootPath))
                 {
@@ -154,9 +157,13 @@ namespace NeeView
                 // 最後のプロセスであればすべてのテンポラリを削除する
                 if (processes.Length <= 1)
                 {
-                    foreach (var path in Directory.GetDirectories(Path.GetDirectoryName(TempDirectory), TempDirectoryBaseName + "*"))
+                    var parent = Path.GetDirectoryName(TempDirectory);
+                    if (parent != null)
                     {
-                        Directory.Delete(path, true);
+                        foreach (var path in Directory.GetDirectories(parent, TempDirectoryBaseName + "*"))
+                        {
+                            Directory.Delete(path, true);
+                        }
                     }
                 }
                 // 自プロセスのテンポラリのみ削除する

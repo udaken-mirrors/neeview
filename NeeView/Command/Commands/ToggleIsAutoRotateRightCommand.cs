@@ -17,18 +17,18 @@ namespace NeeView
             return new Binding(nameof(ContentCanvas.IsAutoRotateRight)) { Source = MainViewComponent.Current.ContentCanvas };
         }
 
-        public override string ExecuteMessage(object sender, CommandContext e)
+        public override string ExecuteMessage(object? sender, CommandContext e)
         {
             return MainViewComponent.Current.ViewController.GetAutoRotateRight() ? Properties.Resources.ToggleIsAutoRotateRightCommand_Off : Properties.Resources.ToggleIsAutoRotateRightCommand_On;
         }
         
-        public override bool CanExecute(object sender, CommandContext e)
+        public override bool CanExecute(object? sender, CommandContext e)
         {
             return !NowLoading.Current.IsDispNowLoading;
         }
 
         [MethodArgument("@ToggleCommand.Execute.Remarks")]
-        public override void Execute(object sender, CommandContext e)
+        public override void Execute(object? sender, CommandContext e)
         {
             if (e.Args.Length > 0)
             {

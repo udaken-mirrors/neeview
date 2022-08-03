@@ -15,7 +15,7 @@ namespace NeeView
 
     public class TreeViewItemTools 
     {
-        private static TreeViewItem CurrentItem;
+        private static TreeViewItem? CurrentItem;
 
 
         private static readonly RoutedEvent UpdateOverItemEvent = EventManager.RegisterRoutedEvent("UpdateOverItem", RoutingStrategy.Bubble, typeof(RoutedEventHandler), typeof(TreeViewItemTools));
@@ -103,7 +103,7 @@ namespace NeeView
     {
         public static int GetDepth(this TreeViewItem item)
         {
-            TreeViewItem parent;
+            TreeViewItem? parent;
             while ((parent = GetParent(item)) != null)
             {
                 return GetDepth(parent) + 1;
@@ -111,7 +111,7 @@ namespace NeeView
             return 0;
         }
 
-        private static TreeViewItem GetParent(TreeViewItem item)
+        private static TreeViewItem? GetParent(TreeViewItem item)
         {
             var parent = VisualTreeHelper.GetParent(item);
             while (!(parent is TreeViewItem || parent is TreeView))

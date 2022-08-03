@@ -97,7 +97,7 @@ namespace NeeView.Threading
                 _delay = TimeSpan.Zero;
             }
 
-            DispatcherTimer_Tick(this, null);
+            DispatcherTimer_Tick(this, EventArgs.Empty);
         }
 
 
@@ -106,7 +106,7 @@ namespace NeeView.Threading
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void DispatcherTimer_Tick(object sender, EventArgs e)
+        private void DispatcherTimer_Tick(object? sender, EventArgs e)
         {
             bool isExecute = false;
 

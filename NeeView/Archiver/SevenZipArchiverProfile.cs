@@ -6,7 +6,6 @@ using System.Runtime.Serialization;
 
 namespace NeeView
 {
-    //
     public class SevenZipArchiverProfile : BindableBase
     {
         static SevenZipArchiverProfile() => Current = new SevenZipArchiverProfile();
@@ -24,13 +23,13 @@ namespace NeeView
             public bool IsEnabled { get; set; }
 
             [DataMember, DefaultValue("")]
-            public string X86DllPath { get; set; }
+            public string? X86DllPath { get; set; }
 
             [DataMember, DefaultValue("")]
-            public string X64DllPath { get; set; }
+            public string? X64DllPath { get; set; }
 
             [DataMember, DefaultValue(".7z;.cb7;.cbr;.cbz;.lzh;.rar;.zip")]
-            public string SupportFileTypes { get; set; }
+            public string? SupportFileTypes { get; set; }
 
             [DataMember, DefaultValue(1000)]
             public int PreExtractSolidSize { get; set; }
@@ -55,9 +54,9 @@ namespace NeeView
                 config.Performance.PreExtractSolidSize = PreExtractSolidSize;
                 config.Performance.IsPreExtractToMemory = IsPreExtractToMemory;
                 config.Archive.SevenZip.IsEnabled = IsEnabled;
-                config.Archive.SevenZip.X86DllPath = X86DllPath;
-                config.Archive.SevenZip.X64DllPath = X64DllPath;
-                config.Archive.SevenZip.SupportFileTypes.OneLine = SupportFileTypes;
+                config.Archive.SevenZip.X86DllPath = X86DllPath ?? "";
+                config.Archive.SevenZip.X64DllPath = X64DllPath ?? "";
+                config.Archive.SevenZip.SupportFileTypes.OneLine = SupportFileTypes ?? "";
             }
         }
         

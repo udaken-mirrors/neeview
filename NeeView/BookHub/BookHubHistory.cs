@@ -16,7 +16,7 @@ namespace NeeView
         private readonly HistoryLimitedCollection<QueryPath> _history = new HistoryLimitedCollection<QueryPath>(_historyCapacity);
 
 
-        public void Add(object sender, QueryPath query)
+        public void Add(object? sender, QueryPath? query)
         {
             // NOTE: 履歴操からの操作では履歴を変更しない
             if (sender == this) return;
@@ -64,7 +64,7 @@ namespace NeeView
             _history.SetCurrent(item.Key + 1);
         }
 
-        private void LoadBook(QueryPath query)
+        private void LoadBook(QueryPath? query)
         {
             if (query == null) return;
             var option = BookLoadOption.IsBook | BookLoadOption.SkipSamePlace | BookLoadOption.KeepHistoryOrder | BookLoadOption.SelectHistoryMaybe;

@@ -1,5 +1,4 @@
-﻿
-using NeeLaboratory.ComponentModel;
+﻿using NeeLaboratory.ComponentModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,9 +21,9 @@ namespace NeeView
             _bookMemoryService = bookMemoryService;
         }
 
-        private List<Page> _pages;
+        private List<Page>? _pages;
         private int _index;
-        private Page _page;
+        private Page? _page;
         private object _lock = new object();
 
 

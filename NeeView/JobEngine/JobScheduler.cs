@@ -15,14 +15,14 @@ namespace NeeView
     public class JobScheduler : BindableBase 
     {
         [Conditional("DEBUG")]
-        protected void DebugRaisePropertyChanged([CallerMemberName] string propertyName = null)
+        protected void DebugRaisePropertyChanged([CallerMemberName] string? propertyName = null)
         {
             RaisePropertyChanged(propertyName);
         }
 
         public Dictionary<JobClient, List<JobSource>> _clients = new Dictionary<JobClient, List<JobSource>>();
 
-        public event EventHandler QueueChanged;
+        public event EventHandler? QueueChanged;
 
         public object Lock { get; } = new object();
 
@@ -48,7 +48,7 @@ namespace NeeView
         {
             lock (Lock)
             {
-                QueueChanged?.Invoke(this, null);
+                QueueChanged?.Invoke(this, EventArgs.Empty);
             }
         }
 
@@ -122,7 +122,7 @@ namespace NeeView
 
                 // Queue更新
                 Queue = queue;
-                QueueChanged?.Invoke(this, null);
+                QueueChanged?.Invoke(this, EventArgs.Empty);
 
                 return sources;
             }
@@ -132,7 +132,7 @@ namespace NeeView
         /// 次に処理するJOBを取得
         /// </summary>
         /// <returns></returns>
-        public Job FetchNextJob(int minPriority, int maxPriority)
+        public Job? FetchNextJob(int minPriority, int maxPriority)
         {
             lock (Lock)
             {

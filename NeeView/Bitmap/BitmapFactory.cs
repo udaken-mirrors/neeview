@@ -41,16 +41,11 @@ namespace NeeView
     /// </summary>
     public class BitmapFactory
     {
-        #region Fields
-
         private DefaultBitmapFactory _default = new DefaultBitmapFactory();
         private MagicScalerBitmapFactory _magicScaler = new MagicScalerBitmapFactory();
 
-        #endregion
 
-        #region Methods
-
-        public BitmapImage CreateBitmapSource(Stream stream, BitmapInfo info, Size size, BitmapCreateSetting setting, CancellationToken token)
+        public BitmapImage CreateBitmapSource(Stream stream, BitmapInfo? info, Size size, BitmapCreateSetting setting, CancellationToken token)
         {
             // by MagicScaler
             if (!size.IsEmpty && setting.Mode == BitmapCreateMode.HighQuality)
@@ -74,7 +69,7 @@ namespace NeeView
             return _default.Create(stream, info, size, token);
         }
 
-        public void CreateImage(Stream stream, BitmapInfo info, Stream outStream, Size size, BitmapImageFormat format, int quality, BitmapCreateSetting setting, CancellationToken token)
+        public void CreateImage(Stream stream, BitmapInfo? info, Stream outStream, Size size, BitmapImageFormat format, int quality, BitmapCreateSetting setting, CancellationToken token)
         {
             // by MagicScaler
             if (!size.IsEmpty && setting.Mode == BitmapCreateMode.HighQuality)
@@ -98,8 +93,6 @@ namespace NeeView
             // by Default
             _default.CreateImage(stream, info, outStream, size, format, quality, token);
         }
-
-        #endregion
     }
 
 }

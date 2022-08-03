@@ -14,7 +14,7 @@ namespace NeeView
 
 
         private MenuTree _mainMenuSource;
-        private Menu _menu;
+        private Menu? _menu;
 
 #if DEBUG
         private DebugMenu _debugMenu = new DebugMenu();
@@ -37,7 +37,7 @@ namespace NeeView
 
         public MenuTree MenuSource => _mainMenuSource;
 
-        public Menu Menu
+        public Menu? Menu
         {
             get { return _menu; }
             set { SetProperty(ref _menu, value); }

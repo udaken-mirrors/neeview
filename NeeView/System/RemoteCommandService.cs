@@ -44,9 +44,9 @@ namespace NeeView
             _recievers.Add(ID, reciever);
         }
 
-        private void Reciever(object sender, RemoteCommandEventArgs e)
+        private void Reciever(object? sender, RemoteCommandEventArgs e)
         {
-            if (_recievers.TryGetValue(e.Command.Id, out RemoteCommandReciever reciever))
+            if (_recievers.TryGetValue(e.Command.Id, out RemoteCommandReciever? reciever))
             {
                 AppDispatcher.BeginInvoke(() =>
                 {

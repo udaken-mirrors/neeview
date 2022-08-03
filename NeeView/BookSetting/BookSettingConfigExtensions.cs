@@ -1,14 +1,17 @@
-﻿namespace NeeView
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace NeeView
 {
     public static class BookSettingConfigExtensions
     {
-        public static BookSettingConfig FromBookMement(Book.Memento memento)
+        [return: NotNullIfNotNull("memento")]
+        public static BookSettingConfig? FromBookMement(Book.Memento? memento)
         {
             if (memento == null) return null;
 
             var collection = new BookSettingConfig();
 
-            collection.Page = memento.Page;
+            collection.Page = memento.Page ?? "";
             collection.PageMode = memento.PageMode;
             collection.BookReadOrder = memento.BookReadOrder;
             collection.IsSupportedDividePage = memento.IsSupportedDividePage;

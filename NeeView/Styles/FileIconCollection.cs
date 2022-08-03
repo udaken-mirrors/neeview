@@ -29,7 +29,7 @@ namespace NeeView
 
             #region IEquatable Support
 
-            public override bool Equals(object other)
+            public override bool Equals(object? other)
             {
                 if (other is Key key)
                 {
@@ -108,7 +108,7 @@ namespace NeeView
             }
 
             var key = new Key(filename, iconType, allowJumbo);
-            if (useCache && _caches.TryGetValue(key, out BitmapSourceCollection collection))
+            if (useCache && _caches.TryGetValue(key, out BitmapSourceCollection? collection))
             {
                 return collection;
             }
@@ -127,7 +127,7 @@ namespace NeeView
             catch (Exception ex)
             {
                 Debug.WriteLine(ex);
-                return null;
+                return new BitmapSourceCollection();
             }
             finally
             {

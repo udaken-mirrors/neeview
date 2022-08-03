@@ -34,7 +34,7 @@ namespace NeeView
             set { if (SetProperty(ref _height, value)) RaisePropertyChanged(nameof(Content)); }
         }
 
-        public UIElement Content
+        public UIElement? Content
         {
             get { return CreatePath(); }
         }
@@ -51,7 +51,7 @@ namespace NeeView
             }
         }
 
-        private UIElement CreatePath()
+        private UIElement? CreatePath()
         {
             var imageGrid = Config.Current.ImageGrid;
 

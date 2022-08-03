@@ -15,12 +15,12 @@ namespace NeeView
     /// </summary>
     public class DragDropWatcher
     {
-        public static event EventHandler<TargetElementChangedEventArgs> TargetElementChanged;
+        public static event EventHandler<TargetElementChangedEventArgs>? TargetElementChanged;
 
         /// <summary>
         /// 現在のドラッグターゲット
         /// </summary>
-        public static UIElement DragElement { get; private set; }
+        public static UIElement? DragElement { get; private set; }
 
         /// <summary>
         /// DragStartBehavior用フック
@@ -28,7 +28,7 @@ namespace NeeView
         public static DragDropHook DragDropHook { get; } = new DragDropHook();
 
 
-        public static void SetDragElement(object sender, UIElement element)
+        public static void SetDragElement(object sender, UIElement? element)
         {
             if (DragElement != element)
             {

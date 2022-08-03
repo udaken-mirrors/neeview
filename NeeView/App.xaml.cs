@@ -29,24 +29,31 @@ namespace NeeView
 
         #endregion
 
-        public static new App Current { get; private set; }
+        private static App? _current;
+        public static new App Current => _current ?? throw new InvalidOperationException("_current must not be null");
+
+
+        // Fields
 
         private bool _isSplashScreenVisibled;
+        private bool _isTerminated;
+        private int _tickBase = System.Environment.TickCount;
+        private CommandLineOption? _option;
+
 
         // 多重起動盛業
-        private MultbootService _multiBootService;
+        private MultbootService? _multiBootService;
 
         // プロセス間セマフォ
         private const string _semaphoreLabel = "NeeView.s0001";
-        private Semaphore _semaphore;
-
-        private bool _isTerminated;
+        private Semaphore? _semaphore;
 
 
-        #region Properties
+
+        // Properties
 
         // オプション設定
-        public CommandLineOption Option { get; private set; }
+        public CommandLineOption Option => _option ?? throw new InvalidOperationException("_option must not be null");
 
         // システムロック
         public object Lock { get; } = new object();
@@ -55,35 +62,28 @@ namespace NeeView
         public DateTime StartTime { get; private set; }
 
         // 開発用：ストップウォッチ
-        public Stopwatch Stopwatch { get; private set; }
+        public Stopwatch Stopwatch { get; private set; } = new();
 
         // MainWindowはLoad完了している？
         public bool IsMainWindowLoaded { get; set; }
 
-        #endregion
-
-        #region TickCount
-
-        private int _tickBase = System.Environment.TickCount;
 
         /// <summary>
         /// アプリの起動時間(ms)取得
         /// </summary>
         public int TickCount => System.Environment.TickCount - _tickBase;
 
-        #endregion
 
-        #region Methods
 
         /// <summary>
         /// Startup
         /// </summary>
         private async void Application_Startup(object sender, StartupEventArgs e)
         {
-            Current = this;
+            _current = this;
 
             StartTime = DateTime.Now;
-            Stopwatch = Stopwatch.StartNew();
+            Stopwatch.Start();
 
             // DLL 検索パスから現在の作業ディレクトリ (CWD) を削除
             NativeMethods.SetDllDirectory("");
@@ -128,7 +128,6 @@ namespace NeeView
 
             // メインウィンドウ起動
             var mainWindow = new MainWindow();
-            mainWindow.Initialize();
 
             Interop.NVFpReset();
             mainWindow.Show();
@@ -150,8 +149,8 @@ namespace NeeView
             Environment.CoorectLocalAppDataFolder();
 
             // コマンドライン引数処理
-            this.Option = ParseArguments(e.Args);
-            this.Option.Validate();
+            _option = ParseArguments(e.Args);
+            _option.Validate();
 
             // カレントディレクトリを実行ファイルの場所に変更。ファイルロック回避のため
             System.IO.Directory.SetCurrentDirectory(Environment.AssemblyFolder);
@@ -219,7 +218,7 @@ namespace NeeView
             }
 
             // テンポラリーの場所
-            Config.Current.System.TemporaryDirectory = Temporary.Current.SetDirectory(Config.Current.System.TemporaryDirectory);
+            Config.Current.System.TemporaryDirectory = Temporary.Current.SetDirectory(Config.Current.System.TemporaryDirectory, true);
 
             // TextBox以外のコントロールのIMEを無効にする
             if (!Config.Current.System.IsInputMethodEnabled)
@@ -235,7 +234,7 @@ namespace NeeView
         /// </summary>
         public void SemaphoreWait()
         {
-            _semaphore.WaitOne();
+            _semaphore?.WaitOne();
         }
 
         /// <summary>
@@ -243,7 +242,7 @@ namespace NeeView
         /// </summary>
         public void SemaphoreRelease()
         {
-            _semaphore.Release();
+            _semaphore?.Release();
         }
 
         /// <summary>
@@ -267,6 +266,8 @@ namespace NeeView
         /// </summary>
         private bool CanStart(Config config)
         {
+            if (_multiBootService is null) return false;
+
             return !_multiBootService.IsServerExists || (Option.IsNewWindow != null ? Option.IsNewWindow == SwitchOption.on : config.StartUp.IsMultiBootEnabled);
         }
 
@@ -344,6 +345,5 @@ namespace NeeView
             SaveData.Current.IsEnableSave = false;
             Shutdown();
         }
-        #endregion
     }
 }

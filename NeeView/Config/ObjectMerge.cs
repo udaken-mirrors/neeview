@@ -16,9 +16,10 @@ namespace NeeView
         /// インスタンスのプロパティを上書き
         /// TODO: 配列や辞書の対応
         /// </summary>
-        public static void Merge(object a1, object a2, ObjectMergeOption options = null)
+        public static void Merge(object a1, object? a2, ObjectMergeOption? options = null)
         {
-            if (a1 == null && a2 == null) return;
+            ////if (a1 == null && a2 == null) return;
+            if (a1 is null || a2 is null) return;
 
             var type = a1.GetType();
             if (type != a2.GetType()) throw new ArgumentException();
@@ -49,11 +50,11 @@ namespace NeeView
                 }
                 else if (property.PropertyType.IsValueType || property.PropertyType == typeof(string))
                 {
-                    property.GetSetMethod(false)?.Invoke(a1, new object[] { v2 });
+                    property.GetSetMethod(false)?.Invoke(a1, new object?[] { v2 });
                 }
                 else if (property.GetCustomAttribute(typeof(ObjectMergeReferenceCopyAttribute)) != null || property.PropertyType.GetCustomAttribute(typeof(ObjectMergeReferenceCopyAttribute)) != null)
                 {
-                    property.GetSetMethod(false)?.Invoke(a1, new object[] { v2 });
+                    property.GetSetMethod(false)?.Invoke(a1, new object?[] { v2 });
                 }
                 else if (property.PropertyType.GetInterfaces().Contains(typeof(System.Collections.ICollection)))
                 {
@@ -64,6 +65,7 @@ namespace NeeView
                     if (v1 == null)
                     {
                         v1 = Activator.CreateInstance(property.PropertyType);
+                        if (v1 is null) throw new InvalidOperationException();
                         property.SetValue(a1, v1);
                     }
                     if (v2 == null)

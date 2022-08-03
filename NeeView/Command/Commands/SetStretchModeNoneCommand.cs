@@ -16,12 +16,12 @@ namespace NeeView
             return BindingGenerator.StretchMode(PageStretchMode.None);
         }
 
-        public override bool CanExecute(object sender, CommandContext e)
+        public override bool CanExecute(object? sender, CommandContext e)
         {
             return !NowLoading.Current.IsDispNowLoading;
         }
 
-        public override void Execute(object sender, CommandContext e)
+        public override void Execute(object? sender, CommandContext e)
         {
             MainViewComponent.Current.ViewController.SetStretchMode(PageStretchMode.None, false);
         }

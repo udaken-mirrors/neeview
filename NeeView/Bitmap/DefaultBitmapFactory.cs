@@ -13,7 +13,7 @@ namespace NeeView
     public class DefaultBitmapFactory : IBitmapFactory
     {
         //
-        public BitmapImage Create(Stream stream, BitmapInfo info, Size size, CancellationToken token)
+        public BitmapImage Create(Stream stream, BitmapInfo? info, Size size, CancellationToken token)
         {
             info = info ?? BitmapInfo.Create(stream);
 
@@ -79,7 +79,7 @@ namespace NeeView
         }
 
         //
-        public void CreateImage(Stream stream, BitmapInfo info, Stream outStream, Size size, BitmapImageFormat format, int quality, CancellationToken token)
+        public void CreateImage(Stream stream, BitmapInfo? info, Stream outStream, Size size, BitmapImageFormat format, int quality, CancellationToken token)
         {
             Debug.WriteLine($"DefaultImage: {size.Truncate()}");
 

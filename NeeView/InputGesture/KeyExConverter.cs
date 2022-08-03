@@ -7,7 +7,7 @@ namespace NeeView
 {
     public class KeyExConverter : TypeConverter
     {
-        public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType)
+        public override bool CanConvertFrom(ITypeDescriptorContext? context, Type sourceType)
         {
             if (sourceType == typeof(string))
             {
@@ -20,7 +20,7 @@ namespace NeeView
         }
 
 
-        public override bool CanConvertTo(ITypeDescriptorContext context, Type destinationType)
+        public override bool CanConvertTo(ITypeDescriptorContext? context, Type? destinationType)
         {
             if (destinationType == typeof(string) && context?.Instance is Key key)
             {
@@ -33,12 +33,12 @@ namespace NeeView
         }
 
 
-        public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object source)
+        public override object? ConvertFrom(ITypeDescriptorContext? context, CultureInfo? culture, object source)
         {
             if (source is string)
             {
                 string fullName = ((string)source).Trim();
-                object key = GetKey(fullName, CultureInfo.InvariantCulture);
+                object? key = GetKey(fullName, CultureInfo.InvariantCulture);
                 if (key != null)
                 {
                     return ((Key)key);
@@ -52,7 +52,7 @@ namespace NeeView
         }
 
 
-        public override object ConvertTo(ITypeDescriptorContext context, CultureInfo culture, object value, Type destinationType)
+        public override object? ConvertTo(ITypeDescriptorContext? context, CultureInfo? culture, object? value, Type destinationType)
         {
             if (destinationType == null)
             {
@@ -77,7 +77,7 @@ namespace NeeView
                     return char.ToString((char)(int)(key - Key.A + 'A'));
                 }
 
-                string strKey = MatchKey(key, culture);
+                string? strKey = MatchKey(key, culture);
                 if (strKey != null && (strKey.Length != 0 || strKey == string.Empty))
                 {
                     return strKey;
@@ -87,7 +87,7 @@ namespace NeeView
         }
 
 
-        private object GetKey(string keyToken, CultureInfo culture)
+        private object? GetKey(string keyToken, CultureInfo? culture)
         {
             if (keyToken == string.Empty)
             {
@@ -176,7 +176,7 @@ namespace NeeView
         }
 
 
-        private static string MatchKey(Key key, CultureInfo culture)
+        private static string? MatchKey(Key key, CultureInfo? culture)
         {
             if (key == Key.None)
             {

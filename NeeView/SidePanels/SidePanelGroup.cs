@@ -20,10 +20,10 @@ namespace NeeView
         public class Memento : IMemento
         {
             [DataMember]
-            public List<string> PanelTypeCodes { get; set; }
+            public List<string>? PanelTypeCodes { get; set; }
 
             [DataMember]
-            public string SelectedPanelTypeCode { get; set; }
+            public string? SelectedPanelTypeCode { get; set; }
 
             [DataMember]
             public double Width { get; set; }

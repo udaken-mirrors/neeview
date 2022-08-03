@@ -7,7 +7,7 @@ namespace NeeView
     /// </summary>
     public interface IThumbnail
     {
-        ImageSource ImageSource { get; }
+        ImageSource? ImageSource { get; }
         double Width { get; }
         double Height { get; }
 

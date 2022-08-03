@@ -16,32 +16,30 @@ namespace NeeView
     [DataContract]
     public class PageViewRecorder : BindableBase, IDisposable
     {
-        // Singleton
-        static PageViewRecorder() => Current = new PageViewRecorder();
-        public static PageViewRecorder Current { get; }
+        private static PageViewRecorder? _current;
+        public static PageViewRecorder Current => _current ?? throw new InvalidOperationException();
+
+        public static void Initialize()
+        {
+            if (_current is not null) return;
+            _current = new PageViewRecorder();
+        }
 
 
-        private FileStream _file;
-        private StringBuilder _writeBuffer;
+
+        private FileStream? _file;
+        private StringBuilder? _writeBuffer;
         private DateTime _viewedPagesDateTime;
-        private List<Page> _viewedPages;
+        private List<Page>? _viewedPages;
         private DateTime _viewedBookDateTime;
-        private string _viewedBookAddress;
-        private string _viewedBookName;
-        private object _lock;
+        private string? _viewedBookAddress;
+        private string? _viewedBookName;
+        private object _lock = new object();
         private bool _disposedValue;
 
 
         private PageViewRecorder()
         {
-        }
-
-
-        public void Initialize()
-        {
-            if (_lock != null) return;
-            _lock = new object();
-
             Config.Current.PageViewRecorder.PropertyChanged += OnPropertyChanged;
 
             // アプリ終了前の開放予約
@@ -50,14 +48,14 @@ namespace NeeView
             UpdateState();
         }
 
+
         private void WritePageViewedRecord(DateTime now)
         {
             lock (_lock)
             {
-                if (_file == null)
-                {
-                    return;
-                }
+                if (_file is null) return;
+                if (_writeBuffer is null) return;
+                if (_viewedPages is null) return;
 
                 _writeBuffer.Clear();
                 foreach (var page in _viewedPages)
@@ -93,15 +91,9 @@ namespace NeeView
         {
             lock (_lock)
             {
-                if (_file == null)
-                {
-                    return;
-                }
-
-                if (_viewedBookAddress == null)
-                {
-                    return;
-                }
+                if (_file is null) return;
+                if (_writeBuffer is null) return;
+                if (_viewedBookAddress is null) return;
 
                 _writeBuffer.Clear();
                 _writeBuffer.Append(_viewedBookDateTime.ToString("O"));
@@ -121,6 +113,8 @@ namespace NeeView
 
         private void WriteString(string text)
         {
+            if (_file is null) return;
+
             try
             {
                 App.Current.SemaphoreWait();
@@ -132,7 +126,7 @@ namespace NeeView
             catch (IOException err)
             {
                 Debug.WriteLine("[Error] {0}", err.Message);
-                ToastService.Current.Show(new Toast(Resources.PageViewRecordWriteError_Message, null, ToastIcon.Error));
+                ToastService.Current.Show(new Toast(Resources.PageViewRecordWriteError_Message, "", ToastIcon.Error));
             }
             finally
             {
@@ -140,19 +134,19 @@ namespace NeeView
             }
         }
 
-        private void OpenFile()
+        private void OpenFile(string path)
         {
             lock (_lock)
             {
                 try
                 {
-                    _file = File.Open(Config.Current.PageViewRecorder.PageViewRecordFilePath, FileMode.Append, FileAccess.Write, FileShare.ReadWrite);
+                    _file = File.Open(path, FileMode.Append, FileAccess.Write, FileShare.ReadWrite);
                     _writeBuffer = new StringBuilder(1024);
                 }
                 catch (IOException err)
                 {
                     Debug.WriteLine("[Error] {0}", err.Message);
-                    ToastService.Current.Show(new Toast(Resources.PageViewRecordWriteError_Message, null, ToastIcon.Error));
+                    ToastService.Current.Show(new Toast(Resources.PageViewRecordWriteError_Message, "", ToastIcon.Error));
                 }
                 _viewedBookAddress = null;
                 _viewedPages = new List<Page>();
@@ -214,7 +208,7 @@ namespace NeeView
         #endregion
 
 
-        private void OnViewBookChanged(object sender, BookChangedEventArgs e)
+        private void OnViewBookChanged(object? sender, BookChangedEventArgs e)
         {
             var now = DateTime.Now;
             var book = BookHub.Current.Book;
@@ -240,7 +234,7 @@ namespace NeeView
             }
         }
 
-        private void OnViewContentsChanged(object sender, ViewContentSourceCollectionChangedEventArgs e)
+        private void OnViewContentsChanged(object? sender, ViewContentSourceCollectionChangedEventArgs e)
         {
             var now = DateTime.Now;
             var viewedPages = e?.ViewPageCollection?.Collection.Where(x => x != null).Select(x => x.Page).ToList() ?? new List<Page>();
@@ -250,7 +244,7 @@ namespace NeeView
             _viewedPages = viewedPages;
         }
 
-        private void OnPropertyChanged(object sender, PropertyChangedEventArgs e)
+        private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
             UpdateState();
         }
@@ -264,12 +258,13 @@ namespace NeeView
                 return;
             }
 
-            if (String.IsNullOrEmpty(Config.Current.PageViewRecorder.PageViewRecordFilePath))
+            var filePath = Config.Current.PageViewRecorder.PageViewRecordFilePath;
+            if (string.IsNullOrEmpty(filePath))
             {
                 return;
             }
 
-            OpenFile();
+            OpenFile(filePath);
         }
 
 
@@ -288,7 +283,7 @@ namespace NeeView
             public bool IsRecordPageView { get; set; }
 
             [DataMember(EmitDefaultValue = false)]
-            public string PageViewRecordPath { get; set; }
+            public string? PageViewRecordPath { get; set; }
 
             public void RestoreConfig(Config config)
             {

@@ -53,7 +53,7 @@ namespace NeeView
         /// </summary>
         private Timer _timer;
 
-        private MouseButtonEventArgs _mouseButtonEventArgs;
+        private MouseButtonEventArgs? _mouseButtonEventArgs;
 
 
         /// <summary>
@@ -62,6 +62,8 @@ namespace NeeView
         /// <param name="context"></param>
         public MouseInputNormal(MouseInputContext context) : base(context)
         {
+            _timer = new Timer();
+            _timer.Elapsed += OnTimeout;
         }
 
         private bool IsLongButtonPressed()
@@ -72,25 +74,16 @@ namespace NeeView
 
         private void StartTimer()
         {
-            if (_timer is null)
-            {
-                _timer = new Timer();
-                _timer.Elapsed += OnTimeout;
-            }
-
             _timer.Interval = Config.Current.Mouse.LongButtonDownTime * 1000.0;
             _timer.Start();
         }
 
         private void StopTimer()
         {
-            if (_timer is not null)
-            {
-                _timer.Stop();
-            }
+            _timer.Stop();
         }
 
-        private void OnTimeout(object sender, object e)
+        private void OnTimeout(object? sender, object e)
         {
             switch (Config.Current.Mouse.LongButtonDownMode)
             {
@@ -110,7 +103,10 @@ namespace NeeView
                     }
                     AppDispatcher.Invoke(() =>
                     {
-                        MouseButtonChanged?.Invoke(sender, _mouseButtonEventArgs);
+                        if (_mouseButtonEventArgs != null)
+                        {
+                            MouseButtonChanged?.Invoke(sender, _mouseButtonEventArgs);
+                        }
                         _isButtonDown = false;
                     });
                     break;
@@ -126,7 +122,7 @@ namespace NeeView
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="parameter"></param>
-        public override void OnOpened(FrameworkElement sender, object parameter)
+        public override void OnOpened(FrameworkElement sender, object? parameter)
         {
             _isButtonDown = false;
             if (sender.Cursor != Cursors.None)
@@ -154,7 +150,7 @@ namespace NeeView
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        public override void OnMouseButtonDown(object sender, MouseButtonEventArgs e)
+        public override void OnMouseButtonDown(object? sender, MouseButtonEventArgs e)
         {
             _isButtonDown = true;
             _context.Sender.Focus();
@@ -191,7 +187,7 @@ namespace NeeView
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        public override void OnMouseButtonUp(object sender, MouseButtonEventArgs e)
+        public override void OnMouseButtonUp(object? sender, MouseButtonEventArgs e)
         {
             StopTimer();
 
@@ -210,7 +206,7 @@ namespace NeeView
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        public override void OnMouseWheel(object sender, MouseWheelEventArgs e)
+        public override void OnMouseWheel(object? sender, MouseWheelEventArgs e)
         {
             // コマンド決定
             // ホイールがメインキー、それ以外は装飾キー
@@ -225,7 +221,7 @@ namespace NeeView
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        public override void OnMouseHorizontalWheel(object sender, MouseWheelEventArgs e)
+        public override void OnMouseHorizontalWheel(object? sender, MouseWheelEventArgs e)
         {
             // コマンド決定
             // ホイールがメインキー、それ以外は装飾キー
@@ -240,7 +236,7 @@ namespace NeeView
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        public override void OnMouseMove(object sender, MouseEventArgs e)
+        public override void OnMouseMove(object? sender, MouseEventArgs e)
         {
             if (Config.Current.Mouse.IsHoverScroll)
             {
@@ -276,7 +272,7 @@ namespace NeeView
         /// <summary>
         /// ホバースクロール
         /// </summary>
-        private void HoverScroll(object sender, MouseEventArgs e)
+        private void HoverScroll(object? sender, MouseEventArgs e)
         {
             if (_context.DragTransformControl is null) return;
 

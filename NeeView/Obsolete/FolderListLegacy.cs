@@ -24,7 +24,7 @@ namespace NeeView
             public bool IsVisibleBookmarkMark { get; set; }
 
             [DataMember]
-            public string Home { get; set; }
+            public string? Home { get; set; }
 
             [DataMember, DefaultValue(true)]
             public bool IsInsertItem { get; set; }
@@ -33,7 +33,7 @@ namespace NeeView
             public bool IsMultipleRarFilterEnabled { get; set; }
 
             [DataMember]
-            public string ExcludePattern { get; set; }
+            public string? ExcludePattern { get; set; }
 
             [DataMember]
             public bool IsCruise { get; set; }
@@ -77,10 +77,10 @@ namespace NeeView
 
             target.IsVisibleHistoryMark = memento.IsVisibleHistoryMark;
             target.IsVisibleBookmarkMark = memento.IsVisibleBookmarkMark;
-            target.Home = memento.Home;
+            target.Home = memento.Home ?? "";
             target.IsInsertItem = memento.IsInsertItem;
             target.IsMultipleRarFilterEnabled = memento.IsMultipleRarFilterEnabled;
-            target.ExcludePattern = memento.ExcludePattern;
+            target.ExcludePattern = memento.ExcludePattern ?? "";
             target.IsCruise = memento.IsCruise;
             target.IsCloseBookWhenMove = memento.IsCloseBookWhenMove;
 

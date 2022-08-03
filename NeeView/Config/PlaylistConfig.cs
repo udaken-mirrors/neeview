@@ -13,10 +13,10 @@ namespace NeeView
         private bool _isFirstIn;
 
         [JsonInclude, JsonPropertyName(nameof(PlaylistFolder))]
-        public string _playlistFolder;
+        public string? _playlistFolder;
 
         [JsonInclude, JsonPropertyName(nameof(CurrentPlaylist))]
-        public string _currentPlaylist;
+        public string? _currentPlaylist;
 
 
         [PropertyMember]

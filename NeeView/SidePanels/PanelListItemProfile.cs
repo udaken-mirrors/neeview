@@ -206,7 +206,7 @@ namespace NeeView
         }
 
         [PropertyMapIgnore]
-        public Brush Background
+        public Brush? Background
         {
             get
             {

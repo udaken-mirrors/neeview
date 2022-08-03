@@ -1,6 +1,7 @@
 ﻿using NeeView.Properties;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
@@ -10,14 +11,14 @@ namespace NeeView
     public class Importer : IDisposable
     {
         private ZipArchive _archive;
-        private ZipArchiveEntry _settingEntry;
-        private ZipArchiveEntry _settingEntryV1;
-        private ZipArchiveEntry _historyEntry;
-        private ZipArchiveEntry _historyEntryV1;
-        private ZipArchiveEntry _bookmarkEntry;
-        private ZipArchiveEntry _bookmarkEntryV1;
-        private ZipArchiveEntry _pagemarkEntry;
-        private ZipArchiveEntry _pagemarkEntryV1;
+        private ZipArchiveEntry? _settingEntry;
+        private ZipArchiveEntry? _settingEntryV1;
+        private ZipArchiveEntry? _historyEntry;
+        private ZipArchiveEntry? _historyEntryV1;
+        private ZipArchiveEntry? _bookmarkEntry;
+        private ZipArchiveEntry? _bookmarkEntryV1;
+        private ZipArchiveEntry? _pagemarkEntry;
+        private ZipArchiveEntry? _pagemarkEntryV1;
         private bool _disposedValue;
         private bool _isUserSettingEnabled = true;
         private bool _isHistoryEnabled = false;
@@ -111,6 +112,7 @@ namespace NeeView
         public List<ZipArchiveEntry> ScriptEntries { get; private set; }
 
 
+        [MemberNotNull(nameof(PlaylistEntries), nameof(ThemeEntries), nameof(ScriptEntries))]
         public void Initialize()
         {
             _settingEntry = _archive.GetEntry(SaveData.UserSettingFileName);
@@ -158,7 +160,7 @@ namespace NeeView
         {
             if (!this.IsUserSettingEnabled) return;
 
-            UserSetting setting = null;
+            UserSetting? setting = null;
 
             if (_settingEntry != null)
             {
@@ -172,7 +174,7 @@ namespace NeeView
                 using (var stream = _settingEntryV1.Open())
                 {
                     var settingV1 = UserSettingV1.LoadV1(stream);
-                    setting = settingV1.ConvertToV2();
+                    setting = settingV1?.ConvertToV2();
                 }
                 // 他のファイルの一部設定を反映
                 if (_historyEntryV1 != null)
@@ -180,7 +182,7 @@ namespace NeeView
                     using (var stream = _historyEntryV1.Open())
                     {
                         var historyV1 = BookHistoryCollection.Memento.LoadV1(stream);
-                        historyV1.RestoreConfig(setting.Config);
+                        historyV1.RestoreConfig(setting?.Config);
                     }
                 }
                 if (_pagemarkEntryV1 != null)
@@ -189,7 +191,7 @@ namespace NeeView
                     {
 #pragma warning disable CS0612 // 型またはメンバーが旧型式です
                         var pagemarkV1 = PagemarkCollection.Memento.LoadV1(stream);
-                        pagemarkV1.RestoreConfig(setting.Config);
+                        pagemarkV1?.RestoreConfig(setting?.Config);
 #pragma warning restore CS0612 // 型またはメンバーが旧型式です
                     }
                 }
@@ -200,7 +202,10 @@ namespace NeeView
                 Setting.SettingWindow.Current?.Cancel();
                 MainWindowModel.Current.CloseCommandParameterDialog();
 
-                setting.Config.Window.State = Config.Current.Window.State; // ウィンドウ状態は維持する
+                if (setting.Config is not null)
+                {
+                    setting.Config.Window.State = Config.Current.Window.State; // ウィンドウ状態は維持する
+                }
                 UserSettingTools.Restore(setting);
             }
         }
@@ -209,7 +214,7 @@ namespace NeeView
         {
             if (!this.IsHistoryEnabled) return;
 
-            BookHistoryCollection.Memento history = null;
+            BookHistoryCollection.Memento? history = null;
 
             if (_historyEntry != null)
             {
@@ -236,7 +241,7 @@ namespace NeeView
         {
             if (!this.IsBookmarkEnabled) return;
 
-            BookmarkCollection.Memento bookmark = null;
+            BookmarkCollection.Memento? bookmark = null;
 
             if (_bookmarkEntry != null)
             {
@@ -265,7 +270,7 @@ namespace NeeView
             if (!this.IsPagemarkEnabled) return;
 
 #pragma warning disable CS0612 // 型またはメンバーが旧型式です
-            PagemarkCollection.Memento pagemark = null;
+            PagemarkCollection.Memento? pagemark = null;
 
             if (_pagemarkEntry != null)
             {

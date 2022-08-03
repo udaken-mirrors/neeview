@@ -1,4 +1,5 @@
 ﻿using NeeView.Collections.Generic;
+using NeeLaboratory.Linq;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -166,7 +167,8 @@ namespace NeeView
         {
             if (pages == null || pages.Count == 0) return "";
 
-            string s = pages[0].EntryName;
+            string? s = pages[0].EntryName;
+            if (s is null) return "";
             foreach (var page in pages)
             {
                 s = GetStartsWith(s, page.EntryName);
@@ -225,7 +227,8 @@ namespace NeeView
             var archivers = pages
                 .Select(e => e.Entry.Archiver)
                 .Distinct()
-                .Where(e => e != null && !e.IsFileSystem)
+                .WhereNotNull()
+                .Where(e => !e.IsFileSystem)
                 .ToList();
 
             foreach (var archiver in archivers)

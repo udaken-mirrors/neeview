@@ -100,7 +100,7 @@ namespace NeeView
         }
 
 
-        public void Execute(object sender, string path, string argument)
+        public void Execute(object? sender, string path, string? argument)
         {
             _pool.Run(sender, path, argument);
         }

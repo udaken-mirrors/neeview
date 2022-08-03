@@ -73,8 +73,8 @@ namespace NeeView
         }
 
         // ページ背景ブラシ
-        private Brush _pageBackgroundBrush = null;
-        public Brush PageBackgroundBrush
+        private Brush? _pageBackgroundBrush = null;
+        public Brush? PageBackgroundBrush
         {
             get { return _pageBackgroundBrush; }
             set { SetProperty(ref _pageBackgroundBrush, value); }
@@ -82,8 +82,8 @@ namespace NeeView
 
 
         // Backgroud Brush
-        private Brush _backgroundBrush = Brushes.Black;
-        public Brush BackgroundBrush
+        private Brush? _backgroundBrush = Brushes.Black;
+        public Brush? BackgroundBrush
         {
             get { return _backgroundBrush; }
             set { if (_backgroundBrush != value) { _backgroundBrush = value; RaisePropertyChanged(); UpdateForegroundBrush(); } }
@@ -92,8 +92,8 @@ namespace NeeView
         /// <summary>
         /// BackgroundFrontBrush property.
         /// </summary>
-        private Brush _BackgroundFrontBrush;
-        public Brush BackgroundFrontBrush
+        private Brush? _BackgroundFrontBrush;
+        public Brush? BackgroundFrontBrush
         {
             get { return _BackgroundFrontBrush; }
             set { if (_BackgroundFrontBrush != value) { _BackgroundFrontBrush = value; RaisePropertyChanged(); } }
@@ -103,8 +103,8 @@ namespace NeeView
         /// <summary>
         /// カスタム背景
         /// </summary>
-        private Brush _customBackgroundBrush;
-        public Brush CustomBackgroundBrush
+        private Brush? _customBackgroundBrush;
+        public Brush? CustomBackgroundBrush
         {
             get { return _customBackgroundBrush ?? (_customBackgroundBrush = Config.Current.Background.CustomBackground?.CreateBackBrush()); }
         }
@@ -113,8 +113,8 @@ namespace NeeView
         /// <summary>
         /// カスタム背景
         /// </summary>
-        private Brush _customBackgroundFrontBrush;
-        public Brush CustomBackgroundFrontBrush
+        private Brush? _customBackgroundFrontBrush;
+        public Brush? CustomBackgroundFrontBrush
         {
             get { return _customBackgroundFrontBrush ?? (_customBackgroundFrontBrush = Config.Current.Background.CustomBackground?.CreateFrontBrush()); }
         }
@@ -210,7 +210,7 @@ namespace NeeView
         /// 背景ブラシ作成
         /// </summary>
         /// <returns></returns>
-        public Brush CreateBackgroundBrush()
+        public Brush? CreateBackgroundBrush()
         {
             switch (Config.Current.Background.BackgroundType)
             {
@@ -233,7 +233,7 @@ namespace NeeView
         /// </summary>
         /// <param name="dpi">適用するDPI</param>
         /// <returns></returns>
-        public Brush CreateBackgroundFrontBrush(DpiScale dpi)
+        public Brush? CreateBackgroundFrontBrush(DpiScale dpi)
         {
             switch (Config.Current.Background.BackgroundType)
             {
@@ -281,7 +281,7 @@ namespace NeeView
             public BackgroundType Background { get; set; }
 
             [DataMember]
-            public BrushSource CustomBackground { get; set; }
+            public BrushSource? CustomBackground { get; set; }
 
             [DataMember, DefaultValue(typeof(Color), "Transparent")]
             public Color PageBackgroundColor { get; set; }
@@ -310,7 +310,7 @@ namespace NeeView
 
             public void RestoreConfig(Config config)
             {
-                config.Background.CustomBackground = CustomBackground;
+                config.Background.CustomBackground = CustomBackground ?? new BrushSource();
                 config.Background.BackgroundType = Background;
                 config.Background.PageBackgroundColor = PageBackgroundColor;
             }

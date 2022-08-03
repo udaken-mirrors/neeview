@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Printing;
 using System.Runtime.Serialization;
@@ -127,8 +128,8 @@ namespace NeeView
         /// <summary>
         /// PrintQueue property.
         /// </summary>
-        private PrintQueue _PrintQueue;
-        public PrintQueue PrintQueue
+        private PrintQueue? _PrintQueue;
+        public PrintQueue? PrintQueue
         {
             get { return _PrintQueue; }
             set { if (_PrintQueue != value) { _PrintQueue = value; RaisePropertyChanged(); } }
@@ -234,7 +235,7 @@ namespace NeeView
         /// <summary>
         /// 印刷エリア
         /// </summary>
-        private PageImageableArea _area;
+        private PageImageableArea? _area;
 
         /// <summary>
         /// 印刷開始位置
@@ -573,7 +574,7 @@ namespace NeeView
         {
             if (PrintMode == PrintMode.RawImage)
             {
-                return _context.MainContent.FileName;
+                return _context.MainContent?.FileName ?? "noname";
             }
             else
             {
@@ -621,6 +622,7 @@ namespace NeeView
             public Margin Margin { get; set; }
 
 
+            [MemberNotNull(nameof(Margin))]
             private void Constructor()
             {
                 PageOrientation = PageOrientation.Portrait;
@@ -659,7 +661,7 @@ namespace NeeView
             return memento;
         }
 
-        public void Restore(Memento memento)
+        public void Restore(Memento? memento)
         {
             if (memento == null) return;
 

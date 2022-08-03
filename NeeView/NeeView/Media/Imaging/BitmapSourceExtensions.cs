@@ -34,7 +34,7 @@ namespace NeeView.Media.Imaging
         /// <summary>
         /// サムネイル作成  (STA)
         /// </summary>
-        public static BitmapSource CreateThumbnail(this ImageSource source, Size maxSize)
+        public static BitmapSource? CreateThumbnail(this ImageSource source, Size maxSize)
         {
             if (source == null) return null;
 
@@ -107,7 +107,7 @@ namespace NeeView.Media.Imaging
         /// <param name="source"></param>
         /// <param name="maxSize"></param>
         /// <returns></returns>
-        public static BitmapSource CreateThumbnailByDrawingVisual(this ImageSource source, Size maxSize)
+        public static BitmapSource? CreateThumbnailByDrawingVisual(this ImageSource source, Size maxSize)
         {
             if (source == null) return null;
 

@@ -30,7 +30,7 @@ namespace NeeView
             BookOperation.Current.ViewContentsChanged += BookOperation_ViewContentsChanged;
         }
 
-        private void BookOperation_ViewContentsChanged(object sender, ViewContentSourceCollectionChangedEventArgs e)
+        private void BookOperation_ViewContentsChanged(object? sender, ViewContentSourceCollectionChangedEventArgs e)
         {
             ////var page = BookOperation.Current.Book?.GetViewPage();
             ////this.Root.ScrollIntoView(page);

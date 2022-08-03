@@ -28,6 +28,7 @@ namespace NeeView
 
         public MouseInputLoupe(MouseInputContext context) : base(context)
         {
+            if (context.LoupeTransform is null) throw new InvalidOperationException();
             _loupe = context.LoupeTransform;
         }
 
@@ -40,7 +41,7 @@ namespace NeeView
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="parameter">trueならば長押しモード</param>
-        public override void OnOpened(FrameworkElement sender, object parameter)
+        public override void OnOpened(FrameworkElement sender, object? parameter)
         {
             if (parameter is bool isLongDownMode)
             {
@@ -96,7 +97,7 @@ namespace NeeView
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        public override void OnMouseButtonDown(object sender, MouseButtonEventArgs e)
+        public override void OnMouseButtonDown(object? sender, MouseButtonEventArgs e)
         {
             _isButtonDown = true;
 
@@ -124,7 +125,7 @@ namespace NeeView
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        public override void OnMouseButtonUp(object sender, MouseButtonEventArgs e)
+        public override void OnMouseButtonUp(object? sender, MouseButtonEventArgs e)
         {
             if (_isLongDownMode)
             {
@@ -152,7 +153,7 @@ namespace NeeView
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        public override void OnMouseMove(object sender, MouseEventArgs e)
+        public override void OnMouseMove(object? sender, MouseEventArgs e)
         {
             var point = e.GetPosition(_context.Sender);
             _loupe.Position = _loupeBasePosition - (point - _context.StartPoint) * Config.Current.Loupe.Speed;
@@ -165,7 +166,7 @@ namespace NeeView
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        public override void OnMouseWheel(object sender, MouseWheelEventArgs e)
+        public override void OnMouseWheel(object? sender, MouseWheelEventArgs e)
         {
             if (Config.Current.Loupe.IsWheelScalingEnabled)
             {
@@ -194,7 +195,7 @@ namespace NeeView
         /// <summary>
         /// マウス水平ホイール処理
         /// </summary>
-        public override void OnMouseHorizontalWheel(object sender, MouseWheelEventArgs e)
+        public override void OnMouseHorizontalWheel(object? sender, MouseWheelEventArgs e)
         {
             // コマンド決定
             // ホイールがメインキー、それ以外は装飾キー
@@ -209,7 +210,7 @@ namespace NeeView
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        public override void OnKeyDown(object sender, KeyEventArgs e)
+        public override void OnKeyDown(object? sender, KeyEventArgs e)
         {
             // ESC で 状態解除
             if (Config.Current.Loupe.IsEscapeKeyEnabled && e.Key == Key.Escape && Keyboard.Modifiers == ModifierKeys.None)

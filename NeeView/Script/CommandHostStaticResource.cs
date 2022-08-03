@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 namespace NeeView
 {
@@ -28,6 +29,8 @@ namespace NeeView
         public ConfigMap ConfigMap => _configMap;
         public CommandAccessorMap CommandAccessMap => _commandAccessMap;
 
+
+        [MemberNotNull(nameof(_commandAccessMap))]
         private void UpdateCommandAccessMap()
         {
             _commandAccessMap = new CommandAccessorMap(CommandTable.Current, _accessDiagnostics);

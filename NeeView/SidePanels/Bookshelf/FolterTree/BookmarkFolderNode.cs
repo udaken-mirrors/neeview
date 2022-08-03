@@ -3,6 +3,7 @@ using NeeView.Collections.Generic;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -13,15 +14,15 @@ namespace NeeView
 {
     public class BookmarkFolderNode : FolderTreeNodeBase
     {
-        public BookmarkFolderNode(TreeListNode<IBookmarkEntry> source, FolderTreeNodeBase parent)
+        public BookmarkFolderNode(TreeListNode<IBookmarkEntry> source, FolderTreeNodeBase? parent)
         {
             Source = source;
             Parent = parent;
         }
 
-        public TreeListNode<IBookmarkEntry> BookmarkSource => (TreeListNode<IBookmarkEntry>)Source;
+        public TreeListNode<IBookmarkEntry> BookmarkSource => (TreeListNode<IBookmarkEntry>?)Source ?? throw new InvalidOperationException();
 
-        public override string Name { get => BookmarkSource.Value.Name; set { } }
+        public override string Name { get => BookmarkSource.Value.Name ?? ""; set { } }
 
         public override string DispName { get => Name; set { } }
 
@@ -30,7 +31,8 @@ namespace NeeView
         public string Path => Parent is BookmarkFolderNode parent ? LoosePath.Combine(parent.Path, Name) : Name;
 
 
-        public override ObservableCollection<FolderTreeNodeBase> Children
+        [NotNull]
+        public override ObservableCollection<FolderTreeNodeBase>? Children
         {
             get
             {

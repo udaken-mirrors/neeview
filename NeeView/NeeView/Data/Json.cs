@@ -81,7 +81,7 @@ namespace NeeView.Data
         /// <summary>
         /// デシリアライズ
         /// </summary>
-        public static object Deserialize(System.IO.Stream stream, Type type)
+        public static object? Deserialize(System.IO.Stream stream, Type type)
         {
             var serializer = new DataContractJsonSerializer(type);
             return serializer.ReadObject(stream);
@@ -90,7 +90,7 @@ namespace NeeView.Data
         /// <summary>
         /// デシリアライズ
         /// </summary>
-        public static object Deserialize(string json, Type type)
+        public static object? Deserialize(string json, Type type)
         {
             using (var stream = new System.IO.MemoryStream(Encoding.UTF8.GetBytes(json)))
             {
@@ -101,7 +101,7 @@ namespace NeeView.Data
         /// <summary>
         /// デシリアライズ
         /// </summary>
-        public static object Deserialize(byte[] json, Type type)
+        public static object? Deserialize(byte[] json, Type type)
         {
             using (var stream = new System.IO.MemoryStream(json))
             {
@@ -112,16 +112,16 @@ namespace NeeView.Data
         /// <summary>
         /// デシリアライズ
         /// </summary>
-        public static T Deserialize<T>(System.IO.Stream stream) where T : class
+        public static T? Deserialize<T>(System.IO.Stream stream) where T : class
         {
             var serializer = new DataContractJsonSerializer(typeof(T));
-            return (T)serializer.ReadObject(stream);
+            return (T?)serializer.ReadObject(stream);
         }
 
         /// <summary>
         /// デシリアライズ
         /// </summary>
-        public static T Deserialize<T>(string json) where T : class
+        public static T? Deserialize<T>(string json) where T : class
         {
             using (var stream = new System.IO.MemoryStream(Encoding.UTF8.GetBytes(json)))
             {
@@ -132,7 +132,7 @@ namespace NeeView.Data
         /// <summary>
         /// デシリアライズ
         /// </summary>
-        public static T Deserialize<T>(byte[] json) where T : class
+        public static T? Deserialize<T>(byte[] json) where T : class
         {
             using (var stream = new System.IO.MemoryStream(json))
             {
@@ -156,8 +156,8 @@ namespace NeeView.Data
                 serializer.WriteObject(inStream, element);
 
                 // 出力用ストリーム
-                GZipStream gzout = null;
-                System.IO.MemoryStream outStream = null;
+                GZipStream? gzout = null;
+                System.IO.MemoryStream? outStream = null;
                 try
                 {
                     outStream = new System.IO.MemoryStream();
@@ -192,7 +192,7 @@ namespace NeeView.Data
         /// </summary>
         /// <param name="buff"></param>
         /// <returns></returns>
-        public static T DeserializeGZip<T>(byte[] buff) where T : class
+        public static T? DeserializeGZip<T>(byte[] buff) where T : class
         {
             // 出力用ストリーム
             using (var outStream = new System.IO.MemoryStream())
@@ -206,7 +206,7 @@ namespace NeeView.Data
                 // JSON Deserialize
                 var serializer = new DataContractJsonSerializer(typeof(T));
                 outStream.Seek(0, System.IO.SeekOrigin.Begin);
-                return (T)serializer.ReadObject(outStream);
+                return (T?)serializer.ReadObject(outStream);
             }
         }
 
@@ -217,7 +217,7 @@ namespace NeeView.Data
         /// <param name="source"></param>
         /// <param name="type"></param>
         /// <returns></returns>
-        public static object Clone(object source, Type type)
+        public static object? Clone(object source, Type type)
         {
             return Deserialize(Serialize(source, type), type);
         }
@@ -228,7 +228,7 @@ namespace NeeView.Data
         /// </summary>
         /// <param name="source"></param>
         /// <returns></returns>
-        public static T Clone<T>(T source) where T : class
+        public static T? Clone<T>(T source) where T : class
         {
             return Deserialize<T>(Serialize(source));
         }

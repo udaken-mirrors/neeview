@@ -10,9 +10,9 @@ namespace NeeView.Susie.Client
 {
     public class SusiePluginRemoteClient : IDisposable
     {
-        private SubProcess _subProcess;
-        private SimpleClient _client;
-        private CancellationTokenSource _cancellationTokenSource;
+        private SubProcess? _subProcess;
+        private SimpleClient? _client;
+        private CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
 
         public bool IsConnected => _subProcess != null && _subProcess.IsActive;
 
@@ -62,8 +62,10 @@ namespace NeeView.Susie.Client
                 throw new FileNotFoundException($"File not found: {subProcessFileName}");
             }
 
-            _subProcess = new SubProcess(subProcessFileName, SusiePluginRemote.BootKeyword);
-            _subProcess.Start();
+            var subProcess = new SubProcess(subProcessFileName, SusiePluginRemote.BootKeyword);
+            subProcess.Start();
+            if (subProcess.Process is null) throw new InvalidOperationException($"Cannot start process: {subProcessFileName}");
+            _subProcess = subProcess;
 
             var cancellationTokenSource = new CancellationTokenSource();
             _cancellationTokenSource = cancellationTokenSource;
@@ -89,6 +91,8 @@ namespace NeeView.Susie.Client
             {
                 throw new InvalidOperationException("Disconnected from SusiePlugin Server.");
             }
+
+            if (_client is null) throw new InvalidOperationException("_client must not be null");
 
             using (var linkedCancellationTokenSource = CancellationTokenSource.CreateLinkedTokenSource(_cancellationTokenSource.Token, token))
             {

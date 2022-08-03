@@ -9,11 +9,11 @@ namespace NeeView
 {
     public class ExternalApp : BindableBase, ICloneable
     {
-        private string _name;
-        private string _command;
+        private string? _name;
+        private string? _command;
         private string _parameter = OpenExternalAppCommandParameter.DefaultParameter;
         private ArchivePolicy _archivePolicy = ArchivePolicy.SendExtractFile;
-        private string _workingDirectory;
+        private string? _workingDirectory;
 
 
         // 表示名
@@ -21,14 +21,14 @@ namespace NeeView
         public string DispName => _name ?? (string.IsNullOrWhiteSpace(_command) ? Properties.Resources.Word_DefaultApp : LoosePath.GetFileNameWithoutExtension(_command));
 
         // 名前
-        public string Name
+        public string? Name
         {
             get { return _name; }
             set { if (SetProperty(ref _name, value)) RaisePropertyChanged(nameof(DispName)); }
         }
 
         // コマンド
-        public string Command
+        public string? Command
         {
             get { return _command; }
             set { if (SetProperty(ref _command, value?.Trim())) RaisePropertyChanged(nameof(DispName)); }
@@ -50,7 +50,7 @@ namespace NeeView
         }
 
         // 作業フォルダー
-        public string WorkingDirectory
+        public string? WorkingDirectory
         {
             get { return _workingDirectory; }
             set { SetProperty(ref _workingDirectory, string.IsNullOrWhiteSpace(value) ? null : value.Trim()); }

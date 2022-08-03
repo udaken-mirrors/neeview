@@ -10,17 +10,17 @@ namespace NeeView
 {
     public class ViewContentControl : Grid
     {
-        private FrameworkElement _content;
-        private TextBlock _messageTextBlock;
+        private FrameworkElement? _content;
+        private TextBlock? _messageTextBlock;
         private SimpleDelayAction _delayReconnect = new SimpleDelayAction();
         private object _lock = new object();
 
-        public ViewContentControl(FrameworkElement content)
+        public ViewContentControl(FrameworkElement? content)
         {
             SetContent(content);
         }
 
-        public ViewContentControl(FrameworkElement content, bool isAutoReconnect) : this(content)
+        public ViewContentControl(FrameworkElement? content, bool isAutoReconnect) : this(content)
         {
             IsAutoReconnectEnabled = isAutoReconnect;
         }
@@ -29,9 +29,9 @@ namespace NeeView
         public bool IsAutoReconnectEnabled { get; private set; }
 
 
-        public void SetContent(FrameworkElement content)
+        public void SetContent(FrameworkElement? content)
         {
-            Debug.Assert(content != null);
+            //Debug.Assert(content != null);
 
             lock (_lock)
             {
@@ -42,7 +42,7 @@ namespace NeeView
 
                 _content = content;
 
-                if (content != null)
+                if (_content != null)
                 {
                     this.Children.Insert(0, _content);
                 }
@@ -66,7 +66,7 @@ namespace NeeView
             }
         }
 
-        public FrameworkElement Remove()
+        public FrameworkElement? Remove()
         {
             if (_content is null) return null;
 

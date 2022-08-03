@@ -176,7 +176,7 @@ namespace NeeView
             var workArea = monitorInfo.rcWork;
             var monitorArea = monitorInfo.rcMonitor;
 
-            var mmi = (NativeMethods.MINMAXINFO)Marshal.PtrToStructure(lParam, typeof(NativeMethods.MINMAXINFO));
+            var mmi = (NativeMethods.MINMAXINFO)Marshal.PtrToStructure(lParam, typeof(NativeMethods.MINMAXINFO))!;
             mmi.ptMaxPosition.x = workArea.left - monitorArea.left;
             mmi.ptMaxPosition.y = workArea.top - monitorArea.top;
             mmi.ptMaxSize.x = Math.Abs(workArea.right - workArea.left);

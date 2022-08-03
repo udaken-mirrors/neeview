@@ -15,14 +15,14 @@ namespace NeeView
             this.ParameterSource = new CommandParameterSource(new ExportImageCommandParameter());
         }
 
-        public override bool CanExecute(object sender, CommandContext e)
+        public override bool CanExecute(object? sender, CommandContext e)
         {
             return BookOperation.Current.CanExport();
         }
 
-        public override void Execute(object sender, CommandContext e)
+        public override void Execute(object? sender, CommandContext e)
         {
-            BookOperation.Current.Export((ExportImageCommandParameter)e.Parameter);
+            BookOperation.Current.Export(e.Parameter.Cast<ExportImageCommandParameter>());
         }
     }
 
@@ -32,7 +32,7 @@ namespace NeeView
     {
         private ExportImageMode _mode;
         private bool _hasBackground;
-        private string _exportFolder;
+        private string? _exportFolder;
         private ExportImageFileNameMode _fileNameMode;
         private ExportImageFormat _fileFormat;
         private int _qualityLevel = 80;
@@ -57,7 +57,7 @@ namespace NeeView
         [PropertyPath(FileDialogType = FileDialogType.Directory)]
         public string ExportFolder
         {
-            get => _exportFolder;
+            get => _exportFolder ?? "";
             set => SetProperty(ref _exportFolder, value);
         }
 

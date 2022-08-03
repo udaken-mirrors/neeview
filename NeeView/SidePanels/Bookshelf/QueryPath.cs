@@ -1,6 +1,8 @@
 ﻿using NeeView.IO;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using System.IO;
 using System.Linq;
 using System.Windows.Media;
 
@@ -31,31 +33,37 @@ namespace NeeView
             [QueryScheme.QuickAccess] = "quickaccess:",
         };
 
-        static Dictionary<QueryScheme, ImageSource> _imageMap;
+        static Dictionary<QueryScheme, ImageSource>? _imageMap;
 
-        static Dictionary<QueryScheme, ImageSource> _thumbnailImageMap;
+        static Dictionary<QueryScheme, ImageSource>? _thumbnailImageMap;
 
 
+        [MemberNotNull(nameof(_imageMap))]
         private static void InitializeImageMap()
         {
             if (_imageMap != null) return;
 
             _imageMap = new Dictionary<QueryScheme, ImageSource>()
             {
-                [QueryScheme.File] = MainWindow.Current.Resources["ic_desktop_windows_24px"] as ImageSource,
-                [QueryScheme.Root] = MainWindow.Current.Resources["ic_bookshelf"] as ImageSource,
-                [QueryScheme.Bookmark] = MainWindow.Current.Resources["ic_grade_24px"] as ImageSource,
-                [QueryScheme.QuickAccess] = MainWindow.Current.Resources["ic_lightning"] as ImageSource,
+                [QueryScheme.File] = MainWindow.Current.Resources["ic_desktop_windows_24px"] as ImageSource ?? throw new DirectoryNotFoundException(),
+                [QueryScheme.Root] = MainWindow.Current.Resources["ic_bookshelf"] as ImageSource ?? throw new DirectoryNotFoundException(),
+                [QueryScheme.Bookmark] = MainWindow.Current.Resources["ic_grade_24px"] as ImageSource ?? throw new DirectoryNotFoundException(),
+                [QueryScheme.QuickAccess] = MainWindow.Current.Resources["ic_lightning"] as ImageSource ?? throw new DirectoryNotFoundException(),
             };
+        }
+
+        [MemberNotNull(nameof(_thumbnailImageMap))]
+        private static void InitializeThumbnailImageMap()
+        {
+            if (_thumbnailImageMap != null) return;
 
             _thumbnailImageMap = new Dictionary<QueryScheme, ImageSource>()
             {
-                [QueryScheme.File] = MainWindow.Current.Resources["ic_desktop_windows_24px_t"] as ImageSource,
-                [QueryScheme.Root] = MainWindow.Current.Resources["ic_bookshelf"] as ImageSource,
-                [QueryScheme.Bookmark] = MainWindow.Current.Resources["ic_grade_24px_t"] as ImageSource,
-                [QueryScheme.QuickAccess] = MainWindow.Current.Resources["ic_lightning"] as ImageSource,
+                [QueryScheme.File] = MainWindow.Current.Resources["ic_desktop_windows_24px_t"] as ImageSource ?? throw new DirectoryNotFoundException(),
+                [QueryScheme.Root] = MainWindow.Current.Resources["ic_bookshelf"] as ImageSource ?? throw new DirectoryNotFoundException(),
+                [QueryScheme.Bookmark] = MainWindow.Current.Resources["ic_grade_24px_t"] as ImageSource ?? throw new DirectoryNotFoundException(),
+                [QueryScheme.QuickAccess] = MainWindow.Current.Resources["ic_lightning"] as ImageSource ?? throw new DirectoryNotFoundException(),
             };
-
         }
 
         public static string ToSchemeString(this QueryScheme scheme)
@@ -76,7 +84,7 @@ namespace NeeView
 
         public static ImageSource ToThumbnailImage(this QueryScheme scheme)
         {
-            InitializeImageMap();
+            InitializeThumbnailImageMap();
             return _thumbnailImageMap[scheme];
         }
 
@@ -93,9 +101,11 @@ namespace NeeView
     [Serializable]
     public sealed class QueryPath : IEquatable<QueryPath>
     {
+        public static QueryPath Empty { get; } = new QueryPath(QueryScheme.Root);
+
         static readonly string _querySearch = "?search=";
 
-        public QueryPath(string source)
+        public QueryPath(string? source)
         {
             var rest = source;
             rest = TakeQuerySearch(rest, out _search);
@@ -103,7 +113,7 @@ namespace NeeView
             _path = GetValidatePath(rest, _scheme);
         }
 
-        public QueryPath(string source, string search)
+        public QueryPath(string? source, string? search)
         {
             var rest = source;
             _search = string.IsNullOrWhiteSpace(search) ? null : search;
@@ -111,14 +121,14 @@ namespace NeeView
             _path = GetValidatePath(rest, _scheme);
         }
 
-        public QueryPath(QueryScheme scheme, string path, string search)
+        public QueryPath(QueryScheme scheme, string? path, string? search)
         {
             _search = string.IsNullOrWhiteSpace(search) ? null : search;
             _scheme = scheme;
             _path = GetValidatePath(path, _scheme);
         }
 
-        public QueryPath(QueryScheme scheme, string path)
+        public QueryPath(QueryScheme scheme, string? path)
         {
             _search = null;
             _scheme = scheme;
@@ -139,15 +149,15 @@ namespace NeeView
             private set { _scheme = value; }
         }
 
-        private string _path;
-        public string Path
+        private string? _path;
+        public string? Path
         {
             get { return _path; }
             private set { _path = value; }
         }
 
-        private string _search;
-        public string Search
+        private string? _search;
+        public string? Search
         {
             get { return _search; }
             private set { _search = value; }
@@ -175,7 +185,7 @@ namespace NeeView
         /// <summary>
         /// 簡略化したパス
         /// </summary>
-        public string SimplePath => _scheme == QueryScheme.File ? _path : FullPath;
+        public string SimplePath => _scheme == QueryScheme.File ? _path ?? "" : FullPath;
 
 
         public string FileName => LoosePath.GetFileName(_path);
@@ -184,7 +194,8 @@ namespace NeeView
 
         public string DispPath => (_path == null) ? _scheme.ToAliasName() : SimplePath;
 
-        private string TakeQuerySearch(string source, out string searchWord)
+
+        private string? TakeQuerySearch(string? source, out string? searchWord)
         {
             if (source != null)
             {
@@ -200,7 +211,7 @@ namespace NeeView
             return source;
         }
 
-        private string TakeScheme(string source, out QueryScheme scheme)
+        private string? TakeScheme(string? source, out QueryScheme scheme)
         {
             if (source != null)
             {
@@ -224,7 +235,7 @@ namespace NeeView
             return source;
         }
 
-        private string GetValidatePath(string source, QueryScheme scheme)
+        private string? GetValidatePath(string? source, QueryScheme scheme)
         {
             if (string.IsNullOrWhiteSpace(source))
             {
@@ -245,14 +256,14 @@ namespace NeeView
             return string.IsNullOrWhiteSpace(s) ? null : s;
         }
 
-        public QueryPath ReplacePath(string path)
+        public QueryPath ReplacePath(string? path)
         {
             var query = (QueryPath)this.MemberwiseClone();
             query.Path = string.IsNullOrWhiteSpace(path) ? null : path;
             return query;
         }
 
-        public QueryPath ReplaceSearch(string search)
+        public QueryPath ReplaceSearch(string? search)
         {
             var query = (QueryPath)this.MemberwiseClone();
             query.Search = string.IsNullOrWhiteSpace(search) ? null : search;
@@ -263,7 +274,8 @@ namespace NeeView
         {
             if (_path == null)
             {
-                return null;
+                //return null;
+                return QueryPath.Empty;
             }
 
             var parent = LoosePath.GetDirectoryName(_path);
@@ -309,7 +321,7 @@ namespace NeeView
             return _scheme.GetHashCode() ^ (_path == null ? 0 : _path.GetHashCode()) ^ (_search == null ? 0 : _search.GetHashCode());
         }
 
-        public bool Equals(QueryPath obj)
+        public bool Equals(QueryPath? obj)
         {
             if (obj is null)
             {
@@ -319,25 +331,25 @@ namespace NeeView
             return _scheme == obj._scheme && _path == obj._path && _search == obj._search;
         }
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             if (obj is null || this.GetType() != obj.GetType())
             {
                 return false;
             }
 
-            return this.Equals((QueryPath)obj);
+            return this.Equals((QueryPath?)obj);
         }
 
 
-        public static bool Equals(QueryPath a, QueryPath b)
+        public static bool Equals(QueryPath? a, QueryPath? b)
         {
-            if ((object)a == (object)b)
+            if ((object?)a == (object?)b)
             {
                 return true;
             }
 
-            if ((object)a == null || (object)b == null)
+            if ((object?)a == null || (object?)b == null)
             {
                 return false;
             }
@@ -346,12 +358,12 @@ namespace NeeView
         }
 
         // HACK: 等号の再定義はあまりよろしくない。
-        public static bool operator ==(QueryPath x, QueryPath y)
+        public static bool operator ==(QueryPath? x, QueryPath? y)
         {
             return Equals(x, y);
         }
 
-        public static bool operator !=(QueryPath x, QueryPath y)
+        public static bool operator !=(QueryPath? x, QueryPath? y)
         {
             return !(Equals(x, y));
         }

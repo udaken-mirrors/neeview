@@ -17,7 +17,7 @@ namespace NeeView
     {
         private bool _isSelected;
         private bool _isExpanded;
-        protected ObservableCollection<FolderTreeNodeBase> _children;
+        protected ObservableCollection<FolderTreeNodeBase>? _children;
 
 
         public FolderTreeNodeBase()
@@ -37,40 +37,40 @@ namespace NeeView
             set { SetProperty(ref _isExpanded, value); }
         }
 
-        public virtual ObservableCollection<FolderTreeNodeBase> Children
+        public virtual ObservableCollection<FolderTreeNodeBase>? Children
         {
             get { return _children; }
             set { SetProperty(ref _children, value); }
         }
 
-        public ObservableCollection<FolderTreeNodeBase> ChildrenRaw => _children;
+        public ObservableCollection<FolderTreeNodeBase>? ChildrenRaw => _children;
 
         public abstract string Name { get; set; }
 
         public abstract string DispName { get; set; }
 
-        public abstract IImageSourceCollection Icon { get; }
+        public abstract IImageSourceCollection? Icon { get; }
 
-        public object Source { get; protected set; }
+        public object? Source { get; protected set; }
 
-        private FolderTreeNodeBase _parent;
-        public FolderTreeNodeBase Parent
+        private FolderTreeNodeBase? _parent;
+        public FolderTreeNodeBase? Parent
         {
             get { return _parent; }
             set
             {
                 if (SetProperty(ref _parent, value))
                 {
-                    OnParentChanged(this, null);
+                    OnParentChanged(this, EventArgs.Empty);
                 }
             }
         }
 
-        public FolderTreeNodeBase Previous
+        public FolderTreeNodeBase? Previous
         {
             get
             {
-                if (Parent != null)
+                if (Parent?._children != null)
                 {
                     var index = Parent._children.IndexOf(this);
                     return Parent._children.ElementAtOrDefault(index - 1);
@@ -80,11 +80,11 @@ namespace NeeView
             }
         }
 
-        public FolderTreeNodeBase Next
+        public FolderTreeNodeBase? Next
         {
             get
             {
-                if (Parent != null)
+                if (Parent?._children != null)
                 {
                     var index = Parent._children.IndexOf(this);
                     return Parent._children.ElementAtOrDefault(index + 1);
@@ -155,7 +155,7 @@ namespace NeeView
         /// <param name="createChildren">まだ生成されていなければChildrenを生成する</param>
         /// <param name="asFarAsPossible">指定パスが存在しない場合、存在する上位フォルダーを返す</param>
         /// <returns></returns>
-        public FolderTreeNodeBase GetFolderTreeNode(string path, bool createChildren, bool asFarAsPossible)
+        public FolderTreeNodeBase? GetFolderTreeNode(string? path, bool createChildren, bool asFarAsPossible)
         {
             if (path == null) return null;
 
@@ -166,7 +166,7 @@ namespace NeeView
         /// <summary>
         /// 指定パスのFolderTreeNodeを取得
         /// </summary>
-        public FolderTreeNodeBase GetFolderTreeNode(IEnumerable<string> pathTokens, bool createChildren, bool asFarAsPossible)
+        public FolderTreeNodeBase? GetFolderTreeNode(IEnumerable<string> pathTokens, bool createChildren, bool asFarAsPossible)
         {
             if (!pathTokens.Any())
             {
@@ -201,7 +201,7 @@ namespace NeeView
         /// 子の検索
         /// <para>Sourceのリファレンス比較のみなので、必要に応じてovrrideをして使用する</para>
         /// </summary>
-        public virtual FolderTreeNodeBase FindChild(object source)
+        public virtual FolderTreeNodeBase? FindChild(object? source)
         {
             return _children?.FirstOrDefault(e => e.Source == source);
         }
@@ -296,10 +296,12 @@ namespace NeeView
             // NOTE: FolderTreeModel.SelectedItemを変更したいところだが、ここからは参照できないのでフラグで通知する。
             node.IsSelected = isSelected;
         }
+
+        protected IImageSourceCollection CreateIcomFromResource(string key)
+        {
+            return new SingleImageSourceCollection(MainWindow.Current.Resources[key] as ImageSource
+                ?? throw new InvalidOperationException($"Cannot found resource: {key}"));
+        }
     }
-
-
-
-
 }
 

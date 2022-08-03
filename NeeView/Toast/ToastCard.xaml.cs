@@ -22,17 +22,28 @@ namespace NeeView
     /// </summary>
     public partial class ToastCard : UserControl
     {
-        Toast _toast;
+        private Toast _toast;
 
+        // for Designer
         public ToastCard()
         {
             InitializeComponent();
+            _toast = new Toast("TEST");
+            Refresh();
+        }
+
+        public ToastCard(Toast toast)
+        {
+            InitializeComponent();
+            _toast = toast;
+            Refresh();
         }
 
         public Toast Toast
         {
             get { return _toast; }
-            set
+#if false
+            private set
             {
                 if (_toast != value)
                 {
@@ -40,6 +51,7 @@ namespace NeeView
                     Refresh();
                 }
             }
+#endif
         }
 
         public bool IsCanceled { get; set; }
@@ -47,7 +59,7 @@ namespace NeeView
         private void Refresh()
         {
             this.Caption.Text = _toast.Caption;
-            this.Caption.Visibility = _toast.Caption is null ? Visibility.Collapsed : Visibility.Visible;
+            this.Caption.Visibility = string.IsNullOrEmpty(_toast.Caption) ? Visibility.Collapsed : Visibility.Visible;
             this.Message.Source = _toast.Message;
             this.ConfirmButton.Content = _toast.ButtonContent;
             this.ConfirmButton.Visibility = _toast.ButtonContent is null ? Visibility.Collapsed : Visibility.Visible;

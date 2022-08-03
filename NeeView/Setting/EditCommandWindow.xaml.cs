@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -33,9 +34,9 @@ namespace NeeView.Setting
     {
         #region PropertyChanged
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
-        protected void RaisePropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string name = null)
+        protected void RaisePropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string? name = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
@@ -50,7 +51,7 @@ namespace NeeView.Setting
         private CommandCollection _memento;
         private string _key;
 
-        public EditCommandWindow()
+        public EditCommandWindow(string key, EditCommandWindowTab start)
         {
             InitializeComponent();
             this.DataContext = this;
@@ -60,10 +61,12 @@ namespace NeeView.Setting
 
             this.Loaded += EditCommandWindow_Loaded;
             this.Closed += EditCommandWindow_Closed;
+
+            Initialize(key, start);
         }
 
 
-        public event MouseWheelEventHandler MouseHorizontalWheelChanged;
+        public event MouseWheelEventHandler? MouseHorizontalWheelChanged;
 
 
         private bool _isShowMessage;
@@ -76,13 +79,13 @@ namespace NeeView.Setting
         public string Note { get; private set; }
 
 
-        private void EditCommandWindow_Loaded(object sender, RoutedEventArgs e)
+        private void EditCommandWindow_Loaded(object? sender, RoutedEventArgs e)
         {
             var tabItem = this.TabControl.ItemContainerGenerator.ContainerFromItem(this.TabControl.SelectedItem) as TabItem;
             tabItem?.Focus();
         }
 
-        private void EditCommandWindow_Closed(object sender, EventArgs e)
+        private void EditCommandWindow_Closed(object? sender, EventArgs e)
         {
             if (this.DialogResult == true)
             {
@@ -94,7 +97,8 @@ namespace NeeView.Setting
             }
         }
 
-        public void Initialize(string key, EditCommandWindowTab start = EditCommandWindowTab.Default)
+        [MemberNotNull(nameof(_memento), nameof(_key), nameof(Note))]
+        private void Initialize(string key, EditCommandWindowTab start)
         {
             _memento = CommandTable.Current.CreateCommandCollectionMemento();
             _key = key;

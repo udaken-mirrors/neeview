@@ -51,7 +51,7 @@ namespace NeeView
             public double Opacity { get; set; }
 
             [DataMember]
-            public string FontName { get; set; }
+            public string? FontName { get; set; }
 
             [DataMember, DefaultValue(15.0)]
             public double FontSize { get; set; }
@@ -60,13 +60,13 @@ namespace NeeView
             public double FolderTreeFontSize { get; set; }
 
             [DataMember]
-            public PanelListItemProfile ContentItemProfile { get; set; }
+            public PanelListItemProfile? ContentItemProfile { get; set; }
 
             [DataMember]
-            public PanelListItemProfile BannerItemProfile { get; set; }
+            public PanelListItemProfile? BannerItemProfile { get; set; }
 
             [DataMember]
-            public PanelListItemProfile ThumbnailItemProfile { get; set; }
+            public PanelListItemProfile? ThumbnailItemProfile { get; set; }
 
             [DataMember, DefaultValue(true)]
             public bool IsDecoratePlace { get; set; }
@@ -91,7 +91,7 @@ namespace NeeView
             {
                 config.Panels.IsLeftRightKeyEnabled = IsLeftRightKeyEnabled;
                 config.Panels.Opacity = Opacity;
-                config.Fonts.FontName = FontName;
+                config.Fonts.FontName = FontName ?? config.Fonts.FontName;
                 config.Fonts.PanelFontScale = FontSize / SystemVisualParameters.Current.MessageFontSize;
                 config.Fonts.FolderTreeFontScale = FolderTreeFontSize / SystemVisualParameters.Current.MessageFontSize;
                 config.Panels.IsDecoratePlace = IsDecoratePlace;

@@ -1,4 +1,5 @@
-﻿// from https://github.com/takanemu/WPFDragAndDropSample
+﻿#nullable enable
+// from https://github.com/takanemu/WPFDragAndDropSample
 
 using Microsoft.Xaml.Behaviors;
 using NeeView.Windows.Media;
@@ -547,7 +548,7 @@ namespace NeeView.Windows
             ScrollItemsIntoView(this.SelectedItems.Cast<object>());
         }
 
-        public void ScrollItemsIntoView<T>(IEnumerable<T> items)
+        public void ScrollItemsIntoView<T>(IEnumerable<T>? items)
         {
             if (items == null || !items.Any()) return;
 
@@ -571,7 +572,7 @@ namespace NeeView.Windows
             }
         }
 
-        public void SetSelectedItems<T>(IEnumerable<T> newItems)
+        public void SetSelectedItems<T>(IEnumerable<T>? newItems)
         {
             base.SetSelectedItems(newItems);
         }

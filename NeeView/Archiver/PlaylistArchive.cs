@@ -19,21 +19,14 @@ namespace NeeView
     {
         public const string Extension = ".nvpls";
 
-        #region Constructors
 
-        public PlaylistArchive(string path, ArchiveEntry source) : base(path, source)
+        public PlaylistArchive(string path, ArchiveEntry? source) : base(path, source)
         {
         }
 
-        #endregion
-
-        #region Properties
 
         public override bool IsFileSystem { get; } = false;
 
-        #endregion
-
-        #region Methods
 
         public static bool IsSupportExtension(string path)
         {
@@ -88,9 +81,9 @@ namespace NeeView
             if (FileShortcut.IsShortcut(item.Path))
             {
                 var shortcut = new FileShortcut(item.Path);
-                if (shortcut.IsValid)
+                if (shortcut.TryGetTargetPath(out var target))
                 {
-                    targetPath = shortcut.TargetPath;
+                    targetPath = target;
                 }
             }
 
@@ -112,26 +105,31 @@ namespace NeeView
             return entry;
         }
 
+        private ArchiveEntry GetTargetEntry(ArchiveEntry entry)
+        {
+            var target = entry.Instance as ArchiveEntry;
+            if (target is null) throw new InvalidCastException();
+
+            return target;
+        }
 
         // ストリームを開く
         protected override Stream OpenStreamInner(ArchiveEntry entry)
         {
-            return ((ArchiveEntry)entry.Instance).OpenEntry();
+            return GetTargetEntry(entry).OpenEntry();
         }
 
         // ファイルパス取得
-        public override string GetFileSystemPath(ArchiveEntry entry)
+        public override string? GetFileSystemPath(ArchiveEntry entry)
         {
-            return ((ArchiveEntry)entry.Instance).GetFileSystemPath();
+            return GetTargetEntry(entry).GetFileSystemPath();
         }
 
         // ファイル出力
         protected override void ExtractToFileInner(ArchiveEntry entry, string exportFileName, bool isOverwrite)
         {
-            ((ArchiveEntry)entry.Instance).ExtractToFile(exportFileName, isOverwrite);
+            GetTargetEntry(entry).ExtractToFile(exportFileName, isOverwrite);
         }
-
-        #endregion
     }
 }
 

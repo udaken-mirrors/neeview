@@ -8,13 +8,13 @@ namespace NeeView
     {
         private bool _isInitialized;
 
-        public string ExportFolder { get; set; }
+        public string? ExportFolder { get; set; }
 
         public ExportImageMode Mode { get; set; }
 
         public bool HasBackground { get; set; }
 
-        public Window Owner { get; set; }
+        public Window? Owner { get; set; }
 
         public void Show(ExportImageAsCommandParameter parameter)
         {

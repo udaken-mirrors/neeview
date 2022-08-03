@@ -11,8 +11,8 @@ namespace NeeView
 {
     public class ListViewHorizontalWheelScrollBehavior : Behavior<ListView>
     {
-        private ScrollViewer _scrollViewer;
-        private HwndSource _hwndSource;
+        private ScrollViewer? _scrollViewer;
+        private HwndSource? _hwndSource;
         private MouseWheelDelta _mouseWheelDelta = new MouseWheelDelta();
 
         protected override void OnAttached()
@@ -24,11 +24,11 @@ namespace NeeView
         protected override void OnDetaching()
         {
             base.OnDetaching();
-            _hwndSource.RemoveHook(WndProc);
+            _hwndSource?.RemoveHook(WndProc);
             AssociatedObject.Loaded -= AssociatedObject_Loaded;
         }
 
-        private void AssociatedObject_Loaded(object sender, RoutedEventArgs e)
+        private void AssociatedObject_Loaded(object? sender, RoutedEventArgs e)
         {
             _scrollViewer = VisualTreeUtility.FindVisualChild<ScrollViewer>(AssociatedObject);
             var parentWindow = Window.GetWindow(AssociatedObject);
@@ -62,6 +62,7 @@ namespace NeeView
 
         private void Scroll(int delta)
         {
+            if (_scrollViewer is null) return;
             if (!_scrollViewer.IsMouseOver) return;
             if (Mouse.PrimaryDevice is null) return;
 

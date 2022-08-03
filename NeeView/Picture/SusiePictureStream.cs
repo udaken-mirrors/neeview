@@ -12,13 +12,15 @@ namespace NeeView
     {
         // 画像ストリーム取得。
         // 対象に応じてファイルからの読み込みかメモリからの読み込みかを変更
-        public NamedStream Create(ArchiveEntry entry)
+        public NamedStream? Create(ArchiveEntry entry)
         {
             if (!entry.IsIgnoreFileExtension && !PictureProfile.Current.IsSusieSupported(entry.Link ?? entry.EntryName)) return null;
 
             if (entry.IsFileSystem)
             {
-                return Create(entry.Link ?? entry.GetFileSystemPath(), entry);
+                var path = entry.Link ?? entry.GetFileSystemPath();
+                if (path is null) throw new InvalidOperationException();
+                return Create(path, entry);
             }
             else
             {
@@ -51,7 +53,7 @@ namespace NeeView
 
             var accessor = SusiePluginManager.Current.GetImagePluginAccessor();
             var result = accessor.GetPicture(entry.RawEntryName, buff, !entry.IsIgnoreFileExtension);
-            if (result == null || result.BitmapData == null)
+            if (result == null || result.Plugin == null || result.BitmapData == null)
             {
                 throw new SusieIOException();
             }
@@ -65,7 +67,7 @@ namespace NeeView
         {
             var accessor = SusiePluginManager.Current.GetImagePluginAccessor();
             var result = accessor.GetPicture(fileName, null, !entry.IsIgnoreFileExtension);
-            if (result == null || result.BitmapData == null)
+            if (result == null || result.Plugin == null || result.BitmapData == null)
             {
                 throw new SusieIOException();
             }

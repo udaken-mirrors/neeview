@@ -107,7 +107,7 @@ namespace NeeView
 
         #region for Debug
 
-        public DebugSimpleLog DebugLog { get; private set; }
+        public DebugSimpleLog? DebugLog { get; private set; }
 
         [Conditional("DEBUG")]
         public void Log(string msg)

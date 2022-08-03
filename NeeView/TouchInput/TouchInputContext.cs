@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Input;
 
@@ -7,7 +9,7 @@ namespace NeeView
     //
     public class TouchInputContext
     {
-        public TouchInputContext(FrameworkElement sender, FrameworkElement target, MouseGestureCommandCollection gestureCommandCollection, DragTransform dragTransform, DragTransformControl dragTransformControl, LoupeTransform loupeTransform)
+        public TouchInputContext(FrameworkElement sender, FrameworkElement? target, MouseGestureCommandCollection? gestureCommandCollection, DragTransform? dragTransform, DragTransformControl? dragTransformControl, LoupeTransform? loupeTransform)
         {
             this.Sender = sender;
             this.Target = target;
@@ -27,21 +29,21 @@ namespace NeeView
         /// アニメーション非対応。非表示の矩形のみ。
         /// 表示領域計算にはこちらを利用する
         /// </summary>
-        public FrameworkElement Target { get; set; }
+        public FrameworkElement? Target { get; set; }
 
         /// <summary>
         /// ジェスチャーコマンドテーブル
         /// </summary>
-        public MouseGestureCommandCollection GestureCommandCollection { get; set; }
+        public MouseGestureCommandCollection? GestureCommandCollection { get; set; }
 
         /// <summary>
         /// 操作する座標系
         /// </summary>
-        public DragTransform DragTransform { get; set; }
+        public DragTransform? DragTransform { get; set; }
 
-        public DragTransformControl DragTransformControl { get; set; }
+        public DragTransformControl? DragTransformControl { get; set; }
 
-        public LoupeTransform LoupeTransform { get; set; }
+        public LoupeTransform? LoupeTransform { get; set; }
 
         /// <summary>
         /// 有効なタッチデバイス情報
@@ -55,7 +57,10 @@ namespace NeeView
         /// <returns></returns>
         public DragArea GetArea()
         {
-            return new DragArea(this.Sender, this.Target);
+            // TargetをnullにしたときはGetArea()を使用する処理にはならないはず
+            Debug.Assert(this.Target is not null);
+
+            return new DragArea(this.Sender, this.Target ?? this.Sender);
         }
     }
 }

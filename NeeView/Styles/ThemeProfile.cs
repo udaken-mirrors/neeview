@@ -152,7 +152,7 @@ namespace NeeView
 
         public FormatVersion Format { get; set; }
 
-        public string BasedOn { get; set; }
+        public string? BasedOn { get; set; }
 
         public Dictionary<string, ThemeColor> Colors { get; set; }
 
@@ -176,7 +176,7 @@ namespace NeeView
             return themeProfile;
         }
 
-        public Color GetColor(string key, double opacity, IEnumerable<string> nests = null)
+        public Color GetColor(string key, double opacity, IEnumerable<string>? nests = null)
         {
             if (Colors.TryGetValue(key, out var value))
             {

@@ -5,11 +5,11 @@ namespace NeeView
 {
     public static class BookSettingPolicyConfigExtensions
     {
-        public static BookSettingConfig Mix(this BookSettingPolicyConfig self, BookSettingConfig def, BookSettingConfig current, BookSettingConfig restore, bool isDefaultRecursive)
+        public static BookSettingConfig Mix(this BookSettingPolicyConfig self, BookSettingConfig def, BookSettingConfig current, BookSettingConfig? restore, bool isDefaultRecursive)
         {
             Debug.Assert(def != null);
             Debug.Assert(current != null);
-            Debug.Assert(current.Page == null);
+            Debug.Assert(string.IsNullOrEmpty(current.Page));
 
             BookSettingConfig param = new BookSettingConfig();
 
@@ -18,7 +18,7 @@ namespace NeeView
             var paramMap = new BookSettingConfigMap(param);
             var defMap = new BookSettingConfigMap(def);
             var currentMap = new BookSettingConfigMap(current);
-            var restoretMap = new BookSettingConfigMap(restore);
+            var restoretMap = new BookSettingConfigMap(restore ?? def);
 
             foreach (BookSettingKey key in Enum.GetValues(typeof(BookSettingKey)))
             {

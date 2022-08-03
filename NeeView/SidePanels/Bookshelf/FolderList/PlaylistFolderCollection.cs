@@ -1,4 +1,5 @@
 ﻿using NeeView.IO;
+using NeeLaboratory.Linq;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -16,13 +17,12 @@ namespace NeeView
     /// </summary>
     public class PlaylistFolderCollection : FolderCollection
     {
-        #region Fields
+        // Fields
 
-        private ArchiveEntryCollection _collection;
+        private ArchiveEntryCollection? _collection;
 
-        #endregion
 
-        #region Constructors
+        // Constructors
 
         public PlaylistFolderCollection(QueryPath path, bool isOverlayEnabled) : base(path, isOverlayEnabled)
         {
@@ -44,7 +44,8 @@ namespace NeeView
 
             var items = entries
                 .Select(e => CreateFolderItem(e, e.Id))
-                .Where(e => e != null);
+                .WhereNotNull()
+                .ToList();
 
             var list = Sort(items, token);
 
@@ -57,20 +58,18 @@ namespace NeeView
             BindingOperations.EnableCollectionSynchronization(this.Items, new object());
         }
 
-        #endregion
 
-        #region Properties
+        // Properties
 
         public override FolderOrderClass FolderOrderClass => FolderOrderClass.Full;
 
-        #endregion Properties
 
-        #region Methods
+        // Methods
 
         /// <summary>
         /// フォルダーリスト上での親フォルダーを取得
         /// </summary>
-        public override QueryPath GetParentQuery()
+        public override QueryPath? GetParentQuery()
         {
             if (Place == null)
             {
@@ -87,7 +86,7 @@ namespace NeeView
         }
 
 
-        private FolderItem CreateFolderItem(ArchiveEntry entry, int id)
+        private FolderItem? CreateFolderItem(ArchiveEntry entry, int id)
         {
             var item = CreateFolderItem(entry);
             if (item != null)
@@ -99,12 +98,13 @@ namespace NeeView
             return item;
         }
 
-        private FolderItem CreateFolderItem(ArchiveEntry entry)
+        private FolderItem? CreateFolderItem(ArchiveEntry entry)
         {
-            var entity = (ArchiveEntry)entry.Instance;
+            var entity = entry.Instance as ArchiveEntry ?? throw new InvalidOperationException("Playlist entry.Instance must be ArchiveEntry");
 
             if (entity.IsFileSystem)
             {
+                if (entry.Link is null) throw new InvalidOperationException("Playlist entry.Link must not be null");
                 return _folderItemFactory.CreateFolderItem(entry.Link);
             }
             else
@@ -112,7 +112,5 @@ namespace NeeView
                 return _folderItemFactory.CreateFolderItem(entity, null);
             }
         }
-
-#endregion
     }
 }

@@ -9,7 +9,7 @@ namespace NeeView
 {
     public partial class Book : IDisposable
     {
-        public static Book Default { get; private set; }
+        public static Book? Default { get; private set; }
 
         private BookMemoryService _bookMemoryService = new BookMemoryService();
 
@@ -20,12 +20,12 @@ namespace NeeView
         private string _sourceAddress;
         private BookLoadOption _loadOption;
 
-        public Book(BookSource source, QueryPath sourceAddress, Book.Memento memento, BookLoadOption option)
+        public Book(BookSource source, QueryPath? sourceAddress, Book.Memento memento, BookLoadOption option)
         {
             Book.Default = this;
 
             _source = source;
-            _sourceAddress = sourceAddress.SimplePath;
+            _sourceAddress = sourceAddress?.SimplePath ?? "";
             _viewer = new BookPageViewer(_source, _bookMemoryService, CreateBookViewerCreateSetting(memento));
             _marker = new BookPageMarker(_source, _viewer);
             _controller = new BookController(_source, _viewer, _marker);
@@ -53,11 +53,11 @@ namespace NeeView
 
         // 見つからなかった開始ページ名。通知用。
         // TODO: 不要？
-        public string NotFoundStartPage { get; private set; }
+        public string? NotFoundStartPage { get; private set; }
 
         // 開始ページ
         // TODO: 再読込時に必要だが、なくすことできそう？
-        public string StartEntry { get; private set; }
+        public string? StartEntry { get; private set; }
 
 
         #region IDisposable Support
@@ -92,7 +92,7 @@ namespace NeeView
 
         #region Methods
 
-        public void SetStartPage(object sender, BookStartPage startPage)
+        public void SetStartPage(object? sender, BookStartPage startPage)
         {
             // スタートページ取得
             PagePosition position = _source.Pages.FirstPosition();
@@ -207,7 +207,7 @@ namespace NeeView
         /// <summary>
         /// 開始ページ
         /// </summary>
-        public BookStartPage StartPage { get; set; }
+        public BookStartPage StartPage { get; set; } = new BookStartPage(BookStartPageType.FirstPage);
 
         /// <summary>
         /// フォルダー再帰
@@ -243,7 +243,7 @@ namespace NeeView
 
     public static class BookFactory
     {
-        public static async Task<Book> CreateAsync(object sender, QueryPath address, QueryPath sourceAddress, BookCreateSetting setting, Book.Memento memento, CancellationToken token)
+        public static async Task<Book> CreateAsync(object? sender, QueryPath address, QueryPath? sourceAddress, BookCreateSetting setting, Book.Memento memento, CancellationToken token)
         {
             var factory = new BookSourceFactory();
             var bookSource = await factory.CreateAsync(address, setting, token);

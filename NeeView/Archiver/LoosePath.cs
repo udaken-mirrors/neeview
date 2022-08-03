@@ -27,7 +27,7 @@ namespace NeeView
         /// 末尾のセパレート記号を削除。
         /// ルート(C:\)の場合は削除しない
         /// </summary>
-        public static string TrimEnd(string s)
+        public static string TrimEnd(string? s)
         {
             if (string.IsNullOrEmpty(s)) return "";
 
@@ -44,14 +44,14 @@ namespace NeeView
         /// <summary>
         /// ディレクトリ名用に、終端にセパレート記号を付加する
         /// </summary>
-        public static string TrimDirectoryEnd(string s)
+        public static string TrimDirectoryEnd(string? s)
         {
             if (string.IsNullOrEmpty(s)) return "";
             return s.TrimEnd().TrimEnd(Separators) + '\\';
         }
 
         //
-        public static string[] Split(string s)
+        public static string[] Split(string? s)
         {
             if (string.IsNullOrEmpty(s)) return new string[0];
             var parts = s.Split(Separators, StringSplitOptions.RemoveEmptyEntries);
@@ -66,14 +66,14 @@ namespace NeeView
         }
 
         //
-        public static string GetFileName(string s)
+        public static string GetFileName(string? s)
         {
             if (string.IsNullOrEmpty(s)) return "";
             return s.Split(Separators, StringSplitOptions.RemoveEmptyEntries).Last();
         }
 
         // place部をディレクトリーとみなしたファイル名取得
-        public static string GetFileName(string s, string place)
+        public static string GetFileName(string? s, string? place)
         {
             if (string.IsNullOrEmpty(s)) return "";
             if (string.IsNullOrEmpty(place)) return s;
@@ -81,7 +81,7 @@ namespace NeeView
             return s.Substring(place.Length).TrimStart(Separators);
         }
 
-        public static string GetFileNameWithoutExtension(string s)
+        public static string GetFileNameWithoutExtension(string? s)
         {
             if (string.IsNullOrEmpty(s)) return "";
             var filename = GetFileName(s);
@@ -98,7 +98,7 @@ namespace NeeView
 
 
         //
-        public static string GetPathRoot(string s)
+        public static string GetPathRoot(string? s)
         {
             if (string.IsNullOrEmpty(s)) return "";
             var parts = s.Split(Separators, 2);
@@ -106,7 +106,7 @@ namespace NeeView
         }
 
         //
-        public static string GetDirectoryName(string s)
+        public static string GetDirectoryName(string? s)
         {
             if (string.IsNullOrEmpty(s)) return "";
 
@@ -121,7 +121,7 @@ namespace NeeView
         }
 
         //
-        public static string GetExtension(string s)
+        public static string GetExtension(string? s)
         {
             if (string.IsNullOrEmpty(s)) return "";
             string fileName = GetFileName(s);
@@ -131,7 +131,7 @@ namespace NeeView
         }
 
         //
-        public static string ChopExtension(string s)
+        public static string ChopExtension(string? s)
         {
             if (string.IsNullOrEmpty(s)) return "";
 
@@ -142,10 +142,10 @@ namespace NeeView
         }
 
         //
-        public static string Combine(string s1, string s2)
+        public static string Combine(string? s1, string? s2)
         {
             if (string.IsNullOrEmpty(s1))
-                return s2;
+                return s2 ?? "";
             else if (string.IsNullOrEmpty(s2))
                 return s1;
             else
@@ -153,8 +153,10 @@ namespace NeeView
         }
 
         // ファイル名として使えない文字を置換
-        public static string ValidFileName(string s)
+        public static string ValidFileName(string? s)
         {
+            if (string.IsNullOrEmpty(s)) return "";
+
             string valid = s;
             char[] invalidch = System.IO.Path.GetInvalidFileNameChars();
 
@@ -166,21 +168,25 @@ namespace NeeView
         }
 
         // セパレータ標準化
-        public static string NormalizeSeparator(string s)
+        public static string NormalizeSeparator(string? s)
         {
-            return s?.Replace('/', '\\');
+            if (string.IsNullOrEmpty(s)) return "";
+
+            return s.Replace('/', '\\');
         }
 
         // UNC判定
-        public static bool IsUnc(string s)
+        public static bool IsUnc(string? s)
         {
             var head = GetHeadSeparators(s);
             return head.Length == 2;
         }
 
         // パス先頭にあるセパレータ部を取得
-        private static string GetHeadSeparators(string s)
+        private static string GetHeadSeparators(string? s)
         {
+            if (string.IsNullOrEmpty(s)) return "";
+
             var slashCount = 0;
             foreach (var c in s)
             {
@@ -198,7 +204,7 @@ namespace NeeView
         }
 
         // 表示用のファイル名生成
-        public static string GetDispName(string s)
+        public static string GetDispName(string? s)
         {
             if (string.IsNullOrEmpty(s))
             {
@@ -219,7 +225,7 @@ namespace NeeView
         /// <summary>
         /// パスを "FooBar (C:\Parent)" 形式にする
         /// </summary>
-        public static string GetPlaceName(string s)
+        public static string GetPlaceName(string? s)
         {
             var name = GetFileName(s);
             var parent = GetDirectoryName(s);

@@ -41,12 +41,12 @@ namespace NeeView
             Frames.Sort((x, y) => x.PixelWidth - y.PixelWidth);
         }
 
-        public BitmapSource GetBitmapSource()
+        public BitmapSource? GetBitmapSource()
         {
             return Frames.LastOrDefault();
         }
 
-        public BitmapSource GetBitmapSource(double width)
+        public BitmapSource? GetBitmapSource(double width)
         {
             foreach (var frame in Frames)
             {
@@ -67,7 +67,7 @@ namespace NeeView
             }
         }
 
-        public ImageSource GetImageSource(double width)
+        public ImageSource? GetImageSource(double width)
         {
             return GetBitmapSource(width);
         }

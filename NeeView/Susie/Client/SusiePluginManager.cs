@@ -29,7 +29,7 @@ namespace NeeView
 
         private bool _isInitialized;
         private SusiePluginRemoteClient _remote;
-        private SusiePluginClient _client;
+        private SusiePluginClient? _client;
         private List<SusiePluginInfo> _unauthorizedPlugins;
         private ObservableCollection<SusiePluginInfo> _INPlugins;
         private ObservableCollection<SusiePluginInfo> _AMPlugins;
@@ -45,7 +45,6 @@ namespace NeeView
 
         }
 
-        #region Properties
 
         public List<SusiePluginInfo> UnauthorizedPlugins
         {
@@ -85,9 +84,7 @@ namespace NeeView
         /// </summary>
         public FileTypeCollection ArchiveExtensions = new FileTypeCollection();
 
-        #endregion
 
-        #region Methods
 
         public void Initialize()
         {
@@ -113,7 +110,7 @@ namespace NeeView
         }
 
 
-        private void Plugins_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        private void Plugins_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
         {
             if (e.Action == NotifyCollectionChangedAction.Move)
             {
@@ -157,6 +154,8 @@ namespace NeeView
 
         private void LoadSusiePlugins()
         {
+            if (_client is null) throw new InvalidOperationException();
+
             var settings = Plugins.Select(e => e.ToSusiePluginSetting()).ToList();
             _client.Initialize(Config.Current.Susie.SusiePluginPath, settings);
 
@@ -212,6 +211,8 @@ namespace NeeView
 
         public void FlushSusiePluginSetting(string name)
         {
+            if (_client is null) throw new InvalidOperationException();
+
             var settings = Plugins
                 .Where(e => e.Name == name)
                 .Select(e => e.ToSusiePluginSetting())
@@ -222,47 +223,64 @@ namespace NeeView
 
         public void UpdateSusiePlugin(string name)
         {
+            if (_client is null) throw new InvalidOperationException();
+
             var plugins = _client.GetPlugin(new List<string>() { name });
             if (plugins != null && plugins.Count == 1)
             {
                 var collection = plugins[0].PluginType == SusiePluginType.Image ? INPlugins : AMPlugins;
-                var index = collection.IndexOf(collection.FirstOrDefault(e => e.Name == name));
-                if (index >= 0)
+                var plugin = collection.FirstOrDefault(e => e.Name == name);
+                if (plugin is not null)
                 {
-                    collection[index] = plugins[0];
+                    var index = collection.IndexOf(plugin);
+                    if (index >= 0)
+                    {
+                        collection[index] = plugins[0];
+                    }
                 }
             }
         }
 
         public void FlushSusiePluginOrder()
         {
-            _client.SetPluginOrder(Plugins.Select(e => e.Name).ToList());
+            _client?.SetPluginOrder(Plugins.Select(e => e.Name).ToList());
         }
 
         public SusieImagePluginAccessor GetImagePluginAccessor()
         {
+            if (_client is null) throw new InvalidOperationException();
+
             return new SusieImagePluginAccessor(_client, null);
         }
 
-        public SusieImagePluginAccessor GetImagePluginAccessor(string fileName, byte[] buff, bool isCheckExtension)
+        public SusieImagePluginAccessor? GetImagePluginAccessor(string fileName, byte[] buff, bool isCheckExtension)
         {
+            if (_client is null) throw new InvalidOperationException();
+
             var plugin = _client.GetImagePlugin(fileName, buff, isCheckExtension);
+            if (plugin is null) return null;
+
             return new SusieImagePluginAccessor(_client, plugin);
         }
 
-        public SusieArchivePluginAccessor GetArchivePluginAccessor(string fileName, byte[] buff, bool isCheckExtension)
+        public SusieArchivePluginAccessor? GetArchivePluginAccessor(string fileName, byte[]? buff, bool isCheckExtension)
         {
+            if (_client is null) throw new InvalidOperationException();
+
             var plugin = _client.GetArchivePlugin(fileName, buff, isCheckExtension);
+            if (plugin is null) return null;
+
             return new SusieArchivePluginAccessor(_client, plugin);
         }
 
         public void ShowPluginConfigulationDialog(string pluginName, Window owner)
         {
+            if (_client is null) throw new InvalidOperationException();
+
             var handle = new WindowInteropHelper(owner).Handle;
             _client.ShowConfigulationDlg(pluginName, handle.ToInt32());
         }
 
-        #endregion
 
         #region Memento
 
@@ -276,7 +294,7 @@ namespace NeeView
             public bool IsEnableSusie { get; set; }
 
             [DataMember]
-            public string SusiePluginPath { get; set; }
+            public string? SusiePluginPath { get; set; }
 
             [DataMember]
             public bool IsFirstOrderSusieImage { get; set; }
@@ -285,18 +303,18 @@ namespace NeeView
             public bool IsFirstOrderSusieArchive { get; set; }
 
             [DataMember(EmitDefaultValue = false)]
-            public List<Susie.SusiePluginSetting> Plugins { get; set; }
+            public List<Susie.SusiePluginSetting>? Plugins { get; set; }
 
             #region Obsolete
 
             [Obsolete, DataMember(Name = "SpiFiles", EmitDefaultValue = false)]
-            public Dictionary<string, bool> SpiFilesV1 { get; set; } // ver 33.0
+            public Dictionary<string, bool>? SpiFilesV1 { get; set; } // ver 33.0
 
             [Obsolete, DataMember(Name = "SpiFilesV2", EmitDefaultValue = false)]
-            public Dictionary<string, SusiePluginSetting> SpiFilesV2 { get; set; } // ver 34.0 
+            public Dictionary<string, SusiePluginSetting>? SpiFilesV2 { get; set; } // ver 34.0 
 
             [Obsolete, DataMember(Name = "SusiePlugins", EmitDefaultValue = false)]
-            public Dictionary<string, SusiePlugin.Memento> SpiFilesV3 { get; set; } // ver 35.0
+            public Dictionary<string, SusiePlugin.Memento>? SpiFilesV3 { get; set; } // ver 35.0
 
             [Obsolete, DataMember(EmitDefaultValue = false), DefaultValue(true)]
             public bool IsPluginCacheEnabled { get; set; }
@@ -341,11 +359,11 @@ namespace NeeView
                 config.Susie.IsEnabled = false; // NOTE: 設定最後にIsEnabledを確定することにより更新タイミングを制御する
                 config.Susie.IsFirstOrderSusieImage = IsFirstOrderSusieImage;
                 config.Susie.IsFirstOrderSusieArchive = IsFirstOrderSusieArchive;
-                config.Susie.SusiePluginPath = SusiePluginPath;
+                config.Susie.SusiePluginPath = SusiePluginPath ?? "";
                 config.Susie.IsEnabled = IsEnableSusie;
             }
 
-            public SusiePluginCollection CreateSusiePluginCollection()
+            public SusiePluginCollection? CreateSusiePluginCollection()
             {
                 if (Plugins == null) return null;
 
@@ -372,7 +390,7 @@ namespace NeeView
             return collection;
         }
 
-        public void RestoreSusiePluginCollection(SusiePluginCollection memento)
+        public void RestoreSusiePluginCollection(SusiePluginCollection? memento)
         {
             if (memento == null) return;
             this.UnauthorizedPlugins = memento.Select(e => e.Value.ToSusiePluginInfo(e.Key)).ToList();
@@ -399,7 +417,7 @@ namespace NeeView
 
         public bool IsPreExtract { get; set; }
 
-        public string UserExtensions { get; set; }
+        public string? UserExtensions { get; set; }
 
 
         public static SusiePluginMemento FromSusiePluginInfo(SusiePluginInfo info)
@@ -422,11 +440,10 @@ namespace NeeView
 
         public SusiePluginInfo ToSusiePluginInfo(string name)
         {
-            var info = new SusiePluginInfo();
-            info.Name = name;
+            var info = new SusiePluginInfo(name);
             info.IsEnabled = IsEnabled;
             info.IsCacheEnabled = IsCacheEnabled;
-            info.UserExtension = new FileExtensionCollection(UserExtensions);
+            info.UserExtension = UserExtensions != null ? new FileExtensionCollection(UserExtensions) : null;
             return info;
         }
     }

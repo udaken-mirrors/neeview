@@ -1,4 +1,5 @@
-﻿namespace NeeView
+﻿
+namespace NeeView
 {
     /// <summary>
     /// 分数表現

@@ -14,9 +14,9 @@ namespace NeeView
             this.ParameterSource = new CommandParameterSource(new ViewScrollNTypeCommandParameter());
         }
 
-        public override void Execute(object sender, CommandContext e)
+        public override void Execute(object? sender, CommandContext e)
         {
-            MainViewComponent.Current.ViewController.ScrollNTypeUp((ViewScrollNTypeCommandParameter)e.Parameter);
+            MainViewComponent.Current.ViewController.ScrollNTypeUp(e.Parameter.Cast<ViewScrollNTypeCommandParameter>());
         }
     }
 

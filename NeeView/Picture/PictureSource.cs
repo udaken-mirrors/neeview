@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Windows;
 using System.Windows.Media;
@@ -19,7 +20,7 @@ namespace NeeView
         /// <param name="entry">エントリ</param>
         /// <param name="pictureInfo">画像情報。nullの場合は元データから新しく生成される。</param>
         /// <param name="createOptions"></param>
-        public PictureSource(ArchiveEntry entry, PictureInfo pictureInfo, PictureSourceCreateOptions createOptions)
+        public PictureSource(ArchiveEntry entry, PictureInfo? pictureInfo, PictureSourceCreateOptions createOptions)
         {
             ArchiveEntry = entry;
             PictureInfo = pictureInfo;
@@ -27,7 +28,7 @@ namespace NeeView
         }
 
         public ArchiveEntry ArchiveEntry { get; }
-        public PictureInfo PictureInfo { get; protected set; }
+        public PictureInfo? PictureInfo { get; protected set; }
 
         /// <summary>
         /// メモリ使用量取得
@@ -37,6 +38,7 @@ namespace NeeView
         /// <summary>
         /// PictureInfo作成
         /// </summary>
+        [MemberNotNull(nameof(PictureInfo))]
         public abstract PictureInfo CreatePictureInfo(CancellationToken token);
 
         /// <summary>

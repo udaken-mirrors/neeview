@@ -22,7 +22,7 @@ namespace NeeView.Windows
         /// <param name="sender"></param>
         /// <param name="e"></param>
         /// <param name="format">データフォーマット</param>
-        public static void PreviewDragOver(object sender, DragEventArgs e, string format)
+        public static void PreviewDragOver(object? sender, DragEventArgs e, string format)
         {
             if (e.Data.GetDataPresent(format))
             {
@@ -40,7 +40,7 @@ namespace NeeView.Windows
         /// <param name="e"></param>
         /// <param name="format">データフォーマット</param>
         /// <param name="items">データコレクション</param>
-        public static void Drop<T>(object sender, DragEventArgs e, string format, ObservableCollection<T> items)
+        public static void Drop<T>(object? sender, DragEventArgs e, string format, ObservableCollection<T> items)
             where T : class
         {
             var listBox = sender as ListBox;
@@ -75,7 +75,7 @@ namespace NeeView.Windows
         }
 
 
-        public static DropInfo<T>? GetDropInfo<T>(object sender, DragEventArgs e, string format, ObservableCollection<T> items)
+        public static DropInfo<T>? GetDropInfo<T>(object? sender, DragEventArgs e, string format, ObservableCollection<T> items)
             where T : class
         {
             var listBox = sender as ListBox;

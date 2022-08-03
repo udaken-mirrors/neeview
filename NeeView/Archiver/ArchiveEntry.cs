@@ -15,15 +15,23 @@ namespace NeeView
     /// </summary>
     public class ArchiveEntry
     {
-        #region Properties
+        /// <summary>
+        /// Emptyインスタンス
+        /// </summary>
+        public static ArchiveEntry Empty { get; } = new ArchiveEntry() { IsEmpty = true };
 
-        public static ArchiveEntry Empty { get; } = new ArchiveEntry();
+        /// <summary>
+        ///  Emptyインスタンス？
+        /// </summary>
+        public bool IsEmpty { get; private set; }
+
 
         /// <summary>
         /// 所属アーカイバー.
         /// nullの場合、このエントリはファイルパスを示す
         /// </summary>
-        public Archiver Archiver { get; set; }
+        // TODO: ArchiveEntry.Archiver is not null
+        public Archiver? Archiver { get; set; }
 
         /// <summary>
         /// アーカイブ内登録番号
@@ -34,13 +42,13 @@ namespace NeeView
         /// エントリ情報
         /// アーカイバーで識別子として使用される
         /// </summary>
-        public object Instance { get; set; }
+        public object? Instance { get; set; }
 
         /// <summary>
         /// エントリデータ。
         /// 先読みデータ。テンポラリファイル名もしくはバイナリデータ
         /// </summary>
-        public object Data { get; set; }
+        public object? Data { get; set; }
 
         /// <summary>
         /// パスが有効であるか
@@ -62,7 +70,7 @@ namespace NeeView
         /// エントリ名(重複有)
         /// </summary>
         /// c\001.jpg
-        private string _rawEntryName;
+        private string _rawEntryName = "";
         public string RawEntryName
         {
             get { return _rawEntryName; }
@@ -80,13 +88,13 @@ namespace NeeView
         /// エントリ名(重複有、正規化済)
         /// </summary>
         /// c/001.jpg => c\001.jpg
-        public string EntryName { get; private set; }
+        public string EntryName { get; private set; } = "";
 
         /// <summary>
         /// ショートカットの場合のリンク先パス。<br/>
         /// ページマークの場合の参照先パスにもなる(アーカイブパスの可能性あり)
         /// </summary>
-        public string Link { get; set; }
+        public string? Link { get; set; }
 
         /// <summary>
         /// エントリ名のファイル名
@@ -103,7 +111,8 @@ namespace NeeView
         /// ルートアーカイバー
         /// </summary>
         /// a.zip
-        public Archiver RootArchiver => Archiver?.RootArchiver;
+        // TODO: ArchiveEntry.RootArchiver is not null
+        public Archiver? RootArchiver => Archiver?.RootArchiver;
 
         /// <summary>
         /// 所属名
@@ -145,10 +154,12 @@ namespace NeeView
         /// </summary>
         public bool IsDirectory => Length == -1;
 
+#if false
         /// <summary>
         /// ディレクトリは空であるか
         /// </summary>
         public bool IsEmpty { get; set; }
+#endif
 
         /// <summary>
         /// ファイル作成日
@@ -170,15 +181,13 @@ namespace NeeView
         /// </summary>
         public bool IsIgnoreFileExtension { get; set; }
 
-        #endregion Properties
 
-        #region Methods
 
         /// <summary>
         /// エントリデータを先読みデータとして返す
         /// </summary>
         /// <returns></returns>
-        public byte[] GetRawData()
+        public byte[]? GetRawData()
         {
             return Data as byte[];
         }
@@ -187,7 +196,7 @@ namespace NeeView
         /// ファイルシステムでのパスを返す
         /// </summary>
         /// <returns>パス。圧縮ファイルの場合はnull</returns>
-        public string GetFileSystemPath()
+        public string? GetFileSystemPath()
         {
             return Archiver != null
                 ? Archiver.GetFileSystemPath(this)
@@ -231,9 +240,10 @@ namespace NeeView
         /// <param name="isKeepFileName">エントリー名をファイル名にする</param>
         public FileProxy ExtractToTemp(bool isKeepFileName = false)
         {
-            if (this.Archiver is FolderArchive || this.Archiver is MediaArchiver || IsFileSystem)
+            var targetPath = Link ?? GetFileSystemPath();
+            if (targetPath is not null && (this.Archiver is FolderArchive || this.Archiver is MediaArchiver || IsFileSystem))
             {
-                return new FileProxy(Link ?? GetFileSystemPath());
+                return new FileProxy(targetPath);
             }
             else
             {
@@ -299,14 +309,12 @@ namespace NeeView
         }
 
 
-        public override string ToString()
+        public override string? ToString()
         {
-            return EntryName ?? base.ToString();
+            return string.IsNullOrEmpty(EntryName) ? base.ToString() : EntryName;
         }
 
-        #endregion
 
-        #region Utility
 
         /// <summary>
         /// ArchiveEntry生成。
@@ -354,11 +362,11 @@ namespace NeeView
                             if (FileShortcut.IsShortcut(fileInfo.Name))
                             {
                                 var shortcut = new FileShortcut(fileInfo);
-                                if (shortcut.IsValid)
+                                if (shortcut.TryGetTarget(out var target))
                                 {
-                                    if (shortcut.Target.Attributes.HasFlag(FileAttributes.Directory))
+                                    if (target.Attributes.HasFlag(FileAttributes.Directory))
                                     {
-                                        var info = (DirectoryInfo)shortcut.Target;
+                                        var info = (DirectoryInfo)target;
                                         entry.Link = info.FullName;
                                         entry.Length = -1;
                                         entry.CreationTime = info.CreationTime;
@@ -366,7 +374,7 @@ namespace NeeView
                                     }
                                     else
                                     {
-                                        var info = (FileInfo)shortcut.Target;
+                                        var info = (FileInfo)target;
                                         entry.Link = info.FullName;
                                         entry.Length = info.Length;
                                         entry.CreationTime = info.CreationTime;
@@ -389,8 +397,6 @@ namespace NeeView
             entry.IsValid = false;
             return entry;
         }
-
-        #endregion
     }
 }
 

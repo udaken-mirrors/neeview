@@ -12,7 +12,7 @@ namespace NeeView
     {
         #region 開発用
 
-        public DebugSimpleLog DebugLog { get; private set; }
+        public DebugSimpleLog? DebugLog { get; private set; }
 
         [Conditional("DEBUG")]
         public void Log(string message)
@@ -34,7 +34,7 @@ namespace NeeView
         private ManualResetEventSlim _event = new ManualResetEventSlim(false);
 
         // ワーカースレッド
-        private Thread _thread;
+        private Thread? _thread;
 
         private bool _isBusy;
         private bool _isPrimary;
@@ -53,7 +53,7 @@ namespace NeeView
         }
 
 
-        public event EventHandler IsBusyChanged;
+        public event EventHandler? IsBusyChanged;
 
 
         /// <summary>
@@ -62,7 +62,7 @@ namespace NeeView
         public bool IsBusy
         {
             get { return _isBusy; }
-            set { if (_isBusy != value) { _isBusy = value; IsBusyChanged?.Invoke(this, null); } }
+            set { if (_isBusy != value) { _isBusy = value; IsBusyChanged?.Invoke(this, EventArgs.Empty); } }
         }
 
         /// <summary>
@@ -98,7 +98,7 @@ namespace NeeView
         }
 
 
-        private void Context_JobChanged(object sender, EventArgs e)
+        private void Context_JobChanged(object? sender, EventArgs e)
         {
             _event.Set();
         }
@@ -168,7 +168,7 @@ namespace NeeView
             while (!token.IsCancellationRequested)
             {
                 Log($"get Job ...");
-                Job job;
+                Job? job;
 
                 lock (_scheduler.Lock)
                 {

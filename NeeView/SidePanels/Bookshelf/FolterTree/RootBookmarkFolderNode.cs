@@ -11,6 +11,8 @@ namespace NeeView
         public RootBookmarkFolderNode(FolderTreeNodeBase parent) : base(BookmarkCollection.Current.Items, parent)
         {
             BookmarkCollection.Current.BookmarkChanged += BookmarkCollection_BookmarkChanged;
+
+            Icon = new SingleImageSourceCollection(ResourceTools.GetElementResource<ImageSource>(MainWindow.Current, "ic_grade_24px"));
         }
 
 
@@ -18,10 +20,9 @@ namespace NeeView
 
         public override string DispName { get => Properties.Resources.Word_Bookmark; set { } }
 
-        public override IImageSourceCollection Icon => new SingleImageSourceCollection(MainWindow.Current.Resources["ic_grade_24px"] as ImageSource);
+        public override IImageSourceCollection Icon { get; }
 
-
-        private void BookmarkCollection_BookmarkChanged(object sender, BookmarkCollectionChangedEventArgs e)
+        private void BookmarkCollection_BookmarkChanged(object? sender, BookmarkCollectionChangedEventArgs e)
         {
             switch (e.Action)
             {
@@ -46,8 +47,11 @@ namespace NeeView
             }
         }
 
-        private void Directory_Creaded(TreeListNode<IBookmarkEntry> parent, TreeListNode<IBookmarkEntry> item)
+        private void Directory_Creaded(TreeListNode<IBookmarkEntry>? parent, TreeListNode<IBookmarkEntry>? item)
         {
+            if (parent is null) return;
+            if (item is null) return;
+
             if (!(item.Value is BookmarkFolder folder))
             {
                 return;
@@ -68,8 +72,11 @@ namespace NeeView
             }
         }
 
-        private void Directory_Deleted(TreeListNode<IBookmarkEntry> parent, TreeListNode<IBookmarkEntry> item)
+        private void Directory_Deleted(TreeListNode<IBookmarkEntry>? parent, TreeListNode<IBookmarkEntry>? item)
         {
+            if (parent is null) return;
+            if (item is null) return;
+
             if (!(item.Value is BookmarkFolder folder))
             {
                 return;
@@ -89,8 +96,11 @@ namespace NeeView
             }
         }
 
-        private void Directory_Renamed(TreeListNode<IBookmarkEntry> parent, TreeListNode<IBookmarkEntry> item)
+        private void Directory_Renamed(TreeListNode<IBookmarkEntry>? parent, TreeListNode<IBookmarkEntry>? item)
         {
+            if (parent is null) return;
+            if (item is null) return;
+
             if (!(item.Value is BookmarkFolder folder))
             {
                 return;
@@ -110,12 +120,12 @@ namespace NeeView
             }
         }
 
-        private BookmarkFolderNode GetDirectoryNode(QueryPath path)
+        private BookmarkFolderNode? GetDirectoryNode(QueryPath path)
         {
             return GetDirectoryNode(path.Path);
         }
 
-        private BookmarkFolderNode GetDirectoryNode(string path)
+        private BookmarkFolderNode? GetDirectoryNode(string? path)
         {
             if (string.IsNullOrEmpty(path))
             {

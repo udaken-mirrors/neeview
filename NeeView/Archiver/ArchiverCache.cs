@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NeeLaboratory.Linq;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -55,7 +56,7 @@ namespace NeeView
             {
                 return _caches.Values
                        .Select(e => e.TryGetTarget(out var archiver) ? archiver as IDisposable : null)
-                       .Where(e => e != null)
+                       .WhereNotNull()
                        .ToList();
             }
         }
@@ -69,7 +70,7 @@ namespace NeeView
             }
         }
 
-        public bool TryGetValue(string path, out Archiver archiver)
+        public bool TryGetValue(string path, out Archiver? archiver)
         {
             if (_caches.Count > 50)
             {

@@ -9,12 +9,12 @@
             this.IsShowMessage = false;
         }
 
-        public override bool CanExecute(object sender, CommandContext e)
+        public override bool CanExecute(object? sender, CommandContext e)
         {
             return PageHistory.Current.CanMoveToPrevious();
         }
 
-        public override void Execute(object sender, CommandContext e)
+        public override void Execute(object? sender, CommandContext e)
         {
             PageHistory.Current.MoveToPrevious();
         }

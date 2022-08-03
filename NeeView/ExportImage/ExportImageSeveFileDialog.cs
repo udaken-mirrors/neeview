@@ -9,6 +9,21 @@ namespace NeeView
 {
     public class ExportImageSeveFileDialog
     {
+        public ExportImageSeveFileDialog(string? initialDirectory, string fileName, bool canSelectFormat)
+        {
+            InitialDirectory = initialDirectory;
+            FileName = fileName;
+            CanSelectFormat = canSelectFormat;
+        }
+
+
+        public string? InitialDirectory { get; set; }
+
+        public string FileName { get; set; }
+
+        public bool CanSelectFormat { get; set; }
+
+
         public bool? ShowDialog(Window owner)
         {
             try
@@ -25,14 +40,7 @@ namespace NeeView
             }
         }
 
-        public string InitialDirectory { get; set; }
-
-        public string FileName { get; set; }
-
-        public bool CanSelectFormat { get; set; }
-
-
-        private string ValidateDirectoryPath(string path)
+        private string ValidateDirectoryPath(string? path)
         {
             if (System.IO.Directory.Exists(path))
             {
@@ -44,7 +52,7 @@ namespace NeeView
             }
         }
 
-        public SaveFileDialog CreateSaveFileDialog(string filename, string directory, bool canSelectFormat)
+        private SaveFileDialog CreateSaveFileDialog(string filename, string directory, bool canSelectFormat)
         {
             var dialog = new SaveFileDialog();
 

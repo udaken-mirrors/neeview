@@ -24,13 +24,13 @@ namespace NeeView
             _engine.SetValue("sleep", (Action<int>)Sleep);
             _engine.SetValue("log", (Action<object>)Log);
             _engine.SetValue("system", (Action<string, string>)SystemCall);
-            _engine.SetValue("include", (Func<string, object>)ExecureFile);
+            _engine.SetValue("include", (Func<string, object?>)ExecureFile);
             _engine.SetValue("nv", _commandHost);
         }
 
-        public string CurrentPath { get; private set; }
+        public string? CurrentPath { get; private set; }
 
-        public string CurrentFolder { get; set; }
+        public string? CurrentFolder { get; set; }
 
         public bool IsToastEnable { get; set; }
 
@@ -47,12 +47,12 @@ namespace NeeView
         }
 
         [Documentable(Name = "include")]
-        public object ExecureFile(string path)
+        public object? ExecureFile(string path)
         {
             return ExecureFile(path, _cancellationToken);
         }
 
-        public object ExecureFile(string path, CancellationToken token)
+        public object? ExecureFile(string path, CancellationToken token)
         {
             var fullpath = GetFullPath(path);
             string script = File.ReadAllText(fullpath, Encoding.UTF8);
@@ -60,7 +60,7 @@ namespace NeeView
             var oldFolder = CurrentFolder;
             try
             {
-                CurrentFolder = Path.GetDirectoryName(fullpath);
+                CurrentFolder = LoosePath.GetDirectoryName(fullpath);
                 return Execute(fullpath, script, token);
             }
             finally
@@ -69,7 +69,7 @@ namespace NeeView
             }
         }
 
-        public object Execute(string path, string script, CancellationToken token)
+        public object? Execute(string? path, string script, CancellationToken token)
         {
             _cancellationToken = token;
             _commandHost.SetCancellationToken(token);
@@ -78,7 +78,8 @@ namespace NeeView
             try
             {
                 CurrentPath = path;
-                var result = _engine.Evaluate(script, new Esprima.ParserOptions(path));
+                var parserOptions = path is null ? new Esprima.ParserOptions() : new Esprima.ParserOptions(path);
+                var result = _engine.Evaluate(script, parserOptions);
                 return result?.ToObject();
             }
             catch (OperationCanceledException)
@@ -127,7 +128,7 @@ namespace NeeView
         }
 
         [Documentable(Name = "system")]
-        public void SystemCall(string filename, string args = null)
+        public void SystemCall(string filename, string? args = null)
         {
             ExternalProcess.Start(filename, args, new ExternalProcessOptions() { IsThrowException = true });
         }
@@ -158,7 +159,7 @@ namespace NeeView
         {
             var location = _engine.DebugHandler?.CurrentLocation;
 
-            string source = null;
+            string? source = null;
             int line = -1;
             string message = s.Trim();
 

@@ -15,8 +15,10 @@ namespace NeeView
 
         public int Indent { get; private set; }
 
-        public IndentStringBuilder Append(string s)
+        public IndentStringBuilder Append(string? s)
         {
+            if (s is null) return this;
+
             var lines = s.Split(_separator, StringSplitOptions.None);
 
             for (var i = 0; i < lines.Length; ++i)

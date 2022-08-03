@@ -16,12 +16,12 @@ namespace NeeView
             return new Binding(nameof(MenuBarConfig.IsAddressBarEnabled)) { Source = Config.Current.MenuBar };
         }
 
-        public override string ExecuteMessage(object sender, CommandContext e)
+        public override string ExecuteMessage(object? sender, CommandContext e)
         {
             return Config.Current.MenuBar.IsAddressBarEnabled ? Properties.Resources.ToggleVisibleAddressBarCommand_Off : Properties.Resources.ToggleVisibleAddressBarCommand_On;
         }
 
-        public override void Execute(object sender, CommandContext e)
+        public override void Execute(object? sender, CommandContext e)
         {
             MainWindowModel.Current.ToggleVisibleAddressBar();
         }

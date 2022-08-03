@@ -44,8 +44,8 @@ namespace NeeView
 
         public void Cleanup(long limitSize)
         {
-            List<IHasPageContent> elements = null;
-            List<IHasPageContent> removes = null;
+            List<IHasPageContent>? elements = null;
+            List<IHasPageContent>? removes = null;
 
             lock (_lock)
             {

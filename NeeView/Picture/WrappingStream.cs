@@ -32,8 +32,8 @@ namespace NeeView
         {
             if (disposing)
             {
-                BaseStream?.Dispose();
-                BaseStream = null;
+                BaseStream.Dispose();
+                //BaseStream = null;
             }
 
             base.Dispose(disposing);

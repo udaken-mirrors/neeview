@@ -15,7 +15,7 @@ namespace NeeView
     public class MultbootService
     {
         private Process _currentProcess;
-        private Process _serverProcess;
+        private Process? _serverProcess;
 
 
         public MultbootService(bool isCreateNew)
@@ -35,7 +35,7 @@ namespace NeeView
         /// <summary>
         /// サーバープロセスを検索
         /// </summary>
-        private Process GetServerProcess(Process currentProcess)
+        private Process? GetServerProcess(Process currentProcess)
         {
             var processName = currentProcess.ProcessName;
             Trace.WriteLine($"GetServerProcess: CurrentProcess: ProcessName={processName}, Id={currentProcess.Id}");
@@ -83,6 +83,8 @@ namespace NeeView
         /// </summary>
         public async Task RemoteLoadAsAsync(List<string> files)
         {
+            if (_serverProcess is null) return;
+
             try
             {
                 ProcessActivator.AppActivate(_serverProcess);

@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 using System.Windows;
 
 namespace NeeView
@@ -24,15 +25,16 @@ namespace NeeView
             var parameter = CreateBindingParameter();
 
             // create view
+            if (this.Source is null) throw new InvalidOperationException();
             this.View = new ViewContentControl(CreateView(this.Source, parameter));
 
             // content setting
             this.Size = new Size(480, 480);
         }
 
-        private FrameworkElement CreateView(ViewContentSource source, ViewContentParameters parameter)
+        private FrameworkElement? CreateView(ViewContentSource source, ViewContentParameters parameter)
         {
-            if (Content.PageMessage == null)
+            if (Content?.PageMessage == null)
             {
                 Debug.WriteLine("Warning: Content.PageMessage is null");
                 return null;

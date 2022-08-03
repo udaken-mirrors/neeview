@@ -9,7 +9,7 @@ namespace NeeView
         private bool _isAspectRatioEnabled;
         private bool _isAnimatedGifEnabled = true;
         private bool _isAllFileSupported;
-        private FileTypeCollection _supportFileTypes = null;
+        private FileTypeCollection? _supportFileTypes = null;
 
         // 既定の画像拡張子をWICから取得する
         [PropertyMember]
@@ -21,7 +21,7 @@ namespace NeeView
 
         // サポートする画像ファイルの拡張子。nullの場合は既定の画像拡張子が適用される
         [PropertyMember]
-        public FileTypeCollection SupportFileTypes
+        public FileTypeCollection? SupportFileTypes
         {
             get { return _supportFileTypes; }
             set { SetProperty(ref _supportFileTypes, value); }

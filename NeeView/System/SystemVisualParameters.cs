@@ -1,4 +1,6 @@
 ﻿using NeeLaboratory.ComponentModel;
+using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Media;
@@ -28,6 +30,9 @@ namespace NeeView
 
         private SystemVisualParameters()
         {
+            // NOTE: nulalble警告回避
+            _messageFontName = SystemFonts.MessageFontFamily.Source;
+
             UpdateFonts();
             UpdateColors();
 
@@ -72,7 +77,7 @@ namespace NeeView
         }
 
 
-        private void WindowMessage_SettingChanged(object sender, SettingChangedEventArgs e)
+        private void WindowMessage_SettingChanged(object? sender, SettingChangedEventArgs e)
         {
             switch (e.Message)
             {
@@ -107,7 +112,9 @@ namespace NeeView
                 var registoryKeyName = @"Software\Microsoft\Windows\CurrentVersion\Themes\Personalize";
                 using (var registoryKey = Microsoft.Win32.Registry.CurrentUser.OpenSubKey(registoryKeyName))
                 {
-                    var value = (int)registoryKey.GetValue("AppsUseLightTheme");
+                    if (registoryKey is null) return SystemThemeType.Dark;
+
+                    var value = (int?)registoryKey.GetValue("AppsUseLightTheme");
                     return (value == 1) ? SystemThemeType.Light : SystemThemeType.Dark;
                 }
             }

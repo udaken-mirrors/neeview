@@ -17,7 +17,7 @@ namespace NeeView
     /// </summary>
     public class ZipArchiver : Archiver
     {
-        public ZipArchiver(string path, ArchiveEntry source) : base(path, source)
+        public ZipArchiver(string path, ArchiveEntry? source) : base(path, source)
         {
         }
 
@@ -55,7 +55,7 @@ namespace NeeView
             var list = new List<ArchiveEntry>();
             var directories = new List<ArchiveEntry>();
 
-            FileStream stream = null;
+            FileStream? stream = null;
             try
             {
                 stream = new FileStream(Path, FileMode.Open, FileAccess.Read, FileShare.Read);

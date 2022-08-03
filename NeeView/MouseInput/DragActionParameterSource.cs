@@ -5,14 +5,14 @@ namespace NeeView
 {
     public class DragActionParameterSource
     {
-        private DragActionParameter _parameter;
+        private DragActionParameter? _parameter;
         private Type _type;
 
-
+#if false
         public DragActionParameterSource()
         {
         }
-
+#endif
 
         public DragActionParameterSource(Type defaultType)
         {
@@ -22,14 +22,16 @@ namespace NeeView
         }
 
 
-        public DragActionParameter GetRaw()
+        public DragActionParameter? GetRaw()
         {
             return _parameter;
         }
 
         public DragActionParameter GetDefault()
         {
-            return (DragActionParameter)Activator.CreateInstance(_type);
+            var instance = Activator.CreateInstance(_type) as DragActionParameter;
+            if (instance is null) throw new InvalidOperationException();
+            return instance;
         }
 
         public DragActionParameter Get()
@@ -42,7 +44,7 @@ namespace NeeView
             return _parameter;
         }
 
-        public void Set(DragActionParameter value)
+        public void Set(DragActionParameter? value)
         {
             if (value != null && value.GetType() != _type)
             {

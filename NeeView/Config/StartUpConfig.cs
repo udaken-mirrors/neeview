@@ -7,8 +7,8 @@ namespace NeeView
 {
     public class StartUpConfig : BindableBase
     {
-        private string _lastBookPath;
-        private string _lastFolderPath;
+        private string? _lastBookPath;
+        private string? _lastFolderPath;
         private bool _isSplashScreenEnabled = true;
         private bool _isMultiBootEnabled;
         private bool _isRestoreWindowPlacement = true;
@@ -89,14 +89,14 @@ namespace NeeView
         #region HiddenParameters
 
         [PropertyMapIgnore]
-        public string LastBookPath
+        public string? LastBookPath
         {
             get { return IsOpenLastBook ? _lastBookPath : null; }
             set { SetProperty(ref _lastBookPath, value); }
         }
 
         [PropertyMapIgnore]
-        public string LastFolderPath
+        public string? LastFolderPath
         {
             get { return IsOpenLastFolder ? _lastFolderPath : null; }
             set { SetProperty(ref _lastFolderPath, value); }

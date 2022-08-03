@@ -16,7 +16,7 @@ namespace NeeView
             return BindingGenerator.Background(BackgroundType.White);
         }
 
-        public override void Execute(object sender, CommandContext e)
+        public override void Execute(object? sender, CommandContext e)
         {
             Config.Current.Background.BackgroundType = BackgroundType.White;
         }

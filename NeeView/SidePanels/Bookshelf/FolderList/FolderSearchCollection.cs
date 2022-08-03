@@ -1,4 +1,5 @@
 ﻿using NeeView.IO;
+using NeeLaboratory.Linq;
 using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
@@ -16,8 +17,8 @@ namespace NeeView
     /// </summary>
     public class FolderSearchCollection : FolderCollection, IDisposable
     {
-        private NeeLaboratory.IO.Search.SearchResultWatcher _searchResult;
-        private FolderCollectionEngine _engine;
+        private NeeLaboratory.IO.Search.SearchResultWatcher? _searchResult;
+        private FolderCollectionEngine? _engine;
         private bool _isWatchSearchResult;
 
 
@@ -49,9 +50,11 @@ namespace NeeView
 
         public void InitializeItems(CancellationToken token)
         {
+            if (_searchResult is null) throw new ObjectDisposedException(nameof(FolderSearchCollection));
+
             var items = _searchResult.Items
                 .Select(e => CreateFolderItem(e))
-                .Where(e => e != null)
+                .WhereNotNull()
                 .ToList();
 
             var list = Sort(items, token);
@@ -86,7 +89,7 @@ namespace NeeView
             _engine?.RequestRename(oldPath, path);
         }
 
-        private void SearchResult_NodeChanged(object sender, NeeLaboratory.IO.Search.SearchResultChangedEventArgs e)
+        private void SearchResult_NodeChanged(object? sender, NeeLaboratory.IO.Search.SearchResultChangedEventArgs e)
         {
             switch (e.Action)
             {
@@ -108,7 +111,7 @@ namespace NeeView
         /// <summary>
         /// 検索結果からFolderItem作成
         /// </summary>
-        private FolderItem CreateFolderItem(NeeLaboratory.IO.Search.NodeContent nodeContent)
+        private FolderItem? CreateFolderItem(NeeLaboratory.IO.Search.NodeContent nodeContent)
         {
             if (nodeContent.FileInfo.IsDirectory)
             {
@@ -135,7 +138,7 @@ namespace NeeView
             };
         }
 
-        private FolderItem CreateFolderItemFile(NeeLaboratory.IO.Search.NodeContent nodeContent)
+        private FolderItem? CreateFolderItemFile(NeeLaboratory.IO.Search.NodeContent nodeContent)
         {
             if (FileShortcut.IsShortcut(nodeContent.Path))
             {

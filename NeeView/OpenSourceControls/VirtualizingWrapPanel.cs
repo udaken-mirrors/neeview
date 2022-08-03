@@ -130,6 +130,7 @@ namespace OpenSourceControls
         private static void OnOrientationChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var panel = d as VirtualizingWrapPanel;
+            if (panel is null) throw new InvalidOperationException();
             panel.offset = default(Point);
             panel.InvalidateMeasure();
         }
@@ -196,7 +197,7 @@ namespace OpenSourceControls
                 if (itemRect.IntersectsWith(viewportRect))
                 {
                     var child = generator.GetOrCreateChild(i);
-                    child.Measure(childAvailable);
+                    child?.Measure(childAvailable);
                     childSize = this.ContainerSizeForIndex(i);
                 }
 
@@ -277,7 +278,7 @@ namespace OpenSourceControls
             /// <summary>
             /// <see cref="generator"/> の生成プロセスの有効期間を追跡するオブジェクト。
             /// </summary>
-            private IDisposable generatorTracker;
+            private IDisposable? generatorTracker;
 
             /// <summary>
             /// 表示範囲内にある最初の要素のインデックス。
@@ -378,7 +379,7 @@ namespace OpenSourceControls
             /// </summary>
             /// <param name="index">取得するアイテムのインデックス。</param>
             /// <returns>指定したインデックスのアイテム。</returns>
-            public UIElement GetOrCreateChild(int index)
+            public UIElement? GetOrCreateChild(int index)
             {
                 if (this.generator == null)
                     return this.owner.InternalChildren[index];
@@ -491,7 +492,7 @@ namespace OpenSourceControls
         {
             var getSize = new Func<int, Size>(idx =>
             {
-                UIElement item = null;
+                UIElement? item = null;
                 var itemsOwner = ItemsControl.GetItemsOwner(this);
                 var generator = this.ItemContainerGenerator as ItemContainerGenerator;
 
@@ -679,7 +680,7 @@ namespace OpenSourceControls
         /// スクロール動作を制御する <see cref="System.Windows.Controls.ScrollViewer"/> 要素を
         /// 取得、または設定する。
         /// </summary>
-        public ScrollViewer ScrollOwner { get; set; }
+        public ScrollViewer? ScrollOwner { get; set; }
         #endregion
 
         #region CanHorizontallyScroll

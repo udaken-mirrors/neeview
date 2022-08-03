@@ -85,7 +85,7 @@ namespace NeeLaboratory.IO
         /// </summary>
         /// <param name="path"></param>
         /// <returns></returns>
-        public static string GetTypeName(string path)
+        public static string? GetTypeName(string path)
         {
             var shfi = new NativeMethods.SHFILEINFO();
             shfi.szDisplayName = "";
@@ -107,7 +107,7 @@ namespace NeeLaboratory.IO
         /// </summary>
         /// <param name="path"></param>
         /// <returns></returns>
-        public static string GetTypeNameWithAttribute(string path, uint attribute)
+        public static string? GetTypeNameWithAttribute(string path, uint attribute)
         {
             var shfi = new NativeMethods.SHFILEINFO();
             shfi.szDisplayName = "";
@@ -130,7 +130,7 @@ namespace NeeLaboratory.IO
         /// <param name="path"></param>
         /// <param name="iconSize"></param>
         /// <returns></returns>
-        public static BitmapSource GetTypeIconSource(string path, IconSize iconSize)
+        public static BitmapSource? GetTypeIconSource(string path, IconSize iconSize)
         {
             var shinfo = new NativeMethods.SHFILEINFO();
             IntPtr hSuccess = NativeMethods.SHGetFileInfo(path, 0, ref shinfo, (uint)Marshal.SizeOf(shinfo), NativeMethods.SHGFI_ICON | (iconSize == IconSize.Small ? NativeMethods.SHGFI_SMALLICON : NativeMethods.SHGFI_LARGEICON));
@@ -152,7 +152,7 @@ namespace NeeLaboratory.IO
         /// <param name="path"></param>
         /// <param name="iconSize"></param>
         /// <returns></returns>
-        public static BitmapSource GetTypeIconSourceWithAttribute(string path, IconSize iconSize, uint attribute)
+        public static BitmapSource? GetTypeIconSourceWithAttribute(string path, IconSize iconSize, uint attribute)
         {
             var shinfo = new NativeMethods.SHFILEINFO();
             IntPtr hSuccess = NativeMethods.SHGetFileInfo(path, attribute, ref shinfo, (uint)Marshal.SizeOf(shinfo), NativeMethods.SHGFI_ICON | (iconSize == IconSize.Small ? NativeMethods.SHGFI_SMALLICON : NativeMethods.SHGFI_LARGEICON) | NativeMethods.SHGFI_USEFILEATTRIBUTES);

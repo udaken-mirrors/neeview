@@ -27,12 +27,7 @@ namespace NeeView
 
             if (string.IsNullOrWhiteSpace(parameter.ExportFolder))
             {
-                var dialog = new ExportImageSeveFileDialog
-                {
-                    InitialDirectory = exporter.ExportFolder,
-                    FileName = filename,
-                    CanSelectFormat = exporter.Mode == ExportImageMode.View
-                };
+                var dialog = new ExportImageSeveFileDialog(exporter.ExportFolder, filename, exporter.Mode == ExportImageMode.View);
                 var result = dialog.ShowDialog(MainWindow.Current);
                 if (result != true) return;
                 filename = dialog.FileName;

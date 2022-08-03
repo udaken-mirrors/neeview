@@ -19,13 +19,13 @@ namespace NeeView
             return new Binding(nameof(windowStateManager.IsFullScreen)) { Source = windowStateManager, Mode = BindingMode.OneWay };
         }
 
-        public override string ExecuteMessage(object sender, CommandContext e)
+        public override string ExecuteMessage(object? sender, CommandContext e)
         {
             var windowStateManager = MainWindow.Current.WindowStateManager;
             return windowStateManager.IsFullScreen ? Properties.Resources.ToggleFullScreenCommand_Off : Properties.Resources.ToggleFullScreenCommand_On;
         }
 
-        public override void Execute(object sender, CommandContext e)
+        public override void Execute(object? sender, CommandContext e)
         {
             MainViewComponent.Current.ViewController.ToggleWindowFullScreen(sender);
         }

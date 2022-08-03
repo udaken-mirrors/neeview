@@ -16,6 +16,8 @@ namespace NeeView
             WindowMessage.Current.DriveChanged += WindowMessage_DriveChanged;
             WindowMessage.Current.MediaChanged += WindowMessage_MediaChanged;
             WindowMessage.Current.DirectoryChanged += WindowMessage_DirectoryChanged;
+
+            Icon = new SingleImageSourceCollection(ResourceTools.GetElementResource<ImageSource>(MainWindow.Current, "ic_desktop_windows_24px"));
         }
 
 
@@ -23,7 +25,8 @@ namespace NeeView
 
         public override string DispName { get => "PC"; set { } }
 
-        public override IImageSourceCollection Icon => new SingleImageSourceCollection(MainWindow.Current.Resources["ic_desktop_windows_24px"] as ImageSource);
+        public override IImageSourceCollection Icon { get; }
+
 
 
         public void Refresh()
@@ -56,7 +59,7 @@ namespace NeeView
             }
         }
 
-        private void WindowMessage_DriveChanged(object sender, DriveChangedEventArgs e)
+        private void WindowMessage_DriveChanged(object? sender, DriveChangedEventArgs e)
         {
             if (_children == null) return;
 
@@ -130,7 +133,7 @@ namespace NeeView
             }
         }
 
-        private DriveInfo CreateDriveInfo(string name)
+        private DriveInfo? CreateDriveInfo(string name)
         {
             Debug.Assert(name.EndsWith("\\"));
 
@@ -142,7 +145,7 @@ namespace NeeView
             return null;
         }
 
-        private void WindowMessage_MediaChanged(object sender, MediaChangedEventArgs e)
+        private void WindowMessage_MediaChanged(object? sender, MediaChangedEventArgs e)
         {
             if (_children == null) return;
 
@@ -169,7 +172,7 @@ namespace NeeView
             });
         }
 
-        private void WindowMessage_DirectoryChanged(object sender, DirectoryChangedEventArgs e)
+        private void WindowMessage_DirectoryChanged(object? sender, DirectoryChangedEventArgs e)
         {
             AppDispatcher.BeginInvoke(() =>
             {
@@ -184,6 +187,7 @@ namespace NeeView
                             Directory_Deleted(e.FullPath);
                             break;
                         case DirectoryChangeType.Renamed:
+                            if (e.OldFullPath is null) throw new InvalidOperationException("e.OldFullPath must not be null at Renamed");
                             Directory_Renamed(e.OldFullPath, e.FullPath);
                             break;
                     }
@@ -251,7 +255,7 @@ namespace NeeView
             }
         }
 
-        private DirectoryNode GetDirectoryNode(string path)
+        private DirectoryNode? GetDirectoryNode(string path)
         {
             return GetFolderTreeNode(path, false, false) as DirectoryNode;
         }

@@ -4,10 +4,6 @@ namespace NeeView
 {
     public class SidePanelContentChangedEventArgs : EventArgs
     {
-        public SidePanelContentChangedEventArgs()
-        {
-        }
-
         public SidePanelContentChangedEventArgs(string key)
         {
             Key = key;

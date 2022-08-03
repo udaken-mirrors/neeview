@@ -4,14 +4,14 @@ namespace NeeView
 {
     public class FileInformationRecord : BindableBase
     {
-        private object _value;
+        private object? _value;
 
 
-        public FileInformationRecord(InformationKey key, object value)
+        public FileInformationRecord(InformationKey key, object? value)
         {
             Group = key.ToInformationGroup();
             Key = key;
-            Value = value;
+            _value = value;
         }
 
 
@@ -19,7 +19,7 @@ namespace NeeView
         
         public InformationKey Key { get; private set; }
 
-        public object Value
+        public object? Value
         {
             get { return _value; }
             set { SetProperty(ref _value, value); }

@@ -11,7 +11,7 @@ namespace NeeView
         private bool _IsVisibleItemsCount;
         private bool _isVisibleHistoryMark = true;
         private bool _isVisibleBookmarkMark = true;
-        private string _excludePattern;
+        private string? _excludePattern;
         private bool _isSyncFolderTree;
         private bool _isCloseBookWhenMove;
         private bool _isOpenNextBookWhenRemove = true;
@@ -25,7 +25,7 @@ namespace NeeView
         private bool _isOrderWithoutFileType;
 
         [JsonInclude, JsonPropertyName(nameof(Home))]
-        public string _home;
+        public string? _home;
 
         /// <summary>
         /// ホームのパス
@@ -133,7 +133,7 @@ namespace NeeView
         /// 項目除外パターン
         /// </summary>
         [PropertyMember]
-        public string ExcludePattern
+        public string? ExcludePattern
         {
             get { return _excludePattern; }
             set { SetProperty(ref _excludePattern, value); }

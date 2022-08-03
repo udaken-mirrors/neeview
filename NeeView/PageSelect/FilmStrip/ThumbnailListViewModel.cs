@@ -14,23 +14,15 @@ namespace NeeView
     /// </summary>
     public class ThumbnailListViewModel : BindableBase
     {
-        #region Fields
-
         private ThumbnailList _model;
 
-        #endregion
-
-        #region Constructors
 
         public ThumbnailListViewModel(ThumbnailList model)
         {
-            if (model == null) return;
+            if (model == null) throw new InvalidOperationException();
             _model = model;
         }
 
-        #endregion
-
-        #region Properties
 
         public ThumbnailList Model
         {
@@ -38,9 +30,6 @@ namespace NeeView
             set { if (_model != value) { _model = value; RaisePropertyChanged(); } }
         }
 
-        #endregion
-
-        #region Methods
 
         public void MoveSelectedIndex(int delta)
         {
@@ -61,7 +50,5 @@ namespace NeeView
         {
             _model.FlushSelectedIndex();
         }
-
-        #endregion
     }
 }

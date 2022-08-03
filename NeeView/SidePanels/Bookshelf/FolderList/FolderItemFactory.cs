@@ -41,10 +41,11 @@ namespace NeeView
         /// </summary>
         /// <param name="path">パス</param>
         /// <returns>FolderItem。生成できなかった場合はnull</returns>
-        public FolderItem CreateFolderItem(QueryPath path)
+        public FolderItem? CreateFolderItem(QueryPath path)
         {
             if (path.Scheme == QueryScheme.File)
             {
+                if (path.Path is null) throw new InvalidOperationException($"path.Path must not be null");
                 return CreateFolderItem(path.Path);
             }
             else
@@ -58,7 +59,7 @@ namespace NeeView
         /// </summary>
         /// <param name="path">パス</param>
         /// <returns>FolderItem。生成できなかった場合はnull</returns>
-        public FolderItem CreateFolderItem(string path)
+        public FolderItem? CreateFolderItem(string path)
         {
             var directory = new DirectoryInfo(path);
             if (directory.Exists)
@@ -76,7 +77,7 @@ namespace NeeView
         }
 
 
-        public FolderItem CreateFolderItem(FileSystemInfo e)
+        public FolderItem? CreateFolderItem(FileSystemInfo? e)
         {
             if (e == null || !e.Exists) return null;
 
@@ -96,7 +97,7 @@ namespace NeeView
         /// <summary>
         /// DriveInfoからFodlerItem作成
         /// </summary>
-        public FolderItem CreateFolderItem(DriveInfo e)
+        public FolderItem? CreateFolderItem(DriveInfo e)
         {
             if (e == null) return null;
 
@@ -128,7 +129,7 @@ namespace NeeView
         /// <summary>
         /// DirectoryInfoからFolderItem作成
         /// </summary>
-        public FolderItem CreateFolderItem(DirectoryInfo e)
+        public FolderItem? CreateFolderItem(DirectoryInfo? e)
         {
             if (e == null || !e.Exists) return null;
 
@@ -146,7 +147,7 @@ namespace NeeView
         }
 
 
-        public FolderItem CreateFolderItem(FileInfo e)
+        public FolderItem? CreateFolderItem(FileInfo? e)
         {
             if (e == null || !e.Exists) return null;
 
@@ -194,7 +195,7 @@ namespace NeeView
         /// <summary>
         /// FileShortcutからFolderItem作成
         /// </summary>
-        public FolderItem CreateFolderItem(FileShortcut e)
+        public FolderItem? CreateFolderItem(FileShortcut e)
         {
             if (e == null || !e.IsValid)
             {
@@ -223,7 +224,7 @@ namespace NeeView
         /// <summary>
         /// アーカイブエントリから項目作成
         /// </summary>
-        public FolderItem CreateFolderItem(ArchiveEntry entry, string prefix)
+        public FolderItem CreateFolderItem(ArchiveEntry entry, string? prefix)
         {
             string name = entry.EntryLastName;
             if (prefix != null)

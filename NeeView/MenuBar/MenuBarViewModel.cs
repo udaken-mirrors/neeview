@@ -1,6 +1,7 @@
 ﻿using NeeLaboratory.ComponentModel;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -34,9 +35,9 @@ namespace NeeView
             set { if (_model != value) { _model = value; RaisePropertyChanged(); } }
         }
 
-        public Menu MainMenu => _model.MainMenu;
+        public Menu? MainMenu => _model.MainMenu;
 
-        public Window Window { get; private set; }
+        public Window? Window { get; private set; }
 
         public Config Config => Config.Current;
 
@@ -57,7 +58,7 @@ namespace NeeView
             }
         }
 
-
+        [MemberNotNull(nameof(_windowCaptionEmulator))]
         private void InitializeWindowCaptionEmulator(FrameworkElement control, WindowStateManager windowStateManamger)
         {
             this.Window = System.Windows.Window.GetWindow(control);

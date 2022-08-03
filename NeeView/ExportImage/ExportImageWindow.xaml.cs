@@ -20,7 +20,7 @@ namespace NeeView
     /// </summary>
     public partial class ExportImageWindow : Window
     {
-        private ExportImageWindowViewModel _vm;
+        private ExportImageWindowViewModel? _vm;
 
         public ExportImageWindow()
         {
@@ -53,7 +53,7 @@ namespace NeeView
 
         private void SaveButton_Click(object sender, RoutedEventArgs e)
         {
-            bool? result = _vm.ShowSelectSaveFileDialog(this);
+            bool? result = _vm?.ShowSelectSaveFileDialog(this);
             if (result == true)
             {
                 this.DialogResult = true;
@@ -69,7 +69,7 @@ namespace NeeView
         private void DestinationFolderOptionButton_Click(object sender, RoutedEventArgs e)
         {
             DestinationFolderDialog.ShowDialog(this);
-            _vm.UpdateDestinationFolderList();
+            _vm?.UpdateDestinationFolderList();
         }
     }
 }

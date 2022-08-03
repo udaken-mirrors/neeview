@@ -24,10 +24,10 @@ namespace NeeView
     /// </summary>
     public partial class MainView : UserControl, IHasDeviceInput
     {
-        private MainViewViewModel _vm;
-        private Window _owner;
+        private MainViewViewModel? _vm;
+        private Window? _owner;
         private DpiScaleProvider _dpiProvider = new DpiScaleProvider();
-        private TransformGroup _transformCalc;
+        private TransformGroup? _transformCalc;
 
         public MainView()
         {
@@ -39,16 +39,16 @@ namespace NeeView
         }
 
 
-        public event EventHandler TransformChanged;
+        public event EventHandler? TransformChanged;
 
 
-        public MouseInput MouseInput => _vm?.MouseInput;
+        public MouseInput? MouseInput => _vm?.MouseInput;
 
-        public TouchInput TouchInput => _vm?.TouchInput;
+        public TouchInput? TouchInput => _vm?.TouchInput;
 
         public DpiScaleProvider DpiProvider => _dpiProvider;
 
-        public TransformGroup Transform => _transformCalc;
+        public TransformGroup? Transform => _transformCalc;
 
 
         public void Initialize()
@@ -83,7 +83,7 @@ namespace NeeView
             InitializeNonActiveTimer();
         }
 
-        private void MainView_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
+        private void MainView_DataContextChanged(object? sender, DependencyPropertyChangedEventArgs e)
         {
             if (sender is MainView control)
             {
@@ -125,12 +125,12 @@ namespace NeeView
             }
         }
 
-        private void Window_Activated(object sender, EventArgs e)
+        private void Window_Activated(object? sender, EventArgs e)
         {
             SetCursorVisible(true);
         }
 
-        private void Window_Deactivated(object sender, EventArgs e)
+        private void Window_Deactivated(object? sender, EventArgs e)
         {
             SetCursorVisible(true);
         }
@@ -154,6 +154,7 @@ namespace NeeView
             var window = Window.GetWindow(this);
             if (window is null) return;
             if (window.WindowState != WindowState.Normal) return;
+            if (_vm is null) return;
 
             try
             {
@@ -175,6 +176,8 @@ namespace NeeView
 
         private void StretchContent()
         {
+            if (_vm is null) return;
+
             var canvasSize = this.GetCanvasSzie();
             var contentSize = this.GetContentRenderSize();
             _vm.StretchScale(contentSize, canvasSize);
@@ -195,7 +198,7 @@ namespace NeeView
         #region タイマーによる非アクティブ監視
 
         // タイマーディスパッチ
-        private DispatcherTimer _nonActiveTimer;
+        private DispatcherTimer? _nonActiveTimer;
 
         // 非アクティブ時間チェック用
         private DateTime _lastActionTime;
@@ -222,6 +225,8 @@ namespace NeeView
 
         private void UpdateNonActiveTimerActivity()
         {
+            if (_nonActiveTimer is null) return;
+
             if (Config.Current.Mouse.IsCursorHideEnabled)
             {
                 _nonActiveTimer.Start();
@@ -235,7 +240,7 @@ namespace NeeView
         }
 
         // タイマー処理
-        private void DispatcherTimer_Tick(object sender, EventArgs e)
+        private void DispatcherTimer_Tick(object? sender, EventArgs e)
         {
             // 非アクティブ時間が続いたらマウスカーソルを非表示にする
             if (IsCursurVisibled() && (DateTime.Now - _lastActionTime).TotalSeconds > Config.Current.Mouse.CursorHideTime)
@@ -244,7 +249,7 @@ namespace NeeView
             }
         }
         // マウス移動
-        private void MainView_PreviewMouseMove(object sender, MouseEventArgs e)
+        private void MainView_PreviewMouseMove(object? sender, MouseEventArgs e)
         {
             var nowPoint = e.GetPosition(this.View);
 
@@ -266,7 +271,7 @@ namespace NeeView
         }
 
         // マウスアクション
-        private void MainView_PreviewMouseAction(object sender, MouseEventArgs e)
+        private void MainView_PreviewMouseAction(object? sender, MouseEventArgs e)
         {
             if (Config.Current.Mouse.IsCursorHideReleaseAction)
             {
@@ -278,7 +283,7 @@ namespace NeeView
         }
 
         // 表示領域にマウスが入った
-        private void MainView_MouseEnter(object sender, MouseEventArgs e)
+        private void MainView_MouseEnter(object? sender, MouseEventArgs e)
         {
             SetCursorVisible(true);
         }
@@ -286,6 +291,8 @@ namespace NeeView
         // マウスカーソル表示ON/OFF
         private void SetCursorVisible(bool isVisible)
         {
+            if (_vm is null) return;
+
             ////Debug.WriteLine($"Cursur: {isVisible}");
             _cursorMoveDistance = 0.0;
             _lastActionTime = DateTime.Now;
@@ -312,7 +319,7 @@ namespace NeeView
         /// </summary>
         private bool IsCursurVisibled()
         {
-            return this.View.Cursor != Cursors.None || _vm.ViewComponent.IsLoupeMode;
+            return this.View.Cursor != Cursors.None || _vm?.ViewComponent.IsLoupeMode == true;
         }
 
         #endregion タイマーによる非アクティブ監視
@@ -388,6 +395,8 @@ namespace NeeView
 
         private void SizeChangedCore()
         {
+            if (_vm is null) return;
+
             bool sizeChanged = false;
 
             lock (_windowSizeChangedLock)

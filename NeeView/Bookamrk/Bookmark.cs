@@ -8,7 +8,7 @@ using System.Runtime.Serialization;
 
 namespace NeeView
 {
-    public interface IBookmarkEntry : IHasName
+    public interface IBookmarkEntry : IHasName 
     {
     }
 
@@ -17,16 +17,20 @@ namespace NeeView
     public class Bookmark : BindableBase, IBookmarkEntry
     {
         private string _path;
+        private BookMementoUnit? _unit;
 
-        public Bookmark()
+
+        public Bookmark(string path)
         {
+            _path = path;
         }
 
         public Bookmark(BookMementoUnit unit)
         {
-            Path = unit.Path;
-            Unit = unit;
+            _path = unit.Path;
+            _unit = unit;
         }
+
 
         [DataMember(Name = "Place")]
         public string Path
@@ -47,7 +51,6 @@ namespace NeeView
 
         public string Name => Unit.Memento.Name;
 
-        private BookMementoUnit _unit;
         public BookMementoUnit Unit
         {
             get { return _unit = _unit ?? BookMementoCollection.Current.Set(Path); }

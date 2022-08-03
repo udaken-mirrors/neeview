@@ -18,7 +18,7 @@ namespace NeeView
 
     public class SaveExportDataDialogParameter
     {
-        public string FileName { get; set; }
+        public string FileName { get; set; } = "";
     }
 
 
@@ -51,7 +51,7 @@ namespace NeeView
 
     public class OpenExportDataDialogParameter
     {
-        public string FileName { get; set; }
+        public string FileName { get; set; } = "";
     }
 
     public class OpenExportDataDialog : IShowDialog

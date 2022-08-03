@@ -99,7 +99,7 @@ namespace NeeView
         // Y方向の移動制限フラグ
         private bool _lockMoveY;
 
-        private AreaSelectAdorner _adorner;
+        private AreaSelectAdorner? _adorner;
 
         #endregion
 
@@ -112,18 +112,12 @@ namespace NeeView
             _transform = transform;
 
             _sender.SizeChanged += Sender_SizeChanged;
-            Sender_SizeChanged(this, null);
+            UpdateCoordCenter();
 
             _sender.Loaded += (s, e) =>
             {
                 _adorner = _adorner ?? new AreaSelectAdorner(_sender);
             };
-        }
-
-        private void Sender_SizeChanged(object sender, SizeChangedEventArgs e)
-        {
-            _coordCenter = new Vector(_sender.ActualWidth * 0.5, _sender.ActualHeight * 0.5);
-            ////Debug.WriteLine($"CoordCenter: { ((Point)_coordCenter).ToIntString()}");
         }
 
         #endregion
@@ -149,7 +143,7 @@ namespace NeeView
         {
             _isMouseButtonDown = false;
             _action = null;
-            _adorner.Detach();
+            _adorner?.Detach();
         }
 
         /// <summary>
@@ -203,7 +197,7 @@ namespace NeeView
 
                 if (action != _action && action?.IsDummy == false)
                 {
-                    _adorner.Detach();
+                    _adorner?.Detach();
                     _action = action;
                     InitializeDragParameter(point);
                 }
@@ -217,6 +211,17 @@ namespace NeeView
         #endregion
 
         #region Methods
+
+        private void Sender_SizeChanged(object? sender, SizeChangedEventArgs e)
+        {
+            UpdateCoordCenter();
+        }
+
+        private void UpdateCoordCenter()
+        {
+            _coordCenter = new Vector(_sender.ActualWidth * 0.5, _sender.ActualHeight * 0.5);
+            ////Debug.WriteLine($"CoordCenter: { ((Point)_coordCenter).ToIntString()}");
+        }
 
         // ドラッグでビュー操作設定の更新
         public void SetMouseDragSetting(int direction, DragViewOrigin origin, PageReadOrder order)
@@ -934,7 +939,7 @@ namespace NeeView
         private Point _flipCenter;
 
         // ドラッグアクション
-        private DragAction _action;
+        private DragAction? _action;
 
         /// <summary>
         /// Senderの座標をCenter座標系に変換する
@@ -1232,6 +1237,8 @@ namespace NeeView
 
         public void DragMarqueeZoom(Point start, Point end)
         {
+            if (_adorner is null) return;
+
             _adorner.Start = start + _coordCenter;
             _adorner.End = end + _coordCenter;
             _adorner.Attach();
@@ -1239,7 +1246,7 @@ namespace NeeView
 
         public void DragMarqueeZoomEnd(Point start, Point end)
         {
-            _adorner.Detach();
+            _adorner?.Detach();
 
             var zoomRect = new Rect(start, end);
             if (zoomRect.Width < 0 || zoomRect.Height < 0) return;

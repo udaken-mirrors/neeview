@@ -41,7 +41,7 @@ namespace NeeView
     {
         private BrushType _type;
         private Color _color;
-        private string _imageFileName;
+        private string? _imageFileName;
 
 
         public BrushSource()
@@ -71,7 +71,7 @@ namespace NeeView
 
         [DataMember]
         [PropertyMember]
-        public string ImageFileName
+        public string? ImageFileName
         {
             get { return _imageFileName; }
             set { if (_imageFileName != value) { _imageFileName = value; RaisePropertyChanged(); } }
@@ -82,7 +82,7 @@ namespace NeeView
             return new SolidColorBrush(Color);
         }
 
-        public Brush CreateFrontBrush()
+        public Brush? CreateFrontBrush()
         {
             switch (Type)
             {

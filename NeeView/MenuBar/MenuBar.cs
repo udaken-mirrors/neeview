@@ -25,7 +25,7 @@ namespace NeeView
         }
 
 
-        public Menu MainMenu => NeeView.MainMenu.Current.Menu;
+        public Menu? MainMenu => NeeView.MainMenu.Current.Menu;
 
         public WindowStateManager WindowStateManager => _windowStateManager;
 

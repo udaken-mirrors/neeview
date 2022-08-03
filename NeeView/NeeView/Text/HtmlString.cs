@@ -16,8 +16,10 @@ namespace NeeView.Text
         /// imgタグ抜き出し
         /// </summary>
         /// <returns>imgタグのURLリスト</returns>
-        public static List<string> CollectImgSrc(string source)
+        public static List<string> CollectImgSrc(string? source)
         {
+            if (source is null) return new List<string>();
+
             var matchCollection = _imageTagRegex.Matches(source);
             var urls = new List<string>();
             foreach (System.Text.RegularExpressions.Match match in matchCollection)

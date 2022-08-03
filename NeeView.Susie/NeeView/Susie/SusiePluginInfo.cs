@@ -8,23 +8,30 @@ namespace NeeView.Susie
     [DataContract]
     public class SusiePluginInfo
     {
-        [DataMember]
-        public string FileName { get; set; }
+        public SusiePluginInfo(string name)
+        {
+            Name = name;
+            DefaultExtension = new FileExtensionCollection();
+        }
+
 
         [DataMember]
         public string Name { get; set; }
 
         [DataMember]
-        public string ApiVersion { get; set; }
+        public string? FileName { get; set; }
 
         [DataMember]
-        public string PluginVersion { get; set; }
+        public string? ApiVersion { get; set; }
+
+        [DataMember]
+        public string? PluginVersion { get; set; }
 
         [DataMember]
         public SusiePluginType PluginType { get; set; }
 
         [DataMember]
-        public string DetailText { get; set; }
+        public string? DetailText { get; set; }
 
         [DataMember]
         public bool HasConfigurationDlg { get; set; }
@@ -42,14 +49,13 @@ namespace NeeView.Susie
         public FileExtensionCollection DefaultExtension { get; set; }
 
         [DataMember]
-        public FileExtensionCollection UserExtension { get; set; }
+        public FileExtensionCollection? UserExtension { get; set; }
 
         public FileExtensionCollection Extensions => UserExtension ?? DefaultExtension;
 
         public SusiePluginSetting ToSusiePluginSetting()
         {
-            var setting = new SusiePluginSetting();
-            setting.Name = Name;
+            var setting = new SusiePluginSetting(Name);
             setting.IsEnabled = IsEnabled;
             setting.IsCacheEnabled = IsCacheEnabled;
             setting.IsPreExtract = IsPreExtract;

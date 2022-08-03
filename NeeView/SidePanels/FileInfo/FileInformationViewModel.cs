@@ -19,7 +19,7 @@ namespace NeeView
     public class FileInformationViewModel : BindableBase
     {
         private FileInformation _model;
-        private FileInformationSource _selectedItem;
+        private FileInformationSource? _selectedItem;
 
 
         public FileInformationViewModel(FileInformation model)
@@ -33,12 +33,12 @@ namespace NeeView
         }
 
 
-        public List<FileInformationSource> FileInformations
+        public List<FileInformationSource>? FileInformations
         {
             get { return _model.FileInformations; }
         }
 
-        public FileInformationSource SelectedItem
+        public FileInformationSource? SelectedItem
         {
             get { return _selectedItem; }
             set { SetProperty(ref _selectedItem, value); }
@@ -68,7 +68,7 @@ namespace NeeView
         #endregion MoreMenu
 
 
-        private void Model_FileInformationsChanged(object sender, PropertyChangedEventArgs e)
+        private void Model_FileInformationsChanged(object? sender, PropertyChangedEventArgs e)
         {
             RaisePropertyChanged(nameof(FileInformations));
 

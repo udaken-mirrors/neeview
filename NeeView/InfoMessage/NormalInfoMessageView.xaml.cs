@@ -22,9 +22,9 @@ namespace NeeView
     {
         #region INotifyPropertyChanged Support
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
-        protected bool SetProperty<T>(ref T storage, T value, [System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
+        protected bool SetProperty<T>(ref T storage, T value, [System.Runtime.CompilerServices.CallerMemberName] string? propertyName = null)
         {
             if (object.Equals(storage, value)) return false;
             storage = value;
@@ -32,7 +32,7 @@ namespace NeeView
             return true;
         }
 
-        protected void RaisePropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string name = null)
+        protected void RaisePropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string? name = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
@@ -45,7 +45,7 @@ namespace NeeView
         #endregion
 
 
-        private NormalInfoMessageViewModel _vm;
+        private NormalInfoMessageViewModel? _vm;
 
 
         public NormalInfoMessageView()
@@ -72,7 +72,7 @@ namespace NeeView
             }
         }
 
-        public NormalInfoMessageViewModel VM
+        public NormalInfoMessageViewModel? VM
         {
             get { return _vm; }
             private set { SetProperty(ref _vm, value); }

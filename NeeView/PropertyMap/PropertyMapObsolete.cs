@@ -4,11 +4,13 @@ namespace NeeView
 {
     public class PropertyMapObsolete : PropertyMapNode
     {
+#if false
         public PropertyMapObsolete()
         {
         }
+#endif
 
-        public PropertyMapObsolete(string propertyName, Type propertyType, string message, ObsoleteAttribute obsolete, AlternativeAttribute alternative)
+        public PropertyMapObsolete(string propertyName, Type propertyType, string? message, ObsoleteAttribute obsolete, AlternativeAttribute? alternative)
         {
             PropertyName = propertyName;
             PropertyType = propertyType;
@@ -21,14 +23,14 @@ namespace NeeView
 
         public Type PropertyType { get; set; }
 
-        public string Message { get; set; }
+        public string? Message { get; set; }
 
         public ObsoleteAttribute Obsolete { get; set; }
 
-        public AlternativeAttribute Alternative { get; set; }
+        public AlternativeAttribute? Alternative { get; set; }
 
 
-        public string CreateObsoleteMessage()
+        public string? CreateObsoleteMessage()
         {
             return RefrectionTools.CreateObsoleteMessage(PropertyName, Obsolete, Alternative);
         }

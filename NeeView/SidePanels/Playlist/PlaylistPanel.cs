@@ -22,11 +22,12 @@ namespace NeeView
             _view = new PlaylistView(model);
             _presenter = new PlaylistPresenter(_view, model);
 
-            Icon = App.Current.MainWindow.Resources["pic_playlist_24px"] as ImageSource;
+            Icon = App.Current.MainWindow.Resources["pic_playlist_24px"] as ImageSource
+                ?? throw new InvalidOperationException("Cannot found resource");
         }
 
 #pragma warning disable CS0067
-        public event EventHandler IsVisibleLockChanged;
+        public event EventHandler? IsVisibleLockChanged;
 #pragma warning restore CS0067
 
 

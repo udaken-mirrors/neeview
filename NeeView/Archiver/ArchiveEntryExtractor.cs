@@ -23,32 +23,21 @@ namespace NeeView
     /// </summary>
     public class ArchiveEntryExtractor
     {
-        #region Fields
-
-        private Task _action;
-
-        #endregion
+        private Task? _action;
 
 
-        #region Constructors
-
-        public ArchiveEntryExtractor(ArchiveEntry entry)
+        public ArchiveEntryExtractor(ArchiveEntry entry, string path)
         {
             Entry = entry;
+            ExtractFileName = path ?? throw new ArgumentNullException(nameof(path));
         }
 
-        #endregion
-
-        #region Events
 
         /// <summary>
         /// 展開完了イベント
         /// </summary>
-        public event EventHandler<ArchiveEntryExtractorEventArgs> Completed;
+        public event EventHandler<ArchiveEntryExtractorEventArgs>? Completed;
 
-        #endregion
-
-        #region Properties
 
         /// <summary>
         /// 元になるArchiveEntry
@@ -65,14 +54,10 @@ namespace NeeView
         /// </summary>
         public bool IsActive => _action != null;
 
-        #endregion
 
-        #region Methods
-
-        public async Task<string> ExtractAsync(string path, CancellationToken token)
+        public async Task<string> ExtractAsync(CancellationToken token)
         {
-            ExtractFileName = path ?? throw new ArgumentNullException(nameof(path));
-            Exception innerException = null;
+            Exception? innerException = null;
 
             _action = TaskUtils.ActionAsync((t) =>
             {
@@ -103,7 +88,5 @@ namespace NeeView
 
             return ExtractFileName;
         }
-
-        #endregion
     }
 }

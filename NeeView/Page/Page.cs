@@ -23,7 +23,7 @@ namespace NeeView
 
     public interface IHasPage
     {
-        Page GetPage();
+        Page? GetPage();
     }
 
 
@@ -36,7 +36,7 @@ namespace NeeView
         #region 開発用
 
         [Conditional("DEBUG")]
-        private void DebugRaisePropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string name = "")
+        private void DebugRaisePropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string? name = null)
         {
             RaisePropertyChanged(name);
         }
@@ -64,12 +64,12 @@ namespace NeeView
             _content = content;
             _content.AddPropertyChanged(nameof(PageContent.Entry), (s, e) => RaisePropertyChanged(nameof(Entry)));
             _contentLoader = _content.CreateContentLoader();
-            _contentLoader.Loaded += (s, e) => Loaded?.Invoke(this, null);
+            _contentLoader.Loaded += (s, e) => Loaded?.Invoke(this, EventArgs.Empty);
         }
 
 
         // コンテンツ更新イベント
-        public EventHandler Loaded;
+        public EventHandler? Loaded;
 
 
         public bool IsLoaded => _content.IsLoaded;
@@ -92,28 +92,28 @@ namespace NeeView
         public int IndexPlusOne => Index + 1;
 
         // 場所
-        public string Place { get; protected set; }
+        public string? Place { get; protected set; }
 
         // ページ名 : エントリ名
-        public string EntryName => Entry?.EntryFullName.Substring(BookPrefix.Length);
+        public string EntryName => Entry.EntryFullName.Substring(BookPrefix.Length);
 
         // ページ名：ファイル名のみ
-        public string EntryLastName => Entry?.EntryLastName;
+        public string EntryLastName => Entry.EntryLastName;
 
         // ページ名：スマートパス
         public string EntrySmartName => Prefix == null ? EntryName : EntryName.Substring(Prefix.Length);
 
         // ページ名：フルパス名 (リンクはそのまま)
-        public string EntryFullName => Entry?.EntryFullName;
+        public string EntryFullName => Entry.EntryFullName;
 
         // ページ名：システムパス (リンクは実体に変換済)
-        public string SystemPath => Entry?.SystemPath;
+        public string SystemPath => Entry.SystemPath;
 
         // ページ名：ブックプレフィックス
         public string BookPrefix { get; private set; }
 
         // ページ名：スマート名用プレフィックス
-        public string Prefix { get; set; }
+        public string? Prefix { get; set; }
 
         // ブックのパス
         public string BookAddress => LoosePath.TrimEnd(BookPrefix);
@@ -205,7 +205,7 @@ namespace NeeView
         #endregion
 
         // ToString
-        public override string ToString()
+        public override string? ToString()
         {
             var name = _content.ToString();
             if (name == null) return base.ToString();
@@ -245,7 +245,7 @@ namespace NeeView
         /// <summary>
         /// サムネイル読み込み
         /// </summary>
-        public async Task<ImageSource> LoadThumbnailAsync(CancellationToken token)
+        public async Task<ImageSource?> LoadThumbnailAsync(CancellationToken token)
         {
             try
             {
@@ -262,7 +262,7 @@ namespace NeeView
 
 
         // ImageSource取得
-        public ImageSource GetContentImageSource()
+        public ImageSource? GetContentImageSource()
         {
             return (_content as BitmapContent)?.ImageSource;
         }
@@ -274,9 +274,9 @@ namespace NeeView
         }
 
         // ページ名：プレフィックスを除いたフルパス
-        public string GetSmartFullName()
+        public string? GetSmartFullName()
         {
-            return EntrySmartName.Replace("\\", " > ");
+            return EntrySmartName?.Replace("\\", " > ");
         }
 
         public string GetSmartDirectoryName()
@@ -285,13 +285,13 @@ namespace NeeView
         }
 
         // ファイルの場所を取得
-        public string GetFilePlace()
+        public string? GetFilePlace()
         {
-            return Entry.GetFileSystemPath() ?? Entry.Archiver.GetPlace();
+            return Entry.GetFileSystemPath() ?? Entry.Archiver?.GetPlace();
         }
 
         // フォルダーを開く、で取得するパス
-        public string GetFolderOpenPlace()
+        public string? GetFolderOpenPlace()
         {
             Debug.Assert(Entry?.Archiver != null);
 

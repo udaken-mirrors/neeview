@@ -57,7 +57,7 @@ namespace NeeView
             BookmarkCollection.Current.BookmarkChanged += BookmarkCollection_BookmarkChanged;
         }
 
-        private void BookmarkCollection_BookmarkChanged(object sender, BookmarkCollectionChangedEventArgs e)
+        private void BookmarkCollection_BookmarkChanged(object? sender, BookmarkCollectionChangedEventArgs e)
         {
             if (e.Action == EntryCollectionChangedAction.Reset) return;
             _delaySaveBookmark.Request();

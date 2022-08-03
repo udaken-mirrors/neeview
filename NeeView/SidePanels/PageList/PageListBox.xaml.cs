@@ -29,21 +29,22 @@ namespace NeeView
         public static string DragDropFormat = FormatVersion.CreateFormatName(Environment.ProcessId.ToString(), nameof(PageListBox));
 
         private PageListBoxViewModel _vm;
-        private ListBoxThumbnailLoader _thumbnailLoader;
-        private PageThumbnailJobClient _jobClient;
+        private ListBoxThumbnailLoader? _thumbnailLoader;
+        private PageThumbnailJobClient? _jobClient;
 
         static PageListBox()
         {
             InitializeCommandStatic();
         }
 
-        public PageListBox()
+        //public PageListBox()
+        //{
+        //    InitializeComponent();
+        //}
+
+        public PageListBox(PageListBoxViewModel vm)
         {
             InitializeComponent();
-        }
-
-        public PageListBox(PageListBoxViewModel vm) : this()
-        {
             InitializeCommand();
 
             _vm = vm;
@@ -58,7 +59,7 @@ namespace NeeView
             this.Unloaded += PageListBox_Unloaded;
         }
 
-        private void ViewModel_CollectionChanged(object sender, EventArgs e)
+        private void ViewModel_CollectionChanged(object? sender, EventArgs e)
         {
             _thumbnailLoader?.Load();
 
@@ -147,7 +148,7 @@ namespace NeeView
         #endregion
 
 
-        private void PageListBox_Loaded(object sender, RoutedEventArgs e)
+        private void PageListBox_Loaded(object? sender, RoutedEventArgs e)
         {
             _vm.Loaded();
             _vm.ViewItemsChanged += ViewModel_ViewItemsChanged;
@@ -163,7 +164,7 @@ namespace NeeView
             FocusSelectedItem(false);
         }
 
-        private void PageListBox_Unloaded(object sender, RoutedEventArgs e)
+        private void PageListBox_Unloaded(object? sender, RoutedEventArgs e)
         {
             _vm.Unloaded();
             _vm.ViewItemsChanged -= ViewModel_ViewItemsChanged;
@@ -175,12 +176,12 @@ namespace NeeView
             _jobClient?.Dispose();
         }
 
-        private void PanelListtemProfile_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        private void PanelListtemProfile_PropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
             this.ListBox.Items?.Refresh();
         }
 
-        private void ViewModel_ViewItemsChanged(object sender, ViewItemsChangedEventArgs e)
+        private void ViewModel_ViewItemsChanged(object? sender, ViewItemsChangedEventArgs e)
         {
             UpdateViewItems(e.ViewItems, e.Direction);
         }
@@ -241,13 +242,13 @@ namespace NeeView
         }
 
         // 選択項目変更
-        private void PageList_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void PageList_SelectionChanged(object? sender, SelectionChangedEventArgs e)
         {
             _vm.Model.SelectedItems = this.ListBox.SelectedItems.Cast<Page>().ToList();
         }
 
         // リストのキ入力
-        private void PageList_KeyDown(object sender, KeyEventArgs e)
+        private void PageList_KeyDown(object? sender, KeyEventArgs e)
         {
             var page = this.ListBox.SelectedItem as Page;
 
@@ -285,7 +286,7 @@ namespace NeeView
             }
             else if (Keyboard.Modifiers == ModifierKeys.None)
             {
-                if (e.Key == Key.Return)
+                if (e.Key == Key.Return && page is not null)
                 {
                     // 項目決定
                     _vm.Model.Jump(page);
@@ -303,7 +304,7 @@ namespace NeeView
             }
         }
 
-        private async void PaegList_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+        private async void PaegList_IsVisibleChanged(object? sender, DependencyPropertyChangedEventArgs e)
         {
             if ((bool)e.NewValue)
             {
@@ -312,14 +313,14 @@ namespace NeeView
             }
         }
 
-        private void PageList_TargetUpdated(object sender, DataTransferEventArgs e)
+        private void PageList_TargetUpdated(object? sender, DataTransferEventArgs e)
         {
             UpdateViewItems();
         }
 
 
         // 項目クリック
-        private void PageListItem_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        private void PageListItem_MouseLeftButtonDown(object? sender, MouseButtonEventArgs e)
         {
             if (Keyboard.Modifiers != ModifierKeys.None) return;
 
@@ -331,7 +332,7 @@ namespace NeeView
         }
 
         // 項目ダブルクリック
-        private void PageListItem_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        private void PageListItem_MouseDoubleClick(object? sender, MouseButtonEventArgs e)
         {
             var page = (sender as ListBoxItem)?.Content as Page;
             if (page != null && page.PageType == PageType.Folder)
@@ -342,7 +343,7 @@ namespace NeeView
         }
 
 
-        private void PageListItem_ContextMenuOpening(object sender, ContextMenuEventArgs e)
+        private void PageListItem_ContextMenuOpening(object? sender, ContextMenuEventArgs e)
         {
             var container = sender as ListBoxItem;
             if (container == null)
@@ -387,7 +388,7 @@ namespace NeeView
 
         #region DragDrop
 
-        private async Task DragStartBehavior_DragBeginAsync(object sender, Windows.DragStartEventArgs e, CancellationToken token)
+        private async Task DragStartBehavior_DragBeginAsync(object? sender, Windows.DragStartEventArgs e, CancellationToken token)
         {
             var pages = this.ListBox.SelectedItems.Cast<Page>().ToList();
             if (!pages.Any())
@@ -434,7 +435,7 @@ namespace NeeView
         #endregion
 
         #region UI Accessor
-        public List<Page> GetItems()
+        public List<Page>? GetItems()
         {
             return this.ListBox.Items?.Cast<Page>().ToList();
         }
@@ -446,7 +447,10 @@ namespace NeeView
 
         public void SetSelectedItems(IEnumerable<Page> selectedItems)
         {
-            var items = selectedItems?.Intersect(GetItems()).ToList();
+            var sources = GetItems();
+            if (sources is null) return;
+
+            var items = selectedItems?.Intersect(sources).ToList();
             this.ListBox.SetSelectedItems(items);
             this.ListBox.ScrollItemsIntoView(items);
         }
@@ -460,7 +464,7 @@ namespace NeeView
     /// </summary>
     public class PageNameFormatConverter : IMultiValueConverter
     {
-        public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
+        public object? Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
         {
             if (values[0] is Page page && values[1] is PageNameFormat format)
             {
@@ -486,7 +490,7 @@ namespace NeeView
 
     public class PageToNoteConverter : IValueConverter
     {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        public object? Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value is Page page)
             {

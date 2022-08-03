@@ -70,7 +70,7 @@ namespace NeeView
         public new class Memento
         {
             [DataMember]
-            public FolderList.Memento FolderList { get; set; }
+            public FolderList.Memento? FolderList { get; set; }
 
             [DataMember, DefaultValue(true)]
             public bool IsSyncBookshelfEnabled { get; set; }
@@ -83,7 +83,7 @@ namespace NeeView
 
             public void RestoreConfig(Config config)
             {
-                FolderList.RestoreConfig(config.Bookmark);
+                FolderList?.RestoreConfig(config.Bookmark);
                 Config.Current.Bookmark.IsSyncBookshelfEnabled = IsSyncBookshelfEnabled;
             }
         }

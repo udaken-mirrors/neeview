@@ -16,7 +16,7 @@ namespace NeeView
         /// <param name="buff">判定するデータ</param>
         /// <returns>対応拡張子群。対応できない場合はnull</returns>
         /// </summary>
-        public static string[] GetSupportImageExtensions(byte[] buff)
+        public static string[]? GetSupportImageExtensions(byte[] buff)
         {
             var extensions = GetDefaultSupportImageExtensions(buff);
             if (extensions == null) extensions = GetSusieSupportImageExtensions(buff);
@@ -28,7 +28,7 @@ namespace NeeView
         /// </summary>
         /// <param name="buff">判定するデータ</param>
         /// <returns>対応拡張子群。対応できない場合はnull</returns>
-        public static string[] GetDefaultSupportImageExtensions(byte[] buff)
+        public static string[]? GetDefaultSupportImageExtensions(byte[] buff)
         {
             try
             {
@@ -50,13 +50,13 @@ namespace NeeView
         /// </summary>
         /// <param name="buff">判定するデータ</param>
         /// <returns>対応拡張子群。対応できない場合はnull</returns>
-        public static string[] GetSusieSupportImageExtensions(byte[] buff)
+        public static string[]? GetSusieSupportImageExtensions(byte[] buff)
         {
             try
             {
                 if (!Config.Current.Susie.IsEnabled) return null;
                 var accessor = SusiePluginManager.Current.GetImagePluginAccessor("dummy", buff, false);
-                return accessor?.Plugin.Extensions.ToArray();
+                return accessor?.Plugin?.Extensions?.ToArray();
             }
             catch (Exception e)
             {

@@ -8,13 +8,13 @@ namespace NeeView
     /// </summary>
     public class TouchEmurlateController
     {
-        public void Execute(object sender)
+        public void Execute(object? sender)
         {
             GetActiveTouchInput(sender)?.Emulator.Execute();
         }
 
         // NOTE: no use sender
-        private TouchInput GetActiveTouchInput(object sender)
+        private TouchInput? GetActiveTouchInput(object? sender)
         {
             var mainViewManager = MainViewManager.Current;
 

@@ -13,7 +13,7 @@ namespace NeeView
     public class AddressBarViewModel : BindableBase
     {
         private AddressBar _model;
-        private RelayCommand<KeyValuePair<int, QueryPath>> _moveToHistory;
+        private RelayCommand<KeyValuePair<int, QueryPath>>? _moveToHistory;
         private DelayValue<bool> _isLoading;
 
 
@@ -63,7 +63,7 @@ namespace NeeView
         }
 
 
-        private void BookHub_Loading(object sender, BookHubPathEventArgs e)
+        private void BookHub_Loading(object? sender, BookHubPathEventArgs e)
         {
             if (e.Path != null)
             {

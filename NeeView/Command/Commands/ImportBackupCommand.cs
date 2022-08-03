@@ -13,14 +13,14 @@ namespace NeeView
             this.ParameterSource = new CommandParameterSource(new ImportBackupCommandParameter());
         }
         
-        public override bool CanExecute(object sender, CommandContext e)
+        public override bool CanExecute(object? sender, CommandContext e)
         {
             return !NowLoading.Current.IsDispNowLoading;
         }
 
-        public override void Execute(object sender, CommandContext e)
+        public override void Execute(object? sender, CommandContext e)
         {
-            ExportDataPresenter.Current.Import((ImportBackupCommandParameter)e.Parameter);
+            ExportDataPresenter.Current.Import(e.Parameter.Cast<ImportBackupCommandParameter>());
         }
     }
 
@@ -34,7 +34,7 @@ namespace NeeView
 
     public class ImportBackupCommandParameter : CommandParameter 
     {
-        private string _fileName;
+        private string? _fileName;
         private ImportAction _userSetting = ImportAction.Import;
         private ImportAction _history;
         private ImportAction _bookmark;
@@ -46,7 +46,7 @@ namespace NeeView
         [PropertyPath(Filter = "NeeView BackupFile|*.nvzip")]
         public string FileName
         {
-            get { return _fileName; }
+            get { return _fileName ?? ""; }
             set { SetProperty(ref _fileName, value); }
         }
 

@@ -16,12 +16,12 @@ namespace NeeView
             return new Binding(nameof(PanelsConfig.IsHidePanel)) { Source = Config.Current.Panels };
         }
 
-        public override string ExecuteMessage(object sender, CommandContext e)
+        public override string ExecuteMessage(object? sender, CommandContext e)
         {
             return Config.Current.Panels.IsHidePanel ? Properties.Resources.ToggleHidePanelCommand_Off : Properties.Resources.ToggleHidePanelCommand_On;
         }
 
-        public override void Execute(object sender, CommandContext e)
+        public override void Execute(object? sender, CommandContext e)
         {
             MainWindowModel.Current.ToggleHidePanel();
         }

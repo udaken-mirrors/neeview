@@ -14,14 +14,14 @@ namespace NeeView
             this.ParameterSource = new CommandParameterSource(new OpenExternalAppCommandParameter());
         }
 
-        public override bool CanExecute(object sender, CommandContext e)
+        public override bool CanExecute(object? sender, CommandContext e)
         {
             return BookOperation.Current.CanOpenFilePlace();
         }
 
-        public override void Execute(object sender, CommandContext e)
+        public override void Execute(object? sender, CommandContext e)
         {
-            BookOperation.Current.OpenApplication((OpenExternalAppCommandParameter)e.Parameter);
+            BookOperation.Current.OpenApplication(e.Parameter.Cast<OpenExternalAppCommandParameter>());
         }
     }
 
@@ -34,16 +34,16 @@ namespace NeeView
         public const string DefaultParameter = "\"" + KeyFile + "\"";
 
         private ArchivePolicy _archivePolicy = ArchivePolicy.SendExtractFile;
-        private string _command;
+        private string? _command;
         private string _parameter = DefaultParameter;
         private MultiPagePolicy _multiPagePolicy = MultiPagePolicy.Once;
-        private string _workingDirectory;
+        private string? _workingDirectory;
 
 
         // コマンド
         [DataMember]
         [PropertyPath(Filter = "EXE|*.exe|All|*.*")]
-        public string Command
+        public string? Command
         {
             get { return _command; }
             set { SetProperty(ref _command, value); }
@@ -62,7 +62,7 @@ namespace NeeView
         // 作業フォルダー
         [DataMember]
         [PropertyPath(FileDialogType = Windows.Controls.FileDialogType.Directory)]
-        public string WorkingDirectory
+        public string? WorkingDirectory
         {
             get { return _workingDirectory; }
             set { SetProperty(ref _workingDirectory, string.IsNullOrWhiteSpace(value) ? null : value.Trim()); }

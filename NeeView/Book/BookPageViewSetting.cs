@@ -1,4 +1,5 @@
-﻿namespace NeeView
+﻿
+namespace NeeView
 {
     /// <summary>
     /// BookPageViewer, BookPageViewGenerater setting
@@ -12,6 +13,4 @@
         public bool IsSupportedSingleLastPage { get; set; }
         public bool IsSupportedWidePage { get; set; }
     }
-
-
 }

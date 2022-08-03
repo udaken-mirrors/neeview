@@ -11,8 +11,11 @@ namespace NeeView
     /// </summary>
     public class PdfViewContent : BitmapViewContent
     {
+        private BitmapContent _bitmapContent;
+
         public PdfViewContent(MainViewComponent viewComponent, ViewContentSource source) : base(viewComponent, source)
         {
+            _bitmapContent = this.Content as BitmapContent ?? throw new InvalidOperationException("Content must be BitmapContent");
         }
 
 
@@ -22,11 +25,11 @@ namespace NeeView
             var parameter = CreateBindingParameter();
 
             // create view
+            if (this.Source is null) throw new InvalidOperationException();
             this.View = new ViewContentControl(CreateView(this.Source, parameter));
 
             // content setting
-            var bitmapContent = this.Content as BitmapContent;
-            this.Color = bitmapContent.Color;
+            this.Color = _bitmapContent.Color;
         }
 
         public override bool Rebuild(double scale)

@@ -34,7 +34,7 @@ namespace NeeView
             public static extern bool SetForegroundWindow(IntPtr hWnd);
         }
 
-        public static Process NextActivate(int direction)
+        public static Process? NextActivate(int direction)
         {
             var currentProcess = Process.GetCurrentProcess();
 
@@ -49,12 +49,12 @@ namespace NeeView
             return process;
         }
 
-        public static void AppActivate(Process process)
+        public static void AppActivate(Process? process)
         {
             if (process == null) return;
 
             var hWnd = process.MainWindowHandle;
-            
+
             // アクティブにする
             NativeMethods.SetForegroundWindow(hWnd);
 

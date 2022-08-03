@@ -10,7 +10,7 @@ namespace NeeView
     /// </summary>
     public interface IBitmapFactory
     {
-        BitmapImage Create(Stream stream, BitmapInfo info, Size size, CancellationToken token);
+        BitmapImage Create(Stream stream, BitmapInfo? info, Size size, CancellationToken token);
         void CreateImage(Stream stream, BitmapInfo info, Stream outStream, Size size, BitmapImageFormat format, int quality, CancellationToken token);
     }
 }

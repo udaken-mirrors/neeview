@@ -20,8 +20,8 @@ namespace NeeView
 
         private PageSortMode _pageSortMode;
         private PageSortModeClass _pageSortModeClass = PageSortModeClass.Full;
-        private Page _selectedItem;
-        private List<Page> _selectedItems;
+        private Page? _selectedItem;
+        private List<Page>? _selectedItems;
         private List<Page> _viewItems = new List<Page>();
 
 
@@ -36,15 +36,15 @@ namespace NeeView
         /// <summary>
         /// ページコレクションの変更通知
         /// </summary>
-        public event EventHandler CollectionChanging;
-        public event EventHandler CollectionChanged;
+        public event EventHandler? CollectionChanging;
+        public event EventHandler? CollectionChanged;
 
-        public event EventHandler PageHistoryChanged;
+        public event EventHandler? PageHistoryChanged;
 
         /// <summary>
         ///  表示ページの変更通知
         /// </summary>
-        public event EventHandler<ViewItemsChangedEventArgs> ViewItemsChanged;
+        public event EventHandler<ViewItemsChangedEventArgs>? ViewItemsChanged;
 
 
         // サムネイル画像が表示される？？
@@ -83,7 +83,7 @@ namespace NeeView
         /// <summary>
         /// ブックのパス
         /// </summary>
-        public string Path
+        public string? Path
         {
             get { return BookOperation.Current.Address; }
         }
@@ -117,20 +117,20 @@ namespace NeeView
 
 
         // ページリスト(表示部用)
-        public ObservableCollection<Page> PageCollection => BookOperation.Current.PageList;
+        public ObservableCollection<Page>? PageCollection => BookOperation.Current.PageList;
 
-        public List<Page> Items
+        public List<Page>? Items
         {
-            get { return PageCollection.ToList(); }
+            get { return PageCollection?.ToList(); }
         }
 
-        public Page SelectedItem
+        public Page? SelectedItem
         {
             get { return _selectedItem; }
             set { SetProperty(ref _selectedItem, value); }
         }
 
-        public List<Page> SelectedItems
+        public List<Page>? SelectedItems
         {
             get { return _selectedItems; }
             set { SetProperty(ref _selectedItems, value); }
@@ -167,7 +167,7 @@ namespace NeeView
         /// <summary>
         /// ブックが変更された時の処理
         /// </summary>
-        private void BookOperation_PageListChanged(object sender, PropertyChangedEventArgs e)
+        private void BookOperation_PageListChanged(object? sender, PropertyChangedEventArgs e)
         {
             RefreshCollection();
         }
@@ -175,7 +175,7 @@ namespace NeeView
         /// <summary>
         /// ブックのページが切り替わったときの処理
         /// </summary>
-        private void BookOperation_ViewContentsChanged(object sender, ViewContentSourceCollectionChangedEventArgs e)
+        private void BookOperation_ViewContentsChanged(object? sender, ViewContentSourceCollectionChangedEventArgs e)
         {
             RefreshSelectedItem();
         }
@@ -186,7 +186,7 @@ namespace NeeView
         /// </summary>
         private void RefreshCollection()
         {
-            CollectionChanging?.Invoke(this, null);
+            CollectionChanging?.Invoke(this, EventArgs.Empty);
 
             RaisePropertyChanged(nameof(PageCollection));
             RaisePropertyChanged(nameof(PlaceDispString));
@@ -197,7 +197,7 @@ namespace NeeView
 
             RefreshSelectedItem();
 
-            CollectionChanged?.Invoke(this, null);
+            CollectionChanged?.Invoke(this, EventArgs.Empty);
         }
 
         /// <summary>
@@ -212,6 +212,8 @@ namespace NeeView
 
             //this.SelectedItem = viewPages.FirstOrDefault();
             var page = viewPages.FirstOrDefault();
+            if (page is null) return;
+
             if (SelectedItems == null || SelectedItems.Count <= 1 || !SelectedItems.Contains(page))
             {
                 this.SelectedItem = page;

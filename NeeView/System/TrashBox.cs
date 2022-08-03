@@ -28,7 +28,7 @@ namespace NeeView
         /// 現在のシステムオブジェクト
         /// (燃えないゴミの処理)
         /// </summary>
-        static private TrashBox _current;
+        static private TrashBox? _current;
         static public TrashBox Current
         {
             get

@@ -19,7 +19,7 @@ namespace NeeLaboratory.ComponentModel
         /// <summary>
         /// プロパティの変更を通知するためのマルチキャスト イベント。
         /// </summary>
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         /// <summary>
         /// プロパティが既に目的の値と一致しているかどうかを確認します。必要な場合のみ、
@@ -33,7 +33,7 @@ namespace NeeLaboratory.ComponentModel
         /// CallerMemberName をサポートするコンパイラから呼び出す場合に自動的に指定できます。</param>
         /// <returns>値が変更された場合は true、既存の値が目的の値に一致した場合は
         /// false です。</returns>
-        protected bool SetProperty<T>(ref T storage, T value, [CallerMemberName] String propertyName = null)
+        protected bool SetProperty<T>(ref T storage, T value, [CallerMemberName] string? propertyName = null)
         {
             if (object.Equals(storage, value)) return false;
 
@@ -48,7 +48,7 @@ namespace NeeLaboratory.ComponentModel
         /// <param name="propertyName">リスナーに通知するために使用するプロパティの名前。
         /// この値は省略可能で、
         /// <see cref="CallerMemberNameAttribute"/> をサポートするコンパイラから呼び出す場合に自動的に指定できます。</param>
-        protected void RaisePropertyChanged([CallerMemberName] string propertyName = null)
+        protected void RaisePropertyChanged([CallerMemberName] string? propertyName = null)
         {
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
@@ -83,8 +83,8 @@ namespace NeeLaboratory.ComponentModel
         /// <summary>
         /// プロパティの変更を通知するためのマルチキャスト イベント。
         /// </summary>
-        public event PropertyChangingEventHandler PropertyChanging;
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangingEventHandler? PropertyChanging;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         /// <summary>
         /// プロパティが既に目的の値と一致しているかどうかを確認します。必要な場合のみ、
@@ -98,7 +98,7 @@ namespace NeeLaboratory.ComponentModel
         /// CallerMemberName をサポートするコンパイラから呼び出す場合に自動的に指定できます。</param>
         /// <returns>値が変更された場合は true、既存の値が目的の値に一致した場合は
         /// false です。</returns>
-        protected bool SetProperty<T>(ref T storage, T value, [CallerMemberName] String propertyName = null)
+        protected bool SetProperty<T>(ref T storage, T value, [CallerMemberName] string? propertyName = null)
         {
             if (object.Equals(storage, value)) return false;
 
@@ -111,7 +111,7 @@ namespace NeeLaboratory.ComponentModel
         /// <summary>
         /// プロパティ値が変更されることをリスナーに通知します。
         /// </summary>
-        protected void RaisePropertyChanging([CallerMemberName] string propertyName = null)
+        protected void RaisePropertyChanging([CallerMemberName] string? propertyName = null)
         {
             this.PropertyChanging?.Invoke(this, new PropertyChangingEventArgs(propertyName));
         }
@@ -119,7 +119,7 @@ namespace NeeLaboratory.ComponentModel
         /// <summary>
         /// プロパティ値が変更されたことをリスナーに通知します。
         /// </summary>
-        protected void RaisePropertyChanged([CallerMemberName] string propertyName = null)
+        protected void RaisePropertyChanged([CallerMemberName] string? propertyName = null)
         {
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }

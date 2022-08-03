@@ -13,9 +13,7 @@ namespace NeeLaboratory.IO
     /// </summary>
     public class RemoteCommandServer : IDisposable
     {
-        private CancellationTokenSource _cancellationTokenSource;
-
-        public EventHandler<RemoteCommandEventArgs> Called;
+        private CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
 
 
         public RemoteCommandServer()
@@ -23,6 +21,10 @@ namespace NeeLaboratory.IO
             var process = Process.GetCurrentProcess();
             Console.WriteLine(GetPipetName(process));
         }
+
+
+        public EventHandler<RemoteCommandEventArgs>? Called;
+
 
         public void Start()
         {

@@ -27,12 +27,12 @@ namespace NeeView
         private bool _isFocusRequest;
 
 
-        public NavigateView()
-        {
-            InitializeComponent();
-        }
+        //public NavigateView()
+        //{
+        //    InitializeComponent();
+        //}
 
-        public NavigateView(NavigateModel model) : this()
+        public NavigateView(NavigateModel model)
         {
             InitializeComponent();
 
@@ -44,12 +44,12 @@ namespace NeeView
 
 
         // 単キーのショートカット無効
-        private void Control_KeyDown_IgnoreSingleKeyGesture(object sender, KeyEventArgs e)
+        private void Control_KeyDown_IgnoreSingleKeyGesture(object? sender, KeyEventArgs e)
         {
             KeyExGesture.AllowSingleKey = false;
         }
 
-        private void NavigateView_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+        private void NavigateView_IsVisibleChanged(object? sender, DependencyPropertyChangedEventArgs e)
         {
             if (_isFocusRequest && this.IsVisible)
             {
@@ -58,17 +58,17 @@ namespace NeeView
             }
         }
 
-        private void BaseScale_ValueDelta(object sender, ValueDeltaEventArgs e)
+        private void BaseScale_ValueDelta(object? sender, ValueDeltaEventArgs e)
         {
             _vm.AddBaseScaleTick(e.Delta);
         }
 
-        private void Scale_ValueDelta(object sender, ValueDeltaEventArgs e)
+        private void Scale_ValueDelta(object? sender, ValueDeltaEventArgs e)
         {
             _vm.AddScaleTick(e.Delta);
         }
 
-        private void Angle_ValueDelta(object sender, ValueDeltaEventArgs e)
+        private void Angle_ValueDelta(object? sender, ValueDeltaEventArgs e)
         {
             _vm.AddAngleTick(e.Delta);
         }

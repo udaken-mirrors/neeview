@@ -31,7 +31,7 @@ namespace NeeView.Windows.Controls
         private static void MoveToPointOnDragPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var slider = d as Slider;
-            if (d is null) return;
+            if (slider is null) return;
 
             if ((bool)e.NewValue)
             {
@@ -43,7 +43,7 @@ namespace NeeView.Windows.Controls
             }
         }
 
-        private static void Slider_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        private static void Slider_PreviewMouseLeftButtonDown(object? sender, MouseButtonEventArgs e)
         {
             var slider = sender as Slider;
             if (slider is null) return;

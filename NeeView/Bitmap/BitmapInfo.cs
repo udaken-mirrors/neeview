@@ -15,9 +15,8 @@ namespace NeeView
     {
         public BitmapInfo()
         {
+            this.Metadata = BitmapMetadataDatabase.Default;
         }
-
-
 
         public BitmapInfo(BitmapFrame bitmapFrame, Stream stream)
         {
@@ -120,7 +119,7 @@ namespace NeeView
         }
 
 
-        private BitmapMetadata GetBitmapMetadata(BitmapFrame bitmapFrame)
+        private BitmapMetadata? GetBitmapMetadata(BitmapFrame bitmapFrame)
         {
             if (bitmapFrame.Decoder is GifBitmapDecoder decoder)
             {

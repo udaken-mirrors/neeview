@@ -11,8 +11,8 @@ namespace NeeView
     /// </summary>
     public class ConstThumbnail : IThumbnail
     {
-        private ImageSource _bitmapSource;
-        protected Func<ImageSource> _create;
+        private ImageSource? _bitmapSource;
+        protected Func<ImageSource?>? _create;
 
         public ConstThumbnail()
         {
@@ -28,9 +28,9 @@ namespace NeeView
             _create = crate;
         }
 
-        public ImageSource ImageSource
+        public ImageSource? ImageSource
         {
-            get { return _bitmapSource = _bitmapSource ?? _create.Invoke(); }
+            get { return _bitmapSource = _bitmapSource ?? _create?.Invoke(); }
         }
 
         public bool IsUniqueImage => false;
@@ -85,7 +85,7 @@ namespace NeeView
     /// </summary>
     public class FolderThumbnail : ConstThumbnail
     {
-        public FolderThumbnail()
+        public FolderThumbnail() 
         {
             _create = () => FileIconCollection.Current.CreateDefaultFolderIcon().GetBitmapSource(256.0);
         }
@@ -97,7 +97,7 @@ namespace NeeView
     /// </summary>
     public class ResourceThumbnail : ConstThumbnail
     {
-        public ResourceThumbnail(string resourceName, FrameworkElement source = null)
+        public ResourceThumbnail(string resourceName, FrameworkElement? source = null)
         {
             var resources = source != null ? source.Resources : App.Current.Resources;
             _create = () => resources[resourceName] as ImageSource;

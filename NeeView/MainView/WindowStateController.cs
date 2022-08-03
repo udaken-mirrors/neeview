@@ -15,34 +15,34 @@ namespace NeeView
             _defaultController = defaultController;
         }
 
-        public void ToggleMinimize(object sender)
+        public void ToggleMinimize(object? sender)
         {
             GetWindowController(sender)?.ToggleMinimize();
         }
 
-        public void ToggleMaximize(object sender)
+        public void ToggleMaximize(object? sender)
         {
             GetWindowController(sender)?.ToggleMaximize();
         }
 
-        public void ToggleFullScreen(object sender)
+        public void ToggleFullScreen(object? sender)
         {
             GetWindowController(sender)?.ToggleFullScreen();
         }
 
-        public void SetFullScreen(object sender, bool isFullScreen)
+        public void SetFullScreen(object? sender, bool isFullScreen)
         {
             GetWindowController(sender).SetFullScreen(isFullScreen);
         }
 
-        public void ToggleTopmost(object sender)
+        public void ToggleTopmost(object? sender)
         {
             GetWindowController(sender).ToggleTopmost();
         }
 
 
         // NOTE: no use sender
-        private WindowController GetWindowController(object sender)
+        private WindowController GetWindowController(object? sender)
         {
             var window = Application.Current.Windows.OfType<Window>().SingleOrDefault(x => x.IsActive) as IHasWindowController;
             return (window ?? _defaultController).WindowController;

@@ -5,7 +5,7 @@
     /// </summary>
     class DefaultPictureStream : IPictureStream
     {
-        public NamedStream Create(ArchiveEntry entry)
+        public NamedStream? Create(ArchiveEntry entry)
         {
             if (!entry.IsIgnoreFileExtension && !PictureProfile.Current.IsDefaultSupported(entry.Link ?? entry.EntryName)) return null;
 

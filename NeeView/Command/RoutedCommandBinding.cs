@@ -28,6 +28,8 @@ namespace NeeView
             _routedCommandTable = routedCommandTable;
             _routedCommandTable.CommandExecuted += RoutedCommand_CommandExecuted;
 
+            _commandBindings = new Dictionary<string, CommandBinding>();
+
             InitializeCommandBindings();
         }
 
@@ -66,7 +68,7 @@ namespace NeeView
 
         private void InitializeCommandBindings()
         {
-            _commandBindings = new Dictionary<string, CommandBinding>();
+            _commandBindings.Clear();
 
             foreach (var name in CommandTable.Current.Keys)
             {
@@ -79,7 +81,7 @@ namespace NeeView
         }
 
         // コマンド実行後処理
-        private void RoutedCommand_CommandExecuted(object sender, CommandExecutedEventArgs e)
+        private void RoutedCommand_CommandExecuted(object? sender, CommandExecutedEventArgs e)
         {
             // ダブルクリックでコマンド実行後のMouseButtonUpイベントをキャンセルする
             if (e.Gesture is MouseGesture mouse)
@@ -117,7 +119,7 @@ namespace NeeView
             return binding;
         }
 
-        private void UpdateCommandBindings(object sender, EventArgs _)
+        private void UpdateCommandBindings(object? sender, EventArgs _)
         {
             var oldies = _commandBindings.Keys
                 .Where(e => e.StartsWith(ScriptCommand.Prefix))
@@ -142,7 +144,7 @@ namespace NeeView
             }
         }
 
-        private void Control_PreviewMouseUp(object sender, MouseButtonEventArgs e)
+        private void Control_PreviewMouseUp(object? sender, MouseButtonEventArgs e)
         {
             // ダブルクリック後のイベントキャンセル
             if (_skipMouseButtonUp)
@@ -153,7 +155,7 @@ namespace NeeView
             }
         }
 
-        private void Control_PreviewKeyDown(object sender, KeyEventArgs e)
+        private void Control_PreviewKeyDown(object? sender, KeyEventArgs e)
         {
             // 単キーのショートカットを有効にする。
             // TextBoxなどのイベント処理でこのフラグをfalseにすることで短キーのショートカットを無効にして入力を優先させる

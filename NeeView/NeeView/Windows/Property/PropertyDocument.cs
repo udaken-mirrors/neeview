@@ -33,10 +33,10 @@ namespace NeeView.Windows.Property
 
 
         // name
-        public string Name { get; set; }
+        //public string Name { get; set; }
 
         // class source
-        public object Source { get; set; }
+        public object? Source { get; set; }
 
         // properties
         public List<PropertyDrawElement> Elements { get; set; }
@@ -44,13 +44,13 @@ namespace NeeView.Windows.Property
         // properties (member only)
         public List<PropertyMemberElement> PropertyMembers => Elements.OfType<PropertyMemberElement>().ToList();
 
-        public PropertyDrawElement this[string key]
+        public PropertyDrawElement? this[string key]
         {
             get => GetPropertyMember(key);
         }
 
 
-        public PropertyMemberElement GetPropertyMember(string path)
+        public PropertyMemberElement? GetPropertyMember(string path)
         {
             return Elements.OfType<PropertyMemberElement>().FirstOrDefault(e => e.Path == path);
         }
@@ -61,7 +61,7 @@ namespace NeeView.Windows.Property
         /// <param name="source">元となるパラメータ</param>
         public void Set(object source)
         {
-            Debug.Assert(Source.GetType() == source.GetType());
+            Debug.Assert(Source is null || Source.GetType() == source.GetType());
             foreach (var element in Elements)
             {
                 var property = element as PropertyMemberElement;
@@ -134,29 +134,30 @@ namespace NeeView.Windows.Property
             }
         }
 
-        private PropertyMemberElement CreatePropertyMemberElement(object source, string propertyName)
+        private PropertyMemberElement? CreatePropertyMemberElement(object source, string propertyName)
         {
             var type = source.GetType();
             var info = type.GetProperty(propertyName);
             if (info == null) return null;
 
             var attribute = GetPropertyMemberAttribute(info);
+            if (attribute is null) return null;
             return new PropertyMemberElement(source, info, attribute, PropertyMemberElementOptions.Default);
         }
 
-        private static PropertyMemberAttribute GetPropertyMemberAttribute(MemberInfo info)
+        private static PropertyMemberAttribute? GetPropertyMemberAttribute(MemberInfo info)
         {
-            return (PropertyMemberAttribute)Attribute.GetCustomAttributes(info, typeof(PropertyMemberAttribute)).FirstOrDefault();
+            return (PropertyMemberAttribute?)Attribute.GetCustomAttributes(info, typeof(PropertyMemberAttribute)).FirstOrDefault();
         }
 
-        private static DefaultValueAttribute GetDefaultValueAttribute(MemberInfo info)
+        private static DefaultValueAttribute? GetDefaultValueAttribute(MemberInfo info)
         {
-            return (DefaultValueAttribute)Attribute.GetCustomAttributes(info, typeof(DefaultValueAttribute)).FirstOrDefault();
+            return (DefaultValueAttribute?)Attribute.GetCustomAttributes(info, typeof(DefaultValueAttribute)).FirstOrDefault();
         }
 
-        private static ObsoleteAttribute GetObsoleteValueAttribute(MemberInfo info)
+        private static ObsoleteAttribute? GetObsoleteValueAttribute(MemberInfo info)
         {
-            return (ObsoleteAttribute)Attribute.GetCustomAttributes(info, typeof(ObsoleteAttribute)).FirstOrDefault();
+            return (ObsoleteAttribute?)Attribute.GetCustomAttributes(info, typeof(ObsoleteAttribute)).FirstOrDefault();
         }
     }
 

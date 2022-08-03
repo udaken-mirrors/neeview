@@ -155,7 +155,7 @@ namespace NeeView
         // ver 38
         [PropertyMapIgnore]
         [ObjectMergeReferenceCopy]
-        public LayoutPanelManager.Memento Layout { get; set; }
+        public LayoutPanelManager.Memento? Layout { get; set; }
 
         #endregion HiddenParameters
 
@@ -164,11 +164,11 @@ namespace NeeView
 
         [Obsolete, PropertyMapIgnore]
         [JsonIgnore]
-        public string FontName_Legacy { get; private set; }
+        public string? FontName_Legacy { get; private set; }
 
         [Obsolete, Alternative("nv.Config.Fonts.FontName", 39, IsFullName = true)] // ver.39
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
-        public string FontName
+        public string? FontName
         {
             get { return null; }
             set { FontName_Legacy = value; }
@@ -208,15 +208,15 @@ namespace NeeView
 
         [Obsolete, Alternative(null, 38)] // ver.38
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
-        public Dictionary<string, PanelDock> PanelDocks { get; set; }
+        public Dictionary<string, PanelDock>? PanelDocks { get; set; }
 
         [Obsolete, Alternative(null, 38)] // ver.38
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
-        public string LeftPanelSeleted { get; set; }
+        public string? LeftPanelSeleted { get; set; }
 
         [Obsolete, Alternative(null, 38)] // ver.38
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
-        public string RightPanelSeleted { get; set; }
+        public string? RightPanelSeleted { get; set; }
 
         #endregion Obsolete
 

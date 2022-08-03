@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
@@ -60,7 +61,7 @@ namespace NeeView
             set { if (_isBusy != value) { _isBusy = value; RaisePropertyChanged(); } }
         }
 
-        public JobWorker[] Workers { get; set; }
+        public JobWorker?[] Workers { get; set; }
 
 
         private void UpdateIsBusy()
@@ -86,25 +87,27 @@ namespace NeeView
 
             for (int i = 0; i < _maxWorkerSize; ++i)
             {
+                var worker = Workers[i];
                 if (i < size)
                 {
-                    if (Workers[i] == null)
+                    if (worker == null)
                     {
-                        Workers[i] = new JobWorker(_scheduler);
-                        Workers[i].IsBusyChanged += (s, e) => UpdateIsBusy(); ////  IsBusyChanged?.Invoke(s, e);
-                        Workers[i].Run();
+                        worker = new JobWorker(_scheduler);
+                        worker.IsBusyChanged += (s, e) => UpdateIsBusy(); ////  IsBusyChanged?.Invoke(s, e);
+                        worker.Run();
+                        Workers[i] = worker;
                         Debug.WriteLine($"JobEngine: Create Worker[{i}]");
                     }
 
-                    Workers[i].IsPrimary = i < primaryCount;
-                    Workers[i].IsLimited = isLimited;
+                    worker.IsPrimary = i < primaryCount;
+                    worker.IsLimited = isLimited;
                 }
                 else
                 {
-                    if (Workers[i] != null)
+                    if (worker != null)
                     {
-                        Workers[i].Cancel();
-                        Workers[i].Dispose();
+                        worker.Cancel();
+                        worker.Dispose();
                         Workers[i] = null;
                         Debug.WriteLine($"JobEngine: Delete Worker[{i}]");
                     }
@@ -123,6 +126,7 @@ namespace NeeView
 
         public JobScheduler Scheduler => _scheduler;
 
+        [MemberNotNull(nameof(_scheduler))]
         private void InitializeScheduler()
         {
             _scheduler = new JobScheduler();

@@ -41,8 +41,8 @@ namespace OpenSourceControls
         private static void OnSelectedColorChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
         {
 
-            ComboColorPicker cp = obj as ComboColorPicker;
-            Debug.Assert(cp != null);
+            ComboColorPicker? cp = obj as ComboColorPicker;
+            if (cp is null) throw new InvalidOperationException();
 
             Color newColor = (Color)args.NewValue;
             Color oldColor = (Color)args.OldValue;
@@ -51,7 +51,7 @@ namespace OpenSourceControls
                 return;
 
             // When the SelectedColor changes, set the selected value of the combo box
-            ColorViewModel selectedColorViewModel = cp.ColorList1.SelectedValue as ColorViewModel;
+            ColorViewModel? selectedColorViewModel = cp.ColorList1.SelectedValue as ColorViewModel;
             if (selectedColorViewModel == null || selectedColorViewModel.Color != newColor)
             {
                 // Add the color if not found
@@ -70,7 +70,7 @@ namespace OpenSourceControls
         {
             foreach (object o in ColorList1.Items)
             {
-                ColorViewModel vcm = o as ColorViewModel;
+                ColorViewModel? vcm = o as ColorViewModel;
                 if (vcm == null) continue;
                 if (vcm.Color == newColor) return true;
             }
@@ -162,7 +162,11 @@ namespace OpenSourceControls
             Type colorsType = typeof(Colors);
             PropertyInfo[] pis = colorsType.GetProperties();
             foreach (PropertyInfo pi in pis)
-                AddColor((Color)pi.GetValue(null, null), pi.Name);
+            {
+                var color = pi.GetValue(null, null);
+                if (color is null) throw new InvalidOperationException();
+                AddColor((Color)color, pi.Name);
+            }
             
             // todo: does this work?
             ColorList1.SelectedValuePath = "Color";
@@ -224,6 +228,6 @@ namespace OpenSourceControls
     {
         public Color Color { get; set; }
         public Brush Brush { get { return new SolidColorBrush(Color); } }
-        public string Name { get; set; }
+        public string? Name { get; set; }
     }
 }

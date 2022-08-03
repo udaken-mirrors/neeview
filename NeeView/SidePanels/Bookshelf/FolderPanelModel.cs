@@ -25,9 +25,9 @@ namespace NeeView
             public bool IsVisiblePanelList { get; set; }
 
             [DataMember]
-            public string GridLength0 { get; set; }
+            public string? GridLength0 { get; set; }
             [DataMember]
-            public string GridLength2 { get; set; }
+            public string? GridLength2 { get; set; }
 
 
             public void RestoreConfig(Config config)

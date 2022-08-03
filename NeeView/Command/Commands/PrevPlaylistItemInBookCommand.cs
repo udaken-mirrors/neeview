@@ -12,14 +12,14 @@ namespace NeeView
             this.ParameterSource = new CommandParameterSource(new MovePlaylsitItemInBookCommandParameter());
         }
 
-        public override bool CanExecute(object sender, CommandContext e)
+        public override bool CanExecute(object? sender, CommandContext e)
         {
-            return BookOperation.Current.CanPrevMarkInPlace((MovePlaylsitItemInBookCommandParameter)e.Parameter);
+            return BookOperation.Current.CanPrevMarkInPlace(e.Parameter.Cast<MovePlaylsitItemInBookCommandParameter>());
         }
 
-        public override void Execute(object sender, CommandContext e)
+        public override void Execute(object? sender, CommandContext e)
         {
-            BookOperation.Current.PrevMarkInPlace((MovePlaylsitItemInBookCommandParameter)e.Parameter);
+            BookOperation.Current.PrevMarkInPlace(e.Parameter.Cast<MovePlaylsitItemInBookCommandParameter>());
         }
     }
 

@@ -37,19 +37,19 @@ namespace NeeView
 
 
         // ソートされた
-        public event EventHandler PagesSorted;
+        public event EventHandler? PagesSorted;
 
         // ファイル削除された
-        public event EventHandler<PageRemovedEventArgs> PageRemoved;
+        public event EventHandler<PageRemovedEventArgs>? PageRemoved;
 
 
-
+#if false
         // この本のアーカイバ
         public ArchiveEntryCollection ArchiveEntryCollection { get; private set; }
 
         // メディアアーカイバ？
         public bool IsMedia => ArchiveEntryCollection?.Archiver is MediaArchiver;
-
+#endif
 
         public List<Page> Pages { get; private set; }
 
@@ -128,18 +128,20 @@ namespace NeeView
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void Thumbnail_Touched(object sender, EventArgs e)
+        private void Thumbnail_Touched(object? sender, EventArgs e)
         {
-            var thumb = (Thumbnail)sender;
+            var thumb = sender as Thumbnail;
+            if (thumb is null) return;
+
             _thumbnaulPool.Add(thumb);
         }
 
         // ページ
-        public Page GetPage(int index) => Pages.Count > 0 ? Pages[ClampPageNumber(index)] : null;
+        public Page? GetPage(int index) => Pages.Count > 0 ? Pages[ClampPageNumber(index)] : null;
 
         ////public Page GetPage(string name) => Pages.FirstOrDefault(e => e.EntryName == name);
 
-        public Page GetPageWithEntryFullName(string name)
+        public Page? GetPageWithEntryFullName(string name)
         {
             PageMap.TryGetValue(name, out var page);
             return page;
@@ -184,7 +186,7 @@ namespace NeeView
 
             var isSortFileFirst = Config.Current.Book.IsSortFileFirst;
 
-            IEnumerable<Page> pages = null;
+            IEnumerable<Page>? pages = null;
 
             switch (SortMode)
             {
@@ -227,7 +229,7 @@ namespace NeeView
                 // ページ ナンバリング
                 PagesNumbering();
 
-                PagesSorted?.Invoke(this, null);
+                PagesSorted?.Invoke(this, EventArgs.Empty);
             }
             catch (InvalidOperationException ex) when (ex.InnerException is OperationCanceledException canceledException)
             {
@@ -260,9 +262,12 @@ namespace NeeView
                 _token = token;
             }
 
-            public int Compare(Page x, Page y)
+            public int Compare(Page? x, Page? y)
             {
                 _token.ThrowIfCancellationRequested();
+
+                if (x is null) return (y is null) ? 0 : -1;
+                if (y is null) return 1;
 
                 var xName = x.GetEntryFullNameTokens();
                 var yName = y.GetEntryFullNameTokens();
@@ -311,7 +316,7 @@ namespace NeeView
         }
 
         // 近くの有効なページを取得
-        public Page GetValidPage(Page page)
+        public Page? GetValidPage(Page page)
         {
             var index = page != null ? page.Index : 0;
             var answer = Pages.Skip(index).Concat(Pages.Take(index).Reverse()).FirstOrDefault(e => !e.IsDeleted);

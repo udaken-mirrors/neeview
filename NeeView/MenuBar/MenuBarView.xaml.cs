@@ -24,7 +24,7 @@ namespace NeeView
     /// </summary>
     public partial class MenuBarView : UserControl
     {
-        private MenuBarViewModel _vm;
+        private MenuBarViewModel? _vm;
 
 
         public MenuBarView()
@@ -80,6 +80,8 @@ namespace NeeView
         // システムメニュー表示
         private void MenuBarView_MouseRightButtonUp(object sender, MouseButtonEventArgs e)
         {
+            if (_vm is null) return;
+
             if (_vm.IsCaptionEnabled)
             {
                 WindowTools.ShowSystemMenu(Window.GetWindow(this));

@@ -40,7 +40,8 @@ namespace NeeLaboratory.ComponentModel
             {
                 serializer.WriteObject(mem, source);
                 mem.Position = 0;
-                return (T)serializer.ReadObject(mem);
+                var clone = (T?)serializer.ReadObject(mem) ?? throw new InvalidOperationException("serialize must be successed");
+                return clone;
             }
         }
 
@@ -74,7 +75,7 @@ namespace NeeLaboratory.ComponentModel
             ParameterExpression pThis = Expression.Parameter(typeof(object), "x");
             UnaryExpression pCastThis = Expression.Convert(pThis, type);
 
-            Expression last = null;
+            Expression? last = null;
             foreach (PropertyInfo property in type.GetProperties())
             {
                 MemberExpression thisProperty = Expression.Property(pCastThis, property);
@@ -100,6 +101,8 @@ namespace NeeLaboratory.ComponentModel
                     last = Expression.ExclusiveOr(last, hash);
             }
 
+            if (last is null) throw new InvalidOperationException($"{type.Name} must have any properties");
+
             return Expression.Lambda<Func<object, int>>(last, pThis).Compile();
         }
 
@@ -120,7 +123,7 @@ namespace NeeLaboratory.ComponentModel
             UnaryExpression pCastThat = Expression.Convert(pThat, type);
 
             // compound AND expression using short-circuit evaluation
-            Expression last = null;
+            Expression? last = null;
             foreach (PropertyInfo property in type.GetProperties())
             {
                 if (property.GetCustomAttribute(typeof(EqualsIgnoreAttribute)) != null)
@@ -136,6 +139,8 @@ namespace NeeLaboratory.ComponentModel
                 else
                     last = Expression.AndAlso(last, equals);
             }
+
+            if (last is null) throw new InvalidOperationException($"{type.Name} must have any properties");
 
             // call Object.Equals if second parameter doesn't match type
             last = Expression.Condition(

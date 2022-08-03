@@ -13,12 +13,10 @@ namespace NeeLaboratory.Threading.Jobs
     /// </summary>
     public class SingleJobEngine : IEngine, IDisposable
     {
-        #region Fields
-
         /// <summary>
         /// ワーカータスクのキャンセルトークン
         /// </summary>
-        private CancellationTokenSource _engineCancellationTokenSource;
+        private CancellationTokenSource? _engineCancellationTokenSource;
 
         /// <summary>
         /// 予約Job存在通知
@@ -33,7 +31,7 @@ namespace NeeLaboratory.Threading.Jobs
         /// <summary>
         /// 実行中Job
         /// </summary>
-        protected volatile IJob _currentJob;
+        protected volatile IJob? _currentJob;
 
         /// <summary>
         /// エンジン動作中
@@ -48,49 +46,43 @@ namespace NeeLaboratory.Threading.Jobs
         /// <summary>
         /// ワーカースレッド
         /// </summary>
-        private Thread _thread;
+        private Thread? _thread;
 
         /// <summary>
         /// 開発用：ログ
         /// </summary>
-        private Log _log;
+        private Log? _log;
 
-        #endregion
 
-        #region Constructors
 
         public SingleJobEngine()
         {
         }
 
-        #endregion
 
-        #region Events
 
         /// <summary>
         /// JOBエラー発生時のイベント
         /// </summary>
-        public event EventHandler<JobErrorEventArgs> JobError;
+        public event EventHandler<JobErrorEventArgs>? JobError;
 
         /// <summary>
         /// 例外によってJobEngineが停止した時に発生するイベント
         /// </summary>
-        public event EventHandler<JobErrorEventArgs> JobEngineError;
+        public event EventHandler<JobErrorEventArgs>? JobEngineError;
 
         /// <summary>
         /// IsBusyプロパティ變更EVENT
         /// </summary>
-        public event EventHandler<JobIsBusyChangedEventArgs> IsBusyChanged;
+        public event EventHandler<JobIsBusyChangedEventArgs>? IsBusyChanged;
 
-        #endregion
 
-        #region Properties
 
         /// <summary>
         /// 名前
         /// </summary>
-        private string _name;
-        public string Name
+        private string? _name;
+        public string? Name
         {
             get { return _name; }
             set
@@ -123,15 +115,13 @@ namespace NeeLaboratory.Threading.Jobs
         /// <summary>
         /// 開発用：ログ
         /// </summary>
-        public Log Log
+        public Log? Log
         {
             get { return _log; }
             set { _log = value; }
         }
 
-        #endregion
 
-        #region Methods
 
         /// <summary>
         /// 全てのJobを走査
@@ -269,7 +259,6 @@ namespace NeeLaboratory.Threading.Jobs
             }
         }
 
-        #endregion
 
         #region IEngine Support
 

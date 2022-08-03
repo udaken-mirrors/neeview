@@ -28,9 +28,9 @@ namespace NeeView.Setting
     {
         #region INotifyPropertyChanged Support
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
-        protected bool SetProperty<T>(ref T storage, T value, [System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
+        protected bool SetProperty<T>(ref T storage, T value, [System.Runtime.CompilerServices.CallerMemberName] string? propertyName = null)
         {
             if (object.Equals(storage, value)) return false;
             storage = value;
@@ -38,7 +38,7 @@ namespace NeeView.Setting
             return true;
         }
 
-        protected void RaisePropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string name = null)
+        protected void RaisePropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string? name = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
@@ -50,18 +50,16 @@ namespace NeeView.Setting
 
         #endregion
 
-        #region Fields
 
         private SusiePluginType _pluginType;
 
-        #endregion
-
-        #region Constructors
-
+#if false
+        // for designer
         public SettingItemSusiePluginControl()
         {
             InitializeComponent();
         }
+#endif
 
         public SettingItemSusiePluginControl(SusiePluginType pluginType)
         {
@@ -78,17 +76,14 @@ namespace NeeView.Setting
             this.PluginList.SetBinding(ListBox.TagProperty, binding);
         }
 
-        #endregion
 
-        #region Properties
 
         public string DragDataFormat { get; private set; }
 
-        #endregion
 
         #region Commands
 
-        private RelayCommand _configCommand;
+        private RelayCommand? _configCommand;
         public RelayCommand ConfigCommand
         {
             get { return _configCommand = _configCommand ?? new RelayCommand(OpenConfigDialog_Executed, CanOpenConfigDialog); }
@@ -103,6 +98,8 @@ namespace NeeView.Setting
         private void OpenConfigDialog_Executed()
         {
             var item = this.PluginList.SelectedItem as SusiePluginInfo;
+            if (item is null) return;
+
             OpenConfigDialog(item);
         }
 
@@ -121,7 +118,7 @@ namespace NeeView.Setting
         }
 
 
-        private RelayCommand _moveUpCommand;
+        private RelayCommand? _moveUpCommand;
         public RelayCommand MoveUpCommand
         {
             get { return _moveUpCommand = _moveUpCommand ?? new RelayCommand(MoveUpCommand_Executed); }
@@ -131,6 +128,8 @@ namespace NeeView.Setting
         {
             var index = this.PluginList.SelectedIndex;
             var collection = this.PluginList.Tag as ObservableCollection<SusiePluginInfo>;
+            if (collection is null) return;
+
             if (index > 0)
             {
                 collection.Move(index, index - 1);
@@ -138,7 +137,7 @@ namespace NeeView.Setting
             }
         }
 
-        private RelayCommand _moveDownCommand;
+        private RelayCommand? _moveDownCommand;
         public RelayCommand MoveDownCommand
         {
             get { return _moveDownCommand = _moveDownCommand ?? new RelayCommand(MoveDownCommand_Executed); }
@@ -148,6 +147,8 @@ namespace NeeView.Setting
         {
             var index = this.PluginList.SelectedIndex;
             var collection = this.PluginList.Tag as ObservableCollection<SusiePluginInfo>;
+            if (collection is null) return;
+
             if (index >= 0 && index < collection.Count - 1)
             {
                 collection.Move(index, index + 1);
@@ -155,7 +156,7 @@ namespace NeeView.Setting
             }
         }
 
-        private RelayCommand _switchAllCommand;
+        private RelayCommand? _switchAllCommand;
         public RelayCommand SwitchAllCommand
         {
             get { return _switchAllCommand = _switchAllCommand ?? new RelayCommand(SwitchAllCommand_Executed); }
@@ -177,23 +178,22 @@ namespace NeeView.Setting
 
         #endregion
 
-        #region Methods
 
         // プラグインリスト：ドロップ受付判定
-        private void PluginListView_PreviewDragOver(object sender, DragEventArgs e)
+        private void PluginListView_PreviewDragOver(object? sender, DragEventArgs e)
         {
             ListBoxDragSortExtension.PreviewDragOver(sender, e, DragDataFormat);
         }
 
-        private void PluginListView_PreviewDragEnter(object sender, DragEventArgs e)
+        private void PluginListView_PreviewDragEnter(object? sender, DragEventArgs e)
         {
             PluginListView_PreviewDragOver(sender, e);
         }
 
         // プラグインリスト：ドロップ
-        private void PluginListView_Drop(object sender, DragEventArgs e)
+        private void PluginListView_Drop(object? sender, DragEventArgs e)
         {
-            var list = (sender as ListBox).Tag as ObservableCollection<SusiePluginInfo>;
+            var list = (sender as ListBox)?.Tag as ObservableCollection<SusiePluginInfo>;
             if (list != null)
             {
                 ListBoxDragSortExtension.Drop<SusiePluginInfo>(sender, e, DragDataFormat, list);
@@ -202,31 +202,36 @@ namespace NeeView.Setting
 
 
         // 選択項目変更
-        private void PluginList_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void PluginList_SelectionChanged(object? sender, SelectionChangedEventArgs e)
         {
             ConfigCommand.RaiseCanExecuteChanged();
         }
 
         // 項目ダブルクリック
-        private void ListBoxItem_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        private void ListBoxItem_MouseDoubleClick(object? sender, MouseButtonEventArgs e)
         {
             var item = (sender as ListBoxItem)?.DataContext as SusiePluginInfo;
+            if (item is null) return;
             OpenConfigDialog(item);
         }
 
-        private void ListBoxItem_KeyDown(object sender, KeyEventArgs e)
+        private void ListBoxItem_KeyDown(object? sender, KeyEventArgs e)
         {
             if (e.Key == Key.Enter)
             {
                 var item = (sender as ListBoxItem)?.DataContext as SusiePluginInfo;
+                if (item is null) return;
+
                 OpenConfigDialog(item);
             }
         }
 
         // 有効/無効チェックボックス
-        private void CheckBox_Changed(object sender, RoutedEventArgs e)
+        private void CheckBox_Changed(object? sender, RoutedEventArgs e)
         {
             var item = (sender as CheckBox)?.DataContext as SusiePluginInfo;
+            if (item is null) return;
+
             SusiePluginManager.Current.FlushSusiePluginSetting(item.Name);
             UpdateExtensions();
         }
@@ -242,7 +247,5 @@ namespace NeeView.Setting
                 SusiePluginManager.Current.UpdateArchiveExtensions();
             }
         }
-
-        #endregion
     }
 }

@@ -29,12 +29,12 @@ namespace NeeView
 
         #region IEqutable
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             return this.Equals(obj as CommandNameSource);
         }
 
-        public bool Equals(CommandNameSource p)
+        public bool Equals(CommandNameSource? p)
         {
             if (p is null)
             {
@@ -76,17 +76,17 @@ namespace NeeView
 
         #region IComparable
 
-        public int CompareTo(CommandNameSource other)
+        public int CompareTo(CommandNameSource? other)
         {
-            var result = Name.CompareTo(other.Name);
+            var result = Name.CompareTo(other?.Name);
             if (result != 0) return result;
 
-            return Number.CompareTo(other.Number);
+            return Number.CompareTo(other?.Number);
         }
 
         #endregion IComparable
 
-        public override string ToString()
+        public override string? ToString()
         {
             return FullName;
         }

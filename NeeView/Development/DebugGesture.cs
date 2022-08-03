@@ -63,7 +63,7 @@ namespace NeeView
             ElementWalk(element);
             Debug.WriteLine(".");
 
-            void ElementWalk(Visual e)
+            void ElementWalk(Visual? e)
             {
                 if (e == null) return;
 
@@ -81,7 +81,7 @@ namespace NeeView
                 {
                     Debug.WriteLine($"FocusTree: {isKeyboardFocused} {name} ({typename})");
                 }
-                else if (valuestring.StartsWith(typename))
+                else if (valuestring is not null && valuestring.StartsWith(typename))
                 {
                     Debug.WriteLine($"FocusTree: {isKeyboardFocused} {name} ({valuestring})");
                 }

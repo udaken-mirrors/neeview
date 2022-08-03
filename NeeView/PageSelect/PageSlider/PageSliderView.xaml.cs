@@ -21,7 +21,7 @@ namespace NeeView
     /// </summary>
     public partial class PageSliderView : UserControl
     {
-        private PageSliderViewModel _vm;
+        private PageSliderViewModel? _vm;
 
 
         public PageSlider Source
@@ -84,7 +84,7 @@ namespace NeeView
 
 
         // スライダーの方向切替反映
-        public void Model_IsSliderDirectionReversedChanged(object sender, PropertyChangedEventArgs e)
+        public void Model_IsSliderDirectionReversedChanged(object? sender, PropertyChangedEventArgs e)
         {
             // nop.
         }
@@ -95,29 +95,35 @@ namespace NeeView
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void SliderArea_MouseWheel(object sender, MouseWheelEventArgs e)
+        private void SliderArea_MouseWheel(object? sender, MouseWheelEventArgs e)
         {
+            if (_vm is null) return;
+
             _vm.MouseWheel(sender, e);
         }
 
-        private void PageSlider_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        private void PageSlider_PreviewMouseLeftButtonDown(object? sender, MouseButtonEventArgs e)
         {
             // 操作するときはメインビューにフォーカスを移動する
             MainWindowModel.Current.FocusMainView();
         }
 
-        private void PageSlider_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        private void PageSlider_PreviewMouseLeftButtonUp(object? sender, MouseButtonEventArgs e)
         {
+            if (_vm is null) return;
+
             _vm.Jump(false);
         }
 
-        private void PageSliderTextBox_ValueChanged(object sender, EventArgs e)
+        private void PageSliderTextBox_ValueChanged(object? sender, EventArgs e)
         {
+            if (_vm is null) return;
+
             _vm.Jump(true);
         }
 
         // テキストボックス入力時に単キーのショートカットを無効にする
-        private void PageSliderTextBox_KeyDown(object sender, KeyEventArgs e)
+        private void PageSliderTextBox_KeyDown(object? sender, KeyEventArgs e)
         {
             // 単キーのショートカット無効
             KeyExGesture.AllowSingleKey = false;

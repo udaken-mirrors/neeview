@@ -21,9 +21,9 @@ namespace NeeView
 
         #region INotifyPropertyChanged Support
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
-        protected bool SetProperty<T>(ref T storage, T value, [System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
+        protected bool SetProperty<T>(ref T storage, T value, [System.Runtime.CompilerServices.CallerMemberName] string? propertyName = null)
         {
             if (object.Equals(storage, value)) return false;
             storage = value;
@@ -31,7 +31,7 @@ namespace NeeView
             return true;
         }
 
-        protected void RaisePropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string name = null)
+        protected void RaisePropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string? name = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
@@ -69,19 +69,19 @@ namespace NeeView
             public bool IsSaveHistory { get; set; }
 
             [DataMember(EmitDefaultValue = false)]
-            public string HistoryFilePath { get; set; }
+            public string? HistoryFilePath { get; set; }
 
             [DataMember, DefaultValue(true)]
             public bool IsSaveBookmark { get; set; }
 
             [DataMember(EmitDefaultValue = false)]
-            public string BookmarkFilePath { get; set; }
+            public string? BookmarkFilePath { get; set; }
 
             [DataMember, DefaultValue(true)]
             public bool IsSavePagemark { get; set; }
 
             [DataMember(EmitDefaultValue = false)]
-            public string PagemarkFilePath { get; set; }
+            public string? PagemarkFilePath { get; set; }
 
             [DataMember, DefaultValue(true)]
             public bool IsIgnoreImageDpi { get; set; }
@@ -108,13 +108,13 @@ namespace NeeView
             public bool IsOpenLastBook { get; set; }
 
             [DataMember, DefaultValue("")]
-            public string DownloadPath { get; set; }
+            public string? DownloadPath { get; set; }
 
             [DataMember, DefaultValue(false)]
             public bool IsSettingBackup { get; set; }
 
             [DataMember]
-            public string Language { get; set; }
+            public string? Language { get; set; }
 
             [DataMember, DefaultValue(true)]
             public bool IsSplashScreenEnabled { get; set; }
@@ -123,13 +123,13 @@ namespace NeeView
             public bool IsSyncUserSetting { get; set; }
 
             [DataMember(EmitDefaultValue = false)]
-            public string TemporaryDirectory { get; set; }
+            public string? TemporaryDirectory { get; set; }
 
             [DataMember(EmitDefaultValue = false)]
-            public string CacheDirectory { get; set; }
+            public string? CacheDirectory { get; set; }
 
             [DataMember(EmitDefaultValue = false)]
-            public string CacheDirectoryOld { get; set; }
+            public string? CacheDirectoryOld { get; set; }
 
             [DataMember, DefaultValue(AutoHideFocusLockMode.LogicalTextBoxFocusLock)]
             public AutoHideFocusLockMode AutoHideFocusLockMode { get; set; }
@@ -175,17 +175,20 @@ namespace NeeView
                 config.System.Language = Language == "Japanese" ? "ja" : "en";
                 config.StartUp.IsSplashScreenEnabled = IsSplashScreenEnabled;
                 config.History.IsSaveHistory = IsSaveHistory;
-                config.History.HistoryFilePath = HistoryFilePath;
+                config.History.HistoryFilePath = HistoryFilePath ?? "";
                 config.Bookmark.IsSaveBookmark = IsSaveBookmark;
-                config.Bookmark.BookmarkFilePath = BookmarkFilePath;
+                config.Bookmark.BookmarkFilePath = BookmarkFilePath ?? "";
 #pragma warning disable CS0612
-                config.PagemarkLegacy.IsSavePagemark = IsSavePagemark;
-                config.PagemarkLegacy.PagemarkFilePath = PagemarkFilePath;
+                if (config.PagemarkLegacy != null)
+                {
+                    config.PagemarkLegacy.IsSavePagemark = IsSavePagemark;
+                    config.PagemarkLegacy.PagemarkFilePath = PagemarkFilePath ?? "";
+                }
 #pragma warning restore CS0612
                 config.System.IsSettingBackup = IsSettingBackup;
                 config.System.IsSyncUserSetting = IsSyncUserSetting;
-                config.System.TemporaryDirectory = TemporaryDirectory;
-                config.Thumbnail.ThumbnailCacheFilePath = CacheDirectory != null ? Path.Combine(CacheDirectory, ThumbnailCache.ThumbnailCacheFileName) : null;
+                config.System.TemporaryDirectory = TemporaryDirectory = ""; ;
+                config.Thumbnail.ThumbnailCacheFilePath = CacheDirectory != null ? Path.Combine(CacheDirectory, ThumbnailCache.ThumbnailCacheFileName) : "";
                 config.System.IsIgnoreImageDpi = IsIgnoreImageDpi;
                 config.AutoHide.AutoHideDelayTime = AutoHideDelayTime;
                 config.AutoHide.AutoHideDelayVisibleTime = AutoHideDelayVisibleTime;
@@ -193,7 +196,7 @@ namespace NeeView
                 config.AutoHide.IsAutoHideKeyDownDelay = IsAutoHideKeyDownDelay;
                 config.AutoHide.AutoHideHitTestHorizontalMargin = AutoHideHitTestMargin;
                 config.AutoHide.AutoHideHitTestVerticalMargin = AutoHideHitTestMargin;
-                config.System.DownloadPath = DownloadPath;
+                config.System.DownloadPath = DownloadPath ?? "";
             }
         }
 

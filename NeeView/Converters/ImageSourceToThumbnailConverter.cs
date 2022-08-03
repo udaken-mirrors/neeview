@@ -11,9 +11,9 @@ namespace NeeView
     [ValueConversion(typeof(ImageSource), typeof(ImageSource))]
     public class ImageSourceToThumbnailConverter : IValueConverter
     {
-        private static readonly ImageSource _defaultThumbnail = MainWindow.Current.Resources["thumbnail_default"] as ImageSource;
+        private static readonly ImageSource? _defaultThumbnail = MainWindow.Current.Resources["thumbnail_default"] as ImageSource;
 
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        public object? Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value is null)
             {

@@ -3,9 +3,16 @@ using System.Windows.Input;
 
 namespace NeeView
 {
-    //
     public class TouchContext
     {
+        public TouchContext(StylusDevice stylusDevice, Point startPoint, int startTimestamp)
+        {
+            StylusDevice = stylusDevice;
+            StartPoint = startPoint;
+            StartTimestamp = startTimestamp;
+        }
+
+
         /// <summary>
         /// ドラッグ開始座標
         /// </summary>

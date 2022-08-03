@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 
@@ -77,6 +78,9 @@ namespace NeeView.Text
             }
 
             public Action<Context> Action { get; private set; }
+
+            // NOTE: 状態遷移を構成する手順で最初はnullになってしまうため
+            [AllowNull]
             public List<State> NextStates { get; set; }
         }
 
@@ -90,18 +94,19 @@ namespace NeeView.Text
         private static State s06 = new State(StateAction_Push);
         private static State s07 = new State(StateAction_Next);
         private static State err = new State(StateAction_Error);
+        private static State eos = new State(StateAction_None);
 
         static StringCollectionParser()
         {
-            s00.NextStates = new List<State> { s04, s01, s02, s03 };
+            s00.NextStates = new List<State>() { s04, s01, s02, s03 };
             s01.NextStates = new List<State>() { s00, s00, s00, s00 };
             s02.NextStates = new List<State>() { err, s06, s05, s06 };
             s03.NextStates = new List<State>() { s07, s07, s07, s07 };
-            s04.NextStates = new List<State>() { null, null, null, null };
+            s04.NextStates = new List<State>() { eos, eos, eos, eos };
             s05.NextStates = new List<State>() { s04, s01, s06, err };
             s06.NextStates = new List<State>() { s02, s02, s02, s02 };
             s07.NextStates = new List<State>() { s04, s01, err, s03 };
-            err.NextStates = new List<State>() { null, null, null, null };
+            err.NextStates = new List<State>() { eos, eos, eos, eos };
         }
 
 
@@ -122,7 +127,7 @@ namespace NeeView.Text
             var context = new Context(source);
             var state = s00;
 
-            while (state != null)
+            while (state != eos)
             {
                 state.Action(context);
                 state = state.NextStates[(int)GetCharType(context.GetCurrentChar())];
@@ -144,6 +149,10 @@ namespace NeeView.Text
                 default:
                     return CharType.Any;
             }
+        }
+
+        private static void StateAction_None(Context context)
+        {
         }
 
         private static void StateAction_Next(Context context)

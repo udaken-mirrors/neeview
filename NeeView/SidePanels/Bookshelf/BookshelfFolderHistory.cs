@@ -21,7 +21,7 @@ namespace NeeView
         }
 
 
-        public event EventHandler Changed;
+        public event EventHandler? Changed;
 
 
         public void Add(QueryPath item)
@@ -44,6 +44,8 @@ namespace NeeView
             if (!_history.CanPrevious()) return;
 
             var item = _history.GetPrevious();
+            if (item is null) return;
+
             await LoadPageAsync(item);
             _history.Move(-1);
         }
@@ -58,6 +60,8 @@ namespace NeeView
             if (!_history.CanNext()) return;
 
             var item = _history.GetNext();
+            if (item is null) return;
+
             await LoadPageAsync(item);
             _history.Move(+1);
         }
@@ -69,7 +73,7 @@ namespace NeeView
             _history.SetCurrent(item.Key + 1);
         }
 
-        private async Task LoadPageAsync(QueryPath item)
+        private async Task LoadPageAsync(QueryPath? item)
         {
             if (item == null) return;
           

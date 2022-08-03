@@ -22,16 +22,15 @@ namespace NeeView.Text
         }
 
 
-        public int Compare(object x, object y)
+        public int Compare(object? x, object? y)
         {
             return Compare(x as string, y as string);
         }
 
-        public int Compare(string x, string y)
+        public int Compare(string? x, string? y)
         {
-            if (x == null && y == null) return 0;
-            if (x == null) return -1;
-            if (y == null) return 1;
+            if (x is null) return (y is null) ? 0 : -1;
+            if (y is null) return 1;
 
             if (object.ReferenceEquals(x, y)) return 0;
 

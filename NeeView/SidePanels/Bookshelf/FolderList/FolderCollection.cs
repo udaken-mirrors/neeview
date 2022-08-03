@@ -33,16 +33,12 @@ namespace NeeView
     /// </summary>
     public abstract class FolderCollection : BindableBase, IDisposable, IEnumerable<FolderItem>
     {
-        #region Fields
-
-        private ObservableCollection<FolderItem> _items;
+        private static readonly ObservableCollection<FolderItem> _itemsEmpty = new();
+        private ObservableCollection<FolderItem> _items = _itemsEmpty;
         protected FolderItemFactory _folderItemFactory;
         protected bool _isOverlayEnabled;
         private object _lock = new object();
 
-        #endregion
-
-        #region Constructors
 
         protected FolderCollection(QueryPath path, bool isOverlayEnabled)
         {
@@ -53,21 +49,16 @@ namespace NeeView
 
             // HACK: FullPathにする。過去のデータも修正が必要
             this.FolderParameter = new FolderParameter(Place.SimplePath);
-            this.FolderParameter.PropertyChanged += (s, e) => ParameterChanged?.Invoke(s, null);
+            this.FolderParameter.PropertyChanged += (s, e) => ParameterChanged?.Invoke(s, EventArgs.Empty);
         }
 
-        #endregion Constructors
 
-        #region Events
 
-        public event EventHandler<FolderCollectionChangedEventArgs> CollectionChanging;
-        public event EventHandler<FolderCollectionChangedEventArgs> CollectionChanged;
+        public event EventHandler<FolderCollectionChangedEventArgs>? CollectionChanging;
+        public event EventHandler<FolderCollectionChangedEventArgs>? CollectionChanged;
 
-        public event EventHandler ParameterChanged;
+        public event EventHandler? ParameterChanged;
 
-        #endregion
-
-        #region Properties
 
         // indexer
         public FolderItem this[int index]
@@ -101,12 +92,12 @@ namespace NeeView
             {
                 if (_items != value)
                 {
-                    if (_items != null)
+                    if (_items != _itemsEmpty)
                     {
                         _items.CollectionChanged -= Items_CollectionChanged;
                     }
                     _items = value;
-                    if (_items != null)
+                    if (_items != _itemsEmpty)
                     {
                         _items.CollectionChanged += Items_CollectionChanged;
                     }
@@ -156,11 +147,9 @@ namespace NeeView
         /// </summary>
         public bool IsValid => Items != null;
 
-        #endregion Properties
 
-        #region Methods
 
-        private void Items_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        private void Items_CollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
             RaisePropertyChanged(nameof(ValidCount));
         }
@@ -210,7 +199,7 @@ namespace NeeView
         }
 
 
-        public FolderItem FirstOrDefault(Func<FolderItem, bool> predicate)
+        public FolderItem? FirstOrDefault(Func<FolderItem, bool> predicate)
         {
             return Items.FirstOrDefault(predicate);
         }
@@ -219,7 +208,7 @@ namespace NeeView
         /// 先頭項目を取得
         /// </summary>
         /// <returns></returns>
-        public FolderItem FirstOrDefault()
+        public FolderItem? FirstOrDefault()
         {
             return Items.FirstOrDefault();
         }
@@ -227,7 +216,7 @@ namespace NeeView
         /// <summary>
         /// 有効な先頭項目を取得
         /// </summary>
-        public FolderItem FirstFolderOrDefault()
+        public FolderItem? FirstFolderOrDefault()
         {
             return Items.FirstOrDefault(e => !e.IsEmpty());
         }
@@ -235,7 +224,7 @@ namespace NeeView
         /// <summary>
         /// 有効な末端項目を取得
         /// </summary>
-        public FolderItem LastFolderOrDefault()
+        public FolderItem? LastFolderOrDefault()
         {
             return Items.LastOrDefault(e => !e.IsEmpty());
         }
@@ -243,7 +232,8 @@ namespace NeeView
         /// <summary>
         /// 親の場所を取得
         /// </summary>
-        public virtual QueryPath GetParentQuery()
+        /// <returns>親の場所。存在しない場合はnullを返す</returns>
+        public virtual QueryPath? GetParentQuery()
         {
             if (Place == null)
             {
@@ -347,11 +337,11 @@ namespace NeeView
                 _token = token;
             }
 
-            public int Compare(FolderItem x, FolderItem y)
+            public int Compare(FolderItem? x, FolderItem? y)
             {
                 _token.ThrowIfCancellationRequested();
 
-                return NaturalSort.Compare(x.Name, y.Name);
+                return NaturalSort.Compare(x?.Name, y?.Name);
             }
         }
 
@@ -368,11 +358,11 @@ namespace NeeView
                 _token = token;
             }
 
-            public int Compare(FolderItem x, FolderItem y)
+            public int Compare(FolderItem? x, FolderItem? y)
             {
                 _token.ThrowIfCancellationRequested();
 
-                return NaturalSort.Compare(x.TargetPath.FullPath, y.TargetPath.FullPath);
+                return NaturalSort.Compare(x?.TargetPath.FullPath, y?.TargetPath.FullPath);
             }
         }
 
@@ -388,9 +378,12 @@ namespace NeeView
                 _token = token;
             }
 
-            public int Compare(FolderItem x, FolderItem y)
+            public int Compare(FolderItem? x, FolderItem? y)
             {
                 _token.ThrowIfCancellationRequested();
+
+                if (x is null) return y is null ? 0 : -1;
+                if (y is null) return 1;
 
                 // ディレクトリは種類判定なし
                 if (x.IsDirectoryMaybe())
@@ -419,7 +412,7 @@ namespace NeeView
         /// アイコンの表示更新
         /// </summary>
         /// <param name="path">指定パスの項目を更新。nullの場合全ての項目を更新</param>
-        public void RefreshIcon(QueryPath path)
+        public void RefreshIcon(QueryPath? path)
         {
             if (Items == null) return;
 
@@ -456,7 +449,7 @@ namespace NeeView
         }
 
 
-        private FolderItem FindItem(QueryPath path)
+        private FolderItem? FindItem(QueryPath path)
         {
             lock (_lock)
             {
@@ -465,7 +458,7 @@ namespace NeeView
         }
 
         // HACK: 本来はFolderCollectionの種類に応じて挙動を変える必要がある。いまのところファイルシステム系以外で呼ばれないため実装していない。
-        protected virtual FolderItem CreateItem(QueryPath path)
+        protected virtual FolderItem? CreateItem(QueryPath path)
         {
             return _folderItemFactory.CreateFolderItem(path);
         }
@@ -571,7 +564,6 @@ namespace NeeView
             item.Name = path.FileName;
         }
 
-        #endregion Methods
 
         #region IDisposable Support
         private bool _disposedValue = false; // 重複する呼び出しを検出するには
@@ -585,7 +577,7 @@ namespace NeeView
                     if (Items != null)
                     {
                         BindingOperations.DisableCollectionSynchronization(Items);
-                        Items = null;
+                        Items = _itemsEmpty;
                     }
                 }
 

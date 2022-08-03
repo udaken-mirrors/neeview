@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Threading;
 
@@ -7,15 +8,18 @@ namespace NeeView
 {
     public class PictureStreamSource
     {
-        private byte[] _rawData;
+        private byte[]? _rawData;
         private ArchiveEntry _entry;
+
 
         public PictureStreamSource(ArchiveEntry entry)
         {
             _entry = entry;
         }
 
+
         public ArchiveEntry ArchiveEntry => _entry;
+
 
         public long GetMemorySize()
         {
@@ -52,7 +56,8 @@ namespace NeeView
             }
         }
 
-        protected void InitializeCore(Stream stream, byte[] rawData, CancellationToken token)
+        [MemberNotNull(nameof(_rawData))]
+        protected void InitializeCore(Stream stream, byte[]? rawData, CancellationToken token)
         {
             if (rawData != null)
             {
@@ -77,6 +82,7 @@ namespace NeeView
                 Initialize(token);
             }
 
+            if (_rawData is null) throw new InvalidOperationException();
             return new MemoryStream(_rawData, false);
         }
     }
@@ -87,11 +93,13 @@ namespace NeeView
     {
         private static PictureStream _pictureStream = new PictureStream();
 
+
         public PictureNamedStreamSource(ArchiveEntry entry) : base(entry)
         {
         }
 
-        public string Decoder { get; private set; }
+
+        public string? Decoder { get; private set; }
 
         public override void Initialize(CancellationToken token)
         {

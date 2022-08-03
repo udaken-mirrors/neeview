@@ -50,8 +50,7 @@ namespace NeeView
     {
         private ArchiveEntryCollectionMode _mode;
         private ArchiveEntryCollectionMode _modeIfArchive;
-        private List<ArchiveEntry> _entries;
-        private int _prefixLength;
+        private List<ArchiveEntry>? _entries;
         private bool _ignoreCache;
 
         /// <summary>
@@ -68,12 +67,10 @@ namespace NeeView
             _mode = mode;
             _modeIfArchive = modeIfArchive;
             _ignoreCache = option.HasFlag(ArchiveEntryCollectionOption.IgnoreCache);
-
-            _prefixLength = LoosePath.TrimDirectoryEnd(Path).Length;
         }
 
         public string Path { get; }
-        public Archiver Archiver { get; private set; }
+        public Archiver? Archiver { get; private set; }
 
         public ArchiveEntryCollectionMode Mode { get; private set; }
 
@@ -86,7 +83,7 @@ namespace NeeView
 
             var rootEntry = await ArchiveEntryUtility.CreateAsync(Path, token);
 
-            Archiver rootArchiver;
+            Archiver? rootArchiver;
             string rootArchiverPath;
 
             if (rootEntry.IsFileSystem)
@@ -116,7 +113,13 @@ namespace NeeView
                 }
             }
 
+            if (rootArchiver is null)
+            {
+                return new List<ArchiveEntry>() { rootEntry };
+            }
+
             Archiver = rootArchiver;
+
             Mode = Archiver.IsFileSystem ? _mode : _modeIfArchive;
 
             var includeSubDirectories = Mode == ArchiveEntryCollectionMode.IncludeSubDirectories || Mode == ArchiveEntryCollectionMode.IncludeSubArchives;
@@ -224,7 +227,7 @@ namespace NeeView
         /// <summary>
         /// フォルダーリスト上での親フォルダーを取得
         /// </summary>
-        public string GetFolderPlace()
+        public string? GetFolderPlace()
         {
             if (Path == null || Archiver == null)
             {
@@ -239,7 +242,7 @@ namespace NeeView
 
             if (Mode == ArchiveEntryCollectionMode.IncludeSubArchives)
             {
-                return LoosePath.GetDirectoryName(Archiver.RootArchiver.SystemPath);
+                return LoosePath.GetDirectoryName(Archiver.RootArchiver?.SystemPath);
             }
             else if (Mode == ArchiveEntryCollectionMode.IncludeSubDirectories)
             {

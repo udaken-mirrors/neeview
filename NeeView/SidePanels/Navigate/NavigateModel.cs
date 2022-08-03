@@ -88,7 +88,7 @@ namespace NeeView
         }
 
 
-        private void ViewConfig_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        private void ViewConfig_PropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
             switch (e.PropertyName)
             {

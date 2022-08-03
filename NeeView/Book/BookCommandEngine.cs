@@ -14,7 +14,7 @@ namespace NeeView
     /// </summary>
     internal abstract class BookCommand : CancelableJobBase
     {
-        public BookCommand(object sender, int priority)
+        public BookCommand(object? sender, int priority)
         {
             _sender = sender;
             Priority = priority;
@@ -23,7 +23,7 @@ namespace NeeView
         /// <summary>
         /// 送信者
         /// </summary>
-        protected object _sender;
+        protected object? _sender;
 
         /// <summary>
         /// コマンド優先度
@@ -59,9 +59,9 @@ namespace NeeView
     /// </summary>
     internal class BookCommandAction : BookCommand
     {
-        private Func<object, CancellationToken, Task> _taskAction;
+        private Func<object?, CancellationToken, Task> _taskAction;
 
-        public BookCommandAction(object sender, Func<object, CancellationToken, Task> taskAction, int priority) : base(sender, priority)
+        public BookCommandAction(object? sender, Func<object?, CancellationToken, Task> taskAction, int priority) : base(sender, priority)
         {
             _taskAction = taskAction;
         }
@@ -78,10 +78,10 @@ namespace NeeView
     /// </summary>
     internal class BookCommandJoinAction : BookCommand
     {
-        private Func<object, int, CancellationToken, Task> _taskAction;
+        private Func<object?, int, CancellationToken, Task> _taskAction;
         private int _value;
 
-        public BookCommandJoinAction(object sender, Func<object, int, CancellationToken, Task> taskAction, int value, int priority) : base(sender, priority)
+        public BookCommandJoinAction(object? sender, Func<object?, int, CancellationToken, Task> taskAction, int value, int priority) : base(sender, priority)
         {
             _taskAction = taskAction;
             _value = value;

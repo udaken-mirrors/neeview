@@ -380,7 +380,10 @@ namespace NeeView.IO
                             bitmapSource?.Freeze();
                             NativeMethods.DestroyIcon(hicon);
                             ////Debug.WriteLine($"Icon: {filename} - {shil}: {sw.ElapsedMilliseconds}ms");
-                            bitmaps.Add(bitmapSource);
+                            if (bitmapSource is not null)
+                            {
+                                bitmaps.Add(bitmapSource);
+                            }
                         }
                     }
                     catch (Exception ex)
@@ -405,7 +408,7 @@ namespace NeeView.IO
                 if (hSuccess != IntPtr.Zero && shinfo.hIcon != IntPtr.Zero)
                 {
                     BitmapSource bitmapSource = System.Windows.Interop.Imaging.CreateBitmapSourceFromHIcon(shinfo.hIcon, System.Windows.Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
-                    bitmapSource?.Freeze();
+                    bitmapSource.Freeze();
                     NativeMethods.DestroyIcon(shinfo.hIcon);
                     ////Debug.WriteLine($"Icon: {filename} - {iconSize}: {sw.ElapsedMilliseconds}ms");
                     return bitmapSource;

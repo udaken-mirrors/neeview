@@ -26,9 +26,9 @@ namespace NeeView
     {
         #region INotifyPropertyChanged Support
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
-        protected bool SetProperty<T>(ref T storage, T value, [System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
+        protected bool SetProperty<T>(ref T storage, T value, [System.Runtime.CompilerServices.CallerMemberName] string? propertyName = null)
         {
             if (object.Equals(storage, value)) return false;
             storage = value;
@@ -36,7 +36,7 @@ namespace NeeView
             return true;
         }
 
-        protected void RaisePropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string name = null)
+        protected void RaisePropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string? name = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
@@ -49,7 +49,7 @@ namespace NeeView
         #endregion
 
         private MouseWheelDelta _mouseWheelDelta = new MouseWheelDelta();
-        private string _dispText;
+        private string? _dispText;
 
         public SliderTextBox()
         {
@@ -59,10 +59,8 @@ namespace NeeView
         }
 
 
-        public event EventHandler ValueChanged;
+        public event EventHandler? ValueChanged;
 
-
-        #region DependencyProperties
 
         public double Minimum
         {
@@ -112,22 +110,20 @@ namespace NeeView
             (d as SliderTextBox)?.UpdateValue();
         }
 
-        #endregion
 
-        #region Properties
-
-        public string DispText
+        public string? DispText
         {
             get { return _dispText; }
             set { if (_dispText != value) { _dispText = value; RaisePropertyChanged(); } }
         }
 
-        #endregion
 
 
-        private void TextBlock_SizeChanged(object sender, SizeChangedEventArgs e)
+        private void TextBlock_SizeChanged(object? sender, SizeChangedEventArgs e)
         {
-            var control = (FrameworkElement)sender;
+            var control = (FrameworkElement?)sender;
+            if (control is null) return;
+
             if (e.WidthChanged && e.NewSize.Width > control.MinWidth)
             {
                 SetWidth(e.NewSize.Width);
@@ -156,35 +152,35 @@ namespace NeeView
         }
 
 
-        private void SliderTextBox_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        private void SliderTextBox_MouseLeftButtonDown(object? sender, MouseButtonEventArgs e)
         {
             this.TextBox.Visibility = Visibility.Visible;
             this.TextBox.Focus();
         }
 
-        private void SliderTextBox_GotFocus(object sender, RoutedEventArgs e)
+        private void SliderTextBox_GotFocus(object? sender, RoutedEventArgs e)
         {
             this.TextBox.Visibility = Visibility.Visible;
             this.TextBox.Focus();
         }
 
-        private void SliderTextBox_KeyDown(object sender, KeyEventArgs e)
+        private void SliderTextBox_KeyDown(object? sender, KeyEventArgs e)
         {
             e.Handled = true;
         }
 
-        private void TextBox_LostFocus(object sender, RoutedEventArgs e)
+        private void TextBox_LostFocus(object? sender, RoutedEventArgs e)
         {
             UpdateSource();
             this.TextBox.Visibility = Visibility.Hidden;
         }
 
-        private void TextBox_GotFocus(object sender, RoutedEventArgs e)
+        private void TextBox_GotFocus(object? sender, RoutedEventArgs e)
         {
             this.TextBox.SelectAll();
         }
 
-        private void TextBox_PreviewKeyDown(object sender, KeyEventArgs e)
+        private void TextBox_PreviewKeyDown(object? sender, KeyEventArgs e)
         {
             if (Keyboard.Modifiers != ModifierKeys.None) return;
 
@@ -206,16 +202,16 @@ namespace NeeView
         private void UpdateSource()
         {
             this.TextBox.GetBindingExpression(TextBox.TextProperty).UpdateSource();
-            ValueChanged?.Invoke(this, null);
+            ValueChanged?.Invoke(this, EventArgs.Empty);
         }
 
-        private void TextBox_MouseWheel(object sender, MouseWheelEventArgs e)
+        private void TextBox_MouseWheel(object? sender, MouseWheelEventArgs e)
         {
             int turn = _mouseWheelDelta.NotchCount(e);
             if (turn != 0)
             {
                 this.Value = this.Value - turn;
-                ValueChanged?.Invoke(this, null);
+                ValueChanged?.Invoke(this, EventArgs.Empty);
                 this.TextBox.SelectAll();
             }
             e.Handled = true;

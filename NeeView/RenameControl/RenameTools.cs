@@ -12,7 +12,7 @@ namespace NeeView
         /// <returns>RenameManager</returns>
         public static RenameManager GetRenameManager(UIElement element)
         {
-            RenameManager renameMabager = null;
+            RenameManager? renameMabager = null;
 
             var window = Window.GetWindow(element);
             if (window is IHasRenameManager hasRenameManager)

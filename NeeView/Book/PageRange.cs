@@ -9,8 +9,6 @@ namespace NeeView
     /// </summary>
     public class PageRange
     {
-        #region Constructors
-
         public PageRange()
         {
             this.Position = new PagePosition();
@@ -86,9 +84,6 @@ namespace NeeView
             this.PartSize = Math.Abs(p1.Value - p0.Value) + 1;
         }
 
-        #endregion
-
-        #region Properties
 
         public static PageRange Empty = new PageRange(PagePosition.Empty, PagePosition.Empty);
 
@@ -120,9 +115,6 @@ namespace NeeView
         /// </summary>
         public int PageSize => Math.Abs(Position.Index - Last.Index) + 1;
 
-        #endregion
-
-        #region Medhods
 
         public override string ToString()
         {
@@ -230,7 +222,5 @@ namespace NeeView
             var range = new PageRange(min, max);
             return range;
         }
-
-        #endregion
     }
 }

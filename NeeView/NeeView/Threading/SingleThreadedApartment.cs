@@ -26,7 +26,7 @@ namespace NeeView.Threading
         /// <summary>
         /// A window that is used for message pumping.
         /// </summary>
-        private Window window;
+        private Window? window;
 
         /// <summary>
         /// Thread on which work is scheduled.
@@ -36,7 +36,7 @@ namespace NeeView.Threading
         /// <summary>
         /// The <see cref="TaskScheduler"/> exposed by this class.
         /// </summary>
-        private TaskScheduler taskScheduler;
+        private TaskScheduler taskScheduler = TaskScheduler.Default;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="StaTaskSchedulerSource"/> class.
@@ -62,6 +62,8 @@ namespace NeeView.Threading
 
                 re.WaitOne();
             }
+
+            if (this.window is null) throw new InvalidOperationException();
 
             this.window.Dispatcher.Invoke(
                 new Action(

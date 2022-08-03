@@ -112,18 +112,18 @@ namespace NeeView
         #region Obsolete
 
         [Obsolete]
-        private PagemarkConfig _pagemark = new PagemarkConfig();
+        private PagemarkConfig? _pagemark = new PagemarkConfig();
 
         [Obsolete, Alternative(nameof(Playlist), 39)] // ver.39
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-        public PagemarkConfig Pagemark
+        public PagemarkConfig? Pagemark
         {
             get { return null; }
             set { _pagemark = value; }
         }
 
         [Obsolete, PropertyMapIgnore]
-        public PagemarkConfig PagemarkLegacy
+        public PagemarkConfig? PagemarkLegacy
         {
             get { return _pagemark; }
         }
@@ -135,10 +135,10 @@ namespace NeeView
         // 誤字修正 (WindowTittle -> WindowTitle)
         [Obsolete, Alternative(nameof(WindowTitle), 39)] // ver.39
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
-        public WindowTitleConfig WindowTittle
+        public WindowTitleConfig? WindowTittle
         {
             get { return null; }
-            set { this.WindowTitle = value; }
+            set { if (value is not null) this.WindowTitle = value; }
         }
 
         #endregion

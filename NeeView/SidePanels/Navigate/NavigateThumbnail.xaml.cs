@@ -33,17 +33,17 @@ namespace NeeView
             this.SizeChanged += NavigateThumbnail_SizeChanged;
         }
 
-        private void NavigateThumbnail_SizeChanged(object sender, SizeChangedEventArgs e)
+        private void NavigateThumbnail_SizeChanged(object? sender, SizeChangedEventArgs e)
         {
             _vm.SetCanvasSize(e.NewSize);
         }
 
-        private void NavigateThumbnail_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+        private void NavigateThumbnail_IsVisibleChanged(object? sender, DependencyPropertyChangedEventArgs e)
         {
             _vm.IsEnabled = this.IsVisible;
         }
 
-        private void ThumbnailGrid_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        private void ThumbnailGrid_MouseLeftButtonDown(object? sender, MouseButtonEventArgs e)
         {
             this.CaptureMouse();
             this.Cursor = Cursors.Hand;
@@ -51,13 +51,13 @@ namespace NeeView
             _vm.LookAt(e.GetPosition(this.ThumbnailGrid));
         }
 
-        private void ThumbnailGrid_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        private void ThumbnailGrid_PreviewMouseLeftButtonUp(object? sender, MouseButtonEventArgs e)
         {
             this.ReleaseMouseCapture();
             this.Cursor = null;
         }
 
-        private void ThumbnailGrid_MouseMove(object sender, MouseEventArgs e)
+        private void ThumbnailGrid_MouseMove(object? sender, MouseEventArgs e)
         {
             if (e.LeftButton != MouseButtonState.Pressed) return;
 

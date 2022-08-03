@@ -1,4 +1,5 @@
 ﻿using NeeLaboratory.ComponentModel;
+using NeeLaboratory.Linq;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -8,21 +9,9 @@ namespace NeeView.Setting
 {
     public class ContextMenuSettingViewModel : BindableBase
     {
-        private MenuTree _root;
-        public MenuTree Root
-        {
-            get { return _root; }
-            set { _root = value; RaisePropertyChanged(); }
-        }
-
-        public List<MenuTree> SourceElementList { get; set; }
-
-
-        private ContextMenuSetting _contextMenuSetting;
-
         public ContextMenuSettingViewModel()
         {
-            if (CommandTable.Current == null) return;
+            if (CommandTable.Current == null) throw new InvalidOperationException();
 
             var list = CommandTable.Current.Values
                 .OrderBy(e => e.Order)
@@ -37,6 +26,21 @@ namespace NeeView.Setting
 
             SourceElementList = list;
         }
+
+
+        private MenuTree? _root;
+        public MenuTree? Root
+        {
+            get { return _root; }
+            set { _root = value; RaisePropertyChanged(); }
+        }
+
+        public List<MenuTree> SourceElementList { get; set; }
+
+
+        private ContextMenuSetting? _contextMenuSetting;
+
+
 
         //
         public void Initialize(ContextMenuSetting contextMenuSetting)
@@ -53,6 +57,8 @@ namespace NeeView.Setting
         //
         public void Decide()
         {
+            if (_contextMenuSetting is null || Root is null) return;
+            
             _contextMenuSetting.SourceTree = Root.IsEqual(MenuTree.CreateDefault()) ? null : Root;
         }
 
@@ -65,13 +71,13 @@ namespace NeeView.Setting
         }
 
         //
-        private ObservableCollection<MenuTree> GetParentCollection(ObservableCollection<MenuTree> collection, MenuTree target)
+        private ObservableCollection<MenuTree>? GetParentCollection(ObservableCollection<MenuTree> collection, MenuTree target)
         {
             if (collection.Contains(target)) return collection;
 
-            foreach (var group in collection.Where(e => e.Children != null))
+            foreach (var chldren in collection.Select(e => e.Children).WhereNotNull())
             {
-                var parent = GetParentCollection(group.Children, target);
+                var parent = GetParentCollection(chldren, target);
                 if (parent != null) return parent;
             }
 
@@ -79,10 +85,13 @@ namespace NeeView.Setting
         }
 
         //
-        public void AddNode(MenuTree element, MenuTree target)
+        public void AddNode(MenuTree element, MenuTree? target)
         {
+            if (Root is null) return;
+
             if (target == null)
             {
+                if (Root.Children is null) throw new InvalidOperationException();
                 Root.Children.Add(element);
             }
             else if (target.Children != null && target.IsExpanded)
@@ -94,6 +103,7 @@ namespace NeeView.Setting
                 var parent = target.GetParent(Root);
                 if (parent != null)
                 {
+                    if (parent.Children is null) throw new InvalidOperationException();
                     int index = parent.Children.IndexOf(target);
                     parent.Children.Insert(index + 1, element);
                 }
@@ -109,9 +119,13 @@ namespace NeeView.Setting
         //
         public void RemoveNode(MenuTree target)
         {
+            if (Root is null) return;
+
             var parent = target.GetParent(Root);
             if (parent != null)
             {
+                if (parent.Children is null) throw new InvalidOperationException();
+
                 var next = target.GetNext(Root, false) ?? target.GetPrev(Root);
 
                 parent.Children.Remove(target);
@@ -134,12 +148,16 @@ namespace NeeView.Setting
         //
         public void MoveUp(MenuTree target)
         {
+            if (Root is null) return;
+
             var targetParent = target.GetParent(Root);
+            if (targetParent?.Children is null) throw new InvalidOperationException();
 
             var prev = target.GetPrev(Root);
             if (prev != null && prev != Root)
             {
                 var prevParent = prev.GetParent(Root);
+                if (prevParent?.Children is null) throw new InvalidOperationException();
 
                 if (targetParent == prevParent)
                 {
@@ -169,17 +187,22 @@ namespace NeeView.Setting
 
         public void MoveDown(MenuTree target)
         {
+            if (Root is null) return;
+
             var targetParent = target.GetParent(Root);
+            if (targetParent?.Children is null) throw new InvalidOperationException();
 
             var next = target.GetNext(Root);
             if (next != null && next != Root)
             {
                 var nextParent = next.GetParent(Root);
+                if (nextParent?.Children is null) throw new InvalidOperationException();
 
                 if (targetParent == nextParent)
                 {
                     if (next.IsExpanded)
                     {
+                        if (next?.Children is null) throw new InvalidOperationException();
                         targetParent.Children.Remove(target);
                         next.Children.Insert(0, target);
                     }

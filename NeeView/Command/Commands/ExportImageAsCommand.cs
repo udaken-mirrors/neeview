@@ -16,14 +16,14 @@ namespace NeeView
             this.ParameterSource = new CommandParameterSource(new ExportImageAsCommandParameter());
         }
 
-        public override bool CanExecute(object sender, CommandContext e)
+        public override bool CanExecute(object? sender, CommandContext e)
         {
             return BookOperation.Current.CanExport();
         }
 
-        public override void Execute(object sender, CommandContext e)
+        public override void Execute(object? sender, CommandContext e)
         {
-            BookOperation.Current.ExportDialog((ExportImageAsCommandParameter)e.Parameter);
+            BookOperation.Current.ExportDialog(e.Parameter.Cast<ExportImageAsCommandParameter>());
         }
     }
 
@@ -34,14 +34,14 @@ namespace NeeView
     [DataContract]
     public class ExportImageAsCommandParameter : CommandParameter
     {
-        private string _exportFolder;
+        private string? _exportFolder;
         private int _qualityLevel = 80;
 
         [DataMember]
         [PropertyPath(FileDialogType = FileDialogType.Directory)]
         public string ExportFolder
         {
-            get => _exportFolder;
+            get => _exportFolder ?? "";
             set => SetProperty(ref _exportFolder, value);
         }
 

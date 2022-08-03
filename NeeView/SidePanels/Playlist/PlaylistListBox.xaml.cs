@@ -1,4 +1,5 @@
-﻿using NeeView.Windows;
+﻿using NeeLaboratory.Linq;
+using NeeView.Windows;
 using NeeView.Windows.Media;
 using System;
 using System.Collections.Generic;
@@ -28,8 +29,8 @@ namespace NeeView
     public partial class PlaylistListBox : UserControl, IPageListPanel, IDisposable
     {
         private PlaylistListBoxViewModel _vm;
-        private ListBoxThumbnailLoader _thumbnailLoader;
-        private PageThumbnailJobClient _jobClient;
+        private ListBoxThumbnailLoader? _thumbnailLoader;
+        private PageThumbnailJobClient? _jobClient;
         private bool _focusRequest;
 
         static PlaylistListBox()
@@ -37,14 +38,17 @@ namespace NeeView
             InitializeCommandStatic();
         }
 
-        public PlaylistListBox()
+        //public PlaylistListBox()
+        //{
+        //    InitializeComponent();
+        //    InitializeCommand();
+        //}
+
+        public PlaylistListBox(PlaylistListBoxViewModel vm)
         {
             InitializeComponent();
             InitializeCommand();
-        }
 
-        public PlaylistListBox(PlaylistListBoxViewModel vm) : this()
-        {
             _vm = vm;
             this.DataContext = vm;
 
@@ -102,71 +106,68 @@ namespace NeeView
         }
 
 
-        private void AddCommand_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        private void AddCommand_CanExecute(object? sender, CanExecuteRoutedEventArgs e)
         {
             e.CanExecute = _vm.IsEditable;
         }
 
-        private void AddCommand_Execute(object sender, ExecutedRoutedEventArgs e)
+        private void AddCommand_Execute(object? sender, ExecutedRoutedEventArgs e)
         {
             _vm.AddCurrentPage();
             ScrollIntoView();
         }
 
-        private void MoveUpCommand_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        private void MoveUpCommand_CanExecute(object? sender, CanExecuteRoutedEventArgs e)
         {
             e.CanExecute = _vm.CanMoveUp() && this.ListBox.SelectedItems.Count == 1;
         }
 
-        private void MoveUpCommand_Execute(object sender, ExecutedRoutedEventArgs e)
+        private void MoveUpCommand_Execute(object? sender, ExecutedRoutedEventArgs e)
         {
             _vm.MoveUp();
             ScrollIntoView();
         }
 
-        private void MoveDownCommand_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        private void MoveDownCommand_CanExecute(object? sender, CanExecuteRoutedEventArgs e)
         {
             e.CanExecute = _vm.CanMoveDown() && this.ListBox.SelectedItems.Count == 1;
         }
 
-        private void MoveDownCommand_Execute(object sender, ExecutedRoutedEventArgs e)
+        private void MoveDownCommand_Execute(object? sender, ExecutedRoutedEventArgs e)
         {
             _vm.MoveDown();
             ScrollIntoView();
         }
 
 
-        private void OpenCommand_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        private void OpenCommand_CanExecute(object? sender, CanExecuteRoutedEventArgs e)
         {
             e.CanExecute = true;
         }
 
-        private void OpenCommand_Execute(object sender, ExecutedRoutedEventArgs e)
+        private void OpenCommand_Execute(object? sender, ExecutedRoutedEventArgs e)
         {
             var item = this.ListBox.SelectedItem as PlaylistItem;
             if (item is null) return;
             _vm.Open(item);
         }
 
-        private void RenameCommand_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        private void RenameCommand_CanExecute(object? sender, CanExecuteRoutedEventArgs e)
         {
             e.CanExecute = _vm.IsEditable;
         }
 
-        private void RenameCommand_Execute(object sender, ExecutedRoutedEventArgs e)
+        private void RenameCommand_Execute(object? sender, ExecutedRoutedEventArgs e)
         {
-            var item = this.ListBox.SelectedItem as PlaylistItem;
-            if (item is null) return;
-
-            Rename(item);
+            Rename();
         }
 
-        private void RemoveCommand_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        private void RemoveCommand_CanExecute(object? sender, CanExecuteRoutedEventArgs e)
         {
             e.CanExecute = _vm.IsEditable;
         }
 
-        private void RemoveCommand_Execute(object sender, ExecutedRoutedEventArgs e)
+        private void RemoveCommand_Execute(object? sender, ExecutedRoutedEventArgs e)
         {
             var items = this.ListBox.SelectedItems.Cast<PlaylistItem>().ToList();
             _vm.Remove(items);
@@ -174,18 +175,28 @@ namespace NeeView
             ////FocusSelectedItem(true);
         }
 
-        private void MoveToAnotherCommand_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        private void MoveToAnotherCommand_CanExecute(object? sender, CanExecuteRoutedEventArgs e)
         {
             e.CanExecute = _vm.IsEditable;
         }
 
-        private void MoveToAnotherCommand_Execute(object sender, ExecutedRoutedEventArgs e)
+        private void MoveToAnotherCommand_Execute(object? sender, ExecutedRoutedEventArgs e)
         {
             var items = this.ListBox.SelectedItems.Cast<PlaylistItem>().ToList();
-            _vm.MoveToAnotherPlaylist(e.Parameter as string, items);
+            var another = e.Parameter as string;
+            if (another is null) return;
+
+            _vm.MoveToAnotherPlaylist(another, items);
             ScrollIntoView();
         }
 
+        private void Rename()
+        {
+            var item = this.ListBox.SelectedItem as PlaylistItem;
+            if (item is null) return;
+
+            Rename(item);
+        }
 
         private void Rename(PlaylistItem item)
         {
@@ -193,6 +204,8 @@ namespace NeeView
             if (item != null)
             {
                 var listViewItem = VisualTreeUtility.FindContainer<ListBoxItem>(listBox, item);
+                if (listViewItem is null) return;
+
                 var textBlock = VisualTreeUtility.FindVisualChild<TextBlock>(listViewItem, "FileNameTextBlock");
 
                 if (textBlock != null)
@@ -234,7 +247,7 @@ namespace NeeView
             this.ListBox.UpdateLayout();
 
             // リネーム発動
-            RenameCommand_Execute(this.ListBox, null);
+            Rename();
         }
 
         #endregion Commands
@@ -275,7 +288,7 @@ namespace NeeView
 
         #region DragDrop
 
-        private async Task DragStartBehavior_DragBeginAsync(object sender, DragStartEventArgs e, CancellationToken token)
+        private async Task DragStartBehavior_DragBeginAsync(object? sender, DragStartEventArgs e, CancellationToken token)
         {
             var items = this.ListBox.SelectedItems
                 .Cast<PlaylistItem>()
@@ -296,28 +309,28 @@ namespace NeeView
             await Task.CompletedTask;
         }
 
-        private void FolderList_PreviewDragEnter(object sender, DragEventArgs e)
+        private void FolderList_PreviewDragEnter(object? sender, DragEventArgs e)
         {
             FolderList_PreviewDragOver(sender, e);
         }
 
-        private void FolderList_PreviewDragOver(object sender, DragEventArgs e)
+        private void FolderList_PreviewDragOver(object? sender, DragEventArgs e)
         {
             FolderList_DragDrop(sender, e, false);
             DragDropHelper.AutoScroll(sender, e);
         }
 
-        private void FolderList_Drop(object sender, DragEventArgs e)
+        private void FolderList_Drop(object? sender, DragEventArgs e)
         {
             FolderList_DragDrop(sender, e, true);
         }
 
-        private void FolderList_DragDrop(object sender, DragEventArgs e, bool isDrop)
+        private void FolderList_DragDrop(object? sender, DragEventArgs e, bool isDrop)
         {
             var nearest = PointToViewItem(this.ListBox, e.GetPosition(this.ListBox));
 
             var targetItem = nearest.item?.Content as PlaylistItem;
-            if (nearest.distance > 0.0 && _vm.Items.LastOrDefault() == targetItem)
+            if (nearest.distance > 0.0 && _vm.Items?.LastOrDefault() == targetItem)
             {
                 targetItem = null;
             }
@@ -332,7 +345,7 @@ namespace NeeView
             if (e.Handled) return;
         }
 
-        private void DropToPlaylist(object sender, DragEventArgs e, bool isDrop, PlaylistItem targetItem, IEnumerable<PlaylistItem> dropItems)
+        private void DropToPlaylist(object? sender, DragEventArgs e, bool isDrop, PlaylistItem? targetItem, IEnumerable<PlaylistItem>? dropItems)
         {
             if (dropItems == null || !dropItems.Any())
             {
@@ -358,7 +371,7 @@ namespace NeeView
             }
         }
 
-        private void DropToPlaylist(object sender, DragEventArgs e, bool isDrop, PlaylistItem targetItem, IEnumerable<QueryPath> queries)
+        private void DropToPlaylist(object? sender, DragEventArgs e, bool isDrop, PlaylistItem? targetItem, IEnumerable<QueryPath>? queries)
         {
             if (queries == null || !queries.Any())
             {
@@ -385,7 +398,7 @@ namespace NeeView
             e.Handled = true;
         }
 
-        private void DropToPlaylist(object sender, DragEventArgs e, bool isDrop, PlaylistItem targetItem, IEnumerable<string> fileNames)
+        private void DropToPlaylist(object? sender, DragEventArgs e, bool isDrop, PlaylistItem? targetItem, IEnumerable<string> fileNames)
         {
             if (fileNames == null)
             {
@@ -412,7 +425,7 @@ namespace NeeView
         }
 
 
-        private (ListBoxItem item, double distance) PointToViewItem(ListBox listBox, Point point)
+        private (ListBoxItem? item, double distance) PointToViewItem(ListBox listBox, Point point)
         {
             // ポイントされている項目を取得
             var element = VisualTreeUtility.HitTest<ListBoxItem>(listBox, point);
@@ -422,13 +435,13 @@ namespace NeeView
             }
 
             // ポイントに最も近い項目を取得
-            var nearest = VisualTreeUtility.FindVisualChildren<ListBoxItem>(listBox)
+            var nearest = VisualTreeUtility.FindVisualChildren<ListBoxItem>(listBox)?
                 .Where(e => e.IsVisible)
                 .Select(e => (item: e, disatance: point.Y - e.TranslatePoint(new Point(0, 0), listBox).Y))
                 .OrderBy(e => Math.Abs(e.disatance))
                 .FirstOrDefault();
 
-            return nearest;
+            return nearest ?? (null, 0.0);
         }
 
         #endregion DragDrop
@@ -436,13 +449,13 @@ namespace NeeView
         /// <summary>
         /// スクロール変更イベント処理
         /// </summary>
-        private void ListBox_ScrollChanged(object sender, ScrollChangedEventArgs e)
+        private void ListBox_ScrollChanged(object? sender, ScrollChangedEventArgs e)
         {
             // リネームキャンセル
             RenameTools.GetRenameManager(this)?.Stop();
         }
 
-        private void PlaylistListBox_Loaded(object sender, RoutedEventArgs e)
+        private void PlaylistListBox_Loaded(object? sender, RoutedEventArgs e)
         {
             _jobClient = new PageThumbnailJobClient("Playlist", JobCategories.BookThumbnailCategory);
             _thumbnailLoader = new ListBoxThumbnailLoader(this, _jobClient);
@@ -454,7 +467,7 @@ namespace NeeView
         }
 
 
-        private void PlaylistListBox_Unloaded(object sender, RoutedEventArgs e)
+        private void PlaylistListBox_Unloaded(object? sender, RoutedEventArgs e)
         {
             Config.Current.Panels.ContentItemProfile.PropertyChanged -= PanelListItemProfile_PropertyChanged;
             Config.Current.Panels.BannerItemProfile.PropertyChanged -= PanelListItemProfile_PropertyChanged;
@@ -469,7 +482,7 @@ namespace NeeView
             this.ListBox.ScrollSelectedItemsIntoView();
         }
 
-        private void PanelListItemProfile_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        private void PanelListItemProfile_PropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
             this.ListBox.Items?.Refresh();
         }
@@ -506,20 +519,24 @@ namespace NeeView
         }
 
 
-        private void PlaylistListItem_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        private void PlaylistListItem_MouseLeftButtonDown(object? sender, MouseButtonEventArgs e)
         {
             if (Keyboard.Modifiers != ModifierKeys.None) return;
 
             var item = ((sender as ListBoxItem)?.Content as PlaylistItem);
+            if (item is null) return;
+
             if (!Config.Current.Panels.OpenWithDoubleClick)
             {
                 _vm.Open(item);
             }
         }
 
-        private void PlaylistListItem_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private void PlaylistListItem_MouseDoubleClick(object? sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             var item = ((sender as ListBoxItem)?.Content as PlaylistItem);
+            if (item is null) return;
+
             if (Config.Current.Panels.OpenWithDoubleClick)
             {
                 _vm.Open(item);
@@ -527,9 +544,10 @@ namespace NeeView
         }
 
         // 履歴項目決定(キー)
-        private void PlaylistListItem_KeyDown(object sender, KeyEventArgs e)
+        private void PlaylistListItem_KeyDown(object? sender, KeyEventArgs e)
         {
             var item = ((sender as ListBoxItem)?.Content as PlaylistItem);
+            if (item is null) return;
 
             if (Keyboard.Modifiers == ModifierKeys.None)
             {
@@ -541,7 +559,7 @@ namespace NeeView
             }
         }
 
-        private void PlaylistItem_ContextMenuOpening(object sender, ContextMenuEventArgs e)
+        private void PlaylistItem_ContextMenuOpening(object? sender, ContextMenuEventArgs e)
         {
             var contextMenu = (sender as ListBoxItem)?.ContextMenu;
             if (contextMenu is null) return;
@@ -583,7 +601,7 @@ namespace NeeView
         }
 
         // リストのキ入力
-        private void PlaylistListBox_KeyDown(object sender, KeyEventArgs e)
+        private void PlaylistListBox_KeyDown(object? sender, KeyEventArgs e)
         {
             // このパネルで使用するキーのイベントを止める
             if (Keyboard.Modifiers == ModifierKeys.None)
@@ -596,7 +614,7 @@ namespace NeeView
         }
 
         // 表示/非表示イベント
-        private async void PlaylistListBox_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+        private async void PlaylistListBox_IsVisibleChanged(object? sender, DependencyPropertyChangedEventArgs e)
         {
             _vm.Visibility = (bool)e.NewValue ? Visibility.Visible : Visibility.Hidden;
 
@@ -613,12 +631,12 @@ namespace NeeView
             }
         }
 
-        private void PlaylistListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void PlaylistListBox_SelectionChanged(object? sender, SelectionChangedEventArgs e)
         {
         }
 
         // リスト全体が変化したときにサムネイルを更新する
-        private void PlaylistListBox_TargetUpdated(object sender, DataTransferEventArgs e)
+        private void PlaylistListBox_TargetUpdated(object? sender, DataTransferEventArgs e)
         {
             AppDispatcher.BeginInvoke(() =>
             {
@@ -629,7 +647,7 @@ namespace NeeView
 
         #region UI Accessor
 
-        public List<PlaylistItem> GetItems()
+        public List<PlaylistItem>? GetItems()
         {
             return this.ListBox.Items?.Cast<PlaylistItem>().ToList();
         }
@@ -639,7 +657,7 @@ namespace NeeView
             return this.ListBox.SelectedItems.Cast<PlaylistItem>().ToList();
         }
 
-        public void SetSelectedItem(PlaylistItem item)
+        public void SetSelectedItem(PlaylistItem? item)
         {
             this.ListBox.SelectedItem = item;
             this.ListBox.ScrollIntoView(item);
@@ -647,7 +665,10 @@ namespace NeeView
 
         public void SetSelectedItems(IEnumerable<PlaylistItem> selectedItems)
         {
-            var items = selectedItems?.Intersect(GetItems()).ToList();
+            var sources = GetItems();
+            if (sources is null) return;
+
+            var items = selectedItems?.Intersect(sources).ToList();
             this.ListBox.SetSelectedItems(items);
             this.ListBox.ScrollItemsIntoView(items);
         }
@@ -681,16 +702,16 @@ namespace NeeView
 
     public class PlaylistPageCommandResource : PageCommandResource
     {
-        protected override Page GetSelectedPage(object sender)
+        protected override Page? GetSelectedPage(object sender)
         {
             return ((sender as ListBox)?.SelectedItem as PlaylistItem)?.ArchivePage;
         }
 
-        protected override List<Page> GetSelectedPages(object sender)
+        protected override List<Page>? GetSelectedPages(object sender)
         {
             return (sender as ListBox)?.SelectedItems?
                 .Cast<PlaylistItem>()
-                .Where(e => e != null)
+                .WhereNotNull()
                 .Select(e => e.ArchivePage)
                 .ToList();
         }

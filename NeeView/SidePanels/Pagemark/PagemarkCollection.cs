@@ -17,6 +17,7 @@ using NeeView.Collections;
 using System.Text.Json.Serialization;
 using System.Text.Json;
 using NeeView.Properties;
+using System.Diagnostics.CodeAnalysis;
 
 namespace NeeView
 {
@@ -32,8 +33,7 @@ namespace NeeView
     {
         public static TreeListNode<IPagemarkEntry> CreateRoot()
         {
-            var items = new TreeListNode<IPagemarkEntry>();
-            items.Value = new PagemarkFolder();
+            var items = new TreeListNode<IPagemarkEntry>(new PagemarkFolder());
 
             return items;
         }
@@ -80,7 +80,7 @@ namespace NeeView
         public class Memento
         {
             [JsonPropertyName("Format")]
-            public FormatVersion Format { get; set; }
+            public FormatVersion? Format { get; set; }
 
             [JsonIgnore]
             [DataMember]
@@ -88,10 +88,10 @@ namespace NeeView
 
             [JsonIgnore]
             [Obsolete, DataMember(Name = "Nodes", EmitDefaultValue = false)]
-            public TreeListNode<IPagemarkEntry> NodesLegacy { get; set; }
+            public TreeListNode<IPagemarkEntry>? NodesLegacy { get; set; }
 
             [DataMember(Name = "NodesV2")]
-            public PagemarkNode Nodes { get; set; }
+            public PagemarkNode? Nodes { get; set; }
 
             [JsonIgnore]
             [DataMember]
@@ -100,15 +100,15 @@ namespace NeeView
 
             [JsonIgnore]
             [Obsolete, DataMember(EmitDefaultValue = false)]
-            public List<Book.Memento> Books { get; set; }
+            public List<Book.Memento>? Books { get; set; }
 
             [JsonIgnore]
             [Obsolete, DataMember(EmitDefaultValue = false)]
-            public List<Pagemark> Marks { get; set; }
+            public List<Pagemark>? Marks { get; set; }
 
             [JsonIgnore]
             [Obsolete, DataMember(Name = "Items", EmitDefaultValue = false)]
-            public List<Book.Memento> OldBooks { get; set; }
+            public List<Book.Memento>? OldBooks { get; set; }
 
 
             private void Constructor()
@@ -133,7 +133,7 @@ namespace NeeView
 #pragma warning disable CS0612
                 if (_Version < Environment.GenerateProductVersionNumber(31, 0, 0))
                 {
-                    NodesLegacy = new TreeListNode<IPagemarkEntry>();
+                    NodesLegacy = new TreeListNode<IPagemarkEntry>(new PagemarkEmpty());
                     foreach (var mark in Marks ?? new List<Pagemark>())
                     {
                         NodesLegacy.Add(mark);
@@ -150,12 +150,12 @@ namespace NeeView
                 }
 
                 // 新しいフォーマットに変換
-                if (_Version < Environment.GenerateProductVersionNumber(32, 0, 0))
+                if (_Version < Environment.GenerateProductVersionNumber(32, 0, 0) && NodesLegacy is not null)
                 {
                     NodesLegacy = ConvertToBookUnitFormat(NodesLegacy);
                 }
 
-                if (_Version < Environment.GenerateProductVersionNumber(37, 0, 0))
+                if (_Version < Environment.GenerateProductVersionNumber(37, 0, 0) && NodesLegacy is not null)
                 {
                     Nodes = PagemarkNodeConverter.ConvertFrom(NodesLegacy) ?? new PagemarkNode();
                     NodesLegacy = null;
@@ -171,13 +171,13 @@ namespace NeeView
                 File.WriteAllBytes(path, json);
             }
 
-            public static Memento Load(string path)
+            public static Memento? Load(string path)
             {
                 var json = File.ReadAllBytes(path);
                 return Load(new ReadOnlySpan<byte>(json));
             }
 
-            public static Memento Load(Stream stream)
+            public static Memento? Load(Stream stream)
             {
                 using (var ms = new MemoryStream())
                 {
@@ -186,9 +186,9 @@ namespace NeeView
                 }
             }
 
-            public static Memento Load(ReadOnlySpan<byte> json)
+            public static Memento? Load(ReadOnlySpan<byte> json)
             {
-                return JsonSerializer.Deserialize<Memento>(json, UserSettingTools.GetSerializerOptions()).Validate();
+                return JsonSerializer.Deserialize<Memento>(json, UserSettingTools.GetSerializerOptions())?.Validate();
             }
 
             /// <summary>
@@ -201,7 +201,7 @@ namespace NeeView
 
             public bool IsEmpty()
             {
-                return (Nodes.Children is null || Nodes.Children.Count == 0);
+                return (Nodes?.Children is null || Nodes.Children.Count == 0);
             }
 
             #region Legacy
@@ -220,7 +220,7 @@ namespace NeeView
             }
 
             // ファイルから読み込み
-            public static Memento LoadV1(string path)
+            public static Memento? LoadV1(string path)
             {
                 using (var stream = new FileStream(path, FileMode.Open, FileAccess.Read))
                 {
@@ -229,19 +229,19 @@ namespace NeeView
             }
 
             // ストリームから読み込み
-            public static Memento LoadV1(Stream stream)
+            public static Memento? LoadV1(Stream stream)
             {
                 using (XmlReader xr = XmlReader.Create(stream))
                 {
                     DataContractSerializer serializer = new DataContractSerializer(typeof(Memento));
-                    Memento memento = (Memento)serializer.ReadObject(xr);
+                    Memento? memento = (Memento?)serializer.ReadObject(xr);
                     return memento;
                 }
             }
 
             #endregion
 
-            public void RestoreConfig(Config config)
+            public void RestoreConfig(Config? config)
             {
                 // nop.
                 ////config.Pagemark.PagemarkOrder = PagemarkOrder;
@@ -255,15 +255,15 @@ namespace NeeView
     [Obsolete]
     public class PagemarkNode
     {
-        public string Path { get; set; }
+        public string? Path { get; set; }
 
-        public string EntryName { get; set; }
+        public string? EntryName { get; set; }
 
-        public string DispName { get; set; }
+        public string? DispName { get; set; }
 
         public bool IsExpanded { get; set; }
 
-        public List<PagemarkNode> Children { get; set; }
+        public List<PagemarkNode>? Children { get; set; }
 
         public bool IsFolder => Children != null;
 
@@ -287,7 +287,8 @@ namespace NeeView
     [Obsolete]
     public static class PagemarkNodeConverter
     {
-        public static PagemarkNode ConvertFrom(TreeListNode<IPagemarkEntry> source)
+        [return: NotNullIfNotNull("source")]
+        public static PagemarkNode? ConvertFrom(TreeListNode<IPagemarkEntry> source)
         {
             if (source == null) return null;
 
@@ -317,31 +318,40 @@ namespace NeeView
             return node;
         }
 
-        public static TreeListNode<IPagemarkEntry> ConvertToTreeListNode(PagemarkNode source)
+        public static TreeListNode<IPagemarkEntry>? ConvertToTreeListNode(PagemarkNode source)
         {
-            var node = new TreeListNode<IPagemarkEntry>();
 
             if (source.IsFolder)
             {
-                node.Value = new PagemarkFolder()
+                var pagemarkFolder = new PagemarkFolder()
                 {
-                    Path = source.Path,
+                    Path = source.Path
                 };
+                var node = new TreeListNode<IPagemarkEntry>(pagemarkFolder);
                 node.IsExpanded = source.IsExpanded;
-                foreach (var child in source.Children)
+                if (source.Children is not null)
                 {
-                    node.Add(ConvertToTreeListNode(child));
+                    foreach (var child in source.Children)
+                    {
+                        var newNode = ConvertToTreeListNode(child);
+                        if (newNode != null)
+                        {
+                            node.Add(newNode);
+                        }
+                    }
                 }
+                return node;
             }
             else
             {
-                node.Value = new Pagemark(source.Path, source.EntryName)
+                if (source.Path is null || source.EntryName is null) return null;
+                var pagemark = new Pagemark(source.Path, source.EntryName)
                 {
                     DispName = source.DispName,
                 };
+                var node = new TreeListNode<IPagemarkEntry>(pagemark);
+                return node;
             }
-
-            return node;
         }
     }
 
@@ -352,6 +362,8 @@ namespace NeeView
 #pragma warning disable CS0612 // 型またはメンバーが旧型式です
         public static PlaylistSource ConvertToPlaylist(PagemarkCollection.Memento memento)
         {
+            if (memento.Nodes is null) return new PlaylistSource();
+
             var items = memento.Nodes.GetEnumerator()
                 .Where(e => !e.IsFolder)
                 .Select(e => new PlaylistSourceItem(LoosePath.Combine(e.Path, e.EntryName), e.DispName));
@@ -388,7 +400,10 @@ namespace NeeView
 
             // remove
             FileIO.RemoveFile(result.path);
-            Config.Current.PagemarkLegacy.PagemarkFilePath = null;
+            if (Config.Current.PagemarkLegacy != null)
+            {
+                Config.Current.PagemarkLegacy.PagemarkFilePath = "";
+            }
         }
 
         public static void SavePagemarkPlaylist(PagemarkCollection.Memento pagemark)
@@ -407,7 +422,7 @@ namespace NeeView
 
 
         // ページマーク読み込み
-        private static (string path, PagemarkCollection.Memento pagemark) LoadPagemark(string filename)
+        private static (string path, PagemarkCollection.Memento? pagemark) LoadPagemark(string? filename)
         {
             if (filename is null) return default;
 
@@ -421,13 +436,13 @@ namespace NeeView
 
                 if (extension == ".json" && File.Exists(filename))
                 {
-                    PagemarkCollection.Memento memento = Load(PagemarkCollection.Memento.Load, filename, failedDialog);
+                    PagemarkCollection.Memento? memento = Load(PagemarkCollection.Memento.Load, filename, failedDialog);
                     return (filename, memento);
                 }
                 // before v.37
                 else if (File.Exists(filenameV1))
                 {
-                    PagemarkCollection.Memento memento = Load(PagemarkCollection.Memento.LoadV1, filenameV1, failedDialog);
+                    PagemarkCollection.Memento? memento = Load(PagemarkCollection.Memento.LoadV1, filenameV1, failedDialog);
                     return (filenameV1, memento);
                 }
                 else
@@ -440,7 +455,7 @@ namespace NeeView
                 App.Current.SemaphoreRelease();
             }
 
-            PagemarkCollection.Memento Load(Func<string, PagemarkCollection.Memento> load, string path, LoadFailedDialog loadFailedDialog)
+            PagemarkCollection.Memento? Load(Func<string, PagemarkCollection.Memento?> load, string path, LoadFailedDialog loadFailedDialog)
             {
                 try
                 {

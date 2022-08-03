@@ -18,7 +18,7 @@ namespace NeeView
         /// <summary>
         /// VisibleLock変更イベント
         /// </summary>
-        event EventHandler IsVisibleLockChanged;
+        event EventHandler? IsVisibleLockChanged;
 
         /// <summary>
         /// 識別名

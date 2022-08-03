@@ -19,7 +19,7 @@ namespace NeeView.Setting
     /// </summary>
     public partial class InputTouchSettingControl : UserControl
     {
-        private InputTouchSettingViewModel _vm;
+        private InputTouchSettingViewModel? _vm;
 
         public InputTouchSettingControl()
         {
@@ -41,8 +41,10 @@ namespace NeeView.Setting
             _vm?.Flush();
         }
 
-        private void GestureBox_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        private void GestureBox_PreviewMouseLeftButtonUp(object? sender, MouseButtonEventArgs e)
         {
+            if (_vm is null) return;
+
             var width = this.GestureBox.ActualWidth;
             var pos = e.GetPosition(this.GestureBox);
 

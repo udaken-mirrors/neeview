@@ -20,18 +20,26 @@ namespace NeeView
     /// </summary>
     public partial class TinyInfoMessageView : UserControl, INotifyPropertyChanged
     {
-        #region PropertyChanged
+        #region INotifyPropertyChanged Support
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
-        protected void RaisePropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string name = "")
+        protected bool SetProperty<T>(ref T storage, T value, [System.Runtime.CompilerServices.CallerMemberName] string? propertyName = null)
+        {
+            if (object.Equals(storage, value)) return false;
+            storage = value;
+            this.RaisePropertyChanged(propertyName);
+            return true;
+        }
+
+        protected void RaisePropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string? name = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
 
         public void AddPropertyChanged(string propertyName, PropertyChangedEventHandler handler)
         {
-            PropertyChanged += (s, e) => { if (e.PropertyName == propertyName) handler?.Invoke(s, e); };
+            PropertyChanged += (s, e) => { if (string.IsNullOrEmpty(e.PropertyName) || e.PropertyName == propertyName) handler?.Invoke(s, e); };
         }
 
         #endregion
@@ -58,13 +66,13 @@ namespace NeeView
         /// <summary>
         /// VM property.
         /// </summary>
-        public TinyInfoMessageViewModel VM
+        public TinyInfoMessageViewModel? VM
         {
             get { return _vm; }
             private set { if (_vm != value) { _vm = value; RaisePropertyChanged(); } }
         }
 
-        private TinyInfoMessageViewModel _vm;
+        private TinyInfoMessageViewModel? _vm;
 
 
         /// <summary>

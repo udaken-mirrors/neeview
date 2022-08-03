@@ -17,13 +17,13 @@ namespace NeeView
             return BindingGenerator.BindingBookSetting(nameof(BookSettingPresenter.Current.LatestSetting.IsRecursiveFolder));
         }
 
-        public override string ExecuteMessage(object sender, CommandContext e)
+        public override string ExecuteMessage(object? sender, CommandContext e)
         {
             return BookSettingPresenter.Current.LatestSetting.IsRecursiveFolder ? Properties.Resources.ToggleIsRecursiveFolderCommand_Off : Properties.Resources.ToggleIsRecursiveFolderCommand_On;
         }
 
         [MethodArgument("@ToggleCommand.Execute.Remarks")]
-        public override void Execute(object sender, CommandContext e)
+        public override void Execute(object? sender, CommandContext e)
         {
             if (e.Args.Length > 0)
             {

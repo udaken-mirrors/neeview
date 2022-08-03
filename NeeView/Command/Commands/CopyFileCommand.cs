@@ -15,14 +15,14 @@ namespace NeeView
 
         }
 
-        public override bool CanExecute(object sender, CommandContext e)
+        public override bool CanExecute(object? sender, CommandContext e)
         {
             return BookOperation.Current.CanOpenFilePlace();
         }
 
-        public override void Execute(object sender, CommandContext e)
+        public override void Execute(object? sender, CommandContext e)
         {
-            BookOperation.Current.CopyToClipboard((CopyFileCommandParameter)e.Parameter);
+            BookOperation.Current.CopyToClipboard(e.Parameter.Cast<CopyFileCommandParameter>());
         }
     }
 

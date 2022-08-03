@@ -12,7 +12,7 @@ namespace NeeView
     /// </summary>
     public class BookThumbnailPool : ThumbnailPool
     {
-        public static BookThumbnailPool _current;
+        public static BookThumbnailPool? _current;
         public static BookThumbnailPool Current
         {
             get

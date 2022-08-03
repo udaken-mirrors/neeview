@@ -100,7 +100,7 @@ namespace NeeView.Windows.Controls
 
 
 
-        private void MainTextBox_ValueDelta(object sender, ValueDeltaEventArgs e)
+        private void MainTextBox_ValueDelta(object? sender, ValueDeltaEventArgs e)
         {
             if (WheelCalculator != null)
             {

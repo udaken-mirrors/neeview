@@ -16,7 +16,7 @@ namespace NeeView
         /// 遷移パラメータ。
         /// 遷移状態により要求される内容は異なります。
         /// </summary>
-        public object Parameter { get; set; }
+        public object? Parameter { get; set; }
 
         /// <summary>
         /// コンストラクター
@@ -31,7 +31,7 @@ namespace NeeView
         /// コンストラクター
         /// </summary>
         /// <param name="state"></param>
-        public TouchInputStateEventArgs(TouchInputState state, object parameter)
+        public TouchInputStateEventArgs(TouchInputState state, object? parameter)
         {
             this.State = state;
             this.Parameter = parameter;

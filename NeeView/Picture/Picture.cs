@@ -16,8 +16,6 @@ namespace NeeView
     /// </summary>
     public class Picture : BindableBase
     {
-        #region Fields
-
         /// <summary>
         /// リサイズパラメータのハッシュ。
         /// リサイズが必要かの判定に使用される
@@ -29,9 +27,6 @@ namespace NeeView
         /// </summary>
         private object _lock = new object();
 
-        #endregion
-
-        #region Constructors
 
         public Picture(PictureSource source)
         {
@@ -40,31 +35,24 @@ namespace NeeView
             _resizeHashCode = GetEnvironmentoHashCode();
         }
 
-        #endregion
-
-        #region Properties
 
         public PictureSource PictureSource { get; private set; }
-
 
         /// <summary>
         /// 画像情報
         /// </summary>
-        public PictureInfo PictureInfo => PictureSource.PictureInfo;
+        public PictureInfo? PictureInfo => PictureSource.PictureInfo;
 
         /// <summary>
         /// 表示する画像
         /// </summary>
-        private ImageSource _imageSource;
-        public ImageSource ImageSource
+        private ImageSource? _imageSource;
+        public ImageSource? ImageSource
         {
             get { return _imageSource; }
             set { if (_imageSource != value) { _imageSource = value; RaisePropertyChanged(); } }
         }
 
-        #endregion
-
-        #region Methods
 
         public long GetMemorySize()
         {
@@ -89,7 +77,8 @@ namespace NeeView
         // Imageが同じサイズであるか判定
         private bool IsEqualImageSizeMaybe(Size size, bool keepAspectRatio)
         {
-            if (this.ImageSource == null) return false;
+            if (this.ImageSource is null) return false;
+            if (this.PictureInfo is null) return false;
 
             size = size.IsEmpty ? this.PictureInfo.Size : size;
 
@@ -111,6 +100,8 @@ namespace NeeView
         /// </summary>
         public bool CreateImageSource(Size size, CancellationToken token)
         {
+            if (this.PictureInfo is null) return false;
+
             size = size.IsEmpty ? this.PictureInfo.Size : size;
             size = PictureSource.FixedSize(size);
 
@@ -171,8 +162,6 @@ namespace NeeView
 
             return MemoryControl.Current.RetryFuncWithMemoryCleanup(() => PictureSource.CreateImageSource(size, setting, token));
         }
-
-        #endregion
     }
 
 }

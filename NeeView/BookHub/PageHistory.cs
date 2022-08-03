@@ -8,7 +8,7 @@ namespace NeeView
 {
     public struct PageHistoryUnit : IEquatable<PageHistoryUnit>
     {
-        public static PageHistoryUnit Empty = new PageHistoryUnit(null, null);
+        public static PageHistoryUnit Empty = new PageHistoryUnit("", "");
 
         public PageHistoryUnit(string bookAddress, string pageName)
         {
@@ -24,10 +24,10 @@ namespace NeeView
 
         public bool IsEmpty()
         {
-            return BookAddress == null && PageName == null;
+            return string.IsNullOrEmpty(BookAddress) && string.IsNullOrEmpty(PageName);
         }
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             if (obj is PageHistoryUnit other)
             {
@@ -79,12 +79,12 @@ namespace NeeView
         }
 
         
-        public event EventHandler Changed;
+        public event EventHandler? Changed;
 
 
-        private void BookHub_ViewContentsChanged(object sender, ViewContentSourceCollectionChangedEventArgs e)
+        private void BookHub_ViewContentsChanged(object? sender, ViewContentSourceCollectionChangedEventArgs e)
         {
-            var viewPages = e?.ViewPageCollection?.Collection.Where(x => x != null).Select(x => x.Page).ToList();
+            var viewPages = e.ViewPageCollection?.Collection.Where(x => x != null).Select(x => x.Page).ToList();
 
             PageHistoryUnit pageHistoryUnit;
             if (viewPages != null && viewPages.Count > 0)
@@ -102,7 +102,7 @@ namespace NeeView
         }
 
 
-        public void Add(object sender, PageHistoryUnit unit)
+        public void Add(object? sender, PageHistoryUnit unit)
         {
             // NOTE: 履歴操からの操作では履歴を変更しない
             if (sender == this) return;

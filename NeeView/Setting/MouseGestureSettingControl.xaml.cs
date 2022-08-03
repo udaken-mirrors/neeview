@@ -18,7 +18,7 @@ namespace NeeView.Setting
     /// </summary>
     public partial class MouseGestureSettingControl : UserControl
     {
-        private MouseGestureSettingViewModel _vm;
+        private MouseGestureSettingViewModel? _vm;
 
         public MouseGestureSettingControl()
         {

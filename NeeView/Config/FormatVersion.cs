@@ -65,8 +65,10 @@ namespace NeeView
             return new FormatVersion(name, major, minor, build);
         }
 
-        public int CompareTo(FormatVersion other)
+        public int CompareTo(FormatVersion? other)
         {
+            if (other is null) return 1;
+
             if (this.Name != other.Name)
             {
                 return this.Name.CompareTo(other.Name);
@@ -86,21 +88,22 @@ namespace NeeView
             return 0;
         }
 
-        public bool Equals(FormatVersion other)
+        public bool Equals(FormatVersion? other)
         {
-            return other != null &&
-                this.Name == other.Name &&
+            if (other is null) return false;
+
+            return this.Name == other.Name &&
                 this.MajorVersion == other.MajorVersion &&
                 this.MinorVersion == other.MinorVersion &&
                 this.BuildVersion == other.BuildVersion;
         }
 
-        public override bool Equals(object other)
+        public override bool Equals(object? other)
         {
-            if (other == null) return false;
+            if (other is null) return false;
 
             var formatVersion = other as FormatVersion;
-            if (formatVersion == null)
+            if (formatVersion is null)
             {
                 return false;
             }
@@ -115,17 +118,17 @@ namespace NeeView
             return Name.GetHashCode() ^ VersionNumber;
         }
 
-        public static bool operator ==(FormatVersion v1, FormatVersion v2)
+        public static bool operator ==(FormatVersion? v1, FormatVersion? v2)
         {
-            if (((object)v1) == null || ((object)v2) == null)
+            if (((object?)v1) == null || ((object?)v2) == null)
                 return Equals(v1, v2);
 
             return v1.Equals(v2);
         }
 
-        public static bool operator !=(FormatVersion v1, FormatVersion v2)
+        public static bool operator !=(FormatVersion? v1, FormatVersion? v2)
         {
-            if (((object)v1) == null || ((object)v2) == null)
+            if (((object?)v1) == null || ((object?)v2) == null)
                 return !Equals(v1, v2);
 
             return !(v1.Equals(v2));
@@ -134,9 +137,11 @@ namespace NeeView
 
     public sealed class JsonFormatVersionConverter : JsonConverter<FormatVersion>
     {
-        public override FormatVersion Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+        public override FormatVersion? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
-            return FormatVersion.Parse(reader.GetString());
+            var s = reader.GetString();
+            if (s is null) return null;
+            return FormatVersion.Parse(s);
         }
 
         public override void Write(Utf8JsonWriter writer, FormatVersion value, JsonSerializerOptions options)

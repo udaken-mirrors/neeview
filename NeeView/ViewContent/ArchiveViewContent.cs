@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System;
+using System.Windows;
 
 namespace NeeView
 {
@@ -20,6 +21,7 @@ namespace NeeView
             var parameter = CreateBindingParameter();
 
             // create view
+            if (this.Source is null) throw new InvalidOperationException();
             this.View = new ViewContentControl(CreateView(this.Source, parameter));
 
             // content setting
@@ -28,7 +30,8 @@ namespace NeeView
 
         private FrameworkElement CreateView(ViewContentSource source, ViewContentParameters parameter)
         {
-            var control = new ArchivePageControl(source.Content as ArchiveContent);
+            var content = source.Content as ArchiveContent ?? throw new InvalidOperationException("Content must be ArchiveContent");
+            var control = new ArchivePageControl(content);
             control.SetBinding(ArchivePageControl.DefaultBrushProperty, parameter.ForegroundBrush);
             return control;
         }

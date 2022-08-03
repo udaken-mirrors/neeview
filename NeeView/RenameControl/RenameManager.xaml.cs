@@ -24,9 +24,9 @@ namespace NeeView
     {
         #region INotifyPropertyChanged Support
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
-        protected bool SetProperty<T>(ref T storage, T value, [System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
+        protected bool SetProperty<T>(ref T storage, T value, [System.Runtime.CompilerServices.CallerMemberName] string? propertyName = null)
         {
             if (object.Equals(storage, value)) return false;
             storage = value;
@@ -34,7 +34,7 @@ namespace NeeView
             return true;
         }
 
-        protected void RaisePropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string name = null)
+        protected void RaisePropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string? name = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
@@ -62,7 +62,7 @@ namespace NeeView
             set { SetProperty(ref _isRenaming, value); }
         }
 
-        public UIElement RenameElement
+        public UIElement? RenameElement
         {
             get
             {
@@ -81,6 +81,8 @@ namespace NeeView
 
         public void Open(RenameControl rename)
         {
+            if (rename.Target is null) throw new InvalidOperationException();
+
             rename.Close += Rename_Close;
 
             var pos = rename.Target.TranslatePoint(new Point(0, 0), this) - new Vector(3, 2);
@@ -96,9 +98,13 @@ namespace NeeView
             IsRenaming = true;
         }
 
-        private void Rename_Close(object sender, EventArgs e)
+        private void Rename_Close(object? sender, EventArgs e)
         {
-            var rename = (RenameControl)sender;
+            var rename = sender as RenameControl;
+            if (rename is null) return;
+
+            if (rename.Target is null) throw new InvalidOperationException();
+
             rename.Target.Visibility = Visibility.Visible;
 
             // NOTE: ウィンドウのディアクティブタイミングで閉じたときに再度アクティブ化するのを防ぐためにタイミングをずらす。動作原理不明。

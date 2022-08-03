@@ -13,12 +13,12 @@ namespace NeeView
             this.IsShowMessage = true;
         }
 
-        public override bool CanExecute(object sender, CommandContext e)
+        public override bool CanExecute(object? sender, CommandContext e)
         {
             return MainViewComponent.Current.ViewController.CanCopyImageToClipboard();
         }
 
-        public override void Execute(object sender, CommandContext e)
+        public override void Execute(object? sender, CommandContext e)
         {
             MainViewComponent.Current.ViewController.CopyImageToClipboard();
         }

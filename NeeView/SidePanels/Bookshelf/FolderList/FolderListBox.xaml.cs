@@ -25,8 +25,8 @@ namespace NeeView
     public partial class FolderListBox : UserControl, IPageListPanel, IDisposable
     {
         private FolderListBoxViewModel _vm;
-        private ListBoxThumbnailLoader _thumbnailLoader;
-        private PageThumbnailJobClient _jobClient;
+        private ListBoxThumbnailLoader? _thumbnailLoader;
+        private PageThumbnailJobClient? _jobClient;
 
 
         static FolderListBox()
@@ -34,13 +34,16 @@ namespace NeeView
             InitialieCommandStatic();
         }
 
-        public FolderListBox()
+
+        //public FolderListBox()
+        //{
+        //    InitializeComponent();
+        //}
+
+        public FolderListBox(FolderListBoxViewModel vm)
         {
             InitializeComponent();
-        }
 
-        public FolderListBox(FolderListBoxViewModel vm) : this()
-        {
             _vm = vm;
             this.DataContext = vm;
 
@@ -155,7 +158,7 @@ namespace NeeView
         /// <summary>
         /// ブックマーク登録/解除可能？
         /// </summary>
-        private void ToggleBookmark_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        private void ToggleBookmark_CanExecute(object? sender, CanExecuteRoutedEventArgs e)
         {
             var item = (sender as ListBox)?.SelectedItem as FolderItem;
             e.CanExecute = item != null && item.IsFileSystem() && !item.EntityPath.SimplePath.StartsWith(Temporary.Current.TempDirectory);
@@ -164,7 +167,7 @@ namespace NeeView
         /// <summary>
         /// ブックマーク登録/解除
         /// </summary>
-        private void ToggleBookmark_Executed(object sender, ExecutedRoutedEventArgs e)
+        private void ToggleBookmark_Executed(object? sender, ExecutedRoutedEventArgs e)
         {
             var item = (sender as ListBox)?.SelectedItem as FolderItem;
             if (item != null)
@@ -183,7 +186,7 @@ namespace NeeView
         /// <summary>
         /// 履歴から削除できる？
         /// </summary>
-        private void RemoveHistory_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        private void RemoveHistory_CanExecute(object? sender, CanExecuteRoutedEventArgs e)
         {
             var item = (sender as ListBox)?.SelectedItem as FolderItem;
             e.CanExecute = item != null && BookHistoryCollection.Current.Contains(item.TargetPath.SimplePath);
@@ -192,7 +195,7 @@ namespace NeeView
         /// <summary>
         /// 履歴から削除
         /// </summary>
-        private void RemoveHistory_Executed(object sender, ExecutedRoutedEventArgs e)
+        private void RemoveHistory_Executed(object? sender, ExecutedRoutedEventArgs e)
         {
             var item = (sender as ListBox)?.SelectedItem as FolderItem;
             if (item != null)
@@ -207,7 +210,7 @@ namespace NeeView
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void LoadWithRecursive_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        private void LoadWithRecursive_CanExecute(object? sender, CanExecuteRoutedEventArgs e)
         {
             var item = (sender as ListBox)?.SelectedItem as FolderItem;
 
@@ -224,9 +227,10 @@ namespace NeeView
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void LoadWithRecursive_Executed(object sender, ExecutedRoutedEventArgs e)
+        private void LoadWithRecursive_Executed(object? sender, ExecutedRoutedEventArgs e)
         {
             var item = (sender as ListBox)?.SelectedItem as FolderItem;
+            if (item is null) return;
 
             // サブフォルダー読み込み状態を反転する
             var option = item.IsRecursived ? BookLoadOption.NotRecursive : BookLoadOption.Recursive;
@@ -238,7 +242,7 @@ namespace NeeView
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void FileCommand_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        private void FileCommand_CanExecute(object? sender, CanExecuteRoutedEventArgs e)
         {
             var item = (sender as ListBox)?.SelectedItem as FolderItem;
             e.CanExecute = (item != null && item.IsEditable && Config.Current.System.IsFileWriteAccessEnabled);
@@ -249,7 +253,7 @@ namespace NeeView
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void Copy_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        private void Copy_CanExecute(object? sender, CanExecuteRoutedEventArgs e)
         {
             var items = this.ListBox.SelectedItems.Cast<FolderItem>();
             e.CanExecute = items != null && items.All(x => x.IsEditable);
@@ -260,7 +264,7 @@ namespace NeeView
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        public void Copy_Executed(object sender, ExecutedRoutedEventArgs e)
+        public void Copy_Executed(object? sender, ExecutedRoutedEventArgs e)
         {
             var items = this.ListBox.SelectedItems.Cast<FolderItem>();
             if (items != null && items.Any())
@@ -293,7 +297,7 @@ namespace NeeView
         /// <summary>
         /// フォルダーにコピーコマンド用
         /// </summary>
-        private void CopyToFolder_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        private void CopyToFolder_CanExecute(object? sender, CanExecuteRoutedEventArgs e)
         {
             e.CanExecute = CopyToFolder_CanExecute();
         }
@@ -304,7 +308,7 @@ namespace NeeView
             return items != null && items.All(x => x.IsEditable);
         }
 
-        public void CopyToFolder_Execute(object sender, ExecutedRoutedEventArgs e)
+        public void CopyToFolder_Execute(object? sender, ExecutedRoutedEventArgs e)
         {
             var folder = e.Parameter as DestinationFolder;
             if (folder == null) return;
@@ -335,7 +339,7 @@ namespace NeeView
         /// <summary>
         /// フォルダーに移動コマンド用
         /// </summary>
-        private void MoveToFolder_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        private void MoveToFolder_CanExecute(object? sender, CanExecuteRoutedEventArgs e)
         {
             e.CanExecute = MoveToFolder_CanExecute();
         }
@@ -346,7 +350,7 @@ namespace NeeView
             return Config.Current.System.IsFileWriteAccessEnabled && items != null && items.All(x => x.IsEditable);
         }
 
-        public async void MoveToFolder_Execute(object sender, ExecutedRoutedEventArgs e)
+        public async void MoveToFolder_Execute(object? sender, ExecutedRoutedEventArgs e)
         {
             var folder = e.Parameter as DestinationFolder;
             if (folder == null) return;
@@ -382,7 +386,7 @@ namespace NeeView
         }
 
 
-        public void Remove_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        public void Remove_CanExecute(object? sender, CanExecuteRoutedEventArgs e)
         {
             var items = this.ListBox.SelectedItems.Cast<FolderItem>();
             e.CanExecute = items != null && !(_vm.FolderCollection is PlaylistFolderCollection) && items.All(x => x.CanRemove());
@@ -393,7 +397,7 @@ namespace NeeView
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        public async void Remove_Executed(object sender, ExecutedRoutedEventArgs e)
+        public async void Remove_Executed(object? sender, ExecutedRoutedEventArgs e)
         {
             var items = this.ListBox.SelectedItems.Cast<FolderItem>().ToList();
             await _vm.RemoveAsync(items);
@@ -401,9 +405,11 @@ namespace NeeView
         }
 
 
-        public void Rename_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        public void Rename_CanExecute(object? sender, CanExecuteRoutedEventArgs e)
         {
             var item = (sender as ListBox)?.SelectedItem as FolderItem;
+            if (item is null) return;
+
             e.CanExecute = CanRenameExecute(item);
         }
 
@@ -441,11 +447,18 @@ namespace NeeView
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        public void Rename_Executed(object sender, ExecutedRoutedEventArgs e)
+        public void Rename_Executed(object? sender, ExecutedRoutedEventArgs e)
         {
-            var listView = sender as ListBox;
+            if (sender != this.ListBox) return;
 
-            var item = (sender as ListBox)?.SelectedItem as FolderItem;
+            Rename();
+        }
+
+        private void Rename()
+        {
+            var listView = this.ListBox;
+
+            var item = listView.SelectedItem as FolderItem;
             if (item == null) return;
 
             if (CanRenameExecute(item))
@@ -488,14 +501,14 @@ namespace NeeView
                             }
                         }
                     };
-                        rename.Closed += (s, ev) =>
+                    rename.Closed += (s, ev) =>
+                {
+                    RenameTools.RestoreFocus(listViewItem, ev.IsFocused);
+                    if (ev.MoveRename != 0)
                     {
-                        RenameTools.RestoreFocus(listViewItem, ev.IsFocused);
-                        if (ev.MoveRename != 0)
-                        {
-                            RenameNext(ev.MoveRename);
-                        }
-                    };
+                        RenameNext(ev.MoveRename);
+                    }
+                };
                     rename.Close += (s, ev) =>
                     {
                         _vm.IsRenaming = false;
@@ -506,7 +519,6 @@ namespace NeeView
                 }
             }
         }
-
 
         /// <summary>
         /// 項目を移動して名前変更処理を続行する
@@ -528,24 +540,19 @@ namespace NeeView
             }
 
             // リネーム発動
-            Rename_Executed(this.ListBox, null);
-        }
-
-        public void Rename()
-        {
-            Rename_Executed(this.ListBox, null);
+            Rename();
         }
 
         /// <summary>
         /// エクスプローラーで開くコマンド
         /// </summary>
-        private void OpenExplorer_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        private void OpenExplorer_CanExecute(object? sender, CanExecuteRoutedEventArgs e)
         {
             var item = (sender as ListBox)?.SelectedItem as FolderItem;
             e.CanExecute = item != null;
         }
 
-        public void OpenExplorer_Executed(object sender, ExecutedRoutedEventArgs e)
+        public void OpenExplorer_Executed(object? sender, ExecutedRoutedEventArgs e)
         {
             var item = (sender as ListBox)?.SelectedItem as FolderItem;
             if (item != null)
@@ -559,7 +566,7 @@ namespace NeeView
         /// <summary>
         /// 外部アプリで開く
         /// </summary>
-        private void OpenExternalApp_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        private void OpenExternalApp_CanExecute(object? sender, CanExecuteRoutedEventArgs e)
         {
             e.CanExecute = CopyToFolder_CanExecute();
         }
@@ -570,7 +577,7 @@ namespace NeeView
             return items != null && items.All(x => x.IsEditable);
         }
 
-        public void OpenExternalApp_Executed(object sender, ExecutedRoutedEventArgs e)
+        public void OpenExternalApp_Executed(object? sender, ExecutedRoutedEventArgs e)
         {
             var externalApp = e.Parameter as ExternalApp;
             if (externalApp == null) return;
@@ -583,13 +590,13 @@ namespace NeeView
             }
         }
 
-        private string GetExistPathName(FolderItem item)
-        {
-            var path = item.TargetPath.SimplePath;
-            return item.Attributes.AnyFlag(FolderItemAttribute.Bookmark | FolderItemAttribute.ArchiveEntry | FolderItemAttribute.Empty) ? ArchiverManager.Current.GetExistPathName(path) : path;
-        }
+        //private string GetExistPathName(FolderItem item)
+        //{
+        //    var path = item.TargetPath.SimplePath;
+        //    return item.Attributes.AnyFlag(FolderItemAttribute.Bookmark | FolderItemAttribute.ArchiveEntry | FolderItemAttribute.Empty) ? ArchiverManager.Current.GetExistPathName(path) : path;
+        //}
 
-        public void Open_Executed(object sender, ExecutedRoutedEventArgs e)
+        public void Open_Executed(object? sender, ExecutedRoutedEventArgs e)
         {
             var item = (sender as ListBox)?.SelectedItem as FolderItem;
             if (item != null)
@@ -598,7 +605,7 @@ namespace NeeView
             }
         }
 
-        public void OpenBook_Executed(object sender, ExecutedRoutedEventArgs e)
+        public void OpenBook_Executed(object? sender, ExecutedRoutedEventArgs e)
         {
             var item = (sender as ListBox)?.SelectedItem as FolderItem;
             if (item != null && !item.IsEmpty())
@@ -607,17 +614,17 @@ namespace NeeView
             }
         }
 
-        private void OpenDestinationFolderDialog_Execute(object sender, ExecutedRoutedEventArgs e)
+        private void OpenDestinationFolderDialog_Execute(object? sender, ExecutedRoutedEventArgs e)
         {
             DestinationFolderDialog.ShowDialog(Window.GetWindow(this));
         }
 
-        private void OpenExternalAppDialog_Execute(object sender, ExecutedRoutedEventArgs e)
+        private void OpenExternalAppDialog_Execute(object? sender, ExecutedRoutedEventArgs e)
         {
             ExternalAppDialog.ShowDialog(Window.GetWindow(this));
         }
 
-        private void OpenInPlaylistCommand_Execute(object sender, ExecutedRoutedEventArgs e)
+        private void OpenInPlaylistCommand_Execute(object? sender, ExecutedRoutedEventArgs e)
         {
             var item = (sender as ListBox)?.SelectedItem as FolderItem;
             if (item != null && item.IsPlaylist)
@@ -628,7 +635,7 @@ namespace NeeView
         }
 
 
-        private RelayCommand _NewFolderCommand;
+        private RelayCommand? _NewFolderCommand;
         public RelayCommand NewFolderCommand
         {
             get { return _NewFolderCommand = _NewFolderCommand ?? new RelayCommand(NewFolderCommand_Executed); }
@@ -639,7 +646,7 @@ namespace NeeView
             _vm.Model.NewFolder();
         }
 
-        private RelayCommand _AddBookmarkCommand;
+        private RelayCommand? _AddBookmarkCommand;
         public RelayCommand AddBookmarkCommand
         {
             get { return _AddBookmarkCommand = _AddBookmarkCommand ?? new RelayCommand(AddBookmarkCommand_Executed); }
@@ -654,7 +661,7 @@ namespace NeeView
 
         #region DragDrop
 
-        private async Task DragStartBehavior_DragBeginAsync(object sender, DragStartEventArgs e, CancellationToken token)
+        private async Task DragStartBehavior_DragBeginAsync(object? sender, DragStartEventArgs e, CancellationToken token)
         {
             var items = this.ListBox.SelectedItems
                 .Cast<FolderItem>()
@@ -700,30 +707,30 @@ namespace NeeView
             await Task.CompletedTask;
         }
 
-        private void FolderList_PreviewDragEnter(object sender, DragEventArgs e)
+        private void FolderList_PreviewDragEnter(object? sender, DragEventArgs e)
         {
             FolderList_PreviewDragOver(sender, e);
         }
 
-        private void FolderList_PreviewDragOver(object sender, DragEventArgs e)
+        private void FolderList_PreviewDragOver(object? sender, DragEventArgs e)
         {
             FolderList_DragDrop(sender, e, false);
             DragDropHelper.AutoScroll(sender, e);
         }
 
-        private void FolderList_Drop(object sender, DragEventArgs e)
+        private void FolderList_Drop(object? sender, DragEventArgs e)
         {
             FolderList_DragDrop(sender, e, true);
         }
 
-        private void FolderList_DragDrop(object sender, DragEventArgs e, bool isDrop)
+        private void FolderList_DragDrop(object? sender, DragEventArgs e, bool isDrop)
         {
             var listBoxItem = PointToViewItem(this.ListBox, e.GetPosition(this.ListBox));
 
             // bookmark
             if (_vm.FolderCollection is BookmarkFolderCollection bookmarkFolderCollection)
             {
-                TreeListNode<IBookmarkEntry> bookmarkNode;
+                TreeListNode<IBookmarkEntry>? bookmarkNode;
                 if (listBoxItem?.Content is FolderItem target && target.Attributes.HasFlag(FolderItemAttribute.Bookmark | FolderItemAttribute.Directory))
                 {
                     bookmarkNode = target.Source as TreeListNode<IBookmarkEntry>;
@@ -747,7 +754,7 @@ namespace NeeView
             }
         }
 
-        private void DropToBookmark(object sender, DragEventArgs e, bool isDrop, TreeListNode<IBookmarkEntry> node, IEnumerable<TreeListNode<IBookmarkEntry>> bookmarkEntries)
+        private void DropToBookmark(object? sender, DragEventArgs e, bool isDrop, TreeListNode<IBookmarkEntry> node, IEnumerable<TreeListNode<IBookmarkEntry>>? bookmarkEntries)
         {
             if (bookmarkEntries == null || !bookmarkEntries.Any())
             {
@@ -766,7 +773,7 @@ namespace NeeView
             }
         }
 
-        private void DropToBookmark(object sender, DragEventArgs e, bool isDrop, TreeListNode<IBookmarkEntry> node, TreeListNode<IBookmarkEntry> bookmarkEntry)
+        private void DropToBookmark(object? sender, DragEventArgs e, bool isDrop, TreeListNode<IBookmarkEntry> node, TreeListNode<IBookmarkEntry>? bookmarkEntry)
         {
             if (bookmarkEntry == null)
             {
@@ -793,7 +800,7 @@ namespace NeeView
             BookmarkCollection.Current.MoveToChild(bookmarkEntry, node);
         }
 
-        private void DropToBookmark(object sender, DragEventArgs e, bool isDrop, TreeListNode<IBookmarkEntry> node, IEnumerable<QueryPath> queries)
+        private void DropToBookmark(object? sender, DragEventArgs e, bool isDrop, TreeListNode<IBookmarkEntry> node, IEnumerable<QueryPath>? queries)
         {
             if (queries == null || !queries.Any())
             {
@@ -806,7 +813,7 @@ namespace NeeView
             }
         }
 
-        private void DropToBookmark(object sender, DragEventArgs e, bool isDrop, TreeListNode<IBookmarkEntry> node, QueryPath query)
+        private void DropToBookmark(object? sender, DragEventArgs e, bool isDrop, TreeListNode<IBookmarkEntry> node, QueryPath query)
         {
             if (query == null)
             {
@@ -818,6 +825,7 @@ namespace NeeView
                 if (isDrop)
                 {
                     var bookmark = BookmarkCollectionService.AddToChild(node, query);
+                    if (bookmark is null) return;
                     _vm.Model.SelectBookmark(bookmark, true);
                 }
                 e.Effects = DragDropEffects.Copy;
@@ -842,7 +850,7 @@ namespace NeeView
             }
         }
 
-        private void DropToBookmark(object sender, DragEventArgs e, bool isDrop, TreeListNode<IBookmarkEntry> node, IEnumerable<string> fileNames)
+        private void DropToBookmark(object? sender, DragEventArgs e, bool isDrop, TreeListNode<IBookmarkEntry> node, IEnumerable<string> fileNames)
         {
             if (fileNames == null)
             {
@@ -860,6 +868,7 @@ namespace NeeView
                     if (isDrop)
                     {
                         var bookmark = BookmarkCollectionService.AddToChild(node, new QueryPath(fileName));
+                        if (bookmark is null) continue;
                         _vm.Model.SelectBookmark(bookmark, true);
                     }
                     e.Effects = DragDropEffects.Copy;
@@ -873,7 +882,7 @@ namespace NeeView
             return ArchiverManager.Current.IsSupported(path, true, true) || System.IO.Directory.Exists(path);
         }
 
-        private ListBoxItem PointToViewItem(ListBox listBox, Point point)
+        private ListBoxItem? PointToViewItem(ListBox listBox, Point point)
         {
             var element = VisualTreeUtility.HitTest<ListBoxItem>(listBox, point);
 
@@ -889,7 +898,7 @@ namespace NeeView
         #endregion
 
 
-        private void FolderListBox_Loaded(object sender, RoutedEventArgs e)
+        private void FolderListBox_Loaded(object? sender, RoutedEventArgs e)
         {
             SetBusy(false);
 
@@ -905,7 +914,7 @@ namespace NeeView
             Config.Current.Panels.ThumbnailItemProfile.PropertyChanged += PanelListtemProfile_PropertyChanged;
         }
 
-        private void FolderListBox_Unloaded(object sender, RoutedEventArgs e)
+        private void FolderListBox_Unloaded(object? sender, RoutedEventArgs e)
         {
             _jobClient?.Dispose();
 
@@ -921,7 +930,7 @@ namespace NeeView
         /// <summary>
         /// サムネイルパラメーターが変化したらアイテムをリフレッシュする
         /// </summary>
-        private void PanelListtemProfile_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        private void PanelListtemProfile_PropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             this.ListBox.Items?.Refresh();
         }
@@ -963,7 +972,7 @@ namespace NeeView
         }
 
 
-        public void SelectedChanged(object sender, FolderListSelectedChangedEventArgs e)
+        public void SelectedChanged(object? sender, FolderListSelectedChangedEventArgs e)
         {
             if (this.ListBox.IsFocused)
             {
@@ -972,7 +981,7 @@ namespace NeeView
 
             this.ListBox.ScrollIntoView(this.ListBox.SelectedItem);
 
-            _thumbnailLoader.Load();
+            _thumbnailLoader?.Load();
 
             if (e.IsNewFolder)
             {
@@ -983,17 +992,17 @@ namespace NeeView
         /// <summary>
         /// スクロール変更イベント処理
         /// </summary>
-        private void ListBox_ScrollChanged(object sender, ScrollChangedEventArgs e)
+        private void ListBox_ScrollChanged(object? sender, ScrollChangedEventArgs e)
         {
             // リネームキャンセル
             RenameTools.GetRenameManager(this)?.Stop();
         }
 
-        private void FolderList_Loaded(object sender, RoutedEventArgs e)
+        private void FolderList_Loaded(object? sender, RoutedEventArgs e)
         {
         }
 
-        private async void FolderList_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+        private async void FolderList_IsVisibleChanged(object? sender, DependencyPropertyChangedEventArgs e)
         {
             if ((bool)e.NewValue == true)
             {
@@ -1004,7 +1013,7 @@ namespace NeeView
             }
         }
 
-        private void FolderList_PreviewKeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+        private void FolderList_PreviewKeyDown(object? sender, System.Windows.Input.KeyEventArgs e)
         {
             if (Keyboard.Modifiers == ModifierKeys.Alt)
             {
@@ -1042,7 +1051,7 @@ namespace NeeView
             }
         }
 
-        private void FolderList_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+        private void FolderList_KeyDown(object? sender, System.Windows.Input.KeyEventArgs e)
         {
             bool isLRKeyEnabled = _vm.IsLRKeyEnabled();
             if (isLRKeyEnabled && e.Key == Key.Left) // ←
@@ -1052,12 +1061,12 @@ namespace NeeView
             }
         }
 
-        private void FolderList_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void FolderList_SelectionChanged(object? sender, SelectionChangedEventArgs e)
         {
         }
 
         //
-        private void FolderListItem_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private void FolderListItem_MouseLeftButtonDown(object? sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             if (Keyboard.Modifiers != ModifierKeys.None) return;
 
@@ -1069,7 +1078,7 @@ namespace NeeView
         }
 
         //
-        private void FolderListItem_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private void FolderListItem_MouseDoubleClick(object? sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             var item = (sender as ListBoxItem)?.Content as FolderItem;
             if (Config.Current.Panels.OpenWithDoubleClick && item != null && !item.IsEmpty())
@@ -1083,10 +1092,11 @@ namespace NeeView
         }
 
         //
-        private void FolderListItem_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+        private void FolderListItem_KeyDown(object? sender, System.Windows.Input.KeyEventArgs e)
         {
             bool isLRKeyEnabled = _vm.IsLRKeyEnabled();
             var item = (sender as ListBoxItem)?.Content as FolderItem;
+            if (item is null) return;
 
             if (Keyboard.Modifiers == ModifierKeys.None)
             {
@@ -1102,25 +1112,22 @@ namespace NeeView
                 }
                 else if (isLRKeyEnabled && e.Key == Key.Left) // ←
                 {
-                    if (item != null)
-                    {
-                        _vm.MoveToUp();
-                    }
+                    _vm.MoveToUp();
                     e.Handled = true;
                 }
             }
         }
 
 
-        private void FolderListItem_MouseDown(object sender, MouseButtonEventArgs e)
+        private void FolderListItem_MouseDown(object? sender, MouseButtonEventArgs e)
         {
         }
 
-        private void FolderListItem_MouseUp(object sender, MouseButtonEventArgs e)
+        private void FolderListItem_MouseUp(object? sender, MouseButtonEventArgs e)
         {
         }
 
-        private void FolderListItem_MouseMove(object sender, MouseEventArgs e)
+        private void FolderListItem_MouseMove(object? sender, MouseEventArgs e)
         {
         }
 
@@ -1130,7 +1137,7 @@ namespace NeeView
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void FolderListItem_ContextMenuOpening(object sender, ContextMenuEventArgs e)
+        private void FolderListItem_ContextMenuOpening(object? sender, ContextMenuEventArgs e)
         {
             var container = sender as ListBoxItem;
             if (container == null)
@@ -1224,7 +1231,7 @@ namespace NeeView
         /// <summary>
         /// リスト更新中
         /// </summary>
-        private void BusyChanged(object sender, FolderListBusyChangedEventArgs e)
+        private void BusyChanged(object? sender, FolderListBusyChangedEventArgs e)
         {
             SetBusy(e.IsBusy);
         }
@@ -1261,7 +1268,7 @@ namespace NeeView
 
         public List<FolderItem> GetItems()
         {
-            return this.ListBox.Items?.Cast<FolderItem>().ToList();
+            return this.ListBox.Items?.Cast<FolderItem>().ToList() ?? new List<FolderItem>();
         }
 
         public List<FolderItem> GetSelectedItems()
@@ -1271,7 +1278,7 @@ namespace NeeView
 
         public void SetSelectedItems(IEnumerable<FolderItem> selectedItems)
         {
-            var items = selectedItems?.Intersect(GetItems()).ToList();
+            var items = selectedItems?.Intersect(GetItems()).ToList() ?? new List<FolderItem>();
             this.ListBox.SetSelectedItems(items);
             this.ListBox.ScrollItemsIntoView(items);
         }
@@ -1284,7 +1291,7 @@ namespace NeeView
 
     public class FolderItemToNoteConverter : IMultiValueConverter
     {
-        public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
+        public object? Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
         {
             if (values[0] is FolderItem item && values[1] is FolderOrder order)
             {

@@ -23,16 +23,17 @@ namespace NeeView
         {
             _view = new NavigateView(model);
 
-            Icon = App.Current.MainWindow.Resources["pic_navigate"] as ImageSource;
+            Icon = App.Current.MainWindow.Resources["pic_navigate"] as ImageSource
+                ?? throw new InvalidOperationException("Cannot found resource");
 
-            Config.Current.Control.AddPropertyChanged(nameof(ControlConfig.IsSelected), (s, e) => IsSelectedChanged?.Invoke(this, null));
+            Config.Current.Control.AddPropertyChanged(nameof(ControlConfig.IsSelected), (s, e) => IsSelectedChanged?.Invoke(this, EventArgs.Empty));
         }
 
 #pragma warning disable CS0067
-        public event EventHandler IsVisibleLockChanged;
+        public event EventHandler? IsVisibleLockChanged;
 #pragma warning restore CS0067
 
-        public event EventHandler IsSelectedChanged;
+        public event EventHandler? IsSelectedChanged;
 
 
         public string TypeCode => nameof(NavigatePanel);

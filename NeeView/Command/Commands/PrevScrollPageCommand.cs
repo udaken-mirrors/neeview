@@ -19,14 +19,14 @@ namespace NeeView
             this.ParameterSource = new CommandParameterSource(new ScrollPageCommandParameter());
         }
 
-        public override bool CanExecute(object sender, CommandContext e)
+        public override bool CanExecute(object? sender, CommandContext e)
         {
             return !NowLoading.Current.IsDispNowLoading;
         }
 
-        public override void Execute(object sender, CommandContext e)
+        public override void Execute(object? sender, CommandContext e)
         {
-            MainViewComponent.Current.ViewController.PrevScrollPage(sender, (ScrollPageCommandParameter)e.Parameter);
+            MainViewComponent.Current.ViewController.PrevScrollPage(sender, e.Parameter.Cast<ScrollPageCommandParameter>());
         }
     }
 

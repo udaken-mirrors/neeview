@@ -23,9 +23,9 @@ namespace NeeView
     {
         #region INotifyPropertyChanged Support
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
-        protected bool SetProperty<T>(ref T storage, T value, [System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
+        protected bool SetProperty<T>(ref T storage, T value, [System.Runtime.CompilerServices.CallerMemberName] string? propertyName = null)
         {
             if (object.Equals(storage, value)) return false;
             storage = value;
@@ -33,7 +33,7 @@ namespace NeeView
             return true;
         }
 
-        protected void RaisePropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string name = null)
+        protected void RaisePropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string? name = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
@@ -50,11 +50,11 @@ namespace NeeView
         private string _consoleInput = "";
         private List<string> _history = new List<string>();
         private int _historyIndex;
-        private List<string> _candidates;
+        private List<string>? _candidates;
         private int _candidatesIndex;
         private bool _isPromptEnabled = true;
         private bool _isInputEnabled = true;
-        private CancellationTokenSource _cancellationTokenSource;
+        private CancellationTokenSource? _cancellationTokenSource;
 
         public ConsoleEmulator()
         {
@@ -93,7 +93,7 @@ namespace NeeView
                     control.ConsoleHost.Output += Log;
                 }
 
-                void Log(object sender, ConsoleHostOutputEventArgs args)
+                void Log(object? sender, ConsoleHostOutputEventArgs args)
                 {
                     control.WriteLine(args.Output ?? "");
                 }
@@ -251,7 +251,12 @@ namespace NeeView
             this.Scroller.ScrollToLeftEnd();
         }
 
-        private void ClearScreen(object sender, ExecutedRoutedEventArgs e)
+        private void ClearScreen(object? sender, ExecutedRoutedEventArgs e)
+        {
+            ClearScreen();
+        }
+
+        private void ClearScreen()
         {
             this.OutputBlock.Clear();
             this.OutputBlock.Visibility = Visibility.Collapsed;
@@ -259,7 +264,7 @@ namespace NeeView
             this.InputBlock.Focus();
         }
 
-        public void WriteLine(string text)
+        public void WriteLine(string? text)
         {
             //if (string.IsNullOrEmpty(text)) return;
 
@@ -320,7 +325,7 @@ namespace NeeView
             switch (input.Trim())
             {
                 case "cls":
-                    ClearScreen(this, null);
+                    ClearScreen();
                     break;
 
                 default:
@@ -388,10 +393,10 @@ namespace NeeView
 
     public interface IConsoleHost
     {
-        event EventHandler<ConsoleHostOutputEventArgs> Output;
+        event EventHandler<ConsoleHostOutputEventArgs>? Output;
 
         WordTree WordTree { get; }
 
-        string Execute(string input, CancellationToken token);
+        string? Execute(string input, CancellationToken token);
     }
 }

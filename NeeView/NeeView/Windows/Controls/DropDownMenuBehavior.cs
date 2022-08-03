@@ -49,7 +49,7 @@ namespace NeeView.Windows.Controls
             button.SetValue(DropDownMenuProperty, dropDownMenu);
         }
 
-        public static ContextMenu GetDropDownMenu(ToggleButton button)
+        public static ContextMenu? GetDropDownMenu(ToggleButton button)
         {
             return button.GetValue(DropDownMenuProperty) as ContextMenu;
         }

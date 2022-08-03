@@ -8,8 +8,8 @@ namespace NeeView
     public class PlaylistItem : BindableBase, IHasPage, IHasName
     {
         private PlaylistSourceItem _item;
-        private string _place;
-        private Page _archivePage;
+        private string? _place;
+        private Page? _archivePage;
         private bool? _isArchive;
 
 
@@ -70,7 +70,7 @@ namespace NeeView
                     }
                     else
                     {
-                        _place = ArchiveEntryUtility.GetExistEntryName(Path);
+                        _place = ArchiveEntryUtility.GetExistEntryName(Path) ?? "";
                     }
                 }
                 return _place;
@@ -113,9 +113,11 @@ namespace NeeView
             }
         }
 
-        private void Thumbnail_Touched(object sender, EventArgs e)
+        private void Thumbnail_Touched(object? sender, EventArgs e)
         {
-            var thumbnail = (Thumbnail)sender;
+            var thumbnail = sender as Thumbnail;
+            if (thumbnail is null) return;
+
             BookThumbnailPool.Current.Add(thumbnail);
         }
 
@@ -134,7 +136,7 @@ namespace NeeView
             return new PlaylistSourceItem(Path, Name);
         }
 
-        public override string ToString()
+        public override string? ToString()
         {
             return Name ?? base.ToString();
         }

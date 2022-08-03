@@ -11,8 +11,8 @@ namespace NeeView.Setting
     public class SettingPropertyValue<T>
     {
         private DependencyProperty _dependencyProperty;
-        private T _value;
-        private BindingBase _binding;
+        private T? _value;
+        private BindingBase? _binding;
 
         public SettingPropertyValue(DependencyProperty dp, T value)
         {

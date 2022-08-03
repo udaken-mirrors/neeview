@@ -9,11 +9,16 @@ namespace NeeView
     /// </summary>
     public class ArchiveEntryTreeNode : IEnumerable<ArchiveEntryTreeNode>
     {
+        public ArchiveEntryTreeNode()
+        {
+            Parent = null;
+            Name = "";
+        }
+
         public ArchiveEntryTreeNode(ArchiveEntryTreeNode parent, string name)
         {
             Parent = parent;
             Name = name;
-            Children = new List<ArchiveEntryTreeNode>();
 
             if (Parent != null)
             {
@@ -32,8 +37,8 @@ namespace NeeView
         /// </summary>
         public bool HasChild { get; set; }
 
-        public ArchiveEntryTreeNode Parent { get; private set; }
-        public List<ArchiveEntryTreeNode> Children { get; private set; }
+        public ArchiveEntryTreeNode? Parent { get; private set; }
+        public List<ArchiveEntryTreeNode> Children { get; private set; } = new List<ArchiveEntryTreeNode>();
 
         public string Path => LoosePath.Combine(Parent?.Path, Name);
 

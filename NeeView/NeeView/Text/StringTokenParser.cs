@@ -22,6 +22,8 @@ namespace NeeView.Text
             return this.GetEnumerator();
         }
 
+#nullable disable
+        // TODO: numsFactoryのインスタンス生成のあつかいを再検討。処理負荷に影響しそう。
         public IEnumerator<StringToken> GetEnumerator()
         {
             int state = 0;
@@ -99,6 +101,7 @@ namespace NeeView.Text
                     break;
             }
         }
+#nullable restore
 
         /// <summary>
         /// 数値のStringToken生成用
@@ -108,6 +111,13 @@ namespace NeeView.Text
             private long _n;
             private List<long> _nums = new List<long>(4);
             private List<char> _chars = new List<char>(8);
+
+            public void Clear()
+            {
+                _n = 0;
+                _nums.Clear();
+                _chars.Clear();
+            }
 
             public void Add(char c)
             {

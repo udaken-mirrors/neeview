@@ -17,13 +17,13 @@ namespace NeeView
             return new Binding(nameof(SliderConfig.IsEnabled)) { Source = Config.Current.Slider };
         }
 
-        public override string ExecuteMessage(object sender, CommandContext e)
+        public override string ExecuteMessage(object? sender, CommandContext e)
         {
             return Config.Current.Slider.IsEnabled ? Properties.Resources.ToggleVisiblePageSliderCommand_Off : Properties.Resources.ToggleVisiblePageSliderCommand_On;
         }
 
         [MethodArgument("@ToggleCommand.Execute.Remarks")]
-        public override void Execute(object sender, CommandContext e)
+        public override void Execute(object? sender, CommandContext e)
         {
             if (e.Args.Length > 0)
             {

@@ -17,7 +17,7 @@ namespace NeeView
         }
 
         [WordNodeMember]
-        public string Path
+        public string? Path
         {
             get { return _model.Place?.SimplePath; }
             set { AppDispatcher.Invoke(() => _model.RequestPlace(new QueryPath(value), null, FolderSetPlaceOption.UpdateHistory)); }
@@ -66,7 +66,7 @@ namespace NeeView
             _panel.Presenter.FolderListBox?.SetSelectedItems(selectedItems.Select(e => e.Source));
         }
 
-        private BookmarkItemAccessor[] ToStringArray(IEnumerable<FolderItem> items)
+        private BookmarkItemAccessor[] ToStringArray(IEnumerable<FolderItem>? items)
         {
             return items?.Select(e => new BookmarkItemAccessor(e)).ToArray() ?? new BookmarkItemAccessor[] { };
         }

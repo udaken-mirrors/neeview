@@ -24,8 +24,8 @@ namespace NeeView
         public static string DragDropFormat = $"{Environment.ProcessId}.BookAddress";
 
 
-        private AddressBarViewModel _vm;
-        private UIElement _popupClosedFocusElement;
+        private AddressBarViewModel? _vm;
+        private UIElement? _popupClosedFocusElement;
 
         
         public AddressBarView()
@@ -36,7 +36,7 @@ namespace NeeView
         }
 
 
-        public event DependencyPropertyChangedEventHandler IsAddressTextBoxFocusedChanged;
+        public event DependencyPropertyChangedEventHandler? IsAddressTextBoxFocusedChanged;
 
 
         #region DependencyProperties
@@ -63,7 +63,7 @@ namespace NeeView
             this.Root.DataContext = _vm;
         }
 
-        private void AddressTextBox_IsKeyboardFocusedChanged(object sender, DependencyPropertyChangedEventArgs e)
+        private void AddressTextBox_IsKeyboardFocusedChanged(object? sender, DependencyPropertyChangedEventArgs e)
         {
             IsAddressTextBoxFocusedChanged?.Invoke(sender, e);
         }
@@ -71,6 +71,8 @@ namespace NeeView
         // アドレスバー入力
         private void AddressTextBox_KeyDown(object sender, KeyEventArgs e)
         {
+            if (_vm is null) return;
+
             if (e.Key == Key.Return)
             {
                 _vm.Model.Address = this.AddressTextBox.Text;
@@ -86,6 +88,8 @@ namespace NeeView
         /// </summary>
         private void PrevHistoryButton_ContextMenuOpening(object sender, ContextMenuEventArgs e)
         {
+            if (_vm is null) return;
+
             var menu = (sender as FrameworkElement)?.ContextMenu;
             if (menu == null) return;
             menu.ItemsSource = _vm.GetHistory(-1, 10);
@@ -96,6 +100,8 @@ namespace NeeView
         /// </summary>
         private void NextHistoryButton_ContextMenuOpening(object sender, ContextMenuEventArgs e)
         {
+            if (_vm is null) return;
+
             var menu = (sender as FrameworkElement)?.ContextMenu;
             if (menu == null) return;
             menu.ItemsSource = _vm.GetHistory(+1, 10);
@@ -140,6 +146,8 @@ namespace NeeView
 
         private void BookButton_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
+            if (_vm is null) return;
+
             if (!_vm.Model.IsBookEnabled)
             {
                 return;
@@ -157,6 +165,8 @@ namespace NeeView
 
         private void BookButton_MouseMove(object sender, MouseEventArgs e)
         {
+            if (_vm is null) return;
+
             if (!_isButtonDown)
             {
                 return;
@@ -169,6 +179,7 @@ namespace NeeView
             }
 
             var element = sender as UIElement;
+            if (element is null) return;
 
             var pos = e.GetPosition(element);
             if (DragDropHelper.IsDragDistance(pos, _buttonDownPos))

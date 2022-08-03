@@ -14,7 +14,7 @@ namespace NeeView
         private PagemarkOrder _pagemarkOrder;
 
         [JsonInclude, JsonPropertyName(nameof(PagemarkFilePath))]
-        public string _pagemarkFilePath;
+        public string? _pagemarkFilePath;
 
 
         [PropertyMember]

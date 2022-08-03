@@ -34,7 +34,7 @@ namespace NeeView
         /// <summary>
         /// 表示コンテンツのトランスフォーム変更イベント
         /// </summary>
-        public event EventHandler<TransformEventArgs> TransformChanged;
+        public event EventHandler<TransformEventArgs>? TransformChanged;
 
 
         public TransformGroup TransformView { get; private set; }

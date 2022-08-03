@@ -112,7 +112,7 @@ namespace NeeView
         }
 
         public BookStartPageType StartPageType { get; private set; }
-        public string PageName { get; private set; }
+        public string? PageName { get; private set; }
         public bool IsResetLastPage { get; private set; }
     }
 
@@ -139,7 +139,7 @@ namespace NeeView
             }
         }
 
-        public static BookStartPage CreateBookStartPage(string entry, BookLoadOption options)
+        public static BookStartPage CreateBookStartPage(string? entry, BookLoadOption options)
         {
             if ((options & BookLoadOption.FirstPage) == BookLoadOption.FirstPage)
             {

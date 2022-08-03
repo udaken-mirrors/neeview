@@ -1,20 +1,14 @@
 ﻿using NeeLaboratory.ComponentModel;
 using NeeView.Data;
-using NeeView.Effects;
-using NeeView.Windows.Property;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Runtime.Serialization;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Data;
-using System.Windows.Resources;
 
 // TODO: コマンド引数にコマンドパラメータを渡せないだろうか。（現状メニュー呼び出しであることを示すタグが指定されることが有る)
 
@@ -45,7 +39,7 @@ namespace NeeView
     /// </summary>
     public class ObsoleteCommandItem
     {
-        public ObsoleteCommandItem(string obsolete, string alternative, int version)
+        public ObsoleteCommandItem(string obsolete, string? alternative, int version)
         {
             Obsolete = obsolete;
             Alternative = alternative;
@@ -53,7 +47,7 @@ namespace NeeView
         }
 
         public string Obsolete { get; }
-        public string Alternative { get; }
+        public string? Alternative { get; }
         public int Version { get; }
     }
 
@@ -86,7 +80,7 @@ namespace NeeView
         /// <summary>
         /// コマンドテーブルが変更された
         /// </summary>
-        public event EventHandler<CommandChangedEventArgs> Changed;
+        public event EventHandler<CommandChangedEventArgs>? Changed;
 
 
         public ScriptManager ScriptManager { get; private set; }
@@ -140,12 +134,12 @@ namespace NeeView
             return ((ICollection<KeyValuePair<string, CommandElement>>)_elements).Contains(item);
         }
 
-        public bool ContainsKey(string key)
+        public bool ContainsKey(string? key)
         {
             return key != null && _elements.ContainsKey(key);
         }
 
-        public bool TryGetValue(string key, out CommandElement value)
+        public bool TryGetValue(string key, [MaybeNullWhen(false)] out CommandElement value)
         {
             return ((IDictionary<string, CommandElement>)_elements).TryGetValue(key, out value);
         }
@@ -177,6 +171,7 @@ namespace NeeView
         /// <summary>
         /// コマンドテーブル初期化
         /// </summary>
+        [MemberNotNull(nameof(_elements), nameof(DefaultMemento), nameof(ObsoleteCommands))]
         private void InitializeCommandTable()
         {
             var list = new List<CommandElement>()
@@ -440,9 +435,11 @@ namespace NeeView
 
         #region Methods
 
-        public CommandElement GetElement(string key)
+        public CommandElement GetElement(string? key)
         {
-            if (TryGetValue(key, out CommandElement command))
+            if (key is null) return CommandElement.None;
+
+            if (TryGetValue(key, out CommandElement? command))
             {
                 return command;
             }
@@ -525,7 +522,7 @@ namespace NeeView
             Changed?.Invoke(this, new CommandChangedEventArgs(false));
         }
 
-        private void CommandTable_Changed(object sender, CommandChangedEventArgs e)
+        private void CommandTable_Changed(object? sender, CommandChangedEventArgs e)
         {
             ChangeCount++;
             ClearInputGestureDarty();
@@ -547,16 +544,16 @@ namespace NeeView
                     break;
 
                 case InputSceme.TypeB: // wheel page, right click contextmenu
-                    memento["NextScrollPage"].ShortCutKey = null;
-                    memento["PrevScrollPage"].ShortCutKey = null;
+                    memento["NextScrollPage"].ShortCutKey = "";
+                    memento["PrevScrollPage"].ShortCutKey = "";
                     memento["NextPage"].ShortCutKey = "Left,WheelDown";
                     memento["PrevPage"].ShortCutKey = "Right,WheelUp";
                     memento["OpenContextMenu"].ShortCutKey = "RightClick";
                     break;
 
                 case InputSceme.TypeC: // click page
-                    memento["NextScrollPage"].ShortCutKey = null;
-                    memento["PrevScrollPage"].ShortCutKey = null;
+                    memento["NextScrollPage"].ShortCutKey = "";
+                    memento["PrevScrollPage"].ShortCutKey = "";
                     memento["NextPage"].ShortCutKey = "Left,LeftClick";
                     memento["PrevPage"].ShortCutKey = "Right,RightClick";
                     memento["ViewScrollUp"].ShortCutKey = "WheelUp";
@@ -567,9 +564,9 @@ namespace NeeView
             return memento;
         }
 
-        public bool TryExecute(object sender, string commandName, object[] args, CommandOption option)
+        public bool TryExecute(object sender, string commandName, object[]? args, CommandOption option)
         {
-            if (TryGetValue(commandName, out CommandElement command))
+            if (TryGetValue(commandName, out CommandElement? command))
             {
                 var arguments = new CommandArgs(args, option);
                 if (command.CanExecute(sender, arguments))
@@ -704,7 +701,7 @@ namespace NeeView
             }
 
             // re order
-            var scripts = _elements.Values.OfType<ScriptCommand>().OrderBy(e => e.NameSource.Name).ThenBy(e =>e.NameSource.Number);
+            var scripts = _elements.Values.OfType<ScriptCommand>().OrderBy(e => e.NameSource.Name).ThenBy(e => e.NameSource.Number);
             var offset = _elements.Count;
             foreach (var item in scripts.Select((e, i) => (e, i)))
             {
@@ -807,7 +804,7 @@ namespace NeeView
             public bool IsScriptFolderEnabled { get; set; }
 
             [DataMember(EmitDefaultValue = false)]
-            public string ScriptFolder { get; set; }
+            public string? ScriptFolder { get; set; }
 
 
             [OnSerializing]
@@ -830,17 +827,17 @@ namespace NeeView
                 if (_Version < Environment.GenerateProductVersionNumber(32, 0, 0))
                 {
                     // 新しいコマンドに設定を引き継ぐ
-                    if (Elements.TryGetValue("ToggleVisibleFolderSearchBox", out CommandElement.Memento toggleVisibleFolderSearchBox))
+                    if (Elements.TryGetValue("ToggleVisibleFolderSearchBox", out CommandElement.Memento? toggleVisibleFolderSearchBox))
                     {
                         Elements["FocusFolderSearchBox"] = toggleVisibleFolderSearchBox;
                     }
 
-                    if (Elements.TryGetValue("ToggleVisibleBookmarkList", out CommandElement.Memento toggleVisibleBookmarkList))
+                    if (Elements.TryGetValue("ToggleVisibleBookmarkList", out CommandElement.Memento? toggleVisibleBookmarkList))
                     {
                         Elements["FocusBookmarkList"] = toggleVisibleBookmarkList;
                     }
 
-                    if (Elements.TryGetValue("ToggleVisibleFolderList", out CommandElement.Memento toggleVisibleFolderList))
+                    if (Elements.TryGetValue("ToggleVisibleFolderList", out CommandElement.Memento? toggleVisibleFolderList))
                     {
                         Elements["ToggleVisibleBookshelf"] = toggleVisibleFolderList;
                     }
@@ -937,7 +934,7 @@ namespace NeeView
                 config.Command.IsReversePageMove = IsReversePageMove;
                 config.Command.IsReversePageMoveWheel = IsReversePageMoveWheel;
                 config.Script.IsScriptFolderEnabled = IsScriptFolderEnabled;
-                config.Script.ScriptFolder = ScriptFolder;
+                config.Script.ScriptFolder = ScriptFolder ?? "";
             }
 
             public Memento Clone()
@@ -971,17 +968,17 @@ namespace NeeView
                 return collection;
 
 
-                CommandElement.MementoV2 CreateCommandMementoV2(CommandElement.Memento mementoV1, Type parameterType)
+                CommandElement.MementoV2 CreateCommandMementoV2(CommandElement.Memento mementoV1, Type? parameterType)
                 {
                     var mementoV2 = new CommandElement.MementoV2();
-                    mementoV2.ShortCutKey = mementoV1.ShortCutKey;
-                    mementoV2.TouchGesture = mementoV1.TouchGesture;
-                    mementoV2.MouseGesture = mementoV1.MouseGesture;
+                    mementoV2.ShortCutKey = mementoV1.ShortCutKey ?? "";
+                    mementoV2.TouchGesture = mementoV1.TouchGesture ?? "";
+                    mementoV2.MouseGesture = mementoV1.MouseGesture ?? "";
                     mementoV2.IsShowMessage = mementoV1.IsShowMessage;
 
                     if (parameterType != null && !string.IsNullOrWhiteSpace(mementoV1.Parameter))
                     {
-                        mementoV2.Parameter = (CommandParameter)Json.Deserialize(mementoV1.Parameter, parameterType);
+                        mementoV2.Parameter = (CommandParameter?)Json.Deserialize(mementoV1.Parameter, parameterType);
                     }
 
                     return mementoV2;
@@ -1003,7 +1000,7 @@ namespace NeeView
             return collection;
         }
 
-        public void RestoreCommandCollection(CommandCollection collection)
+        public void RestoreCommandCollection(CommandCollection? collection)
         {
             if (collection == null) return;
 

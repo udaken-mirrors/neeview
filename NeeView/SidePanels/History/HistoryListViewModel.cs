@@ -73,10 +73,10 @@ namespace NeeView
 
         #region Commands
 
-        private CancellationTokenSource _removeUnlinkedCommandCancellationToken;
-        private RelayCommand<PanelListItemStyle> _setListItemStyle;
-        private RelayCommand _removeAllCommand;
-        private RelayCommand _removeUnlinkedCommand;
+        private CancellationTokenSource? _removeUnlinkedCommandCancellationToken;
+        private RelayCommand<PanelListItemStyle>? _setListItemStyle;
+        private RelayCommand? _removeAllCommand;
+        private RelayCommand? _removeUnlinkedCommand;
 
         /// <summary>
         /// SetListItemStyle command.

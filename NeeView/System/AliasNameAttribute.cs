@@ -8,8 +8,8 @@ namespace NeeView
     [AttributeUsage(AttributeTargets.Field, Inherited = false, AllowMultiple = false)]
     public sealed class AliasNameAttribute : Attribute
     {
-        public string AliasName;
-        public string Remarks;
+        public string? AliasName;
+        public string? Remarks;
         public bool IsVisibled = true;
 
         public AliasNameAttribute()
@@ -27,7 +27,7 @@ namespace NeeView
         private static Dictionary<Type, Dictionary<Enum, string>> _cache = new Dictionary<Type, Dictionary<Enum, string>>();
 
 
-        public static string GetAliasName(object value)
+        public static string? GetAliasName(object value)
         {
             if (value is null) return null;
 
@@ -49,6 +49,7 @@ namespace NeeView
 
         // TODO: use _cache?
         public static Dictionary<T, string> GetAliasNameDictionary<T>()
+            where T : notnull
         {
             Debug.Assert(typeof(T).IsEnum);
 
@@ -61,6 +62,7 @@ namespace NeeView
 
         // TODO: use _cache?
         public static Dictionary<T, string> GetVisibledAliasNameDictionary<T>()
+            where T : notnull
         {
             Debug.Assert(typeof(T).IsEnum);
 
@@ -113,7 +115,7 @@ namespace NeeView
             return GetAliasNameInner(value, GetAliasNameAttribute(value));
         }
 
-        private static string GetAliasNameInner(object value, AliasNameAttribute attribute)
+        private static string GetAliasNameInner(object value, AliasNameAttribute? attribute)
         {
             var resourceKey = attribute?.AliasName ?? GetResourceKey(value);
             var resourceString = ResourceService.GetResourceString(resourceKey, true);
@@ -125,20 +127,23 @@ namespace NeeView
             }
 #endif
 
-            return resourceString ?? value.ToString();
+            return resourceString ?? value.ToString() ?? "???";
         }
 
 
-        private static AliasNameAttribute GetAliasNameAttribute(object value)
+        private static AliasNameAttribute? GetAliasNameAttribute(object value)
         {
+            var valueName = value.ToString();
+            if (valueName is null) return null;
+
             return value.GetType()
-                .GetField(value.ToString())
+                .GetField(valueName)?
                 .GetCustomAttributes(typeof(AliasNameAttribute), false)
                 .Cast<AliasNameAttribute>()
                 .FirstOrDefault();
         }
 
-        private static string GetResourceKey(object value, string postfix = null)
+        private static string GetResourceKey(object value, string? postfix = null)
         {
             var type = value.GetType();
             return $"@{type.Name}.{value}{postfix}";
@@ -149,23 +154,25 @@ namespace NeeView
 
         #region Remarks
 
-        public static string GetRemarks<T>(this T value)
+        public static string? GetRemarks<T>(this T value)
+            where T : notnull
         {
             return GetRemarks(value, GetAliasNameAttribute(value));
         }
 
-        private static string GetRemarks<T>(this T value, AliasNameAttribute attribute)
+        private static string? GetRemarks<T>(this T value, AliasNameAttribute? attribute)
+            where T : notnull
         {
             var resourceKey = attribute?.Remarks ?? GetResourceKey(value, ".Remarks");
             return ResourceService.GetResourceString(resourceKey, true);
         }
 
-        public static string GetRemarks(object value)
+        public static string? GetRemarks(object value)
         {
             return GetRemarks(value, GetAliasNameAttribute(value));
         }
 
-        private static string GetRemarks(object value, AliasNameAttribute attribute)
+        private static string? GetRemarks(object value, AliasNameAttribute? attribute)
         {
             var resourceKey = attribute?.Remarks ?? GetResourceKey(value, ".Remarks");
             return ResourceService.GetResourceString(resourceKey, true);
@@ -177,7 +184,7 @@ namespace NeeView
 
             return Enum.GetValues(type)
                 .Cast<Enum>()
-                .ToDictionary(e => e, e => GetRemarks(e, null));
+                .ToDictionary(e => e, e => GetRemarks(e, null) ?? "??");
         }
 
         #endregion Remarks

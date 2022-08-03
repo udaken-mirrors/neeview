@@ -1,6 +1,7 @@
 ﻿using NeeLaboratory;
 using NeeLaboratory.Collection;
 using NeeLaboratory.ComponentModel;
+using NeeLaboratory.Linq;
 using NeeView.Threading;
 using System;
 using System.Collections.Generic;
@@ -17,8 +18,8 @@ namespace NeeView
 {
     public class Playlist : BindableBase
     {
-        private ObservableCollection<PlaylistItem> _items;
-        private MultiMap<string, PlaylistItem> _itemsMap = new MultiMap<string, PlaylistItem>();
+        private ObservableCollection<PlaylistItem> _items = new();
+        private MultiMap<string, PlaylistItem> _itemsMap = new();
         private string _playlistPath;
         private object _lock = new object();
         private bool _isDarty;
@@ -27,14 +28,15 @@ namespace NeeView
         private bool _isNew;
 
 
-        public Playlist()
+        public Playlist(string path)
         {
+            _playlistPath = path;
         }
 
         public Playlist(string path, PlaylistSource playlistFile, bool isNew)
         {
             _isNew = false;
-            this.Path = path;
+            _playlistPath = path;
             this.Items = new ObservableCollection<PlaylistItem>(playlistFile.Items.Select(e => new PlaylistItem(e)));
             this.IsEditable = true;
             this.IsNew = isNew;
@@ -42,9 +44,9 @@ namespace NeeView
 
 
 
-        public event NotifyCollectionChangedEventHandler CollectionChanged;
+        public event NotifyCollectionChangedEventHandler? CollectionChanged;
 
-        public event EventHandler<PlaylistItemRenamedEventArgs> ItemRenamed;
+        public event EventHandler<PlaylistItemRenamedEventArgs>? ItemRenamed;
 
 
         public string Path
@@ -61,7 +63,7 @@ namespace NeeView
 
         public bool IsEditable
         {
-            get { return _isEditable && this.Items != null; }
+            get { return _isEditable; } //&& this.Items != null; }
             set { SetProperty(ref _isEditable, value); }
         }
 
@@ -96,15 +98,19 @@ namespace NeeView
                 {
                     if (_items != null)
                     {
-                        _items.CollectionChanged += OnCollectionChanged;
+                        _items.CollectionChanged -= OnCollectionChanged;
                     }
 
                     _items = value;
-                    _itemsMap = _items.ToMultiMap(x => x.Path, x => x);
 
                     if (_items != null)
                     {
+                        _itemsMap = _items.ToMultiMap(x => x.Path, x => x);
                         _items.CollectionChanged += OnCollectionChanged;
+                    }
+                    else
+                    {
+                        _itemsMap = new MultiMap<string, PlaylistItem>();
                     }
 
                     RaisePropertyChanged();
@@ -136,10 +142,10 @@ namespace NeeView
             set => Config.Current.Playlist.PanelListItemStyle = value;
         }
 
-        public string ErrorMessage { get; private set; }
+        public string? ErrorMessage { get; private set; }
 
 
-        private void OnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        private void OnCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
         {
             var oldItems = e.OldItems?.Cast<PlaylistItem>();
             var newItems = e.NewItems?.Cast<PlaylistItem>();
@@ -151,6 +157,7 @@ namespace NeeView
                     break;
 
                 case NotifyCollectionChangedAction.Add:
+                    if (newItems is null) throw new InvalidOperationException("newItems must not be null when Add");
                     foreach (PlaylistItem item in newItems)
                     {
                         _itemsMap.Add(item.Path, item);
@@ -158,6 +165,7 @@ namespace NeeView
                     break;
 
                 case NotifyCollectionChangedAction.Remove:
+                    if (oldItems is null) throw new InvalidOperationException("oldItems must not be null when Remove");
                     foreach (PlaylistItem item in oldItems)
                     {
                         _itemsMap.Remove(item.Path, item);
@@ -168,6 +176,8 @@ namespace NeeView
                     break;
 
                 case NotifyCollectionChangedAction.Replace:
+                    if (newItems is null) throw new InvalidOperationException("newItems must not be null when Replace");
+                    if (oldItems is null) throw new InvalidOperationException("oldItems must not be null when Replace");
                     foreach (PlaylistItem item in oldItems.Except(newItems))
                     {
                         _itemsMap.Remove(item.Path, item);
@@ -182,7 +192,7 @@ namespace NeeView
                     throw new NotSupportedException();
             }
 
-            Debug.Assert(this.Items.Count == _itemsMap.Count);
+            Debug.Assert(_items.Count == _itemsMap.Count);
 
             CollectionChanged?.Invoke(this, e);
         }
@@ -191,13 +201,13 @@ namespace NeeView
         {
             lock (_lock)
             {
-                return new PlaylistSource(this.Items.Select(e => e.ToPlaylistItem()));
+                return new PlaylistSource(_items.Select(e => e.ToPlaylistItem()));
             }
         }
 
-        public PlaylistItem Find(string path)
+        public PlaylistItem? Find(string path)
         {
-            if (this.Items is null) return null;
+            if (_items is null) return null;
 
             lock (_lock)
             {
@@ -217,18 +227,18 @@ namespace NeeView
             lock (_lock)
             {
                 return paths.Select(e => _itemsMap.TryGetValue(e, out var item) ? item : null)
-                    .Where(e => e != null)
+                    .WhereNotNull()
                     .ToList();
             }
         }
 
-        public List<PlaylistItem> Add(IEnumerable<string> paths)
+        public List<PlaylistItem>? Add(IEnumerable<string> paths)
         {
-            var targetItem = Config.Current.Playlist.IsFirstIn ? this.Items.FirstOrDefault() : null;
+            var targetItem = Config.Current.Playlist.IsFirstIn ? _items?.FirstOrDefault() : null;
             return Insert(paths, targetItem);
         }
 
-        public PlaylistItem Insert(string path, PlaylistItem targetItem)
+        public PlaylistItem? Insert(string path, PlaylistItem? targetItem)
         {
             if (!IsEditable) return null;
             if (path is null) return null;
@@ -239,20 +249,20 @@ namespace NeeView
                 return item;
             }
 
-            var index = targetItem != null ? this.Items.IndexOf(targetItem) : this.Items.Count;
+            var index = targetItem != null ? _items.IndexOf(targetItem) : _items.Count;
             if (index < 0) return null;
             item = new PlaylistItem(path);
-            this.Items.Insert(index, item);
+            _items.Insert(index, item);
 
             _isDarty = true;
 
             return item;
         }
 
-        public List<PlaylistItem> Insert(IEnumerable<string> paths, PlaylistItem targetItem)
+        public List<PlaylistItem>? Insert(IEnumerable<string> paths, PlaylistItem? targetItem)
         {
             if (!IsEditable) return null;
-            if (paths is null && !paths.Any()) return null;
+            if (paths is null || !paths.Any()) return null;
 
             if (paths.Count() == 1)
             {
@@ -264,18 +274,18 @@ namespace NeeView
 
             lock (_lock)
             {
-                var oldCount = this.Items.Count;
+                var oldCount = _items.Count;
 
-                var index = targetItem != null ? this.Items.IndexOf(targetItem) : this.Items.Count;
+                var index = targetItem != null ? _items.IndexOf(targetItem) : _items.Count;
 
                 var pathList = paths.ToList();
 
-                var entries = this.Items.Select(e => e.Path).ToList();
+                var entries = _items.Select(e => e.Path).ToList();
                 var keepEntries = pathList.Intersect(entries).ToList();
                 var newEntries = pathList.Except(entries).Select(e => new PlaylistItem(e)).ToList();
 
-                this.Items = new ObservableCollection<PlaylistItem>(this.Items.Take(index).Concat(newEntries.Concat(this.Items.Skip(index))));
-                Debug.Assert(this.Items.Count == oldCount + newEntries.Count);
+                this.Items = new ObservableCollection<PlaylistItem>(_items.Take(index).Concat(newEntries.Concat(_items.Skip(index))));
+                Debug.Assert(_items.Count == oldCount + newEntries.Count);
 
                 var already = Collect(keepEntries);
                 news = newEntries.Concat(already).ToList();
@@ -293,7 +303,7 @@ namespace NeeView
 
             lock (_lock)
             {
-                this.Items.Remove(item);
+                _items.Remove(item);
 
                 _isDarty = true;
             }
@@ -302,7 +312,7 @@ namespace NeeView
         public void Remove(IEnumerable<PlaylistItem> items)
         {
             if (!IsEditable) return;
-            if (items is null && !items.Any()) return;
+            if (items is null || !items.Any()) return;
 
             if (items.Count() == 1)
             {
@@ -311,7 +321,7 @@ namespace NeeView
 
             lock (_lock)
             {
-                this.Items = new ObservableCollection<PlaylistItem>(this.Items.Except(items));
+                this.Items = new ObservableCollection<PlaylistItem>(_items.Except(items));
 
                 _isDarty = true;
             }
@@ -323,7 +333,7 @@ namespace NeeView
 
             // 削除項目収集
             var unlinked = new List<PlaylistItem>();
-            foreach (var node in this.Items)
+            foreach (var node in _items)
             {
                 if (!await ArchiveEntryUtility.ExistsAsync(node.Path, token))
                 {
@@ -336,7 +346,7 @@ namespace NeeView
             ToastService.Current.Show(new Toast(string.Format(Properties.Resources.Playlist_DeleteItemsMessage, unlinked.Count)));
         }
 
-        public void Move(PlaylistItem item, PlaylistItem targetItem)
+        public void Move(PlaylistItem item, PlaylistItem? targetItem)
         {
             if (!IsEditable) return;
             if (item is null) return;
@@ -344,16 +354,16 @@ namespace NeeView
 
             lock (_lock)
             {
-                var oldIndex = this.Items.IndexOf(item);
+                var oldIndex = _items.IndexOf(item);
                 if (oldIndex < 0) return;
-                var newIndex = targetItem is null ? this.Items.Count - 1 : this.Items.IndexOf(targetItem);
-                this.Items.Move(oldIndex, newIndex);
+                var newIndex = targetItem is null ? _items.Count - 1 : _items.IndexOf(targetItem);
+                _items.Move(oldIndex, newIndex);
 
                 _isDarty = true;
             }
         }
 
-        public void Move(IEnumerable<PlaylistItem> items, PlaylistItem targetItem)
+        public void Move(IEnumerable<PlaylistItem> items, PlaylistItem? targetItem)
         {
             if (!IsEditable) return;
             if (items is null || !items.Any()) return;
@@ -367,22 +377,22 @@ namespace NeeView
 
             lock (_lock)
             {
-                var oldCount = this.Items.Count;
+                var oldCount = _items.Count;
 
                 var itemsA = items
-                    .Select(e => (value: e, index: this.Items.IndexOf(e)))
+                    .Select(e => (value: e, index: _items.IndexOf(e)))
                     .Where(e => e.index >= 0)
                     .OrderBy(e => e.index)
                     .Select(e => e.value)
                     .ToList();
 
-                var itemsB = this.Items.Except(itemsA).ToList();
+                var itemsB = _items.Except(itemsA).ToList();
 
-                var isMoveDown = targetItem is null || this.Items.IndexOf(itemsA.First()) < this.Items.IndexOf(targetItem);
+                var isMoveDown = targetItem is null || _items.IndexOf(itemsA.First()) < _items.IndexOf(targetItem);
                 var index = targetItem is null ? itemsB.Count : itemsB.IndexOf(targetItem) + (isMoveDown ? 1 : 0);
 
                 this.Items = new ObservableCollection<PlaylistItem>(itemsB.Take(index).Concat(itemsA.Concat(itemsB.Skip(index))));
-                Debug.Assert(this.Items.Count == oldCount);
+                Debug.Assert(_items.Count == oldCount);
 
                 _isDarty = true;
             }
@@ -394,7 +404,7 @@ namespace NeeView
 
             lock (_lock)
             {
-                var sorted = this.Items.OrderBy(e => e.Path, NaturalSort.Comparer);
+                var sorted = _items.OrderBy(e => e.Path, NaturalSort.Comparer);
                 this.Items = new ObservableCollection<PlaylistItem>(sorted);
 
                 _isDarty = true;
@@ -435,57 +445,59 @@ namespace NeeView
             BookHub.Current.RequestLoad(this, item.Path, null, options, true);
         }
 
-        public bool CanMoveUp(PlaylistItem item)
+        public bool CanMoveUp(PlaylistItem? item)
         {
             if (!IsEditable) return false;
             if (item is null) return false;
 
-            var index = this.Items.IndexOf(item);
+            var index = _items.IndexOf(item);
             if (index <= 0) return false;
 
             if (Config.Current.Playlist.IsGroupBy)
             {
-                return this.Items.Take(index).Any(e => e.Place == item.Place);
+                return _items.Take(index).Any(e => e.Place == item.Place);
             }
 
             return true;
         }
 
-        public void MoveUp(PlaylistItem item)
+        public void MoveUp(PlaylistItem? item)
         {
+            if (item is null) return;
             if (!CanMoveUp(item)) return;
 
-            var index = this.Items.IndexOf(item);
-            var target = Config.Current.Playlist.IsGroupBy ? this.Items.Take(index).LastOrDefault(e => e.Place == item.Place) : this.Items[index - 1];
+            var index = _items.IndexOf(item);
+            var target = Config.Current.Playlist.IsGroupBy ? _items.Take(index).LastOrDefault(e => e.Place == item.Place) : _items[index - 1];
             if (target is null) return;
 
             Move(item, target);
         }
 
-        public bool CanMoveDown(PlaylistItem item)
+        public bool CanMoveDown(PlaylistItem? item)
         {
             if (!IsEditable) return false;
             if (item is null) return false;
 
-            var index = this.Items.IndexOf(item);
+            var index = _items.IndexOf(item);
             if (index < 0) return false;
-            if (index >= this.Items.Count - 1) return false;
+            if (index >= _items.Count - 1) return false;
 
             if (Config.Current.Playlist.IsGroupBy)
             {
-                return this.Items.Skip(index + 1).Any(e => e.Place == item.Place);
+                return _items.Skip(index + 1).Any(e => e.Place == item.Place);
             }
 
             return true;
         }
 
-        public void MoveDown(PlaylistItem item)
+        public void MoveDown(PlaylistItem? item)
         {
+            if (item is null) return;
             if (!CanMoveDown(item)) return;
 
-            var index = this.Items.IndexOf(item);
+            var index = _items.IndexOf(item);
 
-            var target = Config.Current.Playlist.IsGroupBy ? this.Items.Skip(index + 1).FirstOrDefault(e => e.Place == item.Place) : this.Items[index + 1];
+            var target = Config.Current.Playlist.IsGroupBy ? _items.Skip(index + 1).FirstOrDefault(e => e.Place == item.Place) : _items[index + 1];
             if (target is null) return;
 
             Move(item, target);
@@ -496,7 +508,7 @@ namespace NeeView
 
         private SimpleDelayAction _delaySave = new SimpleDelayAction();
         private SemaphoreSlim _saveSemaphore = new SemaphoreSlim(1, 1);
-        private CancellationTokenSource _cancellationTokenSource;
+        private CancellationTokenSource? _cancellationTokenSource;
 
         public void DelaySave(Action savedCallback)
         {
@@ -518,7 +530,7 @@ namespace NeeView
             _cancellationTokenSource = null;
         }
 
-        public void Save(Action savedCallback, bool isForce = false)
+        public void Save(Action? savedCallback, bool isForce = false)
         {
             if (!this.IsEditable) return;
             if (this.Path is null) return;
@@ -549,7 +561,7 @@ namespace NeeView
             Task.Run(async () => await SaveAsync(this.Path, source, savedCallback, _cancellationTokenSource.Token));
         }
 
-        private async Task SaveAsync(string path, PlaylistSource source, Action SavedCallback, CancellationToken token)
+        private async Task SaveAsync(string path, PlaylistSource source, Action? SavedCallback, CancellationToken token)
         {
             await _saveSemaphore.WaitAsync();
             try
@@ -603,7 +615,7 @@ namespace NeeView
                     }
                     else
                     {
-                        return new Playlist();
+                        return new Playlist(path);
                     }
                 }
                 else
@@ -618,12 +630,13 @@ namespace NeeView
             }
             catch (Exception ex)
             {
+                // TODO: 例外時にこのインスタンスを返すのは問題ありそう
                 Debug.WriteLine(ex.Message);
-                return new Playlist() { ErrorMessage = ex.Message };
+                return new Playlist(path) { ErrorMessage = ex.Message };
             }
         }
 
-        private static PlaylistSource LoadPlaylist(string path)
+        private static PlaylistSource? LoadPlaylist(string path)
         {
             try
             {
@@ -657,6 +670,7 @@ namespace NeeView
             if (!playlist.IsEditable) return;
 
             var newItems = playlist.Add(items.Select(e => e.Path).ToArray());
+            if (newItems is null) throw new InvalidOperationException("Playlist.Add must be successed");
 
             var map = items.Where(e => e.IsNameChanged).ToDictionary(e => e.Path, e => e);
             foreach (var item in newItems)

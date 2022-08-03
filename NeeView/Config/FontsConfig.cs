@@ -14,7 +14,7 @@ namespace NeeView
 
         [JsonPropertyName(nameof(FontName))]
         [JsonInclude]
-        public string _fontName;
+        public string? _fontName;
 
         /// <summary>
         /// 標準フォント名

@@ -38,13 +38,13 @@ namespace NeeView
 
         private SidePanelFrame()
         {
-            CustomLayoutPanelManager.Current.CollectionChanged += (s, e) => RaisePanelPropertyChanged();
+            CustomLayoutPanelMessenger.CollectionChanged += (s, e) => RaisePanelPropertyChanged();
         }
 
 
 
         // パネル表示要求
-        public event EventHandler<VisibleAtOnceRequestEventArgs> VisibleAtOnceRequest;
+        public event EventHandler<VisibleAtOnceRequestEventArgs>? VisibleAtOnceRequest;
 
 
         // サイドバー表示ロック。自動非表示にならないようにする
@@ -58,7 +58,7 @@ namespace NeeView
         /// <summary>
         ///  タッチスクロール終端挙動汎用
         /// </summary>
-        public void ScrollViewer_ManipulationBoundaryFeedback(object sender, ManipulationBoundaryFeedbackEventArgs e)
+        public void ScrollViewer_ManipulationBoundaryFeedback(object? sender, ManipulationBoundaryFeedbackEventArgs e)
         {
             if (!Config.Current.Panels.IsManipulationBoundaryFeedbackEnabled)
             {
@@ -263,7 +263,7 @@ namespace NeeView
         public bool FocusBookshelfBookmarkList(bool byMenu)
         {
             // フォルダーツリーは「ブックマークリスト」を選択した状態にする
-            BookshelfFolderTreeModel.Current.SelectRootBookmarkFolder();
+            BookshelfFolderTreeModel.Current?.SelectRootBookmarkFolder();
             BookshelfFolderList.Current.RequestPlace(new QueryPath(QueryScheme.Bookmark, null), null, FolderSetPlaceOption.UpdateHistory | FolderSetPlaceOption.Refresh);
 
             // フォルダーリスト選択
@@ -320,7 +320,7 @@ namespace NeeView
             // フォーカス要求。表示前に要求する
             if (!byMenu && isVisible)
             {
-                BookshelfFolderTreeModel.Current.FocusAtOnce();
+                BookshelfFolderTreeModel.Current?.FocusAtOnce();
             }
 
             Config.Current.Bookshelf.IsFolderTreeVisible = isVisible;
@@ -346,7 +346,7 @@ namespace NeeView
             // フォーカス要求。表示前に要求する
             if (!byMenu && isVisible)
             {
-                BookmarkFolderTreeModel.Current.FocusAtOnce();
+                BookmarkFolderTreeModel.Current?.FocusAtOnce();
             }
 
             Config.Current.Bookmark.IsFolderTreeVisible = isVisible;
@@ -376,14 +376,14 @@ namespace NeeView
             public bool IsManipulationBoundaryFeedbackEnabled { get; set; }
 
             [DataMember]
-            public SidePanelGroup.Memento Left { get; set; }
+            public SidePanelGroup.Memento? Left { get; set; }
 
             [DataMember]
-            public SidePanelGroup.Memento Right { get; set; }
+            public SidePanelGroup.Memento? Right { get; set; }
 
             #region Obsolete
             [Obsolete, DataMember(EmitDefaultValue = false)]
-            public string FontName { get; set; } // ver 32.0
+            public string? FontName { get; set; } // ver 32.0
 
             [Obsolete, DataMember(EmitDefaultValue = false)]
             public double FontSize { get; set; } // ver 32.0
@@ -411,18 +411,30 @@ namespace NeeView
                 config.Panels.IsSideBarEnabled = IsSideBarVisible;
                 config.Panels.IsManipulationBoundaryFeedbackEnabled = IsManipulationBoundaryFeedbackEnabled;
                 config.Panels.PanelDocks = new Dictionary<string, PanelDock>();
-                foreach (var panelTypeCode in Left.PanelTypeCodes)
+                if (Left is not null)
                 {
-                    config.Panels.PanelDocks.Add(panelTypeCode, PanelDock.Left);
+                    if (Left.PanelTypeCodes is not null)
+                    {
+                        foreach (var panelTypeCode in Left.PanelTypeCodes)
+                        {
+                            config.Panels.PanelDocks.Add(panelTypeCode, PanelDock.Left);
+                        }
+                    }
+                    config.Panels.LeftPanelSeleted = Left.SelectedPanelTypeCode;
+                    config.Panels.LeftPanelWidth = Left.Width;
                 }
-                foreach (var panelTypeCode in Right.PanelTypeCodes)
+                if (Right is not null)
                 {
-                    config.Panels.PanelDocks.Add(panelTypeCode, PanelDock.Right);
+                    if (Right.PanelTypeCodes is not null)
+                    {
+                        foreach (var panelTypeCode in Right.PanelTypeCodes)
+                        {
+                            config.Panels.PanelDocks.Add(panelTypeCode, PanelDock.Right);
+                        }
+                    }
+                    config.Panels.RightPanelSeleted = Right.SelectedPanelTypeCode;
+                    config.Panels.RightPanelWidth = Right.Width;
                 }
-                config.Panels.LeftPanelSeleted = Left.SelectedPanelTypeCode;
-                config.Panels.RightPanelSeleted = Right.SelectedPanelTypeCode;
-                config.Panels.LeftPanelWidth = Left.Width;
-                config.Panels.RightPanelWidth = Right.Width;
 #pragma warning restore CS0612 // 型またはメンバーが旧型式です
             }
         }

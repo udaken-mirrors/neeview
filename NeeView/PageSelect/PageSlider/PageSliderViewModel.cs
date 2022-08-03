@@ -17,7 +17,7 @@ namespace NeeView
 
         public PageSliderViewModel(PageSlider model)
         {
-            if (model == null) return;
+            if (model == null) throw new InvalidOperationException();
 
             _model = model;
 
@@ -50,7 +50,7 @@ namespace NeeView
         public double FontSize => Math.Min(FontParameters.Current.DefaultFontSize, Config.Current.Slider.Thickness);
 
 
-        public void MouseWheel(object sender, MouseWheelEventArgs e)
+        public void MouseWheel(object? sender, MouseWheelEventArgs e)
         {
             int turn = _mouseWheelDelta.NotchCount(e);
             if (turn == 0) return;

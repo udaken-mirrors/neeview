@@ -36,7 +36,7 @@ namespace NeeView
         /// </summary>
         /// <param name="type">target type</param>
         /// <returns>default value</returns>
-        public static object GetDefaultValue(this Type type)
+        public static object? GetDefaultValue(this Type type)
         {
             if (type.IsValueType && Nullable.GetUnderlyingType(type) == null)
             {

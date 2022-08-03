@@ -5,7 +5,7 @@ namespace NeeView
 {
     public interface IHasPictureSource
     {
-        PictureSource PictureSource { get; }
+        PictureSource? PictureSource { get; }
         bool IsPictureSourceLocked { get; }
         void UnloadPictureSource();
     }
@@ -51,7 +51,7 @@ namespace NeeView
         }
 
         // NOTE: 不意のインスタンス喪失に対応
-        private long GetPictureSourceMemorySize(PictureSource source)
+        private long GetPictureSourceMemorySize(PictureSource? source)
         {
             return source != null ? source.GetMemorySize() : 0;
         }

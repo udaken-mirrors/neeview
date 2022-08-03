@@ -33,13 +33,13 @@ namespace NeeView
             return _builder.ToString();
         }
 
-        public JsonStringBulder AppendObject(object source)
+        public JsonStringBulder AppendObject(object? source)
         {
             AppendObject(_builder, source, 0);
             return this;
         }
 
-        private IndentStringBuilder AppendObject(IndentStringBuilder builder, object source, int depth)
+        private IndentStringBuilder AppendObject(IndentStringBuilder builder, object? source, int depth)
         {
             if (source is null)
             {

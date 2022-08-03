@@ -20,7 +20,7 @@ namespace NeeView.Setting
     /// </summary>
     public partial class DragActionGestureControl : UserControl
     {
-        private DragActionGestureControlViewModel _vm;
+        private DragActionGestureControlViewModel? _vm;
 
 
         public DragActionGestureControl()

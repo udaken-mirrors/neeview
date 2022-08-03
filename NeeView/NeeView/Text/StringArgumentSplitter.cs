@@ -67,7 +67,7 @@ namespace NeeView.Text
         }
 
 
-        public List<string> Split(string source)
+        public List<string> Split(string? source)
         {
             if (string.IsNullOrEmpty(source))
             {
@@ -213,7 +213,7 @@ namespace NeeView.Text
     {
         private static StringArgumentSplitter _argumentSplitter = new StringArgumentSplitter();
 
-        public static List<string> SplitArgument(string s)
+        public static List<string> SplitArgument(string? s)
         {
             return _argumentSplitter.Split(s);
         }
@@ -225,7 +225,7 @@ namespace NeeView.Text
         {
             var argument = new StringArgumentSplitter();
 
-            var samples = new string[]
+            var samples = new string?[]
             {
                 null,
                 "",

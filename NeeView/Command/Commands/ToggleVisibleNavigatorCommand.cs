@@ -18,13 +18,13 @@ namespace NeeView
             return new Binding(nameof(SidePanelFrame.IsVisibleNavigator)) { Source = SidePanelFrame.Current };
         }
 
-        public override string ExecuteMessage(object sender, CommandContext e)
+        public override string ExecuteMessage(object? sender, CommandContext e)
         {
             return SidePanelFrame.Current.IsVisibleNavigator ? Properties.Resources.ToggleVisibleNavigatorCommand_Off : Properties.Resources.ToggleVisibleNavigatorCommand_On;
         }
 
         [MethodArgument("@ToggleCommand.Execute.Remarks")]
-        public override void Execute(object sender, CommandContext e)
+        public override void Execute(object? sender, CommandContext e)
         {
             if (e.Args.Length > 0)
             {

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NeeLaboratory.Linq;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -43,7 +44,7 @@ namespace NeeView
             return Find(page) != null;
         }
 
-        public PlaylistItem Find(Page page)
+        public PlaylistItem? Find(Page page)
         {
             if (_playlist is null) return null;
             if (page is null) return null;
@@ -51,7 +52,7 @@ namespace NeeView
             return _playlist.Find(page.EntryFullName);
         }
 
-        public PlaylistItem Add(Page page)
+        public PlaylistItem? Add(Page page)
         {
             if (_playlist is null) return null;
             if (page is null) return null;
@@ -59,7 +60,7 @@ namespace NeeView
             return Add(new List<Page> { page })?.FirstOrDefault();
         }
 
-        public List<PlaylistItem> Add(IEnumerable<Page> pages)
+        public List<PlaylistItem>? Add(IEnumerable<Page> pages)
         {
             if (_playlist is null) return null;
             if (pages is null) return null;
@@ -93,7 +94,7 @@ namespace NeeView
             }
         }
 
-        public PlaylistItem Set(Page page, bool isEntry)
+        public PlaylistItem? Set(Page page, bool isEntry)
         {
             if (_playlist is null) return null;
             if (page is null) return null;
@@ -109,7 +110,7 @@ namespace NeeView
             }
         }
 
-        public PlaylistItem Toggle(Page page)
+        public PlaylistItem? Toggle(Page page)
         {
             if (_playlist is null) return null;
             if (page is null) return null;
@@ -122,8 +123,9 @@ namespace NeeView
             if (_playlist?.Items is null) return new List<Page>();
 
             return _playlist.Items
-                .Select(e => _book.Pages.PageMap.TryGetValue(e.Path, out Page page) ? page : null)
-                .Where(e => e != null).ToList();
+                .Select(e => _book.Pages.PageMap.TryGetValue(e.Path, out Page? page) ? page : null)
+                .WhereNotNull()
+                .ToList();
         }
 
     }

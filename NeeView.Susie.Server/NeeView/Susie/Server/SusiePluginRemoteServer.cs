@@ -46,6 +46,8 @@ namespace NeeView.Susie.Server
 
         private TResult DeserializeChunk<TResult>(Chunk chunk)
         {
+            if (chunk.Data is null) throw new InvalidOperationException("chunk.Data must not be null");
+
             return DefaultSerializer.Deserialize<TResult>(chunk.Data);
         }
 
@@ -74,7 +76,7 @@ namespace NeeView.Susie.Server
         {
             var args = DeserializeChunk<SusiePluginCommandGetPlugin>(command[0]);
             Trace.WriteLine($"Remote.GetPlugin: {args.PluginNames}");
-            var pluginInfos =  _process.GetPlugin(args.PluginNames);
+            var pluginInfos = _process.GetPlugin(args.PluginNames);
             return CreateResult(SusiePluginCommandId.GetPlugin, new SusiePluginCommandGetPluginResult(pluginInfos));
         }
 
@@ -127,9 +129,18 @@ namespace NeeView.Susie.Server
             Trace.WriteLine($"Remote.GetImage: {args.FileName}");
             var buff = command[1].Data;
             var susieImage = _process.GetImage(args.PluginName, args.FileName, buff, args.IsCheckExtension);
-            var result =  CreateResult(SusiePluginCommandId.GetImage, new SusiePluginCommandGetImageResult(susieImage.Plugin));
-            result.Add(new Chunk(SusiePluginCommandId.GetImage, susieImage.BitmapData));
-            return result;
+            if (susieImage != null)
+            {
+                var result = CreateResult(SusiePluginCommandId.GetImage, new SusiePluginCommandGetImageResult(susieImage.Plugin));
+                result.Add(new Chunk(SusiePluginCommandId.GetImage, susieImage.BitmapData));
+                return result;
+            }
+            else
+            {
+                var result = CreateResult(SusiePluginCommandId.GetImage, new SusiePluginCommandGetImageResult(null));
+                result.Add(new Chunk(SusiePluginCommandId.GetImage, null));
+                return result;
+            }
         }
 
 

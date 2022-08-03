@@ -6,7 +6,7 @@ namespace NeeView
     public class MainViewLockerMediator
     {
         private MainView _mainView;
-        private MainViewLockerKey _currentKey;
+        private MainViewLockerKey? _currentKey;
         private DelayValue<bool> _lockValue;
 
         public MainViewLockerMediator(MainView mainView)
@@ -17,7 +17,7 @@ namespace NeeView
             _lockValue.ValueChanged += LockValue_ValueChanged;
         }
 
-        private void LockValue_ValueChanged(object sender, EventArgs e)
+        private void LockValue_ValueChanged(object? sender, EventArgs e)
         {
             _mainView.SetResizeLock(_lockValue.Value);
         }

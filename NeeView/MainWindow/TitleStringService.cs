@@ -6,7 +6,7 @@ namespace NeeView
 {
     public class TitleStringService
     {
-        private static TitleStringService _default;
+        private static TitleStringService? _default;
         public static TitleStringService Default => _default = _default ?? new TitleStringService(MainViewComponent.Current);
 
 
@@ -33,10 +33,10 @@ namespace NeeView
         }
 
 
-        public event EventHandler Changed;
+        public event EventHandler? Changed;
 
 
-        private void ReplaceString_Changed(object sender, ReplaceStringChangedEventArgs e)
+        private void ReplaceString_Changed(object? sender, ReplaceStringChangedEventArgs e)
         {
             _changedCount++;
         }
@@ -73,6 +73,7 @@ namespace NeeView
 
             string GetPageNum(ViewContent content)
             {
+                if (content.Source is null) return "";
                 return content.IsValid ? (content.Source.PagePart.PartSize == 2) ? (content.Position.Index + 1).ToString() : (content.Position.Index + 1).ToString() + (content.Position.Part == 1 ? ".5" : ".0") : "";
             }
 
@@ -84,7 +85,7 @@ namespace NeeView
 
             string GetFullName(ViewContent content)
             {
-                return content.IsValid ? content.FullPath.Replace("/", " > ").Replace("\\", " > ") + content.GetPartString() : "";
+                return (content.IsValid && content.FullPath != null) ? content.FullPath.Replace("/", " > ").Replace("\\", " > ") + content.GetPartString() : "";
             }
 
             string name0 = GetName(contents[0]);
@@ -108,7 +109,7 @@ namespace NeeView
             _replaceString.Set("$SizeExL", bpp1);
             _replaceString.Set("$SizeExR", bpp0);
 
-            string GetSizeEx(PictureInfo pictureInfo)
+            string GetSizeEx(PictureInfo? pictureInfo)
             {
                 return pictureInfo != null ? GetSize(pictureInfo) + "×" + pictureInfo.BitsPerPixel.ToString() : "";
             }
@@ -119,7 +120,7 @@ namespace NeeView
             _replaceString.Set("$SizeL", size1);
             _replaceString.Set("$SizeR", size0);
 
-            string GetSize(PictureInfo pictureInfo)
+            string GetSize(PictureInfo? pictureInfo)
             {
                 return pictureInfo != null ? $"{pictureInfo.OriginalSize.Width}×{pictureInfo.OriginalSize.Height}" : "";
             }
@@ -137,7 +138,7 @@ namespace NeeView
 
             if (_changedCount > 0)
             {
-                Changed?.Invoke(this, null);
+                Changed?.Invoke(this, EventArgs.Empty);
             }
         }
     }

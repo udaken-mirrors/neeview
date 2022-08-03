@@ -1,5 +1,6 @@
 ﻿using NeeLaboratory.ComponentModel;
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.Serialization;
 using System.Text.Json.Serialization;
 
@@ -8,11 +9,11 @@ namespace NeeView
     [DataContract]
     public class QuickAccess : BindableBase, ICloneable
     {
-        private string _path;
+        private string? _path;
 
         [JsonInclude, JsonPropertyName(nameof(Name))]
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-        public string _name;
+        public string? _name;
 
 
         public QuickAccess()
@@ -25,9 +26,10 @@ namespace NeeView
         }
 
         [DataMember]
-        public string Path
+        [NotNull]
+        public string? Path
         {
-            get { return _path; }
+            get { return _path ?? ""; }
             set
             {
                 if (SetProperty(ref _path, value))
@@ -39,7 +41,8 @@ namespace NeeView
         }
 
         [JsonIgnore]
-        public string Name
+        [NotNull]
+        public string? Name
         {
             get
             {
@@ -47,7 +50,7 @@ namespace NeeView
             }
             set
             {
-                var name = value.Trim();
+                var name = value?.Trim();
                 SetProperty(ref _name, string.IsNullOrEmpty(name) || name == DefaultName ? null : name); 
             }
         }
@@ -98,8 +101,8 @@ namespace NeeView
         [DataContract]
         public class Memento
         {
-            public string Path { get; set; }
-            public string Name { get; set; }
+            public string? Path { get; set; }
+            public string? Name { get; set; }
 
             [OnDeserializing]
             private void Deserializing(StreamingContext c)
@@ -111,7 +114,7 @@ namespace NeeView
         public Memento CreateMemento()
         {
             var memento = new Memento();
-            memento.Path = Path;
+            memento.Path = _path;
             memento.Name = _name;
             return memento;
         }
@@ -120,7 +123,7 @@ namespace NeeView
         {
             if (memento == null) return;
             Path = memento.Path;
-            _name = memento.Name;
+            Name = memento.Name;
         }
 
         #endregion

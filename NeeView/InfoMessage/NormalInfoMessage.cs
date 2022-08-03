@@ -32,8 +32,8 @@ namespace NeeView
 
 
         // 通知テキスト
-        private string _message;
-        public string Message
+        private string? _message;
+        public string? Message
         {
             get { return _message; }
             set { _message = value; RaisePropertyChanged(); }

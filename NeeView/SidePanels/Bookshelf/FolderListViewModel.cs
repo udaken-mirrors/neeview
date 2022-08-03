@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
@@ -58,7 +59,7 @@ namespace NeeView
 
 
 
-        public FolderCollection FolderCollection => _model.FolderCollection;
+        public FolderCollection? FolderCollection => _model.FolderCollection;
 
 
         public BookshelfFolderList Model
@@ -115,23 +116,23 @@ namespace NeeView
 
         #region Commands
 
-        private RelayCommand _setHome;
-        private RelayCommand _moveToHome;
-        private RelayCommand<QueryPath> _moveTo;
-        private RelayCommand _moveToPrevious;
-        private RelayCommand _moveToNext;
-        private RelayCommand<KeyValuePair<int, QueryPath>> _moveToHistory;
-        private RelayCommand _moveToUp;
-        private RelayCommand _sync;
-        private RelayCommand _toggleFolderRecursive;
-        private RelayCommand _search;
-        private RelayCommand _clearSearch;
-        private RelayCommand _addQuickAccess;
-        private RelayCommand<FolderTreeLayout> _setFolderTreeLayout;
-        private RelayCommand _newFolderCommand;
-        private RelayCommand _addBookmarkCommand;
-        private RelayCommand<PanelListItemStyle> _setListItemStyle;
-        private RelayCommand _toggleVisibleFoldersTree;
+        private RelayCommand? _setHome;
+        private RelayCommand? _moveToHome;
+        private RelayCommand<QueryPath>? _moveTo;
+        private RelayCommand? _moveToPrevious;
+        private RelayCommand? _moveToNext;
+        private RelayCommand<KeyValuePair<int, QueryPath>>? _moveToHistory;
+        private RelayCommand? _moveToUp;
+        private RelayCommand? _sync;
+        private RelayCommand? _toggleFolderRecursive;
+        private RelayCommand? _search;
+        private RelayCommand? _clearSearch;
+        private RelayCommand? _addQuickAccess;
+        private RelayCommand<FolderTreeLayout>? _setFolderTreeLayout;
+        private RelayCommand? _newFolderCommand;
+        private RelayCommand? _addBookmarkCommand;
+        private RelayCommand<PanelListItemStyle>? _setListItemStyle;
+        private RelayCommand? _toggleVisibleFoldersTree;
 
         public RelayCommand ToggleVisibleFoldersTree
         {
@@ -312,6 +313,7 @@ namespace NeeView
                 return Update(new ContextMenu());
             }
 
+            [return: NotNullIfNotNull("menu")]
             public override ContextMenu Update(ContextMenu menu)
             {
                 var items = menu.Items;
@@ -369,7 +371,7 @@ namespace NeeView
         /// <summary>
         /// Model CollectionChanged event
         /// </summary>
-        private void Model_CollectionChanged(object sender, EventArgs e)
+        private void Model_CollectionChanged(object? sender, EventArgs e)
         {
             UpdateFolderOrerList();
             RaisePropertyChanged(nameof(FolderCollection));
@@ -388,6 +390,8 @@ namespace NeeView
         /// </summary>
         public void UpdateFolderOrerList()
         {
+            if (FolderCollection is null) return;
+
             FolderOrderList = FolderCollection.FolderOrderClass.GetFolderOrderMap();
             RaisePropertyChanged(nameof(FolderOrder));
         }

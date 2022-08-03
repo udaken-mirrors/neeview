@@ -9,11 +9,11 @@ namespace NeeView
     public class PagemarkFolder : BindableBase, IPagemarkEntry
     {
         private static IThumbnail _thumbnail = new FolderThumbnail();
-        private string _path;
+        private string? _path;
 
 
         [Obsolete, DataMember(Name = "Name", EmitDefaultValue = false)]
-        private string ObsoleteName
+        private string? ObsoleteName
         {
             get { return null; }
             set { _path = value; }
@@ -21,7 +21,7 @@ namespace NeeView
 
 
         [DataMember(Name = "Place", EmitDefaultValue = false)]
-        public string Path
+        public string? Path
         {
             get { return _path; }
             set
@@ -33,10 +33,10 @@ namespace NeeView
             }
         }
 
-        public string Name => _path;
+        public string? Name => _path;
         public string DispName => LoosePath.GetFileName(_path);
-        public string Note => null;
-        public string Detail => _path;
+        public string? Note => null;
+        public string? Detail => _path;
 
         public IThumbnail Thumbnail => _thumbnail;
 
@@ -52,4 +52,13 @@ namespace NeeView
         }
     }
 
+    [Obsolete]
+    public class PagemarkEmpty : IPagemarkEntry
+    {
+        public string Path => "";
+
+        public string DispName => "";
+
+        public string Name => "";
+    }
 }

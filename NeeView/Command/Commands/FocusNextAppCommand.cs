@@ -9,7 +9,7 @@
             this.IsShowMessage = false;
         }
 
-        public override void Execute(object sender, CommandContext e)
+        public override void Execute(object? sender, CommandContext e)
         {
             WindowActivator.Current.NextActivate(+1);
         }

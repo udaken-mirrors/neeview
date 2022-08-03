@@ -8,9 +8,9 @@ namespace NeeView
 
         public abstract string GetTypeName(Type typeToConvert);
 
-        public abstract object Read(PropertyMapSource source, Type typeToConvert, PropertyMapOptions options);
+        public abstract object? Read(PropertyMapSource source, Type typeToConvert, PropertyMapOptions options);
 
-        public abstract void Write(PropertyMapSource source, object value, PropertyMapOptions options);
+        public abstract void Write(PropertyMapSource source, object? value, PropertyMapOptions options);
     }
 
 

@@ -11,11 +11,11 @@ namespace NeeView
 {
     public class MainViewManager
     {
-        static MainViewManager() => Current = new MainViewManager();
-        public static MainViewManager Current { get; }
+        private static MainViewManager? _current;
+        public static MainViewManager Current => _current ?? throw new InvalidOperationException();
 
 
-        private MainViewWindow _window;
+        private MainViewWindow? _window;
 
         private MainViewComponent _viewComponent;
 
@@ -28,15 +28,20 @@ namespace NeeView
 
         private MainViewLockerMediator _mediator;
         private MainViewLocker _dockingLocker;
-        private MainViewLocker _floatingLocker;
+        private MainViewLocker? _floatingLocker;
 
-        public MainViewWindow Window => _window;
+        public MainViewWindow? Window => _window;
         public MainView MainView => _mainView;
         public MainViewBay MainViewBay => _mainViewBay;
 
 
+        public static void Initialize(MainViewComponent viewComponent, ContentControl defaultSocket)
+        {
+            if (_current != null) throw new InvalidOperationException();
+            _current = new MainViewManager(viewComponent, defaultSocket);
+        }
 
-        public void Initialize(MainViewComponent viewComponent, ContentControl defaultSocket)
+        public MainViewManager(MainViewComponent viewComponent, ContentControl defaultSocket)
         {
             _viewComponent = viewComponent;
 
@@ -55,9 +60,9 @@ namespace NeeView
             _dockingLocker.Activate();
         }
 
-        private void BookHub_BookChanging(object sender, BookChangingEventArgs e)
+        private void BookHub_BookChanging(object? sender, BookChangingEventArgs e)
         {
-            _mainView.MouseInput.Cancel();
+            _mainView.MouseInput?.Cancel();
             _mainViewBay.MouseInput.Cancel();
         }
 

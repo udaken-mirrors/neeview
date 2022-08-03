@@ -17,7 +17,7 @@ namespace NeeView
         private BookSource _book;
         private BookPageViewSetting _setting;
 
-        private object _sender;
+        private object? _sender;
         private PageRange _viewRange;
         private PageRange _nextRange;
         private PageRange _contentRange;
@@ -31,7 +31,7 @@ namespace NeeView
         private ManualResetEventSlim _visibleEvent = new ManualResetEventSlim();
         private BookPageCounter _viewCounter;
 
-        public BookPageViewGenerater(BookSource book, BookPageViewSetting setting, object sender, PageRange viewPageRange, List<PageRange> aheadPageRanges, BookPageCounter viewCounter)
+        public BookPageViewGenerater(BookSource book, BookPageViewSetting setting, object? sender, PageRange viewPageRange, List<PageRange> aheadPageRanges, BookPageCounter viewCounter)
         {
             _book = book;
             _setting = setting;
@@ -50,10 +50,10 @@ namespace NeeView
 
         // 表示コンテンツ変更
         // 表示の更新を要求
-        public event EventHandler<ViewContentSourceCollectionChangedEventArgs> ViewContentsChanged;
+        public event EventHandler<ViewContentSourceCollectionChangedEventArgs>? ViewContentsChanged;
 
         // 先読みコンテンツ変更
-        public event EventHandler<ViewContentSourceCollectionChangedEventArgs> NextContentsChanged;
+        public event EventHandler<ViewContentSourceCollectionChangedEventArgs>? NextContentsChanged;
 
 
         public bool IsBusy
@@ -181,7 +181,7 @@ namespace NeeView
             UpdateViewContentsInner(_sender, collection, false, token);
         }
 
-        private void UpdateViewContentsInner(object sender, ViewContentSourceCollection collection, bool isFirst, CancellationToken token)
+        private void UpdateViewContentsInner(object? sender, ViewContentSourceCollection collection, bool isFirst, CancellationToken token)
         {
             ////var source = collection.Collection[0];
             ////Debug.WriteLine($"UpdateViewContentsInner: Name={source.Page.EntryName}, Type={source.GetContentType()}");

@@ -47,7 +47,7 @@ namespace NeeView
             return MemberwiseClone();
         }
 
-        public bool Equals(DestinationFolder other)
+        public bool Equals(DestinationFolder? other)
         {
             if (other == null)
                 return false;
@@ -58,7 +58,7 @@ namespace NeeView
                 return false;
         }
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             return Equals(obj as DestinationFolder);
         }

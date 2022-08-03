@@ -9,6 +9,12 @@ namespace NeeView
     /// </summary>
     public class PageMarkerCollection
     {
+        public PageMarkerCollection(List<int> indexes, int maximum)
+        {
+            Indexes = indexes;
+            Maximum = maximum;
+        }
+
         public List<int> Indexes { get; set; }
         public int Maximum { get; set; }
     }
@@ -18,7 +24,11 @@ namespace NeeView
     /// </summary>
     public class PageMarkers : BindableBase
     {
-        //
+        private BookOperation _bookOperation;
+        private PageMarkerCollection? _markerCollection;
+        private bool _isSliderDirectionReversed;
+
+
         public PageMarkers(BookOperation bookOperation)
         {
             _bookOperation = bookOperation;
@@ -33,21 +43,15 @@ namespace NeeView
                 (s, e) => Update();
         }
 
-        //
-        private BookOperation _bookOperation;
-
 
         /// <summary>
         /// MarkerCollection property.
         /// </summary>
-        public PageMarkerCollection MarkerCollection
+        public PageMarkerCollection? MarkerCollection
         {
-            get { return _MarkerCollection; }
-            set { if (_MarkerCollection != value) { _MarkerCollection = value; RaisePropertyChanged(); } }
+            get { return _markerCollection; }
+            set { if (_markerCollection != value) { _markerCollection = value; RaisePropertyChanged(); } }
         }
-
-        private PageMarkerCollection _MarkerCollection;
-
 
         /// <summary>
         /// スライダー方向
@@ -58,7 +62,6 @@ namespace NeeView
             set { if (_isSliderDirectionReversed != value) { _isSliderDirectionReversed = value; RaisePropertyChanged(); } }
         }
 
-        private bool _isSliderDirectionReversed;
 
 
         /// <summary>
@@ -69,14 +72,13 @@ namespace NeeView
             var book = BookOperation.Current.Book;
             if (book != null && book.Marker.Markers.Any())
             {
-                this.MarkerCollection = new PageMarkerCollection()
-                {
-                    Indexes = book.Marker.Markers.Select(e => e.Index).ToList(),
-                    Maximum = book.Pages.Count - 1
-                };
+                this.MarkerCollection = new PageMarkerCollection(
+                    indexes: book.Marker.Markers.Select(e => e.Index).ToList(),
+                    maximum: book.Pages.Count - 1
+                );
             }
             else
-            { 
+            {
                 this.MarkerCollection = null;
             }
         }

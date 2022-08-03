@@ -16,7 +16,7 @@ namespace NeeView
         {
             // フォルダーの場所
             [DataMember(Name = "Place", EmitDefaultValue = false)]
-            public string Path { get; set; }
+            public string Path { get; set; } = "";
 
             // ディレクトリ？
             [DataMember(EmitDefaultValue = false)]
@@ -27,7 +27,7 @@ namespace NeeView
 
             // 現在ページ
             [DataMember(EmitDefaultValue = false)]
-            public string Page { get; set; }
+            public string? Page { get; set; }
 
             // 1ページ表示 or 2ページ表示
             [DataMember(Name = "PageModeV2")]
@@ -78,7 +78,7 @@ namespace NeeView
             // このmementoは履歴とデフォルト設定の２つに使われるが、デフォルト設定には本の場所やページ等は不要
             public void ValidateForDefault()
             {
-                Path = null;
+                Path = "";
                 Page = null;
                 IsDirectorty = false;
             }

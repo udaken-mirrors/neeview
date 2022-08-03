@@ -27,7 +27,7 @@ namespace NeeView.Windows.Controls
         private MouseWheelDelta _mouseWheelDelta = new MouseWheelDelta();
 
 
-        public event EventHandler<ValueDeltaEventArgs> ValueDeltaChanged;
+        public event EventHandler<ValueDeltaEventArgs>? ValueDeltaChanged;
 
 
         public Slider Slider

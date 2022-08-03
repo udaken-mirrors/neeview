@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace NeeView.Linq
+namespace NeeLaboratory.Linq
 {
-    static class LinqExtensions
+    public static class LinqExtensions
     {
-        public static IEnumerable<T> WhereNotNull<T>(this IEnumerable<T?> source)
-            where T : class
+        public static IEnumerable<TSource> WhereNotNull<TSource>(this IEnumerable<TSource?> source)
+            where TSource : class
         {
             if (source is null) throw new ArgumentNullException();
             return source.Where(x => x != null)!;

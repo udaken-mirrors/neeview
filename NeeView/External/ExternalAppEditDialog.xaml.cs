@@ -19,7 +19,7 @@ namespace NeeView
     /// </summary>
     public partial class ExternalAppEditDialog : Window
     {
-        private ExternalAppEditDialogViewModel _vm;
+        private ExternalAppEditDialogViewModel? _vm;
 
         public ExternalAppEditDialog()
         {

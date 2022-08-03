@@ -8,9 +8,9 @@ namespace NeeView
         private const string WindowTitleFormat1Default = "$Book ($Page / $PageMax) - $FullName";
         private const string WindowTitleFormat2Default = "$Book ($Page / $PageMax) - $FullNameL | $NameR";
         private const string WindowTitleFormatMediaDefault = "$Book";
-        private string _windowTitleFormat1;
-        private string _windowTitleFormat2;
-        private string _windowTitleFormatMedia;
+        private string? _windowTitleFormat1;
+        private string? _windowTitleFormat2;
+        private string? _windowTitleFormatMedia;
 
 
         /// <summary>

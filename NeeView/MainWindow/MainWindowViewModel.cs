@@ -2,6 +2,7 @@
 using NeeView.Effects;
 using System;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -70,10 +71,10 @@ namespace NeeView
         #region Window Icon
 
         // ウィンドウアイコン：標準
-        private ImageSource _windowIconDefault;
+        private ImageSource? _windowIconDefault;
 
         // ウィンドウアイコン：スライドショー再生中
-        private ImageSource _windowIconPlay;
+        private ImageSource? _windowIconPlay;
 
         // ウィンドウアイコン初期化
         private void InitializeWindowIcons()
@@ -83,7 +84,7 @@ namespace NeeView
         }
 
         // 現在のウィンドウアイコン取得
-        public ImageSource WindowIcon
+        public ImageSource? WindowIcon
             => SlideShow.Current.IsPlayingSlideShow ? _windowIconPlay : _windowIconDefault;
 
         #endregion
@@ -159,7 +160,7 @@ namespace NeeView
 
 
 
-        public event EventHandler FocusMainViewCall;
+        public event EventHandler? FocusMainViewCall;
 
 
         public bool IsClosing { get; set; }
@@ -211,7 +212,7 @@ namespace NeeView
         public bool IsMenuBarActive => MainWindow.Current.IsActive;
 
 
-        private void Model_FocusMainViewCall(object sender, EventArgs e)
+        private void Model_FocusMainViewCall(object? sender, EventArgs e)
         {
             FocusMainViewCall?.Invoke(sender, e);
         }

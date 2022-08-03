@@ -233,8 +233,8 @@ namespace NeeView
         #endregion DependencyProperties
 
 
-        private Window _window;
-        private DelayValue<Visibility> _delayVisibility;
+        private Window? _window;
+        private DelayValue<Visibility> _delayVisibility = new DelayValue<Visibility>();
         private bool _isAttached;
         private bool _isMouseOver;
         private bool _isFocusLock;
@@ -247,7 +247,7 @@ namespace NeeView
 
             if (this.Screen == null) throw new InvalidOperationException("Screen property is required.");
 
-            _delayVisibility = new DelayValue<Visibility>(this.AssociatedObject.Visibility);
+            _delayVisibility.SetValue(this.AssociatedObject.Visibility);
             _delayVisibility.ValueChanged += DelayVisibility_ValueChanged;
             this.Description?.RaiseVisibilityChanged(this, new VisibillityChangedEventArgs(_delayVisibility.Value));
 
@@ -278,7 +278,7 @@ namespace NeeView
             BindingOperations.ClearBinding(this.AssociatedObject, FrameworkElement.VisibilityProperty);
         }
 
-        private void AssociatedObject_Loaded(object sender, RoutedEventArgs e)
+        private void AssociatedObject_Loaded(object? sender, RoutedEventArgs e)
         {
             _window = Window.GetWindow(this.AssociatedObject);
             _window.MouseMove += Screen_MouseMove;
@@ -286,21 +286,25 @@ namespace NeeView
             _window.StateChanged += Window_StateChanged;
         }
 
-        private void AssociatedObject_Unloaded(object sender, RoutedEventArgs e)
+        private void AssociatedObject_Unloaded(object? sender, RoutedEventArgs e)
         {
-            _window.MouseMove -= Screen_MouseMove;
-            _window.MouseLeave -= Screen_MouseLeave;
-            _window.StateChanged -= Window_StateChanged;
-            _window = null;
+            if (_window != null)
+            {
+                _window.MouseMove -= Screen_MouseMove;
+                _window.MouseLeave -= Screen_MouseLeave;
+                _window.StateChanged -= Window_StateChanged;
+                _window = null;
+            }
         }
 
 
         /// <summary>
         /// ウィンドウ最小化中にパネルが消えるとキーボードフォーカスが失われる現象の対策
         /// </summary>
-        private void Window_StateChanged(object sender, EventArgs e)
+        private void Window_StateChanged(object? sender, EventArgs e)
         {
             if (!IsEnabled) return;
+            if (sender is null) return;
 
             if (_isVisibilityHolded && ((Window)sender).WindowState != WindowState.Minimized)
             {
@@ -313,7 +317,7 @@ namespace NeeView
             }
         }
 
-        private void DelayVisibility_ValueChanged(object sender, EventArgs e)
+        private void DelayVisibility_ValueChanged(object? sender, EventArgs e)
         {
             if (_window?.WindowState != WindowState.Minimized)
             {
@@ -332,25 +336,25 @@ namespace NeeView
             this.Description?.RaiseVisibilityChanged(this, new VisibillityChangedEventArgs(visibility));
         }
 
-        private void AssociatedObject_IsKeyboardFocusWithinChanged(object sender, DependencyPropertyChangedEventArgs e)
+        private void AssociatedObject_IsKeyboardFocusWithinChanged(object? sender, DependencyPropertyChangedEventArgs e)
         {
             if (!IsEnabled) return;
             UpdateVisibility(UpdateVisibilityOption.UpdateFocusLock);
         }
 
-        private void AssociatedObject_GotFocus(object sender, RoutedEventArgs e)
+        private void AssociatedObject_GotFocus(object? sender, RoutedEventArgs e)
         {
             if (!IsEnabled) return;
             UpdateVisibility(UpdateVisibilityOption.UpdateFocusLock);
         }
 
-        private void AssociatedObject_LostFocus(object sender, RoutedEventArgs e)
+        private void AssociatedObject_LostFocus(object? sender, RoutedEventArgs e)
         {
             if (!IsEnabled) return;
             UpdateVisibility(UpdateVisibilityOption.UpdateFocusLock);
         }
 
-        private void AssociatedObject_PreviewKeyDown(object sender, KeyEventArgs e)
+        private void AssociatedObject_PreviewKeyDown(object? sender, KeyEventArgs e)
         {
             if (!IsEnabled) return;
             if (!this.IsKeyDownDelayEnabled) return;
@@ -362,19 +366,19 @@ namespace NeeView
             }
         }
 
-        private void Screen_MouseMove(object sender, MouseEventArgs e)
+        private void Screen_MouseMove(object? sender, MouseEventArgs e)
         {
             if (!IsEnabled) return;
             UpdateVisibility(UpdateVisibilityOption.UpdateMouseOver);
         }
 
-        private void Screen_MouseLeave(object sender, MouseEventArgs e)
+        private void Screen_MouseLeave(object? sender, MouseEventArgs e)
         {
             if (!IsEnabled) return;
             UpdateVisibility(UpdateVisibilityOption.UpdateMouseOver);
         }
 
-        private void Description_VisibleOnce(object sender, EventArgs e)
+        private void Description_VisibleOnce(object? sender, EventArgs e)
         {
             VisibleOnce();
         }
@@ -487,7 +491,9 @@ namespace NeeView
                         return this.AssociatedObject.IsKeyboardFocusWithin;
 
                     case AutoHideFocusLockMode.TextBoxFocusLock:
-                        return this.AssociatedObject.IsKeyboardFocusWithin && VisualTreeUtility.HasParentElement(Keyboard.FocusedElement as TextBox, this.AssociatedObject);
+                        var textbox = Keyboard.FocusedElement as TextBox;
+                        if (textbox is null) return false;
+                        return this.AssociatedObject.IsKeyboardFocusWithin && VisualTreeUtility.HasParentElement(textbox, this.AssociatedObject);
 
                     case AutoHideFocusLockMode.LogicalFocusLock:
                         return GetFocusedElement() != null;
@@ -500,9 +506,10 @@ namespace NeeView
                 }
             }
 
-            FrameworkElement GetFocusedElement()
+            FrameworkElement? GetFocusedElement()
             {
                 var focusedElement = FocusManager.GetFocusedElement(FocusManager.GetFocusScope(this.AssociatedObject)) as FrameworkElement;
+                if (focusedElement is null) return null;
                 return VisualTreeUtility.HasParentElement(focusedElement, this.AssociatedObject) ? focusedElement : null;
             }
         }
@@ -551,7 +558,7 @@ namespace NeeView
         /// <summary>
         /// コントロールからBehavior取得
         /// </summary>
-        public static AutoHideBehavior GetBehavior(FrameworkElement target)
+        public static AutoHideBehavior? GetBehavior(FrameworkElement target)
         {
             var behavior = Interaction.GetBehaviors(target)
                 .OfType<AutoHideBehavior>()
@@ -581,8 +588,8 @@ namespace NeeView
     /// </summary>
     public class AutoHideDescription
     {
-        public event EventHandler<VisibillityChangedEventArgs> VisibilityChanged;
-        public event EventHandler VisibleOnceCall;
+        public event EventHandler<VisibillityChangedEventArgs>? VisibilityChanged;
+        public event EventHandler? VisibleOnceCall;
 
         /// <summary>
         /// 表示ロック追加フラグ
@@ -605,7 +612,7 @@ namespace NeeView
         /// </summary>
         public void VisibleOnce()
         {
-            VisibleOnceCall?.Invoke(this, null);
+            VisibleOnceCall?.Invoke(this, EventArgs.Empty);
         }
 
         /// <summary>

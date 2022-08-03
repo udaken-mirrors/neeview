@@ -12,11 +12,11 @@ namespace NeeView.Windows.Property
     [AttributeUsage(AttributeTargets.Property)]
     public class PropertyMemberAttribute : Attribute
     {
-        public string Name;
-        public string Title;
-        public string Tips;
+        public string? Name;
+        public string? Title;
+        public string? Tips;
         public bool IsVisible = true;
-        public string EmptyMessage;
+        public string? EmptyMessage;
 
         public PropertyMemberAttribute() { }
     }
@@ -28,8 +28,8 @@ namespace NeeView.Windows.Property
         public double Maximum;
         public double TickFrequency;
         public bool IsEditable;
-        public string Format;
-        public string RangeProperty;
+        public string? Format;
+        public string? RangeProperty;
 
         public PropertyRangeAttribute(double min, double max)
         {
@@ -58,9 +58,9 @@ namespace NeeView.Windows.Property
     public class PropertyPathAttribute : PropertyMemberAttribute
     {
         public FileDialogType FileDialogType;
-        public string Filter;
-        public string Note;
-        public string DefaultFileName;
+        public string? Filter;
+        public string? Note;
+        public string? DefaultFileName;
 
         public PropertyPathAttribute() : base()
         {
@@ -71,7 +71,7 @@ namespace NeeView.Windows.Property
     [AttributeUsage(AttributeTargets.Property)]
     public class PropertyStringsAttribute : PropertyMemberAttribute
     {
-        public string[] Strings;
+        public string[]? Strings;
 
         public PropertyStringsAttribute() : base()
         {
@@ -80,12 +80,12 @@ namespace NeeView.Windows.Property
 
     public static class PropertyMemberAttributeExtensions
     {
-        private static string GetResourceKey(PropertyInfo property, string postfix = null)
+        private static string GetResourceKey(PropertyInfo property, string? postfix = null)
         {
-            return $"@{property.DeclaringType.Name}.{property.Name}{postfix}";
+            return $"@{property.DeclaringType?.Name}.{property.Name}{postfix}";
         }
 
-        public static string GetPropertyName(PropertyInfo property, PropertyMemberAttribute attribute)
+        public static string GetPropertyName(PropertyInfo property, PropertyMemberAttribute? attribute)
         {
             if (attribute is null)
             {
@@ -110,7 +110,7 @@ namespace NeeView.Windows.Property
             return GetPropertyName(property, property.GetCustomAttribute<PropertyMemberAttribute>());
         }
 
-        public static string GetPropertyTips(PropertyInfo property, PropertyMemberAttribute attribute)
+        public static string? GetPropertyTips(PropertyInfo property, PropertyMemberAttribute? attribute)
         {
             if (attribute is null)
             {
@@ -123,12 +123,12 @@ namespace NeeView.Windows.Property
             return resourceValue;
         }
 
-        public static string GetPropertyTips(PropertyInfo property)
+        public static string? GetPropertyTips(PropertyInfo property)
         {
             return GetPropertyTips(property, property.GetCustomAttribute<PropertyMemberAttribute>());
         }
 
-        public static string GetPropertyTitle(PropertyInfo property, PropertyMemberAttribute attribute)
+        public static string? GetPropertyTitle(PropertyInfo property, PropertyMemberAttribute? attribute)
         {
             if (attribute is null)
             {
@@ -141,7 +141,7 @@ namespace NeeView.Windows.Property
             return resourceValue;
         }
 
-        public static string GetPropertyTitle(PropertyInfo property)
+        public static string? GetPropertyTitle(PropertyInfo property)
         {
             return GetPropertyTitle(property, property.GetCustomAttribute<PropertyMemberAttribute>());
         }

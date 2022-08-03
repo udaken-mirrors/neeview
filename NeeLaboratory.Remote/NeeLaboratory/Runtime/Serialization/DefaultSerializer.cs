@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Runtime.Serialization;
 
 namespace NeeLaboratory.Runtime.Serialization
@@ -22,6 +23,8 @@ namespace NeeLaboratory.Runtime.Serialization
 
         public static T Deserialize<T>(byte[] source)
         {
+            if (source is null) throw new ArgumentNullException(nameof(source));
+
             using (var ms = new MemoryStream(source))
             {
                 return Deserialize<T>(ms);
@@ -31,7 +34,11 @@ namespace NeeLaboratory.Runtime.Serialization
         public static T Deserialize<T>(Stream stream)
         {
             var serializer = new DataContractSerializer(typeof(T));
-            return (T)serializer.ReadObject(stream);
+            
+            var instance = (T?)serializer.ReadObject(stream);
+            if (instance is null) throw new FormatException();
+
+            return instance;
         }
     }
 }

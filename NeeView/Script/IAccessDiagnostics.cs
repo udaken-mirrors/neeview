@@ -7,9 +7,9 @@ namespace NeeView
     /// </summary>
     public interface IAccessDiagnostics
     {
-        T Throw<T>(Exception ex);
+        T? Throw<T>(Exception ex);
 
-        object Throw(Exception ex, Type type);
+        object? Throw(Exception ex, Type type);
 
         void Throw(Exception ex);
     }

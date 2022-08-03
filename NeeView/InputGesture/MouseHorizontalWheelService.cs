@@ -59,7 +59,7 @@ namespace NeeView
         }
 
 
-        public event MouseWheelEventHandler MouseHorizontalWheelChanged;
+        public event MouseWheelEventHandler? MouseHorizontalWheelChanged;
 
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -75,7 +75,7 @@ namespace NeeView
             switch (msg)
             {
                 case NativeMethods.WM_MOUSEHWHEEL:
-                    MouseWheelEventArgs args = null;
+                    MouseWheelEventArgs? args = null;
                     try
                     {
                         // NOTE: デバイスが特定できないのでとりあえず Mouse.PrimaryDevice を使用

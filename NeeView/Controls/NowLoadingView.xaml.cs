@@ -43,7 +43,7 @@ namespace NeeView
         }
 
         //
-        private NowLoadingViewModel _vm;
+        private NowLoadingViewModel? _vm;
 
         //
         public void Initialize()

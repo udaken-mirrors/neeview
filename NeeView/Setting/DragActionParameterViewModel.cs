@@ -8,8 +8,8 @@ namespace NeeView.Setting
 {
     public class DragActionParameterViewModel : BindableBase
     {
-        private DragActionParameter _defaultParameter;
-        private PropertyDocument _propertyDocument;
+        private DragActionParameter? _defaultParameter;
+        private PropertyDocument? _propertyDocument;
 
 
         public DragActionParameterViewModel(DragActionCollection commandMap, string key)
@@ -20,24 +20,25 @@ namespace NeeView.Setting
                 return;
             }
 
-            _defaultParameter = (DragActionParameter)Activator.CreateInstance(parameter.GetType());
+            _defaultParameter = (DragActionParameter?)Activator.CreateInstance(parameter.GetType());
 
             _propertyDocument = new PropertyDocument(parameter);
         }
 
 
-        public PropertyDocument PropertyDocument
+        public PropertyDocument? PropertyDocument
         {
             get { return _propertyDocument; }
             set { if (_propertyDocument != value) { _propertyDocument = value; RaisePropertyChanged(); } }
         }
 
-        public string Note { get; private set; }
+        public string? Note { get; private set; }
 
 
         public void Reset()
         {
             if (_propertyDocument is null) return;
+            if (_defaultParameter is null) return;
 
             _propertyDocument.Set(_defaultParameter);
             RaisePropertyChanged(nameof(PropertyDocument));

@@ -13,7 +13,7 @@ namespace NeeView
             _source = source;
         }
 
-        public object Create(InformationKey key)
+        public object? Create(InformationKey key)
         {
             switch (key.ToInformationCategory())
             {
@@ -28,7 +28,7 @@ namespace NeeView
             }
         }
 
-        private object CreateInformationFileValue(InformationKey key)
+        private object? CreateInformationFileValue(InformationKey key)
         {
             var page = _source.Page;
 
@@ -54,7 +54,7 @@ namespace NeeView
             }
         }
 
-        private object CreateInformationImageValue(InformationKey key)
+        private object? CreateInformationImageValue(InformationKey key)
         {
             var pictureInfo = _source.BitmapContent?.PictureInfo;
 

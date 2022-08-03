@@ -11,7 +11,7 @@ namespace NeeView
     {
         private ScriptUnitPool _pool;
 
-        private Task _task;
+        private Task? _task;
         private CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
 
         public ScriptUnit(ScriptUnitPool pool)
@@ -21,12 +21,12 @@ namespace NeeView
             _pool = pool;
         }
 
-        public void Execute(object sender, string path, string argument)
+        public void Execute(object? sender, string path, string? argument)
         {
             _task = Task.Run(() => ExecuteInner(sender, path, argument));
         }
 
-        private void ExecuteInner(object sender, string path, string argument)
+        private void ExecuteInner(object? sender, string path, string? argument)
         {
             var engine = new JavascriptEngine() { IsToastEnable = true };
 

@@ -23,13 +23,15 @@ namespace NeeView
     {
         private HistoryListViewModel _vm;
 
-        public HistoryListView()
+        //public HistoryListView()
+        //{
+        //    InitializeComponent();
+        //}
+
+        public HistoryListView(HistoryList model)
         {
             InitializeComponent();
-        }
 
-        public HistoryListView(HistoryList model) : this()
-        {
             _vm = new HistoryListViewModel(model);
             this.DockPanel.DataContext = _vm;
         }

@@ -37,6 +37,12 @@ namespace NeeView
             _dock = dock;
             _dropAcceptor = new SidePanelDropAcceptor(itemsControl, dock);
 
+            AutoHideDescription = new SidePanelAutoHideDescription(this);
+            AutoHideDescription.VisibilityChanged += (s, e) =>
+            {
+                Visibility = e.Visibility;
+            };
+
             _dock.AddPropertyChanged(nameof(_dock.SelectedItem), (s, e) =>
             {
                 RaisePropertyChanged(nameof(PanelVisibility));
@@ -52,12 +58,6 @@ namespace NeeView
             });
 
             _elementContainsFunc = elementContainsFunc;
-
-            AutoHideDescription = new SidePanelAutoHideDescription(this);
-            AutoHideDescription.VisibilityChanged += (s, e) =>
-            {
-                Visibility = e.Visibility;
-            };
         }
 
 

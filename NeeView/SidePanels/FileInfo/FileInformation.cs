@@ -19,7 +19,7 @@ namespace NeeView
 
         
         private DelayValue<IEnumerable<ViewContent>> _viewContentsDelay;
-        private List<FileInformationSource> _fileInformations;
+        private List<FileInformationSource>? _fileInformations;
 
 
         private FileInformation()
@@ -34,14 +34,14 @@ namespace NeeView
         }
 
 
-        public List<FileInformationSource> FileInformations
+        public List<FileInformationSource>? FileInformations
         {
             get { return _fileInformations; }
             set { SetProperty(ref _fileInformations, value); }
         }
 
 
-        public FileInformationSource GetMainFileInformation()
+        public FileInformationSource? GetMainFileInformation()
         {
             return FileInformations?.OrderBy(e => e.Page?.Index ?? int.MaxValue).FirstOrDefault();
         }
@@ -51,7 +51,7 @@ namespace NeeView
             _viewContentsDelay.SetValue(viewContents.ToList(), 100); // 100ms delay
         }
 
-        private void ViewContentsDelay_ValueChanged(object sender, EventArgs _)
+        private void ViewContentsDelay_ValueChanged(object? sender, EventArgs _)
         {
             this.FileInformations = _viewContentsDelay.Value?
                 .Reverse()

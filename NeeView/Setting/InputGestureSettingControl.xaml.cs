@@ -20,7 +20,7 @@ namespace NeeView.Setting
     /// </summary>
     public partial class InputGestureSettingControl : UserControl
     {
-        private InputGestureSettingViewModel _vm;
+        private InputGestureSettingViewModel? _vm;
 
 
         public InputGestureSettingControl()
@@ -89,7 +89,7 @@ namespace NeeView.Setting
                 return;
             }
 
-            KeyExGesture keyExGesture = null;
+            KeyExGesture? keyExGesture = null;
             try
             {
                 keyExGesture = new KeyExGesture(key, Keyboard.Modifiers);
@@ -114,8 +114,10 @@ namespace NeeView.Setting
         /// </summary>
         /// <param name="source"></param>
         /// <returns></returns>
-        private string ValidateKeyGestureText(string source)
+        private string? ValidateKeyGestureText(string? source)
         {
+            if (source is null) return null;
+
             var keys = source.Split('+');
 
             // Next ->PageDown
@@ -129,6 +131,8 @@ namespace NeeView.Setting
         // 追加ボタン処理
         private void AddKeyGestureButton_Click(object sender, RoutedEventArgs e)
         {
+            if (_vm is null) return;
+
             _vm.AddGesture(this.KeyGestureText.Text);
             this.KeyGestureText.Text = null;
         }
@@ -136,6 +140,8 @@ namespace NeeView.Setting
         // 削除ボタン処理
         private void DeleteButton_Click(object sender, RoutedEventArgs e)
         {
+            if (_vm is null) return;
+
             var token = this.InputGestureList.SelectedValue as GestureToken;
             if (token != null)
             {
@@ -182,7 +188,7 @@ namespace NeeView.Setting
 
             // 拡張マウス入力で判定 (標準マウス入力も含まれるため）
             {
-                MouseExGesture mouseGesture = null;
+                MouseExGesture? mouseGesture = null;
                 try
                 {
                     mouseGesture = new MouseExGesture(exAction, Keyboard.Modifiers, modifierMouseButtons);
@@ -233,7 +239,7 @@ namespace NeeView.Setting
             if (e.XButton2 == MouseButtonState.Pressed)
                 modifierMouseButtons |= ModifierMouseButtons.XButton2;
 
-            MouseWheelGesture mouseGesture = null;
+            MouseWheelGesture? mouseGesture = null;
             try
             {
                 mouseGesture = new MouseWheelGesture(wheelAction, Keyboard.Modifiers, modifierMouseButtons);
@@ -282,7 +288,7 @@ namespace NeeView.Setting
             if (e.XButton2 == MouseButtonState.Pressed)
                 modifierMouseButtons |= ModifierMouseButtons.XButton2;
 
-            MouseHorizontalWheelGesture mouseGesture = null;
+            MouseHorizontalWheelGesture? mouseGesture = null;
             try
             {
                 mouseGesture = new MouseHorizontalWheelGesture(wheelAction, Keyboard.Modifiers, modifierMouseButtons);
@@ -309,6 +315,8 @@ namespace NeeView.Setting
         // マウスショートカット追加ボタン処理
         private void AddMouseGestureButton_Click(object sender, RoutedEventArgs e)
         {
+            if (_vm is null) return;
+
             _vm.AddGesture(this.MouseGestureText.Text);
             this.MouseGestureText.Text = null;
         }
@@ -320,6 +328,8 @@ namespace NeeView.Setting
         /// <param name="e"></param>
         private void ConflictButton_Click(object sender, RoutedEventArgs e)
         {
+            if (_vm is null) return;
+
             var item = this.InputGestureList.SelectedValue as GestureToken;
             if (item != null)
             {

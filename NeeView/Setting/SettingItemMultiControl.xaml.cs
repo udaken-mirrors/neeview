@@ -25,7 +25,7 @@ namespace NeeView.Setting
             InitializeComponent();
         }
 
-        public SettingItemMultiControl(string header, string tips, object content1, object content2)
+        public SettingItemMultiControl(string header, string? tips, object content1, object content2)
         {
             InitializeComponent();
 

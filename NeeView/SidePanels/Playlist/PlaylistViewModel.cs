@@ -39,7 +39,8 @@ namespace NeeView
             _model.UpdatePlaylistCollection();
         }
 
-        public EventHandler RenameRequest;
+
+        public EventHandler? RenameRequest;
 
 
         public List<object> PlaylistFiles
@@ -53,19 +54,19 @@ namespace NeeView
             set => _model.SelectedItem = value;
         }
 
-        public string FilterMessage
+        public string? FilterMessage
         {
             get => _model.FilterMessage;
         }
 
 
 
-        private void Model_PlaylistFilesChanged(object sender, PropertyChangedEventArgs e)
+        private void Model_PlaylistFilesChanged(object? sender, PropertyChangedEventArgs e)
         {
             RaisePropertyChanged(nameof(PlaylistFiles));
         }
 
-        private void Model_SelectedItemChanged(object sender, PropertyChangedEventArgs e)
+        private void Model_SelectedItemChanged(object? sender, PropertyChangedEventArgs e)
         {
             RaisePropertyChanged(nameof(SelectedItem));
             DeleteCommand.RaiseCanExecuteChanged();
@@ -120,7 +121,7 @@ namespace NeeView
 
         #region Commands
 
-        private RelayCommand<PanelListItemStyle> _setListItemStyle;
+        private RelayCommand<PanelListItemStyle>? _setListItemStyle;
 
         public RelayCommand<PanelListItemStyle> SetListItemStyle
         {
@@ -133,7 +134,7 @@ namespace NeeView
         }
 
 
-        private RelayCommand _NewCommand;
+        private RelayCommand? _NewCommand;
         public RelayCommand NewCommand
         {
             get { return _NewCommand = _NewCommand ?? new RelayCommand(NewCommand_Execute); }
@@ -146,7 +147,7 @@ namespace NeeView
         }
 
 
-        private RelayCommand _OpenCommand;
+        private RelayCommand? _OpenCommand;
         public RelayCommand OpenCommand
         {
             get { return _OpenCommand = _OpenCommand ?? new RelayCommand(OpenCommand_Execute); }
@@ -157,7 +158,7 @@ namespace NeeView
             _model.Open();
         }
 
-        private RelayCommand _DeleteCommand;
+        private RelayCommand? _DeleteCommand;
         public RelayCommand DeleteCommand
         {
             get { return _DeleteCommand = _DeleteCommand ?? new RelayCommand(DeleteCommand_Execute, DeleteCommand_CanExecute); }
@@ -174,7 +175,7 @@ namespace NeeView
         }
 
 
-        private RelayCommand _RenameCommand;
+        private RelayCommand? _RenameCommand;
         public RelayCommand RenameCommand
         {
             get { return _RenameCommand = _RenameCommand ?? new RelayCommand(RenameCommand_Execute, RenameCommand_CanExecute); }
@@ -187,7 +188,7 @@ namespace NeeView
 
         private void RenameCommand_Execute()
         {
-            RenameRequest?.Invoke(this, null);
+            RenameRequest?.Invoke(this, EventArgs.Empty);
         }
 
         public bool Rename(string newName)
@@ -196,7 +197,7 @@ namespace NeeView
         }
 
 
-        private RelayCommand _OpenAsBookCommand;
+        private RelayCommand? _OpenAsBookCommand;
         public RelayCommand OpenAsBookCommand
         {
             get { return _OpenAsBookCommand = _OpenAsBookCommand ?? new RelayCommand(OpenAsBookCommand_Execute); }
@@ -207,7 +208,7 @@ namespace NeeView
             _model.OpenAsBook();
         }
 
-        private RelayCommand _DeleteInvalidItemsCommand;
+        private RelayCommand? _DeleteInvalidItemsCommand;
         public RelayCommand DeleteInvalidItemsCommand
         {
             get { return _DeleteInvalidItemsCommand = _DeleteInvalidItemsCommand ?? new RelayCommand(DeleteInvalidItemsCommand_Execute); }
@@ -219,7 +220,7 @@ namespace NeeView
         }
 
 
-        private RelayCommand _SortItemsCommand;
+        private RelayCommand? _SortItemsCommand;
         public RelayCommand SortItemsCommand
         {
             get { return _SortItemsCommand = _SortItemsCommand ?? new RelayCommand(SortItemsCommand_Execute); }

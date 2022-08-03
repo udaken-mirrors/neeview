@@ -24,31 +24,13 @@ namespace NeeView.Setting
         private DragActionCollection _memento;
         private string _key;
 
-        public MouseDragSettingWindow()
+        public MouseDragSettingWindow(string key, MouseDragSettingWindowTab start)
         {
             InitializeComponent();
 
             this.Loaded += MouseDragSettingWindow_Loaded;
             this.KeyDown += MouseDragSettingWindow_KeyDown;
-        }
 
-
-        private void MouseDragSettingWindow_Loaded(object sender, RoutedEventArgs e)
-        {
-            this.OkButton.Focus();
-        }
-
-        private void MouseDragSettingWindow_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.Key == Key.Escape && Keyboard.Modifiers == ModifierKeys.None)
-            {
-                this.Close();
-                e.Handled = true;
-            }
-        }
-
-        public void Initialize(string key, MouseDragSettingWindowTab start)
-        {
             _memento = DragActionTable.Current.CreateDragActionCollection();
             _key = key;
 
@@ -71,6 +53,23 @@ namespace NeeView.Setting
             // ESCでウィンドウを閉じる
             this.InputBindings.Add(new KeyBinding(new RelayCommand(Close), new KeyGesture(Key.Escape)));
         }
+
+
+        private void MouseDragSettingWindow_Loaded(object sender, RoutedEventArgs e)
+        {
+            this.OkButton.Focus();
+        }
+
+        private void MouseDragSettingWindow_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Escape && Keyboard.Modifiers == ModifierKeys.None)
+            {
+                this.Close();
+                e.Handled = true;
+            }
+        }
+
+
 
         private void OkButton_Click(object sender, RoutedEventArgs e)
         {
@@ -99,14 +98,18 @@ namespace NeeView.Setting
 
     public class DragToken
     {
+        public DragToken()
+        {
+        }
+
         // ジェスチャー文字列（１ジェスチャー）
-        public string Gesture { get; set; }
+        public string? Gesture { get; set; }
 
         // 競合しているコマンド群
-        public List<string> Conflicts { get; set; }
+        public List<string>? Conflicts { get; set; }
 
         // 競合メッセージ
-        public string OverlapsText { get; set; }
+        public string? OverlapsText { get; set; }
 
         public bool IsConflict => Conflicts != null && Conflicts.Count > 0;
     }

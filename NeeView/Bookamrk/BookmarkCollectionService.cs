@@ -21,7 +21,7 @@ namespace NeeView
             }
         }
 
-        public static TreeListNode<IBookmarkEntry> AddToChild(TreeListNode<IBookmarkEntry> parent, QueryPath query)
+        public static TreeListNode<IBookmarkEntry>? AddToChild(TreeListNode<IBookmarkEntry> parent, QueryPath query)
         {
             if (query.Scheme != QueryScheme.File)
             {
@@ -77,7 +77,7 @@ namespace NeeView
 
             if (newName != oldName)
             {
-                var conflict = node.Parent.Children.FirstOrDefault(e => e != node && e.Value is BookmarkFolder && e.Value.Name == newName);
+                var conflict = node.Parent?.Children.FirstOrDefault(e => e != node && e.Value is BookmarkFolder && e.Value.Name == newName);
                 if (conflict != null)
                 {
                     var dialog = new MessageDialog(string.Format(Properties.Resources.MergeFolderDialog_Message, newName), Properties.Resources.MergeFolderDialog_Title);

@@ -16,7 +16,7 @@ namespace NeeView
             return root;
         }
 
-        private static List<ScriptNode> CreateChildren(ScriptNode node)
+        private static List<ScriptNode>? CreateChildren(ScriptNode node)
         {
             var type = node.Type;
 
@@ -46,6 +46,11 @@ namespace NeeView
 
             // Obsoleteは非対応
             if (node.Obsolete != null)
+            {
+                return null;
+            }
+
+            if (node.Value is null)
             {
                 return null;
             }
@@ -103,13 +108,13 @@ namespace NeeView
     /// </remarks>
     public class ScriptNodeUnit
     {
-        public ScriptNodeUnit(string prefix, ScriptNode node)
+        public ScriptNodeUnit(string? prefix, ScriptNode node)
         {
             Prefix = prefix;
             Node = node;
         }
 
-        public string Prefix { get; }
+        public string? Prefix { get; }
         public ScriptNode Node { get; }
 
         public string Name => Node.Name;
@@ -149,13 +154,13 @@ namespace NeeView
         public abstract string Name { get; }
         public virtual ScriptMemberInfoType Category => ScriptMemberInfoType.None;
         public abstract Type Type { get; }
-        public abstract object Value { get; }
-        public virtual ObsoleteAttribute Obsolete => null;
-        public virtual AlternativeAttribute Alternative => null;
-        public List<ScriptNode> Children { get; set; }
+        public abstract object? Value { get; }
+        public virtual ObsoleteAttribute? Obsolete => null;
+        public virtual AlternativeAttribute? Alternative => null;
+        public List<ScriptNode>? Children { get; set; }
 
 
-        public IEnumerable<ScriptNodeUnit> GetUnitEnumerator(string prefix)
+        public IEnumerable<ScriptNodeUnit> GetUnitEnumerator(string? prefix)
         {
             var parent = new ScriptNodeUnit(prefix, this);
             yield return parent;
@@ -209,9 +214,9 @@ namespace NeeView
         public override string Name => _source.GetName();
         public override ScriptMemberInfoType Category => _source.MemberInfo.Type;
         public override Type Type => _source.GetValueType();
-        public override object Value => _source.GetValue();
-        public override ObsoleteAttribute Obsolete => _source.GetValueObsolete();
-        public override AlternativeAttribute Alternative => _source.GetValueAlternative();
+        public override object? Value => _source.GetValue();
+        public override ObsoleteAttribute? Obsolete => _source.GetValueObsolete();
+        public override AlternativeAttribute? Alternative => _source.GetValueAlternative();
     }
 
 
@@ -253,7 +258,7 @@ namespace NeeView
             }
         }
 
-        public ObsoleteAttribute GetValueObsolete()
+        public ObsoleteAttribute? GetValueObsolete()
         {
             switch (MemberInfo.Type)
             {
@@ -271,7 +276,7 @@ namespace NeeView
             }
         }
 
-        public AlternativeAttribute GetValueAlternative()
+        public AlternativeAttribute? GetValueAlternative()
         {
             switch (MemberInfo.Type)
             {
@@ -307,7 +312,7 @@ namespace NeeView
             }
         }
         
-        public object GetValue()
+        public object? GetValue()
         {
             switch (MemberInfo.Type)
             {
@@ -322,7 +327,7 @@ namespace NeeView
             }
         }
 
-        private ObsoleteAttribute GetIndexerValueObsolete(object source, string key)
+        private ObsoleteAttribute? GetIndexerValueObsolete(object source, string key)
         {
             switch (source)
             {
@@ -337,7 +342,7 @@ namespace NeeView
             }
         }
 
-        private AlternativeAttribute GetIndexerValueAlternative(object source, string key)
+        private AlternativeAttribute? GetIndexerValueAlternative(object source, string key)
         {
             switch (source)
             {
@@ -367,7 +372,7 @@ namespace NeeView
             }
         }
 
-        private object GetIndexerValue(object source, string key)
+        private object? GetIndexerValue(object source, string key)
         {
             switch (source)
             {
@@ -382,7 +387,7 @@ namespace NeeView
             }
         }
 
-        private ObsoleteAttribute GetPropertyMapValueObsolete(object source, string key)
+        private ObsoleteAttribute? GetPropertyMapValueObsolete(object source, string key)
         {
             var propertyMap = (PropertyMap)source;
             var node = propertyMap.GetNode(key);
@@ -400,7 +405,7 @@ namespace NeeView
             }
         }
 
-        private AlternativeAttribute GetPropertyMapValueAlternative(object source, string key)
+        private AlternativeAttribute? GetPropertyMapValueAlternative(object source, string key)
         {
             var propertyMap = (PropertyMap)source;
             var node = propertyMap.GetNode(key);
@@ -438,7 +443,7 @@ namespace NeeView
             }
         }
 
-        private object GetPropertyMapValue(object source, string key)
+        private object? GetPropertyMapValue(object source, string key)
         {
             var propertyMap = (PropertyMap)source;
             var node = propertyMap.GetNode(key);
@@ -459,13 +464,13 @@ namespace NeeView
         }
 
 
-        private ObsoleteAttribute GetCommandMapValueObsolete(object source, string key)
+        private ObsoleteAttribute? GetCommandMapValueObsolete(object source, string key)
         {
             var commandMap = (CommandAccessorMap)source;
             return commandMap.GetObsolete(key);
         }
 
-        private AlternativeAttribute GetCommandMapValueAlternative(object source, string key)
+        private AlternativeAttribute? GetCommandMapValueAlternative(object source, string key)
         {
             var commandMap = (CommandAccessorMap)source;
             return commandMap.GetAlternative(key);
@@ -478,7 +483,7 @@ namespace NeeView
             return command.GetType();
         }
 
-        private object GetCommandMapValue(object source, string key)
+        private object? GetCommandMapValue(object source, string key)
         {
             var commandMap = (CommandAccessorMap)source;
             return commandMap[key];
@@ -492,31 +497,41 @@ namespace NeeView
     /// </summary>
     public class ScriptMemberInfo
     {
+        private PropertyInfo? _propertyInfo { get; }
+        private MethodInfo? _methodInfo { get; }
+        private string? _indexKey { get; }
+
+
         public ScriptMemberInfo(PropertyInfo propertyInfo)
         {
             Type = ScriptMemberInfoType.Property;
-            PropertyInfo = propertyInfo;
+            _propertyInfo = propertyInfo;
         }
 
         public ScriptMemberInfo(MethodInfo methodInfo)
         {
             Type = ScriptMemberInfoType.Method;
-            MethodInfo = methodInfo;
+            _methodInfo = methodInfo;
         }
 
         public ScriptMemberInfo(string key)
         {
             Type = ScriptMemberInfoType.IndexKey;
-            IndexKey = key;
+            _indexKey = key;
         }
 
 
         public ScriptMemberInfoType Type { get; }
-        public PropertyInfo PropertyInfo { get; }
-        public MethodInfo MethodInfo { get; }
-        public string IndexKey { get; }
-    }
 
+        public PropertyInfo PropertyInfo
+            => (Type == ScriptMemberInfoType.Property ? _propertyInfo : null) ?? throw new InvalidOperationException();
+
+        public MethodInfo MethodInfo
+            => (Type == ScriptMemberInfoType.Method ? _methodInfo : null) ?? throw new InvalidOperationException();
+
+        public string IndexKey
+            => (Type == ScriptMemberInfoType.IndexKey ? _indexKey : null) ?? throw new InvalidOperationException();
+    }
 
 
     /// <summary>

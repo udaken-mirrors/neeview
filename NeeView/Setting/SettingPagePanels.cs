@@ -186,13 +186,13 @@ namespace NeeView.Setting
 
         #region Commands
 
-        private RelayCommand<UIElement> _RemoveCache;
+        private RelayCommand<UIElement>? _RemoveCache;
         public RelayCommand<UIElement> RemoveCache
         {
             get { return _RemoveCache = _RemoveCache ?? new RelayCommand<UIElement>(RemoveCache_Executed); }
         }
 
-        private void RemoveCache_Executed(UIElement element)
+        private void RemoveCache_Executed(UIElement? element)
         {
             try
             {

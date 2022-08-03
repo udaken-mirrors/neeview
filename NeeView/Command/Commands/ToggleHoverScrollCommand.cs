@@ -17,13 +17,13 @@ namespace NeeView
             return new Binding(nameof(MouseConfig.IsHoverScroll)) { Source = Config.Current.Mouse, Mode = BindingMode.OneWay };
         }
 
-        public override string ExecuteMessage(object sender, CommandContext e)
+        public override string ExecuteMessage(object? sender, CommandContext e)
         {
             return Config.Current.Mouse.IsHoverScroll ? Properties.Resources.ToggleHoverScrollCommand_Off : Properties.Resources.ToggleHoverScrollCommand_On;
         }
 
         [MethodArgument("@ToggleCommand.Execute.Remarks")]
-        public override void Execute(object sender, CommandContext e)
+        public override void Execute(object? sender, CommandContext e)
         {
             if (e.Args.Length > 0)
             {

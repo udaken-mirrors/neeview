@@ -9,17 +9,23 @@ namespace NeeView
 {
     public class MainViewComponent : IDisposable
     {
-        static MainViewComponent() => Current = new MainViewComponent();
-        public static MainViewComponent Current { get; }
+        private static MainViewComponent? _current;
+        public static MainViewComponent Current => _current ?? throw new InvalidOperationException();
 
 
         private MainView _mainView;
         private bool _disposedValue;
 
 
+        public static void Initlialize()
+        {
+            if (_current is not null) throw new InvalidOperationException();
+            _current = new MainViewComponent();
+        }
+
         // TODO: MainView依存はおかしい
         // TODO: 各種シングルトン依存の排除
-        public void Initialize()
+        private MainViewComponent()
         {
             var mouseGestureCommandCollection = MouseGestureCommandCollection.Current;
             var bookHub = BookHub.Current;
@@ -46,8 +52,8 @@ namespace NeeView
         }
 
 
-        public event EventHandler OpenContextMenuRequest;
-        public event EventHandler FocusMainViewRequest;
+        public event EventHandler? OpenContextMenuRequest;
+        public event EventHandler? FocusMainViewRequest;
 
 
         public MainView MainView => _mainView;
@@ -96,12 +102,12 @@ namespace NeeView
 
         public void RaiseOpenContextMenuRequest()
         {
-            OpenContextMenuRequest?.Invoke(this, null);
+            OpenContextMenuRequest?.Invoke(this, EventArgs.Empty);
         }
 
         public void RaiseFocusMainViewRequest()
         {
-            FocusMainViewRequest?.Invoke(this, null);
+            FocusMainViewRequest?.Invoke(this, EventArgs.Empty);
         }
     }
 }

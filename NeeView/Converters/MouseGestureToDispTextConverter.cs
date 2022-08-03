@@ -7,7 +7,7 @@ namespace NeeView
     [ValueConversion(typeof(string), typeof(string))]
     public class MouseGestureToDispTextConverter : IValueConverter
     {
-        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        public object? Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
             if (value == null) return null;
             return new MouseGestureSequence((string)value).ToDispString();

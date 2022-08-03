@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NeeLaboratory.Linq;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -59,7 +60,7 @@ namespace NeeView
         #endregion RoutedCommand
 
 
-        private FileInformationViewModel _vm;
+        private FileInformationViewModel? _vm;
         private bool _isFocusRequest;
         private MouseWheelDelta _mouseWheelDelta = new MouseWheelDelta();
 
@@ -69,16 +70,17 @@ namespace NeeView
             InitializeCommandStatic();
         }
 
-        public FileInformationView()
+        //public FileInformationView()
+        //{
+        //}
+
+        public FileInformationView(FileInformation model)
         {
             InitializeComponent();
             InitializeCommand();
 
             this.ThumbnailListBox.ContextMenuOpening += ThumbnailListBoxItem_ContextMenuOpening;
-        }
 
-        public FileInformationView(FileInformation model) : this()
-        {
             _vm = new FileInformationViewModel(model);
             this.DataContext = _vm;
 
@@ -86,7 +88,7 @@ namespace NeeView
         }
 
 
-        private void FileInformationView_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+        private void FileInformationView_IsVisibleChanged(object? sender, DependencyPropertyChangedEventArgs e)
         {
             if (_isFocusRequest && this.IsVisible)
             {
@@ -104,7 +106,7 @@ namespace NeeView
             }
         }
 
-        private void ThumbnailListBoxItem_ContextMenuOpening(object sender, ContextMenuEventArgs e)
+        private void ThumbnailListBoxItem_ContextMenuOpening(object? sender, ContextMenuEventArgs e)
         {
             var container = sender as ListBoxItem;
             if (container == null)
@@ -136,8 +138,10 @@ namespace NeeView
             contextMenu.Items.Add(DestinationFolderCollectionUtility.CreateDestinationFolderItem(Properties.Resources.PageListItem_Menu_MoveToFolder, _commandResource.MoveToFolder_CanExecute(listBox), MoveToFolderCommand, OpenDestinationFolderCommand));
         }
 
-        private void ThumbnailListBox_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
+        private void ThumbnailListBox_PreviewMouseWheel(object? sender, MouseWheelEventArgs e)
         {
+            if (_vm is null) return;
+
             var delta = _mouseWheelDelta.NotchCount(e);
             if (delta != 0)
             {
@@ -147,8 +151,10 @@ namespace NeeView
             e.Handled = true;
         }
 
-        private void FolderInformationView_KeyDown(object sender, KeyEventArgs e)
+        private void FolderInformationView_KeyDown(object? sender, KeyEventArgs e)
         {
+            if (_vm is null) return;
+
             // このパネルで使用するキーのイベントを止める
             if (Keyboard.Modifiers == ModifierKeys.None)
             {
@@ -162,9 +168,13 @@ namespace NeeView
 
         #region DragDrop
 
-        private async Task DragStartBehavior_DragBeginAsync(object sender, Windows.DragStartEventArgs e, CancellationToken token)
+        private async Task DragStartBehavior_DragBeginAsync(object? sender, Windows.DragStartEventArgs e, CancellationToken token)
         {
-            var pages = this.ThumbnailListBox.SelectedItems.Cast<FileInformationSource>().Select(x => x.ViewContent?.Page).Where(x => x != null).ToList();
+            var pages = this.ThumbnailListBox.SelectedItems.Cast<FileInformationSource>()
+                .Select(x => x.ViewContent?.Page)
+                .WhereNotNull()
+                .ToList();
+
             if (!pages.Any())
             {
                 e.Cancel = true;
@@ -211,19 +221,23 @@ namespace NeeView
 
     public class InformationPageCommandResource : PageCommandResource
     {
-        protected override Page GetSelectedPage(object sender)
+        protected override Page? GetSelectedPage(object sender)
         {
             var listBox = sender as ListBox;
+            if (listBox is null) return null;
+
             return (listBox.SelectedItem as FileInformationSource)?.ViewContent?.Page;
         }
 
-        protected override List<Page> GetSelectedPages(object sender)
+        protected override List<Page>? GetSelectedPages(object sender)
         {
             var listBox = sender as ListBox;
+            if (listBox is null) return null;
+
             return listBox.SelectedItems
                 .Cast<FileInformationSource>()
                 .Select(e => e.ViewContent?.Page)
-                .Where(e => e != null)
+                .WhereNotNull()
                 .ToList();
         }
     }

@@ -14,7 +14,7 @@ namespace NeeView
         internal static class NativeMethods
         {
             [DllImport("user32.dll", CharSet = CharSet.Unicode)]
-            public static extern IntPtr FindWindow(string className, string windowTitle);
+            public static extern IntPtr FindWindow(string className, string? windowTitle);
 
             [DllImport("user32.dll")]
             public static extern int SetForegroundWindow(IntPtr hwnd);

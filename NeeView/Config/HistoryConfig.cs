@@ -22,7 +22,7 @@ namespace NeeView
         private bool _isAutoCleanupEnabled;
 
         [JsonInclude, JsonPropertyName(nameof(HistoryFilePath))]
-        public string _historyFilePath;
+        public string? _historyFilePath;
 
 
         [PropertyMember]

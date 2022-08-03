@@ -19,14 +19,9 @@ namespace NeeLaboratory.Windows.Input
     /// </summary>
     public class RelayCommand : ICommand
     {
-        #region Fields
-
         private readonly Action _execute;
-        private readonly Func<bool> _canExecute;
+        private readonly Func<bool>? _canExecute;
 
-        #endregion
-
-        #region Constructors
 
         /// <summary>
         /// 常に実行可能な新しいコマンドを作成します。
@@ -42,7 +37,7 @@ namespace NeeLaboratory.Windows.Input
         /// </summary>
         /// <param name="execute">実行ロジック。</param>
         /// <param name="canExecute">実行ステータス ロジック。</param>
-        public RelayCommand(Action execute, Func<bool> canExecute)
+        public RelayCommand(Action execute, Func<bool>? canExecute)
         {
             if (execute == null)
                 throw new ArgumentNullException("execute");
@@ -50,18 +45,12 @@ namespace NeeLaboratory.Windows.Input
             _canExecute = canExecute;
         }
 
-        #endregion
-
-        #region Events
 
         /// <summary>
         /// RaiseCanExecuteChanged が呼び出されたときに生成されます。
         /// </summary>
-        public event EventHandler CanExecuteChanged;
+        public event EventHandler? CanExecuteChanged;
 
-        #endregion
-
-        #region Methods
 
         /// <summary>
         /// 現在の状態でこの <see cref="RelayCommand"/> が実行できるかどうかを判定します。
@@ -70,7 +59,7 @@ namespace NeeLaboratory.Windows.Input
         /// コマンドによって使用されるデータ。コマンドが、データの引き渡しを必要としない場合、このオブジェクトを null に設定できます。
         /// </param>
         /// <returns>このコマンドが実行可能な場合は true、それ以外の場合は false。</returns>
-        public bool CanExecute(object parameter)
+        public bool CanExecute(object? parameter)
         {
             return _canExecute == null ? true : _canExecute();
         }
@@ -81,7 +70,7 @@ namespace NeeLaboratory.Windows.Input
         /// <param name="parameter">
         /// コマンドによって使用されるデータ。コマンドが、データの引き渡しを必要としない場合、このオブジェクトを null に設定できます。
         /// </param>
-        public void Execute(object parameter)
+        public void Execute(object? parameter)
         {
             _execute();
         }
@@ -95,8 +84,6 @@ namespace NeeLaboratory.Windows.Input
         {
             CanExecuteChanged?.Invoke(this, EventArgs.Empty);
         }
-
-        #endregion
     }
 
 
@@ -106,17 +93,15 @@ namespace NeeLaboratory.Windows.Input
     /// <typeparam name="T"></typeparam>
     public class RelayCommand<T> : ICommand
     {
-        #region Fields
-        private readonly Action<T> _execute;
-        private readonly Func<T, bool> _canExecute;
-        #endregion
+        private readonly Action<T?> _execute;
+        private readonly Func<T?, bool>? _canExecute;
 
-        #region Constructoes
+        
         /// <summary>
         /// 常に実行可能な新しいコマンドを作成します。
         /// </summary>
         /// <param name="execute">実行ロジック。</param>
-        public RelayCommand(Action<T> execute)
+        public RelayCommand(Action<T?> execute)
             : this(execute, null)
         {
         }
@@ -126,7 +111,7 @@ namespace NeeLaboratory.Windows.Input
         /// </summary>
         /// <param name="execute">実行ロジック。</param>
         /// <param name="canExecute">実行ステータス ロジック。</param>
-        public RelayCommand(Action<T> execute, Func<T, bool> canExecute)
+        public RelayCommand(Action<T?> execute, Func<T?, bool>? canExecute)
         {
             if (execute == null)
                 throw new ArgumentNullException("execute");
@@ -134,16 +119,12 @@ namespace NeeLaboratory.Windows.Input
             _canExecute = canExecute;
         }
 
-        #endregion
-
-        #region Events
+        
         /// <summary>
         /// RaiseCanExecuteChanged が呼び出されたときに生成されます。
         /// </summary>
-        public event EventHandler CanExecuteChanged;
-        #endregion
+        public event EventHandler? CanExecuteChanged;
 
-        #region Methods
 
         /// <summary>
         /// 現在の状態でこの <see cref="RelayCommand"/> が実行できるかどうかを判定します。
@@ -152,9 +133,9 @@ namespace NeeLaboratory.Windows.Input
         /// コマンドによって使用されるデータ。コマンドが、データの引き渡しを必要としない場合、このオブジェクトを null に設定できます。
         /// </param>
         /// <returns>このコマンドが実行可能な場合は true、それ以外の場合は false。</returns>
-        public bool CanExecute(object parameter)
+        public bool CanExecute(object? parameter)
         {
-            return _canExecute == null ? true : _canExecute((T)parameter);
+            return _canExecute == null ? true : _canExecute((T?)parameter);
         }
 
         /// <summary>
@@ -163,9 +144,9 @@ namespace NeeLaboratory.Windows.Input
         /// <param name="parameter">
         /// コマンドによって使用されるデータ。コマンドが、データの引き渡しを必要としない場合、このオブジェクトを null に設定できます。
         /// </param>
-        public void Execute(object parameter)
+        public void Execute(object? parameter)
         {
-            _execute((T)parameter);
+            _execute((T?)parameter);
         }
 
         /// <summary>
@@ -177,7 +158,5 @@ namespace NeeLaboratory.Windows.Input
         {
             CanExecuteChanged?.Invoke(this, EventArgs.Empty);
         }
-
-        #endregion
     }
 }

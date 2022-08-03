@@ -1,6 +1,7 @@
 ﻿using NeeLaboratory.ComponentModel;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -74,9 +75,10 @@ namespace NeeView
         }
 
 
+        [MemberNotNull(nameof(_mainViewVisualBrush))]
         private void InitializeThumbnail()
         {
-            this.MainViewVisualBrush = new VisualBrush()
+            _mainViewVisualBrush = new VisualBrush()
             {
                 Stretch = Stretch.Uniform,
                 Visual = _mainViewComponent.MainView.PageContents,
@@ -119,6 +121,7 @@ namespace NeeView
         }
 
 
+        [MemberNotNull(nameof(_viewboxGeometry))]
         private void InitializeViewbox()
         {
             var points = new List<Point>()
@@ -158,7 +161,7 @@ namespace NeeView
 
             // コンテンツ座標系の逆変換
             var mainViewTransform = _mainViewComponent.MainView.Transform;
-            var inverse = mainViewTransform.Inverse;
+            var inverse = mainViewTransform?.Inverse;
             if (inverse is Transform inverseTransform)
             {
                 transformGroup.Children.Add(inverseTransform);

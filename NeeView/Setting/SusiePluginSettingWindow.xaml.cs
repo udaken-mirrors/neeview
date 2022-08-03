@@ -25,7 +25,7 @@ namespace NeeView.Setting
     /// </summary>
     public partial class SusiePluginSettingWindow : Window
     {
-        private SusiePluginSettingWindowViewModel _vm;
+        private SusiePluginSettingWindowViewModel? _vm;
 
         public SusiePluginSettingWindow()
         {
@@ -37,17 +37,17 @@ namespace NeeView.Setting
         }
 
 
-        private void SusiePluginSettingWindow_Loaded(object sender, RoutedEventArgs e)
+        private void SusiePluginSettingWindow_Loaded(object? sender, RoutedEventArgs e)
         {
             this.CloseButton.Focus();
         }
 
-        private void SusiePluginSettingWindow_Closed(object sender, EventArgs e)
+        private void SusiePluginSettingWindow_Closed(object? sender, EventArgs e)
         {
-            _vm.Flush();
+            _vm?.Flush();
         }
 
-        private void SusiePluginSettingWindow_KeyDown(object sender, KeyEventArgs e)
+        private void SusiePluginSettingWindow_KeyDown(object? sender, KeyEventArgs e)
         {
             if (e.Key == Key.Escape && Keyboard.Modifiers == ModifierKeys.None)
             {
@@ -62,14 +62,14 @@ namespace NeeView.Setting
             this.DataContext = _vm;
         }
 
-        private void CloseButton_Click(object sender, RoutedEventArgs e)
+        private void CloseButton_Click(object? sender, RoutedEventArgs e)
         {
             this.Close();
         }
 
-        private void ConfigButton_Click(object sender, RoutedEventArgs e)
+        private void ConfigButton_Click(object? sender, RoutedEventArgs e)
         {
-            _vm.OpenConfigDialog(this);
+            _vm?.OpenConfigDialog(this);
         }
     }
 
@@ -89,7 +89,7 @@ namespace NeeView.Setting
 
         public string Name => _spi.Name;
 
-        public string Version => _spi.PluginVersion;
+        public string? Version => _spi.PluginVersion;
 
         public bool IsArchiver => _spi.PluginType == SusiePluginType.Archive;
 

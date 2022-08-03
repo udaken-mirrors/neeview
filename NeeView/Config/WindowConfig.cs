@@ -104,7 +104,7 @@ namespace NeeView
         /// </summary>
         [PropertyMapIgnore]
         [ObjectMergeReferenceCopy]
-        public WindowPlacement WindowPlacement { get; set; }
+        public WindowPlacement? WindowPlacement { get; set; }
 
         #endregion HiddenParameters
 

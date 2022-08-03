@@ -81,14 +81,13 @@ namespace NeeView.Susie.Server
 
         public SusieArchiveEntry ToSusieArchiveEntry()
         {
-            var entry = new SusieArchiveEntry();
-
-            entry.Position = (int)_info.position;
-            entry.Path = this.Path;
-            entry.FileName = this.FileName;
-            entry.IsDirectory = this.IsDirectory;
-            entry.FileSize = this.FileSize;
-            entry.TimeStamp = this.TimeStamp;
+            var entry = new SusieArchiveEntry(this.Path, this.FileName)
+            {
+                Position = (int)_info.position,
+                IsDirectory = this.IsDirectory,
+                FileSize = this.FileSize,
+                TimeStamp = this.TimeStamp
+            };
 
             return entry;
         }

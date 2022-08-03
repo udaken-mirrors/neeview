@@ -5,7 +5,7 @@
     /// </summary>
     public class BookshelfFolderTreeModel : FolderTreeModel
     {
-        public static BookshelfFolderTreeModel Current { get; private set; }
+        public static BookshelfFolderTreeModel? Current { get; private set; }
 
         public BookshelfFolderTreeModel(FolderList folderList) : base(folderList, FolderTreeCategory.All)
         {

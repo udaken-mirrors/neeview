@@ -11,15 +11,15 @@ namespace NeeView
     /// </summary>
     public class FolderSearchEngine : IDisposable
     {
-        #region Fields
+        // Fields
 
-        private SearchEngine _searchEngine;
+        private SearchEngine? _searchEngine;
 
-        #endregion
+        // Properties 
 
         public bool IncludeSubdirectories { get; set; } = true;
 
-        #region Methods
+        // Methods
 
         public async Task<SearchResultWatcher> SearchAsync(string path, string keyword)
         {
@@ -31,7 +31,7 @@ namespace NeeView
                 {
                     AllowFolder = true,
                 };
-                var result = await _searchEngine.SearchAsync(keyword, option);
+                var result = await searchEngine.SearchAsync(keyword, option);
                 return result;
             }
             catch (OperationCanceledException)
@@ -80,7 +80,6 @@ namespace NeeView
             }
         }
 
-        #endregion
 
         #region IDisposable Support
         private bool _disposedValue = false;

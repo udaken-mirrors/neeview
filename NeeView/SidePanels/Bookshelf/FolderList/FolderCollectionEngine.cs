@@ -47,7 +47,7 @@ namespace NeeView
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void JobEngine_Error(object sender, Jobs.JobErrorEventArgs e)
+        private void JobEngine_Error(object? sender, Jobs.JobErrorEventArgs e)
         {
             Debug.WriteLine($"FolderCollection JOB Exception!: {e.Job}: {e.GetException().Message}");
             e.Handled = true;

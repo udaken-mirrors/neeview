@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -19,16 +20,15 @@ namespace NeeView
         private object _lock = new object();
 
         private bool _isParentValid;
-        private bool _isChildrenValid;
-        private FolderCollection _collection;
+        private FolderCollection? _collection;
 
 
         // Constructors
 
-        public FolderNode(FolderNode parent, string name, FolderItem content)
+        public FolderNode(FolderNode? parent, string? name, FolderItem? content)
         {
             Parent = parent;
-            Name = name ?? throw new ArgumentNullException(nameof(name));
+            Name = name;
             Content = content;
             _isParentValid = _parent?.Content != null;
         }
@@ -42,12 +42,11 @@ namespace NeeView
                 .Where(e => !e.IsEmpty())
                 .Select(e => new FolderNode(parent, e.Name, e) { Place = collection.Place.FullPath })
                 .ToList();
-            parent._isChildrenValid = true;
 
             parent._collection = collection;
 
             // 重複名はターゲットで区別する
-            var index = parent.Children.FindIndex(e => e.Name == content.Name && e.Content.TargetPath == content.TargetPath);
+            var index = parent.Children.FindIndex(e => e.Name == content.Name && e.Content?.TargetPath == content.TargetPath);
             if (index < 0) throw new ArgumentException("collection dont have content");
 
             this.Parent = parent;
@@ -62,43 +61,44 @@ namespace NeeView
 
         // Properties
 
-        private FolderNode _parent;
-        public FolderNode Parent
+        private FolderNode? _parent;
+        public FolderNode? Parent
         {
             get => _isParentValid ? _parent : throw new InvalidOperationException("parent not initialize");
             private set => _parent = value;
         }
 
-        private List<FolderNode> _children;
-        public List<FolderNode> Children
+        private List<FolderNode>? _children;
+        public List<FolderNode>? Children
         {
-            get => _isChildrenValid ? _children : throw new InvalidOperationException("children not initialize");
+            get => _children ?? throw new InvalidOperationException("children not initialize");
             private set => _children = value;
         }
 
-        private string _place;
-        public string Place
+        private string? _place;
+        public string? Place
         {
             get { return _parent != null ? _parent.FullName : _place; }
             set { _place = value; }
         }
 
-        public string Name { get; set; }
+        public string? Name { get; set; }
 
-        public string FullName => _parent != null ? LoosePath.Combine(_parent.FullName, Name) : Name;
+        public string? FullName => _parent != null ? LoosePath.Combine(_parent.FullName, Name) : Name;
 
-        public FolderItem Content { get; set; }
+        public FolderItem? Content { get; set; }
 
 
         // Methods
 
-        public async Task<FolderNode> GetParent(CancellationToken token)
+        public async Task<FolderNode?> GetParent(CancellationToken token)
         {
             if (!_isParentValid)
             {
                 var parent = await CreateParent(token);
                 if (parent != null)
                 {
+                    if (parent.Children is null) throw new InvalidOperationException("FolderNode parent.Children must be not null");
                     var name = LoosePath.GetFileName(FullName, parent.FullName);
                     var index = parent.Children.FindIndex(e => e.Name == name); // 重複名は区別できていない
                     if (index < 0) throw new KeyNotFoundException();
@@ -124,7 +124,7 @@ namespace NeeView
             return Parent;
         }
 
-        private async Task<FolderNode> CreateParent(CancellationToken token)
+        private async Task<FolderNode?> CreateParent(CancellationToken token)
         {
             if (_isParentValid) return Parent;
 
@@ -133,7 +133,7 @@ namespace NeeView
 
             // normal folder
             {
-                var directory = _collection?.GetParentQuery().FullPath ?? LoosePath.GetDirectoryName(Name);
+                var directory = _collection?.GetParentQuery()?.FullPath ?? LoosePath.GetDirectoryName(Name);
                 if (string.IsNullOrEmpty(directory))
                 {
                     Parent = null;
@@ -152,7 +152,7 @@ namespace NeeView
         }
 
 
-        public async Task<FolderNode> GetPrev(CancellationToken token)
+        public async Task<FolderNode?> GetPrev(CancellationToken token)
         {
             var parent = await GetParent(token);
             if (parent == null) return null;
@@ -167,7 +167,7 @@ namespace NeeView
             return null;
         }
 
-        public async Task<FolderNode> GetNext(CancellationToken token)
+        public async Task<FolderNode?> GetNext(CancellationToken token)
         {
             var parent = await GetParent(token);
             if (parent == null) return null;
@@ -185,28 +185,24 @@ namespace NeeView
 
         public async Task<List<FolderNode>> GetChildren(CancellationToken token)
         {
-            if (!_isChildrenValid)
+            if (_children is null)
             {
                 var children = await CreateChildren(token);
 
                 lock (_lock)
                 {
-                    if (!_isChildrenValid)
-                    {
-                        _isChildrenValid = true;
-                        Children = children;
-                    }
+                    _children = children;
                 }
 
                 token.ThrowIfCancellationRequested();
             }
 
-            return Children;
+            return _children;
         }
 
         private async Task<List<FolderNode>> CreateChildren(CancellationToken token)
         {
-            if (_isChildrenValid) return Children;
+            if (_children is not null) return _children;
 
             if (Content != null && !Content.CanOpenFolder())
             {
@@ -232,16 +228,18 @@ namespace NeeView
 
         private bool HasAncestor(FolderNode target)
         {
+            if (this.FullName is null) return false;
+
             return this.FullName.StartsWith(LoosePath.TrimDirectoryEnd(target.FullName));
         }
 
 
-        public async Task<FolderNode> CruisePrev(CancellationToken token)
+        public async Task<FolderNode?> CruisePrev(CancellationToken token)
         {
             var prev = await GetPrev(token);
             var cruse = await GetCruisePrev(token);
 
-            if (prev != null && cruse.HasAncestor(prev) && BookHubTools.IsRecursiveBook(new QueryPath(prev.FullName)))
+            if (prev != null && cruse != null && cruse.HasAncestor(prev) && BookHubTools.IsRecursiveBook(new QueryPath(prev.FullName)))
             {
                 return prev;
             }
@@ -249,7 +247,7 @@ namespace NeeView
             return cruse;
         }
 
-        public async Task<FolderNode> GetCruisePrev(CancellationToken token)
+        public async Task<FolderNode?> GetCruisePrev(CancellationToken token)
         {
             var parent = await GetParent(token);
             if (parent == null) return null;
@@ -283,16 +281,18 @@ namespace NeeView
 
         private bool CanCruiseChildren(FolderNode node)
         {
+            if (node.Content is null) return false;
+
             // ショートカット、プレイリストメンバーは辿らない
             return (node.Content.Attributes & (FolderItemAttribute.Shortcut | FolderItemAttribute.PlaylistMember)) == 0;
         }
 
-        public async Task<FolderNode> CruiseNext(CancellationToken token)
+        public async Task<FolderNode?> CruiseNext(CancellationToken token)
         {
             var next = await GetNext(token);
             var cruse = await GetCruiseNext(token);
 
-            if (next != null && cruse.HasAncestor(this) && BookHubTools.IsRecursiveBook(new QueryPath(this.FullName)))
+            if (next != null && cruse != null && cruse.HasAncestor(this) && BookHubTools.IsRecursiveBook(new QueryPath(this.FullName)))
             {
                 return next;
             }
@@ -300,7 +300,7 @@ namespace NeeView
             return cruse;
         }
 
-        public async Task<FolderNode> GetCruiseNext(CancellationToken token)
+        public async Task<FolderNode?> GetCruiseNext(CancellationToken token)
         {
             if (CanCruiseChildren(this))
             {
@@ -315,7 +315,7 @@ namespace NeeView
             return await CruiseNextUp(token);
         }
 
-        private async Task<FolderNode> CruiseNextUp(CancellationToken token)
+        private async Task<FolderNode?> CruiseNextUp(CancellationToken token)
         {
             var parent = await GetParent(token);
             if (parent == null) return null;

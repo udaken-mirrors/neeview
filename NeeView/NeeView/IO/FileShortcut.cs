@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -14,7 +15,7 @@ namespace NeeView.IO
     public class FileShortcut
     {
         private FileInfo _source;
-        private FileSystemInfo _target;
+        private FileSystemInfo? _target;
 
 
         public FileShortcut(string path)
@@ -30,14 +31,28 @@ namespace NeeView.IO
 
         // リンク元ファイル
         public FileInfo Source => _source;
-        public string SourcePath => _source?.FullName;
+        public string SourcePath => _source.FullName;
 
         // リンク先ファイル
-        public FileSystemInfo Target => _target;
-        public string TargetPath => _target?.FullName;
+        public FileSystemInfo? Target => _target;
+        public string? TargetPath => _target?.FullName;
 
         // 有効？
         public bool IsValid => _target != null && _target.Exists;
+
+
+
+        public bool TryGetTarget([NotNullWhen(true)] out FileSystemInfo? target)
+        {
+            target = Target;
+            return IsValid;
+        }
+
+        public bool TryGetTargetPath([NotNullWhen(true)] out string? targetPath)
+        {
+            targetPath = TargetPath;
+            return IsValid;
+        }
 
 
         public static bool IsShortcut(string path)
@@ -62,6 +77,7 @@ namespace NeeView.IO
             }
         }
 
+        [MemberNotNull(nameof(_source))]
         public void Open(FileInfo source)
         {
             if (!IsShortcut(source.FullName)) throw new NotSupportedException($"{source.FullName} is not link file.");

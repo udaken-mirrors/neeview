@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NeeLaboratory.Linq;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -12,7 +13,7 @@ namespace NeeView
 {
     public class PageCommandResource
     {
-        public CommandBinding CreateCommandBinding(RoutedCommand command, string key = null)
+        public CommandBinding CreateCommandBinding(RoutedCommand command, string? key = null)
         {
             key = key ?? command.Name;
             switch (key)
@@ -44,16 +45,16 @@ namespace NeeView
             }
         }
 
-        protected virtual Page GetSelectedPage(object sender)
+        protected virtual Page? GetSelectedPage(object sender)
         {
             return (sender as ListBox)?.SelectedItem as Page;
         }
 
-        protected virtual List<Page> GetSelectedPages(object sender)
+        protected virtual List<Page>? GetSelectedPages(object sender)
         {
             return (sender as ListBox)?.SelectedItems?
                 .Cast<Page>()
-                .Where(e => e != null)
+                .WhereNotNull()
                 .ToList();
         }
 
@@ -115,7 +116,7 @@ namespace NeeView
             var item = GetSelectedPage(sender);
             if (item != null)
             {
-                string path;
+                string? path;
                 if (FileIO.Exists(item.EntryFullName))
                 {
                     path = item.EntryFullName;
@@ -302,7 +303,7 @@ namespace NeeView
         private void MoveToFolder(IEnumerable<Page> pages, string destDirPath)
         {
             var movePages = pages.Where(e => e.Entry.IsFileSystem).ToList();
-            var paths = movePages.Select(e => e.GetFilePlace()).ToList();
+            var paths = movePages.Select(e => e.GetFilePlace()).WhereNotNull().ToList();
             FileIO.MoveToFolder(paths, destDirPath);
 
             // 移動後のブックページ整合性処理
@@ -391,6 +392,8 @@ namespace NeeView
             if (book is null) return;
 
             var pages = GetSelectedPages(sender);
+            if (pages is null) return;
+
             var bookPlaylist = new BookPlaylist(book, PlaylistHub.Current.Playlist);
 
             if (PlaylistMark_IsChecked(sender))
@@ -409,6 +412,8 @@ namespace NeeView
             if (book is null) return false;
 
             var page = GetSelectedPage(sender);
+            if (page is null) return false;
+
             var bookPlaylist = new BookPlaylist(book, PlaylistHub.Current.Playlist);
             return bookPlaylist.Find(page) != null;
         }

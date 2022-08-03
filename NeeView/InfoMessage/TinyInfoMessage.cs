@@ -11,13 +11,13 @@ namespace NeeView
         /// <summary>
         /// Message property.
         /// </summary>
-        public string Message
+        public string? Message
         {
             get { return _Message; }
             set { _Message = value; }
         }
 
-        private string _Message;
+        private string? _Message;
 
 
         /// <summary>

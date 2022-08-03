@@ -40,7 +40,6 @@ namespace NeeView
                     if (Path != null && Path.StartsWith(Temporary.Current.TempDirectory)) // 念入りチェック
                     {
                         if (Directory.Exists(Path)) Directory.Delete(Path, true);
-                        Path = null;
                     }
                 }
                 catch (Exception e)

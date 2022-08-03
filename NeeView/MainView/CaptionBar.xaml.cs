@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -22,8 +23,8 @@ namespace NeeView
     /// </summary>
     public partial class CaptionBar : UserControl
     {
-        MainWindowCaptionEmulator _windowCaptionEmulator;
-        WindowStateCommands _windowStateCommands;
+        MainWindowCaptionEmulator? _windowCaptionEmulator;
+        WindowStateCommands? _windowStateCommands;
 
         public CaptionBar()
         {
@@ -100,14 +101,14 @@ namespace NeeView
 
 
 
-        private void CaptionBar_Loaded(object sender, RoutedEventArgs e)
+        private void CaptionBar_Loaded(object? sender, RoutedEventArgs e)
         {
             UpdateCaptionEmulator();
             UpdateWindowStateCommands();
             UpdateSystemMenu();
         }
 
-        private void CaptionBar_MouseRightButtonUp(object sender, MouseButtonEventArgs e)
+        private void CaptionBar_MouseRightButtonUp(object? sender, MouseButtonEventArgs e)
         {
             if (e.Handled) return;
             if (!IsSystemMenuEnabled) return;

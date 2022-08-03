@@ -24,36 +24,37 @@ namespace NeeView
     /// </summary>
     public class BookAddress
     {
-        #region Properties
+        public BookAddress()
+        {
+
+        }
+
 
         /// <summary>
         /// 開始ページ名
         /// </summary>
-        public string EntryName { get; set; }
+        public string? EntryName { get; set; }
 
         /// <summary>
         /// ブックのアドレス
         /// </summary>
-        public QueryPath Address { get; set; }
+        public QueryPath Address { get; set; } = QueryPath.Empty;
 
         /// <summary>
         /// ブックのあるフォルダー
         /// </summary>
-        public QueryPath Place { get; set; }
+        public QueryPath Place { get; set; } = QueryPath.Empty;
 
         /// <summary>
         /// ページを含めたアーカイブパス
         /// </summary>
-        public string SystemPath => LoosePath.Combine(Address.SimplePath, EntryName);
+        public string SystemPath => LoosePath.Combine(Address?.SimplePath, EntryName);
 
         /// <summary>
         /// ソースアドレス。ショートカットファイルとか
         /// </summary>
-        public QueryPath SourceAddress { get; set; }
+        public QueryPath? SourceAddress { get; set; }
 
-        #endregion
-
-        #region Methods
 
         /// <summary>
         /// BookAddress生成
@@ -63,7 +64,8 @@ namespace NeeView
         /// <param name="option"></param>
         /// <param name="token">キャンセルトークン</param>
         /// <returns>生成したインスタンス</returns>
-        public static async Task<BookAddress> CreateAsync(QueryPath query, QueryPath sourceQuery, string entryName, ArchiveEntryCollectionMode mode, BookLoadOption option, CancellationToken token)
+        // TODO: 非同期ではパラメータ生成のみを行い、BookAddressコンストラクタにそれを渡すようにして初期化する
+        public static async Task<BookAddress> CreateAsync(QueryPath query, QueryPath sourceQuery, string? entryName, ArchiveEntryCollectionMode mode, BookLoadOption option, CancellationToken token)
         {
             var address = new BookAddress();
             await address.ConstructAsync(query, sourceQuery, entryName, mode, option, token);
@@ -74,15 +76,15 @@ namespace NeeView
         /// 初期化。
         /// アーカイブ展開等を含むため、非同期処理。
         /// </summary>
-        private async Task ConstructAsync(QueryPath query, QueryPath sourceQuery, string entryName, ArchiveEntryCollectionMode mode, BookLoadOption option, CancellationToken token)
+        private async Task ConstructAsync(QueryPath query, QueryPath sourceQuery, string? entryName, ArchiveEntryCollectionMode mode, BookLoadOption option, CancellationToken token)
         {
-
             this.SourceAddress = sourceQuery ?? query;
 
             // ブックマークは実体のパスへ
             if (query.Scheme == QueryScheme.Bookmark)
             {
                 var node = BookmarkCollection.Current.FindNode(query);
+                if (node is null) throw new InvalidOperationException();
                 switch (node.Value)
                 {
                     case Bookmark bookmark:
@@ -127,9 +129,11 @@ namespace NeeView
                                 this.Address = query.GetParent();
                                 break;
                             case ArchiveEntryCollectionMode.IncludeSubDirectories:
+                                if (entry.Archiver is null) throw new InvalidOperationException();
                                 this.Address = new QueryPath(entry.Archiver.SystemPath);
                                 break;
                             case ArchiveEntryCollectionMode.IncludeSubArchives:
+                                if (entry.RootArchiver is null) throw new InvalidOperationException();
                                 this.Address = new QueryPath(entry.RootArchiver.SystemPath);
                                 break;
                             default:
@@ -149,7 +153,7 @@ namespace NeeView
             }
 
             this.Place = GetPlace(entry, mode);
-            Debug.Assert(this.Place != null);
+            //Debug.Assert(this.Place != null);
         }
 
         /// <summary>
@@ -170,10 +174,12 @@ namespace NeeView
             {
                 if (mode == ArchiveEntryCollectionMode.IncludeSubArchives)
                 {
+                    if (entry.Archiver?.RootArchiver is null) throw new InvalidOperationException();
                     return new QueryPath(entry.Archiver.RootArchiver.SystemPath).GetParent();
                 }
                 else if (mode == ArchiveEntryCollectionMode.IncludeSubDirectories)
                 {
+                    if (entry.Archiver is null) throw new InvalidOperationException();
                     if (entry.IsArchive())
                     {
                         return new QueryPath(entry.Archiver.SystemPath);
@@ -203,8 +209,6 @@ namespace NeeView
             if (!full.StartsWith(address.SimplePath)) throw new ArgumentException($"{address} is not include entry.", nameof(address));
             return full.Substring(address.SimplePath.Length, full.Length - address.SimplePath.Length).TrimStart(LoosePath.Separators);
         }
-
-        #endregion
     }
 
 }

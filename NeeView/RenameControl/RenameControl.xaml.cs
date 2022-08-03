@@ -20,6 +20,13 @@ namespace NeeView
 
     public class RenameClosingEventArgs : EventArgs
     {
+        public RenameClosingEventArgs(string oldValue, string newValue, bool isFocused)
+        {
+            OldValue = oldValue;
+            NewValue = newValue;
+            IsFocused = isFocused;
+        }
+
         public string OldValue { get; set; }
         public string NewValue { get; set; }
         public bool IsFocused { get; set; }
@@ -28,10 +35,18 @@ namespace NeeView
 
     public class RenameClosedEventArgs : EventArgs
     {
+        public RenameClosedEventArgs(string oldValue, string newValue, int moveRename, bool isFocused)
+        {
+            OldValue = oldValue;
+            NewValue = newValue;
+            MoveRename = moveRename;
+            IsFocused = isFocused;
+        }
+
         public string OldValue { get; set; }
         public string NewValue { get; set; }
-        public bool IsFocused { get; set; }
         public int MoveRename { get; set; }
+        public bool IsFocused { get; set; }
     }
 
     /// <summary>
@@ -41,9 +56,9 @@ namespace NeeView
     {
         #region INotifyPropertyChanged Support
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
-        protected bool SetProperty<T>(ref T storage, T value, [System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
+        protected bool SetProperty<T>(ref T storage, T value, [System.Runtime.CompilerServices.CallerMemberName] string? propertyName = null)
         {
             if (object.Equals(storage, value)) return false;
             storage = value;
@@ -51,7 +66,7 @@ namespace NeeView
             return true;
         }
 
-        protected void RaisePropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string name = null)
+        protected void RaisePropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string? name = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
@@ -65,8 +80,8 @@ namespace NeeView
 
 
         private char[] _invalidChars = System.IO.Path.GetInvalidFileNameChars();
-        private string _old;
-        private string _new;
+        private string _old = "";
+        private string _new = "";
         private int _moveRename;
         private int _keyCount;
         private bool _closing;
@@ -80,18 +95,19 @@ namespace NeeView
         }
 
 
-        public event EventHandler<RenameClosingEventArgs> Closing;
-        public event EventHandler Close;
-        public event EventHandler<RenameClosedEventArgs> Closed;
+        public event EventHandler<RenameClosingEventArgs>? Closing;
+        public event EventHandler? Close;
+        public event EventHandler<RenameClosedEventArgs>? Closed;
 
 
         // リネームを行うTextBlock
-        private TextBlock _target;
-        public TextBlock Target
+        private TextBlock? _target;
+        public TextBlock? Target
         {
             get { return _target; }
             set
             {
+                if (value is null) throw new ArgumentNullException();
                 if (_target != value)
                 {
                     _target = value;
@@ -101,8 +117,8 @@ namespace NeeView
                     _old = Text;
                     _new = Text;
 
-                    this.RenameTextBox.FontFamily = Target.FontFamily;
-                    this.RenameTextBox.FontSize = Target.FontSize;
+                    this.RenameTextBox.FontFamily = _target.FontFamily;
+                    this.RenameTextBox.FontSize = _target.FontSize;
                 }
             }
         }
@@ -127,7 +143,7 @@ namespace NeeView
         // 拡張子を除いた部分を選択
         public bool IsSeleftFileNameBody { get; set; } = false;
 
-        private string _text;
+        private string _text = "";
         public string Text
         {
             get { return _text; }
@@ -140,7 +156,7 @@ namespace NeeView
                         _text = new string(value.Where(e => !_invalidChars.Contains(e)).ToArray());
                         if (_text != value)
                         {
-                            ToastService.Current.Show(new Toast(Properties.Resources.Notice_InvalidFileNameChars, null, ToastIcon.Information));
+                            ToastService.Current.Show(new Toast(Properties.Resources.Notice_InvalidFileNameChars, "", ToastIcon.Information));
                         }
                     }
                     else if (_isInvalidSeparatorChars)
@@ -148,7 +164,7 @@ namespace NeeView
                         _text = new string(value.Where(e => !LoosePath.Separators.Contains(e)).ToArray());
                         if (_text != value)
                         {
-                            ToastService.Current.Show(new Toast(Properties.Resources.Notice_InvalidSeparatorChars, null, ToastIcon.Information));
+                            ToastService.Current.Show(new Toast(Properties.Resources.Notice_InvalidSeparatorChars, "", ToastIcon.Information));
                         }
                     }
                     else
@@ -160,7 +176,7 @@ namespace NeeView
             }
         }
 
-        private void RenameTextBox_LostFocus(object sender, RoutedEventArgs e)
+        private void RenameTextBox_LostFocus(object? sender, RoutedEventArgs e)
         {
             Stop(true);
         }
@@ -173,17 +189,17 @@ namespace NeeView
             _new = isSuccess ? Text.Trim() : _old;
             _isFocused = this.RenameTextBox.IsFocused;
 
-            var args = new RenameClosingEventArgs() { OldValue = _old, NewValue = _new, IsFocused = _isFocused };
+            var args = new RenameClosingEventArgs(_old, _new, _isFocused);
             Closing?.Invoke(this, args);
             if (args.Cancel)
             {
                 _new = _old;
             }
 
-            Close?.Invoke(this, null);
+            Close?.Invoke(this, EventArgs.Empty);
         }
 
-        private void RenameTextBox_Loaded(object sender, RoutedEventArgs e)
+        private void RenameTextBox_Loaded(object? sender, RoutedEventArgs e)
         {
             // 拡張子以外を選択状態にする
             string name = this.IsSeleftFileNameBody ? LoosePath.GetFileNameWithoutExtension(Text) : Text;
@@ -193,12 +209,12 @@ namespace NeeView
             this.RenameTextBox.Focus();
         }
 
-        private void RenameTextBox_Unloaded(object sender, RoutedEventArgs e)
+        private void RenameTextBox_Unloaded(object? sender, RoutedEventArgs e)
         {
-            Closed?.Invoke(this, new RenameClosedEventArgs() { OldValue = _old, NewValue = _new, MoveRename = _moveRename, IsFocused = _isFocused });
+            Closed?.Invoke(this, new RenameClosedEventArgs(_old, _new, _moveRename, _isFocused));
         }
 
-        private void RenameTextBox_PreviewKeyDown(object sender, KeyEventArgs e)
+        private void RenameTextBox_PreviewKeyDown(object? sender, KeyEventArgs e)
         {
             // 最初の方向入力に限りカーソル位置を固定する
             if (_keyCount == 0 && (e.Key == Key.Up || e.Key == Key.Down || e.Key == Key.Left || e.Key == Key.Right))
@@ -208,7 +224,7 @@ namespace NeeView
             }
         }
 
-        private void RenameTextBox_KeyDown(object sender, KeyEventArgs e)
+        private void RenameTextBox_KeyDown(object? sender, KeyEventArgs e)
         {
             if (e.Key == Key.Escape && Keyboard.Modifiers == ModifierKeys.None)
             {
@@ -228,19 +244,19 @@ namespace NeeView
             }
         }
 
-        private void RenameTextBox_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
+        private void RenameTextBox_PreviewMouseWheel(object? sender, MouseWheelEventArgs e)
         {
             Stop(true);
             e.Handled = true;
         }
 
-        private void MeasureText_SizeChanged(object sender, SizeChangedEventArgs e)
+        private void MeasureText_SizeChanged(object? sender, SizeChangedEventArgs e)
         {
             this.RenameTextBox.MinWidth = Math.Min(this.MeasureText.ActualWidth + 30, this.MaxWidth);
         }
 
         // 単キーコマンド無効
-        private void Control_KeyDown_IgnoreSingleKeyGesture(object sender, KeyEventArgs e)
+        private void Control_KeyDown_IgnoreSingleKeyGesture(object? sender, KeyEventArgs e)
         {
             KeyExGesture.AllowSingleKey = false;
         }

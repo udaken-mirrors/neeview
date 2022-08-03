@@ -20,8 +20,8 @@ namespace NeeView
         public static BookshelfFolderList Current { get; }
 
 
-        private FolderItem _visibledItem;
-        private Regex _excludeRegex;
+        private FolderItem? _visibledItem;
+        private Regex? _excludeRegex;
 
 
         private BookshelfFolderList() : base(true, true, Config.Current.Bookshelf)
@@ -80,7 +80,7 @@ namespace NeeView
         public BookshelfFolderHistory History { get; }
 
         // 除外パターンの正規表現
-        public Regex ExcludeRegex
+        public Regex? ExcludeRegex
         {
             get { return _excludeRegex; }
             set { SetProperty(ref _excludeRegex, value); }
@@ -89,7 +89,7 @@ namespace NeeView
         /// <summary>
         /// 現在ブックマーク更新
         /// </summary>
-        private void UpdateVisibledItem(string path, bool force)
+        private void UpdateVisibledItem(string? path, bool force)
         {
             if (force && _visibledItem != null)
             {
@@ -201,7 +201,7 @@ namespace NeeView
 
             if (Config.Current.Bookshelf.IsSyncFolderTree && Place != null)
             {
-                BookshelfFolderTreeModel.Current.SyncDirectory(Place.SimplePath);
+                BookshelfFolderTreeModel.Current?.SyncDirectory(Place.SimplePath);
             }
         }
 
@@ -242,13 +242,14 @@ namespace NeeView
             return Config.Current.Bookshelf.IsSearchIncludeSubdirectories;
         }
 
-        protected override void OnPlaceChanged(object sender, FolderSetPlaceOption options)
+        protected override void OnPlaceChanged(object? sender, FolderSetPlaceOption options)
         {
             base.OnPlaceChanged(sender, options);
 
             if (options.HasFlag(FolderSetPlaceOption.UpdateHistory))
             {
-                var place = Place.ReplaceSearch(null);
+                var place = Place?.ReplaceSearch(null);
+                if (place is null) return;
                 this.History?.Add(place);
             }
         }
@@ -297,7 +298,7 @@ namespace NeeView
         public new class Memento
         {
             [DataMember]
-            public FolderList.Memento FolderList { get; set; }
+            public FolderList.Memento? FolderList { get; set; }
 
             [DataMember]
             public bool IsVisibleHistoryMark { get; set; }
@@ -306,7 +307,7 @@ namespace NeeView
             public bool IsVisibleBookmarkMark { get; set; }
 
             [DataMember]
-            public string Home { get; set; }
+            public string? Home { get; set; }
 
             [DataMember, DefaultValue(true)]
             public bool IsInsertItem { get; set; }
@@ -315,7 +316,7 @@ namespace NeeView
             public bool IsMultipleRarFilterEnabled { get; set; }
 
             [DataMember]
-            public string ExcludePattern { get; set; }
+            public string? ExcludePattern { get; set; }
 
             [DataMember]
             public bool IsCruise { get; set; }
@@ -340,12 +341,12 @@ namespace NeeView
 
             public void RestoreConfig(Config config)
             {
-                FolderList.RestoreConfig(config.Bookshelf);
+                FolderList?.RestoreConfig(config.Bookshelf);
 
-                config.Bookshelf.Home = Home;
+                config.Bookshelf.Home = Home ?? "";
                 config.Bookshelf.IsVisibleHistoryMark = IsVisibleHistoryMark;
                 config.Bookshelf.IsVisibleBookmarkMark = IsVisibleBookmarkMark;
-                config.Bookshelf.IsSyncFolderTree = FolderList.IsSyncFolderTree;
+                config.Bookshelf.IsSyncFolderTree = FolderList?.IsSyncFolderTree ?? false;
                 config.Bookshelf.IsCloseBookWhenMove = IsCloseBookWhenMove;
                 config.Bookshelf.IsOpenNextBookWhenRemove = IsOpenNextBookWhenRemove;
                 config.Bookshelf.IsInsertItem = IsInsertItem;

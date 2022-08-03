@@ -13,10 +13,10 @@ namespace NeeView.Windows.Property
     {
         string Name { get; }
 
-        event EventHandler ValueChanged;
+        event EventHandler? ValueChanged;
 
-        object GetValue();
+        object? GetValue();
 
-        void SetValue(object value);
+        void SetValue(object? value);
     }
 }

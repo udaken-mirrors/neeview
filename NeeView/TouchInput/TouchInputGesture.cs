@@ -13,8 +13,6 @@ namespace NeeView
     /// </summary>
     public class TouchInputGesture : TouchInputBase
     {
-        #region Fields
-
         /// <summary>
         /// ジェスチャー入力
         /// </summary>
@@ -23,11 +21,8 @@ namespace NeeView
         /// <summary>
         /// 監視するデバイス
         /// </summary>
-        private TouchContext _touch;
+        private TouchContext? _touch;
 
-        #endregion
-
-        #region Constructors
 
         /// <summary>
         /// コンストラクタ
@@ -36,28 +31,22 @@ namespace NeeView
         public TouchInputGesture(TouchInputContext context) : base(context)
         {
             _gesture = new MouseGestureSequenceTracker();
-            _gesture.GestureProgressed += (s, e) => GestureProgressed.Invoke(this, new MouseGestureEventArgs(_gesture.Sequence));
+            _gesture.GestureProgressed += (s, e) => GestureProgressed?.Invoke(this, new MouseGestureEventArgs(_gesture.Sequence));
         }
 
-        #endregion
-
-        #region Events
 
         /// <summary>
         /// ジェスチャー進捗通知
         /// </summary>
-        public event EventHandler<MouseGestureEventArgs> GestureProgressed;
+        public event EventHandler<MouseGestureEventArgs>? GestureProgressed;
 
         /// <summary>
         /// ジェスチャー確定通知
         /// </summary>
-        public event EventHandler<MouseGestureEventArgs> GestureChanged;
+        public event EventHandler<MouseGestureEventArgs>? GestureChanged;
 
-        #endregion
 
-        #region Methods
 
-        //
         public void Reset()
         {
             if (_touch == null) return;
@@ -70,11 +59,11 @@ namespace NeeView
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="parameter"></param>
-        public override void OnOpened(FrameworkElement sender, object parameter)
+        public override void OnOpened(FrameworkElement sender, object? parameter)
         {
             ////Debug.WriteLine("TouchState: Gesture");
 
-            _touch = (TouchContext)parameter;
+            _touch = parameter as TouchContext ?? throw new InvalidOperationException("parameter must be TouchContext");
 
             MouseInputHelper.CaptureMouse(this, sender);
             if (sender.Cursor != Cursors.None)
@@ -141,7 +130,6 @@ namespace NeeView
             _gesture.Move(point);
         }
 
-        #endregion
 
         #region Memento
         [DataContract]

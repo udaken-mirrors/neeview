@@ -27,7 +27,7 @@ namespace NeeView
         /// <summary>
         /// メッセージ
         /// </summary>
-        public string Message { get; set; }
+        public string? Message { get; set; }
     }
 
 
@@ -50,8 +50,8 @@ namespace NeeView
             DevStatus = (Thumbnail.IsValid ? "T" : "") + (IsLoaded ? "C" : "");
         }
 
-        private string _devStatus;
-        public string DevStatus
+        private string? _devStatus;
+        public string? DevStatus
         {
             get { return _devStatus; }
             set { if (_devStatus != value) { _devStatus = value; RaisePropertyChanged(); } }
@@ -59,14 +59,9 @@ namespace NeeView
 
         #endregion
 
-        #region Fields
-
         private ArchiveEntry _entry;
         private PageContentState _state;
 
-        #endregion Fields
-
-        #region Constructors
 
         public PageContent(ArchiveEntry entry)
         {
@@ -76,9 +71,6 @@ namespace NeeView
             InitializeDev();
         }
 
-        #endregion Constructors
-
-        #region Properties
 
         public virtual ArchiveEntry Entry
         {
@@ -94,7 +86,7 @@ namespace NeeView
         /// <summary>
         /// 情報表示用
         /// </summary>
-        public PageMessage PageMessage { get; private set; }
+        public PageMessage? PageMessage { get; private set; }
 
         public Thumbnail Thumbnail { get; } = new Thumbnail();
 
@@ -124,11 +116,8 @@ namespace NeeView
         /// <summary>
         /// テンポラリファイル
         /// </summary>
-        public FileProxy FileProxy { get; private set; }
+        public FileProxy? FileProxy { get; private set; }
 
-        #endregion Properties
-
-        #region Methods
 
         /// <summary>
         /// 使用メモリサイズ (Picture)
@@ -161,7 +150,7 @@ namespace NeeView
         /// <summary>
         /// メッセージ表示の設定
         /// </summary>
-        public void SetPageMessage(PageMessage message)
+        public void SetPageMessage(PageMessage? message)
         {
             PageMessage = message;
         }
@@ -178,7 +167,7 @@ namespace NeeView
             };
         }
 
-        public override string ToString()
+        public override string? ToString()
         {
             return _entry.EntryLastName ?? base.ToString();
         }
@@ -199,7 +188,6 @@ namespace NeeView
         /// </summary>
         public abstract IContentLoader CreateContentLoader();
 
-        #endregion
 
         #region IDisposable Support
         private bool _disposedValue = false;

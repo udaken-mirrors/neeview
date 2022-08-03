@@ -41,13 +41,9 @@ namespace NeeView
         static PageSlider() => Current = new PageSlider();
         public static PageSlider Current { get; }
 
-        #region Fields
 
         private bool _isSliderDirectionReversed;
 
-        #endregion
-
-        #region Constructors
 
         private PageSlider()
         {
@@ -67,9 +63,6 @@ namespace NeeView
             UpdateIsSliderDirectionReversed();
         }
 
-        #endregion
-
-        #region Properties
 
         /// <summary>
         /// ページマーカー表示のモデル
@@ -183,11 +176,9 @@ namespace NeeView
             return newValue;
         }
 
-        #endregion
 
-        #region Methods
 
-        private void PageSelector_SelectionChanged(object sender, EventArgs e)
+        private void PageSelector_SelectionChanged(object? sender, EventArgs e)
         {
             if (sender == this) return;
             RaisePropertyChanged(nameof(SelectedIndex));
@@ -227,7 +218,6 @@ namespace NeeView
             }
         }
 
-        #endregion
 
         #region Memento
         [DataContract]

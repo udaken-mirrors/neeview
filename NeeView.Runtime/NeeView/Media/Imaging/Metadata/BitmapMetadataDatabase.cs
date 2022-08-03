@@ -10,7 +10,9 @@ namespace NeeView.Media.Imaging.Metadata
 {
     public class BitmapMetadataDatabase : IReadOnlyDictionary<BitmapMetadataKey, object?>
     {
-        private static readonly Dictionary<BitmapMetadataKey, object?> _emptyMap = Enum.GetValues(typeof(BitmapMetadataKey)).Cast<BitmapMetadataKey>().ToDictionary(e => e, e => (object?)null);
+        private static Dictionary<BitmapMetadataKey, object?> _emptyMap = Enum.GetValues(typeof(BitmapMetadataKey)).Cast<BitmapMetadataKey>().ToDictionary(e => e, e => (object?)null);
+        public static BitmapMetadataDatabase Default { get; } = new BitmapMetadataDatabase();
+
 
         private Dictionary<BitmapMetadataKey, object?> _map;
 

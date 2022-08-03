@@ -30,13 +30,10 @@ namespace NeeView
         private Point _lastTapLocation;
 
 
-        public ArchivePageControl()
+        public ArchivePageControl(ArchiveContent content)
         {
             InitializeComponent();
-        }
 
-        public ArchivePageControl(ArchiveContent content) : this()
-        {
             _vm = new ArchivePageViewModel(content);
             this.Root.DataContext = _vm;
         }
@@ -132,7 +129,7 @@ namespace NeeView
 
         public Thumbnail Thumbnail => _content.Thumbnail;
 
-        public string Name => _content.Entry.EntryName?.TrimEnd('\\').Replace("\\", " > ");
+        public string? Name => _content.Entry.EntryName?.TrimEnd('\\').Replace("\\", " > ");
 
 
         public void OpenBook()

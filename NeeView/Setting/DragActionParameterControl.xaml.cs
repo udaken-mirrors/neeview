@@ -33,7 +33,7 @@ namespace NeeView.Setting
 
         #endregion
 
-        private DragActionParameterViewModel _vm;
+        private DragActionParameterViewModel? _vm;
 
         public DragActionParameterControl()
         {

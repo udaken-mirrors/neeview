@@ -15,7 +15,7 @@ namespace NeeView
 
 
         const int _messagesCapacity = 256;
-        private ConsoleWindow _window;
+        private ConsoleWindow? _window;
         private FixedQueue<string> _messages = new FixedQueue<string>(_messagesCapacity);
 
 
@@ -30,13 +30,14 @@ namespace NeeView
             }
             else
             {
-                AppDispatcher.Invoke(() =>
+                _window = AppDispatcher.Invoke(() =>
                 {
-                    _window = new ConsoleWindow();
-                    _window.Owner = App.Current.MainWindow;
-                    _window.WindowStartupLocation = WindowStartupLocation.CenterOwner;
-                    _window.Show();
-                    _window.Closed += (s, e) => _window = null;
+                    var window = new ConsoleWindow();
+                    window.Owner = App.Current.MainWindow;
+                    window.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+                    window.Closed += (s, e) => _window = null;
+                    window.Show();
+                    return window;
                 });
 
                 Flush();

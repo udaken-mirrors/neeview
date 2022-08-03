@@ -1,6 +1,7 @@
 ﻿using NeeLaboratory.ComponentModel;
 using NeeView.Collections;
 using NeeView.Collections.Generic;
+using NeeLaboratory.Linq;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -27,14 +28,13 @@ namespace NeeView
 
         private BookmarkCollection()
         {
-            Items = new TreeListNode<IBookmarkEntry>();
-            Items.Value = new BookmarkFolder();
+            _items = new TreeListNode<IBookmarkEntry>(new BookmarkFolder());
         }
 
 
         // Events
 
-        public event EventHandler<BookmarkCollectionChangedEventArgs> BookmarkChanged;
+        public event EventHandler<BookmarkCollectionChangedEventArgs>? BookmarkChanged;
 
 
         // Properties
@@ -69,7 +69,7 @@ namespace NeeView
         }
 
 
-        public Bookmark Find(string path)
+        public Bookmark? Find(string path)
         {
             if (path == null) return null;
 
@@ -77,7 +77,7 @@ namespace NeeView
         }
 
 
-        public BookMementoUnit FindUnit(string place)
+        public BookMementoUnit? FindUnit(string place)
         {
             if (place == null) return null;
 
@@ -85,7 +85,7 @@ namespace NeeView
         }
 
 
-        public TreeListNode<IBookmarkEntry> FindNode(IBookmarkEntry entry)
+        public TreeListNode<IBookmarkEntry>? FindNode(IBookmarkEntry entry)
         {
             if (entry == null) return null;
 
@@ -93,16 +93,16 @@ namespace NeeView
         }
 
 
-        public TreeListNode<IBookmarkEntry> FindNode(string path)
+        public TreeListNode<IBookmarkEntry>? FindNode(string path)
         {
             if (path == null) return null;
 
             return FindNode(new QueryPath(path));
         }
 
-        public TreeListNode<IBookmarkEntry> FindNode(QueryPath path)
+        public TreeListNode<IBookmarkEntry>? FindNode(QueryPath path)
         {
-            if (path == null)
+            if (path is null)
             {
                 return null;
             }
@@ -125,7 +125,7 @@ namespace NeeView
             }
         }
 
-        private TreeListNode<IBookmarkEntry> FindNode(TreeListNode<IBookmarkEntry> node, IEnumerable<string> pathTokens)
+        private TreeListNode<IBookmarkEntry>? FindNode(TreeListNode<IBookmarkEntry> node, IEnumerable<string> pathTokens)
         {
             if (pathTokens == null)
             {
@@ -198,7 +198,7 @@ namespace NeeView
         }
 
 
-        public bool Remove(TreeListNode<IBookmarkEntry> node)
+        public bool Remove(TreeListNode<IBookmarkEntry>? node)
         {
             if (node == null) return false;
             if (node.Root != Items.Root) throw new InvalidOperationException();
@@ -245,11 +245,11 @@ namespace NeeView
         }
 
 
-        public TreeListNode<IBookmarkEntry> AddNewFolder(TreeListNode<IBookmarkEntry> target)
+        public TreeListNode<IBookmarkEntry>? AddNewFolder(TreeListNode<IBookmarkEntry> target)
         {
             if (target == Items || target.Value is BookmarkFolder)
             {
-                var ignoreNames = target.Children.Where(e => e.Value is BookmarkFolder).Select(e => e.Value.Name);
+                var ignoreNames = target.Children.Where(e => e.Value is BookmarkFolder).Select(e => e.Value.Name).WhereNotNull();
                 var name = GetValidateFolderName(ignoreNames, Properties.Resources.Word_NewFolder, Properties.Resources.Word_NewFolder);
                 var node = new TreeListNode<IBookmarkEntry>(new BookmarkFolder() { Name = name });
 
@@ -268,7 +268,7 @@ namespace NeeView
         {
             if (item.Value is BookmarkFolder && item.Parent != target.Parent)
             {
-                var conflict = target.Parent.Children.FirstOrDefault(e => e.Value is BookmarkFolder && e.Value.Name == item.Value.Name);
+                var conflict = target.Parent?.Children.FirstOrDefault(e => e.Value is BookmarkFolder && e.Value.Name == item.Value.Name);
                 if (conflict != null)
                 {
                     Merge(item, conflict);
@@ -282,6 +282,7 @@ namespace NeeView
         private void MoveInner(TreeListNode<IBookmarkEntry> item, TreeListNode<IBookmarkEntry> target, int direction)
         {
             if (item == target) return;
+            if (item.Parent is null || target.Parent is null) return;
             if (target.ParentContains(item)) return; // TODO: 例外にすべき？
 
             bool isChangeDirectory = item.Parent != target.Parent;
@@ -447,7 +448,7 @@ namespace NeeView
 
                 var folder = ((BookmarkFolder)child.Value);
 
-                var name = BookmarkFolder.GetValidateName(folder.Name);
+                var name = BookmarkFolder.GetValidateName(folder.Name ?? "");
                 if (string.IsNullOrWhiteSpace(name))
                 {
                     name = "_";
@@ -478,7 +479,7 @@ namespace NeeView
         public class Memento
         {
             [JsonPropertyName("Format")]
-            public FormatVersion Format { get; set; }
+            public FormatVersion? Format { get; set; }
 
             [JsonIgnore]
             [DataMember]
@@ -486,21 +487,21 @@ namespace NeeView
 
             [JsonIgnore]
             [Obsolete, DataMember(Name = "Nodes", EmitDefaultValue = false)]
-            public TreeListNode<IBookmarkEntry> NodesLegacy { get; set; }
+            public TreeListNode<IBookmarkEntry>? NodesLegacy { get; set; }
 
             [DataMember(Name = "NodesV2")]
-            public BookmarkNode Nodes { get; set; }
+            public BookmarkNode? Nodes { get; set; }
 
 
             [DataMember(EmitDefaultValue = false)]
-            public List<Book.Memento> Books { get; set; }
+            public List<Book.Memento>? Books { get; set; }
 
             [DataMember]
-            public QuickAccessCollection.Memento QuickAccess { get; set; }
+            public QuickAccessCollection.Memento? QuickAccess { get; set; }
 
             [JsonIgnore]
             [Obsolete, DataMember(Name = "Items", EmitDefaultValue = false)]
-            public List<Book.Memento> OldBooks { get; set; } // no used (ver.31)
+            public List<Book.Memento>? OldBooks { get; set; } // no used (ver.31)
 
             private void Constructor()
             {
@@ -526,10 +527,13 @@ namespace NeeView
 #pragma warning disable CS0612
                 if (_Version < Environment.GenerateProductVersionNumber(31, 0, 0))
                 {
-                    NodesLegacy = new TreeListNode<IBookmarkEntry>();
-                    foreach (var book in OldBooks)
+                    NodesLegacy = new TreeListNode<IBookmarkEntry>(new BookmarkEmpty());
+                    if (OldBooks is not null)
                     {
-                        NodesLegacy.Add(new Bookmark() { Path = book.Path });
+                        foreach (var book in OldBooks)
+                        {
+                            NodesLegacy.Add(new Bookmark(book.Path));
+                        }
                     }
 
                     Books = OldBooks ?? new List<Book.Memento>();
@@ -541,13 +545,13 @@ namespace NeeView
                     OldBooks = null;
                 }
 
-                if (_Version < Environment.GenerateProductVersionNumber(33, 0, 0))
+                if (_Version < Environment.GenerateProductVersionNumber(33, 0, 0) && OldBooks is not null)
                 {
-                    foreach (var book in Books)
+                    foreach (var book in OldBooks)
                     {
                         try
                         {
-                            if (book.Path != null)
+                            if (!string.IsNullOrEmpty(book.Path))
                             {
                                 book.IsDirectorty = Directory.Exists(book.Path);
                             }
@@ -559,7 +563,7 @@ namespace NeeView
                     }
                 }
 
-                if (_Version < Environment.GenerateProductVersionNumber(37, 0, 0))
+                if (_Version < Environment.GenerateProductVersionNumber(37, 0, 0) && NodesLegacy is not null)
                 {
                     Nodes = BookmarkNodeConverter.ConvertFrom(NodesLegacy) ?? new BookmarkNode();
                     NodesLegacy = null;
@@ -593,7 +597,9 @@ namespace NeeView
 
             public static Memento Load(ReadOnlySpan<byte> json)
             {
-                return JsonSerializer.Deserialize<Memento>(json, UserSettingTools.GetSerializerOptions());
+                var memento = JsonSerializer.Deserialize<Memento>(json, UserSettingTools.GetSerializerOptions());
+                if (memento is null) throw new FormatException();
+                return memento;
 
                 // TODO: v.38以後の互換性処理をここで？
             }
@@ -628,7 +634,8 @@ namespace NeeView
                 using (XmlReader xr = XmlReader.Create(stream))
                 {
                     DataContractSerializer serializer = new DataContractSerializer(typeof(Memento));
-                    Memento memento = (Memento)serializer.ReadObject(xr);
+                    Memento? memento = serializer.ReadObject(xr) as Memento;
+                    if (memento is null) throw new FormatException();
                     return memento;
                 }
             }
@@ -650,12 +657,15 @@ namespace NeeView
         }
 
         // memento適用
-        public void Restore(Memento memento)
+        public void Restore(Memento? memento)
         {
-            if (memento == null) return;
+            if (memento is null) return;
 
             QuickAccessCollection.Current.Restore(memento.QuickAccess);
-            this.Load(BookmarkNodeConverter.ConvertToTreeListNode(memento.Nodes), memento.Books);
+            if (memento.Nodes is not null && memento.Books is not null)
+            {
+                this.Load(BookmarkNodeConverter.ConvertToTreeListNode(memento.Nodes), memento.Books);
+            }
         }
 
         #endregion
@@ -664,13 +674,13 @@ namespace NeeView
 
     public class BookmarkNode
     {
-        public string Name { get; set; }
+        public string? Name { get; set; }
 
-        public string Path { get; set; }
+        public string? Path { get; set; }
 
         public DateTime EntryTime { get; set; }
 
-        public List<BookmarkNode> Children { get; set; }
+        public List<BookmarkNode>? Children { get; set; }
 
         public bool IsFolder => Children != null;
     }
@@ -679,7 +689,7 @@ namespace NeeView
     {
         public static BookmarkNode ConvertFrom(TreeListNode<IBookmarkEntry> source)
         {
-            if (source == null) return null;
+            if (source == null) throw new ArgumentNullException();
 
             var node = new BookmarkNode();
 
@@ -707,29 +717,32 @@ namespace NeeView
 
         public static TreeListNode<IBookmarkEntry> ConvertToTreeListNode(BookmarkNode source)
         {
-            var node = new TreeListNode<IBookmarkEntry>();
-
             if (source.IsFolder)
             {
-                node.Value = new BookmarkFolder()
+                var bookmarkFolder = new BookmarkFolder()
                 {
                     Name = source.Name,
                 };
-                foreach (var child in source.Children)
+                var node = new TreeListNode<IBookmarkEntry>(bookmarkFolder);
+                if (source.Children is not null)
                 {
-                    node.Add(ConvertToTreeListNode(child));
+                    foreach (var child in source.Children)
+                    {
+                        node.Add(ConvertToTreeListNode(child));
+                    }
                 }
+                return node;
             }
             else
             {
-                node.Value = new Bookmark()
+                if (source.Path is null) throw new InvalidOperationException();
+                var bookmark = new Bookmark(source.Path)
                 {
-                    Path = source.Path,
                     EntryTime = source.EntryTime
                 };
+                var node = new TreeListNode<IBookmarkEntry>(bookmark);
+                return node;
             }
-
-            return node;
         }
     }
 

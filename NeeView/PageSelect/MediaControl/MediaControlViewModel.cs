@@ -7,7 +7,7 @@ namespace NeeView
     public class MediaControlViewModel : BindableBase
     {
         private MediaControl _model;
-        private MediaPlayerOperator _operator;
+        private MediaPlayerOperator? _operator;
         private MouseWheelDelta _mouseWheelDelta = new MouseWheelDelta();
 
         public MediaControlViewModel(MediaControl model)
@@ -16,7 +16,7 @@ namespace NeeView
             _model.Changed += Model_Changed;
         }
 
-        public MediaPlayerOperator Operator
+        public MediaPlayerOperator? Operator
         {
             get { return _operator; }
             set { if (_operator != value) { _operator = value; RaisePropertyChanged(); } }
@@ -24,15 +24,17 @@ namespace NeeView
 
         #region Methods
 
-        private void Model_Changed(object sender, MediaPlayerChanged e)
+        private void Model_Changed(object? sender, MediaPlayerChanged e)
         {
             Operator?.Dispose();
 
             if (e.IsValid)
             {
-                Operator = new MediaPlayerOperator(e.MediaPlayer);
+                var mediaPlayse = e.MediaPlayer ?? throw new InvalidOperationException();
+                var uri = e.Uri ?? throw new InvalidOperationException();
+                Operator = new MediaPlayerOperator(mediaPlayse);
                 Operator.MediaEnded += Operator_MediaEnded;
-                Operator.Open(e.Uri, e.IsLastStart);
+                Operator.Open(uri, e.IsLastStart);
             }
             else
             {
@@ -42,7 +44,7 @@ namespace NeeView
             MediaPlayerOperator.Current = Operator;
         }
 
-        private void Operator_MediaEnded(object sender, System.EventArgs e)
+        private void Operator_MediaEnded(object? sender, System.EventArgs e)
         {
             BookOperation.Current.Book?.Viewer.RaisePageTerminatedEvent(this, 1);
         }
@@ -67,7 +69,7 @@ namespace NeeView
             _operator.IsTimeLeftDisp = !_operator.IsTimeLeftDisp;
         }
 
-        public void MouseWheel(object sender, MouseWheelEventArgs e)
+        public void MouseWheel(object? sender, MouseWheelEventArgs e)
         {
             int turn = _mouseWheelDelta.NotchCount(e);
             if (turn == 0) return;
@@ -85,14 +87,18 @@ namespace NeeView
             }
         }
 
-        internal void MouseWheelVolume(object sender, MouseWheelEventArgs e)
+        internal void MouseWheelVolume(object? sender, MouseWheelEventArgs e)
         {
+            if (Operator is null) return;
+
             var delta = (double)e.Delta / 6000.0;
             Operator.AddVolume(delta);
         }
 
         internal bool KeyVolume(Key key)
         {
+            if (Operator is null) return false;
+
             switch (key)
             {
                 case Key.Up:

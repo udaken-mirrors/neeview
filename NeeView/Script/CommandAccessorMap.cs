@@ -27,7 +27,7 @@ namespace NeeView
         }
 
         
-        public ICommandAccessor this[string key]
+        public ICommandAccessor? this[string key]
         {
             get
             {
@@ -61,7 +61,7 @@ namespace NeeView
             return node;
         }
 
-        internal ObsoleteAttribute GetObsolete(string key)
+        internal ObsoleteAttribute? GetObsolete(string key)
         {
             var accessor = _map[key];
             if (accessor is ObsoleteCommandAccessor obsoleteCommand)
@@ -71,7 +71,7 @@ namespace NeeView
             return null;
         }
 
-        internal AlternativeAttribute GetAlternative(string key)
+        internal AlternativeAttribute? GetAlternative(string key)
         {
             var accessor = _map[key];
             if (accessor is ObsoleteCommandAccessor obsoleteCommand)

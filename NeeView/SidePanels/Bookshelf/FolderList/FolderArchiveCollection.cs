@@ -14,14 +14,13 @@ namespace NeeView
     /// </summary>
     public class FolderArchiveCollection : FolderCollection
     {
-        #region Fields
+        // Fields
 
         private ArchiveEntryCollectionMode _mode;
-        private ArchiveEntryCollection _collection;
+        private ArchiveEntryCollection? _collection;
 
-        #endregion
 
-        #region Constructors
+        // Constructors
 
         public FolderArchiveCollection(QueryPath path, ArchiveEntryCollectionMode mode, bool isActive, bool isOverlayEnabled) : base(path, isOverlayEnabled)
         {
@@ -70,20 +69,18 @@ namespace NeeView
             BindingOperations.EnableCollectionSynchronization(this.Items, new object());
         }
 
-        #endregion
 
-        #region Properties
+        // Properties
 
         public override FolderOrderClass FolderOrderClass => FolderOrderClass.Normal;
 
-        #endregion Properties
 
-        #region Methods
+        // Methods
 
         /// <summary>
         /// フォルダーリスト上での親フォルダーを取得
         /// </summary>
-        public override QueryPath GetParentQuery()
+        public override QueryPath? GetParentQuery()
         {
             if (Place == null)
             {
@@ -98,7 +95,5 @@ namespace NeeView
                 return new QueryPath(_collection.GetFolderPlace());
             }
         }
-
-        #endregion
     }
 }

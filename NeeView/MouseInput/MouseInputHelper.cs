@@ -37,7 +37,7 @@ namespace NeeView
             //Debug.WriteLine($"> {id}.ReleaseMouseCapture: done.");
         }
 
-        private static string FixedElementName(IInputElement element)
+        private static string? FixedElementName(IInputElement element)
         {
             if (element is FrameworkElement framweorkElement)
             {

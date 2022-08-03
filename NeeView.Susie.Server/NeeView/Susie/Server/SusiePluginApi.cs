@@ -124,6 +124,7 @@ namespace NeeView.Susie.Server
         /// <param name="procName">API名</param>
         /// <returns></returns>
         public T GetApiDelegate<T>(string procName)
+            where T : notnull
         {
             if (!_apiDelegateList.ContainsKey(typeof(T)))
             {
@@ -161,7 +162,7 @@ namespace NeeView.Susie.Server
         /// </summary>
         /// <param name="infono">取得する情報番号</param>
         /// <returns>情報の文字列。情報番号が無効の場合はnullを返す</returns>
-        public string GetPluginInfo(int infono)
+        public string? GetPluginInfo(int infono)
         {
             if (hModule == IntPtr.Zero) throw new InvalidOperationException();
             var getPluginInfo = GetApiDelegate<GetPluginInfoDelegate>("GetPluginInfo");
@@ -239,7 +240,7 @@ namespace NeeView.Susie.Server
         /// </summary>
         /// <param name="file">アーカイブファイル名</param>
         /// <returns>アーカイブエントリ情報(RAW)。失敗した場合はnull</returns>
-        public List<ArchiveFileInfoRaw> GetArchiveInfo(string file)
+        public List<ArchiveFileInfoRaw>? GetArchiveInfo(string file)
         {
             if (hModule == IntPtr.Zero) throw new InvalidOperationException();
             var getArchiveInfo = GetApiDelegate<GetArchiveInfoFromFileDelegate>("GetArchiveInfo");
@@ -285,7 +286,7 @@ namespace NeeView.Susie.Server
         /// <param name="file">アーカイブファイル名</param>
         /// <param name="position">アーカイブエントリ位置</param>
         /// <returns>出力されたバッファ。失敗した場合はnull</returns>
-        public byte[] GetFile(string file, int position)
+        public byte[]? GetFile(string file, int position)
         {
             if (hModule == IntPtr.Zero) throw new InvalidOperationException();
             var getFile = GetApiDelegate<GetFileFromFileHandler>("GetFile");
@@ -341,7 +342,7 @@ namespace NeeView.Susie.Server
         /// </summary>
         /// <param name="buff">入力画像データ</param>
         /// <returns>Bitmap。失敗した場合はnull</returns>
-        public byte[] GetPicture(byte[] buff)
+        public byte[]? GetPicture(byte[] buff)
         {
             if (hModule == IntPtr.Zero) throw new InvalidOperationException();
             var getPicture = GetApiDelegate<GetPictureFromMemoryDelegate>("GetPicture");
@@ -376,7 +377,7 @@ namespace NeeView.Susie.Server
         /// </summary>
         /// <param name="filename">入力ファイル名</param>
         /// <returns>Bitmap。失敗した場合はnull</returns>
-        public byte[] GetPicture(string filename)
+        public byte[]? GetPicture(string filename)
         {
             if (hModule == IntPtr.Zero) throw new InvalidOperationException();
             var getPicture = GetApiDelegate<GetPictureFromFileDelegate>("GetPicture");

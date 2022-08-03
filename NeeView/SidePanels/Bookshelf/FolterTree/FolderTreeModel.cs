@@ -13,10 +13,10 @@ namespace NeeView
 {
     public class RootFolderTree : FolderTreeNodeBase
     {
-        public override string Name { get => null; set { } }
+        public override string Name { get => ""; set { } }
         public override string DispName { get => "@Bookshelf"; set { } }
 
-        public override IImageSourceCollection Icon => null;
+        public override IImageSourceCollection? Icon => null;
     }
 
     [Flags]
@@ -35,9 +35,9 @@ namespace NeeView
 
         private FolderList _folderList;
         private RootFolderTree _root;
-        private RootQuickAccessNode _rootQuickAccess;
-        private RootDirectoryNode _rootDirectory;
-        private RootBookmarkFolderNode _rootBookmarkFolder;
+        private RootQuickAccessNode? _rootQuickAccess;
+        private RootDirectoryNode? _rootDirectory;
+        private RootBookmarkFolderNode? _rootBookmarkFolder;
 
         // Constructors
 
@@ -71,7 +71,7 @@ namespace NeeView
 
         // Events
 
-        public event EventHandler SelectedItemChanged;
+        public event EventHandler? SelectedItemChanged;
 
 
         // Properties
@@ -79,8 +79,8 @@ namespace NeeView
         public RootFolderTree Root => _root;
 
 
-        private FolderTreeNodeBase _selectedItem;
-        public FolderTreeNodeBase SelectedItem
+        private FolderTreeNodeBase? _selectedItem;
+        public FolderTreeNodeBase? SelectedItem
         {
             get { return _selectedItem; }
             set
@@ -103,7 +103,7 @@ namespace NeeView
             IsFocusAtOnce = true;
         }
 
-        private static IEnumerable<FolderTreeNodeBase> GetNodeWalker(IEnumerable<FolderTreeNodeBase> collection)
+        private static IEnumerable<FolderTreeNodeBase> GetNodeWalker(IEnumerable<FolderTreeNodeBase>? collection)
         {
             if (collection == null)
             {
@@ -153,6 +153,8 @@ namespace NeeView
 
         public void ExpandRoot()
         {
+            if (_root.Children is null) return;
+
             foreach (var node in _root.Children)
             {
                 node.IsExpanded = true;
@@ -222,12 +224,12 @@ namespace NeeView
             }
         }
 
-        public void AddQuickAccess(string path)
+        public void AddQuickAccess(string? path)
         {
             InsertQuickAccess(0, path);
         }
 
-        public void InsertQuickAccess(QuickAccessNode dst, string path)
+        public void InsertQuickAccess(QuickAccessNode? dst, string? path)
         {
             var index = dst != null ? QuickAccessCollection.Current.Items.IndexOf(dst.Source) : 0;
             if (index < 0)
@@ -238,8 +240,10 @@ namespace NeeView
             InsertQuickAccess(index, path);
         }
 
-        public void InsertQuickAccess(int index, string path)
+        public void InsertQuickAccess(int index, string? path)
         {
+            if (_rootQuickAccess is null) return;
+
             if (string.IsNullOrWhiteSpace(path))
             {
                 return;
@@ -259,7 +263,7 @@ namespace NeeView
                 if (node != null)
                 {
                     SelectedItem = node;
-                    SelectedItemChanged?.Invoke(this, null);
+                    SelectedItemChanged?.Invoke(this, EventArgs.Empty);
                 }
                 return;
             }
@@ -318,7 +322,7 @@ namespace NeeView
             }
         }
 
-        public BookmarkFolderNode NewBookmarkFolder(BookmarkFolderNode item)
+        public BookmarkFolderNode? NewBookmarkFolder(BookmarkFolderNode item)
         {
             if (item == null)
             {
@@ -383,6 +387,8 @@ namespace NeeView
 
         public void SyncDirectory(string place)
         {
+            if (_rootDirectory is null) return;
+
             var path = new QueryPath(place);
             if (path.Scheme == QueryScheme.File)
             {
@@ -404,20 +410,20 @@ namespace NeeView
                 }
 
                 SelectedItem = node;
-                SelectedItemChanged?.Invoke(this, null);
+                SelectedItemChanged?.Invoke(this, EventArgs.Empty);
             }
         }
 
-        private FolderTreeNodeBase GetDirectoryNode(QueryPath path, bool createChildren, bool asFarAsPossible)
+        private FolderTreeNodeBase? GetDirectoryNode(QueryPath path, bool createChildren, bool asFarAsPossible)
         {
             switch (path.Scheme)
             {
                 case QueryScheme.File:
-                    return _rootDirectory.GetFolderTreeNode(path.Path, createChildren, asFarAsPossible);
+                    return _rootDirectory?.GetFolderTreeNode(path.Path, createChildren, asFarAsPossible);
                 case QueryScheme.Bookmark:
-                    return _rootBookmarkFolder.GetFolderTreeNode(path.Path, createChildren, asFarAsPossible);
+                    return _rootBookmarkFolder?.GetFolderTreeNode(path.Path, createChildren, asFarAsPossible);
                 case QueryScheme.QuickAccess:
-                    return _rootBookmarkFolder.GetFolderTreeNode(path.Path, createChildren, asFarAsPossible);
+                    return _rootBookmarkFolder?.GetFolderTreeNode(path.Path, createChildren, asFarAsPossible);
                 default:
                     throw new NotImplementedException();
             }
@@ -425,6 +431,8 @@ namespace NeeView
 
         public void RefreshDirectory()
         {
+            if (_rootDirectory is null) return;
+
             _rootDirectory.Refresh();
         }
     }

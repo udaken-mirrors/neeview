@@ -16,7 +16,7 @@ namespace NeeView.Susie.Server
         }
 
 
-        public string PluginFolder { get; private set; }
+        public string? PluginFolder { get; private set; }
 
         /// <summary>
         /// 書庫プラグインリスト
@@ -138,8 +138,11 @@ namespace NeeView.Susie.Server
                 _order = order;
             }
 
-            public int Compare(SusiePlugin spiX, SusiePlugin spiY)
+            public int Compare(SusiePlugin? spiX, SusiePlugin? spiY)
             {
+                if (spiX is null) return (spiY is null) ? 0 : -1;
+                if (spiY is null) return 1;
+
                 int indexX = _order.IndexOf(spiX.Name);
                 int indexY = _order.IndexOf(spiY.Name);
                 return indexX - indexY;
@@ -148,20 +151,20 @@ namespace NeeView.Susie.Server
 
 
         // 名前でプラグイン取得
-        public SusiePlugin GetPluginFromName(string name)
+        public SusiePlugin? GetPluginFromName(string name)
         {
             return PluginCollection.FirstOrDefault(e => e.Name == name);
         }
 
         // 対応アーカイブプラグイン取得
-        public SusiePlugin GetArchivePlugin(string fileName, byte[] buff, bool isCheckExtension)
+        public SusiePlugin? GetArchivePlugin(string fileName, byte[] buff, bool isCheckExtension)
         {
             return GetPlugin(AMPluginList, fileName, buff, isCheckExtension);
         }
 
 
         // 対応画像プラグイン取得
-        public SusiePlugin GetImagePlugin(string fileName, byte[] buff, bool isCheckExtension)
+        public SusiePlugin? GetImagePlugin(string fileName, byte[] buff, bool isCheckExtension)
         {
             return GetPlugin(INPluginList, fileName, buff, isCheckExtension);
         }
@@ -169,7 +172,7 @@ namespace NeeView.Susie.Server
         /// <summary>
         /// 対応プラグインを取得
         /// </summary>
-        public SusiePlugin GetPlugin(List<SusiePlugin> plugins, string fileName, byte[] buff, bool isCheckExtension)
+        public SusiePlugin? GetPlugin(List<SusiePlugin> plugins, string fileName, byte[] buff, bool isCheckExtension)
         {
             plugins = plugins ?? PluginCollection.ToList();
             buff = buff ?? SusiePlugin.LoadHead(fileName);
@@ -200,7 +203,7 @@ namespace NeeView.Susie.Server
         /// <param name="fileName">ファイル名</param>
         /// <param name="buff">ファイル実体。指定されていればこのメモリから画像生成する</param>
         /// <param name="isCheckExtension">拡張子判定を行う？</param>
-        public SusieImage GetImage(List<SusiePlugin> plugins, string fileName, byte[] buff, bool isCheckExtension)
+        public SusieImage? GetImage(List<SusiePlugin> plugins, string fileName, byte[]? buff, bool isCheckExtension)
         {
             plugins = plugins ?? INPluginList;
 

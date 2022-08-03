@@ -18,11 +18,12 @@ namespace NeeView
 
         public MouseInputDrag(MouseInputContext context) : base(context)
         {
+            if (context.DragTransformControl is null) throw new InvalidOperationException();
             _dragTransformControl = context.DragTransformControl;
         }
 
 
-        public override void OnOpened(FrameworkElement sender, object parameter)
+        public override void OnOpened(FrameworkElement sender, object? parameter)
         {
             sender.Cursor = Cursors.Hand;
 
@@ -44,12 +45,12 @@ namespace NeeView
             MouseInputHelper.ReleaseMouseCapture(this, sender);
         }
 
-        public override void OnMouseButtonDown(object sender, MouseButtonEventArgs e)
+        public override void OnMouseButtonDown(object? sender, MouseButtonEventArgs e)
         {
             // nop.
         }
 
-        public override void OnMouseButtonUp(object sender, MouseButtonEventArgs e)
+        public override void OnMouseButtonUp(object? sender, MouseButtonEventArgs e)
         {
             OnMouseMove(sender, e);
 
@@ -60,7 +61,7 @@ namespace NeeView
             }
         }
 
-        public override void OnMouseWheel(object sender, MouseWheelEventArgs e)
+        public override void OnMouseWheel(object? sender, MouseWheelEventArgs e)
         {
             // コマンド実行
             MouseWheelChanged?.Invoke(sender, e);
@@ -72,7 +73,7 @@ namespace NeeView
             }
         }
 
-        public override void OnMouseHorizontalWheel(object sender, MouseWheelEventArgs e)
+        public override void OnMouseHorizontalWheel(object? sender, MouseWheelEventArgs e)
         {
             // コマンド実行
             MouseHorizontalWheelChanged?.Invoke(sender, e);
@@ -84,7 +85,7 @@ namespace NeeView
             }
         }
 
-        public override void OnMouseMove(object sender, MouseEventArgs e)
+        public override void OnMouseMove(object? sender, MouseEventArgs e)
         {
             _dragTransformControl.UpdateState(CreateMouseButtonBits(e), Keyboard.Modifiers, e.GetPosition(_context.Sender));
         }

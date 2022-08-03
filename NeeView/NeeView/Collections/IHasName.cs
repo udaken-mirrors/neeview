@@ -4,18 +4,19 @@ namespace NeeView.Collections
 {
     public interface IHasName
     {
-        string Name { get; }
+        // TODO: IHasName.Name is not null
+        string? Name { get; }
     }
 
     public class HasNameComparer : IComparer<IHasName>
     {
-        public int Compare(IHasName x, IHasName y)
+        public int Compare(IHasName? x, IHasName? y)
         {
-            if (x.Name == null)
+            if (x is null || x.Name is null)
             {
-                return y.Name == null ? 0 : -1;
+                return y is null || y.Name is null ? 0 : -1;
             }
-            else if (y.Name == null)
+            else if (y is null || y.Name is null)
             {
                 return 1;
             }
@@ -28,7 +29,7 @@ namespace NeeView.Collections
 
     public class NameComparer : IComparer<string>
     {
-        public int Compare(string x, string y)
+        public int Compare(string? x, string? y)
         {
             if (x == null)
             {

@@ -18,8 +18,6 @@ namespace NeeView
 
         public SidePanelFrameViewModel(SidePanelFrame model, LeftPanelViewModel left, RightPanelViewModel right)
         {
-            if (model == null) return;
-
             _model = model;
             _model.VisibleAtOnceRequest += Model_VisibleAtOnceRequest;
 
@@ -44,15 +42,15 @@ namespace NeeView
                 (s, e) => RaisePropertyChanged(nameof(IsLimitPanelWidth)));
 
             MainLayoutPanelManager.DragBegin +=
-                (s, e) => DragBegin(this, null);
+                (s, e) => DragBegin(this, EventArgs.Empty);
             MainLayoutPanelManager.DragEnd +=
-                (s, e) => DragEnd(this, null);
+                (s, e) => DragEnd(this, EventArgs.Empty);
 
             SidePanelIconDescriptor = new SidePanelIconDescriptor(this);
         }
 
 
-        public event EventHandler PanelVisibilityChanged;
+        public event EventHandler? PanelVisibilityChanged;
 
 
         public SidePanelIconDescriptor SidePanelIconDescriptor { get; }
@@ -100,7 +98,7 @@ namespace NeeView
         /// <summary>
         /// パネル表示リクエスト
         /// </summary>
-        private void Model_VisibleAtOnceRequest(object sender, VisibleAtOnceRequestEventArgs e)
+        private void Model_VisibleAtOnceRequest(object? sender, VisibleAtOnceRequestEventArgs e)
         {
             VisibleAtOnce(e.Key);
         }
@@ -131,7 +129,7 @@ namespace NeeView
                     this.Left.IsAutoHide = value;
                     this.Right.IsAutoHide = value;
                     RaisePropertyChanged();
-                    PanelVisibilityChanged?.Invoke(this, null);
+                    PanelVisibilityChanged?.Invoke(this, EventArgs.Empty);
                 }
             }
         }
@@ -157,7 +155,7 @@ namespace NeeView
         /// ドラッグ開始イベント処理.
         /// 強制的にパネル表示させる
         /// </summary>
-        public void DragBegin(object sender, DragStartEventArgs e)
+        public void DragBegin(object? sender, EventArgs e)
         {
             Left.IsDragged = true;
             Right.IsDragged = true;
@@ -166,7 +164,7 @@ namespace NeeView
         /// <summary>
         /// ドラッグ終了イベント処理
         /// </summary>
-        public void DragEnd(object sender, EventArgs e)
+        public void DragEnd(object? sender, EventArgs e)
         {
             Left.IsDragged = false;
             Right.IsDragged = false;
@@ -176,7 +174,7 @@ namespace NeeView
         /// <summary>
         /// 右パネルのプロパティ変更イベント処理
         /// </summary>
-        private void Right_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        private void Right_PropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
             switch (e.PropertyName)
             {
@@ -184,7 +182,7 @@ namespace NeeView
                     RaisePropertyChanged(nameof(RightPanelWidth));
                     break;
                 case nameof(Right.PanelVisibility):
-                    PanelVisibilityChanged?.Invoke(this, null);
+                    PanelVisibilityChanged?.Invoke(this, EventArgs.Empty);
                     break;
                 case nameof(Right.IsPanelActived):
                     RaisePropertyChanged(nameof(IsRightPanelActived));
@@ -195,7 +193,7 @@ namespace NeeView
         /// <summary>
         /// 左パネルのプロパティ変更イベント処理
         /// </summary>
-        private void Left_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        private void Left_PropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
             switch (e.PropertyName)
             {
@@ -203,7 +201,7 @@ namespace NeeView
                     RaisePropertyChanged(nameof(LeftPanelWidth));
                     break;
                 case nameof(Left.PanelVisibility):
-                    PanelVisibilityChanged?.Invoke(this, null);
+                    PanelVisibilityChanged?.Invoke(this, EventArgs.Empty);
                     break;
                 case nameof(Left.IsPanelActived):
                     RaisePropertyChanged(nameof(IsLeftPanelActived));

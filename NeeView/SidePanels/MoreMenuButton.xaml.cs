@@ -24,9 +24,9 @@ namespace NeeView
     {
         #region INotifyPropertyChanged Support
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
-        protected bool SetProperty<T>(ref T storage, T value, [System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
+        protected bool SetProperty<T>(ref T storage, T value, [System.Runtime.CompilerServices.CallerMemberName] string? propertyName = null)
         {
             if (object.Equals(storage, value)) return false;
             storage = value;
@@ -34,7 +34,7 @@ namespace NeeView
             return true;
         }
 
-        protected void RaisePropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string name = null)
+        protected void RaisePropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string? name = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
@@ -47,7 +47,7 @@ namespace NeeView
         #endregion
 
 
-        private ContextMenu _moreMenu;
+        private ContextMenu? _moreMenu;
 
 
         public MoreMenuButton()
@@ -78,7 +78,7 @@ namespace NeeView
         }
 
 
-        public ContextMenu MoreMenu
+        public ContextMenu? MoreMenu
         {
             get { return _moreMenu; }
             private set { SetProperty(ref _moreMenu, value); }
@@ -101,7 +101,10 @@ namespace NeeView
         {
             if (Description != null)
             {
-                MoreMenu = Description.Update(MoreMenu);
+                if (MoreMenu is not null)
+                {
+                    MoreMenu = Description.Update(MoreMenu);
+                }
             }
             ContextMenuWatcher.SetTargetElement((UIElement)sender);
         }
@@ -128,7 +131,7 @@ namespace NeeView
             return item;
         }
 
-        protected MenuItem CreateCommandMenuItem(string header, ICommand command, Binding binding = null)
+        protected MenuItem CreateCommandMenuItem(string header, ICommand command, Binding? binding = null)
         {
             var item = new MenuItem();
             item.Header = header;

@@ -3,6 +3,7 @@ using NeeLaboratory.Windows.Input;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.Serialization;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -71,6 +72,7 @@ namespace NeeView
         public RelayCommand<KeyValuePair<int, PageHistoryUnit>> MoveToHistoryCommand { get; private set; }
         public RelayCommand MoveToUpCommand { get; private set; }
 
+        [MemberNotNull(nameof(MoveToPreviousCommand), nameof(MoveToNextCommand), nameof(MoveToHistoryCommand), nameof(MoveToUpCommand))]
         private void InitializeCommands()
         {
             MoveToPreviousCommand = new RelayCommand(_model.MoveToPrevious, _model.CanMoveToPrevious);
@@ -80,7 +82,7 @@ namespace NeeView
         }
 
 
-        private RelayCommand<PanelListItemStyle> _setListItemStyle;
+        private RelayCommand<PanelListItemStyle>? _setListItemStyle;
         public RelayCommand<PanelListItemStyle> SetListItemStyle
         {
             get { return _setListItemStyle = _setListItemStyle ?? new RelayCommand<PanelListItemStyle>(SetListItemStyle_Executed); }

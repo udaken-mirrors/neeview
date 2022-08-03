@@ -25,12 +25,12 @@ namespace NeeView
         private bool _isFocusRequest;
 
 
-        public ImageEffectView()
-        {
-            InitializeComponent();
-        }
+        //public ImageEffectView()
+        //{
+        //    InitializeComponent();
+        //}
 
-        public ImageEffectView(ImageEffect model, ImageFilter imageFilter) : this()
+        public ImageEffectView(ImageEffect model, ImageFilter imageFilter)
         {
             InitializeComponent();
 

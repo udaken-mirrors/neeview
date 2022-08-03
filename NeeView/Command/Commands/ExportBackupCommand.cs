@@ -12,26 +12,26 @@ namespace NeeView
             this.ParameterSource = new CommandParameterSource(new ExportBackupCommandParameter());
         }
 
-        public override bool CanExecute(object sender, CommandContext e)
+        public override bool CanExecute(object? sender, CommandContext e)
         {
             return !NowLoading.Current.IsDispNowLoading;
         }
 
-        public override void Execute(object sender, CommandContext e)
+        public override void Execute(object? sender, CommandContext e)
         {
-            ExportDataPresenter.Current.Export((ExportBackupCommandParameter)e.Parameter);
+            ExportDataPresenter.Current.Export(e.Parameter.Cast<ExportBackupCommandParameter>());
         }
     }
 
 
     public class ExportBackupCommandParameter : CommandParameter
     {
-        private string _fileName;
+        private string? _fileName;
 
         [PropertyPath(FileDialogType = Windows.Controls.FileDialogType.SaveFile, Filter = "NeeView BackupFile|*.nvzip")]
         public string FileName
         {
-            get { return _fileName; }
+            get { return _fileName ?? ""; }
             set { SetProperty(ref _fileName, value); }
         }
     }

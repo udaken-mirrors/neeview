@@ -37,7 +37,7 @@ namespace NeeView
         /// <summary>
         /// 現在状態（実体）
         /// </summary>
-        private MouseInputBase _current;
+        private MouseInputBase? _current;
 
         /// <summary>
         /// 入力ターゲット
@@ -107,7 +107,7 @@ namespace NeeView
         private void OnMouseButtonDown(object sender, MouseButtonEventArgs e)
         {
             if (sender != _sender) return;
-            _current.OnMouseButtonDown(_sender, e);
+            _current?.OnMouseButtonDown(_sender, e);
         }
 
         /// <summary>
@@ -118,7 +118,7 @@ namespace NeeView
         private void OnMouseButtonUp(object sender, MouseButtonEventArgs e)
         {
             if (sender != _sender) return;
-            _current.OnMouseButtonUp(_sender, e);
+            _current?.OnMouseButtonUp(_sender, e);
         }
 
         /// <summary>
@@ -129,7 +129,7 @@ namespace NeeView
         private void OnMouseWheel(object sender, MouseWheelEventArgs e)
         {
             if (sender != _sender) return;
-            _current.OnMouseWheel(_sender, e);
+            _current?.OnMouseWheel(_sender, e);
         }
 
         /// <summary>
@@ -140,7 +140,7 @@ namespace NeeView
         private void OnMouseMove(object sender, MouseEventArgs e)
         {
             if (sender != _sender) return;
-            _current.OnMouseMove(_sender, e);
+            _current?.OnMouseMove(_sender, e);
         }
     }
 }

@@ -12,7 +12,7 @@ namespace NeeView
         }
 
 
-        public WindowStateManager WindowStateManager { get; set; }
+        public WindowStateManager? WindowStateManager { get; set; }
 
 
         protected override void OnMouseLeftButtonDown(object sender, MouseButtonEventArgs e)

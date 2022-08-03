@@ -8,7 +8,7 @@ namespace NeeView.Susie.Server
 {
     public class SusiePluginServer : IRemoteSusiePlugin, IDisposable
     {
-        private SusiePluginCollection _pluginCollection;
+        private SusiePluginCollection _pluginCollection = new SusiePluginCollection();
 
         public SusiePluginServer()
         {
@@ -51,7 +51,7 @@ namespace NeeView.Susie.Server
         public void ExtractArchiveEntryToFolder(string pluginName, string fileName, int position, string extractFolder)
         {
             var plugin = _pluginCollection.AMPluginList.FirstOrDefault(e => e.Name == pluginName);
-            if (plugin == null) throw new SusieException($"Cannot find plugin", pluginName);
+            if (plugin == null) throw new SusieException($"Cannot found plugin", pluginName);
 
             plugin.ExtracArchiveEntrytToFolder(fileName, position, extractFolder);
         }
@@ -59,13 +59,13 @@ namespace NeeView.Susie.Server
         public List<SusieArchiveEntry> GetArchiveEntries(string pluginName, string fileName)
         {
             var plugin = _pluginCollection.AMPluginList.FirstOrDefault(e => e.Name == pluginName);
-            if (plugin == null) throw new SusieException($"Cannot find plugin", pluginName);
+            if (plugin == null) throw new SusieException($"Cannot found plugin", pluginName);
 
             var collection = plugin.GetArchiveEntryCollection(fileName);
             return collection.Select(e => e.ToSusieArchiveEntry()).ToList();
         }
 
-        public SusiePluginInfo GetArchivePlugin(string fileName, byte[] buff, bool isCheckExtension)
+        public SusiePluginInfo? GetArchivePlugin(string fileName, byte[]? buff, bool isCheckExtension)
         {
             // buff==nullのときの処理。ヘッダ2KBを読み込む
             if (buff == null)
@@ -78,10 +78,12 @@ namespace NeeView.Susie.Server
             }
 
             var plugin = _pluginCollection.GetArchivePlugin(fileName, buff, isCheckExtension);
+            if (plugin is null) return null;
+
             return plugin.ToSusiePluginInfo();
         }
 
-        public SusiePluginInfo GetImagePlugin(string fileName, byte[] buff, bool isCheckExtension)
+        public SusiePluginInfo? GetImagePlugin(string fileName, byte[]? buff, bool isCheckExtension)
         {
             // buff==nullのときの処理。ヘッダ2KBを読み込む
             if (buff == null)
@@ -94,26 +96,32 @@ namespace NeeView.Susie.Server
             }
 
             var plugin = _pluginCollection.GetImagePlugin(fileName, buff, isCheckExtension);
+            if (plugin is null) return null;
+
             return plugin.ToSusiePluginInfo();
         }
 
-        public SusieImage GetImage(string pluginName, string fileName, byte[] buff, bool isCheckExtension)
+        public SusieImage? GetImage(string? pluginName, string fileName, byte[]? buff, bool isCheckExtension)
         {
             var plugins = _pluginCollection.INPluginList;
             if (pluginName != null)
             {
                 var plugin = _pluginCollection.INPluginList.FirstOrDefault(e => e.Name == pluginName);
-                if (plugin == null) throw new SusieException($"Cannot find plugin", pluginName);
+                if (plugin == null) throw new SusieException($"Cannot found plugin", pluginName);
+
                 plugins = new List<Server.SusiePlugin>() { plugin };
             }
 
-            return _pluginCollection.GetImage(plugins, fileName, buff, isCheckExtension);
+            var image = _pluginCollection.GetImage(plugins, fileName, buff, isCheckExtension);
+            if (image is null) return null;
+
+            return image;
         }
 
-        public List<SusiePluginInfo> GetPlugin(List<string> pluginNames)
+        public List<SusiePluginInfo> GetPlugin(List<string>? pluginNames)
         {
             var plugins = pluginNames != null
-                ? pluginNames.Select(e => _pluginCollection.GetPluginFromName(e))
+                ? pluginNames.Select(e => _pluginCollection.GetPluginFromName(e)).WhereNotNull()
                 : _pluginCollection.PluginCollection;
 
             return plugins.Select(e => e.ToSusiePluginInfo()).ToList();
@@ -123,7 +131,7 @@ namespace NeeView.Susie.Server
         public byte[] ExtractArchiveEntry(string pluginName, string fileName, int position)
         {
             var plugin = _pluginCollection.AMPluginList.FirstOrDefault(e => e.Name == pluginName);
-            if (plugin == null) throw new SusieException("Cannot find plugin", pluginName);
+            if (plugin == null) throw new SusieException("Cannot found plugin", pluginName);
 
             return plugin.LoadArchiveEntry(fileName, position);
         }
@@ -144,6 +152,8 @@ namespace NeeView.Susie.Server
         public void ShowConfigulationDlg(string pluginName, int hwnd)
         {
             var plugin = _pluginCollection.GetPluginFromName(pluginName);
+            if (plugin is null) return;
+
             plugin.OpenConfigulationDialog(new IntPtr(hwnd));
         }
     }

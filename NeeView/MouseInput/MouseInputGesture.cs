@@ -25,19 +25,19 @@ namespace NeeView
         public MouseInputGesture(MouseInputContext context) : base(context)
         {
             _gesture = new MouseGestureSequenceTracker();
-            _gesture.GestureProgressed += (s, e) => GestureProgressed.Invoke(this, new MouseGestureEventArgs(_gesture.Sequence));
+            _gesture.GestureProgressed += (s, e) => GestureProgressed?.Invoke(this, new MouseGestureEventArgs(_gesture.Sequence));
         }
 
 
         /// <summary>
         /// ジェスチャー進捗通知
         /// </summary>
-        public event EventHandler<MouseGestureEventArgs> GestureProgressed;
+        public event EventHandler<MouseGestureEventArgs>? GestureProgressed;
 
         /// <summary>
         /// ジェスチャー確定通知
         /// </summary>
-        public event EventHandler<MouseGestureEventArgs> GestureChanged;
+        public event EventHandler<MouseGestureEventArgs>? GestureChanged;
 
 
         //
@@ -52,7 +52,7 @@ namespace NeeView
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="parameter"></param>
-        public override void OnOpened(FrameworkElement sender, object parameter)
+        public override void OnOpened(FrameworkElement sender, object? parameter)
         {
             if (sender.Cursor != Cursors.None)
             {
@@ -86,7 +86,7 @@ namespace NeeView
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        public override void OnMouseButtonDown(object sender, MouseButtonEventArgs e)
+        public override void OnMouseButtonDown(object? sender, MouseButtonEventArgs e)
         {
             UpdateState(sender, e);
             if (e.Handled) return;
@@ -109,7 +109,7 @@ namespace NeeView
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        public override void OnMouseButtonUp(object sender, MouseButtonEventArgs e)
+        public override void OnMouseButtonUp(object? sender, MouseButtonEventArgs e)
         {
             // ジェスチャーコマンド実行
             if (_gesture.Sequence.Count > 0)
@@ -128,7 +128,7 @@ namespace NeeView
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        public override void OnMouseWheel(object sender, MouseWheelEventArgs e)
+        public override void OnMouseWheel(object? sender, MouseWheelEventArgs e)
         {
             // ホイール入力確定
             MouseWheelChanged?.Invoke(sender, e);
@@ -143,7 +143,7 @@ namespace NeeView
         /// <summary>
         /// 水平ホイール処理
         /// </summary>
-        public override void OnMouseHorizontalWheel(object sender, MouseWheelEventArgs e)
+        public override void OnMouseHorizontalWheel(object? sender, MouseWheelEventArgs e)
         {
             // ホイール入力確定
             MouseHorizontalWheelChanged?.Invoke(sender, e);
@@ -155,7 +155,7 @@ namespace NeeView
             }
         }
 
-        private void UpdateState(object sender, MouseEventArgs e)
+        private void UpdateState(object? sender, MouseEventArgs e)
         {
             // ジェスチャー認識前に他のドラッグに切り替わったら処理を切り替える
             if (_gesture.Sequence.Count > 0) return;
@@ -179,7 +179,7 @@ namespace NeeView
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        public override void OnMouseMove(object sender, MouseEventArgs e)
+        public override void OnMouseMove(object? sender, MouseEventArgs e)
         {
             UpdateState(sender, e);
             if (e.Handled) return;

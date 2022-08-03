@@ -1,7 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFramework>net6.0-windows10.0.17763.0</TargetFramework>
+    <Nullable>enable</Nullable>
     <Authors>NeeLaboratory</Authors>
     <Copyright>Copyright © 2016-2022 Ito Mitsuhiro (nee)</Copyright>
   </PropertyGroup>

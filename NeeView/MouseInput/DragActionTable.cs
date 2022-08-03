@@ -50,7 +50,7 @@ namespace NeeView
         }
 
 
-        public event EventHandler GestureDragActionChanged;
+        public event EventHandler? GestureDragActionChanged;
 
 
         public DragAction this[string key]
@@ -90,7 +90,7 @@ namespace NeeView
         public void UpdateGestureDragAction()
         {
             _elements[GestureDragActionName].DragKey = Config.Current.Mouse.IsGestureEnabled ? new DragKey("RightButton") : new DragKey();
-            GestureDragActionChanged?.Invoke(this, null);
+            GestureDragActionChanged?.Invoke(this, EventArgs.Empty);
         }
 
         /// <summary>
@@ -105,7 +105,7 @@ namespace NeeView
         /// <summary>
         /// 入力からアクション取得
         /// </summary>
-        public DragAction GetAction(DragKey key)
+        public DragAction? GetAction(DragKey key)
         {
             return _elements.Values.FirstOrDefault(e => e.DragKey == key);
         }
@@ -125,7 +125,7 @@ namespace NeeView
             {
             }
 
-            public DragActionCollection CreateDragActionCollectioin()
+            public DragActionCollection? CreateDragActionCollectioin()
             {
                 if (Elements == null) return null;
 
@@ -153,7 +153,7 @@ namespace NeeView
             return collection;
         }
 
-        public void RestoreDragActionCollection(DragActionCollection collection)
+        public void RestoreDragActionCollection(DragActionCollection? collection)
         {
             if (collection == null) return;
 

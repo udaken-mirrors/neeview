@@ -10,9 +10,9 @@ namespace NeeView
         private const string PageTitleFormat2Default = "$NameL | $NameR";
         private const string PageTitleFormatMediaDefault = " ";
         private bool _isEnabled = true;
-        private string _pageTitleFormat1;
-        private string _pageTitleFormat2;
-        private string _pageTitleFormatMedia;
+        private string? _pageTitleFormat1;
+        private string? _pageTitleFormat2;
+        private string? _pageTitleFormatMedia;
 
 
         /// <summary>

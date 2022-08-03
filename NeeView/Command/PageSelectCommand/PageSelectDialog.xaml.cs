@@ -21,45 +21,47 @@ namespace NeeView
         private PageSelectDialogViewModel _vm;
         private MouseWheelDelta _mouseWheelDelta = new MouseWheelDelta();
 
-        public PageSelectDialog()
+        // for designer
+        public PageSelectDialog() : this(new PageSelecteDialogModel(5,1,10))
+        {
+        }
+
+
+        public PageSelectDialog(PageSelecteDialogModel model)
         {
             InitializeComponent();
+
+            _vm = new PageSelectDialogViewModel(model);
+            _vm.Decided += ViewModel_ChangeResult;
+            this.DataContext = _vm;
 
             this.Loaded += PageSelectDialog_Loaded;
             this.ContentRendered += PageSelectDialog_ContentRendered;
         }
 
-
-        public PageSelectDialog(PageSelecteDialogModel model) : this()
-        {
-            _vm = new PageSelectDialogViewModel(model);
-            _vm.Decided += ViewModel_ChangeResult;
-            this.DataContext = _vm;
-        }
-
-        private void ViewModel_ChangeResult(object sender, PageSelectDialogDecidedEventArgs e)
+        private void ViewModel_ChangeResult(object? sender, PageSelectDialogDecidedEventArgs e)
         {
             this.DialogResult = e.Result;
             this.Close();
         }
 
-        private void PageSelectDialog_Loaded(object sender, RoutedEventArgs e)
+        private void PageSelectDialog_Loaded(object? sender, RoutedEventArgs e)
         {
             this.InputValueTextBox.Focus();
         }
-        private void PageSelectDialog_ContentRendered(object sender, EventArgs e)
+        private void PageSelectDialog_ContentRendered(object? sender, EventArgs e)
         {
             this.InputValueTextBox.SelectAll();
         }
 
-        private void PageSelectDialog_MouseWheel(object sender, MouseWheelEventArgs e)
+        private void PageSelectDialog_MouseWheel(object? sender, MouseWheelEventArgs e)
         {
             int turn = _mouseWheelDelta.NotchCount(e);
             _vm.AddValue(-turn);
             this.InputValueTextBox.SelectAll();
         }
 
-        private void PageSelectDialog_KeyDown(object sender, KeyEventArgs e)
+        private void PageSelectDialog_KeyDown(object? sender, KeyEventArgs e)
         {
             if (e.Key == Key.Escape && Keyboard.Modifiers == ModifierKeys.None)
             {
@@ -67,7 +69,7 @@ namespace NeeView
             }
         }
 
-        private void InputValueTextBox_KeyDown(object sender, KeyEventArgs e)
+        private void InputValueTextBox_KeyDown(object? sender, KeyEventArgs e)
         {
             if (e.Key == Key.Enter)
             {

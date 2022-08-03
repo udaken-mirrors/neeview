@@ -23,9 +23,21 @@ namespace NeeView
             return MemberwiseClone();
         }
 
-        public bool MemberwiseEquals(DragActionParameter other)
+        public bool MemberwiseEquals(DragActionParameter? other)
         {
+            if (other is null) return false;
+
             return _equals(this, other);
+        }
+    }
+
+    public static class DragActionParameterExtensions
+    {
+        public static T Cast<T>(this DragActionParameter? self) where T : DragActionParameter
+        {
+            var param = self as T;
+            if (param is null) throw new InvalidCastException();
+            return param;
         }
     }
 
@@ -61,7 +73,7 @@ namespace NeeView
         };
 
 
-        public override DragActionParameter Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+        public override DragActionParameter? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
             if (reader.TokenType != JsonTokenType.StartObject)
             {
@@ -79,7 +91,7 @@ namespace NeeView
             }
             var typeString = reader.GetString();
 
-            Type type = KnownTypes.FirstOrDefault(e => e.Name == typeString);
+            Type? type = KnownTypes.FirstOrDefault(e => e.Name == typeString);
             Debug.Assert(type != null);
 
             if (!reader.Read() || reader.GetString() != "Value")
@@ -91,7 +103,7 @@ namespace NeeView
                 throw new JsonException();
             }
 
-            object instance;
+            object? instance;
             if (type != null)
             {
                 instance = JsonSerializer.Deserialize(ref reader, type, options);
@@ -108,7 +120,7 @@ namespace NeeView
                 throw new JsonException();
             }
 
-            return (DragActionParameter)instance;
+            return (DragActionParameter?)instance;
         }
 
         public override void Write(Utf8JsonWriter writer, DragActionParameter value, JsonSerializerOptions options)
@@ -117,7 +129,7 @@ namespace NeeView
             var type = value.GetType();
             Debug.Assert(KnownTypes.Contains(type));
 
-            var def = (DragActionParameter)Activator.CreateInstance(type);
+            var def = (DragActionParameter?)Activator.CreateInstance(type);
             if (value.MemberwiseEquals(def))
             {
                 Debug.WriteLine($"{type} is default.");

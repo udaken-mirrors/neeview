@@ -11,13 +11,13 @@ namespace NeeView
     /// </summary>
     public class ScriptAccessDiagnostics : IAccessDiagnostics
     {
-        public T Throw<T>(Exception ex)
+        public T? Throw<T>(Exception ex)
         {
             Throw(ex);
             return default(T);
         }
 
-        public object Throw(Exception ex, Type type)
+        public object? Throw(Exception ex, Type type)
         {
             Throw(ex);
             return type.GetDefaultValue();

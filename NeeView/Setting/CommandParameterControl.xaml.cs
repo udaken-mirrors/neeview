@@ -33,7 +33,7 @@ namespace NeeView.Setting
 
         #endregion
 
-        private CommandParameterViewModel _vm;
+        private CommandParameterViewModel? _vm;
 
         public CommandParameterControl()
         {

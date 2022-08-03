@@ -47,7 +47,7 @@ namespace NeeView
         }
 
 
-        private void ExternalAppDialog_Closed(object sender, EventArgs e)
+        private void ExternalAppDialog_Closed(object? sender, EventArgs e)
         {
             _vm.Decide();
         }

@@ -16,7 +16,7 @@ namespace NeeView
 
         public ArchiveEntryTree()
         {
-            _root = new ArchiveEntryTreeNode(null, null);
+            _root = new ArchiveEntryTreeNode();
         }
 
         public void AddRange(IEnumerable<ArchiveEntry> entries)
@@ -39,7 +39,7 @@ namespace NeeView
                 if (child == null)
                 {
                     child = new ArchiveEntryTreeNode(node, part);
-                    node.Children.Add(child);
+                    node.Children?.Add(child);
                 }
 
                 if (!entry.IsDirectory)

@@ -9,12 +9,6 @@ namespace NeeView
     /// </summary>
     public class TempFile : FileProxy, ITrash
     {
-        #region Constructors
-
-        /// <summary>
-        /// コンストラクタ
-        /// </summary>
-        /// <param name="path"></param>
         public TempFile(string path) : base(path)
         {
             // テンポラリフォルダー以外は非対応
@@ -23,18 +17,12 @@ namespace NeeView
             UpdateLastAccessTime();
         }
 
-        #endregion
-
-        #region Properties
 
         /// <summary>
         /// 最終アクセス日時
         /// </summary>
         public DateTime LastAccessTime { get; private set; }
 
-        #endregion
-
-        #region Methods
 
         /// <summary>
         /// 最終アクセス日時更新
@@ -44,8 +32,6 @@ namespace NeeView
             this.LastAccessTime = DateTime.Now;
         }
 
-        #endregion
-
         #region ITrash Support
 
         public bool IsDisposed => _disposedValue;
@@ -53,6 +39,7 @@ namespace NeeView
         #endregion
 
         #region IDisposable Support
+
         private bool _disposedValue = false;
 
         protected virtual void Dispose(bool disposing)
@@ -69,7 +56,6 @@ namespace NeeView
                     if (Path != null && Path.StartsWith(Temporary.Current.TempDirectory)) // 念入りチェック
                     {
                         if (File.Exists(Path)) File.Delete(Path);
-                        Path = null;
                     }
                 }
                 catch (Exception e)

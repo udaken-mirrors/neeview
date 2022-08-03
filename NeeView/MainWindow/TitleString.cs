@@ -8,9 +8,9 @@ namespace NeeView
     public class TitleString : BindableBase
     {
         TitleStringService _titleStringService;
-        private string _format;
+        private string _format = "";
         private List<string> _keys = new List<string>();
-        private string _title;
+        private string _title = "";
 
         private readonly List<string> _keywords = new List<string>()
         {
@@ -51,7 +51,7 @@ namespace NeeView
         }
 
 
-        private void TitleStringService_Changed(object sender, EventArgs e)
+        private void TitleStringService_Changed(object? sender, EventArgs e)
         {
             UpdateTitle();
         }

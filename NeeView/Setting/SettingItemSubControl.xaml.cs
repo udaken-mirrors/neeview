@@ -27,7 +27,7 @@ namespace NeeView.Setting
             InitializeComponent();
         }
 
-        public SettingItemSubControl(string header, string tips, object content, bool isContentStretch)
+        public SettingItemSubControl(string header, string? tips, object content, bool isContentStretch)
         {
             InitializeComponent();
 

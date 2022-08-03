@@ -21,6 +21,6 @@ namespace NeeView
         /// <summary>
         /// リサイズパラメータ
         /// </summary>
-        public ProcessImageSettings ProcessImageSettings { get; set; }
+        public ProcessImageSettings ProcessImageSettings { get; set; } = ProcessImageSettings.Default;
     }
 }

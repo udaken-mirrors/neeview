@@ -24,7 +24,7 @@ namespace NeeView
             _page = source?.Pages?.FirstOrDefault() ?? throw new ArgumentException();
         }
 
-        public ImageExporterContent CreateView()
+        public ImageExporterContent? CreateView()
         {
             if (_page == null) return null;
 

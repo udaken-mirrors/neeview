@@ -11,7 +11,7 @@ namespace NeeView
         /// <remarks>
         /// 複数ファイルの場合はプレイリスト化して本棚の場所として開く
         /// </remarks>
-        public static string RequestLoad(object sender, IEnumerable<string> paths)
+        public static string? RequestLoad(object sender, IEnumerable<string> paths)
         {
             return RequestLoad(sender, paths, BookLoadOption.None, true);
         }
@@ -22,7 +22,7 @@ namespace NeeView
         /// <remarks>
         /// 複数ファイルの場合はプレイリスト化して本棚の場所として開く
         /// </remarks>
-        public static string RequestLoad(object sender, IEnumerable<string> paths, BookLoadOption options, bool isRefreshFolderList)
+        public static string? RequestLoad(object sender, IEnumerable<string> paths, BookLoadOption options, bool isRefreshFolderList)
         {
             if (paths is null || !paths.Any()) return null;
 

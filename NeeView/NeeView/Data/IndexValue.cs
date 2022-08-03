@@ -37,24 +37,14 @@ namespace NeeView.Data
     /// </summary>
     /// <typeparam name="T"></typeparam>
     abstract public class IndexValue<T> : BindableBase, IIndexValue
+        where T : struct
     {
-        //
-        public event EventHandler<ValueChangedEventArgs<T>> ValueChanged;
-
-        //
-        public bool IsValueSyncIndex { get; set; } = true;
-
-        //  
         private List<T> _values;
+        private int _index;
+        private T _value;
+        public PropertyValue<T>? _property;
 
-        /// <summary>
-        /// Max Index
-        /// </summary>
-        public int IndexMax => _values.Count - 1;
 
-        /// <summary>
-        /// constructor
-        /// </summary>
         public IndexValue(List<T> values)
         {
             _values = values;
@@ -62,10 +52,20 @@ namespace NeeView.Data
             _value = _values[_index];
         }
 
+        
+        public event EventHandler<ValueChangedEventArgs<T>>? ValueChanged;
+
+
+        public bool IsValueSyncIndex { get; set; } = true;
+
+        /// <summary>
+        /// Max Index
+        /// </summary>
+        public int IndexMax => _values.Count - 1;
+
         /// <summary>
         /// 現在のインデックス値
         /// </summary>
-        private int _index;
         public int Index
         {
             get
@@ -83,7 +83,6 @@ namespace NeeView.Data
         /// 現在値。
         /// PropertyValueが設定されているときはラッパーとして動作する
         /// </summary>
-        private T _value;
         public T Value
         {
             get { return _property != null ? _property.Value : _value; }
@@ -98,28 +97,30 @@ namespace NeeView.Data
         /// <summary>
         /// 値に関連させるPropertyValue
         /// </summary>
-        public PropertyValue<T> _property;
-        public PropertyValue<T> Property
+        public PropertyValue<T>? Property
         {
             get { return _property; }
             set
             {
                 _property = value;
-                this.Value = _property.Value;
+                if (_property is not null)
+                {
+                    this.Value = _property.Value;
+                }
             }
         }
 
+        virtual public string ValueString => Value.ToString() ?? "";
 
-        //
-        virtual public string ValueString => Value.ToString();
 
-        //
-        public override string ToString()
+        public override string? ToString()
         {
             return ValueString;
         }
 
-        //
+        /// <summary>
+        /// 近似値の取得
+        /// </summary>
         abstract protected int IndexOfNear(T value, IEnumerable<T> values);
 
         /// <summary>
@@ -145,7 +146,7 @@ namespace NeeView.Data
     /// <typeparam name="T"></typeparam>
     public class ValueChangedEventArgs<T> : EventArgs
     {
-        public T NewValue { get; set; }
+        public T? NewValue { get; set; }
     }
 
     /// <summary>

@@ -17,16 +17,17 @@ namespace NeeView
 {
     public partial class BookmarkListView : UserControl, IHasFolderListBox
     {
-        private BookmarkListViewModel _vm;
+        private BookmarkListViewModel? _vm;
 
 
-        public BookmarkListView()
+        //public BookmarkListView()
+        //{
+        //}
+
+        public BookmarkListView(FolderList model)
         {
             InitializeComponent();
-        }
 
-        public BookmarkListView(FolderList model) : this()
-        {
             this.FolderTree.Model = new BookmarkFolderTreeModel(model);
 
             _vm = new BookmarkListViewModel(model);
@@ -38,6 +39,8 @@ namespace NeeView
 
         protected override void OnDpiChanged(DpiScale oldDpi, DpiScale newDpi)
         {
+            if (_vm is null) return;
+
             base.OnDpiChanged(oldDpi, newDpi);
             _vm.SetDpiScale(newDpi);
         }
@@ -45,19 +48,22 @@ namespace NeeView
         /// <summary>
         /// フォルダーツリーへのフォーカス要求
         /// </summary>
-        private void FolderList_FolderTreeFocus(object sender, System.IO.ErrorEventArgs e)
+        private void FolderList_FolderTreeFocus(object? sender, EventArgs e)
         {
+            if (_vm is null) return;
             if (!_vm.Model.FolderListConfig.IsFolderTreeVisible) return;
 
             this.FolderTree.FocusSelectedItem();
         }
 
-        private void BookmarkListView_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+        private void BookmarkListView_IsVisibleChanged(object? sender, DependencyPropertyChangedEventArgs e)
         {
         }
 
-        private void Root_KeyDown(object sender, KeyEventArgs e)
+        private void Root_KeyDown(object? sender, KeyEventArgs e)
         {
+            if (_vm is null) return;
+
             // このパネルで使用するキーのイベントを止める
             if (Keyboard.Modifiers == ModifierKeys.None)
             {
@@ -68,8 +74,10 @@ namespace NeeView
             }
         }
 
-        private void Grid_SizeChanged(object sender, SizeChangedEventArgs e)
+        private void Grid_SizeChanged(object? sender, SizeChangedEventArgs e)
         {
+            if (_vm is null) return;
+
             if (e.WidthChanged)
             {
                 _vm.Model.AreaWidth = e.NewSize.Width;

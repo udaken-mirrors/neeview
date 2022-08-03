@@ -9,8 +9,9 @@ namespace NeeView
     {
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
+            var s = parameter as string ?? throw new ArgumentException();
             BackgroundType mode0 = (BackgroundType)value;
-            BackgroundType mode1 = (BackgroundType)Enum.Parse(typeof(BackgroundType), parameter as string);
+            BackgroundType mode1 = (BackgroundType)Enum.Parse(typeof(BackgroundType), s);
             return (mode0 == mode1);
         }
 

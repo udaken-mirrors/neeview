@@ -3,6 +3,7 @@ using NeeLaboratory.Windows.Input;
 using NeeView.Collections.Generic;
 using System;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -15,29 +16,33 @@ namespace NeeView
     {
         private static ObjectPool<MediaPlayer> _mediaPlayerPool = new ObjectPool<MediaPlayer>();
 
-        private MediaPlayer _player;
+        private MediaContent _animatedContent;
+        private MediaPlayer? _player;
         private TextBlock _errorMessageTextBlock;
         private DrawingBrush _brush;
         private VideoDrawing _videoDrawing;
         private Rectangle _rectangle;
 
+
         public MediaViewContent(MainViewComponent viewComponent, ViewContentSource source) : base(viewComponent, source)
         {
+            _animatedContent = this.Content as MediaContent ?? throw new InvalidOperationException("Content must be MediaContent");
+            Initialize();
         }
 
-
+        [MemberNotNull(nameof(_videoDrawing), nameof(_brush), nameof(_rectangle), nameof(_errorMessageTextBlock))]
         private void Initialize()
         {
             // binding parameter
             var parameter = CreateBindingParameter();
 
             // create view
+            if (this.Source is null) throw new InvalidOperationException();
             this.View = new ViewContentControl(CreateMediaView(this.Source, parameter));
 
             // content setting
-            var animatedContent = this.Content as MediaContent;
-            this.Color = animatedContent.Color;
-            this.FileProxy = animatedContent.FileProxy;
+            this.Color = _animatedContent.Color;
+            this.FileProxy = _animatedContent.FileProxy;
         }
 
         public override void OnAttached()
@@ -47,9 +52,11 @@ namespace NeeView
             OnDetached();
 
 #pragma warning disable CS0618 // 型またはメンバーが旧型式です
-            var uri = new Uri(((MediaContent)Content).FileProxy.Path, true);
+            if (this.FileProxy is null) throw new InvalidOperationException("FileProxy must not be null");
+            var uri = new Uri(this.FileProxy.Path, true);
 #pragma warning restore CS0618 // 型またはメンバーが旧型式です
 
+            if (this.Source is null) throw new InvalidOperationException("Source must not be null");
             var isLastStart = this.Source.IsLastStart;
 
             _player = _mediaPlayerPool.Allocate();
@@ -85,8 +92,11 @@ namespace NeeView
         /// <summary>
         /// アニメーションビュー生成
         /// </summary>
+        [MemberNotNull(nameof(_videoDrawing), nameof(_brush), nameof(_rectangle), nameof(_errorMessageTextBlock))]
         private FrameworkElement CreateMediaView(ViewContentSource source, ViewContentParameters parameter)
         {
+            if (this.Content is null) throw new InvalidOperationException("Content must not be null");
+
             _videoDrawing = new VideoDrawing()
             {
                 Rect = new Rect(this.Content.Size),
@@ -124,12 +134,13 @@ namespace NeeView
             return grid;
         }
 
-        private void Media_MediaOpened(object sender, EventArgs e)
+        private void Media_MediaOpened(object? sender, EventArgs e)
         {
             var content = this.Content as MediaContent;
             if (content == null) return;
 
-            var player = (MediaPlayer)sender;
+            var player = sender as MediaPlayer;
+            if (player is null) return;
 
             var size = new Size(player.NaturalVideoWidth, player.NaturalVideoHeight);
             Size = size;
@@ -141,7 +152,7 @@ namespace NeeView
             FileInformation.Current.Update();
         }
 
-        private void Media_MediaFailed(object sender, ExceptionEventArgs e)
+        private void Media_MediaFailed(object? sender, ExceptionEventArgs e)
         {
             _errorMessageTextBlock.Text = e.ErrorException != null ? e.ErrorException.Message : Properties.Resources.Notice_PlayFailed;
             _errorMessageTextBlock.Visibility = Visibility.Visible;
@@ -155,9 +166,11 @@ namespace NeeView
 
         public override void UpdateViewBox()
         {
+            if (this.Source is null) return;
+
             if (_brush != null)
             {
-                _brush.Viewbox = Source.GetViewBox();
+                _brush.Viewbox = this.Source.GetViewBox();
             }
         }
 
@@ -181,7 +194,7 @@ namespace NeeView
         public new static MediaViewContent Create(MainViewComponent viewComponent, ViewContentSource source)
         {
             var viewContent = new MediaViewContent(viewComponent, source);
-            viewContent.Initialize();
+            //viewContent.Initialize();
             return viewContent;
         }
     }

@@ -14,6 +14,15 @@ namespace NeeView
     // タッチ処理
     public class TouchInputForGestureEditor : BindableBase
     {
+        private TouchInputContext _context;
+        private FrameworkElement _sender;
+
+        /// <summary>
+        /// 現在状態（実体）
+        /// </summary>
+        private TouchInputBase? _current;
+
+
         public TouchInputForGestureEditor(FrameworkElement sender)
         {
             _context = new TouchInputContext(sender, null, null, null, null, null);
@@ -37,9 +46,6 @@ namespace NeeView
             _sender.PreviewStylusMove += OnStylusMove;
         }
 
-        //
-        private TouchInputContext _context;
-        private FrameworkElement _sender;
 
         /// <summary>
         /// 状態：既定
@@ -63,10 +69,7 @@ namespace NeeView
         private TouchInputState _state;
         public TouchInputState State => _state;
 
-        /// <summary>
-        /// 現在状態（実体）
-        /// </summary>
-        private TouchInputBase _current;
+
 
         //
         public bool IsCaptured()
@@ -79,7 +82,7 @@ namespace NeeView
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void StateChanged(object sender, TouchInputStateEventArgs e)
+        private void StateChanged(object? sender, TouchInputStateEventArgs e)
         {
             SetState(e.State, e.Parameter);
         }
@@ -89,7 +92,7 @@ namespace NeeView
         /// </summary>
         /// <param name="state"></param>
         /// <param name="parameter"></param>
-        public void SetState(TouchInputState state, object parameter)
+        public void SetState(TouchInputState state, object? parameter)
         {
             if (state == _state) return;
 
@@ -115,16 +118,11 @@ namespace NeeView
 
             CleanupTouchMap();
 
-            _context.TouchMap[e.StylusDevice] = new TouchContext()
-            {
-                StylusDevice = e.StylusDevice,
-                StartPoint = e.GetPosition(_sender),
-                StartTimestamp = e.Timestamp
-            };
+            _context.TouchMap[e.StylusDevice] = new TouchContext(e.StylusDevice, e.GetPosition(_sender), e.Timestamp);
 
             _sender.CaptureStylus();
 
-            _current.OnStylusDown(_sender, e);
+            _current?.OnStylusDown(_sender, e);
         }
 
         //
@@ -141,14 +139,14 @@ namespace NeeView
                 _sender.ReleaseStylusCapture();
             }
 
-            _current.OnStylusUp(_sender, e);
+            _current?.OnStylusUp(_sender, e);
         }
 
         //
         private void OnStylusMove(object sender, StylusEventArgs e)
         {
             if (sender != _sender) return;
-            _current.OnStylusMove(_sender, e);
+            _current?.OnStylusMove(_sender, e);
         }
 
     }

@@ -47,9 +47,9 @@ namespace NeeView
             return unit;
         }
 
-        public BookMementoUnit Get(string place)
+        public BookMementoUnit? Get(string place)
         {
-            return Items.TryGetValue(place, out BookMementoUnit memento) ? memento : null;
+            return Items.TryGetValue(place, out BookMementoUnit? memento) ? memento : null;
         }
 
 
@@ -77,7 +77,7 @@ namespace NeeView
         }
 
         
-        public BookMementoUnit GetValid(string place)
+        public BookMementoUnit? GetValid(string place)
         {
             return BookHistoryCollection.Current.FindUnit(place) ?? BookmarkCollection.Current.FindUnit(place);
         }

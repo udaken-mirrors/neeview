@@ -25,7 +25,7 @@ namespace NeeView
         public static IComparer<string> Comparer => Config.Current.System.IsNaturalSortEnabled ? _customComparer : _nativeComparer;
 
 
-        public static int Compare(string x, string y)
+        public static int Compare(string? x, string? y)
         {
             return Comparer.Compare(x, y);
         }

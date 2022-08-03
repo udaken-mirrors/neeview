@@ -28,8 +28,6 @@ namespace NeeView
         private bool _ignoreMouseState;
 
 
-        #region Constructors
-
         public ContentRebuild(MainViewComponent viewComponent)
         {
             _viewComponent = viewComponent;
@@ -72,9 +70,6 @@ namespace NeeView
             ApplicationDisposer.Current.Add(this);
         }
 
-        #endregion
-
-        #region Properties
 
         /// <summary>
         /// 更新を停止させるために使用する
@@ -93,15 +88,12 @@ namespace NeeView
             set { if (_isBusy != value) { _isBusy = value; RaisePropertyChanged(); } }
         }
 
-        #endregion
-
-        #region Medhots
 
         /// <summary>
         /// フレーム処理
         /// 必要ならば現在の表示サイズでコンテンツを再作成する
         /// </summary>
-        private void OnRendering(object sender, EventArgs e)
+        private void OnRendering(object? sender, EventArgs e)
         {
             RebuildFrame();
         }
@@ -194,7 +186,6 @@ namespace NeeView
         {
             CompositionTarget.Rendering -= OnRendering;
         }
-        #endregion
 
         #region IDisposable Support
         private bool _disposedValue = false;
@@ -224,7 +215,7 @@ namespace NeeView
     {
         public class Key : IDisposable
         {
-            public Locker Locker { get; set; }
+            public Locker? Locker { get; set; }
 
             public Key(Locker locker)
             {

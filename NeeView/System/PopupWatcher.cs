@@ -8,11 +8,11 @@ namespace NeeView
     /// </summary>
     public static class PopupWatcher
     {
-        public static event EventHandler<TargetElementChangedEventArgs> PopupElementChanged;
+        public static event EventHandler<TargetElementChangedEventArgs>? PopupElementChanged;
 
-        public static UIElement PopupElement { get; private set; }
+        public static UIElement? PopupElement { get; private set; }
 
-        public static void SetPopupElement(object sender, UIElement element)
+        public static void SetPopupElement(object sender, UIElement? element)
         {
             if (PopupElement != element)
             {

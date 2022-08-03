@@ -59,14 +59,14 @@ namespace NeeView
         public MouseGestureSequenceTracker()
         {
             _sequence = new MouseGestureSequence();
-            _sequence.CollectionChanged += (s, e) => GestureProgressed.Invoke(this, new MouseGestureEventArgs(_sequence));
+            _sequence.CollectionChanged += (s, e) => GestureProgressed?.Invoke(this, new MouseGestureEventArgs(_sequence));
         }
 
 
         /// <summary>
         /// ジェスチャー進捗通知
         /// </summary>
-        public event EventHandler<MouseGestureEventArgs> GestureProgressed;
+        public event EventHandler<MouseGestureEventArgs>? GestureProgressed;
 
 
         /// <summary>

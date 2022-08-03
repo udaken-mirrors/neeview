@@ -104,7 +104,7 @@ namespace NeeView
         /// 遷移パラメータ。
         /// 遷移状態により要求される内容は異なります。
         /// </summary>
-        public object Parameter { get; set; }
+        public object? Parameter { get; set; }
 
         /// <summary>
         /// コンストラクター
@@ -119,7 +119,7 @@ namespace NeeView
         /// コンストラクター
         /// </summary>
         /// <param name="state"></param>
-        public MouseInputStateEventArgs(MouseInputState state, object parameter)
+        public MouseInputStateEventArgs(MouseInputState state, object? parameter)
         {
             this.State = state;
             this.Parameter = parameter;
@@ -134,22 +134,22 @@ namespace NeeView
         /// <summary>
         /// 状態遷移通知
         /// </summary>
-        public EventHandler<MouseInputStateEventArgs> StateChanged;
+        public EventHandler<MouseInputStateEventArgs>? StateChanged;
 
         /// <summary>
         /// ボタン入力通知
         /// </summary>
-        public EventHandler<MouseButtonEventArgs> MouseButtonChanged;
+        public EventHandler<MouseButtonEventArgs>? MouseButtonChanged;
 
         /// <summary>
         /// ホイール入力通知
         /// </summary>
-        public EventHandler<MouseWheelEventArgs> MouseWheelChanged;
+        public EventHandler<MouseWheelEventArgs>? MouseWheelChanged;
 
         /// <summary>
         /// 水平ホイール入力通知
         /// </summary>
-        public EventHandler<MouseWheelEventArgs> MouseHorizontalWheelChanged;
+        public EventHandler<MouseWheelEventArgs>? MouseHorizontalWheelChanged;
 
         /// <summary>
         /// 状態コンテキスト
@@ -170,7 +170,7 @@ namespace NeeView
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="parameter"></param>
-        public virtual void OnOpened(FrameworkElement sender, object parameter) { }
+        public virtual void OnOpened(FrameworkElement sender, object? parameter) { }
 
         /// <summary>
         /// 状態終了時処理
@@ -195,12 +195,12 @@ namespace NeeView
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        public abstract void OnMouseButtonDown(object sender, MouseButtonEventArgs e);
-        public abstract void OnMouseButtonUp(object sender, MouseButtonEventArgs e);
-        public abstract void OnMouseWheel(object sender, MouseWheelEventArgs e);
-        public abstract void OnMouseHorizontalWheel(object sender, MouseWheelEventArgs e);
-        public abstract void OnMouseMove(object sender, MouseEventArgs e);
-        public virtual void OnKeyDown(object sender, KeyEventArgs e) { }
+        public abstract void OnMouseButtonDown(object? sender, MouseButtonEventArgs e);
+        public abstract void OnMouseButtonUp(object? sender, MouseButtonEventArgs e);
+        public abstract void OnMouseWheel(object? sender, MouseWheelEventArgs e);
+        public abstract void OnMouseHorizontalWheel(object? sender, MouseWheelEventArgs e);
+        public abstract void OnMouseMove(object? sender, MouseEventArgs e);
+        public virtual void OnKeyDown(object? sender, KeyEventArgs e) { }
 
         /// <summary>
         /// 入力をキャンセル
@@ -229,7 +229,7 @@ namespace NeeView
         /// </summary>
         /// <param name="state"></param>
         /// <param name="parameter"></param>
-        protected void SetState(MouseInputState state, object parameter = null)
+        protected void SetState(MouseInputState state, object? parameter = null)
         {
             StateChanged?.Invoke(this, new MouseInputStateEventArgs(state, parameter));
         }

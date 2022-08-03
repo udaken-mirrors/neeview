@@ -11,16 +11,30 @@ namespace NeeView
     /// </summary>
     public class PrintContext
     {
+        public PrintContext(ViewContent? mainContent, IEnumerable<ViewContent> contents, FrameworkElement view, Transform viewTransform, double viewWidth, double viewHeight, Effect? viewEffect, Brush? background, Brush? backgroundFront)
+        {
+            MainContent = mainContent;
+            Contents = contents;
+            View = view;
+            ViewTransform = viewTransform;
+            ViewWidth = viewWidth;
+            ViewHeight = viewHeight;
+            ViewEffect = viewEffect;
+            Background = background;
+            BackgroundFront = backgroundFront;
+        }
+
+
         /// <summary>
         /// 表示コンテキスト(メインページ)。
         /// 画像印刷での対象
         /// </summary>
-        public ViewContent MainContent { get; set; }
+        public ViewContent? MainContent { get; set; }
 
         /// <summary>
         /// メインページの画像
         /// </summary>
-        public ImageSource RawImage => (MainContent.Source.Content as BitmapContent).ImageSource;
+        public ImageSource? RawImage => (MainContent?.Source?.Content as BitmapContent)?.ImageSource;
 
         /// <summary>
         /// 表示コンテキスト。
@@ -52,16 +66,16 @@ namespace NeeView
         /// <summary>
         /// エフェクト
         /// </summary>
-        public Effect ViewEffect { get; set; }
+        public Effect? ViewEffect { get; set; }
 
         /// <summary>
         /// 背景ブラシ
         /// </summary>
-        public Brush Background { get; set; }
+        public Brush? Background { get; set; }
 
         /// <summary>
         /// 背景ブラシ
         /// </summary>
-        public Brush BackgroundFront { get; set; }
+        public Brush? BackgroundFront { get; set; }
     }
 }

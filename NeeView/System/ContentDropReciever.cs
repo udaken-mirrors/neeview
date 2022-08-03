@@ -159,7 +159,7 @@ namespace NeeView
             var recievers = (data.GetDataPresent("UniformResourceLocator") || data.GetDataPresent("UniformResourceLocatorW"))
                 ? _browserDropRecievers : _fileDropRecievers;
 
-            string errorMessage = null;
+            string? errorMessage = null;
             foreach (var reciever in recievers)
             {
                 try
@@ -205,7 +205,7 @@ namespace NeeView
                     var obj = data.GetData(name);
                     if (obj is System.IO.MemoryStream)
                     {
-                        Debug.WriteLine($"<{name}>: {obj} ({(obj as System.IO.MemoryStream).Length})");
+                        Debug.WriteLine($"<{name}>: {obj} ({(obj as System.IO.MemoryStream)?.Length})");
                     }
                     else if (obj is string)
                     {
@@ -240,12 +240,12 @@ namespace NeeView
         /// <param name="downloadPath">ファイル出力パス</param>
         /// <param name="nowloading">NowLoading表示用デリゲート</param>
         /// <returns>得られたファイルパス</returns>
-        public abstract Task<List<string>> DropAsync(object sender, IDataObject data, string downloadPath, Action<string> nowloading);
+        public abstract Task<List<string>?> DropAsync(object sender, IDataObject data, string downloadPath, Action<string> nowloading);
 
         /// <summary>
         /// バイナリを画像としてファイルに保存(Async)
         /// </summary>
-        public async Task<string> DownloadToFileAsync(byte[] buff, string name, string downloadPath)
+        public async Task<string?> DownloadToFileAsync(byte[] buff, string? name, string downloadPath)
         {
             return await Task.Run(() => DownloadToFile(buff, name, downloadPath));
         }
@@ -257,7 +257,7 @@ namespace NeeView
         /// <param name="name">希望ファイル名。現在の実装では無視されます</param>
         /// <param name="downloadPath">保存先フォルダー</param>
         /// <returns>出力されたファイルパスを返す。バイナリが画像データ出なかった場合はnull</returns>
-        public string DownloadToFile(byte[] buff, string name, string downloadPath)
+        public string? DownloadToFile(byte[] buff, string? name, string downloadPath)
         {
             //if (!System.IO.Directory.Exists(downloadPath)) throw new DropException("保存先フォルダーが存在しません");
 
@@ -327,7 +327,7 @@ namespace NeeView
     /// </summary>
     public class DropFileContents : DropReciever
     {
-        public override async Task<List<string>> DropAsync(object sender, IDataObject data, string downloadPath, Action<string> nowloading)
+        public override async Task<List<string>?> DropAsync(object sender, IDataObject data, string downloadPath, Action<string> nowloading)
         {
             //
             if (data.GetDataPresent("FileContents") && data.GetDataPresent("FileGroupDescriptorW"))
@@ -337,7 +337,7 @@ namespace NeeView
                 {
                     if (file.Bytes == null || file.Bytes.Length <= 0) continue;
 
-                    string fileName = await DownloadToFileAsync(file.Bytes, file.Name, downloadPath);
+                    string? fileName = await DownloadToFileAsync(file.Bytes, file.Name, downloadPath);
                     if (fileName != null) fileNames.Add(fileName);
                 }
 
@@ -357,7 +357,7 @@ namespace NeeView
     /// </summary>
     public class DropQueryPath : DropReciever
     {
-        public override async Task<List<string>> DropAsync(object sender, IDataObject data, string downloadPath, Action<string> nowloading)
+        public override async Task<List<string>?> DropAsync(object sender, IDataObject data, string downloadPath, Action<string> nowloading)
         {
             var query = data.GetData(typeof(QueryPath)) as QueryPath;
             if (query != null && query.Search == null && query.Scheme == QueryScheme.File)
@@ -376,13 +376,17 @@ namespace NeeView
     /// </summary>
     public class DropFileDrop : DropReciever
     {
-        public override async Task<List<string>> DropAsync(object sender, IDataObject data, string downloadPath, Action<string> nowloading)
+        public override async Task<List<string>?> DropAsync(object sender, IDataObject data, string downloadPath, Action<string> nowloading)
         {
             // File drop
             if (data.GetDataPresent(DataFormats.FileDrop))
             {
-                string[] files = data.GetData(DataFormats.FileDrop) as string[];
-                if (files.Length <= 1)
+                string[]? files = data.GetData(DataFormats.FileDrop) as string[];
+                if (files is null)
+                {
+                    return new List<string>();
+                }
+                else if (files.Length <= 1)
                 {
                     return new List<string>() { files[0] };
                 }
@@ -403,12 +407,12 @@ namespace NeeView
     /// </summary>
     public class DropFileDropCopy : DropReciever
     {
-        public override async Task<List<string>> DropAsync(object sender, IDataObject data, string downloadPath, Action<string> nowloading)
+        public override async Task<List<string>?> DropAsync(object sender, IDataObject data, string downloadPath, Action<string> nowloading)
         {
             // File drop (from browser)
             if (data.GetDataPresent(DataFormats.FileDrop))
             {
-                string[] files = data.GetData(DataFormats.FileDrop) as string[];
+                string[]? files = data.GetData(DataFormats.FileDrop) as string[];
                 if (files != null)
                 {
                     var fileNames = new List<string>();
@@ -417,7 +421,7 @@ namespace NeeView
                         // copy
                         var bytes = await Task.Run(() => System.IO.File.ReadAllBytes(file));
 
-                        string fileName = await DownloadToFileAsync(bytes, System.IO.Path.GetFileName(file), downloadPath);
+                        string? fileName = await DownloadToFileAsync(bytes, System.IO.Path.GetFileName(file), downloadPath);
                         if (fileName != null) fileNames.Add(fileName);
                     }
                     if (fileNames.Count > 0)
@@ -438,7 +442,7 @@ namespace NeeView
     /// </summary>
     public class DropInlineImage : DropReciever
     {
-        public override async Task<List<string>> DropAsync(object sender, IDataObject data, string downloadPath, Action<string> nowloading)
+        public override async Task<List<string>?> DropAsync(object sender, IDataObject data, string downloadPath, Action<string> nowloading)
         {
             if (data.GetDataPresent("HTML Format"))
             {
@@ -456,7 +460,7 @@ namespace NeeView
                         var bytes = Convert.FromBase64String(crypt);
 
                         // ファイル化
-                        string fileName = await DownloadToFileAsync(bytes, null, downloadPath);
+                        string? fileName = await DownloadToFileAsync(bytes, null, downloadPath);
                         if (fileName != null) fileNames.Add(fileName);
                     }
                 }
@@ -477,7 +481,7 @@ namespace NeeView
     /// </summary>
     public class DropWebImage : DropReciever
     {
-        public override async Task<List<string>> DropAsync(object sender, IDataObject data, string downloadPath, Action<string> nowloading)
+        public override async Task<List<string>?> DropAsync(object sender, IDataObject data, string downloadPath, Action<string> nowloading)
         {
             // Webアクセス時はNowLoading表示を行う
             nowloading(Properties.Resources.Notice_DropContent);
@@ -496,7 +500,7 @@ namespace NeeView
                             var bytes = await client.GetByteArrayAsync(new Uri(url));
 
                             // ファイル化
-                            string fileName = await DownloadToFileAsync(bytes, null, downloadPath);
+                            string? fileName = await DownloadToFileAsync(bytes, null, downloadPath);
                             if (fileName != null) fileNames.Add(fileName);
                         }
                     }
@@ -510,13 +514,16 @@ namespace NeeView
                 if (data.GetDataPresent("UniformResourceLocator") || data.GetDataPresent("UniformResourceLocatorW"))
                 {
                     var url = data.GetData(DataFormats.Text).ToString();
-                    if (url.StartsWith("http://") || url.StartsWith("https://"))
+                    if (url is not null && (url.StartsWith("http://") || url.StartsWith("https://")))
                     {
                         // download
                         var bytes = await client.GetByteArrayAsync(new Uri(url));
 
                         // ファイル化
-                        return new List<string>() { DownloadToFile(bytes, null, downloadPath) };
+                        var result = DownloadToFile(bytes, null, downloadPath);
+                        if (result is null) return null;
+
+                        return new List<string>() { result };
                     }
                 }
 
@@ -532,7 +539,7 @@ namespace NeeView
     /// </summary>
     public class DropBitmap : DropReciever
     {
-        public override async Task<List<string>> DropAsync(object sender, IDataObject data, string downloadPath, Action<string> nowloading)
+        public override async Task<List<string>?> DropAsync(object sender, IDataObject data, string downloadPath, Action<string> nowloading)
         {
             if (data.GetDataPresent(DataFormats.Bitmap))
             {

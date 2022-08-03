@@ -19,11 +19,11 @@ namespace NeeView
             _view = new BookmarkListView(folderList);
             _presenter = new BookmarkFolderListPresenter(_view, folderList);
 
-            Icon = App.Current.MainWindow.Resources["pic_star_24px"] as DrawingImage;
+            Icon = App.Current.MainWindow.Resources["pic_star_24px"] as DrawingImage ?? throw new InvalidOperationException("Cannot found resource `pic_star_24px`");
         }
 
 #pragma warning disable CS0067
-        public event EventHandler IsVisibleLockChanged;
+        public event EventHandler? IsVisibleLockChanged;
 #pragma warning restore CS0067
 
 

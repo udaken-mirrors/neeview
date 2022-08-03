@@ -38,10 +38,16 @@ namespace NeeView
     /// </summary>
     public class BookHubCommandLoadArgs : BookHubCommandArgs
     {
-        public object Sender { get; set; }
+        public BookHubCommandLoadArgs(string path, string sourcePath)
+        {
+            Path = path;
+            SourcePath = sourcePath;
+        }
+
+        public object? Sender { get; set; }
         public string Path { get; set; }
         public string SourcePath { get; set; }
-        public string StartEntry { get; set; }
+        public string? StartEntry { get; set; }
         public BookLoadOption Option { get; set; }
         public bool IsRefreshFolderList { get; set; }
     }
@@ -53,7 +59,7 @@ namespace NeeView
     {
         private BookHubCommandLoadArgs _param;
 
-        public string Path => _param?.Path;
+        public string Path => _param.Path;
 
         public BookHubCommandLoad(BookHub bookHub, BookHubCommandLoadArgs param) : base(bookHub)
         {
@@ -72,9 +78,9 @@ namespace NeeView
     /// </summary>
     public class BookHubCommandUnloadArgs : BookHubCommandArgs
     {
-        public object Sender { get; set; }
+        public object? Sender { get; set; }
         public bool IsClearViewContent { get; set; }
-        public string Message { get; set; }
+        public string? Message { get; set; }
     }
 
     /// <summary>

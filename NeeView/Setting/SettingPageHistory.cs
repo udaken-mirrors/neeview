@@ -38,13 +38,13 @@ namespace NeeView.Setting
 
         #region Commands
 
-        private RelayCommand<UIElement> _RemoveHistory;
+        private RelayCommand<UIElement>? _RemoveHistory;
         public RelayCommand<UIElement> RemoveHistory
         {
             get { return _RemoveHistory = _RemoveHistory ?? new RelayCommand<UIElement>(RemoveHistory_Executed); }
         }
 
-        private void RemoveHistory_Executed(UIElement element)
+        private void RemoveHistory_Executed(UIElement? element)
         {
             BookHistoryCollection.Current.Clear();
 

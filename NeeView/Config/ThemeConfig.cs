@@ -11,7 +11,7 @@ namespace NeeView
         private TheneSource _themeType = new TheneSource(NeeView.ThemeType.Dark);
 
         [JsonInclude, JsonPropertyName(nameof(CustomThemeFolder))]
-        public string _customThemeFolder;
+        public string? _customThemeFolder;
 
 
         // テーマ
@@ -46,7 +46,7 @@ namespace NeeView
 
         [Obsolete, Alternative(nameof(ThemeType), 39)] // ver.39
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-        public string PanelColor
+        public string? PanelColor
         {
             get { return null; }
             set { ThemeType = new TheneSource(value == "Light" ? NeeView.ThemeType.Light : NeeView.ThemeType.Dark); }

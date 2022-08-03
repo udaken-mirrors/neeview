@@ -43,10 +43,10 @@ namespace NeeView
 
 
         // コマンドエンジン処理中イベント
-        public event EventHandler<JobIsBusyChangedEventArgs> IsBusyChanged;
+        public event EventHandler<JobIsBusyChangedEventArgs>? IsBusyChanged;
 
         // 表示ページ読込中イベント
-        public event EventHandler<ViewContentsLoadingEventArgs> ViewContentsLoading;
+        public event EventHandler<ViewContentsLoadingEventArgs>? ViewContentsLoading;
 
         // コマンドエンジン処理中
         public bool IsBusy => _commandEngine.IsBusy;
@@ -106,21 +106,21 @@ namespace NeeView
         }
 
         // 前のページに戻る
-        public void PrevPage(object sender, int step)
+        public void PrevPage(object? sender, int step)
         {
             var s = (step == 0) ? _viewer.PageMode.Size() : step;
             RequestMovePosition(sender, -s);
         }
 
         // 次のページへ進む
-        public void NextPage(object sender, int step)
+        public void NextPage(object? sender, int step)
         {
             var s = (step == 0) ? _viewer.PageMode.Size() : step;
             RequestMovePosition(sender, +s);
         }
 
         // 前のフォルダーに戻る
-        public int PrevFolderPage(object sender)
+        public int PrevFolderPage(object? sender)
         {
             var index = _book.Pages.GetPrevFolderIndex(_viewer.GetViewPageIndex());
             if (index < 0) return -1;
@@ -129,7 +129,7 @@ namespace NeeView
         }
 
         // 前のフォルダーへ進む
-        public int NextFolderPage(object sender)
+        public int NextFolderPage(object? sender)
         {
             var index = _book.Pages.GetNextFolderIndex(_viewer.GetViewPageIndex());
             if (index < 0) return -1;
@@ -138,19 +138,19 @@ namespace NeeView
         }
 
         // 最初のページに移動
-        public void FirstPage(object sender)
+        public void FirstPage(object? sender)
         {
             RequestSetPosition(sender, _book.Pages.FirstPosition(), 1);
         }
 
         // 最後のページに移動
-        public void LastPage(object sender)
+        public void LastPage(object? sender)
         {
             RequestSetPosition(sender, _book.Pages.LastPosition(), -1);
         }
 
         // 指定ページに移動
-        public bool JumpPage(object sender, Page page)
+        public bool JumpPage(object sender, Page? page)
         {
             if (page is null) return false;
 
@@ -169,7 +169,7 @@ namespace NeeView
 
         // ページマーク移動
         // TODO: もっと上のレベルでページマークの取得と移動の発行を行う
-        public Page RequestJumpToMarker(object sender, int direction, bool isLoop, bool isIncludeTerminal)
+        public Page? RequestJumpToMarker(object sender, int direction, bool isLoop, bool isIncludeTerminal)
         {
             Debug.Assert(direction == 1 || direction == -1);
 
@@ -194,7 +194,7 @@ namespace NeeView
         /// <param name="sender"></param>
         /// <param name="position">ページ位置</param>
         /// <param name="direction">読む方向(+1 or -1)</param>
-        public void RequestSetPosition(object sender, PagePosition position, int direction)
+        public void RequestSetPosition(object? sender, PagePosition position, int direction)
         {
             Debug.Assert(direction == 1 || direction == -1);
 
@@ -204,7 +204,7 @@ namespace NeeView
             var command = new BookCommandAction(sender, Execute, 0);
             _commandEngine.Enqueue(command);
 
-            async Task Execute(object s, CancellationToken token)
+            async Task Execute(object? s, CancellationToken token)
             {
                 __CommandWriteLine($"Set: {s}, {range}");
                 await _viewer.UpdateViewPageAsync(s, range, token);
@@ -212,12 +212,12 @@ namespace NeeView
         }
 
         // ページ相対移動
-        public void RequestMovePosition(object sender, int step)
+        public void RequestMovePosition(object? sender, int step)
         {
             var command = new BookCommandJoinAction(sender, Execute, step, 0);
             _commandEngine.Enqueue(command);
 
-            async Task Execute(object s, int value, CancellationToken token)
+            async Task Execute(object? s, int value, CancellationToken token)
             {
                 __CommandWriteLine($"Move: {s}, {value}");
                 await _viewer.MoveViewPageAsync(s, value, token);
@@ -230,7 +230,7 @@ namespace NeeView
             var command = new BookCommandAction(sender, Execute, 1);
             _commandEngine.Enqueue(command);
 
-            async Task Execute(object s, CancellationToken token)
+            async Task Execute(object? s, CancellationToken token)
             {
                 __CommandWriteLine($"Refresh: {s}");
                 await _viewer.RefreshViewPageAsync(s, token);
@@ -243,14 +243,14 @@ namespace NeeView
             var command = new BookCommandAction(sender, Execute, 2);
             _commandEngine.Enqueue(command);
 
-            async Task Execute(object s, CancellationToken token)
+            async Task Execute(object? s, CancellationToken token)
             {
                 __CommandWriteLine($"Sort: {_book.Pages.SortMode}");
                 var page = _viewer.GetViewPage();
 
                 _book.Pages.Sort(token);
 
-                var index = (_book.Pages.SortMode == PageSortMode.Random && Config.Current.Book.ResetPageWhenRandomSort) ? 0 : _book.Pages.GetIndex(page);
+                var index = (page is null || (_book.Pages.SortMode == PageSortMode.Random && Config.Current.Book.ResetPageWhenRandomSort)) ? 0 : _book.Pages.GetIndex(page);
                 var pagePosition = new PagePosition(index, 0);
                 RequestSetPosition(this, pagePosition, 1);
 
@@ -273,7 +273,7 @@ namespace NeeView
             var command = new BookCommandAction(sender, Execute, 3);
             _commandEngine.Enqueue(command);
 
-            async Task Execute(object s, CancellationToken token)
+            async Task Execute(object? s, CancellationToken token)
             {
                 __CommandWriteLine($"Remove: Count={pages.Count}");
 
@@ -282,7 +282,8 @@ namespace NeeView
                     page.IsDeleted = true;
                 }
 
-                var next = _book.Pages.GetValidPage(_viewer.GetViewPage());
+                var viewPage = _viewer.GetViewPage();
+                var next = viewPage != null ?_book.Pages.GetValidPage(viewPage) : null;
 
                 _book.Pages.Remove(pages);
 

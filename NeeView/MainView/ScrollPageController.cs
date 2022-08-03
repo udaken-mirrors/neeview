@@ -45,7 +45,7 @@ namespace NeeView
         /// <summary>
         /// スクロール＋前のページに戻る。
         /// </summary>
-        public void PrevScrollPage(object sender, ScrollPageCommandParameter parameter)
+        public void PrevScrollPage(object? sender, ScrollPageCommandParameter parameter)
         {
             int bookReadDirection = (_bookSettingPresenter.LatestSetting.BookReadOrder == PageReadOrder.RightToLeft) ? 1 : -1;
             bool isLineBreakStop = parameter.LineBreakStopMode == LineBreakStopMode.Line;
@@ -63,7 +63,7 @@ namespace NeeView
         /// <summary>
         /// スクロール＋次のページに進む。
         /// </summary>
-        public void NextScrollPage(object sender, ScrollPageCommandParameter parameter)
+        public void NextScrollPage(object? sender, ScrollPageCommandParameter parameter)
         {
             int bookReadDirection = (_bookSettingPresenter.LatestSetting.BookReadOrder == PageReadOrder.RightToLeft) ? 1 : -1;
             bool isLineBreakStop = parameter.LineBreakStopMode == LineBreakStopMode.Line;

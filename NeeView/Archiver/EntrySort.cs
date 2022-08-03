@@ -22,7 +22,8 @@ namespace NeeView
         /// <returns></returns>
         public static List<ArchiveEntry> SortEntries(List<ArchiveEntry> entries, PageSortMode sortMode)
         {
-            if (entries == null || entries.Count <= 0) return entries;
+            if (entries is null) throw new();
+            if (entries.Count <= 0) return entries;
 
             switch (sortMode)
             {

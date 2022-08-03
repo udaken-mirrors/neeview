@@ -30,7 +30,7 @@ namespace NeeView
         private BookAhead _ahead;
 
         // コンテンツ生成
-        private BookPageViewGenerater _contentGenerater;
+        private BookPageViewGenerater? _contentGenerater;
 
         // 処理中フラグ
         private bool _isBusy;
@@ -56,60 +56,60 @@ namespace NeeView
 
 
         // 設定変更
-        public event EventHandler SettingChanged;
+        public event EventHandler? SettingChanged;
 
         // 表示コンテンツ変更
         // 表示の更新を要求
-        public event EventHandler<ViewContentSourceCollectionChangedEventArgs> ViewContentsChanged;
+        public event EventHandler<ViewContentSourceCollectionChangedEventArgs>? ViewContentsChanged;
 
         // 先読みコンテンツ変更
-        public event EventHandler<ViewContentSourceCollectionChangedEventArgs> NextContentsChanged;
+        public event EventHandler<ViewContentSourceCollectionChangedEventArgs>? NextContentsChanged;
 
         // ページ終端を超えて移動しようとした
         // 次の本への移動を要求
-        public event EventHandler<PageTerminatedEventArgs> PageTerminated;
+        public event EventHandler<PageTerminatedEventArgs>? PageTerminated;
 
 
         // 横長ページを分割する
         public bool IsSupportedDividePage
         {
             get { return _setting.IsSupportedDividePage; }
-            set { if (_setting.IsSupportedDividePage != value) { _setting.IsSupportedDividePage = value; RaisePropertyChanged(); SettingChanged?.Invoke(this, null); } }
+            set { if (_setting.IsSupportedDividePage != value) { _setting.IsSupportedDividePage = value; RaisePropertyChanged(); SettingChanged?.Invoke(this, EventArgs.Empty); } }
         }
 
         // 最初のページは単独表示
         public bool IsSupportedSingleFirstPage
         {
             get { return _setting.IsSupportedSingleFirstPage; }
-            set { if (_setting.IsSupportedSingleFirstPage != value) { _setting.IsSupportedSingleFirstPage = value; RaisePropertyChanged(); SettingChanged?.Invoke(this, null); } }
+            set { if (_setting.IsSupportedSingleFirstPage != value) { _setting.IsSupportedSingleFirstPage = value; RaisePropertyChanged(); SettingChanged?.Invoke(this, EventArgs.Empty); } }
         }
 
         // 最後のページは単独表示
         public bool IsSupportedSingleLastPage
         {
             get { return _setting.IsSupportedSingleLastPage; }
-            set { if (_setting.IsSupportedSingleLastPage != value) { _setting.IsSupportedSingleLastPage = value; RaisePropertyChanged(); SettingChanged?.Invoke(this, null); } }
+            set { if (_setting.IsSupportedSingleLastPage != value) { _setting.IsSupportedSingleLastPage = value; RaisePropertyChanged(); SettingChanged?.Invoke(this, EventArgs.Empty); } }
         }
 
         // 横長ページは２ページとみなす
         public bool IsSupportedWidePage
         {
             get { return _setting.IsSupportedWidePage; }
-            set { if (_setting.IsSupportedWidePage != value) { _setting.IsSupportedWidePage = value; RaisePropertyChanged(); SettingChanged?.Invoke(this, null); } }
+            set { if (_setting.IsSupportedWidePage != value) { _setting.IsSupportedWidePage = value; RaisePropertyChanged(); SettingChanged?.Invoke(this, EventArgs.Empty); } }
         }
 
         // 右開き、左開き
         public PageReadOrder BookReadOrder
         {
             get { return _setting.BookReadOrder; }
-            set { if (_setting.BookReadOrder != value) { _setting.BookReadOrder = value; RaisePropertyChanged(); SettingChanged?.Invoke(this, null); } }
+            set { if (_setting.BookReadOrder != value) { _setting.BookReadOrder = value; RaisePropertyChanged(); SettingChanged?.Invoke(this, EventArgs.Empty); } }
         }
 
         // 単ページ/見開き
         public PageMode PageMode
         {
             get { return _setting.PageMode; }
-            set { if (_setting.PageMode != value) { _setting.PageMode = value; RaisePropertyChanged(); SettingChanged?.Invoke(this, null); } }
+            set { if (_setting.PageMode != value) { _setting.PageMode = value; RaisePropertyChanged(); SettingChanged?.Invoke(this, EventArgs.Empty); } }
         }
 
 
@@ -173,7 +173,7 @@ namespace NeeView
         }
 
         // 動画用：外部から終端イベントを発行
-        public void RaisePageTerminatedEvent(object sender, int direction)
+        public void RaisePageTerminatedEvent(object? sender, int direction)
         {
             PageTerminated?.Invoke(sender, new PageTerminatedEventArgs(direction));
         }
@@ -182,7 +182,7 @@ namespace NeeView
         public int GetViewPageIndex() => _viewPageCollection.Range.Min.Index;
 
         // 表示ページ
-        public Page GetViewPage() => _book.Pages.GetPage(_viewPageCollection.Range.Min.Index);
+        public Page? GetViewPage() => _book.Pages.GetPage(_viewPageCollection.Range.Min.Index);
 
         // 表示ページ群
         public List<Page> GetViewPages() => _viewPageCollection.Collection.Select(e => e.Page).ToList();
@@ -194,14 +194,14 @@ namespace NeeView
         }
 
         // 表示ページ再読込
-        public async Task RefreshViewPageAsync(object sender, CancellationToken token)
+        public async Task RefreshViewPageAsync(object? sender, CancellationToken token)
         {
             var range = new PageRange(_viewPageCollection.Range.Min, 1, PageMode.Size());
             await UpdateViewPageAsync(sender, range, token);
         }
 
         // 表示ページ移動
-        public async Task MoveViewPageAsync(object sender, int step, CancellationToken token)
+        public async Task MoveViewPageAsync(object? sender, int step, CancellationToken token)
         {
             var viewRange = _viewPageCollection.Range;
 
@@ -223,7 +223,7 @@ namespace NeeView
         }
 
         // 表示ページ更新
-        public async Task UpdateViewPageAsync(object sender, PageRange viewPageRange, CancellationToken token)
+        public async Task UpdateViewPageAsync(object? sender, PageRange viewPageRange, CancellationToken token)
         {
             // ページ終端を越えたか判定
             if (viewPageRange.Position < _book.Pages.FirstPosition())
@@ -323,9 +323,10 @@ namespace NeeView
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void Page_Loaded(object sender, EventArgs e)
+        private void Page_Loaded(object? sender, EventArgs e)
         {
-            var page = (Page)sender;
+            var page = sender as Page;
+            if (page is null) return;
 
             _bookMemoryService.AddPageContent(page);
 
@@ -333,7 +334,7 @@ namespace NeeView
 
             ////if (!BookProfile.Current.CanPrioritizePageMove()) return;
 
-            _contentGenerater.UpdateNextContents();
+            _contentGenerater?.UpdateNextContents();
         }
 
         /// <summary>

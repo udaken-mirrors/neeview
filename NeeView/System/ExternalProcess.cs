@@ -7,7 +7,7 @@ namespace NeeView
     public class ExternalProcessOptions
     {
         public bool IsThrowException { get; set; }
-        public string WorkingDirectory { get; set; }
+        public string? WorkingDirectory { get; set; }
     }
 
     public static class ExternalProcess
@@ -15,7 +15,7 @@ namespace NeeView
         private static Regex _httpPrefix = new Regex(@"^\s*http[s]?:", RegexOptions.IgnoreCase);
         private static Regex _htmlPostfix = new Regex(@"\.htm[l]?$", RegexOptions.IgnoreCase);
 
-        public static void Start(string filename, string args = null, ExternalProcessOptions options = null)
+        public static void Start(string filename, string? args = null, ExternalProcessOptions? options = null)
         {
             options = options ?? new ExternalProcessOptions();
 

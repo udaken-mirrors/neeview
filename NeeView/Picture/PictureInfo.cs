@@ -23,7 +23,7 @@ namespace NeeView
         /// <summary>
         /// Bitmap画像のRaw情報
         /// </summary>
-        public BitmapInfo BitmapInfo { get; set; }
+        public BitmapInfo? BitmapInfo { get; set; }
 
         /// <summary>
         /// 画像サイズ
@@ -52,12 +52,12 @@ namespace NeeView
         /// <summary>
         /// Metadata
         /// </summary>
-        public BitmapMetadataDatabase Metadata { get; set; }
+        public BitmapMetadataDatabase? Metadata { get; set; }
 
         /// <summary>
         /// Decoder
         /// </summary>
-        public string Decoder { get; set; }
+        public string? Decoder { get; set; }
 
 
         // 実際に読み込まないとわからないもの

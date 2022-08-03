@@ -20,12 +20,12 @@ namespace NeeView
             public bool IsEnabled { get; set; }
 
             [DataMember]
-            public string SupportFileTypes { get; set; }
+            public string? SupportFileTypes { get; set; }
 
             public void RestoreConfig(Config config)
             {
                 config.Archive.Media.IsEnabled = IsEnabled;
-                config.Archive.Media.SupportFileTypes.OneLine = SupportFileTypes;
+                config.Archive.Media.SupportFileTypes.OneLine = SupportFileTypes ?? "";
             }
         }
 

@@ -17,6 +17,12 @@ namespace NeeView.Setting
 {
     public class RenameWindowParam
     {
+        public RenameWindowParam(string text, string defaultText)
+        {
+            Text = text;
+            DefaultText = defaultText;
+        }
+
         public string Text { get; set; }
         public string DefaultText { get; set; }
     }
@@ -28,9 +34,9 @@ namespace NeeView.Setting
     public partial class RenameWindow : Window, INotifyPropertyChanged
     {
         #region NotifyPropertyChanged
-        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+        public event System.ComponentModel.PropertyChangedEventHandler? PropertyChanged;
 
-        protected void RaisePropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string name = "")
+        protected void RaisePropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string? name = null)
         {
             if (PropertyChanged != null)
             {
@@ -54,7 +60,7 @@ namespace NeeView.Setting
         public RenameWindow(RenameWindowParam param)
         {
             _param = param;
-            Text = _param.Text;
+            _text = _param.Text;
 
             InitializeComponent();
             this.DataContext = this;

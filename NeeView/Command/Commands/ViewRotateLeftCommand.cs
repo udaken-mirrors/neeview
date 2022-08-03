@@ -12,9 +12,9 @@ namespace NeeView
             this.ParameterSource = new CommandParameterSource(new ViewRotateCommandParameter());
         }
 
-        public override void Execute(object sender, CommandContext e)
+        public override void Execute(object? sender, CommandContext e)
         {
-            MainViewComponent.Current.ViewController.ViewRotateLeft((ViewRotateCommandParameter)e.Parameter);
+            MainViewComponent.Current.ViewController.ViewRotateLeft(e.Parameter.Cast<ViewRotateCommandParameter>());
         }
     }
 

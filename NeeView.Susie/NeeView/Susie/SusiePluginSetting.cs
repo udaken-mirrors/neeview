@@ -7,6 +7,11 @@ namespace NeeView.Susie
     [DataContract]
     public class SusiePluginSetting
     {
+        public SusiePluginSetting(string name)
+        {
+            Name = name;
+        }
+
         [DataMember]
         public string Name { get; set; }
 
@@ -20,15 +25,16 @@ namespace NeeView.Susie
         public bool IsPreExtract { get; set; }
 
         [DataMember(EmitDefaultValue = false)]
-        public string UserExtensions { get; set; }
+        public string? UserExtensions { get; set; }
+
+
 
         public SusiePluginInfo ToSusiePluginInfo()
         {
-            var info = new SusiePluginInfo();
-            info.Name = Name;
+            var info = new SusiePluginInfo(Name);
             info.IsEnabled = IsEnabled;
             info.IsCacheEnabled = IsCacheEnabled;
-            info.UserExtension = new FileExtensionCollection(UserExtensions);
+            info.UserExtension = UserExtensions is not null ? new FileExtensionCollection(UserExtensions) : null;
             return info;
         }
     }

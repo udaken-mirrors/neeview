@@ -105,14 +105,16 @@ namespace NeeView.Setting
         /// <summary>
         /// OkCommand command.
         /// </summary>
-        private RelayCommand<Window> _OkCommand;
+        private RelayCommand<Window>? _OkCommand;
         public RelayCommand<Window> OkCommand
         {
             get { return _OkCommand = _OkCommand ?? new RelayCommand<Window>(OkCommand_Executed); }
         }
 
-        private void OkCommand_Executed(Window window)
+        private void OkCommand_Executed(Window? window)
         {
+            if (window is null) return;
+
             window.DialogResult = true;
             window.Close();
         }
@@ -120,14 +122,16 @@ namespace NeeView.Setting
         /// <summary>
         /// CancelCommand command.
         /// </summary>
-        private RelayCommand<Window> _CancelCommand;
+        private RelayCommand<Window>? _CancelCommand;
         public RelayCommand<Window> CancelCommand
         {
             get { return _CancelCommand = _CancelCommand ?? new RelayCommand<Window>(CancelCommand_Executed); }
         }
 
-        private void CancelCommand_Executed(Window window)
+        private void CancelCommand_Executed(Window? window)
         {
+            if (window is null) return;
+
             window.DialogResult = false;
             window.Close();
         }

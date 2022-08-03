@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -19,18 +20,19 @@ namespace NeeView
     /// </summary>
     public static class Environment
     {
-        private static string _localApplicationDataPath;
-        private static string _userDataPath;
-        private static string _librariesPath;
-        private static string _packageType;
-        private static string _revision;
-        private static string _dateVersion;
+        private static string? _localApplicationDataPath;
+        private static string? _userDataPath;
+        private static string? _librariesPath;
+        private static string? _packageType;
+        private static string? _revision;
+        private static string? _dateVersion;
         private static bool? _isUseLocalApplicationDataFolder;
-        private static List<string> _cultures;
-        private static string _logFile;
-        private static Encoding _encoding;
+        private static List<string>? _cultures;
+        private static string? _logFile;
+        private static Encoding? _encoding;
 
 
+        // TODO: static でなくてよい
         static Environment()
         {
             // エンコーディングプロバイダの登録
@@ -39,7 +41,7 @@ namespace NeeView
             ProcessId = Process.GetCurrentProcess().Id;
 
             var module = Process.GetCurrentProcess().MainModule;
-            if (module is null) throw new InvalidOperationException();
+            if (module is null) throw new InvalidOperationException("Cannot get CurrentProcessModule");
 
             var assembly = Assembly.GetExecutingAssembly();
             ValidateProductInfo(assembly, module);
@@ -52,7 +54,7 @@ namespace NeeView
         }
 
 
-        public static event EventHandler LocalApplicationDataRemoved;
+        public static event EventHandler? LocalApplicationDataRemoved;
 
 
         /// <summary>
@@ -225,7 +227,7 @@ namespace NeeView
             {
                 if (_librariesPath == null)
                 {
-                    _librariesPath = Path.GetFullPath(Path.Combine(AssemblyFolder, ConfigurationManager.AppSettings["LibrariesPath"]));
+                    _librariesPath = Path.GetFullPath(Path.Combine(AssemblyFolder, ConfigurationManager.AppSettings["LibrariesPath"] ?? ""));
                 }
                 return _librariesPath;
             }
@@ -267,7 +269,7 @@ namespace NeeView
             {
                 if (_packageType == null)
                 {
-                    _packageType = ConfigurationManager.AppSettings["PackageType"];
+                    _packageType = ConfigurationManager.AppSettings["PackageType"] ?? ".zip";
                     ////if (_packageType != ".msi") _packageType = ".zip";
                 }
                 return _packageType;
@@ -295,7 +297,7 @@ namespace NeeView
             {
                 if (_revision == null)
                 {
-                    _revision = ConfigurationManager.AppSettings["Revision"];
+                    _revision = ConfigurationManager.AppSettings["Revision"] ?? "??";
                 }
                 return _revision;
             }
@@ -307,7 +309,7 @@ namespace NeeView
             {
                 if (_dateVersion == null)
                 {
-                    _dateVersion = ConfigurationManager.AppSettings["DateVersion"];
+                    _dateVersion = ConfigurationManager.AppSettings["DateVersion"] ?? "??";
                 }
                 return _dateVersion;
             }
@@ -322,7 +324,7 @@ namespace NeeView
             {
                 if (_cultures == null)
                 {
-                    _cultures = ConfigurationManager.AppSettings["Cultures"].Split(',').ToList();
+                    _cultures = (ConfigurationManager.AppSettings["Cultures"] ?? "en").Split(',').ToList();
                 }
                 return _cultures;
             }
@@ -401,26 +403,27 @@ namespace NeeView
         /// アセンブリ情報収集
         /// </summary>
         /// <param name="asm"></param>
+        [MemberNotNull(nameof(AssemblyLocation), nameof(AssemblyFolder), nameof(CompanyName), nameof(AssemblyTitle), nameof(AssemblyProduct), nameof(AssemblyVersion), nameof(ProductVersion), nameof(ProductVersionNumber))]
         private static void ValidateProductInfo(Assembly asm, ProcessModule module)
         {
             // パス
-            AssemblyLocation = module.FileName ?? "";
-            AssemblyFolder = Path.GetDirectoryName(AssemblyLocation);
+            AssemblyLocation = module.FileName ?? throw new InvalidOperationException("Cannot get this AsemblyLocatation");
+            AssemblyFolder = Path.GetDirectoryName(AssemblyLocation) ?? throw new InvalidOperationException("Cannot get this AsemblyFolder");
 
             // 会社名
-            AssemblyCompanyAttribute companyAttribute = Attribute.GetCustomAttribute(asm, typeof(AssemblyCompanyAttribute)) as AssemblyCompanyAttribute;
-            CompanyName = companyAttribute.Company;
+            AssemblyCompanyAttribute? companyAttribute = Attribute.GetCustomAttribute(asm, typeof(AssemblyCompanyAttribute)) as AssemblyCompanyAttribute;
+            CompanyName = companyAttribute?.Company ?? throw new InvalidOperationException("Cannot get AssemblyCompany");
 
             // タイトル
-            AssemblyTitleAttribute titleAttribute = Attribute.GetCustomAttribute(asm, typeof(AssemblyTitleAttribute)) as AssemblyTitleAttribute;
-            AssemblyTitle = titleAttribute.Title;
+            AssemblyTitleAttribute? titleAttribute = Attribute.GetCustomAttribute(asm, typeof(AssemblyTitleAttribute)) as AssemblyTitleAttribute;
+            AssemblyTitle = titleAttribute?.Title ?? throw new InvalidOperationException("Cannot get AssemblyTitle");
 
             // プロダクト
-            AssemblyProductAttribute productAttribute = Attribute.GetCustomAttribute(asm, typeof(AssemblyProductAttribute)) as AssemblyProductAttribute;
-            AssemblyProduct = productAttribute.Product;
+            AssemblyProductAttribute? productAttribute = Attribute.GetCustomAttribute(asm, typeof(AssemblyProductAttribute)) as AssemblyProductAttribute;
+            AssemblyProduct = productAttribute?.Product ?? throw new InvalidOperationException("Cannot get AssemblyProduct");
 
             // バージョンの取得
-            AssemblyVersion = asm.GetName().Version;
+            AssemblyVersion = asm.GetName().Version ?? throw new InvalidOperationException("Cannot get AssemblyVersion");
             ProductVersion = $"{AssemblyVersion.Major}.{AssemblyVersion.Minor}";
             ProductVersionNumber = GenerateProductVersionNumber(AssemblyVersion.Major, AssemblyVersion.Minor, 0);
         }
@@ -497,7 +500,7 @@ namespace NeeView
         /// <remarks>
         /// Appxではカンパニーフォルダーは存在しないのでnullになる
         /// </remarks>
-        private static string GetLocalAppDataCompanyPath()
+        private static string? GetLocalAppDataCompanyPath()
         {
             if (IsAppxPackage)
             {
@@ -510,7 +513,7 @@ namespace NeeView
         }
 
         // 全ユーザデータ削除
-        public static void RemoveApplicationData(Window owner)
+        public static void RemoveApplicationData(Window? owner)
         {
             var dialog = new MessageDialog(Resources.DeleteApplicationDataDialog_Message, Resources.DeleteApplicationDataDialog_Title);
             dialog.Commands.Add(UICommands.Delete);
@@ -526,7 +529,7 @@ namespace NeeView
                 {
                     RemoveApplicationDataCore();
                     new MessageDialog(Resources.DeleteApplicationDataCompleteDialog_Message, Resources.DeleteApplicationDataCompleteDialog_Title).ShowDialog(owner);
-                    LocalApplicationDataRemoved?.Invoke(null, null);
+                    LocalApplicationDataRemoved?.Invoke(null, EventArgs.Empty);
                 }
                 catch (Exception ex)
                 {

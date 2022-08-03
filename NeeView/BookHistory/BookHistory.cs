@@ -13,14 +13,22 @@ namespace NeeView
     public class BookHistory : BindableBase, IHasPage, IHasName
     {
         private string _path;
+        private BookMementoUnit? _unit;
 
         public BookHistory()
         {
+            _path = "";
+        }
+
+        public BookHistory(string path, DateTime lastAccessTime)
+        {
+            _path = path;
+            LastAccessTime = lastAccessTime;
         }
 
         public BookHistory(BookMementoUnit unit, DateTime lastAccessTime)
         {
-            Path = unit.Path;
+            _path = unit.Path;
             LastAccessTime = lastAccessTime;
             Unit = unit;
         }
@@ -47,21 +55,20 @@ namespace NeeView
         public Page ArchivePage => Unit.ArchivePage;
 
         public string Name => Unit.Memento.Name;
-        public string Note => Unit.ArchivePage.Entry?.RootArchiverName;
+        public string? Note => Unit.ArchivePage.Entry?.RootArchiverName;
         public string Detail => Path + "\n" + LastAccessTime;
 
         public IThumbnail Thumbnail => Unit.ArchivePage.Thumbnail;
 
-        private BookMementoUnit _unit;
         public BookMementoUnit Unit
         {
             get { return _unit = _unit ?? BookMementoCollection.Current.Set(Path); }
             private set { _unit = value; }
         }
 
-        public override string ToString()
+        public override string? ToString()
         {
-            return Path ?? base.ToString();
+            return string.IsNullOrEmpty(Path) ? base.ToString() : Path;
         }
 
         public Page GetPage()

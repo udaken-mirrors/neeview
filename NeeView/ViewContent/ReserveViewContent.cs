@@ -29,6 +29,7 @@ namespace NeeView
             var parameter = CreateBindingParameter();
 
             // create view
+            if (this.Source is null) throw new InvalidOperationException();
             this.View = new ViewContentControl(CreateView(this.Source, parameter));
         }
 
@@ -47,14 +48,14 @@ namespace NeeView
         public static ViewContent Create(MainViewComponent viewComponent, ViewContentSource source, ViewContent oldViewContent)
         {
             ViewContent viewContent = oldViewContent;
-            if (!Config.Current.Performance.IsLoadingPageVisible || oldViewContent?.View is null)
+            if (!Config.Current.Performance.IsLoadingPageVisible || oldViewContent.View is null)
             {
                  var newViewContent = new ReserveViewContent(viewComponent, source, oldViewContent);
                 newViewContent.Initialize();
                 viewContent = newViewContent;
             }
 
-            viewContent.View.SetMessage(LoosePath.GetFileName(source.Page.EntryName));
+            viewContent.View?.SetMessage(LoosePath.GetFileName(source.Page.EntryName));
             return viewContent;
         }
     }

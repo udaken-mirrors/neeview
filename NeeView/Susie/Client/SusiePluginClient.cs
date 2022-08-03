@@ -12,7 +12,7 @@ namespace NeeView.Susie.Client
     public class SusiePluginClient : IRemoteSusiePlugin
     {
         private SusiePluginRemoteClient _remote;
-        private Action _recoveryAction;
+        private Action? _recoveryAction;
         private bool _isRecoveryDoing;
 
         public SusiePluginClient(SusiePluginRemoteClient remote)
@@ -51,7 +51,7 @@ namespace NeeView.Susie.Client
             return Call(new List<Chunk>() { chunk });
         }
 
-        private List<Chunk> Call<T>(int id, T arg1, byte[] arg2)
+        private List<Chunk> Call<T>(int id, T arg1, byte[]? arg2)
         {
             var chunk1 = new Chunk(id, DefaultSerializer.Serialize(arg1));
             var chunk2 = new Chunk(id, arg2);
@@ -73,7 +73,7 @@ namespace NeeView.Susie.Client
             }
             catch (AggregateException ex)
             {
-                if (ex.InnerExceptions.Count == 1)
+                if (ex.InnerException != null && ex.InnerExceptions.Count == 1)
                 {
                     throw ex.InnerException;
                 }
@@ -86,6 +86,8 @@ namespace NeeView.Susie.Client
 
         private TResult DeserializeChunk<TResult>(Chunk chunk)
         {
+            if (chunk.Data is null) throw new InvalidOperationException("chunk.Data must not be null");
+
             return DefaultSerializer.Deserialize<TResult>(chunk.Data);
         }
 
@@ -97,7 +99,7 @@ namespace NeeView.Susie.Client
             Call(SusiePluginCommandId.Initialize, new SusiePluginCommandInitialize(pluginFolder, settings));
         }
 
-        public List<SusiePluginInfo> GetPlugin(List<string> pluginNames)
+        public List<SusiePluginInfo> GetPlugin(List<string>? pluginNames)
         {
             var chunks = Call(SusiePluginCommandId.GetPlugin, new SusiePluginCommandGetPlugin(pluginNames));
             return DeserializeChunk<SusiePluginCommandGetPluginResult>(chunks[0]).PluginInfos;
@@ -118,21 +120,23 @@ namespace NeeView.Susie.Client
             Call(SusiePluginCommandId.ShowConfigulationDlg, new SusiePluginCommandShowConfigulationDlg(pluginName, hwnd));
         }
 
-        public SusiePluginInfo GetArchivePlugin(string fileName, byte[] buff, bool isCheckExtension)
+        public SusiePluginInfo? GetArchivePlugin(string fileName, byte[]? buff, bool isCheckExtension)
         {
             var chunks = Call(SusiePluginCommandId.GetArchivePlugin, new SusiePluginCommandGetArchivePlugin(fileName, isCheckExtension), buff);
             return DeserializeChunk<SusiePluginCommandGetArchivePluginResult>(chunks[0]).PluginInfo;
         }
 
-        public SusiePluginInfo GetImagePlugin(string fileName, byte[] buff, bool isCheckExtension)
+        public SusiePluginInfo? GetImagePlugin(string fileName, byte[] buff, bool isCheckExtension)
         {
             var chunks = Call(SusiePluginCommandId.GetImage, new SusiePluginCommandGetImagePlugin(fileName, isCheckExtension), buff);
             return DeserializeChunk<SusiePluginCommandGetImagePluginResult>(chunks[0]).PluginInfo;
         }
 
-        public SusieImage GetImage(string pluginName, string fileName, byte[] buff, bool isCheckExtension)
+        public SusieImage? GetImage(string? pluginName, string fileName, byte[]? buff, bool isCheckExtension)
         {
             var chunks = Call(SusiePluginCommandId.GetImage, new SusiePluginCommandGetImage(pluginName, fileName, isCheckExtension), buff);
+            if (chunks[1].Data is null) return null;
+
             return new SusieImage(DeserializeChunk<SusiePluginCommandGetImageResult>(chunks[0]).PluginInfo, chunks[1].Data);
         }
 
@@ -145,7 +149,7 @@ namespace NeeView.Susie.Client
         public byte[] ExtractArchiveEntry(string pluginName, string fileName, int position)
         {
             var chunks = Call(SusiePluginCommandId.ExtractArchiveEntry, new SusiePluginCommandExtractArchiveEntry(pluginName, fileName, position));
-            return chunks[0].Data;
+            return chunks[0].Data ?? throw new SusieException("Cannot get ArchiveEntry");
         }
 
         public void ExtractArchiveEntryToFolder(string pluginName, string fileName, int position, string extractFolder)

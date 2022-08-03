@@ -19,11 +19,12 @@ namespace NeeView
             _view = new FolderListView(folderList);
             _folderListPresenter = new BookshelfFolderListPresenter(_view, folderList);
 
-            Icon = App.Current.MainWindow.Resources["pic_bookshelf"] as DrawingImage;
+            Icon = App.Current.MainWindow.Resources["pic_bookshelf"] as DrawingImage
+                ?? throw new InvalidOperationException("cannot found resource 'pic_bookshelf'");
         }
 
 #pragma warning disable CS0067
-        public event EventHandler IsVisibleLockChanged;
+        public event EventHandler? IsVisibleLockChanged;
 #pragma warning restore CS0067
 
 

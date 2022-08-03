@@ -21,7 +21,7 @@ namespace NeeView
         /// <summary>
         /// 現在のタッチデバイス
         /// </summary>
-        private TouchContext _touch;
+        private TouchContext? _touch;
 
         //
         private TouchInputGesture _gesture;
@@ -41,7 +41,7 @@ namespace NeeView
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="parameter"></param>
-        public override void OnOpened(FrameworkElement sender, object parameter)
+        public override void OnOpened(FrameworkElement sender, object? parameter)
         {
             ////Debug.WriteLine("TouchState: Normal");
             _isTouchDown = false;
@@ -87,7 +87,7 @@ namespace NeeView
         public override void OnStylusUp(object sender, StylusEventArgs e)
         {
             if (!_isTouchDown) return;
-            if (e.StylusDevice != _touch.StylusDevice) return;
+            if (e.StylusDevice != _touch?.StylusDevice) return;
 
             // タッチジェスチャー判定
             ExecuteTouchGesture(sender, e);
@@ -105,7 +105,7 @@ namespace NeeView
         public override void OnStylusMove(object sender, StylusEventArgs e)
         {
             if (!_isTouchDown) return;
-            if (e.StylusDevice != _touch.StylusDevice) return;
+            if (e.StylusDevice != _touch?.StylusDevice) return;
 
             var point = e.GetPosition(_context.Sender);
 
@@ -143,7 +143,7 @@ namespace NeeView
         public override void OnStylusSystemGesture(object sender, StylusSystemGestureEventArgs e)
         {
             if (!_isTouchDown) return;
-            if (e.StylusDevice != _touch.StylusDevice) return;
+            if (e.StylusDevice != _touch?.StylusDevice) return;
 
             if (e.SystemGesture == SystemGesture.HoldEnter || e.SystemGesture == SystemGesture.RightDrag)
             {
@@ -154,6 +154,8 @@ namespace NeeView
         //
         private void SetState(TouchAction action)
         {
+            if (_touch is null) return;
+
             switch (action)
             {
                 case TouchAction.Drag:

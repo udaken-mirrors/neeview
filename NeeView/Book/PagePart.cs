@@ -1,4 +1,5 @@
-﻿namespace NeeView
+﻿
+namespace NeeView
 {
     // 表示ページ情報
     public class PagePart

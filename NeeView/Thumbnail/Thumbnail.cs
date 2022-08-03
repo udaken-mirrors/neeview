@@ -34,19 +34,19 @@ namespace NeeView
         /// <summary>
         /// 変更イベント
         /// </summary>
-        public event EventHandler Changed;
+        public event EventHandler? Changed;
 
         /// <summary>
         /// 参照イベント
         /// </summary>
-        public event EventHandler Touched;
+        public event EventHandler? Touched;
 
 
         /// <summary>
         /// Jpeg化された画像
         /// </summary>
-        private byte[] _image;
-        public byte[] Image
+        private byte[]? _image;
+        public byte[]? Image
         {
             get { return _image; }
             set
@@ -56,8 +56,8 @@ namespace NeeView
                     _image = value;
                     if (Image != null)
                     {
-                        Changed?.Invoke(this, null);
-                        Touched?.Invoke(this, null);
+                        Changed?.Invoke(this, EventArgs.Empty);
+                        Touched?.Invoke(this, EventArgs.Empty);
                         RaisePropertyChanged("");
                     }
                 }
@@ -78,7 +78,7 @@ namespace NeeView
         /// <summary>
         /// View用Bitmapプロパティ
         /// </summary>
-        public ImageSource ImageSource => CreateBitmap();
+        public ImageSource? ImageSource => CreateBitmap();
 
         public double Width => ImageSource is BitmapSource bitmap ? bitmap.PixelWidth : ImageSource != null ? ImageSource.Width : 0.0;
         public double Height => ImageSource is BitmapSource bitmap ? bitmap.PixelHeight : ImageSource != null ? ImageSource.Height : 0.0;
@@ -115,13 +115,13 @@ namespace NeeView
         /// <summary>
         /// キャシュ用ヘッダ
         /// </summary>
-        public ThumbnailCacheHeader _header { get; set; }
+        public ThumbnailCacheHeader? _header { get; set; }
 
 
         /// <summary>
         /// キャッシュを使用してサムネイル生成を試みる
         /// </summary>
-        internal void Initialize(ArchiveEntry entry, string appendix)
+        internal void Initialize(ArchiveEntry entry, string? appendix)
         {
             if (IsValid || !IsCacheEnabled) return;
 
@@ -145,7 +145,7 @@ namespace NeeView
         /// 画像データから初期化
         /// </summary>
         /// <param name="source"></param>
-        internal void Initialize(byte[] image)
+        internal void Initialize(byte[]? image)
         {
             if (IsValid) return;
 
@@ -202,7 +202,7 @@ namespace NeeView
         /// </summary>
         public void Touch()
         {
-            Touched?.Invoke(this, null);
+            Touched?.Invoke(this, EventArgs.Empty);
         }
 
 
@@ -210,31 +210,26 @@ namespace NeeView
         /// ImageSource取得
         /// </summary>
         /// <returns></returns>
-        public ImageSource CreateBitmap()
+        public ImageSource? CreateBitmap()
         {
-            if (IsValid)
+            if (_image is null) return null;
+
+            Touched?.Invoke(this, EventArgs.Empty);
+            if (_image == _emptyImage)
             {
-                Touched?.Invoke(this, null);
-                if (_image == _emptyImage)
-                {
-                    return EmptyImageSource;
-                }
-                else if (_image == _mediaImage)
-                {
-                    return MediaBitmapSource;
-                }
-                else if (_image == _folderImage)
-                {
-                    return FolderBitmapSource;
-                }
-                else
-                {
-                    return DecodeFromImageData(_image);
-                }
+                return EmptyImageSource;
+            }
+            else if (_image == _mediaImage)
+            {
+                return MediaBitmapSource;
+            }
+            else if (_image == _folderImage)
+            {
+                return FolderBitmapSource;
             }
             else
             {
-                return null;
+                return DecodeFromImageData(_image);
             }
         }
 
@@ -279,14 +274,15 @@ namespace NeeView
         public static byte[] _emptyImage = System.Text.Encoding.ASCII.GetBytes("EMPTY!");
 
 
-        private static ImageSource _emptyImageSource;
+        private static ImageSource? _emptyImageSource;
         public static ImageSource EmptyImageSource
         {
             get
             {
                 if (_emptyImageSource == null)
                 {
-                    _emptyImageSource = MainWindow.Current.Resources["thumbnail_default"] as ImageSource;
+                    _emptyImageSource = MainWindow.Current.Resources["thumbnail_default"] as ImageSource
+                        ?? throw new InvalidOperationException("Cannot found resource");
                 }
                 return _emptyImageSource;
             }
@@ -295,7 +291,7 @@ namespace NeeView
         /// <summary>
         /// EmptyBitmapSource property.
         /// </summary>
-        private static BitmapSource _emptyBitmapSource;
+        private static BitmapSource? _emptyBitmapSource;
         public static BitmapSource EmptyBitmapSource
         {
             get
@@ -318,7 +314,7 @@ namespace NeeView
         /// <summary>
         /// MediaBitmapSource
         /// </summary>
-        private static BitmapSource _mediaBitmapSource;
+        private static BitmapSource? _mediaBitmapSource;
         public static BitmapSource MediaBitmapSource
         {
             get
@@ -343,14 +339,14 @@ namespace NeeView
 
         public static byte[] _folderImage = System.Text.Encoding.ASCII.GetBytes("FOLDER!");
 
-        private BitmapSource _folderBitmapSource;
+        private BitmapSource? _folderBitmapSource;
         public BitmapSource FolderBitmapSource
         {
             get
             {
                 if (_folderBitmapSource == null)
                 {
-                    _folderBitmapSource = FileIconCollection.Current.CreateDefaultFolderIcon().GetBitmapSource(256.0);
+                    _folderBitmapSource = FileIconCollection.Current.CreateDefaultFolderIcon().GetBitmapSource(256.0) ?? EmptyBitmapSource;
                 }
                 return _folderBitmapSource;
             }

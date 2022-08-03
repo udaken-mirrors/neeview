@@ -125,14 +125,14 @@ namespace NeeView
                 string argument = "";
                 {
                     var type = command.GetType();
-                    var info = type.GetMethod(nameof(command.Execute), executeMethodArgTypes);
-                    var attribute = (MethodArgumentAttribute)Attribute.GetCustomAttributes(info, typeof(MethodArgumentAttribute)).FirstOrDefault();
+                    var info = type.GetMethod(nameof(command.Execute), executeMethodArgTypes) ?? throw new InvalidOperationException();
+                    var attribute = (MethodArgumentAttribute?)Attribute.GetCustomAttributes(info, typeof(MethodArgumentAttribute)).FirstOrDefault();
                     if (attribute != null)
                     {
-                        var tokens = MethodArgumentAttributeExtensions.GetMethodNote(info, attribute).Split('|');
+                        var tokens = MethodArgumentAttributeExtensions.GetMethodNote(info, attribute)?.Split('|');
                         int index = 0;
                         argument += "<dl>";
-                        while (index < tokens.Length)
+                        while (tokens is not null && index < tokens.Length)
                         {
                             var dt = tokens.ElementAtOrDefault(index++);
                             var dd = tokens.ElementAtOrDefault(index++);
@@ -155,7 +155,7 @@ namespace NeeView
 
                     foreach (PropertyInfo info in type.GetProperties())
                     {
-                        var attribute = (PropertyMemberAttribute)Attribute.GetCustomAttributes(info, typeof(PropertyMemberAttribute)).FirstOrDefault();
+                        var attribute = (PropertyMemberAttribute?)Attribute.GetCustomAttributes(info, typeof(PropertyMemberAttribute)).FirstOrDefault();
                         if (attribute != null && attribute.IsVisible)
                         {
                             var titleString = PropertyMemberAttributeExtensions.GetPropertyTitle(info, attribute);
@@ -205,7 +205,7 @@ namespace NeeView
 
             var groups = root.GetUnitEnumerator(null)
                 .Where(e => e.Node.Obsolete != null)
-                .GroupBy(e => e.Node.Alternative.Version)
+                .GroupBy(e => e.Node.Alternative?.Version)
                 .OrderBy(e => e.Key);
 
             // ver.39 and later

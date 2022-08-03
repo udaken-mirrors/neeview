@@ -47,7 +47,7 @@ namespace NeeView
         /// <summary>
         /// 未処理例外の処理
         /// </summary>
-        private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+        private void CurrentDomain_UnhandledException(object? sender, UnhandledExceptionEventArgs e)
         {
             var exception = e.ExceptionObject as Exception;
             if (exception == null)

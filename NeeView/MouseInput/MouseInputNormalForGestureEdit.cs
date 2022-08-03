@@ -27,7 +27,7 @@ namespace NeeView
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="parameter"></param>
-        public override void OnOpened(FrameworkElement sender, object parameter)
+        public override void OnOpened(FrameworkElement sender, object? parameter)
         {
             _isButtonDown = false;
         }
@@ -45,7 +45,7 @@ namespace NeeView
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        public override void OnMouseButtonDown(object sender, MouseButtonEventArgs e)
+        public override void OnMouseButtonDown(object? sender, MouseButtonEventArgs e)
         {
             _isButtonDown = true;
             _context.StartPoint = e.GetPosition(_context.Sender);
@@ -57,7 +57,7 @@ namespace NeeView
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        public override void OnMouseButtonUp(object sender, MouseButtonEventArgs e)
+        public override void OnMouseButtonUp(object? sender, MouseButtonEventArgs e)
         {
             if (!_isButtonDown) return;
 
@@ -73,7 +73,7 @@ namespace NeeView
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        public override void OnMouseWheel(object sender, MouseWheelEventArgs e)
+        public override void OnMouseWheel(object? sender, MouseWheelEventArgs e)
         {
             // 入力決定
             MouseWheelChanged?.Invoke(sender, e);
@@ -85,7 +85,7 @@ namespace NeeView
         /// <summary>
         /// 水平ホイール処理
         /// </summary>
-        public override void OnMouseHorizontalWheel(object sender, MouseWheelEventArgs e)
+        public override void OnMouseHorizontalWheel(object? sender, MouseWheelEventArgs e)
         {
             // 入力決定
             MouseHorizontalWheelChanged?.Invoke(sender, e);
@@ -99,7 +99,7 @@ namespace NeeView
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        public override void OnMouseMove(object sender, MouseEventArgs e)
+        public override void OnMouseMove(object? sender, MouseEventArgs e)
         {
             if (!_isButtonDown) return;
 

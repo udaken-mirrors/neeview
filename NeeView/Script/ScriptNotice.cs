@@ -2,7 +2,7 @@
 {
     public class ScriptNotice
     {
-        public ScriptNotice(string source, int line, string message)
+        public ScriptNotice(string? source, int line, string message)
         {
             Source = source;
             Line = line;
@@ -10,7 +10,7 @@
         }
 
 
-        public string Source { get; private set; }
+        public string? Source { get; private set; }
         public int Line { get; private set; }
         public string Message { get; private set; }
 

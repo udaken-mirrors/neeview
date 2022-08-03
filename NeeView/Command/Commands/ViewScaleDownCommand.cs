@@ -17,9 +17,9 @@ namespace NeeView
             this.ParameterSource = new CommandParameterSource(new ViewScaleCommandParameter());
         }
 
-        public override void Execute(object sender, CommandContext e)
+        public override void Execute(object? sender, CommandContext e)
         {
-            MainViewComponent.Current.ViewController.ScaleDown((ViewScaleCommandParameter)e.Parameter);
+            MainViewComponent.Current.ViewController.ScaleDown(e.Parameter.Cast<ViewScaleCommandParameter>());
         }
     }
 

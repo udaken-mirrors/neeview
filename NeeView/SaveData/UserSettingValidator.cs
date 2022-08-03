@@ -13,6 +13,9 @@ namespace NeeView
         {
 #pragma warning disable CS0612 // 型またはメンバーが旧型式です
             if (self is null) throw new ArgumentNullException();
+            if (self.Config is null) throw new InvalidOperationException();
+            if (self.Format is null) throw new InvalidOperationException();
+            if (self.Commands is null) throw new InvalidOperationException();
 
             // 画像拡張子初期化
             if (self.Config.Image.Standard.SupportFileTypes is null)
@@ -199,7 +202,7 @@ namespace NeeView
                 }
             }
 
-            if (self.Windows != null)
+            if (self.Windows?.Panels != null)
             {
                 self.Windows.Panels = self.Windows.Panels
                     .Select(x => x == oldName ? newName : x)

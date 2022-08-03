@@ -12,7 +12,7 @@ namespace NeeView
         private FolderOrder _bookmarkFolderOrder;
 
         [JsonInclude, JsonPropertyName(nameof(BookmarkFilePath))]
-        public string _bookmarkFilePath;
+        public string? _bookmarkFilePath;
 
 
         /// <summary>

@@ -11,7 +11,7 @@ namespace NeeView
         private static ModifierMouseButtons ModifierMouseButtonsFlag = ModifierMouseButtons.LeftButton | ModifierMouseButtons.MiddleButton | ModifierMouseButtons.RightButton | ModifierMouseButtons.XButton1 | ModifierMouseButtons.XButton2;
 
 
-        public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType)
+        public override bool CanConvertFrom(ITypeDescriptorContext? context, Type sourceType)
         {
             if (sourceType == typeof(string))
             {
@@ -24,7 +24,7 @@ namespace NeeView
         }
 
 
-        public override bool CanConvertTo(ITypeDescriptorContext context, Type destinationType)
+        public override bool CanConvertTo(ITypeDescriptorContext? context, Type? destinationType)
         {
             if (destinationType == typeof(string))
             {
@@ -36,7 +36,7 @@ namespace NeeView
             return false;
         }
 
-        public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object source)
+        public override object? ConvertFrom(ITypeDescriptorContext? context, CultureInfo? culture, object source)
         {
             if (source is string str)
             {
@@ -48,8 +48,13 @@ namespace NeeView
         }
 
 
-        public override object ConvertTo(ITypeDescriptorContext context, CultureInfo culture, object value, Type destinationType)
+        public override object? ConvertTo(ITypeDescriptorContext? context, CultureInfo? culture, object? value, Type destinationType)
         {
+            if (value is null)
+            {
+                throw new ArgumentNullException(nameof(value));
+            }
+
             if (destinationType == null)
             {
                 throw new ArgumentNullException(nameof(destinationType));
