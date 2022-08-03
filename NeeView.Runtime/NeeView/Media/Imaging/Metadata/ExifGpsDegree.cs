@@ -9,7 +9,7 @@ namespace NeeView.Media.Imaging.Metadata
         private static readonly char[] _references = "NEWS".ToCharArray();
 
         private string _value;
-        private string _reference;
+        private string? _reference;
         private double _degree;
 
         public ExifGpsDegree(string value)
@@ -22,6 +22,7 @@ namespace NeeView.Media.Imaging.Metadata
             if (reference.Length != 1 || !_references.Contains(reference.First())) throw new ArgumentException(nameof(reference));
             if (degree < 0.0) throw new ArgumentException(nameof(degree));
 
+            _value = "";
             _reference = reference;
             _degree = degree;
         }

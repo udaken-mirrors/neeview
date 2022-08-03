@@ -35,7 +35,7 @@ namespace NeeView.Windows
                 return;
             }
 
-            ScrollViewer scrollViewer = VisualTreeUtility.FindVisualChild<ScrollViewer>(container);
+            ScrollViewer? scrollViewer = VisualTreeUtility.FindVisualChild<ScrollViewer>(container);
             if (scrollViewer == null)
             {
                 return;

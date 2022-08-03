@@ -16,7 +16,7 @@ namespace NeeView.Windows
     /// </summary>
     public class DragAdorner : Adorner
     {
-        protected UIElement _child;
+        protected UIElement _child = new ContentControl();
 
         protected double _centerX;
         protected double _centerY;

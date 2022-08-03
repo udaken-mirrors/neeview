@@ -13,9 +13,6 @@ namespace NeeView.Runtime.LayoutPanel
 {
     public class LayoutDockPanel : Grid
     {
-        private List<LayoutPanelContainer> _containers;
-
-
         public LayoutPanelManager Manager
         {
             get { return (LayoutPanelManager)GetValue(ManagerProperty); }
@@ -74,7 +71,7 @@ namespace NeeView.Runtime.LayoutPanel
         }
 
 
-        private void ItemsSource_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        private void ItemsSource_CollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
             Flush();
         }
@@ -87,18 +84,18 @@ namespace NeeView.Runtime.LayoutPanel
             const double minLength = 40.0;
             const double splitterHeight = 8.0;
 
-            _containers = ItemsSource != null ? ItemsSource.Select(e => new LayoutPanelContainer(Manager, e)).ToList() : new List<LayoutPanelContainer>();
+            var containers = ItemsSource != null ? ItemsSource.Select(e => new LayoutPanelContainer(Manager, e)).ToList() : new List<LayoutPanelContainer>();
 
             this.Children.Clear();
             this.RowDefinitions.Clear();
 
-            if (_containers.Count == 0)
+            if (containers.Count == 0)
             {
                 return;
             }
             else
             {
-                foreach (var container in _containers)
+                foreach (var container in containers)
                 {
                     {
                         var rowDefinigion = new RowDefinition();
@@ -110,7 +107,7 @@ namespace NeeView.Runtime.LayoutPanel
                     }
 
                     // splitter
-                    bool isLast = container == _containers.Last();
+                    bool isLast = container == containers.Last();
                     if (!isLast)
                     {
                         var rowDefinigion = new RowDefinition();

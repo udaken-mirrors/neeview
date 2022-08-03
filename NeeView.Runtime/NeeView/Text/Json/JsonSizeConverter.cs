@@ -13,7 +13,13 @@ namespace NeeView.Text.Json
     {
         public override Size Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
-            return (Size)new SizeConverter().ConvertFromInvariantString(reader.GetString());
+            var s = reader.GetString();
+            if (s == null) return new Size();
+
+            var instance = new SizeConverter().ConvertFromInvariantString(s) as Size?;
+            if (instance == null) throw new InvalidCastException();
+
+            return instance.Value;
         }
 
         public override void Write(Utf8JsonWriter writer, Size value, JsonSerializerOptions options)

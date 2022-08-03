@@ -32,8 +32,8 @@ namespace NeeView.Runtime.LayoutPanel
 
     public class LayoutDockPanelContent : BindableBase
     {
-        private LayoutPanelCollection _selectedItem;
-        private LayoutPanelCollection _lastSelectedItem;
+        private LayoutPanelCollection? _selectedItem;
+        private LayoutPanelCollection? _lastSelectedItem;
 
         public LayoutDockPanelContent(LayoutPanelManager manager)
         {
@@ -41,9 +41,9 @@ namespace NeeView.Runtime.LayoutPanel
             Items.CollectionChanged += Items_CollectionChanged;
         }
 
-        public event EventHandler CollectionChanged;
+        public event EventHandler? CollectionChanged;
 
-        private void Items_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        private void Items_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
         {
             UpdateLeaderPanels();
         }
@@ -51,7 +51,7 @@ namespace NeeView.Runtime.LayoutPanel
         private void UpdateLeaderPanels()
         { 
             LeaderPanels = Items.Select(x => x.First()).ToList();
-            CollectionChanged?.Invoke(this, null);
+            CollectionChanged?.Invoke(this, EventArgs.Empty);
         }
 
         public LayoutPanelManager LayoutPanelManager { get; set; }
@@ -59,14 +59,14 @@ namespace NeeView.Runtime.LayoutPanel
 
         public ObservableCollection<LayoutPanelCollection> Items { get; } = new ObservableCollection<LayoutPanelCollection>();
 
-        public LayoutPanelCollection SelectedItem
+        public LayoutPanelCollection? SelectedItem
         {
             get { return _selectedItem; }
             set
             {
                 if (_selectedItem != value)
                 {
-                    _selectedItem = Items.Contains(value) ? value : null;
+                    _selectedItem = value != null && Items.Contains(value) ? value : null;
                     if (_selectedItem != null)
                     {
                         _lastSelectedItem = _selectedItem;
@@ -76,14 +76,14 @@ namespace NeeView.Runtime.LayoutPanel
             }
         }
 
-        public LayoutPanelCollection LastSelectedItem
+        public LayoutPanelCollection? LastSelectedItem
         {
-            get { return Items.Contains(_lastSelectedItem) ? _lastSelectedItem : null; }
+            get { return _lastSelectedItem != null && Items.Contains(_lastSelectedItem) ? _lastSelectedItem : null; }
         }
 
 
 
-        private List<LayoutPanel> _leaderPanels;
+        private List<LayoutPanel> _leaderPanels = new();
         public List<LayoutPanel> LeaderPanels
         {
             get { return _leaderPanels; }
@@ -101,7 +101,7 @@ namespace NeeView.Runtime.LayoutPanel
             item.CollectionChanged -= LayoutPanelCollection_CollectionChanged;
         }
 
-        private void LayoutPanelCollection_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        private void LayoutPanelCollection_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
         {
             UpdateLeaderPanels();
         }
@@ -159,7 +159,11 @@ namespace NeeView.Runtime.LayoutPanel
 
         public void RemoveAt(int index)
         {
-            Remove(Items.ElementAtOrDefault(index));
+            var item = Items.ElementAtOrDefault(index);
+            if (item != null)
+            {
+                Remove(item);
+            }
         }
 
         public bool Contains(LayoutPanelCollection item)
@@ -167,12 +171,12 @@ namespace NeeView.Runtime.LayoutPanel
             return Items.Contains(item);
         }
 
-        public LayoutPanelCollection FirstOrDefault(Func<LayoutPanelCollection, bool> predicate)
+        public LayoutPanelCollection? FirstOrDefault(Func<LayoutPanelCollection, bool> predicate)
         {
             return Items.FirstOrDefault(predicate);
         }
 
-        public LayoutPanelCollection FirstOrDefaultPanelContains(LayoutPanel panel)
+        public LayoutPanelCollection? FirstOrDefaultPanelContains(LayoutPanel panel)
         {
             return Items.FirstOrDefault(e => e.Contains(panel));
         }
@@ -234,18 +238,19 @@ namespace NeeView.Runtime.LayoutPanel
             if (target is null) throw new ArgumentNullException(nameof(target));
             if (panel is null) throw new ArgumentNullException(nameof(panel));
 
-            (var dock, var collection) = LayoutPanelManager.FindPanelContains(panel);
+            var node = LayoutPanelManager.FindLayoutDockPanelNode(panel);
+            if (node is null) return;
 
-            if (collection == target)
+            if (node.Panels == target)
             {
                 target.Move(target.IndexOf(panel), index);
             }
             else
             {
-                collection.Remove(panel);
-                if (collection.Count == 0)
+                node.Panels.Remove(panel);
+                if (node.Panels.Count == 0)
                 {
-                    dock.Remove(collection);
+                    node.Dock.Remove(node.Panels);
                 }
                 target.Insert(index, panel);
             }
@@ -259,25 +264,25 @@ namespace NeeView.Runtime.LayoutPanel
         {
             if (panel is null) throw new ArgumentNullException(nameof(panel));
 
-            (var dock, var collection) = LayoutPanelManager.FindPanelContains(panel);
+            var node = LayoutPanelManager.FindLayoutDockPanelNode(panel);
 
-            if (collection == null) throw new InvalidOperationException();
+            if (node == null) throw new InvalidOperationException();
 
-            if (collection.First() == panel)
+            if (node.Panels.First() == panel)
             {
-                if (dock == this)
+                if (node.Dock == this)
                 {
-                    Move(Items.IndexOf(collection), index);
+                    Move(Items.IndexOf(node.Panels), index);
                 }
                 else
                 {
-                    dock.Remove(collection);
-                    Insert(index, collection);
+                    node.Dock.Remove(node.Panels);
+                    Insert(index, node.Panels);
                 }
             }
             else
             {
-                collection.Remove(panel);
+                node.Panels.Remove(panel);
                 Insert(index, new LayoutPanelCollection() { panel });
             }
         }
@@ -307,8 +312,8 @@ namespace NeeView.Runtime.LayoutPanel
 
         public class Memento
         {
-            public List<List<string>> Panels { get; set; }
-            public string SelectedItem { get; set; }
+            public List<List<string>> Panels { get; set; } = new();
+            public string? SelectedItem { get; set; }
         }
 
         public Memento CreateMemento()

@@ -6,7 +6,7 @@ namespace NeeView.Media.Imaging.Metadata
 {
     public static class BitmapMetadataAccessorFactory
     {
-        public static BitmapMetadataAccessor Create(BitmapMetadata meta)
+        public static BitmapMetadataAccessor? Create(BitmapMetadata meta)
         {
             if (meta is null)
             {

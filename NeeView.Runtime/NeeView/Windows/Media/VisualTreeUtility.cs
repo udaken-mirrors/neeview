@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NeeView.Linq;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -25,7 +26,7 @@ namespace NeeView.Windows.Media
         /// <param name="item"></param>
         /// <param name="name"></param>
         /// <returns></returns>
-        public static FrameworkElement GetListBoxItemElement(ListBox listBox, object item, string name)
+        public static FrameworkElement? GetListBoxItemElement(ListBox listBox, object item, string name)
         {
             return GetListBoxItemElement(GetListBoxItemFromItem(listBox, item), name);
         }
@@ -58,15 +59,16 @@ namespace NeeView.Windows.Media
         /// <param name="item"></param>
         /// <param name="name"></param>
         /// <returns></returns>
-        public static FrameworkElement GetListBoxItemElement(ListBoxItem item, string name)
+        public static FrameworkElement? GetListBoxItemElement(ListBoxItem item, string name)
         {
             if (item == null) return null;
 
             // Getting the ContentPresenter of myListBoxItem
-            ContentPresenter myContentPresenter = FindVisualChild<ContentPresenter>(item);
+            ContentPresenter? myContentPresenter = FindVisualChild<ContentPresenter>(item);
+            if (myContentPresenter == null) return null;
 
             // Finding textBlock from the DataTemplate that is set on that ContentPresenter
-            DataTemplate myDataTemplate = myContentPresenter.ContentTemplate;
+            DataTemplate? myDataTemplate = myContentPresenter.ContentTemplate;
             if (myDataTemplate == null) throw new InvalidOperationException("DataTempate not exist.");
             return (FrameworkElement)myDataTemplate.FindName(name, myContentPresenter);
         }
@@ -78,16 +80,17 @@ namespace NeeView.Windows.Media
         /// <param name="item"></param>
         /// <param name="name"></param>
         /// <returns></returns>
-        public static T GetListBoxItemElement<T>(ListBoxItem item, string name = null)
+        public static T? GetListBoxItemElement<T>(ListBoxItem item, string? name = null)
             where T : FrameworkElement
         {
             if (item == null) return null;
 
             // Getting the ContentPresenter of myListBoxItem
-            ContentPresenter myContentPresenter = FindVisualChild<ContentPresenter>(item);
+            ContentPresenter? myContentPresenter = FindVisualChild<ContentPresenter>(item);
+            if (myContentPresenter == null) return null;
 
             // Finding textBlock from the DataTemplate that is set on that ContentPresenter
-            DataTemplate myDataTemplate = myContentPresenter.ContentTemplate ?? (myContentPresenter.Content as ContentPresenter)?.ContentTemplate;
+            DataTemplate? myDataTemplate = myContentPresenter.ContentTemplate ?? (myContentPresenter.Content as ContentPresenter)?.ContentTemplate;
 
             if (myDataTemplate != null)
             {
@@ -125,9 +128,11 @@ namespace NeeView.Windows.Media
         /// <param name="item">指定項目</param>
         /// <param name="name">コントロール名</param>
         /// <returns></returns>
-        public static FrameworkElement GetTreeViewItemElement(TreeView treeView, object item, string name)
+        public static FrameworkElement? GetTreeViewItemElement(TreeView treeView, object item, string name)
         {
-            return GetTreeViewItemElement(FindContainer<TreeViewItem>(treeView, item), name);
+            var container = FindContainer<TreeViewItem>(treeView, item);
+            if (container == null) return null;
+            return GetTreeViewItemElement(container, name);
         }
 
         /// <summary>
@@ -136,7 +141,7 @@ namespace NeeView.Windows.Media
         /// <param name="parent">親ノード。TreeViewまたはTreeViewItem</param>
         /// <param name="childItem">TreeViewItemを取得したいitem</param>
         /// <returns></returns>
-        public static T FindContainer<T>(ItemsControl parent, object childItem) where T : DependencyObject
+        public static T? FindContainer<T>(ItemsControl parent, object childItem) where T : DependencyObject
         {
             if (parent.ItemContainerGenerator.Status != GeneratorStatus.ContainersGenerated)
             {
@@ -171,16 +176,17 @@ namespace NeeView.Windows.Media
         /// <param name="item"></param>
         /// <param name="name"></param>
         /// <returns></returns>
-        public static FrameworkElement GetTreeViewItemElement(TreeViewItem item, string name)
+        public static FrameworkElement? GetTreeViewItemElement(TreeViewItem item, string name)
         {
             if (item == null) return null;
 
             // Getting the ContentPresenter of myListBoxItem
-            ContentPresenter myContentPresenter = FindVisualChild<ContentPresenter>(item);
+            ContentPresenter? myContentPresenter = FindVisualChild<ContentPresenter>(item);
+            if (myContentPresenter == null) return null;
 
             // Finding textBlock from the DataTemplate that is set on that ContentPresenter
             DataTemplate myDataTemplate = myContentPresenter.ContentTemplate;
-            return (FrameworkElement)myDataTemplate.FindName(name, myContentPresenter);
+            return myDataTemplate.FindName(name, myContentPresenter) as FrameworkElement;
         }
 
         #endregion
@@ -192,7 +198,7 @@ namespace NeeView.Windows.Media
         /// <param name="visual">調査対象となるビジュアル</param>
         /// <param name="point">ビジュアル上の座標</param>
         /// <returns>取得されたコントロール。なければnull</returns>
-        public static T HitTest<T>(Visual visual, Point point)
+        public static T? HitTest<T>(Visual visual, Point point)
             where T : DependencyObject
         {
             var element = HitTest(visual, point);
@@ -213,9 +219,9 @@ namespace NeeView.Windows.Media
         /// <summary>
         /// 非表示オブジェクオを除外したヒットテスト
         /// </summary>
-        public static DependencyObject HitTest(Visual reference, Point point)
+        public static DependencyObject? HitTest(Visual reference, Point point)
         {
-            DependencyObject hit = null;
+            DependencyObject? hit = null;
 
             VisualTreeHelper.HitTest(reference
                 , new HitTestFilterCallback(OnHitTestFilterCallback)
@@ -245,7 +251,7 @@ namespace NeeView.Windows.Media
         /// <summary>
         /// DependencyObjectとその親から、指定した型のコントロールを取得する.
         /// </summary>
-        public static T FindSourceElement<T>(DependencyObject obj, DependencyObject terminator = null)
+        public static T? FindSourceElement<T>(DependencyObject obj, DependencyObject? terminator = null)
             where T : class
         {
             if (!(obj is Visual))
@@ -273,7 +279,7 @@ namespace NeeView.Windows.Media
         /// <typeparam name="T"></typeparam>
         /// <param name="obj"></param>
         /// <returns></returns>
-        public static T GetParentElement<T>(DependencyObject obj)
+        public static T? GetParentElement<T>(DependencyObject obj)
             where T : class
         {
             if (!(obj is Visual))
@@ -329,8 +335,8 @@ namespace NeeView.Windows.Media
         /// <param name="item"></param>
         /// <param name="name"></param>
         /// <returns></returns>
-        public static T GetChildElement<T>(DependencyObject item, string name = null)
-        where T : FrameworkElement
+        public static T? GetChildElement<T>(DependencyObject item, string? name = null)
+            where T : FrameworkElement
         {
             if (item == null)
             {
@@ -338,10 +344,11 @@ namespace NeeView.Windows.Media
             }
 
             // Getting the ContentPresenter of myListBoxItem
-            ContentPresenter myContentPresenter = FindVisualChild<ContentPresenter>(item);
+            ContentPresenter? myContentPresenter = FindVisualChild<ContentPresenter>(item);
+            if (myContentPresenter is null) return null;
 
             // Finding textBlock from the DataTemplate that is set on that ContentPresenter
-            DataTemplate myDataTemplate = myContentPresenter.ContentTemplate ?? (myContentPresenter.Content as ContentPresenter)?.ContentTemplate;
+            DataTemplate? myDataTemplate = myContentPresenter.ContentTemplate ?? (myContentPresenter.Content as ContentPresenter)?.ContentTemplate;
 
             if (myDataTemplate != null)
             {
@@ -360,7 +367,7 @@ namespace NeeView.Windows.Media
         /// <typeparam name="T">型</typeparam>
         /// <param name="root">探索対象のビジュアル要素</param>
         /// <returns>見つかった場合はその要素</returns>
-        public static T FindVisualChild<T>(DependencyObject root, string name = null) where T : FrameworkElement
+        public static T? FindVisualChild<T>(DependencyObject root, string? name = null) where T : FrameworkElement
         {
             if (root == null)
             {
@@ -386,7 +393,7 @@ namespace NeeView.Windows.Media
             return null;
         }
 
-        public static List<T> FindVisualChildren<T>(DependencyObject root) where T : FrameworkElement
+        public static List<T>? FindVisualChildren<T>(DependencyObject root) where T : FrameworkElement
         {
             if (root == null)
             {
@@ -401,7 +408,7 @@ namespace NeeView.Windows.Media
 
             var children = Enumerable.Range(0, VisualTreeHelper.GetChildrenCount(root))
                 .Select(i => FindVisualChildren<T>(VisualTreeHelper.GetChild(root, i)))
-                .Where(x => x != null)
+                .WhereNotNull()
                 .SelectMany(x => x)
                 .ToList();
 

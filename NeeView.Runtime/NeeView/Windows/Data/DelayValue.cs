@@ -16,8 +16,8 @@ namespace NeeView.Windows.Data
     {
         #region Fields
 
-        private T _value;
-        private T _delayValue;
+        private T? _value;
+        private T? _delayValue;
         private DateTime _delayTime = DateTime.MaxValue;
         private DispatcherTimer _timer;
 
@@ -52,7 +52,7 @@ namespace NeeView.Windows.Data
         /// <summary>
         /// 値が反映されたときのイベント
         /// </summary>
-        public event EventHandler ValueChanged;
+        public event EventHandler? ValueChanged;
 
         #endregion
 
@@ -61,7 +61,7 @@ namespace NeeView.Windows.Data
         /// <summary>
         /// 現在値
         /// </summary>
-        public T Value => _value;
+        public T? Value => _value;
 
         #endregion
 
@@ -135,7 +135,7 @@ namespace NeeView.Windows.Data
             if (!EqualityComparer<T>.Default.Equals(_delayValue, _value))
             {
                 _value = _delayValue;
-                ValueChanged?.Invoke(this, null);
+                ValueChanged?.Invoke(this, EventArgs.Empty);
                 RaisePropertyChanged(nameof(Value));
             }
         }
@@ -145,7 +145,7 @@ namespace NeeView.Windows.Data
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void Tick(object sender, EventArgs e)
+        private void Tick(object? sender, EventArgs e)
         {
             if (_delayTime <= DateTime.Now)
             {

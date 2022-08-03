@@ -16,18 +16,18 @@ namespace NeeView.Runtime.LayoutPanel
         public LayoutPanelWindowManager(LayoutPanelManager manager)
         {
             _layoutPanelManager = manager;
-            _windows.CollectionChanged += (s, e) => CollectionChanged?.Invoke(this, null);
+            _windows.CollectionChanged += (s, e) => CollectionChanged?.Invoke(this, EventArgs.Empty);
         }
 
 
-        public event EventHandler CollectionChanged;
+        public event EventHandler? CollectionChanged;
 
 
         public LayoutPanelManager LayoutPanelManager => _layoutPanelManager;
 
         public Dictionary<string, string> Resources => _layoutPanelManager.Resources;
 
-        public Window Owner { get; set; }
+        public Window? Owner { get; set; }
 
         public ObservableCollection<LayoutPanelWindow> Windows => _windows;
 
@@ -101,26 +101,29 @@ namespace NeeView.Runtime.LayoutPanel
 
         public class Memento
         {
-            public List<string> Panels { get; set; }
+            public List<string>? Panels { get; set; }
         }
 
         public Memento CreateMemento()
         {
             var memento = new Memento();
-            memento.Panels = _windows.Select(e => e.LayoutPanel.Key).ToList();
+            memento.Panels = _windows.Select(e => e.LayoutPanel).OfType<LayoutPanel>().Select(e => e.Key).ToList();
             return memento;
         }
 
-        public void Restore(Memento memento)
+        public void Restore(Memento? memento)
         {
             if (memento == null) return;
 
             CloseAll();
 
-            var panels = memento.Panels.Where(e => _layoutPanelManager.Panels.ContainsKey(e)).Select(e => _layoutPanelManager.Panels[e]).ToList();
-            foreach (var panel in panels)
+            if (memento.Panels != null)
             {
-                _layoutPanelManager.OpenWindow(panel);
+                var panels = memento.Panels.Where(e => _layoutPanelManager.Panels.ContainsKey(e)).Select(e => _layoutPanelManager.Panels[e]).ToList();
+                foreach (var panel in panels)
+                {
+                    _layoutPanelManager.OpenWindow(panel);
+                }
             }
         }
 

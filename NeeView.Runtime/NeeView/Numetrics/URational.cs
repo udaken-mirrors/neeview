@@ -79,7 +79,7 @@ namespace NeeView.Numetrics
             return ToRationalString();
         }
 
-        public static bool TryParse(string value, out URational rational)
+        public static bool TryParse(string value, out URational? rational)
         {
             rational = null;
 

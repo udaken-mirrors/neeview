@@ -6,19 +6,19 @@ namespace NeeView.Text
 {
     public class FormatValue
     {
-        private object _value;
-        private string _format;
-        private Func<object, object> _converter;
+        private object? _value;
+        private string? _format;
+        private Func<object, object>? _converter;
 
-        public FormatValue(object value) : this(value, null, null)
+        public FormatValue(object? value) : this(value, null, null)
         {
         }
 
-        public FormatValue(object value, string format) : this(value, format, null)
+        public FormatValue(object? value, string? format) : this(value, format, null)
         {
         }
 
-        public FormatValue(object value, string format, Func<object, object> converter)
+        public FormatValue(object? value, string? format, Func<object, object>? converter)
         { 
             _value = value;
             _format = format;
@@ -33,7 +33,7 @@ namespace NeeView.Text
         {
             if (_value is null)
             {
-                return null;
+                return "";
             }
 
             try
@@ -41,7 +41,7 @@ namespace NeeView.Text
                 var value = _converter != null ? _converter(_value) : _value;
                 if (value is null)
                 {
-                    return null;
+                    return "";
                 }
                 else if (_format != null)
                 {
@@ -49,12 +49,12 @@ namespace NeeView.Text
                 }
                 else
                 {
-                    return value.ToString();
+                    return value?.ToString() ?? "";
                 }
             }
             catch
             {
-                return _value?.ToString();
+                return _value?.ToString() ?? "";
             }
         }
 
@@ -65,7 +65,7 @@ namespace NeeView.Text
 
         #region Filters
 
-        public static object SupportTypeConverter<T>(object value)
+        public static object? SupportTypeConverter<T>(object value)
         {
             if (value is T target)
             {
@@ -74,7 +74,7 @@ namespace NeeView.Text
             return null;
         }
 
-        public static object NotDefaultValueConverter<T>(object value)
+        public static object? NotDefaultValueConverter<T>(object value)
         {
             if (value is T target && !object.Equals(target, default(T)))
             {

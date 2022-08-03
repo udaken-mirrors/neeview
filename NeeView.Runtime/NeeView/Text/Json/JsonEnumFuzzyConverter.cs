@@ -18,12 +18,15 @@ namespace NeeView.Text.Json
 
         public override JsonConverter CreateConverter(Type typeToConvert, JsonSerializerOptions options)
         {
-            JsonConverter converter = (JsonConverter)Activator.CreateInstance(
+            var instance = Activator.CreateInstance(
                 typeof(EnumFuzzyConverter<>).MakeGenericType(typeToConvert),
                 BindingFlags.Instance | BindingFlags.Public,
                 binder: null,
                 args: new object[] { },
                 culture: null);
+
+            JsonConverter? converter = instance as JsonConverter;
+            if (converter is null) throw new InvalidOperationException("Cannot create JsonConverter");
 
             return converter;
         }

@@ -7,6 +7,6 @@ namespace NeeView.Windows
 {
     public interface IHasDragGhost
     {
-        FrameworkElement GetDragGhost();
+        FrameworkElement? GetDragGhost();
     }
 }

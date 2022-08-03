@@ -62,7 +62,7 @@ namespace NeeView.Media.Imaging.Metadata
             {
                 foreach (var xmp in _xmp)
                 {
-                    Debug.WriteLine(xmp.XmpMeta.DumpObject());
+                    Debug.WriteLine(xmp.XmpMeta?.DumpObject());
                 }
             }
         }
@@ -74,17 +74,15 @@ namespace NeeView.Media.Imaging.Metadata
             {
                 if (directory.ContainsTag(FileTypeDirectory.TagDetectedFileTypeName))
                 {
-                    return directory.GetDescription(FileTypeDirectory.TagDetectedFileTypeName);
+                    return directory.GetDescription(FileTypeDirectory.TagDetectedFileTypeName) ?? "(Unknown)";
                 }
             }
 
             return "(Unknown)";
         }
 
-        public override object GetValue(BitmapMetadataKey key)
+        public override object? GetValue(BitmapMetadataKey key)
         {
-            if (_metadata is null) return null;
-
             switch (key)
             {
                 // -- Description
@@ -156,7 +154,7 @@ namespace NeeView.Media.Imaging.Metadata
             public static readonly string MicrosoftPhotoX = "http://ns.microsoft.com/photo/1.0";
         }
 
-        private string GetTitle()
+        private string? GetTitle()
         {
             return GetString(_ifd0, ExifDirectoryBase.TagWinTitle)
                 ?? GetString(_xmp, Schema.DublinCoreSpecificProperties, "title")
@@ -167,7 +165,7 @@ namespace NeeView.Media.Imaging.Metadata
                 ?? GetString(_xmp, Schema.ExifSpecificProperties, "UserComment");
         }
 
-        private string GetSubject()
+        private string? GetSubject()
         {
             return GetString(_ifd0, ExifDirectoryBase.TagWinSubject)
                 ?? GetString(_ifd0, ExifDirectoryBase.TagImageDescription);
@@ -182,7 +180,7 @@ namespace NeeView.Media.Imaging.Metadata
                 ?? 0);
         }
 
-        private IReadOnlyCollection<string> GetKeywords()
+        private IReadOnlyCollection<string>? GetKeywords()
         {
             return GetStringArray(_xmp, Schema.DublinCoreSpecificProperties, "subject")
                 ?? GetString(_ifd0, ExifDirectoryBase.TagWinKeywords)?.Split(';');
@@ -190,14 +188,14 @@ namespace NeeView.Media.Imaging.Metadata
             // NOTE: /ifd/{ushort=18247}(XP_DIP_XML) は非対応
         }
 
-        private string GeCommente()
+        private string? GeCommente()
         {
             return GetString(_ifd0, ExifDirectoryBase.TagWinComment)
                 ?? GetString(_ifd0, ExifDirectoryBase.TagUserComment)
                 ?? GetString(_xmp, Schema.ExifSpecificProperties, "UserComment");
         }
 
-        private string GetAuthor()
+        private string? GetAuthor()
         {
             return GetString(_ifd0, ExifDirectoryBase.TagArtist)
                 ?? GetString(_xmp, Schema.DublinCoreSpecificProperties, "creator")
@@ -213,7 +211,7 @@ namespace NeeView.Media.Imaging.Metadata
                 ?? GetDateTime(_xmp, Schema.ExifSpecificProperties, "DateTimeOriginal");
         }
 
-        private string GetApplicationName()
+        private string? GetApplicationName()
         {
             return GetString(_ifd0, ExifDirectoryBase.TagSoftware)
                 ?? GetString(_xmp, Schema.XmpProperties, "CreatorTool")
@@ -228,13 +226,13 @@ namespace NeeView.Media.Imaging.Metadata
                 ?? GetDateTime(_xmp, SchemaEx.MicrosoftPhotoX, "DateAcquired");
         }
 
-        private string GetCopyright()
+        private string? GetCopyright()
         {
             return GetString(_ifd0, ExifDirectoryBase.TagCopyright)
                 ?? GetString(_xmp, Schema.DublinCoreSpecificProperties, "rights");
         }
 
-        private string GetCameraManufacturer()
+        private string? GetCameraManufacturer()
         {
             return GetString(_ifd0, ExifDirectoryBase.TagMake)
                 ?? GetString(_panasonicifd0, PanasonicRawIfd0Directory.TagMake)
@@ -242,7 +240,7 @@ namespace NeeView.Media.Imaging.Metadata
                 ?? GetString(_xmp, Schema.ExifTiffProperties, "make");
         }
 
-        private string GetCameraModel()
+        private string? GetCameraModel()
         {
             return GetString(_ifd0, ExifDirectoryBase.TagModel)
                 ?? GetString(_panasonicifd0, PanasonicRawIfd0Directory.TagModel)
@@ -256,7 +254,7 @@ namespace NeeView.Media.Imaging.Metadata
                 ?? GetDouble(_xmp, Schema.ExifSpecificProperties, "FNumber");
         }
 
-        private IRational GetExposureTime()
+        private IRational? GetExposureTime()
         {
             return GetRational(_subIfd, ExifDirectoryBase.TagExposureTime)
                 ?? GetRational(_xmp, Schema.ExifSpecificProperties, "ExposureTime");
@@ -317,7 +315,7 @@ namespace NeeView.Media.Imaging.Metadata
                 ?? GetInteger(_xmp, Schema.ExifSpecificProperties, "FocalLengthIn35mmFilm");
         }
 
-        private string GetLensManufacturer()
+        private string? GetLensManufacturer()
         {
             return GetString(_subIfd, ExifDirectoryBase.TagLensMake)
                 ?? GetString(_xmp, Schema.ExifSpecificProperties, "LensMake")
@@ -325,7 +323,7 @@ namespace NeeView.Media.Imaging.Metadata
                 ?? GetString(_xmp, SchemaEx.MicrosoftPhotoX, "LensManufacturer");
         }
 
-        private string GetLensModel()
+        private string? GetLensModel()
         {
             return GetString(_subIfd, ExifDirectoryBase.TagLensModel)
                 ?? GetString(_xmp, Schema.ExifSpecificProperties, "LensModel")
@@ -333,19 +331,19 @@ namespace NeeView.Media.Imaging.Metadata
                 ?? GetString(_xmp, SchemaEx.MicrosoftPhotoX, "LensModel");
         }
 
-        private string GetFlashManufacturer()
+        private string? GetFlashManufacturer()
         {
             return GetString(_xmp, SchemaEx.MicrosoftPhoto, "FlashManufacturer")
                 ?? GetString(_xmp, SchemaEx.MicrosoftPhotoX, "FlashManufacturer");
         }
 
-        private string GetFlashModel()
+        private string? GetFlashModel()
         {
             return GetString(_xmp, SchemaEx.MicrosoftPhoto, "FlashModel")
                 ?? GetString(_xmp, SchemaEx.MicrosoftPhotoX, "FlashModel");
         }
 
-        private string GetCameraSerialNumber()
+        private string? GetCameraSerialNumber()
         {
             return GetString(_subIfd, ExifDirectoryBase.TagBodySerialNumber)
                 ?? GetString(_xmp, Schema.ExifSpecificProperties, "BodySerialNumber")
@@ -414,19 +412,19 @@ namespace NeeView.Media.Imaging.Metadata
                 ?? GetInteger(_xmp, Schema.ExifTiffProperties, "Orientation");
         }
 
-        private string GetEXIFVersion()
+        private string? GetEXIFVersion()
         {
             return GetString(_subIfd, ExifDirectoryBase.TagExifVersion)
                 ?? GetString(_xmp, Schema.ExifSpecificProperties, "ExifVersion");
         }
 
-        private ExifGpsDegree GetGPSLatitude()
+        private ExifGpsDegree? GetGPSLatitude()
         {
             return GetGPSLatitude(_gps)
                 ?? GetGPSLatitude(_xmp);
         }
 
-        private ExifGpsDegree GetGPSLongitude()
+        private ExifGpsDegree? GetGPSLongitude()
         {
             return GetGPSLongitude(_gps)
                 ?? GetGPSLongitude(_xmp);
@@ -442,10 +440,9 @@ namespace NeeView.Media.Imaging.Metadata
 
         #region EXIF
 
-        private T GetValueFromDirectories<T>(IEnumerable<MetadataExtractor.Directory> directories, int tagType, Func<MetadataExtractor.Directory, int, T> func)
-        {
-            if (directories is null) return default;
 
+        private T? GetValueFromDirectories<T>(IEnumerable<MetadataExtractor.Directory> directories, int tagType, Func<MetadataExtractor.Directory, int, T> func)
+        {
             foreach (var directory in directories)
             {
                 var value = func(directory, tagType);
@@ -458,10 +455,8 @@ namespace NeeView.Media.Imaging.Metadata
             return default;
         }
 
-        private string GetString(MetadataExtractor.Directory directory, int tagType)
+        private string? GetString(MetadataExtractor.Directory directory, int tagType)
         {
-            if (directory is null) return null;
-
             if (directory.ContainsTag(tagType))
             {
                 return directory.GetDescription(tagType);
@@ -470,15 +465,13 @@ namespace NeeView.Media.Imaging.Metadata
             return null;
         }
 
-        private string GetString(IEnumerable<MetadataExtractor.Directory> directories, int tagType)
+        private string? GetString(IEnumerable<MetadataExtractor.Directory> directories, int tagType)
         {
             return GetValueFromDirectories(directories, tagType, GetString);
         }
 
         private int? GetInteger(MetadataExtractor.Directory directory, int tagType)
         {
-            if (directory is null) return null;
-
             if (directory.TryGetInt32(tagType, out var value))
             {
                 return value;
@@ -494,8 +487,6 @@ namespace NeeView.Media.Imaging.Metadata
 
         private double? GetDouble(MetadataExtractor.Directory directory, int tagType)
         {
-            if (directory is null) return null;
-
             if (directory.TryGetDouble(tagType, out var value))
             {
                 return value;
@@ -509,10 +500,8 @@ namespace NeeView.Media.Imaging.Metadata
             return GetValueFromDirectories(directories, tagType, GetDouble);
         }
 
-        private IRational GetRational(MetadataExtractor.Directory directory, int tagType)
+        private IRational? GetRational(MetadataExtractor.Directory directory, int tagType)
         {
-            if (directory is null) return null;
-
             if (directory.TryGetRational(tagType, out var value))
             {
                 if (value.Numerator >= 0 && value.Denominator >= 0)
@@ -528,7 +517,7 @@ namespace NeeView.Media.Imaging.Metadata
             return null;
         }
 
-        private IRational GetRational(IEnumerable<MetadataExtractor.Directory> directories, int tagType)
+        private IRational? GetRational(IEnumerable<MetadataExtractor.Directory> directories, int tagType)
         {
             return GetValueFromDirectories(directories, tagType, GetRational);
         }
@@ -554,10 +543,8 @@ namespace NeeView.Media.Imaging.Metadata
 
         #region XMP
 
-        private T GetValueFromDirectories<T>(IEnumerable<XmpDirectory> directories, string schema, string path, Func<XmpDirectory, string, string, T> func)
+        private T? GetValueFromDirectories<T>(IEnumerable<XmpDirectory> directories, string schema, string path, Func<XmpDirectory, string, string, T> func)
         {
-            if (directories is null) return default;
-
             foreach (var directory in directories)
             {
                 var value = func(directory, schema, path);
@@ -570,35 +557,40 @@ namespace NeeView.Media.Imaging.Metadata
             return default;
         }
 
-        private string GetString(XmpDirectory directory, string schema, string path)
+        private string? GetString(XmpDirectory directory, string schema, string path)
         {
-            if (directory is null) return null;
-
-            var property = directory.XmpMeta.GetProperty(schema, path);
-            if (property != null)
+            var property = directory.XmpMeta?.GetProperty(schema, path);
+            if (property == null)
             {
-                if (property.Options.IsArray)
+                return null;
+            }
+
+            if (property.Options.IsArray)
+            {
+                var strings = GetStringArray(directory, schema, path);
+                if (strings == null)
                 {
-                    return string.Join(Environment.NewLine, GetStringArray(directory, schema, path));
+                    return null;
                 }
                 else
                 {
-                    return property.Value;
+                    return string.Join(Environment.NewLine, strings);
                 }
             }
-
-            return null;
+            else
+            {
+                return property.Value;
+            }
         }
 
-        private string GetString(IEnumerable<XmpDirectory> directories, string schema, string path)
+        private string? GetString(IEnumerable<XmpDirectory> directories, string schema, string path)
         {
             return GetValueFromDirectories(directories, schema, path, GetString);
         }
 
-        private IReadOnlyCollection<string> GetStringArray(XmpDirectory directory, string schema, string path)
+        private IReadOnlyCollection<string>? GetStringArray(XmpDirectory directory, string schema, string path)
         {
-            if (directory is null) return null;
-
+            if (directory.XmpMeta == null) return null;
             var count = directory.XmpMeta.CountArrayItems(schema, path);
             if (count > 0)
             {
@@ -608,7 +600,7 @@ namespace NeeView.Media.Imaging.Metadata
             return null;
         }
 
-        private IReadOnlyCollection<string> GetStringArray(IEnumerable<XmpDirectory> directories, string schema, string path)
+        private IReadOnlyCollection<string>? GetStringArray(IEnumerable<XmpDirectory> directories, string schema, string path)
         {
             return GetValueFromDirectories(directories, schema, path, GetStringArray);
         }
@@ -617,10 +609,10 @@ namespace NeeView.Media.Imaging.Metadata
         {
             if (directory is null) return null;
 
-            var property = directory.XmpMeta.GetProperty(schema, path);
+            var property = directory.XmpMeta?.GetProperty(schema, path);
             if (property != null)
             {
-                return directory.XmpMeta.GetPropertyInteger(schema, path);
+                return directory.XmpMeta?.GetPropertyInteger(schema, path);
             }
 
             return null;
@@ -635,17 +627,17 @@ namespace NeeView.Media.Imaging.Metadata
         {
             if (directory is null) return null;
 
-            var property = directory.XmpMeta.GetProperty(schema, path);
+            var property = directory.XmpMeta?.GetProperty(schema, path);
             if (property != null)
             {
                 if (property.Value.Contains('/'))
                 {
                     var rational = GetRational(directory, schema, path);
-                    return rational.ToValue();
+                    return rational?.ToValue();
                 }
                 else
                 {
-                    return directory.XmpMeta.GetPropertyDouble(schema, path);
+                    return directory.XmpMeta?.GetPropertyDouble(schema, path);
                 }
             }
 
@@ -658,11 +650,11 @@ namespace NeeView.Media.Imaging.Metadata
         }
 
 
-        private IRational GetRational(XmpDirectory directory, string schema, string path)
+        private IRational? GetRational(XmpDirectory directory, string schema, string path)
         {
             if (directory is null) return null;
 
-            var property = directory.XmpMeta.GetProperty(schema, path);
+            var property = directory.XmpMeta?.GetProperty(schema, path);
             if (property != null)
             {
                 return ConvertToRational(property.Value);
@@ -671,7 +663,7 @@ namespace NeeView.Media.Imaging.Metadata
             return null;
         }
 
-        private IRational GetRational(IEnumerable<XmpDirectory> directories, string schema, string path)
+        private IRational? GetRational(IEnumerable<XmpDirectory> directories, string schema, string path)
         {
             return GetValueFromDirectories(directories, schema, path, GetRational);
         }
@@ -680,7 +672,7 @@ namespace NeeView.Media.Imaging.Metadata
         {
             if (directory is null) return null;
 
-            var property = directory.XmpMeta.GetProperty(schema, path);
+            var property = directory.XmpMeta?.GetProperty(schema, path);
             if (property != null)
             {
                 return ConvertToDateTime(property.Value)?.ToLocalTime();
@@ -694,13 +686,11 @@ namespace NeeView.Media.Imaging.Metadata
             return GetValueFromDirectories(directories, schema, path, GetDateTime);
         }
 
-        private ExifGpsDegree GetGPSLatitude(IEnumerable<XmpDirectory> directories)
+        private ExifGpsDegree? GetGPSLatitude(IEnumerable<XmpDirectory> directories)
         {
-            if (directories is null) return null;
-
             foreach (var directory in directories)
             {
-                var property = directory.XmpMeta.GetProperty(Schema.ExifSpecificProperties, "GPSLatitude");
+                var property = directory.XmpMeta?.GetProperty(Schema.ExifSpecificProperties, "GPSLatitude");
                 if (property != null)
                 {
                     return new ExifGpsDegree(property.Value);
@@ -710,13 +700,11 @@ namespace NeeView.Media.Imaging.Metadata
             return null;
         }
 
-        private ExifGpsDegree GetGPSLongitude(IEnumerable<XmpDirectory> directories)
+        private ExifGpsDegree? GetGPSLongitude(IEnumerable<XmpDirectory> directories)
         {
-            if (directories is null) return null;
-
             foreach (var directory in directories)
             {
-                var property = directory.XmpMeta.GetProperty(Schema.ExifSpecificProperties, "GPSLongitude");
+                var property = directory.XmpMeta?.GetProperty(Schema.ExifSpecificProperties, "GPSLongitude");
                 if (property != null)
                 {
                     return new ExifGpsDegree(property.Value);
@@ -758,10 +746,8 @@ namespace NeeView.Media.Imaging.Metadata
 
         #region EXIF.GPS
 
-        private ExifGpsDegree GetGPSLatitude(IEnumerable<GpsDirectory> directories)
+        private ExifGpsDegree? GetGPSLatitude(IEnumerable<GpsDirectory> directories)
         {
-            if (directories is null) return null;
-
             foreach (var directory in directories)
             {
                 var location = directory.GetGeoLocation();
@@ -776,10 +762,8 @@ namespace NeeView.Media.Imaging.Metadata
             return null;
         }
 
-        private ExifGpsDegree GetGPSLongitude(IEnumerable<GpsDirectory> directories)
+        private ExifGpsDegree? GetGPSLongitude(IEnumerable<GpsDirectory> directories)
         {
-            if (directories is null) return null;
-
             foreach (var directory in directories)
             {
                 var location = directory.GetGeoLocation();
@@ -842,7 +826,7 @@ namespace NeeView.Media.Imaging.Metadata
             return null;
         }
 
-        private IRational ConvertToRational(string value)
+        private IRational? ConvertToRational(string value)
         {
             if (value is null)
             {
@@ -862,7 +846,7 @@ namespace NeeView.Media.Imaging.Metadata
             return null;
         }
 
-        private object GetEnumValue<T>(object value)
+        private object? GetEnumValue<T>(object? value)
             where T : Enum
         {
             switch (value)
@@ -875,7 +859,7 @@ namespace NeeView.Media.Imaging.Metadata
             }
         }
 
-        private object GetFlashMode(object value)
+        private object? GetFlashMode(object? value)
         {
             switch (value)
             {

@@ -118,7 +118,10 @@ namespace NeeView.Windows
         {
             public override WindowPlacement Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
             {
-                return WindowPlacement.Parse(reader.GetString());
+                var s = reader.GetString();
+                if (s is null) return WindowPlacement.None;
+
+                return WindowPlacement.Parse(s);
             }
 
             public override void Write(Utf8JsonWriter writer, WindowPlacement value, JsonSerializerOptions options)

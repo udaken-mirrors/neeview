@@ -18,12 +18,12 @@ namespace NeeView.Windows
         /// <summary>
         /// ドラッグオーバーイベント
         /// </summary>
-        public event EventHandler<DragEventArgs> DragOver;
+        public event EventHandler<DragEventArgs>? DragOver;
 
         /// <summary>
         /// ドロップイベント
         /// </summary>
-        public event EventHandler<DragEventArgs> DragDrop;
+        public event EventHandler<DragEventArgs>? DragDrop;
 
         /// <summary>
         /// ドラッグオーバー処理呼び出し

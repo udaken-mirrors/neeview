@@ -24,18 +24,24 @@ namespace NeeView.Runtime.LayoutPanel
     /// </summary>
     public partial class LayoutPanelContainer : UserControl
     {
-        private LayoutPanelContainerAdorner _adorner;
+        private LayoutPanelContainerAdorner? _adorner;
         private LayoutPanelManager _manager;
 
 
+        // NOTE: Designer用
         public LayoutPanelContainer()
         {
             InitializeComponent();
             this.DataContext = this;
+
+            _manager = new LayoutPanelManager();
         }
 
-        public LayoutPanelContainer(LayoutPanelManager manager, LayoutPanel layoutPanel) : this()
+        public LayoutPanelContainer(LayoutPanelManager manager, LayoutPanel layoutPanel)
         {
+            InitializeComponent();
+            this.DataContext = this;
+
             _manager = manager;
             LayoutPanel = layoutPanel;
 
@@ -114,7 +120,7 @@ namespace NeeView.Runtime.LayoutPanel
 
         private void LayoutPanelContainer_Drop(object sender, DragEventArgs e)
         {
-            _adorner.Detach();
+            _adorner?.Detach();
 
             var content = (LayoutPanel)e.Data.GetData(typeof(LayoutPanel));
             if (content is null)
@@ -179,24 +185,27 @@ namespace NeeView.Runtime.LayoutPanel
                 return;
             }
 
-            var dock = GetLayoutDockFromPosY(e.GetPosition(this).Y, this.ActualHeight);
-            switch (dock)
+            if (_adorner != null)
             {
-                case Dock.Top:
-                    _adorner.Start = new Point(0, 0);
-                    _adorner.End = new Point(this.ActualWidth, this.ActualHeight * 0.5);
-                    break;
+                var dock = GetLayoutDockFromPosY(e.GetPosition(this).Y, this.ActualHeight);
+                switch (dock)
+                {
+                    case Dock.Top:
+                        _adorner.Start = new Point(0, 0);
+                        _adorner.End = new Point(this.ActualWidth, this.ActualHeight * 0.5);
+                        break;
 
-                case Dock.Bottom:
-                    _adorner.Start = new Point(0, this.ActualHeight * 0.5);
-                    _adorner.End = new Point(this.ActualWidth, this.ActualHeight);
-                    break;
+                    case Dock.Bottom:
+                        _adorner.Start = new Point(0, this.ActualHeight * 0.5);
+                        _adorner.End = new Point(this.ActualWidth, this.ActualHeight);
+                        break;
 
-                default:
-                    throw new NotSupportedException();
+                    default:
+                        throw new NotSupportedException();
+                }
+
+                _adorner.Attach();
             }
-
-            _adorner.Attach();
 
             ////Debug.WriteLine($"AllowDrag:Move");
 
@@ -222,7 +231,7 @@ namespace NeeView.Runtime.LayoutPanel
                 e.Effects = DragDropEffects.Move;
             }
 
-            _adorner.Detach();
+            _adorner?.Detach();
             e.Handled = true;
         }
 

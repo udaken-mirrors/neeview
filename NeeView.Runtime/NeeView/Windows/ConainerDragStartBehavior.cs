@@ -34,17 +34,18 @@ namespace NeeView.Windows
     {
         private Point _origin;
         private bool _isButtonDown;
-        private TItem _dragItem;
-        private UIElement _adornerVisual;
+        private TItem? _dragItem;
+        private UIElement? _adornerVisual;
         private Point _dragStartPos;
-        private DragAdorner _dragGhost;
-        private CancellationTokenSource _cancellationTokenSource;
+        private DragAdorner? _dragGhost;
+        private CancellationTokenSource? _cancellationTokenSource;
+
 
 
         /// <summary>
         /// ドラッグ中アイテム
         /// </summary>
-        public TItem DragItem => _dragItem;
+        public TItem? DragItem => _dragItem;
 
         /// <summary>
         /// ドラッグしたか
@@ -57,7 +58,7 @@ namespace NeeView.Windows
         /// <remarks>
         /// saticなオブジェクトになることがあるので標準のプロパティにしている
         /// </remarks>
-        public IDragDropHook DragDropHook { get; set; }
+        public IDragDropHook? DragDropHook { get; set; }
 
 
         /// <summary>
@@ -181,12 +182,15 @@ namespace NeeView.Windows
             if (sender is UIElement element)
             {
                 var hitObject = element.InputHitTest(e.GetPosition(element)) as DependencyObject;
-                _dragItem = hitObject is TItem item ? item : VisualTreeUtility.GetParentElement<TItem>(hitObject);
-
-                if (_dragItem != null)
+                if (hitObject != null)
                 {
-                    _adornerVisual = GetAdornerVisual(_dragItem) ?? _dragItem;
-                    _dragStartPos = e.GetPosition(_adornerVisual);
+                    _dragItem = hitObject is TItem item ? item : VisualTreeUtility.GetParentElement<TItem>(hitObject);
+
+                    if (_dragItem != null)
+                    {
+                        _adornerVisual = GetAdornerVisual(_dragItem) ?? _dragItem;
+                        _dragStartPos = e.GetPosition(_adornerVisual);
+                    }
                 }
             }
             else
@@ -226,6 +230,12 @@ namespace NeeView.Windows
         /// </summary>
         private async Task BeginDragAsync(object sender, MouseEventArgs e, CancellationToken token)
         {
+            if (_dragItem is null)
+            {
+                EndDrag();
+                return;
+            }
+
             var window = Application.Current.Windows.OfType<Window>().FirstOrDefault(w => w.IsActive);
 
             var dataObject = new DataObject();
@@ -258,15 +268,18 @@ namespace NeeView.Windows
 
             if (!args.Cancel)
             {
-                AdornerLayer layer = null;
+                AdornerLayer? layer = null;
 
                 if (window != null)
                 {
                     var dragCount = GetDragCount();
                     var root = window.Content as UIElement;
-                    layer = AdornerLayer.GetAdornerLayer(root);
-                    _dragGhost = new DragAdorner(root, _adornerVisual, 0.5, dragCount, _dragStartPos);
-                    layer.Add(_dragGhost);
+                    if (root != null && _adornerVisual != null)
+                    {
+                        layer = AdornerLayer.GetAdornerLayer(root);
+                        _dragGhost = new DragAdorner(root, _adornerVisual, 0.5, dragCount, _dragStartPos);
+                        layer.Add(_dragGhost);
+                    }
                 }
 
                 DragDropHook?.BeginDragDrop(sender, this.AssociatedObject, args.Data, args.AllowedEffects);
@@ -288,9 +301,15 @@ namespace NeeView.Windows
                 _dragGhost = null;
             }
 
+            EndDrag();
+        }
+
+        private void EndDrag()
+        {
+            _cancellationTokenSource?.Cancel();
+            _cancellationTokenSource = null;
             _isButtonDown = false;
             _dragItem = null;
-            _cancellationTokenSource = null;
         }
 
 
@@ -313,7 +332,7 @@ namespace NeeView.Windows
             return 1;
         }
 
-        public virtual UIElement GetAdornerVisual(TItem dragItem)
+        public virtual UIElement? GetAdornerVisual(TItem dragItem)
         {
             return dragItem;
         }
@@ -339,11 +358,17 @@ namespace NeeView.Windows
                 return;
             }
 
+            var visual = sender as Visual;
+            if (visual == null)
+            {
+                return;
+            }
+
             try
             {
                 if (_dragGhost != null)
                 {
-                    var point = CursorInfo.GetNowPosition(sender as Visual);
+                    var point = CursorInfo.GetNowPosition(visual);
                     if (double.IsNaN(point.X))
                     {
                         Debug.WriteLine("_dragItem does not exist in virual tree.");
@@ -379,13 +404,13 @@ namespace NeeView.Windows
                 return;
             }
 
-            ScrollViewer scrollViewer = VisualTreeUtility.FindVisualChild<ScrollViewer>(container);
+            ScrollViewer? scrollViewer = VisualTreeUtility.FindVisualChild<ScrollViewer>(container);
             if (scrollViewer == null)
             {
                 return;
             }
 
-            var root = (FrameworkElement)Window.GetWindow(container)?.Content;
+            var root = Window.GetWindow(container)?.Content as FrameworkElement;
             if (root == null)
             {
                 // container does not exist in virual tree.
@@ -417,7 +442,7 @@ namespace NeeView.Windows
     /// </summary>
     public class TreeViewDragDropStartBehavior : ContainerDragStartBehavior<TreeViewItem>
     {
-        public override UIElement GetAdornerVisual(TreeViewItem dragItem)
+        public override UIElement? GetAdornerVisual(TreeViewItem dragItem)
         {
             return VisualTreeUtility.FindVisualChild<ContentPresenter>(dragItem);
         }
@@ -428,7 +453,7 @@ namespace NeeView.Windows
     /// </summary>
     public class ListBoxDragDropStartBehavior : ContainerDragStartBehavior<ListBoxItem>
     {
-        public override UIElement GetAdornerVisual(ListBoxItem dragItem)
+        public override UIElement? GetAdornerVisual(ListBoxItem dragItem)
         {
             return VisualTreeUtility.FindVisualChild<ContentPresenter>(dragItem);
         }
@@ -440,7 +465,7 @@ namespace NeeView.Windows
     /// </summary>
     public class ListBoxExtendedDragDropStartBehavior : ListBoxDragDropStartBehavior
     {
-        private List<object> _selectedItems;
+        private List<object>? _selectedItems;
 
         protected override void OnAttached()
         {
@@ -512,7 +537,7 @@ namespace NeeView.Windows
             SelectionMode = SelectionMode.Extended;
         }
 
-        public void SetAnchorItem(object anchor)
+        public void SetAnchorItem(object? anchor)
         {
             this.AnchorItem = anchor;
         }

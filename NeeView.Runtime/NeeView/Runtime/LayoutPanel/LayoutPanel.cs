@@ -21,22 +21,22 @@ namespace NeeView.Runtime.LayoutPanel
         }
 
         public string Key { get; set; }
-        public string Title { get; set; }
-        public FrameworkElement DragGhost { get; set; }
-        public object Content { get; set; }
+        public string Title { get; set; } = "(Undefined)";
+        public FrameworkElement? DragGhost { get; set; }
+        public object? Content { get; set; }
 
         public GridLength GridLength { get; set; } = new GridLength(1, GridUnitType.Star);
         public WindowPlacement WindowPlacement { get; set; } = WindowPlacement.None;
 
 
-        public override string ToString()
+        public override string? ToString()
         {
             return Key ?? base.ToString();
         }
 
         #region support IHasDragGhost
 
-        public FrameworkElement GetDragGhost()
+        public FrameworkElement? GetDragGhost()
         {
             return DragGhost;
         }
@@ -50,7 +50,7 @@ namespace NeeView.Runtime.LayoutPanel
             public static Memento Default { get; } = new Memento() { GridLength = new GridLength(1, GridUnitType.Star), WindowPlacement = WindowPlacement.None };
 
             public GridLength GridLength { get; set; }
-            public WindowPlacement WindowPlacement { get; set; }
+            public WindowPlacement WindowPlacement { get; set; } = WindowPlacement.None;
         }
 
         public Memento CreateMemento()

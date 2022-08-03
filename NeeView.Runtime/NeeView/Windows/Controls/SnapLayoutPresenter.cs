@@ -110,7 +110,7 @@ namespace NeeView.Windows.Controls
             if (HitTest(button, lParam))
             {
                 handled = true;
-                IInvokeProvider invokeProv = new ButtonAutomationPeer(button).GetPattern(PatternInterface.Invoke) as IInvokeProvider;
+                IInvokeProvider? invokeProv = new ButtonAutomationPeer(button).GetPattern(PatternInterface.Invoke) as IInvokeProvider;
                 invokeProv?.Invoke();
             }
 

@@ -36,13 +36,15 @@ namespace NeeView.Media.Imaging.Metadata
             return _meta.Format.ToUpper();
         }
 
-        public override object GetValue(BitmapMetadataKey key)
+        public override object? GetValue(BitmapMetadataKey key)
         {
             switch (key)
             {
-                case BitmapMetadataKey.Comments: return string.Join(Environment.NewLine, _comments);
+                case BitmapMetadataKey.Comments:
+                    return string.Join(Environment.NewLine, _comments);
 
-                default: return null;
+                default:
+                    return null;
             }
         }
     }

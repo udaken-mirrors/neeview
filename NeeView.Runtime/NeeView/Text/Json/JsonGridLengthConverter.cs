@@ -16,7 +16,13 @@ namespace NeeView.Text.Json
     {
         public override GridLength Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
-            return (GridLength)new GridLengthConverter().ConvertFromInvariantString(reader.GetString());
+            var s = reader.GetString();
+            if (s == null) return new GridLength();
+
+            var instance = new GridLengthConverter().ConvertFromInvariantString(s) as GridLength?;
+            if (instance == null) throw new InvalidCastException();
+
+            return instance.Value;
         }
 
         public override void Write(Utf8JsonWriter writer, GridLength value, JsonSerializerOptions options)

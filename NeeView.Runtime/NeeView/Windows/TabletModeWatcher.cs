@@ -21,7 +21,7 @@ namespace NeeView.Windows
 
         private const int WM_SETTINGCHANGE = 0x001A;
 
-        private Window _window;
+        private Window? _window;
         private bool _isTabletMode = false;
         private int _dartyValue = 1;
 
@@ -36,7 +36,7 @@ namespace NeeView.Windows
             var hsrc = HwndSource.FromVisual(window) as HwndSource;
             _window = window;
 
-            hsrc.AddHook(WndProc);
+            hsrc?.AddHook(WndProc);
         }
 
         public bool IsTabletMode
@@ -53,7 +53,7 @@ namespace NeeView.Windows
         {
             Interlocked.Exchange(ref _dartyValue, 0);
 
-            RegistryKey regKey = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\ImmersiveShell");
+            RegistryKey? regKey = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\ImmersiveShell");
             if (regKey != null)
             {
                 _isTabletMode = Convert.ToBoolean(regKey.GetValue("TabletMode", 0));
@@ -78,7 +78,7 @@ namespace NeeView.Windows
 
         private void OnSettingChange(IntPtr wParam, IntPtr lParam)
         {
-            string str = Marshal.PtrToStringAuto(lParam);
+            string? str = Marshal.PtrToStringAuto(lParam);
             if (str == "UserInteractionMode")
             {
                 Interlocked.Exchange(ref _dartyValue, 1);

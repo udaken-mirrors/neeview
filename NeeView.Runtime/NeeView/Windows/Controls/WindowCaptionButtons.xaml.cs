@@ -19,7 +19,7 @@ namespace NeeView.Windows.Controls
 {
     public partial class WindowCaptionButtons : UserControl, IHasMaximizeButton
     {
-        private Window _window;
+        private Window? _window;
         private SnapLayoutPresenter _snapLayoutPresenter;
 
 
@@ -89,7 +89,7 @@ namespace NeeView.Windows.Controls
             _window.StateChanged += Window_StateChanged;
             _snapLayoutPresenter.Attach(_window);
 
-            Window_StateChanged(this, null);
+            Window_StateChanged(this, EventArgs.Empty);
         }
 
 
@@ -104,7 +104,7 @@ namespace NeeView.Windows.Controls
             StrokeThickness = Math.Max(Math.Floor(dpi.DpiScaleX), 1.0) / dpi.DpiScaleX;
         }
 
-        private void Window_StateChanged(object sender, EventArgs e)
+        private void Window_StateChanged(object? sender, EventArgs e)
         {
             if (_window == null) return;
 
@@ -126,7 +126,7 @@ namespace NeeView.Windows.Controls
         /// 現在の最大化ボタンを取得
         /// </summary>
         /// <returns></returns>
-        public Button GetMaximizeButton()
+        public Button? GetMaximizeButton()
         {
             return IsMaximizeEnabled
                 ? this.CaptionMaximizeButton.IsVisible ? this.CaptionMaximizeButton : this.CaptionRestoreButton

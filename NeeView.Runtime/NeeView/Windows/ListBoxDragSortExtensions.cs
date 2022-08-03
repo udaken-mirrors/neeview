@@ -44,6 +44,7 @@ namespace NeeView.Windows
             where T : class
         {
             var listBox = sender as ListBox;
+            if (listBox == null) return;
 
             // ドラッグオブジェクト
             var item = e.Data.GetData(format) as T;
@@ -74,10 +75,11 @@ namespace NeeView.Windows
         }
 
 
-        public static DropInfo<T> GetDropInfo<T>(object sender, DragEventArgs e, string format, ObservableCollection<T> items)
+        public static DropInfo<T>? GetDropInfo<T>(object sender, DragEventArgs e, string format, ObservableCollection<T> items)
             where T : class
         {
             var listBox = sender as ListBox;
+            if (listBox is null) return null;
 
             // ドラッグオブジェクト
             var item = e.Data.GetData(format) as T;
@@ -97,7 +99,15 @@ namespace NeeView.Windows
                 var pos = listBoxItem.TranslatePoint(new Point(0, listBoxItem.ActualHeight), listBox);
                 if (dropPos.Y < pos.Y)
                 {
-                    return new DropInfo<T>(item, listBoxItem.DataContext as T, 1.0 - (pos.Y - dropPos.Y) / listBoxItem.ActualHeight);
+                    var data = listBoxItem.DataContext as T;
+                    if (data != null)
+                    {
+                        return new DropInfo<T>(item, data, 1.0 - (pos.Y - dropPos.Y) / listBoxItem.ActualHeight);
+                    }
+                    else
+                    {
+                        return null;
+                    }
                 }
             }
 

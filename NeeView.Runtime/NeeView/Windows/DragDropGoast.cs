@@ -21,9 +21,9 @@ namespace NeeView.Windows
     /// </summary>
     public class DragDropGoast
     {
-        UIElement _element;
-        AdornerLayer _layer;
-        DragAdorner _goast;
+        private UIElement? _element;
+        private AdornerLayer? _layer;
+        private DragAdorner? _goast;
 
         /// <summary>
         /// 専用ビジュアルをゴーストにする
@@ -38,13 +38,20 @@ namespace NeeView.Windows
                 Detach();
             }
 
-            _element = element;
             var window = Application.Current.Windows.OfType<Window>().FirstOrDefault(w => w.IsActive);
-            var root = window.Content as UIElement;
-            _layer = AdornerLayer.GetAdornerLayer(root);
-            _goast = new DragAdorner(root, visual, 1.0, 0, pos);
+            if (window == null)
+            {
+                return;
+            }
 
-            _layer.Add(_goast);
+            var root = window.Content as UIElement;
+            if (root != null)
+            {
+                _element = element;
+                _layer = AdornerLayer.GetAdornerLayer(root);
+                _goast = new DragAdorner(root, visual, 1.0, 0, pos);
+                _layer.Add(_goast);
+            }
         }
 
         /// <summary>
@@ -59,13 +66,15 @@ namespace NeeView.Windows
                 Detach();
             }
 
-            _element = element;
-            var window = Window.GetWindow(_element) ?? Application.Current.MainWindow;
+            var window = Window.GetWindow(element) ?? Application.Current.MainWindow;
             var root = window.Content as UIElement;
-            _layer = AdornerLayer.GetAdornerLayer(root);
-            _goast = new DragAdorner(root, _element, 0.5, 0, pos);
-
-            _layer.Add(_goast);
+            if (root != null)
+            {
+                _element = element;
+                _layer = AdornerLayer.GetAdornerLayer(root);
+                _goast = new DragAdorner(root, _element, 0.5, 0, pos);
+                _layer.Add(_goast);
+            }
         }
 
 

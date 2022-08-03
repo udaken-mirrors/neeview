@@ -32,9 +32,9 @@ namespace NeeView.Runtime.LayoutPanel
             DependencyProperty.Register("LayoutPanelWindowManager", typeof(LayoutPanelWindowManager), typeof(LayoutPanelWindow), new PropertyMetadata(null));
 
 
-        public LayoutPanel LayoutPanel
+        public LayoutPanel? LayoutPanel
         {
-            get { return (LayoutPanel)GetValue(LayoutPanelProperty); }
+            get { return (LayoutPanel?)GetValue(LayoutPanelProperty); }
             set { SetValue(LayoutPanelProperty, value); }
         }
 
@@ -48,7 +48,7 @@ namespace NeeView.Runtime.LayoutPanel
 
         protected override void OnSourceInitialized(EventArgs e)
         {
-            WindowPlacementTools.RestoreWindowPlacement(this, LayoutPanel?.WindowPlacement);
+            WindowPlacementTools.RestoreWindowPlacement(this, LayoutPanel?.WindowPlacement ?? WindowPlacement.None);
             base.OnSourceInitialized(e);
         }
 
@@ -60,7 +60,10 @@ namespace NeeView.Runtime.LayoutPanel
 
         protected override void OnClosed(EventArgs e)
         {
-            this.LayoutPanelWindowManager?.Closed(LayoutPanel);
+            if (LayoutPanel != null)
+            {
+                this.LayoutPanelWindowManager?.Closed(LayoutPanel);
+            }
             base.OnClosed(e);
         }
 
@@ -102,7 +105,10 @@ namespace NeeView.Runtime.LayoutPanel
 
         private void OpenDockCommand_Execute()
         {
-            this.LayoutPanelWindowManager?.LayoutPanelManager.OpenDock(LayoutPanel);
+            if (LayoutPanel != null)
+            {
+                this.LayoutPanelWindowManager?.LayoutPanelManager.OpenDock(LayoutPanel);
+            }
         }
     }
 

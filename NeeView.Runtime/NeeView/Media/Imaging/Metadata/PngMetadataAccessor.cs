@@ -82,7 +82,7 @@ namespace NeeView.Media.Imaging.Metadata
             return _meta.Format.ToUpper();
         }
 
-        public override object GetValue(BitmapMetadataKey key)
+        public override object? GetValue(BitmapMetadataKey key)
         {
             switch (key)
             {
@@ -102,7 +102,7 @@ namespace NeeView.Media.Imaging.Metadata
             }
         }
 
-        private object GetTime()
+        private object? GetTime()
         {
             var time = _meta.GetQuery("/tIME") as BitmapMetadata;
             if (time != null && false)
@@ -140,7 +140,7 @@ namespace NeeView.Media.Imaging.Metadata
             return null;
         }
 
-        private string GetPngText(string keyword)
+        private string? GetPngText(string keyword)
         {
             if (_textMap.TryGetValue(keyword, out var strings))
             {
@@ -149,7 +149,7 @@ namespace NeeView.Media.Imaging.Metadata
             return null;
         }
 
-        private ReadOnlyCollection<string> GetPngTextCollection(string keyword)
+        private ReadOnlyCollection<string>? GetPngTextCollection(string keyword)
         {
             if (_textMap.TryGetValue(keyword, out var strings))
             {

@@ -11,7 +11,7 @@ namespace NeeView.Media.Imaging.Metadata
         }
 
 
-        public override object GetValue(BitmapMetadataKey key)
+        public override object? GetValue(BitmapMetadataKey key)
         {
             switch (key)
             {

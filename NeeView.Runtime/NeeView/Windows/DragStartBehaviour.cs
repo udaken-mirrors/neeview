@@ -27,20 +27,20 @@ namespace NeeView.Windows
     {
         private Point _origin;
         private bool _isButtonDown;
-        private IInputElement _dragItem;
+        private IInputElement? _dragItem;
         private Point _dragStartPos;
-        private DragAdorner _dragGhost;
+        private DragAdorner? _dragGhost;
 
 
         /// <summary>
         /// ドラッグ開始イベント
         /// </summary>
-        public event EventHandler<DragStartEventArgs> DragBegin;
+        public event EventHandler<DragStartEventArgs>? DragBegin;
 
         /// <summary>
         /// ドラッグ終了イベント
         /// </summary>
-        public event EventHandler DragEnd;
+        public event EventHandler? DragEnd;
 
 
         /// <summary>
@@ -49,7 +49,7 @@ namespace NeeView.Windows
         /// <remarks>
         /// saticなオブジェクトになることがあるので標準のプロパティにしている
         /// </remarks>
-        public IDragDropHook DragDropHook { get; set; }
+        public IDragDropHook? DragDropHook { get; set; }
 
 
         /// <summary>
@@ -184,6 +184,11 @@ namespace NeeView.Windows
             {
                 return;
             }
+            if (_dragItem == null)
+            {
+                return;
+            }
+
             var point = e.GetPosition(this.AssociatedObject);
 
             if (CheckDistance(point, _origin) && _dragGhost == null)
@@ -229,14 +234,20 @@ namespace NeeView.Windows
                             dragStartPos = new Point(bounds.Width * 0.5, bounds.Height * 0.5);
                         }
 
-                        _dragGhost = new DragAdorner(root, ghost, 0.5, 0, dragStartPos);
-                        layer.Add(_dragGhost);
+                        if (root != null && ghost != null)
+                        {
+                            _dragGhost = new DragAdorner(root, ghost, 0.5, 0, dragStartPos);
+                            layer.Add(_dragGhost);
+                        }
 
                         DragDropHook?.BeginDragDrop(sender, this.AssociatedObject, args.Data, args.AllowedEffects);
                         DragDrop.DoDragDrop(this.AssociatedObject, args.Data, args.AllowedEffects);
                         DragDropHook?.EndDragDrop(sender, this.AssociatedObject, args.Data, args.AllowedEffects);
 
-                        layer.Remove(_dragGhost);
+                        if (_dragGhost != null)
+                        {
+                            layer.Remove(_dragGhost);
+                        }
                     }
                     else
                     {
@@ -251,7 +262,7 @@ namespace NeeView.Windows
                 _dragGhost = null;
                 _dragItem = null;
 
-                DragEnd?.Invoke(sender, null);
+                DragEnd?.Invoke(sender, EventArgs.Empty);
             }
         }
 
@@ -289,6 +300,10 @@ namespace NeeView.Windows
             {
                 return;
             }
+            if (_dragItem == null)
+            {
+                return;
+            }
 
             try
             {
@@ -323,7 +338,7 @@ namespace NeeView.Windows
         /// <param name="e"></param>
         private void AutoScroll(FrameworkElement container, QueryContinueDragEventArgs e)
         {
-            ScrollViewer scrollViewer = VisualTreeUtility.FindVisualChild<ScrollViewer>(container);
+            ScrollViewer? scrollViewer = VisualTreeUtility.FindVisualChild<ScrollViewer>(container);
             if (scrollViewer == null)
             {
                 return;

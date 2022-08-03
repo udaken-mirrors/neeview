@@ -24,32 +24,32 @@ namespace NeeView.Runtime.LayoutPanel
             ["Close"] = "_Close",
         };
 
-        public ILayoutPanelWindowBuilder WindowBuilder { get; set; }
+        public ILayoutPanelWindowBuilder? WindowBuilder { get; set; }
 
         public LayoutPanelManager()
         {
             Windows = new LayoutPanelWindowManager(this);
         }
 
-        public event EventHandler DragBegin;
-        public event EventHandler DragEnd;
+        public event EventHandler? DragBegin;
+        public event EventHandler? DragEnd;
 
 
-        public (LayoutDockPanelContent dock, LayoutPanelCollection collection) FindPanelContains(LayoutPanel panel)
+        public LayoutDockPanelNode? FindLayoutDockPanelNode(LayoutPanel panel)
         {
             foreach (var dock in Docks.Values)
             {
                 var item = dock.FirstOrDefault(e => e.Contains(panel));
                 if (item != null)
                 {
-                    return (dock, item);
+                    return new LayoutDockPanelNode(dock, item);
                 }
             }
 
-            return (null, null);
+            return null;
         }
 
-        public LayoutDockPanelContent FindPanelListCollection(LayoutPanelCollection collection)
+        public LayoutDockPanelContent? FindPanelListCollection(LayoutPanelCollection collection)
         {
             return Docks.Values.FirstOrDefault(e => e.Contains(collection));
         }
@@ -124,9 +124,9 @@ namespace NeeView.Runtime.LayoutPanel
             if (panel is null) throw new ArgumentNullException(nameof(panel));
 
             Windows.Close(panel);
-            (var collection, var list) = FindPanelContains(panel);
-            if (collection == null) throw new InvalidOperationException($"This panel is not registered.: {panel}");
-            collection.SelectedItem = list;
+            var node = FindLayoutDockPanelNode(panel);
+            if (node == null) throw new InvalidOperationException($"This panel is not registered.: {panel}");
+            node.Dock.SelectedItem = node.Panels;
         }
 
         public void Close(LayoutPanel panel)
@@ -164,23 +164,23 @@ namespace NeeView.Runtime.LayoutPanel
         // パネルの独立
         public void StandAlone(LayoutPanel panel)
         {
-            (var collection, var list) = FindPanelContains(panel);
-            if (collection == null) throw new InvalidOperationException($"This panel is not registered.: {panel}");
+            var node = FindLayoutDockPanelNode(panel);
+            if (node == null) throw new InvalidOperationException($"This panel is not registered.: {panel}");
 
-            if (list.IsStandAlone(panel)) return;
+            if (node.Panels.IsStandAlone(panel)) return;
 
-            list.Remove(panel);
-            collection.Insert(collection.IndexOf(list) + 1, new LayoutPanelCollection() { panel });
+            node.Panels.Remove(panel);
+            node.Dock.Insert(node.Dock.IndexOf(node.Panels) + 1, new LayoutPanelCollection() { panel });
         }
 
         public void RaiseDragBegin()
         {
-            DragBegin?.Invoke(this, null);
+            DragBegin?.Invoke(this, EventArgs.Empty);
         }
 
         public void RaiseDragEnd()
         {
-            DragEnd?.Invoke(this, null);
+            DragEnd?.Invoke(this, EventArgs.Empty);
         }
 
 
@@ -188,11 +188,11 @@ namespace NeeView.Runtime.LayoutPanel
 
         public class Memento
         {
-            public Dictionary<string, LayoutPanel.Memento> Panels { get; set; }
+            public Dictionary<string, LayoutPanel.Memento>? Panels { get; set; }
 
-            public Dictionary<string, LayoutDockPanelContent.Memento> Docks { get; set; }
+            public Dictionary<string, LayoutDockPanelContent.Memento>? Docks { get; set; }
 
-            public LayoutPanelWindowManager.Memento Windows { get; set; }
+            public LayoutPanelWindowManager.Memento? Windows { get; set; }
         }
 
 
@@ -213,14 +213,20 @@ namespace NeeView.Runtime.LayoutPanel
 
             this.Windows.CloseAll();
 
-            foreach (var item in memento.Panels.Where(e => Panels.ContainsKey(e.Key)))
+            if (memento.Panels != null)
             {
-                Panels[item.Key].Restore(item.Value);
+                foreach (var item in memento.Panels.Where(e => Panels.ContainsKey(e.Key)))
+                {
+                    Panels[item.Key].Restore(item.Value);
+                }
             }
 
-            foreach(var dock in memento.Docks.Where(e => Docks.ContainsKey(e.Key)))
+            if (memento.Docks != null)
             {
-                Docks[dock.Key].Restore(dock.Value);
+                foreach (var dock in memento.Docks.Where(e => Docks.ContainsKey(e.Key)))
+                {
+                    Docks[dock.Key].Restore(dock.Value);
+                }
             }
 
             // すべてのパネル登録を保証する
@@ -235,6 +241,5 @@ namespace NeeView.Runtime.LayoutPanel
 
         #endregion
     }
-
 
 }

@@ -8,22 +8,23 @@ using System.Windows.Media.Imaging;
 
 namespace NeeView.Media.Imaging.Metadata
 {
-    public class BitmapMetadataDatabase : IReadOnlyDictionary<BitmapMetadataKey, object>
+    public class BitmapMetadataDatabase : IReadOnlyDictionary<BitmapMetadataKey, object?>
     {
-        private static readonly Dictionary<BitmapMetadataKey, object> _emptyMap = Enum.GetValues(typeof(BitmapMetadataKey)).Cast<BitmapMetadataKey>().ToDictionary(e => e, e => (object)null);
+        private static readonly Dictionary<BitmapMetadataKey, object?> _emptyMap = Enum.GetValues(typeof(BitmapMetadataKey)).Cast<BitmapMetadataKey>().ToDictionary(e => e, e => (object?)null);
 
-        private Dictionary<BitmapMetadataKey, object> _map;
+        private Dictionary<BitmapMetadataKey, object?> _map;
 
         public BitmapMetadataDatabase()
         {
             _map = _emptyMap;
+            this.Format = "(Undefined)";
         }
 
-        public BitmapMetadataDatabase(BitmapMetadata meta)
+        public BitmapMetadataDatabase(BitmapMetadata? meta)
         {
-            var accessor = BitmapMetadataAccessorFactory.Create(meta);
+            var accessor = (meta != null) ? BitmapMetadataAccessorFactory.Create(meta) : null;
             _map = accessor != null ? CreateMap(accessor) : _emptyMap;
-            this.Format = accessor?.GetFormat();
+            this.Format = accessor?.GetFormat() ?? "(Unknown)";
             this.IsOriantationEnabled = true;
         }
 
@@ -46,9 +47,9 @@ namespace NeeView.Media.Imaging.Metadata
         public bool IsOriantationEnabled { get; private set; }
 
 
-        private Dictionary<BitmapMetadataKey, object> CreateMap(BitmapMetadataAccessor accessor)
+        private Dictionary<BitmapMetadataKey, object?> CreateMap(BitmapMetadataAccessor accessor)
         {
-            var map = new Dictionary<BitmapMetadataKey, object>();
+            var map = new Dictionary<BitmapMetadataKey, object?>();
 
             foreach (BitmapMetadataKey key in Enum.GetValues(typeof(BitmapMetadataKey)))
             {
@@ -73,31 +74,31 @@ namespace NeeView.Media.Imaging.Metadata
         }
 
 
-        public object ElementAt(BitmapMetadataKey key) => _map[key];
+        public object? ElementAt(BitmapMetadataKey key) => _map[key];
 
         #region IReadOnlyDictionary
 
-        public object this[BitmapMetadataKey key] => ((IReadOnlyDictionary<BitmapMetadataKey, object>)_map)[key];
+        public object? this[BitmapMetadataKey key] => ((IReadOnlyDictionary<BitmapMetadataKey, object?>)_map)[key];
 
-        public IEnumerable<BitmapMetadataKey> Keys => ((IReadOnlyDictionary<BitmapMetadataKey, object>)_map).Keys;
+        public IEnumerable<BitmapMetadataKey> Keys => ((IReadOnlyDictionary<BitmapMetadataKey, object?>)_map).Keys;
 
-        public IEnumerable<object> Values => ((IReadOnlyDictionary<BitmapMetadataKey, object>)_map).Values;
+        public IEnumerable<object?> Values => ((IReadOnlyDictionary<BitmapMetadataKey, object?>)_map).Values;
 
-        public int Count => ((IReadOnlyCollection<KeyValuePair<BitmapMetadataKey, object>>)_map).Count;
+        public int Count => ((IReadOnlyCollection<KeyValuePair<BitmapMetadataKey, object?>>)_map).Count;
 
         public bool ContainsKey(BitmapMetadataKey key)
         {
-            return ((IReadOnlyDictionary<BitmapMetadataKey, object>)_map).ContainsKey(key);
+            return ((IReadOnlyDictionary<BitmapMetadataKey, object?>)_map).ContainsKey(key);
         }
 
-        public IEnumerator<KeyValuePair<BitmapMetadataKey, object>> GetEnumerator()
+        public IEnumerator<KeyValuePair<BitmapMetadataKey, object?>> GetEnumerator()
         {
-            return ((IEnumerable<KeyValuePair<BitmapMetadataKey, object>>)_map).GetEnumerator();
+            return ((IEnumerable<KeyValuePair<BitmapMetadataKey, object?>>)_map).GetEnumerator();
         }
 
-        public bool TryGetValue(BitmapMetadataKey key, out object value)
+        public bool TryGetValue(BitmapMetadataKey key, out object? value)
         {
-            return ((IReadOnlyDictionary<BitmapMetadataKey, object>)_map).TryGetValue(key, out value);
+            return ((IReadOnlyDictionary<BitmapMetadataKey, object?>)_map).TryGetValue(key, out value);
         }
 
         IEnumerator IEnumerable.GetEnumerator()

@@ -9,7 +9,7 @@ namespace NeeView.Windows.Controls
         /// 最大化ボタン取得
         /// </summary>
         /// <returns>nullの場合は最大化ボタンは存在しない</returns>
-        Button GetMaximizeButton();
+        Button? GetMaximizeButton();
 
         /// <summary>
         /// 最大化ボタン背景設定

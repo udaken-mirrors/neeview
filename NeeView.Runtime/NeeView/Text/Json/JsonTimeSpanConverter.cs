@@ -11,7 +11,10 @@ namespace NeeView.Text.Json
     {
         public override TimeSpan Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
-            return TimeSpan.Parse(reader.GetString());
+            var s = reader.GetString();
+            if (s == null) return new TimeSpan();
+
+            return TimeSpan.Parse(s);
         }
 
         public override void Write(Utf8JsonWriter writer, TimeSpan value, JsonSerializerOptions options)

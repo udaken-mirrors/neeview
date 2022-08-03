@@ -72,10 +72,8 @@ namespace NeeView.Media.Imaging.Metadata
             return _metadata.Format.ToUpper();
         }
 
-        public override object GetValue(BitmapMetadataKey key)
+        public override object? GetValue(BitmapMetadataKey key)
         {
-            if (_metadata is null) return null;
-
             switch (key)
             {
                 // -- Description
@@ -134,7 +132,7 @@ namespace NeeView.Media.Imaging.Metadata
             }
         }
 
-        private object GetEnumValue<T>(string policy)
+        private object? GetEnumValue<T>(string policy)
             where T : Enum
         {
             var value = _metadata.GetQuery(policy);
@@ -151,7 +149,7 @@ namespace NeeView.Media.Imaging.Metadata
 
 
 
-        private object GetFlashMode(string policy)
+        private object? GetFlashMode(string policy)
         {
             var value = _metadata.GetQuery(policy);
             switch (value)
@@ -164,7 +162,7 @@ namespace NeeView.Media.Imaging.Metadata
             }
         }
 
-        private object GetDateTime(string policy)
+        private object? GetDateTime(string policy)
         {
             var value = _metadata.GetQuery(policy);
 
@@ -184,7 +182,7 @@ namespace NeeView.Media.Imaging.Metadata
         }
 
 
-        private object GetDegreeMeterSeconds(string policy)
+        private object? GetDegreeMeterSeconds(string policy)
         {
             var value = _metadata.GetQuery(policy);
             if (value is string s)
@@ -195,7 +193,7 @@ namespace NeeView.Media.Imaging.Metadata
             return value;
         }
 
-        private object GetRational(string policy)
+        private object? GetRational(string policy)
         {
             var value = _metadata.GetQuery(policy);
             if (value is null) return null;
@@ -213,13 +211,8 @@ namespace NeeView.Media.Imaging.Metadata
             }
         }
 
-        private object ConvertToRational(string value)
+        private object? ConvertToRational(string value)
         {
-            if (value is null)
-            {
-                return null;
-            }
-
             if (URational.TryParse(value, out var uRational))
             {
                 return uRational;
@@ -234,7 +227,7 @@ namespace NeeView.Media.Imaging.Metadata
         }
 
 
-        private object GetAltitude(string query, string queryRef)
+        private object? GetAltitude(string query, string queryRef)
         {
             var value = _metadata.GetQuery(query);
             if (value is double altitude)

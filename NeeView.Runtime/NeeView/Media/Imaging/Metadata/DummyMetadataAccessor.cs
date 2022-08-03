@@ -4,10 +4,10 @@
     {
         public override string GetFormat()
         {
-            return null;
+            return "(Dummy)";
         }
 
-        public override object GetValue(BitmapMetadataKey key)
+        public override object? GetValue(BitmapMetadataKey key)
         {
             return null;
         }

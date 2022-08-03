@@ -1,14 +1,11 @@
-﻿using System.Windows;
+﻿using System;
+using System.Windows;
 
 namespace NeeView.Windows
 {
     public class DropInfo<T>
         where T : class
     {
-        public DropInfo()
-        {
-        }
-
         public DropInfo(T data, T dropTarget, double position)
         {
             Data = data;
@@ -18,7 +15,10 @@ namespace NeeView.Windows
 
         public DropInfo(DragEventArgs e, string format, T dropTarget, FrameworkElement dropTargetVisual)
         {
-            Data = e.Data.GetData(format) as T;
+            var data = e.Data.GetData(format) as T;
+            if (data == null) throw new ArgumentException();
+
+            Data = data;
             DropTarget = dropTarget; 
 
             var pos = e.GetPosition(dropTargetVisual);

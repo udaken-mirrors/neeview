@@ -5,12 +5,12 @@ namespace NeeView.Media.Imaging.Metadata
 {
     public static class BitmapMetadataExtensions
     {
-        public static object GetQuery(this BitmapMetadata meta, params string[] queries)
+        public static object? GetQuery(this BitmapMetadata meta, params string[] queries)
         {
             return meta.GetQueryFirst(queries);
         }
 
-        public static object GetQueryFirst(this BitmapMetadata meta, IEnumerable<string> queries)
+        public static object? GetQueryFirst(this BitmapMetadata meta, IEnumerable<string> queries)
         {
             foreach (var query in queries)
             {
