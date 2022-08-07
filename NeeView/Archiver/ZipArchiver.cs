@@ -117,7 +117,7 @@ namespace NeeView
         {
             if (entry.Id < 0) throw new ApplicationException("Cannot open this entry: " + entry.EntryName);
 
-            using (var archiver = ZipFile.OpenRead(Path))
+            using (var archiver = ZipFile.Open(Path, ZipArchiveMode.Read, Environment.Encoding))
             {
                 ZipArchiveEntry archiveEntry = archiver.Entries[entry.Id];
                 if (archiveEntry.FullName != entry.RawEntryName)
@@ -140,7 +140,7 @@ namespace NeeView
         {
             if (entry.Id < 0) throw new ApplicationException("Cannot open this entry: " + entry.EntryName);
 
-            using (var archiver = ZipFile.OpenRead(Path))
+            using (var archiver = ZipFile.Open(Path, ZipArchiveMode.Read, Environment.Encoding))
             {
                 ZipArchiveEntry archiveEntry = archiver.Entries[entry.Id];
                 archiveEntry.ExtractToFile(exportFileName, isOverwrite);
