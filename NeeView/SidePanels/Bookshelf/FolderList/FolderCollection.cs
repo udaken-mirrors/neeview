@@ -79,7 +79,7 @@ namespace NeeView
         /// <summary>
         /// 検索可能？
         /// </summary>
-        public virtual bool IsSearchEnabled => false; 
+        public virtual bool IsSearchEnabled => false;
 
         /// <summary>
         /// ソート適用の種類
@@ -273,10 +273,10 @@ namespace NeeView
         /// </summary>
         /// <param name="source"></param>
         /// <returns></returns>
-        protected IEnumerable<FolderItem> Sort(IEnumerable<FolderItem> source)
+        protected List<FolderItem> Sort(IEnumerable<FolderItem> source, CancellationToken token)
         {
             IOrderedEnumerable<FolderItem> orderSource;
-            
+
             if (Config.Current.Bookshelf.IsOrderWithoutFileType)
             {
                 // NOTE: 並び順を変えないOrderBy
@@ -287,37 +287,52 @@ namespace NeeView
                 orderSource = source.OrderBy(e => e.Type);
             }
 
-            switch (FolderOrder)
+            var order = FolderOrder switch
             {
-                default:
-                case FolderOrder.FileName:
-                    return orderSource.ThenBy(e => e, new ComparerFileName());
-                case FolderOrder.FileNameDescending:
-                    return orderSource.ThenByDescending(e => e, new ComparerFileName());
-                case FolderOrder.Path:
-                    return orderSource.ThenBy(e => e, new ComparerFullPath());
-                case FolderOrder.PathDescending:
-                    return orderSource.ThenByDescending(e => e, new ComparerFullPath());
-                case FolderOrder.FileType:
-                    return orderSource.ThenBy(e => e, new ComparerFileType());
-                case FolderOrder.FileTypeDescending:
-                    return orderSource.ThenByDescending(e => e, new ComparerFileType());
-                case FolderOrder.TimeStamp:
-                    return orderSource.ThenBy(e => e.LastWriteTime).ThenBy(e => e, new ComparerFileName());
-                case FolderOrder.TimeStampDescending:
-                    return orderSource.ThenByDescending(e => e.LastWriteTime).ThenBy(e => e, new ComparerFileName());
-                case FolderOrder.EntryTime:
-                    return orderSource.ThenBy(e => e.EntryTime).ThenBy(e => e, new ComparerFileName());
-                case FolderOrder.EntryTimeDescending:
-                    return orderSource.ThenByDescending(e => e.EntryTime).ThenBy(e => e, new ComparerFileName());
-                case FolderOrder.Size:
-                    return orderSource.ThenBy(e => e.Length).ThenBy(e => e, new ComparerFileName());
-                case FolderOrder.SizeDescending:
-                    return orderSource.ThenByDescending(e => e.Length).ThenBy(e => e, new ComparerFileName());
-                case FolderOrder.Random:
-                    var random = new Random(RandomSeed);
-                    return orderSource.ThenBy(e => random.Next());
+                FolderOrder.FileName
+                    => orderSource.ThenBy(e => e, new ComparerFileName(token)),
+                FolderOrder.FileNameDescending
+                    => orderSource.ThenByDescending(e => e, new ComparerFileName(token)),
+                FolderOrder.Path
+                    => orderSource.ThenBy(e => e, new ComparerFullPath(token)),
+                FolderOrder.PathDescending
+                    => orderSource.ThenByDescending(e => e, new ComparerFullPath(token)),
+                FolderOrder.FileType
+                    => orderSource.ThenBy(e => e, new ComparerFileType(token)),
+                FolderOrder.FileTypeDescending
+                    => orderSource.ThenByDescending(e => e, new ComparerFileType(token)),
+                FolderOrder.TimeStamp
+                    => orderSource.ThenBy(e => e.LastWriteTime).ThenBy(e => e, new ComparerFileName(token)),
+                FolderOrder.TimeStampDescending
+                    => orderSource.ThenByDescending(e => e.LastWriteTime).ThenBy(e => e, new ComparerFileName(token)),
+                FolderOrder.EntryTime
+                    => orderSource.ThenBy(e => e.EntryTime).ThenBy(e => e, new ComparerFileName(token)),
+                FolderOrder.EntryTimeDescending
+                    => orderSource.ThenByDescending(e => e.EntryTime).ThenBy(e => e, new ComparerFileName(token)),
+                FolderOrder.Size
+                    => orderSource.ThenBy(e => e.Length).ThenBy(e => e, new ComparerFileName(token)),
+                FolderOrder.SizeDescending
+                    => orderSource.ThenByDescending(e => e.Length).ThenBy(e => e, new ComparerFileName(token)),
+                FolderOrder.Random
+                    => CreateRandomOrder(orderSource),
+                _
+                    => orderSource.ThenBy(e => e, new ComparerFileName(token)),
+            };
+
+            try
+            {
+                return order.ToList();
             }
+            catch (InvalidOperationException ex) when (ex.InnerException is OperationCanceledException opex)
+            {
+                throw opex;
+            }
+        }
+
+        private IOrderedEnumerable<FolderItem> CreateRandomOrder(IOrderedEnumerable<FolderItem> orderSource)
+        {
+            var random = new Random(RandomSeed);
+            return orderSource.ThenBy(e => random.Next());
         }
 
         /// <summary>
@@ -325,8 +340,17 @@ namespace NeeView
         /// </summary>
         public class ComparerFileName : IComparer<FolderItem>
         {
+            private CancellationToken _token;
+
+            public ComparerFileName(CancellationToken token)
+            {
+                _token = token;
+            }
+
             public int Compare(FolderItem x, FolderItem y)
             {
+                _token.ThrowIfCancellationRequested();
+
                 return NaturalSort.Compare(x.Name, y.Name);
             }
         }
@@ -337,8 +361,17 @@ namespace NeeView
         /// </summary>
         public class ComparerFullPath : IComparer<FolderItem>
         {
+            private CancellationToken _token;
+
+            public ComparerFullPath(CancellationToken token)
+            {
+                _token = token;
+            }
+
             public int Compare(FolderItem x, FolderItem y)
             {
+                _token.ThrowIfCancellationRequested();
+
                 return NaturalSort.Compare(x.TargetPath.FullPath, y.TargetPath.FullPath);
             }
         }
@@ -348,8 +381,17 @@ namespace NeeView
         /// </summary>
         public class ComparerFileType : IComparer<FolderItem>
         {
+            private CancellationToken _token;
+
+            public ComparerFileType(CancellationToken token)
+            {
+                _token = token;
+            }
+
             public int Compare(FolderItem x, FolderItem y)
             {
+                _token.ThrowIfCancellationRequested();
+
                 // ディレクトリは種類判定なし
                 if (x.IsDirectoryMaybe())
                 {
@@ -458,7 +500,7 @@ namespace NeeView
                 else if (Config.Current.Bookshelf.IsInsertItem)
                 {
                     // 別にリストを作ってソートを実行し、それで挿入位置を決める
-                    var list = Sort(this.Items.Concat(new List<FolderItem>() { item })).ToList();
+                    var list = Sort(this.Items.Concat(new List<FolderItem>() { item }), CancellationToken.None);
                     var index = list.IndexOf(item);
 
                     if (index >= 0)

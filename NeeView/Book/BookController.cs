@@ -248,7 +248,7 @@ namespace NeeView
                 __CommandWriteLine($"Sort: {_book.Pages.SortMode}");
                 var page = _viewer.GetViewPage();
 
-                _book.Pages.Sort();
+                _book.Pages.Sort(token);
 
                 var index = (_book.Pages.SortMode == PageSortMode.Random && Config.Current.Book.ResetPageWhenRandomSort) ? 0 : _book.Pages.GetIndex(page);
                 var pagePosition = new PagePosition(index, 0);

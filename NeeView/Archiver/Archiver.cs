@@ -74,9 +74,9 @@ namespace NeeView
             }
         }
 
-#endregion
+        #endregion
 
-#region Properties
+        #region Properties
 
         // アーカイブ実体のパス
         public string Path { get; protected set; }
@@ -149,9 +149,9 @@ namespace NeeView
         /// </summary>
         public string Ident => (Parent == null || Parent is FolderArchive) ? Path : LoosePath.Combine(Parent.Ident, $"{Id}.{EntryName}");
 
-#endregion
+        #endregion
 
-#region Methods
+        #region Methods
 
         // 本来のファイルシスでのパスを取得
         public string GetSourceFileSystemPath()
@@ -202,7 +202,7 @@ namespace NeeView
         /// <summary>
         /// エントリリストを取得
         /// </summary>
-        public async Task<List<ArchiveEntry>> GetEntriesAsync(CancellationToken token)
+        public async ValueTask<List<ArchiveEntry>> GetEntriesAsync(CancellationToken token)
         {
             token.ThrowIfCancellationRequested();
 
@@ -392,7 +392,7 @@ namespace NeeView
             return IsFileSystem || entry.Link != null;
         }
 
-#endregion
+        #endregion
     }
 
     /// <summary>

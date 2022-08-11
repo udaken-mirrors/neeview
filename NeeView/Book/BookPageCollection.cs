@@ -3,7 +3,9 @@ using NeeLaboratory.ComponentModel;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Threading;
 
 namespace NeeView
 {
@@ -13,16 +15,14 @@ namespace NeeView
         private PageThumbnailPool _thumbnaulPool = new PageThumbnailPool();
 
         // ページ列
-        private PageSortMode _sortMode = PageSortMode.FileName;
+        private PageSortMode _sortMode = PageSortMode.Entry;
 
 
-        public BookPageCollection(List<Page> pages, PageSortMode sortMode)
+        public BookPageCollection(List<Page> pages)
         {
             Pages = pages;
 
             PageMap = Pages.ToMultiMap(e => e.EntryFullName, e => e);
-
-            _sortMode = sortMode;
 
             foreach (var page in Pages)
             {
@@ -33,8 +33,6 @@ namespace NeeView
             {
                 Pages[i].EntryIndex = i;
             }
-
-            Sort();
         }
 
 
@@ -174,8 +172,13 @@ namespace NeeView
 
         #region ページの並び替え
 
-        // ページの並び替え
-        public void Sort()
+        public void InitializeSort(PageSortMode sortMode, CancellationToken token)
+        {
+            _sortMode = sortMode;
+            Sort(token);
+        }
+
+        public void Sort(CancellationToken token)
         {
             if (Pages.Count <= 0) return;
 
@@ -186,22 +189,22 @@ namespace NeeView
             switch (SortMode)
             {
                 case PageSortMode.FileName:
-                    pages = Pages.OrderBy(e => e.PageType).ThenBy(e => e, new ComparerFileName(isSortFileFirst));
+                    pages = Pages.OrderBy(e => e.PageType).ThenBy(e => e, new ComparerFileName(isSortFileFirst, token));
                     break;
                 case PageSortMode.FileNameDescending:
-                    pages = Pages.OrderBy(e => e.PageType).ThenByDescending(e => e, new ComparerFileName(isSortFileFirst));
+                    pages = Pages.OrderBy(e => e.PageType).ThenByDescending(e => e, new ComparerFileName(isSortFileFirst, token));
                     break;
                 case PageSortMode.TimeStamp:
-                    pages = Pages.OrderBy(e => e.PageType).ThenBy(e => e.Entry.LastWriteTime).ThenBy(e => e, new ComparerFileName(isSortFileFirst));
+                    pages = Pages.OrderBy(e => e.PageType).ThenBy(e => e.Entry.LastWriteTime).ThenBy(e => e, new ComparerFileName(isSortFileFirst, token));
                     break;
                 case PageSortMode.TimeStampDescending:
-                    pages = Pages.OrderBy(e => e.PageType).ThenByDescending(e => e.Entry.LastWriteTime).ThenBy(e => e, new ComparerFileName(isSortFileFirst));
+                    pages = Pages.OrderBy(e => e.PageType).ThenByDescending(e => e.Entry.LastWriteTime).ThenBy(e => e, new ComparerFileName(isSortFileFirst, token));
                     break;
                 case PageSortMode.Size:
-                    pages = Pages.OrderBy(e => e.PageType).ThenBy(e => e.Entry.Length).ThenBy(e => e, new ComparerFileName(isSortFileFirst));
+                    pages = Pages.OrderBy(e => e.PageType).ThenBy(e => e.Entry.Length).ThenBy(e => e, new ComparerFileName(isSortFileFirst, token));
                     break;
                 case PageSortMode.SizeDescending:
-                    pages = Pages.OrderBy(e => e.PageType).ThenByDescending(e => e.Entry.Length).ThenBy(e => e, new ComparerFileName(isSortFileFirst));
+                    pages = Pages.OrderBy(e => e.PageType).ThenByDescending(e => e.Entry.Length).ThenBy(e => e, new ComparerFileName(isSortFileFirst, token));
                     break;
                 case PageSortMode.Random:
                     var random = new Random();
@@ -217,12 +220,19 @@ namespace NeeView
                     throw new NotImplementedException();
             }
 
-            Pages = pages.ToList();
+            try
+            {
+                Pages = pages.ToList();
 
-            // ページ ナンバリング
-            PagesNumbering();
+                // ページ ナンバリング
+                PagesNumbering();
 
-            PagesSorted?.Invoke(this, null);
+                PagesSorted?.Invoke(this, null);
+            }
+            catch (InvalidOperationException ex) when (ex.InnerException is OperationCanceledException canceledException)
+            {
+                throw canceledException;
+            }
         }
 
         /// <summary>
@@ -242,14 +252,18 @@ namespace NeeView
         private class ComparerFileName : IComparer<Page>
         {
             private int _sortFileFirstSign;
+            private CancellationToken _token;
 
-            public ComparerFileName(bool isSortFileFirst)
+            public ComparerFileName(bool isSortFileFirst, CancellationToken token)
             {
                 _sortFileFirstSign = isSortFileFirst ? 1 : -1;
+                _token = token;
             }
 
             public int Compare(Page x, Page y)
             {
+                _token.ThrowIfCancellationRequested();
+
                 var xName = x.GetEntryFullNameTokens();
                 var yName = y.GetEntryFullNameTokens();
 

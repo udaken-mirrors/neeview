@@ -54,7 +54,7 @@ namespace NeeView
                 .Where(e => e != null)
                 .ToList();
 
-            var list = Sort(items).ToList();
+            var list = Sort(items, token);
 
             if (!list.Any())
             {

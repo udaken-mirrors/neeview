@@ -46,7 +46,7 @@ namespace NeeView
                 .Select(e => CreateFolderItem(e, e.Id))
                 .Where(e => e != null);
 
-            var list = Sort(items).ToList();
+            var list = Sort(items, token);
 
             if (!list.Any())
             {

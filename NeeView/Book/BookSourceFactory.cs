@@ -36,7 +36,9 @@ namespace NeeView
             // Validate sort mode
             var sortMode = ValidatePageSortMode(setting.SortMode, archiveEntryCollection);
 
-            var book = new BookSource(archiveEntryCollection, new BookPageCollection(pages, sortMode));
+            var pageCollection = new BookPageCollection(pages);
+            pageCollection.InitializeSort(sortMode, token);
+            var book = new BookSource(archiveEntryCollection, pageCollection);
             book.SubFolderCount = subFolderCount;
 
             return book;
@@ -79,7 +81,7 @@ namespace NeeView
             }
 
             var bookPrefix = LoosePath.TrimDirectoryEnd(archiveEntryCollection.Path);
-            return entries.Select(e => CreatePage(bookPrefix, e)).ToList();
+            return entries.Select(e => CreatePage(bookPrefix, e, token)).ToList();
         }
 
         /// <summary>
@@ -87,8 +89,10 @@ namespace NeeView
         /// </summary>
         /// <param name="entry">ファイルエントリ</param>
         /// <returns></returns>
-        private Page CreatePage(string bookPrefix, ArchiveEntry entry)
+        private Page CreatePage(string bookPrefix, ArchiveEntry entry, CancellationToken token)
         {
+            token.ThrowIfCancellationRequested();
+
             Page page;
 
             if (entry.IsImage())

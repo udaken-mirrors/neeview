@@ -40,10 +40,10 @@ namespace NeeView
 
         public override async Task InitializeItemsAsync(CancellationToken token)
         {
-            await Task.Run(() => InitializeItems());
+            await Task.Run(() => InitializeItems(token));
         }
 
-        private void InitializeItems()
+        private void InitializeItems(CancellationToken token)
         {
             if (string.IsNullOrWhiteSpace(Place.SimplePath))
             {
@@ -90,7 +90,7 @@ namespace NeeView
                             items = items.Where(e => !BookshelfFolderList.Current.ExcludeRegex.IsMatch(e.Name)).ToList();
                         }
 
-                        var list = Sort(items).ToList();
+                        var list = Sort(items, token);
 
                         if (!list.Any())
                         {
