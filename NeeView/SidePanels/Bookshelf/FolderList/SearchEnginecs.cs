@@ -47,7 +47,6 @@ namespace NeeView
             _engine = new NeeLaboratory.IO.Search.SearchEngine();
             _engine.Context.NodeFilter = NodeFilter;
             _engine.SetSearchAreas(new List<SearchArea> { new SearchArea(path, includeSubdirectories) });
-            _engine.Start();
         }
 
         #endregion
@@ -118,7 +117,7 @@ namespace NeeView
         //
         public void Stop()
         {
-            _engine?.Stop();
+            _engine?.Dispose();
             _engine = null;
         }
 
@@ -133,8 +132,6 @@ namespace NeeView
 
             // 監視開始
             var watcher = new SearchResultWatcher(_engine, result);
-            watcher.Start();
-
             return watcher;
         }
 

@@ -100,7 +100,8 @@ namespace NeeView
                     RequestDelete(new QueryPath(e.Content.Path));
                     break;
                 case NeeLaboratory.IO.Search.NodeChangedAction.Rename:
-                    RequestRename(new QueryPath(e.OldPath), new QueryPath(e.Content.Path));
+                    var rename = (NeeLaboratory.IO.Search.SearchResultRenamedEventArgs)e;
+                    RequestRename(new QueryPath(rename.OldPath), new QueryPath(e.Content.Path));
                     break;
                 default:
                     throw new NotSupportedException();

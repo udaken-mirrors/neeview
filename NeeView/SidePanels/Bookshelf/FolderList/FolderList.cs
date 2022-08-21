@@ -752,9 +752,9 @@ namespace NeeView
         /// <summary>
         /// 検索キーワードの正規化
         /// </summary>
-        private string? GetFixedSearchKeyword()
+        private string GetFixedSearchKeyword()
         {
-            return _searchKeyword.Value?.Trim();
+            return _searchKeyword.Value?.Trim() ?? "";
         }
 
         public string? GetSearchKeyword()
