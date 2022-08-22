@@ -465,10 +465,10 @@ namespace NeeView
                         return point.Y < this.HitTestMargin;
 
                     case Dock.Right:
-                        return point.X > this.Screen.ActualWidth - this.HitTestMargin;
+                        return point.X > this.Screen.ActualWidth - this.HitTestMargin - 1.0;
 
                     case Dock.Bottom:
-                        return point.Y > this.Screen.ActualHeight - this.HitTestMargin;
+                        return point.Y > this.Screen.ActualHeight - this.HitTestMargin - 1.0;
 
                     default:
                         return false;
