@@ -21,7 +21,7 @@ namespace NeeView
         public string Style
         {
             get { return _model.PanelListItemStyle.ToString(); }
-            set { AppDispatcher.Invoke(() => _model.PanelListItemStyle = (PanelListItemStyle)Enum.Parse(typeof(PanelListItemStyle), value)); }
+            set { AppDispatcher.Invoke(() => _model.PanelListItemStyle = value.ToEnum<PanelListItemStyle>()); }
         }
 
         [WordNodeMember]

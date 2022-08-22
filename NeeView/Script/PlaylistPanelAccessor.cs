@@ -30,7 +30,7 @@ namespace NeeView
         public string Style
         {
             get { return Config.Current.Playlist.PanelListItemStyle.ToString(); }
-            set { AppDispatcher.Invoke(() => Config.Current.Playlist.PanelListItemStyle = (PanelListItemStyle)Enum.Parse(typeof(PanelListItemStyle), value)); }
+            set { AppDispatcher.Invoke(() => Config.Current.Playlist.PanelListItemStyle = value.ToEnum<PanelListItemStyle>()); }
         }
 
         [WordNodeMember]

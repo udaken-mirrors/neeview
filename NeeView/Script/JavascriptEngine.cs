@@ -49,6 +49,8 @@ namespace NeeView
         [Documentable(Name = "include")]
         public object? ExecureFile(string path)
         {
+            if (path is null) throw new ArgumentNullException(nameof(path));
+
             return ExecureFile(path, _cancellationToken);
         }
 

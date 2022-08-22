@@ -35,14 +35,14 @@ namespace NeeView
         public string Style
         {
             get { return _model.FolderListConfig.PanelListItemStyle.ToString(); }
-            set { AppDispatcher.Invoke(() => _model.FolderListConfig.PanelListItemStyle = (PanelListItemStyle)Enum.Parse(typeof(PanelListItemStyle), value)); }
+            set { AppDispatcher.Invoke(() => _model.FolderListConfig.PanelListItemStyle = value.ToEnum<PanelListItemStyle>()); }
         }
 
         [WordNodeMember(DocumentType = typeof(FolderOrder))]
         public string FolderOrder
         {
             get { return _model.GetFolderOrder().ToString(); }
-            set { AppDispatcher.Invoke(() => _model.SetFolderOrder((FolderOrder)Enum.Parse(typeof(FolderOrder), value))); }
+            set { AppDispatcher.Invoke(() => _model.SetFolderOrder(value.ToEnum<FolderOrder>())); }
         }
 
         [WordNodeMember]

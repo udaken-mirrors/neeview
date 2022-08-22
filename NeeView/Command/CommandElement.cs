@@ -172,7 +172,7 @@ namespace NeeView
             {
                 if (_shortCutKey != value)
                 {
-                    _shortCutKey = value;
+                    _shortCutKey = value?.Trim() ?? "";
                     IsInputGestureDarty = true;
                 }
             }
@@ -186,7 +186,7 @@ namespace NeeView
             {
                 if (_touchGesture != value)
                 {
-                    _touchGesture = value;
+                    _touchGesture = value?.Trim() ?? "";
                     IsInputGestureDarty = true;
                 }
             }
@@ -200,7 +200,7 @@ namespace NeeView
             {
                 if (_mouseGesture != value)
                 {
-                    _mouseGesture = value;
+                    _mouseGesture = value?.Trim() ?? "";
                     IsInputGestureDarty = true;
                 }
             }

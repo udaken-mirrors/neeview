@@ -32,21 +32,21 @@ namespace NeeView
         public string ShortCutKey
         {
             get { return _command.ShortCutKey; }
-            set { _command.ShortCutKey = value; }
+            set { _command.ShortCutKey = value ?? ""; }
         }
 
         [WordNodeMember]
         public string TouchGesture
         {
             get { return _command.TouchGesture; }
-            set { _command.TouchGesture = value; }
+            set { _command.TouchGesture = value ?? ""; }
         }
 
         [WordNodeMember]
         public string MouseGesture
         {
             get { return _command.MouseGesture; }
-            set { _command.MouseGesture = value.Replace("←", "L").Replace("↑", "U").Replace("→", "R").Replace("↓", "L").Replace("Click", "C"); }
+            set { _command.MouseGesture = value?.Replace("←", "L").Replace("↑", "U").Replace("→", "R").Replace("↓", "L").Replace("Click", "C") ?? ""; }
         }
 
         [WordNodeMember(IsAutoCollect = false)]

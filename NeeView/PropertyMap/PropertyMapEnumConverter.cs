@@ -17,13 +17,15 @@ namespace NeeView
 
         public override void Write(PropertyMapSource source, object? value, PropertyMapOptions options)
         {
+            var type = source.PropertyInfo.PropertyType;
+
             if (value is string s)
             {
-                source.SetValue(Enum.Parse(source.PropertyInfo.PropertyType, s));
+                source.SetValue(s.ToEnum(type));
             }
             else
             {
-                throw new InvalidCastException();
+                throw new InvalidCastException($"Failed to convert to {type.Name}. Accepts only strings.");
             }
         }
     }

@@ -26,21 +26,21 @@ namespace NeeView
         public string Style
         {
             get { return _model.PanelListItemStyle.ToString(); }
-            set { AppDispatcher.Invoke(() => _model.PanelListItemStyle = (PanelListItemStyle)Enum.Parse(typeof(PanelListItemStyle), value)); }
+            set { AppDispatcher.Invoke(() => _model.PanelListItemStyle = value.ToEnum<PanelListItemStyle>()); }
         }
 
         [WordNodeMember(DocumentType = typeof(PageNameFormat))]
         public string Format
         {
             get { return AppDispatcher.Invoke(() => _panel.Presenter.PageListView.GetFormat().ToString()); }
-            set { AppDispatcher.Invoke(() => _panel.Presenter.PageListView.SetFormat((PageNameFormat)Enum.Parse(typeof(PageNameFormat), value))); }
+            set { AppDispatcher.Invoke(() => _panel.Presenter.PageListView.SetFormat(value.ToEnum<PageNameFormat>())); }
         }
 
         [WordNodeMember(DocumentType = typeof(PageSortMode))]
         public string SortMode
         {
             get { return AppDispatcher.Invoke(() => _panel.Presenter.PageListView.GetSortMode().ToString()); }
-            set { AppDispatcher.Invoke(() => _panel.Presenter.PageListView.SetSortMode((PageSortMode)Enum.Parse(typeof(PageSortMode), value))); }
+            set { AppDispatcher.Invoke(() => _panel.Presenter.PageListView.SetSortMode(value.ToEnum<PageSortMode>())); }
         }
 
         [WordNodeMember]
