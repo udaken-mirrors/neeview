@@ -19,6 +19,11 @@ namespace NeeView
         #region IDisposable Support
         private bool _disposedValue = false;
 
+        protected void ThrowIfDisposed()
+        {
+            if (_disposedValue) throw new ObjectDisposedException(GetType().FullName);
+        }
+
         protected virtual void Dispose(bool disposing)
         {
             if (!_disposedValue)
@@ -26,6 +31,7 @@ namespace NeeView
                 _disposedValue = true;
                 if (disposing)
                 {
+                    // TODO: WeakReference オブジェクトはDisposeする必要あるのか？
                     var items = CollectDisposable();
 
                     if (items.Count > 0)
@@ -63,6 +69,8 @@ namespace NeeView
 
         public void Add(Archiver archiver)
         {
+            ThrowIfDisposed();
+
             lock (_lock)
             {
                 ////Debug.WriteLine($"ArchvierCache: Add {archiver.SystemPath}");
@@ -72,6 +80,8 @@ namespace NeeView
 
         public bool TryGetValue(string path, out Archiver? archiver)
         {
+            ThrowIfDisposed();
+
             if (_caches.Count > 50)
             {
                 Debug.WriteLine($"ArchvierCache: CleanUp ...");
@@ -96,6 +106,8 @@ namespace NeeView
 
         public void CleanUp()
         {
+            ThrowIfDisposed();
+
             lock (_lock)
             {
                 var removes = _caches.Where(e => !e.Value.TryGetTarget(out var archiver)).Select(e => e.Key).ToList();
@@ -112,6 +124,8 @@ namespace NeeView
         /// </summary>
         public void Unlock()
         {
+            ThrowIfDisposed();
+
             CleanUp();
 
             lock (_lock)
