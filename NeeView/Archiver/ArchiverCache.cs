@@ -31,9 +31,9 @@ namespace NeeView
                 _disposedValue = true;
                 if (disposing)
                 {
-                    // TODO: WeakReference オブジェクトはDisposeする必要あるのか？
+                    // TODO: WeakReference オブジェクトはDisposeする必要あるのか？ -> 不要と判断。経過観察。
+#if false
                     var items = CollectDisposable();
-
                     if (items.Count > 0)
                     {
                         // NOTE: MTAスレッドで実行。SevenZipSharpのCOM例外対策
@@ -45,6 +45,7 @@ namespace NeeView
                             }
                         });
                     }
+#endif
                 }
             }
         }
