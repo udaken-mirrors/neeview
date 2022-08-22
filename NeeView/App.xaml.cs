@@ -163,6 +163,7 @@ namespace NeeView
 
             // プロセス間セマフォ取得
             _semaphore = new Semaphore(1, 1, _semaphoreLabel, out bool isCreateNew);
+            Debug.WriteLine($"Process Semaphore isCreateNew: {isCreateNew}");
 
             // 多重起動サービス起動
             _multiBootService = new MultbootService(isCreateNew);
@@ -234,7 +235,11 @@ namespace NeeView
         /// </summary>
         public void SemaphoreWait()
         {
-            _semaphore?.WaitOne();
+            // 10秒待っても取得できないときは例外
+            if (_semaphore?.WaitOne(1000 * 10) != true)
+            {
+                throw new IOException("Cannot sync with other NeeViews. There may be a problem with NeeView already running.");
+            }
         }
 
         /// <summary>
@@ -279,18 +284,6 @@ namespace NeeView
         private void Application_Exit(object sender, ExitEventArgs e)
         {
             Terminate();
-
-            // プロセスを確実に終了させるための保険
-            Task.Run(() =>
-            {
-                Thread.Sleep(5000);
-                Debug.WriteLine("Environment_Exit");
-                lock (this.Lock)
-                {
-                    System.Environment.Exit(0);
-                }
-            });
-
             Trace.WriteLine("App.Exit: done.");
         }
 
@@ -322,11 +315,11 @@ namespace NeeView
                 // 設定保存
                 SaveDataSync.Current.SaveAll(false);
 
-                // テンポラリファイル破棄
-                Temporary.Current.RemoveTempFolder();
-
                 // キャッシュDBを閉じる
                 ThumbnailCache.Current.Dispose();
+
+                // テンポラリファイル破棄
+                Temporary.Current.RemoveTempFolder();
 
                 Trace.WriteLine($"App.Terminate: {DateTime.Now}: Terminated.");
             }
