@@ -6,7 +6,8 @@
 
 Param(
 	[ValidateSet("All", "Zip", "Installer", "Appx", "Canary", "Beta")]$Target = "All",
-	[switch]$continue
+	[switch]$continue,
+	[switch]$trace
 )
 
 # error to break
@@ -286,6 +287,19 @@ function New-ConfigForZip($inputDir, $config, $outputDir)
 
 	$add = $xml.configuration.appSettings.add | Where { $_.key -eq 'DateVersion' } | Select -First 1
 	$add.value = $dateVersion
+	
+	if ($trace)
+	{
+		#<add key="LogFile" value="TraceLog.txt" />
+		$attribute1 = $xml.CreateAttribute('key')
+		$attribute1.Value = 'LogFile';
+		$attribute2 = $xml.CreateAttribute('value')
+		$attribute2.Value = 'TraceLog.txt';
+		$element = $xml.CreateElement('add');
+		$element.Attributes.Append($attribute1);
+		$element.Attributes.Append($attribute2);
+		$xml.configuration.appSettings.AppendChild($element);
+	}
 
 	$utf8WithoutBom = New-Object System.Text.UTF8Encoding($false)
 	$outputFile = Join-Path (Convert-Path $outputDir) $config

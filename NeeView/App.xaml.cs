@@ -106,7 +106,7 @@ namespace NeeView
                 Trace.WriteLine(System.Environment.NewLine + new string('=', 80));
             }
 
-            Trace.WriteLine($"App.Startup: {DateTime.Now}");
+            Trace.WriteLine($"App.Startup: PID={Process.GetCurrentProcess().Id}: {DateTime.Now}");
 
             // 未処理例外ハンドル
             InitializeUnhandledException();
