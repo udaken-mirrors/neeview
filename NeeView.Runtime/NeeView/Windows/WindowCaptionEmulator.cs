@@ -66,7 +66,7 @@ namespace NeeView.Windows
                 return;
             }
 
-            _window.DragMove();
+            WindowDragMove();
         }
 
 
@@ -108,7 +108,7 @@ namespace NeeView.Windows
                 _window.WindowState = WindowState.Normal;
                 OnWindowStateChanged(this, args);
 
-                if (Mouse.LeftButton == MouseButtonState.Pressed) _window.DragMove();
+                WindowDragMove();
             }
         }
 
@@ -119,6 +119,22 @@ namespace NeeView.Windows
 
         protected virtual void OnWindowStateChanged(object sender, WindowStateChangeEventArgs e)
         {
+        }
+
+
+        private void WindowDragMove()
+        {
+            try
+            {
+                if (Mouse.LeftButton == MouseButtonState.Pressed)
+                {
+                    _window.DragMove();
+                }
+            }
+            catch (InvalidOperationException ex)
+            {
+                Debug.WriteLine(ex.Message);
+            }
         }
 
 
