@@ -54,6 +54,7 @@ namespace NeeView
                 {
                     // 自身以外のプロセスをターゲットにする
                     var serverProcess = processes
+                        .Where(p => p.MainWindowHandle != IntPtr.Zero) // ウィンドウハンドルが存在しないものは除外
                         .LastOrDefault((p) => p.Id != currentProcess.Id);
 
                     if (serverProcess == null)

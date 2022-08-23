@@ -79,6 +79,7 @@ namespace NeeView
             }
             catch(Exception ex)
             {
+                // TODO: ここで例外を握りつぶすのはまずい
                 Debug.WriteLine(ex.Message);
             }
         }
