@@ -132,7 +132,7 @@ namespace NeeView
             var def = (DragActionParameter?)Activator.CreateInstance(type);
             if (value.MemberwiseEquals(def))
             {
-                Debug.WriteLine($"{type} is default.");
+                //Debug.WriteLine($"{type} is default.");
                 writer.WriteNullValue();
             }
             else

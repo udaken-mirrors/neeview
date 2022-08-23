@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace NeeView
 {
@@ -17,6 +18,9 @@ namespace NeeView
 
         public void Add(IDisposable disposable)
         {
+            if (disposable is null) throw new ArgumentNullException(nameof(disposable));
+            if (_disposedValue) throw new ObjectDisposedException(GetType().FullName);
+
             _disposables.Add(disposable);
         }
 
@@ -29,7 +33,7 @@ namespace NeeView
             {
                 if (disposing)
                 {
-                    foreach(var disposable in _disposables)
+                    foreach(var disposable in _disposables.Reverse<IDisposable>())
                     {
                         disposable.Dispose();
                     }

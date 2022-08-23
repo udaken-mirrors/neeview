@@ -69,25 +69,26 @@ namespace NeeView
         private bool _isDartyOrderList;
 
         private ArchiverCache _cache = new ArchiverCache();
+        private PropetryChangedEventCollection _propertyChangedEventCollection;
 
 
-        /// <summary>
-        /// constructor
-        /// </summary>
+
         private ArchiverManager()
         {
-            Config.Current.Archive.Zip.AddPropertyChanged(nameof(ZipArchiveConfig.IsEnabled),
+            _propertyChangedEventCollection = new PropetryChangedEventCollection();
+            _propertyChangedEventCollection.Add(Config.Current.Archive.Zip, nameof(ZipArchiveConfig.IsEnabled),
                 (s, e) => UpdateOrderList());
-            Config.Current.Archive.SevenZip.AddPropertyChanged(nameof(SevenZipArchiveConfig.IsEnabled),
+            _propertyChangedEventCollection.Add(Config.Current.Archive.SevenZip, nameof(SevenZipArchiveConfig.IsEnabled),
                 (s, e) => UpdateOrderList());
-            Config.Current.Archive.Pdf.AddPropertyChanged(nameof(PdfArchiveConfig.IsEnabled),
+            _propertyChangedEventCollection.Add(Config.Current.Archive.Pdf, nameof(PdfArchiveConfig.IsEnabled),
                 (s, e) => UpdateOrderList());
-            Config.Current.Archive.Media.AddPropertyChanged(nameof(MediaArchiveConfig.IsEnabled),
+            _propertyChangedEventCollection.Add(Config.Current.Archive.Media, nameof(MediaArchiveConfig.IsEnabled),
                 (s, e) => UpdateOrderList());
-            Config.Current.Susie.AddPropertyChanged(nameof(SusieConfig.IsEnabled),
+            _propertyChangedEventCollection.Add(Config.Current.Susie, nameof(SusieConfig.IsEnabled),
                 (s, e) => UpdateOrderList());
-            Config.Current.Susie.AddPropertyChanged(nameof(SusieConfig.IsFirstOrderSusieArchive),
+            _propertyChangedEventCollection.Add(Config.Current.Susie, nameof(SusieConfig.IsFirstOrderSusieArchive),
                 (s, e) => UpdateOrderList());
+            _propertyChangedEventCollection.Regist();
 
             // 検索順初期化
             _orderList = CreateOrderList();
@@ -115,12 +116,18 @@ namespace NeeView
         #region IDisposable Support
         private bool _disposedValue = false;
 
+        protected void ThrowIfDisposed()
+        {
+            if (_disposedValue) throw new ObjectDisposedException(GetType().FullName);
+        }
+
         protected virtual void Dispose(bool disposing)
         {
             if (!_disposedValue)
             {
                 if (disposing)
                 {
+                    _propertyChangedEventCollection.Dispose();
                     _cache.Dispose();
                 }
                 _disposedValue = true;
@@ -185,6 +192,8 @@ namespace NeeView
         // サポートしているアーカイバーがあるか判定
         public bool IsSupported(string fileName, bool isAllowFileSystem = true, bool isAllowMedia = true)
         {
+            ThrowIfDisposed();
+
             return GetSupportedType(fileName, isAllowFileSystem, isAllowMedia) != ArchiverType.None;
         }
 
@@ -192,6 +201,8 @@ namespace NeeView
         // サポートしているアーカイバーを取得
         public ArchiverType GetSupportedType(string fileName, bool isArrowFileSystem = true, bool isAllowMedia = true)
         {
+            ThrowIfDisposed();
+
             var query = new QueryPath(fileName);
 
             if (isArrowFileSystem && (fileName.Last() == '\\' || fileName.Last() == '/'))
@@ -293,6 +304,8 @@ namespace NeeView
         /// <returns></returns>
         public async Task<Archiver> CreateArchiverAsync(ArchiveEntry source, bool ignoreCache, CancellationToken token)
         {
+            ThrowIfDisposed();
+
             // キャッシュがあればそれを返す。
             var systemPath = source.SystemPath;
             if (!ignoreCache && _cache.TryGetValue(systemPath, out var archiver))
@@ -343,6 +356,8 @@ namespace NeeView
         /// 
         public bool Exists(string path, bool isAllowFileSystem)
         {
+            ThrowIfDisposed();
+
             if (isAllowFileSystem)
             {
                 return Directory.Exists(path) || (File.Exists(path) && IsSupported(path, true));
@@ -361,6 +376,8 @@ namespace NeeView
         /// <returns>実在するアーカイブファイルのパス。見つからなかった場合はnull</returns>
         public string? GetExistPathName(string path)
         {
+            ThrowIfDisposed();
+
             if (Exists(path, true))
             {
                 return path;
@@ -422,6 +439,8 @@ namespace NeeView
         /// </summary>
         public async Task UnlockAllArchivesAsync()
         {
+            ThrowIfDisposed();
+
             // NOTE: MTAスレッドで実行。SevenZipSharpのCOM例外対策
             if (Thread.CurrentThread.GetApartmentState() == ApartmentState.STA)
             {

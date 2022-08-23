@@ -173,7 +173,7 @@ namespace NeeView
 
             if (value.MemberwiseEquals(def))
             {
-                Debug.WriteLine($"{type} is default.");
+                //Debug.WriteLine($"{type} is default.");
                 writer.WriteNullValue();
             }
             else
