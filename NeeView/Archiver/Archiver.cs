@@ -33,8 +33,6 @@ namespace NeeView
         {
             Path = path;
 
-            var query = new QueryPath(path);
-
             if (source != null)
             {
                 Parent = source.Archiver;

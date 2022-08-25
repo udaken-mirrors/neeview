@@ -1,4 +1,5 @@
 ﻿// from http://sourcechord.hatenablog.com/entry/20130303/1362315081
+using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
@@ -16,6 +17,32 @@ namespace NeeLaboratory.ComponentModel
         /// </summary>
         public event PropertyChangingEventHandler? PropertyChanging;
         public event PropertyChangedEventHandler? PropertyChanged;
+
+        /// <summary>
+        /// プロパティの変更通知を購読。
+        /// 購読解除するDisposableオブジェクトを返す。
+        /// </summary>
+        public IDisposable SubscribePropertyChanging(PropertyChangingEventHandler handler)
+        {
+            PropertyChanging += handler;
+            return new AnonymousDisposable(() => PropertyChanging -= handler);
+        }
+
+        public IDisposable SubscribePropertyChanged(PropertyChangedEventHandler handler)
+        {
+            PropertyChanged += handler;
+            return new AnonymousDisposable(() => PropertyChanged -= handler);
+        }
+
+        public IDisposable SubscribePropertyChanginh(string? propertyName, PropertyChangingEventHandler handler)
+        {
+            return SubscribePropertyChanging(PropertyChangedTools.CreateChangingEventHandler(propertyName, handler));
+        }
+
+        public IDisposable SubscribePropertyChanged(string? propertyName, PropertyChangedEventHandler handler)
+        {
+            return SubscribePropertyChanged(PropertyChangedTools.CreateChangedEventHandler(propertyName, handler));
+        }
 
         /// <summary>
         /// プロパティが既に目的の値と一致しているかどうかを確認します。必要な場合のみ、

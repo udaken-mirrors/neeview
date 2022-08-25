@@ -35,6 +35,13 @@ namespace NeeView
 
         public event EventHandler<BookMementoCollectionChangedArgs>? HistoryChanged;
 
+        public IDisposable SubscribeHistoryChanged(EventHandler<BookMementoCollectionChangedArgs> handler)
+        {
+            HistoryChanged += handler;
+            return new AnonymousDisposable(() => HistoryChanged -= handler);
+        }
+
+
 
         // 履歴コレクション
         public LinkedDicionary<string, BookHistory> Items { get; set; } = new LinkedDicionary<string, BookHistory>();

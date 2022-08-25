@@ -221,6 +221,8 @@ namespace NeeView
         /// <param name="isOverwrite">上書き許可フラグ</param>
         public void ExtractToFile(string exportFileName, bool isOverwrite)
         {
+            if (exportFileName is null) throw new ArgumentNullException(nameof(exportFileName));
+
             if (Archiver != null)
             {
                 Archiver.ExtractToFile(this, exportFileName, isOverwrite);

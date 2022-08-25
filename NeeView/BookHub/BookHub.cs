@@ -255,10 +255,13 @@ namespace NeeView
         private bool _historyRemoved;
         private int _requestLoadCount;
         private object _lock = new object();
+        private DisposableCollection _disposables;
 
         private BookHub()
         {
-            this.BookChanged +=
+            _disposables = new DisposableCollection();
+
+            _disposables.Add(SubscribeBookChanged(
                 (s, e) =>
                 {
                     if (this.Book?.NotFoundStartPage != null && this.Book.Pages.Count > 0)
@@ -269,67 +272,156 @@ namespace NeeView
                     {
                         InfoMessage.Current.SetMessage(InfoMessageType.BookName, LoosePath.GetFileName(Address), null, 2.0, e.BookMementoType);
                     }
-                };
+                }));
 
-            BookHistoryCollection.Current.HistoryChanged += BookHistoryCollection_HistoryChanged;
+            _disposables.Add(BookHistoryCollection.Current.SubscribeHistoryChanged(
+                BookHistoryCollection_HistoryChanged));
 
-            BookmarkCollection.Current.BookmarkChanged +=
-                (s, e) => BookmarkChanged?.Invoke(s, e);
+            _disposables.Add(BookmarkCollection.Current.SubscribeBookmarkChanged(
+                (s, e) => BookmarkChanged?.Invoke(s, e)));
 
-            BookSettingPresenter.Current.SettingChanged +=
-                (s, e) => Book?.Restore(BookSettingPresenter.Current.LatestSetting.ToBookMemento());
-
+            _disposables.Add(BookSettingPresenter.Current.SubscribeSettingChanged(
+                (s, e) => Book?.Restore(BookSettingPresenter.Current.LatestSetting.ToBookMemento())));
 
             // command engine
             _commandEngine = new BookHubCommandEngine();
-            _commandEngine.IsBusyChanged +=
-                (s, e) => IsBusyChanged?.Invoke(s, e);
+            _disposables.Add(_commandEngine.SubscribeIsBusyChanged(
+                (s, e) => IsBusyChanged?.Invoke(s, e)));
             _commandEngine.StartEngine();
+            _disposables.Add(_commandEngine);
 
             // アプリ終了前の開放予約
             ApplicationDisposer.Current.Add(this);
         }
 
 
-        // 本の変更通知
+        // 本の変更開始通知
         public event EventHandler<BookChangingEventArgs>? BookChanging;
+
+        public IDisposable SubscribeBookChanging(EventHandler<BookChangingEventArgs> handler)
+        {
+            BookChanging += handler;
+            return new AnonymousDisposable(() => BookChanging -= handler);
+        }
+
+        // 本の変更通知
         public event EventHandler<BookChangedEventArgs>? BookChanged;
+
+        public IDisposable SubscribeBookChanged(EventHandler<BookChangedEventArgs> handler)
+        {
+            BookChanged += handler;
+            return new AnonymousDisposable(() => BookChanged -= handler);
+        }
 
         // 新しいロードリクエスト
         public event EventHandler<BookHubPathEventArgs>? LoadRequested;
 
+        public IDisposable SubscribeLoadRequested(EventHandler<BookHubPathEventArgs> handler)
+        {
+            LoadRequested += handler;
+            return new AnonymousDisposable(() => LoadRequested -= handler);
+        }
+
         // ロード中通知
         public event EventHandler<BookHubPathEventArgs>? Loading;
+
+        public IDisposable SubscribeLoading(EventHandler<BookHubPathEventArgs> handler)
+        {
+            Loading += handler;
+            return new AnonymousDisposable(() => Loading -= handler);
+        }
 
         // コマンドエンジン処理中通知
         public event EventHandler<JobIsBusyChangedEventArgs>? IsBusyChanged;
 
+        public IDisposable SubscribeIsBusyChanged(EventHandler<JobIsBusyChangedEventArgs> handler)
+        {
+            IsBusyChanged += handler;
+            return new AnonymousDisposable(() => IsBusyChanged -= handler);
+        }
+
         // ViewContentsの変更通知
         public event EventHandler<ViewContentSourceCollectionChangedEventArgs>? ViewContentsChanged;
+
+        public IDisposable SubscribeViewContentsChanged(EventHandler<ViewContentSourceCollectionChangedEventArgs> handler)
+        {
+            ViewContentsChanged += handler;
+            return new AnonymousDisposable(() => ViewContentsChanged -= handler);
+        }
 
         // NextContentsの変更通知
         public event EventHandler<ViewContentSourceCollectionChangedEventArgs>? NextContentsChanged;
 
+        public IDisposable SubscribeNextContentsChanged(EventHandler<ViewContentSourceCollectionChangedEventArgs> handler)
+        {
+            NextContentsChanged += handler;
+            return new AnonymousDisposable(() => NextContentsChanged -= handler);
+        }
+
         // 空ページメッセージ
         public event EventHandler<BookHubMessageEventArgs>? EmptyMessage;
+
+        public IDisposable SubscribeEmptyMessage(EventHandler<BookHubMessageEventArgs> handler)
+        {
+            EmptyMessage += handler;
+            return new AnonymousDisposable(() => EmptyMessage -= handler);
+        }
 
         // 空ページメッセージ その２
         public event EventHandler<BookHubMessageEventArgs>? EmptyPageMessage;
 
+        public IDisposable SubscribeEmptyPageMessage(EventHandler<BookHubMessageEventArgs> handler)
+        {
+            EmptyPageMessage += handler;
+            return new AnonymousDisposable(() => EmptyPageMessage -= handler);
+        }
+
         // フォルダー列更新要求
         public event EventHandler<FolderListSyncEventArgs>? FolderListSync;
+
+        public IDisposable SubscribeFolderListSync(EventHandler<FolderListSyncEventArgs> handler)
+        {
+            FolderListSync += handler;
+            return new AnonymousDisposable(() => FolderListSync -= handler);
+        }
 
         // 履歴リスト更新要求
         public event EventHandler<BookHubPathEventArgs>? HistoryListSync;
 
+        public IDisposable SubscribeHistoryListSync(EventHandler<BookHubPathEventArgs> handler)
+        {
+            HistoryListSync += handler;
+            return new AnonymousDisposable(() => HistoryListSync -= handler);
+        }
+
         // 履歴に追加、削除された
         public event EventHandler<BookMementoCollectionChangedArgs>? HistoryChanged;
+
+        public IDisposable SubscribeHistoryChanged(EventHandler<BookMementoCollectionChangedArgs> handler)
+        {
+            HistoryChanged += handler;
+            return new AnonymousDisposable(() => HistoryChanged -= handler);
+        }
 
         // ブックマークにに追加、削除された
         public event EventHandler<BookmarkCollectionChangedEventArgs>? BookmarkChanged;
 
+        public IDisposable SubscribeBookmarkChanged(EventHandler<BookmarkCollectionChangedEventArgs> handler)
+        {
+            BookmarkChanged += handler;
+            return new AnonymousDisposable(() => BookmarkChanged -= handler);
+        }
+
         // アドレスが変更された
         public event EventHandler? AddressChanged;
+
+        public IDisposable SubscribeAddressChanged(EventHandler handler)
+        {
+            AddressChanged += handler;
+            return new AnonymousDisposable(() => AddressChanged -= handler);
+        }
+
+
 
 
         /// <summary>
@@ -398,6 +490,8 @@ namespace NeeView
             {
                 if (disposing)
                 {
+                    _disposables.Dispose();
+
                     // reset event
                     this.BookChanging = null;
                     this.BookChanged = null;
@@ -413,8 +507,6 @@ namespace NeeView
                     this.BookmarkChanged = null;
                     this.AddressChanged = null;
                     ResetPropertyChanged();
-
-                    _commandEngine.Dispose();
 
                     this.BookUnit?.Dispose();
 
@@ -1134,10 +1226,10 @@ namespace NeeView
                 && (Config.Current.History.IsUncHistoryEnabled || !LoosePath.IsUnc(Book.Address));
         }
 
-#endregion BookMemento Control
+        #endregion BookMemento Control
 
 
-#region Memento
+        #region Memento
 
         /// <summary>
         /// BookHub Memento
@@ -1169,7 +1261,7 @@ namespace NeeView
             [DataMember, DefaultValue(ArchiveEntryCollectionMode.IncludeSubArchives)]
             public ArchiveEntryCollectionMode ArchiveRecursveMode { get; set; }
 
-#region Obslete
+            #region Obslete
 
             [Obsolete, DataMember(Order = 22, EmitDefaultValue = false)]
             public bool IsAutoRecursiveWithAllFiles { get; set; } // no used (ver.34)
@@ -1228,7 +1320,7 @@ namespace NeeView
             [Obsolete, DataMember(Order = 20, EmitDefaultValue = false)]
             public string? Home { get; set; } // no used (ver.23)
 
-#endregion
+            #endregion
 
             [OnDeserializing]
             private void OnDeserializing(StreamingContext c)
@@ -1260,7 +1352,7 @@ namespace NeeView
             }
         }
 
-#endregion
+        #endregion
     }
 }
 

@@ -36,6 +36,13 @@ namespace NeeView
 
         public event EventHandler<BookmarkCollectionChangedEventArgs>? BookmarkChanged;
 
+        public IDisposable SubscribeBookmarkChanged(EventHandler<BookmarkCollectionChangedEventArgs> handler)
+        {
+            BookmarkChanged += handler;
+            return new AnonymousDisposable(() => BookmarkChanged -= handler);
+        }
+
+
 
         // Properties
 

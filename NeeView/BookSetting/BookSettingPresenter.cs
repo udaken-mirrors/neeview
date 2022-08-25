@@ -19,6 +19,13 @@ namespace NeeView
         // 設定の変更通知
         public event EventHandler<BookSettingEventArgs>? SettingChanged;
 
+        public IDisposable SubscribeSettingChanged(EventHandler<BookSettingEventArgs> handler)
+        {
+            SettingChanged += handler;
+            return new AnonymousDisposable(() => SettingChanged -= handler);
+        }
+
+
 
         public BookSettingConfig DefaultSetting => Config.Current.BookSettingDefault;
 

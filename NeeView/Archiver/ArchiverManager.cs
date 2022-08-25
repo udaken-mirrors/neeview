@@ -68,27 +68,29 @@ namespace NeeView
         private List<ArchiverType> _orderList;
         private bool _isDartyOrderList;
 
-        private ArchiverCache _cache = new ArchiverCache();
-        private PropetryChangedEventCollection _propertyChangedEventCollection;
-
+        private DisposableCollection _disposables;
+        private ArchiverCache _cache;
 
 
         private ArchiverManager()
         {
-            _propertyChangedEventCollection = new PropetryChangedEventCollection();
-            _propertyChangedEventCollection.Add(Config.Current.Archive.Zip, nameof(ZipArchiveConfig.IsEnabled),
-                (s, e) => UpdateOrderList());
-            _propertyChangedEventCollection.Add(Config.Current.Archive.SevenZip, nameof(SevenZipArchiveConfig.IsEnabled),
-                (s, e) => UpdateOrderList());
-            _propertyChangedEventCollection.Add(Config.Current.Archive.Pdf, nameof(PdfArchiveConfig.IsEnabled),
-                (s, e) => UpdateOrderList());
-            _propertyChangedEventCollection.Add(Config.Current.Archive.Media, nameof(MediaArchiveConfig.IsEnabled),
-                (s, e) => UpdateOrderList());
-            _propertyChangedEventCollection.Add(Config.Current.Susie, nameof(SusieConfig.IsEnabled),
-                (s, e) => UpdateOrderList());
-            _propertyChangedEventCollection.Add(Config.Current.Susie, nameof(SusieConfig.IsFirstOrderSusieArchive),
-                (s, e) => UpdateOrderList());
-            _propertyChangedEventCollection.Regist();
+            _disposables = new DisposableCollection();
+
+            _cache = new ArchiverCache();
+            _disposables.Add(_cache);
+
+            _disposables.Add(Config.Current.Archive.Zip.SubscribePropertyChanged(nameof(ZipArchiveConfig.IsEnabled),
+                    (s, e) => UpdateOrderList()));
+            _disposables.Add(Config.Current.Archive.SevenZip.SubscribePropertyChanged(nameof(SevenZipArchiveConfig.IsEnabled),
+                (s, e) => UpdateOrderList()));
+            _disposables.Add(Config.Current.Archive.Pdf.SubscribePropertyChanged(nameof(PdfArchiveConfig.IsEnabled),
+                (s, e) => UpdateOrderList()));
+            _disposables.Add(Config.Current.Archive.Media.SubscribePropertyChanged(nameof(MediaArchiveConfig.IsEnabled),
+                (s, e) => UpdateOrderList()));
+            _disposables.Add(Config.Current.Susie.SubscribePropertyChanged(nameof(SusieConfig.IsEnabled),
+                (s, e) => UpdateOrderList()));
+            _disposables.Add(Config.Current.Susie.SubscribePropertyChanged(nameof(SusieConfig.IsFirstOrderSusieArchive),
+                (s, e) => UpdateOrderList()));
 
             // 検索順初期化
             _orderList = CreateOrderList();
@@ -127,8 +129,7 @@ namespace NeeView
             {
                 if (disposing)
                 {
-                    _propertyChangedEventCollection.Dispose();
-                    _cache.Dispose();
+                    _disposables.Dispose();
                 }
                 _disposedValue = true;
             }

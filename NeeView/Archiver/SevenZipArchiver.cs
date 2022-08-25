@@ -112,6 +112,7 @@ namespace NeeView
         // エントリーのストリームを得る
         protected override Stream OpenStreamInner(ArchiveEntry entry)
         {
+            Debug.Assert(entry is not null);
             if (entry.Id < 0) throw new ArgumentException("Cannot open this entry: " + entry.EntryName);
 
             ThrowIfDisposed();
@@ -131,6 +132,9 @@ namespace NeeView
         // ファイルに出力
         protected override void ExtractToFileInner(ArchiveEntry entry, string exportFileName, bool isOverwrite)
         {
+            Debug.Assert(entry is not null);
+            Debug.Assert(!string.IsNullOrEmpty(exportFileName));
+
             if (entry.Id < 0) throw new ArgumentException("Cannot open this entry: " + entry.EntryName);
 
             ThrowIfDisposed();
@@ -160,6 +164,8 @@ namespace NeeView
         /// </summary>
         public override async Task PreExtractInnerAsync(string directory, CancellationToken token)
         {
+            Debug.Assert(!string.IsNullOrEmpty(directory));
+
             ThrowIfDisposed();
 
             if (Config.Current.Performance.IsPreExtractToMemory)
@@ -174,9 +180,12 @@ namespace NeeView
 
         private async Task PreExtractTempFileAsync(string directory, CancellationToken token)
         {
+            Debug.Assert(!string.IsNullOrEmpty(directory));
+
             ThrowIfDisposed();
 
             var entries = await GetEntriesAsync(token);
+            token.ThrowIfCancellationRequested();
 
             using (var extractor = new SevenZipExtractor(this.Path))
             {
@@ -200,6 +209,7 @@ namespace NeeView
             ThrowIfDisposed();
 
             var entries = await GetEntriesAsync(token);
+            token.ThrowIfCancellationRequested();
 
             using (var extractor = new SevenZipExtractor(this.Path))
             {
