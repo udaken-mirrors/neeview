@@ -22,190 +22,6 @@ using NeeLaboratory.Threading.Jobs;
 
 namespace NeeView
 {
-    public enum BookMementoType
-    {
-        None,
-        Bookmark,
-        History,
-    }
-
-    /// <summary>
-    /// ページが終わったときのアクション
-    /// </summary>
-    [DataContract]
-    public enum PageEndAction
-    {
-        [EnumMember]
-        [AliasName]
-        None,
-
-        [EnumMember(Value = "NextFolder")]
-        [AliasName]
-        NextBook,
-
-        [EnumMember]
-        [AliasName]
-        Loop,
-
-        [EnumMember]
-        [AliasName]
-        Dialog,
-    }
-
-
-    /// <summary>
-    /// 先読みモード
-    /// </summary>
-    [Obsolete]
-    public enum PreLoadMode
-    {
-        None,
-        AutoPreLoad,
-        PreLoad,
-        PreLoadNoUnload,
-    }
-
-
-    /// <summary>
-    /// フォルダーリスト更新イベントパラメーター
-    /// </summary>
-    public class FolderListSyncEventArgs : EventArgs
-    {
-        public FolderListSyncEventArgs(string path, string parent, bool isKeepPlace)
-        {
-            Path = path;
-            Parent = parent;
-            this.isKeepPlace = isKeepPlace;
-        }
-
-        /// <summary>
-        /// フォルダーリストで選択されて欲しい項目のパス
-        /// </summary>
-        public string Path { get; set; }
-
-        /// <summary>
-        /// フォルダーリストの場所。アーカイブパス用。
-        /// nullの場合Pathから求められる。
-        /// </summary>
-        public string Parent { get; set; }
-
-        /// <summary>
-        /// なるべくリストの選択項目を変更しないようにする
-        /// </summary>
-        public bool isKeepPlace { get; set; }
-    }
-
-
-    public class BookChangingEventArgs : EventArgs
-    {
-        public BookChangingEventArgs(string address)
-        {
-            Address = address;
-        }
-
-        public string Address { get; set; }
-    }
-
-
-    public class BookChangedEventArgs : EventArgs
-    {
-        public BookChangedEventArgs(string? address, Book? book, BookMementoType type)
-        {
-            Address = address;
-            Book = book;
-            BookMementoType = type;
-        }
-
-        public string? Address { get; set; }
-        public Book? Book { get; set; }
-        public BookMementoType BookMementoType { get; set; }
-    }
-
-    public class BookHubPathEventArgs : EventArgs
-    {
-        public BookHubPathEventArgs(string? path)
-        {
-            Path = path;
-        }
-
-        public string? Path { get; set; }
-    }
-
-    public class BookHubMessageEventArgs : EventArgs
-    {
-        public BookHubMessageEventArgs(string message)
-        {
-            Message = message;
-        }
-
-        public string Message { get; set; }
-    }
-
-
-    /// <summary>
-    /// Bookとその付属情報の管理
-    /// </summary>
-    public class BookUnit : IDisposable
-    {
-        public BookUnit(Book book, BookAddress bookAddress, BookLoadOption loadOptions)
-        {
-            Debug.Assert(book != null);
-            Book = book;
-            BookAddress = bookAddress;
-            LoadOptions = loadOptions;
-        }
-
-        public Book Book { get; private set; }
-        public BookAddress BookAddress { get; private set; }
-        public BookLoadOption LoadOptions { get; private set; }
-
-        public bool IsKeepHistoryOrder
-            => (LoadOptions & BookLoadOption.KeepHistoryOrder) == BookLoadOption.KeepHistoryOrder;
-
-        public bool IsValid
-            => Book?.Address != null;
-
-        #region IDisposable Support
-        private bool _disposedValue = false;
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!_disposedValue)
-            {
-                if (disposing)
-                {
-                    Book.Dispose();
-                }
-                _disposedValue = true;
-            }
-        }
-
-        public void Dispose()
-        {
-            Dispose(true);
-        }
-        #endregion
-
-        public BookMementoType GetBookMementoType()
-        {
-            if (Book is null) return BookMementoType.None;
-
-            if (BookmarkCollection.Current.Contains(Book.Address))
-            {
-                return BookMementoType.Bookmark;
-            }
-            else if (BookHistoryCollection.Current.Contains(Book.Address))
-            {
-                return BookMementoType.History;
-            }
-            else
-            {
-                return BookMementoType.None;
-            }
-        }
-    }
-
-
     /// <summary>
     /// 本の管理
     /// ロード、本の操作はここを通す
@@ -264,6 +80,8 @@ namespace NeeView
             _disposables.Add(SubscribeBookChanged(
                 (s, e) =>
                 {
+                    if (_disposedValue) return;
+
                     if (this.Book?.NotFoundStartPage != null && this.Book.Pages.Count > 0)
                     {
                         InfoMessage.Current.SetMessage(InfoMessageType.BookName, string.Format(Properties.Resources.Notice_CannotOpen, LoosePath.GetFileName(this.Book.NotFoundStartPage)), null, 2.0);
@@ -430,7 +248,7 @@ namespace NeeView
         public BookUnit? BookUnit
         {
             get { return _bookUnit; }
-            set { SetProperty(ref _bookUnit, value); }
+            private set { SetProperty(ref _bookUnit, value); }
         }
 
         // 現在の本
@@ -440,8 +258,10 @@ namespace NeeView
         public string? Address
         {
             get { return _address; }
-            set
+            private set
             {
+                ThrowIfDisposed();
+
                 _address = value;
                 AddressChanged?.Invoke(this, EventArgs.Empty);
             }
@@ -458,8 +278,10 @@ namespace NeeView
         public bool IsLoading
         {
             get { return _isLoading; }
-            set
+            private set
             {
+                ThrowIfDisposed();
+
                 if (SetProperty(ref _isLoading, value))
                 {
                     BookSettingPresenter.Current.IsLocked = _isLoading;
@@ -483,6 +305,11 @@ namespace NeeView
 
         #region IDisposable Support
         private bool _disposedValue = false;
+
+        private void ThrowIfDisposed()
+        {
+            if (_disposedValue) throw new ObjectDisposedException(GetType().FullName);
+        }
 
         void Dispose(bool disposing)
         {
@@ -527,6 +354,8 @@ namespace NeeView
 
         private void BookHistoryCollection_HistoryChanged(object? sender, BookMementoCollectionChangedArgs e)
         {
+            if (_disposedValue) return;
+
             HistoryChanged?.Invoke(sender, e);
 
             lock (_lock)
@@ -541,8 +370,10 @@ namespace NeeView
             }
         }
 
-        private void OnViewContentsChanged(object? sender, ViewContentSourceCollectionChangedEventArgs e)
+        private void BookViewer_ViewContentsChanged(object? sender, ViewContentSourceCollectionChangedEventArgs e)
         {
+            if (_disposedValue) return;
+
             AppDispatcher.Invoke(() =>
             {
                 bool allowUpdateHistory;
@@ -576,8 +407,10 @@ namespace NeeView
             });
         }
 
-        private void OnNextContentsChanged(object? sender, ViewContentSourceCollectionChangedEventArgs e)
+        private void BookViewer_NextContentsChanged(object? sender, ViewContentSourceCollectionChangedEventArgs e)
         {
+            if (_disposedValue) return;
+
             if (BookUnit == null) return;
             NextContentsChanged?.Invoke(sender, e);
         }
@@ -597,6 +430,8 @@ namespace NeeView
         public BookHubCommandLoad? RequestLoad(object? sender, string? path, string? start, BookLoadOption option, bool isRefreshFolderList)
         {
             if (!this.IsEnabled) return null;
+
+            ThrowIfDisposed();
 
             if (path == null) return null;
 
@@ -657,6 +492,8 @@ namespace NeeView
         /// <returns></returns>
         public BookHubCommandUnload RequestUnload(object sender, bool isClearViewContent, string? message = null)
         {
+            ThrowIfDisposed();
+
             var command = new BookHubCommandUnload(this, new BookHubCommandUnloadArgs()
             {
                 Sender = sender,
@@ -681,6 +518,8 @@ namespace NeeView
         /// </summary>
         public void RequestReLoad(object sender)
         {
+            ThrowIfDisposed();
+
             if (_isLoading || Address == null) return;
 
             BookLoadOption options;
@@ -703,6 +542,8 @@ namespace NeeView
         /// </summary>
         public void RequestLoadParent(object sender)
         {
+            ThrowIfDisposed();
+
             var bookAddress = BookUnit?.BookAddress;
 
             var current = bookAddress?.Address;
@@ -726,6 +567,8 @@ namespace NeeView
         // ロード中状態更新
         private void NotifyLoading(string? path)
         {
+            if (_disposedValue) return;
+
             this.LoadingPath = path;
             this.IsLoading = (path != null);
             AppDispatcher.Invoke(() => Loading?.Invoke(this, new BookHubPathEventArgs(path)));
@@ -740,6 +583,8 @@ namespace NeeView
         /// <returns></returns>
         public async Task LoadAsync(BookHubCommandLoadArgs args, CancellationToken token)
         {
+            if (_disposedValue) return;
+
             ////DebugTimer.Check("LoadAsync...");
 
             AppDispatcher.Invoke(() =>
@@ -961,29 +806,30 @@ namespace NeeView
                 }
 
                 // イベント設定
-                book.Viewer.ViewContentsChanged += OnViewContentsChanged;
-                book.Viewer.NextContentsChanged += OnNextContentsChanged;
+                // NOTE: book のほうが BookHub より寿命が短いため開放は考えなくてよい
+                book.Viewer.ViewContentsChanged += BookViewer_ViewContentsChanged;
+                book.Viewer.NextContentsChanged += BookViewer_NextContentsChanged;
                 book.Source.DartyBook += (s, e) => RequestLoad(this, Address, null, BookLoadOption.ReLoad | BookLoadOption.IsBook, false);
 
                 var tcs = new TaskCompletionSource<bool>();
-                book.Viewer.ViewContentsChanged += OnViewContentsChangedInner;
 
-                // 開始
-                BookUnit?.Book.Start();
-
-                // 最初のコンテンツ表示待ち
-                if (book.Pages.Count > 0)
+                using (book.Viewer.SubscribeViewContentsChanged(BookViewer_ViewContentsChangedInner))
                 {
-                    using (var register = token.Register(() => tcs.TrySetCanceled()))
+                    // 開始
+                    BookUnit?.Book.Start();
+
+                    // 最初のコンテンツ表示待ち
+                    if (book.Pages.Count > 0)
                     {
-                        await tcs.Task;
+                        using (var register = token.Register(() => tcs.TrySetCanceled()))
+                        {
+                            await tcs.Task;
+                        }
                     }
                 }
 
-                book.Viewer.ViewContentsChanged -= OnViewContentsChangedInner;
-
                 //// inner callback function define.
-                void OnViewContentsChangedInner(object? s, ViewContentSourceCollectionChangedEventArgs e)
+                void BookViewer_ViewContentsChangedInner(object? s, ViewContentSourceCollectionChangedEventArgs e)
                 {
                     if (e.ViewPageCollection.Collection.All(e_ => e_.Content.IsViewReady))
                     {

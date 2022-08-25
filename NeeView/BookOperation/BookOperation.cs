@@ -55,20 +55,56 @@ namespace NeeView
         // ブックが変更される
         public event EventHandler<BookChangingEventArgs>? BookChanging;
 
+        public IDisposable SubscribeBookChanging(EventHandler<BookChangingEventArgs> handler)
+        {
+            BookChanging += handler;
+            return new AnonymousDisposable(() => BookChanging -= handler);
+        }
+
         // ブックが変更された
         public event EventHandler<BookChangedEventArgs>? BookChanged;
+
+        public IDisposable SubscribeBookChanged(EventHandler<BookChangedEventArgs> handler)
+        {
+            BookChanged += handler;
+            return new AnonymousDisposable(() => BookChanged -= handler);
+        }
 
         // ページが変更された
         public event EventHandler<ViewContentSourceCollectionChangedEventArgs>? ViewContentsChanged;
 
+        public IDisposable SubscribeViewContentsChanged(EventHandler<ViewContentSourceCollectionChangedEventArgs> handler)
+        {
+            ViewContentsChanged += handler;
+            return new AnonymousDisposable(() => ViewContentsChanged -= handler);
+        }
+
         // ページがソートされた
         public event EventHandler? PagesSorted;
+
+        public IDisposable SubscribePagesSorted(EventHandler handler)
+        {
+            PagesSorted += handler;
+            return new AnonymousDisposable(() => PagesSorted -= handler);
+        }
 
         // ページリストが変更された
         public event EventHandler? PageListChanged;
 
+        public IDisposable SubscribePageListChanged(EventHandler handler)
+        {
+            PageListChanged += handler;
+            return new AnonymousDisposable(() => PageListChanged -= handler);
+        }
+
         // ページが削除された
         public event EventHandler<PageRemovedEventArgs>? PageRemoved;
+
+        public IDisposable SubscribePageRemoved(EventHandler<PageRemovedEventArgs> handler)
+        {
+            PageRemoved += handler;
+            return new AnonymousDisposable(() => PageRemoved -= handler);
+        }
 
 
         /// <summary>

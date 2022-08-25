@@ -58,16 +58,41 @@ namespace NeeView
         // 設定変更
         public event EventHandler? SettingChanged;
 
+        public IDisposable SubscribeSettingChanged(EventHandler handler)
+        {
+            SettingChanged += handler;
+            return new AnonymousDisposable(() => SettingChanged -= handler);
+        }
+
         // 表示コンテンツ変更
         // 表示の更新を要求
         public event EventHandler<ViewContentSourceCollectionChangedEventArgs>? ViewContentsChanged;
 
+        public IDisposable SubscribeViewContentsChanged(EventHandler<ViewContentSourceCollectionChangedEventArgs> handler)
+        {
+            ViewContentsChanged += handler;
+            return new AnonymousDisposable(() => ViewContentsChanged -= handler);
+        }
+
         // 先読みコンテンツ変更
         public event EventHandler<ViewContentSourceCollectionChangedEventArgs>? NextContentsChanged;
+
+        public IDisposable SubscribeNextContentsChanged(EventHandler<ViewContentSourceCollectionChangedEventArgs> handler)
+        {
+            NextContentsChanged += handler;
+            return new AnonymousDisposable(() => NextContentsChanged -= handler);
+        }
 
         // ページ終端を超えて移動しようとした
         // 次の本への移動を要求
         public event EventHandler<PageTerminatedEventArgs>? PageTerminated;
+
+        public IDisposable SubscribePageTerminated(EventHandler<PageTerminatedEventArgs> handler)
+        {
+            PageTerminated += handler;
+            return new AnonymousDisposable(() => PageTerminated -= handler);
+        }
+
 
 
         // 横長ページを分割する

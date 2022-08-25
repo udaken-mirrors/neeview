@@ -39,17 +39,21 @@ namespace NeeView
         // ソートされた
         public event EventHandler? PagesSorted;
 
+        public IDisposable SubscribePagesSorted(EventHandler handler)
+        {
+            PagesSorted += handler;
+            return new AnonymousDisposable(() => PagesSorted -= handler);
+        }
+
         // ファイル削除された
         public event EventHandler<PageRemovedEventArgs>? PageRemoved;
 
+        public IDisposable SubscribePageRemoved(EventHandler<PageRemovedEventArgs> handler)
+        {
+            PageRemoved += handler;
+            return new AnonymousDisposable(() => PageRemoved -= handler);
+        }
 
-#if false
-        // この本のアーカイバ
-        public ArchiveEntryCollection ArchiveEntryCollection { get; private set; }
-
-        // メディアアーカイバ？
-        public bool IsMedia => ArchiveEntryCollection?.Archiver is MediaArchiver;
-#endif
 
         public List<Page> Pages { get; private set; }
 

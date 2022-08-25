@@ -48,12 +48,27 @@ namespace NeeView
             _task = Worker(_cancellationTokenSource.Token);
         }
 
+
+
         // 表示コンテンツ変更
         // 表示の更新を要求
         public event EventHandler<ViewContentSourceCollectionChangedEventArgs>? ViewContentsChanged;
 
+        public IDisposable SubscribeViewContentsChanged(EventHandler<ViewContentSourceCollectionChangedEventArgs> handler)
+        {
+            ViewContentsChanged += handler;
+            return new AnonymousDisposable(() => ViewContentsChanged -= handler);
+        }
+
         // 先読みコンテンツ変更
         public event EventHandler<ViewContentSourceCollectionChangedEventArgs>? NextContentsChanged;
+
+        public IDisposable SubscribeNextContentsChanged(EventHandler<ViewContentSourceCollectionChangedEventArgs> handler)
+        {
+            NextContentsChanged += handler;
+            return new AnonymousDisposable(() => NextContentsChanged -= handler);
+        }
+
 
 
         public bool IsBusy

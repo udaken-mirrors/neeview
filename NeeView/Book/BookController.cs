@@ -1,4 +1,5 @@
-﻿using NeeLaboratory.Threading.Jobs;
+﻿using NeeLaboratory.ComponentModel;
+using NeeLaboratory.Threading.Jobs;
 using NeeView.Collections.Generic;
 using System;
 using System.Collections.Generic;
@@ -45,8 +46,22 @@ namespace NeeView
         // コマンドエンジン処理中イベント
         public event EventHandler<JobIsBusyChangedEventArgs>? IsBusyChanged;
 
+        public IDisposable SubscribeIsBusyChanged(EventHandler<JobIsBusyChangedEventArgs> handler)
+        {
+            IsBusyChanged += handler;
+            return new AnonymousDisposable(() => IsBusyChanged -= handler);
+        }
+
         // 表示ページ読込中イベント
         public event EventHandler<ViewContentsLoadingEventArgs>? ViewContentsLoading;
+
+        public IDisposable SubscribeViewContentsLoading(EventHandler<ViewContentsLoadingEventArgs> handler)
+        {
+            ViewContentsLoading += handler;
+            return new AnonymousDisposable(() => ViewContentsLoading -= handler);
+        }
+
+
 
         // コマンドエンジン処理中
         public bool IsBusy => _commandEngine.IsBusy;

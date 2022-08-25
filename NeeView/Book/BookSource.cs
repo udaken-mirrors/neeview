@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NeeLaboratory.ComponentModel;
+using System;
 
 namespace NeeView
 {
@@ -12,8 +13,17 @@ namespace NeeView
             _isRecursiveFolder = ArchiveEntryCollection.Mode == ArchiveEntryCollectionMode.IncludeSubArchives;
         }
 
+
         // 再読み込みを要求
         public event EventHandler? DartyBook;
+
+        public IDisposable SubscribeDartyBook(EventHandler handler)
+        {
+            DartyBook += handler;
+            return new AnonymousDisposable(() => DartyBook -= handler);
+        }
+
+
 
         // この本のアーカイバ
         public ArchiveEntryCollection ArchiveEntryCollection { get; private set; }
