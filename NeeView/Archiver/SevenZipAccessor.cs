@@ -141,13 +141,20 @@ namespace NeeView
                 {
                     if (disposing)
                     {
-                        _extractor?.Dispose();
-                        _extractor = null;
                     }
+
+                    // NOTE: ファイルロックを解除する
+                    _extractor?.Dispose();
+                    _extractor = null;
 
                     _disposedValue = true;
                 }
             }
+        }
+
+        ~SevenZipAccessor()
+        {
+            Dispose(disposing: false);
         }
 
         public void Dispose()
