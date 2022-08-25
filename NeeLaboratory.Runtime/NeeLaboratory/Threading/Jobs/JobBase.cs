@@ -8,23 +8,6 @@ using System.Threading.Tasks;
 
 namespace NeeLaboratory.Threading.Jobs
 {
-    /// <summary>
-    /// Job実行結果
-    /// </summary>
-    public enum JobResult
-    {
-        None,
-
-        /// <summary>
-        /// 完了
-        /// </summary>
-        Completed,
-
-        /// <summary>
-        /// キャンセル
-        /// </summary>
-        Canceled,
-    }
 
     /// <summary>
     /// Job基底
@@ -32,12 +15,11 @@ namespace NeeLaboratory.Threading.Jobs
     /// </summary>
     public abstract class JobBase : IJob, IDisposable
     {
-        #region Fields
-
         /// <summary>
         /// キャンセルトークン
         /// </summary>
-        protected CancellationToken _cancellationToken;
+        private CancellationTokenSource _tokenSource = new CancellationTokenSource();
+        private CancellationToken _cancellationToken;
 
         /// <summary>
         /// 実行完了待ち用フラグ
@@ -47,78 +29,93 @@ namespace NeeLaboratory.Threading.Jobs
         /// <summary>
         /// 実行結果
         /// </summary>
-        private JobResult _result;
+        private JobState _state;
 
-        #endregion
 
-        #region Properties
 
-        /// <summary>
-        /// 実行結果
-        /// </summary>
-        public JobResult Result
-        {
-            get { return _result; }
-            private set { _result = value; _complete.Set(); }
-        }
-
-        // キャンセル可能フラグ
-        public bool CanBeCanceled => _cancellationToken.CanBeCanceled;
-
-        #endregion
-
-        #region Constructoes
-
-        /// <summary>
-        /// constructor
-        /// </summary>
         public JobBase()
         {
-            _cancellationToken = CancellationToken.None;
+            _cancellationToken = _tokenSource.Token;
         }
 
-        /// <summary>
-        /// constructor
-        /// </summary>
-        /// <param name="token"></param>
         public JobBase(CancellationToken token)
         {
             _cancellationToken = token;
         }
 
-        #endregion
 
-        #region Methods
 
         /// <summary>
-        /// Job実行
+        /// 実行状態
         /// </summary>
+        public JobState State
+        {
+            get { return _state; }
+        }
+
+
+
+        /// <summary>
+        /// 実行状態設定
+        /// </summary>
+        private void SetState(JobState state, bool isCompleted)
+        {
+            _state = state;
+            if (isCompleted)
+            {
+                _complete.Set();
+            }
+        }
+
+        /// <summary>
+        /// キャンセル
+        /// </summary>
+        public void Cancel()
+        {
+            ThrowIfDisposed();
+
+            _tokenSource.Cancel();
+
+            if (_state == JobState.None)
+            {
+                SetState(JobState.Canceled, true);
+            }
+        }
+
+        /// <summary>
+        /// Job実行。エンジンから呼ばれる
+        /// </summary>
+        /// <param name="token">エンジンのキャンセルトークン</param>
         /// <returns></returns>
         public async Task ExecuteAsync()
         {
+            ThrowIfDisposed();
+
             if (_complete.IsSet) return;
 
             // cancel ?
             if (_cancellationToken.IsCancellationRequested)
             {
-                this.Result = JobResult.Canceled;
+                SetState(JobState.Canceled, true);
                 return;
             }
 
             // execute
             try
             {
+                SetState(JobState.Run, false);
                 await ExecuteAsync(_cancellationToken);
-                this.Result = JobResult.Completed;
+                SetState(JobState.Completed, true);
             }
             catch (OperationCanceledException)
             {
-                this.Result = JobResult.Canceled;
+                SetState(JobState.Canceled, true);
                 Debug.WriteLine($"Job {this}: canceled.");
                 OnCanceled();
             }
             catch (Exception e)
             {
+                SetState(JobState.Faulted, true);
                 Debug.WriteLine($"Job {this}: excepted!!");
                 OnException(e);
                 throw;
@@ -128,11 +125,16 @@ namespace NeeLaboratory.Threading.Jobs
         /// <summary>
         /// Job終了待機
         /// </summary>
-        /// <returns></returns>
         public async Task WaitAsync()
         {
-            await _complete.WaitHandle.WaitOneAsync();
+            await _complete.WaitHandle.AsTask();
         }
+
+        public async Task WaitAsync(CancellationToken token)
+        {
+            await _complete.WaitHandle.AsTask().WaitAsync(token);
+        }
+
 
         /// <summary>
         /// Job実行(abstract)
@@ -156,10 +158,14 @@ namespace NeeLaboratory.Threading.Jobs
         {
         }
 
-        #endregion
 
         #region IDisposable Support
         private bool _disposedValue = false;
+
+        protected void ThrowIfDisposed()
+        {
+            if (_disposedValue) throw new ObjectDisposedException(GetType().FullName);
+        }
 
         protected virtual void Dispose(bool disposing)
         {
@@ -167,6 +173,8 @@ namespace NeeLaboratory.Threading.Jobs
             {
                 if (disposing)
                 {
+                    Cancel();
+                    _tokenSource.Dispose();
                     _complete.Dispose();
                 }
 
@@ -181,43 +189,4 @@ namespace NeeLaboratory.Threading.Jobs
         #endregion
     }
 
-
-    public abstract class CancelableJobBase : JobBase
-    {
-        private CancellationTokenSource _tokenSource = new CancellationTokenSource();
-        private bool _canBeCanceled = true;
-
-        public CancelableJobBase() : base()
-        {
-            _cancellationToken = _tokenSource.Token;
-        }
-
-        /// <summary>
-        /// キャンセル可能プロパティ
-        /// </summary>
-        public new bool CanBeCanceled
-        {
-            get { return _canBeCanceled && base.CanBeCanceled; }
-            set { _canBeCanceled = value; }
-        }
-
-        public void Cancel()
-        {
-            _tokenSource.Cancel();
-        }
-
-        #region IDisposable Support
-
-        protected override void Dispose(bool disposing)
-        {
-            if (!disposing)
-            {
-                _tokenSource.Dispose();
-            }
-
-            base.Dispose(disposing);
-        }
-
-        #endregion
-    }
 }

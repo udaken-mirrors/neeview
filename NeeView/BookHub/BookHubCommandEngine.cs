@@ -19,18 +19,17 @@ namespace NeeView
     /// <summary>
     /// BookHubコマンド基底
     /// </summary>
-    public abstract class BookHubCommand : CancelableJobBase
+    public abstract class BookHubCommand : JobBase
     {
-        /// <summary>
-        /// construcotr
-        /// </summary>
-        /// <param name="bookHub"></param>
-        public BookHubCommand(BookHub bookHub) { _bookHub = bookHub; }
-
-        /// <summary>
-        /// ターゲット
-        /// </summary>
         protected BookHub _bookHub { get; private set; }
+
+
+        public BookHubCommand(BookHub bookHub)
+        {
+            _bookHub = bookHub;
+        }
+
+        public bool CanBeCanceled { get; set; } = true;
     }
 
     /// <summary>
@@ -114,44 +113,28 @@ namespace NeeView
     /// </summary>
     public class BookHubCommandEngine : SingleJobEngine
     {
-        /// <summary>
-        /// コマンド登録前処理
-        /// </summary>
-        /// <param name="job"></param>
-        protected override bool OnEnqueueing(IJob job)
+        public BookHubCommandEngine() : base(nameof(BookHubCommandEngine))
         {
-            Debug.Assert(job is BookHubCommand);
+        }
+
+        public BookHubCommandEngine(string name) : base(name)
+        {
+        }
+
+
+        protected override Queue<IJob> Enqueue(IJob job, Queue<IJob> queue)
+        {
+            if (job is not BookHubCommand) throw new ArgumentException("job must be BookHubCommand");
+            if (queue is null) throw new ArgumentNullException(nameof(queue));
 
             // 全コマンドキャンセル
             // ※ Unloadはキャンセルできないので残る
-            foreach (BookHubCommand e in AllJobs())
+            foreach (var e in AllJobs().OfType<BookHubCommand>().Where(e => e.CanBeCanceled))
             {
                 e.Cancel();
             }
 
-            return true;
+            return base.Enqueue(job, queue);
         }
-
-        #region IDisposable Support
-        private bool _disposedValue = false;
-
-        protected override void Dispose(bool disposing)
-        {
-            if (!_disposedValue)
-            {
-                if (disposing)
-                {
-                    foreach (BookHubCommand e in AllJobs())
-                    {
-                        e.Cancel();
-                    }
-                }
-
-                _disposedValue = true;
-            }
-
-            base.Dispose(disposing);
-        }
-        #endregion
     }
 }

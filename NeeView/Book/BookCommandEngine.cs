@@ -12,7 +12,7 @@ namespace NeeView
     /// <summary>
     /// Bookコマンド基底
     /// </summary>
-    internal abstract class BookCommand : CancelableJobBase
+    internal abstract class BookCommand : JobBase
     {
         public BookCommand(object? sender, int priority)
         {
@@ -105,65 +105,47 @@ namespace NeeView
     /// </summary>
     internal class BookCommandEngine : SingleJobEngine
     {
-        /// <summary>
-        /// コマンド登録前処理
-        /// </summary>
-        protected override bool OnEnqueueing(IJob command)
+        public BookCommandEngine() : base(nameof(BookCommandEngine))
         {
-            Debug.Assert(command is BookCommand);
+        }
 
-            if (_queue.Count == 0) return true;
+        public BookCommandEngine(string name) : base(name)
+        {
+        }
 
-            // JoinActionコマンドはまとめる
-            if (BookProfile.Current.CanMultiplePageMove())
+
+        protected override Queue<IJob> Enqueue(IJob job, Queue<IJob> queue)
+        {
+            Debug.Assert(job is BookCommand);
+            Debug.Assert(queue is not null);
+
+            var request = job as BookCommand;
+            if (request is null) return queue;
+
+            Debug.Assert(queue.Count <= 1);
+            var select = queue.Count > 0 ? (BookCommand)queue.Peek() : null;
+
+            if (select is null)
             {
-                var mc0 = command as BookCommandJoinAction;
-                var mc1 = _queue.Peek() as BookCommandJoinAction;
-                if (mc0 != null && mc1 != null)
-                {
-                    mc1.Join(mc0);
-                    return false;
-                }
-                else
-                {
-                    return true;
-                }
+                select = request;
+            }
+            // TODO: たまたまBookCommandJoinActionを使っている命令が一種類だけだったのでうまくいっているだけ。要修正
+            else if (BookProfile.Current.CanMultiplePageMove()
+                && request is BookCommandJoinAction requestJoinable
+                && select is BookCommandJoinAction selectJoinable)
+            {
+                selectJoinable.Join(requestJoinable);
+            }
+            else
+            {
+                select = request.Priority >= select.Priority ? request : select;
             }
 
-            return true;
+            queue.Clear();
+            queue.Enqueue(select);
+
+            return queue;
         }
 
-        /// <summary>
-        /// コマンド登録後処理
-        /// </summary>
-        /// <param name="job"></param>
-        protected override void OnEnqueued(IJob job)
-        {
-            // 優先度の高い、最新のコマンドのみ残す
-            if (_queue.Count > 1)
-            {
-                // 選択コマンド
-                var select = _queue.Reverse().Cast<BookCommand>().OrderByDescending(e => e.Priority).First();
-
-                // それ以外のコマンドは廃棄
-                foreach (BookCommand command in _queue.Where(e => e != select))
-                {
-                    command.Cancel();
-                }
-
-                // 新しいコマンド列
-                _queue.Clear();
-                _queue.Enqueue(select);
-            }
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public override void StopEngine()
-        {
-            ////Book.Log.Flush();
-            base.StopEngine();
-        }
     }
 }

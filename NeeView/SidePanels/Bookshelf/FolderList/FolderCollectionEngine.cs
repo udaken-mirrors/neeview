@@ -1,22 +1,24 @@
-﻿using System;
+﻿using NeeLaboratory.Threading.Jobs;
+using System;
 using System.Diagnostics;
+using System.Threading;
 using System.Threading.Tasks;
 
 using Jobs = NeeLaboratory.Threading.Jobs;
 
 namespace NeeView
 {
+
     public class FolderCollectionEngine : IDisposable
     {
         private FolderCollection _folderCollection;
-        private Jobs.SingleJobEngine _engine;
+        private SingleJobEngine _engine;
 
         public FolderCollectionEngine(FolderCollection folderCollection)
         {
             _folderCollection = folderCollection;
 
-            _engine = new Jobs.SingleJobEngine();
-            _engine.Name = "FolderCollectionJobEngine";
+            _engine = new SingleJobEngine(nameof(FolderCollectionEngine));
             _engine.JobError += JobEngine_Error;
             _engine.StartEngine();
         }
@@ -86,7 +88,14 @@ namespace NeeView
             _engine?.Enqueue(new RenameJob(this, oldPath, path, false));
         }
 
-        public class CreateJob : Jobs.IJob
+
+
+        public abstract class FolderCollectionJob : JobBase
+        {
+        }
+
+
+        public class CreateJob : FolderCollectionJob
         {
             private FolderCollectionEngine _target;
             private QueryPath _path;
@@ -99,7 +108,7 @@ namespace NeeView
                 _verify = verify;
             }
 
-            public async Task ExecuteAsync()
+            protected override async Task ExecuteAsync(CancellationToken token)
             {
                 ////Debug.WriteLine($"Create: {_path}");
                 _target._folderCollection.AddItem(_path); // TODO: ファイルシステム以外のFolderCollectionでは不正な操作になる
@@ -107,7 +116,7 @@ namespace NeeView
             }
         }
 
-        public class DeleteJob : Jobs.IJob
+        public class DeleteJob : FolderCollectionJob
         {
             private FolderCollectionEngine _target;
             private QueryPath _path;
@@ -120,7 +129,7 @@ namespace NeeView
                 _verify = verify;
             }
 
-            public async Task ExecuteAsync()
+            protected override async Task ExecuteAsync(CancellationToken token)
             {
                 ////Debug.WriteLine($"Delete: {_path}");
                 _target._folderCollection.DeleteItem(_path);
@@ -128,7 +137,7 @@ namespace NeeView
             }
         }
 
-        public class RenameJob : Jobs.IJob
+        public class RenameJob : FolderCollectionJob
         {
             private FolderCollectionEngine _target;
             private QueryPath _oldPath;
@@ -143,7 +152,7 @@ namespace NeeView
                 _verify = verify;
             }
 
-            public async Task ExecuteAsync()
+            protected override async Task ExecuteAsync(CancellationToken token)
             {
                 ////Debug.WriteLine($"Rename: {_oldPath} => {_path}");
                 _target._folderCollection.RenameItem(_oldPath, _path);

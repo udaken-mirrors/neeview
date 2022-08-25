@@ -100,8 +100,6 @@ namespace NeeView
         {
             ////Debug.Assert(Address != null);
             ////_commandEngine.Name = $"BookJobEngine: {this.Address}";
-            _commandEngine.Name = $"BookJobEngine: start.";
-            _commandEngine.Log = new NeeLaboratory.Diagnostics.Log(nameof(BookCommandEngine), 0);
             _commandEngine.StartEngine();
         }
 

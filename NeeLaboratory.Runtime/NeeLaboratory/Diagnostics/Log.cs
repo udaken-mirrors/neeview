@@ -11,16 +11,11 @@ namespace NeeLaboratory.Diagnostics
     /// ログの管理を行う。
     /// SourceTraceのユーティリティクラスです。
     /// </summary>
-    public class Log : IDisposable
+    public class Log : IDisposable 
     {
-        #region Fields
-
         private TraceSource _traceSource;
         private int _id;
 
-        #endregion
-
-        #region Constructors
 
         /// <summary>
         /// コンストラクター
@@ -46,15 +41,11 @@ namespace NeeLaboratory.Diagnostics
             _id = id;
         }
 
-        #endregion
 
-        #region Properties
 
         public TraceSource TraceSource => _traceSource;
 
-        #endregion
 
-        #region Methods
 
         /// <summary>
         /// TraceSourceのログ出力レベル変更
@@ -95,7 +86,6 @@ namespace NeeLaboratory.Diagnostics
             _traceSource.Flush();
         }
 
-        #endregion
 
         #region IDisposable Support
         private bool _disposedValue = false;

@@ -282,8 +282,6 @@ namespace NeeView
 
             // command engine
             _commandEngine = new BookHubCommandEngine();
-            _commandEngine.Name = "BookHubJobEngine";
-            _commandEngine.Log = new Log(nameof(BookHubCommandEngine), 0);
             _commandEngine.IsBusyChanged +=
                 (s, e) => IsBusyChanged?.Invoke(s, e);
             _commandEngine.StartEngine();
