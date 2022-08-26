@@ -61,7 +61,7 @@ namespace NeeView
         /// </summary>
         public async Task WaitAsync(int milisecondTimeout, CancellationToken token)
         {
-            await Task.Run(() => Job.WaitCompleted(milisecondTimeout, token));
+            await Job.WaitAsync(milisecondTimeout, token);
         }
 
         public override string ToString()

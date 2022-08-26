@@ -1,7 +1,10 @@
 ﻿using NeeLaboratory.ComponentModel;
+using NeeLaboratory.Threading.Tasks;
 using System;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace NeeView
 {
@@ -15,8 +18,9 @@ namespace NeeView
     public enum JobResult
     {
         None,
-        Canceled,
         Completed,
+        Canceled,
+        Failed,
     }
 
     /// <summary>
@@ -25,54 +29,112 @@ namespace NeeView
     public class Job : BindableBase, IDisposable
     {
         private ManualResetEventSlim _completed = new ManualResetEventSlim();
+        private CancellationToken _cancellationToken;
+        private IJobCommand _command;
+        private JobState _state;
+        private JobResult _result;
+
 
         private Job(int serialNumber, IJobCommand command, CancellationToken token)
         {
             SerialNumber = serialNumber;
-            Command = command;
-            CancellationToken = token;
+            _command = command;
+            _cancellationToken = token;
         }
+
 
         // シリアル番号(開発用..HashCodeで代用可能か)
         public int SerialNumber { get; private set; }
 
-        // コマンド
-        public IJobCommand Command { get; private set; }
+        public bool IsCompleted
+        {
+            get { return _completed.IsSet; }
+        }
 
-        // キャンセルトークン
-        public CancellationToken CancellationToken { get; private set; }
-
-
-        private JobState _state;
         public JobState State
         {
             get { return _state; }
-            set { SetProperty(ref _state, value); }
+            private set { SetProperty(ref _state, value); }
         }
 
-        private JobResult _result;
         public JobResult Result
         {
             get { return _result; }
-            set { SetProperty(ref _result, value); }
+            private set { SetProperty(ref _result, value); }
         }
 
 
-        public void SetCompleted()
+        /// <summary>
+        /// JOB終了状態を設定
+        /// </summary>
+        public void SetResult(JobResult result)
         {
+            if (_disposedValue) return;
+            if (_completed.IsSet) return;
+
+            Result = result;
+            State = JobState.Closed;
             _completed.Set();
         }
 
-        public bool WaitCompleted(int millisecondsTimeout, CancellationToken token)
+        public void Execute()
         {
-            using (var linkedTokenSource = CancellationTokenSource.CreateLinkedTokenSource(token, CancellationToken))
+            if (_disposedValue) return;
+
+            if (_completed.IsSet)
             {
-                return _completed.Wait(millisecondsTimeout, linkedTokenSource.Token);
+                Log("IsCompleted.");
+                return;
+            }
+
+            Log("Run...");
+
+            try
+            {
+                _cancellationToken.ThrowIfCancellationRequested();
+                State = JobState.Run;
+                _command.Execute(_cancellationToken);
+                SetResult(JobResult.Completed);
+            }
+            catch (OperationCanceledException ex)
+            {
+                Log($"Exception: {ex.Message}");
+                SetResult(JobResult.Canceled);
+            }
+            catch (AggregateException ex)
+            {
+                foreach (var iex in ex.InnerExceptions)
+                {
+                    Log($"Exception: {iex.Message}");
+                }
+                SetResult(ex.InnerExceptions.Any(e => e is OperationCanceledException) ? JobResult.Canceled : JobResult.Failed);
+            }
+            catch (Exception ex)
+            {
+                Log($"Exception: {ex.Message}");
+                SetResult(JobResult.Failed);
+            }
+
+            Log($"Done: {Result}");
+        }
+
+        public async Task WaitAsync(int millisecondsTimeout, CancellationToken token)
+        {
+            using (var linkedTokenSource = CancellationTokenSource.CreateLinkedTokenSource(token, _cancellationToken))
+            {
+                await _completed.WaitHandle.AsTask().WaitAsync(TimeSpan.FromMilliseconds(millisecondsTimeout), token);
             }
         }
 
+
         #region IDisposable Support
         private bool _disposedValue = false;
+
+        protected void ThrowIfDisposed()
+        {
+            if (_disposedValue) throw new ObjectDisposedException(GetType().FullName);
+        }
+
 
         protected virtual void Dispose(bool disposing)
         {
@@ -80,6 +142,7 @@ namespace NeeView
             {
                 if (disposing)
                 {
+                    SetResult(JobResult.Canceled);
                     _completed.Dispose();
                 }
 

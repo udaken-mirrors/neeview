@@ -20,14 +20,25 @@ namespace NeeView
             RaisePropertyChanged(propertyName);
         }
 
+
+
         public Dictionary<JobClient, List<JobSource>> _clients = new Dictionary<JobClient, List<JobSource>>();
+        private List<JobSource> _queue = new List<JobSource>();
+
 
         public event EventHandler? QueueChanged;
 
+        public IDisposable SubscribeQueueChanged(EventHandler handler)
+        {
+            QueueChanged += handler;
+            return new AnonymousDisposable(() => QueueChanged -= handler);
+        }
+
+
+        // TODO: Lockオブジェクトはプライベートにしたい
         public object Lock { get; } = new object();
 
 
-        private List<JobSource> _queue = new List<JobSource>();
         public List<JobSource> Queue
         {
             get { return _queue; }
@@ -40,9 +51,16 @@ namespace NeeView
             }
         }
 
-
         public int JobCount => Queue.Count(e => !e.IsProcessed);
 
+
+        public void LockAction(Action action)
+        {
+            lock (Lock)
+            {
+                action();
+            }
+        }
 
         public void RaiseQueueChanged()
         {

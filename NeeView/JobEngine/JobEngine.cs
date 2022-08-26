@@ -45,7 +45,6 @@ namespace NeeView
                 ChangeWorkerSize(_workerSize);
             });
 
-
             Workers = new JobWorker[_maxWorkerSize];
 
             ChangeWorkerSize(_workerSize);
@@ -58,27 +57,17 @@ namespace NeeView
         public bool IsBusy
         {
             get { return _isBusy; }
-            set { if (_isBusy != value) { _isBusy = value; RaisePropertyChanged(); } }
+            set { SetProperty(ref _isBusy, value); }
         }
 
         public JobWorker?[] Workers { get; set; }
 
 
-        private void UpdateIsBusy()
-        {
-            this.IsBusy = this.Workers.Any(e => e != null && e.IsBusy);
-        }
-
-        // 廃棄処理
-        private void Stop()
-        {
-            ChangeWorkerSize(0);
-            Debug.WriteLine("JobEngine: Disposed.");
-        }
-
         // 稼働ワーカー数変更
         public void ChangeWorkerSize(int size)
         {
+            if (_disposedValue) return;
+
             Debug.Assert(0 <= size && size <= _maxWorkerSize);
             Debug.WriteLine("JobEngine: WorkerSize=" + size);
 
@@ -93,7 +82,7 @@ namespace NeeView
                     if (worker == null)
                     {
                         worker = new JobWorker(_scheduler);
-                        worker.IsBusyChanged += (s, e) => UpdateIsBusy(); ////  IsBusyChanged?.Invoke(s, e);
+                        worker.IsBusyChanged += Worker_IsBusyChanged;
                         worker.Run();
                         Workers[i] = worker;
                         Debug.WriteLine($"JobEngine: Create Worker[{i}]");
@@ -106,6 +95,7 @@ namespace NeeView
                 {
                     if (worker != null)
                     {
+                        worker.IsBusyChanged -= Worker_IsBusyChanged;
                         worker.Cancel();
                         worker.Dispose();
                         Workers[i] = null;
@@ -120,6 +110,12 @@ namespace NeeView
             RaisePropertyChanged(nameof(Workers));
         }
 
+        private void Worker_IsBusyChanged(object? sender, EventArgs e)
+        {
+            if (_disposedValue) return;
+
+            this.IsBusy = this.Workers.Any(e => e != null && e.IsBusy);
+        }
 
         #region Scheduler
         private JobScheduler _scheduler;
@@ -134,17 +130,23 @@ namespace NeeView
 
         public void RegistClient(JobClient client)
         {
+            if (_disposedValue) return;
+
             _scheduler.RegistClent(client);
         }
 
         public void UnregistClient(JobClient client)
         {
+            if (_disposedValue) return;
+
             _scheduler.Order(client, new List<JobOrder>());
             _scheduler.UnregistClient(client);
         }
 
         public List<JobSource> Order(JobClient sender, List<JobOrder> orders)
         {
+            ThrowIfDisposed();
+
             return _scheduler.Order(sender, orders);
         }
 
@@ -153,13 +155,18 @@ namespace NeeView
         #region IDisposable Support
         private bool _disposedValue = false;
 
+        protected void ThrowIfDisposed()
+        {
+            if (_disposedValue) throw new ObjectDisposedException(GetType().FullName);
+        }
+
         protected virtual void Dispose(bool disposing)
         {
             if (!_disposedValue)
             {
                 if (disposing)
                 {
-                    Stop();
+                    ChangeWorkerSize(0);
                 }
 
                 _disposedValue = true;

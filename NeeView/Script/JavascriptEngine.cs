@@ -14,6 +14,7 @@ namespace NeeView
         private CommandHost _commandHost;
         private CancellationToken _cancellationToken;
 
+
         public JavascriptEngine()
         {
             _commandHost = new CommandHost();
@@ -27,6 +28,7 @@ namespace NeeView
             _engine.SetValue("include", (Func<string, object?>)ExecureFile);
             _engine.SetValue("nv", _commandHost);
         }
+
 
         public string? CurrentPath { get; private set; }
 

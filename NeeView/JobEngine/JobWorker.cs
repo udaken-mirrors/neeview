@@ -1,6 +1,7 @@
 ﻿using NeeLaboratory.ComponentModel;
 using System;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading;
 
 namespace NeeView
@@ -55,6 +56,12 @@ namespace NeeView
 
         public event EventHandler? IsBusyChanged;
 
+        public IDisposable SubscribeIsBusyChanged(EventHandler handler)
+        {
+            IsBusyChanged += handler;
+            return new AnonymousDisposable(() => IsBusyChanged -= handler);
+        }
+
 
         /// <summary>
         /// IsBusy property.
@@ -62,7 +69,16 @@ namespace NeeView
         public bool IsBusy
         {
             get { return _isBusy; }
-            set { if (_isBusy != value) { _isBusy = value; IsBusyChanged?.Invoke(this, EventArgs.Empty); } }
+            private set
+            {
+                if (IsDisposed()) return;
+
+                if (_isBusy != value)
+                {
+                    _isBusy = value;
+                    IsBusyChanged?.Invoke(this, EventArgs.Empty);
+                }
+            }
         }
 
         /// <summary>
@@ -74,6 +90,8 @@ namespace NeeView
             get { return _isPrimary; }
             set
             {
+                if (IsDisposed()) return;
+
                 if (SetProperty(ref _isPrimary, value))
                 {
                     UpdateThreadPriority();
@@ -90,6 +108,8 @@ namespace NeeView
             get { return _isLimited; }
             set
             {
+                if (IsDisposed()) return;
+
                 if (SetProperty(ref _isLimited, value))
                 {
                     UpdateJobPriorityRange();
@@ -100,6 +120,8 @@ namespace NeeView
 
         private void Context_JobChanged(object? sender, EventArgs e)
         {
+            if (IsDisposed()) return;
+
             _event.Set();
         }
 
@@ -141,6 +163,8 @@ namespace NeeView
         // ワーカータスク廃棄
         public void Cancel()
         {
+            if (IsDisposed()) return;
+
             _cancellationTokenSource.Cancel();
         }
 
@@ -161,12 +185,13 @@ namespace NeeView
             }
         }
 
-
         // ワーカータスクメイン
         private void WorkerExecuteAsyncCore(CancellationToken token)
         {
-            while (!token.IsCancellationRequested)
+            while (true)
             {
+                token.ThrowIfCancellationRequested();
+
                 Log($"get Job ...");
                 Job? job;
 
@@ -193,47 +218,21 @@ namespace NeeView
                     continue;
                 }
 
+                // JOB実行
                 IsBusy = true;
-
-                if (!job.CancellationToken.IsCancellationRequested)
-                {
-                    job.Log("Run...");
-                    job.State = JobState.Run;
-                    Log($"Job({job.SerialNumber}) execute ...");
-                    try
-                    {
-                        job.Command.Execute(job.CancellationToken);
-                        job.Log($"Done: Cancel={job.CancellationToken.IsCancellationRequested}");
-                    }
-                    catch (AggregateException ex)
-                    {
-                        foreach (var iex in ex.InnerExceptions)
-                        {
-                            job.Log($"Exception: {iex.Message}");
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        job.Log($"Exception: {ex.Message}");
-                    }
-                    Log($"Job({job.SerialNumber}) execute done. : {job.CancellationToken.IsCancellationRequested}");
-                }
-                else
-                {
-                    job.Log($"Already canceled.");
-                }
-
-                // JOB完了
-                job.Result = job.CancellationToken.IsCancellationRequested ? JobResult.Canceled : JobResult.Completed;
-                job.State = JobState.Closed;
-                job.SetCompleted();
+                Log($"Job({job.SerialNumber}) execute ...");
+                job.Execute();
+                Log($"Job({job.SerialNumber}) execute done. : {job.Result}");
             }
-
-            Debug.WriteLine("Task: Exit.");
         }
 
         #region IDisposable Support
         private int _disposedValue;
+
+        private bool IsDisposed()
+        {
+            return _disposedValue != 0;
+        }
 
         private void ThrowIfDisposed()
         {
@@ -246,21 +245,13 @@ namespace NeeView
             {
                 if (disposing)
                 {
-                    if (_scheduler != null)
-                    {
-                        _scheduler.QueueChanged -= Context_JobChanged;
-                    }
+                    _scheduler.QueueChanged -= Context_JobChanged;
 
-                    if (_cancellationTokenSource != null)
-                    {
-                        _cancellationTokenSource.Cancel();
-                        _cancellationTokenSource.Dispose();
-                    }
+                    _cancellationTokenSource.Cancel();
+                    _cancellationTokenSource.Dispose();
 
-                    if (_event != null)
-                    {
-                        _event.Dispose();
-                    }
+                    _event.Set();
+                    _event.Dispose();
                 }
             }
         }
