@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NeeLaboratory.ComponentModel;
+using System;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
@@ -12,9 +13,8 @@ namespace NeeView
         private ScriptUnitPool _pool = new ScriptUnitPool();
         private ScriptFolderWatcher _watcher;
         private bool _disposedValue;
-
         private ScriptCommandSourceMap _sourceMap = new ScriptCommandSourceMap();
-
+        private DisposableCollection _disposableCollection = new DisposableCollection();
 
         public ScriptManager(CommandTable commandTable)
         {
@@ -23,24 +23,28 @@ namespace NeeView
             _watcher = new ScriptFolderWatcher();
             _watcher.Changed += (s, e) => UpdateScriptCommands(true, false);
 
-            Config.Current.Script.AddPropertyChanged(nameof(ScriptConfig.IsScriptFolderEnabled),
-                (s, e) => ScriptConfigChanged());
-
-            Config.Current.Script.AddPropertyChanged(nameof(ScriptConfig.ScriptFolder),
-                (s, e) => ScriptConfigChanged());
+            _disposableCollection.Add(Config.Current.Script.SubscribePropertyChanged(nameof(ScriptConfig.IsScriptFolderEnabled),
+                (s, e) => ScriptConfig_Changed()));
+            
+            _disposableCollection.Add(Config.Current.Script.SubscribePropertyChanged(nameof(ScriptConfig.ScriptFolder),
+                (s, e) => ScriptConfig_Changed()));
 
             UpdateWatcher();
         }
 
 
-        private void ScriptConfigChanged()
+        private void ScriptConfig_Changed()
         {
+            if (_disposedValue) return;
+
             UpdateScriptCommands(isForce: true, isReplace: false);
             UpdateWatcher();
         }
 
         private void UpdateWatcher()
         {
+            if (_disposedValue) return;
+
             if (Config.Current.Script.IsScriptFolderEnabled)
             {
                 _watcher.Start(Config.Current.Script.ScriptFolder);
@@ -53,6 +57,8 @@ namespace NeeView
 
         public void OpenScriptsFolder()
         {
+            if (_disposedValue) return;
+
             var path = Config.Current.Script.ScriptFolder;
             if (string.IsNullOrEmpty(path))
             {
@@ -67,7 +73,7 @@ namespace NeeView
                 {
                     directory.Create();
                     ResourceTools.ExportFileFromResource(System.IO.Path.Combine(directory.FullName, "Sample.nvjs"), "/Resources/Scripts/Sample.nvjs");
-                    ScriptConfigChanged();
+                    ScriptConfig_Changed();
                 }
                 ExternalProcess.Start("explorer.exe", $"\"{path}\"", new ExternalProcessOptions() { IsThrowException = true });
             }
@@ -86,6 +92,8 @@ namespace NeeView
         /// <returns>実行した</returns>
         public bool UpdateScriptCommands(bool isForce, bool isReplace)
         {
+            if (_disposedValue) return false;
+
             if (!isForce && !_isDarty) return false;
             _isDarty = false;
 
@@ -102,11 +110,15 @@ namespace NeeView
 
         public void Execute(object? sender, string path, string? argument)
         {
+            if (_disposedValue) return;
+
             _pool.Run(sender, path, argument);
         }
 
         public void CancelAll()
         {
+            if (_disposedValue) return;
+
             _pool.CancelAll();
         }
 
@@ -117,7 +129,9 @@ namespace NeeView
                 if (disposing)
                 {
                     CancelAll();
+
                     _watcher.Dispose();
+                    _disposableCollection.Dispose();
                 }
 
                 _disposedValue = true;

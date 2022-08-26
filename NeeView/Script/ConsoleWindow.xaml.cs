@@ -18,7 +18,15 @@ namespace NeeView
         public ConsoleWindow()
         {
             InitializeComponent();
+
+            this.Closed += ConsoleWindow_Closed;
+
             this.Console.ConsoleHost = new ConsoleHost(this);
+        }
+
+        private void ConsoleWindow_Closed(object? sender, System.EventArgs e)
+        {
+            this.Console.Dispose();
         }
     }
 }

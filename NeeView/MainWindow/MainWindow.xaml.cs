@@ -530,7 +530,11 @@ namespace NeeView
         {
             _vm.IsClosing = true;
 
+            // コマンド停止
             RoutedCommandTable.Current.Dispose();
+
+            // コンソールウィンドウを閉じる
+            ConsoleWindowManager.Current.Dispose();
 
             // 設定ウィンドウの保存動作を無効化
             if (Setting.SettingWindow.Current != null)
@@ -553,9 +557,9 @@ namespace NeeView
         private void MainWindow_Closed(object sender, EventArgs e)
         {
             CompositionTarget.Rendering -= OnRendering;
-
+            
+            // これApp.xaml.csでも処理してるぞ？
             App.Current.DisableUnhandledException();
-
             ApplicationDisposer.Current.Dispose();
 
             // タイマー停止

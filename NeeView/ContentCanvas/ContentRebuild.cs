@@ -1,7 +1,6 @@
 ﻿using NeeLaboratory;
 using NeeLaboratory.ComponentModel;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -26,6 +25,7 @@ namespace NeeView
         private bool _isBusy;
         private bool _isKeyUpChance;
         private bool _ignoreMouseState;
+        private DisposableCollection _disposables = new DisposableCollection();
 
 
         public ContentRebuild(MainViewComponent viewComponent)
@@ -33,33 +33,45 @@ namespace NeeView
             _viewComponent = viewComponent;
 
             // コンテンツ変更監視
-            _viewComponent.ContentCanvas.ContentChanged += (s, e) => Request();
-            _viewComponent.ContentCanvas.ContentSizeChanged += (s, e) => Request();
-            _viewComponent.ContentCanvas.ContentStretchChanged += (s, e) => RequestSoon();
+            _disposables.Add(_viewComponent.ContentCanvas.SubscribeContentChanged(
+                (s, e) => Request()));
+            _disposables.Add(_viewComponent.ContentCanvas.SubscribeContentSizeChanged(
+                (s, e) => Request()));
+            _disposables.Add(_viewComponent.ContentCanvas.SubscribeContentStretchChanged(
+                (s, e) => RequestSoon()));
 
             // DPI変化に追従
-            _viewComponent.MainView.DpiProvider.DpiChanged += (s, e) => RequestWithResize();
+            _disposables.Add(_viewComponent.MainView.DpiProvider.SubscribeDpiChanged(
+                (s, e) => RequestWithResize()));
 
             // スケール変化に追従
-            _viewComponent.DragTransform.AddPropertyChanged(nameof(DragTransform.Scale), (s, e) => Request());
+            _disposables.Add(_viewComponent.DragTransform.SubscribePropertyChanged(nameof(DragTransform.Scale),
+                (s, e) => Request()));
 
             // ルーペ状態に追従
-            _viewComponent.LoupeTransform.AddPropertyChanged(nameof(LoupeTransform.FixedScale), (s, e) => Request());
+            _disposables.Add(_viewComponent.LoupeTransform.SubscribePropertyChanged(nameof(LoupeTransform.FixedScale),
+                (s, e) => Request()));
 
             // リサイズフィルター状態監視
-            ////Config.Current.ImageResizeFilter.AddPropertyChanged(nameof(ImageResizeFilterConfig.IsEnabled), (s, e) => Request());
-            Config.Current.ImageResizeFilter.PropertyChanged += (s, e) => Request();
+            _disposables.Add(Config.Current.ImageResizeFilter.SubscribePropertyChanged(
+                (s, e) => Request()));
 
             // ドット表示監視
-            Config.Current.ImageDotKeep.AddPropertyChanged(nameof(ImageDotKeepConfig.IsEnabled), (s, e) => Request());
+            _disposables.Add(Config.Current.ImageDotKeep.SubscribePropertyChanged(nameof(ImageDotKeepConfig.IsEnabled),
+                (s, e) => Request()));
 
             // サイズ指定状態監視
-            Config.Current.ImageCustomSize.PropertyChanged += (s, e) => RequestWithResize();
-            Config.Current.ImageTrim.PropertyChanged += (s, e) => RequestWithTrim();
+            _disposables.Add(Config.Current.ImageCustomSize.SubscribePropertyChanged(
+                (s, e) => RequestWithResize()));
+            _disposables.Add(Config.Current.ImageTrim.SubscribePropertyChanged(
+                (s, e) => RequestWithTrim()));
 
-            WindowMessage.Current.EnterSizeMove += (s, e) => _isResizingWindow = true;
-            WindowMessage.Current.ExitSizeMove += (s, e) => _isResizingWindow = false;
+            _disposables.Add(WindowMessage.Current.SubscribeEnterSizeMove(
+                (s, e) => _isResizingWindow = true));
+            _disposables.Add(WindowMessage.Current.SubscribeExitSizeMove(
+                (s, e) => _isResizingWindow = false));
 
+            // キー入力監視。メンバーなのでイベント解除不要
             _keyPressWatcher = new KeyPressWatcher(MainWindow.Current);
             _keyPressWatcher.PreviewKeyDown += (s, e) => _isKeyUpChance = false;
             _keyPressWatcher.PreviewKeyUp += (s, e) => _isKeyUpChance = true;
@@ -95,6 +107,8 @@ namespace NeeView
         /// </summary>
         private void OnRendering(object? sender, EventArgs e)
         {
+            if (_disposedValue) return;
+
             RebuildFrame();
         }
 
@@ -147,12 +161,16 @@ namespace NeeView
         // 更新要求
         public void Request()
         {
+            if (_disposedValue) return;
+
             this.IsRequested = true;
         }
 
         // 即時更新要求
         public void RequestSoon()
         {
+            if (_disposedValue) return;
+
             _ignoreMouseState = true;
             this.IsRequested = true;
         }
@@ -160,6 +178,8 @@ namespace NeeView
         // リサイズ更新要求
         public void RequestWithResize()
         {
+            if (_disposedValue) return;
+
             _isUpdateContentSize = true;
             this.IsRequested = true;
         }
@@ -167,6 +187,8 @@ namespace NeeView
         // トリミング更新要求
         public void RequestWithTrim()
         {
+            if (_disposedValue) return;
+
             _isUpdateContentSize = true;
             _isUpdateContentViewBox = true;
             this.IsRequested = true;
@@ -174,11 +196,15 @@ namespace NeeView
 
         public void UpdateStatus()
         {
+            if (_disposedValue) return;
+
             this.IsBusy = _viewComponent.ContentCanvas.CloneContents.Where(e => e.IsValid).Any(e => e.IsResizing);
         }
 
         private void Start()
         {
+            if (_disposedValue) return;
+
             CompositionTarget.Rendering += OnRendering;
         }
 
@@ -190,6 +216,12 @@ namespace NeeView
         #region IDisposable Support
         private bool _disposedValue = false;
 
+        protected void ThrowIfDisposed()
+        {
+            if (_disposedValue) throw new ObjectDisposedException(GetType().FullName);
+        }
+
+
         protected virtual void Dispose(bool disposing)
         {
             if (!_disposedValue)
@@ -198,6 +230,7 @@ namespace NeeView
                 {
                     Stop();
                     _keyPressWatcher.Dispose();
+                    _disposables.Dispose();
                 }
 
                 _disposedValue = true;
@@ -209,61 +242,6 @@ namespace NeeView
             Dispose(true);
         }
         #endregion
-    }
-
-    public class Locker
-    {
-        public class Key : IDisposable
-        {
-            public Locker? Locker { get; set; }
-
-            public Key(Locker locker)
-            {
-                this.Locker = locker;
-            }
-
-            #region IDisposable Support
-            private bool _disposedValue = false;
-
-            protected virtual void Dispose(bool disposing)
-            {
-                if (!_disposedValue)
-                {
-                    if (disposing)
-                    {
-                        this.Locker?.Unlock(this);
-                    }
-
-                    _disposedValue = true;
-                }
-            }
-
-            public void Dispose()
-            {
-                Dispose(true);
-            }
-            #endregion
-        }
-
-        private List<Key> _keys = new List<Key>();
-
-        public bool IsLocked => _keys.Any();
-
-        public Key Lock()
-        {
-            var key = new Key(this);
-            _keys.Add(key);
-            return key;
-        }
-
-        public void Unlock(Key key)
-        {
-            if (key.Locker == this)
-            {
-                _keys.Remove(key);
-                key.Locker = null;
-            }
-        }
     }
 
 

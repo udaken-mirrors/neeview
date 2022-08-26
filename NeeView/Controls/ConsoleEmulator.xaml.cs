@@ -19,7 +19,7 @@ using System.Windows.Shapes;
 
 namespace NeeView
 {
-    public partial class ConsoleEmulator : UserControl, INotifyPropertyChanged
+    public partial class ConsoleEmulator : UserControl, INotifyPropertyChanged, IDisposable
     {
         #region INotifyPropertyChanged Support
 
@@ -55,6 +55,7 @@ namespace NeeView
         private bool _isPromptEnabled = true;
         private bool _isInputEnabled = true;
         private CancellationTokenSource? _cancellationTokenSource;
+        private bool _disposedValue;
 
         public ConsoleEmulator()
         {
@@ -133,7 +134,6 @@ namespace NeeView
             set => SetProperty(ref _consoleInput, value);
         }
 
-
         private void ConsoleEmulator_Loaded(object sender, RoutedEventArgs e)
         {
             if (FirstMessage != null)
@@ -144,6 +144,8 @@ namespace NeeView
 
         private void RootPanel_MouseDown(object sender, MouseButtonEventArgs e)
         {
+            if (_disposedValue) return;
+
             this.InputBlock.Focus();
             e.Handled = true;
         }
@@ -151,6 +153,8 @@ namespace NeeView
 
         private void OutputBlock_PreviewKeyDown(object sender, KeyEventArgs e)
         {
+            if (_disposedValue) return;
+
             if (Keyboard.Modifiers == ModifierKeys.None)
             {
                 FocusToInputBlock();
@@ -165,6 +169,8 @@ namespace NeeView
         // NOTE: 未使用
         private void OutputBlock_PreviewMouseButtonUp(object sender, MouseButtonEventArgs e)
         {
+            if (_disposedValue) return;
+
             if (this.OutputBlock.SelectionLength == 0)
             {
                 FocusToInputBlock();
@@ -173,12 +179,16 @@ namespace NeeView
 
         private void InputBlock_Loaded(object sender, RoutedEventArgs e)
         {
+            if (_disposedValue) return;
+
             this.InputBlock.Focus();
         }
 
 
         private void InputBlock_PreviewKeyDown(object sender, KeyEventArgs e)
         {
+            if (_disposedValue) return;
+
             // Ctrl+C
             if (e.Key == Key.C && Keyboard.Modifiers == ModifierKeys.Control)
             {
@@ -266,6 +276,8 @@ namespace NeeView
 
         public void WriteLine(string? text)
         {
+            if (_disposedValue) return;
+
             //if (string.IsNullOrEmpty(text)) return;
 
             this.Dispatcher.Invoke((Action)(() =>
@@ -339,6 +351,8 @@ namespace NeeView
 
         private void RunScript(string input)
         {
+            if (_disposedValue) return;
+
             var consoleHost = ConsoleHost;
             if (consoleHost is null) return;
 
@@ -361,6 +375,8 @@ namespace NeeView
 
         private void CancelScript()
         {
+            if (_disposedValue) return;
+
             ////Debug.WriteLine($"CancelScript");
             _cancellationTokenSource?.Cancel();
         }
@@ -368,14 +384,44 @@ namespace NeeView
 
         private void EnableInput()
         {
+            if (_disposedValue) return;
+
             _isInputEnabled = true;
             IsPromptEnabled = true;
         }
 
         private void DisableInput()
         {
+            if (_disposedValue) return;
+
             _isInputEnabled = false;
             IsPromptEnabled = false;
+        }
+
+        protected void ThrowIfDisposed()
+        {
+            if (_disposedValue) throw new ObjectDisposedException(GetType().FullName);
+        }
+
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!_disposedValue)
+            {
+                if (disposing)
+                {
+                    _cancellationTokenSource?.Cancel();
+                    _cancellationTokenSource?.Dispose();
+                }
+
+                _disposedValue = true;
+            }
+        }
+
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
         }
     }
 

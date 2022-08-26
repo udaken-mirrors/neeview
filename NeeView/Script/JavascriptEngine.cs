@@ -104,18 +104,18 @@ namespace NeeView
 
         public void ExceptionPrcess(Exception ex)
         {
-            if (ex is OperationCanceledException)
-            {
-                return;
-            }
+            var message = ex is OperationCanceledException || ex is ScriptException
+                ? ex.Message
+                : CreateScriptErrorMessage(ex.Message).ToString();
 
-            var message = (ex is ScriptException) ? ex.Message : CreateScriptErrorMessage(ex.Message).ToString();
             ConsoleWindowManager.Current.ErrorMessage(message, this.IsToastEnable);
         }
 
         [Documentable(Name = "log")]
         public void Log(object log)
         {
+            _cancellationToken.ThrowIfCancellationRequested();
+
             var message = log as string ?? new JsonStringBulder(log).ToString();
             ConsoleWindowManager.Current.WriteLine(ScriptMessageLevel.None, message);
         }
@@ -123,6 +123,7 @@ namespace NeeView
         [Documentable(Name = "sleep")]
         public void Sleep(int millisecond)
         {
+            // https://qiita.com/laughter/items/b0bcab9c60d0a28709a0
             if (_cancellationToken.WaitHandle.WaitOne(millisecond))
             {
                 throw new OperationCanceledException();
@@ -132,17 +133,23 @@ namespace NeeView
         [Documentable(Name = "system")]
         public void SystemCall(string filename, string? args = null)
         {
+            _cancellationToken.ThrowIfCancellationRequested();
+
             ExternalProcess.Start(filename, args, new ExternalProcessOptions() { IsThrowException = true });
         }
 
 
         public void SetValue(string name, object value)
         {
+            _cancellationToken.ThrowIfCancellationRequested();
+
             _engine.SetValue(name, value);
         }
 
         public object GetValue(string name)
         {
+            _cancellationToken.ThrowIfCancellationRequested();
+
             return _engine.GetValue(name).ToObject();
         }
 

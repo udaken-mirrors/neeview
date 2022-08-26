@@ -27,13 +27,28 @@ namespace NeeView
 
 
         public event EventHandler<KeyEventArgs>? PreviewKeyDown;
+
+        public IDisposable SubscribePreviewKeyDown(EventHandler<KeyEventArgs> handler)
+        {
+            PreviewKeyDown += handler;
+            return new AnonymousDisposable(() => PreviewKeyDown -= handler);
+        }
+
         public event EventHandler<KeyEventArgs>? PreviewKeyUp;
+
+        public IDisposable SubscribePreviewKeyUp(EventHandler<KeyEventArgs> handler)
+        {
+            PreviewKeyUp += handler;
+            return new AnonymousDisposable(() => PreviewKeyUp -= handler);
+        }
 
 
         public bool IsPressed
         {
             get
             {
+                if (_disposedValue) return false;
+
                 if (_keys.Any() && _keys.All(e => Keyboard.IsKeyUp(e)))
                 {
                     _keys.Clear();
@@ -50,8 +65,47 @@ namespace NeeView
         public bool IsModifierKeysPressed => Keyboard.Modifiers != ModifierKeys.None;
 
 
+        private void Target_PreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            if (_disposedValue) return;
+
+            AddKey(e.Key);
+            PreviewKeyDown?.Invoke(sender, e);
+        }
+
+        private void Target_PreviewKeyUp(object sender, KeyEventArgs e)
+        {
+            if (_disposedValue) return;
+
+            RemoveKey(e.Key);
+            PreviewKeyUp?.Invoke(sender, e);
+        }
+
+        private void AddKey(Key key)
+        {
+            if (_disposedValue) return;
+
+            if (!RoutedCommandTable.Current.IsUsedKey(key)) return;
+
+            if (_keys.Contains(key)) return;
+            _keys.AddLast(key);
+        }
+
+        private void RemoveKey(Key key)
+        {
+            if (_disposedValue) return;
+
+            _keys.Remove(key);
+        }
+
         #region IDisposable Support
         private bool _disposedValue = false;
+
+        protected void ThrowIfDisposed()
+        {
+            if (_disposedValue) throw new ObjectDisposedException(GetType().FullName);
+        }
+
 
         protected virtual void Dispose(bool disposing)
         {
@@ -71,31 +125,5 @@ namespace NeeView
             Dispose(true);
         }
         #endregion
-
-
-        private void Target_PreviewKeyDown(object sender, KeyEventArgs e)
-        {
-            AddKey(e.Key);
-            PreviewKeyDown?.Invoke(sender, e);
-        }
-
-        private void Target_PreviewKeyUp(object sender, KeyEventArgs e)
-        {
-            RemoveKey(e.Key);
-            PreviewKeyUp?.Invoke(sender, e);
-        }
-
-        private void AddKey(Key key)
-        {
-            if (!RoutedCommandTable.Current.IsUsedKey(key)) return;
-
-            if (_keys.Contains(key)) return;
-            _keys.AddLast(key);
-        }
-
-        private void RemoveKey(Key key)
-        {
-            _keys.Remove(key);
-        }
     }
 }

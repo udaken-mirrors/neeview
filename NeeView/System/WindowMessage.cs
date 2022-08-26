@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NeeLaboratory.ComponentModel;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -239,11 +240,53 @@ namespace NeeView
         }
 
         public event EventHandler<DriveChangedEventArgs>? DriveChanged;
+
+        public IDisposable SubscribeDriveChanged(EventHandler<DriveChangedEventArgs> handler)
+        {
+            DriveChanged += handler;
+            return new AnonymousDisposable(() => DriveChanged -= handler);
+        }
+
         public event EventHandler<MediaChangedEventArgs>? MediaChanged;
+
+        public IDisposable SubscribeMediaChanged(EventHandler<MediaChangedEventArgs> handler)
+        {
+            MediaChanged += handler;
+            return new AnonymousDisposable(() => MediaChanged -= handler);
+        }
+
         public event EventHandler<DirectoryChangedEventArgs>? DirectoryChanged;
+        
+        public IDisposable SubscribeDirectoryChanged(EventHandler<DirectoryChangedEventArgs> handler)
+        {
+            DirectoryChanged += handler;
+            return new AnonymousDisposable(() => DirectoryChanged -= handler);
+        }
+
         public event EventHandler<SettingChangedEventArgs>? SettingChanged;
+
+        public IDisposable SubscribeSettingChanged(EventHandler<SettingChangedEventArgs> handler)
+        {
+            SettingChanged += handler;
+            return new AnonymousDisposable(() => SettingChanged -= handler);
+        }
+
         public event EventHandler? EnterSizeMove;
+
+        public IDisposable SubscribeEnterSizeMove(EventHandler handler)
+        {
+            EnterSizeMove += handler;
+            return new AnonymousDisposable(() => EnterSizeMove -= handler);
+        }
+
         public event EventHandler? ExitSizeMove;
+
+        public IDisposable SubscribeExitSizeMove(EventHandler handler)
+        {
+            ExitSizeMove += handler;
+            return new AnonymousDisposable(() => ExitSizeMove -= handler);
+        }
+
 
         // ウィンドウプロシージャ初期化
         public void Initialize(Window window)

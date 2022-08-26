@@ -41,11 +41,22 @@ namespace NeeView
 
         public void AddReciever(string ID, RemoteCommandReciever reciever)
         {
+            if (_disposedValue) return;
+
             _recievers.Add(ID, reciever);
+        }
+
+        public void RemoveReciever(string ID)
+        {
+            if (_disposedValue) return;
+
+            _recievers.Remove(ID);
         }
 
         private void Reciever(object? sender, RemoteCommandEventArgs e)
         {
+            if (_disposedValue) return;
+
             if (_recievers.TryGetValue(e.Command.Id, out RemoteCommandReciever? reciever))
             {
                 AppDispatcher.BeginInvoke(() =>
@@ -68,11 +79,15 @@ namespace NeeView
 
         public void Send(RemoteCommand command, RemoteCommandDelivery delivery)
         {
+            if (_disposedValue) return;
+
             var async = SendAsync(command, delivery);
         }
 
         public async Task SendAsync(RemoteCommand command, RemoteCommandDelivery delivery)
         {
+            if (_disposedValue) return;
+
             try
             {
                 await _client.SendAsync(command, delivery);
@@ -87,18 +102,26 @@ namespace NeeView
         #region IDisposable Support
         private bool _disposedValue = false;
 
+        protected void ThrowIfDisposed()
+        {
+            if (_disposedValue) throw new ObjectDisposedException(GetType().FullName);
+        }
+
+
         protected virtual void Dispose(bool disposing)
         {
             if (!_disposedValue)
             {
                 if (disposing)
                 {
+                    _server.Stop();
                     _server.Dispose();
                 }
 
                 _disposedValue = true;
             }
         }
+
         public void Dispose()
         {
             Dispose(true);

@@ -178,14 +178,49 @@ namespace NeeView
         }
 
 
-
+        /// <summary>
+        /// コンテンツ変更通知
+        /// </summary>
         public event EventHandler? ContentChanged;
 
+        public IDisposable SubscribeContentChanged(EventHandler handler)
+        {
+            ContentChanged += handler;
+            return new AnonymousDisposable(() => ContentChanged -= handler);
+        }
+
+        /// <summary>
+        /// コンテンツサイズ変更通知
+        /// </summary>
         public event EventHandler? ContentSizeChanged;
 
+        public IDisposable SubscribeContentSizeChanged(EventHandler handler)
+        {
+            ContentSizeChanged += handler;
+            return new AnonymousDisposable(() => ContentSizeChanged -= handler);
+        }
+
+        /// <summary>
+        /// コンテンツストレッチ変更通知
+        /// </summary>
         public event EventHandler? ContentStretchChanged;
 
+        public IDisposable SubscribeContentStretchChanged(EventHandler handler)
+        {
+            ContentStretchChanged += handler;
+            return new AnonymousDisposable(() => ContentStretchChanged -= handler);
+        }
+
+        /// <summary>
+        /// DPI変更通知
+        /// </summary>
         public event EventHandler? DpiChanged;
+
+        public IDisposable SubscribeDpiChanged(EventHandler handler)
+        {
+            DpiChanged += handler;
+            return new AnonymousDisposable(() => DpiChanged -= handler);
+        }
 
 
         // 空フォルダー通知表示のON/OFF
