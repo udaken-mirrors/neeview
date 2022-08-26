@@ -116,16 +116,11 @@ namespace NeeView
 
         public void ExtractFile(int index, Stream extractStream)
         {
-            ThrowIfDisposed();
-
-            SevenZipExtractor extractor;
-
             lock (_lock)
             {
-                extractor = GetExtractor();
+                ThrowIfDisposed();
+                GetExtractor().ExtractFile(index, extractStream);
             }
-
-            extractor.ExtractFile(index, extractStream);
         }
 
 
