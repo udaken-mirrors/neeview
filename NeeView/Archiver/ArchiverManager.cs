@@ -6,7 +6,6 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Runtime.Serialization;
 using System.Security.Permissions;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -15,33 +14,6 @@ using System.Threading.Tasks;
 
 namespace NeeView
 {
-    [Serializable]
-    public class NotSupportedFileTypeException : Exception
-    {
-        public NotSupportedFileTypeException(string extension) : base(string.Format(Properties.Resources.Notice_NotSupportedFileType, extension))
-        {
-            Extension = extension;
-        }
-
-        public NotSupportedFileTypeException(string extension, string message) : base(message)
-        {
-            Extension = extension;
-        }
-
-        public NotSupportedFileTypeException(string extension, string message, Exception inner) : base(message)
-        {
-            Extension = extension;
-        }
-
-        public string Extension { get; set; }
-
-        public override void GetObjectData(SerializationInfo info, StreamingContext context)
-        {
-            base.GetObjectData(info, context);
-            info.AddValue("NotSupportedFileTypeException.Extension", this.Extension);
-        }
-    }
-
     /// <summary>
     /// アーカイバーマネージャ
     /// </summary>
@@ -231,6 +203,8 @@ namespace NeeView
         /// <returns></returns>
         public bool IsExcludedFolder(string path)
         {
+            ThrowIfDisposed();
+
             return Config.Current.Book.Excludes.Contains(LoosePath.GetFileName(path));
         }
 
@@ -411,9 +385,10 @@ namespace NeeView
 
         }
 
-
         public ArchiverType GetArchiverType(Archiver archiver)
         {
+            if (archiver is null) throw new ArgumentNullException(nameof(archiver));
+
             switch (archiver)
             {
                 case FolderArchive folderArchive:
@@ -440,7 +415,7 @@ namespace NeeView
         /// </summary>
         public async Task UnlockAllArchivesAsync()
         {
-            ThrowIfDisposed();
+            if (_disposedValue) return;
 
             // NOTE: MTAスレッドで実行。SevenZipSharpのCOM例外対策
             if (Thread.CurrentThread.GetApartmentState() == ApartmentState.STA)

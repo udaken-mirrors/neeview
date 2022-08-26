@@ -260,7 +260,7 @@ namespace NeeView
             get { return _address; }
             private set
             {
-                ThrowIfDisposed();
+                if (_disposedValue) return;
 
                 _address = value;
                 AddressChanged?.Invoke(this, EventArgs.Empty);
@@ -280,7 +280,7 @@ namespace NeeView
             get { return _isLoading; }
             private set
             {
-                ThrowIfDisposed();
+                if (_disposedValue) return;
 
                 if (SetProperty(ref _isLoading, value))
                 {
@@ -302,53 +302,6 @@ namespace NeeView
         /// </summary>
         public int RequestLoadCount => _requestLoadCount;
 
-
-        #region IDisposable Support
-        private bool _disposedValue = false;
-
-        private void ThrowIfDisposed()
-        {
-            if (_disposedValue) throw new ObjectDisposedException(GetType().FullName);
-        }
-
-        void Dispose(bool disposing)
-        {
-            if (!_disposedValue)
-            {
-                if (disposing)
-                {
-                    _disposables.Dispose();
-
-                    // reset event
-                    this.BookChanging = null;
-                    this.BookChanged = null;
-                    this.LoadRequested = null;
-                    this.Loading = null;
-                    this.ViewContentsChanged = null;
-                    this.NextContentsChanged = null;
-                    this.EmptyMessage = null;
-                    this.EmptyPageMessage = null;
-                    this.FolderListSync = null;
-                    this.HistoryListSync = null;
-                    this.HistoryChanged = null;
-                    this.BookmarkChanged = null;
-                    this.AddressChanged = null;
-                    ResetPropertyChanged();
-
-                    this.BookUnit?.Dispose();
-
-                    Debug.WriteLine("BookHub Disposed.");
-                }
-
-                _disposedValue = true;
-            }
-        }
-
-        public void Dispose()
-        {
-            Dispose(true);
-        }
-        #endregion
 
         #region Callback Methods
 
@@ -429,11 +382,11 @@ namespace NeeView
         /// <returns></returns>
         public BookHubCommandLoad? RequestLoad(object? sender, string? path, string? start, BookLoadOption option, bool isRefreshFolderList)
         {
-            if (!this.IsEnabled) return null;
-
-            ThrowIfDisposed();
-
             if (path == null) return null;
+
+            if (_disposedValue) return null;
+
+            if (!this.IsEnabled) return null;
 
             path = LoosePath.NormalizeSeparator(path);
             var sourcePath = path;
@@ -482,6 +435,8 @@ namespace NeeView
         // アンロード可能?
         public bool CanUnload()
         {
+            if (_disposedValue) return false;
+
             return BookUnit != null || _commandEngine.IsBusy;
         }
 
@@ -510,6 +465,8 @@ namespace NeeView
         // 再読込可能？
         public bool CanReload()
         {
+            if (_disposedValue) return false;
+
             return (!string.IsNullOrWhiteSpace(Address));
         }
 
@@ -518,7 +475,7 @@ namespace NeeView
         /// </summary>
         public void RequestReLoad(object sender)
         {
-            ThrowIfDisposed();
+            if (_disposedValue) return;
 
             if (_isLoading || Address == null) return;
 
@@ -533,6 +490,8 @@ namespace NeeView
         // 上の階層に移動可能？
         public bool CanLoadParent()
         {
+            if (_disposedValue) return false;
+
             var parent = BookUnit?.BookAddress?.Place;
             return parent?.Path != null && parent.Scheme == QueryScheme.File;
         }
@@ -542,7 +501,7 @@ namespace NeeView
         /// </summary>
         public void RequestLoadParent(object sender)
         {
-            ThrowIfDisposed();
+            if (_disposedValue) return;
 
             var bookAddress = BookUnit?.BookAddress;
 
@@ -648,6 +607,7 @@ namespace NeeView
                 // Load本体
                 var loadOption = args.Option | (isResetLastPage ? BookLoadOption.ResetLastPage : BookLoadOption.None);
                 await LoadAsyncCore(args.Sender, address, loadOption, setting, token);
+                token.ThrowIfCancellationRequested();
 
                 ////DebugTimer.Check("LoadCore");
 
@@ -786,12 +746,14 @@ namespace NeeView
                 };
 
                 var book = await BookFactory.CreateAsync(sender, address.Address, address.SourceAddress, bookSetting, memento, token);
+                token.ThrowIfCancellationRequested();
 
                 // auto recursive
                 if (Config.Current.Book.IsAutoRecursive && !book.Source.IsRecursiveFolder && book.Source.SubFolderCount == 1)
                 {
                     bookSetting.IsRecursiveFolder = true;
                     book = await BookFactory.CreateAsync(sender, address.Address, address.SourceAddress, bookSetting, memento, token);
+                    token.ThrowIfCancellationRequested();
                 }
 
                 _historyEntry = false;
@@ -824,6 +786,7 @@ namespace NeeView
                         using (var register = token.Register(() => tcs.TrySetCanceled()))
                         {
                             await tcs.Task;
+                            token.ThrowIfCancellationRequested();
                         }
                     }
                 }
@@ -870,7 +833,6 @@ namespace NeeView
             Config.Current.StartUp.LastBookPath = Address;
         }
 
-
         #endregion BookHubCommand.Load
 
         #region BookHubCommand.Unload
@@ -880,6 +842,8 @@ namespace NeeView
         /// </summary>
         public void Unload(BookHubCommandUnloadArgs param)
         {
+            if (_disposedValue) return;
+
             // 履歴の保存
             SaveBookMemento();
 
@@ -924,6 +888,8 @@ namespace NeeView
         //現在開いているブックの設定作成
         public Book.Memento? CreateBookMemento()
         {
+            ThrowIfDisposed();
+
             lock (_lock)
             {
                 return (BookUnit != null && BookUnit.Book.Pages.Count > 0) ? BookUnit.Book.CreateMemento() : null;
@@ -934,7 +900,9 @@ namespace NeeView
         // 開いているブックならばその設定を取得する
         public Book.Memento CreateBookMemento(string path)
         {
-            if (path == null) throw new ArgumentNullException();
+            if (path == null) throw new ArgumentNullException(nameof(Path));
+
+            ThrowIfDisposed();
 
             var memento = CreateBookMemento();
             if (memento == null || memento.Path != path)
@@ -995,6 +963,8 @@ namespace NeeView
         //設定の保存
         public void SaveBookMemento()
         {
+            if (_disposedValue) return;
+
             var memento = CreateBookMemento();
             if (memento == null) return;
 
@@ -1010,6 +980,8 @@ namespace NeeView
         private void SaveBookMemento(Book.Memento memento, bool isKeepHistoryOrder)
         {
             if (memento == null) return;
+
+            if (_disposedValue) return;
 
             // 情報更新
             var unit = BookMementoCollection.Current.Get(memento.Path);
@@ -1030,6 +1002,10 @@ namespace NeeView
         /// </summary>
         private void ResetBookMementoPage(string place)
         {
+            if (place is null) throw new ArgumentNullException(nameof(place));
+
+            if (_disposedValue) return;
+
             var unit = BookMementoCollection.Current.GetValid(place);
             if (unit?.Memento != null)
             {
@@ -1045,6 +1021,10 @@ namespace NeeView
         /// <returns></returns>
         public Book.Memento GetLastestBookMemento(string address, BookLoadOption option)
         {
+            if (address is null) throw new ArgumentNullException(nameof(address));
+
+            ThrowIfDisposed();
+
             var book = this.Book;
             if (book is not null && book.Address == address)
             {
@@ -1057,6 +1037,8 @@ namespace NeeView
         // 履歴登録可
         private bool CanHistory()
         {
+            if (_disposedValue) return false;
+
             // 履歴閲覧時の履歴更新は最低１操作を必要とする
             var historyEntryPageCount = Config.Current.History.HistoryEntryPageCount;
             if (BookUnit != null && BookUnit.IsKeepHistoryOrder && Config.Current.History.IsForceUpdateHistory && historyEntryPageCount <= 0)
@@ -1074,6 +1056,53 @@ namespace NeeView
 
         #endregion BookMemento Control
 
+        #region IDisposable Support
+        private bool _disposedValue = false;
+
+        private void ThrowIfDisposed()
+        {
+            if (_disposedValue) throw new ObjectDisposedException(GetType().FullName);
+        }
+
+        void Dispose(bool disposing)
+        {
+            if (!_disposedValue)
+            {
+                if (disposing)
+                {
+                    _disposables.Dispose();
+
+                    // reset event
+                    // 非同期で処理されるため、イベントを確実に停止させるためにクリアしている
+                    this.BookChanging = null;
+                    this.BookChanged = null;
+                    this.LoadRequested = null;
+                    this.Loading = null;
+                    this.ViewContentsChanged = null;
+                    this.NextContentsChanged = null;
+                    this.EmptyMessage = null;
+                    this.EmptyPageMessage = null;
+                    this.FolderListSync = null;
+                    this.HistoryListSync = null;
+                    this.HistoryChanged = null;
+                    this.BookmarkChanged = null;
+                    this.AddressChanged = null;
+                    ResetPropertyChanged();
+
+                    this.BookUnit?.Dispose();
+
+                    Debug.WriteLine("BookHub Disposed.");
+                }
+
+                _disposedValue = true;
+            }
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+        }
+        #endregion
 
         #region Memento
 

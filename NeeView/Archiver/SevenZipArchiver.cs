@@ -134,7 +134,6 @@ namespace NeeView
         {
             Debug.Assert(entry is not null);
             Debug.Assert(!string.IsNullOrEmpty(exportFileName));
-
             if (entry.Id < 0) throw new ArgumentException("Cannot open this entry: " + entry.EntryName);
 
             ThrowIfDisposed();

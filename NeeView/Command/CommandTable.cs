@@ -14,42 +14,13 @@ using System.Runtime.Serialization;
 
 namespace NeeView
 {
+    // Typo: InputScheme ... 保存データの互換性を確認後に修正
     public enum InputSceme
     {
         TypeA, // 標準
         TypeB, // ホイールでページ送り
         TypeC, // クリックでページ送り
     };
-
-    public class CommandChangedEventArgs : EventArgs
-    {
-        /// <summary>
-        /// キーバインド反映を保留
-        /// </summary>
-        public bool OnHold;
-
-        public CommandChangedEventArgs(bool onHold)
-        {
-            this.OnHold = onHold;
-        }
-    }
-
-    /// <summary>
-    /// 廃棄されたコマンドの情報
-    /// </summary>
-    public class ObsoleteCommandItem
-    {
-        public ObsoleteCommandItem(string obsolete, string? alternative, int version)
-        {
-            Obsolete = obsolete;
-            Alternative = alternative;
-            Version = version;
-        }
-
-        public string Obsolete { get; }
-        public string? Alternative { get; }
-        public int Version { get; }
-    }
 
 
     /// <summary>
@@ -81,6 +52,13 @@ namespace NeeView
         /// コマンドテーブルが変更された
         /// </summary>
         public event EventHandler<CommandChangedEventArgs>? Changed;
+
+        public IDisposable SubscribeChanged(EventHandler<CommandChangedEventArgs> handler)
+        {
+            Changed += handler;
+            return new AnonymousDisposable(() => Changed -= handler);
+        }
+
 
 
         public ScriptManager ScriptManager { get; private set; }
@@ -451,6 +429,8 @@ namespace NeeView
 
         public CommandElement CreateCloneCommand(CommandElement source)
         {
+            ThrowIfDisposed();
+
             var cloneCommand = CloneCommand(source);
 
             Changed?.Invoke(this, new CommandChangedEventArgs(false));
@@ -460,6 +440,8 @@ namespace NeeView
 
         public void RemoveCloneCommand(CommandElement command)
         {
+            ThrowIfDisposed();
+
             if (command.IsCloneCommand())
             {
                 _elements.Remove(command.Name);
@@ -519,11 +501,15 @@ namespace NeeView
         /// </summary>
         public void RaiseChanged()
         {
+            if (_disposedValue) return;
+
             Changed?.Invoke(this, new CommandChangedEventArgs(false));
         }
 
         private void CommandTable_Changed(object? sender, CommandChangedEventArgs e)
         {
+            if (_disposedValue) return;
+
             ChangeCount++;
             ClearInputGestureDarty();
         }
@@ -566,6 +552,8 @@ namespace NeeView
 
         public bool TryExecute(object sender, string commandName, object[]? args, CommandOption option)
         {
+            if (_disposedValue) return false;
+
             if (TryGetValue(commandName, out CommandElement? command))
             {
                 var arguments = new CommandArgs(args, option);
@@ -583,6 +571,8 @@ namespace NeeView
         /// </summary>
         public void FlushInputGesture()
         {
+            if (_disposedValue) return;
+
             if (_elements.Values.Any(e => e.IsInputGestureDarty))
             {
                 AppDispatcher.Invoke(() => Changed?.Invoke(this, new CommandChangedEventArgs(false)));
@@ -594,6 +584,8 @@ namespace NeeView
         /// </summary>
         public void ClearInputGestureDarty()
         {
+            if (_disposedValue) return;
+
             foreach (var command in _elements.Values)
             {
                 command.IsInputGestureDarty = false;
@@ -604,6 +596,8 @@ namespace NeeView
         // ショートカット重複チェック
         public List<string> GetOverlapShortCut(string shortcut)
         {
+            ThrowIfDisposed();
+
             var overlaps = _elements
                 .Where(e => !string.IsNullOrEmpty(e.Value.ShortCutKey) && e.Value.ShortCutKey.Split(',').Contains(shortcut))
                 .Select(e => e.Key)
@@ -615,6 +609,8 @@ namespace NeeView
         // マウスジェスチャー重複チェック
         public List<string> GetOverlapMouseGesture(string gesture)
         {
+            ThrowIfDisposed();
+
             var overlaps = _elements
                 .Where(e => !string.IsNullOrEmpty(e.Value.MouseGesture) && e.Value.MouseGesture.Split(',').Contains(gesture))
                 .Select(e => e.Key)
@@ -626,6 +622,8 @@ namespace NeeView
         // コマンドリストをブラウザで開く
         public void OpenCommandListHelp()
         {
+            if (_disposedValue) return;
+
             Directory.CreateDirectory(Temporary.Current.TempSystemDirectory);
             string fileName = System.IO.Path.Combine(Temporary.Current.TempSystemDirectory, "CommandList.html");
 
@@ -660,6 +658,8 @@ namespace NeeView
         /// <param name="isReplace">登録済コマンドも置き換える</param>
         public void SetScriptCommands(IEnumerable<ScriptCommand> commands, bool isReplace)
         {
+            if (_disposedValue) return;
+
             var newers = (commands ?? new List<ScriptCommand>())
                 .ToList();
 
@@ -715,6 +715,11 @@ namespace NeeView
         #endregion Scripts
 
         #region IDisposable
+
+        protected void ThrowIfDisposed()
+        {
+            if (_disposedValue) throw new ObjectDisposedException(GetType().FullName);
+        }
 
         protected virtual void Dispose(bool disposing)
         {
@@ -992,6 +997,8 @@ namespace NeeView
 
         public CommandCollection CreateCommandCollectionMemento()
         {
+            ThrowIfDisposed();
+
             var collection = new CommandCollection();
             foreach (var item in _elements)
             {
@@ -1003,6 +1010,8 @@ namespace NeeView
         public void RestoreCommandCollection(CommandCollection? collection)
         {
             if (collection == null) return;
+
+            if (_disposedValue) return;
 
             this.ScriptManager.UpdateScriptCommands(isForce: false, isReplace: false);
 

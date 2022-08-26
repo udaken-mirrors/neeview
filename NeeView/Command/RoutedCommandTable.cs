@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NeeLaboratory.ComponentModel;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -8,19 +9,10 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 
+// TODO: CommandTalbe.Current をコンストラクタに渡す
+
 namespace NeeView
 {
-    public class CommandExecutedEventArgs : EventArgs
-    {
-        public CommandExecutedEventArgs(InputGesture gesture)
-        {
-            Gesture = gesture;
-        }
-
-        public InputGesture Gesture { get; set; }
-    }
-
-
     /// <summary>
     /// コマンド集 ： RoutedCommand
     /// </summary>
@@ -58,10 +50,24 @@ namespace NeeView
         /// </summary>
         public event EventHandler? Changed;
 
+        public IDisposable SubscribeChanged(EventHandler handler)
+        {
+            Changed += handler;
+            return new AnonymousDisposable(() => Changed -= handler);
+        }
+
         /// <summary>
         /// コマンドが実行されたときのイベント
         /// </summary>
         public event EventHandler<CommandExecutedEventArgs>? CommandExecuted;
+
+        public IDisposable SubscribeCommandExecuted(EventHandler<CommandExecutedEventArgs> handler)
+        {
+            CommandExecuted += handler;
+            return new AnonymousDisposable(() => CommandExecuted -= handler);
+        }
+
+
 
         /// <summary>
         /// コマンド辞書
@@ -72,6 +78,8 @@ namespace NeeView
 
         private void CommandTable_Changed(object? sender, CommandChangedEventArgs e)
         {
+            if (_disposedValue) return;
+
             _isDarty = true;
 
             if (!e.OnHold)
@@ -82,11 +90,15 @@ namespace NeeView
 
         public void SetDarty()
         {
+            if (_disposedValue) return;
+
             _isDarty = true;
         }
 
         public void UpdateRoutedCommand()
         {
+            if (_disposedValue) return;
+
             var oldies = Commands.Keys
                 .ToList();
 
@@ -110,12 +122,16 @@ namespace NeeView
 
         public void AddTouchInput(TouchInput touchInput)
         {
+            if (_disposedValue) return;
+
             _touchInputCollection.Add(touchInput);
             UpdateTouchInputGestures(touchInput);
         }
 
         public void AddMouseInput(MouseInput mouseInput)
         {
+            if (_disposedValue) return;
+
             _mouseInputCollection.Add(mouseInput);
             UpdateMouseInputGestures(mouseInput);
         }
@@ -124,10 +140,10 @@ namespace NeeView
         // InputGesture設定
         public void UpdateInputGestures()
         {
+            if (_disposedValue) return;
+
             if (!_isDarty) return;
             _isDarty = false;
-
-            if (_disposedValue) return;
 
             UpdateRoutedCommand();
             ClearRoutedCommandInputGestures();
@@ -302,12 +318,16 @@ namespace NeeView
         // コマンドで使用されているキー？
         public bool IsUsedKey(Key key)
         {
+            if (_disposedValue) return false;
+
             return _usedKeyMap.Contains(key);
         }
 
         // IMEキーコマンドを直接実行
         public void ExecuteImeKeyGestureCommand(object? sender, KeyEventArgs args)
         {
+            if (_disposedValue) return;
+
             foreach (var handle in _imeKeyHandlers)
             {
                 if (args.Handled) return;
@@ -318,6 +338,8 @@ namespace NeeView
         // コマンドのジェスチャー判定と実行
         private void InputGestureCommandExecute(object? sender, InputEventArgs x, InputGesture gesture, RoutedUICommand command)
         {
+            if (_disposedValue) return;
+
             if (!x.Handled && gesture.Matches(this, x))
             {
                 command.Execute(null, (sender as IInputElement) ?? MainWindow.Current);
@@ -332,6 +354,8 @@ namespace NeeView
         // ホイールの回転数に応じたコマンド実行
         private void WheelCommandExecute(object? sender, MouseWheelEventArgs arg, MouseWheelDeltaOption wheelOoptions, RoutedUICommand command)
         {
+            if (_disposedValue) return;
+
             int turn = Math.Abs(_mouseWheelDelta.NotchCount(arg, wheelOoptions));
             if (turn > 0)
             {
@@ -353,6 +377,8 @@ namespace NeeView
         // CommandTableを純粋なコマンド定義のみにするため、コマンド実行に伴う処理はここで定義している
         public void Execute(object sender, string name, object parameter)
         {
+            if (_disposedValue) return;
+
             bool allowFlip = (parameter is CommandParameterArgs args)
                 ? args.AllowFlip
                 : (parameter != MenuCommandTag.Tag);
@@ -375,7 +401,7 @@ namespace NeeView
         }
 
         // スライダー方向によって移動コマンドを入れ替える
-        public string GetFixedCommandName(string name, bool allowFlip)
+        private string GetFixedCommandName(string name, bool allowFlip)
         {
             if (allowFlip && Config.Current.Command.IsReversePageMove && MainWindowModel.Current.IsLeftToRightSlider())
             {
@@ -404,14 +430,25 @@ namespace NeeView
 
         public CommandElement? GetFixedCommandElement(string commandName, bool allowRecursive)
         {
+            ThrowIfDisposed();
+
             CommandTable.Current.TryGetValue(GetFixedCommandName(commandName, allowRecursive), out CommandElement? command);
             return command;
         }
 
         public RoutedUICommand? GetFixedRoutedCommand(string commandName, bool allowRecursive)
         {
+            ThrowIfDisposed();
+
             this.Commands.TryGetValue(GetFixedCommandName(commandName, allowRecursive), out RoutedUICommand? command);
             return command;
+        }
+
+
+
+        protected void ThrowIfDisposed()
+        {
+            if (_disposedValue) throw new ObjectDisposedException(GetType().FullName);
         }
 
         protected virtual void Dispose(bool disposing)
@@ -420,6 +457,7 @@ namespace NeeView
             {
                 if (disposing)
                 {
+                    CommandTable.Current.Changed -= CommandTable_Changed;
                 }
 
                 _disposedValue = true;
@@ -432,52 +470,5 @@ namespace NeeView
             GC.SuppressFinalize(this);
         }
 
-    }
-
-    /// <summary>
-    /// コマンドパラメータ引数管理用
-    /// </summary>
-    public class CommandParameterArgs
-    {
-        public CommandParameterArgs(object? param)
-        {
-            ////Parameter = param;
-            AllowFlip = true;
-        }
-
-        public CommandParameterArgs(object? param, bool allowRecursive)
-        {
-            ////Parameter = param;
-            AllowFlip = allowRecursive;
-        }
-
-
-        /// <summary>
-        /// 標準パラメータ
-        /// </summary>
-        ////public static CommandParameterArgs Null { get; } = new CommandParameterArgs(null);
-
-        /// <summary>
-        /// パラメータ本体
-        /// </summary>
-        ////public object Parameter { get; set; }
-
-        /// <summary>
-        /// スライダー方向でのコマンド入れ替え許可
-        /// </summary>
-        public bool AllowFlip { get; set; }
-
-
-        public static CommandParameterArgs Create(object param)
-        {
-            if (param is CommandParameterArgs parameterArgs)
-            {
-                return parameterArgs;
-            }
-            else
-            {
-                return new CommandParameterArgs(param);
-            }
-        }
     }
 }

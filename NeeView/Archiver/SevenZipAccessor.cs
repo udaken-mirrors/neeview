@@ -104,10 +104,10 @@ namespace NeeView
         /// </summary>
         public void Unlock()
         {
+            if (_disposedValue) return;
+
             lock (_lock)
             {
-                if (_disposedValue) return;
-
                 _extractor?.Dispose();
                 _extractor = null;
             }
@@ -116,11 +116,12 @@ namespace NeeView
 
         public void ExtractFile(int index, Stream extractStream)
         {
+            ThrowIfDisposed();
+
             SevenZipExtractor extractor;
 
             lock (_lock)
             {
-                ThrowIfDisposed();
                 extractor = GetExtractor();
             }
 
