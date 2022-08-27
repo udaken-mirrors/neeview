@@ -8,6 +8,22 @@ namespace NeeView
 {
     public class ScriptManager : IDisposable
     {
+        private static ScriptManager? _current;
+        public static ScriptManager Current
+        {
+            get
+            {
+                if (_current == null)
+                {
+                    _current = new ScriptManager(CommandTable.Current);
+                    ApplicationDisposer.Current.Add(_current);
+                }
+
+                return _current;
+            }
+        }
+
+
         private CommandTable _commandTable;
         private bool _isDarty = true;
         private ScriptUnitPool _pool = new ScriptUnitPool();

@@ -325,6 +325,7 @@ namespace NeeView
             }
             catch (Exception ex)
             {
+                Debug.Assert(false, "Application Terminate failed!!");
                 Trace.Fail($"App.Terminate: {DateTime.Now}: {ex.ToStackString()}");
             }
         }

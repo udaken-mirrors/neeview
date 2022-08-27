@@ -373,7 +373,7 @@ namespace NeeView
             }
 
             // スクリプトの再適用
-            CommandTable.Current.ScriptManager.UpdateScriptCommands(isForce: true, isReplace: false);
+            ScriptManager.Current.UpdateScriptCommands(isForce: true, isReplace: false);
         }
 
         protected virtual void Dispose(bool disposing)

@@ -290,7 +290,7 @@ namespace NeeView.Setting
 
             if (result == true)
             {
-                CommandTable.Current.ScriptManager.UpdateScriptCommands(isForce: true, isReplace: true);
+                ScriptManager.Current.UpdateScriptCommands(isForce: true, isReplace: true);
                 CommandTable.Current.RestoreCommandCollection(dialog.CreateCommandMemento());
             }
         }
