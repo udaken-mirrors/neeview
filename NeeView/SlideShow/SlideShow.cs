@@ -13,6 +13,8 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Threading;
 
+// TODO: Timerをもっと制度の良いものに変更
+
 namespace NeeView
 {
     /// <summary>
@@ -29,12 +31,12 @@ namespace NeeView
         // スライドショー表示間隔用
         private DateTime _lastShowTime;
 
-        //
         private const double _minTimerTick = 0.01;
         private const double _maxTimerTick = 0.2;
 
-        // レジューム状態
+        private bool _isPlayingSlideShow;
         private bool _isPlayingSlideShowMemento;
+        private DisposableCollection _disposables = new DisposableCollection();
 
 
         // コンストラクター
@@ -45,14 +47,23 @@ namespace NeeView
             _timer.Interval = TimeSpan.FromSeconds(_maxTimerTick);
             _timer.Tick += new EventHandler(DispatcherTimer_Tick);
 
-            BookOperation.Current.ViewContentsChanged +=
-                (s, e) => ResetTimer();
+            _disposables.Add(BookOperation.Current.SubscribeViewContentsChanged(
+                (s, e) => ResetTimer()));
 
-            MainWindow.Current.PreviewKeyDown +=
-                (s, e) => ResetTimer();
+            _disposables.Add(MainWindow.Current.SubscribePreviewKeyDown(
+                (s, e) => ResetTimer()));
 
-            MainViewComponent.Current.MouseInput.MouseMoved +=
-                (s, e) => { if (Config.Current.SlideShow.IsCancelSlideByMouseMove) ResetTimer(); };
+            _disposables.Add(MainViewComponent.Current.MainView.SubscribePreviewKeyDown(
+                (s, e) => ResetTimer()));
+
+            _disposables.Add(MainViewComponent.Current.MouseInput.SubscribeMouseMoved(
+                (s, e) =>
+                {
+                    if (Config.Current.SlideShow.IsCancelSlideByMouseMove)
+                    {
+                        ResetTimer();
+                    }
+                }));
 
             // アプリ終了前の開放予約
             ApplicationDisposer.Current.Add(this);
@@ -61,26 +72,37 @@ namespace NeeView
         /// <summary>
         /// スライドショー再生状態
         /// </summary>
-        private bool _IsPlayingSlideShow;
         public bool IsPlayingSlideShow
         {
-            get { return _IsPlayingSlideShow; }
+            get { return _isPlayingSlideShow; }
             set
             {
-                if (_IsPlayingSlideShow != value)
+                if (_disposedValue) return;
+
+                if (_isPlayingSlideShow != value)
                 {
-                    _IsPlayingSlideShow = value;
-                    if (_IsPlayingSlideShow)
+                    _isPlayingSlideShow = value;
+                    if (_isPlayingSlideShow)
                     {
-                        Play();
+                        StartTimer();
                     }
                     else
                     {
-                        Stop();
+                        StopTimer();
                     }
                     RaisePropertyChanged();
                 }
             }
+        }
+
+        public void Play()
+        {
+            IsPlayingSlideShow = true;
+        }
+
+        public void Stop()
+        {
+            IsPlayingSlideShow = false;
         }
 
         /// <summary>
@@ -88,15 +110,18 @@ namespace NeeView
         /// </summary>
         public void TogglePlayingSlideShow()
         {
+            if (_disposedValue) return;
+
             this.IsPlayingSlideShow = !this.IsPlayingSlideShow;
         }
-
 
         /// <summary>
         /// 一時停止
         /// </summary>
         public void PauseSlideShow()
         {
+            if (_disposedValue) return;
+
             _isPlayingSlideShowMemento = IsPlayingSlideShow;
             IsPlayingSlideShow = false;
         }
@@ -106,13 +131,15 @@ namespace NeeView
         /// </summary>
         public void ResumeSlideShow()
         {
+            if (_disposedValue) return;
+
             IsPlayingSlideShow = _isPlayingSlideShowMemento;
         }
 
         /// <summary>
         /// 次のスライドへ移動：スライドショー専用
         /// </summary>
-        public void NextSlide()
+        private void NextSlide()
         {
             BookOperation.Current.NextSlide(this);
         }
@@ -120,7 +147,7 @@ namespace NeeView
         /// <summary>
         /// 再生開始
         /// </summary>
-        private void Play()
+        private void StartTimer()
         {
             if (_disposedValue) return;
 
@@ -133,17 +160,29 @@ namespace NeeView
         /// <summary>
         /// 再生停止
         /// </summary>
-        private void Stop()
+        private void StopTimer()
         {
             _timer.Stop();
         }
 
+        /// <summary>
+        /// スライドショータイマーリセット
+        /// </summary>
+        public void ResetTimer()
+        {
+            if (_disposedValue) return;
+
+            if (!_timer.IsEnabled) return;
+            _lastShowTime = DateTime.Now;
+        }
 
         /// <summary>
         /// 再生中のタイマー処理
         /// </summary>
         private void DispatcherTimer_Tick(object? sender, EventArgs e)
         {
+            if (_disposedValue) return;
+
             // マウスボタンが押されていたらキャンセル
             if (Mouse.LeftButton == MouseButtonState.Pressed || Mouse.RightButton == MouseButtonState.Pressed)
             {
@@ -159,18 +198,13 @@ namespace NeeView
             }
         }
 
-        /// <summary>
-        /// スライドショータイマーリセット
-        /// </summary>
-        public void ResetTimer()
-        {
-            if (!_timer.IsEnabled) return;
-            _lastShowTime = DateTime.Now;
-        }
-
-
         #region IDisposable Support
         private bool _disposedValue = false;
+
+        protected void ThrowIfDisposed()
+        {
+            if (_disposedValue) throw new ObjectDisposedException(GetType().FullName);
+        }
 
         protected virtual void Dispose(bool disposing)
         {
@@ -178,7 +212,7 @@ namespace NeeView
             {
                 if (disposing)
                 {
-                    Stop();
+                    _timer.Stop();
                 }
 
                 _disposedValue = true;

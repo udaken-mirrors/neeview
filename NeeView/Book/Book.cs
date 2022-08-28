@@ -20,7 +20,7 @@ namespace NeeView
         private string _sourceAddress;
         private BookLoadOption _loadOption;
 
-        public Book(BookSource source, QueryPath? sourceAddress, Book.Memento memento, BookLoadOption option)
+        public Book(BookSource source, QueryPath? sourceAddress, Book.Memento memento, BookLoadOption option, bool isNew)
         {
             Book.Default = this;
 
@@ -30,6 +30,8 @@ namespace NeeView
             _marker = new BookPageMarker(_source, _viewer);
             _controller = new BookController(_source, _viewer, _marker);
             _loadOption = option;
+
+            IsNew = isNew;
         }
 
         public BookSource Source => _source;
@@ -49,7 +51,7 @@ namespace NeeView
         public BookLoadOption LoadOption => _loadOption;
 
         // はじめて開く本
-        public bool IsNew { get; set; }
+        public bool IsNew { get; private set; }
 
         // 見つからなかった開始ページ名。通知用。
         // TODO: 不要？
@@ -235,6 +237,11 @@ namespace NeeView
         public bool IsIgnoreCache { get; set; }
 
         /// <summary>
+        /// 新規ブック
+        /// </summary>
+        public bool IsNew { get; set; }
+
+        /// <summary>
         /// ロード設定フラグ
         /// </summary>
         public BookLoadOption LoadOption { get; set; }
@@ -245,6 +252,8 @@ namespace NeeView
     {
         public static async Task<Book> CreateAsync(object? sender, QueryPath address, QueryPath? sourceAddress, BookCreateSetting setting, Book.Memento memento, CancellationToken token)
         {
+            token.ThrowIfCancellationRequested();
+
             var factory = new BookSourceFactory();
             var bookSource = await factory.CreateAsync(address, setting, token);
 
@@ -256,7 +265,7 @@ namespace NeeView
                 }
             }
 
-            var book = new Book(bookSource, sourceAddress, memento, setting.LoadOption);
+            var book = new Book(bookSource, sourceAddress, memento, setting.LoadOption, setting.IsNew);
 
             // HACK: Start() で行いたい
             book.SetStartPage(sender, setting.StartPage);

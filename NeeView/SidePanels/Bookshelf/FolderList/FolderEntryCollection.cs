@@ -46,6 +46,10 @@ namespace NeeView
 
         private void InitializeItems(CancellationToken token)
         {
+            token.ThrowIfCancellationRequested();
+
+            ThrowIfDisposed();
+
             if (string.IsNullOrWhiteSpace(Place.SimplePath))
             {
                 this.Items = new ObservableCollection<FolderItem>(DriveInfo.GetDrives().Select(e => _folderItemFactory.CreateFolderItem(e)).WhereNotNull());
@@ -66,6 +70,7 @@ namespace NeeView
                     try
                     {
                         var fileSystemInfos = directory.GetFileSystemInfos();
+                        token.ThrowIfCancellationRequested();
 
                         var items = fileSystemInfos
                             .Where(e => FileIOProfile.Current.IsFileValid(e.Attributes))
@@ -273,6 +278,11 @@ namespace NeeView
         #region IDisposable Support
 
         private bool _disposedValue = false; // 重複する呼び出しを検出するには
+
+        protected void ThrowIfDisposed()
+        {
+            if (_disposedValue) throw new ObjectDisposedException(GetType().FullName);
+        }
 
         protected override void Dispose(bool disposing)
         {

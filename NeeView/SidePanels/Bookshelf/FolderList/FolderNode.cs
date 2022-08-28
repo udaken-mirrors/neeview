@@ -215,7 +215,8 @@ namespace NeeView
                 path = Content.TargetPath;
             }
 
-            using (var collection = await BookshelfFolderList.Current.FolderCollectionFactory.CreateFolderCollectionAsync(path, false, token))
+            var folderCollectionFactory = new FolderCollectionFactory(null, true);
+            using (var collection = await folderCollectionFactory.CreateFolderCollectionAsync(path, false, token))
             {
                 var children = collection.Items
                     .Where(e => !e.IsEmpty())

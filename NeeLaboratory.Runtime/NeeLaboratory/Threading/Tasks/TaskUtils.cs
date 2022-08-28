@@ -6,10 +6,13 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
+#warning TaskUtils is need refactor. 
+
 namespace NeeLaboratory.Threading.Tasks
 {
     public static class TaskUtils
     {
+
         // なんだこれ。
         public static Task ActionAsync(Action<CancellationToken> action, CancellationToken token)
         {

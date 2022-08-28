@@ -1,4 +1,5 @@
-﻿using NeeView.Data;
+﻿using NeeLaboratory.ComponentModel;
+using NeeView.Data;
 using NeeView.Native;
 using NeeView.Threading;
 using NeeView.Windows;
@@ -192,11 +193,33 @@ namespace NeeView
         }
 
 
+        /// <summary>
+        /// マウス水平ホイールイベント
+        /// </summary>
         public event MouseWheelEventHandler? MouseHorizontalWheelChanged;
+
+        public IDisposable SubscribeMouseHorizontalWheelChanged(MouseWheelEventHandler handler)
+        {
+            MouseHorizontalWheelChanged += handler;
+            return new AnonymousDisposable(() => MouseHorizontalWheelChanged -= handler);
+        }
+
+        /// <summary>
+        /// キー入力イベント購読
+        /// </summary>
+
+        public IDisposable SubscribePreviewKeyDown(KeyEventHandler handler)
+        {
+            PreviewKeyDown += handler;
+            return new AnonymousDisposable(() => PreviewKeyDown -= handler);
+        }
+
 
 
         public WindowStateManager WindowStateManager => _windowStateManager;
+
         public WindowController WindowController => _windowController;
+
 
 
         #region 初期化処理

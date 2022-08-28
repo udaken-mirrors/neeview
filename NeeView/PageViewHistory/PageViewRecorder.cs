@@ -19,6 +19,7 @@ namespace NeeView
         private static PageViewRecorder? _current;
         public static PageViewRecorder Current => _current ?? throw new InvalidOperationException();
 
+
         public static void Initialize()
         {
             if (_current is not null) return;
@@ -36,11 +37,12 @@ namespace NeeView
         private string? _viewedBookName;
         private object _lock = new object();
         private bool _disposedValue;
+        private DisposableCollection _disposables = new DisposableCollection();
 
 
         private PageViewRecorder()
         {
-            Config.Current.PageViewRecorder.PropertyChanged += OnPropertyChanged;
+            _disposables.Add(Config.Current.PageViewRecorder.SubscribePropertyChanged(OnPropertyChanged));
 
             // アプリ終了前の開放予約
             ApplicationDisposer.Current.Add(this);
@@ -138,6 +140,8 @@ namespace NeeView
         {
             lock (_lock)
             {
+                if (_disposedValue) return;
+
                 try
                 {
                     _file = File.Open(path, FileMode.Append, FileAccess.Write, FileShare.ReadWrite);
@@ -157,6 +161,8 @@ namespace NeeView
 
         private void CloseFile()
         {
+            if (_disposedValue) return;
+
             if (_file != null)
             {
                 var now = DateTime.Now;
@@ -184,32 +190,11 @@ namespace NeeView
             }
         }
 
-        #region IDisposable Support
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!_disposedValue)
-            {
-                if (disposing)
-                {
-                    CloseFile();
-                }
-
-                _disposedValue = true;
-            }
-        }
-
-        public void Dispose()
-        {
-            Dispose(disposing: true);
-            GC.SuppressFinalize(this);
-        }
-
-        #endregion
-
 
         private void OnViewBookChanged(object? sender, BookChangedEventArgs e)
         {
+            if (_disposedValue) return;
+
             var now = DateTime.Now;
             var book = BookHub.Current.Book;
 
@@ -236,6 +221,8 @@ namespace NeeView
 
         private void OnViewContentsChanged(object? sender, ViewContentSourceCollectionChangedEventArgs e)
         {
+            if (_disposedValue) return;
+
             var now = DateTime.Now;
             var viewedPages = e?.ViewPageCollection?.Collection.Where(x => x != null).Select(x => x.Page).ToList() ?? new List<Page>();
 
@@ -246,6 +233,8 @@ namespace NeeView
 
         private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
+            if (_disposedValue) return;
+
             UpdateState();
         }
 
@@ -267,6 +256,35 @@ namespace NeeView
             OpenFile(filePath);
         }
 
+        #region IDisposable Support
+
+        protected void ThrowIfDisposed()
+        {
+            if (_disposedValue) throw new ObjectDisposedException(GetType().FullName);
+        }
+
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!_disposedValue)
+            {
+                if (disposing)
+                {
+                    _disposables.Dispose();
+                    CloseFile();
+                }
+
+                _disposedValue = true;
+            }
+        }
+
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
+
+        #endregion
 
         #region Memento
 

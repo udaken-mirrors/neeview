@@ -18,6 +18,8 @@ namespace NeeView
         /// </summary>
         public static async Task<ArchiveEntry> CreateAsync(string path, CancellationToken token)
         {
+            token.ThrowIfCancellationRequested();
+
             var query = new QueryPath(path);
 
             if (File.Exists(path) || Directory.Exists(path))
@@ -68,6 +70,8 @@ namespace NeeView
         /// </summary>
         private static async Task<ArchiveEntry> CreateInnerAsync(Archiver archiver, string entryName, CancellationToken token)
         {
+            token.ThrowIfCancellationRequested();
+
             var entries = await archiver.GetEntriesAsync(token);
 
             var entry = entries.FirstOrDefault(e => e.EntryName == entryName);
@@ -99,6 +103,8 @@ namespace NeeView
         /// <param name="depth">検索範囲</param>
         public static async Task<ArchiveEntry?> CreateFirstImageArchiveEntryAsync(ArchiveEntry source, int depth, CancellationToken token)
         {
+            token.ThrowIfCancellationRequested();
+
             try
             {
                 List<ArchiveEntry> entries;
@@ -155,6 +161,8 @@ namespace NeeView
         /// <returns></returns>
         public static async Task<bool> ExistsAsync(string path, CancellationToken token)
         {
+            token.ThrowIfCancellationRequested();
+
             try
             {
                 var entry = await CreateAsync(path, token);

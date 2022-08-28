@@ -12,25 +12,21 @@ namespace NeeView
     public class FolderCollectionFactory
     {
         private bool _isOverlayEnabled;
+        private FolderSearchEngine? _searchEngine;
 
-        public FolderCollectionFactory(FolderSearchEngine searchEngine, bool isOverlayEnabled)
+
+        public FolderCollectionFactory(FolderSearchEngine? searchEngine, bool isOverlayEnabled)
         {
-            SearchEngine = searchEngine;
+            _searchEngine = searchEngine;
             _isOverlayEnabled = isOverlayEnabled;
         }
 
 
-        #region Properties
-
-        public FolderSearchEngine SearchEngine { get; set; }
-
-        #endregion
-
-        #region Methods
-
         // フォルダーコレクション作成
         public async Task<FolderCollection> CreateFolderCollectionAsync(QueryPath path, bool isActive, CancellationToken token)
         {
+            token.ThrowIfCancellationRequested();
+
             if (path.Scheme == QueryScheme.Root)
             {
                 return await CreateRootFolderCollectionAsync(path, isActive, token);
@@ -71,13 +67,14 @@ namespace NeeView
         // 検索コレクション作成
         public async Task<FolderCollection> CreateSearchFolderCollectionAsync(QueryPath path, bool isActive, CancellationToken token)
         {
-            if (SearchEngine == null) throw new InvalidOperationException("SearchEngine not initialized.");
+            if (_searchEngine == null) throw new InvalidOperationException("SearchEngine does not exist.");
             if (path.Search is null) throw new InvalidOperationException("path.Search must not be null.");
+
+            token.ThrowIfCancellationRequested();
 
             try
             {
-                var result = await SearchEngine.SearchAsync(path.SimplePath, path.Search);
-                token.ThrowIfCancellationRequested();
+                var result = await _searchEngine.SearchAsync(path.SimplePath, path.Search, token);
 
                 var collection = new FolderSearchCollection(path, result, isActive, _isOverlayEnabled);
                 await collection.InitializeItemsAsync(token);
@@ -92,6 +89,8 @@ namespace NeeView
         // 通常フォルダーコレクション作成
         private async Task<FolderCollection> CreateEntryFolderCollectionAsync(QueryPath path, bool isActive, CancellationToken token)
         {
+            token.ThrowIfCancellationRequested();
+
             FolderCollection collection;
             try
             {
@@ -110,18 +109,16 @@ namespace NeeView
                 await collection.InitializeItemsAsync(token);
             }
 
-            token.ThrowIfCancellationRequested();
-
             return collection;
         }
 
         // ブックマークフォルダーコレクション作成
         private async Task<FolderCollection> CreateBookmarkFolderCollectionAsync(QueryPath path, bool isActive, CancellationToken token)
         {
+            token.ThrowIfCancellationRequested();
+
             var collection = new BookmarkFolderCollection(path, _isOverlayEnabled);
             await collection.InitializeItemsAsync(token);
-
-            token.ThrowIfCancellationRequested();
 
             return collection;
         }
@@ -129,11 +126,12 @@ namespace NeeView
         // プレイリストフォルダーコレクション作成
         public async Task<FolderCollection> CreatePlaylistFolderCollectionAsync(QueryPath path, bool isActive, CancellationToken token)
         {
+            token.ThrowIfCancellationRequested();
+
             try
             {
                 var collection = new PlaylistFolderCollection(path, _isOverlayEnabled);
                 await collection.InitializeItemsAsync(token);
-                token.ThrowIfCancellationRequested();
                 return collection;
             }
             catch (OperationCanceledException)
@@ -152,11 +150,12 @@ namespace NeeView
         // アーカイブフォルダーコレクション作成
         public async Task<FolderCollection> CreateArchiveFolderCollectionAsync(QueryPath path, bool isActive, CancellationToken token)
         {
+            token.ThrowIfCancellationRequested();
+
             try
             {
                 var collection = new FolderArchiveCollection(path, Config.Current.System.ArchiveRecursiveMode, isActive, _isOverlayEnabled);
                 await collection.InitializeItemsAsync(token);
-                token.ThrowIfCancellationRequested();
                 return collection;
             }
             catch (OperationCanceledException)
@@ -177,6 +176,8 @@ namespace NeeView
         /// </summary>
         private async Task<FolderCollection> CreateRootFolderCollectionAsync(QueryPath path, bool isActive, CancellationToken token)
         {
+            token.ThrowIfCancellationRequested();
+
             var collection = new RootFolderCollection(path, _isOverlayEnabled);
             await collection.InitializeItemsAsync(token);
             return collection;
@@ -187,11 +188,11 @@ namespace NeeView
         /// </summary>
         private async Task<FolderCollection> CreateQuickAccessFolderCollectionAsync(QueryPath path, bool isActive, CancellationToken token)
         {
+            token.ThrowIfCancellationRequested();
+
             var collection = new QuickAccessFolderCollection(_isOverlayEnabled);
             await collection.InitializeItemsAsync(token);
             return collection;
         }
-
-        #endregion
     }
 }

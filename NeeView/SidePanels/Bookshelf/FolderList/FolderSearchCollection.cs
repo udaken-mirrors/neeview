@@ -17,7 +17,7 @@ namespace NeeView
     /// </summary>
     public class FolderSearchCollection : FolderCollection, IDisposable
     {
-        private NeeLaboratory.IO.Search.SearchResultWatcher? _searchResult;
+        private NeeLaboratory.IO.Search.SearchResultWatcher _searchResult;
         private FolderCollectionEngine? _engine;
         private bool _isWatchSearchResult;
 
@@ -48,9 +48,11 @@ namespace NeeView
             await Task.Run(() => InitializeItems(token));
         }
 
-        public void InitializeItems(CancellationToken token)
+        private void InitializeItems(CancellationToken token)
         {
-            if (_searchResult is null) throw new ObjectDisposedException(nameof(FolderSearchCollection));
+            token.ThrowIfCancellationRequested();
+
+            ThrowIfDisposed();
 
             var items = _searchResult.Items
                 .Select(e => CreateFolderItem(e))
@@ -76,21 +78,29 @@ namespace NeeView
 
         public override void RequestCreate(QueryPath path)
         {
+            if (_disposedValue) return;
+
             _engine?.RequestCreate(path);
         }
 
         public override void RequestDelete(QueryPath path)
         {
+            if (_disposedValue) return;
+
             _engine?.RequestDelete(path);
         }
 
         public override void RequestRename(QueryPath oldPath, QueryPath path)
         {
+            if (_disposedValue) return;
+
             _engine?.RequestRename(oldPath, path);
         }
 
         private void SearchResult_NodeChanged(object? sender, NeeLaboratory.IO.Search.SearchResultChangedEventArgs e)
         {
+            if (_disposedValue) return;
+
             switch (e.Action)
             {
                 case NeeLaboratory.IO.Search.NodeChangedAction.Add:
@@ -177,6 +187,12 @@ namespace NeeView
 
         private bool _disposedValue = false;
 
+        protected void ThrowIfDisposed()
+        {
+            if (_disposedValue) throw new ObjectDisposedException(GetType().FullName);
+        }
+
+
         protected override void Dispose(bool disposing)
         {
             if (!_disposedValue)
@@ -188,11 +204,7 @@ namespace NeeView
                         _engine.Dispose();
                     }
 
-                    if (_searchResult != null)
-                    {
-                        _searchResult.Dispose();
-                        _searchResult = null;
-                    }
+                    _searchResult.Dispose();
                 }
 
                 _disposedValue = true;

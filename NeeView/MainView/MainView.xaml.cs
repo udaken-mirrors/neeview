@@ -1,4 +1,5 @@
-﻿using NeeView.Windows;
+﻿using NeeLaboratory.ComponentModel;
+using NeeView.Windows;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -40,6 +41,18 @@ namespace NeeView
 
 
         public event EventHandler? TransformChanged;
+
+        public IDisposable SubscribeTransformChanged(EventHandler handler)
+        {
+            TransformChanged += handler;
+            return new AnonymousDisposable(() => TransformChanged -= handler);
+        }
+
+        public IDisposable SubscribePreviewKeyDown(KeyEventHandler handler)
+        {
+            PreviewKeyDown += handler;
+            return new AnonymousDisposable(() => PreviewKeyDown -= handler);
+        }
 
 
         public MouseInput? MouseInput => _vm?.MouseInput;

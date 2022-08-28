@@ -17,11 +17,13 @@ namespace NeeView
         {
         }
 
+
         public override FolderOrderClass FolderOrderClass => FolderOrderClass.None;
+
 
         public override async Task InitializeItemsAsync(CancellationToken token)
         {
-            await Task.Yield();
+            token.ThrowIfCancellationRequested();
 
             var items = QuickAccessCollection.Current.Items.Select(e => CreateFolderItem(Place, e));
 
@@ -29,10 +31,14 @@ namespace NeeView
 
             //TODO:
             QuickAccessCollection.Current.CollectionChanged += QuickAccessCollection_CollectionChanged;
+
+            await Task.CompletedTask;
         }
+
 
         private void QuickAccessCollection_CollectionChanged(object? sender, CollectionChangeEventArgs e)
         {
+            if (_disposedValue) return;
 
             switch (e.Action)
             {
@@ -60,14 +66,11 @@ namespace NeeView
                     }
                     break;
 
-
                 case CollectionChangeAction.Refresh:
                     BookshelfFolderList.Current.RequestPlace(new QueryPath(QueryScheme.QuickAccess, null), null, FolderSetPlaceOption.UpdateHistory | FolderSetPlaceOption.ResetKeyword | FolderSetPlaceOption.Refresh);
                     break;
             }
         }
-
-
 
         private FolderItem CreateFolderItem(QueryPath parent, QuickAccess quickAccess)
         {

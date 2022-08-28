@@ -129,20 +129,44 @@ namespace NeeView
         /// </summary>
         public event EventHandler<MouseButtonEventArgs>? MouseButtonChanged;
 
+        public IDisposable SubscribeMouseButtonChanged(EventHandler<MouseButtonEventArgs> handler)
+        {
+            MouseButtonChanged += handler;
+            return new AnonymousDisposable(() => MouseButtonChanged -= handler);
+        }
+
         /// <summary>
         /// ホイール入力イベント
         /// </summary>
         public event EventHandler<MouseWheelEventArgs>? MouseWheelChanged;
+
+        public IDisposable SubscribeMouseWheelChanged(EventHandler<MouseWheelEventArgs> handler)
+        {
+            MouseWheelChanged += handler;
+            return new AnonymousDisposable(() => MouseWheelChanged -= handler);
+        }
 
         /// <summary>
         /// 水平ホイール入力イベント
         /// </summary>
         public event EventHandler<MouseWheelEventArgs>? MouseHorizontalWheelChanged;
 
+        public IDisposable SubscribeMouseHorizontalWheelChanged(EventHandler<MouseWheelEventArgs> handler)
+        {
+            MouseHorizontalWheelChanged += handler;
+            return new AnonymousDisposable(() => MouseHorizontalWheelChanged -= handler);
+        }
+
         /// <summary>
         /// 一定距離カーソルが移動したイベント
         /// </summary>
         public event EventHandler<MouseEventArgs>? MouseMoved;
+
+        public IDisposable SubscribeMouseMoved(EventHandler<MouseEventArgs> handler)
+        {
+            MouseMoved += handler;
+            return new AnonymousDisposable(() => MouseMoved -= handler);
+        }
 
 
         /// <summary>

@@ -5,10 +5,13 @@ using System.Threading.Tasks;
 namespace NeeLaboratory.Threading.Tasks
 {
     public static class WaitHandleExtensions
-    { 
+    {
         /// <summary>
         /// WaitHandle待ちのタスク化。
         /// </summary>
+        /// <example>
+        /// await ManualResetEventSlim.WaitHandle.AsTask();
+        /// </example>
         /// <remarks>
         /// https://docs.microsoft.com/ja-jp/dotnet/standard/asynchronous-programming-patterns/interop-with-other-asynchronous-patterns-and-types
         /// </remarks>

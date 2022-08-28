@@ -14,6 +14,7 @@ namespace NeeView
         private FolderCollection _folderCollection;
         private SingleJobEngine _engine;
 
+
         public FolderCollectionEngine(FolderCollection folderCollection)
         {
             _folderCollection = folderCollection;
@@ -22,6 +23,59 @@ namespace NeeView
             _engine.JobError += JobEngine_Error;
             _engine.StartEngine();
         }
+
+
+
+        /// <summary>
+        /// JobEngineで例外発生
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void JobEngine_Error(object? sender, Jobs.JobErrorEventArgs e)
+        {
+            Debug.WriteLine($"FolderCollection JOB Exception!: {e.Job}: {e.GetException().Message}");
+            e.Handled = true;
+        }
+
+        /// <summary>
+        /// 項目追加
+        /// </summary>
+        /// <param name="path"></param>
+        public void RequestCreate(QueryPath path)
+        {
+            if (_disposedValue) return;
+
+            _engine.Enqueue(new CreateJob(this, path, false));
+        }
+
+        /// <summary>
+        /// 項目削除
+        /// </summary>
+        /// <param name="path"></param>
+        public void RequestDelete(QueryPath path)
+        {
+            if (_disposedValue) return;
+
+            _engine.Enqueue(new DeleteJob(this, path, false));
+        }
+
+        /// <summary>
+        /// 項目名変更
+        /// </summary>
+        /// <param name="oldPath"></param>
+        /// <param name="path"></param>
+        public void RequestRename(QueryPath oldPath, QueryPath path)
+        {
+            if (_disposedValue) return;
+
+            if (oldPath == path || path == null)
+            {
+                return;
+            }
+
+            _engine.Enqueue(new RenameJob(this, oldPath, path, false));
+        }
+
 
         #region IDisposable Support
         private bool _disposedValue = false;
@@ -43,50 +97,6 @@ namespace NeeView
             Dispose(true);
         }
         #endregion
-
-        /// <summary>
-        /// JobEngineで例外発生
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void JobEngine_Error(object? sender, Jobs.JobErrorEventArgs e)
-        {
-            Debug.WriteLine($"FolderCollection JOB Exception!: {e.Job}: {e.GetException().Message}");
-            e.Handled = true;
-        }
-
-        /// <summary>
-        /// 項目追加
-        /// </summary>
-        /// <param name="path"></param>
-        public void RequestCreate(QueryPath path)
-        {
-            _engine?.Enqueue(new CreateJob(this, path, false));
-        }
-
-        /// <summary>
-        /// 項目削除
-        /// </summary>
-        /// <param name="path"></param>
-        public void RequestDelete(QueryPath path)
-        {
-            _engine?.Enqueue(new DeleteJob(this, path, false));
-        }
-
-        /// <summary>
-        /// 項目名変更
-        /// </summary>
-        /// <param name="oldPath"></param>
-        /// <param name="path"></param>
-        public void RequestRename(QueryPath oldPath, QueryPath path)
-        {
-            if (oldPath == path || path == null)
-            {
-                return;
-            }
-
-            _engine?.Enqueue(new RenameJob(this, oldPath, path, false));
-        }
 
 
 

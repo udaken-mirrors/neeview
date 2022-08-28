@@ -265,6 +265,8 @@ namespace NeeView
         /// <returns></returns>
         protected List<FolderItem> Sort(IEnumerable<FolderItem> source, CancellationToken token)
         {
+            token.ThrowIfCancellationRequested();
+
             IOrderedEnumerable<FolderItem> orderSource;
 
             if (Config.Current.Bookshelf.IsOrderWithoutFileType)

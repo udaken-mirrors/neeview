@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace NeeView
@@ -15,8 +16,6 @@ namespace NeeView
     /// </summary>
     public class SearchEngine : IDisposable
     {
-        #region Fields
-
         /// <summary>
         /// インデックスフィルタ用無効パス
         /// </summary>
@@ -27,17 +26,13 @@ namespace NeeView
             System.Environment.GetFolderPath(System.Environment.SpecialFolder.Windows) + ".old",
         };
 
-
         /// <summary>
         /// 検索エンジン
         /// </summary>
-        private NeeLaboratory.IO.Search.SearchEngine? _engine;
+        private NeeLaboratory.IO.Search.SearchEngine _engine;
 
-        #endregion
 
-        #region Constructors
 
-        //
         public SearchEngine(string path, bool includeSubdirectories)
         {
             Path = path;
@@ -49,19 +44,15 @@ namespace NeeView
             _engine.SetSearchAreas(new List<SearchArea> { new SearchArea(path, includeSubdirectories) });
         }
 
-        #endregion
 
-        #region Properties
 
-        public bool IsBusy => _engine != null && _engine.State != SearchCommandEngineState.Idle;
+        public bool IsBusy => _engine.State != SearchCommandEngineState.Idle;
 
         public string Path { get; private set; }
 
         public bool IncludeSubdirectories { get; private set; }
 
-        #endregion
 
-        #region Methods
 
         /// <summary>
         /// インデックスフィルタ
@@ -113,38 +104,33 @@ namespace NeeView
             return true;
         }
 
-
-        //
-        public void Stop()
+        public async Task<SearchResultWatcher> SearchAsync(string keyword, NeeLaboratory.IO.Search.SearchOption? option, CancellationToken token)
         {
-            _engine?.Dispose();
-            _engine = null;
-        }
-
-        //
-        public async Task<SearchResultWatcher> SearchAsync(string keyword, NeeLaboratory.IO.Search.SearchOption? option = null)
-        {
-            if (_engine == null) throw new InvalidOperationException();
+            token.ThrowIfCancellationRequested();
 
             // 検索
             option = option ?? new NeeLaboratory.IO.Search.SearchOption();
-            var result = await _engine.SearchAsync(keyword.Trim(), option);
+            var result = await _engine.SearchAsync(keyword.Trim(), option, token);
 
             // 監視開始
             var watcher = new SearchResultWatcher(_engine, result);
             return watcher;
         }
 
-        //
         public void CancelSearch()
         {
-            _engine?.CancelSearch();
+            _engine.CancelSearch();
         }
 
-        #endregion
 
         #region IDisposable Support
         private bool _disposedValue = false;
+
+        protected void ThrowIfDisposed()
+        {
+            if (_disposedValue) throw new ObjectDisposedException(GetType().FullName);
+        }
+
 
         protected virtual void Dispose(bool disposing)
         {
@@ -152,12 +138,8 @@ namespace NeeView
             {
                 if (disposing)
                 {
-                    Stop();
-
-                    if (_engine != null)
-                    {
-                        _engine.Dispose();
-                    }
+                    _engine.CancelSearch();
+                    _engine.Dispose();
                 }
 
                 _disposedValue = true;

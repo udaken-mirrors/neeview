@@ -3,27 +3,29 @@ using System;
 using System.ComponentModel;
 using System.Globalization;
 using System.Runtime.Serialization;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace NeeView
 {
     /// <summary>
     /// BookmarkFolderList
     /// </summary>
-    public class BookmarkFolderList : FolderList
+    public class BookmarkFolderList : FolderList, IDisposable
     {
         static BookmarkFolderList() => Current = new BookmarkFolderList();
         public static BookmarkFolderList Current { get; }
+
+
+        private DisposableCollection _disposables = new();
+
 
         private BookmarkFolderList() : base(false, false, Config.Current.Bookmark)
         {
             ApplicationDisposer.Current.Add(this);
 
-            Config.Current.Bookmark.AddPropertyChanged(nameof(BookmarkConfig.IsSyncBookshelfEnabled), (s, e) =>
+            _disposables.Add(Config.Current.Bookmark.SubscribePropertyChanged(nameof(BookmarkConfig.IsSyncBookshelfEnabled), (s, e) =>
             {
                 RaisePropertyChanged(nameof(IsSyncBookshelfEnabled));
-            });
+            }));
         }
 
 
@@ -35,6 +37,8 @@ namespace NeeView
 
         public void UpdateItems()
         {
+            if (_disposedValue) return;
+
             if (FolderCollection == null)
             {
                 RequestPlace(new QueryPath(QueryScheme.Bookmark, null), null, FolderSetPlaceOption.None);
@@ -43,6 +47,8 @@ namespace NeeView
 
         public override bool CanMoveToParent()
         {
+            if (_disposedValue) return false;
+
             var parentQuery = FolderCollection?.GetParentQuery();
             if (parentQuery == null) return false;
             return parentQuery.Scheme == QueryScheme.Bookmark;
@@ -63,6 +69,31 @@ namespace NeeView
             return true;
         }
 
+        #region IDisposable support
+
+        private bool _disposedValue;
+
+        private new void ThrowIfDisposed()
+        {
+            if (_disposedValue) throw new ObjectDisposedException(GetType().FullName);
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (!_disposedValue)
+            {
+                if (disposing)
+                {
+                    _disposables.Dispose();
+                }
+
+                _disposedValue = true;
+            }
+
+            base.Dispose(disposing);
+        }
+
+        #endregion IDisposable support
 
         #region Memento
 
@@ -89,30 +120,5 @@ namespace NeeView
         }
 
         #endregion
-    }
-
-
-    // from https://stackoverflow.com/questions/9343594/how-to-call-asynchronous-method-from-synchronous-method-in-c
-    internal static class AsyncHelper
-    {
-        private static readonly TaskFactory _myTaskFactory = new TaskFactory(CancellationToken.None, TaskCreationOptions.None, TaskContinuationOptions.None, TaskScheduler.Default);
-
-        public static TResult RunSync<TResult>(Func<Task<TResult>> func)
-        {
-            return AsyncHelper._myTaskFactory
-              .StartNew<Task<TResult>>(func)
-              .Unwrap<TResult>()
-              .GetAwaiter()
-              .GetResult();
-        }
-
-        public static void RunSync(Func<Task> func)
-        {
-            AsyncHelper._myTaskFactory
-              .StartNew<Task>(func)
-              .Unwrap()
-              .GetAwaiter()
-              .GetResult();
-        }
     }
 }

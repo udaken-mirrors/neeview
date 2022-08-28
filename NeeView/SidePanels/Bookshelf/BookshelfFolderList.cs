@@ -14,7 +14,7 @@ namespace NeeView
     /// <summary>
     /// BookshelfFolderList
     /// </summary>
-    public class BookshelfFolderList : FolderList
+    public class BookshelfFolderList : FolderList, IDisposable
     {
         static BookshelfFolderList() => Current = new BookshelfFolderList();
         public static BookshelfFolderList Current { get; }
@@ -22,6 +22,7 @@ namespace NeeView
 
         private FolderItem? _visibledItem;
         private Regex? _excludeRegex;
+        private DisposableCollection _disposables = new();
 
 
         private BookshelfFolderList() : base(true, true, Config.Current.Bookshelf)
@@ -30,46 +31,46 @@ namespace NeeView
 
             ApplicationDisposer.Current.Add(this);
 
-            Config.Current.System.AddPropertyChanged(nameof(SystemConfig.IsHiddenFileVisibled), async (s, e) =>
+            _disposables.Add(Config.Current.System.SubscribePropertyChanged(nameof(SystemConfig.IsHiddenFileVisibled), async (s, e) =>
             {
                 await RefreshAsync(true, true);
-            });
+            }));
 
-            Config.Current.Bookshelf.AddPropertyChanged(nameof(BookshelfConfig.IsVisibleHistoryMark), (s, e) =>
+            _disposables.Add(Config.Current.Bookshelf.SubscribePropertyChanged(nameof(BookshelfConfig.IsVisibleHistoryMark), (s, e) =>
             {
                 FolderCollection?.RefreshIcon(null);
-            });
+            }));
 
-            Config.Current.Bookshelf.AddPropertyChanged(nameof(BookshelfConfig.IsVisibleBookmarkMark), (s, e) =>
+            _disposables.Add(Config.Current.Bookshelf.SubscribePropertyChanged(nameof(BookshelfConfig.IsVisibleBookmarkMark), (s, e) =>
             {
                 FolderCollection?.RefreshIcon(null);
-            });
+            }));
 
-            Config.Current.Bookshelf.AddPropertyChanged(nameof(BookshelfConfig.ExcludePattern), (s, e) =>
+            _disposables.Add(Config.Current.Bookshelf.SubscribePropertyChanged(nameof(BookshelfConfig.ExcludePattern), (s, e) =>
             {
                 UpdateExcludeRegex();
-            });
+            }));
 
-            Config.Current.Bookshelf.AddPropertyChanged(nameof(BookshelfConfig.IsSearchIncludeSubdirectories), (s, e) =>
+            _disposables.Add(Config.Current.Bookshelf.SubscribePropertyChanged(nameof(BookshelfConfig.IsSearchIncludeSubdirectories), (s, e) =>
             {
                 RequestSearchPlace(true);
-            });
+            }));
 
 
-            BookOperation.Current.BookChanging += (s, e) =>
+            _disposables.Add(BookOperation.Current.SubscribeBookChanging((s, e) =>
             {
                 UpdateVisibledItem(e.Address, false);
-            };
+            }));
 
-            BookOperation.Current.BookChanged += (s, e) =>
+            _disposables.Add(BookOperation.Current.SubscribeBookChanged((s, e) =>
             {
                 UpdateVisibledItem(BookOperation.Current.Address, false);
-            };
+            }));
 
-            this.CollectionChanged += (s, e) =>
+            _disposables.Add(this.SubscribeCollectionChanged((s, e) =>
             {
                 UpdateVisibledItem(BookOperation.Current.Address, true);
-            };
+            }));
 
 
             UpdateExcludeRegex();
@@ -91,6 +92,8 @@ namespace NeeView
         /// </summary>
         private void UpdateVisibledItem(string? path, bool force)
         {
+            if (_disposedValue) return;
+
             if (force && _visibledItem != null)
             {
                 _visibledItem.IsVisibled = false;
@@ -122,6 +125,8 @@ namespace NeeView
 
         internal void ToggleVisibleFoldersTree()
         {
+            if (_disposedValue) return;
+
             var command = CommandTable.Current.GetElement("ToggleVisibleFoldersTree");
             if (command.CanExecute(this, CommandArgs.Empty))
             {
@@ -178,6 +183,8 @@ namespace NeeView
 
         public override async void Sync()
         {
+            if (_disposedValue) return;
+
             var address = BookHub.Current?.Book?.Address;
 
             if (address != null)
@@ -207,6 +214,8 @@ namespace NeeView
 
         protected override void CloseBookIfNecessary()
         {
+            if (_disposedValue) return;
+
             if (Config.Current.Bookshelf.IsCloseBookWhenMove)
             {
                 BookHub.Current.RequestUnload(this, true);
@@ -221,6 +230,8 @@ namespace NeeView
         // 除外パターンの正規表現を更新
         private void UpdateExcludeRegex()
         {
+            if (_disposedValue) return;
+
             try
             {
                 ExcludeRegex = string.IsNullOrWhiteSpace(Config.Current.Bookshelf.ExcludePattern) ? null : new Regex(Config.Current.Bookshelf.ExcludePattern, RegexOptions.IgnoreCase | RegexOptions.Compiled);
@@ -244,6 +255,8 @@ namespace NeeView
 
         protected override void OnPlaceChanged(object? sender, FolderSetPlaceOption options)
         {
+            if (_disposedValue) return;
+
             base.OnPlaceChanged(sender, options);
 
             if (options.HasFlag(FolderSetPlaceOption.UpdateHistory))
@@ -256,40 +269,77 @@ namespace NeeView
 
         #region FolderHistory
 
-
         public bool CanMoveToPrevious()
         {
+            if (_disposedValue) return false;
+
             return this.History.CanMoveToPrevious();
         }
 
         public override async void MoveToPrevious()
         {
+            if (_disposedValue) return;
+
             await this.History.MoveToPreviousAsync();
         }
 
         public bool CanMoveToNext()
         {
+            if (_disposedValue) return false;
+
             return this.History.CanMoveToNext();
         }
 
         public override async void MoveToNext()
         {
+            if (_disposedValue) return;
+
             await this.History.MoveToNextAsync();
         }
 
         public async void MoveToHistory(KeyValuePair<int, QueryPath> item)
         {
+            if (_disposedValue) return;
+
             await this.History.MoveToHistoryAsync(item);
         }
 
         // NOTE: Historyから呼ばれる
         public async Task MoveToHistoryAsync(QueryPath path)
         {
+            if (_disposedValue) return;
+
             await SetPlaceAsync(path, null, FolderSetPlaceOption.Focus);
             CloseBookIfNecessary();
         }
 
         #endregion FolderHistory
+
+        #region IDisposable support
+
+        private bool _disposedValue;
+
+        private new void ThrowIfDisposed()
+        {
+            if (_disposedValue) throw new ObjectDisposedException(GetType().FullName);
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (!_disposedValue)
+            {
+                if (disposing)
+                {
+                    _disposables.Dispose();
+                }
+
+                _disposedValue = true;
+            }
+
+            base.Dispose(disposing);
+        }
+
+        #endregion IDisposable support
 
 
         #region Memento

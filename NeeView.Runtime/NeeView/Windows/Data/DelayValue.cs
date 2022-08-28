@@ -12,22 +12,19 @@ namespace NeeView.Windows.Data
     /// <summary>
     /// 値の遅延反映
     /// </summary>
-    public class DelayValue<T> : BindableBase
+    public class DelayValue<T> : BindableBase, IDisposable
     {
-        #region Fields
+        // Fields
 
         private T? _value;
         private T? _delayValue;
         private DateTime _delayTime = DateTime.MaxValue;
         private DispatcherTimer _timer;
+        private bool _disposedValue;
 
-        #endregion
 
-        #region Constructors
+        // Constructors
 
-        /// <summary>
-        /// コンストラクター
-        /// </summary>
         public DelayValue()
         {
             _timer = new DispatcherTimer();
@@ -35,37 +32,35 @@ namespace NeeView.Windows.Data
             _timer.Tick += Tick;
         }
 
-        /// <summary>
-        /// コンストラクター
-        /// </summary>
-        /// <param name="value">初期値</param>
         public DelayValue(T value) : this()
         {
             _value = value;
             _delayValue = value;
         }
 
-        #endregion
-
-        #region Events
+        // Events
 
         /// <summary>
         /// 値が反映されたときのイベント
         /// </summary>
         public event EventHandler? ValueChanged;
 
-        #endregion
+        public IDisposable SubscribeValueChanged(EventHandler handler)
+        {
+            ValueChanged += handler;
+            return new AnonymousDisposable(() => ValueChanged -= handler);
+        }
 
-        #region Properties
+
+        // Properties
 
         /// <summary>
         /// 現在値
         /// </summary>
         public T? Value => _value;
 
-        #endregion
 
-        #region Methods
+        // Methods
 
         /// <summary>
         /// タイマー精度変更
@@ -76,11 +71,15 @@ namespace NeeView.Windows.Data
         /// <param name="ms"></param>
         public void SetInterval(double ms)
         {
+            if (_disposedValue) return;
+
             _timer.Interval = TimeSpan.FromMilliseconds(ms);
         }
 
         public void SetValue(T value)
         {
+            if (_disposedValue) return;
+
             SetValue(value, 0.0);
         }
 
@@ -92,6 +91,8 @@ namespace NeeView.Windows.Data
         /// <param name="overwriteOption">遅延実行中の上書き判定</param>
         public void SetValue(T value, double ms, DelayValueOverwriteOption overwriteOption = DelayValueOverwriteOption.None)
         {
+            if (_disposedValue) return;
+
             if (EqualityComparer<T>.Default.Equals(_delayValue, value))
             {
                 switch (overwriteOption)
@@ -130,6 +131,8 @@ namespace NeeView.Windows.Data
         /// </summary>
         private void Flush()
         {
+            if (_disposedValue) return;
+
             _timer.Stop();
 
             if (!EqualityComparer<T>.Default.Equals(_delayValue, _value))
@@ -147,6 +150,8 @@ namespace NeeView.Windows.Data
         /// <param name="e"></param>
         private void Tick(object? sender, EventArgs e)
         {
+            if (_disposedValue) return;
+
             if (_delayTime <= DateTime.Now)
             {
                 Flush();
@@ -162,7 +167,28 @@ namespace NeeView.Windows.Data
             return _timer.IsEnabled ? $"{_value} ({_delayValue}, {(_delayTime - DateTime.Now).TotalMilliseconds}ms)" : $"{_value}";
         }
 
-        #endregion
+        protected void ThrowIfDisposed()
+        {
+            if (_disposedValue) throw new ObjectDisposedException(GetType().FullName);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!_disposedValue)
+            {
+                if (disposing)
+                {
+                    _timer.Stop();
+                }
+                _disposedValue = true;
+            }
+        }
+
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
     }
 
 

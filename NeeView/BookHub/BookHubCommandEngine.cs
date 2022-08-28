@@ -39,6 +39,9 @@ namespace NeeView
     {
         public BookHubCommandLoadArgs(string path, string sourcePath)
         {
+            Debug.Assert(path is not null);
+            Debug.Assert(sourcePath is not null);
+
             Path = path;
             SourcePath = sourcePath;
         }

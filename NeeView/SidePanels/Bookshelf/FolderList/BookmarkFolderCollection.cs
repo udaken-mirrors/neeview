@@ -32,6 +32,8 @@ namespace NeeView
 
         public void InitializeItems(CancellationToken token)
         {
+            ThrowIfDisposed();
+
             _bookmarkPlace = BookmarkCollection.Current.FindNode(Place.FullPath) ?? CreateBookmarkPlaceEmpty();
 
             var items = _bookmarkPlace.Children
@@ -70,6 +72,8 @@ namespace NeeView
 
         private void BookmarkCollection_BookmarkChanged(object? sender, BookmarkCollectionChangedEventArgs e)
         {
+            if (_disposedValue) return;
+
             switch (e.Action)
             {
                 case EntryCollectionChangedAction.Add:
@@ -222,6 +226,11 @@ namespace NeeView
         #region IDisposable Support
 
         private bool _disposedValue = false;
+
+        protected void ThrowIfDisposed()
+        {
+            if (_disposedValue) throw new ObjectDisposedException(GetType().FullName);
+        }
 
         protected override void Dispose(bool disposing)
         {

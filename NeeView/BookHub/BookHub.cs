@@ -241,7 +241,6 @@ namespace NeeView
 
 
 
-
         /// <summary>
         /// 現在の本
         /// </summary>
@@ -262,8 +261,12 @@ namespace NeeView
             {
                 if (_disposedValue) return;
 
-                _address = value;
-                AddressChanged?.Invoke(this, EventArgs.Empty);
+                if (_address != value)
+                {
+                    _address = value;
+                    Config.Current.StartUp.LastBookPath = Address;
+                    AddressChanged?.Invoke(this, EventArgs.Empty);
+                }
             }
         }
 
@@ -523,7 +526,10 @@ namespace NeeView
 
         #region BookHubCommand.Load
 
-        // ロード中状態更新
+        /// <summary>
+        /// ロード中状態更新
+        /// </summary>
+        /// <param name="path"></param>
         private void NotifyLoading(string? path)
         {
             if (_disposedValue) return;
@@ -536,31 +542,28 @@ namespace NeeView
         /// <summary>
         /// 本を読み込む
         /// </summary>
-        /// <param name="path"></param>
-        /// <param name="option"></param>
-        /// <param name="isRefreshFolderList"></param>
-        /// <returns></returns>
         public async Task LoadAsync(BookHubCommandLoadArgs args, CancellationToken token)
         {
             if (_disposedValue) return;
 
+            token.ThrowIfCancellationRequested();
+
             ////DebugTimer.Check("LoadAsync...");
-
-            AppDispatcher.Invoke(() =>
-            {
-                // 再生中のメディアをPAUSE
-                MediaPlayerOperator.Current?.Pause();
-
-                // 本の変更開始通知
-                // NOTE: パスはまだページの可能性があるので不完全
-                BookChanging?.Invoke(this, new BookChangingEventArgs(args.Path));
-            });
 
             // 現在の設定を記憶
             var lastBookMemento = this.Book?.Address != null ? this.Book.CreateMemento() : null;
 
+            Address = args.SourcePath;
+
+            AppDispatcher.Invoke(() =>
+            {
+                // 本の変更開始通知
+                // NOTE: パスはまだページの可能性があるので不完全
+                BookChanging?.Invoke(this, new BookChangingEventArgs(Address));
+            });
+
             // 現在の本を開放
-            Unload(new BookHubCommandUnloadArgs() { Sender = args.Sender, IsClearViewContent = false });
+            UnloadCore();
 
             string place = args.Path;
 
@@ -606,33 +609,36 @@ namespace NeeView
 
                 // Load本体
                 var loadOption = args.Option | (isResetLastPage ? BookLoadOption.ResetLastPage : BookLoadOption.None);
-                await LoadAsyncCore(args.Sender, address, loadOption, setting, token);
-                token.ThrowIfCancellationRequested();
+                var bookUnit = await LoadAsyncCore(args.Sender, address, loadOption, setting, isNew, token);
+
+                _historyEntry = false;
+                _historyRemoved = false;
+
+                var bookSetting = BookSettingConfigExtensions.FromBookMement(bookUnit.Book.CreateMemento());
+                if (bookSetting is not null)
+                {
+                    AppDispatcher.Invoke(() =>
+                    {
+                        // 本の設定を更新
+                        BookSettingPresenter.Current.SetLatestSetting(bookSetting);
+                    });
+                }
+
+                lock (_lock)
+                {
+                    BookUnit = bookUnit;
+                    Address = bookUnit.Book.Address;
+                }
+
+                await WaitBookReadyAsync(token);
 
                 ////DebugTimer.Check("LoadCore");
 
-                if (BookUnit != null)
-                {
-                    BookUnit.Book.IsNew = isNew;
-                }
-
-                var bookSetting = BookSettingConfigExtensions.FromBookMement(BookUnit?.Book.CreateMemento());
-
                 AppDispatcher.Invoke(() =>
                 {
-                    // 本の設定を更新
-                    if (bookSetting is not null)
-                    {
-                        BookSettingPresenter.Current.SetLatestSetting(bookSetting);
-                    }
-
-                    // 本の変更通知
                     lock (_lock)
                     {
-                        if (BookUnit != null)
-                        {
-                            BookChanged?.Invoke(this, new BookChangedEventArgs(BookUnit.Book?.Address, BookUnit.Book, BookUnit.GetBookMementoType()));
-                        }
+                        BookChanged?.Invoke(this, new BookChangedEventArgs(bookUnit.Book.Address, bookUnit.Book, bookUnit.GetBookMementoType()));
                     }
                 });
 
@@ -693,20 +699,21 @@ namespace NeeView
             }
         }
 
-
         // 再帰読み込み確認
         private void ConfirmRecursive(object? sender, CancellationToken token)
         {
             if (Book is null) throw new InvalidOperationException();
 
+            token.ThrowIfCancellationRequested();
+
             var dialog = new MessageDialog(string.Format(Properties.Resources.ConfirmRecursiveDialog_Message, Book.Address), Properties.Resources.ConfirmRecursiveDialog_Title);
             dialog.Commands.Add(UICommands.Yes);
             dialog.Commands.Add(UICommands.No);
 
-            token.ThrowIfCancellationRequested();
             using (var register = token.Register(() => dialog.Close()))
             {
                 var result = dialog.ShowDialog();
+                token.ThrowIfCancellationRequested();
 
                 if (result == UICommands.Yes)
                 {
@@ -721,116 +728,80 @@ namespace NeeView
             RequestLoad(sender, book.Address, book.StartEntry, BookLoadOption.Recursive | BookLoadOption.ReLoad, true);
         }
 
-
         /// <summary>
         /// 本を読み込む(本体)
         /// </summary>
-        /// <param name="path">本のパス</param>
-        /// <param name="startEntry">開始エントリ</param>
-        /// <param name="option">読み込みオプション</param>
-        private async Task LoadAsyncCore(object? sender, BookAddress address, BookLoadOption option, Book.Memento setting, CancellationToken token)
+        private async Task<BookUnit> LoadAsyncCore(object? sender, BookAddress address, BookLoadOption option, Book.Memento setting, bool isNew, CancellationToken token)
         {
-            try
+            token.ThrowIfCancellationRequested();
+
+            var memento = ((option & BookLoadOption.ReLoad) == BookLoadOption.ReLoad) ? BookSettingPresenter.Current.LatestSetting.ToBookMemento() : setting;
+
+            var bookSetting = new BookCreateSetting()
             {
-                var memento = ((option & BookLoadOption.ReLoad) == BookLoadOption.ReLoad) ? BookSettingPresenter.Current.LatestSetting.ToBookMemento() : setting;
+                StartPage = BookLoadOptionHelper.CreateBookStartPage(address.EntryName, option),
+                IsRecursiveFolder = BookLoadOptionHelper.CreateIsRecursiveFolder(memento.IsRecursiveFolder, option),
+                ArchiveRecursiveMode = Config.Current.System.ArchiveRecursiveMode,
+                BookPageCollectMode = Config.Current.System.BookPageCollectMode,
+                SortMode = memento.SortMode,
+                IsIgnoreCache = option.HasFlag(BookLoadOption.IgnoreCache),
+                IsNew = isNew,
+                LoadOption = option,
+            };
 
-                var bookSetting = new BookCreateSetting()
+            var book = await BookFactory.CreateAsync(sender, address.Address, address.SourceAddress, bookSetting, memento, token);
+
+            // auto recursive
+            if (Config.Current.Book.IsAutoRecursive && !book.Source.IsRecursiveFolder && book.Source.SubFolderCount == 1)
+            {
+                bookSetting.IsRecursiveFolder = true;
+                book = await BookFactory.CreateAsync(sender, address.Address, address.SourceAddress, bookSetting, memento, token);
+            }
+
+            return new BookUnit(book, address, option);
+        }
+
+        private async Task WaitBookReadyAsync(CancellationToken token)
+        {
+            token.ThrowIfCancellationRequested();
+
+            if (BookUnit is null) return;
+
+            var book = BookUnit.Book;
+
+            // イベント設定
+            // NOTE: book のほうが BookHub より寿命が短いため開放は考えなくてよい？どうだろう？
+            // BookUnit で管理すべき？
+            book.Viewer.ViewContentsChanged += BookViewer_ViewContentsChanged;
+            book.Viewer.NextContentsChanged += BookViewer_NextContentsChanged;
+            book.Source.DartyBook += (s, e) => RequestLoad(this, Address, null, BookLoadOption.ReLoad | BookLoadOption.IsBook, false);
+
+            var tcs = new TaskCompletionSource<bool>();
+
+            using (book.Viewer.SubscribeViewContentsChanged(BookViewer_ViewContentsChangedInner))
+            {
+                // ブックエンジン開始
+                book.Start();
+
+                // 最初のコンテンツ表示待ち
+                if (book.Pages.Count > 0)
                 {
-                    StartPage = BookLoadOptionHelper.CreateBookStartPage(address.EntryName, option),
-                    IsRecursiveFolder = BookLoadOptionHelper.CreateIsRecursiveFolder(memento.IsRecursiveFolder, option),
-                    ArchiveRecursiveMode = Config.Current.System.ArchiveRecursiveMode,
-                    BookPageCollectMode = Config.Current.System.BookPageCollectMode,
-                    SortMode = memento.SortMode,
-                    IsIgnoreCache = option.HasFlag(BookLoadOption.IgnoreCache),
-                    LoadOption = option,
-                };
-
-                var book = await BookFactory.CreateAsync(sender, address.Address, address.SourceAddress, bookSetting, memento, token);
-                token.ThrowIfCancellationRequested();
-
-                // auto recursive
-                if (Config.Current.Book.IsAutoRecursive && !book.Source.IsRecursiveFolder && book.Source.SubFolderCount == 1)
-                {
-                    bookSetting.IsRecursiveFolder = true;
-                    book = await BookFactory.CreateAsync(sender, address.Address, address.SourceAddress, bookSetting, memento, token);
-                    token.ThrowIfCancellationRequested();
-                }
-
-                _historyEntry = false;
-                _historyRemoved = false;
-
-                // カレントを設定し、開始する
-                lock (_lock)
-                {
-                    token.ThrowIfCancellationRequested();
-                    BookUnit?.Dispose();
-                    BookUnit = new BookUnit(book, address, option);
-                }
-
-                // イベント設定
-                // NOTE: book のほうが BookHub より寿命が短いため開放は考えなくてよい
-                book.Viewer.ViewContentsChanged += BookViewer_ViewContentsChanged;
-                book.Viewer.NextContentsChanged += BookViewer_NextContentsChanged;
-                book.Source.DartyBook += (s, e) => RequestLoad(this, Address, null, BookLoadOption.ReLoad | BookLoadOption.IsBook, false);
-
-                var tcs = new TaskCompletionSource<bool>();
-
-                using (book.Viewer.SubscribeViewContentsChanged(BookViewer_ViewContentsChangedInner))
-                {
-                    // 開始
-                    BookUnit?.Book.Start();
-
-                    // 最初のコンテンツ表示待ち
-                    if (book.Pages.Count > 0)
+                    using (var register = token.Register(() => tcs.TrySetCanceled()))
                     {
-                        using (var register = token.Register(() => tcs.TrySetCanceled()))
-                        {
-                            await tcs.Task;
-                            token.ThrowIfCancellationRequested();
-                        }
-                    }
-                }
-
-                //// inner callback function define.
-                void BookViewer_ViewContentsChangedInner(object? s, ViewContentSourceCollectionChangedEventArgs e)
-                {
-                    if (e.ViewPageCollection.Collection.All(e_ => e_.Content.IsViewReady))
-                    {
-                        tcs.TrySetResult(true);
+                        await tcs.Task;
+                        token.ThrowIfCancellationRequested();
                     }
                 }
             }
-            catch (OperationCanceledException)
+
+            //// inner callback function define.
+            void BookViewer_ViewContentsChangedInner(object? s, ViewContentSourceCollectionChangedEventArgs e)
             {
-                // 後始末
-                lock (_lock)
+                if (e.ViewPageCollection.Collection.All(x => x.Content.IsViewReady))
                 {
-                    BookUnit?.Dispose();
-                    BookUnit = null;
+                    tcs.TrySetResult(true);
                 }
-                Config.Current.StartUp.LastBookPath = null;
-
-                throw;
             }
-            catch (Exception)
-            {
-                // 後始末
-                lock (_lock)
-                {
-                    BookUnit?.Dispose();
-                    BookUnit = null;
-                }
-                Config.Current.StartUp.LastBookPath = null;
-
-                // 履歴から消去
-                ////BookHistory.Current.Remove(address.Place);
-                ////MenuBar.Current.UpdateLastFiles();
-
-                throw;
-            }
-
-            Address = BookUnit?.Book.Address;
-            Config.Current.StartUp.LastBookPath = Address;
         }
 
         #endregion BookHubCommand.Load
@@ -844,24 +815,22 @@ namespace NeeView
         {
             if (_disposedValue) return;
 
-            // 履歴の保存
-            SaveBookMemento();
+            AppDispatcher.Invoke(() =>
+            {
+                // 本の変更通
+                BookChanging?.Invoke(param.Sender, new BookChangingEventArgs(""));
+            });
 
-            // 現在の本を開放
-            ReleaseCurrent();
+            UnloadCore();
 
             if (param.IsClearViewContent)
             {
                 Address = null;
-                Config.Current.StartUp.LastBookPath = null;
 
                 AppDispatcher.Invoke(() =>
                 {
                     // 現在表示されているコンテンツを無効
                     ViewContentsChanged?.Invoke(param.Sender, new ViewContentSourceCollectionChangedEventArgs());
-
-                    // 本の変更通
-                    BookChanged?.Invoke(param.Sender, new BookChangedEventArgs(Address, null, BookMementoType.None));
                 });
             }
 
@@ -869,11 +838,29 @@ namespace NeeView
             {
                 EmptyPageMessage?.Invoke(this, new BookHubMessageEventArgs(param.Message));
             }
+
+            AppDispatcher.Invoke(() =>
+            {
+                // 本の変更通
+                BookChanged?.Invoke(param.Sender, new BookChangedEventArgs("", null, BookMementoType.None));
+            });
         }
 
-        // 現在の本を解除
-        private void ReleaseCurrent()
+        /// <summary>
+        /// 本の開放
+        /// </summary>
+        private void UnloadCore()
         {
+            AppDispatcher.Invoke(() =>
+            {
+                // 再生中のメディアをPAUSE
+                MediaPlayerOperator.Current?.Pause();
+            });
+
+            // 履歴の保存
+            SaveBookMemento();
+
+            // 現在の本を開放
             lock (_lock)
             {
                 BookUnit?.Dispose();

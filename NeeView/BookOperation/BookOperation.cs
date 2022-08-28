@@ -152,10 +152,47 @@ namespace NeeView
 
 
 
+        private DisposableCollection? _bookDisposables;
+
+        private void SubscribeBook(Book? book)
+        {
+            UnsubscribeCurrentBook();
+
+            if (book != null)
+            {
+                _bookDisposables = new DisposableCollection();
+                _bookDisposables.Add(book.Pages.SubscribePagesSorted(
+                    Book_PagesSorted));
+                _bookDisposables.Add(book.Pages.SubscribePageRemoved(
+                    Book_PageRemoved));
+                _bookDisposables.Add(book.Viewer.SubscribeViewContentsChanged(
+                    Book_ViewContentsChanged));
+                _bookDisposables.Add(book.Viewer.SubscribePageTerminated(
+                    Book_PageTerminated));
+                _bookDisposables.Add(book.Viewer.SubscribePropertyChanged(nameof(BookPageViewer.IsBusy),
+                    (s, _) => RaisePropertyChanged(nameof(IsBusy))));
+            }
+
+            this.Book = book;
+        }
+
+        private void UnsubscribeCurrentBook()
+        {
+            if (this.Book is null) return;
+
+            _bookDisposables?.Dispose();
+            _bookDisposables = null;
+
+            this.Book = null;
+        }
+
+
         private void BookHub_BookChanging(object? sender, BookChangingEventArgs e)
         {
             // ブック操作無効
             IsEnabled = false;
+
+            UnsubscribeCurrentBook();
 
             BookChanging?.Invoke(sender, e);
         }
@@ -165,16 +202,7 @@ namespace NeeView
         /// </summary>
         private void BookHub_BookChanged(object? sender, BookChangedEventArgs e)
         {
-            this.Book = BookHub.Current.Book;
-
-            if (this.Book != null)
-            {
-                this.Book.Pages.PagesSorted += Book_PagesSorted;
-                this.Book.Pages.PageRemoved += Book_PageRemoved;
-                this.Book.Viewer.ViewContentsChanged += Book_ViewContentsChanged;
-                this.Book.Viewer.PageTerminated += Book_PageTerminated;
-                this.Book.Viewer.AddPropertyChanged(nameof(BookPageViewer.IsBusy), (s, e_) => RaisePropertyChanged(nameof(IsBusy)));
-            }
+            SubscribeBook(BookHub.Current.Book);
 
             //
             RaisePropertyChanged(nameof(IsBookmark));
@@ -686,7 +714,7 @@ namespace NeeView
             if (SlideShow.Current.IsPlayingSlideShow)
             {
                 // スライドショー解除
-                SlideShow.Current.IsPlayingSlideShow = false;
+                SlideShow.Current.Stop();
             }
 
             // 通知。本の場合のみ処理。メディアでは不要

@@ -52,8 +52,27 @@ namespace NeeView
         }
 
 
+        /// <summary>
+        /// コンテキストメニューを開く要求イベント
+        /// </summary>
         public event EventHandler? OpenContextMenuRequest;
+
+        public IDisposable SubscribeOpenContextMenuRequest(EventHandler handler)
+        {
+            OpenContextMenuRequest += handler;
+            return new AnonymousDisposable(() => OpenContextMenuRequest -= handler);
+        }
+
+        /// <summary>
+        /// MainViewにフォーカスを移す要求イベント
+        /// </summary>
         public event EventHandler? FocusMainViewRequest;
+
+        public IDisposable SubscribeFocusMainViewRequest(EventHandler handler)
+        {
+            FocusMainViewRequest += handler;
+            return new AnonymousDisposable(() => FocusMainViewRequest -= handler);
+        }
 
 
         public MainView MainView => _mainView;

@@ -28,6 +28,7 @@ namespace NeeView
         public bool IsValid
             => Book?.Address != null;
 
+
         #region IDisposable Support
         private bool _disposedValue = false;
 

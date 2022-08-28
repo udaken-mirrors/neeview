@@ -67,6 +67,8 @@ namespace NeeView
         // TODO: 非同期ではパラメータ生成のみを行い、BookAddressコンストラクタにそれを渡すようにして初期化する
         public static async Task<BookAddress> CreateAsync(QueryPath query, QueryPath sourceQuery, string? entryName, ArchiveEntryCollectionMode mode, BookLoadOption option, CancellationToken token)
         {
+            token.ThrowIfCancellationRequested();
+
             var address = new BookAddress();
             await address.ConstructAsync(query, sourceQuery, entryName, mode, option, token);
             return address;
@@ -78,6 +80,8 @@ namespace NeeView
         /// </summary>
         private async Task ConstructAsync(QueryPath query, QueryPath sourceQuery, string? entryName, ArchiveEntryCollectionMode mode, BookLoadOption option, CancellationToken token)
         {
+            token.ThrowIfCancellationRequested();
+
             this.SourceAddress = sourceQuery ?? query;
 
             // ブックマークは実体のパスへ

@@ -29,6 +29,8 @@ namespace NeeView
 
         public override async Task InitializeItemsAsync(CancellationToken token)
         {
+            token.ThrowIfCancellationRequested();
+
             try
             {
                 _collection = new ArchiveEntryCollection(this.Place.SimplePath, ArchiveEntryCollectionMode.CurrentDirectory, _mode, ArchiveEntryCollectionOption.None);
