@@ -57,8 +57,8 @@ namespace NeeView
             bool isMainContent0 = mainContent == contents[0];
 
             // book
-            var book = BookHub.Current.Book;
-            string bookName = LoosePath.GetDispName(book?.Address);
+            var book = BookHub.Current.GetCurrentBook();
+            string bookName = LoosePath.GetDispName(book?.Path);
             _replaceString.Set("$Book", bookName);
 
             // page

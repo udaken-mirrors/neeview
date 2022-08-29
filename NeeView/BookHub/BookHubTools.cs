@@ -52,14 +52,14 @@ namespace NeeView
             if (query is null) return false;
 
             // 開いているブックは現状の設定を返す ... これいらない？下の計算でやってる？
-            var book = BookHub.Current.Book;
-            if (book != null && book.Address == query.SimplePath)
+            var book = BookHub.Current.GetCurrentBook();
+            if (book != null && book.Path == query.SimplePath)
             {
                 return book.Source.IsRecursiveFolder;
             }
 
             // 開いていないブックは履歴と設定から計算する
-            var lastBookMemento = book?.Address != null ? book.CreateMemento() : null;
+            var lastBookMemento = book?.Path != null ? book.CreateMemento() : null;
             var loadOption = BookLoadOption.Resume | (IsFolderRecoursive(query.GetParent()) ? BookLoadOption.DefaultRecursive : BookLoadOption.None);
             var setting = BookHub.CreateOpenBookMemento(query.SimplePath, lastBookMemento, loadOption);
             return setting.IsRecursiveFolder;

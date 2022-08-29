@@ -196,7 +196,7 @@ namespace NeeView
             if (_disposedValue) return;
 
             var now = DateTime.Now;
-            var book = BookHub.Current.Book;
+            var book = BookHub.Current.GetCurrentBook();
 
             WriteBookViewedRecord(now);
 
@@ -208,14 +208,14 @@ namespace NeeView
                 return;
             }
 
-            _viewedBookAddress = book.Address;
+            _viewedBookAddress = book.Path;
             if (book.NotFoundStartPage != null && book.Pages.Count > 0)
             {
                 _viewedBookName = string.Format(Resources.Notice_CannotOpen, LoosePath.GetFileName(book.NotFoundStartPage));
             }
             else
             {
-                _viewedBookName = LoosePath.GetFileName(book.Address);
+                _viewedBookName = LoosePath.GetFileName(book.Path);
             }
         }
 

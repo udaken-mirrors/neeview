@@ -1,9 +1,6 @@
 ﻿using NeeView.Collections.Generic;
 using System;
 using System.Diagnostics;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace NeeView
 {
@@ -17,15 +14,18 @@ namespace NeeView
         private BookPageViewer _viewer;
         private BookPageMarker _marker;
         private BookController _controller;
-        private string _sourceAddress;
+        private string _sourcePath;
         private BookLoadOption _loadOption;
+        private BookAddress _address;
 
-        public Book(BookSource source, QueryPath? sourceAddress, Book.Memento memento, BookLoadOption option, bool isNew)
+
+        public Book(BookAddress address, BookSource source, Book.Memento memento, BookLoadOption option, bool isNew)
         {
             Book.Default = this;
 
+            _address = address;
             _source = source;
-            _sourceAddress = sourceAddress?.SimplePath ?? "";
+            _sourcePath = address.SourcePath?.SimplePath ?? "";
             _viewer = new BookPageViewer(_source, _bookMemoryService, CreateBookViewerCreateSetting(memento));
             _marker = new BookPageMarker(_source, _viewer);
             _controller = new BookController(_source, _viewer, _marker);
@@ -34,6 +34,7 @@ namespace NeeView
             IsNew = isNew;
         }
 
+
         public BookSource Source => _source;
         public BookPageCollection Pages => _source.Pages;
         public BookPageViewer Viewer => _viewer;
@@ -41,11 +42,12 @@ namespace NeeView
         public BookController Control => _controller;
         public BookMemoryService BookMemoryService => _bookMemoryService;
 
-        public string Address => _source.Address;
-        public string SourceAddress => _sourceAddress;
+        public BookAddress BookAddress => _address;
+        public string Path => _source.Path;
+        public string SourcePath => _sourcePath;
         public bool IsMedia => _source.IsMedia;
         public bool IsPlaylist => _source.IsPlaylist;
-        public bool IsTemporary => _source.Address.StartsWith(Temporary.Current.TempDirectory);
+        public bool IsTemporary => _source.Path.StartsWith(Temporary.Current.TempDirectory);
 
         public PageSortModeClass PageSortModeClass => IsPlaylist ? PageSortModeClass.WithEntry : PageSortModeClass.Normal;
         public BookLoadOption LoadOption => _loadOption;
@@ -61,38 +63,9 @@ namespace NeeView
         // TODO: 再読込時に必要だが、なくすことできそう？
         public string? StartEntry { get; private set; }
 
-
-        #region IDisposable Support
-        private bool _disposedValue = false;
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!_disposedValue)
-            {
-                if (disposing)
-                {
-                    if (Book.Default == this)
-                    {
-                        Book.Default = null;
-                    }
-
-                    _controller.Dispose();
-                    _viewer.Dispose();
-                    _source.Dispose();
-                }
-
-                _disposedValue = true;
-            }
-        }
-
-        public void Dispose()
-        {
-            Dispose(true);
-        }
-        #endregion
+        public bool IsKeepHistoryOrder => (_loadOption & BookLoadOption.KeepHistoryOrder) == BookLoadOption.KeepHistoryOrder;
 
 
-        #region Methods
 
         public void SetStartPage(object? sender, BookStartPage startPage)
         {
@@ -141,6 +114,34 @@ namespace NeeView
             _controller.Start();
         }
 
+
+        #region IDisposable Support
+        private bool _disposedValue = false;
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!_disposedValue)
+            {
+                if (disposing)
+                {
+                    if (Book.Default == this)
+                    {
+                        Book.Default = null;
+                    }
+
+                    _controller.Dispose();
+                    _viewer.Dispose();
+                    _source.Dispose();
+                }
+
+                _disposedValue = true;
+            }
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+        }
         #endregion
 
         #region Memento
@@ -150,7 +151,7 @@ namespace NeeView
         {
             var memento = new Book.Memento();
 
-            memento.Path = _source.Address;
+            memento.Path = _source.Path;
             memento.IsDirectorty = _source.IsDirectory;
             memento.Page = _source.Pages.SortMode != PageSortMode.Random ? _viewer.GetViewPage()?.EntryName : null;
 
@@ -170,6 +171,8 @@ namespace NeeView
         public void Restore(Book.Memento memento)
         {
             if (memento == null) return;
+
+            if (_disposedValue) return;
 
             _viewer.PageMode = memento.PageMode;
             _viewer.BookReadOrder = memento.BookReadOrder;
@@ -196,82 +199,6 @@ namespace NeeView
         }
 
         #endregion
-    }
-
-
-
-
-    /// <summary>
-    /// Book生成設定
-    /// </summary>
-    public class BookCreateSetting
-    {
-        /// <summary>
-        /// 開始ページ
-        /// </summary>
-        public BookStartPage StartPage { get; set; } = new BookStartPage(BookStartPageType.FirstPage);
-
-        /// <summary>
-        /// フォルダー再帰
-        /// </summary>
-        public bool IsRecursiveFolder { get; set; }
-
-        /// <summary>
-        /// 圧縮ファイルの再帰モード
-        /// </summary>
-        public ArchiveEntryCollectionMode ArchiveRecursiveMode { get; set; }
-
-        /// <summary>
-        /// ページ収集モード
-        /// </summary>
-        public BookPageCollectMode BookPageCollectMode { get; set; }
-
-        /// <summary>
-        /// ページの並び順
-        /// </summary>
-        public PageSortMode SortMode { get; set; }
-
-        /// <summary>
-        /// キャッシュ無効
-        /// </summary>
-        public bool IsIgnoreCache { get; set; }
-
-        /// <summary>
-        /// 新規ブック
-        /// </summary>
-        public bool IsNew { get; set; }
-
-        /// <summary>
-        /// ロード設定フラグ
-        /// </summary>
-        public BookLoadOption LoadOption { get; set; }
-    }
-
-
-    public static class BookFactory
-    {
-        public static async Task<Book> CreateAsync(object? sender, QueryPath address, QueryPath? sourceAddress, BookCreateSetting setting, Book.Memento memento, CancellationToken token)
-        {
-            token.ThrowIfCancellationRequested();
-
-            var factory = new BookSourceFactory();
-            var bookSource = await factory.CreateAsync(address, setting, token);
-
-            if (bookSource.IsMedia)
-            {
-                foreach (var mediaContent in bookSource.Pages.Select(e => e.ContentAccessor).OfType<MediaContent>())
-                {
-                    mediaContent.IsLastStart = setting.StartPage.StartPageType == BookStartPageType.LastPage;
-                }
-            }
-
-            var book = new Book(bookSource, sourceAddress, memento, setting.LoadOption, setting.IsNew);
-
-            // HACK: Start() で行いたい
-            book.SetStartPage(sender, setting.StartPage);
-
-            return book;
-        }
     }
 
 }

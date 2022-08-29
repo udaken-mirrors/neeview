@@ -185,13 +185,14 @@ namespace NeeView
         {
             if (_disposedValue) return;
 
-            var address = BookHub.Current?.Book?.Address;
+            var book = BookHub.Current?.GetCurrentBook();
+            var address = book?.Path;
 
             if (address != null)
             {
                 // TODO: Queryの求め方はこれでいいのか？
                 var path = new QueryPath(address);
-                var parent = new QueryPath(BookHub.Current?.Book?.Source.GetFolderPlace() ?? LoosePath.GetDirectoryName(address));
+                var parent = new QueryPath(book?.Source.GetFolderPlace() ?? LoosePath.GetDirectoryName(address));
 
                 SetDarty(); // 強制更新
                 await SetPlaceAsync(parent, new FolderItemPosition(path), FolderSetPlaceOption.Focus | FolderSetPlaceOption.UpdateHistory | FolderSetPlaceOption.ResetKeyword | FolderSetPlaceOption.FileSystem);

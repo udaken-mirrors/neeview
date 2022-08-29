@@ -131,7 +131,7 @@ namespace NeeView
             {
                 var item = (PlaylistItem)e.Item;
                 var book = BookOperation.Current.Book;
-                e.Accepted = book is null || (item.Path.StartsWith(book.Address) && book.Pages.PageMap.ContainsKey(item.Path));
+                e.Accepted = book is null || (item.Path.StartsWith(book.Path) && book.Pages.PageMap.ContainsKey(item.Path));
             }
             else
             {

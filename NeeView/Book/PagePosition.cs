@@ -70,6 +70,12 @@ namespace NeeView
             return _value == -1;
         }
 
+        // ページ数とパーツ数からValue値を求める
+        public static int GetValue(int index, int part = 0)
+        {
+            return index * 2 + part;
+        }
+
         // add
         public static PagePosition operator +(PagePosition a, PagePosition b)
         {

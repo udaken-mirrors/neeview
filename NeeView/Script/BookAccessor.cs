@@ -22,7 +22,7 @@ namespace NeeView
         }
 
         [WordNodeMember]
-        public string? Path => BookOperation.Current.Book?.Address;
+        public string? Path => BookOperation.Current.Book?.Path;
 
         [WordNodeMember]
         public bool IsMedia => BookOperation.Current.Book?.IsMedia == true;

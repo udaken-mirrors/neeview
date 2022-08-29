@@ -38,7 +38,12 @@ namespace NeeView
         /// <summary>
         /// ブックのアドレス
         /// </summary>
-        public QueryPath Address { get; set; } = QueryPath.Empty;
+        public QueryPath TargetPath { get; set; } = QueryPath.Empty;
+
+        /// <summary>
+        /// ソースアドレス。ショートカットファイルとか
+        /// </summary>
+        public QueryPath? SourcePath { get; set; }
 
         /// <summary>
         /// ブックのあるフォルダー
@@ -48,12 +53,8 @@ namespace NeeView
         /// <summary>
         /// ページを含めたアーカイブパス
         /// </summary>
-        public string SystemPath => LoosePath.Combine(Address?.SimplePath, EntryName);
+        public string SystemPath => LoosePath.Combine(TargetPath?.SimplePath, EntryName);
 
-        /// <summary>
-        /// ソースアドレス。ショートカットファイルとか
-        /// </summary>
-        public QueryPath? SourceAddress { get; set; }
 
 
         /// <summary>
@@ -82,7 +83,7 @@ namespace NeeView
         {
             token.ThrowIfCancellationRequested();
 
-            this.SourceAddress = sourceQuery ?? query;
+            this.SourcePath = sourceQuery ?? query;
 
             // ブックマークは実体のパスへ
             if (query.Scheme == QueryScheme.Bookmark)
@@ -106,14 +107,14 @@ namespace NeeView
             if (entryName != null)
             {
                 Debug.Assert(!option.HasFlag(BookLoadOption.IsBook));
-                this.Address = query;
+                this.TargetPath = query;
                 this.EntryName = entryName;
             }
             // パスはブック
             else if (entry.IsBook() || option.HasFlag(BookLoadOption.IsBook))
             {
                 Debug.Assert(!option.HasFlag(BookLoadOption.IsPage));
-                this.Address = query;
+                this.TargetPath = query;
                 this.EntryName = null;
             }
             // パスはページ
@@ -123,36 +124,36 @@ namespace NeeView
                 {
                     if (entry.IsFileSystem)
                     {
-                        this.Address = query.GetParent();
+                        this.TargetPath = query.GetParent();
                     }
                     else
                     {
                         switch (mode)
                         {
                             case ArchiveEntryCollectionMode.CurrentDirectory:
-                                this.Address = query.GetParent();
+                                this.TargetPath = query.GetParent();
                                 break;
                             case ArchiveEntryCollectionMode.IncludeSubDirectories:
                                 if (entry.Archiver is null) throw new InvalidOperationException();
-                                this.Address = new QueryPath(entry.Archiver.SystemPath);
+                                this.TargetPath = new QueryPath(entry.Archiver.SystemPath);
                                 break;
                             case ArchiveEntryCollectionMode.IncludeSubArchives:
                                 if (entry.RootArchiver is null) throw new InvalidOperationException();
-                                this.Address = new QueryPath(entry.RootArchiver.SystemPath);
+                                this.TargetPath = new QueryPath(entry.RootArchiver.SystemPath);
                                 break;
                             default:
                                 throw new NotSupportedException($"{nameof(ArchiveEntryCollectionMode)}.{mode} is not supported.");
                         }
                     }
-                    this.EntryName = GetEntryName(query, this.Address);
-                    entry = await ArchiveEntryUtility.CreateAsync(Address.SimplePath, token);
+                    this.EntryName = GetEntryName(query, this.TargetPath);
+                    entry = await ArchiveEntryUtility.CreateAsync(TargetPath.SimplePath, token);
                 }
                 catch (Exception ex)
                 {
                     Debug.WriteLine(ex.Message);
-                    this.Address = query.GetParent();
+                    this.TargetPath = query.GetParent();
                     this.EntryName = query.FileName;
-                    entry = await ArchiveEntryUtility.CreateAsync(Address.SimplePath, token);
+                    entry = await ArchiveEntryUtility.CreateAsync(TargetPath.SimplePath, token);
                 }
             }
 

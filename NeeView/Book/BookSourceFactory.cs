@@ -11,14 +11,14 @@ namespace NeeView
     public class BookSourceFactory
     {
         // 本読み込み
-        public async Task<BookSource> CreateAsync(QueryPath address, BookCreateSetting setting, CancellationToken token)
+        public async Task<BookSource> CreateAsync(BookAddress address, BookCreateSetting setting, CancellationToken token)
         {
             // ページ生成
-            var archiveEntryCollection = CreateArchiveEntryCollection(address.SimplePath, setting.IsRecursiveFolder, setting.ArchiveRecursiveMode, setting.IsIgnoreCache);
+            var archiveEntryCollection = CreateArchiveEntryCollection(address.TargetPath.SimplePath, setting.IsRecursiveFolder, setting.ArchiveRecursiveMode, setting.IsIgnoreCache);
             var pages = await CreatePageCollection(archiveEntryCollection, setting.BookPageCollectMode, token);
 
             // 再起判定は通常のディレクトリーのみ適用
-            var canAutoRecursive = System.IO.Directory.Exists(address.SimplePath);
+            var canAutoRecursive = System.IO.Directory.Exists(address.TargetPath.SimplePath);
 
             // 再帰判定用サブフォルダー数カウント
             int subFolderCount = 0;

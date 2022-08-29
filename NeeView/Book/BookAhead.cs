@@ -35,6 +35,8 @@ namespace NeeView
 
         public void Order(List<Page> pages)
         {
+            if (_disposedValue) return;
+
             lock (_lock)
             {
                 _pages = pages;
@@ -60,6 +62,8 @@ namespace NeeView
         /// </summary>
         public void OnPageLoaded(object sender, PageChangedEventArgs e)
         {
+            if (_disposedValue) return;
+
             if (e.Page != _page) return;
 
             if (_bookMemoryService.IsFull)
@@ -73,6 +77,8 @@ namespace NeeView
 
         private bool LoadNext()
         {
+            if (_disposedValue) return false;
+
             lock (_lock)
             {
                 do

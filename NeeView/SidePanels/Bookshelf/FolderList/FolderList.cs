@@ -966,7 +966,7 @@ namespace NeeView
         {
             if (_folderCollection is null) return false;
 
-            var currentBookAddress = BookOperation.Current.Book?.Address;
+            var currentBookAddress = BookOperation.Current.Book?.Path;
 
             var items = _folderCollection.Where(e => !e.IsEmpty() && e.EntityPath.Scheme == QueryScheme.File && e.EntityPath.SimplePath != currentBookAddress);
             if (!items.Any())
@@ -1400,7 +1400,7 @@ namespace NeeView
         {
             if (_disposedValue) return null;
 
-            var item = FindFolderItem(BookHub.Current.Book?.SourceAddress);
+            var item = FindFolderItem(BookHub.Current.GetCurrentBook()?.SourcePath);
             return item ?? FixedItem(pos);
         }
 
@@ -1700,7 +1700,7 @@ namespace NeeView
         {
             if (_disposedValue) return false;
 
-            var address = BookHub.Current.Book?.Address;
+            var address = BookHub.Current.GetCurrentBook()?.Path;
             if (address == null)
             {
                 return false;

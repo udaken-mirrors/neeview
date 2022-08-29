@@ -131,7 +131,7 @@ namespace NeeView
         }
 
 
-        public string? Address => Book?.Address;
+        public string? Address => Book?.Path;
 
         public bool IsValid => Book != null;
 
@@ -202,7 +202,7 @@ namespace NeeView
         /// </summary>
         private void BookHub_BookChanged(object? sender, BookChangedEventArgs e)
         {
-            SubscribeBook(BookHub.Current.Book);
+            SubscribeBook(BookHub.Current.GetCurrentBook());
 
             //
             RaisePropertyChanged(nameof(IsBookmark));
@@ -469,7 +469,7 @@ namespace NeeView
         // 現在表示しているブックの削除可能？
         public bool CanDeleteBook()
         {
-            return Config.Current.System.IsFileWriteAccessEnabled && Book != null && (Book.LoadOption & BookLoadOption.Undeliteable) == 0 && (File.Exists(Book.SourceAddress) || Directory.Exists(Book.SourceAddress));
+            return Config.Current.System.IsFileWriteAccessEnabled && Book != null && (Book.LoadOption & BookLoadOption.Undeliteable) == 0 && (File.Exists(Book.SourcePath) || Directory.Exists(Book.SourcePath));
         }
 
         // 現在表示しているブックを削除する
@@ -477,7 +477,7 @@ namespace NeeView
         {
             if (CanDeleteBook())
             {
-                var bookAddress = Book?.SourceAddress;
+                var bookAddress = Book?.SourcePath;
                 if (bookAddress is null) return;
 
                 var item = BookshelfFolderList.Current.FindFolderItem(bookAddress);
@@ -1105,12 +1105,12 @@ namespace NeeView
 
             if (CanBookmark())
             {
-                var query = new QueryPath(Book.Address);
+                var query = new QueryPath(Book.Path);
 
                 if (isBookmark)
                 {
                     // ignore temporary directory
-                    if (Book.Address.StartsWith(Temporary.Current.TempDirectory))
+                    if (Book.Path.StartsWith(Temporary.Current.TempDirectory))
                     {
                         ToastService.Current.Show(new Toast(Resources.Bookmark_Message_TemporaryNotSupportedError, "", ToastIcon.Error));
                         return;
@@ -1141,7 +1141,7 @@ namespace NeeView
         {
             get
             {
-                return Book is null ? false : BookmarkCollection.Current.Contains(Book.Address);
+                return Book is null ? false : BookmarkCollection.Current.Contains(Book.Path);
             }
         }
 

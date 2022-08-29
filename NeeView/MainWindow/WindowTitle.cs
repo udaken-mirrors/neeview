@@ -93,7 +93,7 @@ namespace NeeView
 
         private void UpdateTitle()
         {
-            var address = _bookHub.Book?.Address;
+            var address = _bookHub.GetCurrentBook()?.Path;
 
             if (_bookHub.IsLoading)
             {

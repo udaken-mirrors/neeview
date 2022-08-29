@@ -29,7 +29,7 @@ namespace NeeView
         public ArchiveEntryCollection ArchiveEntryCollection { get; private set; }
 
         // この本の場所
-        public string Address => this.ArchiveEntryCollection.Path;
+        public string Path => this.ArchiveEntryCollection.Path;
 
         // この本はディレクトリ？
         public bool IsDirectory => this.ArchiveEntryCollection.Archiver is FolderArchive;

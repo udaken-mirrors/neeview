@@ -311,9 +311,10 @@ namespace NeeView
         private string GetDefaultFolder()
         {
             // 既に開いている場合、その場所を起点とする
-            if (Config.Current.System.IsOpenbookAtCurrentPlace && BookHub.Current.Book != null)
+            var book = BookHub.Current.GetCurrentBook();
+            if (Config.Current.System.IsOpenbookAtCurrentPlace && book != null)
             {
-                return System.IO.Path.GetDirectoryName(BookHub.Current.Book.Address) ?? "";
+                return System.IO.Path.GetDirectoryName(book.Path) ?? "";
             }
             else
             {

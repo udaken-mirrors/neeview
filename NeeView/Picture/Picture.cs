@@ -123,6 +123,7 @@ namespace NeeView
             }
 
 #if false
+            Debug.WriteLine($"Resize: {this.PictureSource.ArchiveEntry.EntryLastName}");
             var nowSize = new Size(this.PictureInfo.BitmapInfo.PixelWidth, this.PictureInfo.BitmapInfo.PixelHeight);
             Debug.WriteLine($"Resize: {isDartyResizeParameter}: {nowSize.Truncate()} -> {size.Truncate()}");
             Debug.WriteLine($"BMP: {this.PictureSource.ArchiveEntry.EntryName}: {this.PictureInfo.Size} -> {size}");

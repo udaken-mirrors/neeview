@@ -51,13 +51,13 @@ namespace NeeView
 
         public string BookName => LoosePath.GetFileName(_address);
 
-        public bool IsBookEnabled => BookHub.Current.Book != null;
+        public bool IsBookEnabled => BookHub.Current.GetCurrentBook() != null;
 
         public string BookDetail
         {
             get
             {
-                var text = BookHub.Current.Book?.Source.GetDetail();
+                var text = BookHub.Current.GetCurrentBook()?.Source.GetDetail();
                 if (text is null)
                 {
                     var query = new QueryPath(_address);

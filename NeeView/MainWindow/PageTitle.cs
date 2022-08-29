@@ -88,7 +88,7 @@ namespace NeeView
             {
                 Title = _defaultPageTitle;
             }
-            else if (_bookHub.Book?.Address == null)
+            else if (_bookHub.GetCurrentBook()?.Path == null)
             {
                 Title = _defaultPageTitle;
             }

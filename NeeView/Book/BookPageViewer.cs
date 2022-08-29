@@ -30,7 +30,7 @@ namespace NeeView
         private BookAhead _ahead;
 
         // コンテンツ生成
-        private BookPageViewGenerater? _contentGenerater;
+        private BookPageViewGenerater? _pageViewGenerater;
 
         // 処理中フラグ
         private bool _isBusy;
@@ -159,47 +159,18 @@ namespace NeeView
         public ViewContentSourceCollection ViewPageCollection => _viewPageCollection;
 
 
-        #region IDisposable Support
-        private bool _disposedValue = false;
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!_disposedValue)
-            {
-                if (disposing)
-                {
-                    this.ResetPropertyChanged();
-                    this.PageTerminated = null;
-                    this.ViewContentsChanged = null;
-                    this.NextContentsChanged = null;
-
-                    _ahead.Dispose();
-                    _contentGenerater?.Dispose();
-
-                    _jobClient.Dispose();
-                }
-
-                _disposedValue = true;
-            }
-        }
-
-        public void Dispose()
-        {
-            Dispose(true);
-        }
-        #endregion
-
-        #region Methods
 
         // 処理中フラグ更新
         private void UpdateIsBusy()
         {
-            IsBusy = _ahead.IsBusy || (_contentGenerater != null ? _contentGenerater.IsBusy : false);
+            IsBusy = _ahead.IsBusy || (_pageViewGenerater != null ? _pageViewGenerater.IsBusy : false);
         }
 
         // 動画用：外部から終端イベントを発行
         public void RaisePageTerminatedEvent(object? sender, int direction)
         {
+            if (_disposedValue) return;
+
             PageTerminated?.Invoke(sender, new PageTerminatedEventArgs(direction));
         }
 
@@ -221,6 +192,10 @@ namespace NeeView
         // 表示ページ再読込
         public async Task RefreshViewPageAsync(object? sender, CancellationToken token)
         {
+            token.ThrowIfCancellationRequested();
+
+            if (_disposedValue) return;
+
             var range = new PageRange(_viewPageCollection.Range.Min, 1, PageMode.Size());
             await UpdateViewPageAsync(sender, range, token);
         }
@@ -228,6 +203,10 @@ namespace NeeView
         // 表示ページ移動
         public async Task MoveViewPageAsync(object? sender, int step, CancellationToken token)
         {
+            token.ThrowIfCancellationRequested();
+
+            if (_disposedValue) return;
+
             var viewRange = _viewPageCollection.Range;
 
             var direction = step < 0 ? -1 : 1;
@@ -250,6 +229,10 @@ namespace NeeView
         // 表示ページ更新
         public async Task UpdateViewPageAsync(object? sender, PageRange viewPageRange, CancellationToken token)
         {
+            token.ThrowIfCancellationRequested();
+
+            if (_disposedValue) return;
+
             // ページ終端を越えたか判定
             if (viewPageRange.Position < _book.Pages.FirstPosition())
             {
@@ -265,7 +248,7 @@ namespace NeeView
             // ページ数０の場合は表示コンテンツなし
             if (_book.Pages.Count == 0)
             {
-                ViewContentsChanged?.Invoke(sender, new ViewContentSourceCollectionChangedEventArgs(_book.Address, new ViewContentSourceCollection()));
+                ViewContentsChanged?.Invoke(sender, new ViewContentSourceCollectionChangedEventArgs(_book.Path, new ViewContentSourceCollection()));
                 return;
             }
 
@@ -306,17 +289,17 @@ namespace NeeView
             // wait load time (max 5sec.)
             var timeout = (BookProfile.Current.CanPrioritizePageMove() && _viewCounter.Counter != 0) ? 100 : 5000;
 
-            _contentGenerater?.Dispose();
-            _contentGenerater = new BookPageViewGenerater(_book, _setting, sender, viewPageRange, aheadPageRange, _viewCounter);
-            _contentGenerater.ViewContentsChanged += (s, e) =>
+            _pageViewGenerater?.Dispose();
+            _pageViewGenerater = new BookPageViewGenerater(sender, _book, _setting, viewPageRange, aheadPageRange, _viewCounter);
+            _pageViewGenerater.ViewContentsChanged += (s, e) =>
             {
                 Interlocked.Exchange(ref _viewPageCollection, e.ViewPageCollection);
                 this.DisplayIndex = e.ViewPageCollection.Range.Min.Index;
                 ViewContentsChanged?.Invoke(s, e);
             };
-            _contentGenerater.NextContentsChanged += (s, e) =>
+            _pageViewGenerater.NextContentsChanged += (s, e) =>
                 NextContentsChanged?.Invoke(s, e);
-            _contentGenerater.AddPropertyChanged(nameof(_contentGenerater.IsBusy), (s, e) =>
+            _pageViewGenerater.AddPropertyChanged(nameof(_pageViewGenerater.IsBusy), (s, e) =>
                 UpdateIsBusy());
 
             _bookMemoryService.SetReference(viewPages.First().Index);
@@ -324,22 +307,18 @@ namespace NeeView
             _ahead.Order(aheadPages);
 
             UpdateIsBusy();
-            _contentGenerater.UpdateNextContents();
+            _pageViewGenerater.UpdateNextContents();
 
-            using (var loadWaitCancellation = new CancellationTokenSource())
-            using (var linkedTokenSource = CancellationTokenSource.CreateLinkedTokenSource(token, loadWaitCancellation.Token))
+            try
             {
                 // wait load (max 5sec.)
-                await _contentGenerater.WaitVisibleAsync(timeout, linkedTokenSource.Token);
-
-                loadWaitCancellation.Cancel();
+                await _pageViewGenerater.WaitVisibleAsync(timeout, token);
             }
-
-            // task cancel?
-            token.ThrowIfCancellationRequested();
-
-            _contentGenerater.UpdateViewContents(token);
-            _contentGenerater.UpdateNextContents();
+            catch (TimeoutException)
+            {
+                _pageViewGenerater.UpdateViewContents();
+                _pageViewGenerater.UpdateNextContents();
+            }
         }
 
 
@@ -350,6 +329,8 @@ namespace NeeView
         /// <param name="e"></param>
         private void Page_Loaded(object? sender, EventArgs e)
         {
+            if (_disposedValue) return;
+
             var page = sender as Page;
             if (page is null) return;
 
@@ -359,7 +340,7 @@ namespace NeeView
 
             ////if (!BookProfile.Current.CanPrioritizePageMove()) return;
 
-            _contentGenerater?.UpdateNextContents();
+            _pageViewGenerater?.UpdateNextContents();
         }
 
         /// <summary>
@@ -383,7 +364,6 @@ namespace NeeView
             }
 
             return new List<PageRange>() { range0, range1 };
-
         }
 
         private PageRange CreateAheadPageRange(PageRange source, int direction, int size)
@@ -409,7 +389,7 @@ namespace NeeView
                 .ToList();
         }
 
-        List<Page> CreatePagesFromRange(PageRange range, List<Page> excepts)
+        private List<Page> CreatePagesFromRange(PageRange range, List<Page> excepts)
         {
             if (range.IsEmpty())
             {
@@ -424,6 +404,35 @@ namespace NeeView
                 .ToList();
         }
 
+
+        #region IDisposable Support
+        private bool _disposedValue = false;
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!_disposedValue)
+            {
+                if (disposing)
+                {
+                    this.ResetPropertyChanged();
+                    this.PageTerminated = null;
+                    this.ViewContentsChanged = null;
+                    this.NextContentsChanged = null;
+
+                    _ahead.Dispose();
+                    _pageViewGenerater?.Dispose();
+
+                    _jobClient.Dispose();
+                }
+
+                _disposedValue = true;
+            }
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+        }
         #endregion
     }
 }

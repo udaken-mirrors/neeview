@@ -529,7 +529,7 @@ namespace NeeView
             if (source?.ViewPageCollection?.Collection == null) return;
 
             bool includeLoupeScale = _viewComponent.LoupeTransform.IsEnabled && !Config.Current.Loupe.IsResetByPageChanged;
-            ResizeConten(source.ViewPageCollection, includeLoupeScale, source.CancellationToken);
+            ResizeConten(source.ViewPageCollection, includeLoupeScale, CancellationToken.None);
         }
 
 

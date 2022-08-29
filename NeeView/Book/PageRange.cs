@@ -35,6 +35,18 @@ namespace NeeView
             this.PartSize = Math.Abs(p1.Value - p0.Value) + 1;
         }
 
+        public PageRange(PagePosition p0, PagePosition p1, int direction)
+        {
+            if (direction != 1 && direction != -1) throw new ArgumentOutOfRangeException(nameof(direction));
+
+            var min = p0 < p1 ? p0 : p1;
+            var max = p0 < p1 ? p1 : p0;
+
+            this.Position = (direction > 0) ? min : max;
+            this.Direction = direction;
+            this.PartSize = Math.Abs(max.Value - min.Value) + 1;
+        }
+
         public PageRange(IEnumerable<PagePosition> positions, int direction)
         {
             if (positions == null) throw new ArgumentNullException(nameof(positions));
@@ -221,6 +233,23 @@ namespace NeeView
             var max = new PagePosition(Max.Index, 0);
             var range = new PageRange(min, max);
             return range;
+        }
+
+        /// <summary>
+        /// 範囲を制限する
+        /// </summary>
+        public PageRange Clamp(PagePosition p0, PagePosition p1)
+        {
+            if (p0.IsEmpty()) throw new ArgumentException("Must not be empty.", nameof(p0));
+            if (p1.IsEmpty()) throw new ArgumentException("Must not be empty.", nameof(p1));
+
+            var minLimit = p0 < p1 ? p0 : p1;
+            var maxLimit = p0 < p1 ? p1 : p0;
+
+            var min = Min < minLimit ? minLimit : Min;
+            var max = Max > maxLimit ? maxLimit : Max;
+
+            return new PageRange(min, max, this.Direction);
         }
     }
 }

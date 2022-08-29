@@ -1,4 +1,5 @@
 ﻿using NeeLaboratory.ComponentModel;
+using NeeLaboratory.Threading.Tasks;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -14,6 +15,8 @@ namespace NeeView
     /// </summary>
     public class BookPageViewGenerater : BindableBase, IDisposable
     {
+
+
         private BookSource _book;
         private BookPageViewSetting _setting;
 
@@ -23,7 +26,6 @@ namespace NeeView
         private PageRange _contentRange;
         private int _contentCount;
 
-        private ValueTask _task;
         private CancellationTokenSource _cancellationTokenSource;
         private object _lock = new object();
         private SemaphoreSlim _semaphore;
@@ -31,8 +33,11 @@ namespace NeeView
         private ManualResetEventSlim _visibleEvent = new ManualResetEventSlim();
         private BookPageCounter _viewCounter;
 
-        public BookPageViewGenerater(BookSource book, BookPageViewSetting setting, object? sender, PageRange viewPageRange, List<PageRange> aheadPageRanges, BookPageCounter viewCounter)
+        public BookPageViewGenerater(object? sender, BookSource book, BookPageViewSetting setting, PageRange viewPageRange, List<PageRange> aheadPageRanges, BookPageCounter viewCounter)
         {
+            _cancellationTokenSource = new CancellationTokenSource();
+            _semaphore = new SemaphoreSlim(0);
+
             _book = book;
             _setting = setting;
             _viewCounter = viewCounter;
@@ -40,12 +45,15 @@ namespace NeeView
             _sender = sender;
             _viewRange = viewPageRange;
             _nextRange = viewPageRange;
-            _contentRange = viewPageRange.Truncate().Add(aheadPageRanges);
-            _contentCount = 0;
 
-            _cancellationTokenSource = new CancellationTokenSource();
-            _semaphore = new SemaphoreSlim(0);
-            _task = Worker(_cancellationTokenSource.Token);
+            // NextContentsChanged発行範囲を先読み含めて前後10ページまでに制限
+            var clampOffset = PagePosition.GetValue(10);
+            _contentRange = viewPageRange
+                    .Truncate()
+                    .Add(aheadPageRanges)
+                    .Clamp(viewPageRange.Min - clampOffset, viewPageRange.Max + clampOffset);
+
+            _ = WorkerAsync(_cancellationTokenSource.Token);
         }
 
 
@@ -78,33 +86,6 @@ namespace NeeView
         }
 
 
-        #region IDisposable Support
-        private bool _disposedValue = false;
-
-        [SuppressMessage("Microsoft.Usage", "CA2213:DisposableFieldsShouldBeDisposed", MessageId = "_semaphore")]
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!_disposedValue)
-            {
-                if (disposing)
-                {
-                    ResetPropertyChanged();
-                    ViewContentsChanged = null;
-                    NextContentsChanged = null;
-                    _cancellationTokenSource.Cancel();
-                    _cancellationTokenSource.Dispose();
-                }
-
-                _disposedValue = true;
-            }
-        }
-
-        public void Dispose()
-        {
-            Dispose(true);
-        }
-        #endregion
-
 
         public void UpdateNextContents()
         {
@@ -113,7 +94,7 @@ namespace NeeView
             _semaphore.Release();
         }
 
-        private async ValueTask Worker(CancellationToken token)
+        private async ValueTask WorkerAsync(CancellationToken token)
         {
             try
             {
@@ -132,6 +113,8 @@ namespace NeeView
 
         private async ValueTask UpdateNextContentsAsync(CancellationToken token)
         {
+            token.ThrowIfCancellationRequested();
+
             while (true)
             {
                 IsBusy = false;
@@ -166,20 +149,22 @@ namespace NeeView
                         _nextRange = GetNextRange(collection.Range);
                     }
 
+                    // NOTE: 先行リサイズ処理要求
                     token.ThrowIfCancellationRequested();
-                    NextContentsChanged?.Invoke(_sender, new ViewContentSourceCollectionChangedEventArgs(_book.Address, collection) { IsForceResize = (_contentCount == 0), CancellationToken = token });
+                    NextContentsChanged?.Invoke(_sender, new ViewContentSourceCollectionChangedEventArgs(_book.Path, collection) { IsForceResize = (_contentCount == 0) });
 
                     if (Interlocked.Increment(ref _contentCount) == 1)
                     {
+                        // NOTE: 表示処理
                         ////Debug.WriteLine($"UpdateNextContentsInner: ViewContentChanged");
                         token.ThrowIfCancellationRequested();
-                        UpdateViewContentsInner(_sender, collection, _viewCounter.Increment() == 1, token);
+                        UpdateViewContentsInner(_sender, collection, _viewCounter.Increment() == 1);
                     }
                 }
             }
         }
 
-        public void UpdateViewContents(CancellationToken token)
+        public void UpdateViewContents()
         {
             ViewContentSourceCollection collection;
             lock (_lock)
@@ -193,19 +178,18 @@ namespace NeeView
             }
 
             ////Debug.WriteLine($"UpdateViewContents: ViewContentChanged");
-            UpdateViewContentsInner(_sender, collection, false, token);
+            UpdateViewContentsInner(_sender, collection, false);
         }
 
-        private void UpdateViewContentsInner(object? sender, ViewContentSourceCollection collection, bool isFirst, CancellationToken token)
+        private void UpdateViewContentsInner(object? sender, ViewContentSourceCollection collection, bool isFirst)
         {
             ////var source = collection.Collection[0];
             ////Debug.WriteLine($"UpdateViewContentsInner: Name={source.Page.EntryName}, Type={source.GetContentType()}");
 
-            var args = new ViewContentSourceCollectionChangedEventArgs(_book.Address, collection)
+            var args = new ViewContentSourceCollectionChangedEventArgs(_book.Path, collection)
             {
                 IsForceResize = true,
-                IsFirst = isFirst,
-                CancellationToken = token
+                IsFirst = isFirst
             };
             ViewContentsChanged?.Invoke(sender, args);
 
@@ -214,7 +198,10 @@ namespace NeeView
 
         public async ValueTask WaitVisibleAsync(int millisecondsTimeout, CancellationToken token)
         {
-            await Task.Run(() => _visibleEvent.Wait(millisecondsTimeout, token));
+            using (var tokenSource = CancellationTokenSource.CreateLinkedTokenSource(token, _cancellationTokenSource.Token))
+            {
+                await _visibleEvent.WaitHandle.AsTask().WaitAsync(TimeSpan.FromMilliseconds(millisecondsTimeout), tokenSource.Token);
+            }
         }
 
 
@@ -340,6 +327,34 @@ namespace NeeView
             var context = new ViewContentSourceCollection(new PageRange(infos, source.Direction), list);
             return context;
         }
+
+
+        #region IDisposable Support
+        private bool _disposedValue = false;
+
+        [SuppressMessage("Microsoft.Usage", "CA2213:DisposableFieldsShouldBeDisposed", MessageId = "_semaphore")]
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!_disposedValue)
+            {
+                if (disposing)
+                {
+                    ResetPropertyChanged();
+                    ViewContentsChanged = null;
+                    NextContentsChanged = null;
+                    _cancellationTokenSource.Cancel();
+                    _cancellationTokenSource.Dispose();
+                }
+
+                _disposedValue = true;
+            }
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+        }
+        #endregion
 
     }
 }
