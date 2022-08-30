@@ -16,7 +16,8 @@ namespace NeeView
         public PageListBoxViewModel(PageList model)
         {
             _model = model;
-            _model.CollectionChanged += (s, e) => CollectionChanged?.Invoke(s, e);
+            _model.CollectionChanged += (s, e) =>
+                AppDispatcher.Invoke(() => CollectionChanged?.Invoke(s, e));
         }
 
 

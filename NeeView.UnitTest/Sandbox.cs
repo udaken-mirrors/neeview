@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Threading;
 using Xunit.Abstractions;
 
 namespace NeeView.UnitTest
@@ -39,5 +40,32 @@ namespace NeeView.UnitTest
             sw.Stop();
             _output.WriteLine($"done. {sw.ElapsedMilliseconds}ms");
         }
+
+        [Fact]
+        public void DispatcherTest()
+        {
+            Dispatcher? myDispatcher = null;
+
+            ManualResetEvent dispatcherReadyEvent = new ManualResetEvent(false);
+
+            new Thread(new ThreadStart(() =>
+            {
+                myDispatcher = Dispatcher.CurrentDispatcher;
+                dispatcherReadyEvent.Set();
+                Dispatcher.Run();
+            })).Start();
+
+            dispatcherReadyEvent.WaitOne();
+            if (myDispatcher is null) throw new InvalidOperationException();
+
+            myDispatcher.Invoke(() => _output.WriteLine("invoke 1"));
+            myDispatcher.InvokeShutdown();
+
+            Assert.Throws<TaskCanceledException>(() =>
+                myDispatcher.Invoke(() => _output.WriteLine("invoke 2")));
+
+            _output.WriteLine("done.");
+        }
+
     }
 }

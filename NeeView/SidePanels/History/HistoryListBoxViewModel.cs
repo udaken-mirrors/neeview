@@ -23,8 +23,11 @@ namespace NeeView
             _model.AddPropertyChanged(nameof(HistoryList.FilterPath), HistoryList_FilterPathChanged);
             _model.AddPropertyChanged(nameof(HistoryList.Items), (s, e) => RaisePropertyChanged(nameof(Items)));
 
-            BookHub.Current.HistoryChanged += BookHub_HistoryChanged;
-            BookHub.Current.HistoryListSync += BookHub_HistoryListSync;
+            BookHub.Current.HistoryChanged +=
+                (s, e) => AppDispatcher.Invoke(() => BookHub_HistoryChanged(s, e));
+
+            BookHub.Current.HistoryListSync +=
+                (s, e) => AppDispatcher.Invoke(() => BookHub_HistoryListSync(s, e));
         }
 
 

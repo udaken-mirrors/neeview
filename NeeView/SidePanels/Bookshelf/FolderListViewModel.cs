@@ -34,13 +34,13 @@ namespace NeeView
             _model = model;
 
             _model.History.Changed +=
-                (s, e) => UpdateCommandCanExecute();
+                (s, e) => AppDispatcher.Invoke(() => UpdateCommandCanExecute());
 
             _model.PlaceChanged +=
-                (s, e) => MoveToUp.RaiseCanExecuteChanged();
+                (s, e) => AppDispatcher.Invoke(() => MoveToUp.RaiseCanExecuteChanged());
 
             _model.CollectionChanged +=
-                Model_CollectionChanged;
+                (s, e) => AppDispatcher.Invoke(() => Model_CollectionChanged(s, e));
 
             _model.AddPropertyChanged(nameof(_model.IsFolderTreeVisible),
                 (s, e) => RaisePropertyChanged(nameof(IsFolderTreeVisible)));

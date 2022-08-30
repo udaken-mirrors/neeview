@@ -20,10 +20,18 @@ namespace NeeView
         public FolderListBoxViewModel(FolderList folderList)
         {
             _model = folderList;
-            _model.BusyChanged += (s, e) => BusyChanged?.Invoke(s, e);
-            _model.PropertyChanged += Model_PropertyChanged;
-            _model.SelectedChanging += Model_SelectedChanging;
-            _model.SelectedChanged += Model_SelectedChanged;
+
+            _model.BusyChanged +=
+                (s, e) => AppDispatcher.Invoke(() => BusyChanged?.Invoke(s, e));
+
+            _model.PropertyChanged +=
+                (s, e) => AppDispatcher.Invoke(() => Model_PropertyChanged(s, e));
+
+            _model.SelectedChanging +=
+                (s, e) => AppDispatcher.Invoke(() => Model_SelectedChanging(s, e));
+
+            _model.SelectedChanged +=
+                (s, e) => AppDispatcher.Invoke(() => Model_SelectedChanged(s, e));
         }
 
 

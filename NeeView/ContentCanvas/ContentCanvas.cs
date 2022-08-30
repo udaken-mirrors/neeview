@@ -111,27 +111,29 @@ namespace NeeView
 
             MainContent = Contents[0];
 
-            bookHub.BookChanging +=
-                (s, e) => IgnoreViewContentsReservers();
+            bookHub.BookChanging += (s, e) =>
+                AppDispatcher.Invoke(() => IgnoreViewContentsReservers());
 
             // TODO: BookOperationから？
-            bookHub.ViewContentsChanged +=
-                OnViewContentsChanged;
-            bookHub.NextContentsChanged +=
-                OnNextContentsChanged;
+            bookHub.ViewContentsChanged += (s, e) =>
+                AppDispatcher.Invoke(() => OnViewContentsChanged(s, e));
 
-            bookHub.EmptyMessage +=
-                (s, e) => EmptyPageMessage = e.Message;
+            // NOTE: NextContentsChangedのリサイズ処理は非同期。MagicScaler(WIC)が非同期のみをサポート
+            bookHub.NextContentsChanged += (s, e) =>
+                OnNextContentsChanged(s, e);
 
-            bookHub.EmptyPageMessage +=
-                (s, e) =>
+            bookHub.EmptyMessage += (s, e) =>
+                AppDispatcher.Invoke(() => EmptyPageMessage = e.Message);
+
+            bookHub.EmptyPageMessage += (s, e) =>
+                AppDispatcher.Invoke(() =>
                 {
                     if (!string.IsNullOrEmpty(e.Message))
                     {
                         EmptyPageMessage = e.Message;
                         IsVisibleEmptyPageMessage = true;
                     }
-                };
+                });
 
             Config.Current.ImageDotKeep.AddPropertyChanged(nameof(ImageDotKeepConfig.IsEnabled), (s, e) =>
             {

@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Threading;
 
 namespace NeeView
 {
@@ -10,88 +11,57 @@ namespace NeeView
     /// </summary>
     public static class AppDispatcher
     {
+        public static Dispatcher UIDispatcher { get; } = App.Current.Dispatcher;
+
+
         public static void Invoke(Action action)
         {
-            if (Application.Current == null) return;
-
-#if DEBUG
-            var callStack = new StackFrame(1, true);
-            var sourceFile = System.IO.Path.GetFileName(callStack.GetFileName());
-            int sourceLine = callStack.GetFileLineNumber();
-            var sw = Stopwatch.StartNew();
-            App.Current.Dispatcher.Invoke(action);
-            ////Debug.WriteLine($"App.Dispatcher.Invoke: {sourceFile}({sourceLine}):  {sw.ElapsedMilliseconds}ms");
-#else
-            App.Current.Dispatcher.Invoke(action);
-#endif
-        }
-
-        public static TResult Invoke<TResult>(Func<TResult> callback)
-        {
-            if (Application.Current == null) throw new InvalidOperationException();
-
-            return App.Current.Dispatcher.Invoke(callback);
-        }
-
-        public static void InvokeSTA(Action action)
-        {
-            if (System.Threading.Thread.CurrentThread.GetApartmentState() == System.Threading.ApartmentState.STA)
+            if (UIDispatcher.CheckAccess())
             {
-                action.Invoke();
+                action();
             }
             else
             {
-                if (Application.Current == null) throw new InvalidOperationException();
-                App.Current.Dispatcher.Invoke(action);
+                UIDispatcher.Invoke(action);
             }
         }
 
-        public static TResult InvokeSTA<TResult>(Func<TResult> callback)
+
+        public static TResult Invoke<TResult>(Func<TResult> func)
         {
-            if (System.Threading.Thread.CurrentThread.GetApartmentState() == System.Threading.ApartmentState.STA)
+            if (UIDispatcher.CheckAccess())
             {
-                return callback.Invoke();
+                return func.Invoke();
             }
             else
             {
-                if (Application.Current == null) throw new InvalidOperationException();
-                return App.Current.Dispatcher.Invoke(callback);
+                return UIDispatcher.Invoke(func);
             }
         }
 
         public static async Task InvokeAsync(Action action)
         {
-            if (Application.Current == null) return;
-
-#if DEBUG
-            var callStack = new StackFrame(1, true);
-            var sourceFile = System.IO.Path.GetFileName(callStack.GetFileName());
-            int sourceLine = callStack.GetFileLineNumber();
-            var sw = Stopwatch.StartNew();
-            await App.Current.Dispatcher.InvokeAsync(action);
-            ////Debug.WriteLine($"App.Dispatcher.Invoke: {sourceFile}({sourceLine}):  {sw.ElapsedMilliseconds}ms");
-#else
-            await App.Current.Dispatcher.InvokeAsync(action);
-#endif
+            if (UIDispatcher.CheckAccess())
+            {
+                action.Invoke();
+            }
+            else
+            {
+                await UIDispatcher.InvokeAsync(action);
+            }
         }
 
         public static void BeginInvoke(Action action)
         {
-            if (Application.Current == null) return;
-
-#if DEBUG
-            var callStack = new StackFrame(1, true);
-            var sourceFile = System.IO.Path.GetFileName(callStack.GetFileName());
-            int sourceLine = callStack.GetFileLineNumber();
-            App.Current.Dispatcher.BeginInvoke((Action)(() =>
+            if (UIDispatcher.CheckAccess())
             {
-                var sw = Stopwatch.StartNew();
-                action();
-                ////Debug.WriteLine($"App.Dispatcher.BeginInvoke: {sourceFile}({sourceLine}):  {sw.ElapsedMilliseconds}ms");
-            }));
-#else
-            App.Current.Dispatcher.BeginInvoke(action);
-#endif
+                action.Invoke();
+            }
+            else
+            {
+                UIDispatcher.BeginInvoke(action);
+            }
         }
+
     }
 }

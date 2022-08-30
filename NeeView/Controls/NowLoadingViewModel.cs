@@ -1,4 +1,6 @@
 ﻿using NeeLaboratory.ComponentModel;
+using System;
+using System.Windows.Threading;
 
 namespace NeeView
 {
@@ -7,27 +9,23 @@ namespace NeeView
     /// </summary>
     public class NowLoadingViewModel : BindableBase
     {
-        /// <summary>
-        /// constructor
-        /// </summary>
-        /// <param name="model"></param>
-        public NowLoadingViewModel(NowLoading model)
-        {
-            _model = model;
-        }
-
-        /// <summary>
-        /// Model property.
-        /// </summary>
-        public NowLoading Model
-        {
-            get { return _model; }
-            set { if (_model != value) { _model = value; RaisePropertyChanged(); } }
-        }
         private NowLoading _model;
 
 
+        public NowLoadingViewModel(NowLoading model)
+        {
+            _model = model;
 
+            _model.SubscribePropertyChanged(nameof(_model.IsDispNowLoading),
+                (_, _) => AppDispatcher.Invoke(() => RaisePropertyChanged(nameof(IsDispNowLoading))));
+        }
+
+
+        public bool IsDispNowLoading
+        {
+            get => _model.IsDispNowLoading;
+            set => _model.IsDispNowLoading = value;
+        }
     }
 
 }

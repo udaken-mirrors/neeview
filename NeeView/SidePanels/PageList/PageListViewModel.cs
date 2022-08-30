@@ -32,16 +32,16 @@ namespace NeeView
             _model = model;
 
             _model.AddPropertyChanged(nameof(PageList.PageSortModeList),
-                (s, e) => RaisePropertyChanged(nameof(PageSortModeList)));
+                (s, e) => AppDispatcher.Invoke(() => RaisePropertyChanged(nameof(PageSortModeList))));
 
             _model.AddPropertyChanged(nameof(PageList.PageSortMode),
-                (s, e) => RaisePropertyChanged(nameof(PageSortMode)));
+                (s, e) => AppDispatcher.Invoke(() => RaisePropertyChanged(nameof(PageSortMode))));
 
             _model.PageHistoryChanged +=
-                (s, e) => UpdateMoveToHistoryCommandCanExecute();
+                (s, e) => AppDispatcher.Invoke(() => UpdateMoveToHistoryCommandCanExecute());
 
             _model.CollectionChanged +=
-                (s, e) => UpdateMoveToUpCommandCanExecute();
+                (s, e) => AppDispatcher.Invoke(() => UpdateMoveToUpCommandCanExecute());
 
             InitializeCommands();
 
