@@ -40,9 +40,14 @@ namespace NeeView
 
         private BookOperation()
         {
-            BookHub.Current.BookChanging += BookHub_BookChanging;
-            BookHub.Current.BookChanged += BookHub_BookChanged;
-            BookHub.Current.ViewContentsChanged += BookHub_ViewContentsChanged;
+            BookHub.Current.BookChanging +=
+                (s, e) => AppDispatcher.Invoke(() => BookHub_BookChanging(s, e));
+
+            BookHub.Current.BookChanged +=
+                (s, e) => AppDispatcher.Invoke(() => BookHub_BookChanged(s, e));
+
+            BookHub.Current.ViewContentsChanged +=
+                (s, e) => AppDispatcher.Invoke(() => BookHub_ViewContentsChanged(s, e));
         }
 
         // NOTE: 応急処置。シングルトンコンストラクタで互いを参照してしまっているのを回避するため

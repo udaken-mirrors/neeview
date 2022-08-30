@@ -127,7 +127,7 @@ namespace NeeView
 
             MainWindow.Current.Activated +=
                 (s, e) => RaisePropertyChanged(nameof(IsMenuBarActive));
- 
+
             MainWindow.Current.Deactivated +=
                 (s, e) => RaisePropertyChanged(nameof(IsMenuBarActive));
 
@@ -149,6 +149,8 @@ namespace NeeView
                     App.Current.MainWindow.Close();
                 };
 
+            PageTitle.Current.SubscribePropertyChanged(nameof(PageTitle.Title),
+                (s, e) => AppDispatcher.Invoke(() => RaisePropertyChanged(nameof(Title))));
 
             // TODO: アプリの初期化処理で行うべき
             // ダウンロードフォルダー生成
@@ -163,8 +165,10 @@ namespace NeeView
         public event EventHandler? FocusMainViewCall;
 
 
+
         public bool IsClosing { get; set; }
 
+        public string Title => PageTitle.Current.Title;
 
         // for Binding
         public WindowShape WindowShape => _model.WindowShape;

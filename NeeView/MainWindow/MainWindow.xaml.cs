@@ -803,19 +803,33 @@ namespace NeeView
         [MemberNotNull(nameof(_pageCaptionVisibility))]
         private void InitializePageCaption()
         {
-            this.DockStatusArea.SizeChanged += (s, e) => UpdatePageCaptionLayout();
-            this.DockStatusArea.MouseEnter += (s, e) => UpdatePageCaptionVisibility();
-            this.DockStatusArea.MouseLeave += (s, e) => UpdatePageCaptionVisibility();
+            this.DockStatusArea.SizeChanged +=
+                (s, e) => UpdatePageCaptionLayout();
+            
+            this.DockStatusArea.MouseEnter +=
+                (s, e) => UpdatePageCaptionVisibility();
+            
+            this.DockStatusArea.MouseLeave +=
+                (s, e) => UpdatePageCaptionVisibility();
 
-            this.LayerStatusArea.IsVisibleChanged += (s, e) => UpdatePageCaptionLayout();
-            this.LayerStatusArea.SizeChanged += (s, e) => UpdatePageCaptionLayout();
-            this.LayerStatusArea.MouseEnter += (s, e) => UpdatePageCaptionVisibility();
-            this.LayerStatusArea.MouseLeave += (s, e) => UpdatePageCaptionVisibility();
+            this.LayerStatusArea.IsVisibleChanged +=
+                (s, e) => UpdatePageCaptionLayout();
+            
+            this.LayerStatusArea.SizeChanged +=
+                (s, e) => UpdatePageCaptionLayout();
+            
+            this.LayerStatusArea.MouseEnter +=
+                (s, e) => UpdatePageCaptionVisibility();
+            
+            this.LayerStatusArea.MouseLeave +=
+                (s, e) => UpdatePageCaptionVisibility();
 
-            PageTitle.Current.AddPropertyChanged(nameof(PageTitle.Title), (s, e) => UpdatePageCaptionVisibility());
+            _vm.AddPropertyChanged(nameof(_vm.Title),
+                (s, e) => UpdatePageCaptionVisibility());
 
             _pageCaptionVisibility = new DelayVisibility();
-            _pageCaptionVisibility.Changed += PageCaptionVisibility_Changed;
+            _pageCaptionVisibility.Changed +=
+                (s, e) => PageCaptionVisibility_Changed(s, e);
 
             this.PageCaption.Visibility = _pageCaptionVisibility.Visibility;
             UpdatePageCaptionLayout();
@@ -841,7 +855,7 @@ namespace NeeView
                 return;
             }
 
-            if (string.IsNullOrWhiteSpace(PageTitle.Current.Title))
+            if (string.IsNullOrWhiteSpace(_vm.Title))
             {
                 _pageCaptionVisibility.SetDelayVisibility(Visibility.Collapsed, 0, NeeView.Windows.Data.DelayValueOverwriteOption.Force);
             }

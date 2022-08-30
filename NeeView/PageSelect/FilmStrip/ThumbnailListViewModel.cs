@@ -20,8 +20,23 @@ namespace NeeView
         public ThumbnailListViewModel(ThumbnailList model)
         {
             if (model == null) throw new InvalidOperationException();
+
             _model = model;
+
+            _model.CollectionChanging +=
+                (s, e) => CollectionChanging?.Invoke(s, e);
+
+            _model.CollectionChanged +=
+                (s, e) => CollectionChanged?.Invoke(s, e);
+
+            _model.ViewItemsChanged +=
+                (s, e) => AppDispatcher.Invoke(() => ViewItemsChanged?.Invoke(s, e));
         }
+
+
+        public event EventHandler? CollectionChanging;
+        public event EventHandler? CollectionChanged;
+        public event EventHandler<ViewItemsChangedEventArgs>? ViewItemsChanged;
 
 
         public ThumbnailList Model

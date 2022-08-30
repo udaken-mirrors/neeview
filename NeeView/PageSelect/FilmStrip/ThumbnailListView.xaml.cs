@@ -148,13 +148,20 @@ namespace NeeView
 
             _vm = new ThumbnailListViewModel(this.Source);
 
-            _vm.Model.CollectionChanging += ViewModel_CollectionChanging;
-            _vm.Model.CollectionChanged += ViewModel_CollectionChanged;
-            _vm.Model.ViewItemsChanged += ViewModel_ViewItemsChanged;
+            _vm.CollectionChanging +=
+                (s, e) => ViewModel_CollectionChanging(s, e);
 
-            this.ThumbnailListBox.ManipulationBoundaryFeedback += _vm.Model.ScrollViewer_ManipulationBoundaryFeedback;
+            _vm.CollectionChanged +=
+                (s, e) => ViewModel_CollectionChanged(s, e);
 
-            this.ThumbnailListBox.SelectionChanged += ThumbnailListBox_SelectionChanged;
+            _vm.ViewItemsChanged +=
+                (s, e) => ViewModel_ViewItemsChanged(s, e);
+
+            this.ThumbnailListBox.ManipulationBoundaryFeedback +=
+                _vm.Model.ScrollViewer_ManipulationBoundaryFeedback;
+
+            this.ThumbnailListBox.SelectionChanged +=
+                ThumbnailListBox_SelectionChanged;
 
             this.Root.DataContext = _vm;
         }
