@@ -16,7 +16,8 @@ namespace NeeView
             _book = book;
             _viewer = viewer;
 
-            _book.Pages.PageRemoved += Pages_PageRemoved;
+            _book.Pages.PageRemoved += 
+                (s, e) => AppDispatcher.Invoke(() => Pages_PageRemoved(s, e));
         }
 
 

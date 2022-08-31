@@ -167,15 +167,15 @@ namespace NeeView
             {
                 _bookDisposables = new DisposableCollection();
                 _bookDisposables.Add(book.Pages.SubscribePagesSorted(
-                    Book_PagesSorted));
+                    (s, e) => AppDispatcher.Invoke(() => Book_PagesSorted(s, e))));
                 _bookDisposables.Add(book.Pages.SubscribePageRemoved(
-                    Book_PageRemoved));
+                    (s, e) => AppDispatcher.Invoke(() => Book_PageRemoved(s, e))));
                 _bookDisposables.Add(book.Viewer.SubscribeViewContentsChanged(
-                    Book_ViewContentsChanged));
+                    (s, e) => AppDispatcher.Invoke(() => Book_ViewContentsChanged(s, e))));
                 _bookDisposables.Add(book.Viewer.SubscribePageTerminated(
-                    Book_PageTerminated));
+                    (s, e) => AppDispatcher.Invoke(() => Book_PageTerminated(s, e))));
                 _bookDisposables.Add(book.Viewer.SubscribePropertyChanged(nameof(BookPageViewer.IsBusy),
-                    (s, _) => RaisePropertyChanged(nameof(IsBusy))));
+                    (s, e) => AppDispatcher.Invoke(() => RaisePropertyChanged(nameof(IsBusy)))));
             }
 
             this.Book = book;
@@ -250,10 +250,7 @@ namespace NeeView
         //
         private void Book_PagesSorted(object? sender, EventArgs e)
         {
-            AppDispatcher.Invoke(() =>
-            {
-                UpdatePageList(true);
-            });
+            UpdatePageList(true);
 
             PagesSorted?.Invoke(this, e);
         }
@@ -263,11 +260,9 @@ namespace NeeView
         {
             if (!IsEnabled) return;
 
-            AppDispatcher.Invoke(() =>
-            {
-                RaisePropertyChanged(nameof(IsMarked));
-                ViewContentsChanged?.Invoke(sender, e);
-            });
+            RaisePropertyChanged(nameof(IsMarked));
+
+            ViewContentsChanged?.Invoke(sender, e);
         }
 
 

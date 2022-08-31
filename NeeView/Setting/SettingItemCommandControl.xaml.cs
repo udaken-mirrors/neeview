@@ -184,7 +184,7 @@ namespace NeeView.Setting
             if (this.CommandListView.SelectedItem is CommandItem item)
             {
                 var command = CommandTable.Current.CreateCloneCommand(item.Command);
-                this.CommandListView.SelectedItem =_commandItems.FirstOrDefault(x => x.Command == command);
+                this.CommandListView.SelectedItem = _commandItems.FirstOrDefault(x => x.Command == command);
                 FocusSelectedItem();
             }
         }

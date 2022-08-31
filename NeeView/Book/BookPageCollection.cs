@@ -316,7 +316,7 @@ namespace NeeView
 
             PagesNumbering();
 
-            AppDispatcher.Invoke(() => PageRemoved?.Invoke(this, new PageRemovedEventArgs(removes)));
+            PageRemoved?.Invoke(this, new PageRemovedEventArgs(removes));
         }
 
         // 近くの有効なページを取得

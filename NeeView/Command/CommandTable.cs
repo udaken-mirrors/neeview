@@ -26,7 +26,7 @@ namespace NeeView
     /// <summary>
     /// コマンド設定テーブル
     /// </summary>
-    public partial class CommandTable : BindableBase, IDictionary<string, CommandElement> 
+    public partial class CommandTable : BindableBase, IDictionary<string, CommandElement>
     {
         static CommandTable() => Current = new CommandTable();
         public static CommandTable Current { get; }
@@ -556,7 +556,7 @@ namespace NeeView
         {
             if (_elements.Values.Any(e => e.IsInputGestureDarty))
             {
-                AppDispatcher.Invoke(() => Changed?.Invoke(this, new CommandChangedEventArgs(false)));
+                Changed?.Invoke(this, new CommandChangedEventArgs(false));
             }
         }
 

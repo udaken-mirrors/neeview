@@ -29,7 +29,7 @@ namespace NeeView
                 (s, e) => Update());
 
             RoutedCommandTable.Current.Changed +=
-                (s, e) => UpdateInputGestureText();
+                (s, e) => AppDispatcher.Invoke(() => UpdateInputGestureText());
 
             Update();
         }
