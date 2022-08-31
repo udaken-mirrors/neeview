@@ -17,6 +17,7 @@ namespace NeeView
         private Playlist? _model;
         private ObservableCollection<PlaylistItem>? _items;
         private Visibility _visibility = Visibility.Hidden;
+        private bool _isRenaming;
 
 
         public PlaylistListBoxViewModel()
@@ -66,6 +67,12 @@ namespace NeeView
         {
             get { return _visibility; }
             set { _visibility = value; RaisePropertyChanged(); }
+        }
+
+        public bool IsRenaming
+        {
+            get { return _isRenaming; }
+            set { SetProperty(ref _isRenaming, value); }
         }
 
         public bool IsEditable

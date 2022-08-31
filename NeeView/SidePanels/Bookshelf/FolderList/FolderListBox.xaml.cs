@@ -539,10 +539,19 @@ namespace NeeView
         /// <param name="delta"></param>
         private void RenameNext(int delta)
         {
+            Debug.Assert(delta == -1 || delta == +1);
+
             if (this.ListBox.SelectedIndex < 0) return;
 
-            // 選択項目を1つ移動
-            this.ListBox.SelectedIndex = (this.ListBox.SelectedIndex + this.ListBox.Items.Count + delta) % this.ListBox.Items.Count;
+            var collection = this.ListBox.ItemsSource as IList<FolderItem>;
+            if (collection is null) return;
+
+            // 次に名前変更可能な項目
+            var next = GetRenabableNext(collection, this.ListBox.SelectedIndex, delta);
+            if (next == this.ListBox.SelectedIndex) return;
+
+            // 選択項目を移動
+            this.ListBox.SelectedIndex = next;
             this.ListBox.ScrollIntoView(this.ListBox.SelectedItem);
             this.ListBox.UpdateLayout();
 
@@ -555,6 +564,29 @@ namespace NeeView
 
             // リネーム発動
             Rename();
+        }
+
+        /// <summary>
+        /// リネーム可能な次の項目を取得
+        /// </summary>
+        /// <param name="delta"></param>
+        /// <returns>次の項目番号。みつからなければ現在の項目番号を返す</returns>
+        private int GetRenabableNext(IList<FolderItem> collection, int selectedIndex, int delta)
+        {
+            Debug.Assert(delta == -1 || delta == +1);
+
+            if (collection is null || collection.Count <= 0) return selectedIndex;
+            if (selectedIndex < 0) return selectedIndex;
+
+            var index = selectedIndex;
+            do
+            {
+                index = (index + collection.Count + delta) % collection.Count;
+                if (CanRenameExecute(collection[index])) break;
+            }
+            while (index != selectedIndex);
+
+            return index;
         }
 
         /// <summary>
@@ -1008,7 +1040,10 @@ namespace NeeView
         /// </summary>
         private void ListBox_ScrollChanged(object? sender, ScrollChangedEventArgs e)
         {
-            RenameTools.ListBoxScrollChanged(this.ListBox, e);
+            if (_vm.IsRenaming)
+            {
+                RenameTools.ListBoxScrollChanged(this.ListBox, e);
+            }
         }
 
         private void FolderList_Loaded(object? sender, RoutedEventArgs e)

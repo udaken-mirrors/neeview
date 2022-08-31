@@ -230,8 +230,10 @@ namespace NeeView
                     };
                     rename.Close += (s, ev) =>
                     {
+                        _vm.IsRenaming = false;
                     };
 
+                    _vm.IsRenaming = true;
                     RenameTools.GetRenameManager(this)?.Open(rename);
                 }
             }
@@ -451,7 +453,10 @@ namespace NeeView
         /// </summary>
         private void ListBox_ScrollChanged(object? sender, ScrollChangedEventArgs e)
         {
-            RenameTools.ListBoxScrollChanged(this.ListBox, e);
+            if (_vm.IsRenaming)
+            {
+                RenameTools.ListBoxScrollChanged(this.ListBox, e);
+            }
         }
 
         private void PlaylistListBox_Loaded(object? sender, RoutedEventArgs e)
