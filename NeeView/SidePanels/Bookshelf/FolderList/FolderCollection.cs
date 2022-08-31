@@ -315,6 +315,7 @@ namespace NeeView
             {
                 return order.ToList();
             }
+            // NOTE: Linq.OrderByでのOperationCanceledException例外はInvalidOperationExceptionとして報告される
             catch (InvalidOperationException ex) when (ex.InnerException is OperationCanceledException opex)
             {
                 throw opex;

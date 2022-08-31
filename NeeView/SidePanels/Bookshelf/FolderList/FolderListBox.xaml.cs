@@ -467,7 +467,6 @@ namespace NeeView
                 var listViewItem = VisualTreeUtility.GetListBoxItemFromItem(listView, item);
                 var textBlock = VisualTreeUtility.FindVisualChild<TextBlock>(listViewItem, "FileNameTextBlock");
 
-                // 
                 if (textBlock != null)
                 {
                     var rename = new RenameControl();
@@ -483,7 +482,7 @@ namespace NeeView
                         rename.IsInvalidSeparatorChars = true;
                     }
 
-                    rename.Closing += async (s, ev) =>
+                    rename.Closing += (s, ev) =>
                     {
                         if (item.Source is TreeListNode<IBookmarkEntry> bookmarkNode)
                         {
@@ -493,22 +492,36 @@ namespace NeeView
                         {
                             var newName = item.IsHideExtension() ? ev.NewValue + System.IO.Path.GetExtension(item.Name) : ev.NewValue;
                             //Debug.WriteLine($"{ev.OldValue} => {newName}");
-                            var src = item.TargetPath;
-                            var dst = await FileIO.Current.RenameAsync(item, newName);
-                            if (dst != null)
+
+                            var src = FileIO.Current.CreateRenameSrc(item);
+                            var dst = FileIO.Current.CreateRenameDst(item, newName);
+                            if (dst is null) return;
+
+                            // 先に項目の名前変更反映
+                            item.SetTargetPath(new QueryPath(dst));
+
+                            // ファイル名変更処理は非同期で
+                            Task.Run(async () =>
                             {
-                                _vm.FolderCollection?.RequestRename(src, new QueryPath(dst));
-                            }
+                                var isSuccess = await FileIO.Current.RenameAsync(src, dst);
+                                if (!isSuccess)
+                                {
+                                    // Renameに失敗した場合はもとに戻す
+                                    _vm.FolderCollection?.RequestRename(new QueryPath(dst), new QueryPath(src));
+                                }
+                            });
                         }
                     };
+
                     rename.Closed += (s, ev) =>
-                {
-                    RenameTools.RestoreFocus(listViewItem, ev.IsFocused);
-                    if (ev.MoveRename != 0)
                     {
-                        RenameNext(ev.MoveRename);
-                    }
-                };
+                        RenameTools.RestoreFocus(listViewItem, ev.IsFocused);
+                        if (ev.MoveRename != 0)
+                        {
+                            RenameNext(ev.MoveRename);
+                        }
+                    };
+
                     rename.Close += (s, ev) =>
                     {
                         _vm.IsRenaming = false;
@@ -530,6 +543,7 @@ namespace NeeView
 
             // 選択項目を1つ移動
             this.ListBox.SelectedIndex = (this.ListBox.SelectedIndex + this.ListBox.Items.Count + delta) % this.ListBox.Items.Count;
+            this.ListBox.ScrollIntoView(this.ListBox.SelectedItem);
             this.ListBox.UpdateLayout();
 
             // ブック切り替え
@@ -994,8 +1008,7 @@ namespace NeeView
         /// </summary>
         private void ListBox_ScrollChanged(object? sender, ScrollChangedEventArgs e)
         {
-            // リネームキャンセル
-            RenameTools.GetRenameManager(this)?.Stop();
+            RenameTools.ListBoxScrollChanged(this.ListBox, e);
         }
 
         private void FolderList_Loaded(object? sender, RoutedEventArgs e)

@@ -85,11 +85,7 @@ namespace NeeView
 
             rename.Close += Rename_Close;
 
-            var pos = rename.Target.TranslatePoint(new Point(0, 0), this) - new Vector(3, 2);
-            Canvas.SetLeft(rename, pos.X);
-            Canvas.SetTop(rename, pos.Y);
-
-            rename.MaxWidth = this.ActualWidth - pos.X - 8;
+            SyncLayout(rename);
 
             this.Root.Children.Add(rename);
 
@@ -124,5 +120,35 @@ namespace NeeView
                 }
             }
         }
+
+        /// <summary>
+        /// renameコントロールをターゲットの位置に合わせる
+        /// </summary>
+        public void SyncLayout()
+        {
+            if (this.Root.Children != null && this.Root.Children.Count > 0)
+            {
+                var renames = this.Root.Children.OfType<RenameControl>().ToList();
+                foreach (var rename in renames)
+                {
+                    SyncLayout(rename);
+                }
+            }
+        }
+
+        /// <summary>
+        /// renameコントロールをターゲットの位置に合わせる
+        /// </summary>
+        private void SyncLayout(RenameControl rename)
+        {
+            if (rename.Target is null) throw new InvalidOperationException();
+
+            var pos = rename.Target.TranslatePoint(new Point(0, 0), this) - new Vector(3, 2);
+            Canvas.SetLeft(rename, pos.X);
+            Canvas.SetTop(rename, pos.Y);
+
+            rename.MaxWidth = this.ActualWidth - pos.X - 8;
+        }
     }
+
 }

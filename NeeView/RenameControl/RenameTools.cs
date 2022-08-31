@@ -1,5 +1,7 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 using System.Windows;
+using System.Windows.Controls;
 
 namespace NeeView
 {
@@ -36,6 +38,30 @@ namespace NeeView
             if (!isFocused) return false;
 
             return FocusTools.FocusIfWindowActived(element);
+        }
+
+        /// <summary>
+        /// ListBoxスクロールのリネーム処理追従
+        /// </summary>
+        public static void ListBoxScrollChanged(ListBox listBox, ScrollChangedEventArgs e)
+        {
+            if (listBox is null) throw new ArgumentNullException(nameof(listBox));
+
+            var renameManager = GetRenameManager(listBox);
+            if (!renameManager.IsRenaming) return;
+
+            if (e.VerticalChange != 0.0 || e.HorizontalChange != 0.0)
+            {
+                // リネームキャンセル
+                renameManager.Stop();
+            }
+            else
+            {
+                // リネームコントロール座標調整
+                listBox.ScrollIntoView(listBox.SelectedItem);
+                listBox.UpdateLayout();
+                renameManager.SyncLayout();
+            }
         }
     }
 }

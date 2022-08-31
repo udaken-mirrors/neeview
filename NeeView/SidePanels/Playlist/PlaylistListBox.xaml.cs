@@ -451,8 +451,7 @@ namespace NeeView
         /// </summary>
         private void ListBox_ScrollChanged(object? sender, ScrollChangedEventArgs e)
         {
-            // リネームキャンセル
-            RenameTools.GetRenameManager(this)?.Stop();
+            RenameTools.ListBoxScrollChanged(this.ListBox, e);
         }
 
         private void PlaylistListBox_Loaded(object? sender, RoutedEventArgs e)

@@ -235,6 +235,7 @@ namespace NeeView
 
                 PagesSorted?.Invoke(this, EventArgs.Empty);
             }
+            // NOTE: LINQ.OrderBy内でのキャンセル例外は InvalidOperationException として返される
             catch (InvalidOperationException ex) when (ex.InnerException is OperationCanceledException canceledException)
             {
                 throw canceledException;

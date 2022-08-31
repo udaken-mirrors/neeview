@@ -257,6 +257,15 @@ namespace NeeView
         public bool IsHideExtension() => IsShortcut || IsPlaylist;
 
         /// <summary>
+        /// ターゲットパスと名前の設定
+        /// </summary>
+        public void SetTargetPath(QueryPath path)
+        {
+            this.TargetPath = path;
+            this.Name = path.FileName;
+        }
+
+        /// <summary>
         /// IsRecursived 更新
         /// </summary>
         public void UpdateIsRecursived(bool isDefaultRecursive)

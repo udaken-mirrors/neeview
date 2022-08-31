@@ -428,8 +428,18 @@ namespace NeeView
 
         #region Rename
 
-        // ファイル名前変更
-        public async Task<string?> RenameAsync(FolderItem file, string newName)
+        /// <summary>
+        /// Rename用変更前ファイル名を生成
+        /// </summary>
+        public string CreateRenameSrc(FolderItem file)
+        {
+            return file.TargetPath.SimplePath;
+        }
+
+        /// <summary>
+        /// Rename用変更後ファイル名を生成
+        /// </summary>
+        public string? CreateRenameDst(FolderItem file, string newName)
         {
             if (newName is null) return null;
 
@@ -522,15 +532,13 @@ namespace NeeView
                 }
             }
 
-            // 名前変更実行
-            var result = await RenameAsyncInner(src, dst);
-
-            return result ? dst : null;
+            return dst;
         }
 
-
-        // ファイル名前変更 コア
-        private async Task<bool> RenameAsyncInner(string src, string dst)
+        /// <summary>
+        /// ファイル名前変更。現在ブックにも反映させる
+        /// </summary>
+        public async Task<bool> RenameAsync(string src, string dst)
         {
             var _bookHub = BookHub.Current;
             int retryCount = 1;
@@ -623,10 +631,10 @@ namespace NeeView
             BookMementoCollection.Current.Rename(src, dst);
         }
 
-        #endregion
+#endregion
 
 
-        #region Dialogs
+#region Dialogs
 
         public class Win32Window : System.Windows.Forms.IWin32Window
         {
@@ -658,6 +666,6 @@ namespace NeeView
             }
         }
 
-        #endregion Dialogs
+#endregion Dialogs
     }
 }
