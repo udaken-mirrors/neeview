@@ -78,7 +78,7 @@ namespace NeeView
         private double _areaWidth = double.PositiveInfinity;
         private double _areaHeight = double.PositiveInfinity;
         private bool _isFocusAtOnce;
-        
+
         private DisposableCollection _disposables = new DisposableCollection();
 
 
@@ -107,12 +107,14 @@ namespace NeeView
 
             if (isSyncBookHub)
             {
-                _disposables.Add(BookHub.Current.SubscribeFolderListSync(async (s, e) =>
-                    await SyncWeak(e)));
-                _disposables.Add(BookHub.Current.SubscribeHistoryChanged((s, e) =>
-                    RefreshIcon(new QueryPath(e.Key))));
-                _disposables.Add(BookHub.Current.SubscribeLoadRequested((s, e) =>
-                    CancelMoveCruiseFolder()));
+                _disposables.Add(BookHub.Current.SubscribeFolderListSync(
+                    (s, e) => AppDispatcher.Invoke(() => SyncWeak(e))));
+
+                _disposables.Add(BookHub.Current.SubscribeHistoryChanged(
+                    (s, e) => RefreshIcon(new QueryPath(e.Key))));
+
+                _disposables.Add(BookHub.Current.SubscribeLoadRequested(
+                    (s, e) => CancelMoveCruiseFolder()));
             }
 
             if (isOverlayEnabled)
