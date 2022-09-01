@@ -13,8 +13,6 @@ namespace NeeView
     public class FolderListBoxViewModel : BindableBase
     {
         private FolderList _model;
-        private bool _isRenaming;
-        private RenameManager? _renameManager;
 
 
         public FolderListBoxViewModel(FolderList folderList)
@@ -58,18 +56,6 @@ namespace NeeView
 
         // サムネイルが表示されている？
         public bool IsThumbnailVisibled => _model.IsThumbnailVisibled;
-
-        public bool IsRenaming
-        {
-            get { return _isRenaming; }
-            set { SetProperty(ref _isRenaming, value); }
-        }
-
-        public RenameManager? RenameManager
-        {
-            get { return _renameManager; }
-            set { SetProperty(ref _renameManager, value); }
-        }
 
 
         #region RelayCommands

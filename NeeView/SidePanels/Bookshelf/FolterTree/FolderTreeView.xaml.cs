@@ -31,7 +31,7 @@ namespace NeeView
     {
         private CancellationTokenSource _removeUnlinkedCommandCancellationTokenSource = new CancellationTokenSource();
         private FolderTreeViewModel _vm;
-
+        private RenameControl? _renameControl;
 
         public FolderTreeView()
         {
@@ -304,20 +304,20 @@ namespace NeeView
             var textBlock = VisualTreeUtility.FindVisualChild<TextBlock>(treeViewItem, "FileNameTextBlock");
             if (textBlock is null) return;
 
-            var rename = new RenameControl() { Target = textBlock };
-            rename.Closing += (s, ev) =>
+            var rename = new RenameControl(textBlock) { StoredFocusTarget = this.TreeView };
+
+            rename.Closed += (s, e) =>
             {
-                item.Rename(ev.NewValue);
-            };
-            rename.Closed += (s, ev) =>
-            {
-                RenameTools.RestoreFocus(this.TreeView, ev.IsFocused);
-            };
-            rename.Close += (s, ev) =>
-            {
+                _renameControl = null;
+
+                if (e.IsChanged)
+                {
+                    item.Rename(e.NewValue);
+                }
             };
 
-            RenameTools.GetRenameManager(this)?.Open(rename);
+            _renameControl = rename;
+            _renameControl.Open();
         }
 
 
@@ -332,20 +332,24 @@ namespace NeeView
             var textBlock = VisualTreeUtility.FindVisualChild<TextBlock>(treeViewItem, "FileNameTextBlock");
             if (textBlock is null) return;
 
-            var rename = new RenameControl() { Target = textBlock, IsInvalidSeparatorChars = true };
-            rename.Closing += (s, ev) =>
+            var rename = new RenameControl(textBlock)
             {
-                BookmarkCollectionService.Rename(item.BookmarkSource, ev.NewValue);
-            };
-            rename.Closed += (s, ev) =>
-            {
-                RenameTools.RestoreFocus(this.TreeView, ev.IsFocused);
-            };
-            rename.Close += (s, ev) =>
-            {
+                IsInvalidSeparatorChars = true,
+                StoredFocusTarget = this.TreeView
             };
 
-            RenameTools.GetRenameManager(this)?.Open(rename);
+            rename.Closed += (s, e) =>
+            {
+                _renameControl = null;
+
+                if (e.IsChanged)
+                {
+                    BookmarkCollectionService.Rename(item.BookmarkSource, e.NewValue);
+                }
+            };
+
+            _renameControl = rename;
+            _renameControl.Open();
         }
 
         public void FocusSelectedItem()
@@ -490,7 +494,7 @@ namespace NeeView
         private void TreeView_ScrollChanged(object? sender, ScrollChangedEventArgs e)
         {
             if (App.Current == null) return;
-            RenameTools.GetRenameManager(this)?.Stop();
+            _renameControl?.Close(true);
         }
 
         private void TreeView_SelectedItemChanged(object? sender, RoutedPropertyChangedEventArgs<object> e)

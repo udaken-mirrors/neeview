@@ -20,7 +20,7 @@ namespace NeeView
     /// <summary>
     /// RenameManager.xaml の相互作用ロジック
     /// </summary>
-    public partial class RenameManager : UserControl, INotifyPropertyChanged
+    public partial class RenameManager : UserControl, INotifyPropertyChanged 
     {
         #region INotifyPropertyChanged Support
 
@@ -47,20 +47,15 @@ namespace NeeView
         #endregion
 
 
-        private bool _isRenaming;
-
-
         public RenameManager()
         {
             InitializeComponent();
         }
 
 
-        public bool IsRenaming
-        {
-            get { return _isRenaming; }
-            set { SetProperty(ref _isRenaming, value); }
-        }
+        public bool IsRenaming =>
+            this.Root.Children != null && this.Root.Children.Count > 0;
+
 
         public UIElement? RenameElement
         {
@@ -79,44 +74,55 @@ namespace NeeView
         }
 
 
-        public void Open(RenameControl rename)
+        /// <summary>
+        /// 登録
+        /// </summary>
+        public void Add(RenameControl rename)
         {
+            if (rename is null) throw new ArgumentException("element must be RenameControl");
             if (rename.Target is null) throw new InvalidOperationException();
 
-            rename.Close += Rename_Close;
+            if (this.Root.Children.Contains(rename)) return;
 
-            SyncLayout(rename);
+            rename.SyncLayout();
 
             this.Root.Children.Add(rename);
 
             rename.Target.Visibility = Visibility.Hidden;
 
-            IsRenaming = true;
+            RaisePropertyChanged(nameof(IsRenaming));
         }
 
-        private void Rename_Close(object? sender, EventArgs e)
-        {
-            var rename = sender as RenameControl;
-            if (rename is null) return;
 
+        /// <summary>
+        /// 登録解除
+        /// </summary>
+        public void Remove(RenameControl rename)
+        {
+            if (rename is null) throw new ArgumentException("element must be RenameControl");
             if (rename.Target is null) throw new InvalidOperationException();
 
             rename.Target.Visibility = Visibility.Visible;
 
             // NOTE: ウィンドウのディアクティブタイミングで閉じたときに再度アクティブ化するのを防ぐためにタイミングをずらす。動作原理不明。
-            AppDispatcher.BeginInvoke(() => this.Root.Children.Remove(sender as RenameControl));
-
-            IsRenaming = this.Root.Children != null && this.Root.Children.Count > 0;
+            AppDispatcher.BeginInvoke(() =>
+            {
+                this.Root.Children.Remove(rename);
+                RaisePropertyChanged(nameof(IsRenaming));
+            });
         }
 
-        public void Stop()
+        /// <summary>
+        /// すべて閉じる
+        /// </summary>
+        public void CloseAll(bool isSuccess = true, bool isRestoreFocus = true)
         {
             if (this.Root.Children != null && this.Root.Children.Count > 0)
             {
                 var renames = this.Root.Children.OfType<RenameControl>().ToList();
                 foreach (var rename in renames)
                 {
-                    rename.Stop(true);
+                    rename.Close(isSuccess, isRestoreFocus);
                 }
             }
         }
@@ -131,23 +137,29 @@ namespace NeeView
                 var renames = this.Root.Children.OfType<RenameControl>().ToList();
                 foreach (var rename in renames)
                 {
-                    SyncLayout(rename);
+                    rename.SyncLayout();
                 }
             }
         }
 
+
         /// <summary>
-        /// renameコントロールをターゲットの位置に合わせる
+        /// elementの所属するRenameManagerを取得
         /// </summary>
-        private void SyncLayout(RenameControl rename)
+        /// <param name="element"></param>
+        /// <returns></returns>
+        public static RenameManager? GetRenameManager(UIElement element)
         {
-            if (rename.Target is null) throw new InvalidOperationException();
+            RenameManager? renameMabager = null;
 
-            var pos = rename.Target.TranslatePoint(new Point(0, 0), this) - new Vector(3, 2);
-            Canvas.SetLeft(rename, pos.X);
-            Canvas.SetTop(rename, pos.Y);
+            var window = Window.GetWindow(element);
+            if (window is IHasRenameManager hasRenameManager)
+            {
+                renameMabager = hasRenameManager.GetRenameManager();
+            }
 
-            rename.MaxWidth = this.ActualWidth - pos.X - 8;
+            Debug.Assert(renameMabager != null);
+            return renameMabager;
         }
     }
 

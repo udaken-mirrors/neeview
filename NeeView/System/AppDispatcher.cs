@@ -53,15 +53,7 @@ namespace NeeView
 
         public static void BeginInvoke(Action action)
         {
-            if (UIDispatcher.CheckAccess())
-            {
-                action.Invoke();
-            }
-            else
-            {
-                UIDispatcher.BeginInvoke(action);
-            }
+            UIDispatcher.BeginInvoke(action);
         }
-
     }
 }

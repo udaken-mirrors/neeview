@@ -27,6 +27,7 @@ namespace NeeView
         private FolderListBoxViewModel _vm;
         private ListBoxThumbnailLoader? _thumbnailLoader;
         private PageThumbnailJobClient? _jobClient;
+        private RenameControl? _renameControl;
 
 
         static FolderListBox()
@@ -34,11 +35,6 @@ namespace NeeView
             InitialieCommandStatic();
         }
 
-
-        //public FolderListBox()
-        //{
-        //    InitializeComponent();
-        //}
 
         public FolderListBox(FolderListBoxViewModel vm)
         {
@@ -469,8 +465,7 @@ namespace NeeView
 
                 if (textBlock != null)
                 {
-                    var rename = new RenameControl();
-                    rename.Target = textBlock;
+                    var rename = new RenameControl(textBlock) { StoredFocusTarget = listViewItem };
 
                     if (item.IsFileSystem())
                     {
@@ -482,55 +477,60 @@ namespace NeeView
                         rename.IsInvalidSeparatorChars = true;
                     }
 
-                    rename.Closing += (s, ev) =>
+                    rename.Closed += (s, e) =>
                     {
-                        if (item.Source is TreeListNode<IBookmarkEntry> bookmarkNode)
+                        _renameControl = null;
+
+                        if (e.IsChanged)
                         {
-                            BookmarkCollectionService.Rename(bookmarkNode, ev.NewValue);
+                            RenameFolderItem(item, e.NewValue);
                         }
-                        else if (ev.OldValue != ev.NewValue)
+                        if (e.MoveRename != 0)
                         {
-                            var newName = item.IsHideExtension() ? ev.NewValue + System.IO.Path.GetExtension(item.Name) : ev.NewValue;
-                            //Debug.WriteLine($"{ev.OldValue} => {newName}");
-
-                            var src = FileIO.Current.CreateRenameSrc(item);
-                            var dst = FileIO.Current.CreateRenameDst(item, newName);
-                            if (dst is null) return;
-
-                            // 先に項目の名前変更反映
-                            item.SetTargetPath(new QueryPath(dst));
-
-                            // ファイル名変更処理は非同期で
-                            Task.Run(async () =>
-                            {
-                                var isSuccess = await FileIO.Current.RenameAsync(src, dst);
-                                if (!isSuccess)
-                                {
-                                    // Renameに失敗した場合はもとに戻す
-                                    _vm.FolderCollection?.RequestRename(new QueryPath(dst), new QueryPath(src));
-                                }
-                            });
+                            RenameNext(e.MoveRename);
                         }
                     };
 
-                    rename.Closed += (s, ev) =>
-                    {
-                        RenameTools.RestoreFocus(listViewItem, ev.IsFocused);
-                        if (ev.MoveRename != 0)
-                        {
-                            RenameNext(ev.MoveRename);
-                        }
-                    };
-
-                    rename.Close += (s, ev) =>
-                    {
-                        _vm.IsRenaming = false;
-                    };
-
-                    _vm.IsRenaming = true;
-                    RenameTools.GetRenameManager(this)?.Open(rename);
+                    _renameControl = rename;
+                    _renameControl.Open();
                 }
             }
+        }
+
+        private void RenameFolderItem(FolderItem item, string newValue)
+        {
+            if (item.Source is TreeListNode<IBookmarkEntry> bookmarkNode)
+            {
+                BookmarkCollectionService.Rename(bookmarkNode, newValue);
+            }
+            else
+            {
+                RenameFileName(item, newValue);
+            }
+        }
+
+        private void RenameFileName(FolderItem item, string name)
+        {
+            var newName = item.IsHideExtension() ? name + System.IO.Path.GetExtension(item.Name) : name;
+            //Debug.WriteLine($"{ev.OldValue} => {newName}");
+
+            var src = FileIO.Current.CreateRenameSrc(item);
+            var dst = FileIO.Current.CreateRenameDst(item, newName);
+            if (dst is null) return;
+
+            // 先に項目の名前変更反映
+            item.SetTargetPath(new QueryPath(dst));
+
+            // ファイル名変更処理は非同期で
+            Task.Run(async () =>
+            {
+                var isSuccess = await FileIO.Current.RenameAsync(src, dst);
+                if (!isSuccess)
+                {
+                    // Renameに失敗した場合はもとに戻す
+                    _vm.FolderCollection?.RequestRename(new QueryPath(dst), new QueryPath(src));
+                }
+            });
         }
 
         /// <summary>
@@ -953,7 +953,6 @@ namespace NeeView
 
             _vm.SelectedChanged += SelectedChanged;
             _vm.BusyChanged += BusyChanged;
-            _vm.RenameManager = RenameTools.GetRenameManager(this);
 
             Config.Current.Panels.ContentItemProfile.PropertyChanged += PanelListtemProfile_PropertyChanged;
             Config.Current.Panels.BannerItemProfile.PropertyChanged += PanelListtemProfile_PropertyChanged;
@@ -966,7 +965,7 @@ namespace NeeView
 
             _vm.SelectedChanged -= SelectedChanged;
             _vm.BusyChanged -= BusyChanged;
-            _vm.RenameManager = null;
+            _renameControl?.Close(false, false);
 
             Config.Current.Panels.ContentItemProfile.PropertyChanged -= PanelListtemProfile_PropertyChanged;
             Config.Current.Panels.BannerItemProfile.PropertyChanged -= PanelListtemProfile_PropertyChanged;
@@ -1040,9 +1039,9 @@ namespace NeeView
         /// </summary>
         private void ListBox_ScrollChanged(object? sender, ScrollChangedEventArgs e)
         {
-            if (_vm.IsRenaming)
+            if (_renameControl != null)
             {
-                RenameTools.ListBoxScrollChanged(this.ListBox, e);
+                RenameTools.ListBoxScrollChanged(this.ListBox, e, _renameControl);
             }
         }
 
@@ -1111,6 +1110,7 @@ namespace NeeView
 
         private void FolderList_SelectionChanged(object? sender, SelectionChangedEventArgs e)
         {
+            _renameControl?.Close(false, false);
         }
 
         //
@@ -1293,6 +1293,8 @@ namespace NeeView
                 this.ListBox.BeginAnimation(UIElement.OpacityProperty, new DoubleAnimation(0.0, TimeSpan.FromSeconds(0.5)) { BeginTime = TimeSpan.FromSeconds(1.0) });
 
                 this.BusyFadeContent.Content = new BusyFadeView();
+
+                _renameControl?.Close(false, false);
             }
             else
             {

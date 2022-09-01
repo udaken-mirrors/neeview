@@ -32,6 +32,7 @@ namespace NeeView
         private ListBoxThumbnailLoader? _thumbnailLoader;
         private PageThumbnailJobClient? _jobClient;
         private bool _focusRequest;
+        private RenameControl? _renameControl;
 
         static PlaylistListBox()
         {
@@ -210,31 +211,28 @@ namespace NeeView
 
                 if (textBlock != null)
                 {
-                    var rename = new RenameControl() { Target = textBlock };
-                    rename.IsInvalidSeparatorChars = true;
-                    rename.Closing += (s, ev) =>
+                    var rename = new RenameControl(textBlock)
                     {
-                        if (ev.OldValue != ev.NewValue)
-                        {
-                            bool isRenamed = _vm.Rename(item, ev.NewValue);
-                            ev.Cancel = !isRenamed;
-                        }
-                    };
-                    rename.Closed += (s, ev) =>
-                    {
-                        RenameTools.RestoreFocus(listViewItem, ev.IsFocused);
-                        if (ev.MoveRename != 0)
-                        {
-                            RenameNext(ev.MoveRename);
-                        }
-                    };
-                    rename.Close += (s, ev) =>
-                    {
-                        _vm.IsRenaming = false;
+                        IsInvalidSeparatorChars = true,
+                        StoredFocusTarget = listViewItem
                     };
 
-                    _vm.IsRenaming = true;
-                    RenameTools.GetRenameManager(this)?.Open(rename);
+                    rename.Closed += (s, e) =>
+                    {
+                        _renameControl = null;
+
+                        if (e.IsChanged)
+                        {
+                            _vm.Rename(item, e.NewValue);
+                        }
+                        if (e.MoveRename != 0)
+                        {
+                            RenameNext(e.MoveRename);
+                        }
+                    };
+
+                    _renameControl = rename;
+                    _renameControl.Open();
                 }
             }
         }
@@ -453,9 +451,9 @@ namespace NeeView
         /// </summary>
         private void ListBox_ScrollChanged(object? sender, ScrollChangedEventArgs e)
         {
-            if (_vm.IsRenaming)
+            if (_renameControl != null)
             {
-                RenameTools.ListBoxScrollChanged(this.ListBox, e);
+                RenameTools.ListBoxScrollChanged(this.ListBox, e, _renameControl);
             }
         }
 
@@ -476,6 +474,8 @@ namespace NeeView
             Config.Current.Panels.ContentItemProfile.PropertyChanged -= PanelListItemProfile_PropertyChanged;
             Config.Current.Panels.BannerItemProfile.PropertyChanged -= PanelListItemProfile_PropertyChanged;
             Config.Current.Panels.ThumbnailItemProfile.PropertyChanged -= PanelListItemProfile_PropertyChanged;
+
+            _renameControl?.Close(false, false);
 
             _jobClient?.Dispose();
         }
@@ -637,6 +637,7 @@ namespace NeeView
 
         private void PlaylistListBox_SelectionChanged(object? sender, SelectionChangedEventArgs e)
         {
+            _renameControl?.Close(false, false);
         }
 
         // リスト全体が変化したときにサムネイルを更新する

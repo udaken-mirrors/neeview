@@ -18,37 +18,6 @@ using System.Windows.Shapes;
 namespace NeeView
 {
 
-    public class RenameClosingEventArgs : EventArgs
-    {
-        public RenameClosingEventArgs(string oldValue, string newValue, bool isFocused)
-        {
-            OldValue = oldValue;
-            NewValue = newValue;
-            IsFocused = isFocused;
-        }
-
-        public string OldValue { get; set; }
-        public string NewValue { get; set; }
-        public bool IsFocused { get; set; }
-        public bool Cancel { get; set; }
-    }
-
-    public class RenameClosedEventArgs : EventArgs
-    {
-        public RenameClosedEventArgs(string oldValue, string newValue, int moveRename, bool isFocused)
-        {
-            OldValue = oldValue;
-            NewValue = newValue;
-            MoveRename = moveRename;
-            IsFocused = isFocused;
-        }
-
-        public string OldValue { get; set; }
-        public string NewValue { get; set; }
-        public int MoveRename { get; set; }
-        public bool IsFocused { get; set; }
-    }
-
     /// <summary>
     /// RenameControl.xaml の相互作用ロジック
     /// </summary>
@@ -79,52 +48,45 @@ namespace NeeView
         #endregion
 
 
-        private char[] _invalidChars = System.IO.Path.GetInvalidFileNameChars();
-        private string _old = "";
-        private string _new = "";
-        private int _moveRename;
+        private static readonly char[] _invalidChars = System.IO.Path.GetInvalidFileNameChars();
+        private RenameManager _manager;
         private int _keyCount;
-        private bool _closing;
-        private bool _isFocused;
+        private bool _closed;
+        private bool _isInvalidFileNameChars;
+        private bool _isInvalidSeparatorChars;
+        private bool _isSeleftFileNameBody;
+        private string _text;
+        private string _oldValue;
 
 
-        public RenameControl()
+        public RenameControl(TextBlock target)
         {
             InitializeComponent();
+
+            _manager = RenameManager.GetRenameManager(target)
+                ?? throw new InvalidOperationException("RenameManager must not be null.");
+
+            this.Target = target;
+            this.RenameTextBox.FontFamily = target.FontFamily;
+            this.RenameTextBox.FontSize = target.FontSize;
+            _text = GetFixedText(target.Text, false);
+            _oldValue = _text;
+
             this.RenameTextBox.DataContext = this;
         }
 
 
-        public event EventHandler<RenameClosingEventArgs>? Closing;
-        public event EventHandler? Close;
+        /// <summary>
+        /// 終了時イベント
+        /// </summary>
         public event EventHandler<RenameClosedEventArgs>? Closed;
 
 
+
         // リネームを行うTextBlock
-        private TextBlock? _target;
-        public TextBlock? Target
-        {
-            get { return _target; }
-            set
-            {
-                if (value is null) throw new ArgumentNullException();
-                if (_target != value)
-                {
-                    _target = value;
-                    RaisePropertyChanged();
-
-                    Text = _target.Text;
-                    _old = Text;
-                    _new = Text;
-
-                    this.RenameTextBox.FontFamily = _target.FontFamily;
-                    this.RenameTextBox.FontSize = _target.FontSize;
-                }
-            }
-        }
+        public TextBlock Target { get; private set; }
 
         // ファイル名禁則文字制御
-        private bool _isInvalidFileNameChars;
         public bool IsInvalidFileNameChars
         {
             get { return _isInvalidFileNameChars; }
@@ -132,71 +94,104 @@ namespace NeeView
         }
 
         // パス区切り文字制御
-        private bool _isInvalidSeparatorChars;
         public bool IsInvalidSeparatorChars
         {
             get { return _isInvalidSeparatorChars; }
             set { SetProperty(ref _isInvalidSeparatorChars, value); }
         }
 
-
         // 拡張子を除いた部分を選択
-        public bool IsSeleftFileNameBody { get; set; } = false;
+        public bool IsSeleftFileNameBody
+        {
+            get { return _isSeleftFileNameBody; }
+            set { SetProperty(ref _isSeleftFileNameBody, value); }
+        }
 
-        private string _text = "";
+        // 編集文字列
         public string Text
         {
             get { return _text; }
-            set
+            set { SetProperty(ref _text, GetFixedText(value, true)); }
+        }
+
+        // フォーカスを戻すコントロール
+        public UIElement? StoredFocusTarget { get; set; }
+
+
+        private string GetFixedText(string source, bool withToast)
+        {
+            if (_isInvalidFileNameChars)
             {
-                if (_text != value)
-                {
-                    if (_isInvalidFileNameChars)
-                    {
-                        _text = new string(value.Where(e => !_invalidChars.Contains(e)).ToArray());
-                        if (_text != value)
-                        {
-                            ToastService.Current.Show(new Toast(Properties.Resources.Notice_InvalidFileNameChars, "", ToastIcon.Information));
-                        }
-                    }
-                    else if (_isInvalidSeparatorChars)
-                    {
-                        _text = new string(value.Where(e => !LoosePath.Separators.Contains(e)).ToArray());
-                        if (_text != value)
-                        {
-                            ToastService.Current.Show(new Toast(Properties.Resources.Notice_InvalidSeparatorChars, "", ToastIcon.Information));
-                        }
-                    }
-                    else
-                    {
-                        _text = value;
-                    }
-                    RaisePropertyChanged();
-                }
+                return GetFixedInvalidFileNameCharsText(source, withToast);
             }
+            else if (_isInvalidSeparatorChars)
+            {
+                return GetFixedInvalidSeparatorCharsText(source, withToast);
+            }
+            else
+            {
+                return source;
+            }
+        }
+
+        private string GetFixedInvalidFileNameCharsText(string source, bool withToast)
+        {
+            var text = new string(source.Where(e => !_invalidChars.Contains(e)).ToArray());
+            if (withToast && text != source)
+            {
+                ToastService.Current.Show(new Toast(Properties.Resources.Notice_InvalidFileNameChars, "", ToastIcon.Information));
+            }
+            return text;
+        }
+
+        private string GetFixedInvalidSeparatorCharsText(string source, bool withToast)
+        {
+            var text = new string(source.Where(e => !LoosePath.Separators.Contains(e)).ToArray());
+            if (withToast && text != source)
+            {
+                ToastService.Current.Show(new Toast(Properties.Resources.Notice_InvalidSeparatorChars, "", ToastIcon.Information));
+            }
+            return text;
+        }
+
+        /// <summary>
+        /// Rename開始
+        /// </summary>
+        public void Open()
+        {
+            _manager.Add(this);
+        }
+
+        /// <summary>
+        /// Rename終了
+        /// </summary>
+        /// <param name="isSuccess">名前変更成功</param>
+        /// <param name="isRestoreFocus">元のコントロールにフォーカスを戻す要求</param>
+        /// <param name="moveRename">次の項目に名前変更を要求</param>
+        public void Close(bool isSuccess, bool isRestoreFocus = true, int moveRename = 0)
+        {
+            Debug.Assert(-1 <= moveRename && moveRename <= 1);
+
+            if (_closed) return;
+            _closed = true;
+
+            var newValue = isSuccess ? Text.Trim() : _oldValue;
+            var restoreFocus = isRestoreFocus && this.RenameTextBox.IsFocused;
+
+            _manager.Remove(this);
+
+            if (restoreFocus && StoredFocusTarget != null)
+            {
+                FocusTools.FocusIfWindowActived(StoredFocusTarget);
+            }
+
+            var args = new RenameClosedEventArgs(_oldValue, newValue, moveRename, restoreFocus);
+            Closed?.Invoke(this, args);
         }
 
         private void RenameTextBox_LostFocus(object? sender, RoutedEventArgs e)
         {
-            Stop(true);
-        }
-
-        public void Stop(bool isSuccess = true)
-        {
-            if (_closing) return;
-            _closing = true;
-
-            _new = isSuccess ? Text.Trim() : _old;
-            _isFocused = this.RenameTextBox.IsFocused;
-
-            var args = new RenameClosingEventArgs(_old, _new, _isFocused);
-            Closing?.Invoke(this, args);
-            if (args.Cancel)
-            {
-                _new = _old;
-            }
-
-            Close?.Invoke(this, EventArgs.Empty);
+            Close(true);
         }
 
         private void RenameTextBox_Loaded(object? sender, RoutedEventArgs e)
@@ -211,7 +206,6 @@ namespace NeeView
 
         private void RenameTextBox_Unloaded(object? sender, RoutedEventArgs e)
         {
-            Closed?.Invoke(this, new RenameClosedEventArgs(_old, _new, _moveRename, _isFocused));
         }
 
         private void RenameTextBox_PreviewKeyDown(object? sender, KeyEventArgs e)
@@ -228,25 +222,25 @@ namespace NeeView
         {
             if (e.Key == Key.Escape && Keyboard.Modifiers == ModifierKeys.None)
             {
-                Stop(false);
+                Close(false);
                 e.Handled = true;
             }
             else if (e.Key == Key.Enter)
             {
-                Stop(true);
+                Close(true);
                 e.Handled = true;
             }
             else if (e.Key == Key.Tab)
             {
-                _moveRename = (Keyboard.Modifiers == ModifierKeys.Shift) ? -1 : +1;
-                Stop(true);
+                var moveRename = (Keyboard.Modifiers == ModifierKeys.Shift) ? -1 : +1;
+                Close(true, true, moveRename);
                 e.Handled = true;
             }
         }
 
         private void RenameTextBox_PreviewMouseWheel(object? sender, MouseWheelEventArgs e)
         {
-            Stop(true);
+            Close(true);
             e.Handled = true;
         }
 
@@ -259,6 +253,20 @@ namespace NeeView
         private void Control_KeyDown_IgnoreSingleKeyGesture(object? sender, KeyEventArgs e)
         {
             KeyExGesture.AllowSingleKey = false;
+        }
+
+        /// <summary>
+        /// renameコントロールをターゲットの位置に合わせる
+        /// </summary>
+        public void SyncLayout()
+        {
+            if (this.Target is null) throw new InvalidOperationException();
+
+            var pos = this.Target.TranslatePoint(new Point(0, 0), _manager) - new Vector(3, 2);
+            Canvas.SetLeft(this, pos.X);
+            Canvas.SetTop(this, pos.Y);
+
+            this.MaxWidth = _manager.ActualWidth - pos.X - 8;
         }
     }
 }

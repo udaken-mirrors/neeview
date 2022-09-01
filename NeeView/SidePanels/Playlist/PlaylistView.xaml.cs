@@ -24,10 +24,6 @@ namespace NeeView
         private PlaylistViewModel _vm;
 
 
-        //public PlaylistView()
-        //{
-        //}
-
         public PlaylistView(PlaylistHub model)
         {
             InitializeComponent();
@@ -71,23 +67,18 @@ namespace NeeView
             var textBlock = VisualTreeUtility.FindVisualChild<TextBlock>(comboBox, "NameTextBlock");
             if (textBlock is null) return;
 
-            var rename = new RenameControl() { Target = textBlock };
+            var rename = new RenameControl(textBlock) { StoredFocusTarget = comboBox };
             rename.IsInvalidFileNameChars = true;
 
-            rename.Closing += (s, ev) =>
+            rename.Closed += (s, e) =>
             {
-                if (ev.OldValue != ev.NewValue)
+                if (e.IsChanged)
                 {
-                    bool isRenamed = _vm.Rename(ev.NewValue);
-                    ev.Cancel = !isRenamed;
+                    _vm.Rename(e.NewValue);
                 }
             };
-            rename.Closed += (s, ev) =>
-            {
-                RenameTools.RestoreFocus(comboBox, ev.IsFocused);
-            };
 
-            RenameTools.GetRenameManager(this)?.Open(rename);
+            rename.Open();
         }
     }
 }

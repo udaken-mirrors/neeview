@@ -48,8 +48,8 @@ namespace NeeView
             _routedCommandBinding = new RoutedCommandBinding(this, RoutedCommandTable.Current);
 
             // cancel rename triggers
-            this.MouseLeftButtonDown += (s, e) => this.RenameManager.Stop();
-            this.MouseRightButtonDown += (s, e) => this.RenameManager.Stop();
+            this.MouseLeftButtonDown += (s, e) => this.RenameManager.CloseAll();
+            this.MouseRightButtonDown += (s, e) => this.RenameManager.CloseAll();
         }
 
 

@@ -173,8 +173,8 @@ namespace NeeView
             this.KeyDown += MainWindow_KeyDown;
 
             // cancel rename triggers
-            this.MouseLeftButtonDown += (s, e) => this.RenameManager.Stop();
-            this.MouseRightButtonDown += (s, e) => this.RenameManager.Stop();
+            this.MouseLeftButtonDown += (s, e) => this.RenameManager.CloseAll();
+            this.MouseRightButtonDown += (s, e) => this.RenameManager.CloseAll();
 
             // frame event
             CompositionTarget.Rendering += OnRendering;
