@@ -64,6 +64,18 @@ namespace NeeView
         }
 
 
+
+        public bool IsToolTipEnabled
+        {
+            get { return (bool)GetValue(IsToolTipEnabledProperty); }
+            set { SetValue(IsToolTipEnabledProperty, value); }
+        }
+
+        public static readonly DependencyProperty IsToolTipEnabledProperty =
+            DependencyProperty.Register("IsToolTipEnabled", typeof(bool), typeof(FolderListBox), new PropertyMetadata(true));
+
+
+
         // フォーカス可能フラグ
         public bool IsFocusEnabled { get; set; } = true;
 
@@ -459,6 +471,7 @@ namespace NeeView
 
             if (CanRenameExecute(item))
             {
+                listView.ScrollIntoView(item);
                 listView.UpdateLayout();
                 var listViewItem = VisualTreeUtility.GetListBoxItemFromItem(listView, item);
                 var textBlock = VisualTreeUtility.FindVisualChild<TextBlock>(listViewItem, "FileNameTextBlock");
@@ -480,6 +493,7 @@ namespace NeeView
                     rename.Closed += (s, e) =>
                     {
                         _renameControl = null;
+                        this.IsToolTipEnabled = true;
 
                         if (e.IsChanged)
                         {
@@ -491,6 +505,7 @@ namespace NeeView
                         }
                     };
 
+                    this.IsToolTipEnabled = false;
                     _renameControl = rename;
                     _renameControl.Open();
                 }

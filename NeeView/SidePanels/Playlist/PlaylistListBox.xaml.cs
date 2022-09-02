@@ -63,6 +63,18 @@ namespace NeeView
         }
 
 
+
+        public bool IsToolTipEnabled
+        {
+            get { return (bool)GetValue(IsToolTipEnabledProperty); }
+            set { SetValue(IsToolTipEnabledProperty, value); }
+        }
+
+        public static readonly DependencyProperty IsToolTipEnabledProperty =
+            DependencyProperty.Register("IsToolTipEnabled", typeof(bool), typeof(PlaylistListBox), new PropertyMetadata(true));
+
+
+
         #region Commands
         public readonly static RoutedCommand AddCommand = new RoutedCommand(nameof(AddCommand), typeof(PlaylistListBox));
         public readonly static RoutedCommand MoveUpCommand = new RoutedCommand(nameof(MoveUpCommand), typeof(PlaylistListBox));
@@ -204,6 +216,8 @@ namespace NeeView
             var listBox = this.ListBox;
             if (item != null)
             {
+                listBox.ScrollIntoView(item);
+                listBox.UpdateLayout();
                 var listViewItem = VisualTreeUtility.FindContainer<ListBoxItem>(listBox, item);
                 if (listViewItem is null) return;
 
@@ -220,6 +234,7 @@ namespace NeeView
                     rename.Closed += (s, e) =>
                     {
                         _renameControl = null;
+                        IsToolTipEnabled = true;
 
                         if (e.IsChanged)
                         {
@@ -231,6 +246,7 @@ namespace NeeView
                         }
                     };
 
+                    IsToolTipEnabled = false;
                     _renameControl = rename;
                     _renameControl.Open();
                 }
