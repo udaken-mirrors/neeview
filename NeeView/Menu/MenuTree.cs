@@ -1,4 +1,5 @@
 ﻿using NeeLaboratory.ComponentModel;
+using NeeLaboratory.Linq;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -495,6 +496,18 @@ namespace NeeView
             }
 
             return contextMenu.Items.Count > 0 ? contextMenu : null;
+        }
+
+        public List<object> CreateContextMenuItems()
+        {
+            if (this.Children == null) return new List<object>();
+
+            var children = this.Children
+                .Select(e => e.CreateMenuControl())
+                .WhereNotNull()
+                .ToList();
+
+            return children;
         }
 
         //

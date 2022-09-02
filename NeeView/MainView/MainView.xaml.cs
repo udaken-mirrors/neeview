@@ -350,6 +350,11 @@ namespace NeeView
             }
         }
 
+        private void MainViewPanel_ContextMenuOpening(object sender, ContextMenuEventArgs e)
+        {
+            _vm?.UpdateContextMenu();
+        }
+
         #endregion ContextMenu
 
         #region SizeChanged

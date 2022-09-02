@@ -10,17 +10,34 @@ namespace NeeView
     public class MainViewViewModel : BindableBase
     {
         private MainViewComponent _viewComponent;
+        private ContextMenu _contextMenu = new ContextMenu();
+        private bool _isContextMenuDarty = true;
+        private Visibility _busyVisibility = Visibility.Collapsed;
 
 
         public MainViewViewModel(MainViewComponent viewComponent)
         {
             _viewComponent = viewComponent;
 
-            InitializeContextMenu();
-            InitializeBusyVisibility();
-
             Config.Current.View.AddPropertyChanged(nameof(ViewConfig.MainViewMergin),
                 (s, e) => RaisePropertyChanged(nameof(MainViewMergin)));
+
+            // context menu
+            ContextMenuManager.Current.AddPropertyChanged(nameof(ContextMenuManager.Current.SourceTree),
+                (s, e) => SetContextMenuDarty());
+
+            RoutedCommandTable.Current.Changed +=
+                (s, e) => SetContextMenuDarty();
+
+            // busy visibility
+            _viewComponent.ContentRebuild.AddPropertyChanged(nameof(ContentRebuild.IsBusy),
+                (s, e) => UpdateBusyVisibility());
+
+            BookOperation.Current.AddPropertyChanged(nameof(BookOperation.IsBusy),
+                (s, e) => UpdateBusyVisibility());
+
+            BookHub.Current.AddPropertyChanged(nameof(BookHub.IsLoading),
+                (s, e) => UpdateBusyVisibility());
         }
 
 
@@ -44,9 +61,7 @@ namespace NeeView
 
         public Thickness MainViewMergin => new Thickness(Config.Current.View.MainViewMergin);
 
-        #region BusyVisibility
-
-        private Visibility _busyVisibility = Visibility.Collapsed;
+        public ContextMenu ContextMenu => _contextMenu;
 
         public Visibility BusyVisibility
         {
@@ -54,17 +69,7 @@ namespace NeeView
             set { if (_busyVisibility != value) { _busyVisibility = value; RaisePropertyChanged(); } }
         }
 
-        private void InitializeBusyVisibility()
-        {
-            _viewComponent.ContentRebuild.AddPropertyChanged(nameof(ContentRebuild.IsBusy),
-                (s, e) => UpdateBusyVisibility());
 
-            BookOperation.Current.AddPropertyChanged(nameof(BookOperation.IsBusy),
-                (s, e) => UpdateBusyVisibility());
-
-            BookHub.Current.AddPropertyChanged(nameof(BookHub.IsLoading),
-                (s, e) => UpdateBusyVisibility());
-        }
 
         private void UpdateBusyVisibility()
         {
@@ -72,52 +77,25 @@ namespace NeeView
             this.BusyVisibility = Config.Current.Notice.IsBusyMarkEnabled && (BookHub.Current.IsLoading || BookOperation.Current.IsBusy || _viewComponent.ContentRebuild.IsBusy) && !SlideShow.Current.IsPlayingSlideShow ? Visibility.Visible : Visibility.Collapsed;
         }
 
-        #endregion BusyVisibility
 
-        #region ContextMenu
-
-        private ContextMenu? _contextMenu;
-
-        public ContextMenu? ContextMenu
+        private void SetContextMenuDarty()
         {
-            get
-            {
-                if (ContextMenuManager.Current.IsDarty)
-                {
-                    ////Debug.WriteLine($"new ContextMenu.");
-                    _contextMenu = ContextMenuManager.Current.ContextMenu;
-                    _contextMenu?.UpdateInputGestureText();
-                }
-                return _contextMenu;
-            }
-        }
-
-
-        private void InitializeContextMenu()
-        {
-            ContextMenuManager.Current.AddPropertyChanged(nameof(ContextMenuManager.Current.SourceTree),
-                (s, e) => UpdateContextMenu());
-
-            RoutedCommandTable.Current.Changed +=
-                (s, e) =>
-                {
-                    ContextMenuManager.Current.IsDarty = true;
-                    UpdateContextMenu();
-                };
-
-            UpdateContextMenu();
+            _isContextMenuDarty = true;
         }
 
         public void UpdateContextMenu()
         {
-            if (ContextMenuManager.Current.IsDarty)
+            if (!_isContextMenuDarty) return;
+            _isContextMenuDarty = false;
+
+            _contextMenu.Items.Clear();
+            foreach (var item in ContextMenuManager.Current.CreateContextMenuItems())
             {
-                RaisePropertyChanged(nameof(ContextMenu));
+                _contextMenu.Items.Add(item);
             }
+
+            _contextMenu.UpdateInputGestureText();
         }
-
-
-        #endregion ContextMenu
 
 
         public void SetViewSize(double width, double height)

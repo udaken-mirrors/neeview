@@ -13,7 +13,7 @@
         <local:NullableToVisibilityConverter x:Key="NullableToVisibilityConverter" />
     </UserControl.Resources>
 
-    <Grid x:Name="MainViewPanel" ContextMenu="{Binding ContextMenu}" Background="{Binding ContentCanvasBrush.BackgroundBrush}">
+    <Grid x:Name="MainViewPanel" ContextMenu="{Binding ContextMenu}" ContextMenuOpening="MainViewPanel_ContextMenuOpening" Background="{Binding ContentCanvasBrush.BackgroundBrush}">
         <Rectangle x:Name="FrontBackground" Fill="{Binding ContentCanvasBrush.BackgroundFrontBrush}" RenderOptions.BitmapScalingMode="HighQuality" IsHitTestVisible="False"
                 Visibility="{Binding ContentCanvasBrush.BackgroundFrontBrush, Converter={StaticResource NullableToVisibilityConverter}}" />
 

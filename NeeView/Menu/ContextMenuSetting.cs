@@ -58,6 +58,11 @@ namespace NeeView
             return SourceTreeRaw?.CreateMenuNode();
         }
 
+        public List<object> CreateContextMenuItems()
+        {
+            return SourceTree.CreateContextMenuItems();
+        }
+
         internal void Resotre(MenuNode? contextMenuNode)
         {
             var sourceTree = contextMenuNode != null ? MenuTree.CreateMenuTree(contextMenuNode) : null;
