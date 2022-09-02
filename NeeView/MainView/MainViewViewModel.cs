@@ -93,14 +93,17 @@ namespace NeeView
         }
 
 
-
         private void InitializeContextMenu()
         {
             ContextMenuManager.Current.AddPropertyChanged(nameof(ContextMenuManager.Current.SourceTree),
                 (s, e) => UpdateContextMenu());
 
             RoutedCommandTable.Current.Changed +=
-                (s, e) => UpdateContextMenu();
+                (s, e) =>
+                {
+                    ContextMenuManager.Current.IsDarty = true;
+                    UpdateContextMenu();
+                };
 
             UpdateContextMenu();
         }

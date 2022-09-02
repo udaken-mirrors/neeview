@@ -9,40 +9,72 @@ namespace NeeView.Setting
 {
     public class ContextMenuSettingViewModel : BindableBase
     {
+        private MenuTree? _root;
+        private ContextMenuSetting? _contextMenuSetting;
+        private List<MenuTree> _sourceElementList;
+        private int _commandTableChangeCount;
+        private int _selectedElementIndex;
+
+
         public ContextMenuSettingViewModel()
         {
             if (CommandTable.Current == null) throw new InvalidOperationException();
 
+            _commandTableChangeCount = CommandTable.Current.ChangeCount;
+            _sourceElementList = CreateSourceElementList();
+            _selectedElementIndex = 0;
+        }
+
+
+        public MenuTree? Root
+        {
+            get { return _root; }
+            set { SetProperty(ref _root, value); }
+        }
+
+
+        public List<MenuTree> SourceElementList
+        {
+            get { return _sourceElementList; }
+            private set { SetProperty(ref _sourceElementList, value); }
+        }
+
+
+        public int SelectedElementIndex
+        {
+            get { return _selectedElementIndex; }
+            set { SetProperty(ref _selectedElementIndex, value); }
+        }
+
+
+        public void UpdateSource()
+        {
+            if (_commandTableChangeCount != CommandTable.Current.ChangeCount)
+            {
+                _commandTableChangeCount = CommandTable.Current.ChangeCount;
+                this.SourceElementList = CreateSourceElementList();
+                this.SelectedElementIndex = 0;
+
+                this.Root?.RaisePropertyChangedAll();
+            }
+        }
+
+        private List<MenuTree> CreateSourceElementList()
+        {
             var list = CommandTable.Current.Values
-                .OrderBy(e => e.Order)
-                .GroupBy(e => e.Group)
-                .SelectMany(g => g)
-                .Select(e => new MenuTree() { MenuElementType = MenuElementType.Command, CommandName = e.Name })
-                .ToList();
+            .OrderBy(e => e.Order)
+            .GroupBy(e => e.Group)
+            .SelectMany(g => g)
+            .Select(e => new MenuTree() { MenuElementType = MenuElementType.Command, CommandName = e.Name })
+            .ToList();
 
             list.Insert(0, new MenuTree() { MenuElementType = MenuElementType.Group });
             list.Insert(1, new MenuTree() { MenuElementType = MenuElementType.Separator });
             list.Insert(2, new MenuTree() { MenuElementType = MenuElementType.History });
 
-            SourceElementList = list;
+            return list;
         }
 
-
-        private MenuTree? _root;
-        public MenuTree? Root
-        {
-            get { return _root; }
-            set { _root = value; RaisePropertyChanged(); }
-        }
-
-        public List<MenuTree> SourceElementList { get; set; }
-
-
-        private ContextMenuSetting? _contextMenuSetting;
-
-
-
-        //
         public void Initialize(ContextMenuSetting contextMenuSetting)
         {
             _contextMenuSetting = contextMenuSetting;
@@ -54,15 +86,13 @@ namespace NeeView.Setting
             Root.Validate();
         }
 
-        //
         public void Decide()
         {
             if (_contextMenuSetting is null || Root is null) return;
-            
+
             _contextMenuSetting.SourceTree = Root.IsEqual(MenuTree.CreateDefault()) ? null : Root;
         }
 
-        //
         public void Reset()
         {
             Root = MenuTree.CreateDefault();
@@ -70,7 +100,6 @@ namespace NeeView.Setting
             Decide();
         }
 
-        //
         private ObservableCollection<MenuTree>? GetParentCollection(ObservableCollection<MenuTree> collection, MenuTree target)
         {
             if (collection.Contains(target)) return collection;
@@ -84,7 +113,6 @@ namespace NeeView.Setting
             return null;
         }
 
-        //
         public void AddNode(MenuTree element, MenuTree? target)
         {
             if (Root is null) return;
@@ -115,8 +143,6 @@ namespace NeeView.Setting
             Decide();
         }
 
-
-        //
         public void RemoveNode(MenuTree target)
         {
             if (Root is null) return;
@@ -137,7 +163,6 @@ namespace NeeView.Setting
             }
         }
 
-        //
         public void RenameNode(MenuTree target, string name)
         {
             target.Label = name;
@@ -145,7 +170,6 @@ namespace NeeView.Setting
             Decide();
         }
 
-        //
         public void MoveUp(MenuTree target)
         {
             if (Root is null) return;
@@ -183,7 +207,6 @@ namespace NeeView.Setting
                 Decide();
             }
         }
-
 
         public void MoveDown(MenuTree target)
         {

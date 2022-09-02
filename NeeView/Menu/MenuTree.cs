@@ -47,23 +47,49 @@ namespace NeeView
     [DataContract]
     public class MenuTree : BindableBase, IEnumerable<MenuTree>
     {
-        #region Property: IsExpanded
         private bool _isExpanded;
+        private bool _isSelected;
+
+
+
+        public MenuTree()
+        {
+        }
+
+        public MenuTree(MenuElementType type)
+        {
+            MenuElementType = type;
+        }
+
+
+
         public bool IsExpanded
         {
             get { return _isExpanded; }
             set { _isExpanded = value; RaisePropertyChanged(); }
         }
-        #endregion
 
-        #region Property: IsSelected
-        private bool _isSelected;
         public bool IsSelected
         {
             get { return _isSelected; }
             set { _isSelected = value; RaisePropertyChanged(); }
         }
-        #endregion
+
+        public bool IsEnabled
+        {
+            get
+            {
+                switch (MenuElementType)
+                {
+                    default:
+                        return true;
+                    case MenuElementType.None:
+                        return false;
+                    case MenuElementType.Command:
+                        return IsCommandEnabled(CommandName);
+                }
+            }
+        }
 
 
         [DataMember(EmitDefaultValue = false)]
@@ -78,35 +104,14 @@ namespace NeeView
         [DataMember(EmitDefaultValue = false)]
         public ObservableCollection<MenuTree>? Children { get; set; }
 
-        public MenuTree()
-        {
-        }
 
-        public MenuTree(MenuElementType type)
-        {
-            MenuElementType = type;
-        }
-
-        [OnDeserialized]
-        private void OnDeserialized(StreamingContext context)
-        {
-            if (MenuElementType != MenuElementType.Command)
-            {
-                CommandName = null;
-            }
-        }
-
-
-        #region Property: Label
         public string Label
         {
             get { return string.IsNullOrEmpty(Name) ? DefaultLabel : Name; }
             set { Name = (value == DefaultLabel) ? null : value; RaisePropertyChanged(); RaisePropertyChanged(nameof(DispLabel)); }
         }
-        #endregion
 
         public string? DispLabel => Label?.Replace("_", "");
-
 
         public string DefaultLongLabel
         {
@@ -119,11 +124,10 @@ namespace NeeView
                     case MenuElementType.None:
                         return $"({MenuElementType.ToAliasName()})";
                     case MenuElementType.Command:
-                        return CommandTable.Current.GetElement(CommandName).LongText;
+                        return GetCommandText(CommandName, (CommandElement e) => e.LongText);
                 }
             }
         }
-
 
         public string DefaultLabel
         {
@@ -136,10 +140,104 @@ namespace NeeView
                     case MenuElementType.None:
                         return $"({MenuElementType.ToAliasName()})";
                     case MenuElementType.Command:
-                        return CommandTable.Current.GetElement(CommandName).Menu;
+                        return GetCommandText(CommandName, (CommandElement e) => e.Menu);
                 }
             }
         }
+
+
+
+        [OnDeserialized]
+        private void OnDeserialized(StreamingContext context)
+        {
+            if (MenuElementType != MenuElementType.Command)
+            {
+                CommandName = null;
+            }
+        }
+
+        /// <summary>
+        /// コマンド有効判定
+        /// </summary>
+        /// <param name="commandName">コマンドID</param>
+        /// <returns>コマンド有効なら true</returns>
+        private bool IsCommandEnabled(string? commandName)
+        {
+            if (commandName is null) return false;
+
+            return CommandTable.Current.ContainsKey(commandName);
+        }
+
+        /// <summary>
+        /// コマンドの存在許可。
+        /// クローンコマンドやスクリプトコマンド等は実態がなくても自動削除されない。
+        /// </summary>
+        /// <param name="commandName">コマンドID</param>
+        /// <returns>存在許可するなら true</returns>
+        private bool IsCommandAllowed(string? commandName)
+        {
+            if (commandName is null)
+            {
+                return false;
+            }
+
+            if (CommandTable.Current.ContainsKey(commandName))
+            {
+                return true;
+            }
+
+            if (ScriptCommand.IsScriptCommandName(commandName))
+            {
+                return true;
+            }
+
+            var cloneName = CommandNameSource.Parse(commandName);
+            if (cloneName.IsClone)
+            {
+                if (CommandTable.Current.ContainsKey(cloneName.Name))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// コマンド表示名取得
+        /// </summary>
+        /// <param name="commandName">コマンドID</param>
+        /// <param name="getCommandTextFunc">テキスト取得関数</param>
+        /// <returns>コマンド表示名</returns>
+        private string GetCommandText(string? commandName, Func<CommandElement, string> getCommandTextFunc)
+        {
+            if (commandName is null)
+            {
+                return "(none)";
+            }
+
+            if (CommandTable.Current.TryGetValue(commandName, out CommandElement? command))
+            {
+                return getCommandTextFunc(command);
+            }
+
+            if (ScriptCommand.IsScriptCommandName(commandName))
+            {
+                return commandName.Replace(CommandNameSource.Separator, ' ').Replace('_', ' ');
+            }
+
+            var cloneName = CommandNameSource.Parse(commandName);
+            if (cloneName.IsClone)
+            {
+                if (CommandTable.Current.TryGetValue(cloneName.Name, out CommandElement? commandSource))
+                {
+                    return getCommandTextFunc(commandSource) + " " + cloneName.Number.ToString();
+                }
+            }
+
+            return "(none)";
+        }
+
 
         public MenuTree Clone()
         {
@@ -172,7 +270,7 @@ namespace NeeView
                         Debug.WriteLine($"MenuTree.Validate: Remove EmptyNode");
                         removes.Add(child);
                     }
-                    else if (child.MenuElementType == MenuElementType.Command && !CommandTable.Current.ContainsKey(child.CommandName))
+                    else if (child.MenuElementType == MenuElementType.Command && !IsCommandAllowed(child.CommandName))
                     {
                         Debug.WriteLine($"MenuTree.Validate: Remove CommandNode=\"{child.CommandName}\"");
                         removes.Add(child);
@@ -193,6 +291,21 @@ namespace NeeView
             }
         }
 
+        /// <summary>
+        /// 全てのノードのプロパティ更新通知を発行
+        /// </summary>
+        public void RaisePropertyChangedAll()
+        {
+            RaisePropertyChanged(null);
+
+            if (this.MenuElementType == MenuElementType.Group && this.Children != null)
+            {
+                foreach (var child in this.Children)
+                {
+                    child.RaisePropertyChangedAll();
+                }
+            }
+        }
 
         //
         public static MenuTree Create(MenuTree source)
@@ -300,32 +413,36 @@ namespace NeeView
             {
                 case MenuElementType.Command:
                     {
-                        if (!CommandTable.Current.ContainsKey(this.CommandName))
+                        var item = new MenuItem();
+
+                        if (CommandTable.Current.ContainsKey(this.CommandName))
+                        {
+                            item.Header = this.Label;
+                            item.Tag = this.CommandName;
+                            item.Command = RoutedCommandTable.Current.Commands[this.CommandName ?? "None"];
+                            item.CommandParameter = MenuCommandTag.Tag; // コマンドがメニューからであることをパラメータで伝えてみる
+                            var binding = CommandTable.Current.GetElement(this.CommandName).CreateIsCheckedBinding();
+                            if (binding != null)
+                            {
+                                item.SetBinding(MenuItem.IsCheckedProperty, binding);
+                            }
+
+                            //  右クリックでコマンドパラメーターの設定ウィンドウを開く
+                            item.MouseRightButtonUp += (s, e) =>
+                            {
+                                if (s is MenuItem menuItem && menuItem.Tag is string command)
+                                {
+                                    e.Handled = true;
+                                    MainWindowModel.Current.OpenCommandParameterDialog(command);
+                                }
+                            };
+                        }
+                        else
                         {
                             Debug.WriteLine($"Command {this.CommandName} is not defined.");
-                            return null;
+                            item.Header = this.Label;
+                            item.IsEnabled = false;
                         }
-
-                        var item = new MenuItem();
-                        item.Header = this.Label;
-                        item.Tag = this.CommandName;
-                        item.Command = RoutedCommandTable.Current.Commands[this.CommandName ?? "None"];
-                        item.CommandParameter = MenuCommandTag.Tag; // コマンドがメニューからであることをパラメータで伝えてみる
-                        var binding = CommandTable.Current.GetElement(this.CommandName).CreateIsCheckedBinding();
-                        if (binding != null)
-                        {
-                            item.SetBinding(MenuItem.IsCheckedProperty, binding);
-                        }
-
-                        //  右クリックでコマンドパラメーターの設定ウィンドウを開く
-                        item.MouseRightButtonUp += (s, e) =>
-                        {
-                            if (s is MenuItem menuItem && menuItem.Tag is string command)
-                            {
-                                e.Handled = true;
-                                MainWindowModel.Current.OpenCommandParameterDialog(command);
-                            }
-                        };
 
                         return item;
                     }

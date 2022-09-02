@@ -5,6 +5,9 @@ namespace NeeView
     // Immutable
     public sealed class CommandNameSource : IEquatable<CommandNameSource>, IComparable<CommandNameSource>
     {
+        public static readonly char Separator = ':';
+
+
         public CommandNameSource(string name)
         {
             Name = name;
@@ -22,7 +25,7 @@ namespace NeeView
 
         public int Number { get; }
 
-        public string FullName => Number == 0 ? Name : Name + ":" + Number.ToString();
+        public string FullName => Number == 0 ? Name : Name + Separator + Number.ToString();
 
         public bool IsClone => Number != 0;
 
@@ -93,7 +96,7 @@ namespace NeeView
 
         public static CommandNameSource Parse(string name)
         {
-            var tokens = name.Split(':');
+            var tokens = name.Split(Separator);
             if (tokens.Length == 2)
             {
                 return new CommandNameSource(tokens[0], int.Parse(tokens[1]));

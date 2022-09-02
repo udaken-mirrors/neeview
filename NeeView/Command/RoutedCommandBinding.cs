@@ -33,38 +33,6 @@ namespace NeeView
             InitializeCommandBindings();
         }
 
-        #region IDisposable
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!_disposedValue)
-            {
-                if (disposing)
-                {
-                    if (_element != null)
-                    {
-                        _element.PreviewMouseUp -= Control_PreviewMouseUp;
-                        _element.PreviewKeyDown -= Control_PreviewKeyDown;
-                    }
-
-                    if (_routedCommandTable != null)
-                    {
-                        _routedCommandTable.CommandExecuted -= RoutedCommand_CommandExecuted;
-                        _routedCommandTable.Changed -= UpdateCommandBindings;
-                    }
-                }
-
-                _disposedValue = true;
-            }
-        }
-
-        public void Dispose()
-        {
-            Dispose(disposing: true);
-            GC.SuppressFinalize(this);
-        }
-
-        #endregion IDisposable
 
         private void InitializeCommandBindings()
         {
@@ -122,11 +90,9 @@ namespace NeeView
         private void UpdateCommandBindings(object? sender, EventArgs _)
         {
             var oldies = _commandBindings.Keys
-                .Where(e => e.StartsWith(ScriptCommand.Prefix))
                 .ToList();
 
             var newers = CommandTable.Current.Keys
-                .Where(e => e.StartsWith(ScriptCommand.Prefix))
                 .ToList();
 
             foreach (var name in oldies.Except(newers))
@@ -167,5 +133,39 @@ namespace NeeView
                 RoutedCommandTable.Current.ExecuteImeKeyGestureCommand(sender, e);
             }
         }
+
+
+        #region IDisposable
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!_disposedValue)
+            {
+                if (disposing)
+                {
+                    if (_element != null)
+                    {
+                        _element.PreviewMouseUp -= Control_PreviewMouseUp;
+                        _element.PreviewKeyDown -= Control_PreviewKeyDown;
+                    }
+
+                    if (_routedCommandTable != null)
+                    {
+                        _routedCommandTable.CommandExecuted -= RoutedCommand_CommandExecuted;
+                        _routedCommandTable.Changed -= UpdateCommandBindings;
+                    }
+                }
+
+                _disposedValue = true;
+            }
+        }
+
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
+
+        #endregion IDisposable
     }
 }

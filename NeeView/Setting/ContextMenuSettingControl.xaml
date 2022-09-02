@@ -34,7 +34,7 @@
                 <DataTrigger Binding="{Binding MenuElementType}" Value="Separator">
                     <Setter Property="Visibility" Value="Hidden"/>
                 </DataTrigger>
-                <DataTrigger Binding="{Binding MenuElementType}" Value="None">
+                <DataTrigger Binding="{Binding IsEnabled}" Value="False">
                     <Setter Property="Foreground" Value="Gray"/>
                 </DataTrigger>
             </Style.Triggers>
@@ -59,7 +59,7 @@
                         <StackPanel DockPanel.Dock="Right">
                             <Button x:Name="AddButton" Content="{x:Static properties:Resources.Word_Add}" Command="{x:Static local:ContextMenuSettingControl.AddCommand}" TabIndex="2"/>
                         </StackPanel>
-                        <ComboBox x:Name="SourceComboBox" VerticalAlignment="Center" ItemsSource="{Binding SourceElementList}" DisplayMemberPath="DefaultLongLabel" TabIndex="1"/>
+                        <ComboBox x:Name="SourceComboBox" VerticalAlignment="Center" ItemsSource="{Binding SourceElementList}" SelectedIndex="{Binding SelectedElementIndex}" DisplayMemberPath="DefaultLongLabel" TabIndex="1"/>
                     </DockPanel>
                     <DockPanel Margin="0,5,0,0">
                         <DockPanel DockPanel.Dock="Right" LastChildFill="False">

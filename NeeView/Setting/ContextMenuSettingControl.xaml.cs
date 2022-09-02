@@ -42,8 +42,10 @@ namespace NeeView.Setting
         }
 
 
-        //
+
         private ContextMenuSettingViewModel _vm;
+
+
 
         public ContextMenuSettingControl()
         {
@@ -57,17 +59,27 @@ namespace NeeView.Setting
             this.CommandBindings.Add(new CommandBinding(RenameCommand, Rename_Exec, Rename_CanExec));
             this.CommandBindings.Add(new CommandBinding(MoveUpCommand, MoveUp_Exec, SelectedItem_CanExec));
             this.CommandBindings.Add(new CommandBinding(MoveDownCommand, MoveDown_Exec, SelectedItem_CanExec));
+
+            this.IsVisibleChanged += ContextMenuSettingControl_IsVisibleChanged;
         }
+
+
 
         private void Initialize()
         {
             if (this.ContextMenuSetting != null)
             {
                 _vm.Initialize(ContextMenuSetting);
-                this.SourceComboBox.SelectedIndex = 0;
             }
         }
 
+        private void ContextMenuSettingControl_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            if (this.IsVisible)
+            {
+                _vm.UpdateSource();
+            }
+        }
 
         private void Add_Exec(object? sender, ExecutedRoutedEventArgs e)
         {

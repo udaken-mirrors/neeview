@@ -34,6 +34,11 @@ namespace NeeView
         public string Path => _path;
 
 
+        public static bool IsScriptCommandName(string name)
+        {
+            return name.StartsWith(Prefix);
+        }
+
         public static string PathToScriptCommandName(string path)
         {
             return Prefix + LoosePath.GetFileNameWithoutExtension(path);
