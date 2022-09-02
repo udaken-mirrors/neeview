@@ -297,9 +297,11 @@ namespace NeeView
 
         private void RenameQuickAccess(QuickAccessNode item)
         {
-            var treetView = this.TreeView;
-            var treeViewItem = VisualTreeUtility.FindContainer<TreeViewItem>(treetView, item);
+            var treeViewItem = VisualTreeUtility.FindContainer<TreeViewItem>(this.TreeView, item);
             if (treeViewItem is null) return;
+
+            treeViewItem.BringIntoView();
+            this.TreeView.UpdateLayout();
 
             var textBlock = VisualTreeUtility.FindVisualChild<TextBlock>(treeViewItem, "FileNameTextBlock");
             if (textBlock is null) return;
@@ -325,9 +327,11 @@ namespace NeeView
         {
             if (item is RootBookmarkFolderNode) return;
 
-            var treetView = this.TreeView;
-            var treeViewItem = VisualTreeUtility.FindContainer<TreeViewItem>(treetView, item);
+            var treeViewItem = VisualTreeUtility.FindContainer<TreeViewItem>(this.TreeView, item);
             if (treeViewItem is null) return;
+
+            treeViewItem.BringIntoView();
+            this.TreeView.UpdateLayout();
 
             var textBlock = VisualTreeUtility.FindVisualChild<TextBlock>(treeViewItem, "FileNameTextBlock");
             if (textBlock is null) return;
