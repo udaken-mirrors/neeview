@@ -27,6 +27,7 @@ namespace NeeView
 
         private SaveData()
         {
+            App.Current.CriticalError += (s, e) => DisableSave();
         }
 
         public const string UserSettingFileName = "UserSetting.json";
@@ -49,8 +50,13 @@ namespace NeeView
         public string HistoryFilePath => Config.Current.History.HistoryFilePath;
         public string BookmarkFilePath => Config.Current.Bookmark.BookmarkFilePath;
 
-        public bool IsEnableSave { get; set; } = true;
+        public bool IsEnableSave { get; private set; } = true;
 
+
+        public void DisableSave()
+        {
+            IsEnableSave = false;
+        }
 
         #region Load
 

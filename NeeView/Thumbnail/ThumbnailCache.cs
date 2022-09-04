@@ -84,6 +84,7 @@ namespace NeeView
         private Dictionary<string, ThumbnailCacheHeader> _updateQueue;
         private DelayAction _delaySaveQueue;
         private object _lockSaveQueue = new object();
+        private bool _isEnabled = true;
 
 
         private ThumbnailCache()
@@ -91,6 +92,13 @@ namespace NeeView
             _saveQueue = new Dictionary<string, ThumbnailCacheItem>();
             _updateQueue = new Dictionary<string, ThumbnailCacheHeader>();
             _delaySaveQueue = new DelayAction(App.Current.Dispatcher, TimeSpan.FromSeconds(0.5), SaveQueue, TimeSpan.FromSeconds(2.0));
+
+            App.Current.CriticalError += (s, e) => Disable();
+        }
+
+        private void Current_CriticalError(object? sender, EventArgs e)
+        {
+            throw new NotImplementedException();
         }
 
 
@@ -102,8 +110,16 @@ namespace NeeView
         /// <summary>
         /// キャッシュ有効フラグ
         /// </summary>
-        public bool IsEnabled => Config.Current.Thumbnail.IsCacheEnabled;
+        private bool IsEnabled => Config.Current.Thumbnail.IsCacheEnabled && _isEnabled;
 
+
+        /// <summary>
+        /// 機能停止
+        /// </summary>
+        public void Disable()
+        {
+            _isEnabled = false;
+        }
 
         /// <summary>
         /// DBファイルサイズを取得

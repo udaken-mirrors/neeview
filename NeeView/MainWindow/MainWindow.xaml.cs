@@ -581,7 +581,6 @@ namespace NeeView
             CompositionTarget.Rendering -= OnRendering;
             
             // これApp.xaml.csでも処理してるぞ？
-            App.Current.DisableUnhandledException();
             ApplicationDisposer.Current.Dispose();
 
             // タイマー停止

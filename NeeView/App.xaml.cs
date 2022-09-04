@@ -307,9 +307,6 @@ namespace NeeView
 
             try
             {
-                DisableUnhandledException();
-                DisableExceptionDialog();
-
                 ApplicationDisposer.Current.Dispose();
 
                 // 設定保存
@@ -336,7 +333,7 @@ namespace NeeView
         /// </summary>
         public void ShutdownWithoutSave()
         {
-            SaveData.Current.IsEnableSave = false;
+            SaveData.Current.DisableSave();
             Shutdown();
         }
     }

@@ -145,7 +145,7 @@ namespace NeeView
             Environment.LocalApplicationDataRemoved +=
                 (s, e) =>
                 {
-                    SaveData.Current.IsEnableSave = false; // 保存禁止
+                    SaveData.Current.DisableSave(); // 保存禁止
                     App.Current.MainWindow.Close();
                 };
 
