@@ -121,7 +121,7 @@ namespace NeeView
         /// <summary>
         /// キャッシュを使用してサムネイル生成を試みる
         /// </summary>
-        internal void Initialize(ArchiveEntry entry, string? appendix)
+        internal async Task InitializeAsync(ArchiveEntry entry, string? appendix, CancellationToken token)
         {
             if (IsValid || !IsCacheEnabled) return;
 
@@ -136,7 +136,7 @@ namespace NeeView
             var length = entry.IsDirectory ? entry.LastWriteTime.ToBinary() : entry.Length;
 
             _header = new ThumbnailCacheHeader(entry.SystemPath, length, appendix, Config.Current.Thumbnail.GetThumbnailImageGenerateHash());
-            var image = ThumbnailCache.Current.Load(_header);
+            var image = await ThumbnailCache.Current.LoadAsync(_header, token);
             ////Debug.WriteLine($"ThumbnailCache.Load: {_header.Key}: {(image == null ? "Miss" : "Hit!")}");
             Image = image;
         }

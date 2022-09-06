@@ -197,10 +197,10 @@ namespace NeeView
         /// </summary>
         public virtual async Task LoadThumbnailAsync(CancellationToken token)
         {
-            _content.Thumbnail.Initialize(_content.Entry, null);
-
-            if (_content.Thumbnail.IsValid) return;
             token.ThrowIfCancellationRequested();
+            
+            await _content.Thumbnail.InitializeAsync(_content.Entry, null, token);
+            if (_content.Thumbnail.IsValid) return;
 
             var source = LoadPictureSource(token);
 
@@ -224,8 +224,6 @@ namespace NeeView
 
             token.ThrowIfCancellationRequested();
             _content.Thumbnail.Initialize(thumbnailRaw);
-
-            await Task.CompletedTask;
         }
     }
 

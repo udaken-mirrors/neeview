@@ -81,7 +81,7 @@ namespace NeeView
 
             if (isLoadCache)
             {
-                _content.Thumbnail.Initialize(_content.Entry, null);
+                await _content.Thumbnail.InitializeAsync(_content.Entry, null, token);
                 if (_content.Thumbnail.IsValid) return;
             }
 

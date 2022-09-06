@@ -552,6 +552,9 @@ namespace NeeView
         {
             _vm.IsClosing = true;
 
+            // レンダリングイベント購読停止
+            CompositionTarget.Rendering -= OnRendering;
+
             // コマンド停止
             RoutedCommandTable.Current.Dispose();
 
@@ -578,14 +581,6 @@ namespace NeeView
 
         private void MainWindow_Closed(object sender, EventArgs e)
         {
-            CompositionTarget.Rendering -= OnRendering;
-            
-            // これApp.xaml.csでも処理してるぞ？
-            ApplicationDisposer.Current.Dispose();
-
-            // タイマー停止
-            ////_nonActiveTimer.Stop();
-
             Debug.WriteLine("Window.Closed done.");
         }
 

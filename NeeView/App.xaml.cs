@@ -307,6 +307,10 @@ namespace NeeView
 
             try
             {
+                // キャッシュDBのクリーンナップ
+                ThumbnailCache.Current.Cleanup();
+
+                // 各種Dispose
                 ApplicationDisposer.Current.Dispose();
 
                 // 設定保存
