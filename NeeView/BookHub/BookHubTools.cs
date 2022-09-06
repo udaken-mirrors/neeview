@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace NeeView
 {
@@ -72,6 +73,58 @@ namespace NeeView
         {
             var memento = BookHistoryCollection.Current.GetFolderMemento(query.SimplePath);
             return memento.IsFolderRecursive;
+        }
+
+        /// <summary>
+        /// 指定パスのブックならば閉じる
+        /// </summary>
+        /// <param name="path">パス</param>
+        /// <returns>閉じたなら true</returns>
+        public static async Task<bool> CloseBookAsync(string path)
+        {
+            return await CloseBookAsync(new List<string>() { path });
+        }
+
+        /// <summary>
+        /// 指定パスのブックならば閉じる
+        /// </summary>
+        /// <param name="paths">パス候補</param>
+        /// <returns>閉じたなら true</returns>
+        public static async Task<bool> CloseBookAsync(IEnumerable<string> paths)
+        {
+            bool isClosed;
+            var bookAddress = BookHub.Current.Address;
+            if (bookAddress != null && paths.Contains(bookAddress))
+            {
+                // 本を閉じる
+                await BookHub.Current.RequestUnload(null, false).WaitAsync();
+                isClosed = true;
+            }
+            else
+            {
+                isClosed = false;
+            }
+
+            return isClosed;
+        }
+
+        /// <summary>
+        /// 本を開きなおす。Renames処理で使用する
+        /// </summary>
+        /// <param name="path">開くパス</param>
+        /// <param name="oldPath">古いパス</param>
+        public static void RestoreBook(string path, string oldPath)
+        {
+            if (path is null) return;
+
+            // 履歴を新しい名前に変更
+            if (oldPath != null)
+            {
+                BookMementoCollection.Current.Rename(oldPath, path);
+            }
+
+            // 本を開く
+            BookHub.Current.RequestLoad(null, path, null, BookLoadOption.Resume | BookLoadOption.IsBook, false);
         }
     }
 }

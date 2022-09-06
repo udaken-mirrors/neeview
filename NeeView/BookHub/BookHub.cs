@@ -437,7 +437,7 @@ namespace NeeView
         /// </summary>
         /// <param name="isClearViewContent"></param>
         /// <returns></returns>
-        public BookHubCommandUnload RequestUnload(object sender, bool isClearViewContent, string? message = null)
+        public BookHubCommandUnload RequestUnload(object? sender, bool isClearViewContent, string? message = null)
         {
             ThrowIfDisposed();
 

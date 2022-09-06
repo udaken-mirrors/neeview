@@ -291,7 +291,7 @@ namespace NeeView
         {
             if (!CanDelete()) return;
 
-            bool isSuccessed = await FileIO.Current.RemoveFileAsync(SelectedItem, Properties.Resources.Playlist_DeleteDialog_Title, null);
+            bool isSuccessed = await FileIO.RemoveFileAsync(SelectedItem, Properties.Resources.Playlist_DeleteDialog_Title, null);
             if (isSuccessed)
             {
                 SelectedItem = DefaultPlaylist;

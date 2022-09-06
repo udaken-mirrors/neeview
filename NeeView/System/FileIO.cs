@@ -1,5 +1,4 @@
 ﻿using NeeView.IO;
-using NeeLaboratory.Linq;
 using NeeView.Properties;
 using System;
 using System.Collections.Generic;
@@ -9,21 +8,17 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Interop;
-using System.Windows.Media.Effects;
 
-// TODO: 要整備。表示やフロー等も含まれてしまっている。依存関係が強すぎる
 
 namespace NeeView
 {
     /// <summary>
     /// File I/O
     /// </summary>
-    public class FileIO
+    public static class FileIO
     {
         private class NativeMethods
         {
@@ -31,18 +26,15 @@ namespace NeeView
             public static extern bool MoveFile(string lpExistingFileName, string lpNewFileName);
         }
 
-        static FileIO() => Current = new FileIO();
-        public static FileIO Current { get; }
 
 
-
-
-        // ファイルかディレクトリの存在チェック
+        /// <summary>
+        /// ファイルかディレクトリの存在チェック
+        /// </summary>
         public static bool Exists(string path)
         {
             return File.Exists(path) || Directory.Exists(path);
         }
-
 
         /// <summary>
         /// パスの衝突を連番をつけて回避
@@ -161,82 +153,10 @@ namespace NeeView
             new FileInfo(filename).Delete();
         }
 
-
-        /// <summary>
-        /// ページ削除済？
-        /// </summary>
-        public bool IsPageRemoved(Page page)
-        {
-            if (page == null) return false;
-            if (!page.Entry.IsFileSystem) return false;
-
-            var path = page.GetFilePlace();
-            return !(File.Exists(path) || Directory.Exists(path));
-        }
-
-
-        /// <summary>
-        /// ページ削除可能？
-        /// </summary>
-        public bool CanRemovePage(Page page)
-        {
-            if (page == null) return false;
-            if (!page.Entry.IsFileSystem) return false;
-
-            var path = page.GetFilePlace();
-            return (File.Exists(path) || Directory.Exists(path));
-        }
-
-        /// <summary>
-        /// ページ削除可能？
-        /// </summary>
-        public bool CanRemovePage(List<Page> pages)
-        {
-            return pages.All(e => CanRemovePage(e));
-        }
-
-        /// <summary>
-        /// ページファイル削除
-        /// </summary>
-        public async Task<bool> RemovePageAsync(Page page)
-        {
-            if (page == null) return false;
-
-            var path = page.GetFilePlace();
-            if (path is null) return false;
-
-            var thumbnail = await CreatePageVisualAsync(page);
-            return await RemoveFileAsync(path, Resources.FileDeletePageDialog_Title, thumbnail);
-        }
-
-        /// <summary>
-        /// ページファイル削除
-        /// </summary>
-        public async Task<bool> RemovePageAsync(List<Page> pages)
-        {
-            if (pages == null || pages.Count == 0)
-            {
-                return false;
-            }
-
-            if (pages.Count == 1)
-            {
-                return await RemovePageAsync(pages.First());
-            }
-            else
-            {
-                var files = pages
-                    .Select(e => e.GetFilePlace())
-                    .WhereNotNull()
-                    .ToList();
-                return await RemoveFileAsync(files, Resources.FileDeletePageDialog_Title);
-            }
-        }
-
         /// <summary>
         /// ファイル削除
         /// </summary>
-        public async Task<bool> RemoveFileAsync(string path, string title, FrameworkElement? thumbnail)
+        public static async Task<bool> RemoveFileAsync(string path, string title, FrameworkElement? thumbnail)
         {
             if (Config.Current.System.IsRemoveConfirmed)
             {
@@ -253,7 +173,7 @@ namespace NeeView
         /// <summary>
         /// ファイル削除
         /// </summary>
-        public async Task<bool> RemoveFileAsync(List<string> paths, string title)
+        public static async Task<bool> RemoveFileAsync(List<string> paths, string title)
         {
             if (paths is null || !paths.Any())
             {
@@ -276,30 +196,9 @@ namespace NeeView
         }
 
         /// <summary>
-        /// ページからダイアログ用サムネイル作成
-        /// </summary>
-        private async Task<Image> CreatePageVisualAsync(Page page)
-        {
-            var imageSource = await page.LoadThumbnailAsync(CancellationToken.None);
-
-            var image = new Image();
-            image.Source = imageSource;
-            image.Effect = new DropShadowEffect()
-            {
-                Opacity = 0.5,
-                ShadowDepth = 2,
-                RenderingBias = RenderingBias.Quality
-            };
-            image.MaxWidth = 96;
-            image.MaxHeight = 96;
-
-            return image;
-        }
-
-        /// <summary>
         /// ファイルからダイアログ用サムネイル作成
         /// </summary>
-        private Image CreateFileVisual(string path)
+        private static Image CreateFileVisual(string path)
         {
             return new Image
             {
@@ -313,7 +212,7 @@ namespace NeeView
         /// <summary>
         /// 1ファイル用確認ダイアログコンテンツ
         /// </summary>
-        private FrameworkElement CreateRemoveDialogContent(string path, FrameworkElement? thumbnail)
+        private static FrameworkElement CreateRemoveDialogContent(string path, FrameworkElement? thumbnail)
         {
             var dockPanel = new DockPanel();
 
@@ -341,23 +240,23 @@ namespace NeeView
             return dockPanel;
         }
 
-        private string GetRemoveDialogTitle(string path)
+        private static string GetRemoveDialogTitle(string path)
         {
             return string.Format(Resources.FileDeleteDialog_Title, GetRemoveFilesTypeName(path));
         }
 
-        private string GetRemoveDialogTitle(List<string> paths)
+        private static string GetRemoveDialogTitle(List<string> paths)
         {
             return string.Format(Resources.FileDeleteDialog_Title, GetRemoveFilesTypeName(paths));
         }
 
-        private string GetRemoveFilesTypeName(string path)
+        private static string GetRemoveFilesTypeName(string path)
         {
             bool isDirectory = System.IO.Directory.Exists(path);
             return isDirectory ? Resources.Word_Folder : Resources.Word_File;
         }
 
-        private string GetRemoveFilesTypeName(List<string> paths)
+        private static string GetRemoveFilesTypeName(List<string> paths)
         {
             if (paths.Count == 1)
             {
@@ -371,7 +270,7 @@ namespace NeeView
         /// <summary>
         /// 複数ファイル用確認ダイアログコンテンツ
         /// </summary>
-        private FrameworkElement CreateRemoveDialogContent(List<string> paths)
+        private static FrameworkElement CreateRemoveDialogContent(List<string> paths)
         {
             var message = new TextBlock();
             message.Text = string.Format(Resources.FileDeleteMultiDialog_Message, paths.Count);
@@ -384,7 +283,7 @@ namespace NeeView
         /// <summary>
         /// 削除確認
         /// </summary>
-        private bool ConfirmRemove(FrameworkElement content, string title)
+        private static bool ConfirmRemove(FrameworkElement content, string title)
         {
             var dialog = new MessageDialog(content, title);
             dialog.Commands.Add(UICommands.Delete);
@@ -397,17 +296,15 @@ namespace NeeView
         /// <summary>
         /// 削除メイン
         /// </summary>
-        private async Task<bool> RemoveCoreAsync(List<string> paths)
+        private static async Task<bool> RemoveCoreAsync(List<string> paths)
         {
             try
             {
                 // 開いている本であるならば閉じる
-                var bookAddress = BookHub.Current.Address;
-                if (bookAddress != null && paths.Contains(bookAddress))
-                {
-                    await BookHub.Current.RequestUnload(this, true).WaitAsync();
-                    await ArchiverManager.Current.UnlockAllArchivesAsync();
-                }
+                await BookHubTools.CloseBookAsync(paths);
+
+                // 全てのファイルロックをはずす
+                await ArchiverManager.Current.UnlockAllArchivesAsync();
 
                 ShellFileOperation.Delete(Application.Current.MainWindow, paths, Config.Current.System.IsRemoveWantNukeWarning);
                 return true;
@@ -429,27 +326,23 @@ namespace NeeView
         #region Rename
 
         /// <summary>
-        /// Rename用変更前ファイル名を生成
-        /// </summary>
-        public string CreateRenameSrc(FolderItem file)
-        {
-            return file.TargetPath.SimplePath;
-        }
-
-        /// <summary>
         /// Rename用変更後ファイル名を生成
         /// </summary>
-        public string? CreateRenameDst(FolderItem file, string newName)
+        public static string? CreateRenameDst(string sourcePath, string newName, bool showConfirmDialog)
         {
-            if (newName is null) return null;
+            if (sourcePath is null) throw new ArgumentNullException(nameof(sourcePath));
+            if (newName is null) throw new ArgumentNullException(nameof(newName));
 
             newName = newName.Trim().TrimEnd(' ', '.');
 
             // ファイル名に使用できない
             if (string.IsNullOrWhiteSpace(newName))
             {
-                var dialog = new MessageDialog(Resources.FileRenameWrongDialog_Message, Resources.FileRenameErrorDialog_Title);
-                dialog.ShowDialog();
+                if (showConfirmDialog)
+                {
+                    var dialog = new MessageDialog(Resources.FileRenameWrongDialog_Message, Resources.FileRenameErrorDialog_Title);
+                    dialog.ShowDialog();
+                }
                 return null;
             }
 
@@ -458,11 +351,12 @@ namespace NeeView
             int invalidCharsIndex = newName.IndexOfAny(invalidChars);
             if (invalidCharsIndex >= 0)
             {
-                var invalids = string.Join(" ", newName.Where(e => invalidChars.Contains(e)).Distinct());
-
-                var dialog = new MessageDialog($"{Resources.FileRenameInvalidDialog_Message}\n\n{invalids}", Resources.FileRenameErrorDialog_Title);
-                dialog.ShowDialog();
-
+                if (showConfirmDialog)
+                {
+                    var invalids = string.Join(" ", newName.Where(e => invalidChars.Contains(e)).Distinct());
+                    var dialog = new MessageDialog($"{Resources.FileRenameInvalidDialog_Message}\n\n{invalids}", Resources.FileRenameErrorDialog_Title);
+                    dialog.ShowDialog();
+                }
                 return null;
             }
 
@@ -470,12 +364,15 @@ namespace NeeView
             var match = new Regex(@"^(CON|PRN|AUX|NUL|COM[0-9]|LPT[0-9])(\.|$)", RegexOptions.IgnoreCase).Match(newName);
             if (match.Success)
             {
-                var dialog = new MessageDialog($"{Resources.FileRenameWrongDeviceDialog_Message}\n\n{match.Groups[1].Value.ToUpper()}", Resources.FileRenameErrorDialog_Title);
-                dialog.ShowDialog();
+                if (showConfirmDialog)
+                {
+                    var dialog = new MessageDialog($"{Resources.FileRenameWrongDeviceDialog_Message}\n\n{match.Groups[1].Value.ToUpper()}", Resources.FileRenameErrorDialog_Title);
+                    dialog.ShowDialog();
+                }
                 return null;
             }
 
-            string src = file.TargetPath.SimplePath;
+            string src = sourcePath;
             string folder = System.IO.Path.GetDirectoryName(src) ?? throw new InvalidOperationException("Cannot get parent directory");
             string dst = System.IO.Path.Combine(folder, newName);
 
@@ -483,19 +380,22 @@ namespace NeeView
             if (src == dst) return null;
 
             // 拡張子変更確認
-            if (!file.IsDirectory)
+            if (!Directory.Exists(sourcePath))
             {
                 var srcExt = System.IO.Path.GetExtension(src);
                 var dstExt = System.IO.Path.GetExtension(dst);
                 if (string.Compare(srcExt, dstExt, true) != 0)
                 {
-                    var dialog = new MessageDialog(Resources.FileRenameExtensionDialog_Message, Resources.FileRenameExtensionDialog_Title);
-                    dialog.Commands.Add(UICommands.Yes);
-                    dialog.Commands.Add(UICommands.No);
-                    var answer = dialog.ShowDialog();
-                    if (answer != UICommands.Yes)
+                    if (showConfirmDialog)
                     {
-                        return null;
+                        var dialog = new MessageDialog(Resources.FileRenameExtensionDialog_Message, Resources.FileRenameExtensionDialog_Title);
+                        dialog.Commands.Add(UICommands.Yes);
+                        dialog.Commands.Add(UICommands.No);
+                        var answer = dialog.ShowDialog();
+                        if (answer != UICommands.Yes)
+                        {
+                            return null;
+                        }
                     }
                 }
             }
@@ -522,13 +422,16 @@ namespace NeeView
                 while (System.IO.File.Exists(dst) || System.IO.Directory.Exists(dst));
 
                 // 確認
-                var dialog = new MessageDialog(string.Format(Resources.FileRenameConfrictDialog_Message, Path.GetFileName(dstBase), Path.GetFileName(dst)), Resources.FileRenameConfrictDialog_Title);
-                dialog.Commands.Add(new UICommand(Resources.Word_Rename));
-                dialog.Commands.Add(UICommands.Cancel);
-                var answer = dialog.ShowDialog();
-                if (answer != dialog.Commands[0])
+                if (showConfirmDialog)
                 {
-                    return null;
+                    var dialog = new MessageDialog(string.Format(Resources.FileRenameConfrictDialog_Message, Path.GetFileName(dstBase), Path.GetFileName(dst)), Resources.FileRenameConfrictDialog_Title);
+                    dialog.Commands.Add(new UICommand(Resources.Word_Rename));
+                    dialog.Commands.Add(UICommands.Cancel);
+                    var answer = dialog.ShowDialog();
+                    if (answer != dialog.Commands[0])
+                    {
+                        return null;
+                    }
                 }
             }
 
@@ -538,28 +441,20 @@ namespace NeeView
         /// <summary>
         /// ファイル名前変更。現在ブックにも反映させる
         /// </summary>
-        public async Task<bool> RenameAsync(string src, string dst)
+        public static async Task<bool> RenameAsync(string src, string dst)
         {
-            var _bookHub = BookHub.Current;
             int retryCount = 1;
+
+            // 現在の本ならば閉じる
+            var isBookClosed = await BookHubTools.CloseBookAsync(src);
+
+            // 全てのファイルロックをはずす
+            await ArchiverManager.Current.UnlockAllArchivesAsync();
 
         Retry:
 
             try
             {
-                bool isContinue = false;
-                int requestLoadCount = _bookHub.RequestLoadCount;
-
-                // 開いている本であるならば再び開くようにする
-                if (_bookHub.Address == src)
-                {
-                    isContinue = true;
-                    await _bookHub.RequestUnload(this, false).WaitAsync();
-                }
-
-                // 開いている本のロックをはずす
-                await ArchiverManager.Current.UnlockAllArchivesAsync();
-
                 // rename
                 try
                 {
@@ -579,25 +474,9 @@ namespace NeeView
                 catch (IOException) when (string.Compare(src, dst, true) == 0)
                 {
                     // 大文字小文字の違いだけである場合はWIN32APIで処理する
+                    // .NET6 では不要？
                     NativeMethods.MoveFile(src, dst);
                 }
-
-
-                try
-                {
-                    // 閉じた本を開き直す
-                    if (isContinue && requestLoadCount == _bookHub.RequestLoadCount)
-                    {
-                        RenameHistory(src, dst);
-                        _bookHub.RequestLoad(this, dst, null, BookLoadOption.Resume | BookLoadOption.IsBook, false);
-                    }
-                }
-                catch (Exception ex)
-                {
-                    Debug.WriteLine(ex.Message);
-                }
-
-                return true;
             }
             catch (Exception ex)
             {
@@ -623,49 +502,15 @@ namespace NeeView
                 }
             }
 
-        }
-
-        // 履歴上のファイル名変更
-        private void RenameHistory(string src, string dst)
-        {
-            BookMementoCollection.Current.Rename(src, dst);
-        }
-
-#endregion
-
-
-#region Dialogs
-
-        public class Win32Window : System.Windows.Forms.IWin32Window
-        {
-            public IntPtr Handle { get; private set; }
-
-            public Win32Window(Window window)
+            // 本を開き直す
+            if (isBookClosed)
             {
-                this.Handle = new WindowInteropHelper(window).Handle;
+                BookHubTools.RestoreBook(dst, src);
             }
+
+            return true;
         }
 
-
-        /// <summary>
-        /// フォルダー選択ダイアログ
-        /// </summary>
-        public static string? OpenFolderBrowserDialog(Window owner, string description)
-        {
-            var dialog = new System.Windows.Forms.FolderBrowserDialog();
-            dialog.Description = description;
-
-            var result = dialog.ShowDialog(new Win32Window(owner));
-            if (result == System.Windows.Forms.DialogResult.OK)
-            {
-                return dialog.SelectedPath;
-            }
-            else
-            {
-                return null;
-            }
-        }
-
-#endregion Dialogs
+        #endregion Rename
     }
 }

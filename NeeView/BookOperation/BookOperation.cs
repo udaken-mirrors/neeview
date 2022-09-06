@@ -418,7 +418,7 @@ namespace NeeView
         {
             if (page is null) return false;
 
-            return Config.Current.System.IsFileWriteAccessEnabled && FileIO.Current.CanRemovePage(page);
+            return Config.Current.System.IsFileWriteAccessEnabled && PageFileIO.CanRemovePage(page);
         }
 
         // 指定ページのファルを削除する
@@ -431,7 +431,7 @@ namespace NeeView
 
             if (CanDeleteFile(page))
             {
-                var isSuccess = await FileIO.Current.RemovePageAsync(page);
+                var isSuccess = await PageFileIO.RemovePageAsync(page);
                 if (isSuccess)
                 {
                     book.Control.RequestRemove(this, page);
@@ -451,7 +451,7 @@ namespace NeeView
                     return;
                 }
 
-                await FileIO.Current.RemovePageAsync(removes);
+                await PageFileIO.RemovePageAsync(removes);
                 ValidateRemoveFile(removes);
             }
         }
@@ -459,7 +459,7 @@ namespace NeeView
         // 消えたファイルのページを削除
         public void ValidateRemoveFile(IEnumerable<Page> pages)
         {
-            Book?.Control.RequestRemove(this, pages.Where(e => FileIO.Current.IsPageRemoved(e)).ToList());
+            Book?.Control.RequestRemove(this, pages.Where(e => PageFileIO.IsPageRemoved(e)).ToList());
         }
 
         #endregion
@@ -487,7 +487,7 @@ namespace NeeView
                 }
                 else
                 {
-                    await FileIO.Current.RemoveFileAsync(bookAddress, Resources.FileDeleteBookDialog_Title, null);
+                    await FileIO.RemoveFileAsync(bookAddress, Resources.FileDeleteBookDialog_Title, null);
                 }
             }
         }

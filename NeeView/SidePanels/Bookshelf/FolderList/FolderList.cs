@@ -1837,7 +1837,7 @@ namespace NeeView
                 }
             }
 
-            var removed = await FileIO.Current.RemoveFileAsync(items.Select(e => e.TargetPath.SimplePath).ToList(), Properties.Resources.FileDeleteBookDialog_Title);
+            var removed = await FileIO.RemoveFileAsync(items.Select(e => e.TargetPath.SimplePath).ToList(), Properties.Resources.FileDeleteBookDialog_Title);
             if (removed && _folderCollection != null)
             {
                 var removes = items.Where(e => !FileIO.Exists(e.TargetPath.SimplePath)).ToList();

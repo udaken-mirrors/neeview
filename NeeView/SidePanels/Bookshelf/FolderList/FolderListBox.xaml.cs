@@ -529,8 +529,8 @@ namespace NeeView
             var newName = item.IsHideExtension() ? name + System.IO.Path.GetExtension(item.Name) : name;
             //Debug.WriteLine($"{ev.OldValue} => {newName}");
 
-            var src = FileIO.Current.CreateRenameSrc(item);
-            var dst = FileIO.Current.CreateRenameDst(item, newName);
+            var src = item.TargetPath.SimplePath;
+            var dst = FileIO.CreateRenameDst(src, newName, true);
             if (dst is null) return;
 
             // 先に項目の名前変更反映
@@ -539,7 +539,7 @@ namespace NeeView
             // ファイル名変更処理は非同期で
             Task.Run(async () =>
             {
-                var isSuccess = await FileIO.Current.RenameAsync(src, dst);
+                var isSuccess = await FileIO.RenameAsync(src, dst);
                 if (!isSuccess)
                 {
                     // Renameに失敗した場合はもとに戻す

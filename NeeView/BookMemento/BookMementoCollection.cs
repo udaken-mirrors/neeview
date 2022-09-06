@@ -62,6 +62,7 @@ namespace NeeView
         internal void Rename(string src, string dst)
         {
             if (src == null || dst == null) return;
+            if (src == dst) return;
 
             var unit = Get(src);
             if (unit != null)
