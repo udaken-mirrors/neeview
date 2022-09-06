@@ -7,6 +7,11 @@ namespace NeeLaboratory.IO
     [DataContract]
     public class RemoteCommand
     {
+        public RemoteCommand()
+        {
+            Id = "";
+        }
+
         public RemoteCommand(string id)
         {
             Id = id;

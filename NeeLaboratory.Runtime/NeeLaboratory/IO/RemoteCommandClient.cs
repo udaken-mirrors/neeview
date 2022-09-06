@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO.Pipes;
 using System.Linq;
-using System.Runtime.Serialization;
+using System.Text.Json;
+using System.Threading;
 using System.Threading.Tasks;
-using System.Xml;
 
 namespace NeeLaboratory.IO
 {
@@ -22,13 +22,21 @@ namespace NeeLaboratory.IO
             _processName = processName;
         }
 
-
-        public async Task SendAsync(RemoteCommand command, RemoteCommandDelivery delivery)
+        public async Task SendAsync(RemoteCommand command, RemoteCommandDelivery delivery, CancellationToken token)
         {
             var processes = await CollectProcess(delivery);
             foreach (var process in processes)
             {
-                await SendAsync(RemoteCommandServer.GetPipetName(process), command);
+                token.ThrowIfCancellationRequested();
+                var pipeName = RemoteCommandServer.GetPipetName(process);
+                try
+                {
+                    await SendAsync(pipeName, command, 1000);
+                }
+                catch (TimeoutException ex)
+                {
+                    Debug.WriteLine($"RemoteClient.SendAsync: {pipeName}: {command.Id}: {ex.Message}");
+                }
             }
         }
 
@@ -65,16 +73,23 @@ namespace NeeLaboratory.IO
             });
         }
 
-        private async Task SendAsync(string pipeName, RemoteCommand command)
+        private async Task SendAsync(string pipeName, RemoteCommand command, int timeout)
         {
-            using (NamedPipeClientStream pipeClient = new NamedPipeClientStream(".", pipeName, PipeDirection.Out))
+            using var tokenSource = new CancellationTokenSource();
+            tokenSource.CancelAfter(timeout);
+
+            try
             {
-                await pipeClient.ConnectAsync(500);
-                using (var writer = XmlWriter.Create(pipeClient))
+                using var pipeClient = new NamedPipeClientStream(".", pipeName, PipeDirection.Out);
+                await pipeClient.ConnectAsync(tokenSource.Token);
+                if (pipeClient.IsConnected)
                 {
-                    var serializer = new DataContractSerializer(typeof(RemoteCommand));
-                    serializer.WriteObject(writer, command);
+                    await JsonSerializer.SerializeAsync(pipeClient, command, RemoteCommandServer.SerializerOptions, tokenSource.Token);
                 }
+            }
+            catch (OperationCanceledException ex)
+            {
+                throw new TimeoutException("Timeout send RemoteCommand.", ex);
             }
         }
     }

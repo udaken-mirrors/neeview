@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace NeeView
@@ -38,6 +39,12 @@ namespace NeeView
             ApplicationDisposer.Current.Add(this);
         }
 
+
+        [Conditional("DEBUG")]
+        public void StopServer()
+        {
+            _server.Stop();
+        }
 
         public void AddReciever(string ID, RemoteCommandReciever reciever)
         {
@@ -81,20 +88,23 @@ namespace NeeView
         {
             if (_disposedValue) return;
 
-            var async = SendAsync(command, delivery);
+            var async = SendAsync(command, delivery, CancellationToken.None);
         }
 
-        public async Task SendAsync(RemoteCommand command, RemoteCommandDelivery delivery)
+        public async Task SendAsync(RemoteCommand command, RemoteCommandDelivery delivery, CancellationToken token)
         {
             if (_disposedValue) return;
 
             try
             {
-                await _client.SendAsync(command, delivery);
+                await _client.SendAsync(command, delivery, token);
             }
-            catch(Exception ex)
+            catch (OperationCanceledException)
             {
-                // TODO: ここで例外を握りつぶすのはまずい
+            }
+            catch (Exception ex)
+            {
+                // TODO: ここで例外を握りつぶすのはどうなんだろう？
                 Debug.WriteLine(ex.Message);
             }
         }
@@ -114,7 +124,6 @@ namespace NeeView
             {
                 if (disposing)
                 {
-                    _server.Stop();
                     _server.Dispose();
                 }
 

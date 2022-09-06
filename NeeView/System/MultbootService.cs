@@ -89,7 +89,7 @@ namespace NeeView
             try
             {
                 ProcessActivator.AppActivate(_serverProcess);
-                await RemoteCommandService.Current.SendAsync(new RemoteCommand("LoadAs", files.ToArray()), new RemoteCommandDelivery(_serverProcess.Id));
+                await RemoteCommandService.Current.SendAsync(new RemoteCommand("LoadAs", files.ToArray()), new RemoteCommandDelivery(_serverProcess.Id), CancellationToken.None);
             }
             catch (Exception ex)
             {

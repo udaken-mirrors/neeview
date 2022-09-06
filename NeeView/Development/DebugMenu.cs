@@ -76,6 +76,10 @@ namespace NeeView
             item.Click += MenuItemDevExportColorsXaml_Click;
             collection.Add(item);
 
+            item = new MenuItem() { Header = "Stop RemoteServer" };
+            item.Click += MenuItemDevStopRemoteServer_Click;
+            collection.Add(item);
+
             item = new MenuItem() { Header = "GC" };
             item.Click += MenuItemDevGC_Click;
             collection.Add(item);
@@ -85,6 +89,13 @@ namespace NeeView
             collection.Add(item);
 
             return top;
+        }
+
+        // [開発用] RemoteServer停止
+        private void MenuItemDevStopRemoteServer_Click(object sender, RoutedEventArgs e)
+        {
+            RemoteCommandService.Current.StopServer();
+            MessageBox.Show("Stop RemoteServer");
         }
 
         // [開発用] Colors.xaml 出力

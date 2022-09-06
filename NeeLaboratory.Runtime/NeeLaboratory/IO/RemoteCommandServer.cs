@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO.Pipes;
-using System.Runtime.Serialization;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Xml;
 
 namespace NeeLaboratory.IO
 {
@@ -13,6 +12,9 @@ namespace NeeLaboratory.IO
     /// </summary>
     public class RemoteCommandServer : IDisposable
     {
+        public static JsonSerializerOptions SerializerOptions { get; } = new JsonSerializerOptions();
+
+
         private CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
 
 
@@ -28,13 +30,12 @@ namespace NeeLaboratory.IO
 
         public void Start()
         {
-            _cancellationTokenSource = new CancellationTokenSource();
             Task.Run(ReciverAsync);
         }
 
         public void Stop()
         {
-            _cancellationTokenSource?.Cancel();
+            _cancellationTokenSource.Cancel();
         }
 
         public static string GetPipetName(Process process)
@@ -50,18 +51,16 @@ namespace NeeLaboratory.IO
             {
                 try
                 {
-                    using (NamedPipeServerStream pipeServer = new NamedPipeServerStream(pipeName, PipeDirection.In))
+                    using var pipeServer = new NamedPipeServerStream(pipeName, PipeDirection.In);
+
+                    await pipeServer.WaitForConnectionAsync(_cancellationTokenSource.Token);
+                    if (pipeServer.IsConnected)
                     {
-                        await pipeServer.WaitForConnectionAsync(_cancellationTokenSource.Token);
-                        using (var reader = XmlReader.Create(pipeServer))
+                        var command = await JsonSerializer.DeserializeAsync<RemoteCommand>(pipeServer, RemoteCommandServer.SerializerOptions, _cancellationTokenSource.Token);
+                        if (command != null && Called != null)
                         {
-                            var serializer = new DataContractSerializer(typeof(RemoteCommand));
-                            var command = serializer.ReadObject(reader) as RemoteCommand;
-                            if (command != null && Called != null)
-                            {
-                                ////Debug.WriteLine($"Recieve: {command.ID}({string.Join(",", command.Args)})");
-                                Called(this, new RemoteCommandEventArgs(command));
-                            }
+                            ////Debug.WriteLine($"Recieve: {command.ID}({string.Join(",", command.Args)})");
+                            Called(this, new RemoteCommandEventArgs(command));
                         }
                     }
                 }
@@ -71,7 +70,8 @@ namespace NeeLaboratory.IO
                 }
                 catch (Exception ex)
                 {
-                    Debug.WriteLine(ex.Message);
+                    // 例外をここで潰してしまうのはどうなんだろう？
+                    Debug.WriteLine($"Remote Server: {ex.Message}");
                 }
             }
 
@@ -87,11 +87,8 @@ namespace NeeLaboratory.IO
             {
                 if (disposing)
                 {
-                    Stop();
-                    if (_cancellationTokenSource != null)
-                    {
-                        _cancellationTokenSource.Dispose();
-                    }
+                    _cancellationTokenSource.Cancel();
+                    _cancellationTokenSource.Dispose();
                 }
 
                 _disposedValue = true;
