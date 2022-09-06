@@ -150,6 +150,17 @@ namespace NeeView
         }
 
         /// <summary>
+        /// DB掃除 (とても重い)
+        /// </summary>
+        internal void Vacuum()
+        {
+            if (_disposedValue) return;
+            if (!IsEnabled) return;
+
+            Open()?.Vacuum();
+        }
+
+        /// <summary>
         /// 古いサムネイルを削除
         /// </summary>
         /// <param name=""></param>

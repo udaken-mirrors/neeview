@@ -16,11 +16,11 @@ namespace NeeView
 
         public ThumbnailCacheConnection(string path)
         {
-            _connection = new SQLiteConnection($"Data Source={path}");
-            _connection.Open();
-
             try
             {
+                _connection = new SQLiteConnection($"Data Source={path}");
+                _connection.Open();
+
                 InitializePragma();
                 CreatePropertyTable();
 
@@ -35,32 +35,46 @@ namespace NeeView
             }
             catch
             {
-                _connection.Close();
+                _connection?.Close();
+                _connection?.Dispose();
+                _connection = null!;
                 throw;
             }
         }
 
 
-
         [Conditional("DEBUG")]
-        private void _WriteLine(string format, params object[] args)
+        private static void _WriteLine(string format, params object[] args)
         {
             //Debug.WriteLine(_GetWriteLinePrefix() + format, args);
         }
 
-        private string _GetWriteLinePrefix()
+        private static string _GetWriteLinePrefix()
         {
             var tid = Thread.CurrentThread.ManagedThreadId;
             return $"[TC:{tid}] ";
         }
 
 
+
+        /// <summary>
+        /// VACUUM
+        /// </summary>
+        internal void Vacuum()
+        {
+            using (SQLiteCommand command = _connection.CreateCommand())
+            {
+                command.CommandText = "VACUUM";
+                command.ExecuteNonQuery();
+            }
+        }
+
         /// <summary>
         /// フォーマットチェック
         /// </summary>
         private bool IsSupportFormat()
         {
-            var format = LoadProperty(_connection, "format");
+            var format = LoadProperty("format");
 
             var result = format == null || format == _format;
             _WriteLine($"Format: {format}: {result}");
@@ -74,8 +88,6 @@ namespace NeeView
         /// </summary>
         private void InitializePragma()
         {
-            if (_connection is null) return;
-
             using (SQLiteCommand command = _connection.CreateCommand())
             {
                 command.CommandText = "PRAGMA auto_vacuum = full";
@@ -88,8 +100,6 @@ namespace NeeView
         /// </summary>
         private void CreatePropertyTable()
         {
-            if (_connection is null) return;
-
             using (SQLiteCommand command = _connection.CreateCommand())
             {
                 // database property
@@ -109,8 +119,6 @@ namespace NeeView
         /// </summary>
         private void CreateThumbsTable()
         {
-            if (_connection is null) return;
-
             using (SQLiteCommand command = _connection.CreateCommand())
             {
                 // thumbnails 
@@ -133,7 +141,7 @@ namespace NeeView
         /// <param name="value"></param>
         internal void SaveProperty(string key, string value)
         {
-            if (_connection is null) return;
+            if (_disposedValue) return;
 
             using (SQLiteCommand command = _connection.CreateCommand())
             {
@@ -151,7 +159,7 @@ namespace NeeView
         /// <param name="value"></param>
         internal void SavePropertyIfNotExist(string key, string value)
         {
-            if (_connection is null) return;
+            if (_disposedValue) return;
 
             using (SQLiteCommand command = _connection.CreateCommand())
             {
@@ -167,11 +175,11 @@ namespace NeeView
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
-        internal string? LoadProperty(SQLiteConnection connection, string key)
+        internal string? LoadProperty(string key)
         {
-            if (connection is null) return null;
+            if (_disposedValue) return null;
 
-            using (SQLiteCommand command = connection.CreateCommand())
+            using (SQLiteCommand command = _connection.CreateCommand())
             {
                 command.CommandText = "SELECT value FROM property WHERE key = @key";
                 command.Parameters.Add(new SQLiteParameter("@key", key));
@@ -195,6 +203,8 @@ namespace NeeView
         /// <param name=""></param>
         internal void Delete(TimeSpan limitTime)
         {
+            if (_disposedValue) return;
+
             var limitDateTime = DateTime.Now - limitTime;
             _WriteLine($"Delete: before {limitDateTime}");
 
@@ -216,6 +226,8 @@ namespace NeeView
         /// <param name="data"></param>
         internal void Save(ThumbnailCacheHeader header, byte[] data)
         {
+            if (_disposedValue) return;
+
             _WriteLine($"Save: {header.Key}");
 
             using (SQLiteCommand command = _connection.CreateCommand())
@@ -263,6 +275,8 @@ namespace NeeView
         /// <returns></returns>
         internal async Task<ThumbnailCacheRecord?> LoadAsync(ThumbnailCacheHeader header, CancellationToken token)
         {
+            if (_disposedValue) return null;
+
             var key = header.Key;
             var size = header.Size;
             var ghash = header.GenerateHash;
@@ -282,7 +296,7 @@ namespace NeeView
                         if (bytes is not null)
                         {
                             var dateTime = (reader["date"] as DateTime?) ?? DateTime.MinValue;
-                            
+
                             _WriteLine($"Load: o {header.Key}");
                             return new ThumbnailCacheRecord(bytes, dateTime);
                         }
@@ -302,6 +316,8 @@ namespace NeeView
         /// <param name="updateQueue">日付を更新するもの</param>
         public void SaveQueue(Dictionary<string, ThumbnailCacheItem> saveQueue, Dictionary<string, ThumbnailCacheHeader> updateQueue)
         {
+            if (_disposedValue) return;
+
             using (var transaction = _connection.BeginTransaction())
             {
                 using (SQLiteCommand command = _connection.CreateCommand())
