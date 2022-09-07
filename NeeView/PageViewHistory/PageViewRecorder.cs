@@ -117,22 +117,20 @@ namespace NeeView
         {
             if (_file is null) return;
 
-            try
+            using (ProcessLock.Lock())
             {
-                App.Current.SemaphoreWait();
-                var bytes = Encoding.UTF8.GetBytes(text);
-                _file.Seek(0L, SeekOrigin.End);
-                _file.Write(bytes, 0, bytes.Length);
-                _file.Flush();
-            }
-            catch (IOException err)
-            {
-                Debug.WriteLine("[Error] {0}", err.Message);
-                ToastService.Current.Show(new Toast(Resources.PageViewRecordWriteError_Message, "", ToastIcon.Error));
-            }
-            finally
-            {
-                App.Current.SemaphoreRelease();
+                try
+                {
+                    var bytes = Encoding.UTF8.GetBytes(text);
+                    _file.Seek(0L, SeekOrigin.End);
+                    _file.Write(bytes, 0, bytes.Length);
+                    _file.Flush();
+                }
+                catch (IOException err)
+                {
+                    Debug.WriteLine("[Error] {0}", err.Message);
+                    ToastService.Current.Show(new Toast(Resources.PageViewRecordWriteError_Message, "", ToastIcon.Error));
+                }
             }
         }
 

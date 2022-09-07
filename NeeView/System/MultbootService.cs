@@ -18,10 +18,10 @@ namespace NeeView
         private Process? _serverProcess;
 
 
-        public MultbootService(bool isCreateNew)
+        public MultbootService()
         {
             _currentProcess = Process.GetCurrentProcess();
-            _serverProcess = isCreateNew ? null : GetServerProcess(_currentProcess);
+            _serverProcess = GetServerProcess(_currentProcess);
 
             RemoteCommandService.Current.AddReciever("LoadAs", LoadAs);
         }

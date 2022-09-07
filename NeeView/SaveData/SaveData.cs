@@ -73,10 +73,8 @@ namespace NeeView
 
             UserSetting? setting;
 
-            try
+            using (ProcessLock.Lock())
             {
-                App.Current.SemaphoreWait();
-
                 var filename = App.Current.Option.SettingFilename;
                 var extension = Path.GetExtension(filename)?.ToLower();
                 var filenameV1 = Path.ChangeExtension(filename, ".xml");
@@ -121,10 +119,6 @@ namespace NeeView
                     setting = new UserSetting();
                 }
             }
-            finally
-            {
-                App.Current.SemaphoreRelease();
-            }
 
             return setting ?? new UserSetting();
         }
@@ -138,10 +132,8 @@ namespace NeeView
         // 履歴読み込み
         public void LoadHistory()
         {
-            try
+            using (ProcessLock.Lock())
             {
-                App.Current.SemaphoreWait();
-
                 var filename = HistoryFilePath;
                 var extension = Path.GetExtension(filename).ToLower();
                 var filenameV1 = Path.ChangeExtension(filename, ".xml");
@@ -165,19 +157,13 @@ namespace NeeView
                     }
                 }
             }
-            finally
-            {
-                App.Current.SemaphoreRelease();
-            }
         }
 
         // ブックマーク読み込み
         public void LoadBookmark()
         {
-            try
+            using (ProcessLock.Lock())
             {
-                App.Current.SemaphoreWait();
-
                 var filename = BookmarkFilePath;
                 var extension = Path.GetExtension(filename).ToLower();
                 var filenameV1 = Path.ChangeExtension(filename, ".xml");
@@ -200,10 +186,6 @@ namespace NeeView
                         Config.Current.Bookmark.BookmarkFilePath = Path.ChangeExtension(BookmarkFilePath, ".json");
                     }
                 }
-            }
-            finally
-            {
-                App.Current.SemaphoreRelease();
             }
         }
 
@@ -284,18 +266,16 @@ namespace NeeView
         {
             if (!IsEnableSave) return;
 
-            try
+            using (ProcessLock.Lock())
             {
-                App.Current.SemaphoreWait();
-                SafetySave(UserSettingTools.Save, UserSettingFilePath, Config.Current.System.IsSettingBackup, _keepBackup);
-            }
-            catch
-            {
-            }
-            finally
-            {
-                _keepBackup = true;
-                App.Current.SemaphoreRelease();
+                try
+                {
+                    SafetySave(UserSettingTools.Save, UserSettingFilePath, Config.Current.System.IsSettingBackup, _keepBackup);
+                }
+                finally
+                {
+                    _keepBackup = true;
+                }
             }
 
             RemoveLegacyUserSetting();
@@ -317,10 +297,8 @@ namespace NeeView
         /// </summary>
         private void RemoveLegacyFile(string filename)
         {
-            try
+            using (ProcessLock.Lock())
             {
-                App.Current.SemaphoreWait();
-
                 Debug.WriteLine($"Remove: {filename}");
                 FileIO.RemoveFile(filename);
 
@@ -332,13 +310,6 @@ namespace NeeView
                     FileIO.RemoveFile(backup);
                 }
             }
-            catch
-            {
-            }
-            finally
-            {
-                App.Current.SemaphoreRelease();
-            }
         }
 
         // 履歴をファイルに保存
@@ -349,9 +320,8 @@ namespace NeeView
             // 現在の本を履歴に登録
             BookHub.Current.SaveBookMemento(); // TODO: タイミングに問題有り？
 
-            try
-            {
-                App.Current.SemaphoreWait();
+            using (ProcessLock.Lock())
+            { 
                 if (Config.Current.History.IsSaveHistory)
                 {
                     var bookHistoryMemento = BookHistoryCollection.Current.CreateMemento();
@@ -378,13 +348,6 @@ namespace NeeView
                     FileIO.RemoveFile(HistoryFilePath);
                 }
             }
-            catch
-            {
-            }
-            finally
-            {
-                App.Current.SemaphoreRelease();
-            }
 
             RemoveLegacyHistory();
         }
@@ -408,18 +371,10 @@ namespace NeeView
             if (!IsEnableSave) return;
             if (!Config.Current.Bookmark.IsSaveBookmark) return;
 
-            try
-            {
-                App.Current.SemaphoreWait();
+            using (ProcessLock.Lock())
+            { 
                 var bookmarkMemento = BookmarkCollection.Current.CreateMemento();
                 SafetySave(bookmarkMemento.Save, BookmarkFilePath, false, false);
-            }
-            catch
-            {
-            }
-            finally
-            {
-                App.Current.SemaphoreRelease();
             }
 
             RemoveLegacyBookmark();
@@ -444,17 +399,9 @@ namespace NeeView
             if (!IsEnableSave) return;
             if (Config.Current.Bookmark.IsSaveBookmark) return;
 
-            try
+            using (ProcessLock.Lock())
             {
-                App.Current.SemaphoreWait();
                 FileIO.RemoveFile(BookmarkFilePath);
-            }
-            catch
-            {
-            }
-            finally
-            {
-                App.Current.SemaphoreRelease();
             }
         }
 

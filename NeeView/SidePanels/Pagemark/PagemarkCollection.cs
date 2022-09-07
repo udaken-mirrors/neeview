@@ -426,9 +426,8 @@ namespace NeeView
         {
             if (filename is null) return default;
 
-            App.Current.SemaphoreWait();
-            try
-            {
+            using (ProcessLock.Lock())
+            { 
                 var extension = Path.GetExtension(filename).ToLower();
                 var filenameV1 = Path.ChangeExtension(filename, ".xml");
 
@@ -449,10 +448,6 @@ namespace NeeView
                 {
                     return default;
                 }
-            }
-            finally
-            {
-                App.Current.SemaphoreRelease();
             }
 
             PagemarkCollection.Memento? Load(Func<string, PagemarkCollection.Memento?> load, string path, LoadFailedDialog loadFailedDialog)

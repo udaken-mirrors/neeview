@@ -7,7 +7,6 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
@@ -39,15 +38,7 @@ namespace NeeView
         private bool _isTerminated;
         private int _tickBase = System.Environment.TickCount;
         private CommandLineOption? _option;
-
-
-        // 多重起動盛業
         private MultbootService? _multiBootService;
-
-        // プロセス間セマフォ
-        private const string _semaphoreLabel = "NeeView.s0001";
-        private Semaphore? _semaphore;
-
 
 
         // Properties
@@ -161,12 +152,8 @@ namespace NeeView
                 Option.IsNewWindow = SwitchOption.on;
             }
 
-            // プロセス間セマフォ取得
-            _semaphore = new Semaphore(1, 1, _semaphoreLabel, out bool isCreateNew);
-            Debug.WriteLine($"Process Semaphore isCreateNew: {isCreateNew}");
-
             // 多重起動サービス起動
-            _multiBootService = new MultbootService(isCreateNew);
+            _multiBootService = new MultbootService();
 
             // セカンドプロセス判定
             Environment.IsSecondProcess = _multiBootService.IsServerExists;
@@ -229,27 +216,6 @@ namespace NeeView
             }
         }
 
-
-        /// <summary>
-        /// Semaphore Wait
-        /// </summary>
-        public void SemaphoreWait()
-        {
-            // 10秒待っても取得できないときは例外
-            if (_semaphore?.WaitOne(1000 * 10) != true)
-            {
-                throw new IOException("Cannot sync with other NeeViews. There may be a problem with NeeView already running.");
-            }
-        }
-
-        /// <summary>
-        /// Semapnore Release
-        /// </summary>
-        public void SemaphoreRelease()
-        {
-            _semaphore?.Release();
-        }
-
         /// <summary>
         /// Show SplashScreen
         /// </summary>
@@ -307,14 +273,14 @@ namespace NeeView
 
             try
             {
-                // キャッシュDBのクリーンナップ
-                ThumbnailCache.Current.Cleanup();
-
                 // 各種Dispose
                 ApplicationDisposer.Current.Dispose();
 
                 // 設定保存
                 SaveDataSync.Current.SaveAll(false);
+
+                // キャッシュDBのクリーンナップ
+                ThumbnailCache.Current.Cleanup();
 
                 // キャッシュDBを閉じる
                 ThumbnailCache.Current.Dispose();
