@@ -51,7 +51,7 @@ namespace NeeView
             return builder.ToString();
         }
 
-        private StringBuilder AppendScriptReference(StringBuilder builder)
+        private static StringBuilder AppendScriptReference(StringBuilder builder)
         {
             builder.Append($"<h1 class=\"sub\">{ResourceService.GetString("@ScriptReference")}</h1>");
             builder.Append($"<p>{ResourceService.GetString("@ScriptReference.Summary")}</p>").AppendLine();
@@ -103,7 +103,7 @@ namespace NeeView
             return htmlBuilder.ToStringBuilder();
         }
 
-        private StringBuilder AppendConfigList(StringBuilder builder)
+        private static StringBuilder AppendConfigList(StringBuilder builder)
         {
             builder.Append($"<h1 class=\"sub\" id=\"ConfigList\">{Properties.Resources.Word_ConfigList}</h1>");
             builder.Append("<table class=\"table-slim table-topless\">");
@@ -196,7 +196,7 @@ namespace NeeView
         }
 
 
-        private StringBuilder AppendObsoleteList(StringBuilder builder)
+        private static StringBuilder AppendObsoleteList(StringBuilder builder)
         {
             builder.Append($"<h1 class=\"sub\" id=\"ObsoleteList\">{Properties.Resources.Word_ObsoleteList}</h1>");
 

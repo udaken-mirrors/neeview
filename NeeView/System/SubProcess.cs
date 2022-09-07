@@ -6,15 +6,15 @@ namespace NeeView
 {
     public class SubProcess : IDisposable
     {
-        private static ProcessJobObject _processJobObject;
+        private static readonly ProcessJobObject _processJobObject;
 
         static SubProcess()
         {
             _processJobObject = new ProcessJobObject();
         }
 
-        private string _filename;
-        private string _args;
+        private readonly string _filename;
+        private readonly string _args;
         private Process? _process;
 
         public SubProcess(string path, string args)

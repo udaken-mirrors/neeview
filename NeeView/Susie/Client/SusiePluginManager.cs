@@ -28,7 +28,7 @@ namespace NeeView
         public static SusiePluginManager Current { get; }
 
         private bool _isInitialized;
-        private SusiePluginRemoteClient _remote;
+        private readonly SusiePluginRemoteClient _remote;
         private SusiePluginClient? _client;
         private List<SusiePluginInfo> _unauthorizedPlugins;
         private ObservableCollection<SusiePluginInfo> _INPlugins;
@@ -77,12 +77,12 @@ namespace NeeView
         /// <summary>
         /// 対応画像ファイル拡張子
         /// </summary>
-        public FileTypeCollection ImageExtensions = new FileTypeCollection();
+        public FileTypeCollection ImageExtensions = new();
 
         /// <summary>
         /// 対応圧縮ファイル拡張子
         /// </summary>
-        public FileTypeCollection ArchiveExtensions = new FileTypeCollection();
+        public FileTypeCollection ArchiveExtensions = new();
 
 
 
@@ -307,16 +307,16 @@ namespace NeeView
 
             #region Obsolete
 
-            [Obsolete, DataMember(Name = "SpiFiles", EmitDefaultValue = false)]
+            [Obsolete("no used"), DataMember(Name = "SpiFiles", EmitDefaultValue = false)]
             public Dictionary<string, bool>? SpiFilesV1 { get; set; } // ver 33.0
 
-            [Obsolete, DataMember(Name = "SpiFilesV2", EmitDefaultValue = false)]
+            [Obsolete("no used"), DataMember(Name = "SpiFilesV2", EmitDefaultValue = false)]
             public Dictionary<string, SusiePluginSetting>? SpiFilesV2 { get; set; } // ver 34.0 
 
-            [Obsolete, DataMember(Name = "SusiePlugins", EmitDefaultValue = false)]
+            [Obsolete("no used"), DataMember(Name = "SusiePlugins", EmitDefaultValue = false)]
             public Dictionary<string, SusiePlugin.Memento>? SpiFilesV3 { get; set; } // ver 35.0
 
-            [Obsolete, DataMember(EmitDefaultValue = false), DefaultValue(true)]
+            [Obsolete("no used"), DataMember(EmitDefaultValue = false), DefaultValue(true)]
             public bool IsPluginCacheEnabled { get; set; }
 
             #endregion Obsolete
@@ -331,7 +331,7 @@ namespace NeeView
             [OnDeserialized]
             private void OnDeserialized(StreamingContext c)
             {
-#pragma warning disable CS0612
+#pragma warning disable CS0618
                 if (_Version < Environment.GenerateProductVersionNumber(33, 0, 0) && SpiFilesV1 != null)
                 {
                     SpiFilesV2 = SpiFilesV1.ToDictionary(e => e.Key, e => new SusiePluginSetting(e.Value, false));
@@ -349,7 +349,7 @@ namespace NeeView
                         .Select(e => e.Value.ToSusiePluginSetting(LoosePath.GetFileName(e.Key), IsPluginCacheEnabled))
                         .ToList();
                 }
-#pragma warning restore CS0612
+#pragma warning restore CS0618
             }
 
             public void RestoreConfig(Config config)

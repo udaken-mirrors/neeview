@@ -21,12 +21,8 @@ namespace NeeView
     /// </summary>
     public partial class PageListView : UserControl
     {
-        private PageListViewModel _vm;
+        private readonly PageListViewModel _vm;
 
-
-        //public PageListView()
-        //{
-        //}
 
         public PageListView(PageList model)
         {
@@ -112,16 +108,12 @@ namespace NeeView
             try
             {
                 var format = (PageNameFormat)value;
-                switch (format)
+                return format switch
                 {
-                    default:
-                    case PageNameFormat.Raw:
-                        return DefaultTextStyle;
-                    case PageNameFormat.Smart:
-                        return SmartTextStyle;
-                    case PageNameFormat.NameOnly:
-                        return NameOnlyTextStyle;
-                }
+                    PageNameFormat.Smart => SmartTextStyle,
+                    PageNameFormat.NameOnly => NameOnlyTextStyle,
+                    _ => DefaultTextStyle,
+                };
             }
             catch { }
 

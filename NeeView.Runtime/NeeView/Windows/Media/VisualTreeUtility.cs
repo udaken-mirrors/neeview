@@ -157,8 +157,7 @@ namespace NeeView.Windows.Media
             // parentの子を親として再帰検索
             foreach (var item in parent.Items)
             {
-                var child = parent.ItemContainerGenerator.ContainerFromItem(item) as ItemsControl;
-                if (child != null && child.Items.Count > 0)
+                if (parent.ItemContainerGenerator.ContainerFromItem(item) is ItemsControl child && child.Items.Count > 0)
                 {
                     var result = FindContainer<T>(child, childItem);
                     if (result != null)
@@ -207,7 +206,7 @@ namespace NeeView.Windows.Media
                 return null;
             }
 
-            if (!(element is T))
+            if (element is not T)
             {
                 element = GetParentElement<T>(element);
             }
@@ -254,7 +253,7 @@ namespace NeeView.Windows.Media
         public static T? FindSourceElement<T>(DependencyObject obj, DependencyObject? terminator = null)
             where T : class
         {
-            if (!(obj is Visual))
+            if (obj is not Visual)
             {
                 return null;
             }
@@ -282,7 +281,7 @@ namespace NeeView.Windows.Media
         public static T? GetParentElement<T>(DependencyObject obj)
             where T : class
         {
-            if (!(obj is Visual))
+            if (obj is not Visual)
             {
                 return null;
             }
@@ -374,8 +373,7 @@ namespace NeeView.Windows.Media
                 return null;
             }
 
-            var result = root as T;
-            if (result != null && (string.IsNullOrEmpty(name) || name.Equals(result.Name)))
+            if (root is T result && (string.IsNullOrEmpty(name) || name.Equals(result.Name)))
             {
                 return result;
             }
@@ -400,8 +398,7 @@ namespace NeeView.Windows.Media
                 return null;
             }
 
-            var result = root as T;
-            if (result != null)
+            if (root is T result)
             {
                 return new List<T>() { result };
             }

@@ -2,11 +2,10 @@
 {
     public class HistoryListPresenter
     {
-        private HistoryListView _historyListView;
-        private HistoryList _historyList;
-
+        private readonly HistoryListView _historyListView;
+        private readonly HistoryList _historyList;
+        private readonly HistoryListBoxViewModel _historyListBoxViewModel;
         private HistoryListBox? _historyListBox;
-        private HistoryListBoxViewModel _historyListBoxViewModel;
 
 
         public HistoryListPresenter(HistoryListView historyListView, HistoryList historyList)

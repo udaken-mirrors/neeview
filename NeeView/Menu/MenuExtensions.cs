@@ -16,12 +16,11 @@ namespace NeeView
         {
             if (control == null) return;
 
-            KeyGestureConverter kgc = new KeyGestureConverter();
-            KeyExGestureConverter kgxc = new KeyExGestureConverter();
+            var kgc = new KeyGestureConverter();
+            var kgxc = new KeyExGestureConverter();
             foreach (var item in control.Items.OfType<MenuItem>())
             {
-                var command = item.Command as RoutedCommand;
-                if (command != null)
+                if (item.Command is RoutedCommand command)
                 {
                     string text = "";
                     foreach (InputGesture gesture in command.InputGestures)

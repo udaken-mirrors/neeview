@@ -8,7 +8,7 @@ namespace NeeView
 {
     public class ConsoleHost : IConsoleHost 
     {
-        private Window _owner;
+        private readonly Window _owner;
         private JavascriptEngine _engine;
         private WordTree _wordTree;
 
@@ -45,7 +45,7 @@ namespace NeeView
             _wordTree = CreateWordTree(_engine);
         }
 
-        private JavascriptEngine CreateJavascriptEngine()
+        private static JavascriptEngine CreateJavascriptEngine()
         {
             var engine = new JavascriptEngine();
             engine.CurrentFolder = Config.Current.Script.ScriptFolder;
@@ -53,7 +53,7 @@ namespace NeeView
             return engine;
         }
 
-        private WordTree CreateWordTree(JavascriptEngine engine)
+        private static WordTree CreateWordTree(JavascriptEngine engine)
         {
             var wordTreeRoot = new WordNode()
             {

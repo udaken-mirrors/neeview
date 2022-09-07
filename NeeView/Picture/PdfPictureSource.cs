@@ -12,7 +12,7 @@ namespace NeeView
 {
     public class PdfPictureSource : PictureSource
     {
-        private PdfArchiver _pdfArchive;
+        private readonly PdfArchiver _pdfArchive;
 
         public PdfPictureSource(ArchiveEntry entry, PictureInfo? pictureInfo, PictureSourceCreateOptions createOptions) : base(entry, pictureInfo, createOptions)
         {
@@ -88,22 +88,19 @@ namespace NeeView
 
 
 
-        private BitmapEncoder CreateFormat(BitmapImageFormat format, int quality)
+        private static BitmapEncoder CreateFormat(BitmapImageFormat format, int quality)
         {
-            switch (format)
+            return format switch
             {
-                default:
-                case BitmapImageFormat.Jpeg:
-                    return new JpegBitmapEncoder() { QualityLevel = quality };
-                case BitmapImageFormat.Png:
-                    return new PngBitmapEncoder();
-            }
+                BitmapImageFormat.Png => new PngBitmapEncoder(),
+                _ => new JpegBitmapEncoder() { QualityLevel = quality },
+            };
         }
 
 
         public override byte[] CreateThumbnail(ThumbnailProfile profile, CancellationToken token)
         {
-            var size = profile.GetThumbnailSize(GetImageSize());
+            var size = ThumbnailProfile.GetThumbnailSize(GetImageSize());
             var setting = profile.CreateBitmapCreateSetting(true);
             return CreateImage(size, setting, Config.Current.Thumbnail.Format, Config.Current.Thumbnail.Quality, token);
         }

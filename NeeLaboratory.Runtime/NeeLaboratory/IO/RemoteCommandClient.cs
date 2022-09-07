@@ -14,7 +14,7 @@ namespace NeeLaboratory.IO
     /// </summary>
     public class RemoteCommandClient
     {
-        private string _processName;
+        private readonly string _processName;
 
 
         public RemoteCommandClient(string processName)
@@ -53,27 +53,18 @@ namespace NeeLaboratory.IO
                 var index = processes.FindIndex(e => e.Id == currentProcess.Id);
                 processes = processes.Skip(index).Concat(processes.Take(index)).Where(e => e.Id != currentProcess.Id).ToList();
 
-                switch (delivery.Type)
+                return delivery.Type switch
                 {
-                    case RemoteCommandDeliveryType.Custom:
-                        return processes.Where(p => p.Id == delivery.ProcessId).Take(1).ToList();
-
-                    case RemoteCommandDeliveryType.Lastest:
-                        return processes.OrderByDescending((p) => p.StartTime).Take(1).ToList();
-
-                    case RemoteCommandDeliveryType.Previous:
-                        return ((IEnumerable<Process>)processes).Reverse().Take(1).ToList();
-
-                    case RemoteCommandDeliveryType.Next:
-                        return processes.Take(1).ToList();
-
-                    default:
-                        return processes.ToList();
-                }
+                    RemoteCommandDeliveryType.Custom => processes.Where(p => p.Id == delivery.ProcessId).Take(1).ToList(),
+                    RemoteCommandDeliveryType.Lastest => processes.OrderByDescending((p) => p.StartTime).Take(1).ToList(),
+                    RemoteCommandDeliveryType.Previous => ((IEnumerable<Process>)processes).Reverse().Take(1).ToList(),
+                    RemoteCommandDeliveryType.Next => processes.Take(1).ToList(),
+                    _ => processes.ToList(),
+                };
             });
         }
 
-        private async Task SendAsync(string pipeName, RemoteCommand command, int timeout)
+        private static async Task SendAsync(string pipeName, RemoteCommand command, int timeout)
         {
             using var tokenSource = new CancellationTokenSource();
             tokenSource.CancelAfter(timeout);

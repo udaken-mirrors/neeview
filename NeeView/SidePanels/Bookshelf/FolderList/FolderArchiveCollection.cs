@@ -16,7 +16,7 @@ namespace NeeView
     {
         // Fields
 
-        private ArchiveEntryCollectionMode _mode;
+        private readonly ArchiveEntryCollectionMode _mode;
         private ArchiveEntryCollection? _collection;
 
 

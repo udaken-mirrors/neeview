@@ -13,13 +13,13 @@ namespace NeeView
         public static PageTitle Current { get; }
 
 
-        private string _defaultPageTitle = "";
+        private readonly string _defaultPageTitle = "";
         private string _title = "";
 
-        private BookHub _bookHub;
-        private MainViewComponent _mainViewComponent;
-        private TitleStringService _titleStringService;
-        private TitleString _titleString;
+        private readonly BookHub _bookHub;
+        private readonly MainViewComponent _mainViewComponent;
+        private readonly TitleStringService _titleStringService;
+        private readonly TitleString _titleString;
 
 
         public PageTitle()

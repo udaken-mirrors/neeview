@@ -1,0 +1,13 @@
+﻿[*.cs]
+
+# IDE0063: 単純な 'using' ステートメントを使用する
+csharp_prefer_simple_using_statement = false
+
+# IDE0017: オブジェクトの初期化を簡略化します
+dotnet_style_object_initializer = false
+
+# IDE0054: 複合代入を使用
+dotnet_style_prefer_compound_assignment = false
+
+# IDE0060: 未使用のパラメーターを削除します
+dotnet_code_quality_unused_parameters = non_public

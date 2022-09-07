@@ -12,7 +12,7 @@ namespace NeeView
     /// </summary>
     public class ArchiveEntryTree
     {
-        ArchiveEntryTreeNode _root;
+        private readonly ArchiveEntryTreeNode _root;
 
         public ArchiveEntryTree()
         {

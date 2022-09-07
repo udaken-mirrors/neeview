@@ -14,7 +14,7 @@ namespace NeeView
     {
         private AddressBar _model;
         private RelayCommand<KeyValuePair<int, QueryPath>>? _moveToHistory;
-        private DelayValue<bool> _isLoading;
+        private readonly DelayValue<bool> _isLoading;
 
 
         public AddressBarViewModel(AddressBar model)

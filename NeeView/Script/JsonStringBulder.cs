@@ -15,7 +15,7 @@ namespace NeeView
     {
         private static readonly int _limitDepth = 0;
 
-        private readonly IndentStringBuilder _builder = new IndentStringBuilder();
+        private readonly IndentStringBuilder _builder = new();
 
 
         public JsonStringBulder()
@@ -84,11 +84,11 @@ namespace NeeView
             }
             else if (source is PropertyMap propertyMap)
             {
-                return AppendDictionary(builder, propertyMap.Where(e => !(e.Value is PropertyMapObsolete)).ToDictionary(e => e.Key, e => propertyMap.GetValue(e.Value)), depth);
+                return AppendDictionary(builder, propertyMap.Where(e => e.Value is not PropertyMapObsolete).ToDictionary(e => e.Key, e => propertyMap.GetValue(e.Value)), depth);
             }
             else if (source is CommandAccessorMap commandMap)
             {
-                return AppendDictionary(builder, commandMap.Where(e => !(e.Value is ObsoleteCommandAccessor)).ToDictionary(e => e.Key, e => e.Value), depth);
+                return AppendDictionary(builder, commandMap.Where(e => e.Value is not ObsoleteCommandAccessor).ToDictionary(e => e.Key, e => e.Value), depth);
             }
             else if (type.IsClass && !IsDelegate(type))
             {
@@ -115,7 +115,7 @@ namespace NeeView
         }
 
 
-        private string JavaScriptStringEncode(string src)
+        private static string JavaScriptStringEncode(string src)
         {
             var builder = new StringBuilder();
             foreach(var c in src)
@@ -235,9 +235,9 @@ namespace NeeView
 
         private class CollectionSection
         {
-            private IndentStringBuilder _builder;
-            private char _openChar;
-            private char _closeChar;
+            private readonly IndentStringBuilder _builder;
+            private readonly char _openChar;
+            private readonly char _closeChar;
             private int _count;
 
             public CollectionSection(IndentStringBuilder builder, char openChar, char closeChar)

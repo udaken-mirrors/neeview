@@ -16,7 +16,7 @@ namespace NeeView.Susie.Server
     /// </summary>
     public class SusiePlugin : IDisposable
     {
-        private object _lock = new object();
+        private readonly object _lock = new();
         private SusiePluginApi? _module;
         private bool _isCacheEnabled = true;
         private FileExtensionCollection? _userExtensions;
@@ -29,7 +29,7 @@ namespace NeeView.Susie.Server
 
 
         // 一連の処理をロックするときに使用
-        public object GlobalLock = new object();
+        public object GlobalLock = new();
 
         // 有効/無効
         public bool IsEnabled { get; set; } = true;
@@ -62,15 +62,12 @@ namespace NeeView.Susie.Server
         {
             get
             {
-                switch (this.ApiVersion)
+                return this.ApiVersion switch
                 {
-                    default:
-                        return SusiePluginType.None;
-                    case "00IN":
-                        return SusiePluginType.Image;
-                    case "00AM":
-                        return SusiePluginType.Archive;
-                }
+                    "00IN" => SusiePluginType.Image,
+                    "00AM" => SusiePluginType.Archive,
+                    _ => SusiePluginType.None,
+                };
             }
         }
 
@@ -591,6 +588,7 @@ namespace NeeView.Susie.Server
         public void Dispose()
         {
             Dispose(true);
+            GC.SuppressFinalize(this);
         }
         #endregion
 
@@ -649,7 +647,7 @@ namespace NeeView.Susie.Server
 
                 if (source.StartsWith(system32dir, StringComparison.OrdinalIgnoreCase))
                 {
-                    path = Path.Combine(windir, "Sysnative") + "\\" + path.Substring(system32dir.Length);
+                    path = string.Concat(Path.Combine(windir, "Sysnative"), "\\", path.AsSpan(system32dir.Length));
                     return path;
 
                     // NOTE: System32、Sysnative は特殊なフォルダーのためか GetShortPathName が正常に動作しない
@@ -671,7 +669,7 @@ namespace NeeView.Susie.Server
             var path = GetLegacyPathName(fileName);
 
             var buff = new byte[2048];
-            using (FileStream fs = new FileStream(path, FileMode.Open, FileAccess.Read))
+            using (var fs = new FileStream(path, FileMode.Open, FileAccess.Read))
             {
                 fs.Read(buff, 0, 2048);
             }

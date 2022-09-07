@@ -16,33 +16,21 @@ namespace NeeView
         public CommandBinding CreateCommandBinding(RoutedCommand command, string? key = null)
         {
             key = key ?? command.Name;
-            switch (key)
+            return key switch
             {
-                case "OpenCommand":
-                    return new CommandBinding(command, Open_Exec, Open_CanExec);
-                case "OpenBookCommand":
-                    return new CommandBinding(command, OpenBook_Exec, OpenBook_CanExec);
-                case "OpenExplorerCommand":
-                    return new CommandBinding(command, OpenExplorer_Executed, OpenExplorer_CanExecute);
-                case "OpenExternalAppCommand":
-                    return new CommandBinding(command, OpenExternalApp_Executed, OpenExternalApp_CanExecute);
-                case "CopyCommand":
-                    return new CommandBinding(command, Copy_Exec, Copy_CanExec);
-                case "CopyToFolderCommand":
-                    return new CommandBinding(command, CopyToFolder_Execute, CopyToFolder_CanExecute);
-                case "MoveToFolderCommand":
-                    return new CommandBinding(command, MoveToFolder_Execute, MoveToFolder_CanExecute);
-                case "RemoveCommand":
-                    return new CommandBinding(command, Remove_Exec, Remove_CanExec);
-                case "OpenDestinationFolderCommand":
-                    return new CommandBinding(command, OpenDestinationFolderDialog_Execute);
-                case "OpenExternalAppDialogCommand":
-                    return new CommandBinding(command, OpenExternalAppDialog_Execute);
-                case "PlaylistMarkCommand":
-                    return new CommandBinding(command, PlaylistMark_Execute, PlaylistMark_CanExecute);
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(key));
-            }
+                "OpenCommand" => new CommandBinding(command, Open_Exec, Open_CanExec),
+                "OpenBookCommand" => new CommandBinding(command, OpenBook_Exec, OpenBook_CanExec),
+                "OpenExplorerCommand" => new CommandBinding(command, OpenExplorer_Executed, OpenExplorer_CanExecute),
+                "OpenExternalAppCommand" => new CommandBinding(command, OpenExternalApp_Executed, OpenExternalApp_CanExecute),
+                "CopyCommand" => new CommandBinding(command, Copy_Exec, Copy_CanExec),
+                "CopyToFolderCommand" => new CommandBinding(command, CopyToFolder_Execute, CopyToFolder_CanExecute),
+                "MoveToFolderCommand" => new CommandBinding(command, MoveToFolder_Execute, MoveToFolder_CanExecute),
+                "RemoveCommand" => new CommandBinding(command, Remove_Exec, Remove_CanExec),
+                "OpenDestinationFolderCommand" => new CommandBinding(command, OpenDestinationFolderDialog_Execute),
+                "OpenExternalAppDialogCommand" => new CommandBinding(command, OpenExternalAppDialog_Execute),
+                "PlaylistMarkCommand" => new CommandBinding(command, PlaylistMark_Execute, PlaylistMark_CanExecute),
+                _ => throw new ArgumentOutOfRangeException(nameof(key)),
+            };
         }
 
         protected virtual Page? GetSelectedPage(object sender)
@@ -64,14 +52,12 @@ namespace NeeView
         /// </summary>
         public void Open_CanExec(object sender, CanExecuteRoutedEventArgs e)
         {
-            var page = (sender as ListBox)?.SelectedItem as Page;
-            e.CanExecute = page != null;
+            e.CanExecute = (sender as ListBox)?.SelectedItem is Page;
         }
 
         public void Open_Exec(object sender, ExecutedRoutedEventArgs e)
         {
-            var page = (sender as ListBox)?.SelectedItem as Page;
-            if (page == null) return;
+            if ((sender as ListBox)?.SelectedItem is not Page page) return;
 
             Jump(page);
         }
@@ -145,8 +131,7 @@ namespace NeeView
 
         public void OpenExternalApp_Executed(object sender, ExecutedRoutedEventArgs e)
         {
-            var externalApp = e.Parameter as ExternalApp;
-            if (externalApp == null) return;
+            if (e.Parameter is not ExternalApp externalApp) return;
 
             var items = GetSelectedPages(sender);
             if (items != null && items.Any())
@@ -168,7 +153,6 @@ namespace NeeView
         {
             var items = GetSelectedPages(sender);
 
-            var listBox = (ListBox)sender;
             if (items != null && items.Count > 0)
             {
                 try
@@ -185,17 +169,17 @@ namespace NeeView
             e.Handled = true;
         }
 
-        private void Copy(List<Page> pages)
+        private static void Copy(List<Page> pages)
         {
             ClipboardUtility.Copy(pages, new CopyFileCommandParameter() { MultiPagePolicy = MultiPagePolicy.All });
         }
 
-        private bool CanCopyToFolder(IEnumerable<Page> pages)
+        private static bool CanCopyToFolder(IEnumerable<Page> pages)
         {
             return PageUtility.CanCreateRealizedFilePathList(pages);
         }
 
-        private void CopyToFolder(IEnumerable<Page> pages, string destDirPath)
+        private static void CopyToFolder(IEnumerable<Page> pages, string destDirPath)
         {
             var paths = PageUtility.CreateRealizedFilePathList(pages, CancellationToken.None);
             FileIO.CopyToFolder(paths, destDirPath);
@@ -218,8 +202,7 @@ namespace NeeView
 
         public void CopyToFolder_Execute(object sender, ExecutedRoutedEventArgs e)
         {
-            var folder = e.Parameter as DestinationFolder;
-            if (folder == null) return;
+            if (e.Parameter is not DestinationFolder folder) return;
 
             try
             {
@@ -265,8 +248,7 @@ namespace NeeView
 
         public void MoveToFolder_Execute(object sender, ExecutedRoutedEventArgs e)
         {
-            var folder = e.Parameter as DestinationFolder;
-            if (folder == null) return;
+            if (e.Parameter is not DestinationFolder folder) return;
 
             try
             {
@@ -300,7 +282,7 @@ namespace NeeView
             return pages.All(e => e.Entry.IsFileSystem && e.Entry.Archiver is not PlaylistArchive);
         }
 
-        private void MoveToFolder(IEnumerable<Page> pages, string destDirPath)
+        private static void MoveToFolder(IEnumerable<Page> pages, string destDirPath)
         {
             var movePages = pages.Where(e => e.Entry.IsFileSystem).ToList();
             var paths = movePages.Select(e => e.GetFilePlace()).WhereNotNull().ToList();
@@ -339,17 +321,12 @@ namespace NeeView
             e.Handled = true;
         }
 
-        private bool CanRemove(Page page)
+        private static bool CanRemove(Page page)
         {
             return BookOperation.Current.CanDeleteFile(page);
         }
 
-        private async Task RemoveAsync(Page page)
-        {
-            await BookOperation.Current.DeleteFileAsync(page);
-        }
-
-        private async Task RemoveAsync(List<Page> pages)
+        private static async Task RemoveAsync(List<Page> pages)
         {
             await BookOperation.Current.DeleteFileAsync(pages);
         }

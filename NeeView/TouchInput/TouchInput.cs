@@ -31,9 +31,9 @@ namespace NeeView
     // タッチ処理
     public class TouchInput : BindableBase
     {
-        private TouchInputContext _context;
-        private FrameworkElement _sender;
-        private Dictionary<TouchInputState, TouchInputBase?> _touchInputCollection;
+        private readonly TouchInputContext _context;
+        private readonly FrameworkElement _sender;
+        private readonly Dictionary<TouchInputState, TouchInputBase?> _touchInputCollection;
         private TouchInputState _state;
         private TouchInputBase? _current;
 
@@ -74,12 +74,14 @@ namespace NeeView
             this.Emulator.TouchGestureChanged += (s, e) => TouchGestureChanged?.Invoke(_sender, e);
 
             // initialize state
-            _touchInputCollection = new Dictionary<TouchInputState, TouchInputBase?>();
-            _touchInputCollection.Add(TouchInputState.Normal, this.Normal);
-            _touchInputCollection.Add(TouchInputState.MouseDrag, this.MouseDrag);
-            _touchInputCollection.Add(TouchInputState.Drag, this.Drag);
-            _touchInputCollection.Add(TouchInputState.Gesture, this.Gesture);
-            _touchInputCollection.Add(TouchInputState.Loupe, this.Loupe);
+            _touchInputCollection = new Dictionary<TouchInputState, TouchInputBase?>
+            {
+                { TouchInputState.Normal, this.Normal },
+                { TouchInputState.MouseDrag, this.MouseDrag },
+                { TouchInputState.Drag, this.Drag },
+                { TouchInputState.Gesture, this.Gesture },
+                { TouchInputState.Loupe, this.Loupe }
+            };
             SetState(TouchInputState.Normal, null);
 
             // initialize event

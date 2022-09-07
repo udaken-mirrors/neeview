@@ -54,7 +54,7 @@ namespace NeeView
 
         public override int GetHashCode()
         {
-            return (Name, Number).GetHashCode();
+            return HashCode.Combine(Name, Number);
         }
 
         public static bool operator ==(CommandNameSource lhs, CommandNameSource rhs)

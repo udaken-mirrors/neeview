@@ -110,6 +110,26 @@ namespace NeeView
                 this.IsRecursiveFolder == other.IsRecursiveFolder &&
                 this.SortMode == other.SortMode;
         }
+
+        public override bool Equals(object? obj)
+        {
+            return Equals(obj as BookSettingConfig);
+        }
+
+        public override int GetHashCode()
+        {
+            HashCode hash = new();
+            hash.Add(_page);
+            hash.Add(_pageMode);
+            hash.Add(_bookReadOrder);
+            hash.Add(_isSupportedDividePage);
+            hash.Add(_isSupportedSingleFirstPage);
+            hash.Add(_isSupportedSingleLastPage);
+            hash.Add(_isSupportedWidePage);
+            hash.Add(_isRecursiveFolder);
+            hash.Add(_sortMode);
+            return hash.ToHashCode();
+        }
     }
 
 }

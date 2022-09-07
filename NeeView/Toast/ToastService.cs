@@ -11,12 +11,12 @@ namespace NeeView
         public static ToastService Current { get; }
 
 
-        private Queue<Toast> _queue;
+        private readonly Queue<Toast> _queue;
         private ToastCard? _toastCard;
-        private DispatcherTimer _timer;
+        private readonly DispatcherTimer _timer;
         private DateTime _timeLimit;
-        private Dictionary<string, Toast> _slotMap = new Dictionary<string, Toast>();
-        private object _lock = new object();
+        private readonly Dictionary<string, Toast> _slotMap = new();
+        private readonly object _lock = new();
 
 
         public ToastService()

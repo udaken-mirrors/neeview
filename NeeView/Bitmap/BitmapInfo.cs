@@ -84,7 +84,7 @@ namespace NeeView
         public bool IsTranspose => (this.Rotation == Rotation.Rotate90 || this.Rotation == Rotation.Rotate270);
 
 
-        private BitmapMetadataDatabase CreateMetadataDatabase(BitmapFrame bitmapFrame, Stream stream)
+        private static BitmapMetadataDatabase CreateMetadataDatabase(BitmapFrame bitmapFrame, Stream stream)
         {
             BitmapMetadataDatabase database;
 
@@ -119,7 +119,7 @@ namespace NeeView
         }
 
 
-        private BitmapMetadata? GetBitmapMetadata(BitmapFrame bitmapFrame)
+        private static BitmapMetadata? GetBitmapMetadata(BitmapFrame bitmapFrame)
         {
             if (bitmapFrame.Decoder is GifBitmapDecoder decoder)
             {
@@ -170,8 +170,6 @@ namespace NeeView
         [Conditional("DEBUG")]
         private void DumpMetaData(string prefix, BitmapMetadata metadata)
         {
-            ImageMetadata im = metadata;
-
             foreach (var name in metadata)
             {
                 string query;
@@ -188,9 +186,9 @@ namespace NeeView
                 if (metadata.ContainsQuery(name))
                 {
                     var element = metadata.GetQuery(name);
-                    if (element is BitmapMetadata)
+                    if (element is BitmapMetadata bitmapMetadata)
                     {
-                        DumpMetaData(query, (BitmapMetadata)element);
+                        DumpMetaData(query, bitmapMetadata);
                     }
                     else
                     {

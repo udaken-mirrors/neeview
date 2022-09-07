@@ -17,7 +17,7 @@ namespace NeeView
     {
         // Fields
 
-        private object _lock = new object();
+        private readonly object _lock = new();
 
         private bool _isParentValid;
         private FolderCollection? _collection;
@@ -129,7 +129,6 @@ namespace NeeView
             if (_isParentValid) return Parent;
 
             FolderNode parent;
-            string name;
 
             // normal folder
             {
@@ -142,7 +141,6 @@ namespace NeeView
                 }
 
                 parent = new FolderNode(null, directory, null);
-                name = LoosePath.GetFileName(Name);
             }
 
             // 子の生成
@@ -280,7 +278,7 @@ namespace NeeView
             return this;
         }
 
-        private bool CanCruiseChildren(FolderNode node)
+        private static bool CanCruiseChildren(FolderNode node)
         {
             if (node.Content is null) return false;
 

@@ -9,9 +9,9 @@ namespace NeeView
     {
         private const int _historyCapacity = 100;
 
-        private HistoryLimitedCollection<QueryPath> _history = new HistoryLimitedCollection<QueryPath>(_historyCapacity);
+        private readonly HistoryLimitedCollection<QueryPath> _history = new(_historyCapacity);
 
-        private BookshelfFolderList _folderList;
+        private readonly BookshelfFolderList _folderList;
 
 
         public BookshelfFolderHistory(BookshelfFolderList folder)

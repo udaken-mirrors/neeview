@@ -32,7 +32,7 @@ namespace NeeView
             return Config.Current.Panels.IsDecoratePlace ? LoosePath.GetPlaceName(s) : s;
         }
 
-        public void ValidatePanelListItemProfile()
+        private static void ValidatePanelListItemProfile()
         {
             Config.Current.Panels.ContentItemProfile.UpdateTextHeight();
             Config.Current.Panels.BannerItemProfile.UpdateTextHeight();

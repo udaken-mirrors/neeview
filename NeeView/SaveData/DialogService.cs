@@ -5,7 +5,7 @@ namespace NeeView
 {
     public class DialogService
     {
-        private Dictionary<string, IShowDialog> _map = new Dictionary<string, IShowDialog>();
+        private readonly Dictionary<string, IShowDialog> _map = new();
 
 
         public void Register(string key, IShowDialog dialogService)

@@ -6,8 +6,8 @@ namespace NeeView.Threading
     public class SimpleDelayAction
     {
         private Action? _action;
-        private DispatcherTimer _timer;
-        private object _lock = new object();
+        private readonly DispatcherTimer _timer;
+        private readonly object _lock = new();
 
         public SimpleDelayAction()
         {

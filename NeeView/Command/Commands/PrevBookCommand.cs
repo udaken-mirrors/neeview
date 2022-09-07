@@ -17,7 +17,7 @@
 
         public override void Execute(object? sender, CommandContext e)
         {
-            var async = BookshelfFolderList.Current.PrevFolder();
+            _ = BookshelfFolderList.Current.PrevFolder();
         }
     }
 }

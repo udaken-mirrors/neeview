@@ -28,7 +28,7 @@ namespace NeeView
     /// </summary>
     public partial class PlaylistListBox : UserControl, IPageListPanel, IDisposable
     {
-        private PlaylistListBoxViewModel _vm;
+        private readonly PlaylistListBoxViewModel _vm;
         private ListBoxThumbnailLoader? _thumbnailLoader;
         private PageThumbnailJobClient? _jobClient;
         private bool _focusRequest;
@@ -76,22 +76,22 @@ namespace NeeView
 
 
         #region Commands
-        public readonly static RoutedCommand AddCommand = new RoutedCommand(nameof(AddCommand), typeof(PlaylistListBox));
-        public readonly static RoutedCommand MoveUpCommand = new RoutedCommand(nameof(MoveUpCommand), typeof(PlaylistListBox));
-        public readonly static RoutedCommand MoveDownCommand = new RoutedCommand(nameof(MoveDownCommand), typeof(PlaylistListBox));
-        public readonly static RoutedCommand OpenCommand = new RoutedCommand(nameof(OpenCommand), typeof(PlaylistListBox));
-        public readonly static RoutedCommand RenameCommand = new RoutedCommand(nameof(RenameCommand), typeof(PlaylistListBox));
-        public readonly static RoutedCommand RemoveCommand = new RoutedCommand(nameof(RemoveCommand), typeof(PlaylistListBox));
-        public readonly static RoutedCommand MoveToAnotherCommand = new RoutedCommand(nameof(MoveToAnotherCommand), typeof(PlaylistListBox));
-        public static readonly RoutedCommand OpenExplorerCommand = new RoutedCommand(nameof(OpenExplorerCommand), typeof(PlaylistListBox));
-        public static readonly RoutedCommand OpenExternalAppCommand = new RoutedCommand(nameof(OpenExternalAppCommand), typeof(PlaylistListBox));
-        public static readonly RoutedCommand CopyCommand = new RoutedCommand(nameof(CopyCommand), typeof(PlaylistListBox));
-        public static readonly RoutedCommand CopyToFolderCommand = new RoutedCommand(nameof(CopyToFolderCommand), typeof(PlaylistListBox));
-        public static readonly RoutedCommand MoveToFolderCommand = new RoutedCommand(nameof(MoveToFolderCommand), typeof(PlaylistListBox));
-        public static readonly RoutedCommand OpenDestinationFolderCommand = new RoutedCommand(nameof(OpenDestinationFolderCommand), typeof(PlaylistListBox));
-        public static readonly RoutedCommand OpenExternalAppDialogCommand = new RoutedCommand(nameof(OpenExternalAppDialogCommand), typeof(PlaylistListBox));
+        public readonly static RoutedCommand AddCommand = new(nameof(AddCommand), typeof(PlaylistListBox));
+        public readonly static RoutedCommand MoveUpCommand = new(nameof(MoveUpCommand), typeof(PlaylistListBox));
+        public readonly static RoutedCommand MoveDownCommand = new(nameof(MoveDownCommand), typeof(PlaylistListBox));
+        public readonly static RoutedCommand OpenCommand = new(nameof(OpenCommand), typeof(PlaylistListBox));
+        public readonly static RoutedCommand RenameCommand = new(nameof(RenameCommand), typeof(PlaylistListBox));
+        public readonly static RoutedCommand RemoveCommand = new(nameof(RemoveCommand), typeof(PlaylistListBox));
+        public readonly static RoutedCommand MoveToAnotherCommand = new(nameof(MoveToAnotherCommand), typeof(PlaylistListBox));
+        public static readonly RoutedCommand OpenExplorerCommand = new(nameof(OpenExplorerCommand), typeof(PlaylistListBox));
+        public static readonly RoutedCommand OpenExternalAppCommand = new(nameof(OpenExternalAppCommand), typeof(PlaylistListBox));
+        public static readonly RoutedCommand CopyCommand = new(nameof(CopyCommand), typeof(PlaylistListBox));
+        public static readonly RoutedCommand CopyToFolderCommand = new(nameof(CopyToFolderCommand), typeof(PlaylistListBox));
+        public static readonly RoutedCommand MoveToFolderCommand = new(nameof(MoveToFolderCommand), typeof(PlaylistListBox));
+        public static readonly RoutedCommand OpenDestinationFolderCommand = new(nameof(OpenDestinationFolderCommand), typeof(PlaylistListBox));
+        public static readonly RoutedCommand OpenExternalAppDialogCommand = new(nameof(OpenExternalAppDialogCommand), typeof(PlaylistListBox));
 
-        private PlaylistPageCommandResource _commandResource = new PlaylistPageCommandResource();
+        private readonly PlaylistPageCommandResource _commandResource = new();
 
         private static void InitializeCommandStatic()
         {
@@ -160,8 +160,7 @@ namespace NeeView
 
         private void OpenCommand_Execute(object? sender, ExecutedRoutedEventArgs e)
         {
-            var item = this.ListBox.SelectedItem as PlaylistItem;
-            if (item is null) return;
+            if (this.ListBox.SelectedItem is not PlaylistItem item) return;
             _vm.Open(item);
         }
 
@@ -196,8 +195,7 @@ namespace NeeView
         private void MoveToAnotherCommand_Execute(object? sender, ExecutedRoutedEventArgs e)
         {
             var items = this.ListBox.SelectedItems.Cast<PlaylistItem>().ToList();
-            var another = e.Parameter as string;
-            if (another is null) return;
+            if (e.Parameter is not string another) return;
 
             _vm.MoveToAnotherPlaylist(another, items);
             ScrollIntoView();
@@ -205,8 +203,7 @@ namespace NeeView
 
         private void Rename()
         {
-            var item = this.ListBox.SelectedItem as PlaylistItem;
-            if (item is null) return;
+            if (this.ListBox.SelectedItem is not PlaylistItem item) return;
 
             Rename(item);
         }
@@ -289,6 +286,7 @@ namespace NeeView
         public void Dispose()
         {
             Dispose(true);
+            GC.SuppressFinalize(this);
         }
         #endregion
 
@@ -304,7 +302,7 @@ namespace NeeView
 
         #region DragDrop
 
-        private async Task DragStartBehavior_DragBeginAsync(object? sender, DragStartEventArgs e, CancellationToken token)
+        public async Task DragStartBehavior_DragBeginAsync(object? sender, DragStartEventArgs e, CancellationToken token)
         {
             var items = this.ListBox.SelectedItems
                 .Cast<PlaylistItem>()
@@ -343,10 +341,10 @@ namespace NeeView
 
         private void FolderList_DragDrop(object? sender, DragEventArgs e, bool isDrop)
         {
-            var nearest = PointToViewItem(this.ListBox, e.GetPosition(this.ListBox));
+            var (item, distance) = PointToViewItem(this.ListBox, e.GetPosition(this.ListBox));
 
-            var targetItem = nearest.item?.Content as PlaylistItem;
-            if (nearest.distance > 0.0 && _vm.Items?.LastOrDefault() == targetItem)
+            var targetItem = item?.Content as PlaylistItem;
+            if (distance > 0.0 && _vm.Items?.LastOrDefault() == targetItem)
             {
                 targetItem = null;
             }
@@ -361,6 +359,7 @@ namespace NeeView
             if (e.Handled) return;
         }
 
+#pragma warning disable IDE0060 // 未使用のパラメーターを削除します
         private void DropToPlaylist(object? sender, DragEventArgs e, bool isDrop, PlaylistItem? targetItem, IEnumerable<PlaylistItem>? dropItems)
         {
             if (dropItems == null || !dropItems.Any())
@@ -439,9 +438,10 @@ namespace NeeView
             e.Effects = DragDropEffects.Copy;
             e.Handled = true;
         }
+#pragma warning restore IDE0060 // 未使用のパラメーターを削除します
 
 
-        private (ListBoxItem? item, double distance) PointToViewItem(ListBox listBox, Point point)
+        private static (ListBoxItem? item, double distance) PointToViewItem(ListBox listBox, Point point)
         {
             // ポイントされている項目を取得
             var element = VisualTreeUtility.HitTest<ListBoxItem>(listBox, point);

@@ -12,7 +12,7 @@ namespace NeeView.Susie.Client
     {
         private SubProcess? _subProcess;
         private SimpleClient? _client;
-        private CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
+        private CancellationTokenSource _cancellationTokenSource = new();
 
         public bool IsConnected => _subProcess != null && _subProcess.IsActive;
 
@@ -41,6 +41,7 @@ namespace NeeView.Susie.Client
         public void Dispose()
         {
             Dispose(true);
+            GC.SuppressFinalize(this);
         }
         #endregion
 

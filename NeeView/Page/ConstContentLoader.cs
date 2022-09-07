@@ -6,7 +6,8 @@ namespace NeeView
 {
     public class ConstContentLoader : IContentLoader
     {
-        private ConstContent _content;
+        private readonly ConstContent _content;
+
 
         public ConstContentLoader(ConstContent content)
         {
@@ -19,6 +20,7 @@ namespace NeeView
 
         public void Dispose()
         {
+            GC.SuppressFinalize(this);
         }
 
         public async Task LoadContentAsync(CancellationToken token)

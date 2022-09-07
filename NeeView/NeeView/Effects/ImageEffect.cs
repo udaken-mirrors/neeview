@@ -26,22 +26,23 @@ namespace NeeView.Effects
 
         private ImageEffect()
         {
-            Effects = new Dictionary<EffectType, EffectUnit?>();
-
-            Effects[EffectType.None] = null;
-            Effects[EffectType.Level] = Config.Current.ImageEffect.LevelEffect;
-            Effects[EffectType.Hsv] = Config.Current.ImageEffect.HsvEffect;
-            Effects[EffectType.ColorSelect] = Config.Current.ImageEffect.ColorSelectEffect;
-            Effects[EffectType.Blur] = Config.Current.ImageEffect.BlurEffect;
-            Effects[EffectType.Bloom] = Config.Current.ImageEffect.BloomEffect;
-            Effects[EffectType.Monochrome] = Config.Current.ImageEffect.MonochromeEffect;
-            Effects[EffectType.ColorTone] = Config.Current.ImageEffect.ColorToneEffect;
-            Effects[EffectType.Sharpen] = Config.Current.ImageEffect.SharpenEffect;
-            Effects[EffectType.Embossed] = Config.Current.ImageEffect.EmbossedEffect;
-            Effects[EffectType.Pixelate] = Config.Current.ImageEffect.PixelateEffect;
-            Effects[EffectType.Magnify] = Config.Current.ImageEffect.MagnifyEffect;
-            Effects[EffectType.Ripple] = Config.Current.ImageEffect.RippleEffect;
-            Effects[EffectType.Swirl] = Config.Current.ImageEffect.SwirlEffect;
+            Effects = new Dictionary<EffectType, EffectUnit?>
+            {
+                [EffectType.None] = null,
+                [EffectType.Level] = Config.Current.ImageEffect.LevelEffect,
+                [EffectType.Hsv] = Config.Current.ImageEffect.HsvEffect,
+                [EffectType.ColorSelect] = Config.Current.ImageEffect.ColorSelectEffect,
+                [EffectType.Blur] = Config.Current.ImageEffect.BlurEffect,
+                [EffectType.Bloom] = Config.Current.ImageEffect.BloomEffect,
+                [EffectType.Monochrome] = Config.Current.ImageEffect.MonochromeEffect,
+                [EffectType.ColorTone] = Config.Current.ImageEffect.ColorToneEffect,
+                [EffectType.Sharpen] = Config.Current.ImageEffect.SharpenEffect,
+                [EffectType.Embossed] = Config.Current.ImageEffect.EmbossedEffect,
+                [EffectType.Pixelate] = Config.Current.ImageEffect.PixelateEffect,
+                [EffectType.Magnify] = Config.Current.ImageEffect.MagnifyEffect,
+                [EffectType.Ripple] = Config.Current.ImageEffect.RippleEffect,
+                [EffectType.Swirl] = Config.Current.ImageEffect.SwirlEffect
+            };
 
             Config.Current.ImageEffect.AddPropertyChanged(nameof(ImageEffectConfig.IsEnabled), (s, e) =>
             {
@@ -149,7 +150,7 @@ namespace NeeView.Effects
                     MargeEffect(config.ImageEffect.RippleEffect, Effects[EffectType.Ripple]);
                     MargeEffect(config.ImageEffect.SwirlEffect, Effects[EffectType.Swirl]);
 
-                    void MargeEffect(EffectUnit unit, string json) => ObjectMerge.Merge(unit, Json.Deserialize(json, unit.GetType()));
+                    static void MargeEffect(EffectUnit unit, string json) => ObjectMerge.Merge(unit, Json.Deserialize(json, unit.GetType()));
                 }
             }
         }

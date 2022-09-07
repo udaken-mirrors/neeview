@@ -16,7 +16,7 @@ namespace NeeView
         /// <param name="OpenDestinationFolderDialogCommand">設定コマンド</param>
         public static MenuItem CreateDestinationFolderItem(string title, bool isEnabled, ICommand command, ICommand OpenDestinationFolderDialogCommand)
         {
-            MenuItem subItem = new MenuItem() { Header = title, IsEnabled = isEnabled };
+            var subItem = new MenuItem() { Header = title, IsEnabled = isEnabled };
 
             if (Config.Current.System.DestinationFodlerCollection.Any())
             {

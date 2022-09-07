@@ -23,9 +23,6 @@ namespace NeeView
         /// </summary>
         private TouchContext? _touch;
 
-        //
-        private TouchInputGesture _gesture;
-
 
         /// <summary>
         /// コンストラクター
@@ -33,7 +30,6 @@ namespace NeeView
         /// <param name="context"></param>
         public TouchInputNormal(TouchInputContext context, TouchInputGesture gesture) : base(context)
         {
-            _gesture = gesture;
         }
 
         /// <summary>

@@ -6,6 +6,7 @@ using NeeView.Properties;
 using NeeView.Setting;
 using NeeView.Windows.Property;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Runtime.Serialization;
@@ -60,32 +61,29 @@ namespace NeeView
         // 古いパネル表示ロック。コマンドでロックのトグルをできるようにするため
         private bool _isPanelVisibleLockedOld;
 
-        private ContextMenuSetting _contextMenuSetting = new ContextMenuSetting();
         private bool _canHidePageSlider;
         private bool _canHidePanel;
         private bool _canHideMenu;
 
         private volatile EditCommandWindow? _editCommandWindow;
 
-        private MainViewComponent _viewComponent;
+        private readonly MainViewComponent _viewComponent;
 
-        private WindowShape _windowShape;
-        private WindowStateManager _windowStateManamger;
+        private readonly WindowShape _windowShape;
 
 
-        public static void Initialize(WindowShape windowShape, WindowStateManager windowStateManamger)
+        public static void Initialize(WindowShape windowShape)
         {
             if (_current is not null) throw new InvalidOperationException();
-            _current = new MainWindowModel(windowShape, windowStateManamger);
+            _current = new MainWindowModel(windowShape);
         }
 
-        private MainWindowModel(WindowShape windowShape, WindowStateManager windowStateManamger)
+        private MainWindowModel(WindowShape windowShape)
         {
             if (_current is not null) throw new InvalidOperationException();
             _current = this;
 
             _windowShape = windowShape;
-            _windowStateManamger = windowStateManamger;
 
             _windowShape.AddPropertyChanged(nameof(WindowShape.AutoHideMode),
                 (s, e) =>
@@ -410,12 +408,6 @@ namespace NeeView
             ExternalProcess.Start("explorer.exe", $"\"{Environment.LocalApplicationDataPath}\"");
         }
 
-        // オンラインヘルプ
-        public void OpenOnlineHelp()
-        {
-            ExternalProcess.Start("https://bitbucket.org/neelabo/neeview/wiki/");
-        }
-
 
         /// <summary>
         /// パネル表示ロック開始
@@ -484,7 +476,7 @@ namespace NeeView
         }
 
 
-#region Memento
+        #region Memento
 
         [DataContract]
         public class Memento : IMemento
@@ -522,7 +514,7 @@ namespace NeeView
             [DataMember, DefaultValue(5.0)]
             public double CursorHideReleaseDistance { get; set; }
 
-            [Obsolete, DataMember(EmitDefaultValue = false)]
+            [Obsolete("no used"), DataMember(EmitDefaultValue = false)]
             public ThemeType PanelColor { get; set; } // no used v34.0. moved to ThumbnailProfile.
 
 

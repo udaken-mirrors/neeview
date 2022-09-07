@@ -102,8 +102,7 @@ namespace NeeView
         {
             if (other is null) return false;
 
-            var formatVersion = other as FormatVersion;
-            if (formatVersion is null)
+            if (other is not FormatVersion formatVersion)
             {
                 return false;
             }

@@ -63,7 +63,7 @@ namespace NeeView.Setting
         }
 
 
-        private TextBlock CreateScriptErrorLevelRemarks()
+        private static TextBlock CreateScriptErrorLevelRemarks()
         {
             var binding = new Binding(nameof(ScriptConfig.ErrorLevel))
             {

@@ -13,7 +13,7 @@ namespace NeeView
         public static BookHubHistory Current { get; }
 
         private const int _historyCapacity = 100;
-        private readonly HistoryLimitedCollection<QueryPath> _history = new HistoryLimitedCollection<QueryPath>(_historyCapacity);
+        private readonly HistoryLimitedCollection<QueryPath> _history = new(_historyCapacity);
 
 
         public void Add(object? sender, QueryPath? query)

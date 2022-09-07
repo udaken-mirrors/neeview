@@ -21,14 +21,14 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace NeeView
 {
-    [Obsolete]
+    [Obsolete("no used")]
     public enum PagemarkOrder
     {
         FileName,
         Path,
     }
 
-    [Obsolete]
+    [Obsolete("no used")]
     public class PagemarkCollection : BindableBase
     {
         public static TreeListNode<IPagemarkEntry> CreateRoot()
@@ -87,7 +87,7 @@ namespace NeeView
             public int _Version { get; set; } = Environment.ProductVersionNumber;
 
             [JsonIgnore]
-            [Obsolete, DataMember(Name = "Nodes", EmitDefaultValue = false)]
+            [Obsolete("no used"), DataMember(Name = "Nodes", EmitDefaultValue = false)]
             public TreeListNode<IPagemarkEntry>? NodesLegacy { get; set; }
 
             [DataMember(Name = "NodesV2")]
@@ -99,15 +99,15 @@ namespace NeeView
 
 
             [JsonIgnore]
-            [Obsolete, DataMember(EmitDefaultValue = false)]
+            [Obsolete("no used"), DataMember(EmitDefaultValue = false)]
             public List<Book.Memento>? Books { get; set; }
 
             [JsonIgnore]
-            [Obsolete, DataMember(EmitDefaultValue = false)]
+            [Obsolete("no used"), DataMember(EmitDefaultValue = false)]
             public List<Pagemark>? Marks { get; set; }
 
             [JsonIgnore]
-            [Obsolete, DataMember(Name = "Items", EmitDefaultValue = false)]
+            [Obsolete("no used"), DataMember(Name = "Items", EmitDefaultValue = false)]
             public List<Book.Memento>? OldBooks { get; set; }
 
 
@@ -130,7 +130,7 @@ namespace NeeView
             [OnDeserialized]
             private void OnDeserialized(StreamingContext c)
             {
-#pragma warning disable CS0612
+#pragma warning disable CS0612, CS0618
                 if (_Version < Environment.GenerateProductVersionNumber(31, 0, 0))
                 {
                     NodesLegacy = new TreeListNode<IPagemarkEntry>(new PagemarkEmpty());
@@ -142,7 +142,7 @@ namespace NeeView
                     Books = OldBooks ?? new List<Book.Memento>();
                     foreach (var book in Books)
                     {
-                        book.LastAccessTime = default(DateTime);
+                        book.LastAccessTime = default;
                     }
 
                     Marks = null;
@@ -160,7 +160,7 @@ namespace NeeView
                     Nodes = PagemarkNodeConverter.ConvertFrom(NodesLegacy) ?? new PagemarkNode();
                     NodesLegacy = null;
                 }
-#pragma warning restore CS0612
+#pragma warning restore CS0612, CS0618
             }
 
             public void Save(string path)
@@ -209,12 +209,12 @@ namespace NeeView
             // ファイルに保存
             public void SaveV1(string path)
             {
-                XmlWriterSettings settings = new XmlWriterSettings();
+                var settings = new XmlWriterSettings();
                 settings.Encoding = new System.Text.UTF8Encoding(false);
                 settings.Indent = true;
                 using (XmlWriter xw = XmlWriter.Create(path, settings))
                 {
-                    DataContractSerializer serializer = new DataContractSerializer(typeof(Memento));
+                    var serializer = new DataContractSerializer(typeof(Memento));
                     serializer.WriteObject(xw, this);
                 }
             }
@@ -233,7 +233,7 @@ namespace NeeView
             {
                 using (XmlReader xr = XmlReader.Create(stream))
                 {
-                    DataContractSerializer serializer = new DataContractSerializer(typeof(Memento));
+                    var serializer = new DataContractSerializer(typeof(Memento));
                     Memento? memento = (Memento?)serializer.ReadObject(xr);
                     return memento;
                 }
@@ -252,7 +252,7 @@ namespace NeeView
     }
 
 
-    [Obsolete]
+    [Obsolete("no used")]
     public class PagemarkNode
     {
         public string? Path { get; set; }
@@ -284,7 +284,7 @@ namespace NeeView
         }
     }
 
-    [Obsolete]
+    [Obsolete("no used")]
     public static class PagemarkNodeConverter
     {
         [return: NotNullIfNotNull("source")]
@@ -359,7 +359,7 @@ namespace NeeView
     // ページマークをプレイリストに変換する
     public static class PagemarkToPlaylistConverter
     {
-#pragma warning disable CS0612 // 型またはメンバーが旧型式です
+#pragma warning disable CS0612, CS0618 // 型またはメンバーが旧型式です
         public static PlaylistSource ConvertToPlaylist(PagemarkCollection.Memento memento)
         {
             if (memento.Nodes is null) return new PlaylistSource();
@@ -450,7 +450,7 @@ namespace NeeView
                 }
             }
 
-            PagemarkCollection.Memento? Load(Func<string, PagemarkCollection.Memento?> load, string path, LoadFailedDialog loadFailedDialog)
+            static PagemarkCollection.Memento? Load(Func<string, PagemarkCollection.Memento?> load, string path, LoadFailedDialog loadFailedDialog)
             {
                 try
                 {
@@ -465,7 +465,7 @@ namespace NeeView
         }
 
 
-#pragma warning restore CS0612 // 型またはメンバーが旧型式です
+#pragma warning restore CS0612, CS0618 // 型またはメンバーが旧型式です
 
 
     }

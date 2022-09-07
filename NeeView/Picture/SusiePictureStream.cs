@@ -32,7 +32,7 @@ namespace NeeView
         }
 
         // Bitmap読み込み(stream)
-        private NamedStream Create(Stream stream, ArchiveEntry entry)
+        private static NamedStream Create(Stream stream, ArchiveEntry entry)
         {
             byte[] buff;
             var rawData = entry.GetRawData();
@@ -63,7 +63,7 @@ namespace NeeView
 
 
         // Bitmap読み込み(ファイル版)
-        private NamedStream Create(string fileName, ArchiveEntry entry)
+        private static NamedStream Create(string fileName, ArchiveEntry entry)
         {
             var accessor = SusiePluginManager.Current.GetImagePluginAccessor();
             var result = accessor.GetPicture(fileName, null, !entry.IsIgnoreFileExtension);

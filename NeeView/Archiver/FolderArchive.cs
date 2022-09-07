@@ -60,7 +60,7 @@ namespace NeeView
                     continue;
                 }
 
-                var name = info.FullName.Substring(prefixLen).TrimStart('\\', '/');
+                var name = info.FullName[prefixLen..].TrimStart('\\', '/');
                 var fileInfo = info as FileInfo;
                 var isDirectory = info.Attributes.HasFlag(FileAttributes.Directory);
 

@@ -108,12 +108,12 @@ namespace NeeView
         }
 
         // 標準サイズで取得
-        private Size GetRenderSize(PdfPage pdfPage)
+        private static Size GetRenderSize(PdfPage pdfPage)
         {
             var size = SizeExtensions.FromFoundationSize(pdfPage.Size);
-            if (PdfArchiverProfile.Current.SizeLimitedRenderSize.IsContains(size))
+            if (PdfArchiverProfile.SizeLimitedRenderSize.IsContains(size))
             {
-                size = size.Uniformed(PdfArchiverProfile.Current.SizeLimitedRenderSize);
+                size = size.Uniformed(PdfArchiverProfile.SizeLimitedRenderSize);
             }
             return size;
         }

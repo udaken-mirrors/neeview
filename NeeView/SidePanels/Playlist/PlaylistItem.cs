@@ -7,7 +7,7 @@ namespace NeeView
 {
     public class PlaylistItem : BindableBase, IHasPage, IHasName
     {
-        private PlaylistSourceItem _item;
+        private readonly PlaylistSourceItem _item;
         private string? _place;
         private Page? _archivePage;
         private bool? _isArchive;
@@ -115,8 +115,7 @@ namespace NeeView
 
         private void Thumbnail_Touched(object? sender, EventArgs e)
         {
-            var thumbnail = sender as Thumbnail;
-            if (thumbnail is null) return;
+            if (sender is not Thumbnail thumbnail) return;
 
             BookThumbnailPool.Current.Add(thumbnail);
         }

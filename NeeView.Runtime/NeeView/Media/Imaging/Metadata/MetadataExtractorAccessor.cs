@@ -19,12 +19,12 @@ namespace NeeView.Media.Imaging.Metadata
     /// </summary>
     public class MetadataExtractorAccessor : BitmapMetadataAccessor
     {
-        private IEnumerable<MetadataExtractor.Directory> _metadata;
-        private List<ExifIfd0Directory> _ifd0;
-        private List<ExifSubIfdDirectory> _subIfd;
-        private List<GpsDirectory> _gps;
-        private List<XmpDirectory> _xmp;
-        private List<PanasonicRawIfd0Directory> _panasonicifd0;
+        private readonly IEnumerable<MetadataExtractor.Directory> _metadata;
+        private readonly List<ExifIfd0Directory> _ifd0;
+        private readonly List<ExifSubIfdDirectory> _subIfd;
+        private readonly List<GpsDirectory> _gps;
+        private readonly List<XmpDirectory> _xmp;
+        private readonly List<PanasonicRawIfd0Directory> _panasonicifd0;
 
 
 
@@ -47,6 +47,7 @@ namespace NeeView.Media.Imaging.Metadata
         }
 
 
+#if false
         [Conditional("DEBUG")]
         private void Dump()
         {
@@ -66,6 +67,7 @@ namespace NeeView.Media.Imaging.Metadata
                 }
             }
         }
+#endif
 
         public override string GetFormat()
         {
@@ -83,62 +85,57 @@ namespace NeeView.Media.Imaging.Metadata
 
         public override object? GetValue(BitmapMetadataKey key)
         {
-            switch (key)
+            return key switch
             {
                 // -- Description
-                case BitmapMetadataKey.Title: return GetTitle();
-                case BitmapMetadataKey.Subject: return GetSubject();
-                case BitmapMetadataKey.Rating: return GetSimpleRatiing();
-                case BitmapMetadataKey.Tags: return GetKeywords();
-                case BitmapMetadataKey.Comments: return GeCommente();
-
+                BitmapMetadataKey.Title => GetTitle(),
+                BitmapMetadataKey.Subject => GetSubject(),
+                BitmapMetadataKey.Rating => GetSimpleRatiing(),
+                BitmapMetadataKey.Tags => GetKeywords(),
+                BitmapMetadataKey.Comments => GeCommente(),
                 // -- Origin
-                case BitmapMetadataKey.Author: return GetAuthor();
-                case BitmapMetadataKey.DateTaken: return GetDateTaken();
-                case BitmapMetadataKey.ApplicatoinName: return GetApplicationName();
-                case BitmapMetadataKey.DateAcquired: return GetDateAcquired();
-                case BitmapMetadataKey.Copyright: return GetCopyright();
-
+                BitmapMetadataKey.Author => GetAuthor(),
+                BitmapMetadataKey.DateTaken => GetDateTaken(),
+                BitmapMetadataKey.ApplicatoinName => GetApplicationName(),
+                BitmapMetadataKey.DateAcquired => GetDateAcquired(),
+                BitmapMetadataKey.Copyright => GetCopyright(),
                 // -- Camera
-                case BitmapMetadataKey.CameraMaker: return GetCameraManufacturer();
-                case BitmapMetadataKey.CameraModel: return GetCameraModel();
-                case BitmapMetadataKey.FNumber: return new FormatValue(GetFNumber(), "f/{0:0.##}");
-                case BitmapMetadataKey.ExposureTime: return new FormatValue(GetExposureTime(), "{0} s");
-                case BitmapMetadataKey.ISOSpeed: return GetISOSpeed();
-                case BitmapMetadataKey.ExposureBias: return new FormatValue(GetExposureBias(), "{0:+0.#;-0.#;0} step");
-                case BitmapMetadataKey.FocalLength: return new FormatValue(GetFocalLength(), "{0:0.##} mm");
-                case BitmapMetadataKey.MaxAperture: return new FormatValue(GetMaxAperture(), "{0:0.##}");
-                case BitmapMetadataKey.MeteringMode: return GetEnumValue<ExifMeteringMode>(GetMeteringMode());
-                case BitmapMetadataKey.SubjectDistance: return new FormatValue(GetSubjectDistance(), "{0:0.##} m");
-                case BitmapMetadataKey.FlashMode: return GetFlashMode(GetFlash());
-                case BitmapMetadataKey.FlashEnergy: return new FormatValue(GetFlashEnergy(), "{0:0.##} bcps");
-                case BitmapMetadataKey.FocalLengthIn35mmFilm: return new FormatValue(GetFocalLengthIn35mmFilm(), "{0:0.##} mm");
-
+                BitmapMetadataKey.CameraMaker => GetCameraManufacturer(),
+                BitmapMetadataKey.CameraModel => GetCameraModel(),
+                BitmapMetadataKey.FNumber => new FormatValue(GetFNumber(), "f/{0:0.##}"),
+                BitmapMetadataKey.ExposureTime => new FormatValue(GetExposureTime(), "{0} s"),
+                BitmapMetadataKey.ISOSpeed => GetISOSpeed(),
+                BitmapMetadataKey.ExposureBias => new FormatValue(GetExposureBias(), "{0:+0.#;-0.#;0} step"),
+                BitmapMetadataKey.FocalLength => new FormatValue(GetFocalLength(), "{0:0.##} mm"),
+                BitmapMetadataKey.MaxAperture => new FormatValue(GetMaxAperture(), "{0:0.##}"),
+                BitmapMetadataKey.MeteringMode => GetEnumValue<ExifMeteringMode>(GetMeteringMode()),
+                BitmapMetadataKey.SubjectDistance => new FormatValue(GetSubjectDistance(), "{0:0.##} m"),
+                BitmapMetadataKey.FlashMode => GetFlashMode(GetFlash()),
+                BitmapMetadataKey.FlashEnergy => new FormatValue(GetFlashEnergy(), "{0:0.##} bcps"),
+                BitmapMetadataKey.FocalLengthIn35mmFilm => new FormatValue(GetFocalLengthIn35mmFilm(), "{0:0.##} mm"),
                 // -- Advanced photo
-                case BitmapMetadataKey.LensMaker: return GetLensManufacturer();
-                case BitmapMetadataKey.LensModel: return GetLensModel();
-                case BitmapMetadataKey.FlashMaker: return GetFlashManufacturer();
-                case BitmapMetadataKey.FlashModel: return GetFlashModel();
-                case BitmapMetadataKey.CameraSerialNumber: return GetCameraSerialNumber();
-                case BitmapMetadataKey.Contrast: return GetEnumValue<ExifContrast>(GetContrast());
-                case BitmapMetadataKey.Brightness: return new FormatValue(GetBrightness(), "{0:0.##}");
-                case BitmapMetadataKey.LightSource: return GetEnumValue<ExifLightSource>(GetLightSource());
-                case BitmapMetadataKey.ExposureProgram: return GetEnumValue<ExifExposureProgram>(GetExposureProgram());
-                case BitmapMetadataKey.Saturation: return GetEnumValue<ExifSaturation>(GetSaturation());
-                case BitmapMetadataKey.Sharpness: return GetEnumValue<ExifSharpness>(GetSharpness());
-                case BitmapMetadataKey.WhiteBalance: return GetEnumValue<ExifWhiteBalance>(GetWhiteBalance());
-                case BitmapMetadataKey.PhotometricInterpretation: return GetEnumValue<ExifPhotometricInterpretation>(GetPhotometricInterpretation());
-                case BitmapMetadataKey.DigitalZoom: return new FormatValue(GetDigitalZoom(), "{0:0.##}");
-                case BitmapMetadataKey.Orientation: return GetEnumValue<ExifOrientation>(GetOrientation());
-                case BitmapMetadataKey.EXIFVersion: return GetEXIFVersion();
-
+                BitmapMetadataKey.LensMaker => GetLensManufacturer(),
+                BitmapMetadataKey.LensModel => GetLensModel(),
+                BitmapMetadataKey.FlashMaker => GetFlashManufacturer(),
+                BitmapMetadataKey.FlashModel => GetFlashModel(),
+                BitmapMetadataKey.CameraSerialNumber => GetCameraSerialNumber(),
+                BitmapMetadataKey.Contrast => GetEnumValue<ExifContrast>(GetContrast()),
+                BitmapMetadataKey.Brightness => new FormatValue(GetBrightness(), "{0:0.##}"),
+                BitmapMetadataKey.LightSource => GetEnumValue<ExifLightSource>(GetLightSource()),
+                BitmapMetadataKey.ExposureProgram => GetEnumValue<ExifExposureProgram>(GetExposureProgram()),
+                BitmapMetadataKey.Saturation => GetEnumValue<ExifSaturation>(GetSaturation()),
+                BitmapMetadataKey.Sharpness => GetEnumValue<ExifSharpness>(GetSharpness()),
+                BitmapMetadataKey.WhiteBalance => GetEnumValue<ExifWhiteBalance>(GetWhiteBalance()),
+                BitmapMetadataKey.PhotometricInterpretation => GetEnumValue<ExifPhotometricInterpretation>(GetPhotometricInterpretation()),
+                BitmapMetadataKey.DigitalZoom => new FormatValue(GetDigitalZoom(), "{0:0.##}"),
+                BitmapMetadataKey.Orientation => GetEnumValue<ExifOrientation>(GetOrientation()),
+                BitmapMetadataKey.EXIFVersion => GetEXIFVersion(),
                 // -- GPS
-                case BitmapMetadataKey.GPSLatitude: return GetGPSLatitude();
-                case BitmapMetadataKey.GPSLongitude: return GetGPSLongitude();
-                case BitmapMetadataKey.GPSAltitude: return new FormatValue(GetGPSAltitude(), "{0:0.#} m");
-
-                default: return null;
-            }
+                BitmapMetadataKey.GPSLatitude => GetGPSLatitude(),
+                BitmapMetadataKey.GPSLongitude => GetGPSLongitude(),
+                BitmapMetadataKey.GPSAltitude => new FormatValue(GetGPSAltitude(), "{0:0.#} m"),
+                _ => null,
+            };
         }
 
 
@@ -441,7 +438,7 @@ namespace NeeView.Media.Imaging.Metadata
         #region EXIF
 
 
-        private T? GetValueFromDirectories<T>(IEnumerable<MetadataExtractor.Directory> directories, int tagType, Func<MetadataExtractor.Directory, int, T> func)
+        private static T? GetValueFromDirectories<T>(IEnumerable<MetadataExtractor.Directory> directories, int tagType, Func<MetadataExtractor.Directory, int, T> func)
         {
             foreach (var directory in directories)
             {
@@ -543,7 +540,7 @@ namespace NeeView.Media.Imaging.Metadata
 
         #region XMP
 
-        private T? GetValueFromDirectories<T>(IEnumerable<XmpDirectory> directories, string schema, string path, Func<XmpDirectory, string, string, T> func)
+        private static T? GetValueFromDirectories<T>(IEnumerable<XmpDirectory> directories, string schema, string path, Func<XmpDirectory, string, string, T> func)
         {
             foreach (var directory in directories)
             {
@@ -686,7 +683,7 @@ namespace NeeView.Media.Imaging.Metadata
             return GetValueFromDirectories(directories, schema, path, GetDateTime);
         }
 
-        private ExifGpsDegree? GetGPSLatitude(IEnumerable<XmpDirectory> directories)
+        private static ExifGpsDegree? GetGPSLatitude(IEnumerable<XmpDirectory> directories)
         {
             foreach (var directory in directories)
             {
@@ -700,7 +697,7 @@ namespace NeeView.Media.Imaging.Metadata
             return null;
         }
 
-        private ExifGpsDegree? GetGPSLongitude(IEnumerable<XmpDirectory> directories)
+        private static ExifGpsDegree? GetGPSLongitude(IEnumerable<XmpDirectory> directories)
         {
             foreach (var directory in directories)
             {
@@ -746,7 +743,7 @@ namespace NeeView.Media.Imaging.Metadata
 
         #region EXIF.GPS
 
-        private ExifGpsDegree? GetGPSLatitude(IEnumerable<GpsDirectory> directories)
+        private static ExifGpsDegree? GetGPSLatitude(IEnumerable<GpsDirectory> directories)
         {
             foreach (var directory in directories)
             {
@@ -762,7 +759,7 @@ namespace NeeView.Media.Imaging.Metadata
             return null;
         }
 
-        private ExifGpsDegree? GetGPSLongitude(IEnumerable<GpsDirectory> directories)
+        private static ExifGpsDegree? GetGPSLongitude(IEnumerable<GpsDirectory> directories)
         {
             foreach (var directory in directories)
             {
@@ -826,7 +823,7 @@ namespace NeeView.Media.Imaging.Metadata
             return null;
         }
 
-        private IRational? ConvertToRational(string value)
+        private static IRational? ConvertToRational(string value)
         {
             if (value is null)
             {
@@ -846,29 +843,23 @@ namespace NeeView.Media.Imaging.Metadata
             return null;
         }
 
-        private object? GetEnumValue<T>(object? value)
+        private static object? GetEnumValue<T>(object? value)
             where T : Enum
         {
-            switch (value)
+            return value switch
             {
-                case null:
-                case string _:
-                    return value;
-                default:
-                    return Enum.ToObject(typeof(T), value);
-            }
+                null or string => value,
+                _ => Enum.ToObject(typeof(T), value),
+            };
         }
 
-        private object? GetFlashMode(object? value)
+        private static object? GetFlashMode(object? value)
         {
-            switch (value)
+            return value switch
             {
-                case null:
-                case string _:
-                    return value;
-                default:
-                    return ExifFlashModeExtensions.ToExifFlashMode(Convert.ToInt32(value));
-            }
+                null or string _ => value,
+                _ => ExifFlashModeExtensions.ToExifFlashMode(Convert.ToInt32(value)),
+            };
         }
 
     }

@@ -4,7 +4,7 @@ namespace NeeView
 {
     public class RepeatLimiter
     {
-        private Stopwatch _stopwatch;
+        private readonly Stopwatch _stopwatch;
 
         public RepeatLimiter()
         {

@@ -46,7 +46,7 @@ namespace NeeView.UnitTest
         {
             Dispatcher? myDispatcher = null;
 
-            ManualResetEvent dispatcherReadyEvent = new ManualResetEvent(false);
+            var dispatcherReadyEvent = new ManualResetEvent(false);
 
             new Thread(new ThreadStart(() =>
             {

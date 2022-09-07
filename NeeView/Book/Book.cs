@@ -8,15 +8,15 @@ namespace NeeView
     {
         public static Book? Default { get; private set; }
 
-        private BookMemoryService _bookMemoryService = new BookMemoryService();
+        private readonly BookMemoryService _bookMemoryService = new();
 
-        private BookSource _source;
-        private BookPageViewer _viewer;
-        private BookPageMarker _marker;
-        private BookController _controller;
-        private string _sourcePath;
-        private BookLoadOption _loadOption;
-        private BookAddress _address;
+        private readonly BookSource _source;
+        private readonly BookPageViewer _viewer;
+        private readonly BookPageMarker _marker;
+        private readonly BookController _controller;
+        private readonly string _sourcePath;
+        private readonly BookLoadOption _loadOption;
+        private readonly BookAddress _address;
 
 
         public Book(BookAddress address, BookSource source, Book.Memento memento, BookLoadOption option, bool isNew)
@@ -141,6 +141,7 @@ namespace NeeView
         public void Dispose()
         {
             Dispose(true);
+            GC.SuppressFinalize(this);
         }
         #endregion
 
@@ -149,20 +150,21 @@ namespace NeeView
         // bookの設定を取得する
         public Book.Memento CreateMemento()
         {
-            var memento = new Book.Memento();
+            var memento = new Book.Memento
+            {
+                Path = _source.Path,
+                IsDirectorty = _source.IsDirectory,
+                Page = _source.Pages.SortMode != PageSortMode.Random ? _viewer.GetViewPage()?.EntryName : null,
 
-            memento.Path = _source.Path;
-            memento.IsDirectorty = _source.IsDirectory;
-            memento.Page = _source.Pages.SortMode != PageSortMode.Random ? _viewer.GetViewPage()?.EntryName : null;
-
-            memento.PageMode = _viewer.PageMode;
-            memento.BookReadOrder = _viewer.BookReadOrder;
-            memento.IsSupportedDividePage = _viewer.IsSupportedDividePage;
-            memento.IsSupportedSingleFirstPage = _viewer.IsSupportedSingleFirstPage;
-            memento.IsSupportedSingleLastPage = _viewer.IsSupportedSingleLastPage;
-            memento.IsSupportedWidePage = _viewer.IsSupportedWidePage;
-            memento.IsRecursiveFolder = _source.IsRecursiveFolder;
-            memento.SortMode = _source.Pages.SortMode;
+                PageMode = _viewer.PageMode,
+                BookReadOrder = _viewer.BookReadOrder,
+                IsSupportedDividePage = _viewer.IsSupportedDividePage,
+                IsSupportedSingleFirstPage = _viewer.IsSupportedSingleFirstPage,
+                IsSupportedSingleLastPage = _viewer.IsSupportedSingleLastPage,
+                IsSupportedWidePage = _viewer.IsSupportedWidePage,
+                IsRecursiveFolder = _source.IsRecursiveFolder,
+                SortMode = _source.Pages.SortMode
+            };
 
             return memento;
         }

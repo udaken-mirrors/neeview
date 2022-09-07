@@ -12,7 +12,7 @@ namespace NeeView
     /// </summary>
     public class ArchiveContent : BitmapContent
     {
-        private string _path;
+        private readonly string _path;
 
 
         /// <param name="entry">対象アーカイブもしくはファイルのエントリ</param>
@@ -51,7 +51,7 @@ namespace NeeView
         /// <summary>
         /// コンテンツサイズは固定
         /// </summary>
-        public override Size Size => new Size(512, 512);
+        public override Size Size => new(512, 512);
 
         public override bool CanResize => false;
 

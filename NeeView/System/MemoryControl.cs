@@ -23,7 +23,7 @@ namespace NeeView
         public static MemoryControl Current { get; }
 
 
-        private DelayAction _delayAction;
+        private readonly DelayAction _delayAction;
 
 
         private MemoryControl()
@@ -58,6 +58,7 @@ namespace NeeView
         public void Dispose()
         {
             Dispose(true);
+            GC.SuppressFinalize(this);
         }
         #endregion
 

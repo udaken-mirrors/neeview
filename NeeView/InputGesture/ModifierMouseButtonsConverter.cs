@@ -8,7 +8,7 @@ namespace NeeView
     {
         private const char ModifierDelimiter = '+';
 
-        private static ModifierMouseButtons ModifierMouseButtonsFlag = ModifierMouseButtons.LeftButton | ModifierMouseButtons.MiddleButton | ModifierMouseButtons.RightButton | ModifierMouseButtons.XButton1 | ModifierMouseButtons.XButton2;
+        private static readonly ModifierMouseButtons ModifierMouseButtonsFlag = ModifierMouseButtons.LeftButton | ModifierMouseButtons.MiddleButton | ModifierMouseButtons.RightButton | ModifierMouseButtons.XButton1 | ModifierMouseButtons.XButton2;
 
 
         public override bool CanConvertFrom(ITypeDescriptorContext? context, Type sourceType)
@@ -28,9 +28,9 @@ namespace NeeView
         {
             if (destinationType == typeof(string))
             {
-                if (context != null && context.Instance != null && context.Instance is ModifierMouseButtons)
+                if (context != null && context.Instance != null && context.Instance is ModifierMouseButtons buttons)
                 {
-                    return (IsDefinedModifierMouseButtons((ModifierMouseButtons)context.Instance));
+                    return (IsDefinedModifierMouseButtons(buttons));
                 }
             }
             return false;
@@ -116,16 +116,16 @@ namespace NeeView
         }
 
 
-        private ModifierMouseButtons GetModifierKeys(string modifiersToken, CultureInfo culture)
+        private static ModifierMouseButtons GetModifierKeys(string modifiersToken, CultureInfo culture)
         {
             ModifierMouseButtons modifiers = ModifierMouseButtons.None;
             if (modifiersToken.Length != 0)
             {
-                int offset = 0;
+                int offset;
                 do
                 {
                     offset = modifiersToken.IndexOf(ModifierDelimiter);
-                    string token = (offset < 0) ? modifiersToken : modifiersToken.Substring(0, offset);
+                    string token = (offset < 0) ? modifiersToken : modifiersToken[..offset];
                     token = token.Trim();
                     token = token.ToUpper(culture);
 
@@ -134,33 +134,16 @@ namespace NeeView
                         break;
                     }
 
-                    switch (token)
+                    modifiers |= token switch
                     {
-                        case "LEFTBUTTON":
-                            modifiers |= ModifierMouseButtons.LeftButton;
-                            break;
-
-                        case "MIDDLEBUTTON":
-                            modifiers |= ModifierMouseButtons.MiddleButton;
-                            break;
-
-                        case "RIGHTBUTTON":
-                            modifiers |= ModifierMouseButtons.RightButton;
-                            break;
-
-                        case "XBUTTON1":
-                            modifiers |= ModifierMouseButtons.XButton1;
-                            break;
-
-                        case "XBUTTON2":
-                            modifiers |= ModifierMouseButtons.XButton2;
-                            break;
-
-                        default:
-                            throw new NotSupportedException($"Unsupported modifier: {token}");
-                    }
-
-                    modifiersToken = modifiersToken.Substring(offset + 1);
+                        "LEFTBUTTON" => ModifierMouseButtons.LeftButton,
+                        "MIDDLEBUTTON" => ModifierMouseButtons.MiddleButton,
+                        "RIGHTBUTTON" => ModifierMouseButtons.RightButton,
+                        "XBUTTON1" => ModifierMouseButtons.XButton1,
+                        "XBUTTON2" => ModifierMouseButtons.XButton2,
+                        _ => throw new NotSupportedException($"Unsupported modifier: {token}"),
+                    };
+                    modifiersToken = modifiersToken[(offset + 1)..];
                 } while (offset != -1);
             }
             return modifiers;

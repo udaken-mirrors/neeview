@@ -10,24 +10,24 @@ namespace NeeView
 {
     public class BookPageViewer : BindableBase, IDisposable
     {
-        private BookSource _book;
-        private BookPageViewSetting _setting;
+        private readonly BookSource _book;
+        private readonly BookPageViewSetting _setting;
 
 
         // 表示ページコンテキスト
-        private ViewContentSourceCollection _viewPageCollection = new ViewContentSourceCollection();
+        private ViewContentSourceCollection _viewPageCollection = new();
 
         // リソースを保持しておくページ
-        private List<Page> _keepPages = new List<Page>();
+        private List<Page> _keepPages = new();
 
         // JOBリクエスト
-        private PageContentJobClient _jobClient = new PageContentJobClient("View", JobCategories.PageViewContentJobCategory);
+        private readonly PageContentJobClient _jobClient = new("View", JobCategories.PageViewContentJobCategory);
 
         // メモリ管理
-        private BookMemoryService _bookMemoryService;
+        private readonly BookMemoryService _bookMemoryService;
 
         // 先読み
-        private BookAhead _ahead;
+        private readonly BookAhead _ahead;
 
         // コンテンツ生成
         private BookPageViewGenerater? _pageViewGenerater;
@@ -36,7 +36,7 @@ namespace NeeView
         private bool _isBusy;
 
         // ブックのビュー更新カウンター
-        private BookPageCounter _viewCounter = new BookPageCounter();
+        private readonly BookPageCounter _viewCounter = new();
 
 
         public BookPageViewer(BookSource book, BookMemoryService memoryService, BookPageViewSetting setting)
@@ -163,7 +163,7 @@ namespace NeeView
         // 処理中フラグ更新
         private void UpdateIsBusy()
         {
-            IsBusy = _ahead.IsBusy || (_pageViewGenerater != null ? _pageViewGenerater.IsBusy : false);
+            IsBusy = _ahead.IsBusy || (_pageViewGenerater != null && _pageViewGenerater.IsBusy);
         }
 
         // 動画用：外部から終端イベントを発行
@@ -184,7 +184,7 @@ namespace NeeView
         public List<Page> GetViewPages() => _viewPageCollection.Collection.Select(e => e.Page).ToList();
 
         // 先読み許可フラグ
-        private bool AllowPreLoad()
+        private static bool AllowPreLoad()
         {
             return Config.Current.Performance.PreLoadSize > 0;
         }
@@ -331,8 +331,7 @@ namespace NeeView
         {
             if (_disposedValue) return;
 
-            var page = sender as Page;
-            if (page is null) return;
+            if (sender is not Page page) return;
 
             _bookMemoryService.AddPageContent(page);
 
@@ -432,6 +431,7 @@ namespace NeeView
         public void Dispose()
         {
             Dispose(true);
+            GC.SuppressFinalize(this);
         }
         #endregion
     }

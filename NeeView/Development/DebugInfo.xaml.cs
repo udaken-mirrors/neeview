@@ -26,7 +26,7 @@ namespace NeeView
     {
         public static DebugInfo? Current { get; private set; }
 
-        private DevInfoViewModel _vm;
+        private readonly DevInfoViewModel _vm;
 
         public DebugInfo()
         {

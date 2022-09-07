@@ -88,8 +88,7 @@ namespace NeeView
 
             CriticalError?.Invoke(this, EventArgs.Empty);
 
-            var exception = e.ExceptionObject as Exception;
-            if (exception == null) return;
+            if (e.ExceptionObject is not Exception exception) return;
 
             string errorLog = CreateErrorLog(exception);
 
@@ -110,7 +109,7 @@ namespace NeeView
         /// エラーログテキスト作成
         /// </summary>
         /// <param name="exception">例外</param>
-        private string CreateErrorLog(Exception exception)
+        private static string CreateErrorLog(Exception exception)
         {
             string errorLog;
             using (var writer = new StringWriter())
@@ -129,7 +128,7 @@ namespace NeeView
         /// <summary>
         /// エラーダイアログ表示
         /// </summary>
-        private void ShowErrorLogDialog(string errorLog, string errorLogFileName)
+        private static void ShowErrorLogDialog(string errorLog, string errorLogFileName)
         {
             try
             {

@@ -8,9 +8,9 @@ namespace NeeView
     /// </summary>
     public class FocusProvider
     {
-        private UIElement _control;
+        private readonly UIElement _control;
+        private readonly Func<bool> _focusFunc;
         private bool _focusRequest;
-        private Func<bool> _focusFunc;
 
 
         public FocusProvider(UIElement control, Func<bool> focusFunc)

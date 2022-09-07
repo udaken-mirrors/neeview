@@ -14,7 +14,7 @@ namespace NeeView.Effects
     [DataContract]
     public class LevelEffectUnit : EffectUnit
     {
-        private static LevelEffect _effect = new LevelEffect();
+        private static readonly LevelEffect _effect = new();
 
         public override Effect GetEffect() => _effect;
 

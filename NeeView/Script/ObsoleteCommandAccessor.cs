@@ -5,14 +5,12 @@ namespace NeeView
 {
     public class ObsoleteCommandAccessor : ICommandAccessor 
     {
-        private string _name;
-        private IAccessDiagnostics _accessDiagnostics;
-        private ObsoleteCommandItem _obsoleteInfo;
+        private readonly string _name;
+        private readonly ObsoleteCommandItem _obsoleteInfo;
 
         public ObsoleteCommandAccessor(string commandName, ObsoleteCommandItem obsoleteInfo, IAccessDiagnostics accessDiagnostics)
         {
             _name = commandName;
-            _accessDiagnostics = accessDiagnostics;
             _obsoleteInfo = obsoleteInfo;
         }
 

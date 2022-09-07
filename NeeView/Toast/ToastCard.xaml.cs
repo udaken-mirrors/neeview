@@ -22,7 +22,7 @@ namespace NeeView
     /// </summary>
     public partial class ToastCard : UserControl
     {
-        private Toast _toast;
+        private readonly Toast _toast;
 
         // for Designer
         public ToastCard()
@@ -64,19 +64,12 @@ namespace NeeView
             this.ConfirmButton.Content = _toast.ButtonContent;
             this.ConfirmButton.Visibility = _toast.ButtonContent is null ? Visibility.Collapsed : Visibility.Visible;
 
-            switch (_toast.Icon)
+            this.Icon.Source = _toast.Icon switch
             {
-                default:
-                case ToastIcon.Information:
-                    this.Icon.Source = (DrawingImage)this.Resources["tic_info"];
-                    break;
-                case ToastIcon.Warning:
-                    this.Icon.Source = (DrawingImage)this.Resources["tic_warning"];
-                    break;
-                case ToastIcon.Error:
-                    this.Icon.Source = (DrawingImage)this.Resources["tic_error"];
-                    break;
-            }
+                ToastIcon.Warning => (DrawingImage)this.Resources["tic_warning"],
+                ToastIcon.Error => (DrawingImage)this.Resources["tic_error"],
+                _ => (DrawingImage)this.Resources["tic_info"],
+            };
         }
 
         private void CloseButton_Click(object sender, RoutedEventArgs e)

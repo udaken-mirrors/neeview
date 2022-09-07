@@ -25,7 +25,7 @@ namespace NeeView
     [JsonConverter(typeof(JsonCommandParameterConverter))]
     public abstract class CommandParameter : BindableBase, ICloneable
     {
-        private Func<object, object, bool> _equals;
+        private readonly Func<object, object, bool> _equals;
 
         public CommandParameter()
         {
@@ -48,8 +48,7 @@ namespace NeeView
     {
         public static T Cast<T>(this CommandParameter? self ) where T : CommandParameter
         {
-            var param = self as T;
-            if (param is null) throw new InvalidCastException();
+            var param = self as T ?? throw new InvalidCastException();
             return param;
         }
     }
@@ -168,8 +167,7 @@ namespace NeeView
             var type = value.GetType();
             Debug.Assert(KnownTypes.Contains(type));
 
-            var def = Activator.CreateInstance(type) as CommandParameter;
-            if (def is null) throw new InvalidOperationException();
+            var def = Activator.CreateInstance(type) as CommandParameter ?? throw new InvalidOperationException();
 
             if (value.MemberwiseEquals(def))
             {

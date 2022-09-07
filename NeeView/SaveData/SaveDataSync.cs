@@ -17,7 +17,7 @@ namespace NeeView
         public static SaveDataSync Current { get; }
 
 
-        private DelayAction _delaySaveBookmark;
+        private readonly DelayAction _delaySaveBookmark;
 
 
         private SaveDataSync()
@@ -48,6 +48,7 @@ namespace NeeView
         public void Dispose()
         {
             Dispose(true);
+            GC.SuppressFinalize(this);
         }
         #endregion
 
@@ -102,7 +103,7 @@ namespace NeeView
             }
         }
 
-        public void SaveHistory()
+        private static void SaveHistory()
         {
             Debug.WriteLine($"Save History");
             SaveData.Current.SaveHistory();
@@ -118,7 +119,7 @@ namespace NeeView
             }
         }
 
-        public void RemoveBookmarkIfNotSave()
+        private static void RemoveBookmarkIfNotSave()
         {
             SaveData.Current.RemoveBookmarkIfNotSave();
         }

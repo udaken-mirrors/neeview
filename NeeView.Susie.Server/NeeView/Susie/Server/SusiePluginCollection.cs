@@ -63,12 +63,13 @@ namespace NeeView.Susie.Server
         public void Dispose()
         {
             Dispose(true);
+            GC.SuppressFinalize(this);
         }
         #endregion
 
         public void Initialize(string spiFolder)
         {
-            if (string.IsNullOrWhiteSpace(spiFolder)) throw new ArgumentException();
+            if (string.IsNullOrWhiteSpace(spiFolder)) throw new ArgumentException("spiFolder must be not null.", nameof(spiFolder));
             if (!Directory.Exists(spiFolder)) throw new DirectoryNotFoundException($"Directory not found: {spiFolder}");
 
             PluginFolder = spiFolder;
@@ -131,7 +132,7 @@ namespace NeeView.Susie.Server
         /// </summary>
         class PluginOrderComparer : IComparer<SusiePlugin>
         {
-            private List<string> _order;
+            private readonly List<string> _order;
 
             public PluginOrderComparer(List<string> order)
             {

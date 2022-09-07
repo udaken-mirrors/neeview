@@ -26,9 +26,9 @@ namespace NeeView
     /// </summary>
     public partial class PageListBox : UserControl, IPageListPanel, IDisposable
     {
-        public static string DragDropFormat = FormatVersion.CreateFormatName(Environment.ProcessId.ToString(), nameof(PageListBox));
+        public static readonly string DragDropFormat = FormatVersion.CreateFormatName(Environment.ProcessId.ToString(), nameof(PageListBox));
 
-        private PageListBoxViewModel _vm;
+        private readonly PageListBoxViewModel _vm;
         private ListBoxThumbnailLoader? _thumbnailLoader;
         private PageThumbnailJobClient? _jobClient;
 
@@ -90,6 +90,7 @@ namespace NeeView
         public void Dispose()
         {
             Dispose(true);
+            GC.SuppressFinalize(this);
         }
         #endregion
 
@@ -107,19 +108,19 @@ namespace NeeView
 
         #region Commands
 
-        public static readonly RoutedCommand OpenCommand = new RoutedCommand(nameof(OpenCommand), typeof(PageListBox));
-        public static readonly RoutedCommand OpenBookCommand = new RoutedCommand(nameof(OpenBookCommand), typeof(PageListBox));
-        public static readonly RoutedCommand OpenExplorerCommand = new RoutedCommand(nameof(OpenExplorerCommand), typeof(PageListBox));
-        public static readonly RoutedCommand OpenExternalAppCommand = new RoutedCommand(nameof(OpenExternalAppCommand), typeof(PageListBox));
-        public static readonly RoutedCommand CopyCommand = new RoutedCommand(nameof(CopyCommand), typeof(PageListBox));
-        public static readonly RoutedCommand CopyToFolderCommand = new RoutedCommand(nameof(CopyToFolderCommand), typeof(PageListBox));
-        public static readonly RoutedCommand MoveToFolderCommand = new RoutedCommand(nameof(MoveToFolderCommand), typeof(PageListBox));
-        public static readonly RoutedCommand RemoveCommand = new RoutedCommand(nameof(RemoveCommand), typeof(PageListBox));
-        public static readonly RoutedCommand OpenDestinationFolderCommand = new RoutedCommand(nameof(OpenDestinationFolderCommand), typeof(PageListBox));
-        public static readonly RoutedCommand OpenExternalAppDialogCommand = new RoutedCommand(nameof(OpenExternalAppDialogCommand), typeof(PageListBox));
-        public static readonly RoutedCommand PlaylistMarkCommand = new RoutedCommand(nameof(PlaylistMarkCommand), typeof(PageListBox));
+        public static readonly RoutedCommand OpenCommand = new(nameof(OpenCommand), typeof(PageListBox));
+        public static readonly RoutedCommand OpenBookCommand = new(nameof(OpenBookCommand), typeof(PageListBox));
+        public static readonly RoutedCommand OpenExplorerCommand = new(nameof(OpenExplorerCommand), typeof(PageListBox));
+        public static readonly RoutedCommand OpenExternalAppCommand = new(nameof(OpenExternalAppCommand), typeof(PageListBox));
+        public static readonly RoutedCommand CopyCommand = new(nameof(CopyCommand), typeof(PageListBox));
+        public static readonly RoutedCommand CopyToFolderCommand = new(nameof(CopyToFolderCommand), typeof(PageListBox));
+        public static readonly RoutedCommand MoveToFolderCommand = new(nameof(MoveToFolderCommand), typeof(PageListBox));
+        public static readonly RoutedCommand RemoveCommand = new(nameof(RemoveCommand), typeof(PageListBox));
+        public static readonly RoutedCommand OpenDestinationFolderCommand = new(nameof(OpenDestinationFolderCommand), typeof(PageListBox));
+        public static readonly RoutedCommand OpenExternalAppDialogCommand = new(nameof(OpenExternalAppDialogCommand), typeof(PageListBox));
+        public static readonly RoutedCommand PlaylistMarkCommand = new(nameof(PlaylistMarkCommand), typeof(PageListBox));
 
-        private PageCommandResource _commandResource = new PageCommandResource();
+        private readonly PageCommandResource _commandResource = new();
 
         private static void InitializeCommandStatic()
         {
@@ -324,8 +325,7 @@ namespace NeeView
         {
             if (Keyboard.Modifiers != ModifierKeys.None) return;
 
-            var page = (sender as ListBoxItem)?.Content as Page;
-            if (page != null)
+            if ((sender as ListBoxItem)?.Content is Page page)
             {
                 _vm.Model.Jump(page);
             }
@@ -334,8 +334,7 @@ namespace NeeView
         // 項目ダブルクリック
         private void PageListItem_MouseDoubleClick(object? sender, MouseButtonEventArgs e)
         {
-            var page = (sender as ListBoxItem)?.Content as Page;
-            if (page != null && page.PageType == PageType.Folder)
+            if ((sender as ListBoxItem)?.Content is Page page && page.PageType == PageType.Folder)
             {
                 BookHub.Current.RequestLoad(this, page.Entry.SystemPath, null, BookLoadOption.IsBook | BookLoadOption.SkipSamePlace, true);
                 e.Handled = true;
@@ -345,14 +344,12 @@ namespace NeeView
 
         private void PageListItem_ContextMenuOpening(object? sender, ContextMenuEventArgs e)
         {
-            var container = sender as ListBoxItem;
-            if (container == null)
+            if (sender is not ListBoxItem container)
             {
                 return;
             }
 
-            var item = container.Content as Page;
-            if (item == null)
+            if (container.Content is not Page item)
             {
                 return;
             }
@@ -388,7 +385,7 @@ namespace NeeView
 
         #region DragDrop
 
-        private async Task DragStartBehavior_DragBeginAsync(object? sender, Windows.DragStartEventArgs e, CancellationToken token)
+        public async Task DragStartBehavior_DragBeginAsync(object? sender, Windows.DragStartEventArgs e, CancellationToken token)
         {
             var pages = this.ListBox.SelectedItems.Cast<Page>().ToList();
             if (!pages.Any())
@@ -416,7 +413,7 @@ namespace NeeView
             }
 
             // 全てのファイルがファイルシステムであった場合のみ。プレイリスト以外。
-            if (pages.All(p => p.Entry.IsFileSystem && p.Entry.Archiver is not PlaylistArchive) )
+            if (pages.All(p => p.Entry.IsFileSystem && p.Entry.Archiver is not PlaylistArchive))
             {
                 // 右クリックドラッグでファイル移動を許可
                 if (Config.Current.System.IsFileWriteAccessEnabled && e.MouseEventArgs.RightButton == MouseButtonState.Pressed)
@@ -468,16 +465,12 @@ namespace NeeView
         {
             if (values[0] is Page page && values[1] is PageNameFormat format)
             {
-                switch (format)
+                return format switch
                 {
-                    default:
-                    case PageNameFormat.Raw:
-                        return page.EntryName;
-                    case PageNameFormat.Smart:
-                        return page.GetSmartFullName();
-                    case PageNameFormat.NameOnly:
-                        return page.EntryLastName;
-                }
+                    PageNameFormat.Smart => page.GetSmartFullName(),
+                    PageNameFormat.NameOnly => page.EntryLastName,
+                    _ => page.EntryName,
+                };
             }
             return null;
         }

@@ -8,7 +8,7 @@ namespace NeeView.Susie.Server
 {
     public class SusiePluginServer : IRemoteSusiePlugin, IDisposable
     {
-        private SusiePluginCollection _pluginCollection = new SusiePluginCollection();
+        private SusiePluginCollection _pluginCollection = new();
 
         public SusiePluginServer()
         {
@@ -33,6 +33,7 @@ namespace NeeView.Susie.Server
         public void Dispose()
         {
             Dispose(true);
+            GC.SuppressFinalize(this);
         }
         #endregion
 
@@ -71,7 +72,7 @@ namespace NeeView.Susie.Server
             if (buff == null)
             {
                 buff = new byte[4096];
-                using (FileStream fs = new FileStream(fileName, FileMode.Open, FileAccess.Read))
+                using (var fs = new FileStream(fileName, FileMode.Open, FileAccess.Read))
                 {
                     fs.Read(buff, 0, 2048);
                 }
@@ -89,7 +90,7 @@ namespace NeeView.Susie.Server
             if (buff == null)
             {
                 buff = new byte[4096];
-                using (FileStream fs = new FileStream(fileName, FileMode.Open, FileAccess.Read))
+                using (var fs = new FileStream(fileName, FileMode.Open, FileAccess.Read))
                 {
                     fs.Read(buff, 0, 2048);
                 }

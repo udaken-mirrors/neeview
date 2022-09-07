@@ -10,8 +10,8 @@ namespace NeeView
         public const string OnBookLoadedFilename = "OnBookLoaded";
         public const string OnPageChangedFilename = "OnPageChanged";
 
-        private static Regex _regexCommentLine = new Regex(@"^\s*/{2,}");
-        private static Regex _regexDocComment = new Regex(@"^\s*/{2,}\s*(@\w+)\s+(.+)$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+        private static readonly Regex _regexCommentLine = new(@"^\s*/{2,}");
+        private static readonly Regex _regexDocComment = new(@"^\s*/{2,}\s*(@\w+)\s+(.+)$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
 
         public ScriptCommandSource(string path)

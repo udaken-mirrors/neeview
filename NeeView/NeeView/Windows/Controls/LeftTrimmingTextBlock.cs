@@ -90,7 +90,7 @@ namespace NeeView.Windows.Controls
 
             for (int index = 2; index < this.TextSource.Length; ++index)
             {
-                var s = "…" + this.TextSource.Substring(index);
+                var s = string.Concat("…", this.TextSource.AsSpan(index));
                 var formattedText = CreateFormattedText(s);
                 if (formattedText.Width < width - margin)
                 {

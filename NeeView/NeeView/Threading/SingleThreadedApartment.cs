@@ -13,7 +13,7 @@ namespace NeeView.Threading
     /// </summary>
     public static class SingleThreadedApartment
     {
-        private static StaTaskSchedulerSource _source = new StaTaskSchedulerSource();
+        private static readonly StaTaskSchedulerSource _source = new();
 
         public static TaskScheduler TaskScheduler => _source.TaskScheduler;
     }
@@ -31,7 +31,7 @@ namespace NeeView.Threading
         /// <summary>
         /// Thread on which work is scheduled.
         /// </summary>
-        private Thread thread;
+        private readonly Thread thread;
 
         /// <summary>
         /// The <see cref="TaskScheduler"/> exposed by this class.
@@ -43,7 +43,7 @@ namespace NeeView.Threading
         /// </summary>
         public StaTaskSchedulerSource()
         {
-            using (ManualResetEvent re = new ManualResetEvent(false))
+            using (var re = new ManualResetEvent(false))
             {
                 this.thread = new Thread(
                     () =>

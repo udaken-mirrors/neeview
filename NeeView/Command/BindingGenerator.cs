@@ -10,13 +10,12 @@ namespace NeeView
 {
     public static class BindingGenerator
     {
-        private static readonly StretchModeToBooleanConverter _stretchModeToBooleanConverter = new StretchModeToBooleanConverter();
-        private static readonly PageModeToBooleanConverter _pageModeToBooleanConverter = new PageModeToBooleanConverter();
-        private static readonly BookReadOrderToBooleanConverter _bookReadOrderToBooleanConverter = new BookReadOrderToBooleanConverter();
-        private static readonly BackgroundStyleToBooleanConverter _backgroundStyleToBooleanConverter = new BackgroundStyleToBooleanConverter();
-        private static readonly FolderOrderToBooleanConverter _folderOrderToBooleanConverter = new FolderOrderToBooleanConverter();
-        private static readonly SortModeToBooleanConverter _sortModeToBooleanConverter = new SortModeToBooleanConverter();
-        private static readonly AnytToFalseConverter _anyToFalseConverter = new AnytToFalseConverter();
+        private static readonly StretchModeToBooleanConverter _stretchModeToBooleanConverter = new();
+        private static readonly PageModeToBooleanConverter _pageModeToBooleanConverter = new();
+        private static readonly BookReadOrderToBooleanConverter _bookReadOrderToBooleanConverter = new();
+        private static readonly BackgroundStyleToBooleanConverter _backgroundStyleToBooleanConverter = new();
+        private static readonly FolderOrderToBooleanConverter _folderOrderToBooleanConverter = new();
+        private static readonly SortModeToBooleanConverter _sortModeToBooleanConverter = new();
 
         public static Binding BindingBookHub(string path)
         {

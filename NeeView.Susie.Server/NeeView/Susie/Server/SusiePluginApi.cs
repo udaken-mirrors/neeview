@@ -16,15 +16,16 @@ namespace NeeView.Susie.Server
     public class SusiePluginApi : IDisposable
     {
         // DLLハンドル
-        public IntPtr hModule { get; private set; } = IntPtr.Zero;
+        private IntPtr hModule = IntPtr.Zero;
 
         // APIデリゲートリスト
-        private Dictionary<Type, object> _apiDelegateList = new Dictionary<Type, object>();
+        private readonly Dictionary<Type, object> _apiDelegateList = new();
 
 
         private SusiePluginApi()
         {
         }
+
 
         /// <summary>
         /// プラグインをロードし、使用可能状態にする
@@ -167,7 +168,7 @@ namespace NeeView.Susie.Server
             if (hModule == IntPtr.Zero) throw new InvalidOperationException();
             var getPluginInfo = GetApiDelegate<GetPluginInfoDelegate>("GetPluginInfo");
 
-            StringBuilder strb = new StringBuilder(1024);
+            var strb = new StringBuilder(1024);
             int ret = getPluginInfo(infono, strb, strb.Capacity);
             if (ret <= 0) return null;
             return strb.ToString();
@@ -209,7 +210,7 @@ namespace NeeView.Susie.Server
             if (hModule == IntPtr.Zero) throw new InvalidOperationException();
             var isSupported = GetApiDelegate<IsSupportedFromFileDelegate>("IsSupported");
 
-            using (FileStream fs = new FileStream(filename, FileMode.Open, FileAccess.Read))
+            using (var fs = new FileStream(filename, FileMode.Open, FileAccess.Read))
             {
                 return isSupported(filename, fs.SafeFileHandle.DangerousGetHandle());
             }
@@ -408,7 +409,7 @@ namespace NeeView.Susie.Server
 
 
         // Bitmap 作成
-        private byte[] CraeteBitmapImage(IntPtr pBInfo, int pBInfoSize, IntPtr pBm, int pBmSize)
+        private static byte[] CraeteBitmapImage(IntPtr pBInfo, int pBInfoSize, IntPtr pBm, int pBmSize)
         {
             if (pBInfoSize == 0 || pBmSize == 0)
             {
@@ -447,7 +448,7 @@ namespace NeeView.Susie.Server
 
 
         // BitmaiFileHeader作成
-        private BitmapFileHeader CreateBitmapFileHeader(BitmapInfoHeader bi)
+        private static BitmapFileHeader CreateBitmapFileHeader(BitmapInfoHeader bi)
         {
             var bf = new BitmapFileHeader();
             bf.bfSize = (uint)((((bi.biWidth * bi.biBitCount + 0x1f) >> 3) & ~3) * bi.biHeight);

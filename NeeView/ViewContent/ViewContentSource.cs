@@ -59,7 +59,7 @@ namespace NeeView
         /// <summary>
         /// メディア用。最後から再生開始
         /// </summary>
-        public bool IsLastStart => Content is MediaContent content ? content.IsLastStart : false;
+        public bool IsLastStart => Content is MediaContent content && content.IsLastStart;
 
         public bool IsDummy { get; }
 
@@ -130,15 +130,12 @@ namespace NeeView
                 size = new Size(width, height);
             }
 
-            switch (PagePart.PartSize)
+            return PagePart.PartSize switch
             {
-                case 0:
-                    return new Size(0.0, size.Height);
-                case 1:
-                    return new Size(Math.Floor(size.Width * 0.5 + 0.4), size.Height);
-                default:
-                    return size;
-            }
+                0 => new Size(0.0, size.Height),
+                1 => new Size(Math.Floor(size.Width * 0.5 + 0.4), size.Height),
+                _ => size,
+            };
         }
 
         /// <summary>
@@ -230,7 +227,7 @@ namespace NeeView
         /// <param name="source"></param>
         /// <param name="image"></param>
         /// <returns></returns>
-        public ImageBrush ClonePageImageBrush(ImageBrush source, ImageSource image)
+        public static ImageBrush ClonePageImageBrush(ImageBrush source, ImageSource image)
         {
             var brush = source.Clone();
             brush.ImageSource = image;
@@ -246,7 +243,7 @@ namespace NeeView
         /// 予備ブラシ作成
         /// </summary>
         /// <returns></returns>
-        public Brush CreateReserveBrush(ViewContentReserver reserver)
+        public static Brush CreateReserveBrush(ViewContentReserver reserver)
         {
             if (reserver != null)
             {

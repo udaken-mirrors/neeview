@@ -6,12 +6,10 @@ namespace NeeView
     {
         public static PlaylistPresenter? Current { get; private set; }
 
-
-        private PlaylistView _playliseView;
-        private PlaylistHub _playlistHub;
-
+        private readonly PlaylistView _playliseView;
+        private readonly PlaylistHub _playlistHub;
+        private readonly PlaylistListBoxViewModel _playlistListBoxViewModel = new();
         private PlaylistListBox? _playlistListBox;
-        private PlaylistListBoxViewModel _playlistListBoxViewModel = new PlaylistListBoxViewModel();
 
 
         public PlaylistPresenter(PlaylistView playlistView, PlaylistHub playlistModel)

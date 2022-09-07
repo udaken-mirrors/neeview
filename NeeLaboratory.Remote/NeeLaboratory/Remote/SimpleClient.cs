@@ -14,8 +14,8 @@ namespace NeeLaboratory.Remote
 {
     public class SimpleClient
     {
-        private string _serverPipeName;
-        private SemaphoreSlim _semaphore = new SemaphoreSlim(1);
+        private readonly string _serverPipeName;
+        private readonly SemaphoreSlim _semaphore = new(1);
 
 
         public SimpleClient(string serverPipeName)
@@ -26,7 +26,7 @@ namespace NeeLaboratory.Remote
         public async Task<List<Chunk>> CallAsync(List<Chunk> args, CancellationToken token)
         {
             // セマフォで排他処理。通信は同時に１つだけ
-            _semaphore.Wait();
+            _semaphore.Wait(token);
             try
             {
                 // 接続１秒タイムアウトで１０回リトライ

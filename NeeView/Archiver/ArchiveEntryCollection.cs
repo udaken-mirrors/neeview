@@ -48,10 +48,10 @@ namespace NeeView
     /// </summary>
     public class ArchiveEntryCollection
     {
-        private ArchiveEntryCollectionMode _mode;
-        private ArchiveEntryCollectionMode _modeIfArchive;
+        private readonly ArchiveEntryCollectionMode _mode;
+        private readonly ArchiveEntryCollectionMode _modeIfArchive;
+        private readonly bool _ignoreCache;
         private List<ArchiveEntry>? _entries;
-        private bool _ignoreCache;
 
         /// <summary>
         /// コンストラクタ

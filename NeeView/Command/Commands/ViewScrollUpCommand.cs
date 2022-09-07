@@ -61,7 +61,7 @@ namespace NeeView
 
 
         #region Obsolete
-        [Obsolete, JsonIgnore, EqualsIgnore, DataMember(Name = "Scroll", EmitDefaultValue = false)] // ver.37
+        [Obsolete("no used"), JsonIgnore, EqualsIgnore, DataMember(Name = "Scroll", EmitDefaultValue = false)] // ver.37
         [PropertyMapIgnore]
         public int ScrollV1
         {

@@ -13,15 +13,15 @@ namespace NeeView
 {
     public class OriginalImageExporter : IImageExporter
     {
-        private ExportImageSource _source;
-        private Page _page;
+        private readonly ExportImageSource _source;
+        private readonly Page _page;
 
         public bool HasBackground { get; set; }
 
         public OriginalImageExporter(ExportImageSource source)
         {
             _source = source;
-            _page = source?.Pages?.FirstOrDefault() ?? throw new ArgumentException();
+            _page = _source?.Pages?.FirstOrDefault() ?? throw new ArgumentException("source must have any page");
         }
 
         public ImageExporterContent? CreateView()

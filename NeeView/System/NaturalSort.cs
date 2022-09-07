@@ -12,8 +12,8 @@ namespace NeeView
     /// </summary>
     public static class NaturalSort
     {
-        private static IComparer<string> _nativeComparer;
-        private static IComparer<string> _customComparer;
+        private static readonly IComparer<string> _nativeComparer;
+        private static readonly IComparer<string> _customComparer;
 
         static NaturalSort()
         {

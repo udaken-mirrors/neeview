@@ -12,19 +12,21 @@ namespace NeeView
     /// </summary>
     public class BookAhead : BindableBase, IDisposable
     {
-        private PageContentJobClient _jobClient = new PageContentJobClient("Ahead", JobCategories.PageAheadContentJobCategory);
-        private BookMemoryService _bookMemoryService;
+        private readonly PageContentJobClient _jobClient = new("Ahead", JobCategories.PageAheadContentJobCategory);
+        private readonly BookMemoryService _bookMemoryService;
         private bool _isBusy;
+        private List<Page>? _pages;
+        private int _index;
+        private Page? _page;
+        private readonly object _lock = new();
+
+
 
         public BookAhead(BookMemoryService bookMemoryService)
         {
             _bookMemoryService = bookMemoryService;
         }
 
-        private List<Page>? _pages;
-        private int _index;
-        private Page? _page;
-        private object _lock = new object();
 
 
         public bool IsBusy
@@ -119,6 +121,7 @@ namespace NeeView
         public void Dispose()
         {
             Dispose(true);
+            GC.SuppressFinalize(this);
         }
         #endregion
     }

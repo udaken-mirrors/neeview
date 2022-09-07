@@ -26,13 +26,13 @@ namespace NeeView
         #endregion
 
         // スケジューラー
-        private JobScheduler _scheduler;
+        private readonly JobScheduler _scheduler;
 
         // ワーカータスクのキャンセルトークン
-        private CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
+        private readonly CancellationTokenSource _cancellationTokenSource = new();
 
         // ジョブ待ちフラグ
-        private ManualResetEventSlim _event = new ManualResetEventSlim(false);
+        private readonly ManualResetEventSlim _event = new(false);
 
         // ワーカースレッド
         private Thread? _thread;
@@ -259,6 +259,7 @@ namespace NeeView
         public void Dispose()
         {
             Dispose(true);
+            GC.SuppressFinalize(this);
         }
         #endregion
 

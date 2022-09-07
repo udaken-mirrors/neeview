@@ -5,6 +5,7 @@ namespace NeeView
     /// <summary>
     /// ドキュメント候補属性
     /// </summary>
+    [AttributeUsage(AttributeTargets.All)]
     public class DocumentableAttribute : Attribute
     {
         public DocumentableAttribute()

@@ -15,8 +15,8 @@ namespace NeeView
         /// ドロップ受け入れ先コントロール.
         /// ドロップイベント受信コントロールとは異なるために用意した.
         /// </summary>
-        private ItemsControl _itemsControl;
-        private LayoutDockPanelContent _dock;
+        private readonly ItemsControl _itemsControl;
+        private readonly LayoutDockPanelContent _dock;
 
         private DropAcceptDescription _description;
 

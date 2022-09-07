@@ -11,7 +11,7 @@
 
         public override void Execute(object? sender, CommandContext e)
         {
-            WindowActivator.Current.NextActivate(+1);
+            WindowActivator.NextActivate(+1);
         }
     }
 

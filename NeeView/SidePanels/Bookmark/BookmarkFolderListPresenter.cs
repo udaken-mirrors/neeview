@@ -2,8 +2,8 @@
 {
     public class BookmarkFolderListPresenter : FolderListPresenter
     {
-        private BookmarkListView _folderListView;
-        private BookmarkFolderList _folderList;
+        private readonly BookmarkListView _folderListView;
+        private readonly BookmarkFolderList _folderList;
 
         public BookmarkFolderListPresenter(BookmarkListView folderListView, BookmarkFolderList folderList) : base(folderListView, folderList)
         {

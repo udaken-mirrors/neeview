@@ -15,7 +15,7 @@ namespace NeeView
         public static BookmarkFolderList Current { get; }
 
 
-        private DisposableCollection _disposables = new();
+        private readonly DisposableCollection _disposables = new();
 
 
         private BookmarkFolderList() : base(false, false, Config.Current.Bookmark)
@@ -72,11 +72,6 @@ namespace NeeView
         #region IDisposable support
 
         private bool _disposedValue;
-
-        private new void ThrowIfDisposed()
-        {
-            if (_disposedValue) throw new ObjectDisposedException(GetType().FullName);
-        }
 
         protected override void Dispose(bool disposing)
         {

@@ -80,7 +80,7 @@ namespace NeeView
         /// </summary>
         private bool _isFreezed;
 
-        private MouseWheelDelta _mouseWheelDelta = new MouseWheelDelta();
+        private readonly MouseWheelDelta _mouseWheelDelta = new();
 
 
 
@@ -101,19 +101,19 @@ namespace NeeView
 
         #region Commands
 
-        public static readonly RoutedCommand OpenCommand = new RoutedCommand(nameof(OpenCommand), typeof(ThumbnailListView));
-        public static readonly RoutedCommand OpenBookCommand = new RoutedCommand(nameof(OpenBookCommand), typeof(ThumbnailListView));
-        public static readonly RoutedCommand OpenExplorerCommand = new RoutedCommand(nameof(OpenExplorerCommand), typeof(ThumbnailListView));
-        public static readonly RoutedCommand OpenExternalAppCommand = new RoutedCommand(nameof(OpenExternalAppCommand), typeof(ThumbnailListView));
-        public static readonly RoutedCommand CopyCommand = new RoutedCommand(nameof(CopyCommand), typeof(ThumbnailListView));
-        public static readonly RoutedCommand CopyToFolderCommand = new RoutedCommand(nameof(CopyToFolderCommand), typeof(ThumbnailListView));
-        public static readonly RoutedCommand MoveToFolderCommand = new RoutedCommand(nameof(MoveToFolderCommand), typeof(ThumbnailListView));
-        public static readonly RoutedCommand RemoveCommand = new RoutedCommand(nameof(RemoveCommand), typeof(ThumbnailListView));
-        public static readonly RoutedCommand OpenDestinationFolderCommand = new RoutedCommand(nameof(OpenDestinationFolderCommand), typeof(ThumbnailListView));
-        public static readonly RoutedCommand OpenExternalAppDialogCommand = new RoutedCommand(nameof(OpenExternalAppDialogCommand), typeof(ThumbnailListView));
-        public static readonly RoutedCommand PlaylistMarkCommand = new RoutedCommand(nameof(PlaylistMarkCommand), typeof(ThumbnailListView));
+        public static readonly RoutedCommand OpenCommand = new(nameof(OpenCommand), typeof(ThumbnailListView));
+        public static readonly RoutedCommand OpenBookCommand = new(nameof(OpenBookCommand), typeof(ThumbnailListView));
+        public static readonly RoutedCommand OpenExplorerCommand = new(nameof(OpenExplorerCommand), typeof(ThumbnailListView));
+        public static readonly RoutedCommand OpenExternalAppCommand = new(nameof(OpenExternalAppCommand), typeof(ThumbnailListView));
+        public static readonly RoutedCommand CopyCommand = new(nameof(CopyCommand), typeof(ThumbnailListView));
+        public static readonly RoutedCommand CopyToFolderCommand = new(nameof(CopyToFolderCommand), typeof(ThumbnailListView));
+        public static readonly RoutedCommand MoveToFolderCommand = new(nameof(MoveToFolderCommand), typeof(ThumbnailListView));
+        public static readonly RoutedCommand RemoveCommand = new(nameof(RemoveCommand), typeof(ThumbnailListView));
+        public static readonly RoutedCommand OpenDestinationFolderCommand = new(nameof(OpenDestinationFolderCommand), typeof(ThumbnailListView));
+        public static readonly RoutedCommand OpenExternalAppDialogCommand = new(nameof(OpenExternalAppDialogCommand), typeof(ThumbnailListView));
+        public static readonly RoutedCommand PlaylistMarkCommand = new(nameof(PlaylistMarkCommand), typeof(ThumbnailListView));
 
-        private PageCommandResource _commandResource = new PageCommandResource();
+        private readonly PageCommandResource _commandResource = new();
 
         private static void InitializeCommandStatic()
         {
@@ -550,8 +550,7 @@ namespace NeeView
         // 履歴項目決定
         private void ThumbnailListItem_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            var page = (sender as ListBoxItem)?.Content as Page;
-            if (page != null)
+            if ((sender as ListBoxItem)?.Content is Page page)
             {
                 BookOperation.Current.JumpPage(this, page);
             }
@@ -560,14 +559,12 @@ namespace NeeView
         // ContextMenu
         private void ThumbnailListItem_ContextMenuOpening(object sender, ContextMenuEventArgs e)
         {
-            var container = sender as ListBoxItem;
-            if (container == null)
+            if (sender is not ListBoxItem container)
             {
                 return;
             }
 
-            var item = container.Content as Page;
-            if (item == null)
+            if (container.Content is not Page item)
             {
                 return;
             }

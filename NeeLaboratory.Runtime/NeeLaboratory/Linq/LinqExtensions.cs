@@ -9,7 +9,7 @@ namespace NeeLaboratory.Linq
         public static IEnumerable<TSource> WhereNotNull<TSource>(this IEnumerable<TSource?> source)
             where TSource : class
         {
-            if (source is null) throw new ArgumentNullException();
+            if (source is null) throw new ArgumentNullException(nameof(source));
             return source.Where(x => x != null)!;
         }
     }

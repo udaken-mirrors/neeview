@@ -17,8 +17,8 @@ namespace NeeView
         public static DragActionTable Current { get; }
 
         public const string GestureDragActionName = "Gesture";
-        private DragActionCollection _defaultMemento;
-        private Dictionary<string, DragAction> _elements;
+        private readonly DragActionCollection _defaultMemento;
+        private readonly Dictionary<string, DragAction> _elements;
 
 
         private DragActionTable()
@@ -116,10 +116,10 @@ namespace NeeView
         [DataContract]
         public class Memento : IMemento
         {
-#pragma warning disable CS0612
+#pragma warning disable CS0618
             [DataMember(Name = "Elements", EmitDefaultValue = false)]
             public Dictionary<DragActionType, DragAction.Memento> Elements { get; set; } = new Dictionary<DragActionType, DragAction.Memento>();
-#pragma warning restore CS0612
+#pragma warning restore CS0618
 
             public void RestoreConfig(Config config)
             {

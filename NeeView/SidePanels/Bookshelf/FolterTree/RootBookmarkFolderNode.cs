@@ -52,7 +52,7 @@ namespace NeeView
             if (parent is null) return;
             if (item is null) return;
 
-            if (!(item.Value is BookmarkFolder folder))
+            if (item.Value is not BookmarkFolder)
             {
                 return;
             }
@@ -77,7 +77,7 @@ namespace NeeView
             if (parent is null) return;
             if (item is null) return;
 
-            if (!(item.Value is BookmarkFolder folder))
+            if (item.Value is not BookmarkFolder)
             {
                 return;
             }
@@ -101,7 +101,7 @@ namespace NeeView
             if (parent is null) return;
             if (item is null) return;
 
-            if (!(item.Value is BookmarkFolder folder))
+            if (item.Value is not BookmarkFolder)
             {
                 return;
             }

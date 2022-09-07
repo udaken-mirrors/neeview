@@ -20,15 +20,15 @@ namespace NeeView
     /// </summary>
     public class SidePanelViewModel : BindableBase
     {
-        public static string DragDropFormat = $"{Environment.ProcessId}.PanelContent";
+        public static readonly string DragDropFormat = $"{Environment.ProcessId}.PanelContent";
 
-        private LayoutDockPanelContent _dock;
-        private SidePanelDropAcceptor _dropAcceptor;
+        private readonly LayoutDockPanelContent _dock;
+        private readonly SidePanelDropAcceptor _dropAcceptor;
         private double _width = 300.0;
         private bool _isDragged;
         private bool _isAutoHide;
         private Visibility _visibility;
-        private Func<DependencyObject, bool> _elementContainsFunc;
+        private readonly Func<DependencyObject, bool> _elementContainsFunc;
         private bool _isPanelActived;
         
         
@@ -210,7 +210,7 @@ namespace NeeView
     /// </summary>
     public class SidePanelAutoHideDescription : AutoHideDescription
     {
-        private SidePanelViewModel _self;
+        private readonly SidePanelViewModel _self;
 
         public SidePanelAutoHideDescription(SidePanelViewModel self)
         {

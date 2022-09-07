@@ -19,8 +19,8 @@ namespace NeeView
 
     public class PageContentPool
     {
-        private List<IHasPageContent> _collection = new List<IHasPageContent>();
-        private object _lock = new object();
+        private List<IHasPageContent> _collection = new();
+        private readonly object _lock = new();
         private int _referenceIndex;
 
 

@@ -8,7 +8,7 @@ namespace NeeLaboratory.ComponentModel
     /// </summary>
     public class AnonymousDisposable : IDisposable
     {
-        private Action _action;
+        private readonly Action _action;
         private bool _disposedValue;
 
         public AnonymousDisposable(Action action)
@@ -34,6 +34,7 @@ namespace NeeLaboratory.ComponentModel
         public void Dispose()
         {
             Dispose(disposing: true);
+            GC.SuppressFinalize(this);
         }
     }
 

@@ -8,9 +8,9 @@ namespace NeeView
     /// </summary>
     public class CommandAccessor : ICommandAccessor
     {
-        private CommandElement _command;
+        private readonly CommandElement _command;
         private ImmutableDictionary<string, object> _patch = ImmutableDictionary<string, object>.Empty;
-        private IAccessDiagnostics _accessDiagnostics;
+        private readonly IAccessDiagnostics _accessDiagnostics;
 
 
         public CommandAccessor(CommandElement command, IAccessDiagnostics accessDiagnostics)

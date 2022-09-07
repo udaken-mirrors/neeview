@@ -3,7 +3,7 @@
 namespace NeeView
 {
     // ドラッグアクションの種類
-    [Obsolete]
+    [Obsolete("no used")]
     public enum DragActionType
     {
         [AliasName]

@@ -14,7 +14,7 @@ namespace NeeView
     /// <summary>
     /// ページの準備中に表示するもの
     /// </summary>
-    [Obsolete]
+    [Obsolete("no used")]
     public enum LoadingPageView
     {
         [AliasName]
@@ -95,7 +95,7 @@ namespace NeeView
             [DataMember, DefaultValue(2)]
             public int PreLoadSize { get; set; }
 
-            [Obsolete, DataMember(EmitDefaultValue = false)]
+            [Obsolete("no used"), DataMember(EmitDefaultValue = false)]
             public PreLoadMode PreLoadMode { get; set; }
 
             [DataMember, DefaultValue(1.0)]
@@ -104,13 +104,13 @@ namespace NeeView
             [DataMember, DefaultValue(true)]
             public bool IsEnableAnimatedGif { get; set; }
 
-            [Obsolete, DataMember(EmitDefaultValue = false)]
+            [Obsolete("no used"), DataMember(EmitDefaultValue = false)]
             public bool IsEnableNoSupportFile { get; set; }
 
             [DataMember, DefaultValue(BookPageCollectMode.ImageAndBook)]
             public BookPageCollectMode BookPageCollectMode { get; set; }
 
-            [Obsolete, DataMember(EmitDefaultValue = false)]
+            [Obsolete("no used"), DataMember(EmitDefaultValue = false)]
             public LoadingPageView LoadingPageView { get; set; }
 
             [DataMember, DefaultValue(true)]
@@ -135,14 +135,14 @@ namespace NeeView
             [OnDeserialized]
             private void OnDeserialized(StreamingContext c)
             {
-#pragma warning disable CS0612
+#pragma warning disable CS0618
                 if (_Version < Environment.GenerateProductVersionNumber(34, 0, 0))
                 {
                     BookPageCollectMode = IsEnableNoSupportFile ? BookPageCollectMode.All : BookPageCollectMode.ImageAndBook;
                     PreLoadSize = PreLoadMode == PreLoadMode.None ? 0 : 2;
                     IsLoadingPageVisible = LoadingPageView != LoadingPageView.None;
                 }
-#pragma warning restore CS0612
+#pragma warning restore CS0618
             }
 
             public void RestoreConfig(Config config)

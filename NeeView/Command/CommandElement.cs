@@ -72,9 +72,9 @@ namespace NeeView
     {
         public static CommandElement None { get; } = new NoneCommand();
 
-        public static object[] EmptyArgs { get; } = new object[] { };
+        public static object[] EmptyArgs { get; } = Array.Empty<object>();
 
-        private static Regex _trimCommand = new Regex(@"Command$", RegexOptions.Compiled);
+        private static readonly Regex _trimCommand = new(@"Command$", RegexOptions.Compiled);
 
         private string? _menuText;
         private string? _remarksText;
@@ -338,16 +338,13 @@ namespace NeeView
         protected virtual CommandElement CloneInstance()
         {
             var type = this.GetType();
-            var element = Activator.CreateInstance(type) as CommandElement;
-            if (element is null) throw new InvalidOperationException();
+            var element = Activator.CreateInstance(type) as CommandElement ?? throw new InvalidOperationException();
             return element;
         }
 
         // コマンドの複製
         public CommandElement CloneCommand(CommandNameSource name)
         {
-            var type = this.GetType();
-
             var clone = CloneInstance();
 
             var memento = CreateMementoV2();

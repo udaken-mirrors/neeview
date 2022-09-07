@@ -24,7 +24,7 @@ namespace NeeView
 
     public static class AliasNameExtensions
     {
-        private static Dictionary<Type, Dictionary<Enum, string>> _cache = new Dictionary<Type, Dictionary<Enum, string>>();
+        private static readonly Dictionary<Type, Dictionary<Enum, string>> _cache = new();
 
 
         public static string? GetAliasName(object value)

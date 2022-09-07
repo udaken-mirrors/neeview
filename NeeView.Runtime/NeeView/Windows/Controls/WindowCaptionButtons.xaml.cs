@@ -19,8 +19,8 @@ namespace NeeView.Windows.Controls
 {
     public partial class WindowCaptionButtons : UserControl, IHasMaximizeButton
     {
+        private readonly SnapLayoutPresenter _snapLayoutPresenter;
         private Window? _window;
-        private SnapLayoutPresenter _snapLayoutPresenter;
 
 
         public WindowCaptionButtons()

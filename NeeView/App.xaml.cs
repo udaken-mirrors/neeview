@@ -36,7 +36,7 @@ namespace NeeView
 
         private bool _isSplashScreenVisibled;
         private bool _isTerminated;
-        private int _tickBase = System.Environment.TickCount;
+        private readonly int _tickBase = System.Environment.TickCount;
         private CommandLineOption? _option;
         private MultbootService? _multiBootService;
 
@@ -97,7 +97,7 @@ namespace NeeView
                 Trace.WriteLine(System.Environment.NewLine + new string('=', 80));
             }
 
-            Trace.WriteLine($"App.Startup: PID={Process.GetCurrentProcess().Id}: {DateTime.Now}");
+            Trace.WriteLine($"App.Startup: PID={System.Environment.ProcessId}: {DateTime.Now}");
 
             // 未処理例外ハンドル
             InitializeUnhandledException();
@@ -115,7 +115,8 @@ namespace NeeView
 
             Trace.WriteLine($"App.Initialized: {Stopwatch.ElapsedMilliseconds}ms");
 
-            ThemeManager.Current.Touch();
+            // インスタンス確定
+            _ = ThemeManager.Current;
 
             // メインウィンドウ起動
             var mainWindow = new MainWindow();
@@ -226,7 +227,7 @@ namespace NeeView
                 if (_isSplashScreenVisibled) return;
                 _isSplashScreenVisibled = true;
                 var resourceName = "Resources/SplashScreen.png";
-                SplashScreen splashScreen = new SplashScreen(resourceName);
+                var splashScreen = new SplashScreen(resourceName);
                 splashScreen.Show(true);
                 Debug.WriteLine($"App.ShowSplashScreen: {Stopwatch.ElapsedMilliseconds}ms");
             }

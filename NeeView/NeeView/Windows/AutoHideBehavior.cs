@@ -63,7 +63,7 @@ namespace NeeView
 
         private static void OnScreenPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            if (d is AutoHideBehavior control)
+            if (d is AutoHideBehavior)
             {
                 if (e.OldValue != null)
                 {
@@ -234,7 +234,7 @@ namespace NeeView
 
 
         private Window? _window;
-        private DelayValue<Visibility> _delayVisibility = new DelayValue<Visibility>();
+        private readonly DelayValue<Visibility> _delayVisibility = new();
         private bool _isAttached;
         private bool _isMouseOver;
         private bool _isFocusLock;
@@ -456,23 +456,14 @@ namespace NeeView
 
                 var point = Mouse.GetPosition(this.Screen);
 
-                switch (this.Dock)
+                return this.Dock switch
                 {
-                    case Dock.Left:
-                        return point.X < this.HitTestMargin;
-
-                    case Dock.Top:
-                        return point.Y < this.HitTestMargin;
-
-                    case Dock.Right:
-                        return point.X > this.Screen.ActualWidth - this.HitTestMargin - 1.0;
-
-                    case Dock.Bottom:
-                        return point.Y > this.Screen.ActualHeight - this.HitTestMargin - 1.0;
-
-                    default:
-                        return false;
-                }
+                    Dock.Left => point.X < this.HitTestMargin,
+                    Dock.Top => point.Y < this.HitTestMargin,
+                    Dock.Right => point.X > this.Screen.ActualWidth - this.HitTestMargin - 1.0,
+                    Dock.Bottom => point.Y > this.Screen.ActualHeight - this.HitTestMargin - 1.0,
+                    _ => false,
+                };
             }
         }
 
@@ -491,8 +482,7 @@ namespace NeeView
                         return this.AssociatedObject.IsKeyboardFocusWithin;
 
                     case AutoHideFocusLockMode.TextBoxFocusLock:
-                        var textbox = Keyboard.FocusedElement as TextBox;
-                        if (textbox is null) return false;
+                        if (Keyboard.FocusedElement is not TextBox textbox) return false;
                         return this.AssociatedObject.IsKeyboardFocusWithin && VisualTreeUtility.HasParentElement(textbox, this.AssociatedObject);
 
                     case AutoHideFocusLockMode.LogicalFocusLock:
@@ -508,8 +498,7 @@ namespace NeeView
 
             FrameworkElement? GetFocusedElement()
             {
-                var focusedElement = FocusManager.GetFocusedElement(FocusManager.GetFocusScope(this.AssociatedObject)) as FrameworkElement;
-                if (focusedElement is null) return null;
+                if (FocusManager.GetFocusedElement(FocusManager.GetFocusScope(this.AssociatedObject)) is not FrameworkElement focusedElement) return null;
                 return VisualTreeUtility.HasParentElement(focusedElement, this.AssociatedObject) ? focusedElement : null;
             }
         }

@@ -6,12 +6,12 @@ namespace NeeView
 {
     public class CommandHostStaticResource
     {
-        private static Lazy<CommandHostStaticResource> _instance = new Lazy<CommandHostStaticResource>();
+        private static readonly Lazy<CommandHostStaticResource> _instance = new();
         public static CommandHostStaticResource Current => _instance.Value;
 
 
-        private ScriptAccessDiagnostics _accessDiagnostics;
-        private ConfigMap _configMap;
+        private readonly ScriptAccessDiagnostics _accessDiagnostics;
+        private readonly ConfigMap _configMap;
         private CommandAccessorMap _commandAccessMap;
 
 

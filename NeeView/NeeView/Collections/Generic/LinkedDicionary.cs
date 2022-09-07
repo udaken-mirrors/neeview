@@ -12,8 +12,8 @@ namespace NeeView.Collections.Generic
     public class LinkedDicionary<TKey, TValue> : IEnumerable<TValue>
         where TKey : notnull
     {
-        private Dictionary<TKey, LinkedListNode<TValue>> _map = new Dictionary<TKey, LinkedListNode<TValue>>();
-        private LinkedList<TValue> _list = new LinkedList<TValue>();
+        private readonly Dictionary<TKey, LinkedListNode<TValue>> _map = new();
+        private readonly LinkedList<TValue> _list = new();
 
         public int Count => _map.Count;
         public LinkedListNode<TValue>? First => _list.First;

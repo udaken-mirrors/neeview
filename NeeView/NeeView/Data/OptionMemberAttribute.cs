@@ -4,7 +4,6 @@ using System.Reflection;
 
 namespace NeeView.Data
 {
-    //
     [AttributeUsage(AttributeTargets.Property)]
     public class OptionMemberAttribute : OptionBaseAttribute
     {
@@ -23,7 +22,6 @@ namespace NeeView.Data
     }
 
 
-    //
     public class OptionMemberElement
     {
         public string? LongName => _attribute.LongName;
@@ -35,8 +33,8 @@ namespace NeeView.Data
 
         public string PropertyName => _info.Name;
 
-        private PropertyInfo _info;
-        private OptionMemberAttribute _attribute;
+        private readonly PropertyInfo _info;
+        private readonly OptionMemberAttribute _attribute;
 
 
         public OptionMemberElement(PropertyInfo info, OptionMemberAttribute attribute)
@@ -64,19 +62,14 @@ namespace NeeView.Data
             }
 
             TypeCode typeCode = Type.GetTypeCode(_info.PropertyType);
-            switch (typeCode)
+            return typeCode switch
             {
-                case TypeCode.Boolean:
-                    return "bool";
-                case TypeCode.String:
-                    return "string";
-                case TypeCode.Int32:
-                    return "number";
-                case TypeCode.Double:
-                    return "number";
-                default:
-                    throw new NotSupportedException(string.Format(Properties.Resources.OptionArgumentException_NotSupportType, _info.PropertyType));
-            }
+                TypeCode.Boolean => "bool",
+                TypeCode.String => "string",
+                TypeCode.Int32 => "number",
+                TypeCode.Double => "number",
+                _ => throw new NotSupportedException(string.Format(Properties.Resources.OptionArgumentException_NotSupportType, _info.PropertyType)),
+            };
         }
 
         //

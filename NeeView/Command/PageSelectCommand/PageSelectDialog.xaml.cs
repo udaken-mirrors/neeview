@@ -18,8 +18,8 @@ namespace NeeView
     /// </summary>
     public partial class PageSelectDialog : Window
     {
-        private PageSelectDialogViewModel _vm;
-        private MouseWheelDelta _mouseWheelDelta = new MouseWheelDelta();
+        private readonly PageSelectDialogViewModel _vm;
+        private readonly MouseWheelDelta _mouseWheelDelta = new();
 
         // for designer
         public PageSelectDialog() : this(new PageSelecteDialogModel(5,1,10))

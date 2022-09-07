@@ -11,7 +11,7 @@ namespace NeeView.Susie.Server
     public class ArchiveEntry
     {
         // 対応するプラグイン
-        private SusiePlugin _spi;
+        private readonly SusiePlugin _spi;
 
         // エントリ情報(RAW)
         private ArchiveFileInfoRaw _info;

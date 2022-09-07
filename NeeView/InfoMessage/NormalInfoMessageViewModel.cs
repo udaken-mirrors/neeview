@@ -11,7 +11,7 @@ namespace NeeView
     /// </summary>
     public class NormalInfoMessageViewModel : BindableBase
     {
-        private WeakBindableBase<NormalInfoMessage> _model;
+        private readonly WeakBindableBase<NormalInfoMessage> _model;
         private int _changeCount;
 
 

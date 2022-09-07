@@ -7,8 +7,8 @@ namespace NeeView
 {
     public class CommandAccessorMap : IEnumerable<KeyValuePair<string, ICommandAccessor>>
     {
-        private Dictionary<string, ICommandAccessor> _map = new Dictionary<string, ICommandAccessor>();
-        private IAccessDiagnostics _accessDiagnostics;
+        private readonly Dictionary<string, ICommandAccessor> _map = new();
+        private readonly IAccessDiagnostics _accessDiagnostics;
 
 
         public CommandAccessorMap(CommandTable commandTable, IAccessDiagnostics accessDiagnostics)
@@ -52,8 +52,7 @@ namespace NeeView
             node.Children = new List<WordNode>();
             foreach (var commandName in _map.Keys)
             {
-                var commandAccessor = _map[commandName] as CommandAccessor;
-                if (commandAccessor != null)
+                if (_map[commandName] is CommandAccessor commandAccessor)
                 {
                     node.Children.Add(commandAccessor.CreateWordNode(commandName));
                 }

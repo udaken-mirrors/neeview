@@ -10,7 +10,7 @@ namespace NeeView
     /// <summary>
     /// フォルダーの並び(互換用)
     /// </summary>
-    [Obsolete, DataContract(Name = "FolderOrder")]
+    [Obsolete("no used"), DataContract(Name = "FolderOrder")]
     public enum FolderOrderV1
     {
         [EnumMember]
@@ -84,45 +84,34 @@ namespace NeeView
 
     public static class FolderOrderExtension
     {
-        [Obsolete]
+        [Obsolete("use legacy convert only")]
         public static FolderOrder ToV2(this FolderOrderV1 mode)
         {
-            switch (mode)
+            return mode switch
             {
-                default:
-                case FolderOrderV1.FileName:
-                    return FolderOrder.FileName;
-                case FolderOrderV1.TimeStamp:
-                    return FolderOrder.TimeStampDescending;
-                case FolderOrderV1.Size:
-                    return FolderOrder.SizeDescending;
-                case FolderOrderV1.Random:
-                    return FolderOrder.Random;
-            }
+                FolderOrderV1.TimeStamp => FolderOrder.TimeStampDescending,
+                FolderOrderV1.Size => FolderOrder.SizeDescending,
+                FolderOrderV1.Random => FolderOrder.Random,
+                _ => FolderOrder.FileName,
+            };
         }
 
         public static bool IsEntryCategory(this FolderOrder mode)
         {
-            switch (mode)
+            return mode switch
             {
-                case FolderOrder.EntryTime:
-                case FolderOrder.EntryTimeDescending:
-                    return true;
-                default:
-                    return false;
-            }
+                FolderOrder.EntryTime or FolderOrder.EntryTimeDescending => true,
+                _ => false,
+            };
         }
 
         public static bool IsPathCategory(this FolderOrder mode)
         {
-            switch (mode)
+            return mode switch
             {
-                case FolderOrder.Path:
-                case FolderOrder.PathDescending:
-                    return true;
-                default:
-                    return false;
-            }
+                FolderOrder.Path or FolderOrder.PathDescending => true,
+                _ => false,
+            };
         }
     }
 

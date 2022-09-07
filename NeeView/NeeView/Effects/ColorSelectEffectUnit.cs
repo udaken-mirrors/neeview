@@ -14,7 +14,7 @@ namespace NeeView.Effects
     [DataContract]
     public class ColorSelectEffectUnit : EffectUnit
     {
-        private static ColorSelectEffect _effect = new ColorSelectEffect();
+        private static readonly ColorSelectEffect _effect = new();
         public override Effect GetEffect() => _effect;
 
 

@@ -7,12 +7,12 @@ namespace NeeView
 {
     public class TitleString : BindableBase
     {
-        TitleStringService _titleStringService;
+        private readonly TitleStringService _titleStringService;
         private string _format = "";
-        private List<string> _keys = new List<string>();
+        private List<string> _keys = new();
         private string _title = "";
 
-        private readonly List<string> _keywords = new List<string>()
+        private readonly List<string> _keywords = new()
         {
             "$Book",
             "$PageMax",

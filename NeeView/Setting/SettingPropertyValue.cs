@@ -10,9 +10,9 @@ namespace NeeView.Setting
     /// <typeparam name="T">値の型</typeparam>
     public class SettingPropertyValue<T>
     {
-        private DependencyProperty _dependencyProperty;
-        private T? _value;
-        private BindingBase? _binding;
+        private readonly DependencyProperty _dependencyProperty;
+        private readonly T? _value;
+        private readonly BindingBase? _binding;
 
         public SettingPropertyValue(DependencyProperty dp, T value)
         {

@@ -68,13 +68,13 @@ namespace NeeView
 
         public GridLength LeftPanelWidth
         {
-            get => new GridLength(this.Left.Width);
+            get => new(this.Left.Width);
             set => this.Left.Width = value.Value;
         }
 
         public GridLength RightPanelWidth
         {
-            get => new GridLength(this.Right.Width);
+            get => new(this.Right.Width);
             set => this.Right.Width = value.Value;
         }
 

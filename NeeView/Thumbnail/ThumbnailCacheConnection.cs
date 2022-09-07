@@ -11,7 +11,7 @@ namespace NeeView
     {
         private const string _format = "2.0";
 
-        private SQLiteConnection _connection;
+        private readonly SQLiteConnection _connection;
 
 
         public ThumbnailCacheConnection(string path)
@@ -44,17 +44,11 @@ namespace NeeView
 
 
         [Conditional("DEBUG")]
-        private static void _WriteLine(string format, params object[] args)
+        private static void LocalWriteLine(string format, params object[] args)
         {
-            //Debug.WriteLine(_GetWriteLinePrefix() + format, args);
+            //var prefix = $"[TC:{System.Environment.CurrentManagedThreadId}] "; 
+            //Debug.WriteLine(prefix + format, args);
         }
-
-        private static string _GetWriteLinePrefix()
-        {
-            var tid = Thread.CurrentThread.ManagedThreadId;
-            return $"[TC:{tid}] ";
-        }
-
 
 
         /// <summary>
@@ -77,7 +71,7 @@ namespace NeeView
             var format = LoadProperty("format");
 
             var result = format == null || format == _format;
-            _WriteLine($"Format: {format}: {result}");
+            LocalWriteLine($"Format: {format}: {result}");
 
             return result;
         }
@@ -206,7 +200,7 @@ namespace NeeView
             if (_disposedValue) return;
 
             var limitDateTime = DateTime.Now - limitTime;
-            _WriteLine($"Delete: before {limitDateTime}");
+            LocalWriteLine($"Delete: before {limitDateTime}");
 
             using (SQLiteCommand command = _connection.CreateCommand())
             {
@@ -214,7 +208,7 @@ namespace NeeView
                 command.Parameters.Add(new SQLiteParameter("@date", limitDateTime));
                 int count = command.ExecuteNonQuery();
 
-                _WriteLine($"Delete: {count}");
+                LocalWriteLine($"Delete: {count}");
             }
         }
 
@@ -228,7 +222,7 @@ namespace NeeView
         {
             if (_disposedValue) return;
 
-            _WriteLine($"Save: {header.Key}");
+            LocalWriteLine($"Save: {header.Key}");
 
             using (SQLiteCommand command = _connection.CreateCommand())
             {
@@ -243,7 +237,7 @@ namespace NeeView
         /// <param name="command"></param>
         /// <param name="header"></param>
         /// <param name="data"></param>
-        private void Save(SQLiteCommand command, ThumbnailCacheHeader header, byte[] data)
+        private static void Save(SQLiteCommand command, ThumbnailCacheHeader header, byte[] data)
         {
             command.CommandText = "REPLACE INTO thumbs (key, size, date, ghash, value) VALUES (@key, @size, @date, @ghash, @value)";
             command.Parameters.Add(new SQLiteParameter("@key", header.Key));
@@ -259,7 +253,7 @@ namespace NeeView
         /// </summary>
         /// <param name="command"></param>
         /// <param name="header"></param>
-        private void UpdateDate(SQLiteCommand command, ThumbnailCacheHeader header)
+        private static void UpdateDate(SQLiteCommand command, ThumbnailCacheHeader header)
         {
             command.CommandText = "UPDATE thumbs SET date = @date WHERE key = @key";
             command.Parameters.Add(new SQLiteParameter("@key", header.Key));
@@ -297,14 +291,14 @@ namespace NeeView
                         {
                             var dateTime = (reader["date"] as DateTime?) ?? DateTime.MinValue;
 
-                            _WriteLine($"Load: o {header.Key}");
+                            LocalWriteLine($"Load: o {header.Key}");
                             return new ThumbnailCacheRecord(bytes, dateTime);
                         }
                     }
                 }
             }
 
-            _WriteLine($"Load: x {header.Key}");
+            LocalWriteLine($"Load: x {header.Key}");
             return null;
         }
 
@@ -324,13 +318,13 @@ namespace NeeView
                 {
                     foreach (var item in saveQueue.Values)
                     {
-                        _WriteLine($"Save: {item.Header.Key}");
+                        LocalWriteLine($"Save: {item.Header.Key}");
                         Save(command, item.Header, item.Body);
                     }
 
                     foreach (var item in updateQueue.Values)
                     {
-                        _WriteLine($"Update: {item.Key}");
+                        LocalWriteLine($"Update: {item.Key}");
                         UpdateDate(command, item);
                     }
                 }
@@ -359,6 +353,7 @@ namespace NeeView
         public void Dispose()
         {
             Dispose(true);
+            GC.SuppressFinalize(this);
         }
         #endregion
     }

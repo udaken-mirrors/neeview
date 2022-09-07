@@ -10,7 +10,7 @@ namespace NeeView
 {
     public class Importer : IDisposable
     {
-        private ZipArchive _archive;
+        private readonly ZipArchive _archive;
         private ZipArchiveEntry? _settingEntry;
         private ZipArchiveEntry? _settingEntryV1;
         private ZipArchiveEntry? _historyEntry;
@@ -189,10 +189,10 @@ namespace NeeView
                 {
                     using (var stream = _pagemarkEntryV1.Open())
                     {
-#pragma warning disable CS0612 // 型またはメンバーが旧型式です
+#pragma warning disable CS0612, CS0618 // 型またはメンバーが旧型式です
                         var pagemarkV1 = PagemarkCollection.Memento.LoadV1(stream);
                         pagemarkV1?.RestoreConfig(setting?.Config);
-#pragma warning restore CS0612 // 型またはメンバーが旧型式です
+#pragma warning restore CS0612, CS0618 // 型またはメンバーが旧型式です
                     }
                 }
             }
@@ -269,7 +269,7 @@ namespace NeeView
         {
             if (!this.IsPagemarkEnabled) return;
 
-#pragma warning disable CS0612 // 型またはメンバーが旧型式です
+#pragma warning disable CS0612, CS0618 // 型またはメンバーが旧型式です
             PagemarkCollection.Memento? pagemark = null;
 
             if (_pagemarkEntry != null)
@@ -286,7 +286,7 @@ namespace NeeView
                     pagemark = PagemarkCollection.Memento.LoadV1(stream);
                 }
             }
-#pragma warning restore CS0612 // 型またはメンバーが旧型式です
+#pragma warning restore CS0612, CS0618 // 型またはメンバーが旧型式です
 
             if (pagemark != null)
             {

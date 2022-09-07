@@ -34,9 +34,9 @@ namespace NeeView
 
         public override object? ConvertFrom(ITypeDescriptorContext? context, CultureInfo? culture, object source)
         {
-            if (source != null && source is string)
+            if (source != null && source is string s)
             {
-                string mouseActionToken = ((string)source).Trim();
+                string mouseActionToken = s.Trim();
                 mouseActionToken = mouseActionToken.ToUpper(CultureInfo.InvariantCulture);
                 if (mouseActionToken == String.Empty)
                 {

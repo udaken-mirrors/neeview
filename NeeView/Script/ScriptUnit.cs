@@ -9,23 +9,23 @@ namespace NeeView
 {
     public class ScriptUnit
     {
-        private ScriptUnitPool _pool;
+        private readonly ScriptUnitPool _pool;
 
-        private Task? _task;
-        private CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
+        private readonly CancellationTokenSource _cancellationTokenSource = new();
 
         public ScriptUnit(ScriptUnitPool pool)
         {
-            if (pool is null) throw new ArgumentNullException();
+            if (pool is null) throw new ArgumentNullException(nameof(pool));
 
             _pool = pool;
         }
 
         public void Execute(object? sender, string path, string? argument)
         {
-            _task = Task.Run(() => ExecuteInner(sender, path, argument));
+            Task.Run(() => ExecuteInner(sender, path, argument));
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060:未使用のパラメーターを削除します", Justification = "<保留中>")]
         private void ExecuteInner(object? sender, string path, string? argument)
         {
             var engine = new JavascriptEngine() { IsToastEnable = true };

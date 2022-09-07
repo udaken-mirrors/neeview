@@ -14,8 +14,8 @@ namespace NeeView
 {
     public class MultbootService
     {
-        private Process _currentProcess;
-        private Process? _serverProcess;
+        private readonly Process _currentProcess;
+        private readonly Process? _serverProcess;
 
 
         public MultbootService()
@@ -35,7 +35,7 @@ namespace NeeView
         /// <summary>
         /// サーバープロセスを検索
         /// </summary>
-        private Process? GetServerProcess(Process currentProcess)
+        private static Process? GetServerProcess(Process currentProcess)
         {
             var processName = currentProcess.ProcessName;
             Trace.WriteLine($"GetServerProcess: CurrentProcess: ProcessName={processName}, Id={currentProcess.Id}");

@@ -46,40 +46,29 @@ namespace NeeView
 
         public static bool IsDescending(this PageSortMode mode)
         {
-            switch (mode)
+            return mode switch
             {
-                case PageSortMode.FileNameDescending:
-                case PageSortMode.TimeStampDescending:
-                case PageSortMode.SizeDescending:
-                case PageSortMode.EntryDescending:
-                    return true;
-                default:
-                    return false;
-            }
+                PageSortMode.FileNameDescending or PageSortMode.TimeStampDescending or PageSortMode.SizeDescending or PageSortMode.EntryDescending => true,
+                _ => false,
+            };
         }
 
         public static bool IsFileNameCategory(this PageSortMode mode)
         {
-            switch (mode)
+            return mode switch
             {
-                case PageSortMode.FileName:
-                case PageSortMode.FileNameDescending:
-                    return true;
-                default:
-                    return false;
-            }
+                PageSortMode.FileName or PageSortMode.FileNameDescending => true,
+                _ => false,
+            };
         }
 
         public static bool IsEntryCategory(this PageSortMode mode)
         {
-            switch (mode)
+            return mode switch
             {
-                case PageSortMode.Entry:
-                case PageSortMode.EntryDescending:
-                    return true;
-                default:
-                    return false;
-            }
+                PageSortMode.Entry or PageSortMode.EntryDescending => true,
+                _ => false,
+            };
         }
     }
 
@@ -93,10 +82,10 @@ namespace NeeView
 
     public static class PageSortModeClassExtension
     {
-        private static Dictionary<PageSortMode, string> _mapNone;
-        private static Dictionary<PageSortMode, string> _mapNormal;
-        private static Dictionary<PageSortMode, string> _mapWithEntry;
-        private static Dictionary<PageSortMode, string> _mapFull;
+        private static readonly Dictionary<PageSortMode, string> _mapNone;
+        private static readonly Dictionary<PageSortMode, string> _mapNormal;
+        private static readonly Dictionary<PageSortMode, string> _mapWithEntry;
+        private static readonly Dictionary<PageSortMode, string> _mapFull;
 
         static PageSortModeClassExtension()
         {
@@ -120,17 +109,13 @@ namespace NeeView
 
         public static Dictionary<PageSortMode, string> GetPageSortModeMap(this PageSortModeClass self)
         {
-            switch (self)
+            return self switch
             {
-                case PageSortModeClass.Full:
-                    return _mapFull;
-                case PageSortModeClass.WithEntry:
-                    return _mapWithEntry;
-                case PageSortModeClass.Normal:
-                    return _mapNormal;
-                default:
-                    return _mapNone;
-            }
+                PageSortModeClass.Full => _mapFull,
+                PageSortModeClass.WithEntry => _mapWithEntry,
+                PageSortModeClass.Normal => _mapNormal,
+                _ => _mapNone,
+            };
         }
 
         public static PageSortMode ValidatePageSortMode(this PageSortModeClass self, PageSortMode mode)

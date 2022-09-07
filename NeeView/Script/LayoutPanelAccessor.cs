@@ -4,9 +4,9 @@ namespace NeeView
 {
     public class LayoutPanelAccessor
     {
-        private string _key;
-        private CustomLayoutPanelManager _manager;
-        private LayoutPanel _layoutPanel;
+        private readonly string _key;
+        private readonly CustomLayoutPanelManager _manager;
+        private readonly LayoutPanel _layoutPanel;
 
         public LayoutPanelAccessor(string key)
         {

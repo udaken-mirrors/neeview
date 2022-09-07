@@ -21,14 +21,9 @@ namespace NeeView
 {
     public partial class ImageEffectView : UserControl
     {
-        private ImageEffectViewModel _vm;
+        private readonly ImageEffectViewModel _vm;
         private bool _isFocusRequest;
 
-
-        //public ImageEffectView()
-        //{
-        //    InitializeComponent();
-        //}
 
         public ImageEffectView(ImageEffect model, ImageFilter imageFilter)
         {

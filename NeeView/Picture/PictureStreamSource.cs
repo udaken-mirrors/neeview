@@ -9,7 +9,7 @@ namespace NeeView
     public class PictureStreamSource
     {
         private byte[]? _rawData;
-        private ArchiveEntry _entry;
+        private readonly ArchiveEntry _entry;
 
 
         public PictureStreamSource(ArchiveEntry entry)
@@ -42,7 +42,7 @@ namespace NeeView
         }
 
 
-        private void CopyStream(Stream inputStream, Stream outputStream, int bufferSize, CancellationToken token)
+        private static void CopyStream(Stream inputStream, Stream outputStream, int bufferSize, CancellationToken token)
         {
             token.ThrowIfCancellationRequested();
 
@@ -91,7 +91,7 @@ namespace NeeView
 
     public class PictureNamedStreamSource : PictureStreamSource
     {
-        private static PictureStream _pictureStream = new PictureStream();
+        private static readonly PictureStream _pictureStream = new();
 
 
         public PictureNamedStreamSource(ArchiveEntry entry) : base(entry)

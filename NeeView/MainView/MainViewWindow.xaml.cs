@@ -49,13 +49,13 @@ namespace NeeView
 
         #endregion
 
-        private DpiScaleProvider _dpiProvider = new DpiScaleProvider();
-        private WindowChromeAccessor _windowChrome;
-        private WindowStateManager _windowStateManager;
+        private readonly DpiScaleProvider _dpiProvider = new();
+        private readonly WindowChromeAccessor _windowChrome;
+        private readonly WindowStateManager _windowStateManager;
         private bool _canHideMenu;
-        private WindowController _windowController;
+        private readonly WindowController _windowController;
         private RoutedCommandBinding? _routedCommandBinding;
-        private WeakBindableBase<MainViewConfig> _mainViewConfig;
+        private readonly WeakBindableBase<MainViewConfig> _mainViewConfig;
 
         public MainViewWindow()
         {

@@ -11,8 +11,8 @@ namespace NeeView
 {
     public class BookmarkPanel : BindableBase, IPanel
     {
-        private BookmarkListView _view;
-        private BookmarkFolderListPresenter _presenter;
+        private readonly BookmarkListView _view;
+        private readonly BookmarkFolderListPresenter _presenter;
 
         public BookmarkPanel(BookmarkFolderList folderList)
         {

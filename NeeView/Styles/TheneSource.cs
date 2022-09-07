@@ -22,7 +22,7 @@ namespace NeeView
             if (themeType == ThemeType.Custom && string.IsNullOrWhiteSpace(fileName))
                 throw new ArgumentException($"{ThemeType.Custom} requires {nameof(fileName)}.");
 
-            if (themeType != ThemeType.Custom && !(fileName is null))
+            if (themeType != ThemeType.Custom && fileName is not null)
                 throw new ArgumentException($"{nameof(fileName)} cannot be set except for {ThemeType.Custom}.");
 
             Type = themeType;
@@ -32,12 +32,6 @@ namespace NeeView
         public ThemeType Type { get; private set; }
 
         public string? FileName { get; private set; }
-
-#if false
-        public string? FullName => (Type == ThemeType.Custom && this.FileName != null)
-            ? Path.Combine(Config.Current.Theme.CustomThemeFolder, this.FileName)
-            : null;
-#endif
 
         public string CustomThemeFilePath
         {

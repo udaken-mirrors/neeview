@@ -6,8 +6,8 @@ namespace NeeView
 {
     public class MouseHorizontalWheelSource : IDisposable, INotifyMouseHorizontalWheelChanged
     {
-        private INotifyMouseHorizontalWheelChanged _source;
-        private FrameworkElement _target;
+        private readonly INotifyMouseHorizontalWheelChanged _source;
+        private readonly FrameworkElement _target;
         private bool _disposedValue;
 
         public MouseHorizontalWheelSource(FrameworkElement target, INotifyMouseHorizontalWheelChanged source)

@@ -22,11 +22,10 @@ namespace NeeView.Text.Json
                 typeof(EnumFuzzyConverter<>).MakeGenericType(typeToConvert),
                 BindingFlags.Instance | BindingFlags.Public,
                 binder: null,
-                args: new object[] { },
+                args: Array.Empty<object>(),
                 culture: null);
 
-            JsonConverter? converter = instance as JsonConverter;
-            if (converter is null) throw new InvalidOperationException("Cannot create JsonConverter");
+            var converter = instance as JsonConverter ?? throw new InvalidOperationException("Cannot create JsonConverter");
 
             return converter;
         }

@@ -21,7 +21,7 @@ namespace NeeView
     /// </summary>
     public partial class AddressBarView : UserControl
     {
-        public static string DragDropFormat = $"{Environment.ProcessId}.BookAddress";
+        public static readonly string DragDropFormat = $"{Environment.ProcessId}.BookAddress";
 
 
         private AddressBarViewModel? _vm;
@@ -140,7 +140,7 @@ namespace NeeView
 
         #region DragDrop
 
-        private DragDropGoast _goast = new DragDropGoast();
+        private readonly DragDropGoast _goast = new();
         private bool _isButtonDown;
         private Point _buttonDownPos;
 
@@ -178,8 +178,7 @@ namespace NeeView
                 return;
             }
 
-            var element = sender as UIElement;
-            if (element is null) return;
+            if (sender is not UIElement element) return;
 
             var pos = e.GetPosition(element);
             if (DragDropHelper.IsDragDistance(pos, _buttonDownPos))

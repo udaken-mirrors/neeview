@@ -17,7 +17,7 @@ namespace NeeView
     /// </summary>
     public class NavigateViewModel : BindableBase
     {
-        private NavigateModel _model;
+        private readonly NavigateModel _model;
 
 
         public NavigateViewModel(NavigateModel model)

@@ -22,7 +22,7 @@ namespace NeeView
         private PageSortModeClass _pageSortModeClass = PageSortModeClass.Full;
         private Page? _selectedItem;
         private List<Page>? _selectedItems;
-        private List<Page> _viewItems = new List<Page>();
+        private List<Page> _viewItems = new();
 
 
         private PageList()
@@ -52,17 +52,13 @@ namespace NeeView
         {
             get
             {
-                switch (Config.Current.PageList.PanelListItemStyle)
+                return Config.Current.PageList.PanelListItemStyle switch
                 {
-                    default:
-                        return false;
-                    case PanelListItemStyle.Thumbnail:
-                        return true;
-                    case PanelListItemStyle.Content:
-                        return Config.Current.Panels.ContentItemProfile.ImageWidth > 0.0;
-                    case PanelListItemStyle.Banner:
-                        return Config.Current.Panels.BannerItemProfile.ImageWidth > 0.0;
-                }
+                    PanelListItemStyle.Thumbnail => true,
+                    PanelListItemStyle.Content => Config.Current.Panels.ContentItemProfile.ImageWidth > 0.0,
+                    PanelListItemStyle.Banner => Config.Current.Panels.BannerItemProfile.ImageWidth > 0.0,
+                    _ => false,
+                };
             }
         }
 

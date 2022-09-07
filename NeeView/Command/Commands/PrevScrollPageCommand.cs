@@ -92,7 +92,7 @@ namespace NeeView
 
         #region Obsolete
 
-        [Obsolete, Alternative(nameof(ScrollType), 39)] // ver.39
+        [Obsolete("no used"), Alternative(nameof(ScrollType), 39)] // ver.39
         [DataMember]
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         public bool IsNScroll
@@ -101,7 +101,7 @@ namespace NeeView
             set { ScrollType = value ? NScrollType.NType : NScrollType.Diagonal; }
         }
 
-        [Obsolete, Alternative(nameof(LineBreakStopTime), 39)] // ver.39
+        [Obsolete("no used"), Alternative(nameof(LineBreakStopTime), 39)] // ver.39
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         public double PageMoveMargin
         {
@@ -109,7 +109,7 @@ namespace NeeView
             set { LineBreakStopTime = value; LineBreakStopMode = LineBreakStopMode.Page; }
         }
 
-        [Obsolete, JsonIgnore, EqualsIgnore, DataMember(Name = "Scroll", EmitDefaultValue = false)] // ver.37
+        [Obsolete("no used"), JsonIgnore, EqualsIgnore, DataMember(Name = "Scroll", EmitDefaultValue = false)] // ver.37
         [PropertyMapIgnore]
         public int ScrollV1
         {
@@ -117,7 +117,7 @@ namespace NeeView
             set => Scroll = value / 100.0;
         }
 
-        [Obsolete, JsonIgnore, EqualsIgnore, DataMember(EmitDefaultValue = false)] // ver.37
+        [Obsolete("no used"), JsonIgnore, EqualsIgnore, DataMember(EmitDefaultValue = false)] // ver.37
         [PropertyMapIgnore]
         public bool IsAnimation
         {
@@ -125,7 +125,7 @@ namespace NeeView
             set => ScrollDuration = value ? 0.1 : 0.0;
         }
 
-        [Obsolete, JsonIgnore, EqualsIgnore, DataMember(EmitDefaultValue = false)] // ver.37
+        [Obsolete("no used"), JsonIgnore, EqualsIgnore, DataMember(EmitDefaultValue = false)] // ver.37
         [PropertyMapIgnore]
         public bool IsStop
         {

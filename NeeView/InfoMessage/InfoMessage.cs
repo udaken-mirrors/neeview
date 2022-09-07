@@ -45,24 +45,17 @@ namespace NeeView
         {
         }
 
-        private ShowMessageStyle GetShowMessageStyle(InfoMessageType type)
+        private static ShowMessageStyle GetShowMessageStyle(InfoMessageType type)
         {
-            switch (type)
+            return type switch
             {
-                default:
-                case InfoMessageType.Notify:
-                    return Config.Current.Notice.NoticeShowMessageStyle;
-                case InfoMessageType.BookName:
-                    return Config.Current.Notice.BookNameShowMessageStyle;
-                case InfoMessageType.Command:
-                    return Config.Current.Notice.CommandShowMessageStyle;
-                case InfoMessageType.Gesture:
-                    return Config.Current.Notice.GestureShowMessageStyle;
-                case InfoMessageType.Loading:
-                    return Config.Current.Notice.NowLoadingShowMessageStyle;
-                case InfoMessageType.ViewTransform:
-                    return Config.Current.Notice.ViewTransformShowMessageStyle;
-            }
+                InfoMessageType.BookName => Config.Current.Notice.BookNameShowMessageStyle,
+                InfoMessageType.Command => Config.Current.Notice.CommandShowMessageStyle,
+                InfoMessageType.Gesture => Config.Current.Notice.GestureShowMessageStyle,
+                InfoMessageType.Loading => Config.Current.Notice.NowLoadingShowMessageStyle,
+                InfoMessageType.ViewTransform => Config.Current.Notice.ViewTransformShowMessageStyle,
+                _ => Config.Current.Notice.NoticeShowMessageStyle,
+            };
         }
 
         public NormalInfoMessage NormalInfoMessage { get; } = new NormalInfoMessage();

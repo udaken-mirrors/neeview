@@ -31,8 +31,8 @@ namespace NeeView
         };
 
 
-        private DragTransform _dragTransform;
-        private ContentCanvas _contentCanvas;
+        private readonly DragTransform _dragTransform;
+        private readonly ContentCanvas _contentCanvas;
 
         public NavigateModel()
         {

@@ -11,8 +11,8 @@ namespace NeeView
 {
     public class FolderCollectionFactory
     {
-        private bool _isOverlayEnabled;
-        private FolderSearchEngine? _searchEngine;
+        private readonly bool _isOverlayEnabled;
+        private readonly FolderSearchEngine? _searchEngine;
 
 
         public FolderCollectionFactory(FolderSearchEngine? searchEngine, bool isOverlayEnabled)
@@ -117,6 +117,8 @@ namespace NeeView
         {
             token.ThrowIfCancellationRequested();
 
+            _ = isActive;
+
             var collection = new BookmarkFolderCollection(path, _isOverlayEnabled);
             await collection.InitializeItemsAsync(token);
 
@@ -178,6 +180,8 @@ namespace NeeView
         {
             token.ThrowIfCancellationRequested();
 
+            _ = isActive;
+
             var collection = new RootFolderCollection(path, _isOverlayEnabled);
             await collection.InitializeItemsAsync(token);
             return collection;
@@ -189,6 +193,9 @@ namespace NeeView
         private async Task<FolderCollection> CreateQuickAccessFolderCollectionAsync(QueryPath path, bool isActive, CancellationToken token)
         {
             token.ThrowIfCancellationRequested();
+
+            _ = path;
+            _ = isActive;
 
             var collection = new QuickAccessFolderCollection(_isOverlayEnabled);
             await collection.InitializeItemsAsync(token);

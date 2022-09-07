@@ -92,8 +92,7 @@ namespace NeeView.Setting
 
         private void DragActionListViewItem_MouseDoubleClick(object? sender, MouseButtonEventArgs e)
         {
-            var targetItem = sender as ListViewItem;
-            if (targetItem is null) return;
+            if (sender is not ListViewItem targetItem) return;
 
             var value = (DragActionParam)targetItem.DataContext;
             OpenDragActionSettingDialog(value, MouseDragSettingWindowTab.MouseGesture);
@@ -104,8 +103,7 @@ namespace NeeView.Setting
         {
             if (e.Key == Key.Enter)
             {
-                var targetItem = sender as ListViewItem;
-                if (targetItem is null) return;
+                if (sender is not ListViewItem targetItem) return;
 
                 var value = (DragActionParam)targetItem.DataContext;
                 OpenDragActionSettingDialog(value, MouseDragSettingWindowTab.MouseGesture);
@@ -161,8 +159,7 @@ namespace NeeView.Setting
 
         private void EditCommandParameterButton_Click(object? sender, RoutedEventArgs e)
         {
-            var dragActionParam = (sender as Button)?.Tag as DragActionParam;
-            if (dragActionParam is null) return;
+            if ((sender as Button)?.Tag is not DragActionParam dragActionParam) return;
 
             this.DragActionListView.SelectedItem = dragActionParam;
             OpenDragActionSettingDialog(dragActionParam, MouseDragSettingWindowTab.Parameter);

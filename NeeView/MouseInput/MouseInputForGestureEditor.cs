@@ -27,7 +27,7 @@ namespace NeeView
         /// <summary>
         /// 状態テーブル
         /// </summary>
-        private Dictionary<MouseInputState, MouseInputBase> _mouseInputCollection;
+        private readonly Dictionary<MouseInputState, MouseInputBase> _mouseInputCollection;
 
         /// <summary>
         /// 現在状態
@@ -42,12 +42,12 @@ namespace NeeView
         /// <summary>
         /// 入力ターゲット
         /// </summary>
-        private FrameworkElement _sender;
+        private readonly FrameworkElement _sender;
 
         /// <summary>
         /// 状態コンテキスト
         /// </summary>
-        private MouseInputContext _context;
+        private readonly MouseInputContext _context;
 
         /// <summary>
         /// コンストラクター
@@ -66,9 +66,11 @@ namespace NeeView
             this.Gesture.StateChanged += (s, e) => SetState(e.State);
 
             // initialize state
-            _mouseInputCollection = new Dictionary<MouseInputState, MouseInputBase>();
-            _mouseInputCollection.Add(MouseInputState.Normal, this.Normal);
-            _mouseInputCollection.Add(MouseInputState.Gesture, this.Gesture);
+            _mouseInputCollection = new Dictionary<MouseInputState, MouseInputBase>
+            {
+                { MouseInputState.Normal, this.Normal },
+                { MouseInputState.Gesture, this.Gesture }
+            };
             SetState(MouseInputState.Normal);
 
             // initialize event

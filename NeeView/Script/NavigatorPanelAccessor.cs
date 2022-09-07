@@ -2,7 +2,7 @@
 {
     public class NavigatorPanelAccessor : LayoutPanelAccessor
     {
-        private NavigatePanel _panel;
+        private readonly NavigatePanel _panel;
 
 
         public NavigatorPanelAccessor() : base(nameof(NavigatePanel))

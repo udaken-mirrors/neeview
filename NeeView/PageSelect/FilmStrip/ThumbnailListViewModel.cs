@@ -19,9 +19,7 @@ namespace NeeView
 
         public ThumbnailListViewModel(ThumbnailList model)
         {
-            if (model == null) throw new InvalidOperationException();
-
-            _model = model;
+            _model = model ?? throw new InvalidOperationException();
 
             _model.CollectionChanging +=
                 (s, e) => CollectionChanging?.Invoke(s, e);

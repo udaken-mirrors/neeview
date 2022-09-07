@@ -47,12 +47,12 @@ namespace NeeView
         // ファイルに保存
         public void SaveV1(string path)
         {
-            XmlWriterSettings settings = new XmlWriterSettings();
+            var settings = new XmlWriterSettings();
             settings.Encoding = new System.Text.UTF8Encoding(false);
             settings.Indent = true;
             using (XmlWriter xw = XmlWriter.Create(path, settings))
             {
-                DataContractSerializer serializer = new DataContractSerializer(typeof(UserSettingV1));
+                var serializer = new DataContractSerializer(typeof(UserSettingV1));
                 serializer.WriteObject(xw, this);
             }
         }
@@ -72,7 +72,7 @@ namespace NeeView
         {
             using (XmlReader xr = XmlReader.Create(stream))
             {
-                DataContractSerializer serializer = new DataContractSerializer(typeof(UserSettingV1));
+                var serializer = new DataContractSerializer(typeof(UserSettingV1));
                 UserSettingV1? setting = (UserSettingV1?)serializer.ReadObject(xr);
                 return setting;
             }

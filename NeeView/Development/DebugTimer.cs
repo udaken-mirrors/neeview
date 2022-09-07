@@ -9,7 +9,7 @@ namespace NeeView
         private static Stopwatch? _sw;
 
         private static string? _label;
-        private static Dictionary<string, long> _timetable = new Dictionary<string, long>();
+        private static readonly Dictionary<string, long> _timetable = new();
         private static int _count;
         private static bool _isSlient;
 

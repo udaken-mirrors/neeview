@@ -23,14 +23,9 @@ namespace NeeView
 {
     public partial class NavigateView : UserControl
     {
-        private NavigateViewModel _vm;
+        private readonly NavigateViewModel _vm;
         private bool _isFocusRequest;
 
-
-        //public NavigateView()
-        //{
-        //    InitializeComponent();
-        //}
 
         public NavigateView(NavigateModel model)
         {
@@ -91,7 +86,7 @@ namespace NeeView
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             double val = (double)value;
-            GridLength gridLength = new GridLength(val);
+            var gridLength = new GridLength(val);
 
             return gridLength;
         }

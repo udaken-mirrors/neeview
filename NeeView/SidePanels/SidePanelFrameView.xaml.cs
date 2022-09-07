@@ -486,8 +486,7 @@ namespace NeeView
             //if (this.LeftColumnWidth.Value <= 0.0) return;
 
             var over = this.Screen.ActualWidth - this.ScreenRect.ActualWidth;
-            over = AdjustRightColumn(over);
-            over = AdjustLeftColumn(over);
+            AdjustLeftColumn(AdjustRightColumn(over));
             UpdateCanvas();
         }
 
@@ -496,8 +495,7 @@ namespace NeeView
             //if (this.RightColumnWidth.Value <= 0.0) return;
 
             var over = this.Screen.ActualWidth - this.ScreenRect.ActualWidth;
-            over = AdjustLeftColumn(over);
-            over = AdjustRightColumn(over);
+            AdjustRightColumn(AdjustLeftColumn(over));
             UpdateCanvas();
         }
 

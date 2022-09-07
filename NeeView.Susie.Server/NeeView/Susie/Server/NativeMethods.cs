@@ -15,8 +15,10 @@ namespace NeeView.Susie.Server
         [DllImport("kernel32")]
         public extern static bool FreeLibrary(IntPtr hModule);
 
+#pragma warning disable CA2101 // P/Invoke 文字列引数に対してマーシャリングを指定します
         [DllImport("kernel32", CharSet = CharSet.Ansi, ExactSpelling = true, SetLastError = true, BestFitMapping = false, ThrowOnUnmappableChar = true)]
         public extern static IntPtr GetProcAddress(IntPtr hModule, [MarshalAs(UnmanagedType.LPStr)] string lpProcName);
+#pragma warning restore CA2101 // P/Invoke 文字列引数に対してマーシャリングを指定します
 
         [DllImport("kernel32")]
         public extern static IntPtr LocalLock(IntPtr hMem);
@@ -37,9 +39,13 @@ namespace NeeView.Susie.Server
         // ショートパス名を求める
         public static string GetShortPathName(string longPath)
         {
-            int bufferSize = Math.Max(longPath.Length + 8, 260);
-            StringBuilder shortPathBuffer = new StringBuilder(bufferSize);
-            NativeMethods.GetShortPathName(longPath, shortPathBuffer, bufferSize);
+            int bufferSize = Math.Max(longPath.Length + 8, 1024);
+            var shortPathBuffer = new StringBuilder(bufferSize);
+            var length = NativeMethods.GetShortPathName(longPath, shortPathBuffer, bufferSize);
+            if (length == 0)
+            {
+                return longPath;
+            }
             string shortPath = shortPathBuffer.ToString();
             return shortPath;
         }

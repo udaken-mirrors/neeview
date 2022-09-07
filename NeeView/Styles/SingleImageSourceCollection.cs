@@ -7,7 +7,7 @@ namespace NeeView
     /// </summary>
     public class SingleImageSourceCollection : IImageSourceCollection
     {
-        private ImageSource _imageSource;
+        private readonly ImageSource _imageSource;
 
         public SingleImageSourceCollection(ImageSource imageSource)
         {

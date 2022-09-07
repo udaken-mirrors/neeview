@@ -9,7 +9,7 @@ namespace NeeView
 {
     public class FileInformationContentViewModel : BindableBase
     {
-        private Dictionary<InformationKey, FileInformationRecord> _database;
+        private readonly Dictionary<InformationKey, FileInformationRecord> _database;
         private FileInformationSource? _source;
         private CollectionViewSource _collectionViewSource;
         private FileInformationRecord? _selectedItem;

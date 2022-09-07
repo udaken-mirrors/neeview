@@ -5,9 +5,9 @@ namespace NeeView
 {
     public class MainViewLockerMediator
     {
-        private MainView _mainView;
+        private readonly MainView _mainView;
         private MainViewLockerKey? _currentKey;
-        private DelayValue<bool> _lockValue;
+        private readonly DelayValue<bool> _lockValue;
 
         public MainViewLockerMediator(MainView mainView)
         {
@@ -31,7 +31,7 @@ namespace NeeView
 
         public void Activate(MainViewLockerKey key)
         {
-            if (key is null) throw new ArgumentNullException();
+            if (key is null) throw new ArgumentNullException(nameof(key));
             if (_currentKey == key) return;
 
             _currentKey = key;

@@ -1,10 +1,11 @@
-﻿
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Windows;
+
+#pragma warning disable CA1822
 
 namespace NeeView
 {
@@ -14,7 +15,7 @@ namespace NeeView
     public class BookAccessor
     {
         private CancellationToken _cancellationToken;
-        private IAccessDiagnostics _accessDiagnostics;
+        private readonly IAccessDiagnostics _accessDiagnostics;
 
         public BookAccessor(IAccessDiagnostics accessDiagnostics)
         {
@@ -38,7 +39,7 @@ namespace NeeView
         {
             get
             {
-                return BookOperation.Current.Book?.Pages.Select(e => new PageAccessor(e)).ToArray() ?? new PageAccessor[] { };
+                return BookOperation.Current.Book?.Pages.Select(e => new PageAccessor(e)).ToArray() ?? Array.Empty<PageAccessor>();
             }
         }
 
@@ -47,7 +48,7 @@ namespace NeeView
         {
             get
             {
-                return BookOperation.Current.Book?.Viewer.ViewPageCollection.Collection.Select(e => new ViewPageAccessor(e.Page)).ToArray() ?? new ViewPageAccessor[] { };
+                return BookOperation.Current.Book?.Viewer.ViewPageCollection.Collection.Select(e => new ViewPageAccessor(e.Page)).ToArray() ?? Array.Empty<ViewPageAccessor>();
             }
         }
 
@@ -61,7 +62,7 @@ namespace NeeView
         #region Obsolete
 
         [WordNodeMember]
-        [Obsolete, Alternative("ViewPages.length", 38)] // ver.38
+        [Obsolete("no used"), Alternative("ViewPages.length", 38)] // ver.38
         public int PageSize
         {
             get
@@ -71,7 +72,7 @@ namespace NeeView
         }
 
         [WordNodeMember]
-        [Obsolete, Alternative("Pages.length", 38)] // ver.38
+        [Obsolete("no used"), Alternative("Pages.length", 38)] // ver.38
         public int ViewPageSize
         {
             get
@@ -81,14 +82,14 @@ namespace NeeView
         }
 
         [WordNodeMember]
-        [Obsolete, Alternative("Pages[]", 38)] // ver.38
+        [Obsolete("no used"), Alternative("Pages[]", 38)] // ver.38
         public PageAccessor? Page(int index)
         {
             return _accessDiagnostics.Throw<PageAccessor>(new NotSupportedException(RefrectionTools.CreateMethodObsoleteMessage(this.GetType())));
         }
 
         [WordNodeMember]
-        [Obsolete, Alternative("ViewPages[]", 38)] // ver.38
+        [Obsolete("no used"), Alternative("ViewPages[]", 38)] // ver.38
         public PageAccessor? ViewPage(int index)
         {
             return _accessDiagnostics.Throw<PageAccessor>(new NotSupportedException(RefrectionTools.CreateMethodObsoleteMessage(this.GetType())));
@@ -104,7 +105,7 @@ namespace NeeView
         internal WordNode CreateWordNode(string name)
         {
             var node = WordNodeHelper.CreateClassWordNode(name, this.GetType());
-            
+
             node.Children?.Add(Config.CreateWordNode(nameof(Config)));
 
             return node;

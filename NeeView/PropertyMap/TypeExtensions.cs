@@ -16,19 +16,14 @@ namespace NeeView
                 return "enum";
             }
 
-            switch (Type.GetTypeCode(type))
+            return Type.GetTypeCode(type) switch
             {
-                case TypeCode.Boolean:
-                    return "bool";
-                case TypeCode.Int32:
-                    return "int";
-                case TypeCode.Double:
-                    return "double";
-                case TypeCode.String:
-                    return "string";
-            }
-
-            return type.ToString();
+                TypeCode.Boolean => "bool",
+                TypeCode.Int32 => "int",
+                TypeCode.Double => "double",
+                TypeCode.String => "string",
+                _ => type.ToString(),
+            };
         }
 
         /// <summary>

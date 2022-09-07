@@ -88,7 +88,7 @@ namespace NeeView
         }
 
 
-        private bool IsVisiblePanel(string key)
+        private static bool IsVisiblePanel(string key)
         {
             return CustomLayoutPanelManager.Current.IsPanelSelected(key);
         }
@@ -382,19 +382,19 @@ namespace NeeView
             public SidePanelGroup.Memento? Right { get; set; }
 
             #region Obsolete
-            [Obsolete, DataMember(EmitDefaultValue = false)]
+            [Obsolete("no used"), DataMember(EmitDefaultValue = false)]
             public string? FontName { get; set; } // ver 32.0
 
-            [Obsolete, DataMember(EmitDefaultValue = false)]
+            [Obsolete("no used"), DataMember(EmitDefaultValue = false)]
             public double FontSize { get; set; } // ver 32.0
 
-            [Obsolete, DataMember(EmitDefaultValue = false)]
+            [Obsolete("no used"), DataMember(EmitDefaultValue = false)]
             public double FolderTreeFontSize { get; set; } // ver 32.0
 
-            [Obsolete, DataMember(EmitDefaultValue = false)]
+            [Obsolete("no used"), DataMember(EmitDefaultValue = false)]
             public bool IsTextWrapped { get; set; } // ver 32.0
 
-            [Obsolete, DataMember(EmitDefaultValue = false)]
+            [Obsolete("no used"), DataMember(EmitDefaultValue = false)]
             public double NoteOpacity { get; set; } // ver 32.0
             #endregion
 
@@ -407,7 +407,7 @@ namespace NeeView
 
             public void RestoreConfig(Config config)
             {
-#pragma warning disable CS0612 // 型またはメンバーが旧型式です
+#pragma warning disable CS0618 // 型またはメンバーが旧型式です
                 config.Panels.IsSideBarEnabled = IsSideBarVisible;
                 config.Panels.IsManipulationBoundaryFeedbackEnabled = IsManipulationBoundaryFeedbackEnabled;
                 config.Panels.PanelDocks = new Dictionary<string, PanelDock>();
@@ -435,7 +435,7 @@ namespace NeeView
                     config.Panels.RightPanelSeleted = Right.SelectedPanelTypeCode;
                     config.Panels.RightPanelWidth = Right.Width;
                 }
-#pragma warning restore CS0612 // 型またはメンバーが旧型式です
+#pragma warning restore CS0618 // 型またはメンバーが旧型式です
             }
         }
 

@@ -47,7 +47,7 @@ namespace NeeView
         #endregion
 
 
-        private PageSortModePaletteViewModel _vm;
+        private readonly PageSortModePaletteViewModel _vm;
 
         public PageSortModePalette()
         {
@@ -126,12 +126,7 @@ namespace NeeView
 
         private void MoveFocus(FocusNavigationDirection direction)
         {
-            var element = FocusManager.GetFocusedElement(Window.GetWindow(this)) as UIElement;
-            if (element == null)
-            {
-                element = this.Items;
-            }
-
+            var element = FocusManager.GetFocusedElement(Window.GetWindow(this)) as UIElement ?? this.Items;
             element.MoveFocus(new TraversalRequest(direction));
         }
     }

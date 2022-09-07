@@ -35,7 +35,7 @@ namespace NeeView
 
         private class JobCommand : IJobCommand
         {
-            Page _page;
+            readonly Page _page;
 
             public JobCommand(Page page)
             {
@@ -44,7 +44,7 @@ namespace NeeView
 
             public void Execute(CancellationToken token)
             {
-                _page.LoadContentAsync(token).Wait();
+                _page.LoadContentAsync(token).Wait(token);
             }
         }
 
@@ -69,7 +69,7 @@ namespace NeeView
 
         private class JobCommand : IJobCommand
         {
-            Page _page;
+            readonly Page _page;
 
             public JobCommand(Page page)
             {
@@ -78,7 +78,7 @@ namespace NeeView
 
             public void Execute(CancellationToken token)
             {
-                _page.LoadThumbnailAsync(token).Wait();
+                _page.LoadThumbnailAsync(token).Wait(token);
             }
         }
 

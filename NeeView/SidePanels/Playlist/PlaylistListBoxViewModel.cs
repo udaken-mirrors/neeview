@@ -41,7 +41,7 @@ namespace NeeView
         }
 
 
-        public bool IsThumbnailVisibled => _model is null ? false : _model.IsThumbnailVisibled;
+        public bool IsThumbnailVisibled => _model is not null && _model.IsThumbnailVisibled;
 
         public CollectionViewSource CollectionViewSource { get; private set; }
 
@@ -70,7 +70,7 @@ namespace NeeView
 
         public bool IsEditable
         {
-            get { return _model is null ? false : _model.IsEditable; }
+            get { return _model is not null && _model.IsEditable; }
         }
 
         public bool IsGroupBy
@@ -322,8 +322,7 @@ namespace NeeView
 
             this.CollectionViewSource.View.MoveCurrentTo(this.SelectedItem);
             this.CollectionViewSource.View.MoveCurrentToPrevious();
-            var item = this.CollectionViewSource.View.CurrentItem as PlaylistItem;
-            if (item != null)
+            if (this.CollectionViewSource.View.CurrentItem is PlaylistItem item)
             {
                 this.SelectedItem = item;
                 _model.Open(this.SelectedItem);
@@ -346,8 +345,7 @@ namespace NeeView
 
             this.CollectionViewSource.View.MoveCurrentTo(this.SelectedItem);
             this.CollectionViewSource.View.MoveCurrentToNext();
-            var item = this.CollectionViewSource.View.CurrentItem as PlaylistItem;
-            if (item != null)
+            if (this.CollectionViewSource.View.CurrentItem is PlaylistItem item)
             {
                 this.SelectedItem = item;
                 _model.Open(this.SelectedItem);

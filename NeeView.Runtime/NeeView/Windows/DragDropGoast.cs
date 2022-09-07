@@ -44,8 +44,7 @@ namespace NeeView.Windows
                 return;
             }
 
-            var root = window.Content as UIElement;
-            if (root != null)
+            if (window.Content is UIElement root)
             {
                 _element = element;
                 _layer = AdornerLayer.GetAdornerLayer(root);
@@ -67,8 +66,7 @@ namespace NeeView.Windows
             }
 
             var window = Window.GetWindow(element) ?? Application.Current.MainWindow;
-            var root = window.Content as UIElement;
-            if (root != null)
+            if (window.Content is UIElement root)
             {
                 _element = element;
                 _layer = AdornerLayer.GetAdornerLayer(root);

@@ -37,7 +37,7 @@ namespace NeeView
         /// ZIPヘッダチェック
         /// </summary>
         /// <returns></returns>
-        private bool CheckSignature(Stream stream)
+        private static bool CheckSignature(Stream stream)
         {
             var pos = stream.Position;
 

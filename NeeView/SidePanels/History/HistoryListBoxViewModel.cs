@@ -11,7 +11,7 @@ namespace NeeView
 {
     public class HistoryListBoxViewModel : BindableBase
     {
-        private HistoryList _model;
+        private readonly HistoryList _model;
         private BookHistory? _selectedItem;
         private Visibility _visibility = Visibility.Hidden;
         private bool _isDarty = true;

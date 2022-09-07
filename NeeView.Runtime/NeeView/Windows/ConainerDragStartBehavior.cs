@@ -182,8 +182,7 @@ namespace NeeView.Windows
 
             if (sender is UIElement element)
             {
-                var hitObject = element.InputHitTest(e.GetPosition(element)) as DependencyObject;
-                if (hitObject != null)
+                if (element.InputHitTest(e.GetPosition(element)) is DependencyObject hitObject)
                 {
                     _dragItem = hitObject is TItem item ? item : VisualTreeUtility.GetParentElement<TItem>(hitObject);
 
@@ -218,11 +217,11 @@ namespace NeeView.Windows
 
             var point = e.GetPosition(this.AssociatedObject);
 
-            if (CheckDistance(point, _origin) && _cancellationTokenSource == null)
+            if (ContainerDragStartBehavior<TItem>.CheckDistance(point, _origin) && _cancellationTokenSource == null)
             {
                 this.Dragged = true;
                 _cancellationTokenSource = new CancellationTokenSource();
-                var async = BeginDragAsync(sender, e, _cancellationTokenSource.Token);
+                _ = BeginDragAsync(sender, e, _cancellationTokenSource.Token);
             }
         }
 
@@ -274,8 +273,7 @@ namespace NeeView.Windows
                 if (window != null)
                 {
                     var dragCount = GetDragCount();
-                    var root = window.Content as UIElement;
-                    if (root != null && _adornerVisual != null)
+                    if (window.Content is UIElement root && _adornerVisual != null)
                     {
                         layer = AdornerLayer.GetAdornerLayer(root);
                         _dragGhost = new DragAdorner(root, _adornerVisual, 0.5, dragCount, _dragStartPos);
@@ -342,7 +340,7 @@ namespace NeeView.Windows
         /// <summary>
         /// 座標検査
         /// </summary>
-        private bool CheckDistance(Point x, Point y)
+        private static bool CheckDistance(Point x, Point y)
         {
             return Math.Abs(x.X - y.X) >= SystemParameters.MinimumHorizontalDragDistance ||
                    Math.Abs(x.Y - y.Y) >= SystemParameters.MinimumVerticalDragDistance;
@@ -359,8 +357,7 @@ namespace NeeView.Windows
                 return;
             }
 
-            var visual = sender as Visual;
-            if (visual == null)
+            if (sender is not Visual visual)
             {
                 return;
             }
@@ -399,8 +396,7 @@ namespace NeeView.Windows
         /// </summary>
         private void AutoScroll(object sender, QueryContinueDragEventArgs e)
         {
-            var container = sender as FrameworkElement;
-            if (container == null)
+            if (sender is not FrameworkElement container)
             {
                 return;
             }
@@ -411,8 +407,7 @@ namespace NeeView.Windows
                 return;
             }
 
-            var root = Window.GetWindow(container)?.Content as FrameworkElement;
-            if (root == null)
+            if (Window.GetWindow(container)?.Content is not FrameworkElement root)
             {
                 // container does not exist in virual tree.
                 return;

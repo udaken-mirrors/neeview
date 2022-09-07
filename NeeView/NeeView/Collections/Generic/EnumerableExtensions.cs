@@ -25,7 +25,7 @@ namespace NeeView.Collections.Generic
         {
             if (chunkSize <= 0)
             {
-                throw new ArgumentException("Chunk size must be greater than 0.", "chunkSize");
+                throw new ArgumentException("Chunk size must be greater than 0.", nameof(chunkSize));
             }
 
             while (self.Any())
@@ -42,8 +42,8 @@ namespace NeeView.Collections.Generic
         ///<returns>The index of the first matching item, or -1 if no items match.</returns>
         public static int FindIndex<T>(this IEnumerable<T> items, Func<T, bool> predicate)
         {
-            if (items == null) throw new ArgumentNullException("items");
-            if (predicate == null) throw new ArgumentNullException("predicate");
+            if (items == null) throw new ArgumentNullException(nameof(items));
+            if (predicate == null) throw new ArgumentNullException(nameof(predicate));
 
             int retVal = 0;
             foreach (var item in items)

@@ -40,7 +40,7 @@ namespace NeeView
 
         public static readonly RoutedEvent MouseHorizontalWheelEvent = EventManager.RegisterRoutedEvent("MouseHorizontalWheel", RoutingStrategy.Bubble, typeof(RoutedEventHandler), typeof(MouseHorizontalWheelService));
 
-        private Window _window;
+        private readonly Window _window;
 
 
         public MouseHorizontalWheelService(Window window)

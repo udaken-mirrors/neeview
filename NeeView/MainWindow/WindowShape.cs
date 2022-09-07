@@ -41,20 +41,15 @@ namespace NeeView
     {
         public static WindowState ToWindowState(this WindowStateEx self)
         {
-            switch(self)
+            return self switch
             {
-                default:
-                case WindowStateEx.None:
-                case WindowStateEx.Normal:
-                    return WindowState.Normal;
-
-                case WindowStateEx.Minimized:
-                    return WindowState.Minimized;
-
-                case WindowStateEx.Maximized:
-                case WindowStateEx.FullScreen:
-                    return WindowState.Maximized;
-            }
+                WindowStateEx.Minimized
+                    => WindowState.Minimized,
+                WindowStateEx.Maximized or WindowStateEx.FullScreen
+                    => WindowState.Maximized,
+                _
+                    => WindowState.Normal,
+            };
         }
 
         public static bool IsFullScreen(this WindowStateEx self)
@@ -64,7 +59,7 @@ namespace NeeView
     }
 
 
-    [Obsolete]
+    [Obsolete("no used")]
     public enum WindowChromeFrameV1
     {
         None,
@@ -97,10 +92,10 @@ namespace NeeView
     /// </summary>
     public class WindowShape : BindableBase, ITopmostControllable
     {
-        private Window _window;
+        private readonly Window _window;
+        private readonly WindowChromeAccessor _windowChromeAccessor;
+        private readonly WindowStateManager _manager;
         private bool _isEnabled;
-        private WindowChromeAccessor _windowChromeAccessor;
-        private WindowStateManager _manager;
         private bool _autoHideMode;
 
 
@@ -162,21 +157,13 @@ namespace NeeView
 
         public void UpdatePanelHideMode()
         {
-            switch (_manager.CurrentState)
+            AutoHideMode = _manager.CurrentState switch
             {
-                case WindowStateEx.Normal:
-                    AutoHideMode = Config.Current.Window.IsAutoHideInNormal;
-                    break;
-                case WindowStateEx.Maximized:
-                    AutoHideMode = Config.Current.Window.IsAutoHidInMaximized;
-                    break;
-                case WindowStateEx.FullScreen:
-                    AutoHideMode = Config.Current.Window.IsAutoHideInFullScreen;
-                    break;
-                default:
-                    AutoHideMode = false;
-                    break;
-            }
+                WindowStateEx.Normal => Config.Current.Window.IsAutoHideInNormal,
+                WindowStateEx.Maximized => Config.Current.Window.IsAutoHidInMaximized,
+                WindowStateEx.FullScreen => Config.Current.Window.IsAutoHideInFullScreen,
+                _ => false,
+            };
         }
 
         private void ValidateWindowState()

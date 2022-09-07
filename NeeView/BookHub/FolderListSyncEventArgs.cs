@@ -13,7 +13,7 @@ namespace NeeView
         {
             Path = path;
             Parent = parent;
-            this.isKeepPlace = isKeepPlace;
+            IsKeepPlace = isKeepPlace;
         }
 
         /// <summary>
@@ -30,7 +30,7 @@ namespace NeeView
         /// <summary>
         /// なるべくリストの選択項目を変更しないようにする
         /// </summary>
-        public bool isKeepPlace { get; set; }
+        public bool IsKeepPlace { get; set; }
     }
 }
 

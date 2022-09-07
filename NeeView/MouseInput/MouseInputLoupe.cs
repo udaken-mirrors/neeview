@@ -15,16 +15,11 @@ namespace NeeView
     /// </summary>
     public class MouseInputLoupe : MouseInputBase
     {
-        #region Fields
-
-        private LoupeTransform _loupe;
+        private readonly LoupeTransform _loupe;
         private Point _loupeBasePosition;
         private bool _isLongDownMode;
         private bool _isButtonDown;
 
-        #endregion
-
-        #region Constructors
 
         public MouseInputLoupe(MouseInputContext context) : base(context)
         {
@@ -32,9 +27,6 @@ namespace NeeView
             _loupe = context.LoupeTransform;
         }
 
-        #endregion
-
-        #region Methods
 
         /// <summary>
         /// 状態開始処理
@@ -222,7 +214,6 @@ namespace NeeView
             }
         }
 
-        #endregion
 
         #region Memento
         [DataContract]

@@ -43,23 +43,24 @@ namespace NeeView.Setting
 
         private static Type? _latestSelectedPageType;
 
-        private List<SettingPage> _pages;
-        private List<SettingItemRecord> _records;
+        private readonly List<SettingPage> _pages;
+        private readonly List<SettingItemRecord> _records;
 
 
         public SettingWindowModel()
         {
-            _pages = new List<SettingPage>();
-
-            _pages.Add(new SettingPageGeneral());
-            _pages.Add(new SettingPageFileTypes());
-            _pages.Add(new SettingPageWindow());
-            _pages.Add(new SettingPagePanels());
-            _pages.Add(new SettingPageSlideshow());
-            _pages.Add(new SettingPageManipurate());
-            _pages.Add(new SettingPageBook());
-            _pages.Add(new SettingPageHistory());
-            _pages.Add(new SettingPageCommand());
+            _pages = new List<SettingPage>
+            {
+                new SettingPageGeneral(),
+                new SettingPageFileTypes(),
+                new SettingPageWindow(),
+                new SettingPagePanels(),
+                new SettingPageSlideshow(),
+                new SettingPageManipurate(),
+                new SettingPageBook(),
+                new SettingPageHistory(),
+                new SettingPageCommand()
+            };
 
             _latestSelectedPageType = _latestSelectedPageType ?? typeof(SettingPageGeneral);
             var page = GetSettingPagesEnumerator(_pages).FirstOrDefault(e => e.GetType() == _latestSelectedPageType);
@@ -185,7 +186,7 @@ namespace NeeView.Setting
             bool IsMatch(SettingItemRecord record, List<string> tokens)
             {
                 var text = NeeLaboratory.IO.Search.Node.ToNormalisedWord(record.GetSearchText(), true);
-                return tokens.All(e => text.IndexOf(e) >= 0);
+                return tokens.All(e => text.Contains(e, StringComparison.CurrentCulture));
             }
         }
 

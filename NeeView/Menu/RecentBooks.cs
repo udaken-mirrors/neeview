@@ -9,7 +9,7 @@ namespace NeeView
         public static RecentBooks Current { get; }
 
 
-        private List<BookHistory> _lastFiles = new List<BookHistory>();
+        private List<BookHistory> _lastFiles = new();
 
 
         private RecentBooks()

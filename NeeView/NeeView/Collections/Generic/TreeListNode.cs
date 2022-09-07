@@ -17,18 +17,13 @@ namespace NeeView.Collections.Generic
         private bool _isExpanded;
         private T _value;
 
-#if false
-        public TreeListNode()
-        {
-            _children = new ObservableCollection<TreeListNode<T>>();
-        }
-#endif
 
         public TreeListNode(T value)
         {
             _children = new ObservableCollection<TreeListNode<T>>();
             _value = value;
         }
+
 
         public TreeListNode<T>? Parent => _parent;
 
@@ -38,6 +33,8 @@ namespace NeeView.Collections.Generic
             private set => _children = value;
         }
 
+        // データ互換用
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0051:使用されていないプライベート メンバーを削除する", Justification = "<保留中>")]
         [DataMember(Name = "Children", EmitDefaultValue = false)]
         private ObservableCollection<TreeListNode<T>>? _NullableChildren
         {
@@ -134,7 +131,7 @@ namespace NeeView.Collections.Generic
         {
             if (target == null) throw new ArgumentNullException(nameof(target));
 
-            return _parent == null ? false : _parent == target ? true : _parent.ParentContains(target);
+            return _parent != null && (_parent == target || _parent.ParentContains(target));
         }
 
         public TreeListNode<T>? Find(T value)
@@ -255,8 +252,8 @@ namespace NeeView.Collections.Generic
 
         public bool CompareOrder(TreeListNode<T> x, TreeListNode<T> y)
         {
-            if (x == null) throw new ArgumentNullException();
-            if (y == null) throw new ArgumentNullException();
+            if (x == null) throw new ArgumentNullException(nameof(x));
+            if (y == null) throw new ArgumentNullException(nameof(y));
 
 
             var parentsX = x.Hierarchy.ToList();
@@ -268,7 +265,7 @@ namespace NeeView.Collections.Generic
             {
                 if (parentsX[depth] != parentsY[depth])
                 {
-                    if (depth == 0) throw new ArgumentOutOfRangeException();
+                    if (depth == 0) throw new InvalidOperationException();
 
                     var parent = parentsX[depth - 1];
                     var indexX = parent.Children.IndexOf(parentsX[depth]);
@@ -281,7 +278,7 @@ namespace NeeView.Collections.Generic
         }
 
 
-#region IEnumerable support
+        #region IEnumerable support
 
         public IEnumerator<TreeListNode<T>> GetEnumerator()
         {
@@ -304,7 +301,7 @@ namespace NeeView.Collections.Generic
             return this.GetEnumerator();
         }
 
-#endregion
+        #endregion
     }
 
 

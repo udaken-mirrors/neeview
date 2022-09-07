@@ -17,11 +17,11 @@ namespace NeeView.Windows.Controls
         private const int WM_NCLBUTTONDOWN = 0x00A1;
         private const int WM_NCMOUSELEAVE = 0x02A2;
 
-        private const int HTMINBUTTON = 8;
+        //private const int HTMINBUTTON = 8;
         private const int HTMAXBUTTON = 9;
 
         private readonly SolidColorBrush _defaultButtonBackground = Brushes.Transparent;
-        private readonly SolidColorBrush _mouseOverButtonBackground = new SolidColorBrush(Color.FromArgb(0x66, 0x88, 0x88, 0x88));
+        private readonly SolidColorBrush _mouseOverButtonBackground = new(Color.FromArgb(0x66, 0x88, 0x88, 0x88));
         public IHasMaximizeButton _maximizeButton;
 
 
@@ -62,20 +62,13 @@ namespace NeeView.Windows.Controls
         /// </summary>
         private IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
         {
-            switch (msg)
+            return msg switch
             {
-                case WM_NCHITTEST:
-                    return OnNCHitTest(lParam, ref handled);
-
-                case WM_NCLBUTTONDOWN:
-                    return OnNCLButtonDown(lParam, ref handled);
-
-                case WM_NCMOUSELEAVE:
-                    return OnNCMouseLeave(lParam, ref handled);
-
-                default:
-                    return IntPtr.Zero;
-            }
+                WM_NCHITTEST => OnNCHitTest(lParam, ref handled),
+                WM_NCLBUTTONDOWN => OnNCLButtonDown(lParam, ref handled),
+                WM_NCMOUSELEAVE => OnNCMouseLeave(lParam, ref handled),
+                _ => IntPtr.Zero,
+            };
         }
 
         /// <summary>
@@ -117,9 +110,11 @@ namespace NeeView.Windows.Controls
             return IntPtr.Zero;
         }
 
+
         /// <summary>
         /// WM_NCMOUSELEAVE
         /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060:未使用のパラメーターを削除します", Justification = "<保留中>")]
         private IntPtr OnNCMouseLeave(IntPtr lParam, ref bool handled)
         {
             var button = _maximizeButton.GetMaximizeButton();

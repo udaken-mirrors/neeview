@@ -23,12 +23,12 @@ namespace NeeView
             /// <summary>
             /// サムネイル
             /// </summary>
-            private Thumbnail _thumbnail;
+            private readonly Thumbnail _thumbnail;
 
             /// <summary>
             /// 寿命シリアル番号
             /// </summary>
-            private int _lifeSerial;
+            private readonly int _lifeSerial;
 
             /// <summary>
             /// コンストラクタ
@@ -60,7 +60,7 @@ namespace NeeView
         /// <summary>
         /// サムネイルユニット群
         /// </summary>
-        private List<ThumbnailUnit> _collection = new List<ThumbnailUnit>();
+        private List<ThumbnailUnit> _collection = new();
 
         /// <summary>
         /// 寿命シリアル番号生成用
@@ -68,22 +68,27 @@ namespace NeeView
         private int _serial;
 
         /// <summary>
+        /// 排他ロックオブジェクト
+        /// </summary>
+        private readonly object _lock = new();
+
+
+        /// <summary>
         /// サムネイル保証数
         /// </summary>
         public virtual int Limit { get; } = 1000;
 
+
+
         /// <summary>
         /// 廃棄処理 part1 許容値
         /// </summary>
-        private int _tolerance1 => (Limit * 150 / 100); // 150%
+        private int GetTolerance1() => (Limit * 150 / 100); // 150%
 
         /// <summary>
         /// 廃棄処理 part2 許容値
         /// </summary>
-        private int _tolerance2 => (Limit * 120 / 100); // 120%
-
-        //
-        private object _lock = new object();
+        private int GetTolerance2() => (Limit * 120 / 100); // 120%
 
         /// <summary>
         /// 管理にサムネイル登録
@@ -109,7 +114,7 @@ namespace NeeView
         private bool Cleanup()
         {
             // 1st path.
-            if (_collection.Count < _tolerance1) return false;
+            if (_collection.Count < GetTolerance1()) return false;
 
             //Debug.WriteLine($"TP Clean: 1st... {_collection.Count}");
 
@@ -122,7 +127,7 @@ namespace NeeView
             Debug.WriteLine($"ThumbnailPool Clean: Level.1: {count} -> {_collection.Count}: No.{_serial}");
 
             // 2nd path.
-            if (_collection.Count < _tolerance2) return false;
+            if (_collection.Count < GetTolerance2()) return false;
 
             int erase = _collection.Count - Limit;
 

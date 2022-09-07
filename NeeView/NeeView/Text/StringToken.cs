@@ -111,7 +111,7 @@ namespace NeeView.Text
                 SequenceEqual(this.Chars, other.Chars) &&
                 SequenceEqual(this.Nums, other.Nums);
 
-            bool SequenceEqual<T>(IEnumerable<T>? x, IEnumerable<T>? y)
+            static bool SequenceEqual<T>(IEnumerable<T>? x, IEnumerable<T>? y)
             {
                 if (x == null)
                 {
@@ -149,6 +149,36 @@ namespace NeeView.Text
             return string.Join(",", tokens);
         }
 
+
+        public static bool operator ==(StringToken left, StringToken right)
+        {
+            return left.Equals(right);
+        }
+
+        public static bool operator !=(StringToken left, StringToken right)
+        {
+            return !(left == right);
+        }
+
+        public static bool operator <(StringToken left, StringToken right)
+        {
+            return left.CompareTo(right) < 0;
+        }
+
+        public static bool operator <=(StringToken left, StringToken right)
+        {
+            return left.CompareTo(right) <= 0;
+        }
+
+        public static bool operator >(StringToken left, StringToken right)
+        {
+            return left.CompareTo(right) > 0;
+        }
+
+        public static bool operator >=(StringToken left, StringToken right)
+        {
+            return left.CompareTo(right) >= 0;
+        }
     }
 
 }

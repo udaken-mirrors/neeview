@@ -6,7 +6,7 @@ namespace NeeLaboratory.Collection
     // from https://www.hanachiru-blog.com/entry/2020/05/05/120000
     public class FixedQueue<T> : IEnumerable<T>
     {
-        private Queue<T> _queue;
+        private readonly Queue<T> _queue;
 
         public FixedQueue(int capacity)
         {

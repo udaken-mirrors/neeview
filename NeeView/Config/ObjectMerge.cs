@@ -22,8 +22,8 @@ namespace NeeView
             if (a1 is null || a2 is null) return;
 
             var type = a1.GetType();
-            if (type != a2.GetType()) throw new ArgumentException();
-            if (!type.IsClass) throw new ArgumentException();
+            if (type != a2.GetType()) throw new ArgumentException("a1 must be same type to a2");
+            if (!type.IsClass) throw new ArgumentException("a1 must be class");
 
             options = options ?? new ObjectMergeOption();
 

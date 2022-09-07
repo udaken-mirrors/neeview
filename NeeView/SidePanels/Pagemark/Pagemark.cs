@@ -10,14 +10,14 @@ using System.Threading.Tasks;
 
 namespace NeeView
 {
-    [Obsolete]
+    [Obsolete("no used")]
     public interface IPagemarkEntry : IHasName
     {
         string? Path { get; }
         string DispName { get; }
     }
 
-    [Obsolete]
+    [Obsolete("no used")]
     [DataContract]
     public class Pagemark : BindableBase, IPagemarkEntry
     {

@@ -282,7 +282,7 @@ namespace NeeView.Windows
         /// <param name="x"></param>
         /// <param name="y"></param>
         /// <returns></returns>
-        private bool CheckDistance(Point x, Point y)
+        private static bool CheckDistance(Point x, Point y)
         {
             return Math.Abs(x.X - y.X) >= SystemParameters.MinimumHorizontalDragDistance ||
                    Math.Abs(x.Y - y.Y) >= SystemParameters.MinimumVerticalDragDistance;
@@ -336,7 +336,7 @@ namespace NeeView.Windows
         /// </summary>
         /// <param name="container"></param>
         /// <param name="e"></param>
-        private void AutoScroll(FrameworkElement container, QueryContinueDragEventArgs e)
+        private void AutoScroll(FrameworkElement container, QueryContinueDragEventArgs _)
         {
             ScrollViewer? scrollViewer = VisualTreeUtility.FindVisualChild<ScrollViewer>(container);
             if (scrollViewer == null)

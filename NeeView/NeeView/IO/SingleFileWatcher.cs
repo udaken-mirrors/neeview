@@ -7,7 +7,7 @@ namespace NeeView.IO
     public class SingleFileWatcher : IDisposable
     {
         private string? _path;
-        private SingleFileWaterOptions _options;
+        private readonly SingleFileWaterOptions _options;
         private FileSystemWatcher? _watcher;
         private bool _disposedValue;
 

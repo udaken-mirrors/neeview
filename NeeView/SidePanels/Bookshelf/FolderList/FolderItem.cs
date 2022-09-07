@@ -80,7 +80,7 @@ namespace NeeView
     /// </summary>
     public abstract class FolderItem : BindableBase, IHasPage, IHasName
     {
-        private bool _isOverlayEnabled;
+        private readonly bool _isOverlayEnabled;
 
         private QueryPath? _place;
         private string? _name;
@@ -400,6 +400,7 @@ namespace NeeView
         public void Dispose()
         {
             Dispose(true);
+            GC.SuppressFinalize(this);
         }
         #endregion
 
@@ -433,19 +434,15 @@ namespace NeeView
 
             string GetLastWriteTimeString() => (LastWriteTime != default ? $"{LastWriteTime:yyyy/MM/dd HH:mm:ss}   " : "");
 
-            switch (order)
+            return order switch
             {
-                default:
-                    return GetLastWriteTimeString() + (Length > 0 ? FileSizeToStringConverter.ByteToDispString(Length) : "");
-
-                case FolderOrder.FileType:
-                case FolderOrder.FileTypeDescending:
-                    return GetLastWriteTimeString() + (IsDirectoryMaybe() ? Properties.Resources.Word_Folder : LoosePath.GetExtension(Name));
-
-                case FolderOrder.Path:
-                case FolderOrder.PathDescending:
-                    return SidePanelProfile.GetDecoratePlaceName(LoosePath.GetDirectoryName(TargetPath.SimplePath));
-            }
+                FolderOrder.FileType or FolderOrder.FileTypeDescending
+                    => GetLastWriteTimeString() + (IsDirectoryMaybe() ? Properties.Resources.Word_Folder : LoosePath.GetExtension(Name)),
+                FolderOrder.Path or FolderOrder.PathDescending
+                    => SidePanelProfile.GetDecoratePlaceName(LoosePath.GetDirectoryName(TargetPath.SimplePath)),
+                _
+                    => GetLastWriteTimeString() + (Length > 0 ? FileSizeToStringConverter.ByteToDispString(Length) : ""),
+            };
         }
     }
 
@@ -454,7 +451,7 @@ namespace NeeView
     /// </summary>
     public class DriveFolderItem : FolderItem
     {
-        private IThumbnail _thumbnail;
+        private readonly IThumbnail _thumbnail;
 
         public DriveFolderItem(DriveInfo driveInfo, bool isOverlayEnabled) : base(isOverlayEnabled)
         {
@@ -469,7 +466,7 @@ namespace NeeView
     /// </summary>
     public class ConstFolderItem : FolderItem
     {
-        private IThumbnail _thumbnail;
+        private readonly IThumbnail _thumbnail;
 
         public ConstFolderItem(IThumbnail thumbnail, bool isOverlayEnabled) : base(isOverlayEnabled)
         {

@@ -2,7 +2,7 @@
 {
     public class BookshelfItemAccessor
     {
-        private FolderItem _source;
+        private readonly FolderItem _source;
 
         public BookshelfItemAccessor(FolderItem source)
         {

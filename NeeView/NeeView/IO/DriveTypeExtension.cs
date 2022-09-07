@@ -5,7 +5,7 @@ namespace NeeView.IO
 {
     public static class DriveTypeExtension
     {
-        private static readonly Dictionary<DriveType, string> _driveTypeNames = new Dictionary<DriveType, string>
+        private static readonly Dictionary<DriveType, string> _driveTypeNames = new()
         {
             [DriveType.Unknown] = "",
             [DriveType.NoRootDirectory] = "",

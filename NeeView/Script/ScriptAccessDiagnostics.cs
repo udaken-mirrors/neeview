@@ -14,7 +14,7 @@ namespace NeeView
         public T? Throw<T>(Exception ex)
         {
             Throw(ex);
-            return default(T);
+            return default;
         }
 
         public object? Throw(Exception ex, Type type)

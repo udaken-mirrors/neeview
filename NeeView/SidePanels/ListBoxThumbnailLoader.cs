@@ -16,8 +16,8 @@ namespace NeeView
     /// </summary>
     public class ListBoxThumbnailLoader
     {
-        private IPageListPanel _panel;
-        private PageThumbnailJobClient _jobClient;
+        private readonly IPageListPanel _panel;
+        private readonly PageThumbnailJobClient _jobClient;
 
         public ListBoxThumbnailLoader(IPageListPanel panelListBox, PageThumbnailJobClient jobClient)
         {

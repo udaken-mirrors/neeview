@@ -21,8 +21,6 @@ namespace NeeView.Setting
     /// </summary>
     public partial class SettingItemImageCollection : UserControl
     {
-        private bool _isStoreHelpEnabled = true;
-
         public SettingItemImageCollection()
         {
             InitializeComponent();
@@ -32,7 +30,6 @@ namespace NeeView.Setting
         public SettingItemImageCollection(double height, bool isStoreHelpEnabled) : this()
         {
             this.ExtensionsView.Height = height;
-            _isStoreHelpEnabled = isStoreHelpEnabled;
         }
 
         #region Dependency Properties

@@ -41,7 +41,7 @@ namespace NeeView.Setting
         /// </summary>
         public class AngleFrequency : IndexDoubleValue
         {
-            private static List<double> _values = new List<double> { 0, 5, 10, 15, 20, 30, 45, 60, 90 };
+            private static readonly List<double> _values = new() { 0, 5, 10, 15, 20, 30, 45, 60, 90 };
 
             public AngleFrequency() : base(_values)
             {

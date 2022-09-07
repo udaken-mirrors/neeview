@@ -6,7 +6,7 @@ namespace NeeView.Runtime.LayoutPanel
 {
     public class LayoutPanelContainerAdorner : Adorner
     {
-        private AdornerLayer _layer;
+        private readonly AdornerLayer _layer;
         private bool _isAttached;
         private Point _start;
         private Point _end;

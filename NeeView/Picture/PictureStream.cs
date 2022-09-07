@@ -51,9 +51,9 @@ namespace NeeView
     /// </summary>
     public class PictureStream : BindableBase, IPictureStream
     {
-        private DefaultPictureStream _default = new DefaultPictureStream();
-        private SusiePictureStream _susie = new SusiePictureStream();
-        private List<IPictureStream> _orderList = new List<IPictureStream>();
+        private readonly DefaultPictureStream _default = new();
+        private readonly SusiePictureStream _susie = new();
+        private List<IPictureStream> _orderList = new();
 
 
         // コンストラクタ

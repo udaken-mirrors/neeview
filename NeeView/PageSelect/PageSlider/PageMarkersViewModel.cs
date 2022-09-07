@@ -46,7 +46,7 @@ namespace NeeView
 
 
         // マーカーコントロールを登録するキャンバス
-        private Canvas _canvas;
+        private readonly Canvas _canvas;
 
 
         /// <summary>
@@ -87,14 +87,14 @@ namespace NeeView
             bool isReverse = _model.IsSliderDirectionReversed;
 
             // Pathの作成
-            Path path = new Path();
+            var path = new Path();
             path.Stroke = Brushes.Gray;
             path.StrokeThickness = 3.0;
             RenderOptions.SetEdgeMode(path, EdgeMode.Aliased);
 
             if (_model.MarkerCollection.Indexes.Count < 1000)
             {
-                StreamGeometry geometry = new StreamGeometry();
+                var geometry = new StreamGeometry();
                 geometry.FillRule = FillRule.Nonzero;
                 using (StreamGeometryContext context = geometry.Open())
                 {

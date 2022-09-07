@@ -8,8 +8,8 @@ namespace NeeView
 {
     public class PrintController
     {
-        private MainViewComponent _viewComponent;
-        private MainView _mainView;
+        private readonly MainViewComponent _viewComponent;
+        private readonly MainView _mainView;
 
         public PrintController(MainViewComponent viewComponent, MainView mainView)
         {

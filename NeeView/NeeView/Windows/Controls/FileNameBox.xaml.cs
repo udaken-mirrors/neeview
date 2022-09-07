@@ -50,9 +50,6 @@ namespace NeeView.Windows.Controls
 
         #endregion
 
-        private static string _defaultFileNote = Properties.Resources.FileNameBox_File_Message;
-        private static string _defaultDirectoryNote = Properties.Resources.FileNameBox_Directory_Message;
-
         //
         public static readonly DependencyProperty TextProperty =
             DependencyProperty.Register(
@@ -286,8 +283,7 @@ namespace NeeView.Windows.Controls
         //
         private void PathTextBox_Drop(object sender, DragEventArgs e)
         {
-            var dropFiles = e.Data.GetData(System.Windows.DataFormats.FileDrop) as string[];
-            if (dropFiles == null) return;
+            if (e.Data.GetData(System.Windows.DataFormats.FileDrop) is not string[] dropFiles) return;
 
             if (FileDialogType == FileDialogType.Directory)
             {

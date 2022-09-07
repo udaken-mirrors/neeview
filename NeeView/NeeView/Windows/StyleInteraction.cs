@@ -55,8 +55,7 @@ namespace NeeView.Windows
                         return;
                     }
 
-                    var styleBehaviors = e.NewValue as StyleBehaviorCollection;
-                    if (styleBehaviors == null)
+                    if (e.NewValue is not StyleBehaviorCollection styleBehaviors)
                     {
                         return;
                     }
@@ -84,8 +83,7 @@ namespace NeeView.Windows
                        return;
                    }
 
-                   var styleTriggers = e.NewValue as StyleTriggerCollection;
-                   if (styleTriggers == null)
+                   if (e.NewValue is not StyleTriggerCollection styleTriggers)
                    {
                        return;
                    }

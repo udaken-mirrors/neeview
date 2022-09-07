@@ -14,8 +14,8 @@ namespace NeeView.Susie.Server
 {
     public class SusiePluginRemoteServer
     {
-        private SimpleServer _server;
-        private SusiePluginServer _process;
+        private readonly SimpleServer _server;
+        private readonly SusiePluginServer _process;
 
 
         public SusiePluginRemoteServer()
@@ -44,20 +44,20 @@ namespace NeeView.Susie.Server
             _server.ServerProcess();
         }
 
-        private TResult DeserializeChunk<TResult>(Chunk chunk)
+        private static TResult DeserializeChunk<TResult>(Chunk chunk)
         {
             if (chunk.Data is null) throw new InvalidOperationException("chunk.Data must not be null");
 
             return DefaultSerializer.Deserialize<TResult>(chunk.Data);
         }
 
-        private List<Chunk> CreateResult<T>(int id, T result)
+        private static List<Chunk> CreateResult<T>(int id, T result)
         {
             var chunk = new Chunk(id, DefaultSerializer.Serialize(result));
             return new List<Chunk>() { chunk };
         }
 
-        private List<Chunk> CreateResultIsSuccess(int id, bool isSuccess)
+        private static List<Chunk> CreateResultIsSuccess(int id, bool isSuccess)
         {
             var chunk = new Chunk(id, DefaultSerializer.Serialize(new SusiePluginCommandResult(isSuccess)));
             return new List<Chunk>() { chunk };

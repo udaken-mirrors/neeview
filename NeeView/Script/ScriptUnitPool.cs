@@ -5,8 +5,8 @@ namespace NeeView
 {
     public class ScriptUnitPool
     {
-        private List<ScriptUnit> _units = new List<ScriptUnit>();
-        private object _lock = new object();
+        private readonly List<ScriptUnit> _units = new();
+        private readonly object _lock = new();
 
         public ScriptUnit Run(object? sender, string script, string? argument)
         {
@@ -18,7 +18,7 @@ namespace NeeView
 
         public void Add(ScriptUnit unit)
         {
-            if (unit is null) throw new ArgumentNullException();
+            if (unit is null) throw new ArgumentNullException(nameof(unit));
 
             lock (_lock)
             {

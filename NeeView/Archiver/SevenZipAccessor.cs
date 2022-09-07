@@ -33,9 +33,9 @@ namespace NeeView
         }
 
 
-        private string _fileName;
+        private readonly string _fileName;
         private SevenZipExtractor? _extractor;
-        private object _lock = new object();
+        private readonly object _lock = new();
 
 
         public SevenZipAccessor(string fileName)

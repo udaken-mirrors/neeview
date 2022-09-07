@@ -14,8 +14,8 @@ namespace NeeView
     // タッチ処理
     public class TouchInputForGestureEditor : BindableBase
     {
-        private TouchInputContext _context;
-        private FrameworkElement _sender;
+        private readonly TouchInputContext _context;
+        private readonly FrameworkElement _sender;
 
         /// <summary>
         /// 現在状態（実体）
@@ -35,9 +35,11 @@ namespace NeeView
             this.Normal.StateChanged += StateChanged;
 
             // initialize state
-            _touchInputCollection = new Dictionary<TouchInputState, TouchInputBase>();
-            _touchInputCollection.Add(TouchInputState.Normal, this.Normal);
-            _touchInputCollection.Add(TouchInputState.Gesture, this.Gesture);
+            _touchInputCollection = new Dictionary<TouchInputState, TouchInputBase>
+            {
+                { TouchInputState.Normal, this.Normal },
+                { TouchInputState.Gesture, this.Gesture }
+            };
             SetState(TouchInputState.Normal, null);
 
             // initialize event
@@ -60,7 +62,7 @@ namespace NeeView
         /// <summary>
         /// 遷移テーブル
         /// </summary>
-        private Dictionary<TouchInputState, TouchInputBase> _touchInputCollection;
+        private readonly Dictionary<TouchInputState, TouchInputBase> _touchInputCollection;
 
 
         /// <summary>

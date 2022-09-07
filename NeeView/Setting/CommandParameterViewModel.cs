@@ -7,10 +7,10 @@ namespace NeeView.Setting
 {
     public class CommandParameterViewModel : BindableBase
     {
-        private IDictionary<string, CommandElement> _commandMap;
-        private string _key;
+        private readonly IDictionary<string, CommandElement> _commandMap;
+        private readonly string _key;
 
-        private CommandParameter? _defaultParameter;
+        private readonly CommandParameter? _defaultParameter;
         private PropertyDocument? _propertyDocument;
 
 

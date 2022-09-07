@@ -8,10 +8,10 @@ using System.Threading.Tasks;
 
 namespace NeeView
 {
-    public class BookSourceFactory
+    public static class BookSourceFactory
     {
         // 本読み込み
-        public async Task<BookSource> CreateAsync(BookAddress address, BookCreateSetting setting, CancellationToken token)
+        public static async Task<BookSource> CreateAsync(BookAddress address, BookCreateSetting setting, CancellationToken token)
         {
             // ページ生成
             var archiveEntryCollection = CreateArchiveEntryCollection(address.TargetPath.SimplePath, setting.IsRecursiveFolder, setting.ArchiveRecursiveMode, setting.IsIgnoreCache);
@@ -22,7 +22,7 @@ namespace NeeView
 
             // 再帰判定用サブフォルダー数カウント
             int subFolderCount = 0;
-            if (canAutoRecursive && archiveEntryCollection.Mode != ArchiveEntryCollectionMode.IncludeSubArchives && pages.Where(e => e.PageType == PageType.File).Count() == 0)
+            if (canAutoRecursive && archiveEntryCollection.Mode != ArchiveEntryCollectionMode.IncludeSubArchives && !pages.Where(e => e.PageType == PageType.File).Any())
             {
                 var entries = await archiveEntryCollection.GetEntriesWhereBookAsync(token);
                 subFolderCount = entries.Count;
@@ -45,7 +45,7 @@ namespace NeeView
             return book;
         }
 
-        private PageSortMode ValidatePageSortMode(PageSortMode sortMode, ArchiveEntryCollection archiveEntryCollection)
+        private static PageSortMode ValidatePageSortMode(PageSortMode sortMode, ArchiveEntryCollection archiveEntryCollection)
         {
             // プレイリストならば登録順有効、それ以外は無効
             var isPlaylist = archiveEntryCollection?.Archiver is PlaylistArchive;
@@ -53,7 +53,7 @@ namespace NeeView
             return pageSortModeClass.ValidatePageSortMode(sortMode);
         }
 
-        private ArchiveEntryCollection CreateArchiveEntryCollection(string place, bool isRecursived, ArchiveEntryCollectionMode archiveRecursiveMode, bool isIgnoreCache)
+        private static ArchiveEntryCollection CreateArchiveEntryCollection(string place, bool isRecursived, ArchiveEntryCollectionMode archiveRecursiveMode, bool isIgnoreCache)
         {
             var collectMode = isRecursived ? ArchiveEntryCollectionMode.IncludeSubArchives : ArchiveEntryCollectionMode.CurrentDirectory;
             var collectModeIfArchive = isRecursived ? ArchiveEntryCollectionMode.IncludeSubArchives : archiveRecursiveMode;
@@ -64,23 +64,14 @@ namespace NeeView
         /// <summary>
         /// ページ生成
         /// </summary>
-        private async Task<List<Page>> CreatePageCollection(ArchiveEntryCollection archiveEntryCollection, BookPageCollectMode bookPageCollectMode, CancellationToken token)
+        private static async Task<List<Page>> CreatePageCollection(ArchiveEntryCollection archiveEntryCollection, BookPageCollectMode bookPageCollectMode, CancellationToken token)
         {
-            List<ArchiveEntry> entries;
-            switch (bookPageCollectMode)
+            List<ArchiveEntry> entries = bookPageCollectMode switch
             {
-                case BookPageCollectMode.Image:
-                    entries = await archiveEntryCollection.GetEntriesWhereImageAsync(token);
-                    break;
-                case BookPageCollectMode.ImageAndBook:
-                    entries = await archiveEntryCollection.GetEntriesWhereImageAndArchiveAsync(token);
-                    break;
-                case BookPageCollectMode.All:
-                default:
-                    entries = await archiveEntryCollection.GetEntriesWherePageAllAsync(token);
-                    break;
-            }
-
+                BookPageCollectMode.Image => await archiveEntryCollection.GetEntriesWhereImageAsync(token),
+                BookPageCollectMode.ImageAndBook => await archiveEntryCollection.GetEntriesWhereImageAndArchiveAsync(token),
+                _ => await archiveEntryCollection.GetEntriesWherePageAllAsync(token),
+            };
             var bookPrefix = LoosePath.TrimDirectoryEnd(archiveEntryCollection.Path);
             return entries.Select(e => CreatePage(bookPrefix, e, token)).ToList();
         }
@@ -90,7 +81,7 @@ namespace NeeView
         /// </summary>
         /// <param name="entry">ファイルエントリ</param>
         /// <returns></returns>
-        private Page CreatePage(string bookPrefix, ArchiveEntry entry, CancellationToken token)
+        private static Page CreatePage(string bookPrefix, ArchiveEntry entry, CancellationToken token)
         {
             token.ThrowIfCancellationRequested();
 
@@ -152,7 +143,7 @@ namespace NeeView
         /// <summary>
         /// PageのPrefix設定
         /// </summary>
-        private void SetPagePrefix(List<Page> pages)
+        private static void SetPagePrefix(List<Page> pages)
         {
             // TODO: ページ生成と同時に行うべき?
             var prefix = GetPagesPrefix(pages);
@@ -163,7 +154,7 @@ namespace NeeView
         }
 
         // 名前の最長一致文字列取得
-        private string GetPagesPrefix(List<Page> pages)
+        private static string GetPagesPrefix(List<Page> pages)
         {
             if (pages == null || pages.Count == 0) return "";
 
@@ -186,7 +177,7 @@ namespace NeeView
             {
                 if (s[i] == '\\' || s[i] == '/')
                 {
-                    return s.Substring(0, i + 1);
+                    return s[..(i + 1)];
                 }
             }
 
@@ -195,24 +186,20 @@ namespace NeeView
         }
 
         //
-        private string GetStartsWith(string s0, string s1)
+        private static string GetStartsWith(string s0, string s1)
         {
             if (s0 == null || s1 == null) return "";
 
             if (s0.Length > s1.Length)
             {
-                var temp = s0;
-                s0 = s1;
-                s1 = temp;
+                (s1, s0) = (s0, s1);
             }
 
             for (int i = 0; i < s0.Length; ++i)
             {
-                char a0 = s0[i];
-                char a1 = s1[i];
                 if (s0[i] != s1[i])
                 {
-                    return i > 0 ? s0.Substring(0, i) : "";
+                    return i > 0 ? s0[..i] : "";
                 }
             }
 
@@ -222,7 +209,7 @@ namespace NeeView
 
         // 事前展開
         // TODO: 事前展開の非同期化。ページアクセスをトリガーにする
-        private async Task PreExtractAsync(List<Page> pages, CancellationToken token)
+        private static async Task PreExtractAsync(List<Page> pages, CancellationToken token)
         {
             var archivers = pages
                 .Select(e => e.Entry.Archiver)

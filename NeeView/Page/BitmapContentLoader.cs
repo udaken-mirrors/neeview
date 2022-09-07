@@ -7,8 +7,8 @@ namespace NeeView
 {
     public class BitmapContentLoader : IContentLoader, IHasPictureSource
     {
-        private BitmapContent _content;
-        private object _lock = new object();
+        private readonly BitmapContent _content;
+        private readonly object _lock = new();
 
         public BitmapContentLoader(BitmapContent content)
         {
@@ -47,6 +47,7 @@ namespace NeeView
         public void Dispose()
         {
             Dispose(true);
+            GC.SuppressFinalize(this);
         }
         #endregion
 

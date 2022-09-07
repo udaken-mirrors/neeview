@@ -5,11 +5,11 @@ namespace NeeView
 {
     public class ViewController
     {
-        private MainViewComponent _viewComponent;
-        private ScrollPageController _scrollPageControl;
-        private PrintController _printControl;
-        private TouchEmurlateController _touchEmurlateController;
-        private WindowStateController _windowStateController;
+        private readonly MainViewComponent _viewComponent;
+        private readonly ScrollPageController _scrollPageControl;
+        private readonly PrintController _printControl;
+        private readonly TouchEmurlateController _touchEmurlateController;
+        private readonly WindowStateController _windowStateController;
 
         public ViewController(MainViewComponent viewContent, ScrollPageController scrollPageControl, PrintController printControl)
         {

@@ -21,8 +21,8 @@ namespace NeeView.Setting
     /// </summary>
     public partial class MouseDragSettingWindow : Window
     {
-        private DragActionCollection _memento;
-        private string _key;
+        private readonly DragActionCollection _memento;
+        private readonly string _key;
 
         public MouseDragSettingWindow(string key, MouseDragSettingWindowTab start)
         {

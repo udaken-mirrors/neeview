@@ -18,8 +18,8 @@ namespace NeeView
     /// </summary>
     public class PageListPanel : BindableBase, IPanel
     {
-        private PageListView _view;
-        private PageListPresenter _presenter;
+        private readonly PageListView _view;
+        private readonly PageListPresenter _presenter;
 
         public PageListPanel(PageList model)
         {

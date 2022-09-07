@@ -80,15 +80,12 @@ namespace NeeView
         {
             get
             {
-                switch (MenuElementType)
+                return MenuElementType switch
                 {
-                    default:
-                        return true;
-                    case MenuElementType.None:
-                        return false;
-                    case MenuElementType.Command:
-                        return IsCommandEnabled(CommandName);
-                }
+                    MenuElementType.None => false,
+                    MenuElementType.Command => IsCommandEnabled(CommandName),
+                    _ => true,
+                };
             }
         }
 
@@ -118,15 +115,12 @@ namespace NeeView
         {
             get
             {
-                switch (MenuElementType)
+                return MenuElementType switch
                 {
-                    default:
-                        return $"《{MenuElementType.ToAliasName()}》";
-                    case MenuElementType.None:
-                        return $"({MenuElementType.ToAliasName()})";
-                    case MenuElementType.Command:
-                        return GetCommandText(CommandName, (CommandElement e) => e.LongText);
-                }
+                    MenuElementType.None => $"({MenuElementType.ToAliasName()})",
+                    MenuElementType.Command => GetCommandText(CommandName, (CommandElement e) => e.LongText),
+                    _ => $"《{MenuElementType.ToAliasName()}》",
+                };
             }
         }
 
@@ -134,15 +128,12 @@ namespace NeeView
         {
             get
             {
-                switch (MenuElementType)
+                return MenuElementType switch
                 {
-                    default:
-                        return MenuElementType.ToAliasName();
-                    case MenuElementType.None:
-                        return $"({MenuElementType.ToAliasName()})";
-                    case MenuElementType.Command:
-                        return GetCommandText(CommandName, (CommandElement e) => e.Menu);
-                }
+                    MenuElementType.None => $"({MenuElementType.ToAliasName()})",
+                    MenuElementType.Command => GetCommandText(CommandName, (CommandElement e) => e.Menu),
+                    _ => MenuElementType.ToAliasName(),
+                };
             }
         }
 
@@ -162,7 +153,7 @@ namespace NeeView
         /// </summary>
         /// <param name="commandName">コマンドID</param>
         /// <returns>コマンド有効なら true</returns>
-        private bool IsCommandEnabled(string? commandName)
+        private static bool IsCommandEnabled(string? commandName)
         {
             if (commandName is null) return false;
 
@@ -175,7 +166,7 @@ namespace NeeView
         /// </summary>
         /// <param name="commandName">コマンドID</param>
         /// <returns>存在許可するなら true</returns>
-        private bool IsCommandAllowed(string? commandName)
+        private static bool IsCommandAllowed(string? commandName)
         {
             if (commandName is null)
             {
@@ -210,7 +201,7 @@ namespace NeeView
         /// <param name="commandName">コマンドID</param>
         /// <param name="getCommandTextFunc">テキスト取得関数</param>
         /// <returns>コマンド表示名</returns>
-        private string GetCommandText(string? commandName, Func<CommandElement, string> getCommandTextFunc)
+        private static string GetCommandText(string? commandName, Func<CommandElement, string> getCommandTextFunc)
         {
             if (commandName is null)
             {
@@ -316,8 +307,10 @@ namespace NeeView
             element.CommandName = source.CommandName;
             if (element.MenuElementType == MenuElementType.Group)
             {
-                element.Children = new ObservableCollection<MenuTree>();
-                element.Children.Add(new MenuTree() { MenuElementType = MenuElementType.None });
+                element.Children = new ObservableCollection<MenuTree>
+                {
+                    new MenuTree() { MenuElementType = MenuElementType.None }
+                };
             }
             return element;
         }
@@ -557,20 +550,14 @@ namespace NeeView
         {
             get
             {
-                switch (MenuElementType)
+                return MenuElementType switch
                 {
-                    default:
-                    case MenuElementType.None:
-                        return "";
-                    case MenuElementType.Group:
-                        return "";
-                    case MenuElementType.Command:
-                        return CommandTable.Current.GetElement(CommandName).Remarks;
-                    case MenuElementType.History:
-                        return Properties.Resources.MenuTree_History;
-                    case MenuElementType.Separator:
-                        return "";
-                }
+                    MenuElementType.Group => "",
+                    MenuElementType.Command => CommandTable.Current.GetElement(CommandName).Remarks,
+                    MenuElementType.History => Properties.Resources.MenuTree_History,
+                    MenuElementType.Separator => "",
+                    _ => "",
+                };
             }
         }
 

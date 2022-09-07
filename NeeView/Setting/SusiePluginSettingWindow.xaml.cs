@@ -25,7 +25,8 @@ namespace NeeView.Setting
     /// </summary>
     public partial class SusiePluginSettingWindow : Window
     {
-        private SusiePluginSettingWindowViewModel? _vm;
+        private readonly SusiePluginSettingWindowViewModel? _vm;
+
 
         public SusiePluginSettingWindow()
         {
@@ -34,6 +35,12 @@ namespace NeeView.Setting
             this.Loaded += SusiePluginSettingWindow_Loaded;
             this.Closed += SusiePluginSettingWindow_Closed;
             this.KeyDown += SusiePluginSettingWindow_KeyDown;
+        }
+
+        public SusiePluginSettingWindow(SusiePluginInfo spi) : this()
+        {
+            _vm = new SusiePluginSettingWindowViewModel(spi);
+            this.DataContext = _vm;
         }
 
 
@@ -56,11 +63,6 @@ namespace NeeView.Setting
             }
         }
 
-        public SusiePluginSettingWindow(SusiePluginInfo spi) : this()
-        {
-            _vm = new SusiePluginSettingWindowViewModel(spi);
-            this.DataContext = _vm;
-        }
 
         private void CloseButton_Click(object? sender, RoutedEventArgs e)
         {
@@ -78,7 +80,7 @@ namespace NeeView.Setting
     /// </summary>
     public class SusiePluginSettingWindowViewModel : BindableBase
     {
-        private SusiePluginInfo _spi;
+        private readonly SusiePluginInfo _spi;
 
         public SusiePluginSettingWindowViewModel(SusiePluginInfo spi)
         {

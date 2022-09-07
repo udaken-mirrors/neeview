@@ -11,18 +11,6 @@ namespace NeeView
 {
     public static class NvDebug
     {
-        [Conditional("DEBUG")]
-        public static void __DumpThread(string? s = null)
-        {
-            Debug.WriteLine($"> ThreadId: {Thread.CurrentThread.ManagedThreadId}: {s}");
-        }
-
-        [Conditional("DEBUG")]
-        private static void __Delay(int ms)
-        {
-            Thread.Sleep(ms);
-        }
-
         public static void MeasureAction(Action action)
         {
             var callStack = new StackFrame(1, true);

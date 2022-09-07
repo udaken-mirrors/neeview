@@ -50,8 +50,7 @@ namespace NeeView
             }
 
             // If parameter cannot be cast to Point return false.
-            DragKey? p = obj as DragKey;
-            if ((object?)p == null)
+            if (obj is not DragKey p)
             {
                 return false;
             }
@@ -68,7 +67,7 @@ namespace NeeView
         public bool Equals(DragKey? p)
         {
             // If parameter is null return false:
-            if ((object?)p == null)
+            if (p is null)
             {
                 return false;
             }
@@ -101,7 +100,7 @@ namespace NeeView
             }
 
             // If one is null, but not both, return false.
-            if (((object)a == null) || ((object)b == null))
+            if ((a is null) || (b is null))
             {
                 return false;
             }

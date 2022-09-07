@@ -20,7 +20,7 @@ namespace NeeView
     [JsonConverter(typeof(ThemeColorJsonConverter))]
     public class ThemeColor
     {
-        private static Regex _linkTokenRegex = new Regex(@"^\w+(\.\w+)+$", RegexOptions.Compiled);
+        private static readonly Regex _linkTokenRegex = new(@"^\w+(\.\w+)+$", RegexOptions.Compiled);
 
         public ThemeColor()
         {
@@ -51,17 +51,13 @@ namespace NeeView
 
         public override string ToString()
         {
-            switch (ThemeColorType)
+            return ThemeColorType switch
             {
-                case ThemeColorType.Default:
-                    return "";
-                case ThemeColorType.Color:
-                    return DecorateOpacityString(Color.ToString());
-                case ThemeColorType.Link:
-                    return DecorateOpacityString(Link);
-            }
-
-            throw new InvalidOperationException();
+                ThemeColorType.Default => "",
+                ThemeColorType.Color => DecorateOpacityString(Color.ToString()),
+                ThemeColorType.Link => DecorateOpacityString(Link),
+                _ => throw new InvalidOperationException(),
+            };
         }
 
         private string DecorateOpacityString(string s)

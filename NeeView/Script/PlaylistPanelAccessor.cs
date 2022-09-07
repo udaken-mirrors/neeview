@@ -3,14 +3,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
+#pragma warning disable CA1822
+
 namespace NeeView
 {
-
-
     public class PlaylistPanelAccessor : LayoutPanelAccessor
     {
-        private PlaylistPanel _panel;
-        private PlaylistHub _model;
+        private readonly PlaylistPanel _panel;
+        private readonly PlaylistHub _model;
 
 
         public PlaylistPanelAccessor() : base(nameof(PlaylistPanel))
@@ -58,13 +58,13 @@ namespace NeeView
 
         private void SetSelectedItems(PlaylistItemAccessor[] selectedItems)
         {
-            selectedItems = selectedItems ?? new PlaylistItemAccessor[] { };
+            selectedItems = selectedItems ?? Array.Empty<PlaylistItemAccessor>();
             _panel.Presenter.PlaylistListBox?.SetSelectedItems(selectedItems.Select(e => e.Source));
         }
 
-        private PlaylistItemAccessor[] ToStringArray(IEnumerable<PlaylistItem>? items)
+        private static PlaylistItemAccessor[] ToStringArray(IEnumerable<PlaylistItem>? items)
         {
-            return items?.Select(e => new PlaylistItemAccessor(e)).ToArray() ?? new PlaylistItemAccessor[] { };
+            return items?.Select(e => new PlaylistItemAccessor(e)).ToArray() ?? Array.Empty<PlaylistItemAccessor>();
         }
 
         internal WordNode CreateWordNode(string name)

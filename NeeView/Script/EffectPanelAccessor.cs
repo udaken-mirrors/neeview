@@ -2,7 +2,7 @@
 {
     public class EffectPanelAccessor : LayoutPanelAccessor
     {
-        private ImageEffectPanel _panel;
+        private readonly ImageEffectPanel _panel;
 
 
         public EffectPanelAccessor() : base(nameof(ImageEffectPanel))

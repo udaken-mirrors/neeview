@@ -9,7 +9,7 @@ namespace NeeView.Text
     /// </summary>
     public class StringTokenParser : IEnumerable<StringToken>
     {
-        private StringNormalizeParser _parser;
+        private readonly StringNormalizeParser _parser;
 
         public StringTokenParser(string source)
         {
@@ -109,8 +109,8 @@ namespace NeeView.Text
         public class NumsTokenFactory
         {
             private long _n;
-            private List<long> _nums = new List<long>(4);
-            private List<char> _chars = new List<char>(8);
+            private readonly List<long> _nums = new(4);
+            private readonly List<char> _chars = new(8);
 
             public void Clear()
             {

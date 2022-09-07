@@ -49,8 +49,8 @@ namespace NeeView
 
         #endregion
 
-        private PageContent _content;
-        private IContentLoader _contentLoader;
+        private readonly PageContent _content;
+        private readonly IContentLoader _contentLoader;
         private bool _isVisibled;
         private bool _isMarked;
 
@@ -95,13 +95,13 @@ namespace NeeView
         public string? Place { get; protected set; }
 
         // ページ名 : エントリ名
-        public string EntryName => Entry.EntryFullName.Substring(BookPrefix.Length);
+        public string EntryName => Entry.EntryFullName[BookPrefix.Length..];
 
         // ページ名：ファイル名のみ
         public string EntryLastName => Entry.EntryLastName;
 
         // ページ名：スマートパス
-        public string EntrySmartName => Prefix == null ? EntryName : EntryName.Substring(Prefix.Length);
+        public string EntrySmartName => Prefix == null ? EntryName : EntryName[Prefix.Length..];
 
         // ページ名：フルパス名 (リンクはそのまま)
         public string EntryFullName => Entry.EntryFullName;
@@ -201,6 +201,7 @@ namespace NeeView
         public void Dispose()
         {
             Dispose(true);
+            GC.SuppressFinalize(this);
         }
         #endregion
 

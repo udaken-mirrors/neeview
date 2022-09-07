@@ -32,7 +32,7 @@ namespace NeeView
             this.Size = new Size(480, 480);
         }
 
-        private FrameworkElement? CreateView(ViewContentSource source, ViewContentParameters parameter)
+        private FrameworkElement? CreateView(ViewContentSource _, ViewContentParameters parameter)
         {
             if (Content?.PageMessage == null)
             {

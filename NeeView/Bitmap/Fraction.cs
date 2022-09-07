@@ -29,7 +29,7 @@ namespace NeeView
         }
 
         // 最大公約数
-        private int GreatestCommonDivisor(int x, int y)
+        private static int GreatestCommonDivisor(int x, int y)
         {
             while (true)
             {

@@ -14,12 +14,12 @@ namespace NeeView
     /// </summary>
     public static class InputGestureConverter
     {
-        private static KeyGestureConverter _keyGestureConverter = new KeyGestureConverter();
-        private static KeyExGestureConverter _keyExGestureConverter = new KeyExGestureConverter();
-        private static MouseGestureConverter _mouseGestureConverter = new MouseGestureConverter();
-        private static MouseExGestureConverter _mouseExGestureConverter = new MouseExGestureConverter();
-        private static MouseWheelGestureConverter _mouseWheelGestureConverter = new MouseWheelGestureConverter();
-        private static MouseHorizontalWheelGestureConverter _mouseHorizontalWheelGestureConverter = new MouseHorizontalWheelGestureConverter();
+        private static readonly KeyGestureConverter _keyGestureConverter = new();
+        private static readonly KeyExGestureConverter _keyExGestureConverter = new();
+        private static readonly MouseGestureConverter _mouseGestureConverter = new();
+        private static readonly MouseExGestureConverter _mouseExGestureConverter = new();
+        private static readonly MouseWheelGestureConverter _mouseWheelGestureConverter = new();
+        private static readonly MouseHorizontalWheelGestureConverter _mouseHorizontalWheelGestureConverter = new();
 
 
         private enum ConverterType
@@ -42,22 +42,15 @@ namespace NeeView
 
         private static InputGesture? ConvertFromStringByOrder(string source, ConverterType type)
         {
-            List<ConverterType> order;
-
-            switch (type)
+            List<ConverterType> order = type switch
             {
-                case ConverterType.MouseWheel:
-                case ConverterType.MouseHorizontalWheel:
-                    order = new List<ConverterType> { ConverterType.MouseWheel, ConverterType.MouseHorizontalWheel, ConverterType.Mouse, ConverterType.Key };
-                    break;
-                case ConverterType.Mouse:
-                    order = new List<ConverterType> { ConverterType.Mouse, ConverterType.MouseWheel, ConverterType.MouseHorizontalWheel, ConverterType.Key };
-                    break;
-                default:
-                    order = new List<ConverterType> { ConverterType.Key, ConverterType.Mouse, ConverterType.MouseWheel, ConverterType.MouseHorizontalWheel };
-                    break;
-            }
-
+                ConverterType.MouseWheel or ConverterType.MouseHorizontalWheel
+                    => new List<ConverterType> { ConverterType.MouseWheel, ConverterType.MouseHorizontalWheel, ConverterType.Mouse, ConverterType.Key },
+                ConverterType.Mouse
+                    => new List<ConverterType> { ConverterType.Mouse, ConverterType.MouseWheel, ConverterType.MouseHorizontalWheel, ConverterType.Key },
+                _
+                    => new List<ConverterType> { ConverterType.Key, ConverterType.Mouse, ConverterType.MouseWheel, ConverterType.MouseHorizontalWheel },
+            };
             foreach (var t in order)
             {
                 var gesture = _converter[t](source);
@@ -100,7 +93,7 @@ namespace NeeView
         {
             try
             {
-                KeyExGestureConverter converter = new KeyExGestureConverter();
+                var converter = new KeyExGestureConverter();
                 var gesture =  converter.ConvertFromString(source) as InputGesture;
                 if (gesture is not null) return gesture;
             }
@@ -121,7 +114,7 @@ namespace NeeView
         {
             try
             {
-                MouseGestureConverter converter = new MouseGestureConverter();
+                var converter = new MouseGestureConverter();
                 var gesture = converter.ConvertFromString(source) as MouseGesture;
                 if (gesture is not null) return gesture;
             }
@@ -132,7 +125,7 @@ namespace NeeView
 
             try
             {
-                MouseExGestureConverter converter = new MouseExGestureConverter();
+                var converter = new MouseExGestureConverter();
                 var gesture = converter.ConvertFromString(source) as InputGesture;
                 if (gesture is not null) return gesture;
 
@@ -154,7 +147,7 @@ namespace NeeView
         {
             try
             {
-                MouseWheelGestureConverter converter = new MouseWheelGestureConverter();
+                var converter = new MouseWheelGestureConverter();
                 var gesture = converter.ConvertFromString(source) as InputGesture;
                 if (gesture is not null) return gesture;
             }
@@ -175,7 +168,7 @@ namespace NeeView
         {
             try
             {
-                MouseHorizontalWheelGestureConverter converter = new MouseHorizontalWheelGestureConverter();
+                var converter = new MouseHorizontalWheelGestureConverter();
                 var gesture = converter.ConvertFromString(source) as InputGesture;
                 if (gesture is not null) return gesture;
             }
@@ -192,30 +185,16 @@ namespace NeeView
         /// </summary>
         public static string? ConvertToString(InputGesture? gesture)
         {
-            switch (gesture)
+            return gesture switch
             {
-                case KeyGesture e:
-                    return _keyGestureConverter.ConvertToString(e);
-
-                case KeyExGesture e:
-                    return _keyExGestureConverter.ConvertToString(e);
-
-                case MouseGesture e:
-                    return _mouseGestureConverter.ConvertToString(e);
-
-                case MouseExGesture e:
-                    return _mouseExGestureConverter.ConvertToString(e);
-
-                case MouseWheelGesture e:
-                    return _mouseWheelGestureConverter.ConvertToString(e);
-
-                case MouseHorizontalWheelGesture e:
-                    return _mouseHorizontalWheelGestureConverter.ConvertToString(e);
-
-                default:
-                    throw new NotSupportedException($"Not supported gesture type: {gesture?.GetType()}");
-            }
-
+                KeyGesture e => _keyGestureConverter.ConvertToString(e),
+                KeyExGesture e => _keyExGestureConverter.ConvertToString(e),
+                MouseGesture e => _mouseGestureConverter.ConvertToString(e),
+                MouseExGesture e => _mouseExGestureConverter.ConvertToString(e),
+                MouseWheelGesture e => _mouseWheelGestureConverter.ConvertToString(e),
+                MouseHorizontalWheelGesture e => _mouseHorizontalWheelGestureConverter.ConvertToString(e),
+                _ => throw new NotSupportedException($"Not supported gesture type: {gesture?.GetType()}"),
+            };
         }
     }
 }

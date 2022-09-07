@@ -13,7 +13,7 @@ namespace NeeView.Threading
     /// </remarks>
     public sealed class AsyncLock
     {
-        private readonly SemaphoreSlim _semaphore = new SemaphoreSlim(1, 1);
+        private readonly SemaphoreSlim _semaphore = new(1, 1);
 
         public async Task<IDisposable> LockAsync(CancellationToken token)
         {

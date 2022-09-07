@@ -91,7 +91,7 @@ namespace NeeView
 
         private MainWindowModel _model;
 
-        private MainViewComponent _viewComponent;
+        private readonly MainViewComponent _viewComponent;
 
         /// <summary>
         /// コンストラクター
@@ -251,7 +251,7 @@ namespace NeeView
         {
             if (IsClosing) return;
 
-            var async = ArchiverManager.Current.UnlockAllArchivesAsync();
+            _ = ArchiverManager.Current.UnlockAllArchivesAsync();
         }
     }
 }

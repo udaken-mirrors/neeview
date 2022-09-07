@@ -24,7 +24,7 @@ namespace NeeView
     /// </summary>
     public partial class FolderListBox : UserControl, IPageListPanel, IDisposable
     {
-        private FolderListBoxViewModel _vm;
+        private readonly FolderListBoxViewModel _vm;
         private ListBoxThumbnailLoader? _thumbnailLoader;
         private PageThumbnailJobClient? _jobClient;
         private RenameControl? _renameControl;
@@ -101,6 +101,7 @@ namespace NeeView
         public void Dispose()
         {
             Dispose(true);
+            GC.SuppressFinalize(this);
         }
         #endregion
 
@@ -118,21 +119,21 @@ namespace NeeView
 
         #region Commands
 
-        public static readonly RoutedCommand LoadWithRecursiveCommand = new RoutedCommand("LoadWithRecursiveCommand", typeof(FolderListBox));
-        public static readonly RoutedCommand OpenCommand = new RoutedCommand("OpenCommand", typeof(FolderListBox));
-        public static readonly RoutedCommand OpenBookCommand = new RoutedCommand("OpenBookCommand", typeof(FolderListBox));
-        public static readonly RoutedCommand OpenExplorerCommand = new RoutedCommand("OpenExplorerCommand", typeof(FolderListBox));
-        public static readonly RoutedCommand OpenExternalAppCommand = new RoutedCommand("OpenExternalAppCommand", typeof(FolderListBox));
-        public static readonly RoutedCommand CopyCommand = new RoutedCommand("CopyCommand", typeof(FolderListBox));
-        public static readonly RoutedCommand CopyToFolderCommand = new RoutedCommand("CopyToFolderCommand", typeof(FolderListBox));
-        public static readonly RoutedCommand MoveToFolderCommand = new RoutedCommand("MoveToFolderCommand", typeof(FolderListBox));
-        public static readonly RoutedCommand RemoveCommand = new RoutedCommand("RemoveCommand", typeof(FolderListBox));
-        public static readonly RoutedCommand RenameCommand = new RoutedCommand("RenameCommand", typeof(FolderListBox));
-        public static readonly RoutedCommand RemoveHistoryCommand = new RoutedCommand("RemoveHistoryCommand", typeof(FolderListBox));
-        public static readonly RoutedCommand ToggleBookmarkCommand = new RoutedCommand("ToggleBookmarkCommand", typeof(FolderListBox));
-        public static readonly RoutedCommand OpenDestinationFolderCommand = new RoutedCommand("OpenDestinationFolderCommand", typeof(FolderListBox));
-        public static readonly RoutedCommand OpenExternalAppDialogCommand = new RoutedCommand("OpenExternalAppDialogCommand", typeof(FolderListBox));
-        public static readonly RoutedCommand OpenInPlaylistCommand = new RoutedCommand("OpenInPlaylistCommand", typeof(FolderListBox));
+        public static readonly RoutedCommand LoadWithRecursiveCommand = new("LoadWithRecursiveCommand", typeof(FolderListBox));
+        public static readonly RoutedCommand OpenCommand = new("OpenCommand", typeof(FolderListBox));
+        public static readonly RoutedCommand OpenBookCommand = new("OpenBookCommand", typeof(FolderListBox));
+        public static readonly RoutedCommand OpenExplorerCommand = new("OpenExplorerCommand", typeof(FolderListBox));
+        public static readonly RoutedCommand OpenExternalAppCommand = new("OpenExternalAppCommand", typeof(FolderListBox));
+        public static readonly RoutedCommand CopyCommand = new("CopyCommand", typeof(FolderListBox));
+        public static readonly RoutedCommand CopyToFolderCommand = new("CopyToFolderCommand", typeof(FolderListBox));
+        public static readonly RoutedCommand MoveToFolderCommand = new("MoveToFolderCommand", typeof(FolderListBox));
+        public static readonly RoutedCommand RemoveCommand = new("RemoveCommand", typeof(FolderListBox));
+        public static readonly RoutedCommand RenameCommand = new("RenameCommand", typeof(FolderListBox));
+        public static readonly RoutedCommand RemoveHistoryCommand = new("RemoveHistoryCommand", typeof(FolderListBox));
+        public static readonly RoutedCommand ToggleBookmarkCommand = new("ToggleBookmarkCommand", typeof(FolderListBox));
+        public static readonly RoutedCommand OpenDestinationFolderCommand = new("OpenDestinationFolderCommand", typeof(FolderListBox));
+        public static readonly RoutedCommand OpenExternalAppDialogCommand = new("OpenExternalAppDialogCommand", typeof(FolderListBox));
+        public static readonly RoutedCommand OpenInPlaylistCommand = new("OpenInPlaylistCommand", typeof(FolderListBox));
 
         private static void InitialieCommandStatic()
         {
@@ -168,8 +169,7 @@ namespace NeeView
         /// </summary>
         private void ToggleBookmark_CanExecute(object? sender, CanExecuteRoutedEventArgs e)
         {
-            var item = (sender as ListBox)?.SelectedItem as FolderItem;
-            e.CanExecute = item != null && item.IsFileSystem() && !item.EntityPath.SimplePath.StartsWith(Temporary.Current.TempDirectory);
+            e.CanExecute = (sender as ListBox)?.SelectedItem is FolderItem item && item.IsFileSystem() && !item.EntityPath.SimplePath.StartsWith(Temporary.Current.TempDirectory);
         }
 
         /// <summary>
@@ -177,8 +177,7 @@ namespace NeeView
         /// </summary>
         private void ToggleBookmark_Executed(object? sender, ExecutedRoutedEventArgs e)
         {
-            var item = (sender as ListBox)?.SelectedItem as FolderItem;
-            if (item != null)
+            if ((sender as ListBox)?.SelectedItem is FolderItem item)
             {
                 if (BookmarkCollection.Current.Contains(item.EntityPath.SimplePath))
                 {
@@ -196,8 +195,7 @@ namespace NeeView
         /// </summary>
         private void RemoveHistory_CanExecute(object? sender, CanExecuteRoutedEventArgs e)
         {
-            var item = (sender as ListBox)?.SelectedItem as FolderItem;
-            e.CanExecute = item != null && BookHistoryCollection.Current.Contains(item.TargetPath.SimplePath);
+            e.CanExecute = (sender as ListBox)?.SelectedItem is FolderItem item && BookHistoryCollection.Current.Contains(item.TargetPath.SimplePath);
         }
 
         /// <summary>
@@ -205,8 +203,7 @@ namespace NeeView
         /// </summary>
         private void RemoveHistory_Executed(object? sender, ExecutedRoutedEventArgs e)
         {
-            var item = (sender as ListBox)?.SelectedItem as FolderItem;
-            if (item != null)
+            if ((sender as ListBox)?.SelectedItem is FolderItem item)
             {
                 BookHistoryCollection.Current.Remove(item.TargetPath.SimplePath);
             }
@@ -220,13 +217,11 @@ namespace NeeView
         /// <param name="e"></param>
         private void LoadWithRecursive_CanExecute(object? sender, CanExecuteRoutedEventArgs e)
         {
-            var item = (sender as ListBox)?.SelectedItem as FolderItem;
-
-            e.CanExecute = item == null || item.Attributes.AnyFlag(FolderItemAttribute.Drive | FolderItemAttribute.Empty)
-                ? false
-                : Config.Current.System.ArchiveRecursiveMode == ArchiveEntryCollectionMode.IncludeSubArchives
+            e.CanExecute = (sender as ListBox)?.SelectedItem is FolderItem item
+                && !item.Attributes.AnyFlag(FolderItemAttribute.Drive | FolderItemAttribute.Empty)
+                && (Config.Current.System.ArchiveRecursiveMode == ArchiveEntryCollectionMode.IncludeSubArchives
                     ? item.Attributes.HasFlag(FolderItemAttribute.Directory)
-                    : ArchiverManager.Current.GetSupportedType(item.TargetPath.SimplePath).IsRecursiveSupported();
+                    : ArchiverManager.Current.GetSupportedType(item.TargetPath.SimplePath).IsRecursiveSupported());
         }
 
 
@@ -237,8 +232,7 @@ namespace NeeView
         /// <param name="e"></param>
         private void LoadWithRecursive_Executed(object? sender, ExecutedRoutedEventArgs e)
         {
-            var item = (sender as ListBox)?.SelectedItem as FolderItem;
-            if (item is null) return;
+            if ((sender as ListBox)?.SelectedItem is not FolderItem item) return;
 
             // サブフォルダー読み込み状態を反転する
             var option = item.IsRecursived ? BookLoadOption.NotRecursive : BookLoadOption.Recursive;
@@ -252,8 +246,7 @@ namespace NeeView
         /// <param name="e"></param>
         private void FileCommand_CanExecute(object? sender, CanExecuteRoutedEventArgs e)
         {
-            var item = (sender as ListBox)?.SelectedItem as FolderItem;
-            e.CanExecute = (item != null && item.IsEditable && Config.Current.System.IsFileWriteAccessEnabled);
+            e.CanExecute = ((sender as ListBox)?.SelectedItem is FolderItem item && item.IsEditable && Config.Current.System.IsFileWriteAccessEnabled);
         }
 
         /// <summary>
@@ -284,7 +277,7 @@ namespace NeeView
         /// <summary>
         /// クリップボードにコピー
         /// </summary>
-        private void CopyToClipboard(IEnumerable<FolderItem> infos)
+        private static void CopyToClipboard(IEnumerable<FolderItem> infos)
         {
             var collection = new System.Collections.Specialized.StringCollection();
             foreach (var item in infos.Where(e => !e.IsEmpty()).Select(e => e.EntityPath.SimplePath).Where(e => new QueryPath(e).Scheme == QueryScheme.File))
@@ -318,8 +311,7 @@ namespace NeeView
 
         public void CopyToFolder_Execute(object? sender, ExecutedRoutedEventArgs e)
         {
-            var folder = e.Parameter as DestinationFolder;
-            if (folder == null) return;
+            if (e.Parameter is not DestinationFolder folder) return;
 
             try
             {
@@ -360,8 +352,7 @@ namespace NeeView
 
         public async void MoveToFolder_Execute(object? sender, ExecutedRoutedEventArgs e)
         {
-            var folder = e.Parameter as DestinationFolder;
-            if (folder == null) return;
+            if (e.Parameter is not DestinationFolder folder) return;
 
             try
             {
@@ -397,7 +388,7 @@ namespace NeeView
         public void Remove_CanExecute(object? sender, CanExecuteRoutedEventArgs e)
         {
             var items = this.ListBox.SelectedItems.Cast<FolderItem>();
-            e.CanExecute = items != null && !(_vm.FolderCollection is PlaylistFolderCollection) && items.All(x => x.CanRemove());
+            e.CanExecute = items != null && _vm.FolderCollection is not PlaylistFolderCollection && items.All(x => x.CanRemove());
         }
 
         /// <summary>
@@ -415,8 +406,7 @@ namespace NeeView
 
         public void Rename_CanExecute(object? sender, CanExecuteRoutedEventArgs e)
         {
-            var item = (sender as ListBox)?.SelectedItem as FolderItem;
-            if (item is null) return;
+            if ((sender as ListBox)?.SelectedItem is not FolderItem item) return;
 
             e.CanExecute = CanRenameExecute(item);
         }
@@ -466,8 +456,7 @@ namespace NeeView
         {
             var listView = this.ListBox;
 
-            var item = listView.SelectedItem as FolderItem;
-            if (item == null) return;
+            if (listView.SelectedItem is not FolderItem item) return;
 
             if (CanRenameExecute(item))
             {
@@ -558,8 +547,7 @@ namespace NeeView
 
             if (this.ListBox.SelectedIndex < 0) return;
 
-            var collection = this.ListBox.ItemsSource as IList<FolderItem>;
-            if (collection is null) return;
+            if (this.ListBox.ItemsSource is not IList<FolderItem> collection) return;
 
             // 次に名前変更可能な項目
             var next = GetRenabableNext(collection, this.ListBox.SelectedIndex, delta);
@@ -571,8 +559,7 @@ namespace NeeView
             this.ListBox.UpdateLayout();
 
             // ブック切り替え
-            var item = this.ListBox.SelectedItem as FolderItem;
-            if (item != null)
+            if (this.ListBox.SelectedItem is FolderItem item)
             {
                 _vm.Model.LoadBook(item);
             }
@@ -609,14 +596,12 @@ namespace NeeView
         /// </summary>
         private void OpenExplorer_CanExecute(object? sender, CanExecuteRoutedEventArgs e)
         {
-            var item = (sender as ListBox)?.SelectedItem as FolderItem;
-            e.CanExecute = item != null;
+            e.CanExecute = (sender as ListBox)?.SelectedItem is FolderItem;
         }
 
         public void OpenExplorer_Executed(object? sender, ExecutedRoutedEventArgs e)
         {
-            var item = (sender as ListBox)?.SelectedItem as FolderItem;
-            if (item != null)
+            if ((sender as ListBox)?.SelectedItem is FolderItem item)
             {
                 var path = item.TargetPath.SimplePath;
                 path = item.Attributes.AnyFlag(FolderItemAttribute.Bookmark | FolderItemAttribute.ArchiveEntry | FolderItemAttribute.Empty) ? ArchiverManager.Current.GetExistPathName(path) : path;
@@ -640,8 +625,7 @@ namespace NeeView
 
         public void OpenExternalApp_Executed(object? sender, ExecutedRoutedEventArgs e)
         {
-            var externalApp = e.Parameter as ExternalApp;
-            if (externalApp == null) return;
+            if (e.Parameter is not ExternalApp externalApp) return;
 
             var items = this.ListBox.SelectedItems.Cast<FolderItem>();
             if (items != null && items.Any())
@@ -659,8 +643,7 @@ namespace NeeView
 
         public void Open_Executed(object? sender, ExecutedRoutedEventArgs e)
         {
-            var item = (sender as ListBox)?.SelectedItem as FolderItem;
-            if (item != null)
+            if ((sender as ListBox)?.SelectedItem is FolderItem item)
             {
                 _vm.MoveToSafety(item);
             }
@@ -668,8 +651,7 @@ namespace NeeView
 
         public void OpenBook_Executed(object? sender, ExecutedRoutedEventArgs e)
         {
-            var item = (sender as ListBox)?.SelectedItem as FolderItem;
-            if (item != null && !item.IsEmpty())
+            if ((sender as ListBox)?.SelectedItem is FolderItem item && !item.IsEmpty())
             {
                 _vm.Model.LoadBook(item);
             }
@@ -687,8 +669,7 @@ namespace NeeView
 
         private void OpenInPlaylistCommand_Execute(object? sender, ExecutedRoutedEventArgs e)
         {
-            var item = (sender as ListBox)?.SelectedItem as FolderItem;
-            if (item != null && item.IsPlaylist)
+            if ((sender as ListBox)?.SelectedItem is FolderItem item && item.IsPlaylist)
             {
                 Config.Current.Playlist.CurrentPlaylist = item.EntityPath.SimplePath;
                 SidePanelFrame.Current.IsVisiblePlaylist = true;
@@ -722,7 +703,7 @@ namespace NeeView
 
         #region DragDrop
 
-        private async Task DragStartBehavior_DragBeginAsync(object? sender, DragStartEventArgs e, CancellationToken token)
+        public async Task DragStartBehavior_DragBeginAsync(object? sender, DragStartEventArgs e, CancellationToken token)
         {
             var items = this.ListBox.SelectedItems
                 .Cast<FolderItem>()
@@ -834,6 +815,7 @@ namespace NeeView
             }
         }
 
+#if false
         private void DropToBookmark(object? sender, DragEventArgs e, bool isDrop, TreeListNode<IBookmarkEntry> node, TreeListNode<IBookmarkEntry>? bookmarkEntry)
         {
             if (bookmarkEntry == null)
@@ -849,8 +831,9 @@ namespace NeeView
                 DropToBookmarkExecute(node, bookmarkEntry);
             }
         }
+#endif
 
-        private bool CanDropToBookmark(TreeListNode<IBookmarkEntry> node, TreeListNode<IBookmarkEntry> bookmarkEntry)
+        private static bool CanDropToBookmark(TreeListNode<IBookmarkEntry> node, TreeListNode<IBookmarkEntry> bookmarkEntry)
         {
             return !node.Children.Contains(bookmarkEntry) && !node.ParentContains(bookmarkEntry) && node != bookmarkEntry;
         }
@@ -894,21 +877,18 @@ namespace NeeView
             }
         }
 
-        private bool CanDropToBookmark(QueryPath query)
+        private static bool CanDropToBookmark(QueryPath query)
         {
             if (query.Search != null)
             {
                 return false;
             }
 
-            switch (query.Scheme)
+            return query.Scheme switch
             {
-                case QueryScheme.File:
-                    return CanDropToBookmark(query.SimplePath);
-
-                default:
-                    return false;
-            }
+                QueryScheme.File => CanDropToBookmark(query.SimplePath),
+                _ => false,
+            };
         }
 
         private void DropToBookmark(object? sender, DragEventArgs e, bool isDrop, TreeListNode<IBookmarkEntry> node, IEnumerable<string> fileNames)
@@ -938,12 +918,12 @@ namespace NeeView
             }
         }
 
-        private bool CanDropToBookmark(string path)
+        private static bool CanDropToBookmark(string path)
         {
             return ArchiverManager.Current.IsSupported(path, true, true) || System.IO.Directory.Exists(path);
         }
 
-        private ListBoxItem? PointToViewItem(ListBox listBox, Point point)
+        private static ListBoxItem? PointToViewItem(ListBox listBox, Point point)
         {
             var element = VisualTreeUtility.HitTest<ListBoxItem>(listBox, point);
 
@@ -956,7 +936,7 @@ namespace NeeView
             return element;
         }
 
-        #endregion
+#endregion
 
 
         private void FolderListBox_Loaded(object? sender, RoutedEventArgs e)
@@ -1093,8 +1073,7 @@ namespace NeeView
                 }
                 else if (key == Key.Down)
                 {
-                    var item = (sender as ListBox)?.SelectedItem as FolderItem;
-                    if (item != null)
+                    if ((sender as ListBox)?.SelectedItem is FolderItem item)
                     {
                         _vm.MoveToSafety(item);
                         e.Handled = true;
@@ -1133,8 +1112,7 @@ namespace NeeView
         {
             if (Keyboard.Modifiers != ModifierKeys.None) return;
 
-            var item = (sender as ListBoxItem)?.Content as FolderItem;
-            if (!Config.Current.Panels.OpenWithDoubleClick && item != null && !item.IsEmpty())
+            if (!Config.Current.Panels.OpenWithDoubleClick && (sender as ListBoxItem)?.Content is FolderItem item && !item.IsEmpty())
             {
                 _vm.Model.LoadBook(item);
             }
@@ -1158,8 +1136,7 @@ namespace NeeView
         private void FolderListItem_KeyDown(object? sender, System.Windows.Input.KeyEventArgs e)
         {
             bool isLRKeyEnabled = _vm.IsLRKeyEnabled();
-            var item = (sender as ListBoxItem)?.Content as FolderItem;
-            if (item is null) return;
+            if ((sender as ListBoxItem)?.Content is not FolderItem item) return;
 
             if (Keyboard.Modifiers == ModifierKeys.None)
             {
@@ -1202,20 +1179,18 @@ namespace NeeView
         /// <param name="e"></param>
         private void FolderListItem_ContextMenuOpening(object? sender, ContextMenuEventArgs e)
         {
-            var container = sender as ListBoxItem;
-            if (container == null)
+            if (sender is not ListBoxItem container)
             {
                 return;
             }
 
-            var item = container.Content as FolderItem;
-            if (item == null)
+            if (container.Content is not FolderItem item)
             {
                 return;
             }
 
             // サブフォルダー読み込みの状態を更新
-            var isDefaultRecursive = _vm.FolderCollection != null ? _vm.FolderCollection.FolderParameter.IsFolderRecursive : false;
+            var isDefaultRecursive = _vm.FolderCollection != null && _vm.FolderCollection.FolderParameter.IsFolderRecursive;
             item.UpdateIsRecursived(isDefaultRecursive);
 
             // コンテキストメニュー生成
@@ -1257,7 +1232,7 @@ namespace NeeView
             }
             else if (item.Attributes.HasFlag(FolderItemAttribute.Empty))
             {
-                bool canExplorer = !(_vm.FolderCollection is BookmarkFolderCollection);
+                bool canExplorer = _vm.FolderCollection is not BookmarkFolderCollection;
                 contextMenu.Items.Add(new MenuItem() { Header = Properties.Resources.BookshelfItem_Menu_Explorer, Command = OpenExplorerCommand, IsEnabled = canExplorer });
                 contextMenu.Items.Add(new MenuItem() { Header = Properties.Resources.BookshelfItem_Menu_Copy, Command = CopyCommand, IsEnabled = false });
             }
@@ -1329,7 +1304,7 @@ namespace NeeView
         }
 
 
-        #region UI Accessor
+#region UI Accessor
 
         public List<FolderItem> GetItems()
         {
@@ -1348,7 +1323,7 @@ namespace NeeView
             this.ListBox.ScrollItemsIntoView(items);
         }
 
-        #endregion UI Accessor
+#endregion UI Accessor
     }
 
 

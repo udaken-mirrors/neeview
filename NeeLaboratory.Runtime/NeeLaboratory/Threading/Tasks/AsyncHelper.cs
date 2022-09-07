@@ -7,7 +7,7 @@ namespace NeeLaboratory.Threading.Tasks
     // from https://stackoverflow.com/questions/9343594/how-to-call-asynchronous-method-from-synchronous-method-in-c
     public static class AsyncHelper
     {
-        private static readonly TaskFactory _myTaskFactory = new TaskFactory(CancellationToken.None, TaskCreationOptions.None, TaskContinuationOptions.None, TaskScheduler.Default);
+        private static readonly TaskFactory _myTaskFactory = new(CancellationToken.None, TaskCreationOptions.None, TaskContinuationOptions.None, TaskScheduler.Default);
 
         /// <summary>
         /// Asyncメソッドの同期実行

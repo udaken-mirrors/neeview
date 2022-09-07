@@ -26,7 +26,7 @@ namespace NeeView
         public static SlideShow Current { get; }
 
         // タイマーディスパッチ
-        private DispatcherTimer _timer;
+        private readonly DispatcherTimer _timer;
 
         // スライドショー表示間隔用
         private DateTime _lastShowTime;
@@ -36,7 +36,7 @@ namespace NeeView
 
         private bool _isPlayingSlideShow;
         private bool _isPlayingSlideShowMemento;
-        private DisposableCollection _disposables = new DisposableCollection();
+        private readonly DisposableCollection _disposables = new();
 
 
         // コンストラクター
@@ -222,6 +222,7 @@ namespace NeeView
         public void Dispose()
         {
             Dispose(true);
+            GC.SuppressFinalize(this);
         }
         #endregion
 

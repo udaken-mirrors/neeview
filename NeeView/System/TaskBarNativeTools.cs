@@ -63,7 +63,7 @@ namespace NeeView
 
                 public static APPBARDATA Create()
                 {
-                    APPBARDATA appBarData = new APPBARDATA();
+                    var appBarData = new APPBARDATA();
                     appBarData.cbSize = Marshal.SizeOf(typeof(APPBARDATA));
                     return appBarData;
                 }
@@ -72,7 +72,7 @@ namespace NeeView
             [DllImport("shell32", CallingConvention = CallingConvention.StdCall)]
             internal static extern IntPtr SHAppBarMessage(uint dwMessage, [In] ref APPBARDATA pData);
 
-            [DllImport("user32", SetLastError = true)]
+            [DllImport("user32", SetLastError = true, CharSet = CharSet.Unicode)]
             internal static extern IntPtr FindWindow(string lpClassName, string? lpWindowName);
         }
 

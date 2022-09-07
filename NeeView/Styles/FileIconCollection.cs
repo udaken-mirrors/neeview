@@ -61,7 +61,7 @@ namespace NeeView
             #endregion
         }
 
-        private Dictionary<Key, BitmapSourceCollection> _caches = new Dictionary<Key, BitmapSourceCollection>();
+        private readonly Dictionary<Key, BitmapSourceCollection> _caches = new();
 
 
         public Task InitializeAsync()
@@ -96,9 +96,6 @@ namespace NeeView
         {
             return CreateFileIconCollection(filename, iconType, allowJumbo, useCache);
         }
-
-
-        private object _lock = new object();
 
         private BitmapSourceCollection CreateFileIconCollection(string filename, FileIconType iconType, bool allowJumbo, bool useCache)
         {

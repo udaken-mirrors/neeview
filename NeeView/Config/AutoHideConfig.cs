@@ -84,7 +84,7 @@ namespace NeeView
         #region Obsolete
 
         // パネル自動非表示の表示判定マージン(水平方向)
-        [Obsolete, Alternative("AutoHideHitTestHorizontalMargin and AutoHideHitTestVerticalMargin", 39)]
+        [Obsolete("no used"), Alternative("AutoHideHitTestHorizontalMargin and AutoHideHitTestVerticalMargin", 39)]
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         public double AutoHideHitTestMargin
         {

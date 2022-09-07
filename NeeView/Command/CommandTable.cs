@@ -690,7 +690,7 @@ namespace NeeView
         [DataContract]
         public class Memento
         {
-            public static Dictionary<string, string> RenameMap_37_0_0 = new Dictionary<string, string>()
+            public static readonly Dictionary<string, string> RenameMap_37_0_0 = new()
             {
                 ["OpenApplication"] = "OpenExternalApp",
                 ["OpenFilePlace"] = "OpenExplorer",
@@ -720,14 +720,14 @@ namespace NeeView
                 ["ToggleStretchAllowReduce"] = "ToggleStretchAllowScaleDown",
             };
 
-            public static Dictionary<string, string> RenameMap_38_0_0 = new Dictionary<string, string>()
+            public static readonly Dictionary<string, string> RenameMap_38_0_0 = new()
             {
                 ["TogglePermitFileCommand"] = "TogglePermitFile",
                 ["FocusPrevAppCommand"] = "FocusPrevApp",
                 ["FocusNextAppCommand"] = "FocusNextApp",
             };
 
-            public static Dictionary<string, string> RenameMap_39_0_0 = new Dictionary<string, string>()
+            public static readonly Dictionary<string, string> RenameMap_39_0_0 = new()
             {
                 ["ToggleVisiblePagemarkList"] = "ToggleVisiblePlaylist",
                 ["TogglePagemark"] = "TogglePlaylistMark",
@@ -754,11 +754,6 @@ namespace NeeView
             [DataMember(EmitDefaultValue = false)]
             public string? ScriptFolder { get; set; }
 
-
-            [OnSerializing]
-            private void OnSerializing(StreamingContext context)
-            {
-            }
 
             [OnDeserializing]
             private void OnDeserializing(StreamingContext c)
@@ -915,8 +910,7 @@ namespace NeeView
 
                 return collection;
 
-
-                CommandElement.MementoV2 CreateCommandMementoV2(CommandElement.Memento mementoV1, Type? parameterType)
+                static CommandElement.MementoV2 CreateCommandMementoV2(CommandElement.Memento mementoV1, Type? parameterType)
                 {
                     var mementoV2 = new CommandElement.MementoV2();
                     mementoV2.ShortCutKey = mementoV1.ShortCutKey ?? "";

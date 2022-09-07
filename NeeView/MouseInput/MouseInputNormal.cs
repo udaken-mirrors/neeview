@@ -25,16 +25,12 @@ namespace NeeView
     {
         public static MouseButtonBits ToMouseButtonBits(this LongButtonMask self)
         {
-            switch (self)
+            return self switch
             {
-                default:
-                case LongButtonMask.Left:
-                    return MouseButtonBits.LeftButton;
-                case LongButtonMask.Right:
-                    return MouseButtonBits.RightButton;
-                case LongButtonMask.All:
-                    return MouseButtonBits.All;
-            }
+                LongButtonMask.Right => MouseButtonBits.RightButton,
+                LongButtonMask.All => MouseButtonBits.All,
+                _ => MouseButtonBits.LeftButton,
+            };
         }
     }
 
@@ -51,7 +47,7 @@ namespace NeeView
         /// <summary>
         /// 長押し判定用タイマー
         /// </summary>
-        private Timer _timer;
+        private readonly Timer _timer;
 
         private MouseButtonEventArgs? _mouseButtonEventArgs;
 

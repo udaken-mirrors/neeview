@@ -164,7 +164,7 @@ namespace NeeView
         /// <summary>
         /// エントリのあるフォルダーの場所を取得
         /// </summary>
-        private QueryPath GetPlace(ArchiveEntry entry, ArchiveEntryCollectionMode mode)
+        private static QueryPath GetPlace(ArchiveEntry entry, ArchiveEntryCollectionMode mode)
         {
             if (entry == null)
             {
@@ -205,14 +205,14 @@ namespace NeeView
             }
         }
 
-        private string GetEntryName(QueryPath query, QueryPath address)
+        private static string GetEntryName(QueryPath query, QueryPath address)
         {
             if (query is null) throw new ArgumentNullException(nameof(query));
             if (address is null) throw new ArgumentNullException(nameof(address));
 
             var full = query.SimplePath;
             if (!full.StartsWith(address.SimplePath)) throw new ArgumentException($"{address} is not include entry.", nameof(address));
-            return full.Substring(address.SimplePath.Length, full.Length - address.SimplePath.Length).TrimStart(LoosePath.Separators);
+            return full[address.SimplePath.Length..].TrimStart(LoosePath.Separators);
         }
     }
 

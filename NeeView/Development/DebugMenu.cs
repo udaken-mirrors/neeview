@@ -29,7 +29,7 @@ namespace NeeView
                             _debugWindow.Closed += (s, e) =>
                             {
                                 _debugWindow = null;
-                                IsDebugWindowVisibled = false;
+                                _isDebugWindowVisibled = false;
                             };
                             _debugWindow.Show();
                         }
@@ -148,7 +148,7 @@ namespace NeeView
         /// 開発用：GC
         /// </summary>
         [Conditional("DEBUG")]
-        private void DebugGC()
+        private static void DebugGC()
         {
             GCSettings.LargeObjectHeapCompactionMode = GCLargeObjectHeapCompactionMode.CompactOnce;
             GC.Collect();
@@ -160,16 +160,16 @@ namespace NeeView
         /// 開発用：テストボタンのアクション
         /// </summary>
         [Conditional("DEBUG")]
-        private void DebugTestAction()
+        private static void DebugTestAction()
         {
-            var async = DebugTest.ExecuteTestAsync();
+            _ = DebugTest.ExecuteTestAsync();
         }
 
         /// <summary>
         /// 開発用：フォルダーを開く
         /// </summary>
         [Conditional("DEBUG")]
-        private void DebugOpenFolder(string path)
+        private static void DebugOpenFolder(string path)
         {
             Debug.WriteLine($"OpenFolder: {path}");
             ExternalProcess.Start("explorer.exe", path);

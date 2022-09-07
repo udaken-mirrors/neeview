@@ -41,10 +41,10 @@ namespace NeeView
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (!(value is PanelListItemStyle v0))
+            if (value is not PanelListItemStyle v0)
                 return false;
 
-            if (!(parameter is PanelListItemStyle v1))
+            if (parameter is not PanelListItemStyle v1)
                 return false;
 
             return v0 == v1;

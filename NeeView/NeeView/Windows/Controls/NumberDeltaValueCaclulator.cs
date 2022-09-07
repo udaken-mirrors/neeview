@@ -6,15 +6,12 @@
 
         public object Calc(object value, int delta)
         {
-            switch (value)
+            return value switch
             {
-                case int n:
-                    return (int)(n + delta * Scale);
-                case double n:
-                    return n + delta * Scale;
-                default:
-                    return value;
-            }
+                int n => (int)(n + delta * Scale),
+                double n => n + delta * Scale,
+                _ => value,
+            };
         }
     }
 }

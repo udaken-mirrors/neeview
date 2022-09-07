@@ -12,14 +12,12 @@ namespace NeeView
     public class PageSliderViewModel : BindableBase
     {
         private PageSlider _model;
-        private MouseWheelDelta _mouseWheelDelta = new MouseWheelDelta();
+        private readonly MouseWheelDelta _mouseWheelDelta = new();
 
 
         public PageSliderViewModel(PageSlider model)
         {
-            if (model == null) throw new InvalidOperationException();
-
-            _model = model;
+            _model = model ?? throw new InvalidOperationException();
 
             Config.Current.Slider.AddPropertyChanged(nameof(SliderConfig.SliderIndexLayout),
                 (s, e) => RaisePropertyChanged(null));

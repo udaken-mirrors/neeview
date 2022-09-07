@@ -19,7 +19,7 @@ namespace NeeView.Windows.Data
         private T? _value;
         private T? _delayValue;
         private DateTime _delayTime = DateTime.MaxValue;
-        private DispatcherTimer _timer;
+        private readonly DispatcherTimer _timer;
         private bool _disposedValue;
 
 

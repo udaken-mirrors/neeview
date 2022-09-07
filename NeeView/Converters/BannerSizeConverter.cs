@@ -9,9 +9,8 @@ namespace NeeView
     {
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
-            if (value is double)
+            if (value is double bannerSize)
             {
-                var bannerSize = (double)value;
                 return $"{(int)bannerSize}x{(int)(bannerSize / 4)}";
             }
             else

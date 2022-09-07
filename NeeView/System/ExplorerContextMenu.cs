@@ -27,7 +27,7 @@ namespace NeeView
         private const string _keyDirectory = @"Directory\shell\" + _keyName;
         private const string _keyDirectoryBackground = @"Directory\Background\shell\" + _keyName;
 
-        private RegistryKey _root;
+        private readonly RegistryKey _root;
         private bool _isEnabled;
 
 

@@ -37,7 +37,7 @@ namespace NeeView
         private ObservableCollection<FolderItem> _items = _itemsEmpty;
         protected FolderItemFactory _folderItemFactory;
         protected bool _isOverlayEnabled;
-        private object _lock = new object();
+        private readonly object _lock = new();
 
 
         protected FolderCollection(QueryPath path, bool isOverlayEnabled)
@@ -333,7 +333,7 @@ namespace NeeView
         /// </summary>
         public class ComparerFileName : IComparer<FolderItem>
         {
-            private CancellationToken _token;
+            private readonly CancellationToken _token;
 
             public ComparerFileName(CancellationToken token)
             {
@@ -354,7 +354,7 @@ namespace NeeView
         /// </summary>
         public class ComparerFullPath : IComparer<FolderItem>
         {
-            private CancellationToken _token;
+            private readonly CancellationToken _token;
 
             public ComparerFullPath(CancellationToken token)
             {
@@ -374,7 +374,7 @@ namespace NeeView
         /// </summary>
         public class ComparerFileType : IComparer<FolderItem>
         {
-            private CancellationToken _token;
+            private readonly CancellationToken _token;
 
             public ComparerFileType(CancellationToken token)
             {
@@ -569,7 +569,7 @@ namespace NeeView
 
 
         #region IDisposable Support
-        private bool _disposedValue = false; // 重複する呼び出しを検出するには
+        private bool _disposedValue = false;
 
         protected virtual void Dispose(bool disposing)
         {
@@ -588,11 +588,10 @@ namespace NeeView
             }
         }
 
-        // このコードは、破棄可能なパターンを正しく実装できるように追加されました。
         public void Dispose()
         {
-            // このコードを変更しないでください。クリーンアップ コードを上の Dispose(bool disposing) に記述します。
             Dispose(true);
+            GC.SuppressFinalize(this);
         }
 
         #endregion IDisposable Support

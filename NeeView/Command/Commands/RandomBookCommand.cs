@@ -15,7 +15,7 @@
 
         public override void Execute(object? sender, CommandContext e)
         {
-            var async = BookshelfFolderList.Current.RandomFolder();
+            _ = BookshelfFolderList.Current.RandomFolder();
         }
     }
 

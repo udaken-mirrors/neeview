@@ -88,9 +88,9 @@ namespace NeeView.Setting
         }
 
         private int _commandTableChangeCount;
-        private ObservableCollection<CommandItem> _commandItems;
+        private readonly ObservableCollection<CommandItem> _commandItems;
         private string _searchKeyword = "";
-        private List<string> _searchKeywordTokens = new List<string>();
+        private List<string> _searchKeywordTokens = new();
 
 
         public SettingItemCommandControl()
@@ -114,10 +114,10 @@ namespace NeeView.Setting
 
         #region Commands
 
-        public readonly static RoutedCommand SettingCommand = new RoutedCommand(nameof(SettingCommand), typeof(SettingItemCommandControl));
-        public readonly static RoutedCommand EditCommand = new RoutedCommand(nameof(EditCommand), typeof(SettingItemCommandControl));
-        public readonly static RoutedCommand CloneCommand = new RoutedCommand(nameof(CloneCommand), typeof(SettingItemCommandControl));
-        public readonly static RoutedCommand RemoveCommand = new RoutedCommand(nameof(RemoveCommand), typeof(SettingItemCommandControl));
+        public readonly static RoutedCommand SettingCommand = new(nameof(SettingCommand), typeof(SettingItemCommandControl));
+        public readonly static RoutedCommand EditCommand = new(nameof(EditCommand), typeof(SettingItemCommandControl));
+        public readonly static RoutedCommand CloneCommand = new(nameof(CloneCommand), typeof(SettingItemCommandControl));
+        public readonly static RoutedCommand RemoveCommand = new(nameof(RemoveCommand), typeof(SettingItemCommandControl));
 
         private void InitializeCommand()
         {
@@ -129,7 +129,7 @@ namespace NeeView.Setting
 
         private void SettingCommand_CanExecute(object? sender, CanExecuteRoutedEventArgs e)
         {
-            if (this.CommandListView.SelectedItem is CommandItem item)
+            if (this.CommandListView.SelectedItem is CommandItem)
             {
                 e.CanExecute = true;
             }
@@ -252,7 +252,7 @@ namespace NeeView.Setting
             {
                 var item = (CommandItem)eventArgs.Item;
                 var text = NeeLaboratory.IO.Search.Node.ToNormalisedWord(item.Command.GetSearchText(), true);
-                eventArgs.Accepted = _searchKeywordTokens.All(e => text.IndexOf(e) >= 0);
+                eventArgs.Accepted = _searchKeywordTokens.All(e => text.Contains(e, StringComparison.CurrentCulture));
             }
         }
 
@@ -298,8 +298,6 @@ namespace NeeView.Setting
         // コマンド一覧 更新
         private void UpdateCommandList()
         {
-            var selectedItem = CommandListView.SelectedItem as CommandItem;
-
             _commandTableChangeCount = CommandTable.Current.ChangeCount;
 
             _commandItems.Clear();
@@ -329,7 +327,7 @@ namespace NeeView.Setting
             this.CommandListView.Items.Refresh();
             //this.CommandListView.UpdateLayout();
 
-            if (selectedItem != null)
+            if (CommandListView.SelectedItem is CommandItem selectedItem)
             {
                 var item = _commandItems.FirstOrDefault(x => x.Key == selectedItem.Key);
                 if (item != null)
@@ -462,8 +460,7 @@ namespace NeeView.Setting
 
         private void EditCommandParameterButton_Clock(object? sender, RoutedEventArgs e)
         {
-            var command = (sender as Button)?.Tag as CommandItem;
-            if (command is null) return;
+            if ((sender as Button)?.Tag is not CommandItem command) return;
 
             this.CommandListView.SelectedItem = command;
             OpenEditCommandWindow(command.Key, EditCommandWindowTab.Parameter);
@@ -479,42 +476,28 @@ namespace NeeView.Setting
 
         private void ListViewItem_MouseDoubleClick(object? sender, MouseButtonEventArgs e)
         {
-            var listViewItem = sender as ListViewItem;
-            if (listViewItem is null) return;
+            if (sender is not ListViewItem listViewItem) return;
 
-            var item = listViewItem.Content as CommandItem;
-            if (item == null) return;
+            if (listViewItem.Content is not CommandItem item) return;
 
             // カーソル位置から初期TABを選択
             var hitResult = VisualTreeHelper.HitTest(listViewItem, e.GetPosition(listViewItem));
             var tag = GetAncestorTag(hitResult.VisualHit, "@");
-            EditCommandWindowTab tab;
-            switch (tag)
+            var tab = tag switch
             {
-                default:
-                    tab = EditCommandWindowTab.Default;
-                    break;
-                case "@shortcut":
-                    tab = EditCommandWindowTab.InputGesture;
-                    break;
-                case "@gesture":
-                    tab = EditCommandWindowTab.MouseGesture;
-                    break;
-                case "@touch":
-                    tab = EditCommandWindowTab.InputTouch;
-                    break;
-            }
-
+                "@shortcut" => EditCommandWindowTab.InputGesture,
+                "@gesture" => EditCommandWindowTab.MouseGesture,
+                "@touch" => EditCommandWindowTab.InputTouch,
+                _ => EditCommandWindowTab.Default,
+            };
             OpenEditCommandWindow(item.Key, tab);
         }
 
         private void ListViewItem_KeyDown(object? sender, KeyEventArgs e)
         {
-            var listViewItem = sender as ListViewItem;
-            if (listViewItem is null) return;
+            if (sender is not ListViewItem listViewItem) return;
 
-            var item = listViewItem.Content as CommandItem;
-            if (item == null) return;
+            if (listViewItem.Content is not CommandItem item) return;
 
             if (e.Key == Key.Enter)
             {
@@ -543,12 +526,11 @@ namespace NeeView.Setting
         /// <param name="obj">検索開始要素</param>
         /// <param name="prefix">文字列のプレフィックス</param>
         /// <returns></returns>
-        private string? GetAncestorTag(DependencyObject obj, string prefix)
+        private static string? GetAncestorTag(DependencyObject obj, string prefix)
         {
             while (obj != null)
             {
-                var tag = (obj as FrameworkElement)?.Tag as string;
-                if (tag != null && tag.StartsWith(prefix)) return tag;
+                if ((obj as FrameworkElement)?.Tag is string tag && tag.StartsWith(prefix)) return tag;
 
                 obj = VisualTreeHelper.GetParent(obj);
             }

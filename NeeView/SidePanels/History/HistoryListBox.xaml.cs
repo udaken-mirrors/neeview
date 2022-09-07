@@ -23,7 +23,7 @@ namespace NeeView
     /// </summary>
     public partial class HistoryListBox : UserControl, IPageListPanel, IDisposable
     {
-        private HistoryListBoxViewModel? _vm;
+        private readonly HistoryListBoxViewModel? _vm;
         private ListBoxThumbnailLoader? _thumbnailLoader;
         private PageThumbnailJobClient? _jobClient;
         private bool _focusRequest;
@@ -78,6 +78,7 @@ namespace NeeView
         public void Dispose()
         {
             Dispose(true);
+            GC.SuppressFinalize(this);
         }
         #endregion
 
@@ -85,7 +86,7 @@ namespace NeeView
 
         public ListBox PageCollectionListBox => this.ListBox;
 
-        public bool IsThumbnailVisibled => _vm is null ? false : _vm.IsThumbnailVisibled;
+        public bool IsThumbnailVisibled => _vm is not null && _vm.IsThumbnailVisibled;
 
         public IEnumerable<IHasPage> CollectPageList(IEnumerable<object> objs) => objs.OfType<IHasPage>();
 
@@ -93,8 +94,8 @@ namespace NeeView
 
         #region Commands
 
-        public static readonly RoutedCommand OpenBookCommand = new RoutedCommand("OpenBookCommand", typeof(HistoryListBox));
-        public static readonly RoutedCommand RemoveCommand = new RoutedCommand("RemoveCommand", typeof(HistoryListBox));
+        public static readonly RoutedCommand OpenBookCommand = new("OpenBookCommand", typeof(HistoryListBox));
+        public static readonly RoutedCommand RemoveCommand = new("RemoveCommand", typeof(HistoryListBox));
 
         public static void InitializeCommandStatic()
         {

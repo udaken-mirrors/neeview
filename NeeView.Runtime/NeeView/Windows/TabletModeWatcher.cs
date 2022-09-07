@@ -76,6 +76,7 @@ namespace NeeView.Windows
             return IntPtr.Zero;
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060:未使用のパラメーターを削除します", Justification = "<保留中>")]
         private void OnSettingChange(IntPtr wParam, IntPtr lParam)
         {
             string? str = Marshal.PtrToStringAuto(lParam);

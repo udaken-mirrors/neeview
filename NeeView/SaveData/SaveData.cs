@@ -100,11 +100,11 @@ namespace NeeView
                     var historyV1 = SafetyLoad(BookHistoryCollection.Memento.LoadV1, historyV1FilePath, null); // 一部の履歴設定を反映
                     historyV1?.RestoreConfig(settingV1Converted?.Config);
 
-#pragma warning disable CS0612 // 型またはメンバーが旧型式です
+#pragma warning disable CS0612, CS0618 // 型またはメンバーが旧型式です
                     var pagemarkV1FilePath = Path.ChangeExtension(settingV1?.App?.PagemarkFilePath ?? DefaultPagemarkFilePath, ".xml");
                     var pagemarkV1 = SafetyLoad(PagemarkCollection.Memento.LoadV1, pagemarkV1FilePath, null); // 一部のページマーク設定を反映
                     pagemarkV1?.RestoreConfig(settingV1Converted?.Config);
-#pragma warning restore CS0612 // 型またはメンバーが旧型式です
+#pragma warning restore CS0612, CS0618 // 型またはメンバーが旧型式です
 
                     _settingFilenameToDelete = filenameV1;
                     if (Path.GetExtension(App.Current.Option.SettingFilename)?.ToLower() == ".xml")
@@ -194,7 +194,7 @@ namespace NeeView
         /// エラー時にはダイアログ表示。選択によってはOperationCancelExceptionを発生させる。
         /// </summary>
         /// <param name="useDefault">データが読み込めなかった場合に初期化されたインスタンスを返す。falseの場合はnullを返す</param>
-        private T? SafetyLoad<T>(Func<string, T?> load, string path, LoadFailedDialog loadFailedDialog, bool useDefault = false, Action? loadBackupCallback = null)
+        private static T? SafetyLoad<T>(Func<string, T?> load, string path, LoadFailedDialog loadFailedDialog, bool useDefault = false, Action? loadBackupCallback = null)
             where T : class, new()
         {
             try
@@ -221,7 +221,7 @@ namespace NeeView
         /// <summary>
         /// 正規ファイルの読み込みに失敗したらバックアップからの復元を試みる
         /// </summary>
-        private T? SafetyLoad<T>(Func<string, T?> load, string path, Action? loadBackupCallback)
+        private static T? SafetyLoad<T>(Func<string, T?> load, string path, Action? loadBackupCallback)
             where T : class, new()
         {
             var old = path + ".bak";
@@ -295,7 +295,7 @@ namespace NeeView
         /// <summary>
         /// 古いファイルを削除
         /// </summary>
-        private void RemoveLegacyFile(string filename)
+        private static void RemoveLegacyFile(string filename)
         {
             using (ProcessLock.Lock())
             {
@@ -423,7 +423,7 @@ namespace NeeView
         /// <param name="path">保存ファイル名</param>
         /// <param name="isBackup">バックアップを作る。falseの場合はバックアップファイル削除</param>
         /// <param name="keepBackup">バックアップファイルは変更しない</param>
-        private void SafetySave(Action<string> save, string path, bool isBackup, bool keepBackup)
+        private static void SafetySave(Action<string> save, string path, bool isBackup, bool keepBackup)
         {
             try
             {

@@ -61,16 +61,12 @@ namespace NeeView
     {
         public static double ToAngle(this AutoRotateType self)
         {
-            switch (self)
+            return self switch
             {
-                default:
-                case AutoRotateType.None:
-                    return 0.0;
-                case AutoRotateType.Left:
-                    return -90.0;
-                case AutoRotateType.Right:
-                    return 90.0;
-            }
+                AutoRotateType.Left => -90.0,
+                AutoRotateType.Right => 90.0,
+                _ => 0.0,
+            };
         }
     }
 
@@ -80,20 +76,20 @@ namespace NeeView
     public class ContentCanvas : BindableBase, IDisposable
     {
 
-        private object _lock = new object();
-        private MainViewComponent _viewComponent;
-        private ContentSizeCalcurator _contentSizeCalcurator;
+        private readonly object _lock = new();
+        private readonly MainViewComponent _viewComponent;
+        private readonly ContentSizeCalcurator _contentSizeCalcurator;
         private PageStretchMode _stretchModePrev = PageStretchMode.Uniform;
         private double _baseScale;
         private double _lastScale;
-        private DpiScaleProvider _dpiProvider;
+        private readonly DpiScaleProvider _dpiProvider;
         private Size _viewSize;
 
 
         public ContentCanvas(MainViewComponent viewComponent, BookHub bookHub)
         {
-            if (viewComponent is null) throw new ArgumentNullException();
-            if (viewComponent.MainView?.DpiProvider is null) throw new ArgumentException();
+            if (viewComponent is null) throw new ArgumentNullException(nameof(viewComponent));
+            if (viewComponent.MainView?.DpiProvider is null) throw new ArgumentException("viewComponent must have DpiProvicer");
 
             _viewComponent = viewComponent;
             _dpiProvider = viewComponent.MainView.DpiProvider;
@@ -105,9 +101,11 @@ namespace NeeView
             _viewComponent.LoupeTransform.TransformChanged += Transform_TransformChanged;
 
             // Contents
-            Contents = new ObservableCollection<ViewContent>();
-            Contents.Add(new ViewContent());
-            Contents.Add(new ViewContent());
+            Contents = new ObservableCollection<ViewContent>
+            {
+                new ViewContent(),
+                new ViewContent()
+            };
 
             MainContent = Contents[0];
 
@@ -371,7 +369,7 @@ namespace NeeView
         /// </summary>
         /// <param name="precedeAutoRotate">AutoRotate設定を優先する</param>
         /// <returns></returns>
-        private AngleResetMode GetAngleResetMode(bool precedeAutoRotate)
+        private static AngleResetMode GetAngleResetMode(bool precedeAutoRotate)
         {
             if (Config.Current.View.IsKeepAngle)
             {
@@ -546,7 +544,7 @@ namespace NeeView
 
 
             var sizes = viewPageCollection.Collection.Select(e => e.Size).ToList();
-            while (sizes.Count() < 2)
+            while (sizes.Count < 2)
             {
                 sizes.Add(SizeExtensions.Zero);
             }
@@ -683,7 +681,7 @@ namespace NeeView
         }
 
         // TODO: ViewContent.Size の廃止
-        private Size GetViewContentSize(ViewContent viewContent)
+        private static Size GetViewContentSize(ViewContent viewContent)
         {
             return viewContent.Size;
         }
@@ -770,8 +768,7 @@ namespace NeeView
 
                 if (content.View != null && content.Source != null && content.IsBitmapScalingModeSupported)
                 {
-                    var bitmapContent = content as BitmapViewContent;
-                    if (bitmapContent == null) continue;
+                    if (content is not BitmapViewContent bitmapContent) continue;
 
                     var image = bitmapContent.GetViewImage();
                     if (image == null) continue;
@@ -963,6 +960,7 @@ namespace NeeView
         public void Dispose()
         {
             Dispose(true);
+            GC.SuppressFinalize(this);
         }
 
         #endregion
@@ -975,7 +973,7 @@ namespace NeeView
             [DataMember]
             public int _Version { get; set; } = Environment.ProductVersionNumber;
 
-            [Obsolete, DataMember(Name = "StretchMode", EmitDefaultValue = false)]
+            [Obsolete("no used"), DataMember(Name = "StretchMode", EmitDefaultValue = false)]
             public PageStretchModeV1 StretchModeV1 { get; set; }
 
             [DataMember(Name = "StretchModeV2")]
@@ -1001,7 +999,7 @@ namespace NeeView
             public GridLine.Memento? GridLine { get; set; }
 
 
-            [Obsolete, DataMember(EmitDefaultValue = false)]
+            [Obsolete("no used"), DataMember(EmitDefaultValue = false)]
             public bool IsAutoRotate { get; set; }
 
 
@@ -1014,7 +1012,7 @@ namespace NeeView
             [OnDeserialized]
             private void OnDeserialized(StreamingContext c)
             {
-#pragma warning disable CS0612
+#pragma warning disable CS0612, CS0618
                 // before 34.0
                 if (_Version < Environment.GenerateProductVersionNumber(34, 0, 0))
                 {
@@ -1026,7 +1024,7 @@ namespace NeeView
                 {
                     StretchMode = StretchModeV1.ToPageStretchMode();
                 }
-#pragma warning restore CS0612
+#pragma warning restore CS0612, CS0618
             }
 
             public void RestoreConfig(Config config)

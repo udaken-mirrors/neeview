@@ -11,7 +11,7 @@ namespace NeeView
 {
     public class ViewImageExporter : IImageExporter
     {
-        private ExportImageSource _source;
+        private readonly ExportImageSource _source;
 
         public bool HasBackground { get; set; }
 
@@ -61,18 +61,18 @@ namespace NeeView
 
             var fileMode = isOverwrite ? FileMode.Create : FileMode.CreateNew;
 
-            using (FileStream stream = new FileStream(path, fileMode))
+            using (var stream = new FileStream(path, fileMode))
             {
                 // 出力ファイル名からフォーマットを決定する
                 if (System.IO.Path.GetExtension(path).ToLower() == ".png")
                 {
-                    PngBitmapEncoder encoder = new PngBitmapEncoder();
+                    var encoder = new PngBitmapEncoder();
                     encoder.Frames.Add(BitmapFrame.Create(bitmapSource));
                     encoder.Save(stream);
                 }
                 else
                 {
-                    JpegBitmapEncoder encoder = new JpegBitmapEncoder();
+                    var encoder = new JpegBitmapEncoder();
                     encoder.QualityLevel = qualityLevel;
                     encoder.Frames.Add(BitmapFrame.Create(bitmapSource));
                     encoder.Save(stream);
@@ -100,7 +100,7 @@ namespace NeeView
             UpdateElementLayout(canvas, rect.Size);
 
             double dpi = 96.0;
-            RenderTargetBitmap bmp = new RenderTargetBitmap((int)canvas.Width, (int)canvas.Height, dpi, dpi, PixelFormats.Pbgra32);
+            var bmp = new RenderTargetBitmap((int)canvas.Width, (int)canvas.Height, dpi, dpi, PixelFormats.Pbgra32);
             bmp.Render(canvas);
 
             canvas.Children.Clear(); // コンテンツ開放
@@ -108,7 +108,7 @@ namespace NeeView
             return bmp;
         }
 
-        private void UpdateElementLayout(FrameworkElement element, Size size)
+        private static void UpdateElementLayout(FrameworkElement element, Size size)
         {
             element.Measure(size);
             element.Arrange(new Rect(size));

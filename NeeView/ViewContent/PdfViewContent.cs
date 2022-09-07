@@ -11,7 +11,7 @@ namespace NeeView
     /// </summary>
     public class PdfViewContent : BitmapViewContent
     {
-        private BitmapContent _bitmapContent;
+        private readonly BitmapContent _bitmapContent;
 
         public PdfViewContent(MainViewComponent viewComponent, ViewContentSource source) : base(viewComponent, source)
         {

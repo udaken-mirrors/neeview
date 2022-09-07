@@ -16,7 +16,7 @@ namespace NeeView.Effects
     [DataContract]
     public class SharpenEffectUnit : EffectUnit
     {
-        private static SharpenEffect _effect = new SharpenEffect();
+        private static readonly SharpenEffect _effect = new();
         public override Effect GetEffect() => _effect;
 
         [DataMember]

@@ -17,12 +17,8 @@ namespace NeeView
 {
     public partial class BookmarkListView : UserControl, IHasFolderListBox
     {
-        private BookmarkListViewModel? _vm;
+        private readonly BookmarkListViewModel? _vm;
 
-
-        //public BookmarkListView()
-        //{
-        //}
 
         public BookmarkListView(FolderList model)
         {

@@ -12,23 +12,12 @@ namespace NeeView
         {
             if (value is bool boolean)
             {
-                Brush brush;
-
-                switch (parameter)
+                Brush brush = parameter switch
                 {
-                    case Brush b:
-                        brush = b;
-                        break;
-
-                    case Color c:
-                        brush = new SolidColorBrush(c);
-                        break;
-
-                    default:
-                        brush = Brushes.Gray;
-                        break;
-                }
-
+                    Brush b => b,
+                    Color c => new SolidColorBrush(c),
+                    _ => Brushes.Gray,
+                };
                 return boolean ? brush : null;
             }
 

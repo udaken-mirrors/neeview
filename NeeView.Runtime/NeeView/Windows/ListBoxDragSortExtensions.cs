@@ -43,12 +43,10 @@ namespace NeeView.Windows
         public static void Drop<T>(object? sender, DragEventArgs e, string format, ObservableCollection<T> items)
             where T : class
         {
-            var listBox = sender as ListBox;
-            if (listBox == null) return;
+            if (sender is not ListBox listBox) return;
 
             // ドラッグオブジェクト
-            var item = e.Data.GetData(format) as T;
-            if (item == null) return;
+            if (e.Data.GetData(format) is not T item) return;
 
             // ドラッグオブジェクトが所属しているリスト判定
             if (items.Count <= 0 || !items.Contains(item)) return;
@@ -58,8 +56,7 @@ namespace NeeView.Windows
             int newIndex = items.Count - 1;
             for (int i = 0; i < items.Count; i++)
             {
-                var listBoxItem = listBox.ItemContainerGenerator.ContainerFromIndex(i) as ListBoxItem;
-                if (listBoxItem == null) continue;
+                if (listBox.ItemContainerGenerator.ContainerFromIndex(i) is not ListBoxItem listBoxItem) continue;
 
                 var pos = listBoxItem.TranslatePoint(new Point(0, listBoxItem.ActualHeight), listBox);
                 if (dropPos.Y < pos.Y)
@@ -78,29 +75,23 @@ namespace NeeView.Windows
         public static DropInfo<T>? GetDropInfo<T>(object? sender, DragEventArgs e, string format, ObservableCollection<T> items)
             where T : class
         {
-            var listBox = sender as ListBox;
-            if (listBox is null) return null;
+            if (sender is not ListBox listBox) return null;
 
             // ドラッグオブジェクト
-            var item = e.Data.GetData(format) as T;
-            if (item == null) return null;
+            if (e.Data.GetData(format) is not T item) return null;
 
             // ドラッグオブジェクトが所属しているリスト判定
             if (items.Count <= 0 || !items.Contains(item)) return null;
 
             var dropPos = e.GetPosition(listBox);
-            int oldIndex = items.IndexOf(item);
-            int newIndex = items.Count - 1;
             for (int i = 0; i < items.Count; i++)
             {
-                var listBoxItem = listBox.ItemContainerGenerator.ContainerFromIndex(i) as ListBoxItem;
-                if (listBoxItem == null) continue;
+                if (listBox.ItemContainerGenerator.ContainerFromIndex(i) is not ListBoxItem listBoxItem) continue;
 
                 var pos = listBoxItem.TranslatePoint(new Point(0, listBoxItem.ActualHeight), listBox);
                 if (dropPos.Y < pos.Y)
                 {
-                    var data = listBoxItem.DataContext as T;
-                    if (data != null)
+                    if (listBoxItem.DataContext is T data)
                     {
                         return new DropInfo<T>(item, data, 1.0 - (pos.Y - dropPos.Y) / listBoxItem.ActualHeight);
                     }

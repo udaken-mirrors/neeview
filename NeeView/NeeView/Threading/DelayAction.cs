@@ -26,7 +26,7 @@ namespace NeeView.Threading
         /// <summary>
         /// 遅延実行のためのタイマー
         /// </summary>
-        private DispatcherTimer _timer;
+        private readonly DispatcherTimer _timer;
 
         /// <summary>
         /// 遅延時間
@@ -36,12 +36,12 @@ namespace NeeView.Threading
         /// <summary>
         /// 実行本体
         /// </summary>
-        private Action _action;
+        private readonly Action _action;
 
         /// <summary>
         /// lock
         /// </summary>
-        private object _lock = new object();
+        private readonly object _lock = new();
 
         /// <summary>
         /// constructor
@@ -148,6 +148,7 @@ namespace NeeView.Threading
         public void Dispose()
         {
             Dispose(true);
+            GC.SuppressFinalize(this);
         }
         #endregion
     }

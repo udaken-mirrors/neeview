@@ -33,7 +33,7 @@ namespace NeeView.Windows
             /// 画面上にある指定された点を、スクリーン座標からクライアント座標へ変換します。
             /// </summary>
             [DllImport("user32.dll")]
-            public static extern int ScreenToClient(IntPtr hwnd, ref POINT pt);
+            public static extern bool ScreenToClient(IntPtr hwnd, ref POINT pt);
 
             /// <summary>
             /// 座標
@@ -54,8 +54,7 @@ namespace NeeView.Windows
         {
             NativeMethods.GetCursorPos(out NativeMethods.POINT point);
 
-            var source = HwndSource.FromVisual(visual) as HwndSource;
-            if (source == null)
+            if (HwndSource.FromVisual(visual) is not HwndSource source)
             {
                 // visual does not exist in virual tree.
                 return new Point(double.NaN, double.NaN);
@@ -63,7 +62,11 @@ namespace NeeView.Windows
 
             var hwnd = source.Handle;
 
-            NativeMethods.ScreenToClient(hwnd, ref point);
+            var isSuccess = NativeMethods.ScreenToClient(hwnd, ref point);
+            if (!isSuccess)
+            {
+                return new Point(double.NaN, double.NaN);
+            }
 
             var dpiScaleFactor = GetDpiScaleFactor(visual);
             return new Point(point.X / dpiScaleFactor.X, point.Y / dpiScaleFactor.Y);

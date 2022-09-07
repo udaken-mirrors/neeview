@@ -129,9 +129,8 @@ namespace OpenSourceControls
         /// <param name="e">このプロパティの有効値に対する変更を追跡するイベントによって発行されるイベントデータ。</param>
         private static void OnOrientationChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            var panel = d as VirtualizingWrapPanel;
-            if (panel is null) throw new InvalidOperationException();
-            panel.offset = default(Point);
+            var panel = d as VirtualizingWrapPanel ?? throw new InvalidOperationException();
+            panel.offset = default;
             panel.InvalidateMeasure();
         }
 
@@ -145,7 +144,7 @@ namespace OpenSourceControls
         /// <summary>
         /// 指定したインデックスのアイテムの位置およびサイズを記憶するディクショナリ。
         /// </summary>
-        private Dictionary<int, Rect> containerLayouts = new Dictionary<int, Rect>();
+        private readonly Dictionary<int, Rect> containerLayouts = new();
 
         /// <summary>
         /// 子要素に必要なレイアウトのサイズを測定し、パネルのサイズを決定する。
@@ -222,7 +221,7 @@ namespace OpenSourceControls
                     {
                         maxSize.Width = isHorizontal ? Math.Max(childSize.Width, maxSize.Width) : maxSize.Width + childSize.Width;
                         maxSize.Height = isHorizontal ? maxSize.Height + childSize.Height : Math.Max(childSize.Height, maxSize.Height);
-                        lineSize = default(Size);
+                        lineSize = default;
                     }
                 }
                 else
@@ -268,12 +267,12 @@ namespace OpenSourceControls
             /// <summary>
             /// アイテムを生成する対象の <see cref="VirtualizingWrapPanel"/>。
             /// </summary>
-            private VirtualizingWrapPanel owner;
+            private readonly VirtualizingWrapPanel owner;
 
             /// <summary>
             /// <see cref="owner"/> の <see cref="System.Windows.Controls.ItemContainerGenerator"/>。
             /// </summary>
-            private IItemContainerGenerator generator;
+            private readonly IItemContainerGenerator generator;
 
             /// <summary>
             /// <see cref="generator"/> の生成プロセスの有効期間を追跡するオブジェクト。
@@ -313,7 +312,7 @@ namespace OpenSourceControls
                 this.owner = owner;
 
                 // ItemContainerGenerator 取得前に InternalChildren にアクセスしないと null になる
-                var childrenCount = owner.InternalChildren.Count;
+                _ = owner.InternalChildren.Count;
                 this.generator = owner.ItemContainerGenerator;
             }
 
@@ -387,8 +386,7 @@ namespace OpenSourceControls
                 if (this.generatorTracker == null)
                     this.BeginGenerate(index);
 
-                bool newlyRealized;
-                var child = this.generator.GenerateNext(out newlyRealized) as UIElement;
+                var child = this.generator.GenerateNext(out bool newlyRealized) as UIElement;
                 if (newlyRealized)
                 {
                     if (this.currentGenerateIndex >= this.owner.InternalChildren.Count)
@@ -445,8 +443,7 @@ namespace OpenSourceControls
 
             foreach (UIElement child in this.InternalChildren)
             {
-                var gen = this.ItemContainerGenerator as ItemContainerGenerator;
-                var index = (gen != null) ? gen.IndexFromContainer(child) : this.InternalChildren.IndexOf(child);
+                var index = (this.ItemContainerGenerator is ItemContainerGenerator gen) ? gen.IndexFromContainer(child) : this.InternalChildren.IndexOf(child);
                 if (this.containerLayouts.ContainsKey(index))
                 {
                     var layout = this.containerLayouts[index];
@@ -481,7 +478,7 @@ namespace OpenSourceControls
         /// <see cref="System.Windows.DataTemplate"/> 使用時、全要素のサイズが一致することを前提に、
         /// 要素のサイズの推定に使用する。
         /// </remarks>
-        private Size prevSize = new Size(16, 16);
+        private Size prevSize = new(16, 16);
 
         /// <summary>
         /// 指定したインデックスに対するアイテムのサイズを、実際にアイテムを生成せずに推定する。
@@ -494,9 +491,8 @@ namespace OpenSourceControls
             {
                 UIElement? item = null;
                 var itemsOwner = ItemsControl.GetItemsOwner(this);
-                var generator = this.ItemContainerGenerator as ItemContainerGenerator;
 
-                if (itemsOwner == null || generator == null)
+                if (itemsOwner == null || this.ItemContainerGenerator is not ItemContainerGenerator generator)
                 {
                     // VirtualizingWrapPanel 単体で使用されている場合、自身のアイテムを返す
                     if (this.InternalChildren.Count > idx)
@@ -518,8 +514,7 @@ namespace OpenSourceControls
                         return item.DesiredSize;
 
                     // アイテムのサイズが未測定の場合、推奨値を使う
-                    var i = item as FrameworkElement;
-                    if (i != null)
+                    if (item is FrameworkElement i)
                         return new Size(i.Width, i.Height); // NOTE: NaNになることがある
                 }
 
@@ -605,7 +600,7 @@ namespace OpenSourceControls
         /// <summary>
         /// エクステントのサイズ。
         /// </summary>
-        private Size extent = default(Size);
+        private Size extent = default;
 
         /// <summary>
         /// エクステントの縦幅を取得する。
@@ -630,7 +625,7 @@ namespace OpenSourceControls
         /// <summary>
         /// ビューポートのサイズ。
         /// </summary>
-        private Size viewport = default(Size);
+        private Size viewport = default;
 
         /// <summary>
         /// このコンテンツに対するビューポートの縦幅を取得する。
@@ -843,8 +838,7 @@ namespace OpenSourceControls
         {
             var idx = this.InternalChildren.IndexOf(visual as UIElement);
 
-            var generator = this.ItemContainerGenerator as IItemContainerGenerator;
-            if (generator != null)
+            if (this.ItemContainerGenerator is IItemContainerGenerator generator)
             {
                 var pos = new GeneratorPosition(idx, 0);
                 idx = generator.IndexFromGeneratorPosition(pos);

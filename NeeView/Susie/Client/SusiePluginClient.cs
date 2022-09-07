@@ -11,7 +11,7 @@ namespace NeeView.Susie.Client
 {
     public class SusiePluginClient : IRemoteSusiePlugin
     {
-        private SusiePluginRemoteClient _remote;
+        private readonly SusiePluginRemoteClient _remote;
         private Action? _recoveryAction;
         private bool _isRecoveryDoing;
 
@@ -84,7 +84,7 @@ namespace NeeView.Susie.Client
             }
         }
 
-        private TResult DeserializeChunk<TResult>(Chunk chunk)
+        private static TResult DeserializeChunk<TResult>(Chunk chunk)
         {
             if (chunk.Data is null) throw new InvalidOperationException("chunk.Data must not be null");
 

@@ -13,8 +13,8 @@ namespace NeeView
 {
     public class FileInformationPanel : BindableBase, IPanel
     {
-        private FileInformationView _view;
-        private FileInformation _model;
+        private readonly FileInformationView _view;
+        private readonly FileInformation _model;
 
         public FileInformationPanel(FileInformation model)
         {

@@ -22,8 +22,8 @@ namespace NeeView.Windows.Controls
     /// </summary>
     public partial class ToggleSwitch : UserControl
     {
-        private Storyboard _onAnimation;
-        private Storyboard _offAnimation;
+        private readonly Storyboard _onAnimation;
+        private readonly Storyboard _offAnimation;
 
         private bool _pressed;
         private Point _startPos;

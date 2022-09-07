@@ -142,7 +142,7 @@ namespace NeeView
 
         public bool IsBusy
         {
-            get { return Book != null ? Book.Viewer.IsBusy : false; }
+            get { return Book != null && Book.Viewer.IsBusy; }
         }
 
         public ObservableCollection<Page>? PageList
@@ -540,7 +540,7 @@ namespace NeeView
             }
         }
 
-        private List<Page> CollectPages(Book book, MultiPagePolicy policy)
+        private static List<Page> CollectPages(Book book, MultiPagePolicy policy)
         {
             if (book is null)
             {
@@ -630,8 +630,7 @@ namespace NeeView
             {
                 try
                 {
-                    var process = new ExportImageProcedure();
-                    process.Execute(parameter);
+                    ExportImageProcedure.Execute(parameter);
                 }
                 catch (Exception e)
                 {
@@ -1141,7 +1140,7 @@ namespace NeeView
         {
             get
             {
-                return Book is null ? false : BookmarkCollection.Current.Contains(Book.Path);
+                return Book is not null && BookmarkCollection.Current.Contains(Book.Path);
             }
         }
 
@@ -1408,7 +1407,7 @@ namespace NeeView
 
         public class ExternalApplicationMemento
         {
-            [Obsolete, DataMember]
+            [Obsolete("no used"), DataMember]
             public ExternalProgramType ProgramType { get; set; }
 
             [DataMember]
@@ -1417,7 +1416,7 @@ namespace NeeView
             [DataMember]
             public string? Parameter { get; set; }
 
-            [Obsolete, DataMember]
+            [Obsolete("no used"), DataMember]
             public string? Protocol { get; set; }
 
             // 複数ページのときの動作
@@ -1435,13 +1434,13 @@ namespace NeeView
             [OnDeserialized]
             private void OnDeserialized(StreamingContext context)
             {
-#pragma warning disable CS0612 // 型またはメンバーが旧型式です
+#pragma warning disable CS0612, CS0618 // 型またはメンバーが旧型式です
                 if (ProgramType == ExternalProgramType.Protocol)
                 {
                     Command = "";
                     Parameter = Protocol;
                 }
-#pragma warning restore CS0612 // 型またはメンバーが旧型式です
+#pragma warning restore CS0612, CS0618 // 型またはメンバーが旧型式です
             }
         }
 

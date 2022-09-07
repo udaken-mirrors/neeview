@@ -35,6 +35,8 @@ namespace NeeView
         private string? _selectedItem;
 
 
+
+
         private ThemeManager()
         {
             RefreshThemeColor();
@@ -114,16 +116,13 @@ namespace NeeView
             return new List<TheneSource>();
         }
 
-        public void Touch()
-        {
-            // NOTE: シングルトンインスタンスの保証
-        }
+
 
         public void RefreshThemeColor()
         {
             _selectedItem = Config.Current.Theme.ThemeType.ToString();
 
-            var themeProfile = GeThemeProfile(Config.Current.Theme.ThemeType, true);
+            var themeProfile = GeThemeProfile(Config.Current.Theme.ThemeType);
 
             foreach (var key in ThemeProfile.Keys)
             {
@@ -157,7 +156,7 @@ namespace NeeView
         }
 
 
-        private ThemeProfile GeThemeProfile(TheneSource theneId, bool isShowExceptionToast)
+        private ThemeProfile GeThemeProfile(TheneSource theneId)
         {
             try
             {
@@ -171,7 +170,7 @@ namespace NeeView
 
                 if (theneId.Type is ThemeType.Custom)
                 {
-                    return GeThemeProfile(new TheneSource(ThemeType.Dark), false);
+                    return GeThemeProfile(new TheneSource(ThemeType.Dark));
                 }
                 else
                 {
@@ -206,20 +205,12 @@ namespace NeeView
                     }
                     else if (Windows10Tools.IsWindows10_OrGreater())
                     {
-                        ThemeProfile themeProfile;
-                        switch (SystemVisualParameters.Current.Theme)
+                        ThemeProfile themeProfile = SystemVisualParameters.Current.Theme switch
                         {
-                            case SystemThemeType.Dark:
-                                themeProfile = LoadThemeProfile(new TheneSource(ThemeType.Dark));
-                                break;
-
-                            case SystemThemeType.Light:
-                                themeProfile = LoadThemeProfile(new TheneSource(ThemeType.Light));
-                                break;
-
-                            default:
-                                throw new NotSupportedException();
-                        }
+                            SystemThemeType.Dark => LoadThemeProfile(new TheneSource(ThemeType.Dark)),
+                            SystemThemeType.Light => LoadThemeProfile(new TheneSource(ThemeType.Light)),
+                            _ => throw new NotSupportedException(),
+                        };
                         themeProfile.Colors["Control.Accent"] = new ThemeColor(SystemVisualParameters.Current.AccentColor, 1.0);
                         return themeProfile;
                     }
@@ -263,7 +254,7 @@ namespace NeeView
 
             if (themeProfile.BasedOn.StartsWith(_themeProtocolHeader))
             {
-                var path = themeProfile.BasedOn.Substring(_themeProtocolHeader.Length);
+                var path = themeProfile.BasedOn[_themeProtocolHeader.Length..];
                 var baseTheme = ThemeProfileTools.LoadFromContent("Libraries/Themes/" + path);
                 return ThemeProfileTools.Merge(baseTheme, themeProfile);
             }
@@ -277,7 +268,7 @@ namespace NeeView
             }
         }
 
-        public void OpenCustomThemeFolder()
+        public static void OpenCustomThemeFolder()
         {
             if (string.IsNullOrEmpty(Config.Current.Theme.CustomThemeFolder))
             {

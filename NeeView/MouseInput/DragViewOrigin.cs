@@ -23,14 +23,14 @@ namespace NeeView
     {
         public static DragViewOrigin Reverse(this DragViewOrigin origin)
         {
-            switch (origin)
+            return origin switch
             {
-                case DragViewOrigin.LeftTop: return DragViewOrigin.RightTop;
-                case DragViewOrigin.RightTop: return DragViewOrigin.LeftTop;
-                case DragViewOrigin.LeftBottom: return DragViewOrigin.RightBottom;
-                case DragViewOrigin.RightBottom: return DragViewOrigin.LeftBottom;
-                default: return origin;
-            }
+                DragViewOrigin.LeftTop => DragViewOrigin.RightTop,
+                DragViewOrigin.RightTop => DragViewOrigin.LeftTop,
+                DragViewOrigin.LeftBottom => DragViewOrigin.RightBottom,
+                DragViewOrigin.RightBottom => DragViewOrigin.LeftBottom,
+                _ => origin,
+            };
         }
     }
 }

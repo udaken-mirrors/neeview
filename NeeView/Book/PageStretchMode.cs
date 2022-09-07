@@ -31,7 +31,7 @@ namespace NeeView
     #region Obsolete
 
     // 旧・画像のストレッチモード
-    [Obsolete]
+    [Obsolete("use PageStretchMode")]
     public enum PageStretchModeV1
     {
         None,
@@ -44,29 +44,20 @@ namespace NeeView
         UniformToHorizontal,
     }
 
-    [Obsolete]
+    [Obsolete("no used")]
     public static class PageStretchModeV1Extension
     {
         public static PageStretchMode ToPageStretchMode(this PageStretchModeV1 self)
         {
-            switch (self)
+            return self switch
             {
-                default:
-                case PageStretchModeV1.None:
-                case PageStretchModeV1.Inside:
-                case PageStretchModeV1.Outside:
-                    return PageStretchMode.None;
-                case PageStretchModeV1.Uniform:
-                    return PageStretchMode.Uniform;
-                case PageStretchModeV1.UniformToFill:
-                    return PageStretchMode.UniformToFill;
-                case PageStretchModeV1.UniformToSize:
-                    return PageStretchMode.UniformToSize;
-                case PageStretchModeV1.UniformToVertical:
-                    return PageStretchMode.UniformToVertical;
-                case PageStretchModeV1.UniformToHorizontal:
-                    return PageStretchMode.UniformToHorizontal;
-            }
+                PageStretchModeV1.Uniform => PageStretchMode.Uniform,
+                PageStretchModeV1.UniformToFill => PageStretchMode.UniformToFill,
+                PageStretchModeV1.UniformToSize => PageStretchMode.UniformToSize,
+                PageStretchModeV1.UniformToVertical => PageStretchMode.UniformToVertical,
+                PageStretchModeV1.UniformToHorizontal => PageStretchMode.UniformToHorizontal,
+                _ => PageStretchMode.None,
+            };
         }
     }
 

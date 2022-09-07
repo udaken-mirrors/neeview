@@ -220,11 +220,6 @@ namespace NeeView
                 this.InitializePropertyDefaultValues();
             }
 
-            [OnDeserialized]
-            private void OnDeserialized(StreamingContext c)
-            {
-            }
-
             public void RestoreConfig(Config config)
             {
                 if (DefaultSetting != null)

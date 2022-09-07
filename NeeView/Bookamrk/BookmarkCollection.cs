@@ -316,7 +316,7 @@ namespace NeeView
 
         public void MoveToChild(TreeListNode<IBookmarkEntry> item, TreeListNode<IBookmarkEntry> target)
         {
-            if (target != Items && !(target.Value is BookmarkFolder))
+            if (target != Items && target.Value is not BookmarkFolder)
             {
                 return;
             }
@@ -375,7 +375,8 @@ namespace NeeView
 
         public void Merge(TreeListNode<IBookmarkEntry> item, TreeListNode<IBookmarkEntry> target)
         {
-            if (!(item.Value is BookmarkFolder && target.Value is BookmarkFolder)) throw new ArgumentException();
+            if (item?.Value is not BookmarkFolder) throw new ArgumentException("item must be BookmarkFolder");
+            if (target?.Value is not BookmarkFolder) throw new ArgumentException("target must be BookmarkFolder");
 
             var parent = item.Parent;
             if (item.RemoveSelf())
@@ -422,7 +423,7 @@ namespace NeeView
         }
 
 
-        public string GetValidateFolderName(IEnumerable<string> names, string name, string defaultName)
+        private static string GetValidateFolderName(IEnumerable<string> names, string name, string defaultName)
         {
             name = BookmarkFolder.GetValidateName(name);
             if (string.IsNullOrWhiteSpace(name))
@@ -432,7 +433,7 @@ namespace NeeView
             if (names.Contains(name))
             {
                 int count = 1;
-                string newName = name;
+                string newName;
                 do
                 {
                     newName = $"{name} ({++count})";
@@ -493,7 +494,7 @@ namespace NeeView
             public int _Version { get; set; } = Environment.ProductVersionNumber;
 
             [JsonIgnore]
-            [Obsolete, DataMember(Name = "Nodes", EmitDefaultValue = false)]
+            [Obsolete("Use Nodes"), DataMember(Name = "Nodes", EmitDefaultValue = false)]
             public TreeListNode<IBookmarkEntry>? NodesLegacy { get; set; }
 
             [DataMember(Name = "NodesV2")]
@@ -507,7 +508,7 @@ namespace NeeView
             public QuickAccessCollection.Memento? QuickAccess { get; set; }
 
             [JsonIgnore]
-            [Obsolete, DataMember(Name = "Items", EmitDefaultValue = false)]
+            [Obsolete("use Books"), DataMember(Name = "Items", EmitDefaultValue = false)]
             public List<Book.Memento>? OldBooks { get; set; } // no used (ver.31)
 
             private void Constructor()
@@ -531,7 +532,7 @@ namespace NeeView
             [OnDeserialized]
             private void OnDeserialized(StreamingContext c)
             {
-#pragma warning disable CS0612
+#pragma warning disable CS0618
                 if (_Version < Environment.GenerateProductVersionNumber(31, 0, 0))
                 {
                     NodesLegacy = new TreeListNode<IBookmarkEntry>(new BookmarkEmpty());
@@ -546,7 +547,7 @@ namespace NeeView
                     Books = OldBooks ?? new List<Book.Memento>();
                     foreach (var book in Books)
                     {
-                        book.LastAccessTime = default(DateTime);
+                        book.LastAccessTime = default;
                     }
 
                     OldBooks = null;
@@ -575,7 +576,7 @@ namespace NeeView
                     Nodes = BookmarkNodeConverter.ConvertFrom(NodesLegacy) ?? new BookmarkNode();
                     NodesLegacy = null;
                 }
-#pragma warning restore CS0612
+#pragma warning restore CS0618
             }
 
 
@@ -616,12 +617,12 @@ namespace NeeView
             // ファイルに保存
             public void SaveV1(string path)
             {
-                XmlWriterSettings settings = new XmlWriterSettings();
+                var settings = new XmlWriterSettings();
                 settings.Encoding = new System.Text.UTF8Encoding(false);
                 settings.Indent = true;
                 using (XmlWriter xw = XmlWriter.Create(path, settings))
                 {
-                    DataContractSerializer serializer = new DataContractSerializer(typeof(Memento));
+                    var serializer = new DataContractSerializer(typeof(Memento));
                     serializer.WriteObject(xw, this);
                 }
             }
@@ -640,9 +641,8 @@ namespace NeeView
             {
                 using (XmlReader xr = XmlReader.Create(stream))
                 {
-                    DataContractSerializer serializer = new DataContractSerializer(typeof(Memento));
-                    Memento? memento = serializer.ReadObject(xr) as Memento;
-                    if (memento is null) throw new FormatException();
+                    var serializer = new DataContractSerializer(typeof(Memento));
+                    var memento = serializer.ReadObject(xr) as Memento ?? throw new FormatException();
                     return memento;
                 }
             }
@@ -696,7 +696,7 @@ namespace NeeView
     {
         public static BookmarkNode ConvertFrom(TreeListNode<IBookmarkEntry> source)
         {
-            if (source == null) throw new ArgumentNullException();
+            if (source == null) throw new ArgumentNullException(nameof(source));
 
             var node = new BookmarkNode();
 

@@ -11,7 +11,7 @@ namespace NeeView
 {
     public static class PlaylistSourceTools
     {
-        private static readonly SemaphoreSlim _semaphore = new SemaphoreSlim(1, 1);
+        private static readonly SemaphoreSlim _semaphore = new(1, 1);
 
 
         public static string? CreateTempPlaylist(IEnumerable<string> files)
@@ -79,14 +79,14 @@ namespace NeeView
         {
             var fileHeader = JsonSerializer.Deserialize<PlaylistFileHeader>(json, UserSettingTools.GetSerializerOptions());
 
-#pragma warning disable CS0612 // 型またはメンバーが旧型式です
+#pragma warning disable CS0612, CS0618 // 型またはメンバーが旧型式です
             if (fileHeader?.Format != null && fileHeader.Format.Name == PlaylistSourceV1.FormatVersion)
             {
                 var playlistV1 = JsonSerializer.Deserialize<PlaylistSourceV1>(json, UserSettingTools.GetSerializerOptions());
                 if (playlistV1 is null) throw new FormatException();
                 return playlistV1.ToPlaylist();
             }
-#pragma warning restore CS0612 // 型またはメンバーが旧型式です
+#pragma warning restore CS0612, CS0618 // 型またはメンバーが旧型式です
 
             else
             {

@@ -12,7 +12,7 @@ namespace NeeView
     public static class ProcessLock
     {
         private const string _semaphoreLabel = "NeeView.s0001";
-        private static Semaphore _semaphore;
+        private static readonly Semaphore _semaphore;
 
         static ProcessLock()
         {

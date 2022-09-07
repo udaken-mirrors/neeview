@@ -17,9 +17,9 @@ namespace NeeView
 
     public class ArchiveContentLoader : BitmapContentLoader, IHasInitializeEntry
     {
-        private static readonly AsyncLock _lock = new AsyncLock();
+        private static readonly AsyncLock _lock = new();
 
-        private ArchiveContent _content;
+        private readonly ArchiveContent _content;
 
         public ArchiveContentLoader(ArchiveContent content) : base(content)
         {
@@ -152,7 +152,7 @@ namespace NeeView
         /// アーカイブサムネイル読込
         /// 名前順で先頭のページ
         /// </summary>
-        private async Task<ThumbnailPicture?> LoadArchivePictureAsync(ArchiveEntry entry, CancellationToken token)
+        private static async Task<ThumbnailPicture?> LoadArchivePictureAsync(ArchiveEntry entry, CancellationToken token)
         {
             // ブックサムネイル検索範囲
             const int searchRange = 2;
@@ -180,14 +180,14 @@ namespace NeeView
             }
         }
 
-        private byte[] CreateThumbnail(ArchiveEntry entry, CancellationToken token)
+        private static byte[] CreateThumbnail(ArchiveEntry entry, CancellationToken token)
         {
             var source = PictureSourceFactory.Create(entry, null, PictureSourceCreateOptions.IgnoreCompress, token);
             return MemoryControl.Current.RetryFuncWithMemoryCleanup(() => source.CreateThumbnail(ThumbnailProfile.Current, token));
         }
 
 
-        private async ValueTask<ThumbnailPicture> LoadMediaPictureAsync(ArchiveEntry entry, CancellationToken token)
+        private static async ValueTask<ThumbnailPicture> LoadMediaPictureAsync(ArchiveEntry entry, CancellationToken token)
         {
             if (Config.Current.Thumbnail.IsVideoThumbnailEnabled && entry.IsFileSystem)
             {
@@ -200,7 +200,7 @@ namespace NeeView
             return new ThumbnailPicture(ThumbnailType.Media);
         }
 
-        private async Task<byte[]?> CreateMediaThumbnailAsync(ArchiveEntry entry, CancellationToken token)
+        private static async Task<byte[]?> CreateMediaThumbnailAsync(ArchiveEntry entry, CancellationToken token)
         {
             var storage = await StorageFile.GetFileFromPathAsync(entry.SystemPath).AsTask(token);
             if (storage is null)
@@ -219,7 +219,7 @@ namespace NeeView
             }
         }
 
-        private byte[] CreateThumbnailImage(Stream bitmapStream, BitmapImageFormat format, int quality)
+        private static byte[] CreateThumbnailImage(Stream bitmapStream, BitmapImageFormat format, int quality)
         {
             using (var outStream = new MemoryStream())
             {
@@ -232,16 +232,13 @@ namespace NeeView
         }
 
         // from PdfPictureSource.cs
-        private BitmapEncoder CreateFormat(BitmapImageFormat format, int quality)
+        private static BitmapEncoder CreateFormat(BitmapImageFormat format, int quality)
         {
-            switch (format)
+            return format switch
             {
-                default:
-                case BitmapImageFormat.Jpeg:
-                    return new JpegBitmapEncoder() { QualityLevel = quality };
-                case BitmapImageFormat.Png:
-                    return new PngBitmapEncoder();
-            }
+                BitmapImageFormat.Png => new PngBitmapEncoder(),
+                _ => new JpegBitmapEncoder() { QualityLevel = quality },
+            };
         }
 
         /// <summary>

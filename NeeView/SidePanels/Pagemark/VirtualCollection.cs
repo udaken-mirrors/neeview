@@ -14,7 +14,7 @@ namespace NeeView
     /// <summary>
     /// 仮想パネル管理を行う項目
     /// </summary>
-    [Obsolete]
+    [Obsolete("no used")]
     public interface IVirtualItem
     {
         /// <summary>
@@ -44,11 +44,11 @@ namespace NeeView
     /// </remarks>
     /// <typeparam name="TContainer">TreeViewItem,ListBoxItem等のコンテナ</typeparam>
     /// <typeparam name="TValue">Value型</typeparam>
-    [Obsolete]
+    [Obsolete("no used")]
     public class VirtualCollection<TContainer, TValue>
         where TContainer : Control
     {
-        private ItemsControl _itemsControl;
+        private readonly ItemsControl _itemsControl;
         private List<IVirtualItem> _items;
         public bool _darty;
 
@@ -144,8 +144,7 @@ namespace NeeView
                 Visual child = (Visual)VisualTreeHelper.GetChild(visual, i);
                 if (child != null)
                 {
-                    T? correctlyTyped = child as T;
-                    if (correctlyTyped != null)
+                    if (child is T correctlyTyped)
                     {
                         yield return correctlyTyped;
                     }

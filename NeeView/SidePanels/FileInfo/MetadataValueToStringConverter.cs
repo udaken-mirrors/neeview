@@ -11,17 +11,13 @@ namespace NeeView
         {
             if (value is null) return null;
 
-            switch (value)
+            return value switch
             {
-                case IEnumerable<string> strings:
-                    return string.Join("; ", strings);
-                case DateTime dateTime:
-                    return dateTime != default ? dateTime.ToString(Config.Current.Information.DateTimeFormat) : null;
-                case Enum _:
-                    return AliasNameExtensions.GetAliasName(value);
-                default:
-                    return value.ToString();
-            }
+                IEnumerable<string> strings => string.Join("; ", strings),
+                DateTime dateTime => dateTime != default ? dateTime.ToString(Config.Current.Information.DateTimeFormat) : null,
+                Enum _ => AliasNameExtensions.GetAliasName(value),
+                _ => value.ToString(),
+            };
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

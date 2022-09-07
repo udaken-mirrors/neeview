@@ -10,7 +10,7 @@ namespace NeeView
     public class ImageCustomSizeConfig : BindableBase
     {
         private bool _isEnabled;
-        private Size _size = new Size(256, 256);
+        private Size _size = new(256, 256);
         private CustomSizeAspectRatio _aspectRatio;
         private double _applicabilityRate = 1.0;
         private bool _isAlignLongSide = false;
@@ -101,7 +101,7 @@ namespace NeeView
         /// <summary>
         /// 縦横比を固定する
         /// </summary>
-        [Obsolete, Alternative(nameof(AspectRatio), 39)] // ver.39
+        [Obsolete("no used"), Alternative(nameof(AspectRatio), 39)] // ver.39
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         public bool IsUniformed
         {

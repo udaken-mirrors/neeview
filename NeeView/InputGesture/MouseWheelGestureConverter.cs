@@ -9,9 +9,9 @@ namespace NeeView
     {
         private const char _modifiersDelimiter = '+';
 
-        private static MouseWheelActionConverter _mouseActionConverter = new MouseWheelActionConverter();
-        private static ModifierKeysConverter _modifierKeysConverter = new ModifierKeysConverter();
-        private static ModifierMouseButtonsConverter _modifierMouseButtonsConverter = new ModifierMouseButtonsConverter();
+        private static readonly MouseWheelActionConverter _mouseActionConverter = new();
+        private static readonly ModifierKeysConverter _modifierKeysConverter = new();
+        private static readonly ModifierMouseButtonsConverter _modifierMouseButtonsConverter = new();
 
 
         public override bool CanConvertFrom(ITypeDescriptorContext? context, Type sourceType)
@@ -29,9 +29,9 @@ namespace NeeView
 
         public override object? ConvertFrom(ITypeDescriptorContext? context, CultureInfo? culture, object source)
         {
-            if (source is string && source != null)
+            if (source is string s && source != null)
             {
-                string fullName = ((string)source).Trim();
+                string fullName = s.Trim();
                 string mouseActionToken;
                 string modifierMouseButtonsToken;
                 string modifiersToken;
@@ -44,8 +44,8 @@ namespace NeeView
                 int offset = fullName.LastIndexOf(_modifiersDelimiter);
                 if (offset >= 0)
                 {
-                    string modifiers = fullName.Substring(0, offset);
-                    mouseActionToken = fullName.Substring(offset + 1);
+                    string modifiers = fullName[..offset];
+                    mouseActionToken = fullName[(offset + 1)..];
 
                     offset = modifiers.IndexOf("BUTTON", StringComparison.OrdinalIgnoreCase);
                     if (offset >= 0)
@@ -53,8 +53,8 @@ namespace NeeView
                         offset = modifiers.LastIndexOf(_modifiersDelimiter, offset);
                         if (offset >= 0)
                         {
-                            modifiersToken = modifiers.Substring(0, offset);
-                            modifierMouseButtonsToken = modifiers.Substring(offset + 1);
+                            modifiersToken = modifiers[..offset];
+                            modifierMouseButtonsToken = modifiers[(offset + 1)..];
                         }
                         else
                         {
@@ -86,7 +86,7 @@ namespace NeeView
                     {
                         modifierKeys = _modifierKeysConverter.ConvertFrom(context, culture, modifiersToken);
 
-                        if (!(modifierKeys is ModifierKeys))
+                        if (modifierKeys is not ModifierKeys)
                         {
                             modifierKeys = ModifierKeys.None;
                         }
@@ -96,7 +96,7 @@ namespace NeeView
                     {
                         modifierMouseButtons = _modifierMouseButtonsConverter.ConvertFrom(context, culture, modifierMouseButtonsToken);
 
-                        if (!(modifierMouseButtons is ModifierMouseButtons))
+                        if (modifierMouseButtons is not ModifierMouseButtons)
                         {
                             modifierMouseButtons = ModifierMouseButtons.None;
                         }
@@ -138,8 +138,7 @@ namespace NeeView
                     return string.Empty;
                 }
 
-                MouseWheelGesture? mouseGesture = value as MouseWheelGesture;
-                if (mouseGesture != null)
+                if (value is MouseWheelGesture mouseGesture)
                 {
                     string strGesture = "";
 
@@ -150,7 +149,7 @@ namespace NeeView
                     }
 
                     strGesture += _modifierMouseButtonsConverter.ConvertTo(context, culture, mouseGesture.ModifierMouseButtons, destinationType) as string;
-                    if (strGesture != string.Empty && strGesture[strGesture.Length - 1] != _modifiersDelimiter)
+                    if (strGesture != string.Empty && strGesture[^1] != _modifiersDelimiter)
                     {
                         strGesture += _modifiersDelimiter;
                     }

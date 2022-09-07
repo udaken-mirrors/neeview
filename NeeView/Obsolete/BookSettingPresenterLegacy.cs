@@ -5,7 +5,7 @@ using System.Runtime.Serialization;
 namespace NeeView
 {
     // ver 34.0 obsolete.
-    [Obsolete]
+    [Obsolete("no used")]
     public class BookSettingPresenterLegacy : BindableBase
     {
         #region Memento

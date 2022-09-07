@@ -371,7 +371,7 @@ namespace NeeView
             _delayReloadAction = new SimpleDelayAction();
         }
 
-        private void StartFileWatch(string path, bool isForce = false)
+        private void StartFileWatch(string path)
         {
             _delayReloadAction.Cancel();
             _watcher.Start(path);

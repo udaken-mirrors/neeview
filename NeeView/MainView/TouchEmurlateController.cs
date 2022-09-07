@@ -14,7 +14,8 @@ namespace NeeView
         }
 
         // NOTE: no use sender
-        private TouchInput? GetActiveTouchInput(object? sender)
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060:未使用のパラメーターを削除します", Justification = "<保留中>")]
+        private static TouchInput? GetActiveTouchInput(object? sender)
         {
             var mainViewManager = MainViewManager.Current;
 

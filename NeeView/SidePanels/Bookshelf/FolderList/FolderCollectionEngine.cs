@@ -11,8 +11,8 @@ namespace NeeView
 
     public class FolderCollectionEngine : IDisposable
     {
-        private FolderCollection _folderCollection;
-        private SingleJobEngine _engine;
+        private readonly FolderCollection _folderCollection;
+        private readonly SingleJobEngine _engine;
 
 
         public FolderCollectionEngine(FolderCollection folderCollection)
@@ -95,6 +95,7 @@ namespace NeeView
         public void Dispose()
         {
             Dispose(true);
+            GC.SuppressFinalize(this);
         }
         #endregion
 
@@ -107,15 +108,13 @@ namespace NeeView
 
         public class CreateJob : FolderCollectionJob
         {
-            private FolderCollectionEngine _target;
-            private QueryPath _path;
-            private bool _verify;
+            private readonly FolderCollectionEngine _target;
+            private readonly QueryPath _path;
 
             public CreateJob(FolderCollectionEngine target, QueryPath path, bool verify)
             {
                 _target = target;
                 _path = path;
-                _verify = verify;
             }
 
             protected override async Task ExecuteAsync(CancellationToken token)
@@ -128,15 +127,13 @@ namespace NeeView
 
         public class DeleteJob : FolderCollectionJob
         {
-            private FolderCollectionEngine _target;
-            private QueryPath _path;
-            private bool _verify;
+            private readonly FolderCollectionEngine _target;
+            private readonly QueryPath _path;
 
             public DeleteJob(FolderCollectionEngine target, QueryPath path, bool verify)
             {
                 _target = target;
                 _path = path;
-                _verify = verify;
             }
 
             protected override async Task ExecuteAsync(CancellationToken token)
@@ -149,17 +146,15 @@ namespace NeeView
 
         public class RenameJob : FolderCollectionJob
         {
-            private FolderCollectionEngine _target;
-            private QueryPath _oldPath;
-            private QueryPath _path;
-            private bool _verify;
+            private readonly FolderCollectionEngine _target;
+            private readonly QueryPath _oldPath;
+            private readonly QueryPath _path;
 
             public RenameJob(FolderCollectionEngine target, QueryPath oldPath, QueryPath path, bool verify)
             {
                 _target = target;
                 _oldPath = oldPath;
                 _path = path;
-                _verify = verify;
             }
 
             protected override async Task ExecuteAsync(CancellationToken token)

@@ -7,7 +7,7 @@ namespace NeeView.Susie
 {
     public static class SusiePluginRemote
     {
-        public static string BootKeyword = "Enable.NeeView.SusiePlugin";
+        public static readonly string BootKeyword = "Enable.NeeView.SusiePlugin";
 
         public static string CreateServerName(Process process)
         {

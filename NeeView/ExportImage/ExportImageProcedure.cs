@@ -10,9 +10,9 @@ namespace NeeView
     /// <summary>
     /// 画像出力の処理フロー
     /// </summary>
-    public class ExportImageProcedure
+    public static class ExportImageProcedure
     {
-        public void Execute(ExportImageCommandParameter parameter)
+        public static void Execute(ExportImageCommandParameter parameter)
         {
             var source = ExportImageSource.Create();
 

@@ -5,7 +5,7 @@ namespace NeeView
 {
     public static class SizeExtensions
     {
-        public static Size Zero = new Size(0, 0);
+        public static readonly Size Zero = new(0, 0);
 
         // ゼロスケール判定
         public static bool IsZero(this Size self)

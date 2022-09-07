@@ -16,7 +16,7 @@ namespace NeeView.ComponentModel
         where TModel : INotifyPropertyChanged
     {
         // NOTE: GCの対象になるまで破棄されないように保持する
-        private IWeakEventListener _propertyChangedListener;
+        private readonly IWeakEventListener _propertyChangedListener;
 
 
         public WeakBindableBase(TModel model)
@@ -33,7 +33,7 @@ namespace NeeView.ComponentModel
 
         private class PropertyChangedWeakEventListener : IWeakEventListener
         {
-            private Action<string?> _raisePropertyChangedAction;
+            private readonly Action<string?> _raisePropertyChangedAction;
 
             public PropertyChangedWeakEventListener(Action<string?> raisePropertyChangedAction)
             {
@@ -47,8 +47,7 @@ namespace NeeView.ComponentModel
                     return false;
                 }
 
-                var evt = e as PropertyChangedEventArgs;
-                if (evt == null)
+                if (e is not PropertyChangedEventArgs evt)
                 {
                     return false;
                 }

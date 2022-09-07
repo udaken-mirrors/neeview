@@ -36,8 +36,8 @@ namespace NeeView.Windows
         #endregion
 
 
-        private Window _window;
-        private WindowChrome _windowChrome;
+        private readonly Window _window;
+        private readonly WindowChrome _windowChrome;
         private bool _isEnabled;
         private bool _isSuspended;
 

@@ -12,8 +12,8 @@ namespace NeeView
 
     public static class ExternalProcess
     {
-        private static Regex _httpPrefix = new Regex(@"^\s*http[s]?:", RegexOptions.IgnoreCase);
-        private static Regex _htmlPostfix = new Regex(@"\.htm[l]?$", RegexOptions.IgnoreCase);
+        private static readonly Regex _httpPrefix = new(@"^\s*http[s]?:", RegexOptions.IgnoreCase);
+        private static readonly Regex _htmlPostfix = new(@"\.htm[l]?$", RegexOptions.IgnoreCase);
 
         public static void Start(string filename, string? args = null, ExternalProcessOptions? options = null)
         {

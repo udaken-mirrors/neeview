@@ -8,7 +8,7 @@ namespace NeeView
     // サイドパネルアイコンのドラッグ設定
     public class SidePanelIconDescriptor : ISidePanelIconDescriptor
     {
-        private SidePanelFrameViewModel _vm;
+        private readonly SidePanelFrameViewModel _vm;
 
         public SidePanelIconDescriptor(SidePanelFrameViewModel vm)
         {

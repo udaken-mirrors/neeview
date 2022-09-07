@@ -16,7 +16,7 @@ namespace NeeView
 {
     public class DragAction
     {
-        private static Regex _trimCommand = new Regex(@"DragAction$", RegexOptions.Compiled);
+        private static readonly Regex _trimCommand = new(@"DragAction$", RegexOptions.Compiled);
 
 
         public DragAction()

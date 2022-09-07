@@ -8,7 +8,7 @@ namespace NeeView
 {
     public struct PageHistoryUnit : IEquatable<PageHistoryUnit>
     {
-        public static PageHistoryUnit Empty = new PageHistoryUnit("", "");
+        public static readonly PageHistoryUnit Empty = new("", "");
 
         public PageHistoryUnit(string bookAddress, string pageName)
         {
@@ -68,7 +68,7 @@ namespace NeeView
 
 
         private const int _historyCapacity = 100;
-        private readonly HistoryLimitedCollection<PageHistoryUnit> _history = new HistoryLimitedCollection<PageHistoryUnit>(_historyCapacity);
+        private readonly HistoryLimitedCollection<PageHistoryUnit> _history = new(_historyCapacity);
 
 
         public PageHistory()
@@ -89,7 +89,7 @@ namespace NeeView
             PageHistoryUnit pageHistoryUnit;
             if (viewPages != null && viewPages.Count > 0)
             {
-                var page = viewPages.Select(p => (p.Index, p)).Min().Item2;
+                var page = viewPages.Select(page => (page.Index, page)).Min().page;
                 pageHistoryUnit = new PageHistoryUnit(e.BookAddress, page.EntryName);
             }
             else

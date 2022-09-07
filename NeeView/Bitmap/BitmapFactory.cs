@@ -41,8 +41,8 @@ namespace NeeView
     /// </summary>
     public class BitmapFactory
     {
-        private DefaultBitmapFactory _default = new DefaultBitmapFactory();
-        private MagicScalerBitmapFactory _magicScaler = new MagicScalerBitmapFactory();
+        private readonly DefaultBitmapFactory _default = new();
+        private readonly MagicScalerBitmapFactory _magicScaler = new();
 
 
         public BitmapImage CreateBitmapSource(Stream stream, BitmapInfo? info, Size size, BitmapCreateSetting setting, CancellationToken token)

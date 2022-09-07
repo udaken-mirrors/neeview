@@ -96,7 +96,7 @@ namespace NeeView
             return canvas;
         }
 
-        private Path CreatePath(Point startPoint, Point endPoint, Brush stroke)
+        private static Path CreatePath(Point startPoint, Point endPoint, Brush stroke)
         {
             var geometry = new LineGeometry(startPoint, endPoint);
             geometry.Freeze();

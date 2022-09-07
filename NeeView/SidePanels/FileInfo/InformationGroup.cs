@@ -24,21 +24,17 @@ namespace NeeView
     {
         public static InformationCategory ToInformationCategory(this InformationGroup self)
         {
-            switch (self)
+            return self switch
             {
-                case InformationGroup.File:
-                    return InformationCategory.File;
-                case InformationGroup.Image:
-                    return InformationCategory.Image;
-                case InformationGroup.Description:
-                case InformationGroup.Origin:
-                case InformationGroup.Camera:
-                case InformationGroup.AdvancedPhoto:
-                case InformationGroup.Gps:
-                    return InformationCategory.Metadata;
-                default:
-                    throw new NotSupportedException();
-            }
+                InformationGroup.File
+                    => InformationCategory.File,
+                InformationGroup.Image
+                    => InformationCategory.Image,
+                InformationGroup.Description or InformationGroup.Origin or InformationGroup.Camera or InformationGroup.AdvancedPhoto or InformationGroup.Gps
+                    => InformationCategory.Metadata,
+                _
+                    => throw new NotSupportedException(),
+            };
         }
     }
 }

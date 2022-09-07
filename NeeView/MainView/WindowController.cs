@@ -7,8 +7,8 @@
 
     public class WindowController
     {
-        WindowStateManager _windowStateManager;
-        ITopmostControllable _topmostController;
+        readonly WindowStateManager _windowStateManager;
+        readonly ITopmostControllable _topmostController;
 
         public WindowController(WindowStateManager windowStateManager, ITopmostControllable topmostController)
         {

@@ -39,9 +39,7 @@ namespace NeeLaboratory.Windows.Input
         /// <param name="canExecute">実行ステータス ロジック。</param>
         public RelayCommand(Action execute, Func<bool>? canExecute)
         {
-            if (execute == null)
-                throw new ArgumentNullException("execute");
-            _execute = execute;
+            _execute = execute ?? throw new ArgumentNullException(nameof(execute));
             _canExecute = canExecute;
         }
 
@@ -61,7 +59,7 @@ namespace NeeLaboratory.Windows.Input
         /// <returns>このコマンドが実行可能な場合は true、それ以外の場合は false。</returns>
         public bool CanExecute(object? parameter)
         {
-            return _canExecute == null ? true : _canExecute();
+            return _canExecute == null || _canExecute();
         }
 
         /// <summary>
@@ -113,9 +111,7 @@ namespace NeeLaboratory.Windows.Input
         /// <param name="canExecute">実行ステータス ロジック。</param>
         public RelayCommand(Action<T?> execute, Func<T?, bool>? canExecute)
         {
-            if (execute == null)
-                throw new ArgumentNullException("execute");
-            _execute = execute;
+            _execute = execute ?? throw new ArgumentNullException(nameof(execute));
             _canExecute = canExecute;
         }
 
@@ -135,7 +131,7 @@ namespace NeeLaboratory.Windows.Input
         /// <returns>このコマンドが実行可能な場合は true、それ以外の場合は false。</returns>
         public bool CanExecute(object? parameter)
         {
-            return _canExecute == null ? true : _canExecute((T?)parameter);
+            return _canExecute == null || _canExecute((T?)parameter);
         }
 
         /// <summary>

@@ -62,7 +62,7 @@ namespace NeeView
             [DataMember, DefaultValue(true)]
             public bool IsNetworkEnabled { get; set; }
 
-            [Obsolete, DataMember(EmitDefaultValue = false)]
+            [Obsolete("no used"), DataMember(EmitDefaultValue = false)]
             public bool IsDisableSave { get; set; }
 
             [DataMember, DefaultValue(true)]
@@ -86,13 +86,13 @@ namespace NeeView
             [DataMember, DefaultValue(true)]
             public bool IsIgnoreImageDpi { get; set; }
 
-            [Obsolete, DataMember(EmitDefaultValue = false), DefaultValue(false)]
+            [Obsolete("no used"), DataMember(EmitDefaultValue = false), DefaultValue(false)]
             public bool IsIgnoreWindowDpi { get; set; }
 
             [DataMember, DefaultValue(true)]
             public bool IsRestoreSecondWindow { get; set; }
 
-            [Obsolete, DataMember(Name = "WindowChromeFrame", EmitDefaultValue = false)]
+            [Obsolete("no used"), DataMember(Name = "WindowChromeFrame", EmitDefaultValue = false)]
             public WindowChromeFrameV1 WindowChromeFrameV1 { get; set; }
 
             [DataMember(Name = "WindowChromeFrameV2"), DefaultValue(WindowChromeFrame.WindowFrame)]
@@ -149,7 +149,7 @@ namespace NeeView
                 this.Language = CultureInfo.CurrentCulture.TwoLetterISOLanguageName;
             }
 
-#pragma warning disable CS0612
+#pragma warning disable CS0618
 
             [OnDeserialized]
             public void OnDeserialized(StreamingContext c)
@@ -161,7 +161,7 @@ namespace NeeView
                 }
             }
 
-#pragma warning restore CS0612
+#pragma warning restore CS0618
 
             public void RestoreConfig(Config config)
             {
@@ -178,13 +178,13 @@ namespace NeeView
                 config.History.HistoryFilePath = HistoryFilePath ?? "";
                 config.Bookmark.IsSaveBookmark = IsSaveBookmark;
                 config.Bookmark.BookmarkFilePath = BookmarkFilePath ?? "";
-#pragma warning disable CS0612
+#pragma warning disable CS0618
                 if (config.PagemarkLegacy != null)
                 {
                     config.PagemarkLegacy.IsSavePagemark = IsSavePagemark;
                     config.PagemarkLegacy.PagemarkFilePath = PagemarkFilePath ?? "";
                 }
-#pragma warning restore CS0612
+#pragma warning restore CS0618
                 config.System.IsSettingBackup = IsSettingBackup;
                 config.System.IsSyncUserSetting = IsSyncUserSetting;
                 config.System.TemporaryDirectory = TemporaryDirectory = ""; ;

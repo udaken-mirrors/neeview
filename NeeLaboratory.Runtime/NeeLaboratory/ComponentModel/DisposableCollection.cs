@@ -10,7 +10,7 @@ namespace NeeLaboratory.ComponentModel
     /// </summary>
     public class DisposableCollection : IDisposable
     {
-        private List<IDisposable> _disposables = new List<IDisposable>();
+        private readonly List<IDisposable> _disposables = new();
 
         public void Add(IDisposable disposable)
         {
@@ -50,6 +50,7 @@ namespace NeeLaboratory.ComponentModel
         public void Dispose()
         {
             Dispose(true);
+            GC.SuppressFinalize(this);
         }
         #endregion
     }

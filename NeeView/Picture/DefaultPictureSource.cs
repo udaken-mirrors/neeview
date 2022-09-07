@@ -12,8 +12,8 @@ namespace NeeView
 {
     public class DefaultPictureSource : PictureSource
     {
-        private static BitmapFactory _bitmapFactory = new BitmapFactory();
-        private PictureNamedStreamSource _streamSource;
+        private static readonly BitmapFactory _bitmapFactory = new();
+        private readonly PictureNamedStreamSource _streamSource;
 
         public DefaultPictureSource(ArchiveEntry entry, PictureInfo? pictureInfo, PictureSourceCreateOptions createOptions) : base(entry, pictureInfo, createOptions)
         {
@@ -25,7 +25,6 @@ namespace NeeView
             return _streamSource.GetMemorySize();
         }
 
-        [SuppressMessage("Microsoft.Usage", "CA2202:DoNotDisposeObjectsMultipleTimes")]
         public override PictureInfo CreatePictureInfo(CancellationToken token)
         {
             if (this.PictureInfo != null) return this.PictureInfo;
@@ -57,7 +56,6 @@ namespace NeeView
             return this.PictureInfo;
         }
 
-        [SuppressMessage("Microsoft.Usage", "CA2202:DoNotDisposeObjectsMultipleTimes")]
         public override ImageSource CreateImageSource(Size size, BitmapCreateSetting setting, CancellationToken token)
         {
             token.ThrowIfCancellationRequested();
@@ -79,7 +77,6 @@ namespace NeeView
         }
 
 
-        [SuppressMessage("Microsoft.Usage", "CA2202:DoNotDisposeObjectsMultipleTimes")]
         public override byte[] CreateImage(Size size, BitmapCreateSetting setting, BitmapImageFormat format, int quality, CancellationToken token)
         {
             token.ThrowIfCancellationRequested();
@@ -117,7 +114,7 @@ namespace NeeView
                 }
             }
 
-            size = profile.GetThumbnailSize(size);
+            size = ThumbnailProfile.GetThumbnailSize(size);
             var setting = profile.CreateBitmapCreateSetting(bitmapInfo?.Metadata?.IsOriantationEnabled == true);
             return CreateImage(size, setting, Config.Current.Thumbnail.Format, Config.Current.Thumbnail.Quality, token);
         }

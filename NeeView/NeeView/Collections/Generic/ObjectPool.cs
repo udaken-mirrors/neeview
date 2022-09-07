@@ -9,8 +9,11 @@ namespace NeeView.Collections.Generic
     /// </summary>
     public class ObjectPool<T> where T : new()
     {
-        private Queue<T> _pool = new Queue<T>();
-        private object _lock = new object();
+        private readonly Queue<T> _pool = new();
+        private readonly object _lock = new();
+        
+        // デバッグ用
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0052:読み取られていないプライベート メンバーを削除", Justification = "<保留中>")]
         private int _count;
 
         public ObjectPool()

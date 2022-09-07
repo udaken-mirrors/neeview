@@ -4,7 +4,7 @@ namespace NeeView.Media.Imaging.Metadata
 {
     public class ExifRating
     {
-        private int _value;
+        private readonly int _value;
 
         public ExifRating(int value)
         {

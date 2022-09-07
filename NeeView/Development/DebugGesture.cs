@@ -16,7 +16,7 @@ namespace NeeView
         {
             App.Current.MainWindow.PreviewKeyDown += OnPreviewKeyDown;
 
-            void OnPreviewKeyDown(object sender, KeyEventArgs e)
+            static void OnPreviewKeyDown(object sender, KeyEventArgs e)
             {
                 // trigger is Ctrl+F12
                 if (Keyboard.Modifiers == ModifierKeys.Control && e.Key == Key.F12)
@@ -42,10 +42,9 @@ namespace NeeView
                 Keyboard.PreviewGotKeyboardFocusEvent,
                 (KeyboardFocusChangedEventHandler)OnPreviewGotKeyboardFocus);
 
-            void OnPreviewGotKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
+            static void OnPreviewGotKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
             {
-                var element = FocusManager.GetFocusedElement(App.Current.MainWindow) as Visual;
-                if (element == null)
+                if (FocusManager.GetFocusedElement(App.Current.MainWindow) is not Visual element)
                 {
                     Debug.WriteLine($">> FocusLost:");
                     CheckFocus();
@@ -63,12 +62,11 @@ namespace NeeView
             ElementWalk(element);
             Debug.WriteLine(".");
 
-            void ElementWalk(Visual? e)
+            static void ElementWalk(Visual? e)
             {
                 if (e == null) return;
 
-                var framewrkElement = e as FrameworkElement;
-                var isKeyboardFocused = framewrkElement != null ? framewrkElement.IsKeyboardFocused : false;
+                var isKeyboardFocused = e is FrameworkElement framewrkElement && framewrkElement.IsKeyboardFocused;
 
                 var name = (e as FrameworkElement)?.Name;
 
@@ -90,8 +88,7 @@ namespace NeeView
                     Debug.WriteLine($"FocusTree: {isKeyboardFocused} {name} ({typename}: {valuestring})");
                 }
 
-                var parent = VisualTreeHelper.GetParent(e) as Visual;
-                if (parent != null)
+                if (VisualTreeHelper.GetParent(e) is Visual parent)
                 {
                     ElementWalk(parent);
                 }

@@ -11,7 +11,7 @@
             X = 100, Y, Z
         };
 
-        private string nullString = null!;
+        private readonly string nullString = null!;
 
 
         [Fact]

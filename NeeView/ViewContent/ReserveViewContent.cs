@@ -25,18 +25,15 @@ namespace NeeView
 
         private void Initialize()
         {
-            // binding parameter
-            var parameter = CreateBindingParameter();
-
             // create view
             if (this.Source is null) throw new InvalidOperationException();
-            this.View = new ViewContentControl(CreateView(this.Source, parameter));
+            this.View = new ViewContentControl(CreateView());
         }
 
         /// <summary>
         /// 読み込み中ビュー生成
         /// </summary>
-        private FrameworkElement CreateView(ViewContentSource source, ViewContentParameters parameter)
+        private static FrameworkElement CreateView()
         {
             var rectangle = new Rectangle();
             rectangle.Fill = new SolidColorBrush(Color.FromRgb(0xAA, 0xAA, 0xAA));

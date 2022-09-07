@@ -6,16 +6,16 @@ using System.Linq;
 
 namespace NeeView
 {
-    public class Exporter
+    public static class Exporter
     {
-        public void Export(string filename)
+        public static void Export(string filename)
         {
             SaveDataSync.Current.SaveAll(false);
 
             try
             {
                 // 保存されたファイルをzipにまとめて出力
-                using (ZipArchive archive = new ZipArchive(new FileStream(filename, FileMode.Create, FileAccess.ReadWrite), ZipArchiveMode.Update))
+                using (var archive = new ZipArchive(new FileStream(filename, FileMode.Create, FileAccess.ReadWrite), ZipArchiveMode.Update))
                 {
                     archive.CreateEntryFromFile(SaveData.UserSettingFileName, SaveData.UserSettingFileName);
 

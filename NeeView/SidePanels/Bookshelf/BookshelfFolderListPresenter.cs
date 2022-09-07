@@ -2,8 +2,8 @@
 {
     public class BookshelfFolderListPresenter : FolderListPresenter
     {
-        private FolderListView _folderListView;
-        private BookshelfFolderList _folderList;
+        private readonly FolderListView _folderListView;
+        private readonly BookshelfFolderList _folderList;
 
 
         public BookshelfFolderListPresenter(FolderListView folderListView, BookshelfFolderList folderList) : base(folderListView, folderList)

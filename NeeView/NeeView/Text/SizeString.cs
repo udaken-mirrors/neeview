@@ -18,7 +18,7 @@ namespace NeeView.Text
         /// <summary>
         /// フォーマット正規表現
         /// </summary>
-        private Regex _regex = new Regex(@"^(\d+)x(\d+)$");
+        private readonly Regex _regex = new(@"^(\d+)x(\d+)$");
 
         private string _value;
 
@@ -54,7 +54,7 @@ namespace NeeView.Text
             _value = value;
 
             var match = _regex.Match(this.Value);
-            if (!match.Success) throw new ArgumentException();
+            if (!match.Success) throw new ArgumentException("wrong value format.");
             this.Width = int.Parse(match.Groups[1].Value);
             this.Height = int.Parse(match.Groups[2].Value);
         }

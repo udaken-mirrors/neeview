@@ -12,7 +12,7 @@ namespace NeeView.Text
     public class NaturalComparer : IComparer<string>, IComparer
     {
         // 漢数字のソート順(逆順)
-        private static Dictionary<char, int> _kanjiOrderMap;
+        private static readonly Dictionary<char, int> _kanjiOrderMap;
 
 
         static NaturalComparer()

@@ -21,10 +21,10 @@ namespace NeeView
         public static RemoteCommandService Current { get; }
 
 
-        private RemoteCommandServer _server;
-        private RemoteCommandClient _client;
+        private readonly RemoteCommandServer _server;
+        private readonly RemoteCommandClient _client;
 
-        private Dictionary<string, RemoteCommandReciever> _recievers = new Dictionary<string, RemoteCommandReciever>();
+        private readonly Dictionary<string, RemoteCommandReciever> _recievers = new();
 
 
         public RemoteCommandService()
@@ -88,7 +88,7 @@ namespace NeeView
         {
             if (_disposedValue) return;
 
-            var async = SendAsync(command, delivery, CancellationToken.None);
+            _ = SendAsync(command, delivery, CancellationToken.None);
         }
 
         public async Task SendAsync(RemoteCommand command, RemoteCommandDelivery delivery, CancellationToken token)
@@ -134,6 +134,7 @@ namespace NeeView
         public void Dispose()
         {
             Dispose(true);
+            GC.SuppressFinalize(this);
         }
 
         #endregion

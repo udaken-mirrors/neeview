@@ -8,7 +8,7 @@ namespace NeeView.Text
     /// </summary>
     public class StringNormalizeParser : IEnumerable<char>
     {
-        private string _source;
+        private readonly string _source;
 
         public StringNormalizeParser(string source)
         {
@@ -64,7 +64,6 @@ namespace NeeView.Text
             if (n0 != '\0')
             {
                 yield return n0;
-                n0 = '\0';
             }
         }
 

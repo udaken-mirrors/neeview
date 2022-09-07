@@ -17,7 +17,7 @@ namespace NeeView.Effects
     [DataContract]
     public class EmbossedEffectUnit : EffectUnit
     {
-        private static EmbossedEffect _effect = new EmbossedEffect();
+        private static readonly EmbossedEffect _effect = new();
 
         public override Effect GetEffect() => _effect;
 

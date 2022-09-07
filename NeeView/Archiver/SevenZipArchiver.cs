@@ -16,9 +16,9 @@ namespace NeeView
     /// </summary>
     public class SevenZipArchiver : Archiver, IDisposable
     {
-        private static object _staticLock = new object();
+        private static readonly object _staticLock = new();
 
-        private SevenZipAccessor _accessor;
+        private readonly SevenZipAccessor _accessor;
         private string? _format;
 
 
@@ -252,6 +252,7 @@ namespace NeeView
         public void Dispose()
         {
             Dispose(true);
+            GC.SuppressFinalize(this);
         }
         #endregion
     }

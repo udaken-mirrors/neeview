@@ -10,8 +10,8 @@ namespace NeeView
         ////public static string GoogleMapFormatB => @"https://www.google.com/maps/place/$Lat+$Lon/";
 
 
-        ExifGpsDegree _latitude;
-        ExifGpsDegree _longitude;
+        readonly ExifGpsDegree _latitude;
+        readonly ExifGpsDegree _longitude;
 
         public GpsLocation(ExifGpsDegree latitude, ExifGpsDegree longitude)
         {

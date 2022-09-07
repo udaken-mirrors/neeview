@@ -59,7 +59,7 @@ namespace NeeView
     /// </summary>
     public class BookHubCommandLoad : BookHubCommand
     {
-        private BookHubCommandLoadArgs _param;
+        private readonly BookHubCommandLoadArgs _param;
 
         public string Path => _param.Path;
 
@@ -90,7 +90,7 @@ namespace NeeView
     /// </summary>
     public class BookHubCommandUnload : BookHubCommand
     {
-        private BookHubCommandUnloadArgs _param;
+        private readonly BookHubCommandUnloadArgs _param;
 
         public BookHubCommandUnload(BookHub bookHub, BookHubCommandUnloadArgs param) : base(bookHub)
         {

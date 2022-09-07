@@ -60,7 +60,7 @@ namespace NeeView
         private static Task WaitOneAsync(this WaitHandle waitHandle)
         {
             if (waitHandle == null)
-                throw new ArgumentNullException("waitHandle");
+                throw new ArgumentNullException(nameof(waitHandle));
 
             var tcs = new TaskCompletionSource<bool>();
             var rwh = ThreadPool.RegisterWaitForSingleObject(waitHandle,

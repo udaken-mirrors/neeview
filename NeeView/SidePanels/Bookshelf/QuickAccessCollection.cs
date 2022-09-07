@@ -19,7 +19,7 @@ namespace NeeView
         public event CollectionChangeEventHandler? CollectionChanged;
 
 
-        private ObservableCollection<QuickAccess> _items = new ObservableCollection<QuickAccess>();
+        private ObservableCollection<QuickAccess> _items = new();
         public ObservableCollection<QuickAccess> Items
         {
             get { return _items; }

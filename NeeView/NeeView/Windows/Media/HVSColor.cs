@@ -58,24 +58,16 @@ namespace NeeView.Windows.Media
             double q = V * (1 - f * S);
             double t = V * (1 - (1 - f) * S);
 
-            switch (Hi)
+            return Hi switch
             {
-                case 0:
-                    return FromARGB(A, V, t, p);
-                case 1:
-                    return FromARGB(A, q, V, p);
-                case 2:
-                    return FromARGB(A, p, V, t);
-                case 3:
-                    return FromARGB(A, p, q, V);
-                case 4:
-                    return FromARGB(A, t, p, V);
-                case 5:
-                    return FromARGB(A, V, p, q);
-            }
-
-            // ここには来ない
-            throw new InvalidOperationException();
+                0 => FromARGB(A, V, t, p),
+                1 => FromARGB(A, q, V, p),
+                2 => FromARGB(A, p, V, t),
+                3 => FromARGB(A, p, q, V),
+                4 => FromARGB(A, t, p, V),
+                5 => FromARGB(A, V, p, q),
+                _ => throw new InvalidOperationException(),
+            };
         }
 
         /// <summary>
@@ -85,7 +77,7 @@ namespace NeeView.Windows.Media
         /// <param name="fg"></param>
         /// <param name="fb"></param>
         /// <returns></returns>
-        private static Color FromRGB(double fr, double fg, double fb)
+        public static Color FromRGB(double fr, double fg, double fb)
         {
             fr *= 255;
             fg *= 255;

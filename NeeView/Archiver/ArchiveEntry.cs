@@ -336,7 +336,7 @@ namespace NeeView
         /// </summary>
         public static ArchiveEntry Create(QueryPath query)
         {
-            ArchiveEntry entry = new ArchiveEntry();
+            var entry = new ArchiveEntry();
 
             entry.RawEntryName = query.SimplePath;
 

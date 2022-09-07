@@ -7,10 +7,10 @@ namespace NeeView
     /// </summary>
     public class BookMemoryService : BindableBase
     {
-        private PageContentPool _contentPool = new PageContentPool();
-        private PictureSourcePool _pictureSourcePool = new PictureSourcePool();
+        private readonly PageContentPool _contentPool = new();
+        private readonly PictureSourcePool _pictureSourcePool = new();
 
-        public long LimitSize => (long)Config.Current.Performance.CacheMemorySize * 1024 * 1024;
+        public static long LimitSize => (long)Config.Current.Performance.CacheMemorySize * 1024 * 1024;
 
         public long TotalSize => _contentPool.TotalSize + _pictureSourcePool.TotalSize;
 

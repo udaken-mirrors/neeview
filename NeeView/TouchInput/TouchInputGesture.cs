@@ -16,7 +16,7 @@ namespace NeeView
         /// <summary>
         /// ジェスチャー入力
         /// </summary>
-        private MouseGestureSequenceTracker _gesture;
+        private readonly MouseGestureSequenceTracker _gesture;
 
         /// <summary>
         /// 監視するデバイス

@@ -24,20 +24,20 @@ namespace NeeView
     /// </summary>
     public partial class FileInformationView : UserControl
     {
-        public static string DragDropFormat = FormatVersion.CreateFormatName(Environment.ProcessId.ToString(), nameof(FileInformationView));
+        public static readonly string DragDropFormat = FormatVersion.CreateFormatName(Environment.ProcessId.ToString(), nameof(FileInformationView));
 
         #region RoutedCommand
 
-        public static readonly RoutedCommand OpenExplorerCommand = new RoutedCommand(nameof(OpenExplorerCommand), typeof(FileInformationView));
-        public static readonly RoutedCommand OpenExternalAppCommand = new RoutedCommand(nameof(OpenExternalAppCommand), typeof(FileInformationView));
-        public static readonly RoutedCommand CopyCommand = new RoutedCommand(nameof(CopyCommand), typeof(FileInformationView));
-        public static readonly RoutedCommand CopyToFolderCommand = new RoutedCommand(nameof(CopyToFolderCommand), typeof(FileInformationView));
-        public static readonly RoutedCommand MoveToFolderCommand = new RoutedCommand(nameof(MoveToFolderCommand), typeof(FileInformationView));
-        public static readonly RoutedCommand OpenDestinationFolderCommand = new RoutedCommand(nameof(OpenDestinationFolderCommand), typeof(FileInformationView));
-        public static readonly RoutedCommand OpenExternalAppDialogCommand = new RoutedCommand(nameof(OpenExternalAppDialogCommand), typeof(FileInformationView));
-        public static readonly RoutedCommand PlaylistMarkCommand = new RoutedCommand(nameof(PlaylistMarkCommand), typeof(FileInformationView));
+        public static readonly RoutedCommand OpenExplorerCommand = new(nameof(OpenExplorerCommand), typeof(FileInformationView));
+        public static readonly RoutedCommand OpenExternalAppCommand = new(nameof(OpenExternalAppCommand), typeof(FileInformationView));
+        public static readonly RoutedCommand CopyCommand = new(nameof(CopyCommand), typeof(FileInformationView));
+        public static readonly RoutedCommand CopyToFolderCommand = new(nameof(CopyToFolderCommand), typeof(FileInformationView));
+        public static readonly RoutedCommand MoveToFolderCommand = new(nameof(MoveToFolderCommand), typeof(FileInformationView));
+        public static readonly RoutedCommand OpenDestinationFolderCommand = new(nameof(OpenDestinationFolderCommand), typeof(FileInformationView));
+        public static readonly RoutedCommand OpenExternalAppDialogCommand = new(nameof(OpenExternalAppDialogCommand), typeof(FileInformationView));
+        public static readonly RoutedCommand PlaylistMarkCommand = new(nameof(PlaylistMarkCommand), typeof(FileInformationView));
 
-        private InformationPageCommandResource _commandResource = new InformationPageCommandResource();
+        private readonly InformationPageCommandResource _commandResource = new();
 
         private static void InitializeCommandStatic()
         {
@@ -60,9 +60,9 @@ namespace NeeView
         #endregion RoutedCommand
 
 
-        private FileInformationViewModel? _vm;
+        private readonly FileInformationViewModel? _vm;
+        private readonly MouseWheelDelta _mouseWheelDelta = new();
         private bool _isFocusRequest;
-        private MouseWheelDelta _mouseWheelDelta = new MouseWheelDelta();
 
 
         static FileInformationView()
@@ -108,8 +108,7 @@ namespace NeeView
 
         private void ThumbnailListBoxItem_ContextMenuOpening(object? sender, ContextMenuEventArgs e)
         {
-            var container = sender as ListBoxItem;
-            if (container == null)
+            if (sender is not ListBoxItem container)
             {
                 return;
             }
@@ -168,7 +167,7 @@ namespace NeeView
 
         #region DragDrop
 
-        private async Task DragStartBehavior_DragBeginAsync(object? sender, Windows.DragStartEventArgs e, CancellationToken token)
+        public async Task DragStartBehavior_DragBeginAsync(object? sender, Windows.DragStartEventArgs e, CancellationToken token)
         {
             var pages = this.ThumbnailListBox.SelectedItems.Cast<FileInformationSource>()
                 .Select(x => x.ViewContent?.Page)
@@ -223,16 +222,14 @@ namespace NeeView
     {
         protected override Page? GetSelectedPage(object sender)
         {
-            var listBox = sender as ListBox;
-            if (listBox is null) return null;
+            if (sender is not ListBox listBox) return null;
 
             return (listBox.SelectedItem as FileInformationSource)?.ViewContent?.Page;
         }
 
         protected override List<Page>? GetSelectedPages(object sender)
         {
-            var listBox = sender as ListBox;
-            if (listBox is null) return null;
+            if (sender is not ListBox listBox) return null;
 
             return listBox.SelectedItems
                 .Cast<FileInformationSource>()

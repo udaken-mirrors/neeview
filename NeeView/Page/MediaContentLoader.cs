@@ -7,7 +7,7 @@ namespace NeeView
 {
     public class MediaContentLoader : BitmapContentLoader
     {
-        private MediaContent _content;
+        private readonly MediaContent _content;
 
         public MediaContentLoader(MediaContent content): base(content)
         {

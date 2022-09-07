@@ -7,8 +7,8 @@ namespace NeeView
 {
     public class BookPlaylist
     {
-        private Book _book;
-        private Playlist _playlist;
+        private readonly Book _book;
+        private readonly Playlist _playlist;
 
         public BookPlaylist(Book book, Playlist playlist)
         {

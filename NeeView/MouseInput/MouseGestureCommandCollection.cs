@@ -18,7 +18,7 @@ namespace NeeView
         /// <summary>
         /// シーケンスとコマンドの対応辞書
         /// </summary>
-        private Dictionary<string, string> _commands;
+        private readonly Dictionary<string, string> _commands;
 
         /// <summary>
         /// コンストラクター

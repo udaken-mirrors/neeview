@@ -15,7 +15,7 @@ namespace NeeView
 {
     public class ContentCanvasBrush : BindableBase
     {
-        private ContentCanvas _contentCanvas;
+        private readonly ContentCanvas _contentCanvas;
 
         public ContentCanvasBrush(ContentCanvas contentCanvas)
         {
@@ -143,21 +143,21 @@ namespace NeeView
             hsv.V = hsv.V + (hsv.V < 0.1 ? 0.1 : -0.1);
             var brush2 = new SolidColorBrush(hsv.ToARGB());
 
-            DrawingBrush checkerBrush = new DrawingBrush();
+            var checkerBrush = new DrawingBrush();
 
-            GeometryDrawing backgroundSquare =
+            var backgroundSquare =
                 new GeometryDrawing(
                     brush1,
                     null,
                     new RectangleGeometry(new Rect(0, 0, 8, 8)));
 
-            GeometryGroup aGeometryGroup = new GeometryGroup();
+            var aGeometryGroup = new GeometryGroup();
             aGeometryGroup.Children.Add(new RectangleGeometry(new Rect(0, 0, 4, 4)));
             aGeometryGroup.Children.Add(new RectangleGeometry(new Rect(4, 4, 4, 4)));
 
-            GeometryDrawing checkers = new GeometryDrawing(brush2, null, aGeometryGroup);
+            var checkers = new GeometryDrawing(brush2, null, aGeometryGroup);
 
-            DrawingGroup checkersDrawingGroup = new DrawingGroup();
+            var checkersDrawingGroup = new DrawingGroup();
             checkersDrawingGroup.Children.Add(backgroundSquare);
             checkersDrawingGroup.Children.Add(checkers);
 
@@ -173,8 +173,7 @@ namespace NeeView
         // Foregroud Brush 更新
         private void UpdateForegroundBrush()
         {
-            var solidColorBrush = BackgroundBrush as SolidColorBrush;
-            if (solidColorBrush != null)
+            if (BackgroundBrush is SolidColorBrush solidColorBrush)
             {
                 double y =
                     (double)solidColorBrush.Color.R * 0.299 +
@@ -212,20 +211,14 @@ namespace NeeView
         /// <returns></returns>
         public Brush? CreateBackgroundBrush()
         {
-            switch (Config.Current.Background.BackgroundType)
+            return Config.Current.Background.BackgroundType switch
             {
-                default:
-                case BackgroundType.Black:
-                    return Brushes.Black;
-                case BackgroundType.White:
-                    return Brushes.White;
-                case BackgroundType.Auto:
-                    return new SolidColorBrush(_contentCanvas.GetContentColor());
-                case BackgroundType.Check:
-                    return null;
-                case BackgroundType.Custom:
-                    return CustomBackgroundBrush;
-            }
+                BackgroundType.White => Brushes.White,
+                BackgroundType.Auto => new SolidColorBrush(_contentCanvas.GetContentColor()),
+                BackgroundType.Check => null,
+                BackgroundType.Custom => CustomBackgroundBrush,
+                _ => Brushes.Black,
+            };
         }
 
         /// <summary>
@@ -274,7 +267,7 @@ namespace NeeView
             [DataMember]
             public int _Version { get; set; } = Environment.ProductVersionNumber;
 
-            [Obsolete, DataMember(Name = "Background", EmitDefaultValue = false)]
+            [Obsolete("no used"), DataMember(Name = "Background", EmitDefaultValue = false)]
             public BackgroundStyleV1 BackgroundV1 { get; set; }
 
             [DataMember(Name = "BackgroundV2")]
@@ -296,7 +289,7 @@ namespace NeeView
             [OnDeserialized]
             private void OnDeserialized(StreamingContext c)
             {
-#pragma warning disable CS0612
+#pragma warning disable CS0618
                 // before 34.0
                 if (_Version < Environment.GenerateProductVersionNumber(34, 0, 0))
                 {
@@ -305,7 +298,7 @@ namespace NeeView
                         Background = value;
                     }
                 }
-#pragma warning restore CS0612
+#pragma warning restore CS0618
             }
 
             public void RestoreConfig(Config config)

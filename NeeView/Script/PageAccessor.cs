@@ -2,7 +2,7 @@
 {
     public class PageAccessor
     {
-        private Page _page;
+        private readonly Page _page;
 
         public PageAccessor(Page page)
         {

@@ -117,7 +117,7 @@ namespace NeeView
                 foreach (var entry in entries)
                 {
                     var attribute = entry.IsDirectory ? "D" : entry.IsArchive() ? "A" : entry.IsImage() ? "I" : "?";
-                    var name = entry.SystemPath.Substring(prefix.Length);
+                    var name = entry.SystemPath[prefix.Length..];
                     Debug.WriteLine(attribute + " " + name);
                 }
             }

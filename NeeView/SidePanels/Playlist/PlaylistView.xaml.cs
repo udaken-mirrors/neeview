@@ -21,7 +21,7 @@ namespace NeeView
     /// </summary>
     public partial class PlaylistView : UserControl
     {
-        private PlaylistViewModel _vm;
+        private readonly PlaylistViewModel _vm;
 
 
         public PlaylistView(PlaylistHub model)
@@ -40,7 +40,7 @@ namespace NeeView
        }
 
 
-        public readonly static RoutedCommand RenameCommand = new RoutedCommand(nameof(RenameCommand), typeof(PlaylistView), new InputGestureCollection() { new KeyGesture(Key.F2) });
+        public readonly static RoutedCommand RenameCommand = new(nameof(RenameCommand), typeof(PlaylistView), new InputGestureCollection() { new KeyGesture(Key.F2) });
 
 
         private void InitializeCommand()

@@ -11,7 +11,7 @@ namespace NeeView
     [JsonConverter(typeof(JsonDragActionParameterConverter))]
     public class DragActionParameter : BindableBase, ICloneable
     {
-        private Func<object, object, bool> _equals;
+        private readonly Func<object, object, bool> _equals;
 
         public DragActionParameter()
         {
@@ -35,8 +35,7 @@ namespace NeeView
     {
         public static T Cast<T>(this DragActionParameter? self) where T : DragActionParameter
         {
-            var param = self as T;
-            if (param is null) throw new InvalidCastException();
+            var param = self as T ?? throw new InvalidCastException();
             return param;
         }
     }

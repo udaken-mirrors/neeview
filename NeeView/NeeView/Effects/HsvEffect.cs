@@ -8,14 +8,14 @@ namespace NeeView.Effects
 {
     public class HsvEffect : ShaderEffect
     {
-        private static PixelShader s_pixelShader = new PixelShader()
+        private static readonly PixelShader _pixelShader = new()
         {
             UriSource = Tools.MakePackUri(typeof(HsvEffect).Assembly, "NeeView/Effects/Shaders/HsvEffect.ps")
         };
 
         public HsvEffect()
         {
-            PixelShader = s_pixelShader;
+            PixelShader = _pixelShader;
 
             UpdateShaderValue(InputProperty);
             UpdateShaderValue(HueProperty);

@@ -21,7 +21,7 @@ namespace NeeView
     /// </summary>
     public partial class DestinationFolderDialog : Window
     {
-        private DestinationFolderDialogViewModel _vm;
+        private readonly DestinationFolderDialogViewModel _vm;
 
         public DestinationFolderDialog()
         {

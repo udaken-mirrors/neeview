@@ -21,7 +21,7 @@ namespace NeeView
         private int _count = 0;
 
         // 排他制御用オブジェクト
-        private object _lock = new object();
+        private readonly object _lock = new();
 
 
         private Temporary()
@@ -59,17 +59,18 @@ namespace NeeView
         [MemberNotNull(nameof(TempRootPath), nameof(TempDirectoryBaseName), nameof(TempDirectory), nameof(TempDownloadDirectory), nameof(TempSystemDirectory), nameof(TempCacheDirectory))]
         public string SetDirectory(string path, bool validate)
         {
-            var assembly = Assembly.GetExecutingAssembly();
-
+            // NOTE: シングルパッケージにすると次の方法ではアセンブリ情報が取得できない
+            //var assembly = Assembly.GetExecutingAssembly();
             ////AssemblyCompanyの取得
             //var asmcmp = (AssemblyCompanyAttribute?)Attribute.GetCustomAttribute(assembly, typeof(AssemblyCompanyAttribute));
             ////AssemblyProductの取得
             //var asmprd = (AssemblyProductAttribute?)Attribute.GetCustomAttribute(assembly, typeof(AssemblyProductAttribute));
 
+            var currentProcess = Process.GetCurrentProcess();
             //ProcessIDの取得
-            var processId = Process.GetCurrentProcess().Id;
+            var processId = currentProcess.Id;
             //Process名の取得
-            var processName = Process.GetCurrentProcess().ProcessName;
+            var processName = currentProcess.ProcessName;
 
             TempRootPath = path ?? TempRootPathDefault;
             if (validate && TempRootPath != TempRootPathDefault)

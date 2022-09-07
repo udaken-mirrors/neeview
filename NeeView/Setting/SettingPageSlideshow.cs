@@ -26,7 +26,7 @@ namespace NeeView.Setting
         /// </summary>
         public class SlideShowInterval : IndexDoubleValue
         {
-            private static List<double> _values = new List<double>
+            private static readonly List<double> _values = new()
             {
                 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 20, 30, 45, 60, 90, 120, 180, 240, 300
             };

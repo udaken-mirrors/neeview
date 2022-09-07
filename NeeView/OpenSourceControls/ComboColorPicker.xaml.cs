@@ -40,9 +40,7 @@ namespace OpenSourceControls
 
         private static void OnSelectedColorChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
         {
-
-            ComboColorPicker? cp = obj as ComboColorPicker;
-            if (cp is null) throw new InvalidOperationException();
+            ComboColorPicker cp = obj as ComboColorPicker ?? throw new InvalidOperationException();
 
             Color newColor = (Color)args.NewValue;
             Color oldColor = (Color)args.OldValue;
@@ -51,8 +49,7 @@ namespace OpenSourceControls
                 return;
 
             // When the SelectedColor changes, set the selected value of the combo box
-            ColorViewModel? selectedColorViewModel = cp.ColorList1.SelectedValue as ColorViewModel;
-            if (selectedColorViewModel == null || selectedColorViewModel.Color != newColor)
+            if (cp.ColorList1.SelectedValue is not ColorViewModel selectedColorViewModel || selectedColorViewModel.Color != newColor)
             {
                 // Add the color if not found
                 if (!cp.ListContains(newColor))
@@ -70,8 +67,7 @@ namespace OpenSourceControls
         {
             foreach (object o in ColorList1.Items)
             {
-                ColorViewModel? vcm = o as ColorViewModel;
-                if (vcm == null) continue;
+                if (o is not ColorViewModel vcm) continue;
                 if (vcm.Color == newColor) return true;
             }
             return false;
@@ -113,13 +109,13 @@ namespace OpenSourceControls
 
         protected virtual void OnColorChanged(Color oldValue, Color newValue)
         {
-            RoutedPropertyChangedEventArgs<Color> args = new RoutedPropertyChangedEventArgs<Color>(oldValue, newValue);
+            var args = new RoutedPropertyChangedEventArgs<Color>(oldValue, newValue);
             args.RoutedEvent = ComboColorPicker.ColorChangedEvent;
             RaiseEvent(args);
         }
         #endregion
 
-        static Brush _CheckerBrush = CreateCheckerBrush();
+        static readonly Brush _CheckerBrush = CreateCheckerBrush();
         public static Brush CheckerBrush { get { return _CheckerBrush;  } }
         // Todo: should this be disposed somewhere?
 
@@ -177,17 +173,17 @@ namespace OpenSourceControls
         {
             if (!name.StartsWith("#",StringComparison.Ordinal))
                 name = NiceName(name);
-            ColorViewModel cvm = new ColorViewModel() { Color = color, Name = name };
+            var cvm = new ColorViewModel() { Color = color, Name = name };
             ColorList1.Items.Add(cvm);
         }
 
         private static string NiceName(string name)
         {
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
             for (int i = 0; i < name.Length; i++)
             {
                 if (i > 0 && char.IsUpper(name[i]))
-                    sb.Append(" ");
+                    sb.Append(' ');
                 sb.Append(name[i]);
             }
             return sb.ToString();
@@ -197,21 +193,21 @@ namespace OpenSourceControls
         {
             // from http://msdn.microsoft.com/en-us/library/aa970904.aspx
 
-            DrawingBrush checkerBrush = new DrawingBrush();
+            var checkerBrush = new DrawingBrush();
 
-            GeometryDrawing backgroundSquare =
+            var backgroundSquare =
                 new GeometryDrawing(
                     Brushes.White,
                     null,
                     new RectangleGeometry(new Rect(0, 0, 8, 8)));
 
-            GeometryGroup aGeometryGroup = new GeometryGroup();
+            var aGeometryGroup = new GeometryGroup();
             aGeometryGroup.Children.Add(new RectangleGeometry(new Rect(0, 0, 4, 4)));
             aGeometryGroup.Children.Add(new RectangleGeometry(new Rect(4, 4, 4, 4)));
 
-            GeometryDrawing checkers = new GeometryDrawing(Brushes.Black, null, aGeometryGroup);
+            var checkers = new GeometryDrawing(Brushes.Black, null, aGeometryGroup);
 
-            DrawingGroup checkersDrawingGroup = new DrawingGroup();
+            var checkersDrawingGroup = new DrawingGroup();
             checkersDrawingGroup.Children.Add(backgroundSquare);
             checkersDrawingGroup.Children.Add(checkers);
 

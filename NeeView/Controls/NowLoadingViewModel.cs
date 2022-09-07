@@ -9,7 +9,7 @@ namespace NeeView
     /// </summary>
     public class NowLoadingViewModel : BindableBase
     {
-        private NowLoading _model;
+        private readonly NowLoading _model;
 
 
         public NowLoadingViewModel(NowLoading model)

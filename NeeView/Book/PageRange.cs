@@ -67,8 +67,8 @@ namespace NeeView
 
             int count = 0;
 
-            PagePosition p0 = new PagePosition();
-            PagePosition p1 = new PagePosition();
+            var p0 = new PagePosition();
+            var p1 = new PagePosition();
 
             foreach (var part in parts)
             {
@@ -97,7 +97,7 @@ namespace NeeView
         }
 
 
-        public static PageRange Empty = new PageRange(PagePosition.Empty, PagePosition.Empty);
+        public static readonly PageRange Empty = new(PagePosition.Empty, PagePosition.Empty);
 
         /// <summary>
         /// 範囲開始

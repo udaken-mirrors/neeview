@@ -13,14 +13,14 @@ namespace NeeView
 {
     public class DriveDirectoryNode : DirectoryNode
     {
-        private DriveInfo _driveInfo;
+        private readonly DriveInfo _driveInfo;
         private bool _iconInitialized;
 
 
         public DriveDirectoryNode(DriveInfo drive, RootDirectoryNode parent) : base(drive.Name.TrimEnd(LoosePath.Separators), parent)
         {
             _driveInfo = drive;
-            var async = InitializeAsync();
+            _ = InitializeAsync();
         }
 
         public string DriveName => Name + '\\';
@@ -88,18 +88,11 @@ namespace NeeView
                     Debug.WriteLine(ex.Message);
                 }
 
-                switch (_driveInfo.DriveType)
+                IsDelayCreateInheritance = _driveInfo.DriveType switch
                 {
-                    case DriveType.Fixed:
-                    case DriveType.Removable:
-                    case DriveType.Ram:
-                        IsDelayCreateInheritance = false;
-                        break;
-                    default:
-                        IsDelayCreateInheritance = true;
-                        break;
-                }
-
+                    DriveType.Fixed or DriveType.Removable or DriveType.Ram => false,
+                    _ => true,
+                };
                 RefreshIcon();
             });
         }
@@ -107,7 +100,7 @@ namespace NeeView
         public void Refresh()
         {
             RefreshChildren();
-            var async = InitializeAsync();
+            _ = InitializeAsync();
         }
 
         public override void RefreshIcon()
@@ -118,7 +111,7 @@ namespace NeeView
 
         protected override void OnException(DirectoryNode sender, NotifyCrateDirectoryChildrenExcepionEventArgs e)
         {
-            if (sender is DirectoryNode directory)
+            if (sender is not null)
             {
                 ToastService.Current.Show("FolderList", new Toast($"({Name}) " + e.Exception.Message, null, ToastIcon.Error));
 

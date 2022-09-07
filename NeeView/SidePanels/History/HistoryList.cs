@@ -35,15 +35,12 @@ namespace NeeView
         {
             get
             {
-                switch (Config.Current.History.PanelListItemStyle)
+                return Config.Current.History.PanelListItemStyle switch
                 {
-                    default:
-                        return false;
-                    case PanelListItemStyle.Content:
-                        return Config.Current.Panels.ContentItemProfile.ImageWidth > 0.0;
-                    case PanelListItemStyle.Banner:
-                        return Config.Current.Panels.BannerItemProfile.ImageWidth > 0.0;
-                }
+                    PanelListItemStyle.Content => Config.Current.Panels.ContentItemProfile.ImageWidth > 0.0,
+                    PanelListItemStyle.Banner => Config.Current.Panels.BannerItemProfile.ImageWidth > 0.0,
+                    _ => false,
+                };
             }
         }
 

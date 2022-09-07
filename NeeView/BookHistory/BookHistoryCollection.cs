@@ -23,8 +23,8 @@ namespace NeeView
         public static BookHistoryCollection Current { get; }
 
 
-        private Dictionary<string, FolderParameter.Memento> _folders = new Dictionary<string, FolderParameter.Memento>();
-        private object _lock = new object();
+        private Dictionary<string, FolderParameter.Memento> _folders = new();
+        private readonly object _lock = new();
 
 
         private BookHistoryCollection()
@@ -344,7 +344,7 @@ namespace NeeView
         #region for Folders
 
         // 検索履歴
-        private ObservableCollection<string> _searchHistory = new ObservableCollection<string>();
+        private ObservableCollection<string> _searchHistory = new();
         public ObservableCollection<string> SearchHistory
         {
             get { return _searchHistory; }
@@ -372,8 +372,7 @@ namespace NeeView
         {
             path = path ?? "<<root>>";
 
-            FolderParameter.Memento? memento;
-            _folders.TryGetValue(path, out memento);
+            _folders.TryGetValue(path, out FolderParameter.Memento? memento);
             return memento ?? FolderParameter.Memento.GetDefault(path);
         }
 
@@ -466,11 +465,11 @@ namespace NeeView
 
             // no used
             [JsonIgnore]
-            [Obsolete, DataMember(Order = 8, EmitDefaultValue = false)]
+            [Obsolete("no used"), DataMember(Order = 8, EmitDefaultValue = false)]
             public Dictionary<string, FolderOrder>? FolderOrders { get; set; } // no used (ver.22)
 
             [JsonIgnore]
-            [Obsolete, DataMember(Name = "History", EmitDefaultValue = false)]
+            [Obsolete("use Books"), DataMember(Name = "History", EmitDefaultValue = false)]
             public List<Book.Memento>? OldBooks { get; set; } // no used (ver.31)
 
 
@@ -500,7 +499,7 @@ namespace NeeView
             [OnDeserialized]
             private void OnDeserialized(StreamingContext c)
             {
-#pragma warning disable CS0612
+#pragma warning disable CS0618
                 // before v31
                 if (_Version < Environment.GenerateProductVersionNumber(31, 0, 0))
                 {
@@ -511,7 +510,7 @@ namespace NeeView
                     Books = OldBooks ?? new List<Book.Memento>();
                     foreach (var book in Books)
                     {
-                        book.LastAccessTime = default(DateTime);
+                        book.LastAccessTime = default;
                     }
 
                     OldBooks = null;
@@ -522,7 +521,7 @@ namespace NeeView
                 {
                     IsKeepLastFolder = IsKeepFolderStatus;
                 }
-#pragma warning restore CS0612
+#pragma warning restore CS0618
             }
 
 
@@ -561,15 +560,15 @@ namespace NeeView
             #region Legacy
 
             // ファイルに保存
-            [Obsolete]
+            [Obsolete("no used")]
             public void SaveV1(string path)
             {
-                XmlWriterSettings settings = new XmlWriterSettings();
+                var settings = new XmlWriterSettings();
                 settings.Encoding = new System.Text.UTF8Encoding(false);
                 settings.Indent = true;
                 using (XmlWriter xw = XmlWriter.Create(path, settings))
                 {
-                    DataContractSerializer serializer = new DataContractSerializer(typeof(Memento));
+                    var serializer = new DataContractSerializer(typeof(Memento));
                     serializer.WriteObject(xw, this);
                 }
             }
@@ -588,9 +587,8 @@ namespace NeeView
             {
                 using (XmlReader xr = XmlReader.Create(stream))
                 {
-                    DataContractSerializer serializer = new DataContractSerializer(typeof(Memento));
-                    var memento = serializer.ReadObject(xr) as Memento;
-                    if (memento is null) throw new FormatException();
+                    var serializer = new DataContractSerializer(typeof(Memento));
+                    var memento = serializer.ReadObject(xr) as Memento ?? throw new FormatException();
                     return memento;
                 }
             }

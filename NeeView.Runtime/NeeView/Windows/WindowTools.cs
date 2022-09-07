@@ -83,7 +83,11 @@ namespace NeeView.Windows
                 var handle = new System.Windows.Interop.WindowInteropHelper(window).Handle;
                 var style = NativeMethods.GetWindowLong(handle, NativeMethods.GWL_STYLE);
                 style = style & (~(int)disableStyleFlags);
-                NativeMethods.SetWindowLong(handle, NativeMethods.GWL_STYLE, style);
+                var result = NativeMethods.SetWindowLong(handle, NativeMethods.GWL_STYLE, style);
+                if (result == 0)
+                {
+                    // SetWindowLong failed.
+                }
             }
         }
 

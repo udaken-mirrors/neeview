@@ -29,15 +29,18 @@ namespace NeeView
         private static MainWindow? _current;
         public static MainWindow Current => _current ?? throw new InvalidOperationException();
 
-        private MainWindowViewModel _vm;
-        private RoutedCommandBinding _routedCommandBinding;
-        private MainViewComponent _viewComponent;
-        private DpiScaleProvider _dpiProvider = new DpiScaleProvider();
+        // インスタンス保持用
+        [SuppressMessage("CodeQuality", "IDE0052:読み取られていないプライベート メンバーを削除", Justification = "<保留中>")]
+        private readonly RoutedCommandBinding _routedCommandBinding;
 
-        private WindowChromeAccessor _windowChromeAccessor;
-        private WindowStateManager _windowStateManager;
-        private WindowShape _windowShape;
-        private WindowController _windowController;
+        private readonly MainWindowViewModel _vm;
+        private readonly MainViewComponent _viewComponent;
+        private readonly DpiScaleProvider _dpiProvider = new();
+
+        private readonly WindowChromeAccessor _windowChromeAccessor;
+        private readonly WindowStateManager _windowStateManager;
+        private readonly WindowShape _windowShape;
+        private readonly WindowController _windowController;
 
 
         public MainWindow()
@@ -70,7 +73,7 @@ namespace NeeView
             mouseHorizontalWheel.MouseHorizontalWheelChanged += (s, e) => MouseHorizontalWheelChanged?.Invoke(s, e);
 
             // 固定画像初期化
-            Thumbnail.InitializeBasicImages();
+            ThumbnailResource.InitializeStaticImages();
             FileIconCollection.Current.InitializeAsync();
 
             // FpReset 念のため
@@ -89,7 +92,7 @@ namespace NeeView
 
             MainViewManager.Initialize(_viewComponent, this.MainViewSocket);
 
-            MainWindowModel.Initialize(_windowShape, _windowStateManager);
+            MainWindowModel.Initialize(_windowShape);
 
             // MainWindow : ViewModel
             _vm = new MainWindowViewModel(MainWindowModel.Current);
@@ -226,7 +229,7 @@ namespace NeeView
         /// <summary>
         /// Window状態初期設定 
         /// </summary>
-        private void InitializeWindowShapeSnap()
+        private static void InitializeWindowShapeSnap()
         {
             var state = Config.Current.Window.State;
 
@@ -282,7 +285,7 @@ namespace NeeView
             if (!IsActive)
             {
                 IsMouseActivate = true;
-                var async = ResetMouseActivateAsync(100);
+                _ = ResetMouseActivateAsync(100);
             }
         }
 
@@ -892,7 +895,7 @@ namespace NeeView
 
         // [開発用] 設定初期化
         [Conditional("DEBUG")]
-        private void Debug_Initialize()
+        private static void Debug_Initialize()
         {
             DebugGesture.Initialize();
         }

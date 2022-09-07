@@ -52,12 +52,12 @@ namespace NeeLaboratory.Collections.Specialized
             return _items.Count > 0 ? string.Join(";", _items) : null;
         }
 
-        private string? ValidateItem(string item)
+        private static string? ValidateItem(string item)
         {
             return string.IsNullOrWhiteSpace(item) ? null : "." + item.Trim().TrimStart('.').ToLower();
         }
 
-        private List<string> ValidateCollection(IEnumerable<string>? items)
+        private static List<string> ValidateCollection(IEnumerable<string>? items)
         {
             if (items == null) return new List<string>();
 

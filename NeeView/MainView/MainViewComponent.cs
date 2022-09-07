@@ -13,7 +13,7 @@ namespace NeeView
         public static MainViewComponent Current => _current ?? throw new InvalidOperationException();
 
 
-        private MainView _mainView;
+        private readonly MainView _mainView;
         private bool _disposedValue;
 
 

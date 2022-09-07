@@ -32,8 +32,7 @@ namespace NeeView.Setting
 
         private void InputGestureSettingControl_Loaded(object sender, RoutedEventArgs e)
         {
-            var window = Window.GetWindow(this) as INotifyMouseHorizontalWheelChanged;
-            if (window is null) throw new InvalidOperationException();
+            var window = Window.GetWindow(this) as INotifyMouseHorizontalWheelChanged ?? throw new InvalidOperationException();
 
             var source = new MouseHorizontalWheelSource(this.MouseGestureBox, window);
             source.MouseHorizontalWheelChanged += MouseGestureBox_MouseHorizontalWheelChanged;
@@ -114,7 +113,7 @@ namespace NeeView.Setting
         /// </summary>
         /// <param name="source"></param>
         /// <returns></returns>
-        private string? ValidateKeyGestureText(string? source)
+        private static string? ValidateKeyGestureText(string? source)
         {
             if (source is null) return null;
 
@@ -142,8 +141,7 @@ namespace NeeView.Setting
         {
             if (_vm is null) return;
 
-            var token = this.InputGestureList.SelectedValue as GestureToken;
-            if (token != null)
+            if (this.InputGestureList.SelectedValue is GestureToken token)
             {
                 _vm.RemoveGesture(token.Gesture);
             }
@@ -330,8 +328,7 @@ namespace NeeView.Setting
         {
             if (_vm is null) return;
 
-            var item = this.InputGestureList.SelectedValue as GestureToken;
-            if (item != null)
+            if (this.InputGestureList.SelectedValue is GestureToken item)
             {
                 _vm.ResolveConflict(item, Window.GetWindow(this));
             }

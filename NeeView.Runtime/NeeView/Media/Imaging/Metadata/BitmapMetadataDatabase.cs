@@ -10,11 +10,11 @@ namespace NeeView.Media.Imaging.Metadata
 {
     public class BitmapMetadataDatabase : IReadOnlyDictionary<BitmapMetadataKey, object?>
     {
-        private static Dictionary<BitmapMetadataKey, object?> _emptyMap = Enum.GetValues(typeof(BitmapMetadataKey)).Cast<BitmapMetadataKey>().ToDictionary(e => e, e => (object?)null);
+        private static readonly Dictionary<BitmapMetadataKey, object?> _emptyMap = Enum.GetValues(typeof(BitmapMetadataKey)).Cast<BitmapMetadataKey>().ToDictionary(e => e, e => (object?)null);
         public static BitmapMetadataDatabase Default { get; } = new BitmapMetadataDatabase();
 
 
-        private Dictionary<BitmapMetadataKey, object?> _map;
+        private readonly Dictionary<BitmapMetadataKey, object?> _map;
 
         public BitmapMetadataDatabase()
         {
@@ -49,7 +49,7 @@ namespace NeeView.Media.Imaging.Metadata
         public bool IsOriantationEnabled { get; private set; }
 
 
-        private Dictionary<BitmapMetadataKey, object?> CreateMap(BitmapMetadataAccessor accessor)
+        private static Dictionary<BitmapMetadataKey, object?> CreateMap(BitmapMetadataAccessor accessor)
         {
             var map = new Dictionary<BitmapMetadataKey, object?>();
 

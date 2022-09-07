@@ -4,10 +4,10 @@ namespace NeeView
 {
     public class PageListPresenter
     {
-        private PageListView _pageListView;
-        private PageList _pageList;
+        private readonly PageListView _pageListView;
+        private readonly PageList _pageList;
+        private readonly PageListBoxViewModel _listBoxViewModel;
         private PageListBox? _pageListBox;
-        private PageListBoxViewModel _listBoxViewModel;
 
 
         public PageListPresenter(PageListView pageListView, PageList pageList)

@@ -13,11 +13,11 @@ namespace NeeView
         public static MainMenu Current { get; }
 
 
-        private MenuTree _mainMenuSource;
+        private readonly MenuTree _mainMenuSource;
         private Menu? _menu;
 
 #if DEBUG
-        private DebugMenu _debugMenu = new DebugMenu();
+        private readonly DebugMenu _debugMenu = new();
 #endif
 
 
@@ -96,7 +96,7 @@ namespace NeeView
         /// <remarks>
         /// アイコンの色は親のForegroundを参照する
         /// </remarks>
-        private DrawingImage CreateMenuIcon()
+        private static DrawingImage CreateMenuIcon()
         {
             var drawing = new GeometryDrawing();
             drawing.Geometry = App.Current.Resources["g_menu_24px"] as Geometry;

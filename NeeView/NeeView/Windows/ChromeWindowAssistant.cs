@@ -15,9 +15,9 @@ namespace NeeView.Windows
 {
     public class ChromeWindowAssistant
     {
-        private Window _window;
-        private WindowChromeAccessor _windowChrome;
-        private WindowStateManager _windowStateManager;
+        private readonly Window _window;
+        private readonly WindowChromeAccessor _windowChrome;
+        private readonly WindowStateManager _windowStateManager;
 
         public ChromeWindowAssistant(Window window)
         {
@@ -47,8 +47,7 @@ namespace NeeView.Windows
         private void Window_Loaded(object? sender, RoutedEventArgs e)
         {
             // CaptionBar があればその高さを設定
-            var captionBar = _window.Template.FindName("PART_CaptionBar", _window) as CaptionBar;
-            if (captionBar != null)
+            if (_window.Template.FindName("PART_CaptionBar", _window) is CaptionBar captionBar)
             {
                 captionBar.SetBinding(CaptionBar.MinHeightProperty, new Binding(nameof(WindowChromeAccessor.CaptionHeight)) { Source = _windowChrome });
             }

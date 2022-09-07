@@ -14,9 +14,9 @@ namespace NeeView
 {
     public class MediaViewContent : BitmapViewContent
     {
-        private static ObjectPool<MediaPlayer> _mediaPlayerPool = new ObjectPool<MediaPlayer>();
+        private static readonly ObjectPool<MediaPlayer> _mediaPlayerPool = new();
 
-        private MediaContent _animatedContent;
+        private readonly MediaContent _animatedContent;
         private MediaPlayer? _player;
         private TextBlock _errorMessageTextBlock;
         private DrawingBrush _brush;
@@ -136,11 +136,9 @@ namespace NeeView
 
         private void Media_MediaOpened(object? sender, EventArgs e)
         {
-            var content = this.Content as MediaContent;
-            if (content == null) return;
+            if (this.Content is not MediaContent content) return;
 
-            var player = sender as MediaPlayer;
-            if (player is null) return;
+            if (sender is not MediaPlayer player) return;
 
             var size = new Size(player.NaturalVideoWidth, player.NaturalVideoHeight);
             Size = size;

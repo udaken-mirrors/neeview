@@ -10,7 +10,7 @@ namespace NeeView.Runtime.LayoutPanel
 {
     public class LayoutPanelWindow : Window, IDpiScaleProvider
     {
-        private DpiScaleProvider _dpiProvider;
+        private readonly DpiScaleProvider _dpiProvider;
 
 
         public LayoutPanelWindow()

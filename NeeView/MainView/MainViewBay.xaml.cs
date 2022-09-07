@@ -20,8 +20,8 @@ namespace NeeView
     /// </summary>
     public partial class MainViewBay : UserControl, IHasDeviceInput
     {
-        private MouseInput _mouseInput;
-        private TouchInput _touchInput;
+        private readonly MouseInput _mouseInput;
+        private readonly TouchInput _touchInput;
 
 
         public MouseInput MouseInput => _mouseInput;

@@ -6,7 +6,7 @@ namespace NeeView
 {
     public abstract class ItemsListMoreMenuDescription : MoreMenuDescription
     {
-        private static PanelListItemStyleToBooleanConverter _converter = new PanelListItemStyleToBooleanConverter();
+        private static readonly PanelListItemStyleToBooleanConverter _converter = new();
 
         protected MenuItem CreateListItemStyleMenuItem(string header, ICommand command, PanelListItemStyle style, IHasPanelListItemStyle source)
         {

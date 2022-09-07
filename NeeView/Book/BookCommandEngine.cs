@@ -59,7 +59,7 @@ namespace NeeView
     /// </summary>
     internal class BookCommandAction : BookCommand
     {
-        private Func<object?, CancellationToken, Task> _taskAction;
+        private readonly Func<object?, CancellationToken, Task> _taskAction;
 
         public BookCommandAction(object? sender, Func<object?, CancellationToken, Task> taskAction, int priority) : base(sender, priority)
         {
@@ -78,7 +78,7 @@ namespace NeeView
     /// </summary>
     internal class BookCommandJoinAction : BookCommand
     {
-        private Func<object?, int, CancellationToken, Task> _taskAction;
+        private readonly Func<object?, int, CancellationToken, Task> _taskAction;
         private int _value;
 
         public BookCommandJoinAction(object? sender, Func<object?, int, CancellationToken, Task> taskAction, int value, int priority) : base(sender, priority)
@@ -119,8 +119,7 @@ namespace NeeView
             Debug.Assert(job is BookCommand);
             Debug.Assert(queue is not null);
 
-            var request = job as BookCommand;
-            if (request is null) return queue;
+            if (job is not BookCommand request) return queue;
 
             Debug.Assert(queue.Count <= 1);
             var select = queue.Count > 0 ? (BookCommand)queue.Peek() : null;

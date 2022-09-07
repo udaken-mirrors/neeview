@@ -6,19 +6,12 @@ namespace NeeView
     public class DragActionParameterSource
     {
         private DragActionParameter? _parameter;
-        private Type _type;
+        private readonly Type _type;
 
-#if false
-        public DragActionParameterSource()
-        {
-        }
-#endif
 
         public DragActionParameterSource(Type defaultType)
         {
-            if (defaultType == null) throw new ArgumentNullException(nameof(defaultType));
-
-            _type = defaultType;
+            _type = defaultType ?? throw new ArgumentNullException(nameof(defaultType));
         }
 
 
@@ -29,8 +22,7 @@ namespace NeeView
 
         public DragActionParameter GetDefault()
         {
-            var instance = Activator.CreateInstance(_type) as DragActionParameter;
-            if (instance is null) throw new InvalidOperationException();
+            if (Activator.CreateInstance(_type) is not DragActionParameter instance) throw new InvalidOperationException();
             return instance;
         }
 

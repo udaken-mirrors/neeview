@@ -16,10 +16,10 @@ namespace NeeView
 
     public static class FolderOrderClassExtension
     {
-        private static Dictionary<FolderOrder, string> _mapFull;
-        private static Dictionary<FolderOrder, string> _mapWithPath;
-        private static Dictionary<FolderOrder, string> _mapNormal;
-        private static Dictionary<FolderOrder, string> _mapNone;
+        private static readonly Dictionary<FolderOrder, string> _mapFull;
+        private static readonly Dictionary<FolderOrder, string> _mapWithPath;
+        private static readonly Dictionary<FolderOrder, string> _mapNormal;
+        private static readonly Dictionary<FolderOrder, string> _mapNone;
 
         static FolderOrderClassExtension()
         {
@@ -40,17 +40,13 @@ namespace NeeView
 
         public static Dictionary<FolderOrder, string> GetFolderOrderMap(this FolderOrderClass self)
         {
-            switch (self)
+            return self switch
             {
-                case FolderOrderClass.Full:
-                    return _mapFull;
-                case FolderOrderClass.WithPath:
-                    return _mapWithPath;
-                case FolderOrderClass.Normal:
-                    return _mapNormal;
-                default:
-                    return _mapNone;
-            }
+                FolderOrderClass.Full => _mapFull,
+                FolderOrderClass.WithPath => _mapWithPath,
+                FolderOrderClass.Normal => _mapNormal,
+                _ => _mapNone,
+            };
         }
     }
 

@@ -128,6 +128,16 @@ namespace NeeView
                 return (FolderOrder == other.FolderOrder &&
                     IsFolderRecursive == other.IsFolderRecursive);
             }
+
+            public override bool Equals(object? obj)
+            {
+                return Equals(obj as Memento);
+            }
+
+            public override int GetHashCode()
+            {
+                return HashCode.Combine(FolderOrder, IsFolderRecursive);
+            }
         }
 
         public Memento CreateMemento()

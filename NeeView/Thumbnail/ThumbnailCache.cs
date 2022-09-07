@@ -27,11 +27,11 @@ namespace NeeView
 
 
         private ThumbnailCacheConnection? _connection;
-        private object _lock = new object();
+        private readonly object _lock = new();
         private Dictionary<string, ThumbnailCacheItem> _saveQueue;
         private Dictionary<string, ThumbnailCacheHeader> _updateQueue;
-        private DelayAction _delaySaveQueue;
-        private object _lockSaveQueue = new object();
+        private readonly DelayAction _delaySaveQueue;
+        private readonly object _lockSaveQueue = new();
         private bool _isEnabled = true;
 
 
@@ -50,7 +50,7 @@ namespace NeeView
         /// <summary>
         /// キャッシュDBのパス
         /// </summary>
-        public string DatabasePath => Config.Current.Thumbnail.ThumbnailCacheFilePath ?? DefaultThumbnailCacheFilePath;
+        public static string DatabasePath => Config.Current.Thumbnail.ThumbnailCacheFilePath ?? DefaultThumbnailCacheFilePath;
 
         /// <summary>
         /// キャッシュ有効フラグ
@@ -69,7 +69,7 @@ namespace NeeView
         /// <summary>
         /// DBファイルサイズを取得
         /// </summary>
-        public long GetCaheDatabaseSize()
+        public static long GetCaheDatabaseSize()
         {
             if (DatabasePath == null) throw new InvalidOperationException();
 
@@ -318,6 +318,7 @@ namespace NeeView
         public void Dispose()
         {
             Dispose(true);
+            GC.SuppressFinalize(this);
         }
         #endregion
     }

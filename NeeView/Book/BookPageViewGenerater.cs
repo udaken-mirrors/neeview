@@ -15,23 +15,21 @@ namespace NeeView
     /// </summary>
     public class BookPageViewGenerater : BindableBase, IDisposable
     {
+        private readonly BookSource _book;
+        private readonly BookPageViewSetting _setting;
 
-
-        private BookSource _book;
-        private BookPageViewSetting _setting;
-
-        private object? _sender;
-        private PageRange _viewRange;
+        private readonly object? _sender;
+        private readonly PageRange _viewRange;
         private PageRange _nextRange;
-        private PageRange _contentRange;
+        private readonly PageRange _contentRange;
         private int _contentCount;
 
-        private CancellationTokenSource _cancellationTokenSource;
-        private object _lock = new object();
-        private SemaphoreSlim _semaphore;
+        private readonly CancellationTokenSource _cancellationTokenSource;
+        private readonly object _lock = new();
+        private readonly SemaphoreSlim _semaphore;
         private bool _isBusy = true;
-        private ManualResetEventSlim _visibleEvent = new ManualResetEventSlim();
-        private BookPageCounter _viewCounter;
+        private readonly ManualResetEventSlim _visibleEvent = new();
+        private readonly BookPageCounter _viewCounter;
 
         public BookPageViewGenerater(object? sender, BookSource book, BookPageViewSetting setting, PageRange viewPageRange, List<PageRange> aheadPageRanges, BookPageCounter viewCounter)
         {
@@ -86,7 +84,6 @@ namespace NeeView
         }
 
 
-
         public void UpdateNextContents()
         {
             if (_disposedValue) return;
@@ -94,7 +91,7 @@ namespace NeeView
             _semaphore.Release();
         }
 
-        private async ValueTask WorkerAsync(CancellationToken token)
+        private async Task WorkerAsync(CancellationToken token)
         {
             try
             {
@@ -217,7 +214,7 @@ namespace NeeView
 
 
         // ページのワイド判定
-        private bool IsWide(Page page)
+        private static bool IsWide(Page page)
         {
             return page.Width > page.Height * Config.Current.Book.WideRatio;
         }
@@ -332,7 +329,6 @@ namespace NeeView
         #region IDisposable Support
         private bool _disposedValue = false;
 
-        [SuppressMessage("Microsoft.Usage", "CA2213:DisposableFieldsShouldBeDisposed", MessageId = "_semaphore")]
         protected virtual void Dispose(bool disposing)
         {
             if (!_disposedValue)
@@ -353,6 +349,7 @@ namespace NeeView
         public void Dispose()
         {
             Dispose(true);
+            GC.SuppressFinalize(this);
         }
         #endregion
 

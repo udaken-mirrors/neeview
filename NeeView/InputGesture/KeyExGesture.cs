@@ -41,8 +41,7 @@ namespace NeeView
         // 入力判定
         public override bool Matches(object targetElement, InputEventArgs inputEventArgs)
         {
-            var keyEventArgs = inputEventArgs as KeyEventArgs;
-            if (keyEventArgs == null) return false;
+            if (inputEventArgs is not KeyEventArgs keyEventArgs) return false;
 
             // 入力許可？ (Escキーは常に受け入れる)
             if (!AllowSingleKey && keyEventArgs.Key != Key.Escape) return false;
@@ -58,7 +57,7 @@ namespace NeeView
         }
 
         // 
-        private bool IsDefinedKey(Key key)
+        private static bool IsDefinedKey(Key key)
         {
             return Key.None <= key && key <= Key.OemClear;
         }

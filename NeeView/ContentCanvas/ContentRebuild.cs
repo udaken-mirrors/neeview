@@ -16,8 +16,8 @@ namespace NeeView
     /// </summary>
     public class ContentRebuild : BindableBase, IDisposable
     {
-        private MainViewComponent _viewComponent;
-        private KeyPressWatcher _keyPressWatcher;
+        private readonly MainViewComponent _viewComponent;
+        private readonly KeyPressWatcher _keyPressWatcher;
         private bool _isResizingWindow;
         private bool _isUpdateContentSize;
         private bool _isUpdateContentViewBox;
@@ -25,7 +25,7 @@ namespace NeeView
         private bool _isBusy;
         private bool _isKeyUpChance;
         private bool _ignoreMouseState;
-        private DisposableCollection _disposables = new DisposableCollection();
+        private readonly DisposableCollection _disposables = new();
 
 
         public ContentRebuild(MainViewComponent viewComponent)
@@ -240,6 +240,7 @@ namespace NeeView
         public void Dispose()
         {
             Dispose(true);
+            GC.SuppressFinalize(this);
         }
         #endregion
     }

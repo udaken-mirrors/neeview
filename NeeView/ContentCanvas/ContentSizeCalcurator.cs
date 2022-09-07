@@ -72,11 +72,11 @@ namespace NeeView
     /// </summary>
     public class ContentSizeCalcurator
     {
-        private PageStretchMode StretchMode => Config.Current.View.StretchMode;
-        private double ContentsSpace => Config.Current.Book.ContentsSpace;
-        private AutoRotateType AutoRotateType => Config.Current.View.AutoRotate;
-        private bool AllowEnlarge => Config.Current.View.AllowStretchScaleUp;
-        private bool AllowReduce => Config.Current.View.AllowStretchScaleDown;
+        private static PageStretchMode StretchMode => Config.Current.View.StretchMode;
+        private static double ContentsSpace => Config.Current.Book.ContentsSpace;
+        private static AutoRotateType AutoRotateType => Config.Current.View.AutoRotate;
+        private static bool AllowEnlarge => Config.Current.View.AllowStretchScaleUp;
+        private static bool AllowReduce => Config.Current.View.AllowStretchScaleDown;
 
 
 
@@ -118,22 +118,16 @@ namespace NeeView
         /// <returns></returns>
         public double GetAutoRotateAngle(List<Size> source, Size viewSize, AngleResetMode angleResetMode, double defaultAngle)
         {
-            switch (angleResetMode)
+            return angleResetMode switch
             {
-                case AngleResetMode.None:
-                    return defaultAngle;
-
-                case AngleResetMode.ForceAutoRotate:
-                    return this.AutoRotateType.ToAngle();
-
-                default:
-                case AngleResetMode.Normal:
-                    return CheckAutoRotate(GetContentSize(source), viewSize).ToAngle();
-            }
+                AngleResetMode.None => defaultAngle,
+                AngleResetMode.ForceAutoRotate => AutoRotateType.ToAngle(),
+                _ => CheckAutoRotate(GetContentSize(source), viewSize).ToAngle(),
+            };
         }
 
         // 自動回転する？
-        private AutoRotateType CheckAutoRotate(Size contentSize, Size viewSize)
+        private static AutoRotateType CheckAutoRotate(Size contentSize, Size viewSize)
         {
             if (Config.Current.View.AutoRotate == AutoRotateType.None) return AutoRotateType.None;
 
@@ -151,7 +145,7 @@ namespace NeeView
         }
 
         //
-        private Size GetContentSize(List<Size> source)
+        private static Size GetContentSize(List<Size> source)
         {
             var c0 = source[0];
             var c1 = source[1];
@@ -171,7 +165,7 @@ namespace NeeView
                 return c0;
             }
             // オリジナルサイズ
-            else if (this.StretchMode == PageStretchMode.None)
+            else if (StretchMode == PageStretchMode.None)
             {
                 return new Size(c0.Width + c1.Width, Math.Max(c0.Height, c1.Height));
             }
@@ -196,7 +190,7 @@ namespace NeeView
         }
 
         // ストレッチモードに合わせて各コンテンツのスケールを計算する。BaseScaleを適用
-        private Size[] CalcContentSize(List<Size> source, double width, double height, double margin, double angle, DpiScale dpiScale)
+        private static Size[] CalcContentSize(List<Size> source, double width, double height, double margin, double angle, DpiScale dpiScale)
         {
             var sizes = CalcContentSizeBase(source, width, height, margin, angle, dpiScale);
 
@@ -211,7 +205,7 @@ namespace NeeView
         }
 
         // ストレッチモードに合わせて各コンテンツのスケールを計算する
-        private Size[] CalcContentSizeBase(List<Size> source, double width, double height, double margin, double angle, DpiScale dpiScale)
+        private static Size[] CalcContentSizeBase(List<Size> source, double width, double height, double margin, double angle, DpiScale dpiScale)
         {
             if (width < 1.0) width = 1.0;
             if (height < 1.0) height = 1.0;
@@ -225,7 +219,7 @@ namespace NeeView
             var originalSize = new Size[] { d0, d1 };
 
             // オリジナルサイズ
-            if (this.StretchMode == PageStretchMode.None)
+            if (StretchMode == PageStretchMode.None)
             {
                 return originalSize;
             }
@@ -299,7 +293,7 @@ namespace NeeView
             }
 
             // 面積をあわせる
-            if (this.StretchMode == PageStretchMode.UniformToSize)
+            if (StretchMode == PageStretchMode.UniformToSize)
             {
                 var viewSize = width * height;
                 var contentSize = content.Width * content.Height;
@@ -310,19 +304,19 @@ namespace NeeView
                 rate1 *= rate;
             }
             // 高さを合わせる
-            else if (this.StretchMode == PageStretchMode.UniformToVertical)
+            else if (StretchMode == PageStretchMode.UniformToVertical)
             {
                 rate0 *= rateH;
                 rate1 *= rateH;
             }
             // 幅を合わせる
-            else if (this.StretchMode == PageStretchMode.UniformToHorizontal)
+            else if (StretchMode == PageStretchMode.UniformToHorizontal)
             {
                 rate0 *= rateW;
                 rate1 *= rateW;
             }
             // 枠いっぱいに広げる
-            else if (this.StretchMode == PageStretchMode.UniformToFill)
+            else if (StretchMode == PageStretchMode.UniformToFill)
             {
                 if (rateW > rateH)
                 {

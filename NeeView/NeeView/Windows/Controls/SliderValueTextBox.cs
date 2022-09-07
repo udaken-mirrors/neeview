@@ -10,8 +10,8 @@ namespace NeeView.Windows.Controls
     /// </summary>
     public class SliderValueTextBox : Grid
     {
-        private FormattedTextBox _mainTextBox;
-        private TextBox _subTextBox;
+        private readonly FormattedTextBox _mainTextBox;
+        private readonly TextBox _subTextBox;
 
 
         public SliderValueTextBox()

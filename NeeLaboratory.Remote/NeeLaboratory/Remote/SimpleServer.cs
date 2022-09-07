@@ -15,9 +15,9 @@ namespace NeeLaboratory.Remote
     {
         public delegate List<Chunk> SimpleReciever(List<Chunk> chunks);
 
-        private string _name;
+        private readonly string _name;
 
-        private Dictionary<int, SimpleReciever> _recievers = new Dictionary<int, SimpleReciever>();
+        private readonly Dictionary<int, SimpleReciever> _recievers = new();
 
         public SimpleServer(string name)
         {
@@ -41,7 +41,7 @@ namespace NeeLaboratory.Remote
         public void ServerProcessTurn()
         {
             ////Trace.WriteLine($"Server: Open");
-            using (NamedPipeServerStream pipeServer = new NamedPipeServerStream(_name, PipeDirection.InOut))
+            using (var pipeServer = new NamedPipeServerStream(_name, PipeDirection.InOut))
             {
                 ////Trace.WriteLine($"Server: Wait for connect...");
                 pipeServer.WaitForConnection();

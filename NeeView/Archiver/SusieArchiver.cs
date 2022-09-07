@@ -16,7 +16,7 @@ namespace NeeView
     public class SusieArchiver : Archiver
     {
         private SusieArchivePluginAccessor? _susiePlugin;
-        private object _lock = new object();
+        private readonly object _lock = new();
 
 
         public SusieArchiver(string path, ArchiveEntry? source) : base(path, source)
@@ -105,11 +105,8 @@ namespace NeeView
 
             lock (_lock)
             {
-                var info = entry.Instance as SusieArchiveEntry;
-                if (info is null) throw new InvalidCastException();
-
-                var plugin = GetPlugin();
-                if (plugin is null) throw new SusieException("Cannot found archive plugin");
+                var info = entry.Instance as SusieArchiveEntry ?? throw new InvalidCastException();
+                var plugin = GetPlugin() ?? throw new SusieException("Cannot found archive plugin");
 
                 byte[] buffer = plugin.ExtractArchiveEntry(Path, info.Position);
                 return new MemoryStream(buffer);
@@ -122,11 +119,8 @@ namespace NeeView
         {
             if (entry.Id < 0) throw new ApplicationException("Cannot open this entry: " + entry.EntryName);
 
-            var info = entry.Instance as SusieArchiveEntry;
-            if (info is null) throw new InvalidCastException();
-
-            var plugin = GetPlugin();
-            if (plugin is null) throw new SusieException("Cannot found archive plugin");
+            var info = entry.Instance as SusieArchiveEntry ?? throw new InvalidCastException();
+            var plugin = GetPlugin() ?? throw new SusieException("Cannot found archive plugin");
 
             // 16MB以上のエントリは直接ファイル出力を試みる
             if (entry.Length > 16 * 1024 * 1024)
@@ -192,7 +186,7 @@ namespace NeeView
 
             // NOTE: Susieプラグインの場合、サイズに関係なくプラグインに設定されたフラグでのみ判定
             var plugin = GetPlugin();
-            return plugin != null ? plugin.Plugin.IsPreExtract : false;
+            return plugin != null && plugin.Plugin.IsPreExtract;
         }
     }
 }

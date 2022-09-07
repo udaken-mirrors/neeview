@@ -88,7 +88,7 @@ namespace NeeView.Setting
 
         private void OpenCustomThemeFolder_Execute()
         {
-            ThemeManager.Current.OpenCustomThemeFolder();
+            ThemeManager.OpenCustomThemeFolder();
         }
         #endregion
 

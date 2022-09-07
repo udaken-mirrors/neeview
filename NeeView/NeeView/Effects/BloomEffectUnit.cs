@@ -16,7 +16,7 @@ namespace NeeView.Effects
     [DataContract]
     public class BloomEffectUnit : EffectUnit
     {
-        private static BloomEffect _effect = new BloomEffect();
+        private static readonly BloomEffect _effect = new();
         public override Effect GetEffect() => _effect;
 
         /// <summary>

@@ -64,8 +64,7 @@ namespace NeeView.Windows.Property
             Debug.Assert(Source is null || Source.GetType() == source.GetType());
             foreach (var element in Elements)
             {
-                var property = element as PropertyMemberElement;
-                if (property != null)
+                if (element is PropertyMemberElement property)
                 {
                     property.SetValue(property.GetValue(source));
                 }
@@ -93,7 +92,7 @@ namespace NeeView.Windows.Property
         }
 
 
-        private List<PropertyDrawElement> CreateProperyContentList(object source)
+        private static List<PropertyDrawElement> CreateProperyContentList(object source)
         {
             var type = source.GetType();
 
@@ -134,7 +133,7 @@ namespace NeeView.Windows.Property
             }
         }
 
-        private PropertyMemberElement? CreatePropertyMemberElement(object source, string propertyName)
+        private static PropertyMemberElement? CreatePropertyMemberElement(object source, string propertyName)
         {
             var type = source.GetType();
             var info = type.GetProperty(propertyName);
@@ -148,16 +147,6 @@ namespace NeeView.Windows.Property
         private static PropertyMemberAttribute? GetPropertyMemberAttribute(MemberInfo info)
         {
             return (PropertyMemberAttribute?)Attribute.GetCustomAttributes(info, typeof(PropertyMemberAttribute)).FirstOrDefault();
-        }
-
-        private static DefaultValueAttribute? GetDefaultValueAttribute(MemberInfo info)
-        {
-            return (DefaultValueAttribute?)Attribute.GetCustomAttributes(info, typeof(DefaultValueAttribute)).FirstOrDefault();
-        }
-
-        private static ObsoleteAttribute? GetObsoleteValueAttribute(MemberInfo info)
-        {
-            return (ObsoleteAttribute?)Attribute.GetCustomAttributes(info, typeof(ObsoleteAttribute)).FirstOrDefault();
         }
     }
 

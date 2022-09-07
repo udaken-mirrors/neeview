@@ -22,7 +22,7 @@ namespace NeeView.Effects
     [DataContract]
     public class PixelateEffectUnit : EffectUnit
     {
-        private static PixelateEffect _effect = new PixelateEffect();
+        private static readonly PixelateEffect _effect = new();
         public override Effect GetEffect() => _effect;
 
         /// <summary>

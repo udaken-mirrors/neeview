@@ -12,8 +12,7 @@ namespace NeeView
         //
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
-            string? parameterString = parameter as string;
-            if (parameterString == null)
+            if (parameter is not string parameterString)
             {
                 return DependencyProperty.UnsetValue;
             }
@@ -31,8 +30,7 @@ namespace NeeView
         //
         public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
-            string? parameterString = parameter as string;
-            if (parameterString == null)
+            if (parameter is not string parameterString)
             {
                 return DependencyProperty.UnsetValue;
             }

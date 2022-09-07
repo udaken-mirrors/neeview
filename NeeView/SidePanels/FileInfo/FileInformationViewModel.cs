@@ -18,7 +18,7 @@ namespace NeeView
 {
     public class FileInformationViewModel : BindableBase
     {
-        private FileInformation _model;
+        private readonly FileInformation _model;
         private FileInformationSource? _selectedItem;
 
 

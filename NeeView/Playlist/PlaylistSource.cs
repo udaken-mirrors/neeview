@@ -9,7 +9,7 @@ namespace NeeView
 {
     public class PlaylistSource
     {
-        public static readonly FormatVersion FormatVersion = new FormatVersion("NeeView.Playlist", 2, 0, 0);
+        public static readonly FormatVersion FormatVersion = new("NeeView.Playlist", 2, 0, 0);
 
         public PlaylistSource()
         {

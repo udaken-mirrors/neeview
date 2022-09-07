@@ -20,7 +20,6 @@ namespace NeeView
         private bool _isEnabled = true;
         private bool _isVisiblePlaylistMark = true;
         private double _thickness = 25.0;
-        private Color _color = Colors.SteelBlue;
 
 
         [JsonIgnore]
@@ -128,7 +127,7 @@ namespace NeeView
 
         #region Obsolete
 
-        [Obsolete, Alternative(nameof(IsHidePageSliderInAutoHideMode), 38)] // ver.38
+        [Obsolete("no used"), Alternative(nameof(IsHidePageSliderInAutoHideMode), 38)] // ver.38
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         public bool IsHidePageSliderInFullscreen
         {

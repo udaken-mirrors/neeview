@@ -22,6 +22,7 @@ namespace NeeView
     {
         private MediaControlViewModel? _vm;
 
+
         public MediaControlView()
         {
             InitializeComponent();

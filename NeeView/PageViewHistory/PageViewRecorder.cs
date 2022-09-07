@@ -35,9 +35,9 @@ namespace NeeView
         private DateTime _viewedBookDateTime;
         private string? _viewedBookAddress;
         private string? _viewedBookName;
-        private object _lock = new object();
+        private readonly object _lock = new();
         private bool _disposedValue;
-        private DisposableCollection _disposables = new DisposableCollection();
+        private readonly DisposableCollection _disposables = new();
 
 
         private PageViewRecorder()

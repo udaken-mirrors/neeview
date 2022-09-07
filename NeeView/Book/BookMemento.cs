@@ -62,7 +62,7 @@ namespace NeeView
             public PageSortMode SortMode { get; set; }
 
             // 最終アクセス日
-            [Obsolete, DataMember(Order = 12, EmitDefaultValue = false)]
+            [Obsolete("no used"), DataMember(Order = 12, EmitDefaultValue = false)]
             public DateTime LastAccessTime { get; set; }
 
 

@@ -13,7 +13,7 @@ namespace NeeView
     /// </summary>
     public class MenuBar : BindableBase
     {
-        private WindowStateManager _windowStateManager;
+        private readonly WindowStateManager _windowStateManager;
 
 
         public MenuBar(WindowStateManager windowStateManager)

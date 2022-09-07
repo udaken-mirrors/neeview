@@ -54,16 +54,11 @@ namespace NeeView
             {
                 if (_PageOrientation != value)
                 {
-                    switch (value)
+                    _PageOrientation = value switch
                     {
-                        default:
-                            _PageOrientation = PageOrientation.Portrait;
-                            break;
-                        case PageOrientation.Landscape:
-                        case PageOrientation.ReverseLandscape:
-                            _PageOrientation = PageOrientation.Landscape;
-                            break;
-                    }
+                        PageOrientation.Landscape or PageOrientation.ReverseLandscape => PageOrientation.Landscape,
+                        _ => PageOrientation.Portrait,
+                    };
                     UpdatePrintOrientation();
                     RaisePropertyChanged();
                 }
@@ -198,7 +193,7 @@ namespace NeeView
         /// Margin property.
         /// </summary>
         [DataMember(Name = nameof(Margin))]
-        private Margin _Margin = new Margin();
+        private Margin _Margin = new();
         public Margin Margin
         {
             get { return _Margin; }
@@ -210,7 +205,7 @@ namespace NeeView
         /// </summary>
         /// <param name="mm"></param>
         /// <returns></returns>
-        private double MillimeterToPixel(double mm)
+        private static double MillimeterToPixel(double mm)
         {
             return mm * 0.039370 * 96.0; // mm -> inch -> 96dpi
         }
@@ -219,12 +214,12 @@ namespace NeeView
         /// <summary>
         /// 印刷コンテキスト
         /// </summary>
-        PrintContext _context;
+        private readonly PrintContext _context;
 
         /// <summary>
         /// Print Dialog
         /// </summary>
-        private PrintDialog _printDialog;
+        private readonly PrintDialog _printDialog;
 
         /// <summary>
         /// 印刷領域サイズ
@@ -363,9 +358,6 @@ namespace NeeView
                 double extentWidth = isLandspace ? _area.ExtentHeight : _area.ExtentWidth;
                 double extentHeight = isLandspace ? _area.ExtentWidth : _area.ExtentHeight;
 
-                double printWidth = extentWidth * Columns;
-                double printHeight = extentHeight * Rows;
-
                 // 既定の余白
                 margin.Left = originWidth;
                 margin.Right = _printableAreaWidth - extentWidth - originWidth;
@@ -395,7 +387,6 @@ namespace NeeView
         {
             bool isView = PrintMode != PrintMode.RawImage;
 
-            bool isViewTransform = isView;
             bool isViewAll = PrintMode == PrintMode.ViewStretch || !isView;
             bool isViewPaperArea = isView && PrintMode == PrintMode.ViewFill;
             bool isEffect = isView;
@@ -637,11 +628,6 @@ namespace NeeView
             {
                 Constructor();
             }
-
-            [OnDeserialized]
-            private void OnDeserialized(StreamingContext c)
-            {
-            }
         }
 
         public Memento CreateMemento()
@@ -743,15 +729,12 @@ namespace NeeView
         /// <returns></returns>
         public static double Direction(this HorizontalAlignment self)
         {
-            switch (self)
+            return self switch
             {
-                case HorizontalAlignment.Left:
-                    return -1.0;
-                case HorizontalAlignment.Right:
-                    return 1.0;
-                default:
-                    return 0.0;
-            }
+                HorizontalAlignment.Left => -1.0,
+                HorizontalAlignment.Right => 1.0,
+                _ => 0.0,
+            };
         }
     }
 
@@ -767,15 +750,12 @@ namespace NeeView
         /// <returns></returns>
         public static double Direction(this VerticalAlignment self)
         {
-            switch (self)
+            return self switch
             {
-                case VerticalAlignment.Top:
-                    return -1.0;
-                case VerticalAlignment.Bottom:
-                    return 1.0;
-                default:
-                    return 0.0;
-            }
+                VerticalAlignment.Top => -1.0,
+                VerticalAlignment.Bottom => 1.0,
+                _ => 0.0,
+            };
         }
     }
 }

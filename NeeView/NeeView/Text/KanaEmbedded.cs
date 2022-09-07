@@ -8,7 +8,7 @@ namespace NeeView.Text
     /// </summary>
     public static class KanaEmbedded
     {
-        private static Dictionary<char, char> _hankakuZenkakuKanaMap = new Dictionary<char, char>()
+        private static readonly Dictionary<char, char> _hankakuZenkakuKanaMap = new()
         {
             ['｡'] = '。',
             ['｢'] = '「',

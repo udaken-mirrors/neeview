@@ -222,7 +222,7 @@ namespace NeeView
 
             if (!isRecursive)
             {
-                entries = entries.Where(e => LoosePath.Split(e.EntryName.Substring(path.Length)).Length == 1);
+                entries = entries.Where(e => LoosePath.Split(e.EntryName[path.Length..]).Length == 1);
             }
 
             return entries.ToList();

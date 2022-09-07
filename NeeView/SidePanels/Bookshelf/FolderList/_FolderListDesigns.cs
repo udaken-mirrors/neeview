@@ -7,6 +7,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
 
+#pragma warning disable CA1822
+
 namespace NeeView
 {
     /// <summary>
@@ -14,7 +16,7 @@ namespace NeeView
     /// </summary>
     public class Thumbnail_Design
     {
-        public BitmapImage BitmapSource => new BitmapImage(new Uri(@"E:\Work\test.png"));
+        public BitmapImage BitmapSource => new(new Uri(@"E:\Work\test.png"));
         public bool IsUniqueImage => true;
     }
 

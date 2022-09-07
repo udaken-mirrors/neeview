@@ -18,13 +18,13 @@ namespace NeeLaboratory.Threading.Jobs
         /// <summary>
         /// キャンセルトークン
         /// </summary>
-        private CancellationTokenSource _tokenSource = new CancellationTokenSource();
-        private CancellationToken _cancellationToken;
+        private readonly CancellationTokenSource _tokenSource = new();
+        private readonly CancellationToken _cancellationToken;
 
         /// <summary>
         /// 実行完了待ち用フラグ
         /// </summary>
-        private ManualResetEventSlim _complete = new ManualResetEventSlim(false);
+        private readonly ManualResetEventSlim _complete = new(false);
 
         /// <summary>
         /// 実行結果
@@ -185,6 +185,7 @@ namespace NeeLaboratory.Threading.Jobs
         public void Dispose()
         {
             Dispose(true);
+            GC.SuppressFinalize(this);
         }
         #endregion
     }

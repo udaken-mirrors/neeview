@@ -56,7 +56,7 @@ namespace NeeView
         // clamp
         public PagePosition Clamp(PagePosition min, PagePosition max)
         {
-            if (min._value > max._value) throw new ArgumentOutOfRangeException();
+            if (min._value > max._value) throw new ArgumentOutOfRangeException(nameof(max), "max must be greater than min");
 
             int value = _value;
             if (value < min._value) value = min._value;
@@ -101,8 +101,8 @@ namespace NeeView
         public override bool Equals(object? obj)
         {
             if (obj == null) return false;
-            if (!(obj is PagePosition)) return false;
-            return _value == ((PagePosition)obj)._value;
+            if (obj is not PagePosition pagePosition) return false;
+            return _value == pagePosition._value;
         }
 
         public override int GetHashCode()

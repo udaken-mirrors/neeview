@@ -33,7 +33,7 @@ namespace NeeView
             return string.IsNullOrWhiteSpace(item) ? "" : "." + ReplaceInvalidFileNameChars(item).Trim().TrimStart('.').ToLower();
         }
 
-        private string ReplaceInvalidFileNameChars(string s)
+        private static string ReplaceInvalidFileNameChars(string s)
         {
             if (s is null) return "";
 
@@ -50,6 +50,11 @@ namespace NeeView
         {
             if (other == null) return false;
             return this.ToString() == other.ToString();
+        }
+
+        public override bool Equals(object? obj)
+        {
+            return Equals(obj as FileTypeCollection);
         }
 
         public override int GetHashCode()

@@ -8,8 +8,8 @@ namespace NeeView
 {
     public class FolderItemFactory
     {
-        private QueryPath _place;
-        private bool _isOverlayEnabled;
+        private readonly QueryPath _place;
+        private readonly bool _isOverlayEnabled;
 
 
         public FolderItemFactory(QueryPath place, bool isOverlayEnabled)
@@ -229,7 +229,7 @@ namespace NeeView
             string name = entry.EntryLastName;
             if (prefix != null)
             {
-                name = entry.EntryFullName.Substring(prefix.Length).TrimStart(LoosePath.Separators);
+                name = entry.EntryFullName[prefix.Length..].TrimStart(LoosePath.Separators);
             }
 
             return new FileFolderItem(_isOverlayEnabled)
@@ -249,7 +249,7 @@ namespace NeeView
 
     public static class DriveReadyMap
     {
-        private static Dictionary<string, bool> _driveReadyMap = new Dictionary<string, bool>();
+        private static readonly Dictionary<string, bool> _driveReadyMap = new();
 
         public static bool IsDriveReady(string driveName)
         {

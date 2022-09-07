@@ -31,8 +31,8 @@ namespace NeeView
 
     public static class TouchActionClassExtension
     {
-        private static Dictionary<TouchAction, string> _mapHold;
-        private static Dictionary<TouchAction, string> _mapDrag;
+        private static readonly Dictionary<TouchAction, string> _mapHold;
+        private static readonly Dictionary<TouchAction, string> _mapDrag;
 
         static TouchActionClassExtension()
         {
@@ -45,14 +45,11 @@ namespace NeeView
 
         public static Dictionary<TouchAction, string> GetAliasNameMap(this TouchActionClass self)
         {
-            switch (self)
+            return self switch
             {
-                default:
-                case TouchActionClass.Hold:
-                    return _mapHold;
-                case TouchActionClass.Drag:
-                    return _mapDrag;
-            }
+                TouchActionClass.Drag => _mapDrag,
+                _ => _mapHold,
+            };
         }
     }
 }

@@ -60,7 +60,7 @@ namespace NeeView
         // ドラッグ＆ドロップ前処理
         private void Element_PreviewDragOver(object sender, DragEventArgs e)
         {
-            if (CheckDragContent(sender, e.Data))
+            if (CheckDragContent(e.Data))
             {
                 e.Effects = NowLoading.Current.IsDispNowLoading ? DragDropEffects.None : DragDropEffects.Copy;
                 e.Handled = true;
@@ -70,7 +70,7 @@ namespace NeeView
         // ドラッグ＆ドロップで処理を開始する
         private async void Element_Drop(object sender, DragEventArgs e)
         {
-            await LoadDataObjectAsync(sender, e.Data);
+            await LoadDataObjectAsync(e.Data);
         }
 
 
@@ -78,17 +78,17 @@ namespace NeeView
         public bool CanLoadFromClipboard()
         {
             var data = Clipboard.GetDataObject();
-            return data != null ? !NowLoading.Current.IsDispNowLoading && CheckDragContent(this, data) : false;
+            return data != null && !NowLoading.Current.IsDispNowLoading && CheckDragContent(data);
         }
 
         // コピー＆ペーストで処理を開始する
         public async void LoadFromClipboard()
         {
-            await LoadDataObjectAsync(this, Clipboard.GetDataObject());
+            await LoadDataObjectAsync(Clipboard.GetDataObject());
         }
 
         // データオブジェクトからのロード処理
-        private async Task LoadDataObjectAsync(object sender, IDataObject data)
+        private async Task LoadDataObjectAsync(IDataObject data)
         {
             if (NowLoading.Current.IsDispNowLoading || data == null) return;
 
@@ -124,7 +124,7 @@ namespace NeeView
         }
 
         // ドロップ受付判定
-        private bool CheckDragContent(object sender, IDataObject data)
+        private static bool CheckDragContent(IDataObject data)
         {
             if (data.GetDataPresent(PageListBox.DragDropFormat) || data.GetDataPresent(FileInformationView.DragDropFormat)) return false;
 
@@ -132,7 +132,7 @@ namespace NeeView
         }
 
         // ファイラーからのドロップ
-        private List<DropReciever> _fileDropRecievers = new List<DropReciever>()
+        private readonly List<DropReciever> _fileDropRecievers = new()
         {
             new DropQueryPath(),
             new DropFileDrop(),
@@ -142,7 +142,7 @@ namespace NeeView
         };
 
         // ブラウザからのドロップ
-        private List<DropReciever> _browserDropRecievers = new List<DropReciever>()
+        private readonly List<DropReciever> _browserDropRecievers = new()
         {
             new DropQueryPath(),
             new DropFileContents(),
@@ -209,7 +209,7 @@ namespace NeeView
                     }
                     else if (obj is string)
                     {
-                        Debug.WriteLine($"<{name}>: string: {obj.ToString()}");
+                        Debug.WriteLine($"<{name}>: string: {obj}");
                     }
                     else
                     {
@@ -245,7 +245,7 @@ namespace NeeView
         /// <summary>
         /// バイナリを画像としてファイルに保存(Async)
         /// </summary>
-        public async Task<string?> DownloadToFileAsync(byte[] buff, string? name, string downloadPath)
+        public static async Task<string?> DownloadToFileAsync(byte[] buff, string? name, string downloadPath)
         {
             return await Task.Run(() => DownloadToFile(buff, name, downloadPath));
         }
@@ -257,7 +257,7 @@ namespace NeeView
         /// <param name="name">希望ファイル名。現在の実装では無視されます</param>
         /// <param name="downloadPath">保存先フォルダー</param>
         /// <returns>出力されたファイルパスを返す。バイナリが画像データ出なかった場合はnull</returns>
-        public string? DownloadToFile(byte[] buff, string? name, string downloadPath)
+        public static string? DownloadToFile(byte[] buff, string? name, string downloadPath)
         {
             //if (!System.IO.Directory.Exists(downloadPath)) throw new DropException("保存先フォルダーが存在しません");
 
@@ -297,8 +297,9 @@ namespace NeeView
             return fileName;
         }
 
+#if false
         // ファイル名の修正
-        private string ValidateFileName(string name)
+        private static string ValidateFileName(string name)
         {
             string DefaultName = DateTime.Now.ToString("yyyyMMddHHmmss");
 
@@ -319,6 +320,7 @@ namespace NeeView
 
             return name;
         }
+#endif
     }
 
 
@@ -381,8 +383,7 @@ namespace NeeView
             // File drop
             if (data.GetDataPresent(DataFormats.FileDrop))
             {
-                string[]? files = data.GetData(DataFormats.FileDrop) as string[];
-                if (files is null)
+                if (data.GetData(DataFormats.FileDrop) is not string[] files)
                 {
                     return new List<string>();
                 }
@@ -412,8 +413,7 @@ namespace NeeView
             // File drop (from browser)
             if (data.GetDataPresent(DataFormats.FileDrop))
             {
-                string[]? files = data.GetData(DataFormats.FileDrop) as string[];
-                if (files != null)
+                if (data.GetData(DataFormats.FileDrop) is string[] files)
                 {
                     var fileNames = new List<string>();
                     foreach (var file in files)
@@ -456,7 +456,7 @@ namespace NeeView
                         const string keyword = "base64,";
                         var index = url.IndexOf(keyword);
                         if (index < 0) continue;  // base64の埋め込みのサポート
-                        var crypt = url.Substring(index + keyword.Length);
+                        var crypt = url[(index + keyword.Length)..];
                         var bytes = Convert.FromBase64String(crypt);
 
                         // ファイル化
@@ -543,9 +543,7 @@ namespace NeeView
         {
             if (data.GetDataPresent(DataFormats.Bitmap))
             {
-                var bitmap = data.GetData(DataFormats.Bitmap) as System.Windows.Interop.InteropBitmap;
-
-                if (bitmap != null)
+                if (data.GetData(DataFormats.Bitmap) is System.Windows.Interop.InteropBitmap bitmap)
                 {
                     var name = DateTime.Now.ToString("yyyyMMddHHmmss") + ".png";
 

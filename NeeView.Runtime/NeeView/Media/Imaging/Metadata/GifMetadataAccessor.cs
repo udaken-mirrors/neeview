@@ -8,8 +8,8 @@ namespace NeeView.Media.Imaging.Metadata
 {
     public class GifMetadataAccessor : BitmapMetadataAccessor
     {
-        private BitmapMetadata _meta;
-        private List<string> _comments = new List<string>();
+        private readonly BitmapMetadata _meta;
+        private readonly List<string> _comments = new();
 
         public GifMetadataAccessor(BitmapMetadata meta)
         {
@@ -19,8 +19,7 @@ namespace NeeView.Media.Imaging.Metadata
             // commentext  map
             foreach (var key in meta.Where(e => e.EndsWith("commentext", StringComparison.Ordinal)))
             {
-                var commentextMeta = meta.GetQuery(key) as BitmapMetadata;
-                if (commentextMeta != null)
+                if (meta.GetQuery(key) is BitmapMetadata commentextMeta)
                 {
                     var text = commentextMeta.GetQuery("/TextEntry") as string;
                     if (!string.IsNullOrWhiteSpace(text))
@@ -38,14 +37,11 @@ namespace NeeView.Media.Imaging.Metadata
 
         public override object? GetValue(BitmapMetadataKey key)
         {
-            switch (key)
+            return key switch
             {
-                case BitmapMetadataKey.Comments:
-                    return string.Join(Environment.NewLine, _comments);
-
-                default:
-                    return null;
-            }
+                BitmapMetadataKey.Comments => string.Join(Environment.NewLine, _comments),
+                _ => null,
+            };
         }
     }
 

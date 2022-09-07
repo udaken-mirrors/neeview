@@ -11,8 +11,8 @@ namespace NeeView.Collections
     /// <typeparam name="T"></typeparam>
     public class HistoryLimitedCollection<T>
     {
-        private T?[] _buffer;
-        private int _bufferCapacity;
+        private readonly T?[] _buffer;
+        private readonly int _bufferCapacity;
         private int _bufferTop;
         private int _bufferSize;
 

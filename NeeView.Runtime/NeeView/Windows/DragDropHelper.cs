@@ -29,8 +29,7 @@ namespace NeeView.Windows
             ////    return;
             ////}
 
-            var container = sender as FrameworkElement;
-            if (container == null)
+            if (sender is not FrameworkElement container)
             {
                 return;
             }
@@ -70,7 +69,7 @@ namespace NeeView.Windows
             element.DragOver += Element_DragOverTerminator;
             element.DragEnter += Element_DragOverTerminator;
 
-            void Element_DragOverTerminator(object sender, DragEventArgs e)
+            static void Element_DragOverTerminator(object sender, DragEventArgs e)
             {
                 e.Effects = DragDropEffects.None;
                 e.Handled = true;

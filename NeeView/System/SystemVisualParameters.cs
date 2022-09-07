@@ -9,7 +9,7 @@ namespace NeeView
 {
     public class SystemVisualParameters : BindableBase
     {
-        public static class NativeMethods
+        internal static class NativeMethods
         {
             [DllImport("dwmapi.dll", PreserveSig = false)]
             public static extern void DwmGetColorizationColor(out uint colorizationColor, [MarshalAs(UnmanagedType.Bool)] out bool colorizationOpaqueBlend);
@@ -105,7 +105,7 @@ namespace NeeView
             IsHighContrast = SystemParameters.HighContrast;
         }
 
-        private SystemThemeType GetSystemAppTheme()
+        private static SystemThemeType GetSystemAppTheme()
         {
             try
             {
@@ -124,7 +124,7 @@ namespace NeeView
             }
         }
 
-        private Color GetAccentColor()
+        private static Color GetAccentColor()
         {
             try
             {

@@ -20,7 +20,7 @@ namespace NeeView
     /// </summary>
     public partial class PrintWindow : Window
     {
-        private PrintWindowViewModel? _vm;
+        private readonly PrintWindowViewModel? _vm;
 
 
         public PrintWindow()
@@ -95,8 +95,7 @@ namespace NeeView
         //
         private static void ItemsSource_Changed(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            var control = d as PrintPreviewControl;
-            if (control != null)
+            if (d is PrintPreviewControl control)
             {
                 control.Refresh();
             }

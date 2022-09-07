@@ -21,7 +21,7 @@ namespace NeeView
     /// </summary>
     public class HistoryListViewModel : BindableBase
     {
-        private HistoryList _model;
+        private readonly HistoryList _model;
 
 
         public HistoryListViewModel(HistoryList model)
@@ -42,7 +42,7 @@ namespace NeeView
 
         public class HistoryListMoreMenuDescription : ItemsListMoreMenuDescription
         {
-            private HistoryListViewModel _vm;
+            private readonly HistoryListViewModel _vm;
 
             public HistoryListMoreMenuDescription(HistoryListViewModel vm)
             {

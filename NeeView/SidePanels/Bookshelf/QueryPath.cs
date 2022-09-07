@@ -25,7 +25,7 @@ namespace NeeView
 
     public static class QuerySchemeExtensions
     {
-        static readonly Dictionary<QueryScheme, string> _map = new Dictionary<QueryScheme, string>()
+        static readonly Dictionary<QueryScheme, string> _map = new()
         {
             [QueryScheme.File] = "file:",
             [QueryScheme.Root] = "root:",
@@ -195,15 +195,15 @@ namespace NeeView
         public string DispPath => (_path == null) ? _scheme.ToAliasName() : SimplePath;
 
 
-        private string? TakeQuerySearch(string? source, out string? searchWord)
+        private static string? TakeQuerySearch(string? source, out string? searchWord)
         {
             if (source != null)
             {
                 var index = source.IndexOf(_querySearch);
                 if (index >= 0)
                 {
-                    searchWord = source.Substring(index + _querySearch.Length);
-                    return source.Substring(0, index);
+                    searchWord = source[(index + _querySearch.Length)..];
+                    return source[..index];
                 }
             }
 
@@ -211,7 +211,7 @@ namespace NeeView
             return source;
         }
 
-        private string? TakeScheme(string? source, out QueryScheme scheme)
+        private static string? TakeScheme(string? source, out QueryScheme scheme)
         {
             if (source != null)
             {
@@ -224,7 +224,7 @@ namespace NeeView
                     {
                         length++;
                     }
-                    return source.Substring(length);
+                    return source[length..];
                 }
             }
             else
@@ -235,7 +235,7 @@ namespace NeeView
             return source;
         }
 
-        private string? GetValidatePath(string? source, QueryScheme scheme)
+        private static string? GetValidatePath(string? source, QueryScheme scheme)
         {
             if (string.IsNullOrWhiteSpace(source))
             {
@@ -349,7 +349,7 @@ namespace NeeView
                 return true;
             }
 
-            if ((object?)a == null || (object?)b == null)
+            if (a is null || b is null)
             {
                 return false;
             }

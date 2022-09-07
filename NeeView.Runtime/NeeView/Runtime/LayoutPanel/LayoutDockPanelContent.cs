@@ -15,8 +15,7 @@ namespace NeeView.Runtime.LayoutPanel
 
         public DragDropDescriptor(LayoutPanelManager manager)
         {
-            if (manager == null) throw new ArgumentNullException();
-            _manager = manager;
+            _manager = manager ?? throw new ArgumentNullException(nameof(manager));
         }
 
         public void DragBegin()

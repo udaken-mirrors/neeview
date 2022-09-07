@@ -6,7 +6,7 @@ namespace NeeView.Windows
 {
     public class WindowStateCommands
     {
-        private Window _window;
+        private readonly Window _window;
 
         public WindowStateCommands(Window window)
         {

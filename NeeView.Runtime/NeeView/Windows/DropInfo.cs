@@ -15,8 +15,7 @@ namespace NeeView.Windows
 
         public DropInfo(DragEventArgs e, string format, T dropTarget, FrameworkElement dropTargetVisual)
         {
-            var data = e.Data.GetData(format) as T;
-            if (data == null) throw new ArgumentException();
+            var data = e.Data.GetData(format) as T ?? throw new ArgumentException($"dropData must be type {typeof(T).Name}", nameof(e));
 
             Data = data;
             DropTarget = dropTarget; 

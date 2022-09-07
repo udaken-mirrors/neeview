@@ -12,11 +12,10 @@ namespace NeeView
 
     public class FolderListPresenter
     {
-        private IHasFolderListBox _folderListView;
-        private FolderList _folderList;
-
+        private readonly IHasFolderListBox _folderListView;
+        private readonly FolderList _folderList;
+        private readonly FolderListBoxViewModel _folderListBoxViewModel;
         private FolderListBox? _folderListBox;
-        private FolderListBoxViewModel _folderListBoxViewModel;
 
 
         public FolderListPresenter(IHasFolderListBox folderListView, FolderList folderList)

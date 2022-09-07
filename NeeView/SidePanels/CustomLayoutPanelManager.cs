@@ -50,10 +50,10 @@ namespace NeeView
         }
 
         // TODO: この変数は不要だと思う
-        private bool _initialized;
+        private readonly bool _initialized;
 
         private bool _isStoreEnabled = true;
-        private SidePanelProfile _sidePanelProfile;
+        private readonly SidePanelProfile _sidePanelProfile;
 
 
         public CustomLayoutPanelManager()

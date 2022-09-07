@@ -8,14 +8,14 @@ namespace NeeView.Effects
 {
     public class ColorSelectEffect : ShaderEffect
     {
-        private static PixelShader s_pixelShader = new PixelShader()
+        private static readonly PixelShader _pixelShader = new()
         {
             UriSource = Tools.MakePackUri(typeof(ColorSelectEffect).Assembly, "NeeView/Effects/Shaders/ColorSelectEffect.ps")
         };
 
         public ColorSelectEffect()
         {
-            PixelShader = s_pixelShader;
+            PixelShader = _pixelShader;
 
             UpdateShaderValue(InputProperty);
             UpdateShaderValue(HueProperty);

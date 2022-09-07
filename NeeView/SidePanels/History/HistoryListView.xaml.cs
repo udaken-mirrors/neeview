@@ -21,12 +21,7 @@ namespace NeeView
     /// </summary>
     public partial class HistoryListView : UserControl
     {
-        private HistoryListViewModel _vm;
-
-        //public HistoryListView()
-        //{
-        //    InitializeComponent();
-        //}
+        private readonly HistoryListViewModel _vm;
 
         public HistoryListView(HistoryList model)
         {

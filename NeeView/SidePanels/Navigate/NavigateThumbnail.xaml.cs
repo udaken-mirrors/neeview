@@ -16,7 +16,7 @@ namespace NeeView
     /// </summary>
     public partial class NavigateThumbnail : UserControl
     {
-        private NavigateThumbnailViewModel _vm;
+        private readonly NavigateThumbnailViewModel _vm;
 
         public NavigateThumbnail()
         {

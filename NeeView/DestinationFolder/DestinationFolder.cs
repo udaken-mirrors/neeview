@@ -16,11 +16,8 @@ namespace NeeView
 
         public DestinationFolder(string name, string path)
         {
-            if (name == null) throw new ArgumentNullException(nameof(name));
-            if (path == null) throw new ArgumentNullException(nameof(path));
-
-            Name = name;
-            Path = path;
+            Name = name ?? throw new ArgumentNullException(nameof(name));
+            Path = path ?? throw new ArgumentNullException(nameof(path));
         }
 
 

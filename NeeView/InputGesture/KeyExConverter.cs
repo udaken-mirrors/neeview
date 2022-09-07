@@ -35,9 +35,9 @@ namespace NeeView
 
         public override object? ConvertFrom(ITypeDescriptorContext? context, CultureInfo? culture, object source)
         {
-            if (source is string)
+            if (source is string s)
             {
-                string fullName = ((string)source).Trim();
+                string fullName = s.Trim();
                 object? key = GetKey(fullName, CultureInfo.InvariantCulture);
                 if (key != null)
                 {
@@ -87,7 +87,7 @@ namespace NeeView
         }
 
 
-        private object? GetKey(string keyToken, CultureInfo? culture)
+        private static object? GetKey(string keyToken, CultureInfo? culture)
         {
             if (keyToken == string.Empty)
             {
@@ -113,59 +113,57 @@ namespace NeeView
                 }
                 else
                 {
-                    Key keyFound = (Key)(-1);
-                    switch (keyToken)
+                    var keyFound = keyToken switch
                     {
-                        case "ENTER": keyFound = Key.Return; break;
-                        case "ESC": keyFound = Key.Escape; break;
-                        case "PGUP": keyFound = Key.PageUp; break;
-                        case "PGDN": keyFound = Key.PageDown; break;
-                        case "PRTSC": keyFound = Key.PrintScreen; break;
-                        case "INS": keyFound = Key.Insert; break;
-                        case "DEL": keyFound = Key.Delete; break;
-                        case "WINDOWS": keyFound = Key.LWin; break;
-                        case "WIN": keyFound = Key.LWin; break;
-                        case "LEFTWINDOWS": keyFound = Key.LWin; break;
-                        case "RIGHTWINDOWS": keyFound = Key.RWin; break;
-                        case "APPS": keyFound = Key.Apps; break;
-                        case "APPLICATION": keyFound = Key.Apps; break;
-                        case "BREAK": keyFound = Key.Cancel; break;
-                        case "BACKSPACE": keyFound = Key.Back; break;
-                        case "BKSP": keyFound = Key.Back; break;
-                        case "BS": keyFound = Key.Back; break;
-                        case "SHIFT": keyFound = Key.LeftShift; break;
-                        case "LEFTSHIFT": keyFound = Key.LeftShift; break;
-                        case "RIGHTSHIFT": keyFound = Key.RightShift; break;
-                        case "CONTROL": keyFound = Key.LeftCtrl; break;
-                        case "CTRL": keyFound = Key.LeftCtrl; break;
-                        case "LEFTCTRL": keyFound = Key.LeftCtrl; break;
-                        case "RIGHTCTRL": keyFound = Key.RightCtrl; break;
-                        case "ALT": keyFound = Key.LeftAlt; break;
-                        case "LEFTALT": keyFound = Key.LeftAlt; break;
-                        case "RIGHTALT": keyFound = Key.RightAlt; break;
-                        case "SEMICOLON": keyFound = Key.OemSemicolon; break;
-                        case "PLUS": keyFound = Key.OemPlus; break;
-                        case "COMMA": keyFound = Key.OemComma; break;
-                        case "MINUS": keyFound = Key.OemMinus; break;
-                        case "PERIOD": keyFound = Key.OemPeriod; break;
-                        case "QUESTION": keyFound = Key.OemQuestion; break;
-                        case "TILDE": keyFound = Key.OemTilde; break;
-                        case "OPENBRACKETS": keyFound = Key.OemOpenBrackets; break;
-                        case "PIPE": keyFound = Key.OemPipe; break;
-                        case "CLOSEBRACKETS": keyFound = Key.OemCloseBrackets; break;
-                        case "QUOTES": keyFound = Key.OemQuotes; break;
-                        case "BACKSLASH": keyFound = Key.OemBackslash; break;
-                        case "FINISH": keyFound = Key.OemFinish; break;
-                        case "ATTN": keyFound = Key.Attn; break;
-                        case "CRSEL": keyFound = Key.CrSel; break;
-                        case "EXSEL": keyFound = Key.ExSel; break;
-                        case "ERASEEOF": keyFound = Key.EraseEof; break;
-                        case "PLAY": keyFound = Key.Play; break;
-                        case "ZOOM": keyFound = Key.Zoom; break;
-                        case "PA1": keyFound = Key.Pa1; break;
-                        default: keyFound = (Key)Enum.Parse(typeof(Key), keyToken, true); break;
-                    }
-
+                        "ENTER" => Key.Return,
+                        "ESC" => Key.Escape,
+                        "PGUP" => Key.PageUp,
+                        "PGDN" => Key.PageDown,
+                        "PRTSC" => Key.PrintScreen,
+                        "INS" => Key.Insert,
+                        "DEL" => Key.Delete,
+                        "WINDOWS" => Key.LWin,
+                        "WIN" => Key.LWin,
+                        "LEFTWINDOWS" => Key.LWin,
+                        "RIGHTWINDOWS" => Key.RWin,
+                        "APPS" => Key.Apps,
+                        "APPLICATION" => Key.Apps,
+                        "BREAK" => Key.Cancel,
+                        "BACKSPACE" => Key.Back,
+                        "BKSP" => Key.Back,
+                        "BS" => Key.Back,
+                        "SHIFT" => Key.LeftShift,
+                        "LEFTSHIFT" => Key.LeftShift,
+                        "RIGHTSHIFT" => Key.RightShift,
+                        "CONTROL" => Key.LeftCtrl,
+                        "CTRL" => Key.LeftCtrl,
+                        "LEFTCTRL" => Key.LeftCtrl,
+                        "RIGHTCTRL" => Key.RightCtrl,
+                        "ALT" => Key.LeftAlt,
+                        "LEFTALT" => Key.LeftAlt,
+                        "RIGHTALT" => Key.RightAlt,
+                        "SEMICOLON" => Key.OemSemicolon,
+                        "PLUS" => Key.OemPlus,
+                        "COMMA" => Key.OemComma,
+                        "MINUS" => Key.OemMinus,
+                        "PERIOD" => Key.OemPeriod,
+                        "QUESTION" => Key.OemQuestion,
+                        "TILDE" => Key.OemTilde,
+                        "OPENBRACKETS" => Key.OemOpenBrackets,
+                        "PIPE" => Key.OemPipe,
+                        "CLOSEBRACKETS" => Key.OemCloseBrackets,
+                        "QUOTES" => Key.OemQuotes,
+                        "BACKSLASH" => Key.OemBackslash,
+                        "FINISH" => Key.OemFinish,
+                        "ATTN" => Key.Attn,
+                        "CRSEL" => Key.CrSel,
+                        "EXSEL" => Key.ExSel,
+                        "ERASEEOF" => Key.EraseEof,
+                        "PLAY" => Key.Play,
+                        "ZOOM" => Key.Zoom,
+                        "PA1" => Key.Pa1,
+                        _ => (Key)Enum.Parse(typeof(Key), keyToken, true),
+                    };
                     if ((int)keyFound != -1)
                     {
                         return keyFound;
@@ -175,8 +173,7 @@ namespace NeeView
             }
         }
 
-
-        private static string? MatchKey(Key key, CultureInfo? culture)
+        private static string? MatchKey(Key key, CultureInfo? _)
         {
             if (key == Key.None)
             {

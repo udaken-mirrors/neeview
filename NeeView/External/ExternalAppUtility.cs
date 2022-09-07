@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace NeeView
 {
     // プログラムの種類
-    [Obsolete]
+    [Obsolete("no used")]
     public enum ExternalProgramType
     {
         [AliasName]
@@ -64,7 +64,7 @@ namespace NeeView
 
 
         // 外部アプリの実行(コア)
-        private void CallProcess(string fileName, OpenExternalAppCommandParameter options)
+        private static void CallProcess(string fileName, OpenExternalAppCommandParameter options)
         {
             string param = ReplaceKeyword(ValidateApplicationParam(options.Parameter), fileName);
 

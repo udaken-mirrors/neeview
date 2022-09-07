@@ -6,23 +6,16 @@ namespace NeeView.Windows.Controls
 {
     public class SafeValueConverter<T> : IValueConverter
     {
-        private IValueConverter _converter;
+        private readonly IValueConverter _converter;
 
         public SafeValueConverter()
         {
-            switch (Type.GetTypeCode(typeof(T)))
+            _converter = Type.GetTypeCode(typeof(T)) switch
             {
-                case TypeCode.Int32:
-                    _converter = new SafeIntegerValueConverter();
-                    break;
-
-                case TypeCode.Double:
-                    _converter = new SafeDoubleValueConverter();
-                    break;
-
-                default:
-                    throw new NotSupportedException();
-            }
+                TypeCode.Int32 => new SafeIntegerValueConverter(),
+                TypeCode.Double => new SafeDoubleValueConverter(),
+                _ => throw new NotSupportedException(),
+            };
         }
 
 

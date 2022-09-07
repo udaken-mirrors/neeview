@@ -17,17 +17,17 @@ namespace NeeView
 
         private MainViewWindow? _window;
 
-        private MainViewComponent _viewComponent;
+        private readonly MainViewComponent _viewComponent;
 
-        private MainView _mainView;
-        private MainViewBay _mainViewBay;
+        private readonly MainView _mainView;
+        private readonly MainViewBay _mainViewBay;
 
-        private ContentControl _defaultSocket;
+        private readonly ContentControl _defaultSocket;
 
         private bool _isStoreEnabled = true;
 
-        private MainViewLockerMediator _mediator;
-        private MainViewLocker _dockingLocker;
+        private readonly MainViewLockerMediator _mediator;
+        private readonly MainViewLocker _dockingLocker;
         private MainViewLocker? _floatingLocker;
 
         public MainViewWindow? Window => _window;

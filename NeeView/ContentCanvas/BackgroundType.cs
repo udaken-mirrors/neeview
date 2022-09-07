@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace NeeView
 {
-    [Obsolete]
+    [Obsolete("no used")]
     public enum BackgroundStyleV1
     {
         Black,

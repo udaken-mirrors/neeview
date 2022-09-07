@@ -234,7 +234,7 @@ namespace NeeView.Setting
         /// </summary>
         public class CacheLimitSpan : IndexTimeSpanValue
         {
-            private static List<TimeSpan> _values = new List<TimeSpan>() {
+            private static readonly List<TimeSpan> _values = new() {
                 TimeSpan.FromDays(2),
                 TimeSpan.FromDays(3),
                 TimeSpan.FromDays(7),
@@ -242,7 +242,7 @@ namespace NeeView.Setting
                 TimeSpan.FromDays(30),
                 TimeSpan.FromDays(100),
                 TimeSpan.FromDays(365),
-                default(TimeSpan),
+                default,
             };
 
             public CacheLimitSpan() : base(_values)
@@ -254,7 +254,7 @@ namespace NeeView.Setting
                 Value = value;
             }
 
-            public override string ValueString => Value == default(TimeSpan) ? Properties.Resources.Word_NoLimit : string.Format(Properties.Resources.Word_DaysAgo, Value.Days);
+            public override string ValueString => Value == default ? Properties.Resources.Word_NoLimit : string.Format(Properties.Resources.Word_DaysAgo, Value.Days);
         }
     }
 

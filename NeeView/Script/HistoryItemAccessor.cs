@@ -4,7 +4,7 @@ namespace NeeView
 {
     public class HistoryItemAccessor
     {
-        private BookHistory _source;
+        private readonly BookHistory _source;
 
         public HistoryItemAccessor(BookHistory source)
         {

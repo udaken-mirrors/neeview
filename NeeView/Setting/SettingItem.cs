@@ -288,8 +288,8 @@ namespace NeeView.Setting
     /// </summary>
     public class SettingItemProperty : SettingItem
     {
-        private PropertyMemberElement _element;
-        private object? _content;
+        private readonly PropertyMemberElement _element;
+        private readonly object? _content;
 
         public SettingItemProperty(PropertyMemberElement element) : base(element.Name)
         {
@@ -339,8 +339,8 @@ namespace NeeView.Setting
     /// </summary>
     public class SettingItemMultiProperty : SettingItem
     {
-        private PropertyMemberElement _element1;
-        private PropertyMemberElement _element2;
+        private readonly PropertyMemberElement _element1;
+        private readonly PropertyMemberElement _element2;
 
         public SettingItemMultiProperty(PropertyMemberElement element1, PropertyMemberElement element2) : base(element1?.ToString())
         {
@@ -371,8 +371,8 @@ namespace NeeView.Setting
     /// </summary>
     public class SettingItemSubProperty : SettingItem
     {
-        private PropertyMemberElement _element;
-        private object? _content;
+        private readonly PropertyMemberElement _element;
+        private readonly object? _content;
 
         public SettingItemSubProperty(PropertyMemberElement element) : base(element.Name)
         {
@@ -405,7 +405,7 @@ namespace NeeView.Setting
     /// </summary>
     public class SettingItemPropertyFont : SettingItem
     {
-        private PropertyMemberElement _element;
+        private readonly PropertyMemberElement _element;
 
         public SettingItemPropertyFont(PropertyMemberElement element) : base(element?.ToString())
         {
@@ -440,9 +440,9 @@ namespace NeeView.Setting
     public class SettingItemIndexValue<T> : SettingItem
         where T : struct
     {
-        private PropertyMemberElement _element;
-        private IndexValue<T> _indexValue;
-        private bool _isEditable;
+        private readonly PropertyMemberElement _element;
+        private readonly IndexValue<T> _indexValue;
+        private readonly bool _isEditable;
 
         public SettingItemIndexValue(PropertyMemberElement element, IndexValue<T> indexValue, bool isEditable) : base(element?.ToString())
         {
@@ -478,8 +478,8 @@ namespace NeeView.Setting
     /// </summary>
     public class SettingItemButton : SettingItem
     {
-        private object? _buttonContent;
-        private ICommand _command;
+        private readonly object? _buttonContent;
+        private readonly ICommand _command;
 
         public bool IsContentOnly { get; set; }
 
@@ -530,7 +530,7 @@ namespace NeeView.Setting
     /// </summary>
     public class SettingItemLink : SettingItem
     {
-        private ICommand _command;
+        private readonly ICommand _command;
 
         public SettingItemLink(string header, ICommand command)
             : base(header)
@@ -562,8 +562,8 @@ namespace NeeView.Setting
     /// </summary>
     public class SettingItemNote : SettingItem
     {
-        private string _text;
-        private string _header;
+        private readonly string _text;
+        private readonly string _header;
 
         public SettingItemNote(string text, string header) : base(null)
         {
@@ -616,7 +616,8 @@ namespace NeeView.Setting
     /// </summary>
     public class SettingItemSusiePlugin : SettingItem
     {
-        private SusiePluginType _pluginType;
+        private readonly SusiePluginType _pluginType;
+
         public SettingItemSusiePlugin(SusiePluginType pluginType) : base(null)
         {
             _pluginType = pluginType;

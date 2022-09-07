@@ -2,7 +2,7 @@
 {
     public class BookmarkItemAccessor
     {
-        private FolderItem _source;
+        private readonly FolderItem _source;
 
         public BookmarkItemAccessor(FolderItem source)
         {

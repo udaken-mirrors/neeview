@@ -115,8 +115,9 @@ namespace NeeView.IO
             }
 
             //IMAGE LIST
-            public static Guid IID_IImageList = new Guid("46EB5926-582E-4017-9FDF-E8998DAA0950");
-            public static Guid IID_IImageList2 = new Guid("192B9D83-50FC-457B-90A0-2B82A8B5DAE1");
+            public static Guid IID_IImageList = new("46EB5926-582E-4017-9FDF-E8998DAA0950");
+            private static readonly Guid guid = new("192B9D83-50FC-457B-90A0-2B82A8B5DAE1");
+            public static Guid IID_IImageList2 = guid;
             //Private Const IID_IImageList    As String = "{46EB5926-582E-4017-9FDF-E8998DAA0950}"
             //Private Const IID_IImageList2   As String = "{192B9D83-50FC-457B-90A0-2B82A8B5DAE1}"
 
@@ -124,8 +125,8 @@ namespace NeeView.IO
             [StructLayout(LayoutKind.Sequential)]
             public struct POINT
             {
-                int x;
-                int y;
+                public int x;
+                public int y;
             }
 
             [StructLayout(LayoutKind.Sequential)]
@@ -259,26 +260,20 @@ namespace NeeView.IO
         };
 
 
-        private static object _lock = new object();
+        private static readonly object _lock = new();
 
 
         public static List<BitmapSource> CreateIconCollection(string filename, FileIconType iconType, bool allowJumbo)
         {
-            switch (iconType)
+            return iconType switch
             {
-                case FileIconType.DirectoryType:
-                    return CreateDirectoryTypeIconCollection(filename, allowJumbo);
-                case FileIconType.FileType:
-                    return CreateFileTypeIconCollection(filename, allowJumbo);
-                case FileIconType.Drive:
-                    return CreateDriveIconCollection(filename, allowJumbo);
-                case FileIconType.Directory:
-                    return CreateDirectoryIconCollection(filename, allowJumbo);
-                case FileIconType.File:
-                    return CreateFileIconCollection(filename, allowJumbo);
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(iconType));
-            }
+                FileIconType.DirectoryType => CreateDirectoryTypeIconCollection(filename, allowJumbo),
+                FileIconType.FileType => CreateFileTypeIconCollection(filename, allowJumbo),
+                FileIconType.Drive => CreateDriveIconCollection(filename, allowJumbo),
+                FileIconType.Directory => CreateDirectoryIconCollection(filename, allowJumbo),
+                FileIconType.File => CreateFileIconCollection(filename, allowJumbo),
+                _ => throw new ArgumentOutOfRangeException(nameof(iconType)),
+            };
         }
 
         public static List<BitmapSource> CreateDirectoryTypeIconCollection(string filename, bool allowJumbo)
@@ -322,9 +317,11 @@ namespace NeeView.IO
 
         private static List<BitmapSource> CreateFileIconCollection(string filename, NativeMethods.FILE_ATTRIBUTE attribute, NativeMethods.SHGFI flags)
         {
-            var bitmaps = new List<BitmapSource>();
-            bitmaps.Add(CreateFileIcon(filename, attribute, flags, IconSize.Small));
-            bitmaps.Add(CreateFileIcon(filename, attribute, flags, IconSize.Large));
+            var bitmaps = new List<BitmapSource>
+            {
+                CreateFileIcon(filename, attribute, flags, IconSize.Small),
+                CreateFileIcon(filename, attribute, flags, IconSize.Large)
+            };
             return bitmaps.Where(e => e != null).ToList();
         }
 
@@ -346,7 +343,7 @@ namespace NeeView.IO
             ////var sw = Stopwatch.StartNew();
             lock (_lock)
             {
-                NativeMethods.SHFILEINFO shinfo = new NativeMethods.SHFILEINFO();
+                var shinfo = new NativeMethods.SHFILEINFO();
                 shinfo.szDisplayName = "";
                 shinfo.szTypeName = "";
                 IntPtr hImg = NativeMethods.SHGetFileInfo(filename, attribute, out shinfo, (uint)Marshal.SizeOf(typeof(NativeMethods.SHFILEINFO)), NativeMethods.SHGFI.SHGFI_SYSICONINDEX | flags);
@@ -403,7 +400,7 @@ namespace NeeView.IO
             ////var sw = Stopwatch.StartNew();
             lock (_lock)
             {
-                NativeMethods.SHFILEINFO shinfo = new NativeMethods.SHFILEINFO();
+                var shinfo = new NativeMethods.SHFILEINFO();
                 IntPtr hSuccess = NativeMethods.SHGetFileInfo(filename, attribute, out shinfo, (uint)Marshal.SizeOf(shinfo), flags | NativeMethods.SHGFI.SHGFI_ICON | (iconSize == IconSize.Small ? NativeMethods.SHGFI.SHGFI_SMALLICON : NativeMethods.SHGFI.SHGFI_LARGEICON));
                 if (hSuccess != IntPtr.Zero && shinfo.hIcon != IntPtr.Zero)
                 {

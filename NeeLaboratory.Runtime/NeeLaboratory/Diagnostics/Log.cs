@@ -13,8 +13,8 @@ namespace NeeLaboratory.Diagnostics
     /// </summary>
     public class Log : IDisposable 
     {
-        private TraceSource _traceSource;
-        private int _id;
+        private readonly TraceSource _traceSource;
+        private readonly int _id;
 
 
         /// <summary>

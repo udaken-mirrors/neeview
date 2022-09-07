@@ -42,7 +42,7 @@ namespace NeeView.Numetrics
         }
 
         // 最大公約数
-        private uint GreatestCommonDivisor(uint x, uint y)
+        private static uint GreatestCommonDivisor(uint x, uint y)
         {
             while (true)
             {

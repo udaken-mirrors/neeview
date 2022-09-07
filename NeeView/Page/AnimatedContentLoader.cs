@@ -5,7 +5,7 @@ namespace NeeView
 {
     public class AnimatedContentLoader : BitmapContentLoader
     {
-        private AnimatedContent _content;
+        private readonly AnimatedContent _content;
 
         public AnimatedContentLoader(AnimatedContent content) : base(content)
         {

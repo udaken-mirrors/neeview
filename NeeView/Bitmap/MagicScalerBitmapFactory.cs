@@ -19,7 +19,7 @@ namespace NeeView
 
 
         // 注意: sourceは上書きされます
-        private ProcessImageSettings CreateSetting(Size size, string mimeType, ProcessImageSettings? source)
+        private static ProcessImageSettings CreateSetting(Size size, string mimeType, ProcessImageSettings? source)
         {
             var setting = source ?? new ProcessImageSettings();
 
@@ -89,16 +89,13 @@ namespace NeeView
         }
 
         //
-        private string CreateFormat(BitmapImageFormat format)
+        private static string CreateFormat(BitmapImageFormat format)
         {
-            switch (format)
+            return format switch
             {
-                default:
-                case BitmapImageFormat.Jpeg:
-                    return ImageMimeTypes.Jpeg;
-                case BitmapImageFormat.Png:
-                    return ImageMimeTypes.Png;
-            }
+                BitmapImageFormat.Png => ImageMimeTypes.Png,
+                _ => ImageMimeTypes.Jpeg,
+            };
         }
     }
 

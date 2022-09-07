@@ -198,7 +198,7 @@ namespace NeeView.Data
             using (var outStream = new System.IO.MemoryStream())
             {
                 // 入力用ストリームに gzip ストリームのフィルターを付ける
-                using (GZipStream gzin = new GZipStream(new System.IO.MemoryStream(buff), CompressionMode.Decompress))
+                using (var gzin = new GZipStream(new System.IO.MemoryStream(buff), CompressionMode.Decompress))
                 {
                     gzin.CopyTo(outStream);
                 }

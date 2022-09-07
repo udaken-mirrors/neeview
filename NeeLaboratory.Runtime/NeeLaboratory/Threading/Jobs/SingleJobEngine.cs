@@ -18,22 +18,22 @@ namespace NeeLaboratory.Threading.Jobs
         /// <summary>
         /// ワーカータスクのキャンセルトークン
         /// </summary>
-        private CancellationTokenSource _engineCancellationTokenSource;
+        private readonly CancellationTokenSource _engineCancellationTokenSource;
 
         /// <summary>
         /// エンジンON/OFF
         /// </summary>
-        private ManualResetEventSlim _activeEvent = new ManualResetEventSlim(false);
+        private readonly ManualResetEventSlim _activeEvent = new(false);
 
         /// <summary>
         /// 予約Job存在通知
         /// </summary>
-        private ManualResetEventSlim _readyEvent = new ManualResetEventSlim(false);
+        private readonly ManualResetEventSlim _readyEvent = new(false);
 
         /// <summary>
         /// 予約Jobリスト
         /// </summary>
-        private Queue<IJob> _queue = new Queue<IJob>();
+        private Queue<IJob> _queue = new();
 
         /// <summary>
         /// 実行中Job
@@ -43,18 +43,18 @@ namespace NeeLaboratory.Threading.Jobs
         /// <summary>
         /// 排他処理用オブジェクト
         /// </summary>
-        private object _lock = new object();
+        private readonly object _lock = new();
 
         /// <summary>
         /// ワーカースレッド
         /// </summary>
-        private Thread? _thread;
+        private readonly Thread? _thread;
 
         /// <summary>
         /// 開発用：ログ
         /// </summary>
         /// TODO: LOGのあつかいもっとスマートにできそう
-        private Log? _log;
+        private readonly Log? _log;
 
 
 
@@ -320,6 +320,7 @@ namespace NeeLaboratory.Threading.Jobs
         public void Dispose()
         {
             Dispose(true);
+            GC.SuppressFinalize(this);
         }
         #endregion
     }

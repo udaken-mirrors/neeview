@@ -50,7 +50,7 @@ namespace NeeView
             source = new System.Text.RegularExpressions.Regex(@"^[a-z]:").Replace(source, m => m.Value.ToUpper());
             source = new System.Text.RegularExpressions.Regex(@":$").Replace(source, ":\\");
 
-            StringBuilder longPath = new StringBuilder(1024);
+            var longPath = new StringBuilder(1024);
             if (0 == NativeMethods.GetLongPathName(source, longPath, longPath.Capacity))
             {
                 return source;
@@ -66,11 +66,11 @@ namespace NeeView
         private bool _isLoading;
         private Book? _book;
         private string? _address;
-        private BookHubCommandEngine _commandEngine;
+        private readonly BookHubCommandEngine _commandEngine;
         private bool _historyEntry;
         private bool _historyRemoved;
         private int _requestLoadCount;
-        private DisposableCollection _disposables;
+        private readonly DisposableCollection _disposables;
 
         private BookHub()
         {
@@ -502,7 +502,7 @@ namespace NeeView
 
             if (parent.Path != null && parent.Scheme == QueryScheme.File)
             {
-                var entryName = current.SimplePath.Substring(parent.SimplePath.Length).TrimStart(LoosePath.Separators);
+                var entryName = current.SimplePath[parent.SimplePath.Length..].TrimStart(LoosePath.Separators);
                 var option = BookLoadOption.SkipSamePlace;
                 RequestLoad(sender, parent.SimplePath, entryName, option, true);
             }
@@ -720,7 +720,7 @@ namespace NeeView
         /// <summary>
         /// ブックを読み込む(本体)
         /// </summary>
-        private async Task<Book> LoadAsyncCore(object? sender, BookAddress address, BookLoadOption option, Book.Memento setting, bool isNew, CancellationToken token)
+        private static async Task<Book> LoadAsyncCore(object? sender, BookAddress address, BookLoadOption option, Book.Memento setting, bool isNew, CancellationToken token)
         {
             token.ThrowIfCancellationRequested();
 
@@ -874,7 +874,7 @@ namespace NeeView
         /// <summary>
         /// 現在開いているブックの設定作成
         /// </summary>
-        private Book.Memento? CreateBookMemento(Book book)
+        private static Book.Memento? CreateBookMemento(Book book)
         {
             return (book != null && book.Pages.Count > 0) ? book.CreateMemento() : null;
         }
@@ -883,7 +883,7 @@ namespace NeeView
         // 開いているブックならばその設定を取得する
         public Book.Memento CreateBookMemento(string path)
         {
-            if (path == null) throw new ArgumentNullException(nameof(Path));
+            if (path == null) throw new ArgumentNullException(nameof(path));
 
             var book = _book;
             var memento = book is not null ? CreateBookMemento(book) : null;
@@ -1131,61 +1131,61 @@ namespace NeeView
 
             #region Obslete
 
-            [Obsolete, DataMember(Order = 22, EmitDefaultValue = false)]
+            [Obsolete("no used"), DataMember(Order = 22, EmitDefaultValue = false)]
             public bool IsAutoRecursiveWithAllFiles { get; set; } // no used (ver.34)
 
-            [Obsolete, DataMember(EmitDefaultValue = false)]
+            [Obsolete("no used"), DataMember(EmitDefaultValue = false)]
             public bool IsArchiveRecursive { get; set; } // no used (ver.34)
 
-            [Obsolete, DataMember(EmitDefaultValue = false)]
+            [Obsolete("no used"), DataMember(EmitDefaultValue = false)]
             public bool IsEnableAnimatedGif { get; set; }
 
-            [Obsolete, DataMember(Order = 1, EmitDefaultValue = false)]
+            [Obsolete("no used"), DataMember(Order = 1, EmitDefaultValue = false)]
             public bool IsEnableExif { get; set; }
 
-            [Obsolete, DataMember(EmitDefaultValue = false)]
+            [Obsolete("no used"), DataMember(EmitDefaultValue = false)]
             public bool IsEnableNoSupportFile { get; set; }
 
-            [Obsolete, DataMember(Order = 19, EmitDefaultValue = false)]
+            [Obsolete("no used"), DataMember(Order = 19, EmitDefaultValue = false)]
             public PreLoadMode PreLoadMode { get; set; }
 
-            [Obsolete, DataMember(EmitDefaultValue = false)]
+            [Obsolete("no used"), DataMember(EmitDefaultValue = false)]
             public bool IsEnabledAutoNextFolder { get; set; } // no used
 
-            [Obsolete, DataMember(Order = 19, EmitDefaultValue = false)]
+            [Obsolete("no used"), DataMember(Order = 19, EmitDefaultValue = false)]
             public PageEndAction PageEndAction { get; set; } // no used (ver.23)
 
-            [Obsolete, DataMember(EmitDefaultValue = false)]
+            [Obsolete("no used"), DataMember(EmitDefaultValue = false)]
             public bool IsSlideShowByLoop { get; set; } // no used (ver.22)
 
-            [Obsolete, DataMember(EmitDefaultValue = false)]
+            [Obsolete("no used"), DataMember(EmitDefaultValue = false)]
             public double SlideShowInterval { get; set; } // no used (ver.22)
 
-            [Obsolete, DataMember(Order = 7, EmitDefaultValue = false)]
+            [Obsolete("no used"), DataMember(Order = 7, EmitDefaultValue = false)]
             public bool IsCancelSlideByMouseMove { get; set; } // no used (ver.22)
 
-            [Obsolete, DataMember(EmitDefaultValue = false)]
+            [Obsolete("no used"), DataMember(EmitDefaultValue = false)]
             public Book.Memento? BookMemento { get; set; } // no used (v.23)
 
-            [Obsolete, DataMember(Order = 2, EmitDefaultValue = false)]
+            [Obsolete("no used"), DataMember(Order = 2, EmitDefaultValue = false)]
             public bool IsEnarbleCurrentDirectory { get; set; } // no used
 
-            [Obsolete, DataMember(Order = 4, EmitDefaultValue = false)]
+            [Obsolete("no used"), DataMember(Order = 4, EmitDefaultValue = false)]
             public bool IsSupportArchiveFile { get; set; } // no used (v.23)
 
-            [Obsolete, DataMember(Order = 5, EmitDefaultValue = false)]
+            [Obsolete("no used"), DataMember(Order = 5, EmitDefaultValue = false)]
             public bool AllowPagePreLoad { get; set; } // no used
 
-            [Obsolete, DataMember(Order = 6, EmitDefaultValue = false)]
+            [Obsolete("no used"), DataMember(Order = 6, EmitDefaultValue = false)]
             public Book.Memento? BookMementoDefault { get; set; } // no used (v.23)
 
-            [Obsolete, DataMember(Order = 6, EmitDefaultValue = false)]
+            [Obsolete("no used"), DataMember(Order = 6, EmitDefaultValue = false)]
             public bool IsUseBookMementoDefault { get; set; } // no used (v.23)
 
-            [Obsolete, DataMember(Order = 19, EmitDefaultValue = false)]
+            [Obsolete("no used"), DataMember(Order = 19, EmitDefaultValue = false)]
             public BookMementoFilter? HistoryMementoFilter { get; set; } // no used (v.23)
 
-            [Obsolete, DataMember(Order = 20, EmitDefaultValue = false)]
+            [Obsolete("no used"), DataMember(Order = 20, EmitDefaultValue = false)]
             public string? Home { get; set; } // no used (ver.23)
 
             #endregion
@@ -1199,13 +1199,13 @@ namespace NeeView
             [OnDeserialized]
             private void OnDeserialized(StreamingContext c)
             {
-#pragma warning disable CS0612
+#pragma warning disable CS0618
                 // before 34.0
                 if (_Version < Environment.GenerateProductVersionNumber(34, 0, 0))
                 {
                     ArchiveRecursveMode = IsArchiveRecursive ? ArchiveEntryCollectionMode.IncludeSubArchives : ArchiveEntryCollectionMode.IncludeSubDirectories;
                 }
-#pragma warning restore CS0612
+#pragma warning restore CS0618
             }
 
             public void RestoreConfig(Config config)

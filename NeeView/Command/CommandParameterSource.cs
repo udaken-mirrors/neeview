@@ -8,7 +8,7 @@ namespace NeeView
     public class CommandParameterSource
     {
         private CommandParameter? _parameter;
-        private Type _type;
+        private readonly Type _type;
 
 #if false
         public CommandParameterSource()
@@ -32,8 +32,7 @@ namespace NeeView
 
         public CommandParameter GetDefault()
         {
-            var parameter = Activator.CreateInstance(_type) as CommandParameter;
-            if (parameter is null) throw new InvalidOperationException();
+            var parameter = Activator.CreateInstance(_type) as CommandParameter ?? throw new InvalidOperationException();
             return parameter;
         }
 
@@ -63,14 +62,14 @@ namespace NeeView
         }
 
 
-        [Obsolete]
+        [Obsolete("no used")]
         public string Store()
         {
             if (_parameter is null) return "";
             return Json.Serialize(_parameter, _type);
         }
 
-        [Obsolete]
+        [Obsolete("no used")]
         public void Restore(string json)
         {
             if (string.IsNullOrWhiteSpace(json))

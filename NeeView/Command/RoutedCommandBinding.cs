@@ -13,10 +13,10 @@ namespace NeeView
     /// </summary>
     class RoutedCommandBinding : IDisposable
     {
-        private FrameworkElement _element;
-        private Dictionary<string, CommandBinding> _commandBindings;
+        private readonly FrameworkElement _element;
+        private readonly Dictionary<string, CommandBinding> _commandBindings;
         private bool _skipMouseButtonUp;
-        private RoutedCommandTable _routedCommandTable;
+        private readonly RoutedCommandTable _routedCommandTable;
         private bool _disposedValue;
 
         public RoutedCommandBinding(FrameworkElement element, RoutedCommandTable routedCommandTable)

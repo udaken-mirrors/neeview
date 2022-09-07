@@ -57,8 +57,7 @@ namespace NeeView
 
         private void Thumbnail_Touched(object? sender, EventArgs e)
         {
-            var thumbnail = sender as Thumbnail;
-            if (thumbnail is null) return;
+            if (sender is not Thumbnail thumbnail) return;
 
             BookThumbnailPool.Current.Add(thumbnail);
         }

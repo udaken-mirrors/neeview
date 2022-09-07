@@ -8,7 +8,7 @@ namespace NeeView.Susie
     /// <summary>
     /// プラグイン設定(Obsolete ver 35.0)
     /// </summary>
-    [Obsolete]
+    [Obsolete("no used")]
     public class SusiePlugin
     {
         [DataContract]

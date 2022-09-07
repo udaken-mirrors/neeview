@@ -17,7 +17,7 @@ namespace NeeView.Effects
     [DataContract]
     public class RippleEffectUnit : EffectUnit
     {
-        private static RippleEffect _effect = new RippleEffect();
+        private static readonly RippleEffect _effect = new();
         public override Effect GetEffect() => _effect;
 
         /// <summary>

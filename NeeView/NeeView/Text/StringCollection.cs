@@ -176,10 +176,16 @@ namespace NeeView.Text
             return this.Items.SequenceEqual(other.Items);
         }
 
+        public override bool Equals(object? obj)
+        {
+            return Equals(obj as StringCollection);
+        }
+
         public override int GetHashCode()
         {
             return this.ToString().GetHashCode();
         }
+
     }
 
 

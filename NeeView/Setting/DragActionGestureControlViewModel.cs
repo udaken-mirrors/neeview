@@ -13,13 +13,13 @@ namespace NeeView.Setting
     /// </summary>
     public class DragActionGestureControlViewModel : BindableBase
     {
-        private DragActionCollection _sources;
-        private string _key;
+        private readonly DragActionCollection _sources;
+        private readonly string _key;
 
         /// <summary>
         /// Property: DragToken
         /// </summary>
-        private DragToken _dragToken = new DragToken();
+        private DragToken _dragToken = new();
         public DragToken DragToken
         {
             get { return _dragToken; }

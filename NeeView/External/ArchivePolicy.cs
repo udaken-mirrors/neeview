@@ -25,19 +25,19 @@ namespace NeeView
     {
         public static string ToSampleText(this ArchivePolicy self)
         {
-            switch (self)
+            return self switch
             {
-                case ArchivePolicy.None:
-                    return @"not run.";
-                case ArchivePolicy.SendArchiveFile:
-                    return @"C:\Archive.zip";
-                case ArchivePolicy.SendArchivePath:
-                    return @"C:\Archive.zip\File.jpg";
-                case ArchivePolicy.SendExtractFile:
-                    return @"ExtractToTempFolder\File.jpg";
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
+                ArchivePolicy.None
+                    => @"not run.",
+                ArchivePolicy.SendArchiveFile
+                    => @"C:\Archive.zip",
+                ArchivePolicy.SendArchivePath
+                    => @"C:\Archive.zip\File.jpg",
+                ArchivePolicy.SendExtractFile
+                    => @"ExtractToTempFolder\File.jpg",
+                _
+                    => throw new ArgumentOutOfRangeException($"not support self value: {self}"),
+            };
         }
     }
 

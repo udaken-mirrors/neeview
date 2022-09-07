@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -26,10 +25,18 @@ namespace NeeView
         public static bool DebugIgnoreCache { get; set; }
 
 
+
         /// <summary>
-        /// 有効判定
+        /// キャシュ用ヘッダ
         /// </summary>
-        internal bool IsValid => (_image != null);
+        private ThumbnailCacheHeader? _header;
+
+        /// <summary>
+        /// サムネイルデータ
+        /// </summary>
+        private byte[]? _image;
+
+
 
         /// <summary>
         /// 変更イベント
@@ -42,10 +49,15 @@ namespace NeeView
         public event EventHandler? Touched;
 
 
+
+        /// <summary>
+        /// 有効判定
+        /// </summary>
+        internal bool IsValid => _image != null;
+
         /// <summary>
         /// Jpeg化された画像
         /// </summary>
-        private byte[]? _image;
         public byte[]? Image
         {
             get { return _image; }
@@ -67,13 +79,13 @@ namespace NeeView
         /// <summary>
         /// ユニークイメージ？
         /// </summary>
-        public bool IsUniqueImage => _image == null || (_image != _emptyImage && _image != _mediaImage && _image != _folderImage);
+        public bool IsUniqueImage => _image == null || (_image != ThumbnailResource.EmptyImage && _image != ThumbnailResource.MediaImage && _image != ThumbnailResource.FolderImage);
 
         /// <summary>
         /// 標準イメージ？
         /// バナーでの引き伸ばし許可
         /// </summary>
-        public bool IsNormalImage => _image == null || (_image != _mediaImage && _image != _folderImage);
+        public bool IsNormalImage => _image == null || (_image != ThumbnailResource.MediaImage && _image != ThumbnailResource.FolderImage);
 
         /// <summary>
         /// View用Bitmapプロパティ
@@ -83,7 +95,6 @@ namespace NeeView
         public double Width => ImageSource is BitmapSource bitmap ? bitmap.PixelWidth : ImageSource != null ? ImageSource.Width : 0.0;
         public double Height => ImageSource is BitmapSource bitmap ? bitmap.PixelHeight : ImageSource != null ? ImageSource.Height : 0.0;
 
-
         /// <summary>
         /// View用Bitmapの背景プロパティ
         /// </summary>
@@ -91,9 +102,9 @@ namespace NeeView
         {
             get
             {
-                if (_image == _mediaImage)
+                if (_image == ThumbnailResource.MediaImage)
                 {
-                    return _mediaBackground;
+                    return ThumbnailResource.MediaBackground;
                 }
                 else
                 {
@@ -111,11 +122,6 @@ namespace NeeView
         /// キャッシュ使用
         /// </summary>
         public bool IsCacheEnabled { get; set; }
-
-        /// <summary>
-        /// キャシュ用ヘッダ
-        /// </summary>
-        public ThumbnailCacheHeader? _header { get; set; }
 
 
         /// <summary>
@@ -149,12 +155,10 @@ namespace NeeView
         {
             if (IsValid) return;
 
-            Image = image ?? _emptyImage;
+            Image = image ?? ThumbnailResource.EmptyImage;
 
             SaveCacheAsync();
         }
-
-
 
         /// <summary>
         /// サムネイル基本タイプから初期化
@@ -162,19 +166,12 @@ namespace NeeView
         /// <param name="type"></param>
         internal void Initialize(ThumbnailType type)
         {
-            switch (type)
+            Image = type switch
             {
-                default:
-                case ThumbnailType.Empty:
-                    Image = _emptyImage;
-                    break;
-                case ThumbnailType.Media:
-                    Image = _mediaImage;
-                    break;
-                case ThumbnailType.Folder:
-                    Image = _folderImage;
-                    break;
-            }
+                ThumbnailType.Media => ThumbnailResource.MediaImage,
+                ThumbnailType.Folder => ThumbnailResource.FolderImage,
+                _ => ThumbnailResource.EmptyImage,
+            };
         }
 
         /// <summary>
@@ -183,7 +180,7 @@ namespace NeeView
         internal void SaveCacheAsync()
         {
             if (!IsCacheEnabled || _header == null) return;
-            if (_image == null || _image == _emptyImage || _image == _mediaImage || _image == _folderImage) return;
+            if (_image == null || _image == ThumbnailResource.EmptyImage || _image == ThumbnailResource.MediaImage || _image == ThumbnailResource.FolderImage) return;
 
             ThumbnailCache.Current.EntrySaveQueue(_header, _image);
         }
@@ -215,17 +212,17 @@ namespace NeeView
             if (_image is null) return null;
 
             Touched?.Invoke(this, EventArgs.Empty);
-            if (_image == _emptyImage)
+            if (_image == ThumbnailResource.EmptyImage)
             {
-                return EmptyImageSource;
+                return ThumbnailResource.EmptyImageSource;
             }
-            else if (_image == _mediaImage)
+            else if (_image == ThumbnailResource.MediaImage)
             {
-                return MediaBitmapSource;
+                return ThumbnailResource.MediaBitmapSource;
             }
-            else if (_image == _folderImage)
+            else if (_image == ThumbnailResource.FolderImage)
             {
-                return FolderBitmapSource;
+                return ThumbnailResource.FolderBitmapSource;
             }
             else
             {
@@ -239,119 +236,19 @@ namespace NeeView
         /// </summary>
         /// <param name="image"></param>
         /// <returns></returns>
-        private BitmapSource DecodeFromImageData(byte[] image)
+        private static BitmapSource DecodeFromImageData(byte[] image)
         {
-            using (var stream = new MemoryStream(image, false))
-            {
-                var bitmap = new BitmapImage();
-                bitmap.BeginInit();
-                bitmap.StreamSource = stream;
-                bitmap.CreateOptions = BitmapCreateOptions.None;
-                bitmap.CacheOption = BitmapCacheOption.OnLoad;
-                bitmap.EndInit();
-                bitmap.Freeze();
-
-                return bitmap;
-            }
-        }
-
-        /// <summary>
-        /// イメージ初期化
-        /// UIスレッドで実行すること。
-        /// </summary>
-        public static void InitializeBasicImages()
-        {
-            Debug.Assert(Thread.CurrentThread.GetApartmentState() == ApartmentState.STA);
-
-            var imageN = EmptyImageSource;
-            var image0 = EmptyBitmapSource;
-            var image1 = MediaBitmapSource;
-        }
-
-        /// <summary>
-        /// Empty Image Key
-        /// </summary>
-        public static byte[] _emptyImage = System.Text.Encoding.ASCII.GetBytes("EMPTY!");
-
-
-        private static ImageSource? _emptyImageSource;
-        public static ImageSource EmptyImageSource
-        {
-            get
-            {
-                if (_emptyImageSource == null)
-                {
-                    _emptyImageSource = MainWindow.Current.Resources["thumbnail_default"] as ImageSource
-                        ?? throw new InvalidOperationException("Cannot found resource");
-                }
-                return _emptyImageSource;
-            }
-        }
-
-        /// <summary>
-        /// EmptyBitmapSource property.
-        /// </summary>
-        private static BitmapSource? _emptyBitmapSource;
-        public static BitmapSource EmptyBitmapSource
-        {
-            get
-            {
-                if (_emptyBitmapSource == null)
-                {
-                    _emptyBitmapSource = CreatetResourceBitmapImage("/Resources/Empty.png");
-                }
-                return _emptyBitmapSource;
-            }
-        }
-
-        /// <summary>
-        /// Media Image Key
-        /// </summary>
-        public static byte[] _mediaImage = System.Text.Encoding.ASCII.GetBytes("MEDIA!");
-
-        public static SolidColorBrush _mediaBackground = new SolidColorBrush(Color.FromRgb(0x3A, 0x3A, 0x3A));
-
-        /// <summary>
-        /// MediaBitmapSource
-        /// </summary>
-        private static BitmapSource? _mediaBitmapSource;
-        public static BitmapSource MediaBitmapSource
-        {
-            get
-            {
-                if (_mediaBitmapSource == null)
-                {
-                    _mediaBitmapSource = CreatetResourceBitmapImage("/Resources/Media.png");
-                }
-                return _mediaBitmapSource;
-            }
-        }
-
-        private static BitmapImage CreatetResourceBitmapImage(string path)
-        {
-            var uri = new Uri("pack://application:,,," + path);
-            var bitmap = new BitmapImage(uri);
+            using var stream = new MemoryStream(image, false);
+            var bitmap = new BitmapImage();
+            bitmap.BeginInit();
+            bitmap.StreamSource = stream;
+            bitmap.CreateOptions = BitmapCreateOptions.None;
+            bitmap.CacheOption = BitmapCacheOption.OnLoad;
+            bitmap.EndInit();
             bitmap.Freeze();
 
             return bitmap;
         }
-
-
-        public static byte[] _folderImage = System.Text.Encoding.ASCII.GetBytes("FOLDER!");
-
-        private BitmapSource? _folderBitmapSource;
-        public BitmapSource FolderBitmapSource
-        {
-            get
-            {
-                if (_folderBitmapSource == null)
-                {
-                    _folderBitmapSource = FileIconCollection.Current.CreateDefaultFolderIcon().GetBitmapSource(256.0) ?? EmptyBitmapSource;
-                }
-                return _folderBitmapSource;
-            }
-        }
-
 
         #region IDisposable Support
         private bool _disposedValue = false;
@@ -375,19 +272,8 @@ namespace NeeView
         public void Dispose()
         {
             Dispose(true);
+            GC.SuppressFinalize(this);
         }
         #endregion
-    }
-
-
-    /// <summary>
-    /// サムネイル種類
-    /// </summary>
-    public enum ThumbnailType
-    {
-        Unique,
-        Empty,
-        Media,
-        Folder,
     }
 }

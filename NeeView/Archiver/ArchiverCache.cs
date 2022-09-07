@@ -12,11 +12,11 @@ namespace NeeView
     /// </summary>
     public class ArchiverCache : IDisposable
     {
-        private Dictionary<string, WeakReference<Archiver>> _caches = new Dictionary<string, WeakReference<Archiver>>();
-        private object _lock = new object();
+        private readonly Dictionary<string, WeakReference<Archiver>> _caches = new();
+        private readonly object _lock = new();
 
 
-        private List<IDisposable> CollectDisposable()
+        public List<IDisposable> CollectDisposable()
         {
             lock (_lock)
             {
@@ -163,6 +163,7 @@ namespace NeeView
         public void Dispose()
         {
             Dispose(true);
+            GC.SuppressFinalize(this);
         }
         #endregion
     }

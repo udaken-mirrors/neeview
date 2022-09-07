@@ -30,7 +30,7 @@ namespace NeeView
     /// </summary>
     public class MouseInput : BindableBase
     {
-        private FrameworkElement _sender;
+        private readonly FrameworkElement _sender;
         private MouseInputState _state;
         private MouseHorizontalWheelSource? _mouseHorizontalWheelSource;
 
@@ -42,12 +42,12 @@ namespace NeeView
         /// <summary>
         /// 遷移テーブル
         /// </summary>
-        private Dictionary<MouseInputState, MouseInputBase?> _mouseInputCollection;
+        private readonly Dictionary<MouseInputState, MouseInputBase?> _mouseInputCollection;
 
         /// <summary>
         /// 状態コンテキスト
         /// </summary>
-        private MouseInputContext _context;
+        private readonly MouseInputContext _context;
 
         /// <summary>
         /// マウス移動検知用
@@ -99,11 +99,13 @@ namespace NeeView
             }
 
             // initialize state
-            _mouseInputCollection = new Dictionary<MouseInputState, MouseInputBase?>();
-            _mouseInputCollection.Add(MouseInputState.Normal, this.Normal);
-            _mouseInputCollection.Add(MouseInputState.Loupe, this.Loupe);
-            _mouseInputCollection.Add(MouseInputState.Drag, this.Drag);
-            _mouseInputCollection.Add(MouseInputState.Gesture, this.Gesture);
+            _mouseInputCollection = new Dictionary<MouseInputState, MouseInputBase?>
+            {
+                { MouseInputState.Normal, this.Normal },
+                { MouseInputState.Loupe, this.Loupe },
+                { MouseInputState.Drag, this.Drag },
+                { MouseInputState.Gesture, this.Gesture }
+            };
             SetState(MouseInputState.Normal, null);
 
             // initialize event
@@ -215,8 +217,7 @@ namespace NeeView
         {
             _mouseHorizontalWheelSource?.Dispose();
 
-            var window = Window.GetWindow(_sender) as INotifyMouseHorizontalWheelChanged;
-            if (window is null) return;
+            if (Window.GetWindow(_sender) is not INotifyMouseHorizontalWheelChanged window) return;
 
             ////Debug.WriteLine($"MouseInput.Sender: InitializeMouseHorizontalWheel()");
             _mouseHorizontalWheelSource = new MouseHorizontalWheelSource(_sender, window);
@@ -282,7 +283,7 @@ namespace NeeView
             SetState(MouseInputState.Normal, null, true);
         }
 
-        private bool IsStylusDevice(MouseEventArgs e)
+        private static bool IsStylusDevice(MouseEventArgs e)
         {
             return e.StylusDevice != null && Config.Current.Touch.IsEnabled;
         }
@@ -480,7 +481,7 @@ namespace NeeView
             public MouseInputGesture.Memento? Gesture { get; set; }
 
             #region Obsolete
-            [Obsolete, DataMember(EmitDefaultValue = false)] // ver 34.0
+            [Obsolete("no used"), DataMember(EmitDefaultValue = false)] // ver 34.0
             public MouseInputDrag.Memento? Drag { get; set; }
             #endregion
 

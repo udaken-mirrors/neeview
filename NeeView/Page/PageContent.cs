@@ -192,7 +192,6 @@ namespace NeeView
         #region IDisposable Support
         private bool _disposedValue = false;
 
-        [SuppressMessage("Microsoft.Usage", "CA2213:DisposableFieldsShouldBeDisposed", MessageId = "<Thumbnail>k__BackingField")]
         protected virtual void Dispose(bool disposing)
         {
             if (!_disposedValue)
@@ -211,6 +210,7 @@ namespace NeeView
         public void Dispose()
         {
             Dispose(true);
+            GC.SuppressFinalize(this);
         }
         #endregion
     }

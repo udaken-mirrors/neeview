@@ -1,7 +1,6 @@
 ﻿using Microsoft.Win32;
 using NeeView.Properties;
 using System;
-//using System.Drawing;
 using System.Linq;
 using System.Windows;
 
@@ -40,7 +39,7 @@ namespace NeeView
             }
         }
 
-        private string ValidateDirectoryPath(string? path)
+        private static string ValidateDirectoryPath(string? path)
         {
             if (System.IO.Directory.Exists(path))
             {
@@ -52,7 +51,7 @@ namespace NeeView
             }
         }
 
-        private SaveFileDialog CreateSaveFileDialog(string filename, string directory, bool canSelectFormat)
+        private static SaveFileDialog CreateSaveFileDialog(string filename, string directory, bool canSelectFormat)
         {
             var dialog = new SaveFileDialog();
 

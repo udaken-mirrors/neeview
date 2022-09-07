@@ -8,7 +8,7 @@ namespace NeeView.Text
         /// <summary>
         ///  imgタグ用正規表現
         /// </summary>
-        private static Regex _imageTagRegex = new Regex(
+        private static readonly Regex _imageTagRegex = new(
             @"<img(?:\s+[^>]*\s+|\s+)src\s*=\s*(?:(?<quot>[""'])(?<url>.*?)\k<quot>|(?<url>[^\s>]+))[^>]*>",
             RegexOptions.IgnoreCase | RegexOptions.Singleline);
 

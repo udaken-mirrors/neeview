@@ -11,8 +11,8 @@ namespace NeeView.Media.Imaging.Metadata
     {
         private static readonly string _strElementPrefix = "/{str=";
 
-        private BitmapMetadata _meta;
-        private Dictionary<string, List<string>> _textMap = new Dictionary<string, List<string>>();
+        private readonly BitmapMetadata _meta;
+        private readonly Dictionary<string, List<string>> _textMap = new();
 
 
         public PngMetadataAccessor(BitmapMetadata meta)
@@ -29,12 +29,9 @@ namespace NeeView.Media.Imaging.Metadata
         {
             foreach (var key in _meta.Where(e => e.EndsWith("iTXt", StringComparison.Ordinal)))
             {
-                var itxt = _meta.GetQuery(key) as BitmapMetadata;
-                if (itxt != null)
+                if (_meta.GetQuery(key) is BitmapMetadata itxt)
                 {
-                    var keyword = itxt.GetQuery("/Keyword") as string;
-                    var text = itxt.GetQuery("/TextEntry") as string;
-                    if (keyword != null && text != null)
+                    if (itxt.GetQuery("/Keyword") is string keyword && itxt.GetQuery("/TextEntry") is string text)
                     {
                         AddToMap(keyword, text);
                     }
@@ -46,8 +43,7 @@ namespace NeeView.Media.Imaging.Metadata
         {
             foreach (var key in _meta.Where(e => e.EndsWith("tEXt", StringComparison.Ordinal)))
             {
-                var chunk = _meta.GetQuery(key) as BitmapMetadata;
-                if (chunk != null)
+                if (_meta.GetQuery(key) is BitmapMetadata chunk)
                 {
 
                     foreach (var title in chunk.Where(e => e.StartsWith(_strElementPrefix)))
@@ -56,8 +52,7 @@ namespace NeeView.Media.Imaging.Metadata
                         if (keywordLength > 1)
                         {
                             var keyword = title.Substring(_strElementPrefix.Length, keywordLength);
-                            var text = chunk.GetQuery(title) as string;
-                            if (text != null)
+                            if (chunk.GetQuery(title) is string text)
                             {
                                 AddToMap(keyword, text);
                             }
@@ -84,28 +79,25 @@ namespace NeeView.Media.Imaging.Metadata
 
         public override object? GetValue(BitmapMetadataKey key)
         {
-            switch (key)
+            return key switch
             {
-                case BitmapMetadataKey.Title: return GetPngText("Title");
-                case BitmapMetadataKey.Subject: return GetPngText("Description");
-                case BitmapMetadataKey.Rating: return null; // not supprted
-                case BitmapMetadataKey.Tags: return null; // not supported
-                case BitmapMetadataKey.Comments: return GetPngText("Comment");
-                case BitmapMetadataKey.Author: return GetPngTextCollection("Author");
-                case BitmapMetadataKey.DateTaken: return GetTime();
-                case BitmapMetadataKey.ApplicatoinName: return GetPngText("Software");
-                case BitmapMetadataKey.Copyright: return GetPngText("Copyright");
-
+                BitmapMetadataKey.Title => GetPngText("Title"),
+                BitmapMetadataKey.Subject => GetPngText("Description"),
+                BitmapMetadataKey.Rating => null,// not supprted
+                BitmapMetadataKey.Tags => null,// not supported
+                BitmapMetadataKey.Comments => GetPngText("Comment"),
+                BitmapMetadataKey.Author => GetPngTextCollection("Author"),
+                BitmapMetadataKey.DateTaken => GetTime(),
+                BitmapMetadataKey.ApplicatoinName => GetPngText("Software"),
+                BitmapMetadataKey.Copyright => GetPngText("Copyright"),
                 // NOTE: PNGメタデータテキストの Warning, Disclaimer, Source は対応項目がない
-
-                default: return null;
-            }
+                _ => null,
+            };
         }
 
         private object? GetTime()
         {
-            var time = _meta.GetQuery("/tIME") as BitmapMetadata;
-            if (time != null && false)
+            if (_meta.GetQuery("/tIME") is BitmapMetadata time && false)
             {
                 var timeMap = new Dictionary<string, int>();
                 foreach (var item in time)

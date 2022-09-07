@@ -24,7 +24,7 @@ namespace NeeView.Windows.Controls
     /// </summary>
     public class EnterTriggerTextBox : TextBox
     {
-        private MouseWheelDelta _mouseWheelDelta = new MouseWheelDelta();
+        private readonly MouseWheelDelta _mouseWheelDelta = new();
 
 
         public event EventHandler<ValueDeltaEventArgs>? ValueDeltaChanged;

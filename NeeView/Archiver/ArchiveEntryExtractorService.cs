@@ -21,26 +21,16 @@ namespace NeeView
         #region Fields
 
         // lock object
-        private object _lock = new object();
+        private readonly object _lock = new();
 
         /// <summary>
         /// キャンセルされたが処理中のインスタンス群
         /// </summary>
-        private Dictionary<string, ArchiveEntryExtractor> _collection = new Dictionary<string, ArchiveEntryExtractor>();
+        private readonly Dictionary<string, ArchiveEntryExtractor> _collection = new();
 
         #endregion
 
         #region Methods
-
-        /// <summary>
-        /// 指定したキーが存在するか
-        /// </summary>
-        private bool Contains(string key)
-        {
-            {
-                return _collection.ContainsKey(key);
-            }
-        }
 
         /// <summary>
         /// 指定したキーの削除
@@ -50,8 +40,7 @@ namespace NeeView
         {
             lock (_lock)
             {
-                ArchiveEntryExtractor? extractor;
-                if (_collection.TryGetValue(key, out extractor))
+                if (_collection.TryGetValue(key, out ArchiveEntryExtractor? extractor))
                 {
                     _collection.Remove(key);
                     return extractor;

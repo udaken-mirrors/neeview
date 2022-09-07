@@ -29,9 +29,9 @@ namespace NeeView
         public static string CraeteHeader(string title)
         {
             string stylesheet = "";
-            Uri fileUri = new Uri("/Resources/Style.css", UriKind.Relative);
+            var fileUri = new Uri("/Resources/Style.css", UriKind.Relative);
             StreamResourceInfo info = System.Windows.Application.GetResourceStream(fileUri);
-            using (StreamReader sr = new StreamReader(info.Stream))
+            using (var sr = new StreamReader(info.Stream))
             {
                 stylesheet = sr.ReadToEnd();
                 stylesheet = new Regex(@"\s+").Replace(stylesheet, " ");

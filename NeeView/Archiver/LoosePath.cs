@@ -53,7 +53,7 @@ namespace NeeView
         //
         public static string[] Split(string? s)
         {
-            if (string.IsNullOrEmpty(s)) return new string[0];
+            if (string.IsNullOrEmpty(s)) return Array.Empty<string>();
             var parts = s.Split(Separators, StringSplitOptions.RemoveEmptyEntries);
             if (parts.Length > 0 && (s.StartsWith("\\\\") || s.StartsWith("//")))
             {
@@ -78,7 +78,7 @@ namespace NeeView
             if (string.IsNullOrEmpty(s)) return "";
             if (string.IsNullOrEmpty(place)) return s;
             if (string.Compare(s, 0, place, 0, place.Length) != 0) throw new ArgumentException("s not contain place");
-            return s.Substring(place.Length).TrimStart(Separators);
+            return s[place.Length..].TrimStart(Separators);
         }
 
         public static string GetFileNameWithoutExtension(string? s)
@@ -92,7 +92,7 @@ namespace NeeView
             }
             else
             {
-                return filename.Substring(0, filename.Length - ext.Length);
+                return filename[..^ext.Length];
             }
         }
 
@@ -127,7 +127,7 @@ namespace NeeView
             string fileName = GetFileName(s);
             int index = fileName.LastIndexOf('.');
 
-            return (index >= 0) ? fileName.Substring(index).ToLower() : "";
+            return (index >= 0) ? fileName[index..].ToLower() : "";
         }
 
         //
@@ -138,7 +138,7 @@ namespace NeeView
             var ext = GetExtension(s);
             if (string.IsNullOrEmpty(s)) return s;
             
-            return s.Substring(0, s.Length - ext.Length);
+            return s[..^ext.Length];
         }
 
         //

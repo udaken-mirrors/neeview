@@ -22,14 +22,12 @@ namespace NeeView.Windows.Controls
 
         private static void OnDropDownMenuChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
         {
-            var button = sender as ToggleButton;
-            if (button == null)
+            if (sender is not ToggleButton button)
             {
                 return;
             }
 
-            var dropDownMenu = e.NewValue as ContextMenu;
-            if (dropDownMenu == null)
+            if (e.NewValue is not ContextMenu dropDownMenu)
             {
                 return;
             }

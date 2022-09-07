@@ -10,7 +10,7 @@ namespace NeeView
 
         public WindowStateController(IHasWindowController defaultController)
         {
-            if (defaultController is null) throw new ArgumentNullException();
+            if (defaultController is null) throw new ArgumentNullException(nameof(defaultController));
 
             _defaultController = defaultController;
         }
@@ -41,7 +41,9 @@ namespace NeeView
         }
 
 
+
         // NOTE: no use sender
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060:未使用のパラメーターを削除します", Justification = "<保留中>")]
         private WindowController GetWindowController(object? sender)
         {
             var window = Application.Current.Windows.OfType<Window>().SingleOrDefault(x => x.IsActive) as IHasWindowController;

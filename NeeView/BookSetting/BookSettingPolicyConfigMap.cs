@@ -4,13 +4,14 @@ namespace NeeView
 {
     public class BookSettingPolicyConfigMap
     {
-        private BookSettingPolicyConfig _setting;
+        private readonly BookSettingPolicyConfig _setting;
 
         public BookSettingPolicyConfigMap(BookSettingPolicyConfig setting)
         {
             _setting = setting;
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0066:switch ステートメントを式に変換します", Justification = "<保留中>")]
         public BookSettingSelectMode this[BookSettingKey key]
         {
             get

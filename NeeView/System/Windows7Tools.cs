@@ -17,7 +17,7 @@ namespace NeeView
             public static extern IntPtr FindWindow(string className, string? windowTitle);
 
             [DllImport("user32.dll")]
-            public static extern int SetForegroundWindow(IntPtr hwnd);
+            public static extern bool SetForegroundWindow(IntPtr hwnd);
         }
 
         #endregion

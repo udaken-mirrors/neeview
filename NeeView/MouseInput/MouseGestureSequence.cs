@@ -23,35 +23,7 @@ namespace NeeView
     /// </summary>
     public class MouseGestureSequence : ObservableCollection<MouseGestureDirection>
     {
-        /// <summary>
-        /// コンストラクタ
-        /// </summary>
-        public MouseGestureSequence()
-        {
-        }
-
-        /// <summary>
-        /// コンストラクタ
-        /// </summary>
-        /// <param name="gestureText">記録用文字列</param>
-        public MouseGestureSequence(string gestureText)
-        {
-            if (!string.IsNullOrEmpty(gestureText))
-            {
-                foreach (char c in gestureText)
-                {
-                    MouseGestureDirection direction;
-                    if (s_table.TryGetValue(c, out direction))
-                    {
-                        this.Add(direction);
-                    }
-                }
-            }
-        }
-
-
-        //
-        private static Dictionary<MouseGestureDirection, string> s_dispStrings = new Dictionary<MouseGestureDirection, string>
+        private static readonly Dictionary<MouseGestureDirection, string> _dispStrings = new()
         {
             [MouseGestureDirection.None] = "",
             [MouseGestureDirection.Up] = "↑",
@@ -62,7 +34,7 @@ namespace NeeView
         };
 
 
-        private static Dictionary<char, MouseGestureDirection> s_table = new Dictionary<char, MouseGestureDirection>
+        private static readonly Dictionary<char, MouseGestureDirection> _table = new()
         {
             ['U'] = MouseGestureDirection.Up,
             ['R'] = MouseGestureDirection.Right,
@@ -70,6 +42,33 @@ namespace NeeView
             ['L'] = MouseGestureDirection.Left,
             ['C'] = MouseGestureDirection.Click,
         };
+
+
+        /// <summary>
+        /// コンストラクター
+        /// </summary>
+        public MouseGestureSequence()
+        {
+        }
+
+        /// <summary>
+        /// コンストラクター
+        /// </summary>
+        /// <param name="gestureText">記録用文字列</param>
+        public MouseGestureSequence(string gestureText)
+        {
+            if (!string.IsNullOrEmpty(gestureText))
+            {
+                foreach (char c in gestureText)
+                {
+                    if (_table.TryGetValue(c, out MouseGestureDirection direction))
+                    {
+                        this.Add(direction);
+                    }
+                }
+            }
+        }
+
 
 
         // 記録用文字列に変換(U,D,L,R,Cの組み合わせ)
@@ -91,7 +90,7 @@ namespace NeeView
             string gestureText = "";
             foreach (var e in this)
             {
-                gestureText += s_dispStrings[e];
+                gestureText += _dispStrings[e];
             }
 
             return gestureText;

@@ -23,7 +23,7 @@ namespace NeeView.Effects
     [DataContract]
     public class MagnifyEffectUnit : EffectUnit
     {
-        private static MagnifyEffect _effect = new MagnifyEffect();
+        private static readonly MagnifyEffect _effect = new();
         public override Effect GetEffect() => _effect;
 
         /// <summary>

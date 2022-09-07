@@ -13,13 +13,11 @@ namespace NeeView.Media.Imaging.Metadata
 
         public override object? GetValue(BitmapMetadataKey key)
         {
-            switch (key)
+            return key switch
             {
-                case BitmapMetadataKey.Comments:
-                    return this.Metadata.Comment ?? this.Metadata.GetQuery("/com/TextEntry");
-                default:
-                    return base.GetValue(key);
-            }
+                BitmapMetadataKey.Comments => this.Metadata.Comment ?? this.Metadata.GetQuery("/com/TextEntry"),
+                _ => base.GetValue(key),
+            };
         }
     }
 

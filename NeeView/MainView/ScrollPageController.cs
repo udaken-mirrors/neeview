@@ -4,10 +4,10 @@ namespace NeeView
 {
     public class ScrollPageController
     {
-        private MainViewComponent _viewContent;
-        private BookSettingPresenter _bookSettingPresenter;
-        private BookOperation _bookOperation;
-        private RepeatLimiter _repeatLimiter = new RepeatLimiter();
+        private readonly MainViewComponent _viewContent;
+        private readonly BookSettingPresenter _bookSettingPresenter;
+        private readonly BookOperation _bookOperation;
+        private readonly RepeatLimiter _repeatLimiter = new();
 
 
         public ScrollPageController(MainViewComponent viewContent, BookSettingPresenter bookSettingPresenter, BookOperation bookOperation)

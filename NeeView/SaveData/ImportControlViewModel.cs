@@ -5,7 +5,7 @@ namespace NeeView
 {
     public class ImportControlViewModel
     {
-        private Importer _model;
+        private readonly Importer _model;
 
         public ImportControlViewModel(Importer model)
         {

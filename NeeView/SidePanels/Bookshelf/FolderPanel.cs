@@ -11,8 +11,8 @@ namespace NeeView
 {
     public class FolderPanel : BindableBase, IPanel
     {
-        private FolderListView _view;
-        private BookshelfFolderListPresenter _folderListPresenter;
+        private readonly FolderListView _view;
+        private readonly BookshelfFolderListPresenter _folderListPresenter;
 
         public FolderPanel(BookshelfFolderList folderList)
         {

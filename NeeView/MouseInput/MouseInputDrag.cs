@@ -14,7 +14,7 @@ namespace NeeView
     /// </summary>
     public class MouseInputDrag : MouseInputBase
     {
-        DragTransformControl _dragTransformControl;
+        readonly DragTransformControl _dragTransformControl;
 
         public MouseInputDrag(MouseInputContext context) : base(context)
         {
@@ -94,20 +94,20 @@ namespace NeeView
         #region Obsolete
 
         // before ver 34.0
-        [Obsolete, DataContract]
+        [Obsolete("no used"), DataContract]
         public class Memento
         {
-            [Obsolete, DataMember(EmitDefaultValue = false)]
+            [Obsolete("no used"), DataMember(EmitDefaultValue = false)]
             public bool IsOriginalScaleShowMessage { get; set; }
-            [Obsolete, DataMember(EmitDefaultValue = false)]
+            [Obsolete("no used"), DataMember(EmitDefaultValue = false)]
             public bool IsControlCenterImage { get; set; }
-            [Obsolete, DataMember(EmitDefaultValue = false)]
+            [Obsolete("no used"), DataMember(EmitDefaultValue = false)]
             public bool IsKeepScale { get; set; }
-            [Obsolete, DataMember(EmitDefaultValue = false)]
+            [Obsolete("no used"), DataMember(EmitDefaultValue = false)]
             public bool IsKeepAngle { get; set; }
-            [Obsolete, DataMember(EmitDefaultValue = false)]
+            [Obsolete("no used"), DataMember(EmitDefaultValue = false)]
             public bool IsKeepFlip { get; set; }
-            [Obsolete, DataMember(EmitDefaultValue = false)]
+            [Obsolete("no used"), DataMember(EmitDefaultValue = false)]
             public bool IsViewStartPositionCenter { get; set; }
         }
 

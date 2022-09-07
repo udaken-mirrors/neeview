@@ -16,7 +16,7 @@ namespace NeeView
         /// <summary>
         /// 入力トラッカー
         /// </summary>
-        private MouseGestureSequenceTracker _gesture;
+        private readonly MouseGestureSequenceTracker _gesture;
 
         /// <summary>
         /// コンストラクタ

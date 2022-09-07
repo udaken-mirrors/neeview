@@ -85,7 +85,7 @@ namespace NeeView.Windows.Controls
             {
                 control.SyncValue();
 
-                RoutedPropertyChangedEventArgs<double> args = new RoutedPropertyChangedEventArgs<double>((double)e.OldValue, (double)e.NewValue);
+                var args = new RoutedPropertyChangedEventArgs<double>((double)e.OldValue, (double)e.NewValue);
                 args.RoutedEvent = SmartSlider.ValueChangedEvent;
                 control.RaiseEvent(args);
             }
@@ -242,7 +242,7 @@ namespace NeeView.Windows.Controls
 
         private void Thumb_DragStarted(object sender, DragStartedEventArgs e)
         {
-            DragStartedEventArgs args = new DragStartedEventArgs(e.HorizontalOffset, e.VerticalOffset);
+            var args = new DragStartedEventArgs(e.HorizontalOffset, e.VerticalOffset);
             args.RoutedEvent = SmartSlider.DragStartedEvent;
             RaiseEvent(args);
         }
@@ -251,7 +251,7 @@ namespace NeeView.Windows.Controls
         {
             SyncValue();
 
-            DragCompletedEventArgs args = new DragCompletedEventArgs(e.HorizontalChange, e.VerticalChange, e.Canceled);
+            var args = new DragCompletedEventArgs(e.HorizontalChange, e.VerticalChange, e.Canceled);
             args.RoutedEvent = SmartSlider.DragCompletedEvent;
             RaiseEvent(args);
         }
@@ -260,7 +260,7 @@ namespace NeeView.Windows.Controls
         {
             this.TrackValue += this.PART_Track.ValueFromDistance(e.HorizontalChange, e.VerticalChange);
 
-            DragDeltaEventArgs args = new DragDeltaEventArgs(e.HorizontalChange, e.VerticalChange);
+            var args = new DragDeltaEventArgs(e.HorizontalChange, e.VerticalChange);
             args.RoutedEvent = SmartSlider.DragDeltaEvent;
             RaiseEvent(args);
         }

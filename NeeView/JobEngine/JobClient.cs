@@ -36,7 +36,7 @@ namespace NeeView
     /// </summary>
     public class PageContentJobClient : JobClient, IDisposable
     {
-        private List<JobSource> _sources = new List<JobSource>();
+        private List<JobSource> _sources = new();
 
         public PageContentJobClient(string name, JobCategory category) : base(name, category)
         {
@@ -102,6 +102,7 @@ namespace NeeView
         public void Dispose()
         {
             Dispose(true);
+            GC.SuppressFinalize(this);
         }
         #endregion
     }
@@ -160,6 +161,7 @@ namespace NeeView
         public void Dispose()
         {
             Dispose(true);
+            GC.SuppressFinalize(this);
         }
         #endregion
     }

@@ -11,11 +11,7 @@ namespace NeeView
     /// </summary>
     public class WindowActivator
     {
-        public static WindowActivator Current { get; }
-        static WindowActivator() => Current = new WindowActivator();
-
-
-        public void NextActivate(int direction)
+        public static void NextActivate(int direction)
         {
             var changed = NextSubWindow(direction, false);
             if (changed) return;
@@ -29,7 +25,7 @@ namespace NeeView
             }
         }
 
-        public IEnumerable<Window> GetSubWindows()
+        private static IEnumerable<Window> GetSubWindows()
         {
             var viewWindow = MainViewManager.Current.Window;
             var layoutPanelWindows = CustomLayoutPanelManager.Current.Windows.Windows.Cast<Window>();
@@ -37,7 +33,7 @@ namespace NeeView
             return viewWindow != null ? layoutPanelWindows.Prepend(viewWindow) : layoutPanelWindows;
         }
 
-        public bool NextSubWindow(int direction, bool loopable)
+        private static bool NextSubWindow(int direction, bool loopable)
         {
             var windows = new List<Window>() { Application.Current.MainWindow };
             var subWindows = GetSubWindows();
@@ -62,7 +58,7 @@ namespace NeeView
         }
 
 
-        private bool ActivateSubWindow(Window window)
+        private static bool ActivateSubWindow(Window window)
         {
             if (window.WindowState == WindowState.Minimized)
             {

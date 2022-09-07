@@ -25,7 +25,7 @@ namespace NeeView.Threading
                 catch
                 {
                     if (retryCount >= retryLimit) throw;
-                    await Task.Delay(intervalMilliseconds);
+                    await Task.Delay(intervalMilliseconds, token);
                     retryCount++;
                 }
             }

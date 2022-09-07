@@ -15,7 +15,7 @@ namespace NeeLaboratory.IO
         public static JsonSerializerOptions SerializerOptions { get; } = new JsonSerializerOptions();
 
 
-        private CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
+        private readonly CancellationTokenSource _cancellationTokenSource = new();
 
 
         public RemoteCommandServer()
@@ -98,6 +98,7 @@ namespace NeeLaboratory.IO
         public void Dispose()
         {
             Dispose(true);
+            GC.SuppressFinalize(this);
         }
         #endregion
     }

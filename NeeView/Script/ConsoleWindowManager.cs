@@ -17,7 +17,7 @@ namespace NeeView
 
         const int _messagesCapacity = 256;
         private ConsoleWindow? _window;
-        private FixedQueue<string> _messages = new FixedQueue<string>(_messagesCapacity);
+        private FixedQueue<string> _messages = new(_messagesCapacity);
         private bool _disposedValue;
 
         public bool IsOpened => _window != null;

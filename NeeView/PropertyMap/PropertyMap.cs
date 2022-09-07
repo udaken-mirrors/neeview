@@ -38,8 +38,8 @@ namespace NeeView
         #endregion
 
 
-        private static PropertyMapConverter _defaultConverter;
-        private static PropertyMapOptions _defaultOptions;
+        private static readonly PropertyMapConverter _defaultConverter;
+        private static readonly PropertyMapOptions _defaultOptions;
 
         static PropertyMap()
         {
@@ -55,10 +55,10 @@ namespace NeeView
         }
 
 
-        private object _source;
-        private Dictionary<string, PropertyMapNode> _items;
-        private PropertyMapOptions _options;
-        private IAccessDiagnostics _accessDiagnostics;
+        private readonly object _source;
+        private readonly Dictionary<string, PropertyMapNode> _items;
+        private readonly PropertyMapOptions _options;
+        private readonly IAccessDiagnostics _accessDiagnostics;
 
 
         public PropertyMap(object source, IAccessDiagnostics? accessDiagnostics, string prefix)

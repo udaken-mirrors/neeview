@@ -38,10 +38,7 @@ namespace NeeView.Setting
 
         protected void RaisePropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string? name = null)
         {
-            if (PropertyChanged != null)
-            {
-                PropertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(name));
-            }
+            PropertyChanged?.Invoke(this, new System.ComponentModel.PropertyChangedEventArgs(name));
         }
         #endregion
 
@@ -54,7 +51,7 @@ namespace NeeView.Setting
         }
         #endregion
 
-        private RenameWindowParam _param;
+        private readonly RenameWindowParam _param;
 
         //
         public RenameWindow(RenameWindowParam param)

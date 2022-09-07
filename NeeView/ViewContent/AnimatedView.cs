@@ -15,11 +15,11 @@ namespace NeeView
     /// </summary>
     public class AnimatedView
     {
-        private static ObjectPool<MediaElement> _mediaElementPool = new ObjectPool<MediaElement>(2);
+        private static readonly ObjectPool<MediaElement> _mediaElementPool = new(2);
 
-        private ViewContentSource _source;
-        private Uri _uri;
-        private ViewContentParameters _parameter;
+        private readonly ViewContentSource _source;
+        private readonly Uri _uri;
+        private readonly ViewContentParameters _parameter;
         private VisualBrush _brush;
         private Grid _mediaGrid;
         private TextBlock _errorMessageTextBlock;
@@ -137,8 +137,7 @@ namespace NeeView
 
         private void Media_MediaEnded(object? sender, RoutedEventArgs e)
         {
-            var media = sender as MediaElement;
-            if (media is null) return;
+            if (sender is not MediaElement media) return;
 
             media.Position = TimeSpan.FromMilliseconds(1);
         }

@@ -17,9 +17,9 @@ namespace NeeView
     /// </summary>
     public class FolderSearchCollection : FolderCollection, IDisposable
     {
-        private NeeLaboratory.IO.Search.SearchResultWatcher _searchResult;
-        private FolderCollectionEngine? _engine;
-        private bool _isWatchSearchResult;
+        private readonly NeeLaboratory.IO.Search.SearchResultWatcher _searchResult;
+        private readonly FolderCollectionEngine? _engine;
+        private readonly bool _isWatchSearchResult;
 
 
         public FolderSearchCollection(QueryPath path, NeeLaboratory.IO.Search.SearchResultWatcher searchResult, bool isWatchSearchResult, bool isOverlayEnabled) : base(path, isOverlayEnabled)
@@ -45,7 +45,7 @@ namespace NeeView
 
         public override async Task InitializeItemsAsync(CancellationToken token)
         {
-            await Task.Run(() => InitializeItems(token));
+            await Task.Run(() => InitializeItems(token), token);
         }
 
         private void InitializeItems(CancellationToken token)

@@ -33,7 +33,7 @@ namespace NeeView
         /// </summary>
         /// <param name="size">元画像サイズ</param>
         /// <returns></returns>
-        public Size GetThumbnailSize(Size size)
+        public static Size GetThumbnailSize(Size size)
         {
             var resolution = Config.Current.Thumbnail.ImageWidth;
 
@@ -91,13 +91,13 @@ namespace NeeView
             public int BookCapacity { get; set; }
 
 
-            [Obsolete, DataMember(EmitDefaultValue = false)] // ver.32
+            [Obsolete("use SidePanelProfile.ContentItemProfile.ImageWidth"), DataMember(EmitDefaultValue = false)] // ver.32
             public int ThumbnailWidth { get; set; }
 
-            [Obsolete, DataMember(EmitDefaultValue = false)] // ver.32
+            [Obsolete("use SidePanelProfile.BannerItemProfile.ImageWidth"), DataMember(EmitDefaultValue = false)] // ver.32
             public int BannerWidth { get; set; }
 
-            [Obsolete, DataMember(EmitDefaultValue = false)] // ver.32
+            [Obsolete("SidePanelProfile.ContentItemProfile.IsImagePopupEnabled"), DataMember(EmitDefaultValue = false)] // ver.32
             public bool IsThumbnailPopup { get; set; }
 
 

@@ -2,7 +2,7 @@
 {
     public class PlaylistItemAccessor
     {
-        private PlaylistItem _source;
+        private readonly PlaylistItem _source;
 
         public PlaylistItemAccessor(PlaylistItem source)
         {

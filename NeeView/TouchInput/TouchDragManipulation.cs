@@ -51,7 +51,7 @@ namespace NeeView
 
         // Fields
 
-        private DragTransform _transform;
+        private readonly DragTransform _transform;
         private TouchDragContext? _origin;
 
         private TouchDragTransform? _base;
@@ -70,18 +70,18 @@ namespace NeeView
         private bool _allowAngle;
         private bool _allowScale;
 
-        private TouchInputContext _context;
+        private readonly TouchInputContext _context;
 
-        private StateMachine _stateMachine;
+        private readonly StateMachine _stateMachine;
 
 
         // Constructors
 
         public TouchDragManipulation(TouchInputContext context)
         {
-            if (context is null) throw new ArgumentNullException();
-            if (context.Target is null) throw new ArgumentException();
-            if (context.DragTransform is null) throw new ArgumentException();
+            if (context is null) throw new ArgumentNullException(nameof(context));
+            if (context.Target is null) throw new ArgumentException("context.Target must not be null.");
+            if (context.DragTransform is null) throw new ArgumentException("context.DragTransform must not be null.");
 
             _context = context;
             _transform = context.DragTransform;
@@ -188,7 +188,7 @@ namespace NeeView
             _base = _start.Clone();
             _now = _start.Clone();
 
-            _snapCenter = default(Vector);
+            _snapCenter = default;
             _snapAngle = _now.Angle;
 
             StartTicking();
@@ -242,16 +242,10 @@ namespace NeeView
 
             public void Initialize(TouchDragManipulation context)
             {
-                context.StateIntertia_Initialize();
+                // nop.
             }
         }
 
-        //
-        private void StateIntertia_Initialize()
-        {
-        }
-
-        //
         private void StateIntertia_Execute()
         {
             if (_now is null) throw new InvalidOperationException("TouchDragManipulation must be started");

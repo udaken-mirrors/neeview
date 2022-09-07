@@ -244,7 +244,7 @@ namespace NeeView.Windows
             var hwnd = new WindowInteropHelper(window).Handle;
             if (hwnd == IntPtr.Zero) throw new InvalidOperationException();
 
-            if (!(window is IDpiScaleProvider dpiProvider)) throw new ArgumentException($"need window has IDpiProvider.");
+            if (window is not IDpiScaleProvider dpiProvider) throw new ArgumentException($"need window has IDpiProvider.");
 
             NativeMethods.GetWindowPlacement(hwnd, out NativeMethods.WINDOWPLACEMENT raw);
             ////Debug.WriteLine($"WindowPlacement.Store: Native.WindowPlacement: {raw}");
@@ -326,7 +326,7 @@ namespace NeeView.Windows
         {
             if (placement == null || !placement.IsValid()) return;
 
-            if (!(window is IDpiScaleProvider dpiProvider)) throw new ArgumentException($"need window has IDpiProvider.");
+            if (window is not IDpiScaleProvider dpiProvider) throw new ArgumentException($"need window has IDpiProvider.");
 
             var hwnd = new WindowInteropHelper(window).Handle;
             var raw = ConvertToNativeWindowPlacement(placement);
@@ -366,28 +366,22 @@ namespace NeeView.Windows
 
         private static WindowState ConvertToWindowState(NativeMethods.SW showCmd)
         {
-            switch (showCmd)
+            return showCmd switch
             {
-                default:
-                    return WindowState.Normal;
-                case NativeMethods.SW.SHOWMINIMIZED:
-                    return WindowState.Minimized;
-                case NativeMethods.SW.SHOWMAXIMIZED:
-                    return WindowState.Maximized;
-            }
+                NativeMethods.SW.SHOWMINIMIZED => WindowState.Minimized,
+                NativeMethods.SW.SHOWMAXIMIZED => WindowState.Maximized,
+                _ => WindowState.Normal,
+            };
         }
 
         private static NativeMethods.SW ConvertToNativeShowCmd(WindowState windowState)
         {
-            switch (windowState)
+            return windowState switch
             {
-                default:
-                    return NativeMethods.SW.SHOWNORMAL;
-                case WindowState.Minimized:
-                    return NativeMethods.SW.SHOWMINIMIZED;
-                case WindowState.Maximized:
-                    return NativeMethods.SW.SHOWMAXIMIZED;
-            }
+                WindowState.Minimized => NativeMethods.SW.SHOWMINIMIZED,
+                WindowState.Maximized => NativeMethods.SW.SHOWMAXIMIZED,
+                _ => NativeMethods.SW.SHOWNORMAL,
+            };
         }
     }
 

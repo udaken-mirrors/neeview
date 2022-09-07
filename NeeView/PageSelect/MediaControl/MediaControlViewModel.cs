@@ -6,9 +6,9 @@ namespace NeeView
 {
     public class MediaControlViewModel : BindableBase
     {
-        private MediaControl _model;
+        private readonly MediaControl _model;
+        private readonly MouseWheelDelta _mouseWheelDelta = new();
         private MediaPlayerOperator? _operator;
-        private MouseWheelDelta _mouseWheelDelta = new MouseWheelDelta();
 
         public MediaControlViewModel(MediaControl model)
         {

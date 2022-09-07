@@ -12,7 +12,7 @@ namespace NeeView
         public static FileTypeCollection DefaultSupportFileTypes { get; } = new FileTypeCollection(".pdf");
 
         private bool _isEnabled = true;
-        private Size _renderSize = new Size(1920, 1080);
+        private Size _renderSize = new(1920, 1080);
         private FileTypeCollection _supportFileTypes = (FileTypeCollection)DefaultSupportFileTypes.Clone();
 
 

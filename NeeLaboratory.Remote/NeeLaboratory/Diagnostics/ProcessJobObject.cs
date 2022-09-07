@@ -13,7 +13,7 @@ namespace NeeLaboratory.Diagnostics
     /// the parent process dies
     /// </summary>
     /// <summary>An interface to the Windows Job Objects API.</summary>
-    public class ProcessJobObject
+    public class ProcessJobObject : IDisposable
     {
         /// <summary>
         /// EqTrace mock.
@@ -294,13 +294,13 @@ namespace NeeLaboratory.Diagnostics
 
             if (ProcessJobObject.Is32Bit)
             {
-                BasicLimits32 basicInfo = default(BasicLimits32);
+                BasicLimits32 basicInfo = default;
                 basicInfo.LimitFlags = LimitFlags.LimitKillOnJobClose;
 
-                ExtendedLimits32 extendedInfo = default(ExtendedLimits32);
+                ExtendedLimits32 extendedInfo = default;
                 extendedInfo.BasicLimits = basicInfo;
 
-                JobObjectInfo info = default(JobObjectInfo);
+                JobObjectInfo info = default;
                 info.basicLimits32 = basicInfo;
                 info.extendedLimits32 = extendedInfo;
 
@@ -315,13 +315,13 @@ namespace NeeLaboratory.Diagnostics
             }
             else
             {
-                BasicLimits64 basicInfo = default(BasicLimits64);
+                BasicLimits64 basicInfo = default;
                 basicInfo.LimitFlags = LimitFlags.LimitKillOnJobClose;
 
-                ExtendedLimits64 extendedInfo = default(ExtendedLimits64);
+                ExtendedLimits64 extendedInfo = default;
                 extendedInfo.BasicLimits = basicInfo;
 
-                JobObjectInfo info = default(JobObjectInfo);
+                JobObjectInfo info = default;
                 info.basicLimits64 = basicInfo;
                 info.extendedLimits64 = extendedInfo;
 
@@ -768,8 +768,6 @@ namespace NeeLaboratory.Diagnostics
 
         #region JobObjectInfo Union
 
-#pragma warning disable SA1307 // Accessible fields must begin with upper-case letter
-
         /// <summary>
         /// Union of different limit data structures that may be passed
         /// to SetInformationJobObject / from QueryInformationJobObject.
@@ -819,8 +817,6 @@ namespace NeeLaboratory.Diagnostics
 
         #endregion
 
-#pragma warning restore SA1307 // Accessible fields must begin with upper-case letter
-
         #region IDisposable implementation
 
         #endregion
@@ -838,7 +834,7 @@ namespace NeeLaboratory.Diagnostics
             /// <param name="jobAttributes">Pointer to a SECURITY_ATTRIBUTES structure</param>
             /// <param name="name"> Pointer to a null-terminated string specifying the name of the job. </param>
             /// <returns>If the function succeeds, the return value is a handle to the job object</returns>
-            [DllImport("kernel32.dll", SetLastError = true)]
+            [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
             public static extern IntPtr CreateJobObject(IntPtr jobAttributes, string? name);
 
             /// <summary>

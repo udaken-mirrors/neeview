@@ -17,7 +17,7 @@ namespace NeeView
     /// </summary>
     public class NavigatePanel : BindableBase, IPanel
     {
-        private NavigateView _view;
+        private readonly NavigateView _view;
 
         public NavigatePanel(NavigateModel model)
         {

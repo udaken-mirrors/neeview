@@ -13,7 +13,7 @@ namespace NeeView
         public static MouseInputProxy Current { get; }
 
 
-        private List<MouseInput> _mouseInputs = new List<MouseInput>();
+        private readonly List<MouseInput> _mouseInputs = new();
 
 
         public event EventHandler<MouseButtonEventArgs>? MouseButtonChanged;
@@ -25,7 +25,7 @@ namespace NeeView
 
         public void Add(MouseInput mouseInput)
         {
-            if (mouseInput is null) throw new ArgumentNullException();
+            if (mouseInput is null) throw new ArgumentNullException(nameof(mouseInput));
 
             if (_mouseInputs.Contains(mouseInput)) return;
 

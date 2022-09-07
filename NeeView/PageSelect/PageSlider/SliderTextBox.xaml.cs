@@ -48,7 +48,7 @@ namespace NeeView
 
         #endregion
 
-        private MouseWheelDelta _mouseWheelDelta = new MouseWheelDelta();
+        private readonly MouseWheelDelta _mouseWheelDelta = new();
         private string? _dispText;
 
         public SliderTextBox()

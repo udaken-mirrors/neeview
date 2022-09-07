@@ -11,7 +11,7 @@ namespace NeeLaboratory.Threading.Jobs
         /// <summary>
         /// 例外が発生したJOB
         /// </summary>
-        private IJob? _job;
+        private readonly IJob? _job;
 
         /// <summary>
         /// 例外処理済みフラグ

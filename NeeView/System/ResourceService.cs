@@ -8,7 +8,7 @@ namespace NeeView
 {
     internal static class ResourceService
     {
-        private static Regex _regexKey = new Regex(@"@[a-zA-Z0-9_\.#]+");
+        private static readonly Regex _regexKey = new(@"@[a-zA-Z0-9_\.#]+");
 
         /// <summary>
         /// @で始まる文字列はリソースキーとしてその値を返す。
@@ -29,7 +29,7 @@ namespace NeeView
                 }
                 else
                 {
-                    Debug.WriteLine($"Error: Not found resource key: {key.Substring(1)}");
+                    Debug.WriteLine($"Error: Not found resource key: {key[1..]}");
                     return key;
                 }
             }
@@ -57,7 +57,7 @@ namespace NeeView
         public static string? GetResourceString(string key)
         {
             if (key is null || key[0] != '@') return null;
-            return Properties.Resources.ResourceManager.GetString(key.Substring(1), Properties.Resources.Culture);
+            return Properties.Resources.ResourceManager.GetString(key[1..], Properties.Resources.Culture);
         }
 
         /// <summary>

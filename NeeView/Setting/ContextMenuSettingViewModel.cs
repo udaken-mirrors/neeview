@@ -59,7 +59,7 @@ namespace NeeView.Setting
             }
         }
 
-        private List<MenuTree> CreateSourceElementList()
+        private static List<MenuTree> CreateSourceElementList()
         {
             var list = CommandTable.Current.Values
             .OrderBy(e => e.Order)

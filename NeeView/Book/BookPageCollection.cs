@@ -12,7 +12,7 @@ namespace NeeView
     public class BookPageCollection : BindableBase, IEnumerable<Page>, IDisposable
     {
         // サムネイル寿命管理
-        private PageThumbnailPool _thumbnaulPool = new PageThumbnailPool();
+        private readonly PageThumbnailPool _thumbnaulPool = new();
 
         // ページ列
         private PageSortMode _sortMode = PageSortMode.Entry;
@@ -92,6 +92,7 @@ namespace NeeView
         public void Dispose()
         {
             Dispose(true);
+            GC.SuppressFinalize(this);
         }
         #endregion
 
@@ -134,8 +135,7 @@ namespace NeeView
         /// <param name="e"></param>
         private void Thumbnail_Touched(object? sender, EventArgs e)
         {
-            var thumb = sender as Thumbnail;
-            if (thumb is null) return;
+            if (sender is not Thumbnail thumb) return;
 
             _thumbnaulPool.Add(thumb);
         }
@@ -258,8 +258,8 @@ namespace NeeView
         /// </summary>
         private class ComparerFileName : IComparer<Page>
         {
-            private int _sortFileFirstSign;
-            private CancellationToken _token;
+            private readonly int _sortFileFirstSign;
+            private readonly CancellationToken _token;
 
             public ComparerFileName(bool isSortFileFirst, CancellationToken token)
             {
@@ -282,8 +282,8 @@ namespace NeeView
                 {
                     if (xName[i] != yName[i])
                     {
-                        var xIsDirectory = i + 1 == xName.Length ? x.Entry.IsDirectory : true;
-                        var yIsDirectory = i + 1 == yName.Length ? y.Entry.IsDirectory : true;
+                        var xIsDirectory = i + 1 != xName.Length || x.Entry.IsDirectory;
+                        var yIsDirectory = i + 1 != yName.Length || y.Entry.IsDirectory;
                         if (xIsDirectory != yIsDirectory)
                         {
                             return (xIsDirectory ? 1 : -1) * _sortFileFirstSign;
@@ -333,7 +333,7 @@ namespace NeeView
         #region ページリスト用現在ページ表示フラグ
 
         // 表示中ページ
-        private List<Page> _viewPages = new List<Page>();
+        private List<Page> _viewPages = new();
 
         /// <summary>
         /// 表示中ページフラグ更新

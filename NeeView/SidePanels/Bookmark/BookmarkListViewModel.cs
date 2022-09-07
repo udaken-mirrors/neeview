@@ -26,7 +26,7 @@ namespace NeeView
     public class BookmarkListViewModel : BindableBase
     {
         private CancellationTokenSource? _removeUnlinkedCommandCancellationTokenSource;
-        private DpiScaleProvider _dpiProvider = new DpiScaleProvider();
+        private readonly DpiScaleProvider _dpiProvider = new();
         private FolderList _model;
         private ContextMenu? _moreMenu;
 
@@ -98,13 +98,13 @@ namespace NeeView
 
         public GridLength FolderTreeAreaWidth
         {
-            get => new GridLength(_model.FolderTreeAreaWidth);
+            get => new(_model.FolderTreeAreaWidth);
             set => _model.FolderTreeAreaWidth = value.Value;
         }
 
         public GridLength FolderTreeAreaHeight
         {
-            get => new GridLength(_model.FolderTreeAreaHeight);
+            get => new(_model.FolderTreeAreaHeight);
             set => _model.FolderTreeAreaHeight = value.Value;
         }
 
@@ -212,7 +212,7 @@ namespace NeeView
 
         public class BookmarkListMoreMenu : ItemsListMoreMenuDescription
         {
-            private BookmarkListViewModel _vm;
+            private readonly BookmarkListViewModel _vm;
 
             public BookmarkListMoreMenu(BookmarkListViewModel vm)
             {

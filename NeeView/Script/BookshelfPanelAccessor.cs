@@ -7,8 +7,8 @@ namespace NeeView
 {
     public class BookshelfPanelAccessor : LayoutPanelAccessor
     {
-        private FolderPanel _panel;
-        private BookshelfFolderList _model;
+        private readonly FolderPanel _panel;
+        private readonly BookshelfFolderList _model;
 
         public BookshelfPanelAccessor() : base(nameof(FolderPanel))
         {
@@ -70,15 +70,15 @@ namespace NeeView
 
         private void SetSelectedItems(BookshelfItemAccessor[] selectedItems)
         {
-            selectedItems = selectedItems ?? new BookshelfItemAccessor[] { };
+            selectedItems = selectedItems ?? Array.Empty<BookshelfItemAccessor>();
 
             var listBox = _panel.Presenter.FolderListBox;
             listBox?.SetSelectedItems(selectedItems.Select(e => e.Source));
         }
 
-        private BookshelfItemAccessor[] ToStringArray(IEnumerable<FolderItem>? items)
+        private static BookshelfItemAccessor[] ToStringArray(IEnumerable<FolderItem>? items)
         {
-            return items?.Select(e => new BookshelfItemAccessor(e)).ToArray() ?? new BookshelfItemAccessor[] { };
+            return items?.Select(e => new BookshelfItemAccessor(e)).ToArray() ?? Array.Empty<BookshelfItemAccessor>();
         }
 
         internal WordNode CreateWordNode(string name)

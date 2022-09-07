@@ -42,8 +42,8 @@ namespace NeeView
         private bool _isSliderDirectionReversed;
         private ObservableCollection<Page>? _items;
         private int _selectedIndex;
-        private List<Page> _viewItems = new List<Page>();
-        private PageThumbnailJobClient _jobClient;
+        private List<Page> _viewItems = new();
+        private readonly PageThumbnailJobClient _jobClient;
 
 
         private ThumbnailList()
@@ -193,6 +193,7 @@ namespace NeeView
         public void Dispose()
         {
             Dispose(true);
+            GC.SuppressFinalize(this);
         }
         #endregion
 

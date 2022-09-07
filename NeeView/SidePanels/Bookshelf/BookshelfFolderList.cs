@@ -22,7 +22,7 @@ namespace NeeView
 
         private FolderItem? _visibledItem;
         private Regex? _excludeRegex;
-        private DisposableCollection _disposables = new();
+        private readonly DisposableCollection _disposables = new();
 
 
         private BookshelfFolderList() : base(true, true, Config.Current.Bookshelf)
@@ -319,11 +319,6 @@ namespace NeeView
         #region IDisposable support
 
         private bool _disposedValue;
-
-        private new void ThrowIfDisposed()
-        {
-            if (_disposedValue) throw new ObjectDisposedException(GetType().FullName);
-        }
 
         protected override void Dispose(bool disposing)
         {

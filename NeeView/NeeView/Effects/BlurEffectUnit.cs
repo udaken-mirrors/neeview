@@ -14,7 +14,7 @@ namespace NeeView.Effects
     [DataContract]
     public class BlurEffectUnit : EffectUnit
     {
-        private static BlurEffect _effect = new BlurEffect();
+        private static readonly BlurEffect _effect = new();
         public override Effect GetEffect() => _effect;
 
         /// <summary>

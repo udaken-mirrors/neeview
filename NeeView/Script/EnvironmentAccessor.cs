@@ -1,4 +1,6 @@
-﻿namespace NeeView
+﻿#pragma warning disable CA1822
+
+namespace NeeView
 {
     public class EnvironmentAccessor
     {

@@ -56,8 +56,7 @@ namespace NeeView
         //
         private void TextBox_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            var t = sender as TextBox;
-            if (t is null) return;
+            if (sender is not TextBox t) return;
 
             if (!t.IsFocused)
             {
@@ -69,8 +68,7 @@ namespace NeeView
         //
         private void TextBox_GotFocus(object sender, RoutedEventArgs e)
         {
-            var t = sender as TextBox;
-            if (t is null) return;
+            if (sender is not TextBox t) return;
 
             t.SelectAll();
         }

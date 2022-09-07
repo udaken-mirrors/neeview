@@ -20,7 +20,7 @@ namespace NeeView
     /// </summary>
     public partial class QuickAccessPropertyDialog : Window
     {
-        private QuickAccessPropertyDialogViewModel? _vm;
+        private readonly QuickAccessPropertyDialogViewModel? _vm;
 
 
         public QuickAccessPropertyDialog()
@@ -52,7 +52,7 @@ namespace NeeView
 
     public class QuickAccessPropertyDialogViewModel : BindableBase
     {
-        private QuickAccess _quickAccess;
+        private readonly QuickAccess _quickAccess;
 
 
         public QuickAccessPropertyDialogViewModel(QuickAccess quickAccess)

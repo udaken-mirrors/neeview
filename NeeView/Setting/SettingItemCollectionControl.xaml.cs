@@ -182,8 +182,7 @@ namespace NeeView.Setting
         {
             if (Collection == null) return;
 
-            var item = this.CollectionListBox.SelectedItem as string;
-            if (item == null)
+            if (this.CollectionListBox.SelectedItem is not string item)
             {
                 return;
             }

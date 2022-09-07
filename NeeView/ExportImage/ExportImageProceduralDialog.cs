@@ -40,7 +40,7 @@ namespace NeeView
 
             ExportFolder = exporter.ExportFolder;
             Mode = exporter.Mode;
-            HasBackground = HasBackground;
+            HasBackground = exporter.HasBackground;
         }
     }
 }

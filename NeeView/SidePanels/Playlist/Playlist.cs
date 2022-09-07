@@ -21,7 +21,7 @@ namespace NeeView
         private ObservableCollection<PlaylistItem> _items = new();
         private MultiMap<string, PlaylistItem> _itemsMap = new();
         private string _playlistPath;
-        private object _lock = new object();
+        private readonly object _lock = new();
         private bool _isDarty;
         private DateTime _lastWriteTime;
         private bool _isEditable;
@@ -124,15 +124,12 @@ namespace NeeView
         {
             get
             {
-                switch (Config.Current.Playlist.PanelListItemStyle)
+                return Config.Current.Playlist.PanelListItemStyle switch
                 {
-                    default:
-                        return false;
-                    case PanelListItemStyle.Content:
-                        return Config.Current.Panels.ContentItemProfile.ImageWidth > 0.0;
-                    case PanelListItemStyle.Banner:
-                        return Config.Current.Panels.BannerItemProfile.ImageWidth > 0.0;
-                }
+                    PanelListItemStyle.Content => Config.Current.Panels.ContentItemProfile.ImageWidth > 0.0,
+                    PanelListItemStyle.Banner => Config.Current.Panels.BannerItemProfile.ImageWidth > 0.0,
+                    _ => false,
+                };
             }
         }
 
@@ -270,7 +267,7 @@ namespace NeeView
                 return result is null ? null : new List<PlaylistItem> { result };
             }
 
-            List<PlaylistItem> news = new List<PlaylistItem>();
+            var news = new List<PlaylistItem>();
 
             lock (_lock)
             {
@@ -506,8 +503,8 @@ namespace NeeView
 
         #region Save
 
-        private SimpleDelayAction _delaySave = new SimpleDelayAction();
-        private SemaphoreSlim _saveSemaphore = new SemaphoreSlim(1, 1);
+        private readonly SimpleDelayAction _delaySave = new();
+        private readonly SemaphoreSlim _saveSemaphore = new(1, 1);
         private CancellationTokenSource? _cancellationTokenSource;
 
         public void DelaySave(Action savedCallback)
@@ -563,7 +560,7 @@ namespace NeeView
 
         private async Task SaveAsync(string path, PlaylistSource source, Action? SavedCallback, CancellationToken token)
         {
-            await _saveSemaphore.WaitAsync();
+            await _saveSemaphore.WaitAsync(token);
             try
             {
                 if (!this.IsEditable) return;

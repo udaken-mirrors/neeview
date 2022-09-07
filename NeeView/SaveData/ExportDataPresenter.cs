@@ -13,7 +13,7 @@ namespace NeeView
         }
 
 
-        private ExportDataDialogService _dialogService = new ExportDataDialogService();
+        private readonly ExportDataDialogService _dialogService = new();
 
 
         public void Export(ExportBackupCommandParameter parameter)
@@ -29,8 +29,7 @@ namespace NeeView
             try
             {
                 SaveDataSync.Current.Flush();
-                var exporter = new Exporter();
-                exporter.Export(fileName);
+                Exporter.Export(fileName);
             }
             catch (Exception ex)
             {

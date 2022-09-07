@@ -20,10 +20,10 @@ namespace NeeView.Text
 
         private class Context
         {
-            private string _source;
+            private readonly string _source;
+            private readonly StringBuilder _work = new();
+            private readonly List<string> _tokens = new();
             private int _index = -1;
-            private StringBuilder _work = new StringBuilder();
-            private List<string> _tokens = new List<string>();
 
 
             public Context(string source)
@@ -72,7 +72,7 @@ namespace NeeView.Text
 
         private class State
         {
-            public State(Action<Context> action )
+            public State(Action<Context> action)
             {
                 Action = action;
             }
@@ -85,16 +85,16 @@ namespace NeeView.Text
         }
 
 
-        private static State s00 = new State(StateAction_Next);
-        private static State s01 = new State(StateAction_Take);
-        private static State s02 = new State(StateAction_Next);
-        private static State s03 = new State(StateAction_Push);
-        private static State s04 = new State(StateAction_Take);
-        private static State s05 = new State(StateAction_Next);
-        private static State s06 = new State(StateAction_Push);
-        private static State s07 = new State(StateAction_Next);
-        private static State err = new State(StateAction_Error);
-        private static State eos = new State(StateAction_None);
+        private static readonly State s00 = new(StateAction_Next);
+        private static readonly State s01 = new(StateAction_Take);
+        private static readonly State s02 = new(StateAction_Next);
+        private static readonly State s03 = new(StateAction_Push);
+        private static readonly State s04 = new(StateAction_Take);
+        private static readonly State s05 = new(StateAction_Next);
+        private static readonly State s06 = new(StateAction_Push);
+        private static readonly State s07 = new(StateAction_Next);
+        private static readonly State err = new(StateAction_Error);
+        private static readonly State eos = new(StateAction_None);
 
         static StringCollectionParser()
         {
@@ -138,17 +138,13 @@ namespace NeeView.Text
 
         private static CharType GetCharType(char c)
         {
-            switch (c)
+            return c switch
             {
-                case '\0':
-                    return CharType.End;
-                case ';':
-                    return CharType.Splitter;
-                case '"':
-                    return CharType.DoubleQuat;
-                default:
-                    return CharType.Any;
-            }
+                '\0' => CharType.End,
+                ';' => CharType.Splitter,
+                '"' => CharType.DoubleQuat,
+                _ => CharType.Any,
+            };
         }
 
         private static void StateAction_None(Context context)

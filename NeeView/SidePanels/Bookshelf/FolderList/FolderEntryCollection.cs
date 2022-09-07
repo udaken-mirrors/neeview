@@ -19,8 +19,8 @@ namespace NeeView
     public class FolderEntryCollection : FolderCollection, IDisposable
     {
         private FileSystemWatcher? _fileSystemWatcher;
-        private FolderCollectionEngine? _engine;
-        private bool _isWatchFileSystem;
+        private readonly FolderCollectionEngine? _engine;
+        private readonly bool _isWatchFileSystem;
 
 
         public FolderEntryCollection(QueryPath path, bool isWatchFileSystem, bool isOverlayEnabled) : base(path, isOverlayEnabled)
@@ -41,7 +41,7 @@ namespace NeeView
 
         public override async Task InitializeItemsAsync(CancellationToken token)
         {
-            await Task.Run(() => InitializeItems(token));
+            await Task.Run(() => InitializeItems(token), token);
         }
 
         private void InitializeItems(CancellationToken token)
@@ -61,8 +61,10 @@ namespace NeeView
 
                 if (!directory.Exists)
                 {
-                    var items = new ObservableCollection<FolderItem>();
-                    items.Add(_folderItemFactory.CreateFolderItemEmpty());
+                    var items = new ObservableCollection<FolderItem>
+                    {
+                        _folderItemFactory.CreateFolderItemEmpty()
+                    };
                     this.Items = items;
                 }
                 else
@@ -131,7 +133,7 @@ namespace NeeView
         private class MultipleArchive
         {
             // .partXX.rar のみ対応
-            private static Regex _regex = new Regex(@"^(.+)\.part(\d+)\.rar$", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+            private static readonly Regex _regex = new(@"^(.+)\.part(\d+)\.rar$", RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
             public FolderItem FolderItem { get; set; }
             public string? Key { get; set; }
@@ -199,7 +201,7 @@ namespace NeeView
         private void Watcher_Error(object sender, ErrorEventArgs e)
         {
             var ex = e.GetException();
-            Debug.WriteLine($"FileSystemWatcher Error!! : {ex.ToString()} : {ex.Message}");
+            Debug.WriteLine($"FileSystemWatcher Error!! : {ex} : {ex.Message}");
 
             // recoverty...
             ////var path = _fileSystemWatcher.Path;

@@ -28,9 +28,9 @@ namespace NeeView
     /// </summary>
     public class Job : BindableBase, IDisposable
     {
-        private ManualResetEventSlim _completed = new ManualResetEventSlim();
-        private CancellationToken _cancellationToken;
-        private IJobCommand _command;
+        private readonly ManualResetEventSlim _completed = new();
+        private readonly CancellationToken _cancellationToken;
+        private readonly IJobCommand _command;
         private JobState _state;
         private JobResult _result;
 
@@ -153,6 +153,7 @@ namespace NeeView
         public void Dispose()
         {
             Dispose(true);
+            GC.SuppressFinalize(this);
         }
         #endregion
 

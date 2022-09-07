@@ -17,7 +17,7 @@ namespace NeeView
     /// </summary>
     public class ImageEffectPanel : BindableBase, IPanel
     {
-        private ImageEffectView _view;
+        private readonly ImageEffectView _view;
         
         public ImageEffectPanel(ImageEffect model, ImageFilter imageFilter)
         {

@@ -18,8 +18,8 @@ namespace NeeView
     /// </summary>
     public class HistoryPanel : BindableBase, IPanel
     {
-        private HistoryListView _view;
-        private HistoryListPresenter _presenter;
+        private readonly HistoryListView _view;
+        private readonly HistoryListPresenter _presenter;
 
         public HistoryPanel(HistoryList model)
         {

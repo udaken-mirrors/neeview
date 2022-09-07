@@ -24,7 +24,7 @@ namespace NeeView
     /// </summary>
     public class PageMarkers : BindableBase
     {
-        private BookOperation _bookOperation;
+        private readonly BookOperation _bookOperation;
         private PageMarkerCollection? _markerCollection;
         private bool _isSliderDirectionReversed;
 

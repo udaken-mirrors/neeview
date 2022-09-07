@@ -10,8 +10,7 @@ namespace NeeView
         {
             token.ThrowIfCancellationRequested();
 
-            var factory = new BookSourceFactory();
-            var bookSource = await factory.CreateAsync(address, setting, token);
+            var bookSource = await BookSourceFactory.CreateAsync(address, setting, token);
 
             if (bookSource.IsMedia)
             {

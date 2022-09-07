@@ -30,13 +30,9 @@ namespace NeeView
     /// </summary>
     public partial class FolderListView : UserControl, IHasFolderListBox
     {
-        private FolderListViewModel _vm;
+        private readonly FolderListViewModel _vm;
         private int _requestSearchBoxFocusValue;
 
-        //public FolderListView()
-        //{
-        //    InitializeComponent();
-        //}
 
         public FolderListView(BookshelfFolderList model)
         {
@@ -84,7 +80,7 @@ namespace NeeView
 
             if (Interlocked.Exchange(ref _requestSearchBoxFocusValue, 1) == 0)
             {
-                var task = FocustSearchBoxAsync(); // 非同期
+                _ = FocustSearchBoxAsync(); // 非同期
             }
         }
 
@@ -200,7 +196,7 @@ namespace NeeView
 
         #region DragDrop
 
-        private DragDropGoast _goast = new DragDropGoast();
+        private readonly DragDropGoast _goast = new();
         private bool _isButtonDown;
         private Point _buttonDownPos;
 

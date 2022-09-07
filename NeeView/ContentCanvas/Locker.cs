@@ -34,11 +34,12 @@ namespace NeeView
             public void Dispose()
             {
                 Dispose(true);
+                GC.SuppressFinalize(this);
             }
             #endregion
         }
 
-        private List<Key> _keys = new List<Key>();
+        private readonly List<Key> _keys = new();
 
         public bool IsLocked => _keys.Any();
 

@@ -162,11 +162,11 @@ namespace NeeView
 
         #region Obsolete
 
-        [Obsolete, PropertyMapIgnore]
+        [Obsolete("no used"), PropertyMapIgnore]
         [JsonIgnore]
         public string? FontName_Legacy { get; private set; }
 
-        [Obsolete, Alternative("nv.Config.Fonts.FontName", 39, IsFullName = true)] // ver.39
+        [Obsolete("no used"), Alternative("nv.Config.Fonts.FontName", 39, IsFullName = true)] // ver.39
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         public string? FontName
         {
@@ -174,11 +174,11 @@ namespace NeeView
             set { FontName_Legacy = value; }
         }
 
-        [Obsolete, PropertyMapIgnore]
+        [Obsolete("no used"), PropertyMapIgnore]
         [JsonIgnore]
         public double FontSize_Legacy { get; private set; }
 
-        [Obsolete, Alternative("nv.Config.Fonts.PanelFontScale", 39, IsFullName = true)] // ver.39
+        [Obsolete("no used"), Alternative("nv.Config.Fonts.PanelFontScale", 39, IsFullName = true)] // ver.39
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         public double FontSize
         {
@@ -186,11 +186,11 @@ namespace NeeView
             set { FontSize_Legacy = value; }
         }
 
-        [Obsolete, PropertyMapIgnore]
+        [Obsolete("no used"), PropertyMapIgnore]
         [JsonIgnore]
         public double FolderTreeFontSize_Legacy { get; private set; }
 
-        [Obsolete, Alternative("nv.Config.Fonts.FolderTreeFontScale", 39, IsFullName = true)] // ver.39
+        [Obsolete("no used"), Alternative("nv.Config.Fonts.FolderTreeFontScale", 39, IsFullName = true)] // ver.39
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         public double FolderTreeFontSize
         {
@@ -198,7 +198,7 @@ namespace NeeView
             set { FolderTreeFontSize_Legacy = value; }
         }
 
-        [Obsolete, Alternative(nameof(IsHidePanelInAutoHideMode), 38)] // ver.38
+        [Obsolete("no used"), Alternative(nameof(IsHidePanelInAutoHideMode), 38)] // ver.38
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         public bool IsHidePanelInFullscreen
         {
@@ -206,15 +206,15 @@ namespace NeeView
             set { IsHidePanelInAutoHideMode = value; }
         }
 
-        [Obsolete, Alternative(null, 38)] // ver.38
+        [Obsolete("no used"), Alternative(null, 38)] // ver.38
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         public Dictionary<string, PanelDock>? PanelDocks { get; set; }
 
-        [Obsolete, Alternative(null, 38)] // ver.38
+        [Obsolete("no used"), Alternative(null, 38)] // ver.38
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         public string? LeftPanelSeleted { get; set; }
 
-        [Obsolete, Alternative(null, 38)] // ver.38
+        [Obsolete("no used"), Alternative(null, 38)] // ver.38
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         public string? RightPanelSeleted { get; set; }
 

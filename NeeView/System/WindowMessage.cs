@@ -187,7 +187,10 @@ namespace NeeView
             public static extern UInt32 SHChangeNotifyRegister(IntPtr hWnd, SHCNRF fSources, SHCNE fEvents, uint wMsg, int cEntries, ref SHChangeNotifyEntry pFsne);
 
             [DllImport("shell32.dll", CharSet = CharSet.Unicode)]
-            public static extern Int32 SHGetPathFromIDList(IntPtr pIDL, StringBuilder strPath);
+            [return: MarshalAs(UnmanagedType.Bool)]
+            public static extern bool SHGetPathFromIDList(IntPtr pIDL, StringBuilder strPath);
+
+
 
             /*
             [DllImport("shell32.dll")]
@@ -293,8 +296,7 @@ namespace NeeView
         {
             if (_window != null) throw new InvalidOperationException();
 
-            var hsrc = HwndSource.FromVisual(window) as HwndSource;
-            if (hsrc is null) throw new InvalidOperationException("Cannot get window handle");
+            var hsrc = HwndSource.FromVisual(window) as HwndSource ?? throw new InvalidOperationException("Cannot get window handle");
 
             _window = window;
 
@@ -334,7 +336,8 @@ namespace NeeView
                         OnSettingChange(wParam, lParam);
                         break;
                     case NativeMethods.WM_MOUSEACTIVATE:
-                        return OnMouseActive(ref handled);
+                        OnMouseActive();
+                        break;
                 }
             }
             catch (Exception ex)
@@ -360,14 +363,12 @@ namespace NeeView
         /// <summary>
         /// マウスボタンを押すことでウィンドウをアクティブ化するメッセージ処理
         /// </summary>
-        private IntPtr OnMouseActive(ref bool handled)
+        private static void OnMouseActive()
         {
             if (Config.Current.Window.MouseActivateAndEat)
             {
                 MainWindow.Current.SetMouseActivage();
             }
-
-            return IntPtr.Zero;
         }
 
         private void OnDeviceChange(IntPtr wParam, IntPtr lParam)
@@ -399,7 +400,7 @@ namespace NeeView
             }
         }
 
-        private string? UnitMaskToDriveName(uint unitmask)
+        private static string? UnitMaskToDriveName(uint unitmask)
         {
             for (int i = 0; i < 32; ++i)
             {
@@ -479,15 +480,14 @@ namespace NeeView
             }
         }
 
-        private string? PIDLToString(IntPtr dwItem)
+        private static string? PIDLToString(IntPtr dwItem)
         {
-            if (dwItem == IntPtr.Zero)
-            {
-                return null;
-            }
+            if (dwItem == IntPtr.Zero) return null;
 
             var buff = new StringBuilder(1024);
-            NativeMethods.SHGetPathFromIDList(dwItem, buff);
+            var isSuccess = NativeMethods.SHGetPathFromIDList(dwItem, buff);
+            if (!isSuccess) return null;
+
             return buff.ToString(); ;
         }
 

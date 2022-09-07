@@ -45,7 +45,7 @@ namespace NeeView.Setting
     public class InputGestureSettingViewModel : BindableBase
     {
         // すべてのコマンドのショートカット
-        private IDictionary<string, CommandElement> _commandMap;
+        private readonly IDictionary<string, CommandElement> _commandMap;
 
         // 編集するコマンド
         public string Command { get; set; }

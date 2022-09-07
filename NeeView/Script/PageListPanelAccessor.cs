@@ -6,8 +6,8 @@ namespace NeeView
 {
     public class PageListPanelAccessor : LayoutPanelAccessor
     {
-        private PageListPanel _panel;
-        private PageList _model;
+        private readonly PageListPanel _panel;
+        private readonly PageList _model;
 
 
         public PageListPanelAccessor() : base(nameof(PageListPanel))
@@ -69,13 +69,13 @@ namespace NeeView
 
         private void SetSelectedItems(PageAccessor[] selectedItems)
         {
-            selectedItems = selectedItems ?? new PageAccessor[] { };
+            selectedItems = selectedItems ?? Array.Empty<PageAccessor>();
             _panel.Presenter.PageListBox?.SetSelectedItems(selectedItems.Select(e => e.Source));
         }
 
-        private PageAccessor[] ToStringArray(IEnumerable<Page>? pages)
+        private static PageAccessor[] ToStringArray(IEnumerable<Page>? pages)
         {
-            return pages?.Select(e => new PageAccessor(e)).ToArray() ?? new PageAccessor[] { };
+            return pages?.Select(e => new PageAccessor(e)).ToArray() ?? Array.Empty<PageAccessor>();
         }
 
 

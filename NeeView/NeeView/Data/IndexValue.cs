@@ -39,7 +39,7 @@ namespace NeeView.Data
     abstract public class IndexValue<T> : BindableBase, IIndexValue
         where T : struct
     {
-        private List<T> _values;
+        private readonly List<T> _values;
         private int _index;
         private T _value;
         public PropertyValue<T>? _property;

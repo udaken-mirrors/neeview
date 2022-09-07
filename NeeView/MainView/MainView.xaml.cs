@@ -27,7 +27,7 @@ namespace NeeView
     {
         private MainViewViewModel? _vm;
         private Window? _owner;
-        private DpiScaleProvider _dpiProvider = new DpiScaleProvider();
+        private readonly DpiScaleProvider _dpiProvider = new();
         private TransformGroup? _transformCalc;
 
         public MainView()
@@ -359,7 +359,7 @@ namespace NeeView
 
         #region SizeChanged
 
-        private object _windowSizeChangedLock = new object();
+        private readonly object _windowSizeChangedLock = new();
         private Size _oldWindowSize;
         private Size _newWindowSize;
         private bool _isResizeLocked;

@@ -24,10 +24,10 @@ namespace NeeView
 
         private HashSet<Key> _usedKeyMap = new();
         private bool _isDarty = true;
-        private List<EventHandler<KeyEventArgs>> _imeKeyHandlers = new List<EventHandler<KeyEventArgs>>();
-        private MouseWheelDelta _mouseWheelDelta = new MouseWheelDelta();
-        private List<TouchInput> _touchInputCollection = new List<TouchInput>();
-        private List<MouseInput> _mouseInputCollection = new List<MouseInput>();
+        private List<EventHandler<KeyEventArgs>> _imeKeyHandlers = new();
+        private readonly MouseWheelDelta _mouseWheelDelta = new();
+        private readonly List<TouchInput> _touchInputCollection = new();
+        private readonly List<MouseInput> _mouseInputCollection = new();
         private bool _disposedValue;
 
         private RoutedCommandTable()
@@ -401,7 +401,7 @@ namespace NeeView
         }
 
         // スライダー方向によって移動コマンドを入れ替える
-        private string GetFixedCommandName(string name, bool allowFlip)
+        private static string GetFixedCommandName(string name, bool allowFlip)
         {
             if (allowFlip && Config.Current.Command.IsReversePageMove && MainWindowModel.Current.IsLeftToRightSlider())
             {

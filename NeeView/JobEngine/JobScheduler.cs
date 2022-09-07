@@ -22,8 +22,8 @@ namespace NeeView
 
 
 
-        public Dictionary<JobClient, List<JobSource>> _clients = new Dictionary<JobClient, List<JobSource>>();
-        private List<JobSource> _queue = new List<JobSource>();
+        public Dictionary<JobClient, List<JobSource>> _clients = new();
+        private List<JobSource> _queue = new();
 
 
         public event EventHandler? QueueChanged;
@@ -109,7 +109,7 @@ namespace NeeView
                 var collection = Queue.Where(e => e.Category == sender.Category).ToList();
 
                 // オーダーがcollectionにない場合はそのJOBを作成、追加。
-                List<JobSource> sources = new List<JobSource>();
+                var sources = new List<JobSource>();
                 foreach (var order in orders)
                 {
                     var source = collection.FirstOrDefault(e => e.Key == order.Key);

@@ -25,7 +25,7 @@ namespace NeeView
         /// <summary>
         /// ロックオブジェクト
         /// </summary>
-        private object _lock = new object();
+        private readonly object _lock = new();
 
 
         public Picture(PictureSource source)
@@ -69,7 +69,7 @@ namespace NeeView
         }
 
         // 画像生成に影響する設定のハッシュ値取得
-        private int GetEnvironmentoHashCode()
+        private static int GetEnvironmentoHashCode()
         {
             return Config.Current.ImageResizeFilter.GetHashCode() ^ Config.Current.ImageCustomSize.GetHashCodde();
         }

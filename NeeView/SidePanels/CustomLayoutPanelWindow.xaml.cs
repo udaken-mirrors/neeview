@@ -22,10 +22,14 @@ namespace NeeView
     /// </summary>
     public partial class CustomLayoutPanelWindow : LayoutPanelWindow, IDisposable, IHasRenameManager
     {
-        private WindowChromeAccessor _windowChrome;
-        private WindowStateManager _windowStateManager;
+        private readonly WindowChromeAccessor _windowChrome;
         private RoutedCommandBinding? _routedCommandBinding;
         private bool _disposedValue;
+        
+        // インスタンス保持用
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0052:読み取られていないプライベート メンバーを削除", Justification = "<保留中>")]
+        private readonly WindowStateManager _windowStateManager;
+
 
 
         public CustomLayoutPanelWindow()

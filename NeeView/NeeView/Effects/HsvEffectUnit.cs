@@ -14,7 +14,7 @@ namespace NeeView.Effects
     [DataContract]
     public class HsvEffectUnit : EffectUnit
     {
-        private static HsvEffect _effect = new HsvEffect();
+        private static readonly HsvEffect _effect = new();
         public override Effect GetEffect() => _effect;
 
 

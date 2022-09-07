@@ -9,8 +9,6 @@ using NeeView.Windows.Property;
 
 namespace NeeView
 {
-
-
     /// <summary>
     /// ウィンドウタイトル
     /// </summary>
@@ -20,13 +18,13 @@ namespace NeeView
         public static WindowTitle Current { get; }
 
 
-        private string _defaultWindowTitle;
+        private readonly string _defaultWindowTitle;
         private string _title = "";
 
-        private BookHub _bookHub;
-        private MainViewComponent _mainViewComponent;
-        private TitleStringService _titleStringService;
-        private TitleString _titleString;
+        private readonly BookHub _bookHub;
+        private readonly MainViewComponent _mainViewComponent;
+        private readonly TitleStringService _titleStringService;
+        private readonly TitleString _titleString;
 
 
         public WindowTitle()

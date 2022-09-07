@@ -11,7 +11,7 @@ namespace NeeView
             Debug.Assert(current != null);
             Debug.Assert(string.IsNullOrEmpty(current.Page));
 
-            BookSettingConfig param = new BookSettingConfig();
+            var param = new BookSettingConfig();
 
             var policyMap = new BookSettingPolicyConfigMap(self);
 

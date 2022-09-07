@@ -34,7 +34,7 @@ namespace NeeView.Text
             Any,
         }
 
-        private State[,] _table = new State[,]
+        private readonly State[,] _table = new State[,]
         {
             // End, Space, DoubleQuote, Any
             {State.END, State.S01, State.S06, State.S03, }, // S00
@@ -48,7 +48,7 @@ namespace NeeView.Text
             {State.S05, State.S04, State.S07, State.S03, }, // S08
         };
 
-        private List<StateFunc> _stateMap;
+        private readonly List<StateFunc> _stateMap;
 
         public StringArgumentSplitter()
         {
@@ -138,9 +138,9 @@ namespace NeeView.Text
 
         private class Context
         {
-            private string _source;
+            private readonly string _source;
+            private readonly StringBuilder _stringBuilder = new();
             private int _index;
-            private StringBuilder _stringBuilder = new StringBuilder();
 
             public Context(string source)
             {
@@ -175,15 +175,12 @@ namespace NeeView.Text
                 {
                     return Trigger.Space;
                 }
-                switch (c)
+                return c switch
                 {
-                    case '\0':
-                        return Trigger.End;
-                    case '"':
-                        return Trigger.DoubleQuote;
-                    default:
-                        return Trigger.Any;
-                }
+                    '\0' => Trigger.End,
+                    '"' => Trigger.DoubleQuote,
+                    _ => Trigger.Any,
+                };
             }
 
             public void Push()
@@ -211,7 +208,7 @@ namespace NeeView.Text
 
     public static class StringTools
     {
-        private static StringArgumentSplitter _argumentSplitter = new StringArgumentSplitter();
+        private static readonly StringArgumentSplitter _argumentSplitter = new();
 
         public static List<string> SplitArgument(string? s)
         {

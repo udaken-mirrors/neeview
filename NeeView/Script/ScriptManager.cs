@@ -24,13 +24,14 @@ namespace NeeView
         }
 
 
-        private CommandTable _commandTable;
+        private readonly CommandTable _commandTable;
         private bool _isDarty = true;
-        private ScriptUnitPool _pool = new ScriptUnitPool();
-        private ScriptFolderWatcher _watcher;
+        private readonly ScriptUnitPool _pool = new();
+        private readonly ScriptFolderWatcher _watcher;
         private bool _disposedValue;
-        private ScriptCommandSourceMap _sourceMap = new ScriptCommandSourceMap();
-        private DisposableCollection _disposableCollection = new DisposableCollection();
+        private readonly ScriptCommandSourceMap _sourceMap = new();
+        private readonly DisposableCollection _disposableCollection = new();
+
 
         public ScriptManager(CommandTable commandTable)
         {
@@ -41,7 +42,7 @@ namespace NeeView
 
             _disposableCollection.Add(Config.Current.Script.SubscribePropertyChanged(nameof(ScriptConfig.IsScriptFolderEnabled),
                 (s, e) => ScriptConfig_Changed()));
-            
+
             _disposableCollection.Add(Config.Current.Script.SubscribePropertyChanged(nameof(ScriptConfig.ScriptFolder),
                 (s, e) => ScriptConfig_Changed()));
 

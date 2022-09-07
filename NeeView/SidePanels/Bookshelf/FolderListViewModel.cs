@@ -103,13 +103,13 @@ namespace NeeView
 
         public GridLength FolderTreeAreaWidth
         {
-            get => new GridLength(_model.FolderTreeAreaWidth);
+            get => new(_model.FolderTreeAreaWidth);
             set => _model.FolderTreeAreaWidth = value.Value;
         }
 
         public GridLength FolderTreeAreaHeight
         {
-            get => new GridLength(_model.FolderTreeAreaHeight);
+            get => new(_model.FolderTreeAreaHeight);
             set => _model.FolderTreeAreaHeight = value.Value;
         }
 
@@ -301,7 +301,7 @@ namespace NeeView
 
         public class FolderListMoreMenuDescription : ItemsListMoreMenuDescription
         {
-            private FolderListViewModel _vm;
+            private readonly FolderListViewModel _vm;
 
             public FolderListMoreMenuDescription(FolderListViewModel vm)
             {
@@ -329,18 +329,18 @@ namespace NeeView
 
                 switch (_vm._model.FolderCollection)
                 {
-                    case FolderEntryCollection folderEntryCollection:
+                    case FolderEntryCollection:
                         items.Add(new Separator());
                         items.Add(CreateCommandMenuItem(Properties.Resources.Bookshelf_MoreMenu_Subfolder, _vm.ToggleFolderRecursive, new Binding("FolderCollection.FolderParameter.IsFolderRecursive") { Source = _vm._model }));
                         break;
 
-                    case FolderArchiveCollection folderArchiveCollection:
+                    case FolderArchiveCollection:
                         break;
 
-                    case FolderSearchCollection folderSearchCollection:
+                    case FolderSearchCollection:
                         break;
 
-                    case BookmarkFolderCollection bookmarFolderCollection:
+                    case BookmarkFolderCollection:
                         items.Add(new Separator());
                         items.Add(CreateCommandMenuItem(Properties.Resources.Word_NewFolder, _vm.NewFolderCommand));
                         items.Add(CreateCommandMenuItem(Properties.Resources.FolderTree_Menu_AddBookmark, _vm.AddBookmarkCommand));

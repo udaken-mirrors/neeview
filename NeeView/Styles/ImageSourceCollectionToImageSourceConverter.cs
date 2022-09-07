@@ -16,12 +16,12 @@ namespace NeeView
         {
             if (values.Length < 2) throw new InvalidOperationException();
 
-            if (!(values[0] is IImageSourceCollection frames))
+            if (values[0] is not IImageSourceCollection frames)
             {
                 return DependencyProperty.UnsetValue;
             }
 
-            if (!(values[1] is double dpiScale))
+            if (values[1] is not double dpiScale)
             {
                 return DependencyProperty.UnsetValue;
             }

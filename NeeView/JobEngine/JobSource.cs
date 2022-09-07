@@ -10,7 +10,7 @@ namespace NeeView
     /// </summary>
     public class JobSource : IDisposable
     {
-        private CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
+        private readonly CancellationTokenSource _cancellationTokenSource = new();
 
         public JobSource(JobCategory category, object key)
         {
@@ -92,6 +92,7 @@ namespace NeeView
         public void Dispose()
         {
             Dispose(true);
+            GC.SuppressFinalize(this);
         }
         #endregion
     }

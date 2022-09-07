@@ -55,8 +55,8 @@ namespace NeeView
             pos[2] = target.TranslatePoint(new Point(0, height), parent);
             pos[3] = target.TranslatePoint(new Point(width, height), parent);
 
-            Point min = new Point(pos.Min(e => e.X), pos.Min(e => e.Y));
-            Point max = new Point(pos.Max(e => e.X), pos.Max(e => e.Y));
+            var min = new Point(pos.Min(e => e.X), pos.Min(e => e.Y));
+            var max = new Point(pos.Max(e => e.X), pos.Max(e => e.Y));
 
             return new Rect(min, max);
         }

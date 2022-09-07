@@ -16,7 +16,7 @@ namespace NeeView
     public static class ContextMenuWatcher
     {
         private static bool _isInitialized;
-        private static DelayValue<UIElement?> _targetElement = new DelayValue<UIElement?>();
+        private static DelayValue<UIElement?> _targetElement = new();
 
         public static event EventHandler<TargetElementChangedEventArgs>? TargetElementChanged;
 
@@ -40,8 +40,7 @@ namespace NeeView
 
         private static void OnContextMenuOpening(object? sender, ContextMenuEventArgs e)
         {
-            var target = sender as DependencyObject;
-            if (target is null) return;
+            if (sender is not DependencyObject target) return;
 
             var menu = ContextMenuService.GetContextMenu(target);
             if (menu != null)

@@ -51,7 +51,7 @@ namespace NeeView
         /// <summary>
         /// Model property.
         /// </summary>
-        private PrintModel _model;
+        private readonly PrintModel _model;
         public PrintModel Model => _model;
 
         /// <summary>
@@ -67,7 +67,7 @@ namespace NeeView
         /// <summary>
         /// PageCollection property.
         /// </summary>
-        private List<FixedPage> _PageCollection = new List<FixedPage>();
+        private List<FixedPage> _PageCollection = new();
         public List<FixedPage> PageCollection
         {
             get { return _PageCollection; }

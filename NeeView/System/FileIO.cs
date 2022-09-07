@@ -443,64 +443,15 @@ namespace NeeView
         /// </summary>
         public static async Task<bool> RenameAsync(string src, string dst)
         {
-            int retryCount = 1;
-
             // 現在の本ならば閉じる
             var isBookClosed = await BookHubTools.CloseBookAsync(src);
 
             // 全てのファイルロックをはずす
             await ArchiverManager.Current.UnlockAllArchivesAsync();
 
-        Retry:
-
-            try
-            {
-                // rename
-                try
-                {
-                    if (System.IO.Directory.Exists(src))
-                    {
-                        System.IO.Directory.Move(src, dst);
-                    }
-                    else if (System.IO.File.Exists(src))
-                    {
-                        System.IO.File.Move(src, dst);
-                    }
-                    else
-                    {
-                        throw new FileNotFoundException();
-                    }
-                }
-                catch (IOException) when (string.Compare(src, dst, true) == 0)
-                {
-                    // 大文字小文字の違いだけである場合はWIN32APIで処理する
-                    // .NET6 では不要？
-                    NativeMethods.MoveFile(src, dst);
-                }
-            }
-            catch (Exception ex)
-            {
-                if (retryCount > 0)
-                {
-                    await Task.Delay(1000);
-                    retryCount--;
-                    goto Retry;
-                }
-
-                var confirm = new MessageDialog($"{Resources.FileRenameFailedDialog_Message}\n\n{ex.Message}", Resources.FileRenameFailedDialog_Title);
-                confirm.Commands.Add(UICommands.Retry);
-                confirm.Commands.Add(UICommands.Cancel);
-                var answer = confirm.ShowDialog();
-                if (answer == UICommands.Retry)
-                {
-                    retryCount = 1;
-                    goto Retry;
-                }
-                else
-                {
-                    return false;
-                }
-            }
+            // rename main
+            var isSuccess = RenameRetry(src, dst);
+            if (!isSuccess) return false;
 
             // 本を開き直す
             if (isBookClosed)
@@ -511,6 +462,70 @@ namespace NeeView
             return true;
         }
 
+        private static bool RenameRetry(string src, string dst)
+        {
+            while (true)
+            {
+                try
+                {
+                    RenameCore(src, dst);
+                    return true;
+                }
+                catch (Exception ex)
+                {
+                    UICommand? answer = null;
+                    AppDispatcher.Invoke(() =>
+                    {
+                        var retryConfirm = new MessageDialog($"{Resources.FileRenameFailedDialog_Message}\n\n{ex.Message}", Resources.FileRenameFailedDialog_Title);
+                        retryConfirm.Commands.Add(UICommands.Retry);
+                        retryConfirm.Commands.Add(UICommands.Cancel);
+                        answer = retryConfirm.ShowDialog();
+                    });
+                    if (answer == UICommands.Retry)
+                    {
+                        continue;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+            }
+        }
+
+
+        /// <summary>
+        /// ファイル名変更
+        /// </summary>
+        /// <param name="src">変更前のパス</param>
+        /// <param name="dst">変更後のパス</param>
+        /// <exception cref="FileNotFoundException">srcファイルが見つかりません</exception>
+        private static void RenameCore(string src, string dst)
+        {
+            try
+            {
+                if (System.IO.Directory.Exists(src))
+                {
+                    System.IO.Directory.Move(src, dst);
+                }
+                else if (System.IO.File.Exists(src))
+                {
+                    System.IO.File.Move(src, dst);
+                }
+                else
+                {
+                    throw new FileNotFoundException();
+                }
+            }
+            catch (IOException) when (string.Compare(src, dst, true) == 0)
+            {
+                // 大文字小文字の違いだけである場合はWIN32APIで処理する
+                // .NET6 では不要？
+                NativeMethods.MoveFile(src, dst);
+            }
+        }
+
         #endregion Rename
     }
+
 }

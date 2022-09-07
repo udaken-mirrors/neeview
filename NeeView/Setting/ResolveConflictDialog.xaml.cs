@@ -70,7 +70,7 @@ namespace NeeView.Setting
     /// </summary>
     public class ResolveConflictDialogVM : BindableBase
     {
-        private ResolveConflictDialogContext _context;
+        private readonly ResolveConflictDialogContext _context;
 
         // window title
         public string Title => $"{CommandTable.Current.GetElement(_context.Command).Text} - {Properties.Resources.ResolveConflictDialog_Title}";

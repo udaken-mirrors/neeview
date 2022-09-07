@@ -133,7 +133,7 @@ namespace NeeView
             }
         }
 
-        private DriveInfo? CreateDriveInfo(string name)
+        private static DriveInfo? CreateDriveInfo(string name)
         {
             Debug.Assert(name.EndsWith("\\"));
 

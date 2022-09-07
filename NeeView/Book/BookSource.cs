@@ -85,6 +85,7 @@ namespace NeeView
         public void Dispose()
         {
             Dispose(true);
+            GC.SuppressFinalize(this);
         }
         #endregion
 
@@ -100,24 +101,22 @@ namespace NeeView
 
             var extension = LoosePath.GetExtension(archiver.EntryName);
 
-            var archiverType = ArchiverManager.Current.GetArchiverType(archiver);
-            switch (archiverType)
+            var archiverType = ArchiverManager.GetArchiverType(archiver);
+            return archiverType switch
             {
-                case ArchiverType.FolderArchive:
-                    return Properties.Resources.ArchiveFormat_Folder;
-                case ArchiverType.ZipArchiver:
-                case ArchiverType.SevenZipArchiver:
-                case ArchiverType.SusieArchiver:
-                    return inner + Properties.Resources.ArchiveFormat_CompressedFile + $"({extension})";
-                case ArchiverType.PdfArchiver:
-                    return inner + Properties.Resources.ArchiveFormat_Pdf + $"({extension})";
-                case ArchiverType.MediaArchiver:
-                    return inner + Properties.Resources.ArchiveFormat_Media + $"({extension})";
-                case ArchiverType.PlaylistArchiver:
-                    return Properties.Resources.ArchiveFormat_Playlist;
-                default:
-                    return Properties.Resources.ArchiveFormat_Unknown;
-            }
+                ArchiverType.FolderArchive
+                    => Properties.Resources.ArchiveFormat_Folder,
+                ArchiverType.ZipArchiver or ArchiverType.SevenZipArchiver or ArchiverType.SusieArchiver
+                    => inner + Properties.Resources.ArchiveFormat_CompressedFile + $"({extension})",
+                ArchiverType.PdfArchiver
+                    => inner + Properties.Resources.ArchiveFormat_Pdf + $"({extension})",
+                ArchiverType.MediaArchiver
+                    => inner + Properties.Resources.ArchiveFormat_Media + $"({extension})",
+                ArchiverType.PlaylistArchiver
+                    => Properties.Resources.ArchiveFormat_Playlist,
+                _
+                    => Properties.Resources.ArchiveFormat_Unknown,
+            };
         }
 
         public string GetDetail()

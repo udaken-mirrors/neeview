@@ -43,7 +43,7 @@ namespace NeeView.Drawing
             if (destWidth < 2) destWidth = 2;
             if (destHeight < 2) destHeight = 2;
 
-            Bitmap dest = new Bitmap(destWidth, destHeight);
+            var dest = new Bitmap(destWidth, destHeight);
 
             Graphics g = Graphics.FromImage(dest);
             g.InterpolationMode = InterpolationMode.High;
@@ -59,7 +59,7 @@ namespace NeeView.Drawing
         /// <returns></returns>
         public static Bitmap ToBitmap(this BitmapSource source)
         {
-            Bitmap bmp = new Bitmap
+            var bmp = new Bitmap
             (
               source.PixelWidth,
               source.PixelHeight,
@@ -95,8 +95,7 @@ namespace NeeView.Drawing
         /// <returns></returns>
         public static BitmapSource? ToBitmapSource(this System.Drawing.Image image)
         {
-            var bitmap = image as System.Drawing.Bitmap;
-            if (bitmap is null) return null;
+            if (image is not System.Drawing.Bitmap bitmap) return null;
             return ToBitmapSource(bitmap);
         }
 
@@ -133,8 +132,8 @@ namespace NeeView.Drawing
             var encoder = ImageCodecInfo.GetImageEncoders().FirstOrDefault(e => e.FormatID == format.Guid);
             if (encoder == null) return;
 
-            using (EncoderParameters encoderParams = new EncoderParameters(1))
-            using (EncoderParameter encoderParam = new EncoderParameter(System.Drawing.Imaging.Encoder.Quality, quality))
+            using (var encoderParams = new EncoderParameters(1))
+            using (var encoderParam = new EncoderParameter(System.Drawing.Imaging.Encoder.Quality, quality))
             {
                 encoderParams.Param[0] = encoderParam;
                 image.Save(stream, encoder, encoderParams);

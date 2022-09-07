@@ -23,7 +23,7 @@ namespace NeeView
             this.View = new ViewContentControl(CreateView());
         }
 
-        private FrameworkElement CreateView()
+        private static FrameworkElement CreateView()
         {
             return new Grid() { Background = new SolidColorBrush(Color.FromArgb(0x20, 0x80, 0x80, 0x80)) };
         }

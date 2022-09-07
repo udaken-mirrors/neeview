@@ -28,7 +28,7 @@ namespace NeeView
             this.Size = new Size(512, 512);
         }
 
-        private FrameworkElement CreateView(ViewContentSource source, ViewContentParameters parameter)
+        private static FrameworkElement CreateView(ViewContentSource source, ViewContentParameters parameter)
         {
             var content = source.Content as ArchiveContent ?? throw new InvalidOperationException("Content must be ArchiveContent");
             var control = new ArchivePageControl(content);

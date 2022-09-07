@@ -33,8 +33,7 @@ namespace NeeView
         // 入力判定
         public override bool Matches(object targetElement, InputEventArgs inputEventArgs)
         {
-            var mouseEventArgs = inputEventArgs as MouseButtonEventArgs;
-            if (mouseEventArgs == null) return false;
+            if (inputEventArgs is not MouseButtonEventArgs mouseEventArgs) return false;
 
             MouseExAction action = MouseExAction.None;
 

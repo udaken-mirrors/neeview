@@ -90,8 +90,7 @@ namespace NeeView
 
             return children;
 
-
-            bool IsDocumentable(MemberInfo info)
+            static bool IsDocumentable(MemberInfo info)
             {
                 return info.GetCustomAttribute<DocumentableAttribute>() != null;
             }
@@ -185,7 +184,7 @@ namespace NeeView
     /// </summary>
     public class ScriptNodeDirect : ScriptNode
     {
-        private object _source;
+        private readonly object _source;
 
         public ScriptNodeDirect(object source, string name)
         {
@@ -204,7 +203,7 @@ namespace NeeView
     /// </summary>
     public class ScriptNodeRefrection : ScriptNode
     {
-        private ScriptNodeRefrectionSource _source;
+        private readonly ScriptNodeRefrectionSource _source;
 
         public ScriptNodeRefrection(ScriptNodeRefrectionSource source)
         {
@@ -242,248 +241,169 @@ namespace NeeView
 
         public string GetName()
         {
-            switch (MemberInfo.Type)
+            return MemberInfo.Type switch
             {
-                case ScriptMemberInfoType.Property:
-                    return MemberInfo.PropertyInfo.Name;
-
-                case ScriptMemberInfoType.Method:
-                    return MemberInfo.MethodInfo.Name;
-
-                case ScriptMemberInfoType.IndexKey:
-                    return MemberInfo.IndexKey;
-
-                default:
-                    throw new NotSupportedException();
-            }
+                ScriptMemberInfoType.Property => MemberInfo.PropertyInfo.Name,
+                ScriptMemberInfoType.Method => MemberInfo.MethodInfo.Name,
+                ScriptMemberInfoType.IndexKey => MemberInfo.IndexKey,
+                _ => throw new NotSupportedException(),
+            };
         }
 
         public ObsoleteAttribute? GetValueObsolete()
         {
-            switch (MemberInfo.Type)
+            return MemberInfo.Type switch
             {
-                case ScriptMemberInfoType.Property:
-                    return MemberInfo.PropertyInfo.GetCustomAttribute<ObsoleteAttribute>();
-
-                case ScriptMemberInfoType.Method:
-                    return MemberInfo.MethodInfo.GetCustomAttribute<ObsoleteAttribute>();
-
-                case ScriptMemberInfoType.IndexKey:
-                    return GetIndexerValueObsolete(Source, MemberInfo.IndexKey);
-
-                default:
-                    throw new NotSupportedException();
-            }
+                ScriptMemberInfoType.Property => MemberInfo.PropertyInfo.GetCustomAttribute<ObsoleteAttribute>(),
+                ScriptMemberInfoType.Method => MemberInfo.MethodInfo.GetCustomAttribute<ObsoleteAttribute>(),
+                ScriptMemberInfoType.IndexKey => GetIndexerValueObsolete(Source, MemberInfo.IndexKey),
+                _ => throw new NotSupportedException(),
+            };
         }
 
         public AlternativeAttribute? GetValueAlternative()
         {
-            switch (MemberInfo.Type)
+            return MemberInfo.Type switch
             {
-                case ScriptMemberInfoType.Property:
-                    return MemberInfo.PropertyInfo.GetCustomAttribute<AlternativeAttribute>();
-
-                case ScriptMemberInfoType.Method:
-                    return MemberInfo.MethodInfo.GetCustomAttribute<AlternativeAttribute>();
-
-                case ScriptMemberInfoType.IndexKey:
-                    return GetIndexerValueAlternative(Source, MemberInfo.IndexKey);
-
-                default:
-                    throw new NotSupportedException();
-            }
+                ScriptMemberInfoType.Property => MemberInfo.PropertyInfo.GetCustomAttribute<AlternativeAttribute>(),
+                ScriptMemberInfoType.Method => MemberInfo.MethodInfo.GetCustomAttribute<AlternativeAttribute>(),
+                ScriptMemberInfoType.IndexKey => GetIndexerValueAlternative(Source, MemberInfo.IndexKey),
+                _ => throw new NotSupportedException(),
+            };
         }
 
         public Type GetValueType()
         {
-            switch (MemberInfo.Type)
+            return MemberInfo.Type switch
             {
-                case ScriptMemberInfoType.Property:
-                    return MemberInfo.PropertyInfo.PropertyType;
-
-                case ScriptMemberInfoType.Method:
-                    return MemberInfo.MethodInfo.ReturnType;
-
-                case ScriptMemberInfoType.IndexKey:
-                    return GetIndexerValueType(Source, MemberInfo.IndexKey);
-
-                default:
-                    throw new NotSupportedException();
-            }
+                ScriptMemberInfoType.Property => MemberInfo.PropertyInfo.PropertyType,
+                ScriptMemberInfoType.Method => MemberInfo.MethodInfo.ReturnType,
+                ScriptMemberInfoType.IndexKey => GetIndexerValueType(Source, MemberInfo.IndexKey),
+                _ => throw new NotSupportedException(),
+            };
         }
         
         public object? GetValue()
         {
-            switch (MemberInfo.Type)
+            return MemberInfo.Type switch
             {
-                case ScriptMemberInfoType.Property:
-                    return MemberInfo.PropertyInfo.GetValue(Source);
-
-                case ScriptMemberInfoType.IndexKey:
-                    return GetIndexerValue(Source, MemberInfo.IndexKey);
-
-                default:
-                    throw new NotSupportedException();
-            }
+                ScriptMemberInfoType.Property => MemberInfo.PropertyInfo.GetValue(Source),
+                ScriptMemberInfoType.IndexKey => GetIndexerValue(Source, MemberInfo.IndexKey),
+                _ => throw new NotSupportedException(),
+            };
         }
 
-        private ObsoleteAttribute? GetIndexerValueObsolete(object source, string key)
+        private static ObsoleteAttribute? GetIndexerValueObsolete(object source, string key)
         {
-            switch (source)
+            return source switch
             {
-                case PropertyMap propertyMap:
-                    return GetPropertyMapValueObsolete(propertyMap, key);
-
-                case CommandAccessorMap commandMap:
-                    return GetCommandMapValueObsolete(commandMap, key);
-
-                default:
-                    throw new NotSupportedException();
-            }
+                PropertyMap propertyMap => GetPropertyMapValueObsolete(propertyMap, key),
+                CommandAccessorMap commandMap => GetCommandMapValueObsolete(commandMap, key),
+                _ => throw new NotSupportedException(),
+            };
         }
 
-        private AlternativeAttribute? GetIndexerValueAlternative(object source, string key)
+        private static AlternativeAttribute? GetIndexerValueAlternative(object source, string key)
         {
-            switch (source)
+            return source switch
             {
-                case PropertyMap propertyMap:
-                    return GetPropertyMapValueAlternative(propertyMap, key);
-
-                case CommandAccessorMap commandMap:
-                    return GetCommandMapValueAlternative(commandMap, key);
-
-                default:
-                    throw new NotSupportedException();
-            }
+                PropertyMap propertyMap => GetPropertyMapValueAlternative(propertyMap, key),
+                CommandAccessorMap commandMap => GetCommandMapValueAlternative(commandMap, key),
+                _ => throw new NotSupportedException(),
+            };
         }
 
-        private Type GetIndexerValueType(object source, string key)
+        private static Type GetIndexerValueType(object source, string key)
         {
-            switch (source)
+            return source switch
             {
-                case PropertyMap propertyMap:
-                    return GetPropertyMapValueType(propertyMap, key);
-
-                case CommandAccessorMap commandMap:
-                    return GetCommandMapValueType(commandMap, key);
-
-                default:
-                    throw new NotSupportedException();
-            }
+                PropertyMap propertyMap => GetPropertyMapValueType(propertyMap, key),
+                CommandAccessorMap commandMap => GetCommandMapValueType(commandMap, key),
+                _ => throw new NotSupportedException(),
+            };
         }
 
-        private object? GetIndexerValue(object source, string key)
+        private static object? GetIndexerValue(object source, string key)
         {
-            switch (source)
+            return source switch
             {
-                case PropertyMap propertyMap:
-                    return GetPropertyMapValue(propertyMap, key);
-
-                case CommandAccessorMap commandMap:
-                    return GetCommandMapValue(commandMap, key);
-
-                default:
-                    throw new NotSupportedException();
-            }
+                PropertyMap propertyMap => GetPropertyMapValue(propertyMap, key),
+                CommandAccessorMap commandMap => GetCommandMapValue(commandMap, key),
+                _ => throw new NotSupportedException(),
+            };
         }
 
-        private ObsoleteAttribute? GetPropertyMapValueObsolete(object source, string key)
+        private static ObsoleteAttribute? GetPropertyMapValueObsolete(object source, string key)
         {
             var propertyMap = (PropertyMap)source;
             var node = propertyMap.GetNode(key);
-            switch (node)
+            return node switch
             {
-                case PropertyMap _:
-                case PropertyMapSource _:
-                    return null;
-
-                case PropertyMapObsolete propertyObsolete:
-                    return propertyObsolete.Obsolete;
-
-                default:
-                    throw new NotSupportedException();
-            }
+                PropertyMap _ or PropertyMapSource _ => null,
+                PropertyMapObsolete propertyObsolete => propertyObsolete.Obsolete,
+                _ => throw new NotSupportedException(),
+            };
         }
 
-        private AlternativeAttribute? GetPropertyMapValueAlternative(object source, string key)
+        private static AlternativeAttribute? GetPropertyMapValueAlternative(object source, string key)
         {
             var propertyMap = (PropertyMap)source;
             var node = propertyMap.GetNode(key);
-            switch (node)
+            return node switch
             {
-                case PropertyMap _:
-                case PropertyMapSource _:
-                    return null;
-
-                case PropertyMapObsolete propertyObsolete:
-                    return propertyObsolete.Alternative;
-
-                default:
-                    throw new NotSupportedException();
-            }
+                PropertyMap _ or PropertyMapSource _ => null,
+                PropertyMapObsolete propertyObsolete => propertyObsolete.Alternative,
+                _ => throw new NotSupportedException(),
+            };
         }
 
-        private Type GetPropertyMapValueType(object source, string key)
+        private static Type GetPropertyMapValueType(object source, string key)
         {
             var propertyMap = (PropertyMap)source;
             var node = propertyMap.GetNode(key);
-            switch (node)
+            return node switch
             {
-                case PropertyMap _:
-                    return typeof(PropertyMap);
-
-                case PropertyMapSource propertySource:
-                    return propertySource.PropertyInfo.PropertyType;
-
-                case PropertyMapObsolete propertyObsolete:
-                    return propertyObsolete.PropertyType;
-
-                default:
-                    throw new NotSupportedException();
-            }
+                PropertyMap _ => typeof(PropertyMap),
+                PropertyMapSource propertySource => propertySource.PropertyInfo.PropertyType,
+                PropertyMapObsolete propertyObsolete => propertyObsolete.PropertyType,
+                _ => throw new NotSupportedException(),
+            };
         }
 
-        private object? GetPropertyMapValue(object source, string key)
+        private static object? GetPropertyMapValue(object source, string key)
         {
             var propertyMap = (PropertyMap)source;
             var node = propertyMap.GetNode(key);
-            switch (node)
+            return node switch
             {
-                case PropertyMap propertyMap_:
-                    return propertyMap_;
-
-                case PropertyMapSource propertySource:
-                    return propertySource.GetValue();
-
-                case PropertyMapObsolete propertyObsolete:
-                    return propertyObsolete.PropertyType.GetDefaultValue();
-
-                default:
-                    throw new NotSupportedException();
-            }
+                PropertyMap propertyMap_ => propertyMap_,
+                PropertyMapSource propertySource => propertySource.GetValue(),
+                PropertyMapObsolete propertyObsolete => propertyObsolete.PropertyType.GetDefaultValue(),
+                _ => throw new NotSupportedException(),
+            };
         }
 
 
-        private ObsoleteAttribute? GetCommandMapValueObsolete(object source, string key)
+        private static ObsoleteAttribute? GetCommandMapValueObsolete(object source, string key)
         {
             var commandMap = (CommandAccessorMap)source;
             return commandMap.GetObsolete(key);
         }
 
-        private AlternativeAttribute? GetCommandMapValueAlternative(object source, string key)
+        private static AlternativeAttribute? GetCommandMapValueAlternative(object source, string key)
         {
             var commandMap = (CommandAccessorMap)source;
             return commandMap.GetAlternative(key);
         }
 
-        private Type GetCommandMapValueType(object source, string key)
+        private static Type GetCommandMapValueType(object source, string key)
         {
             var commandMap = (CommandAccessorMap)source;
             var command = commandMap.GetCommand(key);
             return command.GetType();
         }
 
-        private object? GetCommandMapValue(object source, string key)
+        private static object? GetCommandMapValue(object source, string key)
         {
             var commandMap = (CommandAccessorMap)source;
             return commandMap[key];
@@ -497,9 +417,9 @@ namespace NeeView
     /// </summary>
     public class ScriptMemberInfo
     {
-        private PropertyInfo? _propertyInfo { get; }
-        private MethodInfo? _methodInfo { get; }
-        private string? _indexKey { get; }
+        private readonly PropertyInfo? _propertyInfo;
+        private readonly MethodInfo? _methodInfo;
+        private readonly string? _indexKey;
 
 
         public ScriptMemberInfo(PropertyInfo propertyInfo)

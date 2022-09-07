@@ -19,7 +19,7 @@ namespace NeeView
         /// <summary>
         /// インデックスフィルタ用無効パス
         /// </summary>
-        private static List<string> _ignores = new List<string>()
+        private static readonly List<string> _ignores = new()
         {
             // Windows フォルダを除外
             System.Environment.GetFolderPath(System.Environment.SpecialFolder.Windows),
@@ -29,7 +29,7 @@ namespace NeeView
         /// <summary>
         /// 検索エンジン
         /// </summary>
-        private NeeLaboratory.IO.Search.SearchEngine _engine;
+        private readonly NeeLaboratory.IO.Search.SearchEngine _engine;
 
 
 
@@ -149,6 +149,7 @@ namespace NeeView
         public void Dispose()
         {
             Dispose(true);
+            GC.SuppressFinalize(this);
         }
         #endregion
     }

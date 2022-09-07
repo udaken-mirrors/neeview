@@ -33,11 +33,11 @@ namespace NeeView
     {
         // Fields
 
-        private FolderList _folderList;
-        private RootFolderTree _root;
-        private RootQuickAccessNode? _rootQuickAccess;
-        private RootDirectoryNode? _rootDirectory;
-        private RootBookmarkFolderNode? _rootBookmarkFolder;
+        private readonly FolderList _folderList;
+        private readonly RootFolderTree _root;
+        private readonly RootQuickAccessNode? _rootQuickAccess;
+        private readonly RootDirectoryNode? _rootDirectory;
+        private readonly RootBookmarkFolderNode? _rootBookmarkFolder;
 
         // Constructors
 
@@ -179,7 +179,7 @@ namespace NeeView
                     SetFolderListPlace(quickAccess.QuickAccessSource.Path);
                     break;
 
-                case RootDirectoryNode rootFolder:
+                case RootDirectoryNode:
                     SetFolderListPlace("");
                     break;
 
@@ -210,7 +210,7 @@ namespace NeeView
         {
             switch (item)
             {
-                case RootQuickAccessNode rootQuickAccess:
+                case RootQuickAccessNode:
                     AddQuickAccess(_folderList.GetCurentQueryPath());
                     break;
 
@@ -416,17 +416,13 @@ namespace NeeView
 
         private FolderTreeNodeBase? GetDirectoryNode(QueryPath path, bool createChildren, bool asFarAsPossible)
         {
-            switch (path.Scheme)
+            return path.Scheme switch
             {
-                case QueryScheme.File:
-                    return _rootDirectory?.GetFolderTreeNode(path.Path, createChildren, asFarAsPossible);
-                case QueryScheme.Bookmark:
-                    return _rootBookmarkFolder?.GetFolderTreeNode(path.Path, createChildren, asFarAsPossible);
-                case QueryScheme.QuickAccess:
-                    return _rootBookmarkFolder?.GetFolderTreeNode(path.Path, createChildren, asFarAsPossible);
-                default:
-                    throw new NotImplementedException();
-            }
+                QueryScheme.File => _rootDirectory?.GetFolderTreeNode(path.Path, createChildren, asFarAsPossible),
+                QueryScheme.Bookmark => _rootBookmarkFolder?.GetFolderTreeNode(path.Path, createChildren, asFarAsPossible),
+                QueryScheme.QuickAccess => _rootBookmarkFolder?.GetFolderTreeNode(path.Path, createChildren, asFarAsPossible),
+                _ => throw new NotImplementedException(),
+            };
         }
 
         public void RefreshDirectory()

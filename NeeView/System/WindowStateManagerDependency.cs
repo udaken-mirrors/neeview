@@ -6,9 +6,13 @@ namespace NeeView
 {
     public class WindowStateManagerDependency : IWindowStateManagerDependency
     {
-        private WindowChromeAccessor _chrome;
-        private TabletModeWatcher _tabletModeWatcher;
-        private WeakBindableBase<WindowConfig> _windowConfig;
+        private readonly WindowChromeAccessor _chrome;
+        private readonly TabletModeWatcher _tabletModeWatcher;
+
+        // NOTE: インスタンス保持用
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0052:読み取られていないプライベート メンバーを削除", Justification = "<保留中>")]
+        private readonly WeakBindableBase<WindowConfig> _windowConfig;
+
 
         public WindowStateManagerDependency(WindowChromeAccessor chrome, TabletModeWatcher tabletModeWatcher)
         {

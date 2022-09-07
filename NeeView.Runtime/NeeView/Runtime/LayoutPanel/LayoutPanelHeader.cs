@@ -18,7 +18,7 @@ namespace NeeView.Runtime.LayoutPanel
 {
     public class LayoutPanelHeader : Control
     {
-        public readonly static RoutedCommand CloseCommand = new RoutedCommand(nameof(CloseCommand), typeof(LayoutPanelHeader));
+        public readonly static RoutedCommand CloseCommand = new(nameof(CloseCommand), typeof(LayoutPanelHeader));
 
 
         static LayoutPanelHeader()

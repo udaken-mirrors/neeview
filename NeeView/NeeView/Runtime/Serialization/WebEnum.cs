@@ -46,7 +46,7 @@ namespace NeeView.Runtime.Serialization
             }
             else
             {
-                Value = default(T);
+                Value = default;
             }
         }
     }

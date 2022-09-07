@@ -25,7 +25,7 @@ namespace NeeView.Runtime.LayoutPanel
     public partial class LayoutPanelContainer : UserControl
     {
         private LayoutPanelContainerAdorner? _adorner;
-        private LayoutPanelManager _manager;
+        private readonly LayoutPanelManager _manager;
 
 
         // NOTE: Designer用
@@ -95,7 +95,6 @@ namespace NeeView.Runtime.LayoutPanel
 
         private void OpenWindowCommand_Execute(object sender, ExecutedRoutedEventArgs e)
         {
-            var owner = Window.GetWindow(this);
             var point = this.PointToScreen(new Point(0.0, 0.0));
             _manager.OpenWindow(LayoutPanel, new WindowPlacement(WindowState.Normal, (int)point.X + 32, (int)point.Y + 32, (int)ActualWidth, (int)ActualHeight));
         }

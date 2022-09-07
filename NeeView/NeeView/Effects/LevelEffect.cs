@@ -8,14 +8,14 @@ namespace NeeView.Effects
 {
     public class LevelEffect : ShaderEffect
     {
-        private static PixelShader s_pixelShader = new PixelShader()
+        private static readonly PixelShader _pixelShader = new()
         {
             UriSource = Tools.MakePackUri(typeof(LevelEffect).Assembly, "NeeView/Effects/Shaders/LevelEffect.ps")
         };
 
         public LevelEffect()
         {
-            PixelShader = s_pixelShader;
+            PixelShader = _pixelShader;
 
             UpdateShaderValue(InputProperty);
             UpdateShaderValue(BlackProperty);

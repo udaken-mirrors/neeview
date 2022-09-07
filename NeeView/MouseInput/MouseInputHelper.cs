@@ -11,7 +11,6 @@ namespace NeeView
     /// </summary>
     public static class MouseInputHelper
     {
-        #region MouseCapture Helper
         // MouseCaptureのラップ。開発用
 
         [Conditional("DEBUG")]
@@ -49,6 +48,5 @@ namespace NeeView
             }
         }
 
-        #endregion MouseCapture Helper
     }
 }

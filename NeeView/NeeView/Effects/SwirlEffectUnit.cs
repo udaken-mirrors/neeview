@@ -17,7 +17,7 @@ namespace NeeView.Effects
     [DataContract]
     public class SwirlEffectUnit : EffectUnit
     {
-        private static SwirlEffect _effect = new SwirlEffect();
+        private static readonly SwirlEffect _effect = new();
         public override Effect GetEffect() => _effect;
 
         /// <summary>

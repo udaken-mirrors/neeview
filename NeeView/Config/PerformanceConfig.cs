@@ -12,7 +12,7 @@ namespace NeeView
     {
         private int _cacheMemorySize = 200;
         private int _jobWorkerSize = 4;
-        private Size _maximumSize = new Size(4096, 4096);
+        private Size _maximumSize = new(4096, 4096);
         private int _preLoadSize = 5;
         private bool _isLimitSourceSize;
         private bool _isLoadingPageVisible = true;

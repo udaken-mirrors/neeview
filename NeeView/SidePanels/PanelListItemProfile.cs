@@ -31,14 +31,14 @@ namespace NeeView
     [DataContract]
     public class PanelListItemProfile : BindableBase
     {
-        public static PanelListItemProfile DefaultNormalItemProfile = new PanelListItemProfile(PanelListItemImageShape.Square, 0, false, true, false);
-        public static PanelListItemProfile DefaultContentItemProfile = new PanelListItemProfile(PanelListItemImageShape.Square, 64, true, true, false);
-        public static PanelListItemProfile DefaultBannerItemProfile = new PanelListItemProfile(PanelListItemImageShape.Banner, 200, false, true, false);
-        public static PanelListItemProfile DefaultThumbnailItemProfile = new PanelListItemProfile(PanelListItemImageShape.Original, 128, false, true, true);
+        public static readonly PanelListItemProfile DefaultNormalItemProfile = new(PanelListItemImageShape.Square, 0, false, true, false);
+        public static readonly PanelListItemProfile DefaultContentItemProfile = new(PanelListItemImageShape.Square, 64, true, true, false);
+        public static readonly PanelListItemProfile DefaultBannerItemProfile = new(PanelListItemImageShape.Banner, 200, false, true, false);
+        public static readonly PanelListItemProfile DefaultThumbnailItemProfile = new(PanelListItemImageShape.Original, 128, false, true, true);
 
-        private static Rect _rectDefault = new Rect(0, 0, 1, 1);
-        private static Rect _rectBanner = new Rect(0, 0, 1, 0.6);
-        private static SolidColorBrush _brushBanner = new SolidColorBrush(Color.FromArgb(0x20, 0x99, 0x99, 0x99));
+        private static Rect _rectDefault = new(0, 0, 1, 1);
+        private static Rect _rectBanner = new(0, 0, 1, 0.6);
+        private static readonly SolidColorBrush _brushBanner = new(Color.FromArgb(0x20, 0x99, 0x99, 0x99));
 
         private PanelListItemImageShape _imageShape;
         private int _imageWidth;
@@ -131,7 +131,7 @@ namespace NeeView
 
         #region Obsolete
 
-        [Obsolete, Alternative("Panel.Note in the custom theme file", 39, IsFullName = true)] // ver.39
+        [Obsolete("no used"), Alternative("Panel.Note in the custom theme file", 39, IsFullName = true)] // ver.39
         [JsonIgnore]
         public double NoteOpacity
         {
@@ -148,13 +148,11 @@ namespace NeeView
         {
             get
             {
-                switch (_imageShape)
+                return _imageShape switch
                 {
-                    default:
-                        return _imageWidth;
-                    case PanelListItemImageShape.BookShape:
-                        return (int)(_imageWidth * 0.7071);
-                }
+                    PanelListItemImageShape.BookShape => (int)(_imageWidth * 0.7071),
+                    _ => _imageWidth,
+                };
             }
         }
 
@@ -163,13 +161,11 @@ namespace NeeView
         {
             get
             {
-                switch (_imageShape)
+                return _imageShape switch
                 {
-                    default:
-                        return _imageWidth;
-                    case PanelListItemImageShape.Banner:
-                        return _imageWidth / 4;
-                }
+                    PanelListItemImageShape.Banner => _imageWidth / 4,
+                    _ => _imageWidth,
+                };
             }
         }
 
@@ -178,13 +174,11 @@ namespace NeeView
         {
             get
             {
-                switch (_imageShape)
+                return _imageShape switch
                 {
-                    default:
-                        return _rectDefault;
-                    case PanelListItemImageShape.Banner:
-                        return _rectBanner;
-                }
+                    PanelListItemImageShape.Banner => _rectBanner,
+                    _ => _rectDefault,
+                };
             }
         }
 
@@ -193,15 +187,12 @@ namespace NeeView
         {
             get
             {
-                switch (_imageShape)
+                return _imageShape switch
                 {
-                    default:
-                        return AlignmentY.Top;
-                    case PanelListItemImageShape.Original:
-                        return AlignmentY.Bottom;
-                    case PanelListItemImageShape.Banner:
-                        return AlignmentY.Center;
-                }
+                    PanelListItemImageShape.Original => AlignmentY.Bottom,
+                    PanelListItemImageShape.Banner => AlignmentY.Center,
+                    _ => AlignmentY.Top,
+                };
             }
         }
 
@@ -210,13 +201,11 @@ namespace NeeView
         {
             get
             {
-                switch (_imageShape)
+                return _imageShape switch
                 {
-                    default:
-                        return null;
-                    case PanelListItemImageShape.Banner:
-                        return _brushBanner;
-                }
+                    PanelListItemImageShape.Banner => _brushBanner,
+                    _ => null,
+                };
             }
         }
 
@@ -225,13 +214,11 @@ namespace NeeView
         {
             get
             {
-                switch (_imageShape)
+                return _imageShape switch
                 {
-                    default:
-                        return Stretch.UniformToFill;
-                    case PanelListItemImageShape.Original:
-                        return Stretch.Uniform;
-                }
+                    PanelListItemImageShape.Original => Stretch.Uniform,
+                    _ => Stretch.UniformToFill,
+                };
             }
         }
 

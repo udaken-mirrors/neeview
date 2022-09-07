@@ -16,7 +16,7 @@ namespace NeeView.Effects
     [DataContract]
     public class MonochromeEffectUnit : EffectUnit
     {
-        private static MonochromeEffect _effect = new MonochromeEffect();
+        private static readonly MonochromeEffect _effect = new();
         public override Effect GetEffect() => _effect;
 
         /// <summary>

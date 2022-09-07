@@ -8,7 +8,7 @@ namespace NeeView
 {
     public class ThemeConfig : BindableBase
     {
-        private TheneSource _themeType = new TheneSource(NeeView.ThemeType.Dark);
+        private TheneSource _themeType = new(NeeView.ThemeType.Dark);
 
         [JsonInclude, JsonPropertyName(nameof(CustomThemeFolder))]
         public string? _customThemeFolder;
@@ -44,7 +44,7 @@ namespace NeeView
 
         #region Obsolete
 
-        [Obsolete, Alternative(nameof(ThemeType), 39)] // ver.39
+        [Obsolete("no used"), Alternative(nameof(ThemeType), 39)] // ver.39
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public string? PanelColor
         {
@@ -52,7 +52,7 @@ namespace NeeView
             set { ThemeType = new TheneSource(value == "Light" ? NeeView.ThemeType.Light : NeeView.ThemeType.Dark); }
         }
 
-        [Obsolete, Alternative(null, 39)] // ver.39
+        [Obsolete("no used"), Alternative(null, 39)] // ver.39
         [JsonIgnore]
         public ThemeType MenuColor
         {

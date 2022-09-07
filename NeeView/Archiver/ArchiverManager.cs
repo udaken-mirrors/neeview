@@ -26,7 +26,7 @@ namespace NeeView
         /// <summary>
         /// アーカイバのサポート拡張子
         /// </summary>
-        private Dictionary<ArchiverType, FileTypeCollection> _supprtedFileTypes = new Dictionary<ArchiverType, FileTypeCollection>()
+        private readonly Dictionary<ArchiverType, FileTypeCollection> _supprtedFileTypes = new()
         {
             [ArchiverType.SevenZipArchiver] = Config.Current.Archive.SevenZip.SupportFileTypes,
             [ArchiverType.ZipArchiver] = Config.Current.Archive.Zip.SupportFileTypes,
@@ -40,8 +40,8 @@ namespace NeeView
         private List<ArchiverType> _orderList;
         private bool _isDartyOrderList;
 
-        private DisposableCollection _disposables;
-        private ArchiverCache _cache;
+        private readonly DisposableCollection _disposables;
+        private readonly ArchiverCache _cache;
 
 
         private ArchiverManager()
@@ -110,6 +110,7 @@ namespace NeeView
         public void Dispose()
         {
             Dispose(true);
+            GC.SuppressFinalize(this);
         }
         #endregion
 
@@ -120,11 +121,12 @@ namespace NeeView
         }
 
         // 検索順を更新
-        private List<ArchiverType> CreateOrderList()
+        private static List<ArchiverType> CreateOrderList()
         {
-            var order = new List<ArchiverType>();
-
-            order.Add(ArchiverType.PlaylistArchiver);
+            var order = new List<ArchiverType>
+            {
+                ArchiverType.PlaylistArchiver
+            };
 
             if (Config.Current.Archive.Zip.IsEnabled)
             {
@@ -175,8 +177,6 @@ namespace NeeView
         public ArchiverType GetSupportedType(string fileName, bool isArrowFileSystem = true, bool isAllowMedia = true)
         {
             ThrowIfDisposed();
-
-            var query = new QueryPath(fileName);
 
             if (isArrowFileSystem && (fileName.Last() == '\\' || fileName.Last() == '/'))
             {
@@ -375,39 +375,20 @@ namespace NeeView
             return null;
         }
 
-        /// <summary>
-        /// アーカイブパス表現を解析
-        /// </summary>
-        /// <param name="path"></param>
-        /// <returns></returns>
-        public void AnalyzeInnerArchivePath(string path)
-        {
-
-        }
-
-        public ArchiverType GetArchiverType(Archiver archiver)
+        public static ArchiverType GetArchiverType(Archiver archiver)
         {
             if (archiver is null) throw new ArgumentNullException(nameof(archiver));
-
-            switch (archiver)
+            return archiver switch
             {
-                case FolderArchive folderArchive:
-                    return ArchiverType.FolderArchive;
-                case ZipArchiver zipArchiver:
-                    return ArchiverType.ZipArchiver;
-                case SevenZipArchiver sevenZipArchiver:
-                    return ArchiverType.SevenZipArchiver;
-                case PdfArchiver pdfArchiver:
-                    return ArchiverType.PdfArchiver;
-                case MediaArchiver mediaArchiver:
-                    return ArchiverType.MediaArchiver;
-                case SusieArchiver susieArchiver:
-                    return ArchiverType.SusieArchiver;
-                case PlaylistArchive playlistArchvier:
-                    return ArchiverType.PlaylistArchiver;
-                default:
-                    return ArchiverType.None;
-            }
+                FolderArchive => ArchiverType.FolderArchive,
+                ZipArchiver => ArchiverType.ZipArchiver,
+                SevenZipArchiver => ArchiverType.SevenZipArchiver,
+                PdfArchiver => ArchiverType.PdfArchiver,
+                MediaArchiver => ArchiverType.MediaArchiver,
+                SusieArchiver => ArchiverType.SusieArchiver,
+                PlaylistArchive => ArchiverType.PlaylistArchiver,
+                _ => ArchiverType.None,
+            };
         }
 
         /// <summary>

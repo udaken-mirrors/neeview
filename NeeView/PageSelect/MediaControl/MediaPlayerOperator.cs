@@ -22,7 +22,7 @@ namespace NeeView
 
 
         private MediaPlayer _player;
-        private DispatcherTimer _timer;
+        private readonly DispatcherTimer _timer;
 
         private bool _isLastStart;
         private bool _isTimeLeftDisp;
@@ -534,6 +534,7 @@ namespace NeeView
         public void Dispose()
         {
             Dispose(true);
+            GC.SuppressFinalize(this);
         }
 
         #endregion

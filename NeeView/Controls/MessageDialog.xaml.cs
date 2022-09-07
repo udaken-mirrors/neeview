@@ -56,8 +56,8 @@ namespace NeeView
         public static UICommand Retry { get; } = new UICommand(Properties.Resources.Word_Retry);
 
         // dialog.Commands.AddRange(...) のような使用を想定したセット
-        public static List<UICommand> YesNo = new List<UICommand>() { Yes, No };
-        public static List<UICommand> OKCancel = new List<UICommand>() { OK, Cancel };
+        public static readonly List<UICommand> YesNo = new() { Yes, No };
+        public static readonly List<UICommand> OKCancel = new() { OK, Cancel };
     }
 
     /// <summary>
@@ -147,7 +147,7 @@ namespace NeeView
         public static bool IsShowInTaskBar { get; set; } = true;
 
 
-        private FrameworkElement CreateTextContent(string content)
+        private static FrameworkElement CreateTextContent(string content)
         {
             return new TextBlock()
             {

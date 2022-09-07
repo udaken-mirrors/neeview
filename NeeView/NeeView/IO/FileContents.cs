@@ -92,8 +92,7 @@ namespace NeeView.IO
                 lindex = -1,
                 tymed = TYMED.TYMED_HGLOBAL
             };
-            STGMEDIUM medium;
-            dataObject.GetData(ref format, out medium);
+            dataObject.GetData(ref format, out STGMEDIUM medium);
             Debug.Assert(medium.tymed == TYMED.TYMED_HGLOBAL && medium.unionmember != IntPtr.Zero && medium.pUnkForRelease == null);
             try
             {
@@ -115,8 +114,7 @@ namespace NeeView.IO
                 lindex = i,
                 tymed = TYMED.TYMED_HGLOBAL | TYMED.TYMED_ISTREAM
             };
-            STGMEDIUM medium;
-            dataObject.GetData(ref format, out medium);
+            dataObject.GetData(ref format, out STGMEDIUM medium);
             Debug.Assert(medium.unionmember != IntPtr.Zero && medium.pUnkForRelease == null);
             switch (medium.tymed)
             {
@@ -134,8 +132,7 @@ namespace NeeView.IO
                     {
                         var stream = (IStream)Marshal.GetObjectForIUnknown(medium.unionmember);
                         Marshal.Release(medium.unionmember);
-                        STATSTG statstg;
-                        stream.Stat(out statstg, 0);
+                        stream.Stat(out STATSTG statstg, 0);
                         Debug.Assert(statstg.cbSize <= Int32.MaxValue);
                         var buffer = new byte[statstg.cbSize];
                         stream.Read(buffer, buffer.Length, IntPtr.Zero);

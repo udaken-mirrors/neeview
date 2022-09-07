@@ -8,8 +8,8 @@ namespace NeeLaboratory.IO
 {
     public class ChunkStream : IDisposable
     {
-        private Stream _stream;
-        private bool _leaveOpen;
+        private readonly Stream _stream;
+        private readonly bool _leaveOpen;
 
         public ChunkStream(Stream stream)
         {
@@ -43,6 +43,7 @@ namespace NeeLaboratory.IO
         public void Dispose()
         {
             Dispose(true);
+            GC.SuppressFinalize(this);
         }
         #endregion
 
@@ -57,7 +58,7 @@ namespace NeeLaboratory.IO
         public async Task<byte[]> ReadDataAsync(int length, CancellationToken token)
         {
             var data = new byte[length];
-            int answer = await _stream.ReadAsync(data, 0, length, token);
+            int answer = await _stream.ReadAsync(data.AsMemory(0, length), token);
             if (answer != length) throw new IOException($"Cannot read enough: request={length}, answer={answer}");
             return data;
         }
@@ -69,7 +70,7 @@ namespace NeeLaboratory.IO
 
         public async Task WriteDataAsync(byte[] buffer, CancellationToken token)
         {
-            await _stream.WriteAsync(buffer, 0, buffer.Length, token);
+            await _stream.WriteAsync(buffer, token);
         }
 
         public int ReadByte()

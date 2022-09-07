@@ -38,7 +38,7 @@ namespace NeeLaboratory.Threading.Tasks
             if (waitHandle == null)
                 throw new ArgumentNullException(nameof(waitHandle));
 
-            TaskCompletionSource<bool> tcs = new TaskCompletionSource<bool>();
+            var tcs = new TaskCompletionSource<bool>();
             CancellationTokenRegistration ctr = cancellationToken.Register(() => tcs.TrySetCanceled(cancellationToken));
             TimeSpan timeout = timeoutMilliseconds > Timeout.Infinite ? TimeSpan.FromMilliseconds(timeoutMilliseconds) : Timeout.InfiniteTimeSpan;
 

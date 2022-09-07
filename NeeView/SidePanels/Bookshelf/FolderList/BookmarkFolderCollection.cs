@@ -27,7 +27,7 @@ namespace NeeView
 
         public override async Task InitializeItemsAsync(CancellationToken token)
         {
-            await Task.Run(() => InitializeItems(token));
+            await Task.Run(() => InitializeItems(token), token);
         }
 
         public void InitializeItems(CancellationToken token)
@@ -155,7 +155,7 @@ namespace NeeView
 
         private FolderItem? CreateFolderItemBookmarkFolder(TreeListNode<IBookmarkEntry> node)
         {
-            if (!(node?.Value is BookmarkFolder folder)) return null;
+            if (node?.Value is not BookmarkFolder folder) return null;
 
             return new ConstFolderItem(new FolderThumbnail(), _isOverlayEnabled)
             {
@@ -170,7 +170,7 @@ namespace NeeView
             };
         }
 
-        private FileSystemInfo? GetFileSystemInfo(string path)
+        private static FileSystemInfo? GetFileSystemInfo(string path)
         {
             try
             {
@@ -194,7 +194,7 @@ namespace NeeView
 
         private FolderItem? CreateFolderItemBookmark(TreeListNode<IBookmarkEntry> node)
         {
-            if (!(node?.Value is Bookmark bookmark)) return null;
+            if (node?.Value is not Bookmark bookmark) return null;
 
             var item = new FileFolderItem(_isOverlayEnabled)
             {

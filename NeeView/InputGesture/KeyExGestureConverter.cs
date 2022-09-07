@@ -9,8 +9,8 @@ namespace NeeView
     {
         private const char _modifiersDelimiter = '+';
 
-        private static KeyExConverter _keyConverter = new KeyExConverter();
-        private static ModifierKeysConverter _modifierKeysConverter = new ModifierKeysConverter();
+        private static readonly KeyExConverter _keyConverter = new();
+        private static readonly ModifierKeysConverter _modifierKeysConverter = new();
 
         public override bool CanConvertFrom(ITypeDescriptorContext? context, Type sourceType)
         {
@@ -38,9 +38,9 @@ namespace NeeView
 
         public override object? ConvertFrom(ITypeDescriptorContext? context, CultureInfo? culture, object source)
         {
-            if (source != null && source is string)
+            if (source != null && source is string s)
             {
-                string fullName = ((string)source).Trim();
+                string fullName = s.Trim();
                 if (fullName == string.Empty)
                 {
                     return new KeyExGesture(Key.None);
@@ -52,8 +52,8 @@ namespace NeeView
                 int index = fullName.LastIndexOf(_modifiersDelimiter);
                 if (index >= 0)
                 {
-                    modifiersToken = fullName.Substring(0, index);
-                    keyToken = fullName.Substring(index + 1);
+                    modifiersToken = fullName[..index];
+                    keyToken = fullName[(index + 1)..];
                 }
                 else
                 {
@@ -88,8 +88,7 @@ namespace NeeView
             {
                 if (value != null)
                 {
-                    KeyExGesture? keyGesture = value as KeyExGesture;
-                    if (keyGesture != null)
+                    if (value is KeyExGesture keyGesture)
                     {
                         if (keyGesture.Key == Key.None)
                             return string.Empty;

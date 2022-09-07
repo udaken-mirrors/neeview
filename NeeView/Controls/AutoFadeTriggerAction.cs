@@ -45,7 +45,7 @@ namespace NeeView
         /// <param name="element">UI要素</param>
         /// <param name="beginTime">フェイド開始時間(秒)</param>
         /// <param name="fadeTime">フェイドアウト時間(秒)</param>
-        public void AutoFade(UIElement element, TimeSpan beginTime, Duration fadeTime)
+        private static void AutoFade(UIElement element, TimeSpan beginTime, Duration fadeTime)
         {
             // 既存のアニメーションを削除
             element.ApplyAnimationClock(UIElement.OpacityProperty, null);

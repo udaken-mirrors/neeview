@@ -20,7 +20,7 @@ namespace NeeView
     /// </summary>
     public partial class FileInformationContent : UserControl
     {
-        private FileInformationContentViewModel _vm;
+        private readonly FileInformationContentViewModel _vm;
 
 
         static FileInformationContent()
@@ -66,7 +66,7 @@ namespace NeeView
 
         #region Commands
 
-        public readonly static RoutedCommand CopyCommand = new RoutedCommand(nameof(CopyCommand), typeof(FileInformationContent));
+        public readonly static RoutedCommand CopyCommand = new(nameof(CopyCommand), typeof(FileInformationContent));
 
         private static void InitializeCommandStatic()
         {
@@ -96,8 +96,7 @@ namespace NeeView
 
         private void TextBox_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            var t = sender as TextBox;
-            if (t != null && !t.IsFocused)
+            if (sender is TextBox t && !t.IsFocused)
             {
                 t.Focus();
                 e.Handled = true;
@@ -106,8 +105,7 @@ namespace NeeView
 
         private void TextBox_GotFocus(object sender, RoutedEventArgs e)
         {
-            var t = sender as TextBox;
-            if (t != null)
+            if (sender is TextBox t)
             {
                 this.PropertyListBox.SelectedItem = null;
                 t.SelectAll();

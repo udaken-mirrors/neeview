@@ -11,7 +11,7 @@ namespace NeeView
 {
     public class NavigateThumbnailViewModel : BindableBase
     {
-        private MainViewComponent _mainViewComponent;
+        private readonly MainViewComponent _mainViewComponent;
         private bool _isEnabled;
         private bool _isVisible;
         private double _rate;

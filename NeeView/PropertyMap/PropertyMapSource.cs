@@ -7,7 +7,7 @@ namespace NeeView
 {
     public class PropertyMapSource : PropertyMapNode
     {
-        private string? _prefix;
+        private readonly string? _prefix;
 
         public PropertyMapSource(object source, PropertyInfo property, PropertyMapConverter converter, string? prefix)
         {

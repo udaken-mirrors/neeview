@@ -8,7 +8,7 @@ namespace NeeView
     public class BackgroundConfig : BindableBase
     {
         private BackgroundType _backgroundType = BackgroundType.Black;
-        private BrushSource _customBackground = new BrushSource();
+        private BrushSource _customBackground = new();
         private Color _pageBackgroundColor = Colors.Transparent;
         private bool _isPageBackgroundChecker;
 

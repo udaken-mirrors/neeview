@@ -11,8 +11,8 @@ namespace NeeView
         // 互換性処理
         public static UserSetting Validate(this UserSetting self)
         {
-#pragma warning disable CS0612 // 型またはメンバーが旧型式です
-            if (self is null) throw new ArgumentNullException();
+#pragma warning disable CS0612, CS0618 // 型またはメンバーが旧型式です
+            if (self is null) throw new ArgumentNullException(nameof(self));
             if (self.Config is null) throw new InvalidOperationException();
             if (self.Format is null) throw new InvalidOperationException();
             if (self.Commands is null) throw new InvalidOperationException();
@@ -39,17 +39,25 @@ namespace NeeView
                     var layout = new LayoutPanelManager.Memento();
                     layout.Panels = self.Config.Panels.PanelDocks.Keys.ToDictionary(e => e, e => LayoutPanel.Memento.Default);
 
-                    layout.Docks = new Dictionary<string, LayoutDockPanelContent.Memento>();
-                    layout.Docks.Add("Left", new LayoutDockPanelContent.Memento()
+                    layout.Docks = new Dictionary<string, LayoutDockPanelContent.Memento>
                     {
-                        Panels = self.Config.Panels.PanelDocks.Where(e => e.Value == PanelDock.Left).Select(e => e.Key).Select(e => new List<string> { e }).ToList(),
-                        SelectedItem = self.Config.Panels.LeftPanelSeleted,
-                    });
-                    layout.Docks.Add("Right", new LayoutDockPanelContent.Memento()
-                    {
-                        Panels = self.Config.Panels.PanelDocks.Where(e => e.Value == PanelDock.Right).Select(e => e.Key).Select(e => new List<string> { e }).ToList(),
-                        SelectedItem = self.Config.Panels.RightPanelSeleted,
-                    });
+                        {
+                            "Left",
+                            new LayoutDockPanelContent.Memento()
+                            {
+                                Panels = self.Config.Panels.PanelDocks.Where(e => e.Value == PanelDock.Left).Select(e => e.Key).Select(e => new List<string> { e }).ToList(),
+                                SelectedItem = self.Config.Panels.LeftPanelSeleted,
+                            }
+                        },
+                        {
+                            "Right",
+                            new LayoutDockPanelContent.Memento()
+                            {
+                                Panels = self.Config.Panels.PanelDocks.Where(e => e.Value == PanelDock.Right).Select(e => e.Key).Select(e => new List<string> { e }).ToList(),
+                                SelectedItem = self.Config.Panels.RightPanelSeleted,
+                            }
+                        }
+                    };
 
                     self.Config.Panels.Layout = layout;
 
@@ -125,7 +133,7 @@ namespace NeeView
             }
 
             return self;
-#pragma warning restore CS0612 // 型またはメンバーが旧型式です
+#pragma warning restore CS0612, CS0618 // 型またはメンバーが旧型式です
         }
     }
 

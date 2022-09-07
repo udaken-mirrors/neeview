@@ -9,7 +9,7 @@ namespace NeeView
     /// </summary>
     public class BasicAutoHideDescription : AutoHideDescription
     {
-        private FrameworkElement _target;
+        private readonly FrameworkElement _target;
 
         public BasicAutoHideDescription(FrameworkElement target)
         {

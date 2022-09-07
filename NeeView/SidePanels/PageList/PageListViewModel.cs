@@ -101,7 +101,7 @@ namespace NeeView
 
         public class PageListMoreMenuDescription : ItemsListMoreMenuDescription
         {
-            private PageListViewModel _vm;
+            private readonly PageListViewModel _vm;
 
             public PageListMoreMenuDescription(PageListViewModel vm)
             {

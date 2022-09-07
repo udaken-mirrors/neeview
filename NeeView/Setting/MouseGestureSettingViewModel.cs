@@ -11,17 +11,15 @@ namespace NeeView.Setting
     /// </summary>
     public class MouseGestureSettingViewModel : BindableBase
     {
-        private IDictionary<string, CommandElement> _commandMap;
-        private string _key;
-
-        private TouchInputForGestureEditor _touchGesture;
-
-        private MouseInputForGestureEditor _mouseGesture;
+        private readonly IDictionary<string, CommandElement> _commandMap;
+        private readonly string _key;
+        private readonly TouchInputForGestureEditor _touchGesture;
+        private readonly MouseInputForGestureEditor _mouseGesture;
 
         /// <summary>
         /// Property: GestureToken
         /// </summary>
-        private GestureToken _gestureToken = new GestureToken();
+        private GestureToken _gestureToken = new();
         public GestureToken GestureToken
         {
             get { return _gestureToken; }

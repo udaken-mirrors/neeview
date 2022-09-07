@@ -8,7 +8,7 @@ namespace NeeView
     /// <summary>
     /// FolderList.Memento old version (before 33.0)
     /// </summary>
-    [Obsolete]
+    [Obsolete("no used")]
     public static class FolderListLegacy
     {
         [DataContract]

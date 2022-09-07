@@ -15,7 +15,7 @@ namespace NeeView
 
 
         // 最大画像サイズで制限したサイズ
-        public Size SizeLimitedRenderSize
+        public static Size SizeLimitedRenderSize
         {
             get
             {
@@ -36,7 +36,7 @@ namespace NeeView
             [DataMember, DefaultValue(typeof(Size), "1920,1080")]
             public Size RenderSize { get; set; }
 
-            [Obsolete, DataMember(EmitDefaultValue = false)]
+            [Obsolete("use RenderSize"), DataMember(EmitDefaultValue = false)]
             public Size RenderMaxSize { get; set; }
 
 
@@ -49,12 +49,12 @@ namespace NeeView
             [OnDeserialized]
             private void OnDeserialized(StreamingContext c)
             {
-#pragma warning disable CS0612
-                if (this.RenderSize == default(Size))
+#pragma warning disable CS0618
+                if (this.RenderSize == default)
                 {
                     this.RenderSize = this.RenderMaxSize;
                 }
-#pragma warning restore CS0612
+#pragma warning restore CS0618
             }
 
             public void RestoreConfig(Config config)

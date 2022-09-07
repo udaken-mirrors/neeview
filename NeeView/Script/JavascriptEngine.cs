@@ -10,8 +10,8 @@ namespace NeeView
 {
     public class JavascriptEngine
     {
-        private Jint.Engine _engine;
-        private CommandHost _commandHost;
+        private readonly Jint.Engine _engine;
+        private readonly CommandHost _commandHost;
         private CancellationToken _cancellationToken;
 
 

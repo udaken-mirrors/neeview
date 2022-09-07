@@ -11,7 +11,7 @@ namespace NeeView
         public static CustomSize Current { get; }
 
 
-        private ImageCustomSizeConfig _customSize;
+        private readonly ImageCustomSizeConfig _customSize;
 
         private CustomSize()
         {
@@ -39,7 +39,7 @@ namespace NeeView
         }
 
 
-        private Size ApplyAspectRatio(Size sourceSize, Size targetSize, CustomSizeAspectRatio aspectRatio, bool isTransposed)
+        private static Size ApplyAspectRatio(Size sourceSize, Size targetSize, CustomSizeAspectRatio aspectRatio, bool isTransposed)
         {
             if (sourceSize.IsEmptyOrZero()) return sourceSize;
 
@@ -80,7 +80,7 @@ namespace NeeView
         }
 
 
-        private Size ApplyLongSide(Size sourceSize, Size referenceSize, bool isTransposed)
+        private static Size ApplyLongSide(Size sourceSize, Size referenceSize, bool isTransposed)
         {
             if (!isTransposed)
             {

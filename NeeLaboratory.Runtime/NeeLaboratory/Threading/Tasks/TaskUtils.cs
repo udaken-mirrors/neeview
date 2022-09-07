@@ -17,7 +17,7 @@ namespace NeeLaboratory.Threading.Tasks
         public static Task ActionAsync(Action<CancellationToken> action, CancellationToken token)
         {
             token.ThrowIfCancellationRequested();
-            return Task.Run(() => action(token));
+            return Task.Run(() => action(token), token);
         }
 
         // なんだこれ。
@@ -33,7 +33,7 @@ namespace NeeLaboratory.Threading.Tasks
                 catch (OperationCanceledException)
                 {
                 }
-            });
+            }, token);
         }
     }
 

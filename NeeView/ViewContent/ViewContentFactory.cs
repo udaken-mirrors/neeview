@@ -11,39 +11,18 @@ namespace NeeView
     {
         public static ViewContent Create(MainViewComponent viewComponent, ViewContentSource source, ViewContent oldViewContent)
         {
-            ViewContent viewContent;
-
-            switch (source.GetContentType())
+            ViewContent viewContent = source.GetContentType() switch
             {
-                case ViewContentType.Dummy:
-                    viewContent = DummyViewContent.Create(viewComponent, source);
-                    break;
-                case ViewContentType.Message:
-                    viewContent = MessageViewContent.Create(viewComponent, source);
-                    break;
-                case ViewContentType.Reserve:
-                    viewContent =  ReserveViewContent.Create(viewComponent, source, oldViewContent);
-                    break;
-                case ViewContentType.Bitmap:
-                    viewContent = BitmapViewContent.Create(viewComponent, source);
-                    break;
-                case ViewContentType.Anime:
-                    viewContent = AnimatedViewContent.Create(viewComponent, source);
-                    break;
-                case ViewContentType.Media:
-                    viewContent = MediaViewContent.Create(viewComponent, source);
-                    break;
-                case ViewContentType.Pdf:
-                    viewContent = PdfViewContent.Create(viewComponent, source);
-                    break;
-                case ViewContentType.Archive:
-                    viewContent = ArchiveViewContent.Create(viewComponent, source);
-                    break;
-                default:
-                    viewContent = new ViewContent();
-                    break;
-            }
-
+                ViewContentType.Dummy => DummyViewContent.Create(viewComponent, source),
+                ViewContentType.Message => MessageViewContent.Create(viewComponent, source),
+                ViewContentType.Reserve => ReserveViewContent.Create(viewComponent, source, oldViewContent),
+                ViewContentType.Bitmap => BitmapViewContent.Create(viewComponent, source),
+                ViewContentType.Anime => AnimatedViewContent.Create(viewComponent, source),
+                ViewContentType.Media => MediaViewContent.Create(viewComponent, source),
+                ViewContentType.Pdf => PdfViewContent.Create(viewComponent, source),
+                ViewContentType.Archive => ArchiveViewContent.Create(viewComponent, source),
+                _ => new ViewContent(),
+            };
             return viewContent;
         }
     }

@@ -61,8 +61,7 @@ namespace NeeView.Windows.Controls
 
         private static void ColorProperty_Changed(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            var control = d as ColorPicker;
-            if (control != null)
+            if (d is ColorPicker control)
             {
                 control.Flush();
             }
@@ -80,8 +79,7 @@ namespace NeeView.Windows.Controls
 
         private static void IsHsvModeProperty_Changed(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            var control = d as ColorPicker;
-            if (control != null)
+            if (d is ColorPicker control)
             {
                 control.RaisePropertyChanged(nameof(IsRgbVisible));
                 control.RaisePropertyChanged(nameof(IsHsvVisible));

@@ -6,8 +6,8 @@ namespace NeeView
 {
     public class HistoryPanelAccessor : LayoutPanelAccessor
     {
-        private HistoryPanel _panel;
-        private HistoryList _model;
+        private readonly HistoryPanel _panel;
+        private readonly HistoryList _model;
 
 
         public HistoryPanelAccessor() : base(nameof(HistoryPanel))
@@ -49,13 +49,13 @@ namespace NeeView
 
         private void SetSelectedItems(HistoryItemAccessor[] selectedItems)
         {
-            selectedItems = selectedItems ?? new HistoryItemAccessor[] { };
+            selectedItems = selectedItems ?? Array.Empty<HistoryItemAccessor>();
             _panel.Presenter.HistoryListBox?.SetSelectedItems(selectedItems.Select(e => e.Source));
         }
 
-        private HistoryItemAccessor[] ToStringArray(IEnumerable<BookHistory>? items)
+        private static HistoryItemAccessor[] ToStringArray(IEnumerable<BookHistory>? items)
         {
-            return items?.Select(e => new HistoryItemAccessor(e)).ToArray() ?? new HistoryItemAccessor[] { };
+            return items?.Select(e => new HistoryItemAccessor(e)).ToArray() ?? Array.Empty<HistoryItemAccessor>();
         }
 
         internal WordNode CreateWordNode(string name)

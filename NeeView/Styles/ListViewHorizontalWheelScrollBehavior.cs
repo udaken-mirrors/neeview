@@ -13,7 +13,7 @@ namespace NeeView
     {
         private ScrollViewer? _scrollViewer;
         private HwndSource? _hwndSource;
-        private MouseWheelDelta _mouseWheelDelta = new MouseWheelDelta();
+        private readonly MouseWheelDelta _mouseWheelDelta = new();
 
         protected override void OnAttached()
         {

@@ -12,7 +12,7 @@ namespace NeeView
 {
     public class ExportImageWindowViewModel : BindableBase
     {
-        private ExportImage _model;
+        private readonly ExportImage _model;
 
         public ExportImageWindowViewModel(ExportImage model)
         {
@@ -76,8 +76,7 @@ namespace NeeView
         {
             var oldSelect = _selectedDestinationFolder;
 
-            var list = new List<DestinationFolder>();
-            list.Add(new DestinationFolder(Properties.Resources.Word_None, ""));
+            var list = new List<DestinationFolder> { new DestinationFolder(Properties.Resources.Word_None, "") };
             list.AddRange(Config.Current.System.DestinationFodlerCollection);
             DestinationFolderList = list;
 

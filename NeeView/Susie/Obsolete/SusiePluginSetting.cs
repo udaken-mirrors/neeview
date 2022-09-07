@@ -8,7 +8,7 @@ namespace NeeView
     /// <summary>
     /// プラグイン単位の設定 (Obsolete)
     /// </summary>
-    [Obsolete, DataContract]
+    [Obsolete("no used"), DataContract]
     public class SusiePluginSetting
     {
         public SusiePluginSetting(bool isEnable, bool isPreExtract)

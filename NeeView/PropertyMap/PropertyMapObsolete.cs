@@ -4,12 +4,6 @@ namespace NeeView
 {
     public class PropertyMapObsolete : PropertyMapNode
     {
-#if false
-        public PropertyMapObsolete()
-        {
-        }
-#endif
-
         public PropertyMapObsolete(string propertyName, Type propertyType, string? message, ObsoleteAttribute obsolete, AlternativeAttribute? alternative)
         {
             PropertyName = propertyName;

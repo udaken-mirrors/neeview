@@ -65,7 +65,7 @@ namespace NeeView
         public static bool Rename(TreeListNode<IBookmarkEntry> node, string newName)
         {
             if (node == null) throw new ArgumentNullException(nameof(node));
-            if (!(node.Value is BookmarkFolder folder)) throw new ArgumentOutOfRangeException(nameof(node));
+            if (node.Value is not BookmarkFolder folder) throw new ArgumentOutOfRangeException(nameof(node));
 
             newName = BookmarkFolder.GetValidateName(newName);
             var oldName = folder.Name;

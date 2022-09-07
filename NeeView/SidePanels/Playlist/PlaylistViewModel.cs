@@ -19,7 +19,7 @@ namespace NeeView
 {
     public class PlaylistViewModel : BindableBase
     {
-        private PlaylistHub _model;
+        private readonly PlaylistHub _model;
 
 
         public PlaylistViewModel(PlaylistHub model)
@@ -81,7 +81,7 @@ namespace NeeView
 
         public class PlaylistMoreMenuDescription : ItemsListMoreMenuDescription
         {
-            private PlaylistViewModel _vm;
+            private readonly PlaylistViewModel _vm;
 
             public PlaylistMoreMenuDescription(PlaylistViewModel vm)
             {

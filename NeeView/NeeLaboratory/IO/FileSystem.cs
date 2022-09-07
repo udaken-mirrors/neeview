@@ -92,6 +92,11 @@ namespace NeeLaboratory.IO
             shfi.szTypeName = "";
 
             IntPtr hSuccess = NativeMethods.SHGetFileInfo(path, 0, ref shfi, (uint)Marshal.SizeOf(shfi), NativeMethods.SHGFI_TYPENAME);
+            if (hSuccess != IntPtr.Zero)
+            {
+                return null;
+            }
+
             if (!string.IsNullOrEmpty(shfi.szTypeName))
             {
                 return shfi.szTypeName;
@@ -114,6 +119,11 @@ namespace NeeLaboratory.IO
             shfi.szTypeName = "";
 
             IntPtr hSuccess = NativeMethods.SHGetFileInfo(path, attribute, ref shfi, (uint)Marshal.SizeOf(shfi), NativeMethods.SHGFI_TYPENAME | NativeMethods.SHGFI_USEFILEATTRIBUTES);
+            if (hSuccess != IntPtr.Zero)
+            {
+                return null;
+            }
+
             if (!string.IsNullOrEmpty(shfi.szTypeName))
             {
                 return shfi.szTypeName;

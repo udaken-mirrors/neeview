@@ -12,11 +12,11 @@ namespace NeeView
     public class BookController : IDisposable
     {
         // コマンドエンジン
-        private BookCommandEngine _commandEngine = new BookCommandEngine();
+        private readonly BookCommandEngine _commandEngine = new();
 
-        private BookSource _book;
-        private BookPageViewer _viewer;
-        private BookPageMarker _marker;
+        private readonly BookSource _book;
+        private readonly BookPageViewer _viewer;
+        private readonly BookPageMarker _marker;
         private bool _isViewContentsLoading;
 
 
@@ -101,6 +101,7 @@ namespace NeeView
         public void Dispose()
         {
             Dispose(true);
+            GC.SuppressFinalize(this);
         }
         #endregion
 
@@ -195,7 +196,7 @@ namespace NeeView
 
 
         [Conditional("DEBUG")]
-        private void __CommandWriteLine(string message)
+        private static void __CommandWriteLine(string message)
         {
             ////Debug.WriteLine("Command> " + message);
         }

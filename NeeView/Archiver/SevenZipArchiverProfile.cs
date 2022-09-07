@@ -44,11 +44,6 @@ namespace NeeView
                 this.InitializePropertyDefaultValues();
             }
 
-            [OnDeserialized]
-            private void OnDeserialized(StreamingContext context)
-            {
-            }
-
             public void RestoreConfig(Config config)
             {
                 config.Performance.PreExtractSolidSize = PreExtractSolidSize;

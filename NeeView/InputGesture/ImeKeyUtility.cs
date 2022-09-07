@@ -12,7 +12,7 @@ namespace NeeView
         /// <summary>
         /// 管理するIMEキー
         /// </summary>
-        static List<Key> _imeKeys = new List<Key> { Key.ImeConvert, Key.ImeNonConvert };
+        private static readonly List<Key> _imeKeys = new() { Key.ImeConvert, Key.ImeNonConvert };
 
         /// <summary>
         /// 入力定義にIMEキーが入っている？

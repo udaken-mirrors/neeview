@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace NeeView
 {
-    [Obsolete]
+    [Obsolete("no used")]
     public class PlaylistSourceV1
     {
         public const string FormatVersion = "NeeViewPlaylist.1";
@@ -23,7 +23,7 @@ namespace NeeView
         public List<string> Items { get; set; }
     }
 
-    [Obsolete]
+    [Obsolete("no used")]
     public static class PlaylistV1Extensions
     {
         public static PlaylistSource ToPlaylist(this PlaylistSourceV1 self)

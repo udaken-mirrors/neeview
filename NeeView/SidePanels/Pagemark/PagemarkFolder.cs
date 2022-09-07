@@ -4,16 +4,16 @@ using System.Runtime.Serialization;
 
 namespace NeeView
 {
-    [Obsolete]
+    [Obsolete("no used")]
     [DataContract]
     public class PagemarkFolder : BindableBase, IPagemarkEntry
     {
-        private static IThumbnail _thumbnail = new FolderThumbnail();
+        private static readonly IThumbnail _thumbnail = new FolderThumbnail();
         private string? _path;
 
 
-        [Obsolete, DataMember(Name = "Name", EmitDefaultValue = false)]
-        private string? ObsoleteName
+        [Obsolete("no used"), DataMember(Name = "Name", EmitDefaultValue = false)]
+        public string? ObsoleteName
         {
             get { return null; }
             set { _path = value; }
@@ -52,7 +52,7 @@ namespace NeeView
         }
     }
 
-    [Obsolete]
+    [Obsolete("no used")]
     public class PagemarkEmpty : IPagemarkEntry
     {
         public string Path => "";

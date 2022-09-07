@@ -26,8 +26,8 @@ namespace NeeView
         private bool _isOpenbookAtCurrentPlace;
         private bool _isNaturalSortEnabled;
         private bool _isInputMehotdEnabled;
-        private DestinationFolderCollection _destinationFolderCollection = new DestinationFolderCollection();
-        private ExternalAppCollection _externalAppCollection = new ExternalAppCollection() { new ExternalApp() };
+        private DestinationFolderCollection _destinationFolderCollection = new();
+        private ExternalAppCollection _externalAppCollection = new() { new ExternalApp() };
         private string? _textEditor;
         private string? _webBrowser;
 

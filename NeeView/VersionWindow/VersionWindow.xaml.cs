@@ -19,9 +19,9 @@ namespace NeeView
     /// </summary>
     public partial class VersionWindow : Window
     {
-        public readonly static RoutedCommand CopyCommand = new RoutedCommand("CopyCommand", typeof(VersionWindowViewModel), new InputGestureCollection(new List<InputGesture>() { new KeyGesture(Key.C, ModifierKeys.Control) }));
+        public readonly static RoutedCommand CopyCommand = new("CopyCommand", typeof(VersionWindowViewModel), new InputGestureCollection(new List<InputGesture>() { new KeyGesture(Key.C, ModifierKeys.Control) }));
 
-        private VersionWindowViewModel _vm;
+        private readonly VersionWindowViewModel _vm;
 
 
         public VersionWindow()

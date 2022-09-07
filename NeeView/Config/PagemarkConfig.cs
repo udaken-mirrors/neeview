@@ -6,7 +6,7 @@ using System.Text.Json.Serialization;
 
 namespace NeeView
 {
-    [Obsolete]
+    [Obsolete("no used")]
     public class PagemarkConfig : BindableBase, IHasPanelListItemStyle
     {
         private PanelListItemStyle _panelListItemStyle = PanelListItemStyle.Content;

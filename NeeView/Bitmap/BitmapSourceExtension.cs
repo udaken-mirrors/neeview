@@ -28,7 +28,7 @@ namespace NeeView
         }
 
         // GetOneColor()のサポートフォーマット
-        private static PixelFormat[] s_supportedFormats = new PixelFormat[]
+        private static readonly PixelFormat[] s_supportedFormats = new PixelFormat[]
         {
             PixelFormats.Bgra32,
             PixelFormats.Bgr32,
@@ -41,7 +41,7 @@ namespace NeeView
         };
 
         // GetOneColor()のサポートフォーマット (インデックスカラー)
-        private static PixelFormat[] s_supportedIndexFormats = new PixelFormat[]
+        private static readonly PixelFormat[] s_supportedIndexFormats = new PixelFormat[]
         {
             PixelFormats.Indexed8,
             PixelFormats.Indexed4,

@@ -24,7 +24,7 @@ namespace NeeView.Media.Imaging
             visual.UpdateLayout();
 
             double dpi = 96.0;
-            RenderTargetBitmap bmp = new RenderTargetBitmap((int)visual.Width, (int)visual.Height, dpi, dpi, PixelFormats.Pbgra32);
+            var bmp = new RenderTargetBitmap((int)visual.Width, (int)visual.Height, dpi, dpi, PixelFormats.Pbgra32);
             bmp.Render(visual);
             bmp.Freeze();
 
@@ -91,7 +91,7 @@ namespace NeeView.Media.Imaging
             canvas.UpdateLayout();
 
             double dpi = 96.0;
-            RenderTargetBitmap bmp = new RenderTargetBitmap((int)canvas.Width, (int)canvas.Height, dpi, dpi, PixelFormats.Pbgra32);
+            var bmp = new RenderTargetBitmap((int)canvas.Width, (int)canvas.Height, dpi, dpi, PixelFormats.Pbgra32);
             bmp.Render(canvas);
             bmp.Freeze();
 

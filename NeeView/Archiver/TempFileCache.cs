@@ -13,9 +13,9 @@ namespace NeeView
         public static TempFileCache Current { get; }
 
 
-        private Dictionary<string, TempFile> _caches = new Dictionary<string, TempFile>();
+        private readonly Dictionary<string, TempFile> _caches = new();
 
-        private object _lock = new object();
+        private readonly object _lock = new();
 
 
         /// <summary>

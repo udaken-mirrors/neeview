@@ -10,7 +10,7 @@ namespace NeeView
     /// </summary>
     public class TouchInputLoupe : TouchInputBase
     {
-        private LoupeTransform _loupe;
+        private readonly LoupeTransform _loupe;
         private Point _loupeBasePosition;
         private TouchContext? _touch;
         private TouchDragContext? _origin;

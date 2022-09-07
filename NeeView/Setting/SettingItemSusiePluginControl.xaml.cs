@@ -51,15 +51,8 @@ namespace NeeView.Setting
         #endregion
 
 
-        private SusiePluginType _pluginType;
+        private readonly SusiePluginType _pluginType;
 
-#if false
-        // for designer
-        public SettingItemSusiePluginControl()
-        {
-            InitializeComponent();
-        }
-#endif
 
         public SettingItemSusiePluginControl(SusiePluginType pluginType)
         {
@@ -91,14 +84,12 @@ namespace NeeView.Setting
 
         private bool CanOpenConfigDialog()
         {
-            var item = this.PluginList.SelectedItem as SusiePluginInfo;
-            return item != null;
+            return this.PluginList.SelectedItem is SusiePluginInfo;
         }
 
         private void OpenConfigDialog_Executed()
         {
-            var item = this.PluginList.SelectedItem as SusiePluginInfo;
-            if (item is null) return;
+            if (this.PluginList.SelectedItem is not SusiePluginInfo item) return;
 
             OpenConfigDialog(item);
         }
@@ -127,8 +118,7 @@ namespace NeeView.Setting
         private void MoveUpCommand_Executed()
         {
             var index = this.PluginList.SelectedIndex;
-            var collection = this.PluginList.Tag as ObservableCollection<SusiePluginInfo>;
-            if (collection is null) return;
+            if (this.PluginList.Tag is not ObservableCollection<SusiePluginInfo> collection) return;
 
             if (index > 0)
             {
@@ -146,8 +136,7 @@ namespace NeeView.Setting
         private void MoveDownCommand_Executed()
         {
             var index = this.PluginList.SelectedIndex;
-            var collection = this.PluginList.Tag as ObservableCollection<SusiePluginInfo>;
-            if (collection is null) return;
+            if (this.PluginList.Tag is not ObservableCollection<SusiePluginInfo> collection) return;
 
             if (index >= 0 && index < collection.Count - 1)
             {
@@ -164,8 +153,7 @@ namespace NeeView.Setting
 
         private void SwitchAllCommand_Executed()
         {
-            var collection = this.PluginList.Tag as ObservableCollection<SusiePluginInfo>;
-            if (collection != null)
+            if (this.PluginList.Tag is ObservableCollection<SusiePluginInfo> collection)
             {
                 var flag = collection.Any(e => !e.IsEnabled);
                 foreach (var plugin in collection)
@@ -193,8 +181,7 @@ namespace NeeView.Setting
         // プラグインリスト：ドロップ
         private void PluginListView_Drop(object? sender, DragEventArgs e)
         {
-            var list = (sender as ListBox)?.Tag as ObservableCollection<SusiePluginInfo>;
-            if (list != null)
+            if ((sender as ListBox)?.Tag is ObservableCollection<SusiePluginInfo> list)
             {
                 ListBoxDragSortExtension.Drop<SusiePluginInfo>(sender, e, DragDataFormat, list);
             }
@@ -210,8 +197,7 @@ namespace NeeView.Setting
         // 項目ダブルクリック
         private void ListBoxItem_MouseDoubleClick(object? sender, MouseButtonEventArgs e)
         {
-            var item = (sender as ListBoxItem)?.DataContext as SusiePluginInfo;
-            if (item is null) return;
+            if ((sender as ListBoxItem)?.DataContext is not SusiePluginInfo item) return;
             OpenConfigDialog(item);
         }
 
@@ -219,8 +205,7 @@ namespace NeeView.Setting
         {
             if (e.Key == Key.Enter)
             {
-                var item = (sender as ListBoxItem)?.DataContext as SusiePluginInfo;
-                if (item is null) return;
+                if ((sender as ListBoxItem)?.DataContext is not SusiePluginInfo item) return;
 
                 OpenConfigDialog(item);
             }
@@ -229,8 +214,7 @@ namespace NeeView.Setting
         // 有効/無効チェックボックス
         private void CheckBox_Changed(object? sender, RoutedEventArgs e)
         {
-            var item = (sender as CheckBox)?.DataContext as SusiePluginInfo;
-            if (item is null) return;
+            if ((sender as CheckBox)?.DataContext is not SusiePluginInfo item) return;
 
             SusiePluginManager.Current.FlushSusiePluginSetting(item.Name);
             UpdateExtensions();

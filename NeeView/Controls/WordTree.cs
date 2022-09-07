@@ -32,7 +32,7 @@ namespace NeeView
             }
 
             var word = tokens.Last();
-            var prefix = source.Substring(0, source.Length - word.Length);
+            var prefix = source[..^word.Length];
 
             var words = InterpolateWord(word, node);
             if (words.Any())
@@ -73,7 +73,7 @@ namespace NeeView
             }
         }
 
-        private IEnumerable<string> InterpolateWord(string source, WordNode node)
+        private static IEnumerable<string> InterpolateWord(string source, WordNode node)
         {
             if (node.Children == null)
             {
@@ -81,7 +81,7 @@ namespace NeeView
             }
 
             var selects = InterpolateWord(source, node.Children.Select(e => e.Word));
-            if (selects.Count() == 0)
+            if (!selects.Any())
             {
                 yield break;
             }
@@ -94,7 +94,7 @@ namespace NeeView
             }
         }
 
-        private IEnumerable<string> InterpolateWord(string source, IEnumerable<string> candidates)
+        private static IEnumerable<string> InterpolateWord(string source, IEnumerable<string> candidates)
         {
             return candidates.Where(e => e.StartsWith(source, StringComparison.OrdinalIgnoreCase));
         }

@@ -9,7 +9,7 @@ namespace NeeView
     {
         public static Stream OpenResource(string contentPath)
         {
-            Uri uri = new Uri(contentPath, UriKind.Relative);
+            var uri = new Uri(contentPath, UriKind.Relative);
             var info = Application.GetResourceStream(uri);
             if (info is null) throw new FileNotFoundException($"No such resource: {contentPath}");
             return info.Stream;

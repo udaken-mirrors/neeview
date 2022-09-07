@@ -19,11 +19,11 @@ namespace NeeView.Setting
     /// </summary>
     public partial class ContextMenuSettingControl : UserControl
     {
-        public static readonly RoutedCommand AddCommand = new RoutedCommand("AddCommand", typeof(ContextMenuSettingControl));
-        public static readonly RoutedCommand RemoveCommand = new RoutedCommand("RemoveCommand", typeof(ContextMenuSettingControl));
-        public static readonly RoutedCommand RenameCommand = new RoutedCommand("RenameCommand", typeof(ContextMenuSettingControl));
-        public static readonly RoutedCommand MoveUpCommand = new RoutedCommand("MoveUpCommand", typeof(ContextMenuSettingControl));
-        public static readonly RoutedCommand MoveDownCommand = new RoutedCommand("MoveDownCommand", typeof(ContextMenuSettingControl));
+        public static readonly RoutedCommand AddCommand = new("AddCommand", typeof(ContextMenuSettingControl));
+        public static readonly RoutedCommand RemoveCommand = new("RemoveCommand", typeof(ContextMenuSettingControl));
+        public static readonly RoutedCommand RenameCommand = new("RenameCommand", typeof(ContextMenuSettingControl));
+        public static readonly RoutedCommand MoveUpCommand = new("MoveUpCommand", typeof(ContextMenuSettingControl));
+        public static readonly RoutedCommand MoveDownCommand = new("MoveDownCommand", typeof(ContextMenuSettingControl));
 
 
         public ContextMenuSetting ContextMenuSetting
@@ -43,7 +43,7 @@ namespace NeeView.Setting
 
 
 
-        private ContextMenuSettingViewModel _vm;
+        private readonly ContextMenuSettingViewModel _vm;
 
 
 
@@ -83,11 +83,9 @@ namespace NeeView.Setting
 
         private void Add_Exec(object? sender, ExecutedRoutedEventArgs e)
         {
-            var element = this.SourceComboBox.SelectedItem as MenuTree;
-            if (element == null) return;
+            if (this.SourceComboBox.SelectedItem is not MenuTree element) return;
 
-            var node = this.ContextMenuTreeView.SelectedItem as MenuTree;
-            if (node == null) return;
+            if (this.ContextMenuTreeView.SelectedItem is not MenuTree node) return;
 
             _vm.AddNode(MenuTree.Create(element), node);
         }
@@ -95,15 +93,13 @@ namespace NeeView.Setting
         //
         private void SelectedItem_CanExec(object? sender, CanExecuteRoutedEventArgs e)
         {
-            var node = this.ContextMenuTreeView.SelectedItem as MenuTree;
-            e.CanExecute = node != null && node.MenuElementType != MenuElementType.None;
+            e.CanExecute = this.ContextMenuTreeView.SelectedItem is MenuTree node && node.MenuElementType != MenuElementType.None;
         }
 
         //
         private void Remove_Exec(object? sender, ExecutedRoutedEventArgs e)
         {
-            var node = this.ContextMenuTreeView.SelectedItem as MenuTree;
-            if (node == null) return;
+            if (this.ContextMenuTreeView.SelectedItem is not MenuTree node) return;
 
             _vm.RemoveNode(node);
         }
@@ -111,15 +107,13 @@ namespace NeeView.Setting
         //
         private void Rename_CanExec(object? sender, CanExecuteRoutedEventArgs e)
         {
-            var node = this.ContextMenuTreeView.SelectedItem as MenuTree;
-            e.CanExecute = node != null && node.MenuElementType != MenuElementType.None && node.MenuElementType != MenuElementType.Separator;
+            e.CanExecute = this.ContextMenuTreeView.SelectedItem is MenuTree node && node.MenuElementType != MenuElementType.None && node.MenuElementType != MenuElementType.Separator;
         }
 
         //
         private void Rename_Exec(object? sender, ExecutedRoutedEventArgs e)
         {
-            var node = this.ContextMenuTreeView.SelectedItem as MenuTree;
-            if (node == null) return;
+            if (this.ContextMenuTreeView.SelectedItem is not MenuTree node) return;
 
             var param = new RenameWindowParam(node.Label, node.DefaultLabel);
 
@@ -136,8 +130,7 @@ namespace NeeView.Setting
         //
         private void MoveUp_Exec(object? sender, ExecutedRoutedEventArgs e)
         {
-            var node = this.ContextMenuTreeView.SelectedItem as MenuTree;
-            if (node == null) return;
+            if (this.ContextMenuTreeView.SelectedItem is not MenuTree node) return;
 
             _vm.MoveUp(node);
         }
@@ -145,8 +138,7 @@ namespace NeeView.Setting
         //
         private void MoveDown_Exec(object? sender, ExecutedRoutedEventArgs e)
         {
-            var node = this.ContextMenuTreeView.SelectedItem as MenuTree;
-            if (node == null) return;
+            if (this.ContextMenuTreeView.SelectedItem is not MenuTree node) return;
 
             _vm.MoveDown(node);
         }

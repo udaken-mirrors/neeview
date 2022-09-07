@@ -12,12 +12,12 @@ namespace NeeView.UnitTest
 
     public class SingleJobEngineTest
     {
-        private readonly ITestOutputHelper _output;
+        //private readonly ITestOutputHelper _output;
 
-        public SingleJobEngineTest(ITestOutputHelper testOutputHelper)
-        {
-            _output = testOutputHelper;
-        }
+        //public SingleJobEngineTest(ITestOutputHelper testOutputHelper)
+        //{
+        //    _output = testOutputHelper;
+        //}
 
 
         [Fact(Timeout = 1000)]
@@ -145,7 +145,7 @@ namespace NeeView.UnitTest
 
         protected override async Task ExecuteAsync(CancellationToken token)
         {
-            await Task.Delay(500);
+            await Task.Delay(500, CancellationToken.None);
 
             token.ThrowIfCancellationRequested();
             Context?.Add(Value);

@@ -2,10 +2,6 @@
 {
     public class SusieImage
     {
-        //public SusieImage()
-        //{
-        //}
-
         public SusieImage(SusiePluginInfo? plugin, byte[]? bitmapData)
         {
             Plugin = plugin;

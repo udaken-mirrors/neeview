@@ -188,19 +188,12 @@ namespace NeeView
         // スライダー方向更新
         private void UpdateIsSliderDirectionReversed()
         {
-            switch (Config.Current.Slider.SliderDirection)
+            IsSliderDirectionReversed = Config.Current.Slider.SliderDirection switch
             {
-                default:
-                case SliderDirection.LeftToRight:
-                    IsSliderDirectionReversed = false;
-                    break;
-                case SliderDirection.RightToLeft:
-                    IsSliderDirectionReversed = true;
-                    break;
-                case SliderDirection.SyncBookReadDirection:
-                    IsSliderDirectionReversed = BookSettingPresenter.Current.LatestSetting.BookReadOrder == PageReadOrder.RightToLeft;
-                    break;
-            }
+                SliderDirection.RightToLeft => true,
+                SliderDirection.SyncBookReadDirection => BookSettingPresenter.Current.LatestSetting.BookReadOrder == PageReadOrder.RightToLeft,
+                _ => false,
+            };
         }
 
         /// <summary>

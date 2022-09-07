@@ -2,8 +2,8 @@
 {
     public class InformationPanelAccessor : LayoutPanelAccessor
     {
-        private FileInformationPanel _panel;
-        private FileInformation _model;
+        private readonly FileInformationPanel _panel;
+        private readonly FileInformation _model;
 
 
         public InformationPanelAccessor() : base(nameof(FileInformationPanel))

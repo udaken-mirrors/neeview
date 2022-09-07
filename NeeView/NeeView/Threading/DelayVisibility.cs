@@ -12,7 +12,7 @@ namespace NeeView.Threading
 {
     public class DelayVisibility : BindableBase
     {
-        private DelayValue<Visibility> _visibility;
+        private readonly DelayValue<Visibility> _visibility;
 
 
         public DelayVisibility() : this(Visibility.Collapsed)

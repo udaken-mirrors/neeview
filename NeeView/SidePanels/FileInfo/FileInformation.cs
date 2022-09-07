@@ -18,7 +18,7 @@ namespace NeeView
         static FileInformation() => Current = new FileInformation();
 
         
-        private DelayValue<IEnumerable<ViewContent>> _viewContentsDelay;
+        private readonly DelayValue<IEnumerable<ViewContent>> _viewContentsDelay;
         private List<FileInformationSource>? _fileInformations;
 
 
@@ -96,7 +96,7 @@ namespace NeeView
     /// 旧：ファイル情報パネル設定
     /// 互換性のために残してあります
     /// </summary>
-    [Obsolete]
+    [Obsolete("no used")]
     [DataContract]
     public class FileInfoSetting
     {

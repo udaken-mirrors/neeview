@@ -10,8 +10,8 @@ namespace NeeView
         public static TitleStringService Default => _default = _default ?? new TitleStringService(MainViewComponent.Current);
 
 
-        private ReplaceString _replaceString = new ReplaceString();
-        private MainViewComponent _mainViewComponent;
+        private readonly ReplaceString _replaceString = new();
+        private readonly MainViewComponent _mainViewComponent;
         private int _changedCount;
 
 

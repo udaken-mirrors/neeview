@@ -7,8 +7,8 @@ namespace NeeView
 {
     public class BookPageMarker
     {
-        private BookSource _book;
-        private BookPageViewer _viewer;
+        private readonly BookSource _book;
+        private readonly BookPageViewer _viewer;
 
         
         public BookPageMarker(BookSource book, BookPageViewer viewer)

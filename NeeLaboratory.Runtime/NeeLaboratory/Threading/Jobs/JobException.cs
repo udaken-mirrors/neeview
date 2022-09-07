@@ -12,7 +12,7 @@ namespace NeeLaboratory.Threading.Jobs
         /// 例外が発生したJOB
         /// </summary>
         [NonSerialized]
-        private IJob _job;
+        private readonly IJob _job;
 
 
         /// <summary>

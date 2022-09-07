@@ -38,7 +38,7 @@ namespace NeeView
         /// <summary>
         /// ジェスチャー方向ベクトル
         /// </summary>
-        private static Dictionary<MouseGestureDirection, Vector> s_gestureDirectionVector = new Dictionary<MouseGestureDirection, Vector>
+        private static readonly Dictionary<MouseGestureDirection, Vector> _gestureDirectionVector = new()
         {
             [MouseGestureDirection.None] = new Vector(0, 0),
             [MouseGestureDirection.Up] = new Vector(0, -1),
@@ -48,10 +48,11 @@ namespace NeeView
         };
 
 
-        private MouseGestureSequence _sequence;
+        private readonly MouseGestureSequence _sequence;
         private MouseGestureDirection _direction;
 
         private Point _origin;
+
 
         /// <summary>
         /// コンストラクター
@@ -101,17 +102,15 @@ namespace NeeView
 
             // 方向を決める
             // 斜め方向は以前の方向とする
-            if (_direction != MouseGestureDirection.None && Math.Abs(Vector.AngleBetween(s_gestureDirectionVector[_direction], v1)) < 60)
+            if (_direction != MouseGestureDirection.None && Math.Abs(Vector.AngleBetween(_gestureDirectionVector[_direction], v1)) < 60)
             {
                 // そのまま
             }
             else
             {
-                foreach (MouseGestureDirection direction in s_gestureDirectionVector.Keys)
+                foreach (MouseGestureDirection direction in _gestureDirectionVector.Keys)
                 {
-                    var v0 = s_gestureDirectionVector[direction];
-                    var angle = Vector.AngleBetween(s_gestureDirectionVector[direction], v1);
-                    if (direction != MouseGestureDirection.None && Math.Abs(Vector.AngleBetween(s_gestureDirectionVector[direction], v1)) < 30)
+                    if (direction != MouseGestureDirection.None && Math.Abs(Vector.AngleBetween(_gestureDirectionVector[direction], v1)) < 30)
                     {
                         _direction = direction;
                         _sequence.Add(_direction);

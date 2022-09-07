@@ -4,7 +4,7 @@ namespace NeeView
 {
     public class DestinationFolderEditDialogViewMdoel : BindableBase
     {
-        private DestinationFolder _model;
+        private readonly DestinationFolder _model;
 
 
         public DestinationFolderEditDialogViewMdoel(DestinationFolder model)

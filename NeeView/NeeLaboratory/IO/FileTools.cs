@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using System.Threading.Tasks;
+using System;
 
 namespace NeeLaboratory.IO
 {
@@ -22,7 +23,7 @@ namespace NeeLaboratory.IO
             using (FileStream stream = File.Open(path, FileMode.Open, FileAccess.Read, share))
             {
                 result = new byte[stream.Length];
-                await stream.ReadAsync(result, 0, (int)stream.Length);
+                await stream.ReadAsync(result.AsMemory(0, (int)stream.Length));
             }
             return result;
         }
@@ -31,7 +32,7 @@ namespace NeeLaboratory.IO
         {
             using (FileStream stream = File.Open(path, FileMode.Create, FileAccess.Write))
             {
-                await stream.WriteAsync(bytes, 0, bytes.Length);
+                await stream.WriteAsync(bytes);
             }
         }
     }

@@ -50,15 +50,17 @@ namespace NeeView
 
         private static Dictionary<string, string> CreateDefaultExtensions()
         {
-            var dictionary = new Dictionary<string, string>();
-            dictionary.Add("BMP Decoder", ".bmp,.dib,.rle");
-            dictionary.Add("GIF Decoder", ".gif");
-            dictionary.Add("ICO Decoder", ".ico,.icon");
-            dictionary.Add("JPEG Decoder", ".jpeg,.jpe,.jpg,.jfif,.exif");
-            dictionary.Add("PNG Decoder", ".png");
-            dictionary.Add("TIFF Decoder", ".tiff,.tif");
-            dictionary.Add("WMPhoto Decoder", ".wdp,.jxr");
-            dictionary.Add("DDS Decoder", ".dds");
+            var dictionary = new Dictionary<string, string>
+            {
+                { "BMP Decoder", ".bmp,.dib,.rle" },
+                { "GIF Decoder", ".gif" },
+                { "ICO Decoder", ".ico,.icon" },
+                { "JPEG Decoder", ".jpeg,.jpe,.jpg,.jfif,.exif" },
+                { "PNG Decoder", ".png" },
+                { "TIFF Decoder", ".tiff,.tif" },
+                { "WMPhoto Decoder", ".wdp,.jxr" },
+                { "DDS Decoder", ".dds" }
+            };
             return dictionary;
         }
     }

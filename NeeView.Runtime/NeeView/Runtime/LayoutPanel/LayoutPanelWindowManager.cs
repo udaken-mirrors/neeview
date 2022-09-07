@@ -9,8 +9,8 @@ namespace NeeView.Runtime.LayoutPanel
 {
     public class LayoutPanelWindowManager
     {
-        private LayoutPanelManager _layoutPanelManager;
-        private ObservableCollection<LayoutPanelWindow> _windows { get; set; } = new ObservableCollection<LayoutPanelWindow>();
+        private readonly LayoutPanelManager _layoutPanelManager;
+        private readonly ObservableCollection<LayoutPanelWindow> _windows = new();
 
 
         public LayoutPanelWindowManager(LayoutPanelManager manager)

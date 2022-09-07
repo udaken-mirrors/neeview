@@ -9,8 +9,8 @@ namespace NeeView
 {
     public class MainViewViewModel : BindableBase
     {
-        private MainViewComponent _viewComponent;
-        private ContextMenu _contextMenu = new ContextMenu();
+        private readonly MainViewComponent _viewComponent;
+        private readonly ContextMenu _contextMenu = new();
         private bool _isContextMenuDarty = true;
         private Visibility _busyVisibility = Visibility.Collapsed;
 
@@ -59,7 +59,7 @@ namespace NeeView
 
         public TouchInput TouchInput => _viewComponent.TouchInput;
 
-        public Thickness MainViewMergin => new Thickness(Config.Current.View.MainViewMergin);
+        public Thickness MainViewMergin => new(Config.Current.View.MainViewMergin);
 
         public ContextMenu ContextMenu => _contextMenu;
 
@@ -126,19 +126,13 @@ namespace NeeView
             var fixedSize = Config.Current.View.IsBaseScaleEnabled ? contentSize.Multi(1.0 / Config.Current.View.BaseScale) : contentSize;
 
             var limitSize = new Size(SystemParameters.VirtualScreenWidth - frameWidth, SystemParameters.VirtualScreenHeight - frameHeight);
-
-            Size newCanvasSize;
-            switch (_viewComponent.ContentCanvas.GetStretchMode())
+            var newCanvasSize = _viewComponent.ContentCanvas.GetStretchMode() switch
             {
-                case PageStretchMode.Uniform:
-                case PageStretchMode.UniformToSize:
-                    newCanvasSize = fixedSize.Limit(limitSize);
-                    break;
-                default:
-                    newCanvasSize = fixedSize.Clamp(limitSize);
-                    break;
-            }
-
+                PageStretchMode.Uniform or PageStretchMode.UniformToSize
+                    => fixedSize.Limit(limitSize),
+                _
+                    => fixedSize.Clamp(limitSize),
+            };
             window.Width = newCanvasSize.Width + frameWidth;
             window.Height = newCanvasSize.Height + frameHeight;
 

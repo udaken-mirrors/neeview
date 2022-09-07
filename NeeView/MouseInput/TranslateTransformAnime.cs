@@ -49,7 +49,7 @@ namespace NeeView
 
         private class DirectPositionState : IDragTransformPositionState
         {
-            private TranslateTransform _translateTransform;
+            private readonly TranslateTransform _translateTransform;
 
             public DirectPositionState(TranslateTransform translateTransform)
             {
@@ -68,7 +68,7 @@ namespace NeeView
 
         private class AnimatedPositionState : IDragTransformPositionState
         {
-            private TranslateTransform _translateTransform;
+            private readonly TranslateTransform _translateTransform;
             private bool _isEnabled;
 
             public AnimatedPositionState(TranslateTransform translateTransform)
@@ -85,7 +85,7 @@ namespace NeeView
                 _translateTransform.BeginAnimation(TranslateTransform.YProperty,
                     DecorateDoubleAnimation(new DoubleAnimation(point.Y, span)), HandoffBehavior.Compose);
 
-                DoubleAnimation DecorateDoubleAnimation(DoubleAnimation source)
+                static DoubleAnimation DecorateDoubleAnimation(DoubleAnimation source)
                 {
                     source.AccelerationRatio = 0.4;
                     source.DecelerationRatio = 0.4;
@@ -107,7 +107,7 @@ namespace NeeView
 
         private class SmoothPositionState : IDragTransformPositionState
         {
-            private TranslateTransform _translateTransform;
+            private readonly TranslateTransform _translateTransform;
             private bool _isEnabled;
             private Point _point;
 

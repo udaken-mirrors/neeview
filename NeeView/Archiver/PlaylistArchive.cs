@@ -89,7 +89,7 @@ namespace NeeView
 
             var innterEntry = await ArchiveEntryUtility.CreateAsync(targetPath, token);
 
-            ArchiveEntry entry = new ArchiveEntry()
+            var entry = new ArchiveEntry()
             {
                 IsValid = true,
                 Archiver = this,
@@ -105,11 +105,9 @@ namespace NeeView
             return entry;
         }
 
-        private ArchiveEntry GetTargetEntry(ArchiveEntry entry)
+        private static ArchiveEntry GetTargetEntry(ArchiveEntry entry)
         {
-            var target = entry.Instance as ArchiveEntry;
-            if (target is null) throw new InvalidCastException();
-
+            var target = entry.Instance as ArchiveEntry ?? throw new InvalidCastException();
             return target;
         }
 

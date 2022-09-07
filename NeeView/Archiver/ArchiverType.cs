@@ -22,14 +22,11 @@ namespace NeeView
         // 多重圧縮ファイルが可能なアーカイブであるか
         public static bool IsRecursiveSupported(this ArchiverType self)
         {
-            switch (self)
+            return self switch
             {
-                case ArchiverType.PdfArchiver:
-                case ArchiverType.MediaArchiver:
-                    return false;
-                default:
-                    return true;
-            }
+                ArchiverType.PdfArchiver or ArchiverType.MediaArchiver => false,
+                _ => true,
+            };
         }
     }
 }

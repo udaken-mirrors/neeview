@@ -13,7 +13,7 @@ namespace NeeView
     /// </summary>
     public class TouchInputDrag : TouchInputBase
     {
-        private TouchDragManipulation _manipulation;
+        private readonly TouchDragManipulation _manipulation;
 
         /// <summary>
         /// コンストラクター

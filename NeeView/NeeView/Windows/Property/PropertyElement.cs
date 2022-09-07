@@ -32,8 +32,8 @@ namespace NeeView.Windows.Property
 
     public class PropertyValueSource : IValueSetter
     {
-        private object _source;
-        private PropertyInfo _info;
+        private readonly object _source;
+        private readonly PropertyInfo _info;
 
         public PropertyValueSource(object source, PropertyInfo? info)
         {
@@ -135,7 +135,7 @@ namespace NeeView.Windows.Property
             Source = source;
             Name = options.Name ?? PropertyMemberAttributeExtensions.GetPropertyName(info, attribute) ?? info.Name;
             Tips = PropertyMemberAttributeExtensions.GetPropertyTips(info, attribute);
-            IsVisible = attribute != null ? attribute.IsVisible : true;
+            IsVisible = attribute == null || attribute.IsVisible;
             EmptyMessage = attribute?.EmptyMessage;
             Options = options;
 
@@ -157,7 +157,7 @@ namespace NeeView.Windows.Property
         }
 
         [MemberNotNull(nameof(TypeValue))]
-        private void InitializeByDefaultAttribute(PropertyMemberAttribute attribute)
+        private void InitializeByDefaultAttribute(PropertyMemberAttribute _)
         {
             if (_info.PropertyType.IsEnum)
             {
@@ -211,17 +211,12 @@ namespace NeeView.Windows.Property
             IValueSetter value = attribute.RangeProperty != null ? (IValueSetter)new PropertyValueSource(this.Source, attribute.RangeProperty) : this;
 
             TypeCode typeCode = Type.GetTypeCode(_info.PropertyType);
-            switch (typeCode)
+            this.TypeValue = typeCode switch
             {
-                case TypeCode.Int32:
-                    this.TypeValue = CreatePropertyValue(new RangeProfile_Integer(value, attribute.Minimum, attribute.Maximum, attribute.TickFrequency, attribute.IsEditable, attribute.Format));
-                    break;
-                case TypeCode.Double:
-                    this.TypeValue = CreatePropertyValue(new RangeProfile_Double(value, attribute.Minimum, attribute.Maximum, attribute.TickFrequency, attribute.IsEditable, attribute.Format));
-                    break;
-                default:
-                    throw new NotSupportedException();
-            }
+                TypeCode.Int32 => CreatePropertyValue(new RangeProfile_Integer(value, attribute.Minimum, attribute.Maximum, attribute.TickFrequency, attribute.IsEditable, attribute.Format)),
+                TypeCode.Double => CreatePropertyValue(new RangeProfile_Double(value, attribute.Minimum, attribute.Maximum, attribute.TickFrequency, attribute.IsEditable, attribute.Format)),
+                _ => throw new NotSupportedException(),
+            };
         }
 
         private PropertyValue CreatePropertyValue(RangeProfile_Integer profile)
@@ -254,42 +249,33 @@ namespace NeeView.Windows.Property
             IValueSetter value = attribute.RangeProperty != null ? (IValueSetter)new PropertyValueSource(this.Source, attribute.RangeProperty) : this;
 
             TypeCode typeCode = Type.GetTypeCode(_info.PropertyType);
-            switch (typeCode)
+            this.TypeValue = typeCode switch
             {
-                case TypeCode.Double:
-                    this.TypeValue = new PropertyValue_Percent(this, new RangeProfile_Double(value, attribute.Minimum, attribute.Maximum, attribute.TickFrequency, attribute.IsEditable, attribute.Format));
-                    break;
-                default:
-                    throw new NotSupportedException();
-            }
+                TypeCode.Double => new PropertyValue_Percent(this, new RangeProfile_Double(value, attribute.Minimum, attribute.Maximum, attribute.TickFrequency, attribute.IsEditable, attribute.Format)),
+                _ => throw new NotSupportedException(),
+            };
         }
 
         [MemberNotNull(nameof(TypeValue))]
         private void InitializeByPathAttribute(PropertyPathAttribute attribute)
         {
             TypeCode typeCode = Type.GetTypeCode(_info.PropertyType);
-            switch (typeCode)
+            this.TypeValue = typeCode switch
             {
-                case TypeCode.String:
-                    this.TypeValue = new PropertyValue_FilePath(this, attribute.FileDialogType, attribute.Filter, attribute.Note, attribute.DefaultFileName);
-                    break;
-                default:
-                    throw new NotSupportedException();
-            }
+                TypeCode.String => new PropertyValue_FilePath(this, attribute.FileDialogType, attribute.Filter, attribute.Note, attribute.DefaultFileName),
+                _ => throw new NotSupportedException(),
+            };
         }
 
         [MemberNotNull(nameof(TypeValue))]
         private void InitializeByStringsAttribute(PropertyStringsAttribute attribute)
         {
             TypeCode typeCode = Type.GetTypeCode(_info.PropertyType);
-            switch (typeCode)
+            this.TypeValue = typeCode switch
             {
-                case TypeCode.String:
-                    this.TypeValue = new PropertyValue_StringMap(this, attribute.Strings);
-                    break;
-                default:
-                    throw new NotSupportedException();
-            }
+                TypeCode.String => new PropertyValue_StringMap(this, attribute.Strings),
+                _ => throw new NotSupportedException(),
+            };
         }
 
 
@@ -306,7 +292,7 @@ namespace NeeView.Windows.Property
             }
         }
 
-        private ObsoleteAttribute? GetObsoleteAttribute(PropertyInfo info)
+        private static ObsoleteAttribute? GetObsoleteAttribute(PropertyInfo info)
         {
             return (ObsoleteAttribute?)(Attribute.GetCustomAttribute(info, typeof(ObsoleteAttribute)));
         }

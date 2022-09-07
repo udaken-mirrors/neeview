@@ -8,7 +8,7 @@ namespace NeeView.Media.Imaging.Metadata
     {
         private static readonly char[] _references = "NEWS".ToCharArray();
 
-        private string _value;
+        private readonly string _value;
         private string? _reference;
         private double _degree;
 
@@ -19,8 +19,8 @@ namespace NeeView.Media.Imaging.Metadata
 
         public ExifGpsDegree(string reference, double degree)
         {
-            if (reference.Length != 1 || !_references.Contains(reference.First())) throw new ArgumentException(nameof(reference));
-            if (degree < 0.0) throw new ArgumentException(nameof(degree));
+            if (reference.Length != 1 || !_references.Contains(reference.First())) throw new ArgumentException("Wrong GPS format.", nameof(reference));
+            if (degree < 0.0) throw new ArgumentException("degree must be positive value.", nameof(degree));
 
             _value = "";
             _reference = reference;

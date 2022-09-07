@@ -82,7 +82,7 @@ namespace NeeView
 
 
         // 最大サイズ内におさまるサイズを返す
-        public Size CreateFixedSize(Size size)
+        public static Size CreateFixedSize(Size size)
         {
             if (size.IsEmpty) return size;
 

@@ -13,7 +13,7 @@ namespace NeeView
     /// </summary>
     public class DragTransform : BindableBase
     {
-        private TranslateTransformAnime _translateTransformAnime;
+        private readonly TranslateTransformAnime _translateTransformAnime;
         private Point _position;
         private double _angle;
         private double _scale = 1.0;

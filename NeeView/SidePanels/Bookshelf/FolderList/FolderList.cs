@@ -32,12 +32,12 @@ namespace NeeView
     /// </summary>
     public abstract class FolderList : BindableBase, IDisposable
     {
-        private static SearchKeyAnalyzer _searchKeyAnalyzer = new SearchKeyAnalyzer();
+        private static readonly SearchKeyAnalyzer _searchKeyAnalyzer = new();
 
         /// <summary>
         /// そのフォルダーで最後に選択されていた項目の記憶
         /// </summary>
-        private Dictionary<QueryPath, FolderItemPosition> _lastPlaceDictionary = new Dictionary<QueryPath, FolderItemPosition>();
+        private readonly Dictionary<QueryPath, FolderItemPosition> _lastPlaceDictionary = new();
 
         /// <summary>
         /// 更新フラグ
@@ -47,23 +47,23 @@ namespace NeeView
         /// <summary>
         /// 検索エンジン
         /// </summary>
-        private FolderSearchEngine _searchEngine;
+        private readonly FolderSearchEngine _searchEngine;
 
         /// <summary>
         /// 検索キーワード
         /// </summary>
-        private DelayValue<string?> _searchKeyword;
+        private readonly DelayValue<string?> _searchKeyword;
 
         // フォルダーコレクション生成
-        private FolderCollectionFactory _folderCollectionFactory;
+        private readonly FolderCollectionFactory _folderCollectionFactory;
 
-        private CancellationTokenSource _updateFolderCancellationTokenSource = new CancellationTokenSource();
-        private CancellationTokenSource _cruiseFolderCancellationTokenSource = new CancellationTokenSource();
+        private CancellationTokenSource _updateFolderCancellationTokenSource = new();
+        private CancellationTokenSource _cruiseFolderCancellationTokenSource = new();
 
-        private FolderListConfig _folderListConfig;
+        private readonly FolderListConfig _folderListConfig;
 
         private volatile bool _isCollectionCreating;
-        private List<Action> _collectionCreatedCallback = new List<Action>();
+        private List<Action> _collectionCreatedCallback = new();
 
         private int _busyCount;
 
@@ -73,13 +73,13 @@ namespace NeeView
         private string? _inputKeyword;
         private string? _searchKeywordErrorMessage;
 
-        private object _lock = new object();
+        private readonly object _lock = new();
 
         private double _areaWidth = double.PositiveInfinity;
         private double _areaHeight = double.PositiveInfinity;
         private bool _isFocusAtOnce;
 
-        private DisposableCollection _disposables = new DisposableCollection();
+        private readonly DisposableCollection _disposables = new();
 
 
         protected FolderList(bool isSyncBookHub, bool isOverlayEnabled, FolderListConfig folderListConfig)
@@ -277,17 +277,13 @@ namespace NeeView
         {
             get
             {
-                switch (_folderListConfig.PanelListItemStyle)
+                return _folderListConfig.PanelListItemStyle switch
                 {
-                    default:
-                        return false;
-                    case PanelListItemStyle.Thumbnail:
-                        return true;
-                    case PanelListItemStyle.Content:
-                        return Config.Current.Panels.ContentItemProfile.ImageWidth > 0.0;
-                    case PanelListItemStyle.Banner:
-                        return Config.Current.Panels.BannerItemProfile.ImageWidth > 0.0;
-                }
+                    PanelListItemStyle.Thumbnail => true,
+                    PanelListItemStyle.Content => Config.Current.Panels.ContentItemProfile.ImageWidth > 0.0,
+                    PanelListItemStyle.Banner => Config.Current.Panels.BannerItemProfile.ImageWidth > 0.0,
+                    _ => false,
+                };
             }
         }
 
@@ -644,7 +640,7 @@ namespace NeeView
                 return;
             }
 
-            var task = SetPlaceAsync(path, select, options);
+            _ = SetPlaceAsync(path, select, options);
         }
 
         /// <summary>
@@ -803,7 +799,7 @@ namespace NeeView
 
             var collection = _folderCollection;
 
-            if (e != null && e.isKeepPlace)
+            if (e != null && e.IsKeepPlace)
             {
                 // すでにリストに存在している場合は何もしない
                 if (collection == null || collection.Contains(path)) return;
@@ -931,7 +927,7 @@ namespace NeeView
         /// </summary>
         private async Task<bool> MoveFolder(int direction, BookLoadOption options)
         {
-            var isCruise = IsCruise() && !(_folderCollection is FolderSearchCollection);
+            var isCruise = IsCruise() && _folderCollection is not FolderSearchCollection;
 
             if (isCruise)
             {
@@ -1309,7 +1305,7 @@ namespace NeeView
                 return;
             }
 
-            if (!(FolderCollection is BookmarkFolderCollection folderCollection))
+            if (FolderCollection is not BookmarkFolderCollection folderCollection)
             {
                 return;
             }
@@ -1352,7 +1348,7 @@ namespace NeeView
         {
             if (_disposedValue) return;
 
-            if (!(FolderCollection is BookmarkFolderCollection))
+            if (FolderCollection is not BookmarkFolderCollection)
             {
                 return;
             }
@@ -1360,7 +1356,7 @@ namespace NeeView
             ////Debug.WriteLine($"{this}: Refresh BookmarkFolder");
             var query = FolderCollection.Place;
             var node = BookmarkCollection.Current.FindNode(query);
-            if (node == null || !(node.Value is BookmarkFolder))
+            if (node == null || node.Value is not BookmarkFolder)
             {
                 query = new QueryPath(QueryScheme.Bookmark, null, null);
             }
@@ -1617,7 +1613,7 @@ namespace NeeView
         /// </summary>
         public FolderOrder GetFolderOrder()
         {
-            if (this.FolderCollection == null) return default(FolderOrder);
+            if (this.FolderCollection == null) return default;
             return this.FolderCollection.FolderParameter.FolderOrder;
         }
 
@@ -1685,7 +1681,7 @@ namespace NeeView
         {
             if (_disposedValue) return;
 
-            if (!(FolderCollection is BookmarkFolderCollection bookmarkFolderCollection))
+            if (FolderCollection is not BookmarkFolderCollection bookmarkFolderCollection)
             {
                 return;
             }
@@ -1715,7 +1711,7 @@ namespace NeeView
         {
             if (_disposedValue) return false;
 
-            if (!(FolderCollection is BookmarkFolderCollection bookmarkFolderCollection))
+            if (FolderCollection is not BookmarkFolderCollection bookmarkFolderCollection)
             {
                 return false;
             }
@@ -1889,6 +1885,7 @@ namespace NeeView
         public void Dispose()
         {
             Dispose(true);
+            GC.SuppressFinalize(this);
         }
         #endregion
 

@@ -11,7 +11,7 @@ namespace NeeView
     {
         public static ThemeProfile Default { get; }
 
-        public static readonly List<string> Keys = new List<string>()
+        public static readonly List<string> Keys = new()
         {
             "Window.Background",
             "Window.Foreground",
@@ -203,7 +203,7 @@ namespace NeeView
             }
         }
 
-        private Color AddOpacityToColor(Color color, double opacity)
+        private static Color AddOpacityToColor(Color color, double opacity)
         {
             if (opacity == 1.0) return color;
             return Color.FromArgb((byte)(MathUtility.Clamp(color.A * opacity, 0.0, 255.0)), color.R, color.G, color.B);

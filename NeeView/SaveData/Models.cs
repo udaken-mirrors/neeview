@@ -108,16 +108,15 @@ namespace NeeView
             [DataMember]
             public PageViewRecorder.Memento? PageViewRecorder { get; set; }
 
-            [Obsolete, DataMember(EmitDefaultValue = false)]
+            [Obsolete("no used"), DataMember(EmitDefaultValue = false)]
             public FolderListLegacy.Memento? FolderList { get; set; }
-            [Obsolete, DataMember(Name = "BookSetting", EmitDefaultValue = false)]
+            [Obsolete("no used"), DataMember(Name = "BookSetting", EmitDefaultValue = false)]
             public BookSettingPresenterLegacy.Memento? BookSettingPresenterLegacy { get; set; }
 
             [OnDeserialized]
             private void OnDeserialized(StreamingContext c)
             {
-#pragma warning disable CS0612
-
+#pragma warning disable CS0618
                 // before ver.32
                 if (_Version < Environment.GenerateProductVersionNumber(32, 0, 0) && SidePanelProfile != null)
                 {
@@ -180,7 +179,7 @@ namespace NeeView
                         DragTransformControl.IsViewStartPositionCenter = MouseInput.Drag.IsViewStartPositionCenter;
                     }
                 }
-#pragma warning restore CS0612
+#pragma warning restore CS0618
             }
 
             public void RestoreConfig(Config config)

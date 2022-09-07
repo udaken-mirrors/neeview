@@ -96,7 +96,7 @@ namespace NeeView.Windows.Property
     //
     public class PropertyValue_String : PropertyValue<string>
     {
-        private PropertyMemberElement _setter;
+        private readonly PropertyMemberElement _setter;
 
         public string? EmptyMessage { get; private set; }
 
@@ -127,7 +127,7 @@ namespace NeeView.Windows.Property
 
     public class PropertyValue_StringMap : PropertyValue<string>
     {
-        private Func<KeyValuePairList<string, string>>? _getMap;
+        private readonly Func<KeyValuePairList<string, string>>? _getMap;
         private KeyValuePairList<string, string> _map;
 
 
@@ -198,7 +198,7 @@ namespace NeeView.Windows.Property
     //
     public class PropertyValue_Enum : PropertyValue<object>
     {
-        private Type _type;
+        private readonly Type _type;
 
         public Dictionary<Enum, string> Map { get; private set; }
 

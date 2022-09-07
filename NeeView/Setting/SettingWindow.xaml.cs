@@ -102,8 +102,7 @@ namespace NeeView.Setting
         {
             if (_vm is null) return;
 
-            var settingPage = this.IndexTree.SelectedItem as SettingPage;
-            if (settingPage is null) return;
+            if (this.IndexTree.SelectedItem is not SettingPage settingPage) return;
 
             _vm.SelectedItemChanged(settingPage);
         }
@@ -112,9 +111,7 @@ namespace NeeView.Setting
         {
             if (_vm is null) return;
 
-            var settingPage = this.IndexTree.SelectedItem as SettingPage;
-
-            if (_vm.IsSearchPageSelected && settingPage != null)
+            if (_vm.IsSearchPageSelected && this.IndexTree.SelectedItem is SettingPage settingPage)
             {
                 settingPage.IsSelected = false;
             }

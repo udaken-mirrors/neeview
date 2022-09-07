@@ -84,17 +84,11 @@ namespace NeeView
 
         public Brush? CreateFrontBrush()
         {
-            switch (Type)
+            return Type switch
             {
-                default:
-                case BrushType.SolidColor:
-                    return null;
-                case BrushType.ImageTile:
-                case BrushType.ImageFill:
-                case BrushType.ImageUniform:
-                case BrushType.ImageUniformToFill:
-                    return CreateImageBrush(Type);
-            }
+                BrushType.ImageTile or BrushType.ImageFill or BrushType.ImageUniform or BrushType.ImageUniformToFill => CreateImageBrush(Type),
+                _ => null,
+            };
         }
 
         private Brush CreateImageBrush(BrushType type)

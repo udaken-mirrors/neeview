@@ -49,11 +49,6 @@ namespace NeeView
                 this.InitializePropertyDefaultValues();
             }
 
-            [OnDeserialized]
-            public void OnDeserialized(StreamingContext c)
-            {
-            }
-
             public void RestoreConfig(Config config)
             {
                 config.System.IsRemoveConfirmed = IsRemoveConfirmed;

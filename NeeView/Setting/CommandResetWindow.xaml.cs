@@ -22,7 +22,7 @@ namespace NeeView.Setting
     /// </summary>
     public partial class CommandResetWindow : Window
     {
-        private CommandResetWindowViewModel _vm;
+        private readonly CommandResetWindowViewModel _vm;
 
         /// <summary>
         /// constructor

@@ -10,7 +10,7 @@ namespace NeeView
 {
     public class HtmlReferenceBuilder
     {
-        private StringBuilder builder;
+        private readonly StringBuilder builder;
 
         public HtmlReferenceBuilder() : this(new StringBuilder())
         {
@@ -65,7 +65,7 @@ namespace NeeView
         /// </summary>
         public HtmlReferenceBuilder AppendEnum(Type type, string? name)
         {
-            if (!type.IsEnum) throw new ArgumentException();
+            if (!type.IsEnum) throw new ArgumentException("type must be Enum");
 
             var title = name ?? $"[Enum] {type.Name}";
 
@@ -159,7 +159,7 @@ namespace NeeView
             return this;
         }
 
-        private bool IsDocumentable(MemberInfo info)
+        private static bool IsDocumentable(MemberInfo info)
         {
             return info.GetCustomAttribute<DocumentableAttribute>() != null && info.GetCustomAttribute<ObsoleteAttribute>() == null;
         }
@@ -325,7 +325,7 @@ namespace NeeView
         /// <remarks>
         /// 改行変換だけの簡単なもの
         /// </remarks>
-        private string? TextToHtmlFormat(string? src)
+        private static string? TextToHtmlFormat(string? src)
         {
             if (src is null) return null;
 
@@ -340,7 +340,7 @@ namespace NeeView
         /// <param name="postfix">リソース属性名 (e.g. #Remarks)</param>
         /// <param name="notNull">trueの場合、リソースが存在しなければリソース名を返す</param>
         /// <returns>取得された文字列</returns>
-        private string? GetDocument(string name, string postfix, bool notNull = true)
+        private static string? GetDocument(string name, string postfix, bool notNull = true)
         {
             var resourceId = $"@{name}{postfix}";
             var text = ResourceService.GetResourceString(resourceId, true);
@@ -358,7 +358,7 @@ namespace NeeView
         /// <param name="postfix">リソース属性名 (e.g. #Remarks)</param>
         /// <param name="notNull">trueの場合、リソースが存在しなければリソース名を返す</param>
         /// <returns>HTML化された文字列</returns>
-        private string? GetHtmlDocument(string name, string postfix, bool notNull = true)
+        private static string? GetHtmlDocument(string name, string postfix, bool notNull = true)
         {
             var text = GetDocument(name, postfix, notNull);
             return TextToHtmlFormat(text);
@@ -422,7 +422,7 @@ namespace NeeView
         /// <summary>
         /// 属性による名前指定を反映
         /// </summary>
-        private string GetFixedTypeName(Type type)
+        private static string GetFixedTypeName(Type type)
         {
             var attribute = type.GetCustomAttribute<DocumentableAttribute>();
             if (attribute != null && attribute.Name != null)
@@ -438,7 +438,7 @@ namespace NeeView
         /// <summary>
         /// 型をアンカー付きテキストに変換
         /// </summary>
-        private string TypeAnchor(Type type)
+        private static string TypeAnchor(Type type)
         {
             if (type.IsArray)
             {
@@ -457,7 +457,7 @@ namespace NeeView
         /// </summary>
         /// <param name="src"></param>
         /// <param name="id">参照先。nullで標準</param>
-        private string ToAnchor(string src, string? id = null)
+        private static string ToAnchor(string src, string? id = null)
         {
             id = id ?? "#" + src;
             return $"<a href=\"{id}\">{src}</a>";

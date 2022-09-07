@@ -16,8 +16,8 @@ namespace NeeView.Windows
     /// </summary>
     public class WindowCaptionEmulator : IDisposable
     {
-        private Window _window;
-        private FrameworkElement _target;
+        private readonly Window _window;
+        private readonly FrameworkElement _target;
         private bool _isDrag;
         private Point _dragStartPoint;
         private bool _disposedValue;

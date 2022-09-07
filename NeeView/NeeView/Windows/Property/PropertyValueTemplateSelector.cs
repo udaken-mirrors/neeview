@@ -7,8 +7,7 @@ namespace NeeView.Windows.Property
     {
         public override DataTemplate? SelectTemplate(object item, DependencyObject container)
         {
-            FrameworkElement? element = container as FrameworkElement;
-            if (element == null) return null;
+            if (container is not FrameworkElement element) return null;
 
             if (item is PropertyValue_Boolean booleanValue)
             {

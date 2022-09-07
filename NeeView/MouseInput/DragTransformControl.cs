@@ -74,24 +74,17 @@ namespace NeeView
         /// <summary>
         /// 操作領域
         /// </summary>
-        private FrameworkElement _sender;
+        private readonly FrameworkElement _sender;
 
         /// <summary>
         /// 操作エレメント
         /// </summary>
-        private FrameworkElement _target;
+        private readonly FrameworkElement _target;
 
         /// <summary>
         /// 操作エレメント変換パラメータ
         /// </summary>
-        private DragTransform _transform;
-
-
-        private Point _defaultPosition;
-
-        private double _defaultAngle;
-
-        private double _defaultScale;
+        private readonly DragTransform _transform;
 
         // X方向の移動制限フラグ
         private bool _lockMoveX;
@@ -295,14 +288,10 @@ namespace NeeView
                     _transform.SetPosition(limitedPos);
                 }
             }
-
-            _defaultPosition = _transform.Position;
-            _defaultScale = _transform.Scale;
-            _defaultAngle = _transform.Angle;
         }
 
         // 移動量限界計算
-        private Vector GetLimitMove(DragArea area, Vector move)
+        private static Vector GetLimitMove(DragArea area, Vector move)
         {
             var margin = new Point(
                 area.Target.Width < area.View.Width ? 0 : area.Target.Width - area.View.Width,
@@ -496,7 +485,7 @@ namespace NeeView
         #region NScroll method
 
         private const double _nscrollCountThreshold = 0.9;
-        private RepeatLimiter _repeatLimiter = new RepeatLimiter();
+        private readonly RepeatLimiter _repeatLimiter = new();
 
         /// <summary>
         /// N字スクロール
@@ -545,7 +534,7 @@ namespace NeeView
         }
 
         // N字スクロール：移動量から改行であるかを判定
-        private bool IsNScrollLineBreak(NScrollType scrollType, Vector v)
+        private static bool IsNScrollLineBreak(NScrollType scrollType, Vector v)
         {
             return scrollType != NScrollType.Diagonal && v.X != 0.0 && v.Y != 0.0;
         }
@@ -555,18 +544,12 @@ namespace NeeView
         {
             var area = GetArea();
 
-            switch (scrollType)
+            return scrollType switch
             {
-                case NScrollType.NType:
-                    return GetNTypeScrollDelta(area, direction, bookReadDirection, rate, endMergin);
-
-                case NScrollType.ZType:
-                    return GetZTypeScrollDelta(area, direction, bookReadDirection, rate, endMergin);
-
-                case NScrollType.Diagonal:
-                default:
-                    return GetDiagonalScrollDelta(area, direction, bookReadDirection, rate, endMergin);
-            }
+                NScrollType.NType => GetNTypeScrollDelta(area, direction, bookReadDirection, rate, endMergin),
+                NScrollType.ZType => GetZTypeScrollDelta(area, direction, bookReadDirection, rate, endMergin),
+                _ => GetDiagonalScrollDelta(area, direction, bookReadDirection, rate, endMergin),
+            };
         }
 
         private Vector GetNTypeScrollDelta(DragArea area, int direction, int bookReadDirection, double rate, double endMergin)
@@ -591,14 +574,14 @@ namespace NeeView
             return delta;
         }
 
-        private Vector GetDiagonalScrollDelta(DragArea area, int direction, int bookReadDirection, double rate, double endMergin)
+        private static Vector GetDiagonalScrollDelta(DragArea area, int direction, int bookReadDirection, double rate, double endMergin)
         {
             var deltaX = GetNScrollHorizontal(area, direction, bookReadDirection, rate);
             var deltaY = GetNScrollVertical(area, direction, bookReadDirection, rate);
             return SnapZero(new Vector(deltaX.X, deltaY.Y), endMergin);
         }
 
-        private Vector GetNScrollHorizontal(DragArea area, int direction, int bookReadDirection, double rate)
+        private static Vector GetNScrollHorizontal(DragArea area, int direction, int bookReadDirection, double rate)
         {
             var delta = new Vector();
 
@@ -614,8 +597,10 @@ namespace NeeView
             return delta;
         }
 
-        private Vector GetNScrollVertical(DragArea area, int direction, int bookReadDirection, double rate)
+        private static Vector GetNScrollVertical(DragArea area, int direction, int bookReadDirection, double rate)
         {
+            _ = bookReadDirection;
+
             var delta = new Vector();
 
             if (direction > 0)
@@ -631,7 +616,7 @@ namespace NeeView
         }
 
         // N字スクロール改行：水平方向
-        private Vector GetNScrollNewLineHorizontal(DragArea area, int direction, int bookReadDirection, double rate)
+        private static Vector GetNScrollNewLineHorizontal(DragArea area, int direction, int bookReadDirection, double rate)
         {
             var delta = new Vector();
 
@@ -663,7 +648,7 @@ namespace NeeView
 
 
         // N字スクロール改行：垂直方向
-        private Vector GetNScrollNewLineVertical(DragArea area, int direction, int bookReadDirection, double rate)
+        private static Vector GetNScrollNewLineVertical(DragArea area, int direction, int bookReadDirection, double rate)
         {
             var delta = new Vector();
 
@@ -697,12 +682,12 @@ namespace NeeView
         /// Snap zero.
         /// if abs(x) < 1.0, then 0.0
         /// </summary>
-        private double SnapZero(double value, double margin = 1.0)
+        private static double SnapZero(double value, double margin = 1.0)
         {
             return (-margin < value && value < margin) ? 0.0 : value;
         }
 
-        private Vector SnapZero(Vector v, double mergin)
+        private static Vector SnapZero(Vector v, double mergin)
         {
             if (v.IsZero())
             {
@@ -719,7 +704,7 @@ namespace NeeView
 
 
         // N字スクロール：上方向スクロール距離取得
-        private double GetNScrollVerticalToTop(DragArea area, double rate)
+        private static double GetNScrollVerticalToTop(DragArea area, double rate)
         {
             if (area.Over.Top < 0.0)
             {
@@ -738,7 +723,7 @@ namespace NeeView
         }
 
         // N字スクロール：下方向スクロール距離取得
-        private double GetNScrollVerticalToBottom(DragArea area, double rate)
+        private static double GetNScrollVerticalToBottom(DragArea area, double rate)
         {
             if (area.Over.Bottom > 0.0)
             {
@@ -757,31 +742,31 @@ namespace NeeView
         }
 
         // N字スクロール：上端までの移動距離取得
-        private double GetNScrollVerticalMoveToTop(DragArea area)
+        private static double GetNScrollVerticalMoveToTop(DragArea area)
         {
             return Math.Abs(area.Over.Top);
         }
 
         // N字スクロール：下端までの移動距離取得
-        private double GetNScrollVerticalMoveToBottom(DragArea area)
+        private static double GetNScrollVerticalMoveToBottom(DragArea area)
         {
             return -Math.Abs(area.Over.Bottom);
         }
 
         // N字スクロール：左端までの移動距離取得
-        private double GetNScrollHorizontalMoveToLeft(DragArea area)
+        private static double GetNScrollHorizontalMoveToLeft(DragArea area)
         {
             return Math.Abs(area.Over.Left);
         }
 
         // N字スクロール：右端までの移動距離取得
-        private double GetNScrollHorizontalMoveToRight(DragArea area)
+        private static double GetNScrollHorizontalMoveToRight(DragArea area)
         {
             return -Math.Abs(area.Over.Right);
         }
 
         // N字スクロール：左方向スクロール距離取得
-        private double GetNScrollHorizontalToLeft(DragArea area, double rate)
+        private static double GetNScrollHorizontalToLeft(DragArea area, double rate)
         {
             if (area.Over.Left < 0.0)
             {
@@ -800,7 +785,7 @@ namespace NeeView
         }
 
         // N字スクロール：右方向スクロール距離取得
-        private double GetNScrollHorizontalToRight(DragArea area, double rate)
+        private static double GetNScrollHorizontalToRight(DragArea area, double rate)
         {
             if (area.Over.Right > 0.0)
             {
@@ -978,17 +963,13 @@ namespace NeeView
 
         private Point GetCenterPosition(DragControlCenter dragControlCenter)
         {
-            switch (dragControlCenter)
+            return dragControlCenter switch
             {
-                case DragControlCenter.View:
-                    return new Point(0, 0);
-                case DragControlCenter.Target:
-                    return _transform.Position;
-                case DragControlCenter.Cursor:
-                    return _startPoint;
-                default:
-                    throw new NotImplementedException();
-            }
+                DragControlCenter.View => new Point(0, 0),
+                DragControlCenter.Target => _transform.Position,
+                DragControlCenter.Cursor => _startPoint,
+                _ => throw new NotImplementedException(),
+            };
         }
 
         // 移動制限更新
@@ -1132,7 +1113,7 @@ namespace NeeView
 
             _transform.SetAngle(angle, TransformActionType.Angle);
 
-            RotateTransform m = new RotateTransform(_transform.Angle - _baseAngle);
+            var m = new RotateTransform(_transform.Angle - _baseAngle);
             _transform.SetPosition(_rotateCenter + (Vector)m.Transform((Point)(_basePosition - _rotateCenter)));
 
             UnlockMove();
@@ -1359,7 +1340,7 @@ namespace NeeView
         /// <summary>
         /// 座標を論理座標でスクリーン座標に変換
         /// </summary>
-        private Point PointToLogicalScreen(Visual visual, Point point)
+        private static Point PointToLogicalScreen(Visual visual, Point point)
         {
             var pos = visual.PointToScreen(point); // デバイス座標
 
@@ -1399,14 +1380,14 @@ namespace NeeView
             [DataMember]
             public DragControlCenter DragControlFlipCenter { get; set; }
 
-            [Obsolete, DataMember(EmitDefaultValue = false)]
+            [Obsolete("no used"), DataMember(EmitDefaultValue = false)]
             public bool IsControlCenterImage { get; set; }
 
 
             [OnDeserialized]
             private void OnDeserialized(StreamingContext c)
             {
-#pragma warning disable CS0612
+#pragma warning disable CS0612, CS0618
                 // before 34.0
                 if (_Version < Environment.GenerateProductVersionNumber(34, 0, 0))
                 {
@@ -1415,7 +1396,7 @@ namespace NeeView
                     DragControlScaleCenter = center;
                     DragControlFlipCenter = center;
                 }
-#pragma warning restore CS0612
+#pragma warning restore CS0612, CS0618
             }
 
             public void RestoreConfig(Config config)

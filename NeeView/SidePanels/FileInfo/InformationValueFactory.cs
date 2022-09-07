@@ -6,7 +6,7 @@ namespace NeeView
 {
     public class InformationValueFactory
     {
-        private InformationValueSource _source;
+        private readonly InformationValueSource _source;
 
         public InformationValueFactory(InformationValueSource source)
         {
@@ -15,17 +15,13 @@ namespace NeeView
 
         public object? Create(InformationKey key)
         {
-            switch (key.ToInformationCategory())
+            return key.ToInformationCategory() switch
             {
-                case InformationCategory.File:
-                    return CreateInformationFileValue(key);
-                case InformationCategory.Image:
-                    return CreateInformationImageValue(key);
-                case InformationCategory.Metadata:
-                    return _source.Metadata?.ElementAt(key.ToBitmapMetadataKey());
-                default:
-                    throw new NotSupportedException();
-            }
+                InformationCategory.File => CreateInformationFileValue(key),
+                InformationCategory.Image => CreateInformationImageValue(key),
+                InformationCategory.Metadata => _source.Metadata?.ElementAt(key.ToBitmapMetadataKey()),
+                _ => throw new NotSupportedException(),
+            };
         }
 
         private object? CreateInformationFileValue(InformationKey key)

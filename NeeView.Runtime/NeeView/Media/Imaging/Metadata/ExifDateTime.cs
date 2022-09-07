@@ -5,7 +5,7 @@ namespace NeeView.Media.Imaging.Metadata
 {
     public class ExifDateTime
     {
-        private string _value;
+        private readonly string _value;
 
         public ExifDateTime(string value)
         {

@@ -40,7 +40,7 @@ namespace NeeView
         }
 
         //
-        private BitmapImage Create(Stream stream, BitmapCreateOptions createOption, BitmapCacheOption cacheOption, Size size, BitmapInfo info, CancellationToken token)
+        private static BitmapImage Create(Stream stream, BitmapCreateOptions createOption, BitmapCacheOption cacheOption, Size size, BitmapInfo info, CancellationToken token)
         {
             stream.Seek(0, SeekOrigin.Begin);
 

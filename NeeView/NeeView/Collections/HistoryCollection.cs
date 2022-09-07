@@ -13,7 +13,7 @@ namespace NeeView.Collections
     /// <typeparam name="T"></typeparam>
     public class HistoryCollection<T>
     {
-        private List<T> _history = new List<T>();
+        private List<T> _history = new();
 
         /// <summary>
         /// 現在履歴位置。0で先頭
@@ -56,7 +56,7 @@ namespace NeeView.Collections
         public T? GetCurrent()
         {
             var index = _current - 1;
-            return (index >= 0) ? _history[index] : default(T);
+            return (index >= 0) ? _history[index] : default;
         }
 
         public bool CanPrevious()
@@ -67,7 +67,7 @@ namespace NeeView.Collections
         public T? GetPrevious()
         {
             var index = _current - 2;
-            return (index >= 0) ? _history[index] : default(T);
+            return (index >= 0) ? _history[index] : default;
         }
 
         public bool CanNext()
@@ -77,7 +77,7 @@ namespace NeeView.Collections
 
         public T? GetNext()
         {
-            return (_current < _history.Count) ? _history[_current] : default(T);
+            return (_current < _history.Count) ? _history[_current] : default;
         }
 
         //

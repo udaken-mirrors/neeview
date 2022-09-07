@@ -29,14 +29,14 @@ namespace NeeView
     {
         public static WindowStateEx ToWindowStateEx(this WindowStateOption? option)
         {
-            switch (option)
+            return option switch
             {
-                default: return WindowStateEx.None;
-                case WindowStateOption.normal: return WindowStateEx.Normal;
-                case WindowStateOption.min: return WindowStateEx.Minimized;
-                case WindowStateOption.max: return WindowStateEx.Maximized;
-                case WindowStateOption.full: return WindowStateEx.FullScreen;
-            }
+                WindowStateOption.normal => WindowStateEx.Normal,
+                WindowStateOption.min => WindowStateEx.Minimized,
+                WindowStateOption.max => WindowStateEx.Maximized,
+                WindowStateOption.full => WindowStateEx.FullScreen,
+                _ => WindowStateEx.None,
+            };
         }
 
     }
@@ -157,8 +157,8 @@ namespace NeeView
                 throw new FileNotFoundException();
             }
 
-            var directory = path.Substring(0, index);
-            var filename = path.Substring(index);
+            var directory = path[..index];
+            var filename = path[index..];
 
             directory = GetFullArchivePath(directory);
 
@@ -169,7 +169,7 @@ namespace NeeView
 
     public partial class App
     {
-        public CommandLineOption ParseArguments(string[] args)
+        public static CommandLineOption ParseArguments(string[] args)
         {
             var optionMap = new OptionMap<CommandLineOption>();
             CommandLineOption option;

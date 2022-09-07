@@ -12,8 +12,8 @@ namespace NeeView.Media.Imaging.Metadata
     {
         // Photo Metadata Policies
 
-        private const string policy_Title = "System.Title";
-        private const string policy_Subject = "System.Subject";
+        //private const string policy_Title = "System.Title";
+        //private const string policy_Subject = "System.Subject";
 
         private const string policy_DateTaken = "System.Photo.DateTaken";
         private const string policy_DateAcquired = "System.DateAcquired";
@@ -55,7 +55,7 @@ namespace NeeView.Media.Imaging.Metadata
 
 
         // NOTE: _meta の寿命に注意。ソース が閉じられるとこのデータアクセスは保証されない
-        private BitmapMetadata _metadata;
+        private readonly BitmapMetadata _metadata;
 
 
         public BasicMetadataAccessor(BitmapMetadata metadata)
@@ -136,15 +136,11 @@ namespace NeeView.Media.Imaging.Metadata
             where T : Enum
         {
             var value = _metadata.GetQuery(policy);
-            switch (value)
+            return value switch
             {
-                case null:
-                case string _:
-                    return value;
-                default:
-                    //return Enum.ToObject(typeof(T), Convert.ToInt32(value));
-                    return Enum.ToObject(typeof(T), value);
-            }
+                null or string _ => value,
+                _ => Enum.ToObject(typeof(T), value),
+            };
         }
 
 
@@ -152,14 +148,11 @@ namespace NeeView.Media.Imaging.Metadata
         private object? GetFlashMode(string policy)
         {
             var value = _metadata.GetQuery(policy);
-            switch (value)
+            return value switch
             {
-                case null:
-                case string _:
-                    return value;
-                default:
-                    return ExifFlashModeExtensions.ToExifFlashMode(Convert.ToInt32(value));
-            }
+                null or string _ => value,
+                _ => ExifFlashModeExtensions.ToExifFlashMode(Convert.ToInt32(value)),
+            };
         }
 
         private object? GetDateTime(string policy)
@@ -198,20 +191,16 @@ namespace NeeView.Media.Imaging.Metadata
             var value = _metadata.GetQuery(policy);
             if (value is null) return null;
 
-            switch (value)
+            return value switch
             {
-                case long svalue:
-                    return BitmapMetadataUtilities.ExifI8ToRational(svalue);
-                case ulong uvalue:
-                    return BitmapMetadataUtilities.ExifUI8ToURational(uvalue);
-                case string s:
-                    return ConvertToRational(s);
-                default:
-                    return value;
-            }
+                long svalue => BitmapMetadataUtilities.ExifI8ToRational(svalue),
+                ulong uvalue => BitmapMetadataUtilities.ExifUI8ToURational(uvalue),
+                string s => ConvertToRational(s),
+                _ => value,
+            };
         }
 
-        private object? ConvertToRational(string value)
+        private static object? ConvertToRational(string value)
         {
             if (URational.TryParse(value, out var uRational))
             {

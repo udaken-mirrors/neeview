@@ -17,9 +17,8 @@ namespace NeeView
 {
     public class SvgPictureSource : PictureSource
     {
-        private static object _lock = new object();
-
-        private PictureStreamSource _streamSource;
+        private static readonly object _lock = new();
+        private readonly PictureStreamSource _streamSource;
         private ImageSource? _imageSource;
 
 
@@ -126,7 +125,7 @@ namespace NeeView
                 size = new Size(_imageSource.Width, _imageSource.Height);
             }
 
-            size = profile.GetThumbnailSize(size);
+            size = ThumbnailProfile.GetThumbnailSize(size);
             var setting = profile.CreateBitmapCreateSetting(true);
             return CreateImage(size, setting, Config.Current.Thumbnail.Format, Config.Current.Thumbnail.Quality, token);
         }

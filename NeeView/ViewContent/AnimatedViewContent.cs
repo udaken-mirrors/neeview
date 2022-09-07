@@ -9,7 +9,7 @@ namespace NeeView
     /// </summary>
     public class AnimatedViewContent : BitmapViewContent
     {
-        private AnimatedContent _animatedContent;
+        private readonly AnimatedContent _animatedContent;
         private ViewContentParameters? _parameter;
         private AnimatedView? _animatedView;
 

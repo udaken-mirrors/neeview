@@ -14,35 +14,18 @@ namespace NeeView
 
         public static IPanel Create(string key)
         {
-            switch (key)
+            return key switch
             {
-                case nameof(FolderPanel):
-                    return new FolderPanel(BookshelfFolderList.Current);
-
-                case nameof(HistoryPanel):
-                    return new HistoryPanel(HistoryList.Current);
-
-                case nameof(FileInformationPanel):
-                    return new FileInformationPanel(FileInformation.Current);
-
-                case nameof(NavigatePanel):
-                    return new NavigatePanel(NavigateModel.Current);
-
-                case nameof(ImageEffectPanel):
-                    return new ImageEffectPanel(ImageEffect.Current, ImageFilter.Current);
-
-                case nameof(BookmarkPanel):
-                    return new BookmarkPanel(BookmarkFolderList.Current);
-
-                case nameof(PageListPanel):
-                    return new PageListPanel(PageList.Current);
-
-                case nameof(PlaylistPanel):
-                    return new PlaylistPanel(PlaylistHub.Current);
-
-                default:
-                    throw new NotSupportedException();
-            }
+                nameof(FolderPanel) => new FolderPanel(BookshelfFolderList.Current),
+                nameof(HistoryPanel) => new HistoryPanel(HistoryList.Current),
+                nameof(FileInformationPanel) => new FileInformationPanel(FileInformation.Current),
+                nameof(NavigatePanel) => new NavigatePanel(NavigateModel.Current),
+                nameof(ImageEffectPanel) => new ImageEffectPanel(ImageEffect.Current, ImageFilter.Current),
+                nameof(BookmarkPanel) => new BookmarkPanel(BookmarkFolderList.Current),
+                nameof(PageListPanel) => new PageListPanel(PageList.Current),
+                nameof(PlaylistPanel) => new PlaylistPanel(PlaylistHub.Current),
+                _ => throw new NotSupportedException(),
+            };
         }
     }
 

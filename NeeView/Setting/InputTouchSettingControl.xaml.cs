@@ -45,7 +45,6 @@ namespace NeeView.Setting
         {
             if (_vm is null) return;
 
-            var width = this.GestureBox.ActualWidth;
             var pos = e.GetPosition(this.GestureBox);
 
             _vm.SetTouchGesture(pos, this.GestureBox.ActualWidth, this.GestureBox.ActualHeight);

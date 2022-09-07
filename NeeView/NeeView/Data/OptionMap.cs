@@ -25,10 +25,10 @@ namespace NeeView.Data
         where T : class, new()
     {
         // options
-        private List<OptionMemberElement> _elements;
+        private readonly List<OptionMemberElement> _elements;
 
         // values
-        private OptionValuesElement? _values;
+        private readonly OptionValuesElement? _values;
 
         /// <summary>
         /// constructor
@@ -50,8 +50,8 @@ namespace NeeView.Data
                         case OptionMemberAttribute memberAttribute:
                             _elements.Add(new OptionMemberElement(info, memberAttribute));
                             break;
-                        case OptionValuesAttribute valuesAttribute:
-                            _values = new OptionValuesElement(info, valuesAttribute);
+                        case OptionValuesAttribute:
+                            _values = new OptionValuesElement(info);
                             break;
                     }
                 }
@@ -143,7 +143,7 @@ namespace NeeView.Data
                     var tokens = arg.Split(new char[] { '=' }, 2);
                     var value = tokens.Length >= 2 ? tokens[1] : null;
 
-                    var keys = GetKeys(tokens[0]);
+                    var keys = OptionMap<T>.GetKeys(tokens[0]);
 
                     foreach (var key in keys)
                     {
@@ -190,7 +190,7 @@ namespace NeeView.Data
         }
 
         //
-        private List<string> GetKeys(string keys)
+        private static List<string> GetKeys(string keys)
         {
             if (keys.StartsWith("--"))
             {

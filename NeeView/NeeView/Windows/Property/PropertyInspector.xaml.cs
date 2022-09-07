@@ -58,8 +58,7 @@ namespace NeeView.Windows.Property
 
         private static void IsResetButtonVisibleProperty_Changed(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            var control = d as PropertyInspector;
-            if (control != null)
+            if (d is PropertyInspector control)
             {
                 control.ResetButton.Visibility = control.IsResetButtonVisible ? Visibility.Visible : Visibility.Collapsed;
             }

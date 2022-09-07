@@ -18,7 +18,7 @@ namespace NeeView
 
         public static void SaveFromContent(string contentPath, string path)
         {
-            Uri uri = new Uri(contentPath, UriKind.Relative);
+            var uri = new Uri(contentPath, UriKind.Relative);
             var info = Application.GetRemoteStream(uri);
 
             using (var fileStream = new FileStream(path, FileMode.Create, FileAccess.Write))
@@ -40,7 +40,7 @@ namespace NeeView
 
         public static ThemeProfile LoadFromContent(string contentPath)
         {
-            Uri uri = new Uri(contentPath, UriKind.Relative);
+            var uri = new Uri(contentPath, UriKind.Relative);
             var info = Application.GetRemoteStream(uri);
             if (info is null) throw new FileNotFoundException($"No such theme: {contentPath}");
             var profile = Load(info.Stream);

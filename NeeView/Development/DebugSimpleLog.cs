@@ -11,8 +11,8 @@ namespace NeeView
     {
         private int _index;
         private int _count;
-        private int _maxLine;
-        private string[] _debugLogs;
+        private readonly int _maxLine;
+        private readonly string[] _debugLogs;
 
         public DebugSimpleLog()
         {

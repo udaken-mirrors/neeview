@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Reflection;
 
+#pragma warning disable CA1822
+
 namespace NeeView
 {
     public class BookConfigAccessor

@@ -23,10 +23,10 @@ namespace NeeView
     /// </summary>
     public partial class ArchivePageControl : UserControl
     {
-        public static readonly RoutedCommand OpenCommand = new RoutedCommand("OpenCommand", typeof(ArchivePageControl));
+        public static readonly RoutedCommand OpenCommand = new("OpenCommand", typeof(ArchivePageControl));
 
-        private ArchivePageViewModel _vm;
-        private readonly Stopwatch _doubleTapStopwatch = new Stopwatch();
+        private readonly ArchivePageViewModel _vm;
+        private readonly Stopwatch _doubleTapStopwatch = new();
         private Point _lastTapLocation;
 
 
@@ -118,7 +118,7 @@ namespace NeeView
     /// </summary>
     public class ArchivePageViewModel
     {
-        private ArchiveContent _content;
+        private readonly ArchiveContent _content;
 
 
         public ArchivePageViewModel(ArchiveContent content)

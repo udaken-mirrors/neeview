@@ -11,11 +11,11 @@ namespace NeeView
 {
     public class InformationConfig : BindableBase
     {
-        private static string _defaultDateTimeFormat => Properties.Resources.Information_DateFormat;
-        private static string _defaultMapProgramFormat = @"https://www.google.com/maps/place/$Lat+$Lon/";
-        private GridLength _propertyHeaderWidth = new GridLength(128.0);
+        private static readonly string _defaultDateTimeFormat = Properties.Resources.Information_DateFormat;
+        private static readonly string _defaultMapProgramFormat = @"https://www.google.com/maps/place/$Lat+$Lon/";
+        private GridLength _propertyHeaderWidth = new(128.0);
 
-        private Dictionary<InformationGroup, bool> _groupVisibilityMap = new Dictionary<InformationGroup, bool>()
+        private readonly Dictionary<InformationGroup, bool> _groupVisibilityMap = new()
         {
             [InformationGroup.File] = true,
             [InformationGroup.Image] = true,
@@ -117,7 +117,7 @@ namespace NeeView
 
         [JsonIgnore]
         [PropertyMapIgnore]
-        public ReadOnlyDictionary<InformationGroup, bool> GroupVisibilityMap => new ReadOnlyDictionary<InformationGroup, bool>(_groupVisibilityMap);
+        public ReadOnlyDictionary<InformationGroup, bool> GroupVisibilityMap => new(_groupVisibilityMap);
 
         [PropertyMapIgnore]
         public GridLength PropertyHeaderWidth

@@ -13,8 +13,8 @@ namespace NeeView
         public const string EventOnBookLoaded = Prefix + ScriptCommandSource.OnBookLoadedFilename;
         public const string EventOnPageChanged = Prefix + ScriptCommandSource.OnPageChangedFilename;
 
-        private string _path;
-        private ScriptCommandSourceMap _sourceMap;
+        private readonly string _path;
+        private readonly ScriptCommandSourceMap _sourceMap;
         private GesturesMemento? _defaultGestures;
 
         public ScriptCommand(string path, ScriptCommandSourceMap sourceMap) : base(PathToScriptCommandName(path))

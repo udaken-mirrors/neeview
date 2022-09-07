@@ -67,7 +67,7 @@ namespace NeeView.Setting
         /// </summary>
         public class HistoryEntryPageCount : IndexIntValue
         {
-            private static List<int> _values = new List<int>
+            private static readonly List<int> _values = new()
             {
                 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 20, 50, 100,
             };
@@ -93,7 +93,7 @@ namespace NeeView.Setting
         /// </summary>
         public class HistoryLimitSize : IndexIntValue
         {
-            private static List<int> _values = new List<int>
+            private static readonly List<int> _values = new()
             {
                 0, 1, 10, 20, 50, 100, 200, 500, 1000, -1
             };
@@ -115,7 +115,7 @@ namespace NeeView.Setting
         /// </summary>
         public class HistoryLimitSpan : IndexTimeSpanValue
         {
-            private static List<TimeSpan> _values = new List<TimeSpan>() {
+            private static readonly List<TimeSpan> _values = new() {
                 TimeSpan.FromDays(1),
                 TimeSpan.FromDays(2),
                 TimeSpan.FromDays(3),
@@ -124,7 +124,7 @@ namespace NeeView.Setting
                 TimeSpan.FromDays(30),
                 TimeSpan.FromDays(100),
                 TimeSpan.FromDays(365),
-                default(TimeSpan),
+                default,
             };
 
             public HistoryLimitSpan() : base(_values)
@@ -136,7 +136,7 @@ namespace NeeView.Setting
                 Value = value;
             }
 
-            public override string ValueString => Value == default(TimeSpan) ? Properties.Resources.Word_NoLimit : string.Format(Properties.Resources.Word_DaysAgo, Value.Days);
+            public override string ValueString => Value == default ? Properties.Resources.Word_NoLimit : string.Format(Properties.Resources.Word_DaysAgo, Value.Days);
         }
 
         #endregion

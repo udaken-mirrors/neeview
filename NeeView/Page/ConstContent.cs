@@ -2,7 +2,7 @@
 {
     public class ConstContent : PageContent
     {
-        private ThumbnailType _thumbnailType;
+        private readonly ThumbnailType _thumbnailType;
 
         public ConstContent(ThumbnailType thumbnailType) : base(ArchiveEntry.Empty)
         {

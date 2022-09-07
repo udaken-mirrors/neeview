@@ -38,7 +38,7 @@ namespace NeeView
             // エンコーディングプロバイダの登録
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
 
-            ProcessId = Process.GetCurrentProcess().Id;
+            ProcessId = System.Environment.ProcessId;
 
             var module = Process.GetCurrentProcess().MainModule;
             if (module is null) throw new InvalidOperationException("Cannot get CurrentProcessModule");
@@ -286,9 +286,9 @@ namespace NeeView
         public static bool IsZipLikePackage => IsZipPackage || IsCanaryPackage || IsBetaPackage || IsDevPackage;
 
 #if DEBUG
-        public static string ConfigType = "Debug";
+        public static readonly string ConfigType = "Debug";
 #else
-        public static string ConfigType = "Release";
+        public static readonly string ConfigType = "Release";
 #endif
 
         public static string Revision

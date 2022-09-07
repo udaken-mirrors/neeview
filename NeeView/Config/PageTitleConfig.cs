@@ -56,7 +56,7 @@ namespace NeeView
         }
 
 
-        private string CleanUpTitleFormat(string source, string defaultFormat)
+        private static string CleanUpTitleFormat(string source, string defaultFormat)
         {
             return string.IsNullOrEmpty(source) ? defaultFormat : source;
         }

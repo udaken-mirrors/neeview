@@ -1,6 +1,4 @@
-﻿//using System.Drawing;
-
-namespace NeeView
+﻿namespace NeeView
 {
     public enum ExportImageFileNameMode
     {

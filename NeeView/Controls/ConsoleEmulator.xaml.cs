@@ -45,10 +45,10 @@ namespace NeeView
 
         #endregion
 
-        public readonly static RoutedCommand ClearScreenCommand = new RoutedCommand("ClearScreen", typeof(ConsoleEmulator), new InputGestureCollection(new List<InputGesture>() { new KeyGesture(Key.L, ModifierKeys.Control) }));
+        public readonly static RoutedCommand ClearScreenCommand = new("ClearScreen", typeof(ConsoleEmulator), new InputGestureCollection(new List<InputGesture>() { new KeyGesture(Key.L, ModifierKeys.Control) }));
 
         private string _consoleInput = "";
-        private List<string> _history = new List<string>();
+        private readonly List<string> _history = new();
         private int _historyIndex;
         private List<string>? _candidates;
         private int _candidatesIndex;

@@ -42,7 +42,7 @@ namespace NeeView
                             var archiver = await ArchiverManager.Current.CreateArchiverAsync(ArchiveEntry.Create(archivePath), false, token);
                             var entries = await archiver.GetEntriesAsync(token);
 
-                            var entryName = path.Substring(archivePath.Length).TrimStart(LoosePath.Separators);
+                            var entryName = path[archivePath.Length..].TrimStart(LoosePath.Separators);
                             var entry = entries.FirstOrDefault(e => e.EntryName == entryName);
                             if (entry != null)
                             {
@@ -88,7 +88,7 @@ namespace NeeView
                 if (entry != null)
                 {
                     var subArchiver = await ArchiverManager.Current.CreateArchiverAsync(entry, false, token);
-                    var subEntryName = entryName.Substring(archivePath.Length).TrimStart(LoosePath.Separators);
+                    var subEntryName = entryName[archivePath.Length..].TrimStart(LoosePath.Separators);
                     return await CreateInnerAsync(subArchiver, subEntryName, token);
                 }
             }

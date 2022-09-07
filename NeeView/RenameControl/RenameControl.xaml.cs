@@ -49,14 +49,14 @@ namespace NeeView
 
 
         private static readonly char[] _invalidChars = System.IO.Path.GetInvalidFileNameChars();
-        private RenameManager _manager;
+        private readonly RenameManager _manager;
         private int _keyCount;
         private bool _closed;
         private bool _isInvalidFileNameChars;
         private bool _isInvalidSeparatorChars;
         private bool _isSeleftFileNameBody;
         private string _text;
-        private string _oldValue;
+        private readonly string _oldValue;
 
 
         public RenameControl(TextBlock target)
@@ -134,7 +134,7 @@ namespace NeeView
             }
         }
 
-        private string GetFixedInvalidFileNameCharsText(string source, bool withToast)
+        private static string GetFixedInvalidFileNameCharsText(string source, bool withToast)
         {
             var text = new string(source.Where(e => !_invalidChars.Contains(e)).ToArray());
             if (withToast && text != source)
@@ -144,7 +144,7 @@ namespace NeeView
             return text;
         }
 
-        private string GetFixedInvalidSeparatorCharsText(string source, bool withToast)
+        private static string GetFixedInvalidSeparatorCharsText(string source, bool withToast)
         {
             var text = new string(source.Where(e => !LoosePath.Separators.Contains(e)).ToArray());
             if (withToast && text != source)

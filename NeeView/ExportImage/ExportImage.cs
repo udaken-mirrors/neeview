@@ -16,7 +16,7 @@ namespace NeeView
     /// </summary>
     public class ExportImage : BindableBase
     {
-        private ExportImageSource _source;
+        private readonly ExportImageSource _source;
 
         private IImageExporter _exporter;
 
@@ -80,17 +80,15 @@ namespace NeeView
 
         private static IImageExporter CreateExporter(ExportImageMode mode, ExportImageSource source, bool hasBackground)
         {
-            switch (mode)
+            return mode switch
             {
-                case ExportImageMode.Original:
-                    return new OriginalImageExporter(source) { HasBackground = hasBackground };
-
-                case ExportImageMode.View:
-                    return new ViewImageExporter(source) { HasBackground = hasBackground };
-
-                default:
-                    throw new InvalidOperationException();
-            }
+                ExportImageMode.Original
+                    => new OriginalImageExporter(source) { HasBackground = hasBackground },
+                ExportImageMode.View
+                    => new ViewImageExporter(source) { HasBackground = hasBackground },
+                _ 
+                    => throw new InvalidOperationException(),
+            };
         }
 
 

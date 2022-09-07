@@ -8,7 +8,7 @@ namespace NeeView.Setting
 {
     public class DragActionParameterViewModel : BindableBase
     {
-        private DragActionParameter? _defaultParameter;
+        private readonly DragActionParameter? _defaultParameter;
         private PropertyDocument? _propertyDocument;
 
 

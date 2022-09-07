@@ -6,9 +6,9 @@ namespace NeeView.Text
 {
     public class FormatValue
     {
-        private object? _value;
-        private string? _format;
-        private Func<object, object?>? _converter;
+        private readonly object? _value;
+        private readonly string? _format;
+        private readonly Func<object, object?>? _converter;
 
         public FormatValue(object? value) : this(value, null, null)
         {

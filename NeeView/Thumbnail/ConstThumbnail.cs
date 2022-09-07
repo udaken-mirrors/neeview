@@ -30,7 +30,7 @@ namespace NeeView
 
         public ImageSource? ImageSource
         {
-            get { return _bitmapSource = _bitmapSource ?? _create?.Invoke(); }
+            get { return _bitmapSource ??= _create?.Invoke(); }
         }
 
         public bool IsUniqueImage => false;

@@ -4,9 +4,9 @@ namespace NeeView
 {
     public class MainViewLocker : IDisposable
     {
-        private MainViewLockerMediator _mediator;
-        private IMainViewWindow _window;
-        private MainViewLockerKey _key;
+        private readonly MainViewLockerMediator _mediator;
+        private readonly IMainViewWindow _window;
+        private readonly MainViewLockerKey _key;
         private bool _disposedValue;
 
         public MainViewLocker(MainViewLockerMediator mediator, IMainViewWindow window)

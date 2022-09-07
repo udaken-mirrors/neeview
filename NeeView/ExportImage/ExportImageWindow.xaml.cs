@@ -20,7 +20,7 @@ namespace NeeView
     /// </summary>
     public partial class ExportImageWindow : Window
     {
-        private ExportImageWindowViewModel? _vm;
+        private readonly ExportImageWindowViewModel? _vm;
 
         public ExportImageWindow()
         {

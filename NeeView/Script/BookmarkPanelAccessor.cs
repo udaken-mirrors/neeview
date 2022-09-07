@@ -6,8 +6,8 @@ namespace NeeView
 {
     public class BookmarkPanelAccessor : LayoutPanelAccessor
     {
-        private BookmarkPanel _panel;
-        private BookmarkFolderList _model;
+        private readonly BookmarkPanel _panel;
+        private readonly BookmarkFolderList _model;
 
 
         public BookmarkPanelAccessor() : base(nameof(BookmarkPanel))
@@ -62,13 +62,13 @@ namespace NeeView
 
         private void SetSelectedItems(BookmarkItemAccessor[] selectedItems)
         {
-            selectedItems = selectedItems ?? new BookmarkItemAccessor[] { };
+            selectedItems = selectedItems ?? Array.Empty<BookmarkItemAccessor>();
             _panel.Presenter.FolderListBox?.SetSelectedItems(selectedItems.Select(e => e.Source));
         }
 
-        private BookmarkItemAccessor[] ToStringArray(IEnumerable<FolderItem>? items)
+        private static BookmarkItemAccessor[] ToStringArray(IEnumerable<FolderItem>? items)
         {
-            return items?.Select(e => new BookmarkItemAccessor(e)).ToArray() ?? new BookmarkItemAccessor[] { };
+            return items?.Select(e => new BookmarkItemAccessor(e)).ToArray() ?? Array.Empty<BookmarkItemAccessor>();
         }
 
         internal WordNode CreateWordNode(string name)

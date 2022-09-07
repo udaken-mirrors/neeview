@@ -11,13 +11,13 @@ namespace NeeView
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
             bool isReverse = false; ;
-            if (value is bool)
+            if (value is bool boolean)
             {
-                isReverse = (bool)value;
+                isReverse = boolean;
             }
-            else if (value is string)
+            else if (value is string s)
             {
-                bool.TryParse((string)value, out isReverse);
+                bool.TryParse(s, out isReverse);
             }
 
             return isReverse ? FlowDirection.RightToLeft : FlowDirection.LeftToRight;

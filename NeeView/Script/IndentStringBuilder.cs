@@ -8,9 +8,9 @@ namespace NeeView
     /// </summary>
     public class IndentStringBuilder
     {
-        private static string[] _separator = new[] { "\r\n", "\n", "\r" };
+        private static readonly string[] _separator = new[] { "\r\n", "\n", "\r" };
 
-        private StringBuilder _builder = new StringBuilder();
+        private readonly StringBuilder _builder = new();
         private bool _isNewLine = true;
 
         public int Indent { get; private set; }

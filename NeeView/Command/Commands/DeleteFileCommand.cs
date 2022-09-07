@@ -16,7 +16,7 @@
 
         public override void Execute(object? sender, CommandContext e)
         {
-            var async = BookOperation.Current.DeleteFileAsync();
+            _ = BookOperation.Current.DeleteFileAsync();
         }
     }
 }

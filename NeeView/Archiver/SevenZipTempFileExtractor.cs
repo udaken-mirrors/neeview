@@ -83,7 +83,7 @@ namespace NeeView
             return stream;
         }
 
-        private string GetTempFileName(ArchiveFileInfo info)
+        private static string GetTempFileName(ArchiveFileInfo info)
         {
             var extension = info.IsDirectory ? "" : LoosePath.GetExtension(info.FileName);
             return $"{info.Index:000000}{extension}";

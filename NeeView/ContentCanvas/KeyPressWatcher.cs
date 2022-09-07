@@ -13,8 +13,8 @@ namespace NeeView
     /// </summary>
     public class KeyPressWatcher : IDisposable
     {
-        private UIElement _target;
-        private LinkedList<Key> _keys;
+        private readonly UIElement _target;
+        private readonly LinkedList<Key> _keys;
 
         public KeyPressWatcher(UIElement target)
         {
@@ -62,7 +62,7 @@ namespace NeeView
             }
         }
 
-        public bool IsModifierKeysPressed => Keyboard.Modifiers != ModifierKeys.None;
+        private static bool IsModifierKeysPressed => Keyboard.Modifiers != ModifierKeys.None;
 
 
         private void Target_PreviewKeyDown(object sender, KeyEventArgs e)
@@ -123,6 +123,7 @@ namespace NeeView
         public void Dispose()
         {
             Dispose(true);
+            GC.SuppressFinalize(this);
         }
         #endregion
     }

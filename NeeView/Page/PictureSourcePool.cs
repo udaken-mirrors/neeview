@@ -12,8 +12,8 @@ namespace NeeView
 
     public class PictureSourcePool
     {
-        private List<IHasPictureSource> _collection = new List<IHasPictureSource>();
-        private object _lock = new object();
+        private List<IHasPictureSource> _collection = new();
+        private readonly object _lock = new();
 
         public long TotalSize { get; private set; }
 
@@ -51,7 +51,7 @@ namespace NeeView
         }
 
         // NOTE: 不意のインスタンス喪失に対応
-        private long GetPictureSourceMemorySize(PictureSource? source)
+        private static long GetPictureSourceMemorySize(PictureSource? source)
         {
             return source != null ? source.GetMemorySize() : 0;
         }

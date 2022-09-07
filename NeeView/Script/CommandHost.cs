@@ -6,14 +6,15 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 
+#pragma warning disable CA1822
+
 namespace NeeView
 {
     public class CommandHost
     {
-        private CommandHostStaticResource _resource;
-        private ScriptAccessDiagnostics _accessDiagnostics;
-        private List<string> _args = new List<string>();
-        private CancellationToken _canellationToken;
+        private readonly CommandHostStaticResource _resource;
+        private readonly ScriptAccessDiagnostics _accessDiagnostics;
+        private List<string> _args = new();
 
 
         public CommandHost()
@@ -79,7 +80,7 @@ namespace NeeView
         public NavigatorPanelAccessor Navigator { get; }
 
         [WordNodeMember]
-        [Obsolete, Alternative(nameof(Playlist), 39)] // ver.39
+        [Obsolete("no used"), Alternative(nameof(Playlist), 39)] // ver.39
         public object? Pagemark
         {
             get
@@ -95,7 +96,6 @@ namespace NeeView
 
         internal void SetCancellationToken(CancellationToken cancellationToken)
         {
-            _canellationToken = cancellationToken;
             Book.SetCancellationToken(cancellationToken);
         }
 
@@ -149,7 +149,7 @@ namespace NeeView
             return AppDispatcher.Invoke(() => ShowInputDialogIneer(title, text));
         }
 
-        private string? ShowInputDialogIneer(string title, string? text)
+        private static string? ShowInputDialogIneer(string title, string? text)
         {
             var component = new InputDialogComponent(text);
             var dialog = new MessageDialog(component, title);
@@ -186,7 +186,7 @@ namespace NeeView
 
         private class InputDialogComponent : IMessageDialogContentComponent
         {
-            private TextBox _textBox;
+            private readonly TextBox _textBox;
 
             public InputDialogComponent(string? text)
             {

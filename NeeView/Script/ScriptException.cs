@@ -17,12 +17,6 @@ namespace NeeView
             this.ScriptNotice = notice;
         }
 
-#if false
-        protected ScriptException(SerializationInfo info, StreamingContext context) : base(info, context)
-        {
-        }
-#endif
-
 
         public override string Message
         {

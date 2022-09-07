@@ -34,21 +34,15 @@ namespace NeeView
         //
         public static bool IsTouched(this TouchGesture self, double xRate, double yRate)
         {
-            switch (self)
+            return self switch
             {
-                case TouchGesture.TouchCenter:
-                    return 0.33 < xRate && xRate < 0.66 && yRate < 0.75;
-                case TouchGesture.TouchL1:
-                    return xRate < 0.5 && yRate < 0.5;
-                case TouchGesture.TouchL2:
-                    return xRate < 0.5 && !(yRate < 0.5);
-                case TouchGesture.TouchR1:
-                    return !(xRate < 0.5) && yRate < 0.5;
-                case TouchGesture.TouchR2:
-                    return !(xRate < 0.5) && !(yRate < 0.5);
-                default:
-                    return false;
-            }
+                TouchGesture.TouchCenter => 0.33 < xRate && xRate < 0.66 && yRate < 0.75,
+                TouchGesture.TouchL1 => xRate < 0.5 && yRate < 0.5,
+                TouchGesture.TouchL2 => xRate < 0.5 && !(yRate < 0.5),
+                TouchGesture.TouchR1 => !(xRate < 0.5) && yRate < 0.5,
+                TouchGesture.TouchR2 => !(xRate < 0.5) && !(yRate < 0.5),
+                _ => false,
+            };
         }
     }
 

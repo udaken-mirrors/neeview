@@ -14,8 +14,9 @@ namespace NeeView
 {
     public class PlaylistPanel : BindableBase, IPanel
     {
-        private PlaylistView _view;
-        private PlaylistPresenter _presenter;
+        private readonly PlaylistView _view;
+        private readonly PlaylistPresenter _presenter;
+
 
         public PlaylistPanel(PlaylistHub model)
         {

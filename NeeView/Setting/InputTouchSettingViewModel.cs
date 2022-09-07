@@ -13,8 +13,8 @@ namespace NeeView.Setting
     /// </summary>
     public class InputTouchSettingViewModel : BindableBase
     {
-        private IDictionary<string, CommandElement> _commandMap;
-        private string _key;
+        private readonly IDictionary<string, CommandElement> _commandMap;
+        private readonly string _key;
 
         /// <summary>
         /// GestureElements property.
@@ -25,7 +25,7 @@ namespace NeeView.Setting
             set { if (_gestureToken != value) { _gestureToken = value; RaisePropertyChanged(); } }
         }
 
-        private ObservableCollection<GestureElement> _gestureToken = new ObservableCollection<GestureElement>();
+        private ObservableCollection<GestureElement> _gestureToken = new();
 
         /// <summary>
         /// GestoreTokenNote property.
@@ -131,7 +131,7 @@ namespace NeeView.Setting
     public class TouchAreaMap
     {
         //
-        private Dictionary<TouchGesture, bool> _map;
+        private readonly Dictionary<TouchGesture, bool> _map;
 
         //
         public TouchAreaMap(string gestureString)

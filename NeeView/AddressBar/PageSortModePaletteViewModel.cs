@@ -5,7 +5,7 @@ namespace NeeView
 {
     public class PageSortModePaletteViewModel : BindableBase
     {
-        private PageSortModePaletteModel _model;
+        private readonly PageSortModePaletteModel _model;
 
 
         public PageSortModePaletteViewModel()

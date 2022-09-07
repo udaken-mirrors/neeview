@@ -31,7 +31,7 @@ namespace NeeView
 
     public class WindowStateManager : BindableBase
     {
-        private Window _window;
+        private readonly Window _window;
         private WindowStateEx _previousState;
         private WindowStateEx _currentState;
         private WindowStateEx _resumeState;
@@ -39,7 +39,7 @@ namespace NeeView
         private bool _isFullScreen;
         private bool _isProgress;
 
-        private IWindowStateManagerDependency _dependency;
+        private readonly IWindowStateManagerDependency _dependency;
 
 
         public WindowStateManager(Window window, IWindowStateManagerDependency dependency)
@@ -119,17 +119,13 @@ namespace NeeView
             }
             else
             {
-                switch (_window.WindowState)
+                return _window.WindowState switch
                 {
-                    case WindowState.Minimized:
-                        return WindowStateEx.Minimized;
-                    case WindowState.Maximized:
-                        return WindowStateEx.Maximized;
-                    case WindowState.Normal:
-                        return WindowStateEx.Normal;
-                    default:
-                        throw new NotSupportedException();
-                }
+                    WindowState.Minimized => WindowStateEx.Minimized,
+                    WindowState.Maximized => WindowStateEx.Maximized,
+                    WindowState.Normal => WindowStateEx.Normal,
+                    _ => throw new NotSupportedException(),
+                };
             }
         }
 

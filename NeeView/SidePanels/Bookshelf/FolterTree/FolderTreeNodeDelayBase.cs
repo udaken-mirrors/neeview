@@ -11,7 +11,7 @@ namespace NeeView
     /// </summary>
     public abstract class FolderTreeNodeDelayBase : FolderTreeNodeBase
     {
-        private static readonly ObservableCollection<FolderTreeNodeBase> _dummyChildren = new ObservableCollection<FolderTreeNodeBase>() { new DummyNode() };
+        private static readonly ObservableCollection<FolderTreeNodeBase> _dummyChildren = new() { new DummyNode() };
 
 
         public FolderTreeNodeDelayBase()

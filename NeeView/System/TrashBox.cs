@@ -41,12 +41,12 @@ namespace NeeView
         /// <summary>
         /// ゴミたち
         /// </summary>
-        private List<ITrash> _trashes = new List<ITrash>();
+        private readonly List<ITrash> _trashes = new();
 
         /// <summary>
         /// lock
         /// </summary>
-        private object _lock = new object();
+        private readonly object _lock = new();
 
         /// <summary>
         /// 
