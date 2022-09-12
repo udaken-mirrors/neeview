@@ -486,7 +486,7 @@ namespace NeeView
 
                         if (e.IsChanged)
                         {
-                            RenameFolderItem(item, e.NewValue);
+                            RenameFolderItem(item, e.NewValue, e.MoveRename == 0);
                         }
                         if (e.MoveRename != 0)
                         {
@@ -501,7 +501,7 @@ namespace NeeView
             }
         }
 
-        private void RenameFolderItem(FolderItem item, string newValue)
+        private void RenameFolderItem(FolderItem item, string newValue, bool restoreBook)
         {
             if (item.Source is TreeListNode<IBookmarkEntry> bookmarkNode)
             {
@@ -509,11 +509,11 @@ namespace NeeView
             }
             else
             {
-                RenameFileName(item, newValue);
+                RenameFileName(item, newValue, restoreBook);
             }
         }
 
-        private void RenameFileName(FolderItem item, string name)
+        private void RenameFileName(FolderItem item, string name, bool restoreBook)
         {
             var newName = item.IsHideExtension() ? name + System.IO.Path.GetExtension(item.Name) : name;
             //Debug.WriteLine($"{ev.OldValue} => {newName}");
@@ -528,7 +528,7 @@ namespace NeeView
             // ファイル名変更処理は非同期で
             Task.Run(async () =>
             {
-                var isSuccess = await FileIO.RenameAsync(src, dst);
+                var isSuccess = await FileIO.RenameAsync(src, dst, restoreBook);
                 if (!isSuccess)
                 {
                     // Renameに失敗した場合はもとに戻す

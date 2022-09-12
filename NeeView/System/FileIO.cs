@@ -441,7 +441,7 @@ namespace NeeView
         /// <summary>
         /// ファイル名前変更。現在ブックにも反映させる
         /// </summary>
-        public static async Task<bool> RenameAsync(string src, string dst)
+        public static async Task<bool> RenameAsync(string src, string dst, bool restoreBook)
         {
             // 現在の本ならば閉じる
             var isBookClosed = await BookHubTools.CloseBookAsync(src);
@@ -454,7 +454,7 @@ namespace NeeView
             if (!isSuccess) return false;
 
             // 本を開き直す
-            if (isBookClosed)
+            if (restoreBook && isBookClosed)
             {
                 BookHubTools.RestoreBook(dst, src);
             }
