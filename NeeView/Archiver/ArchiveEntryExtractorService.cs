@@ -18,7 +18,6 @@ namespace NeeView
         static ArchiveEntryExtractorService() => Current = new ArchiveEntryExtractorService();
         public static ArchiveEntryExtractorService Current { get; }
 
-        #region Fields
 
         // lock object
         private readonly object _lock = new();
@@ -28,9 +27,7 @@ namespace NeeView
         /// </summary>
         private readonly Dictionary<string, ArchiveEntryExtractor> _collection = new();
 
-        #endregion
 
-        #region Methods
 
         /// <summary>
         /// 指定したキーの削除
@@ -40,9 +37,8 @@ namespace NeeView
         {
             lock (_lock)
             {
-                if (_collection.TryGetValue(key, out ArchiveEntryExtractor? extractor))
+                if (_collection.Remove(key, out var extractor))
                 {
-                    _collection.Remove(key);
                     return extractor;
                 }
                 else
@@ -73,7 +69,7 @@ namespace NeeView
             var tempFile = TempFileCache.Current.Get(entry.Ident);
             if (tempFile != null) return tempFile;
 
-            tempFile = new TempFile(await ExtractRawAsync(entry, token));
+            tempFile = await ExtractRawAsync(entry, token);
             TempFileCache.Current.Add(entry.Ident, tempFile);
             return tempFile;
         }
@@ -83,32 +79,27 @@ namespace NeeView
         /// ファイルはテンポラリに生成される
         /// </summary>
         /// <returns>展開後されたファイル名</returns>
-        public async Task<string> ExtractRawAsync(ArchiveEntry entry, CancellationToken token)
+        public async Task<TempFile> ExtractRawAsync(ArchiveEntry entry, CancellationToken token)
         {
-            ////Debug.WriteLine($"EXT: {entry.Ident}");
+            //Debug.WriteLine($"EXT: {entry.Ident}");
 
             ArchiveEntryExtractor? extractor = null;
-
             try
             {
                 extractor = this.Remove(entry.Ident);
-                if (extractor == null || !extractor.IsActive)
+                if (extractor == null)
                 {
-                    //Debug.WriteLine("EXT: Extract...");
-                    var tempFileName = Temporary.Current.CreateCountedTempFileName("arcv", Path.GetExtension(entry.EntryName));
-                    extractor = new ArchiveEntryExtractor(entry, tempFileName);
-                    extractor.Completed += Extractor_Completed;
-                    return await extractor.ExtractAsync(token);
+                    //Debug.WriteLine($"EXT:{entry.Ident} Create");
+                    extractor = new ArchiveEntryExtractor(entry);
+                    extractor.Expired += Extractor_Expired;
                 }
-                else
-                {
-                    //Debug.WriteLine("EXT: Continue...");
-                    return await extractor.WaitAsync(token);
-                }
+                var tempFile = await extractor.WaitAsync(token);
+                extractor.Dispose();
+                return tempFile;
             }
             catch (OperationCanceledException)
             {
-                //Debug.WriteLine("EXT: Add to Reserver");
+                //Debug.WriteLine($"EXT: {entry.Ident} Add to Reserver");
                 if (extractor != null)
                 {
                     this.Add(entry.Ident, extractor);
@@ -117,26 +108,14 @@ namespace NeeView
             }
         }
 
-        /// <summary>
-        /// 展開後処理
-        /// 不要ならば展開ファイルを削除
-        /// </summary>
-        private void Extractor_Completed(object? sender, ArchiveEntryExtractorEventArgs e)
+        // 期限切れ処理
+        private void Extractor_Expired(object? sender, ArchiveEntry entry)
         {
-            var key = (sender as ArchiveEntryExtractor)?.Entry.Ident;
-            if (key == null) return;
+            if (entry is null) return;
 
-            var extractor = Remove(key);
-            if (extractor != null && e.CancellationToken.IsCancellationRequested)
-            {
-                //Debug.WriteLine($"EXT: delete {extractor.ExtractFileName} with cancel.");
-                if (File.Exists(extractor.ExtractFileName))
-                {
-                    File.Delete(extractor.ExtractFileName);
-                }
-            }
+            //Debug.WriteLine($"EXT: Remove {entry.Ident}");
+            var extractor = Remove(entry.Ident);
+            extractor?.Dispose();
         }
-
-        #endregion
     }
 }

@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -11,82 +12,82 @@ using System.Threading.Tasks;
 namespace NeeView
 {
     /// <summary>
-    /// ArchiveEntryExtractor イベント引数
-    /// </summary>
-    public class ArchiveEntryExtractorEventArgs : EventArgs
-    {
-        public CancellationToken CancellationToken { get; set; }
-    }
-
-    /// <summary>
     /// ArchiveEntryからファイルに展開する。キャンセル可。
     /// </summary>
-    public class ArchiveEntryExtractor
+    public class ArchiveEntryExtractor : IDisposable
     {
-        private Task? _action;
+        private readonly ArchiveEntry _entry;
+        private readonly string _extractFileName;
+        private readonly Task _task;
+        private TempFile? _tempFile;
+        private bool _disposedValue;
 
 
-        public ArchiveEntryExtractor(ArchiveEntry entry, string path)
+        public ArchiveEntryExtractor(ArchiveEntry entry)
         {
-            Entry = entry;
-            ExtractFileName = path ?? throw new ArgumentNullException(nameof(path));
-        }
+            _entry = entry;
+            _extractFileName = Temporary.Current.CreateCountedTempFileName("arcv", Path.GetExtension(entry.EntryName));
 
-
-        /// <summary>
-        /// 展開完了イベント
-        /// </summary>
-        public event EventHandler<ArchiveEntryExtractorEventArgs>? Completed;
-
-
-        /// <summary>
-        /// 元になるArchiveEntry
-        /// </summary>
-        public ArchiveEntry Entry { get; private set; }
-
-        /// <summary>
-        /// 展開ファイルパス
-        /// </summary>
-        public string ExtractFileName { get; private set; }
-
-        /// <summary>
-        /// 処理開始済？
-        /// </summary>
-        public bool IsActive => _action != null;
-
-
-        public async Task<string> ExtractAsync(CancellationToken token)
-        {
-            Exception? innerException = null;
-
-            _action = TaskUtils.ActionAsync((t) =>
+            _task = Task.Run(() =>
             {
-                try
-                {
-                    Entry.ExtractToFile(ExtractFileName, false);
-                    //Debug.WriteLine("EXT: Extract done.");
-                    Completed?.Invoke(this, new ArchiveEntryExtractorEventArgs() { CancellationToken = t });
-                }
-                catch (Exception e)
-                {
-                    innerException = e;
-                }
-            },
-            token);
+                //Debug.WriteLine($"## Start: {_extractFileName}");
+                _entry.ExtractToFile(_extractFileName, false);
+                //Debug.WriteLine($"## Completed: {_extractFileName}");
+                _tempFile = new TempFile(_extractFileName);
+            });
 
-            await TaskUtils.WaitAsync(_action, token);
-            if (innerException != null) throw innerException;
-
-            return ExtractFileName;
+            _task.ContinueWith(async (t) =>
+            {
+                await Task.Delay(1000);
+                //Debug.WriteLine($"## Expired.{(_tempFile is null ? 'o' : 'x')}: {_extractFileName}");
+                Expired?.Invoke(this, _entry);
+            });
         }
 
-        public async Task<string> WaitAsync(CancellationToken token)
+
+        public event EventHandler<ArchiveEntry>? Expired;
+
+
+        public async Task<TempFile> WaitAsync(CancellationToken token)
         {
-            Debug.Assert(_action != null);
+            ThrowIfDisposed();
 
-            await TaskUtils.WaitAsync(_action, token);
+            await _task.WaitAsync(token);
 
-            return ExtractFileName;
+            var tempFile = Interlocked.Exchange(ref _tempFile, null);
+            if (tempFile is null) throw new InvalidOperationException();
+
+            //Debug.WriteLine($"## Export: {_extractFileName}");
+            return tempFile;
+        }
+
+
+        protected void ThrowIfDisposed()
+        {
+            if (_disposedValue) throw new ObjectDisposedException(GetType().FullName);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!_disposedValue)
+            {
+                if (disposing)
+                {
+                    var tempFile = Interlocked.Exchange(ref _tempFile, null);
+                    tempFile?.Dispose();
+                }
+
+                //Debug.WriteLine($"## Disposed: {_extractFileName}");
+                _disposedValue = true;
+            }
+        }
+
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
         }
     }
+
+
 }
