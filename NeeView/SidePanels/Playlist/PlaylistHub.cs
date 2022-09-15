@@ -44,6 +44,9 @@ namespace NeeView
 
             InitializeFileWatcher();
 
+            Config.Current.Playlist.AddPropertyChanged(nameof(PlaylistConfig.PlaylistFolder),
+                PlaylistFolder_Changed);
+
             Config.Current.Playlist.AddPropertyChanged(nameof(PlaylistConfig.CurrentPlaylist),
                 (s, e) => RaisePropertyChanged(nameof(SelectedItem)));
 
@@ -109,6 +112,18 @@ namespace NeeView
         }
 
 
+        private void PlaylistFolder_Changed(object? sender, PropertyChangedEventArgs e)
+        {
+            _playlist.Flush();
+
+            UpdatePlaylistCollection(keepSelectedItem: false);
+
+            this.SelectedItem = DefaultPlaylist;
+            RaisePropertyChanged(nameof(SelectedItem));
+
+            UpdatePlaylist();
+        }
+
         private void Playlist_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
         {
             _playlist.DelaySave(OnSaved);
@@ -163,7 +178,7 @@ namespace NeeView
         }
 
         [MemberNotNull(nameof(_playlistCollection))]
-        public void UpdatePlaylistCollection()
+        public void UpdatePlaylistCollection(bool keepSelectedItem = true)
         {
             _playlistLockCount++;
             var selectedItem = this.SelectedItem;
@@ -172,7 +187,7 @@ namespace NeeView
                 var items = new List<object>();
                 items.AddRange(GetPlaylistFiles(true));
 
-                if (selectedItem != null && !items.Any(e => selectedItem.Equals(e)))
+                if (keepSelectedItem && selectedItem != null && !items.Any(e => selectedItem.Equals(e)))
                 {
                     items.Add(new Separator());
                     items.Add(selectedItem);
@@ -184,7 +199,10 @@ namespace NeeView
             }
             finally
             {
-                this.SelectedItem = selectedItem;
+                if (keepSelectedItem)
+                {
+                    this.SelectedItem = selectedItem;
+                }
                 _playlistLockCount--;
             }
         }
@@ -201,7 +219,7 @@ namespace NeeView
 
                 SetPlaylist(LoadPlaylist(this.SelectedItem));
                 _isPlaylistDarty = false;
-                
+
                 //StartFileWatch(this.SelectedItem);
             }
         }

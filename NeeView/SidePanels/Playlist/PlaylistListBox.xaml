@@ -49,6 +49,7 @@
             <local:BooleanToVisibilityConverter x:Key="BooleanToVisibilityInverseConverter" True="Collapsed" False="Visible" />
             <local:NullableToVisibilityConverter x:Key="NullableToVisibilityInverseConverter" True="Visible" False="Collapsed" />
             <local:BooleanReverseConverter x:Key="BooleanReverseConverter" />
+            <local:StringNullOrWhiteSpaceToVisibilityConverter x:Key="StringNullOrWhiteSpaceToVisibilityInverseConverter" True="Collapsed" False="Visible" />
 
             <Style x:Key="NameStyle" TargetType="TextBlock">
                 <Setter Property="Text" Value="{Binding Name}" />
@@ -239,10 +240,10 @@
 
             </nw:ListBoxExtended>
 
-            <Border Background="Transparent" Visibility="{Binding Items, Converter={StaticResource NullableToVisibilityInverseConverter}}" d:IsHidden="True">
+            <Border Background="Transparent" Visibility="{Binding ErrorMessage, Converter={StaticResource StringNullOrWhiteSpaceToVisibilityInverseConverter}}" d:IsHidden="True">
                 <StackPanel VerticalAlignment="Top" Margin="0,20">
                     <TextBlock Text="{x:Static properties:Resources.Playlist_FailedToLoad}" HorizontalAlignment="Center" Margin="0,5" />
-                    <TextBlock Text="{Binding ErrorMessage}" HorizontalAlignment="Center" Margin="0,5" />
+                    <TextBlock Text="{Binding ErrorMessage}" HorizontalAlignment="Center" Margin="0,5" TextWrapping="Wrap" />
                 </StackPanel>
             </Border>
         </Grid>

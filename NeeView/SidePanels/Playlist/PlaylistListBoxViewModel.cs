@@ -118,6 +118,9 @@ namespace NeeView
             _model.AddPropertyChanged(nameof(_model.IsEditable),
                 (s, e) => RaisePropertyChanged(nameof(IsEditable)));
 
+            _model.AddPropertyChanged(nameof(_model.ErrorMessage),
+                (s, e) => RaisePropertyChanged(nameof(ErrorMessage)));
+
             UpdateItems();
         }
 

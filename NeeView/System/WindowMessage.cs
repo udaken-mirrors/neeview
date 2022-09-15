@@ -413,6 +413,7 @@ namespace NeeView
             return null;
         }
 
+        // TODO:全てのフォルダーの変更が通知される。これは必要な機能としては過剰すぎる。本当に必要か再検討せよ。
         // TODO: 重い処理が多いので、集積かBeginInvokeかする。
         private void OnSHNotify(IntPtr wParam, IntPtr lParam)
         {

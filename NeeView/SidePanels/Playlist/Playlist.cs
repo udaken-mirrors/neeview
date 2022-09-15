@@ -569,7 +569,7 @@ namespace NeeView
                 await RetryAction.RetryActionAsync(() =>
                 {
                     this.LastWriteTime = DateTime.Now;
-                    source.Save(path, true);
+                    source.Save(path, true, IsDefaultPlaylistsFolder(path));
                 }
                 , 3, 1000, token);
 
@@ -596,6 +596,16 @@ namespace NeeView
 
         #region Load
 
+        private static bool IsDefaultPlaylistsFolder(string path)
+        {
+            return System.IO.Path.GetDirectoryName(path) == SaveData.DefaultPlaylistsFolder;
+        }
+
+        private static bool IsDefaultPlaylistsFolder(FileInfo fileInfo)
+        {
+            return fileInfo.Directory?.FullName == SaveData.DefaultPlaylistsFolder;
+        }
+
         public static Playlist Load(string path, bool creteNewFile)
         {
             try
@@ -610,12 +620,10 @@ namespace NeeView
                         playlist.IsEditable = !file.Attributes.HasFlag(FileAttributes.ReadOnly);
                         return playlist;
                     }
-                    else
-                    {
-                        return new Playlist(path);
-                    }
+                    return new Playlist(path);
                 }
-                else
+
+                if (file.Directory?.Exists == true || IsDefaultPlaylistsFolder(file))
                 {
                     var playlist = new Playlist(path, new PlaylistSource(), true);
                     if (creteNewFile)
@@ -624,6 +632,8 @@ namespace NeeView
                     }
                     return playlist;
                 }
+
+                return new Playlist(path) { ErrorMessage = $"Playlist folder does not exists: '{file.Directory?.FullName}'" };
             }
             catch (Exception ex)
             {

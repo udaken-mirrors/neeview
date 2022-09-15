@@ -417,7 +417,7 @@ namespace NeeView
             var playlistSource = ConvertToPlaylist(pagemark);
 
             // save
-            playlistSource.Save(Config.Current.Playlist.PagemarkPlaylist, true);
+            playlistSource.Save(Config.Current.Playlist.PagemarkPlaylist, true, true);
         }
 
 

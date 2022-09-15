@@ -28,16 +28,16 @@ namespace NeeView
         {
             string name = DateTime.Now.ToString("yyyyMMddHHmmss") + PlaylistArchive.Extension;
             string path = FileIO.CreateUniquePath(System.IO.Path.Combine(outputDirectory, name));
-            Save(new PlaylistSource(files), path, true);
+            Save(new PlaylistSource(files), path, true, true);
             return path;
         }
 
 
-        public static void Save(this PlaylistSource playlist, string path, bool overwrite)
+        public static void Save(this PlaylistSource playlist, string path, bool overwrite, bool createDirectory)
         {
             if (!overwrite && File.Exists(path))
             {
-                throw new IOException();
+                throw new IOException($"Cannot overwrite: {path}");
             }
 
             _semaphore.Wait();
@@ -47,10 +47,17 @@ namespace NeeView
                 var json = JsonSerializer.SerializeToUtf8Bytes(playlist, UserSettingTools.GetSerializerOptions());
 
                 var directory = Path.GetDirectoryName(path);
-                if (directory is null) throw new IOException();
+                if (directory is null) throw new IOException("Directory must not be null.");
                 if (!Directory.Exists(directory))
                 {
-                    Directory.CreateDirectory(directory);
+                    if (createDirectory)
+                    {
+                        Directory.CreateDirectory(directory);
+                    }
+                    else
+                    {
+                        throw new IOException($"Directory does not exist: {directory}");
+                    }
                 }
                 File.WriteAllBytes(path, json);
             }
