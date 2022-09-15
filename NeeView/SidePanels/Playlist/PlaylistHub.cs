@@ -1,6 +1,7 @@
 ﻿using Microsoft.Win32;
 using NeeLaboratory.ComponentModel;
 using NeeView.IO;
+using NeeView.Properties;
 using NeeView.Threading;
 using System;
 using System.Collections.Generic;
@@ -316,20 +317,32 @@ namespace NeeView
             }
         }
 
+        public string SelectedItemName
+        {
+            get => Path.GetFileNameWithoutExtension(SelectedItem);
+            set => Rename(value, false);
+        }
+
         public bool CanRename()
         {
             return _playlist.IsEditable == true;
         }
 
-        public bool Rename(string newName)
+        public bool Rename(string newName, bool useErrorDialog = true)
         {
             if (!CanRename()) return false;
+            if (string.IsNullOrWhiteSpace(newName)) return false;
 
             _playlist.Flush();
 
             try
             {
-                var newPath = FileIO.CreateUniquePath(Path.Combine(Path.GetDirectoryName(SelectedItem) ?? ".", newName + Path.GetExtension(SelectedItem)));
+                if (FileIO.ContainsInvalidFileNameChars(newName))
+                {
+                    throw new IOException(Resources.FileRenameInvalidDialog_Message);
+                }
+
+                var newPath = FileIO.CreateUniquePath(Path.Combine(Path.GetDirectoryName(SelectedItem) ?? ".", newName.TrimStart() + Path.GetExtension(SelectedItem)));
                 var file = new FileInfo(SelectedItem);
                 if (file.Exists)
                 {
@@ -341,7 +354,7 @@ namespace NeeView
                 }
                 return true;
             }
-            catch (Exception ex)
+            catch (Exception ex) when (useErrorDialog)
             {
                 ToastService.Current.Show(new Toast(ex.Message, Properties.Resources.Playlist_ErrorDialog_Title, ToastIcon.Error));
                 return false;

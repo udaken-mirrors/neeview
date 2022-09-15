@@ -12695,6 +12695,15 @@ namespace NeeView.Properties {
         }
         
         /// <summary>
+        ///   Current playlist name に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string PlaylistPanelAccessor_Name {
+            get {
+                return ResourceManager.GetString("PlaylistPanelAccessor.Name", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Current playlist path に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string PlaylistPanelAccessor_Path {

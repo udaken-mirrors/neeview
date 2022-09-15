@@ -7403,4 +7403,7 @@ nv.ShowToast(nv.Book.ViewPages[0].Path)</value>
   <data name="ThumbnailConfig.IsVideoThumbnailEnabled" xml:space="preserve">
     <value>動画サムネイルを作成する</value>
   </data>
+  <data name="PlaylistPanelAccessor.Name" xml:space="preserve">
+    <value>現在のプレイリストの名前</value>
+  </data>
 </root>

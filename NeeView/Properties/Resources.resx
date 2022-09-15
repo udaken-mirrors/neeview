@@ -7398,4 +7398,7 @@ nv.ShowToast(nv.Book.ViewPages[0].Path)</value>
   <data name="ThumbnailConfig.IsVideoThumbnailEnabled" xml:space="preserve">
     <value>Create a video thumbnail</value>
   </data>
+  <data name="PlaylistPanelAccessor.Name" xml:space="preserve">
+    <value>Current playlist name</value>
+  </data>
 </root>

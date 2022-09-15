@@ -26,6 +26,13 @@ namespace NeeView
             set { AppDispatcher.Invoke(() => _model.SelectedItem = value); }
         }
 
+        [WordNodeMember]
+        public string Name
+        {
+            get { return _model.SelectedItemName; }
+            set { AppDispatcher.Invoke(() => _model.SelectedItemName = value); }
+        }
+
         [WordNodeMember(DocumentType = typeof(PanelListItemStyle))]
         public string Style
         {

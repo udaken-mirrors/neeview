@@ -326,6 +326,16 @@ namespace NeeView
         #region Rename
 
         /// <summary>
+        /// ファイル名に無効な文字が含まれているか
+        /// </summary>
+        public static bool ContainsInvalidFileNameChars(string newName)
+        {
+            char[] invalidChars = System.IO.Path.GetInvalidFileNameChars();
+            int invalidCharsIndex = newName.IndexOfAny(invalidChars);
+            return invalidCharsIndex >= 0;
+        }
+
+        /// <summary>
         /// Rename用変更後ファイル名を生成
         /// </summary>
         public static string? CreateRenameDst(string sourcePath, string newName, bool showConfirmDialog)
