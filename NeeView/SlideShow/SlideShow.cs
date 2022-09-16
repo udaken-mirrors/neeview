@@ -9,11 +9,10 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
+using System.Timers;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Threading;
-
-// TODO: Timerをもっと制度の良いものに変更
 
 namespace NeeView
 {
@@ -25,29 +24,24 @@ namespace NeeView
         static SlideShow() => Current = new SlideShow();
         public static SlideShow Current { get; }
 
-        // タイマーディスパッチ
-        private readonly DispatcherTimer _timer;
-
-        // スライドショー表示間隔用
-        private DateTime _lastShowTime;
-
-        private const double _minTimerTick = 0.01;
-        private const double _maxTimerTick = 0.2;
+        private readonly Timer _timer;
 
         private bool _isPlayingSlideShow;
         private bool _isPlayingSlideShowMemento;
         private readonly DisposableCollection _disposables = new();
 
 
-        // コンストラクター
         private SlideShow()
         {
             // timer for slideshow
-            _timer = new DispatcherTimer();
-            _timer.Interval = TimeSpan.FromSeconds(_maxTimerTick);
-            _timer.Tick += new EventHandler(DispatcherTimer_Tick);
+            _timer = new Timer();
+            _timer.AutoReset = true;
+            _timer.Elapsed += Timer_Tick;
 
-            _disposables.Add(BookOperation.Current.SubscribeViewContentsChanged(
+            Config.Current.SlideShow.SubscribePropertyChanged(nameof(SlideShowConfig.SlideShowInterval),
+                (s, e) => UpdateTimerInterval());
+
+            _disposables.Add(BookOperation.Current.SubscribeBookChanged(
                 (s, e) => ResetTimer()));
 
             _disposables.Add(MainWindow.Current.SubscribePreviewKeyDown(
@@ -68,6 +62,7 @@ namespace NeeView
             // アプリ終了前の開放予約
             ApplicationDisposer.Current.Add(this);
         }
+
 
         /// <summary>
         /// スライドショー再生状態
@@ -144,6 +139,13 @@ namespace NeeView
             BookOperation.Current.NextSlide(this);
         }
 
+        private void UpdateTimerInterval()
+        {
+            if (_disposedValue) return;
+
+            _timer.Interval = Math.Max(Config.Current.SlideShow.SlideShowInterval * 1000.0, 1.0);
+        }
+
         /// <summary>
         /// 再生開始
         /// </summary>
@@ -151,9 +153,7 @@ namespace NeeView
         {
             if (_disposedValue) return;
 
-            // インターバル時間を修正する
-            _timer.Interval = TimeSpan.FromSeconds(MathUtility.Clamp(Config.Current.SlideShow.SlideShowInterval * 0.5, _minTimerTick, _maxTimerTick));
-            _lastShowTime = DateTime.Now;
+            UpdateTimerInterval();
             _timer.Start();
         }
 
@@ -171,31 +171,33 @@ namespace NeeView
         public void ResetTimer()
         {
             if (_disposedValue) return;
+            if (!_timer.Enabled) return;
 
-            if (!_timer.IsEnabled) return;
-            _lastShowTime = DateTime.Now;
+            UpdateTimerInterval();
         }
 
         /// <summary>
         /// 再生中のタイマー処理
         /// </summary>
-        private void DispatcherTimer_Tick(object? sender, EventArgs e)
+        private void Timer_Tick(object? sender, ElapsedEventArgs e)
         {
             if (_disposedValue) return;
 
-            // マウスボタンが押されていたらキャンセル
-            if (Mouse.LeftButton == MouseButtonState.Pressed || Mouse.RightButton == MouseButtonState.Pressed)
+            AppDispatcher.BeginInvoke(() =>
             {
-                _lastShowTime = DateTime.Now;
-                return;
-            }
+                // ドラッグ中はキャンセル
+                if (Mouse.LeftButton == MouseButtonState.Pressed || Mouse.RightButton == MouseButtonState.Pressed)
+                {
+                    ResetTimer();
+                    return;
+                }
 
-            // スライドショーのインターバルを非アクティブ時間で求める
-            if ((DateTime.Now - _lastShowTime).TotalSeconds >= Config.Current.SlideShow.SlideShowInterval)
-            {
-                if (!BookHub.Current.IsLoading) NextSlide();
-                _lastShowTime = DateTime.Now;
-            }
+                // ブック有効ならばページ移動
+                if (BookOperation.Current.IsEnabled)
+                {
+                    NextSlide();
+                }
+            });
         }
 
         #region IDisposable Support
