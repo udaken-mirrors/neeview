@@ -38,8 +38,8 @@ namespace NeeView
             _timer.AutoReset = true;
             _timer.Elapsed += Timer_Tick;
 
-            Config.Current.SlideShow.SubscribePropertyChanged(nameof(SlideShowConfig.SlideShowInterval),
-                (s, e) => UpdateTimerInterval());
+            _disposables.Add(Config.Current.SlideShow.SubscribePropertyChanged(nameof(SlideShowConfig.SlideShowInterval),
+                (s, e) => UpdateTimerInterval()));
 
             _disposables.Add(BookOperation.Current.SubscribeBookChanged(
                 (s, e) => ResetTimer()));

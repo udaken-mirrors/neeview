@@ -159,16 +159,22 @@ namespace NeeView
 
         public override void RequestCreate(QueryPath path)
         {
+            if (_disposedValue) return;
+
             _engine?.RequestCreate(path);
         }
 
         public override void RequestDelete(QueryPath path)
         {
+            if (_disposedValue) return;
+
             _engine?.RequestDelete(path);
         }
 
         public override void RequestRename(QueryPath oldPath, QueryPath path)
         {
+            if (_disposedValue) return;
+
             _engine?.RequestRename(oldPath, path);
         }
 

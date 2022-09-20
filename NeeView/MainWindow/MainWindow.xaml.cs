@@ -559,6 +559,7 @@ namespace NeeView
             CompositionTarget.Rendering -= OnRendering;
 
             // コマンド停止
+            _routedCommandBinding.Dispose();
             RoutedCommandTable.Current.Dispose();
 
             // コンソールウィンドウを閉じる

@@ -44,42 +44,75 @@ namespace NeeView
         private int _selectedIndex;
         private List<Page> _viewItems = new();
         private readonly PageThumbnailJobClient _jobClient;
+        private readonly DisposableCollection _disposables = new();
 
 
         private ThumbnailList()
         {
             _jobClient = new PageThumbnailJobClient("FilmStrip", JobCategories.PageThumbnailCategory);
 
-            PageSelector.Current.CollectionChanging += PageSelector_CollectionChanging;
-            PageSelector.Current.CollectionChanged += PageSelector_CollectionChanged;
-            PageSelector.Current.SelectionChanged += PageSelector_SelectionChanged;
-            PageSelector.Current.ViewContentsChanged += PageSelector_ViewContentsChanged;
+            _disposables.Add(PageSelector.Current.SubscribeCollectionChanging(
+                PageSelector_CollectionChanging));
+            _disposables.Add(PageSelector.Current.SubscribeCollectionChanged(
+                PageSelector_CollectionChanged));
+            _disposables.Add(PageSelector.Current.SubscribeSelectionChanged(
+                PageSelector_SelectionChanged));
+            _disposables.Add(PageSelector.Current.SubscribeViewContentsChanged(
+                PageSelector_ViewContentsChanged));
 
-            Config.Current.FilmStrip.PropertyChanged += (s, e) =>
-            {
-                switch (e.PropertyName)
+            _disposables.Add(Config.Current.FilmStrip.SubscribePropertyChanged(
+                (s, e) =>
                 {
-                    case nameof(FilmStripConfig.IsEnabled):
-                    case nameof(FilmStripConfig.IsHideFilmStrip):
-                        RaisePropertyChanged(nameof(CanHideThumbnailList));
-                        break;
-                    case nameof(FilmStripConfig.IsVisibleNumber):
-                        RaisePropertyChanged(nameof(ThumbnailNumberVisibility));
-                        break;
-                    case nameof(FilmStripConfig.ImageWidth):
-                        Update();
-                        break;
-                }
-            };
+                    switch (e.PropertyName)
+                    {
+                        case nameof(FilmStripConfig.IsEnabled):
+                        case nameof(FilmStripConfig.IsHideFilmStrip):
+                            RaisePropertyChanged(nameof(CanHideThumbnailList));
+                            break;
+                        case nameof(FilmStripConfig.IsVisibleNumber):
+                            RaisePropertyChanged(nameof(ThumbnailNumberVisibility));
+                            break;
+                        case nameof(FilmStripConfig.ImageWidth):
+                            Update();
+                            break;
+                    }
+                }));
 
             UpdateItems();
         }
 
 
         public event EventHandler? CollectionChanging;
+
+        public IDisposable SubscribeCollectionChanging(EventHandler handler)
+        {
+            CollectionChanging += handler;
+            return new AnonymousDisposable(() => CollectionChanging -= handler);
+        }
+
         public event EventHandler? CollectionChanged;
+
+        public IDisposable SubscribeCollectionChanged(EventHandler handler)
+        {
+            CollectionChanged += handler;
+            return new AnonymousDisposable(() => CollectionChanged -= handler);
+        }
+
         public event EventHandler<ViewItemsChangedEventArgs>? ViewItemsChanged;
+
+        public IDisposable SubscribeViewItemsChanged(EventHandler<ViewItemsChangedEventArgs> handler)
+        {
+            ViewItemsChanged += handler;
+            return new AnonymousDisposable(() => ViewItemsChanged -= handler);
+        }
+
         public event EventHandler<VisibleEventArgs>? VisibleEvent;
+
+        public IDisposable SubscribeVisibleEvent(EventHandler<VisibleEventArgs> handler)
+        {
+            VisibleEvent += handler;
+            return new AnonymousDisposable(() => VisibleEvent -= handler);
+        }
 
 
 
@@ -113,7 +146,16 @@ namespace NeeView
         public bool IsSliderDirectionReversed
         {
             get { return _isSliderDirectionReversed; }
-            set { if (_isSliderDirectionReversed != value) { _isSliderDirectionReversed = value; RaisePropertyChanged(); UpdateItems(); } }
+            set
+            {
+                if (_disposedValue) return;
+                if (_isSliderDirectionReversed != value)
+                {
+                    _isSliderDirectionReversed = value;
+                    RaisePropertyChanged();
+                    UpdateItems();
+                }
+            }
         }
 
         public PageSelector PageSelector => PageSelector.Current;
@@ -121,7 +163,7 @@ namespace NeeView
         public ObservableCollection<Page>? Items
         {
             get { return _items; }
-            set
+            private set
             {
                 if (_items != value)
                 {
@@ -145,6 +187,7 @@ namespace NeeView
             }
             set
             {
+                if (_disposedValue) return;
                 if (_selectedIndex != value)
                 {
                     _selectedIndex = value;
@@ -160,7 +203,7 @@ namespace NeeView
         public List<Page> ViewItems
         {
             get { return _viewItems; }
-            set
+            private set
             {
                 if (_viewItems.SequenceEqual(value)) return;
 
@@ -173,29 +216,6 @@ namespace NeeView
             }
         }
 
-
-        #region IDisposable Support
-        private bool _disposedValue = false;
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!_disposedValue)
-            {
-                if (disposing)
-                {
-                    _jobClient.Dispose();
-                }
-
-                _disposedValue = true;
-            }
-        }
-
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-        #endregion
 
 
         private void PageSelector_CollectionChanging(object? sender, EventArgs e)
@@ -259,6 +279,7 @@ namespace NeeView
 
         public void MoveSelectedIndex(int delta)
         {
+            if (_disposedValue) return;
             if (this.Items is null) return;
 
             int index = SelectedIndex + delta;
@@ -276,12 +297,16 @@ namespace NeeView
 
         public void FlushSelectedIndex()
         {
+            if (_disposedValue) return;
+            
             PageSelector.Current.FlushSelectedIndex(this);
             UpdateSelectedIndex();
         }
 
         public bool SetVisibleThumbnailList(bool isVisible)
         {
+            if (_disposedValue) return Config.Current.FilmStrip.IsEnabled;
+
             Config.Current.FilmStrip.IsEnabled = isVisible;
 
             if (Config.Current.FilmStrip.IsEnabled && !IsVisible)
@@ -300,12 +325,16 @@ namespace NeeView
 
         public bool ToggleHideThumbnailList()
         {
+            if (_disposedValue) return Config.Current.FilmStrip.IsHideFilmStrip;
+
             return Config.Current.FilmStrip.IsHideFilmStrip = !Config.Current.FilmStrip.IsHideFilmStrip;
         }
 
         // サムネイル要求
         public void RequestThumbnail(int start, int count, int margin, int direction)
         {
+            if (_disposedValue) return;
+
             if (IsSliderDirectionReversed)
             {
                 start = PageSelector.Current.MaxIndex - (start + count - 1);
@@ -358,6 +387,29 @@ namespace NeeView
             IsFocusAtOnce = true;
         }
 
+        #region IDisposable Support
+        private bool _disposedValue = false;
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!_disposedValue)
+            {
+                if (disposing)
+                {
+                    _disposables.Dispose();
+                    _jobClient.Dispose();
+                }
+
+                _disposedValue = true;
+            }
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+        #endregion
 
         #region Memento
         [DataContract]

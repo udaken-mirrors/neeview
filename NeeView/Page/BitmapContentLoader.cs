@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NeeLaboratory.ComponentModel;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -18,6 +19,12 @@ namespace NeeView
 
         public event EventHandler? Loaded;
 
+        public IDisposable SubscribeLoaded(EventHandler handler)
+        {
+            Loaded += handler;
+            return new AnonymousDisposable(() => Loaded -= handler);
+        }
+
 
         public PictureSource? PictureSource => _content.PictureSource;
 
@@ -26,6 +33,11 @@ namespace NeeView
 
         #region IDisposable Support
         private bool _disposedValue = false;
+
+        protected void ThrowIfDisposed()
+        {
+            if (_disposedValue) throw new ObjectDisposedException(GetType().FullName);
+        }
 
 
         protected virtual void Dispose(bool disposing)
@@ -63,6 +75,8 @@ namespace NeeView
         {
             lock (_lock)
             {
+                ThrowIfDisposed();
+
                 var source = _content.PictureSource;
                 if (source == null)
                 {
@@ -96,6 +110,8 @@ namespace NeeView
         {
             try
             {
+                ThrowIfDisposed();
+
                 var source = LoadPictureSource(token);
                 var picture = new Picture(source);
 
@@ -131,6 +147,7 @@ namespace NeeView
         {
             try
             {
+                ThrowIfDisposed();
                 _content.Picture?.CreateImageSource(Size.Empty, token);
             }
             catch (OperationCanceledException)
@@ -149,6 +166,7 @@ namespace NeeView
         /// </summary>
         protected virtual async Task LoadContentAsyncTemplate(Action? append, CancellationToken token)
         {
+            if (_disposedValue) return;
             if (_content.IsLoaded) return;
 
             try
@@ -170,6 +188,8 @@ namespace NeeView
         /// </summary>
         public virtual async Task LoadContentAsync(CancellationToken token)
         {
+            if (_disposedValue) return;
+
             await LoadContentAsyncTemplate(() =>
             {
                 // NOTE: リサイズフィルター有効の場合はBitmapSourceの生成をサイズ確定まで遅延させる
@@ -199,6 +219,7 @@ namespace NeeView
         public virtual async Task LoadThumbnailAsync(CancellationToken token)
         {
             token.ThrowIfCancellationRequested();
+            ThrowIfDisposed();
             
             await _content.Thumbnail.InitializeAsync(_content.Entry, null, token);
             if (_content.Thumbnail.IsValid) return;

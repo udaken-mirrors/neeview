@@ -35,10 +35,6 @@ namespace NeeView
             InitializeCommandStatic();
         }
 
-        //public HistoryListBox()
-        //{
-        //    InitializeComponent();
-        //}
 
         public HistoryListBox(HistoryListBoxViewModel vm)
         {

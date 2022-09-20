@@ -53,6 +53,7 @@ namespace NeeView
         private readonly IContentLoader _contentLoader;
         private bool _isVisibled;
         private bool _isMarked;
+        private readonly DisposableCollection _disposables = new();
 
 
         /// <summary>
@@ -61,15 +62,25 @@ namespace NeeView
         public Page(string bookPrefix, PageContent content)
         {
             BookPrefix = bookPrefix;
+            
             _content = content;
-            _content.AddPropertyChanged(nameof(PageContent.Entry), (s, e) => RaisePropertyChanged(nameof(Entry)));
+            _disposables.Add(_content.SubscribePropertyChanged(nameof(PageContent.Entry),
+                (s, e) => RaisePropertyChanged(nameof(Entry))));
+
             _contentLoader = _content.CreateContentLoader();
-            _contentLoader.Loaded += (s, e) => Loaded?.Invoke(this, EventArgs.Empty);
+            _disposables.Add(_contentLoader.SubscribeLoaded(
+                (s, e) => Loaded?.Invoke(this, EventArgs.Empty)));
         }
 
 
         // コンテンツ更新イベント
-        public EventHandler? Loaded;
+        public event EventHandler? Loaded;
+
+        public IDisposable SubscribeLoaded(EventHandler handler)
+        {
+            Loaded += handler;
+            return new AnonymousDisposable(() => Loaded -= handler);
+        }
 
 
         public bool IsLoaded => _content.IsLoaded;
@@ -188,6 +199,7 @@ namespace NeeView
             {
                 if (disposing)
                 {
+                    _disposables.Dispose();
                     Loaded = null;
                     ResetPropertyChanged();
                     _contentLoader.Dispose();
@@ -219,6 +231,8 @@ namespace NeeView
         /// </summary>
         public async Task LoadContentAsync(CancellationToken token)
         {
+            if (_disposedValue) return;
+
             try
             {
                 token.ThrowIfCancellationRequested();
@@ -248,6 +262,8 @@ namespace NeeView
         /// </summary>
         public async Task<ImageSource?> LoadThumbnailAsync(CancellationToken token)
         {
+            if (_disposedValue) return null;
+
             try
             {
                 token.ThrowIfCancellationRequested();

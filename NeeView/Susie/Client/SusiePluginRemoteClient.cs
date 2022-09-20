@@ -12,7 +12,7 @@ namespace NeeView.Susie.Client
     {
         private SubProcess? _subProcess;
         private SimpleClient? _client;
-        private CancellationTokenSource _cancellationTokenSource = new();
+        private CancellationTokenSource? _cancellationTokenSource;
 
         public bool IsConnected => _subProcess != null && _subProcess.IsActive;
 
@@ -68,9 +68,8 @@ namespace NeeView.Susie.Client
             if (subProcess.Process is null) throw new InvalidOperationException($"Cannot start process: {subProcessFileName}");
             _subProcess = subProcess;
 
-            var cancellationTokenSource = new CancellationTokenSource();
-            _cancellationTokenSource = cancellationTokenSource;
-            _subProcess.Exited += (s, e) => cancellationTokenSource.Cancel();
+            _cancellationTokenSource = new CancellationTokenSource();
+            _subProcess.Exited += (s, e) => _cancellationTokenSource.Cancel();
 
             var name = SusiePluginRemote.CreateServerName(_subProcess.Process);
             _client = new SimpleClient(name);
@@ -80,7 +79,8 @@ namespace NeeView.Susie.Client
         {
             if (_subProcess == null) return;
 
-            _cancellationTokenSource.Cancel();
+            _cancellationTokenSource?.Cancel();
+            _cancellationTokenSource?.Dispose();
             _subProcess.Dispose();
             _subProcess = null;
             _client = null;
@@ -94,6 +94,7 @@ namespace NeeView.Susie.Client
             }
 
             if (_client is null) throw new InvalidOperationException("_client must not be null");
+            if (_cancellationTokenSource is null) throw new InvalidOperationException("_cancellationTokenSource must not be null");
 
             using (var linkedCancellationTokenSource = CancellationTokenSource.CreateLinkedTokenSource(_cancellationTokenSource.Token, token))
             {

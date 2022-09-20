@@ -84,7 +84,7 @@ namespace NeeView
         private double _lastScale;
         private readonly DpiScaleProvider _dpiProvider;
         private Size _viewSize;
-
+        private readonly DisposableCollection _disposables = new();
 
         public ContentCanvas(MainViewComponent viewComponent, BookHub bookHub)
         {
@@ -93,12 +93,16 @@ namespace NeeView
 
             _viewComponent = viewComponent;
             _dpiProvider = viewComponent.MainView.DpiProvider;
-            _dpiProvider.DpiChanged += (s, e) => DpiChanged?.Invoke(s, e);
+
+            _disposables.Add(_dpiProvider.SubscribeDpiChanged(
+                (s, e) => DpiChanged?.Invoke(s, e)));
 
             _contentSizeCalcurator = new ContentSizeCalcurator();
 
-            _viewComponent.DragTransform.TransformChanged += Transform_TransformChanged;
-            _viewComponent.LoupeTransform.TransformChanged += Transform_TransformChanged;
+            _disposables.Add(_viewComponent.DragTransform.SubscribeTransformChanged(
+                Transform_TransformChanged));
+            _disposables.Add(_viewComponent.LoupeTransform.SubscribeTransformChanged(
+                Transform_TransformChanged));
 
             // Contents
             Contents = new ObservableCollection<ViewContent>
@@ -109,72 +113,70 @@ namespace NeeView
 
             MainContent = Contents[0];
 
-            bookHub.BookChanging += (s, e) =>
-                AppDispatcher.Invoke(() => IgnoreViewContentsReservers());
+            _disposables.Add(bookHub.SubscribeBookChanging(
+                (s, e) => AppDispatcher.Invoke(() => IgnoreViewContentsReservers())));
 
             // TODO: BookOperationから？
-            bookHub.ViewContentsChanged += (s, e) =>
-                AppDispatcher.Invoke(() => OnViewContentsChanged(s, e));
+            _disposables.Add(bookHub.SubscribeViewContentsChanged(
+                (s, e) => AppDispatcher.Invoke(() => OnViewContentsChanged(s, e))));
 
             // NOTE: NextContentsChangedのリサイズ処理は非同期。MagicScaler(WIC)が非同期のみをサポート
-            bookHub.NextContentsChanged += (s, e) =>
-                OnNextContentsChanged(s, e);
+            _disposables.Add(bookHub.SubscribeNextContentsChanged(
+                (s, e) => OnNextContentsChanged(s, e)));
 
-            bookHub.EmptyMessage += (s, e) =>
-                AppDispatcher.Invoke(() => EmptyPageMessage = e.Message);
+            _disposables.Add(bookHub.SubscribeEmptyMessage(
+                (s, e) => AppDispatcher.Invoke(() => EmptyPageMessage = e.Message)));
 
-            bookHub.EmptyPageMessage += (s, e) =>
-                AppDispatcher.Invoke(() =>
+            _disposables.Add(bookHub.SubscribeEmptyPageMessage(
+                (s, e) => AppDispatcher.Invoke(() =>
                 {
                     if (!string.IsNullOrEmpty(e.Message))
                     {
                         EmptyPageMessage = e.Message;
                         IsVisibleEmptyPageMessage = true;
                     }
-                });
+                })));
 
-            Config.Current.ImageDotKeep.AddPropertyChanged(nameof(ImageDotKeepConfig.IsEnabled), (s, e) =>
-            {
-                UpdateContentScalingMode();
-            });
+            _disposables.Add(Config.Current.ImageDotKeep.SubscribePropertyChanged(nameof(ImageDotKeepConfig.IsEnabled),
+                (s, e) => UpdateContentScalingMode()));
 
-            Config.Current.Book.AddPropertyChanged(nameof(BookConfig.ContentsSpace), (s, e) =>
-            {
-                UpdateContentSize(); ;
-            });
+            _disposables.Add(Config.Current.Book.SubscribePropertyChanged(nameof(BookConfig.ContentsSpace),
+                (s, e) => UpdateContentSize()));
 
-            Config.Current.View.PropertyChanging += (s, e) =>
-            {
-                switch (e.PropertyName)
+            _disposables.Add(Config.Current.View.SubscribePropertyChanging(
+                (s, e) =>
                 {
-                    case nameof(ViewConfig.StretchMode):
-                        _stretchModePrev = Config.Current.View.StretchMode;
-                        break;
-                }
-            };
+                    switch (e.PropertyName)
+                    {
+                        case nameof(ViewConfig.StretchMode):
+                            _stretchModePrev = Config.Current.View.StretchMode;
+                            break;
+                    }
+                }));
 
-            Config.Current.View.PropertyChanged += (s, e) =>
-            {
-                switch (e.PropertyName)
+            _disposables.Add(Config.Current.View.SubscribePropertyChanged(
+                (s, e) =>
                 {
-                    case nameof(ViewConfig.StretchMode):
-                        Stretch();
-                        break;
+                    switch (e.PropertyName)
+                    {
+                        case nameof(ViewConfig.StretchMode):
+                            Stretch();
+                            break;
 
-                    case nameof(ViewConfig.AllowStretchScaleUp):
-                    case nameof(ViewConfig.AllowStretchScaleDown):
-                    case nameof(ViewConfig.IsBaseScaleEnabled):
-                    case nameof(ViewConfig.BaseScale):
-                        ResetContentSize();
-                        break;
+                        case nameof(ViewConfig.AllowStretchScaleUp):
+                        case nameof(ViewConfig.AllowStretchScaleDown):
+                        case nameof(ViewConfig.IsBaseScaleEnabled):
+                        case nameof(ViewConfig.BaseScale):
+                            ResetContentSize();
+                            break;
 
-                    case nameof(ViewConfig.AutoRotate):
-                        RaisePropertyChanged(nameof(IsAutoRotateLeft));
-                        RaisePropertyChanged(nameof(IsAutoRotateRight));
-                        ResetContentSizeAndTransform(new ResetTransformCondition(true));
-                        break;
-                }
-            };
+                        case nameof(ViewConfig.AutoRotate):
+                            RaisePropertyChanged(nameof(IsAutoRotateLeft));
+                            RaisePropertyChanged(nameof(IsAutoRotateRight));
+                            ResetContentSizeAndTransform(new ResetTransformCondition(true));
+                            break;
+                    }
+                }));
         }
 
 
@@ -601,6 +603,8 @@ namespace NeeView
         /// </summary>
         public void ResetContentSize()
         {
+            if (_disposedValue) return;
+
             UpdateContentSize();
             ContentSizeChanged?.Invoke(this, EventArgs.Empty);
             ResetTransformRaw(true, false, false, 0.0, false);
@@ -611,6 +615,8 @@ namespace NeeView
         /// </summary>
         public void ResetContentSizeAndTransform(ResetTransformCondition condition)
         {
+            if (_disposedValue) return;
+
             var angleResetMode = GetAngleResetMode(true);
 
             UpdateContentSize(GetAutoRotateAngle(angleResetMode));
@@ -621,6 +627,8 @@ namespace NeeView
         // 座標系初期化
         public void ResetTransform(int pageDirection, DragViewOrigin viewOrigin, AngleResetMode angleResetMode, ResetTransformCondition condition)
         {
+            if (_disposedValue) return;
+
             // NOTE: ルーペモードのときは初期化しない
             if (_viewComponent.IsLoupeMode) return;
 
@@ -643,6 +651,8 @@ namespace NeeView
         /// <param name="ignoreViewOrigin">初期中心座標補正無しで初期化。座標が必ず0,0になる</param>
         public void ResetTransformRaw(bool isResetScale, bool isResetAngle, bool isResetFlip, double angle, bool ignoreViewOrigin)
         {
+            if (_disposedValue) return;
+
             _viewComponent.DragTransformControl.Reset(isResetScale, isResetAngle, isResetFlip, angle, ignoreViewOrigin);
 
             if (Config.Current.Mouse.IsHoverScroll)
@@ -657,6 +667,8 @@ namespace NeeView
         /// <returns></returns>
         public double GetAutoRotateAngle(AngleResetMode angleResetMode)
         {
+            if (_disposedValue) return 0.0;
+
             if (angleResetMode == AngleResetMode.None)
             {
                 return _viewComponent.DragTransform.Angle;
@@ -689,6 +701,8 @@ namespace NeeView
         // ビューエリアサイズを更新
         public void SetViewSize(double width, double height)
         {
+            if (_disposedValue) return;
+
             this.ViewSize = new Size(width, height);
 
             UpdateContentSize();
@@ -720,8 +734,7 @@ namespace NeeView
             }
         }
 
-        //
-        public void UpdateContentSize(double angle)
+        private void UpdateContentSize(double angle)
         {
             this.ContentAngle = angle;
             UpdateContentSize();
@@ -730,6 +743,7 @@ namespace NeeView
         // コンテンツ表示サイズを更新
         public void UpdateContentSize()
         {
+            if (_disposedValue) return;
             if (!CloneContents.Any(e => e.IsValid)) return;
 
             var result = _contentSizeCalcurator.GetFixedContentSize(GetContentSizeList(), FixedViewSize, this.ContentAngle, Dpi);
@@ -760,6 +774,8 @@ namespace NeeView
         // コンテンツスケーリングモードを更新
         public void UpdateContentScalingMode(ViewContent? target = null)
         {
+            if (_disposedValue) return;
+
             double finalScale = _viewComponent.DragTransform.Scale * _viewComponent.LoupeTransform.FixedScale * _dpiProvider.DpiScale.DpiScaleX;
 
             foreach (var content in CloneContents)
@@ -849,6 +865,8 @@ namespace NeeView
 
         public void SetStretchMode(PageStretchMode mode, bool isToggle)
         {
+            if (_disposedValue) return;
+
             Config.Current.View.StretchMode = GetFixedStretchMode(mode, isToggle);
             Stretch();
         }
@@ -876,6 +894,8 @@ namespace NeeView
 
         public void ViewRotateLeft(ViewRotateCommandParameter parameter)
         {
+            if (_disposedValue) return;
+
             _viewComponent.DragTransformControl.Rotate(-parameter.Angle);
 
             if (parameter.IsStretch)
@@ -886,6 +906,8 @@ namespace NeeView
 
         public void ViewRotateRight(ViewRotateCommandParameter parameter)
         {
+            if (_disposedValue) return;
+
             _viewComponent.DragTransformControl.Rotate(+parameter.Angle);
 
             if (parameter.IsStretch)
@@ -896,6 +918,8 @@ namespace NeeView
 
         public void Stretch(bool ignoreViewOrigin = false)
         {
+            if (_disposedValue) return;
+
             UpdateContentSize(_viewComponent.DragTransform.Angle);
             ContentSizeChanged?.Invoke(this, EventArgs.Empty);
             ContentStretchChanged?.Invoke(this, EventArgs.Empty);
@@ -918,6 +942,8 @@ namespace NeeView
 
         public void CopyImageToClipboard()
         {
+            if (_disposedValue) return;
+
             try
             {
                 if (CanCopyImageToClipboard() && CurrentImageSource is BitmapSource bitmapSource)
@@ -944,6 +970,8 @@ namespace NeeView
             {
                 if (disposing)
                 {
+                    _disposables.Dispose();
+
                     if (this.Contents != null)
                     {
                         foreach (var content in this.Contents)

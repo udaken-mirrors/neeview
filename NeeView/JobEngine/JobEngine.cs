@@ -29,6 +29,7 @@ namespace NeeView
         private bool _isBusy;
         private readonly int _maxWorkerSize;
         private int _workerSize = 2;
+        private readonly DisposableCollection _disposables = new();
 
 
         // コンストラクタ
@@ -39,11 +40,12 @@ namespace NeeView
             _maxWorkerSize = Config.Current.Performance.GetMaxJobWorkerSzie();
             _workerSize = Config.Current.Performance.JobWorkerSize;
 
-            Config.Current.Performance.AddPropertyChanged(nameof(PerformanceConfig.JobWorkerSize), (s, e) =>
-            {
-                _workerSize = Config.Current.Performance.JobWorkerSize;
-                ChangeWorkerSize(_workerSize);
-            });
+            _disposables.Add(Config.Current.Performance.SubscribePropertyChanged(nameof(PerformanceConfig.JobWorkerSize),
+                (s, e) =>
+                {
+                    _workerSize = Config.Current.Performance.JobWorkerSize;
+                    ChangeWorkerSize(_workerSize);
+                }));
 
             Workers = new JobWorker[_maxWorkerSize];
 
@@ -166,6 +168,7 @@ namespace NeeView
             {
                 if (disposing)
                 {
+                    _disposables.Dispose();
                     ChangeWorkerSize(0);
                 }
 

@@ -186,6 +186,7 @@ namespace NeeView
 
         public void Sort(CancellationToken token)
         {
+            if (_disposedValue) return;
             if (Pages.Count <= 0) return;
 
             var isSortFileFirst = Config.Current.Book.IsSortFileFirst;
@@ -303,6 +304,7 @@ namespace NeeView
         // ページの削除
         public void Remove(List<Page> pages)
         {
+            if (_disposedValue) return;
             if (Pages.Count <= 0) return;
             if (pages == null) return;
 

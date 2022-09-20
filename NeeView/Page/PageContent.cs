@@ -143,6 +143,8 @@ namespace NeeView
         /// <param name="isKeepFileName">エントリ名準拠のテンポラリファイルを作成</param>
         public FileProxy CreateTempFile(bool isKeepFileName)
         {
+            ThrowIfDisposed();
+
             FileProxy = FileProxy ?? Entry.ExtractToTemp(isKeepFileName);
             return FileProxy;
         }
@@ -191,6 +193,11 @@ namespace NeeView
 
         #region IDisposable Support
         private bool _disposedValue = false;
+
+        protected void ThrowIfDisposed()
+        {
+            if (_disposedValue) throw new ObjectDisposedException(GetType().FullName);
+        }
 
         protected virtual void Dispose(bool disposing)
         {

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NeeLaboratory.ComponentModel;
+using System;
 using System.Diagnostics;
 using System.IO;
 
@@ -16,16 +17,40 @@ namespace NeeView.IO
             _options = options;
         }
 
+
         public event FileSystemEventHandler? Changed;
+
+        public IDisposable SubscribeChanged(FileSystemEventHandler handler)
+        {
+            Changed += handler;
+            return new AnonymousDisposable(() => Changed -= handler);
+        }
+
         public event FileSystemEventHandler? Deleted;
+
+        public IDisposable SubscribeDeleted(FileSystemEventHandler handler)
+        {
+            Deleted += handler;
+            return new AnonymousDisposable(() => Deleted -= handler);
+        }
+
         public event RenamedEventHandler? Renamed;
+
+        public IDisposable SubscribeRenamed(RenamedEventHandler handler)
+        {
+            Renamed += handler;
+            return new AnonymousDisposable(() => Renamed -= handler);
+        }
 
 
         public void Start(string path)
         {
+            if (_disposedValue) return;
+
             if (path == _path) return;
 
             Stop();
+
 
             if (string.IsNullOrEmpty(path) || !FileIO.Exists(path))
             {

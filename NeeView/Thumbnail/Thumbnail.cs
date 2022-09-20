@@ -43,10 +43,23 @@ namespace NeeView
         /// </summary>
         public event EventHandler? Changed;
 
+        public IDisposable SubscribeChanged(EventHandler handler)
+        {
+            Changed += handler;
+            return new AnonymousDisposable(() => Changed -= handler);
+        }
+
+
         /// <summary>
         /// 参照イベント
         /// </summary>
         public event EventHandler? Touched;
+
+        public IDisposable SubscribeTouched(EventHandler handler)
+        {
+            Touched += handler;
+            return new AnonymousDisposable(() => Touched -= handler);
+        }
 
 
 
@@ -63,6 +76,7 @@ namespace NeeView
             get { return _image; }
             set
             {
+                if (_disposedValue) return;
                 if (_image != value)
                 {
                     _image = value;
@@ -129,6 +143,7 @@ namespace NeeView
         /// </summary>
         internal async Task InitializeAsync(ArchiveEntry entry, string? appendix, CancellationToken token)
         {
+            if (_disposedValue) return;
             if (IsValid || !IsCacheEnabled) return;
 
 #if DEBUG
@@ -153,6 +168,7 @@ namespace NeeView
         /// <param name="source"></param>
         internal void Initialize(byte[]? image)
         {
+            if (_disposedValue) return;
             if (IsValid) return;
 
             Image = image ?? ThumbnailResource.EmptyImage;
@@ -166,6 +182,8 @@ namespace NeeView
         /// <param name="type"></param>
         internal void Initialize(ThumbnailType type)
         {
+            if (_disposedValue) return;
+
             Image = type switch
             {
                 ThumbnailType.Media => ThumbnailResource.MediaImage,
@@ -179,6 +197,7 @@ namespace NeeView
         /// </summary>
         internal void SaveCacheAsync()
         {
+            if (_disposedValue) return;
             if (!IsCacheEnabled || _header == null) return;
             if (_image == null || _image == ThumbnailResource.EmptyImage || _image == ThumbnailResource.MediaImage || _image == ThumbnailResource.FolderImage) return;
 
@@ -209,6 +228,7 @@ namespace NeeView
         /// <returns></returns>
         public ImageSource? CreateBitmap()
         {
+            if (_disposedValue) return null;
             if (_image is null) return null;
 
             Touched?.Invoke(this, EventArgs.Empty);

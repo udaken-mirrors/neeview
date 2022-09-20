@@ -936,7 +936,7 @@ namespace NeeView
             return element;
         }
 
-#endregion
+        #endregion
 
 
         private void FolderListBox_Loaded(object? sender, RoutedEventArgs e)
@@ -1304,7 +1304,7 @@ namespace NeeView
         }
 
 
-#region UI Accessor
+        #region UI Accessor
 
         public List<FolderItem> GetItems()
         {
@@ -1323,7 +1323,7 @@ namespace NeeView
             this.ListBox.ScrollItemsIntoView(items);
         }
 
-#endregion UI Accessor
+        #endregion UI Accessor
     }
 
 

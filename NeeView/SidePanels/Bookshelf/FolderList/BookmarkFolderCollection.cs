@@ -25,6 +25,7 @@ namespace NeeView
         {
         }
 
+
         public override async Task InitializeItemsAsync(CancellationToken token)
         {
             await Task.Run(() => InitializeItems(token), token);

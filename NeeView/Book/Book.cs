@@ -69,6 +69,8 @@ namespace NeeView
 
         public void SetStartPage(object? sender, BookStartPage startPage)
         {
+            if (_disposedValue) return;
+
             // スタートページ取得
             PagePosition position = _source.Pages.FirstPosition();
             int direction = 1;
@@ -110,6 +112,8 @@ namespace NeeView
 
         public void Start()
         {
+            if (_disposedValue) return;
+
             // TODO: スタートページへ移動
             _controller.Start();
         }

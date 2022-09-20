@@ -1,4 +1,5 @@
-﻿using NeeView.Threading;
+﻿using NeeLaboratory.ComponentModel;
+using NeeView.Threading;
 using System;
 using System.IO;
 
@@ -19,9 +20,17 @@ namespace NeeView
 
         public event FileSystemEventHandler? Changed;
 
+        public IDisposable SubscribeChanged(FileSystemEventHandler handler)
+        {
+            Changed += handler;
+            return new AnonymousDisposable(() => Changed -= handler);
+        }
+
 
         public void Start(string path)
         {
+            if (_disposedValue) return;
+
             if (_watcher != null)
             {
                 if (_watcher.Path == path) return;

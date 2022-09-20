@@ -7,6 +7,8 @@ namespace NeeView
     public interface IContentLoader : IDisposable
     {
         event EventHandler? Loaded;
+        
+        IDisposable SubscribeLoaded(EventHandler handler);
 
         Task LoadContentAsync(CancellationToken token);
 

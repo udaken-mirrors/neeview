@@ -29,13 +29,6 @@ namespace NeeView
             _routedCommandTable.CommandExecuted += RoutedCommand_CommandExecuted;
 
             _commandBindings = new Dictionary<string, CommandBinding>();
-
-            InitializeCommandBindings();
-        }
-
-
-        private void InitializeCommandBindings()
-        {
             _commandBindings.Clear();
 
             foreach (var name in CommandTable.Current.Keys)

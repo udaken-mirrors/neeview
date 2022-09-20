@@ -107,6 +107,7 @@ namespace NeeView
         public async Task<SearchResultWatcher> SearchAsync(string keyword, NeeLaboratory.IO.Search.SearchOption? option, CancellationToken token)
         {
             token.ThrowIfCancellationRequested();
+            ThrowIfDisposed();
 
             // 検索
             option = option ?? new NeeLaboratory.IO.Search.SearchOption();

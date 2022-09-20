@@ -35,6 +35,8 @@ namespace NeeView
             set { SetProperty(ref _isBusy, value); }
         }
 
+
+
         public void Order(List<Page> pages)
         {
             if (_disposedValue) return;

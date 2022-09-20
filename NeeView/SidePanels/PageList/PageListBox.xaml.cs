@@ -37,11 +37,6 @@ namespace NeeView
             InitializeCommandStatic();
         }
 
-        //public PageListBox()
-        //{
-        //    InitializeComponent();
-        //}
-
         public PageListBox(PageListBoxViewModel vm)
         {
             InitializeComponent();

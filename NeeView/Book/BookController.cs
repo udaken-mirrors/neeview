@@ -18,6 +18,7 @@ namespace NeeView
         private readonly BookPageViewer _viewer;
         private readonly BookPageMarker _marker;
         private bool _isViewContentsLoading;
+        private readonly DisposableCollection _disposables = new();
 
 
         public BookController(BookSource book, BookPageViewer viewer, BookPageMarker marker)
@@ -26,20 +27,21 @@ namespace NeeView
             _viewer = viewer ?? throw new ArgumentNullException(nameof(viewer));
             _marker = marker ?? throw new ArgumentNullException(nameof(marker));
 
-            _book.Pages.AddPropertyChanged(nameof(BookPageCollection.SortMode), (s, e) => RequestSort(this));
+            _disposables.Add(_book.Pages.SubscribePropertyChanged(nameof(BookPageCollection.SortMode),
+                (s, e) => RequestSort(this)));
 
-            _viewer.SettingChanged +=
-                (s, e) => RequestRefresh(this, false);
+            _disposables.Add(_viewer.SubscribeSettingChanged(
+                (s, e) => RequestRefresh(this, false)));
 
-            _viewer.ViewContentsChanged +=
-                (s, e) => UpdateViewContentsLoading();
+            _disposables.Add(_viewer.SubscribeViewContentsChanged(
+                (s, e) => UpdateViewContentsLoading()));
 
-            _commandEngine.IsBusyChanged +=
+            _disposables.Add(_commandEngine.SubscribeIsBusyChanged(
                 (s, e) =>
                 {
                     IsBusyChanged?.Invoke(s, e);
                     UpdateViewContentsLoading();
-                };
+                }));
         }
 
 
@@ -71,7 +73,7 @@ namespace NeeView
         public bool IsViewContentsLoading
         {
             get { return _isViewContentsLoading; }
-            set
+            private set
             {
                 if (_isViewContentsLoading != value)
                 {
@@ -82,29 +84,6 @@ namespace NeeView
         }
 
 
-        #region IDisposable Support
-        private bool _disposedValue = false;
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!_disposedValue)
-            {
-                if (disposing)
-                {
-                    _commandEngine.Dispose();
-                }
-
-                _disposedValue = true;
-            }
-        }
-
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-        #endregion
-
         private void UpdateViewContentsLoading()
         {
             IsViewContentsLoading = _commandEngine.IsBusy || !_viewer.ViewPageCollection.IsFixedContents();
@@ -114,14 +93,16 @@ namespace NeeView
         // ページ設定を行うとコンテンツ読み込みが始まるため、ロードと分離した
         public void Start()
         {
-            ////Debug.Assert(Address != null);
-            ////_commandEngine.Name = $"BookJobEngine: {this.Address}";
+            if (_disposedValue) return;
+
             _commandEngine.StartEngine();
         }
 
         // 前のページに戻る
         public void PrevPage(object? sender, int step)
         {
+            if (_disposedValue) return;
+
             var s = (step == 0) ? _viewer.PageMode.Size() : step;
             RequestMovePosition(sender, -s);
         }
@@ -129,6 +110,8 @@ namespace NeeView
         // 次のページへ進む
         public void NextPage(object? sender, int step)
         {
+            if (_disposedValue) return;
+
             var s = (step == 0) ? _viewer.PageMode.Size() : step;
             RequestMovePosition(sender, +s);
         }
@@ -136,6 +119,8 @@ namespace NeeView
         // 前のフォルダーに戻る
         public int PrevFolderPage(object? sender)
         {
+            if (_disposedValue) return -1;
+
             var index = _book.Pages.GetPrevFolderIndex(_viewer.GetViewPageIndex());
             if (index < 0) return -1;
             RequestSetPosition(sender, new PagePosition(index, 0), 1);
@@ -145,6 +130,8 @@ namespace NeeView
         // 前のフォルダーへ進む
         public int NextFolderPage(object? sender)
         {
+            if (_disposedValue) return -1;
+
             var index = _book.Pages.GetNextFolderIndex(_viewer.GetViewPageIndex());
             if (index < 0) return -1;
             RequestSetPosition(sender, new PagePosition(index, 0), 1);
@@ -154,18 +141,24 @@ namespace NeeView
         // 最初のページに移動
         public void FirstPage(object? sender)
         {
+            if (_disposedValue) return;
+
             RequestSetPosition(sender, _book.Pages.FirstPosition(), 1);
         }
 
         // 最後のページに移動
         public void LastPage(object? sender)
         {
+            if (_disposedValue) return;
+
             RequestSetPosition(sender, _book.Pages.LastPosition(), -1);
         }
 
         // 指定ページに移動
         public bool JumpPage(object sender, Page? page)
         {
+            if (_disposedValue) return false;
+
             if (page is null) return false;
 
             int index = page.Index;
@@ -186,6 +179,8 @@ namespace NeeView
         public Page? RequestJumpToMarker(object sender, int direction, bool isLoop, bool isIncludeTerminal)
         {
             Debug.Assert(direction == 1 || direction == -1);
+
+            if (_disposedValue) return null;
 
             var target = _marker.GetNearMarkedPage(direction, isLoop, isIncludeTerminal);
             if (target == null) return null;
@@ -308,6 +303,30 @@ namespace NeeView
             }
         }
 
+
+        #region IDisposable Support
+        private bool _disposedValue = false;
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!_disposedValue)
+            {
+                if (disposing)
+                {
+                    _disposables.Dispose();
+                    _commandEngine.Dispose();
+                }
+
+                _disposedValue = true;
+            }
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+        #endregion
     }
 
 

@@ -1,4 +1,5 @@
-﻿using NeeLaboratory.Diagnostics;
+﻿using NeeLaboratory.ComponentModel;
+using NeeLaboratory.Diagnostics;
 using System;
 using System.Diagnostics;
 
@@ -17,20 +18,31 @@ namespace NeeView
         private readonly string _args;
         private Process? _process;
 
+
         public SubProcess(string path, string args)
         {
             _filename = path;
             _args = args;
         }
 
+
         public event EventHandler? Exited;
+
+        public IDisposable SubscribeExited(EventHandler handler)
+        {
+            Exited += handler;
+            return new AnonymousDisposable(() => Exited -= handler);
+        }
+
 
         public Process? Process => _process;
 
         public bool IsActive => _process != null && !_process.HasExited;
 
+
         public void Start()
         {
+            if (_disposedValue) return;
             if (IsActive) return;
 
             var psInfo = new ProcessStartInfo();

@@ -36,6 +36,12 @@ namespace NeeView
         /// </summary>
         public event EventHandler<TransformEventArgs>? TransformChanged;
 
+        public IDisposable SubscribeTransformChanged(EventHandler<TransformEventArgs> handler)
+        {
+            TransformChanged += handler;
+            return new AnonymousDisposable(() => TransformChanged -= handler);
+        }
+
 
         public TransformGroup TransformView { get; private set; }
         public TransformGroup TransformCalc { get; private set; }

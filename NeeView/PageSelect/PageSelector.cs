@@ -29,9 +29,36 @@ namespace NeeView
 
         // NOTE: ChangingとChangedは必ずしもペアではない
         public event EventHandler? CollectionChanging;
+
+        public IDisposable SubscribeCollectionChanging(EventHandler handler)
+        {
+            CollectionChanging += handler;
+            return new AnonymousDisposable(() => CollectionChanging -= handler);
+        }
+
         public event EventHandler? CollectionChanged;
+
+        public IDisposable SubscribeCollectionChanged(EventHandler handler)
+        {
+            CollectionChanged += handler;
+            return new AnonymousDisposable(() => CollectionChanged -= handler);
+        }
+
         public event EventHandler? SelectionChanged;
+
+        public IDisposable SubscribeSelectionChanged(EventHandler handler)
+        {
+            SelectionChanged += handler;
+            return new AnonymousDisposable(() => SelectionChanged -= handler);
+        }
+
         public event EventHandler<ViewContentsChangedEventArgs>? ViewContentsChanged;
+
+        public IDisposable SubscribeViewContentsChanged(EventHandler<ViewContentsChangedEventArgs> handler)
+        {
+            ViewContentsChanged += handler;
+            return new AnonymousDisposable(() => ViewContentsChanged -= handler);
+        }
 
 
         public PageMode PageMode => BookOperation.Current.Book?.Viewer.PageMode ?? PageMode.SinglePage;

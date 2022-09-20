@@ -55,9 +55,29 @@ namespace NeeView
 
 
         public event EventHandler<FolderCollectionChangedEventArgs>? CollectionChanging;
+
+        public IDisposable SubscribeCollectionChanging(EventHandler<FolderCollectionChangedEventArgs> handler)
+        {
+            CollectionChanging += handler;
+            return new AnonymousDisposable(() => CollectionChanging -= handler);
+        }
+
         public event EventHandler<FolderCollectionChangedEventArgs>? CollectionChanged;
 
+        public IDisposable SubscribeCollectionChanged(EventHandler<FolderCollectionChangedEventArgs> handler)
+        {
+            CollectionChanged += handler;
+            return new AnonymousDisposable(() => CollectionChanged -= handler);
+        }
+
         public event EventHandler? ParameterChanged;
+
+        public IDisposable SubscribeParameterChanged(EventHandler handler)
+        {
+            ParameterChanged += handler;
+            return new AnonymousDisposable(() => ParameterChanged -= handler);
+        }
+
 
 
         // indexer

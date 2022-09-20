@@ -38,6 +38,8 @@ namespace NeeView
         // ブックのビュー更新カウンター
         private readonly BookPageCounter _viewCounter = new();
 
+        private readonly DisposableCollection _disposables = new();
+
 
         public BookPageViewer(BookSource book, BookMemoryService memoryService, BookPageViewSetting setting)
         {
@@ -45,13 +47,15 @@ namespace NeeView
             _bookMemoryService = memoryService;
             _setting = setting;
 
+            // NOTE: Page.Loadedの開放はPageのDisposeに任せる
             foreach (var page in _book.Pages)
             {
                 page.Loaded += Page_Loaded;
             }
 
             _ahead = new BookAhead(_bookMemoryService);
-            _ahead.AddPropertyChanged(nameof(BookAhead.IsBusy), (s, e) => UpdateIsBusy());
+            _disposables.Add(_ahead.SubscribePropertyChanged(nameof(BookAhead.IsBusy),
+                (s, e) => UpdateIsBusy()));
         }
 
 
@@ -413,6 +417,8 @@ namespace NeeView
             {
                 if (disposing)
                 {
+                    _disposables.Dispose();
+
                     this.ResetPropertyChanged();
                     this.PageTerminated = null;
                     this.ViewContentsChanged = null;
