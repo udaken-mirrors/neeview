@@ -1814,7 +1814,7 @@ The following data will be deleted
     <value>NeeView executable file path</value>
   </data>
   <data name="EnvironmentAccessor.UserSettingFilePath" xml:space="preserve">
-    <value>User setting file path</value>
+    <value>Setting file path</value>
   </data>
   <data name="ExifContrast.Hard" xml:space="preserve">
     <value>Hard</value>
@@ -2821,7 +2821,7 @@ Is it OK?</value>
     <value>Custom themes</value>
   </data>
   <data name="ImportBackupCommandParameter.UserSetting" xml:space="preserve">
-    <value>User setting</value>
+    <value>Setting</value>
   </data>
   <data name="ImportControl.Bookmark" xml:space="preserve">
     <value>Bookmark</value>
@@ -5838,7 +5838,7 @@ $Name is the main page (the smaller page number) when displaying 2 pages.</value
     <value>Show confirmation dialog when deleting files that don't fit in the Recycle Bin</value>
   </data>
   <data name="SystemConfig.IsSettingBackup" xml:space="preserve">
-    <value>Make a backup of the user setting file</value>
+    <value>Make a backup of the setting file</value>
   </data>
   <data name="SystemConfig.IsSettingBackup.Remarks" xml:space="preserve">
     <value>Make a backup of the configuration file and load it instead if the normal configuration file can not be read. The file name is "UserSetting.json.bak". The update timing is when you close the options window and when you exit the application.</value>

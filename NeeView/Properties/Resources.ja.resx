@@ -1819,7 +1819,7 @@ nv.Values.Test = "Hello!"</value>
     <value>NeeView 実行ファイルのパス</value>
   </data>
   <data name="EnvironmentAccessor.UserSettingFilePath" xml:space="preserve">
-    <value>ユーザー設定ファイルのパス</value>
+    <value>設定ファイルのパス</value>
   </data>
   <data name="ExifContrast.Hard" xml:space="preserve">
     <value>ハード</value>
@@ -2826,7 +2826,7 @@ nv.Values.Test = "Hello!"</value>
     <value>カスタム テーマ</value>
   </data>
   <data name="ImportBackupCommandParameter.UserSetting" xml:space="preserve">
-    <value>ユーザー設定</value>
+    <value>設定</value>
   </data>
   <data name="ImportControl.Bookmark" xml:space="preserve">
     <value>ブックマーク</value>
@@ -5843,7 +5843,7 @@ $Name は 2 ページ表示時には主となるページ (ページ番号の小
     <value>ごみ箱に入らないサイズのファイルを削除するときに確認ダイアログを表示する</value>
   </data>
   <data name="SystemConfig.IsSettingBackup" xml:space="preserve">
-    <value>ユーザー設定ファイルのバックアップを作る</value>
+    <value>設定ファイルのバックアップを作る</value>
   </data>
   <data name="SystemConfig.IsSettingBackup.Remarks" xml:space="preserve">
     <value>設定ファイルのバックアップを作成し、もし通常の設定ファイルが読み込めない場合に代わりに読み込みます。ファイル名は "UserSetting.json.bak" です。更新タイミングは、設定ウィンドウを閉じた時と、アプリを終了した時です。</value>

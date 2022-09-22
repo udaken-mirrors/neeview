@@ -4420,7 +4420,7 @@ namespace NeeView.Properties {
         }
         
         /// <summary>
-        ///   User setting file path に類似しているローカライズされた文字列を検索します。
+        ///   Setting file path に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string EnvironmentAccessor_UserSettingFilePath {
             get {
@@ -7475,7 +7475,7 @@ namespace NeeView.Properties {
         }
         
         /// <summary>
-        ///   User setting に類似しているローカライズされた文字列を検索します。
+        ///   Setting に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string ImportBackupCommandParameter_UserSetting {
             get {
@@ -16483,7 +16483,7 @@ namespace NeeView.Properties {
         }
         
         /// <summary>
-        ///   Make a backup of the user setting file に類似しているローカライズされた文字列を検索します。
+        ///   Make a backup of the setting file に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string SystemConfig_IsSettingBackup {
             get {

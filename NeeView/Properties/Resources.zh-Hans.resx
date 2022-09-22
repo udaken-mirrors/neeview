@@ -1807,7 +1807,7 @@ nv.Values.Test = "Hello!"</value>
     <value>NeeView 执行文件的路径</value>
   </data>
   <data name="EnvironmentAccessor.UserSettingFilePath" xml:space="preserve">
-    <value>用户配置文件的路径</value>
+    <value>配置文件的路径</value>
   </data>
   <data name="ExifContrast.Hard" xml:space="preserve">
     <value>硬</value>
@@ -2814,7 +2814,7 @@ nv.Values.Test = "Hello!"</value>
     <value>自定义主题</value>
   </data>
   <data name="ImportBackupCommandParameter.UserSetting" xml:space="preserve">
-    <value>使用者设定</value>
+    <value>设定</value>
   </data>
   <data name="ImportControl.Bookmark" xml:space="preserve">
     <value>书签</value>
@@ -5831,7 +5831,7 @@ $Name 为 2 页面显示时的主要页面 (页面编号较小者) 。</value>
     <value>删除无法放进垃圾桶的档案时显示确认对话框</value>
   </data>
   <data name="SystemConfig.IsSettingBackup" xml:space="preserve">
-    <value>制作用户配置文件案备份</value>
+    <value>制作配置文件案备份</value>
   </data>
   <data name="SystemConfig.IsSettingBackup.Remarks" xml:space="preserve">
     <value>制作配置文件案的备份、如果无法读入一般的配置文件案时作为替代读入。文件名为"UserSetting.json.bak" 。更新时间点为关闭设定窗口时、结束应用程序时。</value>
