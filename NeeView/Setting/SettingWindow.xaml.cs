@@ -89,7 +89,7 @@ namespace NeeView.Setting
         {
             if (this.AllowSave)
             {
-                SaveDataSync.Current.SaveUserSetting(Config.Current.System.IsSyncUserSetting);
+                SaveDataSync.Current.SaveUserSetting(Config.Current.System.IsSyncUserSetting, true);
             }
         }
 

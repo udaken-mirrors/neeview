@@ -18,7 +18,7 @@ namespace NeeView
         {
             get
             {
-                return SaveData.Current.UserSettingFilePath;
+                return SaveData.UserSettingFilePath;
             }
         }
 

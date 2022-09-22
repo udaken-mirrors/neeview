@@ -2325,3 +2325,7 @@ PanelsConfig.IsLimitPanelWidth=Limit panel width
 PanelsConfig.IsLimitPanelWidth.Remarks=Limit the width of the panel to fit in the window
 ThumbnailConfig.IsVideoThumbnailEnabled=Create a video thumbnail
 PlaylistPanelAccessor.Name=Current playlist name
+FailedToSaveDataDialog.Title=Failed to save data
+FailedToSaveDataDialog.Setting.Message=Failed to save setting file.
+FailedToSaveDataDialog.History.Message=Failed to save history file.
+FailedToSaveDataDialog.Bookmark.Message=Failed to save bookmark file.

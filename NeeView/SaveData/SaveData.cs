@@ -22,7 +22,7 @@ namespace NeeView
         private string? _pagemarkFilenameToDelete;
 
         // 設定のバックアップを１起動に付き１回に制限するフラグ
-        private bool _keepBackup = false;
+        private bool _backupOnce = true;
 
 
         private SaveData()
@@ -46,9 +46,9 @@ namespace NeeView
         public static string DefaultScriptsFolder => Environment.GetUserDataPath(ScriptsFolder);
 
 
-        public string UserSettingFilePath => App.Current.Option.SettingFilename ?? throw new InvalidOperationException("UserSettingFilePath must not be null");
-        public string HistoryFilePath => Config.Current.History.HistoryFilePath;
-        public string BookmarkFilePath => Config.Current.Bookmark.BookmarkFilePath;
+        public static string UserSettingFilePath => App.Current.Option.SettingFilename ?? throw new InvalidOperationException("UserSettingFilePath must not be null");
+        public static string HistoryFilePath => Config.Current.History.HistoryFilePath;
+        public static string BookmarkFilePath => Config.Current.Bookmark.BookmarkFilePath;
 
         public bool IsEnableSave { get; private set; } = true;
 
@@ -125,7 +125,7 @@ namespace NeeView
 
         private void LoadUserSettingBackupCallback()
         {
-            _keepBackup = true;
+            _backupOnce = false;
         }
 
 
@@ -255,7 +255,7 @@ namespace NeeView
             }
         }
 
-        #endregion
+        #endregion Load
 
         #region Save
 
@@ -268,14 +268,9 @@ namespace NeeView
 
             using (ProcessLock.Lock())
             {
-                try
-                {
-                    SafetySave(UserSettingTools.Save, UserSettingFilePath, Config.Current.System.IsSettingBackup, _keepBackup);
-                }
-                finally
-                {
-                    _keepBackup = true;
-                }
+                bool createBackup = Config.Current.System.IsSettingBackup && _backupOnce;
+                SafetySave(UserSettingTools.Save, UserSettingFilePath, createBackup);
+                _backupOnce = false;
             }
 
             RemoveLegacyUserSetting();
@@ -321,7 +316,7 @@ namespace NeeView
             BookHub.Current.SaveBookMemento(); // TODO: タイミングに問題有り？
 
             using (ProcessLock.Lock())
-            { 
+            {
                 if (Config.Current.History.IsSaveHistory)
                 {
                     var bookHistoryMemento = BookHistoryCollection.Current.CreateMemento();
@@ -341,7 +336,7 @@ namespace NeeView
                         Debug.WriteLine(ex.Message);
                     }
 
-                    SafetySave(bookHistoryMemento.Save, HistoryFilePath, false, false);
+                    SafetySave(bookHistoryMemento.Save, HistoryFilePath, false);
                 }
                 else
                 {
@@ -372,9 +367,9 @@ namespace NeeView
             if (!Config.Current.Bookmark.IsSaveBookmark) return;
 
             using (ProcessLock.Lock())
-            { 
+            {
                 var bookmarkMemento = BookmarkCollection.Current.CreateMemento();
-                SafetySave(bookmarkMemento.Save, BookmarkFilePath, false, false);
+                SafetySave(bookmarkMemento.Save, BookmarkFilePath, false);
             }
 
             RemoveLegacyBookmark();
@@ -421,51 +416,31 @@ namespace NeeView
         /// </summary>
         /// <param name="save">SAVE関数</param>
         /// <param name="path">保存ファイル名</param>
-        /// <param name="isBackup">バックアップを作る。falseの場合はバックアップファイル削除</param>
-        /// <param name="keepBackup">バックアップファイルは変更しない</param>
-        private static void SafetySave(Action<string> save, string path, bool isBackup, bool keepBackup)
+        /// <param name="createBackup">バックアップを作る</param>
+        private static void SafetySave(Action<string> save, string path, bool createBackup)
         {
-            try
+            if (save is null) throw new ArgumentNullException(nameof(save));
+            if (string.IsNullOrWhiteSpace(path)) throw new ArgumentNullException(nameof(path));
+
+            var newFileName = path + ".new";
+            var backupFileName = createBackup ? path + ".bak" : null;
+
+            lock (App.Current.Lock)
             {
-                var backupPath = path + ".bak";
-                var tmpPath = path + ".tmp";
-
-                FileIO.RemoveFile(tmpPath);
-                save(tmpPath);
-
-                lock (App.Current.Lock)
+                if (File.Exists(path))
                 {
-                    var newFile = new FileInfo(tmpPath);
-                    var oldFile = new FileInfo(path);
-
-                    if (oldFile.Exists)
-                    {
-                        if (keepBackup)
-                        {
-                            oldFile.Delete();
-                        }
-                        else
-                        {
-                            FileIO.RemoveFile(backupPath);
-                            oldFile.MoveTo(backupPath);
-                        }
-                    }
-
-                    newFile.MoveTo(path);
-
-                    if (!isBackup)
-                    {
-                        FileIO.RemoveFile(backupPath);
-                    }
+                    File.Delete(newFileName);
+                    save(newFileName);
+                    File.Replace(newFileName, path, backupFileName);
                 }
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine(ex.Message);
+                else
+                {
+                    save(path);
+                }
             }
         }
 
-        #endregion
+        #endregion Save
     }
 
 

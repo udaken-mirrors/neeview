@@ -10,7 +10,7 @@ namespace NeeView
     {
         public static void Export(string filename)
         {
-            SaveDataSync.Current.SaveAll(false);
+            SaveDataSync.Current.SaveAll(false, false);
 
             try
             {
@@ -19,13 +19,13 @@ namespace NeeView
                 {
                     archive.CreateEntryFromFile(SaveData.UserSettingFileName, SaveData.UserSettingFileName);
 
-                    if (File.Exists(SaveData.Current.HistoryFilePath))
+                    if (File.Exists(SaveData.HistoryFilePath))
                     {
-                        archive.CreateEntryFromFile(SaveData.Current.HistoryFilePath, SaveData.HistoryFileName);
+                        archive.CreateEntryFromFile(SaveData.HistoryFilePath, SaveData.HistoryFileName);
                     }
-                    if (File.Exists(SaveData.Current.BookmarkFilePath))
+                    if (File.Exists(SaveData.BookmarkFilePath))
                     {
-                        archive.CreateEntryFromFile(SaveData.Current.BookmarkFilePath, SaveData.BookmarkFileName);
+                        archive.CreateEntryFromFile(SaveData.BookmarkFilePath, SaveData.BookmarkFileName);
                     }
                     var playlists = PlaylistHub.GetPlaylistFiles(false);
                     if (playlists.Any())

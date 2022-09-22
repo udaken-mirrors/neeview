@@ -7406,4 +7406,16 @@ nv.ShowToast(nv.Book.ViewPages[0].Path)</value>
   <data name="PlaylistPanelAccessor.Name" xml:space="preserve">
     <value>現在のプレイリストの名前</value>
   </data>
+  <data name="FailedToSaveDataDialog.Title" xml:space="preserve">
+    <value>データの保存に失敗しました</value>
+  </data>
+  <data name="FailedToSaveDataDialog.Setting.Message" xml:space="preserve">
+    <value>設定ファイルの保存に失敗しました。</value>
+  </data>
+  <data name="FailedToSaveDataDialog.History.Message" xml:space="preserve">
+    <value>履歴ファイルの保存に失敗しました。</value>
+  </data>
+  <data name="FailedToSaveDataDialog.Bookmark.Message" xml:space="preserve">
+    <value>ブックマークファイルの保存に失敗しました。</value>
+  </data>
 </root>

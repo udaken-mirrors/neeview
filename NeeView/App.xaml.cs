@@ -278,7 +278,7 @@ namespace NeeView
                 ApplicationDisposer.Current.Dispose();
 
                 // 設定保存
-                SaveDataSync.Current.SaveAll(false);
+                SaveDataSync.Current.SaveAll(false, false);
 
                 // キャッシュDBのクリーンナップ
                 ThumbnailCache.Current.Cleanup();

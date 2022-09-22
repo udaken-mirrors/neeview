@@ -261,7 +261,7 @@ namespace NeeView
             if (bookmark != null)
             {
                 BookmarkCollection.Current.Restore(bookmark);
-                SaveDataSync.Current.SaveBookmark(true);
+                SaveDataSync.Current.SaveBookmark(true, true);
             }
         }
 

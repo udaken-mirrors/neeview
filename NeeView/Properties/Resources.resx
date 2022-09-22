@@ -7401,4 +7401,16 @@ nv.ShowToast(nv.Book.ViewPages[0].Path)</value>
   <data name="PlaylistPanelAccessor.Name" xml:space="preserve">
     <value>Current playlist name</value>
   </data>
+  <data name="FailedToSaveDataDialog.Title" xml:space="preserve">
+    <value>Failed to save data</value>
+  </data>
+  <data name="FailedToSaveDataDialog.Setting.Message" xml:space="preserve">
+    <value>Failed to save setting file.</value>
+  </data>
+  <data name="FailedToSaveDataDialog.History.Message" xml:space="preserve">
+    <value>Failed to save history file.</value>
+  </data>
+  <data name="FailedToSaveDataDialog.Bookmark.Message" xml:space="preserve">
+    <value>Failed to save bookmark file.</value>
+  </data>
 </root>

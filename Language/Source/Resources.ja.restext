@@ -2325,3 +2325,7 @@ PanelsConfig.IsLimitPanelWidth=パネル幅を制限
 PanelsConfig.IsLimitPanelWidth.Remarks=ウィンドウに収まるようにパネル幅を制限する
 ThumbnailConfig.IsVideoThumbnailEnabled=動画サムネイルを作成する
 PlaylistPanelAccessor.Name=現在のプレイリストの名前
+FailedToSaveDataDialog.Title=データの保存に失敗しました
+FailedToSaveDataDialog.Setting.Message=設定ファイルの保存に失敗しました。
+FailedToSaveDataDialog.History.Message=履歴ファイルの保存に失敗しました。
+FailedToSaveDataDialog.Bookmark.Message=ブックマークファイルの保存に失敗しました。

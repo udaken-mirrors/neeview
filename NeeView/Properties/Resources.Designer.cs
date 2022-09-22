@@ -5691,6 +5691,42 @@ namespace NeeView.Properties {
         }
         
         /// <summary>
+        ///   Failed to save bookmark file. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string FailedToSaveDataDialog_Bookmark_Message {
+            get {
+                return ResourceManager.GetString("FailedToSaveDataDialog.Bookmark.Message", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Failed to save history file. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string FailedToSaveDataDialog_History_Message {
+            get {
+                return ResourceManager.GetString("FailedToSaveDataDialog.History.Message", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Failed to save setting file. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string FailedToSaveDataDialog_Setting_Message {
+            get {
+                return ResourceManager.GetString("FailedToSaveDataDialog.Setting.Message", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Failed to save data に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string FailedToSaveDataDialog_Title {
+            get {
+                return ResourceManager.GetString("FailedToSaveDataDialog.Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Delete book に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string FileDeleteBookDialog_Title {

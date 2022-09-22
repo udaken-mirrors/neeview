@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.IO;
 using NeeLaboratory.IO;
 using NeeView.Data;
 using NeeView.Threading;
@@ -22,7 +23,7 @@ namespace NeeView
 
         private SaveDataSync()
         {
-            _delaySaveBookmark = new DelayAction(App.Current.Dispatcher, TimeSpan.FromSeconds(0.2), () => SaveBookmark(true), TimeSpan.FromSeconds(0.5));
+            _delaySaveBookmark = new DelayAction(App.Current.Dispatcher, TimeSpan.FromSeconds(0.2), () => SaveBookmark(true, true), TimeSpan.FromSeconds(0.5));
 
             RemoteCommandService.Current.AddReciever("LoadUserSetting", LoadUserSetting);
             RemoteCommandService.Current.AddReciever("LoadHistory", LoadHistory);
@@ -39,6 +40,7 @@ namespace NeeView
             {
                 if (disposing)
                 {
+                    BookmarkCollection.Current.BookmarkChanged -= BookmarkCollection_BookmarkChanged;
                     _delaySaveBookmark.Dispose();
                 }
                 _disposedValue = true;
@@ -88,11 +90,27 @@ namespace NeeView
             SaveData.Current.LoadBookmark();
         }
 
-        public void SaveUserSetting(bool sync)
+        public void SaveUserSetting(bool sync, bool handleException)
         {
             Debug.WriteLine($"Save UserSetting");
 
-            SaveData.Current.SaveUserSetting();
+            try
+            {
+                SaveData.Current.SaveUserSetting();
+            }
+            catch (Exception ex)
+            {
+                var message = Properties.Resources.FailedToSaveDataDialog_Setting_Message + System.Environment.NewLine + ex.Message;
+                if (handleException)
+                {
+                    ToastService.Current.Show(new Toast(message, Properties.Resources.FailedToSaveDataDialog_Title, ToastIcon.Error));
+                    return;
+                }
+                else
+                {
+                    throw new IOException(message, ex);
+                }
+            }
 
             // TODO: 動作検証用に古い形式のデータも保存する
             ////SaveData.Current.SaveUserSettingV1();
@@ -103,16 +121,51 @@ namespace NeeView
             }
         }
 
-        private static void SaveHistory()
+        private static void SaveHistory(bool handleException)
         {
             Debug.WriteLine($"Save History");
-            SaveData.Current.SaveHistory();
+
+            try
+            {
+                SaveData.Current.SaveHistory();
+            }
+            catch (Exception ex)
+            {
+                var message = Properties.Resources.FailedToSaveDataDialog_History_Message + System.Environment.NewLine + ex.Message;
+                if (handleException)
+                {
+                    ToastService.Current.Show(new Toast(message, Properties.Resources.FailedToSaveDataDialog_Title, ToastIcon.Error));
+                    return;
+                }
+                else
+                {
+                    throw new IOException(message, ex);
+                }
+            }
         }
 
-        public void SaveBookmark(bool sync)
+        public void SaveBookmark(bool sync, bool handleException)
         {
             Debug.WriteLine($"Save Bookmark");
-            SaveData.Current.SaveBookmark();
+
+            try
+            {
+                SaveData.Current.SaveBookmark();
+            }
+            catch (Exception ex)
+            {
+                var message = Properties.Resources.FailedToSaveDataDialog_Bookmark_Message + System.Environment.NewLine + ex.Message;
+                if (handleException)
+                {
+                    ToastService.Current.Show(new Toast(message, Properties.Resources.FailedToSaveDataDialog_Title, ToastIcon.Error));
+                    return;
+                }
+                else
+                {
+                    throw new IOException(message, ex);
+                }
+            }
+
             if (sync)
             {
                 RemoteCommandService.Current.Send(new RemoteCommand("LoadBookmark"), RemoteCommandDelivery.All);
@@ -127,12 +180,12 @@ namespace NeeView
         /// <summary>
         /// すべてのセーブ処理を行う
         /// </summary>
-        public void SaveAll(bool sync)
+        public void SaveAll(bool sync, bool handleException)
         {
             Flush();
-            SaveUserSetting(sync);
-            SaveHistory();
-            SaveBookmark(sync);
+            SaveUserSetting(sync, handleException);
+            SaveHistory(handleException);
+            SaveBookmark(sync, handleException);
             RemoveBookmarkIfNotSave();
 
             PlaylistHub.Current.Flush();
