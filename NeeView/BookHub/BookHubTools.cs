@@ -80,7 +80,7 @@ namespace NeeView
         /// </summary>
         /// <param name="path">パス</param>
         /// <returns>閉じたなら true</returns>
-        public static async Task<bool> CloseBookAsync(string path)
+        public static async Task<CloseBookResult> CloseBookAsync(string path)
         {
             return await CloseBookAsync(new List<string>() { path });
         }
@@ -90,7 +90,7 @@ namespace NeeView
         /// </summary>
         /// <param name="paths">パス候補</param>
         /// <returns>閉じたなら true</returns>
-        public static async Task<bool> CloseBookAsync(IEnumerable<string> paths)
+        public static async Task<CloseBookResult> CloseBookAsync(IEnumerable<string> paths)
         {
             bool isClosed;
             var bookAddress = BookHub.Current.Address;
@@ -105,7 +105,7 @@ namespace NeeView
                 isClosed = false;
             }
 
-            return isClosed;
+            return new CloseBookResult(isClosed, BookHub.Current.RequestLoadCount);
         }
 
         /// <summary>
@@ -113,7 +113,8 @@ namespace NeeView
         /// </summary>
         /// <param name="path">開くパス</param>
         /// <param name="oldPath">古いパス</param>
-        public static void RestoreBook(string path, string oldPath)
+        /// <param name="requestLoadCount">閉じたときのリクエストカウント。変化があれば別の要求があったとみなして本は開かない</param>
+        public static void RestoreBook(string path, string oldPath, int requestLoadCount)
         {
             if (path is null) return;
 
@@ -124,8 +125,23 @@ namespace NeeView
             }
 
             // 本を開く
-            BookHub.Current.RequestLoad(null, path, null, BookLoadOption.Resume | BookLoadOption.IsBook, false);
+            if (requestLoadCount == BookHub.Current.RequestLoadCount)
+            {
+                BookHub.Current.RequestLoad(null, path, null, BookLoadOption.Resume | BookLoadOption.IsBook, false);
+            }
         }
+    }
+
+    public struct CloseBookResult
+    {
+        public CloseBookResult(bool isClosed, int requestLoadCount)
+        {
+            IsClosed = isClosed;
+            RequestLoadCount = requestLoadCount;
+        }
+
+        public bool IsClosed { get; }
+        public int RequestLoadCount { get; }
     }
 }
 
