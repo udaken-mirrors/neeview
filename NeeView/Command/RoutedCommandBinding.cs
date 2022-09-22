@@ -140,6 +140,7 @@ namespace NeeView
                     {
                         _element.PreviewMouseUp -= Control_PreviewMouseUp;
                         _element.PreviewKeyDown -= Control_PreviewKeyDown;
+                        _element.CommandBindings.Clear();
                     }
 
                     if (_routedCommandTable != null)
