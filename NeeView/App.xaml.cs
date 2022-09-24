@@ -323,13 +323,14 @@ namespace NeeView
                 filename = Path.GetFullPath(Path.Combine(Environment.AssemblyFolder, @"..\..\..\..\..\NeeView.Terminator\bin", Environment.PlatformName, Environment.ConfigType, @"net6.0\NeeView.Terminator.exe"));
             }
 
-            // 10秒後にこのプロセスが残っていたら強制終了させる監視プロセスを発行
+            // 5秒後にこのプロセスが残っていたら強制終了させる監視プロセスを発行
+            int timeout = 5000;
             var process = Process.GetCurrentProcess();
             var info = new ProcessStartInfo();
             info.UseShellExecute = false;
             info.CreateNoWindow = true;
             info.FileName = filename;
-            info.Arguments = $"{process.Id} \"{process.ProcessName}\" {process.StartTime.ToFileTime()} {10000}";
+            info.Arguments = $"{process.Id} \"{process.ProcessName}\" {process.StartTime.ToFileTime()} {timeout}";
             Process.Start(info);
         }
 
