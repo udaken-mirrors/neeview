@@ -98,6 +98,39 @@
         </Component>
       </Directory>
       <Directory Id="dir767958332488D010DC9D9657D1813D0E" Name="Libraries">
+        <Component Id="cmp26BFEBA25745409B667F6677414587B3" Guid="*">
+          <File Id="filC83E5C3B2B497C53833A5CBD9FC3AEFE" KeyPath="yes" Source="$(var.ContentDir)\Libraries\NeeLaboratory.Remote.dll" />
+        </Component>
+        <Component Id="cmp7B7FB057136E980E28315EFF34DA6E2D" Guid="*">
+          <File Id="fil757E3CAB8829FCB673BC5EADF1167E11" KeyPath="yes" Source="$(var.ContentDir)\Libraries\NeeView.Susie.dll" />
+        </Component>
+        <Component Id="cmp7E097AA6ECE231B54C8959B819435B10" Guid="*">
+          <File Id="fil9337431E2EE73D2F619033995ED3355E" KeyPath="yes" Source="$(var.ContentDir)\Libraries\NeeView.Susie.Server.deps.json" />
+        </Component>
+        <Component Id="cmpEFD972A749059D262DE4E98A21C04679" Guid="*">
+          <File Id="fil9CDEFD6B54131E8E5D7DA4E706EF38D9" KeyPath="yes" Source="$(var.ContentDir)\Libraries\NeeView.Susie.Server.dll" />
+        </Component>
+        <Component Id="cmp5662F655FEA256B8A48F6153A7A4CB05" Guid="*">
+          <File Id="fil31D45A2577CF5DD1A34AA35B79146514" KeyPath="yes" Source="$(var.ContentDir)\Libraries\NeeView.Susie.Server.dll.config" />
+        </Component>
+        <Component Id="cmpD6FABCB882799C5DFD5EA93A3ECDAC85" Guid="*">
+          <File Id="fil77A8A621901F5BCA5A9618369AFD6330" KeyPath="yes" Source="$(var.ContentDir)\Libraries\NeeView.Susie.Server.exe" />
+        </Component>
+        <Component Id="cmp5A0F2B381A45356788D94441008293C3" Guid="*">
+          <File Id="filBFF799D9C20FAEE1983BDDF92246879A" KeyPath="yes" Source="$(var.ContentDir)\Libraries\NeeView.Susie.Server.runtimeconfig.json" />
+        </Component>
+        <Component Id="cmpD1FCACB3615A48BEC558DAE9A8B4D807" Guid="*">
+          <File Id="filF47319FEF7A7FD7AC98887F0C545756C" KeyPath="yes" Source="$(var.ContentDir)\Libraries\NeeView.Terminator.deps.json" />
+        </Component>
+        <Component Id="cmpA9384F31E90FE73D642D42CBF57E5BBB" Guid="*">
+          <File Id="fil0CE168005DC04C9C5B76C4D9A976CF95" KeyPath="yes" Source="$(var.ContentDir)\Libraries\NeeView.Terminator.dll" />
+        </Component>
+        <Component Id="cmpB52156CBCF5C1C548D3813DFCCACE04B" Guid="*">
+          <File Id="fil0C432F25B87D75E4551348AEA9B0B666" KeyPath="yes" Source="$(var.ContentDir)\Libraries\NeeView.Terminator.exe" />
+        </Component>
+        <Component Id="cmp3FF5CEC3798C9D6FD308A296826D87D6" Guid="*">
+          <File Id="filEFE9A2083F046B0EF52BD4E513473B62" KeyPath="yes" Source="$(var.ContentDir)\Libraries\NeeView.Terminator.runtimeconfig.json" />
+        </Component>
         <Directory Id="dirDBBA5749B3918E859ED43595BF20ABFA" Name="Themes">
           <Component Id="cmpE99940A9C89B2B2C9D6F072E51A114A4" Guid="*">
             <File Id="fil8E468CF2842299E35239F2DAE4BDDE8F" KeyPath="yes" Source="$(var.ContentDir)\Libraries\Themes\CustomThemeTemplate.json" />
@@ -118,29 +151,6 @@
             <File Id="filD4F502BF0360C6194F1F3C10E266FB51" KeyPath="yes" Source="$(var.ContentDir)\Libraries\Themes\LightTheme.json" />
           </Component>
         </Directory>
-      </Directory>
-      <Directory Id="dir475254C19E835F4A59A0E85CB38B60C3" Name="SusieServer">
-        <Component Id="cmp8795C8DF5858DC10E179B0AF368A818B" Guid="*">
-          <File Id="filA4DC4A81FFF92B8F9AC59F12493DEC56" KeyPath="yes" Source="$(var.ContentDir)\SusieServer\NeeLaboratory.Remote.dll" />
-        </Component>
-        <Component Id="cmp8BF3E42410A381F5697206338B849FE2" Guid="*">
-          <File Id="filD5A1D44D98FC12FE14B239188B573752" KeyPath="yes" Source="$(var.ContentDir)\SusieServer\NeeView.Susie.dll" />
-        </Component>
-        <Component Id="cmp32F961959205DCDBF81A0C0DAABBE0A3" Guid="*">
-          <File Id="fil8D7C8F36F466A52D40D3AB6D9AB16C86" KeyPath="yes" Source="$(var.ContentDir)\SusieServer\NeeView.Susie.Server.deps.json" />
-        </Component>
-        <Component Id="cmp795620D9B48C3A5D8E051EFB5998ED6B" Guid="*">
-          <File Id="filC2D999523E1AD742709BE8AE233723C9" KeyPath="yes" Source="$(var.ContentDir)\SusieServer\NeeView.Susie.Server.dll" />
-        </Component>
-        <Component Id="cmpBC87B89F0614476870E10356514A0B75" Guid="*">
-          <File Id="fil5EF71CF1C14D927891F0E7FC46DB80F2" KeyPath="yes" Source="$(var.ContentDir)\SusieServer\NeeView.Susie.Server.dll.config" />
-        </Component>
-        <Component Id="cmp385AE4A75B149E4E29FAE442633805E2" Guid="*">
-          <File Id="filC6DE5A3806951119F2DCCC0AD247C2FF" KeyPath="yes" Source="$(var.ContentDir)\SusieServer\NeeView.Susie.Server.exe" />
-        </Component>
-        <Component Id="cmp740B502C09BD6305A98F9AC3D45492C8" Guid="*">
-          <File Id="filF635585DA22F31FA92168FD1158D112D" KeyPath="yes" Source="$(var.ContentDir)\SusieServer\NeeView.Susie.Server.runtimeconfig.json" />
-        </Component>
       </Directory>
       <Directory Id="dir97F42FF68945B97AAE670945C4FDAE93" Name="x86">
         <Component Id="cmp7748EFA0DF27F725930CCAE3FDB1CA5E" Guid="*">
@@ -195,19 +205,23 @@
       <ComponentRef Id="cmp33C30AAD37872CE4355CA33B0DDA2127" />
       <ComponentRef Id="cmp7AAD167AF28B00F512B8879F3F0BD93D" />
       <ComponentRef Id="cmpE61E631FB4D9B5607DB3871EAC766ADA" />
+      <ComponentRef Id="cmp26BFEBA25745409B667F6677414587B3" />
+      <ComponentRef Id="cmp7B7FB057136E980E28315EFF34DA6E2D" />
+      <ComponentRef Id="cmp7E097AA6ECE231B54C8959B819435B10" />
+      <ComponentRef Id="cmpEFD972A749059D262DE4E98A21C04679" />
+      <ComponentRef Id="cmp5662F655FEA256B8A48F6153A7A4CB05" />
+      <ComponentRef Id="cmpD6FABCB882799C5DFD5EA93A3ECDAC85" />
+      <ComponentRef Id="cmp5A0F2B381A45356788D94441008293C3" />
+      <ComponentRef Id="cmpD1FCACB3615A48BEC558DAE9A8B4D807" />
+      <ComponentRef Id="cmpA9384F31E90FE73D642D42CBF57E5BBB" />
+      <ComponentRef Id="cmpB52156CBCF5C1C548D3813DFCCACE04B" />
+      <ComponentRef Id="cmp3FF5CEC3798C9D6FD308A296826D87D6" />
       <ComponentRef Id="cmpE99940A9C89B2B2C9D6F072E51A114A4" />
       <ComponentRef Id="cmp7280C2B8F7AFC6538BAA5ED1BF4778D2" />
       <ComponentRef Id="cmpDE76C3E03CA1B6962098D326CC0E49DA" />
       <ComponentRef Id="cmp3A8061AB8EA93D93C58E96E280C6F23D" />
       <ComponentRef Id="cmp17A919F686DC0817DE75F7CE2D29CA44" />
       <ComponentRef Id="cmp95A438EB3336A6879800366B519D228D" />
-      <ComponentRef Id="cmp8795C8DF5858DC10E179B0AF368A818B" />
-      <ComponentRef Id="cmp8BF3E42410A381F5697206338B849FE2" />
-      <ComponentRef Id="cmp32F961959205DCDBF81A0C0DAABBE0A3" />
-      <ComponentRef Id="cmp795620D9B48C3A5D8E051EFB5998ED6B" />
-      <ComponentRef Id="cmpBC87B89F0614476870E10356514A0B75" />
-      <ComponentRef Id="cmp385AE4A75B149E4E29FAE442633805E2" />
-      <ComponentRef Id="cmp740B502C09BD6305A98F9AC3D45492C8" />
       <ComponentRef Id="cmp7748EFA0DF27F725930CCAE3FDB1CA5E" />
       <ComponentRef Id="cmp41F56B027916C38E8B4D46246646D522" />
       <ComponentRef Id="cmp04F56CB91472CC3AE3A8B56EFEA374DD" />

@@ -297,7 +297,15 @@ namespace NeeView
                 Trace.Fail($"App.Terminate: {DateTime.Now}: {ex.ToStackString()}");
             }
 
-            CallProcessTerminator();
+            try
+            {
+                CallProcessTerminator();
+            }
+            catch (Exception ex)
+            {
+                Debug.Assert(false, "Cannot start Terminator.");
+                Trace.Fail($"Cannot start Terminator: {ex.Message}");
+            }
         }
 
         /// <summary>
@@ -305,7 +313,7 @@ namespace NeeView
         /// 現象ではPdfDocumentによってゾンビプロセス化してしまうため。
         /// </summary>
         /// <seealso href="https://github.com/microsoft/CsWinRT/issues/1249"/>
-        private void CallProcessTerminator()
+        private static void CallProcessTerminator()
         {
             var filename = Path.Combine(Environment.LibrariesPath, "Libraries\\NeeView.Terminator.exe");
 
