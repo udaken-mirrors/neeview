@@ -130,6 +130,8 @@ $projectDir = "$solutionDir\$product"
 $project = "$projectDir\$product.csproj"
 $projectSusieDir = "$solutionDir\NeeView.Susie.Server"
 $projectSusie = "$projectSusieDir\NeeView.Susie.Server.csproj"
+$projectTerminateDir = "$solutionDir\NeeView.Terminator"
+$ptojectTerminate = "$projectTerminateDir\NeeView.Terminator.csproj"
 
 #-----------------------
 # procject output dir
@@ -151,6 +153,7 @@ function Build-Project($platform)
 {
 	& dotnet publish $project -p:PublishProfile=FolderProfile-$platform.pubxml -c Release
 	& dotnet publish $projectSusie -p:PublishProfile=FolderProfile-$platform.pubxml -c Release
+	& dotnet publish $ptojectTerminate -p:PublishProfile=FolderProfile-$platform.pubxml -c Release
 }
 
 #----------------------

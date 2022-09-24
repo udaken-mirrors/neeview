@@ -58,8 +58,7 @@ namespace NeeView.Native
                 return false;
             }
 
-            path = Path.Combine(path, IntPtr.Size == 4 ? "x86" : "x64");
-            path = Path.Combine(path, "NeeView.Interop.dll");
+            path = Path.Combine(path, Environment.PlatformName, "NeeView.Interop.dll");
 
             return File.Exists(path) && NativeMethods.LoadLibrary(path) != IntPtr.Zero;
         }

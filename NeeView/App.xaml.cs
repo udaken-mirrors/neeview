@@ -296,6 +296,33 @@ namespace NeeView
                 Debug.Assert(false, "Application Terminate failed!!");
                 Trace.Fail($"App.Terminate: {DateTime.Now}: {ex.ToStackString()}");
             }
+
+            CallProcessTerminator();
+        }
+
+        /// <summary>
+        /// 自プロセスがゾンビ化しても停止させる処理。
+        /// 現象ではPdfDocumentによってゾンビプロセス化してしまうため。
+        /// </summary>
+        /// <seealso href="https://github.com/microsoft/CsWinRT/issues/1249"/>
+        private void CallProcessTerminator()
+        {
+            var filename = Path.Combine(Environment.LibrariesPath, "Libraries\\NeeView.Terminator.exe");
+
+            // 開発中は直接プロジェクトを参照する
+            if (Environment.IsDevPackage)
+            {
+                filename = Path.GetFullPath(Path.Combine(Environment.AssemblyFolder, @"..\..\..\..\..\NeeView.Terminator\bin", Environment.PlatformName, Environment.ConfigType, @"net6.0\NeeView.Terminator.exe"));
+            }
+
+            // 10秒後にこのプロセスが残っていたら強制終了させる監視プロセスを発行
+            var process = Process.GetCurrentProcess();
+            var info = new ProcessStartInfo();
+            info.UseShellExecute = false;
+            info.CreateNoWindow = true;
+            info.FileName = filename;
+            info.Arguments = $"{process.Id} \"{process.ProcessName}\" {process.StartTime.ToFileTime()} {10000}";
+            Process.Start(info);
         }
 
 
@@ -307,5 +334,8 @@ namespace NeeView
             SaveData.Current.DisableSave();
             Shutdown();
         }
+
+
+
     }
 }

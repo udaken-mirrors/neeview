@@ -238,7 +238,7 @@ namespace NeeView
         /// </summary>
         public static string LibrariesPlatformPath
         {
-            get { return Path.Combine(LibrariesPath, IsX64 ? "x64" : "x86"); }
+            get { return Path.Combine(LibrariesPath, PlatformName); }
         }
 
         /// <summary>
@@ -247,6 +247,11 @@ namespace NeeView
         public static bool IsX64
         {
             get { return IntPtr.Size == 8; }
+        }
+
+        public static string PlatformName
+        {
+            get { return IsX64 ? "x64" : "x86"; }
         }
 
         // データ保存にアプリケーションデータフォルダーを使用するか
