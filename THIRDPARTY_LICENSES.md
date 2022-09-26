@@ -47,9 +47,9 @@ DLL: pdfium.dll
 
 DLL: PdfiumViewer.dll
 
-* Copyright (c) Pieter van Ginkel
-* URL: [PdfiumViewer](https://github.com/pvginkel/PdfiumViewer)
-* License: [Apache License 2.0](https://github.com/pvginkel/PdfiumViewer/blob/master/LICENSE)
+* Copyright (c) Pieter van Ginkel, Bluegrams
+* URL: [PdfiumViewer](https://github.com/Bluegrams/PdfiumViewer)
+* License: [Apache License 2.0](https://github.com/Bluegrams/PdfiumViewer/blob/master/LICENSE)
 
 ### MagicScaler
 
