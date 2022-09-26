@@ -323,6 +323,9 @@ namespace NeeView
         /// <seealso href="https://github.com/microsoft/CsWinRT/issues/1249"/>
         private static void CallProcessTerminator()
         {
+            // NOTE: PDFでWinRTのレンダラーを使用している場合のみ機能させる
+            if (PdfArchiveConfig.GetPdfRenderer() != PdfRenderer.WinRT) return;
+
             var filename = Path.Combine(Environment.LibrariesPath, "Libraries\\NeeView.Terminator.exe");
 
             // 開発中は直接プロジェクトを参照する

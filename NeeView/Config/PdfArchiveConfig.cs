@@ -7,7 +7,7 @@ namespace NeeView
 {
     public class PdfArchiveConfig : BindableBase
     {
-        public static bool IsPdfArchiveSupported => Windows10Tools.IsWindows10_OrGreater(10240);
+        public static bool IsPdfArchiveSupported => GetPdfRenderer() == PdfRenderer.Pdfium || Windows10Tools.IsWindows10_OrGreater(10240);
 
         public static FileTypeCollection DefaultSupportFileTypes { get; } = new FileTypeCollection(".pdf");
 
@@ -36,5 +36,24 @@ namespace NeeView
             get { return _renderSize; }
             set { SetProperty(ref _renderSize, new Size(Math.Max(value.Width, 256), Math.Max(value.Height, 256))); }
         }
+
+
+        public static PdfRenderer GetPdfRenderer()
+        {
+            return Environment.PdfRenderer switch
+            {
+                PdfWinRTArchiver.Identify
+                    => PdfRenderer.WinRT,
+                _
+                    => PdfRenderer.Pdfium,
+            };
+        }
     }
+
+    public enum PdfRenderer
+    {
+        Pdfium,
+        WinRT,
+    }
+
 }

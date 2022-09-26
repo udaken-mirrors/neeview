@@ -1,4 +1,5 @@
 ﻿using NeeView.Properties;
+using PdfiumViewer;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -28,6 +29,7 @@ namespace NeeView
         private static string? _dateVersion;
         private static bool? _isUseLocalApplicationDataFolder;
         private static List<string>? _cultures;
+        private static string? _pdfRenderer;
         private static string? _logFile;
         private static Encoding? _encoding;
 
@@ -348,6 +350,19 @@ namespace NeeView
                     _encoding = Encoding.GetEncoding(System.Globalization.CultureInfo.CurrentCulture.TextInfo.ANSICodePage);
                 }
                 return _encoding;
+            }
+        }
+
+
+        public static string PdfRenderer
+        {
+            get
+            {
+                if (_pdfRenderer is null)
+                {
+                    _pdfRenderer = ConfigurationManager.AppSettings["PdfRenderer"] ?? "Pdfium";
+                }
+                return _pdfRenderer;
             }
         }
 

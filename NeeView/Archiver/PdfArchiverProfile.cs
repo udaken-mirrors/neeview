@@ -41,13 +41,13 @@ namespace NeeView
 
 
             [OnDeserializing]
-            private void OnDeserializing(StreamingContext c)
+            private void OnDeserializing(StreamingContext _)
             {
                 this.InitializePropertyDefaultValues();
             }
 
             [OnDeserialized]
-            private void OnDeserialized(StreamingContext c)
+            private void OnDeserialized(StreamingContext _)
             {
 #pragma warning disable CS0618
                 if (this.RenderSize == default)

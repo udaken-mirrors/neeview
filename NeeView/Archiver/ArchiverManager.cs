@@ -235,7 +235,7 @@ namespace NeeView
                     archiver = new SevenZipArchiver(path, source);
                     break;
                 case ArchiverType.PdfArchiver:
-                    archiver = new PdfArchiver(path, source);
+                    archiver = PdfArchiverFactory.Create(path, source);
                     break;
                 case ArchiverType.MediaArchiver:
                     archiver = new MediaArchiver(path, source);
