@@ -250,8 +250,8 @@ namespace NeeView
         /// <param name="e"></param>
         private void Application_Exit(object sender, ExitEventArgs e)
         {
-            Terminate();
-            Trace.WriteLine("App.Exit: done.");
+            Trace.WriteLine("App.Exit:");
+            Terminate(true);
         }
 
         /// <summary>
@@ -260,14 +260,19 @@ namespace NeeView
         private void Application_SessionEnding(object sender, SessionEndingCancelEventArgs e)
         {
             Trace.WriteLine($"App.SessionEnding: {e.ReasonSessionEnding}");
-            Terminate();
-        }
 
+            if (this.MainWindow is NeeView.MainWindow mainWindow)
+            {
+                mainWindow.FinalizeMainWindow();
+            }
+
+            Terminate(false);
+        }
 
         /// <summary>
         /// 終了時処理。設定の保存等
         /// </summary>
-        private void Terminate()
+        private void Terminate(bool callProcessTerminator)
         {
             if (_isTerminated) return;
             _isTerminated = true;
@@ -297,14 +302,17 @@ namespace NeeView
                 Trace.Fail($"App.Terminate: {DateTime.Now}: {ex.ToStackString()}");
             }
 
-            try
+            if (callProcessTerminator)
             {
-                CallProcessTerminator();
-            }
-            catch (Exception ex)
-            {
-                Debug.Assert(false, "Cannot start Terminator.");
-                Trace.Fail($"Cannot start Terminator: {ex.Message}");
+                try
+                {
+                    CallProcessTerminator();
+                }
+                catch (Exception ex)
+                {
+                    Debug.Assert(false, "Cannot start Terminator.");
+                    Trace.Fail($"Cannot start Terminator: {ex.Message}");
+                }
             }
         }
 

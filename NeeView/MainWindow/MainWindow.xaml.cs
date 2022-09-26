@@ -553,6 +553,21 @@ namespace NeeView
 
         private void MainWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
+            Trace.WriteLine($"Window.Closing:");
+            FinalizeMainWindow();
+        }
+
+        private void MainWindow_Closed(object sender, EventArgs e)
+        {
+            Trace.WriteLine($"Window.Closed:");
+        }
+
+        /// <summary>
+        /// 終了処理
+        /// </summary>
+        public void FinalizeMainWindow()
+        {
+            if (_vm.IsClosing) return;
             _vm.IsClosing = true;
 
             // レンダリングイベント購読停止
@@ -581,11 +596,6 @@ namespace NeeView
 
             // ウィンドウ座標の保存
             StoreWindowPlacement();
-        }
-
-        private void MainWindow_Closed(object sender, EventArgs e)
-        {
-            Debug.WriteLine("Window.Closed done.");
         }
 
         #endregion
