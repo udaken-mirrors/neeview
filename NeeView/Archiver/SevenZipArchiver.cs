@@ -52,8 +52,6 @@ namespace NeeView
         // Solid archive ?
         private bool IsSolid()
         {
-            ThrowIfDisposed();
-
             return _accessor.IsSolid;
         }
 
@@ -61,7 +59,8 @@ namespace NeeView
         protected override async Task<List<ArchiveEntry>> GetEntriesInnerAsync(CancellationToken token)
         {
             token.ThrowIfCancellationRequested();
-            ThrowIfDisposed();
+
+            if (_disposedValue) return new List<ArchiveEntry>();
 
             var list = new List<ArchiveEntry>();
             var directories = new List<ArchiveEntry>();
@@ -136,7 +135,7 @@ namespace NeeView
             Debug.Assert(!string.IsNullOrEmpty(exportFileName));
             if (entry.Id < 0) throw new ArgumentException("Cannot open this entry: " + entry.EntryName);
 
-            ThrowIfDisposed();
+            if (_disposedValue) return;
 
             using (Stream fs = new FileStream(exportFileName, FileMode.Create, FileAccess.Write))
             {
@@ -149,7 +148,7 @@ namespace NeeView
         /// </summary>
         public override async Task<bool> CanPreExtractAsync(CancellationToken token)
         {
-            ThrowIfDisposed();
+            if (_disposedValue) return false;
 
             if (!IsSolid()) return false;
 
@@ -165,7 +164,7 @@ namespace NeeView
         {
             Debug.Assert(!string.IsNullOrEmpty(directory));
 
-            ThrowIfDisposed();
+            if (_disposedValue) return;
 
             if (Config.Current.Performance.IsPreExtractToMemory)
             {
@@ -181,7 +180,7 @@ namespace NeeView
         {
             Debug.Assert(!string.IsNullOrEmpty(directory));
 
-            ThrowIfDisposed();
+            if (_disposedValue) return;
 
             var entries = await GetEntriesAsync(token);
             token.ThrowIfCancellationRequested();
@@ -205,7 +204,7 @@ namespace NeeView
 
         private async Task PreExtractMemoryAsync(CancellationToken token)
         {
-            ThrowIfDisposed();
+            if (_disposedValue) return;
 
             var entries = await GetEntriesAsync(token);
             token.ThrowIfCancellationRequested();

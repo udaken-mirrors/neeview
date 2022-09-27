@@ -80,7 +80,7 @@ namespace NeeView
         {
             if (_disposedValue) return;
 
-            JobEngine.Current.Order(this, new List<JobOrder>());
+            JobEngine.Current.CancelOrder(this);
         }
 
         #region IDisposable Support
@@ -139,7 +139,7 @@ namespace NeeView
         {
             if (_disposedValue) return;
 
-            JobEngine.Current.Order(this, new List<JobOrder>());
+            JobEngine.Current.CancelOrder(this);
         }
 
         #region IDisposable Support

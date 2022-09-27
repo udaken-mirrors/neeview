@@ -430,7 +430,7 @@ namespace NeeView
 
         public CommandElement? GetFixedCommandElement(string commandName, bool allowRecursive)
         {
-            ThrowIfDisposed();
+            if (_disposedValue) return null;
 
             CommandTable.Current.TryGetValue(GetFixedCommandName(commandName, allowRecursive), out CommandElement? command);
             return command;
@@ -438,7 +438,7 @@ namespace NeeView
 
         public RoutedUICommand? GetFixedRoutedCommand(string commandName, bool allowRecursive)
         {
-            ThrowIfDisposed();
+            if (_disposedValue) return null;
 
             this.Commands.TryGetValue(GetFixedCommandName(commandName, allowRecursive), out RoutedUICommand? command);
             return command;

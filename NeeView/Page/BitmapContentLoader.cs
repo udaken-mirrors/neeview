@@ -145,9 +145,10 @@ namespace NeeView
         /// </summary>
         protected void PictureCreateBitmapSource(CancellationToken token)
         {
+            if (_disposedValue) return;
+
             try
             {
-                ThrowIfDisposed();
                 _content.Picture?.CreateImageSource(Size.Empty, token);
             }
             catch (OperationCanceledException)
@@ -219,8 +220,8 @@ namespace NeeView
         public virtual async Task LoadThumbnailAsync(CancellationToken token)
         {
             token.ThrowIfCancellationRequested();
-            ThrowIfDisposed();
-            
+            if (_disposedValue) return;
+
             await _content.Thumbnail.InitializeAsync(_content.Entry, null, token);
             if (_content.Thumbnail.IsValid) return;
 

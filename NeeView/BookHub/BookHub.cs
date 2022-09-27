@@ -1013,8 +1013,6 @@ namespace NeeView
         {
             if (address is null) throw new ArgumentNullException(nameof(address));
 
-            ThrowIfDisposed();
-
             var book = _book;
             if (book is not null && book.Path == address)
             {

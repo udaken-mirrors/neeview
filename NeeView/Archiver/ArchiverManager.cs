@@ -167,7 +167,7 @@ namespace NeeView
         // サポートしているアーカイバーがあるか判定
         public bool IsSupported(string fileName, bool isAllowFileSystem = true, bool isAllowMedia = true)
         {
-            ThrowIfDisposed();
+            if (_disposedValue) return false;
 
             return GetSupportedType(fileName, isAllowFileSystem, isAllowMedia) != ArchiverType.None;
         }
@@ -176,7 +176,7 @@ namespace NeeView
         // サポートしているアーカイバーを取得
         public ArchiverType GetSupportedType(string fileName, bool isArrowFileSystem = true, bool isAllowMedia = true)
         {
-            ThrowIfDisposed();
+            if (_disposedValue) return ArchiverType.None;
 
             if (isArrowFileSystem && (fileName.Last() == '\\' || fileName.Last() == '/'))
             {
@@ -203,7 +203,7 @@ namespace NeeView
         /// <returns></returns>
         public bool IsExcludedFolder(string path)
         {
-            ThrowIfDisposed();
+            if (_disposedValue) return false;
 
             return Config.Current.Book.Excludes.Contains(LoosePath.GetFileName(path));
         }
@@ -331,7 +331,7 @@ namespace NeeView
         /// 
         public bool Exists(string path, bool isAllowFileSystem)
         {
-            ThrowIfDisposed();
+            if (_disposedValue) return false;
 
             if (isAllowFileSystem)
             {
@@ -351,7 +351,7 @@ namespace NeeView
         /// <returns>実在するアーカイブファイルのパス。見つからなかった場合はnull</returns>
         public string? GetExistPathName(string path)
         {
-            ThrowIfDisposed();
+            if (_disposedValue) return null;
 
             if (Exists(path, true))
             {

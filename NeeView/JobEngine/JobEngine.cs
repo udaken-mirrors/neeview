@@ -145,22 +145,24 @@ namespace NeeView
             _scheduler.UnregistClient(client);
         }
 
-        public List<JobSource> Order(JobClient sender, List<JobOrder> orders)
+        public void CancelOrder(JobClient client)
         {
-            ThrowIfDisposed();
+            if (_disposedValue) return;
 
-            return _scheduler.Order(sender, orders);
+            _scheduler.Order(client, new List<JobOrder>());
+        }
+
+        public List<JobSource> Order(JobClient client, List<JobOrder> orders)
+        {
+            if (_disposedValue) return new List<JobSource>();
+
+            return _scheduler.Order(client, orders);
         }
 
         #endregion
 
         #region IDisposable Support
         private bool _disposedValue = false;
-
-        protected void ThrowIfDisposed()
-        {
-            if (_disposedValue) throw new ObjectDisposedException(GetType().FullName);
-        }
 
         protected virtual void Dispose(bool disposing)
         {

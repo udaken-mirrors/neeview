@@ -1,5 +1,6 @@
 ﻿using SevenZip;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
@@ -51,6 +52,7 @@ namespace NeeView
             {
                 lock (_lock)
                 {
+                    if (_disposedValue) return "";
                     return GetExtractor().Format.ToString();
                 }
             }
@@ -62,6 +64,7 @@ namespace NeeView
             {
                 lock (_lock)
                 {
+                    if (_disposedValue) return false;
                     return GetExtractor().IsSolid;
                 }
             }
@@ -74,6 +77,7 @@ namespace NeeView
             {
                 lock (_lock)
                 {
+                    if (_disposedValue) return new List<ArchiveFileInfo>().AsReadOnly();
                     // TODO: 重い処理。キャンセルできるようにしたい
                     return GetExtractor().ArchiveFileData;
                 }
@@ -118,7 +122,7 @@ namespace NeeView
         {
             lock (_lock)
             {
-                ThrowIfDisposed();
+                if (_disposedValue) return;
                 GetExtractor().ExtractFile(index, extractStream);
             }
         }
