@@ -109,12 +109,12 @@ namespace NeeView
         }
 
         // 期限切れ処理
-        private void Extractor_Expired(object? sender, ArchiveEntry entry)
+        private void Extractor_Expired(object? sender, ArchiveEntryExtractorExpiredEventArgs args)
         {
-            if (entry is null) return;
+            if (args.ArchiveEntry is null) return;
 
             //Debug.WriteLine($"EXT: Remove {entry.Ident}");
-            var extractor = Remove(entry.Ident);
+            var extractor = Remove(args.ArchiveEntry.Ident);
             extractor?.Dispose();
         }
     }

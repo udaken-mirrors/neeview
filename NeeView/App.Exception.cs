@@ -27,7 +27,9 @@ namespace NeeView
         /// </summary>
         private void InitializeUnhandledException()
         {
+#if DEBUG
             TaskScheduler.UnobservedTaskException += TaskScheduler_UnobservedTaskException;
+#endif
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
             this.DispatcherUnhandledException += Application_DispatcherUnhandledException;
         }

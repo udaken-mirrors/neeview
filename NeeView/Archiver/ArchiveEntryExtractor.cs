@@ -40,12 +40,12 @@ namespace NeeView
             {
                 await Task.Delay(1000);
                 //Debug.WriteLine($"## Expired.{(_tempFile is null ? 'o' : 'x')}: {_extractFileName}");
-                Expired?.Invoke(this, _entry);
+                Expired?.Invoke(this, new(_entry, t.Exception));
             });
         }
 
-
-        public event EventHandler<ArchiveEntry>? Expired;
+        // 期限切れ
+        public event EventHandler<ArchiveEntryExtractorExpiredEventArgs>? Expired;
 
 
         public async Task<TempFile> WaitAsync(CancellationToken token)
@@ -88,6 +88,4 @@ namespace NeeView
             GC.SuppressFinalize(this);
         }
     }
-
-
 }
