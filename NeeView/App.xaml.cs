@@ -261,11 +261,6 @@ namespace NeeView
         {
             Trace.WriteLine($"App.SessionEnding: {e.ReasonSessionEnding}");
 
-            if (this.MainWindow is NeeView.MainWindow mainWindow)
-            {
-                mainWindow.FinalizeMainWindow();
-            }
-
             Terminate(false);
         }
 

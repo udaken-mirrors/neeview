@@ -185,7 +185,6 @@ namespace NeeView
             Flush();
             SaveUserSetting(sync, handleException);
             SaveHistory(handleException);
-            SaveBookmark(sync, handleException);
             RemoveBookmarkIfNotSave();
 
             PlaylistHub.Current.Flush();
