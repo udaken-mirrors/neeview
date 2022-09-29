@@ -19,11 +19,13 @@ namespace NeeView
 
 
         private readonly DelayAction _delaySaveBookmark;
+        private readonly DelayAction _delaySaveHistory;
 
 
         private SaveDataSync()
         {
             _delaySaveBookmark = new DelayAction(App.Current.Dispatcher, TimeSpan.FromSeconds(0.2), () => SaveBookmark(true, true), TimeSpan.FromSeconds(0.5));
+            _delaySaveHistory = new DelayAction(App.Current.Dispatcher, TimeSpan.FromSeconds(5.0), () => SaveHistory(true), TimeSpan.FromSeconds(30.0));
 
             RemoteCommandService.Current.AddReciever("LoadUserSetting", LoadUserSetting);
             RemoteCommandService.Current.AddReciever("LoadHistory", LoadHistory);
@@ -41,7 +43,9 @@ namespace NeeView
                 if (disposing)
                 {
                     BookmarkCollection.Current.BookmarkChanged -= BookmarkCollection_BookmarkChanged;
+                    BookHistoryCollection.Current.HistoryChanged -= BookHistoryCollection_HistoryChanged;
                     _delaySaveBookmark.Dispose();
+                    _delaySaveHistory.Dispose();
                 }
                 _disposedValue = true;
             }
@@ -58,7 +62,9 @@ namespace NeeView
         public void Initialize()
         {
             BookmarkCollection.Current.BookmarkChanged += BookmarkCollection_BookmarkChanged;
+            BookHistoryCollection.Current.HistoryChanged += BookHistoryCollection_HistoryChanged;
         }
+
 
         private void BookmarkCollection_BookmarkChanged(object? sender, BookmarkCollectionChangedEventArgs e)
         {
@@ -66,9 +72,16 @@ namespace NeeView
             _delaySaveBookmark.Request();
         }
 
+        private void BookHistoryCollection_HistoryChanged(object? sender, BookMementoCollectionChangedArgs e)
+        {
+            //Debug.WriteLine($"{nameof(SaveDataSync)}.{nameof(BookHistoryCollection_HistoryChanged)}: Request.");
+            _delaySaveHistory.Request();
+        }
+
         public void Flush()
         {
             _delaySaveBookmark.Flush();
+            _delaySaveHistory.Flush();
         }
 
         private void LoadUserSetting(RemoteCommand command)
@@ -172,6 +185,11 @@ namespace NeeView
             }
         }
 
+        private static void RemoveHistoryIfNotSave()
+        {
+            SaveData.Current.RemoveHistoryIfNotSave();
+        }
+
         private static void RemoveBookmarkIfNotSave()
         {
             SaveData.Current.RemoveBookmarkIfNotSave();
@@ -183,11 +201,11 @@ namespace NeeView
         public void SaveAll(bool sync, bool handleException)
         {
             Flush();
-            SaveUserSetting(sync, handleException);
-            SaveHistory(handleException);
-            RemoveBookmarkIfNotSave();
-
             PlaylistHub.Current.Flush();
+            SaveUserSetting(sync, handleException);
+
+            RemoveHistoryIfNotSave();
+            RemoveBookmarkIfNotSave();
         }
     }
 }

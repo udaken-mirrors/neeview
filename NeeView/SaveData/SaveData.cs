@@ -20,6 +20,8 @@ namespace NeeView
         private string? _historyFilenameToDelete;
         private string? _bookmarkFilenameToDelete;
         private string? _pagemarkFilenameToDelete;
+        private bool _historyMergeFlag;
+        private DateTime _historyLastWriteTime;
 
         // 設定のバックアップを１起動に付き１回に制限するフラグ
         private bool _backupOnce = true;
@@ -139,10 +141,12 @@ namespace NeeView
                 var filenameV1 = Path.ChangeExtension(filename, ".xml");
                 var failedDialog = new LoadFailedDialog(Resources.Notice_LoadHistoryFailed, Resources.Notice_LoadHistoryFailedTitle);
 
-                if (extension == ".json" && File.Exists(filename))
+                var fileInfo = new FileInfo(filename);
+                if (extension == ".json" && fileInfo.Exists)
                 {
                     BookHistoryCollection.Memento? memento = SafetyLoad(BookHistoryCollection.Memento.Load, HistoryFilePath, failedDialog);
                     BookHistoryCollection.Current.Restore(memento, true);
+                    _historyLastWriteTime = fileInfo.LastWriteTime;
                 }
                 // before v.37
                 else if (File.Exists(filenameV1))
@@ -307,41 +311,39 @@ namespace NeeView
             }
         }
 
-        // 履歴をファイルに保存
+        /// <summary>
+        /// 履歴をファイルに保存
+        /// </summary>
         public void SaveHistory()
         {
             if (!IsEnableSave) return;
-
-            // 現在の本を履歴に登録
-            BookHub.Current.SaveBookMemento(); // TODO: タイミングに問題有り？
+            if (!Config.Current.History.IsSaveHistory) return;
 
             using (ProcessLock.Lock())
             {
-                if (Config.Current.History.IsSaveHistory)
-                {
-                    var bookHistoryMemento = BookHistoryCollection.Current.CreateMemento();
+                //Debug.WriteLine("SaveData.SaveHistory(): saving.");
+                var bookHistoryMemento = BookHistoryCollection.Current.CreateMemento();
 
-                    try
-                    {
-                        var fileInfo = new FileInfo(HistoryFilePath);
-                        if (fileInfo.Exists && fileInfo.LastWriteTime > App.Current.StartTime)
-                        {
-                            var failedDialog = new LoadFailedDialog(Resources.Notice_LoadHistoryFailed, Resources.Notice_LoadHistoryFailedTitle);
-                            var margeMemento = SafetyLoad(BookHistoryCollection.Memento.Load, HistoryFilePath, failedDialog);
-                            bookHistoryMemento.Merge(margeMemento);
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        Debug.WriteLine(ex.Message);
-                    }
-
-                    SafetySave(bookHistoryMemento.Save, HistoryFilePath, false);
-                }
-                else
+                try
                 {
-                    FileIO.RemoveFile(HistoryFilePath);
+                    // NOTE: 一度マージが発生したらその後は常にマージを行う。負荷が高いのが問題。
+                    var fileInfo = new FileInfo(HistoryFilePath);
+                    if (fileInfo.Exists && (_historyMergeFlag || fileInfo.LastWriteTime > _historyLastWriteTime))
+                    {
+                        //Debug.WriteLine("SaveData.SaveHistory(): merge.");
+                        var failedDialog = new LoadFailedDialog(Resources.Notice_LoadHistoryFailed, Resources.Notice_LoadHistoryFailedTitle);
+                        var margeMemento = SafetyLoad(BookHistoryCollection.Memento.Load, HistoryFilePath, failedDialog);
+                        bookHistoryMemento.Merge(margeMemento);
+                        _historyMergeFlag = true;
+                    }
                 }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine(ex.Message);
+                }
+
+                SafetySave(bookHistoryMemento.Save, HistoryFilePath, false);
+                _historyLastWriteTime = File.GetLastWriteTime(HistoryFilePath);
             }
 
             RemoveLegacyHistory();
@@ -356,6 +358,20 @@ namespace NeeView
 
             RemoveLegacyFile(_historyFilenameToDelete);
             _historyFilenameToDelete = null;
+        }
+
+        /// <summary>
+        /// 必要であるならば、Historyを削除
+        /// </summary>
+        public void RemoveHistoryIfNotSave()
+        {
+            if (!IsEnableSave) return;
+            if (Config.Current.History.IsSaveHistory) return;
+
+            using (ProcessLock.Lock())
+            {
+                FileIO.RemoveFile(HistoryFilePath);
+            }
         }
 
         /// <summary>
