@@ -40,7 +40,7 @@ namespace NeeView
         {
             _saveQueue = new Dictionary<string, ThumbnailCacheItem>();
             _updateQueue = new Dictionary<string, ThumbnailCacheHeader>();
-            _delaySaveQueue = new DelayAction(App.Current.Dispatcher, TimeSpan.FromSeconds(0.5), SaveQueue, TimeSpan.FromSeconds(2.0));
+            _delaySaveQueue = new DelayAction(SaveQueue, TimeSpan.FromSeconds(2.0));
 
             App.Current.CriticalError += (s, e) => Disable();
         }

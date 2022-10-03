@@ -24,8 +24,8 @@ namespace NeeView
 
         private SaveDataSync()
         {
-            _delaySaveBookmark = new DelayAction(App.Current.Dispatcher, TimeSpan.FromSeconds(0.2), () => SaveBookmark(true, true), TimeSpan.FromSeconds(0.5));
-            _delaySaveHistory = new DelayAction(App.Current.Dispatcher, TimeSpan.FromSeconds(5.0), () => SaveHistory(true), TimeSpan.FromSeconds(30.0));
+            _delaySaveBookmark = new DelayAction(() => SaveBookmark(true, true), TimeSpan.FromSeconds(0.5));
+            _delaySaveHistory = new DelayAction(() => SaveHistory(true), TimeSpan.FromSeconds(30.0));
 
             RemoteCommandService.Current.AddReciever("LoadUserSetting", LoadUserSetting);
             RemoteCommandService.Current.AddReciever("LoadHistory", LoadHistory);

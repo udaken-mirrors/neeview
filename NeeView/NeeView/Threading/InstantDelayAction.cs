@@ -3,24 +3,34 @@ using System.Windows.Threading;
 
 namespace NeeView.Threading
 {
-    public class SimpleDelayAction
+    /// <summary>
+    /// 遅延実行
+    /// 都度アクションと遅延時間を要求するタイプ
+    /// </summary>
+    public class InstantDelayAction
     {
         private Action? _action;
         private readonly DispatcherTimer _timer;
         private readonly object _lock = new();
 
-        public SimpleDelayAction()
+
+        public InstantDelayAction() : this(App.Current.Dispatcher)
         {
-            _timer = new DispatcherTimer(DispatcherPriority.Normal, App.Current.Dispatcher);
+        }
+
+        public InstantDelayAction(Dispatcher dispatcher)
+        {
+            _timer = new DispatcherTimer(DispatcherPriority.Normal, dispatcher);
             _timer.Tick += Timer_Tick;
         }
 
+
         public void Request(Action action, TimeSpan delay)
         {
-            Cancel();
-
             lock (_lock)
             {
+                Cancel();
+
                 _action = action ?? throw new ArgumentNullException(nameof(action));
                 _timer.Interval = delay;
                 _timer.Start();
@@ -40,26 +50,22 @@ namespace NeeView.Threading
         {
             lock (_lock)
             {
-                if (_action is null)
+                _timer.Stop();
+
+                if (_action is not null)
                 {
-                    return false;
+                    _action.Invoke();
+                    _action = null;
+                    return true;
                 }
 
-                _timer.Stop();
-                _action?.Invoke();
-                _action = null;
-                return true;
+                return false;
             }
         }
 
         private void Timer_Tick(object? sender, EventArgs e)
         {
-            lock (_lock)
-            {
-                _timer.Stop();
-                _action?.Invoke();
-                _action = null;
-            }
+            Flush();
         }
     }
 }

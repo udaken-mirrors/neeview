@@ -12,7 +12,7 @@ namespace NeeView
     {
         private FrameworkElement? _content;
         private TextBlock? _messageTextBlock;
-        private readonly SimpleDelayAction _delayReconnect = new();
+        private readonly InstantDelayAction _delayReconnect = new();
         private readonly object _lock = new();
 
         public ViewContentControl(FrameworkElement? content)

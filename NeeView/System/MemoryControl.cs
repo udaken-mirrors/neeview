@@ -28,7 +28,7 @@ namespace NeeView
 
         private MemoryControl()
         {
-            _delayAction = new DelayAction(App.Current.Dispatcher, TimeSpan.FromSeconds(0.2), GarbageCollectCore, TimeSpan.FromMilliseconds(100));
+            _delayAction = new DelayAction(GarbageCollectCore, TimeSpan.FromSeconds(0.2));
         }
 
 

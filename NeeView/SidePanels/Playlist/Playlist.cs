@@ -27,18 +27,18 @@ namespace NeeView
         private bool _isDarty;
         private bool _isEditable;
         private bool _isNew;
-        private readonly SimpleDelayAction _delaySave = new();
+        private readonly DelayAction _delaySave;
 
 
         public Playlist(string path)
         {
             _playlistPath = path;
+            _delaySave = new DelayAction(() => Save(false), TimeSpan.FromSeconds(1.0));
         }
 
-        public Playlist(string path, PlaylistSource playlistFile, bool isNew)
+        public Playlist(string path, PlaylistSource playlistFile, bool isNew) : this(path)
         {
             _isNew = false;
-            _playlistPath = path;
             this.Items = new ObservableCollection<PlaylistItem>(playlistFile.Items.Select(e => new PlaylistItem(e)));
             this.IsEditable = true;
             this.IsNew = isNew;
@@ -501,7 +501,7 @@ namespace NeeView
 
         public void DelaySave()
         {
-            _delaySave.Request(() => Save(false), TimeSpan.FromSeconds(1.0));
+            _delaySave.Request();
         }
 
         public void Flush()

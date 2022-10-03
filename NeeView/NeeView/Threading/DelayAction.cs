@@ -13,50 +13,23 @@ namespace NeeView.Threading
     /// </summary>
     public class DelayAction : IDisposable
     {
-        /// <summary>
-        /// 遅延実行要求
-        /// </summary>
-        private bool _isRequested;
-
-        /// <summary>
-        /// 最後のGC要求時間
-        /// </summary>
-        private DateTime _lastRequestTime;
-
-        /// <summary>
-        /// 遅延実行のためのタイマー
-        /// </summary>
         private readonly DispatcherTimer _timer;
-
-        /// <summary>
-        /// 遅延時間
-        /// </summary>
-        private TimeSpan _delay;
-
-        /// <summary>
-        /// 実行本体
-        /// </summary>
         private readonly Action _action;
-
-        /// <summary>
-        /// lock
-        /// </summary>
         private readonly object _lock = new();
 
-        /// <summary>
-        /// constructor
-        /// </summary>
-        /// <param name="dispatcher"></param>
-        public DelayAction(Dispatcher dispatcher, TimeSpan interval, Action action, TimeSpan delay)
-        {
-            // timer for delay
-            _timer = new DispatcherTimer(DispatcherPriority.Normal, dispatcher);
-            _timer.Interval = interval;
-            _timer.Tick += new EventHandler(DispatcherTimer_Tick);
 
-            _action = action;
-            _delay = delay;
+        public DelayAction(Action action, TimeSpan delay) : this(action, delay, App.Current.Dispatcher)
+        {
         }
+
+        public DelayAction(Action action, TimeSpan delay, Dispatcher dispatcher)
+        {
+            _timer = new DispatcherTimer(DispatcherPriority.Normal, dispatcher);
+            _timer.Interval = delay;
+            _timer.Tick += new EventHandler(DispatcherTimer_Tick);
+            _action = action;
+        }
+
 
         /// <summary>
         /// 実行要求
@@ -65,12 +38,7 @@ namespace NeeView.Threading
         {
             if (_disposedValue) return;
 
-            lock (_lock)
-            {
-                _lastRequestTime = DateTime.Now;
-                _isRequested = true;
-                _timer.Start();
-            }
+            StartTimer();
         }
 
         /// <summary>
@@ -78,11 +46,7 @@ namespace NeeView.Threading
         /// </summary>
         public void Cancel()
         {
-            lock (_lock)
-            {
-                _timer.Stop();
-                _isRequested = false;
-            }
+            StopTimer();
         }
 
         /// <summary>
@@ -92,41 +56,41 @@ namespace NeeView.Threading
         {
             if (_disposedValue) return;
 
-            lock (_lock)
+            if (StopTimer())
             {
-                _delay = TimeSpan.Zero;
+                _action.Invoke();
             }
-
-            DispatcherTimer_Tick(this, EventArgs.Empty);
         }
 
+        private void StartTimer()
+        {
+            lock (_lock)
+            {
+                _timer.Stop();
+                _timer.Start();
+            }
+        }
+
+        private bool StopTimer()
+        {
+            lock (_lock)
+            {
+                if (_timer.IsEnabled)
+                {
+                    _timer.Stop();
+                    return true;
+                }
+            }
+
+            return false;
+        }
 
         /// <summary>
         /// timer callback
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
         private void DispatcherTimer_Tick(object? sender, EventArgs e)
         {
-            bool isExecute = false;
-
-            lock (_lock)
-            {
-                if ((DateTime.Now - _lastRequestTime) >= _delay)
-                {
-                    _timer.Stop();
-                    if (_isRequested)
-                    {
-                        _isRequested = false;
-                        isExecute = true;
-                    }
-                }
-            }
-
-            if (isExecute)
-            {
-                _action?.Invoke();
-            }
+            Flush();
         }
 
         #region IDisposable Support
