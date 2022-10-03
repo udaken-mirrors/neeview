@@ -46,7 +46,7 @@ namespace NeeView
             finally
             {
                 JavascroptEngineMap.Current.Remove(engine);
-                CommandTable.Current.FlushInputGesture();
+                AppDispatcher.BeginInvoke(() => CommandTable.Current.FlushInputGesture());
                 _pool.Remove(this);
             }
         }
