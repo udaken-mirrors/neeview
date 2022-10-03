@@ -19,13 +19,13 @@ namespace NeeView
 
 
         private readonly DelayAction _delaySaveBookmark;
-        private readonly DelayAction _delaySaveHistory;
+        private readonly IntervalAction _delaySaveHistory;
 
 
         private SaveDataSync()
         {
             _delaySaveBookmark = new DelayAction(() => SaveBookmark(true, true), TimeSpan.FromSeconds(0.5));
-            _delaySaveHistory = new DelayAction(() => SaveHistory(true), TimeSpan.FromSeconds(30.0));
+            _delaySaveHistory = new IntervalAction(() => SaveHistory(true), TimeSpan.FromMinutes(5.0));
 
             RemoteCommandService.Current.AddReciever("LoadUserSetting", LoadUserSetting);
             RemoteCommandService.Current.AddReciever("LoadHistory", LoadHistory);
