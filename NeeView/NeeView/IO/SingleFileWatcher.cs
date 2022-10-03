@@ -17,6 +17,13 @@ namespace NeeView.IO
             _options = options;
         }
 
+        public event FileSystemEventHandler? Created;
+
+        public IDisposable SubscribeCreated(FileSystemEventHandler handler)
+        {
+            Created += handler;
+            return new AnonymousDisposable(() => Created -= handler);
+        }
 
         public event FileSystemEventHandler? Changed;
 
@@ -65,6 +72,7 @@ namespace NeeView.IO
             _watcher.Filter = Path.GetFileName(_path);
             _watcher.NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.FileName;
             _watcher.IncludeSubdirectories = false;
+            _watcher.Created += Watcher_Created;
             _watcher.Changed += Watcher_Changed;
             _watcher.Deleted += Watcher_Deleted;
             _watcher.Renamed += Watcher_Renamed;
@@ -76,8 +84,19 @@ namespace NeeView.IO
         {
             _watcher?.Dispose();
             _watcher = null;
+            _path = null;
         }
 
+
+        private void Watcher_Created(object sender, FileSystemEventArgs e)
+        {
+            if (Created is null) return;
+
+            AppDispatcher.BeginInvoke(() =>
+            {
+                Created?.Invoke(sender, e);
+            });
+        }
 
         private void Watcher_Changed(object sender, FileSystemEventArgs e)
         {

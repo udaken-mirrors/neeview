@@ -30,6 +30,8 @@ namespace NeeView
             RemoteCommandService.Current.AddReciever("LoadUserSetting", LoadUserSetting);
             RemoteCommandService.Current.AddReciever("LoadHistory", LoadHistory);
             RemoteCommandService.Current.AddReciever("LoadBookmark", LoadBookmark);
+            RemoteCommandService.Current.AddReciever("LoadPlaylist", LoadPlaylist);
+            RemoteCommandService.Current.AddReciever("RenamePlaylist", RenamePlaylist);
         }
 
 
@@ -56,7 +58,7 @@ namespace NeeView
             Dispose(true);
             GC.SuppressFinalize(this);
         }
-        #endregion
+        #endregion IDisposable Support
 
 
         public void Initialize()
@@ -82,6 +84,7 @@ namespace NeeView
         {
             _delaySaveBookmark.Flush();
             _delaySaveHistory.Flush();
+            PlaylistHub.Current.Flush();
         }
 
         private void LoadUserSetting(RemoteCommand command)
@@ -102,6 +105,17 @@ namespace NeeView
             Debug.WriteLine($"{SaveData.BookmarkFileName} is updated by other process.");
             SaveData.Current.LoadBookmark();
         }
+
+        private void LoadPlaylist(RemoteCommand command)
+        {
+            PlaylistHub.Current.Reload(command.Args[0]);
+        }
+
+        private void RenamePlaylist(RemoteCommand command)
+        {
+            PlaylistHub.Current.Rename(command.Args[0], command.Args[1]);
+        }
+
 
         public void SaveUserSetting(bool sync, bool handleException)
         {
@@ -201,7 +215,6 @@ namespace NeeView
         public void SaveAll(bool sync, bool handleException)
         {
             Flush();
-            PlaylistHub.Current.Flush();
             SaveUserSetting(sync, handleException);
 
             RemoveHistoryIfNotSave();

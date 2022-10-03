@@ -1,5 +1,6 @@
 ﻿using Microsoft.Win32;
 using NeeLaboratory.ComponentModel;
+using NeeLaboratory.IO;
 using NeeView.IO;
 using NeeView.Properties;
 using NeeView.Threading;
@@ -24,12 +25,12 @@ namespace NeeView
         static PlaylistHub() => Current = new PlaylistHub();
         public static PlaylistHub Current { get; }
 
+
         private List<object> _playlistCollection;
         private Playlist _playlist;
         private int _playlistLockCount;
         private CancellationTokenSource? _deleteInvalidItemsCancellationToken;
         private bool _isPlaylistDarty;
-
 
         private PlaylistHub()
         {
@@ -42,8 +43,6 @@ namespace NeeView
             }
 
             UpdatePlaylistCollection();
-
-            InitializeFileWatcher();
 
             Config.Current.Playlist.AddPropertyChanged(nameof(PlaylistConfig.PlaylistFolder),
                 PlaylistFolder_Changed);
@@ -88,7 +87,6 @@ namespace NeeView
             set { SetProperty(ref _playlistCollection, value); }
         }
 
-        [NotNull]
         public string SelectedItem
         {
             get
@@ -127,13 +125,13 @@ namespace NeeView
 
         private void Playlist_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
         {
-            _playlist.DelaySave(OnSaved);
+            _playlist.DelaySave();
             PlaylistCollectionChanged?.Invoke(this, e);
         }
 
         private void Playlist_ItemRenamed(object? sender, PlaylistItemRenamedEventArgs e)
         {
-            _playlist.DelaySave(OnSaved);
+            _playlist.DelaySave();
         }
 
         private void SelectedItemChanged()
@@ -231,6 +229,14 @@ namespace NeeView
             return Playlist.Load(path, isCreateNewFile);
         }
 
+        public void Reload(string path)
+        {
+            if (string.Compare(SelectedItem, path, StringComparison.OrdinalIgnoreCase) == 0)
+            {
+                ReloadPlaylist();
+            }
+        }
+
         private void ReloadPlaylist()
         {
             if (this.SelectedItem == _playlist.Path)
@@ -239,6 +245,20 @@ namespace NeeView
                 _isPlaylistDarty = false;
             }
         }
+
+        public void Rename(string oldPath, string newPath)
+        {
+            if (string.Compare(SelectedItem, oldPath, StringComparison.OrdinalIgnoreCase) == 0)
+            {
+                _playlist.Path = newPath;
+                SelectedItem = newPath;
+            }
+            else if (string.Compare(SelectedItem, newPath, StringComparison.OrdinalIgnoreCase) == 0)
+            {
+                Reload(newPath);
+            }
+        }
+
 
         private void SetPlaylist(Playlist value)
         {
@@ -256,7 +276,6 @@ namespace NeeView
         {
             playlist.CollectionChanged += Playlist_CollectionChanged;
             playlist.ItemRenamed += Playlist_ItemRenamed;
-            StartFileWatch(playlist.Path);
         }
 
         private void DetachPlaylistEvents(Playlist playlist)
@@ -265,18 +284,10 @@ namespace NeeView
             playlist.ItemRenamed -= Playlist_ItemRenamed;
         }
 
-        private void OnSaved()
-        {
-            this.SelectedItem = _playlist.Path;
-            StartFileWatch(this.SelectedItem);
-        }
-
-
         public void Flush()
         {
             _playlist.Flush();
         }
-
 
         public void CreateNew()
         {
@@ -325,40 +336,18 @@ namespace NeeView
 
         public bool CanRename()
         {
-            return _playlist.IsEditable == true;
+            return _playlist.CanRename();
         }
 
         public bool Rename(string newName, bool useErrorDialog = true)
         {
-            if (!CanRename()) return false;
-            if (string.IsNullOrWhiteSpace(newName)) return false;
-
-            _playlist.Flush();
-
-            try
+            if (_playlist.Rename(newName, useErrorDialog))
             {
-                if (FileIO.ContainsInvalidFileNameChars(newName))
-                {
-                    throw new IOException(Resources.FileRenameInvalidDialog_Message);
-                }
-
-                var newPath = FileIO.CreateUniquePath(Path.Combine(Path.GetDirectoryName(SelectedItem) ?? ".", newName.TrimStart() + Path.GetExtension(SelectedItem)));
-                var file = new FileInfo(SelectedItem);
-                if (file.Exists)
-                {
-                    file.MoveTo(newPath);
-                }
-                else
-                {
-                    SelectedItem = newPath;
-                }
+                SelectedItem = _playlist.Path;
                 return true;
             }
-            catch (Exception ex) when (useErrorDialog)
-            {
-                ToastService.Current.Show(new Toast(ex.Message, Properties.Resources.Playlist_ErrorDialog_Title, ToastIcon.Error));
-                return false;
-            }
+
+            return false;
         }
 
 
@@ -384,63 +373,5 @@ namespace NeeView
         }
 
         #endregion
-
-
-        #region FileSystemWatcher
-
-        private SingleFileWatcher _watcher;
-        private SimpleDelayAction _delayReloadAction;
-
-        [MemberNotNull(nameof(_watcher), nameof(_delayReloadAction))]
-        private void InitializeFileWatcher()
-        {
-            _watcher = new SingleFileWatcher(SingleFileWaterOptions.FollowRename);
-            _watcher.Changed += Watcher_Changed;
-            _watcher.Deleted += Watcher_Deleted;
-            _watcher.Renamed += Watcher_Renamed;
-
-            _delayReloadAction = new SimpleDelayAction();
-        }
-
-        private void StartFileWatch(string path)
-        {
-            _delayReloadAction.Cancel();
-            _watcher.Start(path);
-        }
-
-        private void Watcher_Changed(object? sender, FileSystemEventArgs e)
-        {
-            if (string.Compare(SelectedItem, e.FullPath, StringComparison.OrdinalIgnoreCase) != 0) return;
-
-            ////Debug.WriteLine($"PlaylistHub.Watcher.Changed: {e.FullPath}");
-
-            if (_playlist.LastWriteTime.AddSeconds(5.0) < DateTime.Now)
-            {
-                _delayReloadAction.Request(() => ReloadPlaylist(), TimeSpan.FromSeconds(1.0));
-            }
-        }
-
-        private void Watcher_Deleted(object? sender, FileSystemEventArgs e)
-        {
-            if (string.Compare(SelectedItem, e.FullPath, StringComparison.OrdinalIgnoreCase) != 0) return;
-
-            ////Debug.WriteLine($"PlaylistHub.Watcher.Deleted: {e.FullPath}");
-
-            SelectedItem = DefaultPlaylist;
-        }
-
-        private void Watcher_Renamed(object? sender, RenamedEventArgs e)
-        {
-            if (string.Compare(SelectedItem, e.OldFullPath, StringComparison.OrdinalIgnoreCase) != 0) return;
-
-            ////Debug.WriteLine($"PlaylistHub.Watcher.Renamed: {e.OldFullPath} -> {e.FullPath}");
-
-            if (_playlist.Path != e.OldFullPath) return;
-
-            _playlist.Path = e.FullPath;
-            SelectedItem = e.FullPath;
-        }
-
-        #endregion FileSystemWatcher
     }
 }

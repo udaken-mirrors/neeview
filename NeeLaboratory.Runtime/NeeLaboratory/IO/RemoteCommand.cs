@@ -10,14 +10,16 @@ namespace NeeLaboratory.IO
         public RemoteCommand()
         {
             Id = "";
+            Args = System.Array.Empty<string>();
         }
 
         public RemoteCommand(string id)
         {
             Id = id;
+            Args = System.Array.Empty<string>();
         }
 
-        public RemoteCommand(string id, params string[]? args)
+        public RemoteCommand(string id, params string[] args)
         {
             Id = id;
             Args = args;
@@ -27,7 +29,7 @@ namespace NeeLaboratory.IO
         public string Id { get; set; }
 
         [DataMember]
-        public string[]? Args { get; set; }
+        public string[] Args { get; set; }
     }
 
 }

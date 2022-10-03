@@ -438,16 +438,24 @@ namespace NeeView
             if (save is null) throw new ArgumentNullException(nameof(save));
             if (string.IsNullOrWhiteSpace(path)) throw new ArgumentNullException(nameof(path));
 
-            var newFileName = path + ".new";
+            var newFileName = path + ".new.tmp";
             var backupFileName = createBackup ? path + ".bak" : null;
 
             lock (App.Current.Lock)
             {
                 if (File.Exists(path))
                 {
-                    File.Delete(newFileName);
-                    save(newFileName);
-                    File.Replace(newFileName, path, backupFileName);
+                    try
+                    {
+                        File.Delete(newFileName);
+                        save(newFileName);
+                        File.Replace(newFileName, path, backupFileName);
+                    }
+                    catch
+                    {
+                        File.Delete(newFileName);
+                        throw;
+                    }
                 }
                 else
                 {

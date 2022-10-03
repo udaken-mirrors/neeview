@@ -1,7 +1,9 @@
 ﻿using NeeLaboratory;
 using NeeLaboratory.Collection;
 using NeeLaboratory.ComponentModel;
+using NeeLaboratory.IO;
 using NeeLaboratory.Linq;
+using NeeView.Properties;
 using NeeView.Threading;
 using System;
 using System.Collections.Generic;
@@ -23,9 +25,9 @@ namespace NeeView
         private string _playlistPath;
         private readonly object _lock = new();
         private bool _isDarty;
-        private DateTime _lastWriteTime;
         private bool _isEditable;
         private bool _isNew;
+        private readonly SimpleDelayAction _delaySave = new();
 
 
         public Playlist(string path)
@@ -53,12 +55,6 @@ namespace NeeView
         {
             get { return _playlistPath; }
             set { SetProperty(ref _playlistPath, value); }
-        }
-
-        public DateTime LastWriteTime
-        {
-            get { return _lastWriteTime; }
-            set { SetProperty(ref _lastWriteTime, value); }
         }
 
         public bool IsEditable
@@ -503,92 +499,83 @@ namespace NeeView
 
         #region Save
 
-        private readonly SimpleDelayAction _delaySave = new();
-        private readonly SemaphoreSlim _saveSemaphore = new(1, 1);
-        private CancellationTokenSource? _cancellationTokenSource;
-
-        public void DelaySave(Action savedCallback)
+        public void DelaySave()
         {
-            _delaySave.Request(() => Save(savedCallback), TimeSpan.FromSeconds(1.0));
+            _delaySave.Request(() => Save(false), TimeSpan.FromSeconds(1.0));
         }
 
         public void Flush()
         {
             _delaySave.Flush();
-
-            // NOTE: 確実に処理の終了を待つ
-            _saveSemaphore.Wait();
-            _saveSemaphore.Release();
         }
 
-        public void CancelSave()
+        public bool Save(bool isForce)
         {
-            _cancellationTokenSource?.Cancel();
-            _cancellationTokenSource = null;
-        }
-
-        public void Save(Action? savedCallback, bool isForce = false)
-        {
-            if (!this.IsEditable) return;
-            if (this.Path is null) return;
+            if (!this.IsEditable) return false;
+            if (this.Path is null) return false;
 
             PlaylistSource source;
             lock (_lock)
             {
-                if (!_isDarty && !isForce) return;
+                if (!_isDarty && !isForce) return false;
                 source = CreatePlaylistSource();
                 _isDarty = false;
             }
 
-            if (_isNew)
+            using (ProcessLock.Lock())
             {
-                if (source.Items.Count == 0 && !isForce)
+                if (_isNew)
                 {
-                    return;
+                    if (source.Items.Count == 0 && !isForce)
+                    {
+                        return false;
+                    }
+                    _isNew = false;
+
+                    this.Path = FileIO.CreateUniquePath(this.Path);
                 }
-                _isNew = false;
 
-                this.Path = FileIO.CreateUniquePath(this.Path);
-            }
+                var newFileName = this.Path + ".new.tmp";
 
-
-            // 非同期保存
-            _cancellationTokenSource?.Cancel();
-            _cancellationTokenSource = new CancellationTokenSource();
-            Task.Run(async () => await SaveAsync(this.Path, source, savedCallback, _cancellationTokenSource.Token));
-        }
-
-        private async Task SaveAsync(string path, PlaylistSource source, Action? SavedCallback, CancellationToken token)
-        {
-            await _saveSemaphore.WaitAsync(token);
-            try
-            {
-                if (!this.IsEditable) return;
-                token.ThrowIfCancellationRequested();
-
-                await RetryAction.RetryActionAsync(() =>
+                try
                 {
-                    this.LastWriteTime = DateTime.Now;
-                    source.Save(path, true, IsDefaultPlaylistsFolder(path));
-                }
-                , 3, 1000, token);
+                    if (File.Exists(this.Path))
+                    {
+                        try
+                        {
 
-                SavedCallback?.Invoke();
-            }
-            catch (OperationCanceledException)
-            {
-            }
-            catch (Exception ex)
-            {
-                if (this.IsEditable)
+                            File.Delete(newFileName);
+                            SaveCore(newFileName);
+                            File.Replace(newFileName, this.Path, null);
+                        }
+                        catch
+                        {
+                            File.Delete(newFileName);
+                            throw;
+                        }
+                    }
+                    else
+                    {
+                        SaveCore(this.Path);
+                    }
+
+                    RemoteCommandService.Current.Send(new RemoteCommand("LoadPlaylist", this.Path), RemoteCommandDelivery.All);
+                    return true;
+                }
+                catch (Exception ex)
                 {
-                    this.IsEditable = false; // 以後編集不可
-                    ToastService.Current.Show(new Toast(ex.Message, Properties.Resources.Playlist_FailedToSave, ToastIcon.Error));
+                    if (this.IsEditable)
+                    {
+                        this.IsEditable = false; // 以後編集不可
+                        ToastService.Current.Show(new Toast(ex.Message, Properties.Resources.Playlist_FailedToSave, ToastIcon.Error));
+                    }
+                    return false;
                 }
             }
-            finally
+
+            void SaveCore(string path)
             {
-                _saveSemaphore.Release();
+                source.Save(path, true, IsDefaultPlaylistsFolder(path));
             }
         }
 
@@ -608,51 +595,37 @@ namespace NeeView
 
         public static Playlist Load(string path, bool creteNewFile)
         {
-            try
+            var file = new FileInfo(path);
+            if (file.Exists)
             {
-                var file = new FileInfo(path);
-                if (file.Exists)
+                using (ProcessLock.Lock())
                 {
-                    var playlistFile = LoadPlaylist(path);
-                    if (playlistFile != null)
+                    try
                     {
+                        var playlistFile = PlaylistSourceTools.Load(path);
                         var playlist = new Playlist(path, playlistFile, false);
                         playlist.IsEditable = !file.Attributes.HasFlag(FileAttributes.ReadOnly);
                         return playlist;
                     }
-                    return new Playlist(path);
-                }
-
-                if (file.Directory?.Exists == true || IsDefaultPlaylistsFolder(file))
-                {
-                    var playlist = new Playlist(path, new PlaylistSource(), true);
-                    if (creteNewFile)
+                    catch (Exception ex)
                     {
-                        playlist.Save(null, true);
+                        ToastService.Current.Show(new Toast(ex.Message, Properties.Resources.Playlist_FailedToLoad, ToastIcon.Error));
+                        return new Playlist(path) { ErrorMessage = ex.Message };
                     }
-                    return playlist;
                 }
-
+            }
+            else if (file.Directory?.Exists == true || IsDefaultPlaylistsFolder(file))
+            {
+                var playlist = new Playlist(path, new PlaylistSource(), true);
+                if (creteNewFile)
+                {
+                    playlist.Save(true);
+                }
+                return playlist;
+            }
+            else
+            {
                 return new Playlist(path) { ErrorMessage = $"Playlist folder does not exists: '{file.Directory?.FullName}'" };
-            }
-            catch (Exception ex)
-            {
-                // TODO: 例外時にこのインスタンスを返すのは問題ありそう
-                Debug.WriteLine(ex.Message);
-                return new Playlist(path) { ErrorMessage = ex.Message };
-            }
-        }
-
-        private static PlaylistSource? LoadPlaylist(string path)
-        {
-            try
-            {
-                return PlaylistSourceTools.Load(path);
-            }
-            catch (Exception ex)
-            {
-                ToastService.Current.Show(new Toast(ex.Message, Properties.Resources.Playlist_FailedToLoad, ToastIcon.Error));
-                return null;
             }
         }
 
@@ -688,9 +661,49 @@ namespace NeeView
                 }
             }
 
-            playlist.Save(() => AppDispatcher.Invoke(() => Remove(items)));
+            if (playlist.Save(true))
+            {
+                Remove(items);
+            }
         }
 
         #endregion Move to another playlist
+
+        #region Rename
+
+        public bool CanRename()
+        {
+            return IsEditable;
+        }
+
+        public bool Rename(string newName, bool useErrorDialog = true)
+        {
+            if (!_isEditable) return false;
+            if (string.IsNullOrWhiteSpace(newName)) return false;
+
+            Flush();
+
+            try
+            {
+                if (FileIO.ContainsInvalidFileNameChars(newName))
+                {
+                    throw new IOException(Resources.FileRenameInvalidDialog_Message);
+                }
+
+                var newPath = FileIO.CreateUniquePath(System.IO.Path.Combine(System.IO.Path.GetDirectoryName(Path) ?? ".", newName.TrimStart() + System.IO.Path.GetExtension(Path)));
+                var oldPath = Path;
+                File.Move(oldPath, newPath);
+                Path = newPath;
+                RemoteCommandService.Current.Send(new RemoteCommand("RenamePlaylist", oldPath, newPath), RemoteCommandDelivery.All);
+                return true;
+            }
+            catch (Exception ex) when (useErrorDialog)
+            {
+                ToastService.Current.Show(new Toast(ex.Message, Properties.Resources.Playlist_ErrorDialog_Title, ToastIcon.Error));
+                return false;
+            }
+        }
+
+        #endregion Rename
     }
 }
