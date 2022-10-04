@@ -957,7 +957,6 @@ namespace NeeView
         private void SaveBookMemento(Book book)
         {
             if (_disposedValue) return;
-
             if (book is null) return;
 
             var memento = CreateBookMemento(book);
@@ -969,16 +968,11 @@ namespace NeeView
 
         private void SaveBookMemento(Book book, Book.Memento memento, bool isKeepHistoryOrder)
         {
+            if (_disposedValue) return;
             if (memento == null) return;
 
-            if (_disposedValue) return;
-
-            // 情報更新
-            var unit = BookMementoCollection.Current.Get(memento.Path);
-            if (unit != null)
-            {
-                unit.Memento = memento;
-            }
+            // ブックマークの更新
+            BookmarkCollection.Current.Update(memento, book.Viewer.PageChangeCount > 1);
 
             // 履歴の保存
             if (CanHistory(book))

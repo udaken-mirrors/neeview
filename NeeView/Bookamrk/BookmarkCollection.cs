@@ -478,6 +478,21 @@ namespace NeeView
             }
         }
 
+        /// <summary>
+        /// 情報更新
+        /// </summary>
+        /// <param name="memento">新しい情報</param>
+        /// <param name="isForce">変更がなくても更新する</param>
+        public void Update(Book.Memento memento, bool isForce)
+        {
+            var node = FindNode(memento.Path);
+            if (node is null) return;
+            if (node.Value is not Bookmark bookmark) return;
+            if (!isForce && bookmark.Unit.Memento.IsEquals(memento)) return;
+ 
+            bookmark.Unit.Memento = memento;
+            BookmarkChanged?.Invoke(this, new BookmarkCollectionChangedEventArgs(EntryCollectionChangedAction.Update, node.Parent, node));
+        }
 
         #region Memento
 

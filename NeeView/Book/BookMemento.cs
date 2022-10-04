@@ -90,8 +90,25 @@ namespace NeeView
                 clone.ValidateForDefault();
                 return clone;
             }
-        }
 
+            // 値の等価判定
+            public bool IsEquals(Memento? other)
+            {
+                return other is not null &&
+                       Path == other.Path &&
+                       IsDirectorty == other.IsDirectorty &&
+                       Name == other.Name &&
+                       Page == other.Page &&
+                       PageMode == other.PageMode &&
+                       BookReadOrder == other.BookReadOrder &&
+                       IsSupportedDividePage == other.IsSupportedDividePage &&
+                       IsSupportedSingleFirstPage == other.IsSupportedSingleFirstPage &&
+                       IsSupportedSingleLastPage == other.IsSupportedSingleLastPage &&
+                       IsSupportedWidePage == other.IsSupportedWidePage &&
+                       IsRecursiveFolder == other.IsRecursiveFolder &&
+                       SortMode == other.SortMode;
+            }
+        }
     }
 }
 

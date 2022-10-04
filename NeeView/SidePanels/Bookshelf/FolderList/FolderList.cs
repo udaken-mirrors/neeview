@@ -129,6 +129,8 @@ namespace NeeView
                         case EntryCollectionChangedAction.Replace:
                             RefreshIcon(null);
                             break;
+                        case EntryCollectionChangedAction.Update:
+                            break;
                         default:
                             if (e.Item?.Value is Bookmark bookmark)
                             {
