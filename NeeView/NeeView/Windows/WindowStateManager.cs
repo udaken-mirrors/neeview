@@ -1,36 +1,37 @@
-﻿using NeeLaboratory.ComponentModel;
-using NeeView.Windows;
-using System;
+﻿using System;
 using System.ComponentModel;
 using System.Windows;
+using System.Windows.Shell;
 
-namespace NeeView
+namespace NeeView.Windows
 {
-    public interface IWindowStateManagerDependency
+
+    public class WindowStateManager : INotifyPropertyChanged
     {
-        bool IsTabletMode { get; }
-        double MaximizedWindowThickness { get; }
+        #region INotifyPropertyChanged Support
 
-        void SuspendWindowChrome();
-        void ResumeWindowChrome();
-    }
+        public event PropertyChangedEventHandler? PropertyChanged;
 
-
-    public class WindowStateChangedEventArgs : EventArgs
-    {
-        public WindowStateChangedEventArgs(WindowStateEx oldState, WindowStateEx newtate)
+        protected bool SetProperty<T>(ref T storage, T value, [System.Runtime.CompilerServices.CallerMemberName] string? propertyName = null)
         {
-            OldState = oldState;
-            NewState = newtate;
+            if (object.Equals(storage, value)) return false;
+            storage = value;
+            this.RaisePropertyChanged(propertyName);
+            return true;
         }
 
-        public WindowStateEx OldState { get; set; }
-        public WindowStateEx NewState { get; set; }
-    }
+        protected void RaisePropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string? name = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+        }
 
+        public void AddPropertyChanged(string propertyName, PropertyChangedEventHandler handler)
+        {
+            PropertyChanged += (s, e) => { if (string.IsNullOrEmpty(e.PropertyName) || e.PropertyName == propertyName) handler?.Invoke(s, e); };
+        }
 
-    public class WindowStateManager : BindableBase
-    {
+        #endregion
+
         private readonly Window _window;
         private WindowStateEx _previousState;
         private WindowStateEx _currentState;
@@ -39,40 +40,36 @@ namespace NeeView
         private bool _isFullScreen;
         private bool _isProgress;
 
-        private readonly IWindowStateManagerDependency _dependency;
 
 
-        public WindowStateManager(Window window, IWindowStateManagerDependency dependency)
+        public WindowStateManager(Window window)
         {
             _window = window;
-            _dependency = dependency;
-
             _window.StateChanged += Window_StateChanged;
-
             Update();
         }
 
 
-        public event EventHandler<WindowStateChangedEventArgs>? StateChanged;
-        public event EventHandler<WindowStateChangedEventArgs>? StateEditing;
-        public event EventHandler<WindowStateChangedEventArgs>? StateEdited;
+        public event EventHandler<WindowStateExChangedEventArgs>? StateChanged;
+        public event EventHandler<WindowStateExChangedEventArgs>? StateEditing;
+        public event EventHandler<WindowStateExChangedEventArgs>? StateEdited;
 
-        public Window Window => _window;
+
+        public WindowState WindowState => _window.WindowState;
         public WindowStateEx CurrentState => _currentState;
         public WindowStateEx PreviousState => _previousState;
-
         public WindowStateEx ResumeState
         {
             get => _resumeState;
             set => _resumeState = value;
         }
-
         public bool IsFullScreen
         {
             get { return _isFullScreen; }
             private set { SetProperty(ref _isFullScreen, value); }
         }
 
+        public double MaximizedChromeBorderThickness { get; set; } = 8.0;
 
 
         private void UpdateIsFullScreen()
@@ -151,21 +148,20 @@ namespace NeeView
             }
         }
 
-
-        private void BeginEdit(WindowStateChangedEventArgs editArgs)
+        private void BeginEdit(WindowStateExChangedEventArgs editArgs)
         {
             StateEditing?.Invoke(this, editArgs);
             _isProgress = true;
         }
 
-        private void EndEdit(WindowStateChangedEventArgs editArgs)
+        private void EndEdit(WindowStateExChangedEventArgs editArgs)
         {
             var nowState = GetWindowState();
             if (nowState != _currentState)
             {
                 _previousState = _currentState;
                 _currentState = nowState;
-                StateChanged?.Invoke(this, new WindowStateChangedEventArgs(_previousState, _currentState));
+                StateChanged?.Invoke(this, new WindowStateExChangedEventArgs(_previousState, _currentState));
             }
 
             _isProgress = false;
@@ -177,11 +173,11 @@ namespace NeeView
         {
             if (_isProgress) return;
 
-            var editArgs = new WindowStateChangedEventArgs(_currentState, WindowStateEx.Minimized);
+            var editArgs = new WindowStateExChangedEventArgs(_currentState, WindowStateEx.Minimized);
             BeginEdit(editArgs);
 
-            _window.ResizeMode = ResizeMode.CanResize;
-            _window.WindowStyle = WindowStyle.None;
+            //_window.ResizeMode = ResizeMode.CanResize;
+            //_window.WindowStyle = WindowStyle.None;
             _window.WindowState = WindowState.Minimized;
 
             EndEdit(editArgs);
@@ -191,17 +187,15 @@ namespace NeeView
         {
             if (_isProgress) return;
 
-            var editArgs = new WindowStateChangedEventArgs(_currentState, WindowStateEx.Normal);
+            var editArgs = new WindowStateExChangedEventArgs(_currentState, WindowStateEx.Normal);
             BeginEdit(editArgs);
 
             SetFullScreenMode(false);
             _resumeState = WindowStateEx.Normal;
 
             _window.ResizeMode = ResizeMode.CanResize;
-            _window.WindowStyle = WindowStyle.None;
+            _window.WindowStyle = WindowStyle.SingleBorderWindow;
             _window.WindowState = WindowState.Normal;
-
-            UpdateWindowChrome();
 
             if (_currentState == WindowStateEx.FullScreen || _currentState == WindowStateEx.Maximized)
             {
@@ -227,56 +221,36 @@ namespace NeeView
         {
             if (_isProgress) return;
 
-            var editArgs = new WindowStateChangedEventArgs(_currentState, WindowStateEx.Maximized);
+            var editArgs = new WindowStateExChangedEventArgs(_currentState, WindowStateEx.Maximized);
             BeginEdit(editArgs);
 
             SetFullScreenMode(false);
             _resumeState = WindowStateEx.Maximized;
 
-            // NOTE: タスクバー自動非表示モードでは直接ウィンドウサイズを変更する
-            if (TaskBarNativeTools.IsAutoHide())
-            {
-                _window.ResizeMode = ResizeMode.CanResize;
-                _window.WindowStyle = WindowStyle.None;
-                _window.WindowState = WindowState.Maximized;
-                WindowSizeTools.SetMaximizedWindowPos(_window);
-            }
-            else
-            {
-                _window.ResizeMode = ResizeMode.CanResize;
-                _window.WindowStyle = WindowStyle.SingleBorderWindow;
-                _window.WindowState = WindowState.Maximized;
-            }
-
-            UpdateWindowChrome();
+            _window.ResizeMode = ResizeMode.CanResize;
+            _window.WindowStyle = WindowStyle.SingleBorderWindow;
+            _window.WindowState = WindowState.Maximized;
 
             EndEdit(editArgs);
         }
 
+        // TODO: minimized からの復帰をシンプルにする
         public void ToFullScreen()
         {
             if (_isProgress) return;
 
-            var editArgs = new WindowStateChangedEventArgs(_currentState, WindowStateEx.FullScreen);
+            var editArgs = new WindowStateExChangedEventArgs(_currentState, WindowStateEx.FullScreen);
             BeginEdit(editArgs);
 
             // NOTE: Windowsショートカットによる移動ができなくなるので、Windows7とタブレットに限定する
-            if (Windows7Tools.IsWindows7 || _dependency.IsTabletMode)
+            if (Windows7Tools.IsWindows7 || WindowParameters.IsTabletMode)
             {
                 _window.ResizeMode = ResizeMode.CanMinimize;
             }
 
             if (_window.WindowState == WindowState.Maximized)
             {
-                // NOTE: タブレットモードでは通常ウィンドウを経由できないので直接ウィンドウサイズを変更する
-                if (_dependency.IsTabletMode)
-                {
-                    WindowSizeTools.SetFullScreenWindowPos(_window);
-                }
-                else
-                {
-                    _window.WindowState = WindowState.Normal;
-                }
+                _window.WindowState = WindowState.Normal;
             }
 
             _window.WindowStyle = WindowStyle.None;
@@ -284,11 +258,8 @@ namespace NeeView
 
             SetFullScreenMode(true);
 
-            UpdateWindowChrome();
-
             EndEdit(editArgs);
         }
-
 
         public void ToggleMinimize()
         {
@@ -314,6 +285,7 @@ namespace NeeView
             }
         }
 
+
         public void ToggleFullScreen()
         {
             if (IsFullScreen)
@@ -330,7 +302,7 @@ namespace NeeView
         {
             if (!IsFullScreen) return;
 
-            if (_resumeState == WindowStateEx.Maximized || _dependency.IsTabletMode)
+            if (_resumeState == WindowStateEx.Maximized || WindowParameters.IsTabletMode)
             {
                 ToMaximize();
             }
@@ -352,25 +324,20 @@ namespace NeeView
             }
         }
 
-
-        private void UpdateWindowChrome()
-        {
-            if (IsFullScreen)
-            {
-                _dependency.SuspendWindowChrome();
-            }
-            else
-            {
-                _dependency.ResumeWindowChrome();
-            }
-        }
-
-
+        /// <summary>
+        /// Windowの状態保存
+        /// </summary>
+        /// <param name="withAeroSnap">エアロスナップを通常サイズとして記憶</param>
+        /// <returns></returns>
         public WindowPlacement StoreWindowPlacement(bool withAeroSnap)
         {
             return WindowPlacementTools.StoreWindowPlacement(_window, withAeroSnap).WithIsFullScreeen(IsFullScreen);
         }
 
+        /// <summary>
+        /// Windowの状態復元
+        /// </summary>
+        /// <param name="placement">状態データ</param>
         public void RestoreWindowPlacement(WindowPlacement placement)
         {
             if (placement.IsFullScreen)

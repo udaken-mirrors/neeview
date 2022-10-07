@@ -16,49 +16,6 @@ using System.Windows.Shell;
 
 namespace NeeView
 {
-    /// <summary>
-    /// WindowStateEx
-    /// </summary>
-    public enum WindowStateEx
-    {
-        [AliasName]
-        None, // 未設定
-
-        [AliasName]
-        Normal,
-
-        [AliasName]
-        Minimized,
-
-        [AliasName]
-        Maximized,
-
-        [AliasName]
-        FullScreen,
-    }
-
-    public static class WindowStateExExtensions
-    {
-        public static WindowState ToWindowState(this WindowStateEx self)
-        {
-            return self switch
-            {
-                WindowStateEx.Minimized
-                    => WindowState.Minimized,
-                WindowStateEx.Maximized or WindowStateEx.FullScreen
-                    => WindowState.Maximized,
-                _
-                    => WindowState.Normal,
-            };
-        }
-
-        public static bool IsFullScreen(this WindowStateEx self)
-        {
-            return self == WindowStateEx.FullScreen;
-        }
-    }
-
-
     [Obsolete("no used")]
     public enum WindowChromeFrameV1
     {
@@ -93,16 +50,14 @@ namespace NeeView
     public class WindowShape : BindableBase, ITopmostControllable
     {
         private readonly Window _window;
-        private readonly WindowChromeAccessor _windowChromeAccessor;
         private readonly WindowStateManager _manager;
         private bool _isEnabled;
         private bool _autoHideMode;
 
 
-        public WindowShape(WindowStateManager manager, WindowChromeAccessor windowChromeAccessor)
+        public WindowShape(WindowStateManager manager)
         {
             _window = MainWindow.Current;
-            _windowChromeAccessor = windowChromeAccessor;
 
             _manager = manager;
             _manager.StateChanged += WindowStateManager_StateChanged;
@@ -149,7 +104,7 @@ namespace NeeView
         }
 
 
-        private void WindowStateManager_StateChanged(object? sender, WindowStateChangedEventArgs e)
+        private void WindowStateManager_StateChanged(object? sender, WindowStateExChangedEventArgs e)
         {
             Config.Current.Window.State = e.NewState;
             UpdatePanelHideMode();
@@ -198,7 +153,6 @@ namespace NeeView
 
             ValidateWindowState();
             UpdatePanelHideMode();
-            _windowChromeAccessor.IsEnabled = true;
             _manager.SetWindowState(Config.Current.Window.State);
             RaisePropertyChanged(null);
         }
@@ -242,7 +196,6 @@ namespace NeeView
             public void RestoreConfig(Config config)
             {
                 config.Window.IsTopmost = IsTopMost;
-                config.Window.MaximizeWindowGapWidth = MaximizeWindowGapWidth;
                 config.Window.State = State;
                 config.Window.LastState = LastState;
             }

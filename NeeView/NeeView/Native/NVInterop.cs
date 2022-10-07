@@ -8,26 +8,23 @@ namespace NeeView.Native
     /// <summary>
     /// for NeeView.Interop.dll
     /// </summary>
-    public class Interop
+    public class NVInterop
     {
-        private class NativeMethods
+        private static class NativeMethods
         {
-            [DllImport("kernel32", SetLastError = true, CharSet = CharSet.Unicode)]
-            public static extern IntPtr LoadLibrary(string lpFileName);
+            [DllImport("NeeView.Interop.dll", CharSet = CharSet.Unicode)]
+            [return: MarshalAs(UnmanagedType.I1)]
+            internal static extern bool NVGetImageCodecInfo(uint index, StringBuilder friendryName, StringBuilder fileExtensions);
+
+            [DllImport("NeeView.Interop.dll")]
+            internal static extern void NVCloseImageCodecInfo();
+
+            [DllImport("NeeView.Interop.dll")]
+            internal static extern void NVFpReset();
 
             [DllImport("NeeView.Interop.dll", CharSet = CharSet.Unicode)]
             [return: MarshalAs(UnmanagedType.I1)]
-            public static extern bool NVGetImageCodecInfo(uint index, StringBuilder friendryName, StringBuilder fileExtensions);
-
-            [DllImport("NeeView.Interop.dll")]
-            public static extern void NVCloseImageCodecInfo();
-
-            [DllImport("NeeView.Interop.dll")]
-            public static extern void NVFpReset();
-
-            [DllImport("NeeView.Interop.dll", CharSet = CharSet.Unicode)]
-            [return: MarshalAs(UnmanagedType.I1)]
-            public static extern bool NVGetFullPathFromShortcut([MarshalAs(UnmanagedType.LPWStr)] string shortcut, StringBuilder fullPath);
+            internal static extern bool NVGetFullPathFromShortcut([MarshalAs(UnmanagedType.LPWStr)] string shortcut, StringBuilder fullPath);
 
 
 #if false // FPU設定のテスト用
@@ -60,7 +57,7 @@ namespace NeeView.Native
 
             path = Path.Combine(path, Environment.PlatformName, "NeeView.Interop.dll");
 
-            return File.Exists(path) && NativeMethods.LoadLibrary(path) != IntPtr.Zero;
+            return File.Exists(path) && Interop.NativeMethods.LoadLibrary(path) != IntPtr.Zero;
         }
 
         public static bool NVGetImageCodecInfo(uint index, StringBuilder friendryName, StringBuilder fileExtensions)

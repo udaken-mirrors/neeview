@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NeeView.Native;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
@@ -122,7 +123,7 @@ namespace NeeView.IO
             }
 
             var targetPath = new StringBuilder(1024);
-            var isSuccess = NeeView.Native.Interop.NVGetFullPathFromShortcut(linkFile.FullName, targetPath);
+            var isSuccess = NVInterop.NVGetFullPathFromShortcut(linkFile.FullName, targetPath);
             if (!isSuccess)
             {
                 throw new IOException("IShellLink error.");

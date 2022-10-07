@@ -3,8 +3,6 @@
                     xmlns:nw="clr-namespace:NeeView.Windows"
                     xmlns:local="clr-namespace:NeeView">
 
-    <nw:DoubleToDpiScaledThicknessConverter x:Key="DoubleToDpiScaledThicknessConverter" />
-
     <!-- Default Window Style -->
     <Style x:Key="DefaultWindowStyle" TargetType="Window">
         <Setter Property="FontFamily" Value="{DynamicResource DefaultFontFamily}" />
@@ -19,27 +17,12 @@
             <Trigger Property="WindowState" Value="Maximized">
                 <Setter Property="BorderThickness" Value="0" />
             </Trigger>
-            <MultiTrigger>
-                <MultiTrigger.Conditions>
-                    <Condition Property="WindowState" Value="Maximized" />
-                    <Condition Property="WindowStyle" Value="SingleBorderWindow" />
-                </MultiTrigger.Conditions>
-                <Setter Property="BorderBrush" Value="Black" />
-                <Setter Property="BorderThickness">
-                    <Setter.Value>
-                        <MultiBinding Converter="{StaticResource DoubleToDpiScaledThicknessConverter}">
-                            <Binding Source="{x:Static local:Config.Current}" Path="Window.MaximizeWindowGapWidth" />
-                            <Binding RelativeSource="{RelativeSource Mode=Self}" Path="(nw:WindowDpiScale.DpiScale)" />
-                        </MultiBinding>
-                    </Setter.Value>
-                </Setter>
-            </MultiTrigger>
         </Style.Triggers>
     </Style>
 
     <!-- Default Window Style (with Chrome) -->
     <Style x:Key="ChromeWindowStyle" TargetType="{x:Type Window}" BasedOn="{StaticResource DefaultWindowStyle}">
-        <Setter Property="nw:ChromeWindowAssistantTools.Attached" Value="True" />
+        <Setter Property="nw:WindowChromeTools.Attached" Value="True" />
         <Setter Property="SnapsToDevicePixels" Value="true" />
         <Setter Property="BorderBrush" Value="{DynamicResource Window.Border}" />
         <Setter Property="BorderThickness" Value="{DynamicResource Window.BorderThickness}" />
@@ -53,7 +36,7 @@
                                     <RowDefinition Height="Auto" />
                                     <RowDefinition />
                                 </Grid.RowDefinitions>
-                                <local:CaptionBar x:Name="PART_CaptionBar" Grid.Row="0" MinHeight="{x:Static SystemParameters.CaptionHeight}" VerticalAlignment="Top" Title="{TemplateBinding Title}" IsSystemMenuEnabled="True" />
+                                <local:CaptionBar x:Name="PART_CaptionBar" Grid.Row="0" MinHeight="30" VerticalAlignment="Top" Title="{TemplateBinding Title}" IsSystemMenuEnabled="True" />
                                 <AdornerDecorator Grid.Row="1">
                                     <ContentPresenter />
                                 </AdornerDecorator>

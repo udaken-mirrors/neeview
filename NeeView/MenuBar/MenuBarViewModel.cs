@@ -1,4 +1,5 @@
 ﻿using NeeLaboratory.ComponentModel;
+using NeeView.Windows;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;

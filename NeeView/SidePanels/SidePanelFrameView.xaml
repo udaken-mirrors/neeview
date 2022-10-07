@@ -6,6 +6,7 @@
              xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
              xmlns:local="clr-namespace:NeeView"
              xmlns:nw="clr-namespace:NeeView.Windows;assembly=NeeView.Runtime"
+             xmlns:nwc="clr-namespace:NeeView.Windows.Controls"
              xmlns:nwd="clr-namespace:NeeView.Windows.Data"
              xmlns:nrlp="clr-namespace:NeeView.Runtime.LayoutPanel;assembly=NeeView.Runtime"
              xmlns:behaviors="http://schemas.microsoft.com/xaml/behaviors"
@@ -120,18 +121,18 @@
                     <Border Style="{StaticResource PanelBorderStyle}" BorderThickness="0,0,1,0" />
                     <Border x:Name="LeftPanelContent" Background="Transparent" Margin="0,0,1,0">
                         <behaviors:Interaction.Behaviors>
-                            <local:AutoHideBehavior Name="LeftPanel" Screen="{Binding ElementName=Screen}" SubTarget="{Binding ElementName=LeftSplitter}" Dock="Left"
+                            <nwc:AutoHideBehavior Name="LeftPanel" Screen="{Binding ElementName=Screen}" SubTarget="{Binding ElementName=LeftSplitter}" Dock="Left"
                                     IsEnabled="{Binding VM.Left.IsAutoHide}" DelayTime="{Binding VM.AutoHideConfig.AutoHideDelayTime}"
                                     DelayVisibleTime="{Binding VM.AutoHideConfig.AutoHideDelayVisibleTime}" FocusLockMode="{Binding VM.AutoHideConfig.AutoHideFocusLockMode}"
                                     IsKeyDownDelayEnabled="{Binding VM.AutoHideConfig.IsAutoHideKeyDownDelay}" HitTestMargin="{Binding VM.AutoHideConfig.AutoHideHitTestHorizontalMargin}"
                                     Description="{Binding VM.Left.AutoHideDescription}">
-                                <local:AutoHideBehavior.IsVisibleLocked>
+                                <nwc:AutoHideBehavior.IsVisibleLocked>
                                     <MultiBinding Converter="{StaticResource MultiBooleanOrConverter}">
                                         <Binding Path="VM.Model.IsVisibleLocked" />
                                         <Binding Path="VM.Left.IsVisibleLocked" />
                                     </MultiBinding>
-                                </local:AutoHideBehavior.IsVisibleLocked>
-                            </local:AutoHideBehavior>
+                                </nwc:AutoHideBehavior.IsVisibleLocked>
+                            </nwc:AutoHideBehavior>
                         </behaviors:Interaction.Behaviors>
                         <nrlp:LayoutDockPanel Margin="{Binding PanelMargin}" Manager="{Binding VM.MainLayoutPanelManager}" ItemsSource="{Binding VM.MainLayoutPanelManager.LeftDock.SelectedItem}"
                                 BorderBrush="{DynamicResource Panel.Splitter}">
@@ -144,18 +145,18 @@
                     <Border Style="{StaticResource PanelBorderStyle}" BorderThickness="1,0,0,0" />
                     <Border x:Name="RightPanelContent" Background="Transparent" Margin="1,0,0,0">
                         <behaviors:Interaction.Behaviors>
-                            <local:AutoHideBehavior Name="RightPanel" Screen="{Binding ElementName=Screen}" SubTarget="{Binding ElementName=RightSplitter}" Dock="Right"
+                            <nwc:AutoHideBehavior Name="RightPanel" Screen="{Binding ElementName=Screen}" SubTarget="{Binding ElementName=RightSplitter}" Dock="Right"
                                     IsEnabled="{Binding VM.Right.IsAutoHide}" DelayTime="{Binding VM.AutoHideConfig.AutoHideDelayTime}"
                                     DelayVisibleTime="{Binding VM.AutoHideConfig.AutoHideDelayVisibleTime}" FocusLockMode="{Binding VM.AutoHideConfig.AutoHideFocusLockMode}"
                                     IsKeyDownDelayEnabled="{Binding VM.AutoHideConfig.IsAutoHideKeyDownDelay}" HitTestMargin="{Binding VM.AutoHideConfig.AutoHideHitTestHorizontalMargin}"
                                     Description="{Binding VM.Right.AutoHideDescription}">
-                                <local:AutoHideBehavior.IsVisibleLocked>
+                                <nwc:AutoHideBehavior.IsVisibleLocked>
                                     <MultiBinding Converter="{StaticResource MultiBooleanOrConverter}">
                                         <Binding Path="VM.Model.IsVisibleLocked" />
                                         <Binding Path="VM.Right.IsVisibleLocked" />
                                     </MultiBinding>
-                                </local:AutoHideBehavior.IsVisibleLocked>
-                            </local:AutoHideBehavior>
+                                </nwc:AutoHideBehavior.IsVisibleLocked>
+                            </nwc:AutoHideBehavior>
                         </behaviors:Interaction.Behaviors>
                         <nrlp:LayoutDockPanel Margin="{Binding PanelMargin}" Manager="{Binding VM.MainLayoutPanelManager}" ItemsSource="{Binding VM.MainLayoutPanelManager.RightDock.SelectedItem}"
                                 BorderBrush="{DynamicResource Panel.Splitter}">

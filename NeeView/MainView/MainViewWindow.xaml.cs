@@ -50,7 +50,6 @@ namespace NeeView
         #endregion
 
         private readonly DpiScaleProvider _dpiProvider = new();
-        private readonly WindowChromeAccessor _windowChrome;
         private readonly WindowStateManager _windowStateManager;
         private bool _canHideMenu;
         private readonly WindowController _windowController;
@@ -60,14 +59,13 @@ namespace NeeView
         public MainViewWindow()
         {
             InitializeComponent();
+            WindowChromeTools.SetWindowChrome(this);
 
             this.DataContext = this;
 
             this.SetBinding(MainViewWindow.TitleProperty, new Binding(nameof(WindowTitle.Title)) { Source = WindowTitle.Current });
 
-            _windowChrome = new WindowChromeAccessor(this);
-
-            _windowStateManager = new WindowStateManager(this, new WindowStateManagerDependency(_windowChrome, TabletModeWatcher.Current));
+            _windowStateManager = new WindowStateManager(this);
             _windowStateManager.StateChanged += WindowStateManager_StateChanged;
 
             _windowController = new WindowController(_windowStateManager, this);
@@ -106,8 +104,6 @@ namespace NeeView
 
         public WindowController WindowController => _windowController;
 
-        public WindowChromeAccessor WindowChrome => _windowChrome;
-
         public WindowStateManager WindowStateManager => _windowStateManager;
 
         public AutoHideConfig AutoHideConfig => Config.Current.AutoHide;
@@ -144,8 +140,6 @@ namespace NeeView
 
         private void MainViewWindow_SourceInitialized(object? sender, EventArgs e)
         {
-            _windowChrome.IsEnabled = true;
-
             var placement = Config.Current.MainView.WindowPlacement;
             if (placement.IsValid() && placement.WindowState == WindowState.Minimized)
             {

@@ -1,4 +1,6 @@
-﻿namespace NeeView
+﻿using NeeView.Windows;
+
+namespace NeeView
 {
     public interface IMainViewWindow
     {

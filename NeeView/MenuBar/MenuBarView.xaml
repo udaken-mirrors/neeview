@@ -57,7 +57,7 @@
                 </Border>
             </Grid>
 
-            <DockPanel x:Name="MenuArea" VerticalAlignment="Bottom">
+            <DockPanel x:Name="MenuArea" VerticalAlignment="Bottom" Margin="8,0,0,0">
                 <DockPanel.Resources>
                     <Style x:Key="{x:Type Menu}" TargetType="{x:Type Menu}" BasedOn="{StaticResource NVMenu}">
                         <Setter Property="Background" Value="Transparent" />

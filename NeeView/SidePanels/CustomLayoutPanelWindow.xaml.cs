@@ -22,7 +22,6 @@ namespace NeeView
     /// </summary>
     public partial class CustomLayoutPanelWindow : LayoutPanelWindow, IDisposable, IHasRenameManager
     {
-        private readonly WindowChromeAccessor _windowChrome;
         private RoutedCommandBinding? _routedCommandBinding;
         private bool _disposedValue;
         
@@ -35,10 +34,11 @@ namespace NeeView
         public CustomLayoutPanelWindow()
         {
             InitializeComponent();
+            WindowChromeTools.SetWindowChrome(this);
+
             this.DataContext = this;
 
-            _windowChrome = new WindowChromeAccessor(this);
-            _windowStateManager = new WindowStateManager(this, new WindowStateManagerDependency(_windowChrome, TabletModeWatcher.Current));
+            _windowStateManager = new WindowStateManager(this);
         }
 
         public CustomLayoutPanelWindow(LayoutPanelWindowManager manager, LayoutPanel layoutPanel) : this()
@@ -56,17 +56,6 @@ namespace NeeView
             this.MouseRightButtonDown += (s, e) => this.RenameManager.CloseAll();
         }
 
-
-        public WindowChromeAccessor WindowChrome => _windowChrome;
-
-
-
-        protected override void OnSourceInitialized(EventArgs e)
-        {
-            _windowChrome.IsEnabled = true;
-
-            base.OnSourceInitialized(e);
-        }
 
         protected override void OnActivated(EventArgs e)
         {

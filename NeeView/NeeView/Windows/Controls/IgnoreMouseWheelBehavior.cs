@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 
-namespace NeeView
+namespace NeeView.Windows.Controls
 {
     /// <summary>
     /// Captures and eats MouseWheel events so that a nested ListBox does not

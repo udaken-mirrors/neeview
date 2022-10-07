@@ -61,7 +61,7 @@ namespace NeeView
             _initialized = true;
 
             // NOTE: To be on the safe side, initialize the floating point processor.
-            Interop.NVFpReset();
+            NVInterop.NVFpReset();
 
             _sidePanelProfile = new SidePanelProfile();
             _sidePanelProfile.Initialize();

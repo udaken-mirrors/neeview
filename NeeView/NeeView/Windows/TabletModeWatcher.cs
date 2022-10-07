@@ -1,4 +1,5 @@
 ﻿using Microsoft.Win32;
+using NeeView.Interop;
 using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
@@ -14,40 +15,31 @@ namespace NeeView.Windows
     /// </summary>
     public class TabletModeWatcher
     {
-        // TODO: このプロジェクトでシングルトンはあまりよろしくないので、static にする。
-        static TabletModeWatcher() => Current = new TabletModeWatcher();
-        public static TabletModeWatcher Current { get; }
-
-
-        private const int WM_SETTINGCHANGE = 0x001A;
-
-        private Window? _window;
         private bool _isTabletMode = false;
         private int _dartyValue = 1;
 
-        public TabletModeWatcher()
+
+        public TabletModeWatcher(Window window)
         {
+            if (!AddHook(window))
+            {
+                window.SourceInitialized += (s, e) => AddHook(window);
+            }
         }
 
-        public void Initialize(Window window)
-        {
-            if (_window != null) throw new InvalidOperationException();
-
-            var hsrc = HwndSource.FromVisual(window) as HwndSource;
-            _window = window;
-
-            hsrc?.AddHook(WndProc);
-        }
 
         public bool IsTabletMode
         {
             get
             {
-                if (_dartyValue != 0) UpdateTabletMode();
+                if (_dartyValue != 0)
+                {
+                    UpdateTabletMode();
+                }
+
                 return _isTabletMode;
             }
         }
-
 
         private void UpdateTabletMode()
         {
@@ -63,12 +55,25 @@ namespace NeeView.Windows
             Debug.WriteLine($"TabletMode: {_isTabletMode}");
         }
 
-        // ウィンドウプロシージャ
+        private bool AddHook(Window window)
+        {
+            var hWnd = new WindowInteropHelper(window).Handle;
+            if (hWnd != IntPtr.Zero)
+            {
+                HwndSource.FromHwnd(hWnd).AddHook(new HwndSourceHook(WndProc));
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
         private IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
         {
-            switch (msg)
+            switch ((WindowsMessages)msg)
             {
-                case WM_SETTINGCHANGE:
+                case WindowsMessages.WM_SETTINGCHANGE:
                     OnSettingChange(wParam, lParam);
                     break;
             }

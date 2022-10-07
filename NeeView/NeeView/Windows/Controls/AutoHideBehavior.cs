@@ -11,7 +11,7 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
 
-namespace NeeView
+namespace NeeView.Windows.Controls
 {
     /// <summary>
     /// 自動非表示のフォーカスロックモード

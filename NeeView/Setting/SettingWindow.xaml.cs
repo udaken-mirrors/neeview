@@ -31,7 +31,7 @@ namespace NeeView.Setting
 
         public SettingWindow()
         {
-            Interop.NVFpReset();
+            NVInterop.NVFpReset();
 
             InitializeComponent();
         }

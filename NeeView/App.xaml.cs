@@ -1,5 +1,6 @@
 ﻿using NeeLaboratory.Diagnostics;
 using NeeView.Native;
+using NeeView.Windows;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -120,8 +121,9 @@ namespace NeeView
 
             // メインウィンドウ起動
             var mainWindow = new MainWindow();
+            WindowParameters.Initialize(mainWindow);
 
-            Interop.NVFpReset();
+            NVInterop.NVFpReset();
             mainWindow.Show();
 
             MessageDialog.IsShowInTaskBar = false;
@@ -133,7 +135,7 @@ namespace NeeView
         /// </summary>
         private async Task InitializeAsync(StartupEventArgs e)
         {
-            Interop.TryLoadNativeLibrary(Environment.LibrariesPath);
+            NVInterop.TryLoadNativeLibrary(Environment.LibrariesPath);
 
             this.ShutdownMode = ShutdownMode.OnExplicitShutdown;
 

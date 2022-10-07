@@ -11,6 +11,7 @@ using NeeView.Windows.Media;
 using NeeLaboratory.Windows.Input;
 using NeeLaboratory.ComponentModel;
 using NeeView.Runtime.LayoutPanel;
+using NeeView.Windows.Controls;
 
 namespace NeeView
 {

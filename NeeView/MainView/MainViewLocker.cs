@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NeeView.Windows;
+using System;
 
 namespace NeeView
 {
@@ -55,12 +56,12 @@ namespace NeeView
             _window.WindowStateManager.StateEdited -= WindowStateManager_StateEdited;
         }
 
-        private void WindowStateManager_StateEditing(object? sender, WindowStateChangedEventArgs e)
+        private void WindowStateManager_StateEditing(object? sender, WindowStateExChangedEventArgs e)
         {
             Lock();
         }
 
-        private void WindowStateManager_StateEdited(object? sender, WindowStateChangedEventArgs e)
+        private void WindowStateManager_StateEdited(object? sender, WindowStateExChangedEventArgs e)
         {
             double delay = e.NewState == WindowStateEx.FullScreen ? 1.0 : 0.0;
             Unlock(delay);

@@ -37,7 +37,6 @@ namespace NeeView
         private readonly MainViewComponent _viewComponent;
         private readonly DpiScaleProvider _dpiProvider = new();
 
-        private readonly WindowChromeAccessor _windowChromeAccessor;
         private readonly WindowStateManager _windowStateManager;
         private readonly WindowShape _windowShape;
         private readonly WindowController _windowController;
@@ -45,9 +44,10 @@ namespace NeeView
 
         public MainWindow()
         {
-            Interop.NVFpReset();
+            NVInterop.NVFpReset();
 
             InitializeComponent();
+            WindowChromeTools.SetWindowChrome(this);
 
             // TextBox の ContextMenu のスタイルを変更する ... やりすぎ？
             // ThemeProfile.InitializeEditorContextMenuStyle(this);
@@ -62,9 +62,8 @@ namespace NeeView
             // Window状態初期化
             InitializeWindowShapeSnap();
 
-            _windowChromeAccessor = new WindowChromeAccessor(this);
-            _windowStateManager = new WindowStateManager(this, new WindowStateManagerDependency(_windowChromeAccessor, TabletModeWatcher.Current));
-            _windowShape = new WindowShape(_windowStateManager, _windowChromeAccessor);
+            _windowStateManager = new WindowStateManager(this);
+            _windowShape = new WindowShape(_windowStateManager);
             _windowController = new WindowController(_windowStateManager, _windowShape);
 
             ContextMenuWatcher.Initialize();
@@ -77,7 +76,7 @@ namespace NeeView
             FileIconCollection.Current.InitializeAsync();
 
             // FpReset 念のため
-            Interop.NVFpReset();
+            NVInterop.NVFpReset();
 
             // Drag&Drop設定
             //ContentDropManager.Current.SetDragDropEvent(MainView);
@@ -437,7 +436,6 @@ namespace NeeView
 
             // WinProc登録
             WindowMessage.Current.Initialize(this);
-            TabletModeWatcher.Current.Initialize(this);
 
             _vm.Loaded();
 
