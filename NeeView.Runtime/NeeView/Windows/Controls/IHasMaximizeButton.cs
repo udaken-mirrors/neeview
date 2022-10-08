@@ -17,7 +17,13 @@ namespace NeeView.Windows.Controls
         /// <remarks>
         /// スタイルが機能しない場合の代替手段として用意
         /// </remarks>
-        /// <param name="brush"></param>
-        void SetMaximizeButtonBackground(Brush brush);
+        void SetMaximizeButtonBackground(CaptionButtonState state);
+    }
+
+    public enum CaptionButtonState
+    {
+        Default,
+        MouseOver,
+        Pressed,
     }
 }

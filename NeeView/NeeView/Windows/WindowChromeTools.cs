@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using NeeView.Windows.Controls;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Shell;
 
@@ -27,6 +28,21 @@ namespace NeeView.Windows
             }
         }
 
+#if false
+        public static SnapLayoutPresenter? GetSnapLayoutPresenter(DependencyObject obj)
+        {
+            return (SnapLayoutPresenter?)obj.GetValue(SnapLayoutPresenterProperty);
+        }
+
+        public static void SetSnapLayoutPresenter(DependencyObject obj, SnapLayoutPresenter? value)
+        {
+            obj.SetValue(SnapLayoutPresenterProperty, value);
+        }
+
+        public static readonly DependencyProperty SnapLayoutPresenterProperty =
+            DependencyProperty.RegisterAttached("SnapLayoutPresenter", typeof(SnapLayoutPresenter), typeof(WindowChromeTools), new PropertyMetadata(null));
+#endif
+
 
         public static void SetWindowChrome(Window window)
         {
@@ -34,7 +50,7 @@ namespace NeeView.Windows
             chrome.CornerRadius = new CornerRadius();
             chrome.UseAeroCaptionButtons = false;
             chrome.CaptionHeight = 0;
-            chrome.GlassFrameThickness = new Thickness(1);
+            chrome.GlassFrameThickness = new Thickness(1, 30, 1, 1);
             chrome.ResizeBorderThickness = new Thickness(4);
 
             SetWindowChrome(window, chrome);
@@ -46,6 +62,12 @@ namespace NeeView.Windows
 
             WindowChrome.SetWindowChrome(window, chrome);
             _ = new WindowChromePatch(window);
+
+#if false
+            SetSnapLayoutPresenter(window, new SnapLayoutPresenter(window));
+#else
+            WndProcSource.SetAttached(window, true);
+#endif
         }
     }
 }

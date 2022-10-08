@@ -19,6 +19,9 @@ namespace NeeView.Windows.Controls
 {
     public partial class WindowCaptionButtons : UserControl, IHasMaximizeButton
     {
+        private readonly SolidColorBrush _defaultButtonBackground = Brushes.Transparent;
+        private readonly SolidColorBrush _mouseOverButtonBackground = new(Color.FromArgb(0x66, 0x88, 0x88, 0x88));
+        private readonly SolidColorBrush _pressedButtonBackground = new(Color.FromArgb(0x88, 0x88, 0x88, 0x88));
         private readonly SnapLayoutPresenter _snapLayoutPresenter;
         private Window? _window;
 
@@ -136,9 +139,19 @@ namespace NeeView.Windows.Controls
         /// <summary>
         /// 最大化ボタンの背景変更 (別手段)
         /// </summary>
-        public void SetMaximizeButtonBackground(Brush brush)
+        public void SetMaximizeButtonBackground(CaptionButtonState state)
         {
-            this.CaptionMaximizeButtonBase.Background = brush;
+            var brush = state switch
+            {
+                CaptionButtonState.MouseOver => _mouseOverButtonBackground,
+                CaptionButtonState.Pressed => _pressedButtonBackground,
+                _ => _defaultButtonBackground,
+            };
+
+            if (this.CaptionMaximizeButtonBase.Background != brush)
+            {
+                this.CaptionMaximizeButtonBase.Background = brush;
+            }
         }
     }
 }
