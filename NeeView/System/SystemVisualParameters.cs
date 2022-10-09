@@ -1,4 +1,5 @@
 ﻿using NeeLaboratory.ComponentModel;
+using NeeView.Interop;
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
@@ -9,13 +10,6 @@ namespace NeeView
 {
     public class SystemVisualParameters : BindableBase
     {
-        internal static class NativeMethods
-        {
-            [DllImport("dwmapi.dll", PreserveSig = false)]
-            public static extern void DwmGetColorizationColor(out uint colorizationColor, [MarshalAs(UnmanagedType.Bool)] out bool colorizationOpaqueBlend);
-        }
-
-
         static SystemVisualParameters() => Current = new SystemVisualParameters();
         public static SystemVisualParameters Current { get; }
 
@@ -36,7 +30,7 @@ namespace NeeView
             UpdateFonts();
             UpdateColors();
 
-            WindowMessage.Current.SettingChanged += WindowMessage_SettingChanged;
+            SystemDeviceWatcher.Current.SettingChanged += WindowMessage_SettingChanged;
         }
 
 

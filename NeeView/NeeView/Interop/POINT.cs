@@ -1,7 +1,9 @@
-﻿using System.Runtime.InteropServices;
+﻿using System;
+using System.Runtime.InteropServices;
 
 namespace NeeView.Interop
 {
+    [Serializable]
     [StructLayout(LayoutKind.Sequential)]
     public struct POINT
     {
@@ -12,6 +14,21 @@ namespace NeeView.Interop
         {
             this.x = x;
             this.y = y;
+        }
+
+        public override string ToString()
+        {
+            return $"{x},{y}";
+        }
+
+        public static POINT Parse(string s)
+        {
+            if (string.IsNullOrWhiteSpace(s)) throw new InvalidCastException();
+
+            var tokens = s.Split(',');
+            if (tokens.Length != 2) throw new InvalidCastException();
+
+            return new POINT(int.Parse(tokens[0]), int.Parse(tokens[1]));
         }
     }
 }

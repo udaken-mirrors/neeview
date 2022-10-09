@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NeeView.Interop;
+using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -8,32 +9,6 @@ namespace NeeView
 {
     public static class ProcessActivator
     {
-        private static class NativeMethods
-        {
-            [DllImport("user32.dll")]
-            [return: MarshalAs(UnmanagedType.Bool)]
-            public static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
-
-            [DllImport("user32.dll")]
-            [return: MarshalAs(UnmanagedType.Bool)]
-            public static extern bool ShowWindowAsync(IntPtr hWnd, int nCmdShow);
-
-            public const int SW_SHOWNORMAL = 1;
-            public const int SW_SHOW = 5;
-            public const int SW_RESTORE = 9;
-
-            [DllImport("user32.dll")]
-            [return: MarshalAs(UnmanagedType.Bool)]
-            public static extern bool IsIconic(IntPtr hWnd);
-
-            [DllImport("user32.dll", SetLastError = true)]
-            public static extern IntPtr SetActiveWindow(IntPtr hWnd);
-
-            [DllImport("user32.dll")]
-            [return: MarshalAs(UnmanagedType.Bool)]
-            public static extern bool SetForegroundWindow(IntPtr hWnd);
-        }
-
         public static Process? NextActivate(int direction)
         {
             var currentProcess = Process.GetCurrentProcess();
@@ -61,7 +36,7 @@ namespace NeeView
             // ウィンドウが最小化されている場合は元に戻す
             if (NativeMethods.IsIconic(hWnd))
             {
-                NativeMethods.ShowWindowAsync(hWnd, NativeMethods.SW_RESTORE);
+                NativeMethods.ShowWindowAsync(hWnd, (int)ShowWindowCommands.SW_RESTORE);
             }
         }
     }

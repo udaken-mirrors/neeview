@@ -45,9 +45,9 @@ namespace NeeView.Windows
 
         private IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
         {
-            switch ((WindowsMessages)msg)
+            switch ((WindowMessages)msg)
             {
-                case WindowsMessages.WM_NCCALCSIZE:
+                case WindowMessages.WM_NCCALCSIZE:
                     // Adjust client area
                     // https://mntone.hateblo.jp/entry/2020/08/02/111309
                     if (wParam != IntPtr.Zero)
@@ -57,7 +57,7 @@ namespace NeeView.Windows
                     }
                     break;
 
-                case WindowsMessages.WM_NCHITTEST:
+                case WindowMessages.WM_NCHITTEST:
                     // This prevents a crash in WindowChromeWorker._HandleNCHitTest
                     // https://developercommunity.visualstudio.com/content/problem/167357/overflow-exception-in-windowchrome.html?childToView=1209945#comment-1209945 
                     try

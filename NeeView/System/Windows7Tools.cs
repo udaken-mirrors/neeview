@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NeeView.Interop;
+using System;
 using System.Runtime.InteropServices;
 using System.Windows;
 
@@ -9,20 +10,6 @@ namespace NeeView
     /// </summary>
     public static class Windows7Tools
     {
-        #region NativeApi
-
-        internal static class NativeMethods
-        {
-            [DllImport("user32.dll", CharSet = CharSet.Unicode)]
-            public static extern IntPtr FindWindow(string className, string? windowTitle);
-
-            [DllImport("user32.dll")]
-            public static extern bool SetForegroundWindow(IntPtr hwnd);
-        }
-
-        #endregion
-
-
         public static bool IsWindows7 => System.Environment.OSVersion.Version.Major == 6 && System.Environment.OSVersion.Version.Minor == 1;
 
 

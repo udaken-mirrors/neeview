@@ -71,9 +71,9 @@ namespace NeeView.Windows
 
         private IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
         {
-            switch ((WindowsMessages)msg)
+            switch ((WindowMessages)msg)
             {
-                case WindowsMessages.WM_SETTINGCHANGE:
+                case WindowMessages.WM_SETTINGCHANGE:
                     OnSettingChange(wParam, lParam);
                     break;
             }

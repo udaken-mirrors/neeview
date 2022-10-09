@@ -13,9 +13,9 @@ namespace NeeView
         {
             Parent = parent;
 
-            WindowMessage.Current.DriveChanged += WindowMessage_DriveChanged;
-            WindowMessage.Current.MediaChanged += WindowMessage_MediaChanged;
-            WindowMessage.Current.DirectoryChanged += WindowMessage_DirectoryChanged;
+            SystemDeviceWatcher.Current.DriveChanged += WindowMessage_DriveChanged;
+            SystemDeviceWatcher.Current.MediaChanged += WindowMessage_MediaChanged;
+            SystemDeviceWatcher.Current.DirectoryChanged += WindowMessage_DirectoryChanged;
 
             Icon = new SingleImageSourceCollection(ResourceTools.GetElementResource<ImageSource>(MainWindow.Current, "ic_desktop_windows_24px"));
         }

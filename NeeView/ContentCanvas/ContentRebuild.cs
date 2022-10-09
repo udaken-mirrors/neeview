@@ -66,9 +66,9 @@ namespace NeeView
             _disposables.Add(Config.Current.ImageTrim.SubscribePropertyChanged(
                 (s, e) => RequestWithTrim()));
 
-            _disposables.Add(WindowMessage.Current.SubscribeEnterSizeMove(
+            _disposables.Add(SystemDeviceWatcher.Current.SubscribeEnterSizeMove(
                 (s, e) => _isResizingWindow = true));
-            _disposables.Add(WindowMessage.Current.SubscribeExitSizeMove(
+            _disposables.Add(SystemDeviceWatcher.Current.SubscribeExitSizeMove(
                 (s, e) => _isResizingWindow = false));
 
             // キー入力監視。メンバーなのでイベント解除不要

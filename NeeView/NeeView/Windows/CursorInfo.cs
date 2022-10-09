@@ -3,6 +3,7 @@
 // WIN32APIの高DPI対応
 // from http://grabacr.net/archives/1105
 
+using NeeView.Interop;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,31 +21,6 @@ namespace NeeView.Windows
     /// </summary>
     public static class CursorInfo
     {
-        internal static class NativeMethods
-        {
-            /// <summary>
-            /// 現在のマウスカーソルのスクリーン座標を得ます
-            /// </summary>
-            [DllImport("user32.dll", SetLastError = true)]
-            [return: MarshalAs(UnmanagedType.Bool)]
-            public static extern bool GetCursorPos(out POINT pt);
-
-            /// <summary>
-            /// 画面上にある指定された点を、スクリーン座標からクライアント座標へ変換します。
-            /// </summary>
-            [DllImport("user32.dll")]
-            public static extern bool ScreenToClient(IntPtr hwnd, ref POINT pt);
-
-            /// <summary>
-            /// 座標
-            /// </summary>
-            public struct POINT
-            {
-                public Int32 X;
-                public Int32 Y;
-            }
-        }
-
         /// <summary>
         /// 現在のマウスカーソル座標を取得
         /// </summary>
@@ -52,7 +28,7 @@ namespace NeeView.Windows
         /// <returns></returns>
         public static Point GetNowPosition(Visual visual)
         {
-            NativeMethods.GetCursorPos(out NativeMethods.POINT point);
+            NativeMethods.GetCursorPos(out POINT point);
 
             if (HwndSource.FromVisual(visual) is not HwndSource source)
             {
@@ -69,7 +45,7 @@ namespace NeeView.Windows
             }
 
             var dpiScaleFactor = GetDpiScaleFactor(visual);
-            return new Point(point.X / dpiScaleFactor.X, point.Y / dpiScaleFactor.Y);
+            return new Point(point.x / dpiScaleFactor.X, point.y / dpiScaleFactor.Y);
         }
 
 
@@ -79,10 +55,10 @@ namespace NeeView.Windows
         /// <returns></returns>
         public static Point GetNowScreenPosition(Window window)
         {
-            NativeMethods.GetCursorPos(out NativeMethods.POINT point);
+            NativeMethods.GetCursorPos(out POINT point);
 
             var dpiScaleFactor = GetDpiScaleFactor(window);
-            return new Point(point.X / dpiScaleFactor.X, point.Y / dpiScaleFactor.Y);
+            return new Point(point.x / dpiScaleFactor.X, point.y / dpiScaleFactor.Y);
         }
 
 

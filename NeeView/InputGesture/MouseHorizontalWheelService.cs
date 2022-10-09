@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NeeView.Interop;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -12,32 +13,6 @@ namespace NeeView
 {
     public class MouseHorizontalWheelService : INotifyMouseHorizontalWheelChanged
     {
-        internal static class NativeMethods
-        {
-            internal const int WM_MOUSEHWHEEL = 0x020E;
-
-            internal static ushort HIWORD(IntPtr dwValue)
-            {
-                return (ushort)((((long)dwValue) >> 0x10) & 0xffff);
-            }
-
-            internal static ushort HIWORD(uint dwValue)
-            {
-                return (ushort)(dwValue >> 0x10);
-            }
-
-            internal static int GET_WHEEL_DELTA_WPARAM(IntPtr wParam)
-            {
-                return (short)HIWORD(wParam);
-            }
-
-            internal static int GET_WHEEL_DELTA_WPARAM(uint wParam)
-            {
-                return (short)HIWORD(wParam);
-            }
-        }
-
-
         public static readonly RoutedEvent MouseHorizontalWheelEvent = EventManager.RegisterRoutedEvent("MouseHorizontalWheel", RoutingStrategy.Bubble, typeof(RoutedEventHandler), typeof(MouseHorizontalWheelService));
 
         private readonly Window _window;
@@ -72,9 +47,9 @@ namespace NeeView
 
         private IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
         {
-            switch (msg)
+            switch ((WindowMessages)msg)
             {
-                case NativeMethods.WM_MOUSEHWHEEL:
+                case WindowMessages.WM_MOUSEHWHEEL:
                     MouseWheelEventArgs? args = null;
                     try
                     {
@@ -82,7 +57,7 @@ namespace NeeView
                         // NOTE: ReferenceSource を見る限り Mouse.PrimaryDevice が null になることはないようだが、念の為に確認している
                         if (Mouse.PrimaryDevice != null)
                         {
-                            var delta = NativeMethods.GET_WHEEL_DELTA_WPARAM(wParam);
+                            var delta = IntPtrMethods.GET_WHEEL_DELTA_WPARAM(wParam);
                             args = new MouseWheelEventArgs(Mouse.PrimaryDevice, System.Environment.TickCount, delta) { RoutedEvent = MouseHorizontalWheelEvent };
                         }
                     }

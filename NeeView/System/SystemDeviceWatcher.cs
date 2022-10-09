@@ -1,4 +1,5 @@
 ﻿using NeeLaboratory.ComponentModel;
+using NeeView.Interop;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -89,156 +90,15 @@ namespace NeeView
         public string? Message { get; private set; }
     }
 
-    public class WindowMessage
+    public class SystemDeviceWatcher
     {
-        #region Win32API
-
-        internal static class NativeMethods
-        {
-            // ウィンドウメッセージ
-            public const int WM_SIZE = 0x0005;
-            public const int WM_SETTINGCHANGE = 0x001A;
-            public const int WM_MOUSEACTIVATE = 0x0021;
-            public const int WM_ENTERSIZEMOVE = 0x0231;
-            public const int WM_EXITSIZEMOVE = 0x0232;
-            public const int WM_DEVICECHANGE = 0x0219;
-            public const int WM_THEMECHANGED = 0x031A;
-            public const int WM_DWMCOLORIZATIONCOLORCHANGED = 0x0320;
-            public const int WM_SHNOTIFY = 0x0401;
-
-            // マウスアクティブ
-            public const int MA_ACTIVATE = 1;
-            public const int MA_ACTIVATEANDEAT = 2;
-            public const int MA_NOACTIVATE = 3;
-            public const int MA_NOACTIVATEANDEAT = 4;
-
-
-            // Win32API の PostMessage 関数のインポート
-            [DllImport("user32.dll", CharSet = CharSet.Unicode)]
-            public static extern bool PostMessage(IntPtr hWnd, Int32 Msg, IntPtr wParam, IntPtr lParam);
-
-            [Flags]
-            public enum SHCNRF
-            {
-                InterruptLevel = 0x1,
-                ShellLevel = 0x2,
-                RecursiveInterrupt = 0x1000,
-                NewDelivery = 0x8000,
-            }
-
-            public enum SHCNF
-            {
-                SHCNF_IDLIST = 0x0000,
-                SHCNF_PATHA = 0x0001,
-                SHCNF_PRINTERA = 0x0002,
-                SHCNF_DWORD = 0x0003,
-                SHCNF_PATHW = 0x0005,
-                SHCNF_PRINTERW = 0x0006,
-                SHCNF_TYPE = 0x00FF,
-                SHCNF_FLUSH = 0x1000,
-                SHCNF_FLUSHNOWAIT = 0x2000
-            }
-
-            [Flags]
-            public enum SHCNE
-            {
-                SHCNE_RENAMEITEM = 0x00000001,
-                SHCNE_CREATE = 0x00000002,
-                SHCNE_DELETE = 0x00000004,
-                SHCNE_MKDIR = 0x00000008,
-                SHCNE_RMDIR = 0x00000010,
-                SHCNE_MEDIAINSERTED = 0x00000020,
-                SHCNE_MEDIAREMOVED = 0x00000040,
-                SHCNE_DRIVEREMOVED = 0x00000080,
-                SHCNE_DRIVEADD = 0x00000100,
-                SHCNE_NETSHARE = 0x00000200,
-                SHCNE_NETUNSHARE = 0x00000400,
-                SHCNE_ATTRIBUTES = 0x00000800,
-                SHCNE_UPDATEDIR = 0x00001000,
-                SHCNE_UPDATEITEM = 0x00002000,
-                SHCNE_SERVERDISCONNECT = 0x00004000,
-                SHCNE_UPDATEIMAGE = 0x00008000,
-                SHCNE_DRIVEADDGUI = 0x00010000,
-                SHCNE_RENAMEFOLDER = 0x00020000,
-                SHCNE_FREESPACE = 0x00040000,
-                SHCNE_EXTENDED_EVENT = 0x04000000,
-                SHCNE_ASSOCCHANGED = 0x08000000,
-                SHCNE_DISKEVENTS = 0x0002381F,
-                SHCNE_GLOBALEVENTS = 0x0C0581E0,
-                SHCNE_ALLEVENTS = 0x7FFFFFFF,
-                SHCNE_INTERRUPT = unchecked((int)0x80000000)
-            }
-
-            [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
-            public struct SHChangeNotifyEntry
-            {
-                public IntPtr pIdl;
-                [MarshalAs(UnmanagedType.Bool)] public Boolean Recursively;
-            }
-
-            [StructLayout(LayoutKind.Sequential)]
-            public struct SHNOTIFYSTRUCT
-            {
-                public IntPtr dwItem1;
-                public IntPtr dwItem2;
-            }
-
-            [DllImport("shell32.dll", SetLastError = true, EntryPoint = "#2", CharSet = CharSet.Auto)]
-            public static extern UInt32 SHChangeNotifyRegister(IntPtr hWnd, SHCNRF fSources, SHCNE fEvents, uint wMsg, int cEntries, ref SHChangeNotifyEntry pFsne);
-
-            [DllImport("shell32.dll", CharSet = CharSet.Unicode)]
-            [return: MarshalAs(UnmanagedType.Bool)]
-            public static extern bool SHGetPathFromIDList(IntPtr pIDL, StringBuilder strPath);
-
-
-
-            /*
-            [DllImport("shell32.dll")]
-            [return: MarshalAs(UnmanagedType.Bool)]
-            public static extern bool SHGetPathFromIDListW(IntPtr pidl, [MarshalAs(UnmanagedType.LPTStr)] StringBuilder pszPath);
-            */
-
-            public enum DBT
-            {
-                DBT_DEVICEARRIVAL = 0x8000,
-                DBT_DEVICEQUERYREMOVE = 0x8001,
-                DBT_DEVICEQUERYREMOVEFAILED = 0x8002,
-                DBT_DEVICEREMOVEPENDING = 0x8003,
-                DBT_DEVICEREMOVECOMPLETE = 0x8004,
-            }
-
-            public enum DBT_DEVTP
-            {
-                DBT_DEVTYP_OEM = 0x0000,
-                DBT_DEVTYP_DEVNODE = 0x0001,
-                DBT_DEVTYP_VOLUME = 0x0002,
-                DBT_DEVTYP_PORT = 0x0003,
-                DBT_DEVTYP_NET = 0x0004,
-                DBT_DEVTYP_DEVICEINTERFACE = 0x0005,
-                DBT_DEVTYP_HANDLE = 0x0006,
-            }
-
-            [StructLayout(LayoutKind.Sequential)]
-            public struct DEV_BROADCAST_VOLUME
-            {
-                public uint dbcv_size;
-                public uint dbcv_devicetype;
-                public uint dbcv_reserved;
-                public uint dbcv_unitmask;
-                public ushort dbcv_flags;
-            }
-
-        }
-
-        #endregion
-
-        static WindowMessage() => Current = new WindowMessage();
-        public static WindowMessage Current { get; }
+        static SystemDeviceWatcher() => Current = new SystemDeviceWatcher();
+        public static SystemDeviceWatcher Current { get; }
 
 
         private Window? _window;
 
-        public WindowMessage()
+        public SystemDeviceWatcher()
         {
         }
 
@@ -300,12 +160,12 @@ namespace NeeView
 
             _window = window;
 
-            var notifyEntry = new NativeMethods.SHChangeNotifyEntry() { pIdl = IntPtr.Zero, Recursively = true };
+            var notifyEntry = new SHChangeNotifyEntry() { pIdl = IntPtr.Zero, Recursively = true };
             var notifyId = NativeMethods.SHChangeNotifyRegister(hsrc.Handle,
-                                                  NativeMethods.SHCNRF.ShellLevel,
-                                                  NativeMethods.SHCNE.SHCNE_MEDIAINSERTED | NativeMethods.SHCNE.SHCNE_MEDIAREMOVED
-                                                  | NativeMethods.SHCNE.SHCNE_MKDIR | NativeMethods.SHCNE.SHCNE_RMDIR | NativeMethods.SHCNE.SHCNE_RENAMEFOLDER,
-                                                  NativeMethods.WM_SHNOTIFY,
+                                                  SHChangeNotifyRegisterFlags.SHCNRF_ShellLevel,
+                                                  SHChangeNotifyEvents.SHCNE_MEDIAINSERTED | SHChangeNotifyEvents.SHCNE_MEDIAREMOVED
+                                                  | SHChangeNotifyEvents.SHCNE_MKDIR | SHChangeNotifyEvents.SHCNE_RMDIR | SHChangeNotifyEvents.SHCNE_RENAMEFOLDER,
+                                                  (uint)WindowMessages.WM_SHNOTIFY,
                                                   1,
                                                   ref notifyEntry);
 
@@ -318,24 +178,24 @@ namespace NeeView
         {
             try
             {
-                switch (msg)
+                switch ((WindowMessages)msg)
                 {
-                    case NativeMethods.WM_ENTERSIZEMOVE:
+                    case WindowMessages.WM_ENTERSIZEMOVE:
                         EnterSizeMove?.Invoke(this, EventArgs.Empty);
                         break;
-                    case NativeMethods.WM_EXITSIZEMOVE:
+                    case WindowMessages.WM_EXITSIZEMOVE:
                         ExitSizeMove?.Invoke(this, EventArgs.Empty);
                         break;
-                    case NativeMethods.WM_DEVICECHANGE:
+                    case WindowMessages.WM_DEVICECHANGE:
                         OnDeviceChange(wParam, lParam);
                         break;
-                    case NativeMethods.WM_SHNOTIFY:
+                    case WindowMessages.WM_SHNOTIFY:
                         OnSHNotify(wParam, lParam);
                         break;
-                    case NativeMethods.WM_SETTINGCHANGE:
+                    case WindowMessages.WM_SETTINGCHANGE:
                         OnSettingChange(wParam, lParam);
                         break;
-                    case NativeMethods.WM_MOUSEACTIVATE:
+                    case WindowMessages.WM_MOUSEACTIVATE:
                         OnMouseActive();
                         break;
                 }
@@ -378,7 +238,7 @@ namespace NeeView
                 return;
             }
 
-            var volume = (NativeMethods.DEV_BROADCAST_VOLUME?)Marshal.PtrToStructure(lParam, typeof(NativeMethods.DEV_BROADCAST_VOLUME));
+            var volume = (DEV_BROADCAST_VOLUME?)Marshal.PtrToStructure(lParam, typeof(DEV_BROADCAST_VOLUME));
             if (volume is null) return;
 
             var driveName = UnitMaskToDriveName(volume.Value.dbcv_unitmask);
@@ -387,13 +247,13 @@ namespace NeeView
                 return;
             }
 
-            switch ((NativeMethods.DBT)wParam.ToInt32())
+            switch ((DeviceBroadcastTtiggers)wParam.ToInt32())
             {
-                case NativeMethods.DBT.DBT_DEVICEARRIVAL:
+                case DeviceBroadcastTtiggers.DBT_DEVICEARRIVAL:
                     ////Debug.WriteLine("DBT_DEVICEARRIVAL");
                     DriveChanged?.Invoke(this, new DriveChangedEventArgs(driveName, true));
                     break;
-                case NativeMethods.DBT.DBT_DEVICEREMOVECOMPLETE:
+                case DeviceBroadcastTtiggers.DBT_DEVICEREMOVECOMPLETE:
                     ////Debug.WriteLine("DBT_DEVICEREMOVECOMPLETE");
                     DriveChanged?.Invoke(this, new DriveChangedEventArgs(driveName, false));
                     break;
@@ -417,15 +277,15 @@ namespace NeeView
         // TODO: 重い処理が多いので、集積かBeginInvokeかする。
         private void OnSHNotify(IntPtr wParam, IntPtr lParam)
         {
-            var shNotify = (NativeMethods.SHNOTIFYSTRUCT)Marshal.PtrToStructure(wParam, typeof(NativeMethods.SHNOTIFYSTRUCT))!;
+            var shNotify = (SHNOTIFYSTRUCT)Marshal.PtrToStructure(wParam, typeof(SHNOTIFYSTRUCT))!;
 
-            var shcne = (NativeMethods.SHCNE)lParam;
+            var shcne = (SHChangeNotifyEvents)lParam;
 
             ////Debug.WriteLine(shcne + ": " + shNotify);
 
             switch (shcne)
             {
-                case NativeMethods.SHCNE.SHCNE_MEDIAINSERTED:
+                case SHChangeNotifyEvents.SHCNE_MEDIAINSERTED:
                     {
                         var path = PIDLToString(shNotify.dwItem1);
                         if (path is not null)
@@ -434,7 +294,7 @@ namespace NeeView
                         }
                     }
                     break;
-                case NativeMethods.SHCNE.SHCNE_MEDIAREMOVED:
+                case SHChangeNotifyEvents.SHCNE_MEDIAREMOVED:
                     {
                         var path = PIDLToString(shNotify.dwItem1);
                         if (path is not null)
@@ -444,7 +304,7 @@ namespace NeeView
                     }
                     break;
 
-                case NativeMethods.SHCNE.SHCNE_MKDIR:
+                case SHChangeNotifyEvents.SHCNE_MKDIR:
                     {
                         var path = PIDLToString(shNotify.dwItem1);
                         if (!string.IsNullOrEmpty(path))
@@ -454,7 +314,7 @@ namespace NeeView
                     }
                     break;
 
-                case NativeMethods.SHCNE.SHCNE_RMDIR:
+                case SHChangeNotifyEvents.SHCNE_RMDIR:
                     {
                         var path = PIDLToString(shNotify.dwItem1);
                         if (!string.IsNullOrEmpty(path))
@@ -464,7 +324,7 @@ namespace NeeView
                     }
                     break;
 
-                case NativeMethods.SHCNE.SHCNE_RENAMEFOLDER:
+                case SHChangeNotifyEvents.SHCNE_RENAMEFOLDER:
                     {
                         var path1 = PIDLToString(shNotify.dwItem1);
                         var path2 = PIDLToString(shNotify.dwItem2);

@@ -17,6 +17,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using NeeLaboratory.Threading.Jobs;
+using NeeView.Interop;
 
 // TODO: コマンド類の何時でも受付。ロード中だから弾く、ではない別の方法を。
 
@@ -33,12 +34,6 @@ namespace NeeView
         public static BookHub Current { get; }
 
         #region NormalizePathName
-
-        internal static class NativeMethods
-        {
-            [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
-            public static extern int GetLongPathName(string shortPath, StringBuilder longPath, int longPathLength);
-        }
 
         // パス名の正規化
         private static string GetNormalizePathName(string source)

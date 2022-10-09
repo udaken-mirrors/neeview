@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NeeView.Interop;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
@@ -15,12 +16,6 @@ namespace NeeView.Drawing
 {
     public static class DrawingExtensions
     {
-        internal static class NativeMethods
-        {
-            [DllImport("gdi32.dll")]
-            public static extern bool DeleteObject(IntPtr hObject);
-        }
-
         /// <summary>
         /// サムネイル作成 (System.Drawing版)
         /// </summary>

@@ -1,4 +1,4 @@
-﻿using NeeLaboratory.Diagnostics;
+﻿using NeeView.Interop;
 using NeeView.Native;
 using NeeView.Windows;
 using System;
@@ -19,16 +19,6 @@ namespace NeeView
     /// </summary>
     public partial class App : Application
     {
-        #region Native
-
-        internal static class NativeMethods
-        {
-            [DllImport("kernel32", CharSet = CharSet.Unicode, SetLastError = true)]
-            public static extern bool SetDllDirectory(string lpPathName);
-        }
-
-        #endregion
-
         private static App? _current;
         public static new App Current => _current ?? throw new InvalidOperationException("_current must not be null");
 

@@ -6,6 +6,7 @@ using System.Windows.Automation.Provider;
 using System.Windows.Interop;
 using System.Collections.Generic;
 using System.Diagnostics;
+using NeeView.Interop;
 
 namespace NeeView.Windows
 {
@@ -16,14 +17,6 @@ namespace NeeView.Windows
     // from https://stackoverflow.com/questions/69797178/support-windows-11-snap-layout-in-wpf-app
     public class SnapLayoutPresenter
     {
-        private const int WM_NCHITTEST = 0x0084;
-        private const int WM_NCLBUTTONDOWN = 0x00A1;
-        private const int WM_NCLBUTTONUP = 0x00A2;
-        private const int WM_NCMOUSELEAVE = 0x02A2;
-
-        //private const int HTMINBUTTON = 8;
-        private const int HTMAXBUTTON = 9;
-
         private readonly Window _window;
         private IMaximizeButtonSource? _maximizeButton;
         private CaptionButtonState _activeButtonState = CaptionButtonState.MouseOver;
@@ -72,15 +65,15 @@ namespace NeeView.Windows
         {
             if (_maximizeButton is null) return IntPtr.Zero;
 
-            return msg switch
+            return (WindowMessages)msg switch
             {
-                WM_NCHITTEST
+                WindowMessages.WM_NCHITTEST
                     => OnNCHitTest(wParam, lParam, ref handled),
-                WM_NCLBUTTONDOWN
+                WindowMessages.WM_NCLBUTTONDOWN
                     => OnNCLButtonDown(wParam, lParam, ref handled),
-                WM_NCLBUTTONUP
+                WindowMessages.WM_NCLBUTTONUP
                     => OnNCLButtonUp(wParam, lParam, ref handled),
-                WM_NCMOUSELEAVE
+                WindowMessages.WM_NCMOUSELEAVE
                     => OnNCMouseLeave(wParam, lParam, ref handled),
                 _
                     => IntPtr.Zero,
@@ -118,7 +111,7 @@ namespace NeeView.Windows
                 //System.Diagnostics.Debug.WriteLine("# IN");
                 _maximizeButton.SetMaximizeButtonBackground(_activeButtonState);
                 handled = true;
-                return new IntPtr(HTMAXBUTTON);
+                return new IntPtr((int)HitTestValues.HTMAXBUTTON);
             }
             else
             {
@@ -137,7 +130,7 @@ namespace NeeView.Windows
             var button = _maximizeButton.GetMaximizeButton();
             if (button is null) return IntPtr.Zero;
 
-            if ((int)wParam == HTMAXBUTTON)
+            if ((HitTestValues)wParam == HitTestValues.HTMAXBUTTON)
             {
                 //Debug.WriteLine("# DOWN");
                 _activeButtonState = CaptionButtonState.Pressed;
@@ -157,7 +150,7 @@ namespace NeeView.Windows
             var button = _maximizeButton.GetMaximizeButton();
             if (button is null) return IntPtr.Zero;
 
-            if ((int)wParam == HTMAXBUTTON)
+            if ((HitTestValues)wParam == HitTestValues.HTMAXBUTTON)
             {
                 //Debug.WriteLine("# UP");
                 _activeButtonState = CaptionButtonState.MouseOver;

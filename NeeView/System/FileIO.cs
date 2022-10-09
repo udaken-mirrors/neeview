@@ -1,4 +1,5 @@
-﻿using NeeView.IO;
+﻿using NeeView.Interop;
+using NeeView.IO;
 using NeeView.Properties;
 using System;
 using System.Collections.Generic;
@@ -20,14 +21,6 @@ namespace NeeView
     /// </summary>
     public static class FileIO
     {
-        private class NativeMethods
-        {
-            [DllImport("kernel32", SetLastError = true, CharSet = CharSet.Unicode)]
-            public static extern bool MoveFile(string lpExistingFileName, string lpNewFileName);
-        }
-
-
-
         /// <summary>
         /// ファイルかディレクトリの存在チェック
         /// </summary>

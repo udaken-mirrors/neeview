@@ -27,4 +27,6 @@ namespace NeeView.Interop
     {
         MONITORINFOF_PRIMARY = 1
     }
+
+
 }

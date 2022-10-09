@@ -435,7 +435,7 @@ namespace NeeView
             DartyWindowLayout();
 
             // WinProc登録
-            WindowMessage.Current.Initialize(this);
+            SystemDeviceWatcher.Current.Initialize(this);
 
             _vm.Loaded();
 
