@@ -83,12 +83,12 @@ namespace NeeView.Windows.Controls
             if (_window != null)
             {
                 _window.StateChanged -= Window_StateChanged;
-                WindowChromeTools.GetSnapLayoutPresenter(_window)?.SetMaximezeButtonSourcer(null);
+                WindowChromeTools.GetSource(_window)?.SetMaximizeButtonSource(null);
             }
 
             _window = window;
             _window.StateChanged += Window_StateChanged;
-            WindowChromeTools.GetSnapLayoutPresenter(_window)?.SetMaximezeButtonSourcer(this);
+            WindowChromeTools.GetSource(_window)?.SetMaximizeButtonSource(this);
 
             Window_StateChanged(this, EventArgs.Empty);
         }

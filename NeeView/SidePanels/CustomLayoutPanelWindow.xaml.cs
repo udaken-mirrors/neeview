@@ -34,7 +34,7 @@ namespace NeeView
         public CustomLayoutPanelWindow()
         {
             InitializeComponent();
-            WindowChromeTools.SetWindowChrome(this);
+            WindowChromeTools.SetWindowChromeSource(this);
 
             this.DataContext = this;
 

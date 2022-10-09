@@ -1,7 +1,7 @@
 ﻿using System.Windows.Controls;
 using System.Windows.Media;
 
-namespace NeeView.Windows.Controls
+namespace NeeView.Windows
 {
     public interface IMaximizeButtonSource
     {

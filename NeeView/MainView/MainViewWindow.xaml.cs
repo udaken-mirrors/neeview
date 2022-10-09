@@ -59,7 +59,7 @@ namespace NeeView
         public MainViewWindow()
         {
             InitializeComponent();
-            WindowChromeTools.SetWindowChrome(this);
+            WindowChromeTools.SetWindowChromeSource(this);
 
             this.DataContext = this;
 

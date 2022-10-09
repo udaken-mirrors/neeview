@@ -47,7 +47,7 @@ namespace NeeView
             NVInterop.NVFpReset();
 
             InitializeComponent();
-            WindowChromeTools.SetWindowChrome(this);
+            WindowChromeTools.SetWindowChromeSource(this);
 
             // TextBox の ContextMenu のスタイルを変更する ... やりすぎ？
             // ThemeProfile.InitializeEditorContextMenuStyle(this);

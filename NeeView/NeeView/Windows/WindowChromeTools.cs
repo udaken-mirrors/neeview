@@ -1,7 +1,4 @@
-﻿using NeeView.Windows.Controls;
-using System.Diagnostics;
-using System.Windows;
-using System.Windows.Shell;
+﻿using System.Windows;
 
 namespace NeeView.Windows
 {
@@ -10,8 +7,6 @@ namespace NeeView.Windows
     /// </summary>
     public static class WindowChromeTools
     {
-        // TODO: 添付プロパティとユーティリティ機能がごっちゃになっているので整備する
-
         public static bool GetAttached(DependencyObject obj)
         {
             return (bool)obj.GetValue(AttachedProperty);
@@ -29,45 +24,31 @@ namespace NeeView.Windows
         {
             if (d is Window window && (bool)e.NewValue)
             {
-                SetWindowChrome(window);
+                SetWindowChromeSource(window);
             }
         }
 
-        public static SnapLayoutPresenter? GetSnapLayoutPresenter(DependencyObject obj)
+
+        public static WindowChromeSource? GetSource(DependencyObject obj)
         {
-            return (SnapLayoutPresenter?)obj.GetValue(SnapLayoutPresenterProperty);
+            return (WindowChromeSource?)obj.GetValue(SourceProperty);
         }
 
-        public static void SetSnapLayoutPresenter(DependencyObject obj, SnapLayoutPresenter? value)
+        public static void SetSource(DependencyObject obj, WindowChromeSource? value)
         {
-            obj.SetValue(SnapLayoutPresenterProperty, value);
+            obj.SetValue(SourceProperty, value);
         }
 
-        public static readonly DependencyProperty SnapLayoutPresenterProperty =
-            DependencyProperty.RegisterAttached("SnapLayoutPresenter", typeof(SnapLayoutPresenter), typeof(WindowChromeTools), new PropertyMetadata(null));
+        public static readonly DependencyProperty SourceProperty =
+            DependencyProperty.RegisterAttached("Source", typeof(WindowChromeSource), typeof(WindowChromeTools), new PropertyMetadata(null));
 
 
-        public static void SetWindowChrome(Window window)
+
+        public static void SetWindowChromeSource(Window window)
         {
-            var chrome = new WindowChrome();
-            chrome.CornerRadius = new CornerRadius();
-            chrome.UseAeroCaptionButtons = false;
-            chrome.CaptionHeight = 0;
-            chrome.GlassFrameThickness = new Thickness(1, 30, 1, 1);
-            chrome.ResizeBorderThickness = new Thickness(4);
-
-            SetWindowChrome(window, chrome);
-        }
-
-        public static void SetWindowChrome(Window window, WindowChrome chrome)
-        {
-            Debug.Assert(WindowChrome.GetWindowChrome(window) is null, "Already chromed");
-
-            WindowChrome.SetWindowChrome(window, chrome);
-            _ = new WindowChromePatch(window);
-
-            // NOTE: SnapLayoutPresenter の WndProc をここで登録。順番によっては WM_NCHITTEST 等のメッセージが受信できなくなるため。
-            SetSnapLayoutPresenter(window, new SnapLayoutPresenter(window));
+            if (GetSource(window) is not null) return;
+            
+            SetSource(window, new WindowChromeSource(window));
         }
     }
 }

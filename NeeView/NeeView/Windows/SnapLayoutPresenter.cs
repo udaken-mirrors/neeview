@@ -7,7 +7,7 @@ using System.Windows.Interop;
 using System.Collections.Generic;
 using System.Diagnostics;
 
-namespace NeeView.Windows.Controls
+namespace NeeView.Windows
 {
     /// <summary>
     /// Windows11 の SnapLayout サポート
@@ -43,7 +43,7 @@ namespace NeeView.Windows.Controls
         /// <summary>
         /// MaximizeButton を登録することで処理が機能します。
         /// </summary>
-        public void SetMaximezeButtonSourcer(IMaximizeButtonSource? source)
+        public void SetMaximzeButtonSource(IMaximizeButtonSource? source)
         {
             _maximizeButton = source;
         }
