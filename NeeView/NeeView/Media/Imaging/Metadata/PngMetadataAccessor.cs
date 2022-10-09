@@ -136,7 +136,7 @@ namespace NeeView.Media.Imaging.Metadata
         {
             if (_textMap.TryGetValue(keyword, out var strings))
             {
-                return string.Join(Environment.NewLine, strings);
+                return string.Join(System.Environment.NewLine, strings);
             }
             return null;
         }

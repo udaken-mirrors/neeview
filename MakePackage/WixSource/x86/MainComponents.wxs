@@ -35,9 +35,6 @@
       <Component Id="cmpA1F46ACF5D97778B73C71FC7542D213B" Guid="*">
         <File Id="fil94081700CD080ABE91D1D60C26E851D7" KeyPath="yes" Source="$(var.ContentDir)\NeeView.dll" />
       </Component>
-      <Component Id="cmpC5AA313C87CA98DD3EE244788606E1B3" Guid="*">
-        <File Id="fil1B56FED7199DE3285AAD6D54A61F32ED" KeyPath="yes" Source="$(var.ContentDir)\NeeView.Runtime.dll" />
-      </Component>
       <Component Id="cmpA3FCF16F2E20DA494D7CF6D407CBF180" Guid="*">
         <File Id="fil39B77A55BAB019305CD0FCAC5E7FB65A" KeyPath="yes" Source="$(var.ContentDir)\NeeView.runtimeconfig.json" />
       </Component>
@@ -201,7 +198,6 @@
       <ComponentRef Id="cmp0143A6F6AA1A22A95AB6303C014B5F37" />
       <ComponentRef Id="cmp6B6EEBDA272F7B1F891FAA45466CD40D" />
       <ComponentRef Id="cmpA1F46ACF5D97778B73C71FC7542D213B" />
-      <ComponentRef Id="cmpC5AA313C87CA98DD3EE244788606E1B3" />
       <ComponentRef Id="cmpA3FCF16F2E20DA494D7CF6D407CBF180" />
       <ComponentRef Id="cmp3105E7032A1F432DA2A9ACACC3049772" />
       <ComponentRef Id="cmpE9F08FAD2A628FCE472306FE8DCE93D5" />

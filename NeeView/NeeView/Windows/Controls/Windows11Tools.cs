@@ -10,7 +10,7 @@ namespace NeeView.Windows.Controls
         /// <remarks>
         /// 注意：確かな判定方法ではない
         /// </remarks>
-        public static bool IsWindows11 => Environment.OSVersion.Version.Major == 10 && Environment.OSVersion.Version.Minor == 0 && Environment.OSVersion.Version.Build >= 22000;
+        public static bool IsWindows11 => System.Environment.OSVersion.Version.Major == 10 && System.Environment.OSVersion.Version.Minor == 0 && System.Environment.OSVersion.Version.Build >= 22000;
 
         /// <summary>
         /// Windows11以上であるかどうか
@@ -18,6 +18,6 @@ namespace NeeView.Windows.Controls
         /// <remarks>
         /// 注意：確かな判定方法ではない
         /// </remarks>
-        public static bool IsWindows11OrGreater => Environment.OSVersion.Version.Major >= 10 && Environment.OSVersion.Version.Build >= 22000;
+        public static bool IsWindows11OrGreater => System.Environment.OSVersion.Version.Major >= 10 && System.Environment.OSVersion.Version.Build >= 22000;
     }
 }

@@ -87,6 +87,7 @@
   <ItemGroup>
     <PackageReference Include="bblanchon.PDFium.Win32" Version="108.0.5323" />
     <PackageReference Include="Jint" Version="3.0.0-beta-2038" />
+    <PackageReference Include="MetadataExtractor" Version="2.7.2" />
     <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf">
       <Version>1.1.39</Version>
     </PackageReference>
@@ -113,7 +114,6 @@
     <ProjectReference Include="..\NeeLaboratory.IO.Search\NeeLaboratory.IO.Search\NeeLaboratory.IO.Search.csproj" />
     <ProjectReference Include="..\NeeLaboratory.Remote\NeeLaboratory.Remote.csproj" />
     <ProjectReference Include="..\NeeLaboratory.Runtime\NeeLaboratory.Runtime.csproj" />
-    <ProjectReference Include="..\NeeView.Runtime\NeeView.Runtime.csproj" />
     <ProjectReference Include="..\NeeView.Susie\NeeView.Susie.csproj" />
     <ProjectReference Include="..\SevenZipSharp\SevenZip\SevenZip.csproj" />
   </ItemGroup>
@@ -148,6 +148,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="NeeView\Runtime\LayoutPanel\LayoutPanelContainer.xaml.cs">
+      <DependentUpon>LayoutPanelContainer.xaml</DependentUpon>
+    </Compile>
     <Compile Update="Properties\Settings.Designer.cs">
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <AutoGen>True</AutoGen>
@@ -181,6 +184,13 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Page Update="NeeView\Runtime\LayoutPanel\LayoutPanelContainer.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="NeeView\Windows\Controls\WindowCaptionButtons.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+    </Page>
     <Page Update="Setting\DragActionParameterControl.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
     </Page>
@@ -191,6 +201,9 @@
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
     </Page>
     <Page Update="SidePanels\Playlist\PlaylistView.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+    </Page>
+    <Page Update="Themes\Generic.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
     </Page>
   </ItemGroup>

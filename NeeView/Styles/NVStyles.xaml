@@ -1,5 +1,5 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:nvc="clr-namespace:NeeView.Windows.Controls"
-        xmlns:nrl="clr-namespace:NeeView.Runtime.LayoutPanel;assembly=NeeView.Runtime" xmlns:local="clr-namespace:NeeView">
+        xmlns:nrl="clr-namespace:NeeView.Runtime.LayoutPanel" xmlns:local="clr-namespace:NeeView">
 
     <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="/Styles/Colors.xaml" />

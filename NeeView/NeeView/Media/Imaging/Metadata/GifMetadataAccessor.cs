@@ -39,7 +39,7 @@ namespace NeeView.Media.Imaging.Metadata
         {
             return key switch
             {
-                BitmapMetadataKey.Comments => string.Join(Environment.NewLine, _comments),
+                BitmapMetadataKey.Comments => string.Join(System.Environment.NewLine, _comments),
                 _ => null,
             };
         }

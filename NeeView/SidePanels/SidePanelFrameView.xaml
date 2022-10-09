@@ -5,10 +5,10 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
              xmlns:local="clr-namespace:NeeView"
-             xmlns:nw="clr-namespace:NeeView.Windows;assembly=NeeView.Runtime"
+             xmlns:nw="clr-namespace:NeeView.Windows"
              xmlns:nwc="clr-namespace:NeeView.Windows.Controls"
              xmlns:nwd="clr-namespace:NeeView.Windows.Data"
-             xmlns:nrlp="clr-namespace:NeeView.Runtime.LayoutPanel;assembly=NeeView.Runtime"
+             xmlns:nrlp="clr-namespace:NeeView.Runtime.LayoutPanel"
              xmlns:behaviors="http://schemas.microsoft.com/xaml/behaviors"
              mc:Ignorable="d" d:DesignHeight="480" d:DesignWidth="640">
 

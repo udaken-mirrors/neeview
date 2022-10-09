@@ -4,7 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:NeeView"
-             xmlns:nwc="clr-namespace:NeeView.Windows.Controls;assembly=NeeView.Runtime"
+             xmlns:nwc="clr-namespace:NeeView.Windows.Controls"
              xmlns:behaviors="http://schemas.microsoft.com/xaml/behaviors"
              mc:Ignorable="d" 
              VerticalAlignment="Top" IsTabStop="False" Focusable="False"

@@ -1,7 +1,7 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:nvc="clr-namespace:NeeView.Windows.Controls"
-                    xmlns:nrl="clr-namespace:NeeView.Runtime.LayoutPanel;assembly=NeeView.Runtime">
+                    xmlns:nrl="clr-namespace:NeeView.Runtime.LayoutPanel">
 
     <Style TargetType="{x:Type ListBox}" BasedOn="{StaticResource NVListBox}" />
     <Style TargetType="{x:Type ListBoxItem}" BasedOn="{StaticResource NVListBoxItem}" />
