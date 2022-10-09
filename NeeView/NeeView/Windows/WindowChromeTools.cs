@@ -5,8 +5,13 @@ using System.Windows.Shell;
 
 namespace NeeView.Windows
 {
+    /// <summary>
+    /// WindowChrome 用
+    /// </summary>
     public static class WindowChromeTools
     {
+        // TODO: 添付プロパティとユーティリティ機能がごっちゃになっているので整備する
+
         public static bool GetAttached(DependencyObject obj)
         {
             return (bool)obj.GetValue(AttachedProperty);
@@ -28,7 +33,6 @@ namespace NeeView.Windows
             }
         }
 
-#if false
         public static SnapLayoutPresenter? GetSnapLayoutPresenter(DependencyObject obj)
         {
             return (SnapLayoutPresenter?)obj.GetValue(SnapLayoutPresenterProperty);
@@ -41,7 +45,6 @@ namespace NeeView.Windows
 
         public static readonly DependencyProperty SnapLayoutPresenterProperty =
             DependencyProperty.RegisterAttached("SnapLayoutPresenter", typeof(SnapLayoutPresenter), typeof(WindowChromeTools), new PropertyMetadata(null));
-#endif
 
 
         public static void SetWindowChrome(Window window)
@@ -63,11 +66,8 @@ namespace NeeView.Windows
             WindowChrome.SetWindowChrome(window, chrome);
             _ = new WindowChromePatch(window);
 
-#if false
+            // NOTE: SnapLayoutPresenter の WndProc をここで登録。順番によっては WM_NCHITTEST 等のメッセージが受信できなくなるため。
             SetSnapLayoutPresenter(window, new SnapLayoutPresenter(window));
-#else
-            WndProcSource.SetAttached(window, true);
-#endif
         }
     }
 }

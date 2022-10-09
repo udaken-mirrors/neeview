@@ -24,22 +24,34 @@ namespace NeeView.Windows.Controls
         //private const int HTMINBUTTON = 8;
         private const int HTMAXBUTTON = 9;
 
-        //private Window _window;
-        private IHasMaximizeButton? _maximizeButton;
+        private readonly Window _window;
+        private IMaximizeButtonSource? _maximizeButton;
         private CaptionButtonState _activeButtonState = CaptionButtonState.MouseOver;
 
-#if false
+
         public SnapLayoutPresenter(Window window)
         {
             _window = window;
 
-            if (!Regist())
+            if (!AddHook())
             {
-                _window.SourceInitialized += (s, e) => Regist();
+                _window.SourceInitialized += (s, e) => AddHook();
             }
         }
 
-        private bool Regist()
+
+        /// <summary>
+        /// MaximizeButton を登録することで処理が機能します。
+        /// </summary>
+        public void SetMaximezeButtonSourcer(IMaximizeButtonSource? source)
+        {
+            _maximizeButton = source;
+        }
+
+        /// <summary>
+        /// regist WndProc
+        /// </summary>
+        private bool AddHook()
         {
             var hWnd = new WindowInteropHelper(_window).Handle;
             if (hWnd != IntPtr.Zero)
@@ -53,57 +65,11 @@ namespace NeeView.Windows.Controls
             }
         }
 
-        public void SetMaximezeButtonSourcer(IHasMaximizeButton source)
-        {
-            _maximizeButton = source;
-        }
-#else
-
-        public SnapLayoutPresenter(IHasMaximizeButton maximizeButton)
-        {
-            _maximizeButton = maximizeButton;
-        }
-
-        /// <summary>
-        /// Attach SnapLayout
-        /// </summary>
-        /// <param name="window"></param>
-        public void Attach(Window window)
-        {
-            if (window is null) return;
-            if (!Windows11Tools.IsWindows11OrGreater) return;
-
-            //var hwnd = PresentationSource.FromVisual(window) as System.Windows.Interop.HwndSource;
-            //hwnd?.AddHook(WndProc);
-
-            var source = WndProcSource.GetWndProcSource(window);
-            source?.AddHook(WndProc);
-        }
-
-        /// <summary>
-        /// Detach SnapLayout
-        /// </summary>
-        /// <param name="window"></param>
-        public void Detach(Window window)
-        {
-            if (window is null) return;
-            if (!Windows11Tools.IsWindows11OrGreater) return;
-
-            //var hwnd = PresentationSource.FromVisual(window) as System.Windows.Interop.HwndSource;
-            //hwnd?.RemoveHook(WndProc);
-
-            var source = WndProcSource.GetWndProcSource(window);
-            source?.RemoveHook(WndProc);
-        }
-#endif
-
         /// <summary>
         /// WinProc for SnapLayout
         /// </summary>
         private IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
         {
-            //System.Diagnostics.Debug.WriteLine($"SL.WMSG: {msg:X04}");
-
             if (_maximizeButton is null) return IntPtr.Zero;
 
             return msg switch
@@ -128,7 +94,6 @@ namespace NeeView.Windows.Controls
         /// </summary>
         private IntPtr OnNCHitTest(IntPtr wParam, IntPtr lParam, ref bool handled)
         {
-            //System.Diagnostics.Debug.WriteLine("*");
             if (_maximizeButton is null) return IntPtr.Zero;
 
             var button = _maximizeButton.GetMaximizeButton();
@@ -150,15 +115,15 @@ namespace NeeView.Windows.Controls
 
             if (isHit)
             {
-                _maximizeButton.SetMaximizeButtonBackground(_activeButtonState);
                 //System.Diagnostics.Debug.WriteLine("# IN");
+                _maximizeButton.SetMaximizeButtonBackground(_activeButtonState);
                 handled = true;
                 return new IntPtr(HTMAXBUTTON);
             }
             else
             {
-                _maximizeButton.SetMaximizeButtonBackground(CaptionButtonState.Default);
                 //System.Diagnostics.Debug.WriteLine("# OUT");
+                _maximizeButton.SetMaximizeButtonBackground(CaptionButtonState.Default);
                 return IntPtr.Zero;
             }
         }
@@ -168,42 +133,35 @@ namespace NeeView.Windows.Controls
         /// </summary>
         private IntPtr OnNCLButtonDown(IntPtr wParam, IntPtr lParam, ref bool handled)
         {
-            //Debug.WriteLine($"NCLButtonDown: {(int)wParam}");
-
             if (_maximizeButton is null) return IntPtr.Zero;
-
             var button = _maximizeButton.GetMaximizeButton();
             if (button is null) return IntPtr.Zero;
 
             if ((int)wParam == HTMAXBUTTON)
             {
+                //Debug.WriteLine("# DOWN");
                 _activeButtonState = CaptionButtonState.Pressed;
                 _maximizeButton.SetMaximizeButtonBackground(_activeButtonState);
-                //Debug.WriteLine("# DOWN");
                 handled = true;
             }
 
             return IntPtr.Zero;
         }
 
-
         /// <summary>
         /// WM_NCLBUTTONUP
         /// </summary>
         private IntPtr OnNCLButtonUp(IntPtr wParam, IntPtr lParam, ref bool handled)
         {
-            //Debug.WriteLine($"NCLButtonUp: {(int)wParam}");
-
             if (_maximizeButton is null) return IntPtr.Zero;
-
             var button = _maximizeButton.GetMaximizeButton();
             if (button is null) return IntPtr.Zero;
 
             if ((int)wParam == HTMAXBUTTON)
             {
+                //Debug.WriteLine("# UP");
                 _activeButtonState = CaptionButtonState.MouseOver;
                 _maximizeButton.SetMaximizeButtonBackground(_activeButtonState);
-                Debug.WriteLine("# UP");
                 handled = true;
                 IInvokeProvider? invokeProv = new ButtonAutomationPeer(button).GetPattern(PatternInterface.Invoke) as IInvokeProvider;
                 invokeProv?.Invoke();
@@ -215,17 +173,15 @@ namespace NeeView.Windows.Controls
         /// <summary>
         /// WM_NCMOUSELEAVE
         /// </summary>
-        //[System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060:未使用のパラメーターを削除します", Justification = "<保留中>")]
         private IntPtr OnNCMouseLeave(IntPtr wParam, IntPtr lParam, ref bool handled)
         {
             if (_maximizeButton is null) return IntPtr.Zero;
-
             var button = _maximizeButton.GetMaximizeButton();
             if (button is null) return IntPtr.Zero;
 
+            //Debug.WriteLine("# LEAVE");
             _activeButtonState = CaptionButtonState.MouseOver;
             _maximizeButton.SetMaximizeButtonBackground(CaptionButtonState.Default);
-            Debug.WriteLine("# LEAVE");
             return IntPtr.Zero;
         }
 
@@ -260,108 +216,5 @@ namespace NeeView.Windows.Controls
                 return (short)(ushort)((uint)lp.ToInt32() >> 16);
             }
         }
-    }
-
-
-    // NOTE: WndProc をまとめたもの。これは一時的なものです。
-    public class WndProcSource
-    {
-        public static bool GetAttached(DependencyObject obj)
-        {
-            return (bool)obj.GetValue(AttachedProperty);
-        }
-
-        public static void SetAttached(DependencyObject obj, bool value)
-        {
-            obj.SetValue(AttachedProperty, value);
-        }
-
-        public static readonly DependencyProperty AttachedProperty =
-            DependencyProperty.RegisterAttached("Attached", typeof(bool), typeof(WndProcSource), new PropertyMetadata(false, AttachedPropertyChanged));
-
-        private static void AttachedPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            if (d is Window window && (bool)e.NewValue)
-            {
-                SetWndProcSource(window, new WndProcSource(window));
-            }
-        }
-
-        public static WndProcSource? GetWndProcSource(DependencyObject obj)
-        {
-            return (WndProcSource?)obj.GetValue(WndProcSourceProperty);
-        }
-
-        public static void SetWndProcSource(DependencyObject obj, WndProcSource value)
-        {
-            obj.SetValue(WndProcSourceProperty, value);
-        }
-
-        public static readonly DependencyProperty WndProcSourceProperty =
-            DependencyProperty.RegisterAttached("WndProcSource", typeof(WndProcSource), typeof(WndProcSource), new PropertyMetadata(null, WndProcSourcePropertyChanged));
-
-        private static void WndProcSourcePropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-        }
-
-
-
-        private readonly Window _window;
-        private readonly List<HwndSourceHook> _hooks = new();
-
-
-        public WndProcSource(Window window)
-        {
-            _window = window;
-
-            if (!Regist())
-            {
-                _window.SourceInitialized += (s, e) => Regist();
-            }
-        }
-        private bool Regist()
-        {
-            var hWnd = new WindowInteropHelper(_window).Handle;
-            if (hWnd != IntPtr.Zero)
-            {
-                HwndSource.FromHwnd(hWnd).AddHook(new HwndSourceHook(WndProc));
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
-
-
-        public void AddHook(HwndSourceHook hook)
-        {
-            if (!_hooks.Contains(hook))
-            {
-                _hooks.Add(hook);
-            }
-        }
-
-        public void RemoveHook(HwndSourceHook hook)
-        {
-            _hooks.Remove(hook);
-        }
-
-
-
-        private IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
-        {
-            foreach (var hook in _hooks)
-            {
-                IntPtr result = hook.Invoke(hwnd, msg, wParam, lParam, ref handled);
-                if (handled)
-                {
-                    return result;
-                }
-            }
-
-            return IntPtr.Zero;
-        }
-
     }
 }

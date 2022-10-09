@@ -3,7 +3,7 @@ using System.Windows.Media;
 
 namespace NeeView.Windows.Controls
 {
-    public interface IHasMaximizeButton
+    public interface IMaximizeButtonSource
     {
         /// <summary>
         /// 最大化ボタン取得

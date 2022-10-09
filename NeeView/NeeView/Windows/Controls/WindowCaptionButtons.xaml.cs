@@ -17,19 +17,17 @@ using System.Windows.Shapes;
 
 namespace NeeView.Windows.Controls
 {
-    public partial class WindowCaptionButtons : UserControl, IHasMaximizeButton
+    public partial class WindowCaptionButtons : UserControl, IMaximizeButtonSource
     {
         private readonly SolidColorBrush _defaultButtonBackground = Brushes.Transparent;
         private readonly SolidColorBrush _mouseOverButtonBackground = new(Color.FromArgb(0x66, 0x88, 0x88, 0x88));
         private readonly SolidColorBrush _pressedButtonBackground = new(Color.FromArgb(0x88, 0x88, 0x88, 0x88));
-        private readonly SnapLayoutPresenter _snapLayoutPresenter;
         private Window? _window;
 
 
         public WindowCaptionButtons()
         {
             InitializeComponent();
-            _snapLayoutPresenter = new SnapLayoutPresenter(this);
 
             this.Loaded += (s, e) => InitializeWindow(Window.GetWindow(this));
             this.Root.DataContext = this;
@@ -85,12 +83,12 @@ namespace NeeView.Windows.Controls
             if (_window != null)
             {
                 _window.StateChanged -= Window_StateChanged;
-                _snapLayoutPresenter.Detach(_window);
+                WindowChromeTools.GetSnapLayoutPresenter(_window)?.SetMaximezeButtonSourcer(null);
             }
 
             _window = window;
             _window.StateChanged += Window_StateChanged;
-            _snapLayoutPresenter.Attach(_window);
+            WindowChromeTools.GetSnapLayoutPresenter(_window)?.SetMaximezeButtonSourcer(this);
 
             Window_StateChanged(this, EventArgs.Empty);
         }
