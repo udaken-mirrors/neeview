@@ -26,6 +26,7 @@ namespace NeeView
                         if (_debugWindow == null)
                         {
                             _debugWindow = new DebugWindow(MainWindow.Current.ViewModel);
+                            _debugWindow.Owner = MainWindow.Current;
                             _debugWindow.Closed += (s, e) =>
                             {
                                 _debugWindow = null;

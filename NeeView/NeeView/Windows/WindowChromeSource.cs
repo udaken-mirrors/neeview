@@ -18,14 +18,9 @@ namespace NeeView.Windows
 
         public WindowChromeSource(Window window, WindowChrome chrome)
         {
-            Debug.Assert(WindowChrome.GetWindowChrome(window) is null, "Already chromed");
-
             _window = window;
-
             _windowChrome = chrome;
-            WindowChrome.SetWindowChrome(_window, _windowChrome);
-
-            _windowChromePatch = new WindowChromePatch(_window);
+            _windowChromePatch = new WindowChromePatch(_window, _windowChrome);
 
             // NOTE: SnapLayoutPresenter の WndProc をここで登録。順番によっては WM_NCHITTEST 等のメッセージが受信できなくなるため。
             _snapLayoutPresenter = new SnapLayoutPresenter(_window);

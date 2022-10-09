@@ -234,7 +234,6 @@ namespace NeeView.Windows
             EndEdit(editArgs);
         }
 
-        // TODO: minimized からの復帰をシンプルにする
         public void ToFullScreen()
         {
             if (_isProgress) return;
@@ -248,7 +247,7 @@ namespace NeeView.Windows
                 _window.ResizeMode = ResizeMode.CanMinimize;
             }
 
-            if (_window.WindowState == WindowState.Maximized)
+            if (_window.WindowState == WindowState.Maximized && (PreviousState != WindowStateEx.FullScreen || CurrentState != WindowStateEx.Minimized))
             {
                 _window.WindowState = WindowState.Normal;
             }

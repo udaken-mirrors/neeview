@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Interop;
+using System.Windows.Shell;
 using NeeView.Interop;
 
 
@@ -14,13 +15,22 @@ namespace NeeView.Windows
     public class WindowChromePatch
     {
         private readonly Window _window;
+        private readonly WindowChrome _windowChrome;
+        private readonly Thickness _resizeBorderThickness;
 
-
-        public WindowChromePatch(Window window)
+        public WindowChromePatch(Window window, WindowChrome windowChrome)
         {
-            if (_window != null) throw new ArgumentNullException(nameof(window));
+            if (window is null) throw new ArgumentNullException(nameof(window));
+            if (windowChrome is null) throw new ArgumentNullException(nameof(windowChrome));
+
+            Debug.Assert(WindowChrome.GetWindowChrome(window) is null, "Already chromed");
 
             _window = window;
+            _windowChrome = windowChrome;
+            _resizeBorderThickness = windowChrome.ResizeBorderThickness;
+
+            WindowChrome.SetWindowChrome(_window, _windowChrome);
+            _window.StateChanged += Window_StateChanged;
 
             if (!AddHook())
             {
@@ -28,6 +38,11 @@ namespace NeeView.Windows
             }
         }
 
+        private void Window_StateChanged(object? sender, EventArgs e)
+        {
+            // NOTE: タブレットモードでのフルスクリーン時に画面端のカーソル座標が取得できなくなる現象の対策として ResizeBorderThickness を 0 にする。
+            _windowChrome.ResizeBorderThickness = _window.WindowState == WindowState.Maximized ? new Thickness(0) : _resizeBorderThickness;
+        }
 
         private bool AddHook()
         {
