@@ -14,16 +14,12 @@ using System.Windows.Media.Effects;
 namespace NeeView.Effects
 {
     // 渦巻き
-    [DataContract]
     public class SwirlEffectUnit : EffectUnit
     {
         private static readonly SwirlEffect _effect = new();
         public override Effect GetEffect() => _effect;
 
-        /// <summary>
-        /// Property: Center
-        /// </summary>
-        [DataMember]
+
         [PropertyMember]
         [DefaultValue(typeof(Point), "0.5,0.5")]
         public Point Center
@@ -32,10 +28,6 @@ namespace NeeView.Effects
             set { if (_effect.Center != value) { _effect.Center = value; RaiseEffectPropertyChanged(); } }
         }
 
-        /// <summary>
-        /// Property: TwistAmount
-        /// </summary>
-        [DataMember]
         [PropertyRange(-50, 50)]
         [DefaultValue(10)]
         public double TwistAmount

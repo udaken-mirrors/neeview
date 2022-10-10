@@ -211,36 +211,6 @@ namespace NeeView
             }
         }
 
-
-        #region Memento
-        [DataContract]
-        public class Memento : IMemento
-        {
-            [DataMember, DefaultValue(SliderIndexLayout.Right)]
-            public SliderIndexLayout SliderIndexLayout { get; set; }
-
-            [DataMember, DefaultValue(SliderDirection.SyncBookReadDirection)]
-            public SliderDirection SliderDirection { get; set; }
-
-            [DataMember, DefaultValue(true)]
-            public bool IsSliderLinkedThumbnailList { get; set; }
-
-
-            [OnDeserializing]
-            private void OnDeserializing(StreamingContext c)
-            {
-                this.InitializePropertyDefaultValues();
-            }
-
-            public void RestoreConfig(Config config)
-            {
-                config.Slider.SliderIndexLayout = SliderIndexLayout;
-                config.Slider.SliderDirection = SliderDirection;
-                config.Slider.IsSliderLinkedFilmStrip = IsSliderLinkedThumbnailList;
-            }
-        }
-
-        #endregion
     }
 }
 

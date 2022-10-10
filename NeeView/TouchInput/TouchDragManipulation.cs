@@ -375,34 +375,5 @@ namespace NeeView
             return _goal.Angle;
         }
 
-
-
-        #region Memento
-        [DataContract]
-        public class Memento : IMemento
-        {
-            [DataMember, DefaultValue(80.0)]
-            public double MinimumManipulationRadius { get; set; }
-
-            [DataMember, DefaultValue(30.0)]
-            public double MinimumManipulationDistance { get; set; }
-
-            [DataMember]
-            public bool IsAngleEnabled { get; set; }
-
-            [DataMember]
-            public bool IsScaleEnabled { get; set; }
-
-
-            public void RestoreConfig(Config config)
-            {
-                config.Touch.MinimumManipulationRadius = MinimumManipulationRadius;
-                config.Touch.MinimumManipulationDistance = MinimumManipulationDistance;
-                config.Touch.IsAngleEnabled = IsAngleEnabled;
-                config.Touch.IsScaleEnabled = IsScaleEnabled;
-            }
-        }
-
-        #endregion
     }
 }

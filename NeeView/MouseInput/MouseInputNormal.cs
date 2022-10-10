@@ -285,52 +285,5 @@ namespace NeeView
             StopTimer();
         }
 
-
-        #region Memento
-        [DataContract]
-        public class Memento : IMemento
-        {
-            [DataMember(Name = "LongLeftButtonDownMode")]
-            public LongButtonDownMode LongButtonDownMode { get; set; }
-
-            [DataMember]
-            public LongButtonMask LongButtonMask { get; set; }
-
-            [DataMember(Name = "LongLeftButtonDownTime"), DefaultValue(1.0)]
-            public double LongButtonDownTime { get; set; }
-
-            [DataMember, DefaultValue(0.1)]
-            public double LongButtonRepeatTime { get; set; }
-
-            [DataMember, DefaultValue(true)]
-            public bool IsGestureEnabled { get; set; }
-
-            [DataMember, DefaultValue(true)]
-            public bool IsDragEnabled { get; set; }
-
-            [DataMember, DefaultValue(5.0)]
-            public double MinimumDragDistance { get; set; }
-
-
-            [OnDeserializing]
-            private void OnDeserializing(StreamingContext c)
-            {
-                this.InitializePropertyDefaultValues();
-            }
-
-            public void RestoreConfig(Config config)
-            {
-                config.Mouse.IsGestureEnabled = IsGestureEnabled;
-                config.Mouse.IsDragEnabled = IsDragEnabled;
-                config.Mouse.MinimumDragDistance = MinimumDragDistance;
-                config.Mouse.LongButtonDownMode = LongButtonDownMode;
-                config.Mouse.LongButtonMask = LongButtonMask;
-                config.Mouse.LongButtonDownTime = LongButtonDownTime;
-                config.Mouse.LongButtonRepeatTime = LongButtonRepeatTime;
-            }
-        }
-
-        #endregion
-
     }
 }

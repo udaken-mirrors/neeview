@@ -13,17 +13,12 @@ using System.Windows.Media.Effects;
 
 namespace NeeView.Effects
 {
-    //
-    [DataContract]
     public class RippleEffectUnit : EffectUnit
     {
         private static readonly RippleEffect _effect = new();
         public override Effect GetEffect() => _effect;
 
-        /// <summary>
-        /// Property: Center
-        /// </summary>
-        [DataMember]
+
         [PropertyMember]
         [DefaultValue(typeof(Point), "0.5,0.5")]
         public Point Center
@@ -32,10 +27,6 @@ namespace NeeView.Effects
             set { if (_effect.Center != value) { _effect.Center = value; RaiseEffectPropertyChanged(); } }
         }
 
-        /// <summary>
-        /// Property: Frequency
-        /// </summary>
-        [DataMember]
         [PropertyRange(0, 100)]
         [DefaultValue(40)]
         public double Frequency
@@ -44,10 +35,6 @@ namespace NeeView.Effects
             set { if (_effect.Frequency != value) { _effect.Frequency = value; RaiseEffectPropertyChanged(); } }
         }
 
-        /// <summary>
-        /// Property: Magnitude
-        /// </summary>
-        [DataMember]
         [PropertyRange(0, 1)]
         [DefaultValue(0.1)]
         public double Magnitude
@@ -56,10 +43,6 @@ namespace NeeView.Effects
             set { if (_effect.Magnitude != value) { _effect.Magnitude = value; RaiseEffectPropertyChanged(); } }
         }
 
-        /// <summary>
-        /// Property: Phase
-        /// </summary>
-        [DataMember]
         [PropertyRange(0, 100)]
         [DefaultValue(10)]
         public double Phase

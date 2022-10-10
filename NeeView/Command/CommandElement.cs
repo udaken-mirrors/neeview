@@ -67,7 +67,6 @@ namespace NeeView
         [AliasName] Window,
     }
 
-    [DataContract]
     public abstract class CommandElement
     {
         public static CommandElement None { get; } = new NoneCommand();
@@ -384,39 +383,6 @@ namespace NeeView
         {
             return Name ?? base.ToString();
         }
-
-
-        #region Memento
-
-        [DataContract]
-        public class Memento
-        {
-            [DataMember]
-            public string? ShortCutKey { get; set; }
-            [DataMember]
-            public string? TouchGesture { get; set; }
-            [DataMember]
-            public string? MouseGesture { get; set; }
-            [DataMember]
-            public bool IsShowMessage { get; set; }
-
-
-            [DataMember(Order = 15, EmitDefaultValue = false)]
-            public string? Parameter { get; set; }
-
-            [OnDeserializing]
-            private void OnDeserializing(StreamingContext c)
-            {
-                this.InitializePropertyDefaultValues();
-            }
-
-            public Memento Clone()
-            {
-                return (Memento)MemberwiseClone();
-            }
-        }
-
-        #endregion Memento
 
         #region MementoV2
 

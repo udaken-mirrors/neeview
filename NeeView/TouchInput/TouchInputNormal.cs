@@ -169,25 +169,5 @@ namespace NeeView
             }
         }
 
-        #region Memento
-        [DataContract]
-        public class Memento : IMemento
-        {
-            [DataMember]
-            public TouchAction DragAction { get; set; }
-            [DataMember]
-            public TouchAction HoldAction { get; set; }
-
-            public void RestoreConfig(Config config)
-            {
-                config.Touch.DragAction = DragAction;
-                config.Touch.HoldAction = HoldAction;
-            }
-        }
-
-        #endregion
-
     }
-
-
 }

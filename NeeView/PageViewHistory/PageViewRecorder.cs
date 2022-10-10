@@ -13,7 +13,6 @@ using System.Text;
 
 namespace NeeView
 {
-    [DataContract]
     public class PageViewRecorder : BindableBase, IDisposable
     {
         private static PageViewRecorder? _current;
@@ -284,30 +283,5 @@ namespace NeeView
 
         #endregion
 
-        #region Memento
-
-        /// <summary>
-        /// PageViewRecorder Memento
-        /// </summary>
-        [DataContract]
-        public class Memento : BindableBase, IMemento
-        {
-            [DataMember]
-            public int _Version { get; set; } = Environment.ProductVersionNumber;
-
-            [DataMember, DefaultValue(false)]
-            public bool IsRecordPageView { get; set; }
-
-            [DataMember(EmitDefaultValue = false)]
-            public string? PageViewRecordPath { get; set; }
-
-            public void RestoreConfig(Config config)
-            {
-                config.PageViewRecorder.IsSavePageViewRecord = IsRecordPageView;
-                config.PageViewRecorder.PageViewRecordFilePath = PageViewRecordPath;
-            }
-        }
-
-        #endregion
     }
 }

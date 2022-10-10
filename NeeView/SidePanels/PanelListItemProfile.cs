@@ -28,7 +28,6 @@ namespace NeeView
     /// <summary>
     /// リスト項目の表示形式
     /// </summary>
-    [DataContract]
     public class PanelListItemProfile : BindableBase
     {
         public static readonly PanelListItemProfile DefaultNormalItemProfile = new(PanelListItemImageShape.Square, 0, false, true, false);
@@ -67,7 +66,6 @@ namespace NeeView
 
         #region 公開プロパティ
 
-        [DataMember(EmitDefaultValue = false)]
         [PropertyMember]
         public PanelListItemImageShape ImageShape
         {
@@ -82,7 +80,6 @@ namespace NeeView
             }
         }
 
-        [DataMember(EmitDefaultValue = false)]
         [PropertyRange(64, 512, TickFrequency = 8, IsEditable = true, Format = "{0} × {0}")]
         public int ImageWidth
         {
@@ -97,7 +94,6 @@ namespace NeeView
             }
         }
 
-        [DataMember(EmitDefaultValue = false)]
         [PropertyMember]
         public bool IsImagePopupEnabled
         {
@@ -105,7 +101,6 @@ namespace NeeView
             set { SetProperty(ref _isImagePopupEnabled, value); }
         }
 
-        [DataMember(Name = "IsTextVisibled", EmitDefaultValue = false)]
         [PropertyMember]
         public bool IsTextVisible
         {
@@ -113,7 +108,6 @@ namespace NeeView
             set { SetProperty(ref _isTextVisible, value); }
         }
 
-        [DataMember(EmitDefaultValue = false)]
         [PropertyMember]
         public bool IsTextWrapped
         {

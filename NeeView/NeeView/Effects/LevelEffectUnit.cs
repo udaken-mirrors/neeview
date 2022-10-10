@@ -10,8 +10,6 @@ using System.Windows.Media.Effects;
 
 namespace NeeView.Effects
 {
-    //
-    [DataContract]
     public class LevelEffectUnit : EffectUnit
     {
         private static readonly LevelEffect _effect = new();
@@ -19,10 +17,6 @@ namespace NeeView.Effects
         public override Effect GetEffect() => _effect;
 
 
-        /// <summary>
-        /// Property: Black
-        /// </summary>
-        [DataMember]
         [PropertyRange(0, 1, Title = "Input")]
         [DefaultValue(0.0)]
         public double Black
@@ -31,11 +25,6 @@ namespace NeeView.Effects
             set { if (_effect.Black != value) { _effect.Black = value; RaiseEffectPropertyChanged(); } }
         }
 
-
-        /// <summary>
-        /// Property: White
-        /// </summary>
-        [DataMember]
         [PropertyRange(0, 1)]
         [DefaultValue(1.0)]
         public double White
@@ -44,11 +33,6 @@ namespace NeeView.Effects
             set { if (_effect.White != value) { _effect.White = value; RaiseEffectPropertyChanged(); } }
         }
 
-
-        /// <summary>
-        /// Property: Center
-        /// </summary>
-        [DataMember]
         [PropertyRange(0.1, 0.9)]
         [DefaultValue(0.5)]
         public double Center
@@ -57,10 +41,6 @@ namespace NeeView.Effects
             set { if (_effect.Center != value) { _effect.Center = value; RaiseEffectPropertyChanged(); } }
         }
 
-        /// <summary>
-        /// Property: Minimum
-        /// </summary>
-        [DataMember]
         [PropertyRange(0, 1, Title = "Output")]
         [DefaultValue(0.0)]
         public double Minimum
@@ -69,10 +49,6 @@ namespace NeeView.Effects
             set { if (_effect.Minimum != value) { _effect.Minimum = value; RaiseEffectPropertyChanged(); } }
         }
 
-        /// <summary>
-        /// Property: Center
-        /// </summary>
-        [DataMember]
         [PropertyRange(0, 1)]
         [DefaultValue(1.0)]
         public double Maximum

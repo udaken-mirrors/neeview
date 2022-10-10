@@ -181,24 +181,5 @@ namespace NeeView
             TransformChanged?.Invoke(this, new TransformEventArgs(actionType));
         }
 
-        #region Memento
-
-        [DataContract]
-        public class Memento : IMemento
-        {
-            [DataMember]
-            public bool IsLimitMove { get; set; }
-            [DataMember]
-            public double AngleFrequency { get; set; }
-
-            public void RestoreConfig(Config config)
-            {
-                config.View.IsLimitMove = IsLimitMove;
-                config.View.AngleFrequency = AngleFrequency;
-            }
-        }
-
-        #endregion
-
     }
 }

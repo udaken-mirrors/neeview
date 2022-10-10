@@ -12,23 +12,12 @@ using System.Windows.Media.Effects;
 
 namespace NeeView.Effects
 {
-    // https://msdn.microsoft.com/ja-jp/library/microsoft.expression.media.effects(v=expression.40).aspx
-    // v EmbossedEffect 
-    // v MagnifyEffect 
-    // v RippleEffect 
-    // SwirlEffect 
-
-    //
-    [DataContract]
     public class PixelateEffectUnit : EffectUnit
     {
         private static readonly PixelateEffect _effect = new();
         public override Effect GetEffect() => _effect;
 
-        /// <summary>
-        /// Property: Pixelation
-        /// </summary>
-        [DataMember]
+
         [PropertyRange(0, 1)]
         [DefaultValue(0.75)]
         public double Pixelation

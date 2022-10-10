@@ -42,22 +42,6 @@ namespace NeeView
             _lastTime = DateTime.Now;
         }
 
-        #region Memento
-
-        [DataContract]
-        public class Memento : IMemento
-        {
-            [DataMember]
-            public string? SeCannotMove { get; set; }
-
-            public void RestoreConfig(Config config)
-            {
-                config.Book.TerminalSound = SeCannotMove;
-            }
-        }
-
-        #endregion
-
     }
 
 }

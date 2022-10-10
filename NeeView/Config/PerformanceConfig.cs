@@ -7,7 +7,6 @@ using System.Windows;
 
 namespace NeeView
 {
-    [DataContract]
     public class PerformanceConfig : BindableBase
     {
         private int _cacheMemorySize = 200;

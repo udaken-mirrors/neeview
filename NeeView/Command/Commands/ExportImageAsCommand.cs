@@ -31,13 +31,11 @@ namespace NeeView
     /// <summary>
     /// ExportImageAs Command Parameter
     /// </summary>
-    [DataContract]
     public class ExportImageAsCommandParameter : CommandParameter
     {
         private string? _exportFolder;
         private int _qualityLevel = 80;
 
-        [DataMember]
         [PropertyPath(FileDialogType = FileDialogType.Directory)]
         public string ExportFolder
         {
@@ -45,7 +43,6 @@ namespace NeeView
             set => SetProperty(ref _exportFolder, value);
         }
 
-        [DataMember]
         [PropertyRange(5, 100, TickFrequency = 5)]
         public int QualityLevel
         {

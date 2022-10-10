@@ -16,9 +16,6 @@ namespace NeeView
         static SaveData() => Current = new SaveData();
         public static SaveData Current { get; }
 
-        private string? _settingFilenameToDelete;
-        private string? _historyFilenameToDelete;
-        private string? _bookmarkFilenameToDelete;
         private string? _pagemarkFilenameToDelete;
         private bool _historyMergeFlag;
         private DateTime _historyLastWriteTime;
@@ -79,7 +76,6 @@ namespace NeeView
             {
                 var filename = App.Current.Option.SettingFilename;
                 var extension = Path.GetExtension(filename)?.ToLower();
-                var filenameV1 = Path.ChangeExtension(filename, ".xml");
 
                 var failedDialog = new LoadFailedDialog(Resources.Notice_LoadSettingFailed, Resources.Notice_LoadSettingFailedTitle);
                 failedDialog.OKCommand = new UICommand(Resources.Notice_LoadSettingFailedButtonContinue) { IsPositibe = true };
@@ -91,30 +87,6 @@ namespace NeeView
                 if (extension == ".json" && File.Exists(filename))
                 {
                     setting = SafetyLoad(UserSettingTools.Load, filename, failedDialog, true, LoadUserSettingBackupCallback);
-                }
-                // before v.37
-                else if (File.Exists(filenameV1))
-                {
-                    var settingV1 = SafetyLoad(UserSettingV1.LoadV1, filenameV1, failedDialog, true);
-                    var settingV1Converted = settingV1?.ConvertToV2();
-
-                    var historyV1FilePath = Path.ChangeExtension(settingV1?.App?.HistoryFilePath ?? DefaultHistoryFilePath, ".xml");
-                    var historyV1 = SafetyLoad(BookHistoryCollection.Memento.LoadV1, historyV1FilePath, null); // 一部の履歴設定を反映
-                    historyV1?.RestoreConfig(settingV1Converted?.Config);
-
-#pragma warning disable CS0612, CS0618 // 型またはメンバーが旧型式です
-                    var pagemarkV1FilePath = Path.ChangeExtension(settingV1?.App?.PagemarkFilePath ?? DefaultPagemarkFilePath, ".xml");
-                    var pagemarkV1 = SafetyLoad(PagemarkCollection.Memento.LoadV1, pagemarkV1FilePath, null); // 一部のページマーク設定を反映
-                    pagemarkV1?.RestoreConfig(settingV1Converted?.Config);
-#pragma warning restore CS0612, CS0618 // 型またはメンバーが旧型式です
-
-                    _settingFilenameToDelete = filenameV1;
-                    if (Path.GetExtension(App.Current.Option.SettingFilename)?.ToLower() == ".xml")
-                    {
-                        App.Current.Option.SettingFilename = Path.ChangeExtension(App.Current.Option.SettingFilename, ".json");
-                    }
-
-                    setting = settingV1Converted;
                 }
                 else
                 {
@@ -138,7 +110,6 @@ namespace NeeView
             {
                 var filename = HistoryFilePath;
                 var extension = Path.GetExtension(filename).ToLower();
-                var filenameV1 = Path.ChangeExtension(filename, ".xml");
                 var failedDialog = new LoadFailedDialog(Resources.Notice_LoadHistoryFailed, Resources.Notice_LoadHistoryFailedTitle);
 
                 var fileInfo = new FileInfo(filename);
@@ -147,18 +118,6 @@ namespace NeeView
                     BookHistoryCollection.Memento? memento = SafetyLoad(BookHistoryCollection.Memento.Load, HistoryFilePath, failedDialog);
                     BookHistoryCollection.Current.Restore(memento, true);
                     _historyLastWriteTime = fileInfo.LastWriteTime;
-                }
-                // before v.37
-                else if (File.Exists(filenameV1))
-                {
-                    BookHistoryCollection.Memento? memento = SafetyLoad(BookHistoryCollection.Memento.LoadV1, filenameV1, failedDialog);
-                    BookHistoryCollection.Current.Restore(memento, true);
-
-                    _historyFilenameToDelete = filenameV1;
-                    if (Path.GetExtension(HistoryFilePath).ToLower() == ".xml")
-                    {
-                        Config.Current.History.HistoryFilePath = Path.ChangeExtension(HistoryFilePath, ".json");
-                    }
                 }
             }
         }
@@ -170,25 +129,12 @@ namespace NeeView
             {
                 var filename = BookmarkFilePath;
                 var extension = Path.GetExtension(filename).ToLower();
-                var filenameV1 = Path.ChangeExtension(filename, ".xml");
                 var failedDialog = new LoadFailedDialog(Resources.Notice_LoadBookmarkFailed, Resources.Notice_LoadBookmarkFailedTitle);
 
                 if (extension == ".json" && File.Exists(filename))
                 {
                     BookmarkCollection.Memento? memento = SafetyLoad(BookmarkCollection.Memento.Load, filename, failedDialog);
                     BookmarkCollection.Current.Restore(memento);
-                }
-                // before v.37
-                else if (File.Exists(filenameV1))
-                {
-                    BookmarkCollection.Memento? memento = SafetyLoad(BookmarkCollection.Memento.LoadV1, filenameV1, failedDialog);
-                    BookmarkCollection.Current.Restore(memento);
-
-                    _bookmarkFilenameToDelete = filenameV1;
-                    if (Path.GetExtension(BookmarkFilePath).ToLower() == ".xml")
-                    {
-                        Config.Current.Bookmark.BookmarkFilePath = Path.ChangeExtension(BookmarkFilePath, ".json");
-                    }
                 }
             }
         }
@@ -276,19 +222,6 @@ namespace NeeView
                 SafetySave(UserSettingTools.Save, UserSettingFilePath, createBackup);
                 _backupOnce = false;
             }
-
-            RemoveLegacyUserSetting();
-        }
-
-        /// <summary>
-        /// 必要であるならば、古い設定ファイルを削除
-        /// </summary>
-        public void RemoveLegacyUserSetting()
-        {
-            if (_settingFilenameToDelete == null) return;
-
-            RemoveLegacyFile(_settingFilenameToDelete);
-            _settingFilenameToDelete = null;
         }
 
         /// <summary>
@@ -345,19 +278,6 @@ namespace NeeView
                 SafetySave(bookHistoryMemento.Save, HistoryFilePath, false);
                 _historyLastWriteTime = File.GetLastWriteTime(HistoryFilePath);
             }
-
-            RemoveLegacyHistory();
-        }
-
-        /// <summary>
-        /// 必要であるならば、古い設定ファイルを削除
-        /// </summary>
-        public void RemoveLegacyHistory()
-        {
-            if (_historyFilenameToDelete == null) return;
-
-            RemoveLegacyFile(_historyFilenameToDelete);
-            _historyFilenameToDelete = null;
         }
 
         /// <summary>
@@ -387,19 +307,6 @@ namespace NeeView
                 var bookmarkMemento = BookmarkCollection.Current.CreateMemento();
                 SafetySave(bookmarkMemento.Save, BookmarkFilePath, false);
             }
-
-            RemoveLegacyBookmark();
-        }
-
-        /// <summary>
-        /// 必要であるならば、古い設定ファイルを削除
-        /// </summary>
-        public void RemoveLegacyBookmark()
-        {
-            if (_bookmarkFilenameToDelete == null) return;
-
-            RemoveLegacyFile(_bookmarkFilenameToDelete);
-            _bookmarkFilenameToDelete = null;
         }
 
         /// <summary>

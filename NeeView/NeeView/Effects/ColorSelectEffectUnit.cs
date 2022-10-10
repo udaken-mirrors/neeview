@@ -10,18 +10,12 @@ using System.Windows.Media.Effects;
 
 namespace NeeView.Effects
 {
-    //
-    [DataContract]
     public class ColorSelectEffectUnit : EffectUnit
     {
         private static readonly ColorSelectEffect _effect = new();
         public override Effect GetEffect() => _effect;
 
 
-        /// <summary>
-        /// Property: Hue
-        /// </summary>
-        [DataMember]
         [PropertyRange(0.0, 360.0)]
         [DefaultValue(15.0)]
         public double Hue
@@ -30,10 +24,6 @@ namespace NeeView.Effects
             set { if (_effect.Hue != value) { _effect.Hue = value; RaiseEffectPropertyChanged(); } }
         }
 
-        /// <summary>
-        /// Property: Range
-        /// </summary>
-        [DataMember]
         [PropertyRange(0.0, 1.0)]
         [DefaultValue(0.1)]
         public double Range
@@ -42,10 +32,6 @@ namespace NeeView.Effects
             set { if (_effect.Range != value) { _effect.Range = value; RaiseEffectPropertyChanged(); } }
         }
 
-        /// <summary>
-        /// Property: Curve
-        /// </summary>
-        [DataMember]
         [PropertyRange(0.0, 0.2)]
         [DefaultValue(0.1)]
         public double Curve

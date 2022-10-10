@@ -26,7 +26,6 @@ namespace NeeView
     /// <summary>
     /// ビュースクロールコマンド用パラメータ
     /// </summary>
-    [DataContract]
     public class ViewScrollCommandParameter : CommandParameter
     {
         private double _scroll = 0.25;
@@ -34,7 +33,6 @@ namespace NeeView
         private double _scrollDuration = 0.1;
 
         // 属性に説明文
-        [DataMember(Name = "ScrollV2")]
         [PropertyPercent]
         public double Scroll
         {
@@ -43,7 +41,6 @@ namespace NeeView
         }
 
         // スクロール速度(秒)
-        [DataMember]
         [PropertyMember]
         public double ScrollDuration
         {
@@ -51,34 +48,12 @@ namespace NeeView
             set { SetProperty(ref _scrollDuration, Math.Max(value, 0.0)); }
         }
 
-        [DataMember]
         [PropertyMember]
         public bool AllowCrossScroll
         {
             get => _allowCrossScroll;
             set => SetProperty(ref _allowCrossScroll, value);
         }
-
-
-        #region Obsolete
-        [Obsolete("no used"), JsonIgnore, EqualsIgnore, DataMember(Name = "Scroll", EmitDefaultValue = false)] // ver.37
-        [PropertyMapIgnore]
-        public int ScrollV1
-        {
-            get => 0;
-            set => Scroll = value / 100.0;
-        }
-        #endregion
-
-
-        [OnDeserializing]
-        private void OnDeserializing(StreamingContext context)
-        {
-            this.Scroll = 0.25;
-            this.AllowCrossScroll = true;
-            this.ScrollDuration = 0.1;
-        }
-
     }
 
 }

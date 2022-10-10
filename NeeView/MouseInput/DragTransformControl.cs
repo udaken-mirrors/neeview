@@ -1355,66 +1355,6 @@ namespace NeeView
 
         #endregion
 
-        #region Memento
-
-        [DataContract]
-        public class Memento : IMemento
-        {
-            [DataMember]
-            public int _Version { get; set; } = Environment.ProductVersionNumber;
-
-            [DataMember]
-            public bool IsOriginalScaleShowMessage { get; set; }
-            [DataMember]
-            public bool IsKeepScale { get; set; }
-            [DataMember]
-            public bool IsKeepAngle { get; set; }
-            [DataMember]
-            public bool IsKeepFlip { get; set; }
-            [DataMember]
-            public bool IsViewStartPositionCenter { get; set; }
-            [DataMember]
-            public DragControlCenter DragControlRotateCenter { get; set; }
-            [DataMember]
-            public DragControlCenter DragControlScaleCenter { get; set; }
-            [DataMember]
-            public DragControlCenter DragControlFlipCenter { get; set; }
-
-            [Obsolete("no used"), DataMember(EmitDefaultValue = false)]
-            public bool IsControlCenterImage { get; set; }
-
-
-            [OnDeserialized]
-            private void OnDeserialized(StreamingContext c)
-            {
-#pragma warning disable CS0612, CS0618
-                // before 34.0
-                if (_Version < Environment.GenerateProductVersionNumber(34, 0, 0))
-                {
-                    var center = IsControlCenterImage ? DragControlCenter.Target : DragControlCenter.View;
-                    DragControlRotateCenter = center;
-                    DragControlScaleCenter = center;
-                    DragControlFlipCenter = center;
-                }
-#pragma warning restore CS0612, CS0618
-            }
-
-            public void RestoreConfig(Config config)
-            {
-                config.Notice.IsOriginalScaleShowMessage = IsOriginalScaleShowMessage;
-
-                config.View.RotateCenter = DragControlRotateCenter;
-                config.View.ScaleCenter = DragControlScaleCenter;
-                config.View.FlipCenter = DragControlFlipCenter;
-                config.View.IsKeepScale = IsKeepScale;
-                config.View.IsKeepAngle = IsKeepAngle;
-                config.View.IsKeepFlip = IsKeepFlip;
-                config.View.IsViewStartPositionCenter = IsViewStartPositionCenter;
-            }
-        }
-
-        #endregion
-
     }
 
 

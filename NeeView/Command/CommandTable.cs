@@ -685,12 +685,10 @@ namespace NeeView
 
         #endregion Scripts
 
-        #region Memento
 
-        [DataContract]
-        public class Memento
+        public static class CommandRenameMap
         {
-            public static readonly Dictionary<string, string> RenameMap_37_0_0 = new()
+            public static Dictionary<string, string> RenameMap_37_0_0 { get; } = new()
             {
                 ["OpenApplication"] = "OpenExternalApp",
                 ["OpenFilePlace"] = "OpenExplorer",
@@ -720,14 +718,14 @@ namespace NeeView
                 ["ToggleStretchAllowReduce"] = "ToggleStretchAllowScaleDown",
             };
 
-            public static readonly Dictionary<string, string> RenameMap_38_0_0 = new()
+            public static Dictionary<string, string> RenameMap_38_0_0 { get; } = new()
             {
                 ["TogglePermitFileCommand"] = "TogglePermitFile",
                 ["FocusPrevAppCommand"] = "FocusPrevApp",
                 ["FocusNextAppCommand"] = "FocusNextApp",
             };
 
-            public static readonly Dictionary<string, string> RenameMap_39_0_0 = new()
+            public static Dictionary<string, string> RenameMap_39_0_0 { get; } = new()
             {
                 ["ToggleVisiblePagemarkList"] = "ToggleVisiblePlaylist",
                 ["TogglePagemark"] = "TogglePlaylistMark",
@@ -737,96 +735,10 @@ namespace NeeView
                 ["NextPagemarkInBook"] = "NextPlaylistItemInBook",
             };
 
-            public int _Version { get; set; } = Environment.ProductVersionNumber;
-
-            [DataMember, DefaultValue(true)]
-            public bool IsReversePageMove { get; set; }
-
-            [DataMember]
-            public bool IsReversePageMoveWheel { get; set; }
-
-            [DataMember(Name = "ElementsV2")]
-            public Dictionary<string, CommandElement.Memento> Elements { get; set; } = new Dictionary<string, CommandElement.Memento>();
-
-            [DataMember]
-            public bool IsScriptFolderEnabled { get; set; }
-
-            [DataMember(EmitDefaultValue = false)]
-            public string? ScriptFolder { get; set; }
-
-
-            [OnDeserializing]
-            private void OnDeserializing(StreamingContext c)
+#if false
+            // NOTE: リネーム処理実装の参考用コード
+            public static VersionCompatibleRename()
             {
-                this.InitializePropertyDefaultValues();
-            }
-
-            [OnDeserialized]
-            private void OnDeserialized(StreamingContext context)
-            {
-                Elements = Elements ?? new Dictionary<string, CommandElement.Memento>();
-
-                // before 32.0
-                if (_Version < Environment.GenerateProductVersionNumber(32, 0, 0))
-                {
-                    // 新しいコマンドに設定を引き継ぐ
-                    if (Elements.TryGetValue("ToggleVisibleFolderSearchBox", out CommandElement.Memento? toggleVisibleFolderSearchBox))
-                    {
-                        Elements["FocusFolderSearchBox"] = toggleVisibleFolderSearchBox;
-                    }
-
-                    if (Elements.TryGetValue("ToggleVisibleBookmarkList", out CommandElement.Memento? toggleVisibleBookmarkList))
-                    {
-                        Elements["FocusBookmarkList"] = toggleVisibleBookmarkList;
-                    }
-
-                    if (Elements.TryGetValue("ToggleVisibleFolderList", out CommandElement.Memento? toggleVisibleFolderList))
-                    {
-                        Elements["ToggleVisibleBookshelf"] = toggleVisibleFolderList;
-                    }
-                }
-
-                // before 33.2
-                if (_Version <= Environment.GenerateProductVersionNumber(33, 2, 0))
-                {
-                    // change shortcut "Escape" to "Esc"
-                    foreach (var element in Elements.Values)
-                    {
-                        if (element.ShortCutKey != null && element.ShortCutKey.Contains("Escape"))
-                        {
-                            var keys = element.ShortCutKey
-                                .Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
-                                .Select(e => e.Replace("Escape", "Esc"))
-                                .Distinct();
-
-                            element.ShortCutKey = string.Join(",", keys);
-                        }
-                    }
-                }
-
-                // before 34.0
-                if (_Version < Environment.GenerateProductVersionNumber(34, 0, 0))
-                {
-                    // 自動回転のショートカットキーをなるべく継承
-                    if (Elements.TryGetValue("ToggleIsAutoRotate", out var element))
-                    {
-                        var commandName = element.Parameter is null ? "ToggleIsAutoRotateRight" : "ToggleIsAutoRotateLeft";
-                        Elements[commandName] = element.Clone();
-                        Elements[commandName].IsShowMessage = true;
-                        Elements[commandName].Parameter = null;
-                    }
-                }
-
-                // before 35.0
-                if (_Version < Environment.GenerateProductVersionNumber(35, 0, 0))
-                {
-                    // ストレッチコマンドパラメータ継承
-                    if (Elements.TryGetValue("SetStretchModeInside", out var element))
-                    {
-                        Elements["SetStretchModeUniform"].Parameter = element.Parameter;
-                    }
-                }
-
                 // before 37.0
                 if (_Version < Environment.GenerateProductVersionNumber(37, 0, 0))
                 {
@@ -871,64 +783,9 @@ namespace NeeView
                     }
                 }
             }
-
-            public void RestoreConfig(Config config)
-            {
-                config.Command.IsReversePageMove = IsReversePageMove;
-                config.Command.IsReversePageMoveWheel = IsReversePageMoveWheel;
-                config.Script.IsScriptFolderEnabled = IsScriptFolderEnabled;
-                config.Script.ScriptFolder = ScriptFolder ?? "";
-            }
-
-            public Memento Clone()
-            {
-                var memento = (Memento)this.MemberwiseClone();
-                memento.Elements = this.Elements.ToDictionary(e => e.Key, e => e.Value.Clone());
-                return memento;
-            }
-
-            public CommandCollection CreateCommandCollection()
-            {
-                // TODO: とてもしっくりこないアクセスなのでいい感じに修正する
-                var elements = CommandTable.Current._elements;
-
-                var collection = new CommandCollection();
-                foreach (var pair in Elements)
-                {
-                    if (elements.ContainsKey(pair.Key))
-                    {
-                        var parameterType = elements[pair.Key].ParameterSource?.GetDefault().GetType();
-                        var value = CreateCommandMementoV2(pair.Value, parameterType);
-                        collection.Add(pair.Key, value);
-                    }
-                    else
-                    {
-                        Debug.WriteLine($"Warning: No such command '{pair.Key}'");
-                        collection.Add(pair.Key, CreateCommandMementoV2(pair.Value, null));
-                    }
-                }
-
-                return collection;
-
-                static CommandElement.MementoV2 CreateCommandMementoV2(CommandElement.Memento mementoV1, Type? parameterType)
-                {
-                    var mementoV2 = new CommandElement.MementoV2();
-                    mementoV2.ShortCutKey = mementoV1.ShortCutKey ?? "";
-                    mementoV2.TouchGesture = mementoV1.TouchGesture ?? "";
-                    mementoV2.MouseGesture = mementoV1.MouseGesture ?? "";
-                    mementoV2.IsShowMessage = mementoV1.IsShowMessage;
-
-                    if (parameterType != null && !string.IsNullOrWhiteSpace(mementoV1.Parameter))
-                    {
-                        mementoV2.Parameter = (CommandParameter?)Json.Deserialize(mementoV1.Parameter, parameterType);
-                    }
-
-                    return mementoV2;
-                }
-            }
+#endif
         }
 
-        #endregion
 
         #region Memento CommandCollection
 

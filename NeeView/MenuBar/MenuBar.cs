@@ -30,24 +30,5 @@ namespace NeeView
 
         public WindowStateManager WindowStateManager => _windowStateManager;
 
-
-
-        #region Memento
-        [DataContract]
-        public class Memento : IMemento
-        {
-            [DataMember, DefaultValue(false)]
-            public bool CaptionEmulateInFullScreen { get; set; }
-
-            [DataMember]
-            public bool IsHamburgerMenu { get; set; }
-
-            public void RestoreConfig(Config config)
-            {
-                config.Window.IsCaptionEmulateInFullScreen = CaptionEmulateInFullScreen;
-                config.MenuBar.IsHamburgerMenu = IsHamburgerMenu;
-            }
-        }
-        #endregion
     }
 }

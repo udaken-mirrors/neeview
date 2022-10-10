@@ -36,7 +36,6 @@ namespace NeeView
     /// ブラシ構成要素.
     /// 単色ブラシ、画像タイルブラシ対応
     /// </summary>
-    [DataContract]
     public class BrushSource : BindableBase, ICloneable
     {
         private BrushType _type;
@@ -53,7 +52,6 @@ namespace NeeView
 
         public static Dictionary<BrushType, string> BrushTypeList => AliasNameExtensions.GetAliasNameDictionary<BrushType>();
 
-        [DataMember]
         [PropertyMember]
         public BrushType Type
         {
@@ -61,7 +59,6 @@ namespace NeeView
             set { if (_type != value) { _type = value; RaisePropertyChanged(); } }
         }
 
-        [DataMember]
         [PropertyMember]
         public Color Color
         {
@@ -69,7 +66,6 @@ namespace NeeView
             set { if (_color != value) { _color = value; RaisePropertyChanged(); } }
         }
 
-        [DataMember]
         [PropertyMember]
         public string? ImageFileName
         {

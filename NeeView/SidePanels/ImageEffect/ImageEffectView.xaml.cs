@@ -25,11 +25,11 @@ namespace NeeView
         private bool _isFocusRequest;
 
 
-        public ImageEffectView(ImageEffect model, ImageFilter imageFilter)
+        public ImageEffectView(ImageEffect model)
         {
             InitializeComponent();
 
-            _vm = new ImageEffectViewModel(model, imageFilter);
+            _vm = new ImageEffectViewModel(model);
             this.DataContext = _vm;
 
             this.IsVisibleChanged += ImageEffectView_IsVisibleChanged;

@@ -260,56 +260,5 @@ namespace NeeView
             }
         }
 
-        #region Memento
-        [DataContract]
-        public class Memento : IMemento
-        {
-            [DataMember]
-            public int _Version { get; set; } = Environment.ProductVersionNumber;
-
-            [Obsolete("no used"), DataMember(Name = "Background", EmitDefaultValue = false)]
-            public BackgroundStyleV1 BackgroundV1 { get; set; }
-
-            [DataMember(Name = "BackgroundV2")]
-            public BackgroundType Background { get; set; }
-
-            [DataMember]
-            public BrushSource? CustomBackground { get; set; }
-
-            [DataMember, DefaultValue(typeof(Color), "Transparent")]
-            public Color PageBackgroundColor { get; set; }
-
-
-            [OnDeserializing]
-            private void OnDeserializing(StreamingContext c)
-            {
-                this.InitializePropertyDefaultValues();
-            }
-
-            [OnDeserialized]
-            private void OnDeserialized(StreamingContext c)
-            {
-#pragma warning disable CS0618
-                // before 34.0
-                if (_Version < Environment.GenerateProductVersionNumber(34, 0, 0))
-                {
-                    if (Enum.TryParse(BackgroundV1.ToString(), out BackgroundType value))
-                    {
-                        Background = value;
-                    }
-                }
-#pragma warning restore CS0618
-            }
-
-            public void RestoreConfig(Config config)
-            {
-                config.Background.CustomBackground = CustomBackground ?? new BrushSource();
-                config.Background.BackgroundType = Background;
-                config.Background.PageBackgroundColor = PageBackgroundColor;
-            }
-        }
-
-        #endregion
-
     }
 }

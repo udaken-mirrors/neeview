@@ -70,43 +70,6 @@ namespace NeeView
             }
         }
 
-
-        #region Memento
-
-        [DataContract]
-        public class Memento : IMemento
-        {
-            [DataMember]
-            public bool IsVisibleBitsPerPixel { get; set; }
-            [DataMember]
-            public bool IsVisibleLoader { get; set; }
-            [DataMember]
-            public bool IsVisibleFilePath { get; set; }
-
-            public void RestoreConfig(Config config)
-            {
-            }
-        }
-
-        #endregion
     }
 
-
-    /// <summary>
-    /// 旧：ファイル情報パネル設定
-    /// 互換性のために残してあります
-    /// </summary>
-    [Obsolete("no used")]
-    [DataContract]
-    public class FileInfoSetting
-    {
-        [DataMember]
-        public bool IsUseExifDateTime { get; set; }
-
-        [DataMember]
-        public bool IsVisibleBitsPerPixel { get; set; }
-
-        [DataMember]
-        public bool IsVisibleLoader { get; set; }
-    }
 }

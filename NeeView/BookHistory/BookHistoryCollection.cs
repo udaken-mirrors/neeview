@@ -413,115 +413,24 @@ namespace NeeView
         /// <summary>
         /// 履歴Memento
         /// </summary>
-        [DataContract(Name = "BookHistory.Memento")]
         public class Memento : BindableBase, IMemento
         {
             [JsonPropertyName("Format")]
             public FormatVersion? Format { get; set; }
 
-            [JsonIgnore]
-            [DataMember]
-            public int _Version { get; set; }
-
-            [DataMember(Name = "Histories")]
             public List<BookHistory> Items { get; set; }
 
-            [DataMember]
             public List<Book.Memento> Books { get; set; }
 
-            [JsonIgnore]
-            [DataMember(Order = 8)]
-            public string? LastFolder { get; set; }
-
-            [JsonIgnore]
-            [DataMember(Order = 12)]
-            public int LimitSize { get; set; }
-
-            [JsonIgnore]
-            [DataMember(Order = 12)]
-            public TimeSpan LimitSpan { get; set; }
-
-            [JsonIgnore]
-            [DataMember(Order = 19)]
-            public bool IsKeepFolderStatus { get; set; }
-
-            [JsonIgnore]
-            [DataMember]
-            public bool IsKeepLastFolder { get; set; }
-
-            [DataMember]
             public Dictionary<string, FolderParameter.Memento>? Folders { get; set; }
 
-            [JsonIgnore]
-            [DataMember]
-            public string? LastAddress { get; set; }
-
-            [JsonIgnore]
-            [DataMember]
-            public bool IsKeepSearchHistory { get; set; }
-
-            [DataMember(EmitDefaultValue = false)]
             public List<string>? SearchHistory { get; set; }
 
-            // no used
-            [JsonIgnore]
-            [Obsolete("no used"), DataMember(Order = 8, EmitDefaultValue = false)]
-            public Dictionary<string, FolderOrder>? FolderOrders { get; set; } // no used (ver.22)
-
-            [JsonIgnore]
-            [Obsolete("use Books"), DataMember(Name = "History", EmitDefaultValue = false)]
-            public List<Book.Memento>? OldBooks { get; set; } // no used (ver.31)
-
-
-            [MemberNotNull(nameof(Items))]
-            [MemberNotNull(nameof(Books))]
-            private void Constructor()
-            {
-                Items = new List<BookHistory>();
-                Books = new List<Book.Memento>();
-                LimitSize = -1;
-                IsKeepFolderStatus = true;
-                IsKeepLastFolder = false;
-                IsKeepSearchHistory = true;
-            }
 
             public Memento()
             {
-                Constructor();
-            }
-
-            [OnDeserializing]
-            private void OnDeserializing(StreamingContext c)
-            {
-                Constructor();
-            }
-
-            [OnDeserialized]
-            private void OnDeserialized(StreamingContext c)
-            {
-#pragma warning disable CS0618
-                // before v31
-                if (_Version < Environment.GenerateProductVersionNumber(31, 0, 0))
-                {
-                    Items = OldBooks != null
-                        ? OldBooks.Select(e => new BookHistory(e.Path, e.LastAccessTime)).ToList()
-                        : new List<BookHistory>();
-
-                    Books = OldBooks ?? new List<Book.Memento>();
-                    foreach (var book in Books)
-                    {
-                        book.LastAccessTime = default;
-                    }
-
-                    OldBooks = null;
-                }
-
-                // before 36
-                if (_Version < Environment.GenerateProductVersionNumber(36, 0, 0))
-                {
-                    IsKeepLastFolder = IsKeepFolderStatus;
-                }
-#pragma warning restore CS0618
+                Items = new List<BookHistory>();
+                Books = new List<Book.Memento>();
             }
 
 
@@ -557,44 +466,6 @@ namespace NeeView
                 // TODO: v.38以後の互換性処理をここで？
             }
 
-            #region Legacy
-
-            // ファイルに保存
-            [Obsolete("no used")]
-            public void SaveV1(string path)
-            {
-                var settings = new XmlWriterSettings();
-                settings.Encoding = new System.Text.UTF8Encoding(false);
-                settings.Indent = true;
-                using (XmlWriter xw = XmlWriter.Create(path, settings))
-                {
-                    var serializer = new DataContractSerializer(typeof(Memento));
-                    serializer.WriteObject(xw, this);
-                }
-            }
-
-            // ファイルから読み込み
-            public static Memento LoadV1(string path)
-            {
-                using (var stream = new FileStream(path, FileMode.Open, FileAccess.Read))
-                {
-                    return LoadV1(stream);
-                }
-            }
-
-            // ストリームから読み込み
-            public static Memento LoadV1(Stream stream)
-            {
-                using (XmlReader xr = XmlReader.Create(stream))
-                {
-                    var serializer = new DataContractSerializer(typeof(Memento));
-                    var memento = serializer.ReadObject(xr) as Memento ?? throw new FormatException();
-                    return memento;
-                }
-            }
-
-            #endregion Legacy
-
             // 合成
             public void Merge(Memento? memento)
             {
@@ -602,9 +473,9 @@ namespace NeeView
 
                 Debug.WriteLine("HistoryMerge...");
 
-                if (_Version != memento._Version)
+                if (Format != memento.Format)
                 {
-                    Debug.WriteLine("HistoryMerge failed: Illigal version");
+                    Debug.WriteLine("HistoryMerge failed: Illigal format");
                     return;
                 }
 
@@ -636,22 +507,9 @@ namespace NeeView
 
                 if (isDarty)
                 {
-                    Items = Limit(itemMap.Values.OrderByDescending(e => e.LastAccessTime), LimitSize, LimitSpan).ToList();
+                    Items = Limit(itemMap.Values.OrderByDescending(e => e.LastAccessTime), Config.Current.History.LimitSize, Config.Current.History.LimitSpan).ToList();
                     Books = bookMap.Values.ToList();
                 }
-            }
-
-            public void RestoreConfig(Config? config)
-            {
-                if (config is null) return;
-
-                config.StartUp.IsOpenLastFolder = IsKeepLastFolder;
-                config.StartUp.LastFolderPath = LastFolder;
-                config.StartUp.LastBookPath = LastAddress;
-                config.History.IsKeepFolderStatus = IsKeepFolderStatus;
-                config.History.IsKeepSearchHistory = IsKeepSearchHistory;
-                config.History.LimitSize = LimitSize;
-                config.History.LimitSpan = LimitSpan;
             }
         }
 
@@ -683,12 +541,12 @@ namespace NeeView
 
             _folders = memento.Folders ?? _folders;
 
-            if (memento.IsKeepSearchHistory)
+            if (Config.Current.History.IsKeepSearchHistory)
             {
                 this.SearchHistory = memento.SearchHistory != null ? new ObservableCollection<string>(memento.SearchHistory) : new ObservableCollection<string>();
             }
 
-            this.Load(fromLoad ? Limit(memento.Items, memento.LimitSize, memento.LimitSpan) : memento.Items, memento.Books);
+            this.Load(fromLoad ? Limit(memento.Items, Config.Current.History.LimitSize, Config.Current.History.LimitSpan) : memento.Items, memento.Books);
         }
 
         // 履歴数制限

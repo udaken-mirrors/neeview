@@ -87,14 +87,12 @@ namespace NeeView
 
         #region Memento
 
-        [DataContract]
         public class Memento : IMemento, IEquatable<Memento>
         {
-            [DataMember(Name = "FolderOrderV2")]
             public FolderOrder FolderOrder { get; set; }
 
-            [DataMember]
             public bool IsFolderRecursive { get; set; }
+
 
             public bool IsDefault(string path)
             {

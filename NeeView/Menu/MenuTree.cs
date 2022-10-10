@@ -42,10 +42,7 @@ namespace NeeView
         public static MenuCommandTag Tag { get; } = new MenuCommandTag();
     }
 
-    /// <summary>
-    /// 
-    /// </summary>
-    [DataContract]
+
     public class MenuTree : BindableBase, IEnumerable<MenuTree>
     {
         private bool _isExpanded;
@@ -90,16 +87,12 @@ namespace NeeView
         }
 
 
-        [DataMember(EmitDefaultValue = false)]
         public string? Name { get; set; }
 
-        [DataMember]
         public MenuElementType MenuElementType { get; set; }
 
-        [DataMember(Name = "Command", EmitDefaultValue = false)]
         public string? CommandName { get; set; }
 
-        [DataMember(EmitDefaultValue = false)]
         public ObservableCollection<MenuTree>? Children { get; set; }
 
 
@@ -138,15 +131,6 @@ namespace NeeView
         }
 
 
-
-        [OnDeserialized]
-        private void OnDeserialized(StreamingContext context)
-        {
-            if (MenuElementType != MenuElementType.Command)
-            {
-                CommandName = null;
-            }
-        }
 
         /// <summary>
         /// コマンド有効判定

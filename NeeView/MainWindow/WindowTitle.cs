@@ -111,58 +111,5 @@ namespace NeeView
             }
         }
 
-        #region Memento
-
-        [DataContract]
-        public class Memento : IMemento
-        {
-            [DataMember]
-            public int _Version { get; set; } = Environment.ProductVersionNumber;
-
-            [DataMember(EmitDefaultValue = false)]
-            public string? WindowTitleFormat1 { get; set; }
-
-            [DataMember(EmitDefaultValue = false)]
-            public string? WindowTitleFormat2 { get; set; }
-
-            [DataMember(EmitDefaultValue = false)]
-            public string? WindowTitleFormatMedia { get; set; }
-
-
-            [OnDeserialized]
-            private void OnDeserialized(StreamingContext c)
-            {
-                // before 34.0
-                if (_Version < Environment.GenerateProductVersionNumber(34, 0, 0))
-                {
-                    const string WindowTitleFormat1Default = "$Book($Page/$PageMax) - $FullName";
-                    const string WindowTitleFormat2Default = "$Book($Page/$PageMax) - $FullNameL | $NameR";
-                    const string WindowTitleFormatMediaDefault = "$Book";
-
-                    if (WindowTitleFormat1 == WindowTitleFormat1Default)
-                    {
-                        WindowTitleFormat1 = null;
-                    }
-                    if (WindowTitleFormat2 == WindowTitleFormat2Default)
-                    {
-                        WindowTitleFormat2 = null;
-                    }
-                    if (WindowTitleFormatMedia == WindowTitleFormatMediaDefault)
-                    {
-                        WindowTitleFormatMedia = null;
-                    }
-                }
-            }
-
-            public void RestoreConfig(Config config)
-            {
-                config.WindowTitle.WindowTitleFormat1 = WindowTitleFormat1 ?? "";
-                config.WindowTitle.WindowTitleFormat2 = WindowTitleFormat2 ?? "";
-                config.WindowTitle.WindowTitleFormatMedia = WindowTitleFormatMedia ?? "";
-            }
-        }
-
-        #endregion
     }
-
 }

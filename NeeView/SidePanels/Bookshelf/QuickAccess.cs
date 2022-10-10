@@ -6,7 +6,6 @@ using System.Text.Json.Serialization;
 
 namespace NeeView
 {
-    [DataContract]
     public class QuickAccess : BindableBase, ICloneable
     {
         private string? _path;
@@ -25,7 +24,6 @@ namespace NeeView
             _path = path;
         }
 
-        [DataMember]
         [NotNull]
         public string? Path
         {
@@ -98,17 +96,10 @@ namespace NeeView
 
         #region Memento
 
-        [DataContract]
-        public class Memento
+        public class Memento : IMemento
         {
             public string? Path { get; set; }
             public string? Name { get; set; }
-
-            [OnDeserializing]
-            private void Deserializing(StreamingContext c)
-            {
-                this.InitializePropertyDefaultValues();
-            }
         }
 
         public Memento CreateMemento()

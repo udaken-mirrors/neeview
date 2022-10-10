@@ -292,30 +292,5 @@ namespace NeeView
             }
         }
 
-
-        #region Memento
-
-        [DataContract]
-        public class Memento : IMemento
-        {
-            [DataMember, DefaultValue(ThemeType.Dark)]
-            public ThemeType PanelColor { get; set; }
-
-            [DataMember, DefaultValue(ThemeType.Light)]
-            public ThemeType MenuColor { get; set; }
-
-            [OnDeserializing]
-            private void OnDeserializing(StreamingContext c)
-            {
-                this.InitializePropertyDefaultValues();
-            }
-
-            public void RestoreConfig(Config config)
-            {
-                config.Theme.ThemeType = new TheneSource(PanelColor);
-            }
-        }
-
-        #endregion
     }
 }

@@ -13,7 +13,6 @@ namespace NeeView
     }
 
 
-    [DataContract]
     public class Bookmark : BindableBase, IBookmarkEntry
     {
         private string _path;
@@ -32,7 +31,6 @@ namespace NeeView
         }
 
 
-        [DataMember(Name = "Place")]
         public string Path
         {
             get { return _path; }
@@ -46,7 +44,6 @@ namespace NeeView
             }
         }
 
-        [DataMember(EmitDefaultValue = false)]
         public DateTime EntryTime { get; set; }
 
         public string Name => Unit.Memento.Name;

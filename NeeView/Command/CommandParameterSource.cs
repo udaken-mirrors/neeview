@@ -4,17 +4,11 @@ using System.Runtime.Serialization;
 
 namespace NeeView
 {
-    [DataContract]
     public class CommandParameterSource
     {
         private CommandParameter? _parameter;
         private readonly Type _type;
 
-#if false
-        public CommandParameterSource()
-        {
-        }
-#endif
 
         // TODO: 型を直接指定するように
         public CommandParameterSource(CommandParameter defaultParameter)
@@ -61,25 +55,5 @@ namespace NeeView
             return GetDefault().MemberwiseEquals(_parameter);
         }
 
-
-        [Obsolete("no used")]
-        public string Store()
-        {
-            if (_parameter is null) return "";
-            return Json.Serialize(_parameter, _type);
-        }
-
-        [Obsolete("no used")]
-        public void Restore(string json)
-        {
-            if (string.IsNullOrWhiteSpace(json))
-            {
-                _parameter = null;
-            }
-            else
-            { 
-                _parameter = (CommandParameter?)Json.Deserialize(json, _type);
-            }
-        }
     }
 }

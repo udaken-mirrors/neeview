@@ -28,7 +28,7 @@ namespace NeeView
         Path,
     }
 
-    [Obsolete("no used")]
+    [Obsolete("no used")] // ver.39
     public class PagemarkCollection : BindableBase
     {
         public static TreeListNode<IPagemarkEntry> CreateRoot()
@@ -74,94 +74,19 @@ namespace NeeView
 
         #region Memento
 
-        [DataContract]
-        [KnownType(typeof(Pagemark))]
-        [KnownType(typeof(PagemarkFolder))]
-        public class Memento
+        public class Memento : IMemento
         {
             [JsonPropertyName("Format")]
             public FormatVersion? Format { get; set; }
 
-            [JsonIgnore]
-            [DataMember]
-            public int _Version { get; set; } = Environment.ProductVersionNumber;
-
-            [JsonIgnore]
-            [Obsolete("no used"), DataMember(Name = "Nodes", EmitDefaultValue = false)]
-            public TreeListNode<IPagemarkEntry>? NodesLegacy { get; set; }
-
-            [DataMember(Name = "NodesV2")]
             public PagemarkNode? Nodes { get; set; }
 
-            [JsonIgnore]
-            [DataMember]
-            public PagemarkOrder PagemarkOrder { get; set; }
 
-
-            [JsonIgnore]
-            [Obsolete("no used"), DataMember(EmitDefaultValue = false)]
-            public List<Book.Memento>? Books { get; set; }
-
-            [JsonIgnore]
-            [Obsolete("no used"), DataMember(EmitDefaultValue = false)]
-            public List<Pagemark>? Marks { get; set; }
-
-            [JsonIgnore]
-            [Obsolete("no used"), DataMember(Name = "Items", EmitDefaultValue = false)]
-            public List<Book.Memento>? OldBooks { get; set; }
-
-
-            private void Constructor()
+            public Memento()
             {
                 Nodes = new PagemarkNode();
             }
 
-            public Memento()
-            {
-                Constructor();
-            }
-
-            [OnDeserializing]
-            private void OnDeserializing(StreamingContext c)
-            {
-                Constructor();
-            }
-
-            [OnDeserialized]
-            private void OnDeserialized(StreamingContext c)
-            {
-#pragma warning disable CS0612, CS0618
-                if (_Version < Environment.GenerateProductVersionNumber(31, 0, 0))
-                {
-                    NodesLegacy = new TreeListNode<IPagemarkEntry>(new PagemarkEmpty());
-                    foreach (var mark in Marks ?? new List<Pagemark>())
-                    {
-                        NodesLegacy.Add(mark);
-                    }
-
-                    Books = OldBooks ?? new List<Book.Memento>();
-                    foreach (var book in Books)
-                    {
-                        book.LastAccessTime = default;
-                    }
-
-                    Marks = null;
-                    OldBooks = null;
-                }
-
-                // 新しいフォーマットに変換
-                if (_Version < Environment.GenerateProductVersionNumber(32, 0, 0) && NodesLegacy is not null)
-                {
-                    NodesLegacy = ConvertToBookUnitFormat(NodesLegacy);
-                }
-
-                if (_Version < Environment.GenerateProductVersionNumber(37, 0, 0) && NodesLegacy is not null)
-                {
-                    Nodes = PagemarkNodeConverter.ConvertFrom(NodesLegacy) ?? new PagemarkNode();
-                    NodesLegacy = null;
-                }
-#pragma warning restore CS0612, CS0618
-            }
 
             public void Save(string path)
             {
@@ -202,49 +127,6 @@ namespace NeeView
             public bool IsEmpty()
             {
                 return (Nodes?.Children is null || Nodes.Children.Count == 0);
-            }
-
-            #region Legacy
-
-            // ファイルに保存
-            public void SaveV1(string path)
-            {
-                var settings = new XmlWriterSettings();
-                settings.Encoding = new System.Text.UTF8Encoding(false);
-                settings.Indent = true;
-                using (XmlWriter xw = XmlWriter.Create(path, settings))
-                {
-                    var serializer = new DataContractSerializer(typeof(Memento));
-                    serializer.WriteObject(xw, this);
-                }
-            }
-
-            // ファイルから読み込み
-            public static Memento? LoadV1(string path)
-            {
-                using (var stream = new FileStream(path, FileMode.Open, FileAccess.Read))
-                {
-                    return LoadV1(stream);
-                }
-            }
-
-            // ストリームから読み込み
-            public static Memento? LoadV1(Stream stream)
-            {
-                using (XmlReader xr = XmlReader.Create(stream))
-                {
-                    var serializer = new DataContractSerializer(typeof(Memento));
-                    Memento? memento = (Memento?)serializer.ReadObject(xr);
-                    return memento;
-                }
-            }
-
-            #endregion
-
-            public void RestoreConfig(Config? config)
-            {
-                // nop.
-                ////config.Pagemark.PagemarkOrder = PagemarkOrder;
             }
         }
 
@@ -427,9 +309,8 @@ namespace NeeView
             if (filename is null) return default;
 
             using (ProcessLock.Lock())
-            { 
+            {
                 var extension = Path.GetExtension(filename).ToLower();
-                var filenameV1 = Path.ChangeExtension(filename, ".xml");
 
                 var failedDialog = new LoadFailedDialog(Resources.Notice_LoadPagemarkFailed, Resources.Notice_LoadPagemarkFailedTitle);
 
@@ -437,12 +318,6 @@ namespace NeeView
                 {
                     PagemarkCollection.Memento? memento = Load(PagemarkCollection.Memento.Load, filename, failedDialog);
                     return (filename, memento);
-                }
-                // before v.37
-                else if (File.Exists(filenameV1))
-                {
-                    PagemarkCollection.Memento? memento = Load(PagemarkCollection.Memento.LoadV1, filenameV1, failedDialog);
-                    return (filenameV1, memento);
                 }
                 else
                 {
@@ -464,10 +339,7 @@ namespace NeeView
             }
         }
 
-
 #pragma warning restore CS0612, CS0618 // 型またはメンバーが旧型式です
 
-
     }
-
 }

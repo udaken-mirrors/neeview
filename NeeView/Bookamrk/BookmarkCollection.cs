@@ -489,109 +489,29 @@ namespace NeeView
             if (node is null) return;
             if (node.Value is not Bookmark bookmark) return;
             if (!isForce && bookmark.Unit.Memento.IsEquals(memento)) return;
- 
+
             bookmark.Unit.Memento = memento;
             BookmarkChanged?.Invoke(this, new BookmarkCollectionChangedEventArgs(EntryCollectionChangedAction.Update, node.Parent, node));
         }
 
         #region Memento
 
-        [DataContract]
-        [KnownType(typeof(Bookmark))]
-        [KnownType(typeof(BookmarkFolder))]
-        public class Memento
+        public class Memento : IMemento
         {
             [JsonPropertyName("Format")]
             public FormatVersion? Format { get; set; }
 
-            [JsonIgnore]
-            [DataMember]
-            public int _Version { get; set; } = Environment.ProductVersionNumber;
-
-            [JsonIgnore]
-            [Obsolete("Use Nodes"), DataMember(Name = "Nodes", EmitDefaultValue = false)]
-            public TreeListNode<IBookmarkEntry>? NodesLegacy { get; set; }
-
-            [DataMember(Name = "NodesV2")]
             public BookmarkNode? Nodes { get; set; }
 
-
-            [DataMember(EmitDefaultValue = false)]
             public List<Book.Memento>? Books { get; set; }
 
-            [DataMember]
             public QuickAccessCollection.Memento? QuickAccess { get; set; }
 
-            [JsonIgnore]
-            [Obsolete("use Books"), DataMember(Name = "Items", EmitDefaultValue = false)]
-            public List<Book.Memento>? OldBooks { get; set; } // no used (ver.31)
-
-            private void Constructor()
-            {
-                Nodes = new BookmarkNode();
-                Books = new List<Book.Memento>();
-            }
 
             public Memento()
             {
-                Constructor();
-            }
-
-            [OnDeserializing]
-            private void OnDeserializing(StreamingContext c)
-            {
-                Constructor();
-            }
-
-
-            [OnDeserialized]
-            private void OnDeserialized(StreamingContext c)
-            {
-#pragma warning disable CS0618
-                if (_Version < Environment.GenerateProductVersionNumber(31, 0, 0))
-                {
-                    NodesLegacy = new TreeListNode<IBookmarkEntry>(new BookmarkEmpty());
-                    if (OldBooks is not null)
-                    {
-                        foreach (var book in OldBooks)
-                        {
-                            NodesLegacy.Add(new Bookmark(book.Path));
-                        }
-                    }
-
-                    Books = OldBooks ?? new List<Book.Memento>();
-                    foreach (var book in Books)
-                    {
-                        book.LastAccessTime = default;
-                    }
-
-                    OldBooks = null;
-                }
-
-                if (_Version < Environment.GenerateProductVersionNumber(33, 0, 0) && OldBooks is not null)
-                {
-                    foreach (var book in OldBooks)
-                    {
-                        try
-                        {
-                            if (!string.IsNullOrEmpty(book.Path))
-                            {
-                                book.IsDirectorty = Directory.Exists(book.Path);
-                            }
-                        }
-                        catch (Exception ex)
-                        {
-                            Debug.WriteLine(ex.Message);
-                        }
-                    }
-                }
-
-                if (_Version < Environment.GenerateProductVersionNumber(37, 0, 0) && NodesLegacy is not null)
-                {
-                    Nodes = BookmarkNodeConverter.ConvertFrom(NodesLegacy) ?? new BookmarkNode();
-                    NodesLegacy = null;
-                }
-#pragma warning restore CS0618
+                Nodes = new BookmarkNode();
+                Books = new List<Book.Memento>();
             }
 
 
@@ -627,43 +547,8 @@ namespace NeeView
                 // TODO: v.38以後の互換性処理をここで？
             }
 
-            #region Legacy
-
-            // ファイルに保存
-            public void SaveV1(string path)
-            {
-                var settings = new XmlWriterSettings();
-                settings.Encoding = new System.Text.UTF8Encoding(false);
-                settings.Indent = true;
-                using (XmlWriter xw = XmlWriter.Create(path, settings))
-                {
-                    var serializer = new DataContractSerializer(typeof(Memento));
-                    serializer.WriteObject(xw, this);
-                }
-            }
-
-            // ファイルから読み込み
-            public static Memento LoadV1(string path)
-            {
-                using (var stream = new FileStream(path, FileMode.Open, FileAccess.Read))
-                {
-                    return LoadV1(stream);
-                }
-            }
-
-            // ストリームから読み込み
-            public static Memento LoadV1(Stream stream)
-            {
-                using (XmlReader xr = XmlReader.Create(stream))
-                {
-                    var serializer = new DataContractSerializer(typeof(Memento));
-                    var memento = serializer.ReadObject(xr) as Memento ?? throw new FormatException();
-                    return memento;
-                }
-            }
         }
 
-        #endregion
 
         // memento作成
         public Memento CreateMemento()

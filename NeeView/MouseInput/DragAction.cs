@@ -67,31 +67,12 @@ namespace NeeView
 
         #region Memento
 
-        [DataContract]
         public class Memento : IMemento
         {
-            [DataMember(Name = "Key")]
             public string MouseButton { get; set; } = "";
 
-            [DataMember]
             public DragActionParameter? Parameter { get; set; }
 
-
-            private void Constructor()
-            {
-                MouseButton = "";
-            }
-
-            public Memento()
-            {
-                Constructor();
-            }
-
-            [OnDeserializing]
-            private void OnDeserializing(StreamingContext c)
-            {
-                Constructor();
-            }
 
             public Memento Clone()
             {

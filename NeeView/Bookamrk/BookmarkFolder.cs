@@ -4,13 +4,11 @@ using System.Runtime.Serialization;
 
 namespace NeeView
 {
-    [DataContract]
     public class BookmarkFolder : BindableBase, IBookmarkEntry
     {
         private string? _name;
 
 
-        [DataMember(EmitDefaultValue = false)]
         public string? Name
         {
             get { return _name; }

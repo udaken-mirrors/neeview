@@ -10,18 +10,12 @@ using System.Windows.Media.Effects;
 
 namespace NeeView.Effects
 {
-    //
-    [DataContract]
     public class HsvEffectUnit : EffectUnit
     {
         private static readonly HsvEffect _effect = new();
         public override Effect GetEffect() => _effect;
 
 
-        /// <summary>
-        /// Property: Hue
-        /// </summary>
-        [DataMember]
         [PropertyRange(0.0, 360.0)]
         [DefaultValue(0.0)]
         public double Hue
@@ -30,10 +24,6 @@ namespace NeeView.Effects
             set { if (_effect.Hue != value) { _effect.Hue = value; RaiseEffectPropertyChanged(); } }
         }
 
-        /// <summary>
-        /// Property: Saturation
-        /// </summary>
-        [DataMember]
         [PropertyRange(-1.0, 1.0)]
         [DefaultValue(0.0)]
         public double Saturation
@@ -42,10 +32,6 @@ namespace NeeView.Effects
             set { if (_effect.Saturation != value) { _effect.Saturation = value; RaiseEffectPropertyChanged(); } }
         }
 
-        /// <summary>
-        /// Property: Value
-        /// </summary>
-        [DataMember]
         [PropertyRange(-1.0, 1.0)]
         [DefaultValue(0.0)]
         public double Value

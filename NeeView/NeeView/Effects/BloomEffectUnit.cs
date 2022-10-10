@@ -12,17 +12,12 @@ using System.Windows.Media.Effects;
 
 namespace NeeView.Effects
 {
-    //
-    [DataContract]
     public class BloomEffectUnit : EffectUnit
     {
         private static readonly BloomEffect _effect = new();
         public override Effect GetEffect() => _effect;
 
-        /// <summary>
-        /// Property: BaseIntensity
-        /// </summary>
-        [DataMember]
+
         [PropertyRange(0, 4)]
         [DefaultValue(1.0)]
         public double BaseIntensity
@@ -31,10 +26,6 @@ namespace NeeView.Effects
             set { if (_effect.BaseIntensity != value) { _effect.BaseIntensity = value; RaiseEffectPropertyChanged(); } }
         }
 
-        /// <summary>
-        /// Property: BaseSaturation
-        /// </summary>
-        [DataMember]
         [PropertyRange(0, 4)]
         [DefaultValue(1.0)]
         public double BaseSaturation
@@ -43,10 +34,6 @@ namespace NeeView.Effects
             set { if (_effect.BaseSaturation != value) { _effect.BaseSaturation = value; RaiseEffectPropertyChanged(); } }
         }
 
-        /// <summary>
-        /// Property: BloomIntensity
-        /// </summary>
-        [DataMember]
         [PropertyRange(0, 4)]
         [DefaultValue(1.25)]
         public double BloomIntensity
@@ -55,10 +42,6 @@ namespace NeeView.Effects
             set { if (_effect.BloomIntensity != value) { _effect.BloomIntensity = value; RaiseEffectPropertyChanged(); } }
         }
 
-        /// <summary>
-        /// Property: BloomIntensity
-        /// </summary>
-        [DataMember]
         [PropertyRange(0, 4)]
         [DefaultValue(1.0)]
         public double BloomSaturation
@@ -67,10 +50,6 @@ namespace NeeView.Effects
             set { if (_effect.BloomSaturation != value) { _effect.BloomSaturation = value; RaiseEffectPropertyChanged(); } }
         }
 
-        /// <summary>
-        /// Property: Threshold
-        /// </summary>
-        [DataMember]
         [PropertyRange(0, 1.0)]
         [DefaultValue(0.25)]
         public double Threshold

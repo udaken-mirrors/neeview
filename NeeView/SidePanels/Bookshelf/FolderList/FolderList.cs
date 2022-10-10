@@ -1891,46 +1891,6 @@ namespace NeeView
         }
         #endregion
 
-        #region Memento
-
-        [DataContract]
-        public class Memento : IMemento
-        {
-            [DataMember]
-            public PanelListItemStyle PanelListItemStyle { get; set; }
-
-            [DataMember, DefaultValue(FolderTreeLayout.Left)]
-            public FolderTreeLayout FolderTreeLayout { get; set; }
-
-            [DataMember, DefaultValue(72.0)]
-            public double FolderTreeAreaHeight { get; set; }
-
-            [DataMember, DefaultValue(128.0)]
-            public double FolderTreeAreaWidth { get; set; }
-
-            [DataMember, DefaultValue(false)]
-            public bool IsFolderTreeVisible { get; set; }
-
-            [DataMember]
-            public bool IsSyncFolderTree { get; set; }
-
-            [OnDeserializing]
-            private void OnDeserializing(StreamingContext c)
-            {
-                this.InitializePropertyDefaultValues();
-            }
-
-            public void RestoreConfig(FolderListConfig config)
-            {
-                config.PanelListItemStyle = PanelListItemStyle;
-                config.FolderTreeLayout = FolderTreeLayout;
-                config.FolderTreeAreaHeight = FolderTreeAreaHeight;
-                config.FolderTreeAreaWidth = FolderTreeAreaWidth;
-                config.IsFolderTreeVisible = IsFolderTreeVisible;
-            }
-        }
-
-        #endregion
     }
 
 }

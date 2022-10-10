@@ -9,7 +9,6 @@ using System.Windows.Data;
 
 namespace NeeView
 {
-    [DataContract]
     public class BookHistory : BindableBase, IHasPage, IHasName
     {
         private string _path;
@@ -33,7 +32,6 @@ namespace NeeView
             Unit = unit;
         }
 
-        [DataMember(Name = "Place")]
         public string Path
         {
             get { return _path; }
@@ -47,10 +45,7 @@ namespace NeeView
             }
         }
 
-
-        [DataMember]
         public DateTime LastAccessTime { get; set; }
-
 
         public Page ArchivePage => Unit.ArchivePage;
 

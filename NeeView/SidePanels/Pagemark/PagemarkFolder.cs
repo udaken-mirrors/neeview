@@ -5,22 +5,11 @@ using System.Runtime.Serialization;
 namespace NeeView
 {
     [Obsolete("no used")]
-    [DataContract]
     public class PagemarkFolder : BindableBase, IPagemarkEntry
     {
         private static readonly IThumbnail _thumbnail = new FolderThumbnail();
         private string? _path;
 
-
-        [Obsolete("no used"), DataMember(Name = "Name", EmitDefaultValue = false)]
-        public string? ObsoleteName
-        {
-            get { return null; }
-            set { _path = value; }
-        }
-
-
-        [DataMember(Name = "Place", EmitDefaultValue = false)]
         public string? Path
         {
             get { return _path; }

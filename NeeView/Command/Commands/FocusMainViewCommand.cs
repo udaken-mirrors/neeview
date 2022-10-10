@@ -20,12 +20,10 @@ namespace NeeView
     }
 
 
-    [DataContract]
     public class FocusMainViewCommandParameter : CommandParameter
     {
         private bool _needClosePanels;
 
-        [DataMember]
         [PropertyMember]
         public bool NeedClosePanels
         {

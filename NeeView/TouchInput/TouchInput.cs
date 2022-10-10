@@ -269,47 +269,5 @@ namespace NeeView
             _current?.OnKeyDown(_sender, e);
         }
 
-
-        #region Memento
-        [DataContract]
-        public class Memento : IMemento
-        {
-            public Memento()
-            {
-                Constructor();
-            }
-
-            [DataMember]
-            public bool IsEnabled { get; set; }
-            [DataMember]
-            public TouchInputNormal.Memento? Normal { get; set; }
-            [DataMember]
-            public TouchInputGesture.Memento? Gesture { get; set; }
-            [DataMember]
-            public TouchInputDrag.Memento? Drag { get; set; }
-
-
-            private void Constructor()
-            {
-                this.IsEnabled = true;
-            }
-
-            [OnDeserializing]
-            private void OnDeserializing(StreamingContext c)
-            {
-                Constructor();
-            }
-
-            public void RestoreConfig(Config config)
-            {
-                config.Touch.IsEnabled = IsEnabled;
-
-                Normal?.RestoreConfig(config);
-                Gesture?.RestoreConfig(config);
-                Drag?.RestoreConfig(config);
-            }
-        }
-
-        #endregion
     }
 }

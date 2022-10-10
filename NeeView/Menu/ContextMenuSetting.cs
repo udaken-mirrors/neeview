@@ -72,17 +72,12 @@ namespace NeeView
     }
 
 
-    [DataContract]
+    // TODO: バージョンのコマンド名変更対応
     public class ContextMenuSetting : BindableBase
     {
         private ContextMenu? _contextMenu;
         private bool _isDarty = true;
-
-        [DataMember]
         private MenuTree? _sourceTree;
-
-        [DataMember]
-        public int _Version { get; set; } = Environment.ProductVersionNumber;
 
 
         public ContextMenuSetting()
@@ -138,28 +133,6 @@ namespace NeeView
         public void Validate()
         {
             _sourceTree?.Validate();
-        }
-
-
-        [OnDeserialized]
-        private void OnDeserialized(StreamingContext context)
-        {
-            if (_sourceTree == null) return;
-
-            // before 37.0
-            if (_Version < Environment.GenerateProductVersionNumber(37, 0, 0))
-            {
-                foreach (var node in _sourceTree)
-                {
-                    if (node.MenuElementType == MenuElementType.Command)
-                    {
-                        if (node.CommandName is not null && CommandTable.Memento.RenameMap_37_0_0.TryGetValue(node.CommandName, out string? newName))
-                        {
-                            node.CommandName = newName;
-                        }
-                    }
-                }
-            }
         }
     }
 }

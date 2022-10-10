@@ -166,21 +166,5 @@ namespace NeeView
             Scale = Math.Max(Scale - Config.Current.Loupe.ScaleStep, Config.Current.Loupe.MinimumScale);
         }
 
-
-        #region Memento
-        [DataContract]
-        public class Memento : IMemento
-        {
-            [DataMember]
-            public bool IsVisibleLoupeInfo { get; set; }
-
-            public void RestoreConfig(Config config)
-            {
-                config.Loupe.IsVisibleLoupeInfo = IsVisibleLoupeInfo;
-
-            }
-        }
-
-        #endregion
     }
 }

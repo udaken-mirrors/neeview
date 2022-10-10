@@ -39,13 +39,8 @@ namespace NeeView
     /// <summary>
     /// Print Model
     /// </summary>
-    [DataContract]
     public class PrintModel : BindableBase
     {
-        /// <summary>
-        /// PageOrientation property.
-        /// </summary>
-        [DataMember(Name = nameof(PageOrientation))]
         private PageOrientation _PageOrientation;
         public PageOrientation PageOrientation
         {
@@ -83,10 +78,7 @@ namespace NeeView
         }
 
 
-        /// <summary>
-        /// PrintMode property.
-        /// </summary>
-        [DataMember(Name = nameof(PrintMode))]
+
         private PrintMode _PrintMode = PrintMode.View;
         public PrintMode PrintMode
         {
@@ -97,10 +89,7 @@ namespace NeeView
         //
         public Dictionary<PrintMode, string> PrintModeList => AliasNameExtensions.GetAliasNameDictionary<PrintMode>();
 
-        /// <summary>
-        /// IsBackground property.
-        /// </summary>
-        [DataMember(Name = nameof(IsBackground))]
+
         private bool _IsBackground;
         public bool IsBackground
         {
@@ -108,10 +97,7 @@ namespace NeeView
             set { if (_IsBackground != value) { _IsBackground = value; RaisePropertyChanged(); } }
         }
 
-        /// <summary>
-        /// IsDotScale property.
-        /// </summary>
-        [DataMember(Name = nameof(IsDotScale))]
+
         private bool _IsDotScale;
         public bool IsDotScale
         {
@@ -120,9 +106,6 @@ namespace NeeView
         }
 
 
-        /// <summary>
-        /// PrintQueue property.
-        /// </summary>
         private PrintQueue? _PrintQueue;
         public PrintQueue? PrintQueue
         {
@@ -130,10 +113,7 @@ namespace NeeView
             set { if (_PrintQueue != value) { _PrintQueue = value; RaisePropertyChanged(); } }
         }
 
-        /// <summary>
-        /// Columns property.
-        /// </summary>
-        [DataMember(Name = nameof(Columns))]
+
         private int _Columns = 1;
         public int Columns
         {
@@ -141,10 +121,7 @@ namespace NeeView
             set { if (_Columns != value) { _Columns = MathUtility.Clamp(value, 1, 4); RaisePropertyChanged(); } }
         }
 
-        /// <summary>
-        /// Rows property.
-        /// </summary>
-        [DataMember(Name = nameof(Rows))]
+
         private int _Rows = 1;
         public int Rows
         {
@@ -153,10 +130,6 @@ namespace NeeView
         }
 
 
-        /// <summary>
-        /// HorizontalAlignment property.
-        /// </summary>
-        [DataMember(Name = nameof(HorizontalAlignment))]
         private HorizontalAlignment _HorizontalAlignment = HorizontalAlignment.Center;
         public HorizontalAlignment HorizontalAlignment
         {
@@ -171,10 +144,7 @@ namespace NeeView
             [HorizontalAlignment.Right] = Properties.Resources.HorizontalAlignment_Right,
         };
 
-        /// <summary>
-        /// VerticalAlignment property.
-        /// </summary>
-        [DataMember(Name = nameof(VerticalAlignment))]
+
         private VerticalAlignment _VerticalAlignment = VerticalAlignment.Center;
         public VerticalAlignment VerticalAlignment
         {
@@ -189,10 +159,7 @@ namespace NeeView
             [VerticalAlignment.Bottom] = Properties.Resources.VerticalAlignment_Bottom,
         };
 
-        /// <summary>
-        /// Margin property.
-        /// </summary>
-        [DataMember(Name = nameof(Margin))]
+
         private Margin _Margin = new();
         public Margin Margin
         {
@@ -576,45 +543,9 @@ namespace NeeView
 
         #region Memento
 
-        [DataContract]
         public class Memento : IMemento
         {
             public Memento()
-            {
-                Constructor();
-            }
-
-
-            [DataMember]
-            public PageOrientation PageOrientation { get; set; }
-
-            [DataMember]
-            public PrintMode PrintMode { get; set; }
-
-            [DataMember]
-            public bool IsBackground { get; set; }
-
-            [DataMember]
-            public bool IsDotScale { get; set; }
-
-            [DataMember]
-            public int Columns { get; set; }
-
-            [DataMember]
-            public int Rows { get; set; }
-
-            [DataMember]
-            public HorizontalAlignment HorizontalAlignment { get; set; }
-
-            [DataMember]
-            public VerticalAlignment VerticalAlignment { get; set; }
-
-            [DataMember]
-            public Margin Margin { get; set; }
-
-
-            [MemberNotNull(nameof(Margin))]
-            private void Constructor()
             {
                 PageOrientation = PageOrientation.Portrait;
                 PrintMode = PrintMode.View;
@@ -623,11 +554,24 @@ namespace NeeView
                 Margin = new Margin();
             }
 
-            [OnDeserializing]
-            private void OnDeserializing(StreamingContext c)
-            {
-                Constructor();
-            }
+
+            public PageOrientation PageOrientation { get; set; }
+
+            public PrintMode PrintMode { get; set; }
+
+            public bool IsBackground { get; set; }
+
+            public bool IsDotScale { get; set; }
+
+            public int Columns { get; set; }
+
+            public int Rows { get; set; }
+
+            public HorizontalAlignment HorizontalAlignment { get; set; }
+
+            public VerticalAlignment VerticalAlignment { get; set; }
+
+            public Margin Margin { get; set; }
         }
 
         public Memento CreateMemento()
@@ -669,47 +613,30 @@ namespace NeeView
     /// <summary>
     /// 余白
     /// </summary>
-    [DataContract]
     public class Margin : BindableBase
     {
-        /// <summary>
-        /// Top property.
-        /// </summary>
         private double _Top;
-        [DataMember]
         public double Top
         {
             get { return _Top; }
             set { if (_Top != value) { _Top = value; RaisePropertyChanged(); } }
         }
 
-        /// <summary>
-        /// Bottom property.
-        /// </summary>
         private double _Bottom;
-        [DataMember]
         public double Bottom
         {
             get { return _Bottom; }
             set { if (_Bottom != value) { _Bottom = value; RaisePropertyChanged(); } }
         }
 
-        /// <summary>
-        /// Left property.
-        /// </summary>
         private double _Left;
-        [DataMember]
         public double Left
         {
             get { return _Left; }
             set { if (_Left != value) { _Left = value; RaisePropertyChanged(); } }
         }
 
-        /// <summary>
-        /// Right property.
-        /// </summary>
         private double _Right;
-        [DataMember]
         public double Right
         {
             get { return _Right; }

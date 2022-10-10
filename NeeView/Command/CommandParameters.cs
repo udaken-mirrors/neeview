@@ -21,7 +21,6 @@ namespace NeeView
     /// <summary>
     /// コマンドパラメータ（基底）
     /// </summary>
-    [DataContract]
     [JsonConverter(typeof(JsonCommandParameterConverter))]
     public abstract class CommandParameter : BindableBase, ICloneable
     {
@@ -57,25 +56,15 @@ namespace NeeView
     /// <summary>
     /// 操作反転コマンドパラメータ基底
     /// </summary>
-    [DataContract]
     public class ReversibleCommandParameter : CommandParameter
     {
         private bool _isReverse = true;
 
-
-        [DataMember]
         [PropertyMember]
         public bool IsReverse
         {
             get => _isReverse;
             set => SetProperty(ref _isReverse, value);
-        }
-
-
-        [OnDeserializing]
-        private void OnDeserializing(StreamingContext context)
-        {
-            IsReverse = true;
         }
     }
 

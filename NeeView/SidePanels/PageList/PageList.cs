@@ -264,23 +264,5 @@ namespace NeeView
             BookHub.Current.RequestLoadParent(this);
         }
 
-        #region Memento
-        [DataContract]
-        public class Memento : IMemento
-        {
-            [DataMember]
-            public PanelListItemStyle PanelListItemStyle { get; set; }
-
-            [DataMember]
-            public PageNameFormat Format { get; set; }
-
-            public void RestoreConfig(Config config)
-            {
-                config.PageList.PanelListItemStyle = PanelListItemStyle;
-                config.PageList.Format = Format;
-            }
-        }
-
-        #endregion Memento
     }
 }

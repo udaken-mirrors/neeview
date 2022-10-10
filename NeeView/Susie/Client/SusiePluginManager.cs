@@ -281,103 +281,6 @@ namespace NeeView
             _client.ShowConfigulationDlg(pluginName, handle.ToInt32());
         }
 
-
-        #region Memento
-
-        [DataContract]
-        public class Memento : IMemento
-        {
-            [DataMember]
-            public int _Version { get; set; } = Environment.ProductVersionNumber;
-
-            [DataMember]
-            public bool IsEnableSusie { get; set; }
-
-            [DataMember]
-            public string? SusiePluginPath { get; set; }
-
-            [DataMember]
-            public bool IsFirstOrderSusieImage { get; set; }
-
-            [DataMember]
-            public bool IsFirstOrderSusieArchive { get; set; }
-
-            [DataMember(EmitDefaultValue = false)]
-            public List<Susie.SusiePluginSetting>? Plugins { get; set; }
-
-            #region Obsolete
-
-            [Obsolete("no used"), DataMember(Name = "SpiFiles", EmitDefaultValue = false)]
-            public Dictionary<string, bool>? SpiFilesV1 { get; set; } // ver 33.0
-
-            [Obsolete("no used"), DataMember(Name = "SpiFilesV2", EmitDefaultValue = false)]
-            public Dictionary<string, SusiePluginSetting>? SpiFilesV2 { get; set; } // ver 34.0 
-
-            [Obsolete("no used"), DataMember(Name = "SusiePlugins", EmitDefaultValue = false)]
-            public Dictionary<string, SusiePlugin.Memento>? SpiFilesV3 { get; set; } // ver 35.0
-
-            [Obsolete("no used"), DataMember(EmitDefaultValue = false), DefaultValue(true)]
-            public bool IsPluginCacheEnabled { get; set; }
-
-            #endregion Obsolete
-
-
-            [OnDeserializing]
-            private void OnDeserializing(StreamingContext c)
-            {
-                this.InitializePropertyDefaultValues();
-            }
-
-            [OnDeserialized]
-            private void OnDeserialized(StreamingContext c)
-            {
-#pragma warning disable CS0618
-                if (_Version < Environment.GenerateProductVersionNumber(33, 0, 0) && SpiFilesV1 != null)
-                {
-                    SpiFilesV2 = SpiFilesV1.ToDictionary(e => e.Key, e => new SusiePluginSetting(e.Value, false));
-                }
-
-                if (_Version < Environment.GenerateProductVersionNumber(34, 0, 0) && SpiFilesV2 != null)
-                {
-                    SpiFilesV3 = SpiFilesV2
-                        .ToDictionary(e => e.Key, e => e.Value.ToPluginMemento());
-                }
-
-                if (_Version < Environment.GenerateProductVersionNumber(35, 0, 0) && SpiFilesV3 != null)
-                {
-                    Plugins = SpiFilesV3
-                        .Select(e => e.Value.ToSusiePluginSetting(LoosePath.GetFileName(e.Key), IsPluginCacheEnabled))
-                        .ToList();
-                }
-#pragma warning restore CS0618
-            }
-
-            public void RestoreConfig(Config config)
-            {
-                // Pluginsは可変のためConfigに向かない。フラグのみConfigに対応
-
-                config.Susie.IsEnabled = false; // NOTE: 設定最後にIsEnabledを確定することにより更新タイミングを制御する
-                config.Susie.IsFirstOrderSusieImage = IsFirstOrderSusieImage;
-                config.Susie.IsFirstOrderSusieArchive = IsFirstOrderSusieArchive;
-                config.Susie.SusiePluginPath = SusiePluginPath ?? "";
-                config.Susie.IsEnabled = IsEnableSusie;
-            }
-
-            public SusiePluginCollection? CreateSusiePluginCollection()
-            {
-                if (Plugins == null) return null;
-
-                var collection = new SusiePluginCollection();
-                foreach (var item in this.Plugins)
-                {
-                    collection.Add(item.Name, SusiePluginMemento.FromSusiePluginSetting(item));
-                }
-                return collection;
-            }
-        }
-
-        #endregion
-
         #region MementoV2
 
         public SusiePluginCollection CreateSusiePluginCollection()
@@ -409,7 +312,7 @@ namespace NeeView
     }
 
 
-    public class SusiePluginMemento
+    public class SusiePluginMemento : IMemento
     {
         public bool IsEnabled { get; set; }
 

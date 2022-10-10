@@ -130,21 +130,5 @@ namespace NeeView
             _gesture.Move(point);
         }
 
-
-        #region Memento
-        [DataContract]
-        public class Memento : IMemento
-        {
-            [DataMember(Name = "GestureMinimumDistanceX"), DefaultValue(16.0)]
-            public double GestureMinimumDistance { get; set; }
-
-            public void RestoreConfig(Config config)
-            {
-                config.Touch.GestureMinimumDistance = GestureMinimumDistance;
-
-            }
-        }
-
-        #endregion
     }
 }

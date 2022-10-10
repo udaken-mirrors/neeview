@@ -25,7 +25,6 @@ namespace NeeView
         }
     }
 
-    [DataContract]
     public class OpenExternalAppCommandParameter : CommandParameter, INotifyPropertyChanged
     {
         // コマンドパラメータで使用されるキーワード
@@ -41,7 +40,6 @@ namespace NeeView
 
 
         // コマンド
-        [DataMember]
         [PropertyPath(Filter = "EXE|*.exe|All|*.*")]
         public string? Command
         {
@@ -51,7 +49,6 @@ namespace NeeView
 
         // コマンドパラメータ
         // $FILE = 渡されるファイルパス
-        [DataMember]
         [PropertyMember]
         public string Parameter
         {
@@ -60,7 +57,6 @@ namespace NeeView
         }
 
         // 作業フォルダー
-        [DataMember]
         [PropertyPath(FileDialogType = Windows.Controls.FileDialogType.Directory)]
         public string? WorkingDirectory
         {
@@ -69,7 +65,6 @@ namespace NeeView
         }
 
         // 複数ページのときの動作
-        [DataMember]
         [PropertyMember]
         public MultiPagePolicy MultiPagePolicy
         {
@@ -78,7 +73,6 @@ namespace NeeView
         }
 
         // 圧縮ファイルのときの動作
-        [DataMember]
         [PropertyMember]
         public ArchivePolicy ArchivePolicy
         {

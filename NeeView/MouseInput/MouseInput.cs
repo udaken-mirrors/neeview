@@ -469,32 +469,5 @@ namespace NeeView
             }
         }
 
-        #region Memento
-        [DataContract]
-        public class Memento : IMemento
-        {
-            [DataMember]
-            public MouseInputNormal.Memento? Normal { get; set; }
-            [DataMember]
-            public MouseInputLoupe.Memento? Loupe { get; set; }
-            [DataMember]
-            public MouseInputGesture.Memento? Gesture { get; set; }
-
-            #region Obsolete
-            [Obsolete("no used"), DataMember(EmitDefaultValue = false)] // ver 34.0
-            public MouseInputDrag.Memento? Drag { get; set; }
-            #endregion
-
-
-            public void RestoreConfig(Config config)
-            {
-                Normal?.RestoreConfig(config);
-                Loupe?.RestoreConfig(config);
-                Gesture?.RestoreConfig(config);
-            }
-        }
-
-        #endregion
-
     }
 }

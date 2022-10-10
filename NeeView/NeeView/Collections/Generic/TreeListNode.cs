@@ -9,7 +9,6 @@ using System.Runtime.Serialization;
 
 namespace NeeView.Collections.Generic
 {
-    [DataContract]
     public class TreeListNode<T> : BindableBase, IEnumerable<TreeListNode<T>>, IHasValue<T>
     {
         private TreeListNode<T>? _parent;
@@ -32,16 +31,6 @@ namespace NeeView.Collections.Generic
             get => _children;
             private set => _children = value;
         }
-
-        // データ互換用
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0051:使用されていないプライベート メンバーを削除する", Justification = "<保留中>")]
-        [DataMember(Name = "Children", EmitDefaultValue = false)]
-        private ObservableCollection<TreeListNode<T>>? _NullableChildren
-        {
-            get => _children == null || _children.Count == 0 ? null : _children;
-            set => _children = value ?? new ObservableCollection<TreeListNode<T>>();
-        }
-
 
         public TreeListNode<T>? Previous
         {
@@ -90,7 +79,6 @@ namespace NeeView.Collections.Generic
 
         public bool CanExpand => Children.Count > 0;
 
-        [DataMember(EmitDefaultValue = false)]
         public bool IsExpanded
         {
             get { return _isExpanded; }
@@ -105,7 +93,6 @@ namespace NeeView.Collections.Generic
         }
 
 
-        [DataMember]
         public T Value
         {
             get => _value;
@@ -115,17 +102,6 @@ namespace NeeView.Collections.Generic
         public TreeListNode<T> Root => _parent == null ? this : _parent.Root;
         public int Depth => _parent == null ? 0 : _parent.Depth + 1;
 
-
-        [OnDeserialized]
-        private void Deserialized(StreamingContext c)
-        {
-            _children = _children ?? new ObservableCollection<TreeListNode<T>>();
-
-            foreach (var child in _children)
-            {
-                child._parent = this;
-            }
-        }
 
         public bool ParentContains(TreeListNode<T> target)
         {
@@ -221,18 +197,6 @@ namespace NeeView.Collections.Generic
 
             return _parent.Remove(this);
         }
-
-#if false
-        public void Clear()
-        {
-            Value = default(T);
-            if (_children.Count > 0)
-            {
-                _children.ForEach(e => e._parent = null);
-                _children.Clear();
-            }
-        }
-#endif
 
         public IEnumerable<TreeListNode<T>> GetExpandedCollection()
         {

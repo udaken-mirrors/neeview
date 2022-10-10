@@ -12,14 +12,11 @@ using System.Windows.Media.Effects;
 
 namespace NeeView.Effects
 {
-    //
-    [DataContract]
     public class SharpenEffectUnit : EffectUnit
     {
         private static readonly SharpenEffect _effect = new();
         public override Effect GetEffect() => _effect;
 
-        [DataMember]
         [PropertyRange(0, 4)]
         [DefaultValue(2.0)]
         public double Amount
@@ -28,7 +25,6 @@ namespace NeeView.Effects
             set { if (_effect.Amount != value) { _effect.Amount = value; RaiseEffectPropertyChanged(); } }
         }
 
-        [DataMember]
         [PropertyRange(0, 2.0)]
         [DefaultValue(0.5)]
         public double Height

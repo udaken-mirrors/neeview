@@ -28,13 +28,11 @@ namespace NeeView
     /// <summary>
     /// ビュー拡大コマンド用パラメータ
     /// </summary>
-    [DataContract]
     public class ViewScaleCommandParameter : CommandParameter
     {
         private double _scale = 0.2;
         private bool _isSnapDefaultScale = true;
 
-        [DataMember(Name = "ScaleV2")]
         [PropertyPercent]
         public double Scale
         {
@@ -42,32 +40,12 @@ namespace NeeView
             set { SetProperty(ref _scale, MathUtility.Clamp(value, 0.0, 1.0)); }
         }
 
-        [DataMember]
         [DefaultValue(true)]
         [PropertyMember]
         public bool IsSnapDefaultScale
         {
             get => _isSnapDefaultScale;
             set => SetProperty(ref _isSnapDefaultScale, value);
-        }
-
-
-        #region Obsolete
-        [Obsolete, JsonIgnore, EqualsIgnore, DataMember(Name = "Scale", EmitDefaultValue = false)] // ver.37
-        [PropertyMapIgnore]
-        public int ScaleV1
-        {
-            get => 0;
-            set => Scale = value / 100.0;
-        }
-        #endregion
-
-
-        [OnDeserializing]
-        private void OnDeserializing(StreamingContext context)
-        {
-            this.Scale = 0.2;
-            this.IsSnapDefaultScale = true;
         }
     }
 }

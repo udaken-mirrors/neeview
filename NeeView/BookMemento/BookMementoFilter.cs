@@ -42,12 +42,9 @@ namespace NeeView
     /// <summary>
     /// Book設定フィルタ
     /// </summary>
-    [DataContract]
     public class BookMementoFilter
     {
-        [DataMember]
         public Dictionary<BookMementoBit, bool> Flags { get; set; }
-
 
         [PropertyMember]
         public bool Page
@@ -118,19 +115,6 @@ namespace NeeView
             Flags = Enum.GetValues(typeof(BookMementoBit)).OfType<BookMementoBit>().ToDictionary(e => e, e => def);
         }
 
-        /// <summary>
-        /// デシリアライズ終端処理
-        /// </summary>
-        /// <param name="c"></param>
-        [OnDeserialized]
-        private void Deserialized(StreamingContext c)
-        {
-            // 項目数の保証
-            foreach (BookMementoBit key in Enum.GetValues(typeof(BookMementoBit)))
-            {
-                if (!Flags.ContainsKey(key)) Flags.Add(key, true);
-            }
-        }
     }
 
 }

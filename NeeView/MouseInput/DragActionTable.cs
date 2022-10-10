@@ -111,36 +111,6 @@ namespace NeeView
         }
 
 
-        #region Memento
-
-        [DataContract]
-        public class Memento : IMemento
-        {
-#pragma warning disable CS0618
-            [DataMember(Name = "Elements", EmitDefaultValue = false)]
-            public Dictionary<DragActionType, DragAction.Memento> Elements { get; set; } = new Dictionary<DragActionType, DragAction.Memento>();
-#pragma warning restore CS0618
-
-            public void RestoreConfig(Config config)
-            {
-            }
-
-            public DragActionCollection? CreateDragActionCollectioin()
-            {
-                if (Elements == null) return null;
-
-                var collection = new DragActionCollection();
-                foreach (var element in Elements)
-                {
-                    collection.Add(element.Key.ToString(), element.Value);
-                }
-                return collection;
-            }
-        }
-
-        #endregion
-
-
         public DragActionCollection CreateDragActionCollection()
         {
             var collection = new DragActionCollection();

@@ -16,17 +16,10 @@ using System.Windows.Shell;
 
 namespace NeeView
 {
-    [Obsolete("no used")]
-    public enum WindowChromeFrameV1
-    {
-        None,
-        WindowFrame,
-        Line,
-    }
-
     /// <summary>
     /// WindowChromeFrame Type
     /// </summary>
+    [Obsolete("no used")]
     public enum WindowChromeFrame
     {
         [AliasName]
@@ -156,51 +149,5 @@ namespace NeeView
             _manager.SetWindowState(Config.Current.Window.State);
             RaisePropertyChanged(null);
         }
-
-
-        #region Memento
-
-        [DataContract]
-        public class Memento : IMemento
-        {
-            [DataMember]
-            public WindowStateEx State { get; set; }
-
-            [DataMember, DefaultValue(true)]
-            public bool IsCaptionVisible { get; set; }
-
-            [DataMember]
-            public bool IsTopMost { get; set; }
-
-            [DataMember]
-            public bool IsFullScreenWithTaskBar { get; set; }
-
-            [DataMember, DefaultValue(8.0)]
-            public double MaximizeWindowGapWidth { get; set; }
-
-            [DataMember]
-            public WindowStateEx LastState { get; set; }
-
-
-            [OnDeserializing]
-            private void OnDeserializing(StreamingContext c)
-            {
-                this.InitializePropertyDefaultValues();
-            }
-
-            public Memento Clone()
-            {
-                return (Memento)this.MemberwiseClone();
-            }
-
-            public void RestoreConfig(Config config)
-            {
-                config.Window.IsTopmost = IsTopMost;
-                config.Window.State = State;
-                config.Window.LastState = LastState;
-            }
-        }
-
-        #endregion
     }
 }

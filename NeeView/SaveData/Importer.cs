@@ -12,13 +12,9 @@ namespace NeeView
     {
         private readonly ZipArchive _archive;
         private ZipArchiveEntry? _settingEntry;
-        private ZipArchiveEntry? _settingEntryV1;
         private ZipArchiveEntry? _historyEntry;
-        private ZipArchiveEntry? _historyEntryV1;
         private ZipArchiveEntry? _bookmarkEntry;
-        private ZipArchiveEntry? _bookmarkEntryV1;
         private ZipArchiveEntry? _pagemarkEntry;
-        private ZipArchiveEntry? _pagemarkEntryV1;
         private bool _disposedValue;
         private bool _isUserSettingEnabled = true;
         private bool _isHistoryEnabled = false;
@@ -116,22 +112,18 @@ namespace NeeView
         public void Initialize()
         {
             _settingEntry = _archive.GetEntry(SaveData.UserSettingFileName);
-            _settingEntryV1 = _archive.GetEntry(Path.ChangeExtension(SaveData.UserSettingFileName, ".xml"));
             _historyEntry = _archive.GetEntry(SaveData.HistoryFileName);
-            _historyEntryV1 = _archive.GetEntry(Path.ChangeExtension(SaveData.HistoryFileName, ".xml"));
             _bookmarkEntry = _archive.GetEntry(SaveData.BookmarkFileName);
-            _bookmarkEntryV1 = _archive.GetEntry(Path.ChangeExtension(SaveData.BookmarkFileName, ".xml"));
             _pagemarkEntry = _archive.GetEntry(SaveData.PagemarkFileName);
-            _pagemarkEntryV1 = _archive.GetEntry(Path.ChangeExtension(SaveData.PagemarkFileName, ".xml"));
 
             this.PlaylistEntries = _archive.Entries.Where(e => e.FullName.StartsWith(@"Playlists\")).ToList();
             this.ThemeEntries = _archive.Entries.Where(e => e.FullName.StartsWith(@"Themes\")).ToList();
             this.ScriptEntries = _archive.Entries.Where(e => e.FullName.StartsWith(@"Scripts\")).ToList();
 
-            this.UserSettingExists = _settingEntry != null || _settingEntryV1 != null;
-            this.HistoryExists = _historyEntry != null || _historyEntryV1 != null;
-            this.BookmarkExists = _bookmarkEntry != null || _bookmarkEntryV1 != null;
-            this.PagemarkExists = _pagemarkEntry != null || _pagemarkEntryV1 != null;
+            this.UserSettingExists = _settingEntry != null;
+            this.HistoryExists = _historyEntry != null;
+            this.BookmarkExists = _bookmarkEntry != null;
+            this.PagemarkExists = _pagemarkEntry != null;
             this.PlaylistsExists = PlaylistEntries.Any();
             this.ThemesExists = ThemeEntries.Any();
             this.ScriptsExists = ScriptEntries.Any();
@@ -169,33 +161,6 @@ namespace NeeView
                     setting = UserSettingTools.Load(stream);
                 }
             }
-            else if (_settingEntryV1 != null)
-            {
-                using (var stream = _settingEntryV1.Open())
-                {
-                    var settingV1 = UserSettingV1.LoadV1(stream);
-                    setting = settingV1?.ConvertToV2();
-                }
-                // 他のファイルの一部設定を反映
-                if (_historyEntryV1 != null)
-                {
-                    using (var stream = _historyEntryV1.Open())
-                    {
-                        var historyV1 = BookHistoryCollection.Memento.LoadV1(stream);
-                        historyV1.RestoreConfig(setting?.Config);
-                    }
-                }
-                if (_pagemarkEntryV1 != null)
-                {
-                    using (var stream = _pagemarkEntryV1.Open())
-                    {
-#pragma warning disable CS0612, CS0618 // 型またはメンバーが旧型式です
-                        var pagemarkV1 = PagemarkCollection.Memento.LoadV1(stream);
-                        pagemarkV1?.RestoreConfig(setting?.Config);
-#pragma warning restore CS0612, CS0618 // 型またはメンバーが旧型式です
-                    }
-                }
-            }
 
             if (setting != null)
             {
@@ -223,13 +188,6 @@ namespace NeeView
                     history = BookHistoryCollection.Memento.Load(stream);
                 }
             }
-            else if (_historyEntryV1 != null)
-            {
-                using (var stream = _historyEntryV1.Open())
-                {
-                    history = BookHistoryCollection.Memento.LoadV1(stream);
-                }
-            }
 
             if (history != null)
             {
@@ -248,13 +206,6 @@ namespace NeeView
                 using (var stream = _bookmarkEntry.Open())
                 {
                     bookmark = BookmarkCollection.Memento.Load(stream);
-                }
-            }
-            else if (_bookmarkEntryV1 != null)
-            {
-                using (var stream = _bookmarkEntryV1.Open())
-                {
-                    bookmark = BookmarkCollection.Memento.LoadV1(stream);
                 }
             }
 
@@ -277,13 +228,6 @@ namespace NeeView
                 using (var stream = _pagemarkEntry.Open())
                 {
                     pagemark = PagemarkCollection.Memento.Load(stream);
-                }
-            }
-            else if (_pagemarkEntryV1 != null)
-            {
-                using (var stream = _pagemarkEntryV1.Open())
-                {
-                    pagemark = PagemarkCollection.Memento.LoadV1(stream);
                 }
             }
 #pragma warning restore CS0612, CS0618 // 型またはメンバーが旧型式です

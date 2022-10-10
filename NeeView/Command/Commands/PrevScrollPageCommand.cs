@@ -34,7 +34,6 @@ namespace NeeView
     /// <summary>
     /// スクロール＋ページ移動用パラメータ
     /// </summary>
-    [DataContract]
     public class ScrollPageCommandParameter : ReversibleCommandParameter, IScrollNTypeParameter, IScrollNTypeEndMargin
     {
         private NScrollType _scrollType = NScrollType.NType;
@@ -52,7 +51,6 @@ namespace NeeView
             set { SetProperty(ref _scrollType, value); }
         }
 
-        [DataMember(Name = "ScrollV2")]
         [PropertyPercent]
         public double Scroll
         {
@@ -60,7 +58,6 @@ namespace NeeView
             set => SetProperty(ref _scroll, MathUtility.Clamp(value, 0.1, 1.0));
         }
 
-        [DataMember]
         [PropertyRange(0.0, 1.0, TickFrequency = 0.1, IsEditable = true)]
         public double ScrollDuration
         {
@@ -93,7 +90,6 @@ namespace NeeView
         #region Obsolete
 
         [Obsolete("no used"), Alternative(nameof(ScrollType), 39)] // ver.39
-        [DataMember]
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         public bool IsNScroll
         {
@@ -109,40 +105,7 @@ namespace NeeView
             set { LineBreakStopTime = value; LineBreakStopMode = LineBreakStopMode.Page; }
         }
 
-        [Obsolete("no used"), JsonIgnore, EqualsIgnore, DataMember(Name = "Scroll", EmitDefaultValue = false)] // ver.37
-        [PropertyMapIgnore]
-        public int ScrollV1
-        {
-            get => 0;
-            set => Scroll = value / 100.0;
-        }
-
-        [Obsolete("no used"), JsonIgnore, EqualsIgnore, DataMember(EmitDefaultValue = false)] // ver.37
-        [PropertyMapIgnore]
-        public bool IsAnimation
-        {
-            get => false;
-            set => ScrollDuration = value ? 0.1 : 0.0;
-        }
-
-        [Obsolete("no used"), JsonIgnore, EqualsIgnore, DataMember(EmitDefaultValue = false)] // ver.37
-        [PropertyMapIgnore]
-        public bool IsStop
-        {
-            get => false;
-            set => PageMoveMargin = value ? 0.1 : 0.0;
-        }
-
-        #endregion
-
-
-        [OnDeserializing]
-        private void OnDeserializing(StreamingContext context)
-        {
-            _scroll = 1.0;
-            _scrollDuration = 0.1;
-            _endMargin = 10.0;
-        }
+        #endregion Obsolete
     }
 
 

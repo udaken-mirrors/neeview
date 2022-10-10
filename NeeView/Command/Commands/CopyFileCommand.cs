@@ -30,7 +30,6 @@ namespace NeeView
     /// <summary>
     /// CopyFileCommand Parameter
     /// </summary>
-    [DataContract]
     public class CopyFileCommandParameter : CommandParameter 
     {
         private ArchivePolicy _archivePolicy = ArchivePolicy.SendExtractFile;
@@ -39,7 +38,6 @@ namespace NeeView
 
 
         // 複数ページのときの動作
-        [DataMember]
         [PropertyMember]
         public MultiPagePolicy MultiPagePolicy
         {
@@ -48,7 +46,6 @@ namespace NeeView
         }
 
         // 圧縮ファイルのときの動作
-        [DataMember]
         [PropertyMember]
         public ArchivePolicy ArchivePolicy
         {
@@ -57,7 +54,6 @@ namespace NeeView
         }
 
         // テキストコピーのヒント
-        [DataMember]
         [PropertyMember]
         public TextCopyPolicy TextCopyPolicy
         {

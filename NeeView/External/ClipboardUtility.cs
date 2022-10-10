@@ -10,7 +10,6 @@ using System.Threading;
 namespace NeeView
 {
     // コピー設定
-    [DataContract]
     public static class ClipboardUtility
     {
         // クリップボードにコピー

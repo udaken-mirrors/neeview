@@ -11,10 +11,9 @@ namespace NeeView
     /// </summary>
     public class ImageEffectViewModel : BindableBase
     {
-        public ImageEffectViewModel(ImageEffect model, ImageFilter imageFilter)
+        public ImageEffectViewModel(ImageEffect model)
         {
             _model = model;
-            _imageFilter = imageFilter;
 
             this.UnsharpMaskProfile = new PropertyDocument(Config.Current.ImageResizeFilter.UnsharpMask);
 
@@ -38,16 +37,6 @@ namespace NeeView
         {
             get { return _model; }
             set { if (_model != value) { _model = value; RaisePropertyChanged(); } }
-        }
-
-        /// <summary>
-        /// ImageFilter property.
-        /// </summary>
-        private ImageFilter _imageFilter;
-        public ImageFilter ImageFilter
-        {
-            get { return _imageFilter; }
-            set { if (_imageFilter != value) { _imageFilter = value; RaisePropertyChanged(); } }
         }
 
         // PictureProfile

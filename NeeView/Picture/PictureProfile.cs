@@ -89,50 +89,5 @@ namespace NeeView
             return size.Limit(Config.Current.Performance.MaximumSize);
         }
 
-
-        #region Memento
-
-        [DataContract]
-        public class Memento : IMemento
-        {
-            [DataMember, DefaultValue(false)]
-            public bool IsLimitSourceSize { get; set; }
-
-            [DataMember, DefaultValue(typeof(Size), "4096,4096")]
-            public Size Maximum { get; set; }
-
-            [DataMember]
-            public bool IsResizeFilterEnabled { get; set; }
-
-            [DataMember]
-            public PictureCustomSize.Memento? CustomSize { get; set; }
-
-            [DataMember]
-            public bool IsAspectRatioEnabled { get; set; }
-
-            [DataMember, DefaultValue(true)]
-            public bool IsSvgEnabled { get; set; }
-
-
-            [OnDeserializing]
-            private void OnDeserializing(StreamingContext c)
-            {
-                this.InitializePropertyDefaultValues();
-            }
-
-            public void RestoreConfig(Config config)
-            {
-                CustomSize?.RestoreConfig(config);
-
-                config.Performance.IsLimitSourceSize = IsLimitSourceSize;
-                config.Performance.MaximumSize = Maximum;
-                config.ImageResizeFilter.IsEnabled = IsResizeFilterEnabled;
-                config.Image.Standard.IsAspectRatioEnabled = IsAspectRatioEnabled;
-                config.Image.Svg.IsEnabled = IsSvgEnabled;
-            }
-        }
-
-        #endregion
-
     }
 }

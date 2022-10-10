@@ -7,22 +7,17 @@ namespace NeeView
     /// <summary>
     /// ページが終わったときのアクション
     /// </summary>
-    [DataContract]
     public enum PageEndAction
     {
-        [EnumMember]
         [AliasName]
         None,
 
-        [EnumMember(Value = "NextFolder")]
         [AliasName]
         NextBook,
 
-        [EnumMember]
         [AliasName]
         Loop,
 
-        [EnumMember]
         [AliasName]
         Dialog,
     }

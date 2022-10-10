@@ -178,20 +178,5 @@ namespace NeeView
             }
         }
 
-
-        #region Memento
-        [DataContract]
-        public class Memento : IMemento
-        {
-            [DataMember]
-            public PanelListItemStyle PanelListItemStyle { get; set; }
-
-            public void RestoreConfig(Config config)
-            {
-                config.History.PanelListItemStyle = PanelListItemStyle;
-            }
-        }
-
-        #endregion
     }
 }

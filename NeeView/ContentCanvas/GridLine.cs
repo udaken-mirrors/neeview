@@ -108,45 +108,5 @@ namespace NeeView
                 StrokeThickness = 1
             };
         }
-
-        #region Memento
-
-        [DataContract]
-        public class Memento : IMemento
-        {
-            [DataMember]
-            public bool IsEnabled { get; set; }
-
-            [DataMember, DefaultValue(8)]
-            public int DivX { get; set; }
-
-            [DataMember, DefaultValue(8)]
-            public int DivY { get; set; }
-
-            [DataMember]
-            public bool IsSquare { get; set; }
-
-            [DataMember, DefaultValue(typeof(Color), "#80808080")]
-            public Color Color { get; set; }
-
-
-            [OnDeserializing]
-            private void OnDeserializing(StreamingContext c)
-            {
-                this.InitializePropertyDefaultValues();
-            }
-
-            public void RestoreConfig(Config config)
-            {
-                config.ImageGrid.DivX = DivX;
-                config.ImageGrid.DivY = DivY;
-                config.ImageGrid.IsSquare = IsSquare;
-                config.ImageGrid.Color = Color;
-                config.ImageGrid.IsEnabled = IsEnabled;
-            }
-        }
-
-        #endregion
-
     }
 }

@@ -10,10 +10,6 @@ namespace NeeView
 {
     public class PdfArchiverProfile : BindableBase
     {
-        static PdfArchiverProfile() => Current = new PdfArchiverProfile();
-        public static PdfArchiverProfile Current { get; }
-
-
         // 最大画像サイズで制限したサイズ
         public static Size SizeLimitedRenderSize
         {
@@ -25,45 +21,5 @@ namespace NeeView
             }
         }
 
-
-        #region Memento
-        [DataContract]
-        public class Memento : IMemento
-        {
-            [DataMember, DefaultValue(true)]
-            public bool IsEnabled { get; set; }
-
-            [DataMember, DefaultValue(typeof(Size), "1920,1080")]
-            public Size RenderSize { get; set; }
-
-            [Obsolete("use RenderSize"), DataMember(EmitDefaultValue = false)]
-            public Size RenderMaxSize { get; set; }
-
-
-            [OnDeserializing]
-            private void OnDeserializing(StreamingContext _)
-            {
-                this.InitializePropertyDefaultValues();
-            }
-
-            [OnDeserialized]
-            private void OnDeserialized(StreamingContext _)
-            {
-#pragma warning disable CS0618
-                if (this.RenderSize == default)
-                {
-                    this.RenderSize = this.RenderMaxSize;
-                }
-#pragma warning restore CS0618
-            }
-
-            public void RestoreConfig(Config config)
-            {
-                config.Archive.Pdf.IsEnabled = IsEnabled;
-                config.Archive.Pdf.RenderSize = RenderSize;
-            }
-        }
-
-        #endregion
     }
 }

@@ -89,31 +89,6 @@ namespace NeeView
         }
 
         #endregion IDisposable support
-
-        #region Memento
-
-        [DataContract]
-        public new class Memento
-        {
-            [DataMember]
-            public FolderList.Memento? FolderList { get; set; }
-
-            [DataMember, DefaultValue(true)]
-            public bool IsSyncBookshelfEnabled { get; set; }
-
-            [OnDeserializing]
-            private void Deserializing(StreamingContext c)
-            {
-                this.InitializePropertyDefaultValues();
-            }
-
-            public void RestoreConfig(Config config)
-            {
-                FolderList?.RestoreConfig(config.Bookmark);
-                Config.Current.Bookmark.IsSyncBookshelfEnabled = IsSyncBookshelfEnabled;
-            }
-        }
-
-        #endregion
+                
     }
 }

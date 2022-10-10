@@ -411,44 +411,5 @@ namespace NeeView
         }
         #endregion
 
-        #region Memento
-        [DataContract]
-        public class Memento : IMemento
-        {
-            [DataMember]
-            public bool IsEnableThumbnailList { get; set; }
-            [DataMember]
-            public bool IsHideThumbnailList { get; set; }
-            [DataMember]
-            public double ThumbnailSize { get; set; }
-            [DataMember]
-            public bool IsVisibleThumbnailNumber { get; set; }
-            [DataMember]
-            public bool IsVisibleThumbnailPlate { get; set; }
-            [DataMember, DefaultValue(true)]
-            public bool IsManipulationBoundaryFeedbackEnabled { get; set; }
-            [DataMember]
-            public bool IsSelectedCenter { get; set; }
-
-
-            [OnDeserializing]
-            private void OnDeserializing(StreamingContext c)
-            {
-                this.IsManipulationBoundaryFeedbackEnabled = true;
-            }
-
-            public void RestoreConfig(Config config)
-            {
-                config.FilmStrip.IsEnabled = IsEnableThumbnailList;
-                config.FilmStrip.IsHideFilmStrip = IsHideThumbnailList;
-                config.FilmStrip.ImageWidth = ThumbnailSize;
-                config.FilmStrip.IsVisibleNumber = IsVisibleThumbnailNumber;
-                config.FilmStrip.IsManipulationBoundaryFeedbackEnabled = IsManipulationBoundaryFeedbackEnabled;
-                config.FilmStrip.IsSelectedCenter = IsSelectedCenter;
-            }
-        }
-
-        #endregion
-
     }
 }

@@ -18,11 +18,12 @@ namespace NeeView
     }
 
     [Obsolete("no used")]
-    [DataContract]
     public class Pagemark : BindableBase, IPagemarkEntry
     {
         private string _path;
         private string _entryName;
+        private string? _dispName;
+
 
         public Pagemark(string path, string entryName)
         {
@@ -31,7 +32,6 @@ namespace NeeView
         }
 
 
-        [DataMember(Name = "Place")]
         public string Path
         {
             get { return _path; }
@@ -44,7 +44,6 @@ namespace NeeView
             }
         }
 
-        [DataMember]
         public string EntryName
         {
             get { return _entryName; }
@@ -57,9 +56,6 @@ namespace NeeView
             }
         }
 
-
-        [DataMember(Name = "DispName", EmitDefaultValue = false)]
-        private string? _dispName;
         [NotNull]
         public string? DispName
         {
@@ -68,73 +64,10 @@ namespace NeeView
         }
 
         public string? DispNameRaw => _dispName;
-
-
-        [OnDeserialized]
-        private void Deserialized(StreamingContext c)
-        {
-            this.EntryName = LoosePath.NormalizeSeparator(this.EntryName);
-        }
-
         public string FullName => LoosePath.Combine(Path, EntryName);
         public string Name => EntryName;
         public string Note => LoosePath.GetFileName(Path);
         public string Detail => EntryName;
-
-#if false
-        public IThumbnail Thumbnail
-        {
-            get
-            {
-                //if (PagemarkList.Current.IsThumbnailVisibled)
-                //{
-                //    PagemarkListVertualCollection.Current.Attach(this);
-                //}
-                return ArchivePage.Thumbnail;
-            }
-        }
-
-        private Page _archivePage;
-        public Page ArchivePage
-        {
-            get
-            {
-                if (_archivePage == null)
-                {
-                    _archivePage = new Page("", new ArchiveContent(LoosePath.Combine(Path, EntryName)));
-                    _archivePage.Thumbnail.IsCacheEnabled = true;
-                    _archivePage.Thumbnail.Touched += Thumbnail_Touched;
-                }
-                return _archivePage;
-            }
-        }
-
-        private void Thumbnail_Touched(object sender, EventArgs e)
-        {
-            var thumbnail = (Thumbnail)sender;
-            BookThumbnailPool.Current.Add(thumbnail);
-        }
-
-        public Page GetPage()
-        {
-            return ArchivePage;
-        }
-
-
-#region IVirtualItem
-
-        public int DetachCount { get; set; }
-
-        public void Attached()
-        {
-        }
-
-        public void Detached()
-        {
-        }
-
-#endregion
-#endif
 
 
         public bool IsEqual(IPagemarkEntry entry)

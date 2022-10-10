@@ -39,7 +39,6 @@ namespace NeeView
     /// <summary>
     /// スケールモードトグル用設定
     /// </summary>
-    [DataContract]
     public class ToggleStretchModeCommandParameter : CommandParameter
     {
         private bool _isLoop = true;
@@ -51,7 +50,6 @@ namespace NeeView
         private bool _isEnableUniformToHorizontal = true;
 
         // ループ
-        [DataMember]
         [PropertyMember]
         public bool IsLoop
         {
@@ -60,7 +58,6 @@ namespace NeeView
         }
 
         // 表示名
-        [DataMember]
         [PropertyMember]
         public bool IsEnableNone
         {
@@ -68,7 +65,6 @@ namespace NeeView
             set => SetProperty(ref _isEnableNone, value);
         }
 
-        [DataMember]
         [PropertyMember]
         public bool IsEnableUniform
         {
@@ -76,7 +72,6 @@ namespace NeeView
             set => SetProperty(ref _isEnableUniform, value);
         }
 
-        [DataMember]
         [PropertyMember]
         public bool IsEnableUniformToFill
         {
@@ -84,7 +79,6 @@ namespace NeeView
             set => SetProperty(ref _isEnableUniformToFill, value);
         }
 
-        [DataMember]
         [PropertyMember]
         public bool IsEnableUniformToSize
         {
@@ -92,7 +86,6 @@ namespace NeeView
             set => SetProperty(ref _isEnableUniformToSize, value);
         }
 
-        [DataMember]
         [PropertyMember]
         public bool IsEnableUniformToVertical
         {
@@ -100,7 +93,6 @@ namespace NeeView
             set => SetProperty(ref _isEnableUniformToVertical, value);
         }
 
-        [DataMember]
         [PropertyMember]
         public bool IsEnableUniformToHorizontal
         {

@@ -18,10 +18,10 @@ namespace NeeView
     public class ImageEffectPanel : BindableBase, IPanel
     {
         private readonly ImageEffectView _view;
-        
-        public ImageEffectPanel(ImageEffect model, ImageFilter imageFilter)
+
+        public ImageEffectPanel(ImageEffect model)
         {
-            _view = new ImageEffectView(model, imageFilter);
+            _view = new ImageEffectView(model);
 
             Icon = App.Current.MainWindow.Resources["pic_toy_24px"] as ImageSource
                 ?? throw new InvalidOperationException("Cannot found resource");

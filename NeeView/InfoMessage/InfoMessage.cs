@@ -85,46 +85,5 @@ namespace NeeView
             SetMessage(style, "");
         }
 
-        #region Memento
-        [DataContract]
-        public class Memento : IMemento
-        {
-            [DataMember, DefaultValue(ShowMessageStyle.Normal)]
-            public ShowMessageStyle NoticeShowMessageStyle { get; set; }
-
-            [DataMember, DefaultValue(ShowMessageStyle.Normal)]
-            public ShowMessageStyle BookNameShowMessageStyle { get; set; }
-
-            [DataMember, DefaultValue(ShowMessageStyle.Normal)]
-            public ShowMessageStyle CommandShowMessageStyle { get; set; }
-
-            [DataMember, DefaultValue(ShowMessageStyle.Normal)]
-            public ShowMessageStyle GestureShowMessageStyle { get; set; }
-
-            [DataMember, DefaultValue(ShowMessageStyle.Normal)]
-            public ShowMessageStyle NowLoadingShowMessageStyle { get; set; }
-
-            [DataMember, DefaultValue(ShowMessageStyle.None)]
-            public ShowMessageStyle ViewTransformShowMessageStyle { get; set; }
-
-            [OnDeserializing]
-            private void OnDeserializing(StreamingContext c)
-            {
-                this.InitializePropertyDefaultValues();
-            }
-
-            public void RestoreConfig(Config config)
-            {
-                config.Notice.NoticeShowMessageStyle = NoticeShowMessageStyle;
-                config.Notice.BookNameShowMessageStyle = BookNameShowMessageStyle;
-                config.Notice.CommandShowMessageStyle = CommandShowMessageStyle;
-                config.Notice.GestureShowMessageStyle = GestureShowMessageStyle;
-                config.Notice.NowLoadingShowMessageStyle = NowLoadingShowMessageStyle;
-                config.Notice.ViewTransformShowMessageStyle = ViewTransformShowMessageStyle;
-            }
-        }
-
-        #endregion
-
     }
 }

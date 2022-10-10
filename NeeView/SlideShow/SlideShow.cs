@@ -228,34 +228,5 @@ namespace NeeView
         }
         #endregion
 
-        #region Memento
-
-        [DataContract]
-        public class Memento : IMemento
-        {
-            [DataMember]
-            public double SlideShowInterval { get; set; }
-
-            [DataMember]
-            public bool IsCancelSlideByMouseMove { get; set; }
-
-            [DataMember]
-            public bool IsSlideShowByLoop { get; set; }
-
-            [DataMember, DefaultValue(false)]
-            public bool IsAutoPlaySlideShow { get; set; }
-
-
-            public void RestoreConfig(Config config)
-            {
-                config.SlideShow.SlideShowInterval = SlideShowInterval;
-                config.SlideShow.IsCancelSlideByMouseMove = IsCancelSlideByMouseMove;
-                config.SlideShow.IsSlideShowByLoop = IsSlideShowByLoop;
-                config.StartUp.IsAutoPlaySlideShow = IsAutoPlaySlideShow;
-            }
-        }
-
-        #endregion
-
     }
 }

@@ -67,57 +67,5 @@ namespace NeeView
             return setting;
         }
 
-
-        #region Memento
-        [DataContract]
-        public class Memento : IMemento
-        {
-            [DataMember]
-            public int _Version { get; set; } = Environment.ProductVersionNumber;
-
-            [DataMember, DefaultValue(BitmapImageFormat.Jpeg)]
-            public BitmapImageFormat Format { get; set; } = BitmapImageFormat.Jpeg;
-
-            [DataMember, DefaultValue(80)]
-            public int Quality { get; set; }
-
-            [DataMember, DefaultValue(true)]
-            public bool IsCacheEnabled { get; set; }
-
-            [DataMember, DefaultValue(1000)]
-            public int PageCapacity { get; set; }
-
-            [DataMember, DefaultValue(200)]
-            public int BookCapacity { get; set; }
-
-
-            [Obsolete("use SidePanelProfile.ContentItemProfile.ImageWidth"), DataMember(EmitDefaultValue = false)] // ver.32
-            public int ThumbnailWidth { get; set; }
-
-            [Obsolete("use SidePanelProfile.BannerItemProfile.ImageWidth"), DataMember(EmitDefaultValue = false)] // ver.32
-            public int BannerWidth { get; set; }
-
-            [Obsolete("SidePanelProfile.ContentItemProfile.IsImagePopupEnabled"), DataMember(EmitDefaultValue = false)] // ver.32
-            public bool IsThumbnailPopup { get; set; }
-
-
-            [OnDeserializing]
-            private void OnDeserializing(StreamingContext context)
-            {
-                this.InitializePropertyDefaultValues();
-            }
-
-            public void RestoreConfig(Config config)
-            {
-                config.Thumbnail.IsCacheEnabled = IsCacheEnabled;
-                config.Thumbnail.Format = Format;
-                config.Thumbnail.Quality = Quality;
-                config.Thumbnail.ThumbnailPageCapacity = PageCapacity;
-                config.Thumbnail.ThumbnailBookCapacity = BookCapacity;
-            }
-        }
-
-        #endregion
-
     }
 }

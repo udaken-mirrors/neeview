@@ -12,7 +12,6 @@ namespace NeeView.Text
     /// <summary>
     /// 文字列コレクション
     /// </summary>
-    [DataContract]
     [ObjectMergeReferenceCopy]
     [JsonConverter(typeof(JsonStringCollectionConverter))]
     public class StringCollection : ICloneable, IEquatable<StringCollection>
@@ -32,27 +31,21 @@ namespace NeeView.Text
             Restore(items);
         }
 
-        [DataMember]
+
         public bool IsSorted { get; private set; } = true;
 
-        [DataMember]
         public bool IsDistinction { get; private set; } = true;
 
-        [DataMember]
         public bool IsNullable { get; private set; } = false;
 
         // immutable
-        [DataMember]
         public List<string> Items { get; private set; }
 
-
-        [DataMember(EmitDefaultValue = false)]
         public string OneLine
         {
             get { return Store(); }
             set { Restore(value); }
         }
-
 
 
         public bool IsEmpty()

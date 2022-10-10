@@ -26,39 +26,5 @@ namespace NeeView
             return Config.Current.System.IsHiddenFileVisibled || (attributes & FileAttributes.Hidden) == 0;
         }
 
-        #region Memento
-        [DataContract]
-        public class Memento : IMemento
-        {
-            [DataMember, DefaultValue(true)]
-            public bool IsRemoveConfirmed { get; set; }
-
-            [DataMember, DefaultValue(false)]
-            public bool IsRemoveExplorerDialogEnabled { get; set; }
-
-            [DataMember, DefaultValue(true)]
-            public bool IsEnabled { get; set; }
-
-            [DataMember]
-            public bool IsHiddenFileVisibled { get; set; }
-
-
-            [OnDeserializing]
-            private void OnDeserializing(StreamingContext c)
-            {
-                this.InitializePropertyDefaultValues();
-            }
-
-            public void RestoreConfig(Config config)
-            {
-                config.System.IsRemoveConfirmed = IsRemoveConfirmed;
-                config.System.IsRemoveWantNukeWarning = IsRemoveExplorerDialogEnabled;
-                config.System.IsFileWriteAccessEnabled = IsEnabled;
-                config.System.IsHiddenFileVisibled = IsHiddenFileVisibled;
-            }
-        }
-
-        #endregion
-
     }
 }

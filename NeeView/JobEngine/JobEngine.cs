@@ -185,19 +185,5 @@ namespace NeeView
         }
         #endregion
 
-        #region Memento
-        [DataContract]
-        public class Memento : IMemento
-        {
-            [DataMember, DefaultValue(2)]
-            public int WorkerSize { get; set; }
-
-            public void RestoreConfig(Config config)
-            {
-                config.Performance.JobWorkerSize = WorkerSize;
-            }
-        }
-
-        #endregion
     }
 }

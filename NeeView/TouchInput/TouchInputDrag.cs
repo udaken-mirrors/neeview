@@ -87,21 +87,5 @@ namespace NeeView
             _manipulation.Update();
         }
 
-
-        #region Memento
-        [DataContract]
-        public class Memento : IMemento
-        {
-            [DataMember]
-            public TouchDragManipulation.Memento? Manipulation { get; set; }
-
-            public void RestoreConfig(Config config)
-            {
-                Manipulation?.RestoreConfig(config);
-            }
-        }
-
-        #endregion
-
     }
 }

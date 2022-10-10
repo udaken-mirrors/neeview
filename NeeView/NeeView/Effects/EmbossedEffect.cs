@@ -13,18 +13,12 @@ using System.Windows.Media.Effects;
 
 namespace NeeView.Effects
 {
-    //
-    [DataContract]
     public class EmbossedEffectUnit : EffectUnit
     {
         private static readonly EmbossedEffect _effect = new();
 
         public override Effect GetEffect() => _effect;
 
-        /// <summary>
-        /// Property: Color
-        /// </summary>
-        [IgnoreDataMember]
         [PropertyMember]
         [DefaultValue(typeof(Color), "#FF808080")]
         public Color Color
@@ -33,22 +27,6 @@ namespace NeeView.Effects
             set { if (_effect.Color != value) { _effect.Color = value; RaiseEffectPropertyChanged(); } }
         }
 
-        /// <summary>
-        /// for serializer
-        /// </summary>
-        [DataMember]
-        [JsonIgnore]
-        [PropertyMapIgnore]
-        public string ColorCode
-        {
-            get { return Color.ToString(); }
-            set { Color = (Color)ColorConverter.ConvertFromString(value); }
-        }
-
-        /// <summary>
-        /// Property: Amount
-        /// </summary>
-        [DataMember]
         [PropertyRange(-5, 5)]
         [DefaultValue(3)]
         public double Amount
@@ -57,10 +35,6 @@ namespace NeeView.Effects
             set { if (_effect.Amount != value) { _effect.Amount = value; RaiseEffectPropertyChanged(); } }
         }
 
-        /// <summary>
-        /// Property: Height
-        /// </summary>
-        [DataMember]
         [PropertyRange(0, 5)]
         [DefaultValue(1)]
         public double Height

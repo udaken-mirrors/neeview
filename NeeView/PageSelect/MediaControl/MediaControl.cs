@@ -25,45 +25,6 @@ namespace NeeView
             Changed?.Invoke(sender, e);
         }
 
-
-        #region Memento
-
-        [DataContract]
-        public class Memento : IMemento
-        {
-            [DataMember]
-            public bool IsMuted { get; set; }
-
-            [DataMember]
-            public double Volume { get; set; }
-
-            [DataMember]
-            public bool IsRepeat { get; set; }
-
-            [DataMember]
-            public double PageSeconds { get; set; }
-
-            [DataMember, DefaultValue(0.5)]
-            public double MediaStartDelaySeconds { get; set; }
-
-
-            [OnDeserializing]
-            public void Deserializing(StreamingContext c)
-            {
-                this.InitializePropertyDefaultValues();
-            }
-
-            public void RestoreConfig(Config config)
-            {
-                config.Archive.Media.IsMuted = IsMuted;
-                config.Archive.Media.Volume = Volume;
-                config.Archive.Media.IsRepeat = IsRepeat;
-                config.Archive.Media.PageSeconds = PageSeconds;
-                config.Archive.Media.MediaStartDelaySeconds = MediaStartDelaySeconds;
-            }
-        }
-
-        #endregion
     }
 
     /// <summary>

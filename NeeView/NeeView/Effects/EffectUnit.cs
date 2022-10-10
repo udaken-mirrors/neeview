@@ -11,7 +11,6 @@ using System.Windows.Media.Effects;
 
 namespace NeeView.Effects
 {
-    [DataContract]
     public class EffectUnit : BindableBase
     {
         public virtual Effect? GetEffect() => null;
