@@ -10,17 +10,12 @@ using System.Windows.Documents;
 
 namespace NeeView
 {
-    /// <summary>
-    /// 
-    /// </summary>
     public class PrintWindowCloseEventArgs : EventArgs
     {
         public bool? Result { get; set; }
     }
 
-    /// <summary>
-    /// PrintWindow ViewModel
-    /// </summary>
+
     public class PrintWindowViewModel : BindableBase
     {
         /// <summary>
@@ -28,11 +23,12 @@ namespace NeeView
         /// </summary>
         private static PrintModel.Memento? _memento;
 
+        private readonly PrintModel _model;
+        private FrameworkElement? _mainContent;
+        private List<FixedPage> _pageCollection = new();
 
-        /// <summary>
-        /// コンストラクター
-        /// </summary>
-        /// <param name="context"></param>
+
+
         public PrintWindowViewModel(PrintContext context)
         {
             _model = new PrintModel(context);
@@ -48,32 +44,19 @@ namespace NeeView
         public event EventHandler<PrintWindowCloseEventArgs>? Close;
 
 
-        /// <summary>
-        /// Model property.
-        /// </summary>
-        private readonly PrintModel _model;
         public PrintModel Model => _model;
 
-        /// <summary>
-        /// MainContent property.
-        /// </summary>
-        private FrameworkElement? _MainContent;
         public FrameworkElement? MainContent
         {
-            get { return _MainContent; }
-            set { if (_MainContent != value) { _MainContent = value; RaisePropertyChanged(); } }
+            get { return _mainContent; }
+            set { if (_mainContent != value) { _mainContent = value; RaisePropertyChanged(); } }
         }
 
-        /// <summary>
-        /// PageCollection property.
-        /// </summary>
-        private List<FixedPage> _PageCollection = new();
         public List<FixedPage> PageCollection
         {
-            get { return _PageCollection; }
-            set { if (_PageCollection != value) { _PageCollection = value; RaisePropertyChanged(); } }
+            get { return _pageCollection; }
+            set { if (_pageCollection != value) { _pageCollection = value; RaisePropertyChanged(); } }
         }
-
 
 
         /// <summary>

@@ -36,20 +36,52 @@ namespace NeeView
         ViewStretch,
     }
 
+
     /// <summary>
     /// Print Model
     /// </summary>
     public class PrintModel : BindableBase
     {
-        private PageOrientation _PageOrientation;
+        private readonly PrintContext _context;
+        private readonly PrintDialog _printDialog;
+        private double _printableAreaWidth;
+        private double _printableAreaHeight;
+        private PageImageableArea? _area;
+        private double _originWidth;
+        private double _originHeight;
+        private double _extentWidth;
+        private double _extentHeight;
+        private PageOrientation _pageOrientation;
+        private PrintMode _printMode = PrintMode.View;
+        private bool _isBackground;
+        private bool _isDotScale;
+        private PrintQueue? _printQueue;
+        private int _columns = 1;
+        private int _rows = 1;
+        private HorizontalAlignment _horizontalAlignment = HorizontalAlignment.Center;
+        private VerticalAlignment _verticalAlignment = VerticalAlignment.Center;
+        private Margin _margin = new();
+
+
+
+        public PrintModel(PrintContext context)
+        {
+            _context = context;
+            _printDialog = new PrintDialog();
+
+            UpdatePrintDialog();
+        }
+
+
+
         public PageOrientation PageOrientation
         {
-            get { return _PageOrientation; }
+            get { return _pageOrientation; }
             set
             {
-                if (_PageOrientation != value)
+                if (_pageOrientation != value)
                 {
-                    _PageOrientation = value switch
+                    _pageOrientation = value switch
                     {
                         PageOrientation.Landscape or PageOrientation.ReverseLandscape => PageOrientation.Landscape,
                         _ => PageOrientation.Portrait,
@@ -60,81 +92,57 @@ namespace NeeView
             }
         }
 
-        //
         public static Dictionary<PageOrientation, string> PageOrientationList { get; } = new Dictionary<PageOrientation, string>()
         {
             [PageOrientation.Portrait] = Properties.Resources.PageOperation_Portrait,
             [PageOrientation.Landscape] = Properties.Resources.PageOperation_Landscape,
         };
 
-        //
-        private void UpdatePrintOrientation()
-        {
-            PrintCapabilities printCapabilites = _printDialog.PrintQueue.GetPrintCapabilities();
-            if (printCapabilites.PageOrientationCapability.Contains(PageOrientation))
-            {
-                _printDialog.PrintTicket.PageOrientation = PageOrientation;
-            }
-        }
-
-
-
-        private PrintMode _PrintMode = PrintMode.View;
         public PrintMode PrintMode
         {
-            get { return _PrintMode; }
-            set { if (_PrintMode != value) { _PrintMode = value; RaisePropertyChanged(); } }
+            get { return _printMode; }
+            set { if (_printMode != value) { _printMode = value; RaisePropertyChanged(); } }
         }
 
-        //
-        public Dictionary<PrintMode, string> PrintModeList => AliasNameExtensions.GetAliasNameDictionary<PrintMode>();
+        public Dictionary<PrintMode, string> PrintModeList
+        {
+            get { return AliasNameExtensions.GetAliasNameDictionary<PrintMode>(); }
+        }
 
-
-        private bool _IsBackground;
         public bool IsBackground
         {
-            get { return _IsBackground; }
-            set { if (_IsBackground != value) { _IsBackground = value; RaisePropertyChanged(); } }
+            get { return _isBackground; }
+            set { if (_isBackground != value) { _isBackground = value; RaisePropertyChanged(); } }
         }
 
-
-        private bool _IsDotScale;
         public bool IsDotScale
         {
-            get { return _IsDotScale; }
-            set { if (_IsDotScale != value) { _IsDotScale = value; RaisePropertyChanged(); } }
+            get { return _isDotScale; }
+            set { if (_isDotScale != value) { _isDotScale = value; RaisePropertyChanged(); } }
         }
 
-
-        private PrintQueue? _PrintQueue;
         public PrintQueue? PrintQueue
         {
-            get { return _PrintQueue; }
-            set { if (_PrintQueue != value) { _PrintQueue = value; RaisePropertyChanged(); } }
+            get { return _printQueue; }
+            set { if (_printQueue != value) { _printQueue = value; RaisePropertyChanged(); } }
         }
 
-
-        private int _Columns = 1;
         public int Columns
         {
-            get { return _Columns; }
-            set { if (_Columns != value) { _Columns = MathUtility.Clamp(value, 1, 4); RaisePropertyChanged(); } }
+            get { return _columns; }
+            set { if (_columns != value) { _columns = MathUtility.Clamp(value, 1, 4); RaisePropertyChanged(); } }
         }
 
-
-        private int _Rows = 1;
         public int Rows
         {
-            get { return _Rows; }
-            set { if (_Rows != value) { _Rows = MathUtility.Clamp(value, 1, 4); ; RaisePropertyChanged(); } }
+            get { return _rows; }
+            set { if (_rows != value) { _rows = MathUtility.Clamp(value, 1, 4); ; RaisePropertyChanged(); } }
         }
 
-
-        private HorizontalAlignment _HorizontalAlignment = HorizontalAlignment.Center;
         public HorizontalAlignment HorizontalAlignment
         {
-            get { return _HorizontalAlignment; }
-            set { if (_HorizontalAlignment != value) { _HorizontalAlignment = value; RaisePropertyChanged(); } }
+            get { return _horizontalAlignment; }
+            set { if (_horizontalAlignment != value) { _horizontalAlignment = value; RaisePropertyChanged(); } }
         }
 
         public Dictionary<HorizontalAlignment, string> HorizontalAlignmentList { get; } = new Dictionary<HorizontalAlignment, string>()
@@ -144,12 +152,10 @@ namespace NeeView
             [HorizontalAlignment.Right] = Properties.Resources.HorizontalAlignment_Right,
         };
 
-
-        private VerticalAlignment _VerticalAlignment = VerticalAlignment.Center;
         public VerticalAlignment VerticalAlignment
         {
-            get { return _VerticalAlignment; }
-            set { if (_VerticalAlignment != value) { _VerticalAlignment = value; RaisePropertyChanged(); } }
+            get { return _verticalAlignment; }
+            set { if (_verticalAlignment != value) { _verticalAlignment = value; RaisePropertyChanged(); } }
         }
 
         public Dictionary<VerticalAlignment, string> VerticalAlignmentList { get; } = new Dictionary<VerticalAlignment, string>()
@@ -159,12 +165,24 @@ namespace NeeView
             [VerticalAlignment.Bottom] = Properties.Resources.VerticalAlignment_Bottom,
         };
 
-
-        private Margin _Margin = new();
         public Margin Margin
         {
-            get { return _Margin; }
-            set { if (_Margin != value) { _Margin = value; RaisePropertyChanged(); } }
+            get { return _margin; }
+            set { if (_margin != value) { _margin = value; RaisePropertyChanged(); } }
+        }
+
+
+
+        /// <summary>
+        /// プリント方向更新
+        /// </summary>
+        private void UpdatePrintOrientation()
+        {
+            PrintCapabilities printCapabilites = _printDialog.PrintQueue.GetPrintCapabilities();
+            if (printCapabilites.PageOrientationCapability.Contains(PageOrientation))
+            {
+                _printDialog.PrintTicket.PageOrientation = PageOrientation;
+            }
         }
 
         /// <summary>
@@ -177,53 +195,6 @@ namespace NeeView
             return mm * 0.039370 * 96.0; // mm -> inch -> 96dpi
         }
 
-
-        /// <summary>
-        /// 印刷コンテキスト
-        /// </summary>
-        private readonly PrintContext _context;
-
-        /// <summary>
-        /// Print Dialog
-        /// </summary>
-        private readonly PrintDialog _printDialog;
-
-        /// <summary>
-        /// 印刷領域サイズ
-        /// </summary>
-        private double _printableAreaWidth;
-        private double _printableAreaHeight;
-
-        /// <summary>
-        /// 印刷エリア
-        /// </summary>
-        private PageImageableArea? _area;
-
-        /// <summary>
-        /// 印刷開始位置
-        /// </summary>
-        private double _originWidth;
-        private double _originHeight;
-
-        /// <summary>
-        /// 印刷コンテンツサイズ
-        /// </summary>
-        private double _extentWidth;
-        private double _extentHeight;
-
-
-        /// <summary>
-        /// コンストラクター
-        /// </summary>
-        /// <param name="context"></param>
-        public PrintModel(PrintContext context)
-        {
-            _context = context;
-            _printDialog = new PrintDialog();
-
-            UpdatePrintDialog();
-        }
-
         /// <summary>
         /// 印刷ダイアログを表示して、プリンタ選択と印刷設定を行う。
         /// </summary>
@@ -234,7 +205,6 @@ namespace NeeView
             UpdatePrintDialog();
             return result;
         }
-
 
         /// <summary>
         /// ダイアログ情報からパラメータ更新
@@ -265,13 +235,11 @@ namespace NeeView
         /// <returns></returns>
         private FrameworkElement CreateRawImageContente()
         {
-            //
             if (_context.RawImage == null)
             {
                 return new Rectangle();
             }
 
-            //
             var brush = new ImageBrush(_context.RawImage);
             brush.Stretch = Stretch.Fill;
             brush.TileMode = TileMode.None;
@@ -557,21 +525,13 @@ namespace NeeView
 
 
             public PageOrientation PageOrientation { get; set; }
-
             public PrintMode PrintMode { get; set; }
-
             public bool IsBackground { get; set; }
-
             public bool IsDotScale { get; set; }
-
             public int Columns { get; set; }
-
             public int Rows { get; set; }
-
             public HorizontalAlignment HorizontalAlignment { get; set; }
-
             public VerticalAlignment VerticalAlignment { get; set; }
-
             public Margin Margin { get; set; }
         }
 
@@ -616,32 +576,34 @@ namespace NeeView
     /// </summary>
     public class Margin : BindableBase
     {
-        private double _Top;
+        private double _top;
+        private double _bottom;
+        private double _left;
+        private double _right;
+
+
         public double Top
         {
-            get { return _Top; }
-            set { if (_Top != value) { _Top = value; RaisePropertyChanged(); } }
+            get { return _top; }
+            set { if (_top != value) { _top = value; RaisePropertyChanged(); } }
         }
 
-        private double _Bottom;
         public double Bottom
         {
-            get { return _Bottom; }
-            set { if (_Bottom != value) { _Bottom = value; RaisePropertyChanged(); } }
+            get { return _bottom; }
+            set { if (_bottom != value) { _bottom = value; RaisePropertyChanged(); } }
         }
 
-        private double _Left;
         public double Left
         {
-            get { return _Left; }
-            set { if (_Left != value) { _Left = value; RaisePropertyChanged(); } }
+            get { return _left; }
+            set { if (_left != value) { _left = value; RaisePropertyChanged(); } }
         }
 
-        private double _Right;
         public double Right
         {
-            get { return _Right; }
-            set { if (_Right != value) { _Right = value; RaisePropertyChanged(); } }
+            get { return _right; }
+            set { if (_right != value) { _right = value; RaisePropertyChanged(); } }
         }
     }
 
