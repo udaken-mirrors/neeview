@@ -132,4 +132,14 @@ namespace NeeView
         #endregion Obsolete
     }
 
+    [Obsolete("no used")] // ver.39
+    public enum WindowChromeFrame
+    {
+        [AliasName]
+        None,
+
+        [AliasName]
+        WindowFrame,
+    }
+
 }

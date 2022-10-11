@@ -23,7 +23,7 @@ namespace NeeView
     /// <summary>
     /// MainViewWindow.xaml の相互作用ロジック
     /// </summary>
-    public partial class MainViewWindow : Window, INotifyPropertyChanged, IDpiScaleProvider, IHasWindowController, ITopmostControllable, INotifyMouseHorizontalWheelChanged, IMainViewWindow
+    public partial class MainViewWindow : Window, INotifyPropertyChanged, IDpiScaleProvider, IHasWindowController, INotifyMouseHorizontalWheelChanged, IMainViewWindow
     {
         #region INotifyPropertyChanged Support
 
@@ -68,7 +68,7 @@ namespace NeeView
             _windowStateManager = new WindowStateManager(this);
             _windowStateManager.StateChanged += WindowStateManager_StateChanged;
 
-            _windowController = new WindowController(_windowStateManager, this);
+            _windowController = new MainViewWindowController(this, _windowStateManager);
 
             _routedCommandBinding = new RoutedCommandBinding(this, RoutedCommandTable.Current);
 
@@ -208,10 +208,7 @@ namespace NeeView
             _windowStateManager.RestoreWindowPlacement(placement);
         }
 
-        public void ToggleTopmost()
-        {
-            Config.Current.MainView.IsTopmost = !Config.Current.MainView.IsTopmost;
-        }
+
 
         private void StretchWindowCommand_Execute(object sender, ExecutedRoutedEventArgs e)
         {
@@ -220,6 +217,5 @@ namespace NeeView
                 mainView.StretchWindow();
             }
         }
-
     }
 }

@@ -69,23 +69,23 @@ namespace NeeView
 
         private readonly MainViewComponent _viewComponent;
 
-        private readonly WindowShape _windowShape;
+        private readonly MainWindowController _windowController;
 
 
-        public static void Initialize(WindowShape windowShape)
+        public static void Initialize(MainWindowController windowController)
         {
             if (_current is not null) throw new InvalidOperationException();
-            _current = new MainWindowModel(windowShape);
+            _current = new MainWindowModel(windowController);
         }
 
-        private MainWindowModel(WindowShape windowShape)
+        private MainWindowModel(MainWindowController windowController)
         {
             if (_current is not null) throw new InvalidOperationException();
             _current = this;
 
-            _windowShape = windowShape;
+            _windowController = windowController;
 
-            _windowShape.AddPropertyChanged(nameof(WindowShape.AutoHideMode),
+            _windowController.AddPropertyChanged(nameof(_windowController.AutoHideMode),
                 (s, e) =>
                 {
                     RefreshCanHidePanel();
@@ -143,7 +143,7 @@ namespace NeeView
 
 
 
-        public WindowShape WindowShape => _windowShape;
+        public MainWindowController WindowController => _windowController;
 
 
         /// <summary>
@@ -200,17 +200,17 @@ namespace NeeView
 
         private void RefreshCanHideMenu()
         {
-            CanHideMenu = Config.Current.MenuBar.IsHideMenu || (Config.Current.MenuBar.IsHideMenuInAutoHideMode && _windowShape.AutoHideMode);
+            CanHideMenu = Config.Current.MenuBar.IsHideMenu || (Config.Current.MenuBar.IsHideMenuInAutoHideMode && _windowController.AutoHideMode);
         }
 
         private void RefreshCanHidePageSlider()
         {
-            CanHidePageSlider = Config.Current.Slider.IsEnabled && (Config.Current.Slider.IsHidePageSlider || (Config.Current.Slider.IsHidePageSliderInAutoHideMode && _windowShape.AutoHideMode));
+            CanHidePageSlider = Config.Current.Slider.IsEnabled && (Config.Current.Slider.IsHidePageSlider || (Config.Current.Slider.IsHidePageSliderInAutoHideMode && _windowController.AutoHideMode));
         }
 
         public void RefreshCanHidePanel()
         {
-            CanHidePanel = Config.Current.Panels.IsHidePanel || (Config.Current.Panels.IsHidePanelInAutoHideMode && _windowShape.AutoHideMode);
+            CanHidePanel = Config.Current.Panels.IsHidePanel || (Config.Current.Panels.IsHidePanelInAutoHideMode && _windowController.AutoHideMode);
         }
 
         public bool ToggleHideMenu()

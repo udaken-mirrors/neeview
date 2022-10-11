@@ -1,56 +1,53 @@
-﻿using NeeLaboratory.ComponentModel;
-using NeeView.Windows;
-using NeeView.Windows.Property;
+﻿using NeeView.Windows;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
-using System.Runtime.InteropServices;
-using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Interop;
-using System.Windows.Shell;
+using System.Windows.Data;
 
 namespace NeeView
 {
     /// <summary>
-    /// WindowChromeFrame Type
-    /// </summary>
-    [Obsolete("no used")]
-    public enum WindowChromeFrame
-    {
-        [AliasName]
-        None,
-
-        [AliasName]
-        WindowFrame,
-    }
-
-    public interface ITopmostControllable
-    {
-        bool IsTopmost { get; set; }
-
-        void ToggleTopmost();
-    }
-
-
-    /// <summary>
     /// MainWindowに特化したウィンドウ制御
     /// </summary>
-    public class WindowShape : BindableBase, ITopmostControllable
+    public class MainWindowController : WindowController, INotifyPropertyChanged
     {
+        #region INotifyPropertyChanged Support
+
+        public event PropertyChangedEventHandler? PropertyChanged;
+
+        protected bool SetProperty<T>(ref T storage, T value, [System.Runtime.CompilerServices.CallerMemberName] string? propertyName = null)
+        {
+            if (object.Equals(storage, value)) return false;
+            storage = value;
+            this.RaisePropertyChanged(propertyName);
+            return true;
+        }
+
+        protected void RaisePropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string? name = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+        }
+
+        public void AddPropertyChanged(string propertyName, PropertyChangedEventHandler handler)
+        {
+            PropertyChanged += (s, e) => { if (string.IsNullOrEmpty(e.PropertyName) || e.PropertyName == propertyName) handler?.Invoke(s, e); };
+        }
+
+        #endregion
+
         private readonly Window _window;
         private readonly WindowStateManager _manager;
-        private bool _isEnabled;
         private bool _autoHideMode;
 
 
-        public WindowShape(WindowStateManager manager)
+        public MainWindowController(Window window, WindowStateManager manager) : base(window, manager)
         {
-            _window = MainWindow.Current;
+            _window = window;
 
             _manager = manager;
             _manager.StateChanged += WindowStateManager_StateChanged;
@@ -72,22 +69,10 @@ namespace NeeView
         }
 
 
-        public bool IsTopmost
+        public override bool IsTopmost
         {
             get { return Config.Current.Window.IsTopmost; }
             set { Config.Current.Window.IsTopmost = value; }
-        }
-
-        public bool IsEnabled
-        {
-            get { return _isEnabled; }
-            set
-            {
-                if (SetProperty(ref _isEnabled, value))
-                {
-                    Refresh();
-                }
-            }
         }
 
         public bool AutoHideMode
@@ -120,21 +105,16 @@ namespace NeeView
 
             switch (_window.WindowState)
             {
-                case System.Windows.WindowState.Normal:
+                case WindowState.Normal:
                     Config.Current.Window.State = WindowStateEx.Normal;
                     break;
-                case System.Windows.WindowState.Minimized:
+                case WindowState.Minimized:
                     Config.Current.Window.State = WindowStateEx.Minimized;
                     break;
-                case System.Windows.WindowState.Maximized:
+                case WindowState.Maximized:
                     Config.Current.Window.State = WindowStateEx.Maximized;
                     break;
             }
-        }
-
-        public void ToggleTopmost()
-        {
-            Config.Current.Window.IsTopmost = !Config.Current.Window.IsTopmost;
         }
 
         /// <summary>
@@ -142,8 +122,6 @@ namespace NeeView
         /// </summary>
         public void Refresh()
         {
-            if (!this.IsEnabled) return;
-
             ValidateWindowState();
             UpdatePanelHideMode();
             _manager.SetWindowState(Config.Current.Window.State);

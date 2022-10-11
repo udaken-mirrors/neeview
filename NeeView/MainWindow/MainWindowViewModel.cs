@@ -131,6 +131,8 @@ namespace NeeView
             MainWindow.Current.Deactivated +=
                 (s, e) => RaisePropertyChanged(nameof(IsMenuBarActive));
 
+            Config.Current.Window.AddPropertyChanged(nameof(WindowConfig.IsTopmost),
+                (s, e) => RaisePropertyChanged(nameof(IsTopmost)));
 
             // SlideShow link to WindowIcon
             SlideShow.Current.AddPropertyChanged(nameof(SlideShow.IsPlayingSlideShow),
@@ -170,8 +172,14 @@ namespace NeeView
 
         public string Title => PageTitle.Current.Title;
 
+        public bool IsTopmost
+        {
+            get { return Config.Current.Window.IsTopmost; }
+            set { Config.Current.Window.IsTopmost = value; }
+        }
+
         // for Binding
-        public WindowShape WindowShape => _model.WindowShape;
+        public MainWindowController WindowController => _model.WindowController;
         public WindowTitle WindowTitle => WindowTitle.Current;
         public PageTitle PageTitle => PageTitle.Current;
         public ThumbnailList ThumbnailList => ThumbnailList.Current;

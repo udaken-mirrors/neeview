@@ -1,4 +1,6 @@
 ﻿using NeeView.Windows;
+using System;
+using System.Windows;
 
 namespace NeeView
 {
@@ -9,16 +11,24 @@ namespace NeeView
 
     public class WindowController
     {
+        readonly Window _window;
         readonly WindowStateManager _windowStateManager;
-        readonly ITopmostControllable _topmostController;
 
-        public WindowController(WindowStateManager windowStateManager, ITopmostControllable topmostController)
+
+        public WindowController(Window window, WindowStateManager windowStateManager)
         {
+            _window = window;
             _windowStateManager = windowStateManager;
-            _topmostController = topmostController;
         }
 
+
         public WindowStateManager WindowStateManager => _windowStateManager;
+
+        public virtual bool IsTopmost
+        {
+            get => _window.Topmost;
+            set => _window.Topmost = value;
+        }
 
 
         public void ToggleMinimize()
@@ -43,7 +53,7 @@ namespace NeeView
 
         public void ToggleTopmost()
         {
-            _topmostController.ToggleTopmost();
+            IsTopmost = !IsTopmost;
         }
     }
 }

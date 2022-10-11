@@ -38,8 +38,7 @@ namespace NeeView
         private readonly DpiScaleProvider _dpiProvider = new();
 
         private readonly WindowStateManager _windowStateManager;
-        private readonly WindowShape _windowShape;
-        private readonly WindowController _windowController;
+        private readonly MainWindowController _windowController;
 
 
         public MainWindow()
@@ -63,8 +62,7 @@ namespace NeeView
             InitializeWindowShapeSnap();
 
             _windowStateManager = new WindowStateManager(this);
-            _windowShape = new WindowShape(_windowStateManager);
-            _windowController = new WindowController(_windowStateManager, _windowShape);
+            _windowController = new MainWindowController(this, _windowStateManager);
 
             ContextMenuWatcher.Initialize();
 
@@ -91,7 +89,7 @@ namespace NeeView
 
             MainViewManager.Initialize(_viewComponent, this.MainViewSocket);
 
-            MainWindowModel.Initialize(_windowShape);
+            MainWindowModel.Initialize(_windowController);
 
             // MainWindow : ViewModel
             _vm = new MainWindowViewModel(MainWindowModel.Current);
@@ -147,7 +145,7 @@ namespace NeeView
             _viewComponent.ContentCanvas.AddPropertyChanged(nameof(ContentCanvas.IsMediaContent),
                 (s, e) => DartyPageSliderLayout());
 
-            _windowShape.AddPropertyChanged(nameof(WindowShape.AutoHideMode),
+            _windowController.AddPropertyChanged(nameof(MainWindowController.AutoHideMode),
                 (s, e) => AutoHideModeChanged());
 
             // initialize routed commands
@@ -261,15 +259,6 @@ namespace NeeView
             }
 
             Config.Current.Window.State = state;
-        }
-
-
-        /// <summary>
-        /// Window状態初期化
-        /// </summary>
-        private void InitializeWindowShape()
-        {
-            _windowShape.IsEnabled = true;
         }
 
         #endregion
@@ -410,7 +399,7 @@ namespace NeeView
             Debug.WriteLine($"App.MainWndow.SourceInitialized: {App.Current.Stopwatch.ElapsedMilliseconds}ms");
 
             // NOTE: Chromeの変更を行った場合、Loadedイベントが発生する。WindowPlacementの処理順番に注意
-            InitializeWindowShape();
+            _windowController.Refresh();
 
             // ウィンドウ座標の復元
             RestoreWindowPlacement();
@@ -428,8 +417,6 @@ namespace NeeView
             _dpiProvider.SetDipScale(VisualTreeHelper.GetDpi(this));
 
             MainViewManager.Current.Update();
-
-            this.SetBinding(Window.TopmostProperty, new Binding(nameof(WindowShape.IsTopmost)) { Source = _windowShape });
 
             // レイアウト更新
             DartyWindowLayout();
@@ -626,7 +613,7 @@ namespace NeeView
             DartyWindowLayout();
 
             // 解除でフォーカスが表示されたパネルに移動してしまう現象を回避
-            if (!_windowShape.AutoHideMode && Config.Current.Panels.IsHidePanelInAutoHideMode)
+            if (!_windowController.AutoHideMode && Config.Current.Panels.IsHidePanelInAutoHideMode)
             {
                 _viewComponent.RaiseFocusMainViewRequest();
             }
