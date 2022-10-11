@@ -346,8 +346,8 @@ namespace NeeView
         {
             var clone = CloneInstance();
 
-            var memento = CreateMementoV2();
-            clone.RestoreV2(memento);
+            var memento = CreateMemento();
+            clone.Restore(memento);
             clone.Order = this.Order;
             clone.ClearGestures();
 
@@ -384,12 +384,10 @@ namespace NeeView
             return Name ?? base.ToString();
         }
 
-        #region MementoV2
+        #region Memento
 
-        /// <summary>
-        /// 設定V2用
-        /// </summary>
-        public class MementoV2 : ICloneable
+        [Memento]
+        public class Memento : ICloneable
         {
             public string ShortCutKey { get; set; } = "";
             public string TouchGesture { get; set; } = "";
@@ -400,7 +398,7 @@ namespace NeeView
 
             public object Clone()
             {
-                var clone = (MementoV2)MemberwiseClone();
+                var clone = (Memento)MemberwiseClone();
                 clone.Parameter =this.Parameter?.Clone() as CommandParameter;
                 return clone;
             }
@@ -419,7 +417,7 @@ namespace NeeView
                 }
             }
 
-            public bool MemberwiseEquals(MementoV2 other)
+            public bool MemberwiseEquals(Memento other)
             {
                 if (other is null) return false;
                 if (other.ShortCutKey != ShortCutKey) return false;
@@ -431,9 +429,9 @@ namespace NeeView
             }
         }
 
-        public MementoV2 CreateMementoV2()
+        public Memento CreateMemento()
         {
-            var memento = new MementoV2();
+            var memento = new Memento();
 
             memento.ShortCutKey = ShortCutKey ?? "";
             memento.TouchGesture = TouchGesture ?? "";
@@ -447,7 +445,7 @@ namespace NeeView
             return memento;
         }
 
-        public void RestoreV2(MementoV2 memento)
+        public void Restore(Memento memento)
         {
             if (memento == null) return;
 
@@ -458,7 +456,7 @@ namespace NeeView
             ParameterSource?.Set(memento.Parameter);
         }
 
-        #endregion MementoV2
+        #endregion Memento
 
         #region GesturesMemento
 

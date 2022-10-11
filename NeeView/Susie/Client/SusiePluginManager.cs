@@ -281,7 +281,7 @@ namespace NeeView
             _client.ShowConfigulationDlg(pluginName, handle.ToInt32());
         }
 
-        #region MementoV2
+        #region Memento
 
         public SusiePluginCollection CreateSusiePluginCollection()
         {
@@ -304,15 +304,15 @@ namespace NeeView
             }
         }
 
-        #endregion
+        #endregion Memento
     }
 
     public class SusiePluginCollection : Dictionary<string, SusiePluginMemento>
     {
     }
 
-
-    public class SusiePluginMemento : IMemento
+    [Memento]
+    public class SusiePluginMemento
     {
         public bool IsEnabled { get; set; }
 

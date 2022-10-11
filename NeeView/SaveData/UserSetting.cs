@@ -1,5 +1,6 @@
 ﻿namespace NeeView
 {
+    [Memento]
     public class UserSetting
     {
         public FormatVersion? Format { get; set; }

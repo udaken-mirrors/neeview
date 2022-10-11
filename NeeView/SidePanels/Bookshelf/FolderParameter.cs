@@ -86,8 +86,8 @@ namespace NeeView
 
 
         #region Memento
-
-        public class Memento : IMemento, IEquatable<Memento>
+        [Memento]
+        public class Memento : IEquatable<Memento>
         {
             public FolderOrder FolderOrder { get; set; }
 

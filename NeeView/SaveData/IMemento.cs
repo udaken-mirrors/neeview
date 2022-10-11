@@ -2,9 +2,11 @@
 
 namespace NeeView
 {
-    // 一般化できなかったインターフェイス
-    // TODO: 属性にする？
-    public interface IMemento
+    /// <summary>
+    /// Memento データであることを示す属性
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct)]
+    public class MementoAttribute : Attribute
     {
     }
 }

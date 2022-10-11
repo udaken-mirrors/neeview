@@ -692,7 +692,7 @@ namespace NeeView
             var collection = new CommandCollection();
             foreach (var item in _elements)
             {
-                collection.Add(item.Key, item.Value.CreateMementoV2());
+                collection.Add(item.Key, item.Value.CreateMemento());
             }
             return collection;
         }
@@ -707,7 +707,7 @@ namespace NeeView
             {
                 if (_elements.ContainsKey(pair.Key))
                 {
-                    _elements[pair.Key].RestoreV2(pair.Value);
+                    _elements[pair.Key].Restore(pair.Value);
                 }
                 else
                 {
@@ -718,7 +718,7 @@ namespace NeeView
                         {
                             var command = CloneCommand(source, cloneName);
                             Debug.Assert(command.Name == pair.Key);
-                            command.RestoreV2(pair.Value);
+                            command.Restore(pair.Value);
                         }
                         else
                         {
@@ -742,14 +742,14 @@ namespace NeeView
     /// <summary>
     /// 保存用コマンドコレクション
     /// </summary>
-    public class CommandCollection : Dictionary<string, CommandElement.MementoV2>
+    public class CommandCollection : Dictionary<string, CommandElement.Memento>
     {
         public CommandCollection Clone()
         {
             var clone = new CommandCollection();
             foreach (var item in this)
             {
-                clone.Add(item.Key, (CommandElement.MementoV2)item.Value.Clone());
+                clone.Add(item.Key, (CommandElement.Memento)item.Value.Clone());
             }
             return clone;
         }

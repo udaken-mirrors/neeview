@@ -413,9 +413,9 @@ namespace NeeView
         /// <summary>
         /// 履歴Memento
         /// </summary>
-        public class Memento : BindableBase, IMemento
+        [Memento]
+        public class Memento : BindableBase
         {
-            [JsonPropertyName("Format")]
             public FormatVersion? Format { get; set; }
 
             public List<BookHistory> Items { get; set; }

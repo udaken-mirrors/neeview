@@ -95,8 +95,8 @@ namespace NeeView
 
 
         #region Memento
-
-        public class Memento : IMemento
+        [Memento]
+        public class Memento
         {
             public string? Path { get; set; }
             public string? Name { get; set; }

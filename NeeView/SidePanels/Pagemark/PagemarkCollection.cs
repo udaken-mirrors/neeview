@@ -73,10 +73,9 @@ namespace NeeView
         }
 
         #region Memento
-
-        public class Memento : IMemento
+        [Memento]
+        public class Memento
         {
-            [JsonPropertyName("Format")]
             public FormatVersion? Format { get; set; }
 
             public PagemarkNode? Nodes { get; set; }

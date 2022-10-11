@@ -59,8 +59,8 @@ namespace NeeView
 
 
         #region Memento
-
-        public class Memento : IMemento
+        [Memento]
+        public class Memento
         {
             public List<QuickAccess>? Items { get; set; }
         }
