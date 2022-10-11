@@ -8,12 +8,6 @@ namespace NeeView
         public static readonly char Separator = ':';
 
 
-        public CommandNameSource(string name)
-        {
-            Name = name;
-            Number = 0;
-        }
-
         public CommandNameSource(string name, int number)
         {
             Name = name;
@@ -103,7 +97,7 @@ namespace NeeView
             }
             else
             {
-                return new CommandNameSource(name);
+                return new CommandNameSource(name, 0);
             }
         }
 

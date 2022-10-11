@@ -8,19 +8,29 @@ namespace NeeView
 {
     public static class UserSettingValidator
     {
-        // 互換性処理
+
+#pragma warning disable CS0612, CS0618 // 型またはメンバーが旧型式です
+
+        /// <summary>
+        /// 互換性処理
+        /// </summary>
         public static UserSetting Validate(this UserSetting self)
         {
-#pragma warning disable CS0612, CS0618 // 型またはメンバーが旧型式です
             if (self is null) throw new ArgumentNullException(nameof(self));
-            if (self.Config is null) throw new InvalidOperationException();
-            if (self.Format is null) throw new InvalidOperationException();
-            if (self.Commands is null) throw new InvalidOperationException();
+            if (self.Format is null) throw new FormatException("UserSetting.Format must not be null.");
+            if (self.Config is null) throw new FormatException("UserSetting.Config must not be null.");
+            if (self.Commands is null) throw new FormatException("UserSetting.Commands must not be null.");
 
             // 画像拡張子初期化
             if (self.Config.Image.Standard.SupportFileTypes is null)
             {
                 self.Config.Image.Standard.SupportFileTypes = PictureFileExtensionTools.CreateDefaultSupprtedFileTypes(self.Config.Image.Standard.UseWicInformation);
+            }
+
+            // 現在のバージョンであればチェック不要
+            if (self.Format.Equals(new FormatVersion(Environment.SolutionName)))
+            {
+                return self;
             }
 
             // ver.38
@@ -132,12 +142,26 @@ namespace NeeView
                 }
             }
 
+#if false
+            // ver.99 (バージョン変更処理テスト)
+            if (self.Format.CompareTo(new FormatVersion(Environment.SolutionName, 99, 0, 0)) < 0)
+            {
+                self.Commands?.ValidateRename(CommandNameValidator.RenameMap_99_0_0);
+                self.ContextMenu?.ValidateRename(CommandNameValidator.RenameMap_99_0_0);
+            }
+#endif
+
             return self;
-#pragma warning restore CS0612, CS0618 // 型またはメンバーが旧型式です
         }
+
+#pragma warning restore CS0612, CS0618 // 型またはメンバーが旧型式です
+
     }
 
 
+    /// <summary>
+    /// コマンド名変更対応
+    /// </summary>
     public static class CommandNameValidator
     {
         public static Dictionary<string, string> RenameMap_38_0_0 { get; } = new Dictionary<string, string>()
@@ -157,6 +181,18 @@ namespace NeeView
             ["NextPagemarkInBook"] = "NextPlaylistItemInBook",
         };
 
+#if false
+        // バージョン変更処理テスト用
+        public static Dictionary<string, string> RenameMap_99_0_0 { get; } = new Dictionary<string, string>()
+        {
+            ["ExportImageAs"] = "XXX_ExportImageAs",
+        };
+#endif
+
+
+        /// <summary>
+        /// CommandCollection のコマンド名変更
+        /// </summary>
         public static void ValidateRename(this CommandCollection commandCollection, Dictionary<string, string> renameMap)
         {
             foreach (var pair in renameMap)
@@ -166,26 +202,46 @@ namespace NeeView
 
             void Rename(string oldName, string newName)
             {
-                if (commandCollection.TryGetValue(oldName, out var element))
+                foreach (var command in commandCollection.ToList())
                 {
-                    commandCollection[newName] = element;
-                    commandCollection.Remove(oldName);
+                    var nameSource = CommandNameSource.Parse(command.Key);
+                    if (nameSource.Name == oldName)
+                    {
+                        commandCollection.TryAdd(new CommandNameSource(newName, nameSource.Number).FullName, command.Value);
+                        commandCollection.Remove(command.Key);
+                    }
                 }
             }
         }
 
+        /// <summary>
+        /// ContextMenu のコマンド名変更
+        /// </summary>
         public static void ValidateRename(this MenuNode contextMenu, Dictionary<string, string> renameMap)
         {
-            foreach (var node in contextMenu.GetEnumerator())
+            foreach (var pair in renameMap)
             {
-                if (node.CommandName != null && renameMap.TryGetValue(node.CommandName, out var newName))
+                Rename(pair.Key, pair.Value);
+            }
+
+            void Rename(string oldName, string newName)
+            {
+                foreach (var node in contextMenu.GetEnumerator().Where(e => e.MenuElementType == MenuElementType.Command))
                 {
-                    node.CommandName = newName;
+                    Debug.Assert(node.CommandName != null);
+                    var nameSource = CommandNameSource.Parse(node.CommandName);
+                    if (nameSource.Name == oldName)
+                    {
+                        node.CommandName = new CommandNameSource(newName, nameSource.Number).FullName;
+                    }
                 }
             }
         }
     }
 
+    /// <summary>
+    /// LayoutPanel 名前変更対応
+    /// </summary>
     public static class LayoutPanelValidator
     {
         public static void ValidateRename(this LayoutPanelManager.Memento self, string oldName, string newName)

@@ -685,108 +685,6 @@ namespace NeeView
 
         #endregion Scripts
 
-
-        public static class CommandRenameMap
-        {
-            public static Dictionary<string, string> RenameMap_37_0_0 { get; } = new()
-            {
-                ["OpenApplication"] = "OpenExternalApp",
-                ["OpenFilePlace"] = "OpenExplorer",
-                ["Export"] = "ExportImageAs",
-                ["PrevFolder"] = "PrevBook",
-                ["NextFolder"] = "NextBook",
-                ["SetPageMode1"] = "SetPageModeOne",
-                ["SetPageMode2"] = "SetPageModeTwo",
-                ["ToggleIsEnabledNearestNeighbor"] = "ToggleNearestNeighbor",
-                ["ToggleFolderOrder"] = "ToggleBookOrder",
-                ["SetFolderOrderByFileNameA"] = "SetBookOrderByFileNameA",
-                ["SetFolderOrderByFileNameD"] = "SetBookOrderByFileNameD",
-                ["SetFolderOrderByPathA"] = "SetBookOrderByPathA",
-                ["SetFolderOrderByPathD"] = "SetBookOrderByPathD",
-                ["SetFolderOrderByFileTypeA"] = "SetBookOrderByFileTypeA",
-                ["SetFolderOrderByFileTypeD"] = "SetBookOrderByFileTypeD",
-                ["SetFolderOrderByTimeStampA"] = "SetBookOrderByTimeStampA",
-                ["SetFolderOrderByTimeStampD"] = "SetBookOrderByTimeStampD",
-                ["SetFolderOrderByEntryTimeA"] = "SetBookOrderByEntryTimeA",
-                ["SetFolderOrderByEntryTimeD"] = "SetBookOrderByEntryTimeD",
-                ["SetFolderOrderBySizeA"] = "SetBookOrderBySizeA",
-                ["SetFolderOrderBySizeD"] = "SetBookOrderBySizeD",
-                ["SetFolderOrderByRandom"] = "SetBookOrderByRandom",
-                ["ReloadUserSetting"] = "ReloadSetting",
-                ["OpenSettingWindow"] = "OpenOptionsWindow",
-                ["ToggleStretchAllowEnlarge"] = "ToggleStretchAllowScaleUp",
-                ["ToggleStretchAllowReduce"] = "ToggleStretchAllowScaleDown",
-            };
-
-            public static Dictionary<string, string> RenameMap_38_0_0 { get; } = new()
-            {
-                ["TogglePermitFileCommand"] = "TogglePermitFile",
-                ["FocusPrevAppCommand"] = "FocusPrevApp",
-                ["FocusNextAppCommand"] = "FocusNextApp",
-            };
-
-            public static Dictionary<string, string> RenameMap_39_0_0 { get; } = new()
-            {
-                ["ToggleVisiblePagemarkList"] = "ToggleVisiblePlaylist",
-                ["TogglePagemark"] = "TogglePlaylistMark",
-                ["PrevPagemark"] = "PrevPlaylistItem",
-                ["NextPagemark"] = "NextPlaylistItem",
-                ["PrevPagemarkInBook"] = "PrevPlaylistItemInBook",
-                ["NextPagemarkInBook"] = "NextPlaylistItemInBook",
-            };
-
-#if false
-            // NOTE: リネーム処理実装の参考用コード
-            public static VersionCompatibleRename()
-            {
-                // before 37.0
-                if (_Version < Environment.GenerateProductVersionNumber(37, 0, 0))
-                {
-                    foreach (var pair in RenameMap_37_0_0)
-                    {
-                        Rename(pair.Key, pair.Value);
-                    }
-
-                    if (Elements["PrevHistory"].ShortCutKey == "Back")
-                    {
-                        Elements["PrevHistory"].ShortCutKey = "";
-                    }
-                    if (Elements["NextHistory"].ShortCutKey == "Shift+Back")
-                    {
-                        Elements["NextHistory"].ShortCutKey = "";
-                    }
-                }
-
-                if (_Version < Environment.GenerateProductVersionNumber(38, 0, 0))
-                {
-                    foreach (var pair in RenameMap_38_0_0)
-                    {
-                        Rename(pair.Key, pair.Value);
-                    }
-                }
-
-                if (_Version < Environment.GenerateProductVersionNumber(39, 0, 0))
-                {
-                    foreach (var pair in RenameMap_39_0_0)
-                    {
-                        Rename(pair.Key, pair.Value);
-                    }
-                }
-
-                // コマンド名変更
-                void Rename(string oldName, string newName)
-                {
-                    if (Elements.TryGetValue(oldName, out var element))
-                    {
-                        Elements[newName] = element;
-                        Elements.Remove(oldName);
-                    }
-                }
-            }
-#endif
-        }
-
-
         #region Memento CommandCollection
 
         public CommandCollection CreateCommandCollectionMemento()
@@ -839,9 +737,10 @@ namespace NeeView
 
         #endregion
     }
+ 
 
     /// <summary>
-    /// 設定V2ではこのデータを保存する
+    /// 保存用コマンドコレクション
     /// </summary>
     public class CommandCollection : Dictionary<string, CommandElement.MementoV2>
     {
@@ -854,6 +753,5 @@ namespace NeeView
             }
             return clone;
         }
-
     }
 }

@@ -89,7 +89,7 @@ namespace NeeView
 
         public CommandElement(string? name)
         {
-            NameSource = new CommandNameSource(name ?? _trimCommand.Replace(this.GetType().Name, ""));
+            NameSource = new CommandNameSource(name ?? _trimCommand.Replace(this.GetType().Name, ""), 0);
 
             Text = GetResourceTextRequired(null, null);
             Menu = GetResourceText(nameof(Menu));
