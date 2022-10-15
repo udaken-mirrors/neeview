@@ -11,7 +11,7 @@ namespace NeeView
     /// ページの場所を表す構造体。
     /// ページ番号と、部分を示すパーツ番号で構成されています。
     /// </summary>
-    public struct PagePosition : IComparable<PagePosition>
+    public struct PagePosition : IComparable<PagePosition>, IEquatable<PagePosition>
     {
         private readonly int _value;
 
@@ -76,33 +76,15 @@ namespace NeeView
             return index * 2 + part;
         }
 
-        // add
-        public static PagePosition operator +(PagePosition a, PagePosition b)
-        {
-            return new PagePosition(a._value + b._value);
-        }
-
-        public static PagePosition operator +(PagePosition a, int b)
-        {
-            return new PagePosition(a._value + b);
-        }
-
-        public static PagePosition operator -(PagePosition a, PagePosition b)
-        {
-            return new PagePosition(a._value - b._value);
-        }
-
-        public static PagePosition operator -(PagePosition a, int b)
-        {
-            return new PagePosition(a._value - b);
-        }
-
         // compare
+        public bool Equals(PagePosition other)
+        {
+            return _value == other._value;
+        }
+
         public override bool Equals(object? obj)
         {
-            if (obj == null) return false;
-            if (obj is not PagePosition pagePosition) return false;
-            return _value == pagePosition._value;
+            return obj is PagePosition equtable && Equals(equtable);
         }
 
         public override int GetHashCode()
@@ -143,6 +125,27 @@ namespace NeeView
         public static bool operator >=(PagePosition a, PagePosition b)
         {
             return a._value >= b._value;
+        }
+
+        // add
+        public static PagePosition operator +(PagePosition a, PagePosition b)
+        {
+            return new PagePosition(a._value + b._value);
+        }
+
+        public static PagePosition operator +(PagePosition a, int b)
+        {
+            return new PagePosition(a._value + b);
+        }
+
+        public static PagePosition operator -(PagePosition a, PagePosition b)
+        {
+            return new PagePosition(a._value - b._value);
+        }
+
+        public static PagePosition operator -(PagePosition a, int b)
+        {
+            return new PagePosition(a._value - b);
         }
     }
 }

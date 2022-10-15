@@ -20,7 +20,7 @@ namespace NeeView
     {
         // コンストラクタ
         // Pageから作成
-        public ViewContentSource(Page page, PagePart pagePart)
+        public ViewContentSource(Page page, PageRange pagePart)
         {
             Page = page;
             PagePart = pagePart;
@@ -29,7 +29,7 @@ namespace NeeView
             IsValid = Content.IsLoaded;
         }
 
-        public ViewContentSource(Page page, PagePart pagePart, bool isDummy) : this(page, pagePart)
+        public ViewContentSource(Page page, PageRange pagePart, bool isDummy) : this(page, pagePart)
         {
             IsDummy = isDummy;
         }
@@ -48,7 +48,7 @@ namespace NeeView
         public Size Size => GetSize();
 
         // ページパーツ
-        public PagePart PagePart { get; }
+        public PageRange PagePart { get; }
 
         // 分割？
         public bool IsHalf => this.PagePart.PartSize == 1;

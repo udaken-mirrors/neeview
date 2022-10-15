@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing.Printing;
 using System.Linq;
 
 namespace NeeView
@@ -7,13 +8,26 @@ namespace NeeView
     /// <summary>
     /// 指向性ページ範囲
     /// </summary>
-    public class PageRange
+    public struct PageRange : IEquatable<PageRange>, IComparable<PageRange>
     {
         public PageRange()
         {
             this.Position = new PagePosition();
-            this.Direction = 1;
-            this.PartSize = 1;
+            this.Size = 1;
+        }
+
+        public PageRange(PagePosition position, int partSize)
+        {
+            this.Position = position;
+            this.Size = partSize;
+        }
+
+        public PageRange(PagePosition position, int partSize, PageReadOrder pageReadOrder)
+        {
+            if (partSize < 1) throw new ArgumentOutOfRangeException(nameof(partSize));
+
+            this.Position = position;
+            this.Size = partSize * pageReadOrder.ToDirection();
         }
 
         public PageRange(PagePosition position, int direction, int pageSize)
@@ -21,18 +35,18 @@ namespace NeeView
             if (pageSize < 1) throw new ArgumentOutOfRangeException(nameof(pageSize));
             if (direction != 1 && direction != -1) throw new ArgumentOutOfRangeException(nameof(direction));
 
-            this.Position = position;
-            this.Direction = direction;
-
             var last = new PagePosition(position.Index + direction * (pageSize - 1), direction > 0 ? 1 : 0);
-            this.PartSize = Math.Abs(last.Value - position.Value) + 1;
+            var partSize = Math.Abs(last.Value - position.Value) + 1;
+            this.Position = position;
+            this.Size = direction * partSize;
         }
 
         public PageRange(PagePosition p0, PagePosition p1)
         {
+            var direction = p1 < p0 ? -1 : 1;
+            var partSize = Math.Abs(p1.Value - p0.Value) + 1;
             this.Position = p0;
-            this.Direction = p1 < p0 ? -1 : 1;
-            this.PartSize = Math.Abs(p1.Value - p0.Value) + 1;
+            this.Size = direction * partSize;
         }
 
         public PageRange(PagePosition p0, PagePosition p1, int direction)
@@ -41,10 +55,9 @@ namespace NeeView
 
             var min = p0 < p1 ? p0 : p1;
             var max = p0 < p1 ? p1 : p0;
-
+            var partSize = Math.Abs(max.Value - min.Value) + 1;
             this.Position = (direction > 0) ? min : max;
-            this.Direction = direction;
-            this.PartSize = Math.Abs(max.Value - min.Value) + 1;
+            this.Size = direction * partSize;
         }
 
         public PageRange(IEnumerable<PagePosition> positions, int direction)
@@ -54,13 +67,12 @@ namespace NeeView
 
             var min = positions.Min();
             var max = positions.Max();
-
+            var partSize = Math.Abs(max.Value - min.Value) + 1;
             this.Position = (direction > 0) ? min : max;
-            this.Direction = direction;
-            this.PartSize = Math.Abs(max.Value - min.Value) + 1;
+            this.Size = direction * partSize;
         }
 
-        public PageRange(IEnumerable<PagePart> parts, int direction)
+        public PageRange(IEnumerable<PageRange> parts, int direction)
         {
             if (parts == null) throw new ArgumentNullException(nameof(parts));
             if (direction != 1 && direction != -1) throw new ArgumentOutOfRangeException(nameof(direction));
@@ -91,9 +103,9 @@ namespace NeeView
                 count++;
             }
 
+            var partSize = Math.Abs(p1.Value - p0.Value) + 1;
             this.Position = direction > 0 ? p0 : p1;
-            this.Direction = direction;
-            this.PartSize = Math.Abs(p1.Value - p0.Value) + 1;
+            this.Size = direction * partSize;
         }
 
 
@@ -103,6 +115,11 @@ namespace NeeView
         /// 範囲開始
         /// </summary>
         public PagePosition Position { get; }
+
+        /// <summary>
+        /// パーツサイズ、方向
+        /// </summary>
+        public int Size { get; }
 
         /// <summary>
         /// 範囲終了
@@ -115,12 +132,17 @@ namespace NeeView
         /// <summary>
         /// 方向
         /// </summary>
-        public int Direction { get; }
+        public int Direction => Size < 0 ? -1 : 1;
+
+        /// <summary>
+        /// 方向 (enum)
+        /// </summary>
+        public PageReadOrder PartOrder => Size < 0 ? PageReadOrder.LeftToRight : PageReadOrder.RightToLeft;
 
         /// <summary>
         /// パーツサイズ
         /// </summary>
-        public int PartSize { get; }
+        public int PartSize => Math.Abs(Size);
 
         /// <summary>
         /// ページサイズ
@@ -250,6 +272,62 @@ namespace NeeView
             var max = Max > maxLimit ? maxLimit : Max;
 
             return new PageRange(min, max, this.Direction);
+        }
+
+        public override bool Equals(object? obj)
+        {
+            return obj is PageRange range && Equals(range);
+        }
+
+        public bool Equals(PageRange other)
+        {
+            return Position.Equals(other.Position) &&
+                   Size == other.Size;
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(Position, Size);
+        }
+
+        public int CompareTo(PageRange other)
+        {
+            var result = Position.CompareTo(other.Position);
+            if (result == 0)
+            {
+                result = Size.CompareTo(other.Size);
+            }
+            return result;
+        }
+
+        public static bool operator ==(PageRange left, PageRange right)
+        {
+            return left.Equals(right);
+        }
+
+        public static bool operator !=(PageRange left, PageRange right)
+        {
+            return !(left == right);
+        }
+
+        public static bool operator <(PageRange left, PageRange right)
+        {
+            return left.CompareTo(right) < 0;
+        }
+
+        public static bool operator <=(PageRange left, PageRange right)
+        {
+            return left.CompareTo(right) <= 0;
+        }
+
+        public static bool operator >(PageRange left, PageRange right)
+        {
+            return left.CompareTo(right) > 0;
+        }
+
+        public static bool operator >=(PageRange left, PageRange right)
+        {
+            return left.CompareTo(right) >= 0;
         }
     }
 }

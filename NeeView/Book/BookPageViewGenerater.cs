@@ -238,7 +238,7 @@ namespace NeeView
         // 表示コンテンツソースと、それに対応したコンテキスト作成
         private ViewContentSourceCollection CreateViewPageCollection(PageRange source)
         {
-            var infos = new List<PagePart>();
+            var infos = new List<PageRange>();
 
             {
                 PagePosition position = source.Position;
@@ -256,7 +256,7 @@ namespace NeeView
                         position = new PagePosition(position.Index, 0);
                     }
 
-                    infos.Add(new PagePart(position, size, _setting.BookReadOrder));
+                    infos.Add(new PageRange(position, size, _setting.BookReadOrder));
                     position = position + ((source.Direction > 0) ? size : -1);
                 }
             }
@@ -317,7 +317,7 @@ namespace NeeView
             {
                 var position = new PagePosition(infos[0].Position.Index, 0);
                 list.Clear();
-                list.Add(new ViewContentSource(_book.Pages[position.Index], new PagePart(position, 2, _setting.BookReadOrder)));
+                list.Add(new ViewContentSource(_book.Pages[position.Index], new PageRange(position, 2, _setting.BookReadOrder)));
             }
 
             // 新しいコンテキスト

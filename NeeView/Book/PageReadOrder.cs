@@ -22,5 +22,10 @@ namespace NeeView
         {
             return (PageReadOrder)(((int)mode + 1) % Enum.GetNames(typeof(PageReadOrder)).Length);
         }
+
+        public static int ToDirection(this PageReadOrder mode)
+        {
+            return mode == PageReadOrder.LeftToRight ? -1 : 1;
+        }
     }
 }
