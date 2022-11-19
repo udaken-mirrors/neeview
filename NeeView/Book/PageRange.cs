@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing.Printing;
 using System.Linq;
 
@@ -262,9 +263,6 @@ namespace NeeView
         /// </summary>
         public PageRange Clamp(PagePosition p0, PagePosition p1)
         {
-            if (p0.IsEmpty()) throw new ArgumentException("Must not be empty.", nameof(p0));
-            if (p1.IsEmpty()) throw new ArgumentException("Must not be empty.", nameof(p1));
-
             var minLimit = p0 < p1 ? p0 : p1;
             var maxLimit = p0 < p1 ? p1 : p0;
 
