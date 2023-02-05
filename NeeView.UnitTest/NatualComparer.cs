@@ -36,5 +36,14 @@ namespace NeeView.UnitTest
             var result = comp.Compare(a, b);
             Assert.True(result < 0);
         }
+
+        [Fact]
+        public void SameExplorer()
+        {
+            var nums = new List<string> { "!123", "_123", "123", "a", "A", "@", "！123", "＿123", "あ", " ", "　" };
+            var a0 = nums.OrderBy(x => x, new NativeNaturalComparer());
+            var a1 = nums.OrderBy(x => x, new NaturalComparer());
+            Assert.Equal(a0, a1);
+        }
     }
 }

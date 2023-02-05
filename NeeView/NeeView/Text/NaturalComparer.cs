@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NeeView.Interop;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -71,7 +72,8 @@ namespace NeeView.Text
                             return string.Compare(kx.ToString(), ky.ToString());
                         }
 
-                        return cx - cy;
+                        // 文字比較
+                        return NativeMethods.StrCmpLogicalW(cx.ToString(), cy.ToString());
                     }
 
                     // 数字文字で等しいというのはありえない
