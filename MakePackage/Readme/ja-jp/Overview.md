@@ -1,5 +1,3 @@
-# NeeView <VERSION/>
-
 <ANNOUNCE/>
 
 ## ソフトの概要

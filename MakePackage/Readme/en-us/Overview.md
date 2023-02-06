@@ -1,5 +1,3 @@
-# NeeView <VERSION/>
-
 <ANNOUNCE/>
 
 ## Overview

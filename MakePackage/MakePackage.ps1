@@ -16,7 +16,7 @@ trap { break }
 $ErrorActionPreference = "stop"
 
 # MSI作成時にMainComponents.wsxを更新する?
-$isCreateMainComponentsWxs = $true;
+$isCreateMainComponentsWxs = $false;
 
 #
 $product = 'NeeView'
@@ -194,7 +194,7 @@ function New-Readme($packageDir, $culture, $target)
 
 	Copy-Item "$readmeSource\Overview.md" $readmeDir
 	Copy-Item "$readmeSource\Canary.md" $readmeDir
-	Copy-Item "$readmeSource\Emvironment.md" $readmeDir
+	Copy-Item "$readmeSource\Environment.md" $readmeDir
 	Copy-Item "$readmeSource\Contact.md" $readmeDir
 
 	Copy-Item "$solutionDir\LICENSE.md" $readmeDir
@@ -222,31 +222,46 @@ function New-Readme($packageDir, $culture, $target)
 	# edit README.md
 	Replace-Content "$readmeDir\Overview.md" "<VERSION/>" "$postfix"
 	Replace-Content "$readmeDir\Overview.md" "<ANNOUNCE/>" "$announce"
-	Replace-Content "$readmeDir\Emvironment.md" "<VERSION/>" "$postfix"
+	Replace-Content "$readmeDir\Environment.md" "<VERSION/>" "$postfix"
 	Replace-Content "$readmeDir\Contact.md" "<VERSION/>" "$postfix"
 	Replace-Content "$readmeDir\ChangeLog.md" "<VERSION/>" "$postfix"
 
 	$readmeHtml = "README.html"
-	$readmeEnvironment = ""
-	$readmeLicenseAppendix = ""
 
 	if (-not ($culture -eq "en-us"))
 	{
 		$readmeHtml = "README.$culture.html"
 	}
 
-	if ($culture -eq "ja-jp")
-	{
-		$readmeLicenseAppendix = """$readmeDir\LICENSE.ja-jp.md"""
-	}
+	$inputs = @()
+	$inputs += "$readmeDir\Overview.md"
 
 	if ($target -ne ".appx")
 	{
-		$readmeEnvironment = """$readmeDir\Emvironment.md"""
+		$inputs += "$readmeDir\Environment.md"
 	}
 
+	$inputs += "$readmeDir\Contact.md"
+	$inputs += "$readmeDir\LICENSE.md"
+
+	if ($culture -eq "ja-jp")
+	{
+		$inputs += "$readmeDir\LICENSE.ja-jp.md"
+	}
+
+	$inputs += "$readmeDir\THIRDPARTY_LICENSES.md"
+	$inputs += "$readmeDir\NeeLaboratory.IO.Search_THIRDPARTY_LICENSES.md"
+	$inputs += "$readmeDir\ChangeLog.md"
+
+	$output = "$packageDir\$readmeHtml"
+	$css = "Readme\Style.html"
+	
 	# markdown to html by pandoc
-	pandoc -s -t html5 -o "$packageDir\$readmeHtml" -H "Readme\Style.html" "$readmeDir\Overview.md" $readmeEnvironment "$readmeDir\Contact.md" "$readmeDir\LICENSE.md" $readmeLicenseAppendix "$readmeDir\THIRDPARTY_LICENSES.md" "$readmeDir\NeeLaboratory.IO.Search_THIRDPARTY_LICENSES.md" "$readmeDir\ChangeLog.md"
+	pandoc -s -t html5 -o $output --metadata title="NeeView $postfix" -H $css $inputs
+	if ($? -ne $true)
+	{
+		throw "pandoc error"
+	}
 
 	Remove-Item $readmeDir -Recurse
 }
