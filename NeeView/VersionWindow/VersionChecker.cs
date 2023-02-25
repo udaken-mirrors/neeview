@@ -30,9 +30,9 @@ namespace NeeView
 
 
 #if DEBUG
-        private static string DownloadUri => "https://neelabo.bitbucket.io/NeeViewUpdateCheck.html";
+        public static string DownloadUri => "https://neelabo.bitbucket.io/NeeViewUpdateCheck.html";
 #else
-        private static string DownloadUri => "https://bitbucket.org/neelabo/neeview/downloads";
+        public static string DownloadUri => "https://bitbucket.org/neelabo/neeview/downloads";
 #endif
 
         public bool IsEnabled => Config.Current.System.IsNetworkEnabled && !Environment.IsAppxPackage && !Environment.IsCanaryPackage && !Environment.IsBetaPackage;
