@@ -157,7 +157,7 @@ namespace NeeView
             if (_client is null) throw new InvalidOperationException();
 
             var settings = Plugins.Select(e => e.ToSusiePluginSetting()).ToList();
-            _client.Initialize(Config.Current.Susie.SusiePluginPath, settings);
+            _client.Initialize(System.IO.Path.GetFullPath(Config.Current.Susie.SusiePluginPath), settings);
 
             var plugins = _client.GetPlugin(null);
             UnauthorizedPlugins = new List<SusiePluginInfo>();
