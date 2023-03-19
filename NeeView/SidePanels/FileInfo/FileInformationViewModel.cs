@@ -61,6 +61,7 @@ namespace NeeView
                 menu.Items.Add(CreateCheckMenuItem(Properties.Resources.InformationGroup_Camera, new Binding(nameof(InformationConfig.IsVisibleCamera)) { Source = Config.Current.Information }));
                 menu.Items.Add(CreateCheckMenuItem(Properties.Resources.InformationGroup_AdvancedPhoto, new Binding(nameof(InformationConfig.IsVisibleAdvancedPhoto)) { Source = Config.Current.Information }));
                 menu.Items.Add(CreateCheckMenuItem(Properties.Resources.InformationGroup_Gps, new Binding(nameof(InformationConfig.IsVisibleGps)) { Source = Config.Current.Information }));
+                menu.Items.Add(CreateCheckMenuItem(Properties.Resources.InformationGroup_Extras, new Binding(nameof(InformationConfig.IsVisibleExtras)) { Source = Config.Current.Information }));
                 return menu;
             }
         }

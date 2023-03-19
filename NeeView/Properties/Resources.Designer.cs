@@ -7673,6 +7673,15 @@ namespace NeeView.Properties {
         }
         
         /// <summary>
+        ///   View extras section に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string InformationConfig_IsVisibleExtras {
+            get {
+                return ResourceManager.GetString("InformationConfig.IsVisibleExtras", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   View file section に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string InformationConfig_IsVisibleFile {
@@ -7750,6 +7759,15 @@ namespace NeeView.Properties {
         public static string InformationGroup_Description {
             get {
                 return ResourceManager.GetString("InformationGroup.Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Extras に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string InformationGroup_Extras {
+            get {
+                return ResourceManager.GetString("InformationGroup.Extras", resourceCulture);
             }
         }
         

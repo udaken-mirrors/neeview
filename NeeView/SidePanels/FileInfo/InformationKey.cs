@@ -77,13 +77,24 @@ namespace NeeView
         GPSLatitude = (InformationCategory.Metadata << 24) | (InformationGroup.Gps << 16) | BitmapMetadataKey.GPSLatitude,
         GPSLongitude,
         GPSAltitude,
+
+        // Extras
+        ExtraValue = (InformationCategory.Metadata << 24) | (InformationGroup.Extras << 16) | 0,
     }
 
 
     public static class InformationKeyExtensions
     {
+        private static List<InformationKey> _defaultKeys;
+
+
         static InformationKeyExtensions()
         {
+            _defaultKeys = Enum.GetValues(typeof(InformationKey))
+                .Cast<InformationKey>()
+                .Where(e => !IsExtra(e))
+                .ToList();
+
 #if DEBUG
             // check
             foreach (InformationCategory category in Enum.GetValues(typeof(InformationKey)).Cast<InformationKey>().Select(e => e.ToInformationCategory()))
@@ -97,7 +108,7 @@ namespace NeeView
             }
 
             {
-                var a = Enum.GetValues(typeof(InformationKey)).Cast<InformationKey>().Where(e => e.ToInformationCategory() == InformationCategory.Metadata).Select(e => e.ToString());
+                var a = _defaultKeys.Where(e => e.ToInformationCategory() == InformationCategory.Metadata).Select(e => e.ToString());
                 var b = Enum.GetValues(typeof(BitmapMetadataKey)).Cast<BitmapMetadataKey>().Select(e => e.ToString());
                 Debug.Assert(!a.Except(b).Any());
                 Debug.Assert(!b.Except(a).Any());
@@ -105,6 +116,14 @@ namespace NeeView
 #endif
         }
 
+
+        public static IEnumerable<InformationKey> DefaultKeys => _defaultKeys;
+
+
+        public static bool IsExtra(this InformationKey key)
+        {
+            return ToInformationGroup(key) == InformationGroup.Extras;
+        }
 
         public static InformationCategory ToInformationCategory(this InformationKey key)
         {

@@ -24,6 +24,7 @@ namespace NeeView
             [InformationGroup.Camera] = true,
             [InformationGroup.AdvancedPhoto] = true,
             [InformationGroup.Gps] = true,
+            [InformationGroup.Extras] = false,
         };
 
         [JsonInclude, JsonPropertyName(nameof(DateTimeFormat))]
@@ -111,6 +112,13 @@ namespace NeeView
         {
             get { return IsVisibleGroup(InformationGroup.Gps); }
             set { SetVisibleGroup(InformationGroup.Gps, value); }
+        }
+
+        [PropertyMember]
+        public bool IsVisibleExtras
+        {
+            get { return IsVisibleGroup(InformationGroup.Extras); }
+            set { SetVisibleGroup(InformationGroup.Extras, value); }
         }
 
         #region HiddenParameters

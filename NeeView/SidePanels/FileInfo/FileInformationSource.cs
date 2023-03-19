@@ -52,11 +52,9 @@ namespace NeeView
         public GpsLocation? GpsLocation { get; private set; }
 
 
-
         public static List<FileInformationRecord> CreatePropertiesTemplate()
         {
-            return new List<FileInformationRecord>(Enum.GetValues(typeof(InformationKey))
-                .Cast<InformationKey>()
+            return new List<FileInformationRecord>(InformationKeyExtensions.DefaultKeys
                 .Select(e => new FileInformationRecord(e, null)));
         }
 
@@ -69,7 +67,9 @@ namespace NeeView
         public List<FileInformationRecord> CreateProperties()
         {
             var factory = new InformationValueFactory(new InformationValueSource(ViewContent?.Page, BitmapContent, Metadata));
-            return new List<FileInformationRecord>(Enum.GetValues(typeof(InformationKey)).Cast<InformationKey>().Select(e => new FileInformationRecord(e, factory.Create(e))));
+            var defaults = InformationKeyExtensions.DefaultKeys.Select(e => new FileInformationRecord(e, factory.Create(e)));
+            var extras = factory.GetExtraMap().Select(e => new FileInformationRecord(e.Key, InformationGroup.Extras, e.Value));
+            return defaults.Concat(extras).ToList();
         }
 
         private GpsLocation? CreateGpsLocate()

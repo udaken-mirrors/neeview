@@ -2329,3 +2329,5 @@ FailedToSaveDataDialog.Title=Failed to save data
 FailedToSaveDataDialog.Setting.Message=Failed to save setting file.
 FailedToSaveDataDialog.History.Message=Failed to save history file.
 FailedToSaveDataDialog.Bookmark.Message=Failed to save bookmark file.
+InformationConfig.IsVisibleExtras=View extras section
+InformationGroup.Extras=Extras

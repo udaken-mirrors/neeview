@@ -11,6 +11,19 @@ namespace NeeView.Media.Imaging.Metadata
     {
         private static readonly string _strElementPrefix = "/{str=";
 
+        private static readonly Dictionary<BitmapMetadataKey, string> _tagMap = new()
+        {
+            [BitmapMetadataKey.Title] = "Title",
+            [BitmapMetadataKey.Subject] = "Description",
+            [BitmapMetadataKey.Rating] = "",
+            [BitmapMetadataKey.Tags] = "",
+            [BitmapMetadataKey.Comments] = "Comment",
+            [BitmapMetadataKey.Author] = "Author",
+            [BitmapMetadataKey.DateTaken] = "Creation Time",
+            [BitmapMetadataKey.ApplicatoinName] = "Software",
+            [BitmapMetadataKey.Copyright] = "Copyright",
+        };
+
         private readonly BitmapMetadata _meta;
         private readonly Dictionary<string, List<string>> _textMap = new();
 
@@ -81,22 +94,32 @@ namespace NeeView.Media.Imaging.Metadata
         {
             return key switch
             {
-                BitmapMetadataKey.Title => GetPngText("Title"),
-                BitmapMetadataKey.Subject => GetPngText("Description"),
+                BitmapMetadataKey.Title => GetPngText(_tagMap[BitmapMetadataKey.Title]),
+                BitmapMetadataKey.Subject => GetPngText(_tagMap[BitmapMetadataKey.Subject]),
                 BitmapMetadataKey.Rating => null,// not supprted
                 BitmapMetadataKey.Tags => null,// not supported
-                BitmapMetadataKey.Comments => GetPngText("Comment"),
-                BitmapMetadataKey.Author => GetPngTextCollection("Author"),
+                BitmapMetadataKey.Comments => GetPngText(_tagMap[BitmapMetadataKey.Comments]),
+                BitmapMetadataKey.Author => GetPngTextCollection(_tagMap[BitmapMetadataKey.Author]),
                 BitmapMetadataKey.DateTaken => GetTime(),
-                BitmapMetadataKey.ApplicatoinName => GetPngText("Software"),
-                BitmapMetadataKey.Copyright => GetPngText("Copyright"),
+                BitmapMetadataKey.ApplicatoinName => GetPngText(_tagMap[BitmapMetadataKey.ApplicatoinName]),
+                BitmapMetadataKey.Copyright => GetPngText(_tagMap[BitmapMetadataKey.Copyright]),
                 // NOTE: PNGメタデータテキストの Warning, Disclaimer, Source は対応項目がない
                 _ => null,
             };
         }
 
+        public override Dictionary<string, object?> GetExtraValues()
+        {
+            var extras = _textMap.Keys.Cast<string>()
+                .Except(_tagMap.Values)
+                .ToDictionary(e => e, e => (object?)GetPngText(e));
+
+            return extras;
+        }
+
         private object? GetTime()
         {
+            // tIMEチャンクを優先
             if (_meta.GetQuery("/tIME") is BitmapMetadata time && false)
             {
                 var timeMap = new Dictionary<string, int>();
@@ -115,7 +138,7 @@ namespace NeeView.Media.Imaging.Metadata
                 return new DateTime(year, month, day, hour, minute, second, DateTimeKind.Utc).ToLocalTime();
             }
 
-            var creationTime = GetPngText("Creation Time");
+            var creationTime = GetPngText(_tagMap[BitmapMetadataKey.DateTaken]);
             if (creationTime != null)
             {
                 if (ExifDateTime.TryParse(creationTime, out var exifDateTime))

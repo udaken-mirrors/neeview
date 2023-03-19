@@ -11,6 +11,7 @@ namespace NeeView
         Camera,
         AdvancedPhoto,
         Gps,
+        Extras,
     }
 
     public enum InformationCategory
@@ -30,7 +31,7 @@ namespace NeeView
                     => InformationCategory.File,
                 InformationGroup.Image
                     => InformationCategory.Image,
-                InformationGroup.Description or InformationGroup.Origin or InformationGroup.Camera or InformationGroup.AdvancedPhoto or InformationGroup.Gps
+                InformationGroup.Description or InformationGroup.Origin or InformationGroup.Camera or InformationGroup.AdvancedPhoto or InformationGroup.Gps or InformationGroup.Extras
                     => InformationCategory.Metadata,
                 _
                     => throw new NotSupportedException(),

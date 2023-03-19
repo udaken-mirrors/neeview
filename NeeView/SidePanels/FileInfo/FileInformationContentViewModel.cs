@@ -9,7 +9,7 @@ namespace NeeView
 {
     public class FileInformationContentViewModel : BindableBase
     {
-        private readonly Dictionary<InformationKey, FileInformationRecord> _database;
+        private readonly MappedCollection<FileInforamtionKey, FileInformationRecord> _collection;
         private FileInformationSource? _source;
         private CollectionViewSource _collectionViewSource;
         private FileInformationRecord? _selectedItem;
@@ -18,10 +18,10 @@ namespace NeeView
 
         public FileInformationContentViewModel()
         {
-            _database = FileInformationSource.CreatePropertiesTemplate().ToDictionary(e => e.Key, e => e);
+            _collection = new MappedCollection<FileInforamtionKey, FileInformationRecord>(InformationKeyExtensions.DefaultKeys.Select(e => new FileInformationRecord(e, null)));
 
             _collectionViewSource = new CollectionViewSource();
-            _collectionViewSource.Source = _database.Values;
+            _collectionViewSource.Source = _collection.Collection;
             _collectionViewSource.GroupDescriptions.Add(new PropertyGroupDescription(nameof(FileInformationRecord.Group)) { Converter = new EnumToAliasNameConverter() });
             _collectionViewSource.Filter += CollectionViewSource_Filter;
 
@@ -92,6 +92,10 @@ namespace NeeView
                 case nameof(InformationConfig.IsVisibleGps):
                     UpdateFilter();
                     break;
+                case nameof(InformationConfig.IsVisibleExtras):
+                    UpdateDatabase();
+                    UpdateFilter();
+                    break;
                 case nameof(InformationConfig.DateTimeFormat):
                     UpdateFilter();
                     break;
@@ -102,13 +106,37 @@ namespace NeeView
         {
             if (_source?.Properties != null)
             {
-                foreach (var item in _source.Properties)
+                using (_collectionViewSource.DeferRefresh())
                 {
-                    _database[item.Key].Value = item.Value;
-                }
+                    // Clear extra values
+                    foreach (var item in _collection.Where(e => e.Key.IsExtra()))
+                    {
+                        item.Value = null;
+                    }
 
-                IsVisibleImage = _source.PictureInfo != null;
-                IsVisibleMetadata = _source.Metadata != null;
+                    foreach (var item in _source.Properties)
+                    {
+                        if (_collection.ContainsKey(item.Key))
+                        {
+                            // NOTE: UI高速化のため、表示値だけを変更
+                            _collection[item.Key].Value = item.Value;
+                        }
+                        else if (Config.Current.Information.IsVisibleGroup(InformationGroup.Extras))
+                        {
+                            var newItem = item.Clone();
+                            _collection.Add(newItem.Key, newItem);
+                        }
+                    }
+
+                    var removes = _collection.Where(e => e.Key.IsExtra() && e.Value is null).ToList();
+                    foreach (var item in removes)
+                    {
+                        _collection.Remove(item.Key);
+                    }
+
+                    IsVisibleImage = _source.PictureInfo != null;
+                    IsVisibleMetadata = _source.Metadata != null;
+                }
             }
         }
 

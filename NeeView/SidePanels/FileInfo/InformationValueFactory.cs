@@ -1,5 +1,6 @@
 ﻿using NeeView.Text;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace NeeView
@@ -22,6 +23,11 @@ namespace NeeView
                 InformationCategory.Metadata => _source.Metadata?.ElementAt(key.ToBitmapMetadataKey()),
                 _ => throw new NotSupportedException(),
             };
+        }
+
+        public Dictionary<string, object?> GetExtraMap()
+        {
+            return _source.Metadata?.ExtraMap ?? new();
         }
 
         private object? CreateInformationFileValue(InformationKey key)

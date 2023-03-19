@@ -15,18 +15,31 @@ namespace NeeView.Media.Imaging.Metadata
 
 
         private readonly Dictionary<BitmapMetadataKey, object?> _map;
+        private readonly Dictionary<string, object?> _extraMap;
+
 
         public BitmapMetadataDatabase()
         {
             _map = _emptyMap;
+            _extraMap = new();
             this.Format = "(Undefined)";
         }
 
         public BitmapMetadataDatabase(BitmapMetadata? meta)
         {
             var accessor = (meta != null) ? BitmapMetadataAccessorFactory.Create(meta) : null;
-            _map = accessor != null ? CreateMap(accessor) : _emptyMap;
-            this.Format = accessor?.GetFormat() ?? "(Unknown)";
+            if (accessor is null)
+            {
+                _map = _emptyMap;
+                _extraMap = new();
+                this.Format = "(Undefined)";
+            }
+            else
+            {
+                _map = CreateMap(accessor);
+                _extraMap = CreateExtraMap(accessor);
+                this.Format = accessor.GetFormat();
+            }
             this.IsOriantationEnabled = true;
         }
 
@@ -34,6 +47,7 @@ namespace NeeView.Media.Imaging.Metadata
         {
             var accessor = new MetadataExtractorAccessor(stream);
             _map = CreateMap(accessor);
+            _extraMap = CreateExtraMap(accessor);
             this.Format = accessor.GetFormat();
 
             // NOTE: 既定のフォーマット以外はすべてOrientation適用済として処理する。
@@ -75,8 +89,15 @@ namespace NeeView.Media.Imaging.Metadata
             return map;
         }
 
+        private static Dictionary<string, object?> CreateExtraMap(BitmapMetadataAccessor accessor)
+        {
+            return accessor.GetExtraValues();
+        }
+
 
         public object? ElementAt(BitmapMetadataKey key) => _map[key];
+
+        public Dictionary<string, object?> ExtraMap => _extraMap;
 
         #region IReadOnlyDictionary
 

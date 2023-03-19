@@ -7413,4 +7413,10 @@ nv.ShowToast(nv.Book.ViewPages[0].Path)</value>
   <data name="FailedToSaveDataDialog.Bookmark.Message" xml:space="preserve">
     <value>Failed to save bookmark file.</value>
   </data>
+  <data name="InformationConfig.IsVisibleExtras" xml:space="preserve">
+    <value>View extras section</value>
+  </data>
+  <data name="InformationGroup.Extras" xml:space="preserve">
+    <value>Extras</value>
+  </data>
 </root>
