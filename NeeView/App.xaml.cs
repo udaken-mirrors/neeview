@@ -220,7 +220,11 @@ namespace NeeView
                 _isSplashScreenVisibled = true;
                 var resourceName = "Resources/SplashScreen.png";
                 var splashScreen = new SplashScreen(resourceName);
+#if DEBUG
+                splashScreen.Show(true);
+#else
                 splashScreen.Show(true, true);
+#endif
                 Debug.WriteLine($"App.ShowSplashScreen: {Stopwatch.ElapsedMilliseconds}ms");
             }
         }
