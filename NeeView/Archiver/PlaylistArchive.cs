@@ -89,10 +89,9 @@ namespace NeeView
 
             var innterEntry = await ArchiveEntryUtility.CreateAsync(targetPath, token);
 
-            var entry = new ArchiveEntry()
+            var entry = new ArchiveEntry(this)
             {
                 IsValid = true,
-                Archiver = this,
                 Id = id,
                 RawEntryName = item.Name,
                 Link = targetPath,

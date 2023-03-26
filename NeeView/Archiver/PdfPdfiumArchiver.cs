@@ -54,10 +54,9 @@ namespace NeeView
                 {
                     token.ThrowIfCancellationRequested();
 
-                    list.Add(new ArchiveEntry()
+                    list.Add(new ArchiveEntry(this)
                     {
                         IsValid = true,
-                        Archiver = this,
                         Id = id,
                         Instance = null,
                         RawEntryName = $"{id + 1:000}.png",

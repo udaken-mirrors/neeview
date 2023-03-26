@@ -50,12 +50,8 @@ namespace NeeView
         {
             token.ThrowIfCancellationRequested();
 
-            var plugin = GetPlugin();
-            if (plugin == null) throw new NotSupportedException($"not archive: {Path}");
-
-            var entries = plugin.GetArchiveEntries(Path);
-            if (entries == null) throw new NotSupportedException();
-
+            var plugin = GetPlugin() ?? throw new NotSupportedException($"not archive: {Path}");
+            var entries = plugin.GetArchiveEntries(Path) ?? throw new NotSupportedException();
             var list = new List<ArchiveEntry>();
             var directories = new List<ArchiveEntry>();
 
@@ -65,10 +61,9 @@ namespace NeeView
 
                 var entry = entries[id];
 
-                var archiveEntry = new ArchiveEntry()
+                var archiveEntry = new ArchiveEntry(this)
                 {
                     IsValid = true,
-                    Archiver = this,
                     Id = id,
                     RawEntryName = (entry.Path.TrimEnd('\\', '/') + "\\" + entry.FileName).TrimStart('\\', '/'),
                     Length = entry.FileSize,

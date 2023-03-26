@@ -338,7 +338,7 @@ namespace NeeView
         {
             if (value is ArchiveEntry entry)
             {
-                var directory = entry.RootArchiver?.SystemPath ?? LoosePath.GetDirectoryName(entry.SystemPath);
+                var directory = entry.RootArchiver.SystemPath;
                 return SidePanelProfile.GetDecoratePlaceName(directory);
             }
 

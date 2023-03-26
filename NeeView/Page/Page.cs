@@ -304,14 +304,12 @@ namespace NeeView
         // ファイルの場所を取得
         public string? GetFilePlace()
         {
-            return Entry.GetFileSystemPath() ?? Entry.Archiver?.GetPlace();
+            return Entry.GetFileSystemPath() ?? Entry.Archiver.GetPlace();
         }
 
         // フォルダーを開く、で取得するパス
         public string? GetFolderOpenPlace()
         {
-            Debug.Assert(Entry?.Archiver != null);
-
             if (Entry.Archiver is FolderArchive)
             {
                 return GetFilePlace();
@@ -325,7 +323,6 @@ namespace NeeView
         // フォルダーの場所を取得
         public string GetFolderPlace()
         {
-            Debug.Assert(Entry?.Archiver != null);
             return Entry.Archiver.GetSourceFileSystemPath();
         }
 

@@ -50,7 +50,7 @@ namespace NeeView
                 case InformationKey.ArchivePath:
                     return page?.GetFolderPlace();
                 case InformationKey.Archiver:
-                    return page?.Entry?.Archiver;
+                    return page?.Entry.Archiver;
                 default:
                     throw new NotSupportedException();
             }

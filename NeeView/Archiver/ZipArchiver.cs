@@ -77,10 +77,9 @@ namespace NeeView
 
                         var entry = archiver.Entries[id];
 
-                        var archiveEntry = new ArchiveEntry()
+                        var archiveEntry = new ArchiveEntry(this)
                         {
                             IsValid = true,
-                            Archiver = this,
                             Id = id,
                             Instance = null,
                             RawEntryName = entry.FullName,

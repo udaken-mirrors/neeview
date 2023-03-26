@@ -1,6 +1,7 @@
 ﻿using NeeView.IO;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -15,21 +16,19 @@ namespace NeeView
     /// </summary>
     public class FolderArchive : Archiver
     {
-        #region Constructors
+        /// <summary>
+        /// ファイル単体のArchiveEntry用アーカイブ
+        /// </summary>
+        public static FolderArchive StaticArchiver { get; } = new FolderArchive("", null);
+
 
         public FolderArchive(string path, ArchiveEntry? source) : base(path, source)
         {
         }
 
-        #endregion
-
-        #region Properties
 
         public override bool IsFileSystem { get; } = true;
 
-        #endregion
-
-        #region Methods
 
         public override string ToString()
         {
@@ -45,6 +44,13 @@ namespace NeeView
         // リスト取得
         protected override async Task<List<ArchiveEntry>> GetEntriesInnerAsync(CancellationToken token)
         {
+            // Pathがない場合は汎用アーカイブなのでリスト作成は行わない
+            if (string.IsNullOrEmpty(Path))
+            {
+                Debug.Fail("If there is no Path, it is a general-purpose archive and does not create a list.");
+                return new List<ArchiveEntry>();
+            }
+
             token.ThrowIfCancellationRequested();
 
             int prefixLen = Path.Length;
@@ -64,10 +70,9 @@ namespace NeeView
                 var fileInfo = info as FileInfo;
                 var isDirectory = info.Attributes.HasFlag(FileAttributes.Directory);
 
-                var entry = new ArchiveEntry()
+                var entry = new ArchiveEntry(this)
                 {
                     IsValid = true,
-                    Archiver = this,
                     Id = list.Count,
                     RawEntryName = name,
                     Length = isDirectory ? -1 : fileInfo?.Length ?? 0,
@@ -112,7 +117,5 @@ namespace NeeView
         {
             File.Copy(GetFileSystemPath(entry), exportFileName, isOverwrite);
         }
-
-        #endregion
     }
 }

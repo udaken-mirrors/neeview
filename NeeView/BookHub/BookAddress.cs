@@ -134,11 +134,9 @@ namespace NeeView
                                 this.TargetPath = query.GetParent();
                                 break;
                             case ArchiveEntryCollectionMode.IncludeSubDirectories:
-                                if (entry.Archiver is null) throw new InvalidOperationException();
                                 this.TargetPath = new QueryPath(entry.Archiver.SystemPath);
                                 break;
                             case ArchiveEntryCollectionMode.IncludeSubArchives:
-                                if (entry.RootArchiver is null) throw new InvalidOperationException();
                                 this.TargetPath = new QueryPath(entry.RootArchiver.SystemPath);
                                 break;
                             default:
@@ -179,12 +177,10 @@ namespace NeeView
             {
                 if (mode == ArchiveEntryCollectionMode.IncludeSubArchives)
                 {
-                    if (entry.Archiver?.RootArchiver is null) throw new InvalidOperationException();
                     return new QueryPath(entry.Archiver.RootArchiver.SystemPath).GetParent();
                 }
                 else if (mode == ArchiveEntryCollectionMode.IncludeSubDirectories)
                 {
-                    if (entry.Archiver is null) throw new InvalidOperationException();
                     if (entry.IsArchive())
                     {
                         return new QueryPath(entry.Archiver.SystemPath);

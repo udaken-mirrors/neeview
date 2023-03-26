@@ -1,8 +1,5 @@
-﻿using NeeView.Collections.Generic;
-using NeeView.IO;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -18,7 +15,18 @@ namespace NeeView
         /// <summary>
         /// Emptyインスタンス
         /// </summary>
-        public static ArchiveEntry Empty { get; } = new ArchiveEntry() { IsEmpty = true };
+        public static ArchiveEntry Empty { get; } = new ArchiveEntry(FolderArchive.StaticArchiver) { IsEmpty = true };
+
+
+        /// <summary>
+        /// コンストラクタ
+        /// </summary>
+        /// <param name="archiver">所属アーカイバ</param>
+        public ArchiveEntry(Archiver archiver)
+        {
+            Archiver = archiver;
+        }
+
 
         /// <summary>
         ///  Emptyインスタンス？
@@ -27,11 +35,9 @@ namespace NeeView
 
 
         /// <summary>
-        /// 所属アーカイバー.
-        /// nullの場合、このエントリはファイルパスを示す
+        /// 所属アーカイバ
         /// </summary>
-        // TODO: ArchiveEntry.Archiver is not null
-        public Archiver? Archiver { get; set; }
+        public Archiver Archiver { get; private set; }
 
         /// <summary>
         /// アーカイブ内登録番号
@@ -105,19 +111,19 @@ namespace NeeView
         /// <summary>
         /// エントリのフルネーム
         /// </summary>
-        public string EntryFullName => LoosePath.Combine(Archiver?.SystemPath, EntryName);
+        public string EntryFullName => LoosePath.Combine(Archiver.SystemPath, EntryName);
 
         /// <summary>
         /// ルートアーカイバー
         /// </summary>
         /// a.zip
         // TODO: ArchiveEntry.RootArchiver is not null
-        public Archiver? RootArchiver => Archiver?.RootArchiver;
+        public Archiver RootArchiver => Archiver.RootArchiver;
 
         /// <summary>
         /// 所属名
         /// </summary>
-        public string RootArchiverName => RootArchiver?.EntryName ?? LoosePath.GetFileName(LoosePath.GetDirectoryName(EntryName));
+        public string RootArchiverName => RootArchiver.EntryName;
 
         /// <summary>
         /// エクスプローラーから指定可能なパス
@@ -141,7 +147,7 @@ namespace NeeView
         /// 識別名
         /// アーカイブ内では重複名があるので登録番号を含めたユニークな名前にする
         /// </summary>
-        public string Ident => LoosePath.Combine(Archiver?.Ident, $"{Id}.{EntryName}");
+        public string Ident => LoosePath.Combine(Archiver.Ident, $"{Id}.{EntryName}");
 
         /// <summary>
         /// ファイルサイズ。
@@ -174,7 +180,7 @@ namespace NeeView
         /// <summary>
         /// ファイルシステム所属判定
         /// </summary>
-        public bool IsFileSystem => Archiver == null || Archiver.IsFileSystemEntry(this);
+        public bool IsFileSystem => Archiver.IsFileSystemEntry(this);
 
         /// <summary>
         /// 拡張子による画像ファイル判定無効
@@ -198,9 +204,7 @@ namespace NeeView
         /// <returns>パス。圧縮ファイルの場合はnull</returns>
         public string? GetFileSystemPath()
         {
-            return Archiver != null
-                ? Archiver.GetFileSystemPath(this)
-                : EntryName;
+            return Archiver.GetFileSystemPath(this);
         }
 
         /// <summary>
@@ -209,9 +213,7 @@ namespace NeeView
         /// <returns>Stream</returns>
         public Stream OpenEntry()
         {
-            return Archiver != null
-                ? Archiver.OpenStream(this)
-                : new FileStream(Link ?? EntryName, FileMode.Open, FileAccess.Read);
+            return Archiver.OpenStream(this);
         }
 
         /// <summary>
@@ -223,14 +225,7 @@ namespace NeeView
         {
             if (exportFileName is null) throw new ArgumentNullException(nameof(exportFileName));
 
-            if (Archiver != null)
-            {
-                Archiver.ExtractToFile(this, exportFileName, isOverwrite);
-            }
-            else
-            {
-                File.Copy(EntryName, exportFileName, isOverwrite);
-            }
+            Archiver.ExtractToFile(this, exportFileName, isOverwrite);
         }
 
 
@@ -314,90 +309,6 @@ namespace NeeView
         public override string? ToString()
         {
             return string.IsNullOrEmpty(EntryName) ? base.ToString() : EntryName;
-        }
-
-
-
-        /// <summary>
-        /// ArchiveEntry生成。
-        /// 簡易生成のため、アーカイブパス等は有効なインスタンスを生成できない。 
-        /// </summary>
-        public static ArchiveEntry Create(string path)
-        {
-            return Create(new QueryPath(path));
-        }
-
-        /// <summary>
-        /// ArchiveEntry生成。
-        /// 簡易生成のため、アーカイブパス等は有効なインスタンスを生成できない。 
-        /// <para>
-        /// 完全な作成には <seealso cref="ArchiveEntryUtility.CreateAsync"/> を使用する。
-        /// </para>
-        /// </summary>
-        public static ArchiveEntry Create(QueryPath query)
-        {
-            var entry = new ArchiveEntry();
-
-            entry.RawEntryName = query.SimplePath;
-
-            switch (query.Scheme)
-            {
-                case QueryScheme.File:
-                    try
-                    {
-                        var directoryInfo = new DirectoryInfo(query.SimplePath);
-                        if (directoryInfo.Exists)
-                        {
-                            entry.Length = -1;
-                            entry.CreationTime = directoryInfo.CreationTime;
-                            entry.LastWriteTime = directoryInfo.LastWriteTime;
-                            entry.IsValid = true;
-                            return entry;
-                        }
-                        var fileInfo = new FileInfo(query.SimplePath);
-                        if (fileInfo.Exists)
-                        {
-                            entry.Length = fileInfo.Length;
-                            entry.CreationTime = fileInfo.CreationTime;
-                            entry.LastWriteTime = fileInfo.LastWriteTime;
-                            entry.IsValid = true;
-                            if (FileShortcut.IsShortcut(fileInfo.Name))
-                            {
-                                var shortcut = new FileShortcut(fileInfo);
-                                if (shortcut.TryGetTarget(out var target))
-                                {
-                                    if (target.Attributes.HasFlag(FileAttributes.Directory))
-                                    {
-                                        var info = (DirectoryInfo)target;
-                                        entry.Link = info.FullName;
-                                        entry.Length = -1;
-                                        entry.CreationTime = info.CreationTime;
-                                        entry.LastWriteTime = info.LastWriteTime;
-                                    }
-                                    else
-                                    {
-                                        var info = (FileInfo)target;
-                                        entry.Link = info.FullName;
-                                        entry.Length = info.Length;
-                                        entry.CreationTime = info.CreationTime;
-                                        entry.LastWriteTime = info.LastWriteTime;
-                                    }
-                                }
-                            }
-                            return entry;
-                        }
-                    }
-                    catch
-                    {
-                        // アーカイブパス等、ファイル名に使用できない文字が含まれている場合がある
-                    }
-                    break;
-            }
-
-            Debug.WriteLine("ArchiveEntry.Create: Not complete.");
-            entry.RawEntryName = query.SimplePath;
-            entry.IsValid = false;
-            return entry;
         }
     }
 }

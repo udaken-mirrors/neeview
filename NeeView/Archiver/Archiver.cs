@@ -41,13 +41,17 @@ namespace NeeView
                 CreationTime = source.CreationTime;
                 LastWriteTime = source.LastWriteTime;
                 Length = source.Length;
-
                 this.Source = source;
+            }
+            else if (string.IsNullOrEmpty(Path))
+            {
+                // for StaticArchive
+                EntryName = "";
             }
             else
             {
+                // ファイルシステムとみなし情報を取得する
                 EntryName = LoosePath.GetFileName(Path);
-
                 var directoryInfo = new DirectoryInfo(Path);
                 if (directoryInfo.Exists)
                 {
@@ -127,7 +131,7 @@ namespace NeeView
         /// <summary>
         /// ルートアーカイバー取得
         /// </summary>
-        public Archiver? RootArchiver => IsRoot ? this : Parent?.RootArchiver;
+        public Archiver RootArchiver => Parent == null ? this : Parent.RootArchiver;
 
         /// <summary>
         /// エクスプローラーで指定可能な絶対パス
@@ -315,10 +319,9 @@ namespace NeeView
             tree.AddRange(entries);
 
             var directories = tree.GetDirectories()
-                .Select(e => new ArchiveEntry()
+                .Select(e => new ArchiveEntry(this)
                 {
                     IsValid = true,
-                    Archiver = this,
                     Id = -1,
                     Instance = null,
                     RawEntryName = e.Path,

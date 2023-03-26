@@ -25,10 +25,9 @@ namespace NeeView
         {
             var fileInfo = new FileInfo(this.Path);
 
-            var entry = new ArchiveEntry()
+            var entry = new ArchiveEntry(this)
             {
                 IsValid = true,
-                Archiver = this,
                 Id = 0,
                 Instance = null,
                 RawEntryName = LoosePath.GetFileName(this.EntryName),

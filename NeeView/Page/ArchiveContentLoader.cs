@@ -39,7 +39,7 @@ namespace NeeView
                 catch (Exception ex)
                 {
                     Debug.WriteLine($"ArchiveContent.Entry: {ex.Message}");
-                    _content.SetEntry(ArchiveEntry.Create(query.SimplePath));
+                    _content.SetEntry(ArchiveEntryTools.Create(query.SimplePath));
                     _content.Thumbnail.Initialize(null);
                 }
             }
@@ -126,7 +126,7 @@ namespace NeeView
         /// </summary>
         private async Task<ThumbnailPicture?> LoadPictureAsync(CancellationToken token)
         {
-            if (_content.Entry.Archiver != null && _content.Entry.Archiver is MediaArchiver)
+            if (_content.Entry.Archiver is MediaArchiver)
             {
                 return await LoadMediaPictureAsync(_content.Entry, token);
             }
