@@ -90,7 +90,7 @@ namespace NeeView
             {
                 if (rootEntry.IsDirectory)
                 {
-                    rootArchiver = await ArchiverManager.Current.CreateArchiverAsync(ArchiveEntryTools.Create(Path), _ignoreCache, token);
+                    rootArchiver = await ArchiverManager.Current.CreateArchiverAsync(StaticFolderArchive.Default.CreateArchiveEntry(Path), _ignoreCache, token);
                     rootArchiverPath = "";
                 }
                 else

@@ -404,62 +404,78 @@ namespace NeeView
         // 現在表示しているページのファイル削除可能？
         public bool CanDeleteFile()
         {
-            return CanDeleteFile(Book?.Viewer.GetViewPage());
+            var page = Book?.Viewer.GetViewPage();
+            if (page is null) return false;
+
+            return CanDeleteFile(new List<Page>() { page });
         }
 
         // 現在表示しているページのファイルを削除する
         public async Task DeleteFileAsync()
         {
-            await DeleteFileAsync(Book?.Viewer.GetViewPage());
+            var page = Book?.Viewer.GetViewPage();
+            if (page is null) return;
+
+            await DeleteFileAsync(new List<Page>() { page });
         }
 
         // 指定ページのファル削除可能？
-        public bool CanDeleteFile(Page? page)
+        public bool CanDeleteFile(List<Page> pages)
         {
-            if (page is null) return false;
+            if (!pages.Any()) return false;
 
-            return Config.Current.System.IsFileWriteAccessEnabled && PageFileIO.CanRemovePage(page);
-        }
-
-        // 指定ページのファルを削除する
-        public async Task DeleteFileAsync(Page? page)
-        {
-            if (page is null) return;
-
-            var book = Book;
-            if (book is null) return;
-
-            if (CanDeleteFile(page))
-            {
-                var isSuccess = await PageFileIO.RemovePageAsync(page);
-                if (isSuccess)
-                {
-                    book.Control.RequestRemove(this, page);
-                }
-            }
+            return Config.Current.System.IsFileWriteAccessEnabled && PageFileIO.CanDeletePage(pages);
         }
 
         // 指定ページのファイルを削除する
         public async Task DeleteFileAsync(List<Page> pages)
         {
-            var removes = pages.Where(e => CanDeleteFile(e)).ToList();
-            if (removes.Any())
+            var isCompletely = pages.Any(e => !e.Entry.Archiver.IsFileSystem);
+            if (Config.Current.System.IsRemoveConfirmed || isCompletely)
             {
-                if (removes.Count == 1)
+                var dialog = await PageFileIO.CreateDeleteConfirmDialog(pages, isCompletely);
+                if (!dialog.ShowDialog().IsPossible)
                 {
-                    await DeleteFileAsync(removes.First());
                     return;
                 }
-
-                await PageFileIO.RemovePageAsync(removes);
-                ValidateRemoveFile(removes);
             }
+
+            try
+            {
+                await PageFileIO.DeletePageAsync(pages);
+            }
+            catch (Exception ex)
+            {
+                new MessageDialog($"{Resources.Word_Cause}: {ex.Message}", Resources.FileDeleteErrorDialog_Title).ShowDialog();
+            }
+
+            ReLoad();
         }
 
-        // 消えたファイルのページを削除
+        /// <summary>
+        /// ブックの再読み込み
+        /// </summary>
+        public void ReLoad()
+        {
+            var book = Book;
+            if (book is null) return;
+
+            var viewPage = book.Viewer.GetViewPage();
+            var page = book.Pages.GetValidPage(viewPage);
+            BookHub.Current.RequestReLoad(this, page?.EntryName);
+        }
+
+        /// <summary>
+        /// 削除された可能性のあるページの処理
+        /// </summary>
+        /// <remarks>
+        /// 主にドラッグ処理の後始末
+        /// </remarks>
+        /// <param name="pages">削除された可能性のあるページ</param>
         public void ValidateRemoveFile(IEnumerable<Page> pages)
         {
-            Book?.Control.RequestRemove(this, pages.Where(e => PageFileIO.IsPageRemoved(e)).ToList());
+            if (pages.All(e => e.Entry.Exists())) return;
+            ReLoad();
         }
 
         #endregion
@@ -485,9 +501,10 @@ namespace NeeView
                 {
                     await BookshelfFolderList.Current.RemoveAsync(item);
                 }
-                else
+                else if (FileIO.ExistsPath(bookAddress))
                 {
-                    await FileIO.RemoveFileAsync(bookAddress, Resources.FileDeleteBookDialog_Title, null);
+                    var entry = StaticFolderArchive.Default.CreateArchiveEntry(bookAddress);
+                    await ConfirmFileIO.DeleteAsync(entry, Resources.FileDeleteBookDialog_Title, null);
                 }
             }
         }
@@ -761,11 +778,11 @@ namespace NeeView
             dialog.Commands.Add(noneCommand);
             var result = dialog.ShowDialog(App.Current.MainWindow);
 
-            if (result == nextCommand)
+            if (result.Command == nextCommand)
             {
                 PageEndAction_NextBook(sender, e);
             }
-            else if (result == loopCommand)
+            else if (result.Command == loopCommand)
             {
                 PageEndAction_Loop(sender, e);
             }

@@ -462,13 +462,21 @@ namespace NeeView
         /// </summary>
         public void RequestReLoad(object sender)
         {
+            RequestReLoad(sender, null);
+        }
+
+        /// <summary>
+        /// リクエスト：再読込
+        /// </summary>
+        public void RequestReLoad(object sender, string? start)
+        {
             if (_disposedValue) return;
 
             if (_isLoading || Address == null) return;
 
             var book = _book;
             BookLoadOption options = book != null ? (book.LoadOption & BookLoadOption.KeepHistoryOrder) | BookLoadOption.Resume : BookLoadOption.None;
-            RequestLoad(sender, Address, null, options | BookLoadOption.IsBook | BookLoadOption.IgnoreCache, true);
+            RequestLoad(sender, Address, start, options | BookLoadOption.IsBook | BookLoadOption.IgnoreCache, true);
         }
 
         // 上の階層に移動可能？
@@ -699,7 +707,7 @@ namespace NeeView
                 var result = dialog.ShowDialog();
                 token.ThrowIfCancellationRequested();
 
-                if (result == UICommands.Yes)
+                if (result.Command == UICommands.Yes)
                 {
                     RequestReloadRecursive(sender, book);
                 }

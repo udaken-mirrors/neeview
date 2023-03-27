@@ -106,7 +106,6 @@ namespace NeeView
             // ページ名が指定されているなら入力そのまま
             if (entryName != null)
             {
-                Debug.Assert(!option.HasFlag(BookLoadOption.IsBook));
                 this.TargetPath = query;
                 this.EntryName = entryName;
             }

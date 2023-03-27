@@ -42,15 +42,16 @@ namespace NeeView
                     node.Children?.Add(child);
                 }
 
-                if (!entry.IsDirectory)
-                {
-                    child.HasChild = true;
-                }
-
                 child.CreationTime = entry.CreationTime;
                 child.LastWriteTime = entry.LastWriteTime;
 
                 node = child;
+            }
+
+            if (entry.IsDirectory)
+            {
+                Debug.Assert(entry.EntryName == ArchiveEntry.NormalizeEntryName(node.Path));
+                node.ArchiveEntry = entry;
             }
         }
 
@@ -65,7 +66,7 @@ namespace NeeView
             Debug.WriteLine("");
             foreach (var dir in GetDirectories())
             {
-                Debug.WriteLine($"Directory: {dir.Path}: {dir.HasChild}");
+                Debug.WriteLine($"Directory: {dir.Path}: ({dir.Children.Count})");
             }
         }
     }

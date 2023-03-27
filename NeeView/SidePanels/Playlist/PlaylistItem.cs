@@ -64,7 +64,7 @@ namespace NeeView
             {
                 if (_place is null)
                 {
-                    if (FileIO.Exists(Path))
+                    if (FileIO.ExistsPath(Path))
                     {
                         _place = LoosePath.GetDirectoryName(Path);
                     }

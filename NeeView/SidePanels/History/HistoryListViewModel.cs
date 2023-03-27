@@ -107,7 +107,7 @@ namespace NeeView
                 dialog.Commands.Add(UICommands.Delete);
                 dialog.Commands.Add(UICommands.Cancel);
                 var answer = dialog.ShowDialog();
-                if (answer != UICommands.Delete) return;
+                if (answer.Command != UICommands.Delete) return;
             }
 
             BookHistoryCollection.Current.Clear();

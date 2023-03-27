@@ -19,28 +19,22 @@ namespace NeeView
         {
             Parent = parent;
             Name = name;
-
-            if (Parent != null)
-            {
-                Parent.HasChild = true;
-            }
         }
 
         public string Name { get; private set; }
 
         public DateTime CreationTime { get; set; }
         public DateTime LastWriteTime { get; set; }
-
-        /// <summary>
-        /// 小要素があるかのフラグ。
-        /// 空フォルダー判定に使用
-        /// </summary>
-        public bool HasChild { get; set; }
-
         public ArchiveEntryTreeNode? Parent { get; private set; }
         public List<ArchiveEntryTreeNode> Children { get; private set; } = new List<ArchiveEntryTreeNode>();
 
         public string Path => LoosePath.Combine(Parent?.Path, Name);
+
+        /// <summary>
+        /// ArchiveEntryが存在する場合の入れ物
+        /// </summary>
+        public ArchiveEntry? ArchiveEntry { get; set; }
+
 
         public IEnumerator<ArchiveEntryTreeNode> GetEnumerator()
         {

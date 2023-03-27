@@ -267,43 +267,6 @@ namespace NeeView
             }
         }
 
-        // ページ削除
-        public void RequestRemove(object sender, Page page)
-        {
-            RequestRemove(sender, new List<Page>() { page });
-        }
-
-        // ページ削除
-        public void RequestRemove(object sender, List<Page> pages)
-        {
-            if (pages == null) return;
-            if (pages.Count == 0) return;
-
-            var command = new BookCommandAction(sender, Execute, 3);
-            _commandEngine.Enqueue(command);
-
-            async Task Execute(object? s, CancellationToken token)
-            {
-                __CommandWriteLine($"Remove: Count={pages.Count}");
-
-                foreach (var page in pages)
-                {
-                    page.IsDeleted = true;
-                }
-
-                var viewPage = _viewer.GetViewPage();
-                var next = viewPage != null ?_book.Pages.GetValidPage(viewPage) : null;
-
-                _book.Pages.Remove(pages);
-
-                var index = next != null ? next.Index : 0;
-                RequestSetPosition(sender, new PagePosition(index, 0), 1);
-
-                await Task.CompletedTask;
-            }
-        }
-
-
         #region IDisposable Support
         private bool _disposedValue = false;
 

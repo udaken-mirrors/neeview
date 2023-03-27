@@ -5791,9 +5791,6 @@ $Name 为 2 页面显示时的主要页面 (页面编号较小者) 。</value>
   <data name="SystemConfig.ExternalAppCollection" xml:space="preserve">
     <value>外部应用程序行表</value>
   </data>
-  <data name="SystemConfig.IsFileWriteAccessEnabled" xml:space="preserve">
-    <value>启用档案操作</value>
-  </data>
   <data name="SystemConfig.IsHiddenFileVisibled" xml:space="preserve">
     <value>显示隐藏档案</value>
   </data>
@@ -7372,5 +7369,8 @@ nv.ShowToast(nv.Book.ViewPages[0].Path)</value>
   </data>
   <data name="ZipArchiveConfig.SupportFileTypes.Remarks" xml:space="preserve">
     <value>仅支持 ZIP 格式。</value>
+  </data>
+  <data name="SystemConfig.IsFileWriteAccessEnabled" xml:space="preserve">
+    <value>允许档案操作</value>
   </data>
 </root>

@@ -280,7 +280,7 @@ namespace NeeView
             }
 
             // remove
-            FileIO.RemoveFile(result.path);
+            FileIO.DeleteFile(result.path);
             if (Config.Current.PagemarkLegacy != null)
             {
                 Config.Current.PagemarkLegacy.PagemarkFilePath = "";

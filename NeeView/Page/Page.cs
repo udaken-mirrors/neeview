@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Controls;
 using System.Windows;
 using NeeLaboratory.ComponentModel;
+using System.Windows.Media.Effects;
 
 namespace NeeView
 {
@@ -62,7 +63,7 @@ namespace NeeView
         public Page(string bookPrefix, PageContent content)
         {
             BookPrefix = bookPrefix;
-            
+
             _content = content;
             _disposables.Add(_content.SubscribePropertyChanged(nameof(PageContent.Entry),
                 (s, e) => RaisePropertyChanged(nameof(Entry))));
@@ -185,9 +186,9 @@ namespace NeeView
         }
 
         /// <summary>
-        /// 削除準備フラグ
+        /// 削除済フラグ
         /// </summary>
-        public bool IsDeleted { get; set; }
+        public bool IsDeleted => Entry.IsDeleted;
 
 
         #region IDisposable Support
@@ -291,9 +292,9 @@ namespace NeeView
         }
 
         // ページ名：プレフィックスを除いたフルパス
-        public string? GetSmartFullName()
+        public string GetSmartFullName()
         {
-            return EntrySmartName?.Replace("\\", " > ");
+            return EntrySmartName.Replace("\\", " > ");
         }
 
         public string GetSmartDirectoryName()
@@ -302,13 +303,13 @@ namespace NeeView
         }
 
         // ファイルの場所を取得
-        public string? GetFilePlace()
+        public string GetFilePlace()
         {
             return Entry.GetFileSystemPath() ?? Entry.Archiver.GetPlace();
         }
 
         // フォルダーを開く、で取得するパス
-        public string? GetFolderOpenPlace()
+        public string GetFolderOpenPlace()
         {
             if (Entry.Archiver is FolderArchive)
             {
@@ -342,6 +343,44 @@ namespace NeeView
             {
                 await initializer.InitializeEntryAsync(token);
             }
+        }
+
+        /// <summary>
+        /// can delete?
+        /// </summary>
+        public bool CanDelete()
+        {
+            return Entry.CanDelete();
+        }
+
+        /// <summary>
+        /// delete
+        /// </summary>
+        public async Task<bool> DeleteAsync()
+        {
+            return await Entry.DeleteAsync();
+        }
+
+        /// <summary>
+        /// Create Page visual for Dialog thumbnail.
+        /// </summary>
+        /// <returns>Image</returns>
+        public async Task<Image> CreatePageVisualAsync()
+        {
+            var imageSource = await LoadThumbnailAsync(CancellationToken.None);
+
+            var image = new Image();
+            image.Source = imageSource;
+            image.Effect = new DropShadowEffect()
+            {
+                Opacity = 0.5,
+                ShadowDepth = 2,
+                RenderingBias = RenderingBias.Quality
+            };
+            image.MaxWidth = 96;
+            image.MaxHeight = 96;
+
+            return image;
         }
     }
 

@@ -43,7 +43,7 @@ namespace NeeView
                 var dialog = new MessageDialog(Properties.Resources.ExternalProcess_ConfirmBrowserDialog_Message, Properties.Resources.ExternalProcess_ConfirmBrowserDialog_Title);
                 dialog.Commands.AddRange(UICommands.OKCancel);
                 var result = dialog.ShowDialog();
-                if (result?.IsPositibe != true)
+                if (!result.IsPossible)
                 {
                     return;
                 }

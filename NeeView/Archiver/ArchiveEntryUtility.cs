@@ -24,7 +24,7 @@ namespace NeeView
 
             if (File.Exists(path) || Directory.Exists(path))
             {
-                return ArchiveEntryTools.Create(path);
+                return StaticFolderArchive.Default.CreateArchiveEntry(path);
             }
             else
             {
@@ -39,7 +39,7 @@ namespace NeeView
 
                         if (File.Exists(archivePath))
                         {
-                            var archiver = await ArchiverManager.Current.CreateArchiverAsync(ArchiveEntryTools.Create(archivePath), false, token);
+                            var archiver = await ArchiverManager.Current.CreateArchiverAsync(StaticFolderArchive.Default.CreateArchiveEntry(archivePath), false, token);
                             var entries = await archiver.GetEntriesAsync(token);
 
                             var entryName = path[archivePath.Length..].TrimStart(LoosePath.Separators);

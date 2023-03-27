@@ -213,6 +213,13 @@ namespace NeeView
             return _entries;
         }
 
+        /// <summary>
+        /// エントリキャッシュをクリア
+        /// </summary>
+        public void ClearEntryCache()
+        {
+            _entries = null;
+        }
 
         /// <summary>
         /// 指定階層のエントリのみ取得
@@ -319,14 +326,13 @@ namespace NeeView
             tree.AddRange(entries);
 
             var directories = tree.GetDirectories()
-                .Select(e => new ArchiveEntry(this)
+                .Select(e => e.ArchiveEntry ?? new ArchiveEntry(this)
                 {
                     IsValid = true,
                     Id = -1,
                     Instance = null,
                     RawEntryName = e.Path,
                     Length = -1,
-                    ////IsEmpty = !e.HasChild,
                     CreationTime = e.CreationTime,
                     LastWriteTime = e.LastWriteTime,
                 })
@@ -334,7 +340,6 @@ namespace NeeView
 
             return directories;
         }
-
 
         /// <summary>
         /// 事前展開する？
@@ -382,29 +387,45 @@ namespace NeeView
             return IsFileSystem || entry.Link != null;
         }
 
-    }
 
-    /// <summary>
-    /// Archiver 拡張メソッド
-    /// </summary>
-    public static class ArchiverExtensions
-    {
         /// <summary>
-        /// 空のディレクトリエントリを抽出して追加
+        /// exists?
         /// </summary>
-        /// <param name="list"></param>
-        /// <param name="directoryEntries"></param>
-        public static void AddDirectoryEntries(this List<ArchiveEntry> list, List<ArchiveEntry> directoryEntries)
+        public virtual bool Exists(ArchiveEntry entry)
         {
-            // 空のディレクトリエントリを抽出
-            var entries = directoryEntries
-                .Where(entry => directoryEntries.All(e => e == entry || !e.EntryName.StartsWith(entry.EntryName)))
-                .Where(entry => list.All(e => !e.EntryName.StartsWith(entry.EntryName)))
-                .ToList();
+            return entry.Archiver == this && !entry.IsDeleted;
+        }
 
-            //foreach (var entry in entries) Debug.WriteLine($"DirectoryEntry!: {entry.EntryName}");
+        /// <summary>
+        /// can delete
+        /// </summary>
+        public bool CanDelete(ArchiveEntry entry)
+        {
+            return CanDelete(new List<ArchiveEntry>() { entry });
+        }
 
-            list.AddRange(entries);
+        /// <summary>
+        /// can delete entries
+        /// </summary>
+        public virtual bool CanDelete(List<ArchiveEntry> entries)
+        {
+            return false;
+        }
+
+        /// <summary>
+        /// delete
+        /// </summary>
+        public async Task<bool> DeleteAsync(ArchiveEntry entry)
+        {
+            return await DeleteAsync(new List<ArchiveEntry>() { entry });
+        }
+
+        /// <summary>
+        /// delete entries
+        /// </summary>
+        public virtual async Task<bool> DeleteAsync(List<ArchiveEntry> entries)
+        {
+            return await Task.FromResult(false);
         }
     }
 }

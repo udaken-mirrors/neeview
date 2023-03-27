@@ -1818,6 +1818,7 @@ namespace NeeView
         private async Task RemoveFilesAsync(IEnumerable<FolderItem> items)
         {
             if (!items.Any()) return;
+            if (items.Any(e => !FileIO.ExistsPath(e.TargetPath.SimplePath))) return;
 
             FolderItem? next = null;
             FolderItem? currentBook = items.FirstOrDefault(e => e.TargetPath.SimplePath == BookHub.Current.Address);
@@ -1835,10 +1836,11 @@ namespace NeeView
                 }
             }
 
-            var removed = await FileIO.RemoveFileAsync(items.Select(e => e.TargetPath.SimplePath).ToList(), Properties.Resources.FileDeleteBookDialog_Title);
+            var entries = items.Select(e => StaticFolderArchive.Default.CreateArchiveEntry(e.TargetPath.SimplePath)).ToList();
+            var removed = await ConfirmFileIO.DeleteAsync(entries, Properties.Resources.FileDeleteBookDialog_Title, null);
             if (removed && _folderCollection != null)
             {
-                var removes = items.Where(e => !FileIO.Exists(e.TargetPath.SimplePath)).ToList();
+                var removes = items.Where(e => !FileIO.ExistsPath(e.TargetPath.SimplePath)).ToList();
                 foreach (var item in removes)
                 {
                     _folderCollection?.RequestDelete(item.TargetPath);

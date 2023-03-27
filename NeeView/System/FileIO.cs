@@ -11,8 +11,8 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
 
+// TODO: UI要素の除外
 
 namespace NeeView
 {
@@ -24,7 +24,7 @@ namespace NeeView
         /// <summary>
         /// ファイルかディレクトリの存在チェック
         /// </summary>
-        public static bool Exists(string path)
+        public static bool ExistsPath(string path)
         {
             return File.Exists(path) || Directory.Exists(path);
         }
@@ -34,7 +34,7 @@ namespace NeeView
         /// </summary>
         public static string CreateUniquePath(string source)
         {
-            if (!Exists(source))
+            if (!ExistsPath(source))
             {
                 return source;
             }
@@ -59,7 +59,7 @@ namespace NeeView
             {
                 path = Path.Combine(directory, $"{filename} ({++count}){extension}");
             }
-            while (Exists(path));
+            while (ExistsPath(path));
 
             return path;
         }
@@ -138,10 +138,10 @@ namespace NeeView
 
         #endregion Move
 
-        #region Remove
+        #region Delete
 
         // ファイル削除 (Direct)
-        public static void RemoveFile(string filename)
+        public static void DeleteFile(string filename)
         {
             new FileInfo(filename).Delete();
         }
@@ -149,147 +149,15 @@ namespace NeeView
         /// <summary>
         /// ファイル削除
         /// </summary>
-        public static async Task<bool> RemoveFileAsync(string path, string title, FrameworkElement? thumbnail)
+        public static async Task<bool> DeleteAsync(string path)
         {
-            if (Config.Current.System.IsRemoveConfirmed)
-            {
-                var content = CreateRemoveDialogContent(path, thumbnail);
-                if (!ConfirmRemove(content, title ?? GetRemoveDialogTitle(path)))
-                {
-                    return false;
-                }
-            }
-
-            return await RemoveCoreAsync(new List<string>() { path });
+            return await DeleteAsync(new List<string>() { path });
         }
 
         /// <summary>
         /// ファイル削除
         /// </summary>
-        public static async Task<bool> RemoveFileAsync(List<string> paths, string title)
-        {
-            if (paths is null || !paths.Any())
-            {
-                return false;
-            }
-            if (paths.Count == 1)
-            {
-                return await RemoveFileAsync(paths.First(), title, null);
-            }
-            if (Config.Current.System.IsRemoveConfirmed)
-            {
-                var content = CreateRemoveDialogContent(paths);
-                if (!ConfirmRemove(content, title ?? GetRemoveDialogTitle(paths)))
-                {
-                    return false;
-                }
-            }
-
-            return await RemoveCoreAsync(paths);
-        }
-
-        /// <summary>
-        /// ファイルからダイアログ用サムネイル作成
-        /// </summary>
-        private static Image CreateFileVisual(string path)
-        {
-            return new Image
-            {
-                SnapsToDevicePixels = true,
-                Source = NeeLaboratory.IO.FileSystem.GetTypeIconSource(path, NeeLaboratory.IO.FileSystem.IconSize.Normal),
-                Width = 32,
-                Height = 32,
-            };
-        }
-
-        /// <summary>
-        /// 1ファイル用確認ダイアログコンテンツ
-        /// </summary>
-        private static FrameworkElement CreateRemoveDialogContent(string path, FrameworkElement? thumbnail)
-        {
-            var dockPanel = new DockPanel();
-
-            var message = new TextBlock();
-            message.Text = string.Format(Resources.FileDeleteDialog_Message, GetRemoveFilesTypeName(path));
-            message.Margin = new Thickness(0, 0, 0, 10);
-            DockPanel.SetDock(message, Dock.Top);
-            dockPanel.Children.Add(message);
-
-            if (thumbnail == null)
-            {
-                thumbnail = CreateFileVisual(path);
-            }
-
-            thumbnail.Margin = new Thickness(0, 0, 10, 0);
-            dockPanel.Children.Add(thumbnail);
-
-            var textblock = new TextBlock();
-            textblock.Text = path;
-            textblock.VerticalAlignment = VerticalAlignment.Bottom;
-            textblock.TextWrapping = TextWrapping.Wrap;
-            textblock.Margin = new Thickness(0, 0, 0, 2);
-            dockPanel.Children.Add(textblock);
-
-            return dockPanel;
-        }
-
-        private static string GetRemoveDialogTitle(string path)
-        {
-            return string.Format(Resources.FileDeleteDialog_Title, GetRemoveFilesTypeName(path));
-        }
-
-        private static string GetRemoveDialogTitle(List<string> paths)
-        {
-            return string.Format(Resources.FileDeleteDialog_Title, GetRemoveFilesTypeName(paths));
-        }
-
-        private static string GetRemoveFilesTypeName(string path)
-        {
-            bool isDirectory = System.IO.Directory.Exists(path);
-            return isDirectory ? Resources.Word_Folder : Resources.Word_File;
-        }
-
-        private static string GetRemoveFilesTypeName(List<string> paths)
-        {
-            if (paths.Count == 1)
-            {
-                return GetRemoveFilesTypeName(paths.First());
-            }
-
-            bool isDirectory = paths.All(e => System.IO.Directory.Exists(e));
-            return isDirectory ? Resources.Word_Folders : Resources.Word_Files;
-        }
-
-        /// <summary>
-        /// 複数ファイル用確認ダイアログコンテンツ
-        /// </summary>
-        private static FrameworkElement CreateRemoveDialogContent(List<string> paths)
-        {
-            var message = new TextBlock();
-            message.Text = string.Format(Resources.FileDeleteMultiDialog_Message, paths.Count);
-            message.Margin = new Thickness(0, 10, 0, 10);
-            DockPanel.SetDock(message, Dock.Top);
-
-            return message;
-        }
-
-        /// <summary>
-        /// 削除確認
-        /// </summary>
-        private static bool ConfirmRemove(FrameworkElement content, string title)
-        {
-            var dialog = new MessageDialog(content, title);
-            dialog.Commands.Add(UICommands.Delete);
-            dialog.Commands.Add(UICommands.Cancel);
-            var answer = dialog.ShowDialog();
-
-            return (answer == UICommands.Delete);
-        }
-
-        /// <summary>
-        /// 削除メイン
-        /// </summary>
-        private static async Task<bool> RemoveCoreAsync(List<string> paths)
+        public static async Task<bool> DeleteAsync(List<string> paths)
         {
             try
             {
@@ -306,15 +174,9 @@ namespace NeeView
             {
                 return false;
             }
-            catch (Exception ex)
-            {
-                var dialog = new MessageDialog($"{Resources.Word_Cause}: {ex.Message}", Resources.FileDeleteErrorDialog_Title);
-                dialog.ShowDialog();
-                return false;
-            }
         }
 
-        #endregion Remove
+        #endregion Delete
 
         #region Rename
 
@@ -395,7 +257,7 @@ namespace NeeView
                         dialog.Commands.Add(UICommands.Yes);
                         dialog.Commands.Add(UICommands.No);
                         var answer = dialog.ShowDialog();
-                        if (answer != UICommands.Yes)
+                        if (answer.Command != UICommands.Yes)
                         {
                             return null;
                         }
@@ -431,7 +293,7 @@ namespace NeeView
                     dialog.Commands.Add(new UICommand(Resources.Word_Rename));
                     dialog.Commands.Add(UICommands.Cancel);
                     var answer = dialog.ShowDialog();
-                    if (answer != dialog.Commands[0])
+                    if (answer.Command != dialog.Commands[0])
                     {
                         return null;
                     }
@@ -476,7 +338,7 @@ namespace NeeView
                 }
                 catch (Exception ex)
                 {
-                    UICommand? answer = null;
+                    MessageDialogResult? answer = null;
                     AppDispatcher.Invoke(() =>
                     {
                         var retryConfirm = new MessageDialog($"{Resources.FileRenameFailedDialog_Message}\n\n{ex.Message}", Resources.FileRenameFailedDialog_Title);
@@ -484,7 +346,7 @@ namespace NeeView
                         retryConfirm.Commands.Add(UICommands.Cancel);
                         answer = retryConfirm.ShowDialog();
                     });
-                    if (answer == UICommands.Retry)
+                    if (answer?.Command == UICommands.Retry)
                     {
                         continue;
                     }

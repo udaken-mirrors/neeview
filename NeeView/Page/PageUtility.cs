@@ -3,6 +3,8 @@ using System.Linq;
 using System.Diagnostics;
 using System.Threading;
 using System;
+using System.Threading.Tasks;
+using System.Windows.Media.Effects;
 
 namespace NeeView
 {
@@ -91,6 +93,5 @@ namespace NeeView
 
             return files.Distinct().ToList();
         }
-
     }
 }

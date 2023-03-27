@@ -320,8 +320,10 @@ namespace NeeView
         public async Task DeleteAsync()
         {
             if (!CanDelete()) return;
+            if (!File.Exists(SelectedItem)) return;
 
-            bool isSuccessed = await FileIO.RemoveFileAsync(SelectedItem, Properties.Resources.Playlist_DeleteDialog_Title, null);
+            var entry = StaticFolderArchive.Default.CreateArchiveEntry(SelectedItem);
+            bool isSuccessed = await ConfirmFileIO.DeleteAsync(entry, Properties.Resources.Playlist_DeleteDialog_Title, null);
             if (isSuccessed)
             {
                 SelectedItem = DefaultPlaylist;

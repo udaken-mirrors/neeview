@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
@@ -111,18 +112,15 @@ namespace NeeView
             return list;
         }
 
-        // エントリーのストリームを得る
         protected override Stream OpenStreamInner(ArchiveEntry entry)
         {
-            if (entry.Id < 0) throw new ApplicationException("Cannot open this entry: " + entry.EntryName);
+            if (entry.Id < 0) throw new ArgumentException("Cannot open this entry: " + entry.EntryName);
+            if (entry.IsDirectory) throw new InvalidOperationException("Cannot open directory: " + entry.EntryName);
 
             using (var archiver = ZipFile.Open(Path, ZipArchiveMode.Read, Environment.Encoding))
             {
                 ZipArchiveEntry archiveEntry = archiver.Entries[entry.Id];
-                if (archiveEntry.FullName != entry.RawEntryName)
-                {
-                    throw new ApplicationException(Properties.Resources.InconsistencyException_Message);
-                }
+                if (!IsValidEntry(entry, archiveEntry)) throw new ValidationException(Properties.Resources.InconsistencyException_Message);
 
                 using (var stream = archiveEntry.Open())
                 {
@@ -134,20 +132,114 @@ namespace NeeView
             }
         }
 
-        //
         protected override void ExtractToFileInner(ArchiveEntry entry, string exportFileName, bool isOverwrite)
         {
-            if (entry.Id < 0) throw new ApplicationException("Cannot open this entry: " + entry.EntryName);
+            // TODO: Directoryフォルダーの出力に対応
+            if (entry.Id < 0) throw new ArgumentException("Cannot extract this entry: " + entry.EntryName);
+            if (entry.IsDirectory) throw new InvalidOperationException("Cannot extract directory: " + entry.EntryName);
 
             using (var archiver = ZipFile.Open(Path, ZipArchiveMode.Read, Environment.Encoding))
             {
                 ZipArchiveEntry archiveEntry = archiver.Entries[entry.Id];
+                if (!IsValidEntry(entry, archiveEntry)) throw new ValidationException(Properties.Resources.InconsistencyException_Message);
+
                 archiveEntry.ExtractToFile(exportFileName, isOverwrite);
+            }
+        }
+
+        /// <summary>
+        /// 有効なエントリであるかを判定
+        /// </summary>
+        /// <param name="entry">調査するエントリ</param>
+        /// <param name="zipArchiveEntry">関連付けられているZipArchiveEntry</param>
+        /// <remarks>
+        /// 同名エントリは正確に判定できない問題がある
+        /// </remarks>
+        private static bool IsValidEntry(ArchiveEntry entry, ZipArchiveEntry zipArchiveEntry)
+        {
+            return entry.RawEntryName == zipArchiveEntry.FullName;
+        }
+
+        /// <summary>
+        /// exists?
+        /// </summary>
+        public override bool Exists(ArchiveEntry entry)
+        {
+            // TODO：１つでも削除されるとIDが変更になるため、この実装は間違っている
+            // 同名エントリの区別ができれば解決するのだが現状では難しい
+            return base.Exists(entry);
+        }
+
+        /// <summary>
+        /// can delete
+        /// </summary>
+        /// <exception cref="ArgumentException">Not registered with this archiver.</exception>
+        public override bool CanDelete(List<ArchiveEntry> entries)
+        {
+            if (entries.Any(e => e.Archiver != this)) throw new ArgumentException("There are elements not registered with this archiver.", nameof(entries));
+
+            if (!Config.Current.Archive.Zip.IsFileWriteAccessEnabled) return false;
+            return entries.All(e => e.Archiver == this && e.Archiver.IsRoot);
+        }
+
+        /// <summary>
+        /// delete entries
+        /// </summary>
+        /// <exception cref="ArgumentException">Not registered with this archiver.</exception>
+        public override async Task<bool> DeleteAsync(List<ArchiveEntry> entries)
+        {
+            if (!IsRoot) throw new ArgumentException("The archive is not a file.");
+            if (entries.Any(e => e.Archiver != this)) throw new ArgumentException("There are elements not registered with this archiver.", nameof(entries));
+            if (!entries.Any()) return false;
+            
+            var removes = entries;
+            var directories = entries.Where(e => e.IsDirectory);
+            if (directories.Any())
+            {
+                var all = await entries.First().Archiver.GetEntriesAsync(CancellationToken.None);
+                var children = directories.SelectMany(d => all.Where(e => e.Id >= 0 && e.EntryName.StartsWith(LoosePath.TrimDirectoryEnd(d.EntryName))));
+                removes = entries.Concat(children).Where(e => e.Id >= 0).Distinct().ToList();
+            }
+            Debug.Assert(removes.All(e => e.Id >= 0));
+
+            return await Task.Run(() =>
+            {
+                var tempFilename = FileIO.CreateUniquePath(Path + ".temp");
+                try
+                {
+                    // NOTE: コピーしたファイルに対して操作と置き換えを行いアーカイブ破壊の可能性を最小限に抑える
+                    File.Copy(Path, tempFilename);
+                    using (var archive = ZipFile.Open(tempFilename, ZipArchiveMode.Update, Environment.Encoding))
+                    {
+                        ClearEntryCache();
+                        var map = removes.Select(e => (Entry: e, ZipArchiveEntry: GetTargetEntry(archive, e))).ToList();
+                        foreach (var item in map)
+                        {
+                            item.ZipArchiveEntry?.Delete();
+                            item.Entry.IsDeleted = true;
+                        }
+                    }
+                    File.Replace(tempFilename, Path, null);
+                    return true;
+                }
+                finally
+                {
+                    if (File.Exists(tempFilename))
+                    {
+                        File.Delete(tempFilename);
+                    }
+                }
+            });
+
+            static ZipArchiveEntry? GetTargetEntry(ZipArchive archive, ArchiveEntry entry)
+            {
+                var zipArchiveEntry = archive.Entries[entry.Id];
+                return IsValidEntry(entry, zipArchiveEntry) ? zipArchiveEntry : null;
             }
         }
     }
 
-    //
+
     public static class ZipArchiveEntryExtension
     {
         public static bool IsDirectory(this ZipArchiveEntry self)

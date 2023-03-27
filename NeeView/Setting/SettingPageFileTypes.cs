@@ -75,6 +75,7 @@ namespace NeeView.Setting
             var section = new SettingItemSection(Properties.Resources.SettingPage_Archive_ZipFeature);
 
             section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.Archive.Zip, nameof(ZipArchiveConfig.IsEnabled))));
+            section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.Archive.Zip, nameof(ZipArchiveConfig.IsFileWriteAccessEnabled))));
             section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.Archive.Zip, nameof(ZipArchiveConfig.SupportFileTypes)),
                 new SettingItemCollectionControl() { Collection = Config.Current.Archive.Zip.SupportFileTypes, AddDialogHeader = Properties.Resources.Word_Extension, DefaultCollection = ZipArchiveConfig.DefaultSupportFileTypes }));
 

@@ -540,7 +540,7 @@ namespace NeeView
             dialog.Commands.Add(UICommands.Cancel);
             var result = dialog.ShowDialog(owner);
 
-            if (result == UICommands.Delete)
+            if (result.Command == UICommands.Delete)
             {
                 // キャッシュDBを閉じる
                 ThumbnailCache.Current.Close();

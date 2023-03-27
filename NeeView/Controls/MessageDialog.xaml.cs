@@ -35,7 +35,7 @@ namespace NeeView
 
         public UICommandAlignment Alignment { get; set; }
 
-        public bool IsPositibe { get; set; }
+        public bool IsPossible { get; set; }
 
         public UICommand(string label)
         {
@@ -48,12 +48,12 @@ namespace NeeView
     /// </summary>
     public static class UICommands
     {
-        public static UICommand OK { get; } = new UICommand(Properties.Resources.Word_OK) { IsPositibe = true };
-        public static UICommand Yes { get; } = new UICommand(Properties.Resources.Word_Yes) { IsPositibe = true };
+        public static UICommand OK { get; } = new UICommand(Properties.Resources.Word_OK) { IsPossible = true };
+        public static UICommand Yes { get; } = new UICommand(Properties.Resources.Word_Yes) { IsPossible = true };
         public static UICommand No { get; } = new UICommand(Properties.Resources.Word_No);
         public static UICommand Cancel { get; } = new UICommand(Properties.Resources.Word_Cancel);
-        public static UICommand Delete { get; } = new UICommand(Properties.Resources.Word_Delete);
-        public static UICommand Retry { get; } = new UICommand(Properties.Resources.Word_Retry);
+        public static UICommand Delete { get; } = new UICommand(Properties.Resources.Word_Delete) { IsPossible = true };
+        public static UICommand Retry { get; } = new UICommand(Properties.Resources.Word_Retry) { IsPossible = true };
 
         // dialog.Commands.AddRange(...) のような使用を想定したセット
         public static readonly List<UICommand> YesNo = new() { Yes, No };
@@ -70,6 +70,20 @@ namespace NeeView
         object Content { get; }
 
         void OnLoaded(object sender, RoutedEventArgs e);
+    }
+
+    /// <summary>
+    /// MessageDialog Result
+    /// </summary>
+    public class MessageDialogResult
+    {
+        public MessageDialogResult(UICommand? command)
+        {
+            Command = command;
+        }
+
+        public UICommand? Command { get; }
+        public bool IsPossible => Command != null && Command.IsPossible;
     }
 
     /// <summary>
@@ -161,7 +175,7 @@ namespace NeeView
             return (DefaultCommandIndex >= 0 && DefaultCommandIndex < Commands.Count) ? Commands[DefaultCommandIndex] : null;
         }
 
-        public UICommand? ShowDialog(Window? owner)
+        public MessageDialogResult ShowDialog(Window? owner)
         {
             _resultCommand = null;
 
@@ -172,19 +186,21 @@ namespace NeeView
                 this.Owner = owner;
             }
 
-            return (base.ShowDialog() != null)
+            var command = (base.ShowDialog() != null)
                 ? _resultCommand
                 : (CancelCommandIndex >= 0 && CancelCommandIndex < Commands.Count) ? Commands[CancelCommandIndex] : null;
+
+            return new MessageDialogResult(command);
         }
 
         private void Decide()
         {
-            _resultCommand = Commands.FirstOrDefault(e => e.IsPositibe);
+            _resultCommand = Commands.FirstOrDefault(e => e.IsPossible);
             this.DialogResult = true;
             this.Close();
         }
 
-        public new UICommand? ShowDialog()
+        public new MessageDialogResult ShowDialog()
         {
             return ShowDialog(null);
         }

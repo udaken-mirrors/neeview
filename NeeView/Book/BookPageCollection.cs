@@ -323,7 +323,7 @@ namespace NeeView
         }
 
         // 近くの有効なページを取得
-        public Page? GetValidPage(Page page)
+        public Page? GetValidPage(Page? page)
         {
             var index = page != null ? page.Index : 0;
             var answer = Pages.Skip(index).Concat(Pages.Take(index).Reverse()).FirstOrDefault(e => !e.IsDeleted);

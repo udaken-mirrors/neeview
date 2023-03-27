@@ -147,7 +147,7 @@ namespace NeeView.Setting
             dialog.Owner = GetOwner();
             var answer = dialog.ShowDialog();
 
-            if (answer == UICommands.Yes)
+            if (answer.Command == UICommands.Yes)
             {
                 var memento = DragActionTable.Current.CreateDefaultMemento();
                 DragActionTable.Current.RestoreDragActionCollection(memento);

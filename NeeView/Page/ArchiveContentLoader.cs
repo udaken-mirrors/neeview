@@ -39,7 +39,7 @@ namespace NeeView
                 catch (Exception ex)
                 {
                     Debug.WriteLine($"ArchiveContent.Entry: {ex.Message}");
-                    _content.SetEntry(ArchiveEntryTools.Create(query.SimplePath));
+                    _content.SetEntry(StaticFolderArchive.Default.CreateArchiveEntry(query.SimplePath, true));
                     _content.Thumbnail.Initialize(null);
                 }
             }

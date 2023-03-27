@@ -140,7 +140,7 @@ namespace NeeView
                     break;
             }
             var result = dialog.ShowDialog(App.Current.MainWindow);
-            return result?.IsPositibe == true;
+            return result.IsPossible;
         }
 
         [WordNodeMember]
@@ -156,7 +156,7 @@ namespace NeeView
             dialog.Commands.Add(UICommands.OK);
             dialog.Commands.Add(UICommands.Cancel);
             var result = dialog.ShowDialog(App.Current.MainWindow);
-            return result?.IsPositibe == true ? component.Text : null;
+            return result.IsPossible ? component.Text : null;
         }
 
 

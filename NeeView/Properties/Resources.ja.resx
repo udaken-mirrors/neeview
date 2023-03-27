@@ -5803,9 +5803,6 @@ $Name は 2 ページ表示時には主となるページ (ページ番号の小
   <data name="SystemConfig.ExternalAppCollection" xml:space="preserve">
     <value>外部アプリリスト</value>
   </data>
-  <data name="SystemConfig.IsFileWriteAccessEnabled" xml:space="preserve">
-    <value>ファイル操作有効</value>
-  </data>
   <data name="SystemConfig.IsHiddenFileVisibled" xml:space="preserve">
     <value>隠しファイルを表示する</value>
   </data>
@@ -7423,5 +7420,20 @@ nv.ShowToast(nv.Book.ViewPages[0].Path)</value>
   </data>
   <data name="InformationGroup.Extras" xml:space="preserve">
     <value>追加情報</value>
+  </data>
+  <data name="FileDeleteMultiDialog.Message.Completely" xml:space="preserve">
+    <value>注意：完全に削除されます。</value>
+  </data>
+  <data name="ZipArchiveConfig.IsFileWriteAccessEnabled" xml:space="preserve">
+    <value>ZIPファイル編集可能</value>
+  </data>
+  <data name="ZipArchiveConfig.IsFileWriteAccessEnabled.Remarks" xml:space="preserve">
+    <value>ZIP内のファイルを削除することが可能になります。「@SystemConfig.IsFileWriteAccessEnabled」設定が有効になっている必要があります。</value>
+  </data>
+  <data name="SystemConfig.IsFileWriteAccessEnabled" xml:space="preserve">
+    <value>ファイル操作許可</value>
+  </data>
+  <data name="SystemConfig.IsFileWriteAccessEnabled.Remarks" xml:space="preserve">
+    <value>ファイルの削除や名前変更ができるようになります。</value>
   </data>
 </root>

@@ -5798,9 +5798,6 @@ $Name is the main page (the smaller page number) when displaying 2 pages.</value
   <data name="SystemConfig.ExternalAppCollection" xml:space="preserve">
     <value>External applications</value>
   </data>
-  <data name="SystemConfig.IsFileWriteAccessEnabled" xml:space="preserve">
-    <value>File operation enabled</value>
-  </data>
   <data name="SystemConfig.IsHiddenFileVisibled" xml:space="preserve">
     <value>Show hidden files</value>
   </data>
@@ -7418,5 +7415,20 @@ nv.ShowToast(nv.Book.ViewPages[0].Path)</value>
   </data>
   <data name="InformationGroup.Extras" xml:space="preserve">
     <value>Extras</value>
+  </data>
+  <data name="FileDeleteMultiDialog.Message.Completely" xml:space="preserve">
+    <value>Note: It will be completely deleted.</value>
+  </data>
+  <data name="ZipArchiveConfig.IsFileWriteAccessEnabled" xml:space="preserve">
+    <value>ZIP file editable</value>
+  </data>
+  <data name="ZipArchiveConfig.IsFileWriteAccessEnabled.Remarks" xml:space="preserve">
+    <value>It will be possible to delete files in the ZIP. The "@SystemConfig.IsFileWriteAccessEnabled" setting must be enabled.</value>
+  </data>
+  <data name="SystemConfig.IsFileWriteAccessEnabled" xml:space="preserve">
+    <value>File operation</value>
+  </data>
+  <data name="SystemConfig.IsFileWriteAccessEnabled.Remarks" xml:space="preserve">
+    <value>You will be able to delete and rename files.</value>
   </data>
 </root>

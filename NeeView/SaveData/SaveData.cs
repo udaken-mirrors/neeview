@@ -78,7 +78,7 @@ namespace NeeView
                 var extension = Path.GetExtension(filename)?.ToLower();
 
                 var failedDialog = new LoadFailedDialog(Resources.Notice_LoadSettingFailed, Resources.Notice_LoadSettingFailedTitle);
-                failedDialog.OKCommand = new UICommand(Resources.Notice_LoadSettingFailedButtonContinue) { IsPositibe = true };
+                failedDialog.OKCommand = new UICommand(Resources.Notice_LoadSettingFailedButtonContinue) { IsPossible = true };
                 if (cancellable)
                 {
                     failedDialog.CancelCommand = new UICommand(Resources.Notice_LoadSettingFailedButtonQuit) { Alignment = UICommandAlignment.Left };
@@ -227,19 +227,19 @@ namespace NeeView
         /// <summary>
         /// 古いファイルを削除
         /// </summary>
-        private static void RemoveLegacyFile(string filename)
+        private static void DeleteLegacyFile(string filename)
         {
             using (ProcessLock.Lock())
             {
                 Debug.WriteLine($"Remove: {filename}");
-                FileIO.RemoveFile(filename);
+                FileIO.DeleteFile(filename);
 
                 // バックアップファイルも削除
                 var backup = filename + ".old";
                 if (File.Exists(backup))
                 {
                     Debug.WriteLine($"Remove: {backup}");
-                    FileIO.RemoveFile(backup);
+                    FileIO.DeleteFile(backup);
                 }
             }
         }
@@ -283,14 +283,14 @@ namespace NeeView
         /// <summary>
         /// 必要であるならば、Historyを削除
         /// </summary>
-        public void RemoveHistoryIfNotSave()
+        public void DeleteHistoryIfNotSave()
         {
             if (!IsEnableSave) return;
             if (Config.Current.History.IsSaveHistory) return;
 
             using (ProcessLock.Lock())
             {
-                FileIO.RemoveFile(HistoryFilePath);
+                FileIO.DeleteFile(HistoryFilePath);
             }
         }
 
@@ -312,25 +312,25 @@ namespace NeeView
         /// <summary>
         /// 必要であるならば、Bookmarkを削除
         /// </summary>
-        public void RemoveBookmarkIfNotSave()
+        public void DeleteBookmarkIfNotSave()
         {
             if (!IsEnableSave) return;
             if (Config.Current.Bookmark.IsSaveBookmark) return;
 
             using (ProcessLock.Lock())
             {
-                FileIO.RemoveFile(BookmarkFilePath);
+                FileIO.DeleteFile(BookmarkFilePath);
             }
         }
 
         /// <summary>
         /// 必要であるならば、古い設定ファイルを削除
         /// </summary>
-        public void RemoveLegacyPagemark()
+        public void DeleteLegacyPagemark()
         {
             if (_pagemarkFilenameToDelete == null) return;
 
-            RemoveLegacyFile(_pagemarkFilenameToDelete);
+            DeleteLegacyFile(_pagemarkFilenameToDelete);
             _pagemarkFilenameToDelete = null;
         }
 
@@ -414,7 +414,7 @@ namespace NeeView
             }
 
             var result = dialog.ShowDialog();
-            return result == OKCommand || CancelCommand == null;
+            return result.Command == OKCommand || CancelCommand == null;
         }
     }
 }

@@ -103,7 +103,7 @@ namespace NeeView
             if (item != null)
             {
                 string? path;
-                if (FileIO.Exists(item.EntryFullName))
+                if (FileIO.ExistsPath(item.EntryFullName))
                 {
                     path = item.EntryFullName;
                 }
@@ -305,7 +305,7 @@ namespace NeeView
             }
             else
             {
-                e.CanExecute = items.All(x => CanRemove(x));
+                e.CanExecute = CanRemove(items);
             }
         }
 
@@ -321,9 +321,9 @@ namespace NeeView
             e.Handled = true;
         }
 
-        private static bool CanRemove(Page page)
+        private static bool CanRemove(List<Page> pages)
         {
-            return BookOperation.Current.CanDeleteFile(page);
+            return BookOperation.Current.CanDeleteFile(pages);
         }
 
         private static async Task RemoveAsync(List<Page> pages)

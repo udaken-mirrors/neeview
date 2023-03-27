@@ -85,7 +85,7 @@ namespace NeeView
                     dialog.Commands.Add(UICommands.No);
                     var result = dialog.ShowDialog();
 
-                    if (result == UICommands.Yes)
+                    if (result.Command == UICommands.Yes)
                     {
                         BookmarkCollection.Current.Merge(node, conflict);
                         return true;

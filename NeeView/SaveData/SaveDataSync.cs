@@ -201,12 +201,12 @@ namespace NeeView
 
         private static void RemoveHistoryIfNotSave()
         {
-            SaveData.Current.RemoveHistoryIfNotSave();
+            SaveData.Current.DeleteHistoryIfNotSave();
         }
 
         private static void RemoveBookmarkIfNotSave()
         {
-            SaveData.Current.RemoveBookmarkIfNotSave();
+            SaveData.Current.DeleteBookmarkIfNotSave();
         }
 
         /// <summary>

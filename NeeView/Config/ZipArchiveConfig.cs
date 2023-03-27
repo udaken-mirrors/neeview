@@ -10,7 +10,7 @@ namespace NeeView
 
         private bool _isEnabled = true;
         private FileTypeCollection _supportFileTypes = (FileTypeCollection)DefaultSupportFileTypes.Clone();
-
+        private bool _isWriteAccessEnabled = false;
 
         [PropertyMember]
         public bool IsEnabled
@@ -24,6 +24,13 @@ namespace NeeView
         {
             get { return _supportFileTypes; }
             set { SetProperty(ref _supportFileTypes, value); }
+        }
+
+        [PropertyMember]
+        public bool IsFileWriteAccessEnabled
+        {
+            get { return _isWriteAccessEnabled; }
+            set { SetProperty(ref _isWriteAccessEnabled, value); }
         }
     }
 }

@@ -85,10 +85,10 @@ namespace NeeView
             var vm = new ImportControlViewModel(importer);
             var dialogContent = new ImportControl(vm);
             var dialog = new MessageDialog(dialogContent, Properties.Resources.ImportSelectDialog_Title);
-            dialog.Commands.Add(new UICommand(Properties.Resources.Word_Import) { IsPositibe = true });
+            dialog.Commands.Add(new UICommand(Properties.Resources.Word_Import) { IsPossible = true });
             dialog.Commands.Add(UICommands.Cancel);
             var result = dialog.ShowDialog();
-            return result?.IsPositibe == true;
+            return result.IsPossible;
         }
     }
 }

@@ -15,7 +15,7 @@ namespace NeeView
         /// <summary>
         /// Emptyインスタンス
         /// </summary>
-        public static ArchiveEntry Empty { get; } = new ArchiveEntry(FolderArchive.StaticArchiver) { IsEmpty = true };
+        public static ArchiveEntry Empty { get; } = new ArchiveEntry(StaticFolderArchive.Default) { IsEmpty = true };
 
 
         /// <summary>
@@ -85,7 +85,7 @@ namespace NeeView
                 if (_rawEntryName != value)
                 {
                     _rawEntryName = value;
-                    this.EntryName = LoosePath.NormalizeSeparator(_rawEntryName);
+                    this.EntryName = NormalizeEntryName(_rawEntryName);
                 }
             }
         }
@@ -187,7 +187,19 @@ namespace NeeView
         /// </summary>
         public bool IsIgnoreFileExtension { get; set; }
 
+        /// <summary>
+        /// 削除済フラグ
+        /// </summary>
+        public bool IsDeleted { get; set; }
 
+
+        /// <summary>
+        /// エントリ名の正規化
+        /// </summary>
+        public static string NormalizeEntryName(string rawEntryName)
+        {
+            return LoosePath.TrimEnd(LoosePath.NormalizeSeparator(rawEntryName));
+        }
 
         /// <summary>
         /// エントリデータを先読みデータとして返す
@@ -305,7 +317,52 @@ namespace NeeView
             return !this.IsDirectory && ((this.Archiver is MediaArchiver) || PictureProfile.Current.IsSupported(this.Link ?? this.EntryName));
         }
 
+        /// <summary>
+        /// exists?
+        /// </summary>
+        public bool Exists()
+        {
+            if (IsDeleted) return false;
+            return Archiver.Exists(this);
+        }
 
+        /// <summary>
+        /// can delete?
+        /// </summary>
+        public bool CanDelete()
+        {
+            return Archiver.CanDelete(this);
+        }
+
+        /// <summary>
+        /// delete
+        /// </summary>
+        public async Task<bool> DeleteAsync()
+        {
+            return await Archiver.DeleteAsync(this);
+        }
+
+        /// <summary>
+        /// 複数エントリをまとめて削除
+        /// </summary>
+        public static async Task<bool> DeleteEntriesAsync(IEnumerable<ArchiveEntry> entries)
+        {
+            if (!entries.Any()) return false;
+
+            foreach (var group in entries.GroupBy(e => e.Archiver))
+            {
+                var archiver = group.Key;
+                archiver.ClearEntryCache();
+                var isSuccess = await archiver.DeleteAsync(group.ToList());
+                if (!isSuccess) return false;
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// to string
+        /// </summary>
         public override string? ToString()
         {
             return string.IsNullOrEmpty(EntryName) ? base.ToString() : EntryName;

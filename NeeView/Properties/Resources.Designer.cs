@@ -5772,6 +5772,15 @@ namespace NeeView.Properties {
         }
         
         /// <summary>
+        ///   Note: It will be completely deleted. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string FileDeleteMultiDialog_Message_Completely {
+            get {
+                return ResourceManager.GetString("FileDeleteMultiDialog.Message.Completely", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Delete page に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string FileDeletePageDialog_Title {
@@ -16384,11 +16393,20 @@ namespace NeeView.Properties {
         }
         
         /// <summary>
-        ///   File operation enabled に類似しているローカライズされた文字列を検索します。
+        ///   File operation に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string SystemConfig_IsFileWriteAccessEnabled {
             get {
                 return ResourceManager.GetString("SystemConfig.IsFileWriteAccessEnabled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   You will be able to delete and rename files. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string SystemConfig_IsFileWriteAccessEnabled_Remarks {
+            get {
+                return ResourceManager.GetString("SystemConfig.IsFileWriteAccessEnabled.Remarks", resourceCulture);
             }
         }
         
@@ -21142,6 +21160,24 @@ namespace NeeView.Properties {
         public static string ZipArchiveConfig_IsEnabled {
             get {
                 return ResourceManager.GetString("ZipArchiveConfig.IsEnabled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   ZIP file editable に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string ZipArchiveConfig_IsFileWriteAccessEnabled {
+            get {
+                return ResourceManager.GetString("ZipArchiveConfig.IsFileWriteAccessEnabled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   It will be possible to delete files in the ZIP. The &quot;@SystemConfig.IsFileWriteAccessEnabled&quot; setting must be enabled. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string ZipArchiveConfig_IsFileWriteAccessEnabled_Remarks {
+            get {
+                return ResourceManager.GetString("ZipArchiveConfig.IsFileWriteAccessEnabled.Remarks", resourceCulture);
             }
         }
         
