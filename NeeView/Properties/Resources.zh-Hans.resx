@@ -7373,4 +7373,7 @@ nv.ShowToast(nv.Book.ViewPages[0].Path)</value>
   <data name="SystemConfig.IsFileWriteAccessEnabled" xml:space="preserve">
     <value>允许档案操作</value>
   </data>
+  <data name="PageListItem.Menu.Rename" xml:space="preserve">
+    <value>重新命名(_M)</value>
+  </data>
 </root>

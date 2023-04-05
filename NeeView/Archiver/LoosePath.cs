@@ -12,6 +12,7 @@ namespace NeeView
     /// </summary>
     public static class LoosePath
     {
+        public const char DefaultSeparator = '\\';
         public static readonly char[] Separators = new char[] { '\\', '/' };
 
         public static readonly char[] AsciiSpaces = new char[] {
@@ -137,19 +138,19 @@ namespace NeeView
 
             var ext = GetExtension(s);
             if (string.IsNullOrEmpty(s)) return s;
-            
+
             return s[..^ext.Length];
         }
 
         //
-        public static string Combine(string? s1, string? s2)
+        public static string Combine(string? s1, string? s2, char separator = DefaultSeparator)
         {
             if (string.IsNullOrEmpty(s1))
                 return s2 ?? "";
             else if (string.IsNullOrEmpty(s2))
                 return s1;
             else
-                return s1.TrimEnd(Separators) + "\\" + s2.TrimStart(Separators);
+                return s1.TrimEnd(Separators) + separator + s2.TrimStart(Separators);
         }
 
         // ファイル名として使えない文字を置換

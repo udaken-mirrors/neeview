@@ -427,6 +427,22 @@ namespace NeeView
         {
             return await Task.FromResult(false);
         }
+
+        /// <summary>
+        /// can rename?
+        /// </summary>
+        public virtual bool CanRename(ArchiveEntry entry)
+        {
+            return false;
+        }
+
+        /// <summary>
+        /// rename
+        /// </summary>
+        public virtual async Task<bool> RenameAsync(ArchiveEntry entry, string name)
+        {
+            return await Task.FromResult(false);
+        }
     }
 }
 

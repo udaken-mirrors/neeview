@@ -119,7 +119,10 @@ namespace NeeView
                     var archiver = await ArchiverManager.Current.CreateArchiverAsync(source, false, token);
                     entries = await archiver.GetEntriesAsync(token);
                 }
-                entries = EntrySort.SortEntries(entries, PageSortMode.FileName);
+
+                // NOTE: ToList()で確定させる。もともとList<>であるが、これがないと次の行以降で Collection was modified; enumeration operation may not execute が発生することがある
+                // TODO: 原因の調査
+                entries = EntrySort.SortEntries(entries, PageSortMode.FileName).ToList();
 
                 var select = entries.FirstOrDefault(e => e.IsImage());
                 if (select != null)

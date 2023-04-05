@@ -31,7 +31,6 @@ namespace NeeView
     {
         private readonly FolderTreeViewModel _vm;
         private CancellationTokenSource _removeUnlinkedCommandCancellationTokenSource = new();
-        private RenameControl? _renameControl;
 
         public FolderTreeView()
         {
@@ -42,8 +41,6 @@ namespace NeeView
 
             // タッチスクロール操作の終端挙動抑制
             this.TreeView.ManipulationBoundaryFeedback += SidePanelFrame.Current.ScrollViewer_ManipulationBoundaryFeedback;
-
-            this.TreeView.AddHandler(ScrollViewer.ScrollChangedEvent, new ScrollChangedEventHandler(TreeView_ScrollChanged));
 
             this.Root.DataContext = _vm;
 
@@ -190,7 +187,7 @@ namespace NeeView
             {
                 return _NewFolderCommand = _NewFolderCommand ?? new RelayCommand(Execute);
 
-                void Execute()
+                async void Execute()
                 {
                     switch (this.TreeView.SelectedItem)
                     {
@@ -200,7 +197,7 @@ namespace NeeView
                                 if (newItem != null)
                                 {
                                     this.TreeView.UpdateLayout();
-                                    RenameBookmarkFolder(newItem);
+                                    await RenameBookmarkFolder(newItem);
                                 }
                             }
                             break;
@@ -217,16 +214,16 @@ namespace NeeView
             {
                 return _RenameCommand = _RenameCommand ?? new RelayCommand(Execute);
 
-                void Execute()
+                async void Execute()
                 {
                     switch (this.TreeView.SelectedItem)
                     {
                         case QuickAccessNode quickAccessNode:
-                            RenameQuickAccess(quickAccessNode);
+                            await RenameQuickAccess(quickAccessNode);
                             break;
 
                         case BookmarkFolderNode bookmarkFolderNode:
-                            RenameBookmarkFolder(bookmarkFolderNode);
+                            await RenameBookmarkFolder(bookmarkFolderNode);
                             break;
                     }
                 }
@@ -293,65 +290,16 @@ namespace NeeView
         {
         }
 
-        private void RenameQuickAccess(QuickAccessNode item)
+        private async Task RenameQuickAccess(QuickAccessNode item)
         {
-            var treeViewItem = VisualTreeUtility.FindContainer<TreeViewItem>(this.TreeView, item);
-            if (treeViewItem is null) return;
-
-            treeViewItem.BringIntoView();
-            this.TreeView.UpdateLayout();
-
-            var textBlock = VisualTreeUtility.FindVisualChild<TextBlock>(treeViewItem, "FileNameTextBlock");
-            if (textBlock is null) return;
-
-            var rename = new RenameControl(textBlock) { StoredFocusTarget = this.TreeView };
-
-            rename.Closed += (s, e) =>
-            {
-                _renameControl = null;
-
-                if (e.IsChanged)
-                {
-                    item.Rename(e.NewValue);
-                }
-            };
-
-            _renameControl = rename;
-            _renameControl.Open();
+            var renamer = new FolderTreeItemRenamer(this.TreeView, null);
+            await renamer.RenameAsync(item);
         }
 
-
-        private void RenameBookmarkFolder(BookmarkFolderNode item)
+        private async Task RenameBookmarkFolder(BookmarkFolderNode item)
         {
-            if (item is RootBookmarkFolderNode) return;
-
-            var treeViewItem = VisualTreeUtility.FindContainer<TreeViewItem>(this.TreeView, item);
-            if (treeViewItem is null) return;
-
-            treeViewItem.BringIntoView();
-            this.TreeView.UpdateLayout();
-
-            var textBlock = VisualTreeUtility.FindVisualChild<TextBlock>(treeViewItem, "FileNameTextBlock");
-            if (textBlock is null) return;
-
-            var rename = new RenameControl(textBlock)
-            {
-                IsInvalidSeparatorChars = true,
-                StoredFocusTarget = this.TreeView
-            };
-
-            rename.Closed += (s, e) =>
-            {
-                _renameControl = null;
-
-                if (e.IsChanged)
-                {
-                    BookmarkCollectionService.Rename(item.BookmarkSource, e.NewValue);
-                }
-            };
-
-            _renameControl = rename;
-            _renameControl.Open();
+            var renamer = new FolderTreeItemRenamer(this.TreeView, null);
+            await renamer.RenameAsync(item);
         }
 
         public void FocusSelectedItem()
@@ -491,12 +439,6 @@ namespace NeeView
         private void ViewModel_SelectedItemChanged(object? sender, EventArgs e)
         {
             ScrollIntoView(false);
-        }
-
-        private void TreeView_ScrollChanged(object? sender, ScrollChangedEventArgs e)
-        {
-            if (App.Current == null) return;
-            _renameControl?.Close(true);
         }
 
         private void TreeView_SelectedItemChanged(object? sender, RoutedPropertyChangedEventArgs<object> e)
@@ -1014,14 +956,8 @@ namespace NeeView
 
         private static TreeViewItem? PointToViewItem(TreeView treeView, Point point)
         {
-            var element = VisualTreeUtility.HitTest<TreeViewItem>(treeView, point);
-
             // NOTE: リストアイテム間に隙間がある場合があるので、Y座標をずらして再検証する
-            if (element == null)
-            {
-                element = VisualTreeUtility.HitTest<TreeViewItem>(treeView, new Point(point.X, point.Y + 1));
-            }
-
+            var element = VisualTreeUtility.HitTest<TreeViewItem>(treeView, point) ?? VisualTreeUtility.HitTest<TreeViewItem>(treeView, new Point(point.X, point.Y + 1));
             return element;
         }
 
@@ -1063,4 +999,21 @@ namespace NeeView
             return (string[])data.GetData(DataFormats.FileDrop, false);
         }
     }
+
+
+
+    public class FolderTreeItemRenamer : TreeViewItemRenamer<FolderTreeNodeBase>
+    {
+        public FolderTreeItemRenamer(TreeView treeView, IToolTipService? toolTipService) : base(treeView, toolTipService)
+        {
+        }
+
+        protected override RenameControl CreateRenameControl(TreeView treeView, FolderTreeNodeBase item)
+        {
+            var control = base.CreateRenameControl(treeView, item);
+            control.IsInvalidSeparatorChars = true;
+            return control;
+        }
+    }
+
 }

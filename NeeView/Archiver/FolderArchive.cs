@@ -206,5 +206,39 @@ namespace NeeView
                 }
             }
         }
+
+        /// <summary>
+        /// can rename?
+        /// </summary>
+        public override bool CanRename(ArchiveEntry entry)
+        {
+            if (entry.Archiver != this) throw new ArgumentException("There are elements not registered with this archiver.", nameof(entry));
+
+            return true;
+        }
+
+        /// <summary>
+        /// rename
+        /// </summary>
+        public override async Task<bool> RenameAsync(ArchiveEntry entry, string name)
+        {
+            if (entry.Archiver != this) throw new ArgumentException("There are elements not registered with this archiver.", nameof(entry));
+
+            var src = entry.GetFileSystemPath();
+            if (src is null) return false;
+
+            // TODO: 名前の補正処理をここで？UI呼ばせるのはよろしくないのでは？
+            var dst = FileIO.CreateRenameDst(src, name, true);
+            if (dst is null) return false;
+
+            var isSuccess = await FileIO.RenameAsync(src, dst, true);
+            if (isSuccess)
+            {
+                var rawEntryName = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(entry.RawEntryName) ?? "", System.IO.Path.GetFileName(dst));
+                entry.RawEntryName = rawEntryName;
+            }
+
+            return isSuccess;
+        }
     }
 }

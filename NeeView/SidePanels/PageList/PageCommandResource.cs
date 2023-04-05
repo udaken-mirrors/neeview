@@ -13,6 +13,25 @@ namespace NeeView
 {
     public class PageCommandResource
     {
+        private readonly IToolTipService? _toolTipService;
+
+        public PageCommandResource()
+        {
+        }
+
+        public PageCommandResource(IToolTipService? toolTipService)
+        {
+            _toolTipService = toolTipService;
+        }
+
+
+        public bool IsToolTipEnabled
+        {
+            get { return _toolTipService is not null && _toolTipService.IsToolTipEnabled; }
+            set { if (_toolTipService != null) _toolTipService.IsToolTipEnabled = value; }
+        }
+
+
         public CommandBinding CreateCommandBinding(RoutedCommand command, string? key = null)
         {
             key = key ?? command.Name;
@@ -26,6 +45,7 @@ namespace NeeView
                 "CopyToFolderCommand" => new CommandBinding(command, CopyToFolder_Execute, CopyToFolder_CanExecute),
                 "MoveToFolderCommand" => new CommandBinding(command, MoveToFolder_Execute, MoveToFolder_CanExecute),
                 "RemoveCommand" => new CommandBinding(command, Remove_Exec, Remove_CanExec),
+                "RenameCommand" => new CommandBinding(command, Rename_Execute, Rename_CanExecute),
                 "OpenDestinationFolderCommand" => new CommandBinding(command, OpenDestinationFolderDialog_Execute),
                 "OpenExternalAppDialogCommand" => new CommandBinding(command, OpenExternalAppDialog_Execute),
                 "PlaylistMarkCommand" => new CommandBinding(command, PlaylistMark_Execute, PlaylistMark_CanExecute),
@@ -44,6 +64,11 @@ namespace NeeView
                 .Cast<Page>()
                 .WhereNotNull()
                 .ToList();
+        }
+
+        private ListBox? GetListBox(object sender)
+        {
+            return sender as ListBox;
         }
 
 
@@ -293,6 +318,8 @@ namespace NeeView
             BookOperation.Current.ValidateRemoveFile(movePages);
         }
 
+        #region Remove
+
         /// <summary>
         /// 削除
         /// </summary>
@@ -331,6 +358,33 @@ namespace NeeView
             await BookOperation.Current.DeleteFileAsync(pages);
         }
 
+        #endregion Remove
+
+        #region Rename
+
+        public void Rename_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            var item = GetSelectedPage(sender);
+            if (item is null) return;
+
+            e.CanExecute = item.CanRename();
+        }
+
+        public async void Rename_Execute(object sender, ExecutedRoutedEventArgs e)
+        {
+            var listBox = GetListBox(sender);
+            if (listBox is null) return;
+
+            var item = GetSelectedPage(sender);
+            if (item is null) return;
+
+            var renamer = new PageListItemRenamer(listBox, _toolTipService);
+            renamer.SelectedItemChanged += (s, e) => BookOperation.Current.JumpPage(this, listBox.SelectedItem as Page);
+            renamer.ArchiveChanged += (s, e) => BookOperation.Current.ReLoad();
+            await renamer.RenameAsync(item);
+        }
+
+        #endregion Rename
 
         public void OpenDestinationFolderDialog_Execute(object sender, ExecutedRoutedEventArgs e)
         {
@@ -395,5 +449,6 @@ namespace NeeView
             return bookPlaylist.Find(page) != null;
         }
     }
+
 
 }

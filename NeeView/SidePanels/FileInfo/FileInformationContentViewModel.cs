@@ -7,7 +7,8 @@ using System.Windows.Data;
 
 namespace NeeView
 {
-    public class FileInformationContentViewModel : BindableBase
+    // TODO: 今のところ破棄されないので不要であるが、正しく上位からDispose()を呼ぶようにしておく
+    public class FileInformationContentViewModel : BindableBase, IDisposable
     {
         private readonly MappedCollection<FileInforamtionKey, FileInformationRecord> _collection;
         private FileInformationSource? _source;
@@ -15,6 +16,9 @@ namespace NeeView
         private FileInformationRecord? _selectedItem;
         private bool _IsVisibleImage;
         private bool _isVisibleMetadata;
+        private IDisposable? _subscribeDisposer;
+        private bool _disposedValue;
+
 
         public FileInformationContentViewModel()
         {
@@ -36,7 +40,9 @@ namespace NeeView
             {
                 if (SetProperty(ref _source, value))
                 {
+                    _subscribeDisposer?.Dispose();
                     UpdateDatabase();
+                    _subscribeDisposer = _source?.SubscribePropertyChanged(nameof(Source.Properties), (s, e) => AppDispatcher.BeginInvoke(() => UpdateDatabase()));
                 }
             }
         }
@@ -172,5 +178,23 @@ namespace NeeView
             }
         }
 
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!_disposedValue)
+            {
+                if (disposing)
+                {
+                    _subscribeDisposer?.Dispose();
+                }
+
+                _disposedValue = true;
+            }
+        }
+
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
     }
 }

@@ -51,6 +51,23 @@ namespace NeeView
             }
         }
 
+        public override string GetRenameText()
+        {
+            return this.Name;
+        }
+
+        public override bool CanRename()
+        {
+            return true;
+        }
+
+        public override async Task<bool> RenameAsync(string name)
+        {
+            if (this.Name == name) return false;
+            
+            BookmarkCollectionService.Rename(this.BookmarkSource, name);
+            return await Task.FromResult(true);
+        }
     }
 
 }

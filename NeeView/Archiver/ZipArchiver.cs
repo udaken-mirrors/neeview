@@ -191,7 +191,7 @@ namespace NeeView
             if (!IsRoot) throw new ArgumentException("The archive is not a file.");
             if (entries.Any(e => e.Archiver != this)) throw new ArgumentException("There are elements not registered with this archiver.", nameof(entries));
             if (!entries.Any()) return false;
-            
+
             var removes = entries;
             var directories = entries.Where(e => e.IsDirectory);
             if (directories.Any())
@@ -237,6 +237,76 @@ namespace NeeView
                 return IsValidEntry(entry, zipArchiveEntry) ? zipArchiveEntry : null;
             }
         }
+
+        // NOTE：ZipArchvieの項目削除にはいろいろ課題があるため保留
+        // - 処理によりIDがずれてしまうためブックを開き直す必要がある -> ファイルと同様の操作感にならない
+        //   - 同様の問題は削除処理にも存在するため、ブックのIDのずれを補正する包括的な処理がほしい
+        // - ZipArchvieに名前変更機能がないため、削除追加という処理になってしまい、重く日付も変更されてしまう ... 7Zip だとどうだろう？
+        // - フォルダーの変更処理。エントリすべてを変更する必要がある...重そうだな
+#if false
+        /// <summary>
+        /// can rename?
+        /// </summary>
+        public override bool CanRename(ArchiveEntry entry)
+        {
+            if (entry.Archiver != this) throw new ArgumentException("There are elements not registered with this archiver.", nameof(entry));
+
+            return IsRoot && Config.Current.Archive.Zip.IsFileWriteAccessEnabled;
+        }
+
+        /// <summary>
+        /// rename
+        /// </summary>
+        public override async Task<bool> RenameAsync(ArchiveEntry entry, string name)
+        {
+            if (entry.Archiver != this) throw new ArgumentException("There are elements not registered with this archiver.", nameof(entry));
+            if (!IsRoot) throw new ArgumentException("The archive is not a file.");
+
+            //throw new NotImplementedException();
+
+            var tempFilename = this.Path;
+
+            using (var archive = ZipFile.Open(tempFilename, ZipArchiveMode.Update, Environment.Encoding))
+            {
+                ClearEntryCache();
+
+                var oldEntry = GetTargetEntry(archive, entry);
+                if (oldEntry is null) return false;
+
+                var directory = LoosePath.GetDirectoryName(oldEntry.FullName);
+                var newEntryName = LoosePath.Combine(directory, name, '/');
+
+                var mem = new MemoryStream();
+                using (var stream = oldEntry.Open())
+                {
+                    await stream.CopyToAsync(mem);
+                    await stream.FlushAsync();
+                }
+
+                oldEntry.Delete();
+
+                var newEntry = archive.CreateEntry(newEntryName);
+                using (var stream = newEntry.Open())
+                {
+                    mem.Seek(0, SeekOrigin.Begin);
+                    await mem.CopyToAsync(stream);
+                    await mem.FlushAsync();
+                }
+                newEntry.LastWriteTime = oldEntry.LastWriteTime;
+
+                entry.RawEntryName = newEntryName;
+            }
+
+            // TODO: 現在ブックを開き直す
+            return true;
+
+            static ZipArchiveEntry? GetTargetEntry(ZipArchive archive, ArchiveEntry entry)
+            {
+                var zipArchiveEntry = archive.Entries[entry.Id];
+                return IsValidEntry(entry, zipArchiveEntry) ? zipArchiveEntry : null;
+            }
+        }
+#endif
     }
 
 

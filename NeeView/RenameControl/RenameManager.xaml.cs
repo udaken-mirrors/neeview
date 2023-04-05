@@ -122,7 +122,8 @@ namespace NeeView
                 var renames = this.Root.Children.OfType<RenameControl>().ToList();
                 foreach (var rename in renames)
                 {
-                    rename.Close(isSuccess, isRestoreFocus);
+                    // NOTE: 非同期で実行
+                    _ = rename.CloseAsync(isSuccess, isRestoreFocus);
                 }
             }
         }

@@ -10,7 +10,7 @@ namespace NeeView
     /// <summary>
     /// アーカイブエントリ
     /// </summary>
-    public class ArchiveEntry
+    public class ArchiveEntry : IRenameable
     {
         /// <summary>
         /// Emptyインスタンス
@@ -366,6 +366,22 @@ namespace NeeView
         public override string? ToString()
         {
             return string.IsNullOrEmpty(EntryName) ? base.ToString() : EntryName;
+        }
+
+
+        public string GetRenameText()
+        {
+            return EntryLastName;
+        }
+
+        public bool CanRename()
+        {
+            return Archiver.CanRename(this);
+        }
+
+        public async Task<bool> RenameAsync(string name)
+        {
+            return await Archiver.RenameAsync(this, name);
         }
     }
 }

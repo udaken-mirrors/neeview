@@ -60,9 +60,16 @@
                     <MultiBinding Converter="{StaticResource PageNameFormatConverter}">
                         <Binding />
                         <Binding Source="{x:Static local:Config.Current}" Path="PageList.Format"/>
+                        <Binding Path="EntryName"/>
                     </MultiBinding>
                 </Setter.Value>
             </Setter>
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=local:PageListBox}, Path=IsToolTipEnabled}" Value="False">
+                    <Setter Property="ToolTip" Value="{x:Null}"/>
+                    <Setter Property="ToolTipService.IsEnabled" Value="False"/>
+                </DataTrigger>
+            </Style.Triggers>
         </Style>
 
         <Style x:Key="NormalNameStyle" TargetType="TextBlock" BasedOn="{StaticResource NameStyle}">
@@ -130,7 +137,7 @@
                 <Rectangle Style="{StaticResource VerticalSelectedStyle}" />
                 <Image DockPanel.Dock="Right" Style="{StaticResource FolderIconStyle}" Margin="1" />
                 <Image DockPanel.Dock="Right" Style="{StaticResource PageMarkStyle}" Margin="1" />
-                <TextBlock Style="{StaticResource NormalNameStyle}" Margin="5,1" />
+                <TextBlock x:Name="FileNameTextBlock" Style="{StaticResource NormalNameStyle}" Margin="5,1" />
             </DockPanel>
         </DataTemplate>
 
@@ -143,7 +150,7 @@
                     <Image DockPanel.Dock="Right" Style="{StaticResource PageMarkStyle}" />
                     <StackPanel VerticalAlignment="Center">
                         <TextBlock Style="{StaticResource NoteTextStyle}" Text="{Binding Converter={StaticResource PageToNoteConverter}}" />
-                        <TextBlock Style="{StaticResource ContentNameStyle}" Margin="5,0" />
+                        <TextBlock x:Name="FileNameTextBlock" Style="{StaticResource ContentNameStyle}" Margin="5,0" />
                     </StackPanel>
                 </DockPanel>
             </DockPanel>
@@ -156,7 +163,7 @@
                     <DockPanel DockPanel.Dock="Bottom" Margin="2">
                         <Image DockPanel.Dock="Right" Style="{StaticResource FolderIconStyle}" />
                         <Image DockPanel.Dock="Right" Style="{StaticResource PageMarkStyle}" />
-                        <TextBlock Style="{StaticResource BannerrNameStyle}" />
+                        <TextBlock x:Name="FileNameTextBlock" Style="{StaticResource BannerrNameStyle}" />
                     </DockPanel>
                     <local:PanelListBannerImage Thumbnail="{Binding Thumbnail}" />
                 </DockPanel>
@@ -170,7 +177,7 @@
                 <DockPanel>
                     <Image DockPanel.Dock="Right" Style="{StaticResource FolderIconStyle}" VerticalAlignment="Top"/>
                     <Image DockPanel.Dock="Right" Style="{StaticResource PageMarkStyle}" VerticalAlignment="Top"/>
-                    <TextBlock Style="{StaticResource ThumbnailNameStyle}" HorizontalAlignment="Center"/>
+                    <TextBlock x:Name="FileNameTextBlock" Style="{StaticResource ThumbnailNameStyle}" HorizontalAlignment="Center"/>
                 </DockPanel>
             </StackPanel>
         </DataTemplate>

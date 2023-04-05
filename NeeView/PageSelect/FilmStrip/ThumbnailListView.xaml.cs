@@ -92,6 +92,8 @@ namespace NeeView
         public ThumbnailListView()
         {
             InitializeComponent();
+
+            _commandResource = new PageCommandResource(null);
             InitializeCommand();
 
             this.Root.IsVisibleChanged +=
@@ -113,7 +115,7 @@ namespace NeeView
         public static readonly RoutedCommand OpenExternalAppDialogCommand = new(nameof(OpenExternalAppDialogCommand), typeof(ThumbnailListView));
         public static readonly RoutedCommand PlaylistMarkCommand = new(nameof(PlaylistMarkCommand), typeof(ThumbnailListView));
 
-        private readonly PageCommandResource _commandResource = new();
+        private readonly PageCommandResource _commandResource;
 
         private static void InitializeCommandStatic()
         {

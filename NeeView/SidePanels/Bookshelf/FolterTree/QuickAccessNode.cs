@@ -1,6 +1,7 @@
 ﻿using NeeLaboratory.ComponentModel;
 using System;
 using System.Collections.ObjectModel;
+using System.Threading.Tasks;
 using System.Windows.Media;
 
 namespace NeeView
@@ -21,15 +22,24 @@ namespace NeeView
 
         public override IImageSourceCollection Icon => PathToPlaceIconConverter.Convert(new QueryPath(QuickAccessSource.Path));
 
-
-        public void Rename(string newName)
+        public override string GetRenameText()
         {
-            if (this.DispName != newName)
-            {
-                QuickAccessSource.Name = newName;
-                RaisePropertyChanged(nameof(Name));
-                RaisePropertyChanged(nameof(DispName));
-            }
+            return this.Name;
+        }
+
+        public override bool CanRename()
+        {
+            return true;
+        }
+
+        public override async Task<bool> RenameAsync(string name)
+        {
+            if (this.Name == name) return false;
+
+            QuickAccessSource.Name = name;
+            RaisePropertyChanged(nameof(Name));
+            RaisePropertyChanged(nameof(DispName));
+            return await Task.FromResult(true);
         }
     }
 }

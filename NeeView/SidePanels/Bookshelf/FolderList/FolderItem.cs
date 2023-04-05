@@ -78,7 +78,7 @@ namespace NeeView
     /// フォルダー情報
     /// フォルダーリストの１項目の情報 
     /// </summary>
-    public abstract class FolderItem : BindableBase, IHasPage, IHasName
+    public abstract class FolderItem : BindableBase, IHasPage, IHasName, IRenameable
     {
         private readonly bool _isOverlayEnabled;
 
@@ -352,6 +352,59 @@ namespace NeeView
             return $"FolderItem: {Name}, Place={Place}, TargetPath={TargetPath}";
         }
 
+        public string GetRenameText()
+        {
+            return this.TargetPath.FileName;
+        }
+
+        public bool CanRename()
+        {
+            if (!this.IsEditable)
+            {
+                return false;
+            }
+            else if (this.IsFileSystem())
+            {
+                if (this.TargetPath.SimplePath.StartsWith(Temporary.Current.TempDirectory))
+                {
+                    return false;
+                }
+                else
+                {
+                    return Config.Current.System.IsFileWriteAccessEnabled;
+                }
+            }
+            else if (this.Attributes.HasFlag(FolderItemAttribute.Bookmark | FolderItemAttribute.Directory))
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        public async Task<bool> RenameAsync(string name)
+        {
+            // TODO: ダイアログ処理を含んでいる。UI処理を分離したい
+
+            var src = this.TargetPath.SimplePath;
+            var dst = FileIO.CreateRenameDst(src, name, showConfirmDialog: true);
+            if (dst is null) return false;
+
+            // 先に項目の名前変更反映 (A)
+            // NOTE: FileIO.RenameAsync前でないと表示変更が遅れる。何故！？
+            this.SetTargetPath(new QueryPath(dst));
+
+            // ファイル名変更処理は非同期で
+            var isSuccess = await FileIO.RenameAsync(src, dst, restoreBook: true); // TODO: 現在の本を開き直すのは上位で行う
+            if (!isSuccess)
+            {
+                // Renameに失敗した場合は元に戻す。(A)用
+                this.SetTargetPath(new QueryPath(src));
+            }
+
+            return isSuccess;
+        }
+
     }
 
     /// <summary>
@@ -388,10 +441,7 @@ namespace NeeView
             {
                 if (disposing)
                 {
-                    if (_archivePage != null)
-                    {
-                        _archivePage.Dispose();
-                    }
+                    _archivePage?.Dispose();
                 }
                 _disposedValue = true;
             }

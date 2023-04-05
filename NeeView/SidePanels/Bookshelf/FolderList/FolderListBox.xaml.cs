@@ -22,12 +22,11 @@ namespace NeeView
     /// <summary>
     /// FolderListBox.xaml の相互作用ロジック
     /// </summary>
-    public partial class FolderListBox : UserControl, IPageListPanel, IDisposable
+    public partial class FolderListBox : UserControl, IPageListPanel, IDisposable, IToolTipService
     {
         private readonly FolderListBoxViewModel _vm;
         private ListBoxThumbnailLoader? _thumbnailLoader;
         private PageThumbnailJobClient? _jobClient;
-        private RenameControl? _renameControl;
 
 
         static FolderListBox()
@@ -47,9 +46,6 @@ namespace NeeView
 
             // タッチスクロール操作の終端挙動抑制
             this.ListBox.ManipulationBoundaryFeedback += SidePanelFrame.Current.ScrollViewer_ManipulationBoundaryFeedback;
-
-            this.ListBox.AddHandler(ScrollViewer.ScrollChangedEvent, new ScrollChangedEventHandler(ListBox_ScrollChanged));
-
 
             this.Loaded += FolderListBox_Loaded;
             this.Unloaded += FolderListBox_Unloaded;
@@ -89,10 +85,7 @@ namespace NeeView
             {
                 if (disposing)
                 {
-                    if (_jobClient != null)
-                    {
-                        _jobClient.Dispose();
-                    }
+                    _jobClient?.Dispose();
                 }
                 _disposedValue = true;
             }
@@ -169,7 +162,7 @@ namespace NeeView
         /// </summary>
         private void ToggleBookmark_CanExecute(object? sender, CanExecuteRoutedEventArgs e)
         {
-            e.CanExecute = (sender as ListBox)?.SelectedItem is FolderItem item && item.IsFileSystem() && !item.EntityPath.SimplePath.StartsWith(Temporary.Current.TempDirectory);
+            e.CanExecute = sender is ListBox { SelectedItem: FolderItem item } && item.IsFileSystem() && !item.EntityPath.SimplePath.StartsWith(Temporary.Current.TempDirectory);
         }
 
         /// <summary>
@@ -177,7 +170,7 @@ namespace NeeView
         /// </summary>
         private void ToggleBookmark_Executed(object? sender, ExecutedRoutedEventArgs e)
         {
-            if ((sender as ListBox)?.SelectedItem is FolderItem item)
+            if (sender is ListBox { SelectedItem: FolderItem item })
             {
                 if (BookmarkCollection.Current.Contains(item.EntityPath.SimplePath))
                 {
@@ -195,7 +188,7 @@ namespace NeeView
         /// </summary>
         private void RemoveHistory_CanExecute(object? sender, CanExecuteRoutedEventArgs e)
         {
-            e.CanExecute = (sender as ListBox)?.SelectedItem is FolderItem item && BookHistoryCollection.Current.Contains(item.TargetPath.SimplePath);
+            e.CanExecute = sender is ListBox { SelectedItem: FolderItem item } && BookHistoryCollection.Current.Contains(item.TargetPath.SimplePath);
         }
 
         /// <summary>
@@ -203,7 +196,7 @@ namespace NeeView
         /// </summary>
         private void RemoveHistory_Executed(object? sender, ExecutedRoutedEventArgs e)
         {
-            if ((sender as ListBox)?.SelectedItem is FolderItem item)
+            if (sender is ListBox { SelectedItem: FolderItem item })
             {
                 BookHistoryCollection.Current.Remove(item.TargetPath.SimplePath);
             }
@@ -217,7 +210,7 @@ namespace NeeView
         /// <param name="e"></param>
         private void LoadWithRecursive_CanExecute(object? sender, CanExecuteRoutedEventArgs e)
         {
-            e.CanExecute = (sender as ListBox)?.SelectedItem is FolderItem item
+            e.CanExecute = sender is ListBox { SelectedItem: FolderItem item }
                 && !item.Attributes.AnyFlag(FolderItemAttribute.Drive | FolderItemAttribute.Empty)
                 && (Config.Current.System.ArchiveRecursiveMode == ArchiveEntryCollectionMode.IncludeSubArchives
                     ? item.Attributes.HasFlag(FolderItemAttribute.Directory)
@@ -246,7 +239,7 @@ namespace NeeView
         /// <param name="e"></param>
         private void FileCommand_CanExecute(object? sender, CanExecuteRoutedEventArgs e)
         {
-            e.CanExecute = ((sender as ListBox)?.SelectedItem is FolderItem item && item.IsEditable && Config.Current.System.IsFileWriteAccessEnabled);
+            e.CanExecute = sender is ListBox { SelectedItem: FolderItem item } && item.IsEditable && Config.Current.System.IsFileWriteAccessEnabled;
         }
 
         /// <summary>
@@ -391,11 +384,6 @@ namespace NeeView
             e.CanExecute = items != null && _vm.FolderCollection is not PlaylistFolderCollection && items.All(x => x.CanRemove());
         }
 
-        /// <summary>
-        /// 削除コマンド実行
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
         public async void Remove_Executed(object? sender, ExecutedRoutedEventArgs e)
         {
             var items = this.ListBox.SelectedItems.Cast<FolderItem>().ToList();
@@ -407,189 +395,34 @@ namespace NeeView
         public void Rename_CanExecute(object? sender, CanExecuteRoutedEventArgs e)
         {
             if ((sender as ListBox)?.SelectedItem is not FolderItem item) return;
+            if (_vm.FolderCollection is PlaylistFolderCollection) return;
 
-            e.CanExecute = CanRenameExecute(item);
+            e.CanExecute = item.CanRename();
         }
 
-        private bool CanRenameExecute(FolderItem item)
-        {
-            if (item == null || !item.IsEditable)
-            {
-                return false;
-            }
-            if (_vm.FolderCollection is PlaylistFolderCollection)
-            {
-                return false;
-            }
-            else if (item.IsFileSystem())
-            {
-                if (item.TargetPath.SimplePath.StartsWith(Temporary.Current.TempDirectory))
-                {
-                    return false;
-                }
-                else
-                {
-                    return Config.Current.System.IsFileWriteAccessEnabled;
-                }
-            }
-            else if (item.Attributes.HasFlag(FolderItemAttribute.Bookmark | FolderItemAttribute.Directory))
-            {
-                return true;
-            }
-
-            return false;
-        }
-
-        /// <summary>
-        /// 名前変更コマンド実行
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        public void Rename_Executed(object? sender, ExecutedRoutedEventArgs e)
+        public async void Rename_Executed(object? sender, ExecutedRoutedEventArgs e)
         {
             if (sender != this.ListBox) return;
 
-            Rename();
+            await RenameAsync();
         }
 
-        private void Rename()
+        private async Task RenameAsync()
         {
-            var listView = this.ListBox;
+            var listBox = this.ListBox;
+            if (listBox.SelectedItem is not FolderItem item) return;
 
-            if (listView.SelectedItem is not FolderItem item) return;
-
-            if (CanRenameExecute(item))
+            var renamer = new FolderItemRenamer(listBox, this);
+            renamer.SelectedItemChanged += (s, e) =>
             {
-                listView.ScrollIntoView(item);
-                listView.UpdateLayout();
-                var listViewItem = VisualTreeUtility.GetListBoxItemFromItem(listView, item);
-                var textBlock = VisualTreeUtility.FindVisualChild<TextBlock>(listViewItem, "FileNameTextBlock");
-
-                if (textBlock != null)
+                if (listBox.SelectedItem is FolderItem item)
                 {
-                    var rename = new RenameControl(textBlock) { StoredFocusTarget = listViewItem };
-
-                    if (item.IsFileSystem())
-                    {
-                        rename.IsSeleftFileNameBody = !item.IsDirectory;
-                        rename.IsInvalidFileNameChars = true;
-                    }
-                    else if (item.Attributes.HasFlag(FolderItemAttribute.Bookmark | FolderItemAttribute.Directory))
-                    {
-                        rename.IsInvalidSeparatorChars = true;
-                    }
-
-                    rename.Closed += (s, e) =>
-                    {
-                        _renameControl = null;
-                        this.IsToolTipEnabled = true;
-
-                        if (e.IsChanged)
-                        {
-                            RenameFolderItem(item, e.NewValue, e.MoveRename == 0);
-                        }
-                        if (e.MoveRename != 0)
-                        {
-                            RenameNext(e.MoveRename);
-                        }
-                    };
-
-                    this.IsToolTipEnabled = false;
-                    _renameControl = rename;
-                    _renameControl.Open();
+                    _vm.Model.LoadBook(item);
                 }
-            }
+            };
+            await renamer.RenameAsync(item);
         }
 
-        private void RenameFolderItem(FolderItem item, string newValue, bool restoreBook)
-        {
-            if (item.Source is TreeListNode<IBookmarkEntry> bookmarkNode)
-            {
-                BookmarkCollectionService.Rename(bookmarkNode, newValue);
-            }
-            else
-            {
-                RenameFileName(item, newValue, restoreBook);
-            }
-        }
-
-        private void RenameFileName(FolderItem item, string name, bool restoreBook)
-        {
-            var newName = item.IsHideExtension() ? name + System.IO.Path.GetExtension(item.Name) : name;
-            //Debug.WriteLine($"{ev.OldValue} => {newName}");
-
-            var src = item.TargetPath.SimplePath;
-            var dst = FileIO.CreateRenameDst(src, newName, true);
-            if (dst is null) return;
-
-            // 先に項目の名前変更反映
-            item.SetTargetPath(new QueryPath(dst));
-
-            // ファイル名変更処理は非同期で
-            Task.Run(async () =>
-            {
-                var isSuccess = await FileIO.RenameAsync(src, dst, restoreBook);
-                if (!isSuccess)
-                {
-                    // Renameに失敗した場合はもとに戻す
-                    _vm.FolderCollection?.RequestRename(new QueryPath(dst), new QueryPath(src));
-                }
-            });
-        }
-
-        /// <summary>
-        /// 項目を移動して名前変更処理を続行する
-        /// </summary>
-        /// <param name="delta"></param>
-        private void RenameNext(int delta)
-        {
-            Debug.Assert(delta == -1 || delta == +1);
-
-            if (this.ListBox.SelectedIndex < 0) return;
-
-            if (this.ListBox.ItemsSource is not IList<FolderItem> collection) return;
-
-            // 次に名前変更可能な項目
-            var next = GetRenabableNext(collection, this.ListBox.SelectedIndex, delta);
-            if (next == this.ListBox.SelectedIndex) return;
-
-            // 選択項目を移動
-            this.ListBox.SelectedIndex = next;
-            this.ListBox.ScrollIntoView(this.ListBox.SelectedItem);
-            this.ListBox.UpdateLayout();
-
-            // ブック切り替え
-            if (this.ListBox.SelectedItem is FolderItem item)
-            {
-                _vm.Model.LoadBook(item);
-            }
-
-            // リネーム発動
-            Rename();
-        }
-
-        /// <summary>
-        /// リネーム可能な次の項目を取得
-        /// </summary>
-        /// <param name="delta"></param>
-        /// <returns>次の項目番号。みつからなければ現在の項目番号を返す</returns>
-        private int GetRenabableNext(IList<FolderItem> collection, int selectedIndex, int delta)
-        {
-            Debug.Assert(delta == -1 || delta == +1);
-
-            if (collection is null || collection.Count <= 0) return selectedIndex;
-            if (selectedIndex < 0) return selectedIndex;
-
-            var index = selectedIndex;
-            do
-            {
-                index = (index + collection.Count + delta) % collection.Count;
-                if (CanRenameExecute(collection[index])) break;
-            }
-            while (index != selectedIndex);
-
-            return index;
-        }
 
         /// <summary>
         /// エクスプローラーで開くコマンド
@@ -601,7 +434,7 @@ namespace NeeView
 
         public void OpenExplorer_Executed(object? sender, ExecutedRoutedEventArgs e)
         {
-            if ((sender as ListBox)?.SelectedItem is FolderItem item)
+            if (sender is ListBox { SelectedItem: FolderItem item })
             {
                 var path = item.TargetPath.SimplePath;
                 path = item.Attributes.AnyFlag(FolderItemAttribute.Bookmark | FolderItemAttribute.ArchiveEntry | FolderItemAttribute.Empty) ? ArchiverManager.Current.GetExistPathName(path) : path;
@@ -643,7 +476,7 @@ namespace NeeView
 
         public void Open_Executed(object? sender, ExecutedRoutedEventArgs e)
         {
-            if ((sender as ListBox)?.SelectedItem is FolderItem item)
+            if (sender is ListBox { SelectedItem: FolderItem item })
             {
                 _vm.MoveToSafety(item);
             }
@@ -651,7 +484,7 @@ namespace NeeView
 
         public void OpenBook_Executed(object? sender, ExecutedRoutedEventArgs e)
         {
-            if ((sender as ListBox)?.SelectedItem is FolderItem item && !item.IsEmpty())
+            if (sender is ListBox { SelectedItem: FolderItem item } && !item.IsEmpty())
             {
                 _vm.Model.LoadBook(item);
             }
@@ -669,7 +502,7 @@ namespace NeeView
 
         private void OpenInPlaylistCommand_Execute(object? sender, ExecutedRoutedEventArgs e)
         {
-            if ((sender as ListBox)?.SelectedItem is FolderItem item && item.IsPlaylist)
+            if (sender is ListBox { SelectedItem: FolderItem item } && item.IsPlaylist)
             {
                 Config.Current.Playlist.CurrentPlaylist = item.EntityPath.SimplePath;
                 SidePanelFrame.Current.IsVisiblePlaylist = true;
@@ -925,14 +758,8 @@ namespace NeeView
 
         private static ListBoxItem? PointToViewItem(ListBox listBox, Point point)
         {
-            var element = VisualTreeUtility.HitTest<ListBoxItem>(listBox, point);
-
             // NOTE: リストアイテム間に隙間がある場合があるので、Y座標をずらして再検証する
-            if (element == null)
-            {
-                element = VisualTreeUtility.HitTest<ListBoxItem>(listBox, new Point(point.X, point.Y + 1));
-            }
-
+            var element = VisualTreeUtility.HitTest<ListBoxItem>(listBox, point) ?? VisualTreeUtility.HitTest<ListBoxItem>(listBox, new Point(point.X, point.Y + 1));
             return element;
         }
 
@@ -946,8 +773,8 @@ namespace NeeView
             _jobClient = new PageThumbnailJobClient("FolderList", JobCategories.BookThumbnailCategory);
             _thumbnailLoader = new ListBoxThumbnailLoader(this, _jobClient);
 
-            _vm.SelectedChanged += SelectedChanged;
-            _vm.BusyChanged += BusyChanged;
+            _vm.SelectedChanged += ViewModel_SelectedChanged;
+            _vm.BusyChanged += ViewModel_BusyChanged;
 
             Config.Current.Panels.ContentItemProfile.PropertyChanged += PanelListtemProfile_PropertyChanged;
             Config.Current.Panels.BannerItemProfile.PropertyChanged += PanelListtemProfile_PropertyChanged;
@@ -958,9 +785,8 @@ namespace NeeView
         {
             _jobClient?.Dispose();
 
-            _vm.SelectedChanged -= SelectedChanged;
-            _vm.BusyChanged -= BusyChanged;
-            _renameControl?.Close(false, false);
+            _vm.SelectedChanged -= ViewModel_SelectedChanged;
+            _vm.BusyChanged -= ViewModel_BusyChanged;
 
             Config.Current.Panels.ContentItemProfile.PropertyChanged -= PanelListtemProfile_PropertyChanged;
             Config.Current.Panels.BannerItemProfile.PropertyChanged -= PanelListtemProfile_PropertyChanged;
@@ -1012,7 +838,7 @@ namespace NeeView
         }
 
 
-        public void SelectedChanged(object? sender, FolderListSelectedChangedEventArgs e)
+        public async void ViewModel_SelectedChanged(object? sender, FolderListSelectedChangedEventArgs e)
         {
             if (this.ListBox.IsFocused)
             {
@@ -1025,18 +851,7 @@ namespace NeeView
 
             if (e.IsNewFolder)
             {
-                Rename();
-            }
-        }
-
-        /// <summary>
-        /// スクロール変更イベント処理
-        /// </summary>
-        private void ListBox_ScrollChanged(object? sender, ScrollChangedEventArgs e)
-        {
-            if (_renameControl != null)
-            {
-                RenameTools.ListBoxScrollChanged(this.ListBox, e, _renameControl);
+                await RenameAsync();
             }
         }
 
@@ -1073,7 +888,7 @@ namespace NeeView
                 }
                 else if (key == Key.Down)
                 {
-                    if ((sender as ListBox)?.SelectedItem is FolderItem item)
+                    if (sender is ListBox { SelectedItem: FolderItem item })
                     {
                         _vm.MoveToSafety(item);
                         e.Handled = true;
@@ -1104,7 +919,6 @@ namespace NeeView
 
         private void FolderList_SelectionChanged(object? sender, SelectionChangedEventArgs e)
         {
-            _renameControl?.Close(false, false);
         }
 
         //
@@ -1112,7 +926,7 @@ namespace NeeView
         {
             if (Keyboard.Modifiers != ModifierKeys.None) return;
 
-            if (!Config.Current.Panels.OpenWithDoubleClick && (sender as ListBoxItem)?.Content is FolderItem item && !item.IsEmpty())
+            if (!Config.Current.Panels.OpenWithDoubleClick && sender is ListBoxItem { Content: FolderItem item } && !item.IsEmpty())
             {
                 _vm.Model.LoadBook(item);
             }
@@ -1269,7 +1083,7 @@ namespace NeeView
         /// <summary>
         /// リスト更新中
         /// </summary>
-        private void BusyChanged(object? sender, FolderListBusyChangedEventArgs e)
+        private void ViewModel_BusyChanged(object? sender, FolderListBusyChangedEventArgs e)
         {
             SetBusy(e.IsBusy);
         }
@@ -1284,7 +1098,7 @@ namespace NeeView
 
                 this.BusyFadeContent.Content = new BusyFadeView();
 
-                _renameControl?.Close(false, false);
+                RenameManager.GetRenameManager(this)?.CloseAll(false, false);
             }
             else
             {

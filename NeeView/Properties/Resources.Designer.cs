@@ -8015,6 +8015,15 @@ namespace NeeView.Properties {
         }
         
         /// <summary>
+        ///   Extras に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string InformationKey_ExtraValue {
+            get {
+                return ResourceManager.GetString("InformationKey.ExtraValue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   File name に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string InformationKey_FileName {
@@ -11502,6 +11511,15 @@ namespace NeeView.Properties {
         public static string PageListItem_Menu_OpenBook {
             get {
                 return ResourceManager.GetString("PageListItem.Menu.OpenBook", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Rena_me に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string PageListItem_Menu_Rename {
+            get {
+                return ResourceManager.GetString("PageListItem.Menu.Rename", resourceCulture);
             }
         }
         

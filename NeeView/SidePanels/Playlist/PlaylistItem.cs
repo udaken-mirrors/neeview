@@ -2,16 +2,16 @@
 using NeeView.Collections;
 using NeeView.IO;
 using System;
+using System.Threading.Tasks;
 
 namespace NeeView
 {
-    public class PlaylistItem : BindableBase, IHasPage, IHasName
+    public class PlaylistItem : BindableBase, IHasPage, IHasName, IRenameable
     {
         private readonly PlaylistSourceItem _item;
         private string? _place;
         private Page? _archivePage;
         private bool? _isArchive;
-
 
         public PlaylistItem(string path)
         {
@@ -37,6 +37,7 @@ namespace NeeView
                 if (_item.Path != value)
                 {
                     _item.Path = value;
+                    RaisePropertyChanged();
                     RaisePropertyChanged(nameof(Name));
                 }
             }
@@ -45,13 +46,13 @@ namespace NeeView
         public string Name
         {
             get { return _item.Name; }
-            set 
+            set
             {
-                var oldName = _item.Name;
-                _item.Name = value;
-                if (_item.Name != oldName)
+                if (_item.Name != value)
                 {
+                    _item.Name = value;
                     RaisePropertyChanged();
+                    RaisePropertyChanged(nameof(IsNameChanged));
                 }
             }
         }
@@ -138,6 +139,38 @@ namespace NeeView
         public override string? ToString()
         {
             return Name ?? base.ToString();
+        }
+
+        public string GetRenameText()
+        {
+            return Name;
+        }
+
+        public bool CanRename()
+        {
+            return true;
+        }
+
+        public async Task<bool> RenameAsync(string name)
+        {
+            // TODO: この命令でリストの保存処理等の波及処理が実行されるようにする
+            
+            await Task.CompletedTask;
+            throw new NotImplementedException();
+
+#if false
+            //from PlaylistListBoxViewModel.Rename();
+
+            if (!IsEditable) return false;
+            if (this.Name == name) return false;
+
+            var oldName = this.Name;
+            this.Name = name;
+            ItemRenamed?.Invoke(this, new PlaylistItemRenamedEventArgs(item, oldName));
+            _isDarty = true;
+
+            return await Task.FromResult(true);
+#endif
         }
     }
 }

@@ -7421,6 +7421,9 @@ nv.ShowToast(nv.Book.ViewPages[0].Path)</value>
   <data name="InformationGroup.Extras" xml:space="preserve">
     <value>追加情報</value>
   </data>
+  <data name="InformationKey.ExtraValue" xml:space="preserve">
+    <value>追加情報</value>
+  </data>
   <data name="FileDeleteMultiDialog.Message.Completely" xml:space="preserve">
     <value>注意：完全に削除されます。</value>
   </data>
@@ -7435,5 +7438,8 @@ nv.ShowToast(nv.Book.ViewPages[0].Path)</value>
   </data>
   <data name="SystemConfig.IsFileWriteAccessEnabled.Remarks" xml:space="preserve">
     <value>ファイルの削除や名前変更ができるようになります。</value>
+  </data>
+  <data name="PageListItem.Menu.Rename" xml:space="preserve">
+    <value>名前の変更(_M)</value>
   </data>
 </root>

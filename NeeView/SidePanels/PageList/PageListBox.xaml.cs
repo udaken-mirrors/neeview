@@ -24,7 +24,7 @@ namespace NeeView
     /// <summary>
     /// PageListBox.xaml の相互作用ロジック
     /// </summary>
-    public partial class PageListBox : UserControl, IPageListPanel, IDisposable
+    public partial class PageListBox : UserControl, IPageListPanel, IDisposable, IToolTipService
     {
         public static readonly string DragDropFormat = FormatVersion.CreateFormatName(Environment.ProcessId.ToString(), nameof(PageListBox));
 
@@ -40,6 +40,8 @@ namespace NeeView
         public PageListBox(PageListBoxViewModel vm)
         {
             InitializeComponent();
+
+            _commandResource = new PageCommandResource(this);
             InitializeCommand();
 
             _vm = vm;
@@ -54,15 +56,16 @@ namespace NeeView
             this.Unloaded += PageListBox_Unloaded;
         }
 
-        private void ViewModel_CollectionChanged(object? sender, EventArgs e)
-        {
-            _thumbnailLoader?.Load();
 
-            if (this.ListBox.IsFocused)
-            {
-                FocusSelectedItem(true);
-            }
+        public bool IsToolTipEnabled
+        {
+            get { return (bool)GetValue(IsToolTipEnabledProperty); }
+            set { SetValue(IsToolTipEnabledProperty, value); }
         }
+
+        public static readonly DependencyProperty IsToolTipEnabledProperty =
+            DependencyProperty.Register("IsToolTipEnabled", typeof(bool), typeof(PageListBox), new PropertyMetadata(true));
+
 
         #region IDisposable Support
         private bool _disposedValue = false;
@@ -89,6 +92,15 @@ namespace NeeView
         }
         #endregion
 
+        private void ViewModel_CollectionChanged(object? sender, EventArgs e)
+        {
+            _thumbnailLoader?.Load();
+
+            if (this.ListBox.IsFocused)
+            {
+                FocusSelectedItem(true);
+            }
+        }
 
         #region IPageListPanel support
 
@@ -111,11 +123,12 @@ namespace NeeView
         public static readonly RoutedCommand CopyToFolderCommand = new(nameof(CopyToFolderCommand), typeof(PageListBox));
         public static readonly RoutedCommand MoveToFolderCommand = new(nameof(MoveToFolderCommand), typeof(PageListBox));
         public static readonly RoutedCommand RemoveCommand = new(nameof(RemoveCommand), typeof(PageListBox));
+        public static readonly RoutedCommand RenameCommand = new(nameof(RenameCommand), typeof(PageListBox));
         public static readonly RoutedCommand OpenDestinationFolderCommand = new(nameof(OpenDestinationFolderCommand), typeof(PageListBox));
         public static readonly RoutedCommand OpenExternalAppDialogCommand = new(nameof(OpenExternalAppDialogCommand), typeof(PageListBox));
         public static readonly RoutedCommand PlaylistMarkCommand = new(nameof(PlaylistMarkCommand), typeof(PageListBox));
 
-        private readonly PageCommandResource _commandResource = new();
+        private readonly PageCommandResource _commandResource;
 
         private static void InitializeCommandStatic()
         {
@@ -123,6 +136,7 @@ namespace NeeView
             OpenBookCommand.InputGestures.Add(new KeyGesture(Key.Down, ModifierKeys.Alt));
             CopyCommand.InputGestures.Add(new KeyGesture(Key.C, ModifierKeys.Control));
             RemoveCommand.InputGestures.Add(new KeyGesture(Key.Delete));
+            RenameCommand.InputGestures.Add(new KeyGesture(Key.F2));
             PlaylistMarkCommand.InputGestures.Add(new KeyGesture(Key.M, ModifierKeys.Control));
         }
 
@@ -136,6 +150,7 @@ namespace NeeView
             this.ListBox.CommandBindings.Add(_commandResource.CreateCommandBinding(CopyToFolderCommand));
             this.ListBox.CommandBindings.Add(_commandResource.CreateCommandBinding(MoveToFolderCommand));
             this.ListBox.CommandBindings.Add(_commandResource.CreateCommandBinding(RemoveCommand));
+            this.ListBox.CommandBindings.Add(_commandResource.CreateCommandBinding(RenameCommand));
             this.ListBox.CommandBindings.Add(_commandResource.CreateCommandBinding(OpenDestinationFolderCommand));
             this.ListBox.CommandBindings.Add(_commandResource.CreateCommandBinding(OpenExternalAppDialogCommand));
             this.ListBox.CommandBindings.Add(_commandResource.CreateCommandBinding(PlaylistMarkCommand));
@@ -375,6 +390,7 @@ namespace NeeView
             contextMenu.Items.Add(DestinationFolderCollectionUtility.CreateDestinationFolderItem(Properties.Resources.PageListItem_Menu_MoveToFolder, _commandResource.MoveToFolder_CanExecute(listBox), MoveToFolderCommand, OpenDestinationFolderCommand));
             contextMenu.Items.Add(new Separator());
             contextMenu.Items.Add(new MenuItem() { Header = Properties.Resources.PageListItem_Menu_Delete, Command = RemoveCommand });
+            contextMenu.Items.Add(new MenuItem() { Header = Properties.Resources.PageListItem_Menu_Rename, Command = RenameCommand });
         }
 
 

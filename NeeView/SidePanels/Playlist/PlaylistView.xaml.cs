@@ -32,12 +32,11 @@ namespace NeeView
             _vm = new PlaylistViewModel(model);
             this.DockPanel.DataContext = _vm;
 
-            _vm.RenameRequest +=
-                (s, e) => Rename();
+            _vm.RenameRequest += ViewModel_RenameRequest;
 
             this.PlaylistComboBox.DropDownOpened +=
                 (s, e) => _vm.UpdatePlaylistCollection();
-       }
+        }
 
 
         public readonly static RoutedCommand RenameCommand = new(nameof(RenameCommand), typeof(PlaylistView), new InputGestureCollection() { new KeyGesture(Key.F2) });
@@ -59,26 +58,42 @@ namespace NeeView
         }
 
 
-        private void Rename()
+        private async void ViewModel_RenameRequest(object? sender, EventArgs e)
         {
             var comboBox = this.PlaylistComboBox;
             comboBox.UpdateLayout();
 
-            var textBlock = VisualTreeUtility.FindVisualChild<TextBlock>(comboBox, "NameTextBlock");
+            var textBlock = VisualTreeUtility.FindVisualChild<TextBlock>(comboBox, "FileNameTextBlock");
             if (textBlock is null) return;
 
-            var rename = new RenameControl(textBlock) { StoredFocusTarget = comboBox };
-            rename.IsInvalidFileNameChars = true;
+            var rename = new PlaylistRenameControl(new RenameControlSource(comboBox, textBlock), Rename);
+            await rename.ShowAsync();
 
-            rename.Closed += (s, e) =>
+            bool Rename(string name)
             {
-                if (e.IsChanged)
-                {
-                    _vm.Rename(e.NewValue);
-                }
-            };
-
-            rename.Open();
+                return _vm.Rename(name);
+            }
         }
     }
+
+    public class PlaylistRenameControl : RenameControl
+    {
+        private readonly Func<string, bool> _renameFunc;
+
+        public PlaylistRenameControl(RenameControlSource source, Func<string, bool> renameFunc) : base(source)
+        {
+            _renameFunc = renameFunc;
+            this.IsInvalidSeparatorChars = true;
+            this.IsInvalidFileNameChars = true;
+        }
+
+        protected override async Task<bool> OnRenameAsync(string oldValue, string newValue)
+        {
+            if (oldValue == newValue) return true;
+
+            var result = _renameFunc(newValue);
+            return await Task.FromResult(result);
+        }
+    }
+
 }

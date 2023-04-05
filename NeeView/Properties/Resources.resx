@@ -7416,6 +7416,9 @@ nv.ShowToast(nv.Book.ViewPages[0].Path)</value>
   <data name="InformationGroup.Extras" xml:space="preserve">
     <value>Extras</value>
   </data>
+  <data name="InformationKey.ExtraValue" xml:space="preserve">
+    <value>Extras</value>
+  </data>
   <data name="FileDeleteMultiDialog.Message.Completely" xml:space="preserve">
     <value>Note: It will be completely deleted.</value>
   </data>
@@ -7430,5 +7433,8 @@ nv.ShowToast(nv.Book.ViewPages[0].Path)</value>
   </data>
   <data name="SystemConfig.IsFileWriteAccessEnabled.Remarks" xml:space="preserve">
     <value>You will be able to delete and rename files.</value>
+  </data>
+  <data name="PageListItem.Menu.Rename" xml:space="preserve">
+    <value>Rena_me</value>
   </data>
 </root>

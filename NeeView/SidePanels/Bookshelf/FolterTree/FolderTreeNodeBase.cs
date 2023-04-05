@@ -5,6 +5,7 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows.Data;
 using System.Windows.Media;
 
@@ -13,7 +14,7 @@ namespace NeeView
     /// <summary>
     /// TreeViewNode基底.
     /// </summary>
-    public abstract class FolderTreeNodeBase : BindableBase
+    public abstract class FolderTreeNodeBase : BindableBase, IRenameable
     {
         private bool _isSelected;
         private bool _isExpanded;
@@ -301,6 +302,21 @@ namespace NeeView
         {
             return new SingleImageSourceCollection(MainWindow.Current.Resources[key] as ImageSource
                 ?? throw new InvalidOperationException($"Cannot found resource: {key}"));
+        }
+
+        public virtual string GetRenameText()
+        {
+            return Name;
+        }
+
+        public virtual bool CanRename()
+        {
+            return false;
+        }
+
+        public virtual async Task<bool> RenameAsync(string name)
+        {
+            return await Task.FromResult(false);
         }
     }
 }

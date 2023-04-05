@@ -26,24 +26,17 @@ namespace NeeView
     /// <summary>
     /// PlaylistListBox.xaml の相互作用ロジック
     /// </summary>
-    public partial class PlaylistListBox : UserControl, IPageListPanel, IDisposable
+    public partial class PlaylistListBox : UserControl, IPageListPanel, IDisposable, IToolTipService
     {
         private readonly PlaylistListBoxViewModel _vm;
         private ListBoxThumbnailLoader? _thumbnailLoader;
         private PageThumbnailJobClient? _jobClient;
         private bool _focusRequest;
-        private RenameControl? _renameControl;
 
         static PlaylistListBox()
         {
             InitializeCommandStatic();
         }
-
-        //public PlaylistListBox()
-        //{
-        //    InitializeComponent();
-        //    InitializeCommand();
-        //}
 
         public PlaylistListBox(PlaylistListBoxViewModel vm)
         {
@@ -55,8 +48,6 @@ namespace NeeView
 
             // タッチスクロール操作の終端挙動抑制
             this.ListBox.ManipulationBoundaryFeedback += SidePanelFrame.Current.ScrollViewer_ManipulationBoundaryFeedback;
-
-            this.ListBox.AddHandler(ScrollViewer.ScrollChangedEvent, new ScrollChangedEventHandler(ListBox_ScrollChanged));
 
             this.Loaded += PlaylistListBox_Loaded;
             this.Unloaded += PlaylistListBox_Unloaded;
@@ -169,9 +160,12 @@ namespace NeeView
             e.CanExecute = _vm.IsEditable;
         }
 
-        private void RenameCommand_Execute(object? sender, ExecutedRoutedEventArgs e)
+        private async void RenameCommand_Execute(object? sender, ExecutedRoutedEventArgs e)
         {
-            Rename();
+            if (this.ListBox.SelectedItem is not PlaylistItem item) return;
+
+            var renamer = new PlaylistItemRenamer(this.ListBox, this, (s, e) => _vm.Rename(s, e));
+            await renamer.RenameAsync(item);
         }
 
         private void RemoveCommand_CanExecute(object? sender, CanExecuteRoutedEventArgs e)
@@ -201,68 +195,6 @@ namespace NeeView
             ScrollIntoView();
         }
 
-        private void Rename()
-        {
-            if (this.ListBox.SelectedItem is not PlaylistItem item) return;
-
-            Rename(item);
-        }
-
-        private void Rename(PlaylistItem item)
-        {
-            var listBox = this.ListBox;
-            if (item != null)
-            {
-                listBox.ScrollIntoView(item);
-                listBox.UpdateLayout();
-                var listViewItem = VisualTreeUtility.FindContainer<ListBoxItem>(listBox, item);
-                if (listViewItem is null) return;
-
-                var textBlock = VisualTreeUtility.FindVisualChild<TextBlock>(listViewItem, "FileNameTextBlock");
-
-                if (textBlock != null)
-                {
-                    var rename = new RenameControl(textBlock)
-                    {
-                        IsInvalidSeparatorChars = true,
-                        StoredFocusTarget = listViewItem
-                    };
-
-                    rename.Closed += (s, e) =>
-                    {
-                        _renameControl = null;
-                        IsToolTipEnabled = true;
-
-                        if (e.IsChanged)
-                        {
-                            _vm.Rename(item, e.NewValue);
-                        }
-                        if (e.MoveRename != 0)
-                        {
-                            RenameNext(e.MoveRename);
-                        }
-                    };
-
-                    IsToolTipEnabled = false;
-                    _renameControl = rename;
-                    _renameControl.Open();
-                }
-            }
-        }
-
-        private void RenameNext(int delta)
-        {
-            if (this.ListBox.SelectedIndex < 0) return;
-
-            // 選択項目を1つ移動
-            this.ListBox.SelectedIndex = (this.ListBox.SelectedIndex + this.ListBox.Items.Count + delta) % this.ListBox.Items.Count;
-            this.ListBox.ScrollIntoView(this.ListBox.SelectedItem);
-            this.ListBox.UpdateLayout();
-
-            // リネーム発動
-            Rename();
-        }
-
         #endregion Commands
 
         #region IDisposable Support
@@ -274,10 +206,7 @@ namespace NeeView
             {
                 if (disposing)
                 {
-                    if (_jobClient != null)
-                    {
-                        _jobClient.Dispose();
-                    }
+                    _jobClient?.Dispose();
                 }
                 _disposedValue = true;
             }
@@ -462,17 +391,6 @@ namespace NeeView
 
         #endregion DragDrop
 
-        /// <summary>
-        /// スクロール変更イベント処理
-        /// </summary>
-        private void ListBox_ScrollChanged(object? sender, ScrollChangedEventArgs e)
-        {
-            if (_renameControl != null)
-            {
-                RenameTools.ListBoxScrollChanged(this.ListBox, e, _renameControl);
-            }
-        }
-
         private void PlaylistListBox_Loaded(object? sender, RoutedEventArgs e)
         {
             _jobClient = new PageThumbnailJobClient("Playlist", JobCategories.BookThumbnailCategory);
@@ -490,8 +408,6 @@ namespace NeeView
             Config.Current.Panels.ContentItemProfile.PropertyChanged -= PanelListItemProfile_PropertyChanged;
             Config.Current.Panels.BannerItemProfile.PropertyChanged -= PanelListItemProfile_PropertyChanged;
             Config.Current.Panels.ThumbnailItemProfile.PropertyChanged -= PanelListItemProfile_PropertyChanged;
-
-            _renameControl?.Close(false, false);
 
             _jobClient?.Dispose();
         }
@@ -653,7 +569,6 @@ namespace NeeView
 
         private void PlaylistListBox_SelectionChanged(object? sender, SelectionChangedEventArgs e)
         {
-            _renameControl?.Close(false, false);
         }
 
         // リスト全体が変化したときにサムネイルを更新する

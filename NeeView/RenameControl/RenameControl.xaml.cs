@@ -10,14 +10,9 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace NeeView
 {
-
     /// <summary>
     /// RenameControl.xaml の相互作用ロジック
     /// </summary>
@@ -55,21 +50,26 @@ namespace NeeView
         private bool _isInvalidFileNameChars;
         private bool _isInvalidSeparatorChars;
         private bool _isSeleftFileNameBody;
-        private string _text;
+        private bool _isHideExtension;
         private readonly string _oldValue;
+        private string _extension = "";
+        private string _text;
+        private string _oldText;
 
 
-        public RenameControl(TextBlock target)
+        public RenameControl(RenameControlSource source)
         {
             InitializeComponent();
 
-            _manager = RenameManager.GetRenameManager(target)
+            _manager = RenameManager.GetRenameManager(source.Target)
                 ?? throw new InvalidOperationException("RenameManager must not be null.");
 
-            this.Target = target;
-            this.RenameTextBox.FontFamily = target.FontFamily;
-            this.RenameTextBox.FontSize = target.FontSize;
-            _text = GetFixedText(target.Text, false);
+            this.Target = source.Target;
+            this.StoredFocusTarget = source.TargetContainer;
+            this.RenameTextBox.FontFamily = this.Target.FontFamily;
+            this.RenameTextBox.FontSize = this.Target.FontSize;
+            _text = source.Text; // GetFixedText(source.Text, false);
+            _oldText = _text;
             _oldValue = _text;
 
             this.RenameTextBox.DataContext = this;
@@ -80,7 +80,6 @@ namespace NeeView
         /// 終了時イベント
         /// </summary>
         public event EventHandler<RenameClosedEventArgs>? Closed;
-
 
 
         // リネームを行うTextBlock
@@ -103,8 +102,32 @@ namespace NeeView
         // 拡張子を除いた部分を選択
         public bool IsSeleftFileNameBody
         {
-            get { return _isSeleftFileNameBody; }
+            get { return _isSeleftFileNameBody && !_isHideExtension; }
             set { SetProperty(ref _isSeleftFileNameBody, value); }
+        }
+
+        // 拡張子を非表示
+        public bool IsHideExtension
+        {
+            get { return _isHideExtension; }
+            set
+            {
+                if (SetProperty(ref _isHideExtension, value))
+                {
+                    if (_isHideExtension)
+                    {
+                        _extension = System.IO.Path.GetExtension(_oldValue);
+                        Text = System.IO.Path.GetFileNameWithoutExtension(_oldValue);
+                        _oldText = Text;
+                    }
+                    else
+                    {
+                        _extension = "";
+                        Text = _oldValue;
+                        _oldText = Text;
+                    }
+                }
+            }
         }
 
         // 編集文字列
@@ -117,6 +140,22 @@ namespace NeeView
         // フォーカスを戻すコントロール
         public UIElement? StoredFocusTarget { get; set; }
 
+
+        private async void Description_StateChanged(object? sender, RenameControlStateChangedEventArgs e)
+        {
+            switch (e.Action)
+            {
+                case RenameControlStateChangedAction.LayoutChanged:
+                    SyncLayout();
+                    break;
+                case RenameControlStateChangedAction.ScrollChanged:
+                    await CloseAsync(true, true);
+                    break;
+                default:
+                    await CloseAsync(false, false);
+                    break;
+            }
+        }
 
         private string GetFixedText(string source, bool withToast)
         {
@@ -154,6 +193,27 @@ namespace NeeView
             return text;
         }
 
+        public async Task<RenameControlResult> ShowAsync()
+        {
+            var tcs = new TaskCompletionSource<RenameControlResult>();
+            Closed += RenameControl_Closed;
+            _manager.Add(this);
+            var result = await tcs.Task;
+            Closed -= RenameControl_Closed;
+            return result;
+
+            void RenameControl_Closed(object? sender, RenameClosedEventArgs e)
+            {
+                tcs.TrySetResult(new RenameControlResult(e.OldValue, e.NewValue, e.MoveRename, e.IsRestoreFocus));
+            }
+        }
+
+        public static async Task<RenameControlResult> ShowAsync(RenameControlSource source)
+        {
+            var renameControl = new RenameControl(source);
+            return await renameControl.ShowAsync();
+        }
+
         /// <summary>
         /// Rename開始
         /// </summary>
@@ -168,15 +228,23 @@ namespace NeeView
         /// <param name="isSuccess">名前変更成功</param>
         /// <param name="isRestoreFocus">元のコントロールにフォーカスを戻す要求</param>
         /// <param name="moveRename">次の項目に名前変更を要求</param>
-        public void Close(bool isSuccess, bool isRestoreFocus = true, int moveRename = 0)
+        public async Task CloseAsync(bool isSuccess, bool isRestoreFocus = true, int moveRename = 0)
         {
             Debug.Assert(-1 <= moveRename && moveRename <= 1);
 
             if (_closed) return;
             _closed = true;
+            this.IsHitTestVisible = false;
 
-            var newValue = isSuccess ? Text.Trim() : _oldValue;
+            var newText = Text.Trim();
+            var newValue = isSuccess ? newText + _extension : _oldValue;
             var restoreFocus = isRestoreFocus && this.RenameTextBox.IsFocused;
+
+            if (_oldValue != newValue)
+            {
+                this.Text = isSuccess ? newText : _oldText;
+                await OnRenameAsync(_oldValue, newValue);
+            }
 
             _manager.Remove(this);
 
@@ -189,9 +257,14 @@ namespace NeeView
             Closed?.Invoke(this, args);
         }
 
-        private void RenameTextBox_LostFocus(object? sender, RoutedEventArgs e)
+        protected virtual async Task<bool> OnRenameAsync(string oldValue, string newValue)
         {
-            Close(true);
+            return await Task.FromResult(true);
+        }
+
+        private async void RenameTextBox_LostFocus(object? sender, RoutedEventArgs e)
+        {
+            await CloseAsync(true);
         }
 
         private void RenameTextBox_Loaded(object? sender, RoutedEventArgs e)
@@ -218,29 +291,29 @@ namespace NeeView
             }
         }
 
-        private void RenameTextBox_KeyDown(object? sender, KeyEventArgs e)
+        private async void RenameTextBox_KeyDown(object? sender, KeyEventArgs e)
         {
             if (e.Key == Key.Escape && Keyboard.Modifiers == ModifierKeys.None)
             {
-                Close(false);
+                await CloseAsync(false);
                 e.Handled = true;
             }
             else if (e.Key == Key.Enter)
             {
-                Close(true);
+                await CloseAsync(true);
                 e.Handled = true;
             }
             else if (e.Key == Key.Tab)
             {
                 var moveRename = (Keyboard.Modifiers == ModifierKeys.Shift) ? -1 : +1;
-                Close(true, true, moveRename);
+                await CloseAsync(true, true, moveRename);
                 e.Handled = true;
             }
         }
 
-        private void RenameTextBox_PreviewMouseWheel(object? sender, MouseWheelEventArgs e)
+        private async void RenameTextBox_PreviewMouseWheel(object? sender, MouseWheelEventArgs e)
         {
-            Close(true);
+            await CloseAsync(true);
             e.Handled = true;
         }
 

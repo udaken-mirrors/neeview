@@ -60,7 +60,7 @@
                 <ComboBox x:Name="PlaylistComboBox" ItemsSource="{Binding PlaylistFiles}" SelectedItem="{Binding SelectedItem}" VerticalAlignment="Center" TabIndex="1">
                     <ComboBox.Resources>
                         <DataTemplate DataType="{x:Type sys:String}">
-                            <TextBlock x:Name="NameTextBlock" Text="{Binding Converter={StaticResource PathToFileNameWithoutExtensionConverter}}" />
+                            <TextBlock x:Name="FileNameTextBlock" Text="{Binding Converter={StaticResource PathToFileNameWithoutExtensionConverter}}" />
                         </DataTemplate>
                         <DataTemplate DataType="{x:Type Separator}">
                             <Separator />

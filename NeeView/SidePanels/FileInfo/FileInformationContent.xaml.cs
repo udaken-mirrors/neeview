@@ -18,7 +18,7 @@ namespace NeeView
     /// <summary>
     /// FileInformationView.xaml の相互作用ロジック
     /// </summary>
-    public partial class FileInformationContent : UserControl
+    public partial class FileInformationContent : UserControl 
     {
         private readonly FileInformationContentViewModel _vm;
 

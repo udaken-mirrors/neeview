@@ -2321,3 +2321,4 @@ ZipArchiveConfig.IsEnabled=使用標準功能展開 ZIP 壓縮檔
 ZipArchiveConfig.SupportFileTypes=壓縮檔的副檔名
 ZipArchiveConfig.SupportFileTypes.Remarks=僅支援 ZIP 格式。
 SystemConfig.IsFileWriteAccessEnabled=允許檔案操作
+PageListItem.Menu.Rename=重新命名(_M)

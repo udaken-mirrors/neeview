@@ -32,7 +32,7 @@ namespace NeeView
     /// <summary>
     /// ページ
     /// </summary>
-    public class Page : BindableBase, IHasPage, IHasPageContent, IDisposable
+    public class Page : BindableBase, IHasPage, IHasPageContent, IDisposable, IRenameable
     {
         #region 開発用
 
@@ -381,6 +381,34 @@ namespace NeeView
             image.MaxHeight = 96;
 
             return image;
+        }
+
+
+        public string GetRenameText()
+        {
+            return Entry.GetRenameText();
+        }
+
+        public bool CanRename()
+        {
+            return Entry.CanRename();
+        }
+
+        public async Task<bool> RenameAsync(string name)
+        {
+            var isSuccess = await Entry.RenameAsync(name);
+            RaiseNamePropertyChanged();
+            FileInformation.Current.Update(); // TODO: 伝達方法がよろしくない
+            return isSuccess;
+        }
+
+        private void RaiseNamePropertyChanged()
+        {
+            RaisePropertyChanged(nameof(EntryName));
+            RaisePropertyChanged(nameof(EntryLastName));
+            RaisePropertyChanged(nameof(EntrySmartName));
+            RaisePropertyChanged(nameof(EntryFullName));
+            RaisePropertyChanged(nameof(SystemPath));
         }
     }
 
