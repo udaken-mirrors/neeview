@@ -85,7 +85,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="bblanchon.PDFium.Win32" Version="108.0.5323" />
+    <PackageReference Include="bblanchon.PDFium.Win32" Version="114.0.5715" />
     <PackageReference Include="Jint" Version="3.0.0-beta-2038" />
     <PackageReference Include="MetadataExtractor" Version="2.7.2" />
     <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf">
