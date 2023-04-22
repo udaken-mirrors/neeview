@@ -50,6 +50,7 @@ namespace NeeView
         public RenameManager()
         {
             InitializeComponent();
+            Loaded += RenameManager_Loaded;
         }
 
 
@@ -73,6 +74,18 @@ namespace NeeView
             }
         }
 
+
+        /// <summary>
+        /// イベント初期化
+        /// </summary>
+        private void RenameManager_Loaded(object sender, RoutedEventArgs e)
+        {
+            var window = Window.GetWindow(this);
+            if (window != null)
+            {
+                window.Deactivated += (s, e) => CloseAll();
+            }
+        }
 
         /// <summary>
         /// 登録
