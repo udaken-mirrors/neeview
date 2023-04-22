@@ -25,6 +25,7 @@ namespace NeeView
             this.Unloaded += (s, e) => OnUnloaded();
         }
 
+
         private static RenameControlSource CreateRenameControlSource(TreeView treeView, TItem item)
         {
             var treeViewItem = VisualTreeUtility.FindContainer<TreeViewItem>(treeView, item) ?? throw new InvalidOperationException("Container not found: TreeViewItem");
@@ -33,10 +34,6 @@ namespace NeeView
             var textBlock = VisualTreeUtility.FindVisualChild<TextBlock>(treeViewItem, "FileNameTextBlock") ?? throw new InvalidOperationException("Control not foud: FileNameTextBlock");
             return new RenameControlSource(treeViewItem, textBlock, item.GetRenameText());
         }
-
-
-        public event EventHandler<RenameControlStateChangedEventArgs>? StateChanged;
-
 
         protected override async Task<bool> OnRenameAsync(string oldValue, string newValue)
         {
@@ -58,27 +55,27 @@ namespace NeeView
             _treeView.RemoveHandler(ScrollViewer.ScrollChangedEvent, (ScrollChangedEventHandler)ScrollViewer_ScrollChanged);
         }
 
-        private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
+        private async void Window_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            StateChanged?.Invoke(this, new RenameControlStateChangedEventArgs(RenameControlStateChangedAction.SelectionChanged));
+            await CloseAsync(false, false);
         }
 
-        private void TreeView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private async void TreeView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            StateChanged?.Invoke(this, new RenameControlStateChangedEventArgs(RenameControlStateChangedAction.SelectionChanged));
+            await CloseAsync(false, false);
         }
 
-        private void TreeView_Unloaded(object sender, RoutedEventArgs e)
+        private async void TreeView_Unloaded(object sender, RoutedEventArgs e)
         {
-            StateChanged?.Invoke(this, new RenameControlStateChangedEventArgs(RenameControlStateChangedAction.Unloaded));
+            await CloseAsync(false, false);
         }
 
-        private void ScrollViewer_ScrollChanged(object sender, ScrollChangedEventArgs e)
+        private async void ScrollViewer_ScrollChanged(object sender, ScrollChangedEventArgs e)
         {
             if (_scrollChangedLocker.IsLocked) return;
             if (e.VerticalChange != 0.0 || e.HorizontalChange != 0.0)
             {
-                StateChanged?.Invoke(this, new RenameControlStateChangedEventArgs(RenameControlStateChangedAction.ScrollChanged));
+                await CloseAsync(true, true);
             }
         }
     }

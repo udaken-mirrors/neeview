@@ -141,22 +141,6 @@ namespace NeeView
         public UIElement? StoredFocusTarget { get; set; }
 
 
-        private async void Description_StateChanged(object? sender, RenameControlStateChangedEventArgs e)
-        {
-            switch (e.Action)
-            {
-                case RenameControlStateChangedAction.LayoutChanged:
-                    SyncLayout();
-                    break;
-                case RenameControlStateChangedAction.ScrollChanged:
-                    await CloseAsync(true, true);
-                    break;
-                default:
-                    await CloseAsync(false, false);
-                    break;
-            }
-        }
-
         private string GetFixedText(string source, bool withToast)
         {
             if (_isInvalidFileNameChars)

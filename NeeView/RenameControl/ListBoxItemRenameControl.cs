@@ -30,6 +30,7 @@ namespace NeeView
             this.Unloaded += (s, e) => OnUnloaded();
         }
 
+
         private static RenameControlSource CreateRenameControlSource(ListBox listBox, TItem item)
         {
             listBox.ScrollIntoView(item);
@@ -39,17 +40,13 @@ namespace NeeView
             return new RenameControlSource(listBoxItem, textBlock, item.GetRenameText());
         }
 
-
-        public event EventHandler<RenameControlStateChangedEventArgs>? StateChanged;
-
-
         protected override async Task<bool> OnRenameAsync(string oldValue, string newValue)
         {
             Debug.Assert(oldValue != newValue);
             return await _item.RenameAsync(newValue);
         }
 
-        protected virtual void OnLoaded()
+        private void OnLoaded()
         {
             _window.SizeChanged += Window_SizeChanged;
             _listBox.SelectionChanged += ListBox_SelectionChanged;
@@ -57,7 +54,7 @@ namespace NeeView
             _listBox.AddHandler(ScrollViewer.ScrollChangedEvent, (ScrollChangedEventHandler)ListBox_ScrollChanged);
         }
 
-        protected virtual void OnUnloaded()
+        private void OnUnloaded()
         {
             _window.SizeChanged -= Window_SizeChanged;
             _listBox.SelectionChanged -= ListBox_SelectionChanged;
@@ -70,25 +67,25 @@ namespace NeeView
             using var locked = _scrollChangedLocker.Lock();
             _listBox.ScrollIntoView(_listBox.SelectedItem);
             _listBox.UpdateLayout();
-            StateChanged?.Invoke(this, new RenameControlStateChangedEventArgs(RenameControlStateChangedAction.LayoutChanged));
+            SyncLayout();
         }
 
-        private void ListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private async void ListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            StateChanged?.Invoke(this, new RenameControlStateChangedEventArgs(RenameControlStateChangedAction.SelectionChanged));
+            await CloseAsync(false, false);
         }
 
-        private void ListBox_Unloaded(object sender, RoutedEventArgs e)
+        private async void ListBox_Unloaded(object sender, RoutedEventArgs e)
         {
-            StateChanged?.Invoke(this, new RenameControlStateChangedEventArgs(RenameControlStateChangedAction.Unloaded));
+            await CloseAsync(false, false);
         }
 
-        private void ListBox_ScrollChanged(object sender, ScrollChangedEventArgs e)
+        private async void ListBox_ScrollChanged(object sender, ScrollChangedEventArgs e)
         {
             if (_scrollChangedLocker.IsLocked) return;
             if (e.VerticalChange != 0.0 || e.HorizontalChange != 0.0)
             {
-                StateChanged?.Invoke(this, new RenameControlStateChangedEventArgs(RenameControlStateChangedAction.ScrollChanged));
+                await CloseAsync(true, true);
             }
         }
     }
