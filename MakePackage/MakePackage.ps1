@@ -16,7 +16,7 @@ trap { break }
 $ErrorActionPreference = "stop"
 
 # MSI作成時にMainComponents.wsxを更新する?
-$isCreateMainComponentsWxs = $false;
+$isCreateMainComponentsWxs = $true;
 
 #
 $product = 'NeeView'
@@ -153,7 +153,7 @@ function Build-Project($platform)
 {
 	& dotnet publish $project -p:PublishProfile=FolderProfile-$platform.pubxml -c Release
 	& dotnet publish $projectSusie -p:PublishProfile=FolderProfile-$platform.pubxml -c Release
-	& dotnet publish $ptojectTerminate -p:PublishProfile=FolderProfile-$platform.pubxml -c Release
+	#& dotnet publish $ptojectTerminate -p:PublishProfile=FolderProfile-$platform.pubxml -c Release
 }
 
 #----------------------
