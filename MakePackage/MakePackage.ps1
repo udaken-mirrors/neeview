@@ -18,6 +18,9 @@ $ErrorActionPreference = "stop"
 # MSI作成時にMainComponents.wsxを更新する?
 $isCreateMainComponentsWxs = $true;
 
+# x86パッケージを作成する？
+$supportX86 = $false
+
 #
 $product = 'NeeView'
 $configuration = 'Release'
@@ -152,7 +155,17 @@ function Get-ProjectOutputDir($projectDir, $platform)
 function Build-Project($platform)
 {
 	& dotnet publish $project -p:PublishProfile=FolderProfile-$platform.pubxml -c Release
+	if ($? -ne $true)
+	{
+		throw "build error"
+	}
+
 	& dotnet publish $projectSusie -p:PublishProfile=FolderProfile-$platform.pubxml -c Release
+	if ($? -ne $true)
+	{
+		throw "build error"
+	}
+	
 	#& dotnet publish $ptojectTerminate -p:PublishProfile=FolderProfile-$platform.pubxml -c Release
 }
 
@@ -676,52 +689,70 @@ function Remove-BuildObjects
 }
 
 
-
-function Build-PackageSorce
+function Build-Clear
 {
 	# clear
 	Write-Host "`n[Clear] ...`n" -fore Cyan
 	Remove-BuildObjects
-	
+}
+
+function Build-PackageSorce-x64
+{
 	# build
 	Write-Host "`n[Build] ...`n" -fore Cyan
 	Build-Project "x64"
-	Build-Project "x86"
 	
 	# create package source
 	Write-Host "`n[Package] ...`n" -fore Cyan
 	New-Package "x64" $product $publishDir_x64 $publishSusieDir $packageDir_x64
+}
+
+function Build-PackageSorce-x86
+{
+	# build
+	Write-Host "`n[Build x86] ...`n" -fore Cyan
+	Build-Project "x86"
+	
+	# create package source
+	Write-Host "`n[Package x86] ...`n" -fore Cyan
 	New-Package "x86" $product $publishDir_x86 $publishSusieDir $packageDir_x86
 }
 
-
-function Build-Zip
+function Build-Zip-x64
 {
 	Write-Host "`[Zip] ...`n" -fore Cyan
 
 	New-Zip $packageDir_x64 $packageZip_x64
 	Write-Host "`nExport $packageZip_x64 successed.`n" -fore Green
+}
+
+function Build-Zip-x86
+{
+	Write-Host "`[Zip x86] ...`n" -fore Cyan
 
 	New-Zip $packageDir_x86 $packageZip_x86
 	Write-Host "`nExport $packageZip_x86 successed.`n" -fore Green
 }
 
-
-function Build-Installer
+function Build-Installer-x64
 {
 	Write-Host "`n[Installer] ...`n" -fore Cyan
 	
 	New-PackageAppend $packageDir_x64 $packageAppendDir_x64
 	New-Msi "x64" $packageDir_x64 $packageAppendDir_x64 $packageMsi_x64
 	Write-Host "`nExport $packageMsi_x64 successed.`n" -fore Green
+}
+
+function Build-Installer-x86
+{
+	Write-Host "`n[Installer x86] ...`n" -fore Cyan
 
 	New-PackageAppend $packageDir_x86 $packageAppendDir_x86
 	New-Msi "x86" $packageDir_x86 $packageAppendDir_x86 $packageMsi_x86
 	Write-Host "`nExport $packageMsi_x86 successed.`n" -fore Green
 }
 
-
-function Build-Appx
+function Build-Appx-x64
 {
 	Write-Host "`n[Appx] ...`n" -fore Cyan
 
@@ -729,7 +760,19 @@ function Build-Appx
 	{
 		New-Appx "x64" $packageDir_x64 $packageAppxDir_x64 $packageX64Appx
 		Write-Host "`nExport $packageX64Appx successed.`n" -fore Green
+	}
+	else
+	{
+		Write-Host "`nWarning: not exist make appx envionment. skip!`n" -fore Yellow
+	}
+}
 
+function Build-Appx-x86
+{
+	Write-Host "`n[Appx x86] ...`n" -fore Cyan
+
+	if (Test-Path "$env:CersPath\_Parameter.ps1")
+	{
 		New-Appx "x86" $packageDir_x86 $packageAppxDir_x86 $packageX86Appx
 		Write-Host "`nExport $packageX86Appx successed.`n" -fore Green
 	}
@@ -812,22 +855,39 @@ $packageBetaWild = "${product}Beta*.zip"
 
 if (-not $continue)
 {
-	Build-PackageSorce
+	Build-Clear
+	Build-PackageSorce-x64
+	if ($supportX86)
+	{
+		Build-PackageSorce-x86
+	}
 }
 
 if (($Target -eq "All") -or ($Target -eq "Zip") -or ($Target -eq "Canary") -or ($Target -eq "Beta"))
 {
-	Build-Zip
+	Build-Zip-x64
+	if ($supportX86)
+	{
+		Build-Zip-x86
+	}
 }
 
 if (($Target -eq "All") -or ($Target -eq "Installer"))
 {
-	Build-Installer
+	Build-Installer-x64
+	if ($supportX86)
+	{
+		Build-Installer-x86
+	}
 }
 
 if (($Target -eq "All") -or ($Target -eq "Appx"))
 {
-	Build-Appx
+	Build-Appx-x64
+	if ($supportX86)
+	{
+		Build-Appx-x86
+	}
 }
 
 if (($Target -eq "All") -or ($Target -eq "Canary"))
