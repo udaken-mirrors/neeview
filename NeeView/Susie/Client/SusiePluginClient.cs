@@ -33,7 +33,7 @@ namespace NeeView.Susie.Client
             _isRecoveryDoing = true;
             try
             {
-                Debug.WriteLine($"SuisePluginCluent: Recovery...");
+                Debug.WriteLine($"SuisePluginClient: Recovery...");
                 _remote.Disconnect();
                 _remote.Connect();
                 _recoveryAction?.Invoke();
@@ -47,13 +47,13 @@ namespace NeeView.Susie.Client
 
         private List<Chunk> Call<T>(int id, T arg)
         {
-            var chunk = new Chunk(id, DefaultSerializer.Serialize(arg));
+            var chunk = new Chunk(id, SusieCommandSerializer.Serialize(arg));
             return Call(new List<Chunk>() { chunk });
         }
 
         private List<Chunk> Call<T>(int id, T arg1, byte[]? arg2)
         {
-            var chunk1 = new Chunk(id, DefaultSerializer.Serialize(arg1));
+            var chunk1 = new Chunk(id, SusieCommandSerializer.Serialize(arg1));
             var chunk2 = new Chunk(id, arg2);
             return Call(new List<Chunk>() { chunk1, chunk2 });
         }
@@ -85,10 +85,13 @@ namespace NeeView.Susie.Client
         }
 
         private static TResult DeserializeChunk<TResult>(Chunk chunk)
+            where TResult : class
         {
             if (chunk.Data is null) throw new InvalidOperationException("chunk.Data must not be null");
 
-            return DefaultSerializer.Deserialize<TResult>(chunk.Data);
+            //Debug.WriteLine($"Chunk.ID: {chunk.Id}");
+            //Debug.WriteLine($"Chunk.Data: " + System.Text.Encoding.UTF8.GetString(chunk.Data));
+            return SusieCommandSerializer.Deserialize<TResult>(chunk.Data);
         }
 
 

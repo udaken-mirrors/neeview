@@ -72,9 +72,10 @@ namespace NeeLaboratory.Remote
                 Trace.Indent();
                 Trace.WriteLine(ex);
                 Trace.Unindent();
-                return new List<Chunk>() { new Chunk(-1, DefaultSerializer.Serialize(ex.Message)) };
+                return new List<Chunk>() { new Chunk(-1, DefaultSerializer.Serialize(ex.Message, BasicJsonSerializerContext.Default)) };
             }
         }
 
     }
+
 }

@@ -146,8 +146,9 @@ namespace NeeView
             {
                 LoadSusiePlugins();
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Debug.WriteLine(ex.Message);
                 ToastService.Current.Show(new Toast(Resources.SusieConnectError_Message, null, ToastIcon.Error));
             }
         }

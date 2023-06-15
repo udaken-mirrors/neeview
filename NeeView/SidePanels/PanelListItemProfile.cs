@@ -2,7 +2,6 @@
 using NeeView.Windows.Property;
 using System;
 using System.ComponentModel;
-using System.Runtime.Serialization;
 using System.Text.Json.Serialization;
 using System.Windows;
 using System.Windows.Controls;
@@ -231,20 +230,6 @@ namespace NeeView
         }
 
         #endregion
-
-
-        [OnDeserializing]
-        private void OnDeserializing(StreamingContext context)
-        {
-            _textHeight = double.NaN;
-        }
-
-        [OnDeserialized]
-        private void OnDeserialized(StreamingContext context)
-        {
-            UpdateTextHeight();
-        }
-
 
         public PanelListItemProfile Clone()
         {

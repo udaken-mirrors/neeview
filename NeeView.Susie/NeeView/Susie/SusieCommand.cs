@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Diagnostics;
-using System.Runtime.Serialization;
 using System.Text;
 
 namespace NeeView.Susie
@@ -34,7 +32,6 @@ namespace NeeView.Susie
 
 
 
-    [DataContract]
     public class SusiePluginCommandResult
     {
         public SusiePluginCommandResult(bool isSuccess)
@@ -42,11 +39,9 @@ namespace NeeView.Susie
             IsSuccess = isSuccess;
         }
 
-        [DataMember]
         public bool IsSuccess { get; set; }
     }
 
-    [DataContract]
     public class SusiePluginCommandInitialize
     {
         public SusiePluginCommandInitialize(string pluginFolder, List<SusiePluginSetting> settings)
@@ -55,15 +50,12 @@ namespace NeeView.Susie
             Settings = settings;
         }
 
-        [DataMember]
         public string PluginFolder { get; set; }
 
-        [DataMember]
         public List<SusiePluginSetting> Settings { get; set; }
     }
 
 
-    [DataContract]
     public class SusiePluginCommandGetPlugin
     {
         public SusiePluginCommandGetPlugin(List<string>? pluginNames)
@@ -71,11 +63,9 @@ namespace NeeView.Susie
             PluginNames = pluginNames;
         }
 
-        [DataMember]
         public List<string>? PluginNames { get; set; }
     }
 
-    [DataContract]
     public class SusiePluginCommandGetPluginResult
     {
         public SusiePluginCommandGetPluginResult(List<SusiePluginInfo> pluginInfos)
@@ -83,12 +73,10 @@ namespace NeeView.Susie
             PluginInfos = pluginInfos;
         }
 
-        [DataMember]
         public List<SusiePluginInfo> PluginInfos { get; set; }
     }
 
 
-    [DataContract]
     public class SusiePluginCommandSetPlugin
     {
         public SusiePluginCommandSetPlugin(List<SusiePluginSetting> settings)
@@ -96,13 +84,10 @@ namespace NeeView.Susie
             Settings = settings;
         }
 
-        [DataMember]
         public List<SusiePluginSetting> Settings { get; set; }
     }
 
 
-
-    [DataContract]
     public class SusiePluginCommandSetPluginOrder
     {
         public SusiePluginCommandSetPluginOrder(List<string> order)
@@ -110,12 +95,10 @@ namespace NeeView.Susie
             Order = order;
         }
 
-        [DataMember]
         public List<string> Order { get; set; }
     }
 
 
-    [DataContract]
     public class SusiePluginCommandShowConfigulationDlg
     {
         public SusiePluginCommandShowConfigulationDlg(string pluginName, int hWnd)
@@ -124,15 +107,12 @@ namespace NeeView.Susie
             HWnd = hWnd;
         }
 
-        [DataMember]
         public string PluginName { get; set; }
 
-        [DataMember]
         public int HWnd { get; set; }
     }
 
 
-    [DataContract]
     public class SusiePluginCommandGetArchivePlugin
     {
         public SusiePluginCommandGetArchivePlugin(string fileName, bool isCheckExtension)
@@ -141,14 +121,11 @@ namespace NeeView.Susie
             IsCheckExtension = isCheckExtension;
         }
 
-        [DataMember]
         public string FileName { get; set; }
 
-        [DataMember]
         public bool IsCheckExtension { get; set; }
     }
 
-    [DataContract]
     public class SusiePluginCommandGetArchivePluginResult
     {
         public SusiePluginCommandGetArchivePluginResult(SusiePluginInfo? pluginInfo)
@@ -156,11 +133,9 @@ namespace NeeView.Susie
             PluginInfo = pluginInfo;
         }
 
-        [DataMember]
         public SusiePluginInfo? PluginInfo { get; set; }
     }
 
-        [DataContract]
     public class SusiePluginCommandGetImagePlugin
     {
         public SusiePluginCommandGetImagePlugin(string fileName, bool isCheckExtension)
@@ -169,14 +144,11 @@ namespace NeeView.Susie
             IsCheckExtension = isCheckExtension;
         }
 
-        [DataMember]
         public string FileName { get; set; }
 
-        [DataMember]
         public bool IsCheckExtension { get; set; }
     }
 
-    [DataContract]
     public class SusiePluginCommandGetImagePluginResult
     {
         public SusiePluginCommandGetImagePluginResult(SusiePluginInfo? pluginInfo)
@@ -184,12 +156,10 @@ namespace NeeView.Susie
             PluginInfo = pluginInfo;
         }
 
-        [DataMember]
         public SusiePluginInfo? PluginInfo { get; set; }
     }
 
 
-    [DataContract]
     public class SusiePluginCommandGetImage
     {
         public SusiePluginCommandGetImage(string? pluginName, string fileName, bool isCheckExtension)
@@ -199,18 +169,14 @@ namespace NeeView.Susie
             IsCheckExtension = isCheckExtension;
         }
 
-        [DataMember]
         public string? PluginName { get; set; }
 
-        [DataMember]
         public string FileName { get; set; }
 
-        [DataMember]
         public bool IsCheckExtension { get; set; }
     }
 
 
-    [DataContract]
     public class SusiePluginCommandGetImageResult
     {
         public SusiePluginCommandGetImageResult(SusiePluginInfo? pluginInfo)
@@ -218,12 +184,10 @@ namespace NeeView.Susie
             PluginInfo = pluginInfo;
         }
 
-        [DataMember]
         public SusiePluginInfo? PluginInfo { get; set; }
     }
 
 
-    [DataContract]
     public class SusiePluginCommandGetArchiveEntries
     {
         public SusiePluginCommandGetArchiveEntries(string pluginName, string fileName)
@@ -232,14 +196,11 @@ namespace NeeView.Susie
             FileName = fileName;
         }
 
-        [DataMember]
         public string PluginName { get; set; }
 
-        [DataMember]
         public string FileName { get; set; }
     }
 
-    [DataContract]
     public class SusiePluginCommandGetArchiveEntriesResult
     {
         public SusiePluginCommandGetArchiveEntriesResult(List<SusieArchiveEntry> entries)
@@ -247,12 +208,10 @@ namespace NeeView.Susie
             Entries = entries;
         }
 
-        [DataMember]
         public List<SusieArchiveEntry> Entries { get; set; }
     }
 
 
-    [DataContract]
     public class SusiePluginCommandExtractArchiveEntry
     {
         public SusiePluginCommandExtractArchiveEntry(string pluginName, string fileName, int position)
@@ -262,15 +221,11 @@ namespace NeeView.Susie
             Position = position;
         }
 
-        [DataMember]
         public string PluginName { get; set; }
-        [DataMember]
         public string FileName { get; set; }
-        [DataMember]
         public int Position { get; set; }
     }
 
-    [DataContract]
     public class SusiePluginCommandExtractArchiveEntryToFolder
     {
         public SusiePluginCommandExtractArchiveEntryToFolder(string pluginName, string fileName, int position, string extractFolder)
@@ -281,13 +236,9 @@ namespace NeeView.Susie
             ExtractFolder = extractFolder;
         }
 
-        [DataMember]
         public string PluginName { get; set; }
-        [DataMember]
         public string FileName { get; set; }
-        [DataMember]
         public int Position { get; set; }
-        [DataMember]
         public string ExtractFolder { get; set; }
     }
 }

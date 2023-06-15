@@ -3,17 +3,17 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.Serialization;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace NeeLaboratory.Collections.Specialized
 {
     /// <summary>
     /// ファイル拡張子コレクション (immutable)
     /// </summary>
-    [DataContract]
+    [JsonConverter(typeof(FileExtensionCollectionJsonConverter))]
     public class FileExtensionCollection : IEnumerable<string>, IEquatable<FileExtensionCollection>
     {
-        [DataMember]
         private List<string> _items;
 
         public FileExtensionCollection()
@@ -103,5 +103,27 @@ namespace NeeLaboratory.Collections.Specialized
         {
             return _items.GetHashCode();
         }
+    }
+
+
+
+    public sealed class FileExtensionCollectionJsonConverter : JsonConverter<FileExtensionCollection>
+    {
+        public override FileExtensionCollection? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+        {
+            var items = JsonSerializer.Deserialize(ref reader, IEnumerableStringJsonSerializerContext.Default.IEnumerableString);
+            if (items is null) return null;
+            return new FileExtensionCollection(items);
+        }
+
+        public override void Write(Utf8JsonWriter writer, FileExtensionCollection value, JsonSerializerOptions options)
+        {
+            JsonSerializer.Serialize(writer, value, IEnumerableStringJsonSerializerContext.Default.IEnumerableString);
+        }
+    }
+
+    [JsonSerializable(typeof(IEnumerable<string>))]
+    public partial class IEnumerableStringJsonSerializerContext : JsonSerializerContext
+    {
     }
 }

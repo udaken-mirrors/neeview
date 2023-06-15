@@ -45,21 +45,22 @@ namespace NeeView.Susie.Server
         }
 
         private static TResult DeserializeChunk<TResult>(Chunk chunk)
+            where TResult : class
         {
             if (chunk.Data is null) throw new InvalidOperationException("chunk.Data must not be null");
 
-            return DefaultSerializer.Deserialize<TResult>(chunk.Data);
+            return SusieCommandSerializer.Deserialize<TResult>(chunk.Data);
         }
 
         private static List<Chunk> CreateResult<T>(int id, T result)
         {
-            var chunk = new Chunk(id, DefaultSerializer.Serialize(result));
+            var chunk = new Chunk(id, SusieCommandSerializer.Serialize(result));
             return new List<Chunk>() { chunk };
         }
 
         private static List<Chunk> CreateResultIsSuccess(int id, bool isSuccess)
         {
-            var chunk = new Chunk(id, DefaultSerializer.Serialize(new SusiePluginCommandResult(isSuccess)));
+            var chunk = new Chunk(id, SusieCommandSerializer.Serialize(new SusiePluginCommandResult(isSuccess)));
             return new List<Chunk>() { chunk };
         }
 

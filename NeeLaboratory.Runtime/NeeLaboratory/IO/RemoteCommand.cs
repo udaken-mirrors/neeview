@@ -1,10 +1,8 @@
-﻿using System.Runtime.Serialization;
-using System.Text;
+﻿using System.Text;
 
 namespace NeeLaboratory.IO
 {
 
-    [DataContract]
     public class RemoteCommand
     {
         public RemoteCommand()
@@ -25,10 +23,8 @@ namespace NeeLaboratory.IO
             Args = args;
         }
 
-        [DataMember]
         public string Id { get; set; }
 
-        [DataMember]
         public string[] Args { get; set; }
     }
 

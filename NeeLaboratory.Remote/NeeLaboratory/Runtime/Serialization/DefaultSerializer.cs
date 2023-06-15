@@ -1,44 +1,31 @@
 ﻿using System;
 using System.IO;
-using System.Runtime.Serialization;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace NeeLaboratory.Runtime.Serialization
 {
     public static class DefaultSerializer
     {
-        public static byte[] Serialize<T>(T data)
+        public static byte[] Serialize<T>(T data, JsonSerializerContext context)
         {
-            using (var ms = new MemoryStream())
-            {
-                Serialize(ms, data);
-                return ms.ToArray();
-            }
+            return JsonSerializer.SerializeToUtf8Bytes(data, typeof(T), context);
         }
 
-        public static void Serialize<T>(Stream stream, T data)
-        {
-            var serializer = new DataContractSerializer(typeof(T));
-            serializer.WriteObject(stream, data);
-        }
-
-        public static T Deserialize<T>(byte[] source)
+        public static T Deserialize<T>(byte[] source, JsonSerializerContext context)
+            where T : class
         {
             if (source is null) throw new ArgumentNullException(nameof(source));
-
-            using (var ms = new MemoryStream(source))
-            {
-                return Deserialize<T>(ms);
-            }
+            return JsonSerializer.Deserialize(source, typeof(T), context) as T ?? throw new FormatException();
         }
+    }
 
-        public static T Deserialize<T>(Stream stream)
-        {
-            var serializer = new DataContractSerializer(typeof(T));
-            
-            var instance = (T?)serializer.ReadObject(stream);
-            if (instance is null) throw new FormatException();
 
-            return instance;
-        }
+    [JsonSerializable(typeof(int))]
+    [JsonSerializable(typeof(bool))]
+    [JsonSerializable(typeof(double))]
+    [JsonSerializable(typeof(string))]
+    public partial class BasicJsonSerializerContext : JsonSerializerContext
+    {
     }
 }

@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.IO.Pipes;
-using System.Runtime.Serialization;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -71,7 +70,7 @@ namespace NeeLaboratory.Remote
                     if (result[0].Id < 0)
                     {
                         var data = result[0].Data;
-                        var message = data != null ? DefaultSerializer.Deserialize<string>(data) : "Susie Exception";
+                        var message = data != null ? DefaultSerializer.Deserialize<string>(data, BasicJsonSerializerContext.Default) : "Susie Exception";
                         throw new IOException(message);
                     }
 
