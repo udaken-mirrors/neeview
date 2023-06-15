@@ -42,11 +42,11 @@ namespace NeeView
 
             ProcessId = System.Environment.ProcessId;
 
-            var module = Process.GetCurrentProcess().MainModule;
-            if (module is null) throw new InvalidOperationException("Cannot get CurrentProcessModule");
+            AssemblyLocation = System.Environment.ProcessPath ?? throw new InvalidOperationException("Cannot get this AsemblyLocatation");
+            AssemblyFolder = Path.GetDirectoryName(AssemblyLocation) ?? throw new InvalidOperationException("Cannot get this AsemblyFolder");
 
             var assembly = Assembly.GetExecutingAssembly();
-            ValidateProductInfo(assembly, module);
+            ValidateProductInfo(assembly);
 
             // Windows7では標準でTLS1.1,TLS1.2に対応していないので対応させる。バージョンチェック通信用。
             if (Windows7Tools.IsWindows7)
@@ -423,13 +423,9 @@ namespace NeeView
         /// アセンブリ情報収集
         /// </summary>
         /// <param name="asm"></param>
-        [MemberNotNull(nameof(AssemblyLocation), nameof(AssemblyFolder), nameof(CompanyName), nameof(AssemblyTitle), nameof(AssemblyProduct), nameof(AssemblyVersion), nameof(ProductVersion), nameof(ProductVersionNumber))]
-        private static void ValidateProductInfo(Assembly asm, ProcessModule module)
+        [MemberNotNull(nameof(CompanyName), nameof(AssemblyTitle), nameof(AssemblyProduct), nameof(AssemblyVersion), nameof(ProductVersion), nameof(ProductVersionNumber))]
+        private static void ValidateProductInfo(Assembly asm)
         {
-            // パス
-            AssemblyLocation = module.FileName ?? throw new InvalidOperationException("Cannot get this AsemblyLocatation");
-            AssemblyFolder = Path.GetDirectoryName(AssemblyLocation) ?? throw new InvalidOperationException("Cannot get this AsemblyFolder");
-
             // 会社名
             AssemblyCompanyAttribute? companyAttribute = Attribute.GetCustomAttribute(asm, typeof(AssemblyCompanyAttribute)) as AssemblyCompanyAttribute;
             CompanyName = companyAttribute?.Company ?? throw new InvalidOperationException("Cannot get AssemblyCompany");
