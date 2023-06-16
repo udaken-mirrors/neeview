@@ -55,7 +55,7 @@ namespace NeeView.Susie.Client
             // 開発中は直接プロジェクトを参照する
             if (Environment.IsDevPackage)
             {
-                subProcessFileName = Path.GetFullPath(Path.Combine(Environment.AssemblyFolder, @"..\..\..\..\..\NeeView.Susie.Server\bin\x86", Environment.ConfigType, @"net6.0-windows\NeeView.Susie.Server.exe"));
+                subProcessFileName = Path.GetFullPath(Path.Combine(Environment.AssemblyFolder, @"..\..\..\..\..\NeeView.Susie.Server\bin\x86", Environment.ConfigType, @"net6.0\NeeView.Susie.Server.exe"));
             }
 
             if (!File.Exists(subProcessFileName))

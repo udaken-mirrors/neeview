@@ -1,4 +1,5 @@
-﻿using System;
+﻿#if USE_WINRT
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading;
@@ -198,3 +199,5 @@ namespace NeeView
         }
     }
 }
+
+#endif

@@ -5,8 +5,10 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
+#if USE_WINRT
 using Windows.Storage;
 using Windows.Storage.FileProperties;
+#endif
 
 namespace NeeView
 {
@@ -74,10 +76,17 @@ namespace NeeView
             await InitializeEntryAsync(token);
 
             bool isLoadCache = true;
+#if USE_WINRT
             if (!Config.Current.Thumbnail.IsVideoThumbnailEnabled && _content.Entry.IsMedia())
             {
                 isLoadCache = false;
             }
+#else
+            if (_content.Entry.IsMedia())
+            {
+                isLoadCache = false;
+            }
+#endif
 
             if (isLoadCache)
             {
@@ -189,6 +198,7 @@ namespace NeeView
 
         private static async ValueTask<ThumbnailPicture> LoadMediaPictureAsync(ArchiveEntry entry, CancellationToken token)
         {
+#if USE_WINRT
             if (Config.Current.Thumbnail.IsVideoThumbnailEnabled && entry.IsFileSystem)
             {
                 var thumbnail = await CreateMediaThumbnailAsync(entry, token);
@@ -197,9 +207,13 @@ namespace NeeView
                     return new ThumbnailPicture(thumbnail);
                 }
             }
+#else
+            await Task.CompletedTask;
+#endif
             return new ThumbnailPicture(ThumbnailType.Media);
         }
 
+#if USE_WINRT
         private static async Task<byte[]?> CreateMediaThumbnailAsync(ArchiveEntry entry, CancellationToken token)
         {
             var storage = await StorageFile.GetFileFromPathAsync(entry.SystemPath).AsTask(token);
@@ -218,6 +232,7 @@ namespace NeeView
                 return CreateThumbnailImage(thumbnail.AsStream(), Config.Current.Thumbnail.Format, Config.Current.Thumbnail.Quality);
             }
         }
+#endif
 
         private static byte[] CreateThumbnailImage(Stream bitmapStream, BitmapImageFormat format, int quality)
         {

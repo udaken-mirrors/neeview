@@ -134,6 +134,7 @@ namespace NeeView
             return new Size(size.Width, size.Height);
         }
 
+#if USE_WINRT
         // Foundation.Size -> Size
         public static Size FromFoundationSize(global::Windows.Foundation.Size size)
         {
@@ -141,6 +142,7 @@ namespace NeeView
 
             return new Size(size.Width, size.Height);
         }
+#endif
 
         // Drawing.SizeF -> Size
         public static Size FromDrawingSize(System.Drawing.SizeF size)

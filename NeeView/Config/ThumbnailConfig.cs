@@ -18,7 +18,9 @@ namespace NeeView
         private int _thumbnailBookCapacity = 200;
         private int _thumbnailPageCapacity = 100;
         private int _imageWidth = 256;
+#if USE_WINRT
         private bool _isVideoThumbnailEnabled = true;
+#endif
 
         [JsonInclude, JsonPropertyName(nameof(ThumbnailCacheFilePath))]
         public string? _thumbnailCacheFilePath;
@@ -94,13 +96,14 @@ namespace NeeView
             set { SetProperty(ref _thumbnailPageCapacity, value); }
         }
 
+#if USE_WINRT
         [PropertyMember]
         public bool IsVideoThumbnailEnabled
         {
             get { return _isVideoThumbnailEnabled && IsVideoThumbnailSupported; }
             set { SetProperty(ref _isVideoThumbnailEnabled, value); }
         }
-
+#endif
 
 
 

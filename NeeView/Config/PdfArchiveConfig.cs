@@ -40,6 +40,7 @@ namespace NeeView
 
         public static PdfRenderer GetPdfRenderer()
         {
+#if USE_WINRT
             return Environment.PdfRenderer switch
             {
                 PdfWinRTArchiver.Identify
@@ -47,6 +48,9 @@ namespace NeeView
                 _
                     => PdfRenderer.Pdfium,
             };
+#else
+            return PdfRenderer.Pdfium;
+#endif
         }
     }
 
