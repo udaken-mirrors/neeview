@@ -273,19 +273,22 @@ namespace NeeView
                 // 各種Dispose
                 ApplicationDisposer.Current.Dispose();
 
-                // 設定保存
-                SaveDataSync.Current.SaveAll(false, false);
-                SaveDataSync.Current.Dispose();
-                SaveData.Current.DisableSave();
+                if (App.Current.IsMainWindowLoaded)
+                {
+                    // 設定保存
+                    SaveDataSync.Current.SaveAll(false, false);
+                    SaveDataSync.Current.Dispose();
+                    SaveData.Current.DisableSave();
 
-                // キャッシュDBのクリーンナップ
-                ThumbnailCache.Current.Cleanup();
+                    // キャッシュDBのクリーンナップ
+                    ThumbnailCache.Current.Cleanup();
 
-                // キャッシュDBを閉じる
-                ThumbnailCache.Current.Dispose();
+                    // キャッシュDBを閉じる
+                    ThumbnailCache.Current.Dispose();
 
-                // テンポラリファイル破棄
-                Temporary.Current.RemoveTempFolder();
+                    // テンポラリファイル破棄
+                    Temporary.Current.RemoveTempFolder();
+                }
 
                 Trace.WriteLine($"App.Terminate: {DateTime.Now}: Terminated.");
             }
