@@ -25,9 +25,9 @@ namespace NeeView
 
         public void Throw(Exception ex)
         {
-            var _engine = JavascroptEngineMap.Current.GetCurrentEngine();
+            var _engine = JavascriptEngineMap.Current.GetCurrentEngine();
 
-            var message = _engine.CreateScriptErrorMessage(ex.Message);
+            var message = _engine.CreateScriptErrorMessage(ex);
 
             switch (Config.Current.Script.ErrorLevel)
             {

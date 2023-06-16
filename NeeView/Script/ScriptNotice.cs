@@ -9,6 +9,10 @@
             Message = message;
         }
 
+        public ScriptNotice(Esprima.ParseError err) : this(err.Source, err.LineNumber, err.Description)
+        {
+        }
+
 
         public string? Source { get; private set; }
         public int Line { get; private set; }

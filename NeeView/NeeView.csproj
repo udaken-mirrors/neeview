@@ -86,7 +86,7 @@
 
   <ItemGroup>
     <PackageReference Include="bblanchon.PDFium.Win32" Version="114.0.5715" />
-    <PackageReference Include="Jint" Version="3.0.0-beta-2038" />
+    <PackageReference Include="Jint" Version="3.0.0-beta-2049" />
     <PackageReference Include="MetadataExtractor" Version="2.7.2" />
     <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf">
       <Version>1.1.39</Version>
@@ -115,7 +115,7 @@
     <ProjectReference Include="..\NeeLaboratory.Remote\NeeLaboratory.Remote.csproj" />
     <ProjectReference Include="..\NeeLaboratory.Runtime\NeeLaboratory.Runtime.csproj" />
     <ProjectReference Include="..\NeeView.Susie\NeeView.Susie.csproj" />
-    <ProjectReference Include="..\SevenZipSharp\SevenZip\SevenZip.csproj" >
+    <ProjectReference Include="..\SevenZipSharp\SevenZip\SevenZip.csproj">
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
     </ProjectReference>
   </ItemGroup>

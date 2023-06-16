@@ -30,7 +30,7 @@ namespace NeeView
         {
             var engine = new JavascriptEngine() { IsToastEnable = true };
 
-            JavascroptEngineMap.Current.Add(engine);
+            JavascriptEngineMap.Current.Add(engine);
             try
             {
                 ////engine.Log($"Script: {LoosePath.GetFileName(path)} ...");
@@ -45,7 +45,7 @@ namespace NeeView
             }
             finally
             {
-                JavascroptEngineMap.Current.Remove(engine);
+                JavascriptEngineMap.Current.Remove(engine);
                 AppDispatcher.BeginInvoke(() => CommandTable.Current.FlushInputGesture());
                 _pool.Remove(this);
             }

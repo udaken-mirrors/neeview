@@ -7,16 +7,16 @@ namespace NeeView
     /// <summary>
     /// スレッドIDとエンジンの対応表
     /// </summary>
-    public class JavascroptEngineMap
+    public class JavascriptEngineMap
     {
-        static JavascroptEngineMap() => Current = new JavascroptEngineMap();
-        public static JavascroptEngineMap Current { get; }
+        static JavascriptEngineMap() => Current = new JavascriptEngineMap();
+        public static JavascriptEngineMap Current { get; }
 
 
         private readonly ConcurrentDictionary<int, JavascriptEngine> _map = new();
 
 
-        private JavascroptEngineMap()
+        private JavascriptEngineMap()
         {
         }
 

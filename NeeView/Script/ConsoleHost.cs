@@ -87,7 +87,7 @@ namespace NeeView
 
                 default:
                     UpdateEngine();
-                    JavascroptEngineMap.Current.Add(_engine);
+                    JavascriptEngineMap.Current.Add(_engine);
                     try
                     {
                         var result = _engine.Execute(null, input, token);
@@ -100,7 +100,7 @@ namespace NeeView
                     }
                     finally
                     {
-                        JavascroptEngineMap.Current.Remove(_engine);
+                        JavascriptEngineMap.Current.Remove(_engine);
                         CommandTable.Current.FlushInputGesture();
                     }
             }

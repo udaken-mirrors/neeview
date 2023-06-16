@@ -82,8 +82,7 @@ namespace NeeView
             try
             {
                 CurrentPath = path;
-                var parserOptions = path is null ? new Esprima.ParserOptions() : new Esprima.ParserOptions(path);
-                var result = _engine.Evaluate(script, parserOptions);
+                var result = path is null ? _engine.Evaluate(script) : _engine.Evaluate(script, path);
                 return result?.ToObject();
             }
             catch (OperationCanceledException)
@@ -93,6 +92,10 @@ namespace NeeView
             catch (ScriptException)
             {
                 throw;
+            }
+            catch (Esprima.ParserException ex) when (ex.Error is not null)
+            {
+                throw new ScriptException(new ScriptNotice(ex.Error), ex);
             }
             catch (Exception ex)
             {
@@ -106,9 +109,15 @@ namespace NeeView
 
         public void ExceptionPrcess(Exception ex)
         {
-            var message = ex is OperationCanceledException || ex is ScriptException
-                ? ex.Message
-                : CreateScriptErrorMessage(ex.Message).ToString();
+            var message = ex switch
+            {
+                Esprima.ParserException pex when pex.Error is not null
+                    => new ScriptNotice(pex.Error).ToString(),
+                OperationCanceledException or ScriptException
+                    => ex.Message,
+                _
+                    => CreateScriptErrorMessage(ex.Message).ToString(),
+            };
 
             ConsoleWindowManager.Current.ErrorMessage(message, this.IsToastEnable);
         }
@@ -165,6 +174,16 @@ namespace NeeView
             return Path.GetFullPath(path);
         }
 
+        public ScriptNotice CreateScriptErrorMessage(Exception ex)
+        {
+            return ex switch
+            {
+                Esprima.ParserException pex when pex.Error is not null
+                    => new ScriptNotice(pex.Error),
+                _
+                    => CreateScriptErrorMessage(ex.Message),
+            };
+        }
 
         public ScriptNotice CreateScriptErrorMessage(string s)
         {
