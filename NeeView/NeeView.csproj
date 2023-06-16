@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net7.0-windows10.0.17763.0</TargetFramework>
+    <TargetFramework>net6.0-windows10.0.17763.0</TargetFramework>
     <Nullable>enable</Nullable>
     <UseWPF>true</UseWPF>
     <UseWindowsForms>true</UseWindowsForms>
@@ -115,7 +115,9 @@
     <ProjectReference Include="..\NeeLaboratory.Remote\NeeLaboratory.Remote.csproj" />
     <ProjectReference Include="..\NeeLaboratory.Runtime\NeeLaboratory.Runtime.csproj" />
     <ProjectReference Include="..\NeeView.Susie\NeeView.Susie.csproj" />
-    <ProjectReference Include="..\SevenZipSharp\SevenZip\SevenZip.csproj" />
+    <ProjectReference Include="..\SevenZipSharp\SevenZip\SevenZip.csproj" >
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+    </ProjectReference>
   </ItemGroup>
 
   <ItemGroup>
