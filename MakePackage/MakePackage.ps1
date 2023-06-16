@@ -7,7 +7,8 @@
 Param(
 	[ValidateSet("All", "Zip", "Installer", "Appx", "Canary", "Beta")]$Target = "All",
 	[switch]$continue,
-	[switch]$trace
+	[switch]$trace,
+	[switch]$x86
 )
 
 # error to break
@@ -17,9 +18,6 @@ $ErrorActionPreference = "stop"
 
 # MSI作成時にMainComponents.wsxを更新する?
 $isCreateMainComponentsWxs = $true;
-
-# x86パッケージを作成する？
-$supportX86 = $false
 
 #
 $product = 'NeeView'
@@ -856,51 +854,66 @@ $packageBetaWild = "${product}Beta*.zip"
 if (-not $continue)
 {
 	Build-Clear
-	Build-PackageSorce-x64
-	if ($supportX86)
+	if ($x86)
 	{
 		Build-PackageSorce-x86
+	}
+	else
+	{
+		Build-PackageSorce-x64
 	}
 }
 
 if (($Target -eq "All") -or ($Target -eq "Zip") -or ($Target -eq "Canary") -or ($Target -eq "Beta"))
 {
-	Build-Zip-x64
-	if ($supportX86)
+	if ($x86)
 	{
 		Build-Zip-x86
+	}
+	else
+	{
+		Build-Zip-x64
 	}
 }
 
 if (($Target -eq "All") -or ($Target -eq "Installer"))
 {
-	Build-Installer-x64
-	if ($supportX86)
+	if ($x86)
 	{
 		Build-Installer-x86
+	}
+	else
+	{
+		Build-Installer-x64
 	}
 }
 
 if (($Target -eq "All") -or ($Target -eq "Appx"))
 {
-	Build-Appx-x64
-	if ($supportX86)
+	if ($x86)
 	{
 		Build-Appx-x86
 	}
+	else
+	{
+		Build-Appx-x64
+	}
 }
 
-if (($Target -eq "All") -or ($Target -eq "Canary"))
+if (-not $x86)
 {
-	Build-Canary
-}
+	if (($Target -eq "All") -or ($Target -eq "Canary"))
+	{
+		Build-Canary
+	}
 
-if (($Target -eq "All") -or ($Target -eq "Beta"))
-{
-	Build-Beta
-}
+	if (($Target -eq "All") -or ($Target -eq "Beta"))
+	{
+		Build-Beta
+	}
 
-Export-Current
+	Export-Current
+}
 
 #--------------------------
 # saev buid version
