@@ -93,7 +93,7 @@
     </PackageReference>
     <PackageReference Include="PdfiumViewer.Updated" Version="2.14.4" />
     <PackageReference Include="PhotoSauce.MagicScaler">
-      <Version>0.13.0</Version>
+      <Version>0.13.2</Version>
     </PackageReference>
     <PackageReference Include="SharpVectors.Reloaded">
       <Version>1.7.7</Version>
