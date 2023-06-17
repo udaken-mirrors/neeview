@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using NeeLaboratory.IO;
@@ -82,6 +83,7 @@ namespace NeeView
 
         private void BookHistoryCollection_HistoryChanged(object? sender, BookMementoCollectionChangedArgs e)
         {
+            if (e.HistoryChangedType == BookMementoCollectionChangedType.Load) return;
             //Debug.WriteLine($"{nameof(SaveDataSync)}.{nameof(BookHistoryCollection_HistoryChanged)}: Request.");
             _delaySaveHistory.Request();
         }
@@ -102,7 +104,6 @@ namespace NeeView
 
         private void LoadHistory(RemoteCommand command)
         {
-            throw new NotImplementedException();
             // TODO: フラグ管理のみ？
         }
 
@@ -154,7 +155,7 @@ namespace NeeView
             }
         }
 
-        private static void SaveHistory(bool handleException)
+        public static void SaveHistory(bool handleException)
         {
             Debug.WriteLine($"Save History");
 
@@ -177,7 +178,7 @@ namespace NeeView
             }
         }
 
-        public void SaveBookmark(bool sync, bool handleException)
+        public static void SaveBookmark(bool sync, bool handleException)
         {
             Debug.WriteLine($"Save Bookmark");
 

@@ -192,6 +192,7 @@ namespace NeeView
             if (history != null)
             {
                 BookHistoryCollection.Current.Restore(history, true);
+                SaveDataSync.SaveHistory(true);
             }
         }
 
@@ -212,7 +213,7 @@ namespace NeeView
             if (bookmark != null)
             {
                 BookmarkCollection.Current.Restore(bookmark);
-                SaveDataSync.Current.SaveBookmark(true, true);
+                SaveDataSync.SaveBookmark(true, true);
             }
         }
 
