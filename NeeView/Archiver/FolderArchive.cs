@@ -121,8 +121,7 @@ namespace NeeView
 
         private ArchiveEntry CreateCommonArchiveEntry(FileSystemInfo info, int id)
         {
-            int prefixLen = Path.Length;
-            var name = info.FullName[prefixLen..].TrimStart('\\', '/');
+            var name = string.IsNullOrEmpty(Path) ? info.FullName : info.FullName[Path.Length..].TrimStart('\\', '/');
 
             var entry = new ArchiveEntry(this)
             {
