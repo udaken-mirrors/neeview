@@ -65,13 +65,13 @@ namespace NeeView
         public void Initialize()
         {
             BookmarkCollection.Current.BookmarkChanged += BookmarkCollection_BookmarkChanged;
-            QuickAccessCollection.Current.CollectionChanged += QuickAccessCollection_CollectionChanged; ;
+            QuickAccessCollection.Current.CollectionChanged += QuickAccessCollection_CollectionChanged;
             BookHistoryCollection.Current.HistoryChanged += BookHistoryCollection_HistoryChanged;
         }
 
-        private void QuickAccessCollection_CollectionChanged(object? sender, CollectionChangeEventArgs e)
+        private void QuickAccessCollection_CollectionChanged(object? sender, QuickAccessCollectionChangeEventArgs e)
         {
-            if (e.Action == CollectionChangeAction.Refresh) return;
+            if (e.Action == QuickAccessCollectionChangeAction.Refresh) return;
             _delaySaveBookmark.Request();
         }
 

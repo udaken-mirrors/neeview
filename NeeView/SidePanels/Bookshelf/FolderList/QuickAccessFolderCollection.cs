@@ -36,13 +36,13 @@ namespace NeeView
         }
 
 
-        private void QuickAccessCollection_CollectionChanged(object? sender, CollectionChangeEventArgs e)
+        private void QuickAccessCollection_CollectionChanged(object? sender, QuickAccessCollectionChangeEventArgs e)
         {
             if (_disposedValue) return;
 
             switch (e.Action)
             {
-                case CollectionChangeAction.Add:
+                case QuickAccessCollectionChangeAction.Add:
                     {
                         var target = e.Element as QuickAccess ?? throw new InvalidOperationException("e.Element must be QuickAccess");
                         var item = Items.FirstOrDefault(i => target == i.Source);
@@ -55,7 +55,7 @@ namespace NeeView
                     }
                     break;
 
-                case CollectionChangeAction.Remove:
+                case QuickAccessCollectionChangeAction.Remove:
                     {
                         var target = e.Element as QuickAccess ?? throw new InvalidOperationException("e.Element must be QuickAccess");
                         var item = Items.FirstOrDefault(i => target == i.Source);
@@ -66,8 +66,12 @@ namespace NeeView
                     }
                     break;
 
-                case CollectionChangeAction.Refresh:
+                case QuickAccessCollectionChangeAction.Refresh:
                     BookshelfFolderList.Current.RequestPlace(new QueryPath(QueryScheme.QuickAccess, null), null, FolderSetPlaceOption.UpdateHistory | FolderSetPlaceOption.ResetKeyword | FolderSetPlaceOption.Refresh);
+                    break;
+
+                case QuickAccessCollectionChangeAction.Rename:
+                    // nop.
                     break;
             }
         }

@@ -42,25 +42,29 @@ namespace NeeView
             QuickAccessCollection.Current.CollectionChanged += QuickAccessCollection_CollectionChanged;
         }
 
-        private void QuickAccessCollection_CollectionChanged(object? sender, System.ComponentModel.CollectionChangeEventArgs e)
+        private void QuickAccessCollection_CollectionChanged(object? sender, QuickAccessCollectionChangeEventArgs e)
         {
 
             switch (e.Action)
             {
-                case CollectionChangeAction.Refresh:
+                case QuickAccessCollectionChangeAction.Refresh:
                     RefreshChildren(isExpanded: true);
                     break;
 
-                case CollectionChangeAction.Add:
+                case QuickAccessCollectionChangeAction.Add:
                     var addItem = e.Element as QuickAccess ?? throw new InvalidOperationException();
                     var index = QuickAccessCollection.Current.Items.IndexOf(addItem);
                     var node = new QuickAccessNode(addItem, null) { IsSelected = true }; // NOTE: 選択項目として追加
                     Insert(index, node);
                     break;
 
-                case CollectionChangeAction.Remove:
+                case QuickAccessCollectionChangeAction.Remove:
                     var removeItem = e.Element as QuickAccess ?? throw new InvalidOperationException();
                     Remove(removeItem);
+                    break;
+
+                case QuickAccessCollectionChangeAction.Rename:
+                    // nop
                     break;
             }
         }

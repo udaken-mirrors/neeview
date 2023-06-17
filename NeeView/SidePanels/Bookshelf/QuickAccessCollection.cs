@@ -1,4 +1,5 @@
 ﻿using NeeLaboratory.ComponentModel;
+using NeeView.Collections.Generic;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -16,8 +17,13 @@ namespace NeeView
         public static QuickAccessCollection Current { get; }
 
 
-        public event CollectionChangeEventHandler? CollectionChanged;
+        public QuickAccessCollection()
+        {
+            QuickAccessNode.NameChanged += QuickAccessNode_NameChanged;
+        }
 
+
+        public event EventHandler<QuickAccessCollectionChangeEventArgs>? CollectionChanged;
 
         private ObservableCollection<QuickAccess> _items = new();
         public ObservableCollection<QuickAccess> Items
@@ -27,12 +33,22 @@ namespace NeeView
         }
 
 
+        private void QuickAccessNode_NameChanged(object? sender, EventArgs e)
+        {
+            if (sender is not QuickAccessNode node) return;
+
+            if (_items.Contains(node.QuickAccessSource))
+            {
+                CollectionChanged?.Invoke(this, new QuickAccessCollectionChangeEventArgs(QuickAccessCollectionChangeAction.Rename, node.QuickAccessSource));
+            }
+        }
+
         public void Insert(int index, QuickAccess item)
         {
             if (item is null) throw new ArgumentNullException(nameof(item));
 
             Items.Insert(index, item);
-            CollectionChanged?.Invoke(this, new CollectionChangeEventArgs(CollectionChangeAction.Add, item));
+            CollectionChanged?.Invoke(this, new QuickAccessCollectionChangeEventArgs(QuickAccessCollectionChangeAction.Add, item));
         }
 
         public bool Remove(QuickAccess item)
@@ -40,7 +56,7 @@ namespace NeeView
             if (item is null) throw new ArgumentNullException(nameof(item));
 
             var isRemoved = Items.Remove(item);
-            CollectionChanged?.Invoke(this, new CollectionChangeEventArgs(CollectionChangeAction.Remove, item));
+            CollectionChanged?.Invoke(this, new QuickAccessCollectionChangeEventArgs(QuickAccessCollectionChangeAction.Remove, item));
             return isRemoved;
         }
 
@@ -51,10 +67,10 @@ namespace NeeView
             var item = Items[srcIndex];
 
             Items.RemoveAt(srcIndex);
-            CollectionChanged?.Invoke(this, new CollectionChangeEventArgs(CollectionChangeAction.Remove, item));
+            CollectionChanged?.Invoke(this, new QuickAccessCollectionChangeEventArgs(QuickAccessCollectionChangeAction.Remove, item));
 
             Items.Insert(dstIndex, item);
-            CollectionChanged?.Invoke(this, new CollectionChangeEventArgs(CollectionChangeAction.Add, item));
+            CollectionChanged?.Invoke(this, new QuickAccessCollectionChangeEventArgs(QuickAccessCollectionChangeAction.Add, item));
         }
 
 
@@ -80,7 +96,7 @@ namespace NeeView
             if (memento.Items is null) return;
 
             this.Items = new ObservableCollection<QuickAccess>(memento.Items);
-            CollectionChanged?.Invoke(this, new CollectionChangeEventArgs(CollectionChangeAction.Refresh, null));
+            CollectionChanged?.Invoke(this, new QuickAccessCollectionChangeEventArgs(QuickAccessCollectionChangeAction.Refresh, null));
         }
 
         #endregion
