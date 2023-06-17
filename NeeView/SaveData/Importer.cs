@@ -269,6 +269,9 @@ namespace NeeView
                 var path = Path.Combine(directory.FullName, entry.Name);
                 entry.ExtractToFile(path, true);
             }
+
+            PlaylistHub.Current.UpdatePlaylistCollection();
+            PlaylistHub.Current.ReloadPlaylist();
         }
 
         public void ImportThemes()

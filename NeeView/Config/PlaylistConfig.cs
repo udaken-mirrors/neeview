@@ -30,8 +30,8 @@ namespace NeeView
         [PropertyPath(FileDialogType = Windows.Controls.FileDialogType.Directory)]
         public string PlaylistFolder
         {
-            get { return _playlistFolder ?? SaveData.DefaultPlaylistsFolder; }
-            set { SetProperty(ref _playlistFolder, (string.IsNullOrWhiteSpace(value) || value.Trim() == SaveData.DefaultPlaylistsFolder) ? null : value.Trim()); }
+            get { return ToFullPlaylistFolder(_playlistFolder); }
+            set { SetProperty(ref _playlistFolder, ToShortPlaylistFolder(value)); }
         }
 
         [JsonIgnore]
@@ -46,8 +46,8 @@ namespace NeeView
         [PropertyPath(FileDialogType = FileDialogType.SaveFile, Filter = "NeeView Playlist|*.nvpls")]
         public string CurrentPlaylist
         {
-            get { return _currentPlaylist ?? DefaultPlaylist; }
-            set { SetProperty(ref _currentPlaylist, (string.IsNullOrWhiteSpace(value) || value.Trim() == DefaultPlaylist) ? null : value.Trim()); }
+            get { return ToFullPlaylistPath(_currentPlaylist); }
+            set { SetProperty(ref _currentPlaylist, ToShortPlaylistPath(value)); }
         }
 
         [PropertyMember]
@@ -71,6 +71,74 @@ namespace NeeView
             set { SetProperty(ref _isFirstIn, value); }
         }
 
+
+
+        private string? ToShortPlaylistFolder(string path)
+        {
+            if (path is null)
+            {
+                return null;
+            }
+
+            path = LoosePath.NormalizeSeparator(path.Trim()).TrimEnd();
+            if (string.IsNullOrWhiteSpace(path) || path == SaveData.DefaultPlaylistsFolder)
+            {
+                return null;
+            }
+
+            return path;
+        }
+
+        private string ToFullPlaylistFolder(string? path)
+        {
+            if (path is null)
+            {
+                return SaveData.DefaultPlaylistsFolder;
+            }
+
+            return path;
+        }
+
+        private string? ToShortPlaylistPath(string path)
+        {
+            if (path is null)
+            {
+                return null;
+            }
+
+            path = LoosePath.NormalizeSeparator(path.Trim());
+            if (string.IsNullOrWhiteSpace(path) || path == DefaultPlaylist)
+            {
+                return null;
+            }
+
+            var folder = LoosePath.TrimDirectoryEnd(PlaylistFolder);
+            if (path.StartsWith(folder, System.StringComparison.OrdinalIgnoreCase))
+            {
+                var shortPath = path.Substring(folder.Length);
+                if (!shortPath.Contains(LoosePath.DefaultSeparator))
+                {
+                    return shortPath;
+                }
+            }
+
+            return path;
+        }
+
+        private string ToFullPlaylistPath(string? path)
+        {
+            if (path is null)
+            {
+                return DefaultPlaylist;
+            }
+
+            if (System.IO.Path.IsPathFullyQualified(path))
+            {
+                return path;
+            }
+
+            return System.IO.Path.Combine(PlaylistFolder, path);
+        }
     }
 }
 

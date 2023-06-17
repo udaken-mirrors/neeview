@@ -237,7 +237,7 @@ namespace NeeView
             }
         }
 
-        private void ReloadPlaylist()
+        public void ReloadPlaylist()
         {
             if (this.SelectedItem == _playlist.Path)
             {
