@@ -30,6 +30,7 @@ namespace NeeView
         private static bool? _isUseLocalApplicationDataFolder;
         private static List<string>? _cultures;
         private static string? _pdfRenderer;
+        private static bool? _watermark;
         private static string? _logFile;
         private static Encoding? _encoding;
 
@@ -263,7 +264,7 @@ namespace NeeView
             {
                 if (_isUseLocalApplicationDataFolder == null)
                 {
-                    _isUseLocalApplicationDataFolder = ConfigurationManager.AppSettings["UseLocalApplicationData"] == "True";
+                    _isUseLocalApplicationDataFolder = string.Compare(ConfigurationManager.AppSettings["UseLocalApplicationData"], "True", true) == 0;
                 }
                 return (bool)_isUseLocalApplicationDataFolder;
             }
@@ -363,6 +364,18 @@ namespace NeeView
                     _pdfRenderer = ConfigurationManager.AppSettings["PdfRenderer"] ?? "Pdfium";
                 }
                 return _pdfRenderer;
+            }
+        }
+
+        public static bool Watermark
+        {
+            get
+            {
+                if (_watermark is null)
+                {
+                    _watermark = string.Compare(ConfigurationManager.AppSettings["Watermark"], "True", true) == 0;
+                }
+                return (bool)_watermark;
             }
         }
 

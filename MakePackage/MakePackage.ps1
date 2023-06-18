@@ -305,6 +305,9 @@ function New-ConfigForZip($inputDir, $config, $outputDir)
 	$add = $xml.configuration.appSettings.add | Where { $_.key -eq 'PackageType' } | Select -First 1
 	$add.value = '.zip'
 
+	$add = $xml.configuration.appSettings.add | Where { $_.key -eq 'Watermark' } | Select -First 1
+	$add.value = 'False'
+
 	$add = $xml.configuration.appSettings.add | Where { $_.key -eq 'UseLocalApplicationData' } | Select -First 1
 	$add.value = 'False'
 
@@ -348,6 +351,9 @@ function New-ConfigForMsi($inputDir, $config, $outputDir)
 	$add = $xml.configuration.appSettings.add | Where { $_.key -eq 'PackageType' } | Select -First 1
 	$add.value = '.msi'
 
+	$add = $xml.configuration.appSettings.add | Where { $_.key -eq 'Watermark' } | Select -First 1
+	$add.value = 'False'
+
 	$add = $xml.configuration.appSettings.add | Where { $_.key -eq 'UseLocalApplicationData' } | Select -First 1
 	$add.value = 'True'
 
@@ -378,6 +384,9 @@ function New-ConfigForAppx($inputDir, $config, $outputDir)
 	$add = $xml.configuration.appSettings.add | Where { $_.key -eq 'PackageType' } | Select -First 1
 	$add.value = '.appx'
 
+	$add = $xml.configuration.appSettings.add | Where { $_.key -eq 'Watermark' } | Select -First 1
+	$add.value = 'False'
+
 	$add = $xml.configuration.appSettings.add | Where { $_.key -eq 'UseLocalApplicationData' } | Select -First 1
 	$add.value = 'True'
 
@@ -407,6 +416,9 @@ function New-ConfigForDevPackage($inputDir, $config, $target, $outputDir)
 
 	$add = $xml.configuration.appSettings.add | Where { $_.key -eq 'PackageType' } | Select -First 1
 	$add.value = $target
+
+	$add = $xml.configuration.appSettings.add | Where { $_.key -eq 'Watermark' } | Select -First 1
+	$add.value = 'True'
 
 	$add = $xml.configuration.appSettings.add | Where { $_.key -eq 'UseLocalApplicationData' } | Select -First 1
 	$add.value = 'False'

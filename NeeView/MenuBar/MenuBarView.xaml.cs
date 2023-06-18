@@ -31,17 +31,22 @@ namespace NeeView
         {
             InitializeComponent();
 
+            this.Watermark.Visibility = Environment.Watermark ? Visibility.Visible : Visibility.Collapsed;
+
             if (Environment.IsCanaryPackage)
             {
-                this.Watermark.Visibility = Visibility.Visible;
                 this.Watermark.Background = Brushes.DarkOrange;
                 this.WatermarkText.Text = "Canary " + Environment.DateVersion;
             }
             else if (Environment.IsBetaPackage)
             {
-                this.Watermark.Visibility = Visibility.Visible;
                 this.Watermark.Background = Brushes.Purple;
                 this.WatermarkText.Text = "Beta " + Environment.DateVersion;
+            }
+            else
+            {
+                this.Watermark.Background = Brushes.DimGray;
+                this.WatermarkText.Text = Environment.PackageType;
             }
 
             this.WindowCaptionButtons.MouseRightButtonUp += (s, e) => e.Handled = true;
