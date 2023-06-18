@@ -90,6 +90,16 @@ namespace NeeView
         }
 
 
+        public bool IsMaximizeButtonMouseOver
+        {
+            get { return (bool)GetValue(IsMaximizeButtonMouseOverProperty); }
+            set { SetValue(IsMaximizeButtonMouseOverProperty, value); }
+        }
+
+        public static readonly DependencyProperty IsMaximizeButtonMouseOverProperty =
+            DependencyProperty.Register("IsMaximizeButtonMouseOver", typeof(bool), typeof(CaptionBar), new PropertyMetadata(false));
+
+
         public bool IsSystemMenuEnabled
         {
             get { return (bool)GetValue(IsSystemMenuEnabledProperty); }

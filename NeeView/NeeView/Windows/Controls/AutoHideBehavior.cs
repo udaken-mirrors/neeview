@@ -407,7 +407,7 @@ namespace NeeView.Windows.Controls
 
             if ((options & UpdateVisibilityOption.UpdateMouseOver) == UpdateVisibilityOption.UpdateMouseOver)
             {
-                UpdateMouseOverr();
+                UpdateMouseOver();
             }
 
             if ((options & UpdateVisibilityOption.UpdateFocusLock) == UpdateVisibilityOption.UpdateFocusLock)
@@ -423,7 +423,7 @@ namespace NeeView.Windows.Controls
         /// <summary>
         /// マウスカーソル位置による表示開始判定
         /// </summary>
-        private void UpdateMouseOverr()
+        private void UpdateMouseOver()
         {
             _isMouseOver = IsMouseOver();
 

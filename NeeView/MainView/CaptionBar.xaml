@@ -31,7 +31,8 @@
             <DockPanel>
                 <nwc:WindowCaptionButtons x:Name="CaptionButtons" DockPanel.Dock="Right" IsEnabled="True" WindowChrome.IsHitTestVisibleInChrome="True"
                         IsMinimizeEnabled="{Binding RelativeSource={RelativeSource AncestorType=local:CaptionBar}, Path=IsMinimizeEnabled}"
-                        IsMaximizeEnabled="{Binding RelativeSource={RelativeSource AncestorType=local:CaptionBar}, Path=IsMaximizeEnabled}" />
+                        IsMaximizeEnabled="{Binding RelativeSource={RelativeSource AncestorType=local:CaptionBar}, Path=IsMaximizeEnabled}"
+                        IsMaximizeButtonMouseOver="{Binding RelativeSource={RelativeSource AncestorType=local:CaptionBar}, Path=IsMaximizeButtonMouseOver, Mode=OneWayToSource}"/>
                 <TextBlock x:Name="TitleTextBlock" VerticalAlignment="Center" Margin="16,0" FontSize="{DynamicResource {x:Static SystemFonts.CaptionFontSizeKey}}"
                         FontFamily="{DynamicResource {x:Static SystemFonts.CaptionFontFamilyKey}}" TextTrimming="CharacterEllipsis"
                         Text="{Binding RelativeSource={RelativeSource AncestorType=local:CaptionBar}, Path=Title}" />

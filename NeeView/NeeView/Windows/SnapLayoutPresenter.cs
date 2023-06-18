@@ -20,6 +20,7 @@ namespace NeeView.Windows
         private readonly Window _window;
         private IMaximizeButtonSource? _maximizeButton;
         private CaptionButtonState _activeButtonState = CaptionButtonState.MouseOver;
+        private bool _isMouseOver;
 
 
         public SnapLayoutPresenter(Window window)
@@ -110,6 +111,7 @@ namespace NeeView.Windows
             {
                 //System.Diagnostics.Debug.WriteLine("# IN");
                 _maximizeButton.SetMaximizeButtonBackground(_activeButtonState);
+                UpdateMouseOver(true);
                 handled = true;
                 return new IntPtr((int)HitTestValues.HTMAXBUTTON);
             }
@@ -117,6 +119,7 @@ namespace NeeView.Windows
             {
                 //System.Diagnostics.Debug.WriteLine("# OUT");
                 _maximizeButton.SetMaximizeButtonBackground(CaptionButtonState.Default);
+                UpdateMouseOver(false);
                 return IntPtr.Zero;
             }
         }
@@ -175,10 +178,31 @@ namespace NeeView.Windows
             //Debug.WriteLine("# LEAVE");
             _activeButtonState = CaptionButtonState.MouseOver;
             _maximizeButton.SetMaximizeButtonBackground(CaptionButtonState.Default);
+            UpdateMouseOver(false);
             return IntPtr.Zero;
         }
 
 #pragma warning restore IDE0060 // 未使用のパラメーターを削除します
+
+
+        private void UpdateMouseOver(bool value)
+        {
+            if (_maximizeButton is null) return;
+
+            if (_isMouseOver != value)
+            {
+                _isMouseOver = value;
+                if (_isMouseOver)
+                {
+                    _maximizeButton.OnMaximizeButtonMouseEnter();
+                }
+                else
+                {
+                    _maximizeButton.OnMaximizeButtonMouseLeave();
+                }
+            }
+        }
+
 
         /// <summary>
         /// ウィンドウメッセージ座標でのコントロール当たり判定
@@ -209,5 +233,6 @@ namespace NeeView.Windows
                 return (short)(ushort)((uint)lp.ToInt32() >> 16);
             }
         }
+
     }
 }

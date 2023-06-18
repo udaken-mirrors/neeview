@@ -59,13 +59,19 @@ namespace NeeView
             }
         }
 
+        public bool IsMaximizeButtonMouseOver
+        {
+            set { _model.SetMaximizeButtonMouseOver(value); }
+        }
+
+
         [MemberNotNull(nameof(_windowCaptionEmulator))]
         private void InitializeWindowCaptionEmulator(FrameworkElement control, WindowStateManager windowStateManamger)
         {
             this.Window = System.Windows.Window.GetWindow(control);
 
             _windowCaptionEmulator = new MainWindowCaptionEmulator(Window, control) { WindowStateManager = windowStateManamger };
-            
+
             IsCaptionEnabled = true;
         }
     }

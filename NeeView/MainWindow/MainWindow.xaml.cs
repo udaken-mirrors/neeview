@@ -91,8 +91,10 @@ namespace NeeView
 
             MainWindowModel.Initialize(_windowController);
 
+            var menuBar = new MenuBar(_windowStateManager);
+
             // MainWindow : ViewModel
-            _vm = new MainWindowViewModel(MainWindowModel.Current);
+            _vm = new MainWindowViewModel(MainWindowModel.Current, menuBar);
             this.DataContext = _vm;
 
             _vm.FocusMainViewCall += (s, e) => _viewComponent.RaiseFocusMainViewRequest();
@@ -118,7 +120,7 @@ namespace NeeView
             this.PageSliderView.Source = PageSlider.Current;
             this.MediaControlView.Source = MediaControl.Current;
             this.ThumbnailListArea.Source = ThumbnailList.Current;
-            this.MenuBar.Source = new MenuBar(_windowStateManager);
+            this.MenuBar.Source = menuBar;
             this.AddressBar.Source = new AddressBar();
 
             Config.Current.MenuBar.AddPropertyChanged(nameof(MenuBarConfig.IsHideMenu),

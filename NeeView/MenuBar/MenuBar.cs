@@ -15,6 +15,7 @@ namespace NeeView
     public class MenuBar : BindableBase
     {
         private readonly WindowStateManager _windowStateManager;
+        private bool _isMaximizeButtonMouseOver;
 
 
         public MenuBar(WindowStateManager windowStateManager)
@@ -30,5 +31,12 @@ namespace NeeView
 
         public WindowStateManager WindowStateManager => _windowStateManager;
 
+        public bool IsMaximizeButtonMouseOver => _isMaximizeButtonMouseOver;
+
+
+        public void SetMaximizeButtonMouseOver(bool isOver)
+        {
+            _isMaximizeButtonMouseOver = isOver;
+        }
     }
 }

@@ -84,7 +84,7 @@ namespace NeeView
                 RaisePropertyChanged(nameof(IsTopmost));
             });
 
-            MenuAutoHideDescription = new BasicAutoHideDescription(this.CaptionBar);
+            MenuAutoHideDescription = new MainViewMenuAutoHideDescription(this.CaptionBar);
 
             this.SourceInitialized += MainViewWindow_SourceInitialized;
             this.Loaded += MainViewWindow_Loaded;
@@ -216,6 +216,27 @@ namespace NeeView
             {
                 mainView.StretchWindow();
             }
+        }
+    }
+
+
+    public class MainViewMenuAutoHideDescription : BasicAutoHideDescription
+    {
+        private readonly CaptionBar _captionBar;
+
+        public MainViewMenuAutoHideDescription(CaptionBar captionBar) : base(captionBar)
+        {
+            _captionBar = captionBar;
+        }
+
+        public override bool IsVisibleLocked()
+        {
+            if (_captionBar.IsMaximizeButtonMouseOver)
+            {
+                return true;
+            }
+
+            return base.IsVisibleLocked();
         }
     }
 }

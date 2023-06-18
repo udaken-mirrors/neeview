@@ -96,11 +96,11 @@ namespace NeeView
         /// <summary>
         /// コンストラクター
         /// </summary>
-        public MainWindowViewModel(MainWindowModel model)
+        public MainWindowViewModel(MainWindowModel model, MenuBar menuBar)
         {
             _viewComponent = MainViewComponent.Current;
 
-            MenuAutoHideDescription = new MenuAutoHideDescription(MainWindow.Current.LayerMenuSocket, MainWindow.Current.SidePanelFrame);
+            MenuAutoHideDescription = new MenuAutoHideDescription(MainWindow.Current.LayerMenuSocket, menuBar, MainWindow.Current.SidePanelFrame);
             StatusAutoHideDescrption = new StatusAutoHideDescription(MainWindow.Current.LayerStatusArea, MainWindow.Current.SidePanelFrame);
             ThumbnailListusAutoHideDescrption = new StatusAutoHideDescription(MainWindow.Current.LayerThumbnailListSocket, MainWindow.Current.SidePanelFrame);
 

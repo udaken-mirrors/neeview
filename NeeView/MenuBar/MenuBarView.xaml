@@ -38,7 +38,8 @@
 
         <DockPanel x:Name="MenuBarArea" LastChildFill="True" Margin="0,0,0,2">
 
-            <nwc:WindowCaptionButtons x:Name="WindowCaptionButtons" VerticalAlignment="Top" DockPanel.Dock="Right" MinHeight="28" WindowChrome.IsHitTestVisibleInChrome="False"/>
+            <nwc:WindowCaptionButtons x:Name="WindowCaptionButtons" VerticalAlignment="Top" DockPanel.Dock="Right" MinHeight="28" WindowChrome.IsHitTestVisibleInChrome="False"
+                                      IsMaximizeButtonMouseOver="{Binding IsMaximizeButtonMouseOver, Mode=OneWayToSource}"/>
 
             <Grid DockPanel.Dock="Right" Visibility="{Binding MainMenu, Converter={StaticResource NullableToVisibilityConverter}}">
                 <Border x:Name="Watermark" Background="DarkOrange" Height="18" VerticalAlignment="Top" Visibility="Collapsed">

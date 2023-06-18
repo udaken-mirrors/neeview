@@ -54,6 +54,16 @@ namespace NeeView.Windows.Controls
             DependencyProperty.Register("IsMaximizeEnabled", typeof(bool), typeof(WindowCaptionButtons), new PropertyMetadata(true));
 
 
+        public bool IsMaximizeButtonMouseOver
+        {
+            get { return (bool)GetValue(IsMaximizeButtonMouseOverProperty); }
+            set { SetValue(IsMaximizeButtonMouseOverProperty, value); }
+        }
+
+        public static readonly DependencyProperty IsMaximizeButtonMouseOverProperty =
+            DependencyProperty.Register("IsMaximizeButtonMouseOver", typeof(bool), typeof(WindowCaptionButtons), new PropertyMetadata(false));
+
+
         public double StrokeThickness
         {
             get { return (double)GetValue(StrokeThicknessProperty); }
@@ -150,6 +160,16 @@ namespace NeeView.Windows.Controls
             {
                 this.CaptionMaximizeButtonBase.Background = brush;
             }
+        }
+
+        public void OnMaximizeButtonMouseEnter()
+        {
+            IsMaximizeButtonMouseOver = true;
+        }
+
+        public void OnMaximizeButtonMouseLeave()
+        {
+            IsMaximizeButtonMouseOver = false;
         }
     }
 }

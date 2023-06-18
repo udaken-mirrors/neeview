@@ -7,12 +7,14 @@ namespace NeeView
 {
     public class MenuAutoHideDescription : BasicAutoHideDescription
     {
+        private readonly MenuBar _menuBar;
         private readonly SidePanelFrameView _sidePanelFrame;
 
-        public MenuAutoHideDescription(FrameworkElement target, SidePanelFrameView sidePanelFrame) : base(target)
+        public MenuAutoHideDescription(FrameworkElement target, MenuBar menuBar, SidePanelFrameView sidePanelFrame) : base(target)
         {
             if (sidePanelFrame is null) throw new ArgumentNullException(nameof(sidePanelFrame));
 
+            _menuBar = menuBar;
             _sidePanelFrame = sidePanelFrame;
         }
 
@@ -36,6 +38,16 @@ namespace NeeView
                 case AutoHideConfrictMode.Deny:
                     return true;
             }
+        }
+
+        public override bool IsVisibleLocked()
+        {
+            if (_menuBar.IsMaximizeButtonMouseOver)
+            {
+                return true;
+            }
+
+            return base.IsVisibleLocked();
         }
     }
 }

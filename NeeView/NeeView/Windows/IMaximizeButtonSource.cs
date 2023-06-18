@@ -18,6 +18,16 @@ namespace NeeView.Windows
         /// スタイルが機能しない場合の代替手段として用意
         /// </remarks>
         void SetMaximizeButtonBackground(CaptionButtonState state);
+
+        /// <summary>
+        /// 最大化ボタンにマウスカーソルが重なったときのイベント
+        /// </summary>
+        void OnMaximizeButtonMouseEnter();
+
+        /// <summary>
+        /// 最大化ボタンからマウスカーソルがなくなったときのイベント
+        /// </summary>
+        void OnMaximizeButtonMouseLeave();
     }
 
     public enum CaptionButtonState
