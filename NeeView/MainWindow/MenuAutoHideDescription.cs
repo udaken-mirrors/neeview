@@ -7,15 +7,20 @@ namespace NeeView
 {
     public class MenuAutoHideDescription : BasicAutoHideDescription
     {
-        private readonly MenuBar _menuBar;
         private readonly SidePanelFrameView _sidePanelFrame;
+        private MenuBar? _menuBar;
 
-        public MenuAutoHideDescription(FrameworkElement target, MenuBar menuBar, SidePanelFrameView sidePanelFrame) : base(target)
+        public MenuAutoHideDescription(FrameworkElement target, SidePanelFrameView sidePanelFrame) : base(target)
         {
             if (sidePanelFrame is null) throw new ArgumentNullException(nameof(sidePanelFrame));
 
-            _menuBar = menuBar;
             _sidePanelFrame = sidePanelFrame;
+        }
+
+
+        public void SetMenuBar(MenuBar menuBar)
+        {
+            _menuBar = menuBar;
         }
 
         public override bool IsIgnoreMouseOverAppendix()
@@ -42,7 +47,7 @@ namespace NeeView
 
         public override bool IsVisibleLocked()
         {
-            if (_menuBar.IsMaximizeButtonMouseOver)
+            if (_menuBar is not null && _menuBar.IsMaximizeButtonMouseOver)
             {
                 return true;
             }

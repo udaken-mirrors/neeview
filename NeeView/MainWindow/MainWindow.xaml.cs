@@ -91,10 +91,8 @@ namespace NeeView
 
             MainWindowModel.Initialize(_windowController);
 
-            var menuBar = new MenuBar(_windowStateManager);
-
             // MainWindow : ViewModel
-            _vm = new MainWindowViewModel(MainWindowModel.Current, menuBar);
+            _vm = new MainWindowViewModel(MainWindowModel.Current);
             this.DataContext = _vm;
 
             _vm.FocusMainViewCall += (s, e) => _viewComponent.RaiseFocusMainViewRequest();
@@ -120,8 +118,10 @@ namespace NeeView
             this.PageSliderView.Source = PageSlider.Current;
             this.MediaControlView.Source = MediaControl.Current;
             this.ThumbnailListArea.Source = ThumbnailList.Current;
-            this.MenuBar.Source = menuBar;
+            this.MenuBar.Source = new MenuBar(_windowStateManager);
             this.AddressBar.Source = new AddressBar();
+
+            _vm.MenuAutoHideDescription.SetMenuBar(this.MenuBar.Source);
 
             Config.Current.MenuBar.AddPropertyChanged(nameof(MenuBarConfig.IsHideMenu),
                 (s, e) => DartyMenuAreaLayout());
