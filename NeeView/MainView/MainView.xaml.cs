@@ -343,6 +343,7 @@ namespace NeeView
         {
             if (this.MainViewPanel.ContextMenu != null)
             {
+                _vm?.UpdateContextMenu();
                 this.MainViewPanel.ContextMenu.DataContext = _vm;
                 this.MainViewPanel.ContextMenu.PlacementTarget = this.MainViewPanel;
                 this.MainViewPanel.ContextMenu.Placement = PlacementMode.MousePoint;
