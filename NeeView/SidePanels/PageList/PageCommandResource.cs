@@ -367,7 +367,7 @@ namespace NeeView
             var item = GetSelectedPage(sender);
             if (item is null) return;
 
-            e.CanExecute = item.CanRename();
+            e.CanExecute = Config.Current.System.IsFileWriteAccessEnabled &&  item.CanRename();
         }
 
         public async void Rename_Execute(object sender, ExecutedRoutedEventArgs e)
