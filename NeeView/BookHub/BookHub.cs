@@ -764,7 +764,7 @@ namespace NeeView
 
             var tcs = new TaskCompletionSource<bool>();
 
-            using (book.Viewer.SubscribeViewContentsChanged(BookViewer_ViewContentsChangedInner))
+            using (book.Viewer.Loader.SubscribeViewContentsChanged(BookViewer_ViewContentsChangedInner))
             {
                 // ブックエンジン開始
                 book.Start();
@@ -797,8 +797,8 @@ namespace NeeView
         {
             if (book is null) return;
 
-            book.Viewer.ViewContentsChanged += BookViewer_ViewContentsChanged;
-            book.Viewer.NextContentsChanged += BookViewer_NextContentsChanged;
+            book.Viewer.Loader.ViewContentsChanged += BookViewer_ViewContentsChanged;
+            book.Viewer.Loader.NextContentsChanged += BookViewer_NextContentsChanged;
             book.Source.DartyBook += BookSource_DartyBook;
         }
 
@@ -809,8 +809,8 @@ namespace NeeView
         {
             if (book is null) return;
 
-            book.Viewer.ViewContentsChanged -= BookViewer_ViewContentsChanged;
-            book.Viewer.NextContentsChanged -= BookViewer_NextContentsChanged;
+            book.Viewer.Loader.ViewContentsChanged -= BookViewer_ViewContentsChanged;
+            book.Viewer.Loader.NextContentsChanged -= BookViewer_NextContentsChanged;
             book.Source.DartyBook -= BookSource_DartyBook;
         }
 

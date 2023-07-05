@@ -142,7 +142,7 @@ namespace NeeView
 
         public bool IsBusy
         {
-            get { return Book != null && Book.Viewer.IsBusy; }
+            get { return Book != null && Book.Viewer.Loader.IsBusy; }
         }
 
         public ObservableCollection<Page>? PageList
@@ -170,11 +170,11 @@ namespace NeeView
                     (s, e) => AppDispatcher.Invoke(() => Book_PagesSorted(s, e))));
                 _bookDisposables.Add(book.Pages.SubscribePageRemoved(
                     (s, e) => AppDispatcher.Invoke(() => Book_PageRemoved(s, e))));
-                _bookDisposables.Add(book.Viewer.SubscribeViewContentsChanged(
+                _bookDisposables.Add(book.Viewer.Loader.SubscribeViewContentsChanged(
                     (s, e) => AppDispatcher.Invoke(() => Book_ViewContentsChanged(s, e))));
                 _bookDisposables.Add(book.Viewer.SubscribePageTerminated(
                     (s, e) => AppDispatcher.Invoke(() => Book_PageTerminated(s, e))));
-                _bookDisposables.Add(book.Viewer.SubscribePropertyChanged(nameof(BookPageViewer.IsBusy),
+                _bookDisposables.Add(book.Viewer.Loader.SubscribePropertyChanged(nameof(BookPageLoader.IsBusy),
                     (s, e) => AppDispatcher.Invoke(() => RaisePropertyChanged(nameof(IsBusy)))));
             }
 
@@ -573,7 +573,7 @@ namespace NeeView
                     break;
 
                 case MultiPagePolicy.AllLeftToRight:
-                    if (book.Viewer.BookReadOrder == PageReadOrder.RightToLeft)
+                    if (book.Setting.BookReadOrder == PageReadOrder.RightToLeft)
                     {
                         pages = pages.Reverse();
                     }

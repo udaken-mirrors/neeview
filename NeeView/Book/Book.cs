@@ -11,6 +11,7 @@ namespace NeeView
         private readonly BookMemoryService _bookMemoryService = new();
 
         private readonly BookSource _source;
+        private readonly BookPageSetting _setting;
         private readonly BookPageViewer _viewer;
         private readonly BookPageMarker _marker;
         private readonly BookController _controller;
@@ -26,9 +27,10 @@ namespace NeeView
             _address = address;
             _source = source;
             _sourcePath = address.SourcePath?.SimplePath ?? "";
-            _viewer = new BookPageViewer(_source, _bookMemoryService, CreateBookViewerCreateSetting(memento));
+            _setting = new BookPageSetting(CreateBookViewerCreateSetting(memento));
+            _viewer = new BookPageViewer(_source, _bookMemoryService, _setting);
             _marker = new BookPageMarker(_source, _viewer);
-            _controller = new BookController(_source, _viewer, _marker);
+            _controller = new BookController(_source, _setting, _viewer, _marker);
             _loadOption = option;
 
             IsNew = isNew;
@@ -37,6 +39,7 @@ namespace NeeView
 
         public BookSource Source => _source;
         public BookPageCollection Pages => _source.Pages;
+        public BookPageSetting Setting => _setting;
         public BookPageViewer Viewer => _viewer;
         public BookPageMarker Marker => _marker;
         public BookController Control => _controller;
@@ -96,7 +99,7 @@ namespace NeeView
 
                 // 最終ページリセット
                 // NOTE: ワイドページ判定は行わないため、2ページモードの場合に不正確な場合がある
-                int lastPageOffset = (_viewer.PageMode == PageMode.WidePage && !_viewer.IsSupportedSingleLastPage) ? 1 : 0;
+                int lastPageOffset = (_setting.PageMode == PageMode.WidePage && !_setting.IsSupportedSingleLastPage) ? 1 : 0;
                 if (startPage.IsResetLastPage && index >= _source.Pages.LastPosition().Index - lastPageOffset)
                 {
                     position = _source.Pages.FirstPosition();
@@ -160,12 +163,12 @@ namespace NeeView
                 IsDirectorty = _source.IsDirectory,
                 Page = _source.Pages.SortMode != PageSortMode.Random ? _viewer.GetViewPage()?.EntryName : null,
 
-                PageMode = _viewer.PageMode,
-                BookReadOrder = _viewer.BookReadOrder,
-                IsSupportedDividePage = _viewer.IsSupportedDividePage,
-                IsSupportedSingleFirstPage = _viewer.IsSupportedSingleFirstPage,
-                IsSupportedSingleLastPage = _viewer.IsSupportedSingleLastPage,
-                IsSupportedWidePage = _viewer.IsSupportedWidePage,
+                PageMode = _setting.PageMode,
+                BookReadOrder = _setting.BookReadOrder,
+                IsSupportedDividePage = _setting.IsSupportedDividePage,
+                IsSupportedSingleFirstPage = _setting.IsSupportedSingleFirstPage,
+                IsSupportedSingleLastPage = _setting.IsSupportedSingleLastPage,
+                IsSupportedWidePage = _setting.IsSupportedWidePage,
                 IsRecursiveFolder = _source.IsRecursiveFolder,
                 SortMode = _source.Pages.SortMode
             };
@@ -180,12 +183,12 @@ namespace NeeView
 
             if (_disposedValue) return;
 
-            _viewer.PageMode = memento.PageMode;
-            _viewer.BookReadOrder = memento.BookReadOrder;
-            _viewer.IsSupportedDividePage = memento.IsSupportedDividePage;
-            _viewer.IsSupportedSingleFirstPage = memento.IsSupportedSingleFirstPage;
-            _viewer.IsSupportedSingleLastPage = memento.IsSupportedSingleLastPage;
-            _viewer.IsSupportedWidePage = memento.IsSupportedWidePage;
+            _setting.PageMode = memento.PageMode;
+            _setting.BookReadOrder = memento.BookReadOrder;
+            _setting.IsSupportedDividePage = memento.IsSupportedDividePage;
+            _setting.IsSupportedSingleFirstPage = memento.IsSupportedSingleFirstPage;
+            _setting.IsSupportedSingleLastPage = memento.IsSupportedSingleLastPage;
+            _setting.IsSupportedWidePage = memento.IsSupportedWidePage;
             _source.IsRecursiveFolder = memento.IsRecursiveFolder;
             _source.Pages.SortMode = memento.SortMode;
         }

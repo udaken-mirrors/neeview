@@ -61,11 +61,11 @@ namespace NeeView
         }
 
 
-        public PageMode PageMode => BookOperation.Current.Book?.Viewer.PageMode ?? PageMode.SinglePage;
+        public PageMode PageMode => BookOperation.Current.Book?.Setting.PageMode ?? PageMode.SinglePage;
 
-        public bool IsSupportedSingleFirstPage => BookOperation.Current.Book?.Viewer.IsSupportedSingleFirstPage ?? false;
+        public bool IsSupportedSingleFirstPage => BookOperation.Current.Book?.Setting.IsSupportedSingleFirstPage ?? false;
         
-        public bool IsSupportedSingleLastPage => BookOperation.Current.Book?.Viewer.IsSupportedSingleLastPage ?? false;
+        public bool IsSupportedSingleLastPage => BookOperation.Current.Book?.Setting.IsSupportedSingleLastPage ?? false;
 
         public int ViewPageCount => BookOperation.Current.Book?.Viewer.GetViewPages()?.Count ?? 0;
 

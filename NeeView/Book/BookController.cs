@@ -15,25 +15,27 @@ namespace NeeView
         private readonly BookCommandEngine _commandEngine = new();
 
         private readonly BookSource _book;
+        private readonly BookPageSetting _setting;
         private readonly BookPageViewer _viewer;
         private readonly BookPageMarker _marker;
         private bool _isViewContentsLoading;
         private readonly DisposableCollection _disposables = new();
 
 
-        public BookController(BookSource book, BookPageViewer viewer, BookPageMarker marker)
+        public BookController(BookSource book, BookPageSetting setting, BookPageViewer viewer, BookPageMarker marker)
         {
             _book = book ?? throw new ArgumentNullException(nameof(book));
+            _setting = setting ?? throw new ArgumentNullException(nameof(setting));
             _viewer = viewer ?? throw new ArgumentNullException(nameof(viewer));
             _marker = marker ?? throw new ArgumentNullException(nameof(marker));
 
             _disposables.Add(_book.Pages.SubscribePropertyChanged(nameof(BookPageCollection.SortMode),
                 (s, e) => RequestSort(this)));
 
-            _disposables.Add(_viewer.SubscribeSettingChanged(
+            _disposables.Add(_setting.SubscribeSettingChanged(
                 (s, e) => RequestRefresh(this, false)));
 
-            _disposables.Add(_viewer.SubscribeViewContentsChanged(
+            _disposables.Add(_viewer.Loader.SubscribeViewContentsChanged(
                 (s, e) => UpdateViewContentsLoading()));
 
             _disposables.Add(_commandEngine.SubscribeIsBusyChanged(
@@ -103,7 +105,7 @@ namespace NeeView
         {
             if (_disposedValue) return;
 
-            var s = (step == 0) ? _viewer.PageMode.Size() : step;
+            var s = (step == 0) ? _setting.PageMode.Size() : step;
             RequestMovePosition(sender, -s);
         }
 
@@ -112,7 +114,7 @@ namespace NeeView
         {
             if (_disposedValue) return;
 
-            var s = (step == 0) ? _viewer.PageMode.Size() : step;
+            var s = (step == 0) ? _setting.PageMode.Size() : step;
             RequestMovePosition(sender, +s);
         }
 
@@ -209,14 +211,15 @@ namespace NeeView
 
             _viewer.DisplayIndex = position.Index;
 
-            var range = new PageRange(position, direction, _viewer.PageMode.Size());
+            //var range = new PageRange(position, direction, _viewer.Setting.PageMode.Size());
             var command = new BookCommandAction(sender, Execute, 0);
             _commandEngine.Enqueue(command);
 
             async Task Execute(object? s, CancellationToken token)
             {
-                __CommandWriteLine($"Set: {s}, {range}");
-                await _viewer.UpdateViewPageAsync(s, range, token);
+                __CommandWriteLine($"Set: {s}, {position}, {direction}");
+                //await _viewer.UpdateViewPageAsync(s, range, token);
+                await _viewer.JumpViewPageAsync(s, position, direction, token);
             }
         }
 
