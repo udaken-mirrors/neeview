@@ -36,8 +36,8 @@ namespace NeeView
         [PropertyPath(FileDialogType = FileDialogType.SaveFile, Filter = "JSON|*.json")]
         public string PagemarkFilePath
         {
-            get { return _pagemarkFilePath ?? SaveData.DefaultPagemarkFilePath; }
-            set { SetProperty(ref _pagemarkFilePath, (string.IsNullOrWhiteSpace(value) || value.Trim() == SaveData.DefaultPagemarkFilePath) ? null : value.Trim()); }
+            get { return _pagemarkFilePath ?? SaveDataProfile.DefaultPagemarkFilePath; }
+            set { SetProperty(ref _pagemarkFilePath, (string.IsNullOrWhiteSpace(value) || value.Trim() == SaveDataProfile.DefaultPagemarkFilePath) ? null : value.Trim()); }
         }
 
         // ページマークの並び順

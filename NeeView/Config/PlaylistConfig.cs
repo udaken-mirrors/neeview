@@ -81,7 +81,7 @@ namespace NeeView
             }
 
             path = LoosePath.NormalizeSeparator(path.Trim()).TrimEnd();
-            if (string.IsNullOrWhiteSpace(path) || path == SaveData.DefaultPlaylistsFolder)
+            if (string.IsNullOrWhiteSpace(path) || path == SaveDataProfile.DefaultPlaylistsFolder)
             {
                 return null;
             }
@@ -93,7 +93,7 @@ namespace NeeView
         {
             if (path is null)
             {
-                return SaveData.DefaultPlaylistsFolder;
+                return SaveDataProfile.DefaultPlaylistsFolder;
             }
 
             return path;

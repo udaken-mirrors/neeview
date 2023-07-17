@@ -6,33 +6,6 @@ using System;
 
 namespace NeeView
 {
-    // スライダーの方向
-    public enum SliderDirection
-    {
-        [AliasName]
-        LeftToRight,
-
-        [AliasName]
-        RightToLeft,
-
-        [AliasName]
-        SyncBookReadDirection,
-    }
-
-    // スライダー数値表示の配置
-    public enum SliderIndexLayout
-    {
-        [AliasName]
-        None,
-
-        [AliasName]
-        Left,
-
-        [AliasName]
-        Right,
-    }
-
-
     /// <summary>
     /// PageSlider : Model
     /// </summary>

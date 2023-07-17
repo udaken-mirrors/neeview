@@ -27,8 +27,8 @@ namespace NeeView
         [PropertyPath(FileDialogType = Windows.Controls.FileDialogType.Directory)]
         public string ScriptFolder
         {
-            get { return _scriptFolder ?? SaveData.DefaultScriptsFolder; }
-            set { SetProperty(ref _scriptFolder, (string.IsNullOrEmpty(value) || value.Trim() == SaveData.DefaultScriptsFolder) ? null : value.Trim()); }
+            get { return _scriptFolder ?? SaveDataProfile.DefaultScriptsFolder; }
+            set { SetProperty(ref _scriptFolder, (string.IsNullOrEmpty(value) || value.Trim() == SaveDataProfile.DefaultScriptsFolder) ? null : value.Trim()); }
         }
 
         [PropertyMember]

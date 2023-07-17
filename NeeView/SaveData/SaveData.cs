@@ -11,6 +11,9 @@ using System.Text;
 
 namespace NeeView
 {
+
+
+
     public class SaveData
     {
         static SaveData() => Current = new SaveData();
@@ -29,6 +32,7 @@ namespace NeeView
             App.Current.CriticalError += (s, e) => DisableSave();
         }
 
+#if false
         public const string UserSettingFileName = "UserSetting.json";
         public const string HistoryFileName = "History.json";
         public const string BookmarkFileName = "Bookmark.json";
@@ -43,7 +47,7 @@ namespace NeeView
         public static string DefaultCustomThemeFolder => Environment.GetUserDataPath(CustomThemeFolder);
         public static string DefaultPlaylistsFolder => Environment.GetUserDataPath(PlaylistsFolder);
         public static string DefaultScriptsFolder => Environment.GetUserDataPath(ScriptsFolder);
-
+#endif
 
         public static string UserSettingFilePath => App.Current.Option.SettingFilename ?? throw new InvalidOperationException("UserSettingFilePath must not be null");
         public static string HistoryFilePath => Config.Current.History.HistoryFilePath;

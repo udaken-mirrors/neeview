@@ -37,8 +37,8 @@ namespace NeeView
         [PropertyPath(FileDialogType = FileDialogType.Directory)]
         public string CustomThemeFolder
         {
-            get { return _customThemeFolder ?? SaveData.DefaultCustomThemeFolder; }
-            set { SetProperty(ref _customThemeFolder, (string.IsNullOrWhiteSpace(value) || value.Trim() == SaveData.DefaultCustomThemeFolder) ? null : value.Trim()); }
+            get { return _customThemeFolder ?? SaveDataProfile.DefaultCustomThemeFolder; }
+            set { SetProperty(ref _customThemeFolder, (string.IsNullOrWhiteSpace(value) || value.Trim() == SaveDataProfile.DefaultCustomThemeFolder) ? null : value.Trim()); }
         }
 
 

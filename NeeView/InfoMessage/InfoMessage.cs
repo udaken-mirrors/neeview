@@ -20,19 +20,6 @@ namespace NeeView
         ViewTransform,
     }
 
-    // 通知表示の種類
-    public enum ShowMessageStyle
-    {
-        [AliasName]
-        None,
-
-        [AliasName]
-        Normal,
-
-        [AliasName]
-        Tiny,
-    }
-
     /// <summary>
     /// 通知表示管理
     /// </summary>

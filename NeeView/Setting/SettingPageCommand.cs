@@ -51,7 +51,7 @@ namespace NeeView.Setting
 
             var section = new SettingItemSection(Properties.Resources.SettingPage_Script);
             section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.Script, nameof(ScriptConfig.IsScriptFolderEnabled))));
-            section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.Script, nameof(ScriptConfig.ScriptFolder), new PropertyMemberElementOptions() { EmptyValue = SaveData.DefaultScriptsFolder }))
+            section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.Script, nameof(ScriptConfig.ScriptFolder), new PropertyMemberElementOptions() { EmptyValue = SaveDataProfile.DefaultScriptsFolder }))
             {
                 IsStretch = true,
                 SubContent = UIElementTools.CreateHyperlink(Properties.Resources.SettingPage_Script_OpenScriptFolder, new RelayCommand(ScriptManager.Current.OpenScriptsFolder)),

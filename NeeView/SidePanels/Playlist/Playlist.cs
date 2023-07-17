@@ -585,12 +585,12 @@ namespace NeeView
 
         private static bool IsDefaultPlaylistsFolder(string path)
         {
-            return System.IO.Path.GetDirectoryName(path) == SaveData.DefaultPlaylistsFolder;
+            return System.IO.Path.GetDirectoryName(path) == SaveDataProfile.DefaultPlaylistsFolder;
         }
 
         private static bool IsDefaultPlaylistsFolder(FileInfo fileInfo)
         {
-            return fileInfo.Directory?.FullName == SaveData.DefaultPlaylistsFolder;
+            return fileInfo.Directory?.FullName == SaveDataProfile.DefaultPlaylistsFolder;
         }
 
         public static Playlist Load(string path, bool creteNewFile)

@@ -97,7 +97,7 @@ namespace NeeView
 
         private void LoadUserSetting(RemoteCommand command)
         {
-            Debug.WriteLine($"{SaveData.UserSettingFileName} is updated by other process.");
+            Debug.WriteLine($"{SaveDataProfile.UserSettingFileName} is updated by other process.");
             var setting = SaveData.Current.LoadUserSetting(false);
             UserSettingTools.Restore(setting);
         }
@@ -109,7 +109,7 @@ namespace NeeView
 
         private void LoadBookmark(RemoteCommand command)
         {
-            Debug.WriteLine($"{SaveData.BookmarkFileName} is updated by other process.");
+            Debug.WriteLine($"{SaveDataProfile.BookmarkFileName} is updated by other process.");
             SaveData.Current.LoadBookmark();
         }
 

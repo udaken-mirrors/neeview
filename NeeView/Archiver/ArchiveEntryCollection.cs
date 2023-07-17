@@ -9,39 +9,6 @@ using System.Threading.Tasks;
 
 namespace NeeView
 {
-    /// <summary>
-    /// ArchiveEntryCollectionの展開オプション
-    /// </summary>
-    [Flags]
-    public enum ArchiveEntryCollectionOption
-    {
-        None,
-        IgnoreCache,
-    }
-
-    /// <summary>
-    /// ArchiveEntryCollectionの展開範囲
-    /// </summary>
-    public enum ArchiveEntryCollectionMode
-    {
-        /// <summary>
-        /// 指定ディレクトリのみ
-        /// </summary>
-        [AliasName]
-        CurrentDirectory,
-
-        /// <summary>
-        /// 指定ディレクトリを含む現在のアーカイブの範囲
-        /// </summary>
-        [AliasName]
-        IncludeSubDirectories,
-
-        /// <summary>
-        /// 指定ディレクトリ以下サブアーカイブ含むすべて
-        /// </summary>
-        [AliasName]
-        IncludeSubArchives,
-    }
 
     /// <summary>
     /// 指定パス以下のArchiveEntryの収集

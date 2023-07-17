@@ -98,7 +98,7 @@ namespace NeeView
                 }
                 else
                 {
-                    this.SettingFilename = Path.Combine(Environment.LocalApplicationDataPath, SaveData.UserSettingFileName);
+                    this.SettingFilename = Path.Combine(Environment.LocalApplicationDataPath, SaveDataProfile.UserSettingFileName);
                 }
             }
             catch (Exception ex)

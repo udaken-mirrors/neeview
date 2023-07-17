@@ -14,12 +14,6 @@ using System.Windows.Interop;
 
 namespace NeeView.Windows.Controls
 {
-    public enum FileDialogType
-    {
-        OpenFile,
-        SaveFile,
-        Directory,
-    }
 
     /// <summary>
     /// FilenameBox.xaml の相互作用ロジック

@@ -45,8 +45,8 @@ namespace NeeView
         [PropertyPath(FileDialogType = FileDialogType.SaveFile, Filter = "JSON|*.json")]
         public string HistoryFilePath
         {
-            get { return _historyFilePath ?? SaveData.DefaultHistoryFilePath; }
-            set { SetProperty(ref _historyFilePath, (string.IsNullOrWhiteSpace(value) || value.Trim() == SaveData.DefaultHistoryFilePath) ? null : value.Trim()); }
+            get { return _historyFilePath ?? SaveDataProfile.DefaultHistoryFilePath; }
+            set { SetProperty(ref _historyFilePath, (string.IsNullOrWhiteSpace(value) || value.Trim() == SaveDataProfile.DefaultHistoryFilePath) ? null : value.Trim()); }
         }
 
         // フォルダーリストの情報記憶

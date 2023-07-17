@@ -111,10 +111,10 @@ namespace NeeView
         [MemberNotNull(nameof(PlaylistEntries), nameof(ThemeEntries), nameof(ScriptEntries))]
         public void Initialize()
         {
-            _settingEntry = _archive.GetEntry(SaveData.UserSettingFileName);
-            _historyEntry = _archive.GetEntry(SaveData.HistoryFileName);
-            _bookmarkEntry = _archive.GetEntry(SaveData.BookmarkFileName);
-            _pagemarkEntry = _archive.GetEntry(SaveData.PagemarkFileName);
+            _settingEntry = _archive.GetEntry(SaveDataProfile.UserSettingFileName);
+            _historyEntry = _archive.GetEntry(SaveDataProfile.HistoryFileName);
+            _bookmarkEntry = _archive.GetEntry(SaveDataProfile.BookmarkFileName);
+            _pagemarkEntry = _archive.GetEntry(SaveDataProfile.PagemarkFileName);
 
             this.PlaylistEntries = _archive.Entries.Where(e => e.FullName.StartsWith(@"Playlists\")).ToList();
             this.ThemeEntries = _archive.Entries.Where(e => e.FullName.StartsWith(@"Themes\")).ToList();

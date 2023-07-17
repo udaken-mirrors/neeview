@@ -38,8 +38,8 @@ namespace NeeView
         [PropertyPath(FileDialogType = FileDialogType.SaveFile, Filter = "JSON|*.json")]
         public string BookmarkFilePath
         {
-            get { return _bookmarkFilePath ?? SaveData.DefaultBookmarkFilePath; }
-            set { SetProperty(ref _bookmarkFilePath, string.IsNullOrWhiteSpace(value) || value.Trim() == SaveData.DefaultBookmarkFilePath ? null : value.Trim()); }
+            get { return _bookmarkFilePath ?? SaveDataProfile.DefaultBookmarkFilePath; }
+            set { SetProperty(ref _bookmarkFilePath, string.IsNullOrWhiteSpace(value) || value.Trim() == SaveDataProfile.DefaultBookmarkFilePath ? null : value.Trim()); }
         }
 
         // ブックマークの既定の並び順

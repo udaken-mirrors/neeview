@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.Diagnostics;
-using System.Globalization;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -79,50 +76,5 @@ namespace NeeView
         }
 
         #endregion UI Accessor
-    }
-
-    public enum PageNameFormat
-    {
-        [AliasName]
-        Smart,
-
-        [AliasName]
-        NameOnly,
-
-        [AliasName]
-        Raw,
-    }
-
-
-    /// <summary>
-    /// 
-    /// </summary>
-    public class PageNameConverter : IValueConverter
-    {
-        public Style? SmartTextStyle { get; set; }
-        public Style? DefaultTextStyle { get; set; }
-        public Style? NameOnlyTextStyle { get; set; }
-
-        public object? Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            try
-            {
-                var format = (PageNameFormat)value;
-                return format switch
-                {
-                    PageNameFormat.Smart => SmartTextStyle,
-                    PageNameFormat.NameOnly => NameOnlyTextStyle,
-                    _ => DefaultTextStyle,
-                };
-            }
-            catch { }
-
-            return DefaultTextStyle;
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            throw new NotImplementedException();
-        }
     }
 }
