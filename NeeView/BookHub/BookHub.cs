@@ -723,7 +723,7 @@ namespace NeeView
         /// <summary>
         /// ブックを読み込む(本体)
         /// </summary>
-        private static async Task<Book> LoadAsyncCore(object? sender, BookAddress address, BookLoadOption option, Book.Memento setting, bool isNew, CancellationToken token)
+        private static async Task<Book> LoadAsyncCore(object? sender, BookAddress address, BookLoadOption option, BookMemento setting, bool isNew, CancellationToken token)
         {
             token.ThrowIfCancellationRequested();
 
@@ -877,14 +877,14 @@ namespace NeeView
         /// <summary>
         /// 現在開いているブックの設定作成
         /// </summary>
-        private static Book.Memento? CreateBookMemento(Book book)
+        private static BookMemento? CreateBookMemento(Book book)
         {
             return (book != null && book.Pages.Count > 0) ? book.CreateMemento() : null;
         }
 
         // ブック設定の作成
         // 開いているブックならばその設定を取得する
-        public Book.Memento CreateBookMemento(string path)
+        public BookMemento CreateBookMemento(string path)
         {
             if (path == null) throw new ArgumentNullException(nameof(path));
 
@@ -903,9 +903,9 @@ namespace NeeView
         /// </summary>
         /// <param name="path">場所</param>
         /// <param name="lastest">現在の情報</param>
-        private static Book.Memento? CreateLastestBookMemento(string path, Book.Memento? lastest)
+        private static BookMemento? CreateLastestBookMemento(string path, BookMemento? lastest)
         {
-            Book.Memento? memento = null;
+            BookMemento? memento = null;
 
             if (lastest?.Path == path)
             {
@@ -929,7 +929,7 @@ namespace NeeView
         /// <param name="path">場所</param>
         /// <param name="lastest">現在の情報</param>
         /// <param name="option">読み込みオプション</param>
-        public static Book.Memento CreateOpenBookMemento(string path, Book.Memento? lastest, BookLoadOption option)
+        public static BookMemento CreateOpenBookMemento(string path, BookMemento? lastest, BookLoadOption option)
         {
             var memory = CreateLastestBookMemento(path, lastest);
             Debug.Assert(memory == null || memory.Path == path);
@@ -969,7 +969,7 @@ namespace NeeView
             SaveBookMemento(book, memento, isKeepHistoryOrder);
         }
 
-        private void SaveBookMemento(Book book, Book.Memento memento, bool isKeepHistoryOrder)
+        private void SaveBookMemento(Book book, BookMemento memento, bool isKeepHistoryOrder)
         {
             if (_disposedValue) return;
             if (memento == null) return;
@@ -1006,7 +1006,7 @@ namespace NeeView
         /// <param name="address">場所</param>
         /// <param name="option"></param>
         /// <returns></returns>
-        public Book.Memento GetLastestBookMemento(string address, BookLoadOption option)
+        public BookMemento GetLastestBookMemento(string address, BookLoadOption option)
         {
             if (address is null) throw new ArgumentNullException(nameof(address));
 

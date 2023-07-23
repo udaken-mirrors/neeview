@@ -74,7 +74,7 @@ namespace NeeView
             HistoryChanged?.Invoke(this, new BookMementoCollectionChangedArgs(BookMementoCollectionChangedType.Clear, null));
         }
 
-        public void Load(IEnumerable<BookHistory> items, IEnumerable<Book.Memento> books)
+        public void Load(IEnumerable<BookHistory> items, IEnumerable<BookMemento> books)
         {
             lock (_lock)
             {
@@ -137,7 +137,7 @@ namespace NeeView
         }
 
         // 履歴追加
-        public void Add(Book.Memento memento, bool isKeepOrder)
+        public void Add(BookMemento memento, bool isKeepOrder)
         {
             if (memento == null) return;
 
@@ -420,7 +420,7 @@ namespace NeeView
 
             public List<BookHistory> Items { get; set; }
 
-            public List<Book.Memento> Books { get; set; }
+            public List<BookMemento> Books { get; set; }
 
             public Dictionary<string, FolderParameter.Memento>? Folders { get; set; }
 
@@ -430,7 +430,7 @@ namespace NeeView
             public Memento()
             {
                 Items = new List<BookHistory>();
-                Books = new List<Book.Memento>();
+                Books = new List<BookMemento>();
             }
 
 

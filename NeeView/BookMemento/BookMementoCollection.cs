@@ -27,7 +27,7 @@ namespace NeeView
             }
         }
 
-        public BookMementoUnit Set(Book.Memento memento)
+        public BookMementoUnit Set(BookMemento memento)
         {
             var unit = Get(memento.Path);
             if (unit != null)

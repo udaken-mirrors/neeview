@@ -62,7 +62,7 @@ namespace NeeView
         }
 
 
-        public void Load(TreeListNode<IBookmarkEntry> nodes, IEnumerable<Book.Memento> books)
+        public void Load(TreeListNode<IBookmarkEntry> nodes, IEnumerable<BookMemento> books)
         {
             foreach (var book in books)
             {
@@ -483,7 +483,7 @@ namespace NeeView
         /// </summary>
         /// <param name="memento">新しい情報</param>
         /// <param name="isForce">変更がなくても更新する</param>
-        public void Update(Book.Memento memento, bool isForce)
+        public void Update(BookMemento memento, bool isForce)
         {
             var node = FindNode(memento.Path);
             if (node is null) return;
@@ -503,7 +503,7 @@ namespace NeeView
 
             public BookmarkNode? Nodes { get; set; }
 
-            public List<Book.Memento>? Books { get; set; }
+            public List<BookMemento>? Books { get; set; }
 
             public QuickAccessCollection.Memento? QuickAccess { get; set; }
 
@@ -511,7 +511,7 @@ namespace NeeView
             public Memento()
             {
                 Nodes = new BookmarkNode();
-                Books = new List<Book.Memento>();
+                Books = new List<BookMemento>();
             }
 
 

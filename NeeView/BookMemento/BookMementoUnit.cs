@@ -19,13 +19,13 @@ namespace NeeView
         private Page? _archivePage;
 
 
-        private BookMementoUnit(Book.Memento memento)
+        private BookMementoUnit(BookMemento memento)
         {
             Memento = memento;
         }
 
 
-        public Book.Memento Memento { get; set; }
+        public BookMemento Memento { get; set; }
 
         public string Path => Memento.Path;
 
@@ -73,7 +73,7 @@ namespace NeeView
 
         #endregion
 
-        public static BookMementoUnit Create(Book.Memento memento)
+        public static BookMementoUnit Create(BookMemento memento)
         {
             return new BookMementoUnit(memento);
         }

@@ -5,7 +5,7 @@ namespace NeeView
     public static class BookSettingConfigExtensions
     {
         [return: NotNullIfNotNull("memento")]
-        public static BookSettingConfig? FromBookMement(Book.Memento? memento)
+        public static BookSettingConfig? FromBookMement(BookMemento? memento)
         {
             if (memento == null) return null;
 
@@ -24,9 +24,9 @@ namespace NeeView
             return collection;
         }
 
-        public static Book.Memento ToBookMemento(this BookSettingConfig self)
+        public static BookMemento ToBookMemento(this BookSettingConfig self)
         {
-            var memento = new Book.Memento();
+            var memento = new BookMemento();
 
             memento.Page = self.Page;
             memento.PageMode = self.PageMode;

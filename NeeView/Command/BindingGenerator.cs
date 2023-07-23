@@ -60,7 +60,7 @@ namespace NeeView
 
         public static Binding PageMode(PageMode mode)
         {
-            var binding = BindingBookSetting(nameof(Book.Memento.PageMode));
+            var binding = BindingBookSetting(nameof(BookMemento.PageMode));
             binding.Converter = _pageModeToBooleanConverter;
             binding.ConverterParameter = mode.ToString();
             return binding;
@@ -68,7 +68,7 @@ namespace NeeView
 
         public static Binding BookReadOrder(PageReadOrder mode)
         {
-            var binding = BindingBookSetting(nameof(Book.Memento.BookReadOrder));
+            var binding = BindingBookSetting(nameof(BookMemento.BookReadOrder));
             binding.Converter = _bookReadOrderToBooleanConverter;
             binding.ConverterParameter = mode.ToString();
             return binding;
@@ -76,7 +76,7 @@ namespace NeeView
 
         public static Binding SortMode(PageSortMode mode)
         {
-            var binding = BindingBookSetting(nameof(Book.Memento.SortMode));
+            var binding = BindingBookSetting(nameof(BookMemento.SortMode));
             binding.Converter = _sortModeToBooleanConverter;
             binding.ConverterParameter = mode.ToString();
             return binding;

@@ -20,7 +20,7 @@ namespace NeeView
         private readonly BookAddress _address;
 
 
-        public Book(BookAddress address, BookSource source, Book.Memento memento, BookLoadOption option, bool isNew)
+        public Book(BookAddress address, BookSource source, BookMemento memento, BookLoadOption option, bool isNew)
         {
             Book.Default = this;
 
@@ -155,9 +155,9 @@ namespace NeeView
         #region Memento
 
         // bookの設定を取得する
-        public Book.Memento CreateMemento()
+        public BookMemento CreateMemento()
         {
-            var memento = new Book.Memento
+            var memento = new BookMemento
             {
                 Path = _source.Path,
                 IsDirectorty = _source.IsDirectory,
@@ -177,7 +177,7 @@ namespace NeeView
         }
 
         // bookに設定を反映させる
-        public void Restore(Book.Memento memento)
+        public void Restore(BookMemento memento)
         {
             if (memento == null) return;
 
@@ -193,7 +193,7 @@ namespace NeeView
             _source.Pages.SortMode = memento.SortMode;
         }
 
-        private static BookPageViewSetting CreateBookViewerCreateSetting(Book.Memento memento)
+        private static BookPageViewSetting CreateBookViewerCreateSetting(BookMemento memento)
         {
             var setting = new BookPageViewSetting
             {
