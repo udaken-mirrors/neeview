@@ -73,7 +73,7 @@ namespace NeeView
     /// <summary>
     /// ページ表示コンテンツ管理
     /// </summary>
-    public class ContentCanvas : BindableBase, IDisposable
+    public class ContentCanvas : BindableBase, IDisposable, IContentCanvasBrushSource
     {
 
         private readonly object _lock = new();

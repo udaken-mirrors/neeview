@@ -1,7 +1,6 @@
 ﻿using NeeLaboratory.ComponentModel;
 using NeeView.Windows.Media;
 using NeeView.Windows.Property;
-using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -15,9 +14,9 @@ namespace NeeView
 {
     public class ContentCanvasBrush : BindableBase
     {
-        private readonly ContentCanvas _contentCanvas;
+        private readonly IContentCanvasBrushSource _contentCanvas;
 
-        public ContentCanvasBrush(ContentCanvas contentCanvas)
+        public ContentCanvasBrush(IContentCanvasBrushSource contentCanvas)
         {
             _contentCanvas = contentCanvas;
 
@@ -122,8 +121,8 @@ namespace NeeView
         /// <summary>
         /// チェック模様
         /// </summary>
-        public Brush CheckBackgroundBrush { get; } = (DrawingBrush)App.Current.Resources["CheckerBrush"];
-        public Brush CheckBackgroundBrushDark { get; } = (DrawingBrush)App.Current.Resources["CheckerBrushDark"];
+        public Brush CheckBackgroundBrush { get; } = (DrawingBrush)Application.Current.Resources["CheckerBrush"];
+        public Brush CheckBackgroundBrushDark { get; } = (DrawingBrush)Application.Current.Resources["CheckerBrushDark"];
 
 
 
