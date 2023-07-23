@@ -161,7 +161,7 @@ namespace NeeView
             {
                 Path = _source.Path,
                 IsDirectorty = _source.IsDirectory,
-                Page = _source.Pages.SortMode != PageSortMode.Random ? _viewer.GetViewPage()?.EntryName : null,
+                Page = _source.Pages.SortMode != PageSortMode.Random ? _viewer.GetViewPage()?.EntryName ?? "" : "",
 
                 PageMode = _setting.PageMode,
                 BookReadOrder = _setting.BookReadOrder,

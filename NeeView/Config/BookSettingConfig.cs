@@ -5,7 +5,7 @@ using System.Text.Json.Serialization;
 
 namespace NeeView
 {
-    public class BookSettingConfig : BindableBase, ICloneable, IEquatable<BookSettingConfig>
+    public class BookSettingConfig : BindableBase, ICloneable, IEquatable<BookSettingConfig>, IBookSetting
     {
         private string _page = "";
         private PageMode _pageMode = PageMode.SinglePage;

@@ -11,7 +11,7 @@ namespace NeeView
 {
     public partial class Book
     {
-        public class Memento
+        public class Memento : IBookSetting
         {
             // フォルダーの場所
             public string Path { get; set; } = "";
@@ -23,7 +23,7 @@ namespace NeeView
             public string Name => Path.EndsWith(@":\") ? Path : System.IO.Path.GetFileName(Path);
 
             // 現在ページ
-            public string? Page { get; set; }
+            public string Page { get; set; } = "";
 
             // 1ページ表示 or 2ページ表示
             public PageMode PageMode { get; set; }
@@ -63,7 +63,7 @@ namespace NeeView
             public void ValidateForDefault()
             {
                 Path = "";
-                Page = null;
+                Page = "";
                 IsDirectorty = false;
             }
 

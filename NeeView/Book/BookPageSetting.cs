@@ -7,7 +7,7 @@ namespace NeeView
     /// BookPageViewSetting アクセサ。
     /// ProeprtyChangedイベントを追加したもの
     /// </summary>
-    public class BookPageSetting : BindableBase
+    public class BookPageSetting : BindableBase, IBookPageViewSetting
     {
         private readonly BookPageViewSetting _setting;
 

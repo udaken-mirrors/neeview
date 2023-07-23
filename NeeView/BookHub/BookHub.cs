@@ -996,7 +996,7 @@ namespace NeeView
             var unit = BookMementoCollection.Current.GetValid(place);
             if (unit?.Memento != null)
             {
-                unit.Memento.Page = null;
+                unit.Memento.Page = "";
             }
         }
 
