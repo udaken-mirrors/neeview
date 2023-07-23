@@ -11,40 +11,6 @@ using System.Windows;
 
 namespace NeeView
 {
-    /// <summary>
-    /// 名前とセットのストリーム
-    /// </summary>
-    public sealed class NamedStream : IDisposable
-    {
-        public Stream Stream { get; set; }
-        public string? Name { get; set; }
-        public byte[]? RawData { get; set; }
-
-        public NamedStream(Stream stream, string? name, byte[]? rawData)
-        {
-            this.Stream = stream;
-            this.Name = name;
-            this.RawData = rawData;
-        }
-
-        public void Dispose()
-        {
-            this.Stream?.Dispose();
-        }
-    }
-
-    /// <summary>
-    /// PictureStream Interface
-    /// </summary>
-    public interface IPictureStream
-    {
-        /// <summary>
-        /// 画像ストリームを取得
-        /// </summary>
-        /// <param name="entry"></param>
-        /// <returns></returns>
-        NamedStream? Create(ArchiveEntry entry);
-    }
 
     /// <summary>
     /// 画像をストリームで取得

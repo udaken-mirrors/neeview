@@ -10,7 +10,7 @@ namespace NeeView
     /// <summary>
     /// Pictureの元データ管理
     /// </summary>
-    public abstract class PictureSource
+    public abstract class PictureSource : IPictureSource
     {
         protected PictureSourceCreateOptions _createOptions;
 

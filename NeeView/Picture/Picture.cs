@@ -16,6 +16,8 @@ namespace NeeView
     /// </summary>
     public class Picture : BindableBase
     {
+        private readonly IPictureSource _pictureSource;
+ 
         /// <summary>
         /// リサイズパラメータのハッシュ。
         /// リサイズが必要かの判定に使用される
@@ -28,20 +30,19 @@ namespace NeeView
         private readonly object _lock = new();
 
 
-        public Picture(PictureSource source)
+        public Picture(IPictureSource source)
         {
-            PictureSource = source;
+            _pictureSource = source;
 
             _resizeHashCode = GetEnvironmentoHashCode();
         }
 
 
-        public PictureSource PictureSource { get; private set; }
 
         /// <summary>
         /// 画像情報
         /// </summary>
-        public PictureInfo? PictureInfo => PictureSource.PictureInfo;
+        public PictureInfo? PictureInfo => _pictureSource.PictureInfo;
 
         /// <summary>
         /// 表示する画像
@@ -103,7 +104,7 @@ namespace NeeView
             if (this.PictureInfo is null) return false;
 
             size = size.IsEmpty ? this.PictureInfo.Size : size;
-            size = PictureSource.FixedSize(size);
+            size = _pictureSource.FixedSize(size);
 
             // 規定サイズ判定
             if (!this.PictureInfo.IsLimited && size.IsEqualMaybe(this.PictureInfo.Size))
@@ -161,7 +162,7 @@ namespace NeeView
                 }
             }
 
-            return MemoryControl.Current.RetryFuncWithMemoryCleanup(() => PictureSource.CreateImageSource(size, setting, token));
+            return MemoryControl.Current.RetryFuncWithMemoryCleanup(() => _pictureSource.CreateImageSource(size, setting, token));
         }
     }
 
