@@ -184,7 +184,8 @@ namespace NeeView
 
             if (_disposedValue) return null;
 
-            var target = _marker.GetNearMarkedPage(direction, isLoop, isIncludeTerminal);
+            var index = _viewer.GetViewPageIndex();
+            var target = _marker.GetNearMarkedPage(index, direction, isLoop, isIncludeTerminal);
             if (target == null) return null;
 
             RequestSetPosition(sender, new PagePosition(target.Index, 0), 1);

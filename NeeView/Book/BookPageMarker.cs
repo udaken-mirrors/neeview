@@ -8,13 +8,11 @@ namespace NeeView
     public class BookPageMarker
     {
         private readonly BookSource _book;
-        private readonly BookPageViewer _viewer;
 
         
-        public BookPageMarker(BookSource book, BookPageViewer viewer)
+        public BookPageMarker(BookSource book)
         {
             _book = book;
-            _viewer = viewer;
 
             _book.Pages.PageRemoved += 
                 (s, e) => AppDispatcher.Invoke(() => Pages_PageRemoved(s, e));
@@ -56,17 +54,17 @@ namespace NeeView
         /// <summary>
         /// マーカー移動可能判定
         /// </summary>
-        /// <param name="direction"></param>
-        /// <param name="isLoop"></param>
+        /// <param name="index">基準座標</param>
+        /// <param name="direction">移動方向(+1 or -1)</param>
+        /// <param name="isLoop">ループ移動</param>
         /// <returns></returns>
-        public bool CanJumpToMarker(int direction, bool isLoop)
+        public bool CanJumpToMarker(int index, int direction, bool isLoop)
         {
             if (Markers == null || Markers.Count == 0) return false;
 
             if (isLoop) return true;
 
             var list = Markers.OrderBy(e => e.Index).ToList();
-            var index = _viewer.GetViewPageIndex();
 
             return direction > 0
                 ? list.Last().Index > index
@@ -76,11 +74,12 @@ namespace NeeView
         /// <summary>
         /// ブック内のマーカーを取得
         /// </summary>
+        /// <param name="index">基準座標</param>
         /// <param name="direction">移動方向(+1 or -1)</param>
         /// <param name="isLoop">ループ移動</param>
         /// <param name="isIncludeTerminal">終端を含める</param>
         /// <returns>一致するページ。見つからなければnull</returns>
-        public Page? GetNearMarkedPage(int direction, bool isLoop, bool isIncludeTerminal)
+        public Page? GetNearMarkedPage(int index, int direction, bool isLoop, bool isIncludeTerminal)
         {
             Debug.Assert(direction == 1 || direction == -1);
 
@@ -101,8 +100,6 @@ namespace NeeView
             }
 
             if (list.Count == 0) return null;
-
-            var index = _viewer.GetViewPageIndex();
 
             var target =
                 direction > 0

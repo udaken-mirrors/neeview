@@ -29,7 +29,7 @@ namespace NeeView
             _sourcePath = address.SourcePath?.SimplePath ?? "";
             _setting = new BookPageSetting(CreateBookViewerCreateSetting(memento));
             _viewer = new BookPageViewer(_source, _bookMemoryService, _setting);
-            _marker = new BookPageMarker(_source, _viewer);
+            _marker = new BookPageMarker(_source);
             _controller = new BookController(_source, _setting, _viewer, _marker);
             _loadOption = option;
 
