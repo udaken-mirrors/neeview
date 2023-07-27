@@ -17,12 +17,12 @@ namespace NeeView
 
         public override bool CanExecute(object? sender, CommandContext e)
         {
-            return BookOperation.Current.CanExport();
+            return BookOperation.Current.Control.CanExport();
         }
 
         public override void Execute(object? sender, CommandContext e)
         {
-            BookOperation.Current.Export(e.Parameter.Cast<ExportImageCommandParameter>());
+            BookOperation.Current.Control.Export(e.Parameter.Cast<ExportImageCommandParameter>());
         }
     }
 

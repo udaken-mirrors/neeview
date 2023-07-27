@@ -22,8 +22,8 @@ namespace NeeView
         {
             BookOperation.Current.BookChanging += BookOperation_BookChanging;
             BookOperation.Current.BookChanged += BookOperation_BookChanged;
-            BookOperation.Current.PageListChanged += BookOperation_PageListChanged;
-            BookOperation.Current.ViewContentsChanged += BookOperation_ViewContentsChanged;
+            BookOperation.Current.Property.PageListChanged += BookOperation_PageListChanged;
+            BookOperation.Current.Property.ViewContentsChanged += BookOperation_ViewContentsChanged;
         }
 
 
@@ -69,7 +69,7 @@ namespace NeeView
 
         public int ViewPageCount => BookOperation.Current.Book?.Viewer.GetViewPages()?.Count ?? 0;
 
-        public int MaxIndex => BookOperation.Current.GetMaxPageIndex();
+        public int MaxIndex => BookOperation.Current.Property.GetMaxPageIndex();
 
         public int SelectedIndex
         {
@@ -89,7 +89,7 @@ namespace NeeView
 
         internal void FlushSelectedIndex(object sender)
         {
-            SetSelectedIndex(sender, BookOperation.Current.GetPageIndex(), true);
+            SetSelectedIndex(sender, BookOperation.Current.Property.GetPageIndex(), true);
         }
 
         public bool SetSelectedIndex(object? sender, int value, bool raiseChangedEvent)
@@ -114,7 +114,7 @@ namespace NeeView
         public void Jump(object sender)
         {
             ////Debug.WriteLine($"Jump: {_selectedIndex}");
-            BookOperation.Current.RequestPageIndex(sender, _selectedIndex);
+            BookOperation.Current.Control.JumpPage(sender, _selectedIndex);
         }
 
         private void BookOperation_BookChanging(object? sender, BookChangingEventArgs e)
@@ -124,10 +124,16 @@ namespace NeeView
 
         private void BookOperation_BookChanged(object? sender, BookChangedEventArgs e)
         {
-            // NOTE: PageListChangedイベントで処理
+            UpdateCollection(sender);
         }
 
         private void BookOperation_PageListChanged(object? sender, EventArgs e)
+        {
+            if (BookOperation.Current.IsLoading) return;
+            UpdateCollection(sender);
+        }
+
+        private void UpdateCollection(object? sender)
         {
             CollectionChanged?.Invoke(this, EventArgs.Empty);
             RaisePropertyChanged(nameof(MaxIndex));

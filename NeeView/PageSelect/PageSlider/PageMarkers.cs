@@ -35,11 +35,11 @@ namespace NeeView
 
             _bookOperation.BookChanged +=
                 (s, e) => Update();
-            _bookOperation.PagesSorted +=
+            _bookOperation.Property.PagesSorted +=
                 (s, e) => Update();
-            _bookOperation.PageRemoved +=
+            _bookOperation.Property.PageRemoved +=
                 (s, e) => Update();
-            _bookOperation.MarkersChanged +=
+            _bookOperation.Playlist.MarkersChanged +=
                 (s, e) => Update();
         }
 

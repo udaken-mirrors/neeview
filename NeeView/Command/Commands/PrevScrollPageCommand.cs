@@ -26,7 +26,7 @@ namespace NeeView
 
         public override void Execute(object? sender, CommandContext e)
         {
-            MainViewComponent.Current.ViewController.PrevScrollPage(sender, e.Parameter.Cast<ScrollPageCommandParameter>());
+            BookOperation.Current.Control.PrevScrollPage(sender, e.Parameter.Cast<ScrollPageCommandParameter>());
         }
     }
 

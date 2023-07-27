@@ -21,7 +21,7 @@
 
         public override void Execute(object? sender, CommandContext e)
         {
-            BookOperation.Current.PrevPage(this);
+            BookOperation.Current.Control.PrevPage(this);
         }
     }
 }

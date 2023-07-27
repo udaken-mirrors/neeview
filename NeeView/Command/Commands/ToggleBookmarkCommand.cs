@@ -14,17 +14,17 @@ namespace NeeView
         }
         public override Binding CreateIsCheckedBinding()
         {
-            return new Binding(nameof(BookOperation.Current.IsBookmark)) { Source = BookOperation.Current, Mode = BindingMode.OneWay };
+            return new Binding(nameof(BookOperation.Current.BookControl.IsBookmark)) { Source = BookOperation.Current.BookControl, Mode = BindingMode.OneWay };
         }
 
         public override string ExecuteMessage(object? sender, CommandContext e)
         {
-            return BookOperation.Current.IsBookmark ? Properties.Resources.ToggleBookmarkCommand_Off : Properties.Resources.ToggleBookmarkCommand_On;
+            return BookOperation.Current.BookControl.IsBookmark ? Properties.Resources.ToggleBookmarkCommand_Off : Properties.Resources.ToggleBookmarkCommand_On;
         }
 
         public override bool CanExecute(object? sender, CommandContext e)
         {
-            return BookOperation.Current.CanBookmark();
+            return BookOperation.Current.BookControl.CanBookmark();
         }
         
         [MethodArgument("@ToggleCommand.Execute.Remarks")]
@@ -32,11 +32,11 @@ namespace NeeView
         {
             if (e.Args.Length > 0)
             {
-                BookOperation.Current.SetBookmark(Convert.ToBoolean(e.Args[0]));
+                BookOperation.Current.BookControl.SetBookmark(Convert.ToBoolean(e.Args[0]));
             }
             else
             {
-                BookOperation.Current.ToggleBookmark();
+                BookOperation.Current.BookControl.ToggleBookmark();
             }
         }
     }

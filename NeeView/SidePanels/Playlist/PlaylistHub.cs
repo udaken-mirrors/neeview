@@ -57,7 +57,7 @@ namespace NeeView
                 (s, e) => RaisePropertyChanged(nameof(FilterMessage));
 
             // NOTE: 応急処置
-            BookOperation.Current.LinkPlaylistHub(this);
+            //BookOperation.Current.LinkPlaylistHub(this);
 
             this.AddPropertyChanged(nameof(SelectedItem),
                 (s, e) => SelectedItemChanged());

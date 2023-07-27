@@ -43,7 +43,7 @@ namespace NeeView
 
         public Dock SliderIndexDock => _model != null && Config.Current.Slider.SliderIndexLayout == SliderIndexLayout.Left ? Dock.Left : Dock.Right;
 
-        public Visibility PageSliderVisibility => _model != null && BookOperation.Current.GetPageCount() > 0 ? Visibility.Visible : Visibility.Hidden;
+        public Visibility PageSliderVisibility => _model != null && BookOperation.Current.Property.GetPageCount() > 0 ? Visibility.Visible : Visibility.Hidden;
 
         public double FontSize => Math.Min(FontParameters.Current.DefaultFontSize, Config.Current.Slider.Thickness);
 
@@ -57,11 +57,11 @@ namespace NeeView
             {
                 if (turn < 0)
                 {
-                    BookOperation.Current.NextPage(this);
+                    BookOperation.Current.Control.NextPage(this);
                 }
                 else
                 {
-                    BookOperation.Current.PrevPage(this);
+                    BookOperation.Current.Control.PrevPage(this);
                 }
             }
         }

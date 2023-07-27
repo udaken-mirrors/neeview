@@ -16,12 +16,12 @@ namespace NeeView
 
         public override bool CanExecute(object? sender, CommandContext e)
         {
-            return BookOperation.Current.CanOpenFilePlace();
+            return BookOperation.Current.Control.CanOpenFilePlace();
         }
 
         public override void Execute(object? sender, CommandContext e)
         {
-            BookOperation.Current.OpenApplication(e.Parameter.Cast<OpenExternalAppCommandParameter>());
+            BookOperation.Current.Control.OpenApplication(e.Parameter.Cast<OpenExternalAppCommandParameter>());
         }
     }
 

@@ -11,12 +11,12 @@
 
         public override bool CanExecute(object? sender, CommandContext e)
         {
-            return BookOperation.Current.CanDeleteFile();
+            return BookOperation.Current.Control.CanDeleteFile();
         }
 
         public override void Execute(object? sender, CommandContext e)
         {
-            _ = BookOperation.Current.DeleteFileAsync();
+            _ = BookOperation.Current.Control.DeleteFileAsync();
         }
     }
 }

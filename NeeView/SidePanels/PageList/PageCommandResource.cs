@@ -315,7 +315,7 @@ namespace NeeView
 
             // 移動後のブックページ整合性処理
             // TODO: しっかり実装するならページのファイルシステムの監視が必要になる。ファイルの追加削除が自動的にページに反映するように。
-            BookOperation.Current.ValidateRemoveFile(movePages);
+            BookOperation.Current.BookControl.ValidateRemoveFile(movePages);
         }
 
         #region Remove
@@ -350,12 +350,12 @@ namespace NeeView
 
         private static bool CanRemove(List<Page> pages)
         {
-            return BookOperation.Current.CanDeleteFile(pages);
+            return BookOperation.Current.Control.CanDeleteFile(pages);
         }
 
         private static async Task RemoveAsync(List<Page> pages)
         {
-            await BookOperation.Current.DeleteFileAsync(pages);
+            await BookOperation.Current.Control.DeleteFileAsync(pages);
         }
 
         #endregion Remove
@@ -380,7 +380,7 @@ namespace NeeView
 
             var renamer = new PageListItemRenamer(listBox, _toolTipService);
             renamer.SelectedItemChanged += (s, e) => BookOperation.Current.JumpPage(this, listBox.SelectedItem as Page);
-            renamer.ArchiveChanged += (s, e) => BookOperation.Current.ReLoad();
+            renamer.ArchiveChanged += (s, e) => BookOperation.Current.BookControl.ReLoad();
             await renamer.RenameAsync(item);
         }
 

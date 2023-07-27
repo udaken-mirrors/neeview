@@ -1,0 +1,109 @@
+﻿using NeeLaboratory.ComponentModel;
+using System;
+using System.Collections.Generic;
+
+namespace NeeView
+{
+    public class BookControlProxy : BindableBase, IBookControl, IDisposable
+    {
+        IBookControl? _source;
+        private bool _disposedValue;
+
+
+
+        public bool IsBookmark => _source?.IsBookmark ?? false;
+
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!_disposedValue)
+            {
+                if (disposing)
+                {
+                    Detach();
+                }
+                _disposedValue = true;
+            }
+        }
+
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
+
+        public void SetSource(IBookControl? source)
+        {
+            if (_source == source) return;
+
+            Detach();
+            Attach(source);
+
+            RaisePropertyChanged(nameof(IsBookmark));
+        }
+
+        private void Attach(IBookControl? source)
+        {
+            if (_source == source) return;
+            _source = source;
+            if (_source is not null)
+            {
+                _source.PropertyChanged += Source_PropertyChanged;
+            }
+        }
+
+        private void Detach()
+        {
+            if (_source is null) return;
+
+            _source.PropertyChanged -= Source_PropertyChanged;
+            _source = null;
+        }
+
+        private void Source_PropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            RaisePropertyChanged(e.PropertyName);
+        }
+
+        public bool CanDeleteBook()
+        {
+            return _source?.CanDeleteBook() ?? false;
+        }
+
+        public void DeleteBook()
+        {
+            _source?.DeleteBook();
+        }
+
+        public void ReLoad()
+        {
+            _source?.ReLoad();
+        }
+
+        public void ValidateRemoveFile(IEnumerable<Page> pages)
+        {
+            _source?.ValidateRemoveFile(pages);
+        }
+
+
+        public bool CanBookmark()
+        {
+            return _source?.CanBookmark() ?? false;
+        }
+
+        public void SetBookmark(bool isBookmark)
+        {
+            _source?.SetBookmark(isBookmark);
+        }
+
+        public void ToggleBookmark()
+        {
+            _source?.ToggleBookmark();
+        }
+
+    }
+
+
+
+
+}

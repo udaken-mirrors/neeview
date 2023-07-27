@@ -1,0 +1,257 @@
+﻿using NeeView.Properties;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using System;
+using System.Linq;
+using System.Threading;
+
+namespace NeeView
+{
+    /// <summary>
+    /// 現在ページに対する操作
+    /// </summary>
+    public class BookPageActionControl : IBookPageActionControl
+    {
+        private Book _book;
+        private readonly IBookControl _bookControl;
+
+        public BookPageActionControl(Book book, IBookControl bookControl)
+        {
+            _book = book;
+            _bookControl = bookControl;
+        }
+
+        #region ページ削除
+
+        // 現在表示しているページのファイル削除可能？
+        public bool CanDeleteFile()
+        {
+            var page = _book?.Viewer.GetViewPage();
+            if (page is null) return false;
+
+            return CanDeleteFile(new List<Page>() { page });
+        }
+
+        // 現在表示しているページのファイルを削除する
+        public async Task DeleteFileAsync()
+        {
+            var page = _book?.Viewer.GetViewPage();
+            if (page is null) return;
+
+            await DeleteFileAsync(new List<Page>() { page });
+        }
+
+        // 指定ページのファル削除可能？
+        public bool CanDeleteFile(List<Page> pages)
+        {
+            if (!pages.Any()) return false;
+
+            return Config.Current.System.IsFileWriteAccessEnabled && PageFileIO.CanDeletePage(pages);
+        }
+
+        // 指定ページのファイルを削除する
+        public async Task DeleteFileAsync(List<Page> pages)
+        {
+            var isCompletely = pages.Any(e => !e.Entry.Archiver.IsFileSystem);
+            if (Config.Current.System.IsRemoveConfirmed || isCompletely)
+            {
+                var dialog = await PageFileIO.CreateDeleteConfirmDialog(pages, isCompletely);
+                if (!dialog.ShowDialog().IsPossible)
+                {
+                    return;
+                }
+            }
+
+            try
+            {
+                await PageFileIO.DeletePageAsync(pages);
+            }
+            catch (Exception ex)
+            {
+                new MessageDialog($"{Resources.Word_Cause}: {ex.Message}", Resources.FileDeleteErrorDialog_Title).ShowDialog();
+            }
+
+            _bookControl.ReLoad();
+        }
+
+#if false
+        /// <summary>
+        /// ブックの再読み込み
+        /// </summary>
+        [Obsolete("Bookに対する操作")]
+        private void ReLoad()
+        {
+            var book = _book;
+            if (book is null) return;
+
+            var viewPage = book.Viewer.GetViewPage();
+            var page = book.Pages.GetValidPage(viewPage);
+            BookHub.Current.RequestReLoad(this, page?.EntryName);
+        }
+
+        /// <summary>
+        /// 削除された可能性のあるページの処理
+        /// </summary>
+        /// <remarks>
+        /// 主にドラッグ処理の後始末
+        /// </remarks>
+        /// <param name="pages">削除された可能性のあるページ</param>
+        [Obsolete]
+        private void ValidateRemoveFile(IEnumerable<Page> pages)
+        {
+            if (pages.All(e => e.Entry.Exists())) return;
+            ReLoad();
+        }
+#endif
+
+        #endregion ページ削除
+
+        #region ページ出力
+
+        // ファイルの場所を開くことが可能？
+        public bool CanOpenFilePlace()
+        {
+            return _book?.Viewer.GetViewPage() != null;
+        }
+
+        // ファイルの場所を開く
+        public void OpenFilePlace()
+        {
+            if (CanOpenFilePlace())
+            {
+                string? place = _book?.Viewer.GetViewPage()?.GetFolderOpenPlace();
+                if (place != null)
+                {
+                    ExternalProcess.Start("explorer.exe", "/select,\"" + place + "\"");
+                }
+            }
+        }
+
+
+        // 外部アプリで開く
+        public void OpenApplication(OpenExternalAppCommandParameter parameter)
+        {
+            var book = this._book;
+            if (book is null) return;
+
+            if (CanOpenFilePlace())
+            {
+                try
+                {
+                    var external = new ExternalAppUtility();
+                    var pages = CollectPages(book, parameter.MultiPagePolicy);
+                    external.Call(pages, parameter, CancellationToken.None);
+                }
+                catch (OperationCanceledException)
+                {
+                }
+                catch (Exception ex)
+                {
+                    new MessageDialog(ex.Message, Properties.Resources.OpenApplicationErrorDialog_Title).ShowDialog();
+                }
+            }
+        }
+
+        private static List<Page> CollectPages(Book book, MultiPagePolicy policy)
+        {
+            if (book is null)
+            {
+                return new List<Page>();
+            }
+
+            var pages = book.Viewer.GetViewPages().Distinct();
+
+            switch (policy)
+            {
+                case MultiPagePolicy.Once:
+                    pages = pages.Take(1);
+                    break;
+
+                case MultiPagePolicy.AllLeftToRight:
+                    if (book.Setting.BookReadOrder == PageReadOrder.RightToLeft)
+                    {
+                        pages = pages.Reverse();
+                    }
+                    break;
+            }
+
+            return pages.ToList();
+        }
+
+
+        // クリップボードにコピー
+        public void CopyToClipboard(CopyFileCommandParameter parameter)
+        {
+            var book = this._book;
+            if (book is null) return;
+
+            if (CanOpenFilePlace())
+            {
+                try
+                {
+                    var pages = CollectPages(book, parameter.MultiPagePolicy);
+                    ClipboardUtility.Copy(pages, parameter);
+                }
+                catch (Exception e)
+                {
+                    new MessageDialog($"{Resources.Word_Cause}: {e.Message}", Resources.CopyErrorDialog_Title).ShowDialog();
+                }
+            }
+        }
+
+        /// <summary>
+        /// ファイル保存可否
+        /// </summary>
+        /// <returns></returns>
+        public bool CanExport()
+        {
+            var pages = _book?.Viewer.GetViewPages();
+            if (pages == null || pages.Count == 0) return false;
+
+            var imageSource = pages[0].GetContentImageSource();
+            if (imageSource == null) return false;
+
+            return true;
+        }
+
+
+        // ファイルに保存する (ダイアログ)
+        // TODO: OutOfMemory対策
+        public void ExportDialog(ExportImageAsCommandParameter parameter)
+        {
+            if (CanExport())
+            {
+                try
+                {
+                    var exportImageProceduralDialog = new ExportImageProceduralDialog();
+                    exportImageProceduralDialog.Owner = MainViewComponent.Current.GetWindow();
+                    exportImageProceduralDialog.Show(parameter);
+                }
+                catch (Exception e)
+                {
+                    new MessageDialog($"{Resources.ImageExportErrorDialog_Message}\n{Resources.Word_Cause}: {e.Message}", Resources.ImageExportErrorDialog_Title).ShowDialog();
+                    return;
+                }
+            }
+        }
+
+        // ファイルに保存する
+        public void Export(ExportImageCommandParameter parameter)
+        {
+            if (CanExport())
+            {
+                try
+                {
+                    ExportImageProcedure.Execute(parameter);
+                }
+                catch (Exception e)
+                {
+                    new MessageDialog($"{Resources.ImageExportErrorDialog_Message}\n{Resources.Word_Cause}: {e.Message}", Resources.ImageExportErrorDialog_Title).ShowDialog();
+                    return;
+                }
+            }
+        }
+
+        #endregion ページ出力
+    }
+}

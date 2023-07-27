@@ -110,7 +110,7 @@ namespace NeeView
             this.StartEntry = _source.Pages.Count > 0 ? _source.Pages[position.Index].EntryName : null;
 
             // 初期ページ設定 
-            _controller.RequestSetPosition(sender, position, direction);
+            _controller.JumpPage(sender, position, direction);
         }
 
         public void Start()

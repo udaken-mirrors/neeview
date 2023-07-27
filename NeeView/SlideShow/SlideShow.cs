@@ -134,10 +134,11 @@ namespace NeeView
         /// <summary>
         /// 次のスライドへ移動：スライドショー専用
         /// </summary>
-        private void NextSlide()
-        {
-            BookOperation.Current.NextSlide(this);
-        }
+        //[Obsolete]
+        //private void NextSlide()
+        //{
+        //    BookOperation.Current.NextSlide(this);
+        //}
 
         private void UpdateTimerInterval()
         {
@@ -192,11 +193,8 @@ namespace NeeView
                     return;
                 }
 
-                // ブック有効ならばページ移動
-                if (BookOperation.Current.IsEnabled)
-                {
-                    NextSlide();
-                }
+                // ページ移動
+                BookOperation.Current.Control.NextPage(sender);
             });
         }
 

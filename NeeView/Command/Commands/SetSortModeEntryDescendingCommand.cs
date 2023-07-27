@@ -18,7 +18,7 @@ namespace NeeView
 
         public override bool CanExecute(object? sender, CommandContext e)
         {
-            return !NowLoading.Current.IsDispNowLoading && BookOperation.Current.PageSortModeClass.Contains(PageSortMode.EntryDescending);
+            return !NowLoading.Current.IsDispNowLoading && BookOperation.Current.Property.PageSortModeClass.Contains(PageSortMode.EntryDescending);
         }
 
         public override void Execute(object? sender, CommandContext e)

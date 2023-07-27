@@ -21,7 +21,7 @@ namespace NeeView
             if (e.Args.Length > 0)
             {
                 var number = Convert.ToInt32(e.Args[0]);
-                BookOperation.Current.JumpPage(this, number);
+                BookOperation.Current.Control.JumpPage(this, number);
             }
             else
             {

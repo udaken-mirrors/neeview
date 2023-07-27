@@ -23,7 +23,7 @@
 
         public override void Execute(object? sender, CommandContext e)
         {
-            BookOperation.Current.PrevFolderPage(this, this.IsShowMessage);
+            BookOperation.Current.Control.PrevFolderPage(this, this.IsShowMessage);
         }
     }
 }

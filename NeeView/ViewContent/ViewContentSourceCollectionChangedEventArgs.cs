@@ -21,6 +21,11 @@ namespace NeeView
         public ViewContentSourceCollection ViewPageCollection { get; set; }
         public bool IsForceResize { get; set; }
         public bool IsFirst { get; set; }
+
+        public override string ToString()
+        {
+            return ViewPageCollection.Range.ToString();
+        }
     }
 
 }

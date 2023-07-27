@@ -24,7 +24,7 @@
 
         public override void Execute(object? sender, CommandContext e)
         {
-            BookOperation.Current.NextFolderPage(this, this.IsShowMessage);
+            BookOperation.Current.Control.NextFolderPage(this, this.IsShowMessage);
         }
     }
 }

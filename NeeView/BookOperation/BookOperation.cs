@@ -1,24 +1,8 @@
 ﻿using NeeLaboratory.ComponentModel;
 using NeeLaboratory.Threading.Jobs;
-using NeeView.Collections;
-using NeeView.Collections.Generic;
-using NeeView.Properties;
-using NeeView.Windows.Property;
 using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Collections.Specialized;
-using System.ComponentModel;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Runtime.Serialization;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Input;
 
 namespace NeeView
 {
@@ -32,29 +16,28 @@ namespace NeeView
         public static BookOperation Current { get; }
 
 
-        private bool _isEnabled;
+        private BookHub _bookHub;
         private Book? _book;
-        private ObservableCollection<Page>? _pageList;
-        private int _pageTerminating;
+
+        public BookPageTerminatorProxy _terminator = new();
+        public BookPagePropertyProxy _bookProperty = new();
+        public BookPageScriptProxy _script = new();
+        public BookControlProxy _bookControl = new();
+        public BookPageControlProxy _control = new();
+        public BookPlaylistControlProxy _playlist = new();
 
 
         private BookOperation()
         {
-            BookHub.Current.BookChanging +=
+            _bookHub = BookHub.Current;
+
+            _bookHub.BookChanging +=
                 (s, e) => AppDispatcher.Invoke(() => BookHub_BookChanging(s, e));
 
-            BookHub.Current.BookChanged +=
+            _bookHub.BookChanged +=
                 (s, e) => AppDispatcher.Invoke(() => BookHub_BookChanged(s, e));
-
-            BookHub.Current.ViewContentsChanged +=
-                (s, e) => AppDispatcher.Invoke(() => BookHub_ViewContentsChanged(s, e));
         }
 
-        // NOTE: 応急処置。シングルトンコンストラクタで互いを参照してしまっているのを回避するため
-        public void LinkPlaylistHub(PlaylistHub playlistHub)
-        {
-            playlistHub.PlaylistCollectionChanged += Playlist_CollectionChanged;
-        }
 
 
         // ブックが変更される
@@ -75,941 +58,98 @@ namespace NeeView
             return new AnonymousDisposable(() => BookChanged -= handler);
         }
 
-        // ページが変更された
-        public event EventHandler<ViewContentSourceCollectionChangedEventArgs>? ViewContentsChanged;
 
-        public IDisposable SubscribeViewContentsChanged(EventHandler<ViewContentSourceCollectionChangedEventArgs> handler)
-        {
-            ViewContentsChanged += handler;
-            return new AnonymousDisposable(() => ViewContentsChanged -= handler);
-        }
+        public bool IsLoading => _bookHub.IsLoading;
 
-        // ページがソートされた
-        public event EventHandler? PagesSorted;
-
-        public IDisposable SubscribePagesSorted(EventHandler handler)
-        {
-            PagesSorted += handler;
-            return new AnonymousDisposable(() => PagesSorted -= handler);
-        }
-
-        // ページリストが変更された
-        public event EventHandler? PageListChanged;
-
-        public IDisposable SubscribePageListChanged(EventHandler handler)
-        {
-            PageListChanged += handler;
-            return new AnonymousDisposable(() => PageListChanged -= handler);
-        }
-
-        // ページが削除された
-        public event EventHandler<PageRemovedEventArgs>? PageRemoved;
-
-        public IDisposable SubscribePageRemoved(EventHandler<PageRemovedEventArgs> handler)
-        {
-            PageRemoved += handler;
-            return new AnonymousDisposable(() => PageRemoved -= handler);
-        }
-
-
-        /// <summary>
-        /// 操作の有効設定。ロード中は機能を無効にするために使用
-        /// </summary>
-        public bool IsEnabled
-        {
-            get { return _isEnabled; }
-            set { if (_isEnabled != value) { _isEnabled = value; RaisePropertyChanged(); } }
-        }
-
-        public Book? Book
-        {
-            get { return _book; }
-            set
-            {
-                if (SetProperty(ref _book, value))
-                {
-                    RaisePropertyChanged(nameof(Address));
-                    RaisePropertyChanged(nameof(IsValid));
-                    RaisePropertyChanged(nameof(IsBusy));
-                }
-            }
-        }
-
+        public Book? Book => _book;
 
         public string? Address => Book?.Path;
 
-        public bool IsValid => Book != null;
+        public BookPagePropertyProxy Property => _bookProperty;
 
-        public bool IsBusy
-        {
-            get { return Book != null && Book.Viewer.Loader.IsBusy; }
-        }
+        public BookControlProxy BookControl => _bookControl;
 
-        public ObservableCollection<Page>? PageList
-        {
-            get { return _pageList; }
-        }
+        public BookPlaylistControlProxy Playlist => _playlist;
 
-        public PageSortModeClass PageSortModeClass
-        {
-            get { return Book != null ? Book.PageSortModeClass : PageSortModeClass.Full; }
-        }
+        public BookPageControlProxy Control => _control;
 
-
-
-        private DisposableCollection? _bookDisposables;
-
-        private void SubscribeBook(Book? book)
-        {
-            UnsubscribeCurrentBook();
-
-            if (book != null)
-            {
-                _bookDisposables = new DisposableCollection();
-                _bookDisposables.Add(book.Pages.SubscribePagesSorted(
-                    (s, e) => AppDispatcher.Invoke(() => Book_PagesSorted(s, e))));
-                _bookDisposables.Add(book.Pages.SubscribePageRemoved(
-                    (s, e) => AppDispatcher.Invoke(() => Book_PageRemoved(s, e))));
-                _bookDisposables.Add(book.Viewer.Loader.SubscribeViewContentsChanged(
-                    (s, e) => AppDispatcher.Invoke(() => Book_ViewContentsChanged(s, e))));
-                _bookDisposables.Add(book.Viewer.SubscribePageTerminated(
-                    (s, e) => AppDispatcher.Invoke(() => Book_PageTerminated(s, e))));
-                _bookDisposables.Add(book.Viewer.Loader.SubscribePropertyChanged(nameof(BookPageLoader.IsBusy),
-                    (s, e) => AppDispatcher.Invoke(() => RaisePropertyChanged(nameof(IsBusy)))));
-            }
-
-            this.Book = book;
-        }
-
-        private void UnsubscribeCurrentBook()
-        {
-            if (this.Book is null) return;
-
-            _bookDisposables?.Dispose();
-            _bookDisposables = null;
-
-            this.Book = null;
-        }
 
 
         private void BookHub_BookChanging(object? sender, BookChangingEventArgs e)
         {
-            // ブック操作無効
-            IsEnabled = false;
-
-            UnsubscribeCurrentBook();
-
+            SetBook(null);
             BookChanging?.Invoke(sender, e);
         }
 
-        /// <summary>
-        /// 本の更新
-        /// </summary>
         private void BookHub_BookChanged(object? sender, BookChangedEventArgs e)
         {
-            SubscribeBook(BookHub.Current.GetCurrentBook());
-
-            //
-            RaisePropertyChanged(nameof(IsBookmark));
-
-            // マーカー復元
-            UpdateMarkers();
-
-            // ページリスト更新
-            UpdatePageList(false);
-
-            // ブック操作有効
-            IsEnabled = true;
-
-            // ページリスト更新通知
-            PageListChanged?.Invoke(this, EventArgs.Empty);
-
-            // Script: OnBookLoaded
-            CommandTable.Current.TryExecute(this, ScriptCommand.EventOnBookLoaded, null, CommandOption.None);
-            // Script: OnPageChanged
-            CommandTable.Current.TryExecute(this, ScriptCommand.EventOnPageChanged, null, CommandOption.None);
-
+            SetBook(_bookHub.GetCurrentBook());
             BookChanged?.Invoke(sender, e);
         }
 
-        private void BookHub_ViewContentsChanged(object? sender, ViewContentSourceCollectionChangedEventArgs e)
+        private void SetBook(Book? book)
         {
-            if (e is null) return;
+            if (_book == book) return;
+            _book = book;
 
-            if (e.ViewPageCollection.IsFixedContents())
-            {
-                // NOTE: ブックが有効なときだけ呼ぶ
-                if (IsEnabled)
-                {
-                    // Script: OnPageChanged
-                    CommandTable.Current.TryExecute(this, ScriptCommand.EventOnPageChanged, null, CommandOption.None);
-                }
-            }
+            _bookProperty.SetSource(CreateBookProperty(_book));
+            _bookControl.SetSource(CreateBoolController(_book));
+            _control.SetSource(CreateController(_book));
+            _playlist.SetSource(CreatePlaylistController(_book));
+            _terminator.SetSource(CreatePageTerminator(_book));
+            _script.SetSource(CreateBookScript(_book));
+
+            RaisePropertyChanged(nameof(Book));
+            RaisePropertyChanged(nameof(Address));
         }
 
-        //
-        private void Book_PagesSorted(object? sender, EventArgs e)
+        private BookPageTerminator? CreatePageTerminator(Book? book)
         {
-            UpdatePageList(true);
-
-            PagesSorted?.Invoke(this, e);
+            return book is null ? null : new BookPageTerminator(book, _control);
         }
 
-        //
-        private void Book_ViewContentsChanged(object? sender, ViewContentSourceCollectionChangedEventArgs e)
+        private BookPageScript? CreateBookScript(Book? book)
         {
-            if (!IsEnabled) return;
-
-            RaisePropertyChanged(nameof(IsMarked));
-
-            ViewContentsChanged?.Invoke(sender, e);
+            return book is null ? null : new BookPageScript(book);
         }
 
-
-        // ページリスト更新
-        public void UpdatePageList(bool raisePageListChanged)
+        private IBookPageProperty? CreateBookProperty(Book? book)
         {
-            var pages = this.Book?.Pages;
-            var pageList = pages != null ? new ObservableCollection<Page>(pages) : null;
-
-            if (SetProperty(ref _pageList, pageList, nameof(PageList)))
-            {
-                if (raisePageListChanged)
-                {
-                    PageListChanged?.Invoke(this, EventArgs.Empty);
-                }
-            }
-
-            RaisePropertyChanged(nameof(IsMarked));
+            return book is null ? null : new BookPageProperty(book);
         }
 
-        // 現在ベージ取得
-        public Page? GetPage()
+        private IBookControl? CreateBoolController(Book? book)
         {
-            return this.Book?.Viewer.GetViewPage();
+            return book is null ? null : new BookControl(book);
         }
 
-        // 現在ページ番号取得
-        public int GetPageIndex()
+        private IBookPageControl? CreateController(Book? book)
         {
-            return this.Book == null ? 0 : this.Book.Viewer.DisplayIndex; // GetPosition().Index;
+            return book is null ? null : new BookPageControl(book, _bookControl);
         }
 
-        // 現在ページ番号を設定し、表示を切り替える (先読み無し)
-        public void RequestPageIndex(object sender, int index)
+        private BookPlaylistControl? CreatePlaylistController(Book? book)
         {
-            this.Book?.Control.RequestSetPosition(sender, new PagePosition(index, 0), 1);
-        }
-
-        /// <summary>
-        /// 最大ページ番号取得
-        /// </summary>
-        /// <returns></returns>
-        public int GetMaxPageIndex()
-        {
-            var count = this.Book == null ? 0 : this.Book.Pages.Count - 1;
-            if (count < 0) count = 0;
-            return count;
-        }
-
-        /// <summary>
-        /// ページ数取得
-        /// </summary>
-        /// <returns></returns>
-        public int GetPageCount()
-        {
-            return this.Book == null ? 0 : this.Book.Pages.Count;
-        }
-
-        /// <summary>
-        /// 表示ページ読み込み完了まで待機
-        /// </summary>
-        public void Wait(CancellationToken token)
-        {
-            if (!BookHub.Current.IsBusy && Book?.Control.IsViewContentsLoading != true)
-            {
-                return;
-            }
-
-            // BookHubのコマンド処理が終わるまで待機
-            var eventFlag = new ManualResetEventSlim();
-            BookHub.Current.IsBusyChanged += BookHub_IsBusyChanged;
-            try
-            {
-                if (BookHub.Current.IsBusy)
-                {
-                    eventFlag.Wait(token);
-                }
-            }
-            finally
-            {
-                BookHub.Current.IsBusyChanged -= BookHub_IsBusyChanged;
-            }
-
-            var book = this.Book;
-            if (book is null)
-            {
-                return;
-            }
-
-            // 表示ページの読み込みが終わるまで待機
-            eventFlag.Reset();
-            bool _isBookChanged = false;
-            this.BookChanged += BookOperation_BookChanged;
-            book.Control.ViewContentsLoading += BookControl_ViewContentsLoading;
-            try
-            {
-                if (book.Control.IsViewContentsLoading)
-                {
-                    eventFlag.Wait(token);
-                }
-            }
-            finally
-            {
-                this.BookChanged -= BookOperation_BookChanged;
-                book.Control.ViewContentsLoading -= BookControl_ViewContentsLoading;
-            }
-
-            // 待機中にブックが変更された場合はそのブックで再待機
-            if (_isBookChanged)
-            {
-                Wait(token);
-            }
-
-            void BookHub_IsBusyChanged(object? sender, JobIsBusyChangedEventArgs e)
-            {
-                if (!e.IsBusy)
-                {
-                    eventFlag.Set();
-                }
-            }
-
-            void BookOperation_BookChanged(object? sender, BookChangedEventArgs e)
-            {
-                _isBookChanged = true;
-                eventFlag.Set();
-            }
-
-            void BookControl_ViewContentsLoading(object? sender, ViewContentsLoadingEventArgs e)
-            {
-                if (!e.IsLoading)
-                {
-                    eventFlag.Set();
-                }
-            }
-        }
-
-        #region BookCommand : ページ削除
-
-        // 現在表示しているページのファイル削除可能？
-        public bool CanDeleteFile()
-        {
-            var page = Book?.Viewer.GetViewPage();
-            if (page is null) return false;
-
-            return CanDeleteFile(new List<Page>() { page });
-        }
-
-        // 現在表示しているページのファイルを削除する
-        public async Task DeleteFileAsync()
-        {
-            var page = Book?.Viewer.GetViewPage();
-            if (page is null) return;
-
-            await DeleteFileAsync(new List<Page>() { page });
-        }
-
-        // 指定ページのファル削除可能？
-        public bool CanDeleteFile(List<Page> pages)
-        {
-            if (!pages.Any()) return false;
-
-            return Config.Current.System.IsFileWriteAccessEnabled && PageFileIO.CanDeletePage(pages);
-        }
-
-        // 指定ページのファイルを削除する
-        public async Task DeleteFileAsync(List<Page> pages)
-        {
-            var isCompletely = pages.Any(e => !e.Entry.Archiver.IsFileSystem);
-            if (Config.Current.System.IsRemoveConfirmed || isCompletely)
-            {
-                var dialog = await PageFileIO.CreateDeleteConfirmDialog(pages, isCompletely);
-                if (!dialog.ShowDialog().IsPossible)
-                {
-                    return;
-                }
-            }
-
-            try
-            {
-                await PageFileIO.DeletePageAsync(pages);
-            }
-            catch (Exception ex)
-            {
-                new MessageDialog($"{Resources.Word_Cause}: {ex.Message}", Resources.FileDeleteErrorDialog_Title).ShowDialog();
-            }
-
-            ReLoad();
-        }
-
-        /// <summary>
-        /// ブックの再読み込み
-        /// </summary>
-        public void ReLoad()
-        {
-            var book = Book;
-            if (book is null) return;
-
-            var viewPage = book.Viewer.GetViewPage();
-            var page = book.Pages.GetValidPage(viewPage);
-            BookHub.Current.RequestReLoad(this, page?.EntryName);
-        }
-
-        /// <summary>
-        /// 削除された可能性のあるページの処理
-        /// </summary>
-        /// <remarks>
-        /// 主にドラッグ処理の後始末
-        /// </remarks>
-        /// <param name="pages">削除された可能性のあるページ</param>
-        public void ValidateRemoveFile(IEnumerable<Page> pages)
-        {
-            if (pages.All(e => e.Entry.Exists())) return;
-            ReLoad();
-        }
-
-        #endregion
-
-        #region BookCommand : ブック削除
-
-        // 現在表示しているブックの削除可能？
-        public bool CanDeleteBook()
-        {
-            return Config.Current.System.IsFileWriteAccessEnabled && Book != null && (Book.LoadOption & BookLoadOption.Undeliteable) == 0 && (File.Exists(Book.SourcePath) || Directory.Exists(Book.SourcePath));
-        }
-
-        // 現在表示しているブックを削除する
-        public async void DeleteBook()
-        {
-            if (CanDeleteBook())
-            {
-                var bookAddress = Book?.SourcePath;
-                if (bookAddress is null) return;
-
-                var item = BookshelfFolderList.Current.FindFolderItem(bookAddress);
-                if (item != null)
-                {
-                    await BookshelfFolderList.Current.RemoveAsync(item);
-                }
-                else if (FileIO.ExistsPath(bookAddress))
-                {
-                    var entry = StaticFolderArchive.Default.CreateArchiveEntry(bookAddress);
-                    await ConfirmFileIO.DeleteAsync(entry, Resources.FileDeleteBookDialog_Title, null);
-                }
-            }
-        }
-
-        #endregion
-
-        #region BookCommand : ページ出力
-
-        // ファイルの場所を開くことが可能？
-        public bool CanOpenFilePlace()
-        {
-            return Book?.Viewer.GetViewPage() != null;
-        }
-
-        // ファイルの場所を開く
-        public void OpenFilePlace()
-        {
-            if (CanOpenFilePlace())
-            {
-                string? place = Book?.Viewer.GetViewPage()?.GetFolderOpenPlace();
-                if (place != null)
-                {
-                    ExternalProcess.Start("explorer.exe", "/select,\"" + place + "\"");
-                }
-            }
+            return (book is null || book.IsMedia) ? null : new BookPlaylistControl(book);
         }
 
 
-        // 外部アプリで開く
-        public void OpenApplication(OpenExternalAppCommandParameter parameter)
-        {
-            var book = this.Book;
-            if (book is null) return;
-
-            if (CanOpenFilePlace())
-            {
-                try
-                {
-                    var external = new ExternalAppUtility();
-                    var pages = CollectPages(book, parameter.MultiPagePolicy);
-                    external.Call(pages, parameter, CancellationToken.None);
-                }
-                catch (OperationCanceledException)
-                {
-                }
-                catch (Exception ex)
-                {
-                    new MessageDialog(ex.Message, Properties.Resources.OpenApplicationErrorDialog_Title).ShowDialog();
-                }
-            }
-        }
-
-        private static List<Page> CollectPages(Book book, MultiPagePolicy policy)
-        {
-            if (book is null)
-            {
-                return new List<Page>();
-            }
-
-            var pages = book.Viewer.GetViewPages().Distinct();
-
-            switch (policy)
-            {
-                case MultiPagePolicy.Once:
-                    pages = pages.Take(1);
-                    break;
-
-                case MultiPagePolicy.AllLeftToRight:
-                    if (book.Setting.BookReadOrder == PageReadOrder.RightToLeft)
-                    {
-                        pages = pages.Reverse();
-                    }
-                    break;
-            }
-
-            return pages.ToList();
-        }
-
-
-        // クリップボードにコピー
-        public void CopyToClipboard(CopyFileCommandParameter parameter)
-        {
-            var book = this.Book;
-            if (book is null) return;
-
-            if (CanOpenFilePlace())
-            {
-                try
-                {
-                    var pages = CollectPages(book, parameter.MultiPagePolicy);
-                    ClipboardUtility.Copy(pages, parameter);
-                }
-                catch (Exception e)
-                {
-                    new MessageDialog($"{Resources.Word_Cause}: {e.Message}", Resources.CopyErrorDialog_Title).ShowDialog();
-                }
-            }
-        }
-
-        /// <summary>
-        /// ファイル保存可否
-        /// </summary>
-        /// <returns></returns>
-        public bool CanExport()
-        {
-            var pages = Book?.Viewer.GetViewPages();
-            if (pages == null || pages.Count == 0) return false;
-
-            var imageSource = pages[0].GetContentImageSource();
-            if (imageSource == null) return false;
-
-            return true;
-        }
-
-
-        // ファイルに保存する (ダイアログ)
-        // TODO: OutOfMemory対策
-        public void ExportDialog(ExportImageAsCommandParameter parameter)
-        {
-            if (CanExport())
-            {
-                try
-                {
-                    var exportImageProceduralDialog = new ExportImageProceduralDialog();
-                    exportImageProceduralDialog.Owner = MainViewComponent.Current.GetWindow();
-                    exportImageProceduralDialog.Show(parameter);
-                }
-                catch (Exception e)
-                {
-                    new MessageDialog($"{Resources.ImageExportErrorDialog_Message}\n{Resources.Word_Cause}: {e.Message}", Resources.ImageExportErrorDialog_Title).ShowDialog();
-                    return;
-                }
-            }
-        }
-
-        // ファイルに保存する
-        public void Export(ExportImageCommandParameter parameter)
-        {
-            if (CanExport())
-            {
-                try
-                {
-                    ExportImageProcedure.Execute(parameter);
-                }
-                catch (Exception e)
-                {
-                    new MessageDialog($"{Resources.ImageExportErrorDialog_Message}\n{Resources.Word_Cause}: {e.Message}", Resources.ImageExportErrorDialog_Title).ShowDialog();
-                    return;
-                }
-            }
-        }
-
-        #endregion
 
         #region BookCommand : ページ操作
 
-        // ページ終端を超えて移動しようとするときの処理
-        private void Book_PageTerminated(object? sender, PageTerminatedEventArgs e)
-        {
-            if (_pageTerminating > 0) return;
-
-            // TODO ここでSlideShowを参照しているが、引数で渡すべきでは？
-            if (SlideShow.Current.IsPlayingSlideShow && Config.Current.SlideShow.IsSlideShowByLoop)
-            {
-                FirstPage(sender);
-            }
-            else
-            {
-                switch (Config.Current.Book.PageEndAction)
-                {
-                    case PageEndAction.Loop:
-                        PageEndAction_Loop(sender, e);
-                        break;
-
-                    case PageEndAction.NextBook:
-                        PageEndAction_NextBook(sender, e);
-                        break;
-
-                    case PageEndAction.Dialog:
-                        PageEndAction_Dialog(sender, e);
-                        break;
-
-                    default:
-                        PageEndAction_None(sender, e, true);
-                        break;
-                }
-            }
-        }
-
-        private void PageEndAction_Loop(object? sender, PageTerminatedEventArgs e)
-        {
-            if (e.Direction < 0)
-            {
-                LastPage(sender);
-            }
-            else
-            {
-                FirstPage(sender);
-            }
-            if (Config.Current.Book.IsNotifyPageLoop)
-            {
-                InfoMessage.Current.SetMessage(InfoMessageType.Notify, Properties.Resources.Notice_BookOperationPageLoop);
-            }
-        }
-
-        private void PageEndAction_NextBook(object? sender, PageTerminatedEventArgs e)
-        {
-            AppDispatcher.Invoke(async () =>
-            {
-                if (e.Direction < 0)
-                {
-                    await BookshelfFolderList.Current.PrevFolder(BookLoadOption.LastPage);
-                }
-                else
-                {
-                    await BookshelfFolderList.Current.NextFolder(BookLoadOption.FirstPage);
-                }
-            });
-        }
-
-        private void PageEndAction_None(object? sender, PageTerminatedEventArgs e, bool notify)
-        {
-            if (SlideShow.Current.IsPlayingSlideShow)
-            {
-                // スライドショー解除
-                SlideShow.Current.Stop();
-            }
-
-            // 通知。本の場合のみ処理。メディアでは不要
-            else if (notify && this.Book != null && !this.Book.IsMedia)
-            {
-                if (e.Direction < 0)
-                {
-                    SoundPlayerService.Current.PlaySeCannotMove();
-                    InfoMessage.Current.SetMessage(InfoMessageType.Notify, Properties.Resources.Notice_FirstPage);
-                }
-                else
-                {
-                    SoundPlayerService.Current.PlaySeCannotMove();
-                    InfoMessage.Current.SetMessage(InfoMessageType.Notify, Properties.Resources.Notice_LastPage);
-                }
-            }
-        }
-
-        private void PageEndAction_Dialog(object? sender, PageTerminatedEventArgs e)
-        {
-            Interlocked.Increment(ref _pageTerminating);
-
-            AppDispatcher.BeginInvoke(() =>
-            {
-                try
-                {
-                    PageEndAction_DialogCore(sender, e);
-                }
-                finally
-                {
-                    Interlocked.Decrement(ref _pageTerminating);
-                }
-            });
-        }
-
-        private void PageEndAction_DialogCore(object? sender, PageTerminatedEventArgs e)
-        {
-            var title = (e.Direction < 0) ? Resources.Notice_FirstPage : Resources.Notice_LastPage;
-            var dialog = new MessageDialog(Resources.PageEndDialog_Message, title);
-            var nextCommand = new UICommand(Properties.Resources.PageEndAction_NextBook);
-            var loopCommand = new UICommand(Properties.Resources.PageEndAction_Loop);
-            var noneCommand = new UICommand(Properties.Resources.PageEndAction_None);
-            dialog.Commands.Add(nextCommand);
-            dialog.Commands.Add(loopCommand);
-            dialog.Commands.Add(noneCommand);
-            var result = dialog.ShowDialog(App.Current.MainWindow);
-
-            if (result.Command == nextCommand)
-            {
-                PageEndAction_NextBook(sender, e);
-            }
-            else if (result.Command == loopCommand)
-            {
-                PageEndAction_Loop(sender, e);
-            }
-            else
-            {
-                PageEndAction_None(sender, e, false);
-            }
-        }
-
-
-        // ページ削除時の処理
-        private void Book_PageRemoved(object? sender, PageRemovedEventArgs e)
-        {
-            if (this.Book is null) return;
-
-            // プレイリストから削除
-            var bookPlaylist = new BookPlaylist(this.Book, PlaylistHub.Current.Playlist);
-            bookPlaylist.Remove(e.Pages);
-
-            UpdatePageList(true);
-            PageRemoved?.Invoke(sender, e);
-        }
-
-        // ページ移動量をメディアの時間移動量に変換して移動
-        private void MoveMediaPage(object? sender, int delta)
-        {
-            if (MediaPlayerOperator.Current == null) return;
-
-            var isTerminated = MediaPlayerOperator.Current.AddPosition(TimeSpan.FromSeconds(delta * Config.Current.Archive.Media.PageSeconds));
-
-            if (isTerminated)
-            {
-                this.Book?.Viewer.RaisePageTerminatedEvent(sender, delta < 0 ? -1 : 1);
-            }
-        }
-
-        // 前のページに移動
-        public void PrevPage(object? sender)
-        {
-            if (this.Book == null) return;
-
-            if (this.Book.IsMedia)
-            {
-                MoveMediaPage(sender, -1);
-            }
-            else
-            {
-                this.Book.Control.PrevPage(sender, 0);
-            }
-        }
-
-        // 次のページに移動
-        public void NextPage(object? sender)
-        {
-            if (this.Book == null) return;
-
-            if (this.Book.IsMedia)
-            {
-                MoveMediaPage(sender, +1);
-            }
-            else
-            {
-                this.Book.Control.NextPage(sender, 0);
-            }
-        }
-
-        // 1ページ前に移動
-        public void PrevOnePage(object sender)
-        {
-            if (this.Book == null) return;
-
-            if (this.Book.IsMedia)
-            {
-                MoveMediaPage(sender, -1);
-            }
-            else
-            {
-                this.Book.Control.PrevPage(sender, 1);
-            }
-        }
-
-        // 1ページ後に移動
-        public void NextOnePage(object sender)
-        {
-            if (this.Book == null) return;
-
-            if (this.Book.IsMedia)
-            {
-                MoveMediaPage(sender, +1);
-            }
-            else
-            {
-                this.Book?.Control.NextPage(sender, 1);
-            }
-        }
-
-        // 指定ページ数前に移動
-        public void PrevSizePage(object sender, int size)
-        {
-            if (this.Book == null) return;
-
-            if (this.Book.IsMedia)
-            {
-                MoveMediaPage(sender, -size);
-            }
-            else
-            {
-                this.Book.Control.PrevPage(sender, size);
-            }
-        }
-
-        // 指定ページ数後に移動
-        public void NextSizePage(object sender, int size)
-        {
-            if (this.Book == null) return;
-
-            if (this.Book.IsMedia)
-            {
-                MoveMediaPage(sender, +size);
-            }
-            else
-            {
-                this.Book.Control.NextPage(sender, size);
-            }
-        }
-
-
-        // 最初のページに移動
-        public void FirstPage(object? sender)
-        {
-            if (this.Book == null) return;
-
-            if (this.Book.IsMedia)
-            {
-                MediaPlayerOperator.Current?.SetPositionFirst();
-            }
-            else
-            {
-                this.Book.Control.FirstPage(sender);
-            }
-        }
-
-        // 最後のページに移動
-        public void LastPage(object? sender)
-        {
-            if (this.Book == null) return;
-
-            if (this.Book.IsMedia)
-            {
-                MediaPlayerOperator.Current?.SetPositionLast();
-            }
-            else
-            {
-                this.Book.Control.LastPage(sender);
-            }
-        }
-
-
-        // 前のフォルダーに移動
-        public void PrevFolderPage(object sender, bool isShowMessage)
-        {
-            if (this.Book == null) return;
-
-            if (this.Book.IsMedia)
-            {
-            }
-            else
-            {
-                var index = this.Book.Control.PrevFolderPage(sender);
-                ShowMoveFolderPageMessage(index, Properties.Resources.Notice_FirstFolderPage, isShowMessage);
-            }
-        }
-
-        // 次のフォルダーに移動
-        public void NextFolderPage(object sender, bool isShowMessage)
-        {
-            if (this.Book == null) return;
-
-            if (this.Book.IsMedia)
-            {
-            }
-            else
-            {
-                var index = this.Book.Control.NextFolderPage(sender);
-                ShowMoveFolderPageMessage(index, Properties.Resources.Notice_LastFolderPage, isShowMessage);
-            }
-        }
-
-        private void ShowMoveFolderPageMessage(int index, string termianteMessage, bool isShowMessage)
-        {
-            if (index < 0)
-            {
-                InfoMessage.Current.SetMessage(InfoMessageType.Notify, termianteMessage);
-            }
-            else if (isShowMessage)
-            {
-                var directory = this.Book?.Pages[index].GetSmartDirectoryName();
-                if (string.IsNullOrEmpty(directory))
-                {
-                    directory = "(Root)";
-                }
-                InfoMessage.Current.SetMessage(InfoMessageType.Notify, directory);
-            }
-        }
-
-
-        // ページを指定して移動
-        public void JumpPage(object sender, int number)
-        {
-            if (this.Book == null || this.Book.IsMedia) return;
-
-            var page = this.Book.Pages.GetPage(number - 1);
-            if (page is null) return;
-            this.Book.Control.JumpPage(sender, page);
-        }
-
         // パスを指定して移動
-        public bool JumpPageWithPath(object sender, string path)
+        public bool JumpPageWithPath(object? sender, string path)
         {
             if (this.Book == null || this.Book.IsMedia) return false;
 
             var page = this.Book.Pages.GetPageWithEntryFullName(path);
-            return this.Book.Control.JumpPage(sender, page);
+            if (page is null) return false;
+            _control.JumpPage(sender, page.Index);
+            return true;
         }
 
         // ページを指定して移動
-        public void JumpPageAs(object sender)
+        public void JumpPageAs(object? sender)
         {
             if (this.Book == null || this.Book.IsMedia) return;
 
@@ -1025,37 +165,20 @@ namespace NeeView
             {
                 var page = this.Book.Pages.GetPage(dialogModel.Value - 1);
                 if (page is null) return;
-                this.Book.Control.JumpPage(sender, page);
+                _control.JumpPage(sender, page.Index);
             }
         }
 
         // 指定ページに移動
-        public void JumpPage(object sender, Page? page)
+        public void JumpPage(object? sender, Page? page)
         {
-            if (_isEnabled && page != null) this.Book?.Control.JumpPage(sender, page);
-        }
-
-        // ランダムページに移動
-        public void JumpRandomPage(object sender)
-        {
-            if (this.Book == null || this.Book.IsMedia) return;
-            if (this.Book.Pages.Count <= 1) return;
-
-            var currentIndex = this.Book.Viewer.GetViewPageIndex();
-
-            var random = new Random();
-            var index = random.Next(this.Book.Pages.Count - 1);
-
-            if (index == currentIndex)
-            {
-                index = this.Book.Pages.Count - 1;
-            }
-
-            var page = this.Book.Pages.GetPage(index);
             if (page is null) return;
-            this.Book.Control.JumpPage(sender, page);
+            _control.JumpPage(sender, page.Index);
         }
 
+        #endregion
+
+        #region BookCommand : メディア操作
 
         // 動画再生中？
         public bool IsMediaPlaying()
@@ -1095,284 +218,6 @@ namespace NeeView
             }
         }
 
-        // スライドショー用：次のページへ移動
-        public void NextSlide(object sender)
-        {
-            if (SlideShow.Current.IsPlayingSlideShow)
-            {
-                NextPage(sender);
-            }
-        }
-
-        #endregion
-
-        #region BookCommand : ブックマーク
-
-        // ブックマーク登録可能？
-        public bool CanBookmark()
-        {
-            return (Book != null);
-        }
-
-        // ブックマーク設定
-        public void SetBookmark(bool isBookmark)
-        {
-            if (Book is null) return;
-
-            if (CanBookmark())
-            {
-                var query = new QueryPath(Book.Path);
-
-                if (isBookmark)
-                {
-                    // ignore temporary directory
-                    if (Book.Path.StartsWith(Temporary.Current.TempDirectory))
-                    {
-                        ToastService.Current.Show(new Toast(Resources.Bookmark_Message_TemporaryNotSupportedError, "", ToastIcon.Error));
-                        return;
-                    }
-
-                    BookmarkCollectionService.Add(query);
-                }
-                else
-                {
-                    BookmarkCollectionService.Remove(query);
-                }
-
-                RaisePropertyChanged(nameof(IsBookmark));
-            }
-        }
-
-        // ブックマーク切り替え
-        public void ToggleBookmark()
-        {
-            if (CanBookmark())
-            {
-                SetBookmark(!IsBookmark);
-            }
-        }
-
-        // ブックマーク判定
-        public bool IsBookmark
-        {
-            get
-            {
-                return Book is not null && BookmarkCollection.Current.Contains(Book.Path);
-            }
-        }
-
-        #endregion
-
-        #region BookCommand : マーク
-
-        // プレイリストに追加、削除された
-        public event EventHandler? MarkersChanged;
-
-        //
-        private void Playlist_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
-        {
-            if (!IsValid)
-            {
-                return;
-            }
-
-            if (Address is null) return;
-
-            var placeQuery = new QueryPath(Address);
-
-            var newItems = e.NewItems?.Cast<PlaylistItem>();
-            var oldItems = e.OldItems?.Cast<PlaylistItem>();
-
-            switch (e.Action)
-            {
-                case NotifyCollectionChangedAction.Reset:
-                    UpdateMarkers();
-                    break;
-
-                case NotifyCollectionChangedAction.Add:
-                    if (newItems is null) throw new InvalidOperationException();
-                    if (newItems.Any(x => x.Path.StartsWith(Address)))
-                    {
-                        UpdateMarkers();
-                    }
-                    break;
-
-                case NotifyCollectionChangedAction.Remove:
-                    if (oldItems is null) throw new InvalidOperationException();
-                    if (oldItems.Any(x => x.Path.StartsWith(Address)))
-                    {
-                        UpdateMarkers();
-                    }
-                    break;
-
-                case NotifyCollectionChangedAction.Replace:
-                    if (newItems is null) throw new InvalidOperationException();
-                    if (oldItems is null) throw new InvalidOperationException();
-                    if (!oldItems.SequenceEqual(newItems) && oldItems.Union(newItems).Any(x => x.Path.StartsWith(Address)))
-                    {
-                        UpdateMarkers();
-                    }
-                    break;
-            }
-        }
-
-        // 表示ページのマーク判定
-        public bool IsMarked
-        {
-            get
-            {
-                var book = this.Book;
-                if (book is null) return false;
-                var page = book.Viewer.GetViewPage();
-                if (page is null) return false;
-                return book.Marker.IsMarked(page);
-            }
-        }
-
-        // ページマーク登録可能？
-        public bool CanMark()
-        {
-            var book = this.Book;
-            if (book is null) return false;
-            var page = book.Viewer.GetViewPage();
-            if (page is null) return false;
-            return CanMark(page);
-        }
-
-        public bool CanMark(Page page)
-        {
-            if (this.Book is null) return false;
-
-            var bookPlaylist = new BookPlaylist(this.Book, PlaylistHub.Current.Playlist);
-            return bookPlaylist.IsEnabled(page);
-        }
-
-        // マーカー追加/削除
-        public PlaylistItem? SetMark(bool isMark)
-        {
-            if (!_isEnabled) return null;
-
-            var book = this.Book;
-            if (book is null) return null;
-            var page = book.Viewer.GetViewPage();
-            if (page is null) return null;
-
-            if (!CanMark(page))
-            {
-                return null;
-            }
-
-            var bookPlaylist = new BookPlaylist(book, PlaylistHub.Current.Playlist);
-            return bookPlaylist.Set(page, isMark);
-        }
-
-        // マーカー切り替え
-        public PlaylistItem? ToggleMark()
-        {
-            if (!_isEnabled) return null;
-
-            var book = this.Book;
-            if (book is null) return null;
-            var page = book.Viewer.GetViewPage();
-            if (page is null) return null;
-
-            if (!CanMark(page))
-            {
-                return null;
-            }
-
-            var bookPlaylist = new BookPlaylist(book, PlaylistHub.Current.Playlist);
-            return bookPlaylist.Toggle(page);
-        }
-
-        #region 開発用
-
-        /// <summary>
-        /// (開発用) たくさんのページマーク作成
-        /// </summary>
-        [Conditional("DEBUG")]
-        public void Test_MakeManyMarkers()
-        {
-            if (Book == null) return;
-            var bookPlaylist = new BookPlaylist(this.Book, PlaylistHub.Current.Playlist);
-
-            for (int index = 0; index < Book.Pages.Count; index += 100)
-            {
-                var page = Book.Pages[index];
-                bookPlaylist.Add(page);
-            }
-        }
-
-        #endregion
-
-        // マーカー表示更新
-        public void UpdateMarkers()
-        {
-            if (Book == null) return;
-
-            // 本にマーカを設定
-            var bookPlaylist = new BookPlaylist(this.Book, PlaylistHub.Current.Playlist);
-            var pages = bookPlaylist.Collect();
-
-            this.Book.Marker.SetMarkers(pages);
-
-            // 表示更新
-            MarkersChanged?.Invoke(this, EventArgs.Empty);
-            RaisePropertyChanged(nameof(IsMarked));
-        }
-
-        //
-        public bool CanPrevMarkInPlace(MovePlaylsitItemInBookCommandParameter param)
-        {
-            var book = this.Book;
-            if (book is null) return false;
-
-            return (book.Marker.Markers != null && book.Marker.Markers.Count > 0) || param.IsIncludeTerminal;
-        }
-
-        //
-        public bool CanNextMarkInPlace(MovePlaylsitItemInBookCommandParameter param)
-        {
-            var book = this.Book;
-            if (book is null) return false;
-
-            return (book.Marker.Markers != null && book.Marker.Markers.Count > 0) || param.IsIncludeTerminal;
-        }
-
-        // ページマークに移動
-        public void PrevMarkInPlace(MovePlaylsitItemInBookCommandParameter param)
-        {
-            if (!_isEnabled || this.Book == null) return;
-            var result = this.Book.Control.RequestJumpToMarker(this, -1, param.IsLoop, param.IsIncludeTerminal);
-            if (result != null)
-            {
-                var bookPlaylist = new BookPlaylist(this.Book, PlaylistHub.Current.Playlist);
-                var item = bookPlaylist.Find(result);
-                PlaylistPresenter.Current?.PlaylistListBox?.SetSelectedItem(item);
-            }
-            else
-            {
-                InfoMessage.Current.SetMessage(InfoMessageType.Notify, Properties.Resources.Notice_FirstPlaylistItem);
-            }
-        }
-
-        // ページマークに移動
-        public void NextMarkInPlace(MovePlaylsitItemInBookCommandParameter param)
-        {
-            if (!_isEnabled || this.Book == null) return;
-            var result = this.Book.Control.RequestJumpToMarker(this, +1, param.IsLoop, param.IsIncludeTerminal);
-            if (result != null)
-            {
-                var bookPlaylist = new BookPlaylist(this.Book, PlaylistHub.Current.Playlist);
-                var item = bookPlaylist.Find(result);
-                PlaylistPresenter.Current?.PlaylistListBox?.SetSelectedItem(item);
-            }
-            else
-            {
-                InfoMessage.Current.SetMessage(InfoMessageType.Notify, Properties.Resources.Notice_LastPlaylistItem);
-            }
-        }
-
         #endregion
 
         #region BookCommand : 下位ブックに移動
@@ -1388,7 +233,92 @@ namespace NeeView
             var page = Book?.Viewer.GetViewPage();
             if (page != null && page.PageType == PageType.Folder)
             {
-                BookHub.Current.RequestLoad(sender, page.Entry.SystemPath, null, BookLoadOption.IsBook | BookLoadOption.SkipSamePlace, true);
+                _bookHub.RequestLoad(sender, page.Entry.SystemPath, null, BookLoadOption.IsBook | BookLoadOption.SkipSamePlace, true);
+            }
+        }
+
+        #endregion
+
+        #region ページ読み込み完了待機
+
+        /// <summary>
+        /// 表示ページ読み込み完了まで待機
+        /// </summary>
+        public void Wait(CancellationToken token)
+        {
+            BookHub bookHub = BookHub.Current;
+
+            var book = bookHub.GetCurrentBook();
+            if (!bookHub.IsBusy && book?.Control.IsViewContentsLoading != true)
+            {
+                return;
+            }
+
+            // BookHubのコマンド処理が終わるまで待機
+            var eventFlag = new ManualResetEventSlim();
+            bookHub.IsBusyChanged += BookHub_IsBusyChanged;
+            try
+            {
+                if (bookHub.IsBusy)
+                {
+                    eventFlag.Wait(token);
+                }
+            }
+            finally
+            {
+                bookHub.IsBusyChanged -= BookHub_IsBusyChanged;
+            }
+
+            book = bookHub.GetCurrentBook();
+            if (book is null)
+            {
+                return;
+            }
+
+            // 表示ページの読み込みが終わるまで待機
+            eventFlag.Reset();
+            bool _isBookChanged = false;
+            bookHub.BookChanged += BookOperation_BookChanged;
+            book.Control.ViewContentsLoading += BookControl_ViewContentsLoading;
+            try
+            {
+                if (book.Control.IsViewContentsLoading)
+                {
+                    eventFlag.Wait(token);
+                }
+            }
+            finally
+            {
+                bookHub.BookChanged -= BookOperation_BookChanged;
+                book.Control.ViewContentsLoading -= BookControl_ViewContentsLoading;
+            }
+
+            // 待機中にブックが変更された場合はそのブックで再待機
+            if (_isBookChanged)
+            {
+                Wait(token);
+            }
+
+            void BookHub_IsBusyChanged(object? sender, JobIsBusyChangedEventArgs e)
+            {
+                if (!e.IsBusy)
+                {
+                    eventFlag.Set();
+                }
+            }
+
+            void BookOperation_BookChanged(object? sender, BookChangedEventArgs e)
+            {
+                _isBookChanged = true;
+                eventFlag.Set();
+            }
+
+            void BookControl_ViewContentsLoading(object? sender, ViewContentsLoadingEventArgs e)
+            {
+                if (!e.IsLoading)
+                {
+                    eventFlag.Set();
+                }
             }
         }
 

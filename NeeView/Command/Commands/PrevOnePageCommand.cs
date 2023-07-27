@@ -19,7 +19,7 @@
 
         public override void Execute(object? sender, CommandContext e)
         {
-            BookOperation.Current.PrevOnePage(this);
+            BookOperation.Current.Control.PrevOnePage(this);
         }
     }
 }

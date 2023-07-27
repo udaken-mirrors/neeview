@@ -302,6 +302,7 @@ namespace NeeView
         #region ページの削除
 
         // ページの削除
+        // NOTE: 実際にはページ削除時にブック再読み込みを行うため、この処理は使用されない
         public void Remove(List<Page> pages)
         {
             if (_disposedValue) return;

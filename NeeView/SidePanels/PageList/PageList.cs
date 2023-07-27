@@ -27,7 +27,7 @@ namespace NeeView
 
         private PageList()
         {
-            BookOperation.Current.AddPropertyChanged(nameof(BookOperation.PageList), BookOperation_PageListChanged);
+            BookOperation.Current.Property.AddPropertyChanged(nameof(BookPagePropertyProxy.PageList), BookOperation_PageListChanged);
 
             PageHistory.Current.Changed += (s, e) => PageHistoryChanged?.Invoke(s, e);
         }
@@ -113,7 +113,7 @@ namespace NeeView
 
 
         // ページリスト(表示部用)
-        public ObservableCollection<Page>? PageCollection => BookOperation.Current.PageList;
+        public ObservableCollection<Page>? PageCollection => BookOperation.Current.Property.PageList;
 
         public List<Page>? Items
         {
@@ -151,13 +151,13 @@ namespace NeeView
 
         public void Loaded()
         {
-            BookOperation.Current.ViewContentsChanged += BookOperation_ViewContentsChanged;
+            BookOperation.Current.Property.ViewContentsChanged += BookOperation_ViewContentsChanged;
             RefreshSelectedItem();
         }
 
         public void Unloaded()
         {
-            BookOperation.Current.ViewContentsChanged -= BookOperation_ViewContentsChanged;
+            BookOperation.Current.Property.ViewContentsChanged -= BookOperation_ViewContentsChanged;
         }
 
         /// <summary>

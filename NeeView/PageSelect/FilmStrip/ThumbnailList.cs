@@ -137,7 +137,7 @@ namespace NeeView
         /// <summary>
         /// フィルムストリップ表示状態
         /// </summary>
-        public Visibility ThumbnailListVisibility => BookOperation.Current.GetPageCount() > 0 ? Visibility.Visible : Visibility.Collapsed;
+        public Visibility ThumbnailListVisibility => BookOperation.Current.Property.GetPageCount() > 0 ? Visibility.Visible : Visibility.Collapsed;
 
         /// <summary>
         /// スライダー方向
@@ -262,12 +262,12 @@ namespace NeeView
             if (IsSliderDirectionReversed)
             {
                 // 右から左
-                this.Items = BookOperation.Current.PageList != null ? new ObservableCollection<Page>(BookOperation.Current.PageList.Reverse()) : null;
+                this.Items = BookOperation.Current.Property.PageList != null ? new ObservableCollection<Page>(BookOperation.Current.Property.PageList.Reverse()) : null;
             }
             else
             {
                 // 左から右
-                this.Items = BookOperation.Current.PageList;
+                this.Items = BookOperation.Current.Property.PageList;
             }
         }
 
@@ -341,7 +341,7 @@ namespace NeeView
                 direction = -direction;
             }
 
-            var pageList = BookOperation.Current.PageList;
+            var pageList = BookOperation.Current.Property.PageList;
 
             if (pageList == null || Config.Current.FilmStrip.ImageWidth < 8.0) return;
 
@@ -349,7 +349,7 @@ namespace NeeView
             if (!Config.Current.FilmStrip.IsEnabled) return;
 
             // 本の切り替え中は処理しない
-            if (!BookOperation.Current.IsEnabled) return;
+            if (BookOperation.Current.IsLoading) return;
 
             /////Debug.WriteLine($"> RequestThumbnail: {start} - {start + count - 1}");
 

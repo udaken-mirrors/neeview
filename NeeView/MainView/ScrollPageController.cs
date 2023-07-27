@@ -54,7 +54,7 @@ namespace NeeView
             if (!isScrolled && !_repeatLimiter.IsLimit((int)(parameter.LineBreakStopTime * 1000.0)))
             {
                 _viewContent.ContentCanvas.NextViewOrigin = (_bookSettingPresenter.LatestSetting.BookReadOrder == PageReadOrder.RightToLeft) ? DragViewOrigin.RightBottom : DragViewOrigin.LeftBottom;
-                _bookOperation.PrevPage(sender);
+                _bookOperation.Control.PrevPage(sender);
             }
 
             _repeatLimiter.Reset();
@@ -72,7 +72,7 @@ namespace NeeView
             if (!isScrolled && !_repeatLimiter.IsLimit((int)(parameter.LineBreakStopTime * 1000.0)))
             {
                 _viewContent.ContentCanvas.NextViewOrigin = (_bookSettingPresenter.LatestSetting.BookReadOrder == PageReadOrder.RightToLeft) ? DragViewOrigin.RightTop : DragViewOrigin.LeftTop;
-                _bookOperation.NextPage(sender);
+                _bookOperation.Control.NextPage(sender);
             }
 
             _repeatLimiter.Reset();

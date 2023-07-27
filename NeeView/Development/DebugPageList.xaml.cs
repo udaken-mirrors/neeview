@@ -27,7 +27,7 @@ namespace NeeView
             InitializeComponent();
             this.Root.DataContext = new DevPageListViewModel();
 
-            BookOperation.Current.ViewContentsChanged += BookOperation_ViewContentsChanged;
+            BookOperation.Current.Property.ViewContentsChanged += BookOperation_ViewContentsChanged;
         }
 
         private void BookOperation_ViewContentsChanged(object? sender, ViewContentSourceCollectionChangedEventArgs e)

@@ -157,7 +157,7 @@ namespace NeeView
         }
 
         // 指定ページに移動
-        public bool JumpPage(object sender, Page? page)
+        public bool JumpPage(object? sender, Page? page)
         {
             if (_disposedValue) return false;
 
@@ -176,9 +176,18 @@ namespace NeeView
             }
         }
 
+        // 指定ページに移動
+        public void JumpPage(object? sender, PagePosition position, int direction)
+        {
+            if (_disposedValue) return;
+
+            RequestSetPosition(sender, position, direction);
+        }
+
+
         // ページマーク移動
         // TODO: もっと上のレベルでページマークの取得と移動の発行を行う
-        public Page? RequestJumpToMarker(object sender, int direction, bool isLoop, bool isIncludeTerminal)
+        public Page? JumpToMarker(object sender, int direction, bool isLoop, bool isIncludeTerminal)
         {
             Debug.Assert(direction == 1 || direction == -1);
 
@@ -206,7 +215,7 @@ namespace NeeView
         /// <param name="sender"></param>
         /// <param name="position">ページ位置</param>
         /// <param name="direction">読む方向(+1 or -1)</param>
-        public void RequestSetPosition(object? sender, PagePosition position, int direction)
+        private void RequestSetPosition(object? sender, PagePosition position, int direction)
         {
             Debug.Assert(direction == 1 || direction == -1);
 
@@ -225,7 +234,7 @@ namespace NeeView
         }
 
         // ページ相対移動
-        public void RequestMovePosition(object? sender, int step)
+        private void RequestMovePosition(object? sender, int step)
         {
             var command = new BookCommandJoinAction(sender, Execute, step, 0);
             _commandEngine.Enqueue(command);
@@ -238,7 +247,7 @@ namespace NeeView
         }
 
         // リフレッシュ
-        public void RequestRefresh(object sender, bool isClear)
+        private void RequestRefresh(object sender, bool isClear)
         {
             var command = new BookCommandAction(sender, Execute, 1);
             _commandEngine.Enqueue(command);
@@ -251,7 +260,7 @@ namespace NeeView
         }
 
         // ソート
-        public void RequestSort(object sender)
+        private void RequestSort(object sender)
         {
             var command = new BookCommandAction(sender, Execute, 2);
             _commandEngine.Enqueue(command);

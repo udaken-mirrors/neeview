@@ -1,6 +1,5 @@
 ﻿using System;
 
-// TODO: コマンド類の何時でも受付。ロード中だから弾く、ではない別の方法を。
 
 namespace NeeView
 {
@@ -12,6 +11,8 @@ namespace NeeView
         }
 
         public string? Path { get; set; }
+
+        public bool IsLoading => Path != null;
     }
 }
 

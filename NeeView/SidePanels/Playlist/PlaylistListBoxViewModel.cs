@@ -126,14 +126,15 @@ namespace NeeView
 
         private void CollectionViewSourceFilter(object? sender, FilterEventArgs e)
         {
+            var book = BookOperation.Current.Book;
+
             if (e.Item is null)
             {
                 e.Accepted = false;
             }
-            else if (Config.Current.Playlist.IsCurrentBookFilterEnabled && BookOperation.Current.IsValid)
+            else if (Config.Current.Playlist.IsCurrentBookFilterEnabled && book is not null)
             {
                 var item = (PlaylistItem)e.Item;
-                var book = BookOperation.Current.Book;
                 e.Accepted = book is null || (item.Path.StartsWith(book.Path) && book.Pages.PageMap.ContainsKey(item.Path));
             }
             else
@@ -215,7 +216,7 @@ namespace NeeView
         {
             if (_items is null) return null;
 
-            var path = BookOperation.Current.GetPage()?.EntryFullName;
+            var path = BookOperation.Current.Property.GetPage()?.EntryFullName;
             if (path is null) return null;
 
             var targetItem = this.IsFirstIn ? _items.FirstOrDefault() : null;

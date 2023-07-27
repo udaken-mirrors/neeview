@@ -15,12 +15,12 @@ namespace NeeView
 
         public override bool CanExecute(object? sender, CommandContext e)
         {
-            return BookOperation.Current.CanNextMarkInPlace(e.Parameter.Cast<MovePlaylsitItemInBookCommandParameter>());
+            return BookOperation.Current.Playlist.CanNextMarkInPlace(e.Parameter.Cast<MovePlaylsitItemInBookCommandParameter>());
         }
 
         public override void Execute(object? sender, CommandContext e)
         {
-            BookOperation.Current.NextMarkInPlace(e.Parameter.Cast<MovePlaylsitItemInBookCommandParameter>());
+            BookOperation.Current.Playlist.NextMarkInPlace(sender, e.Parameter.Cast<MovePlaylsitItemInBookCommandParameter>());
         }
     }
 
