@@ -20,7 +20,7 @@
 
         public override void Execute(object? sender, CommandContext e)
         {
-            BookOperation.Current.Control.NextOnePage(this);
+            BookOperation.Current.Control.MoveNextOne(this);
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Jint.Native;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 
 namespace NeeView
@@ -18,66 +19,66 @@ namespace NeeView
         }
 
 
-        public void FirstPage(object? sender)
+        public void MoveToFirst(object? sender)
         {
             _book.Control.FirstPage(sender);
         }
 
-        public void LastPage(object? sender)
+        public void MoveToLast(object? sender)
         {
             _book.Control.LastPage(sender);
         }
 
-        public void PrevPage(object? sender)
+        public void MovePrev(object? sender)
         {
             _book.Control.PrevPage(sender, 0);
         }
 
-        public void NextPage(object? sender)
+        public void MoveNext(object? sender)
         {
             _book.Control.NextPage(sender, 0);
         }
 
-        public void PrevOnePage(object? sender)
+        public void MovePrevOne(object? sender)
         {
             _book.Control.PrevPage(sender, 1);
         }
 
-        public void NextOnePage(object? sender)
+        public void MoveNextOne(object? sender)
         {
             _book.Control.NextPage(sender, 1);
         }
 
-        public void PrevSizePage(object? sender, int size)
+        public void MovePrevSize(object? sender, int size)
         {
             _book.Control.PrevPage(sender, size);
         }
 
-        public void NextSizePage(object? sender, int size)
+        public void MoveNextSize(object? sender, int size)
         {
             _book.Control.NextPage(sender, size);
         }
 
-        public void PrevFolderPage(object? sender, bool isShowMessage)
+        public void MovePrevFolder(object? sender, bool isShowMessage)
         {
             var index = _book.Control.PrevFolderPage(sender);
             ShowMoveFolderPageMessage(index, Properties.Resources.Notice_FirstFolderPage, isShowMessage);
         }
 
-        public void NextFolderPage(object? sender, bool isShowMessage)
+        public void MoveNextFolder(object? sender, bool isShowMessage)
         {
             var index = _book.Control.NextFolderPage(sender);
             ShowMoveFolderPageMessage(index, Properties.Resources.Notice_LastFolderPage, isShowMessage);
         }
 
-        public void JumpPage(object? sender, int index)
+        public void MoveTo(object? sender, int index)
         {
             if (_book == null || _book.IsMedia) return;
 
             _book.Control.JumpPage(sender, new PagePosition(index, 0), 1);
         }
 
-        public void JumpRandomPage(object? sender)
+        public void MoveToRandom(object? sender)
         {
             if (_book.Pages.Count <= 1) return;
 
@@ -95,12 +96,12 @@ namespace NeeView
         }
 
 
-        public void PrevScrollPage(object? sender, ScrollPageCommandParameter parameter)
+        public void ScrollToPrevFrame(object? sender, ScrollPageCommandParameter parameter)
         {
             MainViewComponent.Current.ViewController.PrevScrollPage(sender, parameter);
         }
 
-        public void NextScrollPage(object? sender, ScrollPageCommandParameter parameter)
+        public void ScrollToNextFrame(object? sender, ScrollPageCommandParameter parameter)
         {
             MainViewComponent.Current.ViewController.NextScrollPage(sender, parameter);
         }
@@ -123,7 +124,7 @@ namespace NeeView
                 InfoMessage.Current.SetMessage(InfoMessageType.Notify, directory);
             }
         }
-        
+
     }
 
 

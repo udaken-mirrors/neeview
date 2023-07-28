@@ -219,7 +219,8 @@ namespace NeeView
         {
             Debug.Assert(direction == 1 || direction == -1);
 
-            _viewer.DisplayIndex = position.Index;
+            // ここで設定する意味ない？
+            //_viewer.DisplayIndex = position.Index;
 
             //var range = new PageRange(position, direction, _viewer.Setting.PageMode.Size());
             var command = new BookCommandAction(sender, Execute, 0);

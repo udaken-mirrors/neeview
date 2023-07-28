@@ -22,7 +22,7 @@ namespace NeeView
 
         public override void Execute(object? sender, CommandContext e)
         {
-            BookOperation.Current.Control.NextSizePage(this, e.Parameter.Cast<MoveSizePageCommandParameter>().Size);
+            BookOperation.Current.Control.MoveNextSize(this, e.Parameter.Cast<MoveSizePageCommandParameter>().Size);
         }
     }
 

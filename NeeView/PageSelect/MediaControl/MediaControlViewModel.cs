@@ -78,11 +78,11 @@ namespace NeeView
             {
                 if (turn < 0)
                 {
-                    BookOperation.Current.Control.NextPage(this);
+                    BookOperation.Current.Control.MoveNext(this);
                 }
                 else
                 {
-                    BookOperation.Current.Control.PrevPage(this);
+                    BookOperation.Current.Control.MovePrev(this);
                 }
             }
         }

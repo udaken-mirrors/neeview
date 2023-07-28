@@ -1,5 +1,6 @@
 ﻿using NeeLaboratory.ComponentModel;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Windows.Forms;
 
@@ -8,7 +9,6 @@ namespace NeeView
     public class BookPageProperty : BindableBase, IDisposable, IBookPageProperty
     {
         private Book _book;
-        private ObservableCollection<Page>? _pageList;
         private bool _disposedValue;
 
         public BookPageProperty(Book book)
@@ -18,9 +18,11 @@ namespace NeeView
             _book.Pages.PagesSorted += Book_PagesSorted;
             _book.Pages.PageRemoved += Book_PageRemoved;
             _book.Viewer.Loader.ViewContentsChanged += Book_ViewContentsChanged;
+            _book.Viewer.SelectedRangeChanged += Book_SelectedRangeChanged;
 
-            UpdatePageList(false);
+            UpdatePageList();
         }
+
 
 
         // ページが変更された
@@ -29,11 +31,22 @@ namespace NeeView
         // ページリストが変更された
         public event EventHandler? PageListChanged;
 
-        // ページがソートされた
-        public event EventHandler? PagesSorted;
+        // 選択項目変更
+        public event EventHandler<SelectedRangeChangedEventArgs>? SelectedItemChanged;
 
-        // ページが削除された
-        public event EventHandler<PageRemovedEventArgs>? PageRemoved;
+
+
+        public int SelectedIndex
+        {
+            get => _book.Viewer.SelectedRange.Min.Index;
+            set => throw new NotImplementedException();
+        }
+
+        public int MaxIndex
+        {
+            get => _book.Pages.Count <= 0 ? 0 : _book.Pages.Count - 1;
+        }
+
 
 
         public bool IsBusy
@@ -41,10 +54,7 @@ namespace NeeView
             get { return _book.Viewer.Loader.IsBusy; }
         }
 
-        public ObservableCollection<Page>? PageList
-        {
-            get { return _pageList; }
-        }
+        public IReadOnlyList<Page>? PageList => _book.Pages;
 
         public PageSortModeClass PageSortModeClass
         {
@@ -62,6 +72,7 @@ namespace NeeView
                     _book.Pages.PagesSorted -= Book_PagesSorted;
                     _book.Pages.PageRemoved -= Book_PageRemoved;
                     _book.Viewer.Loader.ViewContentsChanged -= Book_ViewContentsChanged;
+                    _book.Viewer.SelectedRangeChanged -= Book_SelectedRangeChanged;
                 }
                 _disposedValue = true;
             }
@@ -75,26 +86,28 @@ namespace NeeView
 
         private void Book_PagesSorted(object? sender, EventArgs e)
         {
-            AppDispatcher.Invoke(() =>
-            {
-                UpdatePageList(true);
-                PagesSorted?.Invoke(this, e);
-            });
+            AppDispatcher.Invoke(() => UpdatePageList());
         }
 
         private void Book_PageRemoved(object? sender, PageRemovedEventArgs e)
         {
-            AppDispatcher.Invoke(() =>
-            {
-                UpdatePageList(true);
-                PageRemoved?.Invoke(sender, e);
-            });
+            AppDispatcher.Invoke(() => UpdatePageList());
         }
 
         private void Book_ViewContentsChanged(object? sender, ViewContentSourceCollectionChangedEventArgs e)
         {
             AppDispatcher.Invoke(() => ViewContentsChanged?.Invoke(sender, e));
         }
+
+        private void Book_SelectedRangeChanged(object? sender, SelectedRangeChangedEventArgs e)
+        {
+            AppDispatcher.Invoke(() =>
+            {
+                RaisePropertyChanged(nameof(SelectedIndex));
+                SelectedItemChanged?.Invoke(sender, e);
+            });
+        }
+
 
         // 現在ベージ取得
         public Page? GetPage()
@@ -105,9 +118,8 @@ namespace NeeView
         // 現在ページ番号取得
         public int GetPageIndex()
         {
-            return _book.Viewer.DisplayIndex; // GetPosition().Index;
+            return _book.Viewer.SelectedRange.Min.Index;
         }
-
 
         /// <summary>
         /// 最大ページ番号取得
@@ -131,18 +143,10 @@ namespace NeeView
 
 
         // ページリスト更新
-        private void UpdatePageList(bool raisePageListChanged)
+        private void UpdatePageList()
         {
-            var pages = _book.Pages;
-            var pageList = pages != null ? new ObservableCollection<Page>(pages) : null;
-
-            if (SetProperty(ref _pageList, pageList, nameof(PageList)))
-            {
-                if (raisePageListChanged)
-                {
-                    PageListChanged?.Invoke(this, EventArgs.Empty);
-                }
-            }
+            RaisePropertyChanged(nameof(PageList));
+            PageListChanged?.Invoke(this, EventArgs.Empty);
         }
 
     }

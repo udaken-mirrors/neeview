@@ -207,7 +207,7 @@ namespace NeeView
         private void UpdateViewItems(List<Page> items, int direction)
         {
             if (!this.ListBox.IsLoaded) return;
-            if (_vm.Model.PageCollection == null) return;
+            if (_vm.Model.Items == null) return;
             if (!this.IsVisible) return;
 
             if (items.Count == 1)

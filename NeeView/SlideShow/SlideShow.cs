@@ -194,7 +194,7 @@ namespace NeeView
                 }
 
                 // ページ移動
-                BookOperation.Current.Control.NextPage(sender);
+                BookOperation.Current.Control.MoveNext(sender);
             });
         }
 

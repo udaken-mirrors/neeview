@@ -259,15 +259,21 @@ namespace NeeView
 
         private void UpdateItems()
         {
-            if (IsSliderDirectionReversed)
+            var pageList = BookOperation.Current.Property.PageList;
+
+            if (pageList is null)
+            {
+                this.Items = null;
+            }
+            else if (IsSliderDirectionReversed)
             {
                 // 右から左
-                this.Items = BookOperation.Current.Property.PageList != null ? new ObservableCollection<Page>(BookOperation.Current.Property.PageList.Reverse()) : null;
+                this.Items = new ObservableCollection<Page>(pageList.Reverse());
             }
             else
             {
                 // 左から右
-                this.Items = BookOperation.Current.Property.PageList;
+                this.Items = new ObservableCollection<Page>(pageList);
             }
         }
 

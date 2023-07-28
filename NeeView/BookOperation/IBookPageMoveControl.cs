@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace NeeView
 {
@@ -7,44 +8,29 @@ namespace NeeView
     /// </summary>
     public interface IBookPageMoveControl
     {
-        void PrevPage(object? sender);
-        void NextPage(object? sender);
+        //public IReadOnlyList<Page> Pages { get; }
+        //public int SelectedIndex { get; set; }
+        //public int MaxIndex { get; }
 
-        void PrevOnePage(object? sender);
-        void NextOnePage(object? sender);
+        void MovePrev(object? sender);
+        void MoveNext(object? sender);
 
-        void PrevScrollPage(object? sender, ScrollPageCommandParameter parameter);
-        void NextScrollPage(object? sender, ScrollPageCommandParameter parameter);
+        void MovePrevOne(object? sender);
+        void MoveNextOne(object? sender);
 
-        void JumpPage(object? sender, int index);
-        void JumpRandomPage(object? sender);
+        void ScrollToPrevFrame(object? sender, ScrollPageCommandParameter parameter);
+        void ScrollToNextFrame(object? sender, ScrollPageCommandParameter parameter);
 
-        void PrevSizePage(object? sender, int size);
-        void NextSizePage(object? sender, int size);
+        void MoveTo(object? sender, int index);
+        void MoveToRandom(object? sender);
 
-        void PrevFolderPage(object? sender, bool isShowMessage);
-        void NextFolderPage(object? sender, bool isShowMessage);
+        void MovePrevSize(object? sender, int size);
+        void MoveNextSize(object? sender, int size);
 
-        void FirstPage(object? sender);
-        void LastPage(object? sender);
-    }
+        void MovePrevFolder(object? sender, bool isShowMessage);
+        void MoveNextFolder(object? sender, bool isShowMessage);
 
-
-    public class DummyPageMoveControl : IBookPageMoveControl
-    {
-        public void FirstPage(object? sender) { }
-        public void JumpPage(object? sender, int index) { }
-        public void JumpRandomPage(object? sender) { }
-        public void LastPage(object? sender) { }
-        public void NextFolderPage(object? sender, bool isShowMessage) { }
-        public void NextOnePage(object? sender) { }
-        public void NextPage(object? sender) { }
-        public void NextScrollPage(object? sender, ScrollPageCommandParameter parameter) { }
-        public void NextSizePage(object? sender, int size) { }
-        public void PrevFolderPage(object? sender, bool isShowMessage) { }
-        public void PrevOnePage(object? sender) { }
-        public void PrevPage(object? sender) { }
-        public void PrevScrollPage(object? sender, ScrollPageCommandParameter parameter) { }
-        public void PrevSizePage(object? sender, int size) { }
+        void MoveToFirst(object? sender);
+        void MoveToLast(object? sender);
     }
 }

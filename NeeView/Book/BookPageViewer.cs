@@ -50,13 +50,39 @@ namespace NeeView
         }
 
 
+        #region SelectedRange
+        // ページリストの更新等に ViewContentChanged が使用されているが、その代替になるように
+
+        public event EventHandler<SelectedRangeChangedEventArgs>? SelectedRangeChanged;
+
+        public IDisposable SubscribeSelectedRangeChanged(EventHandler<SelectedRangeChangedEventArgs> handler)
+        {
+            SelectedRangeChanged += handler;
+            return new AnonymousDisposable(() => SelectedRangeChanged -= handler);
+        }
+
+        public PageRange _selectedRange;
+
+        public PageRange SelectedRange
+        {
+            get { return _selectedRange; }
+            set { SetSelectedItem(this, value, true); }
+        }
+
+        public void SetSelectedItem(object? sender, PageRange value, bool fromOutsize)
+        {
+            if (_selectedRange != value)
+            {
+                _selectedRange = value;
+                RaisePropertyChanged(nameof(SelectedRange));
+                SelectedRangeChanged?.Invoke(sender, new SelectedRangeChangedEventArgs(fromOutsize));
+            }
+        }
+
+        #endregion SelectedRange
+
 
         public BookPageLoader Loader => _loader;
-
-
-
-        // 表示されるページ番号(スライダー用)
-        public int DisplayIndex { get; set; }
 
         // 表示ページ変更回数
         public int PageChangeCount { get; private set; }
@@ -72,7 +98,7 @@ namespace NeeView
         private void Loader_ViewContentsChanged(object? sender, ViewContentSourceCollectionChangedEventArgs e)
         {
             Interlocked.Exchange(ref _viewPageCollection, e.ViewPageCollection);
-            this.DisplayIndex = e.ViewPageCollection.Range.Min.Index;
+            SetSelectedItem(sender, e.ViewPageCollection.Range, false);
         }
 
 

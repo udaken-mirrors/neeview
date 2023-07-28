@@ -211,7 +211,7 @@
                  FocusVisualStyle="{x:Null}"
                  ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                  HorizontalContentAlignment="Stretch"
-                 ItemsSource="{Binding Model.PageCollection, NotifyOnTargetUpdated=True}"
+                 ItemsSource="{Binding Model.Items, NotifyOnTargetUpdated=True}"
                  SelectedItem="{Binding Model.SelectedItem}"
                  SelectionChanged="PageList_SelectionChanged"
                  KeyDown="PageList_KeyDown"

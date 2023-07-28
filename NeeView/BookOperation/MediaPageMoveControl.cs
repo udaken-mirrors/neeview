@@ -16,71 +16,71 @@ namespace NeeView
             _book = book;
         }
 
-        public void FirstPage(object? sender)
+        public void MoveToFirst(object? sender)
         {
             MediaPlayerOperator.Current?.SetPositionFirst();
         }
 
-        public void LastPage(object? sender)
+        public void MoveToLast(object? sender)
         {
             MediaPlayerOperator.Current?.SetPositionLast();
         }
 
-        public void PrevPage(object? sender)
+        public void MovePrev(object? sender)
         {
             MoveMediaPage(sender, -1);
         }
 
-        public void NextPage(object? sender)
+        public void MoveNext(object? sender)
         {
             MoveMediaPage(sender, +1);
         }
 
-        public void PrevOnePage(object? sender)
+        public void MovePrevOne(object? sender)
         {
             MoveMediaPage(sender, -1);
         }
 
-        public void NextOnePage(object? sender)
+        public void MoveNextOne(object? sender)
         {
             MoveMediaPage(sender, +1);
         }
 
-        public void PrevSizePage(object? sender, int size)
+        public void MovePrevSize(object? sender, int size)
         {
             MoveMediaPage(sender, -size);
         }
 
-        public void NextSizePage(object? sender, int size)
+        public void MoveNextSize(object? sender, int size)
         {
             MoveMediaPage(sender, +size);
         }
 
-        public void PrevFolderPage(object? sender, bool isShowMessage)
+        public void MovePrevFolder(object? sender, bool isShowMessage)
         {
             // TODO: チャプター移動？
         }
 
-        public void NextFolderPage(object? sender, bool isShowMessage)
+        public void MoveNextFolder(object? sender, bool isShowMessage)
         {
             // TODO: チャプター移動？
         }
 
-        public void JumpPage(object? sender, int index)
+        public void MoveTo(object? sender, int index)
         {
             // TODO: 時間指定移動？
         }
 
-        public void JumpRandomPage(object? sender)
+        public void MoveToRandom(object? sender)
         {
         }
 
-        public void PrevScrollPage(object? sender, ScrollPageCommandParameter parameter)
+        public void ScrollToPrevFrame(object? sender, ScrollPageCommandParameter parameter)
         {
             MainViewComponent.Current.ViewController.PrevScrollPage(sender, parameter);
         }
 
-        public void NextScrollPage(object? sender, ScrollPageCommandParameter parameter)
+        public void ScrollToNextFrame(object? sender, ScrollPageCommandParameter parameter)
         {
             MainViewComponent.Current.ViewController.NextScrollPage(sender, parameter);
         }

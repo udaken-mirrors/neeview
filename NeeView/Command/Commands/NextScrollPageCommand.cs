@@ -24,7 +24,7 @@ namespace NeeView
 
         public override void Execute(object? sender, CommandContext e)
         {
-            BookOperation.Current.Control.NextScrollPage(sender, e.Parameter.Cast<ScrollPageCommandParameter>());
+            BookOperation.Current.Control.ScrollToNextFrame(sender, e.Parameter.Cast<ScrollPageCommandParameter>());
         }
     }
 

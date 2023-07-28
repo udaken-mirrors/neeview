@@ -9,7 +9,7 @@ using System.Threading;
 
 namespace NeeView
 {
-    public class BookPageCollection : BindableBase, IEnumerable<Page>, IDisposable
+    public class BookPageCollection : BindableBase, IReadOnlyList<Page>, IEnumerable<Page>, IDisposable
     {
         // サムネイル寿命管理
         private readonly PageThumbnailPool _thumbnaulPool = new();

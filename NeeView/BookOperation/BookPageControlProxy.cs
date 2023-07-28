@@ -35,74 +35,74 @@ namespace NeeView
 
         #region IBookPageMoveControl
 
-        public void FirstPage(object? sender)
+        public void MoveToFirst(object? sender)
         {
-            _source?.FirstPage(sender);
+            _source?.MoveToFirst(sender);
         }
 
-        public void JumpPage(object? sender, int index)
+        public void MoveTo(object? sender, int index)
         {
-            _source?.JumpPage(sender, index);
+            _source?.MoveTo(sender, index);
         }
 
-        public void JumpRandomPage(object? sender)
+        public void MoveToRandom(object? sender)
         {
-            _source?.JumpRandomPage(sender);
+            _source?.MoveToRandom(sender);
         }
 
-        public void LastPage(object? sender)
+        public void MoveToLast(object? sender)
         {
-            _source?.LastPage(sender);
+            _source?.MoveToLast(sender);
         }
 
-        public void NextFolderPage(object? sender, bool isShowMessage)
+        public void MoveNextFolder(object? sender, bool isShowMessage)
         {
-            _source?.NextFolderPage(sender, isShowMessage);
+            _source?.MoveNextFolder(sender, isShowMessage);
         }
 
-        public void NextOnePage(object? sender)
+        public void MoveNextOne(object? sender)
         {
-            _source?.NextOnePage(sender);
+            _source?.MoveNextOne(sender);
         }
 
-        public void NextPage(object? sender)
+        public void MoveNext(object? sender)
         {
-            _source?.NextPage(sender);
+            _source?.MoveNext(sender);
         }
 
-        public void NextScrollPage(object? sender, ScrollPageCommandParameter parameter)
+        public void ScrollToNextFrame(object? sender, ScrollPageCommandParameter parameter)
         {
-            _source?.NextScrollPage(sender, parameter);
+            _source?.ScrollToNextFrame(sender, parameter);
         }
 
-        public void NextSizePage(object? sender, int size)
+        public void MoveNextSize(object? sender, int size)
         {
-            _source?.NextSizePage(sender, size);
+            _source?.MoveNextSize(sender, size);
         }
 
-        public void PrevFolderPage(object? sender, bool isShowMessage)
+        public void MovePrevFolder(object? sender, bool isShowMessage)
         {
-            _source?.PrevFolderPage(sender, isShowMessage);
+            _source?.MovePrevFolder(sender, isShowMessage);
         }
 
-        public void PrevOnePage(object? sender)
+        public void MovePrevOne(object? sender)
         {
-            _source?.PrevOnePage(sender);
+            _source?.MovePrevOne(sender);
         }
 
-        public void PrevPage(object? sender)
+        public void MovePrev(object? sender)
         {
-            _source?.PrevPage(sender);
+            _source?.MovePrev(sender);
         }
 
-        public void PrevScrollPage(object? sender, ScrollPageCommandParameter parameter)
+        public void ScrollToPrevFrame(object? sender, ScrollPageCommandParameter parameter)
         {
-            _source?.PrevScrollPage(sender, parameter);
+            _source?.ScrollToPrevFrame(sender, parameter);
         }
 
-        public void PrevSizePage(object? sender, int size)
+        public void MovePrevSize(object? sender, int size)
         {
-            _source?.PrevSizePage(sender, size);
+            _source?.MovePrevSize(sender, size);
         }
 
         #endregion IBookPageMoveControl

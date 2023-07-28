@@ -23,11 +23,13 @@ namespace NeeView
         private Page? _selectedItem;
         private List<Page>? _selectedItems;
         private List<Page> _viewItems = new();
+        private ObservableCollection<Page>? _items;
 
 
         private PageList()
         {
-            BookOperation.Current.Property.AddPropertyChanged(nameof(BookPagePropertyProxy.PageList), BookOperation_PageListChanged);
+            BookOperation.Current.BookChanged += BookOperation_BookChanged;
+            BookOperation.Current.Property.PageListChanged += BookOperation_PageListChanged;
 
             PageHistory.Current.Changed += (s, e) => PageHistoryChanged?.Invoke(s, e);
         }
@@ -113,11 +115,10 @@ namespace NeeView
 
 
         // ページリスト(表示部用)
-        public ObservableCollection<Page>? PageCollection => BookOperation.Current.Property.PageList;
-
-        public List<Page>? Items
+        public ObservableCollection<Page>? Items
         {
-            get { return PageCollection?.ToList(); }
+            get { return _items; }
+            private set { SetProperty(ref _items, value); }
         }
 
         public Page? SelectedItem
@@ -163,8 +164,15 @@ namespace NeeView
         /// <summary>
         /// ブックが変更された時の処理
         /// </summary>
-        private void BookOperation_PageListChanged(object? sender, PropertyChangedEventArgs e)
+        private void BookOperation_BookChanged(object? sender, BookChangedEventArgs e)
         {
+            RefreshCollection();
+        }
+
+        private void BookOperation_PageListChanged(object? sender, EventArgs e)
+        {
+            if (BookOperation.Current.IsLoading) return;
+
             RefreshCollection();
         }
 
@@ -184,7 +192,9 @@ namespace NeeView
         {
             CollectionChanging?.Invoke(this, EventArgs.Empty);
 
-            RaisePropertyChanged(nameof(PageCollection));
+            var pages = BookOperation.Current.Property.PageList;
+            Items = pages is null ? null : new ObservableCollection<Page>(pages);
+
             RaisePropertyChanged(nameof(PlaceDispString));
 
             PageSortModeClass = BookOperation.Current.Book != null ? BookOperation.Current.Book.PageSortModeClass : PageSortModeClass.Full;

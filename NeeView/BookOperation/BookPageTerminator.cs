@@ -52,7 +52,7 @@ namespace NeeView
             // TODO ここでSlideShowを参照しているが、引数で渡すべきでは？
             if (SlideShow.Current.IsPlayingSlideShow && Config.Current.SlideShow.IsSlideShowByLoop)
             {
-                _control.FirstPage(sender);
+                _control.MoveToFirst(sender);
             }
             else
             {
@@ -81,11 +81,11 @@ namespace NeeView
         {
             if (e.Direction < 0)
             {
-                _control.LastPage(sender);
+                _control.MoveToLast(sender);
             }
             else
             {
-                _control.FirstPage(sender);
+                _control.MoveToFirst(sender);
             }
             if (Config.Current.Book.IsNotifyPageLoop)
             {

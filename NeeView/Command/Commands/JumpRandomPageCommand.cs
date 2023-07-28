@@ -15,7 +15,7 @@
 
         public override void Execute(object? sender, CommandContext e)
         {
-            BookOperation.Current.Control.JumpRandomPage(this);
+            BookOperation.Current.Control.MoveToRandom(this);
         }
     }
 }

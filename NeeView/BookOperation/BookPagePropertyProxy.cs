@@ -1,5 +1,6 @@
 ﻿using NeeLaboratory.ComponentModel;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 
@@ -14,22 +15,24 @@ namespace NeeView
         {
         }
 
-
         public event EventHandler? PageListChanged;
-
-        public event EventHandler? PagesSorted;
-
-        public event EventHandler<PageRemovedEventArgs>? PageRemoved;
-
         public event EventHandler<ViewContentSourceCollectionChangedEventArgs>? ViewContentsChanged;
+        public event EventHandler<SelectedRangeChangedEventArgs>? SelectedItemChanged;
 
 
         public bool IsBusy => _source?.IsBusy ?? false;
 
-        public ObservableCollection<Page>? PageList => _source?.PageList ?? null;
+        public IReadOnlyList<Page>? PageList => _source?.PageList ?? null;
 
         public PageSortModeClass PageSortModeClass => _source?.PageSortModeClass ?? PageSortModeClass.Full;
 
+        public int SelectedIndex
+        {
+            get { return _source?.SelectedIndex ?? 0; }
+            set { if (_source is not null) _source.SelectedIndex = value; }
+        }
+
+        public int MaxIndex => _source?.MaxIndex ?? 0;
 
         protected virtual void Dispose(bool disposing)
         {
@@ -59,6 +62,8 @@ namespace NeeView
             RaisePropertyChanged(nameof(IsBusy));
             RaisePropertyChanged(nameof(PageList));
             RaisePropertyChanged(nameof(PageSortModeClass));
+            RaisePropertyChanged(nameof(SelectedIndex));
+            RaisePropertyChanged(nameof(MaxIndex));
             PageListChanged?.Invoke(this, EventArgs.Empty);
         }
 
@@ -71,10 +76,10 @@ namespace NeeView
 
             _source.PropertyChanged += Source_PropertyChanged;
             _source.PageListChanged += Source_PageListChanged;
-            _source.PagesSorted += Source_PagesSorted;
-            _source.PageRemoved += Source_PageRemoved;
             _source.ViewContentsChanged += Source_ViewContentsChanged;
+            _source.SelectedItemChanged += Source_SelectedItemChanged;
         }
+
 
         private void Detach()
         {
@@ -82,9 +87,8 @@ namespace NeeView
 
             _source.PropertyChanged -= Source_PropertyChanged;
             _source.PageListChanged -= Source_PageListChanged;
-            _source.PagesSorted -= Source_PagesSorted;
-            _source.PageRemoved -= Source_PageRemoved;
             _source.ViewContentsChanged -= Source_ViewContentsChanged;
+            _source.SelectedItemChanged -= Source_SelectedItemChanged;
             _source.Dispose();
             _source = null;
         }
@@ -99,19 +103,14 @@ namespace NeeView
             PageListChanged?.Invoke(sender, e);
         }
 
-        private void Source_PagesSorted(object? sender, EventArgs e)
-        {
-            PagesSorted?.Invoke(sender, e);
-        }
-
-        private void Source_PageRemoved(object? sender, PageRemovedEventArgs e)
-        {
-            PageRemoved?.Invoke(sender, e);
-        }
-
         private void Source_ViewContentsChanged(object? sender, ViewContentSourceCollectionChangedEventArgs e)
         {
             ViewContentsChanged?.Invoke(sender, e);
+        }
+
+        private void Source_SelectedItemChanged(object? sender, SelectedRangeChangedEventArgs e)
+        {
+            SelectedItemChanged?.Invoke(sender, e);
         }
 
 
@@ -134,8 +133,5 @@ namespace NeeView
         {
             return _source?.GetPageIndex() ?? 0;
         }
-
-
     }
-
 }

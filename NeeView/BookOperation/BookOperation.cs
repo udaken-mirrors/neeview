@@ -18,6 +18,7 @@ namespace NeeView
 
         private BookHub _bookHub;
         private Book? _book;
+        private bool _isLoading;
 
         public BookPageTerminatorProxy _terminator = new();
         public BookPagePropertyProxy _bookProperty = new();
@@ -59,7 +60,8 @@ namespace NeeView
         }
 
 
-        public bool IsLoading => _bookHub.IsLoading;
+
+        public bool IsLoading => _bookHub.IsLoading || _isLoading;
 
         public Book? Book => _book;
 
@@ -77,6 +79,7 @@ namespace NeeView
 
         private void BookHub_BookChanging(object? sender, BookChangingEventArgs e)
         {
+            _isLoading = true;
             SetBook(null);
             BookChanging?.Invoke(sender, e);
         }
@@ -84,6 +87,7 @@ namespace NeeView
         private void BookHub_BookChanged(object? sender, BookChangedEventArgs e)
         {
             SetBook(_bookHub.GetCurrentBook());
+            _isLoading = false;
             BookChanged?.Invoke(sender, e);
         }
 
@@ -144,7 +148,7 @@ namespace NeeView
 
             var page = this.Book.Pages.GetPageWithEntryFullName(path);
             if (page is null) return false;
-            _control.JumpPage(sender, page.Index);
+            _control.MoveTo(sender, page.Index);
             return true;
         }
 
@@ -165,7 +169,7 @@ namespace NeeView
             {
                 var page = this.Book.Pages.GetPage(dialogModel.Value - 1);
                 if (page is null) return;
-                _control.JumpPage(sender, page.Index);
+                _control.MoveTo(sender, page.Index);
             }
         }
 
@@ -173,7 +177,7 @@ namespace NeeView
         public void JumpPage(object? sender, Page? page)
         {
             if (page is null) return;
-            _control.JumpPage(sender, page.Index);
+            _control.MoveTo(sender, page.Index);
         }
 
         #endregion

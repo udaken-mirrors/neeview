@@ -69,7 +69,7 @@ namespace NeeView
 
         public int ViewPageCount => BookOperation.Current.Book?.Viewer.GetViewPages()?.Count ?? 0;
 
-        public int MaxIndex => BookOperation.Current.Property.GetMaxPageIndex();
+        public int MaxIndex => BookOperation.Current.Property.MaxIndex;
 
         public int SelectedIndex
         {
@@ -89,7 +89,7 @@ namespace NeeView
 
         internal void FlushSelectedIndex(object sender)
         {
-            SetSelectedIndex(sender, BookOperation.Current.Property.GetPageIndex(), true);
+            SetSelectedIndex(sender, BookOperation.Current.Property.SelectedIndex, true);
         }
 
         public bool SetSelectedIndex(object? sender, int value, bool raiseChangedEvent)
@@ -114,7 +114,7 @@ namespace NeeView
         public void Jump(object sender)
         {
             ////Debug.WriteLine($"Jump: {_selectedIndex}");
-            BookOperation.Current.Control.JumpPage(sender, _selectedIndex);
+            BookOperation.Current.Control.MoveTo(sender, _selectedIndex);
         }
 
         private void BookOperation_BookChanging(object? sender, BookChangingEventArgs e)

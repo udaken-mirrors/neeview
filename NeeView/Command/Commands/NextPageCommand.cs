@@ -22,7 +22,7 @@
 
         public override void Execute(object? sender, CommandContext e)
         {
-            BookOperation.Current.Control.NextPage(this);
+            BookOperation.Current.Control.MoveNext(this);
         }
     }
 }
