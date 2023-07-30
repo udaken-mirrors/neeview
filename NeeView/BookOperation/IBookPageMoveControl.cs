@@ -8,10 +8,6 @@ namespace NeeView
     /// </summary>
     public interface IBookPageMoveControl
     {
-        //public IReadOnlyList<Page> Pages { get; }
-        //public int SelectedIndex { get; set; }
-        //public int MaxIndex { get; }
-
         void MovePrev(object? sender);
         void MoveNext(object? sender);
 

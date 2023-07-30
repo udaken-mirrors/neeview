@@ -1,16 +1,44 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading.Tasks;
 
 namespace NeeView
 {
-    public class BookPageControlProxy : IBookPageControl
+    public class BookPageControlProxy : IBookPageControl, IDisposable
     {
         private IBookPageControl? _source;
+        private bool _disposedValue;
 
         public BookPageControlProxy()
         {
         }
 
+        public event EventHandler? PagesChanged;
+        public event EventHandler<SelectedRangeChangedEventArgs>? SelectedRangeChanged;
+
+        public IReadOnlyList<Page> Pages => _source?.Pages ?? new List<Page>();
+        public IReadOnlyList<Page> SelectedPages => _source?.SelectedPages ?? new List<Page>();
+        public PageRange SelectedRange => _source?.SelectedRange ?? new PageRange();
+
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!_disposedValue)
+            {
+                if (disposing)
+                {
+                    Detach();
+                }
+                _disposedValue = true;
+            }
+        }
+
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
 
         public void SetSource(IBookPageControl? source)
         {
@@ -22,18 +50,40 @@ namespace NeeView
 
         private void Attach(IBookPageControl? source)
         {
-            if (_source == source) return;
+            Debug.Assert(_source is null);
 
             _source = source;
+            if (_source is null) return;
+
+            _source.PagesChanged += Source_PageListChanged;
+            _source.SelectedRangeChanged += Source_SelectedItemChanged;
+
+            PagesChanged?.Invoke(this, EventArgs.Empty);
         }
 
         private void Detach()
         {
             if (_source is null) return;
+
+            _source.PagesChanged -= Source_PageListChanged;
+            _source.SelectedRangeChanged -= Source_SelectedItemChanged;
+            _source.Dispose();
+            _source = null;
+        }
+
+        private void Source_PageListChanged(object? sender, EventArgs e)
+        {
+            PagesChanged?.Invoke(sender, e);
+        }
+
+        private void Source_SelectedItemChanged(object? sender, SelectedRangeChangedEventArgs e)
+        {
+            SelectedRangeChanged?.Invoke(sender, e);
         }
 
 
         #region IBookPageMoveControl
+
 
         public void MoveToFirst(object? sender)
         {

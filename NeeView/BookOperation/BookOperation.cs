@@ -21,7 +21,6 @@ namespace NeeView
         private bool _isLoading;
 
         public BookPageTerminatorProxy _terminator = new();
-        public BookPagePropertyProxy _bookProperty = new();
         public BookPageScriptProxy _script = new();
         public BookControlProxy _bookControl = new();
         public BookPageControlProxy _control = new();
@@ -67,8 +66,6 @@ namespace NeeView
 
         public string? Address => Book?.Path;
 
-        public BookPagePropertyProxy Property => _bookProperty;
-
         public BookControlProxy BookControl => _bookControl;
 
         public BookPlaylistControlProxy Playlist => _playlist;
@@ -96,7 +93,6 @@ namespace NeeView
             if (_book == book) return;
             _book = book;
 
-            _bookProperty.SetSource(CreateBookProperty(_book));
             _bookControl.SetSource(CreateBoolController(_book));
             _control.SetSource(CreateController(_book));
             _playlist.SetSource(CreatePlaylistController(_book));
@@ -115,11 +111,6 @@ namespace NeeView
         private BookPageScript? CreateBookScript(Book? book)
         {
             return book is null ? null : new BookPageScript(book);
-        }
-
-        private IBookPageProperty? CreateBookProperty(Book? book)
-        {
-            return book is null ? null : new BookPageProperty(book);
         }
 
         private IBookControl? CreateBoolController(Book? book)

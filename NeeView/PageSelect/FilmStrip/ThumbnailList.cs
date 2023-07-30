@@ -57,8 +57,10 @@ namespace NeeView
                 PageSelector_CollectionChanged));
             _disposables.Add(PageSelector.Current.SubscribeSelectionChanged(
                 PageSelector_SelectionChanged));
-            _disposables.Add(PageSelector.Current.SubscribeViewContentsChanged(
-                PageSelector_ViewContentsChanged));
+            //_disposables.Add(PageSelector.Current.SubscribeViewContentsChanged(
+            //    PageSelector_ViewContentsChanged));
+            _disposables.Add(PageSelector.Current.SubscribeSelectedPagesChanged(
+                PageSelector_SelectedPagesChanged));
 
             _disposables.Add(Config.Current.FilmStrip.SubscribePropertyChanged(
                 (s, e) =>
@@ -80,6 +82,7 @@ namespace NeeView
 
             UpdateItems();
         }
+
 
 
         public event EventHandler? CollectionChanging;
@@ -137,7 +140,7 @@ namespace NeeView
         /// <summary>
         /// フィルムストリップ表示状態
         /// </summary>
-        public Visibility ThumbnailListVisibility => BookOperation.Current.Property.GetPageCount() > 0 ? Visibility.Visible : Visibility.Collapsed;
+        public Visibility ThumbnailListVisibility => BookOperation.Current.Control.Pages.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
 
         /// <summary>
         /// スライダー方向
@@ -244,6 +247,12 @@ namespace NeeView
             UpdateSelectedIndex();
         }
 
+        private void PageSelector_SelectedPagesChanged(object? sender, SelectedPagesChangedEventArgs e)
+        {
+            this.ViewItems = e.Pages;
+        }
+
+#if false
         private void PageSelector_ViewContentsChanged(object? sender, ViewContentsChangedEventArgs e)
         {
             var contents = e?.ViewPageCollection?.Collection;
@@ -251,6 +260,7 @@ namespace NeeView
 
             this.ViewItems = contents.Where(i => i != null).Select(i => i.Page).OrderBy(i => i.Index).ToList();
         }
+#endif
 
         private int GetIndexWithDirectionReverse(int value)
         {
@@ -259,13 +269,8 @@ namespace NeeView
 
         private void UpdateItems()
         {
-            var pageList = BookOperation.Current.Property.PageList;
-
-            if (pageList is null)
-            {
-                this.Items = null;
-            }
-            else if (IsSliderDirectionReversed)
+            var pageList = BookOperation.Current.Control.Pages;
+            if (IsSliderDirectionReversed)
             {
                 // 右から左
                 this.Items = new ObservableCollection<Page>(pageList.Reverse());
@@ -304,7 +309,7 @@ namespace NeeView
         public void FlushSelectedIndex()
         {
             if (_disposedValue) return;
-            
+
             PageSelector.Current.FlushSelectedIndex(this);
             UpdateSelectedIndex();
         }
@@ -347,7 +352,7 @@ namespace NeeView
                 direction = -direction;
             }
 
-            var pageList = BookOperation.Current.Property.PageList;
+            var pageList = BookOperation.Current.Control.Pages;
 
             if (pageList == null || Config.Current.FilmStrip.ImageWidth < 8.0) return;
 

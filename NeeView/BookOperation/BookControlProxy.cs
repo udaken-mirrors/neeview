@@ -13,6 +13,10 @@ namespace NeeView
 
         public bool IsBookmark => _source?.IsBookmark ?? false;
 
+        public bool IsBusy => _source?.IsBusy ?? false;
+        public PageSortModeClass PageSortModeClass => _source?.PageSortModeClass ?? PageSortModeClass.Full;
+
+
 
         protected virtual void Dispose(bool disposing)
         {
@@ -40,12 +44,15 @@ namespace NeeView
             Attach(source);
 
             RaisePropertyChanged(nameof(IsBookmark));
+            RaisePropertyChanged(nameof(IsBusy));
+            RaisePropertyChanged(nameof(PageSortModeClass));
         }
 
         private void Attach(IBookControl? source)
         {
             if (_source == source) return;
             _source = source;
+
             if (_source is not null)
             {
                 _source.PropertyChanged += Source_PropertyChanged;

@@ -33,7 +33,7 @@ namespace NeeView
             _viewComponent.ContentRebuild.AddPropertyChanged(nameof(ContentRebuild.IsBusy),
                 (s, e) => UpdateBusyVisibility());
 
-            BookOperation.Current.Property.AddPropertyChanged(nameof(IBookPageProperty.IsBusy),
+            BookOperation.Current.BookControl.AddPropertyChanged(nameof(IBookControl.IsBusy),
                 (s, e) => UpdateBusyVisibility());
 
             BookHub.Current.AddPropertyChanged(nameof(BookHub.IsLoading),
@@ -74,7 +74,7 @@ namespace NeeView
         private void UpdateBusyVisibility()
         {
             ////Debug.WriteLine($"IsBusy: {BookHub.Current.IsLoading}, {BookOperation.Current.IsBusy}, {ContentRebuild.Current.IsBusy}");
-            this.BusyVisibility = Config.Current.Notice.IsBusyMarkEnabled && (BookHub.Current.IsLoading || BookOperation.Current.Property.IsBusy || _viewComponent.ContentRebuild.IsBusy) && !SlideShow.Current.IsPlayingSlideShow ? Visibility.Visible : Visibility.Collapsed;
+            this.BusyVisibility = Config.Current.Notice.IsBusyMarkEnabled && (BookHub.Current.IsLoading || BookOperation.Current.BookControl.IsBusy || _viewComponent.ContentRebuild.IsBusy) && !SlideShow.Current.IsPlayingSlideShow ? Visibility.Visible : Visibility.Collapsed;
         }
 
 

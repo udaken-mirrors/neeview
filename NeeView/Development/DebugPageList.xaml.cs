@@ -27,15 +27,16 @@ namespace NeeView
             InitializeComponent();
             this.Root.DataContext = new DevPageListViewModel();
 
-            BookOperation.Current.Property.ViewContentsChanged += BookOperation_ViewContentsChanged;
+            BookOperation.Current.Control.SelectedRangeChanged += BookOperation_SelectedRangeChanged;
         }
 
-        private void BookOperation_ViewContentsChanged(object? sender, ViewContentSourceCollectionChangedEventArgs e)
+        private void BookOperation_SelectedRangeChanged(object? sender, SelectedRangeChangedEventArgs e)
         {
             ////var page = BookOperation.Current.Book?.GetViewPage();
             ////this.Root.ScrollIntoView(page);
             ///
         }
+
 
         private void RefreshButton_Click(object sender, RoutedEventArgs e)
         {

@@ -22,9 +22,11 @@ namespace NeeView
         {
             BookOperation.Current.BookChanging += BookOperation_BookChanging;
             BookOperation.Current.BookChanged += BookOperation_BookChanged;
-            BookOperation.Current.Property.PageListChanged += BookOperation_PageListChanged;
-            BookOperation.Current.Property.ViewContentsChanged += BookOperation_ViewContentsChanged;
+            BookOperation.Current.Control.PagesChanged += BookOperation_PageListChanged;
+            //BookOperation.Current.Property.ViewContentsChanged += BookOperation_ViewContentsChanged;
+            BookOperation.Current.Control.SelectedRangeChanged += BookOperation_SelectedRangeChanged; ;
         }
+
 
 
         // NOTE: ChangingとChangedは必ずしもペアではない
@@ -52,6 +54,7 @@ namespace NeeView
             return new AnonymousDisposable(() => SelectionChanged -= handler);
         }
 
+#if false
         public event EventHandler<ViewContentsChangedEventArgs>? ViewContentsChanged;
 
         public IDisposable SubscribeViewContentsChanged(EventHandler<ViewContentsChangedEventArgs> handler)
@@ -59,6 +62,17 @@ namespace NeeView
             ViewContentsChanged += handler;
             return new AnonymousDisposable(() => ViewContentsChanged -= handler);
         }
+#endif
+
+        public event EventHandler<SelectedPagesChangedEventArgs>? SelectedPagesChanged;
+
+        public IDisposable SubscribeSelectedPagesChanged(EventHandler<SelectedPagesChangedEventArgs> handler)
+        {
+            SelectedPagesChanged += handler;
+            return new AnonymousDisposable(() => SelectedPagesChanged -= handler);
+        }
+
+
 
 
         public PageMode PageMode => BookOperation.Current.Book?.Setting.PageMode ?? PageMode.SinglePage;
@@ -69,7 +83,7 @@ namespace NeeView
 
         public int ViewPageCount => BookOperation.Current.Book?.Viewer.GetViewPages()?.Count ?? 0;
 
-        public int MaxIndex => BookOperation.Current.Property.MaxIndex;
+        public int MaxIndex => Math.Max(BookOperation.Current.Control.Pages.Count - 1, 0);
 
         public int SelectedIndex
         {
@@ -89,7 +103,7 @@ namespace NeeView
 
         internal void FlushSelectedIndex(object sender)
         {
-            SetSelectedIndex(sender, BookOperation.Current.Property.SelectedIndex, true);
+            SetSelectedIndex(sender, BookOperation.Current.Control.SelectedRange.Min.Index, true);
         }
 
         public bool SetSelectedIndex(object? sender, int value, bool raiseChangedEvent)
@@ -137,14 +151,40 @@ namespace NeeView
         {
             CollectionChanged?.Invoke(this, EventArgs.Empty);
             RaisePropertyChanged(nameof(MaxIndex));
-            RaiseViewContentsChanged(sender, BookOperation.Current.Book?.Viewer.ViewPageCollection, true);
+            //RaiseViewContentsChanged(sender, BookOperation.Current.Book?.Viewer.ViewPageCollection, true);
+            RaiseViewContentsChanged(sender, BookOperation.Current.Control.SelectedRange, true);
         }
 
-        private void BookOperation_ViewContentsChanged(object? sender, ViewContentSourceCollectionChangedEventArgs e)
+        //private void BookOperation_ViewContentsChanged(object? sender, ViewContentSourceCollectionChangedEventArgs e)
+        //{
+        //    RaiseViewContentsChanged(sender, e?.ViewPageCollection, false);
+        //}
+
+        private void BookOperation_SelectedRangeChanged(object? sender, SelectedRangeChangedEventArgs e)
         {
-            RaiseViewContentsChanged(sender, e?.ViewPageCollection, false);
+            RaiseViewContentsChanged(sender, BookOperation.Current.Control.SelectedRange, false);
         }
 
+        private void RaiseViewContentsChanged(object? sender, PageRange range, bool isBookOpen)
+        {
+            var pages = CollectPage(BookOperation.Current.Book, range);
+            if (pages is null) return;
+
+            SelectedPagesChanged?.Invoke(sender, new SelectedPagesChangedEventArgs(pages));
+
+            SetSelectedIndex(sender, range.Min.Index, false);
+            SelectionChanged?.Invoke(sender, EventArgs.Empty);
+        }
+
+        // PageRange に含まれる Page を収集
+        private List<Page>? CollectPage(Book? book, PageRange range)
+        {
+            if (book is null) return null;
+            var indexs = Enumerable.Range(range.Min.Index, range.Max.Index - range.Min.Index + 1);
+            return indexs.Where(e => book.Pages.IsValidIndex(e)).Select(e => book.Pages[e]).ToList();
+        }
+
+#if false
         private void RaiseViewContentsChanged(object? sender, ViewContentSourceCollection? viewPageCollection, bool isBookOpen)
         {
             if (viewPageCollection is null) return;
@@ -161,6 +201,7 @@ namespace NeeView
                 SelectionChanged?.Invoke(sender, EventArgs.Empty);
             }
         }
+#endif
     }
 
 

@@ -35,7 +35,7 @@ namespace NeeView
 
             _bookOperation.BookChanged +=
                 (s, e) => Update();
-            _bookOperation.Property.PageListChanged +=
+            _bookOperation.Control.PagesChanged +=
                 (s, e) => Update();
             _bookOperation.Playlist.MarkersChanged +=
                 (s, e) => Update();

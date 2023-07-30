@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace NeeView
@@ -7,6 +8,7 @@ namespace NeeView
     public class BookPageControl : IBookPageControl, IDisposable
     {
         private Book _book;
+        private List<Page> _selectedPages = new();
         private IBookPageMoveControl _moveControl;
         private IBookPageActionControl _actionControl;
         private bool _disposedValue;
@@ -26,7 +28,20 @@ namespace NeeView
                 _moveControl = new BookPageMoveControl(_book);
                 _actionControl = new BookPageActionControl(_book, bookControl);
             }
+
+            _book.Pages.PagesSorted += Book_PagesSorted;
+            _book.Pages.PageRemoved += Book_PageRemoved;
+            _book.Viewer.SelectedRangeChanged += Book_SelectedRangeChanged;
         }
+
+
+        public event EventHandler? PagesChanged;
+        public event EventHandler<SelectedRangeChangedEventArgs>? SelectedRangeChanged;
+
+        public IReadOnlyList<Page> Pages => _book.Pages;
+        public IReadOnlyList<Page> SelectedPages => _selectedPages;
+        public PageRange SelectedRange => _book.Viewer.SelectedRange;
+
 
 
         protected virtual void Dispose(bool disposing)
@@ -35,8 +50,10 @@ namespace NeeView
             {
                 if (disposing)
                 {
+                    _book.Pages.PagesSorted -= Book_PagesSorted;
+                    _book.Pages.PageRemoved -= Book_PageRemoved;
+                    _book.Viewer.SelectedRangeChanged -= Book_SelectedRangeChanged;
                 }
-
                 _disposedValue = true;
             }
         }
@@ -45,6 +62,27 @@ namespace NeeView
         {
             Dispose(disposing: true);
             GC.SuppressFinalize(this);
+        }
+
+
+
+        private void Book_PagesSorted(object? sender, EventArgs e)
+        {
+            AppDispatcher.Invoke(() => PagesChanged?.Invoke(sender, EventArgs.Empty));
+        }
+
+        private void Book_PageRemoved(object? sender, PageRemovedEventArgs e)
+        {
+            AppDispatcher.Invoke(() => PagesChanged?.Invoke(sender, EventArgs.Empty));
+        }
+
+        private void Book_SelectedRangeChanged(object? sender, SelectedRangeChangedEventArgs e)
+        {
+            var range = SelectedRange;
+            var indexs = Enumerable.Range(range.Min.Index, range.Max.Index - range.Min.Index + 1);
+            _selectedPages = indexs.Where(e => _book.Pages.IsValidIndex(e)).Select(e => _book.Pages[e]).ToList();
+
+            AppDispatcher.Invoke(() => SelectedRangeChanged?.Invoke(sender, e));
         }
 
 

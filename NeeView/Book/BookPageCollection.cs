@@ -175,6 +175,11 @@ namespace NeeView
             return (FirstPosition() <= position && position <= LastPosition());
         }
 
+        public bool IsValidIndex(int index)
+        {
+            return 0 <= index && index < Pages.Count;
+        }
+
 
         #region ページの並び替え
 

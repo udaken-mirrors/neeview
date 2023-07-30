@@ -1,25 +1,59 @@
 ﻿using NeeLaboratory.ComponentModel;
 using NeeView.Properties;
+using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 
 namespace NeeView
 {
-    public class BookControl : BindableBase, IBookControl
+    public class BookControl : BindableBase, IBookControl, IDisposable
     {
         private Book _book;
-
+        private bool _disposedValue;
 
         public BookControl(Book book)
         {
             _book = book;
+            _book.Viewer.Loader.PropertyChanged += BookLoader_PropertyChanged;
         }
 
 
         // ブックマーク判定
         public bool IsBookmark => BookmarkCollection.Current.Contains(_book.Path);
 
+        public bool IsBusy => _book.Viewer.Loader.IsBusy;
+        public PageSortModeClass PageSortModeClass => _book.PageSortModeClass;
+
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!_disposedValue)
+            {
+                if (disposing)
+                {
+                    _book.Viewer.Loader.PropertyChanged -= BookLoader_PropertyChanged;
+                }
+                _disposedValue = true;
+            }
+        }
+
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
+
+        private void BookLoader_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            switch (e.PropertyName)
+            {
+                case nameof(IsBusy):
+                    RaisePropertyChanged(nameof(IsBusy));
+                    break;
+            }
+        }
 
         /// <summary>
         /// ブックの再読み込み

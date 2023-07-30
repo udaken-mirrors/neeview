@@ -1,6 +1,11 @@
-﻿namespace NeeView
+﻿using System;
+
+namespace NeeView
 {
-    public interface IBookPageControl : IBookPageMoveControl, IBookPageActionControl
+    /// <summary>
+    /// ページに関する操作
+    /// </summary>
+    public interface IBookPageControl : IBookPageContext, IBookPageMoveControl, IBookPageActionControl, IDisposable
     {
     }
 }

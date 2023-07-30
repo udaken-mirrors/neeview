@@ -216,7 +216,7 @@ namespace NeeView
         {
             if (_items is null) return null;
 
-            var path = BookOperation.Current.Property.GetPage()?.EntryFullName;
+            var path = BookOperation.Current.Control.SelectedPages.FirstOrDefault()?.EntryFullName;
             if (path is null) return null;
 
             var targetItem = this.IsFirstIn ? _items.FirstOrDefault() : null;

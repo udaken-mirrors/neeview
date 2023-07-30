@@ -29,7 +29,7 @@ namespace NeeView
         private PageList()
         {
             BookOperation.Current.BookChanged += BookOperation_BookChanged;
-            BookOperation.Current.Property.PageListChanged += BookOperation_PageListChanged;
+            BookOperation.Current.Control.PagesChanged += BookOperation_PageListChanged;
 
             PageHistory.Current.Changed += (s, e) => PageHistoryChanged?.Invoke(s, e);
         }
@@ -152,13 +152,14 @@ namespace NeeView
 
         public void Loaded()
         {
-            BookOperation.Current.Property.ViewContentsChanged += BookOperation_ViewContentsChanged;
+            BookOperation.Current.Control.SelectedRangeChanged += BookOperation_SelectedRangeChanged;
             RefreshSelectedItem();
         }
 
+
         public void Unloaded()
         {
-            BookOperation.Current.Property.ViewContentsChanged -= BookOperation_ViewContentsChanged;
+            BookOperation.Current.Control.SelectedRangeChanged -= BookOperation_SelectedRangeChanged;
         }
 
         /// <summary>
@@ -179,7 +180,12 @@ namespace NeeView
         /// <summary>
         /// ブックのページが切り替わったときの処理
         /// </summary>
-        private void BookOperation_ViewContentsChanged(object? sender, ViewContentSourceCollectionChangedEventArgs e)
+        //private void BookOperation_ViewContentsChanged(object? sender, ViewContentSourceCollectionChangedEventArgs e)
+        //{
+        //    RefreshSelectedItem();
+        //}
+
+        private void BookOperation_SelectedRangeChanged(object? sender, SelectedRangeChangedEventArgs e)
         {
             RefreshSelectedItem();
         }
@@ -192,8 +198,8 @@ namespace NeeView
         {
             CollectionChanging?.Invoke(this, EventArgs.Empty);
 
-            var pages = BookOperation.Current.Property.PageList;
-            Items = pages is null ? null : new ObservableCollection<Page>(pages);
+            var pages = BookOperation.Current.Control.Pages;
+            Items = new ObservableCollection<Page>(pages);
 
             RaisePropertyChanged(nameof(PlaceDispString));
 
@@ -211,7 +217,7 @@ namespace NeeView
         /// </summary>
         private void RefreshSelectedItem()
         {
-            var pages = BookOperation.Current.Book?.Viewer.GetViewPages();
+            var pages = CollectPage(BookOperation.Current.Book, BookOperation.Current.Control.SelectedRange);
             if (pages == null) return;
 
             var viewPages = pages.Where(i => i != null).OrderBy(i => i.Index).ToList();
@@ -226,6 +232,14 @@ namespace NeeView
             }
 
             this.ViewItems = viewPages;
+        }
+
+        // PageRange に含まれる Page を収集
+        private List<Page>? CollectPage(Book? book, PageRange range)
+        {
+            if (book is null) return null;
+            var indexs = Enumerable.Range(range.Min.Index, range.Max.Index - range.Min.Index + 1);
+            return indexs.Where(e => book.Pages.IsValidIndex(e)).Select(e => book.Pages[e]).ToList();
         }
 
 

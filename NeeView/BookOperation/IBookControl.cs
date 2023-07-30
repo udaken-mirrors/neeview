@@ -1,10 +1,16 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 
 namespace NeeView
 {
-    public interface IBookControl : INotifyPropertyChanged
+    /// <summary>
+    /// ブックに対する操作
+    /// </summary>
+    public interface IBookControl : INotifyPropertyChanged, IDisposable
     {
+        bool IsBusy { get; }
+        PageSortModeClass PageSortModeClass { get; }
         bool IsBookmark { get; }
 
         bool CanDeleteBook();
