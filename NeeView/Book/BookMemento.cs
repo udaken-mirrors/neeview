@@ -14,9 +14,6 @@ namespace NeeView
         // フォルダーの場所
         public string Path { get; set; } = "";
 
-        // ディレクトリ？
-        public bool IsDirectorty { get; set; }
-
         // 名前
         public string Name => Path.EndsWith(@":\") ? Path : System.IO.Path.GetFileName(Path);
 
@@ -62,7 +59,6 @@ namespace NeeView
         {
             Path = "";
             Page = "";
-            IsDirectorty = false;
         }
 
         // バリデートされたクローン
@@ -78,7 +74,6 @@ namespace NeeView
         {
             return other is not null &&
                    Path == other.Path &&
-                   IsDirectorty == other.IsDirectorty &&
                    Name == other.Name &&
                    Page == other.Page &&
                    PageMode == other.PageMode &&

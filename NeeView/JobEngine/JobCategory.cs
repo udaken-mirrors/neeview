@@ -35,9 +35,9 @@ namespace NeeView
 
         private class JobCommand : IJobCommand
         {
-            readonly Page _page;
+            readonly IPageContentLoader _page;
 
-            public JobCommand(Page page)
+            public JobCommand(IPageContentLoader page)
             {
                 _page = page;
             }
@@ -50,7 +50,7 @@ namespace NeeView
 
         public override Job CreateJob(object key, CancellationToken token)
         {
-            var page = (Page)key;
+            var page = (IPageContentLoader)key;
 
             var job = Job.Create(new JobCommand(page), token);
             return job;
@@ -69,9 +69,9 @@ namespace NeeView
 
         private class JobCommand : IJobCommand
         {
-            readonly Page _page;
+            readonly IPageThumbnailLoader _page;
 
-            public JobCommand(Page page)
+            public JobCommand(IPageThumbnailLoader page)
             {
                 _page = page;
             }
@@ -84,7 +84,7 @@ namespace NeeView
 
         public override Job CreateJob(object key, CancellationToken token)
         {
-            var page = (Page)key;
+            var page = (IPageThumbnailLoader)key;
 
             var job = Job.Create(new JobCommand(page), token);
             return job;

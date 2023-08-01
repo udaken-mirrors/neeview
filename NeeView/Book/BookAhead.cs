@@ -97,7 +97,7 @@ namespace NeeView
                 }
                 while (_page.IsLoaded);
 
-                _jobClient.Order(new List<Page>() { _page });
+                _jobClient.Order(new List<IPageContentLoader>() { _page });
                 return true;
             }
         }

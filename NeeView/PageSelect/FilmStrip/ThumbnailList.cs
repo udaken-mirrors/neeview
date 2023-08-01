@@ -371,7 +371,7 @@ namespace NeeView
                 .Select(e => pageList[e])
                 .OrderBy(e => Math.Abs(e.Index - center));
 
-            _jobClient.Order(pages.ToList());
+            _jobClient.Order(pages.Cast<IPageThumbnailLoader>().ToList());
         }
 
         // サムネイル要求解除

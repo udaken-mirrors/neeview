@@ -160,7 +160,6 @@ namespace NeeView
             var memento = new BookMemento
             {
                 Path = _source.Path,
-                IsDirectorty = _source.IsDirectory,
                 Page = _source.Pages.SortMode != PageSortMode.Random ? _viewer.GetViewPage()?.EntryName ?? "" : "",
 
                 PageMode = _setting.PageMode,

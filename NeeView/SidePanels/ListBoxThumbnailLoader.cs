@@ -79,7 +79,7 @@ namespace NeeView
 
             if (pages.Any())
             {
-                _jobClient?.Order(pages);
+                _jobClient?.Order(pages.Cast<IPageThumbnailLoader>().ToList());
             }
 
             ////Debug.WriteLine($"ThumbLoad: {pages.Count}");

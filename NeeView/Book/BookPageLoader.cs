@@ -142,7 +142,7 @@ namespace NeeView
             _pageViewGenerater.AddPropertyChanged(nameof(_pageViewGenerater.IsBusy), (s, e) => UpdateIsBusy());
 
             _bookMemoryService.SetReference(viewPages.First().Index);
-            _jobClient.Order(viewPages);
+            _jobClient.Order(viewPages.Cast<IPageContentLoader>().ToList());
             _ahead.Order(aheadPages);
 
             UpdateIsBusy();

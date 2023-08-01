@@ -32,7 +32,7 @@ namespace NeeView
     /// <summary>
     /// ページ
     /// </summary>
-    public class Page : BindableBase, IHasPage, IHasPageContent, IDisposable, IRenameable
+    public class Page : BindableBase, IHasPage, IHasPageContent, IDisposable, IRenameable, IPageContentLoader, IPageThumbnailLoader
     {
         #region 開発用
 
@@ -162,6 +162,8 @@ namespace NeeView
         /// サムネイル
         /// </summary>
         public Thumbnail Thumbnail => _content.Thumbnail;
+
+        public bool IsThumbnailValid => _content.Thumbnail.IsValid;
 
         // 表示中?
         public bool IsVisibled

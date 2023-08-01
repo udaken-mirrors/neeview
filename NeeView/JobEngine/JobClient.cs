@@ -48,7 +48,7 @@ namespace NeeView
         /// JOB要求
         /// </summary>
         /// <param name="pages">読み込むページ</param>
-        public void Order(List<Page> pages)
+        public void Order(List<IPageContentLoader> pages)
         {
             if (_disposedValue) return;
 
@@ -64,7 +64,7 @@ namespace NeeView
         /// JOBの完了を待つ
         /// </summary>
         /// <param name="pages">完了待ちをするページ</param>
-        public async Task WaitAsync(List<Page> pages, int millisecondsTimeout, CancellationToken token)
+        public async Task WaitAsync(List<IPageContentLoader> pages, int millisecondsTimeout, CancellationToken token)
         {
             if (_disposedValue) return;
 
@@ -123,12 +123,12 @@ namespace NeeView
         /// JOB要求
         /// </summary>
         /// <param name="pages">読み込むページ</param>
-        public void Order(List<Page> pages)
+        public void Order(List<IPageThumbnailLoader> pages)
         {
             if (_disposedValue) return;
 
             var orders = pages
-                .Where(e => e != null && !e.Thumbnail.IsValid)
+                .Where(e => e != null && !e.IsThumbnailValid)
                 .Select(e => new JobOrder(this.Category, e))
                 .ToList();
 
