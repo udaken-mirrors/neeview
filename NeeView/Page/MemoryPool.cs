@@ -1,25 +1,21 @@
 ﻿using NeeView.Collections.Generic;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Media.Imaging;
 
 namespace NeeView
 {
-    public interface IHasPageContent
+    public interface IMemoryElement
     {
-        PageContent ContentAccessor { get; }
         int Index { get; }
-
-        void UnloadContent();
+        bool IsMemoryLocked { get; }
+        long GetMemorySize();
+        void Unload();
     }
 
-    public class PageContentPool
+    public class MemoryPool
     {
-        private List<IHasPageContent> _collection = new();
+        private List<IMemoryElement> _collection = new();
         private readonly object _lock = new();
         private int _referenceIndex;
 
@@ -32,20 +28,20 @@ namespace NeeView
             _referenceIndex = index;
         }
 
-        public void Add(IHasPageContent element)
+        public void Add(IMemoryElement element)
         {
             lock (_lock)
             {
                 ////Debug.WriteLine($"Add: {page}");
                 _collection.Add(element);
-                TotalSize = TotalSize + element.ContentAccessor.GetContentMemorySize();
+                TotalSize = TotalSize + element.GetMemorySize();
             }
         }
 
         public void Cleanup(long limitSize)
         {
-            List<IHasPageContent>? elements = null;
-            List<IHasPageContent>? removes = null;
+            List<IMemoryElement>? elements = null;
+            List<IMemoryElement>? removes = null;
 
             lock (_lock)
             {
@@ -53,14 +49,14 @@ namespace NeeView
 
                 elements = _collection
                     .Distinct()
-                    .OrderByDescending(e => e.ContentAccessor.IsContentLocked)
+                    .OrderByDescending(e => e.IsMemoryLocked)
                     .ThenBy(e => Math.Abs(e.Index - _referenceIndex))
                     .ToList();
 
                 foreach (var (element, index) in elements.ToTuples())
                 {
-                    var size = element.ContentAccessor.GetContentMemorySize();
-                    if (totalMemory + size > limitSize && !element.ContentAccessor.IsContentLocked)
+                    var size = element.GetMemorySize();
+                    if (totalMemory + size > limitSize && !element.IsMemoryLocked)
                     {
                         removes = elements.Skip(index).ToList();
                         elements = elements.Take(index).ToList();
@@ -80,23 +76,22 @@ namespace NeeView
 
             if (removes != null)
             {
-                foreach (var page in removes)
+                foreach (var element in removes)
                 {
-                    page.UnloadContent();
+                    if (!element.IsMemoryLocked)
+                    {
+                        element.Unload();
+                    }
                 }
             }
         }
 
+#if false
         public void Clear()
         {
-            lock (_lock)
-            {
-                _collection.Clear();
-                TotalSize = 0;
-            }
-
-            _referenceIndex = 0;
+            Cleanup(0);
         }
+#endif
     }
 
 }

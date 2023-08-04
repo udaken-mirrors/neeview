@@ -32,7 +32,7 @@ namespace NeeView
     /// <summary>
     /// ページ
     /// </summary>
-    public class Page : BindableBase, IHasPage, IHasPageContent, IDisposable, IRenameable, IPageContentLoader, IPageThumbnailLoader
+    public class Page : BindableBase, IHasPage, IDisposable, IRenameable, IPageContentLoader, IPageThumbnailLoader, IMemoryElement
     {
         #region 開発用
 
@@ -55,6 +55,7 @@ namespace NeeView
         private bool _isVisibled;
         private bool _isMarked;
         private readonly DisposableCollection _disposables = new();
+        private int _index;
 
 
         /// <summary>
@@ -98,7 +99,15 @@ namespace NeeView
         public int EntryIndex { get; set; }
 
         // ページ番号
-        public int Index { get; set; }
+        public int Index
+        {
+            get { return _index; }
+            set
+            {
+                _index = value;
+                _content.Index = _index;
+            }
+        }
 
         // TODO: 表示番号と内部番号のずれ
         public int IndexPlusOne => Index + 1;
@@ -191,6 +200,8 @@ namespace NeeView
         /// 削除済フラグ
         /// </summary>
         public bool IsDeleted => Entry.IsDeleted;
+
+        public bool IsMemoryLocked => _content.IsContentLocked;
 
 
         #region IDisposable Support
@@ -411,6 +422,16 @@ namespace NeeView
             RaisePropertyChanged(nameof(EntrySmartName));
             RaisePropertyChanged(nameof(EntryFullName));
             RaisePropertyChanged(nameof(SystemPath));
+        }
+
+        public long GetMemorySize()
+        {
+            return _content.GetContentMemorySize();
+        }
+
+        public void Unload()
+        {
+            UnloadContent();
         }
     }
 

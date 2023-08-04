@@ -6,7 +6,7 @@ using System.Windows;
 
 namespace NeeView
 {
-    public class BitmapContentLoader : IContentLoader, IHasPictureSource
+    public class BitmapContentLoader : IContentLoader, IMemoryElement
     {
         private readonly BitmapContent _content;
         private readonly object _lock = new();
@@ -29,6 +29,10 @@ namespace NeeView
         public PictureSource? PictureSource => _content.PictureSource;
 
         public bool IsPictureSourceLocked => _content.IsContentLocked;
+
+        public int Index => _content.Index;
+
+        public bool IsMemoryLocked => _content.IsContentLocked;
 
 
         #region IDisposable Support
@@ -247,6 +251,17 @@ namespace NeeView
 
             token.ThrowIfCancellationRequested();
             _content.Thumbnail.Initialize(thumbnailRaw);
+        }
+
+        public long GetMemorySize()
+        {
+            var source = PictureSource;
+            return source != null ? source.GetMemorySize() : 0;
+        }
+
+        public void Unload()
+        {
+            UnloadPictureSource();
         }
     }
 

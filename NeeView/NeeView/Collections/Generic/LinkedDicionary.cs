@@ -11,6 +11,7 @@ namespace NeeView.Collections.Generic
     /// <typeparam name="TValue">収納型</typeparam>
     public class LinkedDicionary<TKey, TValue> : IEnumerable<TValue>
         where TKey : notnull
+        where TValue : IHasKey<TKey>
     {
         private readonly Dictionary<TKey, LinkedListNode<TValue>> _map = new();
         private readonly LinkedList<TValue> _list = new();

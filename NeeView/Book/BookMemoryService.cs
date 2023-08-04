@@ -7,8 +7,8 @@ namespace NeeView
     /// </summary>
     public class BookMemoryService : BindableBase
     {
-        private readonly PageContentPool _contentPool = new();
-        private readonly PictureSourcePool _pictureSourcePool = new();
+        private readonly MemoryPool _contentPool = new();
+        private readonly MemoryPool _pictureSourcePool = new();
 
         public static long LimitSize => (long)Config.Current.Performance.CacheMemorySize * 1024 * 1024;
 
@@ -22,20 +22,20 @@ namespace NeeView
             _contentPool.SetReference(index);
         }
 
-        public void AddPageContent(IHasPageContent content)
+        public void AddPageContent(IMemoryElement content)
         {
             _contentPool.Add(content);
 
             _contentPool.Cleanup(LimitSize - _pictureSourcePool.TotalSize);
             if (IsFull)
             {
-                _pictureSourcePool.Cleanup();
+                _pictureSourcePool.Cleanup(0);
             }
 
             RaisePropertyChanged("");
         }
 
-        public void AddPictureSource(IHasPictureSource pictureSource)
+        public void AddPictureSource(IMemoryElement pictureSource)
         {
             _pictureSourcePool.Add(pictureSource);
 
@@ -48,9 +48,10 @@ namespace NeeView
         public void CleanupDeep()
         {
             _contentPool.Cleanup(0);
-            _pictureSourcePool.Cleanup();
+            _pictureSourcePool.Cleanup(0);
         }
 
+#if false
         public void Clear()
         {
             _contentPool.Clear();
@@ -58,5 +59,6 @@ namespace NeeView
 
             RaisePropertyChanged("");
         }
+#endif
     }
 }

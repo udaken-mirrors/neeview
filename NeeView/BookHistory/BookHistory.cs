@@ -9,7 +9,7 @@ using System.Windows.Data;
 
 namespace NeeView
 {
-    public class BookHistory : BindableBase, IHasPage, IHasName
+    public class BookHistory : BindableBase, IHasPage, IHasName, IHasKey<string>
     {
         private string _path;
         private BookMementoUnit? _unit;
@@ -31,6 +31,8 @@ namespace NeeView
             LastAccessTime = lastAccessTime;
             Unit = unit;
         }
+
+        public string Key => _path;
 
         public string Path
         {

@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -60,6 +61,7 @@ namespace NeeView
         #endregion
 
         private ArchiveEntry _entry;
+        private int _index;
         private PageContentState _state;
 
 
@@ -76,6 +78,12 @@ namespace NeeView
         {
             get { return _entry; }
             private set { SetProperty(ref _entry, value); }
+        }
+
+        public int Index
+        {
+            get { return _index; }
+            set { SetProperty(ref _index, value); }
         }
 
         /// <summary>
