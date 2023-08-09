@@ -1,6 +1,4 @@
-﻿using NeeView.Windows.Property;
-
-namespace NeeView
+﻿namespace NeeView
 {
     public class PrevPlaylistItemInBookCommand : CommandElement
     {
@@ -20,30 +18,6 @@ namespace NeeView
         public override void Execute(object? sender, CommandContext e)
         {
             BookOperation.Current.Playlist.PrevMarkInPlace(sender, e.Parameter.Cast<MovePlaylsitItemInBookCommandParameter>());
-        }
-    }
-
-
-    /// <summary>
-    /// プレイリスト項目移動用パラメータ
-    /// </summary>
-    public class MovePlaylsitItemInBookCommandParameter : CommandParameter
-    {
-        private bool _isLoop;
-        private bool _isIncludeTerminal;
-
-        [PropertyMember]
-        public bool IsLoop
-        {
-            get => _isLoop;
-            set => SetProperty(ref _isLoop, value);
-        }
-
-        [PropertyMember]
-        public bool IsIncludeTerminal
-        {
-            get => _isIncludeTerminal;
-            set => SetProperty(ref _isIncludeTerminal, value);
         }
     }
 }

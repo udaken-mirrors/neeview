@@ -4,15 +4,15 @@ using System.Windows.Input;
 
 namespace NeeView
 {
-    public class DragKey : IEquatable<DragKey>
+    public record class DragKey
     {
-        public MouseButtonBits MouseButtonBits;
-        public ModifierKeys ModifierKeys;
+        public static DragKey Empty { get; } = new DragKey();
 
 
         public DragKey()
         {
         }
+
 
         public DragKey(MouseButtonBits bits, ModifierKeys modifiers)
         {
@@ -34,6 +34,12 @@ namespace NeeView
             { }
         }
 
+        public MouseButtonBits MouseButtonBits { get; init; }
+        public ModifierKeys ModifierKeys { get; init; }
+
+
+
+#if false
         #region IEquatable
 
         /// <summary>
@@ -56,7 +62,7 @@ namespace NeeView
             }
 
             // Return true if the fields match:
-            return (MouseButtonBits == p.MouseButtonBits) && (ModifierKeys == p.ModifierKeys);
+            return (_mouseButtonBits == p._mouseButtonBits) && (_modifierKeys == p._modifierKeys);
         }
 
         /// <summary>
@@ -73,7 +79,7 @@ namespace NeeView
             }
 
             // Return true if the fields match:
-            return (MouseButtonBits == p.MouseButtonBits) && (ModifierKeys == p.ModifierKeys);
+            return (_mouseButtonBits == p._mouseButtonBits) && (_modifierKeys == p._modifierKeys);
         }
 
         /// <summary>
@@ -82,7 +88,7 @@ namespace NeeView
         /// <returns></returns>
         public override int GetHashCode()
         {
-            return MouseButtonBits.GetHashCode() ^ ModifierKeys.GetHashCode();
+            return _mouseButtonBits.GetHashCode() ^ _modifierKeys.GetHashCode();
         }
 
         /// <summary>
@@ -106,7 +112,7 @@ namespace NeeView
             }
 
             // Return true if the fields match:
-            return (a.MouseButtonBits == b.MouseButtonBits) && (a.ModifierKeys == b.ModifierKeys);
+            return (a._mouseButtonBits == b._mouseButtonBits) && (a._modifierKeys == b._modifierKeys);
         }
 
         /// <summary>
@@ -121,6 +127,7 @@ namespace NeeView
         }
 
         #endregion
+#endif
 
         public bool IsValid => MouseButtonBits != MouseButtonBits.None;
 

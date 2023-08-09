@@ -49,6 +49,7 @@ namespace NeeView
         {
             _isButtonDown = true;
             _context.StartPoint = e.GetPosition(_context.Sender);
+            _context.StartTimestamp = e.Timestamp;
         }
 
 

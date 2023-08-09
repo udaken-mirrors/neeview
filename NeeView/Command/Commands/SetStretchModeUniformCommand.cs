@@ -1,5 +1,4 @@
-﻿using NeeView.Windows.Property;
-using System.Windows.Data;
+﻿using System.Windows.Data;
 
 
 namespace NeeView
@@ -32,23 +31,6 @@ namespace NeeView
         public override void Execute(object? sender, CommandContext e)
         {
             MainViewComponent.Current.ViewController.SetStretchMode(PageStretchMode.Uniform, (e.Parameter.Cast<StretchModeCommandParameter>()).IsToggle);
-        }
-    }
-
-
-    /// <summary>
-    /// スケールモード用設定
-    /// </summary>
-    public class StretchModeCommandParameter : CommandParameter
-    {
-        private bool _isToggle;
-
-        // 属性に説明文
-        [PropertyMember]
-        public bool IsToggle
-        {
-            get => _isToggle;
-            set => SetProperty(ref _isToggle , value);
         }
     }
 }

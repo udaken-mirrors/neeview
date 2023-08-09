@@ -9,12 +9,13 @@ using System.Windows.Media;
 
 namespace NeeView
 {
+
     /// <summary>
     /// ドラッグ操作
     /// </summary>
     public class MouseInputDrag : MouseInputBase
     {
-        readonly DragTransformControl _dragTransformControl;
+        readonly IDragTransformControl _dragTransformControl;
 
         public MouseInputDrag(MouseInputContext context) : base(context)
         {
@@ -28,7 +29,7 @@ namespace NeeView
             sender.Cursor = Cursors.Hand;
 
             _dragTransformControl.ResetState();
-            _dragTransformControl.UpdateState(CreateMouseButtonBits(), Keyboard.Modifiers, _context.StartPoint);
+            _dragTransformControl.UpdateState(CreateMouseButtonBits(), Keyboard.Modifiers, _context.StartPoint, _context.StartTimestamp);
         }
 
         public override void OnClosed(FrameworkElement sender)
@@ -87,7 +88,7 @@ namespace NeeView
 
         public override void OnMouseMove(object? sender, MouseEventArgs e)
         {
-            _dragTransformControl.UpdateState(CreateMouseButtonBits(e), Keyboard.Modifiers, e.GetPosition(_context.Sender));
+            _dragTransformControl.UpdateState(CreateMouseButtonBits(e), Keyboard.Modifiers, e.GetPosition(_context.Sender), e.Timestamp);
         }
 
     }

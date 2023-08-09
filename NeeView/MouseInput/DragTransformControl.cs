@@ -54,7 +54,7 @@ namespace NeeView
     /// <summary>
     /// ドラッグ操作
     /// </summary>
-    public class DragTransformControl
+    public class DragTransformControl : IDragTransformControl
     {
         #region Fields
 
@@ -131,8 +131,9 @@ namespace NeeView
         /// </summary>
         /// <param name="buttons">マウスボタンの状態</param>
         /// <param name="keys">装飾キーの状態</param>
-        /// <param name="pos">マウス座標(_context.Sender)</param>
-        public void UpdateState(MouseButtonBits buttons, ModifierKeys keys, Point point)
+        /// <param name="point">マウス座標(_context.Sender)</param>
+        /// <param name="timestamp">タイムスタンプ</param>
+        public void UpdateState(MouseButtonBits buttons, ModifierKeys keys, Point point, int timestamp)
         {
             if (_isMouseButtonDown)
             {

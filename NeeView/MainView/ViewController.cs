@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace NeeView
 {
-    public class ViewController
+    public class ViewController : IViewController
     {
         private readonly MainViewComponent _viewComponent;
         private readonly ScrollPageController _scrollPageControl;

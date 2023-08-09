@@ -131,6 +131,7 @@ namespace NeeView
             _context.Sender.Focus();
 
             _context.StartPoint = e.GetPosition(_context.Sender);
+            _context.StartTimestamp = e.Timestamp;
 
             // ダブルクリック？
             if (e.ClickCount >= 2)

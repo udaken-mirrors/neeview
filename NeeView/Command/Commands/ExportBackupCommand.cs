@@ -1,6 +1,4 @@
-﻿using NeeView.Windows.Property;
-
-namespace NeeView
+﻿namespace NeeView
 {
     public class ExportBackupCommand : CommandElement
     {
@@ -20,19 +18,6 @@ namespace NeeView
         public override void Execute(object? sender, CommandContext e)
         {
             ExportDataPresenter.Current.Export(e.Parameter.Cast<ExportBackupCommandParameter>());
-        }
-    }
-
-
-    public class ExportBackupCommandParameter : CommandParameter
-    {
-        private string? _fileName;
-
-        [PropertyPath(FileDialogType = Windows.Controls.FileDialogType.SaveFile, Filter = "NeeView BackupFile|*.nvzip")]
-        public string FileName
-        {
-            get { return _fileName ?? ""; }
-            set { SetProperty(ref _fileName, value); }
         }
     }
 }

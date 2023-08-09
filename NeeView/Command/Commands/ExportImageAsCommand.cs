@@ -1,7 +1,4 @@
-﻿using NeeLaboratory;
-using NeeView.Windows.Controls;
-using NeeView.Windows.Property;
-using System.Runtime.Serialization;
+﻿using System.Runtime.Serialization;
 
 namespace NeeView
 {
@@ -24,30 +21,6 @@ namespace NeeView
         public override void Execute(object? sender, CommandContext e)
         {
             BookOperation.Current.Control.ExportDialog(e.Parameter.Cast<ExportImageAsCommandParameter>());
-        }
-    }
-
-
-    /// <summary>
-    /// ExportImageAs Command Parameter
-    /// </summary>
-    public class ExportImageAsCommandParameter : CommandParameter
-    {
-        private string? _exportFolder;
-        private int _qualityLevel = 80;
-
-        [PropertyPath(FileDialogType = FileDialogType.Directory)]
-        public string ExportFolder
-        {
-            get => _exportFolder ?? "";
-            set => SetProperty(ref _exportFolder, value);
-        }
-
-        [PropertyRange(5, 100, TickFrequency = 5)]
-        public int QualityLevel
-        {
-            get => _qualityLevel;
-            set => SetProperty(ref _qualityLevel, MathUtility.Clamp(value, 5, 100));
         }
     }
 }

@@ -39,7 +39,7 @@ namespace NeeView
             _touch = parameter as TouchContext ?? throw new InvalidOperationException("parameter must be TouchContext");
 
             _drag.ResetState();
-            _drag.UpdateState(MouseButtonBits.LeftButton, Keyboard.Modifiers, _touch.StartPoint);
+            _drag.UpdateState(MouseButtonBits.LeftButton, Keyboard.Modifiers, _touch.StartPoint, _touch.StartTimestamp);
         }
 
         /// <summary>
@@ -84,7 +84,7 @@ namespace NeeView
         {
             if (e.StylusDevice != _touch?.StylusDevice) return;
 
-            _drag.UpdateState(MouseButtonBits.LeftButton, Keyboard.Modifiers, e.GetPosition(_context.Sender));
+            _drag.UpdateState(MouseButtonBits.LeftButton, Keyboard.Modifiers, e.GetPosition(_context.Sender), e.Timestamp);
         }
     }
 

@@ -50,6 +50,8 @@ namespace NeeView
         /// ドラッグ開始座標
         /// </summary>
         public Point StartPoint { get; set; }
+
+        public int StartTimestamp { get; set; }
     }
 
 }

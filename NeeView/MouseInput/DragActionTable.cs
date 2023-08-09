@@ -11,7 +11,7 @@ using System.Windows.Input;
 
 namespace NeeView
 {
-    public class DragActionTable : IEnumerable<KeyValuePair<string, DragAction>>
+    public class DragActionTable : IEnumerable<KeyValuePair<string, DragAction>> 
     {
         static DragActionTable() => Current = new DragActionTable();
         public static DragActionTable Current { get; }
@@ -134,20 +134,6 @@ namespace NeeView
                     _elements[pair.Key].Restore(pair.Value);
                 }
             }
-        }
-    }
-
-
-    public class DragActionCollection : Dictionary<string, DragAction.Memento>, ICloneable
-    {
-        public object Clone()
-        {
-            var clone = new DragActionCollection();
-            foreach (var pair in this)
-            {
-                clone.Add(pair.Key, pair.Value.Clone());
-            }
-            return clone;
         }
     }
 

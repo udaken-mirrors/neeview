@@ -1,5 +1,4 @@
-﻿using NeeView.Windows.Property;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -97,20 +96,6 @@ namespace NeeView
         public void OpenFile()
         {
             ExternalProcess.OpenWithTextEditor(_path);
-        }
-    }
-
-
-
-    public class ScriptCommandParameter : CommandParameter
-    {
-        private string? _argument;
-
-        [PropertyMember]
-        public string? Argument
-        {
-            get { return _argument; }
-            set { SetProperty(ref _argument, string.IsNullOrWhiteSpace(value) ? null : value.Trim()); }
         }
     }
 

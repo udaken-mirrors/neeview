@@ -1,0 +1,46 @@
+﻿using NeeLaboratory;
+using NeeView.Windows.Property;
+using System;
+
+namespace NeeView
+{
+    /// <summary>
+    /// N字スクロール
+    /// </summary>
+    public class ViewScrollNTypeCommandParameter : ReversibleCommandParameter, IScrollNTypeParameter
+    {
+        private NScrollType _scrollType = NScrollType.NType;
+        private double _scroll = 1.0;
+        private double _scrollDuration = 0.2;
+        private double _lineBreakStopTime;
+
+        [PropertyMember]
+        public NScrollType ScrollType
+        {
+            get { return _scrollType; }
+            set { SetProperty(ref _scrollType, value); }
+        }
+
+        [PropertyPercent]
+        public double Scroll
+        {
+            get => _scroll;
+            set => SetProperty(ref _scroll, MathUtility.Clamp(value, 0.1, 1.0));
+        }
+
+        [PropertyRange(0.0, 1.0, TickFrequency = 0.1, IsEditable = true)]
+        public double ScrollDuration
+        {
+            get { return _scrollDuration; }
+            set { SetProperty(ref _scrollDuration, Math.Max(value, 0.0)); }
+        }
+
+        [PropertyRange(0.0, 1.0, TickFrequency = 0.1, IsEditable = true)]
+        public double LineBreakStopTime
+        {
+            get { return _lineBreakStopTime; }
+            set { SetProperty(ref _lineBreakStopTime, value); }
+        }
+    }
+
+}

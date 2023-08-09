@@ -48,6 +48,7 @@ namespace NeeView
             sender.Cursor = Cursors.None;
 
             _context.StartPoint = Mouse.GetPosition(sender);
+            _context.StartTimestamp = System.Environment.TickCount;
             var center = new Point(sender.ActualWidth * 0.5, sender.ActualHeight * 0.5);
             Vector v = _context.StartPoint - center;
             _loupeBasePosition = (Point)(Config.Current.Loupe.IsLoupeCenter ? -v : -v + v / _loupe.Scale);
