@@ -19,7 +19,7 @@ namespace NeeView
 
         public override string ExecuteMessage(object? sender, CommandContext e)
         {
-            return MainViewComponent.Current.ViewController.GetAutoRotateLeft() ? Properties.Resources.ToggleIsAutoRotateLeftCommand_Off : Properties.Resources.ToggleIsAutoRotateLeftCommand_On;
+            return MainViewComponent.Current.ViewPropertyControl.GetAutoRotateLeft() ? Properties.Resources.ToggleIsAutoRotateLeftCommand_Off : Properties.Resources.ToggleIsAutoRotateLeftCommand_On;
         }
         
         public override bool CanExecute(object? sender, CommandContext e)
@@ -32,11 +32,11 @@ namespace NeeView
         {
             if (e.Args.Length > 0)
             {
-                MainViewComponent.Current.ViewController.SetAutoRotateLeft(Convert.ToBoolean(e.Args[0]));
+                MainViewComponent.Current.ViewPropertyControl.SetAutoRotateLeft(Convert.ToBoolean(e.Args[0]));
             }
             else
             {
-                MainViewComponent.Current.ViewController.ToggleAutoRotateLeft();
+                MainViewComponent.Current.ViewPropertyControl.ToggleAutoRotateLeft();
             }
         }
     }

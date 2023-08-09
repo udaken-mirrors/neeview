@@ -17,7 +17,7 @@ namespace NeeView
 
         public override void Execute(object? sender, CommandContext e)
         {
-            MainViewComponent.Current.ViewController.ScaleUp(e.Parameter.Cast<ViewScaleCommandParameter>());
+            MainViewComponent.Current.ViewTransformControl.ScaleUp(e.Parameter.Cast<ViewScaleCommandParameter>());
         }
     }
 }

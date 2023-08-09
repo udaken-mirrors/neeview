@@ -10,7 +10,7 @@
 
         public override void Execute(object? sender, CommandContext e)
         {
-            MainViewComponent.Current.ViewController.SetFullScreen(sender, true);
+            MainViewComponent.Current.ViewWindowControl.SetFullScreen(sender, true);
         }
     }
 }

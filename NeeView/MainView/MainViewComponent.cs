@@ -14,6 +14,7 @@ namespace NeeView
 
 
         private readonly MainView _mainView;
+        private TouchEmurlateController _touchEmurlateController = new();
         private bool _disposedValue;
 
 
@@ -40,8 +41,12 @@ namespace NeeView
             MouseInput = new MouseInput(new MouseInputContext(_mainView.View, mouseGestureCommandCollection, DragTransformControl, DragTransform, LoupeTransform));
 
             var scrollPageController = new ScrollPageController(this, BookSettingPresenter.Current, BookOperation.Current);
-            var printController = new PrintController(this, _mainView);
-            ViewController = new ViewController(this, scrollPageController, printController);
+            PrintController = new PrintController(this, _mainView);
+            ViewTransformControl = new ViewTransformControl(this, scrollPageController);
+            ViewLoupeControl = new ViewLoupeControl(this);
+            ViewWindowControl = new ViewWindowControl(this);
+            ViewPropertyControl = new ViewPropertyControl(this);
+            ViewCopyImage = new ViewCopyImage(this);
 
             ContentCanvas = new ContentCanvas(this, bookHub);
             ContentCanvasBrush = new ContentCanvasBrush(ContentCanvas);
@@ -84,7 +89,13 @@ namespace NeeView
         public MouseInput MouseInput { get; private set; }
         public TouchInput TouchInput { get; private set; }
 
-        public ViewController ViewController { get; private set; }
+        public PrintController PrintController { get; private set; }
+
+        public IViewTransformControl ViewTransformControl { get; private set; }
+        public IViewLoupeControl ViewLoupeControl { get; private set; }
+        public IViewWindowControl ViewWindowControl { get; private set; }
+        public IViewPropertyControl ViewPropertyControl { get; private set; }
+        public IViewCopyImage ViewCopyImage { get; private set; }
 
         public ContentCanvas ContentCanvas { get; private set; }
         public ContentCanvasBrush ContentCanvasBrush { get; private set; }
@@ -92,7 +103,7 @@ namespace NeeView
         public ContentRebuild ContentRebuild { get; private set; }
 
 
-        public bool IsLoupeMode => ViewController.GetLoupeMode();
+        public bool IsLoupeMode => ViewLoupeControl.GetLoupeMode();
 
 
         public Window GetWindow()
@@ -127,6 +138,11 @@ namespace NeeView
         public void RaiseFocusMainViewRequest()
         {
             FocusMainViewRequest?.Invoke(this, EventArgs.Empty);
+        }
+
+        public void TouchInputEmutrate(object? sender)
+        {
+            _touchEmurlateController.Execute(sender);
         }
     }
 }

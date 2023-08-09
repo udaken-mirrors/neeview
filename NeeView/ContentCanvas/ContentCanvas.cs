@@ -484,7 +484,7 @@ namespace NeeView
             // ルーペ解除
             if (Config.Current.Loupe.IsResetByPageChanged)
             {
-                _viewComponent.ViewController.SetLoupeMode(false);
+                _viewComponent.ViewLoupeControl.SetLoupeMode(false);
             }
 
             // 回転後のページ移動のスケール維持補正

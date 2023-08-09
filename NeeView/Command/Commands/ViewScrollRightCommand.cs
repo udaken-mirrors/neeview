@@ -13,7 +13,7 @@
 
         public override void Execute(object? sender, CommandContext e)
         {
-            MainViewComponent.Current.ViewController.ScrollRight(e.Parameter.Cast<ViewScrollCommandParameter>());
+            MainViewComponent.Current.ViewTransformControl.ScrollRight(e.Parameter.Cast<ViewScrollCommandParameter>());
         }
     }
 }

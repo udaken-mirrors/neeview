@@ -98,12 +98,12 @@ namespace NeeView
 
         public void ScrollToPrevFrame(object? sender, ScrollPageCommandParameter parameter)
         {
-            MainViewComponent.Current.ViewController.PrevScrollPage(sender, parameter);
+            MainViewComponent.Current.ViewTransformControl.PrevScrollPage(sender, parameter);
         }
 
         public void ScrollToNextFrame(object? sender, ScrollPageCommandParameter parameter)
         {
-            MainViewComponent.Current.ViewController.NextScrollPage(sender, parameter);
+            MainViewComponent.Current.ViewTransformControl.NextScrollPage(sender, parameter);
         }
 
 

@@ -11,7 +11,7 @@
 
         public override void Execute(object? sender, CommandContext e)
         {
-            MainViewComponent.Current.ViewController.ViewRotateLeft(e.Parameter.Cast<ViewRotateCommandParameter>());
+            MainViewComponent.Current.ViewTransformControl.ViewRotateLeft(e.Parameter.Cast<ViewRotateCommandParameter>());
         }
     }
 }

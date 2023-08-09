@@ -18,7 +18,7 @@ namespace NeeView
 
         public override string ExecuteMessage(object? sender, CommandContext e)
         {
-            return MainViewComponent.Current.ViewController.GetLoupeMode() ? Properties.Resources.ToggleIsLoupeCommand_Off : Properties.Resources.ToggleIsLoupeCommand_On;
+            return MainViewComponent.Current.ViewLoupeControl.GetLoupeMode() ? Properties.Resources.ToggleIsLoupeCommand_Off : Properties.Resources.ToggleIsLoupeCommand_On;
         }
 
         [MethodArgument("@ToggleCommand.Execute.Remarks")]
@@ -26,11 +26,11 @@ namespace NeeView
         {
             if (e.Args.Length > 0)
             {
-                MainViewComponent.Current.ViewController.SetLoupeMode(Convert.ToBoolean(e.Args[0]));
+                MainViewComponent.Current.ViewLoupeControl.SetLoupeMode(Convert.ToBoolean(e.Args[0]));
             }
             else
             {
-                MainViewComponent.Current.ViewController.ToggleLoupeMode();
+                MainViewComponent.Current.ViewLoupeControl.ToggleLoupeMode();
             }
         }
     }

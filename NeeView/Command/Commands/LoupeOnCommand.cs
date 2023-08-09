@@ -10,7 +10,7 @@
 
         public override void Execute(object? sender, CommandContext e)
         {
-            MainViewComponent.Current.ViewController.SetLoupeMode(true);
+            MainViewComponent.Current.ViewLoupeControl.SetLoupeMode(true);
         }
     }
 }

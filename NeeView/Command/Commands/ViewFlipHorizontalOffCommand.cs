@@ -10,7 +10,7 @@
 
         public override void Execute(object? sender, CommandContext e)
         {
-            MainViewComponent.Current.ViewController.FlipHorizontal(false);
+            MainViewComponent.Current.ViewTransformControl.FlipHorizontal(false);
         }
     }
 }

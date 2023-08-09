@@ -10,12 +10,12 @@
 
         public override bool CanExecute(object? sender, CommandContext e)
         {
-            return MainViewComponent.Current.ViewController.GetLoupeMode();
+            return MainViewComponent.Current.ViewLoupeControl.GetLoupeMode();
         }
 
         public override void Execute(object? sender, CommandContext e)
         {
-            MainViewComponent.Current.ViewController.LoupeZoomOut();
+            MainViewComponent.Current.ViewLoupeControl.LoupeZoomOut();
         }
     }
 }

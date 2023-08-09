@@ -22,11 +22,11 @@ namespace NeeView
         {
             if (e.Args.Length > 0)
             {
-                MainViewComponent.Current.ViewController.FlipVertical(Convert.ToBoolean(e.Args[0]));
+                MainViewComponent.Current.ViewTransformControl.FlipVertical(Convert.ToBoolean(e.Args[0]));
             }
             else
             {
-                MainViewComponent.Current.ViewController.ToggleFlipVertical();
+                MainViewComponent.Current.ViewTransformControl.ToggleFlipVertical();
             }
         }
     }

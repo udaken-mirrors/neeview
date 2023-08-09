@@ -19,7 +19,7 @@ namespace NeeView
 
         public override void Execute(object? sender, CommandContext e)
         {
-            MainViewComponent.Current.ViewController.ScaleDown(e.Parameter.Cast<ViewScaleCommandParameter>());
+            MainViewComponent.Current.ViewTransformControl.ScaleDown(e.Parameter.Cast<ViewScaleCommandParameter>());
         }
     }
 

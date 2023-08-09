@@ -15,7 +15,7 @@ namespace NeeView
         }
         public override void Execute(object? sender, CommandContext e)
         {
-            MainViewComponent.Current.ViewController.ScrollUp(e.Parameter.Cast<ViewScrollCommandParameter>());
+            MainViewComponent.Current.ViewTransformControl.ScrollUp(e.Parameter.Cast<ViewScrollCommandParameter>());
         }
     }
 

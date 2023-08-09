@@ -13,7 +13,7 @@
 
         public override void Execute(object? sender, CommandContext e)
         {
-            MainViewComponent.Current.ViewController.ScrollNTypeDown(e.Parameter.Cast<ViewScrollNTypeCommandParameter>());
+            MainViewComponent.Current.ViewTransformControl.ScrollNTypeDown(e.Parameter.Cast<ViewScrollNTypeCommandParameter>());
         }
     }
 
