@@ -106,6 +106,7 @@
     <ProjectReference Include="..\NeeLaboratory.IO.Search\NeeLaboratory.IO.Search\NeeLaboratory.IO.Search.csproj" />
     <ProjectReference Include="..\NeeLaboratory.Remote\NeeLaboratory.Remote.csproj" />
     <ProjectReference Include="..\NeeLaboratory.Runtime\NeeLaboratory.Runtime.csproj" />
+    <ProjectReference Include="..\NeeLaboratory.SourceGenerator\NeeLaboratory.SourceGenerator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false"/>
     <ProjectReference Include="..\NeeView.Susie\NeeView.Susie.csproj" />
     <ProjectReference Include="..\SevenZipSharp\SevenZip\SevenZip.csproj">
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>

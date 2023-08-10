@@ -35,6 +35,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NeeView.UnitTest", "NeeView
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NeeView.Terminator", "NeeView.Terminator\NeeView.Terminator.csproj", "{7B614563-CA6F-410A-8CD6-8CB3AAE10190}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NeeLaboratory.SourceGenerator", "NeeLaboratory.SourceGenerator\NeeLaboratory.SourceGenerator.csproj", "{524C9947-50DA-46AF-AE81-F990E558D462}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -210,6 +212,24 @@ Global
 		{7B614563-CA6F-410A-8CD6-8CB3AAE10190}.Remote|x64.Build.0 = Release|x64
 		{7B614563-CA6F-410A-8CD6-8CB3AAE10190}.Remote|x86.ActiveCfg = Release|x86
 		{7B614563-CA6F-410A-8CD6-8CB3AAE10190}.Remote|x86.Build.0 = Release|x86
+		{524C9947-50DA-46AF-AE81-F990E558D462}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{524C9947-50DA-46AF-AE81-F990E558D462}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{524C9947-50DA-46AF-AE81-F990E558D462}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{524C9947-50DA-46AF-AE81-F990E558D462}.Debug|x64.Build.0 = Debug|Any CPU
+		{524C9947-50DA-46AF-AE81-F990E558D462}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{524C9947-50DA-46AF-AE81-F990E558D462}.Debug|x86.Build.0 = Debug|Any CPU
+		{524C9947-50DA-46AF-AE81-F990E558D462}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{524C9947-50DA-46AF-AE81-F990E558D462}.Release|Any CPU.Build.0 = Release|Any CPU
+		{524C9947-50DA-46AF-AE81-F990E558D462}.Release|x64.ActiveCfg = Release|Any CPU
+		{524C9947-50DA-46AF-AE81-F990E558D462}.Release|x64.Build.0 = Release|Any CPU
+		{524C9947-50DA-46AF-AE81-F990E558D462}.Release|x86.ActiveCfg = Release|Any CPU
+		{524C9947-50DA-46AF-AE81-F990E558D462}.Release|x86.Build.0 = Release|Any CPU
+		{524C9947-50DA-46AF-AE81-F990E558D462}.Remote|Any CPU.ActiveCfg = Release|Any CPU
+		{524C9947-50DA-46AF-AE81-F990E558D462}.Remote|Any CPU.Build.0 = Release|Any CPU
+		{524C9947-50DA-46AF-AE81-F990E558D462}.Remote|x64.ActiveCfg = Release|Any CPU
+		{524C9947-50DA-46AF-AE81-F990E558D462}.Remote|x64.Build.0 = Release|Any CPU
+		{524C9947-50DA-46AF-AE81-F990E558D462}.Remote|x86.ActiveCfg = Release|Any CPU
+		{524C9947-50DA-46AF-AE81-F990E558D462}.Remote|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
