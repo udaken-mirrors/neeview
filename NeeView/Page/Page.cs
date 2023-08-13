@@ -270,6 +270,18 @@ namespace NeeView
             RaisePropertyChanged(nameof(ContentAccessor));
         }
 
+        public void Unload()
+        {
+            UnloadContent();
+        }
+
+        // ImageSource取得
+        public ImageSource? GetContentImageSource()
+        {
+            return (_content as BitmapContent)?.ImageSource;
+        }
+
+
 
         /// <summary>
         /// サムネイル読み込み
@@ -291,12 +303,6 @@ namespace NeeView
             }
         }
 
-
-        // ImageSource取得
-        public ImageSource? GetContentImageSource()
-        {
-            return (_content as BitmapContent)?.ImageSource;
-        }
 
         // ページ名：ソート用分割
         public string[] GetEntryFullNameTokens()
@@ -350,13 +356,6 @@ namespace NeeView
             return _content.Clone();
         }
 
-        public async Task InitializeEntryAsync(CancellationToken token)
-        {
-            if (_contentLoader is IHasInitializeEntry initializer)
-            {
-                await initializer.InitializeEntryAsync(token);
-            }
-        }
 
         /// <summary>
         /// can delete?
@@ -373,29 +372,6 @@ namespace NeeView
         {
             return await Entry.DeleteAsync();
         }
-
-        /// <summary>
-        /// Create Page visual for Dialog thumbnail.
-        /// </summary>
-        /// <returns>Image</returns>
-        public async Task<Image> CreatePageVisualAsync()
-        {
-            var imageSource = await LoadThumbnailAsync(CancellationToken.None);
-
-            var image = new Image();
-            image.Source = imageSource;
-            image.Effect = new DropShadowEffect()
-            {
-                Opacity = 0.5,
-                ShadowDepth = 2,
-                RenderingBias = RenderingBias.Quality
-            };
-            image.MaxWidth = 96;
-            image.MaxHeight = 96;
-
-            return image;
-        }
-
 
         public string GetRenameText()
         {
@@ -428,10 +404,32 @@ namespace NeeView
         {
             return _content.GetContentMemorySize();
         }
+    }
 
-        public void Unload()
+
+
+    public static class PageExtensions
+    {
+        /// <summary>
+        /// Create Page visual for Dialog thumbnail.
+        /// </summary>
+        /// <returns>Image</returns>
+        public static async Task<Image> CreatePageVisualAsync(this Page page)
         {
-            UnloadContent();
+            var imageSource = await page.LoadThumbnailAsync(CancellationToken.None);
+
+            var image = new Image();
+            image.Source = imageSource;
+            image.Effect = new DropShadowEffect()
+            {
+                Opacity = 0.5,
+                ShadowDepth = 2,
+                RenderingBias = RenderingBias.Quality
+            };
+            image.MaxWidth = 96;
+            image.MaxHeight = 96;
+
+            return image;
         }
     }
 
