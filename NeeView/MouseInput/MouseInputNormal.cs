@@ -250,10 +250,13 @@ namespace NeeView
         /// </summary>
         private void HoverScroll(object? sender, MouseEventArgs e)
         {
+#warning not support yet
+#if false
             if (_context.DragTransformControl is null) return;
 
             var point = e.GetPosition(_context.Sender);
             _context.DragTransformControl.HoverScroll(point);
+#endif
         }
 
         /// <summary>

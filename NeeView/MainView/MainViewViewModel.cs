@@ -1,5 +1,6 @@
 ﻿using NeeLaboratory.ComponentModel;
 using NeeView.Effects;
+using NeeView.Presenter;
 using System;
 using System.Diagnostics;
 using System.Windows;
@@ -30,22 +31,24 @@ namespace NeeView
                 (s, e) => SetContextMenuDarty();
 
             // busy visibility
-            _viewComponent.ContentRebuild.AddPropertyChanged(nameof(ContentRebuild.IsBusy),
-                (s, e) => UpdateBusyVisibility());
+            //_viewComponent.ContentRebuild.AddPropertyChanged(nameof(ContentRebuild.IsBusy),
+            //    (s, e) => UpdateBusyVisibility());
 
             BookOperation.Current.BookControl.AddPropertyChanged(nameof(IBookControl.IsBusy),
                 (s, e) => UpdateBusyVisibility());
 
-            BookHub.Current.AddPropertyChanged(nameof(BookHub.IsLoading),
+            BookHub.Current.SubscribePropertyChanged(nameof(BookHub.IsLoading),
                 (s, e) => UpdateBusyVisibility());
         }
 
 
         public MainViewComponent ViewComponent => _viewComponent;
 
-        public ContentCanvas ContentCanvas => _viewComponent.ContentCanvas;
+        public PageFrameBoxPresenter PageFrameBoxPresenter => _viewComponent.PageFrameBoxPresenter;
 
-        public ContentCanvasBrush ContentCanvasBrush => _viewComponent.ContentCanvasBrush;
+        //public ContentCanvas ContentCanvas => _viewComponent.ContentCanvas;
+
+        //public ContentCanvasBrush ContentCanvasBrush => _viewComponent.ContentCanvasBrush;
 
         public ImageEffect ImageEffect => ImageEffect.Current;
 
@@ -53,7 +56,7 @@ namespace NeeView
 
         public InfoMessage InfoMessage => InfoMessage.Current;
 
-        public LoupeTransform LoupeTransform => _viewComponent.LoupeTransform;
+        //public LoupeTransform LoupeTransform => _viewComponent.LoupeTransform;
 
         public MouseInput MouseInput => _viewComponent.MouseInput;
 
@@ -74,7 +77,8 @@ namespace NeeView
         private void UpdateBusyVisibility()
         {
             ////Debug.WriteLine($"IsBusy: {BookHub.Current.IsLoading}, {BookOperation.Current.IsBusy}, {ContentRebuild.Current.IsBusy}");
-            this.BusyVisibility = Config.Current.Notice.IsBusyMarkEnabled && (BookHub.Current.IsLoading || BookOperation.Current.BookControl.IsBusy || _viewComponent.ContentRebuild.IsBusy) && !SlideShow.Current.IsPlayingSlideShow ? Visibility.Visible : Visibility.Collapsed;
+            //this.BusyVisibility = Config.Current.Notice.IsBusyMarkEnabled && (BookHub.Current.IsLoading || BookOperation.Current.BookControl.IsBusy || _viewComponent.ContentRebuild.IsBusy) && !SlideShow.Current.IsPlayingSlideShow ? Visibility.Visible : Visibility.Collapsed;
+            this.BusyVisibility = Config.Current.Notice.IsBusyMarkEnabled && (BookHub.Current.IsLoading || BookOperation.Current.BookControl.IsBusy) && !SlideShow.Current.IsPlayingSlideShow ? Visibility.Visible : Visibility.Collapsed;
         }
 
 
@@ -98,12 +102,14 @@ namespace NeeView
         }
 
 
+        [Obsolete]
         public void SetViewSize(double width, double height)
         {
-            _viewComponent.ContentCanvas.SetViewSize(width, height);
-            _viewComponent.DragTransformControl.SnapView();
+            //_viewComponent.ContentCanvas.SetViewSize(width, height);
+            //_viewComponent.DragTransformControl.SnapView();
         }
 
+#if false
         public void StretchWindow(Window window, Size canvasSize, Size contentSize)
         {
             if (contentSize.IsEmptyOrZero())
@@ -167,5 +173,6 @@ namespace NeeView
 
             _viewComponent.DragTransform.SetScale(scale, TransformActionType.None);
         }
+#endif
     }
 }

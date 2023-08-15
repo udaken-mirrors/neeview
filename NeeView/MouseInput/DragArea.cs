@@ -1,45 +1,42 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Linq;
 using System.Windows;
 
 namespace NeeView
 {
+
     /// <summary>
-    /// ドラッグエリア情報
+    /// from NeeView.DragArea
+    /// - ElementではなくRectを扱うように変更
+    /// - 正方向へのはみ出しを計算に入れた
     /// </summary>
     public class DragArea
     {
-        public DragArea(FrameworkElement view, FrameworkElement target)
+        public DragArea(Rect viewRect, Rect contentRect)
         {
-            View = new Size(view.ActualWidth, view.ActualHeight);
-            Target = GetRealSize(target, view);
+            ViewRect = viewRect;
+            ContentRect = contentRect;
 
-            Over = new Rect()
-            {
-                X = Target.Left < 0 ? Target.Left : 0,
-                Y = Target.Top < 0 ? Target.Top : 0,
-                Width = Target.Width > View.Width ? Target.Width - View.Width : 0,
-                Height = Target.Height > View.Height ? Target.Height - View.Height : 0,
-            };
+            var left = ContentRect.Left < ViewRect.Left ? ContentRect.Left - ViewRect.Left : 0;
+            var right = ContentRect.Right > ViewRect.Right ? ContentRect.Right - ViewRect.Right : 0;
+            var top = ContentRect.Top < ViewRect.Top ? ContentRect.Top - ViewRect.Top : 0;
+            var bottom = ContentRect.Bottom > ViewRect.Bottom ? ContentRect.Bottom - ViewRect.Bottom : 0;
+            Over = new Rect(left, top, right - left, bottom - top);
         }
 
         /// <summary>
-        /// ビューエリアサイズ
+        /// ビューエリア矩形
         /// </summary>
-        public Size View { get; private set; }
+        public Rect ViewRect { get; private set; }
 
         /// <summary>
-        /// ターゲットエリア
+        /// コンテンツ矩形
         /// </summary>
-        public Rect Target { get; private set; }
+        public Rect ContentRect { get; private set; }
 
         /// <summary>
         /// ビューエリアオーバー情報.
-        /// X,Y はターゲットがビューエリアからマイナスにはみ出している場合のみその値を記憶する。
-        /// Width,Height はターゲットサイズがビューエリアサイズを超える差分を記憶する。
+        /// Left,Top はターゲットがビューエリアからマイナスにはみ出している場合のみその値を記憶する。
+        /// Right,Bottom はターゲットがビューエリアからプラスにはみ出している場合のみその値を記憶する。
         /// </summary>
         public Rect Over { get; private set; }
 
@@ -81,16 +78,16 @@ namespace NeeView
             // ウィンドウサイズ変更直後はrectのスクリーン座標がおかしい可能性があるのでPositionから計算しなおす
             var rect = new Rect()
             {
-                X = pos.X - this.Target.Width * 0.5 + this.View.Width * 0.5,
-                Y = pos.Y - this.Target.Height * 0.5 + this.View.Height * 0.5,
-                Width = this.Target.Width,
-                Height = this.Target.Height,
+                X = pos.X - ContentRect.Width * 0.5 + ViewRect.Width * 0.5,
+                Y = pos.Y - ContentRect.Height * 0.5 + ViewRect.Height * 0.5,
+                Width = ContentRect.Width,
+                Height = ContentRect.Height,
             };
 
-            var minX = this.View.Width * -0.5 + rect.Width * 0.5;
-            var maxX = minX + this.View.Width - rect.Width;
+            var minX = ViewRect.Width * -0.5 + rect.Width * 0.5;
+            var maxX = minX + ViewRect.Width - rect.Width;
 
-            if (rect.Width <= this.View.Width + margin)
+            if (rect.Width <= ViewRect.Width + margin)
             {
                 if (centered)
                 {
@@ -100,7 +97,7 @@ namespace NeeView
                 {
                     pos.X = minX;
                 }
-                else if (rect.Right > this.View.Width)
+                else if (rect.Right > ViewRect.Width)
                 {
                     pos.X = maxX;
                 }
@@ -111,16 +108,16 @@ namespace NeeView
                 {
                     pos.X -= rect.Left;
                 }
-                else if (rect.Right < this.View.Width)
+                else if (rect.Right < ViewRect.Width)
                 {
-                    pos.X += this.View.Width - rect.Right;
+                    pos.X += ViewRect.Width - rect.Right;
                 }
             }
 
-            var minY = this.View.Height * -0.5 + rect.Height * 0.5;
-            var maxY = minY + this.View.Height - rect.Height;
+            var minY = ViewRect.Height * -0.5 + rect.Height * 0.5;
+            var maxY = minY + ViewRect.Height - rect.Height;
 
-            if (rect.Height <= this.View.Height + margin)
+            if (rect.Height <= ViewRect.Height + margin)
             {
                 if (centered)
                 {
@@ -130,7 +127,7 @@ namespace NeeView
                 {
                     pos.Y = minY;
                 }
-                else if (rect.Bottom > this.View.Height)
+                else if (rect.Bottom > ViewRect.Height)
                 {
                     pos.Y = maxY;
                 }
@@ -141,7 +138,7 @@ namespace NeeView
                 {
                     pos.Y = minY;
                 }
-                else if (rect.Bottom < this.View.Height)
+                else if (rect.Bottom < ViewRect.Height)
                 {
                     pos.Y = maxY;
                 }
@@ -151,4 +148,5 @@ namespace NeeView
         }
 
     }
+
 }

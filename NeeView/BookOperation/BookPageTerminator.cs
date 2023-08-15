@@ -21,8 +21,9 @@ namespace NeeView
             _control = control;
 
             _disposables = new();
-            _disposables.Add(_book.Viewer.SubscribePageTerminated(
-                (s, e) => AppDispatcher.Invoke(() => Book_PageTerminated(s, e))));
+#warning not implemented yet
+            //_disposables.Add(_book.Viewer.SubscribePageTerminated(
+            //    (s, e) => AppDispatcher.Invoke(() => Book_PageTerminated(s, e))));
         }
 
         protected virtual void Dispose(bool disposing)
@@ -46,7 +47,7 @@ namespace NeeView
 
         // ページ終端を超えて移動しようとするときの処理
         private void Book_PageTerminated(object? sender, PageTerminatedEventArgs e)
-        { 
+        {
             if (_pageTerminating > 0) return;
 
             // TODO ここでSlideShowを参照しているが、引数で渡すべきでは？

@@ -27,7 +27,7 @@ namespace NeeView
         [AliasName]
         UniformToHorizontal,
     }
-    
+
     #region Obsolete
 
     // 旧・画像のストレッチモード

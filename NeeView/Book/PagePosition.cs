@@ -5,6 +5,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+// TODO: -1 は有効範囲とする。 int.MinValue を無効な値として定義する
+
 namespace NeeView
 {
     /// <summary>
@@ -50,7 +52,19 @@ namespace NeeView
         //
         public override string ToString()
         {
-            return IsEmpty() ? "Empty" : Index.ToString() + (Part == 1 ? ".5" : "");
+            return IsEmpty() ? "Empty" : Index.ToString() + (Part == 1 ? "b" : "a");
+        }
+
+        // truncate ... パーツ番号クリア
+        public PagePosition Truncate()
+        {
+            return new PagePosition(Index, 0);
+        }
+
+        // もう一方のパーツの場所
+        public PagePosition OtherPart()
+        {
+            return new PagePosition(Index, 1 - Part);
         }
 
         // clamp
@@ -67,7 +81,7 @@ namespace NeeView
 
         public bool IsEmpty()
         {
-            return _value == -1;
+            return _value < 0;
         }
 
         // ページ数とパーツ数からValue値を求める

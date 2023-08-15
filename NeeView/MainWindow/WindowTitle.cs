@@ -38,10 +38,13 @@ namespace NeeView
 
             _defaultWindowTitle = $"{Environment.ApplicationName} {Environment.DispVersion}";
 
+#warning not implement yet
+#if false
             _mainViewComponent.ContentCanvas.ContentChanged += (s, e) =>
             {
                 UpdateFormat();
             };
+#endif
 
             _bookHub.Loading += (s, e) =>
             {
@@ -78,6 +81,7 @@ namespace NeeView
 
         private void UpdateFormat()
         {
+#if false
             var contents = _mainViewComponent.ContentCanvas.CloneContents;
             var mainContent = _mainViewComponent.ContentCanvas.MainContent;
             var subContent = contents.First(e => e != mainContent);
@@ -87,6 +91,7 @@ namespace NeeView
                 : subContent.IsValid && !subContent.IsDummy ? Config.Current.WindowTitle.WindowTitleFormat2 : Config.Current.WindowTitle.WindowTitleFormat1;
 
             _titleString.SetFormat(format);
+#endif
         }
 
         private void UpdateTitle()
@@ -101,10 +106,12 @@ namespace NeeView
             {
                 Title = _defaultWindowTitle;
             }
+#if false
             else if (_mainViewComponent.ContentCanvas.MainContent?.Source == null)
             {
                 Title = LoosePath.GetDispName(address);
             }
+#endif
             else
             {
                 Title = _titleString.Title;

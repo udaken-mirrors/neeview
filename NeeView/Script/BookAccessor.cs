@@ -48,7 +48,9 @@ namespace NeeView
         {
             get
             {
-                return BookOperation.Current.Book?.Viewer.ViewPageCollection.Collection.Select(e => new ViewPageAccessor(e.Page)).ToArray() ?? Array.Empty<ViewPageAccessor>();
+#warning not implement yet
+                //return BookOperation.Current.Book?.Viewer.ViewPageCollection.Collection.Select(e => new ViewPageAccessor(e.Page)).ToArray() ?? Array.Empty<ViewPageAccessor>();
+                return new ViewPageAccessor[0];
             }
         }
 

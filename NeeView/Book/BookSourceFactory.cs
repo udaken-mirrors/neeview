@@ -15,7 +15,8 @@ namespace NeeView
         {
             // ページ生成
             var archiveEntryCollection = CreateArchiveEntryCollection(address.TargetPath.SimplePath, setting.IsRecursiveFolder, setting.ArchiveRecursiveMode, setting.IsIgnoreCache);
-            var pages = await CreatePageCollection(archiveEntryCollection, setting.BookPageCollectMode, token);
+            var bookMemoryService = new BookMemoryService();
+            var pages = await CreatePageCollection(archiveEntryCollection, setting.BookPageCollectMode, new PageContentFactory(bookMemoryService), token);
 
             // 再起判定は通常のディレクトリーのみ適用
             var canAutoRecursive = System.IO.Directory.Exists(address.TargetPath.SimplePath);
@@ -39,7 +40,7 @@ namespace NeeView
 
             var pageCollection = new BookPageCollection(pages);
             pageCollection.InitializeSort(sortMode, token);
-            var book = new BookSource(archiveEntryCollection, pageCollection);
+            var book = new BookSource(archiveEntryCollection, pageCollection, bookMemoryService);
             book.SubFolderCount = subFolderCount;
 
             return book;
@@ -64,7 +65,7 @@ namespace NeeView
         /// <summary>
         /// ページ生成
         /// </summary>
-        private static async Task<List<Page>> CreatePageCollection(ArchiveEntryCollection archiveEntryCollection, BookPageCollectMode bookPageCollectMode, CancellationToken token)
+        private static async Task<List<Page>> CreatePageCollection(ArchiveEntryCollection archiveEntryCollection, BookPageCollectMode bookPageCollectMode, PageContentFactory contentFactory, CancellationToken token)
         {
             List<ArchiveEntry> entries = bookPageCollectMode switch
             {
@@ -73,7 +74,7 @@ namespace NeeView
                 _ => await archiveEntryCollection.GetEntriesWherePageAllAsync(token),
             };
             var bookPrefix = LoosePath.TrimDirectoryEnd(archiveEntryCollection.Path);
-            return entries.Select(e => CreatePage(bookPrefix, e, token)).ToList();
+            return entries.Select(e => CreatePage(bookPrefix, e, contentFactory, token)).ToList();
         }
 
         /// <summary>
@@ -81,10 +82,12 @@ namespace NeeView
         /// </summary>
         /// <param name="entry">ファイルエントリ</param>
         /// <returns></returns>
-        private static Page CreatePage(string bookPrefix, ArchiveEntry entry, CancellationToken token)
+        private static Page CreatePage(string bookPrefix, ArchiveEntry entry, PageContentFactory contentFactory, CancellationToken token)
         {
             token.ThrowIfCancellationRequested();
 
+            return new Page(bookPrefix, contentFactory.Create(entry));
+#if false
             Page page;
 
             if (entry.IsImage())
@@ -137,6 +140,7 @@ namespace NeeView
             }
 
             return page;
+#endif
         }
 
 

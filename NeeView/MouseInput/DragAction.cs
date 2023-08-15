@@ -1,27 +1,16 @@
-﻿using NeeView.Windows.Property;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Runtime.Serialization;
-using System.Text;
-using System.Text.Json;
-using System.Text.Json.Serialization;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Input;
+﻿using System.Text.RegularExpressions;
 
 namespace NeeView
 {
-    public class DragAction
+    public abstract class DragAction
     {
-        private static readonly Regex _trimCommand = new(@"DragAction$", RegexOptions.Compiled);
+        public delegate DragActionControl CreateDragAction(DragTransformContext context, DragAction? source);
 
+        private static readonly Regex _trimCommand = new(@"DragAction$", RegexOptions.Compiled);
 
         public DragAction()
         {
-            Name = _trimCommand.Replace(this.GetType().Name, "");
+            Name = _trimCommand.Replace(GetType().Name, "");
         }
 
         public DragAction(string name)
@@ -30,19 +19,15 @@ namespace NeeView
         }
 
 
-        public string Name { get; set; }
+        public string Name { get; }
 
-        public string Note { get; set; } = "";
+        public string Note { get; init; } = "";
 
         public bool IsLocked { get; set; }
 
-        public bool IsDummy { get; set; }
+        public DragKey DragKey { get; set; } = DragKey.Empty;
 
-        public DragKey DragKey { get; set; } = new DragKey();
-
-        public DragActionGroup Group { get; set; }
-
-        public DragActionParameterSource? ParameterSource { get; set; }
+        public DragActionParameterSource? ParameterSource { get; init; }
 
         public DragActionParameter? Parameter
         {
@@ -50,24 +35,14 @@ namespace NeeView
             set => ParameterSource?.Set(value);
         }
 
+        public DragActionCategory DragActionCategory { get; protected set; }
 
-        // グループ判定
-        public bool IsGroupCompatible(DragAction target)
-        {
-            return Group != DragActionGroup.None && Group == target.Group;
-        }
 
-        public virtual void Execute(DragTransformControl sender, DragTransformActionArgs e)
-        {
-        }
+        public abstract DragActionControl CreateControl(DragTransformContext context);
 
-        public virtual void ExecuteEnd(DragTransformControl sender, DragTransformActionArgs e)
-        {
-        }
 
         #region Memento
 
-        [Memento]
         public class Memento
         {
             public string MouseButton { get; set; } = "";
@@ -89,35 +64,14 @@ namespace NeeView
             return memento;
         }
 
-        public void Restore(Memento element)
+        public void Restore(Memento memento)
         {
-            DragKey = new DragKey(element.MouseButton);
-            Parameter = (DragActionParameter?)element.Parameter?.Clone();
+            if (memento == null) return;
+            DragKey = new DragKey(memento.MouseButton);
+            Parameter = (DragActionParameter?)memento.Parameter?.Clone();
         }
 
         #endregion
-    }
-
-
-
-    public enum DragActionGroup
-    {
-        None, // どのグループにも属さない
-        Move,
-    };
-
-
-
-    public class DragTransformActionArgs
-    {
-        public DragTransformActionArgs(Point start, Point end)
-        {
-            Start = start;
-            End = end;
-        }
-
-        public Point Start { get; }
-        public Point End { get; }
     }
 
 }

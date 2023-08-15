@@ -20,6 +20,13 @@ namespace NeeView
 
     public static class MouseButtonBitsExtensions
     {
+        /// <summary>
+        /// なにか押されている
+        /// </summary>
+        public static bool Any(this MouseButtonBits bits)
+        {
+            return bits != MouseButtonBits.None;
+        }
 
         /// <summary>
         /// 押されているマウスボタンのビットマスク作成

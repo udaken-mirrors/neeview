@@ -34,7 +34,9 @@ namespace NeeView
         /// <summary>
         /// メインページの画像
         /// </summary>
-        public ImageSource? RawImage => (MainContent?.Source?.Content as BitmapContent)?.ImageSource;
+#warning not implement yet Printer
+        //public ImageSource? RawImage => (MainContent?.Source?.Content as BitmapPageContent)?.ImageSource;
+        public ImageSource? RawImage => null;
 
         /// <summary>
         /// 表示コンテキスト。

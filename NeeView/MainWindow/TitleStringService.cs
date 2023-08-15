@@ -19,6 +19,7 @@ namespace NeeView
         {
             _mainViewComponent = mainViewComponent;
 
+#if false
             _mainViewComponent.ContentCanvas.ContentChanged += (s, e) =>
             {
                 Update();
@@ -28,6 +29,7 @@ namespace NeeView
             {
                 Update();
             });
+#endif
 
             _replaceString.Changed += ReplaceString_Changed;
         }
@@ -48,6 +50,8 @@ namespace NeeView
 
         private void Update()
         {
+#warning not implement yet
+#if false
             _changedCount = 0;
 
             var contents = _mainViewComponent.ContentCanvas.CloneContents;
@@ -99,8 +103,8 @@ namespace NeeView
                 return content.IsValid ? LoosePath.GetFileName(content.FullPath) + content.GetPartString() : "";
             }
 
-            var bitmapContent0 = contents[0].Content as BitmapContent;
-            var bitmapContent1 = contents[1].Content as BitmapContent;
+            var bitmapContent0 = contents[0].Content as BitmapPageContent;
+            var bitmapContent1 = contents[1].Content as BitmapPageContent;
             var pictureInfo0 = bitmapContent0?.PictureInfo;
             var pictureInfo1 = bitmapContent1?.PictureInfo;
             string bpp0 = GetSizeEx(pictureInfo0);
@@ -140,6 +144,7 @@ namespace NeeView
             {
                 Changed?.Invoke(this, EventArgs.Empty);
             }
+#endif
         }
     }
 

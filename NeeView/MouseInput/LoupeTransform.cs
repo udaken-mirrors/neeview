@@ -1,4 +1,5 @@
-﻿using NeeLaboratory.ComponentModel;
+﻿#if false
+using NeeLaboratory.ComponentModel;
 using NeeView.Windows.Property;
 using System;
 using System.Runtime.Serialization;
@@ -168,3 +169,4 @@ namespace NeeView
 
     }
 }
+#endif

@@ -46,7 +46,8 @@ namespace NeeView
 
         private void Operator_MediaEnded(object? sender, System.EventArgs e)
         {
-            BookOperation.Current.Book?.Viewer.RaisePageTerminatedEvent(this, 1);
+#warning not implement yet
+            //BookOperation.Current.Book?.Viewer.RaisePageTerminatedEvent(this, 1);
         }
 
         public void SetScrubbing(bool isScrubbing)

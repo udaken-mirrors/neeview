@@ -5,10 +5,11 @@ namespace NeeView
 {
     public class BookSource : IDisposable
     {
-        public BookSource(ArchiveEntryCollection archiveEntryCollection, BookPageCollection pages)
+        public BookSource(ArchiveEntryCollection archiveEntryCollection, BookPageCollection pages, BookMemoryService bookMemoryService)
         {
             ArchiveEntryCollection = archiveEntryCollection;
             Pages = pages;
+            BookMemoryService = bookMemoryService;
 
             _isRecursiveFolder = ArchiveEntryCollection.Mode == ArchiveEntryCollectionMode.IncludeSubArchives;
         }
@@ -24,6 +25,7 @@ namespace NeeView
         }
 
 
+        public BookMemoryService BookMemoryService { get; private set; }    
 
         // この本のアーカイバ
         public ArchiveEntryCollection ArchiveEntryCollection { get; private set; }

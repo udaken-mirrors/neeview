@@ -9,6 +9,8 @@ using System.Windows.Media;
 
 namespace NeeView
 {
+#warning not imprement PDF
+#if false
     public class PdfPictureSource : PictureSource
     {
         private readonly PdfArchiver _pdfArchive;
@@ -90,4 +92,5 @@ namespace NeeView
             return size;
         }
     }
+#endif
 }

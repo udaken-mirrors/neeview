@@ -31,10 +31,13 @@ namespace NeeView
             _titleString = new TitleString(_titleStringService);
             _titleString.AddPropertyChanged(nameof(TitleString.Title), TitleString_TitleChanged);
 
+#warning not implement
+#if false
             _mainViewComponent.ContentCanvas.ContentChanged += (s, e) =>
             {
                 UpdateFormat();
             };
+#endif
 
             _bookHub.Loading += (s, e) =>
             {
@@ -71,6 +74,8 @@ namespace NeeView
 
         private void UpdateFormat()
         {
+#warning not implement
+#if false
             var contents = _mainViewComponent.ContentCanvas.CloneContents;
             var mainContent = _mainViewComponent.ContentCanvas.MainContent;
             var subContent = contents.First(e => e != mainContent);
@@ -80,6 +85,7 @@ namespace NeeView
                 : subContent.IsValid && !subContent.IsDummy ? Config.Current.PageTitle.PageTitleFormat2 : Config.Current.PageTitle.PageTitleFormat1;
 
             _titleString.SetFormat(format);
+#endif
         }
 
         private void UpdateTitle()
@@ -92,10 +98,12 @@ namespace NeeView
             {
                 Title = _defaultPageTitle;
             }
+#if false
             else if (_mainViewComponent.ContentCanvas.MainContent?.Source == null)
             {
                 Title = _defaultPageTitle;
             }
+#endif
             else
             {
                 Title = _titleString.Title;

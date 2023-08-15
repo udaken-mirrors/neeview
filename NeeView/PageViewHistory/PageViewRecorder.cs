@@ -152,7 +152,7 @@ namespace NeeView
                 _viewedBookAddress = null;
                 _viewedPages = new List<Page>();
                 BookHub.Current.BookChanged += OnViewBookChanged;
-                BookHub.Current.ViewContentsChanged += OnViewContentsChanged;
+                //BookHub.Current.ViewContentsChanged += OnViewContentsChanged;
             }
         }
 
@@ -169,7 +169,7 @@ namespace NeeView
 
             lock (_lock)
             {
-                BookHub.Current.ViewContentsChanged -= OnViewContentsChanged;
+                //BookHub.Current.ViewContentsChanged -= OnViewContentsChanged;
                 BookHub.Current.BookChanged -= OnViewBookChanged;
                 try
                 {
@@ -216,6 +216,8 @@ namespace NeeView
             }
         }
 
+#warning 未実装
+#if false
         private void OnViewContentsChanged(object? sender, ViewContentSourceCollectionChangedEventArgs e)
         {
             if (_disposedValue) return;
@@ -227,6 +229,7 @@ namespace NeeView
             _viewedPagesDateTime = now;
             _viewedPages = viewedPages;
         }
+#endif
 
         private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e)
         {

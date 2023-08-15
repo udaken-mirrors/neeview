@@ -442,11 +442,14 @@ namespace NeeView
         /// <returns></returns>
         public bool IsLeftToRightSlider()
         {
+#warning not implement yet
+#if false
             if (_viewComponent.ContentCanvas.IsMediaContent)
             {
                 return true;
             }
             else
+#endif
             {
                 return !PageSlider.Current.IsSliderDirectionReversed;
             }

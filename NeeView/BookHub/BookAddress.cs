@@ -26,9 +26,16 @@ namespace NeeView
     {
         public BookAddress()
         {
-
         }
 
+#warning 一時的に活用
+#if false
+        public BookAddress(string targetPath, string entryName)
+        {
+            TargetPath = new QueryPath(targetPath);
+            EntryName = entryName;
+        }
+#endif
 
         /// <summary>
         /// 開始ページ名

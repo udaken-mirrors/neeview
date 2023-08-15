@@ -31,19 +31,19 @@ namespace NeeView
         };
 
 
-        private readonly DragTransform _dragTransform;
-        private readonly ContentCanvas _contentCanvas;
+        //private readonly DragTransform _dragTransform;
+        //private readonly ContentCanvas _contentCanvas;
 
         public NavigateModel()
         {
-            _dragTransform = MainViewComponent.Current.DragTransform;
-            _contentCanvas = MainViewComponent.Current.ContentCanvas;
+            //_dragTransform = MainViewComponent.Current.DragTransform;
+            //_contentCanvas = MainViewComponent.Current.ContentCanvas;
 
             Config.Current.View.PropertyChanged += ViewConfig_PropertyChanged;
         }
 
 
-        public DragTransform DragTransform => _dragTransform;
+        //public DragTransform DragTransform => _dragTransform;
 
         public bool IsRotateStretchEnabled
         {
@@ -123,6 +123,8 @@ namespace NeeView
 
         public void RotateLeft()
         {
+#warning not support yet Navigator
+#if false
             var angle = DragTransformControl.NormalizeLoopRange(_dragTransform.Angle - 90.0, -180.0, 180.0);
             angle = Math.Truncate((angle + 180.0) / 90.0) * 90.0 - 180.0;
 
@@ -132,10 +134,13 @@ namespace NeeView
             {
                 Stretch();
             }
+#endif
         }
 
         public void RotateRight()
         {
+#warning not support yet Navigator
+#if false
             var angle = DragTransformControl.NormalizeLoopRange(_dragTransform.Angle + 90.0, -180.0, 180.0);
             angle = Math.Truncate((angle + 180.0) / 90.0) * 90.0 - 180.0;
 
@@ -145,20 +150,26 @@ namespace NeeView
             {
                 Stretch();
             }
+#endif
         }
 
         public void RotateReset()
         {
+#warning not support yet Navigator
+#if false
             _dragTransform.SetAngle(0.0, TransformActionType.Navigate);
 
             if (IsRotateStretchEnabled)
             {
                 Stretch();
             }
+#endif
         }
 
         public void ScaleDown()
         {
+#warning not support yet Navigator
+#if false
             var scale = _dragTransform.Scale - 0.01;
             var index = _scaleSnaps.FindIndex(e => scale < e);
             if (0 < index)
@@ -171,10 +182,13 @@ namespace NeeView
             }
 
             _dragTransform.SetScale(scale, TransformActionType.Navigate);
+#endif
         }
 
         public void ScaleUp()
         {
+#warning not support yet Navigator
+#if false
             var scale = _dragTransform.Scale + 0.01;
             var index = _scaleSnaps.FindIndex(e => scale < e);
             if (0 <= index)
@@ -187,16 +201,23 @@ namespace NeeView
             }
 
             _dragTransform.SetScale(scale, TransformActionType.Navigate);
+#endif
         }
 
         public void ScaleReset()
         {
+#warning not support yet Navigator
+#if false
             _dragTransform.SetScale(1.0, TransformActionType.Navigate);
+#endif
         }
 
         public void Stretch()
         {
+#warning not support yet Navigator
+#if false
             _contentCanvas.Stretch();
+#endif
         }
     }
 

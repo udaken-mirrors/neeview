@@ -12,7 +12,7 @@ namespace NeeView
     /// </summary>
     public class TouchInputMouseDrag : TouchInputBase
     {
-        private readonly DragTransformControl _drag;
+        private readonly IDragTransformControl _drag;
         private TouchContext? _touch;
 
 

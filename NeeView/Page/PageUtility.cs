@@ -18,7 +18,7 @@ namespace NeeView
         /// </summary>
         public static bool CanCreateRealizedFilePathList(IEnumerable<Page> pages)
         {
-            return pages.All(e => e.Entry.IsFileSystem || !e.ContentAccessor.Entry.IsArchiveDirectory());
+            return pages.All(e => e.Entry.IsFileSystem || !e.Content.Entry.IsArchiveDirectory());
         }
 
         /// <summary>
@@ -69,9 +69,9 @@ namespace NeeView
                             break;
 
                         case ArchivePolicy.SendExtractFile:
-                            if (!page.ContentAccessor.Entry.IsArchiveDirectory())
+                            if (!page.Content.Entry.IsArchiveDirectory())
                             {
-                                files.Add(page.ContentAccessor.CreateTempFile(true).Path);
+                                files.Add(page.Content.CreateTempFile(true).Path);
                             }
                             else
                             {

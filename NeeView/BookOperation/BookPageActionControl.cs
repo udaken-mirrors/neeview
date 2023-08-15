@@ -21,24 +21,24 @@ namespace NeeView
             _bookControl = bookControl;
         }
 
+#warning not implement page delete
         #region ページ削除
 
         // 現在表示しているページのファイル削除可能？
         public bool CanDeleteFile()
         {
-            var page = _book?.Viewer.GetViewPage();
-            if (page is null) return false;
-
-            return CanDeleteFile(new List<Page>() { page });
+            return false;
+            //var page = _book?.Viewer.GetViewPage();
+            //if (page is null) return false;
+            //return CanDeleteFile(new List<Page>() { page });
         }
 
         // 現在表示しているページのファイルを削除する
         public async Task DeleteFileAsync()
         {
-            var page = _book?.Viewer.GetViewPage();
-            if (page is null) return;
-
-            await DeleteFileAsync(new List<Page>() { page });
+            //var page = _book?.Viewer.GetViewPage();
+            //if (page is null) return;
+            //await DeleteFileAsync(new List<Page>() { page });
         }
 
         // 指定ページのファル削除可能？
@@ -108,23 +108,25 @@ namespace NeeView
 
         #region ページ出力
 
+#warning not impletem open place
         // ファイルの場所を開くことが可能？
         public bool CanOpenFilePlace()
         {
-            return _book?.Viewer.GetViewPage() != null;
+            return false;
+            //return _book?.Viewer.GetViewPage() != null;
         }
 
         // ファイルの場所を開く
         public void OpenFilePlace()
         {
-            if (CanOpenFilePlace())
-            {
-                string? place = _book?.Viewer.GetViewPage()?.GetFolderOpenPlace();
-                if (place != null)
-                {
-                    ExternalProcess.Start("explorer.exe", "/select,\"" + place + "\"");
-                }
-            }
+            //if (CanOpenFilePlace())
+            //{
+            //    string? place = _book?.Viewer.GetViewPage()?.GetFolderOpenPlace();
+            //    if (place != null)
+            //    {
+            //        ExternalProcess.Start("explorer.exe", "/select,\"" + place + "\"");
+            //    }
+            //}
         }
 
 
@@ -159,6 +161,8 @@ namespace NeeView
                 return new List<Page>();
             }
 
+            throw new NotImplementedException();
+#if false
             var pages = book.Viewer.GetViewPages().Distinct();
 
             switch (policy)
@@ -176,6 +180,7 @@ namespace NeeView
             }
 
             return pages.ToList();
+#endif
         }
 
 
@@ -205,6 +210,9 @@ namespace NeeView
         /// <returns></returns>
         public bool CanExport()
         {
+#warning not implement yet
+            return false;
+#if false
             var pages = _book?.Viewer.GetViewPages();
             if (pages == null || pages.Count == 0) return false;
 
@@ -212,6 +220,7 @@ namespace NeeView
             if (imageSource == null) return false;
 
             return true;
+#endif
         }
 
 
@@ -252,6 +261,6 @@ namespace NeeView
             }
         }
 
-        #endregion ページ出力
+#endregion ページ出力
     }
 }

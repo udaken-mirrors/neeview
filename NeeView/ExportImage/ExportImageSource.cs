@@ -42,6 +42,9 @@ namespace NeeView
 
         public static ExportImageSource Create()
         {
+#warning not support yet
+            throw new NotImplementedException();
+#if false
             var viewComponent = MainViewComponent.Current;
 
             var element = viewComponent.MainView.PageContents;
@@ -63,6 +66,7 @@ namespace NeeView
             );
 
             return context;
+#endif
         }
 
     }

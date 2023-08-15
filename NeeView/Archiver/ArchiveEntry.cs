@@ -365,7 +365,7 @@ namespace NeeView
         /// </summary>
         public override string? ToString()
         {
-            return string.IsNullOrEmpty(EntryName) ? base.ToString() : EntryName;
+            return string.IsNullOrEmpty(EntryName) ? base.ToString() : $"{Id}:{EntryName}";
         }
 
 

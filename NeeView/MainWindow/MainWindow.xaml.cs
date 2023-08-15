@@ -101,7 +101,7 @@ namespace NeeView
             _routedCommandBinding = new RoutedCommandBinding(this, RoutedCommandTable.Current);
 
             // MainWindow MouseCommand Terminator
-            var mouseContext = new MouseInputContext(this, MouseGestureCommandCollection.Current, null, null, null)
+            var mouseContext = new MouseInputContext(this, MouseGestureCommandCollection.Current, null, null)
             {
                 IsGestureEnabled = false,
                 IsLeftButtonDownEnabled = false,
@@ -144,8 +144,9 @@ namespace NeeView
             ThumbnailList.Current.VisibleEvent +=
                 ThumbnailList_Visible;
 
-            _viewComponent.ContentCanvas.AddPropertyChanged(nameof(ContentCanvas.IsMediaContent),
-                (s, e) => DartyPageSliderLayout());
+#warning MediaContnt 時のレイアウト更新
+            //_viewComponent.ContentCanvas.AddPropertyChanged(nameof(ContentCanvas.IsMediaContent),
+            //    (s, e) => DartyPageSliderLayout());
 
             _windowController.AddPropertyChanged(nameof(MainWindowController.AutoHideMode),
                 (s, e) => AutoHideModeChanged());
@@ -724,6 +725,8 @@ namespace NeeView
                 this.PageSliderView.IsBackgroundOpacityEnabled = true;
             }
 
+#warning Media対応
+#if false
             // visibility
             if (_viewComponent.ContentCanvas.IsMediaContent)
             {
@@ -731,6 +734,7 @@ namespace NeeView
                 this.PageSliderView.Visibility = Visibility.Collapsed;
             }
             else
+#endif
             {
                 this.MediaControlView.Visibility = Visibility.Collapsed;
                 this.PageSliderView.Visibility = Config.Current.Slider.IsEnabled ? Visibility.Visible : Visibility.Collapsed;
@@ -762,7 +766,9 @@ namespace NeeView
             }
 
             // フィルムストリップ
-            this.ThumbnailListArea.Visibility = Config.Current.FilmStrip.IsEnabled && !_viewComponent.ContentCanvas.IsMediaContent ? Visibility.Visible : Visibility.Collapsed;
+#warning Media対応
+            //this.ThumbnailListArea.Visibility = Config.Current.FilmStrip.IsEnabled && !_viewComponent.ContentCanvas.IsMediaContent ? Visibility.Visible : Visibility.Collapsed;
+            this.ThumbnailListArea.Visibility = Config.Current.FilmStrip.IsEnabled ? Visibility.Visible : Visibility.Collapsed;
         }
 
         private void ThumbnailList_Visible(object? sender, VisibleEventArgs e)
@@ -788,7 +794,7 @@ namespace NeeView
             this.MessageLayerSpace.Height = Math.Max(this.DockStatusArea.ActualHeight, 30.0) + 10.0;
         }
 
-        #endregion レイアウト管理
+#endregion レイアウト管理
 
         #region ページタイトル管理
 

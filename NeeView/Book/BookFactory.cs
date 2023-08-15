@@ -12,6 +12,8 @@ namespace NeeView
 
             var bookSource = await BookSourceFactory.CreateAsync(address, setting, token);
 
+#warning Media用処理未実装
+#if false
             if (bookSource.IsMedia)
             {
                 foreach (var mediaContent in bookSource.Pages.Select(e => e.ContentAccessor).OfType<MediaContent>())
@@ -19,6 +21,7 @@ namespace NeeView
                     mediaContent.IsLastStart = setting.StartPage.StartPageType == BookStartPageType.LastPage;
                 }
             }
+#endif
 
             var book = new Book(address, bookSource, memento, setting.LoadOption, setting.IsNew);
 

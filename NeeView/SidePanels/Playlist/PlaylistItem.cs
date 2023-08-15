@@ -106,7 +106,9 @@ namespace NeeView
             {
                 if (_archivePage == null)
                 {
-                    _archivePage = new Page("", new ArchiveContent(Path));
+#warning not implement
+                    //_archivePage = new Page("", new ArchiveContent(Path));
+                    _archivePage = new Page("", new BitmapPageContent(StaticFolderArchive.Default.CreateArchiveEntry(Path), null));
                     _archivePage.Thumbnail.IsCacheEnabled = true;
                     _archivePage.Thumbnail.Touched += Thumbnail_Touched;
                 }
@@ -154,7 +156,7 @@ namespace NeeView
         public async Task<bool> RenameAsync(string name)
         {
             // TODO: この命令でリストの保存処理等の波及処理が実行されるようにする
-            
+
             await Task.CompletedTask;
             throw new NotImplementedException();
 

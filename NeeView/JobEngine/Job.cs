@@ -122,7 +122,8 @@ namespace NeeView
         {
             using (var linkedTokenSource = CancellationTokenSource.CreateLinkedTokenSource(token, _cancellationToken))
             {
-                await _completed.WaitHandle.AsTask().WaitAsync(TimeSpan.FromMilliseconds(millisecondsTimeout), token);
+                var span = TimeSpan.FromMilliseconds(millisecondsTimeout);
+                await _completed.WaitHandle.AsTask().WaitAsync(span, token);
             }
         }
 

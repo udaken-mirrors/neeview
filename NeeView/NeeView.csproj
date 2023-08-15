@@ -78,9 +78,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="NeeView\Effects\Shaders\ColorSelectEffect.ps" />
-    <None Remove="NeeView\Effects\Shaders\HsvEffect.ps" />
-    <None Remove="NeeView\Effects\Shaders\LevelEffect.ps" />
     <None Remove="Resources\Scripts\Sample.nvjs" />
   </ItemGroup>
 
@@ -106,7 +103,7 @@
     <ProjectReference Include="..\NeeLaboratory.IO.Search\NeeLaboratory.IO.Search\NeeLaboratory.IO.Search.csproj" />
     <ProjectReference Include="..\NeeLaboratory.Remote\NeeLaboratory.Remote.csproj" />
     <ProjectReference Include="..\NeeLaboratory.Runtime\NeeLaboratory.Runtime.csproj" />
-    <ProjectReference Include="..\NeeLaboratory.SourceGenerator\NeeLaboratory.SourceGenerator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false"/>
+    <ProjectReference Include="..\NeeLaboratory.SourceGenerator\NeeLaboratory.SourceGenerator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
     <ProjectReference Include="..\NeeView.Susie\NeeView.Susie.csproj" />
     <ProjectReference Include="..\SevenZipSharp\SevenZip\SevenZip.csproj">
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
@@ -170,6 +167,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Libraries\Themes\LightTheme.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="MediaInfo\MediaInfo.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Properties\Settings.settings">

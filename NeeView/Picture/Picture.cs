@@ -99,7 +99,8 @@ namespace NeeView
         /// ImageSource生成。
         /// サイズを指定し、必要であれば作り直す。不要であればなにもしない。
         /// </summary>
-        public bool CreateImageSource(Size size, CancellationToken token)
+        /// TODO: 名前は UpdateImageSource のほうがふさわしい
+        public bool CreateImageSource(byte[] data, Size size, CancellationToken token)
         {
             if (this.PictureInfo is null) return false;
 
@@ -130,7 +131,7 @@ namespace NeeView
             Debug.WriteLine($"BMP: {this.PictureSource.ArchiveEntry.EntryName}: {this.PictureInfo.Size} -> {size}");
 #endif
 
-            var image = CreateImageSource(size, keepAspectRatio, token);
+            var image = CreateImageSource(data, size, keepAspectRatio, token);
             if (image == null)
             {
                 return false;
@@ -145,7 +146,16 @@ namespace NeeView
             return true;
         }
 
-        private ImageSource CreateImageSource(Size size, bool keepAspectRatio, CancellationToken token)
+        public void ClearImageSource()
+        {
+            lock (_lock)
+            {
+                _resizeHashCode = 0;
+                this.ImageSource = null;
+            }
+        }
+
+        private ImageSource CreateImageSource(byte[] data, Size size, bool keepAspectRatio, CancellationToken token)
         {
             token.ThrowIfCancellationRequested();
 
@@ -162,7 +172,7 @@ namespace NeeView
                 }
             }
 
-            return MemoryControl.Current.RetryFuncWithMemoryCleanup(() => _pictureSource.CreateImageSource(size, setting, token));
+            return MemoryControl.Current.RetryFuncWithMemoryCleanup(() => _pictureSource.CreateImageSource(data, size, setting, token));
         }
     }
 

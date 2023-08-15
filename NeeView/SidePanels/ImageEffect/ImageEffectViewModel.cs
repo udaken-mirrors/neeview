@@ -42,8 +42,9 @@ namespace NeeView
         // PictureProfile
         public PictureProfile PictureProfile => PictureProfile.Current;
 
+#warning not support yet ImageEffect
         // ContentCanvs
-        public ContentCanvas ContentCanvas => MainViewComponent.Current.ContentCanvas;
+        //public ContentCanvas ContentCanvas => MainViewComponent.Current.ContentCanvas;
 
         public PropertyDocument UnsharpMaskProfile { get; set; }
 
@@ -60,7 +61,7 @@ namespace NeeView
         {
             var viewComponent = MainViewComponent.Current;
 
-            using (var lockerKey = viewComponent.ContentRebuild.Locker.Lock())
+            //using (var lockerKey = viewComponent.ContentRebuild.Locker.Lock())
             {
                 Config.Current.ImageResizeFilter.ResizeInterpolation = ResizeInterpolation.Lanczos;
                 Config.Current.ImageResizeFilter.IsUnsharpMaskEnabled = true;

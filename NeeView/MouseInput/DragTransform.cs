@@ -1,184 +1,206 @@
-﻿using NeeLaboratory.ComponentModel;
+﻿using NeeView.Maths;
+using NeeView.PageFrames;
 using System;
-using System.Linq;
-using System.Runtime.Serialization;
 using System.Windows;
-using System.Windows.Data;
 using System.Windows.Media;
 
 namespace NeeView
 {
     /// <summary>
-    /// ドラッグ操作による変換
+    /// 表示座標系の操作実行
     /// </summary>
-    public class DragTransform : BindableBase
+    public class DragTransform : IScaleControl, IAngleControl, IPointControl, IFlipControl
     {
-        private readonly TranslateTransformAnime _translateTransformAnime;
-        private Point _position;
-        private double _angle;
-        private double _scale = 1.0;
-        private bool _isFlipHorizontal;
-        private bool _isFlipVertical;
+        private DragTransformContext _context;
 
-
-        public DragTransform()
+        public DragTransform(DragTransformContext context)
         {
-            this.TransformView = CreateTransformGroup(false);
-            this.TransformCalc = CreateTransformGroup(true);
+            _context = context;
+        }
 
-            var translateTransform = this.TransformView.Children.OfType<TranslateTransform>().First();
-            _translateTransformAnime = new TranslateTransformAnime(translateTransform);
+        /// <summary>
+        /// 拡縮スナップ。0で無効
+        /// </summary>
+        private double SnapScale { get; set; } = 0;
+
+        public DragTransformContext Context => _context;
+
+        public bool IsFlipHorizontal => _context.Transform.IsFlipHorizontal;
+        public bool IsFlipVertical => _context.Transform.IsFlipVertical;
+        public double Scale => _context.Transform.Scale;
+        public double Angle => _context.Transform.Angle;
+        public Point Point => _context.Transform.Point;
+
+
+        public void SetPoint(Point value, TimeSpan span)
+        {
+            _context.Transform.SetPoint(value, span);
+        }
+
+        public void AddPoint(Vector value, TimeSpan span)
+        {
+            _context.Transform.AddPoint(value, span);
+        }
+
+        public void SetScale(double value, TimeSpan span)
+        {
+            _context.Transform.SetScale(value, span);
+        }
+
+        public void SetAngle(double value, TimeSpan span)
+        {
+            _context.Transform.SetAngle(value, span);
+        }
+
+        public void SetFlipHorizontal(bool value, TimeSpan span)
+        {
+            _context.Transform.SetFlipHorizontal(value, span);
+        }
+
+        public void SetFlipVertical(bool value, TimeSpan span)
+        {
+            _context.Transform.SetFlipVertical(value, span);
+        }
+
+        /// <summary>
+        /// 座標変更
+        /// </summary>
+        /// <param name="point">新しい座標</param>
+        /// <param name="span">変化時間</param>
+        public void DoPoint(Point point, TimeSpan span)
+        {
+            _context.Transform.SetPoint(point, span);
+        }
+
+        /// <summary>
+        /// 座標加算
+        /// </summary>
+        /// <param name="delta">変化量</param>
+        /// <param name="span">変化時間</param>
+        public void DoMove(Vector delta, TimeSpan span)
+        {
+            _context.Transform.AddPoint(delta, span);
+        }
+
+        /// <summary>
+        /// スケール変更
+        /// </summary>
+        /// <param name="scale">新しいスケール</param>
+        /// <param name="span">変化時間</param>
+        /// <param name="withTransform">座標も更新する</param>
+        public void DoScale(double scale, TimeSpan span, bool withTransform = true)
+        {
+            if (SnapScale > 0)
+            {
+                scale = Math.Floor((scale + SnapScale * 0.5) / SnapScale) * SnapScale;
+            }
+
+            _context.Transform.SetScale(scale, span);
+
+            if (withTransform)
+            {
+                // NOTE: NeeView移行時は、移動系の計算式はそのままつかえず移植困難
+                var v0 = _context.ContentCenter - _context.ScaleCenter;
+                var v1 = v0 * (_context.Transform.Scale / _context.BaseScale);
+                var delta = v1 - v0;
+                //Debug.WriteLine($"#Scale.Move: {_context.BasePoint:f0} + {delta:f0}");
+                var pos = _context.BasePoint + delta;
+                _context.Transform.SetPoint(pos, span);
+            }
         }
 
 
         /// <summary>
-        /// 表示コンテンツのトランスフォーム変更イベント
+        /// 角度変更
         /// </summary>
-        public event EventHandler<TransformEventArgs>? TransformChanged;
-
-        public IDisposable SubscribeTransformChanged(EventHandler<TransformEventArgs> handler)
+        /// <param name="angle">新しい角度</param>
+        /// <param name="span">変化時間</param>
+        public void DoRotate(double angle, TimeSpan span)
         {
-            TransformChanged += handler;
-            return new AnonymousDisposable(() => TransformChanged -= handler);
-        }
-
-
-        public TransformGroup TransformView { get; private set; }
-        public TransformGroup TransformCalc { get; private set; }
-
-        // コンテンツの座標
-        public Point Position
-        {
-            get { return _position; }
-            private set
+            var angleFrequency = Config.Current.View.AngleFrequency;
+            if (angleFrequency > 0)
             {
-                SetProperty(ref _position, value);
+                angle = Math.Floor((angle + angleFrequency * 0.5) / angleFrequency) * angleFrequency;
             }
+
+            // 回転
+            _context.Transform.SetAngle(angle, span);
+
+            // 回転に伴う移動
+            var m = new RotateTransform(_context.Transform.Angle - _context.BaseAngle);
+            var p0 = _context.ContentCenter;
+            var p1 = _context.RotateCenter + (Vector)m.Transform(p0 - (Vector)_context.RotateCenter);
+            var delta = p1 - p0;
+            var pos = _context.BasePoint + delta;
+            _context.Transform.SetPoint(pos, span);
         }
 
-        // コンテンツの角度
-        public double Angle
+        /// <summary>
+        /// 角度の正規化
+        /// </summary>
+        /// <remarks>
+        /// ループする値を正規化する
+        /// </remarks>
+        /// <param name="val">元の値</param>
+        /// <param name="min">最小値</param>
+        /// <param name="max">最大値</param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentException"></exception>
+        public static double NormalizeLoopRange(double val, double min, double max)
         {
-            get { return _angle; }
-            private set
+            if (min >= max) throw new ArgumentException("need min < max");
+
+            if (val >= max)
             {
-                SetProperty(ref _angle, value);
+                return min + (val - min) % (max - min);
             }
-        }
-
-        // コンテンツの拡大率
-        public double Scale
-        {
-            get { return _scale; }
-            private set
+            else if (val < min)
             {
-                if (SetProperty(ref _scale, value))
-                {
-                    RaisePropertyChanged(nameof(ScaleX));
-                    RaisePropertyChanged(nameof(ScaleY));
-                }
+                return max - (min - val) % (max - min);
             }
-        }
-
-        // コンテンツのScaleX
-        public double ScaleX
-        {
-            get { return _isFlipHorizontal ? -_scale : _scale; }
-        }
-
-        // コンテンツのScaleY
-        public double ScaleY
-        {
-            get { return _isFlipVertical ? -_scale : _scale; }
-        }
-
-        // 左右反転
-        public bool IsFlipHorizontal
-        {
-            get { return _isFlipHorizontal; }
-            set
+            else
             {
-                if (SetProperty(ref _isFlipHorizontal, value))
-                {
-                    RaisePropertyChanged(nameof(ScaleX));
-                }
-            }
-        }
-
-        // 上下反転
-        public bool IsFlipVertical
-        {
-            get { return _isFlipVertical; }
-            set
-            {
-                if (SetProperty(ref _isFlipVertical, value))
-                {
-                    RaisePropertyChanged(nameof(ScaleY));
-                }
+                return val;
             }
         }
 
 
-        // パラメータとトランスフォームを対応させる
-        private TransformGroup CreateTransformGroup(bool bindPosition)
+        // 反転実行
+        public void DoFlipHorizontal(bool isFlip, TimeSpan span)
         {
-            var scaleTransform = new ScaleTransform();
-            BindingOperations.SetBinding(scaleTransform, ScaleTransform.ScaleXProperty, new Binding(nameof(ScaleX)) { Source = this });
-            BindingOperations.SetBinding(scaleTransform, ScaleTransform.ScaleYProperty, new Binding(nameof(ScaleY)) { Source = this });
-
-            var rotateTransform = new RotateTransform();
-            BindingOperations.SetBinding(rotateTransform, RotateTransform.AngleProperty, new Binding(nameof(Angle)) { Source = this });
-
-            var translateTransform = new TranslateTransform();
-            if (bindPosition)
+            if (_context.Transform.IsFlipHorizontal != isFlip)
             {
-                BindingOperations.SetBinding(translateTransform, TranslateTransform.XProperty, new Binding("Position.X") { Source = this });
-                BindingOperations.SetBinding(translateTransform, TranslateTransform.YProperty, new Binding("Position.Y") { Source = this });
+                _context.Transform.SetFlipHorizontal(isFlip, span);
+
+                // 角度を反転
+                var angle = -TransformMath.NormalizeLoopRange(_context.BaseAngle, -180, 180);
+                _context.Transform.SetAngle(angle, span);
+
+                // 座標を反転
+                var v0 = _context.ContentCenter - _context.FlipCenter;
+                var v1 = new Vector(-v0.X, v0.Y);
+                var delta = v1 - v0;
+                _context.Transform.SetPoint(_context.BasePoint + delta, span);
             }
-
-            var transformGroup = new TransformGroup();
-            transformGroup.Children.Add(scaleTransform);
-            transformGroup.Children.Add(rotateTransform);
-            transformGroup.Children.Add(translateTransform);
-
-            return transformGroup;
         }
 
-
-        public void SetPosition(Point value)
+        // 反転実行
+        public void DoFlipVertical(bool isFlip, TimeSpan span)
         {
-            SetPosition(value, TranslateTransformEasing.Direct, default);
-        }
-
-        public void SetPosition(Point value, TranslateTransformEasing easing)
-        {
-            SetPosition(value, easing, default);
-        }
-
-        public void SetPosition(Point value, TranslateTransformEasing easing, TimeSpan span)
-        {
-            if (Position == value) return;
-
-            if (easing == TranslateTransformEasing.Animation && span == TimeSpan.Zero)
+            if (_context.Transform.IsFlipVertical != isFlip)
             {
-                easing = TranslateTransformEasing.Direct;
+                _context.Transform.SetFlipVertical(isFlip, span);
+
+                // 角度を反転
+                var angle = 90 - TransformMath.NormalizeLoopRange(_context.Transform.Angle + 90, -180, 180);
+                _context.Transform.SetAngle(angle, span); //, TransformActionType.FlipVertical);
+
+                // 座標を反転
+                var v0 = _context.ContentCenter - _context.FlipCenter;
+                var v1 = new Vector(v0.X, -v0.Y);
+                var delta = v1 - v0;
+                _context.Transform.SetPoint(_context.BasePoint + delta, span);
             }
-
-            Position = value;
-
-            _translateTransformAnime.SetPosition(value, easing, span);
-        }
-
-        public void SetAngle(double angle, TransformActionType actionType)
-        {
-            this.Angle = angle;
-            TransformChanged?.Invoke(this, new TransformEventArgs(actionType));
-        }
-
-        public void SetScale(double scale, TransformActionType actionType)
-        {
-            this.Scale = scale;
-            TransformChanged?.Invoke(this, new TransformEventArgs(actionType));
         }
 
     }

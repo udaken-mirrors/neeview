@@ -25,7 +25,8 @@ namespace NeeView
             _model = model;
             _model.PropertyChanged += Model_PropertyChanged;
 
-            _model.DragTransform.PropertyChanged += DragTransform_PropertyChanged;
+#warning 未対応
+            //_model.DragTransform.PropertyChanged += DragTransform_PropertyChanged;
 
             Config.Current.View.PropertyChanged += ViewConfig_PropertyChanged;
             Config.Current.Navigator.PropertyChanged += NavigatorConfig_PropertyChanged;
@@ -55,8 +56,9 @@ namespace NeeView
 
         public double Angle
         {
-            get => _model.DragTransform.Angle;
-            set => _model.DragTransform.SetAngle(value, TransformActionType.Navigate);
+            //get => _model.DragTransform.Angle;
+            //set => _model.DragTransform.SetAngle(value, TimeSpan.Zero); // TransformActionType.Navigate
+            get; set;
         }
 
         public AutoRotateType AutoRotate
@@ -70,27 +72,31 @@ namespace NeeView
 
         public double Scale
         {
-            get { return _model.DragTransform.Scale * 100.0; }
-            set { _model.DragTransform.SetScale(value / 100.0, TransformActionType.Navigate); }
+            //get { return _model.DragTransform.Scale * 100.0; }
+            //set { _model.DragTransform.SetScale(value / 100.0, TimeSpan.Zero); } // TransformActionType.Navigate
+            get; set;
         }
 
         public double ScaleLog
         {
-            get { return _model.DragTransform.Scale > 0.0 ? Math.Log(_model.DragTransform.Scale, 2.0) : -5.0; }
-            set { _model.DragTransform.SetScale(Math.Pow(2, value), TransformActionType.Navigate); }
+            //get { return _model.DragTransform.Scale > 0.0 ? Math.Log(_model.DragTransform.Scale, 2.0) : -5.0; }
+            //set { _model.DragTransform.SetScale(Math.Pow(2, value), TimeSpan.Zero); } // TransformActionType.Navigate
+            get; set;
         }
 
 
         public bool IsFlipHorizontal
         {
-            get => _model.DragTransform.IsFlipHorizontal;
-            set => _model.DragTransform.IsFlipHorizontal = value;
+            //get => _model.DragTransform.IsFlipHorizontal;
+            //set => _model.DragTransform.SetFlipHorizontal(value, TimeSpan.Zero);
+            get; set;
         }
 
         public bool IsFlipVertical
         {
-            get => _model.DragTransform.IsFlipVertical;
-            set => _model.DragTransform.IsFlipVertical = value;
+            //get => _model.DragTransform.IsFlipVertical;
+            //set => _model.DragTransform.SetFlipVertical(value, TimeSpan.Zero);
+            get; set;
         }
 
 

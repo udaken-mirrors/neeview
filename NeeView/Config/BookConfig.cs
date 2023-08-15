@@ -19,12 +19,14 @@ namespace NeeView
         private bool _isNotifyPageLoop;
         private bool _isConfirmRecursive;
         private double _contentSpace = -1.0;
+        private double _frameSpace = 0.0;
         private string? _terminalSound;
         private bool _isAutoRecursive = false;
         private bool _isSortFileFirst;
         private double _bookPageSize = 300.0;
         private bool _resetPageWhenRandomSort;
         private bool _isInsertDummyPage;
+        private PageFrameOrientation _orientation = PageFrameOrientation.Horizontal;
 
 
         /// <summary>
@@ -47,6 +49,15 @@ namespace NeeView
             set { SetProperty(ref _excludes, value); }
         }
 
+        /// <summary>
+        /// フレームの並び方向
+        /// </summary>
+        public PageFrameOrientation Orientation
+        {
+            get { return _orientation; }
+            set { SetProperty(ref _orientation, value); }
+        }
+
         // 2ページコンテンツの隙間
         [DefaultValue(-1.0)]
         [PropertyRange(-32, 32, TickFrequency = 1)]
@@ -54,6 +65,15 @@ namespace NeeView
         {
             get { return _contentSpace; }
             set { SetProperty(ref _contentSpace, value); }
+        }
+
+        // フレームの間隔
+        [DefaultValue(0.0)]
+        [PropertyRange(-32, 32, TickFrequency = 1)]
+        public double FrameSpace
+        {
+            get { return _frameSpace; }
+            set { SetProperty(ref _frameSpace, value); }
         }
 
         /// <summary>
@@ -91,7 +111,7 @@ namespace NeeView
         public string? TerminalSound
         {
             get { return _terminalSound; }
-            set { SetProperty(ref  _terminalSound , string.IsNullOrWhiteSpace(value) ? null : value); }
+            set { SetProperty(ref _terminalSound, string.IsNullOrWhiteSpace(value) ? null : value); }
         }
 
         // 再帰を確認する

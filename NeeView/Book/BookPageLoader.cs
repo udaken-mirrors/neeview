@@ -1,4 +1,5 @@
-﻿using NeeLaboratory.ComponentModel;
+﻿#if false
+using NeeLaboratory.ComponentModel;
 using NeeView.Collections.Generic;
 using System;
 using System.Collections.Generic;
@@ -241,3 +242,4 @@ namespace NeeView
         }
     }
 }
+#endif

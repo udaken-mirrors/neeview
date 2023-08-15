@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
@@ -11,8 +10,7 @@ namespace NeeView
     /// </summary>
     public static class AppDispatcher
     {
-        public static Dispatcher UIDispatcher { get; } = App.Current.Dispatcher;
-
+        public static Dispatcher UIDispatcher { get; } = Application.Current.Dispatcher;
 
         public static void Invoke(Action action)
         {
@@ -51,9 +49,19 @@ namespace NeeView
             }
         }
 
-        public static void BeginInvoke(Action action)
+        public static DispatcherOperation BeginInvoke(Action action)
         {
-            UIDispatcher.BeginInvoke(action);
+            return UIDispatcher.BeginInvoke(action);
+        }
+
+        public static EventHandler BeginInvokeHandler(EventHandler eventHandler)
+        {
+            return (s, e) => UIDispatcher.BeginInvoke(() => eventHandler(s, e));
+        }
+
+        public static EventHandler<T> BeginInvokeHandler<T>(EventHandler<T> eventHandler)
+        {
+            return (s, e) => UIDispatcher.BeginInvoke(() => eventHandler(s, e));
         }
     }
 }

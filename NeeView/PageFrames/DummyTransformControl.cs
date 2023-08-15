@@ -1,0 +1,51 @@
+﻿using System;
+using System.Windows;
+
+namespace NeeView.PageFrames
+{
+    public class DummyTransformControl : ITransformControl
+    {
+        public double Scale => 1.0;
+
+        public double Angle => 0.0;
+
+        public Point Point => default;
+
+        public bool IsFlipHorizontal => false;
+
+        public bool IsFlipVertical => false;
+
+        public void SetScale(double value, TimeSpan span)
+        {
+        }
+
+        public void SetAngle(double value, TimeSpan span)
+        {
+        }
+
+        public void SetPoint(Point value, TimeSpan span)
+        {
+        }
+
+        public void AddPoint(Vector value, TimeSpan span)
+        {
+        }
+
+        public void SetFlipHorizontal(bool value, TimeSpan span)
+        {
+        }
+
+        public void SetFlipVertical(bool value, TimeSpan span)
+        {
+        }
+
+        public void SnapView()
+        {
+        }
+    }
+
+
+
+
+
+}

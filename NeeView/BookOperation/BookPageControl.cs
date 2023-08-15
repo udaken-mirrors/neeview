@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NeeView.Presenter;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -12,11 +13,14 @@ namespace NeeView
         private IBookPageMoveControl _moveControl;
         private IBookPageActionControl _actionControl;
         private bool _disposedValue;
+        private PageFrameBoxPresenter _presenter;
 
 
-        public BookPageControl(Book book, IBookControl bookControl)
+
+        public BookPageControl(Book book, IBookControl bookControl, PageFrameBoxPresenter presenter)
         {
             _book = book;
+            _presenter = presenter;
 
             if (book.IsMedia)
             {
@@ -25,22 +29,24 @@ namespace NeeView
             }
             else
             {
-                _moveControl = new BookPageMoveControl(_book);
+                _moveControl = new BookPageMoveControl(_presenter);
                 _actionControl = new BookPageActionControl(_book, bookControl);
             }
 
             _book.Pages.PagesSorted += Book_PagesSorted;
             _book.Pages.PageRemoved += Book_PageRemoved;
-            _book.Viewer.SelectedRangeChanged += Book_SelectedRangeChanged;
-        }
+            //_book.Viewer.SelectedRangeChanged += Book_SelectedRangeChanged;
+            _presenter.SelectedRangeChanged += Book_SelectedRangeChanged;
+    }
 
 
-        public event EventHandler? PagesChanged;
+    public event EventHandler? PagesChanged;
         public event EventHandler<SelectedRangeChangedEventArgs>? SelectedRangeChanged;
 
         public IReadOnlyList<Page> Pages => _book.Pages;
         public IReadOnlyList<Page> SelectedPages => _selectedPages;
-        public PageRange SelectedRange => _book.Viewer.SelectedRange;
+        //public PageRange SelectedRange => _book.Viewer.SelectedRange;
+        public PageRange SelectedRange => _presenter.SelectedRange;
 
 
 
@@ -52,7 +58,8 @@ namespace NeeView
                 {
                     _book.Pages.PagesSorted -= Book_PagesSorted;
                     _book.Pages.PageRemoved -= Book_PageRemoved;
-                    _book.Viewer.SelectedRangeChanged -= Book_SelectedRangeChanged;
+                    //_book.Viewer.SelectedRangeChanged -= Book_SelectedRangeChanged;
+                    _presenter.SelectedRangeChanged -= Book_SelectedRangeChanged;
                 }
                 _disposedValue = true;
             }

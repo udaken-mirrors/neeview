@@ -7,6 +7,7 @@ namespace NeeView
     public class ViewConfig : BindableBaseFull
     {
         private PageStretchMode _stretchMode = PageStretchMode.Uniform;
+        private PageStretchMode _validStretchMode = PageStretchMode.Uniform;
         private bool _allowStretchScaleUp = true;
         private bool _allowStretchScaleDown = true;
         private AutoRotateType _autoRotate;
@@ -128,8 +129,21 @@ namespace NeeView
         public PageStretchMode StretchMode
         {
             get { return _stretchMode; }
-            set { SetProperty(ref _stretchMode, value); }
+            set
+            {
+                if (_stretchMode != value)
+                {
+                    _stretchMode = value;
+                    _validStretchMode = _stretchMode != PageStretchMode.None ? value : _validStretchMode;
+                    RaisePropertyChanged();
+                    RaisePropertyChanged(nameof(ValidStretchMode));
+                }
+            }
         }
+
+        // 有効なスケールモード
+        // StretchMode.None のトグルに使用する
+        public PageStretchMode ValidStretchMode => _validStretchMode;
 
         // スケールモード・拡大許可
         [PropertyMember]

@@ -1,4 +1,4 @@
-﻿using Esprima.Ast;
+﻿#if false
 using NeeLaboratory.ComponentModel;
 using NeeView.Properties;
 using System;
@@ -234,3 +234,4 @@ namespace NeeView
         }
     }
 }
+#endif

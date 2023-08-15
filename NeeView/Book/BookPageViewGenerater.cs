@@ -1,4 +1,5 @@
-﻿using NeeLaboratory.ComponentModel;
+﻿#if false
+using NeeLaboratory.ComponentModel;
 using NeeLaboratory.Threading.Tasks;
 using System;
 using System.Collections.Generic;
@@ -355,3 +356,4 @@ namespace NeeView
 
     }
 }
+#endif

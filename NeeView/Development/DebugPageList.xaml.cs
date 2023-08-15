@@ -62,9 +62,9 @@ namespace NeeView
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (value is BitmapContent content)
+            if (value is BitmapPageContent content)
             {
-                return string.Format("{0:#,0}", content.PictureSource?.GetMemorySize());
+                //return string.Format("{0:#,0}", content.PictureSource?.GetMemorySize());
             }
 
             return "";
@@ -80,9 +80,9 @@ namespace NeeView
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (value is BitmapContent content)
+            if (value is BitmapPageContent content)
             {
-                return string.Format("{0:#,0}", content.Picture?.GetMemorySize());
+                //return string.Format("{0:#,0}", content.Picture?.GetMemorySize());
             }
 
             return "";

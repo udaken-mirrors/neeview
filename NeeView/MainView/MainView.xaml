@@ -19,11 +19,14 @@
 
         <Grid x:Name="MainViewCanvas" Effect="{Binding ImageEffect.Effect}" Margin="{Binding MainViewMergin}">
 
+
             <!-- メインビュー コンテンツ表示領域 -->
             <Grid x:Name="View" Background="Transparent" SizeChanged="MainView_SizeChanged" Focusable="True" KeyboardNavigation.IsTabStop="False" FocusVisualStyle="{x:Null}"
-                    ClipToBounds="True" DataContext="{Binding ContentCanvas}" AllowDrop="True">
-                <!-- Pages -->
-                <!-- NOTE: 時々操作が奪われしてまう原因の可能性その2 IsHitTestVisible -->
+                    ClipToBounds="True" AllowDrop="True">
+
+                <ContentControl x:Name="Socket" Content="{Binding PageFrameBoxPresenter.View}"/>
+                
+                <!--
                 <Canvas x:Name="PageCanvas" Width="{Binding ElementName=MainContent, Path=ActualWidth}" Height="{Binding ElementName=MainContent, Path=ActualHeight}" HorizontalAlignment="Center"
                         VerticalAlignment="Center">
                     <Canvas.Resources>
@@ -49,7 +52,6 @@
                         </Grid>
                     </ContentControl>
                 </Canvas>
-                <!-- Pages Shadow (表示領域計算用) -->
                 <Canvas x:Name="PageCanvasShadow" Width="{Binding ElementName=MainContent, Path=ActualWidth}" Height="{Binding ElementName=MainContent, Path=ActualHeight}" IsHitTestVisible="False"
                         HorizontalAlignment="Center" VerticalAlignment="Center">
                     <StackPanel x:Name="MainContentShadow" Orientation="Horizontal">
@@ -58,6 +60,7 @@
                                 Margin="{Binding ContentsMargin}" />
                     </StackPanel>
                 </Canvas>
+                -->
             </Grid>
          </Grid>
 

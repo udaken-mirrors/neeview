@@ -1,0 +1,201 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
+using System.Windows;
+using NeeLaboratory.Linq;
+using NeeView.ComponentModel;
+using NeeView.Maths;
+
+namespace NeeView.PageFrames
+{
+    /// <summary>
+    /// PageFrame生成
+    /// </summary>
+    public class PageFrameFactory
+    {
+        private BookPageAccessor _book;
+        private ContentSizeCalculator _calculator;
+        private BookContext _context;
+
+
+        public PageFrameFactory(BookContext context, ContentSizeCalculator calcurator)
+        {
+            _context = context;
+            _book = new BookPageAccessor(context);
+            _calculator = calcurator;
+        }
+
+
+        public PageRange GetFirstTerminalRange()
+        {
+            return new PageRange(new PagePosition(-1, 0), 2);
+        }
+
+        public PageRange GetLastTerminalRange()
+        {
+            return new PageRange(new PagePosition(_book.Pages.Count, 0), 2);
+        }
+
+
+        /// <summary>
+        /// フレーム作成
+        /// </summary>
+        /// <param name="position">開始座標</param>
+        /// <param name="direction">作成方向</param>
+        /// <param name="start"></param>
+        /// <returns>フレーム。範囲は正規化されている</returns>
+        public PageFrame? CreatePageFrame(PagePosition position, int direction, bool start = false)
+        {
+            if (position.IsEmpty() || !_book.ContainsIndex(position.Index))
+            {
+                return null;
+            }
+
+            if (start)
+            {
+                position = FixFramePosition(position, direction);
+            }
+            Debug.Assert(IsValidFramePosition(position, direction));
+
+            var frame = CreatePageFrame(CreatePageSource(position, direction), direction);
+            Debug.Assert(frame != null);
+            Debug.Assert(frame.FrameRange.IsContains(position));
+            frame.AssertValid(_context);
+
+            return frame;
+        }
+
+        /// <summary>
+        /// フレーム開始座標修正。分割されない設定での座標修正など。
+        /// </summary>
+        /// <param name="position">修正座標</param>
+        /// <param name="direction">フレーム方向</param>
+        /// <returns>修正された座標</returns>
+        private PagePosition FixFramePosition(PagePosition position, int direction)
+        {
+            var page = _book.GetPage(position.Index);
+            if (page is null) return PagePosition.Empty;
+
+            // 分割可能であれば修正不要
+            if (_context.PageMode == PageMode.SinglePage && _context.IsSupportedDividePage && IsLandscape(page))
+            {
+                return position;
+            }
+
+            // 分割不可なのでフレーム方向に応じたページ先頭座標に修正
+            return new PagePosition(position.Index, direction < 0 ? 1 : 0);
+        }
+
+        /// <summary>
+        /// 固定サイズやトリミングを反映させたサイズで横長判定
+        /// </summary>
+        /// <param name="page">ページ</param>
+        /// <returns>横長？</returns>
+        private bool IsLandscape(Page page)
+        {
+            return AspectRatioTools.IsLandscape(new PageSizeCalculator(_context, page).GetPageSize());
+        }
+
+        /// <summary>
+        /// フレーム開始座標として適切か判定
+        /// </summary>
+        /// <param name="position">開始座標</param>
+        /// <param name="direction">フレーム方向</param>
+        /// <returns>適切であれば true</returns>
+        private bool IsValidFramePosition(PagePosition position, int direction)
+        {
+            return position == FixFramePosition(position, direction);
+        }
+
+        /// <summary>
+        /// PageSource作成
+        /// </summary>
+        /// <param name="position">基準座標</param>
+        /// <param name="direction">作成方向</param>
+        /// <returns></returns>
+        private PageFrameElement? CreatePageSource(PagePosition position, int direction)
+        {
+            if (position.IsEmpty())
+            {
+                return null;
+            }
+
+            var page = _book.GetPage(position.Index);
+            if (page is null)
+            {
+                return null;
+            }
+
+            var range = PageRange.CreatePageRangeForOnePage(position, direction);
+
+            // 分割ページ
+            if (_context.PageMode == PageMode.SinglePage && _context.IsSupportedDividePage && IsLandscape(page))
+            {
+                range = new PageRange(range.Top(direction), direction);
+            }
+
+            return new PageFrameElement(_context, page, range, _context.ReadOrder.ToSign(), GetTerminal(range));
+        }
+
+        private PageTerminal GetTerminal(PageRange range)
+        {
+            var first = range.Min == _book.FirstPosition ? PageTerminal.First : PageTerminal.None;
+            var last = range.Max == _book.LastPosition ? PageTerminal.Last : PageTerminal.None;
+            return first | last;
+        }
+
+
+        private PageFrame? CreatePageFrame(PageFrameElement? source, int direction)
+        {
+            var source1 = source;
+            if (source1 is null) return null;
+
+            var bookDirection = _context.ReadOrder.ToSign();
+
+            if (_context.PageMode == PageMode.WidePage)
+            {
+                // TODO: SinglePageFrame 作成が分散しているのでまとめる？
+
+                if (_context.IsSupportedWidePage && source1.IsLandscape())
+                {
+                    return new PageFrame(source1, bookDirection, _calculator);
+                }
+
+                var position = _book.ValidatePosition(source1.PageRange.Next(direction));
+                var source2 = CreatePageSource(position, direction);
+                if (source2 is null)
+                {
+                    return new PageFrame(source1, bookDirection, _calculator);
+                }
+
+                if (_context.IsSupportedWidePage && source2.IsLandscape())
+                {
+                    return new PageFrame(source1, bookDirection, _calculator);
+                }
+
+                bool isSingleFirstPage = _context.IsSupportedSingleFirstPage && (direction < 0 ? source2 : source1).PageRange.Min.Index == _book.FirstPosition.Index;
+                bool isSingleLastPage = _context.IsSupportedSingleLastPage && (direction < 0 ? source1 : source2).PageRange.Min.Index == _book.LastPosition.Index;
+                if (isSingleFirstPage || isSingleLastPage)
+                {
+                    return new PageFrame(source1, bookDirection, _calculator);
+                }
+
+                var sources = new List<PageFrameElement>() { source1, source2 }.Direction(direction);
+
+                // content size alignment
+                var scales = _calculator.CalcContentScale(sources.Select(e => e.RawSize));
+                var scaledSources = sources
+                    .Select((source, index) => (source, index))
+                    .Select(e => scales[e.index] == e.source.Scale ? e.source : e.source with { Scale = scales[e.index] });
+
+                return new PageFrame(scaledSources, bookDirection, _calculator);
+            }
+            else
+            {
+                return new PageFrame(source1, bookDirection, _calculator);
+            }
+        }
+    }
+
+}

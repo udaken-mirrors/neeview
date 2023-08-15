@@ -11,12 +11,15 @@
 
         public bool CanCopyImageToClipboard()
         {
-            return _viewComponent.ContentCanvas.CanCopyImageToClipboard();
+#warning 未実装
+            return false;
+            //return _viewComponent.ContentCanvas.CanCopyImageToClipboard();
         }
 
         public void CopyImageToClipboard()
         {
-            _viewComponent.ContentCanvas.CopyImageToClipboard();
+#warning 未実装
+            //_viewComponent.ContentCanvas.CopyImageToClipboard();
         }
 
     }

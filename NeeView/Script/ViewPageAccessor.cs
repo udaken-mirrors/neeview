@@ -11,7 +11,7 @@
         {
             get
             {
-                if (this.Source.ContentAccessor is BitmapContent bitmapContent && bitmapContent.PictureInfo != null)
+                if (this.Source.Content is BitmapPageContent bitmapContent && bitmapContent.PictureInfo != null)
                 {
                     return bitmapContent.PictureInfo.OriginalSize.Width;
                 }
@@ -27,7 +27,7 @@
         {
             get
             {
-                if (this.Source.ContentAccessor is BitmapContent bitmapContent && bitmapContent.PictureInfo != null)
+                if (this.Source.Content is BitmapPageContent bitmapContent && bitmapContent.PictureInfo != null)
                 {
                     return bitmapContent.PictureInfo.OriginalSize.Height;
                 }

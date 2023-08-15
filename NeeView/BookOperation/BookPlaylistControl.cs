@@ -19,7 +19,7 @@ namespace NeeView
             _book = book;
 
             PlaylistHub.Current.PlaylistCollectionChanged += Playlist_CollectionChanged;
-            _book.Viewer.Loader.ViewContentsChanged += BookLoader_ViewContentsChanged;
+            //_book.Viewer.Loader.ViewContentsChanged += BookLoader_ViewContentsChanged;
             _book.Pages.PagesSorted += Book_PagesSorted;
             _book.Pages.PageRemoved += Book_PageRemoved;
         }
@@ -42,9 +42,13 @@ namespace NeeView
         {
             get
             {
+#warning 未実装
+                return false;
+#if false
                 var page = _book.Viewer.GetViewPage();
                 if (page is null) return false;
                 return _book.Marker.IsMarked(page);
+#endif
             }
         }
 
@@ -56,7 +60,7 @@ namespace NeeView
                 if (disposing)
                 {
                     PlaylistHub.Current.PlaylistCollectionChanged -= Playlist_CollectionChanged;
-                    _book.Viewer.Loader.ViewContentsChanged -= BookLoader_ViewContentsChanged;
+                    //_book.Viewer.Loader.ViewContentsChanged -= BookLoader_ViewContentsChanged;
                     _book.Pages.PagesSorted -= Book_PagesSorted;
                     _book.Pages.PageRemoved -= Book_PageRemoved;
                     MarkersChanged = null;
@@ -91,10 +95,13 @@ namespace NeeView
             AppDispatcher.Invoke(() => RaisePropertyChanged(nameof(IsMarked)));
         }
 
+#warning ページ変更時処理未実装
+#if false
         private void BookLoader_ViewContentsChanged(object? sender, ViewContentSourceCollectionChangedEventArgs e)
         {
             AppDispatcher.Invoke(() => RaisePropertyChanged(nameof(IsMarked)));
         }
+#endif
 
         private void Playlist_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
         {
@@ -140,9 +147,13 @@ namespace NeeView
         // ページマーク登録可能？
         public bool CanMark()
         {
+#warning 未実装
+            return false;
+#if false
             var page = _book.Viewer.GetViewPage();
             if (page is null) return false;
             return CanMark(page);
+#endif
         }
 
         public bool CanMark(Page page)
@@ -154,6 +165,9 @@ namespace NeeView
         // マーカー追加/削除
         public PlaylistItem? SetMark(bool isMark)
         {
+#warning 未実装
+            return null;
+#if false
             var page = _book.Viewer.GetViewPage();
             if (page is null) return null;
 
@@ -164,11 +178,15 @@ namespace NeeView
 
             var bookPlaylist = new BookPlaylist(_book, PlaylistHub.Current.Playlist);
             return bookPlaylist.Set(page, isMark);
+#endif
         }
 
         // マーカー切り替え
         public PlaylistItem? ToggleMark()
         {
+#warning 未実装
+            return null;
+#if false
             var page = _book.Viewer.GetViewPage();
             if (page is null) return null;
 
@@ -179,6 +197,7 @@ namespace NeeView
 
             var bookPlaylist = new BookPlaylist(_book, PlaylistHub.Current.Playlist);
             return bookPlaylist.Toggle(page);
+#endif
         }
 
         #region 開発用
@@ -226,6 +245,8 @@ namespace NeeView
 
         public void PrevMarkInPlace(object? sender, MovePlaylsitItemInBookCommandParameter param)
         {
+#warning 未実装
+#if false
             var result = _book.Control.JumpToMarker(this, -1, param.IsLoop, param.IsIncludeTerminal);
             if (result != null)
             {
@@ -237,10 +258,13 @@ namespace NeeView
             {
                 InfoMessage.Current.SetMessage(InfoMessageType.Notify, Properties.Resources.Notice_FirstPlaylistItem);
             }
+#endif
         }
 
         public void NextMarkInPlace(object? sender, MovePlaylsitItemInBookCommandParameter param)
         {
+#warning 未実装
+#if false
             var result = _book.Control.JumpToMarker(this, +1, param.IsLoop, param.IsIncludeTerminal);
             if (result != null)
             {
@@ -252,6 +276,7 @@ namespace NeeView
             {
                 InfoMessage.Current.SetMessage(InfoMessageType.Notify, Properties.Resources.Notice_LastPlaylistItem);
             }
+#endif
         }
 
     }

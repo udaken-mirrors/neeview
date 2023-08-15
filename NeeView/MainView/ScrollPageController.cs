@@ -1,4 +1,5 @@
-﻿using System;
+﻿#if false
+using System;
 
 namespace NeeView
 {
@@ -91,3 +92,4 @@ namespace NeeView
     }
 
 }
+#endif

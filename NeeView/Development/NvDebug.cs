@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace NeeView
 {
-    public static class NvDebug
+    public static class NVDebug
     {
         public static void MeasureAction(Action action)
         {
@@ -35,6 +35,52 @@ namespace NeeView
             Debug.WriteLine($"AppDispatcher.Invoke: {sourceFile}({sourceLine}):  {sw.ElapsedMilliseconds}ms");
 
             return result;
+        }
+
+        [Conditional("DEBUG")]
+        public static void WriteLine(string? message)
+        {
+            var thread = Thread.CurrentThread;
+            Debug.WriteLine($"TID.{thread.ManagedThreadId}({thread.GetApartmentState()}): " + message);
+        }
+
+        [Conditional("DEBUG")]
+        public static void WriteLine(object? value) =>
+            WriteLine(value?.ToString());
+
+        [Conditional("DEBUG")]
+        public static void WriteLine(object? value, string? category) =>
+            WriteLine(value?.ToString(), category);
+
+        [Conditional("DEBUG")]
+        public static void WriteLine(string format, params object?[] args) =>
+            WriteLine(string.Format(null, format, args));
+
+        [Conditional("DEBUG")]
+        public static void WriteLine(string? message, string? category)
+        {
+            if (category == null)
+            {
+                WriteLine(message);
+            }
+            else
+            {
+                WriteLine(category + ": " + message);
+            }
+        }
+
+        [Conditional("DEBUG")]
+        public static void AssertSTA()
+        {
+            var thread = Thread.CurrentThread;
+            Debug.Assert(thread.GetApartmentState() == ApartmentState.STA);
+        }
+
+        [Conditional("DEBUG")]
+        public static void AssertMTA()
+        {
+            var thread = Thread.CurrentThread;
+            Debug.Assert(thread.GetApartmentState() == ApartmentState.MTA);
         }
     }
 }

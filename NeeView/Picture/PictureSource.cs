@@ -7,6 +7,7 @@ using System.Windows.Media.Imaging;
 
 namespace NeeView
 {
+#if false
     /// <summary>
     /// Pictureの元データ管理
     /// </summary>
@@ -61,6 +62,7 @@ namespace NeeView
         /// </summary>
         public abstract Size FixedSize(Size size);
     }
+#endif
 
     [Flags]
     public enum PictureSourceCreateOptions

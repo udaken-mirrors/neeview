@@ -1,4 +1,6 @@
 ﻿using NeeLaboratory.ComponentModel;
+using NeeLaboratory.Generators;
+using NeeView.Presenter;
 using System;
 using System.Linq;
 using System.Text;
@@ -7,7 +9,7 @@ using System.Windows;
 
 namespace NeeView
 {
-    public class MainViewComponent : IDisposable
+    public partial class MainViewComponent : IDisposable
     {
         private static MainViewComponent? _current;
         public static MainViewComponent Current => _current ?? throw new InvalidOperationException();
@@ -33,25 +35,33 @@ namespace NeeView
 
             _mainView = new MainView();
 
-            DragTransform = new DragTransform();
-            DragTransformControl = new DragTransformControl(DragTransform, _mainView.View, _mainView.MainContentShadow);
-            LoupeTransform = new LoupeTransform();
+            PageFrameBoxPresenter = new PageFrameBoxPresenter(Config.Current, BookHub.Current);
+            BookOperation.Current.SetPageFrameBoxPresenter(PageFrameBoxPresenter);
 
-            TouchInput = new TouchInput(new TouchInputContext(_mainView.View, _mainView.MainContentShadow, mouseGestureCommandCollection, DragTransform, DragTransformControl, LoupeTransform));
-            MouseInput = new MouseInput(new MouseInputContext(_mainView.View, mouseGestureCommandCollection, DragTransformControl, DragTransform, LoupeTransform));
+            //DragTransform = new DragTransformP
 
-            var scrollPageController = new ScrollPageController(this, BookSettingPresenter.Current, BookOperation.Current);
+            DragTransformControl = new DragTransformControlProxy(PageFrameBoxPresenter);
+
+            //DragTransform = new DragTransform();
+            //DragTransformControl = new DragTransformControl(DragTransform, _mainView.View, _mainView.MainContentShadow);
+            //LoupeTransform = new LoupeTransform();
+
+            TouchInput = new TouchInput(new TouchInputContext(_mainView.View, _mainView.View, mouseGestureCommandCollection, null, DragTransformControl));
+            MouseInput = new MouseInput(new MouseInputContext(_mainView.View, mouseGestureCommandCollection, DragTransformControl, null));
+
+            //var scrollPageController = new ScrollPageController(this, BookSettingPresenter.Current, BookOperation.Current);
             PrintController = new PrintController(this, _mainView);
-            ViewTransformControl = new ViewTransformControl(this, scrollPageController);
+            //ViewTransformControl = new ViewTransformControl(this, scrollPageController);
+            ViewTransformControl = new ViewTransformControl(PageFrameBoxPresenter);
             ViewLoupeControl = new ViewLoupeControl(this);
             ViewWindowControl = new ViewWindowControl(this);
-            ViewPropertyControl = new ViewPropertyControl(this);
+            ViewPropertyControl = new ViewPropertyControl(Config.Current.View);
             ViewCopyImage = new ViewCopyImage(this);
 
-            ContentCanvas = new ContentCanvas(this, bookHub);
-            ContentCanvasBrush = new ContentCanvasBrush(ContentCanvas);
+            //ContentCanvas = new ContentCanvas(this, bookHub);
+            //ContentCanvasBrush = new ContentCanvasBrush(ContentCanvas);
 
-            ContentRebuild = new ContentRebuild(this);
+            //ContentRebuild = new ContentRebuild(this);
 
             _mainView.DataContext = new MainViewViewModel(this);
         }
@@ -60,31 +70,27 @@ namespace NeeView
         /// <summary>
         /// コンテキストメニューを開く要求イベント
         /// </summary>
+        [Subscribable]
         public event EventHandler? OpenContextMenuRequest;
-
-        public IDisposable SubscribeOpenContextMenuRequest(EventHandler handler)
-        {
-            OpenContextMenuRequest += handler;
-            return new AnonymousDisposable(() => OpenContextMenuRequest -= handler);
-        }
 
         /// <summary>
         /// MainViewにフォーカスを移す要求イベント
         /// </summary>
+        [Subscribable]
         public event EventHandler? FocusMainViewRequest;
 
-        public IDisposable SubscribeFocusMainViewRequest(EventHandler handler)
-        {
-            FocusMainViewRequest += handler;
-            return new AnonymousDisposable(() => FocusMainViewRequest -= handler);
-        }
 
 
         public MainView MainView => _mainView;
 
-        public DragTransform DragTransform { get; private set; }
-        public DragTransformControl DragTransformControl { get; private set; }
-        public LoupeTransform LoupeTransform { get; private set; }
+        // ##
+        public Size ViewSize => new Size(_mainView.ActualWidth, _mainView.ActualHeight);
+
+        public PageFrameBoxPresenter PageFrameBoxPresenter { get; private set; }
+
+        //public DragTransform DragTransform { get; private set; }
+        public IDragTransformControl DragTransformControl { get; private set; }
+        //public LoupeTransform LoupeTransform { get; private set; }
 
         public MouseInput MouseInput { get; private set; }
         public TouchInput TouchInput { get; private set; }
@@ -97,10 +103,10 @@ namespace NeeView
         public IViewPropertyControl ViewPropertyControl { get; private set; }
         public IViewCopyImage ViewCopyImage { get; private set; }
 
-        public ContentCanvas ContentCanvas { get; private set; }
-        public ContentCanvasBrush ContentCanvasBrush { get; private set; }
+        //public ContentCanvas ContentCanvas { get; private set; }
+        //public ContentCanvasBrush ContentCanvasBrush { get; private set; }
 
-        public ContentRebuild ContentRebuild { get; private set; }
+        //public ContentRebuild ContentRebuild { get; private set; }
 
 
         public bool IsLoupeMode => ViewLoupeControl.GetLoupeMode();
@@ -117,7 +123,7 @@ namespace NeeView
             {
                 if (disposing)
                 {
-                    ContentCanvas.Dispose();
+                    //ContentCanvas.Dispose();
                 }
 
                 _disposedValue = true;

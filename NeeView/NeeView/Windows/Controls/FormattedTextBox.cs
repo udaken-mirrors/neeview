@@ -70,7 +70,7 @@ namespace NeeView.Windows.Controls
             if (this.IsKeyboardFocused)
             {
                 UpdateBinding();
-                App.Current.Dispatcher.BeginInvoke((Action)(() => this.SelectAll()));
+                Application.Current.Dispatcher.BeginInvoke((Action)(() => this.SelectAll()));
             }
             else
             {

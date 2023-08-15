@@ -5,6 +5,9 @@ using System.Windows;
 
 namespace NeeView
 {
+    /// <summary>
+    /// Page custom size
+    /// </summary>
     public class CustomSize
     {
         static CustomSize() => Current = new CustomSize();
@@ -66,12 +69,14 @@ namespace NeeView
                     return ApplyLongSide(targetSize.AspectRatioUniformed(16.0, 9.0), sourceSize, isTransposed);
                 case CustomSizeAspectRatio.HalfView:
                     {
-                        var viewSize = MainViewComponent.Current.ContentCanvas.ViewSize;
+                        //var viewSize = MainViewComponent.Current ContentCanvas.ViewSize;
+                        var viewSize = MainViewComponent.Current.ViewSize;
                         return ApplyLongSide(targetSize.AspectRatioUniformed(viewSize.Width * 0.5, viewSize.Height), sourceSize, isTransposed);
                     }
                 case CustomSizeAspectRatio.View:
                     {
-                        var viewSize = MainViewComponent.Current.ContentCanvas.ViewSize;
+                        //var viewSize = MainViewComponent.Current.ContentCanvas.ViewSize;
+                        var viewSize = MainViewComponent.Current.ViewSize;
                         return ApplyLongSide(targetSize.AspectRatioUniformed(viewSize.Width, viewSize.Height), sourceSize, isTransposed);
                     }
                 default:

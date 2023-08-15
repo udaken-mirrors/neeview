@@ -15,6 +15,8 @@ using System.Windows.Media.Imaging;
 
 namespace NeeView
 {
+#warning not imprement SVG
+#if false
     public class SvgPictureSource : PictureSource
     {
         private static readonly object _lock = new();
@@ -137,6 +139,6 @@ namespace NeeView
             return this.PictureInfo.Size;
         }
     }
-
+#endif
 }
 

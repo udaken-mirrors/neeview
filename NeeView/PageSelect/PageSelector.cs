@@ -81,7 +81,7 @@ namespace NeeView
         
         public bool IsSupportedSingleLastPage => BookOperation.Current.Book?.Setting.IsSupportedSingleLastPage ?? false;
 
-        public int ViewPageCount => BookOperation.Current.Book?.Viewer.GetViewPages()?.Count ?? 0;
+        public int ViewPageCount => BookOperation.Current.Book?.Pages.Count ?? 0;
 
         public int MaxIndex => Math.Max(BookOperation.Current.Control.Pages.Count - 1, 0);
 
@@ -205,6 +205,7 @@ namespace NeeView
     }
 
 
+#if false
     // 表示コンテンツ変更イベント
     public class ViewContentsChangedEventArgs : EventArgs
     {
@@ -224,5 +225,6 @@ namespace NeeView
         /// </summary>
         public bool IsBookOpen { get; private set; }
     }
+#endif
 }
 

@@ -1,35 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 
 namespace NeeLaboratory.ComponentModel
 {
-    /// <summary>
-    /// DisposableオブジェクトをまとめてDisposeする
-    /// </summary>
-    public class DisposableCollection : IDisposable
+    public class DisposableCollection : List<IDisposable>, IDisposable
     {
-        private readonly List<IDisposable> _disposables = new();
-
-        public void Add(IDisposable disposable)
-        {
-            Debug.Assert(disposable is not null);
-
-            if (disposable is null) return;
-
-            ThrowIfDisposed();
-
-            _disposables.Add(disposable);
-        }
-
-        #region IDisposable Support
-        private bool _disposedValue = false;
-
-        protected void ThrowIfDisposed()
-        {
-            if (_disposedValue) throw new ObjectDisposedException(GetType().FullName);
-        }
+        private bool _disposedValue;
 
         protected virtual void Dispose(bool disposing)
         {
@@ -37,7 +14,7 @@ namespace NeeLaboratory.ComponentModel
             {
                 if (disposing)
                 {
-                    foreach (var disposable in _disposables.Reverse<IDisposable>())
+                    foreach (var disposable in this.Reverse<IDisposable>())
                     {
                         disposable.Dispose();
                     }
@@ -49,10 +26,28 @@ namespace NeeLaboratory.ComponentModel
 
         public void Dispose()
         {
-            Dispose(true);
+            Dispose(disposing: true);
             GC.SuppressFinalize(this);
         }
-        #endregion
-    }
 
+
+        public void Add(Action action)
+        {
+            Add(new AnonymousDisposable(action));
+        }
+
+#if false
+        public static DisposableCollection operator +(DisposableCollection a, IDisposable b)
+        {
+            a.Add(b);
+            return a;
+        }
+
+        public static DisposableCollection operator -(DisposableCollection a, IDisposable b)
+        {
+            a.Remove(b);
+            return a;
+        }
+#endif
+    }
 }

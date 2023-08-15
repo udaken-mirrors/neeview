@@ -66,7 +66,7 @@ namespace NeeView
         public BookPageScript(Book book)
         {
             Book = book;
-            Book.Viewer.Loader.ViewContentsChanged += Book_ViewContentsChanged;
+            //Book.Viewer.Loader.ViewContentsChanged += Book_ViewContentsChanged;
             OnLoaded();
         }
 
@@ -77,7 +77,7 @@ namespace NeeView
             {
                 if (disposing)
                 {
-                    Book.Viewer.Loader.ViewContentsChanged -= Book_ViewContentsChanged;
+                    //Book.Viewer.Loader.ViewContentsChanged -= Book_ViewContentsChanged;
                 }
                 _disposedValue = true;
             }
@@ -104,7 +104,8 @@ namespace NeeView
             });
         }
 
-
+#warning ページ変更時イベント未実装
+#if false
         private void Book_ViewContentsChanged(object? sender, ViewContentSourceCollectionChangedEventArgs e)
         {
             if (e is null) return;
@@ -116,7 +117,7 @@ namespace NeeView
                 CommandTable.Current.TryExecute(this, ScriptCommand.EventOnPageChanged, null, CommandOption.None);
             });
         }
-
+#endif
     }
 
 }

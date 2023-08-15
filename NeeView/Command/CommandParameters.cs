@@ -45,7 +45,7 @@ namespace NeeView
 
     public static class CommandParameterExtensions
     {
-        public static T Cast<T>(this CommandParameter? self ) where T : CommandParameter
+        public static T Cast<T>(this CommandParameter? self) where T : CommandParameter
         {
             var param = self as T ?? throw new InvalidCastException();
             return param;
@@ -67,7 +67,6 @@ namespace NeeView
             set => SetProperty(ref _isReverse, value);
         }
     }
-
 
     /// <summary>
     /// JsonConverter for CommandParameter.

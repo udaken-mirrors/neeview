@@ -9,6 +9,8 @@ using System.Windows.Media;
 
 namespace NeeView
 {
+    #warning not support yet
+#if false
     public class NavigateThumbnailViewModel : BindableBase
     {
         private readonly MainViewComponent _mainViewComponent;
@@ -195,4 +197,5 @@ namespace NeeView
             _mainViewComponent.DragTransformControl.LookAt(new Point(x, y));
         }
     }
+#endif
 }

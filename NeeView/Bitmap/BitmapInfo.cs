@@ -150,6 +150,11 @@ namespace NeeView
 
         public static BitmapInfo Create(Stream stream)
         {
+            return Create(stream, false);
+        }
+
+        public static BitmapInfo Create(Stream stream, bool throwException)
+        {
             stream.Seek(0, SeekOrigin.Begin);
 
             try
@@ -159,8 +164,15 @@ namespace NeeView
             }
             catch (Exception ex)
             {
-                Debug.WriteLine(ex.Message);
-                return new BitmapInfo();
+                if (throwException)
+                {
+                    throw;
+                }
+                else
+                {
+                    Debug.WriteLine(ex.Message);
+                    return new BitmapInfo();
+                }
             }
         }
 

@@ -15,7 +15,8 @@ namespace NeeView
     /// </summary>
     public class MouseInputLoupe : MouseInputBase
     {
-        private readonly LoupeTransform _loupe;
+#warning not supprt yet Loupe
+        //private readonly LoupeTransform _loupe;
         private Point _loupeBasePosition;
         private bool _isLongDownMode;
         private bool _isButtonDown;
@@ -23,8 +24,8 @@ namespace NeeView
 
         public MouseInputLoupe(MouseInputContext context) : base(context)
         {
-            if (context.LoupeTransform is null) throw new InvalidOperationException();
-            _loupe = context.LoupeTransform;
+            //if (context.LoupeTransform is null) throw new InvalidOperationException();
+            //_loupe = context.LoupeTransform;
         }
 
 
@@ -51,15 +52,15 @@ namespace NeeView
             _context.StartTimestamp = System.Environment.TickCount;
             var center = new Point(sender.ActualWidth * 0.5, sender.ActualHeight * 0.5);
             Vector v = _context.StartPoint - center;
-            _loupeBasePosition = (Point)(Config.Current.Loupe.IsLoupeCenter ? -v : -v + v / _loupe.Scale);
-            _loupe.Position = _loupeBasePosition;
+            //_loupeBasePosition = (Point)(Config.Current.Loupe.IsLoupeCenter ? -v : -v + v / _loupe.Scale);
+            //_loupe.Position = _loupeBasePosition;
 
-            _loupe.IsEnabled = true;
+            //_loupe.IsEnabled = true;
             _isButtonDown = false;
 
             if (Config.Current.Loupe.IsResetByRestart)
             {
-                _loupe.Scale = Config.Current.Loupe.DefaultScale;
+                //_loupe.Scale = Config.Current.Loupe.DefaultScale;
             }
         }
 
@@ -71,7 +72,7 @@ namespace NeeView
         {
             sender.Cursor = null;
 
-            _loupe.IsEnabled = false;
+            //_loupe.IsEnabled = false;
         }
 
 
@@ -149,7 +150,7 @@ namespace NeeView
         public override void OnMouseMove(object? sender, MouseEventArgs e)
         {
             var point = e.GetPosition(_context.Sender);
-            _loupe.Position = _loupeBasePosition - (point - _context.StartPoint) * Config.Current.Loupe.Speed;
+            //_loupe.Position = _loupeBasePosition - (point - _context.StartPoint) * Config.Current.Loupe.Speed;
 
             e.Handled = true;
         }
@@ -165,11 +166,11 @@ namespace NeeView
             {
                 if (e.Delta > 0)
                 {
-                    _loupe.ZoomIn();
+                    //_loupe.ZoomIn();
                 }
                 else
                 {
-                    _loupe.ZoomOut();
+                    //_loupe.ZoomOut();
                 }
 
                 e.Handled = true;

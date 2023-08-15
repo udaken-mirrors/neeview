@@ -1,20 +1,22 @@
-﻿using NeeView.Collections.Generic;
+﻿using NeeLaboratory.Generators;
+using NeeView.Collections.Generic;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 
 namespace NeeView
 {
-    public partial class Book : IDisposable
+    public partial class Book : IDisposable, IBook
     {
         public static Book? Default { get; private set; }
 
-        private readonly BookMemoryService _bookMemoryService = new();
+        //private readonly BookMemoryService _bookMemoryService = new();
 
         private readonly BookSource _source;
         private readonly BookPageSetting _setting;
-        private readonly BookPageViewer _viewer;
+        //private readonly BookPageViewer _viewer;
         private readonly BookPageMarker _marker;
-        private readonly BookController _controller;
+        //private readonly BookController _controller;
         private readonly string _sourcePath;
         private readonly BookLoadOption _loadOption;
         private readonly BookAddress _address;
@@ -24,26 +26,33 @@ namespace NeeView
         {
             Book.Default = this;
 
+            this.Memento = memento;
+
             _address = address;
             _source = source;
             _sourcePath = address.SourcePath?.SimplePath ?? "";
             _setting = new BookPageSetting(CreateBookViewerCreateSetting(memento));
-            _viewer = new BookPageViewer(_source, _bookMemoryService, _setting);
+            //_viewer = new BookPageViewer(_source, _bookMemoryService, _setting);
             _marker = new BookPageMarker(_source);
-            _controller = new BookController(_source, _setting, _viewer, _marker);
+            //_controller = new BookController(_source, _setting, _viewer, _marker);
             _loadOption = option;
 
             IsNew = isNew;
         }
 
 
+        [Subscribable]
+        public event EventHandler? PagesChanged;
+
+
         public BookSource Source => _source;
         public BookPageCollection Pages => _source.Pages;
+        IReadOnlyList<Page> IBook.Pages => _source.Pages;
         public BookPageSetting Setting => _setting;
-        public BookPageViewer Viewer => _viewer;
+        //public BookPageViewer Viewer => _viewer;
         public BookPageMarker Marker => _marker;
-        public BookController Control => _controller;
-        public BookMemoryService BookMemoryService => _bookMemoryService;
+        //public BookController Control => _controller;
+        public BookMemoryService BookMemoryService => _source.BookMemoryService;
 
         public BookAddress BookAddress => _address;
         public string Path => _source.Path;
@@ -68,6 +77,11 @@ namespace NeeView
 
         public bool IsKeepHistoryOrder => (_loadOption & BookLoadOption.KeepHistoryOrder) == BookLoadOption.KeepHistoryOrder;
 
+
+        /// <summary>
+        /// 初期Memento
+        /// </summary>
+        public BookMemento Memento { get; private set; }
 
 
         public void SetStartPage(object? sender, BookStartPage startPage)
@@ -110,7 +124,7 @@ namespace NeeView
             this.StartEntry = _source.Pages.Count > 0 ? _source.Pages[position.Index].EntryName : null;
 
             // 初期ページ設定 
-            _controller.JumpPage(sender, position, direction);
+            //_controller.JumpPage(sender, position, direction);
         }
 
         public void Start()
@@ -118,7 +132,7 @@ namespace NeeView
             if (_disposedValue) return;
 
             // TODO: スタートページへ移動
-            _controller.Start();
+            //_controller.Start();
         }
 
 
@@ -136,8 +150,8 @@ namespace NeeView
                         Book.Default = null;
                     }
 
-                    _controller.Dispose();
-                    _viewer.Dispose();
+                    //_controller.Dispose();
+                    //_viewer.Dispose();
                     _source.Dispose();
                 }
 
@@ -155,12 +169,14 @@ namespace NeeView
         #region Memento
 
         // bookの設定を取得する
+        [Obsolete("現在ページの情報はここにはないので別で処する？")]
         public BookMemento CreateMemento()
         {
             var memento = new BookMemento
             {
                 Path = _source.Path,
-                Page = _source.Pages.SortMode != PageSortMode.Random ? _viewer.GetViewPage()?.EntryName ?? "" : "",
+                //Page = _source.Pages.SortMode != PageSortMode.Random ? _viewer.GetViewPage()?.EntryName ?? "" : "",
+                Page = "",
 
                 PageMode = _setting.PageMode,
                 BookReadOrder = _setting.BookReadOrder,

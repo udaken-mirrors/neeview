@@ -76,6 +76,8 @@ namespace NeeView
 
             this.NowLoadingView.Source = NowLoading.Current;
 
+            // Transform はここでは処理しない
+#if false
             // render transform
             var transformView = new TransformGroup();
             transformView.Children.Add(_vm.ViewComponent.DragTransform.TransformView);
@@ -89,6 +91,7 @@ namespace NeeView
             _transformCalc.Changed += (s, e) => TransformChanged?.Invoke(s, e);
             this.MainContentShadow.RenderTransform = _transformCalc;
             this.MainContentShadow.RenderTransformOrigin = new Point(0.5, 0.5);
+#endif
 
             _vm.ViewComponent.OpenContextMenuRequest += (s, e) => OpenContextMenu();
             _vm.ViewComponent.FocusMainViewRequest += (s, e) => FocusMainView();
@@ -164,6 +167,9 @@ namespace NeeView
 
         public void StretchWindow()
         {
+            throw new NotImplementedException();
+
+#if false
             var window = Window.GetWindow(this);
             if (window is null) return;
             if (window.WindowState != WindowState.Normal) return;
@@ -185,17 +191,20 @@ namespace NeeView
             // NOTE: レンダリングに回転を反映させるためにタイミングを遅らせる
             // TODO: レンダリング前に数値計算だけで処理するのが理想
             AppDispatcher.BeginInvoke(() => StretchContent());
+#endif
         }
 
+
+#if false
         private void StretchContent()
         {
+
             if (_vm is null) return;
 
             var canvasSize = this.GetCanvasSzie();
             var contentSize = this.GetContentRenderSize();
             _vm.StretchScale(contentSize, canvasSize);
         }
-
         private Size GetCanvasSzie()
         {
             return new Size(this.MainViewCanvas.ActualWidth, this.MainViewCanvas.ActualHeight);
@@ -206,6 +215,7 @@ namespace NeeView
             var rect = new Rect(new Size(this.MainContentShadow.ActualWidth, this.MainContentShadow.ActualHeight));
             return this.MainContentShadow.RenderTransform.TransformBounds(rect).Size;
         }
+#endif
 
 
         #region タイマーによる非アクティブ監視

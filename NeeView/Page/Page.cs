@@ -1,18 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Media.Imaging;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Threading;
-using System.Windows.Media;
-using System.Windows.Controls;
+using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Media;
 using NeeLaboratory.ComponentModel;
-using System.Windows.Media.Effects;
+using NeeLaboratory.Generators;
 
 namespace NeeView
 {
@@ -29,91 +22,90 @@ namespace NeeView
 
 
 
-    /// <summary>
-    /// ページ
-    /// </summary>
-    public class Page : BindableBase, IHasPage, IDisposable, IRenameable, IPageContentLoader, IPageThumbnailLoader, IMemoryElement
+    [NotifyPropertyChanged]
+    public partial class Page : IDisposable, INotifyPropertyChanged, IPageContentLoader, IPageThumbnailLoader, IHasPage, IRenameable
     {
-        #region 開発用
+        //private static PageContentFactory _pageContentFactory = new PageContentFactory();
 
-        [Conditional("DEBUG")]
-        private void DebugRaisePropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string? name = null)
-        {
-            RaisePropertyChanged(name);
-        }
-
-        [Conditional("DEBUG")]
-        public void DebugRaiseContentPropertyChanged()
-        {
-            DebugRaisePropertyChanged(nameof(ContentAccessor));
-        }
-
-        #endregion
-
-        private readonly PageContent _content;
-        private readonly IContentLoader _contentLoader;
+        private int _index;
+        private IPageContent _content;
         private bool _isVisibled;
         private bool _isMarked;
+        private bool _disposedValue;
         private readonly DisposableCollection _disposables = new();
-        private int _index;
 
 
-        /// <summary>
-        /// コンストラクタ
-        /// </summary>
-        public Page(string bookPrefix, PageContent content)
+#if false
+        public Page(string bookPrefix, ArchiveEntry archiveEntry, int index, BookMemoryService bookMemoryService)
+            : this(bookPrefix, _pageContentFactory.Create(archiveEntry, bookMemoryService) )
+        {
+            Index = index;
+        }
+#endif
+
+
+        public Page(string bookPrefix, IPageContent content)
         {
             BookPrefix = bookPrefix;
 
             _content = content;
+            _content.ContentChanged += Content_ContentChanged;
+            _content.SizeChanged += Content_SizeChanged;
+
+#if false
             _disposables.Add(_content.SubscribePropertyChanged(nameof(PageContent.Entry),
                 (s, e) => RaisePropertyChanged(nameof(Entry))));
 
             _contentLoader = _content.CreateContentLoader();
             _disposables.Add(_contentLoader.SubscribeLoaded(
                 (s, e) => Loaded?.Invoke(this, EventArgs.Empty)));
+#endif
         }
 
 
-        // コンテンツ更新イベント
-        public event EventHandler? Loaded;
 
-        public IDisposable SubscribeLoaded(EventHandler handler)
-        {
-            Loaded += handler;
-            return new AnonymousDisposable(() => Loaded -= handler);
-        }
+
+
+        [Subscribable]
+        public event PropertyChangedEventHandler? PropertyChanged;
+
+        [Subscribable]
+        public event EventHandler? ContentChanged;
+
+        [Subscribable]
+        public event EventHandler? SizeChanged;
+
 
 
         public bool IsLoaded => _content.IsLoaded;
 
-        // アーカイブエントリ
-        public ArchiveEntry Entry => _content.Entry;
+        [Obsolete("use Entry")]
+        public ArchiveEntry ArchiveEntry => _content.ArchiveEntry;
+
+        public ArchiveEntry Entry => _content.ArchiveEntry;
 
         /// <summary>
         /// コンテンツアクセサ。コンテンツを編集する場合はこのアクセサを介して操作を行う。
         /// </summary>
-        public PageContent ContentAccessor => _content;
+        //public PageContent ContentAccessor => _content;
+        public IPageContent Content => _content;
+
 
         // 登録番号
         public int EntryIndex { get; set; }
 
-        // ページ番号
         public int Index
         {
             get { return _index; }
             set
             {
                 _index = value;
-                _content.Index = _index;
+                _content.Index = value;
             }
         }
 
         // TODO: 表示番号と内部番号のずれ
         public int IndexPlusOne => Index + 1;
-
-        // 場所
-        public string? Place { get; protected set; }
 
         // ページ名 : エントリ名
         public string EntryName => Entry.EntryFullName[BookPrefix.Length..];
@@ -155,24 +147,20 @@ namespace NeeView
         public double Height => Size.Height;
 
         /// <summary>
-        /// コンテンツサイズ。カスタムサイズが指定されているときはここで反映される
+        /// コンテンツサイズ
         /// </summary>
-        public Size Size
-        {
-            get { return CustomSize.Current.TransformToCustomSize(_content.Size); }
-        }
+        public Size Size => _content.Size;
+
+        /// <summary>
+        /// コンテンツカラー
+        /// </summary>
+        public Color Color => _content.Color;
 
         /// <summary>
         /// ページの種類
         /// </summary>
-        public PageType PageType => _content is ArchiveContent ? PageType.Folder : PageType.File;
-
-        /// <summary>
-        /// サムネイル
-        /// </summary>
-        public Thumbnail Thumbnail => _content.Thumbnail;
-
-        public bool IsThumbnailValid => _content.Thumbnail.IsValid;
+        //public PageType PageType => _content is ArchiveContent ? PageType.Folder : PageType.File;
+        public PageType PageType => PageType.File;
 
         // 表示中?
         public bool IsVisibled
@@ -186,6 +174,7 @@ namespace NeeView
             get { return _isMarked; }
             set { SetProperty(ref _isMarked, value); }
         }
+
 
         /// <summary>
         /// 要求状態
@@ -201,93 +190,25 @@ namespace NeeView
         /// </summary>
         public bool IsDeleted => Entry.IsDeleted;
 
-        public bool IsMemoryLocked => _content.IsContentLocked;
 
-
-        #region IDisposable Support
-        private bool _disposedValue = false;
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!_disposedValue)
-            {
-                if (disposing)
-                {
-                    _disposables.Dispose();
-                    Loaded = null;
-                    ResetPropertyChanged();
-                    _contentLoader.Dispose();
-                    _content.Dispose();
-                }
-
-                _disposedValue = true;
-            }
-        }
-
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-        #endregion
-
-        // ToString
-        public override string? ToString()
-        {
-            var name = _content.ToString();
-            if (name == null) return base.ToString();
-            return $"{name}: State={State}";
-        }
-
+        #region Thumbnail
 
         /// <summary>
-        /// コンテンツ読み込み
+        /// サムネイル
         /// </summary>
-        public async Task LoadContentAsync(CancellationToken token)
-        {
-            if (_disposedValue) return;
+        //public Thumbnail Thumbnail => _content.Thumbnail;
+        public Thumbnail Thumbnail { get; } = new Thumbnail();
 
-            try
-            {
-                token.ThrowIfCancellationRequested();
-                await _contentLoader.LoadContentAsync(token);
-                RaisePropertyChanged(nameof(ContentAccessor));
-            }
-            catch
-            {
-                // nop.
-            }
-        }
-
-        /// <summary>
-        /// コンテンツを閉じる
-        /// </summary>
-        public void UnloadContent()
-        {
-            Debug.Assert(State == PageContentState.None);
-
-            _contentLoader.UnloadContent();
-            RaisePropertyChanged(nameof(ContentAccessor));
-        }
-
-        public void Unload()
-        {
-            UnloadContent();
-        }
-
-        // ImageSource取得
-        public ImageSource? GetContentImageSource()
-        {
-            return (_content as BitmapContent)?.ImageSource;
-        }
-
-
+        //public bool IsThumbnailValid => _content.Thumbnail.IsValid;
+        public bool IsThumbnailValid => false;
 
         /// <summary>
         /// サムネイル読み込み
         /// </summary>
         public async Task<ImageSource?> LoadThumbnailAsync(CancellationToken token)
         {
+            return null;
+#if false
             if (_disposedValue) return null;
 
             try
@@ -301,7 +222,71 @@ namespace NeeView
                 // nop.
                 return null;
             }
+#endif
         }
+
+        #endregion
+
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!_disposedValue)
+            {
+                if (disposing)
+                {
+                    _content.ContentChanged -= Content_ContentChanged;
+                    _content.SizeChanged -= Content_SizeChanged;
+                    _disposables.Dispose();
+                }
+
+                _disposedValue = true;
+            }
+        }
+
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
+
+        private void Content_ContentChanged(object? sender, EventArgs e)
+        {
+            RaisePropertyChanged(nameof(Content));
+            RaisePropertyChanged(nameof(Color));
+            ContentChanged?.Invoke(this, EventArgs.Empty);
+        }
+
+        private void Content_SizeChanged(object? sender, EventArgs e)
+        {
+            RaisePropertyChanged(nameof(Size));
+            SizeChanged?.Invoke(this, EventArgs.Empty);
+        }
+
+        // TODO: これをPageのメソッドとして公開するのは？
+        public async Task LoadContentAsync(CancellationToken token)
+        {
+            await _content.LoadAsync(token);
+        }
+
+        // TODO: PageLoader管理と競合している問題
+        public void Unload()
+        {
+            _content.Unload();
+            ContentChanged?.Invoke(this, EventArgs.Empty);
+        }
+
+
+        public override string ToString()
+        {
+            return $"Page:{Index}";
+        }
+
+        public Page? GetPage()
+        {
+            return this;
+        }
+
+        #region Page functions
 
 
         // ページ名：ソート用分割
@@ -346,15 +331,11 @@ namespace NeeView
             return Entry.Archiver.GetSourceFileSystemPath();
         }
 
-        public Page GetPage()
-        {
-            return this;
-        }
 
-        public PageContent GetContentClone()
-        {
-            return _content.Clone();
-        }
+        //public PageContent GetContentClone()
+        //{
+        //    return _content.Clone();
+        //}
 
 
         /// <summary>
@@ -400,37 +381,8 @@ namespace NeeView
             RaisePropertyChanged(nameof(SystemPath));
         }
 
-        public long GetMemorySize()
-        {
-            return _content.GetContentMemorySize();
-        }
+        #endregion
+
+
     }
-
-
-
-    public static class PageExtensions
-    {
-        /// <summary>
-        /// Create Page visual for Dialog thumbnail.
-        /// </summary>
-        /// <returns>Image</returns>
-        public static async Task<Image> CreatePageVisualAsync(this Page page)
-        {
-            var imageSource = await page.LoadThumbnailAsync(CancellationToken.None);
-
-            var image = new Image();
-            image.Source = imageSource;
-            image.Effect = new DropShadowEffect()
-            {
-                Opacity = 0.5,
-                ShadowDepth = 2,
-                RenderingBias = RenderingBias.Quality
-            };
-            image.MaxWidth = 96;
-            image.MaxHeight = 96;
-
-            return image;
-        }
-    }
-
 }

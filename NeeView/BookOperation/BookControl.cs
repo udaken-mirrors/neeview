@@ -16,14 +16,17 @@ namespace NeeView
         public BookControl(Book book)
         {
             _book = book;
-            _book.Viewer.Loader.PropertyChanged += BookLoader_PropertyChanged;
+            //_book.Viewer.Loader.PropertyChanged += BookLoader_PropertyChanged;
         }
 
 
         // ブックマーク判定
         public bool IsBookmark => BookmarkCollection.Current.Contains(_book.Path);
 
-        public bool IsBusy => _book.Viewer.Loader.IsBusy;
+#warning not support yet
+        //public bool IsBusy => _book.Viewer.Loader.IsBusy;
+        public bool IsBusy => false;
+        
         public PageSortModeClass PageSortModeClass => _book.PageSortModeClass;
 
 
@@ -33,7 +36,7 @@ namespace NeeView
             {
                 if (disposing)
                 {
-                    _book.Viewer.Loader.PropertyChanged -= BookLoader_PropertyChanged;
+                    //_book.Viewer.Loader.PropertyChanged -= BookLoader_PropertyChanged;
                 }
                 _disposedValue = true;
             }
@@ -60,12 +63,15 @@ namespace NeeView
         /// </summary>
         public void ReLoad()
         {
+            throw new NotImplementedException();
+#if false
             var book = _book;
             if (book is null) return;
 
             var viewPage = book.Viewer.GetViewPage();
             var page = book.Pages.GetValidPage(viewPage);
             BookHub.Current.RequestReLoad(this, page?.EntryName);
+#endif
         }
 
         /// <summary>

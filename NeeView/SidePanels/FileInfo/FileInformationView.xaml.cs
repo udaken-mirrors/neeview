@@ -113,7 +113,10 @@ namespace NeeView
                 return;
             }
 
-            var item = (container.Content as FileInformationSource)?.ViewContent?.Page;
+#warning not implement ye
+            //var item = (container.Content as FileInformationSource)?.ViewContent?.Page;
+            Page? item = null;
+
             if (item == null)
             {
                 return;
@@ -169,6 +172,8 @@ namespace NeeView
 
         public async Task DragStartBehavior_DragBeginAsync(object? sender, Windows.DragStartEventArgs e, CancellationToken token)
         {
+#warning not implement yet
+#if false
             var pages = this.ThumbnailListBox.SelectedItems.Cast<FileInformationSource>()
                 .Select(x => x.ViewContent?.Page)
                 .WhereNotNull()
@@ -213,6 +218,7 @@ namespace NeeView
                 // ひとまずドラッグ完了後のページ削除を限定的に行う。
                 e.DragEndAction = () => BookOperation.Current.BookControl.ValidateRemoveFile(pages);
             }
+#endif
         }
 
         #endregion
@@ -224,7 +230,7 @@ namespace NeeView
         {
             if (sender is not ListBox listBox) return null;
 
-            return (listBox.SelectedItem as FileInformationSource)?.ViewContent?.Page;
+            return (listBox.SelectedItem as FileInformationSource)?.Page;
         }
 
         protected override List<Page>? GetSelectedPages(object sender)
@@ -233,7 +239,7 @@ namespace NeeView
 
             return listBox.SelectedItems
                 .Cast<FileInformationSource>()
-                .Select(e => e.ViewContent?.Page)
+                .Select(e => e.Page)
                 .WhereNotNull()
                 .ToList();
         }

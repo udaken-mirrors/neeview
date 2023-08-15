@@ -1,21 +1,20 @@
 ﻿using System;
-using System.Diagnostics;
 
 namespace NeeLaboratory.ComponentModel
 {
-    /// <summary>
-    /// Disposeアクションのみを行うDisposableオブジェクト
-    /// </summary>
     public class AnonymousDisposable : IDisposable
     {
-        private readonly Action _action;
+        private Action _disposeAction;
         private bool _disposedValue;
 
-        public AnonymousDisposable(Action action)
+        public AnonymousDisposable(Action disposeAction)
         {
-            Debug.Assert(action is not null);
-            
-            _action = action;
+            _disposeAction = disposeAction;
+        }
+
+        public static IDisposable Create(Action action)
+        {
+            return new AnonymousDisposable(action);
         }
 
         protected virtual void Dispose(bool disposing)
@@ -24,7 +23,7 @@ namespace NeeLaboratory.ComponentModel
             {
                 if (disposing)
                 {
-                    _action?.Invoke();
+                    _disposeAction();
                 }
 
                 _disposedValue = true;
@@ -37,5 +36,6 @@ namespace NeeLaboratory.ComponentModel
             GC.SuppressFinalize(this);
         }
     }
+
 
 }

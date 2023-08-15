@@ -2,6 +2,7 @@
 
 namespace NeeView
 {
+#if false
     public static class PictureSourceFactory
     {
         public static PictureSource Create(ArchiveEntry entry, PictureInfo? pictureInfo, PictureSourceCreateOptions createOptions, CancellationToken token)
@@ -20,5 +21,5 @@ namespace NeeView
             }
         }
     }
-
+#endif
 }

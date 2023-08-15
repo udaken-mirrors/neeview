@@ -18,6 +18,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using NeeLaboratory.Threading.Jobs;
 using NeeView.Interop;
+using NeeLaboratory.Generators;
 
 // TODO: コマンド類の何時でも受付。ロード中だから弾く、ではない別の方法を。
 
@@ -27,7 +28,8 @@ namespace NeeView
     /// 本の管理
     /// ロード、本の操作はここを通す
     /// </summary>
-    public sealed class BookHub : BindableBase, IDisposable
+    [NotifyPropertyChanged]
+    public partial class BookHub : IDisposable, INotifyPropertyChanged
     {
         // Singleton
         static BookHub() => Current = new BookHub();
@@ -108,132 +110,66 @@ namespace NeeView
         }
 
 
+        [Subscribable]
+        public event PropertyChangedEventHandler? PropertyChanged;
+
         // 本の変更開始通知
+        [Subscribable]
         public event EventHandler<BookChangingEventArgs>? BookChanging;
 
-        public IDisposable SubscribeBookChanging(EventHandler<BookChangingEventArgs> handler)
-        {
-            BookChanging += handler;
-            return new AnonymousDisposable(() => BookChanging -= handler);
-        }
-
         // 本の変更通知
+        [Subscribable]
         public event EventHandler<BookChangedEventArgs>? BookChanged;
 
-        public IDisposable SubscribeBookChanged(EventHandler<BookChangedEventArgs> handler)
-        {
-            BookChanged += handler;
-            return new AnonymousDisposable(() => BookChanged -= handler);
-        }
-
         // 新しいロードリクエスト
+        [Subscribable]
         public event EventHandler<BookHubPathEventArgs>? LoadRequested;
 
-        public IDisposable SubscribeLoadRequested(EventHandler<BookHubPathEventArgs> handler)
-        {
-            LoadRequested += handler;
-            return new AnonymousDisposable(() => LoadRequested -= handler);
-        }
-
         // ロード中通知
+        [Subscribable]
         public event EventHandler<BookHubPathEventArgs>? Loading;
 
-        public IDisposable SubscribeLoading(EventHandler<BookHubPathEventArgs> handler)
-        {
-            Loading += handler;
-            return new AnonymousDisposable(() => Loading -= handler);
-        }
-
         // コマンドエンジン処理中通知
+        [Subscribable]
         public event EventHandler<JobIsBusyChangedEventArgs>? IsBusyChanged;
 
-        public IDisposable SubscribeIsBusyChanged(EventHandler<JobIsBusyChangedEventArgs> handler)
-        {
-            IsBusyChanged += handler;
-            return new AnonymousDisposable(() => IsBusyChanged -= handler);
-        }
-
+#if false
         // ViewContentsの変更通知
+        [Subscrivable]
         public event EventHandler<ViewContentSourceCollectionChangedEventArgs>? ViewContentsChanged;
 
-        public IDisposable SubscribeViewContentsChanged(EventHandler<ViewContentSourceCollectionChangedEventArgs> handler)
-        {
-            ViewContentsChanged += handler;
-            return new AnonymousDisposable(() => ViewContentsChanged -= handler);
-        }
-
         // NextContentsの変更通知
+        [Subscrivable]
         public event EventHandler<ViewContentSourceCollectionChangedEventArgs>? NextContentsChanged;
-
-        public IDisposable SubscribeNextContentsChanged(EventHandler<ViewContentSourceCollectionChangedEventArgs> handler)
-        {
-            NextContentsChanged += handler;
-            return new AnonymousDisposable(() => NextContentsChanged -= handler);
-        }
+#endif
 
         // 空ページメッセージ
+        [Subscribable]
         public event EventHandler<BookHubMessageEventArgs>? EmptyMessage;
 
-        public IDisposable SubscribeEmptyMessage(EventHandler<BookHubMessageEventArgs> handler)
-        {
-            EmptyMessage += handler;
-            return new AnonymousDisposable(() => EmptyMessage -= handler);
-        }
-
         // 空ページメッセージ その２
+        [Subscribable]
         public event EventHandler<BookHubMessageEventArgs>? EmptyPageMessage;
 
-        public IDisposable SubscribeEmptyPageMessage(EventHandler<BookHubMessageEventArgs> handler)
-        {
-            EmptyPageMessage += handler;
-            return new AnonymousDisposable(() => EmptyPageMessage -= handler);
-        }
-
         // フォルダー列更新要求
+        [Subscribable]
         public event EventHandler<FolderListSyncEventArgs>? FolderListSync;
 
-        public IDisposable SubscribeFolderListSync(EventHandler<FolderListSyncEventArgs> handler)
-        {
-            FolderListSync += handler;
-            return new AnonymousDisposable(() => FolderListSync -= handler);
-        }
-
         // 履歴リスト更新要求
+        [Subscribable]
         public event EventHandler<BookHubPathEventArgs>? HistoryListSync;
 
-        public IDisposable SubscribeHistoryListSync(EventHandler<BookHubPathEventArgs> handler)
-        {
-            HistoryListSync += handler;
-            return new AnonymousDisposable(() => HistoryListSync -= handler);
-        }
-
         // 履歴に追加、削除された
+        [Subscribable]
         public event EventHandler<BookMementoCollectionChangedArgs>? HistoryChanged;
 
-        public IDisposable SubscribeHistoryChanged(EventHandler<BookMementoCollectionChangedArgs> handler)
-        {
-            HistoryChanged += handler;
-            return new AnonymousDisposable(() => HistoryChanged -= handler);
-        }
-
         // ブックマークにに追加、削除された
+        [Subscribable]
         public event EventHandler<BookmarkCollectionChangedEventArgs>? BookmarkChanged;
 
-        public IDisposable SubscribeBookmarkChanged(EventHandler<BookmarkCollectionChangedEventArgs> handler)
-        {
-            BookmarkChanged += handler;
-            return new AnonymousDisposable(() => BookmarkChanged -= handler);
-        }
-
         // アドレスが変更された
+        [Subscribable]
         public event EventHandler? AddressChanged;
-
-        public IDisposable SubscribeAddressChanged(EventHandler handler)
-        {
-            AddressChanged += handler;
-            return new AnonymousDisposable(() => AddressChanged -= handler);
-        }
-
 
 
         // アドレス
@@ -313,6 +249,8 @@ namespace NeeView
             }
         }
 
+#warning 表示変更イベント処理未実装
+#if false
         private void BookViewer_ViewContentsChanged(object? sender, ViewContentSourceCollectionChangedEventArgs e)
         {
             if (_disposedValue) return;
@@ -349,6 +287,7 @@ namespace NeeView
 
             NextContentsChanged?.Invoke(sender, e);
         }
+#endif
 
         private void BookSource_DartyBook(object? sender, EventArgs e)
         {
@@ -635,7 +574,7 @@ namespace NeeView
             catch (OperationCanceledException)
             {
                 // nop.
-           }
+            }
             catch (Exception ex)
             {
                 if (ex is BookAddressException)
@@ -650,7 +589,7 @@ namespace NeeView
                 }
 
                 // 現在表示されているコンテンツを無効
-                ViewContentsChanged?.Invoke(args.Sender, new ViewContentSourceCollectionChangedEventArgs());
+                //ViewContentsChanged?.Invoke(args.Sender, new ViewContentSourceCollectionChangedEventArgs());
 
                 // 本の変更通知
                 NotifyLoading(null);
@@ -762,6 +701,8 @@ namespace NeeView
         {
             token.ThrowIfCancellationRequested();
 
+#warning 別手段を検討
+#if false
             if (book is null) return;
 
             var tcs = new TaskCompletionSource<bool>();
@@ -790,6 +731,7 @@ namespace NeeView
                     tcs.TrySetResult(true);
                 }
             }
+#endif
         }
 
         /// <summary>
@@ -799,8 +741,8 @@ namespace NeeView
         {
             if (book is null) return;
 
-            book.Viewer.Loader.ViewContentsChanged += BookViewer_ViewContentsChanged;
-            book.Viewer.Loader.NextContentsChanged += BookViewer_NextContentsChanged;
+            //book.Viewer.Loader.ViewContentsChanged += BookViewer_ViewContentsChanged;
+            //book.Viewer.Loader.NextContentsChanged += BookViewer_NextContentsChanged;
             book.Source.DartyBook += BookSource_DartyBook;
         }
 
@@ -811,12 +753,12 @@ namespace NeeView
         {
             if (book is null) return;
 
-            book.Viewer.Loader.ViewContentsChanged -= BookViewer_ViewContentsChanged;
-            book.Viewer.Loader.NextContentsChanged -= BookViewer_NextContentsChanged;
+            //book.Viewer.Loader.ViewContentsChanged -= BookViewer_ViewContentsChanged;
+            //book.Viewer.Loader.NextContentsChanged -= BookViewer_NextContentsChanged;
             book.Source.DartyBook -= BookSource_DartyBook;
         }
 
-        #endregion BookHubCommand.Load
+#endregion BookHubCommand.Load
 
         #region BookHubCommand.Unload
 
@@ -839,7 +781,7 @@ namespace NeeView
                     this.Address = null;
 
                     // 現在表示されているコンテンツを無効
-                    ViewContentsChanged?.Invoke(param.Sender, new ViewContentSourceCollectionChangedEventArgs());
+                    //ViewContentsChanged?.Invoke(param.Sender, new ViewContentSourceCollectionChangedEventArgs());
                 }
 
                 if (param.Message != null)
@@ -982,8 +924,9 @@ namespace NeeView
             if (_disposedValue) return;
             if (memento == null) return;
 
+#warning 別手段を検討
             // ブックマークの更新
-            BookmarkCollection.Current.Update(memento, book.Viewer.PageChangeCount > 1);
+            //BookmarkCollection.Current.Update(memento, book.Viewer.PageChangeCount > 1);
 
             // 履歴の保存
             if (CanHistory(book))
@@ -1043,7 +986,8 @@ namespace NeeView
 
             return !_historyRemoved
                 && book.Pages.Count > 0
-                && (_historyEntry || book.Viewer.PageChangeCount > historyEntryPageCount || book.Viewer.IsPageTerminated)
+#warning 未対応
+                //&& (_historyEntry || book.Viewer.PageChangeCount > historyEntryPageCount || book.Viewer.IsPageTerminated)
                 && (Config.Current.History.IsInnerArchiveHistoryEnabled || book.Source.ArchiveEntryCollection.Archiver?.Parent == null)
                 && (Config.Current.History.IsUncHistoryEnabled || !LoosePath.IsUnc(book.Path));
         }
@@ -1072,8 +1016,8 @@ namespace NeeView
                     this.BookChanged = null;
                     this.LoadRequested = null;
                     this.Loading = null;
-                    this.ViewContentsChanged = null;
-                    this.NextContentsChanged = null;
+                    //this.ViewContentsChanged = null;
+                    //this.NextContentsChanged = null;
                     this.EmptyMessage = null;
                     this.EmptyPageMessage = null;
                     this.FolderListSync = null;
@@ -1081,7 +1025,8 @@ namespace NeeView
                     this.HistoryChanged = null;
                     this.BookmarkChanged = null;
                     this.AddressChanged = null;
-                    ResetPropertyChanged();
+                    //ResetPropertyChanged();
+                    this.PropertyChanged = null;
 
                     SaveBookMemento();
 

@@ -102,7 +102,7 @@ namespace NeeView
 
             _start = new TouchDragTransform()
             {
-                Trans = (Vector)_transform.Position,
+                Trans = (Vector)_transform.Point,
                 Angle = _transform.Angle,
                 Scale = _transform.Scale,
             };
@@ -216,9 +216,9 @@ namespace NeeView
 
             _now = TouchDragTransform.Lerp(_now, _goal, 0.5);
 
-            _transform.SetPosition((Point)_now.Trans);
-            _transform.SetAngle(_now.Angle, TransformActionType.Touch);
-            _transform.SetScale(_now.Scale, TransformActionType.Touch);
+            _transform.SetPoint((Point)_now.Trans, TimeSpan.Zero);
+            _transform.SetAngle(_now.Angle, TimeSpan.Zero); // TransformActionType.Touch);
+            _transform.SetScale(_now.Scale, TimeSpan.Zero); // TransformActionType.Touch);
 
             // speed.
             var speed = _now.Trans - old.Trans;
@@ -276,18 +276,18 @@ namespace NeeView
             }
 
             //
-            _transform.SetPosition((Point)_now.Trans);
-            _transform.SetAngle(_now.Angle, TransformActionType.Touch);
+            _transform.SetPoint((Point)_now.Trans, TimeSpan.Zero);
+            _transform.SetAngle(_now.Angle, TimeSpan.Zero); //, TransformActionType.Touch);
 
             // 終了チェック
             if (_speed.LengthSquared < 4.0 && Math.Abs(_now.Angle - _snapAngle) < 1.0)
             {
-                _transform.SetAngle(_snapAngle, TransformActionType.Touch);
+                _transform.SetAngle(_snapAngle, TimeSpan.Zero); // TransformActionType.Touch);
 
                 if (Config.Current.View.IsLimitMove)
                 {
                     var area = _context.GetArea();
-                    _transform.SetPosition((Point)area.SnapView(_now.Trans, true));
+                    _transform.SetPoint((Point)area.SnapView(_now.Trans, true), TimeSpan.Zero);
                 }
 
                 StopTicking();
@@ -310,7 +310,7 @@ namespace NeeView
             var area = _context.GetArea();
 
             // center
-            var center = current.Center - new Point(area.View.Width * 0.5, area.View.Height * 0.5);
+            var center = current.Center - new Point(area.ViewRect.Width * 0.5, area.ViewRect.Height * 0.5);
 
             // move
             var move = current.GetMove(_origin);

@@ -1,15 +1,54 @@
-﻿namespace NeeView
+﻿using System;
+using System.Windows;
+
+namespace NeeView
 {
     public class FlipVerticalDragAction : DragAction
     {
         public FlipVerticalDragAction()
         {
             Note = Properties.Resources.DragActionType_FlipVertical;
+            //DragKey = new DragKey("Alt+RightButton");
+            DragActionCategory = DragActionCategory.Flip;
         }
 
-        public override void Execute(DragTransformControl sender, DragTransformActionArgs e)
+        public override DragActionControl CreateControl(DragTransformContext context)
         {
-            sender.DragFlipVertical(e.Start, e.End);
+            return new ActionControl(context, this);
+        }
+
+        private class ActionControl : DragActionControl
+        {
+            private DragTransform _transformControl;
+
+            public ActionControl(DragTransformContext context, DragAction source) : base(context, source)
+            {
+                _transformControl = new DragTransform(context);
+            }
+
+
+            public override void Execute()
+            {
+                DragFlipVertical(TimeSpan.Zero);
+            }
+
+            // 上下反転
+            public void DragFlipVertical(TimeSpan span)
+            {
+                const double margin = 16;
+
+                if (Context.First.Y + margin < Context.Last.Y)
+                {
+                    _transformControl.DoFlipVertical(true, span);
+                    Context.First = new Point(Context.First.X, Context.Last.Y - margin);
+                }
+                else if (Context.First.Y - margin > Context.Last.Y)
+                {
+                    _transformControl.DoFlipVertical(false, span);
+                    Context.First = new Point(Context.First.X, Context.Last.Y + margin);
+                }
+            }
+
         }
     }
 }

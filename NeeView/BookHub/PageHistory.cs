@@ -75,13 +75,15 @@ namespace NeeView
         {
             _history.Changed += (s, e) => Changed?.Invoke(s, e);
 
-            BookHub.Current.ViewContentsChanged += BookHub_ViewContentsChanged;
+            //BookHub.Current.ViewContentsChanged += BookHub_ViewContentsChanged;
         }
 
         
         public event EventHandler? Changed;
 
 
+#warning ページ変更時の履歴更新未実装
+#if false
         private void BookHub_ViewContentsChanged(object? sender, ViewContentSourceCollectionChangedEventArgs e)
         {
             var viewPages = e.ViewPageCollection?.Collection.Where(x => x != null).Select(x => x.Page).ToList();
@@ -100,6 +102,7 @@ namespace NeeView
 
             Add(sender, pageHistoryUnit);
         }
+#endif
 
 
         public void Add(object? sender, PageHistoryUnit unit)

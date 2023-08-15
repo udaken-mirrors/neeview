@@ -9,14 +9,14 @@ namespace NeeView
     //
     public class TouchInputContext
     {
-        public TouchInputContext(FrameworkElement sender, FrameworkElement? target, MouseGestureCommandCollection? gestureCommandCollection, DragTransform? dragTransform, DragTransformControl? dragTransformControl, LoupeTransform? loupeTransform)
+        public TouchInputContext(FrameworkElement sender, FrameworkElement? target, MouseGestureCommandCollection? gestureCommandCollection, DragTransform? dragTransform, IDragTransformControl? dragTransformControl)
         {
             this.Sender = sender;
             this.Target = target;
             this.GestureCommandCollection = gestureCommandCollection;
             this.DragTransform = dragTransform;
             this.DragTransformControl = dragTransformControl;
-            this.LoupeTransform = loupeTransform;
+            //this.LoupeTransform = loupeTransform;
         }
 
         /// <summary>
@@ -41,26 +41,38 @@ namespace NeeView
         /// </summary>
         public DragTransform? DragTransform { get; set; }
 
-        public DragTransformControl? DragTransformControl { get; set; }
+        public IDragTransformControl? DragTransformControl { get; set; }
 
-        public LoupeTransform? LoupeTransform { get; set; }
+        //public LoupeTransform? LoupeTransform { get; set; }
 
         /// <summary>
         /// 有効なタッチデバイス情報
         /// </summary>
         public Dictionary<StylusDevice, TouchContext> TouchMap { get; set; } = new Dictionary<StylusDevice, TouchContext>();
 
-
         /// <summary>
         /// 表示コンテンツのエリア情報取得
         /// </summary>
-        /// <returns></returns>
         public DragArea GetArea()
         {
             // TargetをnullにしたときはGetArea()を使用する処理にはならないはず
             Debug.Assert(this.Target is not null);
 
-            return new DragArea(this.Sender, this.Target ?? this.Sender);
+#warning not support yet
+            var viewRect = new Rect(0, 0, this.Sender.ActualWidth, this.Sender.ActualHeight);
+            return new DragArea(viewRect, viewRect); // ##
         }
+
+        /// <summary>
+        /// 表示コンテンツのエリア情報取得
+        /// </summary>
+        /// <returns></returns>
+        //public DragAreaX GetArea()
+        //{
+        //    // TargetをnullにしたときはGetArea()を使用する処理にはならないはず
+        //    Debug.Assert(this.Target is not null);
+
+        //    return new DragAreaX(this.Sender, this.Target ?? this.Sender);
+        //}
     }
 }

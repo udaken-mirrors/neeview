@@ -64,11 +64,14 @@ namespace NeeView
             this.Normal.StateChanged += StateChanged;
             this.Normal.TouchGestureChanged += (s, e) => TouchGestureChanged?.Invoke(_sender, e);
 
+#warning not implement Loupe
+#if false
             if (_context.LoupeTransform is not null)
             {
                 this.Loupe = new TouchInputLoupe(_context);
                 this.Loupe.StateChanged += StateChanged;
             }
+#endif
 
             this.Emulator = new TouchInputEmulator(_context);
             this.Emulator.TouchGestureChanged += (s, e) => TouchGestureChanged?.Invoke(_sender, e);
@@ -96,7 +99,7 @@ namespace NeeView
             ClearTouchEventHandler();
 
             // ルーペモード監視
-            _context.LoupeTransform?.AddPropertyChanged(nameof(LoupeTransform.IsEnabled), LoupeTransform_IsEnabledChanged);
+            //_context.LoupeTransform?.AddPropertyChanged(nameof(LoupeTransform.IsEnabled), LoupeTransform_IsEnabledChanged);
         }
 
 
@@ -136,10 +139,12 @@ namespace NeeView
 
         private void LoupeTransform_IsEnabledChanged(object? sender, PropertyChangedEventArgs e)
         {
+#if false
             if (_context.LoupeTransform is null || (_state == TouchInputState.Loupe && !_context.LoupeTransform.IsEnabled))
             {
                 SetState(TouchInputState.Normal, null);
             }
+#endif
         }
 
         public bool IsCaptured()

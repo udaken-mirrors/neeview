@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace NeeView.Collections.Generic
 {
@@ -20,8 +21,16 @@ namespace NeeView.Collections.Generic
         public LinkedListNode<TValue>? First => _list.First;
         public LinkedListNode<TValue>? Last => _list.Last;
 
+
+        public void AddFirst(TValue item)
+        {
+            AddFirst(item.Key, item);
+        }
+
         public void AddFirst(TKey key, TValue item)
         {
+            Debug.Assert(EqualityComparer<TKey>.Default.Equals(key, item.Key));
+
             var node = Find(key);
             if (node == null)
             {
@@ -37,8 +46,15 @@ namespace NeeView.Collections.Generic
             }
         }
 
+        public void AddLast(TValue item)
+        {
+            AddLast(item.Key, item);
+        }
+
         public void AddLast(TKey key, TValue item)
         {
+            Debug.Assert(EqualityComparer<TKey>.Default.Equals(key, item.Key));
+
             var node = Find(key);
             if (node == null)
             {
@@ -57,6 +73,8 @@ namespace NeeView.Collections.Generic
         // no check version
         public void AddLastRaw(TKey key, TValue item)
         {
+            Debug.Assert(EqualityComparer<TKey>.Default.Equals(key, item.Key));
+
             var node = new LinkedListNode<TValue>(item);
             _map.Add(key, node);
             _list.AddLast(node);
@@ -68,21 +86,42 @@ namespace NeeView.Collections.Generic
             return node;
         }
 
-        public bool Remove(TKey key)
+        public void MoveToFirst(LinkedListNode<TValue> node)
         {
-            if (key == null) return false;
+            Debug.Assert(node.List == _list);
+            _list.Remove(node);
+            _list.AddFirst(node);
+        }
+
+        public void MoveToLast(LinkedListNode<TValue> node)
+        {
+            Debug.Assert(node.List == _list);
+            _list.Remove(node);
+            _list.AddLast(node);
+        }
+
+        public TValue? Remove(TKey key)
+        {
+            if (key == null) return default;
 
             var node = Find(key);
             if (node != null)
             {
                 _list.Remove(node);
                 _map.Remove(key);
-                return true;
+                return node.Value;
             }
             else
             {
-                return false;
+                return default;
             }
+        }
+
+        public TValue? Remove(LinkedListNode<TValue> node)
+        {
+            _list.Remove(node);
+            _map.Remove(node.Value.Key);
+            return node.Value;
         }
 
         public bool Remap(TKey src, TKey dst)

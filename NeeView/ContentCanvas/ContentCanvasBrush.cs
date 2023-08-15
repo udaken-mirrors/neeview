@@ -1,8 +1,10 @@
 ﻿using NeeLaboratory.ComponentModel;
 using NeeView.Windows.Media;
 using NeeView.Windows.Property;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
@@ -12,107 +14,122 @@ using System.Windows.Media;
 
 namespace NeeView
 {
-    public class ContentCanvasBrush : BindableBase
+    public class ContentCanvasBrush : BindableBase, IDisposable
     {
         private readonly IContentCanvasBrushSource _contentCanvas;
+        private SolidColorBrush _foregroundBrush = Brushes.White;
+        private Brush? _pageBackgroundBrush = null;
+        private Brush? _backgroundBrush = Brushes.Black;
+        private Brush? _backgroundFrontBrush;
+        private Brush? _customBackgroundBrush;
+        private Brush? _customBackgroundFrontBrush;
+        private DisposableCollection _disposables = new();
+        private bool _disposedValue;
+
 
         public ContentCanvasBrush(IContentCanvasBrushSource contentCanvas)
         {
             _contentCanvas = contentCanvas;
 
-            _contentCanvas.ContentChanged +=
-                (s, e) => UpdateBackgroundBrush();
+            _contentCanvas.ContentChanged += ContentCanvas_ContentChanged;
+            _disposables.Add(() => _contentCanvas.ContentChanged -= ContentCanvas_ContentChanged);
 
-            _contentCanvas.DpiChanged +=
-                (s, e) => UpdateBackgroundBrush();
+            _contentCanvas.DpiChanged += ContentCanvas_DpiChanged;
+            _disposables.Add(() => _contentCanvas.DpiChanged -= ContentCanvas_DpiChanged);
 
-            Config.Current.Background.AddPropertyChanged(nameof(BackgroundConfig.CustomBackground), (s, e) =>
+            _disposables.Add(Config.Current.Background.SubscribePropertyChanged(nameof(BackgroundConfig.CustomBackground), (s, e) =>
             {
-                InitializeCustomBackgroundBrush();
-            });
+                Debug.Assert(false, "Config.Current.Background.CustomBackground が変更されない前提");
+            }));
 
-            Config.Current.Background.AddPropertyChanged(nameof(BackgroundConfig.BackgroundType), (s, e) =>
+            // NOTE: Config.Current.Background.CustomBackground が変更されない前提の購読
+            _disposables.Add(Config.Current.Background.CustomBackground.SubscribePropertyChanged((s, e) =>
+            {
+                UpdateCustomBackgroundBrush();
+            }));
+
+            _disposables.Add(Config.Current.Background.SubscribePropertyChanged(nameof(BackgroundConfig.BackgroundType), (s, e) =>
             {
                 UpdateBackgroundBrush();
-            });
+            }));
 
-            Config.Current.Background.AddPropertyChanged(nameof(BackgroundConfig.PageBackgroundColor), (s, e) =>
+            _disposables.Add(Config.Current.Background.SubscribePropertyChanged(nameof(BackgroundConfig.PageBackgroundColor), (s, e) =>
             {
                 UpdatePageBackgroundBrush();
-            });
+            }));
 
-            Config.Current.Background.AddPropertyChanged(nameof(BackgroundConfig.IsPageBackgroundChecker), (s, e) =>
+            _disposables.Add(Config.Current.Background.SubscribePropertyChanged(nameof(BackgroundConfig.IsPageBackgroundChecker), (s, e) =>
             {
                 UpdatePageBackgroundBrush();
-            });
-
+            }));
 
             // Initialize
-            InitializeCustomBackgroundBrush();
+            UpdateCustomBackgroundBrush();
             UpdateBackgroundBrush();
             UpdatePageBackgroundBrush();
         }
 
-        private void InitializeCustomBackgroundBrush()
+
+
+        protected virtual void Dispose(bool disposing)
         {
-            UpdateCustomBackgroundBrush();
-            if (Config.Current.Background.CustomBackground != null)
+            if (!_disposedValue)
             {
-                Config.Current.Background.CustomBackground.PropertyChanged += (s, e) => UpdateCustomBackgroundBrush();
+                if (disposing)
+                {
+                    _disposables.Dispose();
+                }
+
+                _disposedValue = true;
             }
+        }
+
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
         }
 
 
         // Foregroudh Brush：ファイルページのフォントカラー用
-        private SolidColorBrush _foregroundBrush = Brushes.White;
         public SolidColorBrush ForegroundBrush
         {
             get { return _foregroundBrush; }
-            set { if (_foregroundBrush != value) { _foregroundBrush = value; RaisePropertyChanged(); } }
+            set { SetProperty(ref _foregroundBrush, value); }
         }
 
         // ページ背景ブラシ
-        private Brush? _pageBackgroundBrush = null;
         public Brush? PageBackgroundBrush
         {
             get { return _pageBackgroundBrush; }
             set { SetProperty(ref _pageBackgroundBrush, value); }
         }
 
-
         // Backgroud Brush
-        private Brush? _backgroundBrush = Brushes.Black;
         public Brush? BackgroundBrush
         {
             get { return _backgroundBrush; }
-            set { if (_backgroundBrush != value) { _backgroundBrush = value; RaisePropertyChanged(); UpdateForegroundBrush(); } }
+            set { if (SetProperty(ref _backgroundBrush, value)) { UpdateForegroundBrush(); } }
         }
 
-        /// <summary>
-        /// BackgroundFrontBrush property.
-        /// </summary>
-        private Brush? _BackgroundFrontBrush;
+        // BackgroundFrontBrush
         public Brush? BackgroundFrontBrush
         {
-            get { return _BackgroundFrontBrush; }
-            set { if (_BackgroundFrontBrush != value) { _BackgroundFrontBrush = value; RaisePropertyChanged(); } }
+            get { return _backgroundFrontBrush; }
+            set { SetProperty(ref _backgroundFrontBrush, value); }
         }
-
 
         /// <summary>
         /// カスタム背景
         /// </summary>
-        private Brush? _customBackgroundBrush;
         public Brush? CustomBackgroundBrush
         {
             get { return _customBackgroundBrush ?? (_customBackgroundBrush = Config.Current.Background.CustomBackground?.CreateBackBrush()); }
         }
 
-
         /// <summary>
         /// カスタム背景
         /// </summary>
-        private Brush? _customBackgroundFrontBrush;
         public Brush? CustomBackgroundFrontBrush
         {
             get { return _customBackgroundFrontBrush ?? (_customBackgroundFrontBrush = Config.Current.Background.CustomBackground?.CreateFrontBrush()); }
@@ -125,6 +142,16 @@ namespace NeeView
         public Brush CheckBackgroundBrushDark { get; } = (DrawingBrush)Application.Current.Resources["CheckerBrushDark"];
 
 
+
+        private void ContentCanvas_ContentChanged(object? sender, EventArgs e)
+        {
+            AppDispatcher.BeginInvoke(() => UpdateBackgroundBrush());
+        }
+
+        private void ContentCanvas_DpiChanged(object? sender, EventArgs e)
+        {
+            UpdateBackgroundBrush();
+        }
 
         public void UpdatePageBackgroundBrush()
         {
@@ -193,7 +220,7 @@ namespace NeeView
             BackgroundBrush = CreateBackgroundBrush();
             BackgroundFrontBrush = CreateBackgroundFrontBrush(_contentCanvas.Dpi);
         }
-        
+
         private void UpdateCustomBackgroundBrush()
         {
             _customBackgroundBrush = null;
@@ -258,6 +285,7 @@ namespace NeeView
                     }
             }
         }
+
 
     }
 }

@@ -2,7 +2,9 @@
 
 namespace NeeView
 {
-    sealed class WrappingStream : Stream
+    // TODO: これ意味ないように見えるのだが？
+    // NOTE: Streamを保持することで開放されないようにしている？けどその役目を果たしているのか？
+    public sealed class WrappingStream : Stream
     {
         private Stream BaseStream { get; set; }
 

@@ -1,5 +1,6 @@
 ﻿namespace NeeView
 {
+#warning not support yet
     public class ViewLoupeControl: IViewLoupeControl
     {
         private readonly MainViewComponent _viewComponent;
@@ -18,13 +19,14 @@
             }
             else
             {
-                _viewComponent.LoupeTransform.IsEnabled = false;
+                //_viewComponent.LoupeTransform.IsEnabled = false;
             }
         }
 
         public bool GetLoupeMode()
         {
-            return _viewComponent.LoupeTransform.IsEnabled;
+            return false;
+            //return _viewComponent.LoupeTransform.IsEnabled;
         }
 
         public void ToggleLoupeMode()
@@ -34,12 +36,12 @@
 
         public void LoupeZoomIn()
         {
-            _viewComponent.LoupeTransform.ZoomIn();
+            //_viewComponent.LoupeTransform.ZoomIn();
         }
 
         public void LoupeZoomOut()
         {
-            _viewComponent.LoupeTransform.ZoomOut();
+            //_viewComponent.LoupeTransform.ZoomOut();
         }
 
     }

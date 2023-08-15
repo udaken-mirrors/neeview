@@ -1,149 +1,153 @@
-﻿using NeeLaboratory.ComponentModel;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
+﻿using System;
 using System.Reflection;
-using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
+using System.Threading;
 using System.Windows;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
+using System.Diagnostics;
+using static System.Windows.Forms.AxHost;
+using NeeView.ComponentModel;
 
 namespace NeeView
 {
-    /// <summary>
-    /// 情報コンテンツ表示用
-    /// </summary>
-    public class PageMessage
+    public class PageContent<T> : IPageContent, IDataSource<T>, IDataSource, IMemoryElement
     {
-        /// <summary>
-        /// アイコン
-        /// </summary>
-        public FilePageIcon Icon { get; set; }
+        public static Size DefaultSize = new Size(595, 842);
 
-        /// <summary>
-        /// メッセージ
-        /// </summary>
-        public string? Message { get; set; }
-    }
+        private Size _size = DefaultSize;
+        private ArchiveEntry _archiveEntry;
+
+        private PageSource<T> _pageSource;
+        private string? _errorMessage;
+        private PictureInfo? _pictureInfo;
+
+        private BookMemoryService? _bookMemoryService;
 
 
-    /// <summary>
-    /// ページコンテンツ基底
-    /// </summary>
-    public abstract class PageContent : BindableBase, IDisposable
-    {
-        #region 開発用
-
-        [Conditional("DEBUG")]
-        private void InitializeDev()
+        // TODO: ArchiveEntryを渡すように
+        public PageContent(ArchiveEntry archiveEntry, PageSource<T> pageSource, BookMemoryService? bookMemoryService)
         {
-            Thumbnail.Changed += (s, e) => UpdateDevStatus();
-        }
+            _archiveEntry = archiveEntry;
 
-        [Conditional("DEBUG")]
-        public void UpdateDevStatus()
-        {
-            DevStatus = (Thumbnail.IsValid ? "T" : "") + (IsLoaded ? "C" : "");
-        }
+            _pageSource = pageSource;
+            _pageSource.SourceChanged += PageSource_SourceChanged;
 
-        private string? _devStatus;
-        public string? DevStatus
-        {
-            get { return _devStatus; }
-            set { if (_devStatus != value) { _devStatus = value; RaisePropertyChanged(); } }
-        }
-
-        #endregion
-
-        private ArchiveEntry _entry;
-        private int _index;
-        private PageContentState _state;
-
-
-        public PageContent(ArchiveEntry entry)
-        {
-            _entry = entry;
-
-            // 開発用：
-            InitializeDev();
+            _bookMemoryService = bookMemoryService;
         }
 
 
-        public virtual ArchiveEntry Entry
-        {
-            get { return _entry; }
-            private set { SetProperty(ref _entry, value); }
-        }
+        public event EventHandler? ContentChanged;
 
-        public int Index
-        {
-            get { return _index; }
-            set { SetProperty(ref _index, value); }
-        }
+        public event EventHandler? SizeChanged;
 
-        /// <summary>
-        /// コンテンツサイズ
-        /// </summary>
-        public virtual Size Size => SizeExtensions.Zero;
 
-        /// <summary>
-        /// 情報表示用
-        /// </summary>
-        public PageMessage? PageMessage { get; private set; }
-
-        public Thumbnail Thumbnail { get; } = new Thumbnail();
-
-        /// <summary>
-        /// ロード完了
-        /// </summary>
-        public virtual bool IsLoaded => true;
-
-        /// <summary>
-        /// 表示準備完了
-        /// </summary>
-        public virtual bool IsViewReady => IsLoaded;
+        public int Index { get; set; }
 
         /// <summary>
         /// 要求状態
         /// </summary>
+        public PageContentState _state;
         public PageContentState State
         {
             get => _state;
-            set => SetProperty(ref _state, value);
+            set => _state = value;
         }
 
-        public bool IsContentLocked => _state != PageContentState.None;
 
-        public virtual bool CanResize => false;
+        public ArchiveEntry ArchiveEntry => _archiveEntry;
+        public ArchiveEntry Entry => _archiveEntry;
+
+        public PictureInfo? PictureInfo => _pictureInfo;
+
+
+        public Size Size
+        {
+            get => _size;
+            protected set
+            {
+                if (_size != value)
+                {
+                    _size = value;
+                    Debug.Assert(_size.Width > 0);
+                    SizeChanged?.Invoke(this, EventArgs.Empty);
+                }
+            }
+        }
+
+        public Color Color => _pictureInfo?.Color ?? Colors.Black;
+
+        public T? Data => _pageSource.Data;
+        public long DataSize => _pageSource.DataSize;
+        public string? ErrorMessage => _errorMessage ?? _pageSource.ErrorMessage;
+        public bool IsLoaded => _pageSource.IsLoaded || IsFailed;
+        public bool IsFailed => ErrorMessage is not null;
+        object? IDataSource.Data => Data;
+
+        public bool IsMemoryLocked => _state != PageContentState.None;
+
+
+        public virtual async Task LoadAsync(CancellationToken token)
+        {
+            if (IsLoaded) return;
+            await _pageSource.LoadAsync(token);
+        }
+
+        public virtual void Unload()
+        {
+            _pageSource.Unload();
+        }
+
+
+        protected void RaiseContentChanged(object? sender, EventArgs e)
+        {
+            ContentChanged?.Invoke(sender, e);
+        }
+
+        protected void RaiseSizeChanged(object? sender, EventArgs e)
+        {
+            SizeChanged?.Invoke(sender, e);
+        }
+
+        protected void SetErrorMessage(string? errorMessage)
+        {
+            _errorMessage = errorMessage;
+        }
+
+        protected void SetPictureInfo(PictureInfo? pictureInfo)
+        {
+            _pictureInfo = pictureInfo;
+        }
+
+        protected virtual void OnPageSourceChanged()
+        {
+        }
+
+
+        private void PageSource_SourceChanged(object? sender, EventArgs e)
+        {
+            if (GetMemorySize() > 0)
+            {
+                _bookMemoryService?.AddPageContent(this);
+            }
+
+            OnPageSourceChanged();
+            ContentChanged?.Invoke(this, EventArgs.Empty);
+        }
+
+
+        public virtual long GetMemorySize()
+        {
+            return _pageSource.DataSize;
+        }
+
+
+
+
 
         /// <summary>
         /// テンポラリファイル
         /// </summary>
         public FileProxy? FileProxy { get; private set; }
-
-
-        /// <summary>
-        /// 使用メモリサイズ (Picture)
-        /// </summary>
-        public virtual long GetContentMemorySize() => 0;
-
-        /// <summary>
-        /// 使用メモリサイズ (PictureSource)
-        /// </summary>
-        public virtual long GetPictureSourceMemorySize() => 0;
-
-        /// <summary>
-        /// エントリ設定。遅延生成で使用される
-        /// </summary>
-        public void SetEntry(ArchiveEntry entry)
-        {
-            Entry = entry;
-        }
 
         /// <summary>
         /// テンポラリファイルの作成
@@ -151,86 +155,11 @@ namespace NeeView
         /// <param name="isKeepFileName">エントリ名準拠のテンポラリファイルを作成</param>
         public FileProxy CreateTempFile(bool isKeepFileName)
         {
-            ThrowIfDisposed();
+            //ThrowIfDisposed();
 
             FileProxy = FileProxy ?? Entry.ExtractToTemp(isKeepFileName);
             return FileProxy;
         }
-
-        /// <summary>
-        /// メッセージ表示の設定
-        /// </summary>
-        public void SetPageMessage(PageMessage? message)
-        {
-            PageMessage = message;
-        }
-
-        /// <summary>
-        /// メッセージ表示に例外を設定
-        /// </summary>
-        public void SetPageMessage(Exception ex)
-        {
-            PageMessage = new PageMessage()
-            {
-                Icon = FilePageIcon.Alart,
-                Message = ex.Message
-            };
-        }
-
-        public override string? ToString()
-        {
-            return _entry.EntryLastName ?? base.ToString();
-        }
-
-        /// <summary>
-        /// クローン作成
-        /// </summary>
-        /// <returns></returns>
-        public PageContent Clone()
-        {
-            var clone = (PageContent)MemberwiseClone();
-            clone.ResetPropertyChanged();
-            return clone;
-        }
-
-        /// <summary>
-        /// ローダー作成
-        /// </summary>
-        public abstract IContentLoader CreateContentLoader();
-
-
-        #region IDisposable Support
-        private bool _disposedValue = false;
-
-        protected void ThrowIfDisposed()
-        {
-            if (_disposedValue) throw new ObjectDisposedException(GetType().FullName);
-        }
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!_disposedValue)
-            {
-                if (disposing)
-                {
-                    State = PageContentState.None;
-                    FileProxy = null;
-                    Thumbnail.Dispose(); //TODO: Thumbnail自体のDisposeの必要性の検証
-                }
-
-                _disposedValue = true;
-            }
-        }
-
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-        #endregion
     }
-
-
-
 
 }

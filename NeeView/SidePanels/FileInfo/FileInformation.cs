@@ -18,7 +18,7 @@ namespace NeeView
         static FileInformation() => Current = new FileInformation();
 
         
-        private readonly DelayValue<IEnumerable<ViewContent>> _viewContentsDelay;
+        private readonly DelayValue<IEnumerable<Page>> _viewContentsDelay;
         private List<FileInformationSource>? _fileInformations;
 
 
@@ -26,10 +26,13 @@ namespace NeeView
         {
             var mainViewComponent = MainViewComponent.Current;
 
-            mainViewComponent.ContentCanvas.ContentChanged +=
-                (s, e) => Update(mainViewComponent.ContentCanvas.Contents);
+            mainViewComponent.PageFrameBoxPresenter.SelectedRangeChanged +=
+                (s, e) => Update(mainViewComponent.PageFrameBoxPresenter.SelectedPages);
 
-            _viewContentsDelay = new DelayValue<IEnumerable<ViewContent>>();
+            //mainViewComponent.ContentCanvas.ContentChanged +=
+            //    (s, e) => Update(mainViewComponent.ContentCanvas.Contents);
+
+            _viewContentsDelay = new DelayValue<IEnumerable<Page>>();
             _viewContentsDelay.ValueChanged += ViewContentsDelay_ValueChanged;
         }
 
@@ -46,16 +49,16 @@ namespace NeeView
             return FileInformations?.OrderBy(e => e.Page?.Index ?? int.MaxValue).FirstOrDefault();
         }
 
-        public void Update(IEnumerable<ViewContent> viewContents)
+        public void Update(IEnumerable<Page> pages)
         {
-            _viewContentsDelay.SetValue(viewContents.ToList(), 100); // 100ms delay
+            _viewContentsDelay.SetValue(pages.ToList(), 100); // 100ms delay
         }
 
         private void ViewContentsDelay_ValueChanged(object? sender, EventArgs _)
         {
             this.FileInformations = _viewContentsDelay.Value?
                 .Reverse()
-                .Where(e => e.IsInformationValid)
+                //.Where(e => e.IsInformationValid)
                 .Select(e => new FileInformationSource(e))
                 .ToList();
         }

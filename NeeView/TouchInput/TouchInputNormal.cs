@@ -131,8 +131,9 @@ namespace NeeView
         {
             if (_context.DragTransformControl is null) return;
 
-            var point = e.GetPosition(_context.Sender);
-            _context.DragTransformControl.HoverScroll(point);
+#warning not support yet. TouchInput の HoverScroll って？？
+            //var point = e.GetPosition(_context.Sender);
+            //_context.DragTransformControl.HoverScroll(point);
         }
 
         //

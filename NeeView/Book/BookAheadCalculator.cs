@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿#if false
+using System.Collections.Generic;
 
 namespace NeeView
 {
@@ -57,3 +58,4 @@ namespace NeeView
 
     }
 }
+#endif

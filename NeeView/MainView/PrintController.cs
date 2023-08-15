@@ -6,6 +6,7 @@ using System.Windows.Media;
 
 namespace NeeView
 {
+#warning 未実装
     public class PrintController
     {
         private readonly MainViewComponent _viewComponent;
@@ -19,16 +20,19 @@ namespace NeeView
 
         public bool CanPrint()
         {
-            var mainContent = _viewComponent.ContentCanvas.MainContent;
-            return mainContent != null && mainContent.IsValid;
+            return false;
+            //var mainContent = _viewComponent.ContentCanvas.MainContent;
+            //return mainContent != null && mainContent.IsValid;
         }
 
         public void Print()
         {
-            Print(Window.GetWindow(_mainView), _mainView.PageContents, _mainView.MainContent.RenderTransform, _mainView.View.ActualWidth, _mainView.View.ActualHeight);
+            throw new NotImplementedException();
+            //Print(Window.GetWindow(_mainView), _mainView.PageContents, _mainView.MainContent.RenderTransform, _mainView.View.ActualWidth, _mainView.View.ActualHeight);
         }
 
 
+#if false
         private void Print(Window owner, FrameworkElement element, Transform transform, double width, double height)
         {
             if (!CanPrint()) return;
@@ -91,6 +95,7 @@ namespace NeeView
                 SlideShow.Current.ResumeSlideShow();
             }
         }
+#endif
     }
 
 }

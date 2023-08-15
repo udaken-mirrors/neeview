@@ -57,7 +57,7 @@ namespace NeeView.Media.Imaging
                 if (height < 2.0) height = 2.0;
             }
 
-            if (App.Current == null) return null;
+            if (Application.Current == null) return null;
 
             var canvas = new Canvas();
             canvas.Width = width;

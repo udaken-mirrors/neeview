@@ -2,16 +2,12 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Runtime.Serialization;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Input;
 
 namespace NeeView
 {
-    public class DragActionTable : IEnumerable<KeyValuePair<string, DragAction>> 
+    public class DragActionTable : IEnumerable<KeyValuePair<string, DragAction>>
     {
         static DragActionTable() => Current = new DragActionTable();
         public static DragActionTable Current { get; }
@@ -25,18 +21,22 @@ namespace NeeView
         {
             var list = new List<DragAction>()
             {
-                new GestureDragAction(GestureDragActionName),
-                new MoveDragAction(),
-                new MoveScaleDragAction(),
                 new AngleDragAction(),
                 new AngleSliderDragAction(),
                 new ScaleDragAction(),
                 new ScaleSliderDragAction(),
                 new ScaleSliderCenteredDragAction(),
-                new MarqueeZoomDragAction(),
                 new FlipHorizontalDragAction(),
                 new FlipVerticalDragAction(),
+                new MoveDragAction(),
+                new MoveScaleDragAction(),
+                new MarqueeZoomDragAction(),
                 new WindowMoveDragAction(),
+
+                new GestureDragAction(GestureDragActionName),
+
+                new LoupeDragAction(),
+                new HoverDragAction(),
             };
 
             _elements = list.ToDictionary(e => e.Name);
@@ -110,6 +110,11 @@ namespace NeeView
             return _elements.Values.FirstOrDefault(e => e.DragKey == key);
         }
 
+        public bool TryGetValue(DragKey dragKey, [MaybeNullWhen(false)] out DragAction source)
+        {
+            source = GetAction(dragKey);
+            return source is not null;
+        }
 
         public DragActionCollection CreateDragActionCollection()
         {

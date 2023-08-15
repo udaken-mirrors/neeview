@@ -21,19 +21,17 @@ namespace NeeView
         private List<FileInformationRecord>? _properties;
 
 
-        public FileInformationSource(ViewContent viewContent)
+        public FileInformationSource(Page page)
         {
-            this.ViewContent = viewContent;
+            this.Page = page;
 
             Update();
         }
 
 
-        public ViewContent ViewContent { get; private set; }
+        public Page Page { get; private set; }
 
-        public Page? Page => ViewContent?.Page;
-
-        public BitmapContent? BitmapContent => ViewContent?.Content as BitmapContent;
+        public BitmapPageContent? BitmapContent => Page?.Content as BitmapPageContent;
 
         public PictureInfo? PictureInfo => BitmapContent?.PictureInfo;
 
@@ -66,7 +64,7 @@ namespace NeeView
 
         public List<FileInformationRecord> CreateProperties()
         {
-            var factory = new InformationValueFactory(new InformationValueSource(ViewContent?.Page, BitmapContent, Metadata));
+            var factory = new InformationValueFactory(new InformationValueSource(Page, BitmapContent, Metadata));
             var defaults = InformationKeyExtensions.DefaultKeys.Select(e => new FileInformationRecord(e, factory.Create(e)));
             var extras = factory.GetExtraMap().Select(e => new FileInformationRecord(e.Key, InformationGroup.Extras, e.Value));
             return defaults.Concat(extras).ToList();
@@ -84,6 +82,9 @@ namespace NeeView
 
         public FrameworkElement? CreateIcon()
         {
+#warning 未実装
+            return null;
+#if false
             if (BitmapContent?.ImageSource != null)
             {
                 return CreateBitmapContentIcon(BitmapContent);
@@ -110,10 +111,14 @@ namespace NeeView
             }
 
             return null;
+#endif
         }
 
-        private FrameworkElement? CreateBitmapContentIcon(BitmapContent bitmapContent)
+        private FrameworkElement? CreateBitmapContentIcon(BitmapPageContent bitmapContent)
         {
+#warning 未実装
+            return null;
+#if false
             if (bitmapContent?.ImageSource is null) return null;
 
             var length = bitmapContent.Size.Width > bitmapContent.Size.Height ? bitmapContent.Size.Width : bitmapContent.Size.Height;
@@ -137,6 +142,7 @@ namespace NeeView
             RenderOptions.SetBitmapScalingMode(image, BitmapScalingMode.HighQuality);
 
             return image;
+#endif
         }
 
         private FrameworkElement CreateSymbolFolderIcon()
@@ -193,18 +199,20 @@ namespace NeeView
         }
 
 
+#warning 未実装
         public bool CanOpenPlace()
         {
-            return ViewContent?.FolderPlace != null;
+            return false;
+            //return ViewContent?.FolderPlace != null;
         }
 
         public void OpenPlace()
         {
-            var place = ViewContent?.Page?.GetFolderOpenPlace();
-            if (!string.IsNullOrWhiteSpace(place))
-            {
-                ExternalProcess.Start("explorer.exe", "/select,\"" + place + "\"");
-            }
+            //var place = ViewContent?.Page?.GetFolderOpenPlace();
+            //if (!string.IsNullOrWhiteSpace(place))
+            //{
+            //    ExternalProcess.Start("explorer.exe", "/select,\"" + place + "\"");
+            //}
         }
 
         public bool CanOpenMap()

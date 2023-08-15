@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Shapes;
 
 namespace NeeView
 {
@@ -464,7 +465,9 @@ namespace NeeView
         {
             if (_archivePage == null)
             {
-                _archivePage = new Page("", new ArchiveContent(TargetPath.SimplePath));
+#warning not implement yet
+                //_archivePage = new Page("", new ArchiveContent(TargetPath.SimplePath));
+                _archivePage = new Page("", new BitmapPageContent(StaticFolderArchive.Default.CreateArchiveEntry(TargetPath.SimplePath), null));
                 _archivePage.Thumbnail.IsCacheEnabled = true;
                 _archivePage.Thumbnail.Touched += Thumbnail_Touched;
             }

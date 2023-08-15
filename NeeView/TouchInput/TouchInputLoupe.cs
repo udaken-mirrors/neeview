@@ -10,7 +10,8 @@ namespace NeeView
     /// </summary>
     public class TouchInputLoupe : TouchInputBase
     {
-        private readonly LoupeTransform _loupe;
+#warning not support yet Loupe
+        //private readonly LoupeTransform _loupe;
         private Point _loupeBasePosition;
         private TouchContext? _touch;
         private TouchDragContext? _origin;
@@ -19,7 +20,7 @@ namespace NeeView
 
         public TouchInputLoupe(TouchInputContext context) : base(context)
         {
-            _loupe = context.LoupeTransform ?? throw new InvalidOperationException("context.LoupeTransform must not be null");
+            //_loupe = context.LoupeTransform ?? throw new InvalidOperationException("context.LoupeTransform must not be null");
         }
 
 
@@ -37,14 +38,14 @@ namespace NeeView
 
             var center = new Point(sender.ActualWidth * 0.5, sender.ActualHeight * 0.5);
             Vector v = _touch.StartPoint - center;
-            _loupeBasePosition = (Point)(Config.Current.Loupe.IsLoupeCenter ? -v : -v + v / _loupe.Scale);
-            _loupe.Position = _loupeBasePosition;
+            //_loupeBasePosition = (Point)(Config.Current.Loupe.IsLoupeCenter ? -v : -v + v / _loupe.Scale);
+            //_loupe.Position = _loupeBasePosition;
 
-            _loupe.IsEnabled = true;
+            //_loupe.IsEnabled = true;
 
             if (Config.Current.Loupe.IsResetByRestart)
             {
-                _loupe.Scale = Config.Current.Loupe.DefaultScale;
+                //_loupe.Scale = Config.Current.Loupe.DefaultScale;
             }
         }
 
@@ -55,13 +56,13 @@ namespace NeeView
         {
             sender.Cursor = null;
 
-            _loupe.IsEnabled = false;
+            //_loupe.IsEnabled = false;
         }
 
         public override void OnStylusDown(object sender, StylusDownEventArgs e)
         {
             _origin = new TouchDragContext(_context.Sender, _context.TouchMap.Keys);
-            _originScale = _loupe.Scale;
+            //_originScale = _loupe.Scale;
         }
 
         public override void OnStylusUp(object sender, StylusEventArgs e)
@@ -84,7 +85,7 @@ namespace NeeView
             if (e.StylusDevice == _touch.StylusDevice)
             {
                 var point = e.GetPosition(_context.Sender);
-                _loupe.Position = _loupeBasePosition - (point - _touch.StartPoint) * Config.Current.Loupe.Speed;
+                //_loupe.Position = _loupeBasePosition - (point - _touch.StartPoint) * Config.Current.Loupe.Speed;
             }
 
             if (_context.TouchMap.Count >= 2)
@@ -92,7 +93,7 @@ namespace NeeView
                 var current = new TouchDragContext(_context.Sender, _context.TouchMap.Keys);
 
                 var scale = current.Radius / _origin.Radius;
-                _loupe.Scale = _originScale * scale;
+                //_loupe.Scale = _originScale * scale;
             }
 
             e.Handled = true;
@@ -107,11 +108,11 @@ namespace NeeView
             {
                 if (e.Delta > 0)
                 {
-                    _loupe.ZoomIn();
+                    //_loupe.ZoomIn();
                 }
                 else
                 {
-                    _loupe.ZoomOut();
+                    //_loupe.ZoomOut();
                 }
 
                 e.Handled = true;

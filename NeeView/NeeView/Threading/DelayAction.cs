@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Threading;
 
 namespace NeeView.Threading
@@ -18,7 +19,7 @@ namespace NeeView.Threading
         private readonly object _lock = new();
 
 
-        public DelayAction(Action action, TimeSpan delay) : this(action, delay, App.Current.Dispatcher)
+        public DelayAction(Action action, TimeSpan delay) : this(action, delay, Application.Current.Dispatcher)
         {
         }
 

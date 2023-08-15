@@ -69,6 +69,8 @@ namespace NeeView
             this.Normal.MouseWheelChanged += (s, e) => MouseWheelChanged?.Invoke(_sender, e);
             this.Normal.MouseHorizontalWheelChanged += (s, e) => MouseHorizontalWheelChanged?.Invoke(_sender, e);
 
+#warning not imprement loupe
+#if false
             if (_context.LoupeTransform != null)
             {
                 this.Loupe = new MouseInputLoupe(_context);
@@ -77,6 +79,7 @@ namespace NeeView
                 this.Loupe.MouseWheelChanged += (s, e) => MouseWheelChanged?.Invoke(_sender, e);
                 this.Loupe.MouseHorizontalWheelChanged += (s, e) => MouseHorizontalWheelChanged?.Invoke(_sender, e);
             }
+#endif
 
             if (_context.DragTransform != null)
             {
@@ -121,8 +124,11 @@ namespace NeeView
             _sender.Unloaded += (s, e) => ReleaseMouseHorizontalWheel();
             InitializeMouseHorizontalWheel();
 
+#warning not imprement loupe
+#if false
             // ルーペモード監視
             _context.LoupeTransform?.AddPropertyChanged(nameof(LoupeTransform.IsEnabled), LoupeTransform_IsEnabledChanged);
+#endif
         }
 
 
@@ -194,10 +200,13 @@ namespace NeeView
 
         private void LoupeTransform_IsEnabledChanged(object? sender, PropertyChangedEventArgs e)
         {
+#warning not imprement loupe
+#if false
             if (_state == MouseInputState.Loupe && (_context.LoupeTransform is null || !_context.LoupeTransform.IsEnabled))
             {
                 SetState(MouseInputState.Normal, null);
             }
+#endif
         }
 
         /// <summary>
@@ -431,6 +440,8 @@ namespace NeeView
         // TODO: 外部への依存が強すぎるので、定義場所を別にする？
         public void ShowMessage(TransformActionType ActionType, ViewContent? mainContent)
         {
+#warning not imprement yet
+#if false
             var infoMessage = InfoMessage.Current; // TODO: not singleton
             if (Config.Current.Notice.ViewTransformShowMessageStyle == ShowMessageStyle.None) return;
 
@@ -467,6 +478,7 @@ namespace NeeView
                     }
                     break;
             }
+#endif
         }
 
     }

@@ -259,11 +259,14 @@ namespace NeeView
         /// <returns></returns>
         private FrameworkElement CreateViewContent()
         {
+#warning not implement yet
+#if false
             // スケールモード設定
             foreach (var viewContent in _context.Contents)
             {
                 viewContent.BitmapScalingMode = IsDotScale ? BitmapScalingMode.NearestNeighbor : BitmapScalingMode.HighQuality;
             }
+#endif
 
             var rectangle = new Rectangle();
             rectangle.Width = _context.View.ActualWidth;
@@ -498,6 +501,9 @@ namespace NeeView
         /// <returns></returns>
         private string GetPrintName()
         {
+#warning not implement yet
+            return "not implement yet";
+#if false
             if (PrintMode == PrintMode.RawImage)
             {
                 return _context.MainContent?.FileName ?? "noname";
@@ -506,6 +512,7 @@ namespace NeeView
             {
                 return string.Join(" | ", _context.Contents.Where(e => e.IsValid).Reverse().Select(e => e.FileName));
             }
+#endif
         }
 
 

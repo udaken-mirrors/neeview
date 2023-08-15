@@ -1,112 +1,68 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Drawing.Printing;
 using System.Linq;
 
 namespace NeeView
 {
     /// <summary>
+    /// [Immutable]
     /// 指向性ページ範囲
     /// </summary>
     public struct PageRange : IEquatable<PageRange>, IComparable<PageRange>
     {
         public PageRange()
         {
-            this.Position = new PagePosition();
-            this.Size = 1;
+            Min = new PagePosition();
+            Max = Min;
         }
 
         public PageRange(PagePosition position, int partSize)
         {
-            this.Position = position;
-            this.Size = partSize;
-        }
+            if (position.IsEmpty() || partSize == 0)
+            {
+                Min = PagePosition.Empty;
+                Max = Min;
+                return;
+            }
 
-        public PageRange(PagePosition position, int partSize, PageReadOrder pageReadOrder)
-        {
-            if (partSize < 1) throw new ArgumentOutOfRangeException(nameof(partSize));
-
-            this.Position = position;
-            this.Size = partSize * pageReadOrder.ToDirection();
-        }
-
-        public PageRange(PagePosition position, int direction, int pageSize)
-        {
-            if (pageSize < 1) throw new ArgumentOutOfRangeException(nameof(pageSize));
-            if (direction != 1 && direction != -1) throw new ArgumentOutOfRangeException(nameof(direction));
-
-            var last = new PagePosition(position.Index + direction * (pageSize - 1), direction > 0 ? 1 : 0);
-            var partSize = Math.Abs(last.Value - position.Value) + 1;
-            this.Position = position;
-            this.Size = direction * partSize;
+            if (partSize >= 0)
+            {
+                Min = position;
+                Max = position + (partSize - 1);
+            }
+            else
+            {
+                Min = position + (partSize + 1);
+                Max = position;
+            }
         }
 
         public PageRange(PagePosition p0, PagePosition p1)
+            : this(new[] { p0, p1 })
         {
-            var direction = p1 < p0 ? -1 : 1;
-            var partSize = Math.Abs(p1.Value - p0.Value) + 1;
-            this.Position = p0;
-            this.Size = direction * partSize;
         }
 
-        public PageRange(PagePosition p0, PagePosition p1, int direction)
-        {
-            if (direction != 1 && direction != -1) throw new ArgumentOutOfRangeException(nameof(direction));
-
-            var min = p0 < p1 ? p0 : p1;
-            var max = p0 < p1 ? p1 : p0;
-            var partSize = Math.Abs(max.Value - min.Value) + 1;
-            this.Position = (direction > 0) ? min : max;
-            this.Size = direction * partSize;
-        }
-
-        public PageRange(IEnumerable<PagePosition> positions, int direction)
+        public PageRange(IEnumerable<PagePosition> positions)
         {
             if (positions == null) throw new ArgumentNullException(nameof(positions));
-            if (direction != 1 && direction != -1) throw new ArgumentOutOfRangeException(nameof(direction));
 
-            var min = positions.Min();
-            var max = positions.Max();
-            var partSize = Math.Abs(max.Value - min.Value) + 1;
-            this.Position = (direction > 0) ? min : max;
-            this.Size = direction * partSize;
-        }
+            var list = positions.Where(e => !e.IsEmpty());
 
-        public PageRange(IEnumerable<PageRange> parts, int direction)
-        {
-            if (parts == null) throw new ArgumentNullException(nameof(parts));
-            if (direction != 1 && direction != -1) throw new ArgumentOutOfRangeException(nameof(direction));
-
-            int count = 0;
-
-            var p0 = new PagePosition();
-            var p1 = new PagePosition();
-
-            foreach (var part in parts)
+            if (!list.Any())
             {
-                if (part.PartSize <= 0) continue;
-
-                var a0 = part.Position;
-                var a1 = part.Position + part.PartSize - 1;
-
-                if (count == 0)
-                {
-                    p0 = a0;
-                    p1 = a1;
-                }
-                else
-                {
-                    if (a0.Value < p0.Value) p0 = a0;
-                    if (a1.Value > p1.Value) p1 = a1;
-                }
-
-                count++;
+                Min = PagePosition.Empty;
+                Max = Min;
+                return;
             }
 
-            var partSize = Math.Abs(p1.Value - p0.Value) + 1;
-            this.Position = direction > 0 ? p0 : p1;
-            this.Size = direction * partSize;
+            Min = list.Min();
+            Max = list.Max();
+        }
+
+        public PageRange(IEnumerable<PageRange> ranges)
+            : this(PageRangesToPositions(ranges))
+        {
         }
 
 
@@ -115,50 +71,70 @@ namespace NeeView
         /// <summary>
         /// 範囲開始
         /// </summary>
-        public PagePosition Position { get; }
-
-        /// <summary>
-        /// パーツサイズ、方向
-        /// </summary>
-        public int Size { get; }
+        public PagePosition Min { get; }
 
         /// <summary>
         /// 範囲終了
         /// </summary>
-        public PagePosition Last => Position + Direction * (PartSize - 1);
-
-        public PagePosition Min => Direction > 0 ? Position : Last;
-        public PagePosition Max => Direction > 0 ? Last : Position;
-
-        /// <summary>
-        /// 方向
-        /// </summary>
-        public int Direction => Size < 0 ? -1 : 1;
-
-        /// <summary>
-        /// 方向 (enum)
-        /// </summary>
-        public PageReadOrder PartOrder => Size < 0 ? PageReadOrder.LeftToRight : PageReadOrder.RightToLeft;
+        public PagePosition Max { get; }
 
         /// <summary>
         /// パーツサイズ
         /// </summary>
-        public int PartSize => Math.Abs(Size);
+        public int PartSize => System.Math.Abs(Max.Value - Min.Value) + 1;
 
         /// <summary>
         /// ページサイズ
         /// </summary>
-        public int PageSize => Math.Abs(Position.Index - Last.Index) + 1;
+        public int PageSize => System.Math.Abs(Max.Index - Min.Index) + 1;
 
+
+        /// <summary>
+        /// １ページ分のPageRangeを作成する
+        /// </summary>
+        /// <param name="position">ページ開始位置</param>
+        /// <param name="direction">ページとして有効な方向(+1/-1)</param>
+        public static PageRange CreatePageRangeForOnePage(PagePosition position, int direction)
+        {
+            if (direction != 1 && direction != -1) throw new ArgumentOutOfRangeException(nameof(direction));
+
+            var last = new PagePosition(position.Index, direction > 0 ? 1 : 0);
+            return new PageRange(position, last);
+        }
+
+        private static List<PagePosition> PageRangesToPositions(IEnumerable<PageRange> parts)
+        {
+            return parts.Where(e => !e.IsEmpty()).SelectMany(e => e.CollectTerminals()).ToList();
+        }
+
+
+        public string ToDispString()
+        {
+            if (Min.Part == 0)
+            {
+                var postfix = PartSize >= 2 ? "ab" : "a";
+                return Min.Index.ToString() + postfix;
+            }
+            else
+            {
+                var postfix = PartSize >= 2 ? "b+" : "b";
+                return Min.Index.ToString() + postfix;
+            }
+        }
 
         public override string ToString()
         {
-            return $"{Position},{Last}";
+            return $"{Min}+{Max}";
         }
 
         public bool IsEmpty()
         {
-            return Position.IsEmpty();
+            return Min.IsEmpty() || Max.IsEmpty();
+        }
+
+        public bool IsOnePage()
+        {
+            return Min.Index == Max.Index;
         }
 
         public bool IsContains(PagePosition position)
@@ -167,89 +143,70 @@ namespace NeeView
             {
                 return false;
             }
-            if (this.Direction > 0)
-            {
-                return this.Position <= position && position <= this.Last;
-            }
-            else
-            {
-                return this.Last <= position && position <= this.Position;
-            }
+
+            return Min <= position && position <= Max;
+        }
+
+        public bool Confrict(PageRange other)
+        {
+            return Min <= other.Max && other.Min <= Max;
         }
 
         public PageRange Add(PagePosition position)
         {
-            if (position.IsEmpty() || IsContains(position))
-            {
-                return this;
-            }
-
-            return new PageRange(new List<PagePosition>() { Position, Last, position }, Direction);
+            // TODO: コレクションリテラルの使用 (C#12)
+            return new PageRange(new[] { Min, Max, position });
         }
 
         public PageRange Add(PageRange other)
         {
-            if (other.IsEmpty())
-            {
-                return this;
-            }
-
-            var points = new List<PagePosition> { this.Min, this.Max, other.Min, other.Max };
-            return new PageRange(points, this.Direction);
+            // TODO: コレクションリテラルの使用 (C#12)
+            return new PageRange(new[] { Min, Max, other.Min, other.Max });
         }
 
         public PageRange Add(IEnumerable<PageRange> others)
         {
-            var points = new List<PagePosition> { this.Min, this.Max };
-
-            foreach(var other in others.Where(e => !e.IsEmpty()))
-            {
-                points.Add(other.Min);
-                points.Add(other.Max);
-            }
-
-            return new PageRange(points, this.Direction);
+            return new PageRange(others.Append(this));
         }
-
 
         public PagePosition Next()
         {
-            return Next(this.Direction);
+            return Next(+1);
         }
 
         public PagePosition Previous()
         {
-            return Next(this.Direction * -1);
+            return Next(-1);
         }
 
+        /// <summary>
+        /// PageRangeの次の位置を求める
+        /// </summary>
+        /// <param name="direction">方向</param>
         public PagePosition Next(int direction)
         {
             if (direction != 1 && direction != -1) throw new ArgumentOutOfRangeException(nameof(direction));
 
-            var pos = (this.Direction != direction) ? this.Position : this.Last;
-            return pos + direction;
+            return direction < 0 ? Min - 1 : Max + 1;
         }
 
-        public PagePosition Move(int delta)
+        /// <summary>
+        /// PageRangeの基準位置を求める
+        /// </summary>
+        /// <param name="direction">方向</param>
+        public PagePosition Top(int direction)
         {
-            int direction = delta < 0 ? -1 : 1;
-            var pos = (this.Direction != direction) ? this.Last : this.Position;
-            var position = new PagePosition(pos.Index + delta, direction > 0 ? 0 : 1);
+            if (direction != 1 && direction != -1) throw new ArgumentOutOfRangeException(nameof(direction));
 
-            if (Math.Abs(delta) == 1)
-            {
-                var next = Next(direction);
-                return Math.Abs(pos.Value - next.Value) < Math.Abs(pos.Value - position.Value) ? next : position;
-            }
-            else
-            {
-                return position;
-            }
+            var pos = direction < 0 ? Max : Min;
+            return pos;
         }
 
         /// <summary>
         /// パーツ指定を外した、リソースベースのページ範囲を求める
+        /// TODO: 必要？PartRangeの機能範囲外である。
         /// </summary>
+        [Obsolete]
         public PageRange Truncate()
         {
             var min = new PagePosition(Min.Index, 0);
@@ -269,7 +226,34 @@ namespace NeeView
             var min = Min < minLimit ? minLimit : Min;
             var max = Max > maxLimit ? maxLimit : Max;
 
-            return new PageRange(min, max, this.Direction);
+            return new PageRange(min, max);
+        }
+
+        /// <summary>
+        /// 範囲をマージする
+        /// </summary>
+        public static PageRange Marge(IEnumerable<PageRange> pageRanges)
+        {
+            return new PageRange(pageRanges);
+        }
+
+
+        public IEnumerable<PagePosition> CollectPositions()
+        {
+            if (IsEmpty()) yield break;
+
+            for (int i = 0; i < PartSize; i++)
+            {
+                yield return Min + i;
+            }
+        }
+
+        public IEnumerable<PagePosition> CollectTerminals()
+        {
+            if (IsEmpty()) yield break;
+
+            yield return Min;
+            yield return Max;
         }
 
         public override bool Equals(object? obj)
@@ -279,24 +263,34 @@ namespace NeeView
 
         public bool Equals(PageRange other)
         {
-            return Position.Equals(other.Position) &&
-                   Size == other.Size;
+            return Min.Equals(other.Min) &&
+                   PartSize == other.PartSize;
         }
 
         public override int GetHashCode()
         {
-            return HashCode.Combine(Position, Size);
+            return HashCode.Combine(Min, PartSize);
         }
 
+        // TODO: この比較方法でよいの？
         public int CompareTo(PageRange other)
         {
-            var result = Position.CompareTo(other.Position);
+            var result = Min.CompareTo(other.Min);
             if (result == 0)
             {
-                result = Size.CompareTo(other.Size);
+                result = PartSize.CompareTo(other.PartSize);
             }
             return result;
         }
+
+        public int CompareConfrictTo(PageRange other)
+        {
+            // 範囲が被っているときは０を返す
+            var minCompare = Math.Clamp(Min.CompareTo(other.Min), -1, +1);
+            var maxCompare = Math.Clamp(Max.CompareTo(other.Max), -1, +1);
+            return minCompare == maxCompare ? minCompare : 0;
+        }
+
 
         public static bool operator ==(PageRange left, PageRange right)
         {

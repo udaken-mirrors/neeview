@@ -1,0 +1,40 @@
+﻿using System;
+using System.Diagnostics;
+using System.Threading;
+using System.Threading.Tasks;
+
+namespace NeeView
+{
+    public class FilePageSource : PageSource<string>
+    {
+        public FilePageSource(ArchiveEntry entry) : base(entry)
+        {
+        }
+
+
+        public override long DataSize => 0;
+
+
+        protected override async Task LoadAsyncCore(CancellationToken token)
+        {
+            // TODO: ArchvieFileの場合はTempFile化
+
+
+#if DEBUG
+            if (Debugger.IsAttached)
+            {
+                NVDebug.AssertMTA();
+                await Task.Delay(500, token);
+            }
+#endif
+            NVDebug.AssertMTA();
+
+            SetData(ArchiveEntry.SystemPath, null);
+        }
+
+        protected override void UnloadCore()
+        {
+            //throw new NotImplementedException();
+        }
+    }
+}

@@ -95,7 +95,8 @@ namespace NeeView
 
             if (isTerminated)
             {
-                _book?.Viewer.RaisePageTerminatedEvent(sender, delta < 0 ? -1 : 1);
+#warning not implement yet
+                //_book?.Viewer.RaisePageTerminatedEvent(sender, delta < 0 ? -1 : 1);
             }
         }
     }

@@ -14,7 +14,9 @@ namespace NeeView
 
         public override Binding CreateIsCheckedBinding()
         {
-            return new Binding(nameof(DragTransform.IsFlipVertical)) { Source = MainViewComponent.Current.DragTransform, Mode = BindingMode.OneWay };
+#warning not supported yet
+            //return new Binding(nameof(DragTransform.IsFlipVertical)) { Source = MainViewComponent.Current.DragTransform, Mode = BindingMode.OneWay };
+            return new Binding("Dummy");
         }
 
         [MethodArgument("@ToggleCommand.Execute.Remarks")]

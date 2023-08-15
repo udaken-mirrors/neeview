@@ -12,5 +12,17 @@ namespace NeeLaboratory.Linq
             if (source is null) throw new ArgumentNullException(nameof(source));
             return source.Where(x => x != null)!;
         }
+
+        public static IEnumerable<T> Direction<T>(this IEnumerable<T> self, int direction)
+        {
+            if (direction < 0)
+            {
+                return self.Reverse();
+            }
+            else
+            {
+                return self;
+            }
+        }
     }
 }

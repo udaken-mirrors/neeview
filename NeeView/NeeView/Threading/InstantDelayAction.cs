@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Windows;
 using System.Windows.Threading;
 
 namespace NeeView.Threading
@@ -7,14 +8,15 @@ namespace NeeView.Threading
     /// 遅延実行
     /// 都度アクションと遅延時間を要求するタイプ
     /// </summary>
-    public class InstantDelayAction
+    public class InstantDelayAction : IDisposable
     {
         private Action? _action;
+        private bool _disposedValue;
         private readonly DispatcherTimer _timer;
         private readonly object _lock = new();
 
 
-        public InstantDelayAction() : this(App.Current.Dispatcher)
+        public InstantDelayAction() : this(Application.Current.Dispatcher)
         {
         }
 
@@ -22,6 +24,25 @@ namespace NeeView.Threading
         {
             _timer = new DispatcherTimer(DispatcherPriority.Normal, dispatcher);
             _timer.Tick += Timer_Tick;
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!_disposedValue)
+            {
+                if (disposing)
+                {
+                    Cancel();
+                }
+
+                _disposedValue = true;
+            }
+        }
+
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
         }
 
 
@@ -67,5 +88,6 @@ namespace NeeView.Threading
         {
             Flush();
         }
+
     }
 }

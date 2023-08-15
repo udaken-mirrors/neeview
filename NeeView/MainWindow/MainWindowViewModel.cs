@@ -183,13 +183,13 @@ namespace NeeView
         public WindowTitle WindowTitle => WindowTitle.Current;
         public PageTitle PageTitle => PageTitle.Current;
         public ThumbnailList ThumbnailList => ThumbnailList.Current;
-        public ContentCanvasBrush ContentCanvasBrush => _viewComponent.ContentCanvasBrush;
+        //public ContentCanvasBrush ContentCanvasBrush => _viewComponent.ContentCanvasBrush;
         public ImageEffect ImageEffect => ImageEffect.Current;
         public MouseInput MouseInput => _viewComponent.MouseInput;
         public InfoMessage InfoMessage => InfoMessage.Current;
         public SidePanelFrame SidePanel => SidePanelFrame.Current;
-        public ContentCanvas ContentCanvas => _viewComponent.ContentCanvas;
-        public LoupeTransform LoupeTransform => _viewComponent.LoupeTransform;
+        //public ContentCanvas ContentCanvas => _viewComponent.ContentCanvas;
+        //public LoupeTransform LoupeTransform => _viewComponent.LoupeTransform;
         public ToastService ToastService => ToastService.Current;
         public App App => App.Current;
         public AutoHideConfig AutoHideConfig => Config.Current.AutoHide;

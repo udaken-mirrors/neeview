@@ -10,6 +10,7 @@ using System.Windows.Media.Imaging;
 
 namespace NeeView
 {
+#if false
     public class DefaultPictureSource : PictureSource
     {
         private static readonly BitmapFactory _bitmapFactory = new();
@@ -130,5 +131,5 @@ namespace NeeView
         }
 
     }
-
+#endif
 }

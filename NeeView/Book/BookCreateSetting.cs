@@ -44,6 +44,7 @@
         /// ロード設定フラグ
         /// </summary>
         public BookLoadOption LoadOption { get; set; }
+
     }
 
 }

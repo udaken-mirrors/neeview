@@ -1,6 +1,8 @@
 ﻿using NeeLaboratory.ComponentModel;
 using NeeLaboratory.Threading.Jobs;
+using NeeView.Presenter;
 using System;
+using System.Diagnostics;
 using System.Threading;
 using System.Windows;
 
@@ -120,12 +122,20 @@ namespace NeeView
 
         private IBookPageControl? CreateController(Book? book)
         {
-            return book is null ? null : new BookPageControl(book, _bookControl);
+            Debug.Assert(_presenter != null);
+            return book is null ? null : new BookPageControl(book, _bookControl, _presenter);
         }
 
         private BookPlaylistControl? CreatePlaylistController(Book? book)
         {
             return (book is null || book.IsMedia) ? null : new BookPlaylistControl(book);
+        }
+
+        // ## 応急処置
+        private PageFrameBoxPresenter? _presenter;
+        public void SetPageFrameBoxPresenter(PageFrameBoxPresenter presenter)
+        {
+            _presenter = presenter;
         }
 
 
@@ -148,7 +158,9 @@ namespace NeeView
         {
             if (this.Book == null || this.Book.IsMedia) return;
 
-            var dialogModel = new PageSelecteDialogModel(this.Book.Viewer.GetViewPageIndex() + 1, 1, this.Book.Pages.Count);
+#warning not support yet
+            //var dialogModel = new PageSelecteDialogModel(this.Book.Viewer.GetViewPageIndex() + 1, 1, this.Book.Pages.Count);
+            var dialogModel = new PageSelecteDialogModel(1, 1, this.Book.Pages.Count);
 
             var dialog = new PageSelectDialog(dialogModel);
             dialog.Owner = MainViewComponent.Current.GetWindow();
@@ -219,17 +231,24 @@ namespace NeeView
 
         public bool CanMoveToChildBook()
         {
+            return false;
+#warning not support yet
+#if false
             var page = Book?.Viewer.GetViewPage();
             return page != null && page.PageType == PageType.Folder;
+#endif
         }
 
         public void MoveToChildBook(object sender)
         {
+#warning not support yet
+#if false
             var page = Book?.Viewer.GetViewPage();
             if (page != null && page.PageType == PageType.Folder)
             {
                 _bookHub.RequestLoad(sender, page.Entry.SystemPath, null, BookLoadOption.IsBook | BookLoadOption.SkipSamePlace, true);
             }
+#endif
         }
 
         #endregion
@@ -241,6 +260,8 @@ namespace NeeView
         /// </summary>
         public void Wait(CancellationToken token)
         {
+#warning not support yet
+#if false
             BookHub bookHub = BookHub.Current;
 
             var book = bookHub.GetCurrentBook();
@@ -315,6 +336,7 @@ namespace NeeView
                     eventFlag.Set();
                 }
             }
+#endif
         }
 
         #endregion

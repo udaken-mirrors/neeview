@@ -1,97 +1,105 @@
 ﻿using NeeView.Collections.Generic;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 
 namespace NeeView
 {
-    public interface IMemoryElement
-    {
-        int Index { get; }
-        bool IsMemoryLocked { get; }
-        long GetMemorySize();
-        void Unload();
-    }
 
     public class MemoryPool
     {
-        private List<IMemoryElement> _collection = new();
+        private record MemoryUnit(IMemoryElement Key, long Size) : IHasKey<IMemoryElement>;
+
+        private LinkedDicionary<IMemoryElement, MemoryUnit> _collection = new();
         private readonly object _lock = new();
-        private int _referenceIndex;
 
 
         public long TotalSize { get; private set; }
 
 
+        [Obsolete]
         public void SetReference(int index)
         {
-            _referenceIndex = index;
+            // nop
         }
 
         public void Add(IMemoryElement element)
         {
             lock (_lock)
             {
-                ////Debug.WriteLine($"Add: {page}");
-                _collection.Add(element);
-                TotalSize = TotalSize + element.GetMemorySize();
+                //Debug.WriteLine($"MemoryPool.Add: {element.Index}: {element.GetMemorySize()} Byte");
+                Debug.Assert(element.GetMemorySize() > 0);
+
+                var unit = _collection.Remove(element);
+                if (unit is not null)
+                {
+                    TotalSize -= unit.Size;
+                }
+
+                unit = new MemoryUnit(element, element.GetMemorySize());
+                _collection.AddLast(element, unit);
+                TotalSize += unit.Size;
+                AssertTotalSize();
             }
         }
+
 
         public void Cleanup(long limitSize)
         {
-            List<IMemoryElement>? elements = null;
-            List<IMemoryElement>? removes = null;
-
             lock (_lock)
             {
-                long totalMemory = 0;
+                int removeCount = 0;
 
-                elements = _collection
-                    .Distinct()
-                    .OrderByDescending(e => e.IsMemoryLocked)
-                    .ThenBy(e => Math.Abs(e.Index - _referenceIndex))
-                    .ToList();
-
-                foreach (var (element, index) in elements.ToTuples())
+                while (limitSize < TotalSize)
                 {
-                    var size = element.GetMemorySize();
-                    if (totalMemory + size > limitSize && !element.IsMemoryLocked)
+                    // 古いものから削除を試みる。ロックされていたらそこで終了
+                    var node = _collection.First;
+                    if (node is null) break;
+
+                    if (node.Value.Key.IsMemoryLocked)
                     {
-                        removes = elements.Skip(index).ToList();
-                        elements = elements.Take(index).ToList();
                         break;
                     }
-
-                    totalMemory += size;
-                }
-
-                ////var removeCount = removes != null ? removes.Count : 0;
-                ////var contentCount = elements.Count;
-                ////Debug.WriteLine($"Cleanup1: {totalMemory / 1024 / 1024}MB, {removeCount}/{contentCount}");
-
-                _collection = elements;
-                TotalSize = totalMemory;
-            }
-
-            if (removes != null)
-            {
-                foreach (var element in removes)
-                {
-                    if (!element.IsMemoryLocked)
+                    else
                     {
-                        element.Unload();
+                        Remove(node);
+                        removeCount++;
                     }
                 }
+
+                // [DEV]
+                if (removeCount > 0)
+                {
+                    AssertTotalSize();
+                }
             }
         }
 
-#if false
-        public void Clear()
+        private void Remove(LinkedListNode<MemoryUnit> node)
         {
-            Cleanup(0);
+            lock (_lock)
+            {
+                _collection.Remove(node);
+                TotalSize -= node.Value.Size;
+                AssertTotalSize();
+
+                node.Value.Key.Unload();
+                //Debug.WriteLine($"MemoryPool.Remove: {node.Value.Key.Index}");
+            }
         }
-#endif
+
+
+
+        [Conditional("DEBUG")]
+        private void AssertTotalSize()
+        {
+            lock (_lock)
+            {
+                var totalSize = _collection.Select(e => e.Size).Sum();
+                Debug.Assert(totalSize == TotalSize);
+            }
+        }
     }
 
 }
