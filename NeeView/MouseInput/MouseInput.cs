@@ -81,7 +81,7 @@ namespace NeeView
             }
 #endif
 
-            if (_context.DragTransform != null)
+            if (_context.DragTransformControl != null)
             {
                 this.Drag = new MouseInputDrag(_context);
                 this.Drag.StateChanged += StateChanged;

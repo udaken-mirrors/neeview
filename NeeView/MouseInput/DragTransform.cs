@@ -1,4 +1,5 @@
-﻿using NeeView.Maths;
+﻿using NeeLaboratory;
+using NeeView.Maths;
 using NeeView.PageFrames;
 using System;
 using System.Windows;
@@ -135,6 +136,7 @@ namespace NeeView
             _context.Transform.SetPoint(pos, span);
         }
 
+#if false
         /// <summary>
         /// 角度の正規化
         /// </summary>
@@ -163,7 +165,7 @@ namespace NeeView
                 return val;
             }
         }
-
+#endif
 
         // 反転実行
         public void DoFlipHorizontal(bool isFlip, TimeSpan span)
@@ -173,7 +175,7 @@ namespace NeeView
                 _context.Transform.SetFlipHorizontal(isFlip, span);
 
                 // 角度を反転
-                var angle = -TransformMath.NormalizeLoopRange(_context.BaseAngle, -180, 180);
+                var angle = -MathUtility.NormalizeLoopRange(_context.BaseAngle, -180, 180);
                 _context.Transform.SetAngle(angle, span);
 
                 // 座標を反転
@@ -192,7 +194,7 @@ namespace NeeView
                 _context.Transform.SetFlipVertical(isFlip, span);
 
                 // 角度を反転
-                var angle = 90 - TransformMath.NormalizeLoopRange(_context.Transform.Angle + 90, -180, 180);
+                var angle = 90 - MathUtility.NormalizeLoopRange(_context.Transform.Angle + 90, -180, 180);
                 _context.Transform.SetAngle(angle, span); //, TransformActionType.FlipVertical);
 
                 // 座標を反転

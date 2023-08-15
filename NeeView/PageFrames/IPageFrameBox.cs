@@ -14,6 +14,7 @@ namespace NeeView.PageFrames
         public void ScrollToNextFrame(LinkedListDirection direction, IScrollNTypeParameter parameter, LineBreakStopMode lineBreakStopMode, double endMargin);
         public bool ScrollToNext(LinkedListDirection direction, IScrollNTypeParameter parameter);
         
+        public PageFrameTransformAccessor? CreateSelectedTransform();
         public void ResetTransform();
         public void Stretch(bool ignoreViewOrigin);
 

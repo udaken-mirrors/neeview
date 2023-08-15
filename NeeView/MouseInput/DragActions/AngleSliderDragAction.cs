@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NeeLaboratory;
+using System;
 using System.Windows;
 
 namespace NeeView
@@ -35,7 +36,7 @@ namespace NeeView
 
             public void DragAngleSlider(Point start, Point end, double sensitivity, TimeSpan span)
             {
-                var angle = DragTransform.NormalizeLoopRange(Context.BaseAngle + (start.X - end.X) * 0.5 * sensitivity, -180, 180);
+                var angle = MathUtility.NormalizeLoopRange(Context.BaseAngle + (start.X - end.X) * 0.5 * sensitivity, -180, 180);
                 _transformControl.DoRotate(angle, span);
             }
         }

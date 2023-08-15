@@ -43,7 +43,7 @@ namespace NeeView.Presenter
         public event EventHandler? PageFrameBoxChanged;
 
         [Subscribable]
-        public event EventHandler<SelectedRangeChangedEventArgs>? SelectedRangeChanged;
+        public event EventHandler? SelectedRangeChanged;
 
 
         public bool IsEnabled => _box != null;
@@ -110,6 +110,7 @@ namespace NeeView.Presenter
 
             RaisePropertyChanged(null);
             PagesChanged?.Invoke(this, EventArgs.Empty);
+            SelectedRangeChanged?.Invoke(this, EventArgs.Empty);
         }
 
 
@@ -157,7 +158,7 @@ namespace NeeView.Presenter
             PagesChanged?.Invoke(this, e);
         }
 
-        private void BookContext_SelectedRangeChanged(object? sender, SelectedRangeChangedEventArgs e)
+        private void BookContext_SelectedRangeChanged(object? sender, EventArgs e)
         {
             SelectedRangeChanged?.Invoke(this, e);
         }
@@ -182,7 +183,7 @@ namespace NeeView.Presenter
 
         public DragTransformContext? CreateDragTransformContext(bool isPointContainer, bool isLoupeTransform)
         {
-            return ValidBox()?.CreateDragTransformContext(isPointContainer, isLoupeTransform);
+            return _box?.CreateDragTransformContext(isPointContainer, isLoupeTransform);
         }
 
         public void MoveTo(PagePosition position, LinkedListDirection direction)
@@ -225,6 +226,11 @@ namespace NeeView.Presenter
         {
             if (_book is null) return;
             ReOpen();
+        }
+
+        public PageFrameTransformAccessor? CreateSelectedTransform()
+        {
+            return _box?.CreateSelectedTransform();
         }
 
         #endregion IPageFrameBox

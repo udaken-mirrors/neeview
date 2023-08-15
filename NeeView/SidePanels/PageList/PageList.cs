@@ -185,7 +185,7 @@ namespace NeeView
         //    RefreshSelectedItem();
         //}
 
-        private void BookOperation_SelectedRangeChanged(object? sender, SelectedRangeChangedEventArgs e)
+        private void BookOperation_SelectedRangeChanged(object? sender, EventArgs e)
         {
             RefreshSelectedItem();
         }

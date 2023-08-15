@@ -63,18 +63,20 @@ namespace NeeView.PageFrames
             _loupeScale = _config.Loupe.DefaultScale;
 
             var startIndex = _book.Pages.FirstOrDefault(e => e.EntryName == book.Memento.Page)?.Index ?? 0;
-            _selectedRange = new PageRange(new PagePosition(startIndex, 0), 2);
+            //_selectedRange = new PageRange(new PagePosition(startIndex, 0), 2);
 
             _disposables.Add(_book.SubscribePagesChanged(Book_PagesChanged));
             _disposables.Add(_config.Book.SubscribePropertyChanged(BookConfig_PropertyChanged));
             _disposables.Add(_config.View.SubscribePropertyChanged(ViewConfig_PropertyChanged));
             _disposables.Add(_config.System.SubscribePropertyChanged(SystemConfig_PropertyChanged));
-            _disposables.Add(_bookSetting.SubscribePropertyChanged(BookSetting_PropertyChanged));
+            _disposables.Add(_bookSetting.SubscribePropertyChanged((s, e) => AppDispatcher.BeginInvoke(() =>BookSetting_PropertyChanged(s, e))));
             _disposables.Add(_frameProfile.SubscribePropertyChanged(FrameProfile_PropertyChanged));
             _disposables.Add(ImageResizeFilterConfig.SubscribePropertyChanged((s, e) => RaisePropertyChanged(nameof(ImageResizeFilterConfig))));
             _disposables.Add(ImageCustomSizeConfig.SubscribePropertyChanged((s, e) => RaisePropertyChanged(nameof(ImageCustomSizeConfig))));
             _disposables.Add(ImageTrimConfig.SubscribePropertyChanged((s, e) => RaisePropertyChanged(nameof(ImageTrimConfig))));
             _disposables.Add(ImageDotKeepConfig.SubscribePropertyChanged((s, e) => RaisePropertyChanged(nameof(ImageDotKeepConfig))));
+
+            
         }
 
 
@@ -91,7 +93,7 @@ namespace NeeView.PageFrames
         public event EventHandler? PagesChanged;
 
         [Subscribable]
-        public event EventHandler<SelectedRangeChangedEventArgs>? SelectedRangeChanged;
+        public event EventHandler? SelectedRangeChanged;
 
         public bool IsEnabled => _book.Pages.Any();
 
@@ -104,7 +106,13 @@ namespace NeeView.PageFrames
         public PageRange SelectedRange
         {
             get { return _selectedRange; }
-            set { SetProperty(ref _selectedRange, value); }
+            set
+            {
+                if (SetProperty(ref _selectedRange, value))
+                {
+                    SelectedRangeChanged?.Invoke(this, EventArgs.Empty);
+                }
+            }
         }
 
         public IReadOnlyList<Page> SelectedPages

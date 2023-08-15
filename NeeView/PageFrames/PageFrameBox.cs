@@ -844,6 +844,12 @@ namespace NeeView.PageFrames
             _cleaner.Cleanup(_viewBox.ViewingRect);
         }
 
+
+        public PageFrameTransformAccessor CreateSelectedTransform()
+        {
+            return _transformMap.CreateAccessor(_selected.PageRange);
+        }
+
         public void ResetTransform()
         {
             _transformMap.Clear();

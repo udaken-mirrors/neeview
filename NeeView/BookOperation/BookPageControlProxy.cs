@@ -15,7 +15,7 @@ namespace NeeView
         }
 
         public event EventHandler? PagesChanged;
-        public event EventHandler<SelectedRangeChangedEventArgs>? SelectedRangeChanged;
+        public event EventHandler? SelectedRangeChanged;
 
         public IReadOnlyList<Page> Pages => _source?.Pages ?? new List<Page>();
         public IReadOnlyList<Page> SelectedPages => _source?.SelectedPages ?? new List<Page>();
@@ -76,7 +76,7 @@ namespace NeeView
             PagesChanged?.Invoke(sender, e);
         }
 
-        private void Source_SelectedItemChanged(object? sender, SelectedRangeChangedEventArgs e)
+        private void Source_SelectedItemChanged(object? sender, EventArgs e)
         {
             SelectedRangeChanged?.Invoke(sender, e);
         }

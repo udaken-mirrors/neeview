@@ -5,6 +5,7 @@ using NeeView.Maths;
 
 namespace NeeView.PageFrames
 {
+
     // TODO: ページ移動とPointの初期化問題
     public class ContentTransformControl : ITransformControl
     {

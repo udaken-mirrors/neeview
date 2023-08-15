@@ -1,4 +1,5 @@
-﻿using NeeView.ComponentModel;
+﻿using NeeLaboratory;
+using NeeView.ComponentModel;
 using NeeView.Presenter;
 using System;
 using System.Collections.Generic;
@@ -114,7 +115,7 @@ namespace NeeView
                 angle = Config.Current.View.AngleFrequency * Math.Sign(angle);
             }
 
-            control.DoRotate(DragTransform.NormalizeLoopRange(control.Context.BaseAngle + angle, -180, 180), TimeSpan.Zero);
+            control.DoRotate(MathUtility.NormalizeLoopRange(control.Context.BaseAngle + angle, -180, 180), TimeSpan.Zero);
 
             if (isStretch)
             {

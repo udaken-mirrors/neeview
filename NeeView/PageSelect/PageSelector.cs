@@ -160,7 +160,7 @@ namespace NeeView
         //    RaiseViewContentsChanged(sender, e?.ViewPageCollection, false);
         //}
 
-        private void BookOperation_SelectedRangeChanged(object? sender, SelectedRangeChangedEventArgs e)
+        private void BookOperation_SelectedRangeChanged(object? sender, EventArgs e)
         {
             RaiseViewContentsChanged(sender, BookOperation.Current.Control.SelectedRange, false);
         }

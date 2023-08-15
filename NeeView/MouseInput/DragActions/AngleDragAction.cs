@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Windows;
 using System.Windows.Media;
+using NeeLaboratory;
 using NeeView.Maths;
 
 namespace NeeView
@@ -49,7 +50,7 @@ namespace NeeView
                     return;
                 }
 
-                double angle = TransformMath.NormalizeLoopRange(Context.BaseAngle + Vector.AngleBetween(v0, v1), -180, 180);
+                double angle = MathUtility.NormalizeLoopRange(Context.BaseAngle + Vector.AngleBetween(v0, v1), -180, 180);
 
                 _transformControl.DoRotate(angle, TimeSpan.Zero);
             }

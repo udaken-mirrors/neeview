@@ -56,9 +56,8 @@ namespace NeeView
 
         public double Angle
         {
-            //get => _model.DragTransform.Angle;
-            //set => _model.DragTransform.SetAngle(value, TimeSpan.Zero); // TransformActionType.Navigate
-            get; set;
+            get => _model.Angle;
+            set => _model.Angle = value;
         }
 
         public AutoRotateType AutoRotate
@@ -72,31 +71,27 @@ namespace NeeView
 
         public double Scale
         {
-            //get { return _model.DragTransform.Scale * 100.0; }
-            //set { _model.DragTransform.SetScale(value / 100.0, TimeSpan.Zero); } // TransformActionType.Navigate
-            get; set;
+            get => _model.Scale * 100;
+            set => _model.Scale = value * 0.01;
         }
 
         public double ScaleLog
         {
-            //get { return _model.DragTransform.Scale > 0.0 ? Math.Log(_model.DragTransform.Scale, 2.0) : -5.0; }
-            //set { _model.DragTransform.SetScale(Math.Pow(2, value), TimeSpan.Zero); } // TransformActionType.Navigate
-            get; set;
+            get => _model.Scale > 0.0 ? Math.Log(_model.Scale, 2.0) : -5.0;
+            set => _model.Scale = Math.Pow(2, value);
         }
 
 
         public bool IsFlipHorizontal
         {
-            //get => _model.DragTransform.IsFlipHorizontal;
-            //set => _model.DragTransform.SetFlipHorizontal(value, TimeSpan.Zero);
-            get; set;
+            get => _model.IsFlipHorizontal;
+            set => _model.IsFlipHorizontal = value;
         }
 
         public bool IsFlipVertical
         {
-            //get => _model.DragTransform.IsFlipVertical;
-            //set => _model.DragTransform.SetFlipVertical(value, TimeSpan.Zero);
-            get; set;
+            get => _model.IsFlipVertical;
+            set => _model.IsFlipVertical = value;
         }
 
 
@@ -195,7 +190,19 @@ namespace NeeView
                 case "":
                     RaisePropertyChanged("");
                     break;
-
+                case nameof(DragTransform.Angle):
+                    RaisePropertyChanged(nameof(Angle));
+                    break;
+                case nameof(DragTransform.Scale):
+                    RaisePropertyChanged(nameof(Scale));
+                    RaisePropertyChanged(nameof(ScaleLog));
+                    break;
+                case nameof(DragTransform.IsFlipHorizontal):
+                    RaisePropertyChanged(nameof(IsFlipHorizontal));
+                    break;
+                case nameof(DragTransform.IsFlipVertical):
+                    RaisePropertyChanged(nameof(IsFlipVertical));
+                    break;
                 case nameof(NavigateModel.IsRotateStretchEnabled):
                     RaisePropertyChanged(nameof(IsRotateStretchEnabled));
                     break;
@@ -274,6 +281,7 @@ namespace NeeView
             }
         }
 
+#if false
         private void DragTransform_PropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
             switch (e.PropertyName)
@@ -301,6 +309,7 @@ namespace NeeView
                     break;
             }
         }
+#endif
 
         public void AddBaseScaleTick(int delta)
         {

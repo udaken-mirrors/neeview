@@ -29,7 +29,7 @@ namespace NeeView
             sender.Cursor = Cursors.Hand;
 
             _dragTransformControl.ResetState();
-            _dragTransformControl.UpdateState(CreateMouseButtonBits(), Keyboard.Modifiers, _context.StartPoint, _context.StartTimestamp);
+            _dragTransformControl.UpdateState(CreateMouseButtonBits(), Keyboard.Modifiers, ToDragCoord(_context.StartPoint), _context.StartTimestamp);
         }
 
         public override void OnClosed(FrameworkElement sender)
@@ -88,7 +88,14 @@ namespace NeeView
 
         public override void OnMouseMove(object? sender, MouseEventArgs e)
         {
-            _dragTransformControl.UpdateState(CreateMouseButtonBits(e), Keyboard.Modifiers, e.GetPosition(_context.Sender), e.Timestamp);
+            _dragTransformControl.UpdateState(CreateMouseButtonBits(e), Keyboard.Modifiers, ToDragCoord(e.GetPosition(_context.Sender)), e.Timestamp);
+        }
+
+        private Point ToDragCoord(Point point)
+        {
+            var x = point.X - _context.Sender.ActualWidth * 0.5;
+            var y = point.Y - _context.Sender.ActualHeight * 0.5;
+            return new Point(x, y);
         }
 
     }

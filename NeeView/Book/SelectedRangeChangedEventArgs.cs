@@ -1,7 +1,9 @@
-﻿using System;
+﻿#if false
+using System;
 
 namespace NeeView
 {
+    [Obsolete]
     public class SelectedRangeChangedEventArgs : EventArgs
     {
         public SelectedRangeChangedEventArgs(bool fromOutsize)
@@ -13,3 +15,4 @@ namespace NeeView
         public bool FromOutsize { get; }
     }
 }
+#endif

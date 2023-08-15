@@ -30,7 +30,7 @@ namespace NeeView
             BookOperation.Current.Control.SelectedRangeChanged += BookOperation_SelectedRangeChanged;
         }
 
-        private void BookOperation_SelectedRangeChanged(object? sender, SelectedRangeChangedEventArgs e)
+        private void BookOperation_SelectedRangeChanged(object? sender, EventArgs e)
         {
             ////var page = BookOperation.Current.Book?.GetViewPage();
             ////this.Root.ScrollIntoView(page);

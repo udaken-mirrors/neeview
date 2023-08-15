@@ -9,7 +9,7 @@ namespace NeeView
     public interface IBookPageContext
     {
         event EventHandler? PagesChanged;
-        event EventHandler<SelectedRangeChangedEventArgs>? SelectedRangeChanged;
+        event EventHandler? SelectedRangeChanged;
 
         IReadOnlyList<Page> Pages { get; }
         IReadOnlyList<Page> SelectedPages { get; }

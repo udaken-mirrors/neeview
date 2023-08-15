@@ -1,5 +1,7 @@
-﻿using NeeLaboratory.ComponentModel;
+﻿using NeeLaboratory;
+using NeeLaboratory.ComponentModel;
 using NeeView.Collections.Generic;
+using NeeView.PageFrames;
 using NeeView.Windows.Property;
 using PhotoSauce.MagicScaler;
 using System;
@@ -34,8 +36,16 @@ namespace NeeView
         //private readonly DragTransform _dragTransform;
         //private readonly ContentCanvas _contentCanvas;
 
+        private readonly NavigateTransformControl _dragTransform;
+
+
+
         public NavigateModel()
         {
+            _dragTransform = new NavigateTransformControl(MainViewComponent.Current.PageFrameBoxPresenter);
+            _dragTransform.PropertyChanged += NavigateTransformControl_PropertyChanged;
+
+
             //_dragTransform = MainViewComponent.Current.DragTransform;
             //_contentCanvas = MainViewComponent.Current.ContentCanvas;
 
@@ -43,7 +53,33 @@ namespace NeeView
         }
 
 
-        //public DragTransform DragTransform => _dragTransform;
+
+        public NavigateTransformControl DragTransform => _dragTransform;
+
+
+        public double Angle
+        {
+            get => _dragTransform.Angle;
+            set => _dragTransform.SetAngle(value, TimeSpan.Zero);
+        }
+
+        public double Scale
+        {
+            get => _dragTransform.Scale;
+            set => _dragTransform.SetScale(value, TimeSpan.Zero);
+        }
+
+        public bool IsFlipHorizontal
+        {
+            get => _dragTransform.IsFlipHorizontal;
+            set => _dragTransform.SetFlipHorizontal(value, TimeSpan.Zero);
+        }
+
+        public bool IsFlipVertical
+        {
+            get => _dragTransform.IsFlipVertical;
+            set => _dragTransform.SetFlipVertical(value, TimeSpan.Zero);
+        }
 
         public bool IsRotateStretchEnabled
         {
@@ -88,6 +124,30 @@ namespace NeeView
         }
 
 
+        private void NavigateTransformControl_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            switch (e.PropertyName)
+            {
+                case null:
+                case "":
+                    RaisePropertyChanged("");
+                    break;
+
+                case nameof(NavigateTransformControl.Angle):
+                    RaisePropertyChanged(nameof(Angle));
+                    break;
+                case nameof(NavigateTransformControl.Scale):
+                    RaisePropertyChanged(nameof(Scale));
+                    break;
+                case nameof(NavigateTransformControl.IsFlipHorizontal):
+                    RaisePropertyChanged(nameof(IsFlipHorizontal));
+                    break;
+                case nameof(NavigateTransformControl.IsFlipVertical):
+                    RaisePropertyChanged(nameof(IsFlipVertical));
+                    break;
+            }
+        }
+
         private void ViewConfig_PropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
             switch (e.PropertyName)
@@ -123,53 +183,42 @@ namespace NeeView
 
         public void RotateLeft()
         {
-#warning not support yet Navigator
-#if false
-            var angle = DragTransformControl.NormalizeLoopRange(_dragTransform.Angle - 90.0, -180.0, 180.0);
+            var angle = MathUtility.NormalizeLoopRange(_dragTransform.Angle - 90.0, -180.0, 180.0);
             angle = Math.Truncate((angle + 180.0) / 90.0) * 90.0 - 180.0;
 
-            _dragTransform.SetAngle(angle, TransformActionType.Navigate);
+            _dragTransform.SetAngle(angle, TimeSpan.Zero);
 
             if (IsRotateStretchEnabled)
             {
                 Stretch();
             }
-#endif
         }
 
         public void RotateRight()
         {
-#warning not support yet Navigator
-#if false
-            var angle = DragTransformControl.NormalizeLoopRange(_dragTransform.Angle + 90.0, -180.0, 180.0);
+            var angle = MathUtility.NormalizeLoopRange(_dragTransform.Angle + 90.0, -180.0, 180.0);
             angle = Math.Truncate((angle + 180.0) / 90.0) * 90.0 - 180.0;
 
-            _dragTransform.SetAngle(angle, TransformActionType.Navigate);
+            _dragTransform.SetAngle(angle, TimeSpan.Zero);
 
             if (IsRotateStretchEnabled)
             {
                 Stretch();
             }
-#endif
         }
 
         public void RotateReset()
         {
-#warning not support yet Navigator
-#if false
-            _dragTransform.SetAngle(0.0, TransformActionType.Navigate);
+            _dragTransform.SetAngle(0.0, TimeSpan.Zero);
 
             if (IsRotateStretchEnabled)
             {
                 Stretch();
             }
-#endif
         }
 
         public void ScaleDown()
         {
-#warning not support yet Navigator
-#if false
             var scale = _dragTransform.Scale - 0.01;
             var index = _scaleSnaps.FindIndex(e => scale < e);
             if (0 < index)
@@ -181,14 +230,11 @@ namespace NeeView
                 scale = _scaleSnaps.First();
             }
 
-            _dragTransform.SetScale(scale, TransformActionType.Navigate);
-#endif
+            _dragTransform.SetScale(scale, TimeSpan.Zero);
         }
 
         public void ScaleUp()
         {
-#warning not support yet Navigator
-#if false
             var scale = _dragTransform.Scale + 0.01;
             var index = _scaleSnaps.FindIndex(e => scale < e);
             if (0 <= index)
@@ -200,24 +246,17 @@ namespace NeeView
                 scale = _scaleSnaps.Last();
             }
 
-            _dragTransform.SetScale(scale, TransformActionType.Navigate);
-#endif
+            _dragTransform.SetScale(scale, TimeSpan.Zero);
         }
 
         public void ScaleReset()
         {
-#warning not support yet Navigator
-#if false
-            _dragTransform.SetScale(1.0, TransformActionType.Navigate);
-#endif
+            _dragTransform.SetScale(1.0, TimeSpan.Zero);
         }
 
         public void Stretch()
         {
-#warning not support yet Navigator
-#if false
-            _contentCanvas.Stretch();
-#endif
+            _dragTransform.SnapView();
         }
     }
 
