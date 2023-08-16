@@ -12,9 +12,10 @@ namespace NeeView
         Size FixedSize(Size size);
         ImageSource CreateImageSource(byte[] data, Size size, BitmapCreateSetting setting, CancellationToken token);
 
-        //byte[] CreateImage(Size size, BitmapCreateSetting setting, BitmapImageFormat format, int quality, CancellationToken token);
+        byte[] CreateImage(byte[] data, Size size, BitmapCreateSetting setting, BitmapImageFormat format, int quality, CancellationToken token);
+        byte[] CreateThumbnail(byte[] data, ThumbnailProfile profile, CancellationToken token);
+        
         //PictureInfo CreatePictureInfo(CancellationToken token);
-        //byte[] CreateThumbnail(ThumbnailProfile profile, CancellationToken token);
         //long GetMemorySize();
     }
 }

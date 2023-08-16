@@ -14,6 +14,8 @@ namespace NeeView
     {
         private BitmapPageContent _pageContent;
 
+        // TODO: 毎回作ってるけど大丈夫？
+        private BitmapFactory _bitmapFactory = new BitmapFactory();
 
         public BitmapPictureSource(BitmapPageContent pageContent)
         {
@@ -38,8 +40,6 @@ namespace NeeView
         public ImageSource CreateImageSource(byte[] data, Size size, BitmapCreateSetting setting, CancellationToken token)
         {
             token.ThrowIfCancellationRequested();
-
-            var _bitmapFactory = new BitmapFactory();
 
             Debug.WriteLine($"{ArchiveEntry}, {size:f0}", "CreateImageSource()");
 
@@ -68,6 +68,52 @@ namespace NeeView
             var maxHeight = Math.Max(PictureInfo.Size.Height, Config.Current.Performance.MaximumSize.Height);
             var maxSize = new Size(maxWixth, maxHeight);
             return size.Limit(maxSize);
+        }
+
+
+
+        public byte[] CreateImage(byte[] data, Size size, BitmapCreateSetting setting, BitmapImageFormat format, int quality, CancellationToken token)
+        {
+            token.ThrowIfCancellationRequested();
+
+            using (var stream = new MemoryStream(data))
+            //using (var stream = _streamSource.CreateStream(token))
+            {
+                using (var outStream = new MemoryStream())
+                {
+                    _bitmapFactory.CreateImage(stream, PictureInfo?.BitmapInfo, outStream, size, format, quality, setting, token);
+                    return outStream.ToArray();
+                }
+            }
+        }
+
+
+        public byte[] CreateThumbnail(byte[] data, ThumbnailProfile profile, CancellationToken token)
+        {
+            ////Debug.WriteLine($"## CreateThumbnail: {this.ArchiveEntry}");
+
+            token.ThrowIfCancellationRequested();
+
+            Size size;
+            BitmapInfo? bitmapInfo;
+            if (PictureInfo != null)
+            {
+                size = PictureInfo.Size;
+                bitmapInfo = PictureInfo.BitmapInfo;
+            }
+            else
+            {
+                using (var stream = new MemoryStream(data))
+                //using (var stream = _streamSource.CreateStream(token))
+                {
+                    bitmapInfo = BitmapInfo.Create(stream);
+                    size = bitmapInfo.IsTranspose ? bitmapInfo.GetPixelSize().Transpose() : bitmapInfo.GetPixelSize();
+                }
+            }
+
+            size = ThumbnailProfile.GetThumbnailSize(size);
+            var setting = profile.CreateBitmapCreateSetting(bitmapInfo?.Metadata?.IsOriantationEnabled == true);
+            return CreateImage(data, size, setting, Config.Current.Thumbnail.Format, Config.Current.Thumbnail.Quality, token);
         }
     }
 

@@ -52,6 +52,8 @@ namespace NeeView
             _content.ContentChanged += Content_ContentChanged;
             _content.SizeChanged += Content_SizeChanged;
 
+            _thumbnailSource = PageThumbnailFactory.Create(_content);
+
 #if false
             _disposables.Add(_content.SubscribePropertyChanged(nameof(PageContent.Entry),
                 (s, e) => RaisePropertyChanged(nameof(Entry))));
@@ -193,28 +195,29 @@ namespace NeeView
 
         #region Thumbnail
 
+        private PageThumbnail _thumbnailSource;
+
+
         /// <summary>
         /// サムネイル
         /// </summary>
-        //public Thumbnail Thumbnail => _content.Thumbnail;
-        public Thumbnail Thumbnail { get; } = new Thumbnail();
+        public Thumbnail Thumbnail => _thumbnailSource.Thumbnail;
+        //public Thumbnail Thumbnail { get; } = new Thumbnail();
 
-        //public bool IsThumbnailValid => _content.Thumbnail.IsValid;
-        public bool IsThumbnailValid => false;
+        public bool IsThumbnailValid => _thumbnailSource.Thumbnail.IsValid;
+        //public bool IsThumbnailValid => false;
 
         /// <summary>
         /// サムネイル読み込み
         /// </summary>
         public async Task<ImageSource?> LoadThumbnailAsync(CancellationToken token)
         {
-            return null;
-#if false
             if (_disposedValue) return null;
 
             try
             {
                 token.ThrowIfCancellationRequested();
-                await _contentLoader.LoadThumbnailAsync(token);
+                await _thumbnailSource.LoadThumbnailAsync(token);
                 return this.Thumbnail?.ImageSource;
             }
             catch
@@ -222,7 +225,6 @@ namespace NeeView
                 // nop.
                 return null;
             }
-#endif
         }
 
         #endregion

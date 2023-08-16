@@ -4,15 +4,15 @@ namespace NeeView
 {
     public class InformationValueSource
     {
-        public InformationValueSource(Page? page, BitmapPageContent? bitmapContent, BitmapMetadataDatabase? metadata)
+        public InformationValueSource(Page? page, PictureInfo? pictureInfo, BitmapMetadataDatabase? metadata)
         {
             Page = page;
-            BitmapContent = bitmapContent;
+            PictureInfo = pictureInfo;
             Metadata = metadata;
         }
 
         public Page? Page { get; }
-        public BitmapPageContent? BitmapContent { get; }
+        public PictureInfo? PictureInfo { get; }
         public BitmapMetadataDatabase? Metadata { get; }
     }
 }

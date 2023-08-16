@@ -21,19 +21,18 @@ namespace NeeView
         private List<FileInformationRecord>? _properties;
 
 
-        public FileInformationSource(Page page)
+        public FileInformationSource(ViewContent viewContent)
         {
-            this.Page = page;
+            ViewContent = viewContent;
 
             Update();
         }
 
+        public ViewContent ViewContent { get; private set; }
 
-        public Page Page { get; private set; }
+        public Page Page => ViewContent.Element.Page;
 
-        public BitmapPageContent? BitmapContent => Page?.Content as BitmapPageContent;
-
-        public PictureInfo? PictureInfo => BitmapContent?.PictureInfo;
+        public PictureInfo? PictureInfo => Page.Content.PictureInfo;
 
         public BitmapMetadataDatabase? Metadata => PictureInfo?.Metadata;
 
@@ -64,7 +63,7 @@ namespace NeeView
 
         public List<FileInformationRecord> CreateProperties()
         {
-            var factory = new InformationValueFactory(new InformationValueSource(Page, BitmapContent, Metadata));
+            var factory = new InformationValueFactory(new InformationValueSource(Page, PictureInfo, Metadata));
             var defaults = InformationKeyExtensions.DefaultKeys.Select(e => new FileInformationRecord(e, factory.Create(e)));
             var extras = factory.GetExtraMap().Select(e => new FileInformationRecord(e.Key, InformationGroup.Extras, e.Value));
             return defaults.Concat(extras).ToList();
@@ -82,12 +81,11 @@ namespace NeeView
 
         public FrameworkElement? CreateIcon()
         {
-#warning 未実装
-            return null;
-#if false
-            if (BitmapContent?.ImageSource != null)
+            var imageSource = (ViewContent.ViewSource as BitmapViewSource)?.Picture.ImageSource;
+
+            if (imageSource != null)
             {
-                return CreateBitmapContentIcon(BitmapContent);
+                return CreateBitmapContentIcon(imageSource);
             }
             else if (Page?.Entry != null)
             {
@@ -111,24 +109,18 @@ namespace NeeView
             }
 
             return null;
-#endif
         }
 
-        private FrameworkElement? CreateBitmapContentIcon(BitmapPageContent bitmapContent)
+        private FrameworkElement? CreateBitmapContentIcon(ImageSource imageSource)
         {
-#warning 未実装
-            return null;
-#if false
-            if (bitmapContent?.ImageSource is null) return null;
-
-            var length = bitmapContent.Size.Width > bitmapContent.Size.Height ? bitmapContent.Size.Width : bitmapContent.Size.Height;
+            var length = imageSource.Width > imageSource.Height ? imageSource.Width : imageSource.Height;
             var retio = IconMaxSize / length;
 
             var image = new Image()
             {
-                Source = bitmapContent.ImageSource,
-                Width = bitmapContent.Size.Width * retio,
-                Height = bitmapContent.Size.Height * retio,
+                Source = imageSource,
+                Width = imageSource.Width * retio,
+                Height = imageSource.Height * retio,
                 Stretch = Stretch.Fill,
                 HorizontalAlignment = HorizontalAlignment.Center,
                 VerticalAlignment = VerticalAlignment.Bottom,
@@ -142,7 +134,6 @@ namespace NeeView
             RenderOptions.SetBitmapScalingMode(image, BitmapScalingMode.HighQuality);
 
             return image;
-#endif
         }
 
         private FrameworkElement CreateSymbolFolderIcon()
@@ -198,21 +189,19 @@ namespace NeeView
             return border;
         }
 
-
-#warning 未実装
         public bool CanOpenPlace()
         {
-            return false;
-            //return ViewContent?.FolderPlace != null;
+            var place = Page?.GetFolderOpenPlace();
+            return !string.IsNullOrWhiteSpace(place);
         }
 
         public void OpenPlace()
         {
-            //var place = ViewContent?.Page?.GetFolderOpenPlace();
-            //if (!string.IsNullOrWhiteSpace(place))
-            //{
-            //    ExternalProcess.Start("explorer.exe", "/select,\"" + place + "\"");
-            //}
+            var place = Page?.GetFolderOpenPlace();
+            if (!string.IsNullOrWhiteSpace(place))
+            {
+                ExternalProcess.Start("explorer.exe", "/select,\"" + place + "\"");
+            }
         }
 
         public bool CanOpenMap()

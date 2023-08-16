@@ -26,6 +26,8 @@ namespace NeeView
 
         public override bool IsMemoryLocked => _pageContent.IsMemoryLocked;
 
+        public Picture Picture => _picture;
+
         public override async Task LoadCoreAsync(DataSource data, Size size, CancellationToken token)
         {
             UpdatePicture(data, size, token);

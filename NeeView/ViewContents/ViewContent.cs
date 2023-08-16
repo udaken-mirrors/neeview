@@ -16,10 +16,11 @@ using NeeView;
 using System.Windows.Input;
 using System.Windows.Threading;
 using NeeView.Windows;
+using NeeLaboratory.Generators;
 
 namespace NeeView
 {
-    public abstract class ViewContent : ContentControl, IDisposable
+    public abstract partial class ViewContent : ContentControl, IDisposable
     {
         private bool _initialized;
         private PageFrameElement _element;
@@ -48,6 +49,11 @@ namespace NeeView
         }
 
 
+        [Subscribable]
+        public event EventHandler? ViewContentChanged;
+
+
+
         public PageFrameActivity Activity => _activity;
 
 
@@ -59,6 +65,8 @@ namespace NeeView
 
         public ViewContentSize ViewContentSize => _viewContentSize;
         public Size LayoutSize => _viewContentSize.LayoutSize;
+
+        public ViewSource ViewSource => _viewSource;
 
 
 
@@ -202,7 +210,9 @@ namespace NeeView
             (Content as IDisposable)?.Dispose();
             Content = CreateContent(LayoutSize, data);
             UpdateSize();
+            ViewContentChanged?.Invoke(this, EventArgs.Empty);
         }
+
 
         protected virtual FrameworkElement CreateContent(Size size, DataSource data)
         {

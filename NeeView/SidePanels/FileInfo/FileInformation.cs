@@ -1,4 +1,6 @@
 ﻿using NeeLaboratory.ComponentModel;
+using NeeLaboratory.Linq;
+using NeeView.PageFrames;
 using NeeView.Windows.Data;
 using NeeView.Windows.Property;
 using System;
@@ -17,8 +19,8 @@ namespace NeeView
         public static FileInformation Current { get; }
         static FileInformation() => Current = new FileInformation();
 
-        
-        private readonly DelayValue<IEnumerable<Page>> _viewContentsDelay;
+
+        private readonly DelayValue<ViewContentChangedEventArgs> _viewContentsDelay;
         private List<FileInformationSource>? _fileInformations;
 
 
@@ -26,13 +28,10 @@ namespace NeeView
         {
             var mainViewComponent = MainViewComponent.Current;
 
-            mainViewComponent.PageFrameBoxPresenter.SelectedRangeChanged +=
-                (s, e) => Update(mainViewComponent.PageFrameBoxPresenter.SelectedPages);
+            mainViewComponent.PageFrameBoxPresenter.ViewContentChanged +=
+                (s, e) => Update(e);
 
-            //mainViewComponent.ContentCanvas.ContentChanged +=
-            //    (s, e) => Update(mainViewComponent.ContentCanvas.Contents);
-
-            _viewContentsDelay = new DelayValue<IEnumerable<Page>>();
+            _viewContentsDelay = new DelayValue<ViewContentChangedEventArgs>();
             _viewContentsDelay.ValueChanged += ViewContentsDelay_ValueChanged;
         }
 
@@ -49,15 +48,20 @@ namespace NeeView
             return FileInformations?.OrderBy(e => e.Page?.Index ?? int.MaxValue).FirstOrDefault();
         }
 
-        public void Update(IEnumerable<Page> pages)
+        public void Update(ViewContentChangedEventArgs e)
         {
-            _viewContentsDelay.SetValue(pages.ToList(), 100); // 100ms delay
+            _viewContentsDelay.SetValue(e, 100); // 100ms delay
         }
 
         private void ViewContentsDelay_ValueChanged(object? sender, EventArgs _)
         {
-            this.FileInformations = _viewContentsDelay.Value?
-                .Reverse()
+            var pageFrameContent = _viewContentsDelay.Value?.PageFrameContent;
+
+            var viewContents = pageFrameContent?.ViewContents ?? new List<ViewContent>();
+            var direction = pageFrameContent?.ViewContentsDirection ?? 1;
+
+            this.FileInformations = viewContents
+                .Direction(direction)
                 //.Where(e => e.IsInformationValid)
                 .Select(e => new FileInformationSource(e))
                 .ToList();

@@ -5,7 +5,6 @@ using System.Threading;
 using System.Windows;
 using System.Windows.Media;
 using System.Diagnostics;
-using static System.Windows.Forms.AxHost;
 using NeeView.ComponentModel;
 
 namespace NeeView

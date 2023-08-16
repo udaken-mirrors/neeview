@@ -114,6 +114,7 @@ namespace NeeView.PageFrames
         public event TransformChangedEventHandler? TransformChanged;
         public event EventHandler? ContentSizeChanged;
         public event EventHandler? ContentChanged;
+        public event EventHandler<ViewContentChangedEventArgs>? ViewContentChanged;
 
 
         public PageFrameActivity Activity => _activity;
@@ -293,6 +294,7 @@ namespace NeeView.PageFrames
 
             _content = content;
             _content.TransformChanged += Content_TransformChanged;
+            _content.ViewContentChanged += Ccontent_ViewContentChanged;
             _content.ContentSizeChanged += Content_ContentSizeChanged;
             _contentControl.Content = _content.Content;
 
@@ -303,11 +305,13 @@ namespace NeeView.PageFrames
             ContentChanged?.Invoke(this, EventArgs.Empty);
         }
 
+
         private void DetachContent()
         {
             if (_content is null) return;
             _contentControl.Content = null;
             _content.TransformChanged -= Content_TransformChanged;
+            _content.ViewContentChanged -= Ccontent_ViewContentChanged;
             _content.ContentSizeChanged -= Content_ContentSizeChanged;
             _content.Dispose();
         }
@@ -316,6 +320,14 @@ namespace NeeView.PageFrames
         {
             UpdateFrame();
             TransformChanged?.Invoke(this, e);
+        }
+
+        private void Ccontent_ViewContentChanged(object? sender, EventArgs e)
+        {
+            if (_content is PageFrameContent pageFrameContent)
+            {
+                ViewContentChanged?.Invoke(this, new ViewContentChangedEventArgs(pageFrameContent));
+            }
         }
 
         private void Content_ContentSizeChanged(object? sender, EventArgs e)
@@ -391,5 +403,18 @@ namespace NeeView.PageFrames
             SetX(-Width * 0.5, 0.0);
             SetY(-Height * 0.5, 0.0);
         }
+    }
+
+
+
+
+    public class ViewContentChangedEventArgs : EventArgs
+    {
+        public ViewContentChangedEventArgs(PageFrameContent pageFrameContent)
+        {
+            PageFrameContent = pageFrameContent;
+        }
+
+        public PageFrameContent PageFrameContent { get; private set; }
     }
 }

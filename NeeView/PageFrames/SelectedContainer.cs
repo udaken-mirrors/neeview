@@ -26,18 +26,14 @@ namespace NeeView.PageFrames
             Set(_containers.CollectNode().First());
         }
 
-
-        private void Containers_CollectionChanged(object? sender, PageFrameContainerCollectionChangedEventArgs e)
-        {
-            // 選択ノードが削除されたときの再選出
-            if (e.Node == _node && e.Action == PageFrameContainerCollectionChangedEventAction.Remove)
-            {
-                SetAuto();
-            }
-        }
-
+        [Subscribable]
         public event PropertyChangedEventHandler? PropertyChanged;
+
+        [Subscribable]
         public event EventHandler? IsDartyChanged;
+
+        [Subscribable]
+        public event EventHandler<ViewContentChangedEventArgs>? ViewContentChanged;
 
 
         public LinkedListNode<PageFrameContainer> Node => _node;
@@ -50,6 +46,36 @@ namespace NeeView.PageFrames
         public PagePosition PagePosition => _node.Value.Identifier;
 
         public bool IsValid => _node.Value.Content is PageFrameContent;
+
+
+        private void Dispose(bool disposing)
+        {
+            if (!_disposedValue)
+            {
+                if (disposing)
+                {
+                    Detach();
+                    _containers.CollectionChanging -= Containers_CollectionChanged;
+                }
+
+                _disposedValue = true;
+            }
+        }
+
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
+        
+        private void Containers_CollectionChanged(object? sender, PageFrameContainerCollectionChangedEventArgs e)
+        {
+            // 選択ノードが削除されたときの再選出
+            if (e.Node == _node && e.Action == PageFrameContainerCollectionChangedEventAction.Remove)
+            {
+                SetAuto();
+            }
+        }
 
 
         [MemberNotNull(nameof(_node))]
@@ -78,14 +104,22 @@ namespace NeeView.PageFrames
         private void Attach()
         {
             _node.Value.ContentChanged += Container_ContentChanged;
+            _node.Value.ViewContentChanged += Container_ViewContentChanged;
             _node.Value.Activity.IsSelected = true;
+
+            if (_node.Value.Content is PageFrameContent content)
+            {
+                ViewContentChanged?.Invoke(this, new ViewContentChangedEventArgs(content));
+            }
         }
+
 
         private void Detach()
         {
             if (_node is null) return;
 
             _node.Value.ContentChanged -= Container_ContentChanged;
+            _node.Value.ViewContentChanged -= Container_ViewContentChanged;
             _node.Value.Activity.IsSelected = false;
         }
 
@@ -94,25 +128,12 @@ namespace NeeView.PageFrames
             RaisePropertyChanged(nameof(PagePosition));
         }
 
-        private void Dispose(bool disposing)
+        private void Container_ViewContentChanged(object? sender, ViewContentChangedEventArgs e)
         {
-            if (!_disposedValue)
-            {
-                if (disposing)
-                {
-                    Detach();
-                    _containers.CollectionChanging -= Containers_CollectionChanged;
-                }
-
-                _disposedValue = true;
-            }
+            ViewContentChanged?.Invoke(this, e);
         }
 
-        public void Dispose()
-        {
-            Dispose(disposing: true);
-            GC.SuppressFinalize(this);
-        }
+
     }
 
 

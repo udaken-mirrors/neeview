@@ -45,6 +45,9 @@ namespace NeeView.Presenter
         [Subscribable]
         public event EventHandler? SelectedRangeChanged;
 
+        [Subscribable]
+        public event EventHandler<ViewContentChangedEventArgs>? ViewContentChanged;
+
 
         public bool IsEnabled => _box != null;
 
@@ -106,6 +109,7 @@ namespace NeeView.Presenter
             _bookContext.PropertyChanged += BookContext_PropertyChanged;
 
             _box = new PageFrameBox(_bookContext);
+            _box.ViewContentChanged += Box_ViewContentChanged;
             RaisePropertyChanged(nameof(View));
 
             RaisePropertyChanged(null);
@@ -114,14 +118,17 @@ namespace NeeView.Presenter
         }
 
 
-
         private void Close()
         {
             if (_box is null) return;
 
             Debug.Assert(_box is PageFrameBox);
-            (_box as IDisposable)?.Dispose();
-            _box = null;
+            if (_box is not null)
+            {
+                (_box as IDisposable)?.Dispose();
+                _box.ViewContentChanged -= Box_ViewContentChanged;
+                _box = null;
+            }
             RaisePropertyChanged(nameof(View));
 
 
@@ -137,6 +144,12 @@ namespace NeeView.Presenter
 
             GC.Collect();
             GC.WaitForFullGCComplete();
+        }
+
+
+        private void Box_ViewContentChanged(object? sender, ViewContentChangedEventArgs e)
+        {
+            ViewContentChanged?.Invoke(this, e);
         }
 
 

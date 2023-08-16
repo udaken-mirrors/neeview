@@ -73,29 +73,9 @@ namespace NeeView.PageFrames
 
 
 
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!_disposedValue)
-            {
-                if (disposing)
-                {
-                    DetachTransorm();
-                    _disposables.Dispose();
-                }
-                _disposedValue = true;
-            }
-        }
-
-        public void Dispose()
-        {
-            Dispose(disposing: true);
-            GC.SuppressFinalize(this);
-        }
-
-
-
         public event TransformChangedEventHandler? TransformChanged;
+        
+        public event EventHandler? ViewContentChanged;
 
         public event EventHandler? ContentSizeChanged;
 
@@ -126,6 +106,30 @@ namespace NeeView.PageFrames
             set => _dartyLevel = _dartyLevel < value ? value : _dartyLevel;
         }
 
+        public  List<ViewContent> ViewContents =>  _viewContents;
+
+        public int ViewContentsDirection => _pageFrame.Direction;
+
+
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!_disposedValue)
+            {
+                if (disposing)
+                {
+                    DetachTransorm();
+                    _disposables.Dispose();
+                }
+                _disposedValue = true;
+            }
+        }
+
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
 
         private void Transform_TransformChanged(object? sender, TransformChangedEventArgs e)
         {
@@ -220,10 +224,16 @@ namespace NeeView.PageFrames
             {
                 content.Initialize();
                 contentCanvas.Children.Add(content);
+                _disposables.Add(content.SubscribeViewContentChanged(ViewContent_Changed));
             }
 
             UpdateTransform();
             UpdateElementLayout();
+        }
+
+        private void ViewContent_Changed(object? sender, EventArgs e)
+        {
+            ViewContentChanged?.Invoke(this, EventArgs.Empty);
         }
 
         private void UpdateTransform()

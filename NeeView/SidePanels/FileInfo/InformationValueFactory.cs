@@ -58,7 +58,7 @@ namespace NeeView
 
         private object? CreateInformationImageValue(InformationKey key)
         {
-            var pictureInfo = _source.BitmapContent?.PictureInfo;
+            var pictureInfo = _source.Page?.Content.PictureInfo;
 
             switch (key)
             {
@@ -74,7 +74,7 @@ namespace NeeView
                 case InformationKey.Decoder:
 #warning not implement yet
                     //return ((_source.BitmapContent is AnimatedContent animatedContent && animatedContent.IsAnimated) || _source.BitmapContent is MediaContent) ? "MediaPlayer" : pictureInfo?.Decoder;
-                    return "not implement yet.";
+                    return pictureInfo?.Decoder;
                 default:
                     throw new NotSupportedException();
             }

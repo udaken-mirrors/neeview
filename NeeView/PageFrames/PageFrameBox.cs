@@ -130,6 +130,8 @@ namespace NeeView.PageFrames
                 (s, e) => _context.SelectedRange = _selected.PageRange));
             _disposables.Add(_selected.SubscribePropertyChanged(nameof(_selected.Page),
                 (s, e) => _background.SetPage(_context.IsStaticFrame ? _selected.Page : null)));
+            _disposables.Add(_selected.SubscribeViewContentChanged(
+                 (s, e) => ViewContentChanged?.Invoke(this, e)));
 
             _scrollViewer.SizeChanged += _context.SetCanvasSize;
             _containers.CollectionChanged += ContainerCollection_CollectionChanged;
@@ -152,6 +154,8 @@ namespace NeeView.PageFrames
         [Subscribable]
         public event EventHandler<PageTerminatedEventArgs>? PageTerminated;
 
+        [Subscribable]
+        public event EventHandler<ViewContentChangedEventArgs>? ViewContentChanged;
 
 
         public DragTransformContextFactory DragTransformContextFactory => _dragTransformContextFactory;
