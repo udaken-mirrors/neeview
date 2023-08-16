@@ -69,9 +69,7 @@ namespace NeeView
             this.Normal.MouseWheelChanged += (s, e) => MouseWheelChanged?.Invoke(_sender, e);
             this.Normal.MouseHorizontalWheelChanged += (s, e) => MouseHorizontalWheelChanged?.Invoke(_sender, e);
 
-#warning not imprement loupe
-#if false
-            if (_context.LoupeTransform != null)
+            if (_context.DragTransformContextFactory != null)
             {
                 this.Loupe = new MouseInputLoupe(_context);
                 this.Loupe.StateChanged += StateChanged;
@@ -79,7 +77,6 @@ namespace NeeView
                 this.Loupe.MouseWheelChanged += (s, e) => MouseWheelChanged?.Invoke(_sender, e);
                 this.Loupe.MouseHorizontalWheelChanged += (s, e) => MouseHorizontalWheelChanged?.Invoke(_sender, e);
             }
-#endif
 
             if (_context.DragTransformControl != null)
             {
@@ -124,11 +121,8 @@ namespace NeeView
             _sender.Unloaded += (s, e) => ReleaseMouseHorizontalWheel();
             InitializeMouseHorizontalWheel();
 
-#warning not imprement loupe
-#if false
             // ルーペモード監視
-            _context.LoupeTransform?.AddPropertyChanged(nameof(LoupeTransform.IsEnabled), LoupeTransform_IsEnabledChanged);
-#endif
+            _context.Loupe?.SubscribePropertyChanged(nameof(LoupeContext.IsEnabled), LoupeContext_IsEnabledChanged);
         }
 
 
@@ -198,15 +192,12 @@ namespace NeeView
         public MouseInputGesture? Gesture { get; private set; }
 
 
-        private void LoupeTransform_IsEnabledChanged(object? sender, PropertyChangedEventArgs e)
+        private void LoupeContext_IsEnabledChanged(object? sender, PropertyChangedEventArgs e)
         {
-#warning not imprement loupe
-#if false
-            if (_state == MouseInputState.Loupe && (_context.LoupeTransform is null || !_context.LoupeTransform.IsEnabled))
+            if (_state == MouseInputState.Loupe && (_context.Loupe is null || !_context.Loupe.IsEnabled))
             {
                 SetState(MouseInputState.Normal, null);
             }
-#endif
         }
 
         /// <summary>

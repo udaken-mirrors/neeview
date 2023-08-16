@@ -19,8 +19,10 @@ namespace NeeView.PageFrames
             _context = context;
         }
 
-
+        [Subscribable]
         public event PropertyChangedEventHandler? PropertyChanged;
+
+        [Subscribable]
         public event TransformChangedEventHandler? TransformChanged;
 
 

@@ -83,7 +83,8 @@ namespace NeeView.PageFrames
 
             var loupeContext = new LoupeTransformContext(_context);
             var viewTransform = new PageFrameViewTransform(_context, loupeContext);
-            viewTransform.TransformChanged += ViewTransform_TransformChanged;
+            _disposables.Add(viewTransform.SubscribeTransformChanged(ViewTransform_TransformChanged));
+            _disposables.Add(viewTransform);
 
             _transformMap = new PageFrameTransformMap();
             _transformMap.IsFlipLocked = _context.IsFlipLocked;

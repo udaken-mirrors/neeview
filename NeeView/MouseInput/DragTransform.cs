@@ -136,37 +136,6 @@ namespace NeeView
             _context.Transform.SetPoint(pos, span);
         }
 
-#if false
-        /// <summary>
-        /// 角度の正規化
-        /// </summary>
-        /// <remarks>
-        /// ループする値を正規化する
-        /// </remarks>
-        /// <param name="val">元の値</param>
-        /// <param name="min">最小値</param>
-        /// <param name="max">最大値</param>
-        /// <returns></returns>
-        /// <exception cref="ArgumentException"></exception>
-        public static double NormalizeLoopRange(double val, double min, double max)
-        {
-            if (min >= max) throw new ArgumentException("need min < max");
-
-            if (val >= max)
-            {
-                return min + (val - min) % (max - min);
-            }
-            else if (val < min)
-            {
-                return max - (min - val) % (max - min);
-            }
-            else
-            {
-                return val;
-            }
-        }
-#endif
-
         // 反転実行
         public void DoFlipHorizontal(bool isFlip, TimeSpan span)
         {

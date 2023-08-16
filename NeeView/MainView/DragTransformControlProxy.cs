@@ -17,8 +17,6 @@ namespace NeeView
             _presenter.PageFrameBoxChanged += Presenter_PageFrameBoxChanged;
         }
 
-        //public DragTransformControl? DragTransformControl => _dragTransformControl;
-
         protected virtual void Dispose(bool disposing)
         {
             if (!_disposedValue)
@@ -66,6 +64,8 @@ namespace NeeView
             _dragTransformControl?.MouseWheel(buttons, keys, e);
         }
     }
+
+
 
 
 }

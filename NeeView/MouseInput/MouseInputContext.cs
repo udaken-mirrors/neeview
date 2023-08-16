@@ -1,5 +1,5 @@
 ﻿using NeeLaboratory.ComponentModel;
-using System;
+using NeeView.PageFrames;
 using System.Runtime.Serialization;
 using System.Windows;
 using System.Windows.Input;
@@ -8,13 +8,16 @@ namespace NeeView
 {
     public class MouseInputContext : BindableBase
     {
-        public MouseInputContext(FrameworkElement sender, MouseGestureCommandCollection? gestureCommandCollection, IDragTransformControl? dragTransformControl, DragTransform? dragTransform)
+
+        public MouseInputContext(FrameworkElement sender, MouseGestureCommandCollection? gestureCommandCollection, IDragTransformContextFactory? dragTransformContextFactory, IDragTransformControl? dragTransformControl, DragTransform? dragTransform, LoupeContext? loupe)
         {
             this.Sender = sender;
             this.GestureCommandCollection = gestureCommandCollection;
+            this.DragTransformContextFactory = dragTransformContextFactory;
             this.DragTransformControl = dragTransformControl;
             this.DragTransform = dragTransform;
             //this.LoupeTransform = loupeTransform;
+            this.Loupe = loupe;
         }
 
 
@@ -22,16 +25,20 @@ namespace NeeView
         /// イベント受取エレメント
         /// </summary>
         public FrameworkElement Sender { get; init; }
-        
+
+        public LoupeContext? Loupe { get; init; }
+
         /// <summary>
         /// ジェスチャーコマンドテーブル
         /// </summary>
         public MouseGestureCommandCollection? GestureCommandCollection { get; init; }
 
+        public IDragTransformContextFactory? DragTransformContextFactory { get; init; }
+
         public IDragTransformControl? DragTransformControl { get; init; }
-            
+
         public DragTransform? DragTransform { get; init; }
-            
+
         //public LoupeTransform? LoupeTransform { get; init; }
 
         public bool IsGestureEnabled { get; init; } = true;

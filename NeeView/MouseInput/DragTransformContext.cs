@@ -10,7 +10,7 @@ namespace NeeView
     /// <summary>
     /// 表示座標系操作のリソース
     /// </summary>
-    public class DragTransformContext
+    public class DragTransformContext 
     {
         private int _speedLatestTimestamp;
         private Point _speedLatestPoint;

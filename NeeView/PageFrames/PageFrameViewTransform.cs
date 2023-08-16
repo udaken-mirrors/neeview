@@ -1,41 +1,69 @@
-﻿using System;
+﻿using NeeLaboratory.ComponentModel;
+using NeeLaboratory.Generators;
+using System;
 using System.Windows;
 using System.Windows.Media;
 
 namespace NeeView.PageFrames
 {
-    public class PageFrameViewTransform : IPointControl, INotifyTransformChanged
+    public partial class PageFrameViewTransform : IPointControl, INotifyTransformChanged, IDisposable
     {
         private MultiTransform _transform = new MultiTransform();
         private LoupeTransformContext _loupeContext;
-
+        private bool _disposedValue;
+        private DisposableCollection _disposables = new();
 
         public PageFrameViewTransform(BookContext context, LoupeTransformContext loupeContext)
         {
             _loupeContext = loupeContext;
+            _disposables.Add(_loupeContext.SubscribeTransformChanged(LoupeContext_TransformChanged));
+            _disposables.Add(context.SubscribePropertyChanged(nameof(context.PageMode), (s, e) => Update()));
 
-            TransformView = new TransformGroup();
-            TransformView.Children.Add(_transform.TransformView);
-            TransformView.Children.Add(_loupeContext.GetCanvasTransform());
-
-            TransformCalc = new TransformGroup();
-            TransformCalc.Children.Add(_transform.TransformCalc);
-            TransformCalc.Children.Add(_loupeContext.GetCanvasTransform());
-
-            loupeContext.TransformChanged += LoupeContext_TransformChanged;
+            Update();
         }
 
 
+        [Subscribable]
         public event TransformChangedEventHandler? TransformChanged;
 
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!_disposedValue)
+            {
+                if (disposing)
+                {
+                    _disposables.Dispose();
+                }
+
+                _disposedValue = true;
+            }
+        }
+
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
+
+        private void Update()
+        {
+            TransformView.Children.Clear();
+            TransformView.Children.Add(_transform.TransformView);
+            TransformView.Children.Add(_loupeContext.GetCanvasTransform());
+
+            TransformCalc.Children.Clear();
+            TransformCalc.Children.Add(_transform.TransformCalc);
+            TransformCalc.Children.Add(_loupeContext.GetCanvasTransform());
+        }
 
         private void LoupeContext_TransformChanged(object? sender, TransformChangedEventArgs e)
         {
             TransformChanged?.Invoke(sender, e);
         }
 
-        public TransformGroup TransformView { get; private set; }
-        public TransformGroup TransformCalc { get; private set; }
+        public TransformGroup TransformView { get; private set; } = new();
+        public TransformGroup TransformCalc { get; private set; } = new();
 
         public Point Point => _transform.Point;
 
@@ -63,5 +91,6 @@ namespace NeeView.PageFrames
         {
             _transform.Flush();
         }
+
     }
 }

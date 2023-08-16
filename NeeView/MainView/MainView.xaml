@@ -13,9 +13,12 @@
         <local:NullableToVisibilityConverter x:Key="NullableToVisibilityConverter" />
     </UserControl.Resources>
 
-    <Grid x:Name="MainViewPanel" ContextMenu="{Binding ContextMenu}" ContextMenuOpening="MainViewPanel_ContextMenuOpening" Background="{Binding ContentCanvasBrush.BackgroundBrush}">
+    <Grid x:Name="MainViewPanel" ContextMenu="{Binding ContextMenu}" ContextMenuOpening="MainViewPanel_ContextMenuOpening" Background="Transparent" >
+        <!--
+        Background="{Binding ContentCanvasBrush.BackgroundBrush}"
         <Rectangle x:Name="FrontBackground" Fill="{Binding ContentCanvasBrush.BackgroundFrontBrush}" RenderOptions.BitmapScalingMode="HighQuality" IsHitTestVisible="False"
                 Visibility="{Binding ContentCanvasBrush.BackgroundFrontBrush, Converter={StaticResource NullableToVisibilityConverter}}" />
+        -->
 
         <Grid x:Name="MainViewCanvas" Effect="{Binding ImageEffect.Effect}" Margin="{Binding MainViewMergin}">
 
@@ -76,9 +79,9 @@
 
         <!-- loupe info -->
         <Grid Visibility="{Binding Source={x:Static local:Config.Current}, Path=Loupe.IsVisibleLoupeInfo, Converter={StaticResource BooleanToVisibilityConverter}}">
-            <Grid x:Name="LoupeInfo" Height="30" VerticalAlignment="Top" HorizontalAlignment="Right" DataContext="{Binding LoupeTransform}"
+            <Grid x:Name="LoupeInfo" Height="30" VerticalAlignment="Top" HorizontalAlignment="Right" DataContext="{Binding LoupeContext}"
                     Visibility="{Binding IsEnabled, Converter={StaticResource BooleanToVisibilityConverter}}" Margin="{Binding ElementName=MainViewCanvas, Path=Margin}" Background="{DynamicResource Notification.Background}">
-                <TextBlock VerticalAlignment="Center" Padding="20,0" Foreground="{DynamicResource Notification.Foreground}" Text="{Binding ScaleX, StringFormat={}×{0:.0}}" />
+                <TextBlock VerticalAlignment="Center" Padding="20,0" Foreground="{DynamicResource Notification.Foreground}" Text="{Binding Scale, StringFormat={}×{0:.0}}" />
             </Grid>
         </Grid>
 

@@ -56,7 +56,7 @@ namespace NeeView
 
         public InfoMessage InfoMessage => InfoMessage.Current;
 
-        //public LoupeTransform LoupeTransform => _viewComponent.LoupeTransform;
+        public LoupeContext LoupeContext => _viewComponent.LoupeContext;
 
         public MouseInput MouseInput => _viewComponent.MouseInput;
 

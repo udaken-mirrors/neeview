@@ -15,19 +15,70 @@ namespace NeeView
     /// </summary>
     public class MouseInputLoupe : MouseInputBase
     {
-#warning not supprt yet Loupe
-        //private readonly LoupeTransform _loupe;
-        private Point _loupeBasePosition;
+        private readonly LoupeContext _loupe;
         private bool _isLongDownMode;
         private bool _isButtonDown;
+
+        // TODO: LoupeDragAction 操作でなくてもここで LoupeDragTransformControl 直接操作でいけそう？
 
 
         public MouseInputLoupe(MouseInputContext context) : base(context)
         {
-            //if (context.LoupeTransform is null) throw new InvalidOperationException();
-            //_loupe = context.LoupeTransform;
+            if (context.Loupe is null) throw new InvalidOperationException();
+            _loupe = context.Loupe;
         }
 
+        private DragActionControl? _action;
+
+
+        private void SetAction(DragActionControl? action)
+        {
+            _action?.Dispose();
+            _action = action;
+        }
+
+        private void ClearAction()
+        {
+            SetAction(null);
+        }
+
+        private void BeginAction(Point point, int timestamp)
+        {
+            if (_action is null) return;
+            _action.Context.Initialize(point, timestamp);
+            _action.ExecuteBegin();
+        }
+
+        private void DoAction(Point point, int timestamp)
+        {
+            if (_action is null) return;
+            _action.Context.Update(point, timestamp);
+            _action.Context.UpdateSpeed(point, timestamp);
+            _action.Execute();
+        }
+
+        private void WheelAction(MouseWheelEventArgs e)
+        {
+            if (_action is null) return;
+            _action.MouseWheel(e);
+        }
+
+        private void EndAction(Point point, int timestamp, bool continued)
+        {
+            if (_action is null) return;
+            _action.Context.Update(point, timestamp);
+            _action.Context.UpdateSpeed(point, timestamp);
+            _action.ExecuteEnd(continued);
+        }
+
+        private Point ToDragCoord(Point point)
+        {
+            var x = point.X - _context.Sender.ActualWidth * 0.5;
+            var y = point.Y - _context.Sender.ActualHeight * 0.5;
+            return new Point(x, y);
+        }
+
+        private LoupeDragTransformContext? _transformContext;
 
         /// <summary>
         /// 状態開始処理
@@ -36,6 +87,15 @@ namespace NeeView
         /// <param name="parameter">trueならば長押しモード</param>
         public override void OnOpened(FrameworkElement sender, object? parameter)
         {
+            _transformContext = _context.DragTransformContextFactory?.CreateDragTransformContext(false, true) as LoupeDragTransformContext;
+            if (_transformContext is null) throw new NotImplementedException(); // TODO: モード拒否
+
+            _transformContext.AttachLoupeContext(_loupe);
+
+            var action = new LoupeDragAction().CreateControl(_transformContext);
+            SetAction(action);
+            BeginAction(ToDragCoord(Mouse.GetPosition(sender)), System.Environment.TickCount);
+
             if (parameter is bool isLongDownMode)
             {
                 _isLongDownMode = isLongDownMode;
@@ -48,19 +108,12 @@ namespace NeeView
             sender.Focus();
             sender.Cursor = Cursors.None;
 
-            _context.StartPoint = Mouse.GetPosition(sender);
-            _context.StartTimestamp = System.Environment.TickCount;
-            var center = new Point(sender.ActualWidth * 0.5, sender.ActualHeight * 0.5);
-            Vector v = _context.StartPoint - center;
-            //_loupeBasePosition = (Point)(Config.Current.Loupe.IsLoupeCenter ? -v : -v + v / _loupe.Scale);
-            //_loupe.Position = _loupeBasePosition;
-
-            //_loupe.IsEnabled = true;
+            _loupe.IsEnabled = true;
             _isButtonDown = false;
 
             if (Config.Current.Loupe.IsResetByRestart)
             {
-                //_loupe.Scale = Config.Current.Loupe.DefaultScale;
+                Config.Current.Loupe.LoupeScale = Config.Current.Loupe.DefaultScale;
             }
         }
 
@@ -72,7 +125,13 @@ namespace NeeView
         {
             sender.Cursor = null;
 
-            //_loupe.IsEnabled = false;
+            EndAction(ToDragCoord(Mouse.GetPosition(sender)), System.Environment.TickCount, false);
+            ClearAction();
+
+            _loupe.IsEnabled = false;
+
+            _transformContext?.DetachLoupeContext();
+            _transformContext = null;
         }
 
 
@@ -150,8 +209,7 @@ namespace NeeView
         public override void OnMouseMove(object? sender, MouseEventArgs e)
         {
             var point = e.GetPosition(_context.Sender);
-            //_loupe.Position = _loupeBasePosition - (point - _context.StartPoint) * Config.Current.Loupe.Speed;
-
+            DoAction(ToDragCoord(point), e.Timestamp);
             e.Handled = true;
         }
 
@@ -164,15 +222,7 @@ namespace NeeView
         {
             if (Config.Current.Loupe.IsWheelScalingEnabled)
             {
-                if (e.Delta > 0)
-                {
-                    //_loupe.ZoomIn();
-                }
-                else
-                {
-                    //_loupe.ZoomOut();
-                }
-
+                WheelAction(e);
                 e.Handled = true;
             }
             else
