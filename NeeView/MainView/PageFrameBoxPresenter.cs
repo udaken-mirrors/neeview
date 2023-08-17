@@ -17,9 +17,10 @@ namespace NeeView.Presenter
         private Config _config;
         private BookHub _bookHub;
 
-        private IBook? _book;
+        private Book? _book;
         private BookContext? _bookContext;
         private PageFrameBox? _box;
+        private BookCommandControl? _pageControl;
         private bool _isLoading;
 
 
@@ -76,6 +77,8 @@ namespace NeeView.Presenter
 
         public PageFrameBox? View => _box;
 
+        public BookCommandControl? PageControl => _pageControl;
+
 
         private void BookHub_BookChanging(object? sender, EventArgs e)
         {
@@ -96,7 +99,7 @@ namespace NeeView.Presenter
             });
         }
 
-        private void Open(IBook? book)
+        private void Open(Book? book)
         {
             Close();
             if (book is null) return;
@@ -110,8 +113,10 @@ namespace NeeView.Presenter
 
             _box = new PageFrameBox(_bookContext);
             _box.ViewContentChanged += Box_ViewContentChanged;
-            RaisePropertyChanged(nameof(View));
 
+            _pageControl = new BookCommandControl(_bookContext, _box);
+
+            RaisePropertyChanged(nameof(View));
             RaisePropertyChanged(null);
             PagesChanged?.Invoke(this, EventArgs.Empty);
             SelectedRangeChanged?.Invoke(this, EventArgs.Empty);
@@ -122,6 +127,9 @@ namespace NeeView.Presenter
         {
             if (_box is null) return;
 
+            _pageControl?.Dispose();
+            _pageControl = null;
+
             Debug.Assert(_box is PageFrameBox);
             if (_box is not null)
             {
@@ -130,7 +138,6 @@ namespace NeeView.Presenter
                 _box = null;
             }
             RaisePropertyChanged(nameof(View));
-
 
             Debug.Assert(_bookContext is not null);
             _bookContext.PagesChanged -= BookContext_PagesChanged;

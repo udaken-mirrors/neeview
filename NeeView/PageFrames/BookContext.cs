@@ -33,7 +33,7 @@ namespace NeeView.PageFrames
     [NotifyPropertyChanged]
     public partial class BookContext : INotifyPropertyChanged, IStaticFrame, IDisposable, IContentSizeCalculatorProfie, IBookPageContext
     {
-        private readonly IBook _book;
+        private readonly Book _book;
         private readonly Config _config;
         //private readonly BookPageViewSetting _bookSetting;
         private readonly BookSettingConfig _bookSetting;
@@ -44,13 +44,13 @@ namespace NeeView.PageFrames
         private bool _disposedValue;
 
 
-        public static BookContext CreateDummyBookContext(Config config)
-        {
-            return new BookContext(new EmptyBook(), config); //, new BookPageViewSetting());
-        }
+        //public static BookContext CreateDummyBookContext(Config config)
+        //{
+        //    return new BookContext(new EmptyBook(), config); //, new BookPageViewSetting());
+        //}
 
 
-        public BookContext(IBook book, Config config) //, BookPageViewSetting bookSetting)
+        public BookContext(Book book, Config config) //, BookPageViewSetting bookSetting)
         {
             _book = book;
             _config = config;
@@ -97,7 +97,7 @@ namespace NeeView.PageFrames
 
         public bool IsEnabled => _book.Pages.Any();
 
-        public IBook Book => _book;
+        public Book Book => _book;
         public IReadOnlyList<Page> Pages => _book.Pages;
 
         public PagePosition FirstPosition => Pages.Any() ? PagePosition.Zero : PagePosition.Empty;
@@ -124,7 +124,7 @@ namespace NeeView.PageFrames
         public BookMemoryService BookMemoryService => _book.BookMemoryService;
 
         public PageFrameOrientation FrameOrientation => _config.Book.Orientation;
-        public double FrameMargin => _config.Book.FrameSpace;
+        public double FrameMargin => IsStaticFrame ? 0.0 : _config.Book.FrameSpace;
         public double ContentsSpace => _config.Book.ContentsSpace;
         public PageStretchMode StretchMode => _config.View.StretchMode;
         public AutoRotateType AutoRotateType => _config.View.AutoRotate;
@@ -141,8 +141,8 @@ namespace NeeView.PageFrames
         public bool IsSupportedWidePage => _bookSetting.IsSupportedWidePage && _bookSetting.PageMode == PageMode.WidePage;
         public bool IsSupportedSingleFirstPage => _bookSetting.IsSupportedSingleFirstPage && _bookSetting.PageMode == PageMode.WidePage;
         public bool IsSupportedSingleLastPage => _bookSetting.IsSupportedSingleLastPage && _bookSetting.PageMode == PageMode.WidePage;
-        public bool IsRecursiveFolder => _config.BookSetting.IsRecursiveFolder;
-        public PageSortMode SortMode => _config.BookSetting.SortMode;
+        public bool IsRecursiveFolder => _bookSetting.IsRecursiveFolder;
+        public PageSortMode SortMode => _bookSetting.SortMode;
 
         public bool IsStaticFrame => _frameProfile.IsStaticFrame;
         public Size CanvasSize => _frameProfile.CanvasSize;
@@ -257,7 +257,7 @@ namespace NeeView.PageFrames
         {
             switch (e.PropertyName)
             {
-                case nameof(BookPageViewSetting.PageMode):
+                case nameof(BookSettingConfig.PageMode):
                     RaisePropertyChanged(nameof(PageMode));
                     //RaisePropertyChanged(nameof(IsSupportedDividePage));
                     //RaisePropertyChanged(nameof(IsSupportedWidePage));
@@ -265,24 +265,32 @@ namespace NeeView.PageFrames
                     //RaisePropertyChanged(nameof(IsSupportedSingleLastPage));
                     break;
 
-                case nameof(BookPageViewSetting.BookReadOrder):
+                case nameof(BookSettingConfig.BookReadOrder):
                     RaisePropertyChanged(nameof(ReadOrder));
                     break;
 
-                case nameof(BookPageViewSetting.IsSupportedDividePage):
+                case nameof(BookSettingConfig.IsSupportedDividePage):
                     RaisePropertyChanged(nameof(IsSupportedDividePage));
                     break;
 
-                case nameof(BookPageViewSetting.IsSupportedWidePage):
+                case nameof(BookSettingConfig.IsSupportedWidePage):
                     RaisePropertyChanged(nameof(IsSupportedWidePage));
                     break;
 
-                case nameof(BookPageViewSetting.IsSupportedSingleFirstPage):
+                case nameof(BookSettingConfig.IsSupportedSingleFirstPage):
                     RaisePropertyChanged(nameof(IsSupportedSingleFirstPage));
                     break;
 
-                case nameof(BookPageViewSetting.IsSupportedSingleLastPage):
+                case nameof(BookSettingConfig.IsSupportedSingleLastPage):
                     RaisePropertyChanged(nameof(IsSupportedSingleLastPage));
+                    break;
+
+                case nameof(BookSettingConfig.SortMode):
+                    RaisePropertyChanged(nameof(SortMode));
+                    break;
+
+                case nameof(BookSettingConfig.IsRecursiveFolder):
+                    RaisePropertyChanged(nameof(IsRecursiveFolder));
                     break;
             }
         }

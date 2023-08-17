@@ -62,7 +62,14 @@ namespace NeeView
         public PageSortMode SortMode
         {
             get => _sortMode;
-            set => SetProperty(ref _sortMode, value);
+            set
+            {
+                if (SetProperty(ref _sortMode, value))
+                {
+                    // ## 
+                    //Sort(CancellationToken.None);
+                }
+            }
         }
 
 

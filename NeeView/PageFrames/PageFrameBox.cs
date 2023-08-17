@@ -136,9 +136,14 @@ namespace NeeView.PageFrames
 
             _scrollViewer.SizeChanged += _context.SetCanvasSize;
             _containers.CollectionChanged += ContainerCollection_CollectionChanged;
-            _context.PropertyChanged += Context_PropertyChanged;
-            _context.SizeChanging += Context_SizeChanging;
-            _context.SizeChanged += Context_SizeChanged;
+
+            _disposables.Add(_context.SubscribePropertyChanged(
+                (s, e) => AppDispatcher.BeginInvoke(() => Context_PropertyChanged(s, e))));
+            _disposables.Add(_context.SubscribeSizeChanging(Context_SizeChanging));
+            _disposables.Add(_context.SubscribeSizeChanged(Context_SizeChanged));
+            _disposables.Add(_context.SubscribePagesChanged(
+                (s, e) => AppDispatcher.BeginInvoke(() => Context_PagesChanged(s, e))));
+
             //_context.SelectedItemChanged += Context_SelectedItemChanged;
             _visiblePageWatcher.VisibleContainersChanged += VisibePageWatcher_VisibleContainersChanged;
             _viewBox.RectChanging += ViewBox_RectChanging;
@@ -146,6 +151,7 @@ namespace NeeView.PageFrames
 
             Loaded += PageFrameBox_Loaded;
         }
+
 
         [Subscribable]
         public event PropertyChangedEventHandler? PropertyChanged;
@@ -212,9 +218,10 @@ namespace NeeView.PageFrames
                 {
                     _scrollViewer.SizeChanged -= _context.SetCanvasSize;
                     _containers.CollectionChanged -= ContainerCollection_CollectionChanged;
-                    _context.PropertyChanged -= Context_PropertyChanged;
-                    _context.SizeChanging -= Context_SizeChanging;
-                    _context.SizeChanged -= Context_SizeChanged;
+                    //_context.PropertyChanged -= Context_PropertyChanged;
+                    //_context.SizeChanging -= Context_SizeChanging;
+                    //_context.SizeChanged -= Context_SizeChanged;
+                    //_context.PagesChanged -= Context_PagesChanged;
                     //_context.SelectedItemChanged -= Context_SelectedItemChanged;
                     _visiblePageWatcher.VisibleContainersChanged -= VisibePageWatcher_VisibleContainersChanged;
                     _viewBox.RectChanging -= ViewBox_RectChanging;
@@ -306,6 +313,12 @@ namespace NeeView.PageFrames
             UpdateContainers(PageFrameDartyLevel.Moderate);
         }
 
+
+        private void Context_PagesChanged(object? sender, EventArgs e)
+        {
+            ResetContainers();
+        }
+
 #if false
         private void Context_SelectedItemChanged(object? sender, SelectedItemChangedEventArgs e)
         {
@@ -355,6 +368,12 @@ namespace NeeView.PageFrames
             Cleanup();
         }
 
+        public void FlushLayout()
+        {
+            _layout.Flush();
+            _scrollViewer.FlushScroll();
+            Cleanup();
+        }
 
         /// <summary>
         /// ViewRect 変更に伴う処理
@@ -424,6 +443,14 @@ namespace NeeView.PageFrames
                         MoveTo(_selected.PagePosition.Truncate(), LinkedListDirection.Next);
                     }
                     break;
+
+                case nameof(BookContext.SortMode):
+                    // 別処理
+                    return;
+
+                case nameof(BookContext.Pages):
+                    // PagesChanged で処理
+                    return;
 
                 case nameof(BookContext.PageMode):
                 case nameof(BookContext.FrameOrientation):

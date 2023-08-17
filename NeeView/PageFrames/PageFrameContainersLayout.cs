@@ -58,6 +58,7 @@ namespace NeeView.PageFrames
             LayoutChanged?.Invoke(this, EventArgs.Empty);
         }
 
+
         /// <summary>
         /// 開始コンテナを指定して指定方向すべてのコンテナを配置
         /// </summary>
@@ -127,4 +128,15 @@ namespace NeeView.PageFrames
         }
 
     }
+
+    public class LayoutChangedEventArgs : EventArgs
+    {
+        public LayoutChangedEventArgs(LinkedListNode<PageFrameContainer> anchor)
+        {
+            Anchor = anchor;
+        }
+
+        LinkedListNode<PageFrameContainer> Anchor { get; }
+    }
+
 }

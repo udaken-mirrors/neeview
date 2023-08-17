@@ -37,6 +37,8 @@ namespace NeeView
             //_controller = new BookController(_source, _setting, _viewer, _marker);
             _loadOption = option;
 
+            _source.Pages.PagesSorted += (s, e) => PagesChanged?.Invoke(s, e);
+
             IsNew = isNew;
         }
 

@@ -19,7 +19,7 @@ namespace NeeView
         private bool _isNotifyPageLoop;
         private bool _isConfirmRecursive;
         private double _contentSpace = -1.0;
-        private double _frameSpace = 0.0;
+        private double _frameSpace = -1.0;
         private string? _terminalSound;
         private bool _isAutoRecursive = false;
         private bool _isSortFileFirst;
@@ -68,7 +68,7 @@ namespace NeeView
         }
 
         // フレームの間隔
-        [DefaultValue(0.0)]
+        [DefaultValue(-1.0)]
         [PropertyRange(-32, 32, TickFrequency = 1)]
         public double FrameSpace
         {
