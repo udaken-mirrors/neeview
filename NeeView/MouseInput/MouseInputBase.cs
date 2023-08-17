@@ -124,6 +124,11 @@ namespace NeeView
         public virtual void Cancel() { }
 
         /// <summary>
+        /// 選択フレーム変更
+        /// </summary>
+        public virtual void OnUpdateSelectedFrame() { }
+
+        /// <summary>
         /// 専有判定
         /// </summary>
         /// <returns></returns>
@@ -198,6 +203,16 @@ namespace NeeView
             }
 
             return null;
+        }
+
+        /// <summary>
+        /// 座標を画面中央原点に変換する
+        /// </summary>
+        protected Point ToDragCoord(Point point)
+        {
+            var x = point.X - _context.Sender.ActualWidth * 0.5;
+            var y = point.Y - _context.Sender.ActualHeight * 0.5;
+            return new Point(x, y);
         }
     }
 }

@@ -427,6 +427,12 @@ namespace NeeView
         }
 
 
+        public void UpdateSelectedFrame()
+        {
+            _current?.OnUpdateSelectedFrame();
+        }
+
+
         // メッセージとして状態表示
         // TODO: 外部への依存が強すぎるので、定義場所を別にする？
         public void ShowMessage(TransformActionType ActionType, ViewContent? mainContent)
@@ -471,6 +477,8 @@ namespace NeeView
             }
 #endif
         }
+
+
 
     }
 }

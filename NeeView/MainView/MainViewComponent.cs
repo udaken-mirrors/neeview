@@ -65,7 +65,15 @@ namespace NeeView
 
             //ContentRebuild = new ContentRebuild(this);
 
+            PageFrameBoxPresenter.SelectedRangeChanged += PageFrameBoxPresenter_SelectedRangeChanged;
+
+
             _mainView.DataContext = new MainViewViewModel(this);
+        }
+
+        private void PageFrameBoxPresenter_SelectedRangeChanged(object? sender, EventArgs e)
+        {
+            MouseInput.UpdateSelectedFrame();
         }
 
 

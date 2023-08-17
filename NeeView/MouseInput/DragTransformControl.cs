@@ -11,7 +11,8 @@ namespace NeeView
     {
         private ViewConfig _viewConfig;
 
-        private DragActionControl? _action;
+        private DragActionProxy _action = new DragActionProxy();
+
         private bool _isMouseButtonDown;
 
         private DragActionTable _dragActionTable;
@@ -33,7 +34,7 @@ namespace NeeView
         public void ResetState()
         {
             _isMouseButtonDown = false;
-            SetAction(null);
+            _action.SetAction(null);
         }
 
         /// <summary>
@@ -56,7 +57,7 @@ namespace NeeView
 
         public void MouseWheel(MouseButtonBits buttons, ModifierKeys keys, MouseWheelEventArgs e)
         {
-            _action?.MouseWheel(e);
+            _action.MouseWheel(e);
         }
 
 
@@ -73,59 +74,28 @@ namespace NeeView
         {
             if (buttons == MouseButtonBits.None)
             {
-                EndAction(point, timestamp, false);
-                SetAction(null);
+                _action.ExecuteEnd(point, timestamp, false);
+                _action.SetAction(null);
                 _isMouseButtonDown = false;
                 return;
             }
 
             // change action
             var dragKey = new DragKey(buttons, keys);
-            if (_action?.DragKey != dragKey)
+            if (!_action.DragKeyEquals(dragKey))
             {
                 var action = _dragActionFactory.Create(dragKey);
                 if (action is not null)
                 {
-                    EndAction(point, timestamp, true);
-                    SetAction(action);
-                    BeginAction(point, timestamp);
+                    _action.ExecuteEnd(point, timestamp, true);
+                    _action.SetAction(action);
+                    _action.ExecuteBegin(point, timestamp);
                 }
             }
 
             // exec action
-            DoAction(point, timestamp);
+            _action.Execute(point, timestamp);
         }
 
-
-        private void SetAction(DragActionControl? action)
-        {
-            _action?.Dispose();
-            _action = action;
-        }
-
-        private void BeginAction(Point point, int timestamp)
-        {
-            if (_action is null) return;
-            _action.Context.Initialize(point, timestamp);
-            _action.ExecuteBegin();
-        }
-
-        private void DoAction(Point point, int timestamp)
-        {
-            if (_action is null) return;
-            _action.Context.Update(point, timestamp);
-            _action.Context.UpdateSpeed(point, timestamp);
-            _action.Execute();
-        }
-
-        private void EndAction(Point point, int timestamp, bool continued)
-        {
-            if (_action is null) return;
-            _action.Context.Update(point, timestamp);
-            _action.Context.UpdateSpeed(point, timestamp);
-            _action.ExecuteEnd(continued);
-        }
     }
-
-
 }

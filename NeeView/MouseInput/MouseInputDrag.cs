@@ -90,13 +90,5 @@ namespace NeeView
         {
             _dragTransformControl.UpdateState(CreateMouseButtonBits(e), Keyboard.Modifiers, ToDragCoord(e.GetPosition(_context.Sender)), e.Timestamp);
         }
-
-        private Point ToDragCoord(Point point)
-        {
-            var x = point.X - _context.Sender.ActualWidth * 0.5;
-            var y = point.Y - _context.Sender.ActualHeight * 0.5;
-            return new Point(x, y);
-        }
-
     }
 }

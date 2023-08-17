@@ -59,6 +59,7 @@ namespace NeeView
         public Point StartPoint { get; set; }
 
         public int StartTimestamp { get; set; }
+
     }
 
 }

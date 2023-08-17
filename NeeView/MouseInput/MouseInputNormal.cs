@@ -30,6 +30,7 @@ namespace NeeView
 
         private MouseButtonEventArgs? _mouseButtonEventArgs;
 
+        private HoverTransformControl? _hoverTransformControl;
 
         /// <summary>
         /// コンストラクター
@@ -39,6 +40,11 @@ namespace NeeView
         {
             _timer = new Timer();
             _timer.Elapsed += OnTimeout;
+
+            if (_context.DragTransformContextFactory is not null)
+            {
+                _hoverTransformControl = new HoverTransformControl(_context.DragTransformContextFactory);
+            }
         }
 
         private bool IsLongButtonPressed()
@@ -104,6 +110,8 @@ namespace NeeView
             {
                 sender.Cursor = null;
             }
+
+            OnUpdateSelectedFrame();
         }
 
         /// <summary>
@@ -214,10 +222,7 @@ namespace NeeView
         /// <param name="e"></param>
         public override void OnMouseMove(object? sender, MouseEventArgs e)
         {
-            if (Config.Current.Mouse.IsHoverScroll)
-            {
-                HoverScroll(sender, e);
-            }
+            HoverScrollIfEnabled(sender, e);
 
             if (!_isButtonDown) return;
 
@@ -245,18 +250,27 @@ namespace NeeView
             }
         }
 
+
+        public override void OnUpdateSelectedFrame()
+        {
+            _hoverTransformControl?.UpdateSelected();
+        }
+
+
         /// <summary>
         /// ホバースクロール
         /// </summary>
-        private void HoverScroll(object? sender, MouseEventArgs e)
+        private void HoverScrollIfEnabled(object? sender, MouseEventArgs e)
         {
-#warning not support yet
-#if false
-            if (_context.DragTransformControl is null) return;
+            if (_hoverTransformControl is null) return;
 
-            var point = e.GetPosition(_context.Sender);
-            _context.DragTransformControl.HoverScroll(point);
-#endif
+            _hoverTransformControl.IsEnabled = Config.Current.Mouse.IsHoverScroll;
+            if (_hoverTransformControl.IsEnabled)
+            {
+                var pos = ToDragCoord(e.GetPosition(_context.Sender));
+                var timestamp = e.Timestamp;
+                _hoverTransformControl.HoverScroll(pos, timestamp);
+            }
         }
 
         /// <summary>
