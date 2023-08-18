@@ -11371,6 +11371,24 @@ namespace NeeView.Properties {
         }
         
         /// <summary>
+        ///   Horizontal に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string PageFrameOrientation_Horizontal {
+            get {
+                return ResourceManager.GetString("PageFrameOrientation.Horizontal", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Vertical に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string PageFrameOrientation_Vertical {
+            get {
+                return ResourceManager.GetString("PageFrameOrientation.Vertical", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Back (Alt+Left) に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string PageList_Back_ToolTip {
@@ -11583,6 +11601,15 @@ namespace NeeView.Properties {
         public static string PageListPanelAccessor_Style {
             get {
                 return ResourceManager.GetString("PageListPanelAccessor.Style", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Panorama に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string PageMode_Panorama {
+            get {
+                return ResourceManager.GetString("PageMode.Panorama", resourceCulture);
             }
         }
         

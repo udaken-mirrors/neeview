@@ -7442,4 +7442,13 @@ nv.ShowToast(nv.Book.ViewPages[0].Path)</value>
   <data name="PageListItem.Menu.Rename" xml:space="preserve">
     <value>名前の変更(_M)</value>
   </data>
+  <data name="PageMode.Panorama" xml:space="preserve">
+    <value>パノラマ表示</value>
+  </data>
+  <data name="PageFrameOrientation.Horizontal" xml:space="preserve">
+    <value>水平</value>
+  </data>
+  <data name="PageFrameOrientation.Vertical" xml:space="preserve">
+    <value>垂直</value>
+  </data>
 </root>

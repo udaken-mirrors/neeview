@@ -12,7 +12,7 @@ namespace NeeView
         WidePage,
 
         [AliasName]
-        LinearPage,
+        Panorama,
     }
 
 

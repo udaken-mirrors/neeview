@@ -4,6 +4,7 @@ using NeeView.Collections.Generic;
 using NeeView.ComponentModel;
 using NeeView.PageFrames;
 using System;
+using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
@@ -102,6 +103,19 @@ namespace NeeView
             }
         }
 
+#if false
+        public void Invoke(Action action, CancellationToken token)
+        {
+            var command = new BookCommandAction(this, Execute, 2);
+            _commandEngine.Enqueue(command);
+
+            async Task Execute(object? sender, CancellationToken token)
+            {
+                action.Invoke(token);
+                await Task.CompletedTask;
+            }
+        }
+#endif
     }
 
 

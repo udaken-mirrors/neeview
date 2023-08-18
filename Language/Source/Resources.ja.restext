@@ -2337,3 +2337,6 @@ ZipArchiveConfig.IsFileWriteAccessEnabled.Remarks=ZIP内のファイルを削除
 SystemConfig.IsFileWriteAccessEnabled=ファイル操作許可
 SystemConfig.IsFileWriteAccessEnabled.Remarks=ファイルの削除や名前変更ができるようになります。
 PageListItem.Menu.Rename=名前の変更(_M)
+PageMode.Panorama=パノラマ表示
+PageFrameOrientation.Horizontal=水平
+PageFrameOrientation.Vertical=垂直

@@ -2337,3 +2337,6 @@ ZipArchiveConfig.IsFileWriteAccessEnabled.Remarks=It will be possible to delete 
 SystemConfig.IsFileWriteAccessEnabled=File operation
 SystemConfig.IsFileWriteAccessEnabled.Remarks=You will be able to delete and rename files.
 PageListItem.Menu.Rename=Rena_me
+PageMode.Panorama=Panorama
+PageFrameOrientation.Horizontal=Horizontal
+PageFrameOrientation.Vertical=Vertical

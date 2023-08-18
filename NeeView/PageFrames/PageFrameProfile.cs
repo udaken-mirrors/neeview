@@ -34,7 +34,7 @@ namespace NeeView.PageFrames
         public event PropertyChangedEventHandler? PropertyChanged;
 
 
-        public bool IsStaticFrame => _settingConfig.PageMode != PageMode.LinearPage;
+        public bool IsStaticFrame => _settingConfig.PageMode != PageMode.Panorama;
 
         public double FrameMargin => _config.Book.FrameSpace;
 

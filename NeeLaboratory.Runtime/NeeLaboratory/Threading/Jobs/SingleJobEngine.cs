@@ -7,13 +7,14 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Linq;
+using NeeLaboratory.Generators;
 
 namespace NeeLaboratory.Threading.Jobs
 {
     /// <summary>
     /// SingleJobエンジン
     /// </summary>
-    public class SingleJobEngine : IEngine, IDisposable
+    public partial class SingleJobEngine : IEngine, IDisposable
     {
         /// <summary>
         /// ワーカータスクのキャンセルトークン
@@ -101,37 +102,20 @@ namespace NeeLaboratory.Threading.Jobs
         /// <summary>
         /// JOBエラー発生時のイベント
         /// </summary>
+        [Subscribable]
         public event EventHandler<JobErrorEventArgs>? JobError;
-
-        public IDisposable SubscribeJobError(EventHandler<JobErrorEventArgs> handler)
-        {
-            JobError += handler;
-            return new AnonymousDisposable(() => JobError -= handler);
-        }
-
 
         /// <summary>
         /// 例外によってJobEngineが停止した時に発生するイベント
         /// </summary>
+        [Subscribable]
         public event EventHandler<JobErrorEventArgs>? JobEngineError;
-
-        public IDisposable SubscribeJobEngineError(EventHandler<JobErrorEventArgs> handler)
-        {
-            JobEngineError += handler;
-            return new AnonymousDisposable(() => JobEngineError -= handler);
-        }
-
 
         /// <summary>
         /// IsBusyプロパティ変更EVENT
         /// </summary>
+        [Subscribable]
         public event EventHandler<JobIsBusyChangedEventArgs>? IsBusyChanged;
-
-        public IDisposable SubscribeIsBusyChanged(EventHandler<JobIsBusyChangedEventArgs> handler)
-        {
-            IsBusyChanged += handler;
-            return new AnonymousDisposable(() => IsBusyChanged -= handler);
-        }
 
 
         /// <summary>
