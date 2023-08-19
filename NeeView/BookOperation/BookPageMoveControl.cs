@@ -85,14 +85,12 @@ namespace NeeView
 
         public void ScrollToPrevFrame(object? sender, ScrollPageCommandParameter parameter)
         {
-            // TODO: parameter
             _presenter.ScrollToNextFrame(LinkedListDirection.Previous, parameter, parameter.LineBreakStopMode, parameter.EndMargin);
 
         }
 
         public void ScrollToNextFrame(object? sender, ScrollPageCommandParameter parameter)
         {
-            // TODO: parameter
             _presenter.ScrollToNextFrame(LinkedListDirection.Next, parameter, parameter.LineBreakStopMode, parameter.EndMargin);
         }
 
@@ -120,12 +118,12 @@ namespace NeeView
 
         public void MovePrevFolder(object? sender, bool isShowMessage)
         {
-            throw new NotImplementedException();
+            _presenter.MoveToNextFolder(LinkedListDirection.Previous, isShowMessage);
         }
 
         public void MoveNextFolder(object? sender, bool isShowMessage)
         {
-            throw new NotImplementedException();
+            _presenter.MoveToNextFolder(LinkedListDirection.Next, isShowMessage);
         }
 
         public void MoveToFirst(object? sender)

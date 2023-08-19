@@ -72,10 +72,32 @@ namespace NeeView
         }
     }
 
+    /// <summary>
+    /// キャンセル可能コマンド
+    /// </summary>
+    internal class BookCommandCancellableAction : BookCommand
+    {
+        private readonly Func<object?, CancellationToken, Task> _taskAction;
+        private CancellationToken _cancelToken;
+
+        public BookCommandCancellableAction(object? sender, Func<object?, CancellationToken, Task> taskAction, int priority, CancellationToken cancelToken) : base(sender, priority)
+        {
+            _taskAction = taskAction;
+            _cancelToken = cancelToken;
+        }
+
+        protected override async Task OnExecuteAsync(CancellationToken token)
+        {
+            using var tokenSource = CancellationTokenSource.CreateLinkedTokenSource(token, _cancelToken);
+            tokenSource.Token.ThrowIfCancellationRequested();
+            await _taskAction(_sender, tokenSource.Token);
+        }
+    }
 
     /// <summary>
     /// 結合コマンド
     /// </summary>
+    [Obsolete]
     internal class BookCommandJoinAction : BookCommand
     {
         private readonly Func<object?, int, CancellationToken, Task> _taskAction;
@@ -113,7 +135,7 @@ namespace NeeView
         {
         }
 
-
+#if false
         protected override Queue<IJob> Enqueue(IJob job, Queue<IJob> queue)
         {
             Debug.Assert(job is BookCommand);
@@ -145,6 +167,6 @@ namespace NeeView
 
             return queue;
         }
-
+#endif
     }
 }

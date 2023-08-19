@@ -1,4 +1,5 @@
 ﻿using NeeLaboratory.ComponentModel;
+using NeeLaboratory.Generators;
 using NeeLaboratory.Threading.Jobs;
 using NeeView.Collections.Generic;
 using NeeView.ComponentModel;
@@ -12,8 +13,8 @@ using System.Threading.Tasks;
 
 namespace NeeView
 {
-
-    public class BookCommandControl : IDisposable
+    // TODO: ソート中等コマンド処理中表示
+    public partial class BookCommandControl : IDisposable
     {
         private bool _disposedValue = false;
         private readonly DisposableCollection _disposables = new();
@@ -28,6 +29,7 @@ namespace NeeView
         private readonly PageFrameBox _pageFrameBox;
         private readonly BookContext _bookContext;
         private readonly Book _book;
+        private CancellationTokenSource? _sortCancellationTokenSource;
 
 
         public BookCommandControl(BookContext bookContext, PageFrameBox pageFrameBox)
@@ -47,8 +49,13 @@ namespace NeeView
             _disposables.Add(_bookContext.SubscribePropertyChanged(nameof(BookContext.SortMode),
                 (s, e) => RequestSort(this)));
 
+
             Start();
         }
+
+
+
+
 
         protected virtual void Dispose(bool disposing)
         {
@@ -57,6 +64,8 @@ namespace NeeView
                 if (disposing)
                 {
                     _disposables.Dispose();
+                    _sortCancellationTokenSource?.Cancel();
+                    _sortCancellationTokenSource?.Dispose();
                 }
 
                 _disposedValue = true;
@@ -79,10 +88,14 @@ namespace NeeView
 
         private void RequestSort(object sender)
         {
-            var command = new BookCommandAction(sender, Execute, 2);
+            _sortCancellationTokenSource?.Cancel();
+            _sortCancellationTokenSource?.Dispose();
+            _sortCancellationTokenSource = new CancellationTokenSource();
+
+            var command = new BookCommandCancellableAction(sender, ExecuteAsync, 2, _sortCancellationTokenSource.Token);
             _commandEngine.Enqueue(command);
 
-            async Task Execute(object? s, CancellationToken token)
+            async Task ExecuteAsync(object? s, CancellationToken token)
             {
                 Debug.WriteLine($"Sort: {_book.Pages.SortMode}");
                 //var page = _viewer.GetViewPage();
@@ -103,19 +116,16 @@ namespace NeeView
             }
         }
 
-#if false
-        public void Invoke(Action action, CancellationToken token)
+        public void Invoke(Action action)
         {
-            var command = new BookCommandAction(this, Execute, 2);
+            var command = new BookCommandAction(this, ExecuteAsync, 2);
             _commandEngine.Enqueue(command);
 
-            async Task Execute(object? sender, CancellationToken token)
+            async Task ExecuteAsync(object? sender, CancellationToken token)
             {
-                action.Invoke(token);
-                await Task.CompletedTask;
+                await AppDispatcher.BeginInvoke(action);
             }
         }
-#endif
     }
 
 

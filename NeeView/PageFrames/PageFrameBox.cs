@@ -631,6 +631,44 @@ namespace NeeView.PageFrames
             _isSnapAnchor.Set();
         }
 
+        public void MoveToNextFolder(LinkedListDirection direction, bool isShowMessage)
+        {
+            if (!_context.IsEnabled) return;
+
+            var index = direction == LinkedListDirection.Previous
+                ? _context.Book.Pages.GetPrevFolderIndex(_selected.PageRange.Min.Index)
+                : _context.Book.Pages.GetNextFolderIndex(_selected.PageRange.Min.Index);
+            if (index >= 0)
+            {
+                MoveTo(new PagePosition(index, 0), LinkedListDirection.Next);
+            }
+
+            ShowMoveFolderPageMessage(index, direction, isShowMessage);
+        }
+
+        // TODO: InfoMessage系ここで？
+        private void ShowMoveFolderPageMessage(int index, LinkedListDirection direction, bool isShowMessage)
+        {
+            var termianteMessage = direction == LinkedListDirection.Previous
+                ? Properties.Resources.Notice_FirstFolderPage
+                : Properties.Resources.Notice_LastFolderPage;
+
+            if (index < 0)
+            {
+                InfoMessage.Current.SetMessage(InfoMessageType.Notify, termianteMessage);
+            }
+            else if (isShowMessage)
+            {
+                var directory = _context.Book.Pages[index].GetSmartDirectoryName();
+                if (string.IsNullOrEmpty(directory))
+                {
+                    directory = "(Root)";
+                }
+                InfoMessage.Current.SetMessage(InfoMessageType.Notify, directory);
+            }
+        }
+
+
         // Scroll + NextFrame
         public void ScrollToNextFrame(LinkedListDirection direction, IScrollNTypeParameter parameter, LineBreakStopMode lineBreakStopMode, double endMargin)
         {

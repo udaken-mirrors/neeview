@@ -8,21 +8,22 @@ namespace NeeView.PageFrames
     // TODO: これは abstract class にすべきだったかな。 Dummy はそれで。
     public interface IPageFrameBox : IDragTransformContextFactory
     {
-        public void MoveTo(PagePosition position, LinkedListDirection direction);
-        public void MoveToNextPage(LinkedListDirection direction);
-        public void MoveToNextFrame(LinkedListDirection direction);
-        public void ScrollToNextFrame(LinkedListDirection direction, IScrollNTypeParameter parameter, LineBreakStopMode lineBreakStopMode, double endMargin);
-        public bool ScrollToNext(LinkedListDirection direction, IScrollNTypeParameter parameter);
-        
-        public PageFrameTransformAccessor? CreateSelectedTransform();
-        public void ResetTransform();
-        public void Stretch(bool ignoreViewOrigin);
+        void MoveTo(PagePosition position, LinkedListDirection direction);
+        void MoveToNextPage(LinkedListDirection direction);
+        void MoveToNextFrame(LinkedListDirection direction);
+        void MoveToNextFolder(LinkedListDirection direction, bool isShowMessage);
+        void ScrollToNextFrame(LinkedListDirection direction, IScrollNTypeParameter parameter, LineBreakStopMode lineBreakStopMode, double endMargin);
+        bool ScrollToNext(LinkedListDirection direction, IScrollNTypeParameter parameter);
 
-        public void Reset();
+        PageFrameTransformAccessor? CreateSelectedTransform();
+        void ResetTransform();
+        void Stretch(bool ignoreViewOrigin);
+
+        void Reset();
     }
 
     public interface IDragTransformContextFactory
     {
-        public DragTransformContext? CreateDragTransformContext(bool isPointContainer, bool isLoupeTransform);
+        DragTransformContext? CreateDragTransformContext(bool isPointContainer, bool isLoupeTransform);
     }
 }

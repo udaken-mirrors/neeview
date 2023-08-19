@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
-using System.Windows.Controls;
-using System.Windows.Forms;
 using NeeLaboratory.Generators;
 using NeeView.ComponentModel;
 using NeeView.PageFrames;
@@ -12,7 +10,7 @@ using NeeView.PageFrames;
 namespace NeeView.Presenter
 {
     [NotifyPropertyChanged]
-    public partial class PageFrameBoxPresenter : INotifyPropertyChanged, IPageFrameBox, IBookPageContext
+    public partial class PageFrameBoxPresenter : INotifyPropertyChanged, IDragTransformContextFactory, IBookPageContext
     {
         private Config _config;
         private BookHub _bookHub;
@@ -206,31 +204,54 @@ namespace NeeView.Presenter
             return _box?.CreateDragTransformContext(isPointContainer, isLoupeTransform);
         }
 
+
         public void MoveTo(PagePosition position, LinkedListDirection direction)
         {
-            ValidBox()?.MoveTo(position, direction);
+            var box = ValidBox();
+            if (box is null) return;
+            _pageControl?.Invoke(() => box.MoveTo(position, direction));
         }
 
         public void MoveToNextPage(LinkedListDirection direction)
         {
-            ValidBox()?.MoveToNextPage(direction);
+            var box = ValidBox();
+            if (box is null) return;
+            _pageControl?.Invoke(() => box.MoveToNextPage(direction));
         }
 
         public void MoveToNextFrame(LinkedListDirection direction)
         {
-            ValidBox()?.MoveToNextFrame(direction);
+            var box = ValidBox();
+            if (box is null) return;
+            _pageControl?.Invoke(() => box.MoveToNextFrame(direction));
         }
+
+        // 前のフォルダーに戻る
+        public void MoveToNextFolder(LinkedListDirection direction, bool isShowMessage)
+        {
+            var box = ValidBox();
+            if (box is null) return;
+            _pageControl?.Invoke(() =>
+            {
+                box.MoveToNextFolder(direction, isShowMessage);
+            });
+
+
+        }
+
+
 
         public void ScrollToNextFrame(LinkedListDirection direction, IScrollNTypeParameter parameter, LineBreakStopMode lineBreakStopMode, double endMargin)
         {
-            ValidBox()?.ScrollToNextFrame(direction, parameter, lineBreakStopMode, endMargin);
+            var box = ValidBox();
+            if (box is null) return;
+            _pageControl?.Invoke(() => box.ScrollToNextFrame(direction, parameter, lineBreakStopMode, endMargin));
         }
 
         public bool ScrollToNext(LinkedListDirection direction, IScrollNTypeParameter parameter)
         {
             return ValidBox()?.ScrollToNext(direction, parameter) ?? false;
         }
-
 
         public void ResetTransform()
         {
