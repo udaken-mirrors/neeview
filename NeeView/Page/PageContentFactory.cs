@@ -11,7 +11,7 @@ namespace NeeView
             _bookMemoryService = bookMemoryService;
         }
 
-        public IPageContent Create(ArchiveEntry archiveEntry)
+        public PageContent Create(ArchiveEntry archiveEntry)
         {
             var ext = Path.GetExtension(archiveEntry.EntryName).ToLower();
 

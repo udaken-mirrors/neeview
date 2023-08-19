@@ -16,7 +16,7 @@ namespace NeeView
     {
         private MediaPageContent _pageContent;
 
-        public MediaViewSource(IPageContent pageContent, BookMemoryService bookMemoryService) : base(pageContent, bookMemoryService)
+        public MediaViewSource(PageContent pageContent, BookMemoryService bookMemoryService) : base(pageContent, bookMemoryService)
         {
             _pageContent = pageContent as MediaPageContent ?? throw new ArgumentException("need MediaPageContent", nameof(pageContent));
         }

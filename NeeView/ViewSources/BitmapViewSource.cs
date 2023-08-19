@@ -8,7 +8,6 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using NeeView.ComponentModel;
 using NeeView.Media.Imaging;
-using PhotoSauce.MagicScaler;
 
 namespace NeeView
 {
@@ -18,7 +17,7 @@ namespace NeeView
         private BitmapPageContent _pageContent;
         private Picture _picture;
 
-        public BitmapViewSource(IPageContent pageContent, BookMemoryService bookMemoryService) : base(pageContent, bookMemoryService)
+        public BitmapViewSource(PageContent pageContent, BookMemoryService bookMemoryService) : base(pageContent, bookMemoryService)
         {
             _pageContent = pageContent as BitmapPageContent ?? throw new ArgumentException("need BitmapPageContent", nameof(pageContent));
             _picture = new Picture(new BitmapPictureSource(_pageContent));
@@ -27,6 +26,12 @@ namespace NeeView
         public override bool IsMemoryLocked => _pageContent.IsMemoryLocked;
 
         public Picture Picture => _picture;
+
+
+        public override bool CheckLoaded(Size size)
+        {
+            return IsLoaded && _picture.IsCreated(size);
+        }
 
         public override async Task LoadCoreAsync(DataSource data, Size size, CancellationToken token)
         {

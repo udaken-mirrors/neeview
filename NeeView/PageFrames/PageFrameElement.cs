@@ -40,6 +40,11 @@ namespace NeeView.PageFrames
         public PageRange PageRange { get; }
 
         /// <summary>
+        /// ページ部位
+        /// </summary>
+        public PagePart PagePart => PagePartTools.CreatePagePart(PageRange, Direction);
+
+        /// <summary>
         /// ブックの終端フラグ。ここ？
         /// </summary>
         public PageTerminal Terminal { get; }

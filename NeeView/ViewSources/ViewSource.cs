@@ -4,18 +4,20 @@ using System.Threading.Tasks;
 using System.Windows;
 using NeeLaboratory.Generators;
 using NeeView.ComponentModel;
+using NeeView.Threading;
 
 namespace NeeView
 {
-
     public abstract partial class ViewSource : IDataSource, IMemoryElement
     {
-        private IPageContent _pageContent;
+        private PageContent _pageContent;
         private BookMemoryService _bookMemoryService;
         private DataSource _data = new();
         private object _lock = new();
+        private AsyncLock _asyncLock = new();
 
-        protected ViewSource(IPageContent pageContent, BookMemoryService bookMemoryService)
+
+        protected ViewSource(PageContent pageContent, BookMemoryService bookMemoryService)
         {
             _pageContent = pageContent;
             _bookMemoryService = bookMemoryService;
@@ -39,31 +41,64 @@ namespace NeeView
         public long GetMemorySize() => DataSize;
 
 
+
+
+        /// <summary>
+        /// 求める ViewSource データ生成済かをチェック
+        /// </summary>
+        /// <param name="size">サイズ</param>
+        /// <returns>生成済？</returns>
+        public virtual bool CheckLoaded(Size size)
+        {
+            return IsLoaded;
+        }
+
+        /// <summary>
+        /// ViewSource データ生成
+        /// </summary>
+        /// <param name="size">サイズ</param>
+        /// <param name="token">キャンセルトークン</param>
         public async Task LoadAsync(Size size, CancellationToken token)
         {
             token.ThrowIfCancellationRequested();
 
-            var data = _pageContent.CreateDataSource();
+            using (await _asyncLock.LockAsync(token))
+            {
+                // ロード済であれば何もしない
+                if (CheckLoaded(size))
+                {
+                    return;
+                }
 
-            if (data.IsFailed)
-            {
-                SetData(null, 0, _pageContent.ErrorMessage);
-                return;
-            }
+                // TODO: dataを返したほうが堅牢だね？
+                await _pageContent.LoadAsync(token);
 
-            if (data.Data is null) return;
+                var data = _pageContent.CreateDataSource();
+                if (data.IsFailed)
+                {
+                    SetData(null, 0, _pageContent.ErrorMessage);
+                    return;
+                }
 
-            try
-            {
-                await LoadCoreAsync(data, size, token);
-            }
-            catch (OperationCanceledException)
-            {
-                throw;
-            }
-            catch (Exception ex)
-            {
-                SetData(null, 0, ex.Message);
+                // NOTE: エラーなく読み込んだのにデータが無いとかありえないが念のため
+                if (data.Data is null)
+                {
+                    SetData(null, 0, "InvalidOperationException: cannot load data");
+                    return;
+                }
+
+                try
+                {
+                    await LoadCoreAsync(data, size, token);
+                }
+                catch (OperationCanceledException)
+                {
+                    throw;
+                }
+                catch (Exception ex)
+                {
+                    SetData(null, 0, ex.Message);
+                }
             }
         }
 

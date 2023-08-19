@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace NeeView
 {
-    public class FilePageSource : PageSource<string>
+    public class FilePageSource : PageSource
     {
         public FilePageSource(ArchiveEntry entry) : base(entry)
         {

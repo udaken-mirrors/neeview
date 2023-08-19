@@ -25,7 +25,6 @@ namespace NeeView
         private bool _initialized;
         private PageFrameElement _element;
         private PageFrameElementScale _scale;
-        //private readonly ViewContentParameters? _parameter;
         private PageFrameActivity _activity;
         private ViewSource _viewSource;
         private bool _disposedValue;
@@ -38,7 +37,6 @@ namespace NeeView
         {
             _element = element;
             _scale = scale;
-            //_parameter = parameter;
             _viewSource = viewSource;
             _activity = activity;
 
@@ -59,9 +57,6 @@ namespace NeeView
 
         public ArchiveEntry ArchiveEntry => _element.Page.ArchiveEntry;
         public PageFrameElement Element => _element;
-
-        //[Obsolete]
-        //public ViewContentParameters? Parameter => _parameter;
 
         public ViewContentSize ViewContentSize => _viewContentSize;
         public Size LayoutSize => _viewContentSize.LayoutSize;

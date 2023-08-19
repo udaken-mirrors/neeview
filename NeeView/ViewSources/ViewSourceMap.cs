@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics;
-using System.Windows.Documents;
 
 namespace NeeView
 {
@@ -14,9 +13,9 @@ namespace NeeView
             _factory = new ViewSourceFactory(bookMemoryService);
         }
 
-        public ViewSource Get(PageRange pageRange, IPageContent pageContent)
+        public ViewSource Get(Page page, PagePart pagePart)
         {
-            var key = new ViewSourceKey(pageRange, pageContent);
+            var key = new ViewSourceKey(page, pagePart);
             if (_map.TryGetValue(key, out var value))
             {
                 return value;
@@ -25,7 +24,7 @@ namespace NeeView
             {
                 //Debug.WriteLine($"ViewSourceMap.Create: {key}");
 
-                var viewSource = _factory.Create(pageContent);
+                var viewSource = _factory.Create(page.Content);
                 _map.Add(key, viewSource);
                 return viewSource;
             }
@@ -38,5 +37,5 @@ namespace NeeView
     }
 
 
-    public record struct ViewSourceKey(PageRange PageRange, IPageContent PageContent);
+    public record struct ViewSourceKey(Page Page, PagePart PagePart);
 }

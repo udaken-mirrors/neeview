@@ -34,7 +34,7 @@ namespace NeeView.PageFrames
         private PageFrameContainersCleaner _cleaner;
         private PageFrameContainersFiller _filler;
         private BookContext _context;
-        private IPageLoader _loader;
+        private BookPageLoader _loader;
         private ContentSizeCalculator _calculator;
         private PageFrameContainersVisiblePageWatcher _visiblePageWatcher;
         private PageFrameContainersViewBox _viewBox;
@@ -354,18 +354,21 @@ namespace NeeView.PageFrames
         /// </summary>
         private void ResetContainers()
         {
-            _containers.SetDarty(PageFrameDartyLevel.Replace);
-            _transformMap.Clear();
-            SetControlContainer(_selected.Node);
-            _selected.Node.Value.ResetLayout();
-            _layout.Layout(_selected.Node);
+            using (var pauser = new BookPageLoadPauser(_loader))
+            {
+                _containers.SetDarty(PageFrameDartyLevel.Replace);
+                _transformMap.Clear();
+                SetControlContainer(_selected.Node);
+                _selected.Node.Value.ResetLayout();
+                _layout.Layout(_selected.Node);
 
-            var index = _selected.Node.Value.FrameRange.Min.Index;
-            MoveTo(new PagePosition(index, 0), LinkedListDirection.Next);
+                var index = _selected.Node.Value.FrameRange.Min.Index;
+                MoveTo(new PagePosition(index, 0), LinkedListDirection.Next);
 
-            _layout.Flush();
-            _scrollViewer.FlushScroll();
-            Cleanup();
+                _layout.Flush();
+                _scrollViewer.FlushScroll();
+                Cleanup();
+            }
         }
 
         public void FlushLayout()
@@ -481,11 +484,10 @@ namespace NeeView.PageFrames
         {
             foreach (var container in _containers)
             {
-                container.Activity.IsVisible = _visiblePageWatcher.VisibleContainers.Contains(container);
+                container.Activity.IsVisible = e.Containers.Contains(container);
             }
 
-            var range = new PageRange(_visiblePageWatcher.VisibleContainers.Select(e => e.FrameRange));
-            Task.Run(() => _loader.LoadAsync(range, e.Direction, CancellationToken.None));
+            _loader.RequestLoad(e.PageRange, e.Direction);
         }
 
 

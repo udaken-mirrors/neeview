@@ -17,12 +17,12 @@ namespace NeeView
     public class Picture : BindableBase
     {
         private readonly IPictureSource _pictureSource;
- 
+
         /// <summary>
         /// リサイズパラメータのハッシュ。
         /// リサイズが必要かの判定に使用される
         /// </summary>
-        private int _resizeHashCode;
+        private PictureSizeSource _sizeSource;
 
         /// <summary>
         /// ロックオブジェクト
@@ -33,8 +33,7 @@ namespace NeeView
         public Picture(IPictureSource source)
         {
             _pictureSource = source;
-
-            _resizeHashCode = GetEnvironmentoHashCode();
+            _sizeSource = new PictureSizeSource();
         }
 
 
@@ -53,6 +52,11 @@ namespace NeeView
             get { return _imageSource; }
             set { if (_imageSource != value) { _imageSource = value; RaisePropertyChanged(); } }
         }
+
+        /// <summary>
+        /// 画像生成サイズ情報
+        /// </summary>
+        public PictureSizeSource SizeSource => _sizeSource;
 
 
         public long GetMemorySize()
@@ -75,6 +79,7 @@ namespace NeeView
             return Config.Current.ImageResizeFilter.GetHashCode() ^ Config.Current.ImageCustomSize.GetHashCodde();
         }
 
+#if false
         // Imageが同じサイズであるか判定
         private bool IsEqualImageSizeMaybe(Size size, bool keepAspectRatio)
         {
@@ -94,15 +99,28 @@ namespace NeeView
                 return Math.Abs(size.Height - this.ImageSource.GetPixelHeight()) < margin && Math.Abs(size.Width - this.ImageSource.GetPixelWidth()) < margin;
             }
         }
+#endif
 
         /// <summary>
-        /// ImageSource生成。
-        /// サイズを指定し、必要であれば作り直す。不要であればなにもしない。
+        /// 生成済チェック
         /// </summary>
-        /// TODO: 名前は UpdateImageSource のほうがふさわしい
-        public bool CreateImageSource(byte[] data, Size size, CancellationToken token)
+        /// <param name="size"></param>
+        /// <returns></returns>
+        public bool IsCreated(Size size)
         {
-            if (this.PictureInfo is null) return false;
+            return this.ImageSource is not null && _sizeSource == CreateSizeSource(size);
+        }
+
+        /// <summary>
+
+        /// <summary>
+        /// サイズ情報生成
+        /// </summary>
+        /// <param name="size"></param>
+        /// <returns></returns>
+        public PictureSizeSource? CreateSizeSource(Size size)
+        {
+            if (this.PictureInfo is null) return null;
 
             size = size.IsEmpty ? this.PictureInfo.Size : size;
             size = _pictureSource.FixedSize(size);
@@ -116,11 +134,34 @@ namespace NeeView
             // アスペクト比固定?
             var cutomSize = Config.Current.ImageCustomSize;
             var keepAspectRatio = size.IsEmpty || !cutomSize.IsEnabled || cutomSize.AspectRatio == CustomSizeAspectRatio.Origin;
+            if (keepAspectRatio && !size.IsEmpty)
+            {
+                if (this.PictureInfo.Size.Width > 0.0)
+                {
+                    var rate = size.Width / this.PictureInfo.Size.Width;
+                    size.Height = this.PictureInfo.Size.Height * rate;
+                }
+            }
 
             int filterHashCode = GetEnvironmentoHashCode();
-            bool isDartyResizeParameter = _resizeHashCode != filterHashCode;
-            if (!isDartyResizeParameter && IsEqualImageSizeMaybe(size, keepAspectRatio))
+
+            return new PictureSizeSource(size, filterHashCode, keepAspectRatio);
+        }
+
+
+        /// <summary>
+        /// ImageSource生成。
+        /// サイズを指定し、必要であれば作り直す。不要であればなにもしない。
+        /// </summary>
+        /// TODO: 名前は UpdateImageSource のほうがふさわしい
+        public bool CreateImageSource(byte[] data, Size size, CancellationToken token)
+        {
+            var sizeSource = CreateSizeSource(size);
+            if (sizeSource is null) return false;
+
+            if (this.ImageSource is not null && _sizeSource == sizeSource)
             {
+                //Debug.WriteLine($"Equals SizeSource");
                 return false;
             }
 
@@ -131,7 +172,7 @@ namespace NeeView
             Debug.WriteLine($"BMP: {this.PictureSource.ArchiveEntry.EntryName}: {this.PictureInfo.Size} -> {size}");
 #endif
 
-            var image = CreateImageSource(data, size, keepAspectRatio, token);
+            var image = CreateImageSource(data, sizeSource.Size, sizeSource.IsKeepAspectRatio, token);
             if (image == null)
             {
                 return false;
@@ -139,7 +180,7 @@ namespace NeeView
 
             lock (_lock)
             {
-                _resizeHashCode = filterHashCode;
+                _sizeSource = sizeSource;
                 this.ImageSource = image;
             }
 
@@ -150,7 +191,7 @@ namespace NeeView
         {
             lock (_lock)
             {
-                _resizeHashCode = 0;
+                _sizeSource = new PictureSizeSource();
                 this.ImageSource = null;
             }
         }

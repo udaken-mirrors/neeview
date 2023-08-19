@@ -62,8 +62,9 @@ namespace NeeView.PageFrames
                 var pos = node.Value.FrameRange.Next(direction.ToSign());
                 node = node.GetNext(direction);
                 // NOTE: 連続性に問題があったり更新が必要である場合は生成する
-                if (node?.Value.Content is not PageFrameContent item || item.IsDarty || item.FrameRange.Top(direction.ToSign()) != pos)
+                if (node?.Value.Content is not PageFrameContent item || item.IsDarty || item.FrameRange.Top(direction.ToSign()) != pos || !IsValidContainerFormat(node))
                 {
+                    
                     if (node?.Value.Content is PageFrameContent)
                     {
                         SetContainerAlignment(anchor, node);
@@ -74,6 +75,20 @@ namespace NeeView.PageFrames
                 rest -= GetContainerSpan(node.Value);
             }
         }
+
+        // モードに適したパートサイズ？
+        private bool IsValidContainerFormat(LinkedListNode<PageFrameContainer> node)
+        {
+            if (node.Value.Content is not PageFrameContent item) return true;
+
+            var allowPartPage = _context.PageMode == PageMode.SinglePage && _context.IsSupportedDividePage;
+            var partSize = item.FrameRange.PartSize;
+
+            var result = allowPartPage || partSize == 2;
+            Debug.Assert(result);
+            return result;
+        }
+
 
         private void SetContainerAlignment(LinkedListNode<PageFrameContainer> anchor, LinkedListNode<PageFrameContainer> node)
         {

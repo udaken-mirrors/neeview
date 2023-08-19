@@ -72,7 +72,7 @@ namespace NeeLaboratory.Threading.Jobs
         /// </summary>
         public void Cancel()
         {
-            ThrowIfDisposed();
+            if (_disposedValue) return;
 
             _tokenSource.Cancel();
 
@@ -89,7 +89,7 @@ namespace NeeLaboratory.Threading.Jobs
         /// <returns></returns>
         public async Task ExecuteAsync()
         {
-            ThrowIfDisposed();
+            if (_disposedValue) return;
 
             if (_complete.IsSet) return;
 

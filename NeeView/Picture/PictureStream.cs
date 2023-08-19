@@ -11,7 +11,6 @@ using System.Windows;
 
 namespace NeeView
 {
-
     /// <summary>
     /// 画像をストリームで取得
     /// </summary>

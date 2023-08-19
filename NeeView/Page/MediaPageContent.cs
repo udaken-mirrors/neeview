@@ -10,15 +10,15 @@ using System.Windows;
 
 namespace NeeView
 {
-    public class MediaPageContent : PageContent<string>
+    public class MediaPageContent : PageContent
     {
-        //private PictureInfo? _pictureInfo;
-
-
         public MediaPageContent(ArchiveEntry archiveEntry, BookMemoryService bookMemoryService)
             : base(archiveEntry, new FilePageSource(archiveEntry), bookMemoryService)
         {
         }
+
+
+        public new string? Data => (string?)base.Data;
 
 
         protected override void OnPageSourceChanged()
@@ -40,7 +40,7 @@ namespace NeeView
                 }
             }
 
-            Size = PictureInfo.Size;
+            Size = PictureInfo?.Size ?? DefaultSize;
         }
 
 

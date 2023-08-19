@@ -11,7 +11,7 @@ namespace NeeView
             _bookMemoryService = bookMemoryService;
         }
 
-        public ViewSource Create(IPageContent pageContent)
+        public ViewSource Create(PageContent pageContent)
         {
             switch (pageContent)
             {

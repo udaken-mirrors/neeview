@@ -74,7 +74,7 @@ namespace NeeView.PageFrames
 
 
         public event TransformChangedEventHandler? TransformChanged;
-        
+
         public event EventHandler? ViewContentChanged;
 
         public event EventHandler? ContentSizeChanged;
@@ -106,12 +106,12 @@ namespace NeeView.PageFrames
             set => _dartyLevel = _dartyLevel < value ? value : _dartyLevel;
         }
 
-        public  List<ViewContent> ViewContents =>  _viewContents;
+        public List<ViewContent> ViewContents => _viewContents;
 
         public int ViewContentsDirection => _pageFrame.Direction;
 
-
-
+        
+        
         protected virtual void Dispose(bool disposing)
         {
             if (!_disposedValue)

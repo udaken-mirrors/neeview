@@ -15,7 +15,7 @@ namespace NeeView
     ///   +- MemoryPageSource
     ///   +- FilePageSource
     /// </summary>
-    public abstract class PageSource<T> : IDataSource<T>, IDataSource
+    public abstract class PageSource : IDataSource
     {
         private readonly AsyncLock _asyncLock = new();
         private CancellationTokenSource? _cancellationTokenSource;
@@ -34,7 +34,7 @@ namespace NeeView
 
         public ArchiveEntry ArchiveEntry => _archvieEntry;
 
-        public T? Data { get; protected set; }
+        public object? Data { get; protected set; }
 
         public string? ErrorMessage { get; protected set; }
 
@@ -91,9 +91,9 @@ namespace NeeView
         protected abstract void UnloadCore();
 
 
-        protected void SetData(T? data, string? errorMessage)
+        protected void SetData(object? data, string? errorMessage)
         {
-            bool isContentChanged = !EqualityComparer<T>.Default.Equals(Data, data) || ErrorMessage != errorMessage;
+            bool isContentChanged = Data != data || ErrorMessage != errorMessage;
 
             Data = data;
             ErrorMessage = errorMessage;

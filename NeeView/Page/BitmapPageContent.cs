@@ -8,16 +8,16 @@ using System.Windows.Media.Imaging;
 namespace NeeView
 {
 
-    public class BitmapPageContent : PageContent<byte[]>
+    public class BitmapPageContent : PageContent
     {
-        //private PictureInfo? _pictureInfo;
-        //private BitmapInfo _bitmapInfo = BitmapInfo.Default;
-
 
         public BitmapPageContent(ArchiveEntry archiveEntry, BookMemoryService? bookMemoryService)
-            : base(archiveEntry, new MemoryPageSource(archiveEntry), bookMemoryService)
+            : base(archiveEntry, new BitmapPageSource(archiveEntry), bookMemoryService)
         {
         }
+
+
+        public new byte[]? Data => (byte[]?)base.Data;
 
 
         protected override void OnPageSourceChanged()
@@ -26,16 +26,8 @@ namespace NeeView
 
             if (PictureInfo is null)
             {
-                try
-                {
-                    NVDebug.AssertMTA();
-                    SetPictureInfo(CreatePictureInfo(Data));
-                }
-                catch (Exception ex)
-                {
-                    SetErrorMessage(ex.Message);
-                    SetPictureInfo(new PictureInfo());
-                }
+                NVDebug.AssertMTA();
+                SetPictureInfo(((BitmapPageSource)PageSource).PictureInfo);
             }
 
             // TODO: これはベースクラスに吸収できそう
@@ -45,63 +37,19 @@ namespace NeeView
             }
             else
             {
-                Size = PictureInfo.Size;
+                Size = PictureInfo?.Size ?? DefaultSize;
             }
         }
 
-        // TODO: PictureInfoを拡張子てBitmapInfoやMediaInfoを作成する
-        public PictureInfo CreatePictureInfo(byte[] data)
-        {
-            //if (this.PictureInfo != null) return this.PictureInfo;
-            //token.ThrowIfCancellationRequested();
-
-            var pictureInfo = new PictureInfo();
-
-            using (var stream = new MemoryStream(data)) // _streamSource.CreateStream(token))
-            {
-                stream.Seek(0, SeekOrigin.Begin);
-                var bitmapInfo = BitmapInfo.Create(stream, true);
-                pictureInfo.BitmapInfo = bitmapInfo;
-                var originalSize = bitmapInfo.IsTranspose ? bitmapInfo.GetPixelSize().Transpose() : bitmapInfo.GetPixelSize();
-                pictureInfo.OriginalSize = originalSize;
-
-                var maxSize = bitmapInfo.IsTranspose ? Config.Current.Performance.MaximumSize.Transpose() : Config.Current.Performance.MaximumSize;
-                var size = (Config.Current.Performance.IsLimitSourceSize && !maxSize.IsContains(originalSize)) ? originalSize.Uniformed(maxSize) : Size.Empty;
-                pictureInfo.Size = size.IsEmpty ? originalSize : size;
-                pictureInfo.AspectSize = bitmapInfo.IsTranspose ? bitmapInfo.GetAspectSize().Transpose() : bitmapInfo.GetAspectSize();
-
-                //pictureInfo.Decoder = _streamSource.Decoder ?? ".NET BitmapImage";
-                pictureInfo.Decoder = ".NET BitmapImage";
-                pictureInfo.BitsPerPixel = bitmapInfo.BitsPerPixel;
-                pictureInfo.Metadata = bitmapInfo.Metadata;
-
-                //this.PictureInfo = pictureInfo;
-            }
-
-            return pictureInfo;
-        }
-
-
-
-#if false
-        private BitmapInfo CreateBitmapInfo(byte[] data)
-        {
-            return BitmapInfo.Create(new MemoryStream(data));
-#if false
-            // TODO: AutoRotateとかどうなん？
-            var bitmap = BitmapFrame.Create(new MemoryStream(data), BitmapCreateOptions.DelayCreation | BitmapCreateOptions.IgnoreColorProfile, BitmapCacheOption.None);
-            return new BitmapInfo(bitmap);
-#endif
-        }
-#endif
     }
+
 
 
     public static class PageThumbnailFactory
     {
-        public static PageThumbnail Create(IPageContent content)
+        public static PageThumbnail Create(PageContent content)
         {
-            switch(content)
+            switch (content)
             {
                 case BitmapPageContent bitmapPageContent:
                     return new BitmapPageThumbnail(bitmapPageContent);
@@ -109,16 +57,16 @@ namespace NeeView
                 default:
                     // not support yet.
                     return new PageThumbnail(content);
-
             }
         }
     }
 
+
     public class PageThumbnail
     {
-        private IPageContent _content;
+        private PageContent _content;
 
-        public PageThumbnail(IPageContent content)
+        public PageThumbnail(PageContent content)
         {
             _content = content;
         }

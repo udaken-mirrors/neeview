@@ -28,7 +28,7 @@ namespace NeeView
         //private static PageContentFactory _pageContentFactory = new PageContentFactory();
 
         private int _index;
-        private IPageContent _content;
+        private PageContent _content;
         private bool _isVisibled;
         private bool _isMarked;
         private bool _disposedValue;
@@ -44,7 +44,7 @@ namespace NeeView
 #endif
 
 
-        public Page(string bookPrefix, IPageContent content)
+        public Page(string bookPrefix, PageContent content)
         {
             BookPrefix = bookPrefix;
 
@@ -90,7 +90,7 @@ namespace NeeView
         /// コンテンツアクセサ。コンテンツを編集する場合はこのアクセサを介して操作を行う。
         /// </summary>
         //public PageContent ContentAccessor => _content;
-        public IPageContent Content => _content;
+        public PageContent Content => _content;
 
 
         // 登録番号

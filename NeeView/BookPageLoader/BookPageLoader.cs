@@ -11,7 +11,7 @@ using NeeView.PageFrames;
 namespace NeeView
 {
     // TODO: BookMemoryService: RawSourceとViewSource を同列に管理。ページ単位で増減させる方向で。
-    public class BookPageLoader : IPageLoader, IDisposable
+    public class BookPageLoader : IDisposable
     {
         private IBook _book;
         private PageFrameFactory _frameFactory;
@@ -32,6 +32,8 @@ namespace NeeView
 
         private object _lock = new();
 
+        private bool _isEnabled = true;
+        private BookLoadContext _loadContext = new BookLoadContext();
 
 
         public BookPageLoader(IBook book, PageFrameFactory frameFactory, ViewSourceMap viewSourceMap, PageFrameElementScaleFactory elementScaleFactory, BookMemoryService bookMemoryService, PerformanceConfig performanceConfig)
@@ -72,7 +74,43 @@ namespace NeeView
         }
 
 
-        public async Task LoadAsync(PageRange range, int direction, CancellationToken token)
+        public void Pause()
+        {
+            lock (_lock)
+            {
+                _isEnabled = false;
+                _loadContext = new BookLoadContext();
+            }
+        }
+
+        public void Resume()
+        {
+            lock (_lock)
+            {
+                _isEnabled = true;
+                if (_loadContext.IsValid)
+                {
+                    RequestLoad(_loadContext.PageRange, _loadContext.Direction);
+                }
+            }
+        }
+
+
+        public void RequestLoad(PageRange range, int direction)
+        {
+            lock (_lock)
+            {
+                if (!_isEnabled)
+                {
+                    _loadContext = new BookLoadContext(range, direction);
+                    return;
+                }
+            }
+
+            Task.Run(() => LoadAsync(range, direction, CancellationToken.None));
+        }
+
+        private async Task LoadAsync(PageRange range, int direction, CancellationToken token)
         {
             Debug.Assert(direction is 1 or -1);
 
@@ -145,9 +183,9 @@ namespace NeeView
                 _cancellationTokenSource?.Cancel();
                 _cancellationTokenSource?.Dispose();
                 _cancellationTokenSource = null;
+                _loadContext = new BookLoadContext();
             }
         }
-
 
 
         /// <summary>
@@ -239,7 +277,7 @@ namespace NeeView
                 foreach (var element in frame.Elements)
                 {
                     token.ThrowIfCancellationRequested();
-                    var viewSource = _viewSourceMap.Get(element.PageRange, element.Page.Content);
+                    var viewSource = _viewSourceMap.Get(element.Page, element.PagePart);
                     var viewContentSize = ViewContentSizeFactory.Create(element, _elementScaleFactory.Create(frame));
                     var pictureSize = viewContentSize.GetPictureSize();
                     await viewSource.LoadAsync(pictureSize, token);
@@ -250,6 +288,44 @@ namespace NeeView
             }
 
             return count;
+        }
+    }
+
+
+    public record class BookLoadContext
+    {
+        public BookLoadContext()
+        {
+            PageRange = PageRange.Empty;
+        }
+
+        public BookLoadContext(PageRange pageRange, int direction)
+        {
+            PageRange = pageRange;
+            Direction = direction;
+        }
+
+        public PageRange PageRange { get; init; }
+        public int Direction { get; init; }
+
+        public bool IsValid => !PageRange.IsEmpty();
+    }
+
+
+
+    public class BookPageLoadPauser : IDisposable
+    {
+        public BookPageLoader _loader;
+
+        public BookPageLoadPauser(BookPageLoader loader)
+        {
+            _loader = loader;
+            _loader.Pause();
+        }
+
+        public void Dispose()
+        {
+            _loader.Resume();
         }
     }
 

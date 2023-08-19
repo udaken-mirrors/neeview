@@ -1,26 +1,24 @@
 ﻿using System;
 using System.Diagnostics;
-using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Media.Imaging;
-using NeeLaboratory.Threading;
-using NeeView.ComponentModel;
 
 namespace NeeView
 {
-    /// <summary>
-    /// FileCache maybe.
-    /// </summary>
-    public class MemoryPageSource : PageSource<byte[]>
+    public class BitmapPageSource : PageSource
     {
-        public MemoryPageSource(ArchiveEntry entry) : base(entry)
+        public BitmapPageSource(ArchiveEntry entry) : base(entry)
         {
         }
 
 
-        public override long DataSize => Data?.LongLength ?? 0;
+        public IImageDataLoader? ImageDataLoader { get; private set; }
+
+        public PictureInfo? PictureInfo { get; private set; }
+
+        public byte[]? DataBytes => (byte[]?)Data;
+
+        public override long DataSize => DataBytes?.LongLength ?? 0;
 
 
         /// <summary>
@@ -30,8 +28,6 @@ namespace NeeView
         /// <returns></returns>
         protected override async Task LoadAsyncCore(CancellationToken token)
         {
-            // TODO: Susie
-
             try
             {
                 //Debug.WriteLine($"Loading...: {ArchiveEntry}");
@@ -44,15 +40,14 @@ namespace NeeView
 #endif
                 NVDebug.AssertMTA();
 
-                // memory chache
-                using var stream = ArchiveEntry.OpenEntry();
-                var length = stream.Length;
-                var buffer = new byte[length];
-                var readSize = await stream.ReadAsync(buffer, 0, (int)length, token);
-                if (readSize < length) throw new IOException("This file size is too large to read.");
+                var loader = ImageDataLoader ?? NeeView.ImageDataLoader.Default;
+                var createPictureInfo = PictureInfo is null;
 
-                //Debug.WriteLine($"Loaded: {ArchiveEntry}, {token.IsCancellationRequested}");
-                SetData(buffer, null);
+                var imageData = await loader.LoadAsync(ArchiveEntry, createPictureInfo, token);
+
+                ImageDataLoader = imageData.ImageDataLoader;
+                PictureInfo = PictureInfo ?? imageData.PictureInfo;
+                SetData(imageData.Data, imageData.ErrorMessage);
             }
             catch (OperationCanceledException)
             {
@@ -66,7 +61,6 @@ namespace NeeView
                 throw;
             }
         }
-
 
         protected override void UnloadCore()
         {

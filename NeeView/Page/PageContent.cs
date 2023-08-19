@@ -9,14 +9,14 @@ using NeeView.ComponentModel;
 
 namespace NeeView
 {
-    public class PageContent<T> : IPageContent, IDataSource<T>, IDataSource, IMemoryElement
+    public class PageContent :  IDataSource, IMemoryElement
     {
         public static Size DefaultSize = new Size(595, 842);
 
         private Size _size = DefaultSize;
         private ArchiveEntry _archiveEntry;
 
-        private PageSource<T> _pageSource;
+        private PageSource _pageSource;
         private string? _errorMessage;
         private PictureInfo? _pictureInfo;
 
@@ -24,7 +24,7 @@ namespace NeeView
 
 
         // TODO: ArchiveEntryを渡すように
-        public PageContent(ArchiveEntry archiveEntry, PageSource<T> pageSource, BookMemoryService? bookMemoryService)
+        public PageContent(ArchiveEntry archiveEntry, PageSource pageSource, BookMemoryService? bookMemoryService)
         {
             _archiveEntry = archiveEntry;
 
@@ -75,12 +75,12 @@ namespace NeeView
 
         public Color Color => _pictureInfo?.Color ?? Colors.Black;
 
-        public T? Data => _pageSource.Data;
+        public PageSource PageSource => _pageSource;
+        public object? Data => _pageSource.Data;
         public long DataSize => _pageSource.DataSize;
         public string? ErrorMessage => _errorMessage ?? _pageSource.ErrorMessage;
         public bool IsLoaded => _pageSource.IsLoaded || IsFailed;
         public bool IsFailed => ErrorMessage is not null;
-        object? IDataSource.Data => Data;
 
         public bool IsMemoryLocked => _state != PageContentState.None;
 

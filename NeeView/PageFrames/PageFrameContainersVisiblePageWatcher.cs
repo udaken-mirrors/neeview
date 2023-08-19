@@ -22,6 +22,7 @@ namespace NeeView.PageFrames
         private PageFrameContainersLayout _layout;
 
         private List<PageFrameContainer> _visibleContainers = new();
+        private PageRange _viewRange;
         private List<Page> _viewPages = new();
 
 
@@ -45,7 +46,10 @@ namespace NeeView.PageFrames
 
         public List<PageFrameContainer> VisibleContainers => _visibleContainers;
 
+        public PageRange ViewRange => _viewRange;
+
         public List<Page> VisiblePages => _viewPages;
+
 
 
         // TODO: 変更通知はPropertyChangedではなく専用イベントで？
@@ -81,13 +85,15 @@ namespace NeeView.PageFrames
                 Debug.Assert(IsContinued(visibleContainers));
             }
 
+            var range = GetPageRange(visibleContainers);
             var pages = CollectPages(visibleContainers);
-            if (!_visibleContainers.SequenceEqual(visibleContainers) || !_viewPages.SequenceEqual(pages))
+            if (!_visibleContainers.SequenceEqual(visibleContainers) || _viewRange != range || !_viewPages.SequenceEqual(pages))
             {
-                var direction = (GetPageRange(visibleContainers) < GetPageRange(_visibleContainers)) ? -1 : 1;
+                var direction = range < _viewRange ? -1 : 1;
                 _visibleContainers = visibleContainers;
+                _viewRange = range;
                 _viewPages = pages;
-                VisibleContainersChanged?.Invoke(this, new VisibleContainersChangedEventArgs(direction));
+                VisibleContainersChanged?.Invoke(this, new VisibleContainersChangedEventArgs(_visibleContainers, _viewRange, _viewPages, direction));
             }
         }
 
@@ -162,11 +168,17 @@ namespace NeeView.PageFrames
 
     public class VisibleContainersChangedEventArgs : EventArgs
     {
-        public VisibleContainersChangedEventArgs(int direction)
+        public VisibleContainersChangedEventArgs(List<PageFrameContainer> containers, PageRange pageRange, List<Page> pages, int direction)
         {
+            Containers = containers;
+            PageRange = pageRange;
+            Pages = pages;
             Direction = direction;
         }
 
+        public List<PageFrameContainer> Containers { get; }
+        public PageRange PageRange { get; }
+        public List<Page> Pages { get; }
         public int Direction { get; }
     }
 }
