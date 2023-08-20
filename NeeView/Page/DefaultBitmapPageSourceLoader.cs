@@ -5,9 +5,9 @@ using System.Threading.Tasks;
 
 namespace NeeView
 {
-    public class DefaultImageDataLoader : IImageDataLoader
+    public class DefaultBitmapPageSourceLoader : IBitmapPageSourceLoader
     {
-        public async Task<ImageData> LoadAsync(ArchiveEntry entry, bool createPctureInfo, CancellationToken token)
+        public async Task<BitmapPageSource> LoadAsync(ArchiveEntry entry, bool createPctureInfo, CancellationToken token)
         {
             try
             {
@@ -17,7 +17,7 @@ namespace NeeView
                 var readSize = await stream.ReadAsync(buffer, 0, (int)length, token);
                 if (readSize < length) throw new IOException("This file size is too large to read.");
                 var pictureInfo = createPctureInfo ? PictureInfo.Create(buffer, ".NET BitmapImage") : null;
-                return ImageData.Create(buffer, pictureInfo, this);
+                return BitmapPageSource.Create(buffer, pictureInfo, this);
             }
             catch (OperationCanceledException)
             {
@@ -25,7 +25,7 @@ namespace NeeView
             }
             catch (Exception ex)
             {
-                return ImageData.CreateError(ex.Message);
+                return BitmapPageSource.CreateError(ex.Message);
             }
         }
     }

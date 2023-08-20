@@ -20,6 +20,12 @@ namespace NeeView
         {
         }
 
+        public PictureInfo(Size size)
+        {
+            Size = size;
+            OriginalSize = size;
+        }
+
 
         /// <summary>
         /// Bitmap画像のRaw情報

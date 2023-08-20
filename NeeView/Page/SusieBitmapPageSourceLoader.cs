@@ -6,13 +6,13 @@ using NeeView.Susie;
 
 namespace NeeView
 {
-    public class SusieImageDataLoader : IImageDataLoader
+    public class SusieBitmapPageSourceLoader : IBitmapPageSourceLoader
     {
-        public async Task<ImageData> LoadAsync(ArchiveEntry entry, bool createPictureInfo, CancellationToken token)
+        public async Task<BitmapPageSource> LoadAsync(ArchiveEntry entry, bool createPictureInfo, CancellationToken token)
         {
             if (!entry.IsIgnoreFileExtension && !PictureProfile.Current.IsSusieSupported(entry.Link ?? entry.EntryName))
             {
-                return ImageData.CreateError("not support format");
+                return BitmapPageSource.CreateError("not support format");
             }
 
             try
@@ -37,7 +37,7 @@ namespace NeeView
             }
             catch (Exception ex)
             {
-                return ImageData.CreateError(ex.Message);
+                return BitmapPageSource.CreateError(ex.Message);
             }
         }
 
@@ -78,16 +78,16 @@ namespace NeeView
             return result;
         }
 
-        private ImageData CreateImageDataSource(SusieImage? susieImage, bool createPictureInfo)
+        private BitmapPageSource CreateImageDataSource(SusieImage? susieImage, bool createPictureInfo)
         {
             if (susieImage == null || susieImage.Plugin == null || susieImage.BitmapData == null)
             {
-                return ImageData.CreateError("SusieIOException");
+                return BitmapPageSource.CreateError("SusieIOException");
             }
             else
             {
                 var pictureInfo = createPictureInfo ? PictureInfo.Create(susieImage.BitmapData, susieImage.Plugin.Name) : null;
-                return ImageData.Create(susieImage.BitmapData, pictureInfo, this);
+                return BitmapPageSource.Create(susieImage.BitmapData, pictureInfo, this);
             }
         }
     }

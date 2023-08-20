@@ -1,73 +1,31 @@
-﻿using System;
-using System.Diagnostics;
-using System.Threading;
-using System.Threading.Tasks;
+﻿using System.IO;
+using System.Windows;
 
 namespace NeeView
 {
     public class BitmapPageSource : PageSource
     {
-        public BitmapPageSource(ArchiveEntry entry) : base(entry)
+        public BitmapPageSource(object? data, string? errorMessage, PictureInfo? pictureInfo, IBitmapPageSourceLoader? imageDataLoader)
+            : base(data, errorMessage, pictureInfo)
         {
+            ImageDataLoader = imageDataLoader;
         }
 
 
-        public IImageDataLoader? ImageDataLoader { get; private set; }
-
-        public PictureInfo? PictureInfo { get; private set; }
-
-        public byte[]? DataBytes => (byte[]?)Data;
-
-        public override long DataSize => DataBytes?.LongLength ?? 0;
+        public byte[]? DataAsByteArray => (byte[]?)Data;
+        public override long DataSize => DataAsByteArray?.LongLength ?? 0;
+        public IBitmapPageSourceLoader? ImageDataLoader { get; }
 
 
-        /// <summary>
-        /// 読み込み。キャンセル等された場合でも正常終了する。
-        /// </summary>
-        /// <param name="token"></param>
-        /// <returns></returns>
-        protected override async Task LoadAsyncCore(CancellationToken token)
+        public static BitmapPageSource Create(byte[] data, PictureInfo? pictureInfo, IBitmapPageSourceLoader imageDataLoader)
         {
-            try
-            {
-                //Debug.WriteLine($"Loading...: {ArchiveEntry}");
-#if DEBUG
-                if (Debugger.IsAttached)
-                {
-                    NVDebug.AssertMTA();
-                    await Task.Delay(200, token);
-                }
-#endif
-                NVDebug.AssertMTA();
-
-                var loader = ImageDataLoader ?? NeeView.ImageDataLoader.Default;
-                var createPictureInfo = PictureInfo is null;
-
-                var imageData = await loader.LoadAsync(ArchiveEntry, createPictureInfo, token);
-
-                ImageDataLoader = imageData.ImageDataLoader;
-                PictureInfo = PictureInfo ?? imageData.PictureInfo;
-                SetData(imageData.Data, imageData.ErrorMessage);
-            }
-            catch (OperationCanceledException)
-            {
-                //Debug.WriteLine($"Load Canceled: {ArchiveEntry}");
-                SetData(null, null);
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine(ex);
-                SetData(null, ex.Message);
-                throw;
-            }
+            return new BitmapPageSource(data, null, pictureInfo, imageDataLoader);
         }
 
-        protected override void UnloadCore()
+        public new static BitmapPageSource CreateError(string errorMessage)
         {
-            if (!IsFailed)
-            {
-                SetData(null, null);
-            }
+            return new BitmapPageSource(null, errorMessage, null, null);
         }
     }
+
 }

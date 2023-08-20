@@ -245,12 +245,12 @@ namespace NeeView
 
 
         /// <summary>
-        /// テンポラリにアーカイブを解凍する
+        /// テンポラリにアーカイブエントリを解凍する
         /// このテンポラリは自動的に削除される
         /// </summary>
         /// <param name="entry"></param>
         /// <param name="isKeepFileName">エントリー名をファイル名にする</param>
-        public FileProxy ExtractToTemp(bool isKeepFileName = false)
+        public FileProxy GetFileProxy(bool isKeepFileName = false)
         {
             _fileProxy = _fileProxy ?? CreateFileProxy(isKeepFileName);
             return _fileProxy;

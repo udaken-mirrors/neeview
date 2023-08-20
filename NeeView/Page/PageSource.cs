@@ -1,108 +1,39 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Threading;
-using System.Threading.Tasks;
-using NeeLaboratory.Threading;
-using NeeView.ComponentModel;
-using NeeView.Threading;
+﻿using NeeView.ComponentModel;
 
 namespace NeeView
 {
-    /// <summary>
-    /// PageSource
-    ///   +- MemoryPageSource
-    ///   +- FilePageSource
-    /// </summary>
-    public abstract class PageSource : IDataSource
+    public class PageSource : IDataSource
     {
-        private readonly AsyncLock _asyncLock = new();
-        private CancellationTokenSource? _cancellationTokenSource;
-
-        private ArchiveEntry _archvieEntry;
-
-
-        public PageSource(ArchiveEntry entry)
+        public PageSource(object? data, string? errorMessage, PictureInfo? pictureInfo)
         {
-            _archvieEntry = entry;
-        }
-
-
-        public event EventHandler? SourceChanged;
-
-
-        public ArchiveEntry ArchiveEntry => _archvieEntry;
-
-        public object? Data { get; protected set; }
-
-        public string? ErrorMessage { get; protected set; }
-
-        public bool IsLoaded => Data != null || IsFailed;
-
-        public bool IsFailed => ErrorMessage != null;
-
-        object? IDataSource.Data => Data;
-
-        public abstract long DataSize { get; }
-
-
-
-        public async Task LoadAsync(CancellationToken token)
-        {
-            using (await _asyncLock.LockAsync(token))
-            {
-                if (IsLoaded)
-                {
-                    return;
-                }
-
-                try
-                {
-                    _cancellationTokenSource?.Dispose();
-                    _cancellationTokenSource = new CancellationTokenSource();
-                    using var linkedTokenSource = CancellationTokenSource.CreateLinkedTokenSource(_cancellationTokenSource.Token, token);
-                    if (linkedTokenSource.Token.IsCancellationRequested)
-                    {
-                        return;
-                    }
-                    await LoadAsyncCore(linkedTokenSource.Token);
-                }
-                catch (OperationCanceledException)
-                {
-                }
-                finally
-                {
-                    _cancellationTokenSource?.Dispose();
-                    _cancellationTokenSource = null;
-                }
-            }
-        }
-
-        protected abstract Task LoadAsyncCore(CancellationToken token);
-
-
-        public void Unload()
-        {
-            _cancellationTokenSource?.Cancel();
-            UnloadCore();
-        }
-
-        protected abstract void UnloadCore();
-
-
-        protected void SetData(object? data, string? errorMessage)
-        {
-            bool isContentChanged = Data != data || ErrorMessage != errorMessage;
-
             Data = data;
             ErrorMessage = errorMessage;
+            PictureInfo = pictureInfo;
+        }
 
-            if (isContentChanged)
-            {
-                Debug.WriteLine($"PageSourceChanged: {ArchiveEntry}");
-                SourceChanged?.Invoke(this, EventArgs.Empty);
-            }
+        public object? Data { get; }
+        public virtual long DataSize => 0;
+        public string? ErrorMessage { get; }
+        public bool IsLoaded => Data is not null || IsFailed;
+        public bool IsFailed => ErrorMessage is not null;
+        public DataState DataState => IsFailed ? DataState.Failed : IsLoaded ? DataState.Loaded : DataState.None;
+
+        public PictureInfo? PictureInfo { get; }
+
+
+        public static PageSource CreateEmpty()
+        {
+            return new PageSource(null, null, null);
+        }
+
+        public static PageSource Create(object data, PictureInfo? pictureInfo)
+        {
+            return new PageSource(data, null, pictureInfo);
+        }
+
+        public static PageSource CreateError(string errorMessage)
+        {
+            return new PageSource(null, errorMessage, null);
         }
     }
 

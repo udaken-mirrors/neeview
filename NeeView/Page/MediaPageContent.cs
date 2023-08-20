@@ -13,38 +13,34 @@ namespace NeeView
     public class MediaPageContent : PageContent
     {
         public MediaPageContent(ArchiveEntry archiveEntry, BookMemoryService bookMemoryService)
-            : base(archiveEntry, new FilePageSource(archiveEntry), bookMemoryService)
+            : base(archiveEntry, bookMemoryService)
         {
         }
 
 
-        public new string? Data => (string?)base.Data;
-
-
-        protected override void OnPageSourceChanged()
+        public override async Task<PageSource> LoadSourceAsync(CancellationToken token)
         {
-            if (Data is null) return;
+            NVDebug.AssertMTA();
 
-            if (PictureInfo is null)
+            try
             {
-                try
-                {
-                    NVDebug.AssertMTA();
-                    SetPictureInfo(CreatePictureInfo(Data));
-                }
-                catch (Exception ex)
-                {
-                    Debug.WriteLine(ex);
-                    SetErrorMessage(ex.Message);
-                    SetPictureInfo(new PictureInfo() { Size = new Size(1920, 1080), OriginalSize = new Size(1920, 1080) });
-                }
+                // ArchvieFileの場合はTempFile化
+                var fileProxy = Entry.GetFileProxy(); // TODO: async化
+                var pictureInfo = CreatePictureInfo(fileProxy.Path); // TODO: Async
+                await Task.CompletedTask;
+                return new PageSource(fileProxy.Path, null, pictureInfo);
             }
-
-            Size = PictureInfo?.Size ?? DefaultSize;
+            catch (OperationCanceledException)
+            {
+                return PageSource.CreateEmpty();
+            }
+            catch (Exception ex)
+            {
+                return new PageSource(null, ex.Message, new PictureInfo(new Size(1920, 1080)));
+            }
         }
 
-
-        public PictureInfo CreatePictureInfo(string path)
+        private PictureInfo CreatePictureInfo(string path)
         {
             int width = 1920;
             int height = 1080;
@@ -78,6 +74,7 @@ namespace NeeView
 
             return pictureInfo;
         }
+
     }
 
 }

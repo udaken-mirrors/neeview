@@ -71,7 +71,7 @@ namespace NeeView
                         case ArchivePolicy.SendExtractFile:
                             if (!page.Content.Entry.IsArchiveDirectory())
                             {
-                                files.Add(page.Content.CreateTempFile(true).Path);
+                                files.Add(page.Entry.GetFileProxy(true).Path);
                             }
                             else
                             {
