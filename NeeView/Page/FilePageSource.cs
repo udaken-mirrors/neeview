@@ -17,19 +17,13 @@ namespace NeeView
 
         protected override async Task LoadAsyncCore(CancellationToken token)
         {
-            // TODO: ArchvieFileの場合はTempFile化
-
-
-#if DEBUG
-            if (Debugger.IsAttached)
-            {
-                NVDebug.AssertMTA();
-                await Task.Delay(500, token);
-            }
-#endif
             NVDebug.AssertMTA();
 
-            SetData(ArchiveEntry.SystemPath, null);
+            // ArchvieFileの場合はTempFile化
+            var fileProxy = ArchiveEntry.ExtractToTemp(); // TODO: async化
+            SetData(fileProxy.Path, null);
+
+            await Task.CompletedTask;
         }
 
         protected override void UnloadCore()

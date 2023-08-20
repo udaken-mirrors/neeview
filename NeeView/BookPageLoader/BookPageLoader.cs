@@ -76,6 +76,7 @@ namespace NeeView
 
         public void Pause()
         {
+            if (_disposedValue) return;
             lock (_lock)
             {
                 _isEnabled = false;
@@ -85,6 +86,7 @@ namespace NeeView
 
         public void Resume()
         {
+            if (_disposedValue) return;
             lock (_lock)
             {
                 _isEnabled = true;
@@ -98,6 +100,9 @@ namespace NeeView
 
         public void RequestLoad(PageRange range, int direction)
         {
+            if (_disposedValue) return;
+            if (range.IsEmpty()) return;
+
             lock (_lock)
             {
                 if (!_isEnabled)
@@ -113,6 +118,8 @@ namespace NeeView
         private async Task LoadAsync(PageRange range, int direction, CancellationToken token)
         {
             Debug.Assert(direction is 1 or -1);
+
+            if (_disposedValue) return;
 
             lock (_lock)
             {
@@ -178,6 +185,7 @@ namespace NeeView
 
         public void Cancel()
         {
+            if (_disposedValue) return;
             lock (_lock)
             {
                 _cancellationTokenSource?.Cancel();

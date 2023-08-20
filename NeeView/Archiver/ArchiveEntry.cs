@@ -18,6 +18,9 @@ namespace NeeView
         public static ArchiveEntry Empty { get; } = new ArchiveEntry(StaticFolderArchive.Default) { IsEmpty = true };
 
 
+        private FileProxy? _fileProxy;
+
+
         /// <summary>
         /// コンストラクタ
         /// </summary>
@@ -248,6 +251,12 @@ namespace NeeView
         /// <param name="entry"></param>
         /// <param name="isKeepFileName">エントリー名をファイル名にする</param>
         public FileProxy ExtractToTemp(bool isKeepFileName = false)
+        {
+            _fileProxy = _fileProxy ?? CreateFileProxy(isKeepFileName);
+            return _fileProxy;
+        }
+
+        private FileProxy CreateFileProxy(bool isKeepFileName)
         {
             var targetPath = Link ?? GetFileSystemPath();
             if (targetPath is not null && (this.Archiver is FolderArchive || this.Archiver is MediaArchiver || IsFileSystem))

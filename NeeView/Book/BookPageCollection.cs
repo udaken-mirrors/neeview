@@ -121,7 +121,18 @@ namespace NeeView
 
         public Page this[int index]
         {
-            get { return Pages[index]; }
+            get
+            {
+                try
+                {
+                    return Pages[index];
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine(ex.Message);
+                    throw;
+                }
+            }
             set { Pages[index] = value; }
         }
 

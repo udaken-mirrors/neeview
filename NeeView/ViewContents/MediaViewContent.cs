@@ -77,9 +77,9 @@ namespace NeeView
 
         protected override FrameworkElement CreateLoadedContent(Size size, object data)
         {
-            return CreateMediaContent();
+            var path = data as string ?? throw new InvalidOperationException();
+            return CreateMediaContent(path);
         }
-
 
         private MediaPlayer OpenMediaPlayer(Uri uri)
         {
@@ -149,7 +149,7 @@ namespace NeeView
             }
         }
 
-        private FrameworkElement CreateMediaContent()
+        private FrameworkElement CreateMediaContent(string path)
         {
             Debug.WriteLine($"Create.MediaPlayer: {ArchiveEntry}");
 
@@ -206,9 +206,8 @@ namespace NeeView
             grid.Children.Add(rectangle);
             grid.Children.Add(_errorMessageTextBlock);
 
-
             // NOTE: コントロールの存在を保証するためにプレイヤー生成は最後に行う
-            _player = OpenMediaPlayer(new Uri(Element.Page.Content.ArchiveEntry.SystemPath));
+            _player = OpenMediaPlayer(new Uri(path));
             videoDrawing.Player = _player;
 
             return grid;
