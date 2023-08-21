@@ -46,7 +46,7 @@ namespace NeeView
             }
             else if (isForce)
             {
-                return new ArchiveEntry(this) { RawEntryName = path };
+                return new ArchiveEntry(this) { RawEntryName = path, IsTemporary = true };
             }
 
             throw new FileNotFoundException("File not found.", fullpath);

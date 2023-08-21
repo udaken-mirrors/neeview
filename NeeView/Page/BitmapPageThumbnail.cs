@@ -12,19 +12,11 @@ namespace NeeView
             _content = content;
         }
 
-        /// <summary>
-        /// サムネイルロード
-        /// </summary>
-        public override async Task LoadThumbnailAsync(CancellationToken token)
+        public override async Task<ThumbnailSource> LoadThumbnailAsync(CancellationToken token)
         {
             token.ThrowIfCancellationRequested();
-            //if (_disposedValue) return;
+            NVDebug.AssertMTA();
 
-            await Thumbnail.InitializeAsync(_content.Entry, null, token);
-            if (Thumbnail.IsValid) return;
-
-
-            //var source = LoadPictureSource(token);
             var source = new BitmapPictureSource(_content);
 
             byte[]? thumbnailRaw = null;
@@ -51,10 +43,8 @@ namespace NeeView
             }
 
             token.ThrowIfCancellationRequested();
-            Thumbnail.Initialize(thumbnailRaw);
+            return new ThumbnailSource(thumbnailRaw);
         }
     }
-
-
 
 }

@@ -12,7 +12,7 @@ namespace NeeView
 {
     public class MediaPageContent : PageContent
     {
-        public MediaPageContent(ArchiveEntry archiveEntry, BookMemoryService bookMemoryService)
+        public MediaPageContent(ArchiveEntry archiveEntry, BookMemoryService? bookMemoryService)
             : base(archiveEntry, bookMemoryService)
         {
         }

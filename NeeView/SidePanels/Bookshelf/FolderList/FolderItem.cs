@@ -465,9 +465,7 @@ namespace NeeView
         {
             if (_archivePage == null)
             {
-#warning not implement yet
-                //_archivePage = new Page("", new ArchiveContent(TargetPath.SimplePath));
-                _archivePage = new Page("", new BitmapPageContent(StaticFolderArchive.Default.CreateArchiveEntry(TargetPath.SimplePath), null));
+                _archivePage = new Page("", new ArchivePageContent(ArchiveEntryUtility.CreateTemporaryEntry(TargetPath.SimplePath), null));
                 _archivePage.Thumbnail.IsCacheEnabled = true;
                 _archivePage.Thumbnail.Touched += Thumbnail_Touched;
             }

@@ -322,7 +322,7 @@ namespace NeeView
             if (!CanDelete()) return;
             if (!File.Exists(SelectedItem)) return;
 
-            var entry = StaticFolderArchive.Default.CreateArchiveEntry(SelectedItem);
+            var entry = ArchiveEntryUtility.CreateTemporaryEntry(SelectedItem);
             bool isSuccessed = await ConfirmFileIO.DeleteAsync(entry, Properties.Resources.Playlist_DeleteDialog_Title, null);
             if (isSuccessed)
             {

@@ -4,9 +4,9 @@ namespace NeeView
 {
     public class PageContentFactory
     {
-        private BookMemoryService _bookMemoryService;
+        private BookMemoryService? _bookMemoryService;
 
-        public PageContentFactory(BookMemoryService bookMemoryService)
+        public PageContentFactory(BookMemoryService? bookMemoryService)
         {
             _bookMemoryService = bookMemoryService;
         }

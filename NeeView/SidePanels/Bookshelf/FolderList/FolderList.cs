@@ -1836,7 +1836,7 @@ namespace NeeView
                 }
             }
 
-            var entries = items.Select(e => StaticFolderArchive.Default.CreateArchiveEntry(e.TargetPath.SimplePath)).ToList();
+            var entries = items.Select(e => ArchiveEntryUtility.CreateTemporaryEntry(e.TargetPath.SimplePath)).ToList();
             var removed = await ConfirmFileIO.DeleteAsync(entries, Properties.Resources.FileDeleteBookDialog_Title, null);
             if (removed && _folderCollection != null)
             {

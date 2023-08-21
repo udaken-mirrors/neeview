@@ -14,6 +14,19 @@ namespace NeeView
     public static class ArchiveEntryUtility
     {
         /// <summary>
+        /// 仮エントリ―作成
+        /// </summary>
+        /// <remarks>
+        /// 指定したパスがファイルシステム上に存在すると仮定して発行する。アーカイブ内等の実エントリーにするにはCreateAsync()を使用する。
+        /// </remarks>
+        /// <param name="path"></param>
+        /// <returns></returns>
+        public static ArchiveEntry CreateTemporaryEntry(string path)
+        {
+            return StaticFolderArchive.Default.CreateArchiveEntry(path, true);
+        }
+
+        /// <summary>
         /// パスから完全なArcvhiveEntryを作成
         /// </summary>
         public static async Task<ArchiveEntry> CreateAsync(string path, CancellationToken token)

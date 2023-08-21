@@ -1,4 +1,5 @@
 ﻿using NeeLaboratory.ComponentModel;
+using NeeView;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -190,6 +191,28 @@ namespace NeeView
                 ThumbnailType.Folder => ThumbnailResource.FolderImage,
                 _ => ThumbnailResource.EmptyImage,
             };
+        }
+
+        /// <summary>
+        /// サムネイルソースから初期化
+        /// </summary>
+        /// <param name="source"></param>
+        internal void Initialize(ThumbnailSource source)
+        {
+            if (_disposedValue) return;
+
+            if (source == null)
+            {
+                Initialize((byte[]?)null);
+            }
+            else if (source.Type == ThumbnailType.Unique)
+            {
+                Initialize(source.RawData);
+            }
+            else
+            {
+                Initialize(source.Type);
+            }
         }
 
         /// <summary>

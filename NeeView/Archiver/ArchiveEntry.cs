@@ -36,6 +36,10 @@ namespace NeeView
         /// </summary>
         public bool IsEmpty { get; private set; }
 
+        /// <summary>
+        /// 仮のエントリー
+        /// </summary>
+        public bool IsTemporary { get; init; }
 
         /// <summary>
         /// 所属アーカイバ

@@ -50,6 +50,7 @@ namespace NeeView
         public ArchiveEntry ArchiveEntry => _archiveEntry;
         public ArchiveEntry Entry => _archiveEntry;
 
+        public BookMemoryService? BookMemoryService => _bookMemoryService;
 
         /// <summary>
         /// Picture info.

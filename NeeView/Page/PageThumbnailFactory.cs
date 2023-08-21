@@ -9,6 +9,9 @@
                 case BitmapPageContent bitmapPageContent:
                     return new BitmapPageThumbnail(bitmapPageContent);
 
+                case ArchivePageContent archivePageContent:
+                    return new ArchivePageThumbnail(archivePageContent);
+
                 default:
                     // not support yet.
                     return new PageThumbnail(content);

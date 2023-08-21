@@ -14,9 +14,22 @@ namespace NeeView
 
         public Thumbnail Thumbnail { get; } = new Thumbnail();
 
-        public virtual async Task LoadThumbnailAsync(CancellationToken token)
+
+        public async Task LoadAsync(CancellationToken token)
         {
-            await Task.CompletedTask;
+            NVDebug.AssertMTA();
+            if (Thumbnail.IsValid) return;
+
+            await Thumbnail.InitializeAsync(_content.Entry, null, token);
+            if (Thumbnail.IsValid) return;
+
+            var source = await LoadThumbnailAsync(token);
+            Thumbnail.Initialize(source);
+        }
+
+        public virtual async Task<ThumbnailSource> LoadThumbnailAsync(CancellationToken token)
+        {
+            return new ThumbnailSource(null);
         }
     }
 

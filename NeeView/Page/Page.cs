@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -46,6 +47,7 @@ namespace NeeView
 
         public Page(string bookPrefix, PageContent content)
         {
+
             BookPrefix = bookPrefix;
 
             _content = content;
@@ -53,6 +55,7 @@ namespace NeeView
             _content.SizeChanged += Content_SizeChanged;
 
             _thumbnailSource = PageThumbnailFactory.Create(_content);
+
 
 #if false
             _disposables.Add(_content.SubscribePropertyChanged(nameof(PageContent.Entry),
@@ -217,7 +220,7 @@ namespace NeeView
             try
             {
                 token.ThrowIfCancellationRequested();
-                await _thumbnailSource.LoadThumbnailAsync(token);
+                await _thumbnailSource.LoadAsync(token);
                 return this.Thumbnail?.ImageSource;
             }
             catch
