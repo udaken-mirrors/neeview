@@ -81,11 +81,16 @@ namespace NeeView
 
             using (var stream = new MemoryStream(bytes))
             {
-                using (var outStream = new MemoryStream())
-                {
-                    _bitmapFactory.CreateImage(stream, PictureInfo?.BitmapInfo, outStream, size, format, quality, setting, token);
-                    return outStream.ToArray();
-                }
+                return CreateImage(stream, size, setting, format, quality, token);
+            }
+        }
+
+        public byte[] CreateImage(Stream stream, Size size, BitmapCreateSetting setting, BitmapImageFormat format, int quality, CancellationToken token)
+        {
+            using (var outStream = new MemoryStream())
+            {
+                _bitmapFactory.CreateImage(stream, PictureInfo?.BitmapInfo, outStream, size, format, quality, setting, token);
+                return outStream.ToArray();
             }
         }
 
@@ -116,6 +121,54 @@ namespace NeeView
             var setting = profile.CreateBitmapCreateSetting(bitmapInfo?.Metadata?.IsOriantationEnabled == true);
             return CreateImage(data, size, setting, Config.Current.Thumbnail.Format, Config.Current.Thumbnail.Quality, token);
         }
+
+
+        public byte[] CreateThumbnail(Stream stream, ThumbnailProfile profile, CancellationToken token)
+        {
+            token.ThrowIfCancellationRequested();
+
+            Size size;
+            BitmapInfo? bitmapInfo;
+            if (PictureInfo != null)
+            {
+                size = PictureInfo.Size;
+                bitmapInfo = PictureInfo.BitmapInfo;
+            }
+            else
+            {
+                bitmapInfo = BitmapInfo.Create(stream);
+                size = bitmapInfo.IsTranspose ? bitmapInfo.GetPixelSize().Transpose() : bitmapInfo.GetPixelSize();
+            }
+
+            size = ThumbnailProfile.GetThumbnailSize(size);
+            var setting = profile.CreateBitmapCreateSetting(bitmapInfo?.Metadata?.IsOriantationEnabled == true);
+            stream.Seek(0, SeekOrigin.Begin);
+            return CreateImage(stream, size, setting, Config.Current.Thumbnail.Format, Config.Current.Thumbnail.Quality, token);
+        }
     }
 
+
+
+    // TODO: BitmapPictureSource 等との関係性
+    public class ThumbnailTools
+    {
+        public static byte[] CreateThumbnailImage(Stream stream, PictureInfo pictureInfo, ThumbnailProfile profile, CancellationToken token)
+        {
+            token.ThrowIfCancellationRequested();
+            var size = ThumbnailProfile.GetThumbnailSize(pictureInfo.Size);
+            var setting = profile.CreateBitmapCreateSetting(pictureInfo.BitmapInfo?.Metadata?.IsOriantationEnabled == true);
+            stream.Seek(0, SeekOrigin.Begin);
+            return CreateImage(stream, pictureInfo, size, setting, Config.Current.Thumbnail.Format, Config.Current.Thumbnail.Quality, token);
+        }
+
+        public static byte[] CreateImage(Stream stream, PictureInfo pictureInfo, Size size, BitmapCreateSetting setting, BitmapImageFormat format, int quality, CancellationToken token)
+        {
+            using (var outStream = new MemoryStream())
+            {
+                var bitmapFactory = new BitmapFactory();
+                bitmapFactory.CreateImage(stream, pictureInfo.BitmapInfo, outStream, size, format, quality, setting, token);
+                return outStream.ToArray();
+            }
+        }
+    }
 }

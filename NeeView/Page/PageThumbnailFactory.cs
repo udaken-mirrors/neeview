@@ -9,6 +9,9 @@
                 case BitmapPageContent bitmapPageContent:
                     return new BitmapPageThumbnail(bitmapPageContent);
 
+                case AnimatedPageContent animatedPageContent:
+                    return new AnimatedPageThumbnail(animatedPageContent);
+
                 case PdfPageContent pdfPageContent:
                     return new PdfPageThumbnail(pdfPageContent);
 

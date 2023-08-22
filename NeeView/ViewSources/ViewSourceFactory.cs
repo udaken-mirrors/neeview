@@ -17,6 +17,8 @@ namespace NeeView
             {
                 case BitmapPageContent bitmapPageContent:
                     return new BitmapViewSource(bitmapPageContent, _bookMemoryService);
+                case AnimatedPageContent animatedPageContent:
+                    return new AnimatedViewSource(animatedPageContent, _bookMemoryService);
                 case PdfPageContent pdfPageContent:
                     return new PdfViewSource(pdfPageContent, _bookMemoryService);
                 case SvgPageContent svgPageContent:

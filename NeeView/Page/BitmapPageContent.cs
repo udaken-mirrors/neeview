@@ -1,14 +1,10 @@
 ﻿using System;
-using System.IO;
 using System.Threading.Tasks;
 using System.Threading;
-using System.Windows;
-using System.Windows.Media.Imaging;
 using System.Diagnostics;
 
 namespace NeeView
 {
-
     public class BitmapPageContent : PageContent
     {
         private IBitmapPageSourceLoader? _imageDataLoader;

@@ -202,7 +202,6 @@ namespace NeeView
         protected void UpdateContent(DataSource data)
         {
             NVDebug.AssertSTA();
-            (Content as IDisposable)?.Dispose();
             Content = CreateContent(LayoutSize, data);
             UpdateSize();
             ViewContentChanged?.Invoke(this, EventArgs.Empty);

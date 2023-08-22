@@ -24,8 +24,9 @@ namespace NeeView
             {
                 case ".svg":
                     return new SvgPageContent(archiveEntry, _bookMemoryService);
-                case ".mp4":
                 case ".gif":
+                    return new AnimatedPageContent(archiveEntry, _bookMemoryService);
+                case ".mp4":
                 case ".mkv":
                     return new MediaPageContent(archiveEntry, _bookMemoryService);
                 default:

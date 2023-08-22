@@ -5,6 +5,7 @@ namespace NeeView
     /// <summary>
     /// NOTE: まだ未使用
     /// </summary>
+    [Obsolete]
     public class MediaPlayerSource
     {
         public MediaPlayerSource(string path)

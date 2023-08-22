@@ -10,6 +10,7 @@ namespace NeeView
 {
     public class ImageViewContent : ViewContent
     {
+        private ImageContentControl? _imageControl;
         private bool _disposedValue;
         private DisposableCollection _disposables = new();
         private InstantDelayAction _delayAction;
@@ -27,6 +28,8 @@ namespace NeeView
             {
                 if (disposing)
                 {
+                    _imageControl?.Dispose();
+                    _imageControl = null;
                     _disposables.Dispose();
                 }
 
@@ -48,10 +51,16 @@ namespace NeeView
             base.OnSourceChanged();
         }
 
+
+
         protected override FrameworkElement CreateLoadedContent(Size size, object data)
         {
+            _imageControl?.Dispose();
+            _imageControl = null;
+
             var imageSource = data as ImageSource ?? throw new InvalidOperationException();
-            return new ImageContentControl(Element, imageSource, ViewContentSize);
+            _imageControl = new ImageContentControl(Element, imageSource, ViewContentSize);
+            return _imageControl;
         }
 
     }

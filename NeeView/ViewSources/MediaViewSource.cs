@@ -29,7 +29,9 @@ namespace NeeView
             }
             else
             {
-                SetData(data.Data, 0, null);
+                var path = data.Data as string ?? throw new InvalidOperationException(nameof(data));
+                var source = new MediaSource(path, null);
+                SetData(source, 0, null);
             }
             await Task.CompletedTask;
         }
@@ -42,4 +44,5 @@ namespace NeeView
             }
         }
     }
+
 }

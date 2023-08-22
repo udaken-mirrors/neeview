@@ -20,6 +20,8 @@ namespace NeeView
             {
                 case BitmapPageContent:
                     return new BitmapViewContent(element, scale, viewSource, activity);
+                case AnimatedPageContent:
+                    return new AnimatedViewContent(element, scale, viewSource, activity);
                 case PdfPageContent:
                     return new PdfViewContent(element, scale, viewSource, activity);
                 case SvgPageContent:

@@ -104,25 +104,29 @@ namespace NeeView
 
         public static PictureInfo Create(byte[] data, string? decoder)
         {
-            var pictureInfo = new PictureInfo();
-
             using (var stream = new MemoryStream(data))
             {
-                stream.Seek(0, SeekOrigin.Begin);
                 var bitmapInfo = BitmapInfo.Create(stream, true);
-                pictureInfo.BitmapInfo = bitmapInfo;
-                var originalSize = bitmapInfo.IsTranspose ? bitmapInfo.GetPixelSize().Transpose() : bitmapInfo.GetPixelSize();
-                pictureInfo.OriginalSize = originalSize;
-
-                var maxSize = bitmapInfo.IsTranspose ? Config.Current.Performance.MaximumSize.Transpose() : Config.Current.Performance.MaximumSize;
-                var size = (Config.Current.Performance.IsLimitSourceSize && !maxSize.IsContains(originalSize)) ? originalSize.Uniformed(maxSize) : Size.Empty;
-                pictureInfo.Size = size.IsEmpty ? originalSize : size;
-                pictureInfo.AspectSize = bitmapInfo.IsTranspose ? bitmapInfo.GetAspectSize().Transpose() : bitmapInfo.GetAspectSize();
-
-                pictureInfo.Decoder = decoder ?? "(Unknown)";
-                pictureInfo.BitsPerPixel = bitmapInfo.BitsPerPixel;
-                pictureInfo.Metadata = bitmapInfo.Metadata;
+                return Create(bitmapInfo, decoder);
             }
+        }
+
+        public static PictureInfo Create(BitmapInfo bitmapInfo, string? decoder)
+        {
+            var pictureInfo = new PictureInfo();
+
+            pictureInfo.BitmapInfo = bitmapInfo;
+            var originalSize = bitmapInfo.IsTranspose ? bitmapInfo.GetPixelSize().Transpose() : bitmapInfo.GetPixelSize();
+            pictureInfo.OriginalSize = originalSize;
+
+            var maxSize = bitmapInfo.IsTranspose ? Config.Current.Performance.MaximumSize.Transpose() : Config.Current.Performance.MaximumSize;
+            var size = (Config.Current.Performance.IsLimitSourceSize && !maxSize.IsContains(originalSize)) ? originalSize.Uniformed(maxSize) : Size.Empty;
+            pictureInfo.Size = size.IsEmpty ? originalSize : size;
+            pictureInfo.AspectSize = bitmapInfo.IsTranspose ? bitmapInfo.GetAspectSize().Transpose() : bitmapInfo.GetAspectSize();
+
+            pictureInfo.Decoder = decoder ?? "(Unknown)";
+            pictureInfo.BitsPerPixel = bitmapInfo.BitsPerPixel;
+            pictureInfo.Metadata = bitmapInfo.Metadata;
 
             return pictureInfo;
         }
