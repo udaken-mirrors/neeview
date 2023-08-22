@@ -15,8 +15,15 @@ namespace NeeView
         {
             var ext = Path.GetExtension(archiveEntry.EntryName).ToLower();
 
+            if (archiveEntry.Archiver is PdfArchiver)
+            {
+                return new PdfPageContent(archiveEntry, _bookMemoryService);
+            }
+
             switch (ext)
             {
+                case ".svg":
+                    return new SvgPageContent(archiveEntry, _bookMemoryService);
                 case ".mp4":
                 case ".gif":
                 case ".mkv":

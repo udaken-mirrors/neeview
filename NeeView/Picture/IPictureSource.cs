@@ -10,10 +10,10 @@ namespace NeeView
         PictureInfo? PictureInfo { get; }
 
         Size FixedSize(Size size);
-        ImageSource CreateImageSource(byte[] data, Size size, BitmapCreateSetting setting, CancellationToken token);
+        ImageSource CreateImageSource(object data, Size size, BitmapCreateSetting setting, CancellationToken token);
 
-        byte[] CreateImage(byte[] data, Size size, BitmapCreateSetting setting, BitmapImageFormat format, int quality, CancellationToken token);
-        byte[] CreateThumbnail(byte[] data, ThumbnailProfile profile, CancellationToken token);
+        byte[] CreateImage(object data, Size size, BitmapCreateSetting setting, BitmapImageFormat format, int quality, CancellationToken token);
+        byte[] CreateThumbnail(object data, ThumbnailProfile profile, CancellationToken token);
         
         //PictureInfo CreatePictureInfo(CancellationToken token);
         //long GetMemorySize();

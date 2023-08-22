@@ -143,7 +143,7 @@ namespace NeeView
                 }
             }
 
-            int filterHashCode = GetEnvironmentoHashCode();
+            int filterHashCode = GetEnvironmentoHashCode(); // PDFやSVGには関係ないけどまあいっか？
 
             return new PictureSizeSource(size, filterHashCode, keepAspectRatio);
         }
@@ -154,7 +154,7 @@ namespace NeeView
         /// サイズを指定し、必要であれば作り直す。不要であればなにもしない。
         /// </summary>
         /// TODO: 名前は UpdateImageSource のほうがふさわしい
-        public bool CreateImageSource(byte[] data, Size size, CancellationToken token)
+        public bool CreateImageSource(object data, Size size, CancellationToken token)
         {
             var sizeSource = CreateSizeSource(size);
             if (sizeSource is null) return false;
@@ -164,6 +164,8 @@ namespace NeeView
                 //Debug.WriteLine($"Equals SizeSource");
                 return false;
             }
+
+            Debug.WriteLine($"## PDF: {_sizeSource.Size:f2}");
 
 #if false
             Debug.WriteLine($"Resize: {this.PictureSource.ArchiveEntry.EntryLastName}");
@@ -196,7 +198,7 @@ namespace NeeView
             }
         }
 
-        private ImageSource CreateImageSource(byte[] data, Size size, bool keepAspectRatio, CancellationToken token)
+        private ImageSource CreateImageSource(object data, Size size, bool keepAspectRatio, CancellationToken token)
         {
             token.ThrowIfCancellationRequested();
 

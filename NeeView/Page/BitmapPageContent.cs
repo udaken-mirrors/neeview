@@ -23,6 +23,7 @@ namespace NeeView
         {
             try
             {
+                token.ThrowIfCancellationRequested();
                 //Debug.WriteLine($"Loading...: {ArchiveEntry}");
 #if DEBUG
                 if (Debugger.IsAttached)
@@ -49,5 +50,4 @@ namespace NeeView
         }
 
     }
-
 }

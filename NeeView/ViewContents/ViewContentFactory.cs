@@ -20,6 +20,10 @@ namespace NeeView
             {
                 case BitmapPageContent:
                     return new BitmapViewContent(element, scale, viewSource, activity);
+                case PdfPageContent:
+                    return new PdfViewContent(element, scale, viewSource, activity);
+                case SvgPageContent:
+                    return new SvgViewContent(element, scale, viewSource, activity);
                 case MediaPageContent:
                     return new MediaViewContent(element, scale, viewSource, activity);
 

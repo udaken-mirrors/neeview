@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Threading;
 using System.Windows;
+using System.Windows.Documents;
 using System.Windows.Media;
 
 namespace NeeView
@@ -37,13 +38,14 @@ namespace NeeView
         /// <param name="setting">生成オプション</param>
         /// <param name="token">キャンセルトークン</param>
         /// <returns>ImageSource</returns>
-        public ImageSource CreateImageSource(byte[] data, Size size, BitmapCreateSetting setting, CancellationToken token)
+        public ImageSource CreateImageSource(object data, Size size, BitmapCreateSetting setting, CancellationToken token)
         {
+            var bytes = (byte[])data;
             token.ThrowIfCancellationRequested();
 
             Debug.WriteLine($"{ArchiveEntry}, {size:f0}", "CreateImageSource()");
 
-            using (var stream = new MemoryStream(data))
+            using (var stream = new MemoryStream(bytes))
             {
                 if (setting.IsKeepAspectRatio && !size.IsEmpty)
                 {
@@ -72,12 +74,12 @@ namespace NeeView
 
 
 
-        public byte[] CreateImage(byte[] data, Size size, BitmapCreateSetting setting, BitmapImageFormat format, int quality, CancellationToken token)
+        public byte[] CreateImage(object data, Size size, BitmapCreateSetting setting, BitmapImageFormat format, int quality, CancellationToken token)
         {
+            var bytes = (byte[])data;
             token.ThrowIfCancellationRequested();
 
-            using (var stream = new MemoryStream(data))
-            //using (var stream = _streamSource.CreateStream(token))
+            using (var stream = new MemoryStream(bytes))
             {
                 using (var outStream = new MemoryStream())
                 {
@@ -88,10 +90,10 @@ namespace NeeView
         }
 
 
-        public byte[] CreateThumbnail(byte[] data, ThumbnailProfile profile, CancellationToken token)
+        public byte[] CreateThumbnail(object data, ThumbnailProfile profile, CancellationToken token)
         {
             ////Debug.WriteLine($"## CreateThumbnail: {this.ArchiveEntry}");
-
+            var bytes = (byte[])data;
             token.ThrowIfCancellationRequested();
 
             Size size;
@@ -103,8 +105,7 @@ namespace NeeView
             }
             else
             {
-                using (var stream = new MemoryStream(data))
-                //using (var stream = _streamSource.CreateStream(token))
+                using (var stream = new MemoryStream(bytes))
                 {
                     bitmapInfo = BitmapInfo.Create(stream);
                     size = bitmapInfo.IsTranspose ? bitmapInfo.GetPixelSize().Transpose() : bitmapInfo.GetPixelSize();

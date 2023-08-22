@@ -9,16 +9,16 @@ using NeeView.PageFrames;
 
 namespace NeeView
 {
-    public class BitmapViewImage : ContentControl, IDisposable
+    public class ImageContentControl : ContentControl, IDisposable
     {
         private PageFrameElement _element;
-        private BitmapSource _image;
+        private ImageSource _image;
         private ViewContentSize _contentSize;
         private Rectangle _rectangle;
         private bool _disposedValue;
 
 
-        public BitmapViewImage(PageFrameElement source, BitmapSource bitmap, ViewContentSize contentSize)
+        public ImageContentControl(PageFrameElement source, ImageSource bitmap, ViewContentSize contentSize)
         {
             _element = source;
             _image = bitmap;
@@ -80,26 +80,26 @@ namespace NeeView
 
         private void UpdateBitmapScalingMode()
         {
-            var pictureSize = new Size(_image.Width, _image.Height);
+            var imageSize = _image is BitmapSource bitmapSource ? new Size(bitmapSource.PixelWidth, bitmapSource.PixelHeight) : new Size(_image.Width, _image.Height);
 
             // 画像サイズがビッタリの場合はドットバイドットになるような設定
-            if (_contentSize.IsRightAngle && Math.Abs(_contentSize.PixelSize.Width - _image.PixelWidth) < 1.1 && Math.Abs(_contentSize.PixelSize.Height - _image.PixelHeight) < 1.1)
+            if (_contentSize.IsRightAngle && Math.Abs(_contentSize.PixelSize.Width - imageSize.Width) < 1.1 && Math.Abs(_contentSize.PixelSize.Height - imageSize.Height) < 1.1)
             {
-                Debug.WriteLine($"OO: NearestNeighbor: {_element.Page}: {pictureSize:f0}");
+                Debug.WriteLine($"OO: NearestNeighbor: {_element.Page}: {imageSize:f0}");
                 RenderOptions.SetBitmapScalingMode(_rectangle, BitmapScalingMode.NearestNeighbor);
                 _rectangle.SnapsToDevicePixels = true;
             }
             // DotKeep mode
             // TODO: Config.Current参照はよろしくない
-            else if (Config.Current.ImageDotKeep.IsImgeDotKeep(_contentSize.PixelSize, pictureSize))
+            else if (Config.Current.ImageDotKeep.IsImgeDotKeep(_contentSize.PixelSize, imageSize))
             {
-                Debug.WriteLine($"XX: NearestNeighbor: {_element.Page}: {pictureSize:f0} != request {_contentSize.PixelSize:f0}");
+                Debug.WriteLine($"XX: NearestNeighbor: {_element.Page}: {imageSize:f0} != request {_contentSize.PixelSize:f0}");
                 RenderOptions.SetBitmapScalingMode(_rectangle, BitmapScalingMode.NearestNeighbor);
                 _rectangle.SnapsToDevicePixels = true;
             }
             else
             {
-                Debug.WriteLine($"XX: Fant: {_element.Page}: {pictureSize:f0} != request {_contentSize.PixelSize:f0}");
+                Debug.WriteLine($"XX: Fant: {_element.Page}: {imageSize:f0} != request {_contentSize.PixelSize:f0}");
                 RenderOptions.SetBitmapScalingMode(_rectangle, BitmapScalingMode.Fant);
                 _rectangle.SnapsToDevicePixels = false;
             }

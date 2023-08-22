@@ -46,8 +46,9 @@ namespace NeeView
             set => _state = value;
         }
 
-        [Obsolete]
+        [Obsolete("use Entry")]
         public ArchiveEntry ArchiveEntry => _archiveEntry;
+
         public ArchiveEntry Entry => _archiveEntry;
 
         public BookMemoryService? BookMemoryService => _bookMemoryService;
