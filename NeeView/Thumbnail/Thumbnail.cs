@@ -1,4 +1,5 @@
 ﻿using NeeLaboratory.ComponentModel;
+using NeeLaboratory.Generators;
 using NeeView;
 using System;
 using System.Collections.Generic;
@@ -18,7 +19,7 @@ namespace NeeView
     /// サムネイル.
     /// Jpegで保持し、必要に応じてBitmapSourceを生成
     /// </summary>
-    public class Thumbnail : BindableBase, IThumbnail, IDisposable
+    public partial class Thumbnail : BindableBase, IThumbnail, IDisposable
     {
         /// <summary>
         /// 開発用：キャッシュ読み込み無効
@@ -42,25 +43,14 @@ namespace NeeView
         /// <summary>
         /// 変更イベント
         /// </summary>
+        [Subscribable]
         public event EventHandler? Changed;
-
-        public IDisposable SubscribeChanged(EventHandler handler)
-        {
-            Changed += handler;
-            return new AnonymousDisposable(() => Changed -= handler);
-        }
-
 
         /// <summary>
         /// 参照イベント
         /// </summary>
+        [Subscribable]
         public event EventHandler? Touched;
-
-        public IDisposable SubscribeTouched(EventHandler handler)
-        {
-            Touched += handler;
-            return new AnonymousDisposable(() => Touched -= handler);
-        }
 
 
 
@@ -270,6 +260,26 @@ namespace NeeView
             else
             {
                 return DecodeFromImageData(_image);
+            }
+        }
+
+        public ThumbnailSource CreateSource()
+        {
+            if (_image == ThumbnailResource.EmptyImage)
+            {
+                return new ThumbnailSource(ThumbnailType.Empty);
+            }
+            else if (_image == ThumbnailResource.MediaImage)
+            {
+                return new ThumbnailSource(ThumbnailType.Media);
+            }
+            else if (_image == ThumbnailResource.FolderImage)
+            {
+                return new ThumbnailSource(ThumbnailType.Folder);
+            }
+            else
+            {
+                return new ThumbnailSource(ThumbnailType.Unique, _image);
             }
         }
 

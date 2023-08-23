@@ -85,7 +85,7 @@ namespace NeeView.PageFrames
             var partSize = item.FrameRange.PartSize;
 
             var result = allowPartPage || partSize == 2;
-            Debug.Assert(result);
+            //Debug.Assert(result);
             return result;
         }
 

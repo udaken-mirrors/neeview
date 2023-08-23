@@ -37,6 +37,13 @@ namespace NeeView.PageFrames
         }
     }
 
+#if DEBUG
+    public static class PageFrameDebug
+    {
+        public static Visibility Visibility { get; set; } = Visibility.Collapsed;
+    }
+#endif
+
 
 
     public class PageFrameContainer : Grid, IDisposable, IComparable<PageFrameContainer>, INotifyTransformChanged
@@ -53,7 +60,9 @@ namespace NeeView.PageFrames
         private ContentControl _contentControl;
         private IPageFrameContent _content;
 
+#if DEBUG
         private TextBlock _textBlock;
+#endif
 
 
         public PageFrameContainer(IPageFrameContent content, PageFrameActivity activity)
@@ -76,15 +85,18 @@ namespace NeeView.PageFrames
             };
             Children.Add(_contentControl);
 
+#if DEBUG
             // [DEV]
             _textBlock = new TextBlock()
             {
                 HorizontalAlignment = HorizontalAlignment.Center,
                 VerticalAlignment = VerticalAlignment.Center,
-                FontSize = 32.0,
+                FontSize = 16.0,
                 Foreground = Brushes.Orange,
+                Visibility = PageFrameDebug.Visibility,
             };
             Children.Add(_textBlock);
+#endif
 
             AttachContent(content);
         }
@@ -139,7 +151,7 @@ namespace NeeView.PageFrames
         public bool IsFirstFrame => _content.IsFirstFrame;
         public bool IsLastFrame => _content.IsLastFrame;
 
-        public bool IsHotizontalAnimationEnabled { get; set; }
+        public bool IsHorizontalAnimationEnabled { get; set; }
         public bool IsVerticalAnimationEnabled { get; set; }
 
 
@@ -158,7 +170,7 @@ namespace NeeView.PageFrames
         public double X
         {
             get => _x;
-            set => SetX(value, IsHotizontalAnimationEnabled ? _ms : 0.0);
+            set => SetX(value, IsHorizontalAnimationEnabled ? _ms : 0.0);
         }
 
         public double Y
@@ -170,7 +182,7 @@ namespace NeeView.PageFrames
         public new double Width
         {
             get => _width;
-            set => SetWidth(value, IsHotizontalAnimationEnabled ? _ms : 0.0);
+            set => SetWidth(value, IsHorizontalAnimationEnabled ? _ms : 0.0);
         }
 
         public new double Height
@@ -294,11 +306,13 @@ namespace NeeView.PageFrames
 
             _content = content;
             _content.TransformChanged += Content_TransformChanged;
-            _content.ViewContentChanged += Ccontent_ViewContentChanged;
+            _content.ViewContentChanged += Content_ViewContentChanged;
             _content.ContentSizeChanged += Content_ContentSizeChanged;
             _contentControl.Content = _content.Content;
 
+#if DEBUG
             _textBlock.Text = _content.FrameRange.ToString();
+#endif
 
             UpdateFrame();
 
@@ -311,7 +325,7 @@ namespace NeeView.PageFrames
             if (_content is null) return;
             _contentControl.Content = null;
             _content.TransformChanged -= Content_TransformChanged;
-            _content.ViewContentChanged -= Ccontent_ViewContentChanged;
+            _content.ViewContentChanged -= Content_ViewContentChanged;
             _content.ContentSizeChanged -= Content_ContentSizeChanged;
             _content.Dispose();
         }
@@ -322,7 +336,7 @@ namespace NeeView.PageFrames
             TransformChanged?.Invoke(this, e);
         }
 
-        private void Ccontent_ViewContentChanged(object? sender, EventArgs e)
+        private void Content_ViewContentChanged(object? sender, EventArgs e)
         {
             if (_content is PageFrameContent pageFrameContent)
             {
@@ -363,10 +377,10 @@ namespace NeeView.PageFrames
             var old = Rect;
 
             var size = _content.GetFrameSize();
-            var horizontalDulation = size.Width > old.Width ? duration : 0.0;
-            var verticalDulation = size.Height > old.Height ? duration : 0.0;
-            SetWidth(size.Width, horizontalDulation);
-            SetHeight(size.Height, verticalDulation);
+            var horizontalDuration = size.Width > old.Width ? duration : 0.0;
+            var verticalDuration = size.Height > old.Height ? duration : 0.0;
+            SetWidth(size.Width, horizontalDuration);
+            SetHeight(size.Height, verticalDuration);
 
             //_transformTextBlock.Text = $"{(int)_pageFrame.Angle}, {_pageFrame.Scale:f2}";
             //Debug.WriteLine($"Container.Update: {FrameRange}, {HorizontalAlignment}");
@@ -376,10 +390,10 @@ namespace NeeView.PageFrames
                 case HorizontalAlignment.Left:
                     break;
                 case HorizontalAlignment.Right:
-                    SetX(old.Left - (Width - old.Width) * 1.0, horizontalDulation);
+                    SetX(old.Left - (Width - old.Width) * 1.0, horizontalDuration);
                     break;
                 default:
-                    SetX(old.Left - (Width - old.Width) * 0.5, horizontalDulation);
+                    SetX(old.Left - (Width - old.Width) * 0.5, horizontalDuration);
                     break;
             }
 
@@ -388,10 +402,10 @@ namespace NeeView.PageFrames
                 case VerticalAlignment.Top:
                     break;
                 case VerticalAlignment.Bottom:
-                    SetY(old.Top - (Height - old.Height) * 1.0, verticalDulation);
+                    SetY(old.Top - (Height - old.Height) * 1.0, verticalDuration);
                     break;
                 default:
-                    SetY(old.Top - (Height - old.Height) * 0.5, verticalDulation);
+                    SetY(old.Top - (Height - old.Height) * 0.5, verticalDuration);
                     break;
             }
         }

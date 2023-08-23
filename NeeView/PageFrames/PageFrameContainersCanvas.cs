@@ -29,7 +29,7 @@ namespace NeeView.PageFrames
             _canvas.Children.Add(item);
         }
 
-        public void Uninitialize(PageFrameContainer item)
+        public void Uninitialized(PageFrameContainer item)
         {
             _canvas.Children.Remove(item);
         }

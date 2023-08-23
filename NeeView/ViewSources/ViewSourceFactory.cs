@@ -25,6 +25,10 @@ namespace NeeView
                     return new SvgViewSource(svgPageContent, _bookMemoryService);
                 case MediaPageContent mediaPageContent:
                     return new MediaViewSource(mediaPageContent, _bookMemoryService);
+                case ArchivePageContent archivePageContent:
+                    return new ArchiveViewSource(archivePageContent, _bookMemoryService);
+                case FilePageContent archivePageContent:
+                    return new FileViewSource(archivePageContent, _bookMemoryService);
                 default:
                     throw new NotImplementedException();
             }

@@ -53,6 +53,10 @@ namespace NeeView.Setting
             section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.Image.Svg, nameof(ImageSvgConfig.SupportFileTypes)),
                 new SettingItemCollectionControl() { Collection = Config.Current.Image.Svg.SupportFileTypes, AddDialogHeader = Properties.Resources.Word_Extension, DefaultCollection = ImageSvgConfig.DefaultSupportFileTypes }));
             this.Items.Add(section);
+
+            section = new SettingItemSection("@SettingPage_FileTypes_Media"); // Properties.Resources.SettingPage_FileTypes_Media);
+            section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.Image, nameof(ImageConfig.IsMediaEnabled))));
+            this.Items.Add(section);
         }
 
         private void SupportFileTypeEditor_CollectionChanged(object? sender, System.ComponentModel.CollectionChangeEventArgs e)

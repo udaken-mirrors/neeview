@@ -102,17 +102,17 @@ namespace NeeView.PageFrames
         private Size GetRawContentSize()
         {
             if (!_elements.Any()) return new Size(0.0, 0.0);
-            var widh = Math.Max(_elements.Sum(e => e.Width), 0.0);
+            var width = Math.Max(_elements.Sum(e => e.Width), 0.0);
             var height = Math.Max(_elements.Any() ? _elements.Max(e => e.Height) : 0.0, 0.0);
-            return new Size(widh, height);
+            return new Size(width, height);
         }
 
         private Size GetStretchedContentSize(ContentSizeCalculator calculator)
         {
             var size = GetRawContentSize();
-            var widh = Math.Max(size.Width * _scale + Span, 0.0);
-            var hegiht = Math.Max(size.Height * _scale, 0.0 );
-            return new Size(widh, hegiht);
+            var width = Math.Max(size.Width * _scale + Span, 0.0);
+            var height = Math.Max(size.Height * _scale, 0.0 );
+            return new Size(width, height);
         }
 
         private Size GetContentSize(ContentSizeCalculator calculator)

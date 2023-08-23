@@ -28,7 +28,10 @@ namespace NeeView
                     return new SvgViewContent(element, scale, viewSource, activity);
                 case MediaPageContent:
                     return new MediaViewContent(element, scale, viewSource, activity);
-
+                case ArchivePageContent:
+                    return new ArchiveViewContent(element, scale, viewSource, activity);
+                case FilePageContent:
+                    return new FileViewContent(element, scale, viewSource, activity);
                 default:
                     throw new NotSupportedException();
             }

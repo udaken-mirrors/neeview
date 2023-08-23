@@ -99,7 +99,9 @@ namespace NeeView
             {
                 Debug.WriteLine($"Sort: {_book.Pages.SortMode}");
                 //var page = _viewer.GetViewPage();
-                var page = _bookContext.Pages[_bookContext.SelectedRange.Min.Index];
+
+                var oldIndex = Math.Max(Math.Min(_bookContext.SelectedRange.Min.Index, _bookContext.Pages.Count - 1), 0);
+                var page = _bookContext.Pages[oldIndex];
 
                 _book.Pages.Sort(token);
 

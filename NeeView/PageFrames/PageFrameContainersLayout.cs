@@ -120,7 +120,7 @@ namespace NeeView.PageFrames
 
                 // 初期配置後、変形アニメーション適用
                 element.Duration = 500.0;
-                element.IsHotizontalAnimationEnabled = _context.FrameOrientation == PageFrameOrientation.Horizontal;
+                element.IsHorizontalAnimationEnabled = _context.FrameOrientation == PageFrameOrientation.Horizontal;
                 element.IsVerticalAnimationEnabled = _context.FrameOrientation == PageFrameOrientation.Vertical;
             }
 

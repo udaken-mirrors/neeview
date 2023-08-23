@@ -47,6 +47,7 @@ namespace NeeView.PageFrames
 
             _rootCanvas.Children.Add(_canvas);
 
+#if DEBUG
             // [DEV]
             {
                 var textBox = new TextBox();
@@ -57,8 +58,10 @@ namespace NeeView.PageFrames
                 binding.Bindings.Add(new Binding("Point.Y") { Source = this });
                 binding.Converter = new CanvasPositionConverter();
                 textBox.SetBinding(TextBox.TextProperty, binding);
+                textBox.Visibility = PageFrameDebug.Visibility;
                 Children.Add(textBox);
             }
+#endif
         }
 
         private class CanvasPositionConverter : IMultiValueConverter

@@ -118,7 +118,7 @@ namespace NeeView.PageFrames
             {
                 if (disposing)
                 {
-                    DetachTransorm();
+                    DetachTransform();
                     _disposables.Dispose();
                 }
                 _disposedValue = true;
@@ -238,7 +238,7 @@ namespace NeeView.PageFrames
 
         private void UpdateTransform()
         {
-            DetachTransorm();
+            DetachTransform();
             _viewTransform.Children.Clear();
 
             _viewTransform.Children.Add(_pageFrame.RotateTransform);
@@ -253,7 +253,7 @@ namespace NeeView.PageFrames
             _loupeContext.TransformChanged += ViewTransform_TransformChanged;
         }
 
-        private void DetachTransorm()
+        private void DetachTransform()
         {
             _transform.TransformChanged -= ViewTransform_TransformChanged;
             _loupeContext.TransformChanged -= ViewTransform_TransformChanged;

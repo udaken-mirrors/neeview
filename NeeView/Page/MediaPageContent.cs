@@ -24,7 +24,7 @@ namespace NeeView
 
             try
             {
-                // ArchvieFileの場合はTempFile化
+                // ArchiveFileの場合はTempFile化
                 var fileProxy = Entry.GetFileProxy(); // TODO: async化
                 var pictureInfo = CreatePictureInfo(fileProxy.Path); // TODO: Async
                 await Task.CompletedTask;
@@ -47,7 +47,7 @@ namespace NeeView
 
             // 幅と高さを非同期で得るために MediaInfoLib を使用している
             var mediaInfo = new MediaInfoLib.MediaInfo();
-            if (!mediaInfo.IsEnabled) throw new ApplicationException("Cannnot load MediaInfo.dll");
+            if (!mediaInfo.IsEnabled) throw new ApplicationException("Cannot load MediaInfo.dll");
 
             int result = mediaInfo.Open(path);
             if (result == 0) throw new IOException($"Cannot open MediaInfo: {path}");

@@ -86,7 +86,7 @@ namespace NeeView
         {
             token.ThrowIfCancellationRequested();
 
-            return new Page(bookPrefix, contentFactory.Create(entry));
+            return new Page(bookPrefix, contentFactory.CreatePageContent(entry, token));
 #if false
             Page page;
 

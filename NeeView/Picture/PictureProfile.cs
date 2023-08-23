@@ -26,7 +26,7 @@ namespace NeeView
             {
                 if (Config.Current.Image.Standard.SupportFileTypes is null)
                 {
-                    // NOTE: fallthrough. don't come here!
+                    // NOTE: fall through. don't come here!
                     Config.Current.Image.Standard.SupportFileTypes = PictureFileExtensionTools.CreateDefaultSupprtedFileTypes(Config.Current.Image.Standard.UseWicInformation);
                 }
                 return Config.Current.Image.Standard.SupportFileTypes;
@@ -50,6 +50,11 @@ namespace NeeView
             if (Config.Current.Image.Svg.IsEnabled)
             {
                 if (Config.Current.Image.Svg.SupportFileTypes.Contains(ext)) return true;
+            }
+
+            if (Config.Current.Image.IsMediaEnabled)
+            {
+                if (Config.Current.Archive.Media.SupportFileTypes.Contains(ext)) return true;
             }
 
             return false;
@@ -80,6 +85,14 @@ namespace NeeView
             return Config.Current.Image.Svg.SupportFileTypes.Contains(ext);
         }
 
+        // 対応拡張子判定 (Media)
+        public bool IsMediaSupported(string fileName)
+        {
+            if (!Config.Current.Image.IsMediaEnabled) return false;
+
+            string ext = LoosePath.GetExtension(fileName);
+            return Config.Current.Archive.Media.SupportFileTypes.Contains(ext);
+        }
 
         // 最大サイズ内におさまるサイズを返す
         public static Size CreateFixedSize(Size size)

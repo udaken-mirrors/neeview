@@ -733,7 +733,7 @@ namespace NeeView.PageFrames
             }
             else
             {
-                AddPosition(scroll.Vector.X, scroll.Vector.Y, false); // TODO: parameter.ScrollDuration
+                AddPosition(scroll.Vector.X, scroll.Vector.Y, TimeSpan.FromSeconds(parameter.ScrollDuration)); // TODO: parameter.ScrollDuration
                 return false;
             }
         }
@@ -761,7 +761,7 @@ namespace NeeView.PageFrames
         // TODO: now 引数はどうなのか？
         // - NScroll の時間パラメータ
         // - 連続判定によるカーブ指定
-        public void AddPosition(double dx, double dy, bool now)
+        public void AddPosition(double dx, double dy, TimeSpan span)
         {
             if (!_context.IsEnabled) return;
 
@@ -774,7 +774,7 @@ namespace NeeView.PageFrames
             var transform = _transformControlFactory.Create(node.Value);
 
             var delta = new Vector(dx, dy);
-            var span = now ? TimeSpan.Zero : TimeSpan.FromMilliseconds(500);
+            //var span = now ? TimeSpan.Zero : TimeSpan.FromMilliseconds(500);
             transform.SetPoint(transform.Point + delta, span);
 
             _selected.SetAuto();

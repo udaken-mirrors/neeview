@@ -16,7 +16,7 @@ namespace NeeView.PageFrames
     public interface IInitializable<T>
     {
         void Initialize(T item);
-        void Uninitialize(T item);
+        void Uninitialized(T item);
     }
 
     public enum PageFrameContainerCollectionChangedEventAction
@@ -114,7 +114,7 @@ namespace NeeView.PageFrames
         {
             foreach (var container in _containers)
             {
-                _containerInitializer?.Uninitialize(container);
+                _containerInitializer?.Uninitialized(container);
             }
 
             _containerInitializer = containerInitializer;
@@ -359,7 +359,7 @@ namespace NeeView.PageFrames
 
             CollectionChanging?.Invoke(this, new PageFrameContainerCollectionChangedEventArgs(PageFrameContainerCollectionChangedEventAction.Remove, node));
             _containers.Remove(node);
-            _containerInitializer?.Uninitialize(node.Value);
+            _containerInitializer?.Uninitialized(node.Value);
             node.Value.TransformChanged -= Container_TransformChanged;
             node.Value.ContentSizeChanged -= Container_ContentSizeChanged;
             node.Value.Dispose();
