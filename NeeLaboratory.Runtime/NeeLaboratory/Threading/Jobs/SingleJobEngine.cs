@@ -201,10 +201,13 @@ namespace NeeLaboratory.Threading.Jobs
             while (true)
             {
                 Debug.Assert(_currentJob is null);
-
                 token.ThrowIfCancellationRequested();
+                
                 _readyEvent.Wait(token);
+                token.ThrowIfCancellationRequested();
+
                 _activeEvent.Wait(token);
+                token.ThrowIfCancellationRequested();
 
                 lock (_lock)
                 {

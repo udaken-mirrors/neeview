@@ -239,8 +239,10 @@
 
                     <GridSplitter Grid.Row="0" Height="6" HorizontalAlignment="Stretch"  VerticalAlignment="Bottom" Background="{DynamicResource Panel.Splitter}" IsTabStop="False"
                             Visibility="{Binding IsVisibleThumbnail, Converter={StaticResource BooleanToVisibilityConverter}}" />
-
+                    
                     <StackPanel Grid.Row="1">
+
+                        <local:MediaControlView x:Name="MediaControlView" KeyboardNavigation.TabNavigation="Local" />
 
                         <Separator Visibility="{Binding IsVisibleThumbnail, Converter={StaticResource BooleanToVisibilityInverseConverter}}" />
 
@@ -393,6 +395,7 @@
                         </StackPanel>
 
                         <Separator />
+
 
                     </StackPanel>
 

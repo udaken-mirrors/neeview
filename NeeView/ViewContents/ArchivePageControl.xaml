@@ -8,38 +8,36 @@
     </UserControl.Resources>
 
 
-    <Border x:Name="Root">
+    <Border x:Name="Root"  Background="#FFE8E8E8" Margin="20" CornerRadius="0" BorderThickness="2" BorderBrush="Black">
 
-        <Grid>
-            <Grid.RowDefinitions>
-                <RowDefinition/>
-                <RowDefinition Height="80"/>
-            </Grid.RowDefinitions>
-            <Border Grid.Row="0" x:Name="OpenBookButton" BorderThickness="16" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="20" UseLayoutRounding="True" Cursor="Hand"
-                        MouseLeftButtonDown="OpenBookButton_MouseLeftButtonDown" MouseLeftButtonUp="OpenBookButton_MouseLeftButtonUp" MouseRightButtonUp="OpenBookButton_MouseRightButtonUp" 
-                        PreviewStylusDown="OpenBookButton_PreviewStylusDown" PreviewStylusUp="OpenBookButton_PreviewStylusUp" CornerRadius="8">
-                <Border.Style>
-                    <Style TargetType="Border">
-                        <Setter Property="Background" Value="{DynamicResource Thumbnail.Background}" />
-                        <Setter Property="BorderBrush" Value="{DynamicResource Thumbnail.Background}" />
-                        <Style.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter Property="Background" Value="{DynamicResource Item.MouseOver.Background}" />
-                                <Setter Property="BorderBrush" Value="{DynamicResource Item.MouseOver.Border}" />
-                            </Trigger>
-                        </Style.Triggers>
-                    </Style>
-                </Border.Style>
-                <Image Source="{Binding Thumbnail.ImageSource, Converter={StaticResource ImageSourceToThumbnailConverter}}"
-                           Stretch="Uniform" />
-            </Border>
-            <DockPanel Grid.Row="1" Margin="20,0,20,20" >
-                <TextBlock  x:Name="FileNameTextBlock" Text="{Binding Name}" TextWrapping="Wrap" FontSize="{DynamicResource SystemFontSizeLarge}" MinHeight="80"
-                           HorizontalAlignment="Center" VerticalAlignment="Top"
-                        Foreground="{DynamicResource DefaultBrush}" 
-                           />
-            </DockPanel>
-        </Grid>
+        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10">
+            <Grid x:Name="OpenBookButton" HorizontalAlignment="Center" Margin="20" Cursor="Hand"
+                    MouseLeftButtonDown="OpenBookButton_MouseLeftButtonDown" MouseLeftButtonUp="OpenBookButton_MouseLeftButtonUp" MouseRightButtonUp="OpenBookButton_MouseRightButtonUp" 
+                    PreviewStylusDown="OpenBookButton_PreviewStylusDown" PreviewStylusUp="OpenBookButton_PreviewStylusUp" MouseEnter="OpenBookButton_MouseEnter" MouseLeave="OpenBookButton_MouseLeave">
+
+                <Ellipse Width="256" Height="256" >
+                    <Ellipse.Fill>
+                        <ImageBrush ImageSource="{Binding Thumbnail.ImageSource, Converter={StaticResource ImageSourceToThumbnailConverter}}" Stretch="UniformToFill"/>
+                    </Ellipse.Fill>
+                </Ellipse>
+
+                <Ellipse Width="256" Height="256" StrokeThickness="8" Fill="Transparent">
+                    <Ellipse.Style>
+                        <Style TargetType="Ellipse">
+                            <Setter Property="Stroke" Value="{DynamicResource Thumbnail.Background}" />
+                            <Style.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter Property="Stroke" Value="{DynamicResource Item.MouseOver.Border}" />
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Ellipse.Style>
+                </Ellipse>
+            </Grid>
+
+            <TextBlock x:Name="FileNameTextBlock" Text="{Binding Name}" TextWrapping="Wrap" FontSize="{DynamicResource SystemFontSizeLarge}" MinHeight="80"
+                HorizontalAlignment="Center" Margin="0,8" Foreground="#F222" />
+        </StackPanel>
     </Border>
 
 </UserControl>

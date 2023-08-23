@@ -15,7 +15,7 @@ namespace NeeView
 {
     public static class MediaPlayerPool
     {
-        // TODO: static ダメ！Book切り替えで開放されるように！
+        [Obsolete("TODO: static ダメ！Book切り替えで開放されるように！")]
         public static ObjectPool<MediaPlayer> Default { get; } = new();
     }
 
@@ -24,7 +24,8 @@ namespace NeeView
     {
         private ObjectPool<MediaPlayer> _mediaPlayerPool;
 
-        private MediaPlayerCanvas? _player;
+        private SimpleMediaPlayer _player;
+        private MediaPlayerCanvas? _playerCanvas;
         private DisposableCollection _disposables = new();
         private bool _disposedValue;
 
@@ -33,8 +34,37 @@ namespace NeeView
             : base(element, scale, viewSource, activity)
         {
             _mediaPlayerPool = MediaPlayerPool.Default;
+
+            _player = AllocateMediaPlayer();
+
+            MediaStartDelay = TimeSpan.FromSeconds(Config.Current.Archive.Media.MediaStartDelaySeconds);
         }
 
+
+        public SimpleMediaPlayer Player => _player;
+
+        public bool HasControl
+        {
+            get => _player.HasControl;
+            set => _player.HasControl = value;
+        }
+
+        public TimeSpan MediaStartDelay { get; protected set; }
+
+
+        private SimpleMediaPlayer AllocateMediaPlayer()
+        {
+            var player = new SimpleMediaPlayer(_mediaPlayerPool.Allocate());
+            player.MediaPlayed += Player_MediaPlayed;
+            return player;
+        }
+
+        private void ReleaseMediaPlayer(SimpleMediaPlayer player)
+        {
+            player.MediaPlayed -= Player_MediaPlayed;
+            player.Dispose();
+            _mediaPlayerPool.Release(player.Player);
+        }
 
         protected override void Dispose(bool disposing)
         {
@@ -42,12 +72,10 @@ namespace NeeView
             {
                 if (disposing)
                 {
-                    if (_player is not null)
-                    {
-                        _player.MediaPlayed -= Player_MediaPlayed;
-                        _player.Dispose();
-                        _player = null;
-                    }
+                    _playerCanvas?.Dispose();
+                    _playerCanvas = null;
+
+                    ReleaseMediaPlayer(_player);
 
                     _disposables.Dispose();
                     this.Content = null;
@@ -67,6 +95,7 @@ namespace NeeView
         }
 
 
+
         protected override FrameworkElement CreateLoadedContent(Size size, object data)
         {
             var source = data as MediaSource ?? throw new InvalidOperationException();
@@ -80,16 +109,16 @@ namespace NeeView
 
             var viewbox = Element.ViewSizeCalculator.GetViewBox();
 
-            if (_player is not null)
+            if (_playerCanvas is not null)
             {
-                _player.SetViewbox(viewbox);
-                return _player;
+                _playerCanvas.SetViewbox(viewbox);
+                return _playerCanvas;
             }
 
-            _player = new MediaPlayerCanvas(source, viewbox, _mediaPlayerPool);
-            _player.MediaPlayed += Player_MediaPlayed;
+            _playerCanvas = new MediaPlayerCanvas(source, viewbox, _player);
+            _player.Open(new Uri(source.Path), MediaStartDelay);
 
-            return _player;
+            return _playerCanvas;
         }
 
         private void Player_MediaPlayed(object? sender, EventArgs e)
@@ -99,8 +128,6 @@ namespace NeeView
 
         private void UpdateVideoStatus()
         {
-            if (_player is null) return;
-
             _player.IsMuted = !Activity.IsSelected;
 
             if (Activity.IsVisible)

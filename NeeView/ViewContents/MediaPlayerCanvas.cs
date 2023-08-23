@@ -1,7 +1,9 @@
 ﻿using NeeView.Collections.Generic;
+using NeeView.Susie;
 using System;
+using System.Configuration;
 using System.Diagnostics;
-using System.Threading.Tasks;
+using System.Security.Cryptography.X509Certificates;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -10,10 +12,9 @@ using System.Windows.Shapes;
 
 namespace NeeView
 {
-    public class MediaPlayerCanvas : Grid, IDisposable
+    public class MediaPlayerCanvas : Grid,  IDisposable
     {
-        private ObjectPool<MediaPlayer> _mediaPlayerPool;
-        private MediaPlayer _player;
+        private SimpleMediaPlayer _player;
         private DrawingBrush _videoBrush;
         private Rectangle _videoLayer;
         private ImageBrush _imageBlush;
@@ -22,15 +23,18 @@ namespace NeeView
         private bool _disposedValue;
 
 
-        public MediaPlayerCanvas(MediaSource source, Rect viewbox, ObjectPool<MediaPlayer> mediaPlayerPool)
+        public MediaPlayerCanvas(MediaSource source, Rect viewbox, SimpleMediaPlayer player)
         {
             Debug.WriteLine($"Create.MediaPlayer: {source.Path}");
 
-            _mediaPlayerPool = mediaPlayerPool;
+            _player = player;
+            _player.MediaPlayed += Player_MediaPlayed;
+            _player.MediaFailed += Player_MediaFailed;
 
             var videoDrawing = new VideoDrawing()
             {
                 //Rect = new Rect(size),
+                Player = _player.Player,
                 Rect = new Rect(0, 0, 256, 256), // Stretch.Fill で引き伸ばすので値は適応でも良い
             };
 
@@ -38,7 +42,7 @@ namespace NeeView
             {
                 Drawing = videoDrawing,
                 Stretch = Stretch.Fill,
-                Viewbox = viewbox, //Element.ViewSizeCalculator.GetViewBox(),
+                Viewbox = viewbox,
             };
 
             _videoLayer = new Rectangle()
@@ -79,21 +83,8 @@ namespace NeeView
                 this.Children.Add(_imageLayer);
             }
             this.Children.Add(_errorMessageTextBlock);
-
-            // NOTE: コントロールの存在を保証するためにプレイヤー生成は最後に行う
-            _player = OpenMediaPlayer(new Uri(source.Path));
-            videoDrawing.Player = _player;
         }
 
-
-        public event EventHandler? MediaPlayed;
-
-
-        public bool IsMuted
-        {
-            get => _player.IsMuted;
-            set => _player.IsMuted = value;
-        }
 
 
         protected virtual void Dispose(bool disposing)
@@ -102,10 +93,8 @@ namespace NeeView
             {
                 if (disposing)
                 {
-                    if (_player is not null)
-                    {
-                        CloseMediaPlayer(_player);
-                    }
+                    _player.MediaPlayed -= Player_MediaPlayed;
+                    _player.MediaFailed -= Player_MediaFailed;
                 }
                 _disposedValue = true;
             }
@@ -117,15 +106,20 @@ namespace NeeView
             GC.SuppressFinalize(this);
         }
 
-
-        public void Play()
+        private void Player_MediaPlayed(object? sender, EventArgs e)
         {
-            _player.Play();
+            ShowVideo();
         }
 
-        public void Pause()
+        private void Player_MediaFailed(object? sender, ExceptionEventArgs e)
         {
-            _player.Pause();
+            if (_errorMessageTextBlock is null) return;
+
+            _videoLayer.Visibility = Visibility.Collapsed;
+            _imageLayer.Visibility = Visibility.Collapsed;
+
+            _errorMessageTextBlock.Text = e.ErrorException.Message;
+            _errorMessageTextBlock.Visibility = Visibility.Visible;
         }
 
         public void SetViewbox(Rect viewbox)
@@ -134,89 +128,10 @@ namespace NeeView
             _imageBlush.Viewbox = viewbox;
         }
 
-        private MediaPlayer OpenMediaPlayer(Uri uri)
-        {
-            var player = _mediaPlayerPool.Allocate();
-            player.MediaOpened += Player_MediaOpened;
-            player.MediaEnded += Player_MediaEnded;
-            player.MediaFailed += Player_MediaFailed;
-            player.Open(uri);
-            player.Play();
-            player.IsMuted = true;
-            return player;
-        }
-
-        private void Player_MediaOpened(object? sender, EventArgs e)
-        {
-            // NOTE: 動画再生開始時のちらつき軽減
-            DelayAction(ShowVideo, 16);
-        }
-
-        private void Player_MediaEnded(object? sender, EventArgs e)
-        {
-            var player = sender as MediaPlayer ?? throw new InvalidOperationException();
-
-            // ループ再生
-            player.Position = TimeSpan.FromMilliseconds(1);
-        }
-
-        private void Player_MediaFailed(object? sender, ExceptionEventArgs e)
-        {
-            if (_errorMessageTextBlock is null) return;
-
-            _errorMessageTextBlock.Text = e.ErrorException.Message;
-            _errorMessageTextBlock.Visibility = Visibility.Visible;
-        }
-
-        private void CloseMediaPlayer(MediaPlayer player)
-        {
-            player.MediaOpened -= Player_MediaOpened;
-            player.MediaEnded -= Player_MediaEnded;
-            player.MediaFailed -= Player_MediaFailed;
-            player.Stop();
-
-            // NOTE: 一瞬黒い画像が表示されるのを防ぐために開放タイミングをずらす。今作では不要か？
-            DelayAction(() =>
-            {
-                player.Close();
-                _mediaPlayerPool.Release(player);
-            }, 16);
-        }
-
         private void ShowVideo()
         {
             _videoLayer.Visibility = Visibility.Visible;
             _imageLayer.Visibility = Visibility.Collapsed;
-            MediaPlayed?.Invoke(this, EventArgs.Empty);
         }
-
-
-        // TODO: 汎用化？
-        private static void DelayAction(Action action, int delayMicroseconds)
-        {
-            AppDispatcher.BeginInvoke(async () =>
-            {
-                await Task.Delay(delayMicroseconds);
-                action();
-            });
-        }
-
-        // TODO: 汎用化？
-        private static void DelayCycleAction(Action action, int delayCycle)
-        {
-            int count = 0;
-            CompositionTarget.Rendering += OnRendering;
-            void OnRendering(object? sender, EventArgs e)
-            {
-                if (++count >= delayCycle)
-                {
-                    CompositionTarget.Rendering -= OnRendering;
-                    action();
-                }
-            }
-        }
-
-
     }
-
 }

@@ -7,20 +7,22 @@ using System.Windows.Media;
 
 namespace NeeView
 {
+
+
     public class MediaControl : BindableBase
     {
-        static MediaControl() => Current = new MediaControl();
-        public static MediaControl Current { get; }
+        //static MediaControl() => Current = new MediaControl();
+        //public static MediaControl Current { get; }
 
 
-        private MediaControl()
+        public MediaControl()
         {
         }
 
         public event EventHandler<MediaPlayerChanged>? Changed;
 
 
-        public void RiaseContentChanged(object sender, MediaPlayerChanged e)
+        public void RaiseContentChanged(object sender, MediaPlayerChanged e)
         {
             Changed?.Invoke(sender, e);
         }
@@ -36,16 +38,17 @@ namespace NeeView
         {
         }
 
-        public MediaPlayerChanged(MediaPlayer player, Uri uri, bool isLastStart)
+        public MediaPlayerChanged(SimpleMediaPlayer player, bool isLastStart)
         {
             MediaPlayer = player;
-            Uri = uri;
+            //Uri = uri;
             IsLastStart = isLastStart;
         }
 
-        public MediaPlayer? MediaPlayer { get; set; }
-        public Uri? Uri { get; set; }
+        public SimpleMediaPlayer? MediaPlayer { get; set; }
+        //public Uri? Uri { get; set; }
         public bool IsLastStart { get; set; }
         public bool IsValid => MediaPlayer != null;
+        public bool IsMainMediaPlayer { get; init; }
     }
 }

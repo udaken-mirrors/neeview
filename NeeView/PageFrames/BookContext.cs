@@ -63,7 +63,7 @@ namespace NeeView.PageFrames
             _loupeScale = _config.Loupe.DefaultScale;
 
             var startIndex = _book.Pages.FirstOrDefault(e => e.EntryName == book.Memento.Page)?.Index ?? 0;
-            //_selectedRange = new PageRange(new PagePosition(startIndex, 0), 2);
+            _selectedRange = new PageRange(new PagePosition(startIndex, 0), 2);
 
             _disposables.Add(_book.SubscribePagesChanged(Book_PagesChanged));
             _disposables.Add(_config.Book.SubscribePropertyChanged(BookConfig_PropertyChanged));
@@ -110,6 +110,8 @@ namespace NeeView.PageFrames
             {
                 if (SetProperty(ref _selectedRange, value))
                 {
+                    var page = _book.Pages.GetPage(_selectedRange.Min.Index);
+                    _book.SetCurrentPage(page);
                     SelectedRangeChanged?.Invoke(this, EventArgs.Empty);
                 }
             }
@@ -119,6 +121,8 @@ namespace NeeView.PageFrames
         {
             get => SelectedRange.CollectPositions().Select(e => Pages[e.Index]).Distinct().ToList();
         }
+
+        public bool IsMedia => _book.IsMedia;
 
 
         public BookMemoryService BookMemoryService => _book.BookMemoryService;

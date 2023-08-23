@@ -24,6 +24,8 @@ namespace NeeView
         public LoadingIcon()
         {
             InitializeComponent();
+
+            this.NowLoadingMark.Opacity = 0.0;
             UpdateLoading();
         }
 
@@ -50,6 +52,10 @@ namespace NeeView
         {
             if (IsLoading)
             {
+                var ani = new DoubleAnimation(1, TimeSpan.FromSeconds(0.5));
+                ani.BeginTime = TimeSpan.FromSeconds(1.0);
+                this.NowLoadingMark.BeginAnimation(UIElement.OpacityProperty, ani, HandoffBehavior.SnapshotAndReplace);
+
                 var aniRotate = new DoubleAnimation();
                 aniRotate.By = 360;
                 aniRotate.Duration = TimeSpan.FromSeconds(2.0);
@@ -58,6 +64,9 @@ namespace NeeView
             }
             else
             {
+                var ani = new DoubleAnimation(0, TimeSpan.FromSeconds(0.25));
+                this.NowLoadingMark.BeginAnimation(UIElement.OpacityProperty, ani, HandoffBehavior.SnapshotAndReplace);
+
                 var aniRotate = new DoubleAnimation();
                 aniRotate.By = 45;
                 aniRotate.Duration = TimeSpan.FromSeconds(0.25);

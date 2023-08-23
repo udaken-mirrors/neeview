@@ -4,19 +4,22 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:NeeView"
-             mc:Ignorable="d" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" d:DesignWidth="305" d:DesignHeight="400">
-    <Grid Margin="20" >
+             mc:Ignorable="d" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" d:DesignWidth="480" d:DesignHeight="640">
+    <Border x:Name="Root"  Background="#FFE8E8E8" Margin="20" BorderThickness="2" BorderBrush="Black">
         <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Margin="10">
             <Grid VerticalAlignment="Center" HorizontalAlignment="Center" Margin="20">
-                <Ellipse Width="256" Height="256" Fill="Gray" />
+                <Ellipse Width="256" Height="256" Fill="Gray" HorizontalAlignment="Center" />
                 <TextBlock x:Name="IconTextBlock" Text="2" FontFamily="Wingdings" FontSize="128" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="#FFFFFFFF"/>
             </Grid>
             <TextBlock x:Name="FileNameTextBlock" Text="FileName" HorizontalAlignment="Center" TextWrapping="Wrap" Margin="0,8"
                        FontSize="{DynamicResource SystemFontSizeLarge}"
-                       Foreground="{Binding DefaultBrush, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:FilePageControl}}}"/>
+                       Foreground="#F222"/>
             <TextBlock x:Name="MessageTextBlock" Text="Message Message Message" HorizontalAlignment="Center" TextWrapping="Wrap"
                        FontSize="{DynamicResource SystemFontSizeLarge}"
+                       Foreground="#F222"/>
+            <!--
                        Foreground="{Binding DefaultBrush, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:FilePageControl}}}"/>
+            -->
         </StackPanel>
-    </Grid>
+    </Border>
 </UserControl>

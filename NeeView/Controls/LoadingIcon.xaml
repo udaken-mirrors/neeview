@@ -6,25 +6,25 @@
              xmlns:local="clr-namespace:NeeView"
              mc:Ignorable="d" 
              d:DesignHeight="50" d:DesignWidth="50">
-        <!--
+    <!--
     <Grid>
         <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Orientation="Vertical">
             <TextBlock x:Name="NowLoadingText" Text="Now Loading"  TextAlignment="Center" VerticalAlignment="Center"
                                                    Foreground="{DynamicResource Window.Foreground}" FontFamily="Meiryo" FontSize="{StaticResource InfoTextFontSize}" Margin="8" TextTrimming="CharacterEllipsis"/>
             -->
-            <Grid Width="50" Height="50">
-                <Rectangle Width="5" Height="25" Fill="{DynamicResource Control.Accent}" RenderTransformOrigin="0.5,0.5">
-                    <Rectangle.RenderTransform>
-                        <TransformGroup>
-                            <ScaleTransform/>
-                            <SkewTransform/>
-                            <RotateTransform x:Name="NowLoadingMarkAngle" Angle="45"/>
-                            <TranslateTransform/>
-                        </TransformGroup>
-                    </Rectangle.RenderTransform>
-                </Rectangle>
-            </Grid>
-                <!--
+    <Grid x:Name="Root" Width="50" Height="50">
+        <Rectangle x:Name="NowLoadingMark" Width="5" Height="25" Fill="{DynamicResource Control.Accent}" RenderTransformOrigin="0.5,0.5">
+            <Rectangle.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform/>
+                    <SkewTransform/>
+                    <RotateTransform x:Name="NowLoadingMarkAngle" Angle="45"/>
+                    <TranslateTransform/>
+                </TransformGroup>
+            </Rectangle.RenderTransform>
+        </Rectangle>
+    </Grid>
+    <!--
         </StackPanel>
     </Grid>
         -->

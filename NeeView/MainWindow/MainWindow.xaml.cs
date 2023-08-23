@@ -9,6 +9,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Security.Policy;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -40,6 +41,7 @@ namespace NeeView
         private readonly WindowStateManager _windowStateManager;
         private readonly MainWindowController _windowController;
 
+        private readonly MediaControl _mediaControl;
 
         public MainWindow()
         {
@@ -80,7 +82,7 @@ namespace NeeView
             //ContentDropManager.Current.SetDragDropEvent(MainView);
 
             // ViewComponent
-            MainViewComponent.Initlialize();
+            MainViewComponent.Initialize();
             _viewComponent = MainViewComponent.Current;
 
             // ViewComponent Mouse/TouchCommand
@@ -115,8 +117,9 @@ namespace NeeView
             CustomLayoutPanelManager.Initialize();
 
             // 各コントロールとモデルを関連付け
+            _mediaControl = new MediaControl();
             this.PageSliderView.Source = PageSlider.Current;
-            this.MediaControlView.Source = MediaControl.Current;
+            this.MediaControlView.Source = _mediaControl;
             this.ThumbnailListArea.Source = ThumbnailList.Current;
             this.MenuBar.Source = new MenuBar(_windowStateManager);
             this.AddressBar.Source = new AddressBar();
@@ -147,6 +150,26 @@ namespace NeeView
 #warning MediaContnt 時のレイアウト更新
             //_viewComponent.ContentCanvas.AddPropertyChanged(nameof(ContentCanvas.IsMediaContent),
             //    (s, e) => DartyPageSliderLayout());
+            _viewComponent.PageFrameBoxPresenter.SubscribePageFrameBoxChanged(
+                (s, e) => DartyPageSliderLayout());
+
+            // # ここで？
+            _viewComponent.PageFrameBoxPresenter.SubscribeViewContentChanged((s, e) =>
+            {
+                var viewContent = e.PageFrameContent.ViewContents?.FirstOrDefault() as MediaViewContent;
+                //this.MediaControlView.SetSource(viewContent);
+                var player = viewContent?.Player;
+                if (player is not null && MainViewComponent.Current.PageFrameBoxPresenter.IsMedia)
+                {
+                    _mediaControl.RaiseContentChanged(this, new MediaPlayerChanged(player, false) { IsMainMediaPlayer = true });
+                }
+                else
+                {
+                    _mediaControl.RaiseContentChanged(this, new MediaPlayerChanged() { IsMainMediaPlayer = true });
+                }
+            });
+
+
 
             _windowController.AddPropertyChanged(nameof(MainWindowController.AutoHideMode),
                 (s, e) => AutoHideModeChanged());
@@ -157,7 +180,7 @@ namespace NeeView
             // watch menu bar visibility
             this.MenuArea.IsVisibleChanged += (s, e) => Config.Current.MenuBar.IsVisible = this.MenuArea.IsVisible;
 
-            // watchi slider visibility
+            // watch slider visibility
             this.SliderArea.IsVisibleChanged += (s, e) => Config.Current.Slider.IsVisible = this.SliderArea.IsVisible;
 
             // moue event for window
@@ -726,9 +749,9 @@ namespace NeeView
             }
 
 #warning Media対応
-#if false
+#if true
             // visibility
-            if (_viewComponent.ContentCanvas.IsMediaContent)
+            if (_viewComponent.PageFrameBoxPresenter.IsMedia)
             {
                 this.MediaControlView.Visibility = Visibility.Visible;
                 this.PageSliderView.Visibility = Visibility.Collapsed;

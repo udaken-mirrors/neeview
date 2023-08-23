@@ -39,22 +39,41 @@ namespace NeeView
         private readonly NavigateTransformControl _dragTransform;
 
 
+        private readonly MediaControl _mediaControl;
+
 
         public NavigateModel()
         {
             _dragTransform = new NavigateTransformControl(MainViewComponent.Current.PageFrameBoxPresenter);
             _dragTransform.PropertyChanged += NavigateTransformControl_PropertyChanged;
 
+            _mediaControl = new MediaControl();
 
             //_dragTransform = MainViewComponent.Current.DragTransform;
             //_contentCanvas = MainViewComponent.Current.ContentCanvas;
 
+            MainViewComponent.Current.PageFrameBoxPresenter.ViewContentChanged += PageFrameBoxPresenter_ViewContentChanged;
+
             Config.Current.View.PropertyChanged += ViewConfig_PropertyChanged;
         }
 
-
+        private void PageFrameBoxPresenter_ViewContentChanged(object? sender, ViewContentChangedEventArgs e)
+        {
+            var viewContent = e.PageFrameContent.ViewContents?.FirstOrDefault() as MediaViewContent;
+            var player = viewContent?.Player;
+            if (player is not null && !MainViewComponent.Current.PageFrameBoxPresenter.IsMedia)
+            {
+                _mediaControl.RaiseContentChanged(this, new MediaPlayerChanged(player, false));
+            }
+            else
+            {
+                _mediaControl.RaiseContentChanged(this, new MediaPlayerChanged());
+            }
+        }
 
         public NavigateTransformControl DragTransform => _dragTransform;
+
+        public MediaControl MediaControl => _mediaControl;
 
 
         public double Angle

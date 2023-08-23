@@ -1,4 +1,5 @@
 ﻿using NeeLaboratory.ComponentModel;
+using NeeLaboratory.Generators;
 using NeeView.Windows;
 using System;
 using System.Collections.Generic;
@@ -28,8 +29,17 @@ namespace NeeView
     /// <summary>
     /// MouseInputManager
     /// </summary>
-    public class MouseInput : BindableBase
+    public partial class MouseInput : BindableBase
     {
+        /// <summary>
+        /// マウスクリックによるコマンド発動を抑制する
+        /// </summary>
+        /// <remarks>
+        /// ArchivePage でダブルクリック移動できるようにするために使用されます。
+        /// </remarks>
+        public static bool IgnoreMouseCommand { get; set; }
+
+
         private readonly FrameworkElement _sender;
         private MouseInputState _state;
         private MouseHorizontalWheelSource? _mouseHorizontalWheelSource;
@@ -65,7 +75,7 @@ namespace NeeView
 
             this.Normal = new MouseInputNormal(_context);
             this.Normal.StateChanged += StateChanged;
-            this.Normal.MouseButtonChanged += (s, e) => MouseButtonChanged?.Invoke(_sender, e);
+            this.Normal.MouseButtonChanged += Mouse_MouseButtonChanged;
             this.Normal.MouseWheelChanged += (s, e) => MouseWheelChanged?.Invoke(_sender, e);
             this.Normal.MouseHorizontalWheelChanged += (s, e) => MouseHorizontalWheelChanged?.Invoke(_sender, e);
 
@@ -73,7 +83,7 @@ namespace NeeView
             {
                 this.Loupe = new MouseInputLoupe(_context);
                 this.Loupe.StateChanged += StateChanged;
-                this.Loupe.MouseButtonChanged += (s, e) => MouseButtonChanged?.Invoke(_sender, e);
+                this.Loupe.MouseButtonChanged += Mouse_MouseButtonChanged;
                 this.Loupe.MouseWheelChanged += (s, e) => MouseWheelChanged?.Invoke(_sender, e);
                 this.Loupe.MouseHorizontalWheelChanged += (s, e) => MouseHorizontalWheelChanged?.Invoke(_sender, e);
             }
@@ -82,7 +92,7 @@ namespace NeeView
             {
                 this.Drag = new MouseInputDrag(_context);
                 this.Drag.StateChanged += StateChanged;
-                this.Drag.MouseButtonChanged += (s, e) => MouseButtonChanged?.Invoke(_sender, e);
+                this.Drag.MouseButtonChanged += Mouse_MouseButtonChanged;
                 this.Drag.MouseWheelChanged += (s, e) => MouseWheelChanged?.Invoke(_sender, e);
                 this.Drag.MouseHorizontalWheelChanged += (s, e) => MouseHorizontalWheelChanged?.Invoke(_sender, e);
             }
@@ -91,7 +101,7 @@ namespace NeeView
             {
                 this.Gesture = new MouseInputGesture(_context);
                 this.Gesture.StateChanged += StateChanged;
-                this.Gesture.MouseButtonChanged += (s, e) => MouseButtonChanged?.Invoke(_sender, e);
+                this.Gesture.MouseButtonChanged += Mouse_MouseButtonChanged;
                 this.Gesture.MouseWheelChanged += (s, e) => MouseWheelChanged?.Invoke(_sender, e);
                 this.Gesture.MouseHorizontalWheelChanged += (s, e) => MouseHorizontalWheelChanged?.Invoke(_sender, e);
                 this.Gesture.GestureChanged += (s, e) => _context.GestureCommandCollection?.Execute(e.Sequence);
@@ -126,49 +136,30 @@ namespace NeeView
         }
 
 
+
         /// <summary>
         /// ボタン入力イベント
         /// </summary>
+        [Subscribable]
         public event EventHandler<MouseButtonEventArgs>? MouseButtonChanged;
-
-        public IDisposable SubscribeMouseButtonChanged(EventHandler<MouseButtonEventArgs> handler)
-        {
-            MouseButtonChanged += handler;
-            return new AnonymousDisposable(() => MouseButtonChanged -= handler);
-        }
 
         /// <summary>
         /// ホイール入力イベント
         /// </summary>
+        [Subscribable]
         public event EventHandler<MouseWheelEventArgs>? MouseWheelChanged;
-
-        public IDisposable SubscribeMouseWheelChanged(EventHandler<MouseWheelEventArgs> handler)
-        {
-            MouseWheelChanged += handler;
-            return new AnonymousDisposable(() => MouseWheelChanged -= handler);
-        }
 
         /// <summary>
         /// 水平ホイール入力イベント
         /// </summary>
+        [Subscribable]
         public event EventHandler<MouseWheelEventArgs>? MouseHorizontalWheelChanged;
-
-        public IDisposable SubscribeMouseHorizontalWheelChanged(EventHandler<MouseWheelEventArgs> handler)
-        {
-            MouseHorizontalWheelChanged += handler;
-            return new AnonymousDisposable(() => MouseHorizontalWheelChanged -= handler);
-        }
 
         /// <summary>
         /// 一定距離カーソルが移動したイベント
         /// </summary>
+        [Subscribable]
         public event EventHandler<MouseEventArgs>? MouseMoved;
-
-        public IDisposable SubscribeMouseMoved(EventHandler<MouseEventArgs> handler)
-        {
-            MouseMoved += handler;
-            return new AnonymousDisposable(() => MouseMoved -= handler);
-        }
 
 
         /// <summary>
@@ -190,6 +181,19 @@ namespace NeeView
         /// 状態：ジェスチャー
         /// </summary>
         public MouseInputGesture? Gesture { get; private set; }
+
+
+        /// <summary>
+        /// マウスクリック
+        /// </summary>
+        /// <remarks>
+        /// コマンド発動用
+        /// </remarks>
+        private void Mouse_MouseButtonChanged(object? sender, MouseButtonEventArgs e)
+        {
+            if (IgnoreMouseCommand) return;
+            MouseButtonChanged?.Invoke(_sender, e);
+        }
 
 
         private void LoupeContext_IsEnabledChanged(object? sender, PropertyChangedEventArgs e)

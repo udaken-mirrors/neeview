@@ -34,6 +34,8 @@ namespace NeeView
             _vm = new NavigateViewModel(model);
             this.DataContext = _vm;
 
+            this.MediaControlView.Source = model.MediaControl;
+
             this.IsVisibleChanged += NavigateView_IsVisibleChanged;
         }
 

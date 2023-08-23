@@ -20,7 +20,7 @@ namespace NeeView
         private bool _disposedValue;
 
 
-        public static void Initlialize()
+        public static void Initialize()
         {
             if (_current is not null) throw new InvalidOperationException();
             _current = new MainViewComponent();

@@ -125,6 +125,10 @@ namespace NeeView
             // 開始ページ記憶
             this.StartEntry = _source.Pages.Count > 0 ? _source.Pages[position.Index].EntryName : null;
 
+            //this.Memento.Page = this.StartEntry ?? "";
+            var page = _source.Pages.Count > 0 ? _source.Pages[position.Index] : null;
+            SetCurrentPage(page);
+
             // 初期ページ設定 
             //_controller.JumpPage(sender, position, direction);
         }
@@ -136,6 +140,15 @@ namespace NeeView
             // TODO: スタートページへ移動
             //_controller.Start();
         }
+
+        public Page? CurrentPage { get; private set; }
+
+        public void SetCurrentPage(Page? page)
+        {
+            CurrentPage = page;
+            this.Memento.Page = page?.EntryName ?? "";
+        }
+
 
 
         #region IDisposable Support
@@ -178,7 +191,7 @@ namespace NeeView
             {
                 Path = _source.Path,
                 //Page = _source.Pages.SortMode != PageSortMode.Random ? _viewer.GetViewPage()?.EntryName ?? "" : "",
-                Page = "",
+                Page = _source.Pages.SortMode != PageSortMode.Random ? this.CurrentPage?.EntryName ?? "" : "",
 
                 PageMode = _setting.PageMode,
                 BookReadOrder = _setting.BookReadOrder,

@@ -11,7 +11,7 @@ namespace NeeView
 {
     public abstract class PageContent : IDataSource, IMemoryElement
     {
-        public static Size DefaultSize = new Size(595, 842);
+        public static Size DefaultSize = new Size(480, 640);
 
         private ArchiveEntry _archiveEntry;
         private BookMemoryService? _bookMemoryService;

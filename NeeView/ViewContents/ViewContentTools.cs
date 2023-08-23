@@ -3,6 +3,8 @@ using System.Security.Cryptography.X509Certificates;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using System.Windows.Media.Effects;
+using System.Windows.Shapes;
 using NeeView.PageFrames;
 
 namespace NeeView
@@ -74,7 +76,7 @@ namespace NeeView
         public static FrameworkElement CreateLoadingContent(PageFrameElement source)
         {
             var grid = new Grid();
-            //grid.Background = Brushes.DarkGray;
+            grid.Background = new SolidColorBrush(Color.FromRgb(0xF0, 0xF0, 0xF0));
 
 #if false
             var textBlock = new TextBlock();
@@ -93,13 +95,21 @@ namespace NeeView
             };
             grid.Children.Add(stackPanel);
 
+#if false
             var textBlock = new TextBlock()
             {
                 Text = $"Page {source.Page.Index + 1}",
                 HorizontalAlignment = HorizontalAlignment.Center,
-                Margin = new Thickness(10)
+                Margin = new Thickness(10),
+                FontSize = 16.0,
+                BitmapEffect = new DropShadowBitmapEffect()
+                {
+                    Softness = 0.5,
+                    ShadowDepth = 0,
+                },
             };
             stackPanel.Children.Add(textBlock);
+#endif
 
             var loading = new LoadingIcon()
             {

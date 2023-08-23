@@ -59,7 +59,7 @@ namespace NeeView
 
         private void OpenBookButton_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-            e.Handled = true;
+            //e.Handled = true;
         }
 
         private void OpenBookButton_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -68,12 +68,21 @@ namespace NeeView
             {
                 _vm.OpenBook();
             }
-            e.Handled = true;
+            //e.Handled = true;
         }
 
         private void OpenBookButton_MouseRightButtonUp(object sender, MouseButtonEventArgs e)
         {
-            e.Handled = true;
+            //e.Handled = true;
+        }
+        private void OpenBookButton_MouseEnter(object sender, MouseEventArgs e)
+        {
+            MouseInput.IgnoreMouseCommand = true;
+        }
+
+        private void OpenBookButton_MouseLeave(object sender, MouseEventArgs e)
+        {
+            MouseInput.IgnoreMouseCommand = false;
         }
 
 
@@ -110,6 +119,7 @@ namespace NeeView
         {
             e.Handled = true;
         }
+
     }
 
 

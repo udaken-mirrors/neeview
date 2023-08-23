@@ -1,5 +1,5 @@
 ﻿using NeeView.PageFrames;
-
+using System;
 
 namespace NeeView
 {
@@ -7,6 +7,7 @@ namespace NeeView
     {
         public AnimatedViewContent(PageFrameElement element, PageFrameElementScale scale, ViewSource viewSource, PageFrameActivity activity) : base(element, scale, viewSource, activity)
         {
+            MediaStartDelay = TimeSpan.FromMilliseconds(16);
         }
     }
 

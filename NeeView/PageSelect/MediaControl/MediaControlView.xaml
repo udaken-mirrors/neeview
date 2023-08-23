@@ -87,6 +87,16 @@
     </UserControl.Resources>
 
     <Grid>
+        <Grid.Style>
+            <Style TargetType="Grid">
+                <Setter Property="Visibility" Value="Visible"/>
+                <Style.Triggers>
+                    <DataTrigger Binding="{Binding Operator}" Value="{x:Null}">
+                        <Setter Property="Visibility" Value="Collapsed"/>
+                    </DataTrigger>
+                </Style.Triggers>
+            </Style>
+        </Grid.Style>
         
         <Border x:Name="BaseBorder" BorderThickness="0,1,0,0" BorderBrush="{DynamicResource BottomBar.Border}" Background="{DynamicResource BottomBar.Background}">
             <Border.Style>
@@ -105,7 +115,7 @@
 
             <DockPanel VerticalAlignment="Bottom" Margin="5,0" LastChildFill="False">
 
-                <Button Command="{Binding Operator.PlayCommand}">
+                <Button Command="{Binding PlayCommand}">
                     <Image>
                         <Image.Style>
                             <Style TargetType="Image" BasedOn="{StaticResource ButtonImage}">
@@ -120,7 +130,7 @@
                     </Image>
                 </Button>
 
-                <Button Command="{Binding Operator.MuteCommand}">
+                <Button Command="{Binding MuteCommand}">
                     <Image>
                         <Image.Style>
                             <Style TargetType="Image" BasedOn="{StaticResource ButtonImage}">
@@ -154,7 +164,7 @@
                     </TextBlock.Style>
                 </TextBlock>
 
-                <Button DockPanel.Dock="Right" Command="{Binding Operator.RepeatCommand}">
+                <Button DockPanel.Dock="Right" Command="{Binding RepeatCommand}">
                     <Image>
                         <Image.Style>
                             <Style TargetType="Image" BasedOn="{StaticResource ButtonImage}">

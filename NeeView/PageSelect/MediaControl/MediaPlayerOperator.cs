@@ -3,7 +3,9 @@ using NeeLaboratory.ComponentModel;
 using NeeLaboratory.Windows.Input;
 using System;
 using System.Diagnostics;
+using System.Reflection;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Threading;
 
@@ -21,7 +23,7 @@ namespace NeeView
         public static MediaPlayerOperator? Current { get; set; }
 
 
-        private MediaPlayer _player;
+        private SimpleMediaPlayer _player;
         private readonly DispatcherTimer _timer;
 
         private bool _isLastStart;
@@ -38,8 +40,10 @@ namespace NeeView
         private double _volume = 0.5;
         private double _delay;
         private readonly DisposableCollection _disposables = new();
+        private bool _disposedValue = false;
 
-        public MediaPlayerOperator(MediaPlayer player)
+
+        public MediaPlayerOperator(SimpleMediaPlayer player)
         {
             _player = player;
 
@@ -48,6 +52,10 @@ namespace NeeView
             _player.MediaOpened += Player_MediaOpened;
             _player.MediaEnded += Player_MediaEnded;
             _player.MediaFailed += Player_MediaFailed;
+            _disposables.Add(_player.SubscribePropertyChanged(nameof(_player.NaturalDuration),
+                (s, e) => Duration = _player.NaturalDuration));
+
+            _position = _player.Position;
 
             this.IsMuted = Config.Current.Archive.Media.IsMuted;
             this.Volume = Config.Current.Archive.Media.Volume;
@@ -82,6 +90,7 @@ namespace NeeView
         /// 再生が終端に達したときのイベント
         /// </summary>
         public event EventHandler? MediaEnded;
+
 
         public IDisposable SubscribeMediaEnded(EventHandler handler)
         {
@@ -273,16 +282,50 @@ namespace NeeView
         }
 
 
-        #region Commands
 
-        //
-        private RelayCommand? _PlayCommand;
-        public RelayCommand PlayCommand
+
+
+
+
+        #region IDisposable Support
+
+
+        protected virtual void Dispose(bool disposing)
         {
-            get { return _PlayCommand = _PlayCommand ?? new RelayCommand(PlayCommand_Executed); }
+            if (!_disposedValue)
+            {
+                if (disposing)
+                {
+                    MediaEnded = null;
+                    _disposables.Dispose();
+                    _timer.Stop();
+                    _player.MediaFailed -= Player_MediaFailed;
+                    _player.MediaOpened -= Player_MediaOpened;
+                    _player.MediaEnded -= Player_MediaEnded;
+                    //_player.Stop();
+                    //_player.Close();
+                }
+
+                _disposedValue = true;
+            }
         }
 
-        private void PlayCommand_Executed()
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        #endregion
+
+
+
+        public void RaisePropertyChangedAll()
+        {
+            RaisePropertyChanged(null);
+        }
+
+        public void TogglePlay()
         {
             if (!IsPlaying)
             {
@@ -293,32 +336,6 @@ namespace NeeView
                 Pause();
             }
         }
-
-        //
-        private RelayCommand? _RepeatCommand;
-        public RelayCommand RepeatCommand
-        {
-            get { return _RepeatCommand = _RepeatCommand ?? new RelayCommand(RepeatCommand_Executed); }
-        }
-
-        private void RepeatCommand_Executed()
-        {
-            IsRepeat = !IsRepeat;
-        }
-
-        //
-        private RelayCommand? _MuteCommand;
-        public RelayCommand MuteCommand
-        {
-            get { return _MuteCommand = _MuteCommand ?? new RelayCommand(MuteCommand_Executed); }
-        }
-
-        private void MuteCommand_Executed()
-        {
-            IsMuted = !IsMuted;
-        }
-
-        #endregion
 
 
         private void Player_MediaFailed(object? sender, ExceptionEventArgs e)
@@ -346,7 +363,9 @@ namespace NeeView
 
         private void Player_MediaOpened(object? sender, EventArgs e)
         {
-            Duration = _player.NaturalDuration;
+            return;
+
+            Duration = _player.Player.NaturalDuration;
 
             if (_isLastStart && _duration.HasTimeSpan)
             {
@@ -398,6 +417,7 @@ namespace NeeView
             Delay_Tick(_timer.Interval.TotalMilliseconds);
         }
 
+#if false
         public void Open(Uri uri, bool isLastStart)
         {
             if (_disposedValue) return;
@@ -413,6 +433,28 @@ namespace NeeView
                 _player.Play();
             }
         }
+#endif
+
+        public void Attach(bool isPlaying)
+        {
+            if (_disposedValue) return;
+
+            _isActive = isPlaying;
+            _isPlaying = isPlaying;
+
+            Duration = _player.NaturalDuration;
+        }
+
+#if false
+        private MediaState GetMediaState(MediaElement myMedia)
+        {
+            FieldInfo hlp = typeof(MediaElement).GetField("_helper", BindingFlags.NonPublic | BindingFlags.Instance);
+            object helperObject = hlp.GetValue(myMedia);
+            FieldInfo stateField = helperObject.GetType().GetField("_currentState", BindingFlags.NonPublic | BindingFlags.Instance);
+            MediaState state = (MediaState)stateField.GetValue(helperObject);
+            return state;
+        }
+#endif
 
         public void Play()
         {
@@ -439,7 +481,7 @@ namespace NeeView
         /// コマンドによる移動
         /// </summary>
         /// <param name="delta"></param>
-        /// <returns>終端を超える場合はtrue</returns>
+        /// <returns>終端を超える場合は true</returns>
         public bool AddPosition(TimeSpan delta)
         {
             if (_disposedValue) return false;
@@ -532,39 +574,6 @@ namespace NeeView
         {
             Volume = MathUtility.Clamp(Volume + delta, 0.0, 1.0);
         }
-
-
-        #region IDisposable Support
-
-        private bool _disposedValue = false;
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!_disposedValue)
-            {
-                if (disposing)
-                {
-                    MediaEnded = null;
-                    _disposables.Dispose();
-                    _timer.Stop();
-                    _player.MediaFailed -= Player_MediaFailed;
-                    _player.MediaOpened -= Player_MediaOpened;
-                    _player.MediaEnded -= Player_MediaEnded;
-                    _player.Stop();
-                    _player.Close();
-                }
-
-                _disposedValue = true;
-            }
-        }
-
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        #endregion
 
     }
 

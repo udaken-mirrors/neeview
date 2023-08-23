@@ -77,6 +77,9 @@ namespace NeeView.Presenter
 
         public BookCommandControl? PageControl => _pageControl;
 
+        public bool IsMedia => _bookContext?.IsMedia ?? false;
+
+
 
         private void BookHub_BookChanging(object? sender, EventArgs e)
         {

@@ -180,8 +180,8 @@ namespace NeeView
         private List<Page>? CollectPage(Book? book, PageRange range)
         {
             if (book is null) return null;
-            var indexs = Enumerable.Range(range.Min.Index, range.Max.Index - range.Min.Index + 1);
-            return indexs.Where(e => book.Pages.IsValidIndex(e)).Select(e => book.Pages[e]).ToList();
+            var indexes = Enumerable.Range(range.Min.Index, range.Max.Index - range.Min.Index + 1);
+            return indexes.Where(e => book.Pages.IsValidIndex(e)).Select(e => book.Pages[e]).ToList();
         }
 
 #if false

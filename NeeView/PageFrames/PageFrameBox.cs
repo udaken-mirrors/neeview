@@ -92,13 +92,13 @@ namespace NeeView.PageFrames
             _transformMap.IsAngleLocked = _context.IsAngleLocked;
 
             _calculator = new ContentSizeCalculator(_context);
-            var frameFactorty = new PageFrameFactory(_context, _calculator);
+            var frameFactory = new PageFrameFactory(_context, _calculator);
             _viewSourceMap = new ViewSourceMap(_context.BookMemoryService);
             var elementScaleFactory = new PageFrameElementScaleFactory(_context, _transformMap, loupeContext);
-            _loader = new BookPageLoader(_context.Book, frameFactorty, _viewSourceMap, elementScaleFactory, _context.BookMemoryService, _context.PerformanceConfig);
+            _loader = new BookPageLoader(_context.Book, frameFactory, _viewSourceMap, elementScaleFactory, _context.BookMemoryService, _context.PerformanceConfig);
             _disposables.Add(_loader);
             var containerFactory = new PageFrameContainerFactory(_context, _transformMap, _viewSourceMap, loupeContext);
-            _containers = new PageFrameContainerCollection(frameFactorty, containerFactory);
+            _containers = new PageFrameContainerCollection(frameFactory, containerFactory);
             _rectMath = new PageFrameContainersCollectionRectMath(_context, _containers);
             _layout = new PageFrameContainersLayout(_context, _containers);
 
