@@ -1,6 +1,5 @@
 ﻿using NeeLaboratory.ComponentModel;
 using NeeLaboratory.Generators;
-using NeeView.Presenter;
 using System;
 using System.Linq;
 using System.Text;
@@ -58,7 +57,7 @@ namespace NeeView
             ViewLoupeControl = new ViewLoupeControl(this);
             ViewWindowControl = new ViewWindowControl(this);
             ViewPropertyControl = new ViewPropertyControl(Config.Current.View);
-            ViewCopyImage = new ViewCopyImage(this);
+            ViewCopyImage = new ViewCopyImage(PageFrameBoxPresenter);
 
             //ContentCanvas = new ContentCanvas(this, bookHub);
             //ContentCanvasBrush = new ContentCanvasBrush(ContentCanvas);

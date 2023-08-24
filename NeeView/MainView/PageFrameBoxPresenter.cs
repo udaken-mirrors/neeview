@@ -9,7 +9,7 @@ using NeeView.ComponentModel;
 using NeeView.PageFrames;
 using NeeView.Windows;
 
-namespace NeeView.Presenter
+namespace NeeView
 {
     [NotifyPropertyChanged]
     public partial class PageFrameBoxPresenter : INotifyPropertyChanged, IDragTransformContextFactory, IBookPageContext
@@ -341,6 +341,16 @@ namespace NeeView.Presenter
         public PageFrameTransformAccessor? CreateSelectedTransform()
         {
             return _box?.CreateSelectedTransform();
+        }
+
+
+        /// <summary>
+        /// 選択中の <see cref="PageFrameContent"/> を取得
+        /// </summary>
+        /// <returns></returns>
+        public PageFrameContent? GetSelectedPageFrameContent()
+        {
+            return _box?.GetSelectedPageFrameContent();
         }
 
         #endregion IPageFrameBox

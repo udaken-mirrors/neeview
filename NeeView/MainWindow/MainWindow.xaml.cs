@@ -748,8 +748,6 @@ namespace NeeView
                 this.PageSliderView.IsBackgroundOpacityEnabled = true;
             }
 
-#warning Media対応
-#if true
             // visibility
             if (_viewComponent.PageFrameBoxPresenter.IsMedia)
             {
@@ -757,7 +755,6 @@ namespace NeeView
                 this.PageSliderView.Visibility = Visibility.Collapsed;
             }
             else
-#endif
             {
                 this.MediaControlView.Visibility = Visibility.Collapsed;
                 this.PageSliderView.Visibility = Config.Current.Slider.IsEnabled ? Visibility.Visible : Visibility.Collapsed;

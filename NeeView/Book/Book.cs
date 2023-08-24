@@ -184,13 +184,11 @@ namespace NeeView
         #region Memento
 
         // bookの設定を取得する
-        [Obsolete("現在ページの情報はここにはないので別で処する？")]
         public BookMemento CreateMemento()
         {
             var memento = new BookMemento
             {
                 Path = _source.Path,
-                //Page = _source.Pages.SortMode != PageSortMode.Random ? _viewer.GetViewPage()?.EntryName ?? "" : "",
                 Page = _source.Pages.SortMode != PageSortMode.Random ? this.CurrentPage?.EntryName ?? "" : "",
 
                 PageMode = _setting.PageMode,

@@ -1000,7 +1000,6 @@ namespace NeeView.PageFrames
         }
 
 
-
         /// <summary>
         /// [開発用] リセット
         /// </summary>
@@ -1008,6 +1007,18 @@ namespace NeeView.PageFrames
         {
         }
 
-
+        /// <summary>
+        /// 選択しているページの <see cref="PageFrameContent"/> を取得する。
+        /// </summary>
+        /// <returns><see cref="PageFrameContent"/> 存在しない場合はNULL</returns>
+        public PageFrameContent? GetSelectedPageFrameContent()
+        {
+            var node = _selected.Node;
+            if (node?.Value.Content is PageFrameContent pageFrameContent)
+            {
+                return pageFrameContent;
+            }
+            return null;
+        }
     }
 }

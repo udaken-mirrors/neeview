@@ -3,7 +3,6 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Windows;
 using NeeLaboratory.Generators;
-using NeeView.Presenter;
 
 namespace NeeView.PageFrames
 {

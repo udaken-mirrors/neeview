@@ -8,7 +8,12 @@ using NeeView.Threading;
 
 namespace NeeView
 {
-    public class ImageViewContent : ViewContent
+    public interface IHasImageSource
+    {
+        ImageSource? ImageSource { get; }
+    }
+
+    public class ImageViewContent : ViewContent, IHasImageSource
     {
         private ImageContentControl? _imageControl;
         private bool _disposedValue;
@@ -21,6 +26,10 @@ namespace NeeView
             _delayAction = new InstantDelayAction();
             _disposables.Add(_delayAction);
         }
+
+
+        public ImageSource? ImageSource => _imageControl?.ImageSource;
+
 
         protected override void Dispose(bool disposing)
         {

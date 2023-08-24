@@ -1,5 +1,4 @@
-﻿using NeeView.Presenter;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -86,8 +85,8 @@ namespace NeeView
         private void Book_SelectedRangeChanged(object? sender, EventArgs e)
         {
             var range = SelectedRange;
-            var indexs = Enumerable.Range(range.Min.Index, range.Max.Index - range.Min.Index + 1);
-            _selectedPages = indexs.Where(e => _book.Pages.IsValidIndex(e)).Select(e => _book.Pages[e]).ToList();
+            var indexes = Enumerable.Range(range.Min.Index, range.Max.Index - range.Min.Index + 1);
+            _selectedPages = indexes.Where(e => _book.Pages.IsValidIndex(e)).Select(e => _book.Pages[e]).ToList();
 
             AppDispatcher.Invoke(() => SelectedRangeChanged?.Invoke(sender, e));
         }

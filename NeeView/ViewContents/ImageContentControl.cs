@@ -9,7 +9,7 @@ using NeeView.PageFrames;
 
 namespace NeeView
 {
-    public class ImageContentControl : ContentControl, IDisposable
+    public class ImageContentControl : ContentControl, IDisposable, IHasImageSource
     {
         private PageFrameElement _element;
         private ImageSource _image;
@@ -18,10 +18,10 @@ namespace NeeView
         private bool _disposedValue;
 
 
-        public ImageContentControl(PageFrameElement source, ImageSource bitmap, ViewContentSize contentSize)
+        public ImageContentControl(PageFrameElement source, ImageSource image, ViewContentSize contentSize)
         {
             _element = source;
-            _image = bitmap;
+            _image = image;
             _contentSize = contentSize;
 
             _rectangle = new Rectangle();
@@ -34,6 +34,9 @@ namespace NeeView
 
             _contentSize.SizeChanged += ContentSize_SizeChanged;
         }
+
+
+        public ImageSource ImageSource => _image;
 
 
         protected virtual void Dispose(bool disposing)

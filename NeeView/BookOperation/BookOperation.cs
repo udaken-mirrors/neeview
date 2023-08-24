@@ -1,6 +1,5 @@
 ﻿using NeeLaboratory.ComponentModel;
 using NeeLaboratory.Threading.Jobs;
-using NeeView.Presenter;
 using System;
 using System.Diagnostics;
 using System.Threading;

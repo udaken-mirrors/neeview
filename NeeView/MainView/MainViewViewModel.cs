@@ -1,6 +1,5 @@
 ﻿using NeeLaboratory.ComponentModel;
 using NeeView.Effects;
-using NeeView.Presenter;
 using System;
 using System.Diagnostics;
 using System.Windows;
