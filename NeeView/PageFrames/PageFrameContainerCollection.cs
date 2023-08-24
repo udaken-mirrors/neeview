@@ -32,13 +32,30 @@ namespace NeeView.PageFrames
     {
         public PageFrameContainerCollectionChangedEventArgs(PageFrameContainerCollectionChangedEventAction action, LinkedListNode<PageFrameContainer> node)
         {
+            Debug.Assert(action != PageFrameContainerCollectionChangedEventAction.UpdateTransform);
             Action = action;
             Node = node;
         }
 
+        public PageFrameContainerCollectionChangedEventArgs(PageFrameContainerCollectionChangedEventAction action, LinkedListNode<PageFrameContainer> node, TransformChangedEventArgs transformChangedEventArgs)
+        {
+            Debug.Assert(action == PageFrameContainerCollectionChangedEventAction.UpdateTransform);
+            Action = action;
+            Node = node;
+
+            if (node.Value.Content is PageFrameContent item)
+            {
+                var frame = item.PageFrame.Scale;
+                var elementScale = item.PageFrame.Elements.First().Scale;
+                TransformChangedEventArgs = new OriginalScaleTransformChangedEventArgs(transformChangedEventArgs, frame * elementScale);
+            }
+        }
+
         public PageFrameContainerCollectionChangedEventAction Action { get; }
         public LinkedListNode<PageFrameContainer> Node { get; }
+        public OriginalScaleTransformChangedEventArgs? TransformChangedEventArgs { get; }
     }
+
 
     /// <summary>
     /// PageFrameContainer のコレクションを管理
@@ -287,7 +304,7 @@ namespace NeeView.PageFrames
             var node = Find(container);
             if (node is null) return;
 
-            CollectionChanged?.Invoke(this, new PageFrameContainerCollectionChangedEventArgs(PageFrameContainerCollectionChangedEventAction.UpdateTransform, node));
+            CollectionChanged?.Invoke(this, new PageFrameContainerCollectionChangedEventArgs(PageFrameContainerCollectionChangedEventAction.UpdateTransform, node, e));
         }
 
         private void Container_ContentSizeChanged(object? sender, EventArgs e)

@@ -79,7 +79,8 @@ namespace NeeView.PageFrames
                 TransformAction.Scale => _scaleSource,
                 TransformAction.Angle => _angleSource,
                 TransformAction.Point => _pointSource,
-                TransformAction.Flip => _flipSource,
+                TransformAction.FlipHorizontal => _flipSource,
+                TransformAction.FlipVertical => _flipSource,
                 _ => throw new ArgumentOutOfRangeException(nameof(action)),
             };
         }
@@ -182,23 +183,23 @@ namespace NeeView.PageFrames
 
             if (scale != Scale)
             {
-                TransformChanged?.Invoke(this, new TransformChangedEventArgs(TransformCategory.Content, TransformAction.Scale));
+                TransformChanged?.Invoke(this, new TransformChangedEventArgs(this, TransformCategory.Content, TransformAction.Scale));
             }
             if (angle != Angle)
             {
-                TransformChanged?.Invoke(this, new TransformChangedEventArgs(TransformCategory.Content, TransformAction.Angle));
+                TransformChanged?.Invoke(this, new TransformChangedEventArgs(this, TransformCategory.Content, TransformAction.Angle));
             }
             if (point != Point)
             {
-                TransformChanged?.Invoke(this, new TransformChangedEventArgs(TransformCategory.Content, TransformAction.Point));
+                TransformChanged?.Invoke(this, new TransformChangedEventArgs(this, TransformCategory.Content, TransformAction.Point));
             }
             if (isFlipHorizontal != IsFlipHorizontal)
             {
-                TransformChanged?.Invoke(this, new TransformChangedEventArgs(TransformCategory.Content, TransformAction.Flip));
+                TransformChanged?.Invoke(this, new TransformChangedEventArgs(this, TransformCategory.Content, TransformAction.FlipHorizontal));
             }
             if (isFlipVertical != IsFlipVertical)
             {
-                TransformChanged?.Invoke(this, new TransformChangedEventArgs(TransformCategory.Content, TransformAction.Flip));
+                TransformChanged?.Invoke(this, new TransformChangedEventArgs(this, TransformCategory.Content, TransformAction.FlipVertical));
             }
         }
     }

@@ -84,7 +84,7 @@ namespace NeeView.PageFrames
 
             //Debug.WriteLine($"$$ {{{Point:f0}}} to {{{value:f0}}} ({span.TotalMilliseconds})");
             _transform.SetPoint(value, span);
-            TransformChanged?.Invoke(this, new TransformChangedEventArgs(TransformCategory.View, TransformAction.Point));
+            TransformChanged?.Invoke(this, new TransformChangedEventArgs(this, TransformCategory.View, TransformAction.Point));
         }
 
         public void Flush()

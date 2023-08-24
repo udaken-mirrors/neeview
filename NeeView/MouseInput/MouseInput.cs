@@ -436,53 +436,5 @@ namespace NeeView
             _current?.OnUpdateSelectedFrame();
         }
 
-
-        // メッセージとして状態表示
-        // TODO: 外部への依存が強すぎるので、定義場所を別にする？
-        public void ShowMessage(TransformActionType ActionType, ViewContent? mainContent)
-        {
-#warning not imprement yet
-#if false
-            var infoMessage = InfoMessage.Current; // TODO: not singleton
-            if (Config.Current.Notice.ViewTransformShowMessageStyle == ShowMessageStyle.None) return;
-
-            var dragTransform = _context.DragTransform;
-            var loupeTransform = _context.LoupeTransform;
-
-            switch (ActionType)
-            {
-                case TransformActionType.Scale:
-                    if (dragTransform is null) return;
-                    var dpi = (Window.GetWindow(_sender) is IDpiScaleProvider dpiProvider) ? dpiProvider.GetDpiScale().ToFixedScale().DpiScaleX : 1.0;
-                    string scaleText = Config.Current.Notice.IsOriginalScaleShowMessage && mainContent != null && mainContent.IsValid
-                        ? $"{(int)(dragTransform.Scale * mainContent.Scale * dpi * 100 + 0.1)}%"
-                        : $"{(int)(dragTransform.Scale * 100.0 + 0.1)}%";
-                    infoMessage.SetMessage(InfoMessageType.ViewTransform, scaleText);
-                    break;
-                case TransformActionType.Angle:
-                    if (dragTransform is null) return;
-                    infoMessage.SetMessage(InfoMessageType.ViewTransform, $"{(int)(dragTransform.Angle)}°");
-                    break;
-                case TransformActionType.FlipHorizontal:
-                    if (dragTransform is null) return;
-                    infoMessage.SetMessage(InfoMessageType.ViewTransform, Properties.Resources.Notice_FlipHorizontal + " " + (dragTransform.IsFlipHorizontal ? "ON" : "OFF"));
-                    break;
-                case TransformActionType.FlipVertical:
-                    if (dragTransform is null) return;
-                    infoMessage.SetMessage(InfoMessageType.ViewTransform, Properties.Resources.Notice_FlipVertical + " " + (dragTransform.IsFlipVertical ? "ON" : "OFF"));
-                    break;
-                case TransformActionType.LoupeScale:
-                    if (loupeTransform is null) return;
-                    if (loupeTransform.Scale != 1.0)
-                    {
-                        infoMessage.SetMessage(InfoMessageType.ViewTransform, $"×{loupeTransform.Scale:0.0}");
-                    }
-                    break;
-            }
-#endif
-        }
-
-
-
     }
 }

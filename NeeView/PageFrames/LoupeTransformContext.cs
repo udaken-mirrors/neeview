@@ -54,7 +54,7 @@ namespace NeeView.PageFrames
             {
                 _transform.SetPoint(value);
                 RaisePropertyChanged(nameof(Point));
-                TransformChanged?.Invoke(this, new TransformChangedEventArgs(TransformCategory.Loupe, TransformAction.Point));
+                TransformChanged?.Invoke(this, new TransformChangedEventArgs(this, TransformCategory.Loupe, TransformAction.Point));
             }
         }
 
@@ -64,7 +64,7 @@ namespace NeeView.PageFrames
             {
                 _transform.SetScale(value);
                 RaisePropertyChanged(nameof(Scale));
-                TransformChanged?.Invoke(this, new TransformChangedEventArgs(TransformCategory.Loupe, TransformAction.Scale));
+                TransformChanged?.Invoke(this, new TransformChangedEventArgs(this,TransformCategory.Loupe, TransformAction.Scale));
             }
         }
     }

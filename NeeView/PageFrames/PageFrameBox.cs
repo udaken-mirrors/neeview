@@ -164,6 +164,9 @@ namespace NeeView.PageFrames
         [Subscribable]
         public event EventHandler<ViewContentChangedEventArgs>? ViewContentChanged;
 
+        [Subscribable]
+        public event TransformChangedEventHandler? TransformChanged;
+
 
         public DragTransformContextFactory DragTransformContextFactory => _dragTransformContextFactory;
 
@@ -252,6 +255,10 @@ namespace NeeView.PageFrames
                     if (!_context.IsStaticFrame)
                     {
                         _onceDispatcher.BeginInvoke("UpdateContainersLayout", UpdateContainersLayout);
+                    }
+                    if (e.TransformChangedEventArgs is not null && _selected.Node == e.Node)
+                    {
+                        TransformChanged?.Invoke(this, e.TransformChangedEventArgs);
                     }
                     break;
                 case PageFrameContainerCollectionChangedEventAction.UpdateContentSize:
@@ -502,6 +509,8 @@ namespace NeeView.PageFrames
             }
 
             Cleanup(e.Category == TransformCategory.View);
+
+            TransformChanged?.Invoke(this, e);
         }
 
 
@@ -709,7 +718,7 @@ namespace NeeView.PageFrames
 
             // TODO: NType以外のスクロール
 
-            // linebreak repeat limiter
+            // line break repeat limiter
             var isLimit = _scrollRepeatLimiter.IsLimit((int)(parameter.LineBreakStopTime * 1000.0));
             _scrollRepeatLimiter.Reset();
 

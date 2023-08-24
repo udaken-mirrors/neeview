@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
+using System.Windows;
 using NeeLaboratory.Generators;
 using NeeView.ComponentModel;
 using NeeView.PageFrames;
+using NeeView.Windows;
 
 namespace NeeView.Presenter
 {
@@ -114,6 +116,7 @@ namespace NeeView.Presenter
 
             _box = new PageFrameBox(_bookContext);
             _box.ViewContentChanged += Box_ViewContentChanged;
+            _box.TransformChanged += Box_TransformChanged;
 
             _pageControl = new BookCommandControl(_bookContext, _box);
 
@@ -122,6 +125,7 @@ namespace NeeView.Presenter
             PagesChanged?.Invoke(this, EventArgs.Empty);
             SelectedRangeChanged?.Invoke(this, EventArgs.Empty);
         }
+
 
 
         private void Close()
@@ -136,6 +140,7 @@ namespace NeeView.Presenter
             {
                 (_box as IDisposable)?.Dispose();
                 _box.ViewContentChanged -= Box_ViewContentChanged;
+                _box.TransformChanged -= Box_TransformChanged;
                 _box = null;
             }
             RaisePropertyChanged(nameof(View));
@@ -158,6 +163,20 @@ namespace NeeView.Presenter
         private void Box_ViewContentChanged(object? sender, ViewContentChangedEventArgs e)
         {
             ViewContentChanged?.Invoke(this, e);
+        }
+
+        private void Box_TransformChanged(object? sender, TransformChangedEventArgs e)
+        {
+            switch (e.Category)
+            {
+                case TransformCategory.Loupe:
+                    ShowLoupeTransformMessage(e.Source, e.Action);
+                    break;
+                default:
+                    var originalScale = e is OriginalScaleTransformChangedEventArgs arg ? arg.OriginalScale : 1.0;
+                    ShowContentTransformMessage(e.Source, e.Action, originalScale);
+                    break;
+            }
         }
 
 
@@ -194,6 +213,53 @@ namespace NeeView.Presenter
         }
 
 
+        private void ShowLoupeTransformMessage(ITransformControlObject source, TransformAction action)
+        {
+            var infoMessage = InfoMessage.Current; // TODO: not singleton
+            if (Config.Current.Notice.ViewTransformShowMessageStyle == ShowMessageStyle.None) return;
+
+            switch (action)
+            {
+                case TransformAction.Scale:
+                    var scale = ((IScaleControl)source).Scale;
+                    if (scale != 1.0)
+                    {
+                        infoMessage.SetMessage(InfoMessageType.ViewTransform, $"×{scale:0.0}");
+                    }
+                    break;
+            }
+        }
+
+        private void ShowContentTransformMessage(ITransformControlObject source, TransformAction action, double originalScale)
+        {
+            var infoMessage = InfoMessage.Current; // TODO: not singleton
+            if (Config.Current.Notice.ViewTransformShowMessageStyle == ShowMessageStyle.None) return;
+
+            switch (action)
+            {
+                case TransformAction.Scale:
+                    var scale = ((IScaleControl)source).Scale;
+                    if (Config.Current.Notice.IsOriginalScaleShowMessage)
+                    {
+                        var dpi = (Window.GetWindow(this.View) is IDpiScaleProvider dpiProvider) ? dpiProvider.GetDpiScale().ToFixedScale().DpiScaleX : 1.0;
+                        scale = scale * originalScale * dpi;
+                    }
+                    infoMessage.SetMessage(InfoMessageType.ViewTransform, $"{(int)(scale * 100.0 + 0.1)}%");
+                    break;
+                case TransformAction.Angle:
+                    var angle = ((IAngleControl)source).Angle;
+                    infoMessage.SetMessage(InfoMessageType.ViewTransform, $"{(int)(angle)}°");
+                    break;
+                case TransformAction.FlipHorizontal:
+                    var isFlipHorizontal = ((IFlipControl)source).IsFlipHorizontal;
+                    infoMessage.SetMessage(InfoMessageType.ViewTransform, Properties.Resources.Notice_FlipHorizontal + " " + (isFlipHorizontal ? "ON" : "OFF"));
+                    break;
+                case TransformAction.FlipVertical:
+                    var isFlipVertical = ((IFlipControl)source).IsFlipVertical;
+                    infoMessage.SetMessage(InfoMessageType.ViewTransform, Properties.Resources.Notice_FlipVertical + " " + (isFlipVertical ? "ON" : "OFF"));
+                    break;
+            }
+        }
 
         #region IPageFrameBox
 

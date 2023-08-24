@@ -48,7 +48,7 @@ namespace NeeView.PageFrames
             if (SetProperty(ref _scale, value, nameof(Scale)))
             {
                 _transform.SetScale(_scale, span);
-                TransformChanged?.Invoke(this, new TransformChangedEventArgs(TransformCategory.Content, TransformAction.Scale));
+                TransformChanged?.Invoke(this, new TransformChangedEventArgs(this, TransformCategory.Content, TransformAction.Scale));
             }
         }
 
@@ -57,7 +57,7 @@ namespace NeeView.PageFrames
             if (SetProperty(ref _angle, value, nameof(Angle)))
             {
                 _transform.SetAngle(_angle, span);
-                TransformChanged?.Invoke(this, new TransformChangedEventArgs(TransformCategory.Content, TransformAction.Angle));
+                TransformChanged?.Invoke(this, new TransformChangedEventArgs(this, TransformCategory.Content, TransformAction.Angle));
             }
         }
 
@@ -66,7 +66,7 @@ namespace NeeView.PageFrames
             if (SetProperty(ref _point, value, nameof(Point)))
             {
                 _transform.SetPoint(_point, span);
-                TransformChanged?.Invoke(this, new TransformChangedEventArgs(TransformCategory.Content, TransformAction.Point));
+                TransformChanged?.Invoke(this, new TransformChangedEventArgs(this, TransformCategory.Content, TransformAction.Point));
             }
         }
 
@@ -75,7 +75,7 @@ namespace NeeView.PageFrames
             if (SetProperty(ref _isFlipHorizontal, value, nameof(IsFlipHorizontal)))
             {
                 _transform.SetFlipHorizontal(value, span);
-                TransformChanged?.Invoke(this, new TransformChangedEventArgs(TransformCategory.Content, TransformAction.Flip));
+                TransformChanged?.Invoke(this, new TransformChangedEventArgs(this, TransformCategory.Content, TransformAction.FlipHorizontal));
             }
         }
 
@@ -84,7 +84,7 @@ namespace NeeView.PageFrames
             if (SetProperty(ref _isFlipVertical, value, nameof(IsFlipVertical)))
             {
                 _transform.SetFlipVertical(value, span);
-                TransformChanged?.Invoke(this, new TransformChangedEventArgs(TransformCategory.Content, TransformAction.Flip));
+                TransformChanged?.Invoke(this, new TransformChangedEventArgs(this, TransformCategory.Content, TransformAction.FlipVertical));
             }
         }
 

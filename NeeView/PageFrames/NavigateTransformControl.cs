@@ -74,8 +74,10 @@ namespace NeeView.PageFrames
                 case TransformAction.Point:
                     RaisePropertyChanged(nameof(Point));
                     break;
-                case TransformAction.Flip:
+                case TransformAction.FlipHorizontal:
                     RaisePropertyChanged(nameof(IsFlipHorizontal));
+                    break;
+                case TransformAction.FlipVertical:
                     RaisePropertyChanged(nameof(IsFlipVertical));
                     break;
             }
