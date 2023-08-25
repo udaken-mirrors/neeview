@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -15,6 +16,7 @@ using System.Xml.Linq;
 using NeeLaboratory.ComponentModel;
 using NeeLaboratory.Generators;
 using NeeView.ComponentModel;
+using NeeView.Effects;
 using NeeView.Maths;
 using NeeView.Windows;
 
@@ -114,7 +116,11 @@ namespace NeeView.PageFrames
             _disposables.Add(_background);
 
             this.Children.Add(_background);
-            this.Children.Add(_scrollViewer);
+
+            var effectGrid = new Grid() { Name = "EffectLayer" };
+            effectGrid.SetBinding(Grid.EffectProperty, new Binding(nameof(ImageEffect.Effect)) { Source = ImageEffect.Current });
+            effectGrid.Children.Add(_scrollViewer);
+            this.Children.Add(effectGrid);
 
             var viewContext = new ViewTransformContext(_context, _viewBox, _rectMath, _scrollViewer);
             _transformControlFactory = new TransformControlFactory(_context, viewContext, loupeContext, _scrollLock);
@@ -1020,5 +1026,15 @@ namespace NeeView.PageFrames
             }
             return null;
         }
+
+        /// <summary>
+        /// 背景情報
+        /// </summary>
+        /// <returns></returns>
+        public PageFrameBackground GetBackground()
+        {
+            return _background;
+        }
+
     }
 }

@@ -1,4 +1,5 @@
 ﻿using NeeView.Effects;
+using NeeView.PageFrames;
 using System;
 using System.Linq;
 using System.Windows;
@@ -6,51 +7,51 @@ using System.Windows.Media;
 
 namespace NeeView
 {
-#warning 未実装
     public class PrintController
     {
-        private readonly MainViewComponent _viewComponent;
+        private readonly PageFrameBoxPresenter _presenter;
         private readonly MainView _mainView;
 
-        public PrintController(MainViewComponent viewComponent, MainView mainView)
+        public PrintController(MainViewComponent viewComponent, MainView mainView, PageFrameBoxPresenter presenter)
         {
-            _viewComponent = viewComponent;
             _mainView = mainView;
+            _presenter = presenter;
         }
 
         public bool CanPrint()
         {
-            return false;
-            //var mainContent = _viewComponent.ContentCanvas.MainContent;
-            //return mainContent != null && mainContent.IsValid;
+            return _presenter.GetSelectedPageFrameContent() is not null;
         }
 
         public void Print()
         {
-            throw new NotImplementedException();
-            //Print(Window.GetWindow(_mainView), _mainView.PageContents, _mainView.MainContent.RenderTransform, _mainView.View.ActualWidth, _mainView.View.ActualHeight);
+            var pageFrameContent = _presenter.GetSelectedPageFrameContent();
+            if (pageFrameContent is null) return;
+
+            var frameworkElement = _presenter.GetSelectedPageFrameContent()?.ViewElement;
+            if (frameworkElement is null) return;
+
+            var transform = _presenter.GetSelectedPageFrameContent()?.ViewTransform;
+            if (transform is null) return;
+
+            Print(Window.GetWindow(_mainView), pageFrameContent, frameworkElement, transform, _mainView.View.ActualWidth, _mainView.View.ActualHeight);
         }
 
 
-#if false
-        private void Print(Window owner, FrameworkElement element, Transform transform, double width, double height)
+        private void Print(Window owner, PageFrameContent content, FrameworkElement element, Transform transform, double width, double height)
         {
             if (!CanPrint()) return;
 
             // 掃除しておく
             GC.Collect();
 
-            var contents = _viewComponent.ContentCanvas.Contents;
-            var mainContent = _viewComponent.ContentCanvas.MainContent;
-
-            // スケールモード退避
-            var scaleModeMemory = contents.ToDictionary(e => e, e => e.BitmapScalingMode);
+            var contents = content.ViewContents;
+            var mainContent = content.ViewContents.FirstOrDefault();
 
             // アニメーション停止
-            foreach (var content in contents)
+            foreach (var viewContent in contents.OfType<MediaViewContent>())
             {
-                content.AnimationImageVisibility = Visibility.Visible;
-                content.AnimationPlayerVisibility = Visibility.Collapsed;
+                viewContent.Player.Pause();
             }
 
             // 読み込み停止
@@ -61,6 +62,9 @@ namespace NeeView
 
             try
             {
+                var bg1 = _presenter.GetBackground()?.Bg1Brush;
+                var bg2 = _presenter.GetBackground()?.Bg2Brush;
+
                 var context = new PrintContext(
                     mainContent: mainContent,
                     contents: contents,
@@ -69,8 +73,8 @@ namespace NeeView
                     viewWidth: width,
                     viewHeight: height,
                     viewEffect: ImageEffect.Current.Effect,
-                    background: _viewComponent.ContentCanvasBrush.CreateBackgroundBrush(),
-                    backgroundFront: _viewComponent.ContentCanvasBrush.CreateBackgroundFrontBrush(new DpiScale(1, 1))
+                    background: bg1,
+                    backgroundFront: bg2
                 );
 
                 var dialog = new PrintWindow(context);
@@ -80,12 +84,16 @@ namespace NeeView
             }
             finally
             {
-                // スケールモード、アニメーション復元
-                foreach (var content in contents)
+                // スケールモード復元
+                foreach (var viewContent in contents.OfType<ImageViewContent>())
                 {
-                    content.BitmapScalingMode = scaleModeMemory[content];
-                    content.AnimationImageVisibility = Visibility.Collapsed;
-                    content.AnimationPlayerVisibility = Visibility.Visible;
+                    viewContent.ScalingMode = null;
+                }
+
+                // アニメーション復元
+                foreach (var viewContent in contents.OfType<MediaViewContent>())
+                {
+                    viewContent.Player.Resume();
                 }
 
                 // 読み込み再会
@@ -95,7 +103,6 @@ namespace NeeView
                 SlideShow.Current.ResumeSlideShow();
             }
         }
-#endif
     }
 
 }

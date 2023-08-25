@@ -29,13 +29,13 @@ namespace NeeView
             }
 
             // Performance.MaximumSize Limit
-            var maxWixth = Math.Max(sourceSize.Width, Config.Current.Performance.MaximumSize.Width);
+            var maxWidth = Math.Max(sourceSize.Width, Config.Current.Performance.MaximumSize.Width);
             var maxHeight = Math.Max(sourceSize.Height, Config.Current.Performance.MaximumSize.Height);
-            var maxSize = new Size(maxWixth, maxHeight);
+            var maxSize = new Size(maxWidth, maxHeight);
             size = size.Limit(maxSize);
 
             // IsDotKeep & scale >= 1 => Size.Empty
-            if (Config.Current.ImageDotKeep.IsImgeDotKeep(size, sourceSize))
+            if (Config.Current.ImageDotKeep.IsImageDotKeep(size, sourceSize))
             {
                 size = sourceSize;
             }

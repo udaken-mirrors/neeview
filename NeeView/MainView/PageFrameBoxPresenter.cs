@@ -353,6 +353,15 @@ namespace NeeView
             return _box?.GetSelectedPageFrameContent();
         }
 
+        /// <summary>
+        /// 背景情報取得
+        /// </summary>
+        /// <returns></returns>
+        public PageFrameBackground? GetBackground()
+        {
+            return _box?.GetBackground();
+        }
+
         #endregion IPageFrameBox
     }
 }

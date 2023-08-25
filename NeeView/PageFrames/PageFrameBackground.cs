@@ -44,6 +44,11 @@ namespace NeeView.PageFrames
             //_bg2.SetBinding(Grid.BackgroundProperty, new Binding(nameof(_canvasBrush.BackgroundFrontBrush)) { Source = _canvasBrush });
         }
 
+
+        public Brush Bg1Brush => _bg1.Background;
+        public Brush Bg2Brush => _bg2.Background;
+
+
         private void UpdateBackground1()
         {
             _bg1.Background = _canvasBrush.BackgroundBrush;

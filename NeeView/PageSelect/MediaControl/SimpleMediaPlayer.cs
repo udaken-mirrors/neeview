@@ -17,6 +17,8 @@ namespace NeeView
         private bool _disposedValue;
         private MediaArchiveConfig _mediaConfig;
         private TimeSpan _startDelay;
+        private bool _isPlaying;
+        private bool _resumePlaying;
 
         public SimpleMediaPlayer(MediaPlayer player)
         {
@@ -130,6 +132,8 @@ namespace NeeView
 
             _player.Open(uri);
             _player.Play();
+            _isPlaying = true;
+            _resumePlaying = false;
 
             // NOTE: MP3等、映像がない場合はOpenedイベントが発生しないため、すぐに再生する。
             if (_player.HasAudio && !_player.HasVideo)
@@ -143,13 +147,36 @@ namespace NeeView
             if (_disposedValue) return;
 
             _player.Play();
+            _isPlaying = true;
+            _resumePlaying = false;
+        }
+
+        public void Stop()
+        {
+            if (_disposedValue) return;
+
+            _resumePlaying = _isPlaying;
+            _player.Stop();
+            _isPlaying = false;
         }
 
         public void Pause()
         {
             if (_disposedValue) return;
 
+            _resumePlaying = _isPlaying;
             _player.Pause();
+            _isPlaying = false;
+        }
+
+        public void Resume()
+        {
+            if (_disposedValue) return;
+
+            if (_resumePlaying)
+            {
+                Play();
+            }
         }
 
         private void OnStarted()
@@ -194,6 +221,8 @@ namespace NeeView
             _player.MediaFailed -= Player_MediaFailed;
             _player.Stop();
             _player.Close();
+            _isPlaying = false;
+            _resumePlaying = false;
 
 #if false
             // NOTE: 一瞬黒い画像が表示されるのを防ぐために開放タイミングをずらす。今作では不要か？

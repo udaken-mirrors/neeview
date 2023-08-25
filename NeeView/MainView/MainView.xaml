@@ -18,17 +18,22 @@
         Background="{Binding ContentCanvasBrush.BackgroundBrush}"
         <Rectangle x:Name="FrontBackground" Fill="{Binding ContentCanvasBrush.BackgroundFrontBrush}" RenderOptions.BitmapScalingMode="HighQuality" IsHitTestVisible="False"
                 Visibility="{Binding ContentCanvasBrush.BackgroundFrontBrush, Converter={StaticResource NullableToVisibilityConverter}}" />
+        
+        <Grid x:Name="MainViewCanvas" Effect="{Binding ImageEffect.Effect}" Margin="{Binding MainViewMergin}">
+        
+                    <Grid x:Name="View" Background="Transparent" SizeChanged="MainView_SizeChanged" Focusable="True" KeyboardNavigation.IsTabStop="False" FocusVisualStyle="{x:Null}"
+                    ClipToBounds="True" AllowDrop="True">
+        
         -->
 
-        <Grid x:Name="MainViewCanvas" Effect="{Binding ImageEffect.Effect}" Margin="{Binding MainViewMergin}">
-
+        <Grid x:Name="MainViewCanvas" Margin="{Binding MainViewMergin}">
 
             <!-- メインビュー コンテンツ表示領域 -->
             <Grid x:Name="View" Background="Transparent" SizeChanged="MainView_SizeChanged" Focusable="True" KeyboardNavigation.IsTabStop="False" FocusVisualStyle="{x:Null}"
-                    ClipToBounds="True" AllowDrop="True">
+                    AllowDrop="True">
 
                 <ContentControl x:Name="Socket" Content="{Binding PageFrameBoxPresenter.View}"/>
-                
+
                 <!--
                 <Canvas x:Name="PageCanvas" Width="{Binding ElementName=MainContent, Path=ActualWidth}" Height="{Binding ElementName=MainContent, Path=ActualHeight}" HorizontalAlignment="Center"
                         VerticalAlignment="Center">
@@ -65,7 +70,7 @@
                 </Canvas>
                 -->
             </Grid>
-         </Grid>
+        </Grid>
 
         <!-- empty pages message -->
         <!--

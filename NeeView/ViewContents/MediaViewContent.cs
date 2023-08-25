@@ -28,7 +28,7 @@ namespace NeeView
         private MediaPlayerCanvas? _playerCanvas;
         private DisposableCollection _disposables = new();
         private bool _disposedValue;
-
+        private ImageSource? _imageSource;
 
         public MediaViewContent(PageFrameElement element, PageFrameElementScale scale, ViewSource viewSource, PageFrameActivity activity)
             : base(element, scale, viewSource, activity)
@@ -42,6 +42,9 @@ namespace NeeView
 
 
         public SimpleMediaPlayer Player => _player;
+
+        public ImageSource? ImageSource => _imageSource;
+
 
         public bool HasControl
         {
@@ -107,6 +110,8 @@ namespace NeeView
         {
             Debug.WriteLine($"Create.MediaPlayer: {ArchiveEntry}");
 
+            _imageSource = source.ImageSource;
+
             var viewbox = Element.ViewSizeCalculator.GetViewBox();
 
             if (_playerCanvas is not null)
@@ -139,6 +144,7 @@ namespace NeeView
                 _player.Pause();
             }
         }
+
     }
 
 }

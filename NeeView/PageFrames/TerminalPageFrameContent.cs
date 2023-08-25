@@ -25,7 +25,7 @@ namespace NeeView.PageFrames
             };
         }
 
-        public override UIElement? Content => _rectangle;
+        public override FrameworkElement? Content => _rectangle;
 
         public override bool IsLocked => true;
         public override PageRange FrameRange { get; }

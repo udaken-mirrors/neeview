@@ -16,6 +16,7 @@ namespace NeeView
         private ViewContentSize _contentSize;
         private Rectangle _rectangle;
         private bool _disposedValue;
+        private BitmapScalingMode? _scalingMode;
 
 
         public ImageContentControl(PageFrameElement source, ImageSource image, ViewContentSize contentSize)
@@ -37,6 +38,22 @@ namespace NeeView
 
 
         public ImageSource ImageSource => _image;
+
+        /// <summary>
+        /// BitmapScaleMode指定。Printerで使用される。
+        /// </summary>
+        public BitmapScalingMode? ScalingMode
+        {
+            get { return _scalingMode; }
+            set
+            {
+                if (_scalingMode != value)
+                {
+                    _scalingMode = value;
+                    UpdateBitmapScalingMode();
+                }
+            }
+        }
 
 
         protected virtual void Dispose(bool disposing)
@@ -85,8 +102,15 @@ namespace NeeView
         {
             var imageSize = _image is BitmapSource bitmapSource ? new Size(bitmapSource.PixelWidth, bitmapSource.PixelHeight) : new Size(_image.Width, _image.Height);
 
+            // ScalingMode が指定されている
+            if (_scalingMode is not null)
+            {
+                Debug.WriteLine($"XX: Force {_scalingMode.Value}: {_element.Page}: {imageSize:f0}");
+                RenderOptions.SetBitmapScalingMode(_rectangle, _scalingMode.Value);
+                _rectangle.SnapsToDevicePixels = _scalingMode.Value == BitmapScalingMode.NearestNeighbor;
+            }
             // 画像サイズがビッタリの場合はドットバイドットになるような設定
-            if (_contentSize.IsRightAngle && Math.Abs(_contentSize.PixelSize.Width - imageSize.Width) < 1.1 && Math.Abs(_contentSize.PixelSize.Height - imageSize.Height) < 1.1)
+            else if (_contentSize.IsRightAngle && Math.Abs(_contentSize.PixelSize.Width - imageSize.Width) < 1.1 && Math.Abs(_contentSize.PixelSize.Height - imageSize.Height) < 1.1)
             {
                 Debug.WriteLine($"OO: NearestNeighbor: {_element.Page}: {imageSize:f0}");
                 RenderOptions.SetBitmapScalingMode(_rectangle, BitmapScalingMode.NearestNeighbor);
@@ -94,7 +118,7 @@ namespace NeeView
             }
             // DotKeep mode
             // TODO: Config.Current参照はよろしくない
-            else if (Config.Current.ImageDotKeep.IsImgeDotKeep(_contentSize.PixelSize, imageSize))
+            else if (Config.Current.ImageDotKeep.IsImageDotKeep(_contentSize.PixelSize, imageSize))
             {
                 Debug.WriteLine($"XX: NearestNeighbor: {_element.Page}: {imageSize:f0} != request {_contentSize.PixelSize:f0}");
                 RenderOptions.SetBitmapScalingMode(_rectangle, BitmapScalingMode.NearestNeighbor);
@@ -102,11 +126,13 @@ namespace NeeView
             }
             else
             {
-                Debug.WriteLine($"XX: Fant: {_element.Page}: {imageSize:f0} != request {_contentSize.PixelSize:f0}");
+                Debug.WriteLine($"XX: Fantastic: {_element.Page}: {imageSize:f0} != request {_contentSize.PixelSize:f0}");
                 RenderOptions.SetBitmapScalingMode(_rectangle, BitmapScalingMode.Fant);
                 _rectangle.SnapsToDevicePixels = false;
             }
         }
+
+
 
 
     }

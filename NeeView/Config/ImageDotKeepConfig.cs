@@ -30,7 +30,7 @@ namespace NeeView
         /// <param name="viewSize">実際に表示するサイズ</param>
         /// <param name="sourceSize">画像データのサイズ</param>
         /// <returns></returns>
-        public bool IsImgeDotKeep(Size viewSize, Size sourceSize)
+        public bool IsImageDotKeep(Size viewSize, Size sourceSize)
         {
             const double margin = 1.0;
             return IsEnabled && viewSize.Width >= sourceSize.Width * Threshold - margin && viewSize.Height >= sourceSize.Height * Threshold - margin;

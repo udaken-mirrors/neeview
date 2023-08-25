@@ -13,12 +13,15 @@ namespace NeeView
         ImageSource? ImageSource { get; }
     }
 
+
     public class ImageViewContent : ViewContent, IHasImageSource
     {
         private ImageContentControl? _imageControl;
         private bool _disposedValue;
         private DisposableCollection _disposables = new();
         private InstantDelayAction _delayAction;
+        private BitmapScalingMode? _scalingMode;
+
 
         public ImageViewContent(PageFrameElement element, PageFrameElementScale scale, ViewSource viewSource, PageFrameActivity activity)
             : base(element, scale, viewSource, activity)
@@ -29,6 +32,26 @@ namespace NeeView
 
 
         public ImageSource? ImageSource => _imageControl?.ImageSource;
+
+        /// <summary>
+        /// BitmapScaleMode指定。Printerで使用される。
+        /// </summary>
+        public BitmapScalingMode? ScalingMode
+        {
+            get { return _scalingMode; }
+            set
+            {
+                if (_scalingMode != value)
+                {
+                    _scalingMode = value;
+                    if (_imageControl != null)
+                    {
+                        _imageControl.ScalingMode = _scalingMode;
+                    }
+                }
+            }
+        }
+
 
 
         protected override void Dispose(bool disposing)
@@ -69,6 +92,7 @@ namespace NeeView
 
             var imageSource = data as ImageSource ?? throw new InvalidOperationException();
             _imageControl = new ImageContentControl(Element, imageSource, ViewContentSize);
+            _imageControl.ScalingMode = _scalingMode;
             return _imageControl;
         }
 

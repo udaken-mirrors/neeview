@@ -23,6 +23,7 @@ namespace NeeView.PageFrames
         private ViewContentFactory _viewContentFactory;
 
         private Canvas _canvas;
+        private Canvas _contentCanvas;
         private PageFrame _pageFrame;
         private PageFrameActivity _activity;
         private PageFrameTransformAccessor _transform;
@@ -31,7 +32,7 @@ namespace NeeView.PageFrames
         private List<Page> _pages;
         private List<ViewContent> _viewContents;
         private TransformGroup _viewTransform = new();
-        private PageFrameDartyLevel _dartyLevel;
+        private PageFrameDartyLevel _dirtyLevel;
 
         private bool _disposedValue = false;
         private DisposableCollection _disposables = new();
@@ -48,10 +49,14 @@ namespace NeeView.PageFrames
         public PageFrameContent(ViewContentFactory viewContentFactory, IStaticFrame staticFrame, PageFrame pageFrame, PageFrameActivity activity, PageFrameTransformAccessor transform, LoupeTransformContext loupeContext)
         {
             _canvas = new Canvas();
+            _canvas.RenderTransform = _viewTransform;
+
+            _contentCanvas = new Canvas();
+            _canvas.Children.Add(_contentCanvas);
 
             _viewContentFactory = viewContentFactory;
             _staticFrame = staticFrame;
-            //_disposables.Add(_staticFrame.SubscribePropertyChanged(nameof(staticFrame.CanvasSize), (_, _) => { IsDarty = true; }));
+            //_disposables.Add(_staticFrame.SubscribePropertyChanged(nameof(staticFrame.CanvasSize), (_, _) => { IsDirty = true; }));
 
             _pageFrame = pageFrame;
             _pages = _pageFrame.Elements.Select(e => e.Page).Distinct().ToList();
@@ -80,7 +85,7 @@ namespace NeeView.PageFrames
         public event EventHandler? ContentSizeChanged;
 
 
-        public UIElement? Content => _canvas;
+        public FrameworkElement? Content => _canvas;
 
         public PageFrameActivity Activity => _activity;
 
@@ -98,20 +103,22 @@ namespace NeeView.PageFrames
         public bool IsFirstFrame => (_pageFrame.Terminal & PageTerminal.First) == PageTerminal.First;
         public bool IsLastFrame => (_pageFrame.Terminal & PageTerminal.Last) == PageTerminal.Last;
 
-        public bool IsDarty => _dartyLevel > PageFrameDartyLevel.Clean;
+        public bool IsDirty => _dirtyLevel > PageFrameDartyLevel.Clean;
 
-        public PageFrameDartyLevel DartyLevel
+        public PageFrameDartyLevel DirtyLevel
         {
-            get => _dartyLevel;
-            set => _dartyLevel = _dartyLevel < value ? value : _dartyLevel;
+            get => _dirtyLevel;
+            set => _dirtyLevel = _dirtyLevel < value ? value : _dirtyLevel;
         }
 
         public List<ViewContent> ViewContents => _viewContents;
 
         public int ViewContentsDirection => _pageFrame.Direction;
 
-        
-        
+        public FrameworkElement ViewElement => _contentCanvas;
+        public TransformGroup ViewTransform => _viewTransform;
+
+
         protected virtual void Dispose(bool disposing)
         {
             if (!_disposedValue)
@@ -138,14 +145,14 @@ namespace NeeView.PageFrames
 
         private void Page_SizeChanged(object? sender, EventArgs e)
         {
-            DartyLevel = PageFrameDartyLevel.Moderate;
+            DirtyLevel = PageFrameDartyLevel.Moderate;
             ContentSizeChanged?.Invoke(this, EventArgs.Empty);
         }
 
         public void SetSource(PageFrame pageFrame)
         {
-            var isForce = DartyLevel >= PageFrameDartyLevel.Heavy;
-            _dartyLevel = PageFrameDartyLevel.Clean;
+            var isForce = DirtyLevel >= PageFrameDartyLevel.Heavy;
+            _dirtyLevel = PageFrameDartyLevel.Clean;
 
             if (!_pageFrame.IsMatch(pageFrame)) throw new ArgumentException("Resources do not match");
             if (!isForce && _pageFrame.Equals(pageFrame)) return;
@@ -208,12 +215,7 @@ namespace NeeView.PageFrames
         [MemberNotNull(nameof(_viewContents))]
         private void CreateContents()
         {
-            _canvas.Children.Clear();
-
-            // canvas for contents
-            var contentCanvas = new Canvas();
-            contentCanvas.RenderTransform = _viewTransform;
-            _canvas.Children.Add(contentCanvas);
+            _contentCanvas.Children.Clear();
 
             // layout contents
             _viewContents = _pageFrame.Elements
@@ -223,7 +225,7 @@ namespace NeeView.PageFrames
             foreach (var content in _viewContents.Direction(_pageFrame.Direction))
             {
                 content.Initialize();
-                contentCanvas.Children.Add(content);
+                _contentCanvas.Children.Add(content);
                 _disposables.Add(content.SubscribeViewContentChanged(ViewContent_Changed));
             }
 

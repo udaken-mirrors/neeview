@@ -11,7 +11,7 @@ namespace NeeView.PageFrames
         public event EventHandler? ViewContentChanged;
         public event EventHandler? ContentSizeChanged;
 
-        UIElement? Content { get; }
+        FrameworkElement? Content { get; }
         IPageFrameTransform Transform { get; }
 
         PageFrameActivity Activity { get; }
@@ -19,7 +19,7 @@ namespace NeeView.PageFrames
         PageRange FrameRange { get; }
         public bool IsFirstFrame { get; }
         public bool IsLastFrame { get; }
-        PageFrameDartyLevel DartyLevel { get; set; }
+        PageFrameDartyLevel DirtyLevel { get; set; }
 
         Rect GetContentRect();
         Size GetFrameSize();
@@ -37,7 +37,7 @@ namespace NeeView.PageFrames
 
         public IPageFrameTransform Transform => new DummyPageFrameTransform();
 
-        public virtual UIElement? Content => null;
+        public virtual FrameworkElement? Content => null;
 
         public PageFrameActivity Activity { get; }
 
@@ -47,7 +47,7 @@ namespace NeeView.PageFrames
 
         public bool IsLastFrame => false;
 
-        public PageFrameDartyLevel DartyLevel
+        public PageFrameDartyLevel DirtyLevel
         {
             get { return PageFrameDartyLevel.Clean; }
             set { }
@@ -61,7 +61,7 @@ namespace NeeView.PageFrames
         {
         }
 
-        public void SetDarty(PageFrameDartyLevel level)
+        public void SetDirty(PageFrameDartyLevel level)
         {
         }
 

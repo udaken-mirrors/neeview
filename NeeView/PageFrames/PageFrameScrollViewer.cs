@@ -28,8 +28,9 @@ namespace NeeView.PageFrames
 
         public PageFrameScrollViewer(BookContext context, PageFrameContainersCanvas canvas, PageFrameViewTransform transform)
         {
-            MinWidth = 32;
-            MinHeight = 32;
+            this.MinWidth = 32;
+            this.MinHeight = 32;
+            this.ClipToBounds = true;
 
             _context = context;
             _canvas = canvas;

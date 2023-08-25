@@ -62,7 +62,7 @@ namespace NeeView.PageFrames
                 var pos = node.Value.FrameRange.Next(direction.ToSign());
                 node = node.GetNext(direction);
                 // NOTE: 連続性に問題があったり更新が必要である場合は生成する
-                if (node?.Value.Content is not PageFrameContent item || item.IsDarty || item.FrameRange.Top(direction.ToSign()) != pos || !IsValidContainerFormat(node))
+                if (node?.Value.Content is not PageFrameContent item || item.IsDirty || item.FrameRange.Top(direction.ToSign()) != pos || !IsValidContainerFormat(node))
                 {
                     
                     if (node?.Value.Content is PageFrameContent)
@@ -141,7 +141,7 @@ namespace NeeView.PageFrames
         private void UpdateContainer(LinkedListNode<PageFrameContainer> node)
         {
             if (node.Value.Content is not PageFrameContent) return;
-            if (!node.Value.IsDarty) return;
+            if (!node.Value.IsDirty) return;
 
             var direction = GetContainerDirection(node);
             var position = node.Value.FrameRange.Top(direction.ToSign());

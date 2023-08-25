@@ -257,7 +257,7 @@ namespace NeeView.PageFrames
             var frame = _frameFactory.CreatePageFrame(pos, direction.ToSign());
             Debug.Assert(frame is not null);
 
-            if (!node.Value.IsDarty && node.Value.Content is PageFrameContent item && item.PageFrame == frame)
+            if (!node.Value.IsDirty && node.Value.Content is PageFrameContent item && item.PageFrame == frame)
             {
                 return;
             }
@@ -398,7 +398,7 @@ namespace NeeView.PageFrames
         {
             foreach (var container in _containers.ToList())
             {
-                container.DartyLevel = level;
+                container.DirtyLevel = level;
             }
         }
     }

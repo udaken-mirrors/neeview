@@ -178,8 +178,8 @@ namespace NeeView
         /// </summary>
         private void UpdatePrintOrientation()
         {
-            PrintCapabilities printCapabilites = _printDialog.PrintQueue.GetPrintCapabilities();
-            if (printCapabilites.PageOrientationCapability.Contains(PageOrientation))
+            PrintCapabilities printCapabilities = _printDialog.PrintQueue.GetPrintCapabilities();
+            if (printCapabilities.PageOrientationCapability.Contains(PageOrientation))
             {
                 _printDialog.PrintTicket.PageOrientation = PageOrientation;
             }
@@ -219,7 +219,7 @@ namespace NeeView
             PageOrientation = _printDialog.PrintTicket.PageOrientation ?? PageOrientation.Unknown;
 
             // 用紙の印刷可能領域
-            // NOTE: ドライバによってはnullになる可能性がある
+            // NOTE: ドライバによっては null になる可能性がある
             _area = _printDialog.PrintQueue.GetPrintCapabilities().PageImageableArea;
             ////Debug.WriteLine($"Origin: {_area.OriginWidth}x{_area.OriginHeight}");
             ////Debug.WriteLine($"Extent: {_area.ExtentWidth}x{_area.ExtentHeight}");
@@ -259,18 +259,25 @@ namespace NeeView
         /// <returns></returns>
         private FrameworkElement CreateViewContent()
         {
-#warning not implement yet
-#if false
             // スケールモード設定
-            foreach (var viewContent in _context.Contents)
+            foreach (var viewContent in _context.Contents.OfType<ImageViewContent>())
             {
-                viewContent.BitmapScalingMode = IsDotScale ? BitmapScalingMode.NearestNeighbor : BitmapScalingMode.HighQuality;
+                viewContent.ScalingMode = IsDotScale ? BitmapScalingMode.NearestNeighbor : BitmapScalingMode.HighQuality;
             }
-#endif
+
+            // 表示サイズ計算。
+            // TODO: これは _context に実装で良いのでは
+            Rect viewRect = Rect.Empty;
+            foreach(var rect in  _context.Contents.Select(e => new Rect(Canvas.GetLeft(e), Canvas.GetTop(e), e.ActualWidth, e.ActualHeight)))
+            {
+                viewRect = viewRect.IsEmpty ? rect : Rect.Union(viewRect, rect);
+                //viewRect = _context.ViewTransform.TransformBounds(viewRect);
+            }
+
 
             var rectangle = new Rectangle();
-            rectangle.Width = _context.View.ActualWidth;
-            rectangle.Height = _context.View.ActualHeight;
+            rectangle.Width = viewRect.Width;
+            rectangle.Height = viewRect.Height;
             var brush = new VisualBrush(_context.View);
             brush.Stretch = Stretch.None;
             rectangle.Fill = brush;
@@ -290,11 +297,11 @@ namespace NeeView
 
             if (_area != null)
             {
-                bool isLandspace = PageOrientation == PageOrientation.Landscape;
-                double originWidth = isLandspace ? _area.OriginHeight : _area.OriginWidth;
-                double originHeight = isLandspace ? _area.OriginWidth : _area.OriginHeight;
-                double extentWidth = isLandspace ? _area.ExtentHeight : _area.ExtentWidth;
-                double extentHeight = isLandspace ? _area.ExtentWidth : _area.ExtentHeight;
+                bool isLandscape = PageOrientation == PageOrientation.Landscape;
+                double originWidth = isLandscape ? _area.OriginHeight : _area.OriginWidth;
+                double originHeight = isLandscape ? _area.OriginWidth : _area.OriginHeight;
+                double extentWidth = isLandscape ? _area.ExtentHeight : _area.ExtentWidth;
+                double extentHeight = isLandscape ? _area.ExtentWidth : _area.ExtentHeight;
 
                 // 既定の余白
                 margin.Left = originWidth;
