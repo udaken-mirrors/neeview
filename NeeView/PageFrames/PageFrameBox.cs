@@ -173,6 +173,12 @@ namespace NeeView.PageFrames
         [Subscribable]
         public event TransformChangedEventHandler? TransformChanged;
 
+        [Subscribable]
+        public event EventHandler? SelectedContentSizeChanged;
+
+        [Subscribable]
+        public event EventHandler? SelectedContainerLayoutChanged;
+
 
         public DragTransformContextFactory DragTransformContextFactory => _dragTransformContextFactory;
 
@@ -257,6 +263,14 @@ namespace NeeView.PageFrames
         {
             switch (e.Action)
             {
+                case PageFrameContainerCollectionChangedEventAction.Add:
+                case PageFrameContainerCollectionChangedEventAction.Remove:
+                    if (!_selected.IsValid)
+                    {
+                        _selected.SetAuto();
+                        AssertSelectedExists();
+                    }
+                    break;
                 case PageFrameContainerCollectionChangedEventAction.UpdateTransform:
                     if (!_context.IsStaticFrame)
                     {
@@ -271,6 +285,17 @@ namespace NeeView.PageFrames
                     //Debug.WriteLine($"# Container.ContentChanged: {e.Node.Value}");
                     UpdateContainers(e.Node);
                     AssertSelectedExists();
+                    if (_selected.Node == e.Node)
+                    {
+                        SelectedContentSizeChanged?.Invoke(this, EventArgs.Empty);
+                    }
+                    break;
+
+                case PageFrameContainerCollectionChangedEventAction.UpdateContainerLayout:
+                    if (_selected.Node == e.Node)
+                    {
+                        SelectedContainerLayoutChanged?.Invoke(this, EventArgs.Empty);
+                    }
                     break;
             }
 
@@ -414,7 +439,7 @@ namespace NeeView.PageFrames
             // TODO: プロパティによってどこまでリセットするか等を選別する
             // TODO: プロパティ変更による TransformMap のリセット
 
-            var dartyLevel = PageFrameDartyLevel.Moderate;
+            var dirtyLevel = PageFrameDartyLevel.Moderate;
 
             switch (e.PropertyName)
             {
@@ -479,7 +504,7 @@ namespace NeeView.PageFrames
                 case nameof(BookContext.ImageTrimConfig):
                 case nameof(BookContext.ImageResizeFilterConfig):
                 case nameof(BookContext.ImageDotKeepConfig):
-                    dartyLevel = PageFrameDartyLevel.Heavy;
+                    dirtyLevel = PageFrameDartyLevel.Heavy;
                     break;
 
                 case nameof(BookContext.ViewConfig):
@@ -490,7 +515,7 @@ namespace NeeView.PageFrames
             }
 
             // すべてのコンテナを更新
-            UpdateContainers(dartyLevel);
+            UpdateContainers(dirtyLevel);
         }
 
         private void VisibePageWatcher_VisibleContainersChanged(object? sender, VisibleContainersChangedEventArgs e)

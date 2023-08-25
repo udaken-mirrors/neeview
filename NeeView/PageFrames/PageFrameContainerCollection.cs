@@ -25,6 +25,7 @@ namespace NeeView.PageFrames
         Update,
         UpdateTransform, // view control
         UpdateContentSize, // loaded
+        UpdateContainerLayout, 
         Remove,
     }
 
@@ -281,6 +282,7 @@ namespace NeeView.PageFrames
 
             node.Value.TransformChanged += Container_TransformChanged;
             node.Value.ContentSizeChanged += Container_ContentSizeChanged;
+            node.Value.ContainerLayoutChanged += Container_ContainerLayoutChanged;
 
             while (targetNode != null)
             {
@@ -294,7 +296,6 @@ namespace NeeView.PageFrames
 
             _containers.AddLast(node);
         }
-
 
         private void Container_TransformChanged(object? sender, TransformChangedEventArgs e)
         {
@@ -319,6 +320,18 @@ namespace NeeView.PageFrames
 
             CollectionChanged?.Invoke(this, new PageFrameContainerCollectionChangedEventArgs(PageFrameContainerCollectionChangedEventAction.UpdateContentSize, node));
         }
+
+        private void Container_ContainerLayoutChanged(object? sender, EventArgs e)
+        {
+            var container = sender as PageFrameContainer;
+            if (container is null) return;
+
+            var node = Find(container);
+            if (node is null) return;
+
+            CollectionChanged?.Invoke(this, new PageFrameContainerCollectionChangedEventArgs(PageFrameContainerCollectionChangedEventAction.UpdateContainerLayout, node));
+        }
+
 
 
         /// <summary>
@@ -379,6 +392,7 @@ namespace NeeView.PageFrames
             _containerInitializer?.Uninitialized(node.Value);
             node.Value.TransformChanged -= Container_TransformChanged;
             node.Value.ContentSizeChanged -= Container_ContentSizeChanged;
+            node.Value.ContainerLayoutChanged -= Container_ContainerLayoutChanged;
             node.Value.Dispose();
             CollectionChanged?.Invoke(this, new PageFrameContainerCollectionChangedEventArgs(PageFrameContainerCollectionChangedEventAction.Remove, node));
         }

@@ -16,9 +16,9 @@ namespace NeeView.PageFrames
     // TODO: ２つ並べたコンテンツのサイズをあわせる計算。 PageSource に Scale を保持させる
     public class ContentSizeCalculator
     {
-        private IContentSizeCalculatorProfie _profile;
+        private IContentSizeCalculatorProfile _profile;
 
-        public ContentSizeCalculator(IContentSizeCalculatorProfie profile)
+        public ContentSizeCalculator(IContentSizeCalculatorProfile profile)
         {
             _profile = profile;
         }

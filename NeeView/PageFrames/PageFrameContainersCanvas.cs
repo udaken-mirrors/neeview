@@ -54,6 +54,7 @@ namespace NeeView.PageFrames
             var containerInitializer = new PageFrameContainerInitializer(this);
             _containers.SetContainerInitializer(containerInitializer);
 
+#if false
             // [DEV]
             Children.Add(new Rectangle()
             {
@@ -61,6 +62,7 @@ namespace NeeView.PageFrames
                 Height = 2,
                 Fill = Brushes.Red,
             });
+#endif
 
 #if false
             var grid = new Grid()

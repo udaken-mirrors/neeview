@@ -133,7 +133,7 @@ namespace NeeView.PageFrames
             ClearAngle(0.0);
             ClearPoint(default);
 
-            _map.Clear();
+            //_map.Clear();
             _share.Clear();
         }
 

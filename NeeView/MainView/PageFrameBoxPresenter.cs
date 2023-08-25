@@ -49,6 +49,12 @@ namespace NeeView
         [Subscribable]
         public event EventHandler<ViewContentChangedEventArgs>? ViewContentChanged;
 
+        [Subscribable]
+        public event EventHandler? SelectedContainerLayoutChanged;
+
+        [Subscribable]
+        public event EventHandler? SelectedContentSizeChanged;
+
 
         public bool IsEnabled => _box != null;
 
@@ -117,6 +123,8 @@ namespace NeeView
             _box = new PageFrameBox(_bookContext);
             _box.ViewContentChanged += Box_ViewContentChanged;
             _box.TransformChanged += Box_TransformChanged;
+            _box.SelectedContainerLayoutChanged += Box_SelectedContainerLayoutChanged;
+            _box.SelectedContentSizeChanged += Box_SelectedContentSizeChanged;
 
             _pageControl = new BookCommandControl(_bookContext, _box);
 
@@ -141,6 +149,8 @@ namespace NeeView
                 (_box as IDisposable)?.Dispose();
                 _box.ViewContentChanged -= Box_ViewContentChanged;
                 _box.TransformChanged -= Box_TransformChanged;
+                _box.SelectedContainerLayoutChanged -= Box_SelectedContainerLayoutChanged;
+                _box.SelectedContentSizeChanged -= Box_SelectedContentSizeChanged;
                 _box = null;
             }
             RaisePropertyChanged(nameof(View));
@@ -177,6 +187,17 @@ namespace NeeView
                     ShowContentTransformMessage(e.Source, e.Action, originalScale);
                     break;
             }
+        }
+
+        // TODO: Selected の情報をまとめたクラスみたいなものがほしいかも？
+        private void Box_SelectedContainerLayoutChanged(object? sender, EventArgs e)
+        {
+            SelectedContainerLayoutChanged?.Invoke(this, e);
+        }
+
+        private void Box_SelectedContentSizeChanged(object? sender, EventArgs e)
+        {
+            SelectedContentSizeChanged?.Invoke(this, e);
         }
 
 

@@ -122,9 +122,9 @@ namespace NeeView.PageFrames
         }
 
 
-
         public event TransformChangedEventHandler? TransformChanged;
         public event EventHandler? ContentSizeChanged;
+        public event EventHandler? ContainerLayoutChanged;
         public event EventHandler? ContentChanged;
         public event EventHandler<ViewContentChangedEventArgs>? ViewContentChanged;
 
@@ -238,27 +238,43 @@ namespace NeeView.PageFrames
             //    }
             //}
 
-            BeginAnimation(Canvas.LeftProperty, x, ms);
-            _x = x;
+            if (_x != x)
+            {
+                _x = x;
+                BeginAnimation(Canvas.LeftProperty, _x, ms);
+                ContainerLayoutChanged?.Invoke(this, EventArgs.Empty);
+            }
         }
 
         public void SetY(double y, double ms)
         {
-            BeginAnimation(Canvas.TopProperty, y, ms);
-            _y = y;
-            //Debug.WriteLine($"# {FrameRange}: Y: {_y} / {_height}");
+            if (_y != y)
+            {
+                _y = y;
+                BeginAnimation(Canvas.TopProperty, _y, ms);
+                //Debug.WriteLine($"# {FrameRange}: Y: {_y} / {_height}");
+                ContainerLayoutChanged?.Invoke(this, EventArgs.Empty);
+            }
         }
 
         public void SetWidth(double width, double ms)
         {
-            BeginAnimation(WidthProperty, width, ms);
-            _width = width;
+            if (_width != width)
+            {
+                _width = width;
+                BeginAnimation(WidthProperty, width, ms);
+                ContainerLayoutChanged?.Invoke(this, EventArgs.Empty);
+            }
         }
 
         public void SetHeight(double height, double ms)
         {
-            BeginAnimation(HeightProperty, height, ms);
-            _height = height;
+            if (_height != height)
+            {
+                _height = height;
+                BeginAnimation(HeightProperty, height, ms);
+                ContainerLayoutChanged?.Invoke(this, EventArgs.Empty);
+            }
         }
 
         public void FlushLayout()

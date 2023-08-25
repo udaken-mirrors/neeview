@@ -29,7 +29,16 @@ namespace NeeView
             public ActionControl(DragTransformContext context, DragAction source) : base(context, source)
             {
                 _mouseConfig = Config.Current.Mouse;
-                _basePoint = context.Transform.Point - (Vector)context.ContentCenter;
+
+                // TODO: ViewTransform か ContentTransform かの区別はこれでいいのか？
+                if (context.Transform is PageFrames.ViewTransformControl)
+                {
+                    _basePoint = context.Transform.Point - (Vector)context.ContentCenter;
+                }
+                else
+                {
+                    _basePoint = default;
+                }
             }
 
 

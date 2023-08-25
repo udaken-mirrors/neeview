@@ -1,6 +1,7 @@
 ﻿using NeeLaboratory.ComponentModel;
 using NeeLaboratory.Generators;
 using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -65,9 +66,21 @@ namespace NeeView
             //ContentRebuild = new ContentRebuild(this);
 
             PageFrameBoxPresenter.SelectedRangeChanged += PageFrameBoxPresenter_SelectedRangeChanged;
-
+            PageFrameBoxPresenter.SelectedContainerLayoutChanged += PageFrameBoxPresenter_SelectedContainerLayoutChanged;
+            PageFrameBoxPresenter.SelectedContentSizeChanged += PageFrameBoxPresenter_SelectedContentSizeChanged;
 
             _mainView.DataContext = new MainViewViewModel(this);
+        }
+
+        // TODO: Selected 情報をまとめたなにか
+        private void PageFrameBoxPresenter_SelectedContentSizeChanged(object? sender, EventArgs e)
+        {
+            MouseInput.UpdateSelectedFrame();
+        }
+
+        private void PageFrameBoxPresenter_SelectedContainerLayoutChanged(object? sender, EventArgs e)
+        {
+            MouseInput.UpdateSelectedFrame();
         }
 
         private void PageFrameBoxPresenter_SelectedRangeChanged(object? sender, EventArgs e)

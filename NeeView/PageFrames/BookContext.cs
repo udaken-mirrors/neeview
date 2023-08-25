@@ -16,7 +16,7 @@ namespace NeeView.PageFrames
         public DpiScale DpiScale { get; }
     }
 
-    public interface IContentSizeCalculatorProfie
+    public interface IContentSizeCalculatorProfile
     {
         public double ContentsSpace { get; }
         public PageStretchMode StretchMode { get; }
@@ -31,7 +31,7 @@ namespace NeeView.PageFrames
     /// ブック表示に必要な情報をまとめたもの
     /// </summary>
     [NotifyPropertyChanged]
-    public partial class BookContext : INotifyPropertyChanged, IStaticFrame, IDisposable, IContentSizeCalculatorProfie, IBookPageContext
+    public partial class BookContext : INotifyPropertyChanged, IStaticFrame, IDisposable, IContentSizeCalculatorProfile, IBookPageContext
     {
         private readonly Book _book;
         private readonly Config _config;
@@ -63,20 +63,21 @@ namespace NeeView.PageFrames
             _loupeScale = _config.Loupe.DefaultScale;
 
             var startIndex = _book.Pages.FirstOrDefault(e => e.EntryName == book.Memento.Page)?.Index ?? 0;
-            _selectedRange = new PageRange(new PagePosition(startIndex, 0), 2);
+            //_selectedRange = new PageRange(new PagePosition(startIndex, 0), 2);
+            _selectedRange = PageRange.Empty;
 
             _disposables.Add(_book.SubscribePagesChanged(Book_PagesChanged));
             _disposables.Add(_config.Book.SubscribePropertyChanged(BookConfig_PropertyChanged));
             _disposables.Add(_config.View.SubscribePropertyChanged(ViewConfig_PropertyChanged));
             _disposables.Add(_config.System.SubscribePropertyChanged(SystemConfig_PropertyChanged));
-            _disposables.Add(_bookSetting.SubscribePropertyChanged((s, e) => AppDispatcher.BeginInvoke(() =>BookSetting_PropertyChanged(s, e))));
+            _disposables.Add(_bookSetting.SubscribePropertyChanged((s, e) => AppDispatcher.BeginInvoke(() => BookSetting_PropertyChanged(s, e))));
             _disposables.Add(_frameProfile.SubscribePropertyChanged(FrameProfile_PropertyChanged));
             _disposables.Add(ImageResizeFilterConfig.SubscribePropertyChanged((s, e) => RaisePropertyChanged(nameof(ImageResizeFilterConfig))));
             _disposables.Add(ImageCustomSizeConfig.SubscribePropertyChanged((s, e) => RaisePropertyChanged(nameof(ImageCustomSizeConfig))));
             _disposables.Add(ImageTrimConfig.SubscribePropertyChanged((s, e) => RaisePropertyChanged(nameof(ImageTrimConfig))));
             _disposables.Add(ImageDotKeepConfig.SubscribePropertyChanged((s, e) => RaisePropertyChanged(nameof(ImageDotKeepConfig))));
 
-            
+
         }
 
 
@@ -130,7 +131,9 @@ namespace NeeView.PageFrames
         public PageFrameOrientation FrameOrientation => _config.Book.Orientation;
         public double FrameMargin => IsStaticFrame ? 0.0 : _config.Book.FrameSpace;
         public double ContentsSpace => _config.Book.ContentsSpace;
-        public PageStretchMode StretchMode => _config.View.StretchMode;
+        public PageStretchMode StretchMode => _bookSetting.PageMode == PageMode.Panorama && _config.View.StretchMode == PageStretchMode.Uniform
+            ? _config.Book.Orientation == PageFrameOrientation.Horizontal ? PageStretchMode.UniformToVertical : PageStretchMode.UniformToHorizontal
+            : _config.View.StretchMode;
         public AutoRotateType AutoRotateType => _config.View.AutoRotate;
         public bool AllowEnlarge => _config.View.AllowStretchScaleUp;
         public bool AllowReduce => _config.View.AllowStretchScaleDown;
@@ -199,6 +202,7 @@ namespace NeeView.PageFrames
             {
                 case nameof(BookConfig.Orientation):
                     RaisePropertyChanged(nameof(FrameOrientation));
+                    RaisePropertyChanged(nameof(StretchMode));
                     break;
 
                 case nameof(BookConfig.FrameSpace):
@@ -263,6 +267,7 @@ namespace NeeView.PageFrames
             {
                 case nameof(BookSettingConfig.PageMode):
                     RaisePropertyChanged(nameof(PageMode));
+                    RaisePropertyChanged(nameof(StretchMode));
                     //RaisePropertyChanged(nameof(IsSupportedDividePage));
                     //RaisePropertyChanged(nameof(IsSupportedWidePage));
                     //RaisePropertyChanged(nameof(IsSupportedSingleFirstPage));

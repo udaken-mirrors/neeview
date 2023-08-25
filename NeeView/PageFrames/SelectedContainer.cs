@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using NeeLaboratory.Generators;
@@ -23,14 +24,14 @@ namespace NeeView.PageFrames
 
             _selectFunc = selectFunc;
 
-            Set(_containers.CollectNode().First());
+            _node = _containers.CollectNode().First();
         }
 
         [Subscribable]
         public event PropertyChangedEventHandler? PropertyChanged;
 
         [Subscribable]
-        public event EventHandler? IsDartyChanged;
+        public event EventHandler? IsDirtyChanged;
 
         [Subscribable]
         public event EventHandler<ViewContentChangedEventArgs>? ViewContentChanged;
@@ -78,10 +79,12 @@ namespace NeeView.PageFrames
         }
 
 
-        [MemberNotNull(nameof(_node))]
         public void Set(LinkedListNode<PageFrameContainer> node)
         {
+            if (_disposedValue) return;
+
             if (_node == node) return;
+            Debug.Assert(node?.Value.Content is PageFrameContent);
 
             Detach();
             _node = node;
@@ -95,6 +98,7 @@ namespace NeeView.PageFrames
 
         public void SetAuto()
         {
+            if (_disposedValue) return;
             if (_selectFunc is null) return;
 
             Set(_selectFunc.Invoke());
