@@ -8,9 +8,10 @@
              d:DesignHeight="450" d:DesignWidth="800"
              Background="Transparent"
              ClipToBounds="True">
-    
+
     <UserControl.Resources>
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+        <local:BooleanToInverseVisibilityConverter x:Key="BooleanToInverseVisibilityConverter" />
     </UserControl.Resources>
 
     <Grid x:Name="Root" Visibility="{Binding IsVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
@@ -18,5 +19,6 @@
         <Canvas>
             <Path Stroke="Red" StrokeThickness="1" Data="{Binding ViewboxGeometry}" RenderOptions.EdgeMode="Unspecified" />
         </Canvas>
+        <TextBlock Text="Not supported in this mode." HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="{Binding IsStaticFrame, Converter={StaticResource BooleanToInverseVisibilityConverter}}"/>
     </Grid>
 </UserControl>

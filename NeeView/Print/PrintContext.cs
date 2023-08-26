@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using NeeView.PageFrames;
+using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Effects;
@@ -11,8 +12,9 @@ namespace NeeView
     /// </summary>
     public class PrintContext
     {
-        public PrintContext(ViewContent? mainContent, IEnumerable<ViewContent> contents, FrameworkElement view, Transform viewTransform, double viewWidth, double viewHeight, Effect? viewEffect, Brush? background, Brush? backgroundFront)
+        public PrintContext(PageFrameContent pageFrameContent, ViewContent? mainContent, IEnumerable<ViewContent> contents, FrameworkElement view, Transform viewTransform, double viewWidth, double viewHeight, Effect? viewEffect, Brush? background, Brush? backgroundFront)
         {
+            PageFrameContent = pageFrameContent;
             MainContent = mainContent;
             Contents = contents;
             View = view;
@@ -24,6 +26,7 @@ namespace NeeView
             BackgroundFront = backgroundFront;
         }
 
+        public PageFrameContent PageFrameContent { get; }
 
         /// <summary>
         /// 表示コンテキスト(メインページ)。

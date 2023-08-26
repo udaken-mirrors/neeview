@@ -167,8 +167,8 @@ namespace NeeView
 
         public void StretchWindow()
         {
+#warning not implement yet.
             throw new NotImplementedException();
-
 #if false
             var window = Window.GetWindow(this);
             if (window is null) return;

@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:NeeView"
              mc:Ignorable="d" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" d:DesignWidth="480" d:DesignHeight="640">
-    <Border x:Name="Root"  Background="#FFE8E8E8" Margin="20" BorderThickness="2" BorderBrush="Black">
+    <Border x:Name="Root"  Background="#FFE8E8E8" Margin="0" BorderThickness="2" BorderBrush="Black">
         <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Margin="10">
             <Grid VerticalAlignment="Center" HorizontalAlignment="Center" Margin="20">
                 <Ellipse Width="256" Height="256" Fill="Gray" HorizontalAlignment="Center" />

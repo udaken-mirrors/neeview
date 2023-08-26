@@ -8,7 +8,7 @@
     </UserControl.Resources>
 
 
-    <Border x:Name="Root"  Background="#FFE8E8E8" Margin="20" CornerRadius="0" BorderThickness="2" BorderBrush="Black">
+    <Border x:Name="Root"  Background="#FFE8E8E8" Margin="0" CornerRadius="0" BorderThickness="2" BorderBrush="Black">
 
         <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10">
             <Grid x:Name="OpenBookButton" HorizontalAlignment="Center" Margin="20" Cursor="Hand"

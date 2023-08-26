@@ -66,6 +66,7 @@ namespace NeeView
                 var bg2 = _presenter.GetBackground()?.Bg2Brush;
 
                 var context = new PrintContext(
+                    pageFrameContent: content,
                     mainContent: mainContent,
                     contents: contents,
                     view: element,

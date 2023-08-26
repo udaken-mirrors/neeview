@@ -266,14 +266,7 @@ namespace NeeView
             }
 
             // 表示サイズ計算。
-            // TODO: これは _context に実装で良いのでは
-            Rect viewRect = Rect.Empty;
-            foreach(var rect in  _context.Contents.Select(e => new Rect(Canvas.GetLeft(e), Canvas.GetTop(e), e.ActualWidth, e.ActualHeight)))
-            {
-                viewRect = viewRect.IsEmpty ? rect : Rect.Union(viewRect, rect);
-                //viewRect = _context.ViewTransform.TransformBounds(viewRect);
-            }
-
+            var viewRect = _context.PageFrameContent.GetRawContentRect();
 
             var rectangle = new Rectangle();
             rectangle.Width = viewRect.Width;

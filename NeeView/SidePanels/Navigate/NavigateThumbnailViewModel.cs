@@ -1,4 +1,5 @@
 ﻿using NeeLaboratory.ComponentModel;
+using NeeView.PageFrames;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -9,11 +10,9 @@ using System.Windows.Media;
 
 namespace NeeView
 {
-    #warning not support yet
-#if false
     public class NavigateThumbnailViewModel : BindableBase
     {
-        private readonly MainViewComponent _mainViewComponent;
+        private readonly PageFrameBoxPresenter _presenter;
         private bool _isEnabled;
         private bool _isVisible;
         private double _rate;
@@ -26,7 +25,9 @@ namespace NeeView
 
         public NavigateThumbnailViewModel(MainViewComponent mainViewComponent)
         {
-            _mainViewComponent = mainViewComponent ?? throw new ArgumentNullException(nameof(mainViewComponent));
+            _presenter = mainViewComponent.PageFrameBoxPresenter;
+
+            _mainViewVisualBrush = Brushes.Transparent;
 
             InitializeThumbnail();
             InitializeViewbox();
@@ -77,16 +78,25 @@ namespace NeeView
         }
 
 
+        private bool _isStaticFrame;
+        public bool IsStaticFrame
+        {
+            get { return _isStaticFrame; }
+            set { SetProperty(ref _isStaticFrame, value); }
+        }
+
+
+
         [MemberNotNull(nameof(_mainViewVisualBrush))]
         private void InitializeThumbnail()
         {
-            _mainViewVisualBrush = new VisualBrush()
-            {
-                Stretch = Stretch.Uniform,
-                Visual = _mainViewComponent.MainView.PageContents,
-            };
+            _presenter.PageFrameBoxChanged +=
+                (s, e) => UpdateThumbnail();
 
-            _mainViewComponent.MainView.PageContents.SizeChanged +=
+            _presenter.SelectedContentSizeChanged +=
+                (s, e) => UpdateThumbnail();
+
+            _presenter.ViewContentChanged +=
                 (s, e) => UpdateThumbnail();
         }
 
@@ -100,14 +110,19 @@ namespace NeeView
         {
             if (!_isEnabled) return;
 
-            var sourceWidth = _mainViewComponent.MainView.PageContents.ActualWidth;
-            var sourceHeight = _mainViewComponent.MainView.PageContents.ActualHeight;
+            var pageFrameContent = _presenter.GetSelectedPageFrameContent();
+            var sourceWidth = pageFrameContent?.GetRawContentRect().Width ?? 0.0;
+            var sourceHeight = pageFrameContent?.GetRawContentRect().Height ?? 0.0;
 
-            if (sourceWidth <= 0.0 || sourceHeight <= 0.0)
+            IsStaticFrame = pageFrameContent?.IsStaticFrame ?? true;
+
+            if (sourceWidth <= 0.0 || sourceHeight <= 0.0 || !IsStaticFrame)
             {
                 this.ThumbnailWidth = 0.0;
                 this.ThumbnailHeight = 0.0;
                 _rate = 0.0;
+
+                MainViewVisualBrush = Brushes.Transparent;
             }
             else
             {
@@ -117,6 +132,13 @@ namespace NeeView
                 this.ThumbnailWidth = size.Width;
                 this.ThumbnailHeight = size.Height;
                 _rate = size.Width / sourceWidth;
+
+                MainViewVisualBrush = new VisualBrush()
+                {
+                    Stretch = Stretch.Uniform,
+                    Visual = _presenter.GetSelectedPageFrameContent()?.ViewElement, // _mainViewComponent.MainView.PageContents,
+                };
+
             }
 
             UpdateViewbox();
@@ -142,13 +164,13 @@ namespace NeeView
                 context.PolyLineTo(new List<Point> { points[1], points[2], points[3] }, true, false);
             }
 
-            _mainViewComponent.MainView.TransformChanged +=
+            _presenter.TransformChanged +=
                 (s, e) => UpdateViewbox();
 
-            _mainViewComponent.MainView.View.SizeChanged +=
+            _presenter.SelectedContentSizeChanged +=
                 (s, e) => UpdateViewbox();
 
-            _mainViewComponent.ContentCanvas.ContentChanged +=
+            _presenter.ViewContentChanged +=
                 (s, e) => UpdateViewbox();
         }
 
@@ -159,10 +181,12 @@ namespace NeeView
             var transformGroup = new TransformGroup();
 
             // 表示エリアの大きさに変換
-            transformGroup.Children.Add(new ScaleTransform(_mainViewComponent.MainView.View.ActualWidth, _mainViewComponent.MainView.View.ActualHeight));
+            var viewWidth = _presenter.View?.ActualWidth ?? 0.0;
+            var viewHeight = _presenter.View?.ActualHeight ?? 0.0;
+            transformGroup.Children.Add(new ScaleTransform(viewWidth, viewHeight));
 
             // コンテンツ座標系の逆変換
-            var mainViewTransform = _mainViewComponent.MainView.Transform;
+            var mainViewTransform = _presenter.GetSelectedPageFrameContent()?.ViewTransform;
             var inverse = mainViewTransform?.Inverse;
             if (inverse is Transform inverseTransform)
             {
@@ -185,7 +209,7 @@ namespace NeeView
 
         private void UpdateVisibility()
         {
-            this.IsVisible = _isEnabled && _rate >= 0.0 && _mainViewComponent.ContentCanvas.IsViewContents();
+            this.IsVisible = _isEnabled && _rate >= 0.0 && _presenter.GetSelectedPageFrameContent() != null;
         }
 
         public void LookAt(Point point)
@@ -194,8 +218,23 @@ namespace NeeView
 
             var x = (this.ThumbnailWidth * 0.5 - point.X) / _rate;
             var y = (this.ThumbnailHeight * 0.5 - point.Y) / _rate;
-            _mainViewComponent.DragTransformControl.LookAt(new Point(x, y));
+
+            var transformContext = _presenter.CreateDragTransformContext(false, false);
+            if (transformContext is null) return;
+
+            LookAt(transformContext.Transform, new Point(x, y));
+        }
+
+        private void LookAt(ITransformControl _transform, Point point)
+        {
+            var transformGroup = new TransformGroup();
+            var scaleX = _transform.Scale * (_transform.IsFlipHorizontal ? -1.0 : 1.0);
+            var scaleY = _transform.Scale * (_transform.IsFlipVertical ? -1.0 : 1.0);
+            transformGroup.Children.Add(new ScaleTransform(scaleX, scaleY));
+            transformGroup.Children.Add(new RotateTransform(_transform.Angle));
+
+            var pos = transformGroup.Transform(point);
+            _transform.SetPoint(pos, TimeSpan.Zero);
         }
     }
-#endif
 }
