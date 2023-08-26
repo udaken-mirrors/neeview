@@ -118,6 +118,8 @@ namespace NeeView.PageFrames
         public FrameworkElement ViewElement => _contentCanvas;
         public TransformGroup ViewTransform => _viewTransform;
 
+        public bool IsStaticFrame => _staticFrame.IsStaticFrame;
+
 
         protected virtual void Dispose(bool disposing)
         {

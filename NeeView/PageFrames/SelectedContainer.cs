@@ -68,7 +68,7 @@ namespace NeeView.PageFrames
             Dispose(disposing: true);
             GC.SuppressFinalize(this);
         }
-        
+
         private void Containers_CollectionChanged(object? sender, PageFrameContainerCollectionChangedEventArgs e)
         {
             // 選択ノードが削除されたときの再選出
@@ -129,6 +129,8 @@ namespace NeeView.PageFrames
 
         private void Container_ContentChanged(object? sender, EventArgs e)
         {
+            RaisePropertyChanged(nameof(Page));
+            RaisePropertyChanged(nameof(PageRange));
             RaisePropertyChanged(nameof(PagePosition));
         }
 

@@ -55,6 +55,9 @@ namespace NeeView
         [Subscribable]
         public event EventHandler? SelectedContentSizeChanged;
 
+        [Subscribable]
+        public event TransformChangedEventHandler? TransformChanged;
+
 
         public bool IsEnabled => _box != null;
 
@@ -187,6 +190,8 @@ namespace NeeView
                     ShowContentTransformMessage(e.Source, e.Action, originalScale);
                     break;
             }
+
+            TransformChanged?.Invoke(this, e);
         }
 
         // TODO: Selected の情報をまとめたクラスみたいなものがほしいかも？

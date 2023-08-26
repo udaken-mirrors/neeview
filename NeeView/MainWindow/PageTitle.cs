@@ -1,6 +1,7 @@
 ﻿using NeeLaboratory.ComponentModel;
 using System.Linq;
 using System.ComponentModel;
+using System.Collections.Generic;
 
 namespace NeeView
 {
@@ -17,7 +18,7 @@ namespace NeeView
         private string _title = "";
 
         private readonly BookHub _bookHub;
-        private readonly MainViewComponent _mainViewComponent;
+        private readonly PageFrameBoxPresenter _presenter;
         private readonly TitleStringService _titleStringService;
         private readonly TitleString _titleString;
 
@@ -25,19 +26,16 @@ namespace NeeView
         public PageTitle()
         {
             _bookHub = BookHub.Current;
-            _mainViewComponent = MainViewComponent.Current;
+            _presenter = MainViewComponent.Current.PageFrameBoxPresenter;
             _titleStringService = TitleStringService.Default;
 
             _titleString = new TitleString(_titleStringService);
             _titleString.AddPropertyChanged(nameof(TitleString.Title), TitleString_TitleChanged);
 
-#warning not implement
-#if false
-            _mainViewComponent.ContentCanvas.ContentChanged += (s, e) =>
+            _presenter.ViewContentChanged += (s, e) =>
             {
                 UpdateFormat();
             };
-#endif
 
             _bookHub.Loading += (s, e) =>
             {
@@ -74,18 +72,16 @@ namespace NeeView
 
         private void UpdateFormat()
         {
-#warning not implement
-#if false
-            var contents = _mainViewComponent.ContentCanvas.CloneContents;
-            var mainContent = _mainViewComponent.ContentCanvas.MainContent;
-            var subContent = contents.First(e => e != mainContent);
+            var frameContent = _presenter.GetSelectedPageFrameContent();
 
-            string format = mainContent is MediaViewContent
+            var contents = frameContent?.ViewContents ?? new List<ViewContent>();
+            var isMedia = contents.FirstOrDefault()?.Element.Page.Entry.Archiver is MediaArchiver == true;
+
+            string format = isMedia
                 ? Config.Current.PageTitle.PageTitleFormatMedia
-                : subContent.IsValid && !subContent.IsDummy ? Config.Current.PageTitle.PageTitleFormat2 : Config.Current.PageTitle.PageTitleFormat1;
+                : contents.Count >= 2 ? Config.Current.PageTitle.PageTitleFormat2 : Config.Current.PageTitle.PageTitleFormat1;
 
             _titleString.SetFormat(format);
-#endif
         }
 
         private void UpdateTitle()
@@ -98,12 +94,10 @@ namespace NeeView
             {
                 Title = _defaultPageTitle;
             }
-#if false
-            else if (_mainViewComponent.ContentCanvas.MainContent?.Source == null)
+            else if (_presenter.GetSelectedPageFrameContent() == null)
             {
                 Title = _defaultPageTitle;
             }
-#endif
             else
             {
                 Title = _titleString.Title;

@@ -147,9 +147,6 @@ namespace NeeView
             ThumbnailList.Current.VisibleEvent +=
                 ThumbnailList_Visible;
 
-#warning MediaContnt 時のレイアウト更新
-            //_viewComponent.ContentCanvas.AddPropertyChanged(nameof(ContentCanvas.IsMediaContent),
-            //    (s, e) => DartyPageSliderLayout());
             _viewComponent.PageFrameBoxPresenter.SubscribePageFrameBoxChanged(
                 (s, e) => DartyPageSliderLayout());
 

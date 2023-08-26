@@ -333,6 +333,11 @@ namespace NeeView.PageFrames
             UpdateFrame();
 
             ContentChanged?.Invoke(this, EventArgs.Empty);
+
+            if (_content is PageFrameContent pageFrameContent)
+            {
+                ViewContentChanged?.Invoke(this, new ViewContentChangedEventArgs(pageFrameContent));
+            }
         }
 
 
@@ -397,6 +402,8 @@ namespace NeeView.PageFrames
             var verticalDuration = size.Height > old.Height ? duration : 0.0;
             SetWidth(size.Width, horizontalDuration);
             SetHeight(size.Height, verticalDuration);
+
+            this.ClipToBounds = _content.IsStaticFrame;
 
             //_transformTextBlock.Text = $"{(int)_pageFrame.Angle}, {_pageFrame.Scale:f2}";
             //Debug.WriteLine($"Container.Update: {FrameRange}, {HorizontalAlignment}");

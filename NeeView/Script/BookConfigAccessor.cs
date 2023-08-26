@@ -12,8 +12,8 @@ namespace NeeView
         [WordNodeMember]
         public int ViewPageSize
         {
-            get { return BookSettingPresenter.Current.LatestSetting.PageMode == PageMode.WidePage ? 2 : 1; }
-            set { AppDispatcher.Invoke(() => BookSettingPresenter.Current.SetPageMode(value == 2 ? PageMode.WidePage : PageMode.SinglePage)); }
+            get { return (int)BookSettingPresenter.Current.LatestSetting.PageMode + 1; }
+            set { AppDispatcher.Invoke(() => BookSettingPresenter.Current.SetPageMode(((PageMode)value - 1).Validate())); }
         }
 
         // [Parameter(typeof(BookReadOrder))]

@@ -111,7 +111,7 @@ namespace NeeView
                 return value;
             }
 
-            if (PageSelector.PageMode == PageMode.SinglePage)
+            if (PageSelector.PageMode != PageMode.WidePage)
             {
                 return value;
             }

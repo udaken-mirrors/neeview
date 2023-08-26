@@ -17,9 +17,10 @@ namespace NeeView.PageFrames
         PageFrameActivity Activity { get; }
         bool IsLocked { get; }
         PageRange FrameRange { get; }
-        public bool IsFirstFrame { get; }
-        public bool IsLastFrame { get; }
+        bool IsFirstFrame { get; }
+        bool IsLastFrame { get; }
         PageFrameDartyLevel DirtyLevel { get; set; }
+        bool IsStaticFrame { get; }
 
         Rect GetContentRect();
         Size GetFrameSize();
@@ -52,6 +53,8 @@ namespace NeeView.PageFrames
             get { return PageFrameDartyLevel.Clean; }
             set { }
         }
+
+        public bool IsStaticFrame => false;
 
         public event TransformChangedEventHandler? TransformChanged;
         public event EventHandler? ViewContentChanged;

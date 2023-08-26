@@ -1,6 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Windows;
+using System.Windows.Controls;
 using NeeView.Text;
+using NeeView.Windows;
 
 namespace NeeView
 {
@@ -11,25 +15,26 @@ namespace NeeView
 
 
         private readonly ReplaceString _replaceString = new();
-        private readonly MainViewComponent _mainViewComponent;
+        private readonly PageFrameBoxPresenter _presenter;
         private int _changedCount;
 
 
         public TitleStringService(MainViewComponent mainViewComponent)
         {
-            _mainViewComponent = mainViewComponent;
+            _presenter = mainViewComponent.PageFrameBoxPresenter;
 
-#if false
-            _mainViewComponent.ContentCanvas.ContentChanged += (s, e) =>
+            _presenter.ViewContentChanged += (s, e) =>
             {
                 Update();
             };
 
-            _mainViewComponent.DragTransform.AddPropertyChanged(nameof(DragTransform.Scale), (s, e) =>
+            _presenter.TransformChanged += (s, e) =>
             {
-                Update();
-            });
-#endif
+                if (e.Action == PageFrames.TransformAction.Scale)
+                {
+                    Update();
+                }
+            };
 
             _replaceString.Changed += ReplaceString_Changed;
         }
@@ -50,15 +55,16 @@ namespace NeeView
 
         private void Update()
         {
-#warning not implement yet
-#if false
             _changedCount = 0;
 
-            var contents = _mainViewComponent.ContentCanvas.CloneContents;
-            var mainContent = _mainViewComponent.ContentCanvas.MainContent;
-            var viewScale = _mainViewComponent.DragTransform.Scale;
+            var frameContent = _presenter.GetSelectedPageFrameContent();
 
-            bool isMainContent0 = mainContent == contents[0];
+
+            var contents = frameContent?.ViewContents ?? new List<ViewContent>();
+            var viewScale = frameContent?.Transform.Scale ?? 1.0;
+
+            // TODO: ダミーページが入ってきたら再検討
+            bool isMainContent0 = contents.Count <= 1;  //mainContent == contents[0];
 
             // book
             var book = BookHub.Current.GetCurrentBook();
@@ -69,42 +75,68 @@ namespace NeeView
             var pageMax = book != null ? book.Pages.Count : 0;
             _replaceString.Set("$PageMax", pageMax.ToString());
 
-            string pageNum0 = GetPageNum(contents[0]);
-            string pageNum1 = GetPageNum(contents[1]);
+
+            string pageNum0 = GetPageNum(contents.ElementAtOrDefault(0));
+            string pageNum1 = GetPageNum(contents.ElementAtOrDefault(1));
             _replaceString.Set("$Page", isMainContent0 ? pageNum0 : pageNum1);
             _replaceString.Set("$PageL", pageNum1);
             _replaceString.Set("$PageR", pageNum0);
 
-            string GetPageNum(ViewContent content)
+            string GetPageNum(ViewContent? content)
             {
-                if (content.Source is null) return "";
-                return content.IsValid ? (content.Source.PagePart.PartSize == 2) ? (content.Position.Index + 1).ToString() : (content.Position.Index + 1).ToString() + (content.Position.Part == 1 ? ".5" : ".0") : "";
+                if (content is null) return "";
+                var pageElement = content.Element;
+                return (pageElement.PageRange.PartSize == 2) ? (pageElement.PageRange.Min.Index + 1).ToString() : (pageElement.PageRange.Min.Index + 1).ToString() + (pageElement.PageRange.Min.Part == 1 ? ".5" : ".0");
+                // TODO: content.IsValid って？
             }
 
-            string path0 = GetFullName(contents[0]);
-            string path1 = GetFullName(contents[1]);
+            string path0 = GetFullName(contents.ElementAtOrDefault(0));
+            string path1 = GetFullName(contents.ElementAtOrDefault(1));
             _replaceString.Set("$FullName", isMainContent0 ? path0 : path1);
             _replaceString.Set("$FullNameL", path1);
             _replaceString.Set("$FullNameR", path0);
 
-            string GetFullName(ViewContent content)
+            string GetFullName(ViewContent? content)
             {
-                return (content.IsValid && content.FullPath != null) ? content.FullPath.Replace("/", " > ").Replace("\\", " > ") + content.GetPartString() : "";
+                if (content is null) return "";
+                var pageElement = content.Element;
+                var fullPath = pageElement.Page.EntryName;
+                return fullPath.Replace("/", " > ").Replace("\\", " > ") + GetPartString(content);
             }
 
-            string name0 = GetName(contents[0]);
-            string name1 = GetName(contents[1]);
+            string name0 = GetName(contents.ElementAtOrDefault(0));
+            string name1 = GetName(contents.ElementAtOrDefault(1));
             _replaceString.Set("$Name", isMainContent0 ? name0 : name1);
             _replaceString.Set("$NameL", name1);
             _replaceString.Set("$NameR", name0);
 
-            string GetName(ViewContent content)
+            string GetName(ViewContent? content)
             {
-                return content.IsValid ? LoosePath.GetFileName(content.FullPath) + content.GetPartString() : "";
+                if (content is null) return "";
+                var pageElement = content.Element;
+                var fullPath = pageElement.Page.EntryName;
+                return LoosePath.GetFileName(fullPath) + GetPartString(content);
             }
 
-            var bitmapContent0 = contents[0].Content as BitmapPageContent;
-            var bitmapContent1 = contents[1].Content as BitmapPageContent;
+            string GetPartString(ViewContent? content)
+            {
+                if (content is null) return "";
+                var pageElement = content.Element;
+                var direction = frameContent?.ViewContentsDirection ?? 1;
+                if (pageElement.PageRange.PartSize == 1)
+                {
+                    var part = pageElement.PageRange.Min.Part;
+                    part = direction < 0 ? 1 - part : part;
+                    return part == 0 ? "(L)" : "(R)";
+                }
+                else
+                {
+                    return "";
+                }
+            }
+
+            var bitmapContent0 = contents.ElementAtOrDefault(0)?.Element.Page.Content; //as BitmapPageContent;
+            var bitmapContent1 = contents.ElementAtOrDefault(1)?.Element.Page.Content; // as BitmapPageContent;
             var pictureInfo0 = bitmapContent0?.PictureInfo;
             var pictureInfo1 = bitmapContent1?.PictureInfo;
             string bpp0 = GetSizeEx(pictureInfo0);
@@ -133,18 +165,24 @@ namespace NeeView
             _replaceString.Set("$ViewScale", $"{(int)(viewScale * 100 + 0.1)}%");
 
             // scale
-            var _Dpi = _mainViewComponent.ContentCanvas.Dpi;
-            string scale0 = contents[0].IsValid ? $"{(int)(viewScale * contents[0].Scale * _Dpi.DpiScaleX * 100 + 0.1)}%" : "";
-            string scale1 = contents[1].IsValid ? $"{(int)(viewScale * contents[1].Scale * _Dpi.DpiScaleX * 100 + 0.1)}%" : "";
+            var dpiScaleX = (Window.GetWindow(_presenter.View) is IDpiScaleProvider dpiProvider) ? dpiProvider.GetDpiScale().ToFixedScale().DpiScaleX : 1.0;
+            string scale0 = $"{(int)(viewScale * GetOriginalScale(contents.ElementAtOrDefault(0)) * dpiScaleX * 100 + 0.1)}%";
+            string scale1 = $"{(int)(viewScale * GetOriginalScale(contents.ElementAtOrDefault(1)) * dpiScaleX * 100 + 0.1)}%";
             _replaceString.Set("$Scale", isMainContent0 ? scale0 : scale1);
             _replaceString.Set("$ScaleL", scale1);
             _replaceString.Set("$ScaleR", scale0);
+
+            double GetOriginalScale(ViewContent? content)
+            {
+                if (content is null) return 1.0;
+                var pageElement = content.Element;
+                return (frameContent?.PageFrame.Scale ?? 1.0) * pageElement.Scale;
+            }
 
             if (_changedCount > 0)
             {
                 Changed?.Invoke(this, EventArgs.Empty);
             }
-#endif
         }
     }
 
