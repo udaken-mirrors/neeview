@@ -99,7 +99,9 @@ namespace NeeView.PageFrames
             var elementScaleFactory = new PageFrameElementScaleFactory(_context, _transformMap, loupeContext);
             _loader = new BookPageLoader(_context.Book, frameFactory, _viewSourceMap, elementScaleFactory, _context.BookMemoryService, _context.PerformanceConfig);
             _disposables.Add(_loader);
-            var containerFactory = new PageFrameContainerFactory(_context, _transformMap, _viewSourceMap, loupeContext);
+            var baseScaleTransform = new BaseScaleTransform(_context.ViewConfig);
+            _disposables.Add(baseScaleTransform);
+            var containerFactory = new PageFrameContainerFactory(_context, _transformMap, _viewSourceMap, loupeContext, baseScaleTransform);
             _containers = new PageFrameContainerCollection(frameFactory, containerFactory);
             _rectMath = new PageFrameContainersCollectionRectMath(_context, _containers);
             _layout = new PageFrameContainersLayout(_context, _containers);

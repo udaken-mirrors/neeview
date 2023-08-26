@@ -22,6 +22,7 @@ namespace NeeView.PageFrames
         Content,
         View,
         Loupe,
+        BaseScale,
     }
 
     public enum TransformAction

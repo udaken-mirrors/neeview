@@ -34,7 +34,7 @@ namespace NeeLaboratory.ComponentModel
             return new AnonymousDisposable(() => PropertyChanged -= handler);
         }
 
-        public IDisposable SubscribePropertyChanginh(string? propertyName, PropertyChangingEventHandler handler)
+        public IDisposable SubscribePropertyChanging(string? propertyName, PropertyChangingEventHandler handler)
         {
             return SubscribePropertyChanging(PropertyChangedTools.CreateChangingEventHandler(propertyName, handler));
         }

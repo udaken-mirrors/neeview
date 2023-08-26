@@ -26,13 +26,15 @@ namespace NeeView.PageFrames
         private Canvas _contentCanvas;
         private PageFrame _pageFrame;
         private PageFrameActivity _activity;
-        private PageFrameTransformAccessor _transform;
-        private LoupeTransformContext _loupeContext;
+        private readonly PageFrameTransformAccessor _transform;
+        private readonly LoupeTransformContext _loupeContext;
         private IStaticFrame _staticFrame;
         private List<Page> _pages;
         private List<ViewContent> _viewContents;
         private TransformGroup _viewTransform = new();
+        private TransformGroup _boundsTransform;
         private PageFrameDartyLevel _dirtyLevel;
+        private BaseScaleTransform _baseScaleTransform;
 
         private bool _disposedValue = false;
         private DisposableCollection _disposables = new();
@@ -46,7 +48,7 @@ namespace NeeView.PageFrames
         /// <param name="activity">コンテナの状態。表示中、選択中等</param>
         /// <param name="transform">レイアウト用Transform</param>
         /// <param name="loupeContext">ルーペ用Transform</param>
-        public PageFrameContent(ViewContentFactory viewContentFactory, IStaticFrame staticFrame, PageFrame pageFrame, PageFrameActivity activity, PageFrameTransformAccessor transform, LoupeTransformContext loupeContext)
+        public PageFrameContent(ViewContentFactory viewContentFactory, IStaticFrame staticFrame, PageFrame pageFrame, PageFrameActivity activity, PageFrameTransformAccessor transform, LoupeTransformContext loupeContext, BaseScaleTransform baseScaleTransform)
         {
             _canvas = new Canvas();
             _canvas.RenderTransform = _viewTransform;
@@ -71,11 +73,17 @@ namespace NeeView.PageFrames
             _disposables.Add(_transform);
             _disposables.Add(_transform.SubscribeTransformChanged(Transform_TransformChanged));
 
+            _baseScaleTransform = baseScaleTransform;
+            _disposables.Add(_baseScaleTransform.SubscribeScaleChanged(BaseScaleTransform_ScaleChanged));
+
             _loupeContext = loupeContext;
+
+            _boundsTransform = new TransformGroup();
+            _boundsTransform.Children.Add(_baseScaleTransform.ScaleTransform);
+            _boundsTransform.Children.Add(_transform.Transform);
 
             CreateContents();
         }
-
 
 
         public event TransformChangedEventHandler? TransformChanged;
@@ -145,6 +153,12 @@ namespace NeeView.PageFrames
             TransformChanged?.Invoke(this, e);
         }
 
+        private void BaseScaleTransform_ScaleChanged(object? sender, EventArgs e)
+        {
+            TransformChanged?.Invoke(this, new TransformChangedEventArgs(_baseScaleTransform, TransformCategory.BaseScale, TransformAction.Scale));
+        }
+
+
         private void Page_SizeChanged(object? sender, EventArgs e)
         {
             DirtyLevel = PageFrameDartyLevel.Moderate;
@@ -186,7 +200,7 @@ namespace NeeView.PageFrames
         public Rect GetContentRect()
         {
             var rect = _pageFrame.Size.ToRect();
-            var bounds = _transform.Transform.TransformBounds(rect);
+            var bounds = _boundsTransform.TransformBounds(rect);
             return bounds;
         }
 
@@ -199,7 +213,7 @@ namespace NeeView.PageFrames
             else
             {
                 var rect = _pageFrame.Size.ToRect();
-                var bounds = _transform.Transform.TransformBounds(rect);
+                var bounds = _boundsTransform.TransformBounds(rect);
 
                 // TODO: １つのコンテナの画面幅に対する最小の割合。同時に多すぎる表示を回避するため。Configに設定を。
                 var limitScale = 0.10;
@@ -244,13 +258,14 @@ namespace NeeView.PageFrames
         {
             DetachTransform();
             _viewTransform.Children.Clear();
-
+            _viewTransform.Children.Add(_baseScaleTransform.ScaleTransform);
             _viewTransform.Children.Add(_pageFrame.RotateTransform);
             _viewTransform.Children.Add(_transform.TransformView);
             _viewTransform.Children.Add(_loupeContext.GetContentTransform());
             AttachTransform();
         }
 
+        // TODO: _transform, _loupeContext は不変なのでAttach,Detachは不要？
         private void AttachTransform()
         {
             _transform.TransformChanged += ViewTransform_TransformChanged;

@@ -185,7 +185,7 @@ namespace NeeView
                 case TransformCategory.Loupe:
                     ShowLoupeTransformMessage(e.Source, e.Action);
                     break;
-                default:
+                case TransformCategory.Content:
                     var originalScale = e is OriginalScaleTransformChangedEventArgs arg ? arg.OriginalScale : 1.0;
                     ShowContentTransformMessage(e.Source, e.Action, originalScale);
                     break;

@@ -12,14 +12,15 @@ namespace NeeView.PageFrames
         private PageFrameTransformMap _transformMap;
         private LoupeTransformContext _loupeContext;
         private ViewContentFactory _viewContentFactory;
+        private BaseScaleTransform _baseScaleTransform;
 
-
-        public PageFrameContainerFactory(IStaticFrame staticFrameProfile, PageFrameTransformMap transformMap, ViewSourceMap viewSourceMap, LoupeTransformContext loupeContext)
+        public PageFrameContainerFactory(IStaticFrame staticFrameProfile, PageFrameTransformMap transformMap, ViewSourceMap viewSourceMap, LoupeTransformContext loupeContext, BaseScaleTransform baseScaleTransform)
         {
             _staticFrameProfile = staticFrameProfile;
             _transformMap = transformMap;
             _loupeContext = loupeContext;
             _viewContentFactory = new ViewContentFactory(viewSourceMap);
+            _baseScaleTransform = baseScaleTransform;
         }
 
 
@@ -27,7 +28,7 @@ namespace NeeView.PageFrames
         {
             var activity = new PageFrameActivity();
             var transform = new PageFrameTransformAccessor(_transformMap, _transformMap.ElementAt(frame.FrameRange));
-            var content = new PageFrameContent(_viewContentFactory, _staticFrameProfile, frame, activity, transform, _loupeContext);
+            var content = new PageFrameContent(_viewContentFactory, _staticFrameProfile, frame, activity, transform, _loupeContext, _baseScaleTransform);
             var container = new PageFrameContainer(content, activity);
             return container;
         }
@@ -43,7 +44,7 @@ namespace NeeView.PageFrames
             {
                 var activity = container.Activity;
                 var transform = new PageFrameTransformAccessor(_transformMap, _transformMap.ElementAt(frame.FrameRange));
-                var content = new PageFrameContent(_viewContentFactory, _staticFrameProfile, frame, activity, transform, _loupeContext);
+                var content = new PageFrameContent(_viewContentFactory, _staticFrameProfile, frame, activity, transform, _loupeContext, _baseScaleTransform);
                 container.Content = content;
             }
         }
