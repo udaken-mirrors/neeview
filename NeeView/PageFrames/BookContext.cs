@@ -27,6 +27,44 @@ namespace NeeView.PageFrames
         public DpiScale DpiScale { get; }
     }
 
+    public interface IShareTransformContext
+    {
+        bool IsFlipLocked { get; }
+        bool IsScaleLocked { get; }
+        bool IsAngleLocked { get; }
+        bool IsKeepAngleBooks { get; }
+        bool IsKeepFlipBooks { get; }
+        bool IsKeepScaleBooks { get; }
+        double ShareAngle { get; set; }
+        bool ShareFlipHorizontal { get; set; }
+        bool ShareFlipVertical { get; set; }
+        double ShareScale { get; set; }
+
+    }
+
+    public class BookShareContext : IShareTransformContext
+    {
+        private readonly Config _config;
+
+        public BookShareContext(Config config)
+        {
+            _config = config;
+        }
+
+        public bool IsFlipLocked => _config.View.IsKeepFlip;
+        public bool IsScaleLocked => _config.View.IsKeepScale;
+        public bool IsAngleLocked => _config.View.IsKeepAngle;
+
+        public bool IsKeepFlipBooks => _config.View.IsKeepFlipBooks;
+        public bool IsKeepScaleBooks => _config.View.IsKeepScaleBooks;
+        public bool IsKeepAngleBooks => _config.View.IsKeepAngleBooks;
+
+        public double ShareScale { get; set; } = 1.0;
+        public double ShareAngle { get; set; }
+        public bool ShareFlipHorizontal { get; set; }
+        public bool ShareFlipVertical { get; set; }
+    }
+
     /// <summary>
     /// ブック表示に必要な情報をまとめたもの
     /// </summary>
@@ -42,6 +80,7 @@ namespace NeeView.PageFrames
         private PageRange _selectedRange;
         private DisposableCollection _disposables = new DisposableCollection();
         private bool _disposedValue;
+        private BookShareContext _share;
 
 
         //public static BookContext CreateDummyBookContext(Config config)
@@ -50,10 +89,11 @@ namespace NeeView.PageFrames
         //}
 
 
-        public BookContext(Book book, Config config) //, BookPageViewSetting bookSetting)
+        public BookContext(Book book, Config config, BookShareContext share) //, BookPageViewSetting bookSetting)
         {
             _book = book;
             _config = config;
+            _share = share;
             //_bookSetting = bookSetting;
             _bookSetting = _config.BookSetting;
 
@@ -96,7 +136,10 @@ namespace NeeView.PageFrames
         [Subscribable]
         public event EventHandler? SelectedRangeChanged;
 
+
         public bool IsEnabled => _book.Pages.Any();
+
+        public BookShareContext ShareContext => _share;
 
         public Book Book => _book;
         public IReadOnlyList<Page> Pages => _book.Pages;
@@ -141,6 +184,7 @@ namespace NeeView.PageFrames
         public bool IsScaleLocked => _config.View.IsKeepScale;
         public bool IsAngleLocked => _config.View.IsKeepAngle;
         public bool IsIgnoreImageDpi => _config.System.IsIgnoreImageDpi;
+
 
         public PageMode PageMode => _bookSetting.PageMode;
         public PageReadOrder ReadOrder => _bookSetting.BookReadOrder;

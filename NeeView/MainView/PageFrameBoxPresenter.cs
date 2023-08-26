@@ -19,6 +19,7 @@ namespace NeeView
 
         private Book? _book;
         private BookContext? _bookContext;
+        private BookShareContext _shareContext;
         private PageFrameBox? _box;
         private BookCommandControl? _pageControl;
         private bool _isLoading;
@@ -27,6 +28,7 @@ namespace NeeView
         public PageFrameBoxPresenter(Config config, BookHub bookHub)
         {
             _config = config;
+            _shareContext = new BookShareContext(_config);
             _bookHub = bookHub;
 
             _bookHub.BookChanging += BookHub_BookChanging;
@@ -118,7 +120,7 @@ namespace NeeView
 
             _book = book;
 
-            _bookContext = new BookContext(_book, _config);
+            _bookContext = new BookContext(_book, _config, _shareContext);
             _bookContext.PagesChanged += BookContext_PagesChanged;
             _bookContext.SelectedRangeChanged += BookContext_SelectedRangeChanged;
             _bookContext.PropertyChanged += BookContext_PropertyChanged;

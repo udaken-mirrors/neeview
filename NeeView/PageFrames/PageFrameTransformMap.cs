@@ -11,10 +11,10 @@ namespace NeeView.PageFrames
     [NotifyPropertyChanged]
     public partial class PageFrameTransformMap : INotifyPropertyChanged
     {
-
         private readonly Dictionary<PageRange, PageFrameTransform> _map = new();
         private PageFrameTransform _share = new();
 
+        private IShareTransformContext _shareContext;
         private bool _isFlipLocked;
         private bool _isScaleLocked;
         private bool _isAngleLocked;
@@ -23,8 +23,29 @@ namespace NeeView.PageFrames
         public event PropertyChangedEventHandler? PropertyChanged;
 
 
-        public PageFrameTransformMap()
+        public PageFrameTransformMap(IShareTransformContext shareTransformContext)
         {
+            _shareContext = shareTransformContext;
+
+            _isScaleLocked = _shareContext.IsScaleLocked;
+            _isAngleLocked = _shareContext.IsAngleLocked;
+            _isFlipLocked = _shareContext.IsFlipLocked;
+
+            if (_isScaleLocked && _shareContext.IsKeepScaleBooks)
+            {
+                _share.SetScale(_shareContext.ShareScale, TimeSpan.Zero);
+            }
+            if (_isAngleLocked && _shareContext.IsKeepAngleBooks)
+            {
+                _share.SetAngle(_shareContext.ShareAngle, TimeSpan.Zero);
+            }
+            if (_isFlipLocked && _shareContext.IsKeepFlipBooks)
+            {
+                _share.SetFlipHorizontal(_shareContext.ShareFlipHorizontal, TimeSpan.Zero);
+                _share.SetFlipVertical(_shareContext.ShareFlipVertical, TimeSpan.Zero);
+            }
+
+            _share.TransformChanged += Share_TransformChanged;
         }
 
 
@@ -67,6 +88,25 @@ namespace NeeView.PageFrames
 
         public PageFrameTransform Share => _share;
 
+
+        private void Share_TransformChanged(object? sender, TransformChangedEventArgs e)
+        {
+            switch (e.Action)
+            {
+                case TransformAction.Scale:
+                    _shareContext.ShareScale = _share.Scale;
+                    break;
+                case TransformAction.Angle:
+                    _shareContext.ShareAngle = _share.Angle;
+                    break;
+                case TransformAction.FlipHorizontal:
+                    _shareContext.ShareFlipHorizontal = _share.IsFlipHorizontal;
+                    break;
+                case TransformAction.FlipVertical:
+                    _shareContext.ShareFlipVertical = _share.IsFlipVertical;
+                    break;
+            }
+        }
 
         // NOTE: Disposable
         public PageFrameTransformAccessor CreateAccessor(PageRange range)

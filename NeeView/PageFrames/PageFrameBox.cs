@@ -88,10 +88,7 @@ namespace NeeView.PageFrames
             _disposables.Add(viewTransform.SubscribeTransformChanged(ViewTransform_TransformChanged));
             _disposables.Add(viewTransform);
 
-            _transformMap = new PageFrameTransformMap();
-            _transformMap.IsFlipLocked = _context.IsFlipLocked;
-            _transformMap.IsScaleLocked = _context.IsScaleLocked;
-            _transformMap.IsAngleLocked = _context.IsAngleLocked;
+            _transformMap = new PageFrameTransformMap(_context.ShareContext);
 
             _calculator = new ContentSizeCalculator(_context);
             var frameFactory = new PageFrameFactory(_context, _calculator);
