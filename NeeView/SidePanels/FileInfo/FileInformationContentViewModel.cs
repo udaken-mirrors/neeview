@@ -10,7 +10,7 @@ namespace NeeView
     // TODO: 今のところ破棄されないので不要であるが、正しく上位からDispose()を呼ぶようにしておく
     public class FileInformationContentViewModel : BindableBase, IDisposable
     {
-        private readonly MappedCollection<FileInforamtionKey, FileInformationRecord> _collection;
+        private readonly MappedCollection<FileInformationKey, FileInformationRecord> _collection;
         private FileInformationSource? _source;
         private CollectionViewSource _collectionViewSource;
         private FileInformationRecord? _selectedItem;
@@ -22,7 +22,7 @@ namespace NeeView
 
         public FileInformationContentViewModel()
         {
-            _collection = new MappedCollection<FileInforamtionKey, FileInformationRecord>(InformationKeyExtensions.DefaultKeys.Select(e => new FileInformationRecord(e, null)));
+            _collection = new MappedCollection<FileInformationKey, FileInformationRecord>(InformationKeyExtensions.DefaultKeys.Select(e => new FileInformationRecord(e, null)));
 
             _collectionViewSource = new CollectionViewSource();
             _collectionViewSource.Source = _collection.Collection;

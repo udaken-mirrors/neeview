@@ -139,7 +139,7 @@ namespace NeeView.PageFrames
         private static void AssertSources(IEnumerable<PageFrameElement> sources)
         {
             PageFrameElement? prev = null;
-            foreach (var source in sources)
+            foreach (var source in sources.Where(e => !e.IsDummy))
             {
                 Debug.Assert(!source.PageRange.IsEmpty());
                 if (prev is not null)

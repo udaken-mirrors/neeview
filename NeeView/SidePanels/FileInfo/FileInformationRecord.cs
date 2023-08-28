@@ -4,7 +4,7 @@ using System.Diagnostics;
 
 namespace NeeView
 {
-    public class FileInformationRecord : BindableBase, IHasKey<FileInforamtionKey>
+    public class FileInformationRecord : BindableBase, IHasKey<FileInformationKey>
     {
         private object? _value;
 
@@ -13,19 +13,19 @@ namespace NeeView
         {
             Debug.Assert(key != InformationKey.ExtraValue);
 
-            Key = new FileInforamtionKey(key);
+            Key = new FileInformationKey(key);
             Group = key.ToInformationGroup();
             _value = value;
         }
 
         public FileInformationRecord(string name, InformationGroup group, object? value)
         {
-            Key = new FileInforamtionKey(name);
+            Key = new FileInformationKey(name);
             Group = group;
             Value = value;
         }
 
-        public FileInforamtionKey Key { get; private set; }
+        public FileInformationKey Key { get; private set; }
 
         public InformationGroup Group { get; private set; }
 

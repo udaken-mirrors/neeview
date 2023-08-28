@@ -26,16 +26,16 @@ namespace NeeView
         {
             _model = model;
 
-            _model.AddPropertyChanged(nameof(_model.FileInformations),
-                Model_FileInformationsChanged);
+            _model.AddPropertyChanged(nameof(_model.FileInformationCollection),
+                Model_FileInformationCollectionChanged);
 
             MoreMenuDescription = new FileInformationMoreMenuDescription();
         }
 
 
-        public List<FileInformationSource>? FileInformations
+        public List<FileInformationSource>? FileInformationCollection
         {
-            get { return _model.FileInformations; }
+            get { return _model.FileInformationCollection; }
         }
 
         public FileInformationSource? SelectedItem
@@ -69,9 +69,9 @@ namespace NeeView
         #endregion MoreMenu
 
 
-        private void Model_FileInformationsChanged(object? sender, PropertyChangedEventArgs e)
+        private void Model_FileInformationCollectionChanged(object? sender, PropertyChangedEventArgs e)
         {
-            RaisePropertyChanged(nameof(FileInformations));
+            RaisePropertyChanged(nameof(FileInformationCollection));
 
             if (SelectedItem is null)
             {
@@ -86,13 +86,13 @@ namespace NeeView
 
         public void MoveSelectedItem(int delta)
         {
-            if (FileInformations is null) return;
+            if (FileInformationCollection is null) return;
 
-            var index = SelectedItem is null ? 0 : FileInformations.IndexOf(SelectedItem);
-            index = MathUtility.Clamp(index + delta, 0, FileInformations.Count - 1);
+            var index = SelectedItem is null ? 0 : FileInformationCollection.IndexOf(SelectedItem);
+            index = MathUtility.Clamp(index + delta, 0, FileInformationCollection.Count - 1);
             if (index >= 0)
             {
-                SelectedItem = FileInformations[index];
+                SelectedItem = FileInformationCollection[index];
             }
         }
     }

@@ -19,11 +19,11 @@ namespace NeeView.PageFrames
         private BookContext _context;
 
 
-        public PageFrameFactory(BookContext context, ContentSizeCalculator calcurator)
+        public PageFrameFactory(BookContext context, ContentSizeCalculator calculator)
         {
             _context = context;
             _book = new BookPageAccessor(context);
-            _calculator = calcurator;
+            _calculator = calculator;
         }
 
 
@@ -151,50 +151,91 @@ namespace NeeView.PageFrames
             var source1 = source;
             if (source1 is null) return null;
 
-            var bookDirection = _context.ReadOrder.ToSign();
-
             if (_context.PageMode == PageMode.WidePage)
             {
                 // TODO: SinglePageFrame 作成が分散しているのでまとめる？
-
                 if (_context.IsSupportedWidePage && source1.IsLandscape())
                 {
-                    return new PageFrame(source1, bookDirection, _calculator);
+                    return CreateSinglePageFrame(source1);
                 }
 
                 var position = _book.ValidatePosition(source1.PageRange.Next(direction));
                 var source2 = CreatePageSource(position, direction);
                 if (source2 is null)
                 {
-                    return new PageFrame(source1, bookDirection, _calculator);
+                    return CreateWideFillPageFrame(source1);
                 }
 
                 if (_context.IsSupportedWidePage && source2.IsLandscape())
                 {
-                    return new PageFrame(source1, bookDirection, _calculator);
+                    return CreateWideFillPageFrame(source1);
                 }
 
                 bool isSingleFirstPage = _context.IsSupportedSingleFirstPage && (direction < 0 ? source2 : source1).PageRange.Min.Index == _book.FirstPosition.Index;
                 bool isSingleLastPage = _context.IsSupportedSingleLastPage && (direction < 0 ? source1 : source2).PageRange.Min.Index == _book.LastPosition.Index;
                 if (isSingleFirstPage || isSingleLastPage)
                 {
-                    return new PageFrame(source1, bookDirection, _calculator);
+                    return CreateWideFillPageFrame(source1);
                 }
 
-                var sources = new List<PageFrameElement>() { source1, source2 }.Direction(direction);
-
-                // content size alignment
-                var scales = _calculator.CalcContentScale(sources.Select(e => e.RawSize));
-                var scaledSources = sources
-                    .Select((source, index) => (source, index))
-                    .Select(e => scales[e.index] == e.source.Scale ? e.source : e.source with { Scale = scales[e.index] });
-
-                return new PageFrame(scaledSources, bookDirection, _calculator);
+                return CreateWidePageFrame(source1, source2, direction);
             }
             else
             {
-                return new PageFrame(source1, bookDirection, _calculator);
+                return CreateSinglePageFrame(source1);
             }
+        }
+
+        /// <summary>
+        /// 1エレメントのシングルフレームを作成
+        /// </summary>
+        /// <param name="source1"></param>
+        /// <returns></returns>
+        private PageFrame CreateSinglePageFrame(PageFrameElement source1)
+        {
+            var bookDirection = _context.ReadOrder.ToSign();
+            return new PageFrame(source1, bookDirection, _calculator);
+        }
+
+        /// <summary>
+        /// 1エレメントのワイドフレームを作成。
+        /// 可能であればダミーページを追加する。
+        /// </summary>
+        /// <param name="source1"></param>
+        /// <returns></returns>
+        private PageFrame CreateWideFillPageFrame(PageFrameElement source1)
+        {
+            if (_context.IsInsertDummyPage)
+            {
+                var source2 = source1 with { IsDummy = true };
+                return CreateWidePageFrame(source1, source2, 1);
+            }
+            else
+            {
+                return CreateSinglePageFrame(source1);
+            }
+        }
+
+        /// <summary>
+        /// 2エレメントのワイドフレームを作成
+        /// </summary>
+        /// <param name="source1"></param>
+        /// <param name="source2"></param>
+        /// <param name="direction"></param>
+        /// <returns></returns>
+        private PageFrame CreateWidePageFrame(PageFrameElement source1, PageFrameElement source2, int direction)
+        {
+            var sources = new List<PageFrameElement>() { source1, source2 }.Direction(direction);
+
+            var bookDirection = _context.ReadOrder.ToSign();
+
+            // content size alignment
+            var scales = _calculator.CalcContentScale(sources.Select(e => e.RawSize));
+            var scaledSources = sources
+                .Select((source, index) => (source, index))
+                .Select(e => scales[e.index] == e.source.Scale ? e.source : e.source with { Scale = scales[e.index] });
+
+            return new PageFrame(scaledSources, bookDirection, _calculator);
         }
     }
 

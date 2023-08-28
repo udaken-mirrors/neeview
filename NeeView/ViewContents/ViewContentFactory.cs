@@ -16,6 +16,11 @@ namespace NeeView
         {
             var viewSource = _viewSourceMap.Get(element.Page, element.PagePart);
 
+            if (element.IsDummy)
+            {
+                return new DummyViewContent(element, scale, viewSource, activity);
+            }
+
             switch (element.Page.Content)
             {
                 case BitmapPageContent:

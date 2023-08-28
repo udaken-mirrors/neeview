@@ -79,6 +79,10 @@ namespace NeeView.PageFrames
         /// </summary>
         public int Direction { get; }
 
+        /// <summary>
+        /// ダミーページ
+        /// </summary>
+        public bool IsDummy { get; init; }
         
         public PageViewSizeCalculator ViewSizeCalculator => new PageViewSizeCalculator(_context, Page, PageRange, Direction);
 

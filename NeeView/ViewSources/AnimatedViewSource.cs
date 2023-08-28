@@ -30,6 +30,13 @@ namespace NeeView
             {
                 var path = data.Data as string ?? throw new InvalidOperationException(nameof(data));
                 var image = LoadImage(path);
+
+                // 色情報とBPP設定。
+                if (image is not null)
+                {
+                    _pageContent.PictureInfo?.SetPixelInfo(image);
+                }
+
                 var source = new MediaSource(path, image);
                 SetData(source, 0, null);
             }

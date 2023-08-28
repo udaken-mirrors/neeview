@@ -7,9 +7,9 @@ namespace NeeView
     /// <summary>
     /// 画像情報項目キー (Immutable)
     /// </summary>
-    public record class FileInforamtionKey 
+    public record class FileInformationKey 
     {
-        public FileInforamtionKey(InformationKey key)
+        public FileInformationKey(InformationKey key)
         {
             Debug.Assert(key != InformationKey.ExtraValue);
 
@@ -17,7 +17,7 @@ namespace NeeView
             Name = "";
         }
 
-        public FileInforamtionKey(string name)
+        public FileInformationKey(string name)
         {
             Key = InformationKey.ExtraValue;
             Name = name;

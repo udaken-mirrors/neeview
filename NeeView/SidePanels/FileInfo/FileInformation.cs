@@ -21,7 +21,7 @@ namespace NeeView
 
 
         private readonly DelayValue<ViewContentChangedEventArgs> _viewContentsDelay;
-        private List<FileInformationSource>? _fileInformations;
+        private List<FileInformationSource>? _fileInformationCollection;
 
 
         private FileInformation()
@@ -36,16 +36,16 @@ namespace NeeView
         }
 
 
-        public List<FileInformationSource>? FileInformations
+        public List<FileInformationSource>? FileInformationCollection
         {
-            get { return _fileInformations; }
-            set { SetProperty(ref _fileInformations, value); }
+            get { return _fileInformationCollection; }
+            set { SetProperty(ref _fileInformationCollection, value); }
         }
 
 
         public FileInformationSource? GetMainFileInformation()
         {
-            return FileInformations?.OrderBy(e => e.Page?.Index ?? int.MaxValue).FirstOrDefault();
+            return FileInformationCollection?.OrderBy(e => e.Page?.Index ?? int.MaxValue).FirstOrDefault();
         }
 
         public void Update(ViewContentChangedEventArgs e)
@@ -60,7 +60,8 @@ namespace NeeView
             var viewContents = pageFrameContent?.ViewContents ?? new List<ViewContent>();
             var direction = pageFrameContent?.ViewContentsDirection ?? 1;
 
-            this.FileInformations = viewContents
+            this.FileInformationCollection = viewContents
+                .Where(e => !e.Element.IsDummy)
                 .Direction(direction)
                 //.Where(e => e.IsInformationValid)
                 .Select(e => new FileInformationSource(e))
@@ -69,9 +70,9 @@ namespace NeeView
 
         public void Update()
         {
-            if (_fileInformations is null) return;
+            if (_fileInformationCollection is null) return;
 
-            foreach (var item in _fileInformations)
+            foreach (var item in _fileInformationCollection)
             {
                 item.Update();
             }

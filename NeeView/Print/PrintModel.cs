@@ -233,7 +233,7 @@ namespace NeeView
         /// 画像コンテンツ生成
         /// </summary>
         /// <returns></returns>
-        private FrameworkElement CreateRawImageContente()
+        private FrameworkElement CreateRawImageContent()
         {
             if (_context.RawImage == null)
             {
@@ -333,7 +333,7 @@ namespace NeeView
             double printWidth = _extentWidth * Columns;
             double printHeight = _extentHeight * Rows;
 
-            var target = isView ? CreateViewContent() : CreateRawImageContente();
+            var target = isView ? CreateViewContent() : CreateRawImageContent();
 
             var canvas = new Canvas();
             canvas.Width = target.Width;
@@ -501,18 +501,19 @@ namespace NeeView
         /// <returns></returns>
         private string GetPrintName()
         {
-#warning not implement yet
-            return "not implement yet";
-#if false
             if (PrintMode == PrintMode.RawImage)
             {
-                return _context.MainContent?.FileName ?? "noname";
+                return GetFileName(_context.MainContent);
             }
             else
             {
-                return string.Join(" | ", _context.Contents.Where(e => e.IsValid).Reverse().Select(e => e.FileName));
+                return string.Join(" | ", _context.Contents.Where(e => !e.Element.IsDummy).Select(e => GetFileName(e)));
             }
-#endif
+
+            string GetFileName(ViewContent? content)
+            {
+               return LoosePath.GetFileName(content?.Element.Page.EntryName.TrimEnd('\\'));
+            }
         }
 
 

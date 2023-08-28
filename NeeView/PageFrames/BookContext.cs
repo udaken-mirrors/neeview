@@ -177,6 +177,8 @@ namespace NeeView.PageFrames
         public PageStretchMode StretchMode => _bookSetting.PageMode == PageMode.Panorama && _config.View.StretchMode == PageStretchMode.Uniform
             ? _config.Book.Orientation == PageFrameOrientation.Horizontal ? PageStretchMode.UniformToVertical : PageStretchMode.UniformToHorizontal
             : _config.View.StretchMode;
+
+        public bool IsInsertDummyPage => _config.Book.IsInsertDummyPage;
         public AutoRotateType AutoRotateType => _config.View.AutoRotate;
         public bool AllowEnlarge => _config.View.AllowStretchScaleUp;
         public bool AllowReduce => _config.View.AllowStretchScaleDown;
@@ -255,6 +257,10 @@ namespace NeeView.PageFrames
 
                 case nameof(BookConfig.ContentsSpace):
                     RaisePropertyChanged(nameof(ContentsSpace));
+                    break;
+
+                case nameof(BookConfig.IsInsertDummyPage):
+                    RaisePropertyChanged(nameof(IsInsertDummyPage));
                     break;
             }
         }

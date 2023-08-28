@@ -503,6 +503,7 @@ namespace NeeView.PageFrames
                 case nameof(BookContext.ImageTrimConfig):
                 case nameof(BookContext.ImageResizeFilterConfig):
                 case nameof(BookContext.ImageDotKeepConfig):
+                case nameof(BookContext.IsInsertDummyPage):
                     dirtyLevel = PageFrameDartyLevel.Heavy;
                     break;
 

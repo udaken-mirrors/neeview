@@ -60,7 +60,7 @@ namespace NeeView
             var frameContent = _presenter.GetSelectedPageFrameContent();
 
 
-            var contents = frameContent?.ViewContents ?? new List<ViewContent>();
+            var contents = (frameContent?.ViewContents ?? new List<ViewContent>()).Where(e => !e.Element.IsDummy).ToList(); ;
             var viewScale = frameContent?.Transform.Scale ?? 1.0;
 
             // TODO: ダミーページが入ってきたら再検討

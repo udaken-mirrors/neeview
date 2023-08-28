@@ -81,7 +81,7 @@ namespace NeeView
 
         private void UpdateFormat()
         {
-            var contents = _presenter.GetSelectedPageFrameContent()?.ViewContents ?? new List<ViewContent>();
+            var contents = (_presenter.GetSelectedPageFrameContent()?.ViewContents ?? new List<ViewContent>()).Where(e => !e.Element.IsDummy).ToList();
             var isMedia = contents.FirstOrDefault()?.Element.Page.Entry.Archiver is MediaArchiver == true;
 
             string format = isMedia
