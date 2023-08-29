@@ -64,8 +64,6 @@ namespace NeeView
         private Book? _book;
         private string? _address;
         private readonly BookHubCommandEngine _commandEngine;
-        private bool _historyEntry;
-        private bool _historyRemoved;
         private int _requestLoadCount;
         private readonly DisposableCollection _disposables;
 
@@ -88,9 +86,6 @@ namespace NeeView
                         InfoMessage.Current.SetMessage(InfoMessageType.BookName, LoosePath.GetFileName(Address), null, 2.0, e.BookMementoType);
                     }
                 }));
-
-            _disposables.Add(BookHistoryCollection.Current.SubscribeHistoryChanged(
-                BookHistoryCollection_HistoryChanged));
 
             _disposables.Add(BookmarkCollection.Current.SubscribeBookmarkChanged(
                 (s, e) => BookmarkChanged?.Invoke(s, e)));
@@ -133,16 +128,6 @@ namespace NeeView
         [Subscribable]
         public event EventHandler<JobIsBusyChangedEventArgs>? IsBusyChanged;
 
-#if false
-        // ViewContentsの変更通知
-        [Subscrivable]
-        public event EventHandler<ViewContentSourceCollectionChangedEventArgs>? ViewContentsChanged;
-
-        // NextContentsの変更通知
-        [Subscrivable]
-        public event EventHandler<ViewContentSourceCollectionChangedEventArgs>? NextContentsChanged;
-#endif
-
         // 空ページメッセージ
         [Subscribable]
         public event EventHandler<BookHubMessageEventArgs>? EmptyMessage;
@@ -158,10 +143,6 @@ namespace NeeView
         // 履歴リスト更新要求
         [Subscribable]
         public event EventHandler<BookHubPathEventArgs>? HistoryListSync;
-
-        // 履歴に追加、削除された
-        [Subscribable]
-        public event EventHandler<BookMementoCollectionChangedArgs>? HistoryChanged;
 
         // ブックマークにに追加、削除された
         [Subscribable]
@@ -233,21 +214,6 @@ namespace NeeView
 
         #region Callback Methods
 
-        private void BookHistoryCollection_HistoryChanged(object? sender, BookMementoCollectionChangedArgs e)
-        {
-            if (_disposedValue) return;
-
-            HistoryChanged?.Invoke(sender, e);
-
-            var book = _book;
-            if (book is null) return;
-
-            // 履歴削除されたものを履歴登録しないようにする
-            if (e.HistoryChangedType == BookMementoCollectionChangedType.Remove && (book.Path == e.Key || e.Key == null))
-            {
-                _historyRemoved = true;
-            }
-        }
 
 #warning 表示変更イベント処理未実装
 #if false
@@ -514,7 +480,7 @@ namespace NeeView
                 }
 
                 // 本の設定
-                var setting = CreateOpenBookMemento(address.TargetPath.SimplePath, lastBookMemento, args.Option);
+                var setting = BookMementoTools.CreateOpenBookMemento(address.TargetPath.SimplePath, lastBookMemento, args.Option);
 
                 // 最終ページなら初期化？
                 bool isResetLastPage = address.EntryName == null && Config.Current.BookSettingPolicy.Page == BookSettingPageSelectMode.RestoreOrDefaultReset;
@@ -537,8 +503,8 @@ namespace NeeView
                 var loadOption = args.Option | (isResetLastPage ? BookLoadOption.ResetLastPage : BookLoadOption.None);
                 var book = await LoadAsyncCore(args.Sender, address, loadOption, setting, isNew, token);
 
-                _historyEntry = false;
-                _historyRemoved = false;
+                //_historyEntry = false;
+                //_historyRemoved = false;
 
                 var bookSetting = BookSettingConfigExtensions.FromBookMement(book.CreateMemento());
                 if (bookSetting is not null)
@@ -556,12 +522,12 @@ namespace NeeView
                 ////DebugTimer.Check("LoadCore");
 
                 NotifyLoading(null);
-                BookChanged?.Invoke(this, new BookChangedEventArgs(book.Path, book, GetBookMementoType(book)));
+                BookChanged?.Invoke(this, new BookChangedEventArgs(book.Path, book, BookMementoTools.GetBookMementoType(book)));
 
                 // ページがなかった時の処理
                 if (book != null && book.Pages.Count <= 0)
                 {
-                    ResetBookMementoPage(book.Path);
+                    BookMementoTools.ResetBookMementoPage(book.Path);
 
                     EmptyMessage?.Invoke(this, new BookHubMessageEventArgs(string.Format(Properties.Resources.Notice_NoPages, book.Path)));
 
@@ -610,26 +576,6 @@ namespace NeeView
             }
         }
 
-        /// <summary>
-        /// BookMementの管理者を取得
-        /// </summary>
-        private static BookMementoType GetBookMementoType(Book book)
-        {
-            if (book is null) return BookMementoType.None;
-
-            if (BookmarkCollection.Current.Contains(book.Path))
-            {
-                return BookMementoType.Bookmark;
-            }
-            else if (BookHistoryCollection.Current.Contains(book.Path))
-            {
-                return BookMementoType.History;
-            }
-            else
-            {
-                return BookMementoType.None;
-            }
-        }
 
         // 再帰読み込み確認
         // TODO: UI操作を行うのはいかがなものか。イベントかMessengerにする必要あり。
@@ -758,7 +704,7 @@ namespace NeeView
             book.Source.DartyBook -= BookSource_DartyBook;
         }
 
-#endregion BookHubCommand.Load
+        #endregion BookHubCommand.Load
 
         #region BookHubCommand.Unload
 
@@ -811,9 +757,6 @@ namespace NeeView
 
             if (book is not null)
             {
-                // 履歴の保存
-                SaveBookMemento(book);
-
                 // 現在の本を開放
                 UnsubscribeBook(book);
                 book.Dispose();
@@ -822,177 +765,6 @@ namespace NeeView
 
         #endregion BookHubCommand.Unload
 
-        #region BookMemento Control
-
-        /// <summary>
-        /// 現在開いているブックの設定作成
-        /// </summary>
-        private static BookMemento? CreateBookMemento(Book book)
-        {
-            return (book != null && book.Pages.Count > 0) ? book.CreateMemento() : null;
-        }
-
-        // ブック設定の作成
-        // 開いているブックならばその設定を取得する
-        public BookMemento CreateBookMemento(string path)
-        {
-            if (path == null) throw new ArgumentNullException(nameof(path));
-
-            var book = _book;
-            var memento = book is not null ? CreateBookMemento(book) : null;
-            if (memento == null || memento.Path != path)
-            {
-                memento = BookSettingPresenter.Current.DefaultSetting.ToBookMemento();
-                memento.Path = path;
-            }
-            return memento;
-        }
-
-        /// <summary>
-        /// 最新の設定を取得
-        /// </summary>
-        /// <param name="path">場所</param>
-        /// <param name="lastest">現在の情報</param>
-        private static BookMemento? CreateLastestBookMemento(string path, BookMemento? lastest)
-        {
-            BookMemento? memento = null;
-
-            if (lastest?.Path == path)
-            {
-                memento = lastest.Clone();
-            }
-            else
-            {
-                var unit = BookMementoCollection.Current.GetValid(path);
-                if (unit != null)
-                {
-                    memento = unit.Memento.Clone();
-                }
-            }
-
-            return memento;
-        }
-
-        /// <summary>
-        /// 適切な設定を作成
-        /// </summary>
-        /// <param name="path">場所</param>
-        /// <param name="lastest">現在の情報</param>
-        /// <param name="option">読み込みオプション</param>
-        public static BookMemento CreateOpenBookMemento(string path, BookMemento? lastest, BookLoadOption option)
-        {
-            var memory = CreateLastestBookMemento(path, lastest);
-            Debug.Assert(memory == null || memory.Path == path);
-
-            if (memory != null && option.HasFlag(BookLoadOption.Resume))
-            {
-                return memory.Clone();
-            }
-            else
-            {
-                var restore = BookSettingConfigExtensions.FromBookMement(memory);
-                return BookSettingPresenter.Current.GetSetting(restore, option.HasFlag(BookLoadOption.DefaultRecursive)).ToBookMemento();
-            }
-        }
-
-        // 設定の保存
-        public void SaveBookMemento()
-        {
-            if (_disposedValue) return;
-
-            var book = _book;
-            if (book is null) return;
-
-            SaveBookMemento(book);
-        }
-
-        //設定の保存
-        private void SaveBookMemento(Book book)
-        {
-            if (_disposedValue) return;
-            if (book is null) return;
-
-            var memento = CreateBookMemento(book);
-            if (memento is null) return;
-
-            bool isKeepHistoryOrder = book.IsKeepHistoryOrder || Config.Current.History.IsForceUpdateHistory;
-            SaveBookMemento(book, memento, isKeepHistoryOrder);
-        }
-
-        private void SaveBookMemento(Book book, BookMemento memento, bool isKeepHistoryOrder)
-        {
-            if (_disposedValue) return;
-            if (memento == null) return;
-
-#warning 別手段を検討
-            // ブックマークの更新
-            //BookmarkCollection.Current.Update(memento, book.Viewer.PageChangeCount > 1);
-
-            // 履歴の保存
-            if (CanHistory(book))
-            {
-                BookHistoryCollection.Current.Add(memento, isKeepHistoryOrder);
-            }
-        }
-
-        /// <summary>
-        /// 記録のページのみクリア
-        /// </summary>
-        private void ResetBookMementoPage(string place)
-        {
-            if (place is null) throw new ArgumentNullException(nameof(place));
-
-            if (_disposedValue) return;
-
-            var unit = BookMementoCollection.Current.GetValid(place);
-            if (unit?.Memento != null)
-            {
-                unit.Memento.Page = "";
-            }
-        }
-
-        /// <summary>
-        /// 最新の本の設定を取得
-        /// </summary>
-        /// <param name="address">場所</param>
-        /// <param name="option"></param>
-        /// <returns></returns>
-        public BookMemento GetLastestBookMemento(string address, BookLoadOption option)
-        {
-            if (address is null) throw new ArgumentNullException(nameof(address));
-
-            var book = _book;
-            if (book is not null && book.Path == address)
-            {
-                return book.CreateMemento();
-            }
-
-            return CreateOpenBookMemento(address, null, option);
-        }
-
-        // 履歴登録可
-        private bool CanHistory(Book book)
-        {
-            if (_disposedValue) return false;
-
-            if (book is null) return false;
-
-            // 履歴閲覧時の履歴更新は最低１操作を必要とする
-            var historyEntryPageCount = Config.Current.History.HistoryEntryPageCount;
-            if (book.IsKeepHistoryOrder && Config.Current.History.IsForceUpdateHistory && historyEntryPageCount <= 0)
-            {
-                historyEntryPageCount = 1;
-            }
-
-            return !_historyRemoved
-                && book.Pages.Count > 0
-#warning 未対応
-                //&& (_historyEntry || book.Viewer.PageChangeCount > historyEntryPageCount || book.Viewer.IsPageTerminated)
-                && (Config.Current.History.IsInnerArchiveHistoryEnabled || book.Source.ArchiveEntryCollection.Archiver?.Parent == null)
-                && (Config.Current.History.IsUncHistoryEnabled || !LoosePath.IsUnc(book.Path));
-        }
-
-        #endregion BookMemento Control
 
         #region IDisposable Support
         private bool _disposedValue = false;
@@ -1016,19 +788,15 @@ namespace NeeView
                     this.BookChanged = null;
                     this.LoadRequested = null;
                     this.Loading = null;
-                    //this.ViewContentsChanged = null;
-                    //this.NextContentsChanged = null;
                     this.EmptyMessage = null;
                     this.EmptyPageMessage = null;
                     this.FolderListSync = null;
                     this.HistoryListSync = null;
-                    this.HistoryChanged = null;
                     this.BookmarkChanged = null;
                     this.AddressChanged = null;
-                    //ResetPropertyChanged();
                     this.PropertyChanged = null;
 
-                    SaveBookMemento();
+                    //SaveBookMemento();
 
                     _book?.Dispose();
 

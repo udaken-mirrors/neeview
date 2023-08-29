@@ -110,7 +110,7 @@ namespace NeeView
                 _disposables.Add(BookHub.Current.SubscribeFolderListSync(
                     (s, e) => AppDispatcher.Invoke(() => SyncWeak(e))));
 
-                _disposables.Add(BookHub.Current.SubscribeHistoryChanged(
+                _disposables.Add(BookHistoryCollection.Current.SubscribeHistoryChanged(
                     (s, e) => RefreshIcon(new QueryPath(e.Key))));
 
                 _disposables.Add(BookHub.Current.SubscribeLoadRequested(

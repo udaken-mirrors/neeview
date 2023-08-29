@@ -22,6 +22,7 @@ namespace NeeView
         private BookShareContext _shareContext;
         private PageFrameBox? _box;
         private BookCommandControl? _pageControl;
+        private BookMementoControl? _bookMementoControl;
         private bool _isLoading;
 
 
@@ -133,6 +134,8 @@ namespace NeeView
 
             _pageControl = new BookCommandControl(_bookContext, _box);
 
+            _bookMementoControl = new BookMementoControl(_book, BookHistoryCollection.Current);
+
             RaisePropertyChanged(nameof(View));
             RaisePropertyChanged(null);
             PagesChanged?.Invoke(this, EventArgs.Empty);
@@ -144,6 +147,9 @@ namespace NeeView
         private void Close()
         {
             if (_box is null) return;
+
+            _bookMementoControl?.Dispose();
+            _bookMementoControl = null;
 
             _pageControl?.Dispose();
             _pageControl = null;

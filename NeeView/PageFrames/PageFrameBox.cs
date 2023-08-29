@@ -154,6 +154,11 @@ namespace NeeView.PageFrames
             _viewBox.RectChanging += ViewBox_RectChanging;
             _viewBox.RectChanged += ViewBox_RectChanged;
 
+
+            var index = _context.Book.CurrentPage?.Index ?? 0;
+            MoveTo(new PagePosition(index, 0), LinkedListDirection.Next);
+            _scrollViewer.FlushScroll();
+
             Loaded += PageFrameBox_Loaded;
         }
 
@@ -206,10 +211,6 @@ namespace NeeView.PageFrames
         private void PageFrameBox_Loaded(object sender, RoutedEventArgs e)
         {
             Loaded -= PageFrameBox_Loaded;
-
-            MoveTo(_context.SelectedRange.Min, LinkedListDirection.Next);
-            _scrollViewer.FlushScroll();
-
             InitializeDpiScaleProvider();
         }
 

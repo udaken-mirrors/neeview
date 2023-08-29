@@ -62,7 +62,7 @@ namespace NeeView
             // 開いていないブックは履歴と設定から計算する
             var lastBookMemento = book?.Path != null ? book.CreateMemento() : null;
             var loadOption = BookLoadOption.Resume | (IsFolderRecoursive(query.GetParent()) ? BookLoadOption.DefaultRecursive : BookLoadOption.None);
-            var setting = BookHub.CreateOpenBookMemento(query.SimplePath, lastBookMemento, loadOption);
+            var setting = BookMementoTools.CreateOpenBookMemento(query.SimplePath, lastBookMemento, loadOption);
             return setting.IsRecursiveFolder;
         }
 

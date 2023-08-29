@@ -272,7 +272,7 @@ namespace NeeView
         public void UpdateIsRecursived(bool isDefaultRecursive)
         {
             var option = isDefaultRecursive ? BookLoadOption.DefaultRecursive : BookLoadOption.None;
-            var memento = BookHub.Current.GetLastestBookMemento(EntityPath.SimplePath, option);
+            var memento = BookMementoTools.GetLatestBookMemento(EntityPath.SimplePath, option);
             this.IsRecursived = memento.IsRecursiveFolder;
         }
 

@@ -2,11 +2,12 @@
 using NeeView.Collections.Generic;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 
 namespace NeeView
 {
-    public partial class Book : IDisposable, IBook
+    public partial class Book : IDisposable, IBook 
     {
         public static Book? Default { get; private set; }
 
@@ -46,10 +47,16 @@ namespace NeeView
         [Subscribable]
         public event EventHandler? PagesChanged;
 
+        [Subscribable]
+        public event EventHandler? CurrentPageChanged;
+
 
         public BookSource Source => _source;
         public BookPageCollection Pages => _source.Pages;
         IReadOnlyList<Page> IBook.Pages => _source.Pages;
+
+        public Page? CurrentPage { get; private set; }
+
         public BookPageSetting Setting => _setting;
         //public BookPageViewer Viewer => _viewer;
         public BookPageMarker Marker => _marker;
@@ -141,12 +148,16 @@ namespace NeeView
             //_controller.Start();
         }
 
-        public Page? CurrentPage { get; private set; }
+
 
         public void SetCurrentPage(Page? page)
         {
-            CurrentPage = page;
-            this.Memento.Page = page?.EntryName ?? "";
+            if (CurrentPage != page)
+            {
+                CurrentPage = page;
+                this.Memento.Page = page?.EntryName ?? "";
+                CurrentPageChanged?.Invoke(this, EventArgs.Empty);
+            }
         }
 
 
