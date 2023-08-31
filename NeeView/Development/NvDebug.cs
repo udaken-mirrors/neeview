@@ -82,5 +82,16 @@ namespace NeeView
             var thread = Thread.CurrentThread;
             Debug.Assert(thread.GetApartmentState() == ApartmentState.MTA);
         }
+
+
+        [Conditional("DEBUG")]
+        public static void WriteInfo(string key, string? message)
+        {
+            DevTextMap.Current.SetText(key, message);
+        }
+
+        [Conditional("DEBUG")]
+        public static void WriteInfo(string key, string format, params object?[] args) =>
+            WriteInfo(key, string.Format(null, format, args));
     }
 }

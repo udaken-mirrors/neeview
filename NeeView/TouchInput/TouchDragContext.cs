@@ -10,6 +10,8 @@ namespace NeeView
     /// </summary>
     public class TouchDragContext
     {
+        private FrameworkElement _sender;
+
         /// <summary>
         /// タッチ点情報
         /// </summary>
@@ -33,9 +35,21 @@ namespace NeeView
         /// <param name="touchDevices"></param>
         public TouchDragContext(FrameworkElement sender, IEnumerable<StylusDevice> touchDevices)
         {
-            _touches = touchDevices.Select(e => e.GetPosition(sender)).ToList();
+            _sender = sender;
+            _touches = touchDevices.Select(e => ToDragCoord(e.GetPosition(sender))).ToList();
             this.Center = new Point(_touches.Average(e => e.X), _touches.Average(e => e.Y));
             this.Radius = _touches.Select(e => (e - this.Center).Length).Max();
+        }
+
+
+        /// <summary>
+        /// 座標を画面中央原点に変換する
+        /// </summary>
+        private Point ToDragCoord(Point point)
+        {
+            var x = point.X - _sender.ActualWidth * 0.5;
+            var y = point.Y - _sender.ActualHeight * 0.5;
+            return new Point(x, y);
         }
 
         /// <summary>

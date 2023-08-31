@@ -172,6 +172,9 @@ namespace NeeView
 
             _presenter.ViewContentChanged +=
                 (s, e) => UpdateViewbox();
+
+            _presenter.ViewSizeChanged +=
+                (s, e) => UpdateViewbox();
         }
 
         private void UpdateViewbox()
@@ -181,9 +184,11 @@ namespace NeeView
             var transformGroup = new TransformGroup();
 
             // 表示エリアの大きさに変換
-            var viewWidth = _presenter.View?.ActualWidth ?? 0.0;
-            var viewHeight = _presenter.View?.ActualHeight ?? 0.0;
+            var viewWidth = _presenter.ViewWidth;
+            var viewHeight = _presenter.ViewHeight;
             transformGroup.Children.Add(new ScaleTransform(viewWidth, viewHeight));
+
+            //NVDebug.WriteInfo("Thumb.AreaSize", $"{viewWidth:f0},{viewHeight:f0}");
 
             // コンテンツ座標系の逆変換
             var mainViewTransform = _presenter.GetSelectedPageFrameContent()?.ViewTransform;
@@ -201,6 +206,8 @@ namespace NeeView
             // キャンバス座標系に変換
             transformGroup.Children.Add(new ScaleTransform(_rate, _rate));
             transformGroup.Children.Add(new TranslateTransform(_canvasSize.Width * 0.5, _canvasSize.Height * 0.5));
+
+            //NVDebug.WriteInfo("Thumb.CanvasScale", $"rate={_rate:f2}, size={_canvasSize:f0}");
 
             _viewboxGeometry.Transform = transformGroup;
 

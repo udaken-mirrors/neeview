@@ -23,6 +23,7 @@ namespace NeeView
         /// </summary>
         private TouchContext? _touch;
 
+        private HoverTransformControl? _hoverTransformControl;
 
         /// <summary>
         /// コンストラクター
@@ -30,6 +31,10 @@ namespace NeeView
         /// <param name="context"></param>
         public TouchInputNormal(TouchInputContext context, TouchInputGesture gesture) : base(context)
         {
+            if (_context.DragTransformContextFactory is not null)
+            {
+                _hoverTransformControl = new HoverTransformControl(_context.DragTransformContextFactory);
+            }
         }
 
         /// <summary>
@@ -118,22 +123,32 @@ namespace NeeView
 
         public override void OnStylusInAirMove(object sender, StylusEventArgs e)
         {
-            if (Config.Current.Mouse.IsHoverScroll)
-            {
-                HoverScroll(sender, e);
-            }
+            HoverScrollIfEnabled(sender, e);
+        }
+
+        public override void OnUpdateSelectedFrame()
+        {
+            _hoverTransformControl?.UpdateSelected();
         }
 
         /// <summary>
         /// ホバースクロール
         /// </summary>
-        private void HoverScroll(object sender, StylusEventArgs e)
+        private void HoverScrollIfEnabled(object? sender, StylusEventArgs e)
         {
-            if (_context.DragTransformControl is null) return;
+            if (_hoverTransformControl is null) return;
 
-#warning not support yet. TouchInput の HoverScroll って？？
-            //var point = e.GetPosition(_context.Sender);
-            //_context.DragTransformControl.HoverScroll(point);
+            _hoverTransformControl.IsEnabled = Config.Current.Mouse.IsHoverScroll;
+            if (_hoverTransformControl.IsEnabled)
+            {
+                var pos = ToDragCoord(e.GetPosition(_context.Sender));
+                var timestamp = e.Timestamp;
+
+                //var p2 = e.GetPosition(MainWindow.Current);
+                //NVDebug.WriteInfo("Air", $"{p2:f0}");
+
+                _hoverTransformControl.HoverScroll(pos, timestamp);
+            }
         }
 
         //

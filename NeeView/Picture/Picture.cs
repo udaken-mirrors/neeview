@@ -165,7 +165,7 @@ namespace NeeView
                 return false;
             }
 
-            Debug.WriteLine($"## PDF: {_sizeSource.Size:f2}");
+           // Debug.WriteLine($"## PDF: {_sizeSource.Size:f2}");
 
 #if false
             Debug.WriteLine($"Resize: {this.PictureSource.ArchiveEntry.EntryLastName}");

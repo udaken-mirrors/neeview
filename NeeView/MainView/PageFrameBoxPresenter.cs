@@ -61,6 +61,9 @@ namespace NeeView
         [Subscribable]
         public event TransformChangedEventHandler? TransformChanged;
 
+        [Subscribable]
+        public event SizeChangedEventHandler? ViewSizeChanged;
+
 
         public bool IsEnabled => _box != null;
 
@@ -88,6 +91,8 @@ namespace NeeView
 
 
         public PageFrameBox? View => _box;
+        public double ViewWidth => _box?.ActualWidth ?? 0.0;
+        public double ViewHeight => _box?.ActualHeight ?? 0.0;
 
         public BookCommandControl? PageControl => _pageControl;
 
@@ -131,6 +136,7 @@ namespace NeeView
             _box.TransformChanged += Box_TransformChanged;
             _box.SelectedContainerLayoutChanged += Box_SelectedContainerLayoutChanged;
             _box.SelectedContentSizeChanged += Box_SelectedContentSizeChanged;
+            _box.SizeChanged += Box_SizeChanged;
 
             _pageControl = new BookCommandControl(_bookContext, _box);
 
@@ -141,7 +147,6 @@ namespace NeeView
             PagesChanged?.Invoke(this, EventArgs.Empty);
             SelectedRangeChanged?.Invoke(this, EventArgs.Empty);
         }
-
 
 
         private void Close()
@@ -162,6 +167,7 @@ namespace NeeView
                 _box.TransformChanged -= Box_TransformChanged;
                 _box.SelectedContainerLayoutChanged -= Box_SelectedContainerLayoutChanged;
                 _box.SelectedContentSizeChanged -= Box_SelectedContentSizeChanged;
+                _box.SizeChanged -= Box_SizeChanged;
                 _box = null;
             }
             RaisePropertyChanged(nameof(View));
@@ -212,6 +218,13 @@ namespace NeeView
         {
             SelectedContentSizeChanged?.Invoke(this, e);
         }
+
+
+        private void Box_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            ViewSizeChanged?.Invoke(this, e);
+        }
+
 
 
         private void BookContext_PropertyChanged(object? sender, PropertyChangedEventArgs e)
@@ -306,6 +319,12 @@ namespace NeeView
         {
             return _box?.CreateDragTransformContext(isPointContainer, isLoupeTransform);
         }
+
+        public DragTransformContext? CreateDragTransformContext(PageFrameContainer container, bool isLoupeTransform)
+        {
+            return _box?.CreateDragTransformContext(container, isLoupeTransform);
+        }
+
 
 
         public void MoveTo(PagePosition position, LinkedListDirection direction)

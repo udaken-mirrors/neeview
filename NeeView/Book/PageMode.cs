@@ -34,5 +34,10 @@ namespace NeeView
             if (mode > PageMode.Panorama) return PageMode.Panorama;
             return mode;
         }
+
+        public static bool IsStaticFrame(this PageMode mode)
+        {
+            return mode != PageMode.Panorama;
+        }
     }
 }

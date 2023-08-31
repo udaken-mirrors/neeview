@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Windows;
 using System.Windows.Input;
 using NeeView.ComponentModel;
@@ -12,21 +11,24 @@ namespace NeeView
     /// </summary>
     public class DragTransformContext 
     {
-        private int _speedLatestTimestamp;
-        private Point _speedLatestPoint;
+        private Speedometer _speedometer = new();
+        private ICanvasToViewTranslator _canvasToViewTranslator;
 
-        public DragTransformContext(FrameworkElement sender, ITransformControl transform, Rect contentRect, Rect viewRect, ViewConfig viewConfig)
+
+        public DragTransformContext(FrameworkElement sender, ITransformControl transform, PageFrameContainer container, ICanvasToViewTranslator canvasToViewTranslator, ViewConfig viewConfig)
         {
             Sender = sender;
-            ViewRect = viewRect;
+            Container = container;
+            _canvasToViewTranslator = canvasToViewTranslator;
+            ViewRect = CreateViewRect();
+            ContentRect = CreateContentRect(Container);
             ViewConfig = viewConfig;
-            ContentRect = contentRect;
             Transform = transform;
         }
 
         public ViewConfig ViewConfig { get; }
 
-        public ITransformControl Transform { get; set; }
+        public ITransformControl Transform { get; }
 
         public FrameworkElement Sender { get; }
 
@@ -39,10 +41,11 @@ namespace NeeView
         public int FirstTimeStamp { get; set; }
         public int OldTimeStamp { get; set; }
         public int LastTimeStamp { get; set; }
+        
+        public PageFrameContainer Container { get; }
 
-        public Rect ViewRect { get; set; }
-        public Rect ContentRect { get; set; }
-
+        public Rect ViewRect { get; private set; }
+        public Rect ContentRect { get; private set; }
         public Point ContentCenter => ContentRect.Center();
 
         public Point BasePoint { get; set; }
@@ -55,7 +58,7 @@ namespace NeeView
         public Point ScaleCenter { get; set; }
         public Point FlipCenter { get; set; }
 
-        public Vector Speed { get; set; } // dot/ms
+        public Vector Speed => _speedometer.Speed;
 
 
 
@@ -77,9 +80,7 @@ namespace NeeView
             BaseFlipHorizontal = Transform.IsFlipHorizontal;
             BaseFlipVertical = Transform.IsFlipVertical;
 
-            Speed = default;
-            _speedLatestPoint = Last;
-            _speedLatestTimestamp = LastTimeStamp;
+            _speedometer.Initialize(Last, LastTimeStamp);
 
             RotateCenter = GetCenterPosition(ViewConfig.RotateCenter);
             ScaleCenter = GetCenterPosition(ViewConfig.ScaleCenter);
@@ -91,7 +92,7 @@ namespace NeeView
         {
             return dragControlCenter switch
             {
-                DragControlCenter.View => ViewRect.Center(),
+                DragControlCenter.View => ViewRect.Center(), // NOTE: 常に(0,0)
                 DragControlCenter.Target => ContentRect.Center(),
                 DragControlCenter.Cursor => First,
                 _ => throw new NotImplementedException(),
@@ -110,20 +111,29 @@ namespace NeeView
 
         public void UpdateSpeed(Point point, int timestamp)
         {
-            var time = timestamp - _speedLatestTimestamp;
-            if (time <= 0) return;
+            _speedometer.Update(point, timestamp);
+        }
 
-            var delta = point - _speedLatestPoint;
-            var speed = delta / time;
-            Speed = (Speed + speed * time) / (1 + time);
-            _speedLatestPoint = point;
-            _speedLatestTimestamp = timestamp;
 
-            Debug.Assert(!double.IsNaN(Speed.X));
-            Debug.Assert(!double.IsNaN(Speed.Y));
+        public void UpdateRect()
+        {
+            ViewRect = CreateViewRect();
+            ContentRect = CreateContentRect(Container);
+        }
+
+        private Rect CreateViewRect()
+        {
+            var viewRect = new Size(Sender.ActualWidth, Sender.ActualHeight).ToRect();
+            return viewRect;
+        }
+
+        private Rect CreateContentRect(PageFrameContainer container)
+        {
+            var rect = container.GetContentRect();
+            var p0 = _canvasToViewTranslator.TranslateCanvasToViewPoint(container.TranslateContentToCanvasPoint(rect.TopLeft));
+            var p1 = _canvasToViewTranslator.TranslateCanvasToViewPoint(container.TranslateContentToCanvasPoint(rect.BottomRight));
+            var contentRect = new Rect(p0, p1);
+            return contentRect;
         }
     }
-
-
-
 }

@@ -48,7 +48,7 @@ namespace NeeView
 
             LoupeContext = new LoupeContext(Config.Current.Loupe);
 
-            TouchInput = new TouchInput(new TouchInputContext(_mainView.View, _mainView.View, mouseGestureCommandCollection, null, DragTransformControl));
+            TouchInput = new TouchInput(new TouchInputContext(_mainView.View, mouseGestureCommandCollection, PageFrameBoxPresenter, DragTransformControl, LoupeContext));
             MouseInput = new MouseInput(new MouseInputContext(_mainView.View, mouseGestureCommandCollection, PageFrameBoxPresenter, DragTransformControl, LoupeContext));
 
             //var scrollPageController = new ScrollPageController(this, BookSettingPresenter.Current, BookOperation.Current);
@@ -76,16 +76,19 @@ namespace NeeView
         private void PageFrameBoxPresenter_SelectedContentSizeChanged(object? sender, EventArgs e)
         {
             MouseInput.UpdateSelectedFrame();
+            TouchInput.UpdateSelectedFrame();
         }
 
         private void PageFrameBoxPresenter_SelectedContainerLayoutChanged(object? sender, EventArgs e)
         {
             MouseInput.UpdateSelectedFrame();
+            TouchInput.UpdateSelectedFrame();
         }
 
         private void PageFrameBoxPresenter_SelectedRangeChanged(object? sender, EventArgs e)
         {
             MouseInput.UpdateSelectedFrame();
+            TouchInput.UpdateSelectedFrame();
         }
 
 

@@ -44,6 +44,7 @@ namespace NeeView
 
             public override void Execute()
             {
+                Context.UpdateRect();
                 HoverScroll(Context.Last, TimeSpan.FromSeconds(_mouseConfig.HoverScrollDuration));
             }
 

@@ -43,7 +43,7 @@ namespace NeeView
             _context = context;
             _sender = _context.Sender;
 
-            if (_context.DragTransform != null)
+            if (_context.DragTransformContextFactory != null)
             {
                 this.Drag = new TouchInputDrag(_context);
                 this.Drag.StateChanged += StateChanged;
@@ -54,7 +54,7 @@ namespace NeeView
             this.Gesture.GestureChanged += (s, e) => _context.GestureCommandCollection?.Execute(e.Sequence);
             this.Gesture.GestureProgressed += (s, e) => _context.GestureCommandCollection?.ShowProgressed(e.Sequence);
 
-            if (_context.DragTransform != null)
+            if (_context.DragTransformControl != null)
             {
                 this.MouseDrag = new TouchInputMouseDrag(_context);
                 this.MouseDrag.StateChanged += StateChanged;
@@ -64,14 +64,11 @@ namespace NeeView
             this.Normal.StateChanged += StateChanged;
             this.Normal.TouchGestureChanged += (s, e) => TouchGestureChanged?.Invoke(_sender, e);
 
-#warning not implement Loupe
-#if false
-            if (_context.LoupeTransform is not null)
+            if (_context.DragTransformContextFactory != null)
             {
                 this.Loupe = new TouchInputLoupe(_context);
                 this.Loupe.StateChanged += StateChanged;
             }
-#endif
 
             this.Emulator = new TouchInputEmulator(_context);
             this.Emulator.TouchGestureChanged += (s, e) => TouchGestureChanged?.Invoke(_sender, e);
@@ -99,8 +96,9 @@ namespace NeeView
             ClearTouchEventHandler();
 
             // ルーペモード監視
-            //_context.LoupeTransform?.AddPropertyChanged(nameof(LoupeTransform.IsEnabled), LoupeTransform_IsEnabledChanged);
+            _context.Loupe?.SubscribePropertyChanged(nameof(LoupeContext.IsEnabled), LoupeContext_IsEnabledChanged);
         }
+
 
 
         public event EventHandler<TouchGestureEventArgs>? TouchGestureChanged;
@@ -137,14 +135,12 @@ namespace NeeView
         public TouchInputEmulator Emulator { get; private set; }
 
 
-        private void LoupeTransform_IsEnabledChanged(object? sender, PropertyChangedEventArgs e)
+        private void LoupeContext_IsEnabledChanged(object? sender, PropertyChangedEventArgs e)
         {
-#if false
-            if (_context.LoupeTransform is null || (_state == TouchInputState.Loupe && !_context.LoupeTransform.IsEnabled))
+            if (_state == TouchInputState.Loupe && (_context.Loupe is null || !_context.Loupe.IsEnabled))
             {
                 SetState(TouchInputState.Normal, null);
             }
-#endif
         }
 
         public bool IsCaptured()
@@ -272,6 +268,11 @@ namespace NeeView
         {
             if (sender != _sender) return;
             _current?.OnKeyDown(_sender, e);
+        }
+
+        public void UpdateSelectedFrame()
+        {
+            _current?.OnUpdateSelectedFrame();
         }
 
     }

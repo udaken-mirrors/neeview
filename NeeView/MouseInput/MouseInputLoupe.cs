@@ -19,6 +19,7 @@ namespace NeeView
         private bool _isLongDownMode;
         private bool _isButtonDown;
         private DragActionProxy _action = new DragActionProxy();
+        private LoupeDragTransformContext? _transformContext;
 
         // TODO: LoupeDragAction 操作でなくてもここで LoupeDragTransformControl 直接操作でいけそう？
 
@@ -30,7 +31,6 @@ namespace NeeView
         }
 
 
-        private LoupeDragTransformContext? _transformContext;
 
         /// <summary>
         /// 状態開始処理

@@ -16,6 +16,11 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Globalization;
 using System.Diagnostics;
+using System.Collections.ObjectModel;
+using System.Collections;
+using System.ComponentModel;
+using NeeLaboratory.Generators;
+using NeeView.Windows.Property;
 
 namespace NeeView
 {
@@ -52,8 +57,22 @@ namespace NeeView
         }
     }
 
+
+    public static class ListExtensions
+    {
+        public static void SetSize<T>(this List<T> self, int size)
+        {
+            if (self.Count <= size) return;
+            self.RemoveRange(size, self.Count - size);
+        }
+    }
+
+
     public class DevInfoViewModel : BindableBase
     {
+
+
+
         public DevInfoViewModel()
         {
             JobEngine.Current.PropertyChanged += (s, e) =>
@@ -134,6 +153,8 @@ namespace NeeView
         }
 
 
+        public ObservableCollection<DevTextElement> TextList => DevTextMap.Current.Items;
+
 
         // 開発用：
         ////public Development Development { get; private set; } = new Development();
@@ -174,4 +195,118 @@ namespace NeeView
             throw new NotImplementedException();
         }
     }
+
+
+
+    [NotifyPropertyChanged]
+    public partial class DevTextElement : INotifyPropertyChanged, IComparable<DevTextElement>
+    {
+        private string _key;
+        private string? _text;
+
+        public DevTextElement(string key, string? text)
+        {
+            _key = key;
+            _text = text;
+        }
+
+        public event PropertyChangedEventHandler? PropertyChanged;
+
+        public string Key
+        {
+            get { return _key; }
+            set { SetProperty(ref _key, value); }
+        }
+
+        public string? Text
+        {
+            get { return _text; }
+            set { SetProperty(ref _text, value); }
+        }
+
+        public int CompareTo(DevTextElement? other)
+        {
+            return this.Key.CompareTo(other?.Key);
+        }
+
+        public override string ToString()
+        {
+            return $"{Key}: {Text}";
+        }
+    }
+
+
+    public class DevTextMap
+    {
+        public static DevTextMap Current { get; } = new DevTextMap();
+
+        private Dictionary<string, DevTextElement> _map = new();
+        private ObservableSortedCollection<DevTextElement> _items = new();
+
+
+        public ObservableSortedCollection<DevTextElement> Items => _items;
+
+
+        public void SetText(string key, string? text)
+        {
+            if (_map.TryGetValue(key, out var value))
+            {
+                value.Text = text;
+            }
+            else
+            {
+                var item = new DevTextElement(key, text);
+                _map.Add(key, item);
+                _items.Add(item);
+            }
+        }
+    }
+
+    // https://qiita.com/tanitanin/items/65082f0a395659028323
+    public class ObservableSortedCollection<T> : ObservableCollection<T> where T : IComparable<T>
+    {
+        public ObservableSortedCollection() : base() { }
+
+        public ObservableSortedCollection(IEnumerable<T> collection) : base()
+        {
+            foreach (var item in collection)
+            {
+                this.Add(item);
+            }
+        }
+
+        public int FirstIndexOf(T item)
+        {
+            var e = this.FirstOrDefault(x => x.CompareTo(item) >= 0);
+            return e is not null ? this.IndexOf(e) : -1;
+        }
+
+        public int LastIndexOf(T item)
+        {
+            var e = this.LastOrDefault(x => x.CompareTo(item) <= 0);
+            return e is not null ? this.IndexOf(e) : -1;
+        }
+
+        protected override void InsertItem(int _, T item)
+        {
+            var index = LastIndexOf(item) + 1;
+            base.InsertItem(index, item);
+        }
+
+        protected override void MoveItem(int oldIndex, int _)
+        {
+            var firstIndex = this.FirstIndexOf(this[oldIndex]);
+            if (oldIndex < firstIndex)
+            {
+                base.MoveItem(oldIndex, firstIndex);
+            }
+
+            var lastIndex = this.LastIndexOf(this[oldIndex]);
+            if (lastIndex < oldIndex)
+            {
+                base.MoveItem(oldIndex, lastIndex + 1);
+            }
+        }
+    }
+
 }

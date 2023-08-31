@@ -32,26 +32,22 @@ namespace NeeView
             else
             {
                 return CreateNormal(container);
-
             }
         }
 
         private DragTransformContext CreateNormal(PageFrameContainer container)
         {
             var transformControl = _transformControlFactory.Create(container);
-            var viewRect = CreateViewRect();
-            var contentRect = CreateContentRect(container);
-            return new DragTransformContext(_box, transformControl, contentRect, viewRect, _viewConfig);
+            return new DragTransformContext(_box, transformControl, container, _box, _viewConfig);
         }
 
         private DragTransformContext CreateLoupe(PageFrameContainer container)
         {
             var transformControl = _transformControlFactory.CreateLoupe(container);
-            var viewRect = CreateViewRect();
-            var contentRect = CreateContentRect(container);
-            return new LoupeDragTransformContext(_box, transformControl, contentRect, viewRect, _viewConfig, _loupeConfig);
+            return new LoupeDragTransformContext(_box, transformControl, container, _box, _viewConfig, _loupeConfig);
         }
 
+#if false
         private Rect CreateViewRect()
         {
             var viewRect = new Size(_box.ActualWidth, _box.ActualHeight).ToRect();
@@ -66,6 +62,6 @@ namespace NeeView
             var contentRect = new Rect(p0, p1);
             return contentRect;
         }
-
+#endif
     }
 }

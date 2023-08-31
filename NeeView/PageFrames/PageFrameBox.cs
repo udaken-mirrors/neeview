@@ -28,7 +28,7 @@ namespace NeeView.PageFrames
     // TODO: IsStaticFrame ON/OFF でのスクロール制御の違いが煩雑になっているので良くする
     // TODO: ContentControl になってるけどいいの？
     [NotifyPropertyChanged]
-    public partial class PageFrameBox : Grid, INotifyPropertyChanged, IPageFrameBox, IDisposable
+    public partial class PageFrameBox : Grid, INotifyPropertyChanged, IPageFrameBox, IDisposable, ICanvasToViewTranslator
     {
         private PageFrameContainerCollection _containers;
         private PageFrameScrollViewer _scrollViewer;
@@ -191,12 +191,24 @@ namespace NeeView.PageFrames
             var pos = GetViewPosition();
             var node = isPointContainer ? GetPointedContainer(pos) : _selected.Node;
             if (node is null) return null;
+            return CreateDragTransformContext(node, isLoupeTransform);
+        }
 
+        public DragTransformContext? CreateDragTransformContext(PageFrameContainer container, bool isLoupeTransform)
+        {
+            var node = _containers.Find(container);
+            if (node is null) return null;
+            return CreateDragTransformContext(node, isLoupeTransform);
+        }
+
+        private DragTransformContext? CreateDragTransformContext(LinkedListNode<PageFrameContainer> node, bool isLoupeTransform)
+        {
             var dragContext = _dragTransformContextFactory.Create(node.Value, isLoupeTransform);
             dragContext.Initialize(GetViewPosition(), System.Environment.TickCount);
             SetControlContainer(node); // TODO: ここで指定していいの？
             return dragContext;
         }
+
 
         private Point GetViewPosition()
         {
@@ -1062,5 +1074,14 @@ namespace NeeView.PageFrames
             return _background;
         }
 
+    }
+
+    public interface ICanvasToViewTranslator
+    {
+        // TODO: 汎用化
+        //Point TranslatePoint(Point point, UIElement relativeTo);
+
+        Point TranslateCanvasToViewPoint(Point point);
+        Point TranslateViewToCanvas(Point point);
     }
 }

@@ -57,7 +57,7 @@ namespace NeeView
         public virtual void OnStylusSystemGesture(object sender, StylusSystemGestureEventArgs e) { }
         public virtual void OnMouseWheel(object sender, MouseWheelEventArgs e) { }
         public virtual void OnKeyDown(object sender, KeyEventArgs e) { }
-
+        public virtual void OnUpdateSelectedFrame() { }
 
         /// <summary>
         /// 状態遷移：既定状態に移動
@@ -150,6 +150,17 @@ namespace NeeView
             // TouchLeft / Right
             var gesture = TouchGestureExtensions.GetTouchGestureLast(xRate, yRate);
             TouchGestureChanged?.Invoke(this, new TouchGestureEventArgs(gesture));
+        }
+
+
+        /// <summary>
+        /// 座標を画面中央原点に変換する
+        /// </summary>
+        protected Point ToDragCoord(Point point)
+        {
+            var x = point.X - _context.Sender.ActualWidth * 0.5;
+            var y = point.Y - _context.Sender.ActualHeight * 0.5;
+            return new Point(x, y);
         }
     }
 }

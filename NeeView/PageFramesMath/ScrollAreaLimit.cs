@@ -6,68 +6,90 @@ namespace NeeView.Maths
 {
     /// <summary>
     /// from NeeView.DragTransformControl
-    /// スクロールエリア制限
+    /// スクロールエリア制限。
+    /// 表示範囲内に収まる方向の座標計算を提供する。
     /// TODO: DragArea に統合可能？
     /// </summary>
     public class ScrollAreaLimit
     {
+        /// <summary>
+        /// コンテンツ領域
+        /// </summary>
         private readonly Rect _contentRect;
+
+        /// <summary>
+        /// 表示領域
+        /// </summary>
         private readonly Rect _viewRect;
 
+        /// <summary>
+        /// スクロールエリア制限計算
+        /// </summary>
+        /// <param name="contentRect">コンテンツ領域</param>
+        /// <param name="viewRect">表示領域</param>
         public ScrollAreaLimit(Rect contentRect, Rect viewRect)
         {
             _contentRect = contentRect;
             _viewRect = viewRect;
         }
 
-        // 移動量限界計算
+        /// <summary>
+        /// 表示領域の移動量限界計算
+        /// </summary>
+        /// <param name="delta">表示領域の希望移動量</param>
+        /// <returns>制限された移動量</returns>
         public Vector GetLimitViewMove(Vector delta)
         {
-            var margineX = _contentRect.Width < _viewRect.Width ? _viewRect.Width - _contentRect.Width : 0;
-            var margineY = _contentRect.Height < _viewRect.Height ? _viewRect.Height - _contentRect.Height : 0;
+            var marginX = _contentRect.Width < _viewRect.Width ? _viewRect.Width - _contentRect.Width : 0;
+            var marginY = _contentRect.Height < _viewRect.Height ? _viewRect.Height - _contentRect.Height : 0;
 
-            if (delta.X < 0 && _viewRect.Left + delta.X < _contentRect.Left - margineX)
+            if (delta.X < 0 && _viewRect.Left + delta.X < _contentRect.Left - marginX)
             {
-                delta.X = Math.Min(_contentRect.Left - margineX - _viewRect.Left, 0.0);
+                delta.X = Math.Min(_contentRect.Left - marginX - _viewRect.Left, 0.0);
             }
-            else if (delta.X > 0 && _viewRect.Right + delta.X > _contentRect.Right + margineX)
+            else if (delta.X > 0 && _viewRect.Right + delta.X > _contentRect.Right + marginX)
             {
-                delta.X = Math.Max(_contentRect.Right + margineX - _viewRect.Right, 0.0);
+                delta.X = Math.Max(_contentRect.Right + marginX - _viewRect.Right, 0.0);
             }
 
-            if (delta.Y < 0 && _viewRect.Top + delta.Y < _contentRect.Top - margineY)
+            if (delta.Y < 0 && _viewRect.Top + delta.Y < _contentRect.Top - marginY)
             {
-                delta.Y = Math.Min(_contentRect.Top - margineY - _viewRect.Top, 0.0);
+                delta.Y = Math.Min(_contentRect.Top - marginY - _viewRect.Top, 0.0);
             }
-            else if (delta.Y > 0 && _viewRect.Bottom + delta.Y > _contentRect.Bottom + margineY)
+            else if (delta.Y > 0 && _viewRect.Bottom + delta.Y > _contentRect.Bottom + marginY)
             {
-                delta.Y = Math.Max(_contentRect.Bottom + margineY - _viewRect.Bottom, 0.0);
+                delta.Y = Math.Max(_contentRect.Bottom + marginY - _viewRect.Bottom, 0.0);
             }
 
             return delta;
         }
 
+        /// <summary>
+        /// コンテンツ領域の移動量限界計算
+        /// </summary>
+        /// <param name="delta">コンテンツ領域の希望移動量</param>
+        /// <returns>制限された移動量</returns>
         public Vector GetLimitContentMove(Vector delta)
         {
-            var margineX = _contentRect.Width < _viewRect.Width ? _viewRect.Width - _contentRect.Width : 0;
-            var margineY = _contentRect.Height < _viewRect.Height ? _viewRect.Height - _contentRect.Height : 0;
+            var marginX = _contentRect.Width < _viewRect.Width ? _viewRect.Width - _contentRect.Width : 0;
+            var marginY = _contentRect.Height < _viewRect.Height ? _viewRect.Height - _contentRect.Height : 0;
 
-            if (delta.X < 0 && _contentRect.Right + delta.X < _viewRect.Right - margineX)
+            if (delta.X < 0 && _contentRect.Right + delta.X < _viewRect.Right - marginX)
             {
-                delta.X = Math.Min(_viewRect.Right - margineX - _contentRect.Right, 0.0);
+                delta.X = Math.Min(_viewRect.Right - marginX - _contentRect.Right, 0.0);
             }
-            else if (delta.X > 0 && _contentRect.Left + delta.X > _viewRect.Left + margineX)
+            else if (delta.X > 0 && _contentRect.Left + delta.X > _viewRect.Left + marginX)
             {
-                delta.X = Math.Max(_viewRect.Left + margineX - _contentRect.Left, 0.0);
+                delta.X = Math.Max(_viewRect.Left + marginX - _contentRect.Left, 0.0);
             }
 
-            if (delta.Y < 0 && _contentRect.Bottom + delta.Y < _viewRect.Bottom - margineY)
+            if (delta.Y < 0 && _contentRect.Bottom + delta.Y < _viewRect.Bottom - marginY)
             {
-                delta.Y = Math.Min(_viewRect.Bottom - margineY - _contentRect.Bottom, 0.0);
+                delta.Y = Math.Min(_viewRect.Bottom - marginY - _contentRect.Bottom, 0.0);
             }
-            else if (delta.Y > 0 && _contentRect.Top + delta.Y > _viewRect.Top + margineY)
+            else if (delta.Y > 0 && _contentRect.Top + delta.Y > _viewRect.Top + marginY)
             {
-                delta.Y = Math.Max(_viewRect.Top + margineY - _contentRect.Top, 0.0);
+                delta.Y = Math.Max(_viewRect.Top + marginY - _contentRect.Top, 0.0);
             }
 
             return delta;
@@ -85,7 +107,7 @@ namespace NeeView.Maths
 
             var pos = _contentRect.Center();
 
-            // ウィンドウサイズ変更直後はrectのスクリーン座標がおかしい可能性があるのでPositionから計算しなおす
+            // ウィンドウサイズ変更直後は rect のスクリーン座標がおかしい可能性があるのでPositionから計算しなおす
             var rect = new Rect()
             {
                 X = pos.X - _contentRect.Width * 0.5 + _viewRect.Width * 0.5,

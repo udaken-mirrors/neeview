@@ -10,8 +10,8 @@ namespace NeeView
         private LoupeConfig _loupeConfig;
         private LoupeContext? _loupeContext;
 
-        public LoupeDragTransformContext(FrameworkElement sender, ITransformControl transform, Rect contentRect, Rect viewRect, ViewConfig viewConfig, LoupeConfig loupeConfig)
-            : base(sender, transform, contentRect, viewRect, viewConfig)
+        public LoupeDragTransformContext(FrameworkElement sender, ITransformControl transform, PageFrameContainer container, ICanvasToViewTranslator canvasToViewTranslator, ViewConfig viewConfig, LoupeConfig loupeConfig)
+            : base(sender, transform, container, canvasToViewTranslator, viewConfig)
         {
             _loupeConfig = loupeConfig;
         }

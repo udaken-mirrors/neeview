@@ -34,6 +34,7 @@ namespace NeeView
         /// <param name="parameter"></param>
         public override void OnOpened(FrameworkElement sender, object? parameter)
         {
+            _manipulation.Initialize();
             _manipulation.Start();
         }
 
@@ -44,7 +45,7 @@ namespace NeeView
         /// <param name="sender"></param>
         public override void OnClosed(FrameworkElement sender)
         {
-            _manipulation.Stop();
+            _manipulation.Stop(System.Environment.TickCount);
         }
 
 
@@ -84,7 +85,7 @@ namespace NeeView
         /// <param name="e"></param>
         public override void OnStylusMove(object? sender, StylusEventArgs e)
         {
-            _manipulation.Update();
+            _manipulation.Update(sender, e);
         }
 
     }

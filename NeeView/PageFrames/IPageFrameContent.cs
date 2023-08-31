@@ -10,7 +10,6 @@ namespace NeeView.PageFrames
     {
         public event EventHandler? ViewContentChanged;
         public event EventHandler? ContentSizeChanged;
-
         FrameworkElement? Content { get; }
         IPageFrameTransform Transform { get; }
 

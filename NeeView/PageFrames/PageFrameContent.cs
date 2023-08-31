@@ -181,19 +181,14 @@ namespace NeeView.PageFrames
             }
             UpdateTransform();
             UpdateElementLayout();
+
+            // TODO: ViewContentChanged イベントでいいの？
+            ViewContentChanged?.Invoke(this, EventArgs.Empty);
         }
 
         private PageFrameElementScale CreateElementScale()
         {
             return PageFrameElementScaleFactory.Create(_pageFrame, _transform, _loupeContext, _staticFrame.DpiScale);
-#if false
-            //return new PageFrameElementScale(_pageFrame.Scale, GetRenderScale(), _transform.Angle, _staticFrame.DpiScale);
-            return new PageFrameElementScale(
-                layoutScale: _pageFrame.Scale,
-                renderScale: _transform.Scale * _loupeContext.Scale,
-                renderAngle: _transform.Angle,
-                dpiScale: _staticFrame.DpiScale);
-#endif
         }
 
 
@@ -252,6 +247,7 @@ namespace NeeView.PageFrames
 
             UpdateTransform();
             UpdateElementLayout();
+
         }
 
         private void ViewContent_Changed(object? sender, EventArgs e)

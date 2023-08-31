@@ -20,7 +20,7 @@ namespace NeeView
         private IDragTransformContextFactory _transformContextFactory;
 
 
-
+        
         public DragTransformControl(IDragTransformContextFactory transformContextFactory, DragActionTable dragActionTable, ViewConfig viewConfig)
         {
             _dragActionTable = dragActionTable;

@@ -8,41 +8,51 @@ namespace NeeView
     /// </summary>
     public class TouchDragTransform
     {
-        public Vector Trans { get; set; }
-        public double Angle { get; set; }
-        public double Scale { get; set; }
+        public TouchDragTransform()
+        {
+        }
+
+        public TouchDragTransform(Vector trans, double angle, double scale) : this(trans, angle, scale, default)
+        {
+        }
+
+        public TouchDragTransform(Vector trans, double angle, double scale, Vector center)
+        {
+            Trans = trans;
+            Angle = angle;
+            Scale = scale;
+            Center = center;
+        }
+
+
+        public Vector Trans { get; init; }
+        public double Angle { get; init; }
+        public double Scale { get; init; }
 
         // 回転、拡大縮小の中心
-        public bool IsValidCenter { get; set; }
-        public Vector Center { get; set; }
+        public Vector Center { get; init; }
 
-        //
+
         public TouchDragTransform Clone()
         {
             return (TouchDragTransform)this.MemberwiseClone();
         }
 
-        internal void Add(TouchDragTransform m)
+#if false
+        public TouchDragTransform Add(TouchDragTransform m)
         {
-            this.Trans += m.Trans;
-            this.Angle += m.Angle;
-            this.Scale += m.Scale;
+            return new TouchDragTransform(this.Trans + m.Trans, this.Angle + m.Angle, this.Scale + m.Scale, (this.Center + m.Center) * 0.5);
         }
 
-        internal void Sub(TouchDragTransform m)
+        public TouchDragTransform Sub(TouchDragTransform m)
         {
-            this.Trans -= m.Trans;
-            this.Angle -= m.Angle;
-            this.Scale -= m.Scale;
+            return new TouchDragTransform(this.Trans - m.Trans, this.Angle - m.Angle, this.Scale - m.Scale, (this.Center + m.Center) * 0.5);
         }
 
         internal void Multiply(double v)
         {
-            this.Trans *= v;
-            this.Angle *= v;
-            this.Scale *= v;
+            return new TouchDragTransform(this.Trans - m.Trans, this.Angle - m.Angle, this.Scale - m.Scale, (this.Center + m.Center) * 0.5);
         }
-
 
         public static TouchDragTransform Sub(TouchDragTransform m0, TouchDragTransform m1)
         {
@@ -62,6 +72,6 @@ namespace NeeView
                 Scale = m0.Scale + (m1.Scale - m0.Scale) * t,
             };
         }
-
+#endif
     }
 }

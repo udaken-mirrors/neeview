@@ -406,6 +406,9 @@ namespace NeeView
                     MouseMoved?.Invoke(this, e);
                     _lastActionPoint = nowPoint;
                 }
+
+                // ##
+                //DevTextMap.Current.SetText("Mouse", $"{nowPoint}");
             }
         }
 
