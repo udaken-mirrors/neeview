@@ -50,7 +50,7 @@ namespace NeeView
         public event EventHandler? SelectedRangeChanged;
 
         [Subscribable]
-        public event EventHandler<ViewContentChangedEventArgs>? ViewContentChanged;
+        public event EventHandler<FrameViewContentChangedEventArgs>? ViewContentChanged;
 
         [Subscribable]
         public event EventHandler? SelectedContainerLayoutChanged;
@@ -137,6 +137,7 @@ namespace NeeView
             _box.SelectedContainerLayoutChanged += Box_SelectedContainerLayoutChanged;
             _box.SelectedContentSizeChanged += Box_SelectedContentSizeChanged;
             _box.SizeChanged += Box_SizeChanged;
+            _box.Initialize();
 
             _pageControl = new BookCommandControl(_bookContext, _box);
 
@@ -187,7 +188,7 @@ namespace NeeView
         }
 
 
-        private void Box_ViewContentChanged(object? sender, ViewContentChangedEventArgs e)
+        private void Box_ViewContentChanged(object? sender, FrameViewContentChangedEventArgs e)
         {
             ViewContentChanged?.Invoke(this, e);
         }

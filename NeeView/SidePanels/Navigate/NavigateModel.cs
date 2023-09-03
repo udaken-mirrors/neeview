@@ -57,8 +57,10 @@ namespace NeeView
             Config.Current.View.PropertyChanged += ViewConfig_PropertyChanged;
         }
 
-        private void PageFrameBoxPresenter_ViewContentChanged(object? sender, ViewContentChangedEventArgs e)
+        private void PageFrameBoxPresenter_ViewContentChanged(object? sender, FrameViewContentChangedEventArgs e)
         {
+            if (e.Action < ViewContentChangedAction.Content) return;
+
             var viewContent = e.PageFrameContent.ViewContents?.FirstOrDefault() as MediaViewContent;
             var player = viewContent?.Player;
             if (player is not null && !MainViewComponent.Current.PageFrameBoxPresenter.IsMedia)

@@ -8,7 +8,7 @@ namespace NeeView.PageFrames
 {
     public interface IPageFrameContent : IDisposable, INotifyTransformChanged  
     {
-        public event EventHandler? ViewContentChanged;
+        public event EventHandler<FrameViewContentChangedEventArgs>? ViewContentChanged;
         public event EventHandler? ContentSizeChanged;
         FrameworkElement? Content { get; }
         IPageFrameTransform Transform { get; }
@@ -56,7 +56,7 @@ namespace NeeView.PageFrames
         public bool IsStaticFrame => false;
 
         public event TransformChangedEventHandler? TransformChanged;
-        public event EventHandler? ViewContentChanged;
+        public event EventHandler<FrameViewContentChangedEventArgs>? ViewContentChanged;
         public event EventHandler? ContentSizeChanged;
 
         public void Dispose()

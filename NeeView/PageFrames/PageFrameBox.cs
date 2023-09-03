@@ -154,12 +154,14 @@ namespace NeeView.PageFrames
             _viewBox.RectChanging += ViewBox_RectChanging;
             _viewBox.RectChanged += ViewBox_RectChanged;
 
+            Loaded += PageFrameBox_Loaded;
+        }
 
+        public void Initialize()
+        {
             var index = _context.Book.CurrentPage?.Index ?? 0;
             MoveTo(new PagePosition(index, 0), LinkedListDirection.Next);
             _scrollViewer.FlushScroll();
-
-            Loaded += PageFrameBox_Loaded;
         }
 
 
@@ -172,7 +174,7 @@ namespace NeeView.PageFrames
         public event EventHandler<PageTerminatedEventArgs>? PageTerminated;
 
         [Subscribable]
-        public event EventHandler<ViewContentChangedEventArgs>? ViewContentChanged;
+        public event EventHandler<FrameViewContentChangedEventArgs>? ViewContentChanged;
 
         [Subscribable]
         public event TransformChangedEventHandler? TransformChanged;

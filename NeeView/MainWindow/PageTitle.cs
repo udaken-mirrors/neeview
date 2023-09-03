@@ -2,6 +2,7 @@
 using System.Linq;
 using System.ComponentModel;
 using System.Collections.Generic;
+using NeeView.PageFrames;
 
 namespace NeeView
 {
@@ -34,6 +35,7 @@ namespace NeeView
 
             _presenter.ViewContentChanged += (s, e) =>
             {
+                if (e.Action < ViewContentChangedAction.Content) return;
                 UpdateFormat();
             };
 

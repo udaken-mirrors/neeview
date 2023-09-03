@@ -20,7 +20,7 @@ namespace NeeView
         static FileInformation() => Current = new FileInformation();
 
 
-        private readonly DelayValue<ViewContentChangedEventArgs> _viewContentsDelay;
+        private readonly DelayValue<FrameViewContentChangedEventArgs> _viewContentsDelay;
         private List<FileInformationSource>? _fileInformationCollection;
 
 
@@ -31,7 +31,7 @@ namespace NeeView
             mainViewComponent.PageFrameBoxPresenter.ViewContentChanged +=
                 (s, e) => Update(e);
 
-            _viewContentsDelay = new DelayValue<ViewContentChangedEventArgs>();
+            _viewContentsDelay = new DelayValue<FrameViewContentChangedEventArgs>();
             _viewContentsDelay.ValueChanged += ViewContentsDelay_ValueChanged;
         }
 
@@ -48,8 +48,9 @@ namespace NeeView
             return FileInformationCollection?.OrderBy(e => e.Page?.Index ?? int.MaxValue).FirstOrDefault();
         }
 
-        public void Update(ViewContentChangedEventArgs e)
+        public void Update(FrameViewContentChangedEventArgs e)
         {
+            if (e.Action < ViewContentChangedAction.Content) return;
             _viewContentsDelay.SetValue(e, 100); // 100ms delay
         }
 

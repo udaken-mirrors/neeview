@@ -157,9 +157,7 @@ namespace NeeView
         {
             if (this.Book == null || this.Book.IsMedia) return;
 
-#warning not support yet
-            //var dialogModel = new PageSelecteDialogModel(this.Book.Viewer.GetViewPageIndex() + 1, 1, this.Book.Pages.Count);
-            var dialogModel = new PageSelecteDialogModel(1, 1, this.Book.Pages.Count);
+            var dialogModel = new PageSelecteDialogModel(this.Book.CurrentPage?.Index ?? 1, 1, this.Book.Pages.Count);
 
             var dialog = new PageSelectDialog(dialogModel);
             dialog.Owner = MainViewComponent.Current.GetWindow();

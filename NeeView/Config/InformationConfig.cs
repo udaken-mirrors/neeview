@@ -11,9 +11,7 @@ namespace NeeView
 {
     public class InformationConfig : BindableBase
     {
-#warning _defaultDateTimeFormat を一時的に無効
-        //private static readonly string _defaultDateTimeFormat = Properties.Resources.Information_DateFormat;
-        private static readonly string _defaultDateTimeFormat = "yyyy-MM-dd dddd H:mm";
+        private static readonly string _defaultDateTimeFormat = Properties.Resources.Information_DateFormat;
         private static readonly string _defaultMapProgramFormat = @"https://www.google.com/maps/place/$Lat+$Lon/";
         private GridLength _propertyHeaderWidth = new(128.0);
 

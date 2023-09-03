@@ -34,7 +34,7 @@ namespace NeeView.PageFrames
         public event EventHandler? IsDirtyChanged;
 
         [Subscribable]
-        public event EventHandler<ViewContentChangedEventArgs>? ViewContentChanged;
+        public event EventHandler<FrameViewContentChangedEventArgs>? ViewContentChanged;
 
 
         public LinkedListNode<PageFrameContainer> Node => _node;
@@ -113,7 +113,7 @@ namespace NeeView.PageFrames
 
             if (_node.Value.Content is PageFrameContent content)
             {
-                ViewContentChanged?.Invoke(this, new ViewContentChangedEventArgs(content));
+                ViewContentChanged?.Invoke(this, new FrameViewContentChangedEventArgs(ViewContentChangedAction.Selection, content));
             }
         }
 
@@ -134,7 +134,7 @@ namespace NeeView.PageFrames
             RaisePropertyChanged(nameof(PagePosition));
         }
 
-        private void Container_ViewContentChanged(object? sender, ViewContentChangedEventArgs e)
+        private void Container_ViewContentChanged(object? sender, FrameViewContentChangedEventArgs e)
         {
             ViewContentChanged?.Invoke(this, e);
         }

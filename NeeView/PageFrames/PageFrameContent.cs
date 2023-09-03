@@ -32,6 +32,7 @@ namespace NeeView.PageFrames
         private List<Page> _pages;
         private List<ViewContent> _viewContents;
         private TransformGroup _viewTransform = new();
+        private TransformGroup _calcTransform = new();
         private TransformGroup _boundsTransform;
         private PageFrameDartyLevel _dirtyLevel;
         private BaseScaleTransform _baseScaleTransform;
@@ -88,7 +89,7 @@ namespace NeeView.PageFrames
 
         public event TransformChangedEventHandler? TransformChanged;
 
-        public event EventHandler? ViewContentChanged;
+        public event EventHandler<FrameViewContentChangedEventArgs>? ViewContentChanged;
 
         public event EventHandler? ContentSizeChanged;
 
@@ -125,6 +126,7 @@ namespace NeeView.PageFrames
 
         public FrameworkElement ViewElement => _contentCanvas;
         public TransformGroup ViewTransform => _viewTransform;
+        public TransformGroup CalcTransform => _calcTransform;
 
         public bool IsStaticFrame => _staticFrame.IsStaticFrame;
 
@@ -181,9 +183,6 @@ namespace NeeView.PageFrames
             }
             UpdateTransform();
             UpdateElementLayout();
-
-            // TODO: ViewContentChanged イベントでいいの？
-            ViewContentChanged?.Invoke(this, EventArgs.Empty);
         }
 
         private PageFrameElementScale CreateElementScale()
@@ -250,19 +249,27 @@ namespace NeeView.PageFrames
 
         }
 
-        private void ViewContent_Changed(object? sender, EventArgs e)
+        private void ViewContent_Changed(object? sender, ViewContentChangedEventArgs e)
         {
-            ViewContentChanged?.Invoke(this, EventArgs.Empty);
+            ViewContentChanged?.Invoke(this, new FrameViewContentChangedEventArgs(e.Action, this));
         }
 
         private void UpdateTransform()
         {
             DetachTransform();
+
             _viewTransform.Children.Clear();
             _viewTransform.Children.Add(_baseScaleTransform.ScaleTransform);
             _viewTransform.Children.Add(_pageFrame.RotateTransform);
             _viewTransform.Children.Add(_transform.TransformView);
             _viewTransform.Children.Add(_loupeContext.GetContentTransform());
+
+            _calcTransform.Children.Clear();
+            _calcTransform.Children.Add(_baseScaleTransform.ScaleTransform);
+            _calcTransform.Children.Add(_pageFrame.RotateTransform);
+            _calcTransform.Children.Add(_transform.Transform);
+            _calcTransform.Children.Add(_loupeContext.GetContentTransform());
+            
             AttachTransform();
         }
 

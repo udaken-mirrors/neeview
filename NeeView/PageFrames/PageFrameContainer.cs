@@ -126,7 +126,7 @@ namespace NeeView.PageFrames
         public event EventHandler? ContentSizeChanged;
         public event EventHandler? ContainerLayoutChanged;
         public event EventHandler? ContentChanged;
-        public event EventHandler<ViewContentChangedEventArgs>? ViewContentChanged;
+        public event EventHandler<FrameViewContentChangedEventArgs>? ViewContentChanged;
 
 
         public PageFrameActivity Activity => _activity;
@@ -336,7 +336,7 @@ namespace NeeView.PageFrames
 
             if (_content is PageFrameContent pageFrameContent)
             {
-                ViewContentChanged?.Invoke(this, new ViewContentChangedEventArgs(pageFrameContent));
+                ViewContentChanged?.Invoke(this, new FrameViewContentChangedEventArgs(ViewContentChangedAction.Content, pageFrameContent));
             }
         }
 
@@ -357,11 +357,11 @@ namespace NeeView.PageFrames
             TransformChanged?.Invoke(this, e);
         }
 
-        private void Content_ViewContentChanged(object? sender, EventArgs e)
+        private void Content_ViewContentChanged(object? sender, FrameViewContentChangedEventArgs e)
         {
             if (_content is PageFrameContent pageFrameContent)
             {
-                ViewContentChanged?.Invoke(this, new ViewContentChangedEventArgs(pageFrameContent));
+                ViewContentChanged?.Invoke(this, e);
             }
         }
 
@@ -445,13 +445,4 @@ namespace NeeView.PageFrames
 
 
 
-    public class ViewContentChangedEventArgs : EventArgs
-    {
-        public ViewContentChangedEventArgs(PageFrameContent pageFrameContent)
-        {
-            PageFrameContent = pageFrameContent;
-        }
-
-        public PageFrameContent PageFrameContent { get; private set; }
-    }
 }

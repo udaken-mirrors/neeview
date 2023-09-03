@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.ComponentModel;
 using NeeView.Windows.Property;
 using System.Collections.Generic;
+using NeeView.PageFrames;
 
 namespace NeeView
 {
@@ -43,6 +44,7 @@ namespace NeeView
 
             _presenter.ViewContentChanged += (s, e) =>
             {
+                if (e.Action < ViewContentChangedAction.Content) return;
                 UpdateFormat();
             };
 

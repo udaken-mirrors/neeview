@@ -1,4 +1,5 @@
 ﻿using NeeView.Collections;
+using NeeView.PageFrames;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -69,30 +70,34 @@ namespace NeeView
 
         private const int _historyCapacity = 100;
         private readonly HistoryLimitedCollection<PageHistoryUnit> _history = new(_historyCapacity);
+        private PageFrameBoxPresenter _presenter;
 
 
         public PageHistory()
         {
             _history.Changed += (s, e) => Changed?.Invoke(s, e);
 
-            //BookHub.Current.ViewContentsChanged += BookHub_ViewContentsChanged;
+            _presenter = MainViewComponent.Current.PageFrameBoxPresenter;
+
+            _presenter.ViewContentChanged += Presenter_ViewContentChanged;
         }
 
-        
+
+
         public event EventHandler? Changed;
 
 
-#warning ページ変更時の履歴更新未実装
-#if false
-        private void BookHub_ViewContentsChanged(object? sender, ViewContentSourceCollectionChangedEventArgs e)
+        private void Presenter_ViewContentChanged(object? sender, PageFrames.FrameViewContentChangedEventArgs e)
         {
-            var viewPages = e.ViewPageCollection?.Collection.Where(x => x != null).Select(x => x.Page).ToList();
+            if (e.Action < ViewContentChangedAction.Selection) return;
+
+            var viewPages = e.PageFrameContent.PageFrame.Elements.Select(e => e.Page).ToList();
 
             PageHistoryUnit pageHistoryUnit;
             if (viewPages != null && viewPages.Count > 0)
             {
                 var page = viewPages.Select(page => (page.Index, page)).Min().page;
-                pageHistoryUnit = new PageHistoryUnit(e.BookAddress, page.EntryName);
+                pageHistoryUnit = new PageHistoryUnit(page.BookAddress, page.EntryName);
             }
             else
             {
@@ -102,13 +107,12 @@ namespace NeeView
 
             Add(sender, pageHistoryUnit);
         }
-#endif
 
 
         public void Add(object? sender, PageHistoryUnit unit)
         {
-            // NOTE: 履歴操からの操作では履歴を変更しない
-            if (sender == this) return;
+            // NOTE: 履歴操からの操作では履歴を変更しない .. なくても問題なし？
+            //if (sender == this) return;
 
             _history.TrimEnd(PageHistoryUnit.Empty);
 

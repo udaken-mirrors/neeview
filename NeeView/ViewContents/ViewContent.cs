@@ -48,7 +48,7 @@ namespace NeeView
 
 
         [Subscribable]
-        public event EventHandler? ViewContentChanged;
+        public event EventHandler<ViewContentChangedEventArgs>? ViewContentChanged;
 
 
 
@@ -72,7 +72,7 @@ namespace NeeView
                 if (disposing)
                 {
                     _disposables.Dispose();
-                    
+
                     (Content as IDisposable)?.Dispose();
                     Content = null;
                 }
@@ -92,7 +92,7 @@ namespace NeeView
             if (_initialized) return;
             _initialized = true;
 
-            _disposables.Add(_viewSource.SubscribeDataSourceChanged(ViewSouorce_DataChanged));
+            _disposables.Add(_viewSource.SubscribeDataSourceChanged(ViewSource_DataChanged));
             _disposables.Add(_element.Page.SubscribeContentChanged(AppDispatcher.BeginInvokeHandler(Page_ContentChanged)));
 
             UpdateContent(_viewSource.DataSource);
@@ -125,14 +125,20 @@ namespace NeeView
             {
                 UpdateContent(_viewSource.DataSource);
             }
+            else
+            {
+                if (UpdateSize())
+                {
+                    ViewContentChanged?.Invoke(this, new ViewContentChangedEventArgs(ViewContentChangedAction.Size));
+                }
+            }
 
-            Debug.WriteLine($"OnSourceChanged: {ArchiveEntry} ({LayoutSize})");
+            //Debug.WriteLine($"OnSourceChanged: {ArchiveEntry} ({LayoutSize})");
             OnSourceChanged();
         }
 
         protected virtual void OnSourceChanged()
         {
-            UpdateSize();
         }
 
 
@@ -153,7 +159,7 @@ namespace NeeView
         }
 
 
-        private void ViewSouorce_DataChanged(object? sender, DataSourceChangedEventArgs e)
+        private void ViewSource_DataChanged(object? sender, DataSourceChangedEventArgs e)
         {
             // NOTE: Unload()等でデータがないときは更新しない
             if (e.DataSource.DataState == DataState.None) return;
@@ -163,14 +169,20 @@ namespace NeeView
 
 
         // コントロールサイズの更新
-        protected void UpdateSize()
+        protected bool UpdateSize()
         {
+            bool sizeChanged = (Width != LayoutSize.Width || Height != LayoutSize.Height);
+
             Width = LayoutSize.Width;
             Height = LayoutSize.Height;
 
-            if (this.Content is not FrameworkElement control) return;
-            control.Width = LayoutSize.Width;
-            control.Height = LayoutSize.Height;
+            if (this.Content is FrameworkElement control)
+            {
+                control.Width = LayoutSize.Width;
+                control.Height = LayoutSize.Height;
+            }
+
+            return sizeChanged;
         }
 
         /// <summary>
@@ -204,7 +216,7 @@ namespace NeeView
             NVDebug.AssertSTA();
             Content = CreateContent(LayoutSize, data);
             UpdateSize();
-            ViewContentChanged?.Invoke(this, EventArgs.Empty);
+            ViewContentChanged?.Invoke(this, new ViewContentChangedEventArgs(ViewContentChangedAction.Content));
         }
 
 

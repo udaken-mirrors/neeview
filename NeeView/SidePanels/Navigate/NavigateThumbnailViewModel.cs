@@ -170,8 +170,8 @@ namespace NeeView
             _presenter.SelectedContentSizeChanged +=
                 (s, e) => UpdateViewbox();
 
-            _presenter.ViewContentChanged +=
-                (s, e) => UpdateViewbox();
+            //_presenter.ViewContentChanged +=
+            //    (s, e) => UpdateViewbox();
 
             _presenter.ViewSizeChanged +=
                 (s, e) => UpdateViewbox();
@@ -191,7 +191,7 @@ namespace NeeView
             //NVDebug.WriteInfo("Thumb.AreaSize", $"{viewWidth:f0},{viewHeight:f0}");
 
             // コンテンツ座標系の逆変換
-            var mainViewTransform = _presenter.GetSelectedPageFrameContent()?.ViewTransform;
+            var mainViewTransform = _presenter.GetSelectedPageFrameContent()?.CalcTransform;
             var inverse = mainViewTransform?.Inverse;
             if (inverse is Transform inverseTransform)
             {
