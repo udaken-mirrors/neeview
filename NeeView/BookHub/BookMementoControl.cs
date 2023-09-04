@@ -88,6 +88,7 @@ namespace NeeView
                     BookHistoryCollection.Current.Add(memento, false);
                 }
             }
+
         }
 
 

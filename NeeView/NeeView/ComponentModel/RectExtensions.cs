@@ -41,6 +41,38 @@ namespace NeeView.ComponentModel
         {
             return (rect.EdgeMin(orientation) + rect.EdgeMax(orientation)) * 0.5;
         }
+
+        public static Rect InflateValid(this Rect rect, double dx, double dy)
+        {
+            double x;
+            double width;
+            if (rect.Width + dx * 2.0 >= 0.0)
+            {
+                x = rect.X - dx;
+                width = rect.Width + dx * 2.0;
+            }
+            else
+            {
+                x = rect.X + rect.Width * 0.5;
+                width = 0.0;
+            }
+
+            double y;
+            double height;
+            if (rect.Height + dy * 2.0 >= 0.0)
+            {
+                y = rect.Y - dy;
+                height = rect.Height + dy * 2.0;
+            }
+            else
+            {
+                y = rect.Y + rect.Height * 0.5;
+                height = 0.0;
+            }
+
+            return new Rect(x, y, width, height);
+        }
+
     }
 
 

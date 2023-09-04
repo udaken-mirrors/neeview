@@ -1,9 +1,11 @@
-﻿using System;
+﻿using NeeView.ComponentModel;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Threading;
 using Xunit.Abstractions;
 
@@ -67,5 +69,18 @@ namespace NeeView.UnitTest
             _output.WriteLine("done.");
         }
 
+        [Fact]
+        public void RectTest()
+        {
+            var rect = new Rect(10, 20, 30, 40);
+            Assert.Equal(Rect.Inflate(rect, -1, +1), rect.InflateValid(-1, +1));
+            Assert.Equal(Rect.Inflate(rect, +2, -2), rect.InflateValid(+2, -2));
+
+            var result1 = rect.InflateValid(-20, -10);
+            Assert.Equal(0.0, result1.Width);
+            Assert.Equal(20.0, result1.Height);
+            Assert.Equal(25.0, result1.X);
+            Assert.Equal(30.0, result1.Y);
+        }
     }
 }

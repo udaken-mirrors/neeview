@@ -72,7 +72,8 @@ namespace NeeView.PageFrames
         private void Update()
         {
             // NOTE: 判定誤差を吸収するため判定表示エリアを1dot縮小
-            var viewRect = Rect.Inflate(_viewBox.Rect, -1, -1);
+            var viewRect = _viewBox.Rect.InflateValid(-1, -1);
+            Debug.Assert(!viewRect.IsEmpty);
             SetVisibleContainers(_collectionRectMath.CollectViewContainers(viewRect));
         }
 

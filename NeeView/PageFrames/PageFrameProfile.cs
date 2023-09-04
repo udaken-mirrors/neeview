@@ -13,6 +13,9 @@ namespace NeeView.PageFrames
     [NotifyPropertyChanged]
     public partial class PageFrameProfile : INotifyPropertyChanged, IStaticFrame, IDisposable
     {
+        public const double MinWidth = 32.0;
+        public const double MinHeight = 32.0;
+
         private Config _config;
         private BookConfig _bookConfig;
         private BookSettingConfig _settingConfig;
@@ -25,6 +28,7 @@ namespace NeeView.PageFrames
             _config = config;
             _bookConfig = _config.Book;
             _settingConfig = _config.BookSetting;
+            _canvasSize = new Size(MinWidth, MinHeight);
 
             _bookConfig.PropertyChanged += BookConfig_PropertyChanged;
             _settingConfig.PropertyChanged += BookSettingConfig_PropertyChanged;

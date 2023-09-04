@@ -4,10 +4,11 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Linq;
 
 namespace NeeView
 {
-    public partial class Book : IDisposable, IBook 
+    public partial class Book : IDisposable, IBook
     {
         public static Book? Default { get; private set; }
 
@@ -55,7 +56,10 @@ namespace NeeView
         public BookPageCollection Pages => _source.Pages;
         IReadOnlyList<Page> IBook.Pages => _source.Pages;
 
-        public Page? CurrentPage { get; private set; }
+        private List<Page> _currentPages = new();
+
+        public IReadOnlyList<Page> CurrentPages => _currentPages;
+        public Page? CurrentPage => _currentPages.FirstOrDefault();
 
         public BookPageSetting Setting => _setting;
         //public BookPageViewer Viewer => _viewer;
@@ -134,7 +138,10 @@ namespace NeeView
 
             //this.Memento.Page = this.StartEntry ?? "";
             var page = _source.Pages.Count > 0 ? _source.Pages[position.Index] : null;
-            SetCurrentPage(page);
+            if (page is not null)
+            {
+                SetCurrentPages(new[] { page });
+            }
 
             // 初期ページ設定 
             //_controller.JumpPage(sender, position, direction);
@@ -149,7 +156,17 @@ namespace NeeView
         }
 
 
+        public void SetCurrentPages(IEnumerable<Page> pages)
+        {
+            if (_currentPages.SequenceEqual(pages)) return;
 
+            _currentPages = pages.ToList();
+
+            this.Memento.Page = CurrentPage?.EntryName ?? "";
+            CurrentPageChanged?.Invoke(this, EventArgs.Empty);
+        }
+
+#if false
         public void SetCurrentPage(Page? page)
         {
             if (CurrentPage != page)
@@ -159,7 +176,7 @@ namespace NeeView
                 CurrentPageChanged?.Invoke(this, EventArgs.Empty);
             }
         }
-
+#endif
 
 
         #region IDisposable Support

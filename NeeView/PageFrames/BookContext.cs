@@ -154,8 +154,7 @@ namespace NeeView.PageFrames
             {
                 if (SetProperty(ref _selectedRange, value))
                 {
-                    var page = _book.Pages.GetPage(_selectedRange.Min.Index);
-                    _book.SetCurrentPage(page);
+                    _book.SetCurrentPages(SelectedPages);
                     SelectedRangeChanged?.Invoke(this, EventArgs.Empty);
                 }
             }
@@ -163,7 +162,7 @@ namespace NeeView.PageFrames
 
         public IReadOnlyList<Page> SelectedPages
         {
-            get => SelectedRange.CollectPositions().Select(e => Pages[e.Index]).Distinct().ToList();
+            get => _selectedRange.CollectPositions().Select(e => Pages[e.Index]).Distinct().ToList();
         }
 
         public bool IsMedia => _book.IsMedia;

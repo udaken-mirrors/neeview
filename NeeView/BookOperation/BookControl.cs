@@ -63,15 +63,12 @@ namespace NeeView
         /// </summary>
         public void ReLoad()
         {
-            throw new NotImplementedException();
-#if false
             var book = _book;
             if (book is null) return;
 
-            var viewPage = book.Viewer.GetViewPage();
+            var viewPage = book.CurrentPage;
             var page = book.Pages.GetValidPage(viewPage);
             BookHub.Current.RequestReLoad(this, page?.EntryName);
-#endif
         }
 
         /// <summary>

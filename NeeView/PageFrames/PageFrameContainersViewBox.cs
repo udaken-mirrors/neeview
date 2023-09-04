@@ -19,7 +19,9 @@ namespace NeeView.PageFrames
             _context = context;
             _view = view;
 
-            _rect = CreateViewRect(_view.Point, new Size(_view.ActualWidth, _view.ActualHeight));
+            var width = Math.Max(_view.ActualWidth, _view.MinWidth);
+            var height = Math.Max(_view.ActualHeight, _view.MinHeight);
+            _rect = CreateViewRect(_view.Point, new Size(width, height));
 
             // TODO: Dispose
             _context.SizeChanged += View_SizeChanged;

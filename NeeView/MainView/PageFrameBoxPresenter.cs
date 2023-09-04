@@ -11,9 +11,34 @@ using NeeView.Windows;
 
 namespace NeeView
 {
+    public class PageFrameBoxChangingEventArgs : BookChangingEventArgs
+    {
+        public PageFrameBoxChangingEventArgs(PageFrameBox? box, BookChangingEventArgs e)
+            : base(e.Address)
+        {
+            Box = box;
+        }
+
+        public PageFrameBox? Box { get; }
+    }
+
+    public class PageFrameBoxChangedEventArgs : BookChangedEventArgs
+    {
+        public PageFrameBoxChangedEventArgs(PageFrameBox? box, BookChangedEventArgs e)
+            : base(e.Address, e.Book, e.BookMementoType)
+        {
+            Box = box;
+        }
+
+        public PageFrameBox? Box { get; }
+    }
+
+
     [NotifyPropertyChanged]
     public partial class PageFrameBoxPresenter : INotifyPropertyChanged, IDragTransformContextFactory, IBookPageContext
     {
+        public static PageFrameBoxPresenter Current { get; } = new PageFrameBoxPresenter();
+
         private Config _config;
         private BookHub _bookHub;
 
@@ -26,11 +51,12 @@ namespace NeeView
         private bool _isLoading;
 
 
-        public PageFrameBoxPresenter(Config config, BookHub bookHub)
+        private PageFrameBoxPresenter()
         {
-            _config = config;
+            _config = Config.Current;
+            _bookHub = BookHub.Current;
+
             _shareContext = new BookShareContext(_config);
-            _bookHub = bookHub;
 
             _bookHub.BookChanging += BookHub_BookChanging;
             _bookHub.BookChanged += BookHub_BookChanged;
@@ -44,7 +70,10 @@ namespace NeeView
         public event EventHandler? PagesChanged;
 
         [Subscribable]
-        public event EventHandler? PageFrameBoxChanged;
+        public event EventHandler<PageFrameBoxChangingEventArgs>? PageFrameBoxChanging;
+
+        [Subscribable]
+        public event EventHandler<PageFrameBoxChangedEventArgs>? PageFrameBoxChanged;
 
         [Subscribable]
         public event EventHandler? SelectedRangeChanged;
@@ -100,22 +129,22 @@ namespace NeeView
 
 
 
-        private void BookHub_BookChanging(object? sender, EventArgs e)
+        private void BookHub_BookChanging(object? sender, BookChangingEventArgs e)
         {
             AppDispatcher.Invoke(() =>
             {
                 _isLoading = true;
-                PageFrameBoxChanged?.Invoke(this, EventArgs.Empty);
+                PageFrameBoxChanging?.Invoke(this, new PageFrameBoxChangingEventArgs(null, e));
             });
         }
 
-        private void BookHub_BookChanged(object? sender, EventArgs e)
+        private void BookHub_BookChanged(object? sender, BookChangedEventArgs e)
         {
             AppDispatcher.Invoke(() =>
             {
                 Open(_bookHub.GetCurrentBook());
                 _isLoading = false;
-                PageFrameBoxChanged?.Invoke(this, EventArgs.Empty);
+                PageFrameBoxChanged?.Invoke(this, new PageFrameBoxChangedEventArgs(_box, e));
             });
         }
 

@@ -35,8 +35,7 @@ namespace NeeView
 
             _mainView = new MainView();
 
-            PageFrameBoxPresenter = new PageFrameBoxPresenter(Config.Current, BookHub.Current);
-            BookOperation.Current.SetPageFrameBoxPresenter(PageFrameBoxPresenter);
+            PageFrameBoxPresenter = PageFrameBoxPresenter.Current;
 
             //DragTransform = new DragTransformP
 

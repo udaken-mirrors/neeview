@@ -8,13 +8,15 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Effects;
 using System.Windows.Shapes;
+using NeeView.PageFrames;
 
 namespace NeeView
 {
     public class ExportImageSource
     {
-        public ExportImageSource(string? bookAddress, List<Page> pages, FrameworkElement view, Brush? background, Brush? backgroundFront, Transform viewTransform, Effect? viewEffect)
+        public ExportImageSource(PageFrameContent pageFrameContent, string? bookAddress, List<Page> pages, FrameworkElement view, Brush? background, Brush? backgroundFront, Transform viewTransform, Effect? viewEffect)
         {
+            PageFrameContent = pageFrameContent;
             BookAddress = bookAddress;
             Pages = pages;
             View = view;
@@ -23,6 +25,8 @@ namespace NeeView
             ViewTransform = viewTransform;
             ViewEffect = viewEffect;
         }
+
+        public PageFrameContent PageFrameContent { get; private set; }
 
         public string? BookAddress { get; private set; }
 
@@ -42,31 +46,40 @@ namespace NeeView
 
         public static ExportImageSource Create()
         {
-#warning not support yet
-            throw new NotImplementedException();
-#if false
-            var viewComponent = MainViewComponent.Current;
+            var _presenter = PageFrameBoxPresenter.Current;
+            var pageFrameContent = _presenter.GetSelectedPageFrameContent();
+            if (pageFrameContent is null) throw new InvalidOperationException();
 
-            var element = viewComponent.MainView.PageContents;
+            var element = pageFrameContent.ViewElement;
+            if (element is null) throw new InvalidOperationException();
 
-            var rotateTransform = new RotateTransform(viewComponent.DragTransform.Angle);
-            var scaleTransform = new ScaleTransform(viewComponent.DragTransform.ScaleX, viewComponent.DragTransform.ScaleY);
-            var transform = new TransformGroup();
-            transform.Children.Add(scaleTransform);
-            transform.Children.Add(rotateTransform);
+            var transform = pageFrameContent.ViewTransform;
+            if (transform is null) throw new InvalidOperationException();
+
+            var pages = pageFrameContent.PageFrame.Elements.Select(e => e.Page).ToList();
+
+            var bg1 = _presenter.GetBackground()?.Bg1Brush;
+            var bg2 = _presenter.GetBackground()?.Bg2Brush;
+
+
+            //var rotateTransform = new RotateTransform(viewComponent.DragTransform.Angle);
+            //var scaleTransform = new ScaleTransform(viewComponent.DragTransform.ScaleX, viewComponent.DragTransform.ScaleY);
+            //var transform = new TransformGroup();
+            //transform.Children.Add(scaleTransform);
+            //transform.Children.Add(rotateTransform);
 
             var context = new ExportImageSource(
+                pageFrameContent: pageFrameContent,
                 bookAddress: BookOperation.Current.Address,
-                pages: viewComponent.ContentCanvas.CloneContents.Select(e => e.Page).WhereNotNull().ToList(),
+                pages: pages,
                 view: element,
                 viewTransform: transform,
                 viewEffect: ImageEffect.Current.Effect,
-                background: viewComponent.ContentCanvasBrush.CreateBackgroundBrush(),
-                backgroundFront: viewComponent.ContentCanvasBrush.CreateBackgroundFrontBrush(new DpiScale(1, 1))
+                background: bg1,
+                backgroundFront: bg2
             );
 
             return context;
-#endif
         }
 
     }

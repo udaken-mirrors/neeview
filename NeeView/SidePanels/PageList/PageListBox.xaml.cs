@@ -234,7 +234,7 @@ namespace NeeView
 
         private void ScrollIntoView(object item)
         {
-            ////Debug.WriteLine($"PL:ScrollIntoView: {item}");
+            ////Debug.WriteLine($"#### PL:ScrollIntoView: {item}");
             this.ListBox.ScrollIntoView(item);
         }
 

@@ -215,47 +215,7 @@ namespace NeeView
         #region Callback Methods
 
 
-#warning 表示変更イベント処理未実装
-#if false
-        private void BookViewer_ViewContentsChanged(object? sender, ViewContentSourceCollectionChangedEventArgs e)
-        {
-            if (_disposedValue) return;
-
-            var book = _book;
-            if (book is null) return;
-
-            _historyRemoved = false;
-
-            bool allowUpdateHistory = !book.IsKeepHistoryOrder || Config.Current.History.IsForceUpdateHistory;
-
-            // 履歴更新
-            if (allowUpdateHistory && !_historyEntry && CanHistory(book))
-            {
-                _historyEntry = true;
-                var memento = book.CreateMemento();
-                if (memento is not null)
-                {
-                    BookHistoryCollection.Current.Add(memento, false);
-                }
-            }
-
-            var viewPages = e.ViewPageCollection?.Collection.Where(x => x != null).Select(x => x.Page).ToList() ?? new List<Page>();
-            book.Pages.SetViewPageFlag(viewPages);
-
-            ViewContentsChanged?.Invoke(sender, e);
-        }
-
-        private void BookViewer_NextContentsChanged(object? sender, ViewContentSourceCollectionChangedEventArgs e)
-        {
-            if (_disposedValue) return;
-
-            if (_book is null) return;
-
-            NextContentsChanged?.Invoke(sender, e);
-        }
-#endif
-
-        private void BookSource_DartyBook(object? sender, EventArgs e)
+        private void BookSource_DirtyBook(object? sender, EventArgs e)
         {
             RequestLoad(this, this.Address, null, BookLoadOption.ReLoad | BookLoadOption.IsBook, false);
         }
@@ -689,7 +649,7 @@ namespace NeeView
 
             //book.Viewer.Loader.ViewContentsChanged += BookViewer_ViewContentsChanged;
             //book.Viewer.Loader.NextContentsChanged += BookViewer_NextContentsChanged;
-            book.Source.DartyBook += BookSource_DartyBook;
+            book.Source.DartyBook += BookSource_DirtyBook;
         }
 
         /// <summary>
@@ -701,7 +661,7 @@ namespace NeeView
 
             //book.Viewer.Loader.ViewContentsChanged -= BookViewer_ViewContentsChanged;
             //book.Viewer.Loader.NextContentsChanged -= BookViewer_NextContentsChanged;
-            book.Source.DartyBook -= BookSource_DartyBook;
+            book.Source.DartyBook -= BookSource_DirtyBook;
         }
 
         #endregion BookHubCommand.Load

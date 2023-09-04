@@ -7,6 +7,7 @@ namespace NeeView
     {
         private Dictionary<ViewSourceKey, ViewSource> _map = new();
         private ViewSourceFactory _factory;
+        private object _lock = new();
 
         public ViewSourceMap(BookMemoryService bookMemoryService)
         {
@@ -15,24 +16,30 @@ namespace NeeView
 
         public ViewSource Get(Page page, PagePart pagePart)
         {
-            var key = new ViewSourceKey(page, pagePart);
-            if (_map.TryGetValue(key, out var value))
+            lock (_lock)
             {
-                return value;
-            }
-            else
-            {
-                //Debug.WriteLine($"ViewSourceMap.Create: {key}");
+                var key = new ViewSourceKey(page, pagePart);
+                if (_map.TryGetValue(key, out var value))
+                {
+                    return value;
+                }
+                else
+                {
+                    //Debug.WriteLine($"ViewSourceMap.Create: {key}");
 
-                var viewSource = _factory.Create(page.Content);
-                _map.Add(key, viewSource);
-                return viewSource;
+                    var viewSource = _factory.Create(page.Content);
+                    _map.Add(key, viewSource);
+                    return viewSource;
+                }
             }
         }
 
         public void Clear()
         {
-            _map.Clear();
+            lock (_lock)
+            {
+                _map.Clear();
+            }
         }
     }
 

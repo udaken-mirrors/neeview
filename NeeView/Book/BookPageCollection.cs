@@ -366,7 +366,7 @@ namespace NeeView
         /// </summary>
         public void SetViewPageFlag(List<Page> viewPages)
         {
-            var hidePages = _viewPages.Where(e => !viewPages.Contains(e));
+            var hidePages = _viewPages.Except(viewPages).ToList();
 
             foreach (var page in viewPages)
             {

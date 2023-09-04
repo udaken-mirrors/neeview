@@ -17,6 +17,7 @@ namespace NeeView
         public static BookOperation Current { get; }
 
 
+        private PageFrameBoxPresenter? _presenter;
         private BookHub _bookHub;
         private Book? _book;
         private bool _isLoading;
@@ -32,13 +33,10 @@ namespace NeeView
         {
             _bookHub = BookHub.Current;
 
-            _bookHub.BookChanging +=
-                (s, e) => AppDispatcher.Invoke(() => BookHub_BookChanging(s, e));
-
-            _bookHub.BookChanged +=
-                (s, e) => AppDispatcher.Invoke(() => BookHub_BookChanged(s, e));
+            _presenter = PageFrameBoxPresenter.Current;
+            _presenter.PageFrameBoxChanging += Presenter_PageFrameBoxChanging;
+            _presenter.PageFrameBoxChanged += Presenter_PageFrameBoxChanged;
         }
-
 
 
         // ブックが変更される
@@ -75,19 +73,20 @@ namespace NeeView
 
 
 
-        private void BookHub_BookChanging(object? sender, BookChangingEventArgs e)
+        private void Presenter_PageFrameBoxChanging(object? sender, PageFrameBoxChangingEventArgs e)
         {
             _isLoading = true;
             SetBook(null);
             BookChanging?.Invoke(sender, e);
         }
 
-        private void BookHub_BookChanged(object? sender, BookChangedEventArgs e)
+        private void Presenter_PageFrameBoxChanged(object? sender, PageFrameBoxChangedEventArgs e)
         {
-            SetBook(_bookHub.GetCurrentBook());
+            SetBook(e.Book);
             _isLoading = false;
             BookChanged?.Invoke(sender, e);
         }
+
 
         private void SetBook(Book? book)
         {
@@ -128,13 +127,6 @@ namespace NeeView
         private BookPlaylistControl? CreatePlaylistController(Book? book)
         {
             return (book is null || book.IsMedia) ? null : new BookPlaylistControl(book);
-        }
-
-        // ## 応急処置
-        private PageFrameBoxPresenter? _presenter;
-        public void SetPageFrameBoxPresenter(PageFrameBoxPresenter presenter)
-        {
-            _presenter = presenter;
         }
 
 
@@ -228,24 +220,17 @@ namespace NeeView
 
         public bool CanMoveToChildBook()
         {
-            return false;
-#warning not support yet
-#if false
-            var page = Book?.Viewer.GetViewPage();
+            var page = Book?.CurrentPage;
             return page != null && page.PageType == PageType.Folder;
-#endif
         }
 
         public void MoveToChildBook(object sender)
         {
-#warning not support yet
-#if false
-            var page = Book?.Viewer.GetViewPage();
+            var page = Book?.CurrentPage;
             if (page != null && page.PageType == PageType.Folder)
             {
                 _bookHub.RequestLoad(sender, page.Entry.SystemPath, null, BookLoadOption.IsBook | BookLoadOption.SkipSamePlace, true);
             }
-#endif
         }
 
         #endregion

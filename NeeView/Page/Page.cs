@@ -164,8 +164,7 @@ namespace NeeView
         /// <summary>
         /// ページの種類
         /// </summary>
-        //public PageType PageType => _content is ArchiveContent ? PageType.Folder : PageType.File;
-        public PageType PageType => PageType.File;
+        public PageType PageType => _content is ArchivePageContent ? PageType.Folder : PageType.File;
 
         // 表示中?
         public bool IsVisibled

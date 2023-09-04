@@ -13,6 +13,7 @@ namespace NeeView
         public DragTransformControlProxy(PageFrameBoxPresenter presenter)
         {
             _presenter = presenter;
+            _presenter.PageFrameBoxChanging += Presenter_PageFrameBoxChanging;
             _presenter.PageFrameBoxChanged += Presenter_PageFrameBoxChanged;
         }
 
@@ -22,6 +23,7 @@ namespace NeeView
             {
                 if (disposing)
                 {
+                    _presenter.PageFrameBoxChanging -= Presenter_PageFrameBoxChanging;
                     _presenter.PageFrameBoxChanged -= Presenter_PageFrameBoxChanged;
                 }
 
@@ -35,12 +37,16 @@ namespace NeeView
             GC.SuppressFinalize(this);
         }
 
-        private void Presenter_PageFrameBoxChanged(object? sender, EventArgs e)
+        private void Presenter_PageFrameBoxChanging(object? sender, PageFrameBoxChangingEventArgs e)
         {
-            var box = _presenter.ValidPageFrameBox;
-            if (box is not null)
+            _dragTransformControl = null;
+        }
+
+        private void Presenter_PageFrameBoxChanged(object? sender, PageFrameBoxChangedEventArgs e)
+        {
+            if (e.Box is not null)
             {
-                _dragTransformControl = new DragTransformControl(box, DragActionTable.Current, Config.Current.View);
+                _dragTransformControl = new DragTransformControl(e.Box, DragActionTable.Current, Config.Current.View);
             }
             else
             {

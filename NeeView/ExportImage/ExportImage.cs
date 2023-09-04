@@ -14,6 +14,7 @@ namespace NeeView
     /// <summary>
     /// 画像ファイル出力
     /// </summary>
+    // TODO: スケールをオリジナルにできないか？だがフィルターで求めるサイズにしている可能性も。悩ましい。
     public class ExportImage : BindableBase
     {
         private readonly ExportImageSource _source;
@@ -25,7 +26,6 @@ namespace NeeView
             _source = source;
 
             UpdateExporter();
-            UpdatePreview();
         }
 
         public string? ExportFolder { get; set; }
@@ -39,7 +39,6 @@ namespace NeeView
                 if (SetProperty(ref _mode, value))
                 {
                     UpdateExporter();
-                    UpdatePreview();
                 }
             }
         }
@@ -96,7 +95,6 @@ namespace NeeView
         public void UpdateExporter()
         {
             _exporter = CreateExporter(_mode, _source, _hasBackground);
-
             UpdatePreview();
         }
 

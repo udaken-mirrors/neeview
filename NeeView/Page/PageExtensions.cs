@@ -13,7 +13,8 @@ namespace NeeView
         /// <returns>Image</returns>
         public static async Task<Image> CreatePageVisualAsync(this Page page)
         {
-            var imageSource = await page.LoadThumbnailAsync(CancellationToken.None);
+            // NOTE: 確実に非同期で処理させるため
+            var imageSource = await Task.Run(async () => await page.LoadThumbnailAsync(CancellationToken.None));
 
             var image = new Image();
             image.Source = imageSource;

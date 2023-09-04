@@ -22,8 +22,6 @@ using NeeView.Windows;
 
 namespace NeeView.PageFrames
 {
-
-
     // TODO: ごちゃっとしてるので整備する
     // TODO: IsStaticFrame ON/OFF でのスクロール制御の違いが煩雑になっているので良くする
     // TODO: ContentControl になってるけどいいの？
@@ -154,8 +152,12 @@ namespace NeeView.PageFrames
             _viewBox.RectChanging += ViewBox_RectChanging;
             _viewBox.RectChanged += ViewBox_RectChanged;
 
+            // 表示ページ監視
+            _disposables.Add(new PageFrameContainersSelectedPageWatcher(this, _context.Book));
+
             Loaded += PageFrameBox_Loaded;
         }
+
 
         public void Initialize()
         {
@@ -226,6 +228,8 @@ namespace NeeView.PageFrames
         {
             Loaded -= PageFrameBox_Loaded;
             InitializeDpiScaleProvider();
+
+            //Initialize();
         }
 
         private void InitializeDpiScaleProvider()

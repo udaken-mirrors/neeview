@@ -193,7 +193,7 @@ namespace NeeView.PageFrames
 
         public Rect GetRawContentRect()
         {
-            return _pageFrame.Size.ToRect();
+            return _pageFrame.StretchedSize.ToRect();
         }
 
         public Rect GetContentRect()

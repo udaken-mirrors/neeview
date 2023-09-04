@@ -24,12 +24,12 @@ namespace NeeView
             if (book.IsMedia)
             {
                 _moveControl = new MediaPageMoveControl(_book);
-                _actionControl = new BookPageActionControl(_book, bookControl);
+                _actionControl = new BookPageActionControl(_book, bookControl, _presenter);
             }
             else
             {
                 _moveControl = new BookPageMoveControl(_presenter);
-                _actionControl = new BookPageActionControl(_book, bookControl);
+                _actionControl = new BookPageActionControl(_book, bookControl, _presenter);
             }
 
             _book.Pages.PagesSorted += Book_PagesSorted;

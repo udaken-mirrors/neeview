@@ -14,31 +14,31 @@ namespace NeeView
     {
         private Book _book;
         private readonly IBookControl _bookControl;
+        private readonly PageFrameBoxPresenter _presenter;
 
-        public BookPageActionControl(Book book, IBookControl bookControl)
+        public BookPageActionControl(Book book, IBookControl bookControl, PageFrameBoxPresenter presenter)
         {
             _book = book;
             _bookControl = bookControl;
+            _presenter = presenter;
         }
 
-#warning not implement page delete
         #region ページ削除
 
         // 現在表示しているページのファイル削除可能？
         public bool CanDeleteFile()
         {
-            return false;
-            //var page = _book?.Viewer.GetViewPage();
-            //if (page is null) return false;
-            //return CanDeleteFile(new List<Page>() { page });
+            var page = _book?.CurrentPage;
+            if (page is null) return false;
+            return CanDeleteFile(new List<Page>() { page });
         }
 
         // 現在表示しているページのファイルを削除する
         public async Task DeleteFileAsync()
         {
-            //var page = _book?.Viewer.GetViewPage();
-            //if (page is null) return;
-            //await DeleteFileAsync(new List<Page>() { page });
+            var page = _book?.CurrentPage;
+            if (page is null) return;
+            await DeleteFileAsync(new List<Page>() { page });
         }
 
         // 指定ページのファル削除可能？
@@ -108,25 +108,23 @@ namespace NeeView
 
         #region ページ出力
 
-#warning not impletem open place
         // ファイルの場所を開くことが可能？
         public bool CanOpenFilePlace()
         {
-            return false;
-            //return _book?.Viewer.GetViewPage() != null;
+            return _book?.CurrentPage != null;
         }
 
         // ファイルの場所を開く
         public void OpenFilePlace()
         {
-            //if (CanOpenFilePlace())
-            //{
-            //    string? place = _book?.Viewer.GetViewPage()?.GetFolderOpenPlace();
-            //    if (place != null)
-            //    {
-            //        ExternalProcess.Start("explorer.exe", "/select,\"" + place + "\"");
-            //    }
-            //}
+            if (CanOpenFilePlace())
+            {
+                string? place = _book?.CurrentPage?.GetFolderOpenPlace();
+                if (place != null)
+                {
+                    ExternalProcess.Start("explorer.exe", "/select,\"" + place + "\"");
+                }
+            }
         }
 
 
@@ -161,9 +159,7 @@ namespace NeeView
                 return new List<Page>();
             }
 
-            throw new NotImplementedException();
-#if false
-            var pages = book.Viewer.GetViewPages().Distinct();
+            var pages = book.CurrentPages.Distinct();
 
             switch (policy)
             {
@@ -180,7 +176,6 @@ namespace NeeView
             }
 
             return pages.ToList();
-#endif
         }
 
 
@@ -210,22 +205,13 @@ namespace NeeView
         /// <returns></returns>
         public bool CanExport()
         {
-#warning not implement yet
-            return false;
-#if false
-            var pages = _book?.Viewer.GetViewPages();
-            if (pages == null || pages.Count == 0) return false;
-
-            var imageSource = pages[0].GetContentImageSource();
-            if (imageSource == null) return false;
-
-            return true;
-#endif
+            return _presenter.GetSelectedPageFrameContent()?.ViewContents.FirstOrDefault() is IHasImageSource;
         }
 
 
         // ファイルに保存する (ダイアログ)
         // TODO: OutOfMemory対策
+        // TODO: ダイアログにリソースを直接渡すようにする
         public void ExportDialog(ExportImageAsCommandParameter parameter)
         {
             if (CanExport())

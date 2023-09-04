@@ -38,9 +38,11 @@ namespace NeeView
                 grid.Children.Add(backgroundFront);
             }
 
+            var viewRect = _source.PageFrameContent.GetRawContentRect();
+
             var rectangle = new Rectangle();
-            rectangle.Width = _source.View.ActualWidth;
-            rectangle.Height = _source.View.ActualHeight;
+            rectangle.Width = viewRect.Width;
+            rectangle.Height = viewRect.Height;
             var brush = new VisualBrush(_source.View);
             brush.Stretch = Stretch.None;
             rectangle.Fill = brush;
