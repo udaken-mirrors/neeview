@@ -59,9 +59,17 @@ namespace NeeView
         /// <summary>
         /// JOB完了まで待機
         /// </summary>
-        public async Task WaitAsync(int milisecondTimeout, CancellationToken token)
+        public async Task WaitAsync(CancellationToken token)
         {
-            await Job.WaitAsync(milisecondTimeout, token);
+            await Job.WaitAsync(token);
+        }
+
+        /// <summary>
+        /// JOB完了まで待機
+        /// </summary>
+        public async Task WaitAsync(int millisecondTimeout, CancellationToken token)
+        {
+            await Job.WaitAsync(millisecondTimeout, token);
         }
 
         public override string ToString()

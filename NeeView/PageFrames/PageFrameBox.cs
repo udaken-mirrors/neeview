@@ -94,6 +94,8 @@ namespace NeeView.PageFrames
             var elementScaleFactory = new PageFrameElementScaleFactory(_context, _transformMap, loupeContext);
             _loader = new BookPageLoader(_context.Book, frameFactory, _viewSourceMap, elementScaleFactory, _context.BookMemoryService, _context.PerformanceConfig);
             _disposables.Add(_loader);
+            _disposables.Add(_loader.SubscribePropertyChanged(nameof(BookPageLoader.IsBusy), (s, e) => RaisePropertyChanged(nameof(IsBusy))));
+
             var baseScaleTransform = new BaseScaleTransform(_context.ViewConfig);
             _disposables.Add(baseScaleTransform);
             var containerFactory = new PageFrameContainerFactory(_context, _transformMap, _viewSourceMap, loupeContext, baseScaleTransform);
@@ -189,6 +191,14 @@ namespace NeeView.PageFrames
 
 
         public DragTransformContextFactory DragTransformContextFactory => _dragTransformContextFactory;
+
+
+        public BookContext BookContext => _context;
+
+        public Book Book => _context.Book;
+
+        public bool IsBusy => _loader.IsBusy;
+
 
         public DragTransformContext? CreateDragTransformContext(bool isPointContainer, bool isLoupeTransform)
         {

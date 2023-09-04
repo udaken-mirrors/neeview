@@ -71,9 +71,9 @@ namespace NeeView
             }
 
             // 最大サイズ
-            var maxWixth = Math.Max(imageSize.Width, Config.Current.Performance.MaximumSize.Width);
+            var maxWidth = Math.Max(imageSize.Width, Config.Current.Performance.MaximumSize.Width);
             var maxHeight = Math.Max(imageSize.Height, Config.Current.Performance.MaximumSize.Height);
-            var maxSize = new Size(maxWixth, maxHeight);
+            var maxSize = new Size(maxWidth, maxHeight);
             size = size.Limit(maxSize);
 
             return size;

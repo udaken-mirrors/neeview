@@ -25,9 +25,6 @@ namespace NeeView
             _model = model;
             _model.PropertyChanged += Model_PropertyChanged;
 
-#warning 未対応
-            //_model.DragTransform.PropertyChanged += DragTransform_PropertyChanged;
-
             Config.Current.View.PropertyChanged += ViewConfig_PropertyChanged;
             Config.Current.Navigator.PropertyChanged += NavigatorConfig_PropertyChanged;
 
@@ -280,36 +277,6 @@ namespace NeeView
                     break;
             }
         }
-
-#if false
-        private void DragTransform_PropertyChanged(object? sender, PropertyChangedEventArgs e)
-        {
-            switch (e.PropertyName)
-            {
-                case null:
-                case "":
-                    RaisePropertyChanged("");
-                    break;
-
-                case nameof(DragTransform.Angle):
-                    RaisePropertyChanged(nameof(Angle));
-                    break;
-
-                case nameof(DragTransform.Scale):
-                    RaisePropertyChanged(nameof(Scale));
-                    RaisePropertyChanged(nameof(ScaleLog));
-                    break;
-
-                case nameof(DragTransform.IsFlipHorizontal):
-                    RaisePropertyChanged(nameof(IsFlipHorizontal));
-                    break;
-
-                case nameof(DragTransform.IsFlipVertical):
-                    RaisePropertyChanged(nameof(IsFlipVertical));
-                    break;
-            }
-        }
-#endif
 
         public void AddBaseScaleTick(int delta)
         {

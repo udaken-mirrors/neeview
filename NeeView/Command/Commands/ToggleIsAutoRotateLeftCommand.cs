@@ -14,9 +14,7 @@ namespace NeeView
 
         public override Binding CreateIsCheckedBinding()
         {
-#warning not implement yet
-            //return new Binding(nameof(ContentCanvas.IsAutoRotateLeft)) { Source = MainViewComponent.Current.ContentCanvas };
-            return new Binding("Dummy");
+            return new Binding(nameof(ViewPropertyControl.IsAutoRotateLeft)) { Source = MainViewComponent.Current.ViewPropertyControl };
         }
 
         public override string ExecuteMessage(object? sender, CommandContext e)

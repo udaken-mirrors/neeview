@@ -12,12 +12,11 @@ namespace NeeView
             this.IsShowMessage = false;
         }
 
-        public override Binding CreateIsCheckedBinding()
-        {
-#warning not supported yet
-            //return new Binding(nameof(DragTransform.IsFlipVertical)) { Source = MainViewComponent.Current.DragTransform, Mode = BindingMode.OneWay };
-            return new Binding("Dummy");
-        }
+        // NOTE: パノラマモードでかつカーソル位置の画像に対する操作の場合、フラグが確定できないためメニュー用のフラグ表示は無効にした
+        //public override Binding CreateIsCheckedBinding()
+        //{
+        //    return new Binding(nameof(IViewTransformControl.IsFlipVertical)) { Source = MainViewComponent.Current.ViewTransformControl, Mode = BindingMode.OneWay };
+        //}
 
         [MethodArgument("@ToggleCommand.Execute.Remarks")]
         public override void Execute(object? sender, CommandContext e)

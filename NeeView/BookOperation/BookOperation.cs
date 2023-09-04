@@ -1,5 +1,6 @@
 ﻿using NeeLaboratory.ComponentModel;
 using NeeLaboratory.Threading.Jobs;
+using NeeView.PageFrames;
 using System;
 using System.Diagnostics;
 using System.Threading;
@@ -20,6 +21,7 @@ namespace NeeView
         private PageFrameBoxPresenter _presenter;
         private BookHub _bookHub;
         private Book? _book;
+        private PageFrameBox? _box;
         private bool _isLoading;
 
         public BookPageTerminatorProxy _terminator = new();
@@ -82,18 +84,19 @@ namespace NeeView
 
         private void Presenter_PageFrameBoxChanged(object? sender, PageFrameBoxChangedEventArgs e)
         {
-            SetBook(e.Book);
+            SetBook(e.Box);
             _isLoading = false;
             BookChanged?.Invoke(sender, e);
         }
 
 
-        private void SetBook(Book? book)
+        private void SetBook(PageFrameBox? box)
         {
-            if (_book == book) return;
-            _book = book;
+            if (_box == box) return;
+            _box = box;
+            _book = box.Book;
 
-            _bookControl.SetSource(CreateBoolController(_book));
+            _bookControl.SetSource(CreateBookController(_box));
             _control.SetSource(CreateController(_book));
             _playlist.SetSource(CreatePlaylistController(_book));
             _terminator.SetSource(CreatePageTerminator(_book));
@@ -113,9 +116,9 @@ namespace NeeView
             return book is null ? null : new BookPageScript(book);
         }
 
-        private IBookControl? CreateBoolController(Book? book)
+        private IBookControl? CreateBookController(PageFrameBox? box)
         {
-            return book is null ? null : new BookControl(book);
+            return box is null ? null : new BookControl(box);
         }
 
         private IBookPageControl? CreateController(Book? book)
@@ -126,7 +129,7 @@ namespace NeeView
 
         private BookPlaylistControl? CreatePlaylistController(Book? book)
         {
-            return (book is null || book.IsMedia) ? null : new BookPlaylistControl(book);
+            return (book is null || book.IsMedia) ? null : new BookPlaylistControl(book, _control, _presenter);
         }
 
 

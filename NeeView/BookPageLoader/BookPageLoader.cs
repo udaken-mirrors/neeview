@@ -1,17 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using NeeLaboratory.ComponentModel;
+using NeeLaboratory.Generators;
 using NeeLaboratory.Linq;
 using NeeView.PageFrames;
 
 namespace NeeView
 {
     // TODO: BookMemoryService: RawSourceとViewSource を同列に管理。ページ単位で増減させる方向で。
-    public class BookPageLoader : IDisposable
+    [NotifyPropertyChanged]
+    public partial class BookPageLoader : IDisposable, INotifyPropertyChanged
     {
         private IBook _book;
         private PageFrameFactory _frameFactory;
@@ -35,6 +38,8 @@ namespace NeeView
         private bool _isEnabled = true;
         private BookLoadContext _loadContext = new BookLoadContext();
 
+        private bool _isBusy;
+        private int _busyCount;
 
         public BookPageLoader(IBook book, PageFrameFactory frameFactory, ViewSourceMap viewSourceMap, PageFrameElementScaleFactory elementScaleFactory, BookMemoryService bookMemoryService, PerformanceConfig performanceConfig)
         {
@@ -50,6 +55,33 @@ namespace NeeView
 
             _jobAheadClient = new("Ahead", JobCategories.PageAheadContentJobCategory);
             _disposables.Add(_jobAheadClient);
+        }
+
+
+        [Subscribable]
+        public event PropertyChangedEventHandler? PropertyChanged;
+
+        public bool IsBusy
+        {
+            get { return _isBusy; }
+            set { SetProperty(ref _isBusy, value); }
+        }
+
+
+        private void IncrementBusyCount()
+        {
+            lock (_lock)
+            {
+                IsBusy = ++_busyCount > 0;
+            }
+        }
+
+        private void DecrementBusyCount()
+        {
+            lock (_lock)
+            {
+                IsBusy = --_busyCount > 0;
+            }
         }
 
 
@@ -132,14 +164,19 @@ namespace NeeView
             using var linkedTokenSource = CancellationTokenSource.CreateLinkedTokenSource(_cancellationTokenSource.Token, token);
             linkedTokenSource.Token.ThrowIfCancellationRequested();
 
-            // 先読みサイズ
-            int limit = _performanceConfig.PreLoadSize;
-
-            // ページ状態クリア
-            ClearPageState();
-
             try
             {
+                IncrementBusyCount();
+
+                linkedTokenSource.Token.ThrowIfCancellationRequested();
+
+                // 先読みサイズ
+                int limit = _performanceConfig.PreLoadSize;
+
+                // ページ状態クリア
+                ClearPageState();
+
+
                 // 指定分読み込み
                 await LoadMainAsync(range, direction, linkedTokenSource.Token);
 
@@ -157,9 +194,13 @@ namespace NeeView
             {
                 //Debug.WriteLine($"BookPageLoader.Canceled: {ex.StackTrace}");
             }
+            finally
+            {
+                DecrementBusyCount();
+            }
 
             //Debug.WriteLine($"BookPageLoader: Views.Count = {_book.Pages.Count(e => e.State == PageContentState.View)}");
-            //Debug.WriteLine($"BookPageLoader: Aheads.Count = {_book.Pages.Count(e => e.State == PageContentState.Ahead)}");
+            //Debug.WriteLine($"BookPageLoader: Ahead.Count = {_book.Pages.Count(e => e.State == PageContentState.Ahead)}");
         }
 
         private void ClearPageState()
@@ -204,8 +245,8 @@ namespace NeeView
         /// <param name="token">キャンセルトークン</param>
         public async Task LoadMainAsync(PageRange range, int direction, CancellationToken token)
         {
-            var indexs = Enumerable.Range(range.Min.Index, range.Max.Index - range.Min.Index + 1).ToList();
-            var pages = indexs.Direction(direction).Select(e => _book.Pages[e]).ToList();
+            var indexes = Enumerable.Range(range.Min.Index, range.Max.Index - range.Min.Index + 1).ToList();
+            var pages = indexes.Direction(direction).Select(e => _book.Pages[e]).ToList();
 
             lock (_lock)
             {
@@ -217,13 +258,13 @@ namespace NeeView
                 }
             }
 
-            var contens = pages.Cast<IPageContentLoader>().ToList();
+            var contents = pages.Cast<IPageContentLoader>().ToList();
             //foreach (var page in pages)
             //{
             //    Debug.WriteLine($"BookPageLoader.LoadMainAsync: Job.{page}");
             //}
-            _jobClient.Order(contens);
-            await _jobClient.WaitAsync(contens, -1, token);
+            _jobClient.Order(contents);
+            await _jobClient.WaitAsync(contents, -1, token);
 
             // NOTE: ViewSource は表示部で作成される
         }

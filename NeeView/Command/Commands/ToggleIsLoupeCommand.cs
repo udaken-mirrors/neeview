@@ -13,9 +13,7 @@ namespace NeeView
         }
         public override Binding CreateIsCheckedBinding()
         {
-#warning not implement yet
-            //return new Binding(nameof(LoupeTransform.IsEnabled)) { Mode = BindingMode.OneWay, Source = MainViewComponent.Current.LoupeTransform };
-            return new Binding("Dummy");
+            return new Binding(nameof(LoupeContext.IsEnabled)) { Mode = BindingMode.OneWay, Source = MainViewComponent.Current.LoupeContext };
         }
 
         public override string ExecuteMessage(object? sender, CommandContext e)

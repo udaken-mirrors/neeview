@@ -1,4 +1,5 @@
 ﻿using NeeLaboratory.ComponentModel;
+using NeeView.PageFrames;
 using NeeView.Properties;
 using System;
 using System.Collections.Generic;
@@ -10,22 +11,26 @@ namespace NeeView
 {
     public class BookControl : BindableBase, IBookControl, IDisposable
     {
+        private PageFrameBox _box;
         private Book _book;
         private bool _disposedValue;
+        private DisposableCollection _disposables = new();
 
-        public BookControl(Book book)
+        public BookControl(PageFrameBox box)
         {
-            _book = book;
-            //_book.Viewer.Loader.PropertyChanged += BookLoader_PropertyChanged;
+            _box = box;
+            _book = box.Book;
+
+            _disposables.Add(_box.SubscribePropertyChanged(nameof(_box.IsBusy), (s, e) => RaisePropertyChanged(nameof(IsBusy))));
         }
+
+
 
 
         // ブックマーク判定
         public bool IsBookmark => BookmarkCollection.Current.Contains(_book.Path);
 
-#warning not support yet
-        //public bool IsBusy => _book.Viewer.Loader.IsBusy;
-        public bool IsBusy => false;
+        public bool IsBusy => _box.IsBusy;
         
         public PageSortModeClass PageSortModeClass => _book.PageSortModeClass;
 
@@ -36,7 +41,7 @@ namespace NeeView
             {
                 if (disposing)
                 {
-                    //_book.Viewer.Loader.PropertyChanged -= BookLoader_PropertyChanged;
+                    _disposables.Dispose();
                 }
                 _disposedValue = true;
             }
@@ -48,15 +53,6 @@ namespace NeeView
             GC.SuppressFinalize(this);
         }
 
-        private void BookLoader_PropertyChanged(object? sender, PropertyChangedEventArgs e)
-        {
-            switch (e.PropertyName)
-            {
-                case nameof(IsBusy):
-                    RaisePropertyChanged(nameof(IsBusy));
-                    break;
-            }
-        }
 
         /// <summary>
         /// ブックの再読み込み

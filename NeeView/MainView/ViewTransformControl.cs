@@ -15,10 +15,18 @@ namespace NeeView
     {
         private PageFrameBoxPresenter _presenter;
 
+
         public ViewTransformControl(PageFrameBoxPresenter presenter)
         {
             _presenter = presenter;
         }
+
+
+
+        // 水平スクロールの正方向
+        // TODO: どうやって取得？どこから取得？
+        public double ViewHorizontalDirection => Config.Current.BookSetting.BookReadOrder == PageReadOrder.LeftToRight ? 1.0 : -1.0;
+
 
 
         public void ScaleDown(ViewScaleCommandParameter parameter)
@@ -130,9 +138,7 @@ namespace NeeView
         }
 
 
-        // 水平スクロールの正方向
-        // TODO: どうやって取得？どこから取得？
-        public double ViewHorizontalDirection => Config.Current.BookSetting.BookReadOrder == PageReadOrder.LeftToRight ? 1.0 : -1.0;
+
 
         public void ScrollLeft(ViewScrollCommandParameter parameter)
         {

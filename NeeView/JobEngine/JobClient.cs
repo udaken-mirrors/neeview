@@ -60,6 +60,15 @@ namespace NeeView
             _sources = JobEngine.Current.Order(this, orders);
         }
 
+
+        /// <summary>
+        /// JOBの完了を待つ (すべて)
+        /// </summary>
+        public async Task WaitAsync(CancellationToken token)
+        {
+            await Task.WhenAll(_sources.Select(e => e.WaitAsync(token)));
+        }
+
         /// <summary>
         /// JOBの完了を待つ
         /// </summary>
@@ -75,6 +84,7 @@ namespace NeeView
 
             await Task.WhenAll(tasks);
         }
+
 
         public void CancelOrder()
         {

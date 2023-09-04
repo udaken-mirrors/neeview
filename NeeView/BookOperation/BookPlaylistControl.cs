@@ -1,4 +1,5 @@
 ﻿using NeeLaboratory.ComponentModel;
+using NeeLaboratory.Generators;
 using System;
 using System.Collections.Specialized;
 using System.ComponentModel;
@@ -8,33 +9,32 @@ using System.Net;
 
 namespace NeeView
 {
-    public class BookPlaylistControl : BindableBase, IDisposable, IBookPlaylistControl
+    public partial class BookPlaylistControl : BindableBase, IDisposable, IBookPlaylistControl
     {
+        private PageFrameBoxPresenter _presenter;
         private Book _book;
+        private IBookPageControl _pageControl;
         private bool _disposedValue;
 
-        public BookPlaylistControl(Book book)
+
+        // TODO: book なのに PageFrameBoxPresenter なのが疑問。 PageFrameBox では？
+        public BookPlaylistControl(Book book, IBookPageControl pageControl, PageFrameBoxPresenter presenter)
         {
             Debug.Assert(!book.IsMedia);
             _book = book;
+            _pageControl = pageControl;
+            _presenter = presenter;
 
             PlaylistHub.Current.PlaylistCollectionChanged += Playlist_CollectionChanged;
-            //_book.Viewer.Loader.ViewContentsChanged += BookLoader_ViewContentsChanged;
+            _presenter.ViewContentChanged += Presenter_ViewContentChanged;
             _book.Pages.PagesSorted += Book_PagesSorted;
             _book.Pages.PageRemoved += Book_PageRemoved;
         }
 
 
-
-
         // プレイリストに追加、削除された
+        [Subscribable]
         public event EventHandler? MarkersChanged;
-
-        //public IDisposable SubscribeMarkersChanged(EventHandler handler)
-        //{
-        //    MarkersChanged += handler;
-        //    return new AnonymousDisposable(() => MarkersChanged -= handler);
-        //}
 
 
         // 表示ページのマーク判定
@@ -42,13 +42,9 @@ namespace NeeView
         {
             get
             {
-#warning 未実装
-                return false;
-#if false
-                var page = _book.Viewer.GetViewPage();
+                var page = _book.CurrentPage;
                 if (page is null) return false;
                 return _book.Marker.IsMarked(page);
-#endif
             }
         }
 
@@ -60,7 +56,7 @@ namespace NeeView
                 if (disposing)
                 {
                     PlaylistHub.Current.PlaylistCollectionChanged -= Playlist_CollectionChanged;
-                    //_book.Viewer.Loader.ViewContentsChanged -= BookLoader_ViewContentsChanged;
+                    _presenter.ViewContentChanged -= Presenter_ViewContentChanged;
                     _book.Pages.PagesSorted -= Book_PagesSorted;
                     _book.Pages.PageRemoved -= Book_PageRemoved;
                     MarkersChanged = null;
@@ -95,13 +91,11 @@ namespace NeeView
             AppDispatcher.Invoke(() => RaisePropertyChanged(nameof(IsMarked)));
         }
 
-#warning ページ変更時処理未実装
-#if false
-        private void BookLoader_ViewContentsChanged(object? sender, ViewContentSourceCollectionChangedEventArgs e)
+        private void Presenter_ViewContentChanged(object? sender, PageFrames.FrameViewContentChangedEventArgs e)
         {
+            if (e.Action < PageFrames.ViewContentChangedAction.Selection) return;
             AppDispatcher.Invoke(() => RaisePropertyChanged(nameof(IsMarked)));
         }
-#endif
 
         private void Playlist_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
         {
@@ -147,13 +141,9 @@ namespace NeeView
         // ページマーク登録可能？
         public bool CanMark()
         {
-#warning 未実装
-            return false;
-#if false
-            var page = _book.Viewer.GetViewPage();
+            var page = _book.CurrentPage;
             if (page is null) return false;
             return CanMark(page);
-#endif
         }
 
         public bool CanMark(Page page)
@@ -165,10 +155,7 @@ namespace NeeView
         // マーカー追加/削除
         public PlaylistItem? SetMark(bool isMark)
         {
-#warning 未実装
-            return null;
-#if false
-            var page = _book.Viewer.GetViewPage();
+            var page = _book.CurrentPage;
             if (page is null) return null;
 
             if (!CanMark(page))
@@ -178,16 +165,12 @@ namespace NeeView
 
             var bookPlaylist = new BookPlaylist(_book, PlaylistHub.Current.Playlist);
             return bookPlaylist.Set(page, isMark);
-#endif
         }
 
         // マーカー切り替え
         public PlaylistItem? ToggleMark()
         {
-#warning 未実装
-            return null;
-#if false
-            var page = _book.Viewer.GetViewPage();
+            var page = _book.CurrentPage;
             if (page is null) return null;
 
             if (!CanMark(page))
@@ -197,7 +180,6 @@ namespace NeeView
 
             var bookPlaylist = new BookPlaylist(_book, PlaylistHub.Current.Playlist);
             return bookPlaylist.Toggle(page);
-#endif
         }
 
         #region 開発用
@@ -245,38 +227,24 @@ namespace NeeView
 
         public void PrevMarkInPlace(object? sender, MovePlaylsitItemInBookCommandParameter param)
         {
-#warning 未実装
-#if false
-            var result = _book.Control.JumpToMarker(this, -1, param.IsLoop, param.IsIncludeTerminal);
-            if (result != null)
-            {
-                var bookPlaylist = new BookPlaylist(_book, PlaylistHub.Current.Playlist);
-                var item = bookPlaylist.Find(result);
-                PlaylistPresenter.Current?.PlaylistListBox?.SetSelectedItem(item);
-            }
-            else
-            {
-                InfoMessage.Current.SetMessage(InfoMessageType.Notify, Properties.Resources.Notice_FirstPlaylistItem);
-            }
-#endif
+            MoveMarkInPlace(-1, param.IsLoop, param.IsIncludeTerminal);
         }
 
         public void NextMarkInPlace(object? sender, MovePlaylsitItemInBookCommandParameter param)
         {
-#warning 未実装
-#if false
-            var result = _book.Control.JumpToMarker(this, +1, param.IsLoop, param.IsIncludeTerminal);
-            if (result != null)
-            {
-                var bookPlaylist = new BookPlaylist(_book, PlaylistHub.Current.Playlist);
-                var item = bookPlaylist.Find(result);
-                PlaylistPresenter.Current?.PlaylistListBox?.SetSelectedItem(item);
-            }
-            else
-            {
-                InfoMessage.Current.SetMessage(InfoMessageType.Notify, Properties.Resources.Notice_LastPlaylistItem);
-            }
-#endif
+            MoveMarkInPlace(+1, param.IsLoop, param.IsIncludeTerminal);
+        }
+
+        private void MoveMarkInPlace(int direction, bool isLoop, bool isIncludeTerminal)
+        {
+            Debug.Assert(direction == 1 || direction == -1);
+            if (_disposedValue) return;
+
+            var index = _book.CurrentPage?.Index ?? 0;
+            var target = _book.Marker.GetNearMarkedPage(index, direction, isLoop, isIncludeTerminal);
+            if (target == null) return;
+
+            _pageControl.MoveTo(this, target.Index);
         }
 
     }

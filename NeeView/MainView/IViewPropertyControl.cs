@@ -1,7 +1,12 @@
-﻿namespace NeeView
+﻿using System.ComponentModel;
+
+namespace NeeView
 {
-    public interface IViewPropertyControl
+    public interface IViewPropertyControl : INotifyPropertyChanged
     {
+        bool IsAutoRotateLeft { get; set; }
+        bool IsAutoRotateRight { get; set; }
+
         bool GetAutoRotateLeft();
         bool GetAutoRotateRight();
         void SetAutoRotateLeft(bool flag);
