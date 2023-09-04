@@ -35,11 +35,11 @@ namespace NeeView
 
             _presenter.ViewContentChanged += (s, e) =>
             {
-                if (e.Action < ViewContentChangedAction.Content) return;
+                if (e.Action < ViewContentChangedAction.ContentLoading) return;
                 UpdateFormat();
             };
 
-            _bookHub.Loading += (s, e) =>
+            _presenter.Loading += (s, e) =>
             {
                 UpdateTitle();
             };
@@ -88,7 +88,7 @@ namespace NeeView
 
         private void UpdateTitle()
         {
-            if (_bookHub.IsLoading)
+            if (_presenter.IsLoading)
             {
                 Title = _defaultPageTitle;
             }

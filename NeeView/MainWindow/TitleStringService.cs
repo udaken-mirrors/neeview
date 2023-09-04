@@ -26,7 +26,7 @@ namespace NeeView
 
             _presenter.ViewContentChanged += (s, e) =>
             {
-                if (e.Action < ViewContentChangedAction.Content) return;
+                if (e.Action < ViewContentChangedAction.ContentLoading) return;
                 Update();
             };
 

@@ -166,9 +166,9 @@ namespace NeeView.PageFrames
             _scrollViewer.FlushScroll();
         }
 
-
         [Subscribable]
         public event PropertyChangedEventHandler? PropertyChanged;
+
 
         // ページ終端を超えて移動しようとした
         // 次の本への移動を要求

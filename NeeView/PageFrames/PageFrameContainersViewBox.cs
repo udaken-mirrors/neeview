@@ -21,6 +21,7 @@ namespace NeeView.PageFrames
 
             var width = Math.Max(_view.ActualWidth, _view.MinWidth);
             var height = Math.Max(_view.ActualHeight, _view.MinHeight);
+            _size = new Size(width, height);
             _rect = CreateViewRect(_view.Point, new Size(width, height));
 
             // TODO: Dispose

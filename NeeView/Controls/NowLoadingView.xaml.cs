@@ -57,7 +57,7 @@ namespace NeeView
 
 
         /// <summary>
-        /// NowLoadinの表示/非表示
+        /// NowLoadingの表示/非表示
         /// </summary>
         /// <param name="isDisp"></param>
         private void DispNowLoading(bool isDisp)

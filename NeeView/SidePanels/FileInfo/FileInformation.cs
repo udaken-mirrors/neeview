@@ -50,7 +50,7 @@ namespace NeeView
 
         public void Update(FrameViewContentChangedEventArgs e)
         {
-            if (e.Action < ViewContentChangedAction.Content) return;
+            if (e.Action < ViewContentChangedAction.ContentLoading) return;
             _viewContentsDelay.SetValue(e, 100); // 100ms delay
         }
 

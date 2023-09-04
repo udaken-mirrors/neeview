@@ -12,7 +12,7 @@ namespace NeeView
 
         private NowLoading()
         {
-            BookHub.Current.Loading +=
+            PageFrameBoxPresenter.Current.Loading +=
                 (s, e) => IsDispNowLoading = e.Path != null;
         }
 

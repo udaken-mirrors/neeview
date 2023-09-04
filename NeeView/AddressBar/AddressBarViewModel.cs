@@ -8,7 +8,7 @@ using System.Windows.Input;
 namespace NeeView
 {
     /// <summary>
-    /// AddresBar : ViewModel
+    /// AddressBar : ViewModel
     /// </summary>
     public class AddressBarViewModel : BindableBase
     {
@@ -26,7 +26,7 @@ namespace NeeView
 
             _isLoading = new DelayValue<bool>();
             _isLoading.ValueChanged += (s, e) => RaisePropertyChanged(nameof(IsLoading));
-            BookHub.Current.Loading += BookHub_Loading;
+            PageFrameBoxPresenter.Current.Loading += Presenter_Loading;
         }
 
 
@@ -63,7 +63,7 @@ namespace NeeView
         }
 
 
-        private void BookHub_Loading(object? sender, BookHubPathEventArgs e)
+        private void Presenter_Loading(object? sender, BookPathEventArgs e)
         {
             if (e.Path != null)
             {

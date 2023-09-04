@@ -59,7 +59,7 @@ namespace NeeView
 
         private void PageFrameBoxPresenter_ViewContentChanged(object? sender, FrameViewContentChangedEventArgs e)
         {
-            if (e.Action < ViewContentChangedAction.Content) return;
+            if (e.Action < ViewContentChangedAction.ContentLoading) return;
 
             var viewContent = e.PageFrameContent.ViewContents?.FirstOrDefault() as MediaViewContent;
             var player = viewContent?.Player;

@@ -251,7 +251,8 @@ namespace NeeView.PageFrames
 
         private void ViewContent_Changed(object? sender, ViewContentChangedEventArgs e)
         {
-            ViewContentChanged?.Invoke(this, new FrameViewContentChangedEventArgs(e.Action, this));
+            var action = ViewContentChangedActionExtensions.Min(GetViewContentState().ToChangedAction(), e.Action);
+            ViewContentChanged?.Invoke(this, new FrameViewContentChangedEventArgs(action, this) { InnerArgs = e });
         }
 
         private void UpdateTransform()
@@ -269,7 +270,7 @@ namespace NeeView.PageFrames
             _calcTransform.Children.Add(_pageFrame.RotateTransform);
             _calcTransform.Children.Add(_transform.Transform);
             _calcTransform.Children.Add(_loupeContext.GetContentTransform());
-            
+
             AttachTransform();
         }
 
@@ -320,6 +321,10 @@ namespace NeeView.PageFrames
             }
         }
 
+        public ViewContentState GetViewContentState()
+        {
+            return _viewContents.Select(e => e.State).Min();
+        }
 
         public override string ToString()
         {

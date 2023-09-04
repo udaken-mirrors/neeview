@@ -27,10 +27,9 @@ namespace NeeView
         private PageFrameElementScale _scale;
         private PageFrameActivity _activity;
         private ViewSource _viewSource;
+        private ViewContentSize _viewContentSize;
         private bool _disposedValue;
         private DisposableCollection _disposables = new();
-
-        private ViewContentSize _viewContentSize;
 
 
         public ViewContent(PageFrameElement element, PageFrameElementScale scale, ViewSource viewSource, PageFrameActivity activity)
@@ -51,17 +50,13 @@ namespace NeeView
         public event EventHandler<ViewContentChangedEventArgs>? ViewContentChanged;
 
 
-
         public PageFrameActivity Activity => _activity;
-
-
         public ArchiveEntry ArchiveEntry => _element.Page.ArchiveEntry;
         public PageFrameElement Element => _element;
-
         public ViewContentSize ViewContentSize => _viewContentSize;
         public Size LayoutSize => _viewContentSize.LayoutSize;
-
         public ViewSource ViewSource => _viewSource;
+        public ViewContentState State { get; private set; }
 
 
 
@@ -129,7 +124,7 @@ namespace NeeView
             {
                 if (UpdateSize())
                 {
-                    ViewContentChanged?.Invoke(this, new ViewContentChangedEventArgs(ViewContentChangedAction.Size));
+                    ViewContentChanged?.Invoke(this, new ViewContentChangedEventArgs(ViewContentChangedAction.Size, this));
                 }
             }
 
@@ -214,13 +209,16 @@ namespace NeeView
         protected void UpdateContent(DataSource data)
         {
             NVDebug.AssertSTA();
-            Content = CreateContent(LayoutSize, data);
+            var unit = CreateContent(LayoutSize, data);
+            Content = unit.Content;
+            State = unit.State;
             UpdateSize();
-            ViewContentChanged?.Invoke(this, new ViewContentChangedEventArgs(ViewContentChangedAction.Content));
+            ViewContentChanged?.Invoke(this, new ViewContentChangedEventArgs(State.ToChangedAction(), this));
         }
 
 
-        protected virtual FrameworkElement CreateContent(Size size, DataSource data)
+
+        protected virtual ViewContentData CreateContent(Size size, DataSource data)
         {
             Debug.Assert(_initialized);
 
@@ -228,16 +226,16 @@ namespace NeeView
             {
                 case DataState.None:
                     Debug.WriteLine($"CreateContent.Ready: {ArchiveEntry}");
-                    return ViewContentTools.CreateLoadingContent(Element);
+                    return new ViewContentData(ViewContentTools.CreateLoadingContent(Element), ViewContentState.Loading);
 
                 case DataState.Loaded:
                     Debug.WriteLine($"CreateContent.Loaded: {ArchiveEntry}");
                     Debug.Assert(data.Data is not null);
-                    return CreateLoadedContent(size, data.Data);
+                    return new ViewContentData(CreateLoadedContent(size, data.Data), ViewContentState.Loaded);
 
                 case DataState.Failed:
                     Debug.WriteLine($"CreateContent.Failed: {ArchiveEntry}");
-                    return ViewContentTools.CreateErrorContent(Element, data.ErrorMessage);
+                    return new ViewContentData(ViewContentTools.CreateErrorContent(Element, data.ErrorMessage), ViewContentState.Failed);
 
                 default:
                     throw new InvalidOperationException();
@@ -248,6 +246,35 @@ namespace NeeView
         protected virtual FrameworkElement CreateLoadedContent(Size size, object data)
         {
             return ViewContentTools.CreateDummyContent(Element);
+        }
+    }
+
+
+
+    public record class ViewContentData(FrameworkElement Content, ViewContentState State);
+
+
+
+    public enum ViewContentState
+    {
+        None,
+        Loading,
+        Loaded,
+        Failed,
+    }
+
+    public static class ViewContentStateExtensions
+    {
+        public static ViewContentChangedAction ToChangedAction(this ViewContentState state)
+        {
+            return state switch
+            {
+                ViewContentState.None => ViewContentChangedAction.ContentLoading,
+                ViewContentState.Loading => ViewContentChangedAction.ContentLoading,
+                ViewContentState.Loaded => ViewContentChangedAction.ContentLoaded,
+                ViewContentState.Failed => ViewContentChangedAction.ContentFailed,
+                _ => throw new InvalidEnumArgumentException()
+            };
         }
     }
 }

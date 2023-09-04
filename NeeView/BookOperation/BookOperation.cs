@@ -17,7 +17,7 @@ namespace NeeView
         public static BookOperation Current { get; }
 
 
-        private PageFrameBoxPresenter? _presenter;
+        private PageFrameBoxPresenter _presenter;
         private BookHub _bookHub;
         private Book? _book;
         private bool _isLoading;
@@ -59,7 +59,7 @@ namespace NeeView
 
 
 
-        public bool IsLoading => _bookHub.IsLoading || _isLoading;
+        public bool IsLoading => _presenter.IsLoading || _isLoading;
 
         public Book? Book => _book;
 

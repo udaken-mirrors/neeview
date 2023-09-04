@@ -15,14 +15,20 @@ namespace NeeView
         public static HistoryList Current { get; }
 
 
+        private BookHub _bookHub;
+        private PageFrameBoxPresenter _presenter;
+
         private string? _filterPath;
         private List<BookHistory> _items = new();
-        private bool _isDarty = true;
+        private bool _isDirty = true;
         private int _serialNumber = -1;
 
 
         private HistoryList()
         {
+            _bookHub = BookHub.Current;
+            _presenter = PageFrameBoxPresenter.Current;
+
             BookOperation.Current.BookChanged += BookOperation_BookChanged;
 
             Config.Current.History.AddPropertyChanged(nameof(HistoryConfig.IsCurrentFolder), (s, e) => UpdateFilterPath());
@@ -57,7 +63,7 @@ namespace NeeView
             {
                 if (SetProperty(ref _filterPath, value))
                 {
-                    SetDarty();
+                    SetDirty();
                 }
             }
         }
@@ -84,9 +90,9 @@ namespace NeeView
 
         public void UpdateItems(bool raisePropertyChanged = true)
         {
-            if (IsDarty())
+            if (IsDirty())
             {
-                ResetDarty();
+                ResetDirty();
                 _items = CreateItems();
 
                 if (raisePropertyChanged)
@@ -96,19 +102,19 @@ namespace NeeView
             }
         }
 
-        private void SetDarty()
+        private void SetDirty()
         {
-            _isDarty = true;
+            _isDirty = true;
         }
 
-        private void ResetDarty()
+        private void ResetDirty()
         {
-            _isDarty = false;
+            _isDirty = false;
             _serialNumber = BookHistoryCollection.Current.SerialNumber;
         }
-        private bool IsDarty()
+        private bool IsDirty()
         {
-            return _isDarty || _serialNumber != BookHistoryCollection.Current.SerialNumber;
+            return _isDirty || _serialNumber != BookHistoryCollection.Current.SerialNumber;
         }
 
         private List<BookHistory> CreateItems()
@@ -121,7 +127,7 @@ namespace NeeView
         // 履歴を戻ることができる？
         public bool CanPrevHistory()
         {
-            var index = Items.FindIndex(e => e.Path == BookHub.Current.Address);
+            var index = Items.FindIndex(e => e.Path == _bookHub.Address);
 
             if (index < 0)
             {
@@ -136,9 +142,9 @@ namespace NeeView
         // 履歴を戻る
         public void PrevHistory()
         {
-            if (BookHub.Current.IsLoading || Items.Count <= 0) return;
+            if (_bookHub.IsLoading || Items.Count <= 0) return;
 
-            var index = Items.FindIndex(e => e.Path == BookHub.Current.Address);
+            var index = Items.FindIndex(e => e.Path == _bookHub.Address);
 
             var prev = index < 0
                 ? Items.First()
@@ -146,7 +152,7 @@ namespace NeeView
 
             if (prev != null)
             {
-                BookHub.Current.RequestLoad(this, prev.Path, null, BookLoadOption.KeepHistoryOrder | BookLoadOption.SelectHistoryMaybe | BookLoadOption.IsBook, true);
+                _bookHub.RequestLoad(this, prev.Path, null, BookLoadOption.KeepHistoryOrder | BookLoadOption.SelectHistoryMaybe | BookLoadOption.IsBook, true);
             }
             else
             {
@@ -157,20 +163,20 @@ namespace NeeView
         // 履歴を進めることができる？
         public bool CanNextHistory()
         {
-            var index = Items.FindIndex(e => e.Path == BookHub.Current.Address);
+            var index = Items.FindIndex(e => e.Path == _bookHub.Address);
             return index > 0;
         }
 
         // 履歴を進める
         public void NextHistory()
         {
-            if (BookHub.Current.IsLoading) return;
+            if (_bookHub.IsLoading) return;
 
-            var index = Items.FindIndex(e => e.Path == BookHub.Current.Address);
+            var index = Items.FindIndex(e => e.Path == _bookHub.Address);
             if (index > 0)
             {
                 var next = Items[index - 1];
-                BookHub.Current.RequestLoad(this, next.Path, null, BookLoadOption.KeepHistoryOrder | BookLoadOption.SelectHistoryMaybe | BookLoadOption.IsBook, true);
+                _bookHub.RequestLoad(this, next.Path, null, BookLoadOption.KeepHistoryOrder | BookLoadOption.SelectHistoryMaybe | BookLoadOption.IsBook, true);
             }
             else
             {

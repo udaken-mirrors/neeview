@@ -58,7 +58,7 @@ namespace NeeView
             UpdateItems();
         }
 
-        private void BookHub_HistoryListSync(object? sender, BookHubPathEventArgs e)
+        private void BookHub_HistoryListSync(object? sender, BookPathEventArgs e)
         {
             if (e.Path is null) return;
 

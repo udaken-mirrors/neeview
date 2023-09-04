@@ -44,11 +44,11 @@ namespace NeeView
 
             _presenter.ViewContentChanged += (s, e) =>
             {
-                if (e.Action < ViewContentChangedAction.Content) return;
+                if (e.Action < ViewContentChangedAction.ContentLoading) return;
                 UpdateFormat();
             };
 
-            _bookHub.Loading += (s, e) =>
+            _presenter.Loading += (s, e) =>
             {
                 UpdateTitle();
             };
@@ -97,7 +97,7 @@ namespace NeeView
         {
             var address = _bookHub.GetCurrentBook()?.Path;
 
-            if (_bookHub.IsLoading)
+            if (_presenter.IsLoading)
             {
                 Title = LoosePath.GetFileName(_bookHub.LoadingPath) + " " + Properties.Resources.Notice_LoadingTitle;
             }

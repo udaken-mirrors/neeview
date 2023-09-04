@@ -36,14 +36,14 @@ namespace NeeView
             BookOperation.Current.BookControl.AddPropertyChanged(nameof(IBookControl.IsBusy),
                 (s, e) => UpdateBusyVisibility());
 
-            BookHub.Current.SubscribePropertyChanged(nameof(BookHub.IsLoading),
+            PageFrameBoxPresenter.Current.SubscribePropertyChanged(nameof(PageFrameBoxPresenter.IsLoading),
                 (s, e) => UpdateBusyVisibility());
         }
 
 
         public MainViewComponent ViewComponent => _viewComponent;
 
-        public PageFrameBoxPresenter PageFrameBoxPresenter => _viewComponent.PageFrameBoxPresenter;
+        public PageFrameBoxPresenter PageFrameBoxPresenter => PageFrameBoxPresenter.Current;
 
         //public ContentCanvas ContentCanvas => _viewComponent.ContentCanvas;
 
@@ -77,7 +77,7 @@ namespace NeeView
         {
             ////Debug.WriteLine($"IsBusy: {BookHub.Current.IsLoading}, {BookOperation.Current.IsBusy}, {ContentRebuild.Current.IsBusy}");
             //this.BusyVisibility = Config.Current.Notice.IsBusyMarkEnabled && (BookHub.Current.IsLoading || BookOperation.Current.BookControl.IsBusy || _viewComponent.ContentRebuild.IsBusy) && !SlideShow.Current.IsPlayingSlideShow ? Visibility.Visible : Visibility.Collapsed;
-            this.BusyVisibility = Config.Current.Notice.IsBusyMarkEnabled && (BookHub.Current.IsLoading || BookOperation.Current.BookControl.IsBusy) && !SlideShow.Current.IsPlayingSlideShow ? Visibility.Visible : Visibility.Collapsed;
+            this.BusyVisibility = Config.Current.Notice.IsBusyMarkEnabled && (PageFrameBoxPresenter.Current.IsLoading || BookOperation.Current.BookControl.IsBusy) && !SlideShow.Current.IsPlayingSlideShow ? Visibility.Visible : Visibility.Collapsed;
         }
 
 

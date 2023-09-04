@@ -16,12 +16,12 @@ namespace NeeView
 
 
         // 再読み込みを要求
-        public event EventHandler? DartyBook;
+        public event EventHandler? DirtyBook;
 
         public IDisposable SubscribeDartyBook(EventHandler handler)
         {
-            DartyBook += handler;
-            return new AnonymousDisposable(() => DartyBook -= handler);
+            DirtyBook += handler;
+            return new AnonymousDisposable(() => DirtyBook -= handler);
         }
 
 
@@ -62,7 +62,7 @@ namespace NeeView
                 if (_isRecursiveFolder != value)
                 {
                     _isRecursiveFolder = value;
-                    DartyBook?.Invoke(this, EventArgs.Empty);
+                    DirtyBook?.Invoke(this, EventArgs.Empty);
                 }
             }
         }
@@ -77,7 +77,7 @@ namespace NeeView
             {
                 if (disposing)
                 {
-                    this.DartyBook = null;
+                    this.DirtyBook = null;
                     Pages.Dispose();
                 }
                 _disposedValue = true;

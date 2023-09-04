@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using System.Transactions;
 using System.Windows;
 using System.Windows.Controls;
@@ -336,7 +337,8 @@ namespace NeeView.PageFrames
 
             if (_content is PageFrameContent pageFrameContent)
             {
-                ViewContentChanged?.Invoke(this, new FrameViewContentChangedEventArgs(ViewContentChangedAction.Content, pageFrameContent));
+                var action = pageFrameContent.ViewContents.Select(e => e.State).Min().ToChangedAction();
+                ViewContentChanged?.Invoke(this, new FrameViewContentChangedEventArgs(action, pageFrameContent));
             }
         }
 

@@ -118,11 +118,7 @@ namespace NeeView
 
         // 新しいロードリクエスト
         [Subscribable]
-        public event EventHandler<BookHubPathEventArgs>? LoadRequested;
-
-        // ロード中通知
-        [Subscribable]
-        public event EventHandler<BookHubPathEventArgs>? Loading;
+        public event EventHandler<BookPathEventArgs>? LoadRequested;
 
         // コマンドエンジン処理中通知
         [Subscribable]
@@ -142,7 +138,7 @@ namespace NeeView
 
         // 履歴リスト更新要求
         [Subscribable]
-        public event EventHandler<BookHubPathEventArgs>? HistoryListSync;
+        public event EventHandler<BookPathEventArgs>? HistoryListSync;
 
         // ブックマークにに追加、削除された
         [Subscribable]
@@ -260,7 +256,7 @@ namespace NeeView
 
             ////DebugTimer.Start($"\nStart: {path}");
 
-            LoadRequested?.Invoke(this, new BookHubPathEventArgs(path));
+            LoadRequested?.Invoke(this, new BookPathEventArgs(path));
 
             if (_book?.Path == path && option.HasFlag(BookLoadOption.SkipSamePlace)) return null;
 
@@ -390,7 +386,6 @@ namespace NeeView
 
             this.LoadingPath = path;
             this.IsLoading = (path != null);
-            Loading?.Invoke(this, new BookHubPathEventArgs(path));
         }
 
         /// <summary>
@@ -411,6 +406,9 @@ namespace NeeView
             Address = args.SourcePath;
 
             string place = args.Path;
+
+            var bookChangedEventArgs = new BookChangedEventArgs(Address, null, BookMementoType.None);
+            var isEmptyBook = false;
 
             try
             {
@@ -436,7 +434,7 @@ namespace NeeView
                 // 履歴リスト更新
                 if ((args.Option & BookLoadOption.SelectHistoryMaybe) != 0)
                 {
-                    HistoryListSync?.Invoke(this, new BookHubPathEventArgs(address.TargetPath.SimplePath));
+                    HistoryListSync?.Invoke(this, new BookPathEventArgs(address.TargetPath.SimplePath));
                 }
 
                 // 本の設定
@@ -477,25 +475,11 @@ namespace NeeView
                 _book = book;
                 SubscribeBook(book);
 
-                await WaitBookReadyAsync(book, token);
-
                 ////DebugTimer.Check("LoadCore");
+                bookChangedEventArgs = new BookChangedEventArgs(book.Path, book, BookMementoTools.GetBookMementoType(book));
 
-                NotifyLoading(null);
-                BookChanged?.Invoke(this, new BookChangedEventArgs(book.Path, book, BookMementoTools.GetBookMementoType(book)));
-
-                // ページがなかった時の処理
-                if (book != null && book.Pages.Count <= 0)
-                {
-                    BookMementoTools.ResetBookMementoPage(book.Path);
-
-                    EmptyMessage?.Invoke(this, new BookHubMessageEventArgs(string.Format(Properties.Resources.Notice_NoPages, book.Path)));
-
-                    if (Config.Current.Book.IsConfirmRecursive && (args.Option & BookLoadOption.ReLoad) == 0 && !book.Source.IsRecursiveFolder && book.Source.SubFolderCount > 0)
-                    {
-                        AppDispatcher.Invoke(() => ConfirmRecursive(args.Sender, book, token));
-                    }
-                }
+                // ページ存在チェック
+                isEmptyBook = (book != null && book.Pages.Count <= 0);
             }
             catch (OperationCanceledException)
             {
@@ -517,25 +501,33 @@ namespace NeeView
                 // 現在表示されているコンテンツを無効
                 //ViewContentsChanged?.Invoke(args.Sender, new ViewContentSourceCollectionChangedEventArgs());
 
-                // 本の変更通知
-                NotifyLoading(null);
-                BookChanged?.Invoke(this, new BookChangedEventArgs(Address, null, BookMementoType.None));
-
                 // 履歴リスト更新
                 if ((args.Option & BookLoadOption.SelectHistoryMaybe) != 0)
                 {
-                    HistoryListSync?.Invoke(this, new BookHubPathEventArgs(Address));
+                    HistoryListSync?.Invoke(this, new BookPathEventArgs(Address));
                 }
             }
             finally
             {
-                // Now Loading OFF
+                // 本の変更通知
                 NotifyLoading(null);
-
+                BookChanged?.Invoke(this, bookChangedEventArgs);
                 ////DebugTimer.Check("Done.");
             }
-        }
 
+            // ページがなかった時の処理
+            if (_book is not null && isEmptyBook)
+            {
+                BookMementoTools.ResetBookMementoPage(_book.Path);
+
+                EmptyMessage?.Invoke(this, new BookHubMessageEventArgs(string.Format(Properties.Resources.Notice_NoPages, _book.Path)));
+
+                if (Config.Current.Book.IsConfirmRecursive && (args.Option & BookLoadOption.ReLoad) == 0 && !_book.Source.IsRecursiveFolder && _book.Source.SubFolderCount > 0)
+                {
+                    AppDispatcher.Invoke(() => ConfirmRecursive(args.Sender, _book, token));
+                }
+            }
+        }
 
         // 再帰読み込み確認
         // TODO: UI操作を行うのはいかがなものか。イベントかMessengerにする必要あり。
@@ -600,45 +592,6 @@ namespace NeeView
             return book;
         }
 
-        /// <summary>
-        /// ブックの動作開始と最初のページの表示を待つ
-        /// </summary>
-        private async Task WaitBookReadyAsync(Book book, CancellationToken token)
-        {
-            token.ThrowIfCancellationRequested();
-
-#warning 別手段を検討
-#if false
-            if (book is null) return;
-
-            var tcs = new TaskCompletionSource<bool>();
-
-            using (book.Viewer.Loader.SubscribeViewContentsChanged(BookViewer_ViewContentsChangedInner))
-            {
-                // ブックエンジン開始
-                book.Start();
-
-                // 最初のコンテンツ表示待ち
-                if (book.Pages.Count > 0)
-                {
-                    using (var register = token.Register(() => tcs.TrySetCanceled()))
-                    {
-                        await tcs.Task;
-                        token.ThrowIfCancellationRequested();
-                    }
-                }
-            }
-
-            //// inner callback function define.
-            void BookViewer_ViewContentsChangedInner(object? s, ViewContentSourceCollectionChangedEventArgs e)
-            {
-                if (e.ViewPageCollection.Collection.All(x => x.Content.IsViewReady))
-                {
-                    tcs.TrySetResult(true);
-                }
-            }
-#endif
-        }
 
         /// <summary>
         /// ブックイベント購読
@@ -649,7 +602,7 @@ namespace NeeView
 
             //book.Viewer.Loader.ViewContentsChanged += BookViewer_ViewContentsChanged;
             //book.Viewer.Loader.NextContentsChanged += BookViewer_NextContentsChanged;
-            book.Source.DartyBook += BookSource_DirtyBook;
+            book.Source.DirtyBook += BookSource_DirtyBook;
         }
 
         /// <summary>
@@ -661,7 +614,7 @@ namespace NeeView
 
             //book.Viewer.Loader.ViewContentsChanged -= BookViewer_ViewContentsChanged;
             //book.Viewer.Loader.NextContentsChanged -= BookViewer_NextContentsChanged;
-            book.Source.DartyBook -= BookSource_DirtyBook;
+            book.Source.DirtyBook -= BookSource_DirtyBook;
         }
 
         #endregion BookHubCommand.Load
@@ -671,35 +624,35 @@ namespace NeeView
         /// <summary>
         /// 本の開放
         /// </summary>
-        public void Unload(BookHubCommandUnloadArgs param)
+        public void Unload(BookHubCommandUnloadArgs parameter)
         {
             if (_disposedValue) return;
 
             try
             {
                 // 本の変更通
-                BookChanging?.Invoke(param.Sender, new BookChangingEventArgs(""));
+                BookChanging?.Invoke(parameter.Sender, new BookChangingEventArgs(""));
 
                 UnloadCore();
 
-                if (param.IsClearViewContent)
+                if (parameter.IsClearViewContent)
                 {
                     this.Address = null;
 
                     // 現在表示されているコンテンツを無効
-                    //ViewContentsChanged?.Invoke(param.Sender, new ViewContentSourceCollectionChangedEventArgs());
+                    //ViewContentsChanged?.Invoke(parameter.Sender, new ViewContentSourceCollectionChangedEventArgs());
                 }
 
-                if (param.Message != null)
+                if (parameter.Message != null)
                 {
-                    EmptyPageMessage?.Invoke(this, new BookHubMessageEventArgs(param.Message));
+                    EmptyPageMessage?.Invoke(this, new BookHubMessageEventArgs(parameter.Message));
                 }
             }
             finally
             {
                 // 本の変更通
                 NotifyLoading(null);
-                BookChanged?.Invoke(param.Sender, new BookChangedEventArgs("", null, BookMementoType.None));
+                BookChanged?.Invoke(parameter.Sender, new BookChangedEventArgs("", null, BookMementoType.None));
             }
         }
 
@@ -747,7 +700,6 @@ namespace NeeView
                     this.BookChanging = null;
                     this.BookChanged = null;
                     this.LoadRequested = null;
-                    this.Loading = null;
                     this.EmptyMessage = null;
                     this.EmptyPageMessage = null;
                     this.FolderListSync = null;

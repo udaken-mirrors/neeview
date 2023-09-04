@@ -3,8 +3,12 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
+using NeeLaboratory.ComponentModel;
 using NeeLaboratory.Generators;
+using NeeLaboratory.Threading.Tasks;
 using NeeView.ComponentModel;
 using NeeView.PageFrames;
 using NeeView.Windows;
@@ -93,11 +97,14 @@ namespace NeeView
         [Subscribable]
         public event SizeChangedEventHandler? ViewSizeChanged;
 
+        // ロード中通知
+        [Subscribable]
+        public event EventHandler<BookPathEventArgs>? Loading;
+
 
         public bool IsEnabled => _box != null;
 
-
-        public bool IsLoading => _bookHub.IsLoading || _isLoading;
+        public bool IsLoading => _isLoading;
 
         public IReadOnlyList<Page> Pages => _bookContext?.Pages ?? new List<Page>();
 
@@ -131,25 +138,49 @@ namespace NeeView
 
         private void BookHub_BookChanging(object? sender, BookChangingEventArgs e)
         {
+            _openCancellationTokenSource.Cancel();
+            _openCancellationTokenSource.Dispose();
+            _openCancellationTokenSource = new();
+
             AppDispatcher.Invoke(() =>
             {
-                _isLoading = true;
+                SetLoading(e.Address);
                 PageFrameBoxChanging?.Invoke(this, new PageFrameBoxChangingEventArgs(null, e));
             });
         }
 
+        private CancellationTokenSource _openCancellationTokenSource = new();
+
         private void BookHub_BookChanged(object? sender, BookChangedEventArgs e)
         {
-            AppDispatcher.Invoke(() =>
+            AppDispatcher.BeginInvoke(async () =>
             {
-                Open(_bookHub.GetCurrentBook());
-                _isLoading = false;
-                PageFrameBoxChanged?.Invoke(this, new PageFrameBoxChangedEventArgs(_box, e));
+                try
+                {
+                    await OpenAsync(_bookHub.GetCurrentBook(), _openCancellationTokenSource.Token);
+                    PageFrameBoxChanged?.Invoke(this, new PageFrameBoxChangedEventArgs(_box, e));
+                }
+                catch (OperationCanceledException)
+                {
+                }
+                finally
+                {
+                    SetLoading(null);
+                }
             });
         }
 
-        private void Open(Book? book)
+        private void SetLoading(string? address)
         {
+            _isLoading = !string.IsNullOrEmpty(address);
+            RaisePropertyChanged(nameof(IsLoading));
+            Loading?.Invoke(this, new BookPathEventArgs(address));
+        }
+
+        private async Task OpenAsync(Book? book, CancellationToken token)
+        {
+            token.ThrowIfCancellationRequested();
+
             Close();
             if (book is null) return;
 
@@ -166,11 +197,13 @@ namespace NeeView
             _box.SelectedContainerLayoutChanged += Box_SelectedContainerLayoutChanged;
             _box.SelectedContentSizeChanged += Box_SelectedContentSizeChanged;
             _box.SizeChanged += Box_SizeChanged;
-            _box.Initialize();
 
             _pageControl = new BookCommandControl(_bookContext, _box);
 
             _bookMementoControl = new BookMementoControl(_book, BookHistoryCollection.Current);
+
+            _box.Initialize();
+            await WaitStableAsync(_box, token);
 
             RaisePropertyChanged(nameof(View));
             RaisePropertyChanged(null);
@@ -178,6 +211,37 @@ namespace NeeView
             SelectedRangeChanged?.Invoke(this, EventArgs.Empty);
         }
 
+        /// <summary>
+        /// 選択ページ表示完了まで待機
+        /// </summary>
+        /// <param name="box"></param>
+        /// <param name="token"></param>
+        /// <returns></returns>
+        private async Task WaitStableAsync(PageFrameBox box, CancellationToken token)
+        {
+            using var disposables = new DisposableCollection();
+            using var eventFlag = new ManualResetEventSlim();
+
+            disposables.Add(SubscribeViewContentChanged(Local_ViewContentChanged));
+
+            while (IsLoading())
+            {
+                await eventFlag.WaitHandle.AsTask().WaitAsync(token);
+                eventFlag.Reset();
+            }
+
+            bool IsLoading()
+            {
+                var pageFrameContent = box.GetSelectedPageFrameContent();
+                if (pageFrameContent is null) return false;
+                return pageFrameContent.GetViewContentState() < ViewContentState.Loaded;
+            }
+
+            void Local_ViewContentChanged(object? sender, FrameViewContentChangedEventArgs e)
+            {
+                eventFlag.Set();
+            }
+        }
 
         private void Close()
         {
