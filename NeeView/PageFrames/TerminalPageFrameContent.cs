@@ -2,7 +2,6 @@
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Shapes;
-using PageRange = NeeView.PageRange;
 
 
 namespace NeeView.PageFrames

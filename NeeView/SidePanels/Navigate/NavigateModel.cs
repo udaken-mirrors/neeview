@@ -44,7 +44,7 @@ namespace NeeView
 
         public NavigateModel()
         {
-            _dragTransform = new NavigateTransformControl(MainViewComponent.Current.PageFrameBoxPresenter);
+            _dragTransform = new NavigateTransformControl(PageFrameBoxPresenter.Current);
             _dragTransform.PropertyChanged += NavigateTransformControl_PropertyChanged;
 
             _mediaControl = new MediaControl();

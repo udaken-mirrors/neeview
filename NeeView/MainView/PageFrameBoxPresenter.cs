@@ -106,20 +106,20 @@ namespace NeeView
 
         public bool IsLoading => _isLoading;
 
-        public IReadOnlyList<Page> Pages => _bookContext?.Pages ?? new List<Page>();
+        public IReadOnlyList<Page> Pages => _box?.Pages ?? new List<Page>();
 
         public PageRange SelectedRange
         {
-            get => _bookContext?.SelectedRange ?? new PageRange();
+            get => _box?.SelectedRange ?? new PageRange();
         }
 
         public IReadOnlyList<Page> SelectedPages
         {
             get
             {
-                var bookContext = _bookContext;
-                if (bookContext is null) return new List<Page>();
-                return bookContext.SelectedRange.CollectPositions().Select(e => bookContext.Pages[e.Index]).Distinct().ToList();
+                var box = _box;
+                if (box is null) return new List<Page>();
+                return box.SelectedRange.CollectPositions().Select(e => box.Pages[e.Index]).Distinct().ToList();
             }
         }
 
@@ -132,7 +132,7 @@ namespace NeeView
 
         public BookCommandControl? PageControl => _pageControl;
 
-        public bool IsMedia => _bookContext?.IsMedia ?? false;
+        public bool IsMedia => _box?.Book.IsMedia ?? false;
 
 
 
@@ -187,11 +187,11 @@ namespace NeeView
             _book = book;
 
             _bookContext = new BookContext(_book, _config, _shareContext);
-            _bookContext.PagesChanged += BookContext_PagesChanged;
-            _bookContext.SelectedRangeChanged += BookContext_SelectedRangeChanged;
-            _bookContext.PropertyChanged += BookContext_PropertyChanged;
 
             _box = new PageFrameBox(_bookContext);
+            _box.PagesChanged += Box_PagesChanged;
+            _box.SelectedRangeChanged += Box_SelectedRangeChanged;
+            _box.PropertyChanged += Box_PropertyChanged;
             _box.ViewContentChanged += Box_ViewContentChanged;
             _box.TransformChanged += Box_TransformChanged;
             _box.SelectedContainerLayoutChanged += Box_SelectedContainerLayoutChanged;
@@ -256,20 +256,23 @@ namespace NeeView
             Debug.Assert(_box is PageFrameBox);
             if (_box is not null)
             {
-                (_box as IDisposable)?.Dispose();
+                _box.PagesChanged -= Box_PagesChanged;
+                _box.SelectedRangeChanged -= Box_SelectedRangeChanged;
+                _box.PropertyChanged -= Box_PropertyChanged;
                 _box.ViewContentChanged -= Box_ViewContentChanged;
                 _box.TransformChanged -= Box_TransformChanged;
                 _box.SelectedContainerLayoutChanged -= Box_SelectedContainerLayoutChanged;
                 _box.SelectedContentSizeChanged -= Box_SelectedContentSizeChanged;
                 _box.SizeChanged -= Box_SizeChanged;
+                (_box as IDisposable)?.Dispose();
                 _box = null;
             }
             RaisePropertyChanged(nameof(View));
 
             Debug.Assert(_bookContext is not null);
-            _bookContext.PagesChanged -= BookContext_PagesChanged;
-            _bookContext.SelectedRangeChanged -= BookContext_SelectedRangeChanged;
-            _bookContext.PropertyChanged -= BookContext_PropertyChanged;
+            //_bookContext.PagesChanged -= Box_PagesChanged;
+            //_bookContext.SelectedRangeChanged -= Box_SelectedRangeChanged;
+            //_bookContext.PropertyChanged -= Box_PropertyChanged;
             _bookContext.Dispose();
             _bookContext = null;
 
@@ -321,8 +324,9 @@ namespace NeeView
 
 
 
-        private void BookContext_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+        private void Box_PropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
+
             switch (e.PropertyName)
             {
                 case nameof(BookContext.SelectedRange):
@@ -334,12 +338,12 @@ namespace NeeView
             }
         }
 
-        private void BookContext_PagesChanged(object? sender, EventArgs e)
+        private void Box_PagesChanged(object? sender, EventArgs e)
         {
             PagesChanged?.Invoke(this, e);
         }
 
-        private void BookContext_SelectedRangeChanged(object? sender, EventArgs e)
+        private void Box_SelectedRangeChanged(object? sender, EventArgs e)
         {
             SelectedRangeChanged?.Invoke(this, e);
         }

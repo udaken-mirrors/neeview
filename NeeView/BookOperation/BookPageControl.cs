@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NeeView.PageFrames;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -7,35 +8,36 @@ namespace NeeView
 {
     public class BookPageControl : IBookPageControl, IDisposable
     {
+        private PageFrameBox _box;
         private Book _book;
         private List<Page> _selectedPages = new();
         private IBookPageMoveControl _moveControl;
         private IBookPageActionControl _actionControl;
         private bool _disposedValue;
-        private PageFrameBoxPresenter _presenter;
 
 
 
-        public BookPageControl(Book book, IBookControl bookControl, PageFrameBoxPresenter presenter)
+        public BookPageControl(PageFrameBox box, IBookControl bookControl)
         {
-            _book = book;
-            _presenter = presenter;
+            _box = box;
+            _book = _box.Book;
 
-            if (book.IsMedia)
+            if (_book.IsMedia)
             {
-                _moveControl = new MediaPageMoveControl(_book);
-                _actionControl = new BookPageActionControl(_book, bookControl, _presenter);
+                _moveControl = new MediaPageMoveControl(_box);
+                _actionControl = new BookPageActionControl(_box, bookControl);
             }
             else
             {
-                _moveControl = new BookPageMoveControl(_presenter);
-                _actionControl = new BookPageActionControl(_book, bookControl, _presenter);
+                _moveControl = new BookPageMoveControl(_box);
+                _actionControl = new BookPageActionControl(_box, bookControl);
             }
 
             _book.Pages.PagesSorted += Book_PagesSorted;
             _book.Pages.PageRemoved += Book_PageRemoved;
             //_book.Viewer.SelectedRangeChanged += Book_SelectedRangeChanged;
-            _presenter.SelectedRangeChanged += Book_SelectedRangeChanged;
+            //_presenter.SelectedRangeChanged += Book_SelectedRangeChanged;
+            _box.SelectedRangeChanged += Book_SelectedRangeChanged;
         }
 
 
@@ -45,7 +47,7 @@ namespace NeeView
         public IReadOnlyList<Page> Pages => _book.Pages;
         public IReadOnlyList<Page> SelectedPages => _selectedPages;
         //public PageRange SelectedRange => _book.Viewer.SelectedRange;
-        public PageRange SelectedRange => _presenter.SelectedRange;
+        public PageRange SelectedRange => _box.SelectedRange;
 
 
 
@@ -58,7 +60,8 @@ namespace NeeView
                     _book.Pages.PagesSorted -= Book_PagesSorted;
                     _book.Pages.PageRemoved -= Book_PageRemoved;
                     //_book.Viewer.SelectedRangeChanged -= Book_SelectedRangeChanged;
-                    _presenter.SelectedRangeChanged -= Book_SelectedRangeChanged;
+                    //_presenter.SelectedRangeChanged -= Book_SelectedRangeChanged;
+                    _box.SelectedRangeChanged -= Book_SelectedRangeChanged;
                 }
                 _disposedValue = true;
             }

@@ -27,7 +27,7 @@ namespace NeeView
                 using (var stream = entry.OpenEntry())
                 {
                     var bitmapInfo = BitmapInfo.Create(stream); // TODO: async
-                    var pictureInfo = PictureInfo.Create(bitmapInfo, ".NET Framework");
+                    var pictureInfo = PictureInfo.Create(bitmapInfo, "MediaPlayer");
                     
                     await Task.CompletedTask;
                     

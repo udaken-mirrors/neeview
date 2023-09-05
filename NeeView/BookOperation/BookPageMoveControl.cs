@@ -1,6 +1,7 @@
 ﻿using Jint.Native;
 using NeeLaboratory.ComponentModel;
 using NeeView.ComponentModel;
+using NeeView.PageFrames;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -11,15 +12,15 @@ namespace NeeView
 
     public partial class BookPageMoveControl : IBookPageMoveControl
     {
-        private PageFrameBoxPresenter _presenter;
+        private PageFrameBox _box;
 
         //private DisposableCollection _disposables = new();
         //private bool _disposedValue = false;
 
 
-        public BookPageMoveControl(PageFrameBoxPresenter presenter)
+        public BookPageMoveControl(PageFrameBox box)
         {
-            _presenter = presenter;
+            _box = box;
 
             //_disposables.Add(_presenter.SubscribePropertyChanged(nameof(_presenter.Pages), (_, _) => RaisePropertyChanged(nameof(Pages))));
            // _disposables.Add(_presenter.SubscribePropertyChanged(nameof(_presenter.SelectedRange), (_, _) => RaisePropertyChanged(nameof(SelectedRange))));
@@ -57,82 +58,82 @@ namespace NeeView
         public event EventHandler? PagesChanged;
 #endif
 
-        public IReadOnlyList<Page> Pages => _presenter.Pages;
+        public IReadOnlyList<Page> Pages => _box.Pages;
 
-        public PageRange SelectedRange => _presenter.SelectedRange;
+        public PageRange SelectedRange => _box.SelectedRange;
 
 
         public void MovePrev(object? sender)
         {
-            _presenter.MoveToNextFrame(LinkedListDirection.Previous);
+            _box.MoveToNextFrame(LinkedListDirection.Previous);
         }
 
         public void MoveNext(object? sender)
         {
-            _presenter.MoveToNextFrame(LinkedListDirection.Next);
+            _box.MoveToNextFrame(LinkedListDirection.Next);
         }
 
         public void MovePrevOne(object? sender)
         {
-            _presenter.MoveToNextPage(LinkedListDirection.Previous);
+            _box.MoveToNextPage(LinkedListDirection.Previous);
         }
 
         public void MoveNextOne(object? sender)
         {
-            _presenter.MoveToNextPage(LinkedListDirection.Next);
+            _box.MoveToNextPage(LinkedListDirection.Next);
         }
 
         public void ScrollToPrevFrame(object? sender, ScrollPageCommandParameter parameter)
         {
-            _presenter.ScrollToNextFrame(LinkedListDirection.Previous, parameter, parameter.LineBreakStopMode, parameter.EndMargin);
+            _box.ScrollToNextFrame(LinkedListDirection.Previous, parameter, parameter.LineBreakStopMode, parameter.EndMargin);
 
         }
 
         public void ScrollToNextFrame(object? sender, ScrollPageCommandParameter parameter)
         {
-            _presenter.ScrollToNextFrame(LinkedListDirection.Next, parameter, parameter.LineBreakStopMode, parameter.EndMargin);
+            _box.ScrollToNextFrame(LinkedListDirection.Next, parameter, parameter.LineBreakStopMode, parameter.EndMargin);
         }
 
         public void MoveTo(object? sender, int index)
         {
-            _presenter.MoveTo(new PagePosition(index, 0), LinkedListDirection.Next);
+            _box.MoveTo(new PagePosition(index, 0), LinkedListDirection.Next);
         }
 
         public void MoveToRandom(object? sender)
         {
             var random = new Random();
             var index = random.Next(Pages.Count);
-            _presenter.MoveTo(new PagePosition(index, 0), LinkedListDirection.Next);
+            _box.MoveTo(new PagePosition(index, 0), LinkedListDirection.Next);
         }
 
         public void MovePrevSize(object? sender, int size)
         {
-            _presenter.MoveTo(new PagePosition(SelectedRange.Min.Index - size, 0), LinkedListDirection.Previous);
+            _box.MoveTo(new PagePosition(SelectedRange.Min.Index - size, 0), LinkedListDirection.Previous);
         }
 
         public void MoveNextSize(object? sender, int size)
         {
-            _presenter.MoveTo(new PagePosition(SelectedRange.Min.Index + size, 0), LinkedListDirection.Next);
+            _box.MoveTo(new PagePosition(SelectedRange.Min.Index + size, 0), LinkedListDirection.Next);
         }
 
         public void MovePrevFolder(object? sender, bool isShowMessage)
         {
-            _presenter.MoveToNextFolder(LinkedListDirection.Previous, isShowMessage);
+            _box.MoveToNextFolder(LinkedListDirection.Previous, isShowMessage);
         }
 
         public void MoveNextFolder(object? sender, bool isShowMessage)
         {
-            _presenter.MoveToNextFolder(LinkedListDirection.Next, isShowMessage);
+            _box.MoveToNextFolder(LinkedListDirection.Next, isShowMessage);
         }
 
         public void MoveToFirst(object? sender)
         {
-            _presenter.MoveTo(new PagePosition(0, 0), LinkedListDirection.Next);
+            _box.MoveTo(new PagePosition(0, 0), LinkedListDirection.Next);
         }
 
         public void MoveToLast(object? sender)
         {
-            _presenter.MoveTo(new PagePosition(Pages.Count - 1, 0), LinkedListDirection.Next);
+            _box.MoveTo(new PagePosition(Pages.Count - 1, 0), LinkedListDirection.Next);
         }
     }
 

@@ -70,12 +70,43 @@ namespace NeeView.PageFrames
         public PageRange FrameRange => _range;
         public PageTerminal Terminal => _terminal;
         public int Direction => _direction;
+
+        /// <summary>
+        /// 自動回転角度
+        /// </summary>
         public double Angle => _angle;
+
+        /// <summary>
+        /// ストレッチスケール
+        /// </summary>
         public double Scale => _scale;
+        
+        /// <summary>
+        /// コンテンツ間のスペース
+        /// </summary>
         public double Span => _span;
+
+        /// <summary>
+        /// ストレッチケールを適用したサイズ
+        /// </summary>
         public Size StretchedSize => _stretchedSize;
+
+        /// <summary>
+        /// ストレッチスケールと自動回転を適用したサイズ
+        /// </summary>
+        /// <remarks>
+        /// PageFrame の表示サイズはこれを基準とする
+        /// </remarks>
         public Size Size => _size;
+
+        /// <summary>
+        /// 自動回転
+        /// </summary>
         public RotateTransform RotateTransform => new RotateTransform(_angle);
+
+        /// <summary>
+        /// ストレッチケール
+        /// </summary>
         public ScaleTransform ScaleTransform => new ScaleTransform(_scale, _scale);
 
 

@@ -57,6 +57,9 @@ namespace NeeView
             {
                 width = int.Parse(mediaInfo.Get(StreamKind.Video, 0, "Width"));
                 height = int.Parse(mediaInfo.Get(StreamKind.Video, 0, "Height"));
+
+                var aspectRatio = double.Parse(mediaInfo.Get(StreamKind.Video, 0, "PixelAspectRatio"));
+                width = (int)(width * aspectRatio);
             }
             else
             {

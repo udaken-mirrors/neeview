@@ -783,9 +783,7 @@ namespace NeeView
             }
 
             // フィルムストリップ
-#warning Media対応
-            //this.ThumbnailListArea.Visibility = Config.Current.FilmStrip.IsEnabled && !_viewComponent.ContentCanvas.IsMediaContent ? Visibility.Visible : Visibility.Collapsed;
-            this.ThumbnailListArea.Visibility = Config.Current.FilmStrip.IsEnabled ? Visibility.Visible : Visibility.Collapsed;
+            this.ThumbnailListArea.Visibility = Config.Current.FilmStrip.IsEnabled && !PageFrameBoxPresenter.Current.IsMedia ? Visibility.Visible : Visibility.Collapsed;
         }
 
         private void ThumbnailList_Visible(object? sender, VisibleEventArgs e)

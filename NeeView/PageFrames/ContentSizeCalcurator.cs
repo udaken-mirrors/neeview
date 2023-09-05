@@ -55,7 +55,12 @@ namespace NeeView.PageFrames
         /// <returns></returns>
         public double CalcStretchScale(Size size, RotateTransform rotate)
         {
-            return CalcStretchScale(StretchMode, GetFillScale(size, rotate), size);
+            //return CalcStretchScale(StretchMode, GetFillScale(size, rotate), size);
+            var scales = GetFillScale(size, rotate);
+
+            var max = Math.Max(scales.X, scales.Y);
+            var min = Math.Min(scales.X, scales.Y);
+            return min;
         }
 
         /// <summary>

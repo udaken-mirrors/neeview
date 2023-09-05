@@ -1,32 +1,32 @@
 ﻿using NeeLaboratory.ComponentModel;
 using NeeLaboratory.Generators;
+using NeeView.PageFrames;
 using System;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
-using System.Net;
 
 namespace NeeView
 {
     public partial class BookPlaylistControl : BindableBase, IDisposable, IBookPlaylistControl
     {
-        private PageFrameBoxPresenter _presenter;
+        private PageFrameBox _box;
         private Book _book;
         private IBookPageControl _pageControl;
         private bool _disposedValue;
 
 
         // TODO: book なのに PageFrameBoxPresenter なのが疑問。 PageFrameBox では？
-        public BookPlaylistControl(Book book, IBookPageControl pageControl, PageFrameBoxPresenter presenter)
+        public BookPlaylistControl(PageFrameBox box, IBookPageControl pageControl)
         {
-            Debug.Assert(!book.IsMedia);
-            _book = book;
+            _box = box;
+            _book = _box.Book;
+            Debug.Assert(!_book.IsMedia);
             _pageControl = pageControl;
-            _presenter = presenter;
 
             PlaylistHub.Current.PlaylistCollectionChanged += Playlist_CollectionChanged;
-            _presenter.ViewContentChanged += Presenter_ViewContentChanged;
+            _box.ViewContentChanged += Box_ViewContentChanged;
             _book.Pages.PagesSorted += Book_PagesSorted;
             _book.Pages.PageRemoved += Book_PageRemoved;
         }
@@ -56,7 +56,7 @@ namespace NeeView
                 if (disposing)
                 {
                     PlaylistHub.Current.PlaylistCollectionChanged -= Playlist_CollectionChanged;
-                    _presenter.ViewContentChanged -= Presenter_ViewContentChanged;
+                    _box.ViewContentChanged -= Box_ViewContentChanged;
                     _book.Pages.PagesSorted -= Book_PagesSorted;
                     _book.Pages.PageRemoved -= Book_PageRemoved;
                     MarkersChanged = null;
@@ -91,7 +91,7 @@ namespace NeeView
             AppDispatcher.Invoke(() => RaisePropertyChanged(nameof(IsMarked)));
         }
 
-        private void Presenter_ViewContentChanged(object? sender, PageFrames.FrameViewContentChangedEventArgs e)
+        private void Box_ViewContentChanged(object? sender, PageFrames.FrameViewContentChangedEventArgs e)
         {
             if (e.Action < PageFrames.ViewContentChangedAction.Selection) return;
             AppDispatcher.Invoke(() => RaisePropertyChanged(nameof(IsMarked)));

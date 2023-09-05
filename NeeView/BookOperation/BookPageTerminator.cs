@@ -1,4 +1,5 @@
 ﻿using NeeLaboratory.ComponentModel;
+using NeeView.PageFrames;
 using NeeView.Properties;
 using System;
 using System.Threading;
@@ -8,22 +9,22 @@ namespace NeeView
 
     public class BookPageTerminator : IDisposable
     {
+        private PageFrameBox _box;
         private Book _book;
         private int _pageTerminating;
         private IBookPageControl _control;
         private bool _disposedValue;
-        private DisposableCollection _disposables;
+        private DisposableCollection _disposables = new();
 
 
-        public BookPageTerminator(Book book, IBookPageControl control)
+        public BookPageTerminator(PageFrameBox box, IBookPageControl control)
         {
-            _book = book;
+            _box = box;
+            _book = _box.Book;
             _control = control;
 
-            _disposables = new();
-#warning not implemented yet
-            //_disposables.Add(_book.Viewer.SubscribePageTerminated(
-            //    (s, e) => AppDispatcher.Invoke(() => Book_PageTerminated(s, e))));
+            _disposables.Add(_box.SubscribePageTerminated(
+                (s, e) => AppDispatcher.Invoke(() => Box_PageTerminated(s, e))));
         }
 
         protected virtual void Dispose(bool disposing)
@@ -46,7 +47,7 @@ namespace NeeView
 
 
         // ページ終端を超えて移動しようとするときの処理
-        private void Book_PageTerminated(object? sender, PageTerminatedEventArgs e)
+        private void Box_PageTerminated(object? sender, PageTerminatedEventArgs e)
         {
             if (_pageTerminating > 0) return;
 

@@ -26,15 +26,41 @@ namespace NeeView.PageFrames
         private Canvas _contentCanvas;
         private PageFrame _pageFrame;
         private PageFrameActivity _activity;
+
+        /// <summary>
+        /// レイアウトトランスフォーム 
+        /// </summary>
         private readonly PageFrameTransformAccessor _transform;
+
+        /// <summary>
+        /// ルーペ用トランスフォーム
+        /// </summary>
         private readonly LoupeTransformContext _loupeContext;
+
         private IStaticFrame _staticFrame;
         private List<Page> _pages;
         private List<ViewContent> _viewContents;
+        
+        /// <summary>
+        /// レイアウト用。アニメーションあり
+        /// </summary>
         private TransformGroup _viewTransform = new();
+
+        /// <summary>
+        /// 計算用。アニメーションなし
+        /// </summary>
         private TransformGroup _calcTransform = new();
+
+        /// <summary>
+        /// Bounds計算用。Source
+        /// </summary>
         private TransformGroup _boundsTransform;
+
         private PageFrameDartyLevel _dirtyLevel;
+
+        /// <summary>
+        /// 基底スケールのトランスフォーム
+        /// </summary>
         private BaseScaleTransform _baseScaleTransform;
 
         private bool _disposedValue = false;
@@ -191,11 +217,22 @@ namespace NeeView.PageFrames
         }
 
 
+        /// <summary>
+        /// ストレッチスケールを適用した素材の矩形。自動回転は適用外
+        /// </summary>
+        /// <returns></returns>
         public Rect GetRawContentRect()
         {
             return _pageFrame.StretchedSize.ToRect();
         }
 
+        /// <summary>
+        /// ストレッチスケールと自動回転とレイアウト変換を適用した矩形
+        /// </summary>
+        /// <remarks>
+        /// ルーペは適用されていません。
+        /// </remarks>
+        /// <returns></returns>
         public Rect GetContentRect()
         {
             var rect = _pageFrame.Size.ToRect();
@@ -203,6 +240,14 @@ namespace NeeView.PageFrames
             return bounds;
         }
 
+        /// <summary>
+        /// コンテナフレームサイズ
+        /// </summary>
+        /// <remarks>
+        /// 固定フレームモードでは表示エリアサイズを返す。
+        /// コンテナ表示数を制限するためにサイズの下限あり。
+        /// </remarks>
+        /// <returns></returns>
         public Size GetFrameSize()
         {
             if (_staticFrame.IsStaticFrame)

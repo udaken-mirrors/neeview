@@ -1,4 +1,5 @@
 ﻿using NeeLaboratory.ComponentModel;
+using NeeLaboratory.Generators;
 using NeeView.Windows;
 using System;
 using System.Collections.Generic;
@@ -40,19 +41,8 @@ namespace NeeView
         }
 
 
+        [Subscribable]
         public event EventHandler? TransformChanged;
-
-        public IDisposable SubscribeTransformChanged(EventHandler handler)
-        {
-            TransformChanged += handler;
-            return new AnonymousDisposable(() => TransformChanged -= handler);
-        }
-
-        public IDisposable SubscribePreviewKeyDown(KeyEventHandler handler)
-        {
-            PreviewKeyDown += handler;
-            return new AnonymousDisposable(() => PreviewKeyDown -= handler);
-        }
 
 
         public MouseInput? MouseInput => _vm?.MouseInput;
@@ -63,6 +53,12 @@ namespace NeeView
 
         public TransformGroup? Transform => _transformCalc;
 
+
+        public IDisposable SubscribePreviewKeyDown(KeyEventHandler handler)
+        {
+            PreviewKeyDown += handler;
+            return new AnonymousDisposable(() => PreviewKeyDown -= handler);
+        }
 
         public void Initialize()
         {
@@ -165,11 +161,9 @@ namespace NeeView
             this.View.Focus();
         }
 
+        // TODO: 都度取得でなく、対象のコンテナを確定させてから開始しよう
         public void StretchWindow()
         {
-#warning not implement yet.
-            throw new NotImplementedException();
-#if false
             var window = Window.GetWindow(this);
             if (window is null) return;
             if (window.WindowState != WindowState.Normal) return;
@@ -187,35 +181,18 @@ namespace NeeView
                 Debug.WriteLine(ex.Message);
                 return;
             }
-
-            // NOTE: レンダリングに回転を反映させるためにタイミングを遅らせる
-            // TODO: レンダリング前に数値計算だけで処理するのが理想
-            AppDispatcher.BeginInvoke(() => StretchContent());
-#endif
-        }
-
-
-#if false
-        private void StretchContent()
-        {
-
-            if (_vm is null) return;
-
-            var canvasSize = this.GetCanvasSzie();
-            var contentSize = this.GetContentRenderSize();
-            _vm.StretchScale(contentSize, canvasSize);
-        }
-        private Size GetCanvasSzie()
-        {
-            return new Size(this.MainViewCanvas.ActualWidth, this.MainViewCanvas.ActualHeight);
         }
 
         private Size GetContentRenderSize()
         {
-            var rect = new Rect(new Size(this.MainContentShadow.ActualWidth, this.MainContentShadow.ActualHeight));
-            return this.MainContentShadow.RenderTransform.TransformBounds(rect).Size;
+            var box = PageFrameBoxPresenter.Current.View;
+            if (box is null) return Size.Empty;
+
+            var pageFrameContent = box.GetSelectedPageFrameContent();
+            if (pageFrameContent is null) return Size.Empty;
+
+            return pageFrameContent.GetContentRect().Size;
         }
-#endif
 
 
         #region タイマーによる非アクティブ監視
@@ -434,10 +411,10 @@ namespace NeeView
                 _oldWindowSize = _newWindowSize;
             }
 
-            if (sizeChanged)
-            {
-                _vm.SetViewSize(this.View.ActualWidth, this.View.ActualHeight);
-            }
+            //if (sizeChanged)
+            //{
+            //    _vm.SetViewSize(this.View.ActualWidth, this.View.ActualHeight);
+            //}
         }
 
         #endregion SizeChanged

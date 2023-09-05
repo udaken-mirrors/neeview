@@ -1,4 +1,5 @@
-﻿using NeeView.Text;
+﻿using NeeLaboratory.ComponentModel;
+using NeeView.Text;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -72,8 +73,6 @@ namespace NeeView
                 case InformationKey.VerticalResolution:
                     return new FormatValue(pictureInfo?.BitmapInfo?.DpiY, "{0:0.# dpi}", FormatValue.NotDefaultValueConverter<double>);
                 case InformationKey.Decoder:
-#warning not implement yet
-                    //return ((_source.BitmapContent is AnimatedContent animatedContent && animatedContent.IsAnimated) || _source.BitmapContent is MediaContent) ? "MediaPlayer" : pictureInfo?.Decoder;
                     return pictureInfo?.Decoder;
                 default:
                     throw new NotSupportedException();

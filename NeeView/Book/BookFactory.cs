@@ -12,7 +12,7 @@ namespace NeeView
 
             var bookSource = await BookSourceFactory.CreateAsync(address, setting, token);
 
-#warning Media用処理未実装
+#warning Media用処理未実装。 これはページ終端挙動の動画再生開始井chいの指定だが、どする？
 #if false
             if (bookSource.IsMedia)
             {

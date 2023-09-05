@@ -73,6 +73,11 @@ namespace NeeView.PageFrames
         {
             _context = context;
             _disposables.Add(_context); // このクラスがDisposableする？
+            _disposables.Add(_context.SubscribeSelectedRangeChanged((s, e) => SelectedRangeChanged?.Invoke(this, e)));
+            _disposables.Add(_context.SubscribePropertyChanged((s, e) => AppDispatcher.BeginInvoke(() => Context_PropertyChanged(s, e))));
+            _disposables.Add(_context.SubscribePagesChanged((s, e) => AppDispatcher.BeginInvoke(() => Context_PagesChanged(s, e))));
+            _disposables.Add(_context.SubscribeSizeChanging(Context_SizeChanging));
+            _disposables.Add(_context.SubscribeSizeChanged(Context_SizeChanged));
 
             _onceDispatcher = new();
             _disposables.Add(_onceDispatcher);
@@ -142,12 +147,7 @@ namespace NeeView.PageFrames
             _scrollViewer.SizeChanged += _context.SetCanvasSize;
             _containers.CollectionChanged += ContainerCollection_CollectionChanged;
 
-            _disposables.Add(_context.SubscribePropertyChanged(
-                (s, e) => AppDispatcher.BeginInvoke(() => Context_PropertyChanged(s, e))));
-            _disposables.Add(_context.SubscribeSizeChanging(Context_SizeChanging));
-            _disposables.Add(_context.SubscribeSizeChanged(Context_SizeChanged));
-            _disposables.Add(_context.SubscribePagesChanged(
-                (s, e) => AppDispatcher.BeginInvoke(() => Context_PagesChanged(s, e))));
+
 
             //_context.SelectedItemChanged += Context_SelectedItemChanged;
             _visiblePageWatcher.VisibleContainersChanged += VisibePageWatcher_VisibleContainersChanged;
@@ -189,6 +189,11 @@ namespace NeeView.PageFrames
         [Subscribable]
         public event EventHandler? SelectedContainerLayoutChanged;
 
+        [Subscribable]
+        public event EventHandler? SelectedRangeChanged;
+
+        [Subscribable]
+        public event EventHandler? PagesChanged;
 
         public DragTransformContextFactory DragTransformContextFactory => _dragTransformContextFactory;
 
@@ -197,6 +202,10 @@ namespace NeeView.PageFrames
 
         public Book Book => _context.Book;
 
+        public IReadOnlyList<Page> Pages => _context.Pages;
+
+        public PageRange SelectedRange => _context.SelectedRange;
+        
         public bool IsBusy => _loader.IsBusy;
 
 
@@ -383,6 +392,7 @@ namespace NeeView.PageFrames
         private void Context_PagesChanged(object? sender, EventArgs e)
         {
             ResetContainers();
+            PagesChanged?.Invoke(this, e);
         }
 
 #if false
@@ -472,7 +482,13 @@ namespace NeeView.PageFrames
             switch (e.PropertyName)
             {
                 case nameof(BookContext.SelectedRange):
+                    RaisePropertyChanged(nameof(SelectedRange));
                     return;
+
+                case nameof(BookContext.Pages):
+                    RaisePropertyChanged(nameof(Pages));
+                    return;
+
                 //case nameof(BookContext.SelectedItem):
                 //    RaisePropertyChanged(nameof(SelectedItem));
                 //    return;
@@ -515,10 +531,6 @@ namespace NeeView.PageFrames
 
                 case nameof(BookContext.SortMode):
                     // 別処理
-                    return;
-
-                case nameof(BookContext.Pages):
-                    // PagesChanged で処理
                     return;
 
                 case nameof(BookContext.PageMode):
@@ -1008,7 +1020,8 @@ namespace NeeView.PageFrames
             SetControlContainer(node);
 
             var transform = content.Transform;
-            var rawSize = content.PageFrame.Size;
+
+            var rawSize = content.PageFrame.Size; 
 
             var scale = _calculator.CalcStretchScale(rawSize, new RotateTransform(transform.Angle));
             transform.SetScale(scale, TimeSpan.Zero);
@@ -1090,6 +1103,10 @@ namespace NeeView.PageFrames
             return _background;
         }
 
+        internal void RaisePageTerminatedEvent(object? sender, int direction)
+        {
+            PageTerminated?.Invoke(sender, new PageTerminatedEventArgs(direction));
+        }
     }
 
     public interface ICanvasToViewTranslator

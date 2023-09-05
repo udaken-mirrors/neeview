@@ -42,10 +42,6 @@ namespace NeeView
         // PictureProfile
         public PictureProfile PictureProfile => PictureProfile.Current;
 
-#warning not support yet ImageEffect
-        // ContentCanvs
-        //public ContentCanvas ContentCanvas => MainViewComponent.Current.ContentCanvas;
-
         public PropertyDocument UnsharpMaskProfile { get; set; }
 
         public PropertyDocument CustomSizeProfile { get; set; }

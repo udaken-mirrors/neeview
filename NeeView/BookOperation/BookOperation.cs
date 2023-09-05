@@ -94,21 +94,21 @@ namespace NeeView
         {
             if (_box == box) return;
             _box = box;
-            _book = box.Book;
+            _book = _box?.Book;
 
             _bookControl.SetSource(CreateBookController(_box));
-            _control.SetSource(CreateController(_book));
-            _playlist.SetSource(CreatePlaylistController(_book));
-            _terminator.SetSource(CreatePageTerminator(_book));
+            _control.SetSource(CreateController(_box));
+            _playlist.SetSource(CreatePlaylistController(_box));
+            _terminator.SetSource(CreatePageTerminator(_box));
             _script.SetSource(CreateBookScript(_book));
 
             RaisePropertyChanged(nameof(Book));
             RaisePropertyChanged(nameof(Address));
         }
 
-        private BookPageTerminator? CreatePageTerminator(Book? book)
+        private BookPageTerminator? CreatePageTerminator(PageFrameBox? box)
         {
-            return book is null ? null : new BookPageTerminator(book, _control);
+            return box is null ? null : new BookPageTerminator(box, _control);
         }
 
         private BookPageScript? CreateBookScript(Book? book)
@@ -121,15 +121,15 @@ namespace NeeView
             return box is null ? null : new BookControl(box);
         }
 
-        private IBookPageControl? CreateController(Book? book)
+        private IBookPageControl? CreateController(PageFrameBox? box)
         {
             Debug.Assert(_presenter != null);
-            return book is null ? null : new BookPageControl(book, _bookControl, _presenter);
+            return box is null ? null : new BookPageControl(box, _bookControl);
         }
 
-        private BookPlaylistControl? CreatePlaylistController(Book? book)
+        private BookPlaylistControl? CreatePlaylistController(PageFrameBox? box)
         {
-            return (book is null || book.IsMedia) ? null : new BookPlaylistControl(book, _control, _presenter);
+            return (box is null || box.Book.IsMedia) ? null : new BookPlaylistControl(box, _control);
         }
 
 

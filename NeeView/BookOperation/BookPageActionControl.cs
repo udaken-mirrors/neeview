@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using System;
 using System.Linq;
 using System.Threading;
+using NeeView.PageFrames;
 
 namespace NeeView
 {
@@ -14,13 +15,13 @@ namespace NeeView
     {
         private Book _book;
         private readonly IBookControl _bookControl;
-        private readonly PageFrameBoxPresenter _presenter;
+        private readonly PageFrameBox _box;
 
-        public BookPageActionControl(Book book, IBookControl bookControl, PageFrameBoxPresenter presenter)
+        public BookPageActionControl(PageFrameBox box, IBookControl bookControl)
         {
-            _book = book;
+            _box = box;
+            _book = _box.Book;
             _bookControl = bookControl;
-            _presenter = presenter;
         }
 
         #region ページ削除
@@ -205,7 +206,7 @@ namespace NeeView
         /// <returns></returns>
         public bool CanExport()
         {
-            return _presenter.GetSelectedPageFrameContent()?.ViewContents.FirstOrDefault() is IHasImageSource;
+            return _box.GetSelectedPageFrameContent()?.ViewContents.FirstOrDefault() is IHasImageSource;
         }
 
 

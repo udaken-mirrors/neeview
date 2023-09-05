@@ -2,6 +2,7 @@
 using NeeView.Effects;
 using System;
 using System.Diagnostics;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -101,14 +102,14 @@ namespace NeeView
         }
 
 
-        [Obsolete]
-        public void SetViewSize(double width, double height)
-        {
-            //_viewComponent.ContentCanvas.SetViewSize(width, height);
-            //_viewComponent.DragTransformControl.SnapView();
-        }
-
-#if false
+        /// <summary>
+        /// ウィンドウサイズをコンテンツサイズに合わせる
+        /// </summary>
+        /// <param name="window"></param>
+        /// <param name="canvasSize"></param>
+        /// <param name="contentSize"></param>
+        /// <exception cref="ArgumentException"></exception>
+        /// <exception cref="InvalidOperationException"></exception>
         public void StretchWindow(Window window, Size canvasSize, Size contentSize)
         {
             if (contentSize.IsEmptyOrZero())
@@ -131,7 +132,16 @@ namespace NeeView
             var fixedSize = Config.Current.View.IsBaseScaleEnabled ? contentSize.Multi(1.0 / Config.Current.View.BaseScale) : contentSize;
 
             var limitSize = new Size(SystemParameters.VirtualScreenWidth - frameWidth, SystemParameters.VirtualScreenHeight - frameHeight);
-            var newCanvasSize = _viewComponent.ContentCanvas.GetStretchMode() switch
+
+            var box = PageFrameBoxPresenter.Current.View;
+            if (box is null) return;
+
+            var pageFrameContent = box.GetSelectedPageFrameContent();
+            if (pageFrameContent is null) return;
+
+            var baseAngle = pageFrameContent.PageFrame.Angle;
+
+            var newCanvasSize = box.BookContext.StretchMode switch
             {
                 PageStretchMode.Uniform or PageStretchMode.UniformToSize
                     => fixedSize.Limit(limitSize),
@@ -141,37 +151,24 @@ namespace NeeView
             window.Width = newCanvasSize.Width + frameWidth;
             window.Height = newCanvasSize.Height + frameHeight;
 
-            _viewComponent.ContentCanvas.Stretch(ignoreViewOrigin: true);
+            // NOTE: レンダリングに回転を反映させるためにタイミングを遅らせる
+            AppDispatcher.BeginInvoke(() =>
+            {
+                // 自動回転方向が変化したときの補正
+                var pageFrameContent = box.GetSelectedPageFrameContent();
+                if (pageFrameContent is null) return;
+                var deltaAngle = pageFrameContent.PageFrame.Angle - baseAngle;
+                if (Math.Abs(deltaAngle) > 1.0)
+                {
+                    var dragTransform = box.CreateDragTransformContext(false, false);
+                    if (dragTransform is null) return;
+                    var angle = dragTransform.Transform.Angle - deltaAngle;
+                    dragTransform.Transform.SetAngle(angle, TimeSpan.Zero);
+                }
+
+                box.Stretch(ignoreViewOrigin: true);
+            });
         }
 
-        public void StretchScale(Size contentSize, Size canvasSize)
-        {
-            var scaleX = canvasSize.Width / contentSize.Width;
-            var scaleY = canvasSize.Height / contentSize.Height;
-            var scale = Math.Max(scaleX, scaleY);
-
-            switch (_viewComponent.ContentCanvas.GetStretchMode())
-            {
-                case PageStretchMode.UniformToHorizontal:
-                    scale = scaleX;
-                    break;
-                case PageStretchMode.UniformToVertical:
-                    scale = scaleY;
-                    break;
-            }
-
-            if (Math.Abs(1.0 - scale) < 0.01)
-            {
-                scale = 1.0;
-            }
-
-            if (Config.Current.View.IsBaseScaleEnabled)
-            {
-                scale *= Config.Current.View.BaseScale;
-            }
-
-            _viewComponent.DragTransform.SetScale(scale, TransformActionType.None);
-        }
-#endif
     }
 }

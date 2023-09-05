@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NeeView.PageFrames;
+using System;
 using System.Diagnostics;
 
 namespace NeeView
@@ -8,12 +9,14 @@ namespace NeeView
     /// </summary>
     public class MediaPageMoveControl : IBookPageMoveControl
     {
+        private PageFrameBox _box;
         private Book _book;
 
-        public MediaPageMoveControl(Book book)
+        public MediaPageMoveControl(PageFrameBox box)
         {
-            Debug.Assert(book.IsMedia);
-            _book = book;
+            _box = box;
+            _book = _box.Book;
+            Debug.Assert(_book.IsMedia);
         }
 
         public void MoveToFirst(object? sender)
@@ -95,8 +98,7 @@ namespace NeeView
 
             if (isTerminated)
             {
-#warning not implement yet
-                //_book?.Viewer.RaisePageTerminatedEvent(sender, delta < 0 ? -1 : 1);
+                _box.RaisePageTerminatedEvent(sender, delta < 0 ? -1 : 1);
             }
         }
     }
