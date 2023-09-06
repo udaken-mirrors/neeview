@@ -12,7 +12,6 @@ namespace NeeView
     {
         private NScrollType _scrollType = NScrollType.NType;
         private double _scroll = 1.0;
-        private double _scrollDuration = 0.2;
         private double _endMargin = 10.0;
         private double _lineBreakStopTime;
         private LineBreakStopMode _lineBreakStopMode = LineBreakStopMode.Line;
@@ -32,12 +31,6 @@ namespace NeeView
             set => SetProperty(ref _scroll, MathUtility.Clamp(value, 0.1, 1.0));
         }
 
-        [PropertyRange(0.0, 1.0, TickFrequency = 0.1, IsEditable = true)]
-        public double ScrollDuration
-        {
-            get { return _scrollDuration; }
-            set { SetProperty(ref _scrollDuration, Math.Max(value, 0.0)); }
-        }
 
         [PropertyMember]
         public double EndMargin
@@ -77,6 +70,14 @@ namespace NeeView
         {
             get { return 0.0; }
             set { LineBreakStopTime = value; LineBreakStopMode = LineBreakStopMode.Page; }
+        }
+
+        [Obsolete("no used"), Alternative("nv.Config.Book.ScrollDuration", 40, IsFullName=true)] // ver.40
+        [JsonIgnore(Condition = JsonIgnoreCondition.Always)]
+        public double ScrollDuration
+        {
+            get { return 0.0; }
+            set { }
         }
 
         #endregion Obsolete

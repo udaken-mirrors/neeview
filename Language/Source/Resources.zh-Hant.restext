@@ -2322,3 +2322,4 @@ ZipArchiveConfig.SupportFileTypes=壓縮檔的副檔名
 ZipArchiveConfig.SupportFileTypes.Remarks=僅支援 ZIP 格式。
 SystemConfig.IsFileWriteAccessEnabled=允許檔案操作
 PageListItem.Menu.Rename=重新命名(_M)
+BookConfig.ScrollDuration=捲動時間 (秒)

@@ -7451,4 +7451,13 @@ nv.ShowToast(nv.Book.ViewPages[0].Path)</value>
   <data name="PageFrameOrientation.Vertical" xml:space="preserve">
     <value>垂直</value>
   </data>
+  <data name="BookConfig.ScrollDuration" xml:space="preserve">
+    <value>スクロール時間 (秒)</value>
+  </data>
+  <data name="BookConfig.PageMoveDuration" xml:space="preserve">
+    <value>ページ移動時間 (秒)</value>
+  </data>
+  <data name="BookConfig.PageMoveDuration.Remarks" xml:space="preserve">
+    <value>ページモードが「@PageMode.SinglePage」「@PageMode.WidePage」の時に有効です。</value>
+  </data>
 </root>

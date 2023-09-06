@@ -1,5 +1,7 @@
 ﻿// TODO: 関数が大きすぎる？細分化を検討
 
+using System;
+
 namespace NeeView
 {
     /// <summary>
@@ -18,14 +20,15 @@ namespace NeeView
         double Scroll { get; set; }
 
         /// <summary>
-        /// スクロール時間
-        /// </summary>
-        double ScrollDuration { get; set; }
-
-        /// <summary>
         /// 改行遅延時間
         /// </summary>
         double LineBreakStopTime { get; set; }
+
+        /// <summary>
+        /// スクロール時間
+        /// </summary>
+        //[Obsolete("Use nv.Config.Book.ScrollDuration")] // 40.0
+        //double ScrollDuration { get; set; }
     }
 
 }

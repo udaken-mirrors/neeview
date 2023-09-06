@@ -7376,4 +7376,7 @@ nv.ShowToast(nv.Book.ViewPages[0].Path)</value>
   <data name="PageListItem.Menu.Rename" xml:space="preserve">
     <value>重新命名(_M)</value>
   </data>
+  <data name="BookConfig.ScrollDuration" xml:space="preserve">
+    <value>卷动时间 (秒)</value>
+  </data>
 </root>

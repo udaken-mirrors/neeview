@@ -1,6 +1,7 @@
 ﻿using NeeLaboratory;
 using NeeView.Windows.Property;
 using System;
+using System.Text.Json.Serialization;
 
 namespace NeeView
 {
@@ -11,7 +12,6 @@ namespace NeeView
     {
         private double _scroll = 0.25;
         private bool _allowCrossScroll = true;
-        private double _scrollDuration = 0.1;
 
         // 属性に説明文
         [PropertyPercent]
@@ -21,20 +21,26 @@ namespace NeeView
             set { SetProperty(ref _scroll, MathUtility.Clamp(value, 0.0, 1.0)); }
         }
 
-        // スクロール速度(秒)
-        [PropertyMember]
-        public double ScrollDuration
-        {
-            get { return _scrollDuration; }
-            set { SetProperty(ref _scrollDuration, Math.Max(value, 0.0)); }
-        }
-
         [PropertyMember]
         public bool AllowCrossScroll
         {
             get => _allowCrossScroll;
             set => SetProperty(ref _allowCrossScroll, value);
         }
+
+
+        #region Obsolete
+
+        // スクロール速度(秒)
+        [Obsolete("no used"), Alternative("nv.Config.Book.ScrollDuration", 40, IsFullName = true)] // ver.40
+        [JsonIgnore(Condition = JsonIgnoreCondition.Always)]
+        public double ScrollDuration
+        {
+            get { return 0.0; }
+            set { }
+        }
+
+        #endregion Obsolete
     }
 
 }

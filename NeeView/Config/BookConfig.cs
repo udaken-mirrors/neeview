@@ -27,7 +27,8 @@ namespace NeeView
         private bool _resetPageWhenRandomSort;
         private bool _isInsertDummyPage;
         private PageFrameOrientation _orientation = PageFrameOrientation.Horizontal;
-
+        private double _scrollDuration = 0.5;
+        private double _pageMoveDuration = 0.5;
 
         /// <summary>
         /// 横長画像判定用比率
@@ -162,5 +163,21 @@ namespace NeeView
             set { SetProperty(ref _isInsertDummyPage, value); }
         }
 
+
+        // スクロール時間 (秒)
+        [PropertyRange(0.0, 1.0, TickFrequency = 0.1, IsEditable = true)]
+        public double ScrollDuration
+        {
+            get { return _scrollDuration; }
+            set { SetProperty(ref _scrollDuration, value); }
+        }
+
+        // ページ変更時間(秒)
+        [PropertyRange(0.0, 1.0, TickFrequency = 0.1, IsEditable = true)]
+        public double PageMoveDuration
+        {
+            get { return _pageMoveDuration; }
+            set { SetProperty(ref _pageMoveDuration, value); }
+        }
     }
 }

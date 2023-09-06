@@ -7446,4 +7446,13 @@ nv.ShowToast(nv.Book.ViewPages[0].Path)</value>
   <data name="PageFrameOrientation.Vertical" xml:space="preserve">
     <value>Vertical</value>
   </data>
+  <data name="BookConfig.ScrollDuration" xml:space="preserve">
+    <value>Scroll time (sec)</value>
+  </data>
+  <data name="BookConfig.PageMoveDuration" xml:space="preserve">
+    <value>Page move time (sec)</value>
+  </data>
+  <data name="BookConfig.PageMoveDuration.Remarks" xml:space="preserve">
+    <value>Valid when the page mode is "@PageMode.SinglePage" or "@PageMode.WidePage".</value>
+  </data>
 </root>

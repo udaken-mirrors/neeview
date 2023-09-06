@@ -1057,11 +1057,38 @@ namespace NeeView.Properties {
         }
         
         /// <summary>
+        ///   Page move time (sec) に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string BookConfig_PageMoveDuration {
+            get {
+                return ResourceManager.GetString("BookConfig.PageMoveDuration", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Valid when the page mode is &quot;@PageMode.SinglePage&quot; or &quot;@PageMode.WidePage&quot;. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string BookConfig_PageMoveDuration_Remarks {
+            get {
+                return ResourceManager.GetString("BookConfig.PageMoveDuration.Remarks", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Reset page when shuffle に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string BookConfig_ResetPageWhenRandomSort {
             get {
                 return ResourceManager.GetString("BookConfig.ResetPageWhenRandomSort", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Scroll time (sec) に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string BookConfig_ScrollDuration {
+            get {
+                return ResourceManager.GetString("BookConfig.ScrollDuration", resourceCulture);
             }
         }
         

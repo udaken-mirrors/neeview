@@ -60,6 +60,8 @@ namespace NeeView
 
         public Vector Speed => _speedometer.Speed;
 
+        //
+        public TimeSpan ScrollDuration => TimeSpan.FromSeconds(Config.Current.Book.ScrollDuration);
 
 
         public virtual void Initialize(Point point, int timestamp)

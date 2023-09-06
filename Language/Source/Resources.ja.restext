@@ -2340,3 +2340,6 @@ PageListItem.Menu.Rename=名前の変更(_M)
 PageMode.Panorama=パノラマ表示
 PageFrameOrientation.Horizontal=水平
 PageFrameOrientation.Vertical=垂直
+BookConfig.ScrollDuration=スクロール時間 (秒)
+BookConfig.PageMoveDuration=ページ移動時間 (秒)
+BookConfig.PageMoveDuration.Remarks=ページモードが「@PageMode.SinglePage」「@PageMode.WidePage」の時に有効です。

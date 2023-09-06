@@ -2340,3 +2340,6 @@ PageListItem.Menu.Rename=Rena_me
 PageMode.Panorama=Panorama
 PageFrameOrientation.Horizontal=Horizontal
 PageFrameOrientation.Vertical=Vertical
+BookConfig.ScrollDuration=Scroll time (sec)
+BookConfig.PageMoveDuration=Page move time (sec)
+BookConfig.PageMoveDuration.Remarks=Valid when the page mode is "@PageMode.SinglePage" or "@PageMode.WidePage".

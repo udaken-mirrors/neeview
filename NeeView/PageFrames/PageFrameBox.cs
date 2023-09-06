@@ -814,7 +814,7 @@ namespace NeeView.PageFrames
             }
             else
             {
-                AddPosition(scroll.Vector.X, scroll.Vector.Y, TimeSpan.FromSeconds(parameter.ScrollDuration)); // TODO: parameter.ScrollDuration
+                AddPosition(scroll.Vector.X, scroll.Vector.Y, _context.ScrollDuration);
                 return false;
             }
         }
@@ -826,7 +826,7 @@ namespace NeeView.PageFrames
         private void ScrollIntoViewOrigin(LinkedListNode<PageFrameContainer> node, LinkedListDirection direction)
         {
             var point = new FramePointMath(_context, node.Value.Rect, _viewBox.Rect).GetStartPoint(direction);
-            _scrollViewer.SetPoint(new Point(-point.X, -point.Y), TimeSpan.FromMilliseconds(500));
+            _scrollViewer.SetPoint(new Point(-point.X, -point.Y), _context.PageChangeDuration);
         }
 
         /// <summary>
@@ -835,7 +835,7 @@ namespace NeeView.PageFrames
         private void ScrollIntoViewCenter(LinkedListNode<PageFrameContainer> node)
         {
             var point = new FramePointMath(_context, node.Value.Rect, _viewBox.Rect).GetCenterPoint();
-            _scrollViewer.SetPoint(new Point(-point.X, -point.Y), TimeSpan.FromMilliseconds(500));
+            _scrollViewer.SetPoint(new Point(-point.X, -point.Y), _context.PageChangeDuration);
         }
 
 
@@ -855,7 +855,6 @@ namespace NeeView.PageFrames
             var transform = _transformControlFactory.Create(node.Value);
 
             var delta = new Vector(dx, dy);
-            //var span = now ? TimeSpan.Zero : TimeSpan.FromMilliseconds(500);
             transform.SetPoint(transform.Point + delta, span);
 
             _selected.SetAuto();

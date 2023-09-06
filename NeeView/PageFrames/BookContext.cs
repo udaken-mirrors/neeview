@@ -208,6 +208,10 @@ namespace NeeView.PageFrames
         public ImageDotKeepConfig ImageDotKeepConfig => _config.ImageDotKeep;
 
 
+        public TimeSpan ScrollDuration => TimeSpan.FromSeconds(_config.Book.ScrollDuration);
+        public TimeSpan PageChangeDuration => PageMode == PageMode.Panorama ? ScrollDuration : TimeSpan.FromSeconds(_config.Book.PageMoveDuration);
+
+
         public double LoupeScale
         {
             get { return _loupeScale; }

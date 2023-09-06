@@ -2315,3 +2315,4 @@ ZipArchiveConfig.SupportFileTypes=压缩文件的扩展名
 ZipArchiveConfig.SupportFileTypes.Remarks=仅支持 ZIP 格式。
 SystemConfig.IsFileWriteAccessEnabled=允许档案操作
 PageListItem.Menu.Rename=重新命名(_M)
+BookConfig.ScrollDuration=卷动时间 (秒)

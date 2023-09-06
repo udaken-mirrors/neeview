@@ -138,7 +138,7 @@ namespace NeeView
         }
 
 
-
+        private TimeSpan ScrollDuration() => TimeSpan.FromSeconds(Config.Current.Book.ScrollDuration);
 
         public void ScrollLeft(ViewScrollCommandParameter parameter)
         {
@@ -146,7 +146,7 @@ namespace NeeView
             if (control is null) return;
 
             var rate = parameter.Scroll;
-            var span = TimeSpan.FromSeconds(parameter.ScrollDuration);
+            var span = ScrollDuration();
 
             var old = control.Point;
             control.DoMove(new Vector(control.Context.ViewRect.Width * rate, 0), span);
@@ -163,7 +163,7 @@ namespace NeeView
             if (control is null) return;
 
             var rate = parameter.Scroll;
-            var span = TimeSpan.FromSeconds(parameter.ScrollDuration);
+            var span = ScrollDuration();
 
             var old = control.Point;
             control.DoMove(new Vector(control.Context.ViewRect.Width * -rate, 0), span);
@@ -180,7 +180,7 @@ namespace NeeView
             if (control is null) return;
 
             var rate = parameter.Scroll;
-            var span = TimeSpan.FromSeconds(parameter.ScrollDuration);
+            var span = ScrollDuration();
 
             var old = control.Point;
             control.DoMove(new Vector(0, control.Context.ViewRect.Height * -rate), span);
@@ -197,7 +197,7 @@ namespace NeeView
             if (control is null) return;
 
             var rate = parameter.Scroll;
-            var span = TimeSpan.FromSeconds(parameter.ScrollDuration);
+            var span = ScrollDuration();
 
             var old = control.Point;
             control.DoMove(new Vector(0, control.Context.ViewRect.Height * rate), span);
