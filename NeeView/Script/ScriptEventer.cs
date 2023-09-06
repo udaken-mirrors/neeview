@@ -11,7 +11,7 @@ namespace NeeView
     /// </summary>
     public class ScriptEventer : IDisposable
     {
-        private PageFrameBoxPresenter _presenter;
+        private readonly PageFrameBoxPresenter _presenter;
         private bool _disposedValue;
 
 

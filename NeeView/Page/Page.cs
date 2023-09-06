@@ -29,8 +29,8 @@ namespace NeeView
         //private static PageContentFactory _pageContentFactory = new PageContentFactory();
 
         private int _index;
-        private PageContent _content;
-        private bool _isVisibled;
+        private readonly PageContent _content;
+        private bool _isVisible;
         private bool _isMarked;
         private bool _disposedValue;
         private readonly DisposableCollection _disposables = new();
@@ -87,7 +87,7 @@ namespace NeeView
         [Obsolete("use Entry")]
         public ArchiveEntry ArchiveEntry => _content.ArchiveEntry;
 
-        public ArchiveEntry Entry => _content.ArchiveEntry;
+        public ArchiveEntry Entry => _content.Entry;
 
         /// <summary>
         /// コンテンツアクセサ。コンテンツを編集する場合はこのアクセサを介して操作を行う。
@@ -169,8 +169,8 @@ namespace NeeView
         // 表示中?
         public bool IsVisibled
         {
-            get { return _isVisibled; }
-            set { SetProperty(ref _isVisibled, value); }
+            get { return _isVisible; }
+            set { SetProperty(ref _isVisible, value); }
         }
 
         public bool IsMarked
@@ -197,7 +197,7 @@ namespace NeeView
 
         #region Thumbnail
 
-        private PageThumbnail _thumbnailSource;
+        private readonly PageThumbnail _thumbnailSource;
 
 
         /// <summary>

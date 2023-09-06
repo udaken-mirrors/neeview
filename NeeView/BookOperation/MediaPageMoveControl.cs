@@ -10,8 +10,8 @@ namespace NeeView
     /// </summary>
     public class MediaPageMoveControl : IBookPageMoveControl
     {
-        private PageFrameBox _box;
-        private Book _book;
+        private readonly PageFrameBox _box;
+        private readonly Book _book;
 
         public MediaPageMoveControl(PageFrameBox box)
         {

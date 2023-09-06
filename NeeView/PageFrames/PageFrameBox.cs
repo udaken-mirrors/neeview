@@ -28,44 +28,44 @@ namespace NeeView.PageFrames
     [NotifyPropertyChanged]
     public partial class PageFrameBox : Grid, INotifyPropertyChanged, IPageFrameBox, IDisposable, ICanvasToViewTranslator
     {
-        private PageFrameContainerCollection _containers;
-        private PageFrameScrollViewer _scrollViewer;
-        private PageFrameContainersCanvas _canvas;
-        private PageFrameContainersCleaner _cleaner;
-        private PageFrameContainersFiller _filler;
-        private BookContext _context;
-        private BookPageLoader _loader;
-        private ContentSizeCalculator _calculator;
-        private PageFrameContainersVisiblePageWatcher _visiblePageWatcher;
-        private PageFrameContainersViewBox _viewBox;
-        private PageFrameContainersCollectionRectMath _rectMath;
-        private PageFrameContainersLayout _layout;
-        private PageFrameCanvasPointStorage _canvasPointStorage;
-        private DpiScaleProvider _dpiScaleProvider;
+        private readonly PageFrameContainerCollection _containers;
+        private readonly PageFrameScrollViewer _scrollViewer;
+        private readonly PageFrameContainersCanvas _canvas;
+        private readonly PageFrameContainersCleaner _cleaner;
+        private readonly PageFrameContainersFiller _filler;
+        private readonly BookContext _context;
+        private readonly BookPageLoader _loader;
+        private readonly ContentSizeCalculator _calculator;
+        private readonly PageFrameContainersVisiblePageWatcher _visiblePageWatcher;
+        private readonly PageFrameContainersViewBox _viewBox;
+        private readonly PageFrameContainersCollectionRectMath _rectMath;
+        private readonly PageFrameContainersLayout _layout;
+        private readonly PageFrameCanvasPointStorage _canvasPointStorage;
+        private readonly DpiScaleProvider _dpiScaleProvider;
 
-        private PageFrameTransformMap _transformMap;
+        private readonly PageFrameTransformMap _transformMap;
         /// <summary>
         /// アンカーコンテナを座標補正する
         /// </summary>
-        private BooleanLockValue _isSnapAnchor = new();
+        private readonly BooleanLockValue _isSnapAnchor = new();
 
-        private RepeatLimiter _scrollRepeatLimiter = new();
-        private ScrollLock _scrollLock = new ScrollLock();
-        private TransformControlFactory _transformControlFactory;
+        private readonly RepeatLimiter _scrollRepeatLimiter = new();
+        private readonly ScrollLock _scrollLock = new();
+        private readonly TransformControlFactory _transformControlFactory;
         //private MouseInput _mouseInput;
 
-        private SelectedContainer _selected;
+        private readonly SelectedContainer _selected;
 
         private bool _disposedValue;
 
-        private DisposableCollection _disposables = new();
+        private readonly DisposableCollection _disposables = new();
 
-        private ViewSourceMap _viewSourceMap;
-        private PageFrameBackground _background;
+        private readonly ViewSourceMap _viewSourceMap;
+        private readonly PageFrameBackground _background;
 
-        private DragTransformContextFactory _dragTransformContextFactory;
+        private readonly DragTransformContextFactory _dragTransformContextFactory;
 
-        private OnceDispatcher _onceDispatcher;
+        private readonly OnceDispatcher _onceDispatcher;
 
 
 
@@ -150,7 +150,7 @@ namespace NeeView.PageFrames
 
 
             //_context.SelectedItemChanged += Context_SelectedItemChanged;
-            _visiblePageWatcher.VisibleContainersChanged += VisibePageWatcher_VisibleContainersChanged;
+            _visiblePageWatcher.VisibleContainersChanged += VisiblePageWatcher_VisibleContainersChanged;
             _viewBox.RectChanging += ViewBox_RectChanging;
             _viewBox.RectChanged += ViewBox_RectChanged;
 
@@ -275,7 +275,7 @@ namespace NeeView.PageFrames
                     //_context.SizeChanged -= Context_SizeChanged;
                     //_context.PagesChanged -= Context_PagesChanged;
                     //_context.SelectedItemChanged -= Context_SelectedItemChanged;
-                    _visiblePageWatcher.VisibleContainersChanged -= VisibePageWatcher_VisibleContainersChanged;
+                    _visiblePageWatcher.VisibleContainersChanged -= VisiblePageWatcher_VisibleContainersChanged;
                     _viewBox.RectChanging -= ViewBox_RectChanging;
                     _viewBox.RectChanged -= ViewBox_RectChanged;
 
@@ -430,7 +430,7 @@ namespace NeeView.PageFrames
         /// </summary>
         private void ResetContainers()
         {
-            using (var pauser = new BookPageLoadPauser(_loader))
+            using (var pauser = new BookPageLoadPause(_loader))
             {
                 _containers.SetDarty(PageFrameDartyLevel.Replace);
                 _transformMap.Clear();
@@ -559,7 +559,7 @@ namespace NeeView.PageFrames
             UpdateContainers(dirtyLevel);
         }
 
-        private void VisibePageWatcher_VisibleContainersChanged(object? sender, VisibleContainersChangedEventArgs e)
+        private void VisiblePageWatcher_VisibleContainersChanged(object? sender, VisibleContainersChangedEventArgs e)
         {
             foreach (var container in _containers)
             {
@@ -732,13 +732,13 @@ namespace NeeView.PageFrames
         // TODO: InfoMessage系ここで？
         private void ShowMoveFolderPageMessage(int index, LinkedListDirection direction, bool isShowMessage)
         {
-            var termianteMessage = direction == LinkedListDirection.Previous
+            var terminateMessage = direction == LinkedListDirection.Previous
                 ? Properties.Resources.Notice_FirstFolderPage
                 : Properties.Resources.Notice_LastFolderPage;
 
             if (index < 0)
             {
-                InfoMessage.Current.SetMessage(InfoMessageType.Notify, termianteMessage);
+                InfoMessage.Current.SetMessage(InfoMessageType.Notify, terminateMessage);
             }
             else if (isShowMessage)
             {

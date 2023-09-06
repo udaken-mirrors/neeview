@@ -113,7 +113,7 @@ namespace NeeView
 
         #region Obsolete
 
-        [Obsolete("no used"), Alternative("Whindow.Border in the custom theme file", 39, IsFullName = true)] // ver.39
+        [Obsolete("no used"), Alternative("Window.Border in the custom theme file", 39, IsFullName = true)] // ver.39
         [JsonIgnore]
         public WindowChromeFrame WindowChromeFrame
         {

@@ -19,14 +19,14 @@
         <Rectangle x:Name="FrontBackground" Fill="{Binding ContentCanvasBrush.BackgroundFrontBrush}" RenderOptions.BitmapScalingMode="HighQuality" IsHitTestVisible="False"
                 Visibility="{Binding ContentCanvasBrush.BackgroundFrontBrush, Converter={StaticResource NullableToVisibilityConverter}}" />
         
-        <Grid x:Name="MainViewCanvas" Effect="{Binding ImageEffect.Effect}" Margin="{Binding MainViewMergin}">
+        <Grid x:Name="MainViewCanvas" Effect="{Binding ImageEffect.Effect}" Margin="{Binding MainViewMargin}">
         
                     <Grid x:Name="View" Background="Transparent" SizeChanged="MainView_SizeChanged" Focusable="True" KeyboardNavigation.IsTabStop="False" FocusVisualStyle="{x:Null}"
                     ClipToBounds="True" AllowDrop="True">
         
         -->
 
-        <Grid x:Name="MainViewCanvas" Margin="{Binding MainViewMergin}">
+        <Grid x:Name="MainViewCanvas" Margin="{Binding MainViewMargin}">
 
             <!-- メインビュー コンテンツ表示領域 -->
             <Grid x:Name="View" Background="Transparent" SizeChanged="MainView_SizeChanged" Focusable="True" KeyboardNavigation.IsTabStop="False" FocusVisualStyle="{x:Null}"

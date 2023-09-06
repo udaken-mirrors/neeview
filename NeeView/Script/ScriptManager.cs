@@ -31,7 +31,7 @@ namespace NeeView
         private bool _disposedValue;
         private readonly ScriptCommandSourceMap _sourceMap = new();
         private readonly DisposableCollection _disposableCollection = new();
-        private ScriptEventer _events;
+        private readonly ScriptEventer _events;
 
         public ScriptManager(CommandTable commandTable)
         {

@@ -63,7 +63,7 @@ namespace NeeView.PageFrames
         {
         }
 
-        public void SetDirty(PageFrameDartyLevel level)
+        public static void SetDirty(PageFrameDartyLevel level)
         {
         }
 

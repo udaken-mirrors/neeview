@@ -13,20 +13,22 @@ using System.Windows.Media;
 
 namespace NeeView
 {
+    /// <summary>
+    /// MediaPlayer Pool
+    /// </summary>
     public static class MediaPlayerPool
     {
-        [Obsolete("TODO: static ダメ！Book切り替えで開放されるように！")]
         public static ObjectPool<MediaPlayer> Default { get; } = new();
     }
 
 
     public partial class MediaViewContent : ViewContent
     {
-        private ObjectPool<MediaPlayer> _mediaPlayerPool;
+        private readonly ObjectPool<MediaPlayer> _mediaPlayerPool;
 
-        private SimpleMediaPlayer _player;
+        private readonly SimpleMediaPlayer _player;
         private MediaPlayerCanvas? _playerCanvas;
-        private DisposableCollection _disposables = new();
+        private readonly DisposableCollection _disposables = new();
         private bool _disposedValue;
         private ImageSource? _imageSource;
 

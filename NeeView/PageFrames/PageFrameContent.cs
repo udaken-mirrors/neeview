@@ -20,12 +20,12 @@ namespace NeeView.PageFrames
     /// </summary>
     public class PageFrameContent : IPageFrameContent, IDisposable, INotifyTransformChanged
     {
-        private ViewContentFactory _viewContentFactory;
+        private readonly ViewContentFactory _viewContentFactory;
 
-        private Canvas _canvas;
-        private Canvas _contentCanvas;
+        private readonly Canvas _canvas;
+        private readonly Canvas _contentCanvas;
         private PageFrame _pageFrame;
-        private PageFrameActivity _activity;
+        private readonly PageFrameActivity _activity;
 
         /// <summary>
         /// レイアウトトランスフォーム 
@@ -37,34 +37,34 @@ namespace NeeView.PageFrames
         /// </summary>
         private readonly LoupeTransformContext _loupeContext;
 
-        private IStaticFrame _staticFrame;
-        private List<Page> _pages;
+        private readonly IStaticFrame _staticFrame;
+        private readonly List<Page> _pages;
         private List<ViewContent> _viewContents;
         
         /// <summary>
         /// レイアウト用。アニメーションあり
         /// </summary>
-        private TransformGroup _viewTransform = new();
+        private readonly TransformGroup _viewTransform = new();
 
         /// <summary>
         /// 計算用。アニメーションなし
         /// </summary>
-        private TransformGroup _calcTransform = new();
+        private readonly TransformGroup _calcTransform = new();
 
         /// <summary>
         /// Bounds計算用。Source
         /// </summary>
-        private TransformGroup _boundsTransform;
+        private readonly TransformGroup _boundsTransform;
 
         private PageFrameDartyLevel _dirtyLevel;
 
         /// <summary>
         /// 基底スケールのトランスフォーム
         /// </summary>
-        private BaseScaleTransform _baseScaleTransform;
+        private readonly BaseScaleTransform _baseScaleTransform;
 
         private bool _disposedValue = false;
-        private DisposableCollection _disposables = new();
+        private readonly DisposableCollection _disposables = new();
 
         /// <summary>
         /// PageFrameから構成されるPageFrameContainer用コンテンツ
@@ -332,6 +332,7 @@ namespace NeeView.PageFrames
             _loupeContext.TransformChanged -= ViewTransform_TransformChanged;
         }
 
+#if false
         private double GetRenderScale()
         {
             // TODO: DPIスケール変更で更新されるように
@@ -339,6 +340,7 @@ namespace NeeView.PageFrames
             var dpiScaleX = _staticFrame.DpiScale.DpiScaleX;
             return _transform.Scale * _loupeContext.Scale * dpiScaleX;
         }
+#endif
 
         private void ViewTransform_TransformChanged(object? sender, TransformChangedEventArgs e)
         {

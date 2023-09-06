@@ -6830,7 +6830,7 @@ $Name is the main page (the smaller page number) when displaying 2 pages.</value
   <data name="ViewConfig.IsViewStartPositionCenter.Remarks" xml:space="preserve">
     <value>When turned off, the upper right and upper left reference switches depending on the read direction.</value>
   </data>
-  <data name="ViewConfig.MainViewMergin" xml:space="preserve">
+  <data name="ViewConfig.MainViewMargin" xml:space="preserve">
     <value>Main view margin (pixel)</value>
   </data>
   <data name="ViewConfig.RotateCenter" xml:space="preserve">

@@ -19563,9 +19563,9 @@ namespace NeeView.Properties {
         /// <summary>
         ///   Main view margin (pixel) に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        public static string ViewConfig_MainViewMergin {
+        public static string ViewConfig_MainViewMargin {
             get {
-                return ResourceManager.GetString("ViewConfig.MainViewMergin", resourceCulture);
+                return ResourceManager.GetString("ViewConfig.MainViewMargin", resourceCulture);
             }
         }
         

@@ -6814,7 +6814,7 @@ $Name 为 2 页面显示时的主要页面 (页面编号较小者) 。</value>
   <data name="ViewConfig.IsViewStartPositionCenter.Remarks" xml:space="preserve">
     <value>关闭时，根据对开方向切换右上方、左上方。</value>
   </data>
-  <data name="ViewConfig.MainViewMergin" xml:space="preserve">
+  <data name="ViewConfig.MainViewMargin" xml:space="preserve">
     <value>主要检视的边距 (像素)</value>
   </data>
   <data name="ViewConfig.RotateCenter" xml:space="preserve">

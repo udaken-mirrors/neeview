@@ -43,12 +43,12 @@ namespace NeeView
     {
         public static PageFrameBoxPresenter Current { get; } = new PageFrameBoxPresenter();
 
-        private Config _config;
-        private BookHub _bookHub;
+        private readonly Config _config;
+        private readonly BookHub _bookHub;
 
         private Book? _book;
         private BookContext? _bookContext;
-        private BookShareContext _shareContext;
+        private readonly BookShareContext _shareContext;
         private PageFrameBox? _box;
         private BookCommandControl? _pageControl;
         private BookMementoControl? _bookMementoControl;
@@ -302,20 +302,17 @@ namespace NeeView
             _pageControl?.Dispose();
             _pageControl = null;
 
-            Debug.Assert(_box is PageFrameBox);
-            if (_box is not null)
-            {
-                _box.PagesChanged -= Box_PagesChanged;
-                _box.SelectedRangeChanged -= Box_SelectedRangeChanged;
-                _box.PropertyChanged -= Box_PropertyChanged;
-                _box.ViewContentChanged -= Box_ViewContentChanged;
-                _box.TransformChanged -= Box_TransformChanged;
-                _box.SelectedContainerLayoutChanged -= Box_SelectedContainerLayoutChanged;
-                _box.SelectedContentSizeChanged -= Box_SelectedContentSizeChanged;
-                _box.SizeChanged -= Box_SizeChanged;
-                (_box as IDisposable)?.Dispose();
-                _box = null;
-            }
+            _box.PagesChanged -= Box_PagesChanged;
+            _box.SelectedRangeChanged -= Box_SelectedRangeChanged;
+            _box.PropertyChanged -= Box_PropertyChanged;
+            _box.ViewContentChanged -= Box_ViewContentChanged;
+            _box.TransformChanged -= Box_TransformChanged;
+            _box.SelectedContainerLayoutChanged -= Box_SelectedContainerLayoutChanged;
+            _box.SelectedContentSizeChanged -= Box_SelectedContentSizeChanged;
+            _box.SizeChanged -= Box_SizeChanged;
+            (_box as IDisposable)?.Dispose();
+            _box = null;
+
             RaisePropertyChanged(nameof(View));
 
             Debug.Assert(_bookContext is not null);
@@ -335,7 +332,7 @@ namespace NeeView
         }
 
 
-        private List<Page> _viewPages = new List<Page>();
+        private List<Page> _viewPages = new();
 
         /// <summary>
         /// 安定した選択ページ
@@ -355,7 +352,7 @@ namespace NeeView
             RaiseViewPageChanged(new ViewPageChangedEventArgs(_viewPages));
         }
 
-        private object _lock = new();
+        private readonly object _lock = new();
         private ViewPageChangedEventArgs? _viewPageChangedEventArgs;
 
         private void RaiseViewPageChanged()
@@ -449,7 +446,7 @@ namespace NeeView
         }
 
 
-        private void ShowLoupeTransformMessage(ITransformControlObject source, TransformAction action)
+        private static void ShowLoupeTransformMessage(ITransformControlObject source, TransformAction action)
         {
             var infoMessage = InfoMessage.Current; // TODO: not singleton
             if (Config.Current.Notice.ViewTransformShowMessageStyle == ShowMessageStyle.None) return;

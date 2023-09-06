@@ -5,7 +5,7 @@ namespace NeeView
 {
     public class PageThumbnail
     {
-        private PageContent _content;
+        private readonly PageContent _content;
 
         public PageThumbnail(PageContent content)
         {
@@ -29,7 +29,7 @@ namespace NeeView
 
         public virtual async Task<ThumbnailSource> LoadThumbnailAsync(CancellationToken token)
         {
-            return new ThumbnailSource(null);
+            return await Task.FromResult(new ThumbnailSource(null));
         }
     }
 

@@ -12,10 +12,10 @@ namespace NeeView
     [NotifyPropertyChanged]
     public partial class SimpleMediaPlayer : IDisposable, INotifyPropertyChanged
     {
-        private MediaPlayer _player;
-        private DisposableCollection _disposables = new();
+        private readonly MediaPlayer _player;
+        private readonly DisposableCollection _disposables = new();
         private bool _disposedValue;
-        private MediaArchiveConfig _mediaConfig;
+        private readonly MediaArchiveConfig _mediaConfig;
         private TimeSpan _startDelay;
         private bool _isPlaying;
         private bool _resumePlaying;
@@ -245,6 +245,7 @@ namespace NeeView
             });
         }
 
+#if false
         // TODO: 汎用化？
         private static void DelayCycleAction(Action action, int delayCycle)
         {
@@ -259,7 +260,7 @@ namespace NeeView
                 }
             }
         }
-
+#endif
 
     }
 }

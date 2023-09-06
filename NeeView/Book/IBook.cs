@@ -21,6 +21,7 @@ namespace NeeView
         public BookMemento Memento { get; }
     }
 
+#if false
     public partial class EmptyBook : IBook
     {
         [Subscribable]
@@ -34,4 +35,5 @@ namespace NeeView
 
         public BookMemento Memento { get; } = new BookMemento();
     }
+#endif
 }

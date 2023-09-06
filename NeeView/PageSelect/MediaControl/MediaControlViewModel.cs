@@ -36,7 +36,7 @@ namespace NeeView
             }
         }
 
-        private DisposableCollection _operatorEventDisposables = new DisposableCollection();
+        private DisposableCollection _operatorEventDisposables = new();
 
         private void AttachOperator(MediaPlayerOperator? op)
         {
@@ -45,7 +45,7 @@ namespace NeeView
 
             _operator = op;
 
-            _operatorEventDisposables = new DisposableCollection();
+            _operatorEventDisposables = new();
 
             _operatorEventDisposables.Add(_operator.SubscribePropertyChanged(nameof(_operator.IsPlaying),
                 (s, e) => RaisePropertyChanged(nameof(IsPlaying))));

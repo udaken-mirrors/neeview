@@ -25,11 +25,11 @@ namespace NeeView
         private bool _initialized;
         private PageFrameElement _element;
         private PageFrameElementScale _scale;
-        private PageFrameActivity _activity;
-        private ViewSource _viewSource;
-        private ViewContentSize _viewContentSize;
+        private readonly PageFrameActivity _activity;
+        private readonly ViewSource _viewSource;
+        private readonly ViewContentSize _viewContentSize;
         private bool _disposedValue;
-        private DisposableCollection _disposables = new();
+        private readonly DisposableCollection _disposables = new();
 
 
         public ViewContent(PageFrameElement element, PageFrameElementScale scale, ViewSource viewSource, PageFrameActivity activity)
@@ -51,7 +51,7 @@ namespace NeeView
 
 
         public PageFrameActivity Activity => _activity;
-        public ArchiveEntry ArchiveEntry => _element.Page.ArchiveEntry;
+        public ArchiveEntry ArchiveEntry => _element.Page.Entry;
         public PageFrameElement Element => _element;
         public ViewContentSize ViewContentSize => _viewContentSize;
         public Size LayoutSize => _viewContentSize.LayoutSize;

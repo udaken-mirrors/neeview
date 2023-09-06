@@ -37,10 +37,10 @@ namespace NeeView
             _currentKey = key;
 
             _lockValue.SetValue(false, 0.0, DelayValueOverwriteOption.Force);
-            _mainView.UpdateViewSize();
+            //_mainView.UpdateViewSize();
         }
 
-        public void Deativate(MainViewLockerKey key)
+        public void Deactivate(MainViewLockerKey key)
         {
             if (_currentKey != key) return;
 

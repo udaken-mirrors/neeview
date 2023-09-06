@@ -103,16 +103,16 @@ namespace NeeView
 
             // スタートページ取得
             PagePosition position = _source.Pages.FirstPosition();
-            int direction = 1;
+            //int direction = 1;
             if (startPage.StartPageType == BookStartPageType.FirstPage)
             {
                 position = _source.Pages.FirstPosition();
-                direction = 1;
+                //direction = 1;
             }
             else if (startPage.StartPageType == BookStartPageType.LastPage)
             {
                 position = _source.Pages.LastPosition();
-                direction = -1;
+                //direction = -1;
             }
             else
             {
@@ -122,7 +122,7 @@ namespace NeeView
                     this.NotFoundStartPage = startPage.PageName;
                 }
                 position = index >= 0 ? new PagePosition(index, 0) : _source.Pages.FirstPosition();
-                direction = 1;
+                //direction = 1;
 
                 // 最終ページリセット
                 // NOTE: ワイドページ判定は行わないため、2ページモードの場合に不正確な場合がある

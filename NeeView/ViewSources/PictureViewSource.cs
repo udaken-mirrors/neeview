@@ -9,8 +9,8 @@ namespace NeeView
 {
     public class PictureViewSource : ViewSource
     {
-        private PageContent _pageContent;
-        private Picture _picture;
+        private readonly PageContent _pageContent;
+        private readonly Picture _picture;
 
         public PictureViewSource(PageContent pageContent, IPictureSource pictureSource,  BookMemoryService bookMemoryService) : base(pageContent, bookMemoryService)
         {
@@ -52,7 +52,7 @@ namespace NeeView
             // NOTE: 非同期で処理されることを期待している
             NVDebug.AssertMTA();
 
-            var result = _picture.CreateImageSource(data.Data, size, token);
+            _picture.CreateImageSource(data.Data, size, token);
             Debug.Assert(_picture.ImageSource is not null);
 
             // [DEV]
@@ -61,7 +61,7 @@ namespace NeeView
                 var requestSize = size;
                 var sourceSize = pictureInfo.Size;
                 var pictureSize = new Size(_picture.ImageSource.GetPixelWidth(), _picture.ImageSource.GetPixelHeight());
-                Debug.WriteLine($"CreateBitmapImage: {_pageContent.ArchiveEntry}: {sourceSize:f0}: {requestSize:f0} -> {pictureSize:f0}");
+                Debug.WriteLine($"CreateBitmapImage: {_pageContent.Entry}: {sourceSize:f0}: {requestSize:f0} -> {pictureSize:f0}");
             }
         }
     }

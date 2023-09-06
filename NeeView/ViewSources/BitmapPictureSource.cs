@@ -13,17 +13,17 @@ namespace NeeView
     /// </summary>
     public class BitmapPictureSource : IPictureSource
     {
-        private BitmapPageContent _pageContent;
+        private readonly BitmapPageContent _pageContent;
 
         // TODO: 毎回作ってるけど大丈夫？
-        private BitmapFactory _bitmapFactory = new BitmapFactory();
+        private readonly BitmapFactory _bitmapFactory = new();
 
         public BitmapPictureSource(BitmapPageContent pageContent)
         {
             _pageContent = pageContent;
         }
 
-        public ArchiveEntry ArchiveEntry => _pageContent.ArchiveEntry;
+        public ArchiveEntry ArchiveEntry => _pageContent.Entry;
 
         public PictureInfo? PictureInfo => _pageContent.PictureInfo;
 
@@ -66,9 +66,9 @@ namespace NeeView
         {
             Debug.Assert(PictureInfo != null);
 
-            var maxWixth = Math.Max(PictureInfo.Size.Width, Config.Current.Performance.MaximumSize.Width);
+            var maxWidth = Math.Max(PictureInfo.Size.Width, Config.Current.Performance.MaximumSize.Width);
             var maxHeight = Math.Max(PictureInfo.Size.Height, Config.Current.Performance.MaximumSize.Height);
-            var maxSize = new Size(maxWixth, maxHeight);
+            var maxSize = new Size(maxWidth, maxHeight);
             return size.Limit(maxSize);
         }
 

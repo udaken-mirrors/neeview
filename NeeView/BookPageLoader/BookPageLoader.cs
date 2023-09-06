@@ -16,27 +16,27 @@ namespace NeeView
     [NotifyPropertyChanged]
     public partial class BookPageLoader : IDisposable, INotifyPropertyChanged
     {
-        private IBook _book;
-        private PageFrameFactory _frameFactory;
-        private ViewSourceMap _viewSourceMap;
-        private PageFrameElementScaleFactory _elementScaleFactory;
-        private BookMemoryService _bookMemoryService;
+        private readonly IBook _book;
+        private readonly PageFrameFactory _frameFactory;
+        private readonly ViewSourceMap _viewSourceMap;
+        private readonly PageFrameElementScaleFactory _elementScaleFactory;
+        private readonly BookMemoryService _bookMemoryService;
         private readonly PerformanceConfig _performanceConfig;
         private CancellationTokenSource? _cancellationTokenSource;
 
-        private DisposableCollection _disposables = new();
+        private readonly DisposableCollection _disposables = new();
         private bool _disposedValue;
 
         private readonly PageContentJobClient _jobClient;
         private readonly PageContentJobClient _jobAheadClient;
 
-        private List<Page> _viewPages = new();
-        private List<Page> _aheadPages = new();
+        private readonly List<Page> _viewPages = new();
+        private readonly List<Page> _aheadPages = new();
 
-        private object _lock = new();
+        private readonly object _lock = new();
 
         private bool _isEnabled = true;
-        private BookLoadContext _loadContext = new BookLoadContext();
+        private BookLoadContext _loadContext = new();
 
         private bool _isBusy;
         private int _busyCount;
@@ -190,7 +190,7 @@ namespace NeeView
                     var pages = await LoadAheadAsync(range.Next(-direction), -direction, rest, linkedTokenSource.Token);
                 }
             }
-            catch (OperationCanceledException ex)
+            catch (OperationCanceledException)
             {
                 //Debug.WriteLine($"BookPageLoader.Canceled: {ex.StackTrace}");
             }
@@ -362,11 +362,11 @@ namespace NeeView
 
 
 
-    public class BookPageLoadPauser : IDisposable
+    public class BookPageLoadPause : IDisposable
     {
         public BookPageLoader _loader;
 
-        public BookPageLoadPauser(BookPageLoader loader)
+        public BookPageLoadPause(BookPageLoader loader)
         {
             _loader = loader;
             _loader.Pause();

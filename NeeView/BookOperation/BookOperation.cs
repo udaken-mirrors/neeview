@@ -20,8 +20,8 @@ namespace NeeView
         public static BookOperation Current { get; }
 
 
-        private PageFrameBoxPresenter _presenter;
-        private BookHub _bookHub;
+        private readonly PageFrameBoxPresenter _presenter;
+        private readonly BookHub _bookHub;
         private Book? _book;
         private PageFrameBox? _box;
         private bool _isLoading;
@@ -111,7 +111,7 @@ namespace NeeView
             return box is null ? null : new BookPageTerminator(box, _control);
         }
 
-        private IBookControl? CreateBookController(PageFrameBox? box)
+        private static IBookControl? CreateBookController(PageFrameBox? box)
         {
             return box is null ? null : new BookControl(box);
         }

@@ -23,10 +23,10 @@ namespace NeeView
         public static MediaPlayerOperator? Current { get; set; }
 
 
-        private SimpleMediaPlayer _player;
+        private readonly SimpleMediaPlayer _player;
         private readonly DispatcherTimer _timer;
 
-        private bool _isLastStart;
+        //private bool _isLastStart;
         private bool _isTimeLeftDisp;
 
         private Duration _duration;
@@ -505,8 +505,7 @@ namespace NeeView
                 return;
             }
 
-#warning 無理やり位置補正しているのがよろしくない。この遅延の仕組み自体がいいかげんである。であるが、次の動画再生システムまでのつなぎなのでまあ？
-
+            // NOTE: 無理やり位置補正しているのがよろしくない。この遅延の仕組み自体がいいかげんである。であるが、次の動画再生システムまでのつなぎなのでまあ？
             this.Position = _delayPosition;
 
             _delay -= ms;

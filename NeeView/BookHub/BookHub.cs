@@ -65,12 +65,10 @@ namespace NeeView
         private string? _address;
         private readonly BookHubCommandEngine _commandEngine;
         private int _requestLoadCount;
-        private readonly DisposableCollection _disposables;
+        private readonly DisposableCollection _disposables = new();
 
         private BookHub()
         {
-            _disposables = new DisposableCollection();
-
             _disposables.Add(SubscribeBookChanged(
                 (s, e) =>
                 {

@@ -29,7 +29,7 @@ namespace NeeView
         private MainViewViewModel? _vm;
         private Window? _owner;
         private readonly DpiScaleProvider _dpiProvider = new();
-        private TransformGroup? _transformCalc;
+        //private TransformGroup? _transformCalc;
 
         public MainView()
         {
@@ -51,7 +51,7 @@ namespace NeeView
 
         public DpiScaleProvider DpiProvider => _dpiProvider;
 
-        public TransformGroup? Transform => _transformCalc;
+        //public TransformGroup? Transform => _transformCalc;
 
 
         public IDisposable SubscribePreviewKeyDown(KeyEventHandler handler)
@@ -172,9 +172,9 @@ namespace NeeView
             try
             {
                 var canvasSize = new Size(this.MainViewCanvas.ActualWidth, this.MainViewCanvas.ActualHeight);
-                var contentSize = this.GetContentRenderSize();
+                var contentSize = GetContentRenderSize();
                 if (contentSize.IsEmptyOrZero()) return;
-                _vm.StretchWindow(window, canvasSize, contentSize);
+                MainViewViewModel.StretchWindow(window, canvasSize, contentSize);
             }
             catch (Exception ex)
             {
@@ -183,7 +183,7 @@ namespace NeeView
             }
         }
 
-        private Size GetContentRenderSize()
+        private static Size GetContentRenderSize()
         {
             var box = PageFrameBoxPresenter.Current.View;
             if (box is null) return Size.Empty;
@@ -243,7 +243,7 @@ namespace NeeView
         private void DispatcherTimer_Tick(object? sender, EventArgs e)
         {
             // 非アクティブ時間が続いたらマウスカーソルを非表示にする
-            if (IsCursurVisibled() && (DateTime.Now - _lastActionTime).TotalSeconds > Config.Current.Mouse.CursorHideTime)
+            if (IsCursorVisible() && (DateTime.Now - _lastActionTime).TotalSeconds > Config.Current.Mouse.CursorHideTime)
             {
                 SetCursorVisible(false);
             }
@@ -253,7 +253,7 @@ namespace NeeView
         {
             var nowPoint = e.GetPosition(this.View);
 
-            if (IsCursurVisibled())
+            if (IsCursorVisible())
             {
                 _cursorMoveDistance = 0.0;
             }
@@ -293,7 +293,7 @@ namespace NeeView
         {
             if (_vm is null) return;
 
-            ////Debug.WriteLine($"Cursur: {isVisible}");
+            ////Debug.WriteLine($"Cursor: {isVisible}");
             _cursorMoveDistance = 0.0;
             _lastActionTime = DateTime.Now;
 
@@ -317,7 +317,7 @@ namespace NeeView
         /// <summary>
         /// カーソル表示判定
         /// </summary>
-        private bool IsCursurVisibled()
+        private bool IsCursorVisible()
         {
             return this.View.Cursor != Cursors.None || _vm?.ViewComponent.IsLoupeMode == true;
         }
@@ -348,8 +348,6 @@ namespace NeeView
         #region SizeChanged
 
         private readonly object _windowSizeChangedLock = new();
-        private Size _oldWindowSize;
-        private Size _newWindowSize;
         private bool _isResizeLocked;
 
         public void SetResizeLock(bool locked)
@@ -359,16 +357,12 @@ namespace NeeView
                 if (_isResizeLocked == locked) return;
                 _isResizeLocked = locked;
             }
-
-            UpdateViewSize();
         }
 
         private void MainView_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             var window = Window.GetWindow(this);
-            var windowStateManager = (window as IHasWindowController)?.WindowController.WindowStateManager;
-
-            if (windowStateManager is null) throw new InvalidOperationException();
+            //var windowStateManager = ((window as IHasWindowController)?.WindowController.WindowStateManager) ?? throw new InvalidOperationException();
 
             // 最小化では処理しない
             if (window.WindowState == WindowState.Minimized) return;
@@ -376,14 +370,12 @@ namespace NeeView
             bool isResizeLocked;
             lock (_windowSizeChangedLock)
             {
-                _newWindowSize = e.NewSize;
                 isResizeLocked = _isResizeLocked;
             }
 
             if (!isResizeLocked)
             {
                 //Debug.WriteLine($"ViewSizeChange: {windowStateManager.CurrentState} {e.NewSize} ");
-                SizeChangedCore();
             }
             else
             {
@@ -391,30 +383,11 @@ namespace NeeView
             }
         }
 
+        [Obsolete("no used")]
         public void UpdateViewSize()
         {
-            var window = Window.GetWindow(this);
-            if (window is null) return;
-
-            SizeChangedCore();
-        }
-
-        private void SizeChangedCore()
-        {
-            if (_vm is null) return;
-
-            bool sizeChanged = false;
-
-            lock (_windowSizeChangedLock)
-            {
-                sizeChanged = _oldWindowSize != _newWindowSize;
-                _oldWindowSize = _newWindowSize;
-            }
-
-            //if (sizeChanged)
-            //{
-            //    _vm.SetViewSize(this.View.ActualWidth, this.View.ActualHeight);
-            //}
+            //var window = Window.GetWindow(this);
+            //if (window is null) return;
         }
 
         #endregion SizeChanged

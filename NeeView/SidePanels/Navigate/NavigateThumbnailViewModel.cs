@@ -87,7 +87,6 @@ namespace NeeView
 
 
 
-        [MemberNotNull(nameof(_mainViewVisualBrush))]
         private void InitializeThumbnail()
         {
             _presenter.PageFrameBoxChanged +=

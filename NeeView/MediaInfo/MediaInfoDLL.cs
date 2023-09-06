@@ -17,7 +17,11 @@
 using System;
 using System.Runtime.InteropServices;
 
-#pragma warning disable 1591 // Disable XML documentation warnings
+//#pragma warning disable 1591 // Disable XML documentation warnings
+#pragma warning disable CS8603 // Null 参照戻り値である可能性があります。
+#pragma warning disable CS8600 // Null リテラルまたは Null の可能性がある値を Null 非許容型に変換しています。
+#pragma warning disable IDE0044 // 読み取り専用修飾子を追加します
+
 
 namespace MediaInfoLib
 {
@@ -134,7 +138,7 @@ namespace MediaInfoLib
             {
                 Handle = (IntPtr)0;
             }
-            if (Environment.OSVersion.ToString().IndexOf("Windows") == -1)
+            if (!Environment.OSVersion.ToString().Contains("Windows", StringComparison.CurrentCulture))
                 MustUseAnsi=true;
             else
                 MustUseAnsi=false;

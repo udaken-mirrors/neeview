@@ -11,8 +11,8 @@ namespace NeeView.PageFrames
     [NotifyPropertyChanged]
     public partial class SelectedContainer : INotifyPropertyChanged, IDisposable
     {
-        private PageFrameContainerCollection _containers;
-        private Func<LinkedListNode<PageFrameContainer>> _selectFunc;
+        private readonly PageFrameContainerCollection _containers;
+        private readonly Func<LinkedListNode<PageFrameContainer>> _selectFunc;
         private LinkedListNode<PageFrameContainer> _node;
         private bool _disposedValue;
 
@@ -29,9 +29,6 @@ namespace NeeView.PageFrames
 
         [Subscribable]
         public event PropertyChangedEventHandler? PropertyChanged;
-
-        [Subscribable]
-        public event EventHandler? IsDirtyChanged;
 
         [Subscribable]
         public event EventHandler<FrameViewContentChangedEventArgs>? ViewContentChanged;

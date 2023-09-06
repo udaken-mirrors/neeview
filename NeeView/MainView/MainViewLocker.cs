@@ -75,7 +75,7 @@ namespace NeeView
 
         public void Deactivate()
         {
-            _mediator.Deativate(_key);
+            _mediator.Deactivate(_key);
         }
 
         public void Lock()

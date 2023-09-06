@@ -12,7 +12,7 @@ namespace NeeView
 
     public partial class BookPageMoveControl : IBookPageMoveControl
     {
-        private PageFrameBox _box;
+        private readonly PageFrameBox _box;
 
         //private DisposableCollection _disposables = new();
         //private bool _disposedValue = false;

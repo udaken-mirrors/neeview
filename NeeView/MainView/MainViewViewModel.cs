@@ -20,8 +20,8 @@ namespace NeeView
         {
             _viewComponent = viewComponent;
 
-            Config.Current.View.AddPropertyChanged(nameof(ViewConfig.MainViewMergin),
-                (s, e) => RaisePropertyChanged(nameof(MainViewMergin)));
+            Config.Current.View.AddPropertyChanged(nameof(ViewConfig.MainViewMargin),
+                (s, e) => RaisePropertyChanged(nameof(MainViewMargin)));
 
             // context menu
             ContextMenuManager.Current.AddPropertyChanged(nameof(ContextMenuManager.Current.SourceTree),
@@ -62,7 +62,7 @@ namespace NeeView
 
         public TouchInput TouchInput => _viewComponent.TouchInput;
 
-        public Thickness MainViewMergin => new(Config.Current.View.MainViewMergin);
+        public Thickness MainViewMargin => new(Config.Current.View.MainViewMargin);
 
         public ContextMenu ContextMenu => _contextMenu;
 
@@ -110,7 +110,7 @@ namespace NeeView
         /// <param name="contentSize"></param>
         /// <exception cref="ArgumentException"></exception>
         /// <exception cref="InvalidOperationException"></exception>
-        public void StretchWindow(Window window, Size canvasSize, Size contentSize)
+        public static void StretchWindow(Window window, Size canvasSize, Size contentSize)
         {
             if (contentSize.IsEmptyOrZero())
             {

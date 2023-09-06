@@ -1,6 +1,7 @@
 ﻿using NeeLaboratory.ComponentModel;
 using NeeView.Windows.Property;
 using System;
+using System.Text.Json.Serialization;
 
 namespace NeeView
 {
@@ -23,7 +24,7 @@ namespace NeeView
         private bool _isBaseScaleEnabled;
         private double _baseScale = 1.0;
         private bool _isRotateStretchEnabled = true;
-        private double _mainViewMergin;
+        private double _mainViewMargin;
         private bool _isKeepScakeBooks;
         private bool _isKeepAngleBooks;
         private bool _isKeepFlipBooks;
@@ -195,11 +196,23 @@ namespace NeeView
 
         // ビューエリアの余白
         [PropertyRange(0.0, 100.0)]
+        public double MainViewMargin
+        {
+            get { return _mainViewMargin; }
+            set { SetProperty(ref _mainViewMargin, value); }
+        }
+
+
+        #region Obsolete
+
+        [Obsolete("no used (This is typo.)"), Alternative("MainViewMargin", 40)]
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         public double MainViewMergin
         {
-            get { return _mainViewMergin; }
-            set { SetProperty(ref _mainViewMergin, value); }
+            get { return 0.0; }
+            set { MainViewMargin = value; }
         }
-    }
 
+        #endregion
+    }
 }

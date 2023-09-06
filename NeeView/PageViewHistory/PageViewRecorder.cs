@@ -26,7 +26,7 @@ namespace NeeView
         }
 
 
-        private PageFrameBoxPresenter _presenter;
+        private readonly PageFrameBoxPresenter _presenter;
         private FileStream? _file;
         private StringBuilder? _writeBuffer;
         private DateTime _viewedPagesDateTime;
