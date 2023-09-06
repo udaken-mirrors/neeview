@@ -25,17 +25,20 @@ namespace NeeView
 
 
         private readonly CommandTable _commandTable;
-        private bool _isDarty = true;
+        private bool _isDirty = true;
         private readonly ScriptUnitPool _pool = new();
         private readonly ScriptFolderWatcher _watcher;
         private bool _disposedValue;
         private readonly ScriptCommandSourceMap _sourceMap = new();
         private readonly DisposableCollection _disposableCollection = new();
-
+        private ScriptEventer _events;
 
         public ScriptManager(CommandTable commandTable)
         {
             _commandTable = commandTable;
+
+            _events = new ScriptEventer();
+            _disposableCollection.Add(_events);
 
             _watcher = new ScriptFolderWatcher();
             _watcher.Changed += (s, e) => UpdateScriptCommands(true, false);
@@ -111,8 +114,8 @@ namespace NeeView
         {
             if (_disposedValue) return false;
 
-            if (!isForce && !_isDarty) return false;
-            _isDarty = false;
+            if (!isForce && !_isDirty) return false;
+            _isDirty = false;
 
             _sourceMap.Update();
 

@@ -126,8 +126,7 @@ namespace NeeView
 
         private void Operator_MediaEnded(object? sender, System.EventArgs e)
         {
-#warning not implement yet
-            //BookOperation.Current.Book?.Viewer.RaisePageTerminatedEvent(this, 1);
+            PageFrameBoxPresenter.Current.View?.RaisePageTerminatedEvent(this, 1);
         }
 
         public void SetScrubbing(bool isScrubbing)

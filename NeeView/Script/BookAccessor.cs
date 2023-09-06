@@ -48,9 +48,7 @@ namespace NeeView
         {
             get
             {
-#warning not implement yet
-                //return BookOperation.Current.Book?.Viewer.ViewPageCollection.Collection.Select(e => new ViewPageAccessor(e.Page)).ToArray() ?? Array.Empty<ViewPageAccessor>();
-                return new ViewPageAccessor[0];
+                return BookOperation.Current.ViewPages.Select(e => new ViewPageAccessor(e)).ToArray();
             }
         }
 
@@ -58,7 +56,7 @@ namespace NeeView
         [WordNodeMember]
         public void Wait()
         {
-            BookOperation.Current.Wait(_cancellationToken);
+            BookOperation.Current.WaitAsync(_cancellationToken).Wait();
         }
 
         #region Obsolete

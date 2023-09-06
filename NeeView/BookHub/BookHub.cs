@@ -725,6 +725,23 @@ namespace NeeView
         }
         #endregion
 
+        /// <summary>
+        /// 処理完了を待機
+        /// </summary>
+        /// <param name="token"></param>
+        /// <returns></returns>
+        public async Task WaitAsync(CancellationToken token)
+        {
+            if (!_commandEngine.IsBusy) return;
+
+            // BookHubのコマンド処理が終わるまで待機
+            using var eventFlag = new ManualResetEventSlim();
+            using var isBusyEvent = _commandEngine.SubscribeIsBusyChanged((s, e) => eventFlag.Set());
+            while (_commandEngine.IsBusy)
+            {
+                await eventFlag.WaitHandle.AsTask().WaitAsync(token);
+            }
+        }
     }
 }
 

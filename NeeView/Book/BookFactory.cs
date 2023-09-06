@@ -12,7 +12,8 @@ namespace NeeView
 
             var bookSource = await BookSourceFactory.CreateAsync(address, setting, token);
 
-#warning Media用処理未実装。 これはページ終端挙動の動画再生開始井chいの指定だが、どする？
+            // メディアブック移動で前のブックに戻ったときにフレーム終端から再生させるためのフラグ設定
+            // NOTE: 不要な機能と思われるので無効にしておく
 #if false
             if (bookSource.IsMedia)
             {

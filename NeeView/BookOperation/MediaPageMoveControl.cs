@@ -1,4 +1,5 @@
-﻿using NeeView.PageFrames;
+﻿using NeeView.ComponentModel;
+using NeeView.PageFrames;
 using System;
 using System.Diagnostics;
 
@@ -80,12 +81,12 @@ namespace NeeView
 
         public void ScrollToPrevFrame(object? sender, ScrollPageCommandParameter parameter)
         {
-            MainViewComponent.Current.ViewTransformControl.PrevScrollPage(sender, parameter);
+            _box.ScrollToNext(LinkedListDirection.Previous, parameter);
         }
 
         public void ScrollToNextFrame(object? sender, ScrollPageCommandParameter parameter)
         {
-            MainViewComponent.Current.ViewTransformControl.NextScrollPage(sender, parameter);
+            _box.ScrollToNext(LinkedListDirection.Next, parameter);
         }
 
 

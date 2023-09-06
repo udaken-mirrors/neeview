@@ -63,7 +63,7 @@ namespace NeeView
         // ループ制御
         public bool HasControl { get; set; } = true;
 
-
+        public bool IsRepeat => _mediaConfig.IsRepeat;
 
         public bool IsMuted
         {

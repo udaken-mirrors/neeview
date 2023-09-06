@@ -92,14 +92,6 @@ namespace NeeView
         public event EventHandler? MediaEnded;
 
 
-        public IDisposable SubscribeMediaEnded(EventHandler handler)
-        {
-            MediaEnded += handler;
-            return new AnonymousDisposable(() => MediaEnded -= handler);
-        }
-
-
-
         public Duration Duration
         {
             get { return _duration; }
@@ -142,6 +134,7 @@ namespace NeeView
 
         private void SetPositionInner(TimeSpan position)
         {
+            //Debug.Assert(position > TimeSpan.Zero);
             _position = MathUtility.Clamp(position, TimeSpan.Zero, _durationTimeSpan);
             RaisePropertyChanged();
             RaisePropertyChanged(nameof(PositionRate));
@@ -345,18 +338,8 @@ namespace NeeView
 
         private void Player_MediaEnded(object? sender, EventArgs e)
         {
-            if (_isRepeat)
+            if (!_isRepeat)
             {
-                _player.Position = TimeSpan.FromMilliseconds(1);
-            }
-            else
-            {
-                Debug.WriteLine($"END");
-                _player.Pause();
-                if (_duration.HasTimeSpan)
-                {
-                    _player.Position = _durationTimeSpan;
-                }
                 MediaEnded?.Invoke(this, EventArgs.Empty);
             }
         }
@@ -364,31 +347,6 @@ namespace NeeView
         private void Player_MediaOpened(object? sender, EventArgs e)
         {
             return;
-
-            Duration = _player.Player.NaturalDuration;
-
-            if (_isLastStart && _duration.HasTimeSpan)
-            {
-                // 最終フレームからの開始
-                _player.Position = _duration.TimeSpan;
-                Play();
-                SetPositionLast();
-            }
-            else
-            {
-                // 最初からの開始
-                _delay = Config.Current.Archive.Media.MediaStartDelaySeconds * 1000;
-                if (_delay <= 0.0)
-                {
-                    // 画面のちらつきを許容してすぐに再生する
-                    Play();
-                }
-                else
-                {
-                    // 画面がちらつくことがあるので、少し待ってから再生開始
-                    _timer.Tick += DispatcherTimer_StartTick;
-                }
-            }
         }
 
 
@@ -411,29 +369,12 @@ namespace NeeView
 
             if (_duration.HasTimeSpan)
             {
+                //Debug.WriteLine($"## Player: {_player.Position}");
                 SetPositionInner(_player.Position);
             }
 
             Delay_Tick(_timer.Interval.TotalMilliseconds);
         }
-
-#if false
-        public void Open(Uri uri, bool isLastStart)
-        {
-            if (_disposedValue) return;
-
-            _isLastStart = isLastStart;
-
-            _player.Volume = 0.0;
-            _player.Open(uri);
-
-            // NOTE: MP3等、映像がない場合はOpenedイベントが発生しないため、すぐに再生する。
-            if (_player.HasAudio && !_player.HasVideo)
-            {
-                _player.Play();
-            }
-        }
-#endif
 
         public void Attach(bool isPlaying)
         {
@@ -490,16 +431,31 @@ namespace NeeView
             var t0 = _position;
             var t1 = _position + delta;
 
-            SetPosition(t1);
-
-            if (delta < TimeSpan.Zero && t0 < TimeSpan.FromSeconds(0.5))
+            if (delta < TimeSpan.Zero && t1 < TimeSpan.Zero && t0 < TimeSpan.FromSeconds(0.5))
             {
-                return true;
+                if (IsRepeat)
+                {
+                    t1 = _durationTimeSpan + t1;
+                    t1 = t1 < TimeSpan.Zero ? TimeSpan.Zero : t1;
+                }
+                else
+                {
+                    return true;
+                }
             }
             if (delta > TimeSpan.Zero && t1 > _durationTimeSpan)
             {
-                return true;
+                if (IsRepeat)
+                {
+                    t1 = TimeSpan.Zero;
+                }
+                else
+                {
+                    return true;
+                }
             }
+
+            SetPosition(t1);
 
             return false;
         }
@@ -530,8 +486,12 @@ namespace NeeView
                 UpdateVolume();
                 _player.Pause();
                 this.Position = position;
+
+                _delayPosition = position;
             }
         }
+
+        TimeSpan _delayPosition;
 
         // 移動による遅延再生処理用
         private void Delay_Tick(double ms)
@@ -544,6 +504,10 @@ namespace NeeView
                 _delay = 0.0;
                 return;
             }
+
+#warning 無理やり位置補正しているのがよろしくない。この遅延の仕組み自体がいいかげんである。であるが、次の動画再生システムまでのつなぎなのでまあ？
+
+            this.Position = _delayPosition;
 
             _delay -= ms;
             if (_delay <= 0.0)

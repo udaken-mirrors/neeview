@@ -26,7 +26,7 @@ namespace NeeView
         }
 
 
-
+        private PageFrameBoxPresenter _presenter;
         private FileStream? _file;
         private StringBuilder? _writeBuffer;
         private DateTime _viewedPagesDateTime;
@@ -41,6 +41,8 @@ namespace NeeView
 
         private PageViewRecorder()
         {
+            _presenter = PageFrameBoxPresenter.Current;
+
             _disposables.Add(Config.Current.PageViewRecorder.SubscribePropertyChanged(OnPropertyChanged));
 
             // アプリ終了前の開放予約
@@ -151,8 +153,8 @@ namespace NeeView
                 }
                 _viewedBookAddress = null;
                 _viewedPages = new List<Page>();
-                BookHub.Current.BookChanged += OnViewBookChanged;
-                //BookHub.Current.ViewContentsChanged += OnViewContentsChanged;
+                _presenter.PageFrameBoxChanged += Presenter_PageFrameBoxChanged;
+                _presenter.ViewPageChanged += Presenter_ViewPageChanged;
             }
         }
 
@@ -169,8 +171,8 @@ namespace NeeView
 
             lock (_lock)
             {
-                //BookHub.Current.ViewContentsChanged -= OnViewContentsChanged;
-                BookHub.Current.BookChanged -= OnViewBookChanged;
+                _presenter.PageFrameBoxChanged -= Presenter_PageFrameBoxChanged;
+                _presenter.ViewPageChanged -= Presenter_ViewPageChanged;
                 try
                 {
                     _file?.Close();
@@ -188,12 +190,12 @@ namespace NeeView
         }
 
 
-        private void OnViewBookChanged(object? sender, BookChangedEventArgs e)
+        private void Presenter_PageFrameBoxChanged(object? sender, PageFrameBoxChangedEventArgs e)
         {
             if (_disposedValue) return;
 
             var now = DateTime.Now;
-            var book = BookHub.Current.GetCurrentBook();
+            var book = e.Book;
 
             WriteBookViewedRecord(now);
 
@@ -216,20 +218,17 @@ namespace NeeView
             }
         }
 
-#warning 未実装
-#if false
-        private void OnViewContentsChanged(object? sender, ViewContentSourceCollectionChangedEventArgs e)
+        private void Presenter_ViewPageChanged(object? sender, ViewPageChangedEventArgs e)
         {
             if (_disposedValue) return;
 
             var now = DateTime.Now;
-            var viewedPages = e?.ViewPageCollection?.Collection.Where(x => x != null).Select(x => x.Page).ToList() ?? new List<Page>();
+            var viewedPages = e.Pages.ToList();
 
             WritePageViewedRecord(now);
             _viewedPagesDateTime = now;
             _viewedPages = viewedPages;
         }
-#endif
 
         private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e)
         {

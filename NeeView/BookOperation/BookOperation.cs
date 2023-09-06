@@ -2,8 +2,10 @@
 using NeeLaboratory.Threading.Jobs;
 using NeeView.PageFrames;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 
 namespace NeeView
@@ -25,7 +27,6 @@ namespace NeeView
         private bool _isLoading;
 
         public BookPageTerminatorProxy _terminator = new();
-        public BookPageScriptProxy _script = new();
         public BookControlProxy _bookControl = new();
         public BookPageControlProxy _control = new();
         public BookPlaylistControlProxy _playlist = new();
@@ -100,7 +101,6 @@ namespace NeeView
             _control.SetSource(CreateController(_box));
             _playlist.SetSource(CreatePlaylistController(_box));
             _terminator.SetSource(CreatePageTerminator(_box));
-            _script.SetSource(CreateBookScript(_book));
 
             RaisePropertyChanged(nameof(Book));
             RaisePropertyChanged(nameof(Address));
@@ -109,11 +109,6 @@ namespace NeeView
         private BookPageTerminator? CreatePageTerminator(PageFrameBox? box)
         {
             return box is null ? null : new BookPageTerminator(box, _control);
-        }
-
-        private BookPageScript? CreateBookScript(Book? book)
-        {
-            return book is null ? null : new BookPageScript(book);
         }
 
         private IBookControl? CreateBookController(PageFrameBox? box)
@@ -240,88 +235,14 @@ namespace NeeView
 
         #region ページ読み込み完了待機
 
+        public IReadOnlyList<Page> ViewPages => _presenter.ViewPages;
+
         /// <summary>
         /// 表示ページ読み込み完了まで待機
         /// </summary>
-        public void Wait(CancellationToken token)
+        public async Task WaitAsync(CancellationToken token)
         {
-#warning not support yet
-#if false
-            BookHub bookHub = BookHub.Current;
-
-            var book = bookHub.GetCurrentBook();
-            if (!bookHub.IsBusy && book?.Control.IsViewContentsLoading != true)
-            {
-                return;
-            }
-
-            // BookHubのコマンド処理が終わるまで待機
-            var eventFlag = new ManualResetEventSlim();
-            bookHub.IsBusyChanged += BookHub_IsBusyChanged;
-            try
-            {
-                if (bookHub.IsBusy)
-                {
-                    eventFlag.Wait(token);
-                }
-            }
-            finally
-            {
-                bookHub.IsBusyChanged -= BookHub_IsBusyChanged;
-            }
-
-            book = bookHub.GetCurrentBook();
-            if (book is null)
-            {
-                return;
-            }
-
-            // 表示ページの読み込みが終わるまで待機
-            eventFlag.Reset();
-            bool _isBookChanged = false;
-            bookHub.BookChanged += BookOperation_BookChanged;
-            book.Control.ViewContentsLoading += BookControl_ViewContentsLoading;
-            try
-            {
-                if (book.Control.IsViewContentsLoading)
-                {
-                    eventFlag.Wait(token);
-                }
-            }
-            finally
-            {
-                bookHub.BookChanged -= BookOperation_BookChanged;
-                book.Control.ViewContentsLoading -= BookControl_ViewContentsLoading;
-            }
-
-            // 待機中にブックが変更された場合はそのブックで再待機
-            if (_isBookChanged)
-            {
-                Wait(token);
-            }
-
-            void BookHub_IsBusyChanged(object? sender, JobIsBusyChangedEventArgs e)
-            {
-                if (!e.IsBusy)
-                {
-                    eventFlag.Set();
-                }
-            }
-
-            void BookOperation_BookChanged(object? sender, BookChangedEventArgs e)
-            {
-                _isBookChanged = true;
-                eventFlag.Set();
-            }
-
-            void BookControl_ViewContentsLoading(object? sender, ViewContentsLoadingEventArgs e)
-            {
-                if (!e.IsLoading)
-                {
-                    eventFlag.Set();
-                }
-            }
-#endif
+            await _presenter.WaitForViewPageStableAsync(token);
         }
 
         #endregion
