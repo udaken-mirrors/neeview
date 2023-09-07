@@ -1,4 +1,5 @@
 ﻿using NeeLaboratory.ComponentModel;
+using NeeLaboratory.Generators;
 using NeeView.Data;
 using NeeView.Native;
 using NeeView.Threading;
@@ -211,20 +212,15 @@ namespace NeeView
             // 開発用初期化
             Debug_Initialize();
 
-            Debug.WriteLine($"App.MainWndow.Initialize.Done: {App.Current.Stopwatch.ElapsedMilliseconds}ms");
+            Debug.WriteLine($"App.MainWindow.Initialize.Done: {App.Current.Stopwatch.ElapsedMilliseconds}ms");
         }
 
 
         /// <summary>
         /// マウス水平ホイールイベント
         /// </summary>
+        [Subscribable]
         public event MouseWheelEventHandler? MouseHorizontalWheelChanged;
-
-        public IDisposable SubscribeMouseHorizontalWheelChanged(MouseWheelEventHandler handler)
-        {
-            MouseHorizontalWheelChanged += handler;
-            return new AnonymousDisposable(() => MouseHorizontalWheelChanged -= handler);
-        }
 
         /// <summary>
         /// キー入力イベント購読

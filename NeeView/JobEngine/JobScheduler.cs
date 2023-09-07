@@ -1,4 +1,5 @@
 ﻿using NeeLaboratory.ComponentModel;
+using NeeLaboratory.Generators;
 using NeeLaboratory.Threading.Tasks;
 using System;
 using System.Collections.Generic;
@@ -12,7 +13,7 @@ namespace NeeView
     /// <summary>
     /// JOBスケジューラー
     /// </summary>
-    public class JobScheduler : BindableBase 
+    public partial class JobScheduler : BindableBase 
     {
         [Conditional("DEBUG")]
         protected void DebugRaisePropertyChanged([CallerMemberName] string? propertyName = null)
@@ -26,13 +27,8 @@ namespace NeeView
         private List<JobSource> _queue = new();
 
 
+        [Subscribable]
         public event EventHandler? QueueChanged;
-
-        public IDisposable SubscribeQueueChanged(EventHandler handler)
-        {
-            QueueChanged += handler;
-            return new AnonymousDisposable(() => QueueChanged -= handler);
-        }
 
 
         // TODO: Lockオブジェクトはプライベートにしたい

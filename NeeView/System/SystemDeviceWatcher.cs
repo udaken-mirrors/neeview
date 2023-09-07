@@ -1,4 +1,5 @@
 ﻿using NeeLaboratory.ComponentModel;
+using NeeLaboratory.Generators;
 using NeeView.Interop;
 using System;
 using System.Collections.Generic;
@@ -90,7 +91,7 @@ namespace NeeView
         public string? Message { get; private set; }
     }
 
-    public class SystemDeviceWatcher
+    public partial class SystemDeviceWatcher
     {
         static SystemDeviceWatcher() => Current = new SystemDeviceWatcher();
         public static SystemDeviceWatcher Current { get; }
@@ -102,53 +103,24 @@ namespace NeeView
         {
         }
 
+
+        [Subscribable]
         public event EventHandler<DriveChangedEventArgs>? DriveChanged;
 
-        public IDisposable SubscribeDriveChanged(EventHandler<DriveChangedEventArgs> handler)
-        {
-            DriveChanged += handler;
-            return new AnonymousDisposable(() => DriveChanged -= handler);
-        }
-
+        [Subscribable]
         public event EventHandler<MediaChangedEventArgs>? MediaChanged;
 
-        public IDisposable SubscribeMediaChanged(EventHandler<MediaChangedEventArgs> handler)
-        {
-            MediaChanged += handler;
-            return new AnonymousDisposable(() => MediaChanged -= handler);
-        }
-
+        [Subscribable]
         public event EventHandler<DirectoryChangedEventArgs>? DirectoryChanged;
-        
-        public IDisposable SubscribeDirectoryChanged(EventHandler<DirectoryChangedEventArgs> handler)
-        {
-            DirectoryChanged += handler;
-            return new AnonymousDisposable(() => DirectoryChanged -= handler);
-        }
 
+        [Subscribable]
         public event EventHandler<SettingChangedEventArgs>? SettingChanged;
 
-        public IDisposable SubscribeSettingChanged(EventHandler<SettingChangedEventArgs> handler)
-        {
-            SettingChanged += handler;
-            return new AnonymousDisposable(() => SettingChanged -= handler);
-        }
-
+        [Subscribable]
         public event EventHandler? EnterSizeMove;
 
-        public IDisposable SubscribeEnterSizeMove(EventHandler handler)
-        {
-            EnterSizeMove += handler;
-            return new AnonymousDisposable(() => EnterSizeMove -= handler);
-        }
-
+        [Subscribable]
         public event EventHandler? ExitSizeMove;
-
-        public IDisposable SubscribeExitSizeMove(EventHandler handler)
-        {
-            ExitSizeMove += handler;
-            return new AnonymousDisposable(() => ExitSizeMove -= handler);
-        }
 
 
         // ウィンドウプロシージャ初期化

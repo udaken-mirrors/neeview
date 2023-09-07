@@ -1,11 +1,12 @@
 ﻿using NeeLaboratory.ComponentModel;
 using NeeLaboratory.Diagnostics;
+using NeeLaboratory.Generators;
 using System;
 using System.Diagnostics;
 
 namespace NeeView
 {
-    public class SubProcess : IDisposable
+    public partial class SubProcess : IDisposable
     {
         private static readonly ProcessJobObject _processJobObject;
 
@@ -26,13 +27,8 @@ namespace NeeView
         }
 
 
+        [Subscribable]
         public event EventHandler? Exited;
-
-        public IDisposable SubscribeExited(EventHandler handler)
-        {
-            Exited += handler;
-            return new AnonymousDisposable(() => Exited -= handler);
-        }
 
 
         public Process? Process => _process;

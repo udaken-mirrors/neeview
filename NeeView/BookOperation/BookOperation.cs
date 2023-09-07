@@ -1,4 +1,5 @@
 ﻿using NeeLaboratory.ComponentModel;
+using NeeLaboratory.Generators;
 using NeeLaboratory.Threading.Jobs;
 using NeeView.PageFrames;
 using System;
@@ -13,7 +14,7 @@ namespace NeeView
     /// <summary>
     /// 本の操作
     /// </summary>
-    public class BookOperation : BindableBase
+    public partial class BookOperation : BindableBase
     {
         // System Object
         static BookOperation() => Current = new BookOperation();
@@ -43,23 +44,12 @@ namespace NeeView
 
 
         // ブックが変更される
+        [Subscribable]
         public event EventHandler<BookChangingEventArgs>? BookChanging;
 
-        public IDisposable SubscribeBookChanging(EventHandler<BookChangingEventArgs> handler)
-        {
-            BookChanging += handler;
-            return new AnonymousDisposable(() => BookChanging -= handler);
-        }
-
         // ブックが変更された
+        [Subscribable]
         public event EventHandler<BookChangedEventArgs>? BookChanged;
-
-        public IDisposable SubscribeBookChanged(EventHandler<BookChangedEventArgs> handler)
-        {
-            BookChanged += handler;
-            return new AnonymousDisposable(() => BookChanged -= handler);
-        }
-
 
 
         public bool IsLoading => _presenter.IsLoading || _isLoading;

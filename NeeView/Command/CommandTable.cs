@@ -1,4 +1,5 @@
 ﻿using NeeLaboratory.ComponentModel;
+using NeeLaboratory.Generators;
 using NeeView.Data;
 using System;
 using System.Collections;
@@ -46,14 +47,8 @@ namespace NeeView
         /// <summary>
         /// コマンドテーブルが変更された
         /// </summary>
+        [Subscribable]
         public event EventHandler<CommandChangedEventArgs>? Changed;
-
-        public IDisposable SubscribeChanged(EventHandler<CommandChangedEventArgs> handler)
-        {
-            Changed += handler;
-            return new AnonymousDisposable(() => Changed -= handler);
-        }
-
 
 
         public CommandCollection DefaultMemento { get; private set; }

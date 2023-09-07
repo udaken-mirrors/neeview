@@ -1,4 +1,5 @@
 ﻿using NeeLaboratory.ComponentModel;
+using NeeLaboratory.Generators;
 using NeeView.Collections.Generic;
 using NeeView.Windows.Property;
 using System;
@@ -17,7 +18,7 @@ using System.Xml;
 
 namespace NeeView
 {
-    public class BookHistoryCollection : BindableBase
+    public partial class BookHistoryCollection : BindableBase
     {
         static BookHistoryCollection() => Current = new BookHistoryCollection();
         public static BookHistoryCollection Current { get; }
@@ -33,14 +34,8 @@ namespace NeeView
         }
 
 
+        [Subscribable]
         public event EventHandler<BookMementoCollectionChangedArgs>? HistoryChanged;
-
-        public IDisposable SubscribeHistoryChanged(EventHandler<BookMementoCollectionChangedArgs> handler)
-        {
-            HistoryChanged += handler;
-            return new AnonymousDisposable(() => HistoryChanged -= handler);
-        }
-
 
 
         // 履歴コレクション

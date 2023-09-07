@@ -1,10 +1,11 @@
 ﻿using NeeLaboratory.ComponentModel;
+using NeeLaboratory.Generators;
 using System;
 using System.Runtime.Serialization;
 
 namespace NeeView
 {
-    public class BookSettingPresenter : BindableBase
+    public partial class BookSettingPresenter : BindableBase
     {
         static BookSettingPresenter() => Current = new BookSettingPresenter();
         public static BookSettingPresenter Current { get; }
@@ -17,14 +18,8 @@ namespace NeeView
 
 
         // 設定の変更通知
+        [Subscribable]
         public event EventHandler<BookSettingEventArgs>? SettingChanged;
-
-        public IDisposable SubscribeSettingChanged(EventHandler<BookSettingEventArgs> handler)
-        {
-            SettingChanged += handler;
-            return new AnonymousDisposable(() => SettingChanged -= handler);
-        }
-
 
 
         public BookSettingConfig DefaultSetting => Config.Current.BookSettingDefault;

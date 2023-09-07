@@ -1,11 +1,12 @@
 ﻿using NeeLaboratory.ComponentModel;
+using NeeLaboratory.Generators;
 using System;
 using System.Windows;
 using System.Windows.Input;
 
 namespace NeeView
 {
-    public class MouseHorizontalWheelSource : IDisposable, INotifyMouseHorizontalWheelChanged
+    public partial class MouseHorizontalWheelSource : IDisposable, INotifyMouseHorizontalWheelChanged
     {
         private readonly INotifyMouseHorizontalWheelChanged _source;
         private readonly FrameworkElement _target;
@@ -21,14 +22,8 @@ namespace NeeView
         }
 
 
+        [Subscribable]
         public event MouseWheelEventHandler? MouseHorizontalWheelChanged;
-
-        public IDisposable SubscribeMouseHorizontalWheelChanged(MouseWheelEventHandler handler)
-        {
-            MouseHorizontalWheelChanged += handler;
-            return new AnonymousDisposable(() => MouseHorizontalWheelChanged -= handler);
-        }
-
 
 
         private void Source_MouseHorizontalWheel(object? sender, MouseWheelEventArgs e)

@@ -1,19 +1,15 @@
 ﻿using NeeLaboratory.ComponentModel;
+using NeeLaboratory.Generators;
 using System;
 using System.Diagnostics;
 using System.Windows;
 
 namespace NeeView.Windows
 {
-    public class DpiScaleProvider : IDpiScaleProvider
+    public partial class DpiScaleProvider : IDpiScaleProvider
     {
+        [Subscribable]
         public event EventHandler? DpiChanged;
-
-        public IDisposable SubscribeDpiChanged(EventHandler handler)
-        {
-            DpiChanged += handler;
-            return new AnonymousDisposable(() => DpiChanged -= handler);
-        }
 
 
         public DpiScale DpiScale { get; private set; } = new DpiScale(1, 1);

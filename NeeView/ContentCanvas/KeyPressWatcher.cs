@@ -1,4 +1,5 @@
 ﻿using NeeLaboratory.ComponentModel;
+using NeeLaboratory.Generators;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -11,7 +12,7 @@ namespace NeeView
     /// <summary>
     /// なにかキーが押されているかを監視する
     /// </summary>
-    public class KeyPressWatcher : IDisposable
+    public partial class KeyPressWatcher : IDisposable
     {
         private readonly UIElement _target;
         private readonly LinkedList<Key> _keys;
@@ -26,21 +27,11 @@ namespace NeeView
         }
 
 
+        [Subscribable]
         public event EventHandler<KeyEventArgs>? PreviewKeyDown;
 
-        public IDisposable SubscribePreviewKeyDown(EventHandler<KeyEventArgs> handler)
-        {
-            PreviewKeyDown += handler;
-            return new AnonymousDisposable(() => PreviewKeyDown -= handler);
-        }
-
+        [Subscribable]
         public event EventHandler<KeyEventArgs>? PreviewKeyUp;
-
-        public IDisposable SubscribePreviewKeyUp(EventHandler<KeyEventArgs> handler)
-        {
-            PreviewKeyUp += handler;
-            return new AnonymousDisposable(() => PreviewKeyUp -= handler);
-        }
 
 
         public bool IsPressed

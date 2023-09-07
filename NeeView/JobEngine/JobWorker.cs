@@ -1,4 +1,5 @@
 ﻿using NeeLaboratory.ComponentModel;
+using NeeLaboratory.Generators;
 using System;
 using System.Diagnostics;
 using System.Linq;
@@ -9,7 +10,7 @@ namespace NeeView
     /// <summary>
     /// ジョブワーカー
     /// </summary>
-    public class JobWorker : BindableBase, IDisposable
+    public partial class JobWorker : BindableBase, IDisposable
     {
         #region 開発用
 
@@ -54,13 +55,8 @@ namespace NeeView
         }
 
 
+        [Subscribable]
         public event EventHandler? IsBusyChanged;
-
-        public IDisposable SubscribeIsBusyChanged(EventHandler handler)
-        {
-            IsBusyChanged += handler;
-            return new AnonymousDisposable(() => IsBusyChanged -= handler);
-        }
 
 
         /// <summary>

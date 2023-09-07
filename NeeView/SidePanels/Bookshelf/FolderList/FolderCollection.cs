@@ -13,6 +13,7 @@ using System.Runtime.InteropServices;
 using NeeView.Collections.Generic;
 using System.Collections;
 using NeeLaboratory.ComponentModel;
+using NeeLaboratory.Generators;
 
 namespace NeeView
 {
@@ -31,7 +32,7 @@ namespace NeeView
     /// <summary>
     /// FolderItemコレクション
     /// </summary>
-    public abstract class FolderCollection : BindableBase, IDisposable, IEnumerable<FolderItem>
+    public abstract partial class FolderCollection : BindableBase, IDisposable, IEnumerable<FolderItem>
     {
         private static readonly ObservableCollection<FolderItem> _itemsEmpty = new();
         private ObservableCollection<FolderItem> _items = _itemsEmpty;
@@ -53,31 +54,14 @@ namespace NeeView
         }
 
 
-
+        [Subscribable]
         public event EventHandler<FolderCollectionChangedEventArgs>? CollectionChanging;
 
-        public IDisposable SubscribeCollectionChanging(EventHandler<FolderCollectionChangedEventArgs> handler)
-        {
-            CollectionChanging += handler;
-            return new AnonymousDisposable(() => CollectionChanging -= handler);
-        }
-
+        [Subscribable]
         public event EventHandler<FolderCollectionChangedEventArgs>? CollectionChanged;
 
-        public IDisposable SubscribeCollectionChanged(EventHandler<FolderCollectionChangedEventArgs> handler)
-        {
-            CollectionChanged += handler;
-            return new AnonymousDisposable(() => CollectionChanged -= handler);
-        }
-
+        [Subscribable]
         public event EventHandler? ParameterChanged;
-
-        public IDisposable SubscribeParameterChanged(EventHandler handler)
-        {
-            ParameterChanged += handler;
-            return new AnonymousDisposable(() => ParameterChanged -= handler);
-        }
-
 
 
         // indexer

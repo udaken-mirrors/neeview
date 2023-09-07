@@ -1,4 +1,5 @@
 ﻿using NeeLaboratory.ComponentModel;
+using NeeLaboratory.Generators;
 using System;
 
 namespace NeeView
@@ -7,7 +8,7 @@ namespace NeeView
     /// BookPageViewSetting アクセサ。
     /// ProeprtyChangedイベントを追加したもの
     /// </summary>
-    public class BookPageSetting : BindableBase, IBookPageViewSetting
+    public partial class BookPageSetting : BindableBase, IBookPageViewSetting
     {
         private readonly BookPageViewSetting _setting;
 
@@ -17,15 +18,11 @@ namespace NeeView
             _setting = setting;
         }
 
-        
+
         // 設定変更
+        [Subscribable]
         public event EventHandler? SettingChanged;
 
-        public IDisposable SubscribeSettingChanged(EventHandler handler)
-        {
-            SettingChanged += handler;
-            return new AnonymousDisposable(() => SettingChanged -= handler);
-        }
 
 
         public BookPageViewSetting Source => _setting;

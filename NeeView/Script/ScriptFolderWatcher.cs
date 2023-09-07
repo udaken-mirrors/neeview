@@ -1,4 +1,5 @@
 ﻿using NeeLaboratory.ComponentModel;
+using NeeLaboratory.Generators;
 using NeeView.Threading;
 using System;
 using System.IO;
@@ -6,7 +7,7 @@ using System.IO;
 
 namespace NeeView
 {
-    public class ScriptFolderWatcher : IDisposable
+    public partial class ScriptFolderWatcher : IDisposable
     {
         private FileSystemWatcher? _watcher;
         private readonly InstantDelayAction _delayUpdate = new();
@@ -18,13 +19,8 @@ namespace NeeView
         }
 
 
+        [Subscribable]
         public event FileSystemEventHandler? Changed;
-
-        public IDisposable SubscribeChanged(FileSystemEventHandler handler)
-        {
-            Changed += handler;
-            return new AnonymousDisposable(() => Changed -= handler);
-        }
 
 
         public void Start(string path)

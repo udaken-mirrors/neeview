@@ -1,4 +1,5 @@
 ﻿using NeeLaboratory.ComponentModel;
+using NeeLaboratory.Generators;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -9,7 +10,7 @@ namespace NeeView
     /// <summary>
     /// スライダーやフィルムストリップと連動したページ選択の提供
     /// </summary>
-    public class PageSelector : BindableBase
+    public partial class PageSelector : BindableBase
     {
         static PageSelector() => Current = new PageSelector();
         public static PageSelector Current { get; }
@@ -30,48 +31,22 @@ namespace NeeView
 
 
         // NOTE: ChangingとChangedは必ずしもペアではない
+        [Subscribable]
         public event EventHandler? CollectionChanging;
 
-        public IDisposable SubscribeCollectionChanging(EventHandler handler)
-        {
-            CollectionChanging += handler;
-            return new AnonymousDisposable(() => CollectionChanging -= handler);
-        }
-
+        [Subscribable]
         public event EventHandler? CollectionChanged;
 
-        public IDisposable SubscribeCollectionChanged(EventHandler handler)
-        {
-            CollectionChanged += handler;
-            return new AnonymousDisposable(() => CollectionChanged -= handler);
-        }
-
+        [Subscribable]
         public event EventHandler? SelectionChanged;
 
-        public IDisposable SubscribeSelectionChanged(EventHandler handler)
-        {
-            SelectionChanged += handler;
-            return new AnonymousDisposable(() => SelectionChanged -= handler);
-        }
-
 #if false
+        [Subscribable]
         public event EventHandler<ViewContentsChangedEventArgs>? ViewContentsChanged;
-
-        public IDisposable SubscribeViewContentsChanged(EventHandler<ViewContentsChangedEventArgs> handler)
-        {
-            ViewContentsChanged += handler;
-            return new AnonymousDisposable(() => ViewContentsChanged -= handler);
-        }
 #endif
 
+        [Subscribable]
         public event EventHandler<SelectedPagesChangedEventArgs>? SelectedPagesChanged;
-
-        public IDisposable SubscribeSelectedPagesChanged(EventHandler<SelectedPagesChangedEventArgs> handler)
-        {
-            SelectedPagesChanged += handler;
-            return new AnonymousDisposable(() => SelectedPagesChanged -= handler);
-        }
-
 
 
 

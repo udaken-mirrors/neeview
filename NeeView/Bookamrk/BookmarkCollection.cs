@@ -15,10 +15,11 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Data;
 using System.Xml;
+using NeeLaboratory.Generators;
 
 namespace NeeView
 {
-    public class BookmarkCollection : BindableBase
+    public partial class BookmarkCollection : BindableBase
     {
         static BookmarkCollection() => Current = new BookmarkCollection();
         public static BookmarkCollection Current { get; }
@@ -33,14 +34,8 @@ namespace NeeView
 
 
         // Events
-
+        [Subscribable]
         public event EventHandler<BookmarkCollectionChangedEventArgs>? BookmarkChanged;
-
-        public IDisposable SubscribeBookmarkChanged(EventHandler<BookmarkCollectionChangedEventArgs> handler)
-        {
-            BookmarkChanged += handler;
-            return new AnonymousDisposable(() => BookmarkChanged -= handler);
-        }
 
 
 

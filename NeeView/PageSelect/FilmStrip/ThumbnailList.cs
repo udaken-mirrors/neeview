@@ -1,5 +1,6 @@
 ﻿using NeeLaboratory;
 using NeeLaboratory.ComponentModel;
+using NeeLaboratory.Generators;
 using NeeView.Windows.Property;
 using System;
 using System.Collections.Generic;
@@ -33,7 +34,7 @@ namespace NeeView
     /// <summary>
     /// ThumbnailList : Model
     /// </summary>
-    public class ThumbnailList : BindableBase, IDisposable
+    public partial class ThumbnailList : BindableBase, IDisposable
     {
         static ThumbnailList() => Current = new ThumbnailList();
         public static ThumbnailList Current { get; }
@@ -84,39 +85,17 @@ namespace NeeView
         }
 
 
-
+        [Subscribable]
         public event EventHandler? CollectionChanging;
 
-        public IDisposable SubscribeCollectionChanging(EventHandler handler)
-        {
-            CollectionChanging += handler;
-            return new AnonymousDisposable(() => CollectionChanging -= handler);
-        }
-
+        [Subscribable]
         public event EventHandler? CollectionChanged;
 
-        public IDisposable SubscribeCollectionChanged(EventHandler handler)
-        {
-            CollectionChanged += handler;
-            return new AnonymousDisposable(() => CollectionChanged -= handler);
-        }
-
+        [Subscribable]
         public event EventHandler<ViewItemsChangedEventArgs>? ViewItemsChanged;
 
-        public IDisposable SubscribeViewItemsChanged(EventHandler<ViewItemsChangedEventArgs> handler)
-        {
-            ViewItemsChanged += handler;
-            return new AnonymousDisposable(() => ViewItemsChanged -= handler);
-        }
-
+        [Subscribable]
         public event EventHandler<VisibleEventArgs>? VisibleEvent;
-
-        public IDisposable SubscribeVisibleEvent(EventHandler<VisibleEventArgs> handler)
-        {
-            VisibleEvent += handler;
-            return new AnonymousDisposable(() => VisibleEvent -= handler);
-        }
-
 
 
         public IVisibleElement? VisibleElement { get; set; }

@@ -1,4 +1,5 @@
 ﻿using NeeLaboratory.ComponentModel;
+using NeeLaboratory.Generators;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -16,7 +17,7 @@ namespace NeeView
     /// <summary>
     /// コマンド集 ： RoutedCommand
     /// </summary>
-    public class RoutedCommandTable : IDisposable
+    public partial class RoutedCommandTable : IDisposable
     {
         static RoutedCommandTable() => Current = new RoutedCommandTable();
         public static RoutedCommandTable Current { get; }
@@ -48,25 +49,14 @@ namespace NeeView
         /// <summary>
         /// コマンドテーブルが更新されたときのイベント
         /// </summary>
+        [Subscribable]
         public event EventHandler? Changed;
-
-        public IDisposable SubscribeChanged(EventHandler handler)
-        {
-            Changed += handler;
-            return new AnonymousDisposable(() => Changed -= handler);
-        }
 
         /// <summary>
         /// コマンドが実行されたときのイベント
         /// </summary>
+        [Subscribable]
         public event EventHandler<CommandExecutedEventArgs>? CommandExecuted;
-
-        public IDisposable SubscribeCommandExecuted(EventHandler<CommandExecutedEventArgs> handler)
-        {
-            CommandExecuted += handler;
-            return new AnonymousDisposable(() => CommandExecuted -= handler);
-        }
-
 
 
         /// <summary>

@@ -21,6 +21,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using NeeLaboratory.Generators;
 
 namespace NeeView
 {
@@ -30,7 +31,7 @@ namespace NeeView
     /// <summary>
     /// FolderList Model
     /// </summary>
-    public abstract class FolderList : BindableBase, IDisposable
+    public abstract partial class FolderList : BindableBase, IDisposable
     {
         private static readonly SearchKeyAnalyzer _searchKeyAnalyzer = new();
 
@@ -168,67 +169,32 @@ namespace NeeView
         // Events
 
         // 場所変更
+        [Subscribable]
         public event EventHandler? PlaceChanged;
 
-        public IDisposable SubscribePlaceChanged(EventHandler handler)
-        {
-            PlaceChanged += handler;
-            return new AnonymousDisposable(() => PlaceChanged -= handler);
-        }
-
         // FolderCollection総入れ替え
+        [Subscribable] 
         public event EventHandler? CollectionChanged;
 
-        public IDisposable SubscribeCollectionChanged(EventHandler handler)
-        {
-            CollectionChanged += handler;
-            return new AnonymousDisposable(() => CollectionChanged -= handler);
-        }
-
         // 検索ボックスにフォーカスを
+        [Subscribable] 
         public event EventHandler? SearchBoxFocus;
 
-        public IDisposable SubscribeSearchBoxFocus(EventHandler handler)
-        {
-            SearchBoxFocus += handler;
-            return new AnonymousDisposable(() => SearchBoxFocus -= handler);
-        }
-
         // フォルダーツリーにフォーカスを
+        [Subscribable]
         public event EventHandler? FolderTreeFocus;
 
-        public IDisposable SubscribeFolderTreeFocus(EventHandler handler)
-        {
-            FolderTreeFocus += handler;
-            return new AnonymousDisposable(() => FolderTreeFocus -= handler);
-        }
-
         // リスト更新処理中イベント
+        [Subscribable]
         public event EventHandler<FolderListBusyChangedEventArgs>? BusyChanged;
 
-        public IDisposable SubscribeBusyChanged(EventHandler<FolderListBusyChangedEventArgs> handler)
-        {
-            BusyChanged += handler;
-            return new AnonymousDisposable(() => BusyChanged -= handler);
-        }
-
         // 選択変更開始
+        [Subscribable] 
         public event EventHandler<FolderListSelectedChangedEventArgs>? SelectedChanging;
 
-        public IDisposable SubscribeSelectedChanging(EventHandler<FolderListSelectedChangedEventArgs> handler)
-        {
-            SelectedChanging += handler;
-            return new AnonymousDisposable(() => SelectedChanging -= handler);
-        }
-
         // 選択変更
+        [Subscribable]
         public event EventHandler<FolderListSelectedChangedEventArgs>? SelectedChanged;
-
-        public IDisposable SubscribeSelectedChanged(EventHandler<FolderListSelectedChangedEventArgs> handler)
-        {
-            SelectedChanged += handler;
-            return new AnonymousDisposable(() => SelectedChanged -= handler);
-        }
 
 
         // Properties

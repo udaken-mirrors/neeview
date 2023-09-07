@@ -1,11 +1,12 @@
 ﻿using NeeLaboratory.ComponentModel;
+using NeeLaboratory.Generators;
 using System;
 using System.Diagnostics;
 using System.IO;
 
 namespace NeeView.IO
 {
-    public class SingleFileWatcher : IDisposable
+    public partial class SingleFileWatcher : IDisposable
     {
         private string? _path;
         private readonly SingleFileWaterOptions _options;
@@ -17,37 +18,18 @@ namespace NeeView.IO
             _options = options;
         }
 
+
+        [Subscribable]
         public event FileSystemEventHandler? Created;
 
-        public IDisposable SubscribeCreated(FileSystemEventHandler handler)
-        {
-            Created += handler;
-            return new AnonymousDisposable(() => Created -= handler);
-        }
-
+        [Subscribable]
         public event FileSystemEventHandler? Changed;
 
-        public IDisposable SubscribeChanged(FileSystemEventHandler handler)
-        {
-            Changed += handler;
-            return new AnonymousDisposable(() => Changed -= handler);
-        }
-
+        [Subscribable]
         public event FileSystemEventHandler? Deleted;
 
-        public IDisposable SubscribeDeleted(FileSystemEventHandler handler)
-        {
-            Deleted += handler;
-            return new AnonymousDisposable(() => Deleted -= handler);
-        }
-
+        [Subscribable]
         public event RenamedEventHandler? Renamed;
-
-        public IDisposable SubscribeRenamed(RenamedEventHandler handler)
-        {
-            Renamed += handler;
-            return new AnonymousDisposable(() => Renamed -= handler);
-        }
 
 
         public void Start(string path)

@@ -1,4 +1,5 @@
 ﻿using NeeLaboratory.ComponentModel;
+using NeeLaboratory.Generators;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -12,7 +13,7 @@ namespace NeeView.Windows.Data
     /// <summary>
     /// 値の遅延反映
     /// </summary>
-    public class DelayValue<T> : BindableBase, IDisposable
+    public partial class DelayValue<T> : BindableBase, IDisposable
     {
         // Fields
 
@@ -43,13 +44,8 @@ namespace NeeView.Windows.Data
         /// <summary>
         /// 値が反映されたときのイベント
         /// </summary>
+        [Subscribable]
         public event EventHandler? ValueChanged;
-
-        public IDisposable SubscribeValueChanged(EventHandler handler)
-        {
-            ValueChanged += handler;
-            return new AnonymousDisposable(() => ValueChanged -= handler);
-        }
 
 
         // Properties
