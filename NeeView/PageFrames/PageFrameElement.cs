@@ -12,9 +12,9 @@ namespace NeeView.PageFrames
     /// </summary>
     public record class PageFrameElement : IEquatable<PageFrameElement?>
     {
-        private BookContext _context;
+        private PageFrameContext _context;
 
-        public PageFrameElement(BookContext context, Page page, PageRange range, int direction, PageTerminal terminal)
+        public PageFrameElement(PageFrameContext context, Page page, PageRange range, int direction, PageTerminal terminal)
         {
             Debug.Assert(range.IsOnePage());
             Debug.Assert(!range.IsEmpty());

@@ -153,7 +153,7 @@ namespace NeeView
             // # ここで？
             _viewComponent.PageFrameBoxPresenter.SubscribeViewContentChanged((s, e) =>
             {
-                var viewContent = e.PageFrameContent.ViewContents?.FirstOrDefault() as MediaViewContent;
+                var viewContent = e.ViewContents.FirstOrDefault() as MediaViewContent;
                 //this.MediaControlView.SetSource(viewContent);
                 var player = viewContent?.Player;
                 if (player is not null && MainViewComponent.Current.PageFrameBoxPresenter.IsMedia)

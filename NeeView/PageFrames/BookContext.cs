@@ -65,13 +65,122 @@ namespace NeeView.PageFrames
         public bool ShareFlipVertical { get; set; }
     }
 
+
+    [NotifyPropertyChanged]
+    public partial class BookContext : INotifyPropertyChanged, IDisposable, IBookPageContext
+    {
+        private readonly Book _book;
+        private PageRange _selectedRange;
+        private bool _disposedValue;
+
+        public BookContext(Book book)
+        {
+            _book = book;
+            _book.PagesChanged += Book_PagesChanged;
+        }
+
+        [Subscribable]
+        public event PropertyChangedEventHandler? PropertyChanged;
+        
+        [Subscribable]
+        public event EventHandler? PagesChanged;
+
+        [Subscribable]
+        public event EventHandler? SelectedRangeChanged;
+
+
+        public Book Book => _book;
+
+        public bool IsEnabled => _book.Pages.Any();
+
+        public bool IsMedia => _book.IsMedia;
+
+        public IReadOnlyList<Page> Pages => _book.Pages;
+
+        public PagePosition FirstPosition => Pages.Any() ? PagePosition.Zero : PagePosition.Empty;
+
+        public PagePosition LastPosition => Pages.Any() ? new(Pages.Count - 1, 1) : PagePosition.Empty;
+
+        public PageRange SelectedRange
+        {
+            get { return _selectedRange; }
+            set
+            {
+                if (SetProperty(ref _selectedRange, value))
+                {
+                    _book.SetCurrentPages(SelectedPages);
+                    SelectedRangeChanged?.Invoke(this, EventArgs.Empty);
+                }
+            }
+        }
+
+        public IReadOnlyList<Page> SelectedPages
+        {
+            get => _selectedRange.CollectPositions().Select(e => Pages[e.Index]).Distinct().ToList();
+        }
+
+        // TODO: これは Book で保持する必要ある？
+        public BookMemoryService BookMemoryService => _book.BookMemoryService;
+
+
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!_disposedValue)
+            {
+                if (disposing)
+                {
+                    _book.PagesChanged -= Book_PagesChanged;
+                }
+                _disposedValue = true;
+            }
+        }
+
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
+
+        private void Book_PagesChanged(object? sender, EventArgs e)
+        {
+            RaisePropertyChanged(nameof(Pages));
+            PagesChanged?.Invoke(this, e);
+        }
+
+#if false
+        public BookMemento CreateMemento()
+        {
+            var bookSetting = _config.BookSetting;
+
+            var memento = new BookMemento
+            {
+                Path = _book.Path,
+                Page = this.Pages[this.SelectedRange.Min.Index].EntryName,
+
+                PageMode = bookSetting.PageMode,
+                BookReadOrder = bookSetting.BookReadOrder,
+                IsSupportedDividePage = bookSetting.IsSupportedDividePage,
+                IsSupportedSingleFirstPage = bookSetting.IsSupportedSingleFirstPage,
+                IsSupportedSingleLastPage = bookSetting.IsSupportedSingleLastPage,
+                IsSupportedWidePage = bookSetting.IsSupportedWidePage,
+                IsRecursiveFolder = bookSetting.IsRecursiveFolder,
+                SortMode = bookSetting.SortMode,
+            };
+
+            return memento;
+        }
+#endif
+    }
+
+
     /// <summary>
     /// ブック表示に必要な情報をまとめたもの
     /// </summary>
     [NotifyPropertyChanged]
-    public partial class BookContext : INotifyPropertyChanged, IStaticFrame, IDisposable, IContentSizeCalculatorProfile, IBookPageContext
+    public partial class PageFrameContext : INotifyPropertyChanged, IStaticFrame, IDisposable, IContentSizeCalculatorProfile
     {
-        private readonly Book _book;
+        //private readonly Book _book;
         private readonly Config _config;
         //private readonly BookPageViewSetting _bookSetting;
         private readonly BookSettingConfig _bookSetting;
@@ -89,9 +198,9 @@ namespace NeeView.PageFrames
         //}
 
 
-        public BookContext(Book book, Config config, BookShareContext share) //, BookPageViewSetting bookSetting)
+        public PageFrameContext(Config config, BookShareContext share) //, BookPageViewSetting bookSetting)
         {
-            _book = book;
+            //_book = book;
             _config = config;
             _share = share;
             //_bookSetting = bookSetting;
@@ -102,11 +211,11 @@ namespace NeeView.PageFrames
 
             _loupeScale = _config.Loupe.DefaultScale;
 
-            var startIndex = _book.Pages.FirstOrDefault(e => e.EntryName == book.Memento.Page)?.Index ?? 0;
+            //var startIndex = _book.Pages.FirstOrDefault(e => e.EntryName == book.Memento.Page)?.Index ?? 0;
             //_selectedRange = new PageRange(new PagePosition(startIndex, 0), 2);
             _selectedRange = PageRange.Empty;
 
-            _disposables.Add(_book.SubscribePagesChanged(Book_PagesChanged));
+            //_disposables.Add(_book.SubscribePagesChanged(Book_PagesChanged));
             _disposables.Add(_config.Book.SubscribePropertyChanged(BookConfig_PropertyChanged));
             _disposables.Add(_config.View.SubscribePropertyChanged(ViewConfig_PropertyChanged));
             _disposables.Add(_config.System.SubscribePropertyChanged(SystemConfig_PropertyChanged));
@@ -130,16 +239,17 @@ namespace NeeView.PageFrames
         [Subscribable]
         public event EventHandler<SizeChangedEventArgs>? SizeChanged;
 
-        [Subscribable]
-        public event EventHandler? PagesChanged;
+        //[Subscribable]
+        //public event EventHandler? PagesChanged;
 
-        [Subscribable]
-        public event EventHandler? SelectedRangeChanged;
-
-
-        public bool IsEnabled => _book.Pages.Any();
+        //[Subscribable]
+        //public event EventHandler? SelectedRangeChanged;
 
         public BookShareContext ShareContext => _share;
+
+#if false
+
+        public bool IsEnabled => _book.Pages.Any();
 
         public Book Book => _book;
         public IReadOnlyList<Page> Pages => _book.Pages;
@@ -167,8 +277,8 @@ namespace NeeView.PageFrames
 
         public bool IsMedia => _book.IsMedia;
 
-
         public BookMemoryService BookMemoryService => _book.BookMemoryService;
+#endif
 
         public PageFrameOrientation FrameOrientation => _config.Book.Orientation;
         public double FrameMargin => IsStaticFrame ? 0.0 : _config.Book.FrameSpace;
@@ -238,11 +348,13 @@ namespace NeeView.PageFrames
         }
 
 
+#if false
         private void Book_PagesChanged(object? sender, EventArgs e)
         {
             RaisePropertyChanged(nameof(Pages));
             PagesChanged?.Invoke(this, e);
         }
+#endif
 
 
         private void BookConfig_PropertyChanged(object? sender, PropertyChangedEventArgs e)
@@ -392,6 +504,7 @@ namespace NeeView.PageFrames
             _frameProfile.DpiScale = dpiScale;
         }
 
+#if false
         public BookMemento CreateMemento()
         {
             var bookSetting = _config.BookSetting;
@@ -413,5 +526,6 @@ namespace NeeView.PageFrames
 
             return memento;
         }
+#endif
     }
 }

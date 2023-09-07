@@ -1,9 +1,10 @@
 ﻿using NeeLaboratory.ComponentModel;
+using NeeLaboratory.Generators;
 using System;
 
 namespace NeeView
 {
-    public class BookSource : IDisposable
+    public partial class BookSource : IDisposable
     {
         public BookSource(ArchiveEntryCollection archiveEntryCollection, BookPageCollection pages, BookMemoryService bookMemoryService)
         {
@@ -16,13 +17,8 @@ namespace NeeView
 
 
         // 再読み込みを要求
+        [Subscribable]
         public event EventHandler? DirtyBook;
-
-        public IDisposable SubscribeDartyBook(EventHandler handler)
-        {
-            DirtyBook += handler;
-            return new AnonymousDisposable(() => DirtyBook -= handler);
-        }
 
 
         public BookMemoryService BookMemoryService { get; private set; }    
@@ -78,6 +74,7 @@ namespace NeeView
                 if (disposing)
                 {
                     this.DirtyBook = null;
+                    BookMemoryService.Dispose();
                     Pages.Dispose();
                 }
                 _disposedValue = true;

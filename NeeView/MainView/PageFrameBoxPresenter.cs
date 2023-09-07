@@ -48,6 +48,7 @@ namespace NeeView
 
         private Book? _book;
         private BookContext? _bookContext;
+        private PageFrameContext? _context;
         private readonly BookShareContext _shareContext;
         private PageFrameBox? _box;
         private BookCommandControl? _pageControl;
@@ -187,13 +188,25 @@ namespace NeeView
             token.ThrowIfCancellationRequested();
 
             Close();
-            if (book is null) return;
+            if (book is null)
+            {
+                RaisePropertyChanged(nameof(View));
+                RaisePropertyChanged(null);
+                PagesChanged?.Invoke(this, EventArgs.Empty);
+                SelectedRangeChanged?.Invoke(this, EventArgs.Empty);
+
+                ViewContentChanged?.Invoke(this, new FrameViewContentChangedEventArgs(ViewContentChangedAction.ContentLoaded, Array.Empty<ViewContent>(), 1));
+                RaiseViewPageChanged(new ViewPageChangedEventArgs(Array.Empty<Page>()));
+                
+                return;
+            }
 
             _book = book;
 
-            _bookContext = new BookContext(_book, _config, _shareContext);
+            _context = new PageFrameContext(_config, _shareContext);
+            _bookContext = new BookContext(_book);
 
-            _box = new PageFrameBox(_bookContext);
+            _box = new PageFrameBox(_context, _bookContext);
             _box.PagesChanged += Box_PagesChanged;
             _box.SelectedRangeChanged += Box_SelectedRangeChanged;
             _box.PropertyChanged += Box_PropertyChanged;
@@ -291,7 +304,6 @@ namespace NeeView
 
 
 
-
         private void Close()
         {
             if (_box is null) return;
@@ -315,10 +327,14 @@ namespace NeeView
 
             RaisePropertyChanged(nameof(View));
 
-            Debug.Assert(_bookContext is not null);
+            Debug.Assert(_context is not null);
             //_bookContext.PagesChanged -= Box_PagesChanged;
             //_bookContext.SelectedRangeChanged -= Box_SelectedRangeChanged;
             //_bookContext.PropertyChanged -= Box_PropertyChanged;
+            _context.Dispose();
+            _context = null;
+
+            Debug.Assert(_bookContext is not null);
             _bookContext.Dispose();
             _bookContext = null;
 
@@ -343,9 +359,9 @@ namespace NeeView
         {
             ViewContentChanged?.Invoke(this, e);
 
-            if (e.PageFrameContent.GetViewContentState() < ViewContentState.Loaded) return;
+            if (e.State < ViewContentState.Loaded) return;
 
-            var pages = e.PageFrameContent.PageFrame.Elements.Select(e => e.Page).Distinct().ToList();
+            var pages = e.ViewContents.Select(e => e.Page).Distinct().ToList();
             if (_viewPages.SequenceEqual(pages)) return;
 
             _viewPages = pages;
@@ -417,10 +433,10 @@ namespace NeeView
 
             switch (e.PropertyName)
             {
-                case nameof(BookContext.SelectedRange):
+                case nameof(PageFrameBox.SelectedRange):
                     RaisePropertyChanged(nameof(SelectedRange));
                     break;
-                case nameof(BookContext.Pages):
+                case nameof(PageFrameBox.Pages):
                     RaisePropertyChanged(nameof(Pages));
                     break;
             }
@@ -438,7 +454,7 @@ namespace NeeView
 
         public void ReOpen()
         {
-            if (_bookContext is null) return;
+            if (_context is null) return;
 
             _bookHub.RequestReLoad(this);
             //var memento = _bookContext.CreateMemento();

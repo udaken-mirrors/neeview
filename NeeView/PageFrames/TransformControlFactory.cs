@@ -6,13 +6,13 @@ namespace NeeView.PageFrames
 {
     public class TransformControlFactory
     {
-        private BookContext _context;
+        private PageFrameContext _context;
         private ViewTransformContext _viewContext;
         private LoupeTransformContext _loupeContext;
         private ScrollLock _scrollLock;
 
 
-        public TransformControlFactory(BookContext context, ViewTransformContext viewContext, LoupeTransformContext loupeContext, ScrollLock scrollLock)
+        public TransformControlFactory(PageFrameContext context, ViewTransformContext viewContext, LoupeTransformContext loupeContext, ScrollLock scrollLock)
         {
             _context = context;
             _viewContext = viewContext;

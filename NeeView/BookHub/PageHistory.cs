@@ -91,7 +91,7 @@ namespace NeeView
         {
             if (e.Action < ViewContentChangedAction.Selection) return;
 
-            var viewPages = e.PageFrameContent.PageFrame.Elements.Select(e => e.Page).ToList();
+            var viewPages = e.ViewContents.Select(e => e.Page).ToList();
 
             PageHistoryUnit pageHistoryUnit;
             if (viewPages != null && viewPages.Count > 0)

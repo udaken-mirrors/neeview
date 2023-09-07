@@ -7,15 +7,38 @@ using System.Linq;
 namespace NeeView
 {
 
-    public class MemoryPool
+    public class MemoryPool : IDisposable
     {
         private record MemoryUnit(IMemoryElement Key, long Size) : IHasKey<IMemoryElement>;
 
-        private LinkedDicionary<IMemoryElement, MemoryUnit> _collection = new();
+        private readonly LinkedDicionary<IMemoryElement, MemoryUnit> _collection = new();
+        private bool _disposedValue;
         private readonly object _lock = new();
 
 
         public long TotalSize { get; private set; }
+
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!_disposedValue)
+            {
+                if (disposing)
+                {
+                    lock (_lock)
+                    {
+                        _collection.Clear();
+                    }
+                }
+                _disposedValue = true;
+            }
+        }
+
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
 
 
         [Obsolete]
@@ -28,6 +51,8 @@ namespace NeeView
         {
             lock (_lock)
             {
+                if (_disposedValue) return;
+
                 //Debug.WriteLine($"MemoryPool.Add: {element.Index}: {element.GetMemorySize()} Byte");
                 Debug.Assert(element.GetMemorySize() > 0);
 
@@ -49,6 +74,8 @@ namespace NeeView
         {
             lock (_lock)
             {
+                if (_disposedValue) return;
+
                 int removeCount = 0;
 
                 while (limitSize < TotalSize)
@@ -80,6 +107,8 @@ namespace NeeView
         {
             lock (_lock)
             {
+                if (_disposedValue) return;
+
                 _collection.Remove(node);
                 TotalSize -= node.Value.Size;
                 AssertTotalSize();
@@ -88,8 +117,6 @@ namespace NeeView
                 //Debug.WriteLine($"MemoryPool.Remove: {node.Value.Key.Index}");
             }
         }
-
-
 
         [Conditional("DEBUG")]
         private void AssertTotalSize()
@@ -100,6 +127,8 @@ namespace NeeView
                 Debug.Assert(totalSize == TotalSize);
             }
         }
+
+
     }
 
 }

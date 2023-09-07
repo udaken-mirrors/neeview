@@ -12,11 +12,11 @@ namespace NeeView.PageFrames
     /// </summary>
     public class PageFrameContainersCollectionRectMath
     {
-        private readonly BookContext _context;
+        private readonly PageFrameContext _context;
         private PageFrameContainerCollection _containers;
         private PageFrameRectMath _math;
 
-        public PageFrameContainersCollectionRectMath(BookContext context, PageFrameContainerCollection containers)
+        public PageFrameContainersCollectionRectMath(PageFrameContext context, PageFrameContainerCollection containers)
         {
             _context = context;
             _containers = containers;

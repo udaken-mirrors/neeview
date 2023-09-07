@@ -174,6 +174,7 @@ namespace NeeView
                     IsItemsDarty = true;
                     RaisePropertyChanged();
                     CollectionChanged?.Invoke(this, EventArgs.Empty);
+                    ValidateViewItems();
                 }
             }
         }
@@ -219,6 +220,13 @@ namespace NeeView
             }
         }
 
+
+
+        private void ValidateViewItems()
+        {
+            var viewItems = _viewItems.Where(e => _items?.Contains(e) ?? false).ToList();
+            ViewItems = viewItems;
+        }
 
 
         private void PageSelector_CollectionChanging(object? sender, EventArgs e)
@@ -282,7 +290,7 @@ namespace NeeView
             }
         }
 
-        // PageSelecterの値でSelectedIndexを更新
+        // PageSelectorの値でSelectedIndexを更新
         private void UpdateSelectedIndex()
         {
             SelectedIndex = GetIndexWithDirectionReverse(PageSelector.Current.SelectedIndex);

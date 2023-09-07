@@ -1,5 +1,6 @@
 ﻿using NeeLaboratory.Collection;
 using NeeLaboratory.ComponentModel;
+using NeeLaboratory.Generators;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -9,10 +10,10 @@ using System.Threading;
 
 namespace NeeView
 {
-    public class BookPageCollection : BindableBase, IReadOnlyList<Page>, IEnumerable<Page>, IDisposable
+    public partial class BookPageCollection : BindableBase, IReadOnlyList<Page>, IEnumerable<Page>, IDisposable
     {
         // サムネイル寿命管理
-        private readonly PageThumbnailPool _thumbnaulPool = new();
+        private readonly PageThumbnailPool _thumbnailPool = new();
 
         // ページ列
         private PageSortMode _sortMode = PageSortMode.Entry;
@@ -26,7 +27,7 @@ namespace NeeView
 
             foreach (var page in Pages)
             {
-                page.Thumbnail.Touched += Thumbnail_Touched;
+                AttachPage(page);
             }
 
             for (int i = 0; i < Pages.Count; ++i)
@@ -35,24 +36,24 @@ namespace NeeView
             }
         }
 
+        private void AttachPage(Page page)
+        {
+            page.Thumbnail.Touched += Thumbnail_Touched;
+        }
+
+        private void DetachPage(Page page)
+        {
+            page.Thumbnail.Touched -= Thumbnail_Touched;
+        }
+
 
         // ソートされた
+        [Subscribable]
         public event EventHandler? PagesSorted;
 
-        public IDisposable SubscribePagesSorted(EventHandler handler)
-        {
-            PagesSorted += handler;
-            return new AnonymousDisposable(() => PagesSorted -= handler);
-        }
-
         // ファイル削除された
+        [Subscribable]
         public event EventHandler<PageRemovedEventArgs>? PageRemoved;
-
-        public IDisposable SubscribePageRemoved(EventHandler<PageRemovedEventArgs> handler)
-        {
-            PageRemoved += handler;
-            return new AnonymousDisposable(() => PageRemoved -= handler);
-        }
 
 
         public List<Page> Pages { get; private set; }
@@ -66,12 +67,11 @@ namespace NeeView
             {
                 if (SetProperty(ref _sortMode, value))
                 {
-                    // ## 
+                    // TODO: 直接ソート命令が呼べれば良いのだが
                     //Sort(CancellationToken.None);
                 }
             }
         }
-
 
         #region IDisposable Support
         private bool _disposedValue = false;
@@ -86,10 +86,13 @@ namespace NeeView
                     this.PageRemoved = null;
                     this.PagesSorted = null;
 
-                    if (Pages != null)
+                    foreach (var page in Pages)
                     {
-                        Pages.ForEach(e => e?.Dispose());
+                        DetachPage(page);
+                        page.Dispose();
                     }
+
+                    //Pages.Clear();
                 }
 
                 _disposedValue = true;
@@ -155,7 +158,7 @@ namespace NeeView
         {
             if (sender is not Thumbnail thumb) return;
 
-            _thumbnaulPool.Add(thumb);
+            _thumbnailPool.Add(thumb);
         }
 
         // ページ
@@ -337,6 +340,7 @@ namespace NeeView
 
             foreach (var page in removes)
             {
+                DetachPage(page);
                 Pages.Remove(page);
                 PageMap.Remove(page.EntryFullName, page);
             }

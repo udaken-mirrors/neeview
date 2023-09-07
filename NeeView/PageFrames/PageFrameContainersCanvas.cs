@@ -42,11 +42,11 @@ namespace NeeView.PageFrames
     public class PageFrameContainersCanvas : Canvas
     {
 
-        private BookContext _context;
+        private PageFrameContext _context;
         private PageFrameContainerCollection _containers;
 
 
-        public PageFrameContainersCanvas(BookContext context, PageFrameContainerCollection containers)
+        public PageFrameContainersCanvas(PageFrameContext context, PageFrameContainerCollection containers)
         {
             _context = context;
             _containers = containers;

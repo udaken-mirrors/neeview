@@ -13,7 +13,7 @@ namespace NeeView.PageFrames
         private bool _disposedValue;
         private DisposableCollection _disposables = new();
 
-        public PageFrameViewTransform(BookContext context, LoupeTransformContext loupeContext)
+        public PageFrameViewTransform(PageFrameContext context, LoupeTransformContext loupeContext)
         {
             _loupeContext = loupeContext;
             _disposables.Add(_loupeContext.SubscribeTransformChanged(LoupeContext_TransformChanged));

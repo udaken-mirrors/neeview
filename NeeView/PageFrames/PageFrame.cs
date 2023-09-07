@@ -187,7 +187,7 @@ namespace NeeView.PageFrames
         /// TODO: 実装場所
         /// </summary>
         [Conditional("DEBUG")]
-        public void AssertValid(BookContext context)
+        public void AssertValid(PageFrameContext context)
         {
             if (context.PageMode == PageMode.WidePage)
             {

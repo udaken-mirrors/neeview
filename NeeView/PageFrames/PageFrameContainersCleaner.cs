@@ -9,12 +9,12 @@ namespace NeeView.PageFrames
     // TODO: PageFrameViewRect を参照しても良い
     public class PageFrameContainersCleaner
     {
-        private BookContext _context;
+        private PageFrameContext _context;
         private PageFrameContainerCollection _containers;
         private PageFrameRectMath _math;
 
 
-        public PageFrameContainersCleaner(BookContext context, PageFrameContainerCollection containers)
+        public PageFrameContainersCleaner(PageFrameContext context, PageFrameContainerCollection containers)
         {
             _context = context;
             _containers = containers;

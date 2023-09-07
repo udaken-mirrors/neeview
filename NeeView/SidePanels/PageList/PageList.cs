@@ -118,7 +118,13 @@ namespace NeeView
         public ObservableCollection<Page>? Items
         {
             get { return _items; }
-            private set { SetProperty(ref _items, value); }
+            private set
+            {
+                if (SetProperty(ref _items, value))
+                {
+                    ValidateViewItems();
+                }
+            }
         }
 
         public Page? SelectedItem
@@ -149,6 +155,12 @@ namespace NeeView
             }
         }
 
+
+        private void ValidateViewItems()
+        {
+            var viewItems = _viewItems.Where(e => _items?.Contains(e) ?? false).ToList();
+            ViewItems = viewItems;
+        }
 
         public void Loaded()
         {

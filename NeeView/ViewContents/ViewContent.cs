@@ -50,6 +50,7 @@ namespace NeeView
         public event EventHandler<ViewContentChangedEventArgs>? ViewContentChanged;
 
 
+        public Page Page => _element.Page;
         public PageFrameActivity Activity => _activity;
         public ArchiveEntry ArchiveEntry => _element.Page.Entry;
         public PageFrameElement Element => _element;

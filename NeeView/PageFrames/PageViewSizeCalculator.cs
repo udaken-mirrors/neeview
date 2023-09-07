@@ -10,7 +10,7 @@ namespace NeeView.PageFrames
         private ImageTrimConfig _imageTrim;
 
 
-        public PageSizeCalculator(BookContext context, Page page)
+        public PageSizeCalculator(PageFrameContext context, Page page)
         {
             _page = page;
             _imageTrim = context.ImageTrimConfig;
@@ -49,7 +49,7 @@ namespace NeeView.PageFrames
         private ImageTrimConfig _imageTrim;
         private PageSizeCalculator _pageSizeCalculator;
 
-        public PageViewSizeCalculator(BookContext context, Page page, PageRange pagePart, int direction)
+        public PageViewSizeCalculator(PageFrameContext context, Page page, PageRange pagePart, int direction)
         {
             _pagePart = pagePart;
             _direction = direction;

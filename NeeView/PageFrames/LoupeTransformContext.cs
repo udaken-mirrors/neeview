@@ -10,11 +10,11 @@ namespace NeeView.PageFrames
     [NotifyPropertyChanged]
     public partial class LoupeTransformContext : IPointControl, IScaleControl, INotifyPropertyChanged, INotifyTransformChanged
     {
-        private BookContext _context;
+        private PageFrameContext _context;
         private LoupeTransform _transform = new LoupeTransform();
 
 
-        public LoupeTransformContext(BookContext context)
+        public LoupeTransformContext(PageFrameContext context)
         {
             _context = context;
         }

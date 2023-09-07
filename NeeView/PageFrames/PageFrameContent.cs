@@ -297,7 +297,7 @@ namespace NeeView.PageFrames
         private void ViewContent_Changed(object? sender, ViewContentChangedEventArgs e)
         {
             var action = ViewContentChangedActionExtensions.Min(GetViewContentState().ToChangedAction(), e.Action);
-            ViewContentChanged?.Invoke(this, new FrameViewContentChangedEventArgs(action, this) { InnerArgs = e });
+            ViewContentChanged?.Invoke(this, new FrameViewContentChangedEventArgs(action, ViewContents, ViewContentsDirection) { InnerArgs = e });
         }
 
         private void UpdateTransform()

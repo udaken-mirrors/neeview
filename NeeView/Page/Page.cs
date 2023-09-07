@@ -282,7 +282,7 @@ namespace NeeView
 
         public override string ToString()
         {
-            return $"Page:{Index}";
+            return $"Page:{Index}, {EntryFullName}";
         }
 
         public Page? GetPage()

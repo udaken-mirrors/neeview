@@ -15,12 +15,12 @@ namespace NeeView.PageFrames
     {
         private const double _nscrollCountThreshold = 0.9;
 
-        private BookContext _context;
+        private PageFrameContext _context;
         private Rect _contentRect;
         private Rect _viewRect;
 
 
-        public NScroll(BookContext context, Rect contentRect, Rect viewRect)
+        public NScroll(PageFrameContext context, Rect contentRect, Rect viewRect)
         {
             _context = context;
             _contentRect = contentRect;

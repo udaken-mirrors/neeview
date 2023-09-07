@@ -16,13 +16,13 @@ namespace NeeView.PageFrames
     {
         private BookPageAccessor _book;
         private ContentSizeCalculator _calculator;
-        private BookContext _context;
+        private PageFrameContext _context;
 
 
-        public PageFrameFactory(BookContext context, ContentSizeCalculator calculator)
+        public PageFrameFactory(BookContext bookContext, PageFrameContext context, ContentSizeCalculator calculator)
         {
             _context = context;
-            _book = new BookPageAccessor(context);
+            _book = new BookPageAccessor(bookContext);
             _calculator = calculator;
         }
 

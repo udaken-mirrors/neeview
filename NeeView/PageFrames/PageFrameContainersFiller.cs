@@ -8,13 +8,13 @@ namespace NeeView.PageFrames
 {
     public class PageFrameContainersFiller
     {
-        private BookContext _context;
+        private PageFrameContext _context;
         private PageFrameContainerCollection _containers;
         private PageFrameContainersCollectionRectMath _rectMath;
         private PageFrameRectMath _math;
 
 
-        public PageFrameContainersFiller(BookContext context, PageFrameContainerCollection containers, PageFrameContainersCollectionRectMath rectMath)
+        public PageFrameContainersFiller(PageFrameContext context, PageFrameContainerCollection containers, PageFrameContainersCollectionRectMath rectMath)
         {
             _context = context;
             _containers = containers;

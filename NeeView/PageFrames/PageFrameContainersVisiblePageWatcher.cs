@@ -15,7 +15,7 @@ namespace NeeView.PageFrames
     public partial class PageFrameContainersVisiblePageWatcher // : INotifyPropertyChanged
     {
 
-        private BookContext _context;
+        private PageFrameContext _context;
         private PageFrameContainersViewBox _viewBox;
 
         private PageFrameContainersCollectionRectMath _collectionRectMath;
@@ -26,7 +26,7 @@ namespace NeeView.PageFrames
         private List<Page> _viewPages = new();
 
 
-        public PageFrameContainersVisiblePageWatcher(BookContext context, PageFrameContainersViewBox viewBox, PageFrameContainersCollectionRectMath collectionRectMath, PageFrameContainersLayout layout)
+        public PageFrameContainersVisiblePageWatcher(PageFrameContext context, PageFrameContainersViewBox viewBox, PageFrameContainersCollectionRectMath collectionRectMath, PageFrameContainersLayout layout)
         {
             _context = context;
             _viewBox = viewBox;

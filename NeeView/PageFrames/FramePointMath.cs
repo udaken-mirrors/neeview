@@ -8,12 +8,12 @@ namespace NeeView.PageFrames
     /// </summary>
     public class FramePointMath
     {
-        private BookContext _context;
+        private PageFrameContext _context;
         private Rect _rect;
         private Rect _viewRect;
 
 
-        public FramePointMath(BookContext context, Rect rect, Rect viewRect)
+        public FramePointMath(PageFrameContext context, Rect rect, Rect viewRect)
         {
             _context = context;
             _rect = rect;

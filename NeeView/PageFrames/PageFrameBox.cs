@@ -33,7 +33,8 @@ namespace NeeView.PageFrames
         private readonly PageFrameContainersCanvas _canvas;
         private readonly PageFrameContainersCleaner _cleaner;
         private readonly PageFrameContainersFiller _filler;
-        private readonly BookContext _context;
+        private readonly PageFrameContext _context;
+        private readonly BookContext _bookContext;
         private readonly BookPageLoader _loader;
         private readonly ContentSizeCalculator _calculator;
         private readonly PageFrameContainersVisiblePageWatcher _visiblePageWatcher;
@@ -69,15 +70,19 @@ namespace NeeView.PageFrames
 
 
 
-        public PageFrameBox(BookContext context)
+        public PageFrameBox(PageFrameContext context, BookContext bookContext)
         {
             _context = context;
             _disposables.Add(_context); // このクラスがDisposableする？
-            _disposables.Add(_context.SubscribeSelectedRangeChanged((s, e) => SelectedRangeChanged?.Invoke(this, e)));
             _disposables.Add(_context.SubscribePropertyChanged((s, e) => AppDispatcher.BeginInvoke(() => Context_PropertyChanged(s, e))));
-            _disposables.Add(_context.SubscribePagesChanged((s, e) => AppDispatcher.BeginInvoke(() => Context_PagesChanged(s, e))));
             _disposables.Add(_context.SubscribeSizeChanging(Context_SizeChanging));
             _disposables.Add(_context.SubscribeSizeChanged(Context_SizeChanged));
+
+            _bookContext = bookContext;
+            _disposables.Add(_bookContext); // このクラスがDisposableする？
+            _disposables.Add(_bookContext.SubscribePropertyChanged((s, e) => AppDispatcher.BeginInvoke(() => BookContext_PropertyChanged(s, e))));
+            _disposables.Add(_bookContext.SubscribeSelectedRangeChanged((s, e) => SelectedRangeChanged?.Invoke(this, e)));
+            _disposables.Add(_bookContext.SubscribePagesChanged((s, e) => AppDispatcher.BeginInvoke(() => Context_PagesChanged(s, e))));
 
             _onceDispatcher = new();
             _disposables.Add(_onceDispatcher);
@@ -94,10 +99,10 @@ namespace NeeView.PageFrames
             _transformMap = new PageFrameTransformMap(_context.ShareContext);
 
             _calculator = new ContentSizeCalculator(_context);
-            var frameFactory = new PageFrameFactory(_context, _calculator);
-            _viewSourceMap = new ViewSourceMap(_context.BookMemoryService);
+            var frameFactory = new PageFrameFactory(_bookContext, _context, _calculator);
+            _viewSourceMap = new ViewSourceMap(_bookContext.BookMemoryService);
             var elementScaleFactory = new PageFrameElementScaleFactory(_context, _transformMap, loupeContext);
-            _loader = new BookPageLoader(_context.Book, frameFactory, _viewSourceMap, elementScaleFactory, _context.BookMemoryService, _context.PerformanceConfig);
+            _loader = new BookPageLoader(_bookContext.Book, frameFactory, _viewSourceMap, elementScaleFactory, _bookContext.BookMemoryService, _context.PerformanceConfig);
             _disposables.Add(_loader);
             _disposables.Add(_loader.SubscribePropertyChanged(nameof(BookPageLoader.IsBusy), (s, e) => RaisePropertyChanged(nameof(IsBusy))));
 
@@ -138,7 +143,7 @@ namespace NeeView.PageFrames
             //_disposables.Add(_selected.SubscribePropertyChanged(nameof(_selected.PagePosition),
             //    (s, e) => _context.SetSelectedItem(_selected.PagePosition, false)));
             _disposables.Add(_selected.SubscribePropertyChanged(nameof(_selected.PagePosition),
-                (s, e) => _context.SelectedRange = _selected.PageRange));
+                (s, e) => _bookContext.SelectedRange = _selected.PageRange));
             _disposables.Add(_selected.SubscribePropertyChanged(nameof(_selected.Page),
                 (s, e) => _background.SetPage(_context.IsStaticFrame ? _selected.Page : null)));
             _disposables.Add(_selected.SubscribeViewContentChanged(
@@ -155,7 +160,7 @@ namespace NeeView.PageFrames
             _viewBox.RectChanged += ViewBox_RectChanged;
 
             // 表示ページ監視
-            _disposables.Add(new PageFrameContainersSelectedPageWatcher(this, _context.Book));
+            _disposables.Add(new PageFrameContainersSelectedPageWatcher(this, _bookContext.Book));
 
             Loaded += PageFrameBox_Loaded;
         }
@@ -163,7 +168,7 @@ namespace NeeView.PageFrames
 
         public void Initialize()
         {
-            var index = _context.Book.CurrentPage?.Index ?? 0;
+            var index = _bookContext.Book.CurrentPage?.Index ?? 0;
             MoveTo(new PagePosition(index, 0), LinkedListDirection.Next);
             _scrollViewer.FlushScroll();
         }
@@ -198,14 +203,15 @@ namespace NeeView.PageFrames
         public DragTransformContextFactory DragTransformContextFactory => _dragTransformContextFactory;
 
 
-        public BookContext BookContext => _context;
+        public PageFrameContext Context => _context;
+        public BookContext BookContext => _bookContext;
 
-        public Book Book => _context.Book;
+        public Book Book => _bookContext.Book;
 
-        public IReadOnlyList<Page> Pages => _context.Pages;
+        public IReadOnlyList<Page> Pages => _bookContext.Pages;
 
-        public PageRange SelectedRange => _context.SelectedRange;
-        
+        public PageRange SelectedRange => _bookContext.SelectedRange;
+
         public bool IsBusy => _loader.IsBusy;
 
 
@@ -467,6 +473,20 @@ namespace NeeView.PageFrames
         }
 
 
+        private void BookContext_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            switch (e.PropertyName)
+            {
+                case nameof(_bookContext.SelectedRange):
+                    RaisePropertyChanged(nameof(SelectedRange));
+                    return;
+
+                case nameof(_bookContext.Pages):
+                    RaisePropertyChanged(nameof(Pages));
+                    return;
+            }
+        }
+
         /// <summary>
         /// 環境パラメータの変更イベント処理
         /// </summary>
@@ -481,39 +501,31 @@ namespace NeeView.PageFrames
 
             switch (e.PropertyName)
             {
-                case nameof(BookContext.SelectedRange):
-                    RaisePropertyChanged(nameof(SelectedRange));
-                    return;
-
-                case nameof(BookContext.Pages):
-                    RaisePropertyChanged(nameof(Pages));
-                    return;
-
                 //case nameof(BookContext.SelectedItem):
                 //    RaisePropertyChanged(nameof(SelectedItem));
                 //    return;
 
-                case nameof(BookContext.IsStaticFrame):
+                case nameof(Context.IsStaticFrame):
                     _transformMap.ClearPoint(default);
                     break;
 
-                case nameof(BookContext.FrameMargin):
+                case nameof(Context.FrameMargin):
                     FillContainers();
                     return;
 
-                case nameof(BookContext.IsFlipLocked):
+                case nameof(Context.IsFlipLocked):
                     _transformMap.IsFlipLocked = _context.IsFlipLocked;
                     return;
 
-                case nameof(BookContext.IsScaleLocked):
+                case nameof(Context.IsScaleLocked):
                     _transformMap.IsScaleLocked = _context.IsScaleLocked;
                     return;
 
-                case nameof(BookContext.IsAngleLocked):
+                case nameof(Context.IsAngleLocked):
                     _transformMap.IsAngleLocked = _context.IsAngleLocked;
                     return;
 
-                case nameof(BookContext.ReadOrder):
+                case nameof(Context.ReadOrder):
                     // ページ方向が切り替わったときの分割ページ位置補正
                     if (_context.PageMode == PageMode.SinglePage && _context.IsSupportedDividePage && _selected.Container.FrameRange.PartSize == 1)
                     {
@@ -521,7 +533,7 @@ namespace NeeView.PageFrames
                     }
                     break;
 
-                case nameof(BookContext.IsSupportedDividePage):
+                case nameof(Context.IsSupportedDividePage):
                     // 分割ページでない場合の座標補正
                     if (!(_context.PageMode == PageMode.SinglePage && _context.IsSupportedDividePage))
                     {
@@ -529,29 +541,29 @@ namespace NeeView.PageFrames
                     }
                     break;
 
-                case nameof(BookContext.SortMode):
+                case nameof(Context.SortMode):
                     // 別処理
                     return;
 
-                case nameof(BookContext.PageMode):
-                case nameof(BookContext.FrameOrientation):
+                case nameof(Context.PageMode):
+                case nameof(Context.FrameOrientation):
                     ResetContainers();
                     return;
 
-                case nameof(BookContext.IsIgnoreImageDpi):
-                case nameof(BookContext.DpiScale):
-                case nameof(BookContext.ImageCustomSizeConfig):
-                case nameof(BookContext.ImageTrimConfig):
-                case nameof(BookContext.ImageResizeFilterConfig):
-                case nameof(BookContext.ImageDotKeepConfig):
-                case nameof(BookContext.IsInsertDummyPage):
+                case nameof(Context.IsIgnoreImageDpi):
+                case nameof(Context.DpiScale):
+                case nameof(Context.ImageCustomSizeConfig):
+                case nameof(Context.ImageTrimConfig):
+                case nameof(Context.ImageResizeFilterConfig):
+                case nameof(Context.ImageDotKeepConfig):
+                case nameof(Context.IsInsertDummyPage):
                     dirtyLevel = PageFrameDartyLevel.Heavy;
                     break;
 
-                case nameof(BookContext.ViewConfig):
+                case nameof(Context.ViewConfig):
                     return;
 
-                case nameof(BookContext.CanvasSize):
+                case nameof(Context.CanvasSize):
                     return;
             }
 
@@ -589,7 +601,7 @@ namespace NeeView.PageFrames
 
         public void MoveTo(PagePosition position, LinkedListDirection direction)
         {
-            if (!_context.IsEnabled) return;
+            if (!_bookContext.IsEnabled) return;
 
             // TODO: position の範囲チェック
 
@@ -648,7 +660,7 @@ namespace NeeView.PageFrames
 
         public void MoveToNextPage(LinkedListDirection direction)
         {
-            if (!_context.IsEnabled) return;
+            if (!_bookContext.IsEnabled) return;
 
             if (_context.PageMode != PageMode.WidePage)
             {
@@ -686,7 +698,7 @@ namespace NeeView.PageFrames
 
         public void MoveToNextFrame(LinkedListDirection direction)
         {
-            if (!_context.IsEnabled) return;
+            if (!_bookContext.IsEnabled) return;
 
             var current = _selected.Node;
             Debug.Assert(current is not null);
@@ -716,11 +728,11 @@ namespace NeeView.PageFrames
 
         public void MoveToNextFolder(LinkedListDirection direction, bool isShowMessage)
         {
-            if (!_context.IsEnabled) return;
+            if (!_bookContext.IsEnabled) return;
 
             var index = direction == LinkedListDirection.Previous
-                ? _context.Book.Pages.GetPrevFolderIndex(_selected.PageRange.Min.Index)
-                : _context.Book.Pages.GetNextFolderIndex(_selected.PageRange.Min.Index);
+                ? _bookContext.Book.Pages.GetPrevFolderIndex(_selected.PageRange.Min.Index)
+                : _bookContext.Book.Pages.GetNextFolderIndex(_selected.PageRange.Min.Index);
             if (index >= 0)
             {
                 MoveTo(new PagePosition(index, 0), LinkedListDirection.Next);
@@ -742,7 +754,7 @@ namespace NeeView.PageFrames
             }
             else if (isShowMessage)
             {
-                var directory = _context.Book.Pages[index].GetSmartDirectoryName();
+                var directory = _bookContext.Book.Pages[index].GetSmartDirectoryName();
                 if (string.IsNullOrEmpty(directory))
                 {
                     directory = "(Root)";
@@ -755,7 +767,7 @@ namespace NeeView.PageFrames
         // Scroll + NextFrame
         public void ScrollToNextFrame(LinkedListDirection direction, IScrollNTypeParameter parameter, LineBreakStopMode lineBreakStopMode, double endMargin)
         {
-            if (!_context.IsEnabled) return;
+            if (!_bookContext.IsEnabled) return;
 
             var isTerminated = ScrollToNext(direction, parameter, lineBreakStopMode, endMargin);
             if (isTerminated)
@@ -781,7 +793,7 @@ namespace NeeView.PageFrames
         /// <returns>is scroll terminated</returns>
         public bool ScrollToNext(LinkedListDirection direction, IScrollNTypeParameter parameter, LineBreakStopMode lineBreakStopMode, double endMargin)
         {
-            if (!_context.IsEnabled) return true;
+            if (!_bookContext.IsEnabled) return true;
 
             //var lineBreakStopMode = LineBreakStopMode.Line; // TODO: このパラメータはどこから？
             //var parameter = new ScrollNTypeParameter(); // TODO: このパラメータはどこから？
@@ -844,7 +856,7 @@ namespace NeeView.PageFrames
         // - 連続判定によるカーブ指定
         public void AddPosition(double dx, double dy, TimeSpan span)
         {
-            if (!_context.IsEnabled) return;
+            if (!_bookContext.IsEnabled) return;
 
             var node = _selected.Node;
             AssertSelectedExists();
@@ -1020,7 +1032,7 @@ namespace NeeView.PageFrames
 
             var transform = content.Transform;
 
-            var rawSize = content.PageFrame.Size; 
+            var rawSize = content.PageFrame.Size;
 
             var scale = _calculator.CalcStretchScale(rawSize, new RotateTransform(transform.Angle));
             transform.SetScale(scale, TimeSpan.Zero);

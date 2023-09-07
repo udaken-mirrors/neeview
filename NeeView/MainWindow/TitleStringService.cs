@@ -17,12 +17,14 @@ namespace NeeView
 
         private readonly ReplaceString _replaceString = new();
         private readonly PageFrameBoxPresenter _presenter;
+        private readonly DpiScaleProvider _dpiScaleProvider;
         private int _changedCount;
 
 
         public TitleStringService(MainViewComponent mainViewComponent)
         {
             _presenter = mainViewComponent.PageFrameBoxPresenter;
+            _dpiScaleProvider = mainViewComponent.MainView.DpiProvider;
 
             _presenter.ViewContentChanged += (s, e) =>
             {
@@ -167,7 +169,7 @@ namespace NeeView
             _replaceString.Set("$ViewScale", $"{(int)(viewScale * 100 + 0.1)}%");
 
             // scale
-            var dpiScaleX = (Window.GetWindow(_presenter.View) is IDpiScaleProvider dpiProvider) ? dpiProvider.GetDpiScale().ToFixedScale().DpiScaleX : 1.0;
+            var dpiScaleX = _dpiScaleProvider.GetDpiScale().ToFixedScale().DpiScaleX;
             string scale0 = $"{(int)(viewScale * GetOriginalScale(contents.ElementAtOrDefault(0)) * dpiScaleX * 100 + 0.1)}%";
             string scale1 = $"{(int)(viewScale * GetOriginalScale(contents.ElementAtOrDefault(1)) * dpiScaleX * 100 + 0.1)}%";
             _replaceString.Set("$Scale", isMainContent0 ? scale0 : scale1);

@@ -5,11 +5,11 @@ namespace NeeView
 {
     public class PageFrameElementScaleFactory
     {
-        private BookContext _bookContext;
+        private PageFrameContext _bookContext;
         private PageFrameTransformMap _transformMap;
         private LoupeTransformContext _loupeTransform;
 
-        public PageFrameElementScaleFactory(BookContext bookContext, PageFrameTransformMap transformMap, LoupeTransformContext loupeTransform)
+        public PageFrameElementScaleFactory(PageFrameContext bookContext, PageFrameTransformMap transformMap, LoupeTransformContext loupeTransform)
         {
             _bookContext = bookContext;
             _transformMap = transformMap;

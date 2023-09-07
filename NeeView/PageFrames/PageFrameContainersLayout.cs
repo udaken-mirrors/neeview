@@ -13,11 +13,11 @@ namespace NeeView.PageFrames
     /// </summary>
     public class PageFrameContainersLayout
     {
-        private BookContext _context;
+        private PageFrameContext _context;
         private PageFrameContainerCollection _containers;
 
 
-        public PageFrameContainersLayout(BookContext context, PageFrameContainerCollection containers)
+        public PageFrameContainersLayout(PageFrameContext context, PageFrameContainerCollection containers)
         {
             _context = context;
             _containers = containers;

@@ -141,7 +141,7 @@ namespace NeeView
 
             var baseAngle = pageFrameContent.PageFrame.Angle;
 
-            var newCanvasSize = box.BookContext.StretchMode switch
+            var newCanvasSize = box.Context.StretchMode switch
             {
                 PageStretchMode.Uniform or PageStretchMode.UniformToSize
                     => fixedSize.Limit(limitSize),

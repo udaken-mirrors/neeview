@@ -110,7 +110,7 @@ namespace NeeView.PageFrames
 
             if (_node.Value.Content is PageFrameContent content)
             {
-                ViewContentChanged?.Invoke(this, new FrameViewContentChangedEventArgs(ViewContentChangedAction.Selection, content));
+                ViewContentChanged?.Invoke(this, new FrameViewContentChangedEventArgs(ViewContentChangedAction.Selection, content.ViewContents, content.ViewContentsDirection));
             }
         }
 

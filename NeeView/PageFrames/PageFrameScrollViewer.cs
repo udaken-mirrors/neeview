@@ -19,14 +19,14 @@ namespace NeeView.PageFrames
     [NotifyPropertyChanged]
     public partial class PageFrameScrollViewer : Grid, IPointControl, INotifyPropertyChanged
     {
-        private BookContext _context;
+        private PageFrameContext _context;
         private Canvas _rootCanvas;
         private PageFrameContainersCanvas _canvas;
 
         private PageFrameViewTransform _transform;
 
 
-        public PageFrameScrollViewer(BookContext context, PageFrameContainersCanvas canvas, PageFrameViewTransform transform)
+        public PageFrameScrollViewer(PageFrameContext context, PageFrameContainersCanvas canvas, PageFrameViewTransform transform)
         {
             this.MinWidth = PageFrameProfile.MinWidth;
             this.MinHeight = PageFrameProfile.MinHeight;

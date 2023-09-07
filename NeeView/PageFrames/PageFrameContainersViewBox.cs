@@ -11,10 +11,10 @@ namespace NeeView.PageFrames
         private PageFrameScrollViewer _view;
         private Rect _rect;
         private Size _size;
-        private BookContext _context;
+        private PageFrameContext _context;
         private bool _disposedValue;
 
-        public PageFrameContainersViewBox(BookContext context, PageFrameScrollViewer view)
+        public PageFrameContainersViewBox(PageFrameContext context, PageFrameScrollViewer view)
         {
             _context = context;
             _view = view;

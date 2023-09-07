@@ -20,7 +20,7 @@ namespace NeeView.PageFrames
         private void Box_ViewContentChanged(object? sender, FrameViewContentChangedEventArgs e)
         {
             if (e.Action < ViewContentChangedAction.ContentLoading) return;
-            var viewPages = e.PageFrameContent.PageFrame.Elements.Select(e => e.Page).Distinct().ToList();
+            var viewPages = e.ViewContents.Select(e => e.Page).Distinct().ToList();
             _book.Pages.SetViewPageFlag(viewPages);
         }
 

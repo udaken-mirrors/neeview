@@ -20,7 +20,7 @@ namespace NeeView
         static FileInformation() => Current = new FileInformation();
 
 
-        private readonly DelayValue<FrameViewContentChangedEventArgs> _viewContentsDelay;
+        private readonly DelayValue<List<FileInformationSource>> _viewContentsDelay;
         private List<FileInformationSource>? _fileInformationCollection;
 
 
@@ -31,7 +31,7 @@ namespace NeeView
             mainViewComponent.PageFrameBoxPresenter.ViewContentChanged +=
                 (s, e) => Update(e);
 
-            _viewContentsDelay = new DelayValue<FrameViewContentChangedEventArgs>();
+            _viewContentsDelay = new DelayValue<List<FileInformationSource>>();
             _viewContentsDelay.ValueChanged += ViewContentsDelay_ValueChanged;
         }
 
@@ -51,22 +51,25 @@ namespace NeeView
         public void Update(FrameViewContentChangedEventArgs e)
         {
             if (e.Action < ViewContentChangedAction.ContentLoading) return;
-            _viewContentsDelay.SetValue(e, 100); // 100ms delay
-        }
 
-        private void ViewContentsDelay_ValueChanged(object? sender, EventArgs _)
-        {
-            var pageFrameContent = _viewContentsDelay.Value?.PageFrameContent;
+            //var pageFrameContent = e.PageFrameContent;
 
-            var viewContents = pageFrameContent?.ViewContents ?? new List<ViewContent>();
-            var direction = pageFrameContent?.ViewContentsDirection ?? 1;
+            var viewContents = e.ViewContents;
+            var direction = e.Direction; // 1; // pageFrameContent?.ViewContentsDirection ?? 1;
 
-            this.FileInformationCollection = viewContents
+            var fileInformationCollection = viewContents
                 .Where(e => !e.Element.IsDummy)
                 .Direction(direction)
                 //.Where(e => e.IsInformationValid)
                 .Select(e => new FileInformationSource(e))
                 .ToList();
+
+            _viewContentsDelay.SetValue(fileInformationCollection, 100); // 100ms delay
+        }
+
+        private void ViewContentsDelay_ValueChanged(object? sender, EventArgs _)
+        {
+            this.FileInformationCollection = _viewContentsDelay.Value;
         }
 
         public void Update()
