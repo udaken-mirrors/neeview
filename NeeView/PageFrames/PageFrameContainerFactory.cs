@@ -46,6 +46,7 @@ namespace NeeView.PageFrames
                 var transform = new PageFrameTransformAccessor(_transformMap, _transformMap.ElementAt(frame.FrameRange));
                 var content = new PageFrameContent(_viewContentFactory, _staticFrameProfile, frame, activity, transform, _loupeContext, _baseScaleTransform);
                 container.Content = content;
+                container.UpdateFrame();
             }
         }
 

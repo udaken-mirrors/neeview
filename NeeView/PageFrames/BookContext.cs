@@ -281,7 +281,7 @@ namespace NeeView.PageFrames
 #endif
 
         public PageFrameOrientation FrameOrientation => _config.Book.Orientation;
-        public double FrameMargin => IsStaticFrame ? 0.0 : _config.Book.FrameSpace;
+        public double FrameMargin => IsStaticFrame ? 1.0 : _config.Book.FrameSpace;
         public double ContentsSpace => _config.Book.ContentsSpace;
         public PageStretchMode StretchMode => _bookSetting.PageMode == PageMode.Panorama && _config.View.StretchMode == PageStretchMode.Uniform
             ? _config.Book.Orientation == PageFrameOrientation.Horizontal ? PageStretchMode.UniformToVertical : PageStretchMode.UniformToHorizontal

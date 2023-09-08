@@ -39,7 +39,7 @@ namespace NeeView
 
 
     [NotifyPropertyChanged]
-    public partial class PageFrameBoxPresenter : INotifyPropertyChanged, IDragTransformContextFactory, IBookPageContext
+    public partial class PageFrameBoxPresenter : INotifyPropertyChanged, IDragTransformContextFactory, IBookPageContext, IDisposable
     {
         public static PageFrameBoxPresenter Current { get; } = new PageFrameBoxPresenter();
 
@@ -65,6 +65,9 @@ namespace NeeView
 
             _bookHub.BookChanging += BookHub_BookChanging;
             _bookHub.BookChanged += BookHub_BookChanged;
+
+            // アプリ終了前の開放予約
+            ApplicationDisposer.Current.Add(this);
         }
 
 
@@ -139,6 +142,24 @@ namespace NeeView
         public bool IsMedia => _box?.Book.IsMedia ?? false;
 
 
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    Close();
+                }
+                disposedValue = true;
+            }
+        }
+
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
 
         private void BookHub_BookChanging(object? sender, BookChangingEventArgs e)
         {
@@ -370,6 +391,7 @@ namespace NeeView
 
         private readonly object _lock = new();
         private ViewPageChangedEventArgs? _viewPageChangedEventArgs;
+        private bool disposedValue;
 
         private void RaiseViewPageChanged()
         {
@@ -616,6 +638,7 @@ namespace NeeView
         {
             return _box?.GetBackground();
         }
+
 
         #endregion IPageFrameBox
     }

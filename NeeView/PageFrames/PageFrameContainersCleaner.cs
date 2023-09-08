@@ -35,7 +35,7 @@ namespace NeeView.PageFrames
 
         private void Cleanup(Rect viewRect, LinkedListDirection direction)
         {
-            var node = _containers.CollectNode(direction).FirstOrDefault(e => _math.GetConfrict(e.Value.Rect, viewRect).IsOver(direction.ToSign()));
+            var node = _containers.CollectNode(direction).Where(e => e.Value.Content is PageFrameContent).FirstOrDefault(e => _math.GetConfrict(e.Value.Rect, viewRect).IsOver(direction.ToSign()));
             RemoveContainers(node, direction);
         }
 

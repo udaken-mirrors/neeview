@@ -440,8 +440,13 @@ namespace NeeView.PageFrames
             {
                 _containers.SetDarty(PageFrameDartyLevel.Replace);
                 _transformMap.Clear();
+
+                //_containers.Anchor.FixDirection();
+                //FillContainers();
+
                 SetControlContainer(_selected.Node);
                 _selected.Node.Value.ResetLayout();
+                _storePoint = default;
                 _layout.Layout(_selected.Node);
 
                 var index = _selected.Node.Value.FrameRange.Min.Index;
