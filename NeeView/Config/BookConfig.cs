@@ -4,13 +4,13 @@ using NeeView.Text;
 using NeeView.Windows.Property;
 using System;
 using System.ComponentModel;
+using System.Windows.Media;
 
 namespace NeeView
 {
     public class BookConfig : BindableBase
     {
         public static StringCollection DefaultExcludes { get; } = new StringCollection("__MACOSX;.DS_Store");
-
 
         private double _wideRatio = 1.0;
         private StringCollection _excludes = (StringCollection)DefaultExcludes.Clone();
@@ -26,9 +26,10 @@ namespace NeeView
         private double _bookPageSize = 300.0;
         private bool _resetPageWhenRandomSort;
         private bool _isInsertDummyPage;
+        private Color _dummyPageColor = Colors.White;
         private PageFrameOrientation _orientation = PageFrameOrientation.Horizontal;
-        private double _scrollDuration = 0.5;
-        private double _pageMoveDuration = 0.5;
+        private double _scrollDuration = 0.2;
+        private double _pageMoveDuration = 0.0;
 
         /// <summary>
         /// 横長画像判定用比率
@@ -163,6 +164,13 @@ namespace NeeView
             set { SetProperty(ref _isInsertDummyPage, value); }
         }
 
+        // ダミーページ色
+        [PropertyMember]
+        public Color DummyPageColor
+        {
+            get { return _dummyPageColor; }
+            set { SetProperty(ref _dummyPageColor, value); }
+        }
 
         // スクロール時間 (秒)
         [PropertyRange(0.0, 1.0, TickFrequency = 0.1, IsEditable = true)]

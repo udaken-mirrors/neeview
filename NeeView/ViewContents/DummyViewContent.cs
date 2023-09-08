@@ -1,6 +1,7 @@
 ﻿using NeeView.PageFrames;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Media;
 
 namespace NeeView
@@ -14,7 +15,7 @@ namespace NeeView
         protected override  FrameworkElement CreateLoadedContent(Size size, object data)
         {
             var grid = new Grid();
-            grid.Background = new SolidColorBrush(Element.Page.Content.PictureInfo?.Color ?? Colors.White);
+            grid.SetBinding(Grid.BackgroundProperty, new Binding(nameof(BookConfig.DummyPageColor)){ Source = Config.Current.Book, Converter = new ColorToBrushConverter() });
             return grid;
         }
     }

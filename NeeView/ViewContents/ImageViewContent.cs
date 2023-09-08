@@ -21,11 +21,14 @@ namespace NeeView
         private DisposableCollection _disposables = new();
         private InstantDelayAction _delayAction;
         private BitmapScalingMode? _scalingMode;
+        private PageBackgroundSource _backgroundSource;
 
 
-        public ImageViewContent(PageFrameElement element, PageFrameElementScale scale, ViewSource viewSource, PageFrameActivity activity)
+        public ImageViewContent(PageFrameElement element, PageFrameElementScale scale, ViewSource viewSource, PageFrameActivity activity, PageBackgroundSource backgroundSource)
             : base(element, scale, viewSource, activity)
         {
+            _backgroundSource = backgroundSource;
+
             _delayAction = new InstantDelayAction();
             _disposables.Add(_delayAction);
         }
@@ -91,7 +94,7 @@ namespace NeeView
             _imageControl = null;
 
             var imageSource = data as ImageSource ?? throw new InvalidOperationException();
-            _imageControl = new ImageContentControl(Element, imageSource, ViewContentSize);
+            _imageControl = new ImageContentControl(Element, imageSource, ViewContentSize, _backgroundSource);
             _imageControl.ScalingMode = _scalingMode;
             return _imageControl;
         }

@@ -16,13 +16,15 @@ namespace NeeView.PageFrames
     {
         private BookPageAccessor _book;
         private ContentSizeCalculator _calculator;
+        private BookContext _bookContext;
         private PageFrameContext _context;
 
 
         public PageFrameFactory(BookContext bookContext, PageFrameContext context, ContentSizeCalculator calculator)
         {
+            _bookContext = bookContext;
             _context = context;
-            _book = new BookPageAccessor(bookContext);
+            _book = new BookPageAccessor(_bookContext);
             _calculator = calculator;
         }
 
@@ -151,7 +153,7 @@ namespace NeeView.PageFrames
             var source1 = source;
             if (source1 is null) return null;
 
-            if (_context.PageMode == PageMode.WidePage)
+            if (_context.PageMode == PageMode.WidePage && !_bookContext.IsMedia)
             {
                 // TODO: SinglePageFrame 作成が分散しているのでまとめる？
                 if (_context.IsSupportedWidePage && source1.IsLandscape())

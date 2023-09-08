@@ -21,6 +21,7 @@ namespace NeeView
     /// </summary>
     public partial class LoadingIcon : UserControl
     {
+        // TODO: ProgressRing と機能重複
         public LoadingIcon()
         {
             InitializeComponent();

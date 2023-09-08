@@ -6,7 +6,7 @@ namespace NeeView
 {
     /// <summary>
     /// BookPageViewSetting アクセサ。
-    /// ProeprtyChangedイベントを追加したもの
+    /// PropertyChangedイベントを追加したもの
     /// </summary>
     public partial class BookPageSetting : BindableBase, IBookPageViewSetting
     {

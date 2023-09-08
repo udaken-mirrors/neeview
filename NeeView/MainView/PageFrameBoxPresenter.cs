@@ -173,6 +173,8 @@ namespace NeeView
                 {
                     SetLoading(null);
                 }
+
+                MemoryControl.Current.GarbageCollect();
             });
         }
 
@@ -197,7 +199,7 @@ namespace NeeView
 
                 ViewContentChanged?.Invoke(this, new FrameViewContentChangedEventArgs(ViewContentChangedAction.ContentLoaded, Array.Empty<ViewContent>(), 1));
                 RaiseViewPageChanged(new ViewPageChangedEventArgs(Array.Empty<Page>()));
-                
+
                 return;
             }
 
@@ -343,8 +345,6 @@ namespace NeeView
 
             _viewPages = new List<Page>();
 
-            GC.Collect();
-            GC.WaitForFullGCComplete();
         }
 
 

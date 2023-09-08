@@ -5,11 +5,13 @@ namespace NeeView
 {
     public class ViewContentFactory
     {
-        private ViewSourceMap _viewSourceMap;
+        private readonly ViewSourceMap _viewSourceMap;
+        private readonly PageBackgroundSource _backgroundSource;
 
         public ViewContentFactory(ViewSourceMap viewSourceMap)
         {
             _viewSourceMap = viewSourceMap;
+            _backgroundSource = new PageBackgroundSource();
         }
 
         public ViewContent Create(PageFrameElement element, PageFrameElementScale scale, PageFrameActivity activity)
@@ -24,13 +26,13 @@ namespace NeeView
             switch (element.Page.Content)
             {
                 case BitmapPageContent:
-                    return new BitmapViewContent(element, scale, viewSource, activity);
+                    return new BitmapViewContent(element, scale, viewSource, activity, _backgroundSource);
                 case AnimatedPageContent:
                     return new AnimatedViewContent(element, scale, viewSource, activity);
                 case PdfPageContent:
-                    return new PdfViewContent(element, scale, viewSource, activity);
+                    return new PdfViewContent(element, scale, viewSource, activity, _backgroundSource);
                 case SvgPageContent:
-                    return new SvgViewContent(element, scale, viewSource, activity);
+                    return new SvgViewContent(element, scale, viewSource, activity, _backgroundSource);
                 case MediaPageContent:
                     return new MediaViewContent(element, scale, viewSource, activity);
                 case ArchivePageContent:

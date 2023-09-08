@@ -38,7 +38,7 @@ namespace NeeView
                 }
                 catch
                 {
-                    // NOTE: サムネイル画像取得失敗時はEnptyなサムネイル画像を適用する
+                    // NOTE: サムネイル画像取得失敗時はEmptyなサムネイル画像を適用する
                 }
             }
 

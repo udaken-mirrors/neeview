@@ -7,7 +7,7 @@
         {
             Note = Properties.Resources.DragActionType_Gesture;
             IsLocked = true;
-            //IsDummy = true;
+            IsDummy = true;
             DragKey = new DragKey("RightButton");
             DragActionCategory = DragActionCategory.None;
         }

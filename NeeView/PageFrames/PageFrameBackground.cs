@@ -14,7 +14,7 @@ namespace NeeView.PageFrames
     {
         private DpiScaleProvider _dpiScaleProvider;
         private ContentCanvasBrushSource _brushSource;
-        private ContentCanvasBrush _canvasBrush;
+        private CanvasBackgroundSource _canvasBrush;
         private DisposableCollection _disposables = new();
         private bool _disposedValue;
         private Grid _bg1;
@@ -28,7 +28,7 @@ namespace NeeView.PageFrames
         {
             _dpiScaleProvider = dpiScaleProvider;
             _brushSource = new ContentCanvasBrushSource(_dpiScaleProvider, page);
-            _canvasBrush = new ContentCanvasBrush(_brushSource);
+            _canvasBrush = new CanvasBackgroundSource(_brushSource);
 
             _bg1 = this;
             _bg2 = new Grid();

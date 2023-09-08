@@ -12,7 +12,7 @@ namespace NeeView
 {
     public class SvgViewContent : ImageViewContent
     {
-        public SvgViewContent(PageFrameElement element, PageFrameElementScale scale, ViewSource viewSource, PageFrameActivity activity) : base(element, scale, viewSource, activity)
+        public SvgViewContent(PageFrameElement element, PageFrameElementScale scale, ViewSource viewSource, PageFrameActivity activity, PageBackgroundSource backgroundSource) : base(element, scale, viewSource, activity, backgroundSource)
         {
         }
     }

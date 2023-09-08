@@ -3,7 +3,6 @@ using NeeView.Windows.Media;
 using NeeView.Windows.Property;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.Serialization;
@@ -14,11 +13,10 @@ using System.Windows.Media;
 
 namespace NeeView
 {
-    public class ContentCanvasBrush : BindableBase, IDisposable
+    public class CanvasBackgroundSource : BindableBase, IDisposable
     {
         private readonly IContentCanvasBrushSource _contentCanvas;
         private SolidColorBrush _foregroundBrush = Brushes.White;
-        private Brush? _pageBackgroundBrush = null;
         private Brush? _backgroundBrush = Brushes.Black;
         private Brush? _backgroundFrontBrush;
         private Brush? _customBackgroundBrush;
@@ -27,7 +25,7 @@ namespace NeeView
         private bool _disposedValue;
 
 
-        public ContentCanvasBrush(IContentCanvasBrushSource contentCanvas)
+        public CanvasBackgroundSource(IContentCanvasBrushSource contentCanvas)
         {
             _contentCanvas = contentCanvas;
 
@@ -53,59 +51,20 @@ namespace NeeView
                 UpdateBackgroundBrush();
             }));
 
-            _disposables.Add(Config.Current.Background.SubscribePropertyChanged(nameof(BackgroundConfig.PageBackgroundColor), (s, e) =>
-            {
-                UpdatePageBackgroundBrush();
-            }));
-
-            _disposables.Add(Config.Current.Background.SubscribePropertyChanged(nameof(BackgroundConfig.IsPageBackgroundChecker), (s, e) =>
-            {
-                UpdatePageBackgroundBrush();
-            }));
-
             // Initialize
             UpdateCustomBackgroundBrush();
             UpdateBackgroundBrush();
-            UpdatePageBackgroundBrush();
         }
 
 
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!_disposedValue)
-            {
-                if (disposing)
-                {
-                    _disposables.Dispose();
-                }
-
-                _disposedValue = true;
-            }
-        }
-
-        public void Dispose()
-        {
-            Dispose(disposing: true);
-            GC.SuppressFinalize(this);
-        }
-
-
-        // Foregroudh Brush：ファイルページのフォントカラー用
+        // Foreground Brush：ファイルページのフォントカラー用
         public SolidColorBrush ForegroundBrush
         {
             get { return _foregroundBrush; }
             set { SetProperty(ref _foregroundBrush, value); }
         }
 
-        // ページ背景ブラシ
-        public Brush? PageBackgroundBrush
-        {
-            get { return _pageBackgroundBrush; }
-            set { SetProperty(ref _pageBackgroundBrush, value); }
-        }
-
-        // Backgroud Brush
+        // Background Brush
         public Brush? BackgroundBrush
         {
             get { return _backgroundBrush; }
@@ -142,6 +101,23 @@ namespace NeeView
         public Brush CheckBackgroundBrushDark { get; } = (DrawingBrush)Application.Current.Resources["CheckerBrushDark"];
 
 
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!_disposedValue)
+            {
+                if (disposing)
+                {
+                    _disposables.Dispose();
+                }
+                _disposedValue = true;
+            }
+        }
+
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
 
         private void ContentCanvas_ContentChanged(object? sender, EventArgs e)
         {
@@ -151,13 +127,6 @@ namespace NeeView
         private void ContentCanvas_DpiChanged(object? sender, EventArgs e)
         {
             UpdateBackgroundBrush();
-        }
-
-        public void UpdatePageBackgroundBrush()
-        {
-            PageBackgroundBrush = Config.Current.Background.PageBackgroundColor.A > 0
-                ? Config.Current.Background.IsPageBackgroundChecker ? CreateCheckerBrush(Config.Current.Background.PageBackgroundColor) : new SolidColorBrush(Config.Current.Background.PageBackgroundColor)
-                : null;
         }
 
         // from http://msdn.microsoft.com/en-us/library/aa970904.aspx

@@ -244,10 +244,7 @@ namespace NeeView
         }
 
 
-        protected virtual FrameworkElement CreateLoadedContent(Size size, object data)
-        {
-            return ViewContentTools.CreateDummyContent(Element);
-        }
+        protected abstract FrameworkElement CreateLoadedContent(Size size, object data);
     }
 
 

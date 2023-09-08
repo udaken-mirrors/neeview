@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace NeeView
@@ -218,9 +219,29 @@ namespace NeeView
         }
 
         /// <summary>
+        /// データを読み込む
+        /// </summary>
+        /// <param name="token"></param>
+        /// <returns></returns>
+        /// <exception cref="IOException"></exception>
+        public async Task<byte[]> LoadAsync(CancellationToken token)
+        {
+            var data = GetRawData();
+            if (data is not null) return data;
+
+            using var stream = OpenEntry();
+            var length = stream.Length;
+            var buffer = new byte[length];
+            var readSize = await stream.ReadAsync(buffer, 0, (int)length, token);
+            if (readSize < length) throw new IOException("This file size is too large to read.");
+            return buffer;
+        }
+
+
+        /// <summary>
         /// ファイルシステムでのパスを返す
         /// </summary>
-        /// <returns>パス。圧縮ファイルの場合はnull</returns>
+        /// <returns>パス。圧縮ファイルの場合は null</returns>
         public string? GetFileSystemPath()
         {
             return Archiver.GetFileSystemPath(this);

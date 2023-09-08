@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
@@ -11,25 +12,28 @@ namespace NeeView
 {
     public class ImageContentControl : ContentControl, IDisposable, IHasImageSource
     {
-        private PageFrameElement _element;
-        private ImageSource _image;
-        private ViewContentSize _contentSize;
-        private Rectangle _rectangle;
+        private readonly PageFrameElement _element;
+        private readonly ImageSource _image;
+        private readonly ViewContentSize _contentSize;
+        private readonly Rectangle _rectangle;
         private bool _disposedValue;
         private BitmapScalingMode? _scalingMode;
 
 
-        public ImageContentControl(PageFrameElement source, ImageSource image, ViewContentSize contentSize)
+        public ImageContentControl(PageFrameElement source, ImageSource image, ViewContentSize contentSize, PageBackgroundSource backgroundSource)
         {
             _element = source;
             _image = image;
             _contentSize = contentSize;
-
             _rectangle = new Rectangle();
             _rectangle.Fill = CreatePageImageBrush(true);
             UpdateBitmapScalingMode();
 
-            this.Content = _rectangle;
+            var border = new Border();
+            border.SetBinding(Border.BackgroundProperty, new Binding(nameof(PageBackgroundSource.Brush)) { Source = backgroundSource });
+            border.Child = _rectangle;
+
+            this.Content = border;
             this.Width = _contentSize.LayoutSize.Width;
             this.Height = _contentSize.LayoutSize.Height;
 

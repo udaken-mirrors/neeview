@@ -35,8 +35,8 @@ namespace NeeView
 
                 new GestureDragAction(GestureDragActionName),
 
-                new LoupeDragAction(),
-                new HoverDragAction(),
+                //new LoupeDragAction(),
+                //new HoverDragAction(),
             };
 
             _elements = list.ToDictionary(e => e.Name);
@@ -107,7 +107,7 @@ namespace NeeView
         /// </summary>
         public DragAction? GetAction(DragKey key)
         {
-            return _elements.Values.FirstOrDefault(e => e.DragKey == key);
+            return _elements.Values.Where(e => !e.IsDummy).FirstOrDefault(e => e.DragKey == key);
         }
 
         public bool TryGetValue(DragKey dragKey, [MaybeNullWhen(false)] out DragAction source)

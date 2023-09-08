@@ -91,6 +91,13 @@ namespace NeeView
                     _action.SetAction(action);
                     _action.ExecuteBegin(point, timestamp);
                 }
+                else
+                {
+                    _action.ExecuteEnd(point, timestamp, false);
+                    _action.SetAction(null);
+                    _isMouseButtonDown = false;
+                    return;
+                }
             }
 
             // exec action

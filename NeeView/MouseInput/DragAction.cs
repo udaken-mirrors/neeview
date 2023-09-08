@@ -23,7 +23,9 @@ namespace NeeView
 
         public string Note { get; init; } = "";
 
-        public bool IsLocked { get; set; }
+        public bool IsDummy { get; init; }
+
+        public bool IsLocked { get; init; }
 
         public DragKey DragKey { get; set; } = DragKey.Empty;
 
