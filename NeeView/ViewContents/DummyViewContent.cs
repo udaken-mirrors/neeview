@@ -12,7 +12,7 @@ namespace NeeView
         {
         }
 
-        protected override  FrameworkElement CreateLoadedContent(Size size, object data)
+        protected override  FrameworkElement CreateLoadedContent(object data)
         {
             var grid = new Grid();
             grid.SetBinding(Grid.BackgroundProperty, new Binding(nameof(BookConfig.DummyPageColor)){ Source = Config.Current.Book, Converter = new ColorToBrushConverter() });

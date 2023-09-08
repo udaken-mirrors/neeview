@@ -49,7 +49,7 @@ namespace NeeView
             base.OnSourceChanged();
         }
 
-        protected override FrameworkElement CreateLoadedContent(Size size, object data)
+        protected override FrameworkElement CreateLoadedContent(object data)
         {
             if (_pageControl is not null)
             {

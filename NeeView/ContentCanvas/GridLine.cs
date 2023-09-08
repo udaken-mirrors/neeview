@@ -10,45 +10,47 @@ using System.Windows.Shapes;
 
 namespace NeeView
 {
-    public class GridLine : BindableBase
+    public class GridLine : ContentControl, IDisposable
     {
+        private bool _disposedValue;
+        private DisposableCollection _disposables = new DisposableCollection();
+
+
         public GridLine()
         {
-            Config.Current.ImageGrid.PropertyChanged += (s, e) =>
+            _disposables.Add(Config.Current.ImageGrid.SubscribePropertyChanged((s, e) => Update()));
+            _disposables.Add(this.SubscribeSizeChanged((s, e) => Update()));
+        }
+
+
+        public IDisposable SubscribeSizeChanged(SizeChangedEventHandler handler)
+        {
+            SizeChanged += handler;
+            return new AnonymousDisposable(() => SizeChanged -= handler);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!_disposedValue)
             {
-                RaisePropertyChanged(nameof(Content));
-            };
-        }
-
-        private double _width;
-        public double Width
-        {
-            get { return _width; }
-            set { if (SetProperty(ref _width, value)) RaisePropertyChanged(nameof(Content)); }
-        }
-
-        private double _height;
-        public double Height
-        {
-            get { return _height; }
-            set { if (SetProperty(ref _height, value)) RaisePropertyChanged(nameof(Content)); }
-        }
-
-        public UIElement? Content
-        {
-            get { return CreatePath(); }
-        }
-
-        public void SetSize(double width, double height)
-        {
-            if (_width != width || _height != height)
-            {
-                _width = width;
-                _height = height;
-                RaisePropertyChanged(nameof(Width));
-                RaisePropertyChanged(nameof(Height));
-                RaisePropertyChanged(nameof(Content));
+                if (disposing)
+                {
+                    _disposables.Dispose();
+                }
+                _disposedValue = true;
             }
+        }
+
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
+
+        private void Update()
+        {
+            if (_disposedValue) return;
+            this.Content = CreatePath();
         }
 
         private UIElement? CreatePath()
@@ -105,8 +107,10 @@ namespace NeeView
             {
                 Data = geometry,
                 Stroke = stroke,
-                StrokeThickness = 1
+                StrokeThickness = 1,
             };
         }
+
     }
+
 }

@@ -101,7 +101,7 @@ namespace NeeView
 
 
 
-        protected override FrameworkElement CreateLoadedContent(Size size, object data)
+        protected override FrameworkElement CreateLoadedContent(object data)
         {
             var source = data as MediaSource ?? throw new InvalidOperationException();
             return CreateMediaContent(source);

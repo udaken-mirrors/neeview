@@ -88,7 +88,7 @@ namespace NeeView
 
 
 
-        protected override FrameworkElement CreateLoadedContent(Size size, object data)
+        protected override FrameworkElement CreateLoadedContent(object data)
         {
             _imageControl?.Dispose();
             _imageControl = null;

@@ -7,7 +7,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
 using System.Xml.Linq;
 using NeeLaboratory.ComponentModel;
 using NeeView.ComponentModel;
@@ -20,7 +19,8 @@ using NeeLaboratory.Generators;
 
 namespace NeeView
 {
-    public abstract partial class ViewContent : ContentControl, IDisposable
+
+    public abstract partial class ViewContent : ContentControl, IDisposable 
     {
         private bool _initialized;
         private PageFrameElement _element;
@@ -30,6 +30,7 @@ namespace NeeView
         private readonly ViewContentSize _viewContentSize;
         private bool _disposedValue;
         private readonly DisposableCollection _disposables = new();
+        private readonly SizeSource _sizeSource;
 
 
         public ViewContent(PageFrameElement element, PageFrameElementScale scale, ViewSource viewSource, PageFrameActivity activity)
@@ -41,8 +42,8 @@ namespace NeeView
 
             _viewContentSize = ViewContentSizeFactory.Create(element, scale);
 
-            Width = LayoutSize.Width;
-            Height = LayoutSize.Height;
+            _sizeSource = new SizeSource(LayoutSize);
+            _sizeSource.BindTo(this);
         }
 
 
@@ -169,14 +170,8 @@ namespace NeeView
         {
             bool sizeChanged = (Width != LayoutSize.Width || Height != LayoutSize.Height);
 
-            Width = LayoutSize.Width;
-            Height = LayoutSize.Height;
-
-            if (this.Content is FrameworkElement control)
-            {
-                control.Width = LayoutSize.Width;
-                control.Height = LayoutSize.Height;
-            }
+            _sizeSource.Width = LayoutSize.Width;
+            _sizeSource.Height = LayoutSize.Height;
 
             return sizeChanged;
         }
@@ -210,7 +205,7 @@ namespace NeeView
         protected void UpdateContent(DataSource data)
         {
             NVDebug.AssertSTA();
-            var unit = CreateContent(LayoutSize, data);
+            var unit = CreateContent(_sizeSource, data);
             Content = unit.Content;
             State = unit.State;
             UpdateSize();
@@ -219,7 +214,7 @@ namespace NeeView
 
 
 
-        protected virtual ViewContentData CreateContent(Size size, DataSource data)
+        protected virtual ViewContentData CreateContent(SizeSource size, DataSource data)
         {
             Debug.Assert(_initialized);
 
@@ -232,7 +227,7 @@ namespace NeeView
                 case DataState.Loaded:
                     Debug.WriteLine($"CreateContent.Loaded: {ArchiveEntry}");
                     Debug.Assert(data.Data is not null);
-                    return new ViewContentData(CreateLoadedContent(size, data.Data), ViewContentState.Loaded);
+                    return new ViewContentData(new DecoratedViewContent(size, CreateLoadedContent(data.Data)), ViewContentState.Loaded);
 
                 case DataState.Failed:
                     Debug.WriteLine($"CreateContent.Failed: {ArchiveEntry}");
@@ -243,8 +238,52 @@ namespace NeeView
             }
         }
 
+        protected abstract FrameworkElement CreateLoadedContent(object data);
+    }
 
-        protected abstract FrameworkElement CreateLoadedContent(Size size, object data);
+
+
+
+    public class DecoratedViewContent : Grid, IDisposable
+    {
+        private FrameworkElement _content;
+        private GridLine _gridLine;
+        private bool _disposedValue;
+
+
+        public DecoratedViewContent(SizeSource sizeSource, FrameworkElement content)
+        {
+            // content
+            _content = content;
+            sizeSource.BindTo(_content);
+            this.Children.Add(_content);
+
+            // grid line
+            _gridLine = new GridLine();
+            sizeSource.BindTo(_gridLine);
+            this.Children.Add(_gridLine);
+        }
+
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!_disposedValue)
+            {
+                if (disposing)
+                {
+                    _gridLine.Dispose();
+                    (_content as IDisposable)?.Dispose();
+                }
+
+                _disposedValue = true;
+            }
+        }
+
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
     }
 
 

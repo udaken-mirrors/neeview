@@ -34,8 +34,6 @@ namespace NeeView
             border.Child = _rectangle;
 
             this.Content = border;
-            this.Width = _contentSize.LayoutSize.Width;
-            this.Height = _contentSize.LayoutSize.Height;
 
             _contentSize.SizeChanged += ContentSize_SizeChanged;
         }
