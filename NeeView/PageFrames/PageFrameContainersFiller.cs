@@ -124,10 +124,10 @@ namespace NeeView.PageFrames
 
         private BlankSpace GetViewSpace(Rect viewRect, LinkedListNode<PageFrameContainer> anchor)
         {
-            var confrict = _math.GetConfrict(anchor.Value.Rect, viewRect);
+            var conflict = _math.GetConflict(anchor.Value.Rect, viewRect);
 
-            var restPrevious = confrict.GetDistance(LinkedListDirection.Previous.ToSign()) - _context.FrameMargin;
-            var restNext = confrict.GetDistance(LinkedListDirection.Next.ToSign()) - _context.FrameMargin;
+            var restPrevious = conflict.GetDistance(LinkedListDirection.Previous.ToSign()) - _context.FrameMargin;
+            var restNext = conflict.GetDistance(LinkedListDirection.Next.ToSign()) - _context.FrameMargin;
 
             return new BlankSpace(restPrevious, restNext);
         }
@@ -138,7 +138,7 @@ namespace NeeView.PageFrames
         }
 
 
-        private void UpdateContainer(LinkedListNode<PageFrameContainer> node)
+        public void UpdateContainer(LinkedListNode<PageFrameContainer> node)
         {
             if (node.Value.Content is not PageFrameContent) return;
             if (!node.Value.IsDirty) return;

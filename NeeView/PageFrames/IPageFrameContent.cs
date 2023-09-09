@@ -18,7 +18,7 @@ namespace NeeView.PageFrames
         PageRange FrameRange { get; }
         bool IsFirstFrame { get; }
         bool IsLastFrame { get; }
-        PageFrameDartyLevel DirtyLevel { get; set; }
+        PageFrameDirtyLevel DirtyLevel { get; set; }
         bool IsStaticFrame { get; }
 
         Rect GetContentRect();
@@ -47,9 +47,9 @@ namespace NeeView.PageFrames
 
         public bool IsLastFrame => false;
 
-        public PageFrameDartyLevel DirtyLevel
+        public PageFrameDirtyLevel DirtyLevel
         {
-            get { return PageFrameDartyLevel.Clean; }
+            get { return PageFrameDirtyLevel.Clean; }
             set { }
         }
 
@@ -63,7 +63,7 @@ namespace NeeView.PageFrames
         {
         }
 
-        public static void SetDirty(PageFrameDartyLevel level)
+        public static void SetDirty(PageFrameDirtyLevel level)
         {
         }
 

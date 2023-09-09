@@ -25,11 +25,11 @@ namespace NeeView.PageFrames
             if (_context.IsStaticFrame)
             {
                 var containerRect = container.Rect.Size.ToRect();
-                return new ContentTransformControl(container, containerRect, _scrollLock);
+                return new ContentTransformControl(_context, container, containerRect, _scrollLock);
             }
             else
             {
-                return new ViewTransformControl(container, _viewContext, _scrollLock);
+                return new ViewTransformControl(_context, container, _viewContext, _scrollLock);
             }
         }
 

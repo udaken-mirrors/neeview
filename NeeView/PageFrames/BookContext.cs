@@ -6,6 +6,7 @@ using System.Windows;
 using System.Windows.Controls;
 using NeeLaboratory.ComponentModel;
 using NeeLaboratory.Generators;
+using NeeView.ComponentModel;
 
 namespace NeeView.PageFrames
 {
@@ -190,6 +191,7 @@ namespace NeeView.PageFrames
         private DisposableCollection _disposables = new DisposableCollection();
         private bool _disposedValue;
         private BookShareContext _share;
+        private readonly BooleanLockValue _isSnapAnchor = new();
 
 
         //public static BookContext CreateDummyBookContext(Config config)
@@ -327,6 +329,11 @@ namespace NeeView.PageFrames
             get { return _loupeScale; }
             set { SetProperty(ref _loupeScale, value); }
         }
+
+
+        public BooleanLockValue IsSnapAnchor => _isSnapAnchor;
+
+
 
         protected virtual void Dispose(bool disposing)
         {

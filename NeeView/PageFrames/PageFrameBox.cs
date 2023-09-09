@@ -48,7 +48,7 @@ namespace NeeView.PageFrames
         /// <summary>
         /// アンカーコンテナを座標補正する
         /// </summary>
-        private readonly BooleanLockValue _isSnapAnchor = new();
+        //private readonly BooleanLockValue _isSnapAnchor = new();
 
         private readonly RepeatLimiter _scrollRepeatLimiter = new();
         private readonly ScrollLock _scrollLock = new();
@@ -74,9 +74,7 @@ namespace NeeView.PageFrames
         {
             _context = context;
             _disposables.Add(_context); // このクラスがDisposableする？
-            _disposables.Add(_context.SubscribePropertyChanged((s, e) => AppDispatcher.BeginInvoke(() => Context_PropertyChanged(s, e))));
-            _disposables.Add(_context.SubscribeSizeChanging(Context_SizeChanging));
-            _disposables.Add(_context.SubscribeSizeChanged(Context_SizeChanged));
+
 
             _bookContext = bookContext;
             _disposables.Add(_bookContext); // このクラスがDisposableする？
@@ -152,8 +150,6 @@ namespace NeeView.PageFrames
             _scrollViewer.SizeChanged += _context.SetCanvasSize;
             _containers.CollectionChanged += ContainerCollection_CollectionChanged;
 
-
-
             //_context.SelectedItemChanged += Context_SelectedItemChanged;
             _visiblePageWatcher.VisibleContainersChanged += VisiblePageWatcher_VisibleContainersChanged;
             _viewBox.RectChanging += ViewBox_RectChanging;
@@ -161,6 +157,11 @@ namespace NeeView.PageFrames
 
             // 表示ページ監視
             _disposables.Add(new PageFrameContainersSelectedPageWatcher(this, _bookContext.Book));
+
+            // Context のイベントは最後に処理
+            _disposables.Add(_context.SubscribePropertyChanged((s, e) => AppDispatcher.BeginInvoke(() => Context_PropertyChanged(s, e))));
+            _disposables.Add(_context.SubscribeSizeChanging(Context_SizeChanging));
+            _disposables.Add(_context.SubscribeSizeChanged(Context_SizeChanged));
 
             Loaded += PageFrameBox_Loaded;
         }
@@ -348,7 +349,7 @@ namespace NeeView.PageFrames
                 FillContainers();
                 _layout.Flush();
                 UpdatePosition();
-                _isSnapAnchor.Reset();
+                ResetSnapAnchor();
                 AssertSelectedExists();
             }
 
@@ -356,7 +357,7 @@ namespace NeeView.PageFrames
             {
                 FillContainers();
 
-                var options = (_isSnapAnchor.IsSet && node == _containers.Anchor.Node && _rectMath.WithinView(_viewBox.Rect, node))
+                var options = (_context.IsSnapAnchor.IsSet && node == _containers.Anchor.Node && _rectMath.WithinView(_viewBox.Rect, node))
                     ? ScrollToViewOriginOption.None
                     : ScrollToViewOriginOption.IgnoreFrameScroll;
 
@@ -391,7 +392,8 @@ namespace NeeView.PageFrames
 
         private void Context_SizeChanged(object? sender, SizeChangedEventArgs e)
         {
-            UpdateContainers(PageFrameDartyLevel.Moderate);
+            //UpdateContainers(PageFrameDartyLevel.Moderate);
+            SnapOrigin();
         }
 
 
@@ -413,23 +415,73 @@ namespace NeeView.PageFrames
 #endif
 
         /// <summary>
+        /// 基準位置スナップ
+        /// </summary>
+        /// <remarks>
+        /// ページ切り替え直後のページ開始位置をキープする処理
+        /// </remarks>
+        /// <param name="node">スナップさせるノード</param>
+        private void SnapOrigin()
+        {
+            // 選択とアンカーを一致させる
+            var node = _selected.Node;
+            _containers.Anchor.Set(node);
+
+            // 通常の更新確認
+            _containers.SetDarty(PageFrameDirtyLevel.Moderate);
+
+            // 選択コンテナ更新
+            _filler.UpdateContainer(node);
+
+#if false
+            var options = (_context.IsSnapAnchor.IsSet) // && node == _containers.Anchor.Node && _rectMath.WithinView(_viewBox.Rect, node))
+                ? ScrollToViewOriginOption.None
+                : ScrollToViewOriginOption.IgnoreFrameScroll;
+            ScrollToViewOrigin(node, _containers.Anchor.Direction, options);
+#endif
+            // 座標補正
+            if (_context.IsSnapAnchor.IsSet)
+            {
+                // 基準位置になるようスクロール
+                ScrollToViewOrigin(node, _containers.Anchor.Direction);
+            }
+            else
+            {
+                // 表示範囲内補正
+                SnapView();
+            }
+
+            // 表示に必要なコンテナ生成
+            FillContainers();
+
+            // コンテナのレイアウト
+            _layout.Flush();
+
+            // 表示の確定
+            _scrollViewer.FlushScroll();
+            Cleanup();
+        }
+
+        /// <summary>
         /// すべてのコンテナを更新
         /// </summary>
-        private void UpdateContainers(PageFrameDartyLevel level)
+        private void UpdateContainers(PageFrameDirtyLevel level)
         {
-            Debug.WriteLine($"# PageFrameBox.UpdateContainers(): IsSnap={_isSnapAnchor.IsSet}");
+            Debug.WriteLine($"# PageFrameBox.UpdateContainers(): IsSnap={_context.IsSnapAnchor.IsSet}");
 
             _containers.SetDarty(level);
             _containers.Anchor.FixDirection();
             FillContainers();
 
-            _canvasPointStorage.Restore(_storePoint);
+            //_canvasPointStorage.Restore(_storePoint); // これなんかよろしくないでしょ。おかしくなるようなのはSnapOriginで基準位置移動させる方向を検討してみて
             SnapView();
 
             _layout.Flush();
             _scrollViewer.FlushScroll();
             Cleanup();
         }
+
+
 
         /// <summary>
         /// すべてのコンテナを再作成
@@ -438,7 +490,7 @@ namespace NeeView.PageFrames
         {
             using (var pauser = new BookPageLoadPause(_loader))
             {
-                _containers.SetDarty(PageFrameDartyLevel.Replace);
+                _containers.SetDarty(PageFrameDirtyLevel.Replace);
                 _transformMap.Clear();
 
                 //_containers.Anchor.FixDirection();
@@ -502,8 +554,6 @@ namespace NeeView.PageFrames
             // TODO: プロパティによってどこまでリセットするか等を選別する
             // TODO: プロパティ変更による TransformMap のリセット
 
-            var dirtyLevel = PageFrameDartyLevel.Moderate;
-
             switch (e.PropertyName)
             {
                 //case nameof(BookContext.SelectedItem):
@@ -512,6 +562,7 @@ namespace NeeView.PageFrames
 
                 case nameof(Context.IsStaticFrame):
                     _transformMap.ClearPoint(default);
+                    UpdateContainers(PageFrameDirtyLevel.Moderate);
                     break;
 
                 case nameof(Context.FrameMargin):
@@ -536,6 +587,7 @@ namespace NeeView.PageFrames
                     {
                         MoveTo(_selected.PagePosition.OtherPart(), LinkedListDirection.Next);
                     }
+                    UpdateContainers(PageFrameDirtyLevel.Moderate);
                     break;
 
                 case nameof(Context.IsSupportedDividePage):
@@ -544,10 +596,16 @@ namespace NeeView.PageFrames
                     {
                         MoveTo(_selected.PagePosition.Truncate(), LinkedListDirection.Next);
                     }
+                    UpdateContainers(PageFrameDirtyLevel.Moderate);
                     break;
 
                 case nameof(Context.SortMode):
                     // 別処理
+                    return;
+
+                case nameof(Context.StretchMode):
+                    SetSnapAnchor();
+                    SnapOrigin();
                     return;
 
                 case nameof(Context.PageMode):
@@ -562,7 +620,7 @@ namespace NeeView.PageFrames
                 case nameof(Context.ImageResizeFilterConfig):
                 case nameof(Context.ImageDotKeepConfig):
                 case nameof(Context.IsInsertDummyPage):
-                    dirtyLevel = PageFrameDartyLevel.Heavy;
+                    UpdateContainers(PageFrameDirtyLevel.Heavy);
                     break;
 
                 case nameof(Context.ViewConfig):
@@ -571,9 +629,6 @@ namespace NeeView.PageFrames
                 case nameof(Context.CanvasSize):
                     return;
             }
-
-            // すべてのコンテナを更新
-            UpdateContainers(dirtyLevel);
         }
 
         private void VisiblePageWatcher_VisibleContainersChanged(object? sender, VisibleContainersChangedEventArgs e)
@@ -594,7 +649,7 @@ namespace NeeView.PageFrames
             if (e.Category == TransformCategory.View && e.Action == TransformAction.Point)
             {
                 UpdatePosition();
-                _isSnapAnchor.Reset();
+                //_isSnapAnchor.Reset();
             }
 
             Cleanup(e.Category == TransformCategory.View);
@@ -602,6 +657,16 @@ namespace NeeView.PageFrames
             TransformChanged?.Invoke(this, e);
         }
 
+
+        private void SetSnapAnchor()
+        {
+            _context.IsSnapAnchor.Set();
+        }
+
+        public void ResetSnapAnchor()
+        {
+            _context.IsSnapAnchor.Reset();
+        }
 
 
         public void MoveTo(PagePosition position, LinkedListDirection direction)
@@ -626,7 +691,7 @@ namespace NeeView.PageFrames
             AssertSelectedExists();
 
             _scrollLock.Lock();
-            _isSnapAnchor.Set();
+            SetSnapAnchor();
         }
 
 
@@ -698,7 +763,7 @@ namespace NeeView.PageFrames
             Cleanup();
 
             _scrollLock.Lock();
-            _isSnapAnchor.Set();
+            SetSnapAnchor();
         }
 
         public void MoveToNextFrame(LinkedListDirection direction)
@@ -728,7 +793,7 @@ namespace NeeView.PageFrames
             Cleanup();
 
             _scrollLock.Lock();
-            _isSnapAnchor.Set();
+            SetSnapAnchor();
         }
 
         public void MoveToNextFolder(LinkedListDirection direction, bool isShowMessage)
@@ -876,7 +941,7 @@ namespace NeeView.PageFrames
 
             _selected.SetAuto();
             AssertSelectedExists();
-            _isSnapAnchor.Reset();
+            ResetSnapAnchor();
             //UpdateTransform(node);
         }
 

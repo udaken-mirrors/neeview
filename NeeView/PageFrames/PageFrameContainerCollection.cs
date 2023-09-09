@@ -408,7 +408,7 @@ namespace NeeView.PageFrames
         /// <summary> 
         /// すべてのコンテナに作り直しフラグ設定
         /// </summary>
-        public void SetDarty(PageFrameDartyLevel level)
+        public void SetDarty(PageFrameDirtyLevel level)
         {
             foreach (var container in _containers.ToList())
             {

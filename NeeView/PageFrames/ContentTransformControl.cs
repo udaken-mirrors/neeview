@@ -9,12 +9,14 @@ namespace NeeView.PageFrames
     // TODO: ページ移動とPointの初期化問題
     public class ContentTransformControl : ITransformControl
     {
-        private PageFrameContainer _container;
-        private Rect _containerRect;
-        private ScrollLock _scrollLock;
+        private readonly PageFrameContext _context;
+        private readonly PageFrameContainer _container;
+        private readonly Rect _containerRect;
+        private readonly ScrollLock _scrollLock;
 
-        public ContentTransformControl(PageFrameContainer container, Rect viewRect, ScrollLock scrollLock)
+        public ContentTransformControl(PageFrameContext context, PageFrameContainer container, Rect viewRect, ScrollLock scrollLock)
         {
+            _context = context;
             _container = container;
             _containerRect = viewRect;
             _scrollLock = scrollLock;
@@ -52,6 +54,7 @@ namespace NeeView.PageFrames
 
         public void SetPoint(Point value, TimeSpan span)
         {
+            _context.IsSnapAnchor.Reset();
             _container.Transform.SetPoint(value, span);
         }
 
@@ -67,6 +70,7 @@ namespace NeeView.PageFrames
             var areaLimit = new ScrollAreaLimit(contentRect, _containerRect);
             delta = areaLimit.GetLimitContentMove(delta);
 
+            _context.IsSnapAnchor.Reset();
             _container.Transform.SetPoint(_container.Transform.Point + delta, span);
         }
 

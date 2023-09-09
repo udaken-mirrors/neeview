@@ -115,7 +115,7 @@ namespace NeeView.PageFrames
         {
             if (Point == value) return;
 
-            //Debug.WriteLine($"## {{{Point:f0}}} to {{{value:f0}}} ({span.TotalMilliseconds})");
+            Debug.WriteLine($"## {{{Point:f0}}} to {{{value:f0}}} ({span.TotalMilliseconds})");
             _transform.SetPoint(value, span);
             RaisePropertyChanged(nameof(Point));
         }

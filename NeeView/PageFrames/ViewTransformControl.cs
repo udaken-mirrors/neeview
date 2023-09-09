@@ -6,12 +6,14 @@ namespace NeeView.PageFrames
 {
     public class ViewTransformControl : ITransformControl
     {
-        private ViewTransformContext _viewContext;
-        private PageFrameContainer _container;
-        private ScrollLock _scrollLock;
+        private readonly PageFrameContext _context;
+        private readonly ViewTransformContext _viewContext;
+        private readonly PageFrameContainer _container;
+        private readonly ScrollLock _scrollLock;
 
-        public ViewTransformControl(PageFrameContainer container, ViewTransformContext viewContext, ScrollLock scrollLock)
+        public ViewTransformControl(PageFrameContext context, PageFrameContainer container, ViewTransformContext viewContext, ScrollLock scrollLock)
         {
+            _context = context;
             _viewContext = viewContext;
             _container = container;
             _scrollLock = scrollLock;
@@ -48,13 +50,13 @@ namespace NeeView.PageFrames
 
         public void SetPoint(Point value, TimeSpan span)
         {
+            _context.IsSnapAnchor.Reset();
             _viewContext.SetPoint(value, span);
         }
 
         public void AddPoint(Vector value, TimeSpan span)
         {
             var canvasRect = _viewContext.CanvasRect;
-
 
             // scroll lock
             _scrollLock.Update(canvasRect, _viewContext.ViewRect);
@@ -64,6 +66,7 @@ namespace NeeView.PageFrames
             var areaLimit = new ScrollAreaLimit(canvasRect, _viewContext.ViewRect);
             delta = areaLimit.GetLimitContentMove(delta);
 
+            _context.IsSnapAnchor.Reset();
             _viewContext.AddPoint(delta, span);
         }
 

@@ -3,7 +3,7 @@
     /// <summary>
     /// PageFrame更新要求レベル
     /// </summary>
-    public enum PageFrameDartyLevel
+    public enum PageFrameDirtyLevel
     {
         /// <summary>
         /// 変更なし
@@ -11,18 +11,20 @@
         Clean,
 
         /// <summary>
-        /// 変更あり
+        /// 変更の可能性あり。
+        /// PageFrame情報に差異があればViewContent更新
         /// </summary>
         Moderate,
 
         /// <summary>
-        /// 強めの変更あり。
-        /// フィルター等PageFrame情報以外の変更。ViewContent強制更新
+        /// 変更。
+        /// PageFrame情報に差異がなくてもViewContent更新。
+        /// フィルター等のPageFrame以外の情報変更による。
         /// </summary>
         Heavy,
 
         /// <summary>
-        /// 作り直し
+        /// コンテナから作り直し
         /// </summary>
         Replace,
     }

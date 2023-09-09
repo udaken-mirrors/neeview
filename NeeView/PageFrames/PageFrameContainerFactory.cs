@@ -35,7 +35,7 @@ namespace NeeView.PageFrames
 
         public void Update(PageFrameContainer container, PageFrame frame)
         {
-            if (container.Content is PageFrameContent frameContent && frameContent.PageFrame.IsMatch(frame) && container.DirtyLevel < PageFrameDartyLevel.Replace )
+            if (container.Content is PageFrameContent frameContent && frameContent.PageFrame.IsMatch(frame) && container.DirtyLevel < PageFrameDirtyLevel.Replace )
             {
                 frameContent.SetSource(frame);
                 container.UpdateFrame();

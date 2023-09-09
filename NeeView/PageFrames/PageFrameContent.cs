@@ -56,7 +56,7 @@ namespace NeeView.PageFrames
         /// </summary>
         private readonly TransformGroup _boundsTransform;
 
-        private PageFrameDartyLevel _dirtyLevel;
+        private PageFrameDirtyLevel _dirtyLevel;
 
         /// <summary>
         /// 基底スケールのトランスフォーム
@@ -138,9 +138,9 @@ namespace NeeView.PageFrames
         public bool IsFirstFrame => (_pageFrame.Terminal & PageTerminal.First) == PageTerminal.First;
         public bool IsLastFrame => (_pageFrame.Terminal & PageTerminal.Last) == PageTerminal.Last;
 
-        public bool IsDirty => _dirtyLevel > PageFrameDartyLevel.Clean;
+        public bool IsDirty => _dirtyLevel > PageFrameDirtyLevel.Clean;
 
-        public PageFrameDartyLevel DirtyLevel
+        public PageFrameDirtyLevel DirtyLevel
         {
             get => _dirtyLevel;
             set => _dirtyLevel = _dirtyLevel < value ? value : _dirtyLevel;
@@ -189,14 +189,14 @@ namespace NeeView.PageFrames
 
         private void Page_SizeChanged(object? sender, EventArgs e)
         {
-            DirtyLevel = PageFrameDartyLevel.Moderate;
+            DirtyLevel = PageFrameDirtyLevel.Moderate;
             ContentSizeChanged?.Invoke(this, EventArgs.Empty);
         }
 
         public void SetSource(PageFrame pageFrame)
         {
-            var isForce = DirtyLevel >= PageFrameDartyLevel.Heavy;
-            _dirtyLevel = PageFrameDartyLevel.Clean;
+            var isForce = DirtyLevel >= PageFrameDirtyLevel.Heavy;
+            _dirtyLevel = PageFrameDirtyLevel.Clean;
 
             if (!_pageFrame.IsMatch(pageFrame)) throw new ArgumentException("Resources do not match");
             if (!isForce && _pageFrame.Equals(pageFrame)) return;

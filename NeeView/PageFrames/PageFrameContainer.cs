@@ -135,10 +135,10 @@ namespace NeeView.PageFrames
         public IPageFrameTransform Transform => _content.Transform;
 
         public bool IsLocked => _content.IsLocked;
-        public bool IsDirty => _content.DirtyLevel > PageFrameDartyLevel.Clean;
+        public bool IsDirty => _content.DirtyLevel > PageFrameDirtyLevel.Clean;
         public bool IsLayouted { get; set; }
 
-        public PageFrameDartyLevel DirtyLevel
+        public PageFrameDirtyLevel DirtyLevel
         {
             get => _content.DirtyLevel;
             set => _content.DirtyLevel = value;

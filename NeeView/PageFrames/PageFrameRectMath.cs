@@ -67,12 +67,12 @@ namespace NeeView.PageFrames
                 : new Rect(rect.X, rect.Y - margin, rect.Width, rect.Height + margin * 2.0);
         }
 
-        public PageFrameRectConfrict GetConfrict(Rect rect, Rect rectTarget)
+        public PageFrameRectConfrict GetConflict(Rect rect, Rect rectTarget)
         {
-            return new PageFrameRectConfrict(GetConfrictRate(GetMin(rect), rectTarget), GetConfrictRate(GetMax(rect), rectTarget), GetWidth(rectTarget));
+            return new PageFrameRectConfrict(GetConflictRate(GetMin(rect), rectTarget), GetConflictRate(GetMax(rect), rectTarget), GetWidth(rectTarget));
         }
 
-        public double GetConfrictRate(double x, Rect rect)
+        public double GetConflictRate(double x, Rect rect)
         {
             var min = GetMin(rect);
             var max = GetMax(rect);
