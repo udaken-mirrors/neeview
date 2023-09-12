@@ -7007,6 +7007,24 @@ namespace NeeView.Properties {
         }
         
         /// <summary>
+        ///   Enable Video Page に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string ImageConfig_IsMediaEnabled {
+            get {
+                return ResourceManager.GetString("ImageConfig.IsMediaEnabled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   The type of video file is set in the &quot;@SettingPage.Archive.Media&quot; settings page. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string ImageConfig_IsMediaEnabled_Remarks {
+            get {
+                return ResourceManager.GetString("ImageConfig.IsMediaEnabled.Remarks", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Applicability rate に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string ImageCustomSizeConfig_ApplicabilityRate {
@@ -14950,6 +14968,15 @@ namespace NeeView.Properties {
         }
         
         /// <summary>
+        ///   Video に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string SettingPage_FileTypes_Media {
+            get {
+                return ResourceManager.GetString("SettingPage.FileTypes.Media", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   SVG に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string SettingPage_FileTypes_Svg {
@@ -19534,6 +19561,24 @@ namespace NeeView.Properties {
         }
         
         /// <summary>
+        ///   Keep view transform に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string ViewConfig_IsKeepPageTransform {
+            get {
+                return ResourceManager.GetString("ViewConfig.IsKeepPageTransform", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Keep page-by-page rotation, scaling, and flip. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string ViewConfig_IsKeepPageTransform_Remarks {
+            get {
+                return ResourceManager.GetString("ViewConfig.IsKeepPageTransform.Remarks", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Maintain scaling even when changing pages に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string ViewConfig_IsKeepScale {
@@ -19742,7 +19787,7 @@ namespace NeeView.Properties {
         }
         
         /// <summary>
-        ///   Reset rotation, scaling, movement, and inversion by manipulating the view. に類似しているローカライズされた文字列を検索します。
+        ///   Reset rotation, scaling, movement, and flip by manipulating the view. に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string ViewResetCommand_Remarks {
             get {

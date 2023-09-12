@@ -8,15 +8,15 @@ namespace NeeView.PageFrames
     {
         // TODO: container recycle ... ここではないな
 
-        private IStaticFrame _staticFrameProfile;
+        private PageFrameContext _context;
         private PageFrameTransformMap _transformMap;
         private LoupeTransformContext _loupeContext;
         private ViewContentFactory _viewContentFactory;
         private BaseScaleTransform _baseScaleTransform;
 
-        public PageFrameContainerFactory(IStaticFrame staticFrameProfile, PageFrameTransformMap transformMap, ViewSourceMap viewSourceMap, LoupeTransformContext loupeContext, BaseScaleTransform baseScaleTransform)
+        public PageFrameContainerFactory(PageFrameContext context, PageFrameTransformMap transformMap, ViewSourceMap viewSourceMap, LoupeTransformContext loupeContext, BaseScaleTransform baseScaleTransform)
         {
-            _staticFrameProfile = staticFrameProfile;
+            _context = context;
             _transformMap = transformMap;
             _loupeContext = loupeContext;
             _viewContentFactory = new ViewContentFactory(viewSourceMap);
@@ -27,8 +27,16 @@ namespace NeeView.PageFrames
         public PageFrameContainer Create(PageFrame frame)
         {
             var activity = new PageFrameActivity();
-            var transform = new PageFrameTransformAccessor(_transformMap, _transformMap.ElementAt(frame.FrameRange.Min));
-            var content = new PageFrameContent(_viewContentFactory, _staticFrameProfile, frame, activity, transform, _loupeContext, _baseScaleTransform);
+            var key = PageFrameTransformTool.CreateKey(frame);
+
+            var rawTransform = _transformMap.ElementAt(key);
+            if (!_context.ViewConfig.IsKeepPageTransform)
+            {
+                rawTransform.Clear();
+            }
+
+            var transform = new PageFrameTransformAccessor(_transformMap, rawTransform);
+            var content = new PageFrameContent(_viewContentFactory, _context, frame, activity, transform, _loupeContext, _baseScaleTransform);
             var container = new PageFrameContainer(content, activity);
             return container;
         }
@@ -43,8 +51,9 @@ namespace NeeView.PageFrames
             else
             {
                 var activity = container.Activity;
-                var transform = new PageFrameTransformAccessor(_transformMap, _transformMap.ElementAt(frame.FrameRange.Min));
-                var content = new PageFrameContent(_viewContentFactory, _staticFrameProfile, frame, activity, transform, _loupeContext, _baseScaleTransform);
+                var key = PageFrameTransformTool.CreateKey(frame);
+                var transform = new PageFrameTransformAccessor(_transformMap, _transformMap.ElementAt(key));
+                var content = new PageFrameContent(_viewContentFactory, _context, frame, activity, transform, _loupeContext, _baseScaleTransform);
                 container.Content = content;
                 container.UpdateFrame();
             }

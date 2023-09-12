@@ -1,17 +1,35 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows;
 using NeeLaboratory.Generators;
 
 namespace NeeView.PageFrames
 {
+    public record class PageFrameTransformKey(Page Page, PagePart Part);
+
+    public static class PageFrameTransformTool
+    {
+        /// <summary>
+        /// PageFrame から PageFrameTransformKey を生成する
+        /// </summary>
+        /// <param name="pageFrame"></param>
+        /// <returns></returns>
+        public static PageFrameTransformKey CreateKey(PageFrame pageFrame)
+        {
+            Debug.Assert(pageFrame.Elements.Any());
+            var element = pageFrame.Elements.First();
+            return new PageFrameTransformKey(element.Page, element.PagePart);
+        }
+    }
+
     // TODO: Lock用Transform は専用のものでよいのでは？
     [NotifyPropertyChanged]
     public partial class PageFrameTransformMap : INotifyPropertyChanged
     {
-        private readonly Dictionary<PagePosition, PageFrameTransform> _map = new();
+        private readonly Dictionary<PageFrameTransformKey, PageFrameTransform> _map = new();
         private PageFrameTransform _share = new();
 
         private IShareTransformContext _shareContext;
@@ -109,12 +127,12 @@ namespace NeeView.PageFrames
         }
 
         // NOTE: Disposable
-        public PageFrameTransformAccessor CreateAccessor(PagePosition position)
+        public PageFrameTransformAccessor CreateAccessor(PageFrameTransformKey position)
         {
             return new PageFrameTransformAccessor(this, ElementAt(position));
         }
 
-        public PageFrameTransform ElementAt(PagePosition position)
+        public PageFrameTransform ElementAt(PageFrameTransformKey position)
         {
             if (_map.TryGetValue(position, out var transform))
                 return transform;
@@ -122,7 +140,7 @@ namespace NeeView.PageFrames
                 return _map[position] = new PageFrameTransform();
         }
 
-        public bool ContainsKey(PagePosition position)
+        public bool ContainsKey(PageFrameTransformKey position)
         {
             return _map.ContainsKey(position);
         }
@@ -199,7 +217,7 @@ namespace NeeView.PageFrames
         /// </summary>
         /// <param name="position">ページ位置</param>
         /// <returns></returns>
-        public (bool IsFlipHorizontal, bool IsFlipVertical) GetFlip(PagePosition position)
+        public (bool IsFlipHorizontal, bool IsFlipVertical) GetFlip(PageFrameTransformKey position)
         {
             if (IsFlipLocked)
             {
@@ -220,7 +238,7 @@ namespace NeeView.PageFrames
         /// </summary>
         /// <param name="position">ページ位置</param>
         /// <returns></returns>
-        public double GetScale(PagePosition position)
+        public double GetScale(PageFrameTransformKey position)
         {
             if (IsScaleLocked)
             {
@@ -241,7 +259,7 @@ namespace NeeView.PageFrames
         /// </summary>
         /// <param name="position">ページ位置</param>
         /// <returns></returns>
-        public double GetAngle(PagePosition position)
+        public double GetAngle(PageFrameTransformKey position)
         {
             if (IsAngleLocked)
             {
@@ -262,7 +280,7 @@ namespace NeeView.PageFrames
         /// </summary>
         /// <param name="position">ページ位置</param>
         /// <returns></returns>
-        public Point GetPoint(PagePosition position)
+        public Point GetPoint(PageFrameTransformKey position)
         {
             if (_map.TryGetValue(position, out var transform))
             {

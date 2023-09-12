@@ -653,7 +653,7 @@ namespace NeeView.PageFrames
         {
             if (!_context.IsStaticFrame) return;
 
-            if (node?.Value.Content is not PageFrameContent) return;
+            if (node?.Value.Content is not PageFrameContent pageFrameContent) return;
 
             // TODO: ページ移動による初期位置パラメータの反映。なにもしないという設定も新しく追加
 
@@ -663,7 +663,8 @@ namespace NeeView.PageFrames
             point.X = -point.X; // コンテンツ座標系に補正する
             point.Y = -point.Y;
 
-            _transformMap.ElementAt(node.Value.FrameRange.Min).SetPoint(point, TimeSpan.Zero);
+            var key = PageFrameTransformTool.CreateKey(pageFrameContent.PageFrame);
+            _transformMap.ElementAt(key).SetPoint(point, TimeSpan.Zero);
         }
 
         /// <summary>
@@ -673,9 +674,10 @@ namespace NeeView.PageFrames
         {
             if (!_context.IsStaticFrame) return;
 
-            if (node?.Value.Content is not PageFrameContent) return;
+            if (node?.Value.Content is not PageFrameContent pageFrameContent) return;
 
-            _transformMap.ElementAt(node.Value.FrameRange.Min).SetPoint(default, TimeSpan.Zero);
+            var key = PageFrameTransformTool.CreateKey(pageFrameContent.PageFrame);
+            _transformMap.ElementAt(key).SetPoint(default, TimeSpan.Zero);
         }
 
 
@@ -1042,7 +1044,9 @@ namespace NeeView.PageFrames
 
         public PageFrameTransformAccessor CreateSelectedTransform()
         {
-            return _transformMap.CreateAccessor(_selected.PageRange.Min);
+            var pageFrame = ((PageFrameContent)_selected.Container.Content).PageFrame;
+            var key = PageFrameTransformTool.CreateKey(pageFrame);
+            return _transformMap.CreateAccessor(key);
         }
 
         public void ResetTransform()

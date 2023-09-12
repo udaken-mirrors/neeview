@@ -6883,7 +6883,7 @@ nv.ShowToast(nv.Book.ViewPages[0].Path)</value>
     <value>View reset</value>
   </data>
   <data name="ViewResetCommand.Remarks" xml:space="preserve">
-    <value>Reset rotation, scaling, movement, and inversion by manipulating the view.</value>
+    <value>Reset rotation, scaling, movement, and flip by manipulating the view.</value>
   </data>
   <data name="ViewRotateCommandParameter.Angle" xml:space="preserve">
     <value>Rotation angle</value>
@@ -7454,5 +7454,20 @@ nv.ShowToast(nv.Book.ViewPages[0].Path)</value>
   </data>
   <data name="BookConfig.PageMoveDuration.Remarks" xml:space="preserve">
     <value>Valid when the page mode is "@PageMode.SinglePage" or "@PageMode.WidePage".</value>
+  </data>
+  <data name="ViewConfig.IsKeepPageTransform" xml:space="preserve">
+    <value>Keep view transform</value>
+  </data>
+  <data name="ViewConfig.IsKeepPageTransform.Remarks" xml:space="preserve">
+    <value>Keep page-by-page rotation, scaling, and flip.</value>
+  </data>
+  <data name="SettingPage.FileTypes.Media" xml:space="preserve">
+    <value>Video</value>
+  </data>
+  <data name="ImageConfig.IsMediaEnabled" xml:space="preserve">
+    <value>Enable Video Page</value>
+  </data>
+  <data name="ImageConfig.IsMediaEnabled.Remarks" xml:space="preserve">
+    <value>The type of video file is set in the "@SettingPage.Archive.Media" settings page.</value>
   </data>
 </root>

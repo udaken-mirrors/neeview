@@ -1,4 +1,5 @@
 ﻿using System.Windows;
+using System.Windows.Controls;
 using NeeView.PageFrames;
 
 namespace NeeView
@@ -18,8 +19,9 @@ namespace NeeView
 
         public PageFrameElementScale Create(PageFrame pageFrame)
         {
-            var transformScale = _transformMap.GetScale(pageFrame.FrameRange.Min);
-            var transformAngle = _transformMap.GetAngle(pageFrame.FrameRange.Min);
+            var key = PageFrameTransformTool.CreateKey(pageFrame);
+            var transformScale = _transformMap.GetScale(key);
+            var transformAngle = _transformMap.GetAngle(key);
 
             return new PageFrameElementScale(
                 layoutScale: pageFrame.Scale,

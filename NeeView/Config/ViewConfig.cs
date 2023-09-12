@@ -25,9 +25,11 @@ namespace NeeView
         private double _baseScale = 1.0;
         private bool _isRotateStretchEnabled = true;
         private double _mainViewMargin;
-        private bool _isKeepScakeBooks;
+        private bool _isKeepScaleBooks;
         private bool _isKeepAngleBooks;
         private bool _isKeepFlipBooks;
+        private bool _isKeepPageTransform;
+
 
         // 回転の中心
         [PropertyMember]
@@ -65,8 +67,8 @@ namespace NeeView
         [PropertyMember]
         public bool IsKeepScaleBooks
         {
-            get { return _isKeepScakeBooks; }
-            set { SetProperty(ref _isKeepScakeBooks, value); }
+            get { return _isKeepScaleBooks; }
+            set { SetProperty(ref _isKeepScaleBooks, value); }
         }
 
         // 回転キープ
@@ -200,6 +202,14 @@ namespace NeeView
         {
             get { return _mainViewMargin; }
             set { SetProperty(ref _mainViewMargin, value); }
+        }
+
+        // ページトランスフォームの維持
+        [PropertyMember]
+        public bool IsKeepPageTransform
+        {
+            get { return _isKeepPageTransform; }
+            set { SetProperty(ref _isKeepPageTransform, value); }
         }
 
 

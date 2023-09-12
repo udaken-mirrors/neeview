@@ -7460,4 +7460,19 @@ nv.ShowToast(nv.Book.ViewPages[0].Path)</value>
   <data name="BookConfig.PageMoveDuration.Remarks" xml:space="preserve">
     <value>ページモードが「@PageMode.SinglePage」「@PageMode.WidePage」の時に有効です。</value>
   </data>
+  <data name="ViewConfig.IsKeepPageTransform" xml:space="preserve">
+    <value>ビューの変換を維持</value>
+  </data>
+  <data name="ViewConfig.IsKeepPageTransform.Remarks" xml:space="preserve">
+    <value>ページ単位の回転、拡縮、判定を維持します。</value>
+  </data>
+  <data name="SettingPage.FileTypes.Media" xml:space="preserve">
+    <value>動画</value>
+  </data>
+  <data name="ImageConfig.IsMediaEnabled" xml:space="preserve">
+    <value>動画ページを有効にする</value>
+  </data>
+  <data name="ImageConfig.IsMediaEnabled.Remarks" xml:space="preserve">
+    <value>動画ファイルの種類は「@SettingPage.Archive.Media」設定ページで設定します。</value>
+  </data>
 </root>
