@@ -45,15 +45,10 @@ namespace NeeView.PageFrames
         private readonly DpiScaleProvider _dpiScaleProvider;
 
         private readonly PageFrameTransformMap _transformMap;
-        /// <summary>
-        /// アンカーコンテナを座標補正する
-        /// </summary>
-        //private readonly BooleanLockValue _isSnapAnchor = new();
 
         private readonly RepeatLimiter _scrollRepeatLimiter = new();
         private readonly ScrollLock _scrollLock = new();
         private readonly TransformControlFactory _transformControlFactory;
-        //private MouseInput _mouseInput;
 
         private readonly SelectedContainer _selected;
 
@@ -392,53 +387,56 @@ namespace NeeView.PageFrames
 
         private void Context_SizeChanged(object? sender, SizeChangedEventArgs e)
         {
-            //UpdateContainers(PageFrameDartyLevel.Moderate);
-            SnapOrigin();
+            UpdateContainers(PageFrameDirtyLevel.Moderate, TransformMask.None, false, false);
         }
 
 
         private void Context_PagesChanged(object? sender, EventArgs e)
         {
-            ResetContainers();
+            UpdateContainers(PageFrameDirtyLevel.Moderate, TransformMask.None, false, false);
             PagesChanged?.Invoke(this, e);
         }
 
-#if false
-        private void Context_SelectedItemChanged(object? sender, SelectedItemChangedEventArgs e)
-        {
-            if (e.FromOutsize)
-            {
-                // 外部からの変更(スライダー？)なので即時座標反映させる
-                MoveTo(_context.SelectedItem, LinkedListDirection.Next);
-            }
-        }
-#endif
 
         /// <summary>
-        /// 基準位置スナップ
+        /// コンテナ更新
         /// </summary>
-        /// <remarks>
-        /// ページ切り替え直後のページ開始位置をキープする処理
-        /// </remarks>
-        /// <param name="node">スナップさせるノード</param>
-        private void SnapOrigin()
+        /// <param name="dirtyLevel">コンテナ更新レベル</param>
+        /// <param name="resetTransform">トランスフォームのリセットマスク</param>
+        /// <param name="resetLayout">コンテナ配置初期化</param>
+        /// <param name="snapOrigin">選択コンテナの開始位置スナップ</param>
+        private void UpdateContainers(PageFrameDirtyLevel dirtyLevel, TransformMask resetTransform, bool resetLayout, bool snapOrigin)
         {
-            // 選択とアンカーを一致させる
+            using var pause = new BookPageLoadPause(_loader);
+
+            // Transform 初期化
+            if (resetTransform != TransformMask.None)
+            {
+                _transformMap.Clear(resetTransform);
+            }
+
+            // スナップポリシー更新
+            if (snapOrigin)
+            {
+                _context.IsSnapAnchor.Set();
+            }
+
+            // アンカーを選択コンテナにする
             var node = _selected.Node;
             _containers.Anchor.Set(node);
 
-            // 通常の更新確認
-            _containers.SetDarty(PageFrameDirtyLevel.Moderate);
+            // コンテナにダーティーフラグを設定
+            _containers.SetDirty(dirtyLevel);
 
             // 選択コンテナ更新
-            _filler.UpdateContainer(node);
+            _containers.UpdateContainer(node);
 
-#if false
-            var options = (_context.IsSnapAnchor.IsSet) // && node == _containers.Anchor.Node && _rectMath.WithinView(_viewBox.Rect, node))
-                ? ScrollToViewOriginOption.None
-                : ScrollToViewOriginOption.IgnoreFrameScroll;
-            ScrollToViewOrigin(node, _containers.Anchor.Direction, options);
-#endif
+            // 選択コンテナ配置初期化
+            if (resetLayout)
+            {
+                node.Value.ResetLayout();
+            }
+
             // 座標補正
             if (_context.IsSnapAnchor.IsSet)
             {
@@ -451,65 +449,19 @@ namespace NeeView.PageFrames
                 SnapView();
             }
 
-            // 表示に必要なコンテナ生成
+            // 表示に必要なコンテナ生成と配置
             FillContainers();
 
-            // コンテナのレイアウト
-            _layout.Flush();
-
-            // 表示の確定
-            _scrollViewer.FlushScroll();
-            Cleanup();
+            // 表示即時反映
+            FlushLayout();
         }
 
         /// <summary>
-        /// すべてのコンテナを更新
+        /// 表示即時反映
         /// </summary>
-        private void UpdateContainers(PageFrameDirtyLevel level)
-        {
-            Debug.WriteLine($"# PageFrameBox.UpdateContainers(): IsSnap={_context.IsSnapAnchor.IsSet}");
-
-            _containers.SetDarty(level);
-            _containers.Anchor.FixDirection();
-            FillContainers();
-
-            //_canvasPointStorage.Restore(_storePoint); // これなんかよろしくないでしょ。おかしくなるようなのはSnapOriginで基準位置移動させる方向を検討してみて
-            SnapView();
-
-            _layout.Flush();
-            _scrollViewer.FlushScroll();
-            Cleanup();
-        }
-
-
-
-        /// <summary>
-        /// すべてのコンテナを再作成
-        /// </summary>
-        private void ResetContainers()
-        {
-            using (var pauser = new BookPageLoadPause(_loader))
-            {
-                _containers.SetDarty(PageFrameDirtyLevel.Replace);
-                _transformMap.Clear();
-
-                //_containers.Anchor.FixDirection();
-                //FillContainers();
-
-                SetControlContainer(_selected.Node);
-                _selected.Node.Value.ResetLayout();
-                _storePoint = default;
-                _layout.Layout(_selected.Node);
-
-                var index = _selected.Node.Value.FrameRange.Min.Index;
-                MoveTo(new PagePosition(index, 0), LinkedListDirection.Next);
-
-                _layout.Flush();
-                _scrollViewer.FlushScroll();
-                Cleanup();
-            }
-        }
-
+        /// <remarks>
+        /// スクロールを省略する
+        /// </remarks>
         public void FlushLayout()
         {
             _layout.Flush();
@@ -551,67 +503,50 @@ namespace NeeView.PageFrames
         {
             if (_disposedValue) return;
 
-            // TODO: プロパティによってどこまでリセットするか等を選別する
-            // TODO: プロパティ変更による TransformMap のリセット
-
             switch (e.PropertyName)
             {
-                //case nameof(BookContext.SelectedItem):
-                //    RaisePropertyChanged(nameof(SelectedItem));
-                //    return;
-
-                case nameof(Context.IsStaticFrame):
-                    _transformMap.ClearPoint(default);
-                    UpdateContainers(PageFrameDirtyLevel.Moderate);
-                    break;
-
                 case nameof(Context.FrameMargin):
                     FillContainers();
-                    return;
+                    break;
 
                 case nameof(Context.IsFlipLocked):
                     _transformMap.IsFlipLocked = _context.IsFlipLocked;
-                    return;
+                    break;
 
                 case nameof(Context.IsScaleLocked):
                     _transformMap.IsScaleLocked = _context.IsScaleLocked;
-                    return;
+                    break;
 
                 case nameof(Context.IsAngleLocked):
                     _transformMap.IsAngleLocked = _context.IsAngleLocked;
-                    return;
+                    break;
 
                 case nameof(Context.ReadOrder):
-                    // ページ方向が切り替わったときの分割ページ位置補正
-                    if (_context.PageMode == PageMode.SinglePage && _context.IsSupportedDividePage && _selected.Container.FrameRange.PartSize == 1)
-                    {
-                        MoveTo(_selected.PagePosition.OtherPart(), LinkedListDirection.Next);
-                    }
-                    UpdateContainers(PageFrameDirtyLevel.Moderate);
+                    MoveToOtherPosition();
+                    UpdateContainers(PageFrameDirtyLevel.Moderate, TransformMask.None, false, false);
                     break;
 
                 case nameof(Context.IsSupportedDividePage):
-                    // 分割ページでない場合の座標補正
-                    if (!(_context.PageMode == PageMode.SinglePage && _context.IsSupportedDividePage))
-                    {
-                        MoveTo(_selected.PagePosition.Truncate(), LinkedListDirection.Next);
-                    }
-                    UpdateContainers(PageFrameDirtyLevel.Moderate);
+                    MoveToFixPosition();
+                    Flush();
                     break;
 
-                case nameof(Context.SortMode):
-                    // 別処理
-                    return;
-
                 case nameof(Context.StretchMode):
-                    SetSnapAnchor();
-                    SnapOrigin();
-                    return;
+                    UpdateContainers(PageFrameDirtyLevel.Moderate, TransformMask.None, false, true);
+                    break;
+
+                case nameof(Context.AutoRotateType):
+                    UpdateContainers(PageFrameDirtyLevel.Moderate, TransformMask.Angle, false, true);
+                    break;
+
+                case nameof(Context.FrameOrientation):
+                    UpdateContainers(PageFrameDirtyLevel.Moderate, TransformMask.None, true, true);
+                    break;
 
                 case nameof(Context.PageMode):
-                case nameof(Context.FrameOrientation):
-                    ResetContainers();
-                    return;
+                    MoveToFixPosition();
+                    UpdateContainers(PageFrameDirtyLevel.Replace, TransformMask.Point, true, true);
+                    break;
 
                 case nameof(Context.IsIgnoreImageDpi):
                 case nameof(Context.DpiScale):
@@ -620,16 +555,11 @@ namespace NeeView.PageFrames
                 case nameof(Context.ImageResizeFilterConfig):
                 case nameof(Context.ImageDotKeepConfig):
                 case nameof(Context.IsInsertDummyPage):
-                    UpdateContainers(PageFrameDirtyLevel.Heavy);
+                    UpdateContainers(PageFrameDirtyLevel.Heavy, TransformMask.None, false, false);
                     break;
-
-                case nameof(Context.ViewConfig):
-                    return;
-
-                case nameof(Context.CanvasSize):
-                    return;
             }
         }
+
 
         private void VisiblePageWatcher_VisibleContainersChanged(object? sender, VisibleContainersChangedEventArgs e)
         {
@@ -666,6 +596,27 @@ namespace NeeView.PageFrames
         public void ResetSnapAnchor()
         {
             _context.IsSnapAnchor.Reset();
+        }
+
+        /// <summary>
+        /// ページ設定変更による不正ページ位置を補正
+        /// </summary>
+        private void MoveToFixPosition()
+        {
+            // NOTE: 切り替えるときは常にページ先頭になる。分割ページから分割ページに切り替わることはないはず
+            _containers.SetDirty(PageFrameDirtyLevel.Moderate);
+            MoveTo(_selected.PagePosition.Truncate(), LinkedListDirection.Next);
+        }
+
+        /// <summary>
+        /// ページ方向が切り替わったときの分割ページ位置補正
+        /// </summary>
+        private void MoveToOtherPosition()
+        {
+            if (_context.IsSupportedDividePage && _selected.Container.FrameRange.PartSize == 1)
+            {
+                MoveTo(_selected.PagePosition.OtherPart(), LinkedListDirection.Next);
+            }
         }
 
 
@@ -712,7 +663,7 @@ namespace NeeView.PageFrames
             point.X = -point.X; // コンテンツ座標系に補正する
             point.Y = -point.Y;
 
-            _transformMap.ElementAt(node.Value.FrameRange).SetPoint(point, TimeSpan.Zero);
+            _transformMap.ElementAt(node.Value.FrameRange.Min).SetPoint(point, TimeSpan.Zero);
         }
 
         /// <summary>
@@ -724,7 +675,7 @@ namespace NeeView.PageFrames
 
             if (node?.Value.Content is not PageFrameContent) return;
 
-            _transformMap.ElementAt(node.Value.FrameRange).SetPoint(default, TimeSpan.Zero);
+            _transformMap.ElementAt(node.Value.FrameRange.Min).SetPoint(default, TimeSpan.Zero);
         }
 
 
@@ -1063,6 +1014,16 @@ namespace NeeView.PageFrames
             _layout.Layout(anchor);
         }
 
+        /// <summary>
+        /// 表示即時反映
+        /// </summary>
+        private void Flush()
+        {
+            _layout.Flush();
+            _scrollViewer.FlushScroll();
+            Cleanup();
+        }
+
         private void Cleanup(bool isUpdateSelected)
         {
             Cleanup();
@@ -1081,7 +1042,7 @@ namespace NeeView.PageFrames
 
         public PageFrameTransformAccessor CreateSelectedTransform()
         {
-            return _transformMap.CreateAccessor(_selected.PageRange);
+            return _transformMap.CreateAccessor(_selected.PageRange.Min);
         }
 
         public void ResetTransform()

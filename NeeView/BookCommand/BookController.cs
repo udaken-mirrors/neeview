@@ -46,7 +46,7 @@ namespace NeeView
             _commandEngine = new();
             _disposables.Add(_commandEngine);
 
-            _disposables.Add(_bookContext.SubscribePropertyChanged(nameof(PageFrameContext.SortMode),
+            _disposables.Add(_bookContext.SubscribePropertyChanged(nameof(BookContext.SortMode),
                 (s, e) => RequestSort(this)));
 
 

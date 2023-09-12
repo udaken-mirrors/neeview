@@ -90,11 +90,28 @@ namespace NeeView.PageFrames
 
         public void Clear()
         {
-            SetAngle(0.0, TimeSpan.Zero);
-            SetScale(1.0, TimeSpan.Zero);
-            SetPoint(default, TimeSpan.Zero);
-            SetFlipHorizontal(false, TimeSpan.Zero);
-            SetFlipVertical(false, TimeSpan.Zero);
+            Clear(TransformMask.All);
+        }
+
+        public void Clear(TransformMask mask)
+        {
+            if (mask.HasFlag(TransformMask.Flip))
+            {
+                SetFlipHorizontal(false, TimeSpan.Zero);
+                SetFlipVertical(false, TimeSpan.Zero);
+            }
+            if (mask.HasFlag(TransformMask.Scale))
+            {
+                SetScale(1.0, TimeSpan.Zero);
+            }
+            if (mask.HasFlag(TransformMask.Angle))
+            {
+                SetAngle(0.0, TimeSpan.Zero);
+            }
+            if (mask.HasFlag(TransformMask.Point))
+            {
+                SetPoint(default, TimeSpan.Zero);
+            }
         }
     }
 

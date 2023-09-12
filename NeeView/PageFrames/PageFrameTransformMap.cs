@@ -11,7 +11,7 @@ namespace NeeView.PageFrames
     [NotifyPropertyChanged]
     public partial class PageFrameTransformMap : INotifyPropertyChanged
     {
-        private readonly Dictionary<PageRange, PageFrameTransform> _map = new();
+        private readonly Dictionary<PagePosition, PageFrameTransform> _map = new();
         private PageFrameTransform _share = new();
 
         private IShareTransformContext _shareContext;
@@ -109,22 +109,22 @@ namespace NeeView.PageFrames
         }
 
         // NOTE: Disposable
-        public PageFrameTransformAccessor CreateAccessor(PageRange range)
+        public PageFrameTransformAccessor CreateAccessor(PagePosition position)
         {
-            return new PageFrameTransformAccessor(this, ElementAt(range));
+            return new PageFrameTransformAccessor(this, ElementAt(position));
         }
 
-        public PageFrameTransform ElementAt(PageRange range)
+        public PageFrameTransform ElementAt(PagePosition position)
         {
-            if (_map.TryGetValue(range, out var transform))
+            if (_map.TryGetValue(position, out var transform))
                 return transform;
             else
-                return _map[range] = new PageFrameTransform();
+                return _map[position] = new PageFrameTransform();
         }
 
-        public bool ContainsKey(PageRange range)
+        public bool ContainsKey(PagePosition position)
         {
-            return _map.ContainsKey(range);
+            return _map.ContainsKey(position);
         }
 
         public void ClearFlip(bool isFlipHorizontal, bool isFlipVertical)
@@ -166,30 +166,46 @@ namespace NeeView.PageFrames
             }
         }
 
+
         public void Clear()
         {
-            ClearFlip(false, false);
-            ClearScale(1.0);
-            ClearAngle(0.0);
-            ClearPoint(default);
-
-            //_map.Clear();
-            _share.Clear();
+            Clear(TransformMask.All);
         }
 
+        public void Clear(TransformMask mask)
+        {
+            if (mask.HasFlag(TransformMask.Flip))
+            {
+                ClearFlip(false, false);
+            }
+            if (mask.HasFlag(TransformMask.Scale))
+            {
+                ClearScale(1.0);
+            }
+            if (mask.HasFlag(TransformMask.Angle))
+            {
+                ClearAngle(0.0);
+            }
+            if (mask.HasFlag(TransformMask.Point))
+            {
+                ClearPoint(default);
+            }
+
+            _share.Clear(mask);
+        }
 
         /// <summary>
         /// Flip取得 (非同期スレッド用)
         /// </summary>
-        /// <param name="range">対象範囲</param>
+        /// <param name="position">ページ位置</param>
         /// <returns></returns>
-        public (bool IsFlipHorizontal, bool IsFlipVertical) GetFlip(PageRange range)
+        public (bool IsFlipHorizontal, bool IsFlipVertical) GetFlip(PagePosition position)
         {
             if (IsFlipLocked)
             {
                 return (_share.IsFlipHorizontal, _share.IsFlipVertical);
             }
-            else if (_map.TryGetValue(range, out var transform))
+            else if (_map.TryGetValue(position, out var transform))
             {
                 return (transform.IsFlipHorizontal, transform.IsFlipVertical);
             }
@@ -202,15 +218,15 @@ namespace NeeView.PageFrames
         /// <summary>
         /// Scale取得 (非同期スレッド用)
         /// </summary>
-        /// <param name="range">対象範囲</param>
+        /// <param name="position">ページ位置</param>
         /// <returns></returns>
-        public double GetScale(PageRange range)
+        public double GetScale(PagePosition position)
         {
             if (IsScaleLocked)
             {
                 return _share.Scale;
             }
-            else if (_map.TryGetValue(range, out var transform))
+            else if (_map.TryGetValue(position, out var transform))
             {
                 return transform.Scale;
             }
@@ -223,15 +239,15 @@ namespace NeeView.PageFrames
         /// <summary>
         /// Angle取得 (非同期スレッド用)
         /// </summary>
-        /// <param name="range">対象範囲</param>
+        /// <param name="position">ページ位置</param>
         /// <returns></returns>
-        public double GetAngle(PageRange range)
+        public double GetAngle(PagePosition position)
         {
             if (IsAngleLocked)
             {
                 return _share.Angle;
             }
-            else if (_map.TryGetValue(range, out var transform))
+            else if (_map.TryGetValue(position, out var transform))
             {
                 return transform.Angle;
             }
@@ -242,13 +258,13 @@ namespace NeeView.PageFrames
         }
 
         /// <summary>
-        /// Poiont取得 (非同期スレッド用)
+        /// Point取得 (非同期スレッド用)
         /// </summary>
-        /// <param name="range">対象範囲</param>
+        /// <param name="position">ページ位置</param>
         /// <returns></returns>
-        public Point GetPoint(PageRange range)
+        public Point GetPoint(PagePosition position)
         {
-            if (_map.TryGetValue(range, out var transform))
+            if (_map.TryGetValue(position, out var transform))
             {
                 return transform.Point;
             }
@@ -258,5 +274,18 @@ namespace NeeView.PageFrames
             }
         }
 
+    }
+
+
+    [Flags]
+    public enum TransformMask
+    {
+        None = 0,
+        Flip = (1 << 0),
+        Scale = (1 << 1),
+        Angle = (1 << 2),
+        Point = (1 << 3),
+
+        All = Flip | Scale | Angle | Point
     }
 }

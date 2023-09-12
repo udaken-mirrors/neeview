@@ -16,6 +16,8 @@ using System.Windows.Input;
 using System.Windows.Threading;
 using NeeView.Windows;
 using NeeLaboratory.Generators;
+using System.Windows.Data;
+using System.Windows.Shapes;
 
 namespace NeeView
 {
@@ -31,9 +33,11 @@ namespace NeeView
         private bool _disposedValue;
         private readonly DisposableCollection _disposables = new();
         private readonly SizeSource _sizeSource;
+        private readonly PageBackgroundSource _backgroundSource;
 
 
-        public ViewContent(PageFrameElement element, PageFrameElementScale scale, ViewSource viewSource, PageFrameActivity activity)
+
+        public ViewContent(PageFrameElement element, PageFrameElementScale scale, ViewSource viewSource, PageFrameActivity activity, PageBackgroundSource backgroundSource)
         {
             _element = element;
             _scale = scale;
@@ -44,6 +48,8 @@ namespace NeeView
 
             _sizeSource = new SizeSource(LayoutSize);
             _sizeSource.BindTo(this);
+
+            _backgroundSource = backgroundSource;
         }
 
 
@@ -227,7 +233,7 @@ namespace NeeView
                 case DataState.Loaded:
                     Debug.WriteLine($"CreateContent.Loaded: {ArchiveEntry}");
                     Debug.Assert(data.Data is not null);
-                    return new ViewContentData(new DecoratedViewContent(size, CreateLoadedContent(data.Data)), ViewContentState.Loaded);
+                    return new ViewContentData(new DecoratedViewContent(size, CreateLoadedContent(data.Data), _backgroundSource), ViewContentState.Loaded);
 
                 case DataState.Failed:
                     Debug.WriteLine($"CreateContent.Failed: {ArchiveEntry}");
@@ -251,8 +257,16 @@ namespace NeeView
         private bool _disposedValue;
 
 
-        public DecoratedViewContent(SizeSource sizeSource, FrameworkElement content)
+        public DecoratedViewContent(SizeSource sizeSource, FrameworkElement content, PageBackgroundSource backgroundSource)
         {
+            // background
+            var rectangle = new Rectangle();
+            rectangle.SetBinding(Rectangle.FillProperty, new Binding(nameof(PageBackgroundSource.Brush)) { Source = backgroundSource });
+            rectangle.Margin = new Thickness(1);
+            rectangle.HorizontalAlignment = HorizontalAlignment.Stretch;
+            rectangle.VerticalAlignment = VerticalAlignment.Stretch;
+            this.Children.Add(rectangle);
+
             // content
             _content = content;
             sizeSource.BindTo(_content);

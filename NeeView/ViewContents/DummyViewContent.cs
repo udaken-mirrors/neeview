@@ -8,7 +8,7 @@ namespace NeeView
 {
     public class DummyViewContent : ViewContent
     {
-        public DummyViewContent(PageFrameElement element, PageFrameElementScale scale, ViewSource viewSource, PageFrameActivity activity) : base(element, scale, viewSource, activity)
+        public DummyViewContent(PageFrameElement element, PageFrameElementScale scale, ViewSource viewSource, PageFrameActivity activity, PageBackgroundSource backgroundSource) : base(element, scale, viewSource, activity, backgroundSource)
         {
         }
 

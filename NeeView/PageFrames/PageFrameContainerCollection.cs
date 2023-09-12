@@ -408,12 +408,32 @@ namespace NeeView.PageFrames
         /// <summary> 
         /// すべてのコンテナに作り直しフラグ設定
         /// </summary>
-        public void SetDarty(PageFrameDirtyLevel level)
+        public void SetDirty(PageFrameDirtyLevel level)
         {
             foreach (var container in _containers.ToList())
             {
                 container.DirtyLevel = level;
             }
+        }
+
+        public void UpdateContainer(LinkedListNode<PageFrameContainer> node)
+        {
+            if (node.Value.Content is not PageFrameContent) return;
+            if (!node.Value.IsDirty) return;
+
+            var direction = GetContainerDirection(node);
+            var position = node.Value.FrameRange.Top(direction.ToSign());
+
+            var newer = EnsureLatestContainerNode(position, direction);
+            Debug.Assert(newer is not null && newer.Value.CompareTo(node.Value) == 0);
+        }
+
+        // TODO: これアンカー実装では？
+        private LinkedListDirection GetContainerDirection(LinkedListNode<PageFrameContainer> node)
+        {
+            return node == Anchor.Node
+                ? Anchor.Direction
+                : node.Value.Identifier < Anchor.Container.Identifier ? LinkedListDirection.Previous : LinkedListDirection.Next;
         }
     }
 }

@@ -27,7 +27,7 @@ namespace NeeView.PageFrames
         public PageFrameContainer Create(PageFrame frame)
         {
             var activity = new PageFrameActivity();
-            var transform = new PageFrameTransformAccessor(_transformMap, _transformMap.ElementAt(frame.FrameRange));
+            var transform = new PageFrameTransformAccessor(_transformMap, _transformMap.ElementAt(frame.FrameRange.Min));
             var content = new PageFrameContent(_viewContentFactory, _staticFrameProfile, frame, activity, transform, _loupeContext, _baseScaleTransform);
             var container = new PageFrameContainer(content, activity);
             return container;
@@ -43,7 +43,7 @@ namespace NeeView.PageFrames
             else
             {
                 var activity = container.Activity;
-                var transform = new PageFrameTransformAccessor(_transformMap, _transformMap.ElementAt(frame.FrameRange));
+                var transform = new PageFrameTransformAccessor(_transformMap, _transformMap.ElementAt(frame.FrameRange.Min));
                 var content = new PageFrameContent(_viewContentFactory, _staticFrameProfile, frame, activity, transform, _loupeContext, _baseScaleTransform);
                 container.Content = content;
                 container.UpdateFrame();

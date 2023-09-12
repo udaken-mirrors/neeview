@@ -30,7 +30,7 @@ namespace NeeView.PageFrames
         /// </summary>
         public void FillContainers(Rect viewRect, LinkedListNode<PageFrameContainer> anchor)
         {
-            UpdateContainer(anchor);
+            _containers.UpdateContainer(anchor);
             FillContainers(anchor, GetViewSpace(viewRect, anchor));
         }
 
@@ -137,7 +137,7 @@ namespace NeeView.PageFrames
             return _math.GetWidth(container.Rect) + _context.FrameMargin;
         }
 
-
+#if false
         public void UpdateContainer(LinkedListNode<PageFrameContainer> node)
         {
             if (node.Value.Content is not PageFrameContent) return;
@@ -157,6 +157,7 @@ namespace NeeView.PageFrames
                 ? _containers.Anchor.Direction
                 : node.Value.Identifier < _containers.Anchor.Container.Identifier ? LinkedListDirection.Previous : LinkedListDirection.Next;
         }
+#endif
 
 
         /// <summary>

@@ -20,7 +20,7 @@ namespace NeeView
 
             if (element.IsDummy)
             {
-                return new DummyViewContent(element, scale, viewSource, activity);
+                return new DummyViewContent(element, scale, viewSource, activity, _backgroundSource);
             }
 
             switch (element.Page.Content)
@@ -28,17 +28,17 @@ namespace NeeView
                 case BitmapPageContent:
                     return new BitmapViewContent(element, scale, viewSource, activity, _backgroundSource);
                 case AnimatedPageContent:
-                    return new AnimatedViewContent(element, scale, viewSource, activity);
+                    return new AnimatedViewContent(element, scale, viewSource, activity, _backgroundSource);
                 case PdfPageContent:
                     return new PdfViewContent(element, scale, viewSource, activity, _backgroundSource);
                 case SvgPageContent:
                     return new SvgViewContent(element, scale, viewSource, activity, _backgroundSource);
                 case MediaPageContent:
-                    return new MediaViewContent(element, scale, viewSource, activity);
+                    return new MediaViewContent(element, scale, viewSource, activity, _backgroundSource);
                 case ArchivePageContent:
-                    return new ArchiveViewContent(element, scale, viewSource, activity);
+                    return new ArchiveViewContent(element, scale, viewSource, activity, _backgroundSource);
                 case FilePageContent:
-                    return new FileViewContent(element, scale, viewSource, activity);
+                    return new FileViewContent(element, scale, viewSource, activity, _backgroundSource);
                 default:
                     throw new NotSupportedException();
             }

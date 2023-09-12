@@ -29,11 +29,14 @@ namespace NeeView
             _rectangle.Fill = CreatePageImageBrush(true);
             UpdateBitmapScalingMode();
 
+#if false
             var border = new Border();
             border.SetBinding(Border.BackgroundProperty, new Binding(nameof(PageBackgroundSource.Brush)) { Source = backgroundSource });
             border.Child = _rectangle;
-
             this.Content = border;
+#else
+            this.Content = _rectangle;
+#endif
 
             _contentSize.SizeChanged += ContentSize_SizeChanged;
         }

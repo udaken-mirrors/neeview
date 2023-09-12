@@ -18,8 +18,8 @@ namespace NeeView
 
         public PageFrameElementScale Create(PageFrame pageFrame)
         {
-            var transformScale = _transformMap.GetScale(pageFrame.FrameRange);
-            var transformAngle = _transformMap.GetAngle(pageFrame.FrameRange);
+            var transformScale = _transformMap.GetScale(pageFrame.FrameRange.Min);
+            var transformAngle = _transformMap.GetAngle(pageFrame.FrameRange.Min);
 
             return new PageFrameElementScale(
                 layoutScale: pageFrame.Scale,

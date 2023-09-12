@@ -25,7 +25,7 @@ namespace NeeView
 
 
         public ImageViewContent(PageFrameElement element, PageFrameElementScale scale, ViewSource viewSource, PageFrameActivity activity, PageBackgroundSource backgroundSource)
-            : base(element, scale, viewSource, activity)
+            : base(element, scale, viewSource, activity, backgroundSource)
         {
             _backgroundSource = backgroundSource;
 
