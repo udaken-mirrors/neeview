@@ -51,6 +51,10 @@ namespace NeeView
         {
             if (_disposedValue) return;
             this.Content = CreatePath();
+
+            // センタリング配置
+            Canvas.SetLeft(this, -Width * 0.5);
+            Canvas.SetTop(this, -Height * 0.5);
         }
 
         private UIElement? CreatePath()

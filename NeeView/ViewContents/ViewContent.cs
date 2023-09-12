@@ -233,7 +233,8 @@ namespace NeeView
                 case DataState.Loaded:
                     Debug.WriteLine($"CreateContent.Loaded: {ArchiveEntry}");
                     Debug.Assert(data.Data is not null);
-                    return new ViewContentData(new DecoratedViewContent(size, CreateLoadedContent(data.Data), _backgroundSource), ViewContentState.Loaded);
+                    //return new ViewContentData(new DecoratedViewContent(size, CreateLoadedContent(data.Data), _backgroundSource), ViewContentState.Loaded);
+                    return new ViewContentData(CreateLoadedContent(data.Data), ViewContentState.Loaded);
 
                 case DataState.Failed:
                     Debug.WriteLine($"CreateContent.Failed: {ArchiveEntry}");
@@ -249,11 +250,10 @@ namespace NeeView
 
 
 
-
+    [Obsolete]
     public class DecoratedViewContent : Grid, IDisposable
     {
         private FrameworkElement _content;
-        private GridLine _gridLine;
         private bool _disposedValue;
 
 
@@ -271,11 +271,6 @@ namespace NeeView
             _content = content;
             sizeSource.BindTo(_content);
             this.Children.Add(_content);
-
-            // grid line
-            _gridLine = new GridLine();
-            sizeSource.BindTo(_gridLine);
-            this.Children.Add(_gridLine);
         }
 
 
@@ -285,7 +280,6 @@ namespace NeeView
             {
                 if (disposing)
                 {
-                    _gridLine.Dispose();
                     (_content as IDisposable)?.Dispose();
                 }
 

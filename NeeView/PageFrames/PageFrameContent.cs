@@ -24,6 +24,8 @@ namespace NeeView.PageFrames
 
         private readonly Canvas _canvas;
         private readonly Canvas _contentCanvas;
+        private readonly GridLine _gridLine;
+        private readonly SizeSource _sizeSource;
         private PageFrame _pageFrame;
         private readonly PageFrameActivity _activity;
 
@@ -108,6 +110,13 @@ namespace NeeView.PageFrames
             _boundsTransform = new TransformGroup();
             _boundsTransform.Children.Add(_baseScaleTransform.ScaleTransform);
             _boundsTransform.Children.Add(_transform.Transform);
+
+            // grid line
+            _sizeSource = new SizeSource(_pageFrame.StretchedSize);
+            _gridLine = new GridLine();
+            _disposables.Add(_gridLine);
+            _sizeSource.BindTo(_gridLine);
+            _canvas.Children.Add(_gridLine);
 
             CreateContents();
         }
@@ -209,6 +218,8 @@ namespace NeeView.PageFrames
             }
             UpdateTransform();
             UpdateElementLayout();
+
+            _sizeSource.SetSize(_pageFrame.StretchedSize);
         }
 
         private PageFrameElementScale CreateElementScale()

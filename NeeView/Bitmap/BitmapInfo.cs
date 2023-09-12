@@ -22,6 +22,7 @@ namespace NeeView
         {
             this.PixelWidth = bitmapFrame.PixelWidth;
             this.PixelHeight = bitmapFrame.PixelHeight;
+            this.PixelFormat = bitmapFrame.Format;
             this.BitsPerPixel = bitmapFrame.Format.BitsPerPixel;
             this.FrameCount = bitmapFrame.Decoder is GifBitmapDecoder gifBitmapDecoder ? gifBitmapDecoder.Frames.Count : 1;
             this.DpiX = bitmapFrame.DpiX;
@@ -69,6 +70,7 @@ namespace NeeView
 
         public int PixelWidth { get; private set; }
         public int PixelHeight { get; private set; }
+        public PixelFormat PixelFormat { get; private set; }
         public int BitsPerPixel { get; private set; }
         public bool IsMirrorHorizontal { get; private set; }
         public bool IsMirrorVertical { get; private set; }

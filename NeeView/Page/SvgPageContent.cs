@@ -77,7 +77,7 @@ namespace NeeView
             pictureInfo.OriginalSize = size;
             pictureInfo.Size = size;
             pictureInfo.BitsPerPixel = 32;
-            pictureInfo.Decoder = "SharpVecotrs";
+            pictureInfo.Decoder = "SharpVectors";
             return pictureInfo;
         }
     }

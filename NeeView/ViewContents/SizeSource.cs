@@ -41,6 +41,12 @@ namespace NeeView
         }
 
 
+        public void SetSize(Size size)
+        {
+            Width = size.Width;
+            Height = size.Height;
+        }
+
         public void BindTo(FrameworkElement element)
         {
             element.SetBinding(FrameworkElement.WidthProperty, new Binding(nameof(Width)) { Source = this });
