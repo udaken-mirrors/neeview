@@ -1,5 +1,6 @@
 ﻿using NeeLaboratory.ComponentModel;
 using NeeLaboratory.Generators;
+using NeeView.PageFrames;
 using System;
 using System.Diagnostics;
 using System.Linq;
@@ -16,7 +17,7 @@ namespace NeeView
 
 
         private readonly MainView _mainView;
-        private TouchEmurlateController _touchEmurlateController = new();
+        private TouchEmurlateController _touchEmulateController = new();
         private bool _disposedValue;
 
 
@@ -107,6 +108,8 @@ namespace NeeView
 
         public MainView MainView => _mainView;
 
+        public PageFrameBackground Background => MainView.PageFrameBackground;
+
         // ##
         public Size ViewSize => new Size(_mainView.ActualWidth, _mainView.ActualHeight);
 
@@ -170,9 +173,9 @@ namespace NeeView
             FocusMainViewRequest?.Invoke(this, EventArgs.Empty);
         }
 
-        public void TouchInputEmutrate(object? sender)
+        public void TouchInputEmulate(object? sender)
         {
-            _touchEmurlateController.Execute(sender);
+            _touchEmulateController.Execute(sender);
         }
     }
 }

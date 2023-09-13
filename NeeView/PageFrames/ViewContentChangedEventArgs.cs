@@ -76,8 +76,7 @@ namespace NeeView.PageFrames
 
         public int Direction { get; }
 
-        public ViewContentState State => ViewContents.Select(e => e.State).Min();
-
+        public ViewContentState State => ViewContents.Select(e => e.State).DefaultIfEmpty(ViewContentState.Loaded).Min();
 
         public ViewContentChangedEventArgs? InnerArgs { get; init; }
 

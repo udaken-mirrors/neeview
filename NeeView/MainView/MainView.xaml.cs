@@ -1,5 +1,6 @@
 ﻿using NeeLaboratory.ComponentModel;
 using NeeLaboratory.Generators;
+using NeeView.PageFrames;
 using NeeView.Windows;
 using System;
 using System.Collections.Generic;
@@ -29,11 +30,16 @@ namespace NeeView
         private MainViewViewModel? _vm;
         private Window? _owner;
         private readonly DpiScaleProvider _dpiProvider = new();
-        //private TransformGroup? _transformCalc;
+        private readonly PageFrameBackground _background;
+
 
         public MainView()
         {
             InitializeComponent();
+
+            _background = new PageFrameBackground(_dpiProvider);
+            _background.SetBinding(PageFrameBackground.PageProperty, new Binding(nameof(MainViewViewModel.SelectedPage)));
+            this.MainViewPanel.Children.Insert(0, _background);
 
             this.Loaded += MainView_Loaded;
             this.Unloaded += MainView_Unloaded;
@@ -45,13 +51,13 @@ namespace NeeView
         public event EventHandler? TransformChanged;
 
 
+        public PageFrameBackground PageFrameBackground => _background;
+
         public MouseInput? MouseInput => _vm?.MouseInput;
 
         public TouchInput? TouchInput => _vm?.TouchInput;
 
         public DpiScaleProvider DpiProvider => _dpiProvider;
-
-        //public TransformGroup? Transform => _transformCalc;
 
 
         public IDisposable SubscribePreviewKeyDown(KeyEventHandler handler)

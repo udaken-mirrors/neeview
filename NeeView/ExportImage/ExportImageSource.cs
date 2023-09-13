@@ -58,9 +58,9 @@ namespace NeeView
 
             var pages = pageFrameContent.PageFrame.Elements.Select(e => e.Page).ToList();
 
-            var bg1 = _presenter.GetBackground()?.Bg1Brush;
-            var bg2 = _presenter.GetBackground()?.Bg2Brush;
-
+            var background = MainViewComponent.Current.Background;
+            var bg1 = background.Bg1Brush;
+            var bg2 = background.Bg2Brush;
 
             //var rotateTransform = new RotateTransform(viewComponent.DragTransform.Angle);
             //var scaleTransform = new ScaleTransform(viewComponent.DragTransform.ScaleX, viewComponent.DragTransform.ScaleY);

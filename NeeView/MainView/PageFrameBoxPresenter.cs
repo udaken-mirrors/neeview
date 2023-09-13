@@ -54,6 +54,7 @@ namespace NeeView
         private BookCommandControl? _pageControl;
         private BookMementoControl? _bookMementoControl;
         private bool _isLoading;
+        private string? _emptyMessage;
 
 
         private PageFrameBoxPresenter()
@@ -141,6 +142,12 @@ namespace NeeView
 
         public bool IsMedia => _box?.Book.IsMedia ?? false;
 
+        public string? EmptyMessage
+        {
+            get { return _emptyMessage; }
+            set { SetProperty(ref _emptyMessage, value); }
+        }
+
 
 
         protected virtual void Dispose(bool disposing)
@@ -182,7 +189,9 @@ namespace NeeView
             {
                 try
                 {
+                    EmptyMessage = null;
                     await OpenAsync(_bookHub.GetCurrentBook(), _openCancellationTokenSource.Token);
+                    EmptyMessage = e.EmptyMessage;
                     _isLoading = false; // NOTE: RaiseViewPageChanged() で _isLoading を参照しているため先にフラグリセットしておく
                     PageFrameBoxChanged?.Invoke(this, new PageFrameBoxChangedEventArgs(_box, e));
                     RaiseViewPageChanged();
@@ -634,10 +643,10 @@ namespace NeeView
         /// 背景情報取得
         /// </summary>
         /// <returns></returns>
-        public PageFrameBackground? GetBackground()
-        {
-            return _box?.GetBackground();
-        }
+        //public PageFrameBackground? GetBackground()
+        //{
+        //    return _box?.GetBackground();
+        //}
 
 
         #endregion IPageFrameBox

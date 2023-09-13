@@ -8,7 +8,10 @@ using NeeLaboratory.Generators;
 
 namespace NeeView.PageFrames
 {
-    public record class PageFrameTransformKey(Page Page, PagePart Part);
+    public record class PageFrameTransformKey(Page? Page, PagePart Part)
+    {
+        public static PageFrameTransformKey Dummy { get; } = new PageFrameTransformKey(null, PagePart.All);
+    }
 
     public static class PageFrameTransformTool
     {

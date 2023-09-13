@@ -57,7 +57,6 @@ namespace NeeView.PageFrames
         private readonly DisposableCollection _disposables = new();
 
         private readonly ViewSourceMap _viewSourceMap;
-        private readonly PageFrameBackground _background;
 
         private readonly DragTransformContextFactory _dragTransformContextFactory;
 
@@ -114,11 +113,6 @@ namespace NeeView.PageFrames
             _filler = new PageFrameContainersFiller(_context, _containers, _rectMath);
             _visiblePageWatcher = new PageFrameContainersVisiblePageWatcher(_context, _viewBox, _rectMath, _layout);
 
-            _background = new PageFrameBackground(_dpiScaleProvider);
-            _disposables.Add(_background);
-
-            this.Children.Add(_background);
-
             var effectGrid = new Grid() { Name = "EffectLayer" };
             effectGrid.SetBinding(Grid.EffectProperty, new Binding(nameof(ImageEffect.Effect)) { Source = ImageEffect.Current });
             effectGrid.Children.Add(_scrollViewer);
@@ -137,8 +131,6 @@ namespace NeeView.PageFrames
             //    (s, e) => _context.SetSelectedItem(_selected.PagePosition, false)));
             _disposables.Add(_selected.SubscribePropertyChanged(nameof(_selected.PagePosition),
                 (s, e) => _bookContext.SelectedRange = _selected.PageRange));
-            _disposables.Add(_selected.SubscribePropertyChanged(nameof(_selected.Page),
-                (s, e) => _background.SetPage(_context.IsStaticFrame ? _selected.Page : null)));
             _disposables.Add(_selected.SubscribeViewContentChanged(
                  (s, e) => ViewContentChanged?.Invoke(this, e)));
 
@@ -164,9 +156,16 @@ namespace NeeView.PageFrames
 
         public void Initialize()
         {
-            var index = _bookContext.Book.CurrentPage?.Index ?? 0;
-            MoveTo(new PagePosition(index, 0), LinkedListDirection.Next);
-            _scrollViewer.FlushScroll();
+            if (_bookContext.IsEnabled)
+            {
+                var index = _bookContext.Book.CurrentPage?.Index ?? 0;
+                MoveTo(new PagePosition(index, 0), LinkedListDirection.Next);
+                _scrollViewer.FlushScroll();
+            }
+            else
+            {
+                ViewContentChanged?.Invoke(this, new FrameViewContentChangedEventArgs(ViewContentChangedAction.ContentLoaded, Array.Empty<ViewContent>(), 1));
+            }
         }
 
         [Subscribable]
@@ -1044,9 +1043,15 @@ namespace NeeView.PageFrames
 
         public PageFrameTransformAccessor CreateSelectedTransform()
         {
-            var pageFrame = ((PageFrameContent)_selected.Container.Content).PageFrame;
-            var key = PageFrameTransformTool.CreateKey(pageFrame);
-            return _transformMap.CreateAccessor(key);
+            if (_selected.Container.Content is PageFrameContent pageFrameContent)
+            {
+                var key = PageFrameTransformTool.CreateKey(pageFrameContent.PageFrame);
+                return _transformMap.CreateAccessor(key);
+            }
+            else
+            {
+                return _transformMap.CreateAccessor(PageFrameTransformKey.Dummy);
+            }
         }
 
         public void ResetTransform()
@@ -1138,15 +1143,6 @@ namespace NeeView.PageFrames
                 return pageFrameContent;
             }
             return null;
-        }
-
-        /// <summary>
-        /// 背景情報
-        /// </summary>
-        /// <returns></returns>
-        public PageFrameBackground GetBackground()
-        {
-            return _background;
         }
 
         internal void RaisePageTerminatedEvent(object? sender, int direction)

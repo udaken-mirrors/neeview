@@ -122,14 +122,6 @@ namespace NeeView
         [Subscribable]
         public event EventHandler<JobIsBusyChangedEventArgs>? IsBusyChanged;
 
-        // 空ページメッセージ
-        [Subscribable]
-        public event EventHandler<BookHubMessageEventArgs>? EmptyMessage;
-
-        // 空ページメッセージ その２
-        [Subscribable]
-        public event EventHandler<BookHubMessageEventArgs>? EmptyPageMessage;
-
         // フォルダー列更新要求
         [Subscribable]
         public event EventHandler<FolderListSyncEventArgs>? FolderListSync;
@@ -478,6 +470,10 @@ namespace NeeView
 
                 // ページ存在チェック
                 isEmptyBook = (book != null && book.Pages.Count <= 0);
+                if (isEmptyBook)
+                {
+                    bookChangedEventArgs.EmptyMessage = string.Format(Properties.Resources.Notice_NoPages, book?.Path);
+                }
             }
             catch (OperationCanceledException)
             {
@@ -487,13 +483,13 @@ namespace NeeView
             {
                 if (ex is BookAddressException)
                 {
-                    EmptyMessage?.Invoke(this, new BookHubMessageEventArgs(ex.Message));
+                    bookChangedEventArgs.EmptyMessage = ex.Message;
                 }
                 else
                 {
                     // ファイル読み込み失敗通知
                     var message = string.Format(Properties.Resources.LoadFailedException_Message, place, ex.Message);
-                    EmptyMessage?.Invoke(this, new BookHubMessageEventArgs(message));
+                    bookChangedEventArgs.EmptyMessage = message;
                 }
 
                 // 現在表示されているコンテンツを無効
@@ -517,8 +513,6 @@ namespace NeeView
             if (_book is not null && isEmptyBook)
             {
                 BookMementoTools.ResetBookMementoPage(_book.Path);
-
-                EmptyMessage?.Invoke(this, new BookHubMessageEventArgs(string.Format(Properties.Resources.Notice_NoPages, _book.Path)));
 
                 if (Config.Current.Book.IsConfirmRecursive && (args.Option & BookLoadOption.ReLoad) == 0 && !_book.Source.IsRecursiveFolder && _book.Source.SubFolderCount > 0)
                 {
@@ -626,6 +620,8 @@ namespace NeeView
         {
             if (_disposedValue) return;
 
+            var bookChangedEventArgs = new BookChangedEventArgs("", null, BookMementoType.None);
+
             try
             {
                 // 本の変更通
@@ -643,14 +639,14 @@ namespace NeeView
 
                 if (parameter.Message != null)
                 {
-                    EmptyPageMessage?.Invoke(this, new BookHubMessageEventArgs(parameter.Message));
+                    bookChangedEventArgs.EmptyMessage = parameter.Message;
                 }
             }
             finally
             {
                 // 本の変更通
                 NotifyLoading(null);
-                BookChanged?.Invoke(parameter.Sender, new BookChangedEventArgs("", null, BookMementoType.None));
+                BookChanged?.Invoke(parameter.Sender, bookChangedEventArgs);
             }
         }
 
@@ -698,8 +694,6 @@ namespace NeeView
                     this.BookChanging = null;
                     this.BookChanged = null;
                     this.LoadRequested = null;
-                    this.EmptyMessage = null;
-                    this.EmptyPageMessage = null;
                     this.FolderListSync = null;
                     this.HistoryListSync = null;
                     this.BookmarkChanged = null;

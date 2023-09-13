@@ -10,7 +10,7 @@
 
         public override void Execute(object? sender, CommandContext e)
         {
-            MainViewComponent.Current.TouchInputEmutrate(sender);
+            MainViewComponent.Current.TouchInputEmulate(sender);
         }
     }
 }

@@ -16,6 +16,8 @@ namespace NeeView
         public string? Address { get; set; }
         public Book? Book { get; set; }
         public BookMementoType BookMementoType { get; set; }
+
+        public string? EmptyMessage { get; set; }
     }
 }
 

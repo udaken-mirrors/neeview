@@ -12,13 +12,13 @@ namespace NeeView.PageFrames
 {
     public class PageFrameBackground : Grid, IDisposable
     {
-        private DpiScaleProvider _dpiScaleProvider;
-        private ContentCanvasBrushSource _brushSource;
-        private CanvasBackgroundSource _canvasBrush;
-        private DisposableCollection _disposables = new();
+        private readonly DpiScaleProvider _dpiScaleProvider;
+        private readonly ContentCanvasBrushSource _brushSource;
+        private readonly CanvasBackgroundSource _canvasBrush;
+        private readonly DisposableCollection _disposables = new();
         private bool _disposedValue;
-        private Grid _bg1;
-        private Grid _bg2;
+        private readonly Grid _bg1;
+        private readonly Grid _bg2;
 
         public PageFrameBackground(DpiScaleProvider dpiScaleProvider) : this(dpiScaleProvider, null)
         {
@@ -29,6 +29,7 @@ namespace NeeView.PageFrames
             _dpiScaleProvider = dpiScaleProvider;
             _brushSource = new ContentCanvasBrushSource(_dpiScaleProvider, page);
             _canvasBrush = new CanvasBackgroundSource(_brushSource);
+            _disposables.Add(_canvasBrush);
 
             _bg1 = this;
             _bg2 = new Grid();
@@ -45,9 +46,32 @@ namespace NeeView.PageFrames
         }
 
 
+
+        public Page? Page
+        {
+            get { return (Page?)GetValue(PageProperty); }
+            set { SetValue(PageProperty, value); }
+        }
+
+        public static readonly DependencyProperty PageProperty =
+            DependencyProperty.Register("Page", typeof(Page), typeof(PageFrameBackground), new PropertyMetadata(null, Page_Changed));
+
+        private static void Page_Changed(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            if (d is PageFrameBackground control)
+            {
+                control.Update();
+            }
+        }
+
         public Brush Bg1Brush => _bg1.Background;
         public Brush Bg2Brush => _bg2.Background;
 
+
+        private void Update()
+        {
+            _brushSource.SetPage(Page);
+        }
 
         private void UpdateBackground1()
         {
@@ -65,7 +89,7 @@ namespace NeeView.PageFrames
             {
                 if (disposing)
                 {
-                    _canvasBrush.Dispose();
+                    _disposables.Dispose();
                     //BindingOperations.ClearBinding(_bg1, Grid.BackgroundProperty);
                     //BindingOperations.ClearBinding(_bg2, Grid.BackgroundProperty);
                 }
@@ -78,11 +102,6 @@ namespace NeeView.PageFrames
         {
             Dispose(disposing: true);
             GC.SuppressFinalize(this);
-        }
-
-        public void SetPage(Page? page)
-        {
-            _brushSource.SetPage(page);
         }
 
     }

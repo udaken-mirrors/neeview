@@ -9,11 +9,13 @@ namespace NeeView
 {
     public class PrintController
     {
+        private readonly MainViewComponent _viewComponent;
         private readonly PageFrameBoxPresenter _presenter;
         private readonly MainView _mainView;
 
         public PrintController(MainViewComponent viewComponent, MainView mainView, PageFrameBoxPresenter presenter)
         {
+            _viewComponent = viewComponent;
             _mainView = mainView;
             _presenter = presenter;
         }
@@ -62,8 +64,9 @@ namespace NeeView
 
             try
             {
-                var bg1 = _presenter.GetBackground()?.Bg1Brush;
-                var bg2 = _presenter.GetBackground()?.Bg2Brush;
+                var background = _viewComponent.Background;
+                var bg1 = background.Bg1Brush;
+                var bg2 = background.Bg2Brush;
 
                 var context = new PrintContext(
                     pageFrameContent: content,
