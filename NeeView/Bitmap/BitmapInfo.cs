@@ -30,6 +30,7 @@ namespace NeeView
             this.AspectWidth = bitmapFrame.Width;
             this.AspectHeight = bitmapFrame.Height;
             this.Metadata = CreateMetadataDatabase(bitmapFrame, stream);
+            this.HasAlpha = bitmapFrame.HasAlpha();
 
             ////Debug.WriteLine($"Meta.Format: {this.Metadata.Format}");
 
@@ -84,6 +85,11 @@ namespace NeeView
 
         // 転置？
         public bool IsTranspose => (this.Rotation == Rotation.Rotate90 || this.Rotation == Rotation.Rotate270);
+
+        /// <summary>
+        /// アルファ所持
+        /// </summary>
+        public bool HasAlpha { get; private set; }
 
 
         private static BitmapMetadataDatabase CreateMetadataDatabase(BitmapFrame bitmapFrame, Stream stream)

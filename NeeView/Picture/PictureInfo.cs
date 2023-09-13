@@ -81,6 +81,11 @@ namespace NeeView
 
         public bool IsPixelInfoEnabled => BitsPerPixel > 0;
 
+        /// <summary>
+        /// アルファ所持
+        /// </summary>
+        public bool HasAlpha { get; set; }
+
 
 
         /// <summary>
@@ -127,6 +132,8 @@ namespace NeeView
             pictureInfo.Decoder = decoder ?? "(Unknown)";
             pictureInfo.BitsPerPixel = bitmapInfo.BitsPerPixel;
             pictureInfo.Metadata = bitmapInfo.Metadata;
+
+            pictureInfo.HasAlpha = bitmapInfo.HasAlpha;
 
             return pictureInfo;
         }

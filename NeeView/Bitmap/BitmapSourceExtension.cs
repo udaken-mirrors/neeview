@@ -28,7 +28,7 @@ namespace NeeView
         }
 
         // GetOneColor()のサポートフォーマット
-        private static readonly PixelFormat[] s_supportedFormats = new PixelFormat[]
+        private static readonly PixelFormat[] _supportedFormats = new PixelFormat[]
         {
             PixelFormats.Bgra32,
             PixelFormats.Bgr32,
@@ -41,7 +41,7 @@ namespace NeeView
         };
 
         // GetOneColor()のサポートフォーマット (インデックスカラー)
-        private static readonly PixelFormat[] s_supportedIndexFormats = new PixelFormat[]
+        private static readonly PixelFormat[] _supportedIndexFormats = new PixelFormat[]
         {
             PixelFormats.Indexed8,
             PixelFormats.Indexed4,
@@ -49,27 +49,45 @@ namespace NeeView
             PixelFormats.Indexed1,
         };
 
-
-        // 有効BitsPerPixelを取得する
-        public static int GetSourceBitsPerPixel(this BitmapSource bmp)
+        private static readonly PixelFormat[] _supportedAlphaFormats = new PixelFormat[]
         {
-            if (bmp == null) return 0;
-            return bmp.Format.BitsPerPixel;
+            PixelFormats.Prgba64,
+            PixelFormats.Prgba128Float,
+            PixelFormats.Pbgra32,
+            PixelFormats.Bgra32,
+            PixelFormats.Rgba128Float,
+            PixelFormats.Rgba64,
+        };
+
+
+        /// <summary>
+        /// 有効BitsPerPixelを取得する
+        /// </summary>
+        /// <param name="bitmap"></param>
+        /// <returns></returns>
+        public static int GetSourceBitsPerPixel(this BitmapSource bitmap)
+        {
+            if (bitmap == null) return 0;
+            return bitmap.Format.BitsPerPixel;
         }
 
 
-        // 画像の最初の1ピクセルのカラーを取得
-        public static Color GetOneColor(this BitmapSource bmp)
+        /// <summary>
+        /// 画像の最初の1ピクセルのカラーを取得
+        /// </summary>
+        /// <param name="bitmap"></param>
+        /// <returns></returns>
+        public static Color GetOneColor(this BitmapSource bitmap)
         {
-            if (bmp == null) return Colors.Black;
+            if (bitmap == null) return Colors.Black;
 
             // 1pixel取得
             var pixels = new int[1];
-            bmp.CopyPixels(new System.Windows.Int32Rect(0, 0, 1, 1), pixels, 4, 0);
+            bitmap.CopyPixels(new System.Windows.Int32Rect(0, 0, 1, 1), pixels, 4, 0);
 
             // ビットマスクを適用して要素の値を取得する
             var elements = new List<byte>();
-            foreach (PixelFormatChannelMask channelMask in bmp.Format.Masks)
+            foreach (PixelFormatChannelMask channelMask in bitmap.Format.Masks)
             {
                 int bits = 0;
                 int index = 0;
@@ -86,25 +104,36 @@ namespace NeeView
 
             var color = new Color();
 
-            if (s_supportedFormats.Contains(bmp.Format))
+            if (_supportedFormats.Contains(bitmap.Format))
             {
                 color.B = elements[0];
                 color.G = (elements.Count >= 2) ? elements[1] : elements[0];
                 color.R = (elements.Count >= 3) ? elements[2] : elements[0];
                 color.A = 0xFF; // elements[3];
             }
-            else if (s_supportedIndexFormats.Contains(bmp.Format))
+            else if (_supportedIndexFormats.Contains(bitmap.Format))
             {
-                color = bmp.Palette.Colors[elements[0]];
+                color = bitmap.Palette.Colors[elements[0]];
                 color.A = 0xFF;
             }
             else
             {
-                Debug.WriteLine("GetOneColor: No supprot format: " + bmp.Format.ToString());
+                Debug.WriteLine("GetOneColor: No support format: " + bitmap.Format.ToString());
                 color = Colors.Black;
             }
 
             return color;
+        }
+
+        /// <summary>
+        /// 半透明画像であるか判定
+        /// </summary>
+        /// <param name="bitmap"></param>
+        /// <returns></returns>
+        public static bool HasAlpha(this BitmapSource bitmap)
+        {
+            _supportedAlphaFormats.Contains(bitmap.Format);
+            return _supportedAlphaFormats.Contains(bitmap.Format) || bitmap.Palette?.Colors.Any(e => e.A < 0xff) == true;
         }
     }
 }

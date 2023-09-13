@@ -29,13 +29,15 @@ namespace NeeView
             var grid = new Grid();
 
             // background
-            // TODO: アルファチャンネルを含む画像であるならば表示するようにする
-            var background = new Rectangle();
-            background.SetBinding(Rectangle.FillProperty, new Binding(nameof(PageBackgroundSource.Brush)) { Source = backgroundSource });
-            background.Margin = new Thickness(1);
-            background.HorizontalAlignment = HorizontalAlignment.Stretch;
-            background.VerticalAlignment = VerticalAlignment.Stretch;
-            grid.Children.Add(background);
+            if (source.Page.Content.PictureInfo?.HasAlpha == true)
+            {
+                var background = new Rectangle();
+                background.SetBinding(Rectangle.FillProperty, new Binding(nameof(PageBackgroundSource.Brush)) { Source = backgroundSource });
+                background.Margin = new Thickness(1);
+                background.HorizontalAlignment = HorizontalAlignment.Stretch;
+                background.VerticalAlignment = VerticalAlignment.Stretch;
+                grid.Children.Add(background);
+            }
 
             // image
             _rectangle = new Rectangle();
