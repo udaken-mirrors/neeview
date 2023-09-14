@@ -40,6 +40,8 @@ namespace NeeView
         }
 
 
+        private record class MediaStorage(IMediaPlayer Player, bool IsOldEnabled);
+
         private void Print(Window owner, PageFrameContent content, FrameworkElement element, Transform transform, double width, double height)
         {
             if (!CanPrint()) return;
@@ -51,9 +53,10 @@ namespace NeeView
             var mainContent = content.ViewContents.FirstOrDefault();
 
             // アニメーション停止
-            foreach (var viewContent in contents.OfType<MediaViewContent>())
+            var medias = contents.OfType<MediaViewContent>().Select(e => new MediaStorage(e.Player, e.Player.IsEnabled)).ToList();
+            foreach(var media in medias)
             {
-                viewContent.Player.Pause();
+                media.Player.IsEnabled = false;
             }
 
             // 読み込み停止
@@ -95,9 +98,9 @@ namespace NeeView
                 }
 
                 // アニメーション復元
-                foreach (var viewContent in contents.OfType<MediaViewContent>())
+                foreach (var media in medias)
                 {
-                    viewContent.Player.Resume();
+                    media.Player.IsEnabled = media.IsOldEnabled;
                 }
 
                 // 読み込み再会

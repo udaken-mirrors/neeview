@@ -2348,3 +2348,4 @@ ViewConfig.IsKeepPageTransform.Remarks=ページ単位の回転、拡縮、判�
 SettingPage.FileTypes.Media=動画
 ImageConfig.IsMediaEnabled=動画ページを有効にする
 ImageConfig.IsMediaEnabled.Remarks=動画ファイルの種類は「@SettingPage.Archive.Media」設定ページで設定します。
+Navigator.MoreMenu.IsVisibleControlBar=コントロール バー

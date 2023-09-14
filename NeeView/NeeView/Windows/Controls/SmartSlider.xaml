@@ -43,14 +43,18 @@
                 </Setter>
             </Style>
 
+            <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+
+            
         </Grid.Resources>
 
-        <Track x:Name="PART_Track" PreviewMouseLeftButtonDown="Track_MouseLeftButtonDown">
+        <Track x:Name="PART_Track" PreviewMouseLeftButtonDown="Track_MouseLeftButtonDown" Height="{Binding ThumbSize}">
             <Track.DecreaseRepeatButton>
                 <RepeatButton Background="{Binding TrackDecreaseBrush}" />
             </Track.DecreaseRepeatButton>
             <Track.Thumb>
-                <Thumb Width="{Binding ThumbSize}" Height="{Binding ThumbSize}" DragStarted="Thumb_DragStarted" DragCompleted="Thumb_DragCompleted" DragDelta="Thumb_DragDelta" />
+                <Thumb Width="{Binding ThumbSize}" Height="{Binding ThumbSize}" DragStarted="Thumb_DragStarted" DragCompleted="Thumb_DragCompleted" DragDelta="Thumb_DragDelta"
+                       Visibility="{Binding RelativeSource={RelativeSource Self}, Path=IsEnabled, Converter={StaticResource BooleanToVisibilityConverter}}" />
             </Track.Thumb>
             <Track.IncreaseRepeatButton>
                 <RepeatButton Background="{Binding TrackIncreaseBrush}" />

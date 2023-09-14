@@ -1,9 +1,7 @@
 ﻿using NeeLaboratory.ComponentModel;
-using NeeLaboratory.Generators;
 using NeeView.Collections.Generic;
 using NeeView.PageFrames;
 using System;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Windows;
@@ -26,47 +24,42 @@ namespace NeeView
     {
         private readonly ObjectPool<MediaPlayer> _mediaPlayerPool;
 
+        private readonly ViewContentMediaPlayer _mediaPlayer;
         private readonly SimpleMediaPlayer _player;
+        private readonly IMediaContext _mediaContext;
         private MediaPlayerCanvas? _playerCanvas;
         private readonly DisposableCollection _disposables = new();
         private bool _disposedValue;
         private ImageSource? _imageSource;
 
-        public MediaViewContent(PageFrameElement element, PageFrameElementScale scale, ViewSource viewSource, PageFrameActivity activity, PageBackgroundSource backgroundSource)
-            : base(element, scale, viewSource, activity, backgroundSource)
+        public MediaViewContent(PageFrameElement element, PageFrameElementScale scale, ViewSource viewSource, PageFrameActivity activity, PageBackgroundSource backgroundSource, int index)
+            : base(element, scale, viewSource, activity, backgroundSource, index)
         {
             _mediaPlayerPool = MediaPlayerPool.Default;
 
+            // メディアブックとメティアページで参照する設定を変える
+            _mediaContext = Page.Entry.Archiver is MediaArchiver ? Config.Current.Archive.Media : PageMediaContext.Current;
             _player = AllocateMediaPlayer();
 
-            MediaStartDelay = TimeSpan.FromSeconds(Config.Current.Archive.Media.MediaStartDelaySeconds);
+            _mediaPlayer = new ViewContentMediaPlayer(_mediaContext, _player, activity, index);
         }
 
 
-        public SimpleMediaPlayer Player => _player;
+        public IMediaPlayer Player => _mediaPlayer;
+
+        public IMediaContext MediaContext => _mediaContext;
 
         public ImageSource? ImageSource => _imageSource;
-
-
-        public bool HasControl
-        {
-            get => _player.HasControl;
-            set => _player.HasControl = value;
-        }
-
-        public TimeSpan MediaStartDelay { get; protected set; }
 
 
         private SimpleMediaPlayer AllocateMediaPlayer()
         {
             var player = new SimpleMediaPlayer(_mediaPlayerPool.Allocate());
-            player.MediaPlayed += Player_MediaPlayed;
             return player;
         }
 
         private void ReleaseMediaPlayer(SimpleMediaPlayer player)
         {
-            player.MediaPlayed -= Player_MediaPlayed;
             player.Dispose();
             _mediaPlayerPool.Release(player.Player);
         }
@@ -80,6 +73,7 @@ namespace NeeView
                     _playerCanvas?.Dispose();
                     _playerCanvas = null;
 
+                    _mediaPlayer.Dispose();
                     ReleaseMediaPlayer(_player);
 
                     _disposables.Dispose();
@@ -91,15 +85,10 @@ namespace NeeView
             base.Dispose(disposing);
         }
 
-
         public override void Initialize()
         {
             base.Initialize();
-
-            _disposables.Add(Activity.SubscribePropertyChanged((s, e) => UpdateVideoStatus()));
         }
-
-
 
         protected override FrameworkElement CreateLoadedContent(object data)
         {
@@ -123,30 +112,10 @@ namespace NeeView
             }
 
             _playerCanvas = new MediaPlayerCanvas(source, viewbox, _player);
-            _player.Open(new Uri(source.Path), MediaStartDelay);
+            _player.Open(new Uri(source.Path), TimeSpan.FromSeconds(_mediaContext.MediaStartDelaySeconds));
 
             return _playerCanvas;
         }
-
-        private void Player_MediaPlayed(object? sender, EventArgs e)
-        {
-            UpdateVideoStatus();
-        }
-
-        private void UpdateVideoStatus()
-        {
-            _player.IsMuted = !Activity.IsSelected;
-
-            if (Activity.IsVisible)
-            {
-                _player.Play();
-            }
-            else
-            {
-                _player.Pause();
-            }
-        }
-
     }
 
 }

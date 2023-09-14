@@ -6,6 +6,7 @@ namespace NeeView
     public class ImageConfig : BindableBase
     {
         private bool _isMediaEnabled;
+        private bool _isMediaRepeat = true;
 
         public ImageStandardConfig Standard { get; set; } = new ImageStandardConfig();
 
@@ -24,6 +25,17 @@ namespace NeeView
             get { return _isMediaEnabled; }
             set { SetProperty(ref _isMediaEnabled, value); }
         }
+
+        /// <summary>
+        /// 動画ページのループフラグ
+        /// </summary>
+        [PropertyMember]
+        public bool IsMediaRepeat
+        {
+            get { return _isMediaRepeat; }
+            set { SetProperty(ref _isMediaRepeat, value); }
+        }
+
 
     }
 

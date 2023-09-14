@@ -1,7 +1,17 @@
-﻿<UserControl x:Class="NeeView.NavigateView" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:local="clr-namespace:NeeView"
-        xmlns:nvp="clr-namespace:NeeView.Windows.Property" xmlns:nvc="clr-namespace:NeeView.Windows.Controls" xmlns:properties="clr-namespace:NeeView.Properties" mc:Ignorable="d" d:DesignHeight="800"
-        d:DesignWidth="300" MinWidth="200" Focusable="True" FocusVisualStyle="{x:Null}" Foreground="{DynamicResource Panel.Foreground}">
+﻿<UserControl x:Class="NeeView.NavigateView" 
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:NeeView"
+             xmlns:nvp="clr-namespace:NeeView.Windows.Property"
+             xmlns:nvc="clr-namespace:NeeView.Windows.Controls"
+             xmlns:properties="clr-namespace:NeeView.Properties"
+             mc:Ignorable="d"
+             d:DesignHeight="800" d:DesignWidth="300" MinWidth="200"
+             Focusable="True"
+             FocusVisualStyle="{x:Null}"
+             Foreground="{DynamicResource Panel.Foreground}">
 
     <UserControl.Resources>
 
@@ -239,12 +249,28 @@
 
                     <GridSplitter Grid.Row="0" Height="6" HorizontalAlignment="Stretch"  VerticalAlignment="Bottom" Background="{DynamicResource Panel.Splitter}" IsTabStop="False"
                             Visibility="{Binding IsVisibleThumbnail, Converter={StaticResource BooleanToVisibilityConverter}}" />
-                    
+
                     <StackPanel Grid.Row="1">
 
-                        <local:MediaControlView x:Name="MediaControlView" KeyboardNavigation.TabNavigation="Local" />
+                        <local:MediaControlView x:Name="MediaControlView" KeyboardNavigation.TabNavigation="Local" Margin="0,0,0,5"
+                            Visibility="{Binding IsVisibleControlBar, Converter={StaticResource BooleanToVisibilityConverter}}" />
 
-                        <Separator Visibility="{Binding IsVisibleThumbnail, Converter={StaticResource BooleanToVisibilityInverseConverter}}" />
+                        <Separator>
+                            <Separator.Style>
+                                <Style TargetType="Separator" BasedOn="{StaticResource {x:Type Separator}}">
+                                    <Setter Property="Visibility" Value="Visible" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsVisibleThumbnail}" Value="True">
+                                            <Setter Property="Visibility" Value="Collapsed" />
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding IsVisibleControlBar}" Value="True">
+                                            <Setter Property="Visibility" Value="Collapsed" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Separator.Style>
+
+                        </Separator>
 
                         <StackPanel>
                             <DockPanel LastChildFill="False" Margin="0,5">

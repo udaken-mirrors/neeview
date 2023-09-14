@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -62,7 +63,7 @@ namespace NeeView
             if (Source == null) return;
 
             _vm = new MediaControlViewModel(Source);
-            this.DataContext = _vm;
+            this.Root.DataContext = _vm;
         }
 
         private void VideoSlider_DragStarted(object? sender, System.Windows.Controls.Primitives.DragStartedEventArgs e)
@@ -110,5 +111,21 @@ namespace NeeView
         }
     }
 
+
+    public class EnableValueConverter : IMultiValueConverter
+    {
+        public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
+        {
+            return (bool)values[1] ? values[0] : 0.0;
+        }
+
+        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
+        {
+            return new object[]
+            {
+                value
+            };
+        }
+    }
 
 }

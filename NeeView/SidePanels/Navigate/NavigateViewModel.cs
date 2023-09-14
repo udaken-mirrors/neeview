@@ -51,6 +51,11 @@ namespace NeeView
             set => Config.Current.Navigator.ThumbnailHeight = value;
         }
 
+        public bool IsVisibleControlBar
+        {
+            get => Config.Current.Navigator.IsVisibleControlBar;
+        }
+
         public double Angle
         {
             get => _model.Angle;
@@ -275,6 +280,10 @@ namespace NeeView
                 case nameof(NavigatorConfig.ThumbnailHeight):
                     RaisePropertyChanged(nameof(ThumbnailHeight));
                     break;
+
+                case nameof(NavigatorConfig.IsVisibleControlBar):
+                    RaisePropertyChanged(nameof(IsVisibleControlBar));
+                    break;
             }
         }
 
@@ -308,6 +317,7 @@ namespace NeeView
             {
                 var menu = new ContextMenu();
                 menu.Items.Add(CreateCheckMenuItem(Properties.Resources.Navigator_MoreMenu_IsVisibleThumbnail, new Binding(nameof(NavigatorConfig.IsVisibleThumbnail)) { Source = Config.Current.Navigator }));
+                menu.Items.Add(CreateCheckMenuItem(Properties.Resources.Navigator_MoreMenu_IsVisibleControlBar, new Binding(nameof(NavigatorConfig.IsVisibleControlBar)) { Source = Config.Current.Navigator }));
                 return menu;
             }
         }

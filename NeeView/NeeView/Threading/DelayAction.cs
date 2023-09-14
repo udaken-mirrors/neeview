@@ -14,22 +14,32 @@ namespace NeeView.Threading
     /// </summary>
     public class DelayAction : IDisposable
     {
-        private readonly DispatcherTimer _timer;
-        private readonly Action _action;
         private readonly object _lock = new();
+        private readonly DispatcherTimer _timer;
+        private Action? _action;
 
+
+        public DelayAction(Dispatcher dispatcher)
+        {
+            _timer = new DispatcherTimer(DispatcherPriority.Normal, dispatcher);
+            _timer.Interval = TimeSpan.FromMilliseconds(1000);
+            _timer.Tick += new EventHandler(DispatcherTimer_Tick);
+        }
+
+        public DelayAction() : this(Application.Current.Dispatcher)
+        {
+        }
+
+        public DelayAction(Action action, TimeSpan delay, Dispatcher dispatcher) : this(dispatcher)
+        {
+            _timer.Interval = delay;
+            _action = action;
+        }
 
         public DelayAction(Action action, TimeSpan delay) : this(action, delay, Application.Current.Dispatcher)
         {
         }
 
-        public DelayAction(Action action, TimeSpan delay, Dispatcher dispatcher)
-        {
-            _timer = new DispatcherTimer(DispatcherPriority.Normal, dispatcher);
-            _timer.Interval = delay;
-            _timer.Tick += new EventHandler(DispatcherTimer_Tick);
-            _action = action;
-        }
 
 
         /// <summary>
@@ -38,8 +48,17 @@ namespace NeeView.Threading
         public void Request()
         {
             if (_disposedValue) return;
+            if (_action is null) return;
 
             StartTimer();
+        }
+
+        public void Request(Action action, TimeSpan delay)
+        {
+            _timer.Interval = delay;
+            _action = action;
+
+            Request();
         }
 
         /// <summary>
@@ -56,6 +75,7 @@ namespace NeeView.Threading
         public void Flush()
         {
             if (_disposedValue) return;
+            if (_action is null) return;
 
             if (StopTimer())
             {

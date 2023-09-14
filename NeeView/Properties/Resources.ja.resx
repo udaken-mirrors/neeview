@@ -7475,4 +7475,7 @@ nv.ShowToast(nv.Book.ViewPages[0].Path)</value>
   <data name="ImageConfig.IsMediaEnabled.Remarks" xml:space="preserve">
     <value>動画ファイルの種類は「@SettingPage.Archive.Media」設定ページで設定します。</value>
   </data>
+  <data name="Navigator.MoreMenu.IsVisibleControlBar" xml:space="preserve">
+    <value>コントロール バー</value>
+  </data>
 </root>

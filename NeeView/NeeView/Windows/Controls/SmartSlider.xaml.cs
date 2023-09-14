@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NeeLaboratory.Generators;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -22,38 +23,17 @@ namespace NeeView.Windows.Controls
     /// <summary>
     /// SmartSlider.xaml の相互作用ロジック
     /// </summary>
+    [NotifyPropertyChanged]
     public partial class SmartSlider : UserControl, INotifyPropertyChanged
     {
-        #region INotifyPropertyChanged Support
-
-        public event PropertyChangedEventHandler? PropertyChanged;
-
-        protected bool SetProperty<T>(ref T storage, T value, [System.Runtime.CompilerServices.CallerMemberName] string? propertyName = null)
-        {
-            if (object.Equals(storage, value)) return false;
-            storage = value;
-            this.RaisePropertyChanged(propertyName);
-            return true;
-        }
-
-        protected void RaisePropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string? name = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
-        }
-
-        public void AddPropertyChanged(string propertyName, PropertyChangedEventHandler handler)
-        {
-            PropertyChanged += (s, e) => { if (string.IsNullOrEmpty(e.PropertyName) || e.PropertyName == propertyName) handler?.Invoke(s, e); };
-        }
-
-        #endregion
-
-
         public SmartSlider()
         {
             InitializeComponent();
             this.Root.DataContext = this;
         }
+
+        [Subscribable]
+        public event PropertyChangedEventHandler? PropertyChanged;
 
 
         public static readonly RoutedEvent ValueChangedEvent = EventManager.RegisterRoutedEvent("ValueChanged", RoutingStrategy.Bubble, typeof(RoutedPropertyChangedEventHandler<double>), typeof(SmartSlider));

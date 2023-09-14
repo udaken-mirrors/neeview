@@ -7,6 +7,7 @@ namespace NeeView
     {
         private bool _isVisibleThumbnail;
         private double _thumbnailHeight = 256.0;
+        private bool _isVisibleControlBar;
 
         [PropertyMember]
         public bool IsVisibleThumbnail
@@ -21,6 +22,14 @@ namespace NeeView
             get { return _thumbnailHeight; }
             set { SetProperty(ref _thumbnailHeight, value); }
         }
+
+        [PropertyMember]
+        public bool IsVisibleControlBar
+        {
+            get { return _isVisibleControlBar; }
+            set { SetProperty(ref _isVisibleControlBar, value); }
+        }
+
 
     }
 }

@@ -10043,6 +10043,15 @@ namespace NeeView.Properties {
         }
         
         /// <summary>
+        ///   Control bar に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string Navigator_MoreMenu_IsVisibleControlBar {
+            get {
+                return ResourceManager.GetString("Navigator.MoreMenu.IsVisibleControlBar", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Thumbnail に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string Navigator_MoreMenu_IsVisibleThumbnail {

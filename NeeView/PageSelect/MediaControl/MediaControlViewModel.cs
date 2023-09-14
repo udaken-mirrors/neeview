@@ -101,7 +101,7 @@ namespace NeeView
                 var mediaPlayer = e.MediaPlayer ?? throw new InvalidOperationException();
                 Operator = new MediaPlayerOperator(mediaPlayer);
                 Operator.MediaEnded += Operator_MediaEnded;
-                Operator.Attach(true);
+                Operator.Attach();
 #if false
                 var mediaPlayer = e.MediaPlayer ?? throw new InvalidOperationException();
                 var uri = e.Uri ?? throw new InvalidOperationException();
@@ -126,7 +126,7 @@ namespace NeeView
 
         private void Operator_MediaEnded(object? sender, System.EventArgs e)
         {
-            PageFrameBoxPresenter.Current.View?.RaisePageTerminatedEvent(this, 1);
+            PageFrameBoxPresenter.Current.View?.RaisePageTerminatedEvent(this, 1, true);
         }
 
         public void SetScrubbing(bool isScrubbing)

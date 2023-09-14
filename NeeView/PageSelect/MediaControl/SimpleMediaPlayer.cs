@@ -10,33 +10,38 @@ using System.Windows.Media;
 namespace NeeView
 {
     [NotifyPropertyChanged]
-    public partial class SimpleMediaPlayer : IDisposable, INotifyPropertyChanged
+    public partial class SimpleMediaPlayer : IDisposable, INotifyPropertyChanged, IMediaPlayer
     {
         private readonly MediaPlayer _player;
         private readonly DisposableCollection _disposables = new();
         private bool _disposedValue;
-        private readonly MediaArchiveConfig _mediaConfig;
         private TimeSpan _startDelay;
         private bool _isPlaying;
-        private bool _resumePlaying;
+        private bool _isEnded;
+        private bool _isOpened;
+        private bool _isEnabled = true;
+        private bool _isMuted;
+        private bool _isRepeat;
+
 
         public SimpleMediaPlayer(MediaPlayer player)
         {
             _player = player;
-            _mediaConfig = Config.Current.Archive.Media;
 
-            _disposables.Add(_mediaConfig.SubscribePropertyChanged(nameof(MediaArchiveConfig.IsMuted),
-                (s, e) => IsMuted = _mediaConfig.IsMuted));
+            _disposables.Add(this.SubscribePropertyChanged(nameof(IsEnabled),
+                (s, e) => { UpdatePlayed(); UpdateMuted(); }));
 
-            _disposables.Add(_mediaConfig.SubscribePropertyChanged(nameof(MediaArchiveConfig.Volume),
-                (s, e) => Volume = _mediaConfig.Volume));
+            _disposables.Add(this.SubscribePropertyChanged(nameof(IsMuted),
+                (s, e) => UpdateMuted()));
+
+            _disposables.Add(this.SubscribePropertyChanged(nameof(IMediaContext.IsRepeat),
+                IsRepeat_Changed));
         }
 
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
         public event EventHandler? MediaPlayed;
-
 
         public event EventHandler<ExceptionEventArgs> MediaFailed
         {
@@ -59,16 +64,28 @@ namespace NeeView
 
         public MediaPlayer Player => _player;
 
-
-        // ループ制御
-        public bool HasControl { get; set; } = true;
-
-        public bool IsRepeat => _mediaConfig.IsRepeat;
-
+        public bool IsEnabled
+        {
+            get { return _isEnabled; }
+            set { SetProperty(ref _isEnabled, value); }
+        }
+        
         public bool IsMuted
         {
-            get { return _player.IsMuted; }
-            set { _player.IsMuted = value && _mediaConfig.IsMuted; }
+            get { return _isMuted; }
+            set { SetProperty(ref _isMuted, value); }
+        }
+
+        public bool IsRepeat
+        {
+            get { return _isRepeat; }
+            set { SetProperty(ref _isRepeat, value); }
+        }
+
+        public bool IsPlaying
+        {
+            get { return _isPlaying; }
+            private set { SetProperty(ref _isPlaying, value); }
         }
 
         public double Volume
@@ -86,7 +103,14 @@ namespace NeeView
         public TimeSpan Position
         {
             get { return _player.Position; }
-            set { _player.Position = value; }
+            set
+            {
+                if (_player.Position != value)
+                {
+                    _isEnded = false;
+                    _player.Position = value;
+                }
+            }
         }
 
         public Duration NaturalDuration
@@ -94,10 +118,15 @@ namespace NeeView
             get { return _player.NaturalDuration; }
         }
 
+        public bool HasAudio
+        {
+            get { return _player.HasAudio; }
+        }
 
-
-
-
+        public bool HasVideo
+        {
+            get { return _player.HasVideo; }
+        }
 
         protected virtual void Dispose(bool disposing)
         {
@@ -118,22 +147,21 @@ namespace NeeView
             GC.SuppressFinalize(this);
         }
 
-        public void Open(Uri uri, TimeSpan startDelay)
+        public void Open(Uri uri, TimeSpan delay)
         {
             if (_disposedValue) return;
 
-            _startDelay = startDelay;
+            _startDelay = delay;
 
             _player.MediaOpened += Player_MediaOpened;
             _player.MediaEnded += Player_MediaEnded;
             _player.MediaFailed += Player_MediaFailed;
-            _player.IsMuted = true;
-            _player.Volume = _mediaConfig.Volume;
+            UpdateMuted();
 
             _player.Open(uri);
             _player.Play();
-            _isPlaying = true;
-            _resumePlaying = false;
+            _player.IsMuted = true;
+            IsPlaying = true;
 
             // NOTE: MP3等、映像がない場合はOpenedイベントが発生しないため、すぐに再生する。
             if (_player.HasAudio && !_player.HasVideo)
@@ -146,60 +174,44 @@ namespace NeeView
         {
             if (_disposedValue) return;
 
-            _player.Play();
-            _isPlaying = true;
-            _resumePlaying = false;
+            IsPlaying = true;
+            UpdatePlayed();
+
+            if (_isEnded && _isRepeat)
+            {
+                Replay();
+            }
         }
 
         public void Stop()
         {
             if (_disposedValue) return;
 
-            _resumePlaying = _isPlaying;
+            IsPlaying = false;
             _player.Stop();
-            _isPlaying = false;
         }
 
         public void Pause()
         {
             if (_disposedValue) return;
 
-            _resumePlaying = _isPlaying;
-            _player.Pause();
-            _isPlaying = false;
+            IsPlaying = false;
+            UpdatePlayed();
         }
 
-        public void Resume()
+        private void Replay()
         {
-            if (_disposedValue) return;
+            _isEnded = false;
+            _player.Position = TimeSpan.FromMilliseconds(1);
+        }
 
-            if (_resumePlaying)
+        private void UpdatePlayed()
+        {
+            var isPlay = _isEnabled && _isPlaying;
+
+            if (isPlay)
             {
-                Play();
-            }
-        }
-
-        private void OnStarted()
-        {
-            if (_disposedValue) return;
-
-            IsMuted = false;
-            MediaPlayed?.Invoke(this, EventArgs.Empty);
-        }
-
-        private void Player_MediaOpened(object? sender, EventArgs e)
-        {
-            RaisePropertyChanged(nameof(NaturalDuration));
-            DelayAction(OnStarted, _startDelay);
-        }
-
-        private void Player_MediaEnded(object? sender, EventArgs e)
-        {
-            if (!HasControl) return;
-
-            if (_mediaConfig.IsRepeat)
-            {
-                _player.Position = TimeSpan.FromMilliseconds(1);
+                _player.Play();
             }
             else
             {
@@ -207,9 +219,56 @@ namespace NeeView
             }
         }
 
+        private void UpdateMuted()
+        {
+            var isMuted = !_isEnabled || !_isOpened || _isMuted;
+            _player.IsMuted = isMuted;
+        }
+
+        private void OnStarted()
+        {
+            if (_disposedValue) return;
+
+            _isOpened = true;
+
+            UpdatePlayed();
+            UpdateMuted();
+
+            RaisePropertyChanged(nameof(HasVideo));
+            RaisePropertyChanged(nameof(HasAudio));
+            RaisePropertyChanged(nameof(NaturalDuration));
+
+            MediaPlayed?.Invoke(this, EventArgs.Empty);
+        }
+
+        private void Player_MediaOpened(object? sender, EventArgs e)
+        {
+            DelayAction(OnStarted, _startDelay);
+        }
+
+        private void Player_MediaEnded(object? sender, EventArgs e)
+        {
+            if (_isRepeat)
+            {
+                Replay();
+            }
+            else
+            {
+                _isEnded = true;
+            }
+        }
+
         private void Player_MediaFailed(object? sender, ExceptionEventArgs e)
         {
             // nop.
+        }
+
+        private void IsRepeat_Changed(object? sender, PropertyChangedEventArgs e)
+        {
+            if (_isRepeat && _isEnded && _isPlaying)
+            {
+                Replay();
+            }
         }
 
         private void Close()
@@ -221,8 +280,7 @@ namespace NeeView
             _player.MediaFailed -= Player_MediaFailed;
             _player.Stop();
             _player.Close();
-            _isPlaying = false;
-            _resumePlaying = false;
+            IsPlaying = false;
 
 #if false
             // NOTE: 一瞬黒い画像が表示されるのを防ぐために開放タイミングをずらす。今作では不要か？
@@ -244,23 +302,6 @@ namespace NeeView
                 action();
             });
         }
-
-#if false
-        // TODO: 汎用化？
-        private static void DelayCycleAction(Action action, int delayCycle)
-        {
-            int count = 0;
-            CompositionTarget.Rendering += OnRendering;
-            void OnRendering(object? sender, EventArgs e)
-            {
-                if (++count >= delayCycle)
-                {
-                    CompositionTarget.Rendering -= OnRendering;
-                    action();
-                }
-            }
-        }
-#endif
 
     }
 }

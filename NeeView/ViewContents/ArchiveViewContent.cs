@@ -15,7 +15,8 @@ namespace NeeView
         private DisposableCollection _disposables = new();
         private InstantDelayAction _delayAction;
         
-        public ArchiveViewContent(PageFrameElement element, PageFrameElementScale scale, ViewSource viewSource, PageFrameActivity activity, PageBackgroundSource backgroundSource) : base(element, scale, viewSource, activity, backgroundSource)
+        public ArchiveViewContent(PageFrameElement element, PageFrameElementScale scale, ViewSource viewSource, PageFrameActivity activity, PageBackgroundSource backgroundSource, int index)
+            : base(element, scale, viewSource, activity, backgroundSource, index)
         {
             _delayAction = new InstantDelayAction();
             _disposables.Add(_delayAction);

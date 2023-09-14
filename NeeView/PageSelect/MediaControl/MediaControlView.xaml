@@ -10,7 +10,7 @@
              d:DesignHeight="300" d:DesignWidth="300">
 
     <UserControl.Resources>
-        
+
         <DrawingImage x:Key="ic_play_allow_24px">
             <DrawingImage.Drawing>
                 <DrawingGroup>
@@ -68,7 +68,9 @@
         </DrawingImage>
 
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+        <local:BooleanToVisibilityConverter x:Key="BooleanToVisibilityHiddenConverter" False="Hidden" True="Visible" />
         <local:ColorToBrushConverter x:Key="ColorToBrushConverter" />
+        <local:EnableValueConverter x:Key="EnableValueConverter" />
 
         <Style TargetType="Button" BasedOn="{StaticResource IconButton}">
             <Setter Property="Margin" Value="5,5"/>
@@ -86,18 +88,18 @@
         </Style>
     </UserControl.Resources>
 
-    <Grid>
+    <Grid x:Name="Root">
         <Grid.Style>
             <Style TargetType="Grid">
-                <Setter Property="Visibility" Value="Visible"/>
+                <Setter Property="IsEnabled" Value="True"/>
                 <Style.Triggers>
                     <DataTrigger Binding="{Binding Operator}" Value="{x:Null}">
-                        <Setter Property="Visibility" Value="Collapsed"/>
+                        <Setter Property="IsEnabled" Value="False"/>
                     </DataTrigger>
                 </Style.Triggers>
             </Style>
         </Grid.Style>
-        
+
         <Border x:Name="BaseBorder" BorderThickness="0,1,0,0" BorderBrush="{DynamicResource BottomBar.Border}" Background="{DynamicResource BottomBar.Background}">
             <Border.Style>
                 <Style TargetType="Border">
@@ -116,6 +118,16 @@
             <DockPanel VerticalAlignment="Bottom" Margin="5,0" LastChildFill="False">
 
                 <Button Command="{Binding PlayCommand}">
+                    <Button.Style>
+                        <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding Operator}" Value="{x:Null}">
+                                    <Setter Property="IsEnabled" Value="False" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
+
                     <Image>
                         <Image.Style>
                             <Style TargetType="Image" BasedOn="{StaticResource ButtonImage}">
@@ -130,31 +142,51 @@
                     </Image>
                 </Button>
 
-                <Button Command="{Binding MuteCommand}">
-                    <Image>
-                        <Image.Style>
-                            <Style TargetType="Image" BasedOn="{StaticResource ButtonImage}">
-                                <Setter Property="Source" Value="{StaticResource ic_volume_up_24px}" />
-                                <Style.Triggers>
-                                    <DataTrigger Binding="{Binding Operator.IsMuted}" Value="True">
-                                        <Setter Property="Source" Value="{StaticResource ic_volume_off_24px}" />
-                                    </DataTrigger>
-                                </Style.Triggers>
-                            </Style>
-                        </Image.Style>
-                    </Image>
-                </Button>
+                <StackPanel x:Name="VolumePanel" Orientation="Horizontal">
+                    <StackPanel.Style>
+                        <Style TargetType="StackPanel">
+                            <Setter Property="IsEnabled" Value="False" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding Operator.HasAudio}" Value="True">
+                                    <Setter Property="IsEnabled" Value="True" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </StackPanel.Style>
 
-                <nwc:SmartSlider x:Name="VolumeSlider" Width="112" Height="30" VerticalAlignment="Center" ThumbSize="12"
+                    <Button Command="{Binding MuteCommand}">
+                        <Image>
+                            <Image.Style>
+                                <Style TargetType="Image" BasedOn="{StaticResource ButtonImage}">
+                                    <Setter Property="Source" Value="{StaticResource ic_volume_up_24px}" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Operator.IsMuted}" Value="True">
+                                            <Setter Property="Source" Value="{StaticResource ic_volume_off_24px}" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Image.Style>
+                        </Image>
+                    </Button>
+                    
+                    <nwc:SmartSlider x:Name="VolumeSlider" Width="112" Height="30" VerticalAlignment="Center" ThumbSize="12"
                                  ThumbBorderBrush="{DynamicResource BottomBar.Foreground}"
                                  ThumbFill="{DynamicResource BottomBar.Foreground}"
                                  TrackDecreaseBrush="{DynamicResource BottomBar.Foreground}"
                                  TrackIncreaseBrush="{DynamicResource Slider.Background}"
-                                 Value="{Binding Operator.Volume}"
                                  FocusVisualStyle="{StaticResource NVFocusVisual}" Focusable="True" IsTabStop="True"
                                  PreviewMouseDown="Volume_PreviewMouseDown"
                                  MouseWheel="Volume_MouseWheel"
-                                 KeyDown="Volume_KeyDown" />
+                                 KeyDown="Volume_KeyDown" >
+                        <nwc:SmartSlider.Value>
+                            <MultiBinding Converter="{StaticResource EnableValueConverter}">
+                                <Binding Path="Operator.Volume"/>
+                                <Binding RelativeSource="{RelativeSource Self}" Path="IsEnabled" Mode="OneWay" />
+                            </MultiBinding>
+                        </nwc:SmartSlider.Value>
+                    </nwc:SmartSlider>
+
+                </StackPanel>
 
                 <TextBlock Margin="15,0" DockPanel.Dock="Left" VerticalAlignment="Center" Text="{Binding Operator.DispTime}" Foreground="{DynamicResource BottomBar.Foreground}">
                     <TextBlock.Style>
@@ -165,6 +197,15 @@
                 </TextBlock>
 
                 <Button DockPanel.Dock="Right" Command="{Binding RepeatCommand}">
+                    <Button.Style>
+                        <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding Operator}" Value="{x:Null}">
+                                    <Setter Property="IsEnabled" Value="False" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
                     <Image>
                         <Image.Style>
                             <Style TargetType="Image" BasedOn="{StaticResource ButtonImage}">
@@ -181,21 +222,29 @@
 
             </DockPanel>
 
-            <DockPanel VerticalAlignment="Bottom">
-                <DockPanel.Style>
-                    <Style TargetType="DockPanel">
+            <StackPanel VerticalAlignment="Bottom">
+                <StackPanel.Style>
+                    <Style TargetType="StackPanel">
+                        <Setter Property="IsEnabled" Value="False" />
                         <Style.Triggers>
-                            <DataTrigger Binding="{Binding Operator.DurationHasTimeSpan}" Value="False">
-                                <Setter Property="Visibility" Value="Hidden" />
+                            <DataTrigger Binding="{Binding Operator.DurationHasTimeSpan}" Value="True">
+                                <Setter Property="IsEnabled" Value="True" />
                             </DataTrigger>
                         </Style.Triggers>
                     </Style>
-                </DockPanel.Style>
+                </StackPanel.Style>
                 <nwc:SmartSlider x:Name="Slider" ThumbSize="{Binding Slider.Thickness, Source={x:Static local:Config.Current}}" ThumbBorderBrush="{DynamicResource BottomBar.Slider.Thumb}"
                         TrackDecreaseBrush="{DynamicResource BottomBar.Slider.Track}" TrackIncreaseBrush="{DynamicResource BottomBar.Slider.Background}"
-                        Value="{Binding Operator.PositionRate}" DragStarted="VideoSlider_DragStarted" DragCompleted="VideoSlider_DragCompleted"
-                        PreviewMouseLeftButtonDown="VideoSlider_PreviewMouseLeftButtonDown" />
-            </DockPanel>
+                        DragStarted="VideoSlider_DragStarted" DragCompleted="VideoSlider_DragCompleted"
+                        PreviewMouseLeftButtonDown="VideoSlider_PreviewMouseLeftButtonDown" >
+                    <nwc:SmartSlider.Value>
+                        <MultiBinding Converter="{StaticResource EnableValueConverter}">
+                            <Binding Path="Operator.PositionRate"/>
+                            <Binding RelativeSource="{RelativeSource Self}" Path="IsEnabled" Mode="OneWay" />
+                        </MultiBinding>
+                    </nwc:SmartSlider.Value>
+                </nwc:SmartSlider>
+            </StackPanel>
 
         </StackPanel>
     </Grid>

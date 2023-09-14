@@ -1,6 +1,7 @@
 ﻿using NeeLaboratory;
 using NeeLaboratory.ComponentModel;
 using NeeLaboratory.Windows.Input;
+using NeeView.Threading;
 using System;
 using System.Diagnostics;
 using System.Reflection;
@@ -23,66 +24,59 @@ namespace NeeView
         public static MediaPlayerOperator? Current { get; set; }
 
 
-        private readonly SimpleMediaPlayer _player;
+        private readonly IMediaPlayer _player;
         private readonly DispatcherTimer _timer;
-
-        //private bool _isLastStart;
         private bool _isTimeLeftDisp;
-
         private Duration _duration;
         private TimeSpan _durationTimeSpan = TimeSpan.FromMilliseconds(1.0);
         private TimeSpan _position;
-
         private bool _isActive;
-        private bool _isPlaying;
-        private bool _isRepeat;
         private bool _isScrubbing;
-        private double _volume = 0.5;
-        private double _delay;
         private readonly DisposableCollection _disposables = new();
         private bool _disposedValue = false;
+        private readonly DelayAction _delayResume = new();
+        private MediaPlayerPauseBit _pauseBits;
+        private readonly object _lock = new();
+        private bool _isPlaying;
 
 
-        public MediaPlayerOperator(SimpleMediaPlayer player)
+        public MediaPlayerOperator(IMediaPlayer player)
         {
             _player = player;
-
             _player.ScrubbingEnabled = true;
 
             _player.MediaOpened += Player_MediaOpened;
             _player.MediaEnded += Player_MediaEnded;
             _player.MediaFailed += Player_MediaFailed;
+
             _disposables.Add(_player.SubscribePropertyChanged(nameof(_player.NaturalDuration),
                 (s, e) => Duration = _player.NaturalDuration));
 
-            _position = _player.Position;
+            _disposables.Add(_player.SubscribePropertyChanged(nameof(_player.HasAudio),
+                (s, e) => RaisePropertyChanged(nameof(HasAudio))));
 
-            this.IsMuted = Config.Current.Archive.Media.IsMuted;
-            this.Volume = Config.Current.Archive.Media.Volume;
-            this.IsRepeat = Config.Current.Archive.Media.IsRepeat;
+            _disposables.Add(_player.SubscribePropertyChanged(nameof(_player.HasVideo),
+                (s, e) => RaisePropertyChanged(nameof(HasVideo))));
+
+            _disposables.Add(_player.SubscribePropertyChanged(nameof(_player.IsPlaying),
+                (s, e) => RaisePropertyChanged(nameof(IsPlaying))));
+
+            _disposables.Add(_player.SubscribePropertyChanged(nameof(_player.IsMuted),
+                (s, e) => RaisePropertyChanged(nameof(IsMuted))));
+
+            _disposables.Add(_player.SubscribePropertyChanged(nameof(_player.Volume),
+                (s, e) => RaisePropertyChanged(nameof(Volume))));
+
+            _disposables.Add(_player.SubscribePropertyChanged(nameof(_player.IsRepeat),
+                (s, e) => RaisePropertyChanged(nameof(IsRepeat))));
+
+            _isPlaying = _player.IsPlaying;
+            _position = _player.Position;
 
             _timer = new DispatcherTimer(DispatcherPriority.Normal, App.Current.Dispatcher);
             _timer.Interval = TimeSpan.FromSeconds(0.1);
             _timer.Tick += DispatcherTimer_Tick;
             _timer.Start();
-
-            _disposables.Add(Config.Current.Archive.Media.SubscribePropertyChanged(nameof(MediaArchiveConfig.IsMuted),
-                (s, e) =>
-                {
-                    this.IsMuted = Config.Current.Archive.Media.IsMuted;
-                }));
-
-            _disposables.Add(Config.Current.Archive.Media.SubscribePropertyChanged(nameof(MediaArchiveConfig.Volume),
-                (s, e) =>
-                {
-                    this.Volume = Config.Current.Archive.Media.Volume;
-                }));
-
-            _disposables.Add(Config.Current.Archive.Media.SubscribePropertyChanged(nameof(MediaArchiveConfig.IsRepeat),
-                (s, e) =>
-                {
-                    this.IsRepeat = Config.Current.Archive.Media.IsRepeat;
-                }));
         }
 
 
@@ -113,6 +107,15 @@ namespace NeeView
             get { return _duration.HasTimeSpan; }
         }
 
+        public bool HasAudio
+        {
+            get { return _player.HasAudio; }
+        }
+
+        public bool HasVideo
+        {
+            get { return _player.HasVideo; }
+        }
 
         public TimeSpan Position
         {
@@ -123,7 +126,6 @@ namespace NeeView
                 if (_position != value)
                 {
                     SetPositionInner(value);
-
                     if (_duration.HasTimeSpan)
                     {
                         _player.Position = _position;
@@ -132,14 +134,6 @@ namespace NeeView
             }
         }
 
-        private void SetPositionInner(TimeSpan position)
-        {
-            //Debug.Assert(position > TimeSpan.Zero);
-            _position = MathUtility.Clamp(position, TimeSpan.Zero, _durationTimeSpan);
-            RaisePropertyChanged();
-            RaisePropertyChanged(nameof(PositionRate));
-            RaisePropertyChanged(nameof(DispTime));
-        }
 
         // [0..1] for slider
         public double PositionRate
@@ -151,19 +145,8 @@ namespace NeeView
         // [0..1]
         public double Volume
         {
-            get { return _volume; }
-            set
-            {
-                if (_disposedValue) return;
-                if (_volume != value)
-                {
-                    _volume = value;
-                    UpdateVolume();
-                    RaisePropertyChanged();
-
-                    Config.Current.Archive.Media.Volume = _volume;
-                }
-            }
+            get => _player.Volume;
+            set => _player.Volume = value;
         }
 
         public bool IsTimeLeftDisp
@@ -207,41 +190,23 @@ namespace NeeView
             get { return _isPlaying; }
             set
             {
-                if (_disposedValue) return;
-                if (_isPlaying != value)
+                if (SetProperty(ref _isPlaying, value))
                 {
-                    _isPlaying = value;
-                    RaisePropertyChanged();
+                    UpdatePlaying();
                 }
             }
         }
 
         public bool IsRepeat
         {
-            get { return _isRepeat; }
-            set
-            {
-                if (_disposedValue) return;
-                if (_isRepeat != value)
-                {
-                    _isRepeat = value;
-                    RaisePropertyChanged();
-
-                    Config.Current.Archive.Media.IsRepeat = _isRepeat;
-                }
-            }
+            get => _player.IsRepeat;
+            set => _player.IsRepeat = value;
         }
 
         public bool IsMuted
         {
-            get { return _player.IsMuted; }
-            set
-            {
-                if (_disposedValue) return;
-                _player.IsMuted = value;
-                RaisePropertyChanged();
-                Config.Current.Archive.Media.IsMuted = _player.IsMuted;
-            }
+            get => _player.IsMuted;
+            set => _player.IsMuted = value;
         }
 
         public bool IsScrubbing
@@ -250,37 +215,26 @@ namespace NeeView
             set
             {
                 if (_disposedValue) return;
-
                 if (_isScrubbing != value)
                 {
                     _isScrubbing = value;
-
                     if (_isActive)
                     {
                         if (_isScrubbing)
                         {
-                            _player.Pause();
-                            UpdateVolume();
+                            SetPauseFlag(MediaPlayerPauseBit.Scrubbing);
                         }
                         else
                         {
-                            Resume();
                             _player.Position = _position;
+                            ResetPauseFlag(MediaPlayerPauseBit.Scrubbing);
                         }
                     }
-
                     RaisePropertyChanged();
                 }
             }
         }
 
-
-
-
-
-
-
-        #region IDisposable Support
 
 
         protected virtual void Dispose(bool disposing)
@@ -295,8 +249,6 @@ namespace NeeView
                     _player.MediaFailed -= Player_MediaFailed;
                     _player.MediaOpened -= Player_MediaOpened;
                     _player.MediaEnded -= Player_MediaEnded;
-                    //_player.Stop();
-                    //_player.Close();
                 }
 
                 _disposedValue = true;
@@ -309,26 +261,11 @@ namespace NeeView
             GC.SuppressFinalize(this);
         }
 
-        #endregion
 
-
-
-        public void RaisePropertyChangedAll()
-        {
-            RaisePropertyChanged(null);
-        }
-
-        public void TogglePlay()
-        {
-            if (!IsPlaying)
-            {
-                Play();
-            }
-            else
-            {
-                Pause();
-            }
-        }
+        //public void RaisePropertyChangedAll()
+        //{
+        //    RaisePropertyChanged(null);
+        //}
 
 
         private void Player_MediaFailed(object? sender, ExceptionEventArgs e)
@@ -338,7 +275,7 @@ namespace NeeView
 
         private void Player_MediaEnded(object? sender, EventArgs e)
         {
-            if (!_isRepeat)
+            if (!IsRepeat)
             {
                 MediaEnded?.Invoke(this, EventArgs.Empty);
             }
@@ -346,20 +283,8 @@ namespace NeeView
 
         private void Player_MediaOpened(object? sender, EventArgs e)
         {
-            return;
         }
 
-
-        // 遅延再生開始用のタイマー処理
-        private void DispatcherTimer_StartTick(object? sender, EventArgs e)
-        {
-            _delay -= _timer.Interval.TotalMilliseconds;
-            if (_delay < 0.0)
-            {
-                _timer.Tick -= DispatcherTimer_StartTick;
-                Play();
-            }
-        }
 
         // 通常用タイマー処理
         private void DispatcherTimer_Tick(object? sender, EventArgs e)
@@ -372,17 +297,21 @@ namespace NeeView
                 //Debug.WriteLine($"## Player: {_player.Position}");
                 SetPositionInner(_player.Position);
             }
-
-            Delay_Tick(_timer.Interval.TotalMilliseconds);
         }
 
-        public void Attach(bool isPlaying)
+        private void SetPositionInner(TimeSpan position)
+        {
+            //Debug.Assert(position > TimeSpan.Zero);
+            _position = MathUtility.Clamp(position, TimeSpan.Zero, _durationTimeSpan);
+            RaisePropertyChanged();
+            RaisePropertyChanged(nameof(PositionRate));
+            RaisePropertyChanged(nameof(DispTime));
+        }
+
+        public void Attach()
         {
             if (_disposedValue) return;
-
-            _isActive = isPlaying;
-            _isPlaying = isPlaying;
-
+            _isActive = true;
             Duration = _player.NaturalDuration;
         }
 
@@ -402,20 +331,59 @@ namespace NeeView
             if (_disposedValue) return;
 
             _isActive = true;
-
-            _player.Play();
-            UpdateVolume();
-
-            this.IsPlaying = true;
+            IsPlaying = true;
         }
 
         public void Pause()
         {
             if (_disposedValue) return;
 
-            _player.Pause();
-
             IsPlaying = false;
+        }
+
+        public void TogglePlay()
+        {
+            if (!IsPlaying)
+            {
+                Play();
+            }
+            else
+            {
+                Pause();
+            }
+        }
+
+        private void SetPauseFlag(MediaPlayerPauseBit bit)
+        {
+            lock (_lock)
+            {
+                _pauseBits |= bit;
+            }
+            UpdatePlaying();
+        }
+
+        private void ResetPauseFlag(MediaPlayerPauseBit bit)
+        {
+            lock (_lock)
+            {
+                _pauseBits &= ~bit;
+            }
+            UpdatePlaying();
+        }
+
+        /// <summary>
+        /// 再生状態更新
+        /// </summary>
+        private void UpdatePlaying()
+        {
+            if (_isPlaying && _pauseBits == MediaPlayerPauseBit.None)
+            {
+                _player.Play();
+            }
+            else
+            {
+                _player.Pause();
+            }
         }
 
         /// <summary>
@@ -476,68 +444,28 @@ namespace NeeView
             if (_disposedValue) return;
             if (!_duration.HasTimeSpan) return;
 
-            _delay = Config.Current.Archive.Media.MediaStartDelaySeconds * 1000;
-            if (_delay <= 0.0)
-            {
-                this.Position = position;
-            }
-            else
-            {
-                UpdateVolume();
-                _player.Pause();
-                this.Position = position;
-
-                _delayPosition = position;
-            }
+            SetPauseFlag(MediaPlayerPauseBit.SetPosition);
+            this.Position = position;
+            _delayResume.Request(() => ResetPauseFlag(MediaPlayerPauseBit.SetPosition), TimeSpan.FromMilliseconds(500));
         }
 
-        TimeSpan _delayPosition;
-
-        // 移動による遅延再生処理用
-        private void Delay_Tick(double ms)
-        {
-            if (_disposedValue) return;
-            if (_delay <= 0.0) return;
-
-            if (_isScrubbing)
-            {
-                _delay = 0.0;
-                return;
-            }
-
-            // NOTE: 無理やり位置補正しているのがよろしくない。この遅延の仕組み自体がいいかげんである。であるが、次の動画再生システムまでのつなぎなのでまあ？
-            this.Position = _delayPosition;
-
-            _delay -= ms;
-            if (_delay <= 0.0)
-            {
-                Resume();
-            }
-        }
-
-        //
-        private void Resume()
-        {
-            if (_disposedValue) return;
-
-            if (_isPlaying && (_isRepeat || _position < _durationTimeSpan))
-            {
-                _player.Play();
-                UpdateVolume();
-            }
-        }
-
-        //
-        private void UpdateVolume()
-        {
-            _player.Volume = _isScrubbing || _delay > 0.0 ? 0.0 : _volume;
-        }
-
+        /// <summary>
+        /// 音量増減
+        /// </summary>
+        /// <param name="delta">増減値</param>
         public void AddVolume(double delta)
         {
             Volume = MathUtility.Clamp(Volume + delta, 0.0, 1.0);
         }
 
+
+        [Flags]
+        private enum MediaPlayerPauseBit
+        {
+            None = 0,
+            Scrubbing = (1 << 0),
+            SetPosition = (1 << 1),
+        }
     }
 
     public static class TimeSpanExtensions
@@ -547,4 +475,7 @@ namespace NeeView
             return Math.Abs(timeSpan.Days * 24 + timeSpan.Hours);
         }
     }
+
+
+
 }

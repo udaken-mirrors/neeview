@@ -801,7 +801,7 @@ namespace NeeView.PageFrames
         /// <summary>
         /// NScroll
         /// </summary>
-        /// <param name="direction"></param>
+        /// <param name="direction">scroll direction</param>
         /// <returns>is scroll terminated</returns>
         public bool ScrollToNext(LinkedListDirection direction, IScrollNTypeParameter parameter)
         {
@@ -1145,8 +1145,9 @@ namespace NeeView.PageFrames
             return null;
         }
 
-        internal void RaisePageTerminatedEvent(object? sender, int direction)
+        internal void RaisePageTerminatedEvent(object? sender, int direction, bool isMedia)
         {
+            if (isMedia && !_bookContext.IsMedia) return;
             PageTerminated?.Invoke(sender, new PageTerminatedEventArgs(direction));
         }
     }

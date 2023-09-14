@@ -2348,3 +2348,4 @@ ViewConfig.IsKeepPageTransform.Remarks=Keep page-by-page rotation, scaling, and 
 SettingPage.FileTypes.Media=Video
 ImageConfig.IsMediaEnabled=Enable Video Page
 ImageConfig.IsMediaEnabled.Remarks=The type of video file is set in the "@SettingPage.Archive.Media" settings page.
+Navigator.MoreMenu.IsVisibleControlBar=Control bar

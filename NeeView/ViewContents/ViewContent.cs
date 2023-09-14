@@ -34,15 +34,25 @@ namespace NeeView
         private readonly DisposableCollection _disposables = new();
         private readonly SizeSource _sizeSource;
         private readonly PageBackgroundSource _backgroundSource;
+        private int _index;
 
 
-
-        public ViewContent(PageFrameElement element, PageFrameElementScale scale, ViewSource viewSource, PageFrameActivity activity, PageBackgroundSource backgroundSource)
+        /// <summary>
+        /// ページ要素の表示物
+        /// </summary>
+        /// <param name="element">ページ要素</param>
+        /// <param name="scale">ページ要素スケール</param>
+        /// <param name="viewSource">表示ソース</param>
+        /// <param name="activity">表示状態</param>
+        /// <param name="backgroundSource">ページ背景</param>
+        /// <param name="index">フレーム内のページ要素番号</param>
+        public ViewContent(PageFrameElement element, PageFrameElementScale scale, ViewSource viewSource, PageFrameActivity activity, PageBackgroundSource backgroundSource, int index)
         {
             _element = element;
             _scale = scale;
             _viewSource = viewSource;
             _activity = activity;
+            _index = index;
 
             _viewContentSize = ViewContentSizeFactory.Create(element, scale);
 
@@ -61,6 +71,7 @@ namespace NeeView
         public PageFrameActivity Activity => _activity;
         public ArchiveEntry ArchiveEntry => _element.Page.Entry;
         public PageFrameElement Element => _element;
+        public int ElementIndex => _index;
         public ViewContentSize ViewContentSize => _viewContentSize;
         public Size LayoutSize => _viewContentSize.LayoutSize;
         public ViewSource ViewSource => _viewSource;

@@ -3,7 +3,7 @@ using NeeView.Windows.Property;
 
 namespace NeeView
 {
-    public class MediaArchiveConfig : BindableBase
+    public class MediaArchiveConfig : BindableBase, IMediaContext
     {
         public static FileTypeCollection DefaultSupportFileTypes { get; } = new FileTypeCollection(".asf;.avi;.mp4;.mkv;.mov;.wmv");
 

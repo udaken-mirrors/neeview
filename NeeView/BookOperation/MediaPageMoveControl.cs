@@ -81,12 +81,18 @@ namespace NeeView
 
         public void ScrollToPrevFrame(object? sender, ScrollPageCommandParameter parameter)
         {
-            _box.ScrollToNext(LinkedListDirection.Previous, parameter);
+            if (_box.ScrollToNext(LinkedListDirection.Previous, parameter))
+            {
+                MoveMediaPage(sender, -1);
+            }
         }
 
         public void ScrollToNextFrame(object? sender, ScrollPageCommandParameter parameter)
         {
-            _box.ScrollToNext(LinkedListDirection.Next, parameter);
+            if (_box.ScrollToNext(LinkedListDirection.Next, parameter))
+            {
+                MoveMediaPage(sender, +1);
+            }
         }
 
 
@@ -99,7 +105,7 @@ namespace NeeView
 
             if (isTerminated)
             {
-                _box.RaisePageTerminatedEvent(sender, delta < 0 ? -1 : 1);
+                _box.RaisePageTerminatedEvent(sender, delta < 0 ? -1 : 1, true);
             }
         }
     }

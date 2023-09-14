@@ -290,7 +290,7 @@ namespace NeeView.PageFrames
 
             // layout contents
             _viewContents = _pageFrame.Elements
-                .Select(e => _viewContentFactory.Create(e, CreateElementScale(), _activity))
+                .Select((e, index) => _viewContentFactory.Create(e, CreateElementScale(), _activity, index))
                 .ToList();
             _disposables.AddRange(_viewContents);
             foreach (var content in _viewContents.Direction(_pageFrame.Direction))
