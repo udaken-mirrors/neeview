@@ -81,7 +81,7 @@ namespace NeeView
 
         public FrameworkElement? CreateIcon()
         {
-            var imageSource = (ViewContent.ViewSource as BitmapViewSource)?.Picture.ImageSource;
+            var imageSource = (ViewContent.ViewSource as IHasImageSource)?.ImageSource;
 
             if (imageSource != null)
             {

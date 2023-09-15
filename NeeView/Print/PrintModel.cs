@@ -260,7 +260,7 @@ namespace NeeView
         private FrameworkElement CreateViewContent()
         {
             // スケールモード設定
-            foreach (var viewContent in _context.Contents.OfType<ImageViewContent>())
+            foreach (var viewContent in _context.Contents.OfType<IHasScalingMode>())
             {
                 viewContent.ScalingMode = IsDotScale ? BitmapScalingMode.NearestNeighbor : BitmapScalingMode.HighQuality;
             }

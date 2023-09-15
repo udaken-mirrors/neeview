@@ -5,8 +5,8 @@ namespace NeeView
 {
     public class PicturePageThumbnail : PageThumbnail
     {
-        private PageContent _content;
-        private IPictureSource _source;
+        private readonly PageContent _content;
+        private readonly IPictureSource _source;
 
         public PicturePageThumbnail(PageContent content, IPictureSource source) : base(content)
         {

@@ -252,10 +252,9 @@ namespace NeeView
 
             _bookMementoControl = new BookMementoControl(_book, BookHistoryCollection.Current);
 
-            _box.Initialize();
+            RaisePropertyChanged(nameof(View));
             await WaitStableAsync(_box, token);
 
-            RaisePropertyChanged(nameof(View));
             RaisePropertyChanged(null);
             PagesChanged?.Invoke(this, EventArgs.Empty);
             SelectedRangeChanged?.Invoke(this, EventArgs.Empty);

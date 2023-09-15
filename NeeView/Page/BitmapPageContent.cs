@@ -7,11 +7,12 @@ namespace NeeView
 {
     public class BitmapPageContent : PageContent
     {
-        private IBitmapPageSourceLoader? _imageDataLoader;
+        private BitmapPageContentLoader _loader;
 
         public BitmapPageContent(ArchiveEntry archiveEntry, BookMemoryService? bookMemoryService)
             : base(archiveEntry, bookMemoryService)
         {
+            _loader = new BitmapPageContentLoader(archiveEntry);
         }
 
 
@@ -29,10 +30,8 @@ namespace NeeView
                 }
 #endif
                 NVDebug.AssertMTA();
-                var loader = _imageDataLoader ?? new BitmapPageSourceLoader();
                 var createPictureInfo = PictureInfo is null;
-                var imageData = await loader.LoadAsync(Entry, createPictureInfo, token);
-                _imageDataLoader = imageData.ImageDataLoader;
+                var imageData = await _loader.LoadAsync(createPictureInfo, token);
                 return imageData;
             }
             catch (OperationCanceledException)
@@ -44,6 +43,5 @@ namespace NeeView
                 return PageSource.CreateError(ex.Message);
             }
         }
-
     }
 }

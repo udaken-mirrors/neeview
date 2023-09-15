@@ -1,8 +1,6 @@
 ﻿using NeeLaboratory.ComponentModel;
 using NeeView.Collections.Generic;
 using NeeView.PageFrames;
-using System;
-using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Data;
@@ -19,50 +17,28 @@ namespace NeeView
         public static ObjectPool<MediaPlayer> Default { get; } = new();
     }
 
-
-    public partial class MediaViewContent : ViewContent
+    public interface IHasMediaPlayer
     {
-        private readonly ObjectPool<MediaPlayer> _mediaPlayerPool;
+        IMediaPlayer? Player { get; }
+    }
 
-        private readonly ViewContentMediaPlayer _mediaPlayer;
-        private readonly SimpleMediaPlayer _player;
-        private readonly IMediaContext _mediaContext;
-        private MediaPlayerCanvas? _playerCanvas;
-        private readonly DisposableCollection _disposables = new();
+    public partial class MediaViewContent : ViewContent, IHasMediaPlayer
+    {
         private bool _disposedValue;
-        private ImageSource? _imageSource;
+        private readonly DisposableCollection _disposables = new();
+
+        private readonly IViewContentStrategy _strategy;
+
 
         public MediaViewContent(PageFrameElement element, PageFrameElementScale scale, ViewSource viewSource, PageFrameActivity activity, PageBackgroundSource backgroundSource, int index)
             : base(element, scale, viewSource, activity, backgroundSource, index)
         {
-            _mediaPlayerPool = MediaPlayerPool.Default;
-
-            // メディアブックとメティアページで参照する設定を変える
-            _mediaContext = Page.Entry.Archiver is MediaArchiver ? Config.Current.Archive.Media : PageMediaContext.Current;
-            _player = AllocateMediaPlayer();
-
-            _mediaPlayer = new ViewContentMediaPlayer(_mediaContext, _player, activity, index);
+            _strategy = new MediaViewContentStrategy(this);
         }
 
 
-        public IMediaPlayer Player => _mediaPlayer;
+        public IMediaPlayer? Player => (_strategy as MediaViewContentStrategy)?.Player;
 
-        public IMediaContext MediaContext => _mediaContext;
-
-        public ImageSource? ImageSource => _imageSource;
-
-
-        private SimpleMediaPlayer AllocateMediaPlayer()
-        {
-            var player = new SimpleMediaPlayer(_mediaPlayerPool.Allocate());
-            return player;
-        }
-
-        private void ReleaseMediaPlayer(SimpleMediaPlayer player)
-        {
-            player.Dispose();
-            _mediaPlayerPool.Release(player.Player);
-        }
 
         protected override void Dispose(bool disposing)
         {
@@ -70,12 +46,7 @@ namespace NeeView
             {
                 if (disposing)
                 {
-                    _playerCanvas?.Dispose();
-                    _playerCanvas = null;
-
-                    _mediaPlayer.Dispose();
-                    ReleaseMediaPlayer(_player);
-
+                    _strategy.Dispose();
                     _disposables.Dispose();
                     this.Content = null;
                 }
@@ -85,37 +56,18 @@ namespace NeeView
             base.Dispose(disposing);
         }
 
-        public override void Initialize()
+        protected override void OnSourceChanged()
         {
-            base.Initialize();
+            if (_disposedValue) return;
+            _strategy.OnSourceChanged();
+            base.OnSourceChanged();
         }
 
         protected override FrameworkElement CreateLoadedContent(object data)
         {
-            var source = data as MediaSource ?? throw new InvalidOperationException();
-            return CreateMediaContent(source);
-        }
-
-
-        private FrameworkElement CreateMediaContent(MediaSource source)
-        {
-            Debug.WriteLine($"Create.MediaPlayer: {ArchiveEntry}");
-
-            _imageSource = source.ImageSource;
-
-            var viewbox = Element.ViewSizeCalculator.GetViewBox();
-
-            if (_playerCanvas is not null)
-            {
-                _playerCanvas.SetViewbox(viewbox);
-                return _playerCanvas;
-            }
-
-            _playerCanvas = new MediaPlayerCanvas(source, viewbox, _player);
-            _player.Open(new Uri(source.Path), TimeSpan.FromSeconds(_mediaContext.MediaStartDelaySeconds));
-
-            return _playerCanvas;
+            return _strategy.CreateLoadedContent(data);
         }
     }
+
 
 }

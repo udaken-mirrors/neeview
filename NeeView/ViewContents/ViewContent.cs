@@ -76,6 +76,7 @@ namespace NeeView
         public Size LayoutSize => _viewContentSize.LayoutSize;
         public ViewSource ViewSource => _viewSource;
         public ViewContentState State { get; private set; }
+        public PageBackgroundSource BackgroundSource => _backgroundSource;
 
 
 
@@ -197,7 +198,7 @@ namespace NeeView
         /// ViewSource の更新
         /// </summary>
         /// <param name="token"></param>
-        protected void RequestLoadViewSource(CancellationToken token)
+        public void RequestLoadViewSource(CancellationToken token)
         {
             if (!_element.Page.Content.IsLoaded) return;
             Task.Run(() => LoadViewSourceAsync(token));

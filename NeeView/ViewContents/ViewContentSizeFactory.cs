@@ -8,6 +8,7 @@ namespace NeeView
         {
             return element.Page.Content switch
             {
+                AnimatedPageContent => new BitmapViewContentSize(element, scale),
                 BitmapPageContent => new BitmapViewContentSize(element, scale),
                 MediaPageContent => new MediaViewContentSize(element, scale),
                 _ => new ViewContentSize(element, scale),

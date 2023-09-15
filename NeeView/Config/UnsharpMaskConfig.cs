@@ -40,7 +40,7 @@ namespace NeeView
         }
 
         /// <summary>
-        /// UnsharpThrethold property.
+        /// UnsharpThreshold property.
         /// 0-10
         /// </summary>
         [PropertyRange(0, 10)]
@@ -59,7 +59,7 @@ namespace NeeView
 
         public override int GetHashCode()
         {
-            return Amount.GetHashCode() ^ Radius.GetHashCode() ^ Threshold.GetHashCode();
+            return HashCode.Combine(Amount, Radius, Threshold);
         }
 
         public object Clone()

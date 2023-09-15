@@ -115,11 +115,9 @@ namespace NeeView
         /// ハッシュ値の計算
         /// </summary>
         /// <returns></returns>
-        public int GetHashCodde()
+        public override int GetHashCode()
         {
-            var hash = new { _isEnabled, _size, _aspectRatio, _applicabilityRate, _isAlignLongSide }.GetHashCode();
-            ////System.Diagnostics.Debug.WriteLine($"hash={hash}");
-            return hash;
+            return HashCode.Combine(_isEnabled, _size, _aspectRatio, _applicabilityRate, _isAlignLongSide);
         }
     }
 

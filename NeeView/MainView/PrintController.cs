@@ -1,4 +1,5 @@
-﻿using NeeView.Effects;
+﻿using NeeLaboratory.Linq;
+using NeeView.Effects;
 using NeeView.PageFrames;
 using System;
 using System.Linq;
@@ -53,7 +54,7 @@ namespace NeeView
             var mainContent = content.ViewContents.FirstOrDefault();
 
             // アニメーション停止
-            var medias = contents.OfType<MediaViewContent>().Select(e => new MediaStorage(e.Player, e.Player.IsEnabled)).ToList();
+            var medias = contents.Select(e => (e as IHasMediaPlayer)?.Player).WhereNotNull().Select(e => new MediaStorage(e, e.IsEnabled)).ToList();
             foreach(var media in medias)
             {
                 media.Player.IsEnabled = false;
@@ -92,7 +93,7 @@ namespace NeeView
             finally
             {
                 // スケールモード復元
-                foreach (var viewContent in contents.OfType<ImageViewContent>())
+                foreach (var viewContent in contents.OfType<IHasScalingMode>())
                 {
                     viewContent.ScalingMode = null;
                 }

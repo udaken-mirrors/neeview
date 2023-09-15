@@ -154,7 +154,7 @@ namespace NeeView.PageFrames
         }
 
 
-        public void Initialize()
+        private void Initialize()
         {
             if (_bookContext.IsEnabled)
             {
@@ -249,7 +249,7 @@ namespace NeeView.PageFrames
             Loaded -= PageFrameBox_Loaded;
             InitializeDpiScaleProvider();
 
-            //Initialize();
+            Initialize();
         }
 
         private void InitializeDpiScaleProvider()

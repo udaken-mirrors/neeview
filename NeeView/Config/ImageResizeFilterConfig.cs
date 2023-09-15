@@ -1,6 +1,7 @@
 ﻿using NeeLaboratory.ComponentModel;
 using NeeView.Windows.Property;
 using PhotoSauce.MagicScaler;
+using System;
 
 namespace NeeView
 {
@@ -51,7 +52,7 @@ namespace NeeView
 
         public override int GetHashCode()
         {
-            return _resizeInterpolation.GetHashCode() ^ _isUnsharpMaskEnabled.GetHashCode() ^ UnsharpMask.GetHashCode();
+            return HashCode.Combine(_isResizeFilterEnabled, _resizeInterpolation, _isUnsharpMaskEnabled, UnsharpMask);
         }
 
         public ProcessImageSettings CreateProcessImageSetting()

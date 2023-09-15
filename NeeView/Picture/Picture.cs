@@ -74,9 +74,9 @@ namespace NeeView
         }
 
         // 画像生成に影響する設定のハッシュ値取得
-        private static int GetEnvironmentoHashCode()
+        private static int GetEnvironmentHashCode()
         {
-            return Config.Current.ImageResizeFilter.GetHashCode() ^ Config.Current.ImageCustomSize.GetHashCodde();
+            return HashCode.Combine(Config.Current.ImageResizeFilter, Config.Current.ImageCustomSize);
         }
 
 #if false
@@ -143,7 +143,7 @@ namespace NeeView
                 }
             }
 
-            int filterHashCode = GetEnvironmentoHashCode(); // PDFやSVGには関係ないけどまあいっか？
+            int filterHashCode = GetEnvironmentHashCode(); // PDFやSVGには関係ないけどまあいっか？
 
             return new PictureSizeSource(size, filterHashCode, keepAspectRatio);
         }

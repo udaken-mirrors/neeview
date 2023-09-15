@@ -5,17 +5,28 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
 namespace NeeView
 {
-    public class AnimatedViewSource : ViewSource
+    public class AnimatedViewSource : ViewSource, IHasImageSource
     {
-        private AnimatedPageContent _pageContent;
+        private readonly AnimatedPageContent _pageContent;
+        private readonly PictureContent _pictureLoader;
 
         public AnimatedViewSource(PageContent pageContent, BookMemoryService bookMemoryService) : base(pageContent, bookMemoryService)
         {
             _pageContent = pageContent as AnimatedPageContent ?? throw new ArgumentException("need AnimatedPageContent", nameof(pageContent));
+            _pictureLoader = new PictureContent(_pageContent, new BitmapPictureSource(_pageContent));
+        }
+
+        public ImageSource? ImageSource => (Data as MediaSource)?.ImageSource ?? _pictureLoader.Picture.ImageSource;
+
+
+        public override bool CheckLoaded(Size size)
+        {
+            return IsLoaded && (Data is MediaSource || _pictureLoader.IsCreated(size));
         }
 
         public override async Task LoadCoreAsync(DataSource data, Size size, CancellationToken token)
@@ -28,17 +39,29 @@ namespace NeeView
             }
             else
             {
-                var path = data.Data as string ?? throw new InvalidOperationException(nameof(data));
-                var image = LoadImage(path);
-
-                // 色情報とBPP設定。
-                if (image is not null)
+                if (data.Data is string path)
                 {
-                    _pageContent.PictureInfo?.SetPixelInfo(image);
-                }
+                    var image = LoadImage(path);
 
-                var source = new MediaSource(path, image);
-                SetData(source, 0, null);
+                    // 色情報とBPP設定。
+                    if (image is not null)
+                    {
+                        _pageContent.PictureInfo?.SetPixelInfo(image);
+                    }
+
+                    var source = new MediaSource(path, image);
+                    SetData(source, 0, null);
+                }
+                else if (data.Data is byte[])
+                {
+                    _pictureLoader.Load(data.Data, size, token);
+                    var picture = _pictureLoader.Picture;
+                    SetData(picture.ImageSource, picture.GetMemorySize(), null);
+                }
+                else
+                {
+                    throw new InvalidOperationException(nameof(data.Data));
+                }
             }
             await Task.CompletedTask;
         }
@@ -61,7 +84,7 @@ namespace NeeView
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"ImageLoadFailled: {ex.Message}");
+                Debug.WriteLine($"ImageLoadFailed: {ex.Message}");
                 return null;
             }
         }
@@ -70,6 +93,7 @@ namespace NeeView
         {
             if (Data is not null)
             {
+                _pictureLoader.Unload();
                 SetData(null, 0, null);
             }
         }

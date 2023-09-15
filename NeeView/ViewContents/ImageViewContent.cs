@@ -1,10 +1,7 @@
-﻿using System;
-using System.Threading;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Media;
 using NeeLaboratory.ComponentModel;
 using NeeView.PageFrames;
-using NeeView.Threading;
 
 namespace NeeView
 {
@@ -13,49 +10,32 @@ namespace NeeView
         ImageSource? ImageSource { get; }
     }
 
-
-    public class ImageViewContent : ViewContent, IHasImageSource
+    public interface IHasScalingMode
     {
-        private ImageContentControl? _imageControl;
+        BitmapScalingMode? ScalingMode { get; set; }
+
+    }
+
+
+    public class ImageViewContent : ViewContent, IHasImageSource, IHasScalingMode
+    {
         private bool _disposedValue;
         private DisposableCollection _disposables = new();
-        private InstantDelayAction _delayAction;
-        private BitmapScalingMode? _scalingMode;
-        private PageBackgroundSource _backgroundSource;
-
+        private IViewContentStrategy _strategy;
 
         public ImageViewContent(PageFrameElement element, PageFrameElementScale scale, ViewSource viewSource, PageFrameActivity activity, PageBackgroundSource backgroundSource, int index)
             : base(element, scale, viewSource, activity, backgroundSource, index)
         {
-            _backgroundSource = backgroundSource;
-
-            _delayAction = new InstantDelayAction();
-            _disposables.Add(_delayAction);
+            _strategy = new ImageViewContentStrategy(this);
         }
 
+        public ImageSource? ImageSource => _strategy.ImageSource;
 
-        public ImageSource? ImageSource => _imageControl?.ImageSource;
-
-        /// <summary>
-        /// BitmapScaleMode指定。Printerで使用される。
-        /// </summary>
         public BitmapScalingMode? ScalingMode
         {
-            get { return _scalingMode; }
-            set
-            {
-                if (_scalingMode != value)
-                {
-                    _scalingMode = value;
-                    if (_imageControl != null)
-                    {
-                        _imageControl.ScalingMode = _scalingMode;
-                    }
-                }
-            }
+            get => _strategy.ScalingMode;
+            set => _strategy.ScalingMode = value;
         }
-
-
 
         protected override void Dispose(bool disposing)
         {
@@ -63,8 +43,7 @@ namespace NeeView
             {
                 if (disposing)
                 {
-                    _imageControl?.Dispose();
-                    _imageControl = null;
+                    _strategy.Dispose();
                     _disposables.Dispose();
                 }
 
@@ -74,30 +53,17 @@ namespace NeeView
             base.Dispose(disposing);
         }
 
+
         protected override void OnSourceChanged()
         {
             if (_disposedValue) return;
-
-            _delayAction.Request(
-                () => RequestLoadViewSource(CancellationToken.None),
-                TimeSpan.FromMilliseconds(200)
-            );
-
+            _strategy.OnSourceChanged();
             base.OnSourceChanged();
         }
 
-
-
         protected override FrameworkElement CreateLoadedContent(object data)
         {
-            _imageControl?.Dispose();
-            _imageControl = null;
-
-            var imageSource = data as ImageSource ?? throw new InvalidOperationException();
-            _imageControl = new ImageContentControl(Element, imageSource, ViewContentSize, _backgroundSource);
-            _imageControl.ScalingMode = _scalingMode;
-            return _imageControl;
+            return _strategy.CreateLoadedContent(data);
         }
-
     }
 }

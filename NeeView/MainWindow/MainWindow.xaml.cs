@@ -54,7 +54,7 @@ namespace NeeView
             // TextBox の ContextMenu のスタイルを変更する ... やりすぎ？
             // ThemeProfile.InitializeEditorContextMenuStyle(this);
 
-            Debug.WriteLine($"App.MainWndow.Initialize: {App.Current.Stopwatch.ElapsedMilliseconds}ms");
+            Debug.WriteLine($"App.MainWindow.Initialize: {App.Current.Stopwatch.ElapsedMilliseconds}ms");
 
             if (_current is not null) throw new InvalidOperationException();
             _current = this;
@@ -154,7 +154,7 @@ namespace NeeView
             // # ここで？
             _viewComponent.PageFrameBoxPresenter.SubscribeViewContentChanged((s, e) =>
             {
-                var viewContent = e.ViewContents.FirstOrDefault() as MediaViewContent;
+                var viewContent = e.ViewContents.FirstOrDefault() as IHasMediaPlayer;
                 //this.MediaControlView.SetSource(viewContent);
                 var player = viewContent?.Player;
                 if (player is not null && MainViewComponent.Current.PageFrameBoxPresenter.IsMedia)
@@ -415,7 +415,7 @@ namespace NeeView
         // ウィンドウソース初期化後イベント
         private void MainWindow_SourceInitialized(object sender, EventArgs e)
         {
-            Debug.WriteLine($"App.MainWndow.SourceInitialized: {App.Current.Stopwatch.ElapsedMilliseconds}ms");
+            Debug.WriteLine($"App.MainWindow.SourceInitialized: {App.Current.Stopwatch.ElapsedMilliseconds}ms");
 
             // NOTE: Chromeの変更を行った場合、Loadedイベントが発生する。WindowPlacementの処理順番に注意
             _windowController.Refresh();
@@ -423,13 +423,13 @@ namespace NeeView
             // ウィンドウ座標の復元
             RestoreWindowPlacement();
 
-            Debug.WriteLine($"App.MainWndow.SourceInitialized.Done: {App.Current.Stopwatch.ElapsedMilliseconds}ms");
+            Debug.WriteLine($"App.MainWindow.SourceInitialized.Done: {App.Current.Stopwatch.ElapsedMilliseconds}ms");
         }
 
         // ウィンドウ表示開始
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
-            Debug.WriteLine($"App.MainWndow.Loaded: {App.Current.Stopwatch.ElapsedMilliseconds}ms");
+            Debug.WriteLine($"App.MainWindow.Loaded: {App.Current.Stopwatch.ElapsedMilliseconds}ms");
 
             App.Current.ShutdownMode = ShutdownMode.OnMainWindowClose;
 
@@ -447,17 +447,17 @@ namespace NeeView
 
             App.Current.IsMainWindowLoaded = true;
 
-            Trace.WriteLine($"App.MainWndow.Loaded.Done: {App.Current.Stopwatch.ElapsedMilliseconds}ms");
+            Trace.WriteLine($"App.MainWindow.Loaded.Done: {App.Current.Stopwatch.ElapsedMilliseconds}ms");
         }
 
         // ウィンドウコンテンツ表示開始
         private void MainWindow_ContentRendered(object sender, EventArgs e)
         {
-            Debug.WriteLine($"App.MainWndow.ContentRendered: {App.Current.Stopwatch.ElapsedMilliseconds}ms");
+            Debug.WriteLine($"App.MainWindow.ContentRendered: {App.Current.Stopwatch.ElapsedMilliseconds}ms");
 
             _vm.ContentRendered();
 
-            Debug.WriteLine($"App.MainWndow.ContentRendered.Done: {App.Current.Stopwatch.ElapsedMilliseconds}ms");
+            Debug.WriteLine($"App.MainWindow.ContentRendered.Done: {App.Current.Stopwatch.ElapsedMilliseconds}ms");
         }
 
         // ウィンドウアクティブ
