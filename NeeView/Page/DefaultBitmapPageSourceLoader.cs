@@ -13,7 +13,7 @@ namespace NeeView
             {
                 var buffer = await entry.LoadAsync(token);
                 var pictureInfo = createPictureInfo ? PictureInfo.Create(buffer, ".NET BitmapImage") : null;
-                return BitmapPageSource.Create(buffer, pictureInfo, this);
+                return BitmapPageSource.Create(new BitmapPageData(buffer), pictureInfo, this);
             }
             catch (OperationCanceledException)
             {

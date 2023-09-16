@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Threading;
 using System.Windows;
 using System.Windows.Media;
@@ -6,14 +7,14 @@ using NeeView.Threading;
 
 namespace NeeView
 {
-    public class ImageViewContentStrategy : IDisposable, IViewContentStrategy
+    public class ImageViewContentStrategy : IDisposable, IViewContentStrategy, IHasImageSource, IHasScalingMode
     {
         private readonly ViewContent _viewContent;
         private readonly InstantDelayAction _delayAction = new();
         private ImageContentControl? _imageControl;
         private bool _disposedValue;
-        public BitmapScalingMode? _scalingMode;
-
+        private BitmapScalingMode? _scalingMode;
+        private readonly object _lock = new object();
 
         public ImageViewContentStrategy(ViewContent viewContent)
         {
@@ -73,14 +74,19 @@ namespace NeeView
 
         public FrameworkElement CreateLoadedContent(object data)
         {
-            var imageSource = data as ImageSource ?? throw new InvalidOperationException();
+            var viewData = data as ImageViewData ?? throw new InvalidOperationException();
 
-            _imageControl?.Dispose();
-            _imageControl = null;
+            Debug.WriteLine($"ImageViewContentStrategy: Create={_viewContent.Page}, {_imageControl is not null}");
 
-            _imageControl = new ImageContentControl(_viewContent.Element, imageSource, _viewContent.ViewContentSize, _viewContent.BackgroundSource);
-            _imageControl.ScalingMode = ScalingMode;
-            return _imageControl;
+            lock (_lock)
+            {
+                _imageControl?.Dispose();
+                _imageControl = null;
+
+                _imageControl = new ImageContentControl(_viewContent.Element, viewData.ImageSource, _viewContent.ViewContentSize, _viewContent.BackgroundSource);
+                _imageControl.ScalingMode = ScalingMode;
+                return _imageControl;
+            }
         }
 
 

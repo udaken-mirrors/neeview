@@ -11,11 +11,11 @@ using System.Windows.Media.Imaging;
 
 namespace NeeView
 {
-    public class SvgPictureSource : IPictureSource
+    public class SvgPictureSource : IPictureSource<DrawingGroup>
     {
-        private SvgPageContent _pageContent;
+        private readonly PageContent _pageContent;
 
-        public SvgPictureSource(SvgPageContent pageContent)
+        public SvgPictureSource(PageContent pageContent)
         {
             _pageContent = pageContent;
         }
@@ -26,15 +26,15 @@ namespace NeeView
 
 
         // TODO: async
-        public byte[] CreateImage(object data, Size size, BitmapCreateSetting setting, BitmapImageFormat format, int quality, CancellationToken token)
+        public byte[] CreateImage(DrawingGroup drawing, Size size, BitmapCreateSetting setting, BitmapImageFormat format, int quality, CancellationToken token)
         {
             if (size.IsEmptyOrZero()) throw new ArgumentOutOfRangeException(nameof(size));
 
             token.ThrowIfCancellationRequested();
-            var drawing = (DrawingGroup)data;
 
             var imageSource = CreateImageSource(drawing);
 
+#if false
             BitmapSource? bitmap = null;
             var task = new Task(() =>
             {
@@ -43,6 +43,8 @@ namespace NeeView
             });
             task.Start(SingleThreadedApartment.TaskScheduler); // STA
             task.Wait(token);
+#endif
+            var bitmap = AppDispatcher.Invoke(() => imageSource.CreateThumbnail(size));
 
             using (var outStream = new MemoryStream())
             {
@@ -53,25 +55,23 @@ namespace NeeView
             }
         }
 
-        public ImageSource CreateImageSource(object data, Size size, BitmapCreateSetting setting, CancellationToken token)
+        public ImageSource CreateImageSource(DrawingGroup drawing, Size size, BitmapCreateSetting setting, CancellationToken token)
         {
             token.ThrowIfCancellationRequested();
-            var drawing = (DrawingGroup)data;
             return CreateImageSource(drawing);
         }
 
-        public byte[] CreateThumbnail(object data, ThumbnailProfile profile, CancellationToken token)
+        public byte[] CreateThumbnail(DrawingGroup drawing, ThumbnailProfile profile, CancellationToken token)
         {
             token.ThrowIfCancellationRequested();
-            
+
             Debug.Assert(PictureInfo != null);
             var size = PictureInfo.Size;
             
             size = ThumbnailProfile.GetThumbnailSize(size);
             var setting = profile.CreateBitmapCreateSetting(true);
-            return CreateImage(data, size, setting, Config.Current.Thumbnail.Format, Config.Current.Thumbnail.Quality, token);
+            return CreateImage(drawing, size, setting, Config.Current.Thumbnail.Format, Config.Current.Thumbnail.Quality, token);
         }
-
 
         private ImageSource CreateImageSource(DrawingGroup drawing)
         {

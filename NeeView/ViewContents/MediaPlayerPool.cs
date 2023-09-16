@@ -1,9 +1,4 @@
-﻿using NeeLaboratory.ComponentModel;
-using NeeView.Collections.Generic;
-using NeeView.PageFrames;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Data;
+﻿using NeeView.Collections.Generic;
 using System.Windows.Media;
 
 
@@ -17,11 +12,7 @@ namespace NeeView
         public static ObjectPool<MediaPlayer> Default { get; } = new();
     }
 
-    public interface IHasMediaPlayer
-    {
-        IMediaPlayer? Player { get; }
-    }
-
+#if false
     public partial class MediaViewContent : ViewContent, IHasMediaPlayer
     {
         private bool _disposedValue;
@@ -68,6 +59,6 @@ namespace NeeView
             return _strategy.CreateLoadedContent(data);
         }
     }
-
+#endif
 
 }

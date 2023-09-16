@@ -46,7 +46,7 @@ namespace NeeView
                     using var stream = entry.OpenEntry();
                     var bitmapInfo = BitmapInfo.Create(stream); // TODO: async
                     var pictureInfo = PictureInfo.Create(bitmapInfo, "MediaPlayer");
-                    return new PageSource(fileProxy.Path, null, pictureInfo);
+                    return new PageSource(new AnimatedPageData(fileProxy.Path), null, pictureInfo);
                 }
                 // 通常画像
                 else
@@ -67,17 +67,6 @@ namespace NeeView
                 return PageSource.CreateError(ex.Message);
             }
         }
-
-        public class AnimatedPageSource
-        {
-            public AnimatedPageSource(string path, BitmapImage bitmapImage)
-            {
-                Path = path;
-                this.bitmapImage = bitmapImage;
-            }
-
-            public string Path { get; }
-            public BitmapImage bitmapImage { get; }
-        }
     }
+
 }

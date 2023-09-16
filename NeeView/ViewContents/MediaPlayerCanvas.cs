@@ -23,7 +23,7 @@ namespace NeeView
         private bool _disposedValue;
 
 
-        public MediaPlayerCanvas(MediaSource source, Rect viewbox, SimpleMediaPlayer player)
+        public MediaPlayerCanvas(MediaViewData source, Rect viewbox, SimpleMediaPlayer player)
         {
             Debug.WriteLine($"Create.MediaPlayer: {source.Path}");
 

@@ -3,31 +3,36 @@ using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Media;
 using NeeLaboratory.Generators;
 using NeeView.ComponentModel;
 using NeeView.Threading;
 
 namespace NeeView
 {
-    public abstract partial class ViewSource : IDataSource, IMemoryElement
+    public partial class ViewSource : IDataSource, IMemoryElement, IHasImageSource
     {
-        private PageContent _pageContent;
-        private BookMemoryService _bookMemoryService;
+        private readonly PageContent _pageContent;
+        private readonly BookMemoryService _bookMemoryService;
         private DataSource _data = new();
-        private object _lock = new();
-        private AsyncLock _asyncLock = new();
+        private readonly object _lock = new();
+        private readonly AsyncLock _asyncLock = new();
+        private IViewSourceStrategy? _strategy;
 
 
-        protected ViewSource(PageContent pageContent, BookMemoryService bookMemoryService)
+        public ViewSource(PageContent pageContent, BookMemoryService bookMemoryService)
         {
             _pageContent = pageContent;
             _bookMemoryService = bookMemoryService;
         }
 
+
         [Subscribable]
         public event EventHandler<DataSourceChangedEventArgs>? DataSourceChanged;
 
+
         public DataSource DataSource => _data;
+
         public object? Data => _data.Data;
         public long DataSize => _data.DataSize;
         public string? ErrorMessage => _data.ErrorMessage;
@@ -42,6 +47,7 @@ namespace NeeView
         public long GetMemorySize() => DataSize;
 
 
+        public ImageSource? ImageSource => (Data as ImageSource) ?? (Data as IHasImageSource)?.ImageSource;
 
 
         /// <summary>
@@ -49,9 +55,9 @@ namespace NeeView
         /// </summary>
         /// <param name="size">サイズ</param>
         /// <returns>生成済？</returns>
-        public virtual bool CheckLoaded(Size size)
+        private bool CheckLoaded(Size size)
         {
-            return IsLoaded;
+            return IsLoaded && _strategy?.CheckLoaded(size) == true;
         }
 
         /// <summary>
@@ -103,16 +109,48 @@ namespace NeeView
             }
         }
 
-        public abstract Task LoadCoreAsync(DataSource data, Size size, CancellationToken token);
+        private async Task LoadCoreAsync(DataSource data, Size size, CancellationToken token)
+        {
+            NVDebug.AssertMTA();
 
-        public abstract void Unload();
+            if (data.IsFailed)
+            {
+                SetData(null, 0, data.ErrorMessage);
+            }
+            else
+            {
+                if (_strategy is null)
+                {
+                    _strategy = ViewSourceStrategyFactory.Create(_pageContent, data);
+                }
 
-        protected void SetData(object? data, long dataSize, string? errorMessage)
+                if (_strategy is not null)
+                {
+                    SetData(await _strategy.LoadCoreAsync(data, size, token));
+                }
+                else
+                {
+                    SetData(null, 0, $"InvalidOperationException: No ViewSourceStrategy");
+                }
+            }
+        }
+
+        public void Unload()
+        {
+            if (Data is not null)
+            {
+                _strategy?.Unload();
+                SetData(null, 0, null);
+            }
+        }
+
+
+        private void SetData(object? data, long dataSize, string? errorMessage)
         {
             SetData(new DataSource(data, dataSize, errorMessage));
         }
 
-        protected void SetData(DataSource data)
+        private void SetData(DataSource data)
         {
             lock (_lock)
             {

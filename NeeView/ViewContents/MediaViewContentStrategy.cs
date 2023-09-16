@@ -7,7 +7,15 @@ using System.Windows.Media;
 
 namespace NeeView
 {
-    public class MediaViewContentStrategy : IDisposable, IViewContentStrategy 
+    public class AnimatedViewContentStrategy : MediaViewContentStrategy
+    {
+        public AnimatedViewContentStrategy(ViewContent viewContent) : base(viewContent)
+        {
+        }
+    }
+
+
+    public class MediaViewContentStrategy : IDisposable, IViewContentStrategy, IHasImageSource, IHasMediaPlayer
     {
         private readonly ViewContent _viewContent;
 
@@ -28,15 +36,14 @@ namespace NeeView
 
             // メディアブックとメティアページで参照する設定を変える
             _mediaContext = _viewContent.Page.Entry.Archiver is MediaArchiver ? Config.Current.Archive.Media : PageMediaContext.Current;
-            _player = AllocateMediaPlayer();
 
+
+            _player = AllocateMediaPlayer();
             _mediaPlayer = new ViewContentMediaPlayer(_mediaContext, _player, _viewContent.Activity, _viewContent.ElementIndex);
         }
 
 
         public ImageSource? ImageSource => _imageSource;
-
-        public BitmapScalingMode? ScalingMode { get; set; }
 
         public IMediaPlayer Player => _mediaPlayer;
 
@@ -56,7 +63,7 @@ namespace NeeView
                 _disposedValue = true;
             }
         }
-        
+
         public void Dispose()
         {
             Dispose(disposing: true);
@@ -71,9 +78,9 @@ namespace NeeView
         public FrameworkElement CreateLoadedContent(object data)
         {
             Debug.WriteLine($"Create.MediaPlayer: {_viewContent.ArchiveEntry}");
-            var source = data as MediaSource ?? throw new InvalidOperationException();
+            var viewData = data as MediaViewData ?? throw new InvalidOperationException();
 
-            _imageSource = source.ImageSource;
+            _imageSource = viewData.ImageSource;
 
             var viewbox = _viewContent.Element.ViewSizeCalculator.GetViewBox();
 
@@ -83,8 +90,8 @@ namespace NeeView
                 return _playerCanvas;
             }
 
-            _playerCanvas = new MediaPlayerCanvas(source, viewbox, _player);
-            _player.Open(new Uri(source.Path), TimeSpan.FromSeconds(_mediaContext.MediaStartDelaySeconds));
+            _playerCanvas = new MediaPlayerCanvas(viewData, viewbox, _player);
+            _player.Open(new Uri(viewData.Path), TimeSpan.FromSeconds(_mediaContext.MediaStartDelaySeconds));
 
             return _playerCanvas;
         }

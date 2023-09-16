@@ -1,5 +1,4 @@
 ﻿using NeeLaboratory.ComponentModel;
-using NeeView.PageFrames;
 using NeeView.Threading;
 using System;
 using System.Threading;
@@ -8,21 +7,23 @@ using System.Windows.Media;
 
 namespace NeeView
 {
-    public class ArchiveViewContent : ViewContent, IDisposable
+    public class ArchiveViewContentStrategy : IDisposable, IViewContentStrategy
     {
+        private readonly ViewContent _viewContent;
         private ArchivePageControl? _pageControl;
+        private readonly InstantDelayAction _delayAction;
         private bool _disposedValue;
-        private DisposableCollection _disposables = new();
-        private InstantDelayAction _delayAction;
-        
-        public ArchiveViewContent(PageFrameElement element, PageFrameElementScale scale, ViewSource viewSource, PageFrameActivity activity, PageBackgroundSource backgroundSource, int index)
-            : base(element, scale, viewSource, activity, backgroundSource, index)
+        private readonly DisposableCollection _disposables = new();
+
+        public ArchiveViewContentStrategy(ViewContent viewContent)
         {
+            _viewContent = viewContent;
+
             _delayAction = new InstantDelayAction();
             _disposables.Add(_delayAction);
         }
 
-        protected override void Dispose(bool disposing)
+        protected virtual void Dispose(bool disposing)
         {
             if (!_disposedValue)
             {
@@ -30,27 +31,27 @@ namespace NeeView
                 {
                     _disposables.Dispose();
                 }
-
                 _disposedValue = true;
             }
-
-            base.Dispose(disposing);
         }
 
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
 
-        protected override void OnSourceChanged()
+        public void OnSourceChanged()
         {
             if (_disposedValue) return;
 
             _delayAction.Request(
-                () => RequestLoadViewSource(CancellationToken.None),
+                () => _viewContent.RequestLoadViewSource(CancellationToken.None),
                 TimeSpan.FromMilliseconds(200)
             );
-
-            base.OnSourceChanged();
         }
 
-        protected override FrameworkElement CreateLoadedContent(object data)
+        public FrameworkElement CreateLoadedContent(object data)
         {
             if (_pageControl is not null)
             {

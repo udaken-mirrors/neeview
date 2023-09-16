@@ -31,14 +31,14 @@ namespace NeeView
                 var pictureInfo = new PictureInfo(DefaultSize);
 
                 NVDebug.AssertMTA();
-                if (Thumbnail.IsValid) return new PageSource(Thumbnail, null, pictureInfo);
+                if (Thumbnail.IsValid) return new PageSource(new ArchivePageData(Thumbnail), null, pictureInfo);
 
                 await Thumbnail.InitializeAsync(Entry, null, token);
-                if (Thumbnail.IsValid) return new PageSource(Thumbnail, null, pictureInfo);
+                if (Thumbnail.IsValid) return new PageSource(new ArchivePageData(Thumbnail), null, pictureInfo);
 
                 var source = await LoadThumbnailAsync(token);
                 Thumbnail.Initialize(source);
-                return new PageSource(Thumbnail, null, pictureInfo);
+                return new PageSource(new ArchivePageData(Thumbnail), null, pictureInfo);
             }
             catch (OperationCanceledException)
             {
@@ -139,8 +139,6 @@ namespace NeeView
             }
         }
     }
-
-
 
     public class ArchiveThumbnailSource
     {

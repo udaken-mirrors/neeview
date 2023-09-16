@@ -132,8 +132,8 @@ namespace NeeView
             }
 
             // アスペクト比固定?
-            var cutomSize = Config.Current.ImageCustomSize;
-            var keepAspectRatio = size.IsEmpty || !cutomSize.IsEnabled || cutomSize.AspectRatio == CustomSizeAspectRatio.Origin;
+            var customSize = Config.Current.ImageCustomSize;
+            var keepAspectRatio = size.IsEmpty || !customSize.IsEnabled || customSize.AspectRatio == CustomSizeAspectRatio.Origin;
             if (keepAspectRatio && !size.IsEmpty)
             {
                 if (this.PictureInfo.Size.Width > 0.0)

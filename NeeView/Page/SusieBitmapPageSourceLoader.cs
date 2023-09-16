@@ -87,7 +87,7 @@ namespace NeeView
             else
             {
                 var pictureInfo = createPictureInfo ? PictureInfo.Create(susieImage.BitmapData, susieImage.Plugin.Name) : null;
-                return BitmapPageSource.Create(susieImage.BitmapData, pictureInfo, this);
+                return BitmapPageSource.Create(new BitmapPageData(susieImage.BitmapData), pictureInfo, this);
             }
         }
     }

@@ -30,7 +30,7 @@ namespace NeeView
                 try
                 {
                     await _content.LoadAsync(token);
-                    var data = _content.Data; // as byte[];
+                    var data = (_content.Data as IHasRawData)?.RawData;
                     if (data != null)
                     {
                         thumbnailRaw = MemoryControl.Current.RetryFuncWithMemoryCleanup(() => _source.CreateThumbnail(data, ThumbnailProfile.Current, token));

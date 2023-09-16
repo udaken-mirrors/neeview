@@ -38,7 +38,7 @@ namespace NeeView
         }
 
 
-        public FilePageControl(FilePageSource context)
+        public FilePageControl(FileViewData context)
         {
             InitializeComponent();
 

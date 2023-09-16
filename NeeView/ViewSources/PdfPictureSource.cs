@@ -7,12 +7,12 @@ using System.Windows.Media;
 
 namespace NeeView
 {
-    public class PdfPictureSource : IPictureSource
+    public class PdfPictureSource : IPictureSource<ArchiveEntry>
     {
-        private PdfPageContent _pageContent;
+        private readonly PageContent _pageContent;
         private readonly PdfArchiver _pdfArchive;
 
-        public PdfPictureSource(PdfPageContent pageContent)
+        public PdfPictureSource(PageContent pageContent)
         {
             _pageContent = pageContent;
             _pdfArchive = pageContent.Entry.Archiver as PdfArchiver ?? throw new InvalidOperationException();
@@ -23,21 +23,18 @@ namespace NeeView
 
         public PictureInfo? PictureInfo => _pageContent.PictureInfo;
 
-
         private Size GetImageSize() => PictureInfo?.Size ?? new Size(480, 640);
 
 
-        public byte[] CreateImage(object data, Size size, BitmapCreateSetting setting, BitmapImageFormat format, int quality, CancellationToken token)
+        public byte[] CreateImage(ArchiveEntry entry, Size size, BitmapCreateSetting setting, BitmapImageFormat format, int quality, CancellationToken token)
         {
-            var entry = (ArchiveEntry)data;
             Debug.Assert(entry == ArchiveEntry);
             size = size.IsEmpty ? GetImageSize() : size;
             return _pdfArchive.CreateBitmapData(entry, size, setting, format, quality);
         }
 
-        public ImageSource CreateImageSource(object data, Size size, BitmapCreateSetting setting, CancellationToken token)
+        public ImageSource CreateImageSource(ArchiveEntry entry, Size size, BitmapCreateSetting setting, CancellationToken token)
         {
-            var entry = (ArchiveEntry)data;
             Debug.Assert(entry == ArchiveEntry);
             size = size.IsEmpty ? GetImageSize() : size;
             var bitmap = _pdfArchive.CreateBitmapSource(entry, size);
@@ -48,9 +45,8 @@ namespace NeeView
             return bitmap;
         }
 
-        public byte[] CreateThumbnail(object data, ThumbnailProfile profile, CancellationToken token)
+        public byte[] CreateThumbnail(ArchiveEntry entry, ThumbnailProfile profile, CancellationToken token)
         {
-            var entry = (ArchiveEntry)data;
             Debug.Assert(entry == ArchiveEntry);
             var size = ThumbnailProfile.GetThumbnailSize(GetImageSize());
             var setting = profile.CreateBitmapCreateSetting(true);

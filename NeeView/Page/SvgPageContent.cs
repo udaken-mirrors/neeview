@@ -24,7 +24,7 @@ namespace NeeView
                 token.ThrowIfCancellationRequested();
                 var drawing = LoadDrawingImage(token);
                 var pictureInfo = CreatePictureInfo(drawing, token);
-                return PageSource.Create(drawing, pictureInfo);
+                return PageSource.Create(new SvgPageData(drawing), pictureInfo);
             }
             catch (OperationCanceledException)
             {

@@ -18,11 +18,12 @@ using NeeView.Windows;
 using NeeLaboratory.Generators;
 using System.Windows.Data;
 using System.Windows.Shapes;
+using System.Windows.Media;
 
 namespace NeeView
 {
 
-    public abstract partial class ViewContent : ContentControl, IDisposable 
+    public partial class ViewContent : ContentControl, IDisposable, IHasImageSource, IHasMediaPlayer, IHasScalingMode
     {
         private bool _initialized;
         private PageFrameElement _element;
@@ -34,7 +35,9 @@ namespace NeeView
         private readonly DisposableCollection _disposables = new();
         private readonly SizeSource _sizeSource;
         private readonly PageBackgroundSource _backgroundSource;
-        private int _index;
+        private readonly int _index;
+        private IViewContentStrategy? _strategy;
+
 
 
         /// <summary>
@@ -78,6 +81,13 @@ namespace NeeView
         public ViewContentState State { get; private set; }
         public PageBackgroundSource BackgroundSource => _backgroundSource;
 
+        public IMediaPlayer? Player => (_strategy as IHasMediaPlayer)?.Player;
+        public ImageSource? ImageSource => (_strategy as IHasImageSource)?.ImageSource;
+        public BitmapScalingMode? ScalingMode
+        {
+            get { return (_strategy as IHasScalingMode)?.ScalingMode; }
+            set { if (_strategy is IHasScalingMode scalable) scalable.ScalingMode = value; }
+        }
 
 
         protected virtual void Dispose(bool disposing)
@@ -86,6 +96,7 @@ namespace NeeView
             {
                 if (disposing)
                 {
+                    _strategy?.Dispose();
                     _disposables.Dispose();
 
                     (Content as IDisposable)?.Dispose();
@@ -152,8 +163,10 @@ namespace NeeView
             OnSourceChanged();
         }
 
-        protected virtual void OnSourceChanged()
+        private void OnSourceChanged()
         {
+            if (_disposedValue) return;
+            _strategy?.OnSourceChanged();
         }
 
 
@@ -257,7 +270,30 @@ namespace NeeView
             }
         }
 
-        protected abstract FrameworkElement CreateLoadedContent(object data);
+
+        private  FrameworkElement CreateLoadedContent(object data)
+        {
+            _strategy = _strategy ?? CreateStrategy(data);
+            return _strategy.CreateLoadedContent(data);
+        }
+
+        private IViewContentStrategy CreateStrategy(object data)
+        {
+            if (_element.IsDummy)
+            {
+                return new DummyViewContentStrategy();
+            }
+
+            return data switch
+            {
+                ImageViewData _ => new ImageViewContentStrategy(this),
+                AnimatedViewData _ => new AnimatedViewContentStrategy(this),
+                MediaViewData _ => new MediaViewContentStrategy(this),
+                ArchiveViewData => new ArchiveViewContentStrategy(this),
+                FileViewData => new FileViewContentStrategy(this),
+                _ => throw new NotSupportedException(),
+            };
+        }
     }
 
 

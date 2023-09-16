@@ -30,14 +30,6 @@ namespace NeeView
                 Margin = new Thickness(10),
                 HorizontalAlignment = HorizontalAlignment.Center,
                 VerticalAlignment = VerticalAlignment.Center,
-#if false
-                Effect = new DropShadowEffect()
-                {
-                    BlurRadius = 0,
-                    Opacity = 0.5,
-                    ShadowDepth = 2,
-                },
-#endif
             };
             stackPanel.Children.Add(textBlock);
 
@@ -53,18 +45,9 @@ namespace NeeView
 
         public static FrameworkElement CreateErrorContent(PageFrameElement source, string? message)
         {
-            var pageSource = new FilePageSource(source.Page.Entry, FilePageIcon.Alert, message ?? "Error");
-            return new FilePageControl(pageSource);
+            var viewData = new FileViewData(source.Page.Entry, FilePageIcon.Alert, message ?? "Error");
+            return new FilePageControl(viewData);
         }
 
-
-#if false
-        public static FrameworkElement CreateDummyContent(PageFrameElement source)
-        {
-            var grid = new Grid();
-            grid.Background = new SolidColorBrush(Color.FromArgb(0x20, 0x80, 0x80, 0x80));
-            return grid;
-        }
-#endif
     }
 }

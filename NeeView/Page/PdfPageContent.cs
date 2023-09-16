@@ -25,7 +25,7 @@ namespace NeeView
             {
                 token.ThrowIfCancellationRequested();
                 var pictureInfo = CreatePictureInfo(token);
-                return PageSource.Create(Entry, pictureInfo);
+                return PageSource.Create(new PdfPageData(Entry), pictureInfo);
             }
             catch (OperationCanceledException)
             {
