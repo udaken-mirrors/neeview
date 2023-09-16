@@ -139,23 +139,29 @@ namespace NeeView.PageFrames
 
             //_context.SelectedItemChanged += Context_SelectedItemChanged;
             _visiblePageWatcher.VisibleContainersChanged += VisiblePageWatcher_VisibleContainersChanged;
-            _viewBox.RectChanging += ViewBox_RectChanging;
-            _viewBox.RectChanged += ViewBox_RectChanged;
 
             // 表示ページ監視
             _disposables.Add(new PageFrameContainersSelectedPageWatcher(this, _bookContext.Book));
+
+            Loaded += PageFrameBox_Loaded;
+        }
+
+
+        private void PageFrameBox_Loaded(object sender, RoutedEventArgs e)
+        {
+            Loaded -= PageFrameBox_Loaded;
+            InitializeDpiScaleProvider();
+
+            // ViewBox の変更イベント
+            _disposables.Add(_viewBox.SubscribeRectChanging(ViewBox_RectChanging));
+            _disposables.Add(_viewBox.SubscribeRectChanged(ViewBox_RectChanged));
 
             // Context のイベントは最後に処理
             _disposables.Add(_context.SubscribePropertyChanged((s, e) => AppDispatcher.BeginInvoke(() => Context_PropertyChanged(s, e))));
             _disposables.Add(_context.SubscribeSizeChanging(Context_SizeChanging));
             _disposables.Add(_context.SubscribeSizeChanged(Context_SizeChanged));
 
-            Loaded += PageFrameBox_Loaded;
-        }
-
-
-        private void Initialize()
-        {
+            // 最初のページ
             if (_bookContext.IsEnabled)
             {
                 var index = _bookContext.Book.CurrentPage?.Index ?? 0;
@@ -168,9 +174,9 @@ namespace NeeView.PageFrames
             }
         }
 
+
         [Subscribable]
         public event PropertyChangedEventHandler? PropertyChanged;
-
 
         // ページ終端を超えて移動しようとした
         // 次の本への移動を要求
@@ -195,8 +201,8 @@ namespace NeeView.PageFrames
         [Subscribable]
         public event EventHandler? PagesChanged;
 
-        public DragTransformContextFactory DragTransformContextFactory => _dragTransformContextFactory;
 
+        public DragTransformContextFactory DragTransformContextFactory => _dragTransformContextFactory;
 
         public PageFrameContext Context => _context;
         public BookContext BookContext => _bookContext;
@@ -244,13 +250,6 @@ namespace NeeView.PageFrames
 
 
 
-        private void PageFrameBox_Loaded(object sender, RoutedEventArgs e)
-        {
-            Loaded -= PageFrameBox_Loaded;
-            InitializeDpiScaleProvider();
-
-            Initialize();
-        }
 
         private void InitializeDpiScaleProvider()
         {
@@ -277,8 +276,8 @@ namespace NeeView.PageFrames
                     //_context.PagesChanged -= Context_PagesChanged;
                     //_context.SelectedItemChanged -= Context_SelectedItemChanged;
                     _visiblePageWatcher.VisibleContainersChanged -= VisiblePageWatcher_VisibleContainersChanged;
-                    _viewBox.RectChanging -= ViewBox_RectChanging;
-                    _viewBox.RectChanged -= ViewBox_RectChanged;
+                    //_viewBox.RectChanging -= ViewBox_RectChanging;
+                    //_viewBox.RectChanged -= ViewBox_RectChanged;
 
                     _disposables.Dispose();
 

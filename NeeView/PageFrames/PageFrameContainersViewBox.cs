@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Windows;
+using NeeLaboratory.Generators;
 using NeeView.ComponentModel;
 
 namespace NeeView.PageFrames
 {
     // Canvas座標系での ViewRect を管理
     // TODO: Canvas座標系なのにViewRectって名前でいいの？
-    public class PageFrameContainersViewBox : IDisposable
+    public partial class PageFrameContainersViewBox : IDisposable
     {
         private PageFrameScrollViewer _view;
         private Rect _rect;
@@ -48,8 +49,10 @@ namespace NeeView.PageFrames
         }
 
 
-
+        [Subscribable]
         public event EventHandler<RectChangeEventArgs>? RectChanging;
+
+        [Subscribable]
         public event EventHandler<RectChangeEventArgs>? RectChanged;
 
 
