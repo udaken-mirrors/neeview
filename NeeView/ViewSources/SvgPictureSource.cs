@@ -34,16 +34,6 @@ namespace NeeView
 
             var imageSource = CreateImageSource(drawing);
 
-#if false
-            BitmapSource? bitmap = null;
-            var task = new Task(() =>
-            {
-                // TODO: 関数名がおかしい
-                bitmap = imageSource.CreateThumbnail(size);
-            });
-            task.Start(SingleThreadedApartment.TaskScheduler); // STA
-            task.Wait(token);
-#endif
             var bitmap = AppDispatcher.Invoke(() => imageSource.CreateThumbnail(size));
 
             using (var outStream = new MemoryStream())

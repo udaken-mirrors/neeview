@@ -16,9 +16,11 @@ namespace NeeView
         /// </summary>
         /// <param name="path">ドライブパス</param>
         /// <param name="callback">画像生成後のコールバック</param>
-        public static void CreateDriveIconAsync(string path, Action<BitmapSourceCollection> callback)
+        public static async Task CreateDriveIconAsync(string path, Action<BitmapSourceCollection> callback)
         {
-            var task = new Task(async () =>
+            await AppDispatcher.BeginInvoke(async () => await CreateDriveIcon());
+
+            async Task CreateDriveIcon()
             {
                 for (int i = 0; i < 2; ++i) // retry 2 time.
                 {
@@ -38,9 +40,7 @@ namespace NeeView
                     }
                     await Task.Delay(500);
                 }
-            });
-
-            task.Start(SingleThreadedApartment.TaskScheduler); // STA
+            }
         }
 
 
