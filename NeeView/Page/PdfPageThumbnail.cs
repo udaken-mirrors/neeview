@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 namespace NeeView
 {
-    public class PdfPageThumbnail : PicturePageThumbnail
+    public class PdfPageThumbnail : ImagePageThumbnail
     {
         public PdfPageThumbnail(PdfPageContent content) : base(content, new PdfPictureSource(content))
         {

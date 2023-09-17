@@ -69,14 +69,14 @@ namespace NeeView
         /// <summary>
         /// DBファイルサイズを取得
         /// </summary>
-        public static long GetCaheDatabaseSize()
+        public static long GetCacheDatabaseSize()
         {
             if (DatabasePath == null) throw new InvalidOperationException();
 
-            var fileinfo = new FileInfo(DatabasePath);
-            if (fileinfo.Exists)
+            var fileInfo = new FileInfo(DatabasePath);
+            if (fileInfo.Exists)
             {
-                return fileinfo.Length;
+                return fileInfo.Length;
             }
             else
             {

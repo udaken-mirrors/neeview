@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using System.Threading;
+using System.Diagnostics;
 
 namespace NeeView
 {
@@ -19,7 +20,7 @@ namespace NeeView
             NVDebug.AssertMTA();
 
             await _content.LoadAsync(token);
-            var thumbnail = _content.Data as Thumbnail;
+            var thumbnail = (_content.Data as ArchivePageData)?.Thumbnail;
 
             return thumbnail?.CreateSource() ?? new ThumbnailSource(ThumbnailType.Unique);
         }

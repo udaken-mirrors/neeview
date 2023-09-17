@@ -1,0 +1,24 @@
+﻿using System.Threading.Tasks;
+using System.Threading;
+
+namespace NeeView
+{
+    public class MediaPageThumbnail : PageThumbnail
+    {
+        private MediaPageContent _content;
+
+        public MediaPageThumbnail(MediaPageContent content) : base(content)
+        {
+            _content = content;
+        }
+
+        public override async Task<ThumbnailSource> LoadThumbnailAsync(CancellationToken token)
+        {
+            NVDebug.AssertMTA();
+            token.ThrowIfCancellationRequested();
+
+            return await Task.FromResult(new ThumbnailSource(ThumbnailType.Media));
+        }
+    }
+
+}

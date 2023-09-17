@@ -1,6 +1,6 @@
 ﻿namespace NeeView
 {
-    public class SvgPageThumbnail : PicturePageThumbnail
+    public class SvgPageThumbnail : ImagePageThumbnail
     {
         public SvgPageThumbnail(SvgPageContent content) : base(content, new SvgPictureSource(content))
         {

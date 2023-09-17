@@ -3,12 +3,12 @@ using System.Threading.Tasks;
 
 namespace NeeView
 {
-    public class PicturePageThumbnail : PageThumbnail
+    public class ImagePageThumbnail : PageThumbnail
     {
         private readonly PageContent _content;
         private readonly IPictureSource _source;
 
-        public PicturePageThumbnail(PageContent content, IPictureSource source) : base(content)
+        public ImagePageThumbnail(PageContent content, IPictureSource source) : base(content)
         {
             _content = content;
             _source = source;

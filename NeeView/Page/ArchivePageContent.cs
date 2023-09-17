@@ -23,6 +23,8 @@ namespace NeeView
 
         public override async Task<PageSource> LoadSourceAsync(CancellationToken token)
         {
+            NVDebug.AssertMTA();
+
             try
             {
                 //var width = Math.Max(Config.Current.Book.BookPageSize + 100, DefaultSize.Width);
@@ -30,10 +32,9 @@ namespace NeeView
                 //var pictureInfo = new PictureInfo(new Size(width, height));
                 var pictureInfo = new PictureInfo(DefaultSize);
 
-                NVDebug.AssertMTA();
                 if (Thumbnail.IsValid) return new PageSource(new ArchivePageData(Thumbnail), null, pictureInfo);
 
-                await Thumbnail.InitializeAsync(Entry, null, token);
+                await Thumbnail.InitializeFromCacheAsync(Entry, null, token);
                 if (Thumbnail.IsValid) return new PageSource(new ArchivePageData(Thumbnail), null, pictureInfo);
 
                 var source = await LoadThumbnailAsync(token);

@@ -132,7 +132,7 @@ namespace NeeView
         /// <summary>
         /// キャッシュを使用してサムネイル生成を試みる
         /// </summary>
-        internal async Task InitializeAsync(ArchiveEntry entry, string? appendix, CancellationToken token)
+        internal async Task InitializeFromCacheAsync(ArchiveEntry entry, string? appendix, CancellationToken token)
         {
             if (_disposedValue) return;
             if (IsValid || !IsCacheEnabled) return;

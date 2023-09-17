@@ -21,6 +21,9 @@
                 case ArchivePageContent archivePageContent:
                     return new ArchivePageThumbnail(archivePageContent);
 
+                case MediaPageContent mediaPageContent:
+                    return new MediaPageThumbnail(mediaPageContent);
+
                 default:
                     // not support yet.
                     return new PageThumbnail(content);

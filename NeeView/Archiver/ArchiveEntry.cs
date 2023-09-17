@@ -346,9 +346,9 @@ namespace NeeView
         /// このエントリが画像であるか拡張子から判定。
         /// MediaArchiverは無条件で画像と認識
         /// </summary>
-        public bool IsImage()
+        public bool IsImage(bool includeMedia = true)
         {
-            return !this.IsDirectory && ((this.Archiver is MediaArchiver) || PictureProfile.Current.IsSupported(this.Link ?? this.EntryName));
+            return !this.IsDirectory && ((this.Archiver is MediaArchiver && includeMedia) || PictureProfile.Current.IsSupported(this.Link ?? this.EntryName, includeMedia));
         }
 
         /// <summary>

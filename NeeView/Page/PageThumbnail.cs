@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System.Diagnostics;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace NeeView
@@ -20,7 +21,7 @@ namespace NeeView
             NVDebug.AssertMTA();
             if (Thumbnail.IsValid) return;
 
-            await Thumbnail.InitializeAsync(_content.Entry, null, token);
+            await Thumbnail.InitializeFromCacheAsync(_content.Entry, null, token);
             if (Thumbnail.IsValid) return;
 
             var source = await LoadThumbnailAsync(token);
@@ -29,6 +30,7 @@ namespace NeeView
 
         public virtual async Task<ThumbnailSource> LoadThumbnailAsync(CancellationToken token)
         {
+            // ダミーサムネイル
             return await Task.FromResult(new ThumbnailSource(null));
         }
     }

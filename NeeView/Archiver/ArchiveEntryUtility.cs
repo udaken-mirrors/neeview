@@ -137,7 +137,8 @@ namespace NeeView
                 // TODO: 原因の調査
                 entries = EntrySort.SortEntries(entries, PageSortMode.FileName).ToList();
 
-                var select = entries.FirstOrDefault(e => e.IsImage());
+                // メディアを除外した最初の画像ページを取得
+                var select = entries.FirstOrDefault(e => e.IsImage(false));
                 if (select != null)
                 {
                     return select;
@@ -145,7 +146,7 @@ namespace NeeView
 
                 if (depth > 1)
                 {
-                    // NOTE: 検索サブディレクトリ数もdepthで制限
+                    // NOTE: 検索サブディレクトリ数も depth で制限
                     foreach (var entry in entries.Where(e => e.IsArchive()).Take(depth))
                     {
                         select = await CreateFirstImageArchiveEntryAsync(entry, depth - 1, token);

@@ -36,7 +36,7 @@ namespace NeeView
 
 
         // 対応拡張子判定 (ALL)
-        public bool IsSupported(string fileName)
+        public bool IsSupported(string fileName, bool includeMedia)
         {
             string ext = LoosePath.GetExtension(fileName);
 
@@ -52,7 +52,7 @@ namespace NeeView
                 if (Config.Current.Image.Svg.SupportFileTypes.Contains(ext)) return true;
             }
 
-            if (Config.Current.Image.IsMediaEnabled)
+            if (Config.Current.Image.IsMediaEnabled && includeMedia)
             {
                 if (Config.Current.Archive.Media.SupportFileTypes.Contains(ext)) return true;
             }

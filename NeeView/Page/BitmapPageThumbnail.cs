@@ -1,6 +1,6 @@
 ﻿namespace NeeView
 {
-    public class BitmapPageThumbnail : PicturePageThumbnail
+    public class BitmapPageThumbnail : ImagePageThumbnail
     {
         public BitmapPageThumbnail(BitmapPageContent content) : base(content, new BitmapPictureSource(content))
         {
