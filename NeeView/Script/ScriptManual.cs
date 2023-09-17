@@ -167,7 +167,7 @@ namespace NeeView
                             var enums = "";
                             if (info.PropertyType.IsEnum)
                             {
-                                enums = string.Join(" / ", info.PropertyType.VisibledAliasNameDictionary().Select(e => $"\"{e.Key}\": {e.Value}")) + "<br/>";
+                                enums = string.Join(" / ", info.PropertyType.VisibleAliasNameDictionary().Select(e => $"\"{e.Key}\": {e.Value}")) + "<br/>";
                             }
 
                             var propertyName = PropertyMemberAttributeExtensions.GetPropertyName(info, attribute).TrimEnd(Properties.Resources.Word_Period.ToArray()) + Properties.Resources.Word_Period;

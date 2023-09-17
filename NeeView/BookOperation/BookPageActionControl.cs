@@ -13,7 +13,7 @@ namespace NeeView
     /// </summary>
     public class BookPageActionControl : IBookPageActionControl
     {
-        private Book _book;
+        private readonly Book _book;
         private readonly IBookControl _bookControl;
         private readonly PageFrameBox _box;
 
@@ -53,7 +53,7 @@ namespace NeeView
         // 指定ページのファイルを削除する
         public async Task DeleteFileAsync(List<Page> pages)
         {
-            var isCompletely = pages.Any(e => !e.Entry.Archiver.IsFileSystem);
+            var isCompletely = pages.Any(e => !e.ArchiveEntry.Archiver.IsFileSystem);
             if (Config.Current.System.IsRemoveConfirmed || isCompletely)
             {
                 var dialog = await PageFileIO.CreateDeleteConfirmDialog(pages, isCompletely);

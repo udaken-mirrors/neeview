@@ -56,7 +56,7 @@ namespace NeeView.Setting
                 new SettingPageWindow(),
                 new SettingPagePanels(),
                 new SettingPageSlideshow(),
-                new SettingPageManipurate(),
+                new SettingPageManipulate(),
                 new SettingPageBook(),
                 new SettingPageHistory(),
                 new SettingPageCommand()

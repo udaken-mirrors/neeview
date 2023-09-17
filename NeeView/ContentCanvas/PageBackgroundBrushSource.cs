@@ -12,10 +12,10 @@ namespace NeeView
     [NotifyPropertyChanged]
     public partial class PageBackgroundSource : INotifyPropertyChanged, IDisposable
     {
-        private BackgroundConfig _backgroundConfig;
+        private readonly BackgroundConfig _backgroundConfig;
         private Brush? _pageBackgroundBrush = null;
         private bool _disposedValue;
-        private DisposableCollection _disposables = new();
+        private readonly DisposableCollection _disposables = new();
 
 
         [Subscribable]

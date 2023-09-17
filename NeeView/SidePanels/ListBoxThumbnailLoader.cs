@@ -53,7 +53,7 @@ namespace NeeView
 
         public void Load()
         {
-            if (!_panel.IsThumbnailVisibled)
+            if (!_panel.IsThumbnailVisible)
             {
                 return;
             }

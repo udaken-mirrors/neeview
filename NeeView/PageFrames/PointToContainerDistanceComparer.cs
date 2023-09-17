@@ -10,7 +10,7 @@ namespace NeeView.PageFrames
     public class PointToContainerDistanceComparer : IComparer<PageFrameContainer>
     {
         private Point _point;
-        private Func<PageFrameContainer, PageFrameContainer, int> _compare;
+        private readonly Func<PageFrameContainer, PageFrameContainer, int> _compare;
 
         public PointToContainerDistanceComparer(PageFrameOrientation orientation, Point point)
         {

@@ -199,7 +199,7 @@ namespace NeeView
             }
 
             // 全てのファイルがファイルシステムであった場合のみ
-            if (pages.All(p => p.Entry.IsFileSystem))
+            if (pages.All(p => p.ArchiveEntry.IsFileSystem))
             {
                 // 右クリックドラッグでファイル移動を許可
                 if (Config.Current.System.IsFileWriteAccessEnabled && e.MouseEventArgs.RightButton == MouseButtonState.Pressed)

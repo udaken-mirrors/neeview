@@ -15,11 +15,11 @@ namespace NeeView
         public PdfPictureSource(PageContent pageContent)
         {
             _pageContent = pageContent;
-            _pdfArchive = pageContent.Entry.Archiver as PdfArchiver ?? throw new InvalidOperationException();
+            _pdfArchive = pageContent.ArchiveEntry.Archiver as PdfArchiver ?? throw new InvalidOperationException();
         }
 
 
-        public ArchiveEntry ArchiveEntry => _pageContent.Entry;
+        public ArchiveEntry ArchiveEntry => _pageContent.ArchiveEntry;
 
         public PictureInfo? PictureInfo => _pageContent.PictureInfo;
 

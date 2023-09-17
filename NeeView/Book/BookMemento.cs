@@ -54,7 +54,7 @@ namespace NeeView
         }
 
         // 保存用バリデート
-        // このmementoは履歴とデフォルト設定の２つに使われるが、デフォルト設定には本の場所やページ等は不要
+        // この memento は履歴とデフォルト設定の２つに使われるが、デフォルト設定には本の場所やページ等は不要
         public void ValidateForDefault()
         {
             Path = "";

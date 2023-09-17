@@ -59,7 +59,7 @@ namespace NeeView
             {
                 foreach (var item in propertyMap)
                 {
-                    var child = new ScriptNodeRefrection(new ScriptNodeRefrectionSource(propertyMap, new ScriptMemberInfo(item.Key)));
+                    var child = new ScriptNodeReflection(new ScriptNodeReflectionSource(propertyMap, new ScriptMemberInfo(item.Key)));
                     child.Children = CreateChildren(child);
                     children.Add(child);
                 }
@@ -69,7 +69,7 @@ namespace NeeView
             {
                 foreach (var item in commandMap)
                 {
-                    var child = new ScriptNodeRefrection(new ScriptNodeRefrectionSource(commandMap, new ScriptMemberInfo(item.Key)));
+                    var child = new ScriptNodeReflection(new ScriptNodeReflectionSource(commandMap, new ScriptMemberInfo(item.Key)));
                     child.Children = CreateChildren(child);
                     children.Add(child);
                 }
@@ -77,14 +77,14 @@ namespace NeeView
 
             foreach (var property in type.GetProperties(BindingFlags.Public | BindingFlags.Instance).Where(e => IsDocumentable(e)))
             {
-                var child = new ScriptNodeRefrection(new ScriptNodeRefrectionSource(node.Value, new ScriptMemberInfo(property)));
+                var child = new ScriptNodeReflection(new ScriptNodeReflectionSource(node.Value, new ScriptMemberInfo(property)));
                 child.Children = CreateChildren(child);
                 children.Add(child);
             }
 
             foreach (var method in type.GetMethods(BindingFlags.Public | BindingFlags.Instance).Where(e => IsDocumentable(e)))
             {
-                var child = new ScriptNodeRefrection(new ScriptNodeRefrectionSource(node.Value, new ScriptMemberInfo(method)));
+                var child = new ScriptNodeReflection(new ScriptNodeReflectionSource(node.Value, new ScriptMemberInfo(method)));
                 children.Add(child);
             }
 
@@ -201,11 +201,11 @@ namespace NeeView
     /// <summary>
     /// ScriptNode: sourceを基準にリフレクションでプロパティ等のメンバーを参照するタイプ
     /// </summary>
-    public class ScriptNodeRefrection : ScriptNode
+    public class ScriptNodeReflection : ScriptNode
     {
-        private readonly ScriptNodeRefrectionSource _source;
+        private readonly ScriptNodeReflectionSource _source;
 
-        public ScriptNodeRefrection(ScriptNodeRefrectionSource source)
+        public ScriptNodeReflection(ScriptNodeReflectionSource source)
         {
             _source = source;
         }
@@ -226,9 +226,9 @@ namespace NeeView
     /// <remarks>
     /// PropertyMapやCommandAccessorMapも対応
     /// </remarks>
-    public class ScriptNodeRefrectionSource
+    public class ScriptNodeReflectionSource
     {
-        public ScriptNodeRefrectionSource(object source, ScriptMemberInfo memberInfo)
+        public ScriptNodeReflectionSource(object source, ScriptMemberInfo memberInfo)
         {
             Source = source;
             MemberInfo = memberInfo;

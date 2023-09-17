@@ -72,7 +72,7 @@ namespace NeeView
 
         public Page Page => _element.Page;
         public PageFrameActivity Activity => _activity;
-        public ArchiveEntry ArchiveEntry => _element.Page.Entry;
+        public ArchiveEntry ArchiveEntry => _element.Page.ArchiveEntry;
         public PageFrameElement Element => _element;
         public int ElementIndex => _index;
         public ViewContentSize ViewContentSize => _viewContentSize;
@@ -233,7 +233,7 @@ namespace NeeView
         /// <summary>
         /// Update ViewContent
         /// </summary>
-        protected void UpdateContent(DataSource data)
+        private void UpdateContent(DataSource data)
         {
             NVDebug.AssertSTA();
             var unit = CreateContent(_sizeSource, data);
@@ -245,7 +245,7 @@ namespace NeeView
 
 
 
-        protected virtual ViewContentData CreateContent(SizeSource size, DataSource data)
+        private ViewContentData CreateContent(SizeSource size, DataSource data)
         {
             Debug.Assert(_initialized);
 
@@ -258,7 +258,6 @@ namespace NeeView
                 case DataState.Loaded:
                     Debug.WriteLine($"CreateContent.Loaded: {ArchiveEntry}");
                     Debug.Assert(data.Data is not null);
-                    //return new ViewContentData(new DecoratedViewContent(size, CreateLoadedContent(data.Data), _backgroundSource), ViewContentState.Loaded);
                     return new ViewContentData(CreateLoadedContent(data.Data), ViewContentState.Loaded);
 
                 case DataState.Failed:
@@ -297,77 +296,6 @@ namespace NeeView
     }
 
 
-
-    [Obsolete]
-    public class DecoratedViewContent : Grid, IDisposable
-    {
-        private FrameworkElement _content;
-        private bool _disposedValue;
-
-
-        public DecoratedViewContent(SizeSource sizeSource, FrameworkElement content, PageBackgroundSource backgroundSource)
-        {
-            // background
-            var rectangle = new Rectangle();
-            rectangle.SetBinding(Rectangle.FillProperty, new Binding(nameof(PageBackgroundSource.Brush)) { Source = backgroundSource });
-            rectangle.Margin = new Thickness(1);
-            rectangle.HorizontalAlignment = HorizontalAlignment.Stretch;
-            rectangle.VerticalAlignment = VerticalAlignment.Stretch;
-            this.Children.Add(rectangle);
-
-            // content
-            _content = content;
-            sizeSource.BindTo(_content);
-            this.Children.Add(_content);
-        }
-
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!_disposedValue)
-            {
-                if (disposing)
-                {
-                    (_content as IDisposable)?.Dispose();
-                }
-
-                _disposedValue = true;
-            }
-        }
-
-        public void Dispose()
-        {
-            Dispose(disposing: true);
-            GC.SuppressFinalize(this);
-        }
-    }
-
-
-
     public record class ViewContentData(FrameworkElement Content, ViewContentState State);
 
-
-
-    public enum ViewContentState
-    {
-        None,
-        Loading,
-        Loaded,
-        Failed,
-    }
-
-    public static class ViewContentStateExtensions
-    {
-        public static ViewContentChangedAction ToChangedAction(this ViewContentState state)
-        {
-            return state switch
-            {
-                ViewContentState.None => ViewContentChangedAction.ContentLoading,
-                ViewContentState.Loading => ViewContentChangedAction.ContentLoading,
-                ViewContentState.Loaded => ViewContentChangedAction.ContentLoaded,
-                ViewContentState.Failed => ViewContentChangedAction.ContentFailed,
-                _ => throw new InvalidEnumArgumentException()
-            };
-        }
-    }
 }

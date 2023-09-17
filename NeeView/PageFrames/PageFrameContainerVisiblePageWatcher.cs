@@ -6,27 +6,23 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Windows;
-using System.Xml.Linq;
 
 
 namespace NeeView.PageFrames
 {
-    //[NotifyPropertyChanged]
-    public partial class PageFrameContainersVisiblePageWatcher // : INotifyPropertyChanged
+    public partial class PageFrameContainerVisiblePageWatcher
     {
 
-        private PageFrameContext _context;
-        private PageFrameContainersViewBox _viewBox;
-
-        private PageFrameContainersCollectionRectMath _collectionRectMath;
-        private PageFrameContainersLayout _layout;
-
+        private readonly PageFrameContext _context;
+        private readonly PageFrameContainerViewBox _viewBox;
+        private readonly PageFrameContainerCollectionRectMath _collectionRectMath;
+        private readonly PageFrameContainerLayout _layout;
         private List<PageFrameContainer> _visibleContainers = new();
         private PageRange _viewRange;
         private List<Page> _viewPages = new();
 
 
-        public PageFrameContainersVisiblePageWatcher(PageFrameContext context, PageFrameContainersViewBox viewBox, PageFrameContainersCollectionRectMath collectionRectMath, PageFrameContainersLayout layout)
+        public PageFrameContainerVisiblePageWatcher(PageFrameContext context, PageFrameContainerViewBox viewBox, PageFrameContainerCollectionRectMath collectionRectMath, PageFrameContainerLayout layout)
         {
             _context = context;
             _viewBox = viewBox;
@@ -37,8 +33,6 @@ namespace NeeView.PageFrames
             _layout.LayoutChanged += Layout_LayoutChanged;
         }
 
-
-        //public event PropertyChangedEventHandler? PropertyChanged;
 
         [Subscribable]
         public event EventHandler<VisibleContainersChangedEventArgs>? VisibleContainersChanged;

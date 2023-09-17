@@ -106,7 +106,7 @@ namespace NeeView
 
         public ListBox PageCollectionListBox => this.ListBox;
 
-        public bool IsThumbnailVisibled => PageList.Current.IsThumbnailVisibled;
+        public bool IsThumbnailVisible => PageList.Current.IsThumbnailVisible;
 
         public IEnumerable<IHasPage> CollectPageList(IEnumerable<object> objs) => objs.OfType<IHasPage>();
 
@@ -278,7 +278,7 @@ namespace NeeView
                     // 選択ブックに移動
                     if (page != null && page.PageType == PageType.Folder)
                     {
-                        BookHub.Current.RequestLoad(this, page.Entry.SystemPath, null, BookLoadOption.IsBook | BookLoadOption.SkipSamePlace, true);
+                        BookHub.Current.RequestLoad(this, page.ArchiveEntry.SystemPath, null, BookLoadOption.IsBook | BookLoadOption.SkipSamePlace, true);
                     }
                     e.Handled = true;
                 }
@@ -315,7 +315,7 @@ namespace NeeView
             }
         }
 
-        private async void PaegList_IsVisibleChanged(object? sender, DependencyPropertyChangedEventArgs e)
+        private async void PageList_IsVisibleChanged(object? sender, DependencyPropertyChangedEventArgs e)
         {
             if ((bool)e.NewValue)
             {
@@ -346,7 +346,7 @@ namespace NeeView
         {
             if ((sender as ListBoxItem)?.Content is Page page && page.PageType == PageType.Folder)
             {
-                BookHub.Current.RequestLoad(this, page.Entry.SystemPath, null, BookLoadOption.IsBook | BookLoadOption.SkipSamePlace, true);
+                BookHub.Current.RequestLoad(this, page.ArchiveEntry.SystemPath, null, BookLoadOption.IsBook | BookLoadOption.SkipSamePlace, true);
                 e.Handled = true;
             }
         }
@@ -424,7 +424,7 @@ namespace NeeView
             }
 
             // 全てのファイルがファイルシステムであった場合のみ。プレイリスト以外。
-            if (pages.All(p => p.Entry.IsFileSystem && p.Entry.Archiver is not PlaylistArchive))
+            if (pages.All(p => p.ArchiveEntry.IsFileSystem && p.ArchiveEntry.Archiver is not PlaylistArchive))
             {
                 // 右クリックドラッグでファイル移動を許可
                 if (Config.Current.System.IsFileWriteAccessEnabled && e.MouseEventArgs.RightButton == MouseButtonState.Pressed)
@@ -517,7 +517,7 @@ namespace NeeView
     /// <summary>
     /// ArchivePageなら表示
     /// </summary>
-    public class ArchviePageToVisibilityConverter : IValueConverter
+    public class ArchivePageToVisibilityConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {

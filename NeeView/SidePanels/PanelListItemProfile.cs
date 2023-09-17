@@ -43,7 +43,7 @@ namespace NeeView
         private bool _isImagePopupEnabled;
         private bool _isTextVisible;
         private bool _isTextWrapped;
-        private bool _isTextheightDarty = true;
+        private bool _isTextheightDirty = true;
         private double _textHeight = double.NaN;
 
 
@@ -51,12 +51,12 @@ namespace NeeView
         {
         }
 
-        public PanelListItemProfile(PanelListItemImageShape imageShape, int imageWidth, bool isImagePopupEnabled, bool isTextVisibled, bool isTextWrapped)
+        public PanelListItemProfile(PanelListItemImageShape imageShape, int imageWidth, bool isImagePopupEnabled, bool isTextVisible, bool isTextWrapped)
         {
             _imageShape = imageShape;
             _imageWidth = imageWidth;
             _isImagePopupEnabled = isImagePopupEnabled;
-            _isTextVisible = isTextVisibled;
+            _isTextVisible = isTextVisible;
             _isTextWrapped = isTextWrapped;
 
             UpdateTextHeight();
@@ -220,9 +220,9 @@ namespace NeeView
         {
             get
             {
-                if (_isTextheightDarty)
+                if (_isTextheightDirty)
                 {
-                    _isTextheightDarty = false;
+                    _isTextheightDirty = false;
                     _textHeight = CalcTextHeight();
                 }
                 return _textHeight;
@@ -241,7 +241,7 @@ namespace NeeView
         // TextHeightの更新要求
         public void UpdateTextHeight()
         {
-            _isTextheightDarty = true;
+            _isTextheightDirty = true;
             RaisePropertyChanged(nameof(TextHeight));
         }
 

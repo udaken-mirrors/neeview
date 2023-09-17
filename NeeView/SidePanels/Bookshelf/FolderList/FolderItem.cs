@@ -91,7 +91,7 @@ namespace NeeView
         private bool _isReady;
         private bool _isRecursived;
         private FolderItemIconOverlay _iconOverlay = FolderItemIconOverlay.Uninitialized;
-        private bool _isVisibled;
+        private bool _isVisible;
 
 
         public FolderItem(bool isOverlayEnabled)
@@ -231,14 +231,14 @@ namespace NeeView
         /// <summary>
         /// 現在ブック表示用
         /// </summary>
-        public bool IsVisibled
+        public bool IsVisible
         {
-            get { return _isVisibled; }
-            set { SetProperty(ref _isVisibled, value); }
+            get { return _isVisible; }
+            set { SetProperty(ref _isVisible, value); }
         }
 
 
-        // TODO: IHasPageなのにnullを返すのはおかしいのでダミーで対応？
+        // TODO: IHasPageなのに nullを返すのはおかしいのでダミーで対応？
         public virtual Page? GetPage() => null;
 
 

@@ -211,7 +211,7 @@ namespace NeeView
             switch (item)
             {
                 case RootQuickAccessNode:
-                    AddQuickAccess(_folderList.GetCurentQueryPath());
+                    AddQuickAccess(_folderList.GetCurrentQueryPath());
                     break;
 
                 case DirectoryNode folder:

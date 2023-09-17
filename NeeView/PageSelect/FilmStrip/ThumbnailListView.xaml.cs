@@ -72,13 +72,13 @@ namespace NeeView
         private VirtualizingStackPanel? _listPanel;
 
         private ThumbnailListViewModel? _vm;
-        private bool _isThumbnailDarty;
+        private bool _isThumbnailDirty;
 
 
         /// <summary>
         /// サムネイル更新要求を拒否する
         /// </summary>
-        private bool _isFreezed;
+        private bool _isFrozen;
 
         private readonly MouseWheelDelta _mouseWheelDelta = new();
 
@@ -171,12 +171,12 @@ namespace NeeView
 
         private void ViewModel_CollectionChanging(object? sender, EventArgs e)
         {
-            _isFreezed = true;
+            _isFrozen = true;
         }
 
         private void ViewModel_CollectionChanged(object? sender, EventArgs e)
         {
-            _isFreezed = false;
+            _isFrozen = false;
         }
 
         private void ViewModel_ViewItemsChanged(object? sender, ViewItemsChangedEventArgs e)
@@ -191,16 +191,16 @@ namespace NeeView
             ScrollIntoViewFixed(this.ThumbnailListBox.SelectedIndex);
 
             // 必要であればサムネイル要求を行う
-            if (withLoadThumbnails || _isThumbnailDarty)
+            if (withLoadThumbnails || _isThumbnailDirty)
             {
                 if (this.ThumbnailListBox.SelectedIndex >= 0)
                 {
-                    _isThumbnailDarty = false;
+                    _isThumbnailDirty = false;
                     LoadThumbnails(+1);
                 }
                 else
                 {
-                    _isThumbnailDarty = true;
+                    _isThumbnailDirty = true;
                 }
             }
         }
@@ -224,10 +224,10 @@ namespace NeeView
                 ScrollIntoViewIndex(this.ThumbnailListBox.SelectedIndex);
             }
 
-            UpdateThumbnaliListBoxAlign();
+            UpdateThumbnailListBoxAlign();
         }
 
-        private void UpdateThumbnaliListBoxAlign()
+        private void UpdateThumbnailListBoxAlign()
         {
             if (this.ThumbnailListBox.Width > this.Root.ActualWidth)
             {
@@ -331,14 +331,14 @@ namespace NeeView
         }
 
         /// <summary>
-        /// 指定ページのScrillIntoView
+        /// 指定ページのScrollIntoView
         /// </summary>
         private void ScrollIntoViewItems(List<Page> items, int direction)
         {
             if (_vm == null) return;
             if (!this.ThumbnailListBox.IsLoaded) return;
             if (_vm.Model.Items == null) return;
-            if (_vm.Model.IsItemsDarty) return;
+            if (_vm.Model.IsItemsDirty) return;
             if (!this.IsVisible) return;
 
             if (items.Count == 1)
@@ -384,7 +384,7 @@ namespace NeeView
         private void LoadThumbnails(int direction)
         {
             if (_vm == null) return;
-            if (_isFreezed) return;
+            if (_isFrozen) return;
 
             if (!this.Root.IsVisible || !this.ThumbnailListBox.IsVisible || _listPanel == null || _listPanel.Children.Count <= 0)
             {
@@ -532,7 +532,7 @@ namespace NeeView
             if (_vm == null) return;
             this.ThumbnailListBox.UpdateLayout();
             UpdateThumbnailListLayout(true);
-            _vm.Model.IsItemsDarty = false;
+            _vm.Model.IsItemsDirty = false;
         }
 
         private void ThumbnailListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)

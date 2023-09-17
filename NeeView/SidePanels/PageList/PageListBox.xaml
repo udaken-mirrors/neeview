@@ -46,7 +46,7 @@
         <local:BooleanToTextWrappingConverter x:Key="BooleanToTextWrappingConverter"/>
         <local:PageNameFormatConverter x:Key="PageNameFormatConverter"/>
         <local:PageToNoteConverter x:Key="PageToNoteConverter"/>
-        <local:ArchviePageToVisibilityConverter x:Key="ArchviePageToVisibilityConverter"/>
+        <local:ArchivePageToVisibilityConverter x:Key="ArchviePageToVisibilityConverter"/>
         <local:BrushAlphaToVisibilityConverter x:Key="BrushAlphaToVisibilityConverter" />
         
         <Style x:Key="NameStyle" TargetType="TextBlock">
@@ -106,14 +106,14 @@
             <Setter Property="Width" Value="4"/>
             <Setter Property="Margin" Value="0,0,0,0"/>
             <Setter Property="Fill" Value="{DynamicResource SelectedMark.Foreground}"/>
-            <Setter Property="Visibility" Value="{Binding IsVisibled, Converter={StaticResource BooleanToVisibilityHiddenConverter}}"/>
+            <Setter Property="Visibility" Value="{Binding IsVisible, Converter={StaticResource BooleanToVisibilityHiddenConverter}}"/>
         </Style>
 
         <Style x:Key="HorizontalSelectedStyle" TargetType="Rectangle">
             <Setter Property="Height" Value="4"/>
             <Setter Property="Margin" Value="0,0,0,0"/>
             <Setter Property="Fill" Value="{DynamicResource SelectedMark.Foreground}"/>
-            <Setter Property="Visibility" Value="{Binding IsVisibled, Converter={StaticResource BooleanToVisibilityHiddenConverter}}"/>
+            <Setter Property="Visibility" Value="{Binding IsVisible, Converter={StaticResource BooleanToVisibilityHiddenConverter}}"/>
         </Style>
 
         <Style x:Key="PageMarkStyle" TargetType="Image" >
@@ -215,7 +215,7 @@
                  SelectedItem="{Binding Model.SelectedItem}"
                  SelectionChanged="PageList_SelectionChanged"
                  KeyDown="PageList_KeyDown"
-                 IsVisibleChanged="PaegList_IsVisibleChanged"
+                 IsVisibleChanged="PageList_IsVisibleChanged"
                  TargetUpdated="PageList_TargetUpdated"
                  SelectionMode="Extended"
                  VirtualizingPanel.IsVirtualizing="True"

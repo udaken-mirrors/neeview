@@ -26,7 +26,7 @@ namespace NeeView
         /// <summary>
         /// アーカイバのサポート拡張子
         /// </summary>
-        private readonly Dictionary<ArchiverType, FileTypeCollection> _supprtedFileTypes = new()
+        private readonly Dictionary<ArchiverType, FileTypeCollection> _supportedFileTypes = new()
         {
             [ArchiverType.SevenZipArchiver] = Config.Current.Archive.SevenZip.SupportFileTypes,
             [ArchiverType.ZipArchiver] = Config.Current.Archive.Zip.SupportFileTypes,
@@ -38,7 +38,7 @@ namespace NeeView
 
         // アーカイバの適用順
         private List<ArchiverType> _orderList;
-        private bool _isDartyOrderList;
+        private bool _isDirtyOrderList;
 
         private readonly DisposableCollection _disposables;
         private readonly ArchiverCache _cache;
@@ -76,10 +76,10 @@ namespace NeeView
         {
             get
             {
-                if (_isDartyOrderList)
+                if (_isDirtyOrderList)
                 {
                     _orderList = CreateOrderList();
-                    _isDartyOrderList = false;
+                    _isDirtyOrderList = false;
                 }
 
                 return _orderList;
@@ -117,7 +117,7 @@ namespace NeeView
 
         private void UpdateOrderList()
         {
-            _isDartyOrderList = true;
+            _isDirtyOrderList = true;
         }
 
         // 検索順を更新
@@ -187,7 +187,7 @@ namespace NeeView
 
             foreach (var type in this.OrderList)
             {
-                if (_supprtedFileTypes[type].Contains(ext))
+                if (_supportedFileTypes[type].Contains(ext))
                 {
                     return (isAllowMedia || type != ArchiverType.MediaArchiver) ? type : ArchiverType.None;
                 }
@@ -348,7 +348,7 @@ namespace NeeView
         /// ex: C:\hoge.zip\sub\test.txt -> C:\hoge.zip
         /// </summary>
         /// <param name="path">アーカイブパス</param>
-        /// <returns>実在するアーカイブファイルのパス。見つからなかった場合はnull</returns>
+        /// <returns>実在するアーカイブファイルのパス。見つからなかった場合は null</returns>
         public string? GetExistPathName(string path)
         {
             if (_disposedValue) return null;

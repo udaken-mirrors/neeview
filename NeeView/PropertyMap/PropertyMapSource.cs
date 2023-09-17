@@ -51,7 +51,7 @@ namespace NeeView
             string typeString;
             if (PropertyInfo.PropertyType.IsEnum)
             {
-                typeString = "<dl>" + string.Join("", PropertyInfo.PropertyType.VisibledAliasNameDictionary().Select(e => $"<dt>\"{e.Key}\"</dt><dd>{e.Value}</dd>")) + "</dl>";
+                typeString = "<dl>" + string.Join("", PropertyInfo.PropertyType.VisibleAliasNameDictionary().Select(e => $"<dt>\"{e.Key}\"</dt><dd>{e.Value}</dd>")) + "</dl>";
             }
             else
             {

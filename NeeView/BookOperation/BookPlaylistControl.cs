@@ -11,9 +11,9 @@ namespace NeeView
 {
     public partial class BookPlaylistControl : BindableBase, IDisposable, IBookPlaylistControl
     {
-        private PageFrameBox _box;
-        private Book _book;
-        private IBookPageControl _pageControl;
+        private readonly PageFrameBox _box;
+        private readonly Book _book;
+        private readonly IBookPageControl _pageControl;
         private bool _disposedValue;
 
 

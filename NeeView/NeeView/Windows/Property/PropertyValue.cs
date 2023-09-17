@@ -211,7 +211,7 @@ namespace NeeView.Windows.Property
         public PropertyValue_Enum(PropertyMemberElement setter, Type enumType) : base(setter)
         {
             _type = enumType;
-            this.Map = setter.Options?.EnumMap ?? _type.VisibledAliasNameDictionary();
+            this.Map = setter.Options?.EnumMap ?? _type.VisibleAliasNameDictionary();
         }
 
         public override void SetValueFromString(string value)

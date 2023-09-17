@@ -15,7 +15,7 @@ namespace NeeView
         AllLeftToRight,
 
         [Obsolete("no used")] // ver.37
-        [AliasName(IsVisibled = false)]
+        [AliasName(IsVisible = false)]
         Twice = All,
     };
 }

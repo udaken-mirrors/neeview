@@ -5,7 +5,7 @@ namespace NeeView
 {
     public class MediaPageThumbnail : PageThumbnail
     {
-        private MediaPageContent _content;
+        private readonly MediaPageContent _content;
 
         public MediaPageThumbnail(MediaPageContent content) : base(content)
         {

@@ -34,7 +34,7 @@ namespace NeeView
 
                 if (Thumbnail.IsValid) return new PageSource(new ArchivePageData(Thumbnail), null, pictureInfo);
 
-                await Thumbnail.InitializeFromCacheAsync(Entry, null, token);
+                await Thumbnail.InitializeFromCacheAsync(ArchiveEntry, null, token);
                 if (Thumbnail.IsValid) return new PageSource(new ArchivePageData(Thumbnail), null, pictureInfo);
 
                 var source = await LoadThumbnailAsync(token);
@@ -81,7 +81,7 @@ namespace NeeView
         {
             if (_selectedContent is null)
             {
-                var entry = await CreateRegularEntryAsync(Entry, token);
+                var entry = await CreateRegularEntryAsync(ArchiveEntry, token);
                 var selected = await SelectAlternativeEntry(entry, token);
                 _thumbnailType = GetThumbnailType(selected);
                 var factory = new PageContentFactory(BookMemoryService);

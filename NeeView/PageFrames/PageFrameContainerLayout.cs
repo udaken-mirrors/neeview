@@ -11,13 +11,13 @@ namespace NeeView.PageFrames
     /// <summary>
     /// コンテナの配置
     /// </summary>
-    public class PageFrameContainersLayout
+    public class PageFrameContainerLayout
     {
-        private PageFrameContext _context;
-        private PageFrameContainerCollection _containers;
+        private readonly PageFrameContext _context;
+        private readonly PageFrameContainerCollection _containers;
 
 
-        public PageFrameContainersLayout(PageFrameContext context, PageFrameContainerCollection containers)
+        public PageFrameContainerLayout(PageFrameContext context, PageFrameContainerCollection containers)
         {
             _context = context;
             _containers = containers;
@@ -128,15 +128,4 @@ namespace NeeView.PageFrames
         }
 
     }
-
-    public class LayoutChangedEventArgs : EventArgs
-    {
-        public LayoutChangedEventArgs(LinkedListNode<PageFrameContainer> anchor)
-        {
-            Anchor = anchor;
-        }
-
-        LinkedListNode<PageFrameContainer> Anchor { get; }
-    }
-
 }

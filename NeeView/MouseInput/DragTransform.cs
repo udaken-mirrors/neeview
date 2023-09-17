@@ -12,7 +12,7 @@ namespace NeeView
     /// </summary>
     public class DragTransform : IScaleControl, IAngleControl, IPointControl, IFlipControl
     {
-        private DragTransformContext _context;
+        private readonly DragTransformContext _context;
 
         public DragTransform(DragTransformContext context)
         {

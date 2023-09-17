@@ -105,7 +105,7 @@ namespace NeeView
             DragActionTable.Current.RestoreDragActionCollection(setting.DragActions);
 
             // コンテキストメニュー設定反映
-            ContextMenuManager.Current.Resotre(setting.ContextMenu);
+            ContextMenuManager.Current.Restore(setting.ContextMenu);
 
             // SusiePlugins反映
             SusiePluginManager.Current.RestoreSusiePluginCollection(setting.SusiePlugins);

@@ -50,7 +50,7 @@ namespace NeeView
 
 
         // サムネイル画像が表示される？？
-        public bool IsThumbnailVisibled
+        public bool IsThumbnailVisible
         {
             get
             {

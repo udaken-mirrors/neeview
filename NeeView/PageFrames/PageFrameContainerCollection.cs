@@ -8,6 +8,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Xml.Linq;
+using NeeLaboratory.Generators;
 using NeeView.ComponentModel;
 
 
@@ -61,13 +62,12 @@ namespace NeeView.PageFrames
     /// <summary>
     /// PageFrameContainer のコレクションを管理
     /// </summary>
-    public class PageFrameContainerCollection : IEnumerable<PageFrameContainer>
+    public partial class PageFrameContainerCollection : IEnumerable<PageFrameContainer>
     {
         private readonly LinkedList<PageFrameContainer> _containers = new();
         private readonly PageFrameFactory _frameFactory;
         private readonly PageFrameContainerFactory _containerFactory;
-
-        private PageFrameContainerAnchor _anchor;
+        private readonly PageFrameContainerAnchor _anchor;
         private IInitializable<PageFrameContainer>? _containerInitializer;
 
 
@@ -91,7 +91,10 @@ namespace NeeView.PageFrames
         }
 
 
+        [Subscribable]
         public event EventHandler<PageFrameContainerCollectionChangedEventArgs>? CollectionChanging;
+
+        [Subscribable]
         public event EventHandler<PageFrameContainerCollectionChangedEventArgs>? CollectionChanged;
 
 
@@ -246,7 +249,7 @@ namespace NeeView.PageFrames
             CollectionChanging?.Invoke(this, new PageFrameContainerCollectionChangedEventArgs(PageFrameContainerCollectionChangedEventAction.Add, node));
             AddContainerNode(node);
             CollectionChanged?.Invoke(this, new PageFrameContainerCollectionChangedEventArgs(PageFrameContainerCollectionChangedEventAction.Add, node));
-            RemoveConfrictContainer(node);
+            RemoveConflictContainer(node);
 
             return node;
         }
@@ -267,7 +270,7 @@ namespace NeeView.PageFrames
             _containerFactory.Update(node.Value, frame);
             CollectionChanged?.Invoke(this, new PageFrameContainerCollectionChangedEventArgs(PageFrameContainerCollectionChangedEventAction.Update, node));
 
-            RemoveConfrictContainer(node);
+            RemoveConflictContainer(node);
         }
 
 
@@ -299,8 +302,7 @@ namespace NeeView.PageFrames
 
         private void Container_TransformChanged(object? sender, TransformChangedEventArgs e)
         {
-            var container = sender as PageFrameContainer;
-            if (container is null) return;
+            if (sender is not PageFrameContainer container) return;
 
             var node = Find(container);
             if (node is null) return;
@@ -310,8 +312,7 @@ namespace NeeView.PageFrames
 
         private void Container_ContentSizeChanged(object? sender, EventArgs e)
         {
-            var container = sender as PageFrameContainer;
-            if (container is null) return;
+            if (sender is not PageFrameContainer container) return;
 
             var node = Find(container);
             if (node is null) return;
@@ -323,8 +324,7 @@ namespace NeeView.PageFrames
 
         private void Container_ContainerLayoutChanged(object? sender, EventArgs e)
         {
-            var container = sender as PageFrameContainer;
-            if (container is null) return;
+            if (sender is not PageFrameContainer container) return;
 
             var node = Find(container);
             if (node is null) return;
@@ -338,13 +338,13 @@ namespace NeeView.PageFrames
         /// 衝突しているコンテナを削除
         /// </summary>
         /// <param name="container"></param>
-        private void RemoveConfrictContainer(LinkedListNode<PageFrameContainer> anchor)
+        private void RemoveConflictContainer(LinkedListNode<PageFrameContainer> anchor)
         {
-            RemoveConfrictContainer(anchor, LinkedListDirection.Previous);
-            RemoveConfrictContainer(anchor, LinkedListDirection.Next);
+            RemoveConflictContainer(anchor, LinkedListDirection.Previous);
+            RemoveConflictContainer(anchor, LinkedListDirection.Next);
         }
 
-        private void RemoveConfrictContainer(LinkedListNode<PageFrameContainer> anchor, LinkedListDirection direction)
+        private void RemoveConflictContainer(LinkedListNode<PageFrameContainer> anchor, LinkedListDirection direction)
         {
             var node = anchor.GetNext(direction);
             while (node is not null && node.Value.FrameRange.Confrict(anchor.Value.FrameRange))

@@ -16,7 +16,7 @@ namespace NeeView.PageFrames
     // TODO: ２つ並べたコンテンツのサイズをあわせる計算。 PageSource に Scale を保持させる
     public class ContentSizeCalculator
     {
-        private IContentSizeCalculatorProfile _profile;
+        private readonly IContentSizeCalculatorProfile _profile;
 
         public ContentSizeCalculator(IContentSizeCalculatorProfile profile)
         {
@@ -72,7 +72,7 @@ namespace NeeView.PageFrames
         /// <returns></returns>
         public double CalcFrameStretchScale(Size size, double span, RotateTransform rotate)
         {
-            return CalcStretchScale(StretchMode, GetFillScaleSpaned(size, span, rotate.Angle), size);
+            return CalcStretchScale(StretchMode, GetFillScaleWithSpan(size, span, rotate.Angle), size);
         }
 
 
@@ -122,7 +122,7 @@ namespace NeeView.PageFrames
         /// <param name="span">PageContent 間の距離。スケールに影響されない固定値</param>
         /// <param name="angle">自動回転角度。90度単位のみ対応</param>
         /// <returns>回転前に適用されるScale</returns>
-        private Vector GetFillScaleSpaned(Size size, double span, double angle)
+        private Vector GetFillScaleWithSpan(Size size, double span, double angle)
         {
             Debug.Assert(Math.Abs(angle % 90) < 1.0, "Only 90-degree units are supported.");
 
@@ -158,7 +158,7 @@ namespace NeeView.PageFrames
 
         public double[] CalcContentScale(IEnumerable<Size> contents)
         {
-            if (contents.Count() == 0)
+            if (!contents.Any())
             {
                 return Array.Empty<double>();
             }

@@ -21,7 +21,7 @@ namespace NeeView
             NVDebug.AssertMTA();
             if (Thumbnail.IsValid) return;
 
-            await Thumbnail.InitializeFromCacheAsync(_content.Entry, null, token);
+            await Thumbnail.InitializeFromCacheAsync(_content.ArchiveEntry, null, token);
             if (Thumbnail.IsValid) return;
 
             var source = await LoadThumbnailAsync(token);

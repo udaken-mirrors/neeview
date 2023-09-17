@@ -12,9 +12,9 @@ namespace NeeView
     public class SystemConfig : BindableBase
     {
         private ArchiveEntryCollectionMode _archiveRecursiveMode = ArchiveEntryCollectionMode.IncludeSubArchives;
-        private bool _isNetworkEnalbe = true;
+        private bool _isNetworkEnabled = true;
         private bool _isSettingBackup;
-        private bool _isHiddenFileVisibled;
+        private bool _isHiddenFileVisible;
         private bool _isFileWriteAccessEnabled = false;
         private string? _language;
         private BookPageCollectMode _bookPageCollectMode = BookPageCollectMode.ImageAndBook;
@@ -23,9 +23,9 @@ namespace NeeView
         private bool _isSyncUserSetting = true;
         private bool _isIgnoreImageDpi = true;
         private string _downloadPath = "";
-        private bool _isOpenbookAtCurrentPlace;
+        private bool _isOpenBookAtCurrentPlace;
         private bool _isNaturalSortEnabled;
-        private bool _isInputMehotdEnabled;
+        private bool _isInputMethodEnabled;
         private DestinationFolderCollection _destinationFolderCollection = new();
         private ExternalAppCollection _externalAppCollection = new() { new ExternalApp() };
         private string? _textEditor;
@@ -78,8 +78,8 @@ namespace NeeView
         [PropertyMember]
         public bool IsNetworkEnabled
         {
-            get { return _isNetworkEnalbe || Environment.IsAppxPackage; } // Appxは強制ON
-            set { SetProperty(ref _isNetworkEnalbe, value); }
+            get { return _isNetworkEnabled || Environment.IsAppxPackage; } // Appxは強制ON
+            set { SetProperty(ref _isNetworkEnabled, value); }
         }
 
         // 設定データの同期
@@ -125,11 +125,12 @@ namespace NeeView
         }
 
         // 隠しファイルを表示する？
+        // TODO: [Typo] Visibled -> Visible
         [PropertyMember]
         public bool IsHiddenFileVisibled
         {
-            get { return _isHiddenFileVisibled; }
-            set { SetProperty(ref _isHiddenFileVisibled, value); }
+            get { return _isHiddenFileVisible; }
+            set { SetProperty(ref _isHiddenFileVisible, value); }
         }
 
         [PropertyMember]
@@ -142,11 +143,12 @@ namespace NeeView
 
         // 「ブックを開く」ダイアログを現在の場所を基準にして開く
         // TODO: LoadAs のコマンドパラメータにする
+        // TODO: [Typo] Openbook -> OpenBook
         [PropertyMember]
         public bool IsOpenbookAtCurrentPlace
         {
-            get { return _isOpenbookAtCurrentPlace; }
-            set { SetProperty(ref _isOpenbookAtCurrentPlace, value); }
+            get { return _isOpenBookAtCurrentPlace; }
+            set { SetProperty(ref _isOpenBookAtCurrentPlace, value); }
         }
 
         // カスタム自然順ソート
@@ -161,12 +163,13 @@ namespace NeeView
         [PropertyMember]
         public bool IsInputMethodEnabled
         {
-            get { return _isInputMehotdEnabled; }
-            set { SetProperty(ref _isInputMehotdEnabled, value); }
+            get { return _isInputMethodEnabled; }
+            set { SetProperty(ref _isInputMethodEnabled, value); }
         }
 
 
         // コピーまたは移動先フォルダーのリスト
+        // TODO: [Typo] Fdler -> Folder
         [PropertyMember]
         [PropertyMapIgnore]
         [ObjectMergeReferenceCopy]

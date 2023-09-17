@@ -14,49 +14,13 @@ namespace NeeView
     {
         private readonly PageFrameBox _box;
 
-        //private DisposableCollection _disposables = new();
-        //private bool _disposedValue = false;
-
 
         public BookPageMoveControl(PageFrameBox box)
         {
             _box = box;
-
-            //_disposables.Add(_presenter.SubscribePropertyChanged(nameof(_presenter.Pages), (_, _) => RaisePropertyChanged(nameof(Pages))));
-           // _disposables.Add(_presenter.SubscribePropertyChanged(nameof(_presenter.SelectedRange), (_, _) => RaisePropertyChanged(nameof(SelectedRange))));
         }
 
-#if false
-        #region IDisposable Support
 
-        protected void ThrowIfDisposed()
-        {
-            if (_disposedValue) throw new ObjectDisposedException(GetType().FullName);
-        }
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!_disposedValue)
-            {
-                if (disposing)
-                {
-                    _disposables.Dispose();
-                }
-                _disposedValue = true;
-            }
-        }
-
-        public void Dispose()
-        {
-            Dispose(disposing: true);
-            GC.SuppressFinalize(this);
-        }
-        #endregion IDisposable Support
-
-        public event PropertyChangedEventHandler? PropertyChanged;
-
-        public event EventHandler? PagesChanged;
-#endif
 
         public IReadOnlyList<Page> Pages => _box.Pages;
 

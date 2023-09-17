@@ -50,7 +50,7 @@ namespace NeeView
                     var requestSize = size;
                     var sourceSize = pictureInfo.Size;
                     var pictureSize = new Size(_picture.ImageSource.GetPixelWidth(), _picture.ImageSource.GetPixelHeight());
-                    Debug.WriteLine($"CreateBitmapImage: {_pageContent.Entry}: {sourceSize:f0}: {requestSize:f0} -> {pictureSize:f0}");
+                    Debug.WriteLine($"CreateBitmapImage: {_pageContent.ArchiveEntry}: {sourceSize:f0}: {requestSize:f0} -> {pictureSize:f0}");
                 }
 
                 Debug.Assert(_picture.ImageSource is not null);

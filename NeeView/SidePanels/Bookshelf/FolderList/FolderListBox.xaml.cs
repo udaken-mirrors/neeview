@@ -104,7 +104,7 @@ namespace NeeView
         public ListBox PageCollectionListBox => this.ListBox;
 
         // サムネイルが表示されている？
-        public bool IsThumbnailVisibled => _vm.IsThumbnailVisibled;
+        public bool IsThumbnailVisible => _vm.IsThumbnailVisible;
 
         public IEnumerable<IHasPage> CollectPageList(IEnumerable<object> objs) => objs.OfType<IHasPage>();
 

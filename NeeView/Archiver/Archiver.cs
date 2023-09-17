@@ -77,7 +77,7 @@ namespace NeeView
         // 内部アーカイブのテンポラリファイル。インスタンス保持用
         public TempFile? TempFile { get; set; }
 
-        // ファイルシステムの場合はtrue
+        // ファイルシステムの場合は true
         public virtual bool IsFileSystem { get; } = false;
 
         // ファイルシステムでのパスを取得

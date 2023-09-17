@@ -90,7 +90,7 @@ namespace NeeView
         }
 
 
-        internal bool IsDarty => Command != _resource.CommandAccessMap;
+        internal bool IsDirty => Command != _resource.CommandAccessMap;
 
 
 
@@ -119,10 +119,10 @@ namespace NeeView
         [WordNodeMember]
         public bool ShowDialog(string title, string message = "", int commands = 0)
         {
-            return AppDispatcher.Invoke(() => ShowDialogIneer(title, message, commands));
+            return AppDispatcher.Invoke(() => ShowDialogInner(title, message, commands));
         }
 
-        private bool ShowDialogIneer(string title, string message, int commands)
+        private bool ShowDialogInner(string title, string message, int commands)
         {
             var dialog = new MessageDialog(message, title);
             switch (commands)
@@ -146,10 +146,10 @@ namespace NeeView
         [WordNodeMember]
         public string? ShowInputDialog(string title, string? text = null)
         {
-            return AppDispatcher.Invoke(() => ShowInputDialogIneer(title, text));
+            return AppDispatcher.Invoke(() => ShowInputDialogInner(title, text));
         }
 
-        private static string? ShowInputDialogIneer(string title, string? text)
+        private static string? ShowInputDialogInner(string title, string? text)
         {
             var component = new InputDialogComponent(text);
             var dialog = new MessageDialog(component, title);

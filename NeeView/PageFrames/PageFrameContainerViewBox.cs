@@ -7,15 +7,15 @@ namespace NeeView.PageFrames
 {
     // Canvas座標系での ViewRect を管理
     // TODO: Canvas座標系なのにViewRectって名前でいいの？
-    public partial class PageFrameContainersViewBox : IDisposable
+    public partial class PageFrameContainerViewBox : IDisposable
     {
-        private PageFrameScrollViewer _view;
+        private readonly PageFrameContext _context;
+        private readonly PageFrameScrollViewer _view;
         private Rect _rect;
         private Size _size;
-        private PageFrameContext _context;
         private bool _disposedValue;
 
-        public PageFrameContainersViewBox(PageFrameContext context, PageFrameScrollViewer view)
+        public PageFrameContainerViewBox(PageFrameContext context, PageFrameScrollViewer view)
         {
             _context = context;
             _view = view;

@@ -6,15 +6,15 @@ using NeeView.ComponentModel;
 
 namespace NeeView.PageFrames
 {
-    public class PageFrameContainersFiller
+    public class PageFrameContainerFiller
     {
-        private PageFrameContext _context;
-        private PageFrameContainerCollection _containers;
-        private PageFrameContainersCollectionRectMath _rectMath;
-        private PageFrameRectMath _math;
+        private readonly PageFrameContext _context;
+        private readonly PageFrameContainerCollection _containers;
+        private readonly PageFrameContainerCollectionRectMath _rectMath;
+        private readonly PageFrameRectMath _math;
 
 
-        public PageFrameContainersFiller(PageFrameContext context, PageFrameContainerCollection containers, PageFrameContainersCollectionRectMath rectMath)
+        public PageFrameContainerFiller(PageFrameContext context, PageFrameContainerCollection containers, PageFrameContainerCollectionRectMath rectMath)
         {
             _context = context;
             _containers = containers;
@@ -168,7 +168,7 @@ namespace NeeView.PageFrames
 
         private record struct BlankSpace(double Previous, double Next)
         {
-            public double GetSpace(LinkedListDirection direction)
+            public readonly double GetSpace(LinkedListDirection direction)
             {
                 return direction == LinkedListDirection.Previous ? Previous : Next;
             }

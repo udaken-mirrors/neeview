@@ -14,7 +14,7 @@ namespace NeeView
         private readonly HistoryList _model;
         private BookHistory? _selectedItem;
         private Visibility _visibility = Visibility.Hidden;
-        private bool _isDarty = true;
+        private bool _isDirty = true;
 
 
         public HistoryListBoxViewModel(HistoryList model)
@@ -35,7 +35,7 @@ namespace NeeView
         public event EventHandler? SelectedItemChanged;
 
 
-        public bool IsThumbnailVisibled => _model.IsThumbnailVisibled;
+        public bool IsThumbnailVisible => _model.IsThumbnailVisible;
 
         public List<BookHistory> Items => _model.Items;
 
@@ -54,7 +54,7 @@ namespace NeeView
 
         private void HistoryList_FilterPathChanged(object? sender, PropertyChangedEventArgs e)
         {
-            _isDarty = true;
+            _isDirty = true;
             UpdateItems();
         }
 
@@ -70,8 +70,8 @@ namespace NeeView
 
         private void BookHub_HistoryChanged(object? sender, BookMementoCollectionChangedArgs e)
         {
-            _isDarty = _isDarty || e.HistoryChangedType != BookMementoCollectionChangedType.Update;
-            if (_isDarty && Visibility == Visibility.Visible)
+            _isDirty = _isDirty || e.HistoryChangedType != BookMementoCollectionChangedType.Update;
+            if (_isDirty && Visibility == Visibility.Visible)
             {
                 UpdateItems();
             }
@@ -79,9 +79,9 @@ namespace NeeView
 
         public void UpdateItems()
         {
-            if (_isDarty)
+            if (_isDirty)
             {
-                _isDarty = false;
+                _isDirty = false;
 
                 AppDispatcher.Invoke(() => SelectedItemChanging?.Invoke(this, EventArgs.Empty));
 

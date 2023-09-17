@@ -10,7 +10,7 @@ namespace NeeView
     {
         public string? AliasName;
         public string? Remarks;
-        public bool IsVisibled = true;
+        public bool IsVisible = true;
 
         public AliasNameAttribute()
         {
@@ -61,7 +61,7 @@ namespace NeeView
         }
 
         // TODO: use _cache?
-        public static Dictionary<T, string> GetVisibledAliasNameDictionary<T>()
+        public static Dictionary<T, string> GetVisibleAliasNameDictionary<T>()
             where T : notnull
         {
             Debug.Assert(typeof(T).IsEnum);
@@ -71,12 +71,12 @@ namespace NeeView
             return Enum.GetValues(type)
                 .Cast<T>()
                 .Select(e => (Key: e, Attribute: GetAliasNameAttribute(e)))
-                .Where(e => e.Attribute == null || e.Attribute.IsVisibled)
+                .Where(e => e.Attribute == null || e.Attribute.IsVisible)
                 .ToDictionary(e => e.Key, e => GetAliasNameInner(e.Key, e.Attribute));
         }
 
         // TODO: use _cache?
-        public static Dictionary<Enum, string> VisibledAliasNameDictionary(this Type type)
+        public static Dictionary<Enum, string> VisibleAliasNameDictionary(this Type type)
         {
             if (!type.IsEnum) throw new ArgumentException("not enum", nameof(type));
 
@@ -84,7 +84,7 @@ namespace NeeView
                 .Cast<Enum>()
                 .Distinct()
                 .Select(e => (Key: e, Attribute: GetAliasNameAttribute(e)))
-                .Where(e => e.Attribute == null || e.Attribute.IsVisibled)
+                .Where(e => e.Attribute == null || e.Attribute.IsVisible)
                 .ToDictionary(e => e.Key, e => GetAliasNameInner(e.Key, e.Attribute));
         }
 

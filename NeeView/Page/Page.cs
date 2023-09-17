@@ -10,24 +10,9 @@ using NeeLaboratory.Generators;
 
 namespace NeeView
 {
-    public enum PageType
-    {
-        Folder,
-        File,
-    }
-
-    public interface IHasPage
-    {
-        Page? GetPage();
-    }
-
-
-
     [NotifyPropertyChanged]
     public partial class Page : IDisposable, INotifyPropertyChanged, IPageContentLoader, IPageThumbnailLoader, IHasPage, IRenameable
     {
-        //private static PageContentFactory _pageContentFactory = new PageContentFactory();
-
         private int _index;
         private readonly PageContent _content;
         private bool _isVisible;
@@ -36,18 +21,8 @@ namespace NeeView
         private readonly DisposableCollection _disposables = new();
 
 
-#if false
-        public Page(string bookPrefix, ArchiveEntry archiveEntry, int index, BookMemoryService bookMemoryService)
-            : this(bookPrefix, _pageContentFactory.Create(archiveEntry, bookMemoryService) )
-        {
-            Index = index;
-        }
-#endif
-
-
         public Page(string bookPrefix, PageContent content)
         {
-
             BookPrefix = bookPrefix;
 
             _content = content;
@@ -55,20 +30,7 @@ namespace NeeView
             _content.SizeChanged += Content_SizeChanged;
 
             _thumbnailSource = PageThumbnailFactory.Create(_content);
-
-
-#if false
-            _disposables.Add(_content.SubscribePropertyChanged(nameof(PageContent.Entry),
-                (s, e) => RaisePropertyChanged(nameof(Entry))));
-
-            _contentLoader = _content.CreateContentLoader();
-            _disposables.Add(_contentLoader.SubscribeLoaded(
-                (s, e) => Loaded?.Invoke(this, EventArgs.Empty)));
-#endif
         }
-
-
-
 
 
         [Subscribable]
@@ -84,15 +46,8 @@ namespace NeeView
 
         public bool IsLoaded => _content.IsLoaded;
 
-        [Obsolete("use Entry")]
         public ArchiveEntry ArchiveEntry => _content.ArchiveEntry;
 
-        public ArchiveEntry Entry => _content.Entry;
-
-        /// <summary>
-        /// コンテンツアクセサ。コンテンツを編集する場合はこのアクセサを介して操作を行う。
-        /// </summary>
-        //public PageContent ContentAccessor => _content;
         public PageContent Content => _content;
 
 
@@ -113,19 +68,19 @@ namespace NeeView
         public int IndexPlusOne => Index + 1;
 
         // ページ名 : エントリ名
-        public string EntryName => Entry.EntryFullName[BookPrefix.Length..];
+        public string EntryName => ArchiveEntry.EntryFullName[BookPrefix.Length..];
 
         // ページ名：ファイル名のみ
-        public string EntryLastName => Entry.EntryLastName;
+        public string EntryLastName => ArchiveEntry.EntryLastName;
 
         // ページ名：スマートパス
         public string EntrySmartName => Prefix == null ? EntryName : EntryName[Prefix.Length..];
 
         // ページ名：フルパス名 (リンクはそのまま)
-        public string EntryFullName => Entry.EntryFullName;
+        public string EntryFullName => ArchiveEntry.EntryFullName;
 
         // ページ名：システムパス (リンクは実体に変換済)
-        public string SystemPath => Entry.SystemPath;
+        public string SystemPath => ArchiveEntry.SystemPath;
 
         // ページ名：ブックプレフィックス
         public string BookPrefix { get; private set; }
@@ -137,13 +92,13 @@ namespace NeeView
         public string BookAddress => LoosePath.TrimEnd(BookPrefix);
 
         // ファイル情報：ファイル作成日
-        public DateTime CreationTime => Entry != null ? Entry.CreationTime : default;
+        public DateTime CreationTime => ArchiveEntry != null ? ArchiveEntry.CreationTime : default;
 
         // ファイル情報：最終更新日
-        public DateTime LastWriteTime => Entry != null ? Entry.LastWriteTime : default;
+        public DateTime LastWriteTime => ArchiveEntry != null ? ArchiveEntry.LastWriteTime : default;
 
         // ファイル情報：ファイルサイズ
-        public long Length => Entry.Length;
+        public long Length => ArchiveEntry.Length;
 
         // コンテンツ幅
         public double Width => Size.Width;
@@ -167,7 +122,7 @@ namespace NeeView
         public PageType PageType => _content is ArchivePageContent ? PageType.Folder : PageType.File;
 
         // 表示中?
-        public bool IsVisibled
+        public bool IsVisible
         {
             get { return _isVisible; }
             set { SetProperty(ref _isVisible, value); }
@@ -192,7 +147,7 @@ namespace NeeView
         /// <summary>
         /// 削除済フラグ
         /// </summary>
-        public bool IsDeleted => Entry.IsDeleted;
+        public bool IsDeleted => ArchiveEntry.IsDeleted;
 
 
         #region Thumbnail
@@ -204,10 +159,8 @@ namespace NeeView
         /// サムネイル
         /// </summary>
         public Thumbnail Thumbnail => _thumbnailSource.Thumbnail;
-        //public Thumbnail Thumbnail { get; } = new Thumbnail();
 
         public bool IsThumbnailValid => _thumbnailSource.Thumbnail.IsValid;
-        //public bool IsThumbnailValid => false;
 
         /// <summary>
         /// サムネイル読み込み
@@ -313,13 +266,13 @@ namespace NeeView
         // ファイルの場所を取得
         public string GetFilePlace()
         {
-            return Entry.GetFileSystemPath() ?? Entry.Archiver.GetPlace();
+            return ArchiveEntry.GetFileSystemPath() ?? ArchiveEntry.Archiver.GetPlace();
         }
 
         // フォルダーを開く、で取得するパス
         public string GetFolderOpenPlace()
         {
-            if (Entry.Archiver is FolderArchive)
+            if (ArchiveEntry.Archiver is FolderArchive)
             {
                 return GetFilePlace();
             }
@@ -332,22 +285,15 @@ namespace NeeView
         // フォルダーの場所を取得
         public string GetFolderPlace()
         {
-            return Entry.Archiver.GetSourceFileSystemPath();
+            return ArchiveEntry.Archiver.GetSourceFileSystemPath();
         }
-
-
-        //public PageContent GetContentClone()
-        //{
-        //    return _content.Clone();
-        //}
-
 
         /// <summary>
         /// can delete?
         /// </summary>
         public bool CanDelete()
         {
-            return Entry.CanDelete();
+            return ArchiveEntry.CanDelete();
         }
 
         /// <summary>
@@ -355,22 +301,22 @@ namespace NeeView
         /// </summary>
         public async Task<bool> DeleteAsync()
         {
-            return await Entry.DeleteAsync();
+            return await ArchiveEntry.DeleteAsync();
         }
 
         public string GetRenameText()
         {
-            return Entry.GetRenameText();
+            return ArchiveEntry.GetRenameText();
         }
 
         public bool CanRename()
         {
-            return Entry.CanRename();
+            return ArchiveEntry.CanRename();
         }
 
         public async Task<bool> RenameAsync(string name)
         {
-            var isSuccess = await Entry.RenameAsync(name);
+            var isSuccess = await ArchiveEntry.RenameAsync(name);
             RaiseNamePropertyChanged();
             FileInformation.Current.Update(); // TODO: 伝達方法がよろしくない
             return isSuccess;

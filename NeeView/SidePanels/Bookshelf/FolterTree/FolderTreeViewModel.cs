@@ -8,7 +8,7 @@ namespace NeeView
 {
     public class FolderTreeViewModel : BindableBase
     {
-        private bool _isFirstVisibled;
+        private bool _isFirstVisible;
 
         public FolderTreeViewModel()
         {
@@ -108,9 +108,9 @@ namespace NeeView
 
         public void IsVisibleChanged(bool isVisible)
         {
-            if (isVisible && !_isFirstVisibled)
+            if (isVisible && !_isFirstVisible)
             {
-                _isFirstVisibled = true;
+                _isFirstVisible = true;
                 Model?.ExpandRoot();
             }
         }

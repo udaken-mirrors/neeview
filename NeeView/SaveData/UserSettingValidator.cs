@@ -24,7 +24,7 @@ namespace NeeView
             // 画像拡張子初期化
             if (self.Config.Image.Standard.SupportFileTypes is null)
             {
-                self.Config.Image.Standard.SupportFileTypes = PictureFileExtensionTools.CreateDefaultSupprtedFileTypes(self.Config.Image.Standard.UseWicInformation);
+                self.Config.Image.Standard.SupportFileTypes = PictureFileExtensionTools.CreateDefaultSupportedFileTypes(self.Config.Image.Standard.UseWicInformation);
             }
 
             // 現在のバージョンであればチェック不要

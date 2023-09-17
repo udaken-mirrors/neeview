@@ -16,7 +16,7 @@ namespace NeeView.Windows
     public class TabletModeWatcher
     {
         private bool _isTabletMode = false;
-        private int _dartyValue = 1;
+        private int _dirtyValue = 1;
 
 
         public TabletModeWatcher(Window window)
@@ -32,7 +32,7 @@ namespace NeeView.Windows
         {
             get
             {
-                if (_dartyValue != 0)
+                if (_dirtyValue != 0)
                 {
                     UpdateTabletMode();
                 }
@@ -43,7 +43,7 @@ namespace NeeView.Windows
 
         private void UpdateTabletMode()
         {
-            Interlocked.Exchange(ref _dartyValue, 0);
+            Interlocked.Exchange(ref _dirtyValue, 0);
 
             RegistryKey? regKey = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\ImmersiveShell");
             if (regKey != null)
@@ -87,7 +87,7 @@ namespace NeeView.Windows
             string? str = Marshal.PtrToStringAuto(lParam);
             if (str == "UserInteractionMode")
             {
-                Interlocked.Exchange(ref _dartyValue, 1);
+                Interlocked.Exchange(ref _dirtyValue, 1);
             }
         }
     }

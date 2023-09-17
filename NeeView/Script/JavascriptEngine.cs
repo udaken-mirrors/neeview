@@ -25,7 +25,7 @@ namespace NeeView
             _engine.SetValue("sleep", (Action<int>)Sleep);
             _engine.SetValue("log", (Action<object>)Log);
             _engine.SetValue("system", (Action<string, string>)SystemCall);
-            _engine.SetValue("include", (Func<string, object?>)ExecureFile);
+            _engine.SetValue("include", (Func<string, object?>)ExecuteFile);
             _engine.SetValue("nv", _commandHost);
         }
 
@@ -36,7 +36,7 @@ namespace NeeView
 
         public bool IsToastEnable { get; set; }
 
-        public bool IsDarty => _commandHost.IsDarty;
+        public bool IsDirty => _commandHost.IsDirty;
 
 
         [Documentable(Name = "nv")]
@@ -49,23 +49,23 @@ namespace NeeView
         }
 
         [Documentable(Name = "include")]
-        public object? ExecureFile(string path)
+        public object? ExecuteFile(string path)
         {
             if (path is null) throw new ArgumentNullException(nameof(path));
 
-            return ExecureFile(path, _cancellationToken);
+            return ExecuteFile(path, _cancellationToken);
         }
 
-        public object? ExecureFile(string path, CancellationToken token)
+        public object? ExecuteFile(string path, CancellationToken token)
         {
-            var fullpath = GetFullPath(path);
-            string script = File.ReadAllText(fullpath, Encoding.UTF8);
+            var fullPath = GetFullPath(path);
+            string script = File.ReadAllText(fullPath, Encoding.UTF8);
 
             var oldFolder = CurrentFolder;
             try
             {
-                CurrentFolder = LoosePath.GetDirectoryName(fullpath);
-                return Execute(fullpath, script, token);
+                CurrentFolder = LoosePath.GetDirectoryName(fullPath);
+                return Execute(fullPath, script, token);
             }
             finally
             {
@@ -107,7 +107,7 @@ namespace NeeView
             }
         }
 
-        public void ExceptionPrcess(Exception ex)
+        public void ExceptionProcess(Exception ex)
         {
             var message = ex switch
             {

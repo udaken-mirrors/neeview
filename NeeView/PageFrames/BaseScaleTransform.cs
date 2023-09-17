@@ -8,10 +8,10 @@ namespace NeeView.PageFrames
     public partial class BaseScaleTransform : IScaleControl, IDisposable
     {
         private double _scale = 1.0;
-        private ViewConfig _viewConfig;
-        private ScaleTransform _scaleTransform;
+        private readonly ViewConfig _viewConfig;
+        private readonly ScaleTransform _scaleTransform;
         private bool _disposedValue;
-        private DisposableCollection _disposables = new();
+        private readonly DisposableCollection _disposables = new();
 
         public BaseScaleTransform(ViewConfig viewConfig)
         {

@@ -30,7 +30,7 @@ namespace NeeView
         private Playlist _playlist;
         private int _playlistLockCount;
         private CancellationTokenSource? _deleteInvalidItemsCancellationToken;
-        private bool _isPlaylistDarty;
+        private bool _isPlaylistDirty;
 
         private PlaylistHub()
         {
@@ -209,15 +209,15 @@ namespace NeeView
 
         public void UpdatePlaylist()
         {
-            if (_playlistLockCount <= 0 && (_playlist is null || _isPlaylistDarty || _playlist?.Path != this.SelectedItem))
+            if (_playlistLockCount <= 0 && (_playlist is null || _isPlaylistDirty || _playlist?.Path != this.SelectedItem))
             {
-                if (!_isPlaylistDarty && _playlist != null)
+                if (!_isPlaylistDirty && _playlist != null)
                 {
                     _playlist.Flush();
                 }
 
                 SetPlaylist(LoadPlaylist(this.SelectedItem));
-                _isPlaylistDarty = false;
+                _isPlaylistDirty = false;
 
                 //StartFileWatch(this.SelectedItem);
             }
@@ -242,7 +242,7 @@ namespace NeeView
             if (this.SelectedItem == _playlist.Path)
             {
                 SetPlaylist(LoadPlaylist(this.SelectedItem));
-                _isPlaylistDarty = false;
+                _isPlaylistDirty = false;
             }
         }
 
@@ -323,8 +323,8 @@ namespace NeeView
             if (!File.Exists(SelectedItem)) return;
 
             var entry = ArchiveEntryUtility.CreateTemporaryEntry(SelectedItem);
-            bool isSuccessed = await ConfirmFileIO.DeleteAsync(entry, Properties.Resources.Playlist_DeleteDialog_Title, null);
-            if (isSuccessed)
+            bool isSucceed = await ConfirmFileIO.DeleteAsync(entry, Properties.Resources.Playlist_DeleteDialog_Title, null);
+            if (isSucceed)
             {
                 SelectedItem = DefaultPlaylist;
             }

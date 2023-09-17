@@ -10,12 +10,12 @@ namespace NeeView.PageFrames
     public class ViewTransformContext : IPointControl
     {
         private PageFrameContext _context;
-        private PageFrameContainersViewBox _viewBox;
-        private PageFrameContainersCollectionRectMath _rectMath;
+        private PageFrameContainerViewBox _viewBox;
+        private PageFrameContainerCollectionRectMath _rectMath;
         private PageFrameScrollViewer _scrollViewer;
 
 
-        public ViewTransformContext(PageFrameContext context, PageFrameContainersViewBox viewBox, PageFrameContainersCollectionRectMath rectMath, PageFrameScrollViewer scrollViewer)
+        public ViewTransformContext(PageFrameContext context, PageFrameContainerViewBox viewBox, PageFrameContainerCollectionRectMath rectMath, PageFrameScrollViewer scrollViewer)
         {
             _context = context;
             _viewBox = viewBox;

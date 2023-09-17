@@ -23,7 +23,7 @@ namespace NeeView
         {
             var setting = source ?? new ProcessImageSettings();
 
-            // widthかheightを0にすると、アスペクト比を維持したサイズで変換する
+            // width か height を0にすると、アスペクト比を維持したサイズで変換する
             setting.Width = size.IsEmpty ? 0 : Convert.ToInt32(size.Width);
             setting.Height = size.IsEmpty ? 0 : Convert.ToInt32(size.Height);
             setting.ResizeMode = (setting.Width == 0 || setting.Height == 0) ? CropScaleMode.Crop : CropScaleMode.Stretch;
@@ -47,7 +47,7 @@ namespace NeeView
             
             stream.Seek(0, SeekOrigin.Begin);
 
-            using (var ms = new WrappingStream(new MemoryStream()))
+            using (var ms = new MemoryStream())
             {
                 setting = CreateSetting(size, ImageMimeTypes.Bmp, setting);
                 MagicImageProcessor.ProcessImage(stream, ms, setting);

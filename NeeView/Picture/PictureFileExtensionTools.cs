@@ -11,7 +11,7 @@ namespace NeeView
     public static class PictureFileExtensionTools
     {
         // デフォルトローダーのサポート拡張子を更新
-        public static FileTypeCollection CreateDefaultSupprtedFileTypes(bool useWic)
+        public static FileTypeCollection CreateDefaultSupportedFileTypes(bool useWic)
         {
             var collection = (System.Threading.Thread.CurrentThread.GetApartmentState() == System.Threading.ApartmentState.STA)
                 ? CreateSystemExtensions(useWic)

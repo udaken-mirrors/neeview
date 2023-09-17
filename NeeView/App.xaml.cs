@@ -25,7 +25,7 @@ namespace NeeView
 
         // Fields
 
-        private bool _isSplashScreenVisibled;
+        private bool _isSplashScreenVisible;
         private bool _isTerminated;
         private readonly int _tickBase = System.Environment.TickCount;
         private CommandLineOption? _option;
@@ -177,7 +177,7 @@ namespace NeeView
             // 画像拡張子初期化
             if (Config.Current.Image.Standard.SupportFileTypes is null)
             {
-                Config.Current.Image.Standard.SupportFileTypes = PictureFileExtensionTools.CreateDefaultSupprtedFileTypes(Config.Current.Image.Standard.UseWicInformation);
+                Config.Current.Image.Standard.SupportFileTypes = PictureFileExtensionTools.CreateDefaultSupportedFileTypes(Config.Current.Image.Standard.UseWicInformation);
             }
 
             Debug.WriteLine($"App.RestreSettings: {Stopwatch.ElapsedMilliseconds}ms");
@@ -216,8 +216,8 @@ namespace NeeView
         {
             if (config.StartUp.IsSplashScreenEnabled && CanStart(config))
             {
-                if (_isSplashScreenVisibled) return;
-                _isSplashScreenVisibled = true;
+                if (_isSplashScreenVisible) return;
+                _isSplashScreenVisible = true;
                 var resourceName = "Resources/SplashScreen.png";
                 var splashScreen = new SplashScreen(resourceName);
 #if DEBUG

@@ -9,11 +9,11 @@ using System.Threading.Tasks;
 namespace NeeView.Setting
 {
     /// <summary>
-    /// Setting: Manipurate
+    /// Setting: Manipulate
     /// </summary>
-    public class SettingPageManipurate : SettingPage
+    public class SettingPageManipulate : SettingPage
     {
-        public SettingPageManipurate() : base(Properties.Resources.SettingPage_Manipurate)
+        public SettingPageManipulate() : base(Properties.Resources.SettingPage_Manipurate)
         {
             this.Children = new List<SettingPage>
             {
@@ -121,7 +121,7 @@ namespace NeeView.Setting
     }
 
     /// <summary>
-    /// Setting: Loupte
+    /// Setting: Loupe
     /// </summary>
     public class SettingPageLoupe : SettingPage
     {

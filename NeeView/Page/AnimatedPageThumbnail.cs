@@ -6,7 +6,7 @@ namespace NeeView
 {
     public class AnimatedPageThumbnail : PageThumbnail
     {
-        private AnimatedPageContent _content;
+        private readonly AnimatedPageContent _content;
 
         public AnimatedPageThumbnail(AnimatedPageContent content) : base(content)
         {
@@ -59,7 +59,7 @@ namespace NeeView
             }
             else
             {
-                return _content.Entry.OpenEntry();
+                return _content.ArchiveEntry.OpenEntry();
             }
         }
     }

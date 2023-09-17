@@ -50,7 +50,7 @@ namespace NeeView
     {
         private readonly ItemsControl _itemsControl;
         private List<IVirtualItem> _items;
-        public bool _darty;
+        public bool _dirty;
 
 
         public VirtualCollection(ItemsControl itemsControl)
@@ -91,7 +91,7 @@ namespace NeeView
 
         public void Refresh()
         {
-            _darty = true;
+            _dirty = true;
         }
 
         /// <summary>
@@ -125,7 +125,7 @@ namespace NeeView
             var detaches = removes.Where(e => e.DetachCount > 1).ToList();
             foreach (var item in detaches)
             {
-                ////Debug.WriteLine($"CleanUp.Detatched: {item}");
+                ////Debug.WriteLine($"CleanUp.Detached: {item}");
                 item.Detached();
             }
 

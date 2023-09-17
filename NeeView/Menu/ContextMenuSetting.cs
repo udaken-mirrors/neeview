@@ -63,7 +63,7 @@ namespace NeeView
             return SourceTree.CreateContextMenuItems();
         }
 
-        internal void Resotre(MenuNode? contextMenuNode)
+        internal void Restore(MenuNode? contextMenuNode)
         {
             var sourceTree = contextMenuNode != null ? MenuTree.CreateMenuTree(contextMenuNode) : null;
             sourceTree?.Validate();
@@ -76,7 +76,7 @@ namespace NeeView
     public class ContextMenuSetting : BindableBase
     {
         private ContextMenu? _contextMenu;
-        private bool _isDarty = true;
+        private bool _isDirty = true;
         private MenuTree? _sourceTree;
 
 
@@ -94,8 +94,8 @@ namespace NeeView
         {
             get
             {
-                _contextMenu = this.IsDarty ? SourceTree.CreateContextMenu() : _contextMenu;
-                _isDarty = false;
+                _contextMenu = this.IsDirty ? SourceTree.CreateContextMenu() : _contextMenu;
+                _isDirty = false;
                 return _contextMenu;
             }
         }
@@ -114,15 +114,15 @@ namespace NeeView
             {
                 _sourceTree = value;
                 _contextMenu = null;
-                _isDarty = true;
+                _isDirty = true;
                 RaisePropertyChanged();
             }
         }
 
-        public bool IsDarty
+        public bool IsDirty
         {
-            get { return _isDarty || _contextMenu == null; }
-            set { _isDarty = value; }
+            get { return _isDirty || _contextMenu == null; }
+            set { _isDirty = value; }
         }
 
         public ContextMenuSetting Clone()

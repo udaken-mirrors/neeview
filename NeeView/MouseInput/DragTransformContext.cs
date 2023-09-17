@@ -11,8 +11,8 @@ namespace NeeView
     /// </summary>
     public class DragTransformContext 
     {
-        private Speedometer _speedometer = new();
-        private ICanvasToViewTranslator _canvasToViewTranslator;
+        private readonly Speedometer _speedometer = new();
+        private readonly ICanvasToViewTranslator _canvasToViewTranslator;
 
 
         public DragTransformContext(FrameworkElement sender, ITransformControl transform, PageFrameContainer container, ICanvasToViewTranslator canvasToViewTranslator, ViewConfig viewConfig)

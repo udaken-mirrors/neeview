@@ -128,28 +128,28 @@ namespace NeeView
             _vm.MenuAutoHideDescription.SetMenuBar(this.MenuBar.Source);
 
             Config.Current.MenuBar.AddPropertyChanged(nameof(MenuBarConfig.IsHideMenu),
-                (s, e) => DartyMenuAreaLayout());
+                (s, e) => DirtyMenuAreaLayout());
 
             MainWindowModel.Current.AddPropertyChanged(nameof(MainWindowModel.CanHideMenu),
-                (s, e) => DartyMenuAreaLayout());
+                (s, e) => DirtyMenuAreaLayout());
 
             MainWindowModel.Current.AddPropertyChanged(nameof(MainWindowModel.CanHidePageSlider),
-                (s, e) => DartyPageSliderLayout());
+                (s, e) => DirtyPageSliderLayout());
 
             Config.Current.Slider.AddPropertyChanged(nameof(SliderConfig.IsEnabled),
-                (s, e) => DartyPageSliderLayout());
+                (s, e) => DirtyPageSliderLayout());
 
             Config.Current.FilmStrip.AddPropertyChanged(nameof(FilmStripConfig.IsEnabled),
-                (s, e) => DartyThumbnailListLayout());
+                (s, e) => DirtyThumbnailListLayout());
 
             Config.Current.FilmStrip.AddPropertyChanged(nameof(FilmStripConfig.IsHideFilmStrip),
-                (s, e) => DartyThumbnailListLayout());
+                (s, e) => DirtyThumbnailListLayout());
 
             ThumbnailList.Current.VisibleEvent +=
                 ThumbnailList_Visible;
 
             _viewComponent.PageFrameBoxPresenter.SubscribePageFrameBoxChanged(
-                (s, e) => DartyPageSliderLayout());
+                (s, e) => DirtyPageSliderLayout());
 
             // # ここで？
             _viewComponent.PageFrameBoxPresenter.SubscribeViewContentChanged((s, e) =>
@@ -188,7 +188,7 @@ namespace NeeView
             this.PreviewMouseWheel += MainWindow_PreviewMouseWheel;
             this.PreviewStylusDown += MainWindow_PreviewStylusDown;
 
-            // mouse acticate
+            // mouse activate
             this.MouseDown += MainWindow_MouseDown;
 
             // key event for window
@@ -287,7 +287,7 @@ namespace NeeView
 
         public bool IsMouseActivate { get; private set; }
 
-        public void SetMouseActivage()
+        public void SetMouseActivate()
         {
             if (!IsActive)
             {
@@ -438,7 +438,7 @@ namespace NeeView
             MainViewManager.Current.Update();
 
             // レイアウト更新
-            DartyWindowLayout();
+            DirtyWindowLayout();
 
             // WinProc登録
             SystemDeviceWatcher.Current.Initialize(this);
@@ -620,16 +620,16 @@ namespace NeeView
 
         #region レイアウト管理
 
-        private bool _isDartyMenuAreaLayout;
-        private bool _isDartyPageSliderLayout;
-        private bool _isDartyThumbnailListLayout;
+        private bool _isDirtyMenuAreaLayout;
+        private bool _isDirtyPageSliderLayout;
+        private bool _isDirtyThumbnailListLayout;
 
         /// <summary>
         /// 自動非表示モードが変更されたときの処理
         /// </summary>
         private void AutoHideModeChanged()
         {
-            DartyWindowLayout();
+            DirtyWindowLayout();
 
             // 解除でフォーカスが表示されたパネルに移動してしまう現象を回避
             if (!_windowController.AutoHideMode && Config.Current.Panels.IsHidePanelInAutoHideMode)
@@ -641,36 +641,36 @@ namespace NeeView
         /// <summary>
         /// レイアウト更新要求
         /// </summary>
-        private void DartyWindowLayout()
+        private void DirtyWindowLayout()
         {
-            _isDartyMenuAreaLayout = true;
-            _isDartyPageSliderLayout = true;
-            _isDartyThumbnailListLayout = true;
+            _isDirtyMenuAreaLayout = true;
+            _isDirtyPageSliderLayout = true;
+            _isDirtyThumbnailListLayout = true;
         }
 
         /// <summary>
         /// メニューエリアレイアウト更新要求
         /// </summary>
-        private void DartyMenuAreaLayout()
+        private void DirtyMenuAreaLayout()
         {
-            _isDartyMenuAreaLayout = true;
+            _isDirtyMenuAreaLayout = true;
         }
 
         /// <summary>
         /// スライダーレイアウト更新要求
         /// </summary>
-        private void DartyPageSliderLayout()
+        private void DirtyPageSliderLayout()
         {
-            _isDartyPageSliderLayout = true;
-            _isDartyThumbnailListLayout = true; // フィルムストリップも更新
+            _isDirtyPageSliderLayout = true;
+            _isDirtyThumbnailListLayout = true; // フィルムストリップも更新
         }
 
         /// <summary>
         /// フィルムストリップ更新要求
         /// </summary>
-        private void DartyThumbnailListLayout()
+        private void DirtyThumbnailListLayout()
         {
-            _isDartyThumbnailListLayout = true;
+            _isDirtyThumbnailListLayout = true;
         }
 
 
@@ -688,8 +688,8 @@ namespace NeeView
         /// </summary>
         private void UpdateMenuAreaLayout()
         {
-            if (!_isDartyMenuAreaLayout) return;
-            _isDartyMenuAreaLayout = false;
+            if (!_isDirtyMenuAreaLayout) return;
+            _isDirtyMenuAreaLayout = false;
 
             // menu hide
             bool isMenuDock = !MainWindowModel.Current.CanHideMenu;
@@ -720,8 +720,8 @@ namespace NeeView
         /// </summary>
         private void UpdatePageSliderLayout()
         {
-            if (!_isDartyPageSliderLayout) return;
-            _isDartyPageSliderLayout = false;
+            if (!_isDirtyPageSliderLayout) return;
+            _isDirtyPageSliderLayout = false;
 
             // menu hide
             bool isPageSliderDock = !MainWindowModel.Current.CanHidePageSlider;
@@ -759,8 +759,8 @@ namespace NeeView
         /// </summary>
         private void UpdateThumbnailListLayout()
         {
-            if (!_isDartyThumbnailListLayout) return;
-            _isDartyThumbnailListLayout = false;
+            if (!_isDirtyThumbnailListLayout) return;
+            _isDirtyThumbnailListLayout = false;
 
             bool isPageSliderDock = !MainWindowModel.Current.CanHidePageSlider;
             bool isThimbnailListDock = !Config.Current.FilmStrip.IsHideFilmStrip && isPageSliderDock;

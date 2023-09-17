@@ -8,10 +8,10 @@ namespace NeeView.PageFrames
 {
     public partial class PageFrameViewTransform : IPointControl, INotifyTransformChanged, IDisposable
     {
-        private MultiTransform _transform = new MultiTransform();
-        private LoupeTransformContext _loupeContext;
+        private readonly MultiTransform _transform = new();
+        private readonly LoupeTransformContext _loupeContext;
         private bool _disposedValue;
-        private DisposableCollection _disposables = new();
+        private readonly DisposableCollection _disposables = new();
 
         public PageFrameViewTransform(PageFrameContext context, LoupeTransformContext loupeContext)
         {

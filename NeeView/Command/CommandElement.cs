@@ -161,7 +161,7 @@ namespace NeeView
         /// 入力情報が変更されたフラグ。
         /// コマンドバインディングの更新判定に使用される。
         /// </summary>
-        public bool IsInputGestureDarty { get; set; }
+        public bool IsInputGestureDirty { get; set; }
 
         // ショートカットキー
         public string ShortCutKey
@@ -172,7 +172,7 @@ namespace NeeView
                 if (_shortCutKey != value)
                 {
                     _shortCutKey = value?.Trim() ?? "";
-                    IsInputGestureDarty = true;
+                    IsInputGestureDirty = true;
                 }
             }
         }
@@ -186,7 +186,7 @@ namespace NeeView
                 if (_touchGesture != value)
                 {
                     _touchGesture = value?.Trim() ?? "";
-                    IsInputGestureDarty = true;
+                    IsInputGestureDirty = true;
                 }
             }
         }
@@ -200,7 +200,7 @@ namespace NeeView
                 if (_mouseGesture != value)
                 {
                     _mouseGesture = value?.Trim() ?? "";
-                    IsInputGestureDarty = true;
+                    IsInputGestureDirty = true;
                 }
             }
         }

@@ -26,21 +26,21 @@ namespace NeeView.PageFrames
     // TODO: IsStaticFrame ON/OFF でのスクロール制御の違いが煩雑になっているので良くする
     // TODO: ContentControl になってるけどいいの？
     [NotifyPropertyChanged]
-    public partial class PageFrameBox : Grid, INotifyPropertyChanged, IPageFrameBox, IDisposable, ICanvasToViewTranslator
+    public partial class PageFrameBox : Grid, INotifyPropertyChanged, IDisposable, ICanvasToViewTranslator, IDragTransformContextFactory
     {
         private readonly PageFrameContainerCollection _containers;
         private readonly PageFrameScrollViewer _scrollViewer;
-        private readonly PageFrameContainersCanvas _canvas;
-        private readonly PageFrameContainersCleaner _cleaner;
-        private readonly PageFrameContainersFiller _filler;
+        private readonly PageFrameContainerCanvas _canvas;
+        private readonly PageFrameContainerCleaner _cleaner;
+        private readonly PageFrameContainerFiller _filler;
         private readonly PageFrameContext _context;
         private readonly BookContext _bookContext;
         private readonly BookPageLoader _loader;
         private readonly ContentSizeCalculator _calculator;
-        private readonly PageFrameContainersVisiblePageWatcher _visiblePageWatcher;
-        private readonly PageFrameContainersViewBox _viewBox;
-        private readonly PageFrameContainersCollectionRectMath _rectMath;
-        private readonly PageFrameContainersLayout _layout;
+        private readonly PageFrameContainerVisiblePageWatcher _visiblePageWatcher;
+        private readonly PageFrameContainerViewBox _viewBox;
+        private readonly PageFrameContainerCollectionRectMath _rectMath;
+        private readonly PageFrameContainerLayout _layout;
         private readonly PageFrameCanvasPointStorage _canvasPointStorage;
         private readonly DpiScaleProvider _dpiScaleProvider;
 
@@ -68,7 +68,6 @@ namespace NeeView.PageFrames
         {
             _context = context;
             _disposables.Add(_context); // このクラスがDisposableする？
-
 
             _bookContext = bookContext;
             _disposables.Add(_bookContext); // このクラスがDisposableする？
@@ -102,16 +101,16 @@ namespace NeeView.PageFrames
             _disposables.Add(baseScaleTransform);
             var containerFactory = new PageFrameContainerFactory(_context, _transformMap, _viewSourceMap, loupeContext, baseScaleTransform);
             _containers = new PageFrameContainerCollection(frameFactory, containerFactory);
-            _rectMath = new PageFrameContainersCollectionRectMath(_context, _containers);
-            _layout = new PageFrameContainersLayout(_context, _containers);
+            _rectMath = new PageFrameContainerCollectionRectMath(_context, _containers);
+            _layout = new PageFrameContainerLayout(_context, _containers);
 
-            _canvas = new PageFrameContainersCanvas(_context, _containers);
+            _canvas = new PageFrameContainerCanvas(_context, _containers);
             _scrollViewer = new PageFrameScrollViewer(_context, _canvas, viewTransform);
-            _viewBox = new PageFrameContainersViewBox(_context, _scrollViewer);
+            _viewBox = new PageFrameContainerViewBox(_context, _scrollViewer);
             _disposables.Add(_viewBox);
-            _cleaner = new PageFrameContainersCleaner(_context, _containers);
-            _filler = new PageFrameContainersFiller(_context, _containers, _rectMath);
-            _visiblePageWatcher = new PageFrameContainersVisiblePageWatcher(_context, _viewBox, _rectMath, _layout);
+            _cleaner = new PageFrameContainerCleaner(_context, _containers);
+            _filler = new PageFrameContainerFiller(_context, _containers, _rectMath);
+            _visiblePageWatcher = new PageFrameContainerVisiblePageWatcher(_context, _viewBox, _rectMath, _layout);
 
             var effectGrid = new Grid() { Name = "EffectLayer" };
             effectGrid.SetBinding(Grid.EffectProperty, new Binding(nameof(ImageEffect.Effect)) { Source = ImageEffect.Current });
@@ -134,14 +133,14 @@ namespace NeeView.PageFrames
             _disposables.Add(_selected.SubscribeViewContentChanged(
                  (s, e) => ViewContentChanged?.Invoke(this, e)));
 
-            _scrollViewer.SizeChanged += _context.SetCanvasSize;
-            _containers.CollectionChanged += ContainerCollection_CollectionChanged;
+            _disposables.Add(_scrollViewer.SubscribeSizeChanged(_context.SetCanvasSize));
+            _disposables.Add(_containers.SubscribeCollectionChanged(ContainerCollection_CollectionChanged));
 
             //_context.SelectedItemChanged += Context_SelectedItemChanged;
-            _visiblePageWatcher.VisibleContainersChanged += VisiblePageWatcher_VisibleContainersChanged;
+            _disposables.Add(_visiblePageWatcher.SubscribeVisibleContainersChanged(VisiblePageWatcher_VisibleContainersChanged));
 
             // 表示ページ監視
-            _disposables.Add(new PageFrameContainersSelectedPageWatcher(this, _bookContext.Book));
+            _disposables.Add(new PageFrameContainerSelectedPageWatcher(this, _bookContext.Book));
 
             Loaded += PageFrameBox_Loaded;
         }
@@ -251,36 +250,13 @@ namespace NeeView.PageFrames
 
 
 
-        private void InitializeDpiScaleProvider()
-        {
-            _dpiScaleProvider.SetDipScale(VisualTreeHelper.GetDpi(this));
-        }
-
-        protected override void OnDpiChanged(DpiScale oldDpi, DpiScale newDpi)
-        {
-            base.OnDpiChanged(oldDpi, newDpi);
-            _dpiScaleProvider.SetDipScale(newDpi);
-        }
-
         protected virtual void Dispose(bool disposing)
         {
             if (!_disposedValue)
             {
                 if (disposing)
                 {
-                    _scrollViewer.SizeChanged -= _context.SetCanvasSize;
-                    _containers.CollectionChanged -= ContainerCollection_CollectionChanged;
-                    //_context.PropertyChanged -= Context_PropertyChanged;
-                    //_context.SizeChanging -= Context_SizeChanging;
-                    //_context.SizeChanged -= Context_SizeChanged;
-                    //_context.PagesChanged -= Context_PagesChanged;
-                    //_context.SelectedItemChanged -= Context_SelectedItemChanged;
-                    _visiblePageWatcher.VisibleContainersChanged -= VisiblePageWatcher_VisibleContainersChanged;
-                    //_viewBox.RectChanging -= ViewBox_RectChanging;
-                    //_viewBox.RectChanged -= ViewBox_RectChanged;
-
                     _disposables.Dispose();
-
                     _containers.Clear();
                 }
 
@@ -295,6 +271,16 @@ namespace NeeView.PageFrames
         }
 
 
+        private void InitializeDpiScaleProvider()
+        {
+            _dpiScaleProvider.SetDipScale(VisualTreeHelper.GetDpi(this));
+        }
+
+        protected override void OnDpiChanged(DpiScale oldDpi, DpiScale newDpi)
+        {
+            base.OnDpiChanged(oldDpi, newDpi);
+            _dpiScaleProvider.SetDipScale(newDpi);
+        }
 
         private void ContainerCollection_CollectionChanged(object? sender, PageFrameContainerCollectionChangedEventArgs e)
         {

@@ -46,7 +46,7 @@ namespace NeeView
             token.ThrowIfCancellationRequested();
 
             //using (var stream = _streamSource.CreateStream(token))
-            using (var stream = Entry.OpenEntry())
+            using (var stream = ArchiveEntry.OpenEntry())
             {
                 var settings = new WpfDrawingSettings();
                 settings.IncludeRuntime = false;

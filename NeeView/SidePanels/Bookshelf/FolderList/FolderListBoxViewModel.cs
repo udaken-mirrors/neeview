@@ -55,7 +55,7 @@ namespace NeeView
         }
 
         // サムネイルが表示されている？
-        public bool IsThumbnailVisibled => _model.IsThumbnailVisibled;
+        public bool IsThumbnailVisible => _model.IsThumbnailVisible;
 
 
         #region RelayCommands

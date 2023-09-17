@@ -11,10 +11,10 @@ namespace NeeView
 {
     public class BookControl : BindableBase, IBookControl, IDisposable
     {
-        private PageFrameBox _box;
-        private Book _book;
+        private readonly PageFrameBox _box;
+        private readonly Book _book;
         private bool _disposedValue;
-        private DisposableCollection _disposables = new();
+        private readonly DisposableCollection _disposables = new();
 
         public BookControl(PageFrameBox box)
         {
@@ -76,7 +76,7 @@ namespace NeeView
         /// <param name="pages">削除された可能性のあるページ</param>
         public void ValidateRemoveFile(IEnumerable<Page> pages)
         {
-            if (pages.All(e => e.Entry.Exists())) return;
+            if (pages.All(e => e.ArchiveEntry.Exists())) return;
             ReLoad();
         }
 

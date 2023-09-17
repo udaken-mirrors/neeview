@@ -27,7 +27,7 @@ namespace NeeView
         }
 
         /// <summary>
-        /// パスから完全なArcvhiveEntryを作成
+        /// パスから完全なArchiveEntryを作成
         /// </summary>
         public static async Task<ArchiveEntry> CreateAsync(string path, CancellationToken token)
         {

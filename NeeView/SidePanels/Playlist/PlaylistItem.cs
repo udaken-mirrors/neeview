@@ -167,7 +167,7 @@ namespace NeeView
             var oldName = this.Name;
             this.Name = name;
             ItemRenamed?.Invoke(this, new PlaylistItemRenamedEventArgs(item, oldName));
-            _isDarty = true;
+            _isDirty = true;
 
             return await Task.FromResult(true);
 #endif

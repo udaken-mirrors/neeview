@@ -150,7 +150,7 @@ namespace NeeView
                 if (_items != value)
                 {
                     _items = value;
-                    IsItemsDarty = true;
+                    IsItemsDirty = true;
                     RaisePropertyChanged();
                     CollectionChanged?.Invoke(this, EventArgs.Empty);
                     ValidateViewItems();
@@ -160,7 +160,7 @@ namespace NeeView
 
         // コレクション切り替え直後はListBoxに反映されない。
         // 反映されたらこのフラグをクリアする。
-        public bool IsItemsDarty { get; set; }
+        public bool IsItemsDirty { get; set; }
 
         public int SelectedIndex
         {
@@ -213,7 +213,7 @@ namespace NeeView
             // 未処理のサムネイル要求を解除
             _jobClient.CancelOrder();
 
-            IsItemsDarty = true;
+            IsItemsDirty = true;
             CollectionChanging?.Invoke(sender, e);
         }
 

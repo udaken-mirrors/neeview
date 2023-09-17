@@ -4,7 +4,7 @@ using System.ComponentModel;
 namespace NeeView
 {
     /// <summary>
-    /// BookPageViewer, BookPageViewGenerater setting
+    /// BookPageViewer, BookPageViewGenerator setting
     /// </summary>
     [NotifyPropertyChanged]
     public partial class BookPageViewSetting : INotifyPropertyChanged

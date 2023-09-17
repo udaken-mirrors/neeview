@@ -17,7 +17,7 @@ namespace NeeView.PageFrames
         private readonly BookSettingConfig _bookSetting;
         private readonly PageFrameProfile _frameProfile;
         private double _loupeScale;
-        private readonly DisposableCollection _disposables = new DisposableCollection();
+        private readonly DisposableCollection _disposables = new();
         private bool _disposedValue;
         private readonly BookShareContext _share;
         private readonly BooleanLockValue _isSnapAnchor = new();

@@ -7,14 +7,14 @@ using NeeView.ComponentModel;
 namespace NeeView.PageFrames
 {
     // TODO: PageFrameViewRect を参照しても良い
-    public class PageFrameContainersCleaner
+    public class PageFrameContainerCleaner
     {
-        private PageFrameContext _context;
-        private PageFrameContainerCollection _containers;
-        private PageFrameRectMath _math;
+        private readonly PageFrameContext _context;
+        private readonly PageFrameContainerCollection _containers;
+        private readonly PageFrameRectMath _math;
 
 
-        public PageFrameContainersCleaner(PageFrameContext context, PageFrameContainerCollection containers)
+        public PageFrameContainerCleaner(PageFrameContext context, PageFrameContainerCollection containers)
         {
             _context = context;
             _containers = containers;

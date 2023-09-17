@@ -43,7 +43,7 @@ namespace NeeView
         /// <summary>
         /// 更新フラグ
         /// </summary>
-        private bool _isDarty;
+        private bool _isDirty;
 
         /// <summary>
         /// 検索エンジン
@@ -241,7 +241,7 @@ namespace NeeView
         }
 
         // サムネイル画像が表示される？？
-        public bool IsThumbnailVisibled
+        public bool IsThumbnailVisible
         {
             get
             {
@@ -620,9 +620,9 @@ namespace NeeView
         }
 
 
-        public void SetDarty()
+        public void SetDirty()
         {
-            _isDarty = true;
+            _isDirty = true;
         }
 
         /// <summary>
@@ -662,7 +662,7 @@ namespace NeeView
                 try
                 {
                     OnCollectionCreating();
-                    _isDarty = false;
+                    _isDirty = false;
 
                     // FolderCollection 更新
                     var collection = await CreateFolderCollectionAsync(path, true);
@@ -718,7 +718,7 @@ namespace NeeView
         /// </summary>
         private bool CheckFolderListUpdateneNcessary(QueryPath path, FolderSetPlaceOption options)
         {
-            if (_isDarty || _folderCollection == null || path != _folderCollection.Place || options.HasFlag(FolderSetPlaceOption.Refresh))
+            if (_isDirty || _folderCollection == null || path != _folderCollection.Place || options.HasFlag(FolderSetPlaceOption.Refresh))
             {
                 return true;
             }
@@ -736,7 +736,7 @@ namespace NeeView
             if (_folderCollection == null) return;
             if (Place is null) throw new InvalidOperationException("Place is not null when FolderCollection is not null");
 
-            _isDarty = force || _folderCollection.IsDarty();
+            _isDirty = force || _folderCollection.IsDirty();
 
             if (resetSearchEngine)
             {
@@ -1125,12 +1125,12 @@ namespace NeeView
             if (_disposedValue) return;
 
             _folderListConfig.IsFolderTreeVisible = true;
-            var query = GetCurentQueryPath();
+            var query = GetCurrentQueryPath();
             if (query is null) return;
             BookshelfFolderTreeModel.Current?.AddQuickAccess(query);
         }
 
-        public string? GetCurentQueryPath()
+        public string? GetCurrentQueryPath()
         {
             return Place?.SimpleQuery;
         }

@@ -3,13 +3,13 @@ using System.Linq;
 
 namespace NeeView.PageFrames
 {
-    public class PageFrameContainersSelectedPageWatcher : IDisposable
+    public class PageFrameContainerSelectedPageWatcher : IDisposable
     {
-        private PageFrameBox _box;
-        private Book _book;
+        private readonly PageFrameBox _box;
+        private readonly Book _book;
         private bool _disposedValue;
 
-        public PageFrameContainersSelectedPageWatcher(PageFrameBox box, Book book)
+        public PageFrameContainerSelectedPageWatcher(PageFrameBox box, Book book)
         {
             _box = box;
             _book = book;

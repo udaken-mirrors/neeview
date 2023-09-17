@@ -26,7 +26,7 @@ namespace NeeView
         public static async Task<MessageDialog> CreateDeleteConfirmDialog(List<Page> pages, bool isCompletely)
         {
             var thumbnail = (pages.Count == 1) ? await pages.First().CreatePageVisualAsync() : null;
-            var entries = pages.Select(e => e.Entry).ToList();
+            var entries = pages.Select(e => e.ArchiveEntry).ToList();
             return ConfirmFileIO.CreateDeleteConfirmDialog(entries, Resources.FileDeletePageDialog_Title, thumbnail, isCompletely);
         }
 
@@ -37,7 +37,7 @@ namespace NeeView
         {
             if (!pages.Any()) return false;
 
-            foreach (var group in pages.Select(e => e.Entry).GroupBy(e => e.Archiver))
+            foreach (var group in pages.Select(e => e.ArchiveEntry).GroupBy(e => e.Archiver))
             {
                 var archiver = group.Key;
                 archiver.ClearEntryCache();

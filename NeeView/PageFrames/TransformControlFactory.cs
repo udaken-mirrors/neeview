@@ -6,10 +6,10 @@ namespace NeeView.PageFrames
 {
     public class TransformControlFactory
     {
-        private PageFrameContext _context;
-        private ViewTransformContext _viewContext;
-        private LoupeTransformContext _loupeContext;
-        private ScrollLock _scrollLock;
+        private readonly PageFrameContext _context;
+        private readonly ViewTransformContext _viewContext;
+        private readonly LoupeTransformContext _loupeContext;
+        private readonly ScrollLock _scrollLock;
 
 
         public TransformControlFactory(PageFrameContext context, ViewTransformContext viewContext, LoupeTransformContext loupeContext, ScrollLock scrollLock)
@@ -54,7 +54,7 @@ namespace NeeView.PageFrames
         {
             if (_context.IsStaticFrame)
             {
-                // TODO: Contaienr から求めるべきでは？
+                // TODO: Container から求めるべきでは？
                 return viewRect.Size.ToRect();
             }
             else

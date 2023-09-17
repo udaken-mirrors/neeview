@@ -18,7 +18,7 @@ namespace NeeView
         /// </summary>
         public static bool CanCreateRealizedFilePathList(IEnumerable<Page> pages)
         {
-            return pages.All(e => e.Entry.IsFileSystem || !e.Content.Entry.IsArchiveDirectory());
+            return pages.All(e => e.ArchiveEntry.IsFileSystem || !e.Content.ArchiveEntry.IsArchiveDirectory());
         }
 
         /// <summary>
@@ -39,16 +39,16 @@ namespace NeeView
                 token.ThrowIfCancellationRequested();
 
                 // file
-                if (page.Entry.IsFileSystem)
+                if (page.ArchiveEntry.IsFileSystem)
                 {
-                    // TODO: IsFileSystemのときはGetFilePlace()はnullでないはず
+                    // TODO: IsFileSystemのときはGetFilePlace()は nullでないはず
                     var path = page.GetFilePlace();
                     if (path is not null)
                     {
                         files.Add(path);
                     }
                 }
-                else if (page.Entry.Instance is ArchiveEntry archiveEntry && archiveEntry.IsFileSystem)
+                else if (page.ArchiveEntry.Instance is ArchiveEntry archiveEntry && archiveEntry.IsFileSystem)
                 {
                     files.Add(archiveEntry.EntryFullName);
                 }
@@ -69,19 +69,19 @@ namespace NeeView
                             break;
 
                         case ArchivePolicy.SendExtractFile:
-                            if (!page.Content.Entry.IsArchiveDirectory())
+                            if (!page.Content.ArchiveEntry.IsArchiveDirectory())
                             {
-                                files.Add(page.Entry.GetFileProxy(true).Path);
+                                files.Add(page.ArchiveEntry.GetFileProxy(true).Path);
                             }
                             else
                             {
                                 Debug.WriteLine($"CreateFilePathList: Not support archive folder: {page.EntryName}");
-                                files.Add(page.Entry.EntryFullName);
+                                files.Add(page.ArchiveEntry.EntryFullName);
                             }
                             break;
 
                         case ArchivePolicy.SendArchivePath:
-                            files.Add(page.Entry.EntryFullName);
+                            files.Add(page.ArchiveEntry.EntryFullName);
                             break;
 
                         default:

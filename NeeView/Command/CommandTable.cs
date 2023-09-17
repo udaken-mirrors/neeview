@@ -16,7 +16,7 @@ using System.Runtime.Serialization;
 namespace NeeView
 {
     // Typo: InputScheme ... 保存データの互換性を確認後に修正
-    public enum InputSceme
+    public enum InputScheme
     {
         TypeA, // 標準
         TypeB, // ホイールでページ送り
@@ -437,7 +437,7 @@ namespace NeeView
 
         private CommandElement CloneCommand(CommandElement source)
         {
-            var cloneCommandName = CraeteUniqueCommandName(source.NameSource);
+            var cloneCommandName = CreateUniqueCommandName(source.NameSource);
             return CloneCommand(source, cloneCommandName);
         }
 
@@ -445,11 +445,11 @@ namespace NeeView
         {
             var cloneCommand = source.CloneCommand(name);
             _elements.Add(cloneCommand.Name, cloneCommand);
-            ValudateOrder();
+            ValidateOrder();
             return cloneCommand;
         }
 
-        private CommandNameSource CraeteUniqueCommandName(CommandNameSource name)
+        private CommandNameSource CreateUniqueCommandName(CommandNameSource name)
         {
             if (!_elements.ContainsKey(name.FullName))
             {
@@ -466,7 +466,7 @@ namespace NeeView
             }
         }
 
-        private void ValudateOrder()
+        private void ValidateOrder()
         {
             var sorted = _elements.Values
                 .OrderBy(e => e.Order)
@@ -492,7 +492,7 @@ namespace NeeView
         private void CommandTable_Changed(object? sender, CommandChangedEventArgs e)
         {
             ChangeCount++;
-            ClearInputGestureDarty();
+            ClearInputGestureDirty();
         }
 
         /// <summary>
@@ -500,17 +500,17 @@ namespace NeeView
         /// </summary>
         /// <param name="type">入力スキーム</param>
         /// <returns></returns>
-        public static CommandCollection CreateDefaultMemento(InputSceme type)
+        public static CommandCollection CreateDefaultMemento(InputScheme type)
         {
             var memento = CommandTable.Current.DefaultMemento.Clone();
 
             // Type.M
             switch (type)
             {
-                case InputSceme.TypeA: // default
+                case InputScheme.TypeA: // default
                     break;
 
-                case InputSceme.TypeB: // wheel page, right click contextmenu
+                case InputScheme.TypeB: // wheel page, right click context menu
                     memento["NextScrollPage"].ShortCutKey = "";
                     memento["PrevScrollPage"].ShortCutKey = "";
                     memento["NextPage"].ShortCutKey = "Left,WheelDown";
@@ -518,7 +518,7 @@ namespace NeeView
                     memento["OpenContextMenu"].ShortCutKey = "RightClick";
                     break;
 
-                case InputSceme.TypeC: // click page
+                case InputScheme.TypeC: // click page
                     memento["NextScrollPage"].ShortCutKey = "";
                     memento["PrevScrollPage"].ShortCutKey = "";
                     memento["NextPage"].ShortCutKey = "Left,LeftClick";
@@ -550,7 +550,7 @@ namespace NeeView
         /// </summary>
         public void FlushInputGesture()
         {
-            if (_elements.Values.Any(e => e.IsInputGestureDarty))
+            if (_elements.Values.Any(e => e.IsInputGestureDirty))
             {
                 Changed?.Invoke(this, new CommandChangedEventArgs(false));
             }
@@ -559,11 +559,11 @@ namespace NeeView
         /// <summary>
         /// 入力ジェスチャー変更フラグをクリア
         /// </summary>
-        public void ClearInputGestureDarty()
+        public void ClearInputGestureDirty()
         {
             foreach (var command in _elements.Values)
             {
-                command.IsInputGestureDarty = false;
+                command.IsInputGestureDirty = false;
             }
         }
 
@@ -627,7 +627,7 @@ namespace NeeView
         /// <param name="isReplace">登録済コマンドも置き換える</param>
         public void SetScriptCommands(IEnumerable<ScriptCommand> commands, bool isReplace)
         {
-            var newers = (commands ?? new List<ScriptCommand>())
+            var news = (commands ?? new List<ScriptCommand>())
                 .ToList();
 
             var oldies = _elements.Values
@@ -645,15 +645,15 @@ namespace NeeView
             }
 
             // 存在しないものは削除
-            var newPaths = newers.Select(e => e.Path).ToList();
-            var exceps = oldies.Where(e => !newPaths.Contains(e.Path)).ToList();
-            foreach (var command in exceps)
+            var newPaths = news.Select(e => e.Path).ToList();
+            var excepts = oldies.Where(e => !newPaths.Contains(e.Path)).ToList();
+            foreach (var command in excepts)
             {
                 _elements.Remove(command.Name);
             }
 
             // 既存のものは情報更新
-            var updates = oldies.Except(exceps).ToList();
+            var updates = oldies.Except(excepts).ToList();
             foreach (var command in updates)
             {
                 command.UpdateDocument(false);
@@ -661,8 +661,8 @@ namespace NeeView
 
             // 新規のものは追加
             var overwritesPaths = updates.Select(e => e.Path).Distinct().ToList();
-            var news = newers.Where(e => !overwritesPaths.Contains(e.Path)).ToList();
-            foreach (var command in news)
+            var newcomer = news.Where(e => !overwritesPaths.Contains(e.Path)).ToList();
+            foreach (var command in newcomer)
             {
                 _elements.Add(command.Name, command);
             }

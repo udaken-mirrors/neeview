@@ -24,7 +24,7 @@ namespace NeeView
         private MultiMap<string, PlaylistItem> _itemsMap = new();
         private string _playlistPath;
         private readonly object _lock = new();
-        private bool _isDarty;
+        private bool _isDirty;
         private bool _isEditable;
         private bool _isNew;
         private readonly DelayAction _delaySave;
@@ -63,16 +63,16 @@ namespace NeeView
             set { SetProperty(ref _isEditable, value); }
         }
 
-        public bool IsDarty
+        public bool IsDirty
         {
-            get { return _isDarty; }
+            get { return _isDirty; }
             set
             {
-                if (_isDarty != value)
+                if (_isDirty != value)
                 {
                     lock (_lock)
                     {
-                        _isDarty = value;
+                        _isDirty = value;
                     }
                     RaisePropertyChanged();
                 }
@@ -116,7 +116,7 @@ namespace NeeView
         }
 
 
-        public bool IsThumbnailVisibled
+        public bool IsThumbnailVisible
         {
             get
             {
@@ -247,7 +247,7 @@ namespace NeeView
             item = new PlaylistItem(path);
             _items.Insert(index, item);
 
-            _isDarty = true;
+            _isDirty = true;
 
             return item;
         }
@@ -283,7 +283,7 @@ namespace NeeView
                 var already = Collect(keepEntries);
                 news = newEntries.Concat(already).ToList();
 
-                _isDarty = true;
+                _isDirty = true;
             }
 
             return news;
@@ -298,7 +298,7 @@ namespace NeeView
             {
                 _items.Remove(item);
 
-                _isDarty = true;
+                _isDirty = true;
             }
         }
 
@@ -316,7 +316,7 @@ namespace NeeView
             {
                 this.Items = new ObservableCollection<PlaylistItem>(_items.Except(items));
 
-                _isDarty = true;
+                _isDirty = true;
             }
         }
 
@@ -352,7 +352,7 @@ namespace NeeView
                 var newIndex = targetItem is null ? _items.Count - 1 : _items.IndexOf(targetItem);
                 _items.Move(oldIndex, newIndex);
 
-                _isDarty = true;
+                _isDirty = true;
             }
         }
 
@@ -387,7 +387,7 @@ namespace NeeView
                 this.Items = new ObservableCollection<PlaylistItem>(itemsB.Take(index).Concat(itemsA.Concat(itemsB.Skip(index))));
                 Debug.Assert(_items.Count == oldCount);
 
-                _isDarty = true;
+                _isDirty = true;
             }
         }
 
@@ -400,7 +400,7 @@ namespace NeeView
                 var sorted = _items.OrderBy(e => e.Path, NaturalSort.Comparer);
                 this.Items = new ObservableCollection<PlaylistItem>(sorted);
 
-                _isDarty = true;
+                _isDirty = true;
             }
         }
 
@@ -416,7 +416,7 @@ namespace NeeView
                 item.Name = newName;
                 ItemRenamed?.Invoke(this, new PlaylistItemRenamedEventArgs(item, oldName));
 
-                _isDarty = true;
+                _isDirty = true;
             }
 
             return true;
@@ -517,9 +517,9 @@ namespace NeeView
             PlaylistSource source;
             lock (_lock)
             {
-                if (!_isDarty && !isForce) return false;
+                if (!_isDirty && !isForce) return false;
                 source = CreatePlaylistSource();
-                _isDarty = false;
+                _isDirty = false;
             }
 
             using (ProcessLock.Lock())
@@ -593,7 +593,7 @@ namespace NeeView
             return fileInfo.Directory?.FullName == SaveDataProfile.DefaultPlaylistsFolder;
         }
 
-        public static Playlist Load(string path, bool creteNewFile)
+        public static Playlist Load(string path, bool createNewFile)
         {
             var file = new FileInfo(path);
             if (file.Exists)
@@ -617,7 +617,7 @@ namespace NeeView
             else if (file.Directory?.Exists == true || IsDefaultPlaylistsFolder(file))
             {
                 var playlist = new Playlist(path, new PlaylistSource(), true);
-                if (creteNewFile)
+                if (createNewFile)
                 {
                     playlist.Save(true);
                 }

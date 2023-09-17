@@ -14,7 +14,7 @@ namespace NeeView
         /// <summary>
         /// 画像フォーマット判定
         /// <param name="buff">判定するデータ</param>
-        /// <returns>対応拡張子群。対応できない場合はnull</returns>
+        /// <returns>対応拡張子群。対応できない場合は null</returns>
         /// </summary>
         public static string[]? GetSupportImageExtensions(byte[] buff)
         {
@@ -27,7 +27,7 @@ namespace NeeView
         /// 画像フォーマット判定(標準)
         /// </summary>
         /// <param name="buff">判定するデータ</param>
-        /// <returns>対応拡張子群。対応できない場合はnull</returns>
+        /// <returns>対応拡張子群。対応できない場合は null</returns>
         public static string[]? GetDefaultSupportImageExtensions(byte[] buff)
         {
             try
@@ -49,7 +49,7 @@ namespace NeeView
         /// 画像フォーマット判定(Susie)
         /// </summary>
         /// <param name="buff">判定するデータ</param>
-        /// <returns>対応拡張子群。対応できない場合はnull</returns>
+        /// <returns>対応拡張子群。対応できない場合は null</returns>
         public static string[]? GetSusieSupportImageExtensions(byte[] buff)
         {
             try

@@ -82,7 +82,7 @@ namespace NeeView
 
         public ListBox PageCollectionListBox => this.ListBox;
 
-        public bool IsThumbnailVisibled => _vm is not null && _vm.IsThumbnailVisibled;
+        public bool IsThumbnailVisible => _vm is not null && _vm.IsThumbnailVisible;
 
         public IEnumerable<IHasPage> CollectPageList(IEnumerable<object> objs) => objs.OfType<IHasPage>();
 

@@ -470,11 +470,11 @@ namespace NeeView
 
                 if (Format != memento.Format)
                 {
-                    Debug.WriteLine("HistoryMerge failed: Illigal format");
+                    Debug.WriteLine("HistoryMerge failed: Illegal format");
                     return;
                 }
 
-                bool isDarty = false;
+                bool isDirty = false;
                 var itemMap = Items.ToDictionary(e => e.Path, e => e);
                 var bookMap = Books.ToDictionary(e => e.Path, e => e);
                 var importBookMap = memento.Books.ToDictionary(e => e.Path, e => e);
@@ -488,7 +488,7 @@ namespace NeeView
                             Debug.WriteLine($"HistoryMerge: Update: {item.Path}");
                             itemMap[item.Path] = item;
                             bookMap[item.Path] = importBookMap[item.Path];
-                            isDarty = true;
+                            isDirty = true;
                         }
                     }
                     else
@@ -496,11 +496,11 @@ namespace NeeView
                         Debug.WriteLine($"HistoryMerge: Add: {item.Path}");
                         itemMap.Add(item.Path, item);
                         bookMap.Add(item.Path, importBookMap[item.Path]);
-                        isDarty = true;
+                        isDirty = true;
                     }
                 }
 
-                if (isDarty)
+                if (isDirty)
                 {
                     Items = Limit(itemMap.Values.OrderByDescending(e => e.LastAccessTime), Config.Current.History.LimitSize, Config.Current.History.LimitSpan).ToList();
                     Books = bookMap.Values.ToList();

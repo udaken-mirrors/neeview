@@ -30,7 +30,7 @@ namespace NeeView
                 // 初回アニメーション判定
                 if (_contentType == PageContentType.None)
                 {
-                    using var stream = Entry.OpenEntry();
+                    using var stream = ArchiveEntry.OpenEntry();
                     var bitmapInfo = BitmapInfo.Create(stream); // TODO: async
                     _contentType = bitmapInfo.FrameCount > 1 ? PageContentType.Animated : PageContentType.Bitmap;
                 }
@@ -39,7 +39,7 @@ namespace NeeView
                 if (_contentType == PageContentType.Animated) 
                 {
                     // fileProxy
-                    var fileProxy = Entry.GetFileProxy(); // TODO: async化
+                    var fileProxy = ArchiveEntry.GetFileProxy(); // TODO: async化
                     var entry = ArchiveEntryUtility.CreateTemporaryEntry(fileProxy.Path);
 
                     // pictureInfo
@@ -51,7 +51,7 @@ namespace NeeView
                 // 通常画像
                 else
                 {
-                    var loader = new BitmapPageContentLoader(Entry);
+                    var loader = new BitmapPageContentLoader(ArchiveEntry);
                     var createPictureInfo = PictureInfo is null;
                     var imageData = await loader.LoadAsync(createPictureInfo, token);
                     return imageData;

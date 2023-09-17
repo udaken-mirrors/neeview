@@ -70,28 +70,28 @@ namespace NeeView.Setting
         /// <summary>
         /// InputScheme 表示テーブル
         /// </summary>
-        public Dictionary<InputSceme, string> InputScemeList { get; } = new Dictionary<InputSceme, string>
+        public Dictionary<InputScheme, string> InputScemeList { get; } = new Dictionary<InputScheme, string>
         {
-            [InputSceme.TypeA] = Properties.Resources.InputSceme_TypeA,
-            [InputSceme.TypeB] = Properties.Resources.InputSceme_TypeB,
-            [InputSceme.TypeC] = Properties.Resources.InputSceme_TypeC
+            [InputScheme.TypeA] = Properties.Resources.InputSceme_TypeA,
+            [InputScheme.TypeB] = Properties.Resources.InputSceme_TypeB,
+            [InputScheme.TypeC] = Properties.Resources.InputSceme_TypeC
         };
 
         /// <summary>
         /// ImputScheme 説明テーブル
         /// </summary>
-        public Dictionary<InputSceme, string> InputScemeNoteList { get; } = new Dictionary<InputSceme, string>
+        public Dictionary<InputScheme, string> InputScemeNoteList { get; } = new Dictionary<InputScheme, string>
         {
-            [InputSceme.TypeA] = ResourceService.Replace(Properties.Resources.InputSceme_TypeA_Remarks),
-            [InputSceme.TypeB] = ResourceService.Replace(Properties.Resources.InputSceme_TypeB_Remarks),
-            [InputSceme.TypeC] = ResourceService.Replace(Properties.Resources.InputSceme_TypeC_Remarks),
+            [InputScheme.TypeA] = ResourceService.Replace(Properties.Resources.InputSceme_TypeA_Remarks),
+            [InputScheme.TypeB] = ResourceService.Replace(Properties.Resources.InputSceme_TypeB_Remarks),
+            [InputScheme.TypeC] = ResourceService.Replace(Properties.Resources.InputSceme_TypeC_Remarks),
         };
 
         /// <summary>
         /// InputSceme property.
         /// </summary>
-        private InputSceme _InputSceme;
-        public InputSceme InputSceme
+        private InputScheme _InputSceme;
+        public InputScheme InputSceme
         {
             get { return _InputSceme; }
             set { if (_InputSceme != value) { _InputSceme = value; RaisePropertyChanged(); RaisePropertyChanged(nameof(InputScemeNote)); } }

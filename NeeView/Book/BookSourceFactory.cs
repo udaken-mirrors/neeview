@@ -54,10 +54,10 @@ namespace NeeView
             return pageSortModeClass.ValidatePageSortMode(sortMode);
         }
 
-        private static ArchiveEntryCollection CreateArchiveEntryCollection(string place, bool isRecursived, ArchiveEntryCollectionMode archiveRecursiveMode, bool isIgnoreCache)
+        private static ArchiveEntryCollection CreateArchiveEntryCollection(string place, bool isRecursive, ArchiveEntryCollectionMode archiveRecursiveMode, bool isIgnoreCache)
         {
-            var collectMode = isRecursived ? ArchiveEntryCollectionMode.IncludeSubArchives : ArchiveEntryCollectionMode.CurrentDirectory;
-            var collectModeIfArchive = isRecursived ? ArchiveEntryCollectionMode.IncludeSubArchives : archiveRecursiveMode;
+            var collectMode = isRecursive ? ArchiveEntryCollectionMode.IncludeSubArchives : ArchiveEntryCollectionMode.CurrentDirectory;
+            var collectModeIfArchive = isRecursive ? ArchiveEntryCollectionMode.IncludeSubArchives : archiveRecursiveMode;
             var collectOption = isIgnoreCache ? ArchiveEntryCollectionOption.IgnoreCache : ArchiveEntryCollectionOption.None;
             return new ArchiveEntryCollection(place, collectMode, collectModeIfArchive, collectOption);
         }
@@ -216,7 +216,7 @@ namespace NeeView
         private static async Task PreExtractAsync(List<Page> pages, CancellationToken token)
         {
             var archivers = pages
-                .Select(e => e.Entry.Archiver)
+                .Select(e => e.ArchiveEntry.Archiver)
                 .Distinct()
                 .WhereNotNull()
                 .Where(e => !e.IsFileSystem)

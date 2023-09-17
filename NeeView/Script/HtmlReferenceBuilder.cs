@@ -75,7 +75,7 @@ namespace NeeView
 
             builder.Append($"<h4>{ResourceService.GetString("@Word.Fields")}</h4>").AppendLine();
 
-            AppendDictionary(type.VisibledAliasNameDictionary().ToDictionary(e => e.Key.ToString(), e => e.Value));
+            AppendDictionary(type.VisibleAliasNameDictionary().ToDictionary(e => e.Key.ToString(), e => e.Value));
 
             return this;
         }

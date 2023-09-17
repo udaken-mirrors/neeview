@@ -9,12 +9,12 @@ namespace NeeView
 
     public class BookPageTerminator : IDisposable
     {
-        private PageFrameBox _box;
-        private Book _book;
+        private readonly PageFrameBox _box;
+        private readonly Book _book;
         private int _pageTerminating;
-        private IBookPageControl _control;
+        private readonly IBookPageControl _control;
         private bool _disposedValue;
-        private DisposableCollection _disposables = new();
+        private readonly DisposableCollection _disposables = new();
 
 
         public BookPageTerminator(PageFrameBox box, IBookPageControl control)

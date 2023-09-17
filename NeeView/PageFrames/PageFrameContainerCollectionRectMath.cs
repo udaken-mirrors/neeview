@@ -10,13 +10,13 @@ namespace NeeView.PageFrames
     /// <summary>
     /// PageFrameContainerCollection の表示領域に冠する処理
     /// </summary>
-    public class PageFrameContainersCollectionRectMath
+    public class PageFrameContainerCollectionRectMath
     {
         private readonly PageFrameContext _context;
-        private PageFrameContainerCollection _containers;
-        private PageFrameRectMath _math;
+        private readonly PageFrameContainerCollection _containers;
+        private readonly PageFrameRectMath _math;
 
-        public PageFrameContainersCollectionRectMath(PageFrameContext context, PageFrameContainerCollection containers)
+        public PageFrameContainerCollectionRectMath(PageFrameContext context, PageFrameContainerCollection containers)
         {
             _context = context;
             _containers = containers;
@@ -93,7 +93,7 @@ namespace NeeView.PageFrames
             var node = nodes.MinBy(e => GetContainerDistance(_containers.Anchor.Container, e.Value));
             return node;
 
-            double GetContainerDistance(PageFrameContainer c1, PageFrameContainer c2)
+            static double GetContainerDistance(PageFrameContainer c1, PageFrameContainer c2)
             {
                 return Math.Abs(c1.Identifier.Value - c2.Identifier.Value);
             }

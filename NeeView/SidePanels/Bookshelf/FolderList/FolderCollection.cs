@@ -176,7 +176,7 @@ namespace NeeView
         /// </summary>
         /// <param name="folder"></param>
         /// <returns></returns>
-        public bool IsDarty(FolderParameter folder)
+        public bool IsDirty(FolderParameter folder)
         {
             return (Place.SimplePath != folder.Path || FolderOrder != folder.FolderOrder || RandomSeed != folder.RandomSeed);
         }
@@ -185,9 +185,9 @@ namespace NeeView
         /// 更新が必要？
         /// </summary>
         /// <returns></returns>
-        public bool IsDarty()
+        public bool IsDirty()
         {
-            return IsDarty(new FolderParameter(Place.SimplePath));
+            return IsDirty(new FolderParameter(Place.SimplePath));
         }
 
 
@@ -236,7 +236,7 @@ namespace NeeView
         /// <summary>
         /// 親の場所を取得
         /// </summary>
-        /// <returns>親の場所。存在しない場合はnullを返す</returns>
+        /// <returns>親の場所。存在しない場合は null を返す</returns>
         public virtual QueryPath? GetParentQuery()
         {
             if (Place == null)

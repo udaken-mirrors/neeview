@@ -14,7 +14,7 @@
         [AliasName]
         RestoreOrContinue,
 
-        [AliasName(IsVisibled = false)]
+        [AliasName(IsVisible = false)]
         RestoreOrDefaultReset,
     }
 

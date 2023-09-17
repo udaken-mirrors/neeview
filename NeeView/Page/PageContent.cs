@@ -11,14 +11,14 @@ namespace NeeView
 {
     public abstract class PageContent : IDataSource, IMemoryElement
     {
-        public static Size DefaultSize = new Size(480, 640);
+        public static Size DefaultSize { get; } = new(480, 640);
 
-        private ArchiveEntry _archiveEntry;
-        private BookMemoryService? _bookMemoryService;
+        private readonly ArchiveEntry _archiveEntry;
+        private readonly BookMemoryService? _bookMemoryService;
         private PictureInfo? _pictureInfo;
         private Size _size = DefaultSize;
         public PageContentState _state;
-        private AsyncLock _asyncLock = new();
+        private readonly AsyncLock _asyncLock = new();
         private CancellationTokenSource? _cancellationTokenSource;
 
 
@@ -46,10 +46,7 @@ namespace NeeView
             set => _state = value;
         }
 
-        [Obsolete("use Entry")]
         public ArchiveEntry ArchiveEntry => _archiveEntry;
-
-        public ArchiveEntry Entry => _archiveEntry;
 
         public BookMemoryService? BookMemoryService => _bookMemoryService;
 

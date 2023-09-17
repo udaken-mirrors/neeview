@@ -199,7 +199,7 @@ namespace NeeView
         {
             if (Config.Current.Window.MouseActivateAndEat)
             {
-                MainWindow.Current.SetMouseActivage();
+                MainWindow.Current.SetMouseActivate();
             }
         }
 

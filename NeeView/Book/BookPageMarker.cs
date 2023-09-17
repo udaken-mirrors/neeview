@@ -78,7 +78,7 @@ namespace NeeView
         /// <param name="direction">移動方向(+1 or -1)</param>
         /// <param name="isLoop">ループ移動</param>
         /// <param name="isIncludeTerminal">終端を含める</param>
-        /// <returns>一致するページ。見つからなければnull</returns>
+        /// <returns>一致するページ。見つからなければ null</returns>
         public Page? GetNearMarkedPage(int index, int direction, bool isLoop, bool isIncludeTerminal)
         {
             Debug.Assert(direction == 1 || direction == -1);

@@ -13,7 +13,7 @@ namespace NeeView
     public class GridLine : ContentControl, IDisposable
     {
         private bool _disposedValue;
-        private DisposableCollection _disposables = new DisposableCollection();
+        private readonly DisposableCollection _disposables = new();
 
 
         public GridLine()

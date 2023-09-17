@@ -87,9 +87,9 @@ namespace NeeView
             {
                 return CreateBitmapContentIcon(imageSource);
             }
-            else if (Page?.Entry != null)
+            else if (Page?.ArchiveEntry != null)
             {
-                var entry = Page.Entry;
+                var entry = Page.ArchiveEntry;
 
                 if (entry.IsDirectory)
                 {

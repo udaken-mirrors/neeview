@@ -27,7 +27,7 @@ namespace NeeView
                 if (Config.Current.Image.Standard.SupportFileTypes is null)
                 {
                     // NOTE: fall through. don't come here!
-                    Config.Current.Image.Standard.SupportFileTypes = PictureFileExtensionTools.CreateDefaultSupprtedFileTypes(Config.Current.Image.Standard.UseWicInformation);
+                    Config.Current.Image.Standard.SupportFileTypes = PictureFileExtensionTools.CreateDefaultSupportedFileTypes(Config.Current.Image.Standard.UseWicInformation);
                 }
                 return Config.Current.Image.Standard.SupportFileTypes;
             }

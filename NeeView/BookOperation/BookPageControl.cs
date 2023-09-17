@@ -8,11 +8,11 @@ namespace NeeView
 {
     public class BookPageControl : IBookPageControl, IDisposable
     {
-        private PageFrameBox _box;
-        private Book _book;
+        private readonly PageFrameBox _box;
+        private readonly Book _book;
         private List<Page> _selectedPages = new();
-        private IBookPageMoveControl _moveControl;
-        private IBookPageActionControl _actionControl;
+        private readonly IBookPageMoveControl _moveControl;
+        private readonly IBookPageActionControl _actionControl;
         private bool _disposedValue;
 
 

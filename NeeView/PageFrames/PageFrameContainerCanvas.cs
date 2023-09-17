@@ -4,49 +4,24 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq.Expressions;
 using System.Threading;
-using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
-using System.Xml.Linq;
 
 namespace NeeView.PageFrames
 {
-    public class PageFrameContainerInitializer : IInitializable<PageFrameContainer>
-    {
-        private Canvas _canvas;
-
-        public PageFrameContainerInitializer(Canvas canvas)
-        {
-            _canvas = canvas;
-        }
-
-        public void Initialize(PageFrameContainer item)
-        {
-            item.Visibility = Visibility.Visible;
-            _canvas.Children.Add(item);
-        }
-
-        public void Uninitialized(PageFrameContainer item)
-        {
-            _canvas.Children.Remove(item);
-        }
-    }
-
-
     /// <summary>
     /// PageFrameContainer を配置する Canvas
     /// </summary>
-    public class PageFrameContainersCanvas : Canvas
+    public class PageFrameContainerCanvas : Canvas
     {
+        private readonly PageFrameContext _context;
+        private readonly PageFrameContainerCollection _containers;
 
-        private PageFrameContext _context;
-        private PageFrameContainerCollection _containers;
 
-
-        public PageFrameContainersCanvas(PageFrameContext context, PageFrameContainerCollection containers)
+        public PageFrameContainerCanvas(PageFrameContext context, PageFrameContainerCollection containers)
         {
             _context = context;
             _containers = containers;

@@ -35,7 +35,7 @@ namespace NeeView
             _viewContent = viewContent;
 
             // メディアブックとメティアページで参照する設定を変える
-            _mediaContext = _viewContent.Page.Entry.Archiver is MediaArchiver ? Config.Current.Archive.Media : PageMediaContext.Current;
+            _mediaContext = _viewContent.Page.ArchiveEntry.Archiver is MediaArchiver ? Config.Current.Archive.Media : PageMediaContext.Current;
 
 
             _player = AllocateMediaPlayer();

@@ -6,7 +6,7 @@ namespace NeeView
 {
     public class ArchivePageThumbnail : PageThumbnail
     {
-        private ArchivePageContent _content;
+        private readonly ArchivePageContent _content;
 
         public ArchivePageThumbnail(ArchivePageContent content) : base(content)
         {

@@ -109,7 +109,7 @@ namespace NeeView
 
             if (page.PageType == PageType.Folder)
             {
-                BookHub.Current.RequestLoad(this, page.Entry.SystemPath, null, BookLoadOption.IsBook | BookLoadOption.SkipSamePlace, true);
+                BookHub.Current.RequestLoad(this, page.ArchiveEntry.SystemPath, null, BookLoadOption.IsBook | BookLoadOption.SkipSamePlace, true);
             }
         }
 
@@ -304,12 +304,12 @@ namespace NeeView
 
         protected virtual bool CanMoveToFolder(IEnumerable<Page> pages)
         {
-            return pages.All(e => e.Entry.IsFileSystem && e.Entry.Archiver is not PlaylistArchive);
+            return pages.All(e => e.ArchiveEntry.IsFileSystem && e.ArchiveEntry.Archiver is not PlaylistArchive);
         }
 
         private static void MoveToFolder(IEnumerable<Page> pages, string destDirPath)
         {
-            var movePages = pages.Where(e => e.Entry.IsFileSystem).ToList();
+            var movePages = pages.Where(e => e.ArchiveEntry.IsFileSystem).ToList();
             var paths = movePages.Select(e => e.GetFilePlace()).WhereNotNull().ToList();
             FileIO.MoveToFolder(paths, destDirPath);
 

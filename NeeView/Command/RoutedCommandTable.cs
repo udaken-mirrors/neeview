@@ -24,7 +24,7 @@ namespace NeeView
 
 
         private HashSet<Key> _usedKeyMap = new();
-        private bool _isDarty = true;
+        private bool _isDirty = true;
         private List<EventHandler<KeyEventArgs>> _imeKeyHandlers = new();
         private readonly MouseWheelDelta _mouseWheelDelta = new();
         private readonly List<TouchInput> _touchInputCollection = new();
@@ -70,7 +70,7 @@ namespace NeeView
         {
             if (_disposedValue) return;
 
-            _isDarty = true;
+            _isDirty = true;
 
             if (!e.OnHold)
             {
@@ -78,11 +78,11 @@ namespace NeeView
             }
         }
 
-        public void SetDarty()
+        public void SetDirty()
         {
             if (_disposedValue) return;
 
-            _isDarty = true;
+            _isDirty = true;
         }
 
         public void UpdateRoutedCommand()
@@ -92,15 +92,15 @@ namespace NeeView
             var oldies = Commands.Keys
                 .ToList();
 
-            var newers = CommandTable.Current.Keys
+            var news = CommandTable.Current.Keys
                 .ToList();
 
-            foreach (var name in oldies.Except(newers))
+            foreach (var name in oldies.Except(news))
             {
                 Commands.Remove(name);
             }
 
-            foreach (var name in newers.Except(oldies))
+            foreach (var name in news.Except(oldies))
             {
                 var command = CommandTable.Current.GetElement(name) ?? throw new InvalidOperationException();
                 Commands.Add(name, new RoutedUICommand(command.Text, name, typeof(MainWindow)));
@@ -132,8 +132,8 @@ namespace NeeView
         {
             if (_disposedValue) return;
 
-            if (!_isDarty) return;
-            _isDarty = false;
+            if (!_isDirty) return;
+            _isDirty = false;
 
             UpdateRoutedCommand();
             ClearRoutedCommandInputGestures();
@@ -206,7 +206,7 @@ namespace NeeView
             mouse.ClearMouseEventHandler();
 
             var mouseNormalHandlers = new List<EventHandler<MouseButtonEventArgs>>();
-            var mouseExtraHndlers = new List<EventHandler<MouseButtonEventArgs>>();
+            var mouseExtraHandlers = new List<EventHandler<MouseButtonEventArgs>>();
 
             foreach (var command in this.Commands)
             {
@@ -219,7 +219,7 @@ namespace NeeView
                     }
                     else if (gesture is MouseExGesture)
                     {
-                        mouseExtraHndlers.Add((s, x) => InputGestureCommandExecute(s, x, gesture, command.Value));
+                        mouseExtraHandlers.Add((s, x) => InputGestureCommandExecute(s, x, gesture, command.Value));
                     }
                     else if (gesture is MouseWheelGesture)
                     {
@@ -247,7 +247,7 @@ namespace NeeView
             }
 
             // NOTE: 拡張マウス入力から先に処理を行う
-            foreach (var lambda in mouseExtraHndlers.Concat(mouseNormalHandlers))
+            foreach (var lambda in mouseExtraHandlers.Concat(mouseNormalHandlers))
             {
                 mouse.MouseButtonChanged += lambda;
             }
@@ -255,7 +255,7 @@ namespace NeeView
 
 
         /// <summary>
-        /// Initialize KeyInuput gestures
+        /// Initialize KeyInput gestures
         /// </summary>
         private void UpdateKeyInputGestures()
         {
@@ -342,11 +342,11 @@ namespace NeeView
         }
 
         // ホイールの回転数に応じたコマンド実行
-        private void WheelCommandExecute(object? sender, MouseWheelEventArgs arg, MouseWheelDeltaOption wheelOoptions, RoutedUICommand command)
+        private void WheelCommandExecute(object? sender, MouseWheelEventArgs arg, MouseWheelDeltaOption wheelOptions, RoutedUICommand command)
         {
             if (_disposedValue) return;
 
-            int turn = Math.Abs(_mouseWheelDelta.NotchCount(arg, wheelOoptions));
+            int turn = Math.Abs(_mouseWheelDelta.NotchCount(arg, wheelOptions));
             if (turn > 0)
             {
                 // Debug.WriteLine($"WheelCommand: {turn}({arg.Delta})");

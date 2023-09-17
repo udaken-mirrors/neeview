@@ -228,16 +228,16 @@ namespace NeeView
                     pages = Pages.OrderBy(e => e.PageType).ThenByDescending(e => e, new ComparerFileName(isSortFileFirst, token));
                     break;
                 case PageSortMode.TimeStamp:
-                    pages = Pages.OrderBy(e => e.PageType).ThenBy(e => e.Entry.LastWriteTime).ThenBy(e => e, new ComparerFileName(isSortFileFirst, token));
+                    pages = Pages.OrderBy(e => e.PageType).ThenBy(e => e.ArchiveEntry.LastWriteTime).ThenBy(e => e, new ComparerFileName(isSortFileFirst, token));
                     break;
                 case PageSortMode.TimeStampDescending:
-                    pages = Pages.OrderBy(e => e.PageType).ThenByDescending(e => e.Entry.LastWriteTime).ThenBy(e => e, new ComparerFileName(isSortFileFirst, token));
+                    pages = Pages.OrderBy(e => e.PageType).ThenByDescending(e => e.ArchiveEntry.LastWriteTime).ThenBy(e => e, new ComparerFileName(isSortFileFirst, token));
                     break;
                 case PageSortMode.Size:
-                    pages = Pages.OrderBy(e => e.PageType).ThenBy(e => e.Entry.Length).ThenBy(e => e, new ComparerFileName(isSortFileFirst, token));
+                    pages = Pages.OrderBy(e => e.PageType).ThenBy(e => e.ArchiveEntry.Length).ThenBy(e => e, new ComparerFileName(isSortFileFirst, token));
                     break;
                 case PageSortMode.SizeDescending:
-                    pages = Pages.OrderBy(e => e.PageType).ThenByDescending(e => e.Entry.Length).ThenBy(e => e, new ComparerFileName(isSortFileFirst, token));
+                    pages = Pages.OrderBy(e => e.PageType).ThenByDescending(e => e.ArchiveEntry.Length).ThenBy(e => e, new ComparerFileName(isSortFileFirst, token));
                     break;
                 case PageSortMode.Random:
                     var random = new Random();
@@ -309,8 +309,8 @@ namespace NeeView
                 {
                     if (xName[i] != yName[i])
                     {
-                        var xIsDirectory = i + 1 != xName.Length || x.Entry.IsDirectory;
-                        var yIsDirectory = i + 1 != yName.Length || y.Entry.IsDirectory;
+                        var xIsDirectory = i + 1 != xName.Length || x.ArchiveEntry.IsDirectory;
+                        var yIsDirectory = i + 1 != yName.Length || y.ArchiveEntry.IsDirectory;
                         if (xIsDirectory != yIsDirectory)
                         {
                             return (xIsDirectory ? 1 : -1) * _sortFileFirstSign;
@@ -374,12 +374,12 @@ namespace NeeView
 
             foreach (var page in viewPages)
             {
-                page.IsVisibled = true;
+                page.IsVisible = true;
             }
 
             foreach (var page in hidePages)
             {
-                page.IsVisibled = false;
+                page.IsVisible = false;
             }
 
             _viewPages = viewPages.ToList();

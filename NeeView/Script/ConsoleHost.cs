@@ -39,7 +39,7 @@ namespace NeeView
 
         private void UpdateEngine()
         {
-            if (_engine != null && !_engine.IsDarty) return;
+            if (_engine != null && !_engine.IsDirty) return;
 
             _engine = CreateJavascriptEngine();
             _wordTree = CreateWordTree(_engine);
@@ -95,7 +95,7 @@ namespace NeeView
                     }
                     catch (Exception ex)
                     {
-                        _engine.ExceptionPrcess(ex);
+                        _engine.ExceptionProcess(ex);
                         return null;
                     }
                     finally

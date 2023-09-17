@@ -20,7 +20,7 @@ namespace NeeView
             _pageContent = pageContent;
         }
 
-        public ArchiveEntry ArchiveEntry => _pageContent.Entry;
+        public ArchiveEntry ArchiveEntry => _pageContent.ArchiveEntry;
 
         public PictureInfo? PictureInfo => _pageContent.PictureInfo;
 

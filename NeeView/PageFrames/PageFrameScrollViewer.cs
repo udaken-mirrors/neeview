@@ -1,4 +1,5 @@
-﻿using NeeLaboratory.Generators;
+﻿using NeeLaboratory.ComponentModel;
+using NeeLaboratory.Generators;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -19,14 +20,13 @@ namespace NeeView.PageFrames
     [NotifyPropertyChanged]
     public partial class PageFrameScrollViewer : Grid, IPointControl, INotifyPropertyChanged
     {
-        private PageFrameContext _context;
-        private Canvas _rootCanvas;
-        private PageFrameContainersCanvas _canvas;
+        private readonly PageFrameContext _context;
+        private readonly Canvas _rootCanvas;
+        private readonly PageFrameContainerCanvas _canvas;
+        private readonly PageFrameViewTransform _transform;
 
-        private PageFrameViewTransform _transform;
 
-
-        public PageFrameScrollViewer(PageFrameContext context, PageFrameContainersCanvas canvas, PageFrameViewTransform transform)
+        public PageFrameScrollViewer(PageFrameContext context, PageFrameContainerCanvas canvas, PageFrameViewTransform transform)
         {
             this.MinWidth = PageFrameProfile.MinWidth;
             this.MinHeight = PageFrameProfile.MinHeight;
@@ -80,7 +80,7 @@ namespace NeeView.PageFrames
             }
         }
 
-
+        [Subscribable]
         public event PropertyChangedEventHandler? PropertyChanged;
 
 
@@ -92,6 +92,13 @@ namespace NeeView.PageFrames
             get { return _transform.Point; }
         }
 
+
+
+        public IDisposable SubscribeSizeChanged(SizeChangedEventHandler handler)
+        {
+            SizeChanged += handler;
+            return new AnonymousDisposable(() => SizeChanged -= handler);
+        }
 
         /// <summary>
         /// リセット

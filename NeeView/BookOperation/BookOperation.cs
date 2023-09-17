@@ -217,7 +217,7 @@ namespace NeeView
             var page = Book?.CurrentPage;
             if (page != null && page.PageType == PageType.Folder)
             {
-                _bookHub.RequestLoad(sender, page.Entry.SystemPath, null, BookLoadOption.IsBook | BookLoadOption.SkipSamePlace, true);
+                _bookHub.RequestLoad(sender, page.ArchiveEntry.SystemPath, null, BookLoadOption.IsBook | BookLoadOption.SkipSamePlace, true);
             }
         }
 

@@ -25,7 +25,7 @@ namespace NeeView
             try
             {
                 // ArchiveFileの場合はTempFile化
-                var fileProxy = Entry.GetFileProxy(); // TODO: async化
+                var fileProxy = ArchiveEntry.GetFileProxy(); // TODO: async化
                 var pictureInfo = CreatePictureInfo(fileProxy.Path); // TODO: Async
                 await Task.CompletedTask;
                 return new PageSource(new MediaPageData(fileProxy.Path), null, pictureInfo);

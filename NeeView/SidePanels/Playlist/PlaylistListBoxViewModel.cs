@@ -41,7 +41,7 @@ namespace NeeView
         }
 
 
-        public bool IsThumbnailVisibled => _model is not null && _model.IsThumbnailVisibled;
+        public bool IsThumbnailVisible => _model is not null && _model.IsThumbnailVisible;
 
         public CollectionViewSource CollectionViewSource { get; private set; }
 

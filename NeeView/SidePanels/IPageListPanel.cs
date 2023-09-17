@@ -16,7 +16,7 @@ namespace NeeView
         /// <summary>
         /// サムネイルが表示されているか
         /// </summary>
-        bool IsThumbnailVisibled { get; }
+        bool IsThumbnailVisible { get; }
 
         /// <summary>
         /// ページの収集

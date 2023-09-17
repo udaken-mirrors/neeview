@@ -45,7 +45,7 @@ namespace NeeView
 
         public static FrameworkElement CreateErrorContent(PageFrameElement source, string? message)
         {
-            var viewData = new FileViewData(source.Page.Entry, FilePageIcon.Alert, message ?? "Error");
+            var viewData = new FileViewData(source.Page.ArchiveEntry, FilePageIcon.Alert, message ?? "Error");
             return new FilePageControl(viewData);
         }
 

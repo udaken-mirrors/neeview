@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace NeeView
 {
     /// <summary>
-    /// ThumbnaulPool for Panel
+    /// ThumbnailPool for Panel
     /// </summary>
     public class BookThumbnailPool : ThumbnailPool
     {

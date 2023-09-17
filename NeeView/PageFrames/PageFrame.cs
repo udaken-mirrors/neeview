@@ -102,12 +102,12 @@ namespace NeeView.PageFrames
         /// <summary>
         /// 自動回転
         /// </summary>
-        public RotateTransform RotateTransform => new RotateTransform(_angle);
+        public RotateTransform RotateTransform => new(_angle);
 
         /// <summary>
         /// ストレッチケール
         /// </summary>
-        public ScaleTransform ScaleTransform => new ScaleTransform(_scale, _scale);
+        public ScaleTransform ScaleTransform => new(_scale, _scale);
 
 
         public IEnumerable<PageFrameElement> GetDirectedSources()

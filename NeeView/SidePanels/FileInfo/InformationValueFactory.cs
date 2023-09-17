@@ -40,7 +40,7 @@ namespace NeeView
                 case InformationKey.FileName:
                     return page?.EntryLastName;
                 case InformationKey.FilePath:
-                    return page?.Entry?.Link ?? page?.EntryName;
+                    return page?.ArchiveEntry?.Link ?? page?.EntryName;
                 case InformationKey.FileSize:
                     if (page is null || page.Length <= 0) return null;
                     return new FormatValue(page.Length > 0 ? (page.Length + 1023) / 1024 : 0, "{0:#,0} KB");
@@ -51,7 +51,7 @@ namespace NeeView
                 case InformationKey.ArchivePath:
                     return page?.GetFolderPlace();
                 case InformationKey.Archiver:
-                    return page?.Entry.Archiver;
+                    return page?.ArchiveEntry.Archiver;
                 default:
                     throw new NotSupportedException();
             }

@@ -21,7 +21,7 @@ namespace NeeView
         private Brush? _backgroundFrontBrush;
         private Brush? _customBackgroundBrush;
         private Brush? _customBackgroundFrontBrush;
-        private DisposableCollection _disposables = new();
+        private readonly DisposableCollection _disposables = new();
         private bool _disposedValue;
 
 
@@ -165,7 +165,7 @@ namespace NeeView
         }
 
 
-        // Foregroud Brush 更新
+        // Foreground Brush 更新
         private void UpdateForegroundBrush()
         {
             if (BackgroundBrush is SolidColorBrush solidColorBrush)

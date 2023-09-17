@@ -22,7 +22,7 @@ namespace NeeView
     /// </summary>
     public class FilePageContent : PageContent
     {
-        private FilePageData _source;
+        private readonly FilePageData _source;
 
         public FilePageContent(ArchiveEntry archiveEntry, FilePageIcon icon, string? message, BookMemoryService? bookMemoryService) : base(archiveEntry, bookMemoryService)
         {

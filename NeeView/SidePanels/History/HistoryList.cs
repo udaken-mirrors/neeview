@@ -37,7 +37,7 @@ namespace NeeView
         }
 
 
-        public bool IsThumbnailVisibled
+        public bool IsThumbnailVisible
         {
             get
             {

@@ -35,12 +35,12 @@ namespace NeeView
             {
                 ////engine.Log($"Script: {LoosePath.GetFileName(path)} ...");
                 engine.SetArgs(StringTools.SplitArgument(argument));
-                engine.ExecureFile(path, _cancellationTokenSource.Token);
+                engine.ExecuteFile(path, _cancellationTokenSource.Token);
                 ////engine.Log($"Script: {LoosePath.GetFileName(path)} done.");
             }
             catch (Exception ex)
             {
-                engine.ExceptionPrcess(ex);
+                engine.ExceptionProcess(ex);
                 ////engine.Log($"Script: {LoosePath.GetFileName(path)} stopped.");
             }
             finally

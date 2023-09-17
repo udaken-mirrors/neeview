@@ -5,7 +5,7 @@ namespace NeeView
 {
     public class BookPageAccessor
     {
-        private IBookPageContext _book;
+        private readonly IBookPageContext _book;
 
         public BookPageAccessor(IBookPageContext book)
         {

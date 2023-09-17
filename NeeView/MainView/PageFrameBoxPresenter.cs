@@ -131,7 +131,7 @@ namespace NeeView
             }
         }
 
-        public IPageFrameBox? ValidPageFrameBox => ValidBox();
+        public PageFrameBox? ValidPageFrameBox => ValidBox();
 
 
         public PageFrameBox? View => _box;
@@ -540,7 +540,7 @@ namespace NeeView
 
         #region IPageFrameBox
 
-        private IPageFrameBox? ValidBox()
+        private PageFrameBox? ValidBox()
         {
             return IsLoading ? null : _box;
         }

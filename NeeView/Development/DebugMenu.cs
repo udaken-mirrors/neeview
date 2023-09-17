@@ -13,15 +13,15 @@ namespace NeeView
     {
         private DebugWindow? _debugWindow;
 
-        private bool _isDebugWindowVisibled;
-        public bool IsDebugWindowVisibled
+        private bool _isDebugWindowVisible;
+        public bool IsDebugWindowVisible
         {
-            get { return _isDebugWindowVisibled; }
+            get { return _isDebugWindowVisible; }
             set
             {
-                if (SetProperty(ref _isDebugWindowVisibled, value))
+                if (SetProperty(ref _isDebugWindowVisible, value))
                 {
-                    if (_isDebugWindowVisibled)
+                    if (_isDebugWindowVisible)
                     {
                         if (_debugWindow == null)
                         {
@@ -30,7 +30,7 @@ namespace NeeView
                             _debugWindow.Closed += (s, e) =>
                             {
                                 _debugWindow = null;
-                                _isDebugWindowVisibled = false;
+                                _isDebugWindowVisible = false;
                             };
                             _debugWindow.Show();
                         }
@@ -50,7 +50,7 @@ namespace NeeView
             var collection = top.Items;
 
             var item = new MenuItem() { Header = "Debug Window", IsCheckable = true };
-            item.SetBinding(MenuItem.IsCheckedProperty, new Binding(nameof(IsDebugWindowVisibled)) { Source = this });
+            item.SetBinding(MenuItem.IsCheckedProperty, new Binding(nameof(IsDebugWindowVisible)) { Source = this });
             collection.Add(item);
 
             collection.Add(new Separator());

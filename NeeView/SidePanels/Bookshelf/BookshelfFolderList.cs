@@ -20,7 +20,7 @@ namespace NeeView
         public static BookshelfFolderList Current { get; }
 
 
-        private FolderItem? _visibledItem;
+        private FolderItem? _visibleItem;
         private Regex? _excludeRegex;
         private readonly DisposableCollection _disposables = new();
 
@@ -59,17 +59,17 @@ namespace NeeView
 
             _disposables.Add(BookOperation.Current.SubscribeBookChanging((s, e) =>
             {
-                UpdateVisibledItem(e.Address, false);
+                UpdateVisibleItem(e.Address, false);
             }));
 
             _disposables.Add(BookOperation.Current.SubscribeBookChanged((s, e) =>
             {
-                UpdateVisibledItem(BookOperation.Current.Address, false);
+                UpdateVisibleItem(BookOperation.Current.Address, false);
             }));
 
             _disposables.Add(this.SubscribeCollectionChanged((s, e) =>
             {
-                UpdateVisibledItem(BookOperation.Current.Address, true);
+                UpdateVisibleItem(BookOperation.Current.Address, true);
             }));
 
 
@@ -90,17 +90,17 @@ namespace NeeView
         /// <summary>
         /// 現在ブックマーク更新
         /// </summary>
-        private void UpdateVisibledItem(string? path, bool force)
+        private void UpdateVisibleItem(string? path, bool force)
         {
             if (_disposedValue) return;
 
-            if (force && _visibledItem != null)
+            if (force && _visibleItem != null)
             {
-                _visibledItem.IsVisibled = false;
-                _visibledItem = null;
+                _visibleItem.IsVisible = false;
+                _visibleItem = null;
             }
 
-            if (_visibledItem != null && _visibledItem.EntityPath.SimplePath == path)
+            if (_visibleItem != null && _visibleItem.EntityPath.SimplePath == path)
             {
                 return;
             }
@@ -109,16 +109,16 @@ namespace NeeView
                 ? FolderCollection.Items.FirstOrDefault(x => x.TargetPath.SimplePath == path) ?? FolderCollection.Items.FirstOrDefault(x => x.EntityPath.SimplePath == path)
                 : null;
 
-            if (_visibledItem != item)
+            if (_visibleItem != item)
             {
-                if (_visibledItem != null)
+                if (_visibleItem != null)
                 {
-                    _visibledItem.IsVisibled = false;
+                    _visibleItem.IsVisible = false;
                 }
-                _visibledItem = item;
-                if (_visibledItem != null)
+                _visibleItem = item;
+                if (_visibleItem != null)
                 {
-                    _visibledItem.IsVisibled = true;
+                    _visibleItem.IsVisible = true;
                 }
             }
         }
@@ -194,14 +194,14 @@ namespace NeeView
                 var path = new QueryPath(address);
                 var parent = new QueryPath(book?.Source.GetFolderPlace() ?? LoosePath.GetDirectoryName(address));
 
-                SetDarty(); // 強制更新
+                SetDirty(); // 強制更新
                 await SetPlaceAsync(parent, new FolderItemPosition(path), FolderSetPlaceOption.Focus | FolderSetPlaceOption.UpdateHistory | FolderSetPlaceOption.ResetKeyword | FolderSetPlaceOption.FileSystem);
 
                 RaiseSelectedItemChanged(true);
             }
             else if (Place != null)
             {
-                SetDarty(); // 強制更新
+                SetDirty(); // 強制更新
                 await SetPlaceAsync(Place, null, FolderSetPlaceOption.Focus | FolderSetPlaceOption.FileSystem);
 
                 RaiseSelectedItemChanged(true);

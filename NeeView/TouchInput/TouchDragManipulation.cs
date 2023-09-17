@@ -17,7 +17,7 @@ namespace NeeView
     /// </summary>
     public class TouchDragManipulation
     {
-        private IDragTransformContextFactory _transformContextFactory;
+        private readonly IDragTransformContextFactory _transformContextFactory;
         private DragTransformContext? _transformContext;
 
         private DragTransform? _transform;
@@ -31,7 +31,7 @@ namespace NeeView
 
         private readonly TouchInputContext _context;
 
-        private Speedometer _speedometer = new();
+        private readonly Speedometer _speedometer = new();
 
 
         public TouchDragManipulation(TouchInputContext context)

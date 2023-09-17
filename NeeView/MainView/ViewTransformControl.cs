@@ -13,7 +13,7 @@ namespace NeeView
     // TODO: PageFrames.ViewTransformControl と名前が競合
     public class ViewTransformControl : IViewTransformControl
     {
-        private PageFrameBoxPresenter _presenter;
+        private readonly PageFrameBoxPresenter _presenter;
 
 
         public ViewTransformControl(PageFrameBoxPresenter presenter)

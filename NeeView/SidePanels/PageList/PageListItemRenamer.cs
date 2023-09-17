@@ -30,9 +30,9 @@ namespace NeeView
 
         public PageListItemRenameControl(ListBox listBox, Page item) : base(listBox, item)
         {
-            if (item.Entry.IsFileSystem)
+            if (item.ArchiveEntry.IsFileSystem)
             {
-                this.IsSeleftFileNameBody = !item.Entry.IsDirectory;
+                this.IsSeleftFileNameBody = !item.ArchiveEntry.IsDirectory;
                 this.IsInvalidFileNameChars = true;
                 _isFileSystem = true;
             }

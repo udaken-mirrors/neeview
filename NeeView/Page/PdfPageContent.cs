@@ -25,7 +25,7 @@ namespace NeeView
             {
                 token.ThrowIfCancellationRequested();
                 var pictureInfo = CreatePictureInfo(token);
-                return PageSource.Create(new PdfPageData(Entry), pictureInfo);
+                return PageSource.Create(new PdfPageData(ArchiveEntry), pictureInfo);
             }
             catch (OperationCanceledException)
             {
@@ -42,7 +42,7 @@ namespace NeeView
             if (PictureInfo != null) return PictureInfo;
 
             var pictureInfo = new PictureInfo();
-            var originalSize = _pdfArchive.GetSourceSize(Entry); // TODO: async
+            var originalSize = _pdfArchive.GetSourceSize(ArchiveEntry); // TODO: async
             pictureInfo.OriginalSize = originalSize;
             var maxSize = Config.Current.Performance.MaximumSize;
             var size = (Config.Current.Performance.IsLimitSourceSize && !maxSize.IsContains(originalSize)) ? originalSize.Uniformed(maxSize) : originalSize;

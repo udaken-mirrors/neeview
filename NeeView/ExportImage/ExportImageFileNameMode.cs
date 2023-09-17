@@ -8,7 +8,7 @@
         [AliasName]
         BookPageNumber,
 
-        [AliasName(IsVisibled = false)]
+        [AliasName(IsVisible = false)]
         Default,
     }
 }

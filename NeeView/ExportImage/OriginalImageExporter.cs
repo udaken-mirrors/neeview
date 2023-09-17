@@ -47,7 +47,7 @@ namespace NeeView
 
         public void Export(string path, bool isOverwrite, int qualityLevel)
         {
-            _page.Entry.ExtractToFile(path, isOverwrite);
+            _page.ArchiveEntry.ExtractToFile(path, isOverwrite);
         }
 
         public string CreateFileName()

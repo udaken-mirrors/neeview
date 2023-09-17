@@ -7,7 +7,7 @@ namespace NeeView
 {
     public class BookControlProxy : BindableBase, IBookControl, IDisposable
     {
-        IBookControl? _source;
+        private IBookControl? _source;
         private bool _disposedValue;
 
 
@@ -15,6 +15,7 @@ namespace NeeView
         public bool IsBookmark => _source?.IsBookmark ?? false;
 
         public bool IsBusy => _source?.IsBusy ?? false;
+
         public PageSortModeClass PageSortModeClass => _source?.PageSortModeClass ?? PageSortModeClass.Full;
 
 
