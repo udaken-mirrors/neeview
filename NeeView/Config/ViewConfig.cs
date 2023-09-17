@@ -29,6 +29,8 @@ namespace NeeView
         private bool _isKeepAngleBooks;
         private bool _isKeepFlipBooks;
         private bool _isKeepPageTransform;
+        private double _scrollDuration = 0.2;
+        private double _pageMoveDuration = 0.0;
 
 
         // 回転の中心
@@ -213,9 +215,25 @@ namespace NeeView
         }
 
 
+        // スクロール時間 (秒)
+        [PropertyRange(0.0, 1.0, TickFrequency = 0.1, IsEditable = true)]
+        public double ScrollDuration
+        {
+            get { return _scrollDuration; }
+            set { SetProperty(ref _scrollDuration, value); }
+        }
+
+        // ページ変更時間(秒)
+        [PropertyRange(0.0, 1.0, TickFrequency = 0.1, IsEditable = true)]
+        public double PageMoveDuration
+        {
+            get { return _pageMoveDuration; }
+            set { SetProperty(ref _pageMoveDuration, value); }
+        }
+
         #region Obsolete
 
-        [Obsolete("no used (This is typo.)"), Alternative("MainViewMargin", 40)]
+        [Obsolete("no used (This is typo.)"), Alternative("MainViewMargin", 40)] // ver.40 // TODO: Warning
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         public double MainViewMergin
         {

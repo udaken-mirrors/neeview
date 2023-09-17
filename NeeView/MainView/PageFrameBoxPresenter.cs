@@ -220,7 +220,7 @@ namespace NeeView
             token.ThrowIfCancellationRequested();
 
             Close();
-            if (book is null)
+            if (book is null || book.Pages.Count <= 0)
             {
                 RaisePropertyChanged(nameof(View));
                 RaisePropertyChanged(null);
@@ -280,9 +280,7 @@ namespace NeeView
 
             bool IsLoading()
             {
-                var pageFrameContent = box.GetSelectedPageFrameContent();
-                if (pageFrameContent is null) return false;
-                return pageFrameContent.GetViewContentState() < ViewContentState.Loaded;
+                return !box.IsLoaded && box.IsSelectedPageFrameLoading();
             }
         }
 

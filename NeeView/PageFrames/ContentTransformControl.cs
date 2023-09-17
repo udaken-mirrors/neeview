@@ -61,14 +61,18 @@ namespace NeeView.PageFrames
         public void AddPoint(Vector value, TimeSpan span)
         {
             var contentRect = _container.GetContentRect();
+            var delta = value;
 
-            // scroll lock
-            _scrollLock.Update(contentRect, _containerRect);
-            var delta = _scrollLock.Limit(value);
+            if (_context.ViewConfig.IsLimitMove)
+            {
+                // scroll lock
+                _scrollLock.Update(contentRect, _containerRect);
+                delta = _scrollLock.Limit(delta);
 
-            // scroll area limit
-            var areaLimit = new ScrollAreaLimit(contentRect, _containerRect);
-            delta = areaLimit.GetLimitContentMove(delta);
+                // scroll area limit
+                var areaLimit = new ScrollAreaLimit(contentRect, _containerRect);
+                delta = areaLimit.GetLimitContentMove(delta);
+            }
 
             _context.IsSnapAnchor.Reset();
             _container.Transform.SetPoint(_container.Transform.Point + delta, span);

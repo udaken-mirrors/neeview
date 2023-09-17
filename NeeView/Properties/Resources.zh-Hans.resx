@@ -627,12 +627,6 @@ nv.Command.ToggleMediaPlay.Execute()
   <data name="BookConfig.BookPageSize.Remarks" xml:space="preserve">
     <value>被视为书本页面显示的图像大小。由于显示缩图，过大的值可能会有以低分辨率显示的情况。</value>
   </data>
-  <data name="BookConfig.ContentsSpace" xml:space="preserve">
-    <value>2 页面之间的距离 (像素)</value>
-  </data>
-  <data name="BookConfig.ContentsSpace.Remarks" xml:space="preserve">
-    <value>设定页面与页面之间的间隙。负值代表着重迭的意思。由于每个页面是按比例缩放，所以当为 0 时很少会没有间隙。</value>
-  </data>
   <data name="BookConfig.Excludes" xml:space="preserve">
     <value>排除文件夹</value>
   </data>
@@ -7376,7 +7370,13 @@ nv.ShowToast(nv.Book.ViewPages[0].Path)</value>
   <data name="PageListItem.Menu.Rename" xml:space="preserve">
     <value>重新命名(_M)</value>
   </data>
-  <data name="BookConfig.ScrollDuration" xml:space="preserve">
+  <data name="ViewConfig.ScrollDuration" xml:space="preserve">
     <value>卷动时间 (秒)</value>
+  </data>
+  <data name="BookConfig.FrameSpace.Remarks" xml:space="preserve">
+    <value>设定页面与页面之间的间隙。负值代表着重迭的意思。由于每个页面是按比例缩放，所以当为 0 时很少会没有间隙。</value>
+  </data>
+  <data name="BookConfig.ContentsSpace.Remarks" xml:space="preserve">
+    <value>设定页面与页面之间的间隙。负值代表着重迭的意思。由于每个页面是按比例缩放，所以当为 0 时很少会没有间隙。</value>
   </data>
 </root>

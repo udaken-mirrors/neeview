@@ -63,7 +63,9 @@ namespace NeeView.PageFrames
 
         public PageFrameOrientation FrameOrientation => _config.Book.Orientation;
         public double FrameMargin => IsStaticFrame ? 1.0 : _config.Book.FrameSpace;
-        public double ContentsSpace => _config.Book.ContentsSpace;
+
+        // TODO: 更新イベントが余計に発生している？Propertyパターンにして抑制させることも可能(優先度低)
+        public double ContentsSpace => _bookSetting.PageMode == PageMode.WidePage ? _config.Book.ContentsSpace : 0.0;
         public PageStretchMode StretchMode => _bookSetting.PageMode == PageMode.Panorama && _config.View.StretchMode == PageStretchMode.Uniform
             ? _config.Book.Orientation == PageFrameOrientation.Horizontal ? PageStretchMode.UniformToVertical : PageStretchMode.UniformToHorizontal
             : _config.View.StretchMode;
@@ -98,8 +100,8 @@ namespace NeeView.PageFrames
         public ImageDotKeepConfig ImageDotKeepConfig => _config.ImageDotKeep;
 
 
-        public TimeSpan ScrollDuration => TimeSpan.FromSeconds(_config.Book.ScrollDuration);
-        public TimeSpan PageChangeDuration => PageMode == PageMode.Panorama ? ScrollDuration : TimeSpan.FromSeconds(_config.Book.PageMoveDuration);
+        public TimeSpan ScrollDuration => TimeSpan.FromSeconds(_config.View.ScrollDuration);
+        public TimeSpan PageChangeDuration => PageMode == PageMode.Panorama ? ScrollDuration : TimeSpan.FromSeconds(_config.View.PageMoveDuration);
 
 
         public double LoupeScale
@@ -209,6 +211,7 @@ namespace NeeView.PageFrames
                 case nameof(BookSettingConfig.PageMode):
                     RaisePropertyChanged(nameof(PageMode));
                     RaisePropertyChanged(nameof(StretchMode));
+                    RaisePropertyChanged(nameof(ContentsSpace));
                     //RaisePropertyChanged(nameof(IsSupportedDividePage));
                     //RaisePropertyChanged(nameof(IsSupportedWidePage));
                     //RaisePropertyChanged(nameof(IsSupportedSingleFirstPage));

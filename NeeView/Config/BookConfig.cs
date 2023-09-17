@@ -4,6 +4,7 @@ using NeeView.Text;
 using NeeView.Windows.Property;
 using System;
 using System.ComponentModel;
+using System.Text.Json.Serialization;
 using System.Windows.Media;
 
 namespace NeeView
@@ -14,8 +15,8 @@ namespace NeeView
 
         private double _wideRatio = 1.0;
         private StringCollection _excludes = (StringCollection)DefaultExcludes.Clone();
-        private bool _isMultiplePageMove = true;
         private PageEndAction _pageEndAction;
+        private bool _isPrioritizePageMove = true;
         private bool _isNotifyPageLoop;
         private bool _isConfirmRecursive;
         private double _contentSpace = -1.0;
@@ -28,8 +29,7 @@ namespace NeeView
         private bool _isInsertDummyPage;
         private Color _dummyPageColor = Colors.White;
         private PageFrameOrientation _orientation = PageFrameOrientation.Horizontal;
-        private double _scrollDuration = 0.2;
-        private double _pageMoveDuration = 0.0;
+
 
         /// <summary>
         /// 横長画像判定用比率
@@ -82,16 +82,10 @@ namespace NeeView
         /// ページ移動優先設定
         /// </summary>
         [PropertyMember]
-        public bool IsPrioritizePageMove { get; set; } = true;
-
-        /// <summary>
-        /// ページ移動命令重複許可
-        /// </summary>
-        [PropertyMember]
-        public bool IsMultiplePageMove
+        public bool IsPrioritizePageMove
         {
-            get { return _isMultiplePageMove; }
-            set { SetProperty(ref _isMultiplePageMove, value); }
+            get { return _isPrioritizePageMove; }
+            set { SetProperty(ref _isPrioritizePageMove, value); }
         }
 
         // ページ終端でのアクション
@@ -172,20 +166,22 @@ namespace NeeView
             set { SetProperty(ref _dummyPageColor, value); }
         }
 
-        // スクロール時間 (秒)
-        [PropertyRange(0.0, 1.0, TickFrequency = 0.1, IsEditable = true)]
-        public double ScrollDuration
+
+
+
+        #region Obsolete
+
+        /// <summary>
+        /// ページ移動命令重複許可
+        /// </summary>
+        [Obsolete("no used")] // ver.40 // TODO: Waring
+        [JsonIgnore]
+        public bool IsMultiplePageMove
         {
-            get { return _scrollDuration; }
-            set { SetProperty(ref _scrollDuration, value); }
+            get { return true; }
+            set { }
         }
 
-        // ページ変更時間(秒)
-        [PropertyRange(0.0, 1.0, TickFrequency = 0.1, IsEditable = true)]
-        public double PageMoveDuration
-        {
-            get { return _pageMoveDuration; }
-            set { SetProperty(ref _pageMoveDuration, value); }
-        }
+        #endregion
     }
 }

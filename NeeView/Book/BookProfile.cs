@@ -45,14 +45,6 @@ namespace NeeView
             return Config.Current.Book.IsPrioritizePageMove && !SlideShow.Current.IsPlayingSlideShow;
         }
 
-        /// <summary>
-        /// ページ移動命令重複許可
-        /// </summary>
-        public bool CanMultiplePageMove()
-        {
-            return Config.Current.Book.IsMultiplePageMove && !SlideShow.Current.IsPlayingSlideShow;
-        }
-
         // 除外パス判定
         public bool IsExcludedPath(string path)
         {

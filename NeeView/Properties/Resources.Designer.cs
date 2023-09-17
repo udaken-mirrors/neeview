@@ -904,7 +904,7 @@ namespace NeeView.Properties {
         }
         
         /// <summary>
-        ///   Distance between two pages (pixel) に類似しているローカライズされた文字列を検索します。
+        ///   Distance between pages in &quot;@PageMode.WidePage&quot; (pixels) に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string BookConfig_ContentsSpace {
             get {
@@ -922,11 +922,38 @@ namespace NeeView.Properties {
         }
         
         /// <summary>
+        ///   Dummy page color に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string BookConfig_DummyPageColor {
+            get {
+                return ResourceManager.GetString("BookConfig.DummyPageColor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Excluded folders に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string BookConfig_Excludes {
             get {
                 return ResourceManager.GetString("BookConfig.Excludes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Distance between pages in &quot;@PageMode.Panorama&quot; (pixels) に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string BookConfig_FrameSpace {
+            get {
+                return ResourceManager.GetString("BookConfig.FrameSpace", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sets the gap between page and page. Negative values ​​mean overlapping. Because each page is scaled, it is rare that there will be no gap just at 0. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string BookConfig_FrameSpace_Remarks {
+            get {
+                return ResourceManager.GetString("BookConfig.FrameSpace.Remarks", resourceCulture);
             }
         }
         
@@ -1057,38 +1084,11 @@ namespace NeeView.Properties {
         }
         
         /// <summary>
-        ///   Page move time (sec) に類似しているローカライズされた文字列を検索します。
-        /// </summary>
-        public static string BookConfig_PageMoveDuration {
-            get {
-                return ResourceManager.GetString("BookConfig.PageMoveDuration", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Valid when the page mode is &quot;@PageMode.SinglePage&quot; or &quot;@PageMode.WidePage&quot;. に類似しているローカライズされた文字列を検索します。
-        /// </summary>
-        public static string BookConfig_PageMoveDuration_Remarks {
-            get {
-                return ResourceManager.GetString("BookConfig.PageMoveDuration.Remarks", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Reset page when shuffle に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string BookConfig_ResetPageWhenRandomSort {
             get {
                 return ResourceManager.GetString("BookConfig.ResetPageWhenRandomSort", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Scroll time (sec) に類似しているローカライズされた文字列を検索します。
-        /// </summary>
-        public static string BookConfig_ScrollDuration {
-            get {
-                return ResourceManager.GetString("BookConfig.ScrollDuration", resourceCulture);
             }
         }
         
@@ -19651,6 +19651,24 @@ namespace NeeView.Properties {
         }
         
         /// <summary>
+        ///   Page move time (sec) に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string ViewConfig_PageMoveDuration {
+            get {
+                return ResourceManager.GetString("ViewConfig.PageMoveDuration", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Valid when the page mode is &quot;@PageMode.SinglePage&quot; or &quot;@PageMode.WidePage&quot;. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string ViewConfig_PageMoveDuration_Remarks {
+            get {
+                return ResourceManager.GetString("ViewConfig.PageMoveDuration.Remarks", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Center of rotation に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string ViewConfig_RotateCenter {
@@ -19665,6 +19683,15 @@ namespace NeeView.Properties {
         public static string ViewConfig_ScaleCenter {
             get {
                 return ResourceManager.GetString("ViewConfig.ScaleCenter", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Scroll time (sec) に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string ViewConfig_ScrollDuration {
+            get {
+                return ResourceManager.GetString("ViewConfig.ScrollDuration", resourceCulture);
             }
         }
         

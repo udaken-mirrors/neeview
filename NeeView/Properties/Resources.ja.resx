@@ -627,12 +627,6 @@ nv.Command.ToggleMediaPlay.Execute()
   <data name="BookConfig.BookPageSize.Remarks" xml:space="preserve">
     <value>ブックページとして表示する画像のサイズです。サムネイルを表示しているため、大きい値では低解像度で表示される場合があります。</value>
   </data>
-  <data name="BookConfig.ContentsSpace" xml:space="preserve">
-    <value>2 ページ間の距離 (ピクセル)</value>
-  </data>
-  <data name="BookConfig.ContentsSpace.Remarks" xml:space="preserve">
-    <value>ページとページの隙間を設定します。マイナス値は重なることを意味します。各ページにスケールがかかるため、0 でちょうど隙間がなくなることは稀です。</value>
-  </data>
   <data name="BookConfig.Excludes" xml:space="preserve">
     <value>除外フォルダー</value>
   </data>
@@ -7451,13 +7445,13 @@ nv.ShowToast(nv.Book.ViewPages[0].Path)</value>
   <data name="PageFrameOrientation.Vertical" xml:space="preserve">
     <value>垂直</value>
   </data>
-  <data name="BookConfig.ScrollDuration" xml:space="preserve">
+  <data name="ViewConfig.ScrollDuration" xml:space="preserve">
     <value>スクロール時間 (秒)</value>
   </data>
-  <data name="BookConfig.PageMoveDuration" xml:space="preserve">
+  <data name="ViewConfig.PageMoveDuration" xml:space="preserve">
     <value>ページ移動時間 (秒)</value>
   </data>
-  <data name="BookConfig.PageMoveDuration.Remarks" xml:space="preserve">
+  <data name="ViewConfig.PageMoveDuration.Remarks" xml:space="preserve">
     <value>ページモードが「@PageMode.SinglePage」「@PageMode.WidePage」の時に有効です。</value>
   </data>
   <data name="ViewConfig.IsKeepPageTransform" xml:space="preserve">
@@ -7477,5 +7471,20 @@ nv.ShowToast(nv.Book.ViewPages[0].Path)</value>
   </data>
   <data name="Navigator.MoreMenu.IsVisibleControlBar" xml:space="preserve">
     <value>コントロール バー</value>
+  </data>
+  <data name="BookConfig.DummyPageColor" xml:space="preserve">
+    <value>ダミー ページの色</value>
+  </data>
+  <data name="BookConfig.FrameSpace" xml:space="preserve">
+    <value>「@PageMode.Panorama」でのページ間の距離 (ピクセル)</value>
+  </data>
+  <data name="BookConfig.FrameSpace.Remarks" xml:space="preserve">
+    <value>ページとページの隙間を設定します。マイナス値は重なることを意味します。各ページにスケールがかかるため、0 でちょうど隙間がなくなることは稀です。</value>
+  </data>
+  <data name="BookConfig.ContentsSpace" xml:space="preserve">
+    <value>「@PageMode.WidePage」でのページ間の距離 (ピクセル)</value>
+  </data>
+  <data name="BookConfig.ContentsSpace.Remarks" xml:space="preserve">
+    <value>ページとページの隙間を設定します。マイナス値は重なることを意味します。各ページにスケールがかかるため、0 でちょうど隙間がなくなることは稀です。</value>
   </data>
 </root>

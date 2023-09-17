@@ -625,12 +625,6 @@ Search for files updated in April 2019
   <data name="BookConfig.BookPageSize.Remarks" xml:space="preserve">
     <value>The size of the image to display as the book page. Since thumbnails are displayed, large values ​​may be displayed at a lower resolution.</value>
   </data>
-  <data name="BookConfig.ContentsSpace" xml:space="preserve">
-    <value>Distance between two pages (pixel)</value>
-  </data>
-  <data name="BookConfig.ContentsSpace.Remarks" xml:space="preserve">
-    <value>Sets the gap between page and page. Negative values ​​mean overlapping. Because each page is scaled, it is rare that there will be no gap just at 0.</value>
-  </data>
   <data name="BookConfig.Excludes" xml:space="preserve">
     <value>Excluded folders</value>
   </data>
@@ -7446,13 +7440,13 @@ nv.ShowToast(nv.Book.ViewPages[0].Path)</value>
   <data name="PageFrameOrientation.Vertical" xml:space="preserve">
     <value>Vertical</value>
   </data>
-  <data name="BookConfig.ScrollDuration" xml:space="preserve">
+  <data name="ViewConfig.ScrollDuration" xml:space="preserve">
     <value>Scroll time (sec)</value>
   </data>
-  <data name="BookConfig.PageMoveDuration" xml:space="preserve">
+  <data name="ViewConfig.PageMoveDuration" xml:space="preserve">
     <value>Page move time (sec)</value>
   </data>
-  <data name="BookConfig.PageMoveDuration.Remarks" xml:space="preserve">
+  <data name="ViewConfig.PageMoveDuration.Remarks" xml:space="preserve">
     <value>Valid when the page mode is "@PageMode.SinglePage" or "@PageMode.WidePage".</value>
   </data>
   <data name="ViewConfig.IsKeepPageTransform" xml:space="preserve">
@@ -7472,5 +7466,20 @@ nv.ShowToast(nv.Book.ViewPages[0].Path)</value>
   </data>
   <data name="Navigator.MoreMenu.IsVisibleControlBar" xml:space="preserve">
     <value>Control bar</value>
+  </data>
+  <data name="BookConfig.DummyPageColor" xml:space="preserve">
+    <value>Dummy page color</value>
+  </data>
+  <data name="BookConfig.FrameSpace" xml:space="preserve">
+    <value>Distance between pages in "@PageMode.Panorama" (pixels)</value>
+  </data>
+  <data name="BookConfig.FrameSpace.Remarks" xml:space="preserve">
+    <value>Sets the gap between page and page. Negative values ​​mean overlapping. Because each page is scaled, it is rare that there will be no gap just at 0.</value>
+  </data>
+  <data name="BookConfig.ContentsSpace" xml:space="preserve">
+    <value>Distance between pages in "@PageMode.WidePage" (pixels)</value>
+  </data>
+  <data name="BookConfig.ContentsSpace.Remarks" xml:space="preserve">
+    <value>Sets the gap between page and page. Negative values ​​mean overlapping. Because each page is scaled, it is rare that there will be no gap just at 0.</value>
   </data>
 </root>

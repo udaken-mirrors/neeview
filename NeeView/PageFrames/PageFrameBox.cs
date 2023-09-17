@@ -503,6 +503,10 @@ namespace NeeView.PageFrames
 
             switch (e.PropertyName)
             {
+                case nameof(Context.ContentsSpace):
+                    UpdateContainers(PageFrameDirtyLevel.Moderate, TransformMask.None, false, false);
+                    break;
+
                 case nameof(Context.FrameMargin):
                     FillContainers();
                     break;
@@ -693,6 +697,11 @@ namespace NeeView.PageFrames
             var current = _selected.Node;
             Debug.Assert(current is not null);
             if (current is null) return;
+            
+            if (!BookProfile.Current.CanPrioritizePageMove() && IsSelectedPageFrameLoading())
+            {
+                return;
+            }
 
             var pos = new PagePosition(current.Value.FrameRange.Top(direction.ToSign()).Index + direction.ToSign(), direction == LinkedListDirection.Next ? 0 : 1);
             var next = _containers.EnsureLatestContainerNode(pos, direction);
@@ -724,6 +733,11 @@ namespace NeeView.PageFrames
             var current = _selected.Node;
             Debug.Assert(current is not null);
             if (current is null) return;
+
+            if (!BookProfile.Current.CanPrioritizePageMove() && IsSelectedPageFrameLoading())
+            {
+                return;
+            }
 
             var pos = current.Value.FrameRange.Next(direction.ToSign());
             var next = _containers.EnsureLatestContainerNode(pos, direction);
@@ -1144,11 +1158,29 @@ namespace NeeView.PageFrames
             return null;
         }
 
-        internal void RaisePageTerminatedEvent(object? sender, int direction, bool isMedia)
+        /// <summary>
+        /// 選択ページの読み込み中判定
+        /// </summary>
+        /// <returns></returns>
+        public bool IsSelectedPageFrameLoading()
+        {
+            var pageFrameContent = GetSelectedPageFrameContent();
+            if (pageFrameContent is null) return false;
+            return pageFrameContent.GetViewContentState() < ViewContentState.Loaded;
+        }
+
+        /// <summary>
+        /// ブック終端到達イベント発行
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="direction">終端方向</param>
+        /// <param name="isMedia">メディア操作での要求。ブックメディアとページメディアを区別するため</param>
+        public void RaisePageTerminatedEvent(object? sender, int direction, bool isMedia)
         {
             if (isMedia && !_bookContext.IsMedia) return;
             PageTerminated?.Invoke(sender, new PageTerminatedEventArgs(direction));
         }
+
     }
 
     public interface ICanvasToViewTranslator

@@ -348,7 +348,7 @@ namespace NeeView
         /// </summary>
         public bool IsImage(bool includeMedia = true)
         {
-            return !this.IsDirectory && ((this.Archiver is MediaArchiver && includeMedia) || PictureProfile.Current.IsSupported(this.Link ?? this.EntryName, includeMedia));
+            return !this.IsDirectory && ((this.Archiver is MediaArchiver) || PictureProfile.Current.IsSupported(this.Link ?? this.EntryName, includeMedia));
         }
 
         /// <summary>

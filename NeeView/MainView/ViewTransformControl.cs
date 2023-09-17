@@ -138,7 +138,7 @@ namespace NeeView
         }
 
 
-        private TimeSpan ScrollDuration() => TimeSpan.FromSeconds(Config.Current.Book.ScrollDuration);
+        private TimeSpan ScrollDuration() => TimeSpan.FromSeconds(Config.Current.View.ScrollDuration);
 
         public void ScrollLeft(ViewScrollCommandParameter parameter)
         {
