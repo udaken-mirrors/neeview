@@ -13,10 +13,20 @@ namespace NeeView
     {
         public static Size DefaultSize { get; } = new(480, 640);
 
+        /// <summary>
+        /// サイズ取得前のサイズ
+        /// </summary>
+        /// <reamerks>
+        /// 直前の選択ページのサイズが保持される。
+        /// サイズ確定前のLoadingページのサイズになる。
+        /// </reamerks>
+        /// 
+        public static Size UndefinedSize { get; set; } = DefaultSize;
+
         private readonly ArchiveEntry _archiveEntry;
         private readonly BookMemoryService? _bookMemoryService;
         private PictureInfo? _pictureInfo;
-        private Size _size = DefaultSize;
+        private Size? _size;
         public PageContentState _state;
         private readonly AsyncLock _asyncLock = new();
         private CancellationTokenSource? _cancellationTokenSource;
@@ -25,7 +35,6 @@ namespace NeeView
         public PageContent(ArchiveEntry archiveEntry, BookMemoryService? bookMemoryService)
         {
             _archiveEntry = archiveEntry;
-
             _bookMemoryService = bookMemoryService;
         }
 
@@ -65,13 +74,13 @@ namespace NeeView
         /// </summary>
         public Size Size
         {
-            get => _size;
+            get => _size ?? UndefinedSize;
             protected set
             {
                 if (_size != value)
                 {
                     _size = value;
-                    Debug.Assert(_size.Width > 0);
+                    Debug.Assert(_size.Value.Width > 0);
                     SizeChanged?.Invoke(this, EventArgs.Empty);
                 }
             }
@@ -148,7 +157,7 @@ namespace NeeView
                 _bookMemoryService?.AddPageContent(this);
             }
 
-            Size = PictureInfo?.Size ?? DefaultSize;
+            Size = PictureInfo?.Size ?? UndefinedSize;
             ContentChanged?.Invoke(this, EventArgs.Empty);
         }
 

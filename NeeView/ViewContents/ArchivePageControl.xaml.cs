@@ -149,6 +149,32 @@ namespace NeeView
     }
 
 
+    public class ArchiveThumbnailSizeConverter : IMultiValueConverter
+    {
+        public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
+        {
+            var width = (double)values[0];
+            var height = (double)values[1];
+            return CalcThumbnailSize(width, height);
+        }
+
+        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+
+        public static double CaptionHeight { get; } = 100.0;
+
+        public static double CalcThumbnailSize(double width, double height)
+        {
+            var rate = 0.8;
+            var size = Math.Max(Math.Min(Math.Min(width * rate, height * rate - CaptionHeight), 512), 128);
+            return size;
+        }
+    }
+
+
+
 #if false
     /// <summary>
     /// 入力値に-0.5をかけた値にする。

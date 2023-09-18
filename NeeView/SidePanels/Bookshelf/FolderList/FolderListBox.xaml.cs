@@ -31,7 +31,7 @@ namespace NeeView
 
         static FolderListBox()
         {
-            InitialieCommandStatic();
+            InitializeCommandStatic();
         }
 
 
@@ -128,7 +128,7 @@ namespace NeeView
         public static readonly RoutedCommand OpenExternalAppDialogCommand = new("OpenExternalAppDialogCommand", typeof(FolderListBox));
         public static readonly RoutedCommand OpenInPlaylistCommand = new("OpenInPlaylistCommand", typeof(FolderListBox));
 
-        private static void InitialieCommandStatic()
+        private static void InitializeCommandStatic()
         {
             OpenCommand.InputGestures.Add(new KeyGesture(Key.Down, ModifierKeys.Alt));
             OpenBookCommand.InputGestures.Add(new KeyGesture(Key.Enter));

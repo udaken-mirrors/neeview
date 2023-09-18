@@ -258,6 +258,7 @@ namespace NeeView
                 case DataState.Loaded:
                     Debug.WriteLine($"CreateContent.Loaded: {ArchiveEntry}");
                     Debug.Assert(data.Data is not null);
+                    PageContent.UndefinedSize = this.Page.Content.Size;
                     return new ViewContentData(CreateLoadedContent(data.Data), ViewContentState.Loaded);
 
                 case DataState.Failed:

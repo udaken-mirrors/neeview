@@ -1,27 +1,63 @@
-﻿<UserControl x:Class="NeeView.ArchivePageControl" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:properties="clr-namespace:NeeView.Properties"
-        xmlns:local="clr-namespace:NeeView" mc:Ignorable="d" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" d:DesignWidth="480" d:DesignHeight="640">
+﻿<UserControl x:Class="NeeView.ArchivePageControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:properties="clr-namespace:NeeView.Properties"
+             xmlns:local="clr-namespace:NeeView"
+             mc:Ignorable="d"
+             VerticalAlignment="Stretch" HorizontalAlignment="Stretch"
+             d:DesignWidth="480" d:DesignHeight="640">
 
     <UserControl.Resources>
         <local:ImageSourceToThumbnailConverter x:Key="ImageSourceToThumbnailConverter" />
+        <local:ArchiveThumbnailSizeConverter x:Key="ArchiveThumbnailSizeConverter" />
         <SolidColorBrush x:Key="DefaultBrush" Color="White" />
+        <SolidColorBrush x:Key="LocalForeground" Color="#F222"/>
+
+        <DrawingImage x:Key="fic_folder">
+            <DrawingImage.Drawing>
+                <GeometryDrawing>
+                    <GeometryDrawing.Pen>
+                        <Pen Brush="{StaticResource LocalForeground}" Thickness="1.25"></Pen>
+                    </GeometryDrawing.Pen>
+                    <GeometryDrawing.Geometry>
+                        <PathGeometry FillRule="Nonzero" Figures="M0,0 L14,0 14,10 16,12 16,18, 0,18Z M14,10 L13,12 13,18"/>
+                    </GeometryDrawing.Geometry>
+                </GeometryDrawing>
+            </DrawingImage.Drawing>
+        </DrawingImage>
     </UserControl.Resources>
 
 
-    <Border x:Name="Root"  Background="#FFE8E8E8" Margin="0" CornerRadius="0" BorderThickness="2" BorderBrush="Black">
+    <Border x:Name="Root" Margin="0" CornerRadius="0" BorderThickness="0" BorderBrush="Black" Background="White">
 
-        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10">
-            <Grid x:Name="OpenBookButton" HorizontalAlignment="Center" Margin="20" Cursor="Hand"
+        <Grid Margin="10">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="3*"/>
+                <RowDefinition Height="1*" />
+            </Grid.RowDefinitions>
+
+            <Grid x:Name="OpenBookButton" Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="10" Cursor="Hand"
                     MouseLeftButtonDown="OpenBookButton_MouseLeftButtonDown" MouseLeftButtonUp="OpenBookButton_MouseLeftButtonUp" MouseRightButtonUp="OpenBookButton_MouseRightButtonUp" 
                     PreviewStylusDown="OpenBookButton_PreviewStylusDown" PreviewStylusUp="OpenBookButton_PreviewStylusUp" MouseEnter="OpenBookButton_MouseEnter" MouseLeave="OpenBookButton_MouseLeave">
+                <Grid.Width>
+                    <MultiBinding Converter="{StaticResource ArchiveThumbnailSizeConverter}">
+                        <Binding ElementName="Root" Path="ActualWidth" />
+                        <Binding ElementName="Root" Path="ActualHeight" />
+                    </MultiBinding>
+                </Grid.Width>
+                <Grid.Height>
+                    <Binding RelativeSource="{RelativeSource Self}" Path="Width"/>
+                </Grid.Height>
 
-                <Ellipse Width="256" Height="256" >
+                <Ellipse >
                     <Ellipse.Fill>
                         <ImageBrush ImageSource="{Binding Thumbnail.ImageSource, Converter={StaticResource ImageSourceToThumbnailConverter}}" Stretch="UniformToFill"/>
                     </Ellipse.Fill>
                 </Ellipse>
 
-                <Ellipse Width="256" Height="256" StrokeThickness="8" Fill="Transparent">
+                <Ellipse StrokeThickness="8" Fill="Transparent">
                     <Ellipse.Style>
                         <Style TargetType="Ellipse">
                             <Setter Property="Stroke" Value="{DynamicResource Thumbnail.Background}" />
@@ -33,11 +69,16 @@
                         </Style>
                     </Ellipse.Style>
                 </Ellipse>
+
             </Grid>
 
-            <TextBlock x:Name="FileNameTextBlock" Text="{Binding Name}" TextWrapping="Wrap" FontSize="{DynamicResource SystemFontSizeLarge}" MinHeight="80"
-                HorizontalAlignment="Center" Margin="0,8" Foreground="#F222" />
-        </StackPanel>
+            <Grid Margin="0,10" Grid.Row="1" VerticalAlignment="Top">
+                <DockPanel HorizontalAlignment="Center" VerticalAlignment="Top" >
+                    <Image Source="{StaticResource fic_folder}" Width="24" Height="24" Margin="8" VerticalAlignment="Center"/>
+                    <TextBlock x:Name="FileNameTextBlock" Text="{Binding Name}" TextWrapping="Wrap" FontSize="{DynamicResource SystemFontSizeLarge}" Foreground="{StaticResource LocalForeground}" VerticalAlignment="Center" />
+                </DockPanel>
+            </Grid>
+        </Grid>
     </Border>
 
 </UserControl>

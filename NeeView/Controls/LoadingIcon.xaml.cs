@@ -54,7 +54,7 @@ namespace NeeView
             if (IsLoading)
             {
                 var ani = new DoubleAnimation(1, TimeSpan.FromSeconds(0.5));
-                ani.BeginTime = TimeSpan.FromSeconds(1.0);
+                ani.BeginTime = TimeSpan.FromSeconds(0.0); // 1.0
                 this.NowLoadingMark.BeginAnimation(UIElement.OpacityProperty, ani, HandoffBehavior.SnapshotAndReplace);
 
                 var aniRotate = new DoubleAnimation();

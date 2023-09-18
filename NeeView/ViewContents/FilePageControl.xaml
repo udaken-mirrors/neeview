@@ -5,21 +5,49 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:NeeView"
              mc:Ignorable="d" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" d:DesignWidth="480" d:DesignHeight="640">
-    <Border x:Name="Root"  Background="#FFE8E8E8" Margin="0" BorderThickness="2" BorderBrush="Black">
-        <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Margin="10">
-            <Grid VerticalAlignment="Center" HorizontalAlignment="Center" Margin="20">
-                <Ellipse Width="256" Height="256" Fill="Gray" HorizontalAlignment="Center" />
-                <TextBlock x:Name="IconTextBlock" Text="2" FontFamily="Wingdings" FontSize="128" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="#FFFFFFFF"/>
-            </Grid>
-            <TextBlock x:Name="FileNameTextBlock" Text="FileName" HorizontalAlignment="Center" TextWrapping="Wrap" Margin="0,8"
+    <UserControl.Resources>
+        <SolidColorBrush x:Key="DefaultBrush" Color="White" />
+        <SolidColorBrush x:Key="LocalForeground" Color="#F222"/>
+        <local:ArchiveThumbnailSizeConverter x:Key="ArchiveThumbnailSizeConverter" />
+    </UserControl.Resources>
+
+    <Border x:Name="Root"  Background="White" Margin="0" BorderThickness="0" BorderBrush="Black">
+
+            <Grid Margin="10">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="3*"/>
+                    <RowDefinition Height="1*" />
+                </Grid.RowDefinitions>
+
+                <Grid Grid.Row="0" VerticalAlignment="Bottom" HorizontalAlignment="Center" Margin="10">
+                    <Ellipse Fill="Gray" HorizontalAlignment="Center" >
+                        <Ellipse.Width>
+                            <MultiBinding Converter="{StaticResource ArchiveThumbnailSizeConverter}">
+                                <Binding ElementName="Root" Path="ActualWidth" />
+                                <Binding ElementName="Root" Path="ActualHeight" />
+                            </MultiBinding>
+                        </Ellipse.Width>
+                        <Ellipse.Height>
+                            <Binding RelativeSource="{RelativeSource Self}" Path="Width"/>
+                        </Ellipse.Height>
+                    </Ellipse>
+                    <TextBlock x:Name="IconTextBlock" Text="2" FontFamily="Wingdings" FontSize="128" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White"/>
+                </Grid>
+                
+                <StackPanel Grid.Row="1" VerticalAlignment="Top" Margin="0,10" MinHeight="80">
+                    <Grid MinHeight="40">
+                        <TextBlock x:Name="FileNameTextBlock" Text="FileName" HorizontalAlignment="Center" VerticalAlignment="Center" TextWrapping="Wrap" 
                        FontSize="{DynamicResource SystemFontSizeLarge}"
-                       Foreground="#F222"/>
-            <TextBlock x:Name="MessageTextBlock" Text="Message Message Message" HorizontalAlignment="Center" TextWrapping="Wrap"
+                       Foreground="{StaticResource LocalForeground}"/>
+                    </Grid>
+                    <TextBlock x:Name="MessageTextBlock" Margin="0,8,0,0" Text="Message Message Message" HorizontalAlignment="Center" TextWrapping="Wrap"
                        FontSize="{DynamicResource SystemFontSizeLarge}"
-                       Foreground="#F222"/>
-            <!--
+                       Foreground="{StaticResource LocalForeground}"/>
+                    <!--
                        Foreground="{Binding DefaultBrush, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:FilePageControl}}}"/>
-            -->
-        </StackPanel>
+                     -->
+                </StackPanel>
+
+            </Grid>
     </Border>
 </UserControl>

@@ -35,6 +35,7 @@ namespace NeeView
 
             var loading = new LoadingIcon()
             {
+                Foreground = Brushes.LightGray,
                 HorizontalAlignment = HorizontalAlignment.Center,
             };
             stackPanel.Children.Add(loading);
