@@ -37,7 +37,6 @@ namespace NeeView
 
         [Obsolete("no used"), Alternative(null, 40)] // ver.40
         [JsonIgnore]
-        [PropertyRange(0, 16, TickFrequency = 1, IsEditable = true), DefaultValue(8.0)]
         public double MaximizeWindowGapWidth
         {
             get { return _maximizeWindowGapWidth; }

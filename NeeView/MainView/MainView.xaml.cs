@@ -389,13 +389,6 @@ namespace NeeView
             }
         }
 
-        [Obsolete("no used")]
-        public void UpdateViewSize()
-        {
-            //var window = Window.GetWindow(this);
-            //if (window is null) return;
-        }
-
         #endregion SizeChanged
     }
 }

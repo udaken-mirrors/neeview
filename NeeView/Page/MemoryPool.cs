@@ -40,13 +40,6 @@ namespace NeeView
             GC.SuppressFinalize(this);
         }
 
-
-        [Obsolete]
-        public void SetReference(int index)
-        {
-            // nop
-        }
-
         public void Add(IMemoryElement element)
         {
             lock (_lock)

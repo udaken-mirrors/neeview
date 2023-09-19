@@ -188,43 +188,6 @@ namespace NeeView
             get { return _isOrderWithoutFileType; }
             set { SetProperty(ref _isOrderWithoutFileType, value); }
         }
-
-
-
-        #region 非公開パラメーター
-
-
-#if false
-        /// <summary>
-        /// ページリストをドッキング
-        /// </summary>
-        [Obsolete] // ver.38
-        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
-        public bool IsPageListDocked
-        {
-            get { return _isPlacedInBookshelf; }
-            set { SetProperty(ref _isPlacedInBookshelf, value); }
-        }
-
-        [Obsolete] // ver.38
-        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
-        public bool IsPageListVisible
-        {
-            get { return _isPageListVisible; }
-            set { SetProperty(ref _isPageListVisible, value); }
-        }
-
-        [Obsolete] // ver.38
-        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
-        public GridLength GridLength0 { get; set; } = new GridLength(1, GridUnitType.Star);
-
-        [Obsolete] // ver.38
-        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
-        public GridLength GridLength2 { get; set; } = new GridLength(1, GridUnitType.Star);
-#endif
-
-        #endregion
-
     }
 
 }

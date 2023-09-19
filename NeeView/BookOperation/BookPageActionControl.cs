@@ -75,36 +75,6 @@ namespace NeeView
             _bookControl.ReLoad();
         }
 
-#if false
-        /// <summary>
-        /// ブックの再読み込み
-        /// </summary>
-        [Obsolete("Bookに対する操作")]
-        private void ReLoad()
-        {
-            var book = _book;
-            if (book is null) return;
-
-            var viewPage = book.Viewer.GetViewPage();
-            var page = book.Pages.GetValidPage(viewPage);
-            BookHub.Current.RequestReLoad(this, page?.EntryName);
-        }
-
-        /// <summary>
-        /// 削除された可能性のあるページの処理
-        /// </summary>
-        /// <remarks>
-        /// 主にドラッグ処理の後始末
-        /// </remarks>
-        /// <param name="pages">削除された可能性のあるページ</param>
-        [Obsolete]
-        private void ValidateRemoveFile(IEnumerable<Page> pages)
-        {
-            if (pages.All(e => e.Entry.Exists())) return;
-            ReLoad();
-        }
-#endif
-
         #endregion ページ削除
 
         #region ページ出力

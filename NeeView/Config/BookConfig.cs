@@ -174,7 +174,7 @@ namespace NeeView
         /// <summary>
         /// ページ移動命令重複許可
         /// </summary>
-        [Obsolete("no used")] // ver.40 // TODO: Waring
+        [Obsolete("no used")] // ver.40
         [JsonIgnore]
         public bool IsMultiplePageMove
         {

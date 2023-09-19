@@ -7,16 +7,6 @@ using System.Threading.Tasks;
 
 namespace NeeView
 {
-    [Obsolete("no used")]
-    public enum BackgroundStyleV1
-    {
-        Black,
-        White,
-        Auto,
-        Check,
-        Custom,
-    }
-
     /// <summary>
     /// 背景の種類
     /// </summary>

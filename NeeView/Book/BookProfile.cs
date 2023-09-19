@@ -12,23 +12,6 @@ using System.Windows;
 namespace NeeView
 {
     /// <summary>
-    /// ページの準備中に表示するもの
-    /// </summary>
-    [Obsolete("no used")]
-    public enum LoadingPageView
-    {
-        [AliasName]
-        None,
-
-        [AliasName]
-        PreThumbnail,
-
-        [AliasName]
-        PreImage,
-    }
-
-
-    /// <summary>
     /// 本：設定
     /// </summary>
     public class BookProfile : BindableBase

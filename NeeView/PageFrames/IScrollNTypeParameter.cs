@@ -53,8 +53,6 @@ namespace NeeView.PageFrames
     {
         public NScrollType ScrollType { get; set; } = NScrollType.NType;
         public double Scroll { get; set; } = 1.0;
-        [Obsolete]
-        public double ScrollDuration { get; set; } = 0.2;
         public double LineBreakStopTime { get; set; }
         public double EndMargin { get; set; } = 10.0;
     }

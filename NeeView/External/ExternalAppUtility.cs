@@ -9,19 +9,6 @@ using System.Threading.Tasks;
 
 namespace NeeView
 {
-    // プログラムの種類
-    [Obsolete("no used")]
-    public enum ExternalProgramType
-    {
-        [AliasName]
-        Normal,
-
-        [AliasName]
-        Protocol,
-    }
-
-
-
     // 外部アプリ起動
     public class ExternalAppUtility
     {

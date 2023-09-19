@@ -19,12 +19,6 @@ namespace NeeView
             return (PageReadOrder)(((int)mode + 1) % Enum.GetNames(typeof(PageReadOrder)).Length);
         }
 
-        [Obsolete]
-        public static int ToDirection(this PageReadOrder mode)
-        {
-            return mode == PageReadOrder.LeftToRight ? -1 : 1;
-        }
-
         public static int ToSign(this PageReadOrder self)
         {
             return self == PageReadOrder.LeftToRight ? 1 : -1;

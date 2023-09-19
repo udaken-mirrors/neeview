@@ -23,12 +23,6 @@ namespace NeeView
         /// 改行遅延時間
         /// </summary>
         double LineBreakStopTime { get; set; }
-
-        /// <summary>
-        /// スクロール時間
-        /// </summary>
-        //[Obsolete("Use nv.Config.Book.ScrollDuration")] // 40.0
-        //double ScrollDuration { get; set; }
     }
 
 }

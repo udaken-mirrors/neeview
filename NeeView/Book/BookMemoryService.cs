@@ -44,14 +44,6 @@ namespace NeeView
             GC.SuppressFinalize(this);
         }
 
-
-        [Obsolete]
-        public void SetReference(int index)
-        {
-            _contentPool.SetReference(index);
-            _pictureSourcePool.SetReference(index);
-        }
-
         public void AddPageContent(IMemoryElement content)
         {
             if (_disposedValue) return;

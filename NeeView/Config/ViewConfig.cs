@@ -233,9 +233,17 @@ namespace NeeView
 
         #region Obsolete
 
-        [Obsolete("no used (This is typo.)"), Alternative("MainViewMargin", 40)] // ver.40 // TODO: Warning
-        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+        [Obsolete("Typo"), Alternative(nameof(MainViewMargin), 40)] // ver.40
+        [JsonIgnore]
         public double MainViewMergin
+        {
+            get { return MainViewMargin; }
+            set { MainViewMargin = value; }
+        }
+
+        [Obsolete("Typo json interface"), PropertyMapIgnore]
+        [JsonPropertyName(nameof(MainViewMergin)), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+        public double MainViewMergin_Typo
         {
             get { return 0.0; }
             set { MainViewMargin = value; }

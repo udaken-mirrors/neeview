@@ -94,33 +94,6 @@ namespace NeeView
         }
     }
 
-    /// <summary>
-    /// 結合コマンド
-    /// </summary>
-    [Obsolete]
-    internal class BookCommandJoinAction : BookCommand
-    {
-        private readonly Func<object?, int, CancellationToken, Task> _taskAction;
-        private int _value;
-
-        public BookCommandJoinAction(object? sender, Func<object?, int, CancellationToken, Task> taskAction, int value, int priority) : base(sender, priority)
-        {
-            _taskAction = taskAction;
-            _value = value;
-        }
-
-        protected override async Task OnExecuteAsync(CancellationToken token)
-        {
-            await _taskAction(_sender, _value, token);
-        }
-
-        public void Join(BookCommandJoinAction other)
-        {
-            _value += other._value;
-        }
-    }
-
-
 
     /// <summary>
     /// Bookコマンドエンジン
@@ -130,43 +103,5 @@ namespace NeeView
         public BookCommandEngine() : base(nameof(BookCommandEngine))
         {
         }
-
-        public BookCommandEngine(string name) : base(name)
-        {
-        }
-
-#if false
-        protected override Queue<IJob> Enqueue(IJob job, Queue<IJob> queue)
-        {
-            Debug.Assert(job is BookCommand);
-            Debug.Assert(queue is not null);
-
-            if (job is not BookCommand request) return queue;
-
-            Debug.Assert(queue.Count <= 1);
-            var select = queue.Count > 0 ? (BookCommand)queue.Peek() : null;
-
-            if (select is null)
-            {
-                select = request;
-            }
-            // TODO: たまたまBookCommandJoinActionを使っている命令が一種類だけだったのでうまくいっているだけ。要修正
-            else if (BookProfile.Current.CanMultiplePageMove()
-                && request is BookCommandJoinAction requestJoinable
-                && select is BookCommandJoinAction selectJoinable)
-            {
-                selectJoinable.Join(requestJoinable);
-            }
-            else
-            {
-                select = request.Priority >= select.Priority ? request : select;
-            }
-
-            queue.Clear();
-            queue.Enqueue(select);
-
-            return queue;
-        }
-#endif
     }
 }

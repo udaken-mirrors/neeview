@@ -8,7 +8,6 @@ namespace NeeView
 {
     public static class UserSettingValidator
     {
-
 #pragma warning disable CS0612, CS0618 // 型またはメンバーが旧型式です
 
         /// <summary>
@@ -76,6 +75,7 @@ namespace NeeView
                     self.Config.Panels.LeftPanelSeleted = null;
                     self.Config.Panels.RightPanelSeleted = null;
                 }
+
                 Debug.WriteLine($"PanelLayout done");
 
                 self.Commands?.ValidateRename(CommandNameValidator.RenameMap_38_0_0);

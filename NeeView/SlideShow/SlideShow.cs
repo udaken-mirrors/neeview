@@ -131,15 +131,6 @@ namespace NeeView
             IsPlayingSlideShow = _isPlayingSlideShowMemento;
         }
 
-        /// <summary>
-        /// 次のスライドへ移動：スライドショー専用
-        /// </summary>
-        //[Obsolete]
-        //private void NextSlide()
-        //{
-        //    BookOperation.Current.NextSlide(this);
-        //}
-
         private void UpdateTimerInterval()
         {
             if (_disposedValue) return;
