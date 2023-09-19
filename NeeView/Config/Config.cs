@@ -111,21 +111,12 @@ namespace NeeView
 
         #region Obsolete
 
-        [Obsolete("no used")]
-        private PagemarkConfig? _pagemark = new();
-
         [Obsolete("no used"), Alternative(nameof(Playlist), 39)] // ver.39
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-        public PagemarkConfig? Pagemark
+        public string? Pagemark
         {
             get { return null; }
-            set { _pagemark = value; }
-        }
-
-        [Obsolete("no used"), PropertyMapIgnore]
-        public PagemarkConfig? PagemarkLegacy
-        {
-            get { return _pagemark; }
+            set { }
         }
 
         #endregion

@@ -137,7 +137,6 @@ namespace NeeView
             ImportUserSetting();
             ImportHistory();
             ImportBookmark();
-            ImportPagemark();
             ImportPlaylists();
             ImportThemes();
             ImportScripts();
@@ -214,38 +213,6 @@ namespace NeeView
             {
                 BookmarkCollection.Current.Restore(bookmark);
                 SaveDataSync.SaveBookmark(true, true);
-            }
-        }
-
-        public void ImportPagemark()
-        {
-            if (!this.IsPagemarkEnabled) return;
-
-#pragma warning disable CS0612, CS0618 // 型またはメンバーが旧型式です
-            PagemarkCollection.Memento? pagemark = null;
-
-            if (_pagemarkEntry != null)
-            {
-                using (var stream = _pagemarkEntry.Open())
-                {
-                    pagemark = PagemarkCollection.Memento.Load(stream);
-                }
-            }
-#pragma warning restore CS0612, CS0618 // 型またはメンバーが旧型式です
-
-            if (pagemark != null)
-            {
-                if (string.IsNullOrEmpty(Config.Current.Playlist.PagemarkPlaylist))
-                {
-                    return;
-                }
-
-                PagemarkToPlaylistConverter.SavePagemarkPlaylist(pagemark);
-
-                if (PlaylistHub.Current.SelectedItem == Config.Current.Playlist.DefaultPlaylist && PlaylistHub.Current.Playlist.Items?.Any() != true)
-                {
-                    PlaylistHub.Current.SelectedItem = Config.Current.Playlist.PagemarkPlaylist;
-                }
             }
         }
 

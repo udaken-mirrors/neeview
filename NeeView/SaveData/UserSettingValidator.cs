@@ -98,11 +98,6 @@ namespace NeeView
                     self.Config.Fonts.FolderTreeFontScale = self.Config.Panels.FolderTreeFontSize_Legacy / SystemVisualParameters.Current.MessageFontSize;
                 }
 
-                if (self.Config.PagemarkLegacy != null)
-                {
-                    self.Config.Playlist.PanelListItemStyle = self.Config.PagemarkLegacy.PanelListItemStyle;
-                }
-
                 self.Config.Panels.Layout?.ValidateRename("PagemarkPanel", nameof(PlaylistPanel));
 
                 switch (self.Config.System.Language)
