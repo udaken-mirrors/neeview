@@ -174,7 +174,7 @@ namespace NeeView
         /// <summary>
         /// ページ移動命令重複許可
         /// </summary>
-        [Obsolete("no used")] // ver.40
+        [Obsolete("no used"), Alternative(null, 40, ScriptErrorLevel.Info)] // ver.40
         [JsonIgnore]
         public bool IsMultiplePageMove
         {

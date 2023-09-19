@@ -233,7 +233,7 @@ namespace NeeView
 
         #region Obsolete
 
-        [Obsolete("Typo"), Alternative(nameof(MainViewMargin), 40)] // ver.40
+        [Obsolete("Typo"), Alternative(nameof(MainViewMargin), 40, ScriptErrorLevel.Info)] // ver.40
         [JsonIgnore]
         public double MainViewMergin
         {

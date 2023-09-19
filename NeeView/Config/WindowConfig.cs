@@ -11,7 +11,6 @@ namespace NeeView
     public class WindowConfig : BindableBase
     {
         private bool _isTopmost = false;
-        private double _maximizeWindowGapWidth = 8.0;
         private WindowStateEx _state;
         private bool _isCaptionEmulateInFullScreen;
         private bool _mouseActivateAndEat;
@@ -35,13 +34,6 @@ namespace NeeView
             set { SetProperty(ref _isCaptionEmulateInFullScreen, value); }
         }
 
-        [Obsolete("no used"), Alternative(null, 40)] // ver.40
-        [JsonIgnore]
-        public double MaximizeWindowGapWidth
-        {
-            get { return _maximizeWindowGapWidth; }
-            set { SetProperty(ref _maximizeWindowGapWidth, value); }
-        }
 
         [PropertyMember]
         public bool MouseActivateAndEat
@@ -125,6 +117,14 @@ namespace NeeView
         public bool IsCaptionVisible
         {
             get { return false; }
+            set { }
+        }
+
+        [Obsolete("no used"), Alternative(null, 40, ScriptErrorLevel.Info)] // ver.40
+        [JsonIgnore]
+        public double MaximizeWindowGapWidth
+        {
+            get { return 0.0; }
             set { }
         }
 

@@ -25,11 +25,18 @@ namespace NeeView
 
         public void Throw(Exception ex)
         {
+            Throw(ex, ScriptErrorLevel.Error);
+        }
+
+        public void Throw(Exception ex, ScriptErrorLevel errorLevel)
+        {
             var _engine = JavascriptEngineMap.Current.GetCurrentEngine();
 
             var message = _engine.CreateScriptErrorMessage(ex);
 
-            switch (Config.Current.Script.ErrorLevel)
+            var level = Config.Current.Script.ErrorLevel < errorLevel ? Config.Current.Script.ErrorLevel : errorLevel;
+
+            switch (level)
             {
                 case ScriptErrorLevel.Info:
                     ConsoleWindowManager.Current.InforMessage(message.ToString(), false);

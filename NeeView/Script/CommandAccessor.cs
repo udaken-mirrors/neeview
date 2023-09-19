@@ -17,7 +17,7 @@ namespace NeeView
         {
             _command = command;
             _accessDiagnostics = accessDiagnostics ?? throw new System.ArgumentNullException(nameof(accessDiagnostics));
-            Parameter = _command.Parameter != null ? new PropertyMap(_command.Parameter, _accessDiagnostics, $"nv.Command.{_command.Name}.Parameter") : null;
+            Parameter = _command.Parameter != null ? new PropertyMap($"nv.Command.{_command.Name}.Parameter", _command.Parameter, _accessDiagnostics) : null;
         }
 
 

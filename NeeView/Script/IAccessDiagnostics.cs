@@ -12,6 +12,8 @@ namespace NeeView
         object? Throw(Exception ex, Type type);
 
         void Throw(Exception ex);
+
+        void Throw(Exception ex, ScriptErrorLevel errorLevel);
     }
 
 }

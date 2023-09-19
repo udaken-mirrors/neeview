@@ -37,7 +37,7 @@ namespace NeeView
 
         #region Obsolete
 
-        [Obsolete("no used"), Alternative("nv.Config.Book.ScrollDuration", 40, IsFullName = true)] // ver.40
+        [Obsolete("no used"), Alternative("nv.Config.View.ScrollDuration", 40, ScriptErrorLevel.Warning, IsFullName = true)] // ver.40
         [JsonIgnore(Condition = JsonIgnoreCondition.Always)]
         public double ScrollDuration
         {

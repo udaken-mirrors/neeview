@@ -21,6 +21,11 @@ namespace NeeView
         {
             throw ex;
         }
+
+        public void Throw(Exception ex, ScriptErrorLevel errorLevel)
+        {
+            throw ex;
+        }
     }
 
 }

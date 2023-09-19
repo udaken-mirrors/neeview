@@ -337,24 +337,14 @@ namespace NeeView
         {
             var propertyMap = (PropertyMap)source;
             var node = propertyMap.GetNode(key);
-            return node switch
-            {
-                PropertyMap _ or PropertyMapSource _ => null,
-                PropertyMapObsolete propertyObsolete => propertyObsolete.Obsolete,
-                _ => throw new NotSupportedException(),
-            };
+            return node.Obsolete;
         }
 
         private static AlternativeAttribute? GetPropertyMapValueAlternative(object source, string key)
         {
             var propertyMap = (PropertyMap)source;
             var node = propertyMap.GetNode(key);
-            return node switch
-            {
-                PropertyMap _ or PropertyMapSource _ => null,
-                PropertyMapObsolete propertyObsolete => propertyObsolete.Alternative,
-                _ => throw new NotSupportedException(),
-            };
+            return node.Alternative;
         }
 
         private static Type GetPropertyMapValueType(object source, string key)
@@ -365,7 +355,6 @@ namespace NeeView
             {
                 PropertyMap _ => typeof(PropertyMap),
                 PropertyMapSource propertySource => propertySource.PropertyInfo.PropertyType,
-                PropertyMapObsolete propertyObsolete => propertyObsolete.PropertyType,
                 _ => throw new NotSupportedException(),
             };
         }
@@ -378,7 +367,6 @@ namespace NeeView
             {
                 PropertyMap propertyMap_ => propertyMap_,
                 PropertyMapSource propertySource => propertySource.GetValue(),
-                PropertyMapObsolete propertyObsolete => propertyObsolete.PropertyType.GetDefaultValue(),
                 _ => throw new NotSupportedException(),
             };
         }

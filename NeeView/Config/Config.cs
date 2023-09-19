@@ -125,18 +125,10 @@ namespace NeeView
 
         // 誤字修正 (WindowTittle -> WindowTitle)
         [Obsolete("Typo"), Alternative(nameof(WindowTitle), 39)] // ver.39
-        [JsonIgnore]
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         public WindowTitleConfig? WindowTittle
         {
             get { return this.WindowTitle; }
-            set { if (value is not null) this.WindowTitle = value; }
-        }
-
-        [Obsolete("Typo json interface"), PropertyMapIgnore]
-        [JsonPropertyName(nameof(WindowTittle)), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
-        public WindowTitleConfig? WindowTittle_Typo
-        {
-            get { return null; }
             set { if (value is not null) this.WindowTitle = value; }
         }
 

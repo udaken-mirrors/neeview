@@ -9,10 +9,17 @@ namespace NeeView
     public class AlternativeAttribute : Attribute
     {
         public AlternativeAttribute(string? alternative, int version)
+            : this(alternative, version, ScriptErrorLevel.Error)
+        {
+        }
+
+        public AlternativeAttribute(string? alternative, int version, ScriptErrorLevel errorLevel)
         {
             Alternative = alternative;
             Version = version;
+            ErrorLevel = errorLevel;
         }
+
 
         /// <summary>
         /// 代替案
@@ -31,5 +38,10 @@ namespace NeeView
         /// 適用されたバージョン
         /// </summary>
         public int Version { get; }
+
+        /// <summary>
+        /// エラーレベル
+        /// </summary>
+        public ScriptErrorLevel ErrorLevel { get; set; } = ScriptErrorLevel.Error;
     }
 }

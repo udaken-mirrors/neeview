@@ -207,8 +207,8 @@ namespace NeeView
         }
 
         [Obsolete("no used"), Alternative(null, 38)] // ver.38
-        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
-        public Dictionary<string, PanelDock>? PanelDocks { get; set; }
+        [JsonIgnore]
+        public string? PanelDocks { get; set; }
 
         [Obsolete("no used"), Alternative(null, 38)] // ver.38
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]

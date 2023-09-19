@@ -84,7 +84,7 @@ namespace NeeView
             }
             else if (source is PropertyMap propertyMap)
             {
-                return AppendDictionary(builder, propertyMap.Where(e => e.Value is not PropertyMapObsolete).ToDictionary(e => e.Key, e => propertyMap.GetValue(e.Value)), depth);
+                return AppendDictionary(builder, propertyMap.Where(e => !e.Value.IsObsolete).ToDictionary(e => e.Key, e => propertyMap.GetValue(e.Value)), depth);
             }
             else if (source is CommandAccessorMap commandMap)
             {

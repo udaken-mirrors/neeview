@@ -4,7 +4,7 @@
     {
         public ConfigMap(IAccessDiagnostics? accessDiagnostics)
         {
-            Map = new PropertyMap(NeeView.Config.Current, accessDiagnostics, "nv.Config");
+            Map = new PropertyMap("nv.Config", NeeView.Config.Current, accessDiagnostics);
 
             // エクスプローラーのコンテキストメニューへの追加フラグ
             if (Environment.IsZipLikePackage)

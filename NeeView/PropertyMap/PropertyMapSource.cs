@@ -1,4 +1,6 @@
 ﻿using NeeView.Windows.Property;
+using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
@@ -9,7 +11,8 @@ namespace NeeView
     {
         private readonly string? _prefix;
 
-        public PropertyMapSource(object source, PropertyInfo property, PropertyMapConverter converter, string? prefix)
+        public PropertyMapSource(string name, ObsoleteAttribute? obsolete, AlternativeAttribute? alternative, object source, PropertyInfo property, PropertyMapConverter converter, string? prefix)
+            : base(name, obsolete, alternative)
         {
             Source = source;
             PropertyInfo = property;

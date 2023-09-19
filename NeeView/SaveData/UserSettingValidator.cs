@@ -42,41 +42,7 @@ namespace NeeView
                 }
                 Debug.WriteLine($"ValidateShortCutKey done.");
 
-                Debug.WriteLine($"PanelLayout...");
-                if (self.Config.Panels.PanelDocks != null)
-                {
-                    var layout = new LayoutPanelManager.Memento();
-                    layout.Panels = self.Config.Panels.PanelDocks.Keys.ToDictionary(e => e, e => LayoutPanel.Memento.Default);
-
-                    layout.Docks = new Dictionary<string, LayoutDockPanelContent.Memento>
-                    {
-                        {
-                            "Left",
-                            new LayoutDockPanelContent.Memento()
-                            {
-                                Panels = self.Config.Panels.PanelDocks.Where(e => e.Value == PanelDock.Left).Select(e => e.Key).Select(e => new List<string> { e }).ToList(),
-                                SelectedItem = self.Config.Panels.LeftPanelSeleted,
-                            }
-                        },
-                        {
-                            "Right",
-                            new LayoutDockPanelContent.Memento()
-                            {
-                                Panels = self.Config.Panels.PanelDocks.Where(e => e.Value == PanelDock.Right).Select(e => e.Key).Select(e => new List<string> { e }).ToList(),
-                                SelectedItem = self.Config.Panels.RightPanelSeleted,
-                            }
-                        }
-                    };
-
-                    self.Config.Panels.Layout = layout;
-
-                    // 古い設定を無効化
-                    self.Config.Panels.PanelDocks = null;
-                    self.Config.Panels.LeftPanelSeleted = null;
-                    self.Config.Panels.RightPanelSeleted = null;
-                }
-
-                Debug.WriteLine($"PanelLayout done");
+                // NOTE: Config.Panels.PanelDocks は継承しません。
 
                 self.Commands?.ValidateRename(CommandNameValidator.RenameMap_38_0_0);
                 self.ContextMenu?.ValidateRename(CommandNameValidator.RenameMap_38_0_0);

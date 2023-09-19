@@ -60,13 +60,13 @@ namespace NeeView
         private readonly PropertyMapOptions _options;
         private readonly IAccessDiagnostics _accessDiagnostics;
 
-
-        public PropertyMap(object source, IAccessDiagnostics? accessDiagnostics, string prefix)
-            : this(source, accessDiagnostics, prefix, null, null)
+        public PropertyMap(string name, object source, IAccessDiagnostics? accessDiagnostics)
+            : this(name, null, null, source, accessDiagnostics, "", null)
         {
         }
 
-        public PropertyMap(object source, IAccessDiagnostics? accessDiagnostics, string prefix, string? label, PropertyMapOptions? options)
+        public PropertyMap(string name, ObsoleteAttribute? obsolete, AlternativeAttribute? alternative, object source, IAccessDiagnostics? accessDiagnostics, string label, PropertyMapOptions? options)
+            : base(name, obsolete, alternative)
         {
             _source = source;
             _accessDiagnostics = accessDiagnostics ?? new DefaultAccessDiagnostics();
@@ -82,28 +82,25 @@ namespace NeeView
                 var nameAttribute = (PropertyMapNameAttribute?)property.GetCustomAttribute(typeof(PropertyMapNameAttribute));
                 var key = nameAttribute?.Name ?? property.Name;
                 var converter = _options.Converters.FirstOrDefault(e => e.CanConvert(property.PropertyType));
+                var itemName = name + "." + key;
 
-                var obsolete = (ObsoleteAttribute?)property.GetCustomAttribute(typeof(ObsoleteAttribute));
-                if (obsolete != null)
-                {
-                    ////Debug.WriteLine($"[OBSOLETE] {prefix}.{key}: {obsolete.Message}");
-                    var alternative = property.GetCustomAttribute<AlternativeAttribute>();
-                    _items.Add(key, new PropertyMapObsolete(prefix + "." + key, property.PropertyType, obsolete.Message, obsolete, alternative));
-                }
-                else if (converter == null && property.PropertyType.IsClass && property.PropertyType != typeof(string))
+                var obsoleteAttribute = (ObsoleteAttribute?)property.GetCustomAttribute(typeof(ObsoleteAttribute));
+                var alternativeAttribute = property.GetCustomAttribute<AlternativeAttribute>();
+
+                if (converter == null && property.PropertyType.IsClass && property.PropertyType != typeof(string))
                 {
                     var propertyValue = property.GetValue(_source) ?? throw new InvalidOperationException();
                     var labelAttribute = (PropertyMapLabelAttribute?)property.GetCustomAttribute(typeof(PropertyMapLabelAttribute));
-                    var newPrefix = prefix + "." + key;
                     var newLabel = labelAttribute != null ? label + ResourceService.GetString(labelAttribute.Label) + ": " : label;
-                    _items.Add(key, new PropertyMap(propertyValue, _accessDiagnostics, newPrefix, newLabel, options));
+                    _items.Add(key, new PropertyMap(itemName, obsoleteAttribute, alternativeAttribute, propertyValue, _accessDiagnostics, newLabel, options));
                 }
                 else
                 {
-                    _items.Add(key, new PropertyMapSource(source, property, converter ?? _defaultConverter, label));
+                    _items.Add(key, new PropertyMapSource(itemName, obsoleteAttribute, alternativeAttribute, source, property, converter ?? _defaultConverter, label));
                 }
             }
         }
+
 
         public object? this[string key]
         {
@@ -123,11 +120,13 @@ namespace NeeView
 
         internal object? GetValue(PropertyMapNode node)
         {
-            if (node is PropertyMapObsolete obsolete)
+            if (node.IsObsolete)
             {
-                return _accessDiagnostics.Throw(new NotSupportedException(obsolete.CreateObsoleteMessage()), obsolete.PropertyType);
+                var errorLevel = node.Alternative?.ErrorLevel ?? ScriptErrorLevel.Error;
+                _accessDiagnostics.Throw(new NotSupportedException(node.CreateObsoleteMessage()), errorLevel);
             }
-            else if (node is PropertyMapSource source)
+
+            if (node is PropertyMapSource source)
             {
                 return AppDispatcher.Invoke(() => source.Read(_options));
             }
@@ -139,11 +138,13 @@ namespace NeeView
 
         internal void SetValue(PropertyMapNode node, object? value)
         {
-            if (node is PropertyMapObsolete obsolete)
+            if (node.IsObsolete)
             {
-                _accessDiagnostics.Throw(new NotSupportedException(obsolete.CreateObsoleteMessage()));
+                var errorLevel = node.Alternative?.ErrorLevel ?? ScriptErrorLevel.Error;
+                _accessDiagnostics.Throw(new NotSupportedException(node.CreateObsoleteMessage()), errorLevel);
             }
-            else if (node is PropertyMapSource source)
+
+            if (node is PropertyMapSource source)
             {
                 AppDispatcher.Invoke(() => source.Write(value, _options));
             }
@@ -164,8 +165,8 @@ namespace NeeView
             var property = type.GetProperty(propertyName);
             if (property is null) throw new ArgumentException("not support property name", nameof(propertyName));
             var converter = _options.Converters.FirstOrDefault(e => e.CanConvert(property.PropertyType)) ?? _defaultConverter;
-
-            _items.Add(memberName ?? propertyName, new PropertyMapSource(source, property, converter, null));
+            var key = memberName ?? propertyName;
+            _items.Add(key, new PropertyMapSource(Name + "." + key, null, null, source, property, converter, null));
         }
 
         internal WordNode CreateWordNode(string name)
@@ -176,13 +177,12 @@ namespace NeeView
                 node.Children = new List<WordNode>();
                 foreach (var item in _items)
                 {
+                    if (item.Value.IsObsolete) continue;
+
                     switch (item.Value)
                     {
                         case PropertyMap propertyMap:
                             node.Children.Add(propertyMap.CreateWordNode(item.Key));
-                            break;
-
-                        case PropertyMapObsolete _:
                             break;
 
                         default:
@@ -205,7 +205,7 @@ namespace NeeView
                 {
                     s += subMap.CreateHelpHtml(name);
                 }
-                else if (item.Value is PropertyMapObsolete)
+                else if (item.Value.IsObsolete) // is PropertyMapObsolete)
                 {
                 }
                 else
