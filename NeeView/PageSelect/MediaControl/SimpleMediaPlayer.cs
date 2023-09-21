@@ -1,5 +1,6 @@
 ﻿using NeeLaboratory.ComponentModel;
 using NeeLaboratory.Generators;
+using NeeView.Collections.Generic;
 using System;
 using System.ComponentModel;
 using System.Threading.Tasks;
@@ -12,6 +13,8 @@ namespace NeeView
     [NotifyPropertyChanged]
     public partial class SimpleMediaPlayer : IDisposable, INotifyPropertyChanged, IMediaPlayer
     {
+        private static readonly ObjectPool<MediaPlayer> _mediaPlayerPool = new();
+
         private readonly MediaPlayer _player;
         private readonly DisposableCollection _disposables = new();
         private bool _disposedValue;
@@ -24,9 +27,10 @@ namespace NeeView
         private bool _isRepeat;
 
 
-        public SimpleMediaPlayer(MediaPlayer player)
+        public SimpleMediaPlayer()
         {
-            _player = player;
+            _player = _mediaPlayerPool.Allocate();
+            _player.ScrubbingEnabled = true;
 
             _disposables.Add(this.SubscribePropertyChanged(nameof(IsEnabled),
                 (s, e) => { UpdatePlayed(); UpdateMuted(); }));
@@ -34,7 +38,7 @@ namespace NeeView
             _disposables.Add(this.SubscribePropertyChanged(nameof(IsMuted),
                 (s, e) => UpdateMuted()));
 
-            _disposables.Add(this.SubscribePropertyChanged(nameof(IMediaContext.IsRepeat),
+            _disposables.Add(this.SubscribePropertyChanged(nameof(IsRepeat),
                 IsRepeat_Changed));
         }
 
@@ -43,19 +47,15 @@ namespace NeeView
 
         public event EventHandler? MediaPlayed;
 
-        public event EventHandler<ExceptionEventArgs> MediaFailed
-        {
-            add => _player.MediaFailed += value;
-            remove => _player.MediaFailed -= value;
-        }
+        public event EventHandler<ExceptionEventArgs>? MediaFailed;
 
-        public event EventHandler MediaEnded
+        public event EventHandler? MediaEnded
         {
             add => _player.MediaEnded += value;
             remove => _player.MediaEnded -= value;
         }
 
-        public event EventHandler MediaOpened
+        public event EventHandler? MediaOpened
         {
             add => _player.MediaOpened += value;
             remove => _player.MediaOpened -= value;
@@ -97,7 +97,7 @@ namespace NeeView
         public bool ScrubbingEnabled
         {
             get { return _player.ScrubbingEnabled; }
-            set { _player.ScrubbingEnabled = value; }
+            //set { _player.ScrubbingEnabled = value; }
         }
 
         public TimeSpan Position
@@ -136,6 +136,7 @@ namespace NeeView
                 {
                     Close();
                     _disposables.Dispose();
+                    _mediaPlayerPool.Release(_player);
                 }
                 _disposedValue = true;
             }
@@ -258,9 +259,9 @@ namespace NeeView
             }
         }
 
-        private void Player_MediaFailed(object? sender, ExceptionEventArgs e)
+        private void Player_MediaFailed(object? sender, System.Windows.Media.ExceptionEventArgs e)
         {
-            // nop.
+            MediaFailed?.Invoke(sender, new ExceptionEventArgs(e.ErrorException));
         }
 
         private void IsRepeat_Changed(object? sender, PropertyChangedEventArgs e)

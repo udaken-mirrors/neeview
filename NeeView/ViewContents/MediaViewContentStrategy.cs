@@ -19,7 +19,6 @@ namespace NeeView
     {
         private readonly ViewContent _viewContent;
 
-        private readonly ObjectPool<MediaPlayer> _mediaPlayerPool;
         private readonly ViewContentMediaPlayer _mediaPlayer;
         private readonly SimpleMediaPlayer _player;
         private readonly IMediaContext _mediaContext;
@@ -30,8 +29,6 @@ namespace NeeView
 
         public MediaViewContentStrategy(ViewContent viewContent)
         {
-            _mediaPlayerPool = MediaPlayerPool.Default;
-
             _viewContent = viewContent;
 
             // メディアブックとメティアページで参照する設定を変える
@@ -99,14 +96,12 @@ namespace NeeView
 
         private SimpleMediaPlayer AllocateMediaPlayer()
         {
-            var player = new SimpleMediaPlayer(_mediaPlayerPool.Allocate());
-            return player;
+            return new SimpleMediaPlayer();
         }
 
         private void ReleaseMediaPlayer(SimpleMediaPlayer player)
         {
             player.Dispose();
-            _mediaPlayerPool.Release(player.Player);
         }
     }
 

@@ -7,7 +7,6 @@ using System.Diagnostics;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Media;
 using System.Windows.Threading;
 
 namespace NeeView
@@ -43,7 +42,7 @@ namespace NeeView
         public MediaPlayerOperator(IMediaPlayer player)
         {
             _player = player;
-            _player.ScrubbingEnabled = true;
+            //_player.ScrubbingEnabled = true;
 
             _player.MediaOpened += Player_MediaOpened;
             _player.MediaEnded += Player_MediaEnded;

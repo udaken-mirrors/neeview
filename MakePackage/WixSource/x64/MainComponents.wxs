@@ -142,6 +142,11 @@
           </Component>
         </Directory>
       </Directory>
+      <Directory Id="dir999276BA39DBD5F9CB587B7723FAE255" Name="MediaInfo">
+        <Component Id="cmp3599D05F022C2D0C065632530C189BE6" Guid="*">
+          <File Id="filE12C645B816CDF6E51E2B9A0EFCC1DF7" KeyPath="yes" Source="$(var.ContentDir)\MediaInfo\MediaInfo.dll" />
+        </Component>
+      </Directory>
       <Directory Id="dir2F3D431E0ED26930C4D37E679C7700A1" Name="nl">
         <Component Id="cmp7C0AB73FF3A37EF27D20CE14CF0C9574" Guid="*">
           <File Id="fil94EBBC1F411AB89CFA6318F5D1D743BB" KeyPath="yes" Source="$(var.ContentDir)\nl\PdfiumViewer.resources.dll" />
@@ -213,6 +218,7 @@
       <ComponentRef Id="cmp3A8061AB8EA93D93C58E96E280C6F23D" />
       <ComponentRef Id="cmp17A919F686DC0817DE75F7CE2D29CA44" />
       <ComponentRef Id="cmp95A438EB3336A6879800366B519D228D" />
+      <ComponentRef Id="cmp3599D05F022C2D0C065632530C189BE6" />
       <ComponentRef Id="cmp7C0AB73FF3A37EF27D20CE14CF0C9574" />
       <ComponentRef Id="cmp93376EE54A201CE8EFB62F355E94E24F" />
       <ComponentRef Id="cmp5407035CF10622807020A08C96FB6E0C" />

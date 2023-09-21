@@ -1,11 +1,10 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Windows;
-using System.Windows.Media;
 
 namespace NeeView
 {
-    public interface IMediaPlayer : INotifyPropertyChanged
+    public interface IMediaPlayer : INotifyPropertyChanged, IDisposable
     {
         bool HasAudio { get; }
         bool HasVideo { get; }
@@ -15,12 +14,12 @@ namespace NeeView
         bool IsPlaying { get; }
         Duration NaturalDuration { get; }
         TimeSpan Position { get; set; }
-        bool ScrubbingEnabled { get; set; }
+        bool ScrubbingEnabled { get; }
         double Volume { get; set; }
 
-        event EventHandler MediaEnded;
-        event EventHandler<ExceptionEventArgs> MediaFailed;
-        event EventHandler MediaOpened;
+        event EventHandler? MediaEnded;
+        event EventHandler<ExceptionEventArgs>? MediaFailed;
+        event EventHandler? MediaOpened;
         event EventHandler? MediaPlayed;
 
 
@@ -28,5 +27,15 @@ namespace NeeView
         void Pause();
 
         IDisposable SubscribePropertyChanged(string propertyName, PropertyChangedEventHandler handler);
+    }
+
+    public class ExceptionEventArgs : EventArgs
+    {
+        public ExceptionEventArgs(Exception errorException)
+        {
+            ErrorException = errorException;
+        }
+
+        public Exception ErrorException { get; }
     }
 }

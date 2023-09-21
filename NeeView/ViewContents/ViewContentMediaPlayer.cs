@@ -4,7 +4,6 @@ using NeeView.PageFrames;
 using System;
 using System.ComponentModel;
 using System.Windows;
-using System.Windows.Media;
 
 
 namespace NeeView
@@ -16,13 +15,13 @@ namespace NeeView
     public partial class ViewContentMediaPlayer : IMediaPlayer, INotifyPropertyChanged, IDisposable
     {
         private readonly IMediaContext _mediaContext;
-        private readonly SimpleMediaPlayer _player;
+        private readonly IMediaPlayer _player;
         private readonly PageFrameActivity _activity;
         private readonly int _elementIndex;
         private bool _disposedValue;
         private readonly DisposableCollection _disposables = new();
 
-        public ViewContentMediaPlayer(IMediaContext mediaContext, SimpleMediaPlayer player, PageFrameActivity activity, int elementIndex)
+        public ViewContentMediaPlayer(IMediaContext mediaContext, IMediaPlayer player, PageFrameActivity activity, int elementIndex)
         {
             _mediaContext = mediaContext;
             _player = player;
@@ -38,25 +37,25 @@ namespace NeeView
             _disposables.Add(_mediaContext.SubscribePropertyChanged(nameof(IMediaContext.IsRepeat),
                 (s, e) => { RaisePropertyChanged(nameof(IsRepeat)); Update(); }));
 
-            _disposables.Add(_player.SubscribePropertyChanged(nameof(SimpleMediaPlayer.IsEnabled),
+            _disposables.Add(_player.SubscribePropertyChanged(nameof(IMediaPlayer.IsEnabled),
                 (s, e) => RaisePropertyChanged(nameof(IsEnabled))));
 
-            _disposables.Add(_player.SubscribePropertyChanged(nameof(SimpleMediaPlayer.HasAudio),
+            _disposables.Add(_player.SubscribePropertyChanged(nameof(IMediaPlayer.HasAudio),
                 (s, e) => RaisePropertyChanged(nameof(HasAudio))));
 
-            _disposables.Add(_player.SubscribePropertyChanged(nameof(SimpleMediaPlayer.IsPlaying),
+            _disposables.Add(_player.SubscribePropertyChanged(nameof(IMediaPlayer.IsPlaying),
                 (s, e) => RaisePropertyChanged(nameof(IsPlaying))));
 
-            _disposables.Add(_player.SubscribePropertyChanged(nameof(SimpleMediaPlayer.HasVideo),
+            _disposables.Add(_player.SubscribePropertyChanged(nameof(IMediaPlayer.HasVideo),
                 (s, e) => RaisePropertyChanged(nameof(HasVideo))));
 
-            _disposables.Add(_player.SubscribePropertyChanged(nameof(SimpleMediaPlayer.ScrubbingEnabled),
+            _disposables.Add(_player.SubscribePropertyChanged(nameof(IMediaPlayer.ScrubbingEnabled),
                 (s, e) => RaisePropertyChanged(nameof(ScrubbingEnabled))));
 
-            _disposables.Add(_player.SubscribePropertyChanged(nameof(SimpleMediaPlayer.NaturalDuration),
+            _disposables.Add(_player.SubscribePropertyChanged(nameof(IMediaPlayer.NaturalDuration),
                 (s, e) => RaisePropertyChanged(nameof(NaturalDuration))));
 
-            _disposables.Add(_player.SubscribePropertyChanged(nameof(SimpleMediaPlayer.Position),
+            _disposables.Add(_player.SubscribePropertyChanged(nameof(IMediaPlayer.Position),
                 (s, e) => RaisePropertyChanged(nameof(Position))));
 
             _disposables.Add(_activity.SubscribePropertyChanged(
@@ -66,19 +65,19 @@ namespace NeeView
         }
 
 
-        public event EventHandler MediaEnded
+        public event EventHandler? MediaEnded
         {
             add => _player.MediaEnded += value;
             remove => _player.MediaEnded += value;
         }
 
-        public event EventHandler<ExceptionEventArgs> MediaFailed
+        public event EventHandler<ExceptionEventArgs>? MediaFailed
         {
             add => _player.MediaFailed += value;
             remove => _player.MediaFailed += value;
         }
 
-        public event EventHandler MediaOpened
+        public event EventHandler? MediaOpened
         {
             add => _player.MediaOpened += value;
             remove => _player.MediaOpened += value;
@@ -109,7 +108,7 @@ namespace NeeView
         public bool ScrubbingEnabled
         {
             get => _player.ScrubbingEnabled;
-            set => _player.ScrubbingEnabled = value;
+            //set => _player.ScrubbingEnabled = value;
         }
 
         public Duration NaturalDuration => _player.NaturalDuration;
