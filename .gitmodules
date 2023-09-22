@@ -4,3 +4,6 @@
 [submodule "NeeLaboratory.IO.Search"]
 	path = NeeLaboratory.IO.Search
 	url = https://bitbucket.org/neelabo/neelaboratory.io.search.git
+[submodule "Vlc.DotNet"]
+	path = Vlc.DotNet
+	url = https://github.com/neelabo/Vlc.DotNet.git

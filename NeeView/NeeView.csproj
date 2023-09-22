@@ -108,6 +108,7 @@
     <ProjectReference Include="..\SevenZipSharp\SevenZip\SevenZip.csproj">
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
     </ProjectReference>
+    <ProjectReference Include="..\Vlc.DotNet\src\Vlc.DotNet.Wpf\Vlc.DotNet.Wpf.csproj" />
   </ItemGroup>
 
   <ItemGroup>
