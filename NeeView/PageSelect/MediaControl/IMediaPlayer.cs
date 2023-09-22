@@ -16,26 +16,18 @@ namespace NeeView
         TimeSpan Position { get; set; }
         bool ScrubbingEnabled { get; }
         double Volume { get; set; }
+        TrackCollection? AudioTracks { get; }
+        TrackCollection? Subtitles { get; }
+        bool CanControlTracks { get; }
 
         event EventHandler? MediaEnded;
         event EventHandler<ExceptionEventArgs>? MediaFailed;
         event EventHandler? MediaOpened;
         event EventHandler? MediaPlayed;
 
-
         void Play();
         void Pause();
 
         IDisposable SubscribePropertyChanged(string propertyName, PropertyChangedEventHandler handler);
-    }
-
-    public class ExceptionEventArgs : EventArgs
-    {
-        public ExceptionEventArgs(Exception errorException)
-        {
-            ErrorException = errorException;
-        }
-
-        public Exception ErrorException { get; }
     }
 }

@@ -2,6 +2,10 @@
 using NeeLaboratory.Windows.Input;
 using System;
 using System.ComponentModel;
+using System.Diagnostics;
+using System.Globalization;
+using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Input;
 
 namespace NeeView
@@ -11,6 +15,9 @@ namespace NeeView
         private readonly MediaControl _model;
         private readonly MouseWheelDelta _mouseWheelDelta = new();
         private MediaPlayerOperator? _operator;
+        private DisposableCollection _operatorEventDisposables = new();
+        private bool _isMoreMenuEnabled;
+
 
         public MediaControlViewModel(MediaControl model)
         {
@@ -20,7 +27,10 @@ namespace NeeView
             PlayCommand = new RelayCommand(PlayCommand_Executed);
             RepeatCommand = new RelayCommand(RepeatCommand_Executed);
             MuteCommand = new RelayCommand(MuteCommand_Executed);
+
+            MoreMenuDescription = new MediaPlayerMoreMenuDescription(this);
         }
+
 
         public MediaPlayerOperator? Operator
         {
@@ -30,13 +40,25 @@ namespace NeeView
                 if (_operator != value)
                 {
                     AttachOperator(value);
-                    //_operator = value;
                     RaisePropertyChanged();
+                    IsMoreMenuEnabled = _operator?.CanControlTracks == true;
                 }
             }
         }
 
-        private DisposableCollection _operatorEventDisposables = new();
+        public bool IsMoreMenuEnabled
+        {
+            get { return _isMoreMenuEnabled; }
+            set { SetProperty(ref _isMoreMenuEnabled, value); }
+        }
+      
+        public bool IsPlaying => _operator?.IsPlaying ?? false;
+
+
+        public RelayCommand PlayCommand { get; }
+        public RelayCommand RepeatCommand { get; }
+        public RelayCommand MuteCommand { get; }
+
 
         private void AttachOperator(MediaPlayerOperator? op)
         {
@@ -59,16 +81,6 @@ namespace NeeView
             _operator = null;
         }
 
-
-
-        public bool IsPlaying => _operator?.IsPlaying ?? false;
-
-
-        public RelayCommand PlayCommand { get; }
-        public RelayCommand RepeatCommand { get; }
-        public RelayCommand MuteCommand { get; }
-
-
         private void PlayCommand_Executed()
         {
             if (Operator is null) return;
@@ -88,10 +100,6 @@ namespace NeeView
         }
 
 
-
-
-        #region Methods
-
         private void Model_Changed(object? sender, MediaPlayerChanged e)
         {
             Operator?.Dispose();
@@ -102,13 +110,6 @@ namespace NeeView
                 Operator = new MediaPlayerOperator(mediaPlayer);
                 Operator.MediaEnded += Operator_MediaEnded;
                 Operator.Attach();
-#if false
-                var mediaPlayer = e.MediaPlayer ?? throw new InvalidOperationException();
-                var uri = e.Uri ?? throw new InvalidOperationException();
-                Operator = new MediaPlayerOperator(mediaPlayer);
-                Operator.MediaEnded += Operator_MediaEnded;
-                Operator.Open(uri, e.IsLastStart);
-#endif
             }
             else
             {
@@ -196,6 +197,108 @@ namespace NeeView
             }
         }
 
-        #endregion
+
+        #region MoreMenu
+
+        public MediaPlayerMoreMenuDescription MoreMenuDescription { get; }
+
+        public class MediaPlayerMoreMenuDescription : MoreMenuDescription
+        {
+            private readonly MediaControlViewModel _vm;
+            private readonly ContextMenu _menu = new();
+            private readonly MatchingToBooleanConverter<TrackItem> _matchingConverter = new ();
+
+            public MediaPlayerMoreMenuDescription(MediaControlViewModel vm)
+            {
+                _vm = vm;
+            }
+
+            public override ContextMenu Update(ContextMenu menu)
+            {
+                return Create();
+            }
+
+            public override ContextMenu Create()
+            {
+                var menu = _menu;
+                _menu.Items.Clear();
+
+                if (_vm.Operator is null) return menu;
+
+                var audios = _vm.Operator.AudioTracks;
+                if (audios is not null)
+                {
+                    foreach (var track in audios.Tracks)
+                    {
+                        menu.Items.Add(CreateTrackMenuItem(track, audios));
+                    }
+                }
+                else
+                {
+                    menu.Items.Add(new MenuItem() { Header = Properties.Resources.MediaControl_MoreMenu_NoAudio, IsEnabled = false });
+                }
+
+                menu.Items.Add(new Separator());
+
+                var subtitles = _vm.Operator.SubtitleTracks;
+                if (subtitles is not null)
+                {
+                    foreach (var track in subtitles.Tracks)
+                    {
+                        menu.Items.Add(CreateTrackMenuItem(track, subtitles));
+                    }
+                }
+                else
+                {
+                    menu.Items.Add(new MenuItem() { Header = Properties.Resources.MediaControl_MoreMenu_NoSubtitle, IsEnabled = false });
+                }
+
+                return menu;
+            }
+
+            private MenuItem CreateTrackMenuItem(TrackItem track, TrackCollection tracks)
+            {
+                var menuItem = new MenuItem()
+                {
+                    Header = track.Name,
+                };
+                menuItem.SetBinding(MenuItem.IsCheckedProperty, new Binding(nameof(tracks.Selected))
+                {
+                    Source = tracks,
+                    Converter = _matchingConverter,
+                    ConverterParameter = track,
+                });
+
+                menuItem.Click += (s, e) => { tracks.Selected = track; };
+
+                return menuItem;
+            }
+        }
+
+        #endregion MoreMenu
+
     }
+
+
+
+    public class MatchingToBooleanConverter<T> : IValueConverter
+        where T : class
+    {
+        public object? Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            var selectedItem = value as T;
+            var selfItem = parameter as T;
+
+            var result = selectedItem is not null && selectedItem == selfItem;
+            return result;
+        }
+
+        public object? ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+
+
 }

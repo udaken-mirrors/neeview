@@ -159,6 +159,12 @@ namespace NeeView.Setting
             section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.Archive.Media, nameof(MediaArchiveConfig.PageSeconds))));
             section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.Archive.Media, nameof(MediaArchiveConfig.MediaStartDelaySeconds))));
 
+            section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.Archive.Media, nameof(MediaArchiveConfig.IsLibVlcEnabled))));
+            section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.Archive.Media, nameof(MediaArchiveConfig.LibVlcPath)))
+            {
+                IsEnabled = new IsEnabledPropertyValue(Config.Current.Archive.Media, nameof(MediaArchiveConfig.IsLibVlcEnabled)),
+            });
+
             this.Items = new List<SettingItem>() { section };
         }
     }

@@ -4,7 +4,6 @@ using System.Diagnostics;
 using System.Windows;
 using System.Windows.Media;
 
-
 namespace NeeView
 {
     public class AnimatedViewContentStrategy : MediaViewContentStrategy
@@ -15,16 +14,17 @@ namespace NeeView
     }
 
 
-    public class MediaViewContentStrategy : IDisposable, IViewContentStrategy, IHasImageSource, IHasMediaPlayer
+    public class MediaViewContentStrategy : IDisposable, IViewContentStrategy, IHasImageSource, IHasMediaPlayer, IHasScalingMode
     {
         private readonly ViewContent _viewContent;
 
         private readonly ViewContentMediaPlayer _mediaPlayer;
-        private readonly SimpleMediaPlayer _player;
+        private readonly ICoreMediaPlayer _player;
         private readonly IMediaContext _mediaContext;
         private MediaPlayerCanvas? _playerCanvas;
         private ImageSource? _imageSource;
         private bool _disposedValue;
+        private BitmapScalingMode? _scalingMode;
 
 
         public MediaViewContentStrategy(ViewContent viewContent)
@@ -44,6 +44,22 @@ namespace NeeView
 
         public IMediaPlayer Player => _mediaPlayer;
 
+
+        public BitmapScalingMode? ScalingMode
+        {
+            get { return _scalingMode; }
+            set
+            {
+                if (_scalingMode != value)
+                {
+                    _scalingMode = value;
+                    if (_mediaPlayer is IHasScalingMode hasScalingMode)
+                    {
+                        hasScalingMode.ScalingMode = _scalingMode;
+                    }
+                }
+            }
+        }
 
         protected virtual void Dispose(bool disposing)
         {
@@ -87,23 +103,51 @@ namespace NeeView
                 return _playerCanvas;
             }
 
-            _playerCanvas = new MediaPlayerCanvas(viewData, viewbox, _player);
+            _playerCanvas = MediaPlayerCanvasFactory.Create(_viewContent.Element, viewData, _viewContent.ViewContentSize, viewbox, _player);
             _player.Open(new Uri(viewData.Path), TimeSpan.FromSeconds(_mediaContext.MediaStartDelaySeconds));
 
             return _playerCanvas;
         }
 
 
-        private SimpleMediaPlayer AllocateMediaPlayer()
+        private ICoreMediaPlayer AllocateMediaPlayer()
         {
-            return new SimpleMediaPlayer();
+            if (Config.Current.Archive.Media.IsLibVlcEnabled && _viewContent.Page.Content is not AnimatedPageContent)
+            {
+                try
+                {
+                    if (_viewContent.Page.Content.PictureInfo is PictureInfo pictureInfo)
+                    {
+                        pictureInfo.Decoder = "libVLC";
+                    }
+                    return new VlcCoreMediaPlayer();
+                }
+                catch (Exception ex)
+                {
+                    throw new ApplicationException($"Cannot use libVLC.\r\n{ex.Message}", ex);
+                }
+            }
+            else
+            {
+                try
+                {
+                    if (_viewContent.Page.Content.PictureInfo is PictureInfo pictureInfo)
+                    {
+                        pictureInfo.Decoder = "MediaPlayer";
+                    }
+                    return new DefaultCoreMediaPlayer();
+                }
+                catch (Exception ex)
+                {
+                    throw new ApplicationException($"Cannot create Media player.\r\n{ex.Message}", ex);
+
+                }
+            }
         }
 
-        private void ReleaseMediaPlayer(SimpleMediaPlayer player)
+        private void ReleaseMediaPlayer(ICoreMediaPlayer player)
         {
             player.Dispose();
         }
     }
-
-
 }

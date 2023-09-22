@@ -69,6 +69,12 @@ namespace NeeView
             _disposables.Add(_player.SubscribePropertyChanged(nameof(_player.IsRepeat),
                 (s, e) => RaisePropertyChanged(nameof(IsRepeat))));
 
+            _disposables.Add(_player.SubscribePropertyChanged(nameof(_player.AudioTracks),
+                (s, e) => RaisePropertyChanged(nameof(AudioTracks))));
+
+            _disposables.Add(_player.SubscribePropertyChanged(nameof(_player.Subtitles),
+                (s, e) => RaisePropertyChanged(nameof(SubtitleTracks))));
+
             _isPlaying = _player.IsPlaying;
             _position = _player.Position;
 
@@ -234,6 +240,17 @@ namespace NeeView
             }
         }
 
+        public bool CanControlTracks => _player.CanControlTracks;
+
+        public TrackCollection? AudioTracks
+        {
+            get => _player.AudioTracks;
+        }
+
+        public TrackCollection? SubtitleTracks
+        {
+            get => _player.Subtitles;
+        }
 
 
         protected virtual void Dispose(bool disposing)

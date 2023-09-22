@@ -58,6 +58,12 @@ namespace NeeView
             _disposables.Add(_player.SubscribePropertyChanged(nameof(IMediaPlayer.Position),
                 (s, e) => RaisePropertyChanged(nameof(Position))));
 
+            _disposables.Add(_player.SubscribePropertyChanged(nameof(IMediaPlayer.AudioTracks),
+                (s, e) => RaisePropertyChanged(nameof(AudioTracks))));
+
+            _disposables.Add(_player.SubscribePropertyChanged(nameof(IMediaPlayer.Subtitles),
+                (s, e) => RaisePropertyChanged(nameof(Subtitles))));
+
             _disposables.Add(_activity.SubscribePropertyChanged(
                 (s, e) => Update()));
 
@@ -119,6 +125,18 @@ namespace NeeView
             set => _player.Position = value;
         }
 
+        public bool CanControlTracks => _player.CanControlTracks;
+
+        public TrackCollection? AudioTracks
+        {
+            get => _player.AudioTracks;
+        }
+
+        public TrackCollection? Subtitles
+        {
+            get => _player.Subtitles;
+        }
+
         public bool IsMuted
         {
             get => _mediaContext.IsMuted;
@@ -136,7 +154,6 @@ namespace NeeView
             get => _mediaContext.IsRepeat;
             set => _mediaContext.IsRepeat = value;
         }
-
 
 
         protected virtual void Dispose(bool disposing)

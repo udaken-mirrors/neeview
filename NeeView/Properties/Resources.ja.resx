@@ -7487,4 +7487,22 @@ nv.ShowToast(nv.Book.ViewPages[0].Path)</value>
   <data name="BookConfig.ContentsSpace.Remarks" xml:space="preserve">
     <value>ページとページの隙間を設定します。マイナス値は重なることを意味します。各ページにスケールがかかるため、0 でちょうど隙間がなくなることは稀です。</value>
   </data>
+  <data name="MediaArchiveConfig.IsLibVlcEnabled" xml:space="preserve">
+    <value>libVLC を使用して動画を再生する</value>
+  </data>
+  <data name="MediaArchiveConfig.IsLibVlcEnabled.Remarks" xml:space="preserve">
+    <value>VLC media player が別途必要です。字幕やオーディオチャンネルの選択が可能です。</value>
+  </data>
+  <data name="MediaArchiveConfig.LibVlcPath" xml:space="preserve">
+    <value>libVLCのディレクトリ</value>
+  </data>
+  <data name="MediaArchiveConfig.LibVlcPath.Remarks" xml:space="preserve">
+    <value>libvlc.dll の存在するディレクトリ。通常、これは VLC media player のインストールフォルダーになります。</value>
+  </data>
+  <data name="MediaControl.MoreMenu.NoAudio" xml:space="preserve">
+    <value>(音声なし)</value>
+  </data>
+  <data name="MediaControl.MoreMenu.NoSubtitle" xml:space="preserve">
+    <value>(字幕なし)</value>
+  </data>
 </root>

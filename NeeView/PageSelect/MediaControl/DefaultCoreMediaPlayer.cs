@@ -11,7 +11,7 @@ using System.Windows.Media;
 namespace NeeView
 {
     [NotifyPropertyChanged]
-    public partial class SimpleMediaPlayer : IDisposable, INotifyPropertyChanged, IMediaPlayer
+    public partial class DefaultCoreMediaPlayer : IDisposable, INotifyPropertyChanged, ICoreMediaPlayer
     {
         private static readonly ObjectPool<MediaPlayer> _mediaPlayerPool = new();
 
@@ -27,7 +27,7 @@ namespace NeeView
         private bool _isRepeat;
 
 
-        public SimpleMediaPlayer()
+        public DefaultCoreMediaPlayer()
         {
             _player = _mediaPlayerPool.Allocate();
             _player.ScrubbingEnabled = true;
@@ -127,6 +127,11 @@ namespace NeeView
         {
             get { return _player.HasVideo; }
         }
+
+        public bool CanControlTracks => false;
+        public TrackCollection? AudioTracks => null;
+        public TrackCollection? Subtitles => null;
+
 
         protected virtual void Dispose(bool disposing)
         {

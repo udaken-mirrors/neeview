@@ -9256,6 +9256,24 @@ namespace NeeView.Properties {
         }
         
         /// <summary>
+        ///   Play videos using libVLC に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string MediaArchiveConfig_IsLibVlcEnabled {
+            get {
+                return ResourceManager.GetString("MediaArchiveConfig.IsLibVlcEnabled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   VLC media player is required. Subtitles and audio channels can be selected. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string MediaArchiveConfig_IsLibVlcEnabled_Remarks {
+            get {
+                return ResourceManager.GetString("MediaArchiveConfig.IsLibVlcEnabled.Remarks", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Mute video に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string MediaArchiveConfig_IsMuted {
@@ -9270,6 +9288,24 @@ namespace NeeView.Properties {
         public static string MediaArchiveConfig_IsRepeat {
             get {
                 return ResourceManager.GetString("MediaArchiveConfig.IsRepeat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   libVLC directory に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string MediaArchiveConfig_LibVlcPath {
+            get {
+                return ResourceManager.GetString("MediaArchiveConfig.LibVlcPath", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Directory where the 64-bit version of libvlc.dll resides. This is usually the VLC media player installation folder. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string MediaArchiveConfig_LibVlcPath_Remarks {
+            get {
+                return ResourceManager.GetString("MediaArchiveConfig.LibVlcPath.Remarks", resourceCulture);
             }
         }
         
@@ -9324,6 +9360,24 @@ namespace NeeView.Properties {
         public static string MediaArchiveConfig_Volume {
             get {
                 return ResourceManager.GetString("MediaArchiveConfig.Volume", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   (No audio) に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string MediaControl_MoreMenu_NoAudio {
+            get {
+                return ResourceManager.GetString("MediaControl.MoreMenu.NoAudio", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   (No subtitle) に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string MediaControl_MoreMenu_NoSubtitle {
+            get {
+                return ResourceManager.GetString("MediaControl.MoreMenu.NoSubtitle", resourceCulture);
             }
         }
         

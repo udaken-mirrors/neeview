@@ -133,4 +133,18 @@ DLL: XmpCore.dll
 * URL: [xmp-core-dotnet](https://github.com/drewnoakes/xmp-core-dotnet/)
 * License: [BSD 3-Clause License](https://www.adobe.com/devnet/xmp/library/eula-xmp-library-java.html)
 
- 
+### MediaInfo
+
+DLL: MediaInfo.dll
+
+* Copyright (c) 2002-2023 MediaArea.net SARL. All rights reserved.
+* URL: [MediaInfo](https://mediaarea.net/en/MediaInfo)
+* License: [BSD-style license](https://mediaarea.net/en/MediaInfo/License)
+
+ ### Vlc.DotNet
+
+* Copyright (c) 2014 ZeBobo5
+* URL: [Vlc.DotNet](https://github.com/ZeBobo5/Vlc.DotNet/)
+* License: [MIT License](https://github.com/ZeBobo5/Vlc.DotNet/blob/develop/LICENSE)
+* Changed:
+    * Custom for NeeView: [Project Page](https://github.com/neelabo/Vlc.DotNet)

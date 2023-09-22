@@ -1,5 +1,8 @@
-﻿using NeeLaboratory.ComponentModel;
+﻿using Microsoft.Win32;
+using NeeLaboratory.ComponentModel;
 using NeeView.Windows.Property;
+using System;
+using System.Text.Json.Serialization;
 
 namespace NeeView
 {
@@ -15,6 +18,10 @@ namespace NeeView
         private bool _isMuted;
         private double _volume = 0.5;
         private bool _isRepeat;
+        private bool _isLibVlcEnabled;
+        
+        [JsonInclude, JsonPropertyName(nameof(LibVlcPath))]
+        public string? _libVlcPath;
 
 
         [PropertyMember]
@@ -66,5 +73,33 @@ namespace NeeView
             set { SetProperty(ref _isRepeat, value); }
         }
 
+        [PropertyMember]
+        public bool IsLibVlcEnabled
+        {
+            get { return _isLibVlcEnabled; }
+            set { SetProperty(ref _isLibVlcEnabled, value); }
+        }
+
+        [JsonIgnore]
+        [PropertyPath(FileDialogType = Windows.Controls.FileDialogType.Directory)]
+        public string LibVlcPath
+        {
+            get { return _libVlcPath ?? LibVlcProfile.DefaultLibVlcPath; }
+            set { SetProperty(ref _libVlcPath, (string.IsNullOrWhiteSpace(value) || value.Trim() == LibVlcProfile.DefaultLibVlcPath) ? null : value.Trim()); }
+        }
+    }
+
+
+    public static class LibVlcProfile
+    {
+        static LibVlcProfile()
+        {
+            // get VLC media player install folder
+            var key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\VLC media player");
+            var installLocation = (string?)key?.GetValue("InstallLocation");
+            DefaultLibVlcPath = installLocation ?? "";
+        }
+
+        public static string DefaultLibVlcPath { get; private set; } = "";
     }
 }

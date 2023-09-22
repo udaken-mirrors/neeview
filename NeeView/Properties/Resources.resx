@@ -7482,4 +7482,22 @@ nv.ShowToast(nv.Book.ViewPages[0].Path)</value>
   <data name="BookConfig.ContentsSpace.Remarks" xml:space="preserve">
     <value>Sets the gap between page and page. Negative values ​​mean overlapping. Because each page is scaled, it is rare that there will be no gap just at 0.</value>
   </data>
+  <data name="MediaArchiveConfig.IsLibVlcEnabled" xml:space="preserve">
+    <value>Play videos using libVLC</value>
+  </data>
+  <data name="MediaArchiveConfig.IsLibVlcEnabled.Remarks" xml:space="preserve">
+    <value>VLC media player is required. Subtitles and audio channels can be selected.</value>
+  </data>
+  <data name="MediaArchiveConfig.LibVlcPath" xml:space="preserve">
+    <value>libVLC directory</value>
+  </data>
+  <data name="MediaArchiveConfig.LibVlcPath.Remarks" xml:space="preserve">
+    <value>Directory where the 64-bit version of libvlc.dll resides. This is usually the VLC media player installation folder.</value>
+  </data>
+  <data name="MediaControl.MoreMenu.NoAudio" xml:space="preserve">
+    <value>(No audio)</value>
+  </data>
+  <data name="MediaControl.MoreMenu.NoSubtitle" xml:space="preserve">
+    <value>(No subtitle)</value>
+  </data>
 </root>

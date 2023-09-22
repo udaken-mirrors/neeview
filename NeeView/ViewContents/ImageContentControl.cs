@@ -119,39 +119,8 @@ namespace NeeView
         private void UpdateBitmapScalingMode()
         {
             var imageSize = _image is BitmapSource bitmapSource ? new Size(bitmapSource.PixelWidth, bitmapSource.PixelHeight) : new Size(_image.Width, _image.Height);
-
-            // ScalingMode が指定されている
-            if (_scalingMode is not null)
-            {
-                Debug.WriteLine($"XX: Force {_scalingMode.Value}: {_element.Page}: {imageSize:f0}");
-                RenderOptions.SetBitmapScalingMode(_rectangle, _scalingMode.Value);
-                _rectangle.SnapsToDevicePixels = _scalingMode.Value == BitmapScalingMode.NearestNeighbor;
-            }
-            // 画像サイズがビッタリの場合はドットバイドットになるような設定
-            else if (_contentSize.IsRightAngle && Math.Abs(_contentSize.PixelSize.Width - imageSize.Width) < 1.1 && Math.Abs(_contentSize.PixelSize.Height - imageSize.Height) < 1.1)
-            {
-                Debug.WriteLine($"OO: NearestNeighbor: {_element.Page}: {imageSize:f0}");
-                RenderOptions.SetBitmapScalingMode(_rectangle, BitmapScalingMode.NearestNeighbor);
-                _rectangle.SnapsToDevicePixels = true;
-            }
-            // DotKeep mode
-            // TODO: Config.Current参照はよろしくない
-            else if (Config.Current.ImageDotKeep.IsImageDotKeep(_contentSize.PixelSize, imageSize))
-            {
-                Debug.WriteLine($"XX: NearestNeighbor: {_element.Page}: {imageSize:f0} != request {_contentSize.PixelSize:f0}");
-                RenderOptions.SetBitmapScalingMode(_rectangle, BitmapScalingMode.NearestNeighbor);
-                _rectangle.SnapsToDevicePixels = true;
-            }
-            else
-            {
-                Debug.WriteLine($"XX: Fantastic: {_element.Page}: {imageSize:f0} != request {_contentSize.PixelSize:f0}");
-                RenderOptions.SetBitmapScalingMode(_rectangle, BitmapScalingMode.Fant);
-                _rectangle.SnapsToDevicePixels = false;
-            }
+            ViewContentTools.SetBitmapScalingMode(_rectangle, imageSize, _contentSize, _scalingMode);
         }
-
-
-
 
     }
 }

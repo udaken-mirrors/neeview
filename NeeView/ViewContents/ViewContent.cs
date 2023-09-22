@@ -249,29 +249,35 @@ namespace NeeView
         {
             Debug.Assert(_initialized);
 
-            switch (data.DataState)
+            try
             {
-                case DataState.None:
-                    Debug.WriteLine($"CreateContent.Ready: {ArchiveEntry}");
-                    return new ViewContentData(ViewContentTools.CreateLoadingContent(Element), ViewContentState.Loading);
+                switch (data.DataState)
+                {
+                    case DataState.None:
+                        Debug.WriteLine($"CreateContent.Ready: {ArchiveEntry}");
+                        return new ViewContentData(ViewContentTools.CreateLoadingContent(Element), ViewContentState.Loading);
 
-                case DataState.Loaded:
-                    Debug.WriteLine($"CreateContent.Loaded: {ArchiveEntry}");
-                    Debug.Assert(data.Data is not null);
-                    PageContent.UndefinedSize = this.Page.Content.Size;
-                    return new ViewContentData(CreateLoadedContent(data.Data), ViewContentState.Loaded);
+                    case DataState.Loaded:
+                        Debug.WriteLine($"CreateContent.Loaded: {ArchiveEntry}");
+                        Debug.Assert(data.Data is not null);
+                        PageContent.UndefinedSize = this.Page.Content.Size;
+                        return new ViewContentData(CreateLoadedContent(data.Data), ViewContentState.Loaded);
+                    case DataState.Failed:
+                        Debug.WriteLine($"CreateContent.Failed: {ArchiveEntry}");
+                        return new ViewContentData(ViewContentTools.CreateErrorContent(Element, data.ErrorMessage), ViewContentState.Failed);
 
-                case DataState.Failed:
-                    Debug.WriteLine($"CreateContent.Failed: {ArchiveEntry}");
-                    return new ViewContentData(ViewContentTools.CreateErrorContent(Element, data.ErrorMessage), ViewContentState.Failed);
-
-                default:
-                    throw new InvalidOperationException();
+                    default:
+                        throw new InvalidOperationException("Invalid DataState");
+                }
+            }
+            catch (Exception ex)
+            {
+                return new ViewContentData(ViewContentTools.CreateErrorContent(Element, ex.Message), ViewContentState.Failed);
             }
         }
 
 
-        private  FrameworkElement CreateLoadedContent(object data)
+        private FrameworkElement CreateLoadedContent(object data)
         {
             _strategy = _strategy ?? CreateStrategy(data);
             return _strategy.CreateLoadedContent(data);

@@ -58,6 +58,23 @@ namespace NeeView
         }
 
 
+        public ImageSource? ImageSource
+        {
+            get { return (ImageSource?)GetValue(ImageSourceProperty); }
+            set { SetValue(ImageSourceProperty, value); }
+        }
+
+        public static readonly DependencyProperty ImageSourceProperty =
+            DependencyProperty.Register("ImageSource", typeof(ImageSource), typeof(MoreMenuButton), new PropertyMetadata(null, ImageSource_Changed));
+
+        private static void ImageSource_Changed(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            if (d is MoreMenuButton control)
+            {
+                control.UpdateImageSource();
+            }
+        }
+
 
         public MoreMenuDescription Description
         {
@@ -85,11 +102,15 @@ namespace NeeView
         }
 
 
+        private void UpdateImageSource()
+        {
+            this.MoreButtonImage.Source = ImageSource ?? this.Resources["ic_more_24px_a"] as DrawingImage;
+        }
+
         private void Reset()
         {
             MoreMenu = Description?.Create();
         }
-
 
         private void MoreButton_MouseRightButtonUp(object sender, MouseButtonEventArgs e)
         {
