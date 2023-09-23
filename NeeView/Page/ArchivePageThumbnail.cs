@@ -20,8 +20,9 @@ namespace NeeView
             NVDebug.AssertMTA();
 
             await _content.LoadAsync(token);
-            var thumbnail = (_content.Data as ArchivePageData)?.Thumbnail;
+            token.ThrowIfCancellationRequested();
 
+            var thumbnail = (_content.Data as ArchivePageData)?.Thumbnail;
             return thumbnail?.CreateSource() ?? new ThumbnailSource(ThumbnailType.Unique);
         }
     }
