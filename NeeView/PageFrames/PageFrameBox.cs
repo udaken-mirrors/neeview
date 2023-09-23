@@ -462,6 +462,7 @@ namespace NeeView.PageFrames
 
         private void ViewBox_RectChanged(object? sender, RectChangeEventArgs e)
         {
+            _containers.SetDirty(PageFrameDirtyLevel.Moderate);
             FillContainers();
         }
 
