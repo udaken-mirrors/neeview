@@ -107,14 +107,20 @@ namespace NeeView
             }
         }
 
-        public static PictureInfo Create(byte[] data, string? decoder)
+        public static PictureInfo Create(IStreamSource streamSource, string? decoder)
         {
-            using (var stream = new MemoryStream(data))
+            using (var stream = streamSource.OpenStream())
             {
-                var bitmapInfo = BitmapInfo.Create(stream, true);
-                return Create(bitmapInfo, decoder);
+                return Create(stream, decoder);
             }
         }
+
+        public static PictureInfo Create(Stream stream, string? decoder)
+        {
+            var bitmapInfo = BitmapInfo.Create(stream, true);
+            return Create(bitmapInfo, decoder);
+        }
+
 
         public static PictureInfo Create(BitmapInfo bitmapInfo, string? decoder)
         {

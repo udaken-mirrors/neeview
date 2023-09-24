@@ -11,12 +11,12 @@ namespace NeeView
     /// <summary>
     /// Picture 用のリソース
     /// </summary>
-    public class BitmapPictureSource : IPictureSource<byte[]>
+    public class BitmapPictureSource : IPictureSource<IStreamSource>
     {
-        private readonly PageContent _pageContent;
+        private static readonly BitmapFactory _bitmapFactory = new();
 
-        // TODO: 毎回作ってるけど大丈夫？
-        private readonly BitmapFactory _bitmapFactory = new();
+
+        private readonly PageContent _pageContent;
 
 
         public BitmapPictureSource(PageContent pageContent)
@@ -36,19 +36,19 @@ namespace NeeView
         /// <remarks>
         /// 元データは _pageContent からではなく引数で渡す
         /// </remarks>
-        /// <param name="bytes">元データ</param>
+        /// <param name="streamSource">元データ</param>
         /// <param name="size">作成する画像サイズ。Size.Emptyの場合は元データサイズで作成</param>
         /// <param name="setting">生成オプション</param>
         /// <param name="token">キャンセルトークン</param>
         /// <returns>ImageSource</returns>
-        public ImageSource CreateImageSource(byte[] bytes, Size size, BitmapCreateSetting setting, CancellationToken token)
+        public ImageSource CreateImageSource(IStreamSource streamSource, Size size, BitmapCreateSetting setting, CancellationToken token)
         {
             token.ThrowIfCancellationRequested();
 
             Debug.WriteLine($"{ArchiveEntry}, {size:f0}", "CreateImageSource()");
 
-            using var stream = new MemoryStream(bytes);
-            
+            using var stream = streamSource.OpenStream();
+
             if (setting.IsKeepAspectRatio && !size.IsEmpty)
             {
                 size = new Size(size.Width, 0);
@@ -62,9 +62,9 @@ namespace NeeView
             return bitmapSource;
         }
 
-        public byte[] CreateImage(byte[] bytes, Size size, BitmapCreateSetting setting, BitmapImageFormat format, int quality, CancellationToken token)
+        public byte[] CreateImage(IStreamSource streamSource, Size size, BitmapCreateSetting setting, BitmapImageFormat format, int quality, CancellationToken token)
         {
-            using var stream = new MemoryStream(bytes);
+            using var stream = streamSource.OpenStream();
             return CreateImage(stream, size, setting, format, quality, token);
         }
 
@@ -77,9 +77,9 @@ namespace NeeView
             return outStream.ToArray();
         }
 
-        public byte[] CreateThumbnail(byte[] bytes, ThumbnailProfile profile, CancellationToken token)
+        public byte[] CreateThumbnail(IStreamSource streamSource, ThumbnailProfile profile, CancellationToken token)
         {
-            using var stream = new MemoryStream(bytes);
+            using var stream = streamSource.OpenStream();
             return CreateThumbnail(stream, profile, token);
         }
 

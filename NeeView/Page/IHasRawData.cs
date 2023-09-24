@@ -1,4 +1,6 @@
-﻿namespace NeeView
+﻿using System;
+
+namespace NeeView
 {
     public interface IHasRawData
     {

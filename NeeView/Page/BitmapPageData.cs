@@ -1,14 +1,15 @@
 ﻿namespace NeeView
 {
-    public class BitmapPageData : IHasByteArray, IHasRawData
+    public class BitmapPageData : IHasStreamSource, IHasRawData
     {
-        public BitmapPageData(byte[] bytes)
+        public BitmapPageData(IStreamSource streamSource)
         {
-            Bytes = bytes;
+            StreamSource = streamSource;
         }
 
-        public byte[] Bytes { get; }
+        public IStreamSource StreamSource { get; }
 
-        public object? RawData => Bytes;
+        public object? RawData => StreamSource;
     }
+
 }

@@ -12,8 +12,8 @@ namespace NeeView
         }
 
 
-        public BitmapPageData? DataAsByteArray => (BitmapPageData?)Data;
-        public override long DataSize => DataAsByteArray?.Bytes.LongLength ?? 0;
+        public BitmapPageData? BitmapPageData => (BitmapPageData?)Data;
+        public override long DataSize => BitmapPageData?.StreamSource.GetMemorySize() ?? 0;
         public IBitmapPageSourceLoader? ImageDataLoader { get; }
 
 
@@ -27,5 +27,7 @@ namespace NeeView
             return new BitmapPageSource(null, errorMessage, null, null);
         }
     }
+
+
 
 }

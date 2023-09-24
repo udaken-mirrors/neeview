@@ -11,9 +11,10 @@ namespace NeeView
         {
             try
             {
-                var buffer = await entry.LoadAsync(token);
-                var pictureInfo = createPictureInfo ? PictureInfo.Create(buffer, ".NET BitmapImage") : null;
-                return BitmapPageSource.Create(new BitmapPageData(buffer), pictureInfo, this);
+                var streamSource = new ArchiveEntryStreamSource(entry);
+                var pictureInfo = createPictureInfo ? PictureInfo.Create(streamSource, ".NET BitmapImage") : null; // TODO: Async
+                await Task.CompletedTask;
+                return BitmapPageSource.Create(new BitmapPageData(streamSource), pictureInfo, this);
             }
             catch (OperationCanceledException)
             {
