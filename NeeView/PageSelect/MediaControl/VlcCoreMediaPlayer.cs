@@ -37,7 +37,7 @@ namespace NeeView
         private bool _isOpened;
         private bool _hasAudio;
         private bool _hasVideo;
-        private Duration _naturalDuration;
+        private Duration _duration;
         private VlcTrackCollectionSource? _audioTracks;
         private VlcTrackCollectionSource? _subtitles;
 
@@ -130,27 +130,27 @@ namespace NeeView
         }
 
 
-        public Duration NaturalDuration
+        public Duration Duration
         {
-            get { return _naturalDuration; }
-            set { SetProperty(ref _naturalDuration, value); }
+            get { return _duration; }
+            set { SetProperty(ref _duration, value); }
         }
 
 
-        public TimeSpan Position
+        public double Position
         {
             get
             {
-                if (_disposedValue) return TimeSpan.Zero;
-                return TimeSpan.FromMilliseconds(_player.Time);
+                if (_disposedValue) return 0.0;
+                return _player.Position;
             }
             set
             {
                 if (_disposedValue) return;
-                var newTime = (int)value.TotalMilliseconds;
-                if (_player.Time != newTime)
+                var newPosition = (float)value;
+                if (_player.Position != newPosition)
                 {
-                    _player.Time = newTime;
+                    _player.Position = newPosition;
                 }
             }
         }
@@ -338,7 +338,7 @@ namespace NeeView
             var media = _player.GetMedia();
             HasAudio = media.Tracks.Any(e => e.Type == MediaTrackTypes.Audio);
             HasVideo = media.Tracks.Any(e => e.Type == MediaTrackTypes.Video);
-            NaturalDuration = new Duration(TimeSpan.FromMilliseconds(_player.Length));
+            Duration = new Duration(TimeSpan.FromMilliseconds(_player.Length));
         }
 
         private void UpdatePlayed()

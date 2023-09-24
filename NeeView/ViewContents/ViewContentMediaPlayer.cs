@@ -52,8 +52,8 @@ namespace NeeView
             _disposables.Add(_player.SubscribePropertyChanged(nameof(IMediaPlayer.ScrubbingEnabled),
                 (s, e) => RaisePropertyChanged(nameof(ScrubbingEnabled))));
 
-            _disposables.Add(_player.SubscribePropertyChanged(nameof(IMediaPlayer.NaturalDuration),
-                (s, e) => RaisePropertyChanged(nameof(NaturalDuration))));
+            _disposables.Add(_player.SubscribePropertyChanged(nameof(IMediaPlayer.Duration),
+                (s, e) => RaisePropertyChanged(nameof(Duration))));
 
             _disposables.Add(_player.SubscribePropertyChanged(nameof(IMediaPlayer.Position),
                 (s, e) => RaisePropertyChanged(nameof(Position))));
@@ -117,9 +117,9 @@ namespace NeeView
             //set => _player.ScrubbingEnabled = value;
         }
 
-        public Duration NaturalDuration => _player.NaturalDuration;
+        public Duration Duration => _player.Duration;
 
-        public TimeSpan Position
+        public double Position
         {
             get => _player.Position;
             set => _player.Position = value;

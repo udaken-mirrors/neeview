@@ -251,7 +251,7 @@
                         PreviewMouseLeftButtonDown="VideoSlider_PreviewMouseLeftButtonDown" >
                     <nwc:SmartSlider.Value>
                         <MultiBinding Converter="{StaticResource EnableValueConverter}">
-                            <Binding Path="Operator.PositionRate"/>
+                            <Binding Path="Operator.Position"/>
                             <Binding RelativeSource="{RelativeSource Self}" Path="IsEnabled" Mode="OneWay" />
                         </MultiBinding>
                     </nwc:SmartSlider.Value>

@@ -100,20 +100,21 @@ namespace NeeView
             //set { _player.ScrubbingEnabled = value; }
         }
 
-        public TimeSpan Position
+        public double Position
         {
-            get { return _player.Position; }
+            get { return Duration.HasTimeSpan ? _player.Position.Divide(Duration.TimeSpan) : 0.0; }
             set
             {
-                if (_player.Position != value)
+                var newPosition = Duration.HasTimeSpan ? Duration.TimeSpan.Multiply(value) : TimeSpan.Zero;
+                if (_player.Position != newPosition)
                 {
                     _isEnded = false;
-                    _player.Position = value;
+                    _player.Position = newPosition;
                 }
             }
         }
 
-        public Duration NaturalDuration
+        public Duration Duration
         {
             get { return _player.NaturalDuration; }
         }
@@ -242,7 +243,7 @@ namespace NeeView
 
             RaisePropertyChanged(nameof(HasVideo));
             RaisePropertyChanged(nameof(HasAudio));
-            RaisePropertyChanged(nameof(NaturalDuration));
+            RaisePropertyChanged(nameof(Duration));
 
             MediaPlayed?.Invoke(this, EventArgs.Empty);
         }

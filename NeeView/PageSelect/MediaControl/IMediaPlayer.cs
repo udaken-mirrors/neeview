@@ -12,8 +12,8 @@ namespace NeeView
         bool IsMuted { get; set; }
         bool IsRepeat { get; set; }
         bool IsPlaying { get; }
-        Duration NaturalDuration { get; }
-        TimeSpan Position { get; set; }
+        Duration Duration { get; }
+        double Position { get; set; }
         bool ScrubbingEnabled { get; }
         double Volume { get; set; }
         TrackCollection? AudioTracks { get; }

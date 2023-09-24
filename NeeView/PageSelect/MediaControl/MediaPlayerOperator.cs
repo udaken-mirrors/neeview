@@ -28,7 +28,6 @@ namespace NeeView
         private bool _isTimeLeftDisp;
         private Duration _duration;
         private TimeSpan _durationTimeSpan = TimeSpan.FromMilliseconds(1.0);
-        private TimeSpan _position;
         private bool _isActive;
         private bool _isScrubbing;
         private readonly DisposableCollection _disposables = new();
@@ -48,8 +47,8 @@ namespace NeeView
             _player.MediaEnded += Player_MediaEnded;
             _player.MediaFailed += Player_MediaFailed;
 
-            _disposables.Add(_player.SubscribePropertyChanged(nameof(_player.NaturalDuration),
-                (s, e) => Duration = _player.NaturalDuration));
+            _disposables.Add(_player.SubscribePropertyChanged(nameof(_player.Duration),
+                (s, e) => Duration = _player.Duration));
 
             _disposables.Add(_player.SubscribePropertyChanged(nameof(_player.HasAudio),
                 (s, e) => RaisePropertyChanged(nameof(HasAudio))));
@@ -76,7 +75,6 @@ namespace NeeView
                 (s, e) => RaisePropertyChanged(nameof(SubtitleTracks))));
 
             _isPlaying = _player.IsPlaying;
-            _position = _player.Position;
 
             _timer = new DispatcherTimer(DispatcherPriority.Normal, App.Current.Dispatcher);
             _timer.Interval = TimeSpan.FromSeconds(0.1);
@@ -122,29 +120,24 @@ namespace NeeView
             get { return _player.HasVideo; }
         }
 
-        public TimeSpan Position
+        // [0..1]
+        public double Position
         {
-            get { return _position; }
+            get { return _player.Position; }
             set
             {
                 if (_disposedValue) return;
-                if (_position != value)
+                var newPosition = MathUtility.Clamp(value, 0.0, 1.0);
+                if (_player.Position != newPosition)
                 {
-                    SetPositionInner(value);
                     if (_duration.HasTimeSpan)
                     {
-                        _player.Position = _position;
+                        _player.Position = newPosition;
                     }
+                    RaisePropertyChanged();
+                    RaisePropertyChanged(nameof(DispTime));
                 }
             }
-        }
-
-
-        // [0..1] for slider
-        public double PositionRate
-        {
-            get { return (double)_position.Ticks / _durationTimeSpan.Ticks; }
-            set { this.Position = TimeSpan.FromTicks((long)(_durationTimeSpan.Ticks * value)); }
         }
 
         // [0..1]
@@ -175,8 +168,8 @@ namespace NeeView
             {
                 if (!_duration.HasTimeSpan) return null;
 
-                var now = _position;
                 var total = _durationTimeSpan;
+                var now = total.Multiply(Position);
                 var left = total - now;
 
                 var totalString = total.GetHours() > 0 ? $"{total.GetHours()}:{total.Minutes:00}:{total.Seconds:00}" : $"{total.Minutes}:{total.Seconds:00}";
@@ -231,7 +224,7 @@ namespace NeeView
                         }
                         else
                         {
-                            _player.Position = _position;
+                            //_player.Position = _position;
                             ResetPauseFlag(MediaPlayerPauseBit.Scrubbing);
                         }
                     }
@@ -311,24 +304,16 @@ namespace NeeView
             if (_duration.HasTimeSpan)
             {
                 //Debug.WriteLine($"## Player: {_player.Position}");
-                SetPositionInner(_player.Position);
+                RaisePropertyChanged(nameof(Position));
+                RaisePropertyChanged(nameof(DispTime));
             }
-        }
-
-        private void SetPositionInner(TimeSpan position)
-        {
-            //Debug.Assert(position > TimeSpan.Zero);
-            _position = MathUtility.Clamp(position, TimeSpan.Zero, _durationTimeSpan);
-            RaisePropertyChanged();
-            RaisePropertyChanged(nameof(PositionRate));
-            RaisePropertyChanged(nameof(DispTime));
         }
 
         public void Attach()
         {
             if (_disposedValue) return;
             _isActive = true;
-            Duration = _player.NaturalDuration;
+            Duration = _player.Duration;
         }
 
 #if false
@@ -405,33 +390,34 @@ namespace NeeView
         /// <summary>
         /// コマンドによる移動
         /// </summary>
-        /// <param name="delta"></param>
+        /// <param name="span"></param>
         /// <returns>終端を超える場合は true</returns>
-        public bool AddPosition(TimeSpan delta)
+        public bool AddPosition(TimeSpan span)
         {
             if (_disposedValue) return false;
             if (!_duration.HasTimeSpan) return false;
 
-            var t0 = _position;
-            var t1 = _position + delta;
+            var delta = span.Divide(_durationTimeSpan);
 
-            if (delta < TimeSpan.Zero && t1 < TimeSpan.Zero && t0 < TimeSpan.FromSeconds(0.5))
+            var t0 = Position;
+            var t1 = t0 + delta;
+
+            if (delta < 0.0 && t1 < 0.0&& t0 < 0.01)
             {
                 if (IsRepeat)
                 {
-                    t1 = _durationTimeSpan + t1;
-                    t1 = t1 < TimeSpan.Zero ? TimeSpan.Zero : t1;
+                    t1 = Math.Max(0.0, 1.0 + t1);
                 }
                 else
                 {
                     return true;
                 }
             }
-            if (delta > TimeSpan.Zero && t1 > _durationTimeSpan)
+            if (delta > 0.0 && t1 > 1.0)
             {
                 if (IsRepeat)
                 {
-                    t1 = TimeSpan.Zero;
+                    t1 = 0.0;
                 }
                 else
                 {
@@ -454,8 +440,14 @@ namespace NeeView
             SetPosition(_durationTimeSpan);
         }
 
+        // コマンドによる移動
+        public void SetPosition(TimeSpan span)
+        {
+            SetPosition(span.Divide(_durationTimeSpan));
+        }
+
         // コマンドによる移動[0..1]
-        public void SetPosition(TimeSpan position)
+        public void SetPosition(double position)
         {
             if (_disposedValue) return;
             if (!_duration.HasTimeSpan) return;
