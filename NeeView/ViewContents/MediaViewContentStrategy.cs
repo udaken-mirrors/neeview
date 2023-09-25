@@ -112,7 +112,22 @@ namespace NeeView
 
         private IOpenableMediaPlayer AllocateMediaPlayer()
         {
-            if (Config.Current.Archive.Media.IsLibVlcEnabled && _viewContent.Page.Content is not AnimatedPageContent)
+            if (_viewContent.Page.Content is AnimatedPageContent)
+            {
+                try
+                {
+                    if (_viewContent.Page.Content.PictureInfo is PictureInfo pictureInfo)
+                    {
+                        pictureInfo.Decoder = "WPF Animated GIF";
+                    }
+                    return new AnimatedMediaPlayer();
+                }
+                catch (Exception ex)
+                {
+                    throw new ApplicationException($"Cannot use WPF Animated GIF.\r\n{ex.Message}", ex);
+                }
+            }
+            else if (Config.Current.Archive.Media.IsLibVlcEnabled)
             {
                 try
                 {

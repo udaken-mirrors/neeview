@@ -14,6 +14,8 @@ namespace NeeView
                     return new DefaultMediaPlayerCanvas(element, source, contentSize, viewbox, mediaPlayer);
                 case VlcMediaPlayer vlcMediaPlayer:
                     return new VlcMediaPlayerCanvas(element, source, contentSize, viewbox, vlcMediaPlayer);
+                case AnimatedMediaPlayer animatedMediaPlayer:
+                    return new AnimatedMediaPlayerCanvas(element, source, contentSize, viewbox, animatedMediaPlayer);
                 default:
                     throw new NotSupportedException();
             }

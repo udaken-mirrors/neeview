@@ -7,3 +7,6 @@
 [submodule "Vlc.DotNet"]
 	path = Vlc.DotNet
 	url = https://github.com/neelabo/Vlc.DotNet.git
+[submodule "AnimatedImage"]
+	path = AnimatedImage
+	url = https://github.com/neelabo/AnimatedImage.git

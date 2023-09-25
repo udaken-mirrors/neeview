@@ -239,7 +239,7 @@
                     <Style TargetType="StackPanel">
                         <Setter Property="IsEnabled" Value="False" />
                         <Style.Triggers>
-                            <DataTrigger Binding="{Binding Operator.DurationHasTimeSpan}" Value="True">
+                            <DataTrigger Binding="{Binding Operator.ScrubbingEnabled}" Value="True">
                                 <Setter Property="IsEnabled" Value="True" />
                             </DataTrigger>
                         </Style.Triggers>
@@ -248,13 +248,17 @@
                 <nwc:SmartSlider x:Name="Slider" ThumbSize="{Binding Slider.Thickness, Source={x:Static local:Config.Current}}" ThumbBorderBrush="{DynamicResource BottomBar.Slider.Thumb}"
                         TrackDecreaseBrush="{DynamicResource BottomBar.Slider.Track}" TrackIncreaseBrush="{DynamicResource BottomBar.Slider.Background}"
                         DragStarted="VideoSlider_DragStarted" DragCompleted="VideoSlider_DragCompleted"
+                                 Value="{Binding Operator.Position}"
                         PreviewMouseLeftButtonDown="VideoSlider_PreviewMouseLeftButtonDown" >
+                    
+                    <!--
                     <nwc:SmartSlider.Value>
                         <MultiBinding Converter="{StaticResource EnableValueConverter}">
                             <Binding Path="Operator.Position"/>
                             <Binding RelativeSource="{RelativeSource Self}" Path="IsEnabled" Mode="OneWay" />
                         </MultiBinding>
                     </nwc:SmartSlider.Value>
+                    -->
                 </nwc:SmartSlider>
             </StackPanel>
 

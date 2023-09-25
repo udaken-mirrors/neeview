@@ -28,6 +28,7 @@ namespace NeeView
         private bool _isTimeLeftDisp;
         private Duration _duration;
         private TimeSpan _durationTimeSpan = TimeSpan.FromMilliseconds(1.0);
+        private double _position;
         private bool _isActive;
         private bool _isScrubbing;
         private readonly DisposableCollection _disposables = new();
@@ -67,6 +68,9 @@ namespace NeeView
 
             _disposables.Add(_player.SubscribePropertyChanged(nameof(_player.IsRepeat),
                 (s, e) => RaisePropertyChanged(nameof(IsRepeat))));
+
+            _disposables.Add(_player.SubscribePropertyChanged(nameof(_player.ScrubbingEnabled),
+                (s, e) => RaisePropertyChanged(nameof(ScrubbingEnabled))));
 
             _disposables.Add(_player.SubscribePropertyChanged(nameof(_player.AudioTracks),
                 (s, e) => RaisePropertyChanged(nameof(AudioTracks))));
@@ -120,25 +124,22 @@ namespace NeeView
             get { return _player.HasVideo; }
         }
 
-        // [0..1]
         public double Position
         {
-            get { return _player.Position; }
+            get { return _position; }
             set
             {
-                if (_disposedValue) return;
-                var newPosition = MathUtility.Clamp(value, 0.0, 1.0);
-                if (_player.Position != newPosition)
+                if (SetProperty(ref _position, MathUtility.Clamp(value, 0.0, 1.0)))
                 {
-                    if (_duration.HasTimeSpan)
-                    {
-                        _player.Position = newPosition;
-                    }
-                    RaisePropertyChanged();
+                    _player.Position = _position;
+                    RaisePropertyChanged(nameof(Position));
                     RaisePropertyChanged(nameof(DispTime));
                 }
             }
         }
+
+
+
 
         // [0..1]
         public double Volume
@@ -207,6 +208,11 @@ namespace NeeView
             set => _player.IsMuted = value;
         }
 
+        public bool ScrubbingEnabled
+        {
+            get { return _player.ScrubbingEnabled; }
+        }
+
         public bool IsScrubbing
         {
             get { return _isScrubbing; }
@@ -224,7 +230,6 @@ namespace NeeView
                         }
                         else
                         {
-                            //_player.Position = _position;
                             ResetPauseFlag(MediaPlayerPauseBit.Scrubbing);
                         }
                     }
@@ -270,12 +275,12 @@ namespace NeeView
             GC.SuppressFinalize(this);
         }
 
-
-        //public void RaisePropertyChangedAll()
-        //{
-        //    RaisePropertyChanged(null);
-        //}
-
+        private void RaisePositionPropertyChanged()
+        {
+            _position = _player.Position;
+            RaisePropertyChanged(nameof(Position));
+            RaisePropertyChanged(nameof(DispTime));
+        }
 
         private void Player_MediaFailed(object? sender, ExceptionEventArgs e)
         {
@@ -301,11 +306,10 @@ namespace NeeView
             if (_disposedValue) return;
             if (!_isActive || _isScrubbing) return;
 
-            if (_duration.HasTimeSpan)
+            if (_player.ScrubbingEnabled)
             {
                 //Debug.WriteLine($"## Player: {_player.Position}");
-                RaisePropertyChanged(nameof(Position));
-                RaisePropertyChanged(nameof(DispTime));
+                RaisePositionPropertyChanged();
             }
         }
 
@@ -395,7 +399,7 @@ namespace NeeView
         public bool AddPosition(TimeSpan span)
         {
             if (_disposedValue) return false;
-            if (!_duration.HasTimeSpan) return false;
+            if (!_player.ScrubbingEnabled) return false;
 
             var delta = span.Divide(_durationTimeSpan);
 
@@ -450,7 +454,7 @@ namespace NeeView
         public void SetPosition(double position)
         {
             if (_disposedValue) return;
-            if (!_duration.HasTimeSpan) return;
+            if (!_player.ScrubbingEnabled) return;
 
             SetPauseFlag(MediaPlayerPauseBit.SetPosition);
             this.Position = position;

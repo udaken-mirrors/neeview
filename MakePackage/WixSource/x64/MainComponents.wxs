@@ -95,6 +95,9 @@
       <Component Id="cmp0A53E9601B96AB489A4BBFF84114AA30" Guid="*">
         <File Id="filA17CCA42435E3460D750CAA029C0B5C5" KeyPath="yes" Source="$(var.ContentDir)\Vlc.DotNet.Wpf.dll" />
       </Component>
+      <Component Id="cmp4D83E1A509A575739F9FD40B206CD41F" Guid="*">
+        <File Id="filBC68C8C05403B8A6F6AD0E4877CCCBB9" KeyPath="yes" Source="$(var.ContentDir)\WpfAnimatedGif.dll" />
+      </Component>
       <Component Id="cmp7AAD167AF28B00F512B8879F3F0BD93D" Guid="*">
         <File Id="fil828A7A54ACD0C302B49084D6AD7070D1" KeyPath="yes" Source="$(var.ContentDir)\XmpCore.dll" />
       </Component>
@@ -214,6 +217,7 @@
       <ComponentRef Id="cmpFA2B31A31FA4B927AB5BED423F118D0D" />
       <ComponentRef Id="cmp5506B005CB9BFF8F4013CFA150250525" />
       <ComponentRef Id="cmp0A53E9601B96AB489A4BBFF84114AA30" />
+      <ComponentRef Id="cmp4D83E1A509A575739F9FD40B206CD41F" />
       <ComponentRef Id="cmp7AAD167AF28B00F512B8879F3F0BD93D" />
       <ComponentRef Id="cmpBAD15BA8981526F157C0B1FF9DAC42A4" />
       <ComponentRef Id="cmpE61E631FB4D9B5607DB3871EAC766ADA" />

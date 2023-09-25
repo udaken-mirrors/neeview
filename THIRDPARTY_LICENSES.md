@@ -148,3 +148,13 @@ DLL: MediaInfo.dll
 * License: [MIT License](https://github.com/ZeBobo5/Vlc.DotNet/blob/develop/LICENSE)
 * Changed:
     * Custom for NeeView: [Project Page](https://github.com/neelabo/Vlc.DotNet)
+
+ ### WPF Animated GIF
+
+ DLL: WpfAnimatedGif.dll
+
+* Copyright 2019 Thomas Levesque
+* URL: [WPF Animated GIF](https://github.com/XamlAnimatedGif/WpfAnimatedGif/)
+* License: [Apache-2.0 license](https://github.com/XamlAnimatedGif/WpfAnimatedGif/blob/master/LICENSE.txt)
+
+
