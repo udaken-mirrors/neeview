@@ -14,7 +14,7 @@ namespace NeeView
 {
     public class DefaultMediaPlayerCanvas : MediaPlayerCanvas, IDisposable
     {
-        private readonly DefaultCoreMediaPlayer _player;
+        private readonly DefaultMediaPlayer _player;
         private readonly DrawingBrush _videoBrush;
         private readonly Rectangle _videoLayer;
         private readonly ImageBrush _imageBlush;
@@ -23,7 +23,7 @@ namespace NeeView
         private bool _disposedValue;
 
 
-        public DefaultMediaPlayerCanvas(PageFrameElement element, MediaViewData source, ViewContentSize contentSize, Rect viewbox, DefaultCoreMediaPlayer player)
+        public DefaultMediaPlayerCanvas(PageFrameElement element, MediaViewData source, ViewContentSize contentSize, Rect viewbox, DefaultMediaPlayer player)
         {
             Debug.WriteLine($"Create.MediaPlayer: {source.Path}");
 

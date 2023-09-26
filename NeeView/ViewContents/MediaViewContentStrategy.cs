@@ -19,7 +19,7 @@ namespace NeeView
         private readonly ViewContent _viewContent;
 
         private readonly ViewContentMediaPlayer _mediaPlayer;
-        private readonly ICoreMediaPlayer _player;
+        private readonly IOpenableMediaPlayer _player;
         private readonly IMediaContext _mediaContext;
         private MediaPlayerCanvas? _playerCanvas;
         private ImageSource? _imageSource;
@@ -110,7 +110,7 @@ namespace NeeView
         }
 
 
-        private ICoreMediaPlayer AllocateMediaPlayer()
+        private IOpenableMediaPlayer AllocateMediaPlayer()
         {
             if (Config.Current.Archive.Media.IsLibVlcEnabled && _viewContent.Page.Content is not AnimatedPageContent)
             {
@@ -120,7 +120,7 @@ namespace NeeView
                     {
                         pictureInfo.Decoder = "libVLC";
                     }
-                    return new VlcCoreMediaPlayer();
+                    return new VlcMediaPlayer();
                 }
                 catch (Exception ex)
                 {
@@ -135,7 +135,7 @@ namespace NeeView
                     {
                         pictureInfo.Decoder = "MediaPlayer";
                     }
-                    return new DefaultCoreMediaPlayer();
+                    return new DefaultMediaPlayer();
                 }
                 catch (Exception ex)
                 {
@@ -145,7 +145,7 @@ namespace NeeView
             }
         }
 
-        private void ReleaseMediaPlayer(ICoreMediaPlayer player)
+        private void ReleaseMediaPlayer(IOpenableMediaPlayer player)
         {
             player.Dispose();
         }

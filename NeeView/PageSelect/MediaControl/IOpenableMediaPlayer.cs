@@ -2,7 +2,7 @@
 
 namespace NeeView
 {
-    public interface ICoreMediaPlayer : IMediaPlayer
+    public interface IOpenableMediaPlayer : IMediaPlayer
     {
         void Open(Uri uri, TimeSpan delay);
     }

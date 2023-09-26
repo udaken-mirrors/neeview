@@ -16,7 +16,7 @@ namespace NeeView
 {
     public class VlcMediaPlayerCanvas : MediaPlayerCanvas, IDisposable, IHasScalingMode
     {
-        private readonly VlcCoreMediaPlayer _player;
+        private readonly VlcMediaPlayer _player;
 #if USE_IMAGEBRUSH
         private readonly ImageBrush _videoBrush;
         private readonly Rectangle _videoLayer;
@@ -33,7 +33,7 @@ namespace NeeView
         private ViewContentSize _contentSize;
         private bool _imageInitialized;
 
-        public VlcMediaPlayerCanvas(PageFrameElement element, MediaViewData source, ViewContentSize contentSize, Rect viewbox, VlcCoreMediaPlayer player)
+        public VlcMediaPlayerCanvas(PageFrameElement element, MediaViewData source, ViewContentSize contentSize, Rect viewbox, VlcMediaPlayer player)
         {
             Debug.WriteLine($"Create.VlcMediaPlayer: {source.Path}");
 

@@ -11,7 +11,7 @@ using System.Windows.Media;
 namespace NeeView
 {
     [NotifyPropertyChanged]
-    public partial class DefaultCoreMediaPlayer : IDisposable, INotifyPropertyChanged, ICoreMediaPlayer
+    public partial class DefaultMediaPlayer : IDisposable, INotifyPropertyChanged, IOpenableMediaPlayer
     {
         private static readonly ObjectPool<MediaPlayer> _mediaPlayerPool = new();
 
@@ -27,7 +27,7 @@ namespace NeeView
         private bool _isRepeat;
 
 
-        public DefaultCoreMediaPlayer()
+        public DefaultMediaPlayer()
         {
             _player = _mediaPlayerPool.Allocate();
             _player.ScrubbingEnabled = true;

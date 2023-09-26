@@ -10,9 +10,9 @@ namespace NeeView
         {
             switch (player)
             {
-                case DefaultCoreMediaPlayer mediaPlayer:
+                case DefaultMediaPlayer mediaPlayer:
                     return new DefaultMediaPlayerCanvas(element, source, contentSize, viewbox, mediaPlayer);
-                case VlcCoreMediaPlayer vlcMediaPlayer:
+                case VlcMediaPlayer vlcMediaPlayer:
                     return new VlcMediaPlayerCanvas(element, source, contentSize, viewbox, vlcMediaPlayer);
                 default:
                     throw new NotSupportedException();
