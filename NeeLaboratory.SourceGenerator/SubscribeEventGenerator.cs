@@ -40,6 +40,7 @@ public sealed class SubscribeEventGenerator : IIncrementalGenerator
         string className = ts.ContainingSymbol.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat);
         string eventName = ts.Name;
         string eventTypeName = ts.Type.ToDisplayString().TrimEnd('?');
+        string eventAccessModifiers = ts.IsStatic ? "public static" : "public";
 
         bool isInterface = ((ITypeSymbol)ts.ContainingSymbol).TypeKind == TypeKind.Interface;
 
@@ -75,7 +76,7 @@ public sealed class SubscribeEventGenerator : IIncrementalGenerator
 
                 partial class {{className}}
                 {
-                    public IDisposable Subscribe{{eventName}}({{eventTypeName}} handler)
+                    {{eventAccessModifiers}} IDisposable Subscribe{{eventName}}({{eventTypeName}} handler)
                     {
                         {{eventName}} += handler;
                         return new AnonymousDisposable(() => {{eventName}} -= handler);

@@ -79,7 +79,7 @@ namespace NeeView
         /// <summary>
         /// 削除不可
         /// </summary>
-        Undeliteable = 0x2000,
+        Undeletable = 0x2000,
 
         /// <summary>
         /// 最終ページならばリセット

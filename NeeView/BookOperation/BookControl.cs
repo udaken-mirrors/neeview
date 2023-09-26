@@ -84,7 +84,7 @@ namespace NeeView
         // 現在表示しているブックの削除可能？
         public bool CanDeleteBook()
         {
-            return Config.Current.System.IsFileWriteAccessEnabled && _book != null && (_book.LoadOption & BookLoadOption.Undeliteable) == 0 && (File.Exists(_book.SourcePath) || Directory.Exists(_book.SourcePath));
+            return Config.Current.System.IsFileWriteAccessEnabled && _book != null && (_book.LoadOption & BookLoadOption.Undeletable) == 0 && (File.Exists(_book.SourcePath) || Directory.Exists(_book.SourcePath));
         }
 
         // 現在表示しているブックを削除する

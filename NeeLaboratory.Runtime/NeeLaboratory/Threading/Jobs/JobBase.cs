@@ -44,6 +44,8 @@ namespace NeeLaboratory.Threading.Jobs
         }
 
 
+        public event EventHandler<JobCompletedEventArgs>? Completed;
+
 
         /// <summary>
         /// 実行状態
@@ -52,7 +54,6 @@ namespace NeeLaboratory.Threading.Jobs
         {
             get { return _state; }
         }
-
 
 
         /// <summary>
@@ -64,6 +65,7 @@ namespace NeeLaboratory.Threading.Jobs
             if (isCompleted)
             {
                 _complete.Set();
+                Completed?.Invoke(this, new JobCompletedEventArgs(state));
             }
         }
 
@@ -190,4 +192,15 @@ namespace NeeLaboratory.Threading.Jobs
         #endregion
     }
 
+
+
+    public class JobCompletedEventArgs : EventArgs
+    {
+        public JobCompletedEventArgs(JobState state)
+        {
+            State = state;
+        }
+
+        public JobState State { get; }
+    }
 }

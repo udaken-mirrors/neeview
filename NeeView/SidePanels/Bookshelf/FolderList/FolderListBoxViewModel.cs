@@ -33,7 +33,7 @@ namespace NeeView
         }
 
 
-        public event EventHandler<FolderListBusyChangedEventArgs>? BusyChanged;
+        public event EventHandler<ReferenceCounterChangedEventArgs>? BusyChanged;
         public event EventHandler<FolderListSelectedChangedEventArgs>? SelectedChanging;
         public event EventHandler<FolderListSelectedChangedEventArgs>? SelectedChanged;
 

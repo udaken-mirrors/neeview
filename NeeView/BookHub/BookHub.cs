@@ -114,7 +114,11 @@ namespace NeeView
         [Subscribable]
         public event EventHandler<BookChangedEventArgs>? BookChanged;
 
-        // 新しいロードリクエスト
+        // ロードリクエスト開始
+        [Subscribable]
+        public event EventHandler<BookPathEventArgs>? LoadRequesting;
+
+        // ロードリクエスト処理完了
         [Subscribable]
         public event EventHandler<BookPathEventArgs>? LoadRequested;
 
@@ -246,8 +250,6 @@ namespace NeeView
 
             ////DebugTimer.Start($"\nStart: {path}");
 
-            LoadRequested?.Invoke(this, new BookPathEventArgs(path));
-
             if (_book?.Path == path && option.HasFlag(BookLoadOption.SkipSamePlace)) return null;
 
             this.Address = path;
@@ -264,9 +266,16 @@ namespace NeeView
                 IsRefreshFolderList = isRefreshFolderList
             });
 
+            command.Completed += JobCommand_Completed;
+            LoadRequesting?.Invoke(this, new BookPathEventArgs(path));
             _commandEngine.Enqueue(command);
-
             return command;
+        
+            void JobCommand_Completed(object? sender, JobCompletedEventArgs e)
+            {
+                command.Completed -= JobCommand_Completed;
+                LoadRequested?.Invoke(this, new BookPathEventArgs(path));
+            }
         }
 
 
@@ -693,6 +702,7 @@ namespace NeeView
                     // 非同期で処理されるため、イベントを確実に停止させるためにクリアしている
                     this.BookChanging = null;
                     this.BookChanged = null;
+                    this.LoadRequesting = null;
                     this.LoadRequested = null;
                     this.FolderListSync = null;
                     this.HistoryListSync = null;

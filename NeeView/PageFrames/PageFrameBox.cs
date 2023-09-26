@@ -43,25 +43,17 @@ namespace NeeView.PageFrames
         private readonly PageFrameContainerLayout _layout;
         private readonly PageFrameCanvasPointStorage _canvasPointStorage;
         private readonly DpiScaleProvider _dpiScaleProvider;
-
         private readonly PageFrameTransformMap _transformMap;
-
         private readonly RepeatLimiter _scrollRepeatLimiter = new();
         private readonly ScrollLock _scrollLock = new();
         private readonly TransformControlFactory _transformControlFactory;
-
         private readonly SelectedContainer _selected;
-
         private bool _disposedValue;
-
         private readonly DisposableCollection _disposables = new();
-
         private readonly ViewSourceMap _viewSourceMap;
-
         private readonly DragTransformContextFactory _dragTransformContextFactory;
-
         private readonly OnceDispatcher _onceDispatcher;
-
+        private bool _isStarted;
 
 
         public PageFrameBox(PageFrameContext context, BookContext bookContext)
@@ -171,6 +163,8 @@ namespace NeeView.PageFrames
             {
                 ViewContentChanged?.Invoke(this, new FrameViewContentChangedEventArgs(ViewContentChangedAction.ContentLoaded, Array.Empty<ViewContent>(), 1));
             }
+
+            IsStarted = true;
         }
 
 
@@ -213,6 +207,12 @@ namespace NeeView.PageFrames
         public PageRange SelectedRange => _bookContext.SelectedRange;
 
         public bool IsBusy => _loader.IsBusy;
+
+        public bool IsStarted
+        {
+            get { return _isStarted; }
+            private set { SetProperty(ref _isStarted, value); }
+        }
 
 
         public DragTransformContext? CreateDragTransformContext(bool isPointContainer, bool isLoupeTransform)

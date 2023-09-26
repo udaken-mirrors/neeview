@@ -35,6 +35,30 @@ namespace NeeView
     {
         private static readonly SearchKeyAnalyzer _searchKeyAnalyzer = new();
 
+        #region IsMoving (static)
+
+        private static readonly ReferenceCounter _isMovingCount = new();
+
+        /// <summary>
+        /// フォルダー移動処理中イベント.
+        /// </summary>
+        [Subscribable]
+        public static event EventHandler<ReferenceCounterChangedEventArgs> IsMovingChanged
+        {
+            add { _isMovingCount.Changed += value; }
+            remove { _isMovingCount.Changed -= value; }
+        }
+
+        /// <summary>
+        /// フォルダー移動処理中？
+        /// </summary>
+        /// <remarks>
+        /// 本の切り替え処理中であるかの判定に利用
+        /// </remarks>
+        public static bool IsMoving => _isMovingCount.IsActive;
+
+        #endregion
+
         /// <summary>
         /// そのフォルダーで最後に選択されていた項目の記憶
         /// </summary>
@@ -66,7 +90,7 @@ namespace NeeView
         private volatile bool _isCollectionCreating;
         private List<Action> _collectionCreatedCallback = new();
 
-        private int _busyCount;
+        private ReferenceCounter _busyCount = new();
 
         private FolderCollection? _folderCollection;
         private FolderItem? _selectedItem;
@@ -173,11 +197,11 @@ namespace NeeView
         public event EventHandler? PlaceChanged;
 
         // FolderCollection総入れ替え
-        [Subscribable] 
+        [Subscribable]
         public event EventHandler? CollectionChanged;
 
         // 検索ボックスにフォーカスを
-        [Subscribable] 
+        [Subscribable]
         public event EventHandler? SearchBoxFocus;
 
         // フォルダーツリーにフォーカスを
@@ -186,10 +210,14 @@ namespace NeeView
 
         // リスト更新処理中イベント
         [Subscribable]
-        public event EventHandler<FolderListBusyChangedEventArgs>? BusyChanged;
+        public event EventHandler<ReferenceCounterChangedEventArgs>? BusyChanged
+        {
+            add => _busyCount.Changed += value;
+            remove => _busyCount.Changed -= value;
+        }
 
         // 選択変更開始
-        [Subscribable] 
+        [Subscribable]
         public event EventHandler<FolderListSelectedChangedEventArgs>? SelectedChanging;
 
         // 選択変更
@@ -853,11 +881,20 @@ namespace NeeView
             if (_disposedValue) return;
 
             if (BookHub.Current.IsBusy) return; // 相対移動の場合はキャンセルしない
-            var result = await MoveFolder(+1, option);
-            if (result != true)
+
+            try
             {
-                SoundPlayerService.Current.PlaySeCannotMove();
-                InfoMessage.Current.SetMessage(InfoMessageType.Notify, Properties.Resources.Notice_BookNextFailed);
+                _isMovingCount.Increment();
+                var result = await MoveFolder(+1, option);
+                if (result != true)
+                {
+                    SoundPlayerService.Current.PlaySeCannotMove();
+                    InfoMessage.Current.SetMessage(InfoMessageType.Notify, Properties.Resources.Notice_BookNextFailed);
+                }
+            }
+            finally
+            {
+                _isMovingCount.Decrement();
             }
         }
 
@@ -867,11 +904,20 @@ namespace NeeView
             if (_disposedValue) return;
 
             if (BookHub.Current.IsBusy) return; // 相対移動の場合はキャンセルしない
-            var result = await MoveFolder(-1, option);
-            if (result != true)
+
+            try
             {
-                SoundPlayerService.Current.PlaySeCannotMove();
-                InfoMessage.Current.SetMessage(InfoMessageType.Notify, Properties.Resources.Notice_BookPrevFailed);
+                _isMovingCount.Increment();
+                var result = await MoveFolder(-1, option);
+                if (result != true)
+                {
+                    SoundPlayerService.Current.PlaySeCannotMove();
+                    InfoMessage.Current.SetMessage(InfoMessageType.Notify, Properties.Resources.Notice_BookPrevFailed);
+                }
+            }
+            finally
+            {
+                _isMovingCount.Decrement();
             }
         }
 
@@ -881,7 +927,16 @@ namespace NeeView
             if (_disposedValue) return;
 
             if (BookHub.Current.IsBusy) return;
-            await MoveRandomFolder(option);
+
+            try
+            {
+                _isMovingCount.Increment();
+                await MoveRandomFolder(option);
+            }
+            finally
+            {
+                _isMovingCount.Decrement();
+            }
         }
 
         // 巡回移動できる？
@@ -896,7 +951,6 @@ namespace NeeView
         private async Task<bool> MoveFolder(int direction, BookLoadOption options)
         {
             var isCruise = IsCruise() && _folderCollection is not FolderSearchCollection;
-
             if (isCruise)
             {
                 return await MoveCruiseFolder(direction, options);
@@ -1005,16 +1059,16 @@ namespace NeeView
         {
             if (_disposedValue) return;
 
-            var defaultRecursiveOptionFlag = IsFolderRecoursive(item.Place) ? BookLoadOption.DefaultRecursive : BookLoadOption.None;
-            var undeliteableOptionFlag = item.CanRemove() ? BookLoadOption.None : BookLoadOption.Undeliteable;
-            var options = option | BookLoadOption.IsBook | defaultRecursiveOptionFlag | undeliteableOptionFlag;
+            var defaultRecursiveOptionFlag = IsFolderRecursive(item.Place) ? BookLoadOption.DefaultRecursive : BookLoadOption.None;
+            var undeletableOptionFlag = item.CanRemove() ? BookLoadOption.None : BookLoadOption.Undeletable;
+            var options = option | BookLoadOption.IsBook | defaultRecursiveOptionFlag | undeletableOptionFlag;
             BookHub.Current.RequestLoad(this, item.TargetPath.SimplePath, start, options, isRefreshFolderList);
         }
 
         /// <summary>
         /// 再帰フォルダーが既定の場所であるか
         /// </summary>
-        private static bool IsFolderRecoursive(QueryPath? path)
+        private static bool IsFolderRecursive(QueryPath? path)
         {
             if (path is null) return false;
 
@@ -1026,24 +1080,6 @@ namespace NeeView
 
         #region CreateFolderCollection
 
-        private void IncrementBusy()
-        {
-            var count = Interlocked.Increment(ref _busyCount);
-            if (count == 1)
-            {
-                BusyChanged?.Invoke(this, new FolderListBusyChangedEventArgs(true));
-            }
-        }
-
-        private void DecrementBusy()
-        {
-            var count = Interlocked.Decrement(ref _busyCount);
-            if (count == 0)
-            {
-                BusyChanged?.Invoke(this, new FolderListBusyChangedEventArgs(false));
-            }
-        }
-
         /// <summary>
         /// コレクション作成
         /// </summary>
@@ -1053,8 +1089,7 @@ namespace NeeView
 
             try
             {
-                IncrementBusy();
-
+                _busyCount.Increment();
                 _updateFolderCancellationTokenSource?.Cancel();
                 _updateFolderCancellationTokenSource?.Dispose();
                 _updateFolderCancellationTokenSource = new CancellationTokenSource();
@@ -1080,7 +1115,7 @@ namespace NeeView
             }
             finally
             {
-                DecrementBusy();
+                _busyCount.Decrement();
             }
 
             return null;
@@ -1558,7 +1593,7 @@ namespace NeeView
             }
 
             var query = item.TargetPath;
-            var additionalOption = BookLoadOption.IsBook | (item.CanRemove() ? BookLoadOption.None : BookLoadOption.Undeliteable);
+            var additionalOption = BookLoadOption.IsBook | (item.CanRemove() ? BookLoadOption.None : BookLoadOption.Undeletable);
             BookHub.Current.RequestLoad(this, query.SimplePath, null, option | additionalOption, IsSyncBookshelfEnabled);
         }
 

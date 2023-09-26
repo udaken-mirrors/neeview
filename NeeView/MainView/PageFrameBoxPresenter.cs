@@ -55,6 +55,7 @@ namespace NeeView
         private BookMementoControl? _bookMementoControl;
         private bool _isLoading;
         private string? _emptyMessage;
+        private readonly ReferenceCounter _loadRequestCount = new();
 
 
         private PageFrameBoxPresenter()
@@ -64,6 +65,8 @@ namespace NeeView
 
             _shareContext = new BookShareContext(_config);
 
+            _bookHub.LoadRequesting += BookHub_LoadRequesting;
+            _bookHub.LoadRequested += BookHub_LoadRequested;
             _bookHub.BookChanging += BookHub_BookChanging;
             _bookHub.BookChanged += BookHub_BookChanged;
 
@@ -166,6 +169,17 @@ namespace NeeView
         {
             Dispose(disposing: true);
             GC.SuppressFinalize(this);
+        }
+
+
+        private void BookHub_LoadRequesting(object? sender, BookPathEventArgs e)
+        {
+            _loadRequestCount.Increment();
+        }
+
+        private void BookHub_LoadRequested(object? sender, BookPathEventArgs e)
+        {
+            _loadRequestCount.Decrement();
         }
 
         private void BookHub_BookChanging(object? sender, BookChangingEventArgs e)
@@ -280,7 +294,7 @@ namespace NeeView
 
             bool IsLoading()
             {
-                return !box.IsLoaded && box.IsSelectedPageFrameLoading();
+                return !box.IsStarted || box.IsSelectedPageFrameLoading();
             }
         }
 
@@ -291,13 +305,20 @@ namespace NeeView
         /// <returns></returns>
         public async Task WaitForBookStableAsync(CancellationToken token)
         {
-            if (!_isLoading) return;
+            if (!IsLoading()) return;
 
             using var eventFlag = new ManualResetEventSlim();
+            using var requestingEvent = _loadRequestCount.SubscribeChanged((s, e) => eventFlag.Set());
             using var loadingEvent = SubscribeLoading((s, e) => eventFlag.Set());
-            while (_isLoading)
+            using var movingEvent = FolderList.SubscribeIsMovingChanged((s, e) => eventFlag.Set());
+            while (IsLoading())
             {
                 await eventFlag.WaitHandle.AsTask().WaitAsync(token);
+            }
+
+            bool IsLoading()
+            {
+                return _loadRequestCount.IsActive || _isLoading || FolderList.IsMoving;
             }
         }
 

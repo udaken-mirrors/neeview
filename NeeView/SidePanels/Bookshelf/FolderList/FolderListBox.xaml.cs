@@ -16,6 +16,7 @@ using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media.Animation;
+using NeeLaboratory.ComponentModel;
 
 namespace NeeView
 {
@@ -27,6 +28,7 @@ namespace NeeView
         private readonly FolderListBoxViewModel _vm;
         private ListBoxThumbnailLoader? _thumbnailLoader;
         private PageThumbnailJobClient? _jobClient;
+        private bool _isBuy;
 
 
         static FolderListBox()
@@ -1083,14 +1085,18 @@ namespace NeeView
         /// <summary>
         /// リスト更新中
         /// </summary>
-        private void ViewModel_BusyChanged(object? sender, FolderListBusyChangedEventArgs e)
+        private void ViewModel_BusyChanged(object? sender, ReferenceCounterChangedEventArgs e)
         {
-            SetBusy(e.IsBusy);
+            SetBusy(e.IsActive);
         }
+
 
         private void SetBusy(bool isBusy)
         {
-            if (isBusy)
+            if (_isBuy == isBusy) return;
+            _isBuy = isBusy;
+
+            if (_isBuy)
             {
                 this.IsHitTestVisible = false;
 
