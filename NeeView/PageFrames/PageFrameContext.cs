@@ -72,6 +72,7 @@ namespace NeeView.PageFrames
 
         public bool IsInsertDummyPage => _config.Book.IsInsertDummyPage;
         public AutoRotateType AutoRotateType => _config.View.AutoRotate;
+        public bool AllowFileContentAutoRotate => _config.View.AllowFileContentAutoRotate;
         public bool AllowEnlarge => _config.View.AllowStretchScaleUp;
         public bool AllowReduce => _config.View.AllowStretchScaleDown;
         public bool IsFlipLocked => _config.View.IsKeepFlip;
@@ -168,6 +169,10 @@ namespace NeeView.PageFrames
 
                 case nameof(ViewConfig.AutoRotate):
                     RaisePropertyChanged(nameof(AutoRotateType));
+                    break;
+
+                case nameof(ViewConfig.AllowFileContentAutoRotate):
+                    RaisePropertyChanged(nameof(AllowFileContentAutoRotate));
                     break;
 
                 case nameof(ViewConfig.AllowStretchScaleUp):

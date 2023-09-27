@@ -7494,15 +7494,21 @@ nv.ShowToast(nv.Book.ViewPages[0].Path)</value>
     <value>VLC media player が別途必要です。字幕やオーディオチャンネルの選択が可能です。</value>
   </data>
   <data name="MediaArchiveConfig.LibVlcPath" xml:space="preserve">
-    <value>libVLCのディレクトリ</value>
+    <value>libVLC のディレクトリ</value>
   </data>
   <data name="MediaArchiveConfig.LibVlcPath.Remarks" xml:space="preserve">
-    <value>libvlc.dll の存在するディレクトリ。通常、これは VLC media player のインストールフォルダーになります。</value>
+    <value>64bit版 libvlc.dll の存在するディレクトリ。通常、これは VLC media player のインストールフォルダーになります。</value>
   </data>
   <data name="MediaControl.MoreMenu.NoAudio" xml:space="preserve">
     <value>(音声なし)</value>
   </data>
   <data name="MediaControl.MoreMenu.NoSubtitle" xml:space="preserve">
     <value>(字幕なし)</value>
+  </data>
+  <data name="ViewConfig.AllowFileContentAutoRotate" xml:space="preserve">
+    <value>ファイルページの自動回転を許可</value>
+  </data>
+  <data name="Navigator.AllowFileContentAutoRotate" xml:space="preserve">
+    <value>ファイルページの自動回転を許可</value>
   </data>
 </root>

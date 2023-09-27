@@ -25,6 +25,7 @@ namespace NeeView.PageFrames
 
         public Size CanvasSize => _profile.CanvasSize;
         public AutoRotateType AutoRotateType => _profile.AutoRotateType;
+        public bool AllowFileContentAutoRotate => _profile.AllowFileContentAutoRotate;
         public PageStretchMode StretchMode => _profile.StretchMode;
         public double ContentsSpace => _profile.ContentsSpace;
         public bool AllowEnlarge => _profile.AllowEnlarge;
@@ -35,8 +36,13 @@ namespace NeeView.PageFrames
         /// </summary>
         /// <param name="size"></param>
         /// <returns></returns>
-        public double CalcAutoRotate(Size size)
+        public double CalcAutoRotate(Size size, bool isFileContent)
         {
+            if (isFileContent && !AllowFileContentAutoRotate)
+            {
+                return 0.0;
+            }
+
             if (AutoRotateType == AutoRotateType.None)
             {
                 return 0.0;

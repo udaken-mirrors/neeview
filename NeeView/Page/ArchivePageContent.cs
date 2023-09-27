@@ -18,6 +18,8 @@ namespace NeeView
             Thumbnail.IsCacheEnabled = true;
         }
 
+        public override bool IsFileContent => true;
+
         public Thumbnail Thumbnail { get; } = new Thumbnail();
 
 

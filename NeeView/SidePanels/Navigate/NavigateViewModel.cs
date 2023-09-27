@@ -70,6 +70,11 @@ namespace NeeView
 
         public Dictionary<AutoRotateType, string> AutoRotateTypeList { get; } = AliasNameExtensions.GetAliasNameDictionary<AutoRotateType>();
 
+        public bool AllowFileContentAutoRotate
+        {
+            get => Config.Current.View.AllowFileContentAutoRotate;
+            set => Config.Current.View.AllowFileContentAutoRotate = value;
+        }
 
         public double Scale
         {
@@ -240,6 +245,10 @@ namespace NeeView
 
                 case nameof(ViewConfig.AutoRotate):
                     RaisePropertyChanged(nameof(AutoRotate));
+                    break;
+
+                case nameof(ViewConfig.AllowFileContentAutoRotate):
+                    RaisePropertyChanged(nameof(AllowFileContentAutoRotate));
                     break;
 
                 case nameof(ViewConfig.StretchMode):

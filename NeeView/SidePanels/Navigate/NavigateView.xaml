@@ -333,7 +333,13 @@
                                     </StackPanel>
                                     <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
                                         <ComboBox DockPanel.Dock="Right" ItemsSource="{Binding AutoRotateTypeList}" SelectedValuePath="Key" DisplayMemberPath="Value"
-                                                SelectedValue="{Binding AutoRotate}" />
+                                                SelectedValue="{Binding AutoRotate}" >
+                                            <ComboBox.ContextMenu>
+                                                <ContextMenu>
+                                                    <MenuItem Header="{x:Static properties:Resources.Navigator_AllowFileContentAutoRotate}" IsCheckable="True" IsChecked="{Binding AllowFileContentAutoRotate}" />
+                                                </ContextMenu>
+                                            </ComboBox.ContextMenu>
+                                        </ComboBox>
                                         <ToggleButton Style="{StaticResource NavigateToggleButtonStyle}" IsChecked="{Binding IsKeepAngle}"
                                                 ToolTip="{x:Static properties:Resources.Navigator_IsKeepAngle}">
                                             <Image Source="{StaticResource ic_pushpin_b}" />

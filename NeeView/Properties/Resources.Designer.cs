@@ -2435,7 +2435,7 @@ namespace NeeView.Properties {
         }
         
         /// <summary>
-        ///   Turn off fullscreen. に類似しているローカライズされた文字列を検索します。
+        ///   Turn off full screen. に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string CancelFullScreenCommand_Remarks {
             get {
@@ -2634,7 +2634,7 @@ namespace NeeView.Properties {
         }
         
         /// <summary>
-        ///   Some commands allow you to specify arguments.These can be used for the purpose of omitting the user&apos;s selection by specifying the argument in the command that normally displays the dialog. に類似しているローカライズされた文字列を検索します。
+        ///   Some commands allow you to specify arguments. These can be used for the purpose of omitting the user&apos;s selection by specifying the argument in the command that normally displays the dialog. に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string CommandAccessor_Execute_Remarks {
             get {
@@ -10003,6 +10003,15 @@ namespace NeeView.Properties {
         public static string MultiPagePolicy_Twice {
             get {
                 return ResourceManager.GetString("MultiPagePolicy.Twice", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Allow auto rotate file pages に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string Navigator_AllowFileContentAutoRotate {
+            get {
+                return ResourceManager.GetString("Navigator.AllowFileContentAutoRotate", resourceCulture);
             }
         }
         
@@ -19485,6 +19494,15 @@ namespace NeeView.Properties {
         public static string VerticalAlignment_Top {
             get {
                 return ResourceManager.GetString("VerticalAlignment.Top", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Allow auto rotate file pages に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string ViewConfig_AllowFileContentAutoRotate {
+            get {
+                return ResourceManager.GetString("ViewConfig.AllowFileContentAutoRotate", resourceCulture);
             }
         }
         

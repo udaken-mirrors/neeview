@@ -29,6 +29,8 @@ namespace NeeView
             _source = new FilePageData(archiveEntry, icon, message);
         }
 
+        public override bool IsFileContent => true;
+
         public override async Task<PageSource> LoadSourceAsync(CancellationToken token)
         {
             await Task.CompletedTask;

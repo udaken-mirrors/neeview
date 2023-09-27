@@ -55,6 +55,8 @@ namespace NeeView
             set => _state = value;
         }
 
+        public virtual bool IsFileContent => false;
+
         public ArchiveEntry ArchiveEntry => _archiveEntry;
 
         public BookMemoryService? BookMemoryService => _bookMemoryService;

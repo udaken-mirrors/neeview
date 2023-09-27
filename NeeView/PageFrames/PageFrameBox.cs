@@ -521,10 +521,11 @@ namespace NeeView.PageFrames
                     break;
 
                 case nameof(Context.StretchMode):
-                    UpdateContainers(PageFrameDirtyLevel.Moderate, TransformMask.None, false, true);
+                    UpdateContainers(PageFrameDirtyLevel.Moderate, TransformMask.Scale, false, true);
                     break;
 
                 case nameof(Context.AutoRotateType):
+                case nameof(Context.AllowFileContentAutoRotate):
                     UpdateContainers(PageFrameDirtyLevel.Moderate, TransformMask.Angle, false, true);
                     break;
 

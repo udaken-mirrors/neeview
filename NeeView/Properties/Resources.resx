@@ -1122,7 +1122,7 @@ nv.Bookshelf.SelectedItems = nv.Bookshelf.Items.filter(e =&gt; e.Name.startsWith
     <value>Full screen OFF</value>
   </data>
   <data name="CancelFullScreenCommand.Remarks" xml:space="preserve">
-    <value>Turn off fullscreen.</value>
+    <value>Turn off full screen.</value>
   </data>
   <data name="CancelScriptCommand" xml:space="preserve">
     <value>Cancel script</value>
@@ -1189,7 +1189,7 @@ nv.Bookshelf.SelectedItems = nv.Bookshelf.Items.filter(e =&gt; e.Name.startsWith
 nv.Command.LoadAs.Execute("C:\\Foo\\Bar.zip")</value>
   </data>
   <data name="CommandAccessor.Execute.Remarks" xml:space="preserve">
-    <value>Some commands allow you to specify arguments.These can be used for the purpose of omitting the user's selection by specifying the argument in the command that normally displays the dialog.</value>
+    <value>Some commands allow you to specify arguments. These can be used for the purpose of omitting the user's selection by specifying the argument in the command that normally displays the dialog.</value>
   </data>
   <data name="CommandAccessor.Execute.Returns" xml:space="preserve">
     <value>Success or failure of command issuance. Commands may not be issued during loading. The success or failure of the command itself is not determined.</value>
@@ -7499,5 +7499,11 @@ nv.ShowToast(nv.Book.ViewPages[0].Path)</value>
   </data>
   <data name="MediaControl.MoreMenu.NoSubtitle" xml:space="preserve">
     <value>(No subtitle)</value>
+  </data>
+  <data name="ViewConfig.AllowFileContentAutoRotate" xml:space="preserve">
+    <value>Allow auto rotate file pages</value>
+  </data>
+  <data name="Navigator.AllowFileContentAutoRotate" xml:space="preserve">
+    <value>Allow auto rotate file pages</value>
   </data>
 </root>

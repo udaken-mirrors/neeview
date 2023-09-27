@@ -12,6 +12,7 @@ namespace NeeView
         private bool _allowStretchScaleUp = true;
         private bool _allowStretchScaleDown = true;
         private AutoRotateType _autoRotate;
+        private bool _allowFileContentAutoRotate;
         private bool _isLimitMove = true;
         private DragControlCenter _rotateCenter;
         private DragControlCenter _scaleCenter;
@@ -188,6 +189,13 @@ namespace NeeView
         {
             get { return _autoRotate; }
             set { SetProperty(ref _autoRotate, value); }
+        }
+
+        // ファイルコンテンツの自動回転を許可する
+        public bool AllowFileContentAutoRotate
+        {
+            get { return _allowFileContentAutoRotate; }
+            set { SetProperty(ref _allowFileContentAutoRotate, value); }
         }
 
         // ナビゲーターボタンによる回転にストレッチを適用
