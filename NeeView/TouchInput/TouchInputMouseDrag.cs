@@ -39,7 +39,7 @@ namespace NeeView
             _touch = parameter as TouchContext ?? throw new InvalidOperationException("parameter must be TouchContext");
 
             _drag.ResetState();
-            _drag.UpdateState(MouseButtonBits.LeftButton, Keyboard.Modifiers, ToDragCoord(_touch.StartPoint), _touch.StartTimestamp);
+            _drag.UpdateState(MouseButtonBits.LeftButton, Keyboard.Modifiers, ToDragCoord(_touch.StartPoint), _touch.StartTimestamp, DragActionUpdateOptions.None);
         }
 
         /// <summary>
@@ -72,6 +72,7 @@ namespace NeeView
         /// <param name="e"></param>
         public override void OnStylusUp(object sender, StylusEventArgs e)
         {
+            UpdateDragState(MouseButtonBits.None, e, DragActionUpdateOptions.IgnoreUpdateSpeed);
             SetState(TouchInputState.Normal, null);
         }
 
@@ -83,8 +84,12 @@ namespace NeeView
         public override void OnStylusMove(object sender, StylusEventArgs e)
         {
             if (e.StylusDevice != _touch?.StylusDevice) return;
+            UpdateDragState(MouseButtonBits.LeftButton, e, DragActionUpdateOptions.None);
+        }
 
-            _drag.UpdateState(MouseButtonBits.LeftButton, Keyboard.Modifiers, ToDragCoord(e.GetPosition(_context.Sender)), e.Timestamp);
+        private void UpdateDragState(MouseButtonBits button, StylusEventArgs e, DragActionUpdateOptions options)
+        {
+            _drag.UpdateState(button, Keyboard.Modifiers, ToDragCoord(e.GetPosition(_context.Sender)), e.Timestamp, options);
         }
     }
 

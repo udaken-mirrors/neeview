@@ -11,6 +11,8 @@ namespace NeeView
             Note = Properties.Resources.DragActionType_Move;
             DragKey = new DragKey("LeftButton");
             DragActionCategory = DragActionCategory.Point;
+
+            ParameterSource = new DragActionParameterSource(typeof(MoveDragActionParameter));
         }
 
         public override DragActionControl CreateControl(DragTransformContext context)
@@ -20,12 +22,13 @@ namespace NeeView
 
         private class ActionControl : DragActionControl
         {
-            private DragTransform _transformControl;
-
+            private readonly DragTransform _transformControl;
+            private readonly MoveDragActionParameter _parameter;
 
             public ActionControl(DragTransformContext context, DragAction source) : base(context, source)
             {
                 _transformControl = new DragTransform(context);
+                _parameter = Parameter as MoveDragActionParameter ?? throw new ArgumentNullException(nameof(source));
             }
 
             public override void Execute()
@@ -37,13 +40,10 @@ namespace NeeView
             public override void ExecuteEnd(bool continued)
             {
                 if (continued) return;
+                if (!_parameter.IsInertiaEnabled) return;
 
-                // TODO: Span どこから？
-                var span = TimeSpan.FromMilliseconds(500);
-                // TODO: 距離倍率 0.5 を再検討
-                var delta = Context.Speed * span.TotalMilliseconds * 0.5;
-                _transformControl.DoMove(delta, span);
-
+                var inertia = Context.Speedometer.GetInertia();
+                _transformControl.DoMove(inertia.Delta, inertia.Span);
             }
         }
     }

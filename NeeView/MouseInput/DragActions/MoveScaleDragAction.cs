@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Windows;
 
 namespace NeeView
@@ -10,7 +11,7 @@ namespace NeeView
             Note = Properties.Resources.DragActionType_MoveScale;
             DragActionCategory = DragActionCategory.Point;
 
-            ParameterSource = new DragActionParameterSource(typeof(SensitiveDragActionParameter));
+            ParameterSource = new DragActionParameterSource(typeof(MoveScaleDragActionParameter));
         }
 
         public override DragActionControl CreateControl(DragTransformContext context)
@@ -20,13 +21,13 @@ namespace NeeView
 
         public class ActionControl : DragActionControl
         {
-            private DragTransform _transformControl;
-            private SensitiveDragActionParameter _parameter;
+            private readonly DragTransform _transformControl;
+            private readonly MoveScaleDragActionParameter _parameter;
 
             public ActionControl(DragTransformContext context, DragAction source) : base(context, source)
             {
                 _transformControl = new DragTransform(context);
-                _parameter = Parameter as SensitiveDragActionParameter ?? throw new ArgumentNullException(nameof(source));
+                _parameter = Parameter as MoveScaleDragActionParameter ?? throw new ArgumentNullException(nameof(source));
             }
 
             // 移動(速度スケール依存)
@@ -40,11 +41,11 @@ namespace NeeView
             public override void ExecuteEnd(bool continued)
             {
                 if (continued) return;
+                if (!_parameter.IsInertiaEnabled) return;
 
-                var span = TimeSpan.FromMilliseconds(500);
-                var delta = Context.Speed * span.TotalMilliseconds * 0.5;
+                var inertia = Context.Speedometer.GetInertia();
                 var scale = GetScale();
-                _transformControl.DoMove(delta * scale, span);
+                _transformControl.DoMove(inertia.Delta * scale, inertia.Span);
             }
 
             private double GetScale()

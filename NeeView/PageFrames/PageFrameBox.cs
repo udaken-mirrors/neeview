@@ -114,7 +114,7 @@ namespace NeeView.PageFrames
 
 
             _canvasPointStorage = new PageFrameCanvasPointStorage(_containers, viewContext);
-            _dragTransformContextFactory = new DragTransformContextFactory(this, _transformControlFactory, Config.Current.View, Config.Current.Loupe);
+            _dragTransformContextFactory = new DragTransformContextFactory(this, _transformControlFactory, Config.Current.View, Config.Current.Mouse, Config.Current.Loupe);
 
             _selected = new SelectedContainer(_containers, SelectCenterNode);
             _disposables.Add(_selected);

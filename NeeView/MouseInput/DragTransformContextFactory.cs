@@ -13,13 +13,15 @@ namespace NeeView
         private readonly PageFrameBox _box;
         private readonly TransformControlFactory _transformControlFactory;
         private readonly ViewConfig _viewConfig;
+        private readonly MouseConfig _mouseConfig;
         private readonly LoupeConfig _loupeConfig;
 
-        public DragTransformContextFactory(PageFrameBox box, TransformControlFactory transformControlFactory, ViewConfig viewConfig, LoupeConfig loupeConfig)
+        public DragTransformContextFactory(PageFrameBox box, TransformControlFactory transformControlFactory, ViewConfig viewConfig, MouseConfig mouseConfig, LoupeConfig loupeConfig)
         {
             _box = box;
             _transformControlFactory = transformControlFactory;
             _viewConfig = viewConfig;
+            _mouseConfig = mouseConfig;
             _loupeConfig = loupeConfig;
         }
 
@@ -38,13 +40,13 @@ namespace NeeView
         private DragTransformContext CreateNormal(PageFrameContainer container)
         {
             var transformControl = _transformControlFactory.Create(container);
-            return new DragTransformContext(_box, transformControl, container, _box, _viewConfig);
+            return new DragTransformContext(_box, transformControl, container, _box, _viewConfig, _mouseConfig);
         }
 
         private DragTransformContext CreateLoupe(PageFrameContainer container)
         {
             var transformControl = _transformControlFactory.CreateLoupe(container);
-            return new LoupeDragTransformContext(_box, transformControl, container, _box, _viewConfig, _loupeConfig);
+            return new LoupeDragTransformContext(_box, transformControl, container, _box, _viewConfig, _mouseConfig, _loupeConfig);
         }
 
 #if false

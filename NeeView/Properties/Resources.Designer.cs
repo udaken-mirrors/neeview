@@ -9908,6 +9908,15 @@ namespace NeeView.Properties {
         }
         
         /// <summary>
+        ///   Inertia に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string MoveDragActionParameter_IsInertiaEnabled {
+            get {
+                return ResourceManager.GetString("MoveDragActionParameter.IsInertiaEnabled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Include the first and last pages に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string MovePlaylsitItemInBookCommandParameter_IsIncludeTerminal {
@@ -9922,6 +9931,15 @@ namespace NeeView.Properties {
         public static string MovePlaylsitItemInBookCommandParameter_IsLoop {
             get {
                 return ResourceManager.GetString("MovePlaylsitItemInBookCommandParameter.IsLoop", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Inertia に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string MoveScaleDragActionParameter_IsInertiaEnabled {
+            get {
+                return ResourceManager.GetString("MoveScaleDragActionParameter.IsInertiaEnabled", resourceCulture);
             }
         }
         

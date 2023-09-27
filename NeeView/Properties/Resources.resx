@@ -7506,4 +7506,10 @@ nv.ShowToast(nv.Book.ViewPages[0].Path)</value>
   <data name="Navigator.AllowFileContentAutoRotate" xml:space="preserve">
     <value>Allow auto rotate file pages</value>
   </data>
+  <data name="MoveDragActionParameter.IsInertiaEnabled" xml:space="preserve">
+    <value>Inertia</value>
+  </data>
+  <data name="MoveScaleDragActionParameter.IsInertiaEnabled" xml:space="preserve">
+    <value>Inertia</value>
+  </data>
 </root>

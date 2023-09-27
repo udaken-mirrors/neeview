@@ -6,7 +6,7 @@ namespace NeeView
     public interface IDragTransformControl
     {
         void ResetState();
-        void UpdateState(MouseButtonBits buttons, ModifierKeys keys, Point point, int timestamp);
+        void UpdateState(MouseButtonBits buttons, ModifierKeys keys, Point point, int timestamp, DragActionUpdateOptions options);
         void MouseWheel(MouseButtonBits buttons, ModifierKeys keys, MouseWheelEventArgs e);
     }
 }

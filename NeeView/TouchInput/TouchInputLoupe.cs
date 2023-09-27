@@ -86,8 +86,7 @@ namespace NeeView
             {
                 var point = ToDragCoord(e.GetPosition(_context.Sender));
 
-                _transformContext.Update(point, e.Timestamp);
-                _transformContext.UpdateSpeed(point, e.Timestamp);
+                _transformContext.Update(point, e.Timestamp, DragActionUpdateOptions.None);
                 _transformContext.Update();
             }
 

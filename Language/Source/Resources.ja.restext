@@ -2360,3 +2360,5 @@ MediaControl.MoreMenu.NoAudio=(音声なし)
 MediaControl.MoreMenu.NoSubtitle=(字幕なし)
 ViewConfig.AllowFileContentAutoRotate=ファイルページの自動回転を許可
 Navigator.AllowFileContentAutoRotate=ファイルページの自動回転を許可
+MoveDragActionParameter.IsInertiaEnabled=慣性
+MoveScaleDragActionParameter.IsInertiaEnabled=慣性

@@ -77,7 +77,7 @@ namespace NeeView
         {
             sender.Cursor = null;
 
-            _action.ExecuteEnd(ToDragCoord(Mouse.GetPosition(sender)), System.Environment.TickCount, false);
+            _action.ExecuteEnd(ToDragCoord(Mouse.GetPosition(sender)), System.Environment.TickCount, DragActionUpdateOptions.None, false);
             _action.ClearAction();
 
             _loupe.IsEnabled = false;
@@ -161,7 +161,7 @@ namespace NeeView
         public override void OnMouseMove(object? sender, MouseEventArgs e)
         {
             var point = e.GetPosition(_context.Sender);
-            _action.Execute(ToDragCoord(point), e.Timestamp);
+            _action.Execute(ToDragCoord(point), e.Timestamp, DragActionUpdateOptions.None);
             e.Handled = true;
         }
 

@@ -15,7 +15,7 @@ namespace NeeView
         private readonly ICanvasToViewTranslator _canvasToViewTranslator;
 
 
-        public DragTransformContext(FrameworkElement sender, ITransformControl transform, PageFrameContainer container, ICanvasToViewTranslator canvasToViewTranslator, ViewConfig viewConfig)
+        public DragTransformContext(FrameworkElement sender, ITransformControl transform, PageFrameContainer container, ICanvasToViewTranslator canvasToViewTranslator, ViewConfig viewConfig, MouseConfig mouseConfig)
         {
             Sender = sender;
             Container = container;
@@ -23,10 +23,13 @@ namespace NeeView
             ViewRect = CreateViewRect();
             ContentRect = CreateContentRect(Container);
             ViewConfig = viewConfig;
+            MouseConfig = mouseConfig;
             Transform = transform;
         }
 
         public ViewConfig ViewConfig { get; }
+
+        public MouseConfig MouseConfig { get; }
 
         public ITransformControl Transform { get; }
 
@@ -58,9 +61,8 @@ namespace NeeView
         public Point ScaleCenter { get; set; }
         public Point FlipCenter { get; set; }
 
-        public Vector Speed => _speedometer.Speed;
+        public Speedometer Speedometer => _speedometer;
 
-        //
         public TimeSpan ScrollDuration => TimeSpan.FromSeconds(Config.Current.View.ScrollDuration);
 
 
@@ -76,13 +78,13 @@ namespace NeeView
             OldTimeStamp = timestamp;
             LastTimeStamp = timestamp;
 
+            _speedometer.Reset(point, timestamp);
+
             BasePoint = Transform.Point;
             BaseAngle = Transform.Angle;
             BaseScale = Transform.Scale;
             BaseFlipHorizontal = Transform.IsFlipHorizontal;
             BaseFlipVertical = Transform.IsFlipVertical;
-
-            _speedometer.Initialize(Last, LastTimeStamp);
 
             RotateCenter = GetCenterPosition(ViewConfig.RotateCenter);
             ScaleCenter = GetCenterPosition(ViewConfig.ScaleCenter);
@@ -102,20 +104,20 @@ namespace NeeView
         }
 
 
-        public void Update(Point point, int timestamp)
+        public void Update(Point point, int timestamp, DragActionUpdateOptions options)
         {
-            Old = Last;
-            OldTimeStamp = LastTimeStamp;
-            Last = point;
-            LastTimeStamp = timestamp;
+            if (!options.HasFlag(DragActionUpdateOptions.IgnoreUpdateState))
+            {
+                Old = Last;
+                OldTimeStamp = LastTimeStamp;
+                Last = point;
+                LastTimeStamp = timestamp;
+            }
+            if (!options.HasFlag(DragActionUpdateOptions.IgnoreUpdateSpeed))
+            {
+                _speedometer.Update(point, timestamp);
+            }
         }
-
-
-        public void UpdateSpeed(Point point, int timestamp)
-        {
-            _speedometer.Update(point, timestamp);
-        }
-
 
         public void UpdateRect()
         {
@@ -137,5 +139,14 @@ namespace NeeView
             var contentRect = new Rect(p0, p1);
             return contentRect;
         }
+    }
+
+
+    [Flags]
+    public enum DragActionUpdateOptions
+    {
+        None = 0,
+        IgnoreUpdateState = (1 << 0),
+        IgnoreUpdateSpeed = (1 << 1),
     }
 }

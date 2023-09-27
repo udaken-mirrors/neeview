@@ -57,6 +57,36 @@ namespace NeeView
         }
     }
 
+    public class MoveDragActionParameter : DragActionParameter
+    {
+        private bool _isInertiaEnabled = true;
+
+        /// <summary>
+        /// 慣性
+        /// </summary>
+        [PropertyMember]
+        public bool IsInertiaEnabled
+        {
+            get { return _isInertiaEnabled; }
+            set { SetProperty(ref _isInertiaEnabled, value); }
+        }
+    }
+
+    public class MoveScaleDragActionParameter : SensitiveDragActionParameter
+    {
+        private bool _isInertiaEnabled = true;
+
+        /// <summary>
+        /// 慣性
+        /// </summary>
+        [PropertyMember]
+        public bool IsInertiaEnabled
+        {
+            get { return _isInertiaEnabled; }
+            set { SetProperty(ref _isInertiaEnabled, value); }
+        }
+    }
+
 
 
     /// <summary>
@@ -68,6 +98,8 @@ namespace NeeView
         // NOTE: need add polymorphism class type.
         public static Type[] KnownTypes { get; set; } = new Type[]
         {
+            typeof(MoveScaleDragActionParameter),
+            typeof(MoveDragActionParameter),
             typeof(SensitiveDragActionParameter),
         };
 

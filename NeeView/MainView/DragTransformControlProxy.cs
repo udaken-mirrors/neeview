@@ -59,9 +59,9 @@ namespace NeeView
             _dragTransformControl?.ResetState();
         }
 
-        public void UpdateState(MouseButtonBits buttons, ModifierKeys keys, Point point, int timestamp)
+        public void UpdateState(MouseButtonBits buttons, ModifierKeys keys, Point point, int timestamp, DragActionUpdateOptions options)
         {
-            _dragTransformControl?.UpdateState(buttons, keys, point, timestamp);
+            _dragTransformControl?.UpdateState(buttons, keys, point, timestamp, options);
         }
 
         public void MouseWheel(MouseButtonBits buttons, ModifierKeys keys, MouseWheelEventArgs e)

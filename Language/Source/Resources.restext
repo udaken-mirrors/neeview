@@ -2360,3 +2360,5 @@ MediaControl.MoreMenu.NoAudio=(No audio)
 MediaControl.MoreMenu.NoSubtitle=(No subtitle)
 ViewConfig.AllowFileContentAutoRotate=Allow auto rotate file pages
 Navigator.AllowFileContentAutoRotate=Allow auto rotate file pages
+MoveDragActionParameter.IsInertiaEnabled=Inertia
+MoveScaleDragActionParameter.IsInertiaEnabled=Inertia

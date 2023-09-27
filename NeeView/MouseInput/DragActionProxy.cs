@@ -33,11 +33,10 @@ namespace NeeView
             _action.ExecuteBegin();
         }
 
-        public void Execute(Point point, int timestamp)
+        public void Execute(Point point, int timestamp, DragActionUpdateOptions options)
         {
             if (_action is null) return;
-            _action.Context.Update(point, timestamp);
-            _action.Context.UpdateSpeed(point, timestamp);
+            _action.Context.Update(point, timestamp, options);
             _action.Execute();
         }
 
@@ -47,12 +46,13 @@ namespace NeeView
             _action.MouseWheel(e);
         }
 
-        public void ExecuteEnd(Point point, int timestamp, bool continued)
+        public void ExecuteEnd(Point point, int timestamp, DragActionUpdateOptions options, bool continued)
         {
             if (_action is null) return;
-            _action.Context.Update(point, timestamp);
-            _action.Context.UpdateSpeed(point, timestamp);
+            _action.Context.Update(point, timestamp, options);
             _action.ExecuteEnd(continued);
         }
     }
+
+
 }
