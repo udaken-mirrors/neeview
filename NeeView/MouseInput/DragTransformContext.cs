@@ -58,9 +58,8 @@ namespace NeeView
         public Point ScaleCenter { get; set; }
         public Point FlipCenter { get; set; }
 
-        public Vector Speed => _speedometer.Speed;
+        public Speedometer Speedometer => _speedometer;
 
-        //
         public TimeSpan ScrollDuration => TimeSpan.FromSeconds(Config.Current.View.ScrollDuration);
 
 
@@ -81,8 +80,6 @@ namespace NeeView
             BaseScale = Transform.Scale;
             BaseFlipHorizontal = Transform.IsFlipHorizontal;
             BaseFlipVertical = Transform.IsFlipVertical;
-
-            _speedometer.Initialize(Last, LastTimeStamp);
 
             RotateCenter = GetCenterPosition(ViewConfig.RotateCenter);
             ScaleCenter = GetCenterPosition(ViewConfig.ScaleCenter);

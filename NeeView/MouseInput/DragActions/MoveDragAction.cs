@@ -38,12 +38,8 @@ namespace NeeView
             {
                 if (continued) return;
 
-                // TODO: Span どこから？
-                var span = TimeSpan.FromMilliseconds(500);
-                // TODO: 距離倍率 0.5 を再検討
-                var delta = Context.Speed * span.TotalMilliseconds * 0.5;
-                _transformControl.DoMove(delta, span);
-
+                var inertia = Context.Speedometer.GetInertia();
+                _transformControl.DoMove(inertia.Delta, inertia.Span);
             }
         }
     }

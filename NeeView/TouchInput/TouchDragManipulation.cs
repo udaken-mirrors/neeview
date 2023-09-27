@@ -65,6 +65,8 @@ namespace NeeView
 
             _allowAngle = false;
             _allowScale = false;
+
+            _speedometer.Reset();
         }
 
 
@@ -97,7 +99,7 @@ namespace NeeView
             var deltaScale = Math.Abs(_goal.Scale - _transform.Scale);
             if (deltaAngle > 1.0 || deltaScale > 0.1)
             {
-                _speedometer.Initialize((Point)_goal.Trans, timestamp);
+                _speedometer.Reset((Point)_goal.Trans, timestamp);
             }
             else
             {
@@ -125,11 +127,14 @@ namespace NeeView
         private void Inertia(int timestamp)
         {
             if (_transform is null) return;
-            
-            _goal = GetInertiaTransform(timestamp);
 
-            var span = TimeSpan.FromMilliseconds(500);
-            _transform.SetPoint((Point)_goal.Trans, span);
+            if (_goal is null) throw new InvalidOperationException("TouchDragManipulation must be started");
+            //_speedometer.Update((Point)_goal.Trans, timestamp);
+            var inertia = _speedometer.GetInertia();
+
+            _goal = GetInertiaTransform(inertia);
+
+            _transform.SetPoint((Point)_goal.Trans, inertia.Span);
             _transform.SetAngle(_goal.Angle, TimeSpan.FromMilliseconds(100));
         }
 
@@ -142,20 +147,12 @@ namespace NeeView
         }
 
 
-        private TouchDragTransform GetInertiaTransform(int timestamp)
+        private TouchDragTransform GetInertiaTransform(PointInertia inertia)
         {
             if (_goal is null) throw new InvalidOperationException("TouchDragManipulation must be started");
             if (_transformContext is null) throw new InvalidOperationException();
 
-            _speedometer.Update((Point)_goal.Trans, timestamp);
-
-            // TODO: Span どこから？
-            var span = TimeSpan.FromMilliseconds(500);
-            // TODO: 距離倍率 0.5 を再検討
-            var inertia = _speedometer.Speed * span.TotalMilliseconds * 0.5;
-
-
-            var trans = inertia;
+            var trans = inertia.Delta;
             var angle = GetSnapAngle(_goal.Angle) - _goal.Angle;
             var scale = 1.0;
 
@@ -165,7 +162,7 @@ namespace NeeView
                 var transformContext = _transformContextFactory.CreateDragTransformContext(_transformContext.Container, false);
                 if (transformContext is not null)
                 {
-                    var contentRect = Rect.Offset(transformContext.ContentRect, inertia);
+                    var contentRect = Rect.Offset(transformContext.ContentRect, inertia.Delta);
                     var areaLimit = new ScrollAreaLimit(contentRect, transformContext.ViewRect);
                     var p0 = transformContext.ContentCenter;
                     var p1 = areaLimit.SnapView(true);
@@ -175,15 +172,19 @@ namespace NeeView
                     {
                         if (Config.Current.Book.Orientation == PageFrameOrientation.Horizontal)
                         {
-                            trans.X = inertia.X;
+                            trans.X = inertia.Delta.X;
                         }
                         else
                         {
-                            trans.Y = inertia.Y;
+                            trans.Y = inertia.Delta.Y;
                         }
                     }
                 }
             }
+
+            //var rateX = (inertial.Delta.X > 0.0) ? trans.X / inertial.Delta.X : 1.0;
+            //var rateY = (inertial.Delta.X > 0.0) ? trans.X / inertial.Delta.X : 1.0;
+
 
             //Debug.WriteLine($"## SPEED: {inertia:f0}");
             //Debug.WriteLine($"Trans={trans:f0}");

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Windows;
 
 namespace NeeView
@@ -41,10 +42,9 @@ namespace NeeView
             {
                 if (continued) return;
 
-                var span = TimeSpan.FromMilliseconds(500);
-                var delta = Context.Speed * span.TotalMilliseconds * 0.5;
+                var inertia = Context.Speedometer.GetInertia();
                 var scale = GetScale();
-                _transformControl.DoMove(delta * scale, span);
+                _transformControl.DoMove(inertia.Delta * scale, inertia.Span);
             }
 
             private double GetScale()
