@@ -63,9 +63,14 @@ namespace NeeView.PageFrames
 
         public void SetPoint(Point value, TimeSpan span)
         {
+            SetPoint(value, span, null, null);
+        }
+
+        public void SetPoint(Point value, TimeSpan span, IEasingFunction? easeX, IEasingFunction? easeY)
+        {
             if (SetProperty(ref _point, value, nameof(Point)))
             {
-                _transform.SetPoint(_point, span);
+                _transform.SetPoint(_point, span, easeX, easeY);
                 TransformChanged?.Invoke(this, new TransformChangedEventArgs(this, TransformCategory.Content, TransformAction.Point));
             }
         }
@@ -234,9 +239,14 @@ namespace NeeView.PageFrames
 
         public void SetPoint(Point value, TimeSpan span)
         {
+            SetPoint(value, span, null, null);
+        }
+
+        public void SetPoint(Point value, TimeSpan span, IEasingFunction? easeX, IEasingFunction? easeY)
+        {
             _point = value;
-            SetPropertyValue(_translateTransform, TranslateTransform.XProperty, value.X, span);
-            SetPropertyValue(_translateTransform, TranslateTransform.YProperty, value.Y, span);
+            SetPropertyValue(_translateTransform, TranslateTransform.XProperty, value.X, span, easeX);
+            SetPropertyValue(_translateTransform, TranslateTransform.YProperty, value.Y, span, easeY);
         }
 
         public void SetFlipHorizontal(bool isFlipHorizontal, TimeSpan span)
@@ -261,7 +271,7 @@ namespace NeeView.PageFrames
         }
 
 
-        private void SetPropertyValue(Animatable anime, DependencyProperty dp, double value, TimeSpan span)
+        private void SetPropertyValue(Animatable anime, DependencyProperty dp, double value, TimeSpan span, IEasingFunction? ease = null)
         {
             if (span <= TimeSpan.Zero)
             {
@@ -275,7 +285,8 @@ namespace NeeView.PageFrames
                 animation.Duration = new Duration(span);
                 // ドラッグ操作のような場合
                 //animation.EasingFunction = new CubicEase() { EasingMode = EasingMode.EaseOut };
-                animation.EasingFunction = new QuadraticEase() { EasingMode = EasingMode.EaseOut };
+                //animation.EasingFunction = new QuadraticEase() { EasingMode = EasingMode.EaseOut };
+                animation.EasingFunction = ease ?? EaseTools.DefaultEase;
                 // キーボード操作のような連続して発行される場合は以下の方が良い
                 //animation.AccelerationRatio = IsScrolling() ? 0.4 : 0.0;
                 //animation.DecelerationRatio = 0.4;
@@ -341,12 +352,17 @@ namespace NeeView.PageFrames
 
         public void SetPoint(Point value, TimeSpan span)
         {
+            SetPoint(value, span, null, null);
+        }
+
+        public void SetPoint(Point value, TimeSpan span, IEasingFunction? easeX, IEasingFunction? easeY)
+        {
             if (_point != value)
             {
                 //Debug.WriteLine($"!! {{{Point:f0}}} to {{{value:f0}}} ({span.TotalMilliseconds})");
                 _point = value;
                 _transformCalc.SetPoint(_point);
-                _transformView.SetPoint(_point, span);
+                _transformView.SetPoint(_point, span, easeX, easeY);
             }
         }
 
@@ -435,5 +451,10 @@ namespace NeeView.PageFrames
                 _translateTransform.Y = _point.Y;
             }
         }
+    }
+
+    public static class EaseTools
+    {
+        public static IEasingFunction DefaultEase { get; } = new CubicEase() { EasingMode = EasingMode.EaseOut };
     }
 }

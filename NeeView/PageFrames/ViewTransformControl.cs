@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Windows;
+using System.Windows.Media.Animation;
 using NeeView.Maths;
 
 namespace NeeView.PageFrames
 {
-    public class ViewTransformControl : ITransformControl
+    public class ViewTransformControl : ITransformControl, IRevisePositionDelta
     {
         private readonly PageFrameContext _context;
         private readonly ViewTransformContext _viewContext;
@@ -50,14 +51,31 @@ namespace NeeView.PageFrames
 
         public void SetPoint(Point value, TimeSpan span)
         {
+            SetPoint(value, span, null, null);
+        }
+
+        public void SetPoint(Point value, TimeSpan span, IEasingFunction? easeX, IEasingFunction? easeY)
+        {
             _context.IsSnapAnchor.Reset();
-            _viewContext.SetPoint(value, span);
+            _viewContext.SetPoint(value, span, easeX, easeY);
         }
 
         public void AddPoint(Vector value, TimeSpan span)
         {
+            AddPoint(value, span, null, null);
+        }
+
+        public void AddPoint(Vector value, TimeSpan span, IEasingFunction? easeX, IEasingFunction? easeY)
+        {
+            _context.IsSnapAnchor.Reset();
+            var delta = RevisePositionDelta(value);
+            _viewContext.AddPoint(delta, span, easeX, easeY);
+        }
+
+        // 範囲内になるよう移動量補正
+        public Vector RevisePositionDelta(Vector delta)
+        {
             var canvasRect = _viewContext.CanvasRect;
-            var delta = value;
 
             if (_context.ViewConfig.IsLimitMove)
             {
@@ -70,8 +88,7 @@ namespace NeeView.PageFrames
                 delta = areaLimit.GetLimitContentMove(delta);
             }
 
-            _context.IsSnapAnchor.Reset();
-            _viewContext.AddPoint(delta, span);
+            return delta;
         }
 
         public void SnapView()
@@ -80,4 +97,9 @@ namespace NeeView.PageFrames
         }
     }
 
+
+    public interface IRevisePositionDelta
+    {
+        Vector RevisePositionDelta(Vector delta);
+    }
 }

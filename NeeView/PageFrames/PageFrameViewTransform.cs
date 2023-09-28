@@ -3,6 +3,7 @@ using NeeLaboratory.Generators;
 using System;
 using System.Windows;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 
 namespace NeeView.PageFrames
 {
@@ -73,17 +74,17 @@ namespace NeeView.PageFrames
             return select == TransformSelect.View ? TransformView : TransformCalc;
         }
 
-        public void AddPoint(Vector value, TimeSpan span)
+        public void SetPoint(Point value, TimeSpan span)
         {
-            SetPoint(_transform.Point + value, span);
+            SetPoint(value, span, null, null);
         }
 
-        public void SetPoint(Point value, TimeSpan span)
+        public void SetPoint(Point value, TimeSpan span, IEasingFunction? easeX, IEasingFunction? easeY)
         {
             if (_transform.Point == value) return;
 
             //Debug.WriteLine($"$$ {{{Point:f0}}} to {{{value:f0}}} ({span.TotalMilliseconds})");
-            _transform.SetPoint(value, span);
+            _transform.SetPoint(value, span, easeX, easeY);
             TransformChanged?.Invoke(this, new TransformChangedEventArgs(this, TransformCategory.View, TransformAction.Point));
         }
 

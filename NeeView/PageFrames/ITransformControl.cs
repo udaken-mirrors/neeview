@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows;
+using System.Windows.Media.Animation;
 
 namespace NeeView.PageFrames
 {
@@ -23,7 +24,11 @@ namespace NeeView.PageFrames
     {
         public Point Point { get; }
         public void SetPoint(Point value, TimeSpan span);
-        public void AddPoint(Vector value, TimeSpan span) => SetPoint(Point + value, span);
+        public void SetPoint(Point value, TimeSpan span, IEasingFunction? easeX, IEasingFunction? easeY);
+        public void AddPoint(Vector value, TimeSpan span)
+            => AddPoint(value, span, null, null);
+        public void AddPoint(Vector value, TimeSpan span, IEasingFunction? easeX, IEasingFunction? easeY)
+            => SetPoint(Point + value, span, easeX, easeY);
     }
 
     public interface IFlipControl : ITransformControlObject

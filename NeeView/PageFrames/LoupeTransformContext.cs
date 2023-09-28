@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 
 namespace NeeView.PageFrames
 {
@@ -43,12 +44,13 @@ namespace NeeView.PageFrames
             return _context.IsStaticFrame ? _transform.Transform : Transform.Identity;
         }
 
-        public void AddPoint(Vector value, TimeSpan span)
+        public void SetPoint(Point value, TimeSpan span)
         {
-            SetPoint(_transform.Point + value, span);
+            SetPoint(value, span, null, null);
         }
 
-        public void SetPoint(Point value, TimeSpan span)
+        // NOTE: no use easing function.
+        public void SetPoint(Point value, TimeSpan span, IEasingFunction? easeX, IEasingFunction? easeY)
         {
             if (_transform.Point != value)
             {
@@ -58,13 +60,24 @@ namespace NeeView.PageFrames
             }
         }
 
+        public void AddPoint(Vector value, TimeSpan span)
+        {
+            AddPoint(value, span, null, null);
+        }
+
+        public void AddPoint(Vector value, TimeSpan span, IEasingFunction? easeX, IEasingFunction? easeY)
+        {
+            SetPoint(_transform.Point + value, span, easeX, easeY);
+        }
+
+
         public void SetScale(double value, TimeSpan span)
         {
             if (_transform.Scale != value)
             {
                 _transform.SetScale(value);
                 RaisePropertyChanged(nameof(Scale));
-                TransformChanged?.Invoke(this, new TransformChangedEventArgs(this,TransformCategory.Loupe, TransformAction.Scale));
+                TransformChanged?.Invoke(this, new TransformChangedEventArgs(this, TransformCategory.Loupe, TransformAction.Scale));
             }
         }
     }

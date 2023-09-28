@@ -4,6 +4,7 @@ using NeeView.PageFrames;
 using System;
 using System.Windows;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 
 namespace NeeView
 {
@@ -35,12 +36,22 @@ namespace NeeView
 
         public void SetPoint(Point value, TimeSpan span)
         {
-            _context.Transform.SetPoint(value, span);
+            SetPoint(value, span, null, null);
+        }
+
+        public void SetPoint(Point value, TimeSpan span, IEasingFunction? easeX, IEasingFunction? easeY)
+        {
+            _context.Transform.SetPoint(value, span, easeX, easeY);
         }
 
         public void AddPoint(Vector value, TimeSpan span)
         {
-            _context.Transform.AddPoint(value, span);
+            AddPoint(value, span, null, null);
+        }
+
+        public void AddPoint(Vector value, TimeSpan span, IEasingFunction? easeX, IEasingFunction? easeY)
+        {
+            _context.Transform.AddPoint(value, span, easeX, easeY);
         }
 
         public void SetScale(double value, TimeSpan span)
@@ -81,6 +92,11 @@ namespace NeeView
         public void DoMove(Vector delta, TimeSpan span)
         {
             _context.Transform.AddPoint(delta, span);
+        }
+
+        public void DoMove(Vector delta, TimeSpan span, IEasingFunction? easeX, IEasingFunction? easeY)
+        {
+            _context.Transform.AddPoint(delta, span, easeX, easeY);
         }
 
         /// <summary>

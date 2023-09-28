@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Windows;
+using System.Windows.Media.Animation;
 using NeeLaboratory.Generators;
 
 namespace NeeView.PageFrames
@@ -82,9 +83,14 @@ namespace NeeView.PageFrames
             }
         }
 
-        public void AddPoint(Vector value, TimeSpan span)
+        public void SetPoint(Point value, TimeSpan span)
         {
-            _source?.SetPoint(Point + value, span);
+            SetPoint(value, span, null, null);
+        }
+
+        public void SetPoint(Point value, TimeSpan span, IEasingFunction? easeX, IEasingFunction? easeY)
+        {
+            _source?.SetPoint(value, span, easeX, easeY);
         }
 
         public void SetAngle(double value, TimeSpan span)
@@ -100,11 +106,6 @@ namespace NeeView.PageFrames
         public void SetFlipVertical(bool value, TimeSpan span)
         {
             _source?.SetFlipVertical(value, span);
-        }
-
-        public void SetPoint(Point value, TimeSpan span)
-        {
-            _source?.SetPoint(value, span);
         }
 
         public void SetScale(double value, TimeSpan span)

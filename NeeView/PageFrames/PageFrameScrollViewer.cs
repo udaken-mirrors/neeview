@@ -12,8 +12,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Media;
-
-
+using System.Windows.Media.Animation;
 
 namespace NeeView.PageFrames
 {
@@ -113,18 +112,28 @@ namespace NeeView.PageFrames
             return _transform.TransformView.Transform(new Point(0, 0));
         }
 
-        public void AddPoint(Vector value, TimeSpan span)
+        public void SetPoint(Point value, TimeSpan span)
         {
-            SetPoint(Point + value, span);
+            SetPoint(value, span, null, null);
         }
 
-        public void SetPoint(Point value, TimeSpan span)
+        public void SetPoint(Point value, TimeSpan span, IEasingFunction? easeX, IEasingFunction? easeY)
         {
             if (Point == value) return;
 
             Debug.WriteLine($"## {{{Point:f0}}} to {{{value:f0}}} ({span.TotalMilliseconds})");
-            _transform.SetPoint(value, span);
+            _transform.SetPoint(value, span, easeX, easeY);
             RaisePropertyChanged(nameof(Point));
+        }
+
+        public void AddPoint(Vector value, TimeSpan span)
+        {
+            AddPoint(value, span, null, null);
+        }
+
+        public void AddPoint(Vector value, TimeSpan span, IEasingFunction? easeX, IEasingFunction? easeY)
+        {
+            SetPoint(Point + value, span, easeX, easeY);
         }
 
         public void FlushScroll()

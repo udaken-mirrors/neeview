@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows;
+using System.Windows.Media.Animation;
 
 namespace NeeView.PageFrames
 {
@@ -44,12 +45,22 @@ namespace NeeView.PageFrames
 
         public void SetPoint(Point value, TimeSpan span)
         {
-            _loupeContext.SetPoint(value, span);
+            SetPoint(value, span, null, null);
+        }
+
+        public void SetPoint(Point value, TimeSpan span, IEasingFunction? easeX, IEasingFunction? easeY)
+        {
+            _loupeContext.SetPoint(value, span, easeX, easeY);
         }
 
         public void AddPoint(Vector value, TimeSpan span)
         {
-            _loupeContext.AddPoint(value, span);
+            AddPoint(value, span, null, null);
+        }
+
+        public void AddPoint(Vector value, TimeSpan span, IEasingFunction? easeX, IEasingFunction? easeY)
+        {
+            _loupeContext.AddPoint(value, span, easeX, easeY);
         }
 
         public void SnapView()

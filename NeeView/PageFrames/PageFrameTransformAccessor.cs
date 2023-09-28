@@ -3,6 +3,7 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Windows;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 
 namespace NeeView.PageFrames
 {
@@ -130,9 +131,14 @@ namespace NeeView.PageFrames
 
         public void SetPoint(Point value, TimeSpan span)
         {
+            SetPoint(value, span, null, null);
+        }
+
+        public void SetPoint(Point value, TimeSpan span, IEasingFunction? easeX, IEasingFunction? easeY)
+        {
             if (_disposedValue) return;
 
-            _pointSource.SetPoint(value, span);
+            _pointSource.SetPoint(value, span, easeX, easeY);
         }
 
         public void SetFlipHorizontal(bool value, TimeSpan span)

@@ -2,6 +2,7 @@
 using System.Data;
 using System.Windows;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 
 namespace NeeView.PageFrames
 {
@@ -48,6 +49,10 @@ namespace NeeView.PageFrames
         }
 
         public void SetPoint(Point value, TimeSpan span)
+        {
+        }
+
+        public void SetPoint(Point value, TimeSpan span, IEasingFunction? easeX, IEasingFunction? easeY)
         {
         }
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows;
+using System.Windows.Media.Animation;
 
 namespace NeeView.PageFrames
 {
@@ -32,14 +33,24 @@ namespace NeeView.PageFrames
 
         public void SetPoint(Point value, TimeSpan span)
         {
-            AddPoint(value - Point, span);
+            SetPoint(value, span, null, null);
         }
 
+        public void SetPoint(Point value, TimeSpan span, IEasingFunction? easeX, IEasingFunction? easeY)
+        {
+            AddPoint(value - Point, span, easeX, easeY);
+        }
 
         public void AddPoint(Vector value, TimeSpan span)
         {
-            _scrollViewer.AddPoint(value, span);
+            AddPoint(value, span, null, null);
         }
+
+        public void AddPoint(Vector value, TimeSpan span, IEasingFunction? easeX, IEasingFunction? easeY)
+        {
+            _scrollViewer.AddPoint(value, span, easeX, easeY);
+        }
+
     }
 
 }

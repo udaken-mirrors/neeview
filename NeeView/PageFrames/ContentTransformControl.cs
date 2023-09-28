@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Windows;
+using System.Windows.Media.Animation;
 using NeeView.Maths;
 
 namespace NeeView.PageFrames
 {
 
     // TODO: ページ移動とPointの初期化問題
-    public class ContentTransformControl : ITransformControl
+    public class ContentTransformControl : ITransformControl, IRevisePositionDelta
     {
         private readonly PageFrameContext _context;
         private readonly PageFrameContainer _container;
@@ -54,14 +55,31 @@ namespace NeeView.PageFrames
 
         public void SetPoint(Point value, TimeSpan span)
         {
+            SetPoint(value, span, null, null);
+        }
+
+        public void SetPoint(Point value, TimeSpan span, IEasingFunction? easeX, IEasingFunction? easeY)
+        {
             _context.IsSnapAnchor.Reset();
-            _container.Transform.SetPoint(value, span);
+            _container.Transform.SetPoint(value, span, easeX, easeY);
         }
 
         public void AddPoint(Vector value, TimeSpan span)
         {
+            AddPoint(value, span, null, null);
+        }
+
+        public void AddPoint(Vector value, TimeSpan span, IEasingFunction? easeX, IEasingFunction? easeY)
+        {
+            _context.IsSnapAnchor.Reset();
+            var delta = RevisePositionDelta(value);
+            _container.Transform.SetPoint(_container.Transform.Point + delta, span, easeX, easeY);
+        }
+
+        // 範囲内になるよう移動量補正
+        public Vector RevisePositionDelta(Vector delta)
+        {
             var contentRect = _container.GetContentRect();
-            var delta = value;
 
             if (_context.ViewConfig.IsLimitMove)
             {
@@ -74,8 +92,7 @@ namespace NeeView.PageFrames
                 delta = areaLimit.GetLimitContentMove(delta);
             }
 
-            _context.IsSnapAnchor.Reset();
-            _container.Transform.SetPoint(_container.Transform.Point + delta, span);
+            return delta;
         }
 
 
