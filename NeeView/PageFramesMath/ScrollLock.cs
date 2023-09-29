@@ -59,31 +59,31 @@ namespace NeeView.Maths
             return new Vector(_lockMoveX ? 0.0 : delta.X, _lockMoveY ? 0.0 : delta.Y);
         }
 
+        /// <summary>
+        /// 移動制限の衝突判定
+        /// </summary>
+        /// <param name="start">初期座標</param>
+        /// <param name="delta">移動量</param>
+        /// <returns>衝突データ</returns>
         public HitData HitTest(Point start, Vector delta)
         {
             bool xHit = false;
             bool yHit = false;
 
-            Vector reflect = default;
-
-            if (_lockMoveX)
+            if (_lockMoveX && delta.X != 0.0)
             {
                 xHit = true;
-                reflect.X = -delta.X;
             }
-            if (_lockMoveY)
+            if (_lockMoveY && delta.Y != 0.0)
             {
                 yHit = true;
-                reflect.Y = -delta.Y;
             }
 
             return new HitData(start, delta)
             {
-                IsHit = xHit || yHit,
                 XHit = xHit,
                 YHit = yHit,
                 Rate = 0.0,
-                Reflect = reflect,
             };
         }
     }

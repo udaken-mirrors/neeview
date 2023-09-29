@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Media.Animation;
+using NeeView.ComponentModel;
 using NeeView.Maths;
 
 namespace NeeView.PageFrames
@@ -71,11 +73,86 @@ namespace NeeView.PageFrames
             var delta = RevisePositionDelta(value);
             _viewContext.AddPoint(delta, span, easeX, easeY);
         }
-        
+
+        //public void InertiaPoint(Vector velocity)
+        //{
+        //    // TODO:
+        //    throw new NotImplementedException();
+        //}
+
         public void InertiaPoint(Vector velocity)
         {
-            // TODO:
-            throw new NotImplementedException();
+            if (velocity.LengthSquared < 0.01) return;
+
+            if (velocity.LengthSquared > 40.0 * 40.0)
+            {
+                velocity = velocity * (40.0 / velocity.Length);
+            }
+
+            _context.IsSnapAnchor.Reset();
+
+            var multiEaseSet = new MultiEaseSet();
+            var pos = _container.Transform.Point;
+
+            // scroll lock
+            {
+                var easeSet = DecelerationEaseSetFactory.Create(velocity, 1.0);
+                var hit = GetScrollLockHit(pos, easeSet.Delta);
+
+                if (hit.IsHit)
+                {
+                    if (0.001 < hit.Rate)
+                    {
+                        easeSet = DecelerationEaseSetFactory.Create(velocity, hit.Rate);
+                        multiEaseSet.Add(easeSet);
+                        pos += easeSet.Delta;
+                        velocity = easeSet.V1;
+                    }
+                    var vx = hit.XHit ? 0.0 : velocity.X;
+                    var vy = hit.YHit ? 0.0 : velocity.Y;
+                    velocity = new Vector(vx, vy);
+                    Debug.WriteLine($"## Add.LockHit: Delta={easeSet.Delta:f2}, Rate={hit.Rate:f2}, V1={velocity:f2}");
+                }
+            }
+
+#if false
+            // area limit
+            while (!velocity.NearZero(0.1))
+            {
+                var easeSet = DecelerationEaseSetFactory.Create(velocity, 1.0);
+
+                var hit = GetAreaLimitHit(pos, easeSet.Delta);
+                if (hit.IsHit)
+                {
+                    if (0.001 < hit.Rate)
+                    {
+                        easeSet = DecelerationEaseSetFactory.Create(velocity, hit.Rate);
+                        multiEaseSet.Add(easeSet);
+                        pos += easeSet.Delta;
+                        velocity = easeSet.V1;
+                    }
+                    var vx = hit.XHit ? 0.0 : velocity.X;
+                    var vy = hit.YHit ? 0.0 : velocity.Y;
+                    velocity = new Vector(vx, vy);
+                    Debug.WriteLine($"## Add.Hit: Delta={easeSet.Delta:f2}, Rate={hit.Rate:f2}, V1={velocity:f2}");
+                }
+                else
+                {
+                    multiEaseSet.Add(easeSet);
+                    Debug.WriteLine($"## Add.End: Delta={easeSet.Delta:f2}, Rate={1}, V1={easeSet.V1:f2}");
+                    break;
+                }
+            }
+#else
+            {
+                var easeSet = DecelerationEaseSetFactory.Create(velocity, 1.0);
+                multiEaseSet.Add(easeSet);
+                Debug.WriteLine($"## Add.End: Delta={easeSet.Delta:f2}, Rate={1}, V1={easeSet.V1:f2}");
+            }
+#endif
+
+            _viewContext.AddPoint(multiEaseSet.Delta, TimeSpan.FromMilliseconds(multiEaseSet.Milliseconds), multiEaseSet.EaseX, multiEaseSet.EaseY);
+            //_container.Transform.SetPoint(_container.Transform.Point + multiEaseSet.Delta, TimeSpan.FromMilliseconds(multiEaseSet.Milliseconds), multiEaseSet.EaseX, multiEaseSet.EaseY);
         }
 
         // 範囲内になるよう移動量補正
@@ -95,6 +172,25 @@ namespace NeeView.PageFrames
             }
 
             return delta;
+        }
+
+
+        private HitData GetScrollLockHit(Point start, Vector delta)
+        {
+            if (!_context.ViewConfig.IsLimitMove) return new HitData(start, delta);
+
+            var contentRect = _container.GetContentRect(start);
+            _scrollLock.Update(contentRect, _viewContext.ViewRect);
+            return _scrollLock.HitTest(start, delta);
+        }
+
+        private HitData GetAreaLimitHit(Point start, Vector delta)
+        {
+            if (!_context.ViewConfig.IsLimitMove) return new HitData(start, delta);
+
+            var contentRect = _container.GetContentRect(start);
+            var areaLimit = new ScrollAreaLimit(contentRect, _viewContext.ViewRect);
+            return areaLimit.HitTest(start, delta);
         }
 
         public void SnapView()

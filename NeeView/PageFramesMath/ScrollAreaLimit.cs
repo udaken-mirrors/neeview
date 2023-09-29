@@ -96,92 +96,69 @@ namespace NeeView.Maths
             return delta;
         }
 
+        /// <summary>
+        /// コンテンツ領域の衝突判定
+        /// </summary>
+        /// <param name="start">初期座標</param>
+        /// <param name="delta">移動量</param>
+        /// <returns>衝突データ</returns>
         public HitData HitTest(Point start, Vector delta)
         {
             var marginX = _contentRect.Width < _viewRect.Width ? _viewRect.Width - _contentRect.Width : 0;
             var marginY = _contentRect.Height < _viewRect.Height ? _viewRect.Height - _contentRect.Height : 0;
 
-            var isHit = false;
-            var xHit = false;
-            var yHit = false;
             var rateX = double.PositiveInfinity;
             var rateY = double.PositiveInfinity;
 
             if (delta.X < 0 && _contentRect.Right + delta.X < _viewRect.Right - marginX)
             {
-                //xHit = true;
                 var x = Math.Min(_viewRect.Right - marginX - _contentRect.Right, 0.0);
                 rateX = x / delta.X;
             }
             else if (delta.X > 0 && _contentRect.Left + delta.X > _viewRect.Left + marginX)
             {
-                //xHit = true;
                 var x = Math.Max(_viewRect.Left + marginX - _contentRect.Left, 0.0);
                 rateX = x / delta.X;
             }
 
             if (delta.Y < 0 && _contentRect.Bottom + delta.Y < _viewRect.Bottom - marginY)
             {
-                //yHit = true;
                 var y = Math.Min(_viewRect.Bottom - marginY - _contentRect.Bottom, 0.0);
                 rateY = y / delta.Y;
             }
             else if (delta.Y > 0 && _contentRect.Top + delta.Y > _viewRect.Top + marginY)
             {
-                //yHit = true;
                 var y = Math.Max(_viewRect.Top + marginY - _contentRect.Top, 0.0);
                 rateY = y / delta.Y;
             }
 
-            //isHit = xHit || yHit;
-            isHit = rateX < 1.0 || rateY < 1.0;
-
-            if (isHit)
+            if (rateX < 1.0 || rateY < 1.0)
             {
+                var xHit = false;
+                var yHit = false;
                 double rate;
-                Vector reflect;
                 if (Math.Abs(rateX - rateY) < 0.001)
                 {
                     xHit = true;
                     yHit = true;
                     rate = Math.Min(rateX, rateY);
-                    reflect = -delta;
                 }
                 else if (rateX < rateY)
                 {
                     xHit = true;
                     rate = rateX;
-                    reflect = new Vector(-delta.X, 0.0);
                 }
                 else
                 {
                     yHit = true;
                     rate = rateY;
-                    reflect = new Vector(0.0, -delta.Y);
                 }
-#if false
-                //var rate = Math.Min(rateX, rateY);
-                if (Math.Abs(rateX - rateY) < 0.001)
-                {
-                    reflect = -delta;
-                }
-                else if (rateX < rateY)
-                {
-                    reflect = new Vector(-delta.X, 0.0);
-                }
-                else
-                {
-                    reflect = new Vector(0.0, -delta.Y);
-                }
-#endif
 
                 return new HitData(start, delta)
                 {
-                    IsHit = true,
                     XHit = xHit,
                     YHit = yHit,
                     Rate = rate,
-                    Reflect = reflect
                 };
             }
 
