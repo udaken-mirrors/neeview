@@ -61,24 +61,27 @@ namespace NeeView.Maths
 
         public HitData HitTest(Point start, Vector delta)
         {
-            bool isHit = false;
+            bool xHit = false;
+            bool yHit = false;
 
             Vector reflect = default;
 
             if (_lockMoveX)
             {
-                isHit = true;
+                xHit = true;
                 reflect.X = -delta.X;
             }
             if (_lockMoveY)
             {
-                isHit = true;
+                yHit = true;
                 reflect.Y = -delta.Y;
             }
 
             return new HitData(start, delta)
             {
-                IsHit = isHit,
+                IsHit = xHit || yHit,
+                XHit = xHit,
+                YHit = yHit,
                 Rate = 0.0,
                 Reflect = reflect,
             };

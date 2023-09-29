@@ -4,7 +4,9 @@ using System.Diagnostics;
 using System.Linq;
 using System.Windows;
 using System.Windows.Media.Animation;
+using NeeLaboratory.ComponentModel;
 using NeeView.ComponentModel;
+using NeeView.Interop;
 using NeeView.Maths;
 
 namespace NeeView.PageFrames
@@ -75,11 +77,13 @@ namespace NeeView.PageFrames
         public void AddPoint(Vector value, TimeSpan span, IEasingFunction? easeX, IEasingFunction? easeY)
         {
             _context.IsSnapAnchor.Reset();
-            //var delta = RevisePositionDelta(value);
-            var delta = DetectCollision(value);
+            var delta = RevisePositionDelta(value);
+            //var delta = DetectCollision(value);
 
             _container.Transform.SetPoint(_container.Transform.Point + delta, span, easeX, easeY);
         }
+
+        delegate HitData GeHitFunc(Point start, Vector delta);
 
         public void InertiaPoint(Vector velocity)
         {
@@ -95,11 +99,63 @@ namespace NeeView.PageFrames
             var inertiaMath = new InertiaMath();
             var factory = new MyEaseFactory();
 
+            MultiEaseSet multiEaseSet = new MultiEaseSet();
             var pos = _container.Transform.Point;
+
+
+            {
+                var easeSet = factory.CreateEase(velocity, 1.0);
+                var hit = GetScrollLockHit(pos, easeSet.Delta);
+
+                if (hit.IsHit)
+                {
+                    if (0.001 < hit.Rate)
+                    {
+                        easeSet = factory.CreateEase(velocity, hit.Rate);
+                        multiEaseSet.Add(easeSet);
+                        pos += easeSet.Delta;
+                        velocity = easeSet.V1;
+                    }
+                    var vx = hit.XHit ? 0.0 : velocity.X;
+                    var vy = hit.YHit ? 0.0 : velocity.Y;
+                    velocity = new Vector(vx, vy);
+                    Debug.WriteLine($"## Add.LockHit: Delta={easeSet.Delta:f2}, Rate={hit.Rate:f2}, V1={velocity:f2}");
+                }
+            }
+
+            while (!velocity.NearZero(0.1))
+            {
+                var easeSet = factory.CreateEase(velocity, 1.0);
+
+                var hit = GetAreaLimitHit(pos, easeSet.Delta);
+                if (hit.IsHit)
+                {
+                    if (0.001 < hit.Rate)
+                    {
+                        easeSet = factory.CreateEase(velocity, hit.Rate);
+                        multiEaseSet.Add(easeSet);
+                        pos += easeSet.Delta;
+                        velocity = easeSet.V1;
+                    }
+                    var vx = hit.XHit ? 0.0 : velocity.X;
+                    var vy = hit.YHit ? 0.0 : velocity.Y;
+                    velocity = new Vector(vx, vy);
+                    Debug.WriteLine($"## Add.Hit: Delta={easeSet.Delta:f2}, Rate={hit.Rate:f2}, V1={velocity:f2}");
+                    continue;
+                }
+                else
+                {
+                    multiEaseSet.Add(easeSet);
+                    Debug.WriteLine($"## Add.End: Delta={easeSet.Delta:f2}, Rate={1}, V1={easeSet.V1:f2}");
+                    break;
+                }
+            }
+
+            _container.Transform.SetPoint(_container.Transform.Point + multiEaseSet.Delta, multiEaseSet.Span, multiEaseSet.EaseX, multiEaseSet.EaseY);
+
+#if false
             EaseSet easeSet = factory.CreateEase(velocity, 0.5);
 
-
-            MultiEaseSet multiEaseSet = new MultiEaseSet();
             //multiEaseSet.Add(easeSet);
 
             var easeSet1 = factory.CreateEase(velocity, 0.5);
@@ -112,9 +168,9 @@ namespace NeeView.PageFrames
                 Debug.Assert((velocity.TransNormal() - easeSet1.V1.TransNormal()).NearZero(0.0001));
             }
 
-
             _container.Transform.SetPoint(_container.Transform.Point + multiEaseSet.Delta, multiEaseSet.Span, multiEaseSet.EaseX, multiEaseSet.EaseY);
             //_container.Transform.SetPoint(_container.Transform.Point + easeSet.Delta, easeSet.Span, easeSet.EaseX, easeSet.EaseY);
+#endif
 
 #if false
             while (velocity.LengthSquared > 0.001)
@@ -158,30 +214,35 @@ namespace NeeView.PageFrames
             return delta;
         }
 
+#if false
         public Vector DetectCollision(Vector delta)
         {
             var pos = _container.Transform.Point;
 
             var hit = GetScrollLockHit(pos, delta);
-            if (hit.IsHit)
+            if (hit.XHit)
             {
-                delta += hit.Reflect;
+                delta = hit.Delta;
+                //delta += hit.Reflect;
             }
 
             hit = GetAreaLimitHit(pos, delta);
             if (hit.IsHit)
             {
-                delta += hit.Reflect;
+                //delta += hit.Reflect;
+                delta = hit.Delta;
             }
 
             return delta;
         }
+#endif
+
 
         private HitData GetScrollLockHit(Point start, Vector delta)
         {
             if (!_context.ViewConfig.IsLimitMove) return new HitData(start, delta);
 
-            var contentRect = _container.GetContentRect();
+            var contentRect = _container.GetContentRect(start);
             _scrollLock.Update(contentRect, _containerRect);
             return _scrollLock.HitTest(start, delta);
         }
@@ -190,7 +251,7 @@ namespace NeeView.PageFrames
         {
             if (!_context.ViewConfig.IsLimitMove) return new HitData(start, delta);
 
-            var contentRect = _container.GetContentRect();
+            var contentRect = _container.GetContentRect(start);
             var areaLimit = new ScrollAreaLimit(contentRect, _containerRect);
             return areaLimit.HitTest(start, delta);
         }
@@ -227,6 +288,9 @@ namespace NeeView.PageFrames
         public Vector Reflect { get; init; }
         //public Point HitPoint { get; init; }
         public Point HitPoint => StartPoint + Delta * Rate;
+
+        public bool XHit { get; init; }
+        public bool YHit { get; init; }
     }
 
     public static class Kinematics
@@ -392,7 +456,7 @@ namespace NeeView.PageFrames
 
             var v1 = Kinematics.GetVelocity(v0, _a, t);
             //var vRate = v1 / v0;
-           // Debug.Assert(!double.IsNaN(vRate));
+            // Debug.Assert(!double.IsNaN(vRate));
             var lastVelocity = velocity.TransScalar(v1); // * vRate;
 
             Debug.WriteLine($"EaseSet: v0={velocity:f2}({v0:f2}), v1={lastVelocity:f2}({v1:f2}), delta={delta:f2}, ms={t:f0}");
@@ -470,16 +534,22 @@ namespace NeeView.PageFrames
             var totalS = _items.Last().S1;
             var totalT = _items.Last().T1;
 
+            if (Math.Abs(totalS) < 0.001)
+            {
+                Debug.WriteLine($"{normalizedTime:f2}: [] s={1.0:f2} (no span)");
+                return 1.0;
+            }
+
             // select
             var item = _items.FirstOrDefault(e => normalizedTime * totalT <= e.T1) ?? _items.Last();
             var index = _items.IndexOf(item);
 
             // calc
             var t = (normalizedTime * totalT - item.T0) / (item.T1 - item.T0);
+            if (double.IsNaN(t)) t = 1.0;
             var s = (item.S0 + item.Ease.Ease(t) * (item.S1 - item.S0)) / totalS;
-
-            Debug.WriteLine($"{normalizedTime:f2}: [{index}] t={t:f2}, s={s:f2}");
-
+            if (double.IsNaN(s)) s = 1.0;
+            Debug.WriteLine($"{normalizedTime:f2}: [{index}] t={t:f2} s={s:f2}");
             return s;
         }
     }
@@ -571,6 +641,8 @@ namespace NeeView.PageFrames
             var s1 = Kinematics.GetSpan(_v, _a, MaxRate * _tmax);
 
             var result = (s - s0) / (s1 - s0);
+
+            Debug.Assert(!double.IsNaN(result));
             //var result = s / _smax;
             Debug.WriteLine($"MyEase: {normalizedTime:f2} -> {result:f2}");
             return result;

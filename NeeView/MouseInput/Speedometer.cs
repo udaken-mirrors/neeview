@@ -122,6 +122,7 @@ namespace NeeView
     public record struct PointRecord(Point Point, int Timestamp);
 
 
+
     public class InertiaMath
     {
         public InertiaMath()

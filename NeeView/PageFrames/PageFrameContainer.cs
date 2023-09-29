@@ -374,10 +374,24 @@ namespace NeeView.PageFrames
         }
 
 
-        // ##
+        /// <summary>
+        /// 現在のコンテナの矩形を返す
+        /// </summary>
+        /// <returns>矩形</returns>
         public Rect GetContentRect()
         {
             return _content.GetContentRect();
+        }
+
+        /// <summary>
+        /// 指定座標でのコンテナの大きさの矩形を返す
+        /// </summary>
+        /// <param name="center">コンテナ中心座標</param>
+        /// <returns>矩形</returns>
+        public Rect GetContentRect(Point center)
+        {
+            var rect  =_content.GetContentRect();
+            return new Rect(center.X - rect.Width * 0.5, center.Y - rect.Height * 0.5, rect.Width, rect.Height);
         }
 
         public Point TranslateContentToCanvasPoint(Point point)
