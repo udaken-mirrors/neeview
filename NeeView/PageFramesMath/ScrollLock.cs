@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using NeeView.PageFrames;
+using System.Windows;
 
 namespace NeeView.Maths
 {
@@ -56,6 +57,31 @@ namespace NeeView.Maths
         public Vector Limit(Vector delta)
         {
             return new Vector(_lockMoveX ? 0.0 : delta.X, _lockMoveY ? 0.0 : delta.Y);
+        }
+
+        public HitData HitTest(Point start, Vector delta)
+        {
+            bool isHit = false;
+
+            Vector reflect = default;
+
+            if (_lockMoveX)
+            {
+                isHit = true;
+                reflect.X = -delta.X;
+            }
+            if (_lockMoveY)
+            {
+                isHit = true;
+                reflect.Y = -delta.Y;
+            }
+
+            return new HitData(start, delta)
+            {
+                IsHit = isHit,
+                Rate = 0.0,
+                Reflect = reflect,
+            };
         }
     }
 }

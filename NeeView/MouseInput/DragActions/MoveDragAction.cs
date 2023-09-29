@@ -42,8 +42,7 @@ namespace NeeView
                 if (continued) return;
                 if (!_parameter.IsInertiaEnabled) return;
 
-                var inertia = Context.Speedometer.GetInertia();
-                _transformControl.DoMove(inertia.Delta, inertia.Span);
+                _transformControl.DoInertia(Context.Speedometer.GetSpeed());
             }
         }
     }

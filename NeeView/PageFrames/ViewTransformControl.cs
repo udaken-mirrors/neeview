@@ -71,6 +71,12 @@ namespace NeeView.PageFrames
             var delta = RevisePositionDelta(value);
             _viewContext.AddPoint(delta, span, easeX, easeY);
         }
+        
+        public void InertiaPoint(Vector velocity)
+        {
+            // TODO:
+            throw new NotImplementedException();
+        }
 
         // 範囲内になるよう移動量補正
         public Vector RevisePositionDelta(Vector delta)

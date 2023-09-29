@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Windows;
 using NeeView.ComponentModel;
+using NeeView.PageFrames;
 
 namespace NeeView.Maths
 {
@@ -93,6 +94,69 @@ namespace NeeView.Maths
             }
 
             return delta;
+        }
+
+        public HitData HitTest(Point start, Vector delta)
+        {
+            var marginX = _contentRect.Width < _viewRect.Width ? _viewRect.Width - _contentRect.Width : 0;
+            var marginY = _contentRect.Height < _viewRect.Height ? _viewRect.Height - _contentRect.Height : 0;
+
+            var isHit = false;
+            var rateX = 1.0;
+            var rateY = 1.0;
+
+            if (delta.X < 0 && _contentRect.Right + delta.X < _viewRect.Right - marginX)
+            {
+                isHit = true;
+                var x = Math.Min(_viewRect.Right - marginX - _contentRect.Right, 0.0);
+                rateX = x / delta.X;
+            }
+            else if (delta.X > 0 && _contentRect.Left + delta.X > _viewRect.Left + marginX)
+            {
+                isHit = true;
+                var x = Math.Max(_viewRect.Left + marginX - _contentRect.Left, 0.0);
+                rateX = x / delta.X;
+            }
+
+            if (delta.Y < 0 && _contentRect.Bottom + delta.Y < _viewRect.Bottom - marginY)
+            {
+                isHit = true;
+                var y = Math.Min(_viewRect.Bottom - marginY - _contentRect.Bottom, 0.0);
+                rateY = y / delta.Y;
+            }
+            else if (delta.Y > 0 && _contentRect.Top + delta.Y > _viewRect.Top + marginY)
+            {
+                isHit = true;
+                var y = Math.Max(_viewRect.Top + marginY - _contentRect.Top, 0.0);
+                rateY = y / delta.Y;
+            }
+
+            if (isHit)
+            {
+                var rate = Math.Min(rateX, rateY);
+                Vector reflect;
+                if (Math.Abs(rateX - rateY) < 0.001)
+                {
+                    reflect = -delta;
+                }
+                else if (rateX < rateY)
+                {
+                    reflect = new Vector(-delta.X, 0.0);
+                }
+                else
+                {
+                    reflect = new Vector(0.0, -delta.Y);
+                }
+
+                return new HitData(start, delta)
+                {
+                    IsHit = true,
+                    Rate = rate,
+                    Reflect = reflect
+                };
+            }
+
+            return new HitData(start, delta);
         }
 
 

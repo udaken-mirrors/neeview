@@ -40,6 +40,24 @@ namespace NeeView.ComponentModel
         {
             return v.X == 0.0 && v.Y == 0.0;
         }
+
+        public static bool NearZero(this Vector v, double margin)
+        {
+            return v.LengthSquared <= margin * margin;
+        }
+
+        /// <summary>
+        /// 長さを変更したベクトルを求める
+        /// </summary>
+        public static Vector TransScalar(this Vector v, double scalar)
+        {
+            return v * (scalar / v.Length);
+        }
+
+        public static Vector TransNormal(this Vector v)
+        {
+            return v.TransScalar(1.0);
+        }
     }
 
 }

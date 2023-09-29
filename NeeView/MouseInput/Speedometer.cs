@@ -76,15 +76,14 @@ namespace NeeView
                 var span = p0.Timestamp - p1.Timestamp;
                 if (0 < span)
                 {
-                    var speed = delta / span;
-                    totalSpan += span;
-                    speedSum += speed * span;
-                    Trace($"{i}: Speed = {speed:f2}, Span = {span}");
+                    var cs = Math.Min(span, 64 - totalSpan);
+                    if (cs <= 0) break;
+
+                    var speed = delta / cs;
+                    totalSpan += cs;
+                    speedSum += speed * cs;
+                    Trace($"{i}: Speed = {speed:f2}, Span = {cs}");
                     sp = speed;
-                }
-                if (totalSpan > 100)
-                {
-                    //break;
                 }
             }
 
@@ -113,7 +112,7 @@ namespace NeeView
     /// </summary>
     /// <param name="Delta">慣性移動量</param>
     /// <param name="Span">慣性移動時間</param>
-    public record struct PointInertia(Vector Speed, Vector Delta, TimeSpan Span);
+    public record struct PointInertia(Vector Velocity, Vector Delta, TimeSpan Span);
 
     /// <summary>
     /// 座標記録

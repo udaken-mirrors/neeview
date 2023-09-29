@@ -3,6 +3,7 @@ using NeeView.Maths;
 using NeeView.PageFrames;
 using System;
 using System.Windows;
+using System.Windows.Documents;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 
@@ -94,9 +95,13 @@ namespace NeeView
             _context.Transform.AddPoint(delta, span);
         }
 
-        public void DoMove(Vector delta, TimeSpan span, IEasingFunction? easeX, IEasingFunction? easeY)
+        /// <summary>
+        /// 慣性移動
+        /// </summary>
+        /// <param name="velocity">初速度</param>
+        public void DoInertia(Vector velocity)
         {
-            _context.Transform.AddPoint(delta, span, easeX, easeY);
+            _context.Transform.InertiaPoint(velocity);
         }
 
         /// <summary>
