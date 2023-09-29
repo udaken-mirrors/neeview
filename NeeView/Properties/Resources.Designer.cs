@@ -14347,6 +14347,24 @@ namespace NeeView.Properties {
         }
         
         /// <summary>
+        ///   Panorama に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string SetPageModePanoramaCommand {
+            get {
+                return ResourceManager.GetString("SetPageModePanoramaCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Displays consecutive pages. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string SetPageModePanoramaCommand_Remarks {
+            get {
+                return ResourceManager.GetString("SetPageModePanoramaCommand.Remarks", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Two page に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string SetPageModeTwoCommand {

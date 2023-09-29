@@ -281,6 +281,7 @@ namespace NeeView
                 new TogglePageModeCommand(),
                 new SetPageModeOneCommand(),
                 new SetPageModeTwoCommand(),
+                new SetPageModePanoramaCommand(),
                 new TogglePageOrientationCommand(),
                 new ToggleBookReadOrderCommand(),
                 new SetBookReadOrderRightCommand(),

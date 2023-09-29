@@ -7512,4 +7512,10 @@ nv.ShowToast(nv.Book.ViewPages[0].Path)</value>
   <data name="MoveScaleDragActionParameter.IsInertiaEnabled" xml:space="preserve">
     <value>Inertia</value>
   </data>
+  <data name="SetPageModePanoramaCommand" xml:space="preserve">
+    <value>Panorama</value>
+  </data>
+  <data name="SetPageModePanoramaCommand.Remarks" xml:space="preserve">
+    <value>Displays consecutive pages.</value>
+  </data>
 </root>

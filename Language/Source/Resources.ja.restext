@@ -2362,3 +2362,5 @@ ViewConfig.AllowFileContentAutoRotate=ファイルページの自動回転を許
 Navigator.AllowFileContentAutoRotate=ファイルページの自動回転を許可
 MoveDragActionParameter.IsInertiaEnabled=慣性
 MoveScaleDragActionParameter.IsInertiaEnabled=慣性
+SetPageModePanoramaCommand=パノラマ
+SetPageModePanoramaCommand.Remarks=連続したページを表示します。

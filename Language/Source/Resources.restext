@@ -2362,3 +2362,5 @@ ViewConfig.AllowFileContentAutoRotate=Allow auto rotate file pages
 Navigator.AllowFileContentAutoRotate=Allow auto rotate file pages
 MoveDragActionParameter.IsInertiaEnabled=Inertia
 MoveScaleDragActionParameter.IsInertiaEnabled=Inertia
+SetPageModePanoramaCommand=Panorama
+SetPageModePanoramaCommand.Remarks=Displays consecutive pages.
