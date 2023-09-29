@@ -15,6 +15,7 @@ namespace NeeView.PageFrames
     public partial class BookContext : INotifyPropertyChanged, IDisposable, IBookPageContext
     {
         private readonly Book _book;
+        private readonly BookPageAccessor _pageAccessor;
         private PageRange _selectedRange;
         private bool _disposedValue;
         private readonly DisposableCollection _disposables = new();
@@ -26,6 +27,8 @@ namespace NeeView.PageFrames
 
             _disposables.Add(_book.Pages.SubscribePropertyChanged(nameof(BookPageCollection.SortMode),
                 (s, e) => RaisePropertyChanged(nameof(SortMode))));
+
+            _pageAccessor = new BookPageAccessor(_book.Pages);
         }
 
         [Subscribable]
@@ -46,11 +49,10 @@ namespace NeeView.PageFrames
 
         public IReadOnlyList<Page> Pages => _book.Pages;
 
+        public BookPageAccessor PageAccessor => _pageAccessor;
+
         public PageSortMode SortMode => _book.Pages.SortMode;
 
-        public PagePosition FirstPosition => Pages.Any() ? PagePosition.Zero : PagePosition.Empty;
-
-        public PagePosition LastPosition => Pages.Any() ? new(Pages.Count - 1, 1) : PagePosition.Empty;
 
         public PageRange SelectedRange
         {

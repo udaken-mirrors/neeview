@@ -614,7 +614,17 @@ namespace NeeView.PageFrames
         {
             if (!_bookContext.IsEnabled) return;
 
-            // TODO: position の範囲チェック
+            // position の補正
+            if (position < _bookContext.PageAccessor.FirstPosition)
+            {
+                position = _bookContext.PageAccessor.FirstPosition;
+                direction = LinkedListDirection.Next;
+            }
+            else if (position > _bookContext.PageAccessor.LastPosition)
+            {
+                position = _bookContext.PageAccessor.LastPosition;
+                direction = LinkedListDirection.Previous;
+            }
 
             _containers.Anchor.Set(_rectMath.GetViewCenterContainer(_viewBox.Rect), direction);
             var next = _containers.EnsureLatestContainerNode(position, direction);

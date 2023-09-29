@@ -24,7 +24,7 @@ namespace NeeView.PageFrames
         {
             _bookContext = bookContext;
             _context = context;
-            _book = new BookPageAccessor(_bookContext);
+            _book = new BookPageAccessor(_bookContext.Pages);
             _calculator = calculator;
         }
 
