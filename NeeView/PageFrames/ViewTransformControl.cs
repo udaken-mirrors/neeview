@@ -76,68 +76,10 @@ namespace NeeView.PageFrames
 
         public void InertiaPoint(Vector velocity)
         {
-            if (velocity.LengthSquared < 0.01) return;
-
-            if (velocity.LengthSquared > 40.0 * 40.0)
-            {
-                velocity = velocity * (40.0 / velocity.Length);
-            }
-
             _context.IsSnapAnchor.Reset();
-
-            var multiEaseSet = new MultiEaseSet();
-            var pos = _container.Transform.Point;
-
-            // scroll lock
-            {
-                var easeSet = DecelerationEaseSetFactory.Create(velocity, 1.0);
-                var hit = GetScrollLockHit(pos, easeSet.Delta);
-
-                if (hit.IsHit)
-                {
-                    if (0.001 < hit.Rate)
-                    {
-                        easeSet = DecelerationEaseSetFactory.Create(velocity, hit.Rate);
-                        multiEaseSet.Add(easeSet);
-                        pos += easeSet.Delta;
-                        velocity = easeSet.V1;
-                    }
-                    var vx = hit.XHit ? 0.0 : velocity.X;
-                    var vy = hit.YHit ? 0.0 : velocity.Y;
-                    velocity = new Vector(vx, vy);
-                    Debug.WriteLine($"## Add.LockHit: Delta={easeSet.Delta:f2}, Rate={hit.Rate:f2}, V1={velocity:f2}");
-                }
-            }
-
-            // area limit
-            while (!velocity.NearZero(0.1))
-            {
-                var easeSet = DecelerationEaseSetFactory.Create(velocity, 1.0);
-
-                var hit = GetAreaLimitHit(pos, easeSet.Delta);
-                if (hit.IsHit)
-                {
-                    if (0.001 < hit.Rate)
-                    {
-                        easeSet = DecelerationEaseSetFactory.Create(velocity, hit.Rate);
-                        multiEaseSet.Add(easeSet);
-                        pos += easeSet.Delta;
-                        velocity = easeSet.V1;
-                    }
-                    var vx = hit.XHit ? 0.0 : velocity.X;
-                    var vy = hit.YHit ? 0.0 : velocity.Y;
-                    velocity = new Vector(vx, vy);
-                    Debug.WriteLine($"## Add.Hit: Delta={easeSet.Delta:f2}, Rate={hit.Rate:f2}, V1={velocity:f2}");
-                }
-                else
-                {
-                    multiEaseSet.Add(easeSet);
-                    Debug.WriteLine($"## Add.End: Delta={easeSet.Delta:f2}, Rate={1}, V1={easeSet.V1:f2}");
-                    break;
-                }
-            }
-
-
+            var inertiaEaseFactory = new InertiaEaseFactory(GetScrollLockHit, GetAreaLimitHit);
+            var multiEaseSet = inertiaEaseFactory.Create(_container.Transform.Point, velocity);
+            if (!multiEaseSet.IsValid) return;
             _viewContext.AddPoint(multiEaseSet.Delta, TimeSpan.FromMilliseconds(multiEaseSet.Milliseconds), multiEaseSet.EaseX, multiEaseSet.EaseY, true);
         }
 

@@ -19,6 +19,8 @@ namespace NeeView.PageFrames
             Milliseconds += t;
         }
 
+        public bool IsValid => Milliseconds > 0;
+
         public Vector Delta { get; private set; }
         public double Milliseconds { get; private set; }
         public MultiEase EaseX { get; } = new();

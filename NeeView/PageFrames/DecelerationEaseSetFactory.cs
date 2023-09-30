@@ -54,7 +54,7 @@ namespace NeeView.PageFrames
             var v1 = Kinematics.GetVelocity(v0, a, t);
             var lastVelocity = velocity.TransScalar(v1);
 
-            Debug.WriteLine($"EaseSet: v0={velocity:f2}({v0:f2}), v1={lastVelocity:f2}({v1:f2}), delta={delta:f2}, ms={t:f0}");
+            //Debug.WriteLine($"EaseSet: v0={velocity:f2}({v0:f2}), v1={lastVelocity:f2}({v1:f2}), delta={delta:f2}, ms={t:f0}");
             return new EaseSet(delta, t, easeX, easeY, velocity, lastVelocity);
         }
     }

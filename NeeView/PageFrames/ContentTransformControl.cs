@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Windows;
 using System.Windows.Media.Animation;
 using NeeLaboratory.ComponentModel;
-using NeeView.ComponentModel;
 using NeeView.Interop;
 using NeeView.Maths;
 
@@ -76,79 +74,17 @@ namespace NeeView.PageFrames
         {
             _context.IsSnapAnchor.Reset();
             var delta = RevisePositionDelta(value);
-            //var delta = DetectCollision(value);
-
             _container.Transform.SetPoint(_container.Transform.Point + delta, span, easeX, easeY);
         }
 
-        delegate HitData GeHitFunc(Point start, Vector delta);
-
         public void InertiaPoint(Vector velocity)
         {
-            if (velocity.LengthSquared < 0.01) return;
-
-            if (velocity.LengthSquared > 40.0 * 40.0)
-            {
-                velocity = velocity * (40.0 / velocity.Length);
-            }
-
             _context.IsSnapAnchor.Reset();
-
-            MultiEaseSet multiEaseSet = new MultiEaseSet();
-            var pos = _container.Transform.Point;
-
-            // scroll lock
-            {
-                var easeSet = DecelerationEaseSetFactory.Create(velocity, 1.0);
-                var hit = GetScrollLockHit(pos, easeSet.Delta);
-
-                if (hit.IsHit)
-                {
-                    if (0.001 < hit.Rate)
-                    {
-                        easeSet = DecelerationEaseSetFactory.Create(velocity, hit.Rate);
-                        multiEaseSet.Add(easeSet);
-                        pos += easeSet.Delta;
-                        velocity = easeSet.V1;
-                    }
-                    var vx = hit.XHit ? 0.0 : velocity.X;
-                    var vy = hit.YHit ? 0.0 : velocity.Y;
-                    velocity = new Vector(vx, vy);
-                    Debug.WriteLine($"## Add.LockHit: Delta={easeSet.Delta:f2}, Rate={hit.Rate:f2}, V1={velocity:f2}");
-                }
-            }
-
-            // area limit
-            while (!velocity.NearZero(0.1))
-            {
-                var easeSet = DecelerationEaseSetFactory.Create(velocity, 1.0);
-
-                var hit = GetAreaLimitHit(pos, easeSet.Delta);
-                if (hit.IsHit)
-                {
-                    if (0.001 < hit.Rate)
-                    {
-                        easeSet = DecelerationEaseSetFactory.Create(velocity, hit.Rate);
-                        multiEaseSet.Add(easeSet);
-                        pos += easeSet.Delta;
-                        velocity = easeSet.V1;
-                    }
-                    var vx = hit.XHit ? 0.0 : velocity.X;
-                    var vy = hit.YHit ? 0.0 : velocity.Y;
-                    velocity = new Vector(vx, vy);
-                    Debug.WriteLine($"## Add.Hit: Delta={easeSet.Delta:f2}, Rate={hit.Rate:f2}, V1={velocity:f2}");
-                }
-                else
-                {
-                    multiEaseSet.Add(easeSet);
-                    Debug.WriteLine($"## Add.End: Delta={easeSet.Delta:f2}, Rate={1}, V1={easeSet.V1:f2}");
-                    break;
-                }
-            }
-
-            _container.Transform.SetPoint(_container.Transform.Point + multiEaseSet.Delta, TimeSpan.FromMilliseconds(multiEaseSet.Milliseconds), multiEaseSet.EaseX, multiEaseSet.EaseY);
+            var inertiaEaseFactory = new InertiaEaseFactory(GetScrollLockHit, GetAreaLimitHit);
+            var multiEaseSet = inertiaEaseFactory.Create(_container.Transform.Point, velocity);
+            if (!multiEaseSet.IsValid) return;
+            _container.Transform.AddPoint(multiEaseSet.Delta, TimeSpan.FromMilliseconds(multiEaseSet.Milliseconds), multiEaseSet.EaseX, multiEaseSet.EaseY);
         }
-
 
         // 範囲内になるよう移動量補正
         public Vector RevisePositionDelta(Vector delta)
@@ -199,8 +135,4 @@ namespace NeeView.PageFrames
             _container.Transform.SetPoint(areaLimit.SnapView(false), TimeSpan.Zero);
         }
     }
-
-
-
-
 }
