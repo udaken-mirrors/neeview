@@ -55,6 +55,11 @@ namespace NeeView
             _context.Transform.AddPoint(value, span, easeX, easeY);
         }
 
+        public void InertiaPoint(Vector velocity)
+        {
+            _context.Transform.InertiaPoint(velocity);
+        }
+
         public void SetScale(double value, TimeSpan span)
         {
             _context.Transform.SetScale(value, span);

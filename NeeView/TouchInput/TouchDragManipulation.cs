@@ -129,15 +129,18 @@ namespace NeeView
             if (_transform is null) return;
             
             if (_goal is null) throw new InvalidOperationException("TouchDragManipulation must be started");
-            
+
+#if false
             var inertia = _speedometer.GetInertia();
-
             _goal = GetInertiaTransform(inertia);
-
             //_transform.SetPoint((Point)_goal.Trans, inertia.Span);
             var delta = (Point)_goal.Trans - _transform.Point;
             _transform.AddPoint(delta, inertia.Span);
             _transform.SetAngle(_goal.Angle, TimeSpan.FromMilliseconds(100));
+#endif
+
+            _transform.InertiaPoint(_speedometer.GetSpeed());
+            _transform.SetAngle(GetSnapAngle(_goal.Angle), TimeSpan.FromMilliseconds(100));
         }
 
 
@@ -148,7 +151,7 @@ namespace NeeView
             return new TouchDragTransform((Vector)_transform.Point, _transform.Angle, _transform.Scale, (Vector)_transformContext.ContentCenter);
         }
 
-
+        [Obsolete]
         private TouchDragTransform GetInertiaTransform(PointInertia inertia)
         {
             if (_goal is null) throw new InvalidOperationException("TouchDragManipulation must be started");

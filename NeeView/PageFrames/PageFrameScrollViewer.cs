@@ -23,6 +23,7 @@ namespace NeeView.PageFrames
         private readonly Canvas _rootCanvas;
         private readonly PageFrameContainerCanvas _canvas;
         private readonly PageFrameViewTransform _transform;
+        private bool _isAreaLimitEnabled;
 
 
         public PageFrameScrollViewer(PageFrameContext context, PageFrameContainerCanvas canvas, PageFrameViewTransform transform)
@@ -37,7 +38,6 @@ namespace NeeView.PageFrames
             _transform = transform;
             _canvas.RenderTransform = transform.TransformView;
 
-
             _rootCanvas = new Canvas()
             {
                 HorizontalAlignment = HorizontalAlignment.Center,
@@ -46,6 +46,9 @@ namespace NeeView.PageFrames
             Children.Add(_rootCanvas);
 
             _rootCanvas.Children.Add(_canvas);
+
+            this.Background = Brushes.Transparent;
+            this.PreviewMouseDown += PageFrameScrollViewer_PreviewMouseDown;
 
 #if DEBUG
             // [DEV]
@@ -64,6 +67,8 @@ namespace NeeView.PageFrames
 #endif
         }
 
+
+#if DEBUG
         private class CanvasPositionConverter : IMultiValueConverter
         {
             public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
@@ -78,6 +83,7 @@ namespace NeeView.PageFrames
                 throw new NotImplementedException();
             }
         }
+#endif
 
         [Subscribable]
         public event PropertyChangedEventHandler? PropertyChanged;
@@ -91,6 +97,10 @@ namespace NeeView.PageFrames
             get { return _transform.Point; }
         }
 
+        public Point ViewPoint
+        {
+            get { return _transform.ViewPoint; }
+        }
 
 
         public IDisposable SubscribeSizeChanged(SizeChangedEventHandler handler)
@@ -114,31 +124,88 @@ namespace NeeView.PageFrames
 
         public void SetPoint(Point value, TimeSpan span)
         {
-            SetPoint(value, span, null, null);
+            SetPoint(value, span, null, null, false);
         }
 
         public void SetPoint(Point value, TimeSpan span, IEasingFunction? easeX, IEasingFunction? easeY)
         {
+            SetPoint(value, span, easeX, easeY, false);
+        }
+
+        public void SetPoint(Point value, TimeSpan span, IEasingFunction? easeX, IEasingFunction? easeY, bool areaLimit)
+        {
             if (Point == value) return;
 
-            Debug.WriteLine($"## {{{Point:f0}}} to {{{value:f0}}} ({span.TotalMilliseconds})");
+            //Debug.WriteLine($"## {{{Point:f0}}} to {{{value:f0}}} ({span.TotalMilliseconds}): areaLimit={areaLimit}");
+            _isAreaLimitEnabled = areaLimit;
             _transform.SetPoint(value, span, easeX, easeY);
             RaisePropertyChanged(nameof(Point));
         }
 
         public void AddPoint(Vector value, TimeSpan span)
         {
-            AddPoint(value, span, null, null);
+            SetPoint(Point + value, span, null, null, false);
         }
 
         public void AddPoint(Vector value, TimeSpan span, IEasingFunction? easeX, IEasingFunction? easeY)
         {
-            SetPoint(Point + value, span, easeX, easeY);
+            SetPoint(Point + value, span, easeX, easeY, false);
+        }
+
+        public void AddPoint(Vector value, TimeSpan span, IEasingFunction? easeX, IEasingFunction? easeY, bool areaLimit)
+        {
+            SetPoint(Point + value, span, easeX, easeY, areaLimit);
         }
 
         public void FlushScroll()
         {
             _transform.Flush();
         }
+
+        public void ApplyAreaLimit(Point c0, Point c1)
+        {
+            if (!_isAreaLimitEnabled) return;
+
+            var vp = ViewPoint;
+            var p0 = new Point(vp.X + c0.X, vp.Y + c0.Y);
+            var p1 = new Point(vp.X + c1.X, vp.Y + c1.Y);
+
+            if (_context.FrameOrientation == PageFrameOrientation.Horizontal)
+            {
+                if (p0.X > 0.0)
+                {
+                    var point = new Point(-c0.X, vp.Y);
+                    SetPoint(point, TimeSpan.FromMilliseconds(200));
+                }
+                else if (p1.X < 0.0)
+                {
+                    var point = new Point(-c1.X, vp.Y);
+                    SetPoint(point, TimeSpan.FromMilliseconds(200));
+                }
+            }
+            else
+            {
+                if (p0.Y > 0.0)
+                {
+                    var point = new Point(vp.X, -c0.Y);
+                    SetPoint(point, TimeSpan.FromMilliseconds(200));
+                }
+                else if (p1.Y < 0.0)
+                {
+                    var point = new Point(vp.X, -c1.Y);
+                    SetPoint(point, TimeSpan.FromMilliseconds(200));
+                }
+            }
+        }
+
+        private void PageFrameScrollViewer_PreviewMouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            if (!_isAreaLimitEnabled) return;
+
+            SetPoint(ViewPoint, TimeSpan.Zero);
+        }
+
     }
+
+
 }

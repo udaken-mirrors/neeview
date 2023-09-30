@@ -76,8 +76,9 @@ namespace NeeView.PageFrames
 
             var loupeContext = new LoupeTransformContext(_context);
             var viewTransform = new PageFrameViewTransform(_context, loupeContext);
-            _disposables.Add(viewTransform.SubscribeTransformChanged(ViewTransform_TransformChanged));
             _disposables.Add(viewTransform);
+            _disposables.Add(viewTransform.SubscribeTransformChanged(ViewTransform_TransformChanged));
+            _disposables.Add(viewTransform.SubscribeViewPointChanged(ViewTransform_ViewPointChanged));
 
             _transformMap = new PageFrameTransformMap(_context.ShareContext);
 
@@ -576,6 +577,25 @@ namespace NeeView.PageFrames
 
             TransformChanged?.Invoke(this, e);
         }
+
+        private void ViewTransform_ViewPointChanged(object? sender, EventArgs e)
+        {
+            if (_context.PageMode != PageMode.Panorama) return;
+
+            var c0 = new Point(_containers.FirstTerminate.X, _containers.FirstTerminate.Y);
+            var c1 = new Point(_containers.LastTerminate.X, _containers.LastTerminate.Y);
+            
+            if (_context.FrameOrientation == PageFrameOrientation.Horizontal)
+            {
+                if (_context.ReadOrder == PageReadOrder.RightToLeft)
+                {
+                    (c0, c1) = (c1, c0);
+                }
+            }
+
+            _scrollViewer.ApplyAreaLimit(c0, c1);
+        }
+
 
 
         private void SetSnapAnchor()

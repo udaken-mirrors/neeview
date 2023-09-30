@@ -94,6 +94,7 @@ namespace NeeView
             return lastSpeed;
         }
 
+        [Obsolete]
         public PointInertia GetInertia()
         {
             var inertiaMath = new InertiaMath();
@@ -112,6 +113,7 @@ namespace NeeView
     /// </summary>
     /// <param name="Delta">慣性移動量</param>
     /// <param name="Span">慣性移動時間</param>
+    [Obsolete]
     public record struct PointInertia(Vector Velocity, Vector Delta, TimeSpan Span);
 
     /// <summary>
@@ -122,7 +124,7 @@ namespace NeeView
     public record struct PointRecord(Point Point, int Timestamp);
 
 
-
+    [Obsolete]
     public class InertiaMath
     {
         public InertiaMath()

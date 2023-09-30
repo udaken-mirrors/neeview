@@ -26,7 +26,7 @@ namespace NeeView.PageFrames
         Update,
         UpdateTransform, // view control
         UpdateContentSize, // loaded
-        UpdateContainerLayout, 
+        UpdateContainerLayout,
         Remove,
     }
 
@@ -77,9 +77,12 @@ namespace NeeView.PageFrames
             _containerFactory = containerFactory;
 
             var firstActivity = new PageFrameActivity();
-            _containers.AddFirst(new PageFrameContainer(new TerminalPageFrameContent(_frameFactory.GetFirstTerminalRange(), firstActivity), firstActivity));
+            FirstTerminate = new PageFrameContainer(new TerminalPageFrameContent(_frameFactory.GetFirstTerminalRange(), firstActivity), firstActivity);
+            _containers.AddFirst(FirstTerminate);
+
             var lastActivity = new PageFrameActivity();
-            _containers.AddLast(new PageFrameContainer(new TerminalPageFrameContent(_frameFactory.GetLastTerminalRange(), lastActivity), lastActivity));
+            LastTerminate = new PageFrameContainer(new TerminalPageFrameContent(_frameFactory.GetLastTerminalRange(), lastActivity), lastActivity);
+            _containers.AddLast(LastTerminate);
 
             _anchor = new PageFrameContainerAnchor(this);
 
@@ -99,6 +102,9 @@ namespace NeeView.PageFrames
 
 
         public PageFrameContainerAnchor Anchor => _anchor;
+
+        public PageFrameContainer FirstTerminate { get; }
+        public PageFrameContainer LastTerminate { get; }
 
 
         public IEnumerator<PageFrameContainer> GetEnumerator()

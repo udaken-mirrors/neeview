@@ -48,9 +48,13 @@ namespace NeeView.PageFrames
 
         public void AddPoint(Vector value, TimeSpan span, IEasingFunction? easeX, IEasingFunction? easeY)
         {
-            _scrollViewer.AddPoint(value, span, easeX, easeY);
+            AddPoint(value, span, easeX, easeY, false);
         }
 
+        public void AddPoint(Vector value, TimeSpan span, IEasingFunction? easeX, IEasingFunction? easeY, bool areaLimit)
+        {
+            _scrollViewer.AddPoint(value, span, easeX, easeY, areaLimit);
+        }
     }
 
 }

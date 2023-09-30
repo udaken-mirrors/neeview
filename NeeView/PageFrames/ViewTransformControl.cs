@@ -74,12 +74,6 @@ namespace NeeView.PageFrames
             _viewContext.AddPoint(delta, span, easeX, easeY);
         }
 
-        //public void InertiaPoint(Vector velocity)
-        //{
-        //    // TODO:
-        //    throw new NotImplementedException();
-        //}
-
         public void InertiaPoint(Vector velocity)
         {
             if (velocity.LengthSquared < 0.01) return;
@@ -115,7 +109,6 @@ namespace NeeView.PageFrames
                 }
             }
 
-#if false
             // area limit
             while (!velocity.NearZero(0.1))
             {
@@ -143,16 +136,9 @@ namespace NeeView.PageFrames
                     break;
                 }
             }
-#else
-            {
-                var easeSet = DecelerationEaseSetFactory.Create(velocity, 1.0);
-                multiEaseSet.Add(easeSet);
-                Debug.WriteLine($"## Add.End: Delta={easeSet.Delta:f2}, Rate={1}, V1={easeSet.V1:f2}");
-            }
-#endif
 
-            _viewContext.AddPoint(multiEaseSet.Delta, TimeSpan.FromMilliseconds(multiEaseSet.Milliseconds), multiEaseSet.EaseX, multiEaseSet.EaseY);
-            //_container.Transform.SetPoint(_container.Transform.Point + multiEaseSet.Delta, TimeSpan.FromMilliseconds(multiEaseSet.Milliseconds), multiEaseSet.EaseX, multiEaseSet.EaseY);
+
+            _viewContext.AddPoint(multiEaseSet.Delta, TimeSpan.FromMilliseconds(multiEaseSet.Milliseconds), multiEaseSet.EaseX, multiEaseSet.EaseY, true);
         }
 
         // 範囲内になるよう移動量補正
@@ -179,8 +165,8 @@ namespace NeeView.PageFrames
         {
             if (!_context.ViewConfig.IsLimitMove) return new HitData(start, delta);
 
-            var contentRect = _container.GetContentRect(start);
-            _scrollLock.Update(contentRect, _viewContext.ViewRect);
+            var canvasRect = _viewContext.CanvasRect;
+            _scrollLock.Update(canvasRect, _viewContext.ViewRect);
             return _scrollLock.HitTest(start, delta);
         }
 
@@ -188,8 +174,21 @@ namespace NeeView.PageFrames
         {
             if (!_context.ViewConfig.IsLimitMove) return new HitData(start, delta);
 
-            var contentRect = _container.GetContentRect(start);
-            var areaLimit = new ScrollAreaLimit(contentRect, _viewContext.ViewRect);
+            var canvasRect = _viewContext.CanvasRect;
+
+            // 配置方向の幅を制限なしにする
+            if (_context.FrameOrientation == PageFrameOrientation.Horizontal)
+            {
+                canvasRect.X = double.NegativeInfinity;
+                canvasRect.Width = double.PositiveInfinity;
+            }
+            else
+            {
+                canvasRect.Y = double.NegativeInfinity;
+                canvasRect.Height = double.PositiveInfinity;
+            }
+
+            var areaLimit = new ScrollAreaLimit(canvasRect, _viewContext.ViewRect);
             return areaLimit.HitTest(start, delta);
         }
 

@@ -31,12 +31,16 @@ namespace NeeView.PageFrames
 
 #if false
             // [DEV]
-            Children.Add(new Rectangle()
+            var rectangle = new Rectangle()
             {
-                Width = 2,
-                Height = 2,
+                Width = 5,
+                Height = 5,
                 Fill = Brushes.Red,
-            });
+            };
+            Canvas.SetZIndex(rectangle, -1);
+
+            Children.Add(rectangle);
+
 #endif
 
 #if false
