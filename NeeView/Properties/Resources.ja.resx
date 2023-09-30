@@ -6283,12 +6283,6 @@ $Name は 2 ページ表示時には主となるページ (ページ番号の小
   <data name="ToggleNearestNeighborCommand.Remarks" xml:space="preserve">
     <value>有効にすると拡大するときにドットのまま拡大します。無効の時にはスケール変換処理 (Fant) が行われます。</value>
   </data>
-  <data name="TogglePageModeCommand" xml:space="preserve">
-    <value>ページ表示モードを切り替える</value>
-  </data>
-  <data name="TogglePageModeCommand.Remarks" xml:space="preserve">
-    <value>1 ページ表示と 2 ページ表示を切り替えます。</value>
-  </data>
   <data name="TogglePermitFileCommand" xml:space="preserve">
     <value>ファイル操作有効/無効</value>
   </data>
@@ -7522,5 +7516,23 @@ nv.ShowToast(nv.Book.ViewPages[0].Path)</value>
   </data>
   <data name="SetPageModePanoramaCommand.Remarks" xml:space="preserve">
     <value>連続したページを表示します。</value>
+  </data>
+  <data name="TogglePageModeCommand" xml:space="preserve">
+    <value>ページモードを切り替える</value>
+  </data>
+  <data name="TogglePageModeCommand.Remarks" xml:space="preserve">
+    <value>ページモードを順番に切り替えます。</value>
+  </data>
+  <data name="TogglePageModeReverseCommand" xml:space="preserve">
+    <value>ページモードを切り替える (逆順)</value>
+  </data>
+  <data name="TogglePageModeReverseCommand.Remarks" xml:space="preserve">
+    <value>ページモードを順番に切り替えます。 (逆順)</value>
+  </data>
+  <data name="TogglePageOrientationCommand" xml:space="preserve">
+    <value>ページの配置方向を切り替える</value>
+  </data>
+  <data name="TogglePageOrientationCommand.Remarks" xml:space="preserve">
+    <value>水平方向と垂直方向を切り替えます。</value>
   </data>
 </root>

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 
 namespace NeeView
 {
@@ -18,9 +19,11 @@ namespace NeeView
 
     public static class PageModeExtension
     {
-        public static PageMode GetToggle(this PageMode mode)
+        public static PageMode GetToggle(this PageMode mode, int direction)
         {
-            return (PageMode)(((int)mode + 1) % Enum.GetNames(typeof(PageMode)).Length);
+            Debug.Assert(direction == -1 || direction == +1);
+            var length = Enum.GetNames(typeof(PageMode)).Length;
+            return (PageMode)(((int)mode + length + direction) % length);
         }
 
         public static int Size(this PageMode mode)

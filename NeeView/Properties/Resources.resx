@@ -6278,12 +6278,6 @@ $Name is the main page (the smaller page number) when displaying 2 pages.</value
   <data name="ToggleNearestNeighborCommand.Remarks" xml:space="preserve">
     <value>When set to ON, it will expand while maintaining the dot. When it is OFF, scale conversion processing (Fant) is executed.</value>
   </data>
-  <data name="TogglePageModeCommand" xml:space="preserve">
-    <value>Toggle page mode</value>
-  </data>
-  <data name="TogglePageModeCommand.Remarks" xml:space="preserve">
-    <value>Switch between 1 page display and 2 page display.</value>
-  </data>
   <data name="TogglePermitFileCommand" xml:space="preserve">
     <value>Toggle file operation</value>
   </data>
@@ -7517,5 +7511,23 @@ nv.ShowToast(nv.Book.ViewPages[0].Path)</value>
   </data>
   <data name="SetPageModePanoramaCommand.Remarks" xml:space="preserve">
     <value>Displays consecutive pages.</value>
+  </data>
+  <data name="TogglePageModeCommand" xml:space="preserve">
+    <value>Toggle page mode</value>
+  </data>
+  <data name="TogglePageModeCommand.Remarks" xml:space="preserve">
+    <value>Toggle page mode in order</value>
+  </data>
+  <data name="TogglePageModeReverseCommand" xml:space="preserve">
+    <value>Toggle page mode (reverse)</value>
+  </data>
+  <data name="TogglePageModeReverseCommand.Remarks" xml:space="preserve">
+    <value>Toggle page mode in order (reverse)</value>
+  </data>
+  <data name="TogglePageOrientationCommand" xml:space="preserve">
+    <value>Toggle pages orientation</value>
+  </data>
+  <data name="TogglePageOrientationCommand.Remarks" xml:space="preserve">
+    <value>Switch between horizontal and vertical orientation.</value>
   </data>
 </root>

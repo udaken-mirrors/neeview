@@ -6262,12 +6262,6 @@ $Name 为 2 页面显示时的主要页面 (页面编号较小者) 。</value>
   <data name="ToggleNearestNeighborCommand.Remarks" xml:space="preserve">
     <value>启用时放大会依照点放大。停用时进行比例转换处理 (Fant) 。</value>
   </data>
-  <data name="TogglePageModeCommand" xml:space="preserve">
-    <value>切换页面显示模式</value>
-  </data>
-  <data name="TogglePageModeCommand.Remarks" xml:space="preserve">
-    <value>切换 1 页面显示与 2 页面显示。</value>
-  </data>
   <data name="TogglePermitFileCommand" xml:space="preserve">
     <value>启用/停用档案操作</value>
   </data>

@@ -18094,11 +18094,47 @@ namespace NeeView.Properties {
         }
         
         /// <summary>
-        ///   Switch between 1 page display and 2 page display. に類似しているローカライズされた文字列を検索します。
+        ///   Toggle page mode in order に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string TogglePageModeCommand_Remarks {
             get {
                 return ResourceManager.GetString("TogglePageModeCommand.Remarks", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Toggle page mode (reverse) に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string TogglePageModeReverseCommand {
+            get {
+                return ResourceManager.GetString("TogglePageModeReverseCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Toggle page mode in order (reverse) に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string TogglePageModeReverseCommand_Remarks {
+            get {
+                return ResourceManager.GetString("TogglePageModeReverseCommand.Remarks", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Toggle pages orientation に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string TogglePageOrientationCommand {
+            get {
+                return ResourceManager.GetString("TogglePageOrientationCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Switch between horizontal and vertical orientation. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string TogglePageOrientationCommand_Remarks {
+            get {
+                return ResourceManager.GetString("TogglePageOrientationCommand.Remarks", resourceCulture);
             }
         }
         

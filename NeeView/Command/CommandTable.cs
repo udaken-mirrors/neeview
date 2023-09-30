@@ -279,6 +279,7 @@ namespace NeeView
                 new SetBookOrderBySizeDCommand(),
                 new SetBookOrderByRandomCommand(),
                 new TogglePageModeCommand(),
+                new TogglePageModeReverseCommand(),
                 new SetPageModeOneCommand(),
                 new SetPageModeTwoCommand(),
                 new SetPageModePanoramaCommand(),

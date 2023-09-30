@@ -101,6 +101,32 @@ namespace NeeView
                         self.Config.System.Language = "zh-Hans";
                         break;
                 }
+
+                // ページモード切替ジェスチャーの割当切り替え
+                if (self.Commands != null)
+                {
+                    // ページモード切替ジェスチャが初期設定ならば切り替える
+                    if (self.Commands.TryGetValue("SetPageModeOne", out var setPageModeOne) && setPageModeOne.MouseGesture == "RU"
+                        && self.Commands.TryGetValue("SetPageModeTwo", out var setPageModeTwo) && setPageModeTwo.MouseGesture == "RD"
+                        && self.Commands.TryGetValue("TogglePageMode", out var togglePageMode) && togglePageMode.MouseGesture == "")
+                    {
+                        setPageModeOne.MouseGesture = "";
+                        setPageModeTwo.MouseGesture = "";
+                        togglePageMode.MouseGesture = TogglePageModeCommand.DefaultMouseGesture;
+
+                        var togglePageModeReverseCommand = new TogglePageModeReverseCommand();
+                        var togglePageModeReverse = togglePageModeReverseCommand.CreateMemento();
+                        self.Commands[togglePageModeReverseCommand.Name] = togglePageModeReverse;
+                    }
+                    // 変更されているならば新しいコマンドのジェスチャは無効化
+                    else
+                    {
+                        var togglePageModeReverseCommand = new TogglePageModeReverseCommand();
+                        var togglePageModeReverse = togglePageModeReverseCommand.CreateMemento();
+                        togglePageModeReverse.MouseGesture = "";
+                        self.Commands[togglePageModeReverseCommand.Name] = togglePageModeReverse;
+                    }
+                }
             }
 
 #if false

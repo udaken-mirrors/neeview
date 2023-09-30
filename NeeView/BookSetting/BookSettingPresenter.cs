@@ -68,9 +68,9 @@ namespace NeeView
             }
         }
 
-        public void TogglePageMode()
+        public void TogglePageMode(int direction)
         {
-            SetPageMode(LatestSetting.PageMode.GetToggle());
+            SetPageMode(LatestSetting.PageMode.GetToggle(direction));
         }
 
         // 見開き方向設定
