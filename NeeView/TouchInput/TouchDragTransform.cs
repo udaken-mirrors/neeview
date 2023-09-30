@@ -27,7 +27,7 @@ namespace NeeView
 
         public Vector Trans { get; init; }
         public double Angle { get; init; }
-        public double Scale { get; init; }
+        public double Scale { get; init; } = 1.0;
 
         // 回転、拡大縮小の中心
         public Vector Center { get; init; }

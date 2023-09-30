@@ -23,6 +23,7 @@ namespace NeeView
         private DragTransform? _transform;
         private TouchDragContext? _origin;
 
+        private TouchDragTransform? _first;
         private TouchDragTransform? _start;
         private TouchDragTransform? _goal;
 
@@ -47,9 +48,18 @@ namespace NeeView
         public void Initialize()
         {
             _transformContext = _transformContextFactory.CreateDragTransformContext(true, false);
-            Debug.Assert(_transformContext != null);
+            if (_transformContext is null)
+            {
+                if (Debugger.IsAttached)
+                {
+                    Debug.WriteLine($"Warning: Cannot get DragTransformContext");
+                    Debugger.Break();
+                }
+                return;
+            }
 
             _transform = new DragTransform(_transformContext);
+            _first = GetNowTransform();
         }
 
         /// <summary>
@@ -58,6 +68,8 @@ namespace NeeView
         /// </summary>
         public void Start()
         {
+            if (_transform is null) return;
+            Debug.WriteLine("TouchDrag:Start");
             _origin = new TouchDragContext(_context.Sender, _context.TouchMap.Keys);
 
             _start = GetNowTransform();
@@ -77,7 +89,11 @@ namespace NeeView
         /// </summary>
         public void Stop(int timestamp)
         {
-            Inertia(timestamp);
+            if (_transform is null) return;
+            if (_goal is null) return;
+
+            _transform.SetAngle(GetSnapAngle(_goal.Angle), TimeSpan.FromMilliseconds(200));
+            _transform.InertiaPoint(_speedometer.GetSpeed());
         }
 
         /// <summary>
@@ -85,13 +101,14 @@ namespace NeeView
         /// </summary>
         public void Update(object? sender, StylusEventArgs e)
         {
+            if (_transform is null) return;
             ControlDragTransform(e.Timestamp);
         }
 
         private void ControlDragTransform(int timestamp)
         {
-            if (_goal is null) throw new InvalidOperationException("TouchDragManipulation must be started");
             if (_transform is null) return;
+            if (_goal is null) throw new InvalidOperationException("TouchDragManipulation must be started");
 
             _goal = GetTransform();
 
@@ -107,103 +124,17 @@ namespace NeeView
             }
 
             var spam = TimeSpan.FromMilliseconds(100);
-            _transform.SetPoint((Point)_goal.Trans, spam);
+            _transform.AddPoint((Point)_goal.Trans - _transform.Point, spam);
             _transform.SetAngle(_goal.Angle, spam);
             _transform.SetScale(_goal.Scale, spam);
-
-#if false
-            // speed.
-            var speed = _now.Trans - old.Trans;
-            var deltaAngle = Math.Abs(_now.Angle - old.Angle);
-            if (deltaAngle > 1.0) speed = speed * 0.0;
-            var deltaScale = Math.Abs(_now.Scale - old.Scale);
-            if (deltaScale > 0.1) speed = speed * 0.0;
-            _speed = VectorExtensions.Lerp(_speed, speed * 1.25, 0.25);
-#endif
         }
-
-
-
-        private void Inertia(int timestamp)
-        {
-            if (_transform is null) return;
-            
-            if (_goal is null) throw new InvalidOperationException("TouchDragManipulation must be started");
-
-#if false
-            var inertia = _speedometer.GetInertia();
-            _goal = GetInertiaTransform(inertia);
-            //_transform.SetPoint((Point)_goal.Trans, inertia.Span);
-            var delta = (Point)_goal.Trans - _transform.Point;
-            _transform.AddPoint(delta, inertia.Span);
-            _transform.SetAngle(_goal.Angle, TimeSpan.FromMilliseconds(100));
-#endif
-
-            _transform.InertiaPoint(_speedometer.GetSpeed());
-            _transform.SetAngle(GetSnapAngle(_goal.Angle), TimeSpan.FromMilliseconds(100));
-        }
-
 
         private TouchDragTransform GetNowTransform()
         {
+            if (_transform is null) return new TouchDragTransform();
+            
             Debug.Assert(_transformContext != null);
-            Debug.Assert(_transform != null);
             return new TouchDragTransform((Vector)_transform.Point, _transform.Angle, _transform.Scale, (Vector)_transformContext.ContentCenter);
-        }
-
-        [Obsolete]
-        private TouchDragTransform GetInertiaTransform(PointInertia inertia)
-        {
-            if (_goal is null) throw new InvalidOperationException("TouchDragManipulation must be started");
-            if (_transformContext is null) throw new InvalidOperationException();
-
-            var trans = inertia.Delta;
-            var angle = GetSnapAngle(_goal.Angle) - _goal.Angle;
-            var scale = 1.0;
-
-            // limit move
-            if (Config.Current.View.IsLimitMove)
-            {
-                var transformContext = _transformContextFactory.CreateDragTransformContext(_transformContext.Container, false);
-                if (transformContext is not null)
-                {
-                    var contentRect = Rect.Offset(transformContext.ContentRect, inertia.Delta);
-                    var areaLimit = new ScrollAreaLimit(contentRect, transformContext.ViewRect);
-                    var p0 = transformContext.ContentCenter;
-                    var p1 = areaLimit.SnapView(true);
-                    trans = p1 - p0;
-
-                    if (!Config.Current.BookSetting.PageMode.IsStaticFrame())
-                    {
-                        if (Config.Current.Book.Orientation == PageFrameOrientation.Horizontal)
-                        {
-                            trans.X = inertia.Delta.X;
-                        }
-                        else
-                        {
-                            trans.Y = inertia.Delta.Y;
-                        }
-                    }
-                }
-            }
-
-            //var rateX = (inertial.Delta.X > 0.0) ? trans.X / inertial.Delta.X : 1.0;
-            //var rateY = (inertial.Delta.X > 0.0) ? trans.X / inertial.Delta.X : 1.0;
-
-
-            //Debug.WriteLine($"## SPEED: {inertia:f0}");
-            //Debug.WriteLine($"Trans={trans:f0}");
-            //Debug.WriteLine($"Angle={GetSnapAngle(_goal.Angle)}");
-
-            var delta = new TouchDragTransform()
-            {
-                Trans = trans,
-                Angle = angle,
-                Scale = scale,
-                Center = new Vector(0, 0),
-            };
-
-            return AddTransform(_goal, delta);
         }
 
         /// <summary>
@@ -275,11 +206,11 @@ namespace NeeView
         /// <returns></returns>
         private double GetSnapAngle(double angle)
         {
-            if (_start is null) throw new InvalidOperationException("TouchDragManipulation must be started");
+            if (_first is null) throw new InvalidOperationException("TouchDragManipulation must be initialized");
 
             if (Config.Current.View.AngleFrequency > 0.0)
             {
-                var delta = angle - _start.Angle;
+                var delta = angle - _first.Angle;
 
                 if (Math.Abs(delta) > 1.0)
                 {

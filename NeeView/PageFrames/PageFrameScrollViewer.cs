@@ -11,6 +11,7 @@ using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 
@@ -49,6 +50,7 @@ namespace NeeView.PageFrames
 
             this.Background = Brushes.Transparent;
             this.PreviewMouseDown += PageFrameScrollViewer_PreviewMouseDown;
+            this.PreviewStylusDown += PageFrameScrollViewer_PreviewStylusDown;
 
 #if DEBUG
             // [DEV]
@@ -198,10 +200,15 @@ namespace NeeView.PageFrames
             }
         }
 
-        private void PageFrameScrollViewer_PreviewMouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private void PageFrameScrollViewer_PreviewMouseDown(object sender, MouseButtonEventArgs e)
         {
             if (!_isAreaLimitEnabled) return;
+            SetPoint(ViewPoint, TimeSpan.Zero);
+        }
 
+        private void PageFrameScrollViewer_PreviewStylusDown(object sender, StylusDownEventArgs e)
+        {
+            if (!_isAreaLimitEnabled) return;
             SetPoint(ViewPoint, TimeSpan.Zero);
         }
 

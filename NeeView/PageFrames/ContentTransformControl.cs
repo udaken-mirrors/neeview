@@ -94,13 +94,9 @@ namespace NeeView.PageFrames
 
             _context.IsSnapAnchor.Reset();
 
-            var inertiaMath = new InertiaMath();
-            //var factory = new DecelerationEaseFactory();
-
             MultiEaseSet multiEaseSet = new MultiEaseSet();
             var pos = _container.Transform.Point;
 
-#if true
             // scroll lock
             {
                 var easeSet = DecelerationEaseSetFactory.Create(velocity, 1.0);
@@ -151,27 +147,6 @@ namespace NeeView.PageFrames
             }
 
             _container.Transform.SetPoint(_container.Transform.Point + multiEaseSet.Delta, TimeSpan.FromMilliseconds(multiEaseSet.Milliseconds), multiEaseSet.EaseX, multiEaseSet.EaseY);
-#endif
-
-#if false
-            EaseSet easeSet = factory.CreateEase(velocity, 0.5);
-
-            //multiEaseSet.Add(easeSet);
-
-            var easeSet1 = factory.CreateEase(velocity, 0.5);
-            multiEaseSet.Add(easeSet1);
-
-            if (!easeSet1.V1.NearZero(0.1))
-            {
-                var easeSet2 = factory.CreateEase(easeSet1.V1, 1.0);
-                multiEaseSet.Add(easeSet2);
-                Debug.Assert((velocity.TransNormal() - easeSet1.V1.TransNormal()).NearZero(0.0001));
-            }
-
-            _container.Transform.SetPoint(_container.Transform.Point + multiEaseSet.Delta, multiEaseSet.Span, multiEaseSet.EaseX, multiEaseSet.EaseY);
-            //_container.Transform.SetPoint(_container.Transform.Point + easeSet.Delta, easeSet.Span, easeSet.EaseX, easeSet.EaseY);
-#endif
-
         }
 
 

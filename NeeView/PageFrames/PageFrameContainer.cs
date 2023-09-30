@@ -298,8 +298,7 @@ namespace NeeView.PageFrames
                 var doubleAnimation = new DoubleAnimation();
                 doubleAnimation.To = value;
                 doubleAnimation.Duration = new Duration(TimeSpan.FromMilliseconds(ms));
-                //doubleAnimation.EasingFunction = new CubicEase() { EasingMode = EasingMode.EaseOut };
-                doubleAnimation.EasingFunction = new QuadraticEase() { EasingMode = EasingMode.EaseOut };
+                doubleAnimation.EasingFunction = EaseTools.DefaultEase;
                 BeginAnimation(dp, doubleAnimation);
             }
         }

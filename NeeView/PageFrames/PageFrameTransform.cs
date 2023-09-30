@@ -284,8 +284,6 @@ namespace NeeView.PageFrames
                 animation.To = value;
                 animation.Duration = new Duration(span);
                 // ドラッグ操作のような場合
-                //animation.EasingFunction = new CubicEase() { EasingMode = EasingMode.EaseOut };
-                //animation.EasingFunction = new QuadraticEase() { EasingMode = EasingMode.EaseOut };
                 animation.EasingFunction = ease ?? EaseTools.DefaultEase;
                 // キーボード操作のような連続して発行される場合は以下の方が良い
                 //animation.AccelerationRatio = IsScrolling() ? 0.4 : 0.0;
