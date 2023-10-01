@@ -136,10 +136,11 @@ namespace NeeView.PageFrames
 
         public void SetPoint(Point value, TimeSpan span, IEasingFunction? easeX, IEasingFunction? easeY, bool areaLimit)
         {
+            _isAreaLimitEnabled = areaLimit;
+
             if (Point == value) return;
 
             //Debug.WriteLine($"## {{{Point:f0}}} to {{{value:f0}}} ({span.TotalMilliseconds}): areaLimit={areaLimit}");
-            _isAreaLimitEnabled = areaLimit;
             _transform.SetPoint(value, span, easeX, easeY);
             RaisePropertyChanged(nameof(Point));
         }
