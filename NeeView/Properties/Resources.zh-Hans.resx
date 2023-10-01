@@ -7373,4 +7373,7 @@ nv.ShowToast(nv.Book.ViewPages[0].Path)</value>
   <data name="BookConfig.ContentsSpace.Remarks" xml:space="preserve">
     <value>设定页面与页面之间的间隙。负值代表着重迭的意思。由于每个页面是按比例缩放，所以当为 0 时很少会没有间隙。</value>
   </data>
+  <data name="TogglePageModeCommandParameter.IsLoop" xml:space="preserve">
+    <value>循环</value>
+  </data>
 </root>

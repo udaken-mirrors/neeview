@@ -14,6 +14,7 @@ namespace NeeView
     {
         private AddressBar _model;
         private RelayCommand<KeyValuePair<int, QueryPath>>? _moveToHistory;
+        private RelayCommand? _togglePageModeCommand;
         private readonly DelayValue<bool> _isLoading;
 
 
@@ -62,6 +63,12 @@ namespace NeeView
             get { return _moveToHistory = _moveToHistory ?? new RelayCommand<KeyValuePair<int, QueryPath>>(MoveToHistory_Executed); }
         }
 
+        public RelayCommand TogglePageModeCommand
+        {
+            get { return _togglePageModeCommand = _togglePageModeCommand ?? new RelayCommand(TogglePageModeCommand_Execute); }
+        }
+
+
 
         private void Presenter_Loading(object? sender, BookPathEventArgs e)
         {
@@ -79,5 +86,11 @@ namespace NeeView
         {
             BookHubHistory.Current.MoveToHistory(item);
         }
+
+        private void TogglePageModeCommand_Execute()
+        {
+            BookSettingPresenter.Current.TogglePageMode(+1, true);
+        }
+
     }
 }

@@ -42,8 +42,8 @@ namespace NeeView
             {
                 if (continued) return;
                 if (!_parameter.IsInertiaEnabled) return;
-
-                _transformControl.DoInertia(Context.Speedometer.GetSpeed());
+                var scale = GetScale();
+                _transformControl.DoInertia(Context.Speedometer.GetSpeed() * scale);
             }
 
             private double GetScale()

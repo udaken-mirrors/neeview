@@ -7530,4 +7530,7 @@ nv.ShowToast(nv.Book.ViewPages[0].Path)</value>
   <data name="TogglePageOrientationCommand.Remarks" xml:space="preserve">
     <value>Switch between horizontal and vertical orientation.</value>
   </data>
+  <data name="TogglePageModeCommandParameter.IsLoop" xml:space="preserve">
+    <value>Loop</value>
+  </data>
 </root>

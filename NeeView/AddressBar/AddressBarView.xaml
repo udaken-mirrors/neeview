@@ -72,7 +72,7 @@
                     </Image>
                 </Button>
 
-                <Button Style="{StaticResource AddressIconButton}" Command="{Binding BookCommands[TogglePageMode]}" TabIndex="20">
+                <Button Style="{StaticResource AddressIconButton}" Command="{Binding TogglePageModeCommand}" TabIndex="20">
                     <Image>
                         <Image.Style>
                             <Style TargetType="Image">

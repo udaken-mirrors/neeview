@@ -19,11 +19,18 @@ namespace NeeView
 
     public static class PageModeExtension
     {
-        public static PageMode GetToggle(this PageMode mode, int direction)
+        public static PageMode GetToggle(this PageMode mode, int direction, bool isLoop)
         {
             Debug.Assert(direction == -1 || direction == +1);
             var length = Enum.GetNames(typeof(PageMode)).Length;
-            return (PageMode)(((int)mode + length + direction) % length);
+            if (isLoop)
+            {
+                return (PageMode)(((int)mode + length + direction) % length);
+            }
+            else
+            {
+                return (PageMode)(Math.Clamp((int)mode + direction, 0, length - 1));
+            }
         }
 
         public static int Size(this PageMode mode)

@@ -7535,4 +7535,7 @@ nv.ShowToast(nv.Book.ViewPages[0].Path)</value>
   <data name="TogglePageOrientationCommand.Remarks" xml:space="preserve">
     <value>水平方向と垂直方向を切り替えます。</value>
   </data>
+  <data name="TogglePageModeCommandParameter.IsLoop" xml:space="preserve">
+    <value>ループ</value>
+  </data>
 </root>

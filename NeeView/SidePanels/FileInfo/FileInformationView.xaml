@@ -48,14 +48,14 @@
             </DockPanel>
 
             <nw:ListBoxExtended x:Name="ThumbnailListBox" DockPanel.Dock="Top" Style="{StaticResource NVListBox}" Template="{StaticResource NoScroll}" ItemsSource="{Binding FileInformationCollection}"
-                    SelectedItem="{Binding SelectedItem}" Margin="2" MinHeight="120" MinWidth="256" ScrollViewer.HorizontalScrollBarVisibility="Disabled" PreviewMouseWheel="ThumbnailListBox_PreviewMouseWheel">
+                    SelectedItem="{Binding SelectedItem}" Margin="2" MinHeight="120" ScrollViewer.HorizontalScrollBarVisibility="Disabled" PreviewMouseWheel="ThumbnailListBox_PreviewMouseWheel">
                 <b:Interaction.Behaviors>
                     <nw:ListBoxExtendedDragDropStartBehavior AllowedEffects="Copy, Scroll" AllowRightButtonDrag="True" DragDropFormat="{x:Static local:FileInformationView.DragDropFormat}"
                             DragBeginAsync="DragStartBehavior_DragBeginAsync" />
                 </b:Interaction.Behaviors>
                 <ListBox.ItemsPanel>
                     <ItemsPanelTemplate>
-                        <WrapPanel IsItemsHost="True" />
+                        <StackPanel IsItemsHost="True" Orientation="Horizontal" />
                     </ItemsPanelTemplate>
                 </ListBox.ItemsPanel>
                 <ListBox.ItemContainerStyle>

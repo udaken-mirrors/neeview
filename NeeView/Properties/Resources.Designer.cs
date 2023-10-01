@@ -18103,6 +18103,15 @@ namespace NeeView.Properties {
         }
         
         /// <summary>
+        ///   Loop に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string TogglePageModeCommandParameter_IsLoop {
+            get {
+                return ResourceManager.GetString("TogglePageModeCommandParameter.IsLoop", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Toggle page mode (reverse) に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string TogglePageModeReverseCommand {

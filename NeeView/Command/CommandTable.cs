@@ -368,6 +368,7 @@ namespace NeeView
             _elements["NextSizePage"].SetShare(_elements["PrevSizePage"]);
             _elements["NextFolderPage"].SetShare(_elements["PrevFolderPage"]);
             _elements["LastPage"].SetShare(_elements["FirstPage"]);
+            _elements["TogglePageModeReverse"].SetShare(_elements["TogglePageMode"]);
             _elements["ToggleStretchModeReverse"].SetShare(_elements["ToggleStretchMode"]);
             _elements["SetStretchModeUniformToFill"].SetShare(_elements["SetStretchModeUniform"]);
             _elements["SetStretchModeUniformToSize"].SetShare(_elements["SetStretchModeUniform"]);

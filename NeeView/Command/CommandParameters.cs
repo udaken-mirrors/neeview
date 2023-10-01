@@ -79,6 +79,7 @@ namespace NeeView
         {
             typeof(ReversibleCommandParameter),
             typeof(MoveSizePageCommandParameter),
+            typeof(TogglePageModeCommandParameter),
             typeof(ToggleStretchModeCommandParameter),
             typeof(StretchModeCommandParameter),
             typeof(ViewScrollCommandParameter),

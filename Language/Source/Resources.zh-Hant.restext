@@ -2321,3 +2321,4 @@ PageListItem.Menu.Rename=重新命名(_M)
 ViewConfig.ScrollDuration=捲動時間 (秒)
 BookConfig.FrameSpace.Remarks=設定頁面與頁面之間的間隙。負值代表著重疊的意思。由於每個頁面是按比例縮放，所以當為 0 時很少會沒有間隙。
 BookConfig.ContentsSpace.Remarks=設定頁面與頁面之間的間隙。負值代表著重疊的意思。由於每個頁面是按比例縮放，所以當為 0 時很少會沒有間隙。
+TogglePageModeCommandParameter.IsLoop=循環

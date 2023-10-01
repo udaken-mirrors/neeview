@@ -2368,3 +2368,4 @@ TogglePageModeReverseCommand=ページモードを切り替える (逆順)
 TogglePageModeReverseCommand.Remarks=ページモードを順番に切り替えます。 (逆順)
 TogglePageOrientationCommand=ページの配置方向を切り替える
 TogglePageOrientationCommand.Remarks=水平方向と垂直方向を切り替えます。
+TogglePageModeCommandParameter.IsLoop=ループ
