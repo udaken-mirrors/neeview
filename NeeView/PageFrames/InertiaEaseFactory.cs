@@ -32,9 +32,12 @@ namespace NeeView.PageFrames
         /// </summary>
         /// <param name="start">初期座標</param>
         /// <param name="velocity">入力速度</param>
+        /// <param name="acceleration">加速度(<0.0)</param>
         /// <returns>移動曲線情報</returns>
-        public MultiEaseSet Create(Point start, Vector velocity)
+        public MultiEaseSet Create(Point start, Vector velocity, double acceleration)
         {
+            Debug.Assert(acceleration < 0.0);
+
             var multiEaseSet = new MultiEaseSet();
 
             if (velocity.LengthSquared < 0.01) return multiEaseSet;
@@ -48,14 +51,14 @@ namespace NeeView.PageFrames
 
             // scroll lock
             {
-                var easeSet = DecelerationEaseSetFactory.Create(velocity, 1.0);
+                var easeSet = DecelerationEaseSetFactory.Create(velocity, acceleration, 1.0);
                 var hit = GetScrollLockHit(pos, easeSet.Delta);
 
                 if (hit.IsHit)
                 {
                     if (0.001 < hit.Rate)
                     {
-                        easeSet = DecelerationEaseSetFactory.Create(velocity, hit.Rate);
+                        easeSet = DecelerationEaseSetFactory.Create(velocity, acceleration, hit.Rate);
                         multiEaseSet.Add(easeSet);
                         pos += easeSet.Delta;
                         velocity = easeSet.V1;
@@ -70,14 +73,14 @@ namespace NeeView.PageFrames
             // area limit
             while (!velocity.NearZero(0.1))
             {
-                var easeSet = DecelerationEaseSetFactory.Create(velocity, 1.0);
+                var easeSet = DecelerationEaseSetFactory.Create(velocity, acceleration, 1.0);
 
                 var hit = GetAreaLimitHit(pos, easeSet.Delta);
                 if (hit.IsHit)
                 {
                     if (0.001 < hit.Rate)
                     {
-                        easeSet = DecelerationEaseSetFactory.Create(velocity, hit.Rate);
+                        easeSet = DecelerationEaseSetFactory.Create(velocity, acceleration, hit.Rate);
                         multiEaseSet.Add(easeSet);
                         pos += easeSet.Delta;
                         velocity = easeSet.V1;

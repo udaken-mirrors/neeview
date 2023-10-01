@@ -103,6 +103,11 @@ namespace NeeView.PageFrames
             TransformChanged?.Invoke(this, new TransformChangedEventArgs(this, TransformCategory.View, TransformAction.Point));
         }
 
+        public Vector GetVelocity()
+        {
+            return _transform.GetVelocity();
+        }
+
         public void Flush()
         {
             _transform.Flush();

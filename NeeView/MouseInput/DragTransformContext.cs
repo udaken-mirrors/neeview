@@ -11,7 +11,6 @@ namespace NeeView
     /// </summary>
     public class DragTransformContext 
     {
-        private readonly Speedometer _speedometer = new();
         private readonly ICanvasToViewTranslator _canvasToViewTranslator;
 
 
@@ -61,10 +60,6 @@ namespace NeeView
         public Point ScaleCenter { get; set; }
         public Point FlipCenter { get; set; }
 
-        public Speedometer Speedometer => _speedometer;
-
-        public TimeSpan ScrollDuration => TimeSpan.FromSeconds(Config.Current.View.ScrollDuration);
-
 
         public virtual void Initialize(Point point, int timestamp)
         {
@@ -77,8 +72,6 @@ namespace NeeView
             FirstTimeStamp = timestamp;
             OldTimeStamp = timestamp;
             LastTimeStamp = timestamp;
-
-            _speedometer.Reset(point, timestamp);
 
             BasePoint = Transform.Point;
             BaseAngle = Transform.Angle;
@@ -113,10 +106,6 @@ namespace NeeView
                 Last = point;
                 LastTimeStamp = timestamp;
             }
-            if (!options.HasFlag(DragActionUpdateOptions.IgnoreUpdateSpeed))
-            {
-                _speedometer.Update(point, timestamp);
-            }
         }
 
         public void UpdateRect()
@@ -147,6 +136,5 @@ namespace NeeView
     {
         None = 0,
         IgnoreUpdateState = (1 << 0),
-        IgnoreUpdateSpeed = (1 << 1),
     }
 }

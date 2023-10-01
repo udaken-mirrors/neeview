@@ -32,8 +32,6 @@ namespace NeeView
 
         private readonly TouchInputContext _context;
 
-        private readonly Speedometer _speedometer = new();
-
 
         public TouchDragManipulation(TouchInputContext context)
         {
@@ -77,8 +75,6 @@ namespace NeeView
 
             _allowAngle = false;
             _allowScale = false;
-
-            _speedometer.Reset();
         }
 
 
@@ -93,7 +89,7 @@ namespace NeeView
             if (_goal is null) return;
 
             _transform.SetAngle(GetSnapAngle(_goal.Angle), TimeSpan.FromMilliseconds(200));
-            _transform.InertiaPoint(_speedometer.GetSpeed());
+            _transform.DoInertia(DecelerationEase.DefaultAcceleration * 0.25); // タッチ操作は慣性を強めにする
         }
 
         /// <summary>
@@ -114,16 +110,8 @@ namespace NeeView
 
             var deltaAngle = Math.Abs(_goal.Angle - _transform.Angle);
             var deltaScale = Math.Abs(_goal.Scale - _transform.Scale);
-            if (deltaAngle > 1.0 || deltaScale > 0.1)
-            {
-                _speedometer.Reset((Point)_goal.Trans, timestamp);
-            }
-            else
-            {
-                _speedometer.Update((Point)_goal.Trans, timestamp);
-            }
 
-            var spam = TimeSpan.FromMilliseconds(100);
+            var spam = TimeSpan.FromMilliseconds(32);
             _transform.AddPoint((Point)_goal.Trans - _transform.Point, spam);
             _transform.SetAngle(_goal.Angle, spam);
             _transform.SetScale(_goal.Scale, spam);

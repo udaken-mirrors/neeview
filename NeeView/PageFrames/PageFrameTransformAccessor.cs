@@ -9,17 +9,17 @@ namespace NeeView.PageFrames
 {
     public partial class PageFrameTransformAccessor : IPageFrameTransform, IDisposable, INotifyTransformChanged
     {
-        private PageFrameTransformMap _transformMap;
-        private PageFrameTransform _source;
-        private PageFrameTransform _share;
+        private readonly PageFrameTransformMap _transformMap;
+        private readonly PageFrameTransform _source;
+        private readonly PageFrameTransform _share;
 
         private PageFrameTransform _flipSource;
         private PageFrameTransform _scaleSource;
         private PageFrameTransform _angleSource;
         private PageFrameTransform _pointSource;
 
-        private TransformGroup _transformGroupCalc = new TransformGroup();
-        private TransformGroup _transformGroupView = new TransformGroup();
+        private readonly TransformGroup _transformGroupCalc = new TransformGroup();
+        private readonly TransformGroup _transformGroupView = new TransformGroup();
 
         private bool _disposedValue;
 
@@ -153,6 +153,11 @@ namespace NeeView.PageFrames
             if (_disposedValue) return;
 
             _flipSource.SetFlipVertical(value, span);
+        }
+
+        public Vector GetVelocity()
+        {
+            return _pointSource.GetVelocity();
         }
 
 

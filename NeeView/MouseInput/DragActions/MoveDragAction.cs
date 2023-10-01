@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NeeView.PageFrames;
+using System;
 using System.Diagnostics;
 using System.Windows;
 
@@ -42,7 +43,7 @@ namespace NeeView
                 if (continued) return;
                 if (!_parameter.IsInertiaEnabled) return;
 
-                _transformControl.DoInertia(Context.Speedometer.GetSpeed());
+                _transformControl.DoInertia(DecelerationEase.DefaultAcceleration);
             }
         }
     }

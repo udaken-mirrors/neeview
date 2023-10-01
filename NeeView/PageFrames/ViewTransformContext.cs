@@ -55,6 +55,11 @@ namespace NeeView.PageFrames
         {
             _scrollViewer.AddPoint(value, span, easeX, easeY, areaLimit);
         }
+
+        public Vector GetVelocity()
+        {
+            return _scrollViewer.GetVelocity();
+        }
     }
 
 }

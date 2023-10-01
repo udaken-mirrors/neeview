@@ -55,11 +55,6 @@ namespace NeeView
             _context.Transform.AddPoint(value, span, easeX, easeY);
         }
 
-        public void InertiaPoint(Vector velocity)
-        {
-            _context.Transform.InertiaPoint(velocity);
-        }
-
         public void SetScale(double value, TimeSpan span)
         {
             _context.Transform.SetScale(value, span);
@@ -103,10 +98,10 @@ namespace NeeView
         /// <summary>
         /// 慣性移動
         /// </summary>
-        /// <param name="velocity">初速度</param>
-        public void DoInertia(Vector velocity)
+        /// <param name="acceleration">加速度(<0)</param>
+        public void DoInertia(double acceleration)
         {
-            _context.Transform.InertiaPoint(velocity);
+            _context.Transform.InertiaPoint(acceleration);
         }
 
         /// <summary>

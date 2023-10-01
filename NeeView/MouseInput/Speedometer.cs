@@ -8,7 +8,7 @@ using System.Windows;
 namespace NeeView
 {
     /// <summary>
-    /// ポインタ移動の速度計測
+    /// 移動速度計測
     /// </summary>
     public class Speedometer
     {
@@ -19,34 +19,60 @@ namespace NeeView
             _points = new RingList<PointRecord>(5);
         }
 
+        /// <summary>
+        /// 計測座標初期化
+        /// </summary>
         public void Reset()
         {
             _points.Clear();
         }
 
-        public void Reset(Point point, int timestamp)
+        /// <summary>
+        /// 現在の計測座標追加
+        /// </summary>
+        /// <param name="point"></param>
+        public void Add(Point point)
         {
-            _points.Clear();
-            Update(point, timestamp);
-        }
+            var timestamp = System.Environment.TickCount;
 
-        public void Update(Point point, int timestamp)
-        {
-            if (_points.Any(e => e.Timestamp == timestamp)) return;
-
-#if LOCAL_DEBUG
-            if (_points.Any())
+            if (!_points.Any())
             {
-                var a = _points.LastOrDefault();
-                Debug.WriteLine($">> Span: {timestamp} ({timestamp - a.Timestamp})");
+                _points.Add(new PointRecord(point, timestamp));
             }
-#endif
-
-            _points.Add(new PointRecord(point, timestamp));
+            else
+            {
+                var last = _points.Last();
+                if (timestamp == last.Timestamp)
+                {
+                    last.Point = point;
+                }
+                else
+                {
+                    _points.Add(new PointRecord(point, timestamp));
+                }
+            }
         }
 
-        public Vector GetSpeed()
+        /// <summary>
+        /// 計測座標確定
+        /// </summary>
+        public void Touch()
         {
+            if (!_points.Any()) return;
+            Add(_points.Last().Point);
+        }
+
+        /// <summary>
+        /// 計測座標から速度を求める
+        /// </summary>
+        /// <remarks>
+        /// スパイクデータを軽減するため一定期間の平均速度を求める
+        /// </remarks>
+        /// <returns></returns>
+        public Vector GetVelocity()
+        {
+            if (!_points.Any()) return default;
+
 #if LOCAL_DEBUG
             for (int i = 0; i < _points.Count; i++)
             {
@@ -87,11 +113,12 @@ namespace NeeView
             }
 
             if (totalSpan <= 0) return default;
-            var lastSpeed = speedSum / totalSpan;
+            var velocity = speedSum / totalSpan;
 
-            Trace($"LastSpeed = {lastSpeed.Length:f2} ({lastSpeed:f2}), TotalSpan = {totalSpan}");
-            return lastSpeed;
+            Trace($"Velocity = {velocity.Length:f2} ({velocity:f2}), TotalSpan = {totalSpan}");
+            return velocity;
         }
+
 
         [Conditional("LOCAL_DEBUG")]
         private void Trace(string s, params object[] args)

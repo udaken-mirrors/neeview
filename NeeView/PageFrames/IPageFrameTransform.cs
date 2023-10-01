@@ -8,20 +8,9 @@ namespace NeeView.PageFrames
 {
     public interface IPageFrameTransform : IScaleControl, IAngleControl, IPointControl, IFlipControl
     {
-        //public double Scale { get; }
-        //public double Angle { get; }
-        //public Point Point { get; }
-        //public bool IsFlipHorizontal { get; }
-        //public bool IsFlipVertical { get; }
-
         public Transform Transform { get; }
         public Transform TransformView { get; }
-
-        //public void SetScale(double value, TimeSpan span);
-        //public void SetAngle(double value, TimeSpan span);
-        //public void SetPoint(Point value, TimeSpan span);
-        //public void SetFlipHorizontal(bool value, TimeSpan span);
-        //public void SetFlipVertical(bool value, TimeSpan span);
+        public Vector GetVelocity();
     }
 
     public class DummyPageFrameTransform : IPageFrameTransform
@@ -58,6 +47,11 @@ namespace NeeView.PageFrames
 
         public void SetScale(double value, TimeSpan span)
         {
+        }
+
+        public Vector GetVelocity()
+        {
+            return default;
         }
     }
 }

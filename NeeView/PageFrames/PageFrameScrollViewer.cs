@@ -160,6 +160,11 @@ namespace NeeView.PageFrames
             SetPoint(Point + value, span, easeX, easeY, areaLimit);
         }
 
+        public Vector GetVelocity()
+        {
+            return _transform.GetVelocity();
+        }
+
         public void FlushScroll()
         {
             _transform.Flush();

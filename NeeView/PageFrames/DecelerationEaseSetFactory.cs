@@ -15,12 +15,15 @@ namespace NeeView.PageFrames
         /// 初速度から DecelerationEase のセットを生成する
         /// </summary>
         /// <param name="velocity">初速度</param>
+        /// <param name="acceleration">加速度(<0.0)</param>
         /// <param name="sRate">Easing関数の適用範囲 [0.0-1.0]</param>
         /// <returns></returns>
-        public static EaseSet Create(Vector velocity, double sRate = 1.0)
+        public static EaseSet Create(Vector velocity, double acceleration, double sRate)
         {
+            Debug.Assert(acceleration < 0.0);
+
             var v0 = velocity.Length;
-            var a = DecelerationEase.DefaultAcceleration;
+            var a = acceleration;
 
             // 慣性移動で停止するまでの時間と距離を求める
             var inertiaT = Kinematics.GetStopTime(v0, a);
@@ -43,8 +46,8 @@ namespace NeeView.PageFrames
             var delta = velocity.TransScalar(s);
             var tRate = t / inertiaT;
 
-            var easeX = new DecelerationEase() { MaxRate = tRate };
-            var easeY = new DecelerationEase() { MaxRate = tRate };
+            var easeX = new DecelerationEase() { Acceleration = a, MaxRate = tRate };
+            var easeY = new DecelerationEase() { Acceleration = a, MaxRate = tRate };
 
             //var testX = easeX.Ease(1.0) * delta.X;
             //Debug.Assert(testX == delta.X);

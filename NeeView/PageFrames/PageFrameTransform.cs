@@ -16,7 +16,7 @@ namespace NeeView.PageFrames
         private Point _point;
         public bool _isFlipHorizontal;
         public bool _isFlipVertical;
-        private MultiTransform _transform;
+        private readonly MultiTransform _transform;
 
 
         public PageFrameTransform()
@@ -93,6 +93,11 @@ namespace NeeView.PageFrames
             }
         }
 
+        public Vector GetVelocity()
+        {
+            return _transform.GetVelocity();
+        }
+
         public void Clear()
         {
             Clear(TransformMask.All);
@@ -133,11 +138,11 @@ namespace NeeView.PageFrames
     public class NormalTransform : ITransform
     {
 
-        private ScaleTransform _flipTransform;
-        private ScaleTransform _scaleTransform;
-        private RotateTransform _rotateTransform;
-        private TranslateTransform _translateTransform;
-        private TransformGroup _transformGroup;
+        private readonly ScaleTransform _flipTransform;
+        private readonly ScaleTransform _scaleTransform;
+        private readonly RotateTransform _rotateTransform;
+        private readonly TranslateTransform _translateTransform;
+        private readonly TransformGroup _transformGroup;
 
 
         public NormalTransform()
@@ -197,11 +202,11 @@ namespace NeeView.PageFrames
         public bool _isFlipHorizontal;
         public bool _isFlipVertical;
 
-        private ScaleTransform _flipTransform;
-        private ScaleTransform _scaleTransform;
-        private RotateTransform _rotateTransform;
-        private TranslateTransform _translateTransform;
-        private TransformGroup _transformGroup;
+        private readonly ScaleTransform _flipTransform;
+        private readonly ScaleTransform _scaleTransform;
+        private readonly RotateTransform _rotateTransform;
+        private readonly TranslateTransform _translateTransform;
+        private readonly TransformGroup _transformGroup;
 
 
         public AnimatableTransform()
@@ -302,17 +307,20 @@ namespace NeeView.PageFrames
         private double _scale;
         private double _angle;
         private Point _point;
-        public bool _isFlipHorizontal;
-        public bool _isFlipVertical;
-
-        private NormalTransform _transformCalc;
-        private AnimatableTransform _transformView;
+        private bool _isFlipHorizontal;
+        private bool _isFlipVertical;
+        private readonly Speedometer _speedometer;
+        private readonly NormalTransform _transformCalc;
+        private readonly AnimatableTransform _transformView;
 
 
         public MultiTransform()
         {
+            _speedometer = new();
             _transformCalc = new NormalTransform();
             _transformView = new AnimatableTransform();
+
+            _transformView.Transform.Changed += ViewTransform_Changed;
         }
 
 
@@ -327,6 +335,14 @@ namespace NeeView.PageFrames
         public Transform Transform => _transformCalc.Transform;
         public Transform TransformView => _transformView.Transform;
         public Transform TransformCalc => _transformCalc.Transform;
+
+
+        private void ViewTransform_Changed(object? sender, EventArgs e)
+        {
+            var m = _transformView.Transform.Value;
+            var pos = new Point(m.OffsetX, m.OffsetY);
+            _speedometer.Add(pos);
+        }
 
         public void SetScale(double value, TimeSpan span)
         {
@@ -384,6 +400,11 @@ namespace NeeView.PageFrames
             }
         }
 
+        public Vector GetVelocity()
+        {
+            _speedometer.Touch();
+            return _speedometer.GetVelocity();
+        }
 
         public void Flush()
         {
@@ -406,9 +427,9 @@ namespace NeeView.PageFrames
     {
         private double _scale = 1.0;
         private Point _point;
-        private ScaleTransform _scaleTransform;
-        private TranslateTransform _translateTransform;
-        private TransformGroup _transformGroup;
+        private readonly ScaleTransform _scaleTransform;
+        private readonly TranslateTransform _translateTransform;
+        private readonly TransformGroup _transformGroup;
 
 
         public LoupeTransform()
@@ -453,6 +474,7 @@ namespace NeeView.PageFrames
 
     public static class EaseTools
     {
-        public static IEasingFunction DefaultEase { get; } = new CubicEase() { EasingMode = EasingMode.EaseOut };
+        //public static IEasingFunction DefaultEase { get; } = new CubicEase() { EasingMode = EasingMode.EaseOut };
+        public static IEasingFunction DefaultEase { get; } = new QuadraticEase() { EasingMode = EasingMode.EaseOut };
     }
 }

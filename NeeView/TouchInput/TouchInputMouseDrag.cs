@@ -72,7 +72,7 @@ namespace NeeView
         /// <param name="e"></param>
         public override void OnStylusUp(object sender, StylusEventArgs e)
         {
-            UpdateDragState(MouseButtonBits.None, e, DragActionUpdateOptions.IgnoreUpdateSpeed);
+            UpdateDragState(MouseButtonBits.None, e, DragActionUpdateOptions.None);
             SetState(TouchInputState.Normal, null);
         }
 
