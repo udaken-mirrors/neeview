@@ -50,7 +50,8 @@ namespace NeeView
                 if (continued) return;
                 if (!_parameter.IsInertiaEnabled) return;
 
-                _transformControl.DoInertia(speedometer.GetVelocity(), InertiaTools.GetAcceleration(Config.Current.Mouse.InertiaSensitivity));
+                var scale = GetScale();
+                _transformControl.DoInertia(speedometer.GetVelocity() * scale, InertiaTools.GetAcceleration(Config.Current.Mouse.InertiaSensitivity));
             }
 
             private double GetScale()
