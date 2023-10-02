@@ -32,18 +32,24 @@ namespace NeeView
                 _parameter = Parameter as MoveDragActionParameter ?? throw new ArgumentNullException(nameof(source));
             }
 
+            public override void ExecuteBegin()
+            {
+                _transformControl.ResetInertia();
+            }
+
             public override void Execute()
             {
                 var delta = Context.Last - Context.Old;
                 _transformControl.DoMove(delta, TimeSpan.Zero);
             }
 
-            public override void ExecuteEnd(bool continued)
+            public override void ExecuteEnd(ISpeedometer? speedometer, bool continued)
             {
+                Debug.Assert(speedometer is not null);
                 if (continued) return;
                 if (!_parameter.IsInertiaEnabled) return;
 
-                _transformControl.DoInertia(DecelerationEase.DefaultAcceleration);
+                _transformControl.DoInertia(speedometer.GetVelocity(), InertiaTools.GetAcceleration(Config.Current.Mouse.InertiaSensitivity));
             }
         }
     }

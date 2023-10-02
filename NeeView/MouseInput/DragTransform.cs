@@ -98,10 +98,19 @@ namespace NeeView
         /// <summary>
         /// 慣性移動
         /// </summary>
+        /// <param name="velocity">速度</param>
         /// <param name="acceleration">加速度(<0)</param>
-        public void DoInertia(double acceleration)
+        public void DoInertia(Vector velocity, double acceleration)
         {
-            _context.Transform.InertiaPoint(acceleration);
+            _context.Transform.InertiaPoint(velocity, acceleration);
+        }
+
+        /// <summary>
+        /// 慣性計算初期化
+        /// </summary>
+        public void ResetInertia()
+        {
+            _context.Transform.ResetInertia();
         }
 
         /// <summary>

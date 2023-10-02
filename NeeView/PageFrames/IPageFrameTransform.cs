@@ -11,6 +11,7 @@ namespace NeeView.PageFrames
         public Transform Transform { get; }
         public Transform TransformView { get; }
         public Vector GetVelocity();
+        public void ResetVelocity();
     }
 
     public class DummyPageFrameTransform : IPageFrameTransform
@@ -52,6 +53,10 @@ namespace NeeView.PageFrames
         public Vector GetVelocity()
         {
             return default;
+        }
+
+        public void ResetVelocity()
+        {
         }
     }
 }

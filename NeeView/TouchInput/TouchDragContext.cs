@@ -37,8 +37,11 @@ namespace NeeView
         {
             _sender = sender;
             _touches = touchDevices.Select(e => ToDragCoord(e.GetPosition(sender))).ToList();
-            this.Center = new Point(_touches.Average(e => e.X), _touches.Average(e => e.Y));
-            this.Radius = _touches.Select(e => (e - this.Center).Length).Max();
+            if (_touches.Count > 0)
+            {
+                this.Center = new Point(_touches.Average(e => e.X), _touches.Average(e => e.Y));
+                this.Radius = _touches.Select(e => (e - this.Center).Length).Max();
+            }
         }
 
 

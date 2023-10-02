@@ -69,9 +69,10 @@ namespace NeeView.Setting
             this.Items = new List<SettingItem>();
 
             var section = new SettingItemSection(Properties.Resources.SettingPage_Manipurate_MouseDrag);
-            section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.Mouse, nameof(MouseConfig.MinimumDragDistance))));
             section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.Mouse, nameof(MouseConfig.IsDragEnabled))));
             section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(DragActionTable.Current, nameof(DragActionTable.Elements)), new SettingMouseDragControl()) { IsStretch = true, });
+            section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.Mouse, nameof(MouseConfig.MinimumDragDistance))));
+            section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.Mouse, nameof(MouseConfig.InertiaSensitivity))));
             section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.Mouse, nameof(MouseConfig.IsGestureEnabled))));
             section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.Mouse, nameof(MouseConfig.GestureMinimumDistance))));
             this.Items.Add(section);
@@ -115,6 +116,7 @@ namespace NeeView.Setting
             section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.Touch, nameof(TouchConfig.GestureMinimumDistance))));
             section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.Touch, nameof(TouchConfig.MinimumManipulationRadius))));
             section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.Touch, nameof(TouchConfig.MinimumManipulationDistance))));
+            section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.Touch, nameof(TouchConfig.InertiaSensitivity))));
 
             this.Items = new List<SettingItem>() { section };
         }

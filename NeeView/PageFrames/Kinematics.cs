@@ -30,6 +30,18 @@ namespace NeeView.PageFrames
         }
 
         /// <summary>
+        /// 等加速度運動：加速度を求める
+        /// </summary>
+        /// <param name="v0"></param>
+        /// <param name="v1"></param>
+        /// <param name="s"></param>
+        /// <returns></returns>
+        public static double GetAccelerate(double v0, double v1, double s)
+        {
+            return (v1 * v1 - v0 * v0) / (2.0 * s);
+        }
+
+        /// <summary>
         /// 等加速度運動：距離を求める
         /// </summary>
         /// <param name="v"></param>

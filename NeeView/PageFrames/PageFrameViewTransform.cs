@@ -108,6 +108,11 @@ namespace NeeView.PageFrames
             return _transform.GetVelocity();
         }
 
+        public void ResetVelocity()
+        {
+            _transform.ResetVelocity();
+        }
+
         public void Flush()
         {
             _transform.Flush();

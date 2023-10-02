@@ -42,7 +42,9 @@ namespace NeeView.PageFrames
 
     public interface ITransformControl : IScaleControl, IAngleControl, IPointControl, IFlipControl
     {
-        void InertiaPoint(double acceleration) { }
+        void InertiaPoint(Vector velocity, double acceleration) { }
+        void ResetInertia() { }
+
         void SnapView();
     }
 }

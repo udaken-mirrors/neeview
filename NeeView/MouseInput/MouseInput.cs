@@ -1,4 +1,6 @@
-﻿using NeeLaboratory.ComponentModel;
+﻿//#define LOCAL_DEBUG
+
+using NeeLaboratory.ComponentModel;
 using NeeLaboratory.Generators;
 using NeeView.Windows;
 using System;
@@ -38,8 +40,9 @@ namespace NeeView
         /// ArchivePage でダブルクリック移動できるようにするために使用されます。
         /// </remarks>
         public static bool IgnoreMouseCommand { get; set; }
+        private static int _serialCount;
 
-
+        private readonly int _serialNumber = _serialCount++;
         private readonly FrameworkElement _sender;
         private MouseInputState _state;
         private MouseHorizontalWheelSource? _mouseHorizontalWheelSource;
@@ -310,6 +313,8 @@ namespace NeeView
         /// </summary>
         private void OnMouseButtonDown(object sender, MouseButtonEventArgs e)
         {
+            TracePoint("Down", e);
+
             bool isEnabled = (sender == _sender)
                 && !IsStylusDevice(e)
                 && IsMouseButtonEnabled(e)
@@ -317,6 +322,9 @@ namespace NeeView
 
             if (isEnabled)
             {
+                _context.Speedometer.Reset();
+                _context.Speedometer.Add(e.GetPosition(_sender), e.Timestamp);
+
                 _current?.OnMouseButtonDown(_sender, e);
             }
 
@@ -331,12 +339,17 @@ namespace NeeView
         /// </summary>
         private void OnMouseButtonUp(object sender, MouseButtonEventArgs e)
         {
+            TracePoint("Up", e);
+
             bool isEnabled = (sender == _sender)
                 && !IsStylusDevice(e)
                 && IsMouseButtonEnabled(e);
 
             if (isEnabled)
             {
+                Trace($"Up.Time: {System.Environment.TickCount}");
+                _context.Speedometer.Add(e.GetPosition(_sender), e.Timestamp);
+
                 _current?.OnMouseButtonUp(_sender, e);
             }
 
@@ -392,11 +405,19 @@ namespace NeeView
         /// </summary>
         private void OnMouseMove(object sender, MouseEventArgs e)
         {
+            var buttons = MouseButtonBitsExtensions.Create(e);
+            if (buttons.Any())
+            {
+                TracePoint("Move", e);
+            }
+
             bool isEnabled = (sender == _sender)
                 && !IsStylusDevice(e);
 
-            if (isEnabled)
+            if (isEnabled && buttons.Any())
             {
+                _context.Speedometer.Add(e.GetPosition(_sender), e.Timestamp);
+
                 _current?.OnMouseMove(_sender, e);
 
                 // マウス移動を通知
@@ -437,6 +458,21 @@ namespace NeeView
         public void UpdateSelectedFrame()
         {
             _current?.OnUpdateSelectedFrame();
+        }
+
+
+        [Conditional("LOCAL_DEBUG")]
+        private void Trace(string s, params object[] args)
+        {
+            Debug.WriteLine($"{this.GetType().Name}({_serialNumber}): {string.Format(s, args)}");
+        }
+
+        [Conditional("LOCAL_DEBUG")]
+        private void TracePoint(string label, MouseEventArgs e)
+        {
+            var buttons = MouseButtonBitsExtensions.Create(e);
+            var isStylus = e.StylusDevice != null;
+            Trace($"{label}: {isStylus} {e.GetPosition(_sender):f0}, {e.Timestamp}, {buttons}");
         }
 
     }

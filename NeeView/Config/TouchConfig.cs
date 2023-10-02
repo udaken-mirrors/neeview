@@ -13,6 +13,7 @@ namespace NeeView
         private double _gestureMinimumDistance = 16.0;
         private double _minimumManipulationRadius = 80.0;
         private double _minimumManipulationDistance = 30.0;
+        private double _inertiaSensitivity = 0.6;
 
 
         [PropertyMember]
@@ -71,6 +72,13 @@ namespace NeeView
         {
             get { return _minimumManipulationDistance; }
             set { SetProperty(ref _minimumManipulationDistance, value); }
+        }
+
+        [PropertyPercent]
+        public double InertiaSensitivity
+        {
+            get { return _inertiaSensitivity; }
+            set { SetProperty(ref _inertiaSensitivity, value); }
         }
     }
 

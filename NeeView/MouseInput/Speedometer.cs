@@ -10,9 +10,10 @@ namespace NeeView
     /// <summary>
     /// 移動速度計測
     /// </summary>
-    public class Speedometer
+    public class Speedometer : ISpeedometer
     {
         private readonly RingList<PointRecord> _points;
+        private readonly object _lock = new();
 
         public Speedometer()
         {
@@ -24,7 +25,10 @@ namespace NeeView
         /// </summary>
         public void Reset()
         {
-            _points.Clear();
+            lock (_lock)
+            {
+                _points.Clear();
+            }
         }
 
         /// <summary>
@@ -33,22 +37,38 @@ namespace NeeView
         /// <param name="point"></param>
         public void Add(Point point)
         {
-            var timestamp = System.Environment.TickCount;
+            Add(point, System.Environment.TickCount);
+        }
 
-            if (!_points.Any())
+        public void Add(Point point, int timestamp)
+        {
+            lock (_lock)
             {
+                Chop(timestamp);
+                Trace($"add: point={point:f0}, time={timestamp}");
                 _points.Add(new PointRecord(point, timestamp));
             }
-            else
+        }
+
+        /// <summary>
+        /// 指定時間以降のデータを削除
+        /// </summary>
+        /// <param name="timestamp"></param>
+        private void Chop(int timestamp)
+        {
+            lock (_lock)
             {
-                var last = _points.Last();
-                if (timestamp == last.Timestamp)
+                while (true)
                 {
-                    last.Point = point;
-                }
-                else
-                {
-                    _points.Add(new PointRecord(point, timestamp));
+                    if (_points.Any() && timestamp - _points.LastOrDefault().Timestamp <= 0)
+                    {
+                        Trace($"chop record over {timestamp}");
+                        _points.RemoveLast();
+                    }
+                    else
+                    {
+                        return;
+                    }
                 }
             }
         }
@@ -62,6 +82,11 @@ namespace NeeView
             Add(_points.Last().Point);
         }
 
+        public int GetTimestamp()
+        {
+            return _points.Any() ? _points.Last().Timestamp : int.MinValue;
+        }
+
         /// <summary>
         /// 計測座標から速度を求める
         /// </summary>
@@ -71,44 +96,29 @@ namespace NeeView
         /// <returns></returns>
         public Vector GetVelocity()
         {
-            if (!_points.Any()) return default;
+            var maxSpan = 64; // 計測時間
+            var totalSpan = 0;
+            var speedSum = default(Vector);
 
-#if LOCAL_DEBUG
-            for (int i = 0; i < _points.Count; i++)
+            lock (_lock)
             {
-                var p = _points[i];
-                Trace($"# {i}: Point = {p.Point:f2}, Timestamp = {p.Timestamp}");
-            }
-#endif
+                TraceDump();
 
-            var points = _points.OrderByDescending(e => e.Timestamp).ToList();
-
-            for (int i = 0; i < points.Count; i++)
-            {
-                var p = points[i];
-                Trace($"{i}: Point = {p.Point:f2}, Timestamp = {p.Timestamp}");
-            }
-
-            int totalSpan = 0;
-            Vector speedSum = default;
-            Vector sp = default;
-
-            for (int i = 0; i < points.Count - 1; i++)
-            {
-                var p0 = points[i + 0];
-                var p1 = points[i + 1];
-                var delta = p0.Point - p1.Point;
-                var span = p0.Timestamp - p1.Timestamp;
-                if (0 < span)
+                for (int i = _points.Count - 1; i > 0; i--)
                 {
-                    var cs = Math.Min(span, 64 - totalSpan);
-                    if (cs <= 0) break;
-
-                    var speed = delta / cs;
-                    totalSpan += cs;
-                    speedSum += speed * cs;
-                    Trace($"{i}: Speed = {speed:f2}, Span = {cs}");
-                    sp = speed;
+                    var p0 = _points[i - 1];
+                    var p1 = _points[i - 0];
+                    var delta = p1.Point - p0.Point;
+                    var span = p1.Timestamp - p0.Timestamp;
+                    if (0 < span)
+                    {
+                        span = Math.Min(span, maxSpan - totalSpan);
+                        if (span <= 0) break;
+                        var speed = delta / span;
+                        totalSpan += span;
+                        speedSum += speed * span;
+                        Trace($"{i}: Speed = {speed:f2}, Span = {span}");
+                    }
                 }
             }
 
@@ -121,17 +131,30 @@ namespace NeeView
 
 
         [Conditional("LOCAL_DEBUG")]
+        private void TraceDump()
+        {
+            lock (_lock)
+            {
+                for (int i = 0; i < _points.Count; i++)
+                {
+                    var p = _points[i];
+                    Trace($"{i}: Point = {p.Point:f0}, Timestamp = {p.Timestamp}");
+                }
+            }
+        }
+
+        [Conditional("LOCAL_DEBUG")]
         private void Trace(string s, params object[] args)
         {
-            Debug.WriteLine($"{nameof(Speedometer)}: {string.Format(s, args)}");
+            Debug.WriteLine($"{this.GetType().Name}: {string.Format(s, args)}");
         }
-    }
 
-    /// <summary>
-    /// 座標記録
-    /// </summary>
-    /// <param name="Point">座標</param>
-    /// <param name="Timestamp">タイムスタンプ</param>
-    public record struct PointRecord(Point Point, int Timestamp);
+        /// <summary>
+        /// 座標記録
+        /// </summary>
+        /// <param name="Point">座標</param>
+        /// <param name="Timestamp">タイムスタンプ</param>
+        private record struct PointRecord(Point Point, int Timestamp);
+    }
 }
 

@@ -82,7 +82,11 @@ namespace NeeView
 
         public int IndexOf(T item)
         {
-            throw new NotImplementedException();
+            for (int i = 0; i < _count; i++)
+            {
+                if (EqualityComparer<T>.Default.Equals(_items[i], item)) return i;
+            }
+            return -1;
         }
 
         public void Insert(int index, T item)
@@ -98,6 +102,11 @@ namespace NeeView
         public void RemoveAt(int index)
         {
             throw new NotImplementedException();
+        }
+
+        public void RemoveLast()
+        {
+            _count = Math.Max(_count - 1, 0);
         }
 
         IEnumerator IEnumerable.GetEnumerator()

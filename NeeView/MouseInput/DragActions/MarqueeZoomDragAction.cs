@@ -48,7 +48,7 @@ namespace NeeView
                 DragMarqueeZoom(Context.First, Context.Last);
             }
 
-            public override void ExecuteEnd(bool continued)
+            public override void ExecuteEnd(ISpeedometer? speedometer, bool continued)
             {
                 DragMarqueeZoomEnd(Context.First, Context.Last, TimeSpan.Zero);
             }

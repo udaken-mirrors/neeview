@@ -2369,3 +2369,5 @@ TogglePageModeReverseCommand.Remarks=ページモードを順番に切り替え�
 TogglePageOrientationCommand=ページの配置方向を切り替える
 TogglePageOrientationCommand.Remarks=水平方向と垂直方向を切り替えます。
 TogglePageModeCommandParameter.IsLoop=ループ
+MouseConfig.InertiaSensitivity=慣性感度
+TouchConfig.InertiaSensitivity=慣性感度

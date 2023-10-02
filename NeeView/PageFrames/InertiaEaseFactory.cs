@@ -40,11 +40,31 @@ namespace NeeView.PageFrames
 
             var multiEaseSet = new MultiEaseSet();
 
-            if (velocity.LengthSquared < 0.01) return multiEaseSet;
+            if (velocity.LengthSquared < 0.01 || acceleration < -0.999) return multiEaseSet;
 
             if (velocity.LengthSquared > 40.0 * 40.0)
             {
                 velocity = velocity * (40.0 / velocity.Length);
+            }
+
+            // limit distance
+            {
+                var v0 = velocity.Length;
+
+                // 慣性移動で停止するまでの時間と距離を求める
+                var inertiaT = Kinematics.GetStopTime(v0, acceleration);
+                var inertiaS = Kinematics.GetSpan(v0, acceleration, inertiaT);
+                //NVDebug.WriteInfo("Inertia", $"v={v0:f2}, a={acceleration:f6}, s={inertiaS:f0}");
+
+                // 最大距離を超えないように加速度を制限する
+                var maxS = 30000.0;
+                if (inertiaS > maxS)
+                {
+                    acceleration = Kinematics.GetAccelerate(v0, 0.0, maxS);
+                    //inertiaT = Kinematics.GetStopTime(v0, acceleration);
+                    //inertiaS = Kinematics.GetSpan(v0, acceleration, inertiaT);
+                    //NVDebug.WriteInfo("Inertia", $"limit: v={v0:f2}, a={acceleration:f6}, s={inertiaS:f0}");
+                }
             }
 
             var pos = start;
@@ -104,7 +124,7 @@ namespace NeeView.PageFrames
         [Conditional("LOCAL_DEBUG")]
         private void Trace(string s, params object[] args)
         {
-            Debug.WriteLine($"{nameof(InertiaEaseFactory)}: {string.Format(s, args)}");
+            Debug.WriteLine($"{this.GetType().Name}: {string.Format(s, args)}");
         }
     }
 }

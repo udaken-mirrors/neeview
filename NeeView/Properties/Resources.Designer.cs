@@ -9670,6 +9670,15 @@ namespace NeeView.Properties {
         }
         
         /// <summary>
+        ///   Inertia sensitivity に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string MouseConfig_InertiaSensitivity {
+            get {
+                return ResourceManager.GetString("MouseConfig.InertiaSensitivity", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Hide the cursor with no mouse operation に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string MouseConfig_IsCursorHideEnabled {
@@ -19305,6 +19314,15 @@ namespace NeeView.Properties {
         public static string TouchConfig_HoldAction {
             get {
                 return ResourceManager.GetString("TouchConfig.HoldAction", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Inertia sensitivity に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string TouchConfig_InertiaSensitivity {
+            get {
+                return ResourceManager.GetString("TouchConfig.InertiaSensitivity", resourceCulture);
             }
         }
         

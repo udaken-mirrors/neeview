@@ -1,5 +1,6 @@
-﻿using NeeLaboratory.ComponentModel;
-using NeeView.Windows.Property;
+﻿//#define LOCAL_DEBUG
+
+using NeeLaboratory.ComponentModel;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -31,6 +32,9 @@ namespace NeeView
     // タッチ処理
     public class TouchInput : BindableBase
     {
+        private static int _serialCount;
+
+        private readonly int _serialNumber = _serialCount++;
         private readonly TouchInputContext _context;
         private readonly FrameworkElement _sender;
         private readonly Dictionary<TouchInputState, TouchInputBase?> _touchInputCollection;
@@ -212,6 +216,11 @@ namespace NeeView
 
             _sender.CaptureStylus();
 
+            TracePoint($"Down({e.StylusDevice.Id})", e);
+            _context.Speedometer.Reset(e.StylusDevice.Id);
+            _context.Speedometer.Add(e.StylusDevice.Id, e.GetPosition(_sender), e.Timestamp);
+            _context.Speedometer.Cleanup();
+
             _current?.OnStylusDown(_sender, e);
         }
 
@@ -219,6 +228,10 @@ namespace NeeView
         {
             if (!Config.Current.Touch.IsEnabled) return;
             if (sender != _sender) return;
+
+            TracePoint($"Up({e.StylusDevice.Id})", e);
+            Trace($"Up({e.StylusDevice.Id}).Time: {System.Environment.TickCount}");
+            _context.Speedometer.Add(e.StylusDevice.Id, e.GetPosition(_sender), e.Timestamp);
 
             _context.TouchMap.Remove(e.StylusDevice);
 
@@ -236,6 +249,9 @@ namespace NeeView
         {
             if (!Config.Current.Touch.IsEnabled) return;
             if (sender != _sender) return;
+
+            TracePoint($"Move({e.StylusDevice.Id})", e);
+            _context.Speedometer.Add(e.StylusDevice.Id, e.GetPosition(_sender), e.Timestamp);
 
             _current?.OnStylusMove(_sender, e);
         }
@@ -275,5 +291,18 @@ namespace NeeView
             _current?.OnUpdateSelectedFrame();
         }
 
+
+        [Conditional("LOCAL_DEBUG")]
+        private void Trace(string s, params object[] args)
+        {
+            Debug.WriteLine($"{this.GetType().Name}({_serialNumber}): {string.Format(s, args)}");
+        }
+
+        [Conditional("LOCAL_DEBUG")]
+        private void TracePoint(string label, StylusEventArgs e)
+        {
+            var current = new TouchDragContext(_context.Sender, _context.TouchMap.Keys);
+            Trace($"{label}: {current.Center:f0}, {e.Timestamp}");
+        }
     }
 }

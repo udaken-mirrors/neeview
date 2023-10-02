@@ -6,7 +6,7 @@ using System.Windows.Input;
 
 namespace NeeView
 {
-    public class MouseInputContext : BindableBase
+    public class MouseInputContext : BindableBase 
     {
         public MouseInputContext(FrameworkElement sender, MouseGestureCommandCollection? gestureCommandCollection, IDragTransformContextFactory? dragTransformContextFactory, IDragTransformControl? dragTransformControl, LoupeContext? loupe)
         {
@@ -59,6 +59,7 @@ namespace NeeView
 
         public int StartTimestamp { get; set; }
 
+        public Speedometer Speedometer { get; } = new Speedometer();
     }
 
 }

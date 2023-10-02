@@ -1,4 +1,5 @@
-﻿using NeeLaboratory.ComponentModel;
+﻿using NeeLaboratory;
+using NeeLaboratory.ComponentModel;
 using NeeView.Windows.Property;
 using System;
 using System.Windows;
@@ -21,6 +22,7 @@ namespace NeeView
         private double _cursorHideReleaseDistance = 5.0;
         private bool _isHoverScroll;
         private double _hoverScrollDuration = 0.5;
+        private double _inertiaSensitivity = 0.5;
 
 
         // マウスジェスチャー有効
@@ -125,6 +127,38 @@ namespace NeeView
         {
             get { return _hoverScrollDuration; }
             set { SetProperty(ref _hoverScrollDuration, Math.Max(value, 0.0)); }
+        }
+
+        [PropertyPercent]
+        public double InertiaSensitivity
+        {
+            get { return _inertiaSensitivity; }
+            set { SetProperty(ref _inertiaSensitivity, value); }
+        }
+    }
+
+
+    /// <summary>
+    /// 慣性パラメータ用
+    /// </summary>
+    public static class InertiaTools
+    { 
+        /// <summary>
+        /// 慣性感度から加速度を求める。設定用。
+        /// </summary>
+        /// <param name="sensitivity">慣性感度(0-1)</param>
+        /// <returns></returns>
+        public static double GetAcceleration(double sensitivity)
+        {
+            // y = a * x^b + c で
+            // x = [0.0 - 1.0], y = [0.001 - 1.0], x=0.5 のとき y=0.01 になるような係数
+            var a = 0.999;
+            var b = 6.79586;
+            var c = 0.001;
+
+            var x = MathUtility.Clamp(1.0 - sensitivity, 0.0, 1.0);
+            var y = MathUtility.Clamp(a * Math.Pow(x, b) + c, c, 1.0);
+            return -y;
         }
 
     }

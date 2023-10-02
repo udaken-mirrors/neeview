@@ -2369,3 +2369,5 @@ TogglePageModeReverseCommand.Remarks=Toggle page mode in order (reverse)
 TogglePageOrientationCommand=Toggle pages orientation
 TogglePageOrientationCommand.Remarks=Switch between horizontal and vertical orientation.
 TogglePageModeCommandParameter.IsLoop=Loop
+MouseConfig.InertiaSensitivity=Inertia sensitivity
+TouchConfig.InertiaSensitivity=Inertia sensitivity

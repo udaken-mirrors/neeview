@@ -1,4 +1,6 @@
-﻿using NeeView.Maths;
+﻿//#define LOCAL_DEBUG
+
+using NeeView.Maths;
 using NeeView.PageFrames;
 using System;
 using System.ComponentModel;
@@ -56,6 +58,7 @@ namespace NeeView
                 return;
             }
 
+            Trace("Init");
             _transform = new DragTransform(_transformContext);
             _first = GetNowTransform();
         }
@@ -67,7 +70,8 @@ namespace NeeView
         public void Start()
         {
             if (_transform is null) return;
-            Debug.WriteLine("TouchDrag:Start");
+            
+            Trace("Start");
             _origin = new TouchDragContext(_context.Sender, _context.TouchMap.Keys);
 
             _start = GetNowTransform();
@@ -75,6 +79,8 @@ namespace NeeView
 
             _allowAngle = false;
             _allowScale = false;
+
+            _transform.ResetInertia();
         }
 
 
@@ -87,9 +93,10 @@ namespace NeeView
         {
             if (_transform is null) return;
             if (_goal is null) return;
-
+            
+            Trace("Stop");
             _transform.SetAngle(GetSnapAngle(_goal.Angle), TimeSpan.FromMilliseconds(200));
-            _transform.DoInertia(DecelerationEase.DefaultAcceleration * 0.25); // タッチ操作は慣性を強めにする
+            _transform.DoInertia(_context.Speedometer.GetVelocity(), InertiaTools.GetAcceleration(Config.Current.Touch.InertiaSensitivity));
         }
 
         /// <summary>
@@ -108,13 +115,11 @@ namespace NeeView
 
             _goal = GetTransform();
 
-            var deltaAngle = Math.Abs(_goal.Angle - _transform.Angle);
-            var deltaScale = Math.Abs(_goal.Scale - _transform.Scale);
-
-            var spam = TimeSpan.FromMilliseconds(32);
-            _transform.AddPoint((Point)_goal.Trans - _transform.Point, spam);
-            _transform.SetAngle(_goal.Angle, spam);
-            _transform.SetScale(_goal.Scale, spam);
+            //var span = TimeSpan.FromMilliseconds(64);
+            var span = TimeSpan.Zero;
+            _transform.AddPoint((Point)_goal.Trans - _transform.Point, span);
+            _transform.SetAngle(_goal.Angle, span);
+            _transform.SetScale(_goal.Scale, span);
         }
 
         private TouchDragTransform GetNowTransform()
@@ -210,6 +215,12 @@ namespace NeeView
             return angle;
         }
 
+
+        [Conditional("LOCAL_DEBUG")]
+        private void Trace(string s, params object[] args)
+        {
+            Debug.WriteLine($"{this.GetType().Name}: {string.Format(s, args)}");
+        }
 
     }
 }

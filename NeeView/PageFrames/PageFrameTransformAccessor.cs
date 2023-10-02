@@ -160,6 +160,11 @@ namespace NeeView.PageFrames
             return _pointSource.GetVelocity();
         }
 
+        public void ResetVelocity()
+        {
+            _pointSource.ResetVelocity();
+        }
+
 
         [MemberNotNull(nameof(_scaleSource), nameof(_angleSource), nameof(_pointSource), nameof(_flipSource))]
         private void UpdateSource()

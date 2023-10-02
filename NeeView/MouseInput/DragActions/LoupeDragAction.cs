@@ -39,7 +39,7 @@ namespace NeeView
                 _context.Update();
             }
 
-            public override void ExecuteEnd(bool continued)
+            public override void ExecuteEnd(ISpeedometer? speedometer, bool continued)
             {
             }
 

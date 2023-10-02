@@ -45,5 +45,11 @@ namespace NeeView
         /// 有効なタッチデバイス情報
         /// </summary>
         public Dictionary<StylusDevice, TouchContext> TouchMap { get; set; } = new Dictionary<StylusDevice, TouchContext>();
+
+        /// <summary>
+        /// 速度計測器
+        /// </summary>
+        public MultiSpeedometer Speedometer { get; } = new MultiSpeedometer();
     }
+
 }

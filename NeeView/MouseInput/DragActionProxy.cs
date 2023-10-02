@@ -46,11 +46,11 @@ namespace NeeView
             _action.MouseWheel(e);
         }
 
-        public void ExecuteEnd(Point point, int timestamp, DragActionUpdateOptions options, bool continued)
+        public void ExecuteEnd(Point point, int timestamp, ISpeedometer? speedometer, DragActionUpdateOptions options, bool continued)
         {
             if (_action is null) return;
             _action.Context.Update(point, timestamp, options);
-            _action.ExecuteEnd(continued);
+            _action.ExecuteEnd(speedometer, continued);
         }
     }
 

@@ -77,15 +77,20 @@ namespace NeeView.PageFrames
             _container.Transform.SetPoint(_container.Transform.Point + delta, span, easeX, easeY);
         }
 
-        public void InertiaPoint(double acceleration)
+        public void InertiaPoint(Vector velocity, double acceleration)
         {
-            var velocity = _container.Transform.GetVelocity();
+            //var velocity = _container.Transform.GetVelocity();
 
             _context.IsSnapAnchor.Reset();
             var inertiaEaseFactory = new InertiaEaseFactory(GetScrollLockHit, GetAreaLimitHit);
             var multiEaseSet = inertiaEaseFactory.Create(_container.Transform.Point, velocity, acceleration);
             if (!multiEaseSet.IsValid) return;
             _container.Transform.AddPoint(multiEaseSet.Delta, TimeSpan.FromMilliseconds(multiEaseSet.Milliseconds), multiEaseSet.EaseX, multiEaseSet.EaseY);
+        }
+
+        public void ResetInertia()
+        {
+            //_container.Transform.ResetVelocity();
         }
 
         // 範囲内になるよう移動量補正

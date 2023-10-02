@@ -6,7 +6,7 @@ namespace NeeView
 {
     public class DragTransformControlProxy : IDisposable, IDragTransformControl
     {
-        private PageFrameBoxPresenter _presenter;
+        private readonly PageFrameBoxPresenter _presenter;
         private DragTransformControl? _dragTransformControl;
         private bool _disposedValue;
 
@@ -59,9 +59,9 @@ namespace NeeView
             _dragTransformControl?.ResetState();
         }
 
-        public void UpdateState(MouseButtonBits buttons, ModifierKeys keys, Point point, int timestamp, DragActionUpdateOptions options)
+        public void UpdateState(MouseButtonBits buttons, ModifierKeys keys, Point point, int timestamp, ISpeedometer? speedometer, DragActionUpdateOptions options)
         {
-            _dragTransformControl?.UpdateState(buttons, keys, point, timestamp, options);
+            _dragTransformControl?.UpdateState(buttons, keys, point, timestamp, speedometer, options);
         }
 
         public void MouseWheel(MouseButtonBits buttons, ModifierKeys keys, MouseWheelEventArgs e)

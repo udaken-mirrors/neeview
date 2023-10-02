@@ -7533,4 +7533,10 @@ nv.ShowToast(nv.Book.ViewPages[0].Path)</value>
   <data name="TogglePageModeCommandParameter.IsLoop" xml:space="preserve">
     <value>Loop</value>
   </data>
+  <data name="MouseConfig.InertiaSensitivity" xml:space="preserve">
+    <value>Inertia sensitivity</value>
+  </data>
+  <data name="TouchConfig.InertiaSensitivity" xml:space="preserve">
+    <value>Inertia sensitivity</value>
+  </data>
 </root>

@@ -77,7 +77,7 @@ namespace NeeView
         {
             sender.Cursor = null;
 
-            _action.ExecuteEnd(ToDragCoord(Mouse.GetPosition(sender)), System.Environment.TickCount, DragActionUpdateOptions.None, false);
+            _action.ExecuteEnd(ToDragCoord(Mouse.GetPosition(sender)), System.Environment.TickCount, _context.Speedometer, options: DragActionUpdateOptions.None, continued: false);
             _action.ClearAction();
 
             _loupe.IsEnabled = false;

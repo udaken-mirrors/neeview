@@ -60,6 +60,11 @@ namespace NeeView.PageFrames
         {
             return _scrollViewer.GetVelocity();
         }
+
+        public void ResetVelocity()
+        {
+            _scrollViewer.ResetVelocity();
+        }
     }
 
 }

@@ -31,6 +31,11 @@ namespace NeeView
                 _parameter = Parameter as MoveScaleDragActionParameter ?? throw new ArgumentNullException(nameof(source));
             }
 
+            public override void ExecuteBegin()
+            {
+                _transformControl.ResetInertia();
+            }
+
             // 移動(速度スケール依存)
             public override void Execute()
             {
@@ -39,12 +44,13 @@ namespace NeeView
                 _transformControl.DoMove(delta * scale, TimeSpan.Zero);
             }
 
-            public override void ExecuteEnd(bool continued)
+            public override void ExecuteEnd(ISpeedometer? speedometer, bool continued)
             {
+                Debug.Assert(speedometer is not null);
                 if (continued) return;
                 if (!_parameter.IsInertiaEnabled) return;
-                var scale = GetScale();
-                _transformControl.DoInertia(DecelerationEase.DefaultAcceleration);
+
+                _transformControl.DoInertia(speedometer.GetVelocity(), InertiaTools.GetAcceleration(Config.Current.Mouse.InertiaSensitivity));
             }
 
             private double GetScale()

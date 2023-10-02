@@ -98,6 +98,11 @@ namespace NeeView.PageFrames
             return _transform.GetVelocity();
         }
 
+        public void ResetVelocity()
+        {
+            _transform.ResetVelocity();
+        }
+
         public void Clear()
         {
             Clear(TransformMask.All);
@@ -309,18 +314,16 @@ namespace NeeView.PageFrames
         private Point _point;
         private bool _isFlipHorizontal;
         private bool _isFlipVertical;
-        private readonly Speedometer _speedometer;
         private readonly NormalTransform _transformCalc;
         private readonly AnimatableTransform _transformView;
-
+        private readonly Speedometer _speedometer = new();
+        private bool _isSpeedometerEnabled;
 
         public MultiTransform()
         {
-            _speedometer = new();
             _transformCalc = new NormalTransform();
             _transformView = new AnimatableTransform();
 
-            _transformView.Transform.Changed += ViewTransform_Changed;
         }
 
 
@@ -336,12 +339,37 @@ namespace NeeView.PageFrames
         public Transform TransformView => _transformView.Transform;
         public Transform TransformCalc => _transformCalc.Transform;
 
+        public bool IsSpeedometerEnabled
+        {
+            get { return _isSpeedometerEnabled; }
+            set
+            {
+                if (_isSpeedometerEnabled != value)
+                {
+                    _isSpeedometerEnabled = value;
+                    if (_isSpeedometerEnabled)
+                    {
+                        _transformView.Transform.Changed += ViewTransform_Changed;
+                    }
+                    else
+                    {
+                        _transformView.Transform.Changed -= ViewTransform_Changed;
+                    }
+                }
+            }
+        }
+
 
         private void ViewTransform_Changed(object? sender, EventArgs e)
         {
+            if (!IsSpeedometerEnabled) return;
+            _speedometer.Add(GetViewPoint());
+        }
+
+        private Point GetViewPoint()
+        {
             var m = _transformView.Transform.Value;
-            var pos = new Point(m.OffsetX, m.OffsetY);
-            _speedometer.Add(pos);
+            return new Point(m.OffsetX, m.OffsetY);
         }
 
         public void SetScale(double value, TimeSpan span)
@@ -402,8 +430,16 @@ namespace NeeView.PageFrames
 
         public Vector GetVelocity()
         {
+            if (!IsSpeedometerEnabled) return default;
             _speedometer.Touch();
             return _speedometer.GetVelocity();
+        }
+
+        public void ResetVelocity()
+        {
+            if (!IsSpeedometerEnabled) return;
+            _speedometer.Reset();
+            _speedometer.Add(GetViewPoint());
         }
 
         public void Flush()
