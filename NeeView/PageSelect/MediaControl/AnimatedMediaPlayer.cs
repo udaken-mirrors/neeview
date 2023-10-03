@@ -18,7 +18,7 @@ using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using System.Windows.Threading;
-using WpfAnimatedGif;
+using AnimatedImage.Wpf;
 
 namespace NeeView
 {
