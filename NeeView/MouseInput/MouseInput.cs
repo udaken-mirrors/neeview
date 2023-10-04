@@ -414,9 +414,12 @@ namespace NeeView
             bool isEnabled = (sender == _sender)
                 && !IsStylusDevice(e);
 
-            if (isEnabled && buttons.Any())
+            if (isEnabled)
             {
-                _context.Speedometer.Add(e.GetPosition(_sender), e.Timestamp);
+                if (buttons.Any())
+                {
+                    _context.Speedometer.Add(e.GetPosition(_sender), e.Timestamp);
+                }
 
                 _current?.OnMouseMove(_sender, e);
 
