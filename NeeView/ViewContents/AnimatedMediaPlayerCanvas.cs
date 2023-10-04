@@ -51,6 +51,7 @@ namespace NeeView
 
             _cropControl = new CropControl();
             _cropControl.Target = grid;
+            _cropControl.Viewbox = viewbox;
 
             _errorMessageTextBlock = new TextBlock()
             {
