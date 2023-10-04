@@ -19,16 +19,11 @@ namespace NeeView
             {
                 if (entry.IsFileSystem)
                 {
-                    var path = entry.Link ?? entry.GetFileSystemPath();
-                    if (path is null) throw new InvalidOperationException();
-                    return CreateImageDataSource(await LoadFromFileAsync(path, entry, token), createPictureInfo);
+                    return CreateImageDataSource(await LoadFromFileAsync(entry, token), createPictureInfo);
                 }
                 else
                 {
-                    using (var stream = entry.OpenEntry())
-                    {
-                        return CreateImageDataSource( await LoadFromStreamAsync(stream, entry,  token), createPictureInfo);
-                    }
+                    return CreateImageDataSource(await LoadFromStreamAsync(entry, token), createPictureInfo);
                 }
             }
             catch (OperationCanceledException)
@@ -42,7 +37,7 @@ namespace NeeView
         }
 
         // Bitmap読み込み(stream)
-        private static async Task<SusieImage?> LoadFromStreamAsync(Stream stream, ArchiveEntry entry, CancellationToken token)
+        private static async Task<SusieImage?> LoadFromStreamAsync(ArchiveEntry entry, CancellationToken token)
         {
             byte[] buff;
             var rawData = entry.GetRawData();
@@ -54,24 +49,25 @@ namespace NeeView
             else
             {
                 ////Debug.WriteLine($"SusiePictureStream: {entry.EntryLastName} from Stream");
-                //using (var ms = new MemoryStream())
-                //{
-                //    await stream.CopyToAsync(ms, token);
-                //    buff = ms.ToArray();
-                //}
-                buff = await stream.ToArrayAsync(token);
+                using var stream = entry.OpenEntry();
+                buff = stream.ToArray(0, (int)entry.Length);
             }
 
             var accessor = SusiePluginManager.Current.GetImagePluginAccessor();
             var result = accessor.GetPicture(entry.RawEntryName, buff, !entry.IsIgnoreFileExtension); // TODO: await
+            await Task.CompletedTask;
+
             return result;
         }
 
         // Bitmap読み込み(ファイル版)
-        private static async Task<SusieImage?> LoadFromFileAsync(string fileName, ArchiveEntry entry, CancellationToken token)
+        private static async Task<SusieImage?> LoadFromFileAsync(ArchiveEntry entry, CancellationToken token)
         {
+            var path = entry.Link ?? entry.GetFileSystemPath();
+            if (path is null) throw new InvalidOperationException();
+
             var accessor = SusiePluginManager.Current.GetImagePluginAccessor();
-            var result = accessor.GetPicture(fileName, null, !entry.IsIgnoreFileExtension); // TODO: await
+            var result = accessor.GetPicture(path, null, !entry.IsIgnoreFileExtension); // TODO: await
             await Task.CompletedTask;
 
             return result;

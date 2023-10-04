@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 using System.IO;
 
 namespace NeeView
@@ -8,39 +9,32 @@ namespace NeeView
     /// </summary>
     public class ArchiveEntryStreamSource : IStreamSource, IHasCache
     {
-        private MemoryStream? _memoryStream;
+        private byte[]? _cache;
 
         public ArchiveEntryStreamSource(ArchiveEntry archiveEntry)
         {
             ArchiveEntry = archiveEntry;
-
         }
 
         public ArchiveEntry ArchiveEntry { get; }
         
         public long Length => ArchiveEntry.Length;
 
-        public long CacheSize => _memoryStream?.Capacity ?? 0;
+        public long CacheSize => _cache?.Length ?? 0;
 
         public Stream OpenStream()
         {
-            // 展開処理の重複を避けるため、ファイルシステムエントリ以外はメモリキャッシュを作る
-            if (_memoryStream is null && !ArchiveEntry.HasCache && !ArchiveEntry.IsFileSystem)
+            // 展開処理の重複を避けるため、ファイルシステムエントリ以外はキャッシュを作る
+            if (_cache is null && !ArchiveEntry.HasCache && !ArchiveEntry.IsFileSystem)
             {
-                _memoryStream = new MemoryStream();
                 using var stream = ArchiveEntry.OpenEntry();
-                stream.CopyTo(_memoryStream);
-                _memoryStream.Seek(0, SeekOrigin.Begin);
-                Debug.Assert(ArchiveEntry.Length == _memoryStream.Length);
-
-                var a = _memoryStream.ToArray();
-                var b = stream.ToArray();
-
+                _cache = stream.ToArray(0, (int)ArchiveEntry.Length);
+                Debug.Assert(ArchiveEntry.Length == _cache.Length);
             }
 
-            if (_memoryStream is not null)
+            if (_cache is not null)
             {
-                return new MemoryStream(_memoryStream.GetBuffer(), 0, (int)_memoryStream.Length, false);
+                return new MemoryStream(_cache, false);
             }
             else
             {
@@ -48,9 +42,22 @@ namespace NeeView
             }
         }
 
+        public ReadOnlySpan<byte> GetSpan()
+        {
+            if (_cache is not null)
+            {
+                return new ReadOnlySpan<byte>(_cache);
+            }
+            else
+            {
+                using var stream = ArchiveEntry.OpenEntry();
+                return stream.ToSpan(0, (int)ArchiveEntry.Length);
+            }
+        }
+
         public void ClearCache()
         {
-            _memoryStream = null;
+            _cache = null;
         }
     }
 

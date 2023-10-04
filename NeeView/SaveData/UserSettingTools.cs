@@ -45,26 +45,15 @@ namespace NeeView
             File.WriteAllBytes(path, json);
         }
 
-
-
         public static UserSetting? Load(string path)
         {
-            var json = File.ReadAllBytes(path);
-            return Load(new ReadOnlySpan<byte>(json));
+            using var stream = File.OpenRead(path);
+            return Load(stream);
         }
 
         public static UserSetting? Load(Stream stream)
         {
-            using (var ms = new MemoryStream())
-            {
-                stream.CopyTo(ms);
-                return Load(new ReadOnlySpan<byte>(ms.ToArray()));
-            }
-        }
-
-        public static UserSetting? Load(ReadOnlySpan<byte> json)
-        {
-            return JsonSerializer.Deserialize<UserSetting>(json, GetSerializerOptions())?.Validate();
+            return JsonSerializer.Deserialize<UserSetting>(stream, GetSerializerOptions())?.Validate();
         }
 
         public static JsonSerializerOptions GetSerializerOptions()

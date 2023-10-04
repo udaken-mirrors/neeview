@@ -29,13 +29,7 @@ namespace NeeView
 
         private static ThemeProfile? Load(Stream stream)
         {
-            using (var ms = new MemoryStream())
-            {
-                stream.CopyTo(ms);
-                var isSuccess = ms.TryGetBuffer(out var buffer);
-                if (!isSuccess) throw new IOException();
-                return JsonSerializer.Deserialize<ThemeProfile>(buffer, UserSettingTools.GetSerializerOptions());
-            }
+            return JsonSerializer.Deserialize<ThemeProfile>(stream, UserSettingTools.GetSerializerOptions());
         }
 
         public static ThemeProfile LoadFromContent(string contentPath)

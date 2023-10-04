@@ -2,26 +2,44 @@
 using System.Threading;
 using System.Threading.Tasks;
 using System;
+using System.Diagnostics;
 
 namespace NeeView
 {
     public static class StreamExtensions
     {
-        public static byte[] ToArray(this Stream stream)
+        public static byte[] ToArray(this Stream stream, int start, int length)
         {
-            var array = new byte[stream.Length];
-            stream.Seek(0, SeekOrigin.Begin);
-            stream.Read(array, 0, (int)stream.Length);
+            var array = new byte[length];
+            stream.Seek(start, SeekOrigin.Begin);
+            var readSize = stream.Read(array.AsSpan());
+            Debug.Assert(readSize == length);
             return array;
         }
 
-        public static async Task<byte[]> ToArrayAsync(this Stream stream, CancellationToken token)
+        public static async Task<byte[]> ToArrayAsync(this Stream stream, int start, int length, CancellationToken token)
         {
-            var array = new byte[stream.Length];
-            stream.Seek(0, SeekOrigin.Begin);
-            await stream.ReadAsync(array.AsMemory(0, (int)stream.Length), token);
+            var array = new byte[length];
+            stream.Seek(start, SeekOrigin.Begin);
+            var readSize = await stream.ReadAsync(array.AsMemory(), token);
+            Debug.Assert(readSize == length);
             return array;
         }
+
+        public static ReadOnlySpan<byte> ToSpan(this Stream stream, int start, int length)
+        {
+            return new ReadOnlySpan<byte>(stream.ToArray(start, length));
+        }
     }
+
+    public static class MemoryStreamExtensions
+    {
+        public static ReadOnlySpan<byte> ToSpan(this MemoryStream stream)
+        {
+            return new ReadOnlySpan<byte>(stream.GetBuffer(), 0, (int)stream.Length);
+        }
+
+    }
+
 
 }

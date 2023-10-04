@@ -439,22 +439,13 @@ namespace NeeView
 
             public static Memento Load(string path)
             {
-                var json = File.ReadAllBytes(path);
-                return Load(new ReadOnlySpan<byte>(json));
+                using var stream = File.OpenRead(path);
+                return Load(stream);
             }
 
             public static Memento Load(Stream stream)
             {
-                using (var ms = new MemoryStream())
-                {
-                    stream.CopyTo(ms);
-                    return Load(new ReadOnlySpan<byte>(ms.ToArray()));
-                }
-            }
-
-            public static Memento Load(ReadOnlySpan<byte> json)
-            {
-                var memento = JsonSerializer.Deserialize<Memento>(json, UserSettingTools.GetSerializerOptions());
+                var memento = JsonSerializer.Deserialize<Memento>(stream, UserSettingTools.GetSerializerOptions());
                 if (memento is null) throw new FormatException();
                 return memento;
 
