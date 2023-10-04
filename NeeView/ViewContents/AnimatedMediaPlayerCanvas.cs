@@ -25,7 +25,7 @@ namespace NeeView
 
         public AnimatedMediaPlayerCanvas(PageFrameElement element, MediaViewData source, ViewContentSize contentSize, Rect viewbox, AnimatedMediaPlayer player)
         {
-            Debug.WriteLine($"Create.AnimatedMediaPlayer: {source.Path}");
+            Debug.WriteLine($"Create.AnimatedMediaPlayer: {source.MediaSource}");
 
             _element = element;
             _contentSize = contentSize;

@@ -19,7 +19,7 @@ namespace NeeView
         {
             if (data.Data is not MediaPageData pageData) throw new InvalidOperationException(nameof(data.Data));
 
-            var viewData = new MediaViewData(pageData.Path, null);
+            var viewData = new MediaViewData(new MediaSource(pageData.Path), null);
             await Task.CompletedTask;
             return new DataSource(viewData, 0, null);
         }

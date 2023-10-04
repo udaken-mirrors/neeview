@@ -35,7 +35,7 @@ namespace NeeView
 
         public VlcMediaPlayerCanvas(PageFrameElement element, MediaViewData source, ViewContentSize contentSize, Rect viewbox, VlcMediaPlayer player)
         {
-            Debug.WriteLine($"Create.VlcMediaPlayer: {source.Path}");
+            Debug.WriteLine($"Create.VlcMediaPlayer: {source.MediaSource}");
 
             _element = element;
             _contentSize = contentSize;

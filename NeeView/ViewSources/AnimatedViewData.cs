@@ -4,7 +4,7 @@ namespace NeeView
 {
     public class AnimatedViewData : MediaViewData
     {
-        public AnimatedViewData(string path, ImageSource? imageSource) : base(path, imageSource)
+        public AnimatedViewData(MediaSource mediaSource, ImageSource? imageSource) : base(mediaSource, imageSource)
         {
         }
     }

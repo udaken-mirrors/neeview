@@ -4,6 +4,6 @@ namespace NeeView
 {
     public interface IOpenableMediaPlayer : IMediaPlayer
     {
-        void Open(Uri uri, TimeSpan delay);
+        void Open(MediaSource mediaSource, TimeSpan delay);
     }
 }

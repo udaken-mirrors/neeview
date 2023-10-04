@@ -25,7 +25,7 @@ namespace NeeView
 
         public DefaultMediaPlayerCanvas(PageFrameElement element, MediaViewData source, ViewContentSize contentSize, Rect viewbox, DefaultMediaPlayer player)
         {
-            Debug.WriteLine($"Create.MediaPlayer: {source.Path}");
+            Debug.WriteLine($"Create.MediaPlayer: {source.MediaSource}");
 
             _player = player;
             _player.MediaPlayed += Player_MediaPlayed;

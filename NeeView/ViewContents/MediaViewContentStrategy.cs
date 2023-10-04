@@ -104,7 +104,7 @@ namespace NeeView
             }
 
             _playerCanvas = MediaPlayerCanvasFactory.Create(_viewContent.Element, viewData, _viewContent.ViewContentSize, viewbox, _player);
-            _player.Open(new Uri(viewData.Path), TimeSpan.FromSeconds(_mediaContext.MediaStartDelaySeconds));
+            _player.Open(viewData.MediaSource, TimeSpan.FromSeconds(_mediaContext.MediaStartDelaySeconds));
 
             return _playerCanvas;
         }

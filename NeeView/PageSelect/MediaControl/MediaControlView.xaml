@@ -80,6 +80,7 @@
         <local:BooleanToVisibilityConverter x:Key="BooleanToVisibilityHiddenConverter" False="Hidden" True="Visible" />
         <local:ColorToBrushConverter x:Key="ColorToBrushConverter" />
         <local:EnableValueConverter x:Key="EnableValueConverter" />
+        <local:RootWidthToVolumeSlierWidthConverter x:Key="RootWidthToVolumeSlierWidthConverter"/>
 
         <Style TargetType="Button" BasedOn="{StaticResource IconButton}">
             <Setter Property="Margin" Value="5,5"/>
@@ -178,7 +179,8 @@
                         </Image>
                     </Button>
                     
-                    <nwc:SmartSlider x:Name="VolumeSlider" Width="112" Height="30" VerticalAlignment="Center" ThumbSize="12"
+                    <nwc:SmartSlider x:Name="VolumeSlider" Height="30" VerticalAlignment="Center" ThumbSize="12"
+                                 Width="{Binding ElementName=Root, Path=ActualWidth, Converter={StaticResource RootWidthToVolumeSlierWidthConverter}, ConverterParameter=112}"
                                  ThumbBorderBrush="{DynamicResource BottomBar.Foreground}"
                                  ThumbFill="{DynamicResource BottomBar.Foreground}"
                                  TrackDecreaseBrush="{DynamicResource BottomBar.Foreground}"

@@ -27,10 +27,12 @@ namespace NeeView
 
             try
             {
+                var streamSource = new ArchiveEntryStreamSource(ArchiveEntry);
+
                 // 初回アニメーション判定
                 if (_contentType == PageContentType.None)
                 {
-                    using var stream = ArchiveEntry.OpenEntry();
+                    using var stream = streamSource.OpenStream();
                     var bitmapInfo = BitmapInfo.Create(stream); // TODO: async
                     _contentType = bitmapInfo.FrameCount > 1 ? PageContentType.Animated : PageContentType.Bitmap;
                 }
@@ -38,15 +40,11 @@ namespace NeeView
                 // アニメーション画像
                 if (_contentType == PageContentType.Animated) 
                 {
-                    // fileProxy
-                    var fileProxy = ArchiveEntry.GetFileProxy(); // TODO: async化
-                    var entry = ArchiveEntryUtility.CreateTemporaryEntry(fileProxy.Path);
-
                     // pictureInfo
-                    using var stream = entry.OpenEntry();
+                    using var stream = streamSource.OpenStream();
                     var bitmapInfo = BitmapInfo.Create(stream); // TODO: async
                     var pictureInfo = PictureInfo.Create(bitmapInfo, "MediaPlayer");
-                    return new PageSource(new AnimatedPageData(fileProxy.Path), null, pictureInfo);
+                    return new AnimatedPageSource(new AnimatedPageData(new MediaSource(streamSource)), null, pictureInfo);
                 }
                 // 通常画像
                 else
@@ -68,5 +66,20 @@ namespace NeeView
             }
         }
     }
+
+
+    /// <summary>
+    /// AnimationPage 用データソース
+    /// </summary>
+    /// TODO: キャッシュサイズ取得だけなので汎用化できそう
+    public class AnimatedPageSource : PageSource
+    {
+        public AnimatedPageSource(object? data, string? errorMessage, PictureInfo? pictureInfo) : base(data, errorMessage, pictureInfo)
+        {
+        }
+
+        public override long DataSize => (Data as IHasCache)?.CacheSize ?? 0;
+    }
+
 
 }

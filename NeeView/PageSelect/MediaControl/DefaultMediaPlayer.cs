@@ -154,9 +154,12 @@ namespace NeeView
             GC.SuppressFinalize(this);
         }
 
-        public void Open(Uri uri, TimeSpan delay)
+        public void Open(MediaSource mediaSource, TimeSpan delay)
         {
             if (_disposedValue) return;
+
+            if (mediaSource.Path is null) throw new ArgumentException("MediaPlayer requests a Path from mediaSource.");
+            var uri = new Uri(mediaSource.Path);
 
             _startDelay = delay;
 

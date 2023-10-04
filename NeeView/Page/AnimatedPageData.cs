@@ -1,13 +1,20 @@
 ﻿namespace NeeView
 {
-    public class AnimatedPageData : IHasPath
+    public class AnimatedPageData : IHasCache
     {
-        public AnimatedPageData(string path)
+        public AnimatedPageData(MediaSource mediaSource)
         {
-            Path = path;
+            MediaSource = mediaSource;
         }
 
-        public string Path { get; }
+        public MediaSource MediaSource { get; }
+
+        public long CacheSize => MediaSource.CacheSize;
+
+        public void ClearCache()
+        {
+            MediaSource.ClearCache();
+        }
     }
 
 }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NeeLaboratory;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -128,4 +129,20 @@ namespace NeeView
         }
     }
 
+    public class RootWidthToVolumeSlierWidthConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            var rootWidth = (double)value;
+            var defaultWidth = double.Parse((string)parameter);
+
+            var rate = MathUtility.Clamp((rootWidth - 300.0) / 200.0, 0.0, 1.0);
+            return (defaultWidth * 0.5) * (1.0 + rate);
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
 }

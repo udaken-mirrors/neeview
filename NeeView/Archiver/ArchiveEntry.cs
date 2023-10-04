@@ -65,6 +65,11 @@ namespace NeeView
         public object? Data { get; set; }
 
         /// <summary>
+        /// キャッシュデータ存在
+        /// </summary>
+        public bool HasCache => Data is not null;
+
+        /// <summary>
         /// パスが有効であるか
         /// 無効である場合はアーカイブパスである可能性あり
         /// </summary>

@@ -42,7 +42,7 @@ namespace NeeView
         }
 
         // Bitmap読み込み(stream)
-        private async Task<SusieImage?> LoadFromStreamAsync(Stream stream, ArchiveEntry entry, CancellationToken token)
+        private static async Task<SusieImage?> LoadFromStreamAsync(Stream stream, ArchiveEntry entry, CancellationToken token)
         {
             byte[] buff;
             var rawData = entry.GetRawData();
@@ -54,22 +54,21 @@ namespace NeeView
             else
             {
                 ////Debug.WriteLine($"SusiePictureStream: {entry.EntryLastName} from Stream");
-                using (var ms = new MemoryStream())
-                {
-                    stream.CopyTo(ms);
-                    buff = ms.ToArray();
-                }
+                //using (var ms = new MemoryStream())
+                //{
+                //    await stream.CopyToAsync(ms, token);
+                //    buff = ms.ToArray();
+                //}
+                buff = await stream.ToArrayAsync(token);
             }
 
             var accessor = SusiePluginManager.Current.GetImagePluginAccessor();
             var result = accessor.GetPicture(entry.RawEntryName, buff, !entry.IsIgnoreFileExtension); // TODO: await
-            await Task.CompletedTask;
-
             return result;
         }
 
         // Bitmap読み込み(ファイル版)
-        private async Task<SusieImage?> LoadFromFileAsync(string fileName, ArchiveEntry entry, CancellationToken token)
+        private static async Task<SusieImage?> LoadFromFileAsync(string fileName, ArchiveEntry entry, CancellationToken token)
         {
             var accessor = SusiePluginManager.Current.GetImagePluginAccessor();
             var result = accessor.GetPicture(fileName, null, !entry.IsIgnoreFileExtension); // TODO: await

@@ -4,13 +4,13 @@ namespace NeeView
 {
     public class MediaViewData : IHasImageSource
     {
-        public MediaViewData(string path, ImageSource? imageSource)
+        public MediaViewData(MediaSource mediaSource, ImageSource? imageSource)
         {
-            Path = path;
+            MediaSource = mediaSource;
             ImageSource = imageSource;
         }
 
-        public string Path { get; }
+        public MediaSource MediaSource { get; }
         public ImageSource? ImageSource { get; }
     }
 }

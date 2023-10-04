@@ -25,7 +25,7 @@ namespace NeeView
             if (data.Data is not AnimatedPageData pageData) throw new InvalidOperationException(nameof(data.Data));
 
             // TODO: この画像が何度も読み込まれてないか調査すること
-            var image = LoadImage(pageData.Path);
+            var image = LoadImage(pageData.MediaSource);
             await Task.CompletedTask;
 
             // 色情報とBPP設定。
@@ -34,17 +34,17 @@ namespace NeeView
                 _pageContent.PictureInfo?.SetPixelInfo(image);
             }
 
-            var viewData = new AnimatedViewData(pageData.Path, image);
+            var viewData = new AnimatedViewData(pageData.MediaSource, image);
             return new DataSource(viewData, 0, null);
         }
 
 
         // TODO: Async
-        private BitmapImage? LoadImage(string path)
+        private BitmapImage? LoadImage(MediaSource mediaSource)
         {
             try
             {
-                using (FileStream stream = File.OpenRead(path))
+                using (var stream = mediaSource.OpenStream())
                 {
                     var bitmap = new BitmapImage();
                     bitmap.BeginInit();

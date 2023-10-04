@@ -336,11 +336,12 @@ namespace NeeView
         }
 
 
-        public void Open(Uri uri, TimeSpan _)
+        public void Open(MediaSource mediaSource, TimeSpan _)
         {
             if (_disposedValue) return;
 
-            _uri = uri;
+            if (mediaSource.Path is null) throw new ArgumentException("VlcMediaPlayer requests a Path from mediaSource.");
+            _uri = new Uri(mediaSource.Path);
 
             _player.Playing += Player_FirstPlaying;
 

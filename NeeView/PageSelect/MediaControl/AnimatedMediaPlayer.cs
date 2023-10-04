@@ -161,17 +161,24 @@ namespace NeeView
             _player.GotoFrame(frame);
         }
 
-        public void Open(Uri uri, TimeSpan delay)
+        public void Open(MediaSource mediaSource, TimeSpan delay)
         {
             Debug.Assert(_player is null);
-
             if (_disposedValue) return;
 
-            var bitmapSource = new BitmapImage(uri);
+            var stream = mediaSource.OpenStream();
+            _disposables.Add(stream);
+
+            var bitmapSource = new BitmapImage();
+            bitmapSource.BeginInit();
+            bitmapSource.StreamSource = stream;
+            bitmapSource.EndInit();
+
             ImageBehavior.SetAnimatedSource(_image, bitmapSource);
 
             IsPlaying = true;
         }
+
 
         public void Close()
         {
