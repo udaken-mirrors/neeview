@@ -2742,7 +2742,7 @@ nv.Values.Test = "Hello!"</value>
     <value>アニメーション GIF を再生する</value>
   </data>
   <data name="ImageStandardConfig.IsAnimatedGifEnabled.Remarks" xml:space="preserve">
-    <value>アニメーション GIF 再生を行います。長時間のGIFでメモリ消費の問題が発生する可能性があります。</value>
+    <value>アニメーション GIF 再生を行います。長時間の GIF でメモリ消費の問題が発生する可能性があります。</value>
   </data>
   <data name="ImageStandardConfig.IsAspectRatioEnabled" xml:space="preserve">
     <value>画像の解像度情報を適用する</value>
@@ -3387,9 +3387,6 @@ include("Sample.nvjs")</value>
   </data>
   <data name="MainViewWindow.Menu.AutoHideTitleBar" xml:space="preserve">
     <value>タイトル バーを自動的に隠す</value>
-  </data>
-  <data name="MediaArchiveConfig.IsEnabled" xml:space="preserve">
-    <value>動画を使用する</value>
   </data>
   <data name="MediaArchiveConfig.IsMuted" xml:space="preserve">
     <value>動画をミュートする</value>
@@ -7454,14 +7451,11 @@ nv.ShowToast(nv.Book.ViewPages[0].Path)</value>
   <data name="ViewConfig.IsKeepPageTransform.Remarks" xml:space="preserve">
     <value>ページ単位の回転、拡縮、判定を維持します。</value>
   </data>
-  <data name="SettingPage.FileTypes.Media" xml:space="preserve">
-    <value>動画</value>
+  <data name="MediaArchiveConfig.IsEnabled" xml:space="preserve">
+    <value>動画をブックとして開く</value>
   </data>
-  <data name="ImageConfig.IsMediaEnabled" xml:space="preserve">
-    <value>動画ページを有効にする</value>
-  </data>
-  <data name="ImageConfig.IsMediaEnabled.Remarks" xml:space="preserve">
-    <value>動画ファイルの種類は「@SettingPage.Archive.Media」設定ページで設定します。</value>
+  <data name="MediaArchiveConfig.IsMediaPageEnabled" xml:space="preserve">
+    <value>動画をページとして開く</value>
   </data>
   <data name="Navigator.MoreMenu.IsVisibleControlBar" xml:space="preserve">
     <value>コントロール バー</value>
@@ -7485,7 +7479,7 @@ nv.ShowToast(nv.Book.ViewPages[0].Path)</value>
     <value>libVLC を使用して動画を再生する</value>
   </data>
   <data name="MediaArchiveConfig.IsLibVlcEnabled.Remarks" xml:space="preserve">
-    <value>VLC media player が別途必要です。字幕やオーディオチャンネルの選択が可能です。</value>
+    <value>VLC media player が別途必要です。対応動画フォーマットが多く、字幕やオーディオチャンネルの選択が可能です。</value>
   </data>
   <data name="MediaArchiveConfig.LibVlcPath" xml:space="preserve">
     <value>libVLC のディレクトリ</value>
@@ -7543,5 +7537,11 @@ nv.ShowToast(nv.Book.ViewPages[0].Path)</value>
   </data>
   <data name="TouchConfig.InertiaSensitivity" xml:space="preserve">
     <value>慣性感度</value>
+  </data>
+  <data name="ImageStandardConfig.IsAnimatedPngEnabled" xml:space="preserve">
+    <value>アニメーション PNG を再生する</value>
+  </data>
+  <data name="ImageStandardConfig.IsAnimatedPngEnabled.Remarks" xml:space="preserve">
+    <value>アニメーション PNG 再生を行います。長時間の PNG でメモリ消費の問題が発生する可能性があります。</value>
   </data>
 </root>

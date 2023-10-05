@@ -3383,9 +3383,6 @@ include("Sample.nvjs")</value>
   <data name="MainViewWindow.Menu.AutoHideTitleBar" xml:space="preserve">
     <value>Auto-hide title bar</value>
   </data>
-  <data name="MediaArchiveConfig.IsEnabled" xml:space="preserve">
-    <value>Use video</value>
-  </data>
   <data name="MediaArchiveConfig.IsMuted" xml:space="preserve">
     <value>Mute video</value>
   </data>
@@ -7449,14 +7446,11 @@ nv.ShowToast(nv.Book.ViewPages[0].Path)</value>
   <data name="ViewConfig.IsKeepPageTransform.Remarks" xml:space="preserve">
     <value>Keep page-by-page rotation, scaling, and flip.</value>
   </data>
-  <data name="SettingPage.FileTypes.Media" xml:space="preserve">
-    <value>Video</value>
+  <data name="MediaArchiveConfig.IsEnabled" xml:space="preserve">
+    <value>Open video as a book</value>
   </data>
-  <data name="ImageConfig.IsMediaEnabled" xml:space="preserve">
-    <value>Enable Video Page</value>
-  </data>
-  <data name="ImageConfig.IsMediaEnabled.Remarks" xml:space="preserve">
-    <value>The type of video file is set in the "@SettingPage.Archive.Media" settings page.</value>
+  <data name="MediaArchiveConfig.IsMediaPageEnabled" xml:space="preserve">
+    <value>Open video as a page</value>
   </data>
   <data name="Navigator.MoreMenu.IsVisibleControlBar" xml:space="preserve">
     <value>Control bar</value>
@@ -7480,7 +7474,7 @@ nv.ShowToast(nv.Book.ViewPages[0].Path)</value>
     <value>Play videos using libVLC</value>
   </data>
   <data name="MediaArchiveConfig.IsLibVlcEnabled.Remarks" xml:space="preserve">
-    <value>VLC media player is required. Subtitles and audio channels can be selected.</value>
+    <value>VLC media player is required. Many video formats are supported, and subtitles and audio channels can be selected.</value>
   </data>
   <data name="MediaArchiveConfig.LibVlcPath" xml:space="preserve">
     <value>libVLC directory</value>
@@ -7538,5 +7532,11 @@ nv.ShowToast(nv.Book.ViewPages[0].Path)</value>
   </data>
   <data name="TouchConfig.InertiaSensitivity" xml:space="preserve">
     <value>Inertia sensitivity</value>
+  </data>
+  <data name="ImageStandardConfig.IsAnimatedPngEnabled" xml:space="preserve">
+    <value>Play animated PNG</value>
+  </data>
+  <data name="ImageStandardConfig.IsAnimatedPngEnabled.Remarks" xml:space="preserve">
+    <value>Perform animated PNG playback. Memory consumption problems may occur with long PNGs.</value>
   </data>
 </root>

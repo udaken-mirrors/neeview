@@ -55,7 +55,7 @@ namespace NeeView
                 if (Config.Current.Image.Svg.SupportFileTypes.Contains(ext)) return true;
             }
 
-            if (Config.Current.Image.IsMediaEnabled && includeMedia)
+            if (Config.Current.Archive.Media.IsMediaPageEnabled && includeMedia)
             {
                 if (Config.Current.Archive.Media.SupportFileTypes.Contains(ext)) return true;
             }
@@ -91,7 +91,7 @@ namespace NeeView
         // 対応拡張子判定 (Media)
         public bool IsMediaSupported(string fileName)
         {
-            if (!Config.Current.Image.IsMediaEnabled) return false;
+            if (!Config.Current.Archive.Media.IsMediaPageEnabled) return false;
 
             string ext = LoosePath.GetExtension(fileName);
             return Config.Current.Archive.Media.SupportFileTypes.Contains(ext);

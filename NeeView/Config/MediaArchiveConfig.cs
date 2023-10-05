@@ -12,6 +12,7 @@ namespace NeeView
 
 
         private bool _isEnabled = true;
+        private bool _isMediaPageEnabled = false;
         private FileTypeCollection _supportFileTypes = (FileTypeCollection)DefaultSupportFileTypes.Clone();
         private double _pageSeconds = 10.0;
         private double _mediaStartDelaySeconds = 0.5;
@@ -24,11 +25,24 @@ namespace NeeView
         public string? _libVlcPath;
 
 
+        /// <summary>
+        /// 動画をブックとする
+        /// </summary>
         [PropertyMember]
         public bool IsEnabled
         {
             get { return _isEnabled; }
             set { SetProperty(ref _isEnabled, value); }
+        }
+
+        /// <summary>
+        /// 動画をページとする
+        /// </summary>
+        [PropertyMember]
+        public bool IsMediaPageEnabled
+        {
+            get { return _isMediaPageEnabled; }
+            set { SetProperty(ref _isMediaPageEnabled, value); }
         }
 
         [PropertyMember]

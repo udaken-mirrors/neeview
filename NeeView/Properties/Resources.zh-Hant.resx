@@ -2742,7 +2742,7 @@ nv.Values.Test = "Hello!"</value>
     <value>播放 GIF 動畫</value>
   </data>
   <data name="ImageStandardConfig.IsAnimatedGifEnabled.Remarks" xml:space="preserve">
-    <value>進行播放 GIF  動畫。長時間的GIF可能會有記憶體資源消耗的問題發生。</value>
+    <value>進行播放 GIF  動畫。長時間的 GIF 可能會有記憶體資源消耗的問題發生。</value>
   </data>
   <data name="ImageStandardConfig.IsAspectRatioEnabled" xml:space="preserve">
     <value>套用圖像解析度資訊</value>
@@ -3387,9 +3387,6 @@ include("Sample.nvjs")</value>
   </data>
   <data name="MainViewWindow.Menu.AutoHideTitleBar" xml:space="preserve">
     <value>自動隱藏標題列</value>
-  </data>
-  <data name="MediaArchiveConfig.IsEnabled" xml:space="preserve">
-    <value>使用影片</value>
   </data>
   <data name="MediaArchiveConfig.IsMuted" xml:space="preserve">
     <value>將影片靜音</value>
@@ -7396,5 +7393,11 @@ nv.ShowToast(nv.Book.ViewPages[0].Path)</value>
   </data>
   <data name="TogglePageModeCommandParameter.IsLoop" xml:space="preserve">
     <value>循環</value>
+  </data>
+  <data name="ImageStandardConfig.IsAnimatedPngEnabled" xml:space="preserve">
+    <value>播放 PNG 動畫</value>
+  </data>
+  <data name="ImageStandardConfig.IsAnimatedPngEnabled.Remarks" xml:space="preserve">
+    <value>進行播放 PNG 動畫。長時間的 PNG 可能會有記憶體資源消耗的問題發生。</value>
   </data>
 </root>

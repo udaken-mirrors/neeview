@@ -7007,24 +7007,6 @@ namespace NeeView.Properties {
         }
         
         /// <summary>
-        ///   Enable Video Page に類似しているローカライズされた文字列を検索します。
-        /// </summary>
-        public static string ImageConfig_IsMediaEnabled {
-            get {
-                return ResourceManager.GetString("ImageConfig.IsMediaEnabled", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   The type of video file is set in the &quot;@SettingPage.Archive.Media&quot; settings page. に類似しているローカライズされた文字列を検索します。
-        /// </summary>
-        public static string ImageConfig_IsMediaEnabled_Remarks {
-            get {
-                return ResourceManager.GetString("ImageConfig.IsMediaEnabled.Remarks", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Applicability rate に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string ImageCustomSizeConfig_ApplicabilityRate {
@@ -7300,6 +7282,24 @@ namespace NeeView.Properties {
         public static string ImageStandardConfig_IsAnimatedGifEnabled_Remarks {
             get {
                 return ResourceManager.GetString("ImageStandardConfig.IsAnimatedGifEnabled.Remarks", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Play animated PNG に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string ImageStandardConfig_IsAnimatedPngEnabled {
+            get {
+                return ResourceManager.GetString("ImageStandardConfig.IsAnimatedPngEnabled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Perform animated PNG playback. Memory consumption problems may occur with long PNGs. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string ImageStandardConfig_IsAnimatedPngEnabled_Remarks {
+            get {
+                return ResourceManager.GetString("ImageStandardConfig.IsAnimatedPngEnabled.Remarks", resourceCulture);
             }
         }
         
@@ -9247,7 +9247,7 @@ namespace NeeView.Properties {
         }
         
         /// <summary>
-        ///   Use video に類似しているローカライズされた文字列を検索します。
+        ///   Open video as a book に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string MediaArchiveConfig_IsEnabled {
             get {
@@ -9265,11 +9265,20 @@ namespace NeeView.Properties {
         }
         
         /// <summary>
-        ///   VLC media player is required. Subtitles and audio channels can be selected. に類似しているローカライズされた文字列を検索します。
+        ///   VLC media player is required. Many video formats are supported, and subtitles and audio channels can be selected. に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string MediaArchiveConfig_IsLibVlcEnabled_Remarks {
             get {
                 return ResourceManager.GetString("MediaArchiveConfig.IsLibVlcEnabled.Remarks", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Open video as a page に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string MediaArchiveConfig_IsMediaPageEnabled {
+            get {
+                return ResourceManager.GetString("MediaArchiveConfig.IsMediaPageEnabled", resourceCulture);
             }
         }
         
@@ -15081,15 +15090,6 @@ namespace NeeView.Properties {
         public static string SettingPage_FileTypes {
             get {
                 return ResourceManager.GetString("SettingPage.FileTypes", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Video に類似しているローカライズされた文字列を検索します。
-        /// </summary>
-        public static string SettingPage_FileTypes_Media {
-            get {
-                return ResourceManager.GetString("SettingPage.FileTypes.Media", resourceCulture);
             }
         }
         
