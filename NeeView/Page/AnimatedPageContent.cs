@@ -15,10 +15,12 @@ namespace NeeView
             Animated,
         }
 
+        private readonly AnimatedImageType _imageType;
         private PageContentType _contentType = PageContentType.None;
 
-        public AnimatedPageContent(ArchiveEntry archiveEntry, BookMemoryService? bookMemoryService) : base(archiveEntry, bookMemoryService)
+        public AnimatedPageContent(ArchiveEntry archiveEntry, BookMemoryService? bookMemoryService, AnimatedImageType imageType) : base(archiveEntry, bookMemoryService)
         {
+            _imageType = imageType;
         }
 
         public override async Task<PageSource> LoadSourceAsync(CancellationToken token)
@@ -33,17 +35,16 @@ namespace NeeView
                 if (_contentType == PageContentType.None)
                 {
                     using var stream = streamSource.OpenStream();
-                    var bitmapInfo = BitmapInfo.Create(stream); // TODO: async
-                    _contentType = bitmapInfo.FrameCount > 1 ? PageContentType.Animated : PageContentType.Bitmap;
+                    _contentType = AnimatedImageChecker.IsAnimatedImage(stream, _imageType) ? PageContentType.Animated : PageContentType.Bitmap;
                 }
 
                 // アニメーション画像
-                if (_contentType == PageContentType.Animated) 
+                if (_contentType == PageContentType.Animated)
                 {
                     // pictureInfo
                     using var stream = streamSource.OpenStream();
                     var bitmapInfo = BitmapInfo.Create(stream); // TODO: async
-                    var pictureInfo = PictureInfo.Create(bitmapInfo, "MediaPlayer");
+                    var pictureInfo = PictureInfo.Create(bitmapInfo, "AnimatedImage");
                     return new AnimatedPageSource(new AnimatedPageData(new MediaSource(streamSource)), null, pictureInfo);
                 }
                 // 通常画像
@@ -51,7 +52,7 @@ namespace NeeView
                 {
                     var loader = new BitmapPageContentLoader(ArchiveEntry);
                     var createPictureInfo = PictureInfo is null;
-                    var imageData = await loader.LoadAsync(createPictureInfo, token);
+                    var imageData = await loader.LoadAsync(streamSource, createPictureInfo, token);
                     return imageData;
                 }
 
@@ -80,6 +81,5 @@ namespace NeeView
 
         public override long DataSize => (Data as IHasCache)?.CacheSize ?? 0;
     }
-
 
 }

@@ -8,6 +8,7 @@ namespace NeeView
         private bool _useWicInformation = true;
         private bool _isAspectRatioEnabled;
         private bool _isAnimatedGifEnabled = true;
+        private bool _isAnimatedPngEnabled = false;
         private bool _isAllFileSupported;
         private FileTypeCollection? _supportFileTypes = null;
 
@@ -41,6 +42,14 @@ namespace NeeView
         {
             get { return _isAnimatedGifEnabled; }
             set { SetProperty(ref _isAnimatedGifEnabled, value); }
+        }
+
+        // PNGアニメ有効
+        [PropertyMember]
+        public bool IsAnimatedPngEnabled
+        {
+            get { return _isAnimatedPngEnabled; }
+            set { SetProperty(ref _isAnimatedPngEnabled, value); }
         }
 
         // サポート外ファイル有効のときに、すべてのファイルを画像とみなす

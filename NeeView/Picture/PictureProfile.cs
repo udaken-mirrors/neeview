@@ -13,6 +13,9 @@ namespace NeeView
         static PictureProfile() => Current = new PictureProfile();
         public static PictureProfile Current { get; }
 
+        public static string[] _animatedGifExtensions = new string[] { ".gif" };
+        public static string[] _animatedPngExtensions = new string[] { ".png", ".apng" };
+
 
         private PictureProfile()
         {
@@ -71,6 +74,7 @@ namespace NeeView
         public bool IsSusieSupported(string fileName)
         {
             if (!Config.Current.Susie.IsEnabled) return false;
+            if (Config.Current.Image.Standard.IsAllFileSupported) return true;
 
             string ext = LoosePath.GetExtension(fileName);
             return SusiePluginManager.Current.ImageExtensions.Contains(ext);
@@ -92,6 +96,24 @@ namespace NeeView
 
             string ext = LoosePath.GetExtension(fileName);
             return Config.Current.Archive.Media.SupportFileTypes.Contains(ext);
+        }
+
+        // 拡張子判定 (Animated Gif)
+        public bool IsAnimatedGifSupported(string fileName)
+        {
+            if (!Config.Current.Image.Standard.IsAnimatedGifEnabled) return false;
+
+            string ext = LoosePath.GetExtension(fileName);
+            return _animatedGifExtensions.Contains(ext);
+        }
+
+        // 拡張子判定 (Animated Png)
+        public bool IsAnimatedPngSupported(string fileName)
+        {
+            if (!Config.Current.Image.Standard.IsAnimatedPngEnabled) return false;
+
+            string ext = LoosePath.GetExtension(fileName);
+            return _animatedPngExtensions.Contains(ext);
         }
 
         // 最大サイズ内におさまるサイズを返す

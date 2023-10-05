@@ -20,5 +20,13 @@ namespace NeeView
             _imageDataLoader = imageData.ImageDataLoader;
             return imageData;
         }
+
+        public async Task<BitmapPageSource> LoadAsync(IStreamSource streamSource, bool createPictureInfo, CancellationToken token)
+        {
+            var loader = _imageDataLoader ?? new BitmapPageSourceLoader();
+            var imageData = await loader.LoadAsync(_entry, createPictureInfo, token);
+            _imageDataLoader = imageData.ImageDataLoader;
+            return imageData;
+        }
     }
 }

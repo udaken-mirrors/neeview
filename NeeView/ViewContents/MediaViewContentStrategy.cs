@@ -118,13 +118,13 @@ namespace NeeView
                 {
                     if (_viewContent.Page.Content.PictureInfo is PictureInfo pictureInfo)
                     {
-                        pictureInfo.Decoder = "WPF Animated GIF";
+                        pictureInfo.Decoder = "AnimatedImage";
                     }
                     return new AnimatedMediaPlayer();
                 }
                 catch (Exception ex)
                 {
-                    throw new ApplicationException($"Cannot use WPF Animated GIF.\r\n{ex.Message}", ex);
+                    throw new ApplicationException($"Cannot use AnimatedImage.\r\n{ex.Message}", ex);
                 }
             }
             else if (Config.Current.Archive.Media.IsLibVlcEnabled)

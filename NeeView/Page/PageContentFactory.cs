@@ -6,48 +6,19 @@ namespace NeeView
 {
     public class PageContentFactory
     {
-        private BookMemoryService? _bookMemoryService;
+        private readonly BookMemoryService? _bookMemoryService;
 
         public PageContentFactory(BookMemoryService? bookMemoryService)
         {
             _bookMemoryService = bookMemoryService;
         }
 
-        public PageContent Create(ArchiveEntry archiveEntry)
-        {
-            var ext = Path.GetExtension(archiveEntry.EntryName).ToLower();
-
-            if (archiveEntry.Archiver is PdfArchiver)
-            {
-                return new PdfPageContent(archiveEntry, _bookMemoryService);
-            }
-
-            switch (ext)
-            {
-                case ".svg":
-                    return new SvgPageContent(archiveEntry, _bookMemoryService);
-                case ".gif":
-                    return new AnimatedPageContent(archiveEntry, _bookMemoryService);
-                case ".mp4":
-                case ".mkv":
-                    return new MediaPageContent(archiveEntry, _bookMemoryService);
-                default:
-                    return new BitmapPageContent(archiveEntry, _bookMemoryService);
-            }
-
-        }
-
-        private Page CreatePage(string bookPrefix, ArchiveEntry entry, CancellationToken token)
-        {
-            token.ThrowIfCancellationRequested();
-
-            return new Page(bookPrefix, CreatePageContent(entry, token));
-        }
 
         public PageContent CreatePageContent(ArchiveEntry entry, CancellationToken token)
         {
             token.ThrowIfCancellationRequested();
 
+            var name = entry.Link ?? entry.EntryName;
             if (entry.IsImage())
             {
                 if (entry.Archiver is MediaArchiver)
@@ -58,15 +29,19 @@ namespace NeeView
                 {
                     return new PdfPageContent(entry, _bookMemoryService);
                 }
-                else if (Config.Current.Image.Standard.IsAnimatedGifEnabled && LoosePath.GetExtension(entry.Link ?? entry.EntryName) == ".gif")
+                else if (PictureProfile.Current.IsAnimatedGifSupported(name))
                 {
-                    return new AnimatedPageContent(entry, _bookMemoryService);
+                    return new AnimatedPageContent(entry, _bookMemoryService, AnimatedImageType.Gif);
                 }
-                else if (PictureProfile.Current.IsSvgSupported(entry.EntryName))
+                else if (PictureProfile.Current.IsAnimatedPngSupported(name))
+                {
+                    return new AnimatedPageContent(entry, _bookMemoryService, AnimatedImageType.Png);
+                }
+                else if (PictureProfile.Current.IsSvgSupported(name))
                 {
                     return new SvgPageContent(entry, _bookMemoryService);
                 }
-                else if (PictureProfile.Current.IsMediaSupported(entry.EntryName))
+                else if (PictureProfile.Current.IsMediaSupported(name))
                 {
                     return new MediaPageContent(entry, _bookMemoryService);
                 }
@@ -82,7 +57,7 @@ namespace NeeView
             }
             else
             {
-                var type = entry.IsDirectory ? ArchiverType.FolderArchive : ArchiverManager.Current.GetSupportedType(entry.Link ?? entry.EntryName);
+                var type = entry.IsDirectory ? ArchiverType.FolderArchive : ArchiverManager.Current.GetSupportedType(name);
                 switch (type)
                 {
                     case ArchiverType.None:
