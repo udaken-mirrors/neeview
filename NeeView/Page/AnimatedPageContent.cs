@@ -50,7 +50,7 @@ namespace NeeView
                 // 通常画像
                 else
                 {
-                    var loader = new BitmapPageContentLoader(ArchiveEntry);
+                    var loader = new BitmapPageContentLoader();
                     var createPictureInfo = PictureInfo is null;
                     var imageData = await loader.LoadAsync(streamSource, createPictureInfo, token);
                     return imageData;

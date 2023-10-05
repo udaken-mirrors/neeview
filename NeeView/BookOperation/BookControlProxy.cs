@@ -71,7 +71,7 @@ namespace NeeView
 
         private void Source_PropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            Debug.WriteLine($"{e.PropertyName}: IsBusy={_source?.IsBusy}");
+            //Debug.WriteLine($"{e.PropertyName}: IsBusy={_source?.IsBusy}");
             RaisePropertyChanged(e.PropertyName);
         }
 

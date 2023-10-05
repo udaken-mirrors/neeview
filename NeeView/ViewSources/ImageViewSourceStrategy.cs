@@ -44,14 +44,15 @@ namespace NeeView
                 _picture.CreateImageSource(rawData, size, token);
                 await Task.CompletedTask;
 
-                // [DEV]
+#if DEBUG
                 if (pictureInfo is not null && _picture.ImageSource is not null)
                 {
                     var requestSize = size;
                     var sourceSize = pictureInfo.Size;
                     var pictureSize = new Size(_picture.ImageSource.GetPixelWidth(), _picture.ImageSource.GetPixelHeight());
-                    Debug.WriteLine($"CreateBitmapImage: {_pageContent.ArchiveEntry}: {sourceSize:f0}: {requestSize:f0} -> {pictureSize:f0}");
+                    //Debug.WriteLine($"CreateBitmapImage: {_pageContent.ArchiveEntry}: {sourceSize:f0}: {requestSize:f0} -> {pictureSize:f0}");
                 }
+#endif
 
                 Debug.Assert(_picture.ImageSource is not null);
                 return new DataSource(new ImageViewData(_picture.ImageSource), _picture.GetMemorySize(), null);

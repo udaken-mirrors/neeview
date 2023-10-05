@@ -8,9 +8,10 @@ namespace NeeView
 {
     public class SusieBitmapPageSourceLoader : IBitmapPageSourceLoader
     {
-        public async Task<BitmapPageSource> LoadAsync(ArchiveEntry entry, bool createPictureInfo, CancellationToken token)
+        public async Task<BitmapPageSource> LoadAsync(ArchiveEntryStreamSource streamSource, bool createPictureInfo, CancellationToken token)
         {
-            if (!entry.IsIgnoreFileExtension && !PictureProfile.Current.IsSusieSupported(entry.Link ?? entry.EntryName))
+            var entry = streamSource.ArchiveEntry;
+            if (!Config.Current.Image.Standard.IsAllFileSupported && !PictureProfile.Current.IsSusieSupported(entry.Link ?? entry.EntryName))
             {
                 return BitmapPageSource.CreateError("not support format");
             }
@@ -19,11 +20,11 @@ namespace NeeView
             {
                 if (entry.IsFileSystem)
                 {
-                    return CreateImageDataSource(await LoadFromFileAsync(entry, token), createPictureInfo);
+                    return CreateImageDataSource(await LoadFromFileAsync(streamSource, token), createPictureInfo);
                 }
                 else
                 {
-                    return CreateImageDataSource(await LoadFromStreamAsync(entry, token), createPictureInfo);
+                    return CreateImageDataSource(await LoadFromStreamAsync(streamSource, token), createPictureInfo);
                 }
             }
             catch (OperationCanceledException)
@@ -37,8 +38,17 @@ namespace NeeView
         }
 
         // Bitmap読み込み(stream)
-        private static async Task<SusieImage?> LoadFromStreamAsync(ArchiveEntry entry, CancellationToken token)
+        private static async Task<SusieImage?> LoadFromStreamAsync(ArchiveEntryStreamSource streamSource, CancellationToken token)
         {
+            var entry = streamSource.ArchiveEntry;
+
+            byte[] buff;
+            using (var stream = streamSource.OpenStream())
+            {
+                buff = stream.ToArray(0, (int)entry.Length);
+            }
+
+#if false
             byte[] buff;
             var rawData = entry.GetRawData();
             if (rawData != null)
@@ -52,22 +62,27 @@ namespace NeeView
                 using var stream = entry.OpenEntry();
                 buff = stream.ToArray(0, (int)entry.Length);
             }
+#endif
 
             var accessor = SusiePluginManager.Current.GetImagePluginAccessor();
-            var result = accessor.GetPicture(entry.RawEntryName, buff, !entry.IsIgnoreFileExtension); // TODO: await
+            var isCheckExtension = !Config.Current.Image.Standard.IsAllFileSupported;
+            var result = accessor.GetPicture(entry.RawEntryName, buff, isCheckExtension); // TODO: await
             await Task.CompletedTask;
 
             return result;
         }
 
         // Bitmap読み込み(ファイル版)
-        private static async Task<SusieImage?> LoadFromFileAsync(ArchiveEntry entry, CancellationToken token)
+        private static async Task<SusieImage?> LoadFromFileAsync(ArchiveEntryStreamSource streamSource, CancellationToken token)
         {
+            var entry = streamSource.ArchiveEntry;
+
             var path = entry.Link ?? entry.GetFileSystemPath();
             if (path is null) throw new InvalidOperationException();
 
             var accessor = SusiePluginManager.Current.GetImagePluginAccessor();
-            var result = accessor.GetPicture(path, null, !entry.IsIgnoreFileExtension); // TODO: await
+            var isCheckExtension = !Config.Current.Image.Standard.IsAllFileSupported;
+            var result = accessor.GetPicture(path, null, isCheckExtension); // TODO: await
             await Task.CompletedTask;
 
             return result;

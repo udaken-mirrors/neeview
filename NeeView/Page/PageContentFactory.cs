@@ -63,7 +63,6 @@ namespace NeeView
                     case ArchiverType.None:
                         if (Config.Current.Image.Standard.IsAllFileSupported)
                         {
-                            entry.IsIgnoreFileExtension = true;
                             return new BitmapPageContent(entry, _bookMemoryService);
                         }
                         else

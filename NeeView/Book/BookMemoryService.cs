@@ -1,4 +1,6 @@
-﻿using NeeLaboratory.ComponentModel;
+﻿#define LOCAL_DEBUG
+
+using NeeLaboratory.ComponentModel;
 using System;
 using System.Diagnostics;
 
@@ -49,7 +51,7 @@ namespace NeeView
             if (_disposedValue) return;
 
             _contentPool.Add(content);
-            Debug.WriteLine($"BookMemoryService: AddPageContent: {TotalSize / 1024 / 1024} MB");
+            Trace($"AddPageContent: {TotalSize / 1024 / 1024} MB");
             RaisePropertyChanged("");
         }
 
@@ -58,7 +60,7 @@ namespace NeeView
             if (_disposedValue) return;
 
             _pictureSourcePool.Add(pictureSource);
-            Debug.WriteLine($"BookMemoryService: AddPictureSource: {TotalSize / 1024 / 1024} MB");
+            Trace($"AddPictureSource: {TotalSize / 1024 / 1024} MB");
             RaisePropertyChanged("");
         }
 
@@ -69,7 +71,7 @@ namespace NeeView
             _contentPool.Cleanup(LimitSize - _pictureSourcePool.TotalSize);
             if (IsFull)
             {
-                Debug.WriteLine($"BookMemoryService: Cleanup.PictureSource");
+                Trace($"Cleanup.PictureSource");
                 _pictureSourcePool.Cleanup(0);
             }
             RaisePropertyChanged("");
@@ -86,6 +88,10 @@ namespace NeeView
             _pictureSourcePool.Cleanup(0);
         }
 
-
+        [Conditional("LOCAL_DEBUG")]
+        private void Trace(string s, params object[] args)
+        {
+            Debug.WriteLine($"{this.GetType().Name}: {string.Format(s, args)}");
+        }
     }
 }

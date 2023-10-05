@@ -196,11 +196,6 @@ namespace NeeView
         public bool IsFileSystem => Archiver.IsFileSystemEntry(this);
 
         /// <summary>
-        /// 拡張子による画像ファイル判定無効
-        /// </summary>
-        public bool IsIgnoreFileExtension { get; set; }
-
-        /// <summary>
         /// 削除済フラグ
         /// </summary>
         public bool IsDeleted { get; set; }

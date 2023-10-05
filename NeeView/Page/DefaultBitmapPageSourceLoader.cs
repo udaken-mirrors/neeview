@@ -7,11 +7,10 @@ namespace NeeView
 {
     public class DefaultBitmapPageSourceLoader : IBitmapPageSourceLoader
     {
-        public async Task<BitmapPageSource> LoadAsync(ArchiveEntry entry, bool createPictureInfo, CancellationToken token)
+        public async Task<BitmapPageSource> LoadAsync(ArchiveEntryStreamSource streamSource, bool createPictureInfo, CancellationToken token)
         {
             try
             {
-                var streamSource = new ArchiveEntryStreamSource(entry);
                 var pictureInfo = createPictureInfo ? PictureInfo.Create(streamSource, ".NET BitmapImage") : null; // TODO: Async
                 await Task.CompletedTask;
                 return BitmapPageSource.Create(new BitmapPageData(streamSource), pictureInfo, this);

@@ -74,7 +74,6 @@ namespace NeeView
         public bool IsSusieSupported(string fileName)
         {
             if (!Config.Current.Susie.IsEnabled) return false;
-            if (Config.Current.Image.Standard.IsAllFileSupported) return true;
 
             string ext = LoosePath.GetExtension(fileName);
             return SusiePluginManager.Current.ImageExtensions.Contains(ext);

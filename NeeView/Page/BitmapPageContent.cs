@@ -7,31 +7,35 @@ namespace NeeView
 {
     public class BitmapPageContent : PageContent
     {
-        private BitmapPageContentLoader _loader;
+        private readonly BitmapPageContentLoader _loader;
 
         public BitmapPageContent(ArchiveEntry archiveEntry, BookMemoryService? bookMemoryService)
             : base(archiveEntry, bookMemoryService)
         {
-            _loader = new BitmapPageContentLoader(archiveEntry);
+            _loader = new BitmapPageContentLoader();
         }
 
 
         public override async Task<PageSource> LoadSourceAsync(CancellationToken token)
         {
+            NVDebug.AssertMTA();
+
             try
             {
                 token.ThrowIfCancellationRequested();
-                //Debug.WriteLine($"Loading...: {ArchiveEntry}");
+
 #if DEBUG
                 if (Debugger.IsAttached)
                 {
-                    NVDebug.AssertMTA();
+                    //Debug.WriteLine($"Loading...: {ArchiveEntry}");
                     await Task.Delay(200, token);
+                    NVDebug.AssertMTA();
                 }
 #endif
-                NVDebug.AssertMTA();
+
+                var streamSource = new ArchiveEntryStreamSource(ArchiveEntry);
                 var createPictureInfo = PictureInfo is null;
-                var imageData = await _loader.LoadAsync(createPictureInfo, token);
+                var imageData = await _loader.LoadAsync(streamSource, createPictureInfo, token);
                 return imageData;
             }
             catch (OperationCanceledException)
