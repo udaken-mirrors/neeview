@@ -2,6 +2,12 @@
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
   <Fragment>
     <DirectoryRef Id="INSTALLFOLDER">
+      <Component Id="cmpCC7F63B6DD13FD5BC7B004BB877B7596" Guid="*">
+        <File Id="fil4B03A370175C15902E03BE8F24A22F96" KeyPath="yes" Source="$(var.ContentDir)\AnimatedImage.dll" />
+      </Component>
+      <Component Id="cmpE74B87B06D9AA178BC711079DD69E9A5" Guid="*">
+        <File Id="filD5EACED90D0DA677EFE14FB00B8C56E9" KeyPath="yes" Source="$(var.ContentDir)\AnimatedImage.Wpf.dll" />
+      </Component>
       <Component Id="cmp9BD8386B56714DD2B5F78D159AB49F2E" Guid="*">
         <File Id="filE148B3DEA846E65BF24466F6BD3810A7" KeyPath="yes" Source="$(var.ContentDir)\Esprima.dll" />
       </Component>
@@ -95,12 +101,6 @@
       <Component Id="cmp0A53E9601B96AB489A4BBFF84114AA30" Guid="*">
         <File Id="filA17CCA42435E3460D750CAA029C0B5C5" KeyPath="yes" Source="$(var.ContentDir)\Vlc.DotNet.Wpf.dll" />
       </Component>
-      <Component Id="cmp4D83E1A509A575739F9FD40B206CD41F" Guid="*">
-        <File Id="filBC68C8C05403B8A6F6AD0E4877CCCBB9" KeyPath="yes" Source="$(var.ContentDir)\WpfAnimatedGif.dll" />
-      </Component>
-      <Component Id="cmp29BD485F01A9F101A8D6FFDA13B050C0" Guid="*">
-        <File Id="filB3A3767731C6B9C74EE501DB147C2143" KeyPath="yes" Source="$(var.ContentDir)\WpfAnimatedGif.xml" />
-      </Component>
       <Component Id="cmp7AAD167AF28B00F512B8879F3F0BD93D" Guid="*">
         <File Id="fil828A7A54ACD0C302B49084D6AD7070D1" KeyPath="yes" Source="$(var.ContentDir)\XmpCore.dll" />
       </Component>
@@ -189,6 +189,8 @@
   </Fragment>
   <Fragment>
     <ComponentGroup Id="MainComponents">
+      <ComponentRef Id="cmpCC7F63B6DD13FD5BC7B004BB877B7596" />
+      <ComponentRef Id="cmpE74B87B06D9AA178BC711079DD69E9A5" />
       <ComponentRef Id="cmp9BD8386B56714DD2B5F78D159AB49F2E" />
       <ComponentRef Id="cmp4EF347C4F9445E9C039128F17B101763" />
       <ComponentRef Id="cmpFDD409D63AAED0F59378D2207BDBD3E4" />
@@ -220,8 +222,6 @@
       <ComponentRef Id="cmpFA2B31A31FA4B927AB5BED423F118D0D" />
       <ComponentRef Id="cmp5506B005CB9BFF8F4013CFA150250525" />
       <ComponentRef Id="cmp0A53E9601B96AB489A4BBFF84114AA30" />
-      <ComponentRef Id="cmp4D83E1A509A575739F9FD40B206CD41F" />
-      <ComponentRef Id="cmp29BD485F01A9F101A8D6FFDA13B050C0" />
       <ComponentRef Id="cmp7AAD167AF28B00F512B8879F3F0BD93D" />
       <ComponentRef Id="cmpBAD15BA8981526F157C0B1FF9DAC42A4" />
       <ComponentRef Id="cmpE61E631FB4D9B5607DB3871EAC766ADA" />

@@ -149,9 +149,9 @@ DLL: MediaInfo.dll
 * Changed:
     * Custom for NeeView: [Project Page](https://github.com/neelabo/Vlc.DotNet)
 
- ### AnimatedImage (WPF Animated GIF)
+ ### AnimatedImage
 
- DLL: WpfAnimatedGif.dll
+ DLL: AnimatedImage.dll, AnimatedImage.Wpf.dll
 
 * Copyright 2019 Thomas Levesque
 * URL: [AnimatedImage](https://github.com/whistyun/AnimatedImage)
