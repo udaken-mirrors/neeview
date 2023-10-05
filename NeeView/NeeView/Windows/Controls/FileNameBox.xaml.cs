@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NeeLaboratory.Generators;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
@@ -18,31 +19,11 @@ namespace NeeView.Windows.Controls
     /// <summary>
     /// FilenameBox.xaml の相互作用ロジック
     /// </summary>
+    [NotifyPropertyChanged]
     public partial class FileNameBox : UserControl, INotifyPropertyChanged
     {
-        #region INotifyPropertyChanged Support
-
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        protected bool SetProperty<T>(ref T storage, T value, [CallerMemberName] string? propertyName = null)
-        {
-            if (object.Equals(storage, value)) return false;
-            storage = value;
-            this.RaisePropertyChanged(propertyName);
-            return true;
-        }
-
-        protected void RaisePropertyChanged([CallerMemberName] string? name = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
-        }
-
-        public void AddPropertyChanged(string propertyName, PropertyChangedEventHandler handler)
-        {
-            PropertyChanged += (s, e) => { if (string.IsNullOrEmpty(e.PropertyName) || e.PropertyName == propertyName) handler?.Invoke(s, e); };
-        }
-
-        #endregion
 
         //
         public static readonly DependencyProperty TextProperty =

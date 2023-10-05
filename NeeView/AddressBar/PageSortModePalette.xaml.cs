@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NeeLaboratory.Generators;
+using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
@@ -20,33 +21,9 @@ namespace NeeView
     /// <summary>
     /// PageSortModePalette.xaml の相互作用ロジック
     /// </summary>
+    [NotifyPropertyChanged]
     public partial class PageSortModePalette : UserControl, INotifyPropertyChanged
     {
-        #region INotifyPropertyChanged Support
-
-        public event PropertyChangedEventHandler? PropertyChanged;
-
-        protected bool SetProperty<T>(ref T storage, T value, [CallerMemberName] string? propertyName = null)
-        {
-            if (object.Equals(storage, value)) return false;
-            storage = value;
-            this.RaisePropertyChanged(propertyName);
-            return true;
-        }
-
-        protected void RaisePropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string? name = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
-        }
-
-        public void AddPropertyChanged(string propertyName, PropertyChangedEventHandler handler)
-        {
-            PropertyChanged += (s, e) => { if (string.IsNullOrEmpty(e.PropertyName) || e.PropertyName == propertyName) handler?.Invoke(s, e); };
-        }
-
-        #endregion
-
-
         private readonly PageSortModePaletteViewModel _vm;
 
         public PageSortModePalette()
@@ -59,9 +36,11 @@ namespace NeeView
             this.Loaded += (s, e) => this.Items.Focus();
         }
 
+        [Subscribable]
+        public event PropertyChangedEventHandler? PropertyChanged;
 
+        [Subscribable]
         public event EventHandler? SelfClosed;
-
 
         public Popup ParentPopup
         {

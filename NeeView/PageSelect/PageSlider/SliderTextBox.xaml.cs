@@ -16,40 +16,19 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
 using NeeLaboratory;
+using NeeLaboratory.Generators;
 
 namespace NeeView
 {
     /// <summary>
     /// SliderTextBox.xaml の相互作用ロジック
     /// </summary>
+    [NotifyPropertyChanged]
     public partial class SliderTextBox : UserControl, INotifyPropertyChanged
     {
-        #region INotifyPropertyChanged Support
-
-        public event PropertyChangedEventHandler? PropertyChanged;
-
-        protected bool SetProperty<T>(ref T storage, T value, [System.Runtime.CompilerServices.CallerMemberName] string? propertyName = null)
-        {
-            if (object.Equals(storage, value)) return false;
-            storage = value;
-            this.RaisePropertyChanged(propertyName);
-            return true;
-        }
-
-        protected void RaisePropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string? name = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
-        }
-
-        public void AddPropertyChanged(string propertyName, PropertyChangedEventHandler handler)
-        {
-            PropertyChanged += (s, e) => { if (string.IsNullOrEmpty(e.PropertyName) || e.PropertyName == propertyName) handler?.Invoke(s, e); };
-        }
-
-        #endregion
-
         private readonly MouseWheelDelta _mouseWheelDelta = new();
         private string? _dispText;
+        
 
         public SliderTextBox()
         {
@@ -58,6 +37,8 @@ namespace NeeView
             this.TextBlock.SizeChanged += TextBlock_SizeChanged;
         }
 
+
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         public event EventHandler? ValueChanged;
 

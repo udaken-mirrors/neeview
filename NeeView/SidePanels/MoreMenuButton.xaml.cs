@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NeeLaboratory.Generators;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -20,33 +21,9 @@ namespace NeeView
     /// <summary>
     /// MoreMenu.xaml の相互作用ロジック
     /// </summary>
+    [NotifyPropertyChanged]
     public partial class MoreMenuButton : UserControl, INotifyPropertyChanged
     {
-        #region INotifyPropertyChanged Support
-
-        public event PropertyChangedEventHandler? PropertyChanged;
-
-        protected bool SetProperty<T>(ref T storage, T value, [System.Runtime.CompilerServices.CallerMemberName] string? propertyName = null)
-        {
-            if (object.Equals(storage, value)) return false;
-            storage = value;
-            this.RaisePropertyChanged(propertyName);
-            return true;
-        }
-
-        protected void RaisePropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string? name = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
-        }
-
-        public void AddPropertyChanged(string propertyName, PropertyChangedEventHandler handler)
-        {
-            PropertyChanged += (s, e) => { if (string.IsNullOrEmpty(e.PropertyName) || e.PropertyName == propertyName) handler?.Invoke(s, e); };
-        }
-
-        #endregion
-
-
         private ContextMenu? _moreMenu;
 
 
@@ -56,6 +33,9 @@ namespace NeeView
 
             this.MoreButton.DataContext = this;
         }
+
+
+        public event PropertyChangedEventHandler? PropertyChanged;
 
 
         public ImageSource? ImageSource
@@ -84,7 +64,6 @@ namespace NeeView
 
         public static readonly DependencyProperty DescriptionProperty =
             DependencyProperty.Register("Description", typeof(MoreMenuDescription), typeof(MoreMenuButton), new PropertyMetadata(null, DescriptionChanged));
-
 
         private static void DescriptionChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {

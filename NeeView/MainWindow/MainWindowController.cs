@@ -1,4 +1,5 @@
-﻿using NeeView.Windows;
+﻿using NeeLaboratory.Generators;
+using NeeView.Windows;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -14,32 +15,9 @@ namespace NeeView
     /// <summary>
     /// MainWindowに特化したウィンドウ制御
     /// </summary>
-    public class MainWindowController : WindowController, INotifyPropertyChanged
+    [NotifyPropertyChanged]
+    public partial class MainWindowController : WindowController, INotifyPropertyChanged
     {
-        #region INotifyPropertyChanged Support
-
-        public event PropertyChangedEventHandler? PropertyChanged;
-
-        protected bool SetProperty<T>(ref T storage, T value, [System.Runtime.CompilerServices.CallerMemberName] string? propertyName = null)
-        {
-            if (object.Equals(storage, value)) return false;
-            storage = value;
-            this.RaisePropertyChanged(propertyName);
-            return true;
-        }
-
-        protected void RaisePropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string? name = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
-        }
-
-        public void AddPropertyChanged(string propertyName, PropertyChangedEventHandler handler)
-        {
-            PropertyChanged += (s, e) => { if (string.IsNullOrEmpty(e.PropertyName) || e.PropertyName == propertyName) handler?.Invoke(s, e); };
-        }
-
-        #endregion
-
         private readonly Window _window;
         private readonly WindowStateManager _manager;
         private bool _autoHideMode;
@@ -67,6 +45,9 @@ namespace NeeView
             Config.Current.Window.AddPropertyChanged(nameof(WindowConfig.IsAutoHideInFullScreen),
                 (s, e) => UpdatePanelHideMode());
         }
+
+
+        public event PropertyChangedEventHandler? PropertyChanged;
 
 
         public override bool IsTopmost

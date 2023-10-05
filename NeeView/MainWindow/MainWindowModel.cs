@@ -85,7 +85,7 @@ namespace NeeView
 
             _windowController = windowController;
 
-            _windowController.AddPropertyChanged(nameof(_windowController.AutoHideMode),
+            _windowController.SubscribePropertyChanged(nameof(_windowController.AutoHideMode),
                 (s, e) =>
                 {
                     RefreshCanHidePanel();

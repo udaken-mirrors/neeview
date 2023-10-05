@@ -1,4 +1,5 @@
-﻿using NeeLaboratory.Windows.Input;
+﻿using NeeLaboratory.Generators;
+using NeeLaboratory.Windows.Input;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -89,33 +90,9 @@ namespace NeeView
     /// <summary>
     /// UWP の MessageDialogモドキ
     /// </summary>
+    [NotifyPropertyChanged]
     public partial class MessageDialog : Window, INotifyPropertyChanged
     {
-        #region INotifyPropertyChanged Support
-
-        public event PropertyChangedEventHandler? PropertyChanged;
-
-        protected bool SetProperty<T>(ref T storage, T value, [System.Runtime.CompilerServices.CallerMemberName] string? propertyName = null)
-        {
-            if (object.Equals(storage, value)) return false;
-            storage = value;
-            this.RaisePropertyChanged(propertyName);
-            return true;
-        }
-
-        protected void RaisePropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string? name = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
-        }
-
-        public void AddPropertyChanged(string propertyName, PropertyChangedEventHandler handler)
-        {
-            PropertyChanged += (s, e) => { if (string.IsNullOrEmpty(e.PropertyName) || e.PropertyName == propertyName) handler?.Invoke(s, e); };
-        }
-
-        #endregion
-
-
         private UICommand? _resultCommand;
 
 
@@ -150,6 +127,9 @@ namespace NeeView
             component.Decide += (s, e) => Decide();
             this.Loaded += (s, e) => component.OnLoaded(s, e);
         }
+
+
+        public event PropertyChangedEventHandler? PropertyChanged;
 
 
         public List<UICommand> Commands { get; private set; } = new List<UICommand>();

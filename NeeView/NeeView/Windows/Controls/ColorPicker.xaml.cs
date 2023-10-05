@@ -13,7 +13,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-
+using NeeLaboratory.Generators;
 using NeeView.Windows.Media;
 
 namespace NeeView.Windows.Controls
@@ -21,18 +21,9 @@ namespace NeeView.Windows.Controls
     /// <summary>
     /// ColorPicker.xaml の相互作用ロジック
     /// </summary>
+    [NotifyPropertyChanged]
     public partial class ColorPicker : UserControl, INotifyPropertyChanged
     {
-        #region NotifyPropertyChanged
-        public event PropertyChangedEventHandler? PropertyChanged;
-
-        protected void RaisePropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string? name = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
-        }
-        #endregion
-
-
         private bool _isPropertyLocked;
         private Color _rgb;
         public HSVColor _hsv;
@@ -44,6 +35,9 @@ namespace NeeView.Windows.Controls
 
             this.Root.DataContext = this;
         }
+
+
+        public event PropertyChangedEventHandler? PropertyChanged;
 
 
         /// <summary>

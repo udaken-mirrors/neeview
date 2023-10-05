@@ -169,7 +169,7 @@ namespace NeeView
 
 
 
-            _windowController.AddPropertyChanged(nameof(MainWindowController.AutoHideMode),
+            _windowController.SubscribePropertyChanged(nameof(MainWindowController.AutoHideMode),
                 (s, e) => AutoHideModeChanged());
 
             // initialize routed commands

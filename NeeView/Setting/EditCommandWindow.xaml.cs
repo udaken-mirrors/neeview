@@ -1,4 +1,5 @@
-﻿using NeeLaboratory.Windows.Input;
+﻿using NeeLaboratory.Generators;
+using NeeLaboratory.Windows.Input;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -30,24 +31,9 @@ namespace NeeView.Setting
     /// <summary>
     /// EditCommandWindow.xaml の相互作用ロジック
     /// </summary>
+    [NotifyPropertyChanged]
     public partial class EditCommandWindow : Window, INotifyPropertyChanged, INotifyMouseHorizontalWheelChanged
     {
-        #region PropertyChanged
-
-        public event PropertyChangedEventHandler? PropertyChanged;
-
-        protected void RaisePropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string? name = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
-        }
-
-        public void AddPropertyChanged(string propertyName, PropertyChangedEventHandler handler)
-        {
-            PropertyChanged += (s, e) => { if (string.IsNullOrEmpty(e.PropertyName) || e.PropertyName == propertyName) handler?.Invoke(s, e); };
-        }
-
-        #endregion
-
         private CommandCollection _memento;
         private string _key;
 
@@ -66,6 +52,7 @@ namespace NeeView.Setting
         }
 
 
+        public event PropertyChangedEventHandler? PropertyChanged;
         public event MouseWheelEventHandler? MouseHorizontalWheelChanged;
 
 

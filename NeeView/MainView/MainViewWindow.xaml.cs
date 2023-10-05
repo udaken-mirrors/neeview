@@ -1,4 +1,5 @@
-﻿using NeeView.ComponentModel;
+﻿using NeeLaboratory.Generators;
+using NeeView.ComponentModel;
 using NeeView.Runtime.LayoutPanel;
 using NeeView.Windows;
 using System;
@@ -23,32 +24,9 @@ namespace NeeView
     /// <summary>
     /// MainViewWindow.xaml の相互作用ロジック
     /// </summary>
+    [NotifyPropertyChanged]
     public partial class MainViewWindow : Window, INotifyPropertyChanged, IDpiScaleProvider, IHasWindowController, INotifyMouseHorizontalWheelChanged, IMainViewWindow
     {
-        #region INotifyPropertyChanged Support
-
-        public event PropertyChangedEventHandler? PropertyChanged;
-
-        protected bool SetProperty<T>(ref T storage, T value, [System.Runtime.CompilerServices.CallerMemberName] string? propertyName = null)
-        {
-            if (object.Equals(storage, value)) return false;
-            storage = value;
-            this.RaisePropertyChanged(propertyName);
-            return true;
-        }
-
-        protected void RaisePropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string? name = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
-        }
-
-        public void AddPropertyChanged(string propertyName, PropertyChangedEventHandler handler)
-        {
-            PropertyChanged += (s, e) => { if (string.IsNullOrEmpty(e.PropertyName) || e.PropertyName == propertyName) handler?.Invoke(s, e); };
-        }
-
-        #endregion
-
         private readonly DpiScaleProvider _dpiProvider = new();
         private readonly WindowStateManager _windowStateManager;
         private bool _canHideMenu;
@@ -98,6 +76,8 @@ namespace NeeView
             mouseHorizontalWheel.MouseHorizontalWheelChanged += (s, e) => MouseHorizontalWheelChanged?.Invoke(s, e);
         }
 
+
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         public event MouseWheelEventHandler? MouseHorizontalWheelChanged;
 

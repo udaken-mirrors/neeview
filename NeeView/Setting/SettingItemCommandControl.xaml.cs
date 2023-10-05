@@ -1,4 +1,5 @@
 ﻿using NeeLaboratory.ComponentModel;
+using NeeLaboratory.Generators;
 using NeeLaboratory.Windows.Input;
 using NeeView.Data;
 using NeeView.Windows.Property;
@@ -39,32 +40,9 @@ namespace NeeView.Setting
     /// <summary>
     /// SettingItemCommandControl.xaml の相互作用ロジック
     /// </summary>
+    [NotifyPropertyChanged]
     public partial class SettingItemCommandControl : UserControl, INotifyPropertyChanged
     {
-        #region INotifyPropertyChanged Support
-
-        public event PropertyChangedEventHandler? PropertyChanged;
-
-        protected bool SetProperty<T>(ref T storage, T value, [System.Runtime.CompilerServices.CallerMemberName] string? propertyName = null)
-        {
-            if (object.Equals(storage, value)) return false;
-            storage = value;
-            this.RaisePropertyChanged(propertyName);
-            return true;
-        }
-
-        protected void RaisePropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string? name = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
-        }
-
-        public void AddPropertyChanged(string propertyName, PropertyChangedEventHandler handler)
-        {
-            PropertyChanged += (s, e) => { if (string.IsNullOrEmpty(e.PropertyName) || e.PropertyName == propertyName) handler?.Invoke(s, e); };
-        }
-
-        #endregion
-
         // コマンド項目
         public class CommandItem : BindableBase
         {
@@ -110,6 +88,9 @@ namespace NeeView.Setting
             this.Loaded += SettingItemCommandControl_Loaded;
             this.Unloaded += SettingItemCommandControl_Unloaded;
         }
+
+
+        public event PropertyChangedEventHandler? PropertyChanged;
 
 
         #region Commands

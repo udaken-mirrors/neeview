@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NeeLaboratory.Generators;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -11,33 +12,9 @@ namespace NeeView
     /// <summary>
     /// プロパティで構成されたアクセスマップ
     /// </summary>
-    public class PropertyMap : PropertyMapNode, INotifyPropertyChanged, IEnumerable<KeyValuePair<string, PropertyMapNode>>
+    [NotifyPropertyChanged]
+    public partial class PropertyMap : PropertyMapNode, INotifyPropertyChanged, IEnumerable<KeyValuePair<string, PropertyMapNode>>
     {
-        #region INotifyPropertyChanged Support
-
-        public event PropertyChangedEventHandler? PropertyChanged;
-
-        protected bool SetProperty<T>(ref T storage, T value, [System.Runtime.CompilerServices.CallerMemberName] string? propertyName = null)
-        {
-            if (object.Equals(storage, value)) return false;
-            storage = value;
-            this.RaisePropertyChanged(propertyName);
-            return true;
-        }
-
-        protected void RaisePropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string? name = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
-        }
-
-        public void AddPropertyChanged(string propertyName, PropertyChangedEventHandler handler)
-        {
-            PropertyChanged += (s, e) => { if (string.IsNullOrEmpty(e.PropertyName) || e.PropertyName == propertyName) handler?.Invoke(s, e); };
-        }
-
-        #endregion
-
-
         private static readonly PropertyMapConverter _defaultConverter;
         private static readonly PropertyMapOptions _defaultOptions;
 
@@ -100,6 +77,9 @@ namespace NeeView
                 }
             }
         }
+
+
+        public event PropertyChangedEventHandler? PropertyChanged;
 
 
         public object? this[string key]

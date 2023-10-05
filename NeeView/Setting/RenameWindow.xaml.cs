@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NeeLaboratory.Generators;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -31,29 +32,13 @@ namespace NeeView.Setting
     /// <summary>
     /// RenameWindow.xaml の相互作用ロジック
     /// </summary>
+    [NotifyPropertyChanged]
     public partial class RenameWindow : Window, INotifyPropertyChanged
     {
-        #region NotifyPropertyChanged
-        public event System.ComponentModel.PropertyChangedEventHandler? PropertyChanged;
-
-        protected void RaisePropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string? name = null)
-        {
-            PropertyChanged?.Invoke(this, new System.ComponentModel.PropertyChangedEventArgs(name));
-        }
-        #endregion
-
-        #region Property: Text
-        private string _text;
-        public string Text
-        {
-            get { return _text; }
-            set { _text = value; RaisePropertyChanged(); }
-        }
-        #endregion
-
         private readonly RenameWindowParam _param;
+        private string _text;
 
-        //
+
         public RenameWindow(RenameWindowParam param)
         {
             _param = param;
@@ -65,6 +50,17 @@ namespace NeeView.Setting
             this.Loaded += RenameWindow_Loaded;
             this.KeyDown += RenameWindow_KeyDown;
         }
+
+        
+        public event PropertyChangedEventHandler? PropertyChanged;
+
+
+        public string Text
+        {
+            get { return _text; }
+            set { _text = value; RaisePropertyChanged(); }
+        }
+
 
         private void RenameWindow_Loaded(object sender, RoutedEventArgs e)
         {

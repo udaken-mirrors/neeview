@@ -1,4 +1,5 @@
-﻿using NeeView.Text;
+﻿using NeeLaboratory.Generators;
+using NeeView.Text;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -21,32 +22,9 @@ namespace NeeView.Setting
     /// <summary>
     /// SettingItemCollectionControl.xaml の相互作用ロジック
     /// </summary>
+    [NotifyPropertyChanged]
     public partial class SettingItemCollectionControl : UserControl, INotifyPropertyChanged
     {
-        #region INotifyPropertyChanged Support
-
-        public event PropertyChangedEventHandler? PropertyChanged;
-
-        protected bool SetProperty<T>(ref T storage, T value, [System.Runtime.CompilerServices.CallerMemberName] string? propertyName = null)
-        {
-            if (object.Equals(storage, value)) return false;
-            storage = value;
-            this.RaisePropertyChanged(propertyName);
-            return true;
-        }
-
-        protected void RaisePropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string? name = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
-        }
-
-        public void AddPropertyChanged(string propertyName, PropertyChangedEventHandler handler)
-        {
-            PropertyChanged += (s, e) => { if (string.IsNullOrEmpty(e.PropertyName) || e.PropertyName == propertyName) handler?.Invoke(s, e); };
-        }
-
-        #endregion
-
         public SettingItemCollectionControl()
         {
             InitializeComponent();
@@ -59,6 +37,7 @@ namespace NeeView.Setting
         }
 
 
+        public event PropertyChangedEventHandler? PropertyChanged;
         public event EventHandler<CollectionChangeEventArgs>? CollectionChanged;
 
 

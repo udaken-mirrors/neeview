@@ -1,4 +1,5 @@
 ﻿// from https://stackoverflow.com/questions/14948171/how-to-emulate-a-console-in-wpf
+using NeeLaboratory.Generators;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -19,32 +20,9 @@ using System.Windows.Shapes;
 
 namespace NeeView
 {
+    [NotifyPropertyChanged]
     public partial class ConsoleEmulator : UserControl, INotifyPropertyChanged, IDisposable
     {
-        #region INotifyPropertyChanged Support
-
-        public event PropertyChangedEventHandler? PropertyChanged;
-
-        protected bool SetProperty<T>(ref T storage, T value, [System.Runtime.CompilerServices.CallerMemberName] string? propertyName = null)
-        {
-            if (object.Equals(storage, value)) return false;
-            storage = value;
-            this.RaisePropertyChanged(propertyName);
-            return true;
-        }
-
-        protected void RaisePropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string? name = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
-        }
-
-        public void AddPropertyChanged(string propertyName, PropertyChangedEventHandler handler)
-        {
-            PropertyChanged += (s, e) => { if (string.IsNullOrEmpty(e.PropertyName) || e.PropertyName == propertyName) handler?.Invoke(s, e); };
-        }
-
-        #endregion
-
         public readonly static RoutedCommand ClearScreenCommand = new("ClearScreen", typeof(ConsoleEmulator), new InputGestureCollection(new List<InputGesture>() { new KeyGesture(Key.L, ModifierKeys.Control) }));
 
         private string _consoleInput = "";
@@ -70,6 +48,9 @@ namespace NeeView
 
             this.CommandBindings.Add(new CommandBinding(ClearScreenCommand, ClearScreen, (s, e) => e.CanExecute = true));
         }
+
+
+        public event PropertyChangedEventHandler? PropertyChanged;
 
 
         public IConsoleHost ConsoleHost
@@ -119,7 +100,6 @@ namespace NeeView
 
         public static readonly DependencyProperty FirstMessageProperty =
             DependencyProperty.Register("FirstMessage", typeof(string), typeof(ConsoleEmulator), new PropertyMetadata(null));
-
 
 
         public bool IsPromptEnabled

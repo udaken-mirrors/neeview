@@ -1,4 +1,5 @@
-﻿using NeeView.Windows;
+﻿using NeeLaboratory.Generators;
+using NeeView.Windows;
 using NeeView.Windows.Media;
 using System;
 using System.ComponentModel;
@@ -21,36 +22,13 @@ namespace NeeView
     /// <summary>
     /// SidePanelFrameView.xaml の相互作用ロジック
     /// </summary>
+    [NotifyPropertyChanged]
     public partial class SidePanelFrameView : UserControl, INotifyPropertyChanged
     {
         private const double _splitterWidth = 8.0;
         private const double _panelDefaultWidth = 300.0;
         private const double _panelMinWidth = 100.0;
 
-
-        #region INotifyPropertyChanged Support
-
-        public event PropertyChangedEventHandler? PropertyChanged;
-
-        protected bool SetProperty<T>(ref T storage, T value, [System.Runtime.CompilerServices.CallerMemberName] string? propertyName = null)
-        {
-            if (object.Equals(storage, value)) return false;
-            storage = value;
-            this.RaisePropertyChanged(propertyName);
-            return true;
-        }
-
-        protected void RaisePropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string? name = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
-        }
-
-        public void AddPropertyChanged(string propertyName, PropertyChangedEventHandler handler)
-        {
-            PropertyChanged += (s, e) => { if (string.IsNullOrEmpty(e.PropertyName) || e.PropertyName == propertyName) handler?.Invoke(s, e); };
-        }
-
-        #endregion
 
         #region DependencyProperties
 
@@ -208,6 +186,9 @@ namespace NeeView
 
             this.Root.DataContext = this;
         }
+
+
+        public event PropertyChangedEventHandler? PropertyChanged;
 
 
         /// <summary>

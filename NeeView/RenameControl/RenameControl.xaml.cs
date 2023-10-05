@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NeeLaboratory.Generators;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -16,33 +17,9 @@ namespace NeeView
     /// <summary>
     /// RenameControl.xaml の相互作用ロジック
     /// </summary>
+    [NotifyPropertyChanged]
     public partial class RenameControl : UserControl, INotifyPropertyChanged
     {
-        #region INotifyPropertyChanged Support
-
-        public event PropertyChangedEventHandler? PropertyChanged;
-
-        protected bool SetProperty<T>(ref T storage, T value, [System.Runtime.CompilerServices.CallerMemberName] string? propertyName = null)
-        {
-            if (object.Equals(storage, value)) return false;
-            storage = value;
-            this.RaisePropertyChanged(propertyName);
-            return true;
-        }
-
-        protected void RaisePropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string? name = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
-        }
-
-        public void AddPropertyChanged(string propertyName, PropertyChangedEventHandler handler)
-        {
-            PropertyChanged += (s, e) => { if (string.IsNullOrEmpty(e.PropertyName) || e.PropertyName == propertyName) handler?.Invoke(s, e); };
-        }
-
-        #endregion
-
-
         private static readonly char[] _invalidChars = System.IO.Path.GetInvalidFileNameChars();
         private readonly RenameManager _manager;
         private int _keyCount;
@@ -75,6 +52,8 @@ namespace NeeView
             this.RenameTextBox.DataContext = this;
         }
 
+
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         /// <summary>
         /// 終了時イベント

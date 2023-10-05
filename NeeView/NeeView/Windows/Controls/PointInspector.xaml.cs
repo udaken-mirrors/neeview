@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NeeLaboratory.Generators;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -19,16 +20,11 @@ namespace NeeView.Windows.Controls
     /// <summary>
     /// PointInspector.xaml の相互作用ロジック
     /// </summary>
+    [NotifyPropertyChanged]
     public partial class PointInspector : UserControl, INotifyPropertyChanged
     {
-        #region NotifyPropertyChanged
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        protected void RaisePropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string? name = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
-        }
-        #endregion
 
         public Point Point
         {

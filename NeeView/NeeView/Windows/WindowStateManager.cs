@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NeeLaboratory.Generators;
+using System;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Shell;
@@ -6,32 +7,9 @@ using System.Windows.Shell;
 namespace NeeView.Windows
 {
 
-    public class WindowStateManager : INotifyPropertyChanged
+    [NotifyPropertyChanged]
+    public partial class WindowStateManager : INotifyPropertyChanged
     {
-        #region INotifyPropertyChanged Support
-
-        public event PropertyChangedEventHandler? PropertyChanged;
-
-        protected bool SetProperty<T>(ref T storage, T value, [System.Runtime.CompilerServices.CallerMemberName] string? propertyName = null)
-        {
-            if (object.Equals(storage, value)) return false;
-            storage = value;
-            this.RaisePropertyChanged(propertyName);
-            return true;
-        }
-
-        protected void RaisePropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string? name = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
-        }
-
-        public void AddPropertyChanged(string propertyName, PropertyChangedEventHandler handler)
-        {
-            PropertyChanged += (s, e) => { if (string.IsNullOrEmpty(e.PropertyName) || e.PropertyName == propertyName) handler?.Invoke(s, e); };
-        }
-
-        #endregion
-
         private readonly Window _window;
         private WindowStateEx _previousState;
         private WindowStateEx _currentState;
@@ -39,7 +17,6 @@ namespace NeeView.Windows
         private bool _isFullScreenMode;
         private bool _isFullScreen;
         private bool _isProgress;
-
 
 
         public WindowStateManager(Window window)
@@ -50,6 +27,7 @@ namespace NeeView.Windows
         }
 
 
+        public event PropertyChangedEventHandler? PropertyChanged;
         public event EventHandler<WindowStateExChangedEventArgs>? StateChanged;
         public event EventHandler<WindowStateExChangedEventArgs>? StateEditing;
         public event EventHandler<WindowStateExChangedEventArgs>? StateEdited;
