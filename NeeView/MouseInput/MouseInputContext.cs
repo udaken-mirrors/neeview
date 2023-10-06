@@ -8,7 +8,7 @@ namespace NeeView
 {
     public class MouseInputContext : BindableBase 
     {
-        public MouseInputContext(FrameworkElement sender, MouseGestureCommandCollection? gestureCommandCollection, IDragTransformContextFactory? dragTransformContextFactory, IDragTransformControl? dragTransformControl, LoupeContext? loupe)
+        public MouseInputContext(FrameworkElement sender, MouseGestureCommandCollection? gestureCommandCollection, IDragTransformContextFactory? dragTransformContextFactory, IDragTransformControl? dragTransformControl, LoupeContext? loupe, ViewScrollContext? viewScrollContext)
         {
             this.Sender = sender;
             this.GestureCommandCollection = gestureCommandCollection;
@@ -17,6 +17,7 @@ namespace NeeView
             //this.DragTransform = dragTransform;
             //this.LoupeTransform = loupeTransform;
             this.Loupe = loupe;
+            this.ViewScrollContext = viewScrollContext;
         }
 
 
@@ -26,6 +27,8 @@ namespace NeeView
         public FrameworkElement Sender { get; init; }
 
         public LoupeContext? Loupe { get; init; }
+
+        public ViewScrollContext? ViewScrollContext { get; init; }
 
         /// <summary>
         /// ジェスチャーコマンドテーブル

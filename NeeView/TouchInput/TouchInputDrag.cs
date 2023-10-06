@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NeeView.Threading;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.Serialization;
@@ -14,6 +15,8 @@ namespace NeeView
     public class TouchInputDrag : TouchInputBase
     {
         private readonly TouchDragManipulation _manipulation;
+        private readonly InstantDelayAction _delayAction = new();
+
 
         /// <summary>
         /// コンストラクター
@@ -24,8 +27,9 @@ namespace NeeView
             _manipulation = new TouchDragManipulation(context);
         }
 
-        //
+
         public TouchDragManipulation Manipulation => _manipulation;
+
 
         /// <summary>
         /// 状態開始
@@ -38,16 +42,14 @@ namespace NeeView
             _manipulation.Start();
         }
 
-
         /// <summary>
         /// 状態終了
         /// </summary>
         /// <param name="sender"></param>
         public override void OnClosed(FrameworkElement sender)
         {
-            _manipulation.Stop(System.Environment.TickCount);
+            _delayAction.Cancel();
         }
-
 
         /// <summary>
         /// マウスボタンが押されたときの処理
@@ -56,6 +58,9 @@ namespace NeeView
         /// <param name="e"></param>
         public override void OnStylusDown(object? sender, StylusDownEventArgs e)
         {
+            _delayAction.Cancel();
+            _context.ViewScrollContext?.CancelScroll();
+
             _manipulation.Start();
         }
 
@@ -69,14 +74,16 @@ namespace NeeView
             // タッチされなくなったら解除
             if (_context.TouchMap.Count < 1)
             {
-                ResetState();
+                _manipulation.Stop(System.Environment.TickCount);
+
+                var span = _context.ViewScrollContext?.GetScrollSpan() ?? TimeSpan.Zero;
+                _delayAction.Request(() => ResetState(), span);
             }
             else
             {
                 _manipulation.Start();
             }
         }
-
 
         /// <summary>
         /// マウス移動処理

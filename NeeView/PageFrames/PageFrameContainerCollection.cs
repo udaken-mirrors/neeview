@@ -65,23 +65,25 @@ namespace NeeView.PageFrames
     public partial class PageFrameContainerCollection : IEnumerable<PageFrameContainer>
     {
         private readonly LinkedList<PageFrameContainer> _containers = new();
+        private readonly PageFrameContext _context;
         private readonly PageFrameFactory _frameFactory;
         private readonly PageFrameContainerFactory _containerFactory;
         private readonly PageFrameContainerAnchor _anchor;
         private IInitializable<PageFrameContainer>? _containerInitializer;
 
 
-        public PageFrameContainerCollection(PageFrameFactory frameFactory, PageFrameContainerFactory containerFactory)
+        public PageFrameContainerCollection(PageFrameContext context, PageFrameFactory frameFactory, PageFrameContainerFactory containerFactory)
         {
+            _context = context;
             _frameFactory = frameFactory;
             _containerFactory = containerFactory;
 
             var firstActivity = new PageFrameActivity();
-            FirstTerminate = new PageFrameContainer(new TerminalPageFrameContent(_frameFactory.GetFirstTerminalRange(), firstActivity), firstActivity);
+            FirstTerminate = new PageFrameContainer(new TerminalPageFrameContent(_frameFactory.GetFirstTerminalRange(), firstActivity), firstActivity, _context.ViewScrollContext);
             _containers.AddFirst(FirstTerminate);
 
             var lastActivity = new PageFrameActivity();
-            LastTerminate = new PageFrameContainer(new TerminalPageFrameContent(_frameFactory.GetLastTerminalRange(), lastActivity), lastActivity);
+            LastTerminate = new PageFrameContainer(new TerminalPageFrameContent(_frameFactory.GetLastTerminalRange(), lastActivity), lastActivity, _context.ViewScrollContext);
             _containers.AddLast(LastTerminate);
 
             _anchor = new PageFrameContainerAnchor(this);

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NeeView.Threading;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -16,6 +17,8 @@ namespace NeeView
     public class MouseInputDrag : MouseInputBase
     {
         readonly IDragTransformControl _dragTransformControl;
+        private readonly InstantDelayAction _delayAction = new();
+
 
         public MouseInputDrag(MouseInputContext context) : base(context)
         {
@@ -34,6 +37,7 @@ namespace NeeView
 
         public override void OnClosed(FrameworkElement sender)
         {
+            _delayAction.Cancel();
         }
 
         public override void OnCaptureOpened(FrameworkElement sender)
@@ -48,7 +52,10 @@ namespace NeeView
 
         public override void OnMouseButtonDown(object? sender, MouseButtonEventArgs e)
         {
-            // nop.
+            _delayAction.Cancel();
+            _context.ViewScrollContext?.CancelScroll();
+
+            OnMouseMove(sender, e);
         }
 
         public override void OnMouseButtonUp(object? sender, MouseButtonEventArgs e)
@@ -58,7 +65,8 @@ namespace NeeView
             // ドラッグ解除
             if (CreateMouseButtonBits(e) == MouseButtonBits.None)
             {
-                ResetState();
+                var span = _context.ViewScrollContext?.GetScrollSpan() ?? TimeSpan.Zero;
+                _delayAction.Request(() => ResetState(), span);
             }
         }
 

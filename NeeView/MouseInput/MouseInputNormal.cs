@@ -1,6 +1,4 @@
-﻿using NeeLaboratory.ComponentModel;
-using NeeView.Windows.Property;
-using System;
+﻿using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Runtime.Serialization;
@@ -234,19 +232,24 @@ namespace NeeView
             // drag check
             if (deltaX > Config.Current.Mouse.MinimumDragDistance || deltaY > Config.Current.Mouse.MinimumDragDistance)
             {
-                // ドラッグ開始。処理をドラッグ系に移行
-                var action = DragActionTable.Current.GetActionType(new DragKey(CreateMouseButtonBits(e), Keyboard.Modifiers));
-                if (string.IsNullOrEmpty(action))
-                {
-                }
-                else if (Config.Current.Mouse.IsGestureEnabled && _context.IsGestureEnabled && action == DragActionTable.GestureDragActionName)
-                {
-                    SetState(MouseInputState.Gesture);
-                }
-                else if (Config.Current.Mouse.IsDragEnabled)
-                {
-                    SetState(MouseInputState.Drag, e);
-                }
+                SwitchToDragState(sender, e);
+            }
+        }
+
+        // ドラッグ開始。処理をドラッグ系に移行
+        private void SwitchToDragState(object? sender, MouseEventArgs e)
+        {
+            var action = DragActionTable.Current.GetActionType(new DragKey(CreateMouseButtonBits(e), Keyboard.Modifiers));
+            if (string.IsNullOrEmpty(action))
+            {
+            }
+            else if (Config.Current.Mouse.IsGestureEnabled && _context.IsGestureEnabled && action == DragActionTable.GestureDragActionName)
+            {
+                SetState(MouseInputState.Gesture);
+            }
+            else if (Config.Current.Mouse.IsDragEnabled)
+            {
+                SetState(MouseInputState.Drag, e);
             }
         }
 

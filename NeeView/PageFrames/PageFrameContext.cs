@@ -21,12 +21,13 @@ namespace NeeView.PageFrames
         private bool _disposedValue;
         private readonly BookShareContext _share;
         private readonly BooleanLockValue _isSnapAnchor = new();
+        private readonly ViewScrollContext _viewScrollContext;
 
-
-        public PageFrameContext(Config config, BookShareContext share)
+        public PageFrameContext(Config config, BookShareContext share, ViewScrollContext viewScrollContext)
         {
             _config = config;
             _share = share;
+            _viewScrollContext = viewScrollContext;
             _bookSetting = _config.BookSetting;
 
             _frameProfile = new PageFrameProfile(_config);
@@ -43,8 +44,7 @@ namespace NeeView.PageFrames
             _disposables.Add(ImageCustomSizeConfig.SubscribePropertyChanged((s, e) => RaisePropertyChanged(nameof(ImageCustomSizeConfig))));
             _disposables.Add(ImageTrimConfig.SubscribePropertyChanged((s, e) => RaisePropertyChanged(nameof(ImageTrimConfig))));
             _disposables.Add(ImageDotKeepConfig.SubscribePropertyChanged((s, e) => RaisePropertyChanged(nameof(ImageDotKeepConfig))));
-
-
+            _disposables.Add(() => _viewScrollContext.Clear());
         }
 
 
@@ -59,7 +59,7 @@ namespace NeeView.PageFrames
 
 
         public BookShareContext ShareContext => _share;
-
+        public ViewScrollContext ViewScrollContext => _viewScrollContext;
 
         public PageFrameOrientation FrameOrientation => _config.Book.Orientation;
         public double FrameMargin => IsStaticFrame ? 1.0 : _config.Book.FrameSpace;

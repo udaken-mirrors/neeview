@@ -53,17 +53,32 @@ namespace NeeView.Threading
                 Cancel();
 
                 _action = action ?? throw new ArgumentNullException(nameof(action));
-                _timer.Interval = delay;
-                _timer.Start();
+
+                if (TimeSpan.Zero < delay)
+                {
+                    _timer.Interval = delay;
+                    _timer.Start();
+                }
+                else
+                {
+                    Flush();
+                }
             }
         }
 
-        public void Cancel()
+        public bool Cancel()
         {
             lock (_lock)
             {
                 _timer.Stop();
-                _action = null;
+
+                if (_action is not null)
+                {
+                    _action = null;
+                    return true;
+                }
+
+                return false;
             }
         }
 

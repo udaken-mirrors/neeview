@@ -37,7 +37,7 @@ namespace NeeView.PageFrames
 
             var transform = new PageFrameTransformAccessor(_transformMap, rawTransform);
             var content = new PageFrameContent(_viewContentFactory, _context, frame, activity, transform, _loupeContext, _baseScaleTransform);
-            var container = new PageFrameContainer(content, activity);
+            var container = new PageFrameContainer(content, activity, _context.ViewScrollContext);
             return container;
         }
 

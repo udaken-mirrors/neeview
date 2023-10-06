@@ -47,7 +47,7 @@ namespace NeeView.PageFrames
 
 
 
-    public class PageFrameContainer : Grid, IDisposable, IComparable<PageFrameContainer>, INotifyTransformChanged
+    public class PageFrameContainer : Grid, IDisposable, IComparable<PageFrameContainer>, INotifyTransformChanged, IScaleControl, IAngleControl, IPointControl, IFlipControl, IScrollable
     {
         private double _ms = 0.0;
 
@@ -57,19 +57,20 @@ namespace NeeView.PageFrames
         private double _height;
         private bool _disposedValue;
 
-        private PageFrameActivity _activity;
-        private ContentControl _contentControl;
+        private readonly PageFrameActivity _activity;
+        private readonly ViewScrollContext _viewScrollContext;
+        private readonly ContentControl _contentControl;
         private IPageFrameContent _content;
 
 #if DEBUG
-        private TextBlock _textBlock;
+        private readonly TextBlock _textBlock;
 #endif
 
 
-        public PageFrameContainer(IPageFrameContent content, PageFrameActivity activity)
+        public PageFrameContainer(IPageFrameContent content, PageFrameActivity activity, ViewScrollContext viewScrollContext)
         {
             _activity = activity;
-
+            _viewScrollContext = viewScrollContext;
             HorizontalAlignment = HorizontalAlignment.Center;
             VerticalAlignment = VerticalAlignment.Center;
             ClipToBounds = true;
@@ -206,6 +207,18 @@ namespace NeeView.PageFrames
                 Y = value.Y - _height * 0.5;
             }
         }
+
+        public Point Point => Transform.Point;
+
+        public Point ViewPoint => new Point(Transform.TransformView.Value.OffsetX, Transform.TransformView.Value.OffsetY);
+
+        public double Angle => Transform.Angle;
+
+        public double Scale => Transform.Scale;
+
+        public bool IsFlipHorizontal => Transform.IsFlipHorizontal;
+
+        public bool IsFlipVertical => Transform.IsFlipVertical;
 
 
         public int CompareTo(PageFrameContainer? other)
@@ -455,6 +468,62 @@ namespace NeeView.PageFrames
             this.VerticalAlignment = VerticalAlignment.Center;
             SetX(-Width * 0.5, 0.0);
             SetY(-Height * 0.5, 0.0);
+        }
+
+        public void SetPoint(Point value, TimeSpan span)
+        {
+            SetPoint(value, span, null, null, false);
+        }
+
+        public void SetPoint(Point value, TimeSpan span, IEasingFunction? easeX, IEasingFunction? easeY)
+        {
+            SetPoint(value, span, easeX, easeY, false);
+        }
+
+        public void SetPoint(Point value, TimeSpan span, IEasingFunction? easeX, IEasingFunction? easeY, bool inertia)
+        {
+            _viewScrollContext.AddScrollTime(this, inertia ? span : TimeSpan.Zero);
+            Transform.SetPoint(value, span, easeX, easeY);
+        }
+
+        public void AddPoint(Vector value, TimeSpan span)
+        {
+            SetPoint(Point + value, span, null, null, false);
+        }
+
+        public void AddPoint(Vector value, TimeSpan span, IEasingFunction? easeX, IEasingFunction? easeY)
+        {
+            SetPoint(Point + value, span, easeX, easeY, false);
+        }
+
+        public void AddPoint(Vector value, TimeSpan span, IEasingFunction? easeX, IEasingFunction? easeY, bool inertia)
+        {
+            SetPoint(Point + value, span, easeX, easeY, inertia);
+        }
+
+        public void SetAngle(double value, TimeSpan span)
+        {
+            Transform.SetAngle(value, span);
+        }
+
+        public void SetScale(double value, TimeSpan span)
+        {
+            Transform.SetScale(value, span);
+        }
+
+        public void SetFlipHorizontal(bool value, TimeSpan span)
+        {
+            Transform.SetFlipHorizontal(value, span);
+        }
+
+        public void SetFlipVertical(bool value, TimeSpan span)
+        {
+            Transform.SetFlipVertical(value, span);
+        }
+
+        public void CancelScroll()
+        {
+            SetPoint(ViewPoint, TimeSpan.Zero);
         }
     }
 

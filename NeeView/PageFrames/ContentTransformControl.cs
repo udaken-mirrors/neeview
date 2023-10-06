@@ -25,32 +25,32 @@ namespace NeeView.PageFrames
         }
 
 
-        public double Scale => _container.Transform.Scale;
-        public double Angle => _container.Transform.Angle;
-        public Point Point => _container.Transform.Point;
-        public bool IsFlipHorizontal => _container.Transform.IsFlipHorizontal;
-        public bool IsFlipVertical => _container.Transform.IsFlipVertical;
+        public double Scale => _container.Scale;
+        public double Angle => _container.Angle;
+        public Point Point => _container.Point;
+        public bool IsFlipHorizontal => _container.IsFlipHorizontal;
+        public bool IsFlipVertical => _container.IsFlipVertical;
 
 
         public void SetFlipHorizontal(bool value, TimeSpan span)
         {
-            _container.Transform.SetFlipHorizontal(value, span);
+            _container.SetFlipHorizontal(value, span);
         }
 
         public void SetFlipVertical(bool value, TimeSpan span)
         {
-            _container.Transform.SetFlipVertical(value, span);
+            _container.SetFlipVertical(value, span);
         }
 
         public void SetScale(double value, TimeSpan span)
         {
-            _container.Transform.SetScale(value, span);
+            _container.SetScale(value, span);
             _scrollLock.Unlock();
         }
 
         public void SetAngle(double value, TimeSpan span)
         {
-            _container.Transform.SetAngle(value, span);
+            _container.SetAngle(value, span);
             _scrollLock.Unlock();
         }
 
@@ -62,7 +62,7 @@ namespace NeeView.PageFrames
         public void SetPoint(Point value, TimeSpan span, IEasingFunction? easeX, IEasingFunction? easeY)
         {
             _context.IsSnapAnchor.Reset();
-            _container.Transform.SetPoint(value, span, easeX, easeY);
+            _container.SetPoint(value, span, easeX, easeY);
         }
 
         public void AddPoint(Vector value, TimeSpan span)
@@ -74,7 +74,7 @@ namespace NeeView.PageFrames
         {
             _context.IsSnapAnchor.Reset();
             var delta = RevisePositionDelta(value);
-            _container.Transform.SetPoint(_container.Transform.Point + delta, span, easeX, easeY);
+            _container.SetPoint(_container.Point + delta, span, easeX, easeY);
         }
 
         public void InertiaPoint(Vector velocity, double acceleration)
@@ -83,9 +83,9 @@ namespace NeeView.PageFrames
 
             _context.IsSnapAnchor.Reset();
             var inertiaEaseFactory = new InertiaEaseFactory(GetScrollLockHit, GetAreaLimitHit);
-            var multiEaseSet = inertiaEaseFactory.Create(_container.Transform.Point, velocity, acceleration);
+            var multiEaseSet = inertiaEaseFactory.Create(_container.Point, velocity, acceleration);
             if (!multiEaseSet.IsValid) return;
-            _container.Transform.AddPoint(multiEaseSet.Delta, TimeSpan.FromMilliseconds(multiEaseSet.Milliseconds), multiEaseSet.EaseX, multiEaseSet.EaseY);
+            _container.AddPoint(multiEaseSet.Delta, TimeSpan.FromMilliseconds(multiEaseSet.Milliseconds), multiEaseSet.EaseX, multiEaseSet.EaseY, true);
         }
 
         public void ResetInertia()
@@ -139,7 +139,7 @@ namespace NeeView.PageFrames
             var contentRect = _container.GetContentRect();
 
             var areaLimit = new ScrollAreaLimit(contentRect, _containerRect);
-            _container.Transform.SetPoint(areaLimit.SnapView(false), TimeSpan.Zero);
+            _container.SetPoint(areaLimit.SnapView(false), TimeSpan.Zero);
         }
     }
 }

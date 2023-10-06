@@ -9,19 +9,20 @@ namespace NeeView
 {
     public class TouchInputContext
     {
-        public TouchInputContext(FrameworkElement sender, MouseGestureCommandCollection? gestureCommandCollection, IDragTransformContextFactory? dragTransformContextFactory, IDragTransformControl? dragTransformControl, LoupeContext? loupe)
+        public TouchInputContext(FrameworkElement sender, MouseGestureCommandCollection? gestureCommandCollection, IDragTransformContextFactory? dragTransformContextFactory, IDragTransformControl? dragTransformControl, LoupeContext? loupe, ViewScrollContext? viewScrollContext)
         {
             this.Sender = sender;
             this.GestureCommandCollection = gestureCommandCollection;
             this.DragTransformContextFactory = dragTransformContextFactory;
             this.DragTransformControl = dragTransformControl;
             this.Loupe = loupe;
-
+            this.ViewScrollContext = viewScrollContext;
         }
 
 
         public LoupeContext? Loupe { get; init; }
 
+        public ViewScrollContext? ViewScrollContext { get; init; }
 
         /// <summary>
         /// イベント受取エレメント

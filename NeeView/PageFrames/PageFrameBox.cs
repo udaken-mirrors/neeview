@@ -93,7 +93,7 @@ namespace NeeView.PageFrames
             var baseScaleTransform = new BaseScaleTransform(_context.ViewConfig);
             _disposables.Add(baseScaleTransform);
             var containerFactory = new PageFrameContainerFactory(_context, _transformMap, _viewSourceMap, loupeContext, baseScaleTransform);
-            _containers = new PageFrameContainerCollection(frameFactory, containerFactory);
+            _containers = new PageFrameContainerCollection(_context, frameFactory, containerFactory);
             _rectMath = new PageFrameContainerCollectionRectMath(_context, _containers);
             _layout = new PageFrameContainerLayout(_context, _containers);
 

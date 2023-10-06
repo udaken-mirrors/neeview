@@ -113,6 +113,8 @@ namespace NeeView
         public event EventHandler<ViewPageChangedEventArgs>? ViewPageChanged;
 
 
+        public ViewScrollContext ViewScrollContext { get; } = new();
+
         public bool IsEnabled => _box != null;
 
         public bool IsLoading => _isLoading;
@@ -249,7 +251,7 @@ namespace NeeView
 
             _book = book;
 
-            _context = new PageFrameContext(_config, _shareContext);
+            _context = new PageFrameContext(_config, _shareContext, ViewScrollContext);
             _bookContext = new BookContext(_book);
 
             _box = new PageFrameBox(_context, _bookContext);

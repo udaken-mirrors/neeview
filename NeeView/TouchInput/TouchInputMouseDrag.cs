@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NeeView.Threading;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.Serialization;
@@ -13,6 +14,7 @@ namespace NeeView
     public class TouchInputMouseDrag : TouchInputBase
     {
         private readonly IDragTransformControl _drag;
+        private readonly InstantDelayAction _delayAction = new();
         private TouchContext? _touch;
 
 
@@ -48,8 +50,8 @@ namespace NeeView
         /// <param name="sender"></param>
         public override void OnClosed(FrameworkElement sender)
         {
+            _delayAction.Cancel();
         }
-
 
         /// <summary>
         /// マウスボタンが押されたときの処理
@@ -63,6 +65,16 @@ namespace NeeView
             {
                 SetState(TouchInputState.Drag, null);
             }
+            else
+            {
+                _delayAction.Cancel();
+                _context.ViewScrollContext?.CancelScroll();
+
+                _context.TouchMap.TryGetValue(e.StylusDevice, out _touch);
+                if (_touch == null) return;
+
+                UpdateDragState(MouseButtonBits.LeftButton, e, DragActionUpdateOptions.None);
+            }
         }
 
         /// <summary>
@@ -73,7 +85,9 @@ namespace NeeView
         public override void OnStylusUp(object sender, StylusEventArgs e)
         {
             UpdateDragState(MouseButtonBits.None, e, DragActionUpdateOptions.None);
-            SetState(TouchInputState.Normal, null);
+
+            var span = _context.ViewScrollContext?.GetScrollSpan() ?? TimeSpan.Zero;
+            _delayAction.Request(() => SetState(TouchInputState.Normal, null), span);
         }
 
         /// <summary>

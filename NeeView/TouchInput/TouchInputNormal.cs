@@ -163,7 +163,6 @@ namespace NeeView
             }
         }
 
-        //
         private void SetState(TouchAction action)
         {
             if (_touch is null) return;
@@ -184,6 +183,5 @@ namespace NeeView
                     break;
             }
         }
-
     }
 }

@@ -1,12 +1,10 @@
 ﻿using NeeLaboratory.ComponentModel;
 using NeeLaboratory.Generators;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Diagnostics;
 using System.Globalization;
-using System.Linq;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
@@ -18,7 +16,7 @@ using System.Windows.Media.Animation;
 namespace NeeView.PageFrames
 {
     [NotifyPropertyChanged]
-    public partial class PageFrameScrollViewer : Grid, IPointControl, INotifyPropertyChanged
+    public partial class PageFrameScrollViewer : Grid, IPointControl, INotifyPropertyChanged, IScrollable
     {
         private readonly PageFrameContext _context;
         private readonly Canvas _rootCanvas;
@@ -47,10 +45,6 @@ namespace NeeView.PageFrames
             Children.Add(_rootCanvas);
 
             _rootCanvas.Children.Add(_canvas);
-
-            this.Background = Brushes.Transparent;
-            this.PreviewMouseDown += PageFrameScrollViewer_PreviewMouseDown;
-            this.PreviewStylusDown += PageFrameScrollViewer_PreviewStylusDown;
 
 #if DEBUG
             // [DEV]
@@ -134,13 +128,15 @@ namespace NeeView.PageFrames
             SetPoint(value, span, easeX, easeY, false);
         }
 
-        public void SetPoint(Point value, TimeSpan span, IEasingFunction? easeX, IEasingFunction? easeY, bool areaLimit)
+        public void SetPoint(Point value, TimeSpan span, IEasingFunction? easeX, IEasingFunction? easeY, bool inertia)
         {
-            _isAreaLimitEnabled = areaLimit;
+            _isAreaLimitEnabled = inertia;
+
+            _context.ViewScrollContext.AddScrollTime(this, inertia ? span : TimeSpan.Zero);
 
             if (Point == value) return;
 
-            //Debug.WriteLine($"## {{{Point:f0}}} to {{{value:f0}}} ({span.TotalMilliseconds}): areaLimit={areaLimit}");
+            //Debug.WriteLine($"## {{{Point:f0}}} to {{{value:f0}}} ({span.TotalMilliseconds}): inertia={inertia}");
             _transform.SetPoint(value, span, easeX, easeY);
             RaisePropertyChanged(nameof(Point));
         }
@@ -155,9 +151,9 @@ namespace NeeView.PageFrames
             SetPoint(Point + value, span, easeX, easeY, false);
         }
 
-        public void AddPoint(Vector value, TimeSpan span, IEasingFunction? easeX, IEasingFunction? easeY, bool areaLimit)
+        public void AddPoint(Vector value, TimeSpan span, IEasingFunction? easeX, IEasingFunction? easeY, bool inertia)
         {
-            SetPoint(Point + value, span, easeX, easeY, areaLimit);
+            SetPoint(Point + value, span, easeX, easeY, inertia);
         }
 
         public Vector GetVelocity()
@@ -211,19 +207,17 @@ namespace NeeView.PageFrames
             }
         }
 
-        private void PageFrameScrollViewer_PreviewMouseDown(object sender, MouseButtonEventArgs e)
+        public void CancelScroll()
         {
-            if (!_isAreaLimitEnabled) return;
             SetPoint(ViewPoint, TimeSpan.Zero);
         }
-
-        private void PageFrameScrollViewer_PreviewStylusDown(object sender, StylusDownEventArgs e)
-        {
-            if (!_isAreaLimitEnabled) return;
-            SetPoint(ViewPoint, TimeSpan.Zero);
-        }
-
     }
 
 
+
+
+    public interface IScrollable
+    {
+        void CancelScroll();
+    }
 }
