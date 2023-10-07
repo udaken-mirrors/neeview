@@ -1,4 +1,4 @@
-﻿#define LOCAL_DEBUG
+﻿//#define LOCAL_DEBUG
 
 using NeeLaboratory.ComponentModel;
 using System;
@@ -18,6 +18,9 @@ namespace NeeView
         public static long LimitSize => (long)Config.Current.Performance.CacheMemorySize * 1024 * 1024;
 
         public long TotalSize => _contentPool.TotalSize + _pictureSourcePool.TotalSize;
+
+        public long ContentSize => _contentPool.TotalSize;
+        public long ViewSize => _pictureSourcePool.TotalSize;
 
         public bool IsFull => TotalSize >= LimitSize;
 
@@ -72,7 +75,7 @@ namespace NeeView
             if (IsFull)
             {
                 Trace($"Cleanup.PictureSource");
-                _pictureSourcePool.Cleanup(0);
+                _pictureSourcePool.Cleanup(LimitSize / 2);
             }
             RaisePropertyChanged("");
         }
@@ -86,6 +89,7 @@ namespace NeeView
 
             _contentPool.Cleanup(0);
             _pictureSourcePool.Cleanup(0);
+            RaisePropertyChanged("");
         }
 
         [Conditional("LOCAL_DEBUG")]

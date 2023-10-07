@@ -10,11 +10,10 @@ namespace NeeView.PageFrames
     public class ContentCanvasBrushSource : IContentCanvasBrushSource, IDisposable
     {
         private Page? _page;
-        private DpiScaleProvider _dpiScaleProvider;
-
+        private readonly DpiScaleProvider _dpiScaleProvider;
         private bool _disposedValue;
         private IDisposable? _disposable;
-        private DisposableCollection _disposables = new DisposableCollection();
+        private readonly DisposableCollection _disposables = new();
 
         public ContentCanvasBrushSource(DpiScaleProvider dpiScaleProvider)
             : this(dpiScaleProvider, null)
@@ -61,6 +60,7 @@ namespace NeeView.PageFrames
             if (_page is not null)
             {
                 _disposable?.Dispose();
+                _disposable = null;
             }
 
             _page = page;

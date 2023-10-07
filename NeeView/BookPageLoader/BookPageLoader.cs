@@ -1,4 +1,6 @@
-﻿using System;
+﻿//#define LOCAL_DEBUG
+
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -155,7 +157,7 @@ namespace NeeView
 
             lock (_lock)
             {
-                Debug.WriteLine($"** BookPageLoader.LoadAsync: {range}, {direction}");
+                Trace($"LoadAsync: {range}, {direction}");
                 _cancellationTokenSource?.Cancel();
                 _cancellationTokenSource?.Dispose();
                 _cancellationTokenSource = new CancellationTokenSource();
@@ -337,6 +339,12 @@ namespace NeeView
             }
 
             return count;
+        }
+
+        [Conditional("LOCAL_DEBUG")]
+        private void Trace(string s, params object[] args)
+        {
+            Debug.WriteLine($"{this.GetType().Name}: {string.Format(s, args)}");
         }
     }
 

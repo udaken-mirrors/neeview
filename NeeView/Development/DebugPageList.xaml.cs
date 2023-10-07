@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
-using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -22,12 +21,28 @@ namespace NeeView
     /// </summary>
     public partial class DebugPageList : UserControl
     {
+        private DebugPageListViewModel _vm;
+
         public DebugPageList()
         {
             InitializeComponent();
-            this.Root.DataContext = new DevPageListViewModel();
 
+            _vm = new DebugPageListViewModel();
+            this.Root.DataContext = _vm;
+
+            this.Loaded += DebugPageList_Loaded;
+            this.Unloaded += DebugPageList_Unloaded;
+        }
+
+        private void DebugPageList_Loaded(object sender, RoutedEventArgs e)
+        {
             BookOperation.Current.Control.SelectedRangeChanged += BookOperation_SelectedRangeChanged;
+        }
+
+        private void DebugPageList_Unloaded(object sender, RoutedEventArgs e)
+        {
+            BookOperation.Current.Control.SelectedRangeChanged -= BookOperation_SelectedRangeChanged;
+            _vm.Dispose();
         }
 
         private void BookOperation_SelectedRangeChanged(object? sender, EventArgs e)
@@ -49,14 +64,7 @@ namespace NeeView
         }
     }
 
-    public class DevPageListViewModel
-    {
-        public BookOperation BookOperation => BookOperation.Current;
 
-        public DevPageListViewModel()
-        {
-        }
-    }
 
     public class PageContentToPictureSourceMemoryConverter : IValueConverter
     {

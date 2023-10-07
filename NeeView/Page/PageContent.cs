@@ -6,10 +6,13 @@ using System.Windows.Media;
 using System.Diagnostics;
 using NeeView.ComponentModel;
 using NeeView.Threading;
+using System.ComponentModel;
+using NeeLaboratory.Generators;
 
 namespace NeeView
 {
-    public abstract class PageContent : IDataSource, IMemoryElement
+    [NotifyPropertyChanged]
+    public abstract partial class PageContent : IDataSource, IMemoryElement, INotifyPropertyChanged
     {
         public static Size DefaultSize { get; } = new(480, 640);
 
@@ -30,6 +33,9 @@ namespace NeeView
         public PageContentState _state;
         private readonly AsyncLock _asyncLock = new();
         private CancellationTokenSource? _cancellationTokenSource;
+        private object? _data;
+        private long _dataSize;
+        private string? _errorMessage;
 
 
         public PageContent(ArchiveEntry archiveEntry, BookMemoryService? bookMemoryService)
@@ -39,8 +45,10 @@ namespace NeeView
         }
 
 
+        public event PropertyChangedEventHandler? PropertyChanged;
+        
         public event EventHandler? ContentChanged;
-
+        
         public event EventHandler? SizeChanged;
 
 
@@ -51,8 +59,8 @@ namespace NeeView
         /// </summary>
         public PageContentState State
         {
-            get => _state;
-            set => _state = value;
+            get { return _state; }
+            set { SetProperty(ref _state, value); }
         }
 
         public virtual bool IsFileContent => false;
@@ -76,13 +84,12 @@ namespace NeeView
         /// </summary>
         public Size Size
         {
-            get => _size ?? UndefinedSize;
+            get { return _size ?? UndefinedSize; }
             protected set
             {
-                if (_size != value)
+                if (SetProperty(ref _size, value))
                 {
-                    _size = value;
-                    Debug.Assert(_size.Value.Width > 0);
+                    Debug.Assert(_size is not null && _size.Value.Width > 0);
                     SizeChanged?.Invoke(this, EventArgs.Empty);
                 }
             }
@@ -90,9 +97,23 @@ namespace NeeView
 
         public Color Color => PictureInfo?.Color ?? Colors.Black;
 
-        public object? Data { get; private set; }
-        public long DataSize { get; private set; }
-        public string? ErrorMessage { get; private set; }
+        public object? Data
+        {
+            get { return _data; }
+            private set { SetProperty(ref _data, value); }
+        }
+
+        public long DataSize
+        {
+            get { return _dataSize; }
+            private set { SetProperty(ref _dataSize, value); }
+        }
+
+        public string? ErrorMessage
+        {
+            get { return _errorMessage; }
+            private set { SetProperty(ref _errorMessage, value); }
+        }
 
         public bool IsLoaded => Data is not null || IsFailed;
         public bool IsFailed => ErrorMessage is not null;

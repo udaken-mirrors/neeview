@@ -30,6 +30,7 @@ namespace NeeView
             try
             {
                 var streamSource = new ArchiveEntryStreamSource(ArchiveEntry);
+                streamSource.CreateCache();
 
                 // 初回アニメーション判定
                 if (_contentType == PageContentType.None)

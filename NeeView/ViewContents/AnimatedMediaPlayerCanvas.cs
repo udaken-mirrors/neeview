@@ -21,7 +21,7 @@ namespace NeeView
         private BitmapScalingMode? _scalingMode;
         private PageFrameElement _element;
         private ViewContentSize _contentSize;
-        private bool _imageInitialized;
+        //private bool _imageInitialized;
 
         public AnimatedMediaPlayerCanvas(PageFrameElement element, MediaViewData source, ViewContentSize contentSize, Rect viewbox, AnimatedMediaPlayer player)
         {

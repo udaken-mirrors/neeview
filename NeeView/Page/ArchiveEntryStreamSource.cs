@@ -9,7 +9,7 @@ namespace NeeView
     /// </summary>
     public class ArchiveEntryStreamSource : IStreamSource, IHasCache
     {
-        private byte[]? _cache;
+        private ArraySegment<byte> _cache;
 
         public ArchiveEntryStreamSource(ArchiveEntry archiveEntry)
         {
@@ -17,24 +17,18 @@ namespace NeeView
         }
 
         public ArchiveEntry ArchiveEntry { get; }
-        
+
         public long Length => ArchiveEntry.Length;
 
-        public long CacheSize => _cache?.Length ?? 0;
+        public long CacheSize => _cache.Count;
 
         public Stream OpenStream()
         {
-            // 展開処理の重複を避けるため、ファイルシステムエントリ以外はキャッシュを作る
-            if (_cache is null && !ArchiveEntry.HasCache && !ArchiveEntry.IsFileSystem)
-            {
-                using var stream = ArchiveEntry.OpenEntry();
-                _cache = stream.ToArray(0, (int)ArchiveEntry.Length);
-                Debug.Assert(ArchiveEntry.Length == _cache.Length);
-            }
+            CreateCache();
 
-            if (_cache is not null)
+            if (_cache.Array is not null)
             {
-                return new MemoryStream(_cache, false);
+                return new MemoryStream(_cache.Array, _cache.Offset, _cache.Count, false);
             }
             else
             {
@@ -44,9 +38,9 @@ namespace NeeView
 
         public ReadOnlySpan<byte> GetSpan()
         {
-            if (_cache is not null)
+            if (_cache.Array is not null)
             {
-                return new ReadOnlySpan<byte>(_cache);
+                return _cache.AsSpan();
             }
             else
             {
@@ -55,9 +49,40 @@ namespace NeeView
             }
         }
 
+        public void CreateCache()
+        {
+            // 展開処理の重複を避けるため、ファイルシステムエントリ以外はキャッシュを作る
+            if (_cache.Array is not null || ArchiveEntry.HasCache || ArchiveEntry.IsFileSystem) return;
+
+            using var stream = ArchiveEntry.OpenEntry();
+
+            // メモリストリームであればバッファを直接取得
+            if (stream is MemoryStream memoryStream)
+            {
+                if (memoryStream.TryGetBuffer(out _cache))
+                {
+                    return;
+                }
+                else
+                {
+                    Debug.Assert(false, "Unable to obtain stream buffer.");
+                }
+            }
+
+            // バッファが直接取得できなかったときはストリームから生成する
+            var array = stream.ToArray(0, (int)ArchiveEntry.Length);
+            _cache = new ArraySegment<byte>(array);
+            Debug.Assert((int)ArchiveEntry.Length == _cache.Count);
+        }
+
         public void ClearCache()
         {
-            _cache = null;
+            _cache = default;
+        }
+
+        public long GetMemorySize()
+        {
+            return _cache.Count;
         }
     }
 

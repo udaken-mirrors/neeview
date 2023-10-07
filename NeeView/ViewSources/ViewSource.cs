@@ -1,5 +1,7 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Diagnostics;
+using System.Diagnostics.Eventing.Reader;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -10,7 +12,8 @@ using NeeView.Threading;
 
 namespace NeeView
 {
-    public partial class ViewSource : IDataSource, IMemoryElement, IHasImageSource
+    [NotifyPropertyChanged]
+    public partial class ViewSource : IDataSource, IMemoryElement, IHasImageSource, INotifyPropertyChanged
     {
         private readonly PageContent _pageContent;
         private readonly BookMemoryService _bookMemoryService;
@@ -30,11 +33,36 @@ namespace NeeView
         [Subscribable]
         public event EventHandler<DataSourceChangedEventArgs>? DataSourceChanged;
 
+        [Subscribable]
+        public event PropertyChangedEventHandler? PropertyChanged;
 
-        public DataSource DataSource => _data;
+
+
+        public DataSource DataSource
+        {
+            get { return _data; }
+            set
+            {
+                if (SetProperty(ref _data, value))
+                {
+                    if (_data.DataSize > 0)
+                    {
+                        _bookMemoryService.AddPictureSource(this);
+                    }
+                    DataSourceChanged?.Invoke(this, new DataSourceChangedEventArgs(_data));
+
+                    RaisePropertyChanged(nameof(Data));
+                    RaisePropertyChanged(nameof(DataSize));
+                    RaisePropertyChanged(nameof(ErrorMessage));
+                    RaisePropertyChanged(nameof(IsLoaded));
+                    RaisePropertyChanged(nameof(IsFailed));
+                }
+            }
+        }
 
         public object? Data => _data.Data;
         public long DataSize => _data.DataSize;
+
         public string? ErrorMessage => _data.ErrorMessage;
         public bool IsLoaded => Data is not null || IsFailed;
         public bool IsFailed => ErrorMessage is not null;
@@ -154,6 +182,8 @@ namespace NeeView
         {
             lock (_lock)
             {
+                DataSource = data;
+#if false
                 if (_data != data)
                 {
                     _data = data;
@@ -163,6 +193,7 @@ namespace NeeView
                     }
                     DataSourceChanged?.Invoke(this, new DataSourceChangedEventArgs(_data));
                 }
+#endif
             }
         }
     }

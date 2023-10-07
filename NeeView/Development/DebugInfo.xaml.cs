@@ -110,6 +110,7 @@ namespace NeeView
         public BookHub BookHub => BookHub.Current;
         //public ContentRebuild ContentRebuild => MainViewComponent.Current.ContentRebuild;
 
+        public PageFrameBoxPresenter PageFrameBox => PageFrameBoxPresenter.Current;
 
         // 開発用：コンテンツ座標
         private Point _contentPosition;
@@ -183,6 +184,26 @@ namespace NeeView
             if (value is Point point)
             {
                 return $"{(int)point.X,4},{(int)point.Y,4}";
+            }
+            else
+            {
+                return value;
+            }
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class ByteSizeToFormatString : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value is long number)
+            {
+                return $"{number/1024:#,0}";
             }
             else
             {

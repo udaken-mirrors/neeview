@@ -1,4 +1,6 @@
-﻿using System;
+﻿//#define LOCAL_DEBUG
+
+using System;
 using System.ComponentModel;
 using System.Data.Common;
 using System.Diagnostics;
@@ -123,7 +125,7 @@ namespace NeeView
 
             UpdateContent(_viewSource.DataSource);
 
-            Debug.WriteLine($"InitializeContentAsync: {ArchiveEntry}");
+            Trace($"InitializeContentAsync: {ArchiveEntry}");
             RequestLoadViewSource(CancellationToken.None);
         }
 
@@ -159,7 +161,7 @@ namespace NeeView
                 }
             }
 
-            //Debug.WriteLine($"OnSourceChanged: {ArchiveEntry} ({LayoutSize})");
+            Trace($"OnSourceChanged: {ArchiveEntry} ({LayoutSize})");
             OnSourceChanged();
         }
 
@@ -226,7 +228,7 @@ namespace NeeView
         {
             NVDebug.AssertMTA();
             var pictureSize = _viewContentSize.GetPictureSize();
-            //Debug.WriteLine($"ViewContent.LoadViewSourceAsync: {_element.Page}, PictureSize = {pictureSize:f0}");
+            Trace($"LoadViewSourceAsync: {_element.Page}, PictureSize = {pictureSize:f0}");
             await _viewSource.LoadAsync(pictureSize, token);
         }
 
@@ -254,16 +256,16 @@ namespace NeeView
                 switch (data.DataState)
                 {
                     case DataState.None:
-                        Debug.WriteLine($"CreateContent.Ready: {ArchiveEntry}");
+                        Trace($"CreateContent.Ready: {ArchiveEntry}");
                         return new ViewContentData(ViewContentTools.CreateLoadingContent(Element), ViewContentState.Loading);
 
                     case DataState.Loaded:
-                        Debug.WriteLine($"CreateContent.Loaded: {ArchiveEntry}");
+                        Trace($"CreateContent.Loaded: {ArchiveEntry}");
                         Debug.Assert(data.Data is not null);
                         PageContent.UndefinedSize = this.Page.Content.Size;
                         return new ViewContentData(CreateLoadedContent(data.Data), ViewContentState.Loaded);
                     case DataState.Failed:
-                        Debug.WriteLine($"CreateContent.Failed: {ArchiveEntry}");
+                        Trace($"CreateContent.Failed: {ArchiveEntry}");
                         return new ViewContentData(ViewContentTools.CreateErrorContent(Element, data.ErrorMessage), ViewContentState.Failed);
 
                     default:
@@ -299,6 +301,12 @@ namespace NeeView
                 FileViewData => new FileViewContentStrategy(this),
                 _ => throw new NotSupportedException(),
             };
+        }
+
+        [Conditional("LOCAL_DEBUG")]
+        private void Trace(string s, params object[] args)
+        {
+            Debug.WriteLine($"{this.GetType().Name}: {string.Format(s, args)}");
         }
     }
 

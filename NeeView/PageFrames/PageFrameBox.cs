@@ -215,6 +215,9 @@ namespace NeeView.PageFrames
             private set { SetProperty(ref _isStarted, value); }
         }
 
+        // NOTE: 開発用に公開
+        public ViewSourceMap ViewSourceMap => _viewSourceMap;
+
 
         public DragTransformContext? CreateDragTransformContext(bool isPointContainer, bool isLoupeTransform)
         {

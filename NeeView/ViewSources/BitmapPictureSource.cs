@@ -45,7 +45,7 @@ namespace NeeView
         {
             token.ThrowIfCancellationRequested();
 
-            Debug.WriteLine($"{ArchiveEntry}, {size:f0}", "CreateImageSource()");
+            //Debug.WriteLine($"{ArchiveEntry}, {size:f0}", "CreateImageSource()");
 
             using var stream = streamSource.OpenStream();
 

@@ -14,7 +14,7 @@ namespace NeeView
         Stream OpenStream();
 
         // TODO: PageContent保持メモリサイズ用。本来の用途ではないのでどうにかする
-        long GetMemorySize() => 0L;
+        long GetMemorySize(); //=> 0L;
     }
 
 

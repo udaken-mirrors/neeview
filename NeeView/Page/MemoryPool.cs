@@ -1,4 +1,6 @@
-﻿using NeeView.Collections.Generic;
+﻿//#define LOCAL_DEBUG
+
+using NeeView.Collections.Generic;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -107,7 +109,7 @@ namespace NeeView
                 AssertTotalSize();
 
                 node.Value.Key.Unload();
-                //Debug.WriteLine($"MemoryPool.Remove: {node.Value.Key.Index}");
+                Trace($"Remove: {node.Value.Key.Index}");
             }
         }
 
@@ -121,7 +123,11 @@ namespace NeeView
             }
         }
 
-
+        [Conditional("LOCAL_DEBUG")]
+        private void Trace(string s, params object[] args)
+        {
+            Debug.WriteLine($"{this.GetType().Name}: {string.Format(s, args)}");
+        }
     }
 
 }

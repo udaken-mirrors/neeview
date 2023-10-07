@@ -1,4 +1,6 @@
-﻿using System;
+﻿//#define LOCAL_DEBUG
+
+using System;
 using System.Diagnostics;
 using System.Threading;
 using System.Windows;
@@ -76,7 +78,7 @@ namespace NeeView
         {
             var viewData = data as ImageViewData ?? throw new InvalidOperationException();
 
-            Debug.WriteLine($"ImageViewContentStrategy: Create={_viewContent.Page}, {_imageControl is not null}");
+            Trace($"Create={_viewContent.Page}, {_imageControl is not null}");
 
             lock (_lock)
             {
@@ -89,6 +91,10 @@ namespace NeeView
             }
         }
 
-
+        [Conditional("LOCAL_DEBUG")]
+        private void Trace(string s, params object[] args)
+        {
+            Debug.WriteLine($"{this.GetType().Name}: {string.Format(s, args)}");
+        }
     }
 }

@@ -250,7 +250,7 @@ namespace NeeView
         }
 
         [Obsolete("Typo json interface"), PropertyMapIgnore]
-        [JsonPropertyName(nameof(MainViewMergin)), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+        [JsonPropertyName("MainViewMergin"), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         public double MainViewMergin_Typo
         {
             get { return 0.0; }

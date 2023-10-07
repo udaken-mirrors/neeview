@@ -119,6 +119,8 @@ namespace NeeView
 
         public bool IsLoading => _isLoading;
 
+        public Book? Book => _book;
+
         public IReadOnlyList<Page> Pages => _box?.Pages ?? new List<Page>();
 
         public PageRange SelectedRange
