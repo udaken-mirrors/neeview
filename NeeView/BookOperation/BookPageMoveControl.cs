@@ -71,7 +71,7 @@ namespace NeeView
 
         public void MovePrevSize(object? sender, int size)
         {
-            _box.MoveTo(new PagePosition(SelectedRange.Min.Index - size, 0), LinkedListDirection.Previous);
+            _box.MoveTo(new PagePosition(SelectedRange.Min.Index - size, 0), LinkedListDirection.Next);
         }
 
         public void MoveNextSize(object? sender, int size)
