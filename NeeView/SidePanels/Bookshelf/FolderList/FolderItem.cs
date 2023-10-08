@@ -443,6 +443,7 @@ namespace NeeView
                 if (disposing)
                 {
                     _archivePage?.Dispose();
+                    _archivePage = null;
                 }
                 _disposedValue = true;
             }
@@ -456,13 +457,15 @@ namespace NeeView
         #endregion
 
 
-        public override Page GetPage()
+        public override Page? GetPage()
         {
             return GetArchivePage();
         }
 
-        private Page GetArchivePage()
+        private Page? GetArchivePage()
         {
+            if (_disposedValue) return null;
+
             if (_archivePage == null)
             {
                 _archivePage = new Page("", new ArchivePageContent(ArchiveEntryUtility.CreateTemporaryEntry(TargetPath.SimplePath), null));

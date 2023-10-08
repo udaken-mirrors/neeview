@@ -42,7 +42,7 @@ namespace NeeView
                 if (!_iconInitialized)
                 {
                     _iconInitialized = true;
-                    DriveIconUtility.CreateDriveIconAsync(Path,
+                    _ = DriveIconUtility.CreateDriveIconAsync(Path,
                         image =>
                         {
                             _icon = image;

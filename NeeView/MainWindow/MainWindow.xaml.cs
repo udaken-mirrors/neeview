@@ -74,7 +74,7 @@ namespace NeeView
 
             // 固定画像初期化
             ThumbnailResource.InitializeStaticImages();
-            FileIconCollection.Current.InitializeAsync();
+            _ = FileIconCollection.Current.InitializeAsync();
 
             // FpReset 念のため
             NVInterop.NVFpReset();

@@ -33,9 +33,11 @@ namespace NeeView
                     mres.Reset();
 
                     var page = item.GetPage();
-                    page.Thumbnail.Clear();
-
-                    jobClient.Order(new List<IPageThumbnailLoader>() { page });
+                    if (page is not null)
+                    {
+                        page.Thumbnail.Clear();
+                        jobClient.Order(new List<IPageThumbnailLoader>() { page });
+                    }
 
                     await mres.WaitHandle.WaitOneAsync();
 

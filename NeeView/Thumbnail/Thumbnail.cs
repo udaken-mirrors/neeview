@@ -36,6 +36,9 @@ namespace NeeView
         /// <summary>
         /// サムネイルデータ
         /// </summary>
+        /// <remarks>
+        /// 非同期に値が変更される可能性があるので取り扱い注意
+        /// </remarks>
         private byte[]? _image;
 
 
@@ -84,13 +87,27 @@ namespace NeeView
         /// <summary>
         /// ユニークイメージ？
         /// </summary>
-        public bool IsUniqueImage => _image == null || (_image != ThumbnailResource.EmptyImage && _image != ThumbnailResource.MediaImage && _image != ThumbnailResource.FolderImage);
+        public bool IsUniqueImage
+        {
+            get
+            {
+                var image = _image;
+                return image == null || (image != ThumbnailResource.EmptyImage && image != ThumbnailResource.MediaImage && image != ThumbnailResource.FolderImage);
+            }
+        }
 
         /// <summary>
         /// 標準イメージ？
         /// バナーでの引き伸ばし許可
         /// </summary>
-        public bool IsNormalImage => _image == null || (_image != ThumbnailResource.MediaImage && _image != ThumbnailResource.FolderImage);
+        public bool IsNormalImage
+        {
+            get
+            {
+                var image = _image;
+                return image == null || (image != ThumbnailResource.MediaImage && image != ThumbnailResource.FolderImage);
+            }
+        }
 
         /// <summary>
         /// View用Bitmapプロパティ
@@ -212,9 +229,11 @@ namespace NeeView
         {
             if (_disposedValue) return;
             if (!IsCacheEnabled || _header == null) return;
-            if (_image == null || _image == ThumbnailResource.EmptyImage || _image == ThumbnailResource.MediaImage || _image == ThumbnailResource.FolderImage) return;
 
-            ThumbnailCache.Current.EntrySaveQueue(_header, _image);
+            var image = _image;
+            if (image == null || image == ThumbnailResource.EmptyImage || image == ThumbnailResource.MediaImage || image == ThumbnailResource.FolderImage) return;
+
+            ThumbnailCache.Current.EntrySaveQueue(_header, image);
         }
 
         /// <summary>
@@ -242,44 +261,47 @@ namespace NeeView
         public ImageSource? CreateBitmap()
         {
             if (_disposedValue) return null;
-            if (_image is null) return null;
+
+            var image = _image;
+            if (image is null) return null;
 
             Touched?.Invoke(this, EventArgs.Empty);
-            if (_image == ThumbnailResource.EmptyImage)
+            if (image == ThumbnailResource.EmptyImage)
             {
                 return ThumbnailResource.EmptyImageSource;
             }
-            else if (_image == ThumbnailResource.MediaImage)
+            else if (image == ThumbnailResource.MediaImage)
             {
                 return ThumbnailResource.MediaBitmapSource;
             }
-            else if (_image == ThumbnailResource.FolderImage)
+            else if (image == ThumbnailResource.FolderImage)
             {
                 return ThumbnailResource.FolderBitmapSource;
             }
             else
             {
-                return DecodeFromImageData(_image);
+                return DecodeFromImageData(image);
             }
         }
 
         public ThumbnailSource CreateSource()
         {
-            if (_image == ThumbnailResource.EmptyImage)
+            var image = _image;
+            if (image == ThumbnailResource.EmptyImage)
             {
                 return new ThumbnailSource(ThumbnailType.Empty);
             }
-            else if (_image == ThumbnailResource.MediaImage)
+            else if (image == ThumbnailResource.MediaImage)
             {
                 return new ThumbnailSource(ThumbnailType.Media);
             }
-            else if (_image == ThumbnailResource.FolderImage)
+            else if (image == ThumbnailResource.FolderImage)
             {
                 return new ThumbnailSource(ThumbnailType.Folder);
             }
             else
             {
-                return new ThumbnailSource(ThumbnailType.Unique, _image);
+                return new ThumbnailSource(ThumbnailType.Unique, image);
             }
         }
 
@@ -328,5 +350,11 @@ namespace NeeView
             GC.SuppressFinalize(this);
         }
         #endregion
+
+        public override string ToString()
+        {
+            var name = _header?.Key ?? "(none)";
+            return $"{name}: LifeSerial={LifeSerial}: Length={_image?.Length ?? 0:#,0}";
+         }
     }
 }

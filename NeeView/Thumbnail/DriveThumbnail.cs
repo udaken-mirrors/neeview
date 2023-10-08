@@ -30,7 +30,7 @@ namespace NeeView
             if (!_initialized)
             {
                 _initialized = true;
-                DriveIconUtility.CreateDriveIconAsync(_path,
+                _ = DriveIconUtility.CreateDriveIconAsync(_path,
                     image =>
                     {
                         _bitmapSource = image.GetBitmapSource(256.0);

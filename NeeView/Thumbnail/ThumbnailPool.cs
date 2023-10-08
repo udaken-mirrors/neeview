@@ -1,4 +1,6 @@
-﻿using NeeView.Collections.Generic;
+﻿//#define LOCAL_DEBUG
+
+using NeeView.Collections.Generic;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -28,7 +30,7 @@ namespace NeeView
             /// <summary>
             /// 寿命シリアル番号
             /// </summary>
-            private readonly int _lifeSerial;
+            private int _lifeSerial;
 
             /// <summary>
             /// コンストラクタ
@@ -45,6 +47,19 @@ namespace NeeView
             /// 寿命シリアル番号が一致すれば有効
             /// </summary>
             public bool IsValid => _lifeSerial == _thumbnail.LifeSerial;
+
+            /// <summary>
+            /// ターゲットサムネイル
+            /// </summary>
+            public Thumbnail Thumbnail => _thumbnail;
+
+            /// <summary>
+            /// 最新情報に更新
+            /// </summary>
+            public void Touch()
+            {
+                _lifeSerial = _thumbnail.LifeSerial;
+            }
 
             /// <summary>
             /// サムネイルクリア
@@ -102,8 +117,18 @@ namespace NeeView
                 _serial = (_serial + 1) & 0x7fffffff;
                 thumbnail.LifeSerial = _serial;
 
-                _collection.Add(new ThumbnailUnit(thumbnail));
-                Cleanup();
+                var last = _collection.LastOrDefault();
+                if (last?.Thumbnail == thumbnail)
+                {
+                    last.Touch();
+                    Trace($"Touch: {thumbnail}, count={_collection.Count}");
+                }
+                else
+                {
+                    _collection.Add(new ThumbnailUnit(thumbnail));
+                    Trace($"Add: {thumbnail}, count={_collection.Count}");
+                    Cleanup();
+                }
             }
         }
 
@@ -116,34 +141,34 @@ namespace NeeView
             // 1st path.
             if (_collection.Count < GetTolerance1()) return false;
 
-            //Debug.WriteLine($"TP Clean: 1st... {_collection.Count}");
+            Trace($"Cleanup... {_collection.Count}");
 
-            var count = _collection.Count;
+            _collection.RemoveAll(e => !e.IsValid);
 
-            _collection = _collection
-                .Where(e => e.IsValid)
-                .ToList();
-
-            Debug.WriteLine($"ThumbnailPool Clean: Level.1: {count} -> {_collection.Count}: No.{_serial}");
+            Trace($"Cleanup: Level.1: {_collection.Count}: No.{_serial}");
 
             // 2nd path.
             if (_collection.Count < GetTolerance2()) return false;
 
             int erase = _collection.Count - Limit;
 
-            _collection
-                .Take(erase)
-                .ForEach(e => e.Clear());
+            for (int i=0; i<erase; i++)
+            {
+                _collection[i].Clear();
+            }
 
-            _collection = _collection
-                .Skip(erase)
-                .ToList();
+            _collection.RemoveRange(0, erase);
 
-            Debug.WriteLine($"ThumbnailPool Clean: Level.2: {_collection.Count}");
+            Trace($"Cleanup: Level.2: {_collection.Count}");
 
             return true;
         }
 
-    }
 
+        [Conditional("LOCAL_DEBUG")]
+        private void Trace(string s, params object[] args)
+        {
+            Debug.WriteLine($"{this.GetType().Name}: {string.Format(s, args)}");
+        }
+    }
 }
