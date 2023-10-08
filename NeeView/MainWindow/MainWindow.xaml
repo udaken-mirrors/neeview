@@ -112,7 +112,7 @@
                                     </local:PageSliderView.Style>
                                 </local:PageSliderView>
 
-                                <local:MediaControlView x:Name="MediaControlView" VerticalAlignment="Bottom" KeyboardNavigation.TabNavigation="Local" TabIndex="3" />
+                                <local:MediaControlView x:Name="MediaControlView" IsMainViewFocusEnabled="True" VerticalAlignment="Bottom" KeyboardNavigation.TabNavigation="Local" TabIndex="3" />
                             </Grid>
                         </ContentControl>
 

@@ -22,6 +22,8 @@ namespace NeeView
 
         public ImageContentControl(PageFrameElement source, ImageSource image, ViewContentSize contentSize, PageBackgroundSource backgroundSource)
         {
+            this.Focusable = false;
+
             _element = source;
             _image = image;
             _contentSize = contentSize;

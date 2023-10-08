@@ -29,10 +29,11 @@
         <Grid x:Name="MainViewCanvas" Margin="{Binding MainViewMargin}">
 
             <!-- メインビュー コンテンツ表示領域 -->
-            <Grid x:Name="View" Background="Transparent" SizeChanged="MainView_SizeChanged" Focusable="True" KeyboardNavigation.IsTabStop="False" FocusVisualStyle="{x:Null}"
+            <Grid x:Name="View" Background="Transparent" SizeChanged="MainView_SizeChanged" Focusable="True" KeyboardNavigation.IsTabStop="True"
+                    FocusVisualStyle="{StaticResource NVFocusVisual}"
                     AllowDrop="True">
 
-                <ContentControl x:Name="Socket" Content="{Binding PageFrameBoxPresenter.View}"/>
+                <ContentControl x:Name="Socket" Content="{Binding PageFrameBoxPresenter.View}" Focusable="False"/>
 
                 <!--
                 <Canvas x:Name="PageCanvas" Width="{Binding ElementName=MainContent, Path=ActualWidth}" Height="{Binding ElementName=MainContent, Path=ActualHeight}" HorizontalAlignment="Center"

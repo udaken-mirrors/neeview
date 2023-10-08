@@ -8,7 +8,7 @@
              d:DesignHeight="256" d:DesignWidth="256">
     <Grid x:Name="Root" ClipToBounds="True" >
         <Canvas>
-            <ContentControl x:Name="TargetSocket" />
+            <ContentControl x:Name="TargetSocket" Focusable="False" />
         </Canvas>
     </Grid>
 </UserControl>

@@ -178,7 +178,7 @@
                             </Image.Style>
                         </Image>
                     </Button>
-                    
+
                     <nwc:SmartSlider x:Name="VolumeSlider" Height="30" VerticalAlignment="Center" ThumbSize="12"
                                  Width="{Binding ElementName=Root, Path=ActualWidth, Converter={StaticResource RootWidthToVolumeSlierWidthConverter}, ConverterParameter=112}"
                                  ThumbBorderBrush="{DynamicResource BottomBar.Foreground}"
@@ -207,33 +207,36 @@
                     </TextBlock.Style>
                 </TextBlock>
 
-                <Button DockPanel.Dock="Right" Command="{Binding RepeatCommand}">
-                    <Button.Style>
-                        <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding Operator}" Value="{x:Null}">
-                                    <Setter Property="IsEnabled" Value="False" />
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </Button.Style>
-                    <Image>
-                        <Image.Style>
-                            <Style TargetType="Image" BasedOn="{StaticResource ButtonImage}">
-                                <Setter Property="Source" Value="{StaticResource ic_trending_flat_24px}" />
+                <StackPanel Orientation="Horizontal" DockPanel.Dock="Right">
+
+                    <local:MoreMenuButton ImageSource="{StaticResource ic_more_24px_b}" Description="{Binding MoreMenuDescription}" 
+                                      Visibility="{Binding IsMoreMenuEnabled, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+
+                    <Button Command="{Binding RepeatCommand}">
+                        <Button.Style>
+                            <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
                                 <Style.Triggers>
-                                    <DataTrigger Binding="{Binding Operator.IsRepeat}" Value="True">
-                                        <Setter Property="Source" Value="{StaticResource ic_repeat_24px}" />
+                                    <DataTrigger Binding="{Binding Operator}" Value="{x:Null}">
+                                        <Setter Property="IsEnabled" Value="False" />
                                     </DataTrigger>
                                 </Style.Triggers>
                             </Style>
-                        </Image.Style>
-                    </Image>
-                </Button>
+                        </Button.Style>
+                        <Image>
+                            <Image.Style>
+                                <Style TargetType="Image" BasedOn="{StaticResource ButtonImage}">
+                                    <Setter Property="Source" Value="{StaticResource ic_trending_flat_24px}" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Operator.IsRepeat}" Value="True">
+                                            <Setter Property="Source" Value="{StaticResource ic_repeat_24px}" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Image.Style>
+                        </Image>
+                    </Button>
 
-                <local:MoreMenuButton DockPanel.Dock="Right" ImageSource="{StaticResource ic_more_24px_b}" Description="{Binding MoreMenuDescription}" 
-                                      Visibility="{Binding IsMoreMenuEnabled, Converter={StaticResource BooleanToVisibilityConverter}}"/>
-                
+                </StackPanel>
             </DockPanel>
 
             <StackPanel VerticalAlignment="Bottom">
@@ -252,7 +255,7 @@
                         DragStarted="VideoSlider_DragStarted" DragCompleted="VideoSlider_DragCompleted"
                                  Value="{Binding Operator.Position}"
                         PreviewMouseLeftButtonDown="VideoSlider_PreviewMouseLeftButtonDown" >
-                    
+
                     <!--
                     <nwc:SmartSlider.Value>
                         <MultiBinding Converter="{StaticResource EnableValueConverter}">

@@ -45,6 +45,7 @@
                         Visibility="{Binding Source={x:Static local:Config.Current}, Path=Slider.IsVisiblePlaylistMark, Converter={StaticResource BooleanToVisibilityConverter}}" />
 
                 <nwc:SmartSlider x:Name="Slider" Height="{Binding Slider.Thickness, Source={x:Static local:Config.Current}}"
+                                 Focusable="False"
                                  ThumbSize="{Binding Slider.Thickness, Source={x:Static local:Config.Current}}"
                                  ThumbBorderBrush="{DynamicResource BottomBar.Slider.Thumb}"
                                  TrackDecreaseBrush="{DynamicResource BottomBar.Slider.Track}"

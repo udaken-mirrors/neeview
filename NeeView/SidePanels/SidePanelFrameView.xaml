@@ -89,7 +89,7 @@
             </Grid>
 
             <Grid x:Name="RightSidePanel" Grid.Column="2" Visibility="{Binding VM.IsSideBarVisible, Converter={StaticResource BooleanToVisibilityConverter}}" KeyboardNavigation.TabNavigation="Local"
-                  KeyboardNavigation.TabIndex="4">
+                  KeyboardNavigation.TabIndex="6">
                 <Grid x:Name="RightIconGrid" Visibility="{Binding ElementName=RightPanelContent, Path=Visibility}" Background="Transparent" AllowDrop="True"
                         MouseLeftButtonDown="RightIconGrid_MouseLeftButtonDown" MouseLeftButtonUp="RightIconGrid_MouseLeftButtonUp">
                     <b:Interaction.Behaviors>
@@ -141,7 +141,7 @@
                 </Grid>
 
                 <Grid x:Name="RightPanel" Grid.Column="2" UseLayoutRounding="True" Visibility="{Binding VM.Right.PanelVisibility}"
-                      KeyboardNavigation.TabNavigation="Local" KeyboardNavigation.TabIndex="3">
+                      KeyboardNavigation.TabNavigation="Local" KeyboardNavigation.TabIndex="5">
                     <Border Style="{StaticResource PanelBorderStyle}" BorderThickness="1,0,0,0" />
                     <Border x:Name="RightPanelContent" Background="Transparent" Margin="1,0,0,0">
                         <behaviors:Interaction.Behaviors>
@@ -166,11 +166,13 @@
 
                 <Grid x:Name="CenterPanel" Grid.Column="1"/>
 
-                <GridSplitter x:Name="RightSplitter" Grid.Column="1" Style="{StaticResource PanelGridSplitterStyle}"  HorizontalAlignment="Right"
-                              Visibility="{Binding ElementName=RightPanel, Path=Visibility}"/>
-
                 <GridSplitter x:Name="LeftSplitter" Grid.Column="1" Style="{StaticResource PanelGridSplitterStyle}" HorizontalAlignment="Left"
+                              KeyboardNavigation.TabNavigation="Local" KeyboardNavigation.TabIndex="3" FocusVisualStyle="{StaticResource NVBorderFocusVisual}"
                               Visibility="{Binding ElementName=LeftPanel, Path=Visibility}"/>
+
+                <GridSplitter x:Name="RightSplitter" Grid.Column="1" Style="{StaticResource PanelGridSplitterStyle}"  HorizontalAlignment="Right"
+                              KeyboardNavigation.TabNavigation="Local" KeyboardNavigation.TabIndex="4" FocusVisualStyle="{StaticResource NVBorderFocusVisual}"
+                              Visibility="{Binding ElementName=RightPanel, Path=Visibility}"/>
             </Grid>
         </Grid>
     </Grid>

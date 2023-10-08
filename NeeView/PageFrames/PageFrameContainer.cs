@@ -84,6 +84,7 @@ namespace NeeView.PageFrames
             {
                 HorizontalAlignment = HorizontalAlignment.Center,
                 VerticalAlignment = VerticalAlignment.Center,
+                Focusable = false,
             };
             Children.Add(_contentControl);
 

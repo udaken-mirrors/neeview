@@ -58,6 +58,16 @@ namespace NeeView
             DependencyProperty.Register("IsBackgroundOpacityEnabled", typeof(bool), typeof(MediaControlView), new PropertyMetadata(false));
 
 
+        public bool IsMainViewFocusEnabled
+        {
+            get { return (bool)GetValue(IsMainViewFocusEnabledProperty); }
+            set { SetValue(IsMainViewFocusEnabledProperty, value); }
+        }
+
+        public static readonly DependencyProperty IsMainViewFocusEnabledProperty =
+            DependencyProperty.Register("IsMainViewFocusEnabled", typeof(bool), typeof(MediaControlView), new PropertyMetadata(false));
+
+
 
         public void Initialize()
         {
@@ -79,7 +89,10 @@ namespace NeeView
 
         private void VideoSlider_PreviewMouseLeftButtonDown(object? sender, MouseButtonEventArgs e)
         {
-            MainWindowModel.Current.FocusMainView();
+            if (IsMainViewFocusEnabled)
+            {
+                MainWindowModel.Current.FocusMainView();
+            }
         }
 
         private void TimeTextBlock_MouseLeftButtonDown(object? sender, MouseButtonEventArgs e)

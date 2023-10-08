@@ -53,6 +53,8 @@ namespace NeeView
         /// <param name="index">フレーム内のページ要素番号</param>
         public ViewContent(PageFrameElement element, PageFrameElementScale scale, ViewSource viewSource, PageFrameActivity activity, PageBackgroundSource backgroundSource, int index)
         {
+            this.Focusable = false;
+
             _element = element;
             _scale = scale;
             _viewSource = viewSource;

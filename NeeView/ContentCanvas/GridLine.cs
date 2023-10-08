@@ -18,6 +18,8 @@ namespace NeeView
 
         public GridLine()
         {
+            this.Focusable = false;
+
             _disposables.Add(Config.Current.ImageGrid.SubscribePropertyChanged((s, e) => Update()));
             _disposables.Add(this.SubscribeSizeChanged((s, e) => Update()));
         }
