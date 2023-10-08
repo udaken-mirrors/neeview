@@ -7,12 +7,10 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Xml.Linq;
 using NeeLaboratory.ComponentModel;
 using NeeLaboratory.Generators;
 using NeeView.ComponentModel;
@@ -24,7 +22,6 @@ namespace NeeView.PageFrames
 {
     // TODO: ごちゃっとしてるので整備する
     // TODO: IsStaticFrame ON/OFF でのスクロール制御の違いが煩雑になっているので良くする
-    // TODO: ContentControl になってるけどいいの？
     [NotifyPropertyChanged]
     public partial class PageFrameBox : Grid, INotifyPropertyChanged, IDisposable, ICanvasToViewTranslator, IDragTransformContextFactory
     {
@@ -41,7 +38,6 @@ namespace NeeView.PageFrames
         private readonly PageFrameContainerViewBox _viewBox;
         private readonly PageFrameContainerCollectionRectMath _rectMath;
         private readonly PageFrameContainerLayout _layout;
-        private readonly PageFrameCanvasPointStorage _canvasPointStorage;
         private readonly DpiScaleProvider _dpiScaleProvider;
         private readonly PageFrameTransformMap _transformMap;
         private readonly RepeatLimiter _scrollRepeatLimiter = new();
@@ -59,10 +55,7 @@ namespace NeeView.PageFrames
         public PageFrameBox(PageFrameContext context, BookContext bookContext)
         {
             _context = context;
-            _disposables.Add(_context); // このクラスがDisposableする？
-
             _bookContext = bookContext;
-            _disposables.Add(_bookContext); // このクラスがDisposableする？
             _disposables.Add(_bookContext.SubscribePropertyChanged((s, e) => AppDispatcher.BeginInvoke(() => BookContext_PropertyChanged(s, e))));
             _disposables.Add(_bookContext.SubscribeSelectedRangeChanged((s, e) => SelectedRangeChanged?.Invoke(this, e)));
             _disposables.Add(_bookContext.SubscribePagesChanged((s, e) => AppDispatcher.BeginInvoke(() => Context_PagesChanged(s, e))));
@@ -113,14 +106,10 @@ namespace NeeView.PageFrames
             var viewContext = new ViewTransformContext(_context, _viewBox, _rectMath, _scrollViewer);
             _transformControlFactory = new TransformControlFactory(_context, viewContext, loupeContext, _scrollLock);
 
-
-            _canvasPointStorage = new PageFrameCanvasPointStorage(_containers, viewContext);
             _dragTransformContextFactory = new DragTransformContextFactory(this, _transformControlFactory, Config.Current.View, Config.Current.Mouse, Config.Current.Loupe);
 
             _selected = new SelectedContainer(_containers, SelectCenterNode);
             _disposables.Add(_selected);
-            //_disposables.Add(_selected.SubscribePropertyChanged(nameof(_selected.PagePosition),
-            //    (s, e) => _context.SetSelectedItem(_selected.PagePosition, false)));
             _disposables.Add(_selected.SubscribePropertyChanged(nameof(_selected.PagePosition),
                 (s, e) => _bookContext.SelectedRange = _selected.PageRange));
             _disposables.Add(_selected.SubscribeViewContentChanged(
@@ -129,7 +118,6 @@ namespace NeeView.PageFrames
             _disposables.Add(_scrollViewer.SubscribeSizeChanged(_context.SetCanvasSize));
             _disposables.Add(_containers.SubscribeCollectionChanged(ContainerCollection_CollectionChanged));
 
-            //_context.SelectedItemChanged += Context_SelectedItemChanged;
             _disposables.Add(_visiblePageWatcher.SubscribeVisibleContainersChanged(VisiblePageWatcher_VisibleContainersChanged));
 
             // 表示ページ監視
@@ -219,6 +207,26 @@ namespace NeeView.PageFrames
         public ViewSourceMap ViewSourceMap => _viewSourceMap;
 
 
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!_disposedValue)
+            {
+                if (disposing)
+                {
+                    _disposables.Dispose();
+                    _containers.Clear();
+                }
+
+                _disposedValue = true;
+            }
+        }
+
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
+
         public DragTransformContext? CreateDragTransformContext(bool isPointContainer, bool isLoupeTransform)
         {
             var pos = GetViewPosition();
@@ -242,7 +250,6 @@ namespace NeeView.PageFrames
             return dragContext;
         }
 
-
         private Point GetViewPosition()
         {
             var point = Mouse.GetPosition(this);
@@ -250,30 +257,6 @@ namespace NeeView.PageFrames
             point.Y -= this.ActualHeight * 0.5;
             return point;
         }
-
-
-
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!_disposedValue)
-            {
-                if (disposing)
-                {
-                    _disposables.Dispose();
-                    _containers.Clear();
-                }
-
-                _disposedValue = true;
-            }
-        }
-
-        public void Dispose()
-        {
-            Dispose(disposing: true);
-            GC.SuppressFinalize(this);
-        }
-
 
         private void InitializeDpiScaleProvider()
         {
@@ -348,18 +331,6 @@ namespace NeeView.PageFrames
             }
         }
 
-        //public PagePosition MaxItem
-        //{
-        //    get { return _context.LastPosition; }
-        //}
-
-
-        //public Rect ViewRect => _viewBox.Rect;
-
-
-        private PageFrameCanvasPoint? _storePoint;
-
-
         private LinkedListNode<PageFrameContainer> SelectCenterNode()
         {
             return _rectMath.GetViewCenterContainer(_viewBox.Rect) ?? _containers.CollectNode().First();
@@ -368,9 +339,6 @@ namespace NeeView.PageFrames
         private void Context_SizeChanging(object? sender, SizeChangedEventArgs e)
         {
             _containers.Anchor.Set(_rectMath.GetViewCenterContainer(_viewBox.Rect), _containers.Anchor.Direction);
-
-            var node = _rectMath.GetViewCenterContainer(_viewBox.Rect);
-            _storePoint = _canvasPointStorage.Store(node);
         }
 
         private void Context_SizeChanged(object? sender, SizeChangedEventArgs e)
@@ -378,13 +346,11 @@ namespace NeeView.PageFrames
             UpdateContainers(PageFrameDirtyLevel.Moderate, TransformMask.None, false, false);
         }
 
-
         private void Context_PagesChanged(object? sender, EventArgs e)
         {
             UpdateContainers(PageFrameDirtyLevel.Moderate, TransformMask.None, false, false);
             PagesChanged?.Invoke(this, e);
         }
-
 
         /// <summary>
         /// コンテナ更新
@@ -554,7 +520,6 @@ namespace NeeView.PageFrames
             }
         }
 
-
         private void VisiblePageWatcher_VisibleContainersChanged(object? sender, VisibleContainersChangedEventArgs e)
         {
             foreach (var container in _containers)
@@ -564,7 +529,6 @@ namespace NeeView.PageFrames
 
             _loader.RequestLoad(e.PageRange, e.Direction);
         }
-
 
         private void ViewTransform_TransformChanged(object? sender, TransformChangedEventArgs e)
         {
@@ -599,8 +563,6 @@ namespace NeeView.PageFrames
             _scrollViewer.ApplyAreaLimit(c0, c1);
         }
 
-
-
         private void SetSnapAnchor()
         {
             _context.IsSnapAnchor.Set();
@@ -631,7 +593,6 @@ namespace NeeView.PageFrames
                 MoveTo(_selected.PagePosition.OtherPart(), LinkedListDirection.Next);
             }
         }
-
 
         public void MoveTo(PagePosition position, LinkedListDirection direction)
         {
@@ -668,7 +629,6 @@ namespace NeeView.PageFrames
             SetSnapAnchor();
         }
 
-
         /// <summary>
         /// コンテンツをフレーム中央にスクロール。フレームオーバーの場合は方向に依存する
         /// </summary>
@@ -702,7 +662,6 @@ namespace NeeView.PageFrames
             var key = PageFrameTransformTool.CreateKey(pageFrameContent.PageFrame);
             _transformMap.ElementAt(key).SetPoint(default, TimeSpan.Zero);
         }
-
 
         public void MoveToNextPage(LinkedListDirection direction)
         {
@@ -819,7 +778,6 @@ namespace NeeView.PageFrames
             }
         }
 
-
         // Scroll + NextFrame
         public void ScrollToNextFrame(LinkedListDirection direction, IScrollNTypeParameter parameter, LineBreakStopMode lineBreakStopMode, double endMargin)
         {
@@ -851,13 +809,6 @@ namespace NeeView.PageFrames
         {
             if (!_bookContext.IsEnabled) return true;
 
-            //var lineBreakStopMode = LineBreakStopMode.Line; // TODO: このパラメータはどこから？
-            //var parameter = new ScrollNTypeParameter(); // TODO: このパラメータはどこから？
-            //parameter.ScrollType = NScrollType.NType;
-
-
-            // TODO: NType以外のスクロール
-
             // line break repeat limiter
             var isLimit = _scrollRepeatLimiter.IsLimit((int)(parameter.LineBreakStopTime * 1000.0));
             _scrollRepeatLimiter.Reset();
@@ -886,7 +837,6 @@ namespace NeeView.PageFrames
                 return false;
             }
         }
-
 
         /// <summary>
         /// コンテナを表示中央にスクロール。サイズオーバーする場合は方向指定で表示位置を決定する。
@@ -919,7 +869,6 @@ namespace NeeView.PageFrames
             if (node?.Value.Content is not PageFrameContent) return;
 
             SetControlContainer(node);
-            //_transformMap.SetTarget(container.FrameRange);
             var transform = _transformControlFactory.Create(node.Value);
 
             var delta = new Vector(dx, dy);
@@ -928,53 +877,7 @@ namespace NeeView.PageFrames
             _selected.SetAuto();
             AssertSelectedExists();
             ResetSnapAnchor();
-            //UpdateTransform(node);
         }
-
-#if false
-        public void AddAngle(double delta)
-        {
-            if (!_context.IsEnabled) return;
-
-            var node = _selected.Node;
-            AssertSelectedExists();
-            if (node?.Value.Content is not PageFrameContent) return;
-
-            SetControlContainer(node);
-            //_transformMap.SetTarget(container.FrameRange);
-            var transform = _transformControlFactory.Create(node.Value);
-
-            var span = TimeSpan.Zero;
-            transform.SetAngle(transform.Angle + delta, span);
-
-            _scrollLock.Unlock();
-
-            _selected.SetAuto();
-            AssertSelectedExists();
-            _isSnapAnchor.Reset();
-        }
-
-        public void AddScale(double delta)
-        {
-            if (!_context.IsEnabled) return;
-
-            var node = _selected.Node;
-            AssertSelectedExists();
-            if (node?.Value.Content is not PageFrameContent) return;
-
-            SetControlContainer(node);
-            var transform = _transformControlFactory.Create(node.Value);
-
-            var span = TimeSpan.Zero;
-            transform.SetScale(transform.Scale + delta, span);
-
-            _scrollLock.Unlock();
-
-            _selected.SetAuto();
-            AssertSelectedExists();
-            _isSnapAnchor.Reset();
-        }
-#endif
 
         /// <summary>
         /// コンテンツのスナップ処理
@@ -992,8 +895,6 @@ namespace NeeView.PageFrames
             var transform = _transformControlFactory.Create(node.Value);
             transform.SnapView();
         }
-
-
 
         public LinkedListNode<PageFrameContainer>? GetPointedContainer(Point point)
         {
@@ -1073,7 +974,6 @@ namespace NeeView.PageFrames
         {
             _cleaner.Cleanup(_viewBox.ViewingRect);
         }
-
 
         public PageFrameTransformAccessor CreateSelectedTransform()
         {
@@ -1206,9 +1106,6 @@ namespace NeeView.PageFrames
 
     public interface ICanvasToViewTranslator
     {
-        // TODO: 汎用化
-        //Point TranslatePoint(Point point, UIElement relativeTo);
-
         Point TranslateCanvasToViewPoint(Point point);
         Point TranslateViewToCanvas(Point point);
     }

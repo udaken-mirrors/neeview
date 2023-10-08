@@ -14,62 +14,13 @@
     </UserControl.Resources>
 
     <Grid x:Name="MainViewPanel" ContextMenu="{Binding ContextMenu}" ContextMenuOpening="MainViewPanel_ContextMenuOpening" Background="Transparent" >
-        <!--
-        Background="{Binding ContentCanvasBrush.BackgroundBrush}"
-        <Rectangle x:Name="FrontBackground" Fill="{Binding ContentCanvasBrush.BackgroundFrontBrush}" RenderOptions.BitmapScalingMode="HighQuality" IsHitTestVisible="False"
-                Visibility="{Binding ContentCanvasBrush.BackgroundFrontBrush, Converter={StaticResource NullableToVisibilityConverter}}" />
-        
-        <Grid x:Name="MainViewCanvas" Effect="{Binding ImageEffect.Effect}" Margin="{Binding MainViewMargin}">
-        
-                    <Grid x:Name="View" Background="Transparent" SizeChanged="MainView_SizeChanged" Focusable="True" KeyboardNavigation.IsTabStop="False" FocusVisualStyle="{x:Null}"
-                    ClipToBounds="True" AllowDrop="True">
-        
-        -->
-
         <Grid x:Name="MainViewCanvas" Margin="{Binding MainViewMargin}">
 
             <!-- メインビュー コンテンツ表示領域 -->
             <Grid x:Name="View" Background="Transparent" SizeChanged="MainView_SizeChanged" Focusable="True" KeyboardNavigation.IsTabStop="True"
                     FocusVisualStyle="{StaticResource NVFocusVisual}"
                     AllowDrop="True">
-
                 <ContentControl x:Name="Socket" Content="{Binding PageFrameBoxPresenter.View}" Focusable="False"/>
-
-                <!--
-                <Canvas x:Name="PageCanvas" Width="{Binding ElementName=MainContent, Path=ActualWidth}" Height="{Binding ElementName=MainContent, Path=ActualHeight}" HorizontalAlignment="Center"
-                        VerticalAlignment="Center">
-                    <Canvas.Resources>
-                        <Style TargetType="TextBlock" x:Key="ContentProperty">
-                            <Setter Property="Foreground" Value="{DynamicResource Notification.Foreground}" />
-                            <Setter Property="Background" Value="{DynamicResource Notification.Background}" />
-                            <Setter Property="Padding" Value="10,5" />
-                            <Style.Triggers>
-                                <Trigger Property="Text" Value="">
-                                    <Setter Property="Visibility" Value="Collapsed" />
-                                </Trigger>
-                            </Style.Triggers>
-                        </Style>
-                    </Canvas.Resources>
-                    <ContentControl x:Name="MainContent" IsTabStop="False">
-                        <Grid>
-                            <StackPanel x:Name="PageContents" Orientation="Horizontal">
-                                <ContentControl x:Name="Content1" Content="{Binding Contents[1].View}" Width="{Binding Contents[1].Width}" Height="{Binding Contents[1].Height}" Focusable="False" />
-                                <ContentControl x:Name="Content0" Content="{Binding Contents[0].View}" Width="{Binding Contents[0].Width}" Height="{Binding Contents[0].Height}" Focusable="False"
-                                        Margin="{Binding ContentsMargin}" />
-                            </StackPanel>
-                            <ContentControl Content="{Binding GridLine.Content}" Focusable="False" />
-                        </Grid>
-                    </ContentControl>
-                </Canvas>
-                <Canvas x:Name="PageCanvasShadow" Width="{Binding ElementName=MainContent, Path=ActualWidth}" Height="{Binding ElementName=MainContent, Path=ActualHeight}" IsHitTestVisible="False"
-                        HorizontalAlignment="Center" VerticalAlignment="Center">
-                    <StackPanel x:Name="MainContentShadow" Orientation="Horizontal">
-                        <Rectangle x:Name="Content1Shadow" Visibility="Hidden" Fill="#88FF0000" Width="{Binding Contents[1].Width}" Height="{Binding Contents[1].Height}" />
-                        <Rectangle x:Name="Content0Shadow" Visibility="Hidden" Fill="#88FF0000" Width="{Binding Contents[0].Width}" Height="{Binding Contents[0].Height}"
-                                Margin="{Binding ContentsMargin}" />
-                    </StackPanel>
-                </Canvas>
-                -->
             </Grid>
         </Grid>
 

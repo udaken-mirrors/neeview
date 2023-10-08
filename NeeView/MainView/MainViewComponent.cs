@@ -37,33 +37,19 @@ namespace NeeView
             _mainView = new MainView();
 
             PageFrameBoxPresenter = PageFrameBoxPresenter.Current;
-
-            //DragTransform = new DragTransformP
-
+            
             DragTransformControl = new DragTransformControlProxy(PageFrameBoxPresenter);
-
-            //DragTransform = new DragTransform();
-            //DragTransformControl = new DragTransformControl(DragTransform, _mainView.View, _mainView.MainContentShadow);
-            //LoupeTransform = new LoupeTransform();
-
             LoupeContext = new LoupeContext(Config.Current.Loupe);
 
             TouchInput = new TouchInput(new TouchInputContext(_mainView.View, mouseGestureCommandCollection, PageFrameBoxPresenter, DragTransformControl, LoupeContext, ViewScrollContext));
             MouseInput = new MouseInput(new MouseInputContext(_mainView.View, mouseGestureCommandCollection, PageFrameBoxPresenter, DragTransformControl, LoupeContext, ViewScrollContext));
 
-            //var scrollPageController = new ScrollPageController(this, BookSettingPresenter.Current, BookOperation.Current);
             PrintController = new PrintController(this, _mainView, PageFrameBoxPresenter);
-            //ViewTransformControl = new ViewTransformControl(this, scrollPageController);
             ViewTransformControl = new ViewTransformControl(PageFrameBoxPresenter);
             ViewLoupeControl = new ViewLoupeControl(this);
             ViewWindowControl = new ViewWindowControl(this);
             ViewPropertyControl = new ViewPropertyControl(Config.Current.View);
             ViewCopyImage = new ViewCopyImage(PageFrameBoxPresenter);
-
-            //ContentCanvas = new ContentCanvas(this, bookHub);
-            //ContentCanvasBrush = new ContentCanvasBrush(ContentCanvas);
-
-            //ContentRebuild = new ContentRebuild(this);
 
             PageFrameBoxPresenter.SelectedRangeChanged += PageFrameBoxPresenter_SelectedRangeChanged;
             PageFrameBoxPresenter.SelectedContainerLayoutChanged += PageFrameBoxPresenter_SelectedContainerLayoutChanged;
@@ -130,12 +116,6 @@ namespace NeeView
         public IViewWindowControl ViewWindowControl { get; private set; }
         public IViewPropertyControl ViewPropertyControl { get; private set; }
         public IViewCopyImage ViewCopyImage { get; private set; }
-
-        //public ContentCanvas ContentCanvas { get; private set; }
-        //public ContentCanvasBrush ContentCanvasBrush { get; private set; }
-
-        //public ContentRebuild ContentRebuild { get; private set; }
-
 
         public bool IsLoupeMode => ViewLoupeControl.GetLoupeMode();
 

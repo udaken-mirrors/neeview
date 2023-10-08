@@ -4,13 +4,11 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Transactions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using NeeLaboratory.Generators;
-using PageRange = NeeView.PageRange;
 
 
 namespace NeeView.PageFrames
