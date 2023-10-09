@@ -259,13 +259,15 @@ namespace NeeView
                 {
                     case DataState.None:
                         Trace($"CreateContent.Ready: {ArchiveEntry}");
-                        return new ViewContentData(ViewContentTools.CreateLoadingContent(Element), ViewContentState.Loading);
+                        bool isBlackBackground = this.Page.Content is MediaPageContent;
+                        return new ViewContentData(ViewContentTools.CreateLoadingContent(Element, isBlackBackground), ViewContentState.Loading);
 
                     case DataState.Loaded:
                         Trace($"CreateContent.Loaded: {ArchiveEntry}");
                         Debug.Assert(data.Data is not null);
                         PageContent.UndefinedSize = this.Page.Content.Size;
                         return new ViewContentData(CreateLoadedContent(data.Data), ViewContentState.Loaded);
+
                     case DataState.Failed:
                         Trace($"CreateContent.Failed: {ArchiveEntry}");
                         return new ViewContentData(ViewContentTools.CreateErrorContent(Element, data.ErrorMessage), ViewContentState.Failed);

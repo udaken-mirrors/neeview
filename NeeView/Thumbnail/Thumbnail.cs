@@ -70,6 +70,11 @@ namespace NeeView
         public bool IsValid => _image != null;
 
         /// <summary>
+        /// Empty画像？
+        /// </summary>
+        public bool IsEmptyImage => _image == ThumbnailResource.EmptyImage;
+
+        /// <summary>
         /// Jpeg化された画像
         /// </summary>
         public byte[]? Image

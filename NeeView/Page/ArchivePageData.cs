@@ -2,11 +2,13 @@
 {
     public class ArchivePageData
     {
-        public ArchivePageData(Thumbnail thumbnail)
+        public ArchivePageData(ArchiveEntry archiveEntry, Thumbnail thumbnail)
         {
+            ArchiveEntry = archiveEntry;
             Thumbnail = thumbnail;
         }
 
+        public ArchiveEntry ArchiveEntry { get; }
         public Thumbnail Thumbnail { get; }
     }
 

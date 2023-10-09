@@ -18,7 +18,7 @@
 
             <!-- メインビュー コンテンツ表示領域 -->
             <Grid x:Name="View" Background="Transparent" SizeChanged="MainView_SizeChanged" Focusable="True" KeyboardNavigation.IsTabStop="True"
-                    FocusVisualStyle="{StaticResource NVFocusVisual}"
+                    FocusVisualStyle="{x:Null}"
                     AllowDrop="True">
                 <ContentControl x:Name="Socket" Content="{Binding PageFrameBoxPresenter.View}" Focusable="False"/>
             </Grid>

@@ -36,6 +36,9 @@ namespace NeeView
 
             _vm = new ArchivePageViewModel(content);
             this.Root.DataContext = _vm;
+
+            this.FileCard.Icon = content.ImageSource;
+            this.FileCard.ArchiveEntry = content.Entry;
         }
 
 

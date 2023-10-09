@@ -49,6 +49,11 @@ namespace NeeView
             }
         }
 
+        public static DispatcherOperation<TResult> InvokeAsync<TResult>(Func<TResult> callback)
+        {
+            return UIDispatcher.InvokeAsync(callback);
+        }
+
         public static DispatcherOperation BeginInvoke(Action action)
         {
             return UIDispatcher.BeginInvoke(action);

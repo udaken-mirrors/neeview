@@ -10,10 +10,9 @@
              d:DesignWidth="480" d:DesignHeight="640">
 
     <UserControl.Resources>
-        <local:ImageSourceToThumbnailConverter x:Key="ImageSourceToThumbnailConverter" />
-        <local:ArchiveThumbnailSizeConverter x:Key="ArchiveThumbnailSizeConverter" />
         <SolidColorBrush x:Key="DefaultBrush" Color="White" />
         <SolidColorBrush x:Key="LocalForeground" Color="#F222"/>
+        <local:BooleanToInverseVisibilityConverter x:Key="BooleanToInverseVisibilityConverter" />
 
         <DrawingImage x:Key="fic_folder">
             <DrawingImage.Drawing>
@@ -29,55 +28,59 @@
         </DrawingImage>
     </UserControl.Resources>
 
-
-    <Border x:Name="Root" Margin="0" CornerRadius="0" BorderThickness="0" BorderBrush="Black" Background="White">
+    <Border x:Name="Root" Background="#EEE">
 
         <Grid Margin="10">
             <Grid.RowDefinitions>
                 <RowDefinition Height="3*"/>
-                <RowDefinition Height="1*" />
+                <RowDefinition Height="1*" MinHeight="128" />
             </Grid.RowDefinitions>
 
-            <Grid x:Name="OpenBookButton" Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="10" Cursor="Hand"
-                    MouseLeftButtonDown="OpenBookButton_MouseLeftButtonDown" MouseLeftButtonUp="OpenBookButton_MouseLeftButtonUp" MouseRightButtonUp="OpenBookButton_MouseRightButtonUp" 
-                    PreviewStylusDown="OpenBookButton_PreviewStylusDown" PreviewStylusUp="OpenBookButton_PreviewStylusUp" MouseEnter="OpenBookButton_MouseEnter" MouseLeave="OpenBookButton_MouseLeave">
-                <Grid.Width>
-                    <MultiBinding Converter="{StaticResource ArchiveThumbnailSizeConverter}">
-                        <Binding ElementName="Root" Path="ActualWidth" />
-                        <Binding ElementName="Root" Path="ActualHeight" />
-                    </MultiBinding>
-                </Grid.Width>
-                <Grid.Height>
-                    <Binding RelativeSource="{RelativeSource Self}" Path="Width"/>
-                </Grid.Height>
+            <Grid x:Name="ViewGrid" Grid.Row="0">
 
-                <Ellipse >
-                    <Ellipse.Fill>
-                        <ImageBrush ImageSource="{Binding Thumbnail.ImageSource, Converter={StaticResource ImageSourceToThumbnailConverter}}" Stretch="UniformToFill"/>
-                    </Ellipse.Fill>
-                </Ellipse>
+                <Grid x:Name="OpenBookButton" Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="10" Cursor="Hand"
+                        MaxWidth="512" MaxHeight="512"
+                        MouseLeftButtonDown="OpenBookButton_MouseLeftButtonDown" MouseLeftButtonUp="OpenBookButton_MouseLeftButtonUp" MouseRightButtonUp="OpenBookButton_MouseRightButtonUp" 
+                        PreviewStylusDown="OpenBookButton_PreviewStylusDown" PreviewStylusUp="OpenBookButton_PreviewStylusUp" MouseEnter="OpenBookButton_MouseEnter" MouseLeave="OpenBookButton_MouseLeave">
 
-                <Ellipse StrokeThickness="8" Fill="Transparent">
-                    <Ellipse.Style>
-                        <Style TargetType="Ellipse">
-                            <Setter Property="Stroke" Value="{DynamicResource Thumbnail.Background}" />
-                            <Style.Triggers>
-                                <Trigger Property="IsMouseOver" Value="True">
-                                    <Setter Property="Stroke" Value="{DynamicResource Item.MouseOver.Border}" />
-                                </Trigger>
-                            </Style.Triggers>
-                        </Style>
-                    </Ellipse.Style>
-                </Ellipse>
-
+                    <Grid x:Name="ImageGrid" HorizontalAlignment="Center" VerticalAlignment="Bottom">
+                        <Grid Margin="8,8,0,0" >
+                            <Grid.Style>
+                                <Style TargetType="Grid">
+                                    <Setter Property="Background" Value="{DynamicResource Thumbnail.Background}" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding ElementName=OpenBookButton, Path=IsMouseOver}" Value="True">
+                                            <Setter Property="Background" Value="{DynamicResource Item.MouseOver.Border}" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Grid.Style>
+                        </Grid>
+                        <Grid Margin="0,0,8,8">
+                            <Grid.Style>
+                                <Style TargetType="Grid">
+                                    <Setter Property="Background" Value="{DynamicResource Thumbnail.Background}" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding ElementName=OpenBookButton, Path=IsMouseOver}" Value="True">
+                                            <Setter Property="Background" Value="{DynamicResource Item.MouseOver.Border}" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Grid.Style>
+                            <Image Source="{Binding Thumbnail.ImageSource}" Stretch="Uniform" Margin="2"
+                                   Visibility="{Binding Thumbnail.IsEmptyImage, Converter={StaticResource BooleanToInverseVisibilityConverter}}" />
+                            <Viewbox>
+                                <Grid Background="White" Width="256" Height="320" Margin="2" Visibility="{Binding Thumbnail.IsEmptyImage, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                    <Image Source="{StaticResource fic_folder}" HorizontalAlignment="Center" VerticalAlignment="Center" Width="64" Height="64"/>
+                                </Grid>
+                            </Viewbox>
+                        </Grid>
+                    </Grid>
+                </Grid>
             </Grid>
 
-            <Grid Margin="0,10" Grid.Row="1" VerticalAlignment="Top">
-                <DockPanel HorizontalAlignment="Center" VerticalAlignment="Top" >
-                    <Image Source="{StaticResource fic_folder}" Width="24" Height="24" Margin="8" VerticalAlignment="Center"/>
-                    <TextBlock x:Name="FileNameTextBlock" Text="{Binding Name}" TextWrapping="Wrap" FontSize="{DynamicResource SystemFontSizeLarge}" Foreground="{StaticResource LocalForeground}" VerticalAlignment="Center" />
-                </DockPanel>
-            </Grid>
+            <local:FileCard Grid.Row="1" x:Name="FileCard" Margin="10" VerticalAlignment="Top" />
+
         </Grid>
     </Border>
 

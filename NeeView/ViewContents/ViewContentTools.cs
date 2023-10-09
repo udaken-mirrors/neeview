@@ -10,10 +10,10 @@ namespace NeeView
 {
     public static class ViewContentTools
     {
-        public static FrameworkElement CreateLoadingContent(PageFrameElement source)
+        public static FrameworkElement CreateLoadingContent(PageFrameElement source, bool isBlackBackground)
         {
             var grid = new Grid();
-            grid.Background = Brushes.White; // new SolidColorBrush(Color.FromRgb(0xF0, 0xF0, 0xF0));
+            grid.Background = isBlackBackground ? new SolidColorBrush(Color.FromRgb(0x10, 0x10, 0x10)) : new SolidColorBrush(Color.FromRgb(0xE0, 0xE0, 0xE0));
 
             var stackPanel = new StackPanel()
             {
@@ -22,10 +22,12 @@ namespace NeeView
             };
             grid.Children.Add(stackPanel);
 
+            var foregroundBrush = Brushes.Gray;
+
             var textBlock = new TextBlock()
             {
                 Text = source.Page.EntryLastName,
-                Foreground = Brushes.LightGray,
+                Foreground = foregroundBrush,
                 FontSize = 20,
                 Margin = new Thickness(10),
                 HorizontalAlignment = HorizontalAlignment.Center,
@@ -35,7 +37,7 @@ namespace NeeView
 
             var loading = new LoadingIcon()
             {
-                Foreground = Brushes.LightGray,
+                Foreground = foregroundBrush,
                 HorizontalAlignment = HorizontalAlignment.Center,
             };
             stackPanel.Children.Add(loading);
@@ -46,8 +48,18 @@ namespace NeeView
 
         public static FrameworkElement CreateErrorContent(PageFrameElement source, string? message)
         {
-            var viewData = new FileViewData(source.Page.ArchiveEntry, FilePageIcon.Alert, message ?? "Error");
-            return new FilePageControl(viewData);
+            var entry = source.Page.ArchiveEntry;
+            var bitmapSource = AppDispatcher.Invoke(() =>
+            {
+                var bitmapSourceCollection = entry.IsDirectory
+                    ? FileIconCollection.Current.CreateDefaultFolderIcon()
+                    : FileIconCollection.Current.CreateFileIcon(entry.EntryFullName, IO.FileIconType.FileType, true, true);
+                bitmapSourceCollection.Freeze();
+                return bitmapSourceCollection.GetBitmapSource(48.0);
+            });
+
+            var viewData = new FileViewData(entry, FilePageIcon.Alert, message ?? "Error", bitmapSource);
+            return new MessagePageControl(viewData);
         }
 
         public static void SetBitmapScalingMode(UIElement element, Size imageSize, ViewContentSize contentSize, BitmapScalingMode? scalingMode)

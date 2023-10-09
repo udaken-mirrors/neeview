@@ -16,18 +16,19 @@ using System.Windows.Shapes;
 namespace NeeView
 {
     /// <summary>
-    /// FilePageControl.xaml の相互作用ロジック
+    /// MessagePageControl.xaml の相互作用ロジック
     /// </summary>
-    public partial class FilePageControl : UserControl
+    public partial class MessagePageControl : UserControl
     {
-        public FilePageControl(FileViewData context)
+        public MessagePageControl(FileViewData context)
         {
             InitializeComponent();
 
             this.FileCard.Icon = context.ImageSource;
             this.FileCard.ArchiveEntry = context.Entry;
-        }
 
+            this.MessageTextBlock.Text = context.Message;
+        }
 
         public static readonly DependencyProperty DefaultBrushProperty =
             DependencyProperty.Register(
@@ -45,6 +46,5 @@ namespace NeeView
         private static void OnDefaultBrushChanged(DependencyObject obj, DependencyPropertyChangedEventArgs e)
         {
         }
-
     }
 }

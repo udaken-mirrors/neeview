@@ -19,8 +19,14 @@ namespace NeeView
         {
             if (data.Data is not FilePageData pageData) throw new InvalidOperationException(nameof(data.Data));
 
-            await Task.CompletedTask;
-            return new DataSource(new FileViewData(pageData), 0, null);
+            var bitmapSource = await AppDispatcher.InvokeAsync(() =>
+            {
+                var bitmapSourceCollection = FileIconCollection.Current.CreateFileIcon(pageData.Entry.EntryFullName, IO.FileIconType.FileType, true, true);
+                bitmapSourceCollection.Freeze();
+                return bitmapSourceCollection.GetBitmapSource(48.0);
+            });
+
+            return new DataSource(new FileViewData(pageData, bitmapSource), 0, null);
         }
     }
 

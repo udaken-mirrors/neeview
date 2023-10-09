@@ -86,6 +86,7 @@ namespace NeeView
             }
         }
 
+        public bool IsEmptyImage => _thumbnail is Thumbnail thumbnail && thumbnail.IsEmptyImage;
         public bool IsUniqueImage => _thumbnail?.IsUniqueImage ?? false;
         public bool IsNormalImage => _thumbnail?.IsNormalImage ?? false;
         public Brush Background => _thumbnail?.Background ?? Brushes.Transparent;
@@ -127,6 +128,7 @@ namespace NeeView
         private void Thumbnail_Changed(object? sender, EventArgs e)
         {
             UpdateBitmapSourceAsync();
+            RaisePropertyChanged(nameof(IsEmptyImage));
         }
 
         /// <summary>
