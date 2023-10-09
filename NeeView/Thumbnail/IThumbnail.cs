@@ -1,4 +1,5 @@
-﻿using System.Windows.Media;
+﻿using System;
+using System.Windows.Media;
 
 namespace NeeView
 {
@@ -7,12 +8,13 @@ namespace NeeView
     /// </summary>
     public interface IThumbnail
     {
-        ImageSource? ImageSource { get; }
-        double Width { get; }
-        double Height { get; }
+        public event EventHandler? Changed;
 
+        bool IsValid { get; }
         bool IsUniqueImage { get; }
         bool IsNormalImage { get; }
         Brush Background { get; }
+
+        ImageSource? CreateImageSource();
     }
 }

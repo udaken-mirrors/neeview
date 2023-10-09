@@ -2,13 +2,13 @@
 {
     public class ArchiveViewData
     {
-        public ArchiveViewData(ArchiveEntry entry, Thumbnail thumbnail)
+        public ArchiveViewData(ArchiveEntry entry, ThumbnailBitmap thumbnail)
         {
             Entry = entry;
             Thumbnail = thumbnail;
         }
 
         public ArchiveEntry Entry { get; }
-        public Thumbnail Thumbnail { get; }
+        public ThumbnailBitmap Thumbnail { get; }
     }
 }

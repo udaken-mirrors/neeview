@@ -173,7 +173,7 @@ namespace NeeView
             {
                 token.ThrowIfCancellationRequested();
                 await _thumbnailSource.LoadAsync(token);
-                return this.Thumbnail?.ImageSource;
+                return this.Thumbnail?.CreateImageSource();
             }
             catch
             {

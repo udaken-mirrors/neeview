@@ -20,7 +20,7 @@ namespace NeeView
             if (data.Data is not ArchivePageData pageData) throw new InvalidOperationException(nameof(data.Data));
 
             await Task.CompletedTask;
-            return new DataSource(new ArchiveViewData(_pageContent.ArchiveEntry, pageData.Thumbnail), 0, null);
+            return new DataSource(new ArchiveViewData(_pageContent.ArchiveEntry, new ThumbnailBitmap(pageData.Thumbnail)), 0, null);
         }
     }
 

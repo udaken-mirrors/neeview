@@ -137,7 +137,7 @@ namespace NeeView
         }
 
 
-        public Thumbnail Thumbnail => _content.Thumbnail;
+        public ThumbnailBitmap Thumbnail => _content.Thumbnail;
 
         public string? Name => _content.Entry.EntryName?.TrimEnd('\\').Replace("\\", " > ");
 

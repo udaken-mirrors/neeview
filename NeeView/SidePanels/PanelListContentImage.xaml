@@ -18,7 +18,7 @@
                 Width="{Binding Source={x:Static local:Config.Current}, Path=Panels.ContentItemProfile.ShapeWidth}"
                 Height="{Binding Source={x:Static local:Config.Current}, Path=Panels.ContentItemProfile.ShapeHeight}">
             <Rectangle.Fill>
-                <ImageBrush ImageSource="{Binding Thumbnail.ImageSource, Converter={StaticResource ImageSourceToThumbnailConverter}}"
+                <ImageBrush ImageSource="{Binding ThumbnailBitmap.ImageSource, Converter={StaticResource ImageSourceToThumbnailConverter}}"
                         Stretch="{Binding Thumbnail.IsNormalImage, Converter={StaticResource BooleanToContentStretchConverter}}"
                         Viewbox="{Binding Thumbnail.IsNormalImage,Converter={StaticResource BooleanToContentViewboxConverter}}"
                         AlignmentY="{Binding Thumbnail.IsNormalImage, Converter={StaticResource BooleanToContentAlignmentYConverter}}">
@@ -31,7 +31,7 @@
                             <Setter Property="ToolTipService.InitialShowDelay" Value="1000" />
                             <Setter Property="ToolTip">
                                 <Setter.Value>
-                                    <Image Source="{Binding Thumbnail.ImageSource}" Width="{Binding Thumbnail.Width}" Height="{Binding Thumbnail.Height}" Stretch="Fill" />
+                                    <Image Source="{Binding ThumbnailBitmap.ImageSource}" Width="{Binding ThumbnailBitmap.Width}" Height="{Binding ThumbnailBitmap.Height}" Stretch="Fill" />
                                 </Setter.Value>
                             </Setter>
                         </DataTrigger>

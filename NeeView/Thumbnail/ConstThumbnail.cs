@@ -28,54 +28,19 @@ namespace NeeView
             _create = crate;
         }
 
-        public ImageSource? ImageSource
-        {
-            get { return _bitmapSource ??= _create?.Invoke(); }
-        }
 
+        public event EventHandler? Changed;
+
+
+        public bool IsValid => true;
         public bool IsUniqueImage => false;
         public bool IsNormalImage => false;
         public Brush Background => Brushes.Transparent;
 
 
-        public double Width
+        public ImageSource? CreateImageSource()
         {
-            get
-            {
-                if (ImageSource is null)
-                {
-                    return 0.0;
-                }
-                else if (ImageSource is BitmapSource bitmapSource)
-                {
-                    return bitmapSource.PixelWidth;
-                }
-                else
-                {
-                    var aspectRatio = ImageSource.Width / ImageSource.Height;
-                    return aspectRatio < 1.0 ? 256.0 * aspectRatio : 256.0;
-                }
-            }
-        }
-
-        public double Height
-        {
-            get
-            {
-                if (ImageSource is null)
-                {
-                    return 0.0;
-                }
-                else if (ImageSource is BitmapSource bitmapSource)
-                {
-                    return bitmapSource.PixelHeight;
-                }
-                else
-                {
-                    var aspectRatio = ImageSource.Width / ImageSource.Height;
-                    return aspectRatio < 1.0 ? 256.0 : 256.0 / aspectRatio;
-                }
-            }
+            return _bitmapSource ?? _create?.Invoke();
         }
     }
 
@@ -85,7 +50,7 @@ namespace NeeView
     /// </summary>
     public class FolderThumbnail : ConstThumbnail
     {
-        public FolderThumbnail() 
+        public FolderThumbnail()
         {
             _create = () => FileIconCollection.Current.CreateDefaultFolderIcon().GetBitmapSource(256.0);
         }

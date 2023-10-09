@@ -1,9 +1,12 @@
-﻿using NeeLaboratory.ComponentModel;
+﻿//#define LOCAL_DEBUG
+
+using NeeLaboratory.ComponentModel;
 using NeeLaboratory.Generators;
 using NeeView;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -26,7 +29,11 @@ namespace NeeView
         /// </summary>
         public static bool DebugIgnoreCache { get; set; }
 
-
+        /// <summary>
+        /// 開発用：シリアル番号
+        /// </summary>
+        private static int _serialCount;
+        private readonly int _serialNumber = _serialCount++;
 
         /// <summary>
         /// キャシュ用ヘッダ
@@ -60,7 +67,7 @@ namespace NeeView
         /// <summary>
         /// 有効判定
         /// </summary>
-        internal bool IsValid => _image != null;
+        public bool IsValid => _image != null;
 
         /// <summary>
         /// Jpeg化された画像
@@ -74,7 +81,7 @@ namespace NeeView
                 if (_image != value)
                 {
                     _image = value;
-                    if (Image != null)
+                    if (_image != null)
                     {
                         Changed?.Invoke(this, EventArgs.Empty);
                         Touched?.Invoke(this, EventArgs.Empty);
@@ -110,14 +117,6 @@ namespace NeeView
         }
 
         /// <summary>
-        /// View用Bitmapプロパティ
-        /// </summary>
-        public ImageSource? ImageSource => CreateBitmap();
-
-        public double Width => ImageSource is BitmapSource bitmap ? bitmap.PixelWidth : ImageSource != null ? ImageSource.Width : 0.0;
-        public double Height => ImageSource is BitmapSource bitmap ? bitmap.PixelHeight : ImageSource != null ? ImageSource.Height : 0.0;
-
-        /// <summary>
         /// View用Bitmapの背景プロパティ
         /// </summary>
         public Brush Background
@@ -149,7 +148,7 @@ namespace NeeView
         /// <summary>
         /// キャッシュを使用してサムネイル生成を試みる
         /// </summary>
-        internal async Task InitializeFromCacheAsync(ArchiveEntry entry, string? appendix, CancellationToken token)
+        public async Task InitializeFromCacheAsync(ArchiveEntry entry, string? appendix, CancellationToken token)
         {
             if (_disposedValue) return;
             if (IsValid || !IsCacheEnabled) return;
@@ -166,7 +165,7 @@ namespace NeeView
 
             _header = new ThumbnailCacheHeader(entry.SystemPath, length, appendix, Config.Current.Thumbnail.GetThumbnailImageGenerateHash());
             var image = await ThumbnailCache.Current.LoadAsync(_header, token);
-            ////Debug.WriteLine($"ThumbnailCache.Load: {_header.Key}: {(image == null ? "Miss" : "Hit!")}");
+            Trace($"ThumbnailCache.Load: {_header.Key}: {(image == null ? "Miss" : "Hit!")}");
             Image = image;
         }
 
@@ -174,11 +173,12 @@ namespace NeeView
         /// 画像データから初期化
         /// </summary>
         /// <param name="source"></param>
-        internal void Initialize(byte[]? image)
+        public void Initialize(byte[]? image)
         {
             if (_disposedValue) return;
             if (IsValid) return;
 
+            Trace($"Initialize: from binary={image?.Length ?? 0} byte");
             Image = image ?? ThumbnailResource.EmptyImage;
 
             SaveCacheAsync();
@@ -188,10 +188,11 @@ namespace NeeView
         /// サムネイル基本タイプから初期化
         /// </summary>
         /// <param name="type"></param>
-        internal void Initialize(ThumbnailType type)
+        public void Initialize(ThumbnailType type)
         {
             if (_disposedValue) return;
 
+            Trace($"Initialize: from type={type}");
             Image = type switch
             {
                 ThumbnailType.Media => ThumbnailResource.MediaImage,
@@ -204,7 +205,7 @@ namespace NeeView
         /// サムネイルソースから初期化
         /// </summary>
         /// <param name="source"></param>
-        internal void Initialize(ThumbnailSource source)
+        public void Initialize(ThumbnailSource source)
         {
             if (_disposedValue) return;
 
@@ -225,7 +226,7 @@ namespace NeeView
         /// <summary>
         /// キャッシュに保存
         /// </summary>
-        internal void SaveCacheAsync()
+        public void SaveCacheAsync()
         {
             if (_disposedValue) return;
             if (!IsCacheEnabled || _header == null) return;
@@ -258,7 +259,7 @@ namespace NeeView
         /// ImageSource取得
         /// </summary>
         /// <returns></returns>
-        public ImageSource? CreateBitmap()
+        public ImageSource? CreateImageSource()
         {
             if (_disposedValue) return null;
 
@@ -356,5 +357,14 @@ namespace NeeView
             var name = _header?.Key ?? "(none)";
             return $"{name}: LifeSerial={LifeSerial}: Length={_image?.Length ?? 0:#,0}";
          }
+
+
+        [Conditional("LOCAL_DEBUG")]
+        private void Trace(string s, params object[] args)
+        {
+            Debug.WriteLine($"{this.GetType().Name}({_serialNumber}): {string.Format(s, args)}");
+        }
     }
+
+
 }

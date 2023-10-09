@@ -26,6 +26,13 @@ namespace NeeView
         {
             InitializeComponent();
             this.Root.DataContext = this;
+
+            this.Unloaded += PanelListContentImage_Unloaded;
+        }
+
+        private void PanelListContentImage_Unloaded(object sender, RoutedEventArgs e)
+        {
+            ThumbnailBitmap?.Dispose();
         }
 
 
@@ -36,7 +43,39 @@ namespace NeeView
         }
 
         public static readonly DependencyProperty ThumbnailProperty =
-            DependencyProperty.Register("Thumbnail", typeof(IThumbnail), typeof(PanelListContentImage), new PropertyMetadata(null));
+            DependencyProperty.Register("Thumbnail", typeof(IThumbnail), typeof(PanelListContentImage), new PropertyMetadata(null, OnThumbnailPropertyChanged));
+
+        private static void OnThumbnailPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            if (d is PanelListContentImage control)
+            {
+                control.UpdateThumbnailBitmap();
+            }
+        }
+
+
+        public ThumbnailBitmap? ThumbnailBitmap
+        {
+            get { return (ThumbnailBitmap)GetValue(ThumbnailBitmapProperty); }
+            set { SetValue(ThumbnailBitmapProperty, value); }
+        }
+
+        public static readonly DependencyProperty ThumbnailBitmapProperty =
+            DependencyProperty.Register("ThumbnailBitmap", typeof(ThumbnailBitmap), typeof(PanelListContentImage), new PropertyMetadata(null));
+
+
+        private void UpdateThumbnailBitmap()
+        {
+            var thumbnail = Thumbnail;
+
+            if (ThumbnailBitmap?.Thumbnail == thumbnail) return;
+
+            ThumbnailBitmap?.Dispose();
+            ThumbnailBitmap = null;
+
+            if (thumbnail is null) return;
+            ThumbnailBitmap = new ThumbnailBitmap(thumbnail);
+        }
     }
 
 

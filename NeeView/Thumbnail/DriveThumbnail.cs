@@ -1,4 +1,6 @@
 ﻿using NeeLaboratory.ComponentModel;
+using System;
+using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
@@ -13,19 +15,23 @@ namespace NeeView
         private ImageSource? _bitmapSource;
         private bool _initialized;
 
+
         public DriveThumbnail(string path)
         {
             _path = path;
         }
 
-        public ImageSource? ImageSource => CreateBitmap();
-        public double Width => ImageSource is BitmapSource bitmap ? bitmap.PixelWidth : ImageSource != null ? ImageSource.Width : 0.0;
-        public double Height => ImageSource is BitmapSource bitmap ? bitmap.PixelHeight : ImageSource != null ? ImageSource.Height : 0.0;
+
+        public event EventHandler? Changed;
+
+
+        public bool IsValid => true;
         public bool IsUniqueImage => true;
         public bool IsNormalImage => false;
         public Brush Background => Brushes.Transparent;
 
-        private ImageSource? CreateBitmap()
+
+        public ImageSource? CreateImageSource()
         {
             if (!_initialized)
             {
@@ -35,6 +41,7 @@ namespace NeeView
                     {
                         _bitmapSource = image.GetBitmapSource(256.0);
                         DriveIconUtility.SetDriveIconCache(_path, _bitmapSource);
+                        Changed?.Invoke(this, EventArgs.Empty);
                         RaisePropertyChanged("");
                     });
             }
