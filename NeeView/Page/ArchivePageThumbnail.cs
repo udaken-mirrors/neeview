@@ -20,13 +20,16 @@ namespace NeeView
             NVDebug.AssertMTA();
 
             var pageContent = await ArchivePageUtility.GetSelectedPageContentAsync(_content.ArchiveEntry, token);
-            if (_content.ArchiveEntry.IsMedia())
+            if (pageContent is ArchivePageContent)
             {
-                return new ThumbnailSource(ThumbnailType.Media);
-            }
-            else if (pageContent is null)
-            {
-                return new ThumbnailSource(ThumbnailType.Empty);
+                if (pageContent.ArchiveEntry.IsMedia())
+                {
+                    return new ThumbnailSource(ThumbnailType.Media);
+                }
+                else
+                {
+                    return new ThumbnailSource(ThumbnailType.Empty);
+                }
             }
             else
             {

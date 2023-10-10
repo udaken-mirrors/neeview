@@ -13,20 +13,13 @@ namespace NeeView
         /// <param name="archiveEntry">基準となるエントリ</param>
         /// <param name="token"></param>
         /// <returns>代表エントリの PageContent. 代表エントリが入力と同じである場合は null</returns>
-        public static async Task<PageContent?> GetSelectedPageContentAsync(ArchiveEntry archiveEntry, CancellationToken token)
+        public static async Task<PageContent> GetSelectedPageContentAsync(ArchiveEntry archiveEntry, CancellationToken token)
         {
             var entry = await CreateRegularEntryAsync(archiveEntry, token);
             var selectedEntry = await SelectAlternativeEntry(entry, token);
-            if (entry == selectedEntry)
-            {
-                return null;
-            }
-            else
-            {
-                var factory = new PageContentFactory(null, false);
-                var selectedContent = factory.CreatePageContent(selectedEntry, token);
-                return selectedContent;
-            }
+            var factory = new PageContentFactory(null, false);
+            var selectedContent = factory.CreatePageContent(selectedEntry, token);
+            return selectedContent;
         }
 
         /// <summary>

@@ -55,9 +55,9 @@ namespace NeeView
         private async Task<ArchivePageData?> LoadArchivePageData(CancellationToken token)
         {
             var pageContent = await ArchivePageUtility.GetSelectedPageContentAsync(ArchiveEntry, token);
-            if (pageContent is null)
+            if (pageContent is ArchivePageContent)
             {
-                if (ArchiveEntry.IsMedia())
+                if (pageContent.ArchiveEntry.IsMedia())
                 {
                     return new ArchivePageData(ArchiveEntry, ThumbnailType.Media, null, null);
                 }
