@@ -37,7 +37,7 @@ namespace NeeView
             _vm = new ArchivePageViewModel(content);
             this.Root.DataContext = _vm;
 
-            this.FileCard.Icon = content.ImageSource;
+            this.FileCard.Icon = content.IconSource;
             this.FileCard.ArchiveEntry = content.Entry;
         }
 
@@ -140,7 +140,7 @@ namespace NeeView
         }
 
 
-        public ThumbnailBitmap Thumbnail => _content.Thumbnail;
+        public ImageSource? ImageSource => _content.ImageSource;
 
         public string? Name => _content.Entry.EntryName?.TrimEnd('\\').Replace("\\", " > ");
 

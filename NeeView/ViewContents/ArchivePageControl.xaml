@@ -13,6 +13,8 @@
         <SolidColorBrush x:Key="DefaultBrush" Color="White" />
         <SolidColorBrush x:Key="LocalForeground" Color="#F222"/>
         <local:BooleanToInverseVisibilityConverter x:Key="BooleanToInverseVisibilityConverter" />
+        <local:NullableToVisibilityConverter x:Key="NullableToVisibilityConverter" />
+        <local:NullableToInverseVisibilityConverter x:Key="NullableToInverseVisibilityConverter" />
 
         <DrawingImage x:Key="fic_folder">
             <DrawingImage.Drawing>
@@ -36,10 +38,8 @@
                 <RowDefinition Height="1*" MinHeight="128" />
             </Grid.RowDefinitions>
 
-            <Grid x:Name="ViewGrid" Grid.Row="0">
-
+            <Grid x:Name="ViewGrid" Grid.Row="0" Margin="10,30,10,0">
                 <Grid x:Name="OpenBookButton" Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="10" Cursor="Hand"
-                        MaxWidth="512" MaxHeight="512"
                         MouseLeftButtonDown="OpenBookButton_MouseLeftButtonDown" MouseLeftButtonUp="OpenBookButton_MouseLeftButtonUp" MouseRightButtonUp="OpenBookButton_MouseRightButtonUp" 
                         PreviewStylusDown="OpenBookButton_PreviewStylusDown" PreviewStylusUp="OpenBookButton_PreviewStylusUp" MouseEnter="OpenBookButton_MouseEnter" MouseLeave="OpenBookButton_MouseLeave">
 
@@ -67,10 +67,11 @@
                                     </Style.Triggers>
                                 </Style>
                             </Grid.Style>
-                            <Image Source="{Binding Thumbnail.ImageSource}" Stretch="Uniform" Margin="2"
-                                   Visibility="{Binding Thumbnail.IsEmptyImage, Converter={StaticResource BooleanToInverseVisibilityConverter}}" />
+
+                            <Image Source="{Binding ImageSource}" Stretch="Uniform" Margin="2" RenderOptions.BitmapScalingMode="Fant"
+                                   Visibility="{Binding ImageSource, Converter={StaticResource NullableToVisibilityConverter}}"/>
                             <Viewbox>
-                                <Grid Background="White" Width="256" Height="320" Margin="2" Visibility="{Binding Thumbnail.IsEmptyImage, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                <Grid Background="White" Width="256" Height="320" Margin="2" Visibility="{Binding ImageSource, Converter={StaticResource NullableToInverseVisibilityConverter}}">
                                     <Image Source="{StaticResource fic_folder}" HorizontalAlignment="Center" VerticalAlignment="Center" Width="64" Height="64"/>
                                 </Grid>
                             </Viewbox>

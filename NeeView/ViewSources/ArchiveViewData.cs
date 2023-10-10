@@ -4,15 +4,15 @@ namespace NeeView
 {
     public class ArchiveViewData
     {
-        public ArchiveViewData(ArchiveEntry entry, ThumbnailBitmap thumbnail, ImageSource? imageSource)
+        public ArchiveViewData(ArchiveEntry entry, ImageSource? imageSource, ImageSource? iconSource)
         {
             Entry = entry;
-            Thumbnail = thumbnail;
             ImageSource = imageSource;
+            IconSource = iconSource;
         }
 
         public ArchiveEntry Entry { get; }
-        public ThumbnailBitmap Thumbnail { get; }
         public ImageSource? ImageSource { get; }
+        public ImageSource? IconSource { get; }
     }
 }

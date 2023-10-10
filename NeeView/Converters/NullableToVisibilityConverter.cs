@@ -21,4 +21,14 @@ namespace NeeView
             throw new InvalidOperationException("IsNullConverter can only be used OneWay.");
         }
     }
+
+    [ValueConversion(typeof(object), typeof(Visibility))]
+    public class NullableToInverseVisibilityConverter : NullableToVisibilityConverter
+    {
+        public NullableToInverseVisibilityConverter()
+        {
+            True = Visibility.Visible;
+            False = Visibility.Collapsed;
+        }
+    }
 }

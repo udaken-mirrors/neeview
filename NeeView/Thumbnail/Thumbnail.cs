@@ -290,6 +290,21 @@ namespace NeeView
             }
         }
 
+        public static ImageSource? CreateImageSource(ThumbnailType type)
+        {
+            switch (type)
+            {
+                case ThumbnailType.Empty:
+                    return ThumbnailResource.EmptyImageSource;
+                case ThumbnailType.Media:
+                    return ThumbnailResource.MediaBitmapSource;
+                case ThumbnailType.Folder:
+                    return ThumbnailResource.FolderBitmapSource;
+                default:
+                    return null;
+            }
+        }
+
         public ThumbnailSource CreateSource()
         {
             var image = _image;
@@ -361,7 +376,7 @@ namespace NeeView
         {
             var name = _header?.Key ?? "(none)";
             return $"{name}: LifeSerial={LifeSerial}: Length={_image?.Length ?? 0:#,0}";
-         }
+        }
 
 
         [Conditional("LOCAL_DEBUG")]

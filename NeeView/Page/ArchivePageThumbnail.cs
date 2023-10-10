@@ -19,11 +19,21 @@ namespace NeeView
             token.ThrowIfCancellationRequested();
             NVDebug.AssertMTA();
 
-            await _content.LoadAsync(token);
-            token.ThrowIfCancellationRequested();
-
-            var thumbnail = (_content.Data as ArchivePageData)?.Thumbnail;
-            return thumbnail?.CreateSource() ?? new ThumbnailSource(ThumbnailType.Unique);
+            var pageContent = await ArchivePageUtility.GetSelectedPageContentAsync(_content.ArchiveEntry, token);
+            if (_content.ArchiveEntry.IsMedia())
+            {
+                return new ThumbnailSource(ThumbnailType.Media);
+            }
+            else if (pageContent is null)
+            {
+                return new ThumbnailSource(ThumbnailType.Empty);
+            }
+            else
+            {
+                Debug.Assert(pageContent is not ArchivePageContent);
+                var pageThumbnail = PageThumbnailFactory.Create(pageContent);
+                return await pageThumbnail.LoadThumbnailAsync(token);
+            }
         }
     }
 

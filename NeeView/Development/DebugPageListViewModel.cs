@@ -89,5 +89,9 @@ namespace NeeView
             Items = new();
         }
 
+        internal void Clear()
+        {
+            Book?.Source.BookMemoryService.CleanupDeep();
+        }
     }
 }

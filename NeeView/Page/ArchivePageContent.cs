@@ -3,15 +3,12 @@ using System.Threading.Tasks;
 using System.Threading;
 using System.Diagnostics;
 using System.Windows;
-using Esprima;
+using NeeView.ComponentModel;
 
 namespace NeeView
 {
     public class ArchivePageContent : PageContent
     {
-        private PageContent? _selectedContent;
-        private ThumbnailType _thumbnailType;
-
         public ArchivePageContent(ArchiveEntry archiveEntry, BookMemoryService? bookMemoryService)
             : base(archiveEntry, bookMemoryService)
         {
@@ -29,19 +26,21 @@ namespace NeeView
 
             try
             {
-                //var width = Math.Max(Config.Current.Book.BookPageSize + 100, DefaultSize.Width);
-                //var height = Math.Max(Config.Current.Book.BookPageSize + 100, DefaultSize.Height);
-                //var pictureInfo = new PictureInfo(new Size(width, height));
                 var pictureInfo = new PictureInfo(DefaultSize);
 
-                if (Thumbnail.IsValid) return new PageSource(new ArchivePageData(ArchiveEntry, Thumbnail), null, pictureInfo);
-
-                await Thumbnail.InitializeFromCacheAsync(ArchiveEntry, null, token);
-                if (Thumbnail.IsValid) return new PageSource(new ArchivePageData(ArchiveEntry, Thumbnail), null, pictureInfo);
-
-                var source = await LoadThumbnailAsync(token);
-                Thumbnail.Initialize(source);
-                return new PageSource(new ArchivePageData(ArchiveEntry, Thumbnail), null, pictureInfo);
+                var data = await LoadArchivePageData(token);
+                if (data is null)
+                {
+                    return PageSource.CreateEmpty();
+                }
+                else if (data.PageContent?.IsFailed == true)
+                {
+                    return new ArchivePageSource(null, data.PageContent.ErrorMessage, pictureInfo);
+                }
+                else
+                {
+                    return new ArchivePageSource(data, null, pictureInfo);
+                }
             }
             catch (OperationCanceledException)
             {
@@ -53,106 +52,38 @@ namespace NeeView
             }
         }
 
-
-        private async Task<ThumbnailSource> LoadThumbnailAsync(CancellationToken token)
+        private async Task<ArchivePageData?> LoadArchivePageData(CancellationToken token)
         {
-            token.ThrowIfCancellationRequested();
-            NVDebug.AssertMTA();
-
-            var source = await GetArchiveThumbnailSourceAsync(token);
-            if (source.ThumbnailType == ThumbnailType.Unique)
+            var pageContent = await ArchivePageUtility.GetSelectedPageContentAsync(ArchiveEntry, token);
+            if (pageContent is null)
             {
-                if (source.PageContent is not ArchivePageContent)
+                if (ArchiveEntry.IsMedia())
                 {
-                    Debug.Assert(source.PageContent is not ArchivePageContent);
-                    var pageThumbnail = PageThumbnailFactory.Create(source.PageContent);
-                    return await pageThumbnail.LoadThumbnailAsync(token);
+                    return new ArchivePageData(ArchiveEntry, ThumbnailType.Media, null, null);
                 }
                 else
                 {
-                    return new ThumbnailSource(ThumbnailType.Empty);
+                    return new ArchivePageData(ArchiveEntry, ThumbnailType.Empty, null, null);
                 }
             }
             else
             {
-                return new ThumbnailSource(source.ThumbnailType);
-            }
-        }
-
-        private async Task<ArchiveThumbnailSource> GetArchiveThumbnailSourceAsync(CancellationToken token)
-        {
-            if (_selectedContent is null)
-            {
-                var entry = await CreateRegularEntryAsync(ArchiveEntry, token);
-                var selected = await SelectAlternativeEntry(entry, token);
-                _thumbnailType = GetThumbnailType(selected);
-                var factory = new PageContentFactory(BookMemoryService);
-                _selectedContent = factory.CreatePageContent(selected, token);
-            }
-
-            return new ArchiveThumbnailSource(_thumbnailType, _selectedContent);
-        }
-
-        private ThumbnailType GetThumbnailType(ArchiveEntry entry)
-        {
-            if (System.IO.Directory.Exists(entry.SystemPath) || entry.IsBook())
-            {
-                if (ArchiverManager.Current.GetSupportedType(entry.SystemPath) == ArchiverType.MediaArchiver)
-                {
-                    return ThumbnailType.Media;
-                }
-            }
-
-            return ThumbnailType.Unique;
-        }
-
-        private async Task<ArchiveEntry> SelectAlternativeEntry(ArchiveEntry entry, CancellationToken token)
-        {
-            if (System.IO.Directory.Exists(entry.SystemPath) || entry.IsBook())
-            {
-                if (ArchiverManager.Current.GetSupportedType(entry.SystemPath) == ArchiverType.MediaArchiver)
-                {
-                    return entry;
-                }
-
-                return await ArchiveEntryUtility.CreateFirstImageArchiveEntryAsync(entry, 2, token) ?? entry;
-            }
-            else
-            {
-                return entry;
-            }
-        }
-
-        // 簡易 ArchiveEntry を 正規 ArchiveEntry に変換
-        private async Task<ArchiveEntry> CreateRegularEntryAsync(ArchiveEntry entry, CancellationToken token)
-        {
-            if (!entry.IsTemporary) return entry;
-
-            var query = new QueryPath(entry.SystemPath);
-            query = query.ToEntityPath();
-            try
-            {
-                return await ArchiveEntryUtility.CreateAsync(query.SimplePath, token);
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine($"ArchiveContent.Entry: {ex.Message}");
-                return entry;
-                //return StaticFolderArchive.Default.CreateArchiveEntry(query.SimplePath, true);
+                Debug.Assert(pageContent is not ArchivePageContent);
+                await pageContent.LoadAsync(token);
+                token.ThrowIfCancellationRequested();
+                var dataSource = pageContent.CreateDataSource();
+                if (dataSource.DataState == DataState.None) return null;
+                return new ArchivePageData(ArchiveEntry, ThumbnailType.Unique, pageContent, dataSource);
             }
         }
     }
 
-    public class ArchiveThumbnailSource
+    public class ArchivePageSource : PageSource
     {
-        public ArchiveThumbnailSource(ThumbnailType thumbnailType, PageContent pageContent)
+        public ArchivePageSource(ArchivePageData? data, string? errorMessage, PictureInfo? pictureInfo) : base(data, errorMessage, pictureInfo)
         {
-            ThumbnailType = thumbnailType;
-            PageContent = pageContent;
         }
 
-        public ThumbnailType ThumbnailType { get; }
-        public PageContent PageContent { get; }
+        public override long DataSize => (Data as ArchivePageData)?.PageContent?.DataSize ?? 0;
     }
-
 }

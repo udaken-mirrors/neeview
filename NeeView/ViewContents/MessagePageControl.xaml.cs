@@ -34,7 +34,7 @@ namespace NeeView
             DependencyProperty.Register(
             "DefaultBrush",
             typeof(Brush),
-            typeof(FilePageControl),
+            typeof(MessagePageControl),
             new FrameworkPropertyMetadata(Brushes.White, new PropertyChangedCallback(OnDefaultBrushChanged)));
 
         public Brush DefaultBrush

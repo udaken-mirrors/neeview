@@ -16,7 +16,7 @@ namespace NeeView
             // ページ生成
             var archiveEntryCollection = CreateArchiveEntryCollection(address.TargetPath.SimplePath, setting.IsRecursiveFolder, setting.ArchiveRecursiveMode, setting.IsIgnoreCache);
             var bookMemoryService = new BookMemoryService();
-            var pages = await CreatePageCollection(archiveEntryCollection, setting.BookPageCollectMode, new PageContentFactory(bookMemoryService), token);
+            var pages = await CreatePageCollection(archiveEntryCollection, setting.BookPageCollectMode, new PageContentFactory(bookMemoryService, true), token);
 
             // 再起判定は通常のディレクトリーのみ適用
             var canAutoRecursive = System.IO.Directory.Exists(address.TargetPath.SimplePath);

@@ -62,6 +62,11 @@ namespace NeeView
             Debug.WriteLine($"WorkingSet: {totalMemory:#,0}");
             Debug.WriteLine($"WorkingSet: {workingSet:#,0}");
         }
+
+        private void ClearButton_Click(object sender, RoutedEventArgs e)
+        {
+            _vm.Clear();
+        }
     }
 
 

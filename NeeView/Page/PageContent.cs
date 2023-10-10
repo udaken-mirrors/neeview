@@ -32,6 +32,7 @@ namespace NeeView
         private Size? _size;
         public PageContentState _state;
         private readonly AsyncLock _asyncLock = new();
+        private readonly object _lock = new();
         private CancellationTokenSource? _cancellationTokenSource;
         private object? _data;
         private long _dataSize;
@@ -162,26 +163,41 @@ namespace NeeView
         {
             _cancellationTokenSource?.Cancel();
 
-            Data = null;
-            DataSize = 0;
-            ErrorMessage = null;
+            lock (_lock)
+            {
+                Data = null;
+                DataSize = 0;
+                ErrorMessage = null;
+            }
         }
 
 
         private void SetSource(PageSource source)
         {
-            Data = source.Data;
-            DataSize = source.DataSize;
-            ErrorMessage = source.ErrorMessage;
-            PictureInfo = source.PictureInfo;
-
-            if (GetMemorySize() > 0)
+            lock (_lock)
             {
-                _bookMemoryService?.AddPageContent(this);
+                Data = source.Data;
+                DataSize = source.DataSize;
+                ErrorMessage = source.ErrorMessage;
+                PictureInfo = source.PictureInfo;
+
+                if (GetMemorySize() > 0)
+                {
+                    _bookMemoryService?.AddPageContent(this);
+                }
+
+                Size = PictureInfo?.Size ?? UndefinedSize;
             }
 
-            Size = PictureInfo?.Size ?? UndefinedSize;
             ContentChanged?.Invoke(this, EventArgs.Empty);
+        }
+
+        public DataSource CreateDataSource()
+        {
+            lock (_lock)
+            {
+                return new DataSource(Data, DataSize, ErrorMessage);
+            }
         }
 
 

@@ -7,10 +7,12 @@ namespace NeeView
     public class PageContentFactory
     {
         private readonly BookMemoryService? _bookMemoryService;
+        private readonly bool _allowAnimatedImage;
 
-        public PageContentFactory(BookMemoryService? bookMemoryService)
+        public PageContentFactory(BookMemoryService? bookMemoryService, bool arrowAnimatedImage)
         {
             _bookMemoryService = bookMemoryService;
+            _allowAnimatedImage = arrowAnimatedImage;
         }
 
 
@@ -29,14 +31,6 @@ namespace NeeView
                 {
                     return new PdfPageContent(entry, _bookMemoryService);
                 }
-                else if (PictureProfile.Current.IsAnimatedGifSupported(name))
-                {
-                    return new AnimatedPageContent(entry, _bookMemoryService, AnimatedImageType.Gif);
-                }
-                else if (PictureProfile.Current.IsAnimatedPngSupported(name))
-                {
-                    return new AnimatedPageContent(entry, _bookMemoryService, AnimatedImageType.Png);
-                }
                 else if (PictureProfile.Current.IsSvgSupported(name))
                 {
                     return new SvgPageContent(entry, _bookMemoryService);
@@ -44,6 +38,14 @@ namespace NeeView
                 else if (PictureProfile.Current.IsMediaSupported(name))
                 {
                     return new MediaPageContent(entry, _bookMemoryService);
+                }
+                else if (_allowAnimatedImage && PictureProfile.Current.IsAnimatedGifSupported(name))
+                {
+                    return new AnimatedPageContent(entry, _bookMemoryService, AnimatedImageType.Gif);
+                }
+                else if (_allowAnimatedImage && PictureProfile.Current.IsAnimatedPngSupported(name))
+                {
+                    return new AnimatedPageContent(entry, _bookMemoryService, AnimatedImageType.Png);
                 }
                 else
                 {
