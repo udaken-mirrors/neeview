@@ -431,6 +431,8 @@ namespace NeeView
         {
             Debug.WriteLine($"App.MainWindow.Loaded: {App.Current.Stopwatch.ElapsedMilliseconds}ms");
 
+            MessageDialog.OwnerWindow = this;
+
             App.Current.ShutdownMode = ShutdownMode.OnMainWindowClose;
 
             _dpiProvider.SetDipScale(VisualTreeHelper.GetDpi(this));
@@ -564,6 +566,7 @@ namespace NeeView
         private void MainWindow_Closed(object sender, EventArgs e)
         {
             Trace.WriteLine($"Window.Closed:");
+            MessageDialog.OwnerWindow = null;
         }
 
         /// <summary>

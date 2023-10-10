@@ -93,6 +93,8 @@ namespace NeeView
     [NotifyPropertyChanged]
     public partial class MessageDialog : Window, INotifyPropertyChanged
     {
+        public static Window? OwnerWindow { get; set; }
+
         private UICommand? _resultCommand;
 
 
@@ -101,10 +103,10 @@ namespace NeeView
             InitializeComponent();
             this.DataContext = this;
 
-            this.Owner = MainWindow.Current;
+            this.Owner = OwnerWindow;
             this.WindowStartupLocation = WindowStartupLocation.CenterOwner;
 
-            this.ShowInTaskbar = IsShowInTaskBar;
+            this.ShowInTaskbar = IsShowInTaskBar || OwnerWindow is null;
         }
 
         public MessageDialog(string message, string title) : this()
