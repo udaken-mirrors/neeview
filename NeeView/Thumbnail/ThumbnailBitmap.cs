@@ -141,8 +141,7 @@ namespace NeeView
                 // BitmapSource生成 (非同期)
                 await Task.Run(() =>
                 {
-                    var imageSource = _thumbnail.CreateImageSource();
-                    AppDispatcher.BeginInvoke(() => ImageSource = imageSource);
+                    ImageSource = _thumbnail.CreateImageSource();
                 });
             }
         }

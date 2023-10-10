@@ -65,7 +65,10 @@ namespace NeeView
         public ResourceThumbnail(string resourceName, FrameworkElement? source = null)
         {
             var resources = source != null ? source.Resources : App.Current.Resources;
-            _create = () => resources[resourceName] as ImageSource;
+            _create = () =>
+            {
+                return AppDispatcher.Invoke(() => resources[resourceName] as ImageSource);
+            };
         }
     }
 }
