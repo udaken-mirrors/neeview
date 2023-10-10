@@ -16,9 +16,29 @@
         </Style>
     </UserControl.Resources>
 
+    <!--
     <Grid x:Name="Root" Background="#EEE">
 
         <local:FileCard x:Name="FileCard" Margin="20" />
 
     </Grid>
+    -->
+
+    <Border x:Name="Root" Background="#EEE">
+
+        <Grid Margin="10">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="3*"/>
+                <RowDefinition Height="1*" MinHeight="128" />
+            </Grid.RowDefinitions>
+
+            <Grid x:Name="ViewGrid" Grid.Row="0">
+                <TextBlock x:Name="IconTextBlock" Text="2" FontFamily="Wingdings" FontSize="128" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="LightGray"/>
+            </Grid>
+
+            <local:FileCard Grid.Row="1" x:Name="FileCard" Margin="10" VerticalAlignment="Top" />
+
+        </Grid>
+    </Border>
+    
 </UserControl>

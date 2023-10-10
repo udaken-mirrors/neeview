@@ -20,7 +20,7 @@
             <DrawingImage.Drawing>
                 <GeometryDrawing>
                     <GeometryDrawing.Pen>
-                        <Pen Brush="{StaticResource LocalForeground}" Thickness="1.25"></Pen>
+                        <Pen Brush="LightGray" Thickness="1"></Pen>
                     </GeometryDrawing.Pen>
                     <GeometryDrawing.Geometry>
                         <PathGeometry FillRule="Nonzero" Figures="M0,0 L14,0 14,10 16,12 16,18, 0,18Z M14,10 L13,12 13,18"/>
@@ -71,7 +71,7 @@
                             <Image Source="{Binding ImageSource}" Stretch="Uniform" Margin="2" RenderOptions.BitmapScalingMode="Fant"
                                    Visibility="{Binding ImageSource, Converter={StaticResource NullableToVisibilityConverter}}"/>
                             <Viewbox>
-                                <Grid Background="White" Width="256" Height="320" Margin="2" Visibility="{Binding ImageSource, Converter={StaticResource NullableToInverseVisibilityConverter}}">
+                                <Grid Background="#EEE" Width="256" Height="320" Margin="2" Visibility="{Binding ImageSource, Converter={StaticResource NullableToInverseVisibilityConverter}}">
                                     <Image Source="{StaticResource fic_folder}" HorizontalAlignment="Center" VerticalAlignment="Center" Width="64" Height="64"/>
                                 </Grid>
                             </Viewbox>
