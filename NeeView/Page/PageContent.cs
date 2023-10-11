@@ -174,6 +174,12 @@ namespace NeeView
 
         private void SetSource(PageSource source)
         {
+            if (source.PictureInfo is not null && source.PictureInfo.Size.IsEmptyArea())
+            {
+                SetSource(PageSource.CreateError("Image area is empty"));
+                return;
+            }
+
             lock (_lock)
             {
                 Data = source.Data;

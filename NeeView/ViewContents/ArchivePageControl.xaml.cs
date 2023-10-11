@@ -39,6 +39,8 @@ namespace NeeView
 
             this.FileCard.Icon = content.IconSource;
             this.FileCard.ArchiveEntry = content.Entry;
+
+            this.SizeChanged += ArchivePageControl_SizeChanged;
         }
 
 
@@ -56,6 +58,29 @@ namespace NeeView
             if (d is ArchivePageControl control)
             {
                 control.Resources["DefaultBrush"] = e.NewValue;
+            }
+        }
+
+
+        private void ArchivePageControl_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            if (this.ActualHeight < 300.0)
+            {
+                this.RootGrid.Margin = new Thickness(0.0);
+                this.ViewGrid.Margin = new Thickness(5.0, 5.0, 5.0, 0.0);
+                this.BackPanel.Margin = new Thickness(4.0, 4.0, 0.0, 0.0);
+                this.FrontPanel.Margin = new Thickness(0.0, 0.0, 4.0, 4.0);
+                this.FileCard.Margin = new Thickness(5.0);
+                this.InfoArea.MinHeight = 54.0;
+            }
+            else
+            {
+                this.RootGrid.Margin = new Thickness(10.0);
+                this.ViewGrid.Margin = new Thickness(10.0, 30.0, 10.0, 10.0);
+                this.FileCard.Margin = new Thickness(10.0);
+                this.BackPanel.Margin = new Thickness(8.0, 8.0, 0.0, 0.0);
+                this.FrontPanel.Margin = new Thickness(0.0, 0.0, 8.0, 8.0);
+                this.InfoArea.MinHeight = 128.0;
             }
         }
 

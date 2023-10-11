@@ -19,6 +19,12 @@ namespace NeeView
             return self.IsEmpty || self.IsZero();
         }
 
+        // 面積がない判定
+        public static bool IsEmptyArea(this Size self)
+        {
+            return self.Width <= 0.0 || self.Height <= 0.0;
+        }
+
         // スケール
         public static Size Multi(this Size self, double scale)
         {

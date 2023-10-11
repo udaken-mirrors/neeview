@@ -32,10 +32,10 @@
 
     <Border x:Name="Root" Background="#EEE">
 
-        <Grid Margin="10">
+        <Grid x:Name="RootGrid" Margin="10">
             <Grid.RowDefinitions>
-                <RowDefinition Height="3*"/>
-                <RowDefinition Height="1*" MinHeight="128" />
+                <RowDefinition x:Name="ViewArea" Height="3*"/>
+                <RowDefinition x:Name="InfoArea" Height="1*" MinHeight="128" />
             </Grid.RowDefinitions>
 
             <Grid x:Name="ViewGrid" Grid.Row="0" Margin="10,30,10,0">
@@ -44,7 +44,7 @@
                         PreviewStylusDown="OpenBookButton_PreviewStylusDown" PreviewStylusUp="OpenBookButton_PreviewStylusUp" MouseEnter="OpenBookButton_MouseEnter" MouseLeave="OpenBookButton_MouseLeave">
 
                     <Grid x:Name="ImageGrid" HorizontalAlignment="Center" VerticalAlignment="Bottom">
-                        <Grid Margin="8,8,0,0" >
+                        <Grid x:Name="BackPanel" Margin="8,8,0,0" >
                             <Grid.Style>
                                 <Style TargetType="Grid">
                                     <Setter Property="Background" Value="{DynamicResource Thumbnail.Background}" />
@@ -56,7 +56,7 @@
                                 </Style>
                             </Grid.Style>
                         </Grid>
-                        <Grid Margin="0,0,8,8">
+                        <Grid x:Name="FrontPanel" Margin="0,0,8,8">
                             <Grid.Style>
                                 <Style TargetType="Grid">
                                     <Setter Property="Background" Value="{DynamicResource Thumbnail.Background}" />
@@ -68,7 +68,7 @@
                                 </Style>
                             </Grid.Style>
 
-                            <Image Source="{Binding ImageSource}" Stretch="Uniform" Margin="2" RenderOptions.BitmapScalingMode="Fant"
+                            <Image x:Name="ContentImage" Source="{Binding ImageSource}" Stretch="Uniform" Margin="2" RenderOptions.BitmapScalingMode="Fant" MinWidth="64" MinHeight="64"
                                    Visibility="{Binding ImageSource, Converter={StaticResource NullableToVisibilityConverter}}"/>
                             <Viewbox>
                                 <Grid Background="#EEE" Width="256" Height="320" Margin="2" Visibility="{Binding ImageSource, Converter={StaticResource NullableToInverseVisibilityConverter}}">
