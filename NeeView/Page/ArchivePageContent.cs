@@ -35,7 +35,7 @@ namespace NeeView
                 }
                 else if (data.PageContent?.IsFailed == true)
                 {
-                    return new ArchivePageSource(null, data.PageContent.ErrorMessage, pictureInfo);
+                    return new ArchivePageSource(new ArchivePageData(ArchiveEntry, ThumbnailType.Empty, null, null), null, pictureInfo);
                 }
                 else
                 {
