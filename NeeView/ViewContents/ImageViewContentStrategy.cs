@@ -85,7 +85,14 @@ namespace NeeView
                 _imageControl?.Dispose();
                 _imageControl = null;
 
-                _imageControl = new ImageContentControl(_viewContent.Element, viewData.ImageSource, _viewContent.ViewContentSize, _viewContent.BackgroundSource);
+                if (viewData.ImageSource is DrawingImage)
+                {
+                    _imageControl = new CropImageContentControl(_viewContent.Element, viewData.ImageSource, _viewContent.ViewContentSize, _viewContent.BackgroundSource);
+                }
+                else
+                {
+                    _imageControl = new BrushImageContentControl(_viewContent.Element, viewData.ImageSource, _viewContent.ViewContentSize, _viewContent.BackgroundSource);
+                }
                 _imageControl.ScalingMode = ScalingMode;
                 return _imageControl;
             }

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -10,22 +9,25 @@ using NeeView.PageFrames;
 
 namespace NeeView
 {
-    public class ImageContentControl : ContentControl, IDisposable, IHasImageSource
+    public abstract class ImageContentControl : ContentControl, IDisposable, IHasImageSource
     {
+        protected record struct TargetElement(FrameworkElement View, FrameworkElement Image);
+
+
         private readonly PageFrameElement _element;
-        private readonly ImageSource _image;
+        private readonly ImageSource _imageSource;
         private readonly ViewContentSize _contentSize;
-        private readonly Rectangle _rectangle;
+        private TargetElement _target;
         private bool _disposedValue;
         private BitmapScalingMode? _scalingMode;
 
 
-        public ImageContentControl(PageFrameElement source, ImageSource image, ViewContentSize contentSize, PageBackgroundSource backgroundSource)
+        protected ImageContentControl(PageFrameElement source, ImageSource image, ViewContentSize contentSize, PageBackgroundSource backgroundSource)
         {
             this.Focusable = false;
 
             _element = source;
-            _image = image;
+            _imageSource = image;
             _contentSize = contentSize;
 
             var grid = new Grid();
@@ -41,23 +43,22 @@ namespace NeeView
                 grid.Children.Add(background);
             }
 
-            // image
-            _rectangle = new Rectangle();
-            _rectangle.Fill = CreatePageImageBrush(true);
-            _rectangle.HorizontalAlignment = HorizontalAlignment.Stretch;
-            _rectangle.VerticalAlignment = VerticalAlignment.Stretch;
-            grid.Children.Add(_rectangle);
+            // target image
+            _target = CreateTarget(_imageSource, _element.ViewSizeCalculator.GetViewBox());
+
+            grid.Children.Add(_target.View);
 
             // image scaling mode
             UpdateBitmapScalingMode();
 
-            this.Content =  grid;
+            this.Content = grid;
 
             _contentSize.SizeChanged += ContentSize_SizeChanged;
         }
 
 
-        public ImageSource ImageSource => _image;
+        public ImageSource ImageSource => _imageSource;
+
 
         /// <summary>
         /// BitmapScaleMode指定。Printerで使用される。
@@ -94,35 +95,17 @@ namespace NeeView
             GC.SuppressFinalize(this);
         }
 
+        protected abstract TargetElement CreateTarget(ImageSource imageSource, Rect viewbox);
+
         private void ContentSize_SizeChanged(object? sender, EventArgs e)
         {
             UpdateBitmapScalingMode();
         }
 
-
-        private ImageBrush CreatePageImageBrush(bool isStretch)
-        {
-            var brush = new ImageBrush();
-            brush.ImageSource = _image;
-            brush.AlignmentX = AlignmentX.Left;
-            brush.AlignmentY = AlignmentY.Top;
-            brush.Stretch = isStretch ? Stretch.Fill : Stretch.None;
-            brush.TileMode = TileMode.None;
-            brush.Viewbox = _element.ViewSizeCalculator.GetViewBox();
-            if (brush.CanFreeze)
-            {
-                brush.Freeze();
-            }
-
-            return brush;
-        }
-
-
         private void UpdateBitmapScalingMode()
         {
-            var imageSize = _image is BitmapSource bitmapSource ? new Size(bitmapSource.PixelWidth, bitmapSource.PixelHeight) : new Size(_image.Width, _image.Height);
-            ViewContentTools.SetBitmapScalingMode(_rectangle, imageSize, _contentSize, _scalingMode);
+            var imageSize = _imageSource is BitmapSource bitmapSource ? new Size(bitmapSource.PixelWidth, bitmapSource.PixelHeight) : new Size(_imageSource.Width, _imageSource.Height);
+            ViewContentTools.SetBitmapScalingMode(_target.Image, imageSize, _contentSize, _scalingMode);
         }
-
     }
 }

@@ -68,7 +68,7 @@ namespace NeeView
             var imageLeft = -Viewbox.Left * imageWidth;
             var imageTop = -Viewbox.Top * imageHeight;
 
-            var element = this.TargetSocket;
+            var element = this.ViewBox;
             element.Width = imageWidth;
             element.Height = imageHeight;
             Canvas.SetLeft(element, imageLeft);
