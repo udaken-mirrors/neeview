@@ -8,6 +8,7 @@ namespace NeeView
         private bool _isAccessKeyEnabled = true;
         private bool _isReversePageMove = true;
         private bool _isReversePageMoveWheel;
+        private bool _isReversePageMoveHorizontalWheel;
         private bool _isHorizontalWheelLimitedOnce = true;
 
         [PropertyMember]
@@ -29,6 +30,13 @@ namespace NeeView
         {
             get { return _isReversePageMoveWheel; }
             set { SetProperty(ref _isReversePageMoveWheel, value); }
+        }
+
+        [PropertyMember]
+        public bool IsReversePageMoveHorizontalWheel
+        {
+            get { return _isReversePageMoveHorizontalWheel; }
+            set { SetProperty(ref _isReversePageMoveHorizontalWheel, value); }
         }
 
         [PropertyMember]

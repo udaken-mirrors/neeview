@@ -2828,6 +2828,24 @@ namespace NeeView.Properties {
         }
         
         /// <summary>
+        ///   Replace when operating tilt wheel に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string CommandConfig_IsReversePageMoveHorizontalWheel {
+            get {
+                return ResourceManager.GetString("CommandConfig.IsReversePageMoveHorizontalWheel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   You can select correspondence only for tilt wheel operation. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string CommandConfig_IsReversePageMoveHorizontalWheel_Remarks {
+            get {
+                return ResourceManager.GetString("CommandConfig.IsReversePageMoveHorizontalWheel.Remarks", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Replace when operating wheel に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string CommandConfig_IsReversePageMoveWheel {

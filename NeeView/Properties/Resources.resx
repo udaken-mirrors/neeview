@@ -7539,4 +7539,10 @@ nv.ShowToast(nv.Book.ViewPages[0].Path)</value>
   <data name="ImageStandardConfig.IsAnimatedPngEnabled.Remarks" xml:space="preserve">
     <value>Perform animated PNG playback. Memory consumption problems may occur with long PNGs.</value>
   </data>
+  <data name="CommandConfig.IsReversePageMoveHorizontalWheel" xml:space="preserve">
+    <value>Replace when operating tilt wheel</value>
+  </data>
+  <data name="CommandConfig.IsReversePageMoveHorizontalWheel.Remarks" xml:space="preserve">
+    <value>You can select correspondence only for tilt wheel operation.</value>
+  </data>
 </root>

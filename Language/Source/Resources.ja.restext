@@ -2371,3 +2371,5 @@ MouseConfig.InertiaSensitivity=慣性感度
 TouchConfig.InertiaSensitivity=慣性感度
 ImageStandardConfig.IsAnimatedPngEnabled=アニメーション PNG を再生する
 ImageStandardConfig.IsAnimatedPngEnabled.Remarks=アニメーション PNG 再生を行います。長時間の PNG でメモリ消費の問題が発生する可能性があります。
+CommandConfig.IsReversePageMoveHorizontalWheel=チルトホイール操作のときに入れ替える
+CommandConfig.IsReversePageMoveHorizontalWheel.Remarks=チルトホイール操作のみ対応の選択ができます。

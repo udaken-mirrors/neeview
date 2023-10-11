@@ -2371,3 +2371,5 @@ MouseConfig.InertiaSensitivity=Inertia sensitivity
 TouchConfig.InertiaSensitivity=Inertia sensitivity
 ImageStandardConfig.IsAnimatedPngEnabled=Play animated PNG
 ImageStandardConfig.IsAnimatedPngEnabled.Remarks=Perform animated PNG playback. Memory consumption problems may occur with long PNGs.
+CommandConfig.IsReversePageMoveHorizontalWheel=Replace when operating tilt wheel
+CommandConfig.IsReversePageMoveHorizontalWheel.Remarks=You can select correspondence only for tilt wheel operation.

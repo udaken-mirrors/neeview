@@ -228,7 +228,7 @@ namespace NeeView
                             if (!x.Handled && gesture.Matches(this, x))
                             {
                                 var wheelOptions = MouseWheelDeltaOption.None;
-                                WheelCommandExecute(s, x, wheelOptions, command.Value);
+                                VerticalWheelCommandExecute(s, x, wheelOptions, command.Value);
                             }
                         };
                     }
@@ -239,7 +239,7 @@ namespace NeeView
                             if (!x.Handled && gesture.Matches(this, x))
                             {
                                 var wheelOptions = Config.Current.Command.IsHorizontalWheelLimitedOnce ? MouseWheelDeltaOption.LimitOnce : MouseWheelDeltaOption.None;
-                                WheelCommandExecute(s, x, wheelOptions, command.Value);
+                                HorizontalWheelCommandExecute(s, x, wheelOptions, command.Value);
                             }
                         };
                     }
@@ -341,8 +341,20 @@ namespace NeeView
             }
         }
 
+        // 垂直ホイールの回転数に応じたコマンド実行
+        private void VerticalWheelCommandExecute(object? sender, MouseWheelEventArgs arg, MouseWheelDeltaOption wheelOptions, RoutedUICommand command)
+        {
+            WheelCommandExecute(sender, arg, wheelOptions, command, Config.Current.Command.IsReversePageMoveWheel);
+        }
+
+        // 水平ホイールの回転数に応じたコマンド実行
+        private void HorizontalWheelCommandExecute(object? sender, MouseWheelEventArgs arg, MouseWheelDeltaOption wheelOptions, RoutedUICommand command)
+        {
+            WheelCommandExecute(sender, arg, wheelOptions, command, Config.Current.Command.IsReversePageMoveHorizontalWheel);
+        }
+
         // ホイールの回転数に応じたコマンド実行
-        private void WheelCommandExecute(object? sender, MouseWheelEventArgs arg, MouseWheelDeltaOption wheelOptions, RoutedUICommand command)
+        private void WheelCommandExecute(object? sender, MouseWheelEventArgs arg, MouseWheelDeltaOption wheelOptions, RoutedUICommand command, bool allowFlip)
         {
             if (_disposedValue) return;
 
@@ -350,7 +362,7 @@ namespace NeeView
             if (turn > 0)
             {
                 // Debug.WriteLine($"WheelCommand: {turn}({arg.Delta})");
-                var param = new CommandParameterArgs(null, Config.Current.Command.IsReversePageMoveWheel);
+                var param = new CommandParameterArgs(null, allowFlip);
                 for (int i = 0; i < turn; i++)
                 {
                     command.Execute(param, (sender as IInputElement) ?? MainWindow.Current);

@@ -102,6 +102,9 @@ namespace NeeView
                         break;
                 }
 
+                // 水平ホイールのコマンド入れ替え初期化
+                self.Config.Command.IsReversePageMoveHorizontalWheel = self.Config.Command.IsReversePageMoveWheel;
+
                 // ページモード切替ジェスチャーの割当切り替え
                 if (self.Commands != null)
                 {
