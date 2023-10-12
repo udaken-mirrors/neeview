@@ -463,7 +463,7 @@ namespace NeeView
                 //_historyEntry = false;
                 //_historyRemoved = false;
 
-                var bookSetting = BookSettingConfigExtensions.FromBookMement(book.CreateMemento());
+                var bookSetting = BookSettingConfigExtensions.FromBookMemento(book.CreateMemento());
                 if (bookSetting is not null)
                 {
                     // 本の設定を更新

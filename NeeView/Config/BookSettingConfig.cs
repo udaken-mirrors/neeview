@@ -5,7 +5,7 @@ using System.Text.Json.Serialization;
 
 namespace NeeView
 {
-    public class BookSettingConfig : BindableBase, ICloneable, IEquatable<BookSettingConfig>, IBookSetting
+    public class BookSettingConfig : BindableBase, ICloneable, IEquatable<BookSettingConfig>, IBookSetting, IHasAutoRotate
     {
         private string _page = "";
         private PageMode _pageMode = PageMode.SinglePage;
@@ -16,6 +16,7 @@ namespace NeeView
         private bool _isSupportedWidePage = true;
         private bool _isRecursiveFolder;
         private PageSortMode _sortMode = PageSortMode.Entry;
+        private AutoRotateType _autoRotate;
 
 
         // ページ
@@ -91,6 +92,14 @@ namespace NeeView
             set { SetProperty(ref _sortMode, value); }
         }
 
+        // 自動回転
+        [PropertyMember]
+        public AutoRotateType AutoRotate
+        {
+            get { return _autoRotate; }
+            set { SetProperty(ref _autoRotate, value); }
+        }
+
 
         public object Clone()
         {
@@ -108,7 +117,8 @@ namespace NeeView
                 this.IsSupportedSingleLastPage == other.IsSupportedSingleLastPage &&
                 this.IsSupportedWidePage == other.IsSupportedWidePage &&
                 this.IsRecursiveFolder == other.IsRecursiveFolder &&
-                this.SortMode == other.SortMode;
+                this.SortMode == other.SortMode &&
+                this.AutoRotate == other.AutoRotate;
         }
 
         public override bool Equals(object? obj)
@@ -128,8 +138,15 @@ namespace NeeView
             hash.Add(_isSupportedWidePage);
             hash.Add(_isRecursiveFolder);
             hash.Add(_sortMode);
+            hash.Add(_autoRotate);
             return hash.ToHashCode();
         }
     }
 
+
+
+    public interface IHasAutoRotate
+    {
+        AutoRotateType AutoRotate { get; set; }
+    }
 }

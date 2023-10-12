@@ -27,6 +27,7 @@ namespace NeeView
                     case BookSettingKey.IsSupportedWidePage: return _setting.IsSupportedWidePage;
                     case BookSettingKey.IsRecursiveFolder: return _setting.IsRecursiveFolder;
                     case BookSettingKey.SortMode: return _setting.SortMode;
+                    case BookSettingKey.AutoRotate: return _setting.AutoRotate;
                     default: throw new IndexOutOfRangeException();
                 }
             }
@@ -43,6 +44,7 @@ namespace NeeView
                     case BookSettingKey.IsSupportedWidePage: _setting.IsSupportedWidePage = value; break;
                     case BookSettingKey.IsRecursiveFolder: _setting.IsRecursiveFolder = value; break;
                     case BookSettingKey.SortMode: _setting.SortMode = value; break;
+                    case BookSettingKey.AutoRotate: _setting.AutoRotate = value; break;
                     default: throw new IndexOutOfRangeException();
                 }
             }

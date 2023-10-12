@@ -7586,4 +7586,7 @@ nv.ShowToast(nv.Book.ViewPages[0].Path)</value>
   <data name="AutoRotateType.ForcedRight" xml:space="preserve">
     <value>強制右回転</value>
   </data>
+  <data name="BookSettingConfig.AutoRotate" xml:space="preserve">
+    <value>自動回転</value>
+  </data>
 </root>

@@ -25,6 +25,7 @@ namespace NeeView
             _model = model;
             _model.PropertyChanged += Model_PropertyChanged;
 
+            Config.Current.BookSetting.PropertyChanged += BookSetting_PropertyChanged;
             Config.Current.View.PropertyChanged += ViewConfig_PropertyChanged;
             Config.Current.Navigator.PropertyChanged += NavigatorConfig_PropertyChanged;
 
@@ -64,8 +65,8 @@ namespace NeeView
 
         public AutoRotateType AutoRotate
         {
-            get => Config.Current.View.AutoRotate;
-            set => Config.Current.View.AutoRotate = value;
+            get => Config.Current.BookSetting.AutoRotate;
+            set => Config.Current.BookSetting.AutoRotate = value;
         }
 
         public Dictionary<AutoRotateType, string> AutoRotateTypeList { get; } = AliasNameExtensions.GetAliasNameDictionary<AutoRotateType>();
@@ -234,7 +235,7 @@ namespace NeeView
             }
         }
 
-        private void ViewConfig_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+        private void BookSetting_PropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
             switch (e.PropertyName)
             {
@@ -243,8 +244,19 @@ namespace NeeView
                     RaisePropertyChanged("");
                     break;
 
-                case nameof(ViewConfig.AutoRotate):
+                case nameof(BookSettingConfig.AutoRotate):
                     RaisePropertyChanged(nameof(AutoRotate));
+                    break;
+            }
+        }
+
+        private void ViewConfig_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            switch (e.PropertyName)
+            {
+                case null:
+                case "":
+                    RaisePropertyChanged("");
                     break;
 
                 case nameof(ViewConfig.AllowFileContentAutoRotate):

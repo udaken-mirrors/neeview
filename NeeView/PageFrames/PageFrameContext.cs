@@ -71,7 +71,6 @@ namespace NeeView.PageFrames
             : _config.View.StretchMode;
 
         public bool IsInsertDummyPage => _config.Book.IsInsertDummyPage;
-        public AutoRotateType AutoRotateType => _config.View.AutoRotate;
         public bool AllowFileContentAutoRotate => _config.View.AllowFileContentAutoRotate;
         public bool AllowEnlarge => _config.View.AllowStretchScaleUp;
         public bool AllowReduce => _config.View.AllowStretchScaleDown;
@@ -88,6 +87,7 @@ namespace NeeView.PageFrames
         public bool IsSupportedSingleFirstPage => _bookSetting.IsSupportedSingleFirstPage && _bookSetting.PageMode == PageMode.WidePage;
         public bool IsSupportedSingleLastPage => _bookSetting.IsSupportedSingleLastPage && _bookSetting.PageMode == PageMode.WidePage;
         public bool IsRecursiveFolder => _bookSetting.IsRecursiveFolder;
+        public AutoRotateType AutoRotate => _bookSetting.AutoRotate;
 
         public bool IsStaticFrame => _frameProfile.IsStaticFrame;
         public Size CanvasSize => _frameProfile.CanvasSize;
@@ -165,10 +165,6 @@ namespace NeeView.PageFrames
             {
                 case nameof(ViewConfig.StretchMode):
                     RaisePropertyChanged(nameof(StretchMode));
-                    break;
-
-                case nameof(ViewConfig.AutoRotate):
-                    RaisePropertyChanged(nameof(AutoRotateType));
                     break;
 
                 case nameof(ViewConfig.AllowFileContentAutoRotate):
@@ -249,6 +245,10 @@ namespace NeeView.PageFrames
 
                 case nameof(BookSettingConfig.IsRecursiveFolder):
                     RaisePropertyChanged(nameof(IsRecursiveFolder));
+                    break;
+
+                case nameof(BookSettingConfig.AutoRotate):
+                    RaisePropertyChanged(nameof(AutoRotate));
                     break;
             }
         }

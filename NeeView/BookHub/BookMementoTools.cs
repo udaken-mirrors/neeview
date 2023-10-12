@@ -91,7 +91,7 @@ namespace NeeView
             }
             else
             {
-                var restore = BookSettingConfigExtensions.FromBookMement(memory);
+                var restore = BookSettingConfigExtensions.FromBookMemento(memory);
                 return BookSettingPresenter.Current.GetSetting(restore, option.HasFlag(BookLoadOption.DefaultRecursive)).ToBookMemento();
             }
         }

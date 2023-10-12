@@ -2385,3 +2385,4 @@ ToggleIsAutoRotateForcedRightCommand.On=強制右回転
 ToggleIsAutoRotateForcedRightCommand.Remarks=画像サイズにかかわらず 90 度右回転します。
 AutoRotateType.ForcedLeft=強制左回転
 AutoRotateType.ForcedRight=強制右回転
+BookSettingConfig.AutoRotate=自動回転

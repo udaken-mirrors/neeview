@@ -185,6 +185,23 @@ namespace NeeView
             SettingChanged?.Invoke(this, new BookSettingEventArgs(BookSettingKey.SortMode));
         }
 
+
+        // ページ並び設定切り替え
+        public void SwitchAutoRotate(AutoRotateType autoRotate)
+        {
+            if (IsLocked) return;
+            LatestSetting.AutoRotate = LatestSetting.AutoRotate != autoRotate ? autoRotate : AutoRotateType.None;
+            SettingChanged?.Invoke(this, new BookSettingEventArgs(BookSettingKey.AutoRotate));
+        }
+
+        // 自動回転
+        public void SetAutoRotate(AutoRotateType autoRotate)
+        {
+            if (IsLocked) return;
+            LatestSetting.AutoRotate = autoRotate;
+            SettingChanged?.Invoke(this, new BookSettingEventArgs(BookSettingKey.AutoRotate));
+        }
+
         // 既定設定を適用
         public void SetDefaultPageSetting()
         {

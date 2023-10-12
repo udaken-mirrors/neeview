@@ -15,6 +15,8 @@ namespace NeeView
         private bool _isSupportedSingleFirstPage;
         private bool _isSupportedSingleLastPage;
         private bool _isSupportedWidePage;
+        private AutoRotateType _autoRotate;
+
 
         [Subscribable]
         public event PropertyChangedEventHandler? PropertyChanged;
@@ -53,6 +55,12 @@ namespace NeeView
         {
             get { return _isSupportedWidePage; }
             set { SetProperty(ref _isSupportedWidePage, value); }
+        }
+
+        public AutoRotateType AutoRotate
+        {
+            get { return _autoRotate; }
+            set { SetProperty(ref _autoRotate, value); }
         }
     }
 }

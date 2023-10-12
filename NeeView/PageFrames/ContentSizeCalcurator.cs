@@ -24,7 +24,7 @@ namespace NeeView.PageFrames
         }
 
         public Size CanvasSize => _profile.CanvasSize;
-        public AutoRotateType AutoRotateType => _profile.AutoRotateType;
+        public AutoRotateType AutoRotate => _profile.AutoRotate;
         public bool AllowFileContentAutoRotate => _profile.AllowFileContentAutoRotate;
         public PageStretchMode StretchMode => _profile.StretchMode;
         public double ContentsSpace => _profile.ContentsSpace;
@@ -43,14 +43,14 @@ namespace NeeView.PageFrames
                 return 0.0;
             }
 
-            if (AutoRotateType == AutoRotateType.None)
+            if (AutoRotate == AutoRotateType.None)
             {
                 return 0.0;
             }
 
             var isContentLandscape = AspectRatioTools.IsLandscape(size);
             var isCanvasLandscape = CanvasSize.Width >= CanvasSize.Height;
-            return (isContentLandscape != isCanvasLandscape || AutoRotateType.IsForced()) ? AutoRotateType.ToAngle() : 0.0;
+            return (isContentLandscape != isCanvasLandscape || AutoRotate.IsForced()) ? AutoRotate.ToAngle() : 0.0;
         }
 
         /// <summary>

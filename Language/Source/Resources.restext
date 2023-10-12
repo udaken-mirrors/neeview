@@ -2385,3 +2385,4 @@ ToggleIsAutoRotateForcedRightCommand.On=Forced right rotate
 ToggleIsAutoRotateForcedRightCommand.Remarks=Rotate 90 degrees to the right regardless of image size.
 AutoRotateType.ForcedLeft=Forced left rotate
 AutoRotateType.ForcedRight=Forced right rotate
+BookSettingConfig.AutoRotate=Automatic rotation

@@ -48,7 +48,7 @@ namespace NeeView
             ViewTransformControl = new ViewTransformControl(PageFrameBoxPresenter);
             ViewLoupeControl = new ViewLoupeControl(this);
             ViewWindowControl = new ViewWindowControl(this);
-            ViewPropertyControl = new ViewPropertyControl(Config.Current.View);
+            ViewPropertyControl = new ViewPropertyControl(Config.Current.View, Config.Current.BookSetting);
             ViewCopyImage = new ViewCopyImage(PageFrameBoxPresenter);
 
             PageFrameBoxPresenter.SelectedRangeChanged += PageFrameBoxPresenter_SelectedRangeChanged;

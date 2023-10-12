@@ -8,5 +8,6 @@
         bool IsSupportedSingleLastPage { get; set; }
         bool IsSupportedWidePage { get; set; }
         PageMode PageMode { get; set; }
+        AutoRotateType AutoRotate { get; set; }
     }
 }

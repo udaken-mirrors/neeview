@@ -44,6 +44,8 @@ namespace NeeView
         // ページ並び順
         public PageSortMode SortMode { get; set; }
 
+        // 自動回転
+        public AutoRotateType AutoRotate { get; set; }
 
         /// <summary>
         /// 複製
@@ -83,7 +85,8 @@ namespace NeeView
                    IsSupportedSingleLastPage == other.IsSupportedSingleLastPage &&
                    IsSupportedWidePage == other.IsSupportedWidePage &&
                    IsRecursiveFolder == other.IsRecursiveFolder &&
-                   SortMode == other.SortMode;
+                   SortMode == other.SortMode &&
+                   AutoRotate == other.AutoRotate;
         }
     }
 }

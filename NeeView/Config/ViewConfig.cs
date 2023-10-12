@@ -11,7 +11,6 @@ namespace NeeView
         private PageStretchMode _validStretchMode = PageStretchMode.Uniform;
         private bool _allowStretchScaleUp = true;
         private bool _allowStretchScaleDown = true;
-        private AutoRotateType _autoRotate;
         private bool _allowFileContentAutoRotate;
         private bool _isLimitMove = true;
         private DragControlCenter _rotateCenter;
@@ -32,6 +31,7 @@ namespace NeeView
         private bool _isKeepPageTransform;
         private double _scrollDuration = 0.2;
         private double _pageMoveDuration = 0.0;
+        private IHasAutoRotate? _autoRotateSource;
 
 
         // 回転の中心
@@ -183,13 +183,6 @@ namespace NeeView
             set { SetProperty(ref _baseScale, Math.Max(value, 0.0)); }
         }
 
-        // 自動回転左/右
-        [PropertyMember]
-        public AutoRotateType AutoRotate
-        {
-            get { return _autoRotate; }
-            set { SetProperty(ref _autoRotate, value); }
-        }
 
         // ファイルコンテンツの自動回転を許可する
         public bool AllowFileContentAutoRotate
@@ -255,6 +248,27 @@ namespace NeeView
         {
             get { return 0.0; }
             set { MainViewMargin = value; }
+        }
+
+        // スクリプト互換性用：自動回転左/右
+        // 設定値は BookSetting のものを使用する
+        [PropertyMember]
+        [Obsolete("no used"), Alternative($"nv.Config.BookSetting.AutoRotate", 40, ScriptErrorLevel.Info)] // ver.40
+        [JsonIgnore]
+        public AutoRotateType AutoRotate
+        {
+            get { return _autoRotateSource?.AutoRotate ?? default; }
+            set { if (_autoRotateSource is not null) _autoRotateSource.AutoRotate = value; }
+        }
+
+
+        /// <summary>
+        /// AutoRotate プロパティを外部情報に依存させる
+        /// </summary>
+        /// <param name="autoRotateSource"></param>
+        public void SetBookSettingSource(IHasAutoRotate autoRotateSource)
+        {
+            _autoRotateSource = autoRotateSource;
         }
 
         #endregion

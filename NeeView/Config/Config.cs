@@ -11,6 +11,10 @@ namespace NeeView
         static Config() => Current = new Config();
         public static Config Current { get; }
 
+        public Config()
+        {
+            View.SetBookSettingSource(BookSetting);
+        }
 
         public SystemConfig System { get; set; } = new SystemConfig();
 

@@ -15,6 +15,7 @@ namespace NeeView
         private BookSettingSelectMode _isSupportedWidePage = BookSettingSelectMode.RestoreOrDefault;
         private BookSettingSelectMode _isRecursiveFolder = BookSettingSelectMode.RestoreOrDefault;
         private BookSettingSelectMode _sortMode = BookSettingSelectMode.RestoreOrDefault;
+        private BookSettingSelectMode _autoRotate = BookSettingSelectMode.RestoreOrContinue;
 
 
         [PropertyMember]
@@ -78,6 +79,13 @@ namespace NeeView
         {
             get { return _sortMode; }
             set { SetProperty(ref _sortMode, value); }
+        }
+
+        [PropertyMember]
+        public BookSettingSelectMode AutoRotate
+        {
+            get { return _autoRotate; }
+            set { SetProperty(ref _autoRotate, value); }
         }
 
 

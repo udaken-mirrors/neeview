@@ -1498,6 +1498,15 @@ namespace NeeView.Properties {
         }
         
         /// <summary>
+        ///   Automatic rotation に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string BookSettingConfig_AutoRotate {
+            get {
+                return ResourceManager.GetString("BookSettingConfig.AutoRotate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Book Orientation に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string BookSettingConfig_BookReadOrder {

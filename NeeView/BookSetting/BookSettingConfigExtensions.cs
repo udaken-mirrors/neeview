@@ -5,7 +5,7 @@ namespace NeeView
     public static class BookSettingConfigExtensions
     {
         [return: NotNullIfNotNull("memento")]
-        public static BookSettingConfig? FromBookMement(BookMemento? memento)
+        public static BookSettingConfig? FromBookMemento(BookMemento? memento)
         {
             if (memento == null) return null;
 
@@ -20,6 +20,7 @@ namespace NeeView
             collection.IsSupportedWidePage = memento.IsSupportedWidePage;
             collection.IsRecursiveFolder = memento.IsRecursiveFolder;
             collection.SortMode = memento.SortMode;
+            collection.AutoRotate = memento.AutoRotate;
 
             return collection;
         }
@@ -37,6 +38,7 @@ namespace NeeView
             memento.IsSupportedWidePage = self.IsSupportedWidePage;
             memento.IsRecursiveFolder = self.IsRecursiveFolder;
             memento.SortMode = self.SortMode;
+            memento.AutoRotate = self.AutoRotate;
 
             return memento;
         }
@@ -52,6 +54,7 @@ namespace NeeView
             target.IsSupportedWidePage = self.IsSupportedWidePage;
             target.IsRecursiveFolder = self.IsRecursiveFolder;
             target.SortMode = self.SortMode;
+            target.AutoRotate = self.AutoRotate;
         }
     }
 

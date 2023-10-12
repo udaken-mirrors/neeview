@@ -6,7 +6,7 @@ namespace NeeView.PageFrames
     {
         public double ContentsSpace { get; }
         public PageStretchMode StretchMode { get; }
-        public AutoRotateType AutoRotateType { get; }
+        public AutoRotateType AutoRotate { get; }
         public bool AllowFileContentAutoRotate { get; }
         public bool AllowEnlarge { get; }
         public bool AllowReduce { get; }

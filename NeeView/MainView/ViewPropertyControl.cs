@@ -7,13 +7,15 @@ namespace NeeView
     [NotifyPropertyChanged]
     public partial class ViewPropertyControl : IViewPropertyControl
     {
-        private ViewConfig _viewConfig;
+        private readonly ViewConfig _viewConfig;
+        private readonly BookSettingConfig _bookSettingConfig;
 
-        public ViewPropertyControl(ViewConfig viewConfig)
+        public ViewPropertyControl(ViewConfig viewConfig, BookSettingConfig bookSettingConfig)
         {
             _viewConfig = viewConfig;
+            _bookSettingConfig = bookSettingConfig;
 
-            _viewConfig.SubscribePropertyChanged(nameof(ViewConfig.AutoRotate), (s, e) =>
+            _bookSettingConfig.SubscribePropertyChanged(nameof(BookSettingConfig.AutoRotate), (s, e) =>
             {
                 RaisePropertyChanged(nameof(IsAutoRotateLeft));
                 RaisePropertyChanged(nameof(IsAutoRotateRight));
@@ -54,64 +56,65 @@ namespace NeeView
 
         public bool GetAutoRotateLeft()
         {
-            return _viewConfig.AutoRotate == AutoRotateType.Left;
+            return _bookSettingConfig.AutoRotate == AutoRotateType.Left;
         }
 
         public bool GetAutoRotateRight()
         {
-            return _viewConfig.AutoRotate == AutoRotateType.Right;
+            return _bookSettingConfig.AutoRotate == AutoRotateType.Right;
         }
 
         public bool GetAutoRotateForcedLeft()
         {
-            return _viewConfig.AutoRotate == AutoRotateType.ForcedLeft;
+            return _bookSettingConfig.AutoRotate == AutoRotateType.ForcedLeft;
         }
 
         public bool GetAutoRotateForcedRight()
         {
-            return _viewConfig.AutoRotate == AutoRotateType.ForcedRight;
+            return _bookSettingConfig.AutoRotate == AutoRotateType.ForcedRight;
         }
 
 
         public void SetAutoRotateLeft(bool flag)
         {
-            _viewConfig.AutoRotate = flag ? AutoRotateType.Left : AutoRotateType.None;
+            _bookSettingConfig.AutoRotate = flag ? AutoRotateType.Left : AutoRotateType.None;
         }
 
         public void SetAutoRotateRight(bool flag)
         {
-            _viewConfig.AutoRotate = flag ? AutoRotateType.Right : AutoRotateType.None;
+            _bookSettingConfig.AutoRotate = flag ? AutoRotateType.Right : AutoRotateType.None;
         }
 
         public void SetAutoRotateForcedLeft(bool flag)
         {
-            _viewConfig.AutoRotate = flag ? AutoRotateType.ForcedLeft : AutoRotateType.None;
+            _bookSettingConfig.AutoRotate = flag ? AutoRotateType.ForcedLeft : AutoRotateType.None;
         }
 
         public void SetAutoRotateForcedRight(bool flag)
         {
-            _viewConfig.AutoRotate = flag ? AutoRotateType.ForcedRight : AutoRotateType.None;
+            _bookSettingConfig.AutoRotate = flag ? AutoRotateType.ForcedRight : AutoRotateType.None;
         }
 
         public void ToggleAutoRotateLeft()
         {
-            _viewConfig.AutoRotate = _viewConfig.AutoRotate != AutoRotateType.Left ? AutoRotateType.Left : AutoRotateType.None;
+            _bookSettingConfig.AutoRotate = _bookSettingConfig.AutoRotate != AutoRotateType.Left ? AutoRotateType.Left : AutoRotateType.None;
         }
 
         public void ToggleAutoRotateRight()
         {
-            _viewConfig.AutoRotate = _viewConfig.AutoRotate != AutoRotateType.Right ? AutoRotateType.Right : AutoRotateType.None;
+            _bookSettingConfig.AutoRotate = _bookSettingConfig.AutoRotate != AutoRotateType.Right ? AutoRotateType.Right : AutoRotateType.None;
         }
 
         public void ToggleAutoRotateForcedLeft()
         {
-            _viewConfig.AutoRotate = _viewConfig.AutoRotate != AutoRotateType.ForcedLeft ? AutoRotateType.ForcedLeft : AutoRotateType.None;
+            _bookSettingConfig.AutoRotate = _bookSettingConfig.AutoRotate != AutoRotateType.ForcedLeft ? AutoRotateType.ForcedLeft : AutoRotateType.None;
         }
 
         public void ToggleAutoRotateForcedRight()
         {
-            _viewConfig.AutoRotate = _viewConfig.AutoRotate != AutoRotateType.ForcedRight ? AutoRotateType.ForcedRight : AutoRotateType.None;
+            _bookSettingConfig.AutoRotate = _bookSettingConfig.AutoRotate != AutoRotateType.ForcedRight ? AutoRotateType.ForcedRight : AutoRotateType.None;
         }
+
 
         public PageStretchMode GetToggleStretchMode(ToggleStretchModeCommandParameter parameter)
         {

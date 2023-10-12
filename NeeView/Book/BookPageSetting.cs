@@ -70,5 +70,12 @@ namespace NeeView
             set { if (_setting.PageMode != value) { _setting.PageMode = value; RaisePropertyChanged(); SettingChanged?.Invoke(this, EventArgs.Empty); } }
         }
 
+        // 自動回転
+        public AutoRotateType AutoRotate
+        {
+            get { return _setting.AutoRotate; }
+            set { if (_setting.AutoRotate != value) { _setting.AutoRotate = value; RaisePropertyChanged(); SettingChanged?.Invoke(this, EventArgs.Empty); } }
+        }
+
     }
 }

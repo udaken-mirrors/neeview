@@ -7400,4 +7400,7 @@ nv.ShowToast(nv.Book.ViewPages[0].Path)</value>
   <data name="ImageStandardConfig.IsAnimatedPngEnabled.Remarks" xml:space="preserve">
     <value>進行播放 PNG 動畫。長時間的 PNG 可能會有記憶體資源消耗的問題發生。</value>
   </data>
+  <data name="BookSettingConfig.AutoRotate" xml:space="preserve">
+    <value>自動旋轉</value>
+  </data>
 </root>

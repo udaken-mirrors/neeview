@@ -2316,3 +2316,4 @@ BookConfig.ContentsSpace.Remarks=设定页面与页面之间的间隙。负值�
 TogglePageModeCommandParameter.IsLoop=循环
 ImageStandardConfig.IsAnimatedPngEnabled=播放 PNG 动画
 ImageStandardConfig.IsAnimatedPngEnabled.Remarks=进行播放 PNG 动画。长时间的 PNG 可能会有内存资源消耗的问题发生。
+BookSettingConfig.AutoRotate=自动旋转

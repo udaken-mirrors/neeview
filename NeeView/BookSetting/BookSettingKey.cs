@@ -11,5 +11,6 @@
         IsSupportedWidePage,
         IsRecursiveFolder,
         SortMode,
+        AutoRotate,
     }
 }

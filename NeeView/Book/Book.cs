@@ -226,7 +226,8 @@ namespace NeeView
                 IsSupportedSingleLastPage = _setting.IsSupportedSingleLastPage,
                 IsSupportedWidePage = _setting.IsSupportedWidePage,
                 IsRecursiveFolder = _source.IsRecursiveFolder,
-                SortMode = _source.Pages.SortMode
+                SortMode = _source.Pages.SortMode,
+                AutoRotate = _setting.AutoRotate,
             };
 
             return memento;
@@ -247,6 +248,7 @@ namespace NeeView
             _setting.IsSupportedWidePage = memento.IsSupportedWidePage;
             _source.IsRecursiveFolder = memento.IsRecursiveFolder;
             _source.Pages.SortMode = memento.SortMode;
+            _setting.AutoRotate = memento.AutoRotate;
         }
 
         private static BookPageViewSetting CreateBookViewerCreateSetting(BookMemento memento)
@@ -258,7 +260,8 @@ namespace NeeView
                 IsSupportedDividePage = memento.IsSupportedDividePage,
                 IsSupportedSingleFirstPage = memento.IsSupportedSingleFirstPage,
                 IsSupportedSingleLastPage = memento.IsSupportedSingleLastPage,
-                IsSupportedWidePage = memento.IsSupportedWidePage
+                IsSupportedWidePage = memento.IsSupportedWidePage,
+                AutoRotate = memento.AutoRotate,
             };
             return setting;
         }
