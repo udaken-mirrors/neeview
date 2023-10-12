@@ -50,7 +50,7 @@ namespace NeeView.PageFrames
 
             var isContentLandscape = AspectRatioTools.IsLandscape(size);
             var isCanvasLandscape = CanvasSize.Width >= CanvasSize.Height;
-            return isContentLandscape != isCanvasLandscape ? AutoRotateType.ToAngle() : 0.0;
+            return (isContentLandscape != isCanvasLandscape || AutoRotateType.IsForced()) ? AutoRotateType.ToAngle() : 0.0;
         }
 
         /// <summary>

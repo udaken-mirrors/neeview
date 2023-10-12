@@ -224,6 +224,8 @@ namespace NeeView
                 new ViewRotateRightCommand(),
                 new ToggleIsAutoRotateLeftCommand(),
                 new ToggleIsAutoRotateRightCommand(),
+                new ToggleIsAutoRotateForcedLeftCommand(),
+                new ToggleIsAutoRotateForcedRightCommand(),
 
                 new ToggleViewFlipHorizontalCommand(),
                 new ViewFlipHorizontalOnCommand(),

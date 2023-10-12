@@ -17,6 +17,8 @@ namespace NeeView
             {
                 RaisePropertyChanged(nameof(IsAutoRotateLeft));
                 RaisePropertyChanged(nameof(IsAutoRotateRight));
+                RaisePropertyChanged(nameof(IsAutoRotateForcedLeft));
+                RaisePropertyChanged(nameof(IsAutoRotateForcedRight));
             });
         }
 
@@ -37,6 +39,18 @@ namespace NeeView
             set => SetAutoRotateRight(value);
         }
 
+        public bool IsAutoRotateForcedLeft
+        {
+            get => GetAutoRotateForcedLeft();
+            set => SetAutoRotateForcedLeft(value);
+        }
+
+        public bool IsAutoRotateForcedRight
+        {
+            get => GetAutoRotateForcedRight();
+            set => SetAutoRotateForcedRight(value);
+        }
+
 
         public bool GetAutoRotateLeft()
         {
@@ -48,6 +62,17 @@ namespace NeeView
             return _viewConfig.AutoRotate == AutoRotateType.Right;
         }
 
+        public bool GetAutoRotateForcedLeft()
+        {
+            return _viewConfig.AutoRotate == AutoRotateType.ForcedLeft;
+        }
+
+        public bool GetAutoRotateForcedRight()
+        {
+            return _viewConfig.AutoRotate == AutoRotateType.ForcedRight;
+        }
+
+
         public void SetAutoRotateLeft(bool flag)
         {
             _viewConfig.AutoRotate = flag ? AutoRotateType.Left : AutoRotateType.None;
@@ -56,6 +81,16 @@ namespace NeeView
         public void SetAutoRotateRight(bool flag)
         {
             _viewConfig.AutoRotate = flag ? AutoRotateType.Right : AutoRotateType.None;
+        }
+
+        public void SetAutoRotateForcedLeft(bool flag)
+        {
+            _viewConfig.AutoRotate = flag ? AutoRotateType.ForcedLeft : AutoRotateType.None;
+        }
+
+        public void SetAutoRotateForcedRight(bool flag)
+        {
+            _viewConfig.AutoRotate = flag ? AutoRotateType.ForcedRight : AutoRotateType.None;
         }
 
         public void ToggleAutoRotateLeft()
@@ -68,6 +103,15 @@ namespace NeeView
             _viewConfig.AutoRotate = _viewConfig.AutoRotate != AutoRotateType.Right ? AutoRotateType.Right : AutoRotateType.None;
         }
 
+        public void ToggleAutoRotateForcedLeft()
+        {
+            _viewConfig.AutoRotate = _viewConfig.AutoRotate != AutoRotateType.ForcedLeft ? AutoRotateType.ForcedLeft : AutoRotateType.None;
+        }
+
+        public void ToggleAutoRotateForcedRight()
+        {
+            _viewConfig.AutoRotate = _viewConfig.AutoRotate != AutoRotateType.ForcedRight ? AutoRotateType.ForcedRight : AutoRotateType.None;
+        }
 
         public PageStretchMode GetToggleStretchMode(ToggleStretchModeCommandParameter parameter)
         {

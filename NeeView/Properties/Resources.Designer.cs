@@ -580,6 +580,24 @@ namespace NeeView.Properties {
         }
         
         /// <summary>
+        ///   Forced left rotate に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string AutoRotateType_ForcedLeft {
+            get {
+                return ResourceManager.GetString("AutoRotateType.ForcedLeft", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Forced right rotate に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string AutoRotateType_ForcedRight {
+            get {
+                return ResourceManager.GetString("AutoRotateType.ForcedRight", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Auto left rotate に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string AutoRotateType_Left {
@@ -17685,6 +17703,96 @@ namespace NeeView.Properties {
         public static string ToggleIsAutoRotateCommand {
             get {
                 return ResourceManager.GetString("ToggleIsAutoRotateCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Toggle forced left rotation に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string ToggleIsAutoRotateForcedLeftCommand {
+            get {
+                return ResourceManager.GetString("ToggleIsAutoRotateForcedLeftCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Forced left rotate に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string ToggleIsAutoRotateForcedLeftCommand_Menu {
+            get {
+                return ResourceManager.GetString("ToggleIsAutoRotateForcedLeftCommand.Menu", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Forced left rotate OFF に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string ToggleIsAutoRotateForcedLeftCommand_Off {
+            get {
+                return ResourceManager.GetString("ToggleIsAutoRotateForcedLeftCommand.Off", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Forced left rotate に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string ToggleIsAutoRotateForcedLeftCommand_On {
+            get {
+                return ResourceManager.GetString("ToggleIsAutoRotateForcedLeftCommand.On", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Rotate 90 degrees to the left regardless of image size. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string ToggleIsAutoRotateForcedLeftCommand_Remarks {
+            get {
+                return ResourceManager.GetString("ToggleIsAutoRotateForcedLeftCommand.Remarks", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Toggle forced right rotation に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string ToggleIsAutoRotateForcedRightCommand {
+            get {
+                return ResourceManager.GetString("ToggleIsAutoRotateForcedRightCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Forced right rotate に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string ToggleIsAutoRotateForcedRightCommand_Menu {
+            get {
+                return ResourceManager.GetString("ToggleIsAutoRotateForcedRightCommand.Menu", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Forced right rotate OFF に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string ToggleIsAutoRotateForcedRightCommand_Off {
+            get {
+                return ResourceManager.GetString("ToggleIsAutoRotateForcedRightCommand.Off", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Forced right rotate に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string ToggleIsAutoRotateForcedRightCommand_On {
+            get {
+                return ResourceManager.GetString("ToggleIsAutoRotateForcedRightCommand.On", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Rotate 90 degrees to the right regardless of image size. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string ToggleIsAutoRotateForcedRightCommand_Remarks {
+            get {
+                return ResourceManager.GetString("ToggleIsAutoRotateForcedRightCommand.Remarks", resourceCulture);
             }
         }
         

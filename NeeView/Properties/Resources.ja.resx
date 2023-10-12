@@ -7550,4 +7550,40 @@ nv.ShowToast(nv.Book.ViewPages[0].Path)</value>
   <data name="CommandConfig.IsReversePageMoveHorizontalWheel.Remarks" xml:space="preserve">
     <value>チルトホイール操作のみ対応の選択ができます。</value>
   </data>
+  <data name="ToggleIsAutoRotateForcedLeftCommand" xml:space="preserve">
+    <value>強制左回転</value>
+  </data>
+  <data name="ToggleIsAutoRotateForcedLeftCommand.Menu" xml:space="preserve">
+    <value>強制左回転</value>
+  </data>
+  <data name="ToggleIsAutoRotateForcedLeftCommand.Off" xml:space="preserve">
+    <value>強制左回転解除</value>
+  </data>
+  <data name="ToggleIsAutoRotateForcedLeftCommand.On" xml:space="preserve">
+    <value>強制左回転</value>
+  </data>
+  <data name="ToggleIsAutoRotateForcedLeftCommand.Remarks" xml:space="preserve">
+    <value>画像サイズにかかわらず 90 度左回転します。</value>
+  </data>
+  <data name="ToggleIsAutoRotateForcedRightCommand" xml:space="preserve">
+    <value>強制右回転</value>
+  </data>
+  <data name="ToggleIsAutoRotateForcedRightCommand.Menu" xml:space="preserve">
+    <value>強制右回転</value>
+  </data>
+  <data name="ToggleIsAutoRotateForcedRightCommand.Off" xml:space="preserve">
+    <value>強制右回転解除</value>
+  </data>
+  <data name="ToggleIsAutoRotateForcedRightCommand.On" xml:space="preserve">
+    <value>強制右回転</value>
+  </data>
+  <data name="ToggleIsAutoRotateForcedRightCommand.Remarks" xml:space="preserve">
+    <value>画像サイズにかかわらず 90 度右回転します。</value>
+  </data>
+  <data name="AutoRotateType.ForcedLeft" xml:space="preserve">
+    <value>強制左回転</value>
+  </data>
+  <data name="AutoRotateType.ForcedRight" xml:space="preserve">
+    <value>強制右回転</value>
+  </data>
 </root>
