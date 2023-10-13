@@ -10,17 +10,17 @@
 
         public override string ExecuteMessage(object? sender, CommandContext e)
         {
-            return BookSettingPresenter.Current.LatestSetting.BookReadOrder.GetToggle().ToAliasName();
+            return BookSettings.Current.BookReadOrder.GetToggle().ToAliasName();
         }
 
         public override bool CanExecute(object? sender, CommandContext e)
         {
-            return !NowLoading.Current.IsDispNowLoading;
+            return BookSettings.Current.CanEdit;
         }
 
         public override void Execute(object? sender, CommandContext e)
         {
-            BookSettingPresenter.Current.ToggleBookReadOrder();
+            BookSettings.Current.ToggleBookReadOrder();
         }
     }
 }

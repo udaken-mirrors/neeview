@@ -15,7 +15,7 @@
 
         public override void Execute(object? sender, CommandContext e)
         {
-            BookSettingPresenter.Current.SetDefaultPageSetting();
+            Config.Current.BookSettingDefault.CopyTo(Config.Current.BookSetting);
         }
     }
 }

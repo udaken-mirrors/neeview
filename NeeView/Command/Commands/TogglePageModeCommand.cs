@@ -15,12 +15,12 @@
 
         public override string ExecuteMessage(object? sender, CommandContext e)
         {
-            return BookSettingPresenter.Current.LatestSetting.PageMode.GetToggle(+1, e.Parameter.Cast<TogglePageModeCommandParameter>().IsLoop).ToAliasName();
+            return BookSettings.Current.PageMode.GetToggle(+1, e.Parameter.Cast<TogglePageModeCommandParameter>().IsLoop).ToAliasName();
         }
 
         public override void Execute(object? sender, CommandContext e)
         {
-            BookSettingPresenter.Current.TogglePageMode(+1, e.Parameter.Cast<TogglePageModeCommandParameter>().IsLoop);
+            BookSettings.Current.TogglePageMode(+1, e.Parameter.Cast<TogglePageModeCommandParameter>().IsLoop);
         }
     }
 }

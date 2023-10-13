@@ -1,30 +1,10 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using System;
 
 namespace NeeView
 {
+
     public static class BookSettingConfigExtensions
     {
-        [return: NotNullIfNotNull("memento")]
-        public static BookSettingConfig? FromBookMemento(BookMemento? memento)
-        {
-            if (memento == null) return null;
-
-            var collection = new BookSettingConfig();
-
-            collection.Page = memento.Page ?? "";
-            collection.PageMode = memento.PageMode;
-            collection.BookReadOrder = memento.BookReadOrder;
-            collection.IsSupportedDividePage = memento.IsSupportedDividePage;
-            collection.IsSupportedSingleFirstPage = memento.IsSupportedSingleFirstPage;
-            collection.IsSupportedSingleLastPage = memento.IsSupportedSingleLastPage;
-            collection.IsSupportedWidePage = memento.IsSupportedWidePage;
-            collection.IsRecursiveFolder = memento.IsRecursiveFolder;
-            collection.SortMode = memento.SortMode;
-            collection.AutoRotate = memento.AutoRotate;
-
-            return collection;
-        }
-
         public static BookMemento ToBookMemento(this BookSettingConfig self)
         {
             var memento = new BookMemento();
@@ -41,6 +21,22 @@ namespace NeeView
             memento.AutoRotate = self.AutoRotate;
 
             return memento;
+        }
+
+        public static void Restore(this BookSettingConfig self, BookMemento? memento)
+        {
+            if (memento == null) return;
+
+            self.Page = memento.Page ?? "";
+            self.PageMode = memento.PageMode;
+            self.BookReadOrder = memento.BookReadOrder;
+            self.IsSupportedDividePage = memento.IsSupportedDividePage;
+            self.IsSupportedSingleFirstPage = memento.IsSupportedSingleFirstPage;
+            self.IsSupportedSingleLastPage = memento.IsSupportedSingleLastPage;
+            self.IsSupportedWidePage = memento.IsSupportedWidePage;
+            self.IsRecursiveFolder = memento.IsRecursiveFolder;
+            self.SortMode = memento.SortMode;
+            self.AutoRotate = memento.AutoRotate;
         }
 
         public static void CopyTo(this BookSettingConfig self, BookSettingConfig target)

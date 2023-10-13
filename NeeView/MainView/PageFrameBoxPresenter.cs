@@ -163,6 +163,7 @@ namespace NeeView
             {
                 if (disposing)
                 {
+                    _bookMementoControl?.SaveBookMemento();
                     Close();
                 }
                 disposedValue = true;
@@ -191,6 +192,8 @@ namespace NeeView
             _openCancellationTokenSource.Cancel();
             _openCancellationTokenSource.Dispose();
             _openCancellationTokenSource = new();
+
+            _bookMementoControl?.SaveBookMemento();
 
             AppDispatcher.Invoke(() =>
             {

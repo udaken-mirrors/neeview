@@ -49,7 +49,7 @@ namespace NeeView
             var memento = book is not null ? CreateBookMemento(book) : null;
             if (memento == null || memento.Path != path)
             {
-                memento = BookSettingPresenter.Current.DefaultSetting.ToBookMemento();
+                memento = Config.Current.BookSettingDefault.ToBookMemento();
                 memento.Path = path;
             }
             return memento;
@@ -91,8 +91,8 @@ namespace NeeView
             }
             else
             {
-                var restore = BookSettingConfigExtensions.FromBookMemento(memory);
-                return BookSettingPresenter.Current.GetSetting(restore, option.HasFlag(BookLoadOption.DefaultRecursive)).ToBookMemento();
+                var restore = memory?.ToBookSetting();
+                return Config.Current.BookSettingPolicy.Mix(Config.Current.BookSettingDefault, Config.Current.BookSetting, restore, option.HasFlag(BookLoadOption.DefaultRecursive)).ToBookMemento();
             }
         }
 

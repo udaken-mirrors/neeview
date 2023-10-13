@@ -8,63 +8,74 @@ namespace NeeView
 {
     public class BookConfigAccessor
     {
+        public BookConfigAccessor()
+        {
+        }
+
         // PageMode
         [WordNodeMember]
         public int ViewPageSize
         {
-            get { return (int)BookSettingPresenter.Current.LatestSetting.PageMode + 1; }
-            set { AppDispatcher.Invoke(() => BookSettingPresenter.Current.SetPageMode(((PageMode)value - 1).Validate())); }
+            get { return (int)BookSettings.Current.PageMode + 1; }
+            set { AppDispatcher.Invoke(() => BookSettings.Current.SetPageMode(((PageMode)value - 1).Validate())); }
         }
 
         // [Parameter(typeof(BookReadOrder))]
         [WordNodeMember(DocumentType = typeof(PageReadOrder))]
         public string BookReadOrder
         {
-            get { return BookSettingPresenter.Current.LatestSetting.BookReadOrder.ToString(); }
-            set { AppDispatcher.Invoke(() => BookSettingPresenter.Current.SetBookReadOrder(value.ToEnum<PageReadOrder>())); }
+            get { return BookSettings.Current.BookReadOrder.ToString(); }
+            set { AppDispatcher.Invoke(() => BookSettings.Current.SetBookReadOrder(value.ToEnum<PageReadOrder>())); }
         }
 
         [WordNodeMember]
         public bool IsSupportedDividePage
         {
-            get { return BookSettingPresenter.Current.LatestSetting.IsSupportedDividePage; }
-            set { AppDispatcher.Invoke(() => BookSettingPresenter.Current.SetIsSupportedDividePage(value)); }
+            get { return BookSettings.Current.IsSupportedDividePage; }
+            set { AppDispatcher.Invoke(() => BookSettings.Current.SetIsSupportedDividePage(value)); }
         }
 
         [WordNodeMember]
         public bool IsSupportedSingleFirstPage
         {
-            get { return BookSettingPresenter.Current.LatestSetting.IsSupportedSingleFirstPage; }
-            set { AppDispatcher.Invoke(() => BookSettingPresenter.Current.SetIsSupportedSingleFirstPage(value)); }
+            get { return BookSettings.Current.IsSupportedSingleFirstPage; }
+            set { AppDispatcher.Invoke(() => BookSettings.Current.SetIsSupportedSingleFirstPage(value)); }
         }
 
         [WordNodeMember]
         public bool IsSupportedSingleLastPage
         {
-            get { return BookSettingPresenter.Current.LatestSetting.IsSupportedSingleLastPage; }
-            set { AppDispatcher.Invoke(() => BookSettingPresenter.Current.SetIsSupportedSingleLastPage(value)); }
+            get { return BookSettings.Current.IsSupportedSingleLastPage; }
+            set { AppDispatcher.Invoke(() => BookSettings.Current.SetIsSupportedSingleLastPage(value)); }
         }
 
         [WordNodeMember]
         public bool IsSupportedWidePage
         {
-            get { return BookSettingPresenter.Current.LatestSetting.IsSupportedWidePage; }
-            set { AppDispatcher.Invoke(() => BookSettingPresenter.Current.SetIsSupportedWidePage(value)); }
+            get { return BookSettings.Current.IsSupportedWidePage; }
+            set { AppDispatcher.Invoke(() => BookSettings.Current.SetIsSupportedWidePage(value)); }
         }
 
         [WordNodeMember]
         public bool IsRecursiveFolder
         {
-            get { return BookSettingPresenter.Current.LatestSetting.IsRecursiveFolder; }
-            set { AppDispatcher.Invoke(() => BookSettingPresenter.Current.SetIsRecursiveFolder(value)); }
+            get { return BookSettings.Current.IsRecursiveFolder; }
+            set { AppDispatcher.Invoke(() => BookSettings.Current.SetIsRecursiveFolder(value)); }
         }
 
         // [Parameter(typeof(PageSortMode))]
         [WordNodeMember(DocumentType = typeof(PageSortMode))]
         public string SortMode
         {
-            get { return BookSettingPresenter.Current.LatestSetting.SortMode.ToString(); }
-            set { AppDispatcher.Invoke(() => BookSettingPresenter.Current.SetSortMode(value.ToEnum<PageSortMode>())); }
+            get { return BookSettings.Current.SortMode.ToString(); }
+            set { AppDispatcher.Invoke(() => BookSettings.Current.SetSortMode(value.ToEnum<PageSortMode>())); }
+        }
+
+        [WordNodeMember(DocumentType = typeof(AutoRotateType))]
+        public string AutoRotate
+        {
+            get { return BookSettings.Current.AutoRotate.ToString(); }
+            set { AppDispatcher.Invoke(() => BookSettings.Current.SetAutoRotate(value.ToEnum<AutoRotateType>())); }
         }
 
 

@@ -92,7 +92,7 @@ namespace NeeView
         public PageSortMode PageSortMode
         {
             get { return _pageSortMode; }
-            set { _pageSortMode = value; BookSettingPresenter.Current.SetSortMode(value); }
+            set { _pageSortMode = value; BookSettings.Current.SetSortMode(value); }
         }
 
         public Dictionary<PageSortMode, string> PageSortModeList
@@ -216,7 +216,7 @@ namespace NeeView
             RaisePropertyChanged(nameof(PlaceDispString));
 
             PageSortModeClass = BookOperation.Current.Book != null ? BookOperation.Current.Book.PageSortModeClass : PageSortModeClass.Full;
-            PageSortMode = PageSortModeClass.ValidatePageSortMode(BookSettingPresenter.Current.LatestSetting.SortMode);
+            PageSortMode = PageSortModeClass.ValidatePageSortMode(Config.Current.BookSetting.SortMode);
             RaisePropertyChanged(nameof(PageSortMode));
 
             RefreshSelectedItem();

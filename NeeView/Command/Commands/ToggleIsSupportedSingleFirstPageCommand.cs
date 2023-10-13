@@ -14,17 +14,17 @@ namespace NeeView
 
         public override Binding CreateIsCheckedBinding()
         {
-            return BindingGenerator.BindingBookSetting(nameof(BookSettingPresenter.Current.LatestSetting.IsSupportedSingleFirstPage));
+            return BindingGenerator.BindingBookSetting(nameof(Config.Current.BookSetting.IsSupportedSingleFirstPage));
         }
 
         public override string ExecuteMessage(object? sender, CommandContext e)
         {
-            return BookSettingPresenter.Current.LatestSetting.IsSupportedSingleFirstPage ? Properties.Resources.ToggleIsSupportedSingleFirstPageCommand_Off : Properties.Resources.ToggleIsSupportedSingleFirstPageCommand_On;
+            return Config.Current.BookSetting.IsSupportedSingleFirstPage ? Properties.Resources.ToggleIsSupportedSingleFirstPageCommand_Off : Properties.Resources.ToggleIsSupportedSingleFirstPageCommand_On;
         }
 
         public override bool CanExecute(object? sender, CommandContext e)
         {
-            return BookSettingPresenter.Current.CanPageModeSubSetting(PageMode.WidePage);
+            return BookSettings.Current.CanPageModeSubSetting(PageMode.WidePage);
         }
 
         [MethodArgument("@ToggleCommand.Execute.Remarks")]
@@ -32,11 +32,11 @@ namespace NeeView
         {
             if (e.Args.Length > 0)
             {
-                BookSettingPresenter.Current.SetIsSupportedSingleFirstPage(Convert.ToBoolean(e.Args[0]));
+                Config.Current.BookSetting.IsSupportedSingleFirstPage = Convert.ToBoolean(e.Args[0]);
             }
             else
             {
-                BookSettingPresenter.Current.ToggleIsSupportedSingleFirstPage();
+                Config.Current.BookSetting.IsSupportedSingleFirstPage = !Config.Current.BookSetting.IsSupportedSingleFirstPage;
             }
         }
     }

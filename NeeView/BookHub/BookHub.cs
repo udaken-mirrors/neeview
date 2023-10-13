@@ -88,9 +88,6 @@ namespace NeeView
             _disposables.Add(BookmarkCollection.Current.SubscribeBookmarkChanged(
                 (s, e) => BookmarkChanged?.Invoke(s, e)));
 
-            _disposables.Add(BookSettingPresenter.Current.SubscribeSettingChanged(
-                (s, e) => _book?.Restore(BookSettingPresenter.Current.LatestSetting.ToBookMemento())));
-
             // command engine
             _commandEngine = new BookHubCommandEngine();
             _disposables.Add(_commandEngine.SubscribeIsBusyChanged(
@@ -177,7 +174,7 @@ namespace NeeView
 
                 if (SetProperty(ref _isLoading, value))
                 {
-                    BookSettingPresenter.Current.IsLocked = _isLoading;
+                    BookSettings.Current.CanEdit = !_isLoading;
                 }
             }
         }
@@ -463,12 +460,9 @@ namespace NeeView
                 //_historyEntry = false;
                 //_historyRemoved = false;
 
-                var bookSetting = BookSettingConfigExtensions.FromBookMemento(book.CreateMemento());
-                if (bookSetting is not null)
-                {
-                    // 本の設定を更新
-                    BookSettingPresenter.Current.SetLatestSetting(bookSetting);
-                }
+                // 現在の設定を更新
+                book.Setting.CopyTo(Config.Current.BookSetting);
+                book.AttachBookSetting(Config.Current.BookSetting);
 
                 this.Address = book.Path;
                 _book = book;
@@ -567,7 +561,7 @@ namespace NeeView
         {
             token.ThrowIfCancellationRequested();
 
-            var memento = ((option & BookLoadOption.ReLoad) == BookLoadOption.ReLoad) ? BookSettingPresenter.Current.LatestSetting.ToBookMemento() : setting;
+            var memento = ((option & BookLoadOption.ReLoad) == BookLoadOption.ReLoad) ? Config.Current.BookSetting.ToBookMemento() : setting;
 
             var bookSetting = new BookCreateSetting()
             {
@@ -618,7 +612,7 @@ namespace NeeView
             book.Source.DirtyBook -= BookSource_DirtyBook;
         }
 
-        #endregion BookHubCommand.Load
+#endregion BookHubCommand.Load
 
         #region BookHubCommand.Unload
 

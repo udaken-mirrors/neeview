@@ -14,12 +14,12 @@ namespace NeeView
 
         public override Binding CreateIsCheckedBinding()
         {
-            return BindingGenerator.BindingBookSetting(nameof(BookSettingPresenter.Current.LatestSetting.IsRecursiveFolder));
+            return BindingGenerator.BindingBookSetting(nameof(BookSettings.Current.IsRecursiveFolder));
         }
 
         public override string ExecuteMessage(object? sender, CommandContext e)
         {
-            return BookSettingPresenter.Current.LatestSetting.IsRecursiveFolder ? Properties.Resources.ToggleIsRecursiveFolderCommand_Off : Properties.Resources.ToggleIsRecursiveFolderCommand_On;
+            return BookSettings.Current.IsRecursiveFolder ? Properties.Resources.ToggleIsRecursiveFolderCommand_Off : Properties.Resources.ToggleIsRecursiveFolderCommand_On;
         }
 
         [MethodArgument("@ToggleCommand.Execute.Remarks")]
@@ -27,11 +27,11 @@ namespace NeeView
         {
             if (e.Args.Length > 0)
             {
-                BookSettingPresenter.Current.SetIsRecursiveFolder(Convert.ToBoolean(e.Args[0]));
+                BookSettings.Current.SetIsRecursiveFolder(Convert.ToBoolean(e.Args[0]));
             }
             else
             {
-                BookSettingPresenter.Current.ToggleIsRecursiveFolder();
+                BookSettings.Current.ToggleIsRecursiveFolder();
             }
         }
     }

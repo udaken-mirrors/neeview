@@ -14,17 +14,17 @@ namespace NeeView
 
         public override Binding CreateIsCheckedBinding()
         {
-            return BindingGenerator.BindingBookSetting(nameof(BookSettingPresenter.Current.LatestSetting.IsSupportedDividePage));
+            return BindingGenerator.BindingBookSetting(nameof(BookSettings.Current.IsSupportedDividePage));
         }
 
         public override string ExecuteMessage(object? sender, CommandContext e)
         {
-            return BookSettingPresenter.Current.LatestSetting.IsSupportedDividePage ? Properties.Resources.ToggleIsSupportedDividePageCommand_Off : Properties.Resources.ToggleIsSupportedDividePageCommand_On;
+            return BookSettings.Current.IsSupportedDividePage ? Properties.Resources.ToggleIsSupportedDividePageCommand_Off : Properties.Resources.ToggleIsSupportedDividePageCommand_On;
         }
 
         public override bool CanExecute(object? sender, CommandContext e)
         {
-            return BookSettingPresenter.Current.CanPageModeSubSetting(PageMode.SinglePage);
+            return BookSettings.Current.CanPageModeSubSetting(PageMode.SinglePage);
         }
 
         [MethodArgument("@ToggleCommand.Execute.Remarks")]
@@ -32,11 +32,11 @@ namespace NeeView
         {
             if (e.Args.Length > 0)
             {
-                BookSettingPresenter.Current.SetIsSupportedDividePage(Convert.ToBoolean(e.Args[0]));
+                BookSettings.Current.SetIsSupportedDividePage(Convert.ToBoolean(e.Args[0]));
             }
             else
             {
-                BookSettingPresenter.Current.ToggleIsSupportedDividePage();
+                BookSettings.Current.ToggleIsSupportedDividePage();
             }
         }
     }

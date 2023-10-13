@@ -14,17 +14,17 @@ namespace NeeView
 
         public override Binding CreateIsCheckedBinding()
         {
-            return BindingGenerator.BindingBookSetting(nameof(BookSettingPresenter.Current.LatestSetting.IsSupportedWidePage));
+            return BindingGenerator.BindingBookSetting(nameof(BookSettings.Current.IsSupportedWidePage));
         }
 
         public override string ExecuteMessage(object? sender, CommandContext e)
         {
-            return BookSettingPresenter.Current.LatestSetting.IsSupportedWidePage ? Properties.Resources.ToggleIsSupportedWidePageCommand_Off : Properties.Resources.ToggleIsSupportedWidePageCommand_On;
+            return BookSettings.Current.IsSupportedWidePage ? Properties.Resources.ToggleIsSupportedWidePageCommand_Off : Properties.Resources.ToggleIsSupportedWidePageCommand_On;
         }
 
         public override bool CanExecute(object? sender, CommandContext e)
         {
-            return BookSettingPresenter.Current.CanPageModeSubSetting(PageMode.WidePage);
+            return BookSettings.Current.CanPageModeSubSetting(PageMode.WidePage);
         }
 
         [MethodArgument("@ToggleCommand.Execute.Remarks")]
@@ -32,11 +32,11 @@ namespace NeeView
         {
             if (e.Args.Length > 0)
             {
-                BookSettingPresenter.Current.SetIsSupportedWidePage(Convert.ToBoolean(e.Args[0]));
+                BookSettings.Current.SetIsSupportedWidePage(Convert.ToBoolean(e.Args[0]));
             }
             else
             {
-                BookSettingPresenter.Current.ToggleIsSupportedWidePage();
+                BookSettings.Current.ToggleIsSupportedWidePage();
             }
         }
     }

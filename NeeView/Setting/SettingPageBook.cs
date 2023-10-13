@@ -69,42 +69,44 @@ namespace NeeView.Setting
         {
             this.Items = new List<SettingItem>();
 
+            var defaultSetting = Config.Current.BookSettingDefault;
+            var settingPolicy = Config.Current.BookSettingPolicy;
+
             var section = new SettingItemSection(Properties.Resources.SettingPage_Book_PageSetting, Properties.Resources.SettingPage_Book_PageSetting_Remarks);
             section.Children.Add(new SettingItemMultiProperty(
-                PropertyMemberElement.Create(BookSettingPresenter.Current.DefaultSetting, nameof(BookSettingConfig.Page)),
-                PropertyMemberElement.Create(BookSettingPresenter.Current.Generater, nameof(BookSettingPolicyConfig.Page)))
+                PropertyMemberElement.Create(defaultSetting, nameof(BookSettingConfig.Page)),
+                PropertyMemberElement.Create(settingPolicy, nameof(BookSettingPolicyConfig.Page)))
             {
                 Content1 = Properties.Resources.Word_FirstPage,
             });
 
-
             section.Children.Add(new SettingItemMultiProperty(
-                PropertyMemberElement.Create(BookSettingPresenter.Current.DefaultSetting, nameof(BookSettingConfig.SortMode)),
-                PropertyMemberElement.Create(BookSettingPresenter.Current.Generater, nameof(BookSettingPolicyConfig.SortMode))));
+                PropertyMemberElement.Create(defaultSetting, nameof(BookSettingConfig.SortMode)),
+                PropertyMemberElement.Create(settingPolicy, nameof(BookSettingPolicyConfig.SortMode))));
             section.Children.Add(new SettingItemMultiProperty(
-                PropertyMemberElement.Create(BookSettingPresenter.Current.DefaultSetting, nameof(BookSettingConfig.PageMode)),
-                PropertyMemberElement.Create(BookSettingPresenter.Current.Generater, nameof(BookSettingPolicyConfig.PageMode))));
+                PropertyMemberElement.Create(defaultSetting, nameof(BookSettingConfig.PageMode)),
+                PropertyMemberElement.Create(settingPolicy, nameof(BookSettingPolicyConfig.PageMode))));
             section.Children.Add(new SettingItemMultiProperty(
-                PropertyMemberElement.Create(BookSettingPresenter.Current.DefaultSetting, nameof(BookSettingConfig.BookReadOrder)),
-                PropertyMemberElement.Create(BookSettingPresenter.Current.Generater, nameof(BookSettingPolicyConfig.BookReadOrder))));
+                PropertyMemberElement.Create(defaultSetting, nameof(BookSettingConfig.BookReadOrder)),
+                PropertyMemberElement.Create(settingPolicy, nameof(BookSettingPolicyConfig.BookReadOrder))));
             section.Children.Add(new SettingItemMultiProperty(
-                PropertyMemberElement.Create(BookSettingPresenter.Current.DefaultSetting, nameof(BookSettingConfig.AutoRotate)),
-                PropertyMemberElement.Create(BookSettingPresenter.Current.Generater, nameof(BookSettingPolicyConfig.AutoRotate))));
+                PropertyMemberElement.Create(defaultSetting, nameof(BookSettingConfig.AutoRotate)),
+                PropertyMemberElement.Create(settingPolicy, nameof(BookSettingPolicyConfig.AutoRotate))));
             section.Children.Add(new SettingItemMultiProperty(
-                PropertyMemberElement.Create(BookSettingPresenter.Current.DefaultSetting, nameof(BookSettingConfig.IsSupportedDividePage)),
-                PropertyMemberElement.Create(BookSettingPresenter.Current.Generater, nameof(BookSettingPolicyConfig.IsSupportedDividePage))));
+                PropertyMemberElement.Create(defaultSetting, nameof(BookSettingConfig.IsSupportedDividePage)),
+                PropertyMemberElement.Create(settingPolicy, nameof(BookSettingPolicyConfig.IsSupportedDividePage))));
             section.Children.Add(new SettingItemMultiProperty(
-                PropertyMemberElement.Create(BookSettingPresenter.Current.DefaultSetting, nameof(BookSettingConfig.IsSupportedWidePage)),
-                PropertyMemberElement.Create(BookSettingPresenter.Current.Generater, nameof(BookSettingPolicyConfig.IsSupportedWidePage))));
+                PropertyMemberElement.Create(defaultSetting, nameof(BookSettingConfig.IsSupportedWidePage)),
+                PropertyMemberElement.Create(settingPolicy, nameof(BookSettingPolicyConfig.IsSupportedWidePage))));
             section.Children.Add(new SettingItemMultiProperty(
-                PropertyMemberElement.Create(BookSettingPresenter.Current.DefaultSetting, nameof(BookSettingConfig.IsSupportedSingleFirstPage)),
-                PropertyMemberElement.Create(BookSettingPresenter.Current.Generater, nameof(BookSettingPolicyConfig.IsSupportedSingleFirstPage))));
+                PropertyMemberElement.Create(defaultSetting, nameof(BookSettingConfig.IsSupportedSingleFirstPage)),
+                PropertyMemberElement.Create(settingPolicy, nameof(BookSettingPolicyConfig.IsSupportedSingleFirstPage))));
             section.Children.Add(new SettingItemMultiProperty(
-                PropertyMemberElement.Create(BookSettingPresenter.Current.DefaultSetting, nameof(BookSettingConfig.IsSupportedSingleLastPage)),
-                PropertyMemberElement.Create(BookSettingPresenter.Current.Generater, nameof(BookSettingPolicyConfig.IsSupportedSingleLastPage))));
+                PropertyMemberElement.Create(defaultSetting, nameof(BookSettingConfig.IsSupportedSingleLastPage)),
+                PropertyMemberElement.Create(settingPolicy, nameof(BookSettingPolicyConfig.IsSupportedSingleLastPage))));
             section.Children.Add(new SettingItemMultiProperty(
-                PropertyMemberElement.Create(BookSettingPresenter.Current.DefaultSetting, nameof(BookSettingConfig.IsRecursiveFolder)),
-                PropertyMemberElement.Create(BookSettingPresenter.Current.Generater, nameof(BookSettingPolicyConfig.IsRecursiveFolder))));
+                PropertyMemberElement.Create(defaultSetting, nameof(BookSettingConfig.IsRecursiveFolder)),
+                PropertyMemberElement.Create(settingPolicy, nameof(BookSettingPolicyConfig.IsRecursiveFolder))));
 
             this.Items.Add(section);
 

@@ -9,46 +9,46 @@ namespace NeeView
         {
             Debug.Assert(def != null);
             Debug.Assert(current != null);
-            Debug.Assert(string.IsNullOrEmpty(current.Page));
+            //Debug.Assert(string.IsNullOrEmpty(current.Page));
 
-            var param = new BookSettingConfig();
+            var setting = new BookSettingConfig();
 
             var policyMap = new BookSettingPolicyConfigMap(self);
 
-            var paramMap = new BookSettingConfigMap(param);
+            var settingMap = new BookSettingConfigMap(setting);
             var defMap = new BookSettingConfigMap(def);
             var currentMap = new BookSettingConfigMap(current);
-            var restoretMap = new BookSettingConfigMap(restore ?? def);
+            var restoreMap = new BookSettingConfigMap(restore ?? def);
 
             foreach (BookSettingKey key in Enum.GetValues(typeof(BookSettingKey)))
             {
                 switch (policyMap[key])
                 {
                     case BookSettingSelectMode.Default:
-                        paramMap[key] = defMap[key];
+                        settingMap[key] = defMap[key];
                         break;
 
                     case BookSettingSelectMode.Continue:
-                        paramMap[key] = currentMap[key];
+                        settingMap[key] = currentMap[key];
                         break;
 
                     case BookSettingSelectMode.RestoreOrDefault:
                     case BookSettingSelectMode.RestoreOrDefaultReset:
-                        paramMap[key] = restore != null ? restoretMap[key] : defMap[key];
+                        settingMap[key] = restore != null ? restoreMap[key] : defMap[key];
                         break;
 
                     case BookSettingSelectMode.RestoreOrContinue:
-                        paramMap[key] = restore != null ? restoretMap[key] : currentMap[key];
+                        settingMap[key] = restore != null ? restoreMap[key] : currentMap[key];
                         break;
                 }
             }
 
             if (isDefaultRecursive && restore == null)
             {
-                param.IsRecursiveFolder = true;
+                setting.IsRecursiveFolder = true;
             }
 
-            return param;
+            return setting;
         }
 
     }

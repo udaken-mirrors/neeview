@@ -18,12 +18,12 @@ namespace NeeView
 
         public override bool CanExecute(object? sender, CommandContext e)
         {
-            return !NowLoading.Current.IsDispNowLoading;
+            return BookSettings.Current.CanEdit;
         }
 
         public override void Execute(object? sender, CommandContext e)
         {
-            BookSettingPresenter.Current.SetSortMode(PageSortMode.Random);
+            BookSettings.Current.SetSortMode(PageSortMode.Random);
         }
     }
 }

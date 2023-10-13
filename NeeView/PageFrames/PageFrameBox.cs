@@ -491,6 +491,12 @@ namespace NeeView.PageFrames
                     Flush();
                     break;
 
+                case nameof(Context.IsSupportedSingleFirstPage):
+                case nameof(Context.IsSupportedSingleLastPage):
+                case nameof(Context.IsSupportedWidePage):
+                    UpdateContainers(PageFrameDirtyLevel.Replace, TransformMask.None, true, true);
+                    break;
+
                 case nameof(Context.StretchMode):
                     UpdateContainers(PageFrameDirtyLevel.Moderate, TransformMask.Scale, false, true);
                     break;

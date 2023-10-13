@@ -16,14 +16,12 @@ namespace NeeView
         private bool _disposedValue;
         private readonly DisposableCollection _disposables = new();
         private int _pageChangedCount;
-        private readonly BookMemento? _defaultMemento;
 
 
         public BookMementoControl(Book book, BookHistoryCollection historyCollection)
         {
             _book = book;
             _historyCollection = historyCollection;
-            _defaultMemento = BookMementoTools.CreateBookMemento(_book);
 
             _disposables.Add(_book.SubscribeCurrentPageChanged(Book_CurrentPageChanged));
             _disposables.Add(_historyCollection.SubscribeHistoryChanged(BookHistoryCollection_HistoryChanged));
@@ -36,8 +34,6 @@ namespace NeeView
             {
                 if (disposing)
                 {
-                    SaveBookMemento();
-
                     _disposables.Dispose();
                 }
 
@@ -123,7 +119,7 @@ namespace NeeView
             BookmarkCollection.Current.Update(memento, _pageChangedCount > 1);
 
             // 履歴の保存
-            if (CanHistory(book) || !memento.IsEquals(_defaultMemento))
+            if (CanHistory(book) || !memento.IsEquals(book.Memento)) 
             {
                 BookHistoryCollection.Current.Add(memento, isKeepHistoryOrder);
             }

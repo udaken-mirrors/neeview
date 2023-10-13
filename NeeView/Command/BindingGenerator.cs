@@ -24,7 +24,7 @@ namespace NeeView
 
         public static Binding BindingBookSetting(string path)
         {
-            return new Binding(nameof(BookSettingPresenter.LatestSetting) + "." + path) { Source = BookSettingPresenter.Current };
+            return new Binding(path) { Source = Config.Current.BookSetting };
         }
 
         public static Binding StretchMode(PageStretchMode mode)

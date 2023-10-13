@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
 namespace NeeView
@@ -12,37 +13,37 @@ namespace NeeView
     {
         public static Book? Default { get; private set; }
 
-        //private readonly BookMemoryService _bookMemoryService = new();
-
         private readonly BookSource _source;
-        private readonly BookPageSetting _setting;
-        //private readonly BookPageViewer _viewer;
+        private BookSettingConfig _setting;
         private readonly BookPageMarker _marker;
-        //private readonly BookController _controller;
         private readonly string _sourcePath;
         private readonly BookLoadOption _loadOption;
         private readonly BookAddress _address;
+        private List<Page> _currentPages = new();
 
 
         public Book(BookAddress address, BookSource source, BookMemento memento, BookLoadOption option, bool isNew)
         {
             Book.Default = this;
 
-            this.Memento = memento;
+            this.Memento = memento.Clone();
 
             _address = address;
             _source = source;
             _sourcePath = address.SourcePath?.SimplePath ?? "";
-            _setting = new BookPageSetting(CreateBookViewerCreateSetting(memento));
-            //_viewer = new BookPageViewer(_source, _bookMemoryService, _setting);
             _marker = new BookPageMarker(_source);
-            //_controller = new BookController(_source, _setting, _viewer, _marker);
             _loadOption = option;
+
+            var currentMemento = this.Memento.Clone();
+            currentMemento.IsRecursiveFolder = _source.IsRecursiveFolder;
+            currentMemento.SortMode = _source.Pages.SortMode;
+            AttachBookSetting(currentMemento.ToBookSetting());
 
             _source.Pages.PagesSorted += (s, e) => PagesChanged?.Invoke(s, e);
 
             IsNew = isNew;
         }
+
 
 
         [Subscribable]
@@ -56,24 +57,17 @@ namespace NeeView
         public BookPageCollection Pages => _source.Pages;
         IReadOnlyList<Page> IBook.Pages => _source.Pages;
 
-        private List<Page> _currentPages = new();
 
         public IReadOnlyList<Page> CurrentPages => _currentPages;
         public Page? CurrentPage => _currentPages.FirstOrDefault();
-
-        public BookPageSetting Setting => _setting;
-        //public BookPageViewer Viewer => _viewer;
         public BookPageMarker Marker => _marker;
-        //public BookController Control => _controller;
         public BookMemoryService BookMemoryService => _source.BookMemoryService;
-
         public BookAddress BookAddress => _address;
         public string Path => _source.Path;
         public string SourcePath => _sourcePath;
         public bool IsMedia => _source.IsMedia;
         public bool IsPlaylist => _source.IsPlaylist;
         public bool IsTemporary => _source.Path.StartsWith(Temporary.Current.TempDirectory);
-
         public PageSortModeClass PageSortModeClass => IsPlaylist ? PageSortModeClass.WithEntry : PageSortModeClass.Normal;
         public BookLoadOption LoadOption => _loadOption;
 
@@ -90,12 +84,50 @@ namespace NeeView
 
         public bool IsKeepHistoryOrder => (_loadOption & BookLoadOption.KeepHistoryOrder) == BookLoadOption.KeepHistoryOrder;
 
-
         /// <summary>
         /// 初期Memento
         /// </summary>
         public BookMemento Memento { get; private set; }
 
+        /// <summary>
+        /// 設定
+        /// </summary>
+        public BookSettingConfig Setting => _setting;
+
+
+        [MemberNotNull(nameof(_setting))]
+        public void AttachBookSetting(BookSettingConfig setting)
+        {
+            DetachBookSetting();
+
+            // 新しい設定の反映
+            _setting = setting;
+            _setting.PropertyChanged += Setting_PropertyChanged;
+            _source.IsRecursiveFolder = _setting.IsRecursiveFolder;
+            _source.Pages.SortMode = _setting.SortMode;
+        }
+
+        private void DetachBookSetting()
+        {
+            if (_setting is null) return;
+
+            _setting.PropertyChanged -= Setting_PropertyChanged;
+        }
+
+        private void Setting_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            if (sender is not BookSettingConfig setting) return;
+
+            var isAll = string.IsNullOrEmpty(e.PropertyName);
+            if (isAll || e.PropertyName == nameof(setting.IsRecursiveFolder))
+            {
+                _source.IsRecursiveFolder = setting.IsRecursiveFolder;
+            }
+            if (isAll || e.PropertyName == nameof(setting.SortMode))
+            { 
+                _source.Pages.SortMode = setting.SortMode;
+            }
+        }
 
         public void SetStartPage(object? sender, BookStartPage startPage)
         {
@@ -162,21 +194,9 @@ namespace NeeView
 
             _currentPages = pages.ToList();
 
-            this.Memento.Page = CurrentPage?.EntryName ?? "";
+            //this.Memento.Page = CurrentPage?.EntryName ?? "";
             CurrentPageChanged?.Invoke(this, EventArgs.Empty);
         }
-
-#if false
-        public void SetCurrentPage(Page? page)
-        {
-            if (CurrentPage != page)
-            {
-                CurrentPage = page;
-                this.Memento.Page = page?.EntryName ?? "";
-                CurrentPageChanged?.Invoke(this, EventArgs.Empty);
-            }
-        }
-#endif
 
 
         #region IDisposable Support
@@ -188,13 +208,13 @@ namespace NeeView
             {
                 if (disposing)
                 {
+                    DetachBookSetting();
+
                     if (Book.Default == this)
                     {
                         Book.Default = null;
                     }
 
-                    //_controller.Dispose();
-                    //_viewer.Dispose();
                     _source.Dispose();
                 }
 
@@ -249,21 +269,6 @@ namespace NeeView
             _source.IsRecursiveFolder = memento.IsRecursiveFolder;
             _source.Pages.SortMode = memento.SortMode;
             _setting.AutoRotate = memento.AutoRotate;
-        }
-
-        private static BookPageViewSetting CreateBookViewerCreateSetting(BookMemento memento)
-        {
-            var setting = new BookPageViewSetting
-            {
-                PageMode = memento.PageMode,
-                BookReadOrder = memento.BookReadOrder,
-                IsSupportedDividePage = memento.IsSupportedDividePage,
-                IsSupportedSingleFirstPage = memento.IsSupportedSingleFirstPage,
-                IsSupportedSingleLastPage = memento.IsSupportedSingleLastPage,
-                IsSupportedWidePage = memento.IsSupportedWidePage,
-                AutoRotate = memento.AutoRotate,
-            };
-            return setting;
         }
 
         #endregion

@@ -22,9 +22,6 @@ namespace NeeView
         {
             _model = model;
 
-            BookSettingPresenter.Current.SettingChanged +=
-               (s, e) => RaisePropertyChanged(nameof(BookSetting));
-
             _isLoading = new DelayValue<bool>();
             _isLoading.ValueChanged += (s, e) => RaisePropertyChanged(nameof(IsLoading));
             PageFrameBoxPresenter.Current.Loading += Presenter_Loading;
@@ -48,7 +45,7 @@ namespace NeeView
 
         public BookSettingConfig BookSetting
         {
-            get { return NeeView.BookSettingPresenter.Current.LatestSetting; }
+            get { return Config.Current.BookSetting; }
         }
 
 
@@ -89,7 +86,7 @@ namespace NeeView
 
         private void TogglePageModeCommand_Execute()
         {
-            BookSettingPresenter.Current.TogglePageMode(+1, true);
+            BookSettings.Current.TogglePageMode(+1, true);
         }
 
     }

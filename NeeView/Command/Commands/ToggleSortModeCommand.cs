@@ -9,17 +9,17 @@
         }
         public override string ExecuteMessage(object? sender, CommandContext e)
         {
-            return BookOperation.Current.BookControl.PageSortModeClass.GetTogglePageSortMode(BookSettingPresenter.Current.LatestSetting.SortMode).ToAliasName();
+            return BookOperation.Current.BookControl.PageSortModeClass.GetTogglePageSortMode(BookSettings.Current.SortMode).ToAliasName();
         }
 
         public override bool CanExecute(object? sender, CommandContext e)
         {
-            return !NowLoading.Current.IsDispNowLoading;
+            return BookSettings.Current.CanEdit;
         }
 
         public override void Execute(object? sender, CommandContext e)
         {
-            BookSettingPresenter.Current.ToggleSortMode(BookOperation.Current.BookControl.PageSortModeClass);
+            BookSettings.Current.ToggleSortMode(BookOperation.Current.BookControl.PageSortModeClass);
         }
     }
 }
