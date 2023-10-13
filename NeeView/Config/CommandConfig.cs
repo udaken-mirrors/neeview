@@ -8,7 +8,7 @@ namespace NeeView
         private bool _isAccessKeyEnabled = true;
         private bool _isReversePageMove = true;
         private bool _isReversePageMoveWheel;
-        private bool _isReversePageMoveHorizontalWheel;
+        private bool _isReversePageMoveHorizontalWheel = true;
         private bool _isHorizontalWheelLimitedOnce = true;
 
         [PropertyMember]
