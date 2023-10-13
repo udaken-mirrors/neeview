@@ -56,6 +56,7 @@ namespace NeeView
         private bool _isLoading;
         private string? _emptyMessage;
         private readonly ReferenceCounter _loadRequestCount = new();
+        private CancellationTokenSource _openCancellationTokenSource = new();
 
 
         private PageFrameBoxPresenter()
@@ -202,7 +203,6 @@ namespace NeeView
             });
         }
 
-        private CancellationTokenSource _openCancellationTokenSource = new();
 
         private void BookHub_BookChanged(object? sender, BookChangedEventArgs e)
         {
@@ -211,18 +211,14 @@ namespace NeeView
                 try
                 {
                     EmptyMessage = null;
+                    SetLoading(null);
                     await OpenAsync(_bookHub.GetCurrentBook(), _openCancellationTokenSource.Token);
                     EmptyMessage = e.EmptyMessage;
-                    _isLoading = false; // NOTE: RaiseViewPageChanged() で _isLoading を参照しているため先にフラグリセットしておく
                     PageFrameBoxChanged?.Invoke(this, new PageFrameBoxChangedEventArgs(_box, e));
                     RaiseViewPageChanged();
                 }
                 catch (OperationCanceledException)
                 {
-                }
-                finally
-                {
-                    SetLoading(null);
                 }
 
                 MemoryControl.Current.GarbageCollect();
@@ -583,8 +579,6 @@ namespace NeeView
             return _box?.CreateDragTransformContext(container, isLoupeTransform);
         }
 
-
-
         public void MoveTo(PagePosition position, LinkedListDirection direction)
         {
             var box = ValidBox();
@@ -615,11 +609,7 @@ namespace NeeView
             {
                 box.MoveToNextFolder(direction, isShowMessage);
             });
-
-
         }
-
-
 
         public void ScrollToNextFrame(LinkedListDirection direction, IScrollNTypeParameter parameter, LineBreakStopMode lineBreakStopMode, double endMargin)
         {
@@ -663,16 +653,6 @@ namespace NeeView
         {
             return _box?.GetSelectedPageFrameContent();
         }
-
-        /// <summary>
-        /// 背景情報取得
-        /// </summary>
-        /// <returns></returns>
-        //public PageFrameBackground? GetBackground()
-        //{
-        //    return _box?.GetBackground();
-        //}
-
 
         #endregion IPageFrameBox
     }

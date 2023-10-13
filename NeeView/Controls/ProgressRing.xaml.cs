@@ -25,8 +25,10 @@ namespace NeeView
         {
             InitializeComponent();
 
-            this.Root.Visibility = Visibility.Collapsed;
+            this.ProgressRingMark.Opacity = 0.0;
+            UpdateActivity();
         }
+
 
         public bool IsActive
         {
@@ -35,41 +37,41 @@ namespace NeeView
         }
 
         public static readonly DependencyProperty IsActiveProperty =
-            DependencyProperty.Register("IsActive", typeof(bool), typeof(ProgressRing), new PropertyMetadata(false, IsActivePropertyChanged));
+            DependencyProperty.Register("IsActive", typeof(bool), typeof(ProgressRing), new PropertyMetadata(true, IsActiveProperty_Changed));
 
-        private static void IsActivePropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+
+        private static void IsActiveProperty_Changed(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             if (d is ProgressRing control)
             {
-                control.UpdateAnimationState();
+                control.UpdateActivity();
             }
         }
 
-        private void UpdateAnimationState()
+        private void UpdateActivity()
         {
             if (IsActive)
             {
-                this.Root.Visibility = Visibility.Visible;
+                var ani = new DoubleAnimation(1, TimeSpan.FromSeconds(0.0)) { BeginTime = TimeSpan.FromSeconds(0.0) };
+                this.ProgressRingMark.BeginAnimation(UIElement.OpacityProperty, ani, HandoffBehavior.SnapshotAndReplace);
 
                 var aniRotate = new DoubleAnimation();
                 aniRotate.By = 360;
                 aniRotate.Duration = TimeSpan.FromSeconds(2.0);
                 aniRotate.RepeatBehavior = RepeatBehavior.Forever;
-                this.NowLoadingMarkAngle.BeginAnimation(RotateTransform.AngleProperty, aniRotate);
+                this.ProgressRingMarkAngle.BeginAnimation(RotateTransform.AngleProperty, aniRotate);
             }
             else
             {
-#if false
+                var ani = new DoubleAnimation(0, TimeSpan.FromSeconds(0.25));
+                this.ProgressRingMark.BeginAnimation(UIElement.OpacityProperty, ani, HandoffBehavior.SnapshotAndReplace);
+
                 var aniRotate = new DoubleAnimation();
                 aniRotate.By = 45;
                 aniRotate.Duration = TimeSpan.FromSeconds(0.25);
-                this.NowLoadingMarkAngle.BeginAnimation(RotateTransform.AngleProperty, aniRotate);
-#endif
-
-                this.Root.Visibility = Visibility.Collapsed;
-
-                this.NowLoadingMarkAngle.BeginAnimation(RotateTransform.AngleProperty, null);
+                this.ProgressRingMarkAngle.BeginAnimation(RotateTransform.AngleProperty, aniRotate);
             }
         }
+
     }
 }

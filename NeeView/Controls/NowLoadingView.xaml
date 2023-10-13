@@ -5,13 +5,13 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:NeeView"
              mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="300">
+             d:DesignHeight="400" d:DesignWidth="400">
     <UserControl.Resources>
         <local:IsNearZeroConverter x:Key="IsNearZeroConverter"/>
     </UserControl.Resources>
 
     <Grid x:Name="Root">
-        <Grid x:Name="NowLoading" Opacity="0" IsHitTestVisible="False">
+        <Grid x:Name="NowLoading" IsHitTestVisible="False">
             <Grid.Style>
                 <Style TargetType="Grid">
                     <Style.Triggers>
@@ -25,18 +25,7 @@
                 <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Orientation="Vertical">
                     <TextBlock x:Name="NowLoadingText" Text="Now Loading"  TextAlignment="Center" VerticalAlignment="Center"
                                                    Foreground="{DynamicResource Window.Foreground}" FontFamily="Meiryo" FontSize="{StaticResource InfoTextFontSize}" Margin="8" TextTrimming="CharacterEllipsis"/>
-                    <Grid Width="50" Height="50">
-                        <Rectangle Width="5" Height="25" Fill="{DynamicResource Control.Accent}" RenderTransformOrigin="0.5,0.5">
-                            <Rectangle.RenderTransform>
-                                <TransformGroup>
-                                    <ScaleTransform/>
-                                    <SkewTransform/>
-                                    <RotateTransform x:Name="NowLoadingMarkAngle" Angle="45"/>
-                                    <TranslateTransform/>
-                                </TransformGroup>
-                            </Rectangle.RenderTransform>
-                        </Rectangle>
-                    </Grid>
+                    <local:ProgressRing x:Name="ProgressRing" />
                 </StackPanel>
             </Grid>
 

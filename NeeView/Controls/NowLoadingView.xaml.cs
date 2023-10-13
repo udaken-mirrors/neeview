@@ -40,6 +40,7 @@ namespace NeeView
         public NowLoadingView()
         {
             InitializeComponent();
+            this.NowLoading.Opacity = 0.0;
         }
 
         //
@@ -75,25 +76,13 @@ namespace NeeView
                     this.NowLoadingTiny.Visibility = Visibility.Visible;
                 }
 
-                var ani = new DoubleAnimation(1, TimeSpan.FromSeconds(0.5));
-                ani.BeginTime = TimeSpan.FromSeconds(1.0);
+                var ani = new DoubleAnimation(1, TimeSpan.FromSeconds(0.5)) { BeginTime = TimeSpan.FromSeconds(0.5) };
                 this.NowLoading.BeginAnimation(UIElement.OpacityProperty, ani, HandoffBehavior.SnapshotAndReplace);
-
-                var aniRotate = new DoubleAnimation();
-                aniRotate.By = 360;
-                aniRotate.Duration = TimeSpan.FromSeconds(2.0);
-                aniRotate.RepeatBehavior = RepeatBehavior.Forever;
-                this.NowLoadingMarkAngle.BeginAnimation(RotateTransform.AngleProperty, aniRotate);
             }
             else
             {
                 var ani = new DoubleAnimation(0, TimeSpan.FromSeconds(0.25));
                 this.NowLoading.BeginAnimation(UIElement.OpacityProperty, ani, HandoffBehavior.SnapshotAndReplace);
-
-                var aniRotate = new DoubleAnimation();
-                aniRotate.By = 45;
-                aniRotate.Duration = TimeSpan.FromSeconds(0.25);
-                this.NowLoadingMarkAngle.BeginAnimation(RotateTransform.AngleProperty, aniRotate);
             }
         }
     }

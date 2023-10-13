@@ -35,7 +35,7 @@ namespace NeeView
             };
             stackPanel.Children.Add(textBlock);
 
-            var loading = new LoadingIcon()
+            var loading = new ProgressRing()
             {
                 Foreground = foregroundBrush,
                 HorizontalAlignment = HorizontalAlignment.Center,
