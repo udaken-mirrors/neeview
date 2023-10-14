@@ -6,7 +6,7 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
-
+using System.Windows.Media.Imaging;
 
 namespace NeeView
 {
@@ -26,9 +26,10 @@ namespace NeeView
             {
                 // ArchiveFileの場合はTempFile化
                 var fileProxy = ArchiveEntry.GetFileProxy(); // TODO: async化
-                var pictureInfo = CreatePictureInfo(fileProxy.Path); // TODO: Async
+                var mediaInfo = CreateMediaInfo(fileProxy.Path); // TODO: async化
+                var pictureInfo = mediaInfo.PictureInfo;
                 await Task.CompletedTask;
-                return new PageSource(new MediaPageData(fileProxy.Path), null, pictureInfo);
+                return new PageSource(new MediaPageData(fileProxy.Path, mediaInfo.AudioInfo), null, pictureInfo);
             }
             catch (OperationCanceledException)
             {
@@ -40,17 +41,30 @@ namespace NeeView
             }
         }
 
-        private PictureInfo CreatePictureInfo(string path)
+        private (PictureInfo PictureInfo, AudioInfo? AudioInfo) CreateMediaInfo(string path)
         {
-            int width = 1920;
-            int height = 1080;
-
             // 幅と高さを非同期で得るために MediaInfoLib を使用している
             var mediaInfo = new MediaInfoLib.MediaInfo();
             if (!mediaInfo.IsEnabled) throw new ApplicationException("Cannot load MediaInfo.dll");
 
+            mediaInfo.Option("Internet", "No");
+            mediaInfo.Option("Cover_Data", "base64");
+
             int result = mediaInfo.Open(path);
             if (result == 0) throw new IOException($"Cannot open MediaInfo: {path}");
+
+            var pictureInfo = CreatePictureInfo(mediaInfo);
+            var audioInfo = CreateAudioInfo(mediaInfo);
+
+            mediaInfo.Close();
+
+            return (pictureInfo, audioInfo);
+        }
+
+        private PictureInfo CreatePictureInfo(MediaInfo mediaInfo)
+        {
+            int width = 1920;
+            int height = 1080;
 
             int videoCount = mediaInfo.Count_Get(StreamKind.Video);
             if (videoCount > 0)
@@ -61,15 +75,6 @@ namespace NeeView
                 var aspectRatio = double.Parse(mediaInfo.Get(StreamKind.Video, 0, "PixelAspectRatio"));
                 width = (int)(width * aspectRatio);
             }
-            else
-            {
-                int imageCount = mediaInfo.Count_Get(StreamKind.Image);
-                if (imageCount > 0)
-                {
-                    width = int.Parse(mediaInfo.Get(StreamKind.Image, 0, "Width"));
-                    height = int.Parse(mediaInfo.Get(StreamKind.Image, 0, "Height"));
-                }
-            }
 
             var pictureInfo = new PictureInfo();
             pictureInfo.OriginalSize = new Size(width, height);
@@ -77,5 +82,43 @@ namespace NeeView
 
             return pictureInfo;
         }
+
+        private AudioInfo? CreateAudioInfo(MediaInfo mediaInfo)
+        {
+            int audioCount = mediaInfo.Count_Get(StreamKind.Audio);
+            if (audioCount > 0)
+            {
+                // NOTE: 文字化け対処方法不明
+                var title = mediaInfo.Get(StreamKind.General, 0, "Title");
+                var album = mediaInfo.Get(StreamKind.General, 0, "Album");
+                var artist = mediaInfo.Get(StreamKind.General, 0, "Performer");
+
+                BitmapImage? bitmap = null;
+                var coverBase64 = mediaInfo.Get(StreamKind.General, 0, "Cover_Data");
+                if (!string.IsNullOrEmpty(coverBase64))
+                {
+                    try
+                    {
+                        var ms = new MemoryStream(Convert.FromBase64String(coverBase64));
+                        bitmap = new BitmapImage();
+                        bitmap.BeginInit();
+                        bitmap.StreamSource = ms;
+                        bitmap.CreateOptions = BitmapCreateOptions.None;
+                        bitmap.CacheOption = BitmapCacheOption.OnLoad;
+                        bitmap.EndInit();
+                        bitmap.Freeze();
+                    }
+                    catch (Exception ex)
+                    {
+                        Debug.WriteLine($"cannot get cover image: {ex.Message}");
+                    }
+                }
+
+                return new AudioInfo(ArchiveEntry, title, album, artist, bitmap);
+            }
+
+            return null;
+        }
+
     }
 }

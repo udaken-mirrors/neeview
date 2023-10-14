@@ -78,6 +78,7 @@ namespace NeeView
             if (_operator is null) return;
 
             _operatorEventDisposables.Dispose();
+            _operatorEventDisposables.Clear();
             _operator = null;
         }
 

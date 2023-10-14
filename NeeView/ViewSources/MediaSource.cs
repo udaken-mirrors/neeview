@@ -10,14 +10,17 @@ namespace NeeView
             StreamSource = streamSource;
         }
 
-        public MediaSource(string? path)
+        public MediaSource(string? path, AudioInfo? audioInfo)
         {
             Path = path;
+            AudioInfo = audioInfo;
         }
 
         public IStreamSource? StreamSource { get; }
 
         public string? Path { get; }
+
+        public AudioInfo? AudioInfo { get; }
 
         public long CacheSize => (StreamSource as IHasCache)?.CacheSize ?? 0;
 

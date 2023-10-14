@@ -26,6 +26,7 @@ namespace NeeView
         private readonly Image _videoLayer;
         private readonly Image _imageLayer;
 #endif
+        private readonly AudioCard _audioCard;
         private readonly TextBlock _errorMessageTextBlock;
         private bool _disposedValue;
         private BitmapScalingMode? _scalingMode;
@@ -43,6 +44,7 @@ namespace NeeView
             _player = player;
             _player.MediaPlayed += Player_MediaPlayed;
             _player.MediaFailed += Player_MediaFailed;
+            _player.PropertyChanged += Player_PropertyChanged;
 
 #if USE_IMAGEBRUSH
 
@@ -88,6 +90,29 @@ namespace NeeView
             };
 
 #endif
+
+
+            var drawingImage = new DrawingImage()
+            {
+                Drawing = new GeometryDrawing()
+                {
+                    Brush = Brushes.Gray,
+                    Geometry = App.Current.Resources["g_music"] as PathGeometry,
+                },
+            };
+            drawingImage.Freeze();
+
+
+            _audioCard = new AudioCard()
+            {
+                AudioInfo = source.MediaSource.AudioInfo,
+                Visibility = Visibility.Collapsed,
+                VerticalAlignment = VerticalAlignment.Center,
+                //HorizontalAlignment = HorizontalAlignment.Center,
+                //MaxWidth = 640.0,
+                //Margin = new Thickness(20.0),
+            };
+
             _errorMessageTextBlock = new TextBlock()
             {
                 Background = Brushes.Black,
@@ -107,10 +132,31 @@ namespace NeeView
             {
                 this.Children.Add(_imageLayer);
             }
+            this.Children.Add(_audioCard);
             this.Children.Add(_errorMessageTextBlock);
+
+            UpdateMediaType();
 
             // image scaling mode
             _contentSize.SizeChanged += ContentSize_SizeChanged;
+        }
+
+        private void Player_PropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (string.IsNullOrEmpty(e.PropertyName) || e.PropertyName == nameof(_player.HasVideo))
+            {
+                AppDispatcher.BeginInvoke(() => UpdateMediaType());
+            }
+            if (string.IsNullOrEmpty(e.PropertyName) || e.PropertyName == nameof(_player.HasAudio))
+            {
+                AppDispatcher.BeginInvoke(() => UpdateMediaType());
+            }
+        }
+
+        private void UpdateMediaType()
+        {
+            var isSoundOnly = _player.HasAudio && !_player.HasVideo;
+            _audioCard.Visibility = isSoundOnly ? Visibility.Visible : Visibility.Collapsed;
         }
 
 
@@ -141,6 +187,7 @@ namespace NeeView
                     _contentSize.SizeChanged -= ContentSize_SizeChanged;
                     _player.MediaPlayed -= Player_MediaPlayed;
                     _player.MediaFailed -= Player_MediaFailed;
+                    _player.PropertyChanged -= Player_PropertyChanged;
 #if USE_IMAGEBRUSH
                     _player.SourceProvider.PropertyChanged -= SourceProvider_PropertyChanged;
 #endif
