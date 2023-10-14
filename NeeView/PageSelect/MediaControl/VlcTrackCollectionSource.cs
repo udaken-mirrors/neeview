@@ -3,6 +3,7 @@ using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading.Tasks;
 using Vlc.DotNet.Core;
 
 namespace NeeView
@@ -13,6 +14,8 @@ namespace NeeView
         private readonly TrackCollection _collection;
         private bool _disposedValue;
         private readonly DisposableCollection _disposables = new();
+        private bool _isEnabled = true;
+
 
         public VlcTrackCollectionSource(IEnumerableManagement<TrackDescription> source)
         {
@@ -28,7 +31,22 @@ namespace NeeView
             _disposables.Add(_collection.SubscribePropertyChanged(nameof(_collection.Selected), Collection_SelectedChanged));
         }
 
+
         public TrackCollection Collection => _collection;
+
+        public bool IsEnabled
+        {
+            get { return _isEnabled; }
+            set
+            {
+                if (_isEnabled != value)
+                {
+                    _isEnabled = value;
+                    UpdateCurrent();
+                }
+            }
+        }
+
 
         protected virtual void Dispose(bool disposing)
         {
@@ -50,10 +68,25 @@ namespace NeeView
 
         private void Collection_SelectedChanged(object? sender, PropertyChangedEventArgs e)
         {
+            UpdateCurrent();
+        }
+
+        private void UpdateCurrent()
+        {
             var selected = _collection.Selected;
             if (selected is not null)
             {
-                _source.Current = _source.All.FirstOrDefault(x => x.ID == selected.ID) ?? _source.Current;
+                Task.Run(() =>
+                {
+                    if (_isEnabled)
+                    {
+                        _source.Current = _source.All.FirstOrDefault(x => x.ID == selected.ID) ?? _source.Current;
+                    }
+                    else
+                    {
+                        _source.Current = _source.All.FirstOrDefault() ?? _source.Current;
+                    }
+                });
             }
         }
     }

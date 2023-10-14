@@ -108,10 +108,16 @@ namespace NeeView
     {
         static LibVlcProfile()
         {
-            // get VLC media player install folder
-            var key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\VLC media player");
-            var installLocation = (string?)key?.GetValue("InstallLocation");
-            DefaultLibVlcPath = installLocation ?? "";
+            try
+            {
+                // get VLC media player install folder
+                var key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\VLC media player");
+                var installLocation = (string?)key?.GetValue("InstallLocation");
+                DefaultLibVlcPath = installLocation ?? "";
+            }
+            catch
+            {
+            }
         }
 
         public static string DefaultLibVlcPath { get; private set; } = "";

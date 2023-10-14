@@ -23,6 +23,7 @@ namespace NeeView
         private bool _isEnded;
         private bool _isOpened;
         private bool _isEnabled = true;
+        private bool _isAudioEnabled = true;
         private bool _isMuted;
         private bool _isRepeat;
 
@@ -34,6 +35,9 @@ namespace NeeView
 
             _disposables.Add(this.SubscribePropertyChanged(nameof(IsEnabled),
                 (s, e) => { UpdatePlayed(); UpdateMuted(); }));
+
+            _disposables.Add(this.SubscribePropertyChanged(nameof(IsAudioEnabled),
+                (s, e) => UpdateMuted()));
 
             _disposables.Add(this.SubscribePropertyChanged(nameof(IsMuted),
                 (s, e) => UpdateMuted()));
@@ -69,7 +73,13 @@ namespace NeeView
             get { return _isEnabled; }
             set { SetProperty(ref _isEnabled, value); }
         }
-        
+
+        public bool IsAudioEnabled
+        {
+            get { return _isAudioEnabled; }
+            set { SetProperty(ref _isAudioEnabled, value); }
+        }
+
         public bool IsMuted
         {
             get { return _isMuted; }
@@ -231,7 +241,7 @@ namespace NeeView
 
         private void UpdateMuted()
         {
-            var isMuted = !_isEnabled || !_isOpened || _isMuted;
+            var isMuted = !_isEnabled || !_isAudioEnabled || !_isOpened || _isMuted;
             _player.IsMuted = isMuted;
         }
 

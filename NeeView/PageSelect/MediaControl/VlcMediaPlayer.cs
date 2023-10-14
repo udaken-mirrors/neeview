@@ -26,13 +26,12 @@ namespace NeeView
     [NotifyPropertyChanged]
     public partial class VlcMediaPlayer : IOpenableMediaPlayer, IDisposable
     {
-        private static readonly object _lock = new();
-
         private readonly VlcVideoSourceProvider _source;
         private readonly Vlc.DotNet.Core.VlcMediaPlayer _player;
         private bool _disposedValue;
         private readonly DisposableCollection _disposables = new();
         private bool _isEnabled = true;
+        private bool _isAudioEnabled = true;
         private bool _isMuted;
         private bool _isRepeat;
         private bool _isPlaying;
@@ -62,14 +61,11 @@ namespace NeeView
 
         public VlcMediaPlayer()
         {
-            lock (_lock)
-            {
-                var libDirectory = new DirectoryInfo(Config.Current.Archive.Media.LibVlcPath);
-                if (!libDirectory.Exists) throw new DirectoryNotFoundException($"The directory containing libvlc.dll does not exist: {libDirectory.FullName}");
-                _source = new VlcVideoSourceProvider(Application.Current.Dispatcher);
-                _source.CreatePlayer(libDirectory);
-                _player = _source.MediaPlayer;
-            }
+            var libDirectory = new DirectoryInfo(Config.Current.Archive.Media.LibVlcPath);
+            if (!libDirectory.Exists) throw new DirectoryNotFoundException($"The directory containing libvlc.dll does not exist: {libDirectory.FullName}");
+            _source = new VlcVideoSourceProvider(Application.Current.Dispatcher);
+            _source.CreatePlayer(libDirectory);
+            _player = _source.MediaPlayer;
 
             AttachPlayer();
 
@@ -141,7 +137,18 @@ namespace NeeView
                 if (SetProperty(ref _isEnabled, value))
                 {
                     UpdatePlayed();
-                    UpdateMuted();
+                }
+            }
+        }
+
+        public bool IsAudioEnabled
+        {
+            get { return _isAudioEnabled; }
+            set
+            {
+                if (SetProperty(ref _isAudioEnabled, value))
+                {
+                    UpdateAudioTrackActivity();
                 }
             }
         }
@@ -205,11 +212,14 @@ namespace NeeView
                 {
                     Trace($"Position = {newPosition}");
                     _requestPosition = float.NegativeInfinity;
-                    _player.Position = newPosition;
-                    if (_player.State == MediaStates.Ended)
+                    Task.Run(() =>
                     {
-                        PlayStart(newPosition);
-                    }
+                        _player.Position = newPosition;
+                        if (_player.State == MediaStates.Ended)
+                        {
+                            PlayStart(newPosition);
+                        }
+                    });
                 }
             }
         }
@@ -225,10 +235,13 @@ namespace NeeView
             {
                 if (_disposedValue) return;
                 var newVolume = (int)(value * 100.0);
-                if (_player.Audio.Volume != newVolume)
+                Task.Run(() =>
                 {
-                    _player.Audio.Volume = newVolume;
-                }
+                    if (_player.Audio.Volume != newVolume)
+                    {
+                        _player.Audio.Volume = newVolume;
+                    }
+                });
             }
         }
 
@@ -240,40 +253,24 @@ namespace NeeView
         /// <summary>
         /// オーディオトラックの選択管理
         /// </summary>
-        /// <remarks>
-        /// NOTE: 取得のたびに生成されます。
-        /// </remarks>
         public TrackCollection? AudioTracks
         {
             get
             {
                 if (_disposedValue) return null;
-                _audioTracks?.Dispose();
-                _audioTracks = null;
-                var tracks = _player.Audio.Tracks;
-                if (tracks is null || tracks.Count <= 0) return null;
-                _audioTracks = new VlcTrackCollectionSource(tracks);
-                return _audioTracks.Collection;
+                return _audioTracks?.Collection;
             }
         }
 
         /// <summary>
         /// 字幕の選択管理
         /// </summary>
-        /// <remarks>
-        /// NOTE: 取得のたびに生成されます。
-        /// </remarks>
         public TrackCollection? Subtitles
         {
             get
             {
                 if (_disposedValue) return null;
-                _subtitles?.Dispose();
-                _subtitles = null;
-                var tracks = _player.SubTitles;
-                if (tracks is null || tracks.Count <= 0) return null;
-                _subtitles = new VlcTrackCollectionSource(tracks);
-                return _subtitles.Collection;
+                return _subtitles?.Collection;
             }
         }
 
@@ -283,26 +280,23 @@ namespace NeeView
             {
                 if (disposing)
                 {
-                    lock (_lock)
+                    DetachPlayer();
+                    _audioTracks?.Dispose();
+                    _subtitles?.Dispose();
+                    _disposables.Dispose();
+                    Task.Run(() =>
                     {
-                        DetachPlayer();
-                        _audioTracks?.Dispose();
-                        _subtitles?.Dispose();
-                        _disposables.Dispose();
-                        Task.Run(() =>
+                        try
                         {
-                            try
-                            {
-                                //Trace($"VlcMediaPlayer.Dispose: {System.Environment.TickCount} {_uri}");
-                                _source.Dispose();
-                            }
-                            catch (Exception ex)
-                            {
-                                Debug.WriteLine(ex);
-                                Debugger.Break();
-                            }
-                        });
-                    }
+                            //Trace($"VlcMediaPlayer.Dispose: {System.Environment.TickCount} {_uri}");
+                            _source.Dispose();
+                        }
+                        catch (Exception ex)
+                        {
+                            Debug.WriteLine(ex);
+                            Debugger.Break();
+                        }
+                    });
                 }
                 _disposedValue = true;
             }
@@ -314,6 +308,19 @@ namespace NeeView
             GC.SuppressFinalize(this);
         }
 
+        private VlcTrackCollectionSource? CreateAudioTracks()
+        {
+            var tracks = _player.Audio.Tracks;
+            if (tracks is null || tracks.Count <= 0) return null;
+            return new VlcTrackCollectionSource(tracks);
+        }
+
+        private VlcTrackCollectionSource? CreateSubtitles()
+        {
+            var tracks = _player.SubTitles;
+            if (tracks is null || tracks.Count <= 0) return null;
+            return new VlcTrackCollectionSource(tracks);
+        }
 
         private void AttachPlayer()
         {
@@ -345,14 +352,10 @@ namespace NeeView
 
             _player.Playing += Player_FirstPlaying;
 
-            lock (_lock)
-            {
-                //Trace($"VlcMediaPlayer.Open: {System.Environment.TickCount} {_uri}");
-                PlayStart();
-            }
-            _player.Audio.IsMute = true;
+            //Trace($"VlcMediaPlayer.Open: {System.Environment.TickCount} {_uri}");
+            PlayStart();
+
             IsPlaying = true;
-            ScrubbingEnabled = _player.IsSeekable;
 
             void Player_FirstPlaying(object? sender, VlcMediaPlayerPlayingEventArgs e)
             {
@@ -360,7 +363,6 @@ namespace NeeView
                 OnStarted();
             }
         }
-
 
         private void Player_Playing(object? sender, VlcMediaPlayerPlayingEventArgs e)
         {
@@ -375,6 +377,7 @@ namespace NeeView
                 }
             });
         }
+
         private void Player_EndReached(object? sender, VlcMediaPlayerEndReachedEventArgs e)
         {
             RaisePropertyChanged(nameof(Position));
@@ -412,9 +415,15 @@ namespace NeeView
 
             _isOpened = true;
 
+            _audioTracks = CreateAudioTracks();
+            _subtitles = CreateSubtitles();
+
             UpdatePlayed();
             UpdateMuted();
             UpdateTrackInfo();
+            UpdateAudioTrackActivity();
+
+            ScrubbingEnabled = _player.IsSeekable;
 
             AppDispatcher.BeginInvoke(() => MediaPlayed?.Invoke(this, EventArgs.Empty));
         }
@@ -449,32 +458,36 @@ namespace NeeView
         {
             if (_disposedValue) return;
 
-            lock (_lock)
+            if (ShouldPlay())
             {
-                if (ShouldPlay())
+                if (_player.State == MediaStates.Ended)
                 {
-                    if (_player.State == MediaStates.Ended)
-                    {
-                        PlayStart(true);
-                    }
-                    else
-                    {
-                        _player.Play();
-                    }
+                    PlayStart(true);
                 }
                 else
                 {
-                    _player.SetPause(true);
+                    Task.Run(() => _player.Play());
                 }
             }
+            else
+            {
+                Task.Run(() => _player.SetPause(true));
+            }
+        }
+
+
+        private void UpdateAudioTrackActivity()
+        {
+            if (_audioTracks is null) return;
+
+            _audioTracks.IsEnabled = _isAudioEnabled;
         }
 
         private void UpdateMuted()
         {
             if (_disposedValue) return;
-
-            var isMuted = !_isEnabled || !_isOpened || _isMuted;
-            _player.Audio.IsMute = isMuted;
+            
+            Task.Run(() => { _player.Audio.IsMute = _isMuted; });
         }
 
         private void UpdateRepeat()
@@ -518,7 +531,7 @@ namespace NeeView
             }
 
             if (_uri is null) return;
-            _player.Play(_uri, options.ToArray());
+            Task.Run(() => _player.Play(_uri, options.ToArray()));
         }
 
         [Conditional("DEBUG")]

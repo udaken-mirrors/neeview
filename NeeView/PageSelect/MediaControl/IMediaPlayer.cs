@@ -9,6 +9,7 @@ namespace NeeView
         bool HasAudio { get; }
         bool HasVideo { get; }
         bool IsEnabled { get; set; }
+        bool IsAudioEnabled { get; set; }
         bool IsMuted { get; set; }
         bool IsRepeat { get; set; }
         bool IsPlaying { get; }

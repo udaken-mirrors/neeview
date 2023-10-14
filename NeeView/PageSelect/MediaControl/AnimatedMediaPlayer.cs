@@ -75,6 +75,12 @@ namespace NeeView
             }
         }
 
+        public bool IsAudioEnabled
+        {
+            get { return false; }
+            set { }
+        }    
+
         public bool IsMuted
         {
             get { return false; }

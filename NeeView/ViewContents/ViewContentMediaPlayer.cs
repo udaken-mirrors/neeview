@@ -105,6 +105,12 @@ namespace NeeView
             set => _player.IsEnabled = value;
         }
 
+        public bool IsAudioEnabled
+        {
+            get => _player.IsAudioEnabled;
+            set => _player.IsAudioEnabled = value;
+        }
+
         public bool HasAudio => _player.HasAudio;
 
         public bool HasVideo => _player.HasVideo;
@@ -192,9 +198,11 @@ namespace NeeView
             
             //Debug.WriteLine($"Media.UpdateState: {Page}");
             _player.IsEnabled = _activity.IsVisible;
-            _player.IsMuted = !_activity.IsSelected || _elementIndex != 0 || _mediaContext.IsMuted;
+            _player.IsMuted = _mediaContext.IsMuted;
             _player.Volume = _mediaContext.Volume;
             _player.IsRepeat = _mediaContext.IsRepeat;
+
+            _player.IsAudioEnabled = _activity.IsSelected && _elementIndex == 0;
         }
 
     }

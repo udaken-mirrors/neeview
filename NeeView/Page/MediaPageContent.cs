@@ -63,8 +63,8 @@ namespace NeeView
 
         private PictureInfo CreatePictureInfo(MediaInfo mediaInfo)
         {
-            int width = 1920;
-            int height = 1080;
+            int width = 512;
+            int height = 512;
 
             int videoCount = mediaInfo.Count_Get(StreamKind.Video);
             if (videoCount > 0)
