@@ -19,6 +19,7 @@ namespace NeeView
         private readonly Rectangle _videoLayer;
         private readonly ImageBrush _imageBlush;
         private readonly Rectangle _imageLayer;
+        private readonly AudioCard _audioCard;
         private readonly TextBlock _errorMessageTextBlock;
         private bool _disposedValue;
 
@@ -30,6 +31,7 @@ namespace NeeView
             _player = player;
             _player.MediaPlayed += Player_MediaPlayed;
             _player.MediaFailed += Player_MediaFailed;
+            _player.PropertyChanged += Player_PropertyChanged;
 
             var videoDrawing = new VideoDrawing()
             {
@@ -63,6 +65,13 @@ namespace NeeView
                 Fill = _imageBlush,
             };
 
+            _audioCard = new AudioCard()
+            {
+                AudioInfo = source.MediaSource.AudioInfo,
+                Visibility = Visibility.Collapsed,
+                VerticalAlignment = VerticalAlignment.Center,
+            };
+
             _errorMessageTextBlock = new TextBlock()
             {
                 Background = Brushes.Black,
@@ -82,10 +91,29 @@ namespace NeeView
             {
                 this.Children.Add(_imageLayer);
             }
+            this.Children.Add(_audioCard);
             this.Children.Add(_errorMessageTextBlock);
+
+            UpdateMediaType();
         }
 
+        private void Player_PropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (string.IsNullOrEmpty(e.PropertyName) || e.PropertyName == nameof(_player.HasVideo))
+            {
+                AppDispatcher.BeginInvoke(() => UpdateMediaType());
+            }
+            if (string.IsNullOrEmpty(e.PropertyName) || e.PropertyName == nameof(_player.HasAudio))
+            {
+                AppDispatcher.BeginInvoke(() => UpdateMediaType());
+            }
+        }
 
+        private void UpdateMediaType()
+        {
+            var isSoundOnly = _player.HasAudio && !_player.HasVideo;
+            _audioCard.Visibility = isSoundOnly ? Visibility.Visible : Visibility.Collapsed;
+        }
 
         protected override void Dispose(bool disposing)
         {
@@ -95,6 +123,7 @@ namespace NeeView
                 {
                     _player.MediaPlayed -= Player_MediaPlayed;
                     _player.MediaFailed -= Player_MediaFailed;
+                    _player.PropertyChanged -= Player_PropertyChanged;
                 }
                 _disposedValue = true;
             }

@@ -263,6 +263,9 @@ namespace NeeView
 
         private void Player_MediaOpened(object? sender, EventArgs e)
         {
+            RaisePropertyChanged(nameof(HasVideo));
+            RaisePropertyChanged(nameof(HasAudio));
+            RaisePropertyChanged(nameof(Duration));
             DelayAction(OnStarted, _startDelay);
         }
 
