@@ -4,11 +4,9 @@ using NeeLaboratory.ComponentModel;
 using NeeLaboratory.Generators;
 using NeeView;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -34,11 +32,17 @@ namespace NeeView
         /// </summary>
         private static int _serialCount;
         private readonly int _serialNumber = _serialCount++;
+        public int SerialNumber => _serialNumber;
 
         /// <summary>
         /// キャシュ用ヘッダ
         /// </summary>
         private ThumbnailCacheHeader? _header;
+
+        /// <summary>
+        /// 排他制御ロック
+        /// </summary>
+        private object _lock = new();
 
         /// <summary>
         /// サムネイルデータ
@@ -48,14 +52,12 @@ namespace NeeView
         /// </remarks>
         private byte[]? _image;
 
-
-
         /// <summary>
-        /// 変更イベント
+        /// ImageSource (寿命あり)
         /// </summary>
-        [Subscribable]
-        public event EventHandler? Changed;
-
+        private ImageSource? _imageSource;
+        
+        
         /// <summary>
         /// 参照イベント
         /// </summary>
@@ -63,6 +65,26 @@ namespace NeeView
         public event EventHandler? Touched;
 
 
+        /// <summary>
+        /// ImageSource
+        /// </summary>
+        public ImageSource? ImageSource
+        {
+            get
+            {
+                var imageSource = _imageSource;
+                if (imageSource is null)
+                {
+                    imageSource = CreateImageSource();
+                }
+                lock (_lock)
+                {
+                    _imageSource = imageSource;
+                    ThumbnailLifetimeManagement.Current.Add(this);
+                }
+                return imageSource;
+            }
+        }
 
         /// <summary>
         /// 有効判定
@@ -86,9 +108,9 @@ namespace NeeView
                 if (_image != value)
                 {
                     _image = value;
+                    Trace($"Image={_image is not null}");
                     if (_image != null)
                     {
-                        Changed?.Invoke(this, EventArgs.Empty);
                         Touched?.Invoke(this, EventArgs.Empty);
                         RaisePropertyChanged("");
                     }
@@ -150,6 +172,19 @@ namespace NeeView
         public bool IsCacheEnabled { get; set; }
 
 
+
+        /// <summary>
+        /// ImageSource 開放
+        /// </summary>
+        public void RemoveImageSource()
+        {
+            lock (_lock)
+            {
+                _imageSource = null;
+            }
+        }
+
+
         /// <summary>
         /// キャッシュを使用してサムネイル生成を試みる
         /// </summary>
@@ -170,7 +205,7 @@ namespace NeeView
 
             _header = new ThumbnailCacheHeader(entry.SystemPath, length, appendix, Config.Current.Thumbnail.GetThumbnailImageGenerateHash());
             var image = await ThumbnailCache.Current.LoadAsync(_header, token);
-            Trace($"ThumbnailCache.Load: {_header.Key}: {(image == null ? "Miss" : "Hit!")}");
+            Trace($"Initialize: from cache={_header.Key}: {(image == null ? "Miss" : "Hit!")}");
             Image = image;
         }
 
@@ -356,7 +391,6 @@ namespace NeeView
                 if (disposing)
                 {
                     _image = null;
-                    Changed = null;
                     Touched = null;
                     ResetPropertyChanged();
                 }
@@ -385,6 +419,4 @@ namespace NeeView
             Debug.WriteLine($"{this.GetType().Name}({_serialNumber}): {string.Format(s, args)}");
         }
     }
-
-
 }

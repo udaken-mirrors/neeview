@@ -18,6 +18,7 @@ namespace NeeView
 
         public async Task LoadAsync(CancellationToken token)
         {
+            //Debug.WriteLine($"LoadThumbnail({Thumbnail.SerialNumber}): {_content.ArchiveEntry}");
             NVDebug.AssertMTA();
             if (Thumbnail.IsValid) return;
 

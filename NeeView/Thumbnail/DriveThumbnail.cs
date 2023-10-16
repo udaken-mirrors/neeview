@@ -22,16 +22,13 @@ namespace NeeView
         }
 
 
-        public event EventHandler? Changed;
-
-
         public bool IsValid => true;
         public bool IsUniqueImage => true;
         public bool IsNormalImage => false;
         public Brush Background => Brushes.Transparent;
+        public ImageSource? ImageSource => CreateImageSource();
 
-
-        public ImageSource? CreateImageSource()
+        private ImageSource? CreateImageSource()
         {
             if (!_initialized)
             {
@@ -41,7 +38,6 @@ namespace NeeView
                     {
                         _bitmapSource = image.GetBitmapSource(256.0);
                         DriveIconUtility.SetDriveIconCache(_path, _bitmapSource);
-                        Changed?.Invoke(this, EventArgs.Empty);
                         RaisePropertyChanged("");
                     });
             }

@@ -24,13 +24,6 @@ namespace NeeView
         {
             InitializeComponent();
             this.Root.DataContext = this;
-
-            this.Unloaded += ThumbnailListThumbnailImage_Unloaded;
-        }
-
-        private void ThumbnailListThumbnailImage_Unloaded(object sender, RoutedEventArgs e)
-        {
-            ThumbnailBitmap?.Dispose();
         }
 
 
@@ -41,24 +34,6 @@ namespace NeeView
         }
 
         public static readonly DependencyProperty ThumbnailProperty =
-            DependencyProperty.Register("Thumbnail", typeof(IThumbnail), typeof(ThumbnailListThumbnailImage), new PropertyMetadata(null, OnThumbnailPropertyChanged));
-
-        private static void OnThumbnailPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            if (d is ThumbnailListThumbnailImage control)
-            {
-                control.ThumbnailBitmap = new ThumbnailBitmap(control.Thumbnail);
-            }
-        }
-
-
-        public ThumbnailBitmap ThumbnailBitmap
-        {
-            get { return (ThumbnailBitmap)GetValue(ThumbnailBitmapProperty); }
-            set { SetValue(ThumbnailBitmapProperty, value); }
-        }
-
-        public static readonly DependencyProperty ThumbnailBitmapProperty =
-            DependencyProperty.Register("ThumbnailBitmap", typeof(ThumbnailBitmap), typeof(ThumbnailListThumbnailImage), new PropertyMetadata(null));
+            DependencyProperty.Register("Thumbnail", typeof(IThumbnail), typeof(ThumbnailListThumbnailImage), new PropertyMetadata(null));
     }
 }

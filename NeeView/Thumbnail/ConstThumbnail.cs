@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -9,7 +10,7 @@ namespace NeeView
     /// 固定サムネイル.
     /// 画像リソースを外部から指定する
     /// </summary>
-    public class ConstThumbnail : IThumbnail
+    public class ConstThumbnail : IThumbnail, INotifyPropertyChanged
     {
         private ImageSource? _bitmapSource;
         protected Func<ImageSource?>? _create;
@@ -29,19 +30,13 @@ namespace NeeView
         }
 
 
-        public event EventHandler? Changed;
-
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         public bool IsValid => true;
         public bool IsUniqueImage => false;
         public bool IsNormalImage => false;
         public Brush Background => Brushes.Transparent;
-
-
-        public ImageSource? CreateImageSource()
-        {
-            return _bitmapSource ?? _create?.Invoke();
-        }
+        public ImageSource? ImageSource  => _bitmapSource ?? _create?.Invoke();
     }
 
 
