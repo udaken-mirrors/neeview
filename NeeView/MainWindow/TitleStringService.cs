@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using NeeLaboratory.Linq;
 using NeeView.PageFrames;
 using NeeView.Text;
 using NeeView.Windows;
@@ -62,13 +63,11 @@ namespace NeeView
             _changedCount = 0;
 
             var frameContent = _presenter.GetSelectedPageFrameContent();
-
-
-            var contents = (frameContent?.ViewContents ?? new List<ViewContent>()).Where(e => !e.Element.IsDummy).ToList();
+            var viewContentDirection = frameContent?.ViewContentsDirection ?? +1;
+            var contents = (frameContent?.ViewContents ?? new List<ViewContent>()).Where(e => !e.Element.IsDummy).Direction(viewContentDirection).ToList();
             var viewScale = frameContent?.Transform.Scale ?? 1.0;
 
-            // TODO: ダミーページが入ってきたら再検討
-            bool isMainContent0 = contents.Count <= 1;  //mainContent == contents[0];
+            bool isMainContent0 = contents.Count <= 1 || viewContentDirection == 1;  //mainContent == contents[0];
 
             // book
             var book = BookHub.Current.GetCurrentBook();
@@ -83,23 +82,21 @@ namespace NeeView
             string pageNum0 = GetPageNum(contents.ElementAtOrDefault(0));
             string pageNum1 = GetPageNum(contents.ElementAtOrDefault(1));
             _replaceString.Set("$Page", isMainContent0 ? pageNum0 : pageNum1);
-            _replaceString.Set("$PageL", pageNum1);
-            _replaceString.Set("$PageR", pageNum0);
+            _replaceString.Set("$PageL", pageNum0);
+            _replaceString.Set("$PageR", pageNum1);
 
             string GetPageNum(ViewContent? content)
             {
                 if (content is null) return "";
-                var pageElement = content.Element;
-                //return (pageElement.PageRange.PartSize == 2) ? (pageElement.PageRange.Min.Index + 1).ToString() : (pageElement.PageRange.Min.Index + 1).ToString() + (pageElement.PageRange.Min.Part == 1 ? ".5" : ".0");
+                var pageElement = content.Element; 
                 return (pageElement.PageRange.PartSize == 2) ? (pageElement.Page.Index + 1).ToString() : (pageElement.Page.Index + 1).ToString() + (pageElement.PageRange.Min.Part == 1 ? ".5" : ".0");
-                // TODO: content.IsValid って？
             }
 
             string path0 = GetFullName(contents.ElementAtOrDefault(0));
             string path1 = GetFullName(contents.ElementAtOrDefault(1));
             _replaceString.Set("$FullName", isMainContent0 ? path0 : path1);
-            _replaceString.Set("$FullNameL", path1);
-            _replaceString.Set("$FullNameR", path0);
+            _replaceString.Set("$FullNameL", path0);
+            _replaceString.Set("$FullNameR", path1);
 
             string GetFullName(ViewContent? content)
             {
@@ -112,8 +109,8 @@ namespace NeeView
             string name0 = GetName(contents.ElementAtOrDefault(0));
             string name1 = GetName(contents.ElementAtOrDefault(1));
             _replaceString.Set("$Name", isMainContent0 ? name0 : name1);
-            _replaceString.Set("$NameL", name1);
-            _replaceString.Set("$NameR", name0);
+            _replaceString.Set("$NameL", name0);
+            _replaceString.Set("$NameR", name1);
 
             string GetName(ViewContent? content)
             {
@@ -147,8 +144,8 @@ namespace NeeView
             string bpp0 = GetSizeEx(pictureInfo0);
             string bpp1 = GetSizeEx(pictureInfo1);
             _replaceString.Set("$SizeEx", isMainContent0 ? bpp0 : bpp1);
-            _replaceString.Set("$SizeExL", bpp1);
-            _replaceString.Set("$SizeExR", bpp0);
+            _replaceString.Set("$SizeExL", bpp0);
+            _replaceString.Set("$SizeExR", bpp1);
 
             string GetSizeEx(PictureInfo? pictureInfo)
             {
@@ -158,8 +155,8 @@ namespace NeeView
             string size0 = GetSize(pictureInfo0);
             string size1 = GetSize(pictureInfo1);
             _replaceString.Set("$Size", isMainContent0 ? size0 : size1);
-            _replaceString.Set("$SizeL", size1);
-            _replaceString.Set("$SizeR", size0);
+            _replaceString.Set("$SizeL", size0);
+            _replaceString.Set("$SizeR", size1);
 
             string GetSize(PictureInfo? pictureInfo)
             {
@@ -174,8 +171,8 @@ namespace NeeView
             string scale0 = $"{(int)(viewScale * GetOriginalScale(contents.ElementAtOrDefault(0)) * dpiScaleX * 100 + 0.1)}%";
             string scale1 = $"{(int)(viewScale * GetOriginalScale(contents.ElementAtOrDefault(1)) * dpiScaleX * 100 + 0.1)}%";
             _replaceString.Set("$Scale", isMainContent0 ? scale0 : scale1);
-            _replaceString.Set("$ScaleL", scale1);
-            _replaceString.Set("$ScaleR", scale0);
+            _replaceString.Set("$ScaleL", scale0);
+            _replaceString.Set("$ScaleR", scale1);
 
             double GetOriginalScale(ViewContent? content)
             {
