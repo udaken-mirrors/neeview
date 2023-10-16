@@ -7589,4 +7589,7 @@ nv.ShowToast(nv.Book.ViewPages[0].Path)</value>
   <data name="BookSettingConfig.AutoRotate" xml:space="preserve">
     <value>自動回転</value>
   </data>
+  <data name="PageEndAction.SeamlessLoop" xml:space="preserve">
+    <value>シームレス ループ</value>
+  </data>
 </root>

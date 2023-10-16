@@ -18,7 +18,7 @@ namespace NeeView
     [NotifyPropertyChanged]
     public partial class BookPageLoader : IDisposable, INotifyPropertyChanged
     {
-        private readonly IBook _book;
+        private readonly BookContext _bookContext;
         private readonly PageFrameFactory _frameFactory;
         private readonly ViewSourceMap _viewSourceMap;
         private readonly PageFrameElementScaleFactory _elementScaleFactory;
@@ -43,9 +43,9 @@ namespace NeeView
         private bool _isBusy;
         private int _busyCount;
 
-        public BookPageLoader(IBook book, PageFrameFactory frameFactory, ViewSourceMap viewSourceMap, PageFrameElementScaleFactory elementScaleFactory, BookMemoryService bookMemoryService, PerformanceConfig performanceConfig)
+        public BookPageLoader(BookContext bookContext, PageFrameFactory frameFactory, ViewSourceMap viewSourceMap, PageFrameElementScaleFactory elementScaleFactory, BookMemoryService bookMemoryService, PerformanceConfig performanceConfig)
         {
-            _book = book;
+            _bookContext = bookContext;
             _frameFactory = frameFactory;
             _viewSourceMap = viewSourceMap;
             _elementScaleFactory = elementScaleFactory;
@@ -221,7 +221,7 @@ namespace NeeView
                 _viewPages.Clear();
                 _aheadPages.Clear();
 
-                Debug.Assert(_book.Pages.All(e => e.State == PageContentState.None));
+                Debug.Assert(_bookContext.Pages.All(e => e.State == PageContentState.None));
             }
         }
 
@@ -248,7 +248,7 @@ namespace NeeView
         public async Task LoadMainAsync(PageRange range, int direction, CancellationToken token)
         {
             var indexes = Enumerable.Range(range.Min.Index, range.Max.Index - range.Min.Index + 1).ToList();
-            var pages = indexes.Direction(direction).Select(e => _book.Pages[e]).ToList();
+            var pages = indexes.Direction(direction).Select(e => _bookContext.GetPage(e, true)).WhereNotNull().ToList();
 
             lock (_lock)
             {

@@ -7,7 +7,7 @@ namespace NeeView
     /// <summary>
     /// ページ範囲に関する処理
     /// </summary>
-    public class BookPageAccessor
+    public class BookPageAccessor : IBookPageAccessor
     {
         public BookPageAccessor(IReadOnlyList<Page> pages)
         {
@@ -25,6 +25,8 @@ namespace NeeView
         public PagePosition FirstPosition => Pages.Any() ? PagePosition.Zero : PagePosition.Empty;
         public PagePosition LastPosition => Pages.Any() ? new(Pages.Count - 1, 1) : PagePosition.Empty;
 
+        public PageRange PageRange => new PageRange(FirstPosition, LastPosition);
+
 
         public bool ContainsIndex(int index)
         {
@@ -33,11 +35,27 @@ namespace NeeView
 
         public int ClampIndex(int index)
         {
-            return MathUtility.Clamp(index, FirstIndex, LastIndex);
+            return Pages.Any() ? MathUtility.Clamp(index, FirstIndex, LastIndex) : -1;
         }
 
-        public Page? GetPage(int index)
+        public int NormalizeIndex(int index)
         {
+            return Pages.Any() ? MathUtility.NormalizeLoopRange(index, FirstIndex, LastIndex) : -1;
+        }
+
+        public PagePosition NormalizePosition(PagePosition position)
+        {
+            return Pages.Any() ? new PagePosition(NormalizeIndex(position.Index), position.Part) : PagePosition.Empty;
+        }
+
+
+        public Page? GetPage(int index, bool normalized = false)
+        {
+            if (normalized)
+            {
+                index = NormalizeIndex(index);
+            }
+
             if (ContainsIndex(index))
             {
                 return Pages[index];
@@ -48,9 +66,14 @@ namespace NeeView
             }
         }
 
-        public PagePosition ValidatePosition(PagePosition position)
+        public PagePosition ValidatePosition(PagePosition position, bool normalized = false)
         {
-            if (position.IsEmpty() || !ContainsIndex(position.Index))
+            if (!Pages.Any())
+            {
+                return PagePosition.Empty;
+            }
+
+            if (!normalized && !ContainsIndex(position.Index))
             {
                 return PagePosition.Empty;
             }

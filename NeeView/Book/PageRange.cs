@@ -137,7 +137,7 @@ namespace NeeView
             return Min.Index == Max.Index;
         }
 
-        public bool IsContains(PagePosition position)
+        public bool Contains(PagePosition position)
         {
             if (position.IsEmpty())
             {
@@ -147,7 +147,17 @@ namespace NeeView
             return Min <= position && position <= Max;
         }
 
-        public bool Confrict(PageRange other)
+        public bool Contains(PageRange range)
+        {
+            if (range.IsEmpty())
+            {
+                return false;
+            }
+
+            return Contains(range.Min) && Contains(range.Max);
+        }
+
+        public bool Conflict(PageRange other)
         {
             return Min <= other.Max && other.Min <= Max;
         }

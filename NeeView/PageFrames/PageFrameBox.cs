@@ -76,10 +76,10 @@ namespace NeeView.PageFrames
             _transformMap = new PageFrameTransformMap(_context.ShareContext);
 
             _calculator = new ContentSizeCalculator(_context);
-            var frameFactory = new PageFrameFactory(_bookContext, _context, _calculator);
+            var frameFactory = new PageFrameFactory(_context, _bookContext, _calculator);
             _viewSourceMap = new ViewSourceMap(_bookContext.BookMemoryService);
             var elementScaleFactory = new PageFrameElementScaleFactory(_context, _transformMap, loupeContext);
-            _loader = new BookPageLoader(_bookContext.Book, frameFactory, _viewSourceMap, elementScaleFactory, _bookContext.BookMemoryService, _context.PerformanceConfig);
+            _loader = new BookPageLoader(_bookContext, frameFactory, _viewSourceMap, elementScaleFactory, _bookContext.BookMemoryService, _context.PerformanceConfig);
             _disposables.Add(_loader);
             _disposables.Add(_loader.SubscribePropertyChanged(nameof(BookPageLoader.IsBusy), (s, e) => RaisePropertyChanged(nameof(IsBusy))));
 
@@ -95,7 +95,7 @@ namespace NeeView.PageFrames
             _viewBox = new PageFrameContainerViewBox(_context, _scrollViewer);
             _disposables.Add(_viewBox);
             _cleaner = new PageFrameContainerCleaner(_context, _containers);
-            _filler = new PageFrameContainerFiller(_context, _containers, _rectMath);
+            _filler = new PageFrameContainerFiller(_context, _bookContext, _containers, _rectMath);
             _visiblePageWatcher = new PageFrameContainerVisiblePageWatcher(_context, _viewBox, _rectMath, _layout);
 
             var effectGrid = new Grid() { Name = "EffectLayer" };
@@ -515,6 +515,10 @@ namespace NeeView.PageFrames
                     UpdateContainers(PageFrameDirtyLevel.Replace, TransformMask.Point, true, true);
                     break;
 
+                case nameof(Context.IsLoopPage):
+                    MoveToNormalPosition();
+                    break;
+
                 case nameof(Context.IsIgnoreImageDpi):
                 case nameof(Context.DpiScale):
                 case nameof(Context.ImageCustomSizeConfig):
@@ -558,7 +562,7 @@ namespace NeeView.PageFrames
 
             var c0 = new Point(_containers.FirstTerminate.X, _containers.FirstTerminate.Y);
             var c1 = new Point(_containers.LastTerminate.X, _containers.LastTerminate.Y);
-            
+
             if (_context.FrameOrientation == PageFrameOrientation.Horizontal)
             {
                 if (_context.ReadOrder == PageReadOrder.RightToLeft)
@@ -601,20 +605,43 @@ namespace NeeView.PageFrames
             }
         }
 
+        /// <summary>
+        /// ループ設定変更による正規ページ位置に補正
+        /// </summary>
+        private void MoveToNormalPosition()
+        {
+            if (_selected.Node.Value.Content is not PageFrameContent) return;
+
+            var selectedPosition = _selected.Node.Value.Identifier;
+            var position = _bookContext.NormalizePosition(selectedPosition);
+            MoveTo(position, LinkedListDirection.Next);
+            FlushLayout();
+        }
+
         public void MoveTo(PagePosition position, LinkedListDirection direction)
         {
             if (!_bookContext.IsEnabled) return;
 
             // position の補正
-            if (position < _bookContext.PageAccessor.FirstPosition)
+            if (_context.IsLoopPage && _selected.Node.Value.Content is PageFrameContent)
             {
-                position = _bookContext.PageAccessor.FirstPosition;
-                direction = LinkedListDirection.Next;
+                var selectedIndex = _selected.Node.Value.Identifier.Index;
+                var normalIndex = _bookContext.NormalizeIndex(selectedIndex);
+                var diff = position.Index - normalIndex;
+                position = new PagePosition(selectedIndex + diff, position.Part);
             }
-            else if (position > _bookContext.PageAccessor.LastPosition)
+            else
             {
-                position = _bookContext.PageAccessor.LastPosition;
-                direction = LinkedListDirection.Previous;
+                if (position < _bookContext.FirstPosition)
+                {
+                    position = _bookContext.FirstPosition;
+                    direction = LinkedListDirection.Next;
+                }
+                else if (position > _bookContext.LastPosition)
+                {
+                    position = _bookContext.LastPosition;
+                    direction = LinkedListDirection.Previous;
+                }
             }
 
             _containers.Anchor.Set(_rectMath.GetViewCenterContainer(_viewBox.Rect), direction);
@@ -684,7 +711,7 @@ namespace NeeView.PageFrames
             var current = _selected.Node;
             Debug.Assert(current is not null);
             if (current is null) return;
-            
+
             if (!BookProfile.Current.CanPrioritizePageMove() && IsSelectedPageFrameLoading())
             {
                 return;

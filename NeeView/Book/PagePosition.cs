@@ -5,7 +5,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-// TODO: -1 は有効範囲とする。 int.MinValue を無効な値として定義する
 
 namespace NeeView
 {
@@ -37,16 +36,19 @@ namespace NeeView
         /// <summary>
         /// ページの場所：無効
         /// </summary>
-        public static PagePosition Empty { get; } = new PagePosition(-1);
+        /// <remarks>
+        /// 厳密にはすべての値が有効なのでこの Empty は不正確。NeeViewにおいてはこの場所に到達することはほぼないため機能している。
+        /// </remarks>
+        public static PagePosition Empty { get; } = new PagePosition(int.MinValue);
 
         //
         public int Value => _value;
 
         // ページ番号
-        public int Index => _value / 2;
+        public int Index => (_value >= 0) ? _value / 2 : (_value - 1) / 2;
 
         // パーツ番号
-        public int Part => _value % 2;
+        public int Part => (_value >= 0) ? _value % 2 : (-_value %2);
 
 
         //
@@ -81,7 +83,7 @@ namespace NeeView
 
         public bool IsEmpty()
         {
-            return _value < 0;
+            return this == Empty;
         }
 
         // ページ数とパーツ数からValue値を求める

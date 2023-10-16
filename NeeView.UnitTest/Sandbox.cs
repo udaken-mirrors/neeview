@@ -1,4 +1,5 @@
-﻿using NeeView.ComponentModel;
+﻿using NeeLaboratory;
+using NeeView.ComponentModel;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -81,6 +82,64 @@ namespace NeeView.UnitTest
             Assert.Equal(20.0, result1.Height);
             Assert.Equal(25.0, result1.X);
             Assert.Equal(30.0, result1.Y);
+        }
+
+        [Fact]
+        public void MathUtilityTest()
+        {
+            Assert.Equal(5, MathUtility.NormalizeLoopRange(0, 1, 5));
+            Assert.Equal(1, MathUtility.NormalizeLoopRange(1, 1, 5));
+            Assert.Equal(2, MathUtility.NormalizeLoopRange(2, 1, 5));
+            Assert.Equal(3, MathUtility.NormalizeLoopRange(3, 1, 5));
+            Assert.Equal(4, MathUtility.NormalizeLoopRange(4, 1, 5));
+            Assert.Equal(5, MathUtility.NormalizeLoopRange(5, 1, 5));
+            Assert.Equal(1, MathUtility.NormalizeLoopRange(6, 1, 5));
+            Assert.Equal(2, MathUtility.NormalizeLoopRange(7, 1, 5));
+            Assert.Equal(3, MathUtility.NormalizeLoopRange(8, 1, 5));
+            Assert.Equal(4, MathUtility.NormalizeLoopRange(9, 1, 5));
+            Assert.Equal(5, MathUtility.NormalizeLoopRange(10, 1, 5));
+            Assert.Equal(1, MathUtility.NormalizeLoopRange(11, 1, 5));
+            Assert.Equal(2, MathUtility.NormalizeLoopRange(12, 1, 5));
+
+            Assert.Equal(4, MathUtility.NormalizeLoopRange(-1, 1, 5));
+            Assert.Equal(3, MathUtility.NormalizeLoopRange(-2, 1, 5));
+            Assert.Equal(2, MathUtility.NormalizeLoopRange(-3, 1, 5));
+            Assert.Equal(1, MathUtility.NormalizeLoopRange(-4, 1, 5));
+            Assert.Equal(5, MathUtility.NormalizeLoopRange(-5, 1, 5));
+            Assert.Equal(4, MathUtility.NormalizeLoopRange(-6, 1, 5));
+            Assert.Equal(3, MathUtility.NormalizeLoopRange(-7, 1, 5));
+            Assert.Equal(2, MathUtility.NormalizeLoopRange(-8, 1, 5));
+            Assert.Equal(1, MathUtility.NormalizeLoopRange(-9, 1, 5));
+            Assert.Equal(5, MathUtility.NormalizeLoopRange(-10, 1, 5));
+            Assert.Equal(4, MathUtility.NormalizeLoopRange(-11, 1, 5));
+            Assert.Equal(3, MathUtility.NormalizeLoopRange(-12, 1, 5));
+        }
+
+        [Fact]
+        public void MathUtilityCycleRangeTest()
+        {
+            Assert.Equal(-1, MathUtility.CycleLoopRange(0, 1, 3));
+            Assert.Equal(0, MathUtility.CycleLoopRange(1, 1, 3));
+            Assert.Equal(0, MathUtility.CycleLoopRange(2, 1, 3));
+            Assert.Equal(0, MathUtility.CycleLoopRange(3, 1, 3));
+            Assert.Equal(1, MathUtility.CycleLoopRange(4, 1, 3));
+            Assert.Equal(1, MathUtility.CycleLoopRange(5, 1, 3));
+            Assert.Equal(1, MathUtility.CycleLoopRange(6, 1, 3));
+            Assert.Equal(2, MathUtility.CycleLoopRange(7, 1, 3));
+            Assert.Equal(2, MathUtility.CycleLoopRange(8, 1, 3));
+            Assert.Equal(2, MathUtility.CycleLoopRange(9, 1, 3));
+            Assert.Equal(3, MathUtility.CycleLoopRange(10, 1, 3));
+
+            Assert.Equal(-1, MathUtility.CycleLoopRange(-1, 1, 3));
+            Assert.Equal(-1, MathUtility.CycleLoopRange(-2, 1, 3));
+            Assert.Equal(-2, MathUtility.CycleLoopRange(-3, 1, 3));
+            Assert.Equal(-2, MathUtility.CycleLoopRange(-4, 1, 3));
+            Assert.Equal(-2, MathUtility.CycleLoopRange(-5, 1, 3));
+            Assert.Equal(-3, MathUtility.CycleLoopRange(-6, 1, 3));
+            Assert.Equal(-3, MathUtility.CycleLoopRange(-7, 1, 3));
+            Assert.Equal(-3, MathUtility.CycleLoopRange(-8, 1, 3));
+            Assert.Equal(-4, MathUtility.CycleLoopRange(-9, 1, 3));
+            Assert.Equal(-4, MathUtility.CycleLoopRange(-10, 1, 3));
         }
     }
 }

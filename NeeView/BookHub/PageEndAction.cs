@@ -19,6 +19,9 @@ namespace NeeView
         Loop,
 
         [AliasName]
+        SeamlessLoop,
+
+        [AliasName]
         Dialog,
     }
 }

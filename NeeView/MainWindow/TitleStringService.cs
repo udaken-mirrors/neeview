@@ -64,7 +64,7 @@ namespace NeeView
             var frameContent = _presenter.GetSelectedPageFrameContent();
 
 
-            var contents = (frameContent?.ViewContents ?? new List<ViewContent>()).Where(e => !e.Element.IsDummy).ToList(); ;
+            var contents = (frameContent?.ViewContents ?? new List<ViewContent>()).Where(e => !e.Element.IsDummy).ToList();
             var viewScale = frameContent?.Transform.Scale ?? 1.0;
 
             // TODO: ダミーページが入ってきたら再検討
@@ -90,7 +90,8 @@ namespace NeeView
             {
                 if (content is null) return "";
                 var pageElement = content.Element;
-                return (pageElement.PageRange.PartSize == 2) ? (pageElement.PageRange.Min.Index + 1).ToString() : (pageElement.PageRange.Min.Index + 1).ToString() + (pageElement.PageRange.Min.Part == 1 ? ".5" : ".0");
+                //return (pageElement.PageRange.PartSize == 2) ? (pageElement.PageRange.Min.Index + 1).ToString() : (pageElement.PageRange.Min.Index + 1).ToString() + (pageElement.PageRange.Min.Part == 1 ? ".5" : ".0");
+                return (pageElement.PageRange.PartSize == 2) ? (pageElement.Page.Index + 1).ToString() : (pageElement.Page.Index + 1).ToString() + (pageElement.PageRange.Min.Part == 1 ? ".5" : ".0");
                 // TODO: content.IsValid って？
             }
 

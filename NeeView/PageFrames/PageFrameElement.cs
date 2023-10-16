@@ -14,12 +14,12 @@ namespace NeeView.PageFrames
     {
         private PageFrameContext _context;
 
-        public PageFrameElement(PageFrameContext context, Page page, PageRange range, int direction, PageTerminal terminal)
+        public PageFrameElement(PageFrameContext context, BookContext bookContext, Page page, PageRange range, int direction, PageTerminal terminal)
         {
             Debug.Assert(range.IsOnePage());
             Debug.Assert(!range.IsEmpty());
-            Debug.Assert(range.Min.Index == page.Index);
-            Debug.Assert(range.Max.Index == page.Index);
+            Debug.Assert(bookContext.NormalizeIndex(range.Min.Index) == page.Index);
+            Debug.Assert(bookContext.NormalizeIndex(range.Max.Index) == page.Index);
 
             _context = context;
 
@@ -94,7 +94,7 @@ namespace NeeView.PageFrames
 
         public bool Contains(PagePosition index)
         {
-            return PageRange.IsContains(index);
+            return PageRange.Contains(index);
         }
 
         public bool IsPageLandscape()

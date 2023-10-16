@@ -71,6 +71,8 @@ namespace NeeView.PageFrames
             : _config.View.StretchMode;
 
         public bool IsInsertDummyPage => _config.Book.IsInsertDummyPage;
+        public bool IsLoopPage => _config.Book.PageEndAction == PageEndAction.SeamlessLoop;
+
         public bool AllowFileContentAutoRotate => _config.View.AllowFileContentAutoRotate;
         public bool AllowEnlarge => _config.View.AllowStretchScaleUp;
         public bool AllowReduce => _config.View.AllowStretchScaleDown;
@@ -155,6 +157,10 @@ namespace NeeView.PageFrames
 
                 case nameof(BookConfig.IsInsertDummyPage):
                     RaisePropertyChanged(nameof(IsInsertDummyPage));
+                    break;
+
+                case nameof(BookConfig.PageEndAction):
+                    RaisePropertyChanged(nameof(IsLoopPage));
                     break;
             }
         }

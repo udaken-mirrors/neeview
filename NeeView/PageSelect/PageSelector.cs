@@ -1,4 +1,5 @@
-﻿using NeeLaboratory.ComponentModel;
+﻿using NeeLaboratory;
+using NeeLaboratory.ComponentModel;
 using NeeLaboratory.Generators;
 using System;
 using System.Collections.Generic;
@@ -142,12 +143,15 @@ namespace NeeView
 
         private void RaiseViewContentsChanged(object? sender, PageRange range, bool isBookOpen)
         {
-            var pages = CollectPage(BookOperation.Current.Book, range);
+            var book = BookOperation.Current.Book;
+            if (book is null) return;
+            var pages = CollectPage(book, range);
             if (pages is null) return;
 
             SelectedPagesChanged?.Invoke(sender, new SelectedPagesChangedEventArgs(pages));
 
-            SetSelectedIndex(sender, range.Min.Index, false);
+            var index = MathUtility.NormalizeLoopRange(range.Min.Index, 0, book.Pages.Count - 1);
+            SetSelectedIndex(sender, index, false);
             SelectionChanged?.Invoke(sender, EventArgs.Empty);
         }
 

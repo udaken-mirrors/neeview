@@ -9,14 +9,16 @@ namespace NeeView.PageFrames
     public class PageFrameContainerFiller
     {
         private readonly PageFrameContext _context;
+        private readonly BookContext _bookContext;
         private readonly PageFrameContainerCollection _containers;
         private readonly PageFrameContainerCollectionRectMath _rectMath;
         private readonly PageFrameRectMath _math;
 
 
-        public PageFrameContainerFiller(PageFrameContext context, PageFrameContainerCollection containers, PageFrameContainerCollectionRectMath rectMath)
+        public PageFrameContainerFiller(PageFrameContext context, BookContext bookContext, PageFrameContainerCollection containers, PageFrameContainerCollectionRectMath rectMath)
         {
             _context = context;
+            _bookContext = bookContext;
             _containers = containers;
             _rectMath = rectMath;
 
@@ -50,6 +52,11 @@ namespace NeeView.PageFrames
 
         private void FillContainers(LinkedListNode<PageFrameContainer> anchor, BlankSpace space)
         {
+            if (!_context.IsLoopPage)
+            {
+                _containers.RemoveOutRangeContainers(_bookContext.PageRange);
+            }
+
             FillContainers(anchor, LinkedListDirection.Previous, space.Previous);
             FillContainers(anchor, LinkedListDirection.Next, space.Next);
         }

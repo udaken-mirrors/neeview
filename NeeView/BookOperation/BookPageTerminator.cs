@@ -60,12 +60,16 @@ namespace NeeView
             {
                 switch (Config.Current.Book.PageEndAction)
                 {
+                    case PageEndAction.NextBook:
+                        PageEndAction_NextBook(sender, e);
+                        break;
+
                     case PageEndAction.Loop:
                         PageEndAction_Loop(sender, e);
                         break;
 
-                    case PageEndAction.NextBook:
-                        PageEndAction_NextBook(sender, e);
+                    case PageEndAction.SeamlessLoop:
+                        // nop.
                         break;
 
                     case PageEndAction.Dialog:

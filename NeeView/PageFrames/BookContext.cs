@@ -12,10 +12,10 @@ namespace NeeView.PageFrames
     /// 現在ブック情報
     /// </summary>
     [NotifyPropertyChanged]
-    public partial class BookContext : INotifyPropertyChanged, IDisposable, IBookPageContext
+    public partial class BookContext : INotifyPropertyChanged, IDisposable, IBookPageContext, IBookPageAccessor
     {
         private readonly Book _book;
-        private readonly BookPageAccessor _pageAccessor;
+        private readonly BookPageAccessor _accessor;
         private PageRange _selectedRange;
         private bool _disposedValue;
         private readonly DisposableCollection _disposables = new();
@@ -28,7 +28,7 @@ namespace NeeView.PageFrames
             _disposables.Add(_book.Pages.SubscribePropertyChanged(nameof(BookPageCollection.SortMode),
                 (s, e) => RaisePropertyChanged(nameof(SortMode))));
 
-            _pageAccessor = new BookPageAccessor(_book.Pages);
+            _accessor = new BookPageAccessor(_book.Pages);
         }
 
         [Subscribable]
@@ -49,8 +49,6 @@ namespace NeeView.PageFrames
 
         public IReadOnlyList<Page> Pages => _book.Pages;
 
-        public BookPageAccessor PageAccessor => _pageAccessor;
-
         public PageSortMode SortMode => _book.Pages.SortMode;
 
 
@@ -69,11 +67,28 @@ namespace NeeView.PageFrames
 
         public IReadOnlyList<Page> SelectedPages
         {
-            get => _selectedRange.CollectPositions().Select(e => Pages[e.Index]).Distinct().ToList();
+            get
+            {
+                return _selectedRange.CollectPositions().Select(e => Pages[_accessor.NormalizeIndex(e.Index)]).Distinct().ToList();
+            }
         }
 
         // NOTE: これは Book で保持する必要ある？ -> Page生成時に必要なのだ...
         public BookMemoryService BookMemoryService => _book.BookMemoryService;
+
+        public int FirstIndex => _accessor.FirstIndex;
+
+        public int LastIndex => _accessor.LastIndex;
+
+        public PagePosition FirstPosition => _accessor.FirstPosition;
+
+        public PagePosition LastPosition => _accessor.LastPosition;
+
+        public PageRange PageRange => _accessor.PageRange;
+
+        public Page? First => _accessor.First;
+
+        public Page? Last => _accessor.Last;
 
 
         protected virtual void Dispose(bool disposing)
@@ -100,28 +115,40 @@ namespace NeeView.PageFrames
             PagesChanged?.Invoke(this, e);
         }
 
-#if false
-        public BookMemento CreateMemento()
+        public bool ContainsIndex(int index)
         {
-            var bookSetting = _config.BookSetting;
-
-            var memento = new BookMemento
-            {
-                Path = _book.Path,
-                Page = this.Pages[this.SelectedRange.Min.Index].EntryName,
-
-                PageMode = bookSetting.PageMode,
-                BookReadOrder = bookSetting.BookReadOrder,
-                IsSupportedDividePage = bookSetting.IsSupportedDividePage,
-                IsSupportedSingleFirstPage = bookSetting.IsSupportedSingleFirstPage,
-                IsSupportedSingleLastPage = bookSetting.IsSupportedSingleLastPage,
-                IsSupportedWidePage = bookSetting.IsSupportedWidePage,
-                IsRecursiveFolder = bookSetting.IsRecursiveFolder,
-                SortMode = bookSetting.SortMode,
-            };
-
-            return memento;
+            return _accessor.ContainsIndex(index);
         }
-#endif
+
+        public int ClampIndex(int index)
+        {
+            return _accessor.ClampIndex(index);
+        }
+
+        public int NormalizeIndex(int index)
+        {
+            return _accessor.NormalizeIndex(index);
+        }
+
+        public PagePosition ClampPosition(PagePosition position)
+        {
+            return _accessor.ClampPosition(position);
+        }
+
+        public PagePosition NormalizePosition(PagePosition position)
+        {
+            return _accessor.NormalizePosition(position);
+        }
+
+        public PagePosition ValidatePosition(PagePosition position, bool normalized = false)
+        {
+            return _accessor.ValidatePosition(position, normalized);
+        }
+
+        public Page? GetPage(int index, bool normalized = false)
+        {
+            return _accessor.GetPage(index, normalized);
+        }
+
     }
 }

@@ -70,7 +70,8 @@ namespace NeeView.PageFrames
         private readonly PageFrameContainerFactory _containerFactory;
         private readonly PageFrameContainerAnchor _anchor;
         private IInitializable<PageFrameContainer>? _containerInitializer;
-
+        private readonly LinkedListNode<PageFrameContainer> _firstTerminateNode;
+        private readonly LinkedListNode<PageFrameContainer> _lastTerminateNode;
 
         public PageFrameContainerCollection(PageFrameContext context, PageFrameFactory frameFactory, PageFrameContainerFactory containerFactory)
         {
@@ -79,12 +80,12 @@ namespace NeeView.PageFrames
             _containerFactory = containerFactory;
 
             var firstActivity = new PageFrameActivity();
-            FirstTerminate = new PageFrameContainer(new TerminalPageFrameContent(_frameFactory.GetFirstTerminalRange(), firstActivity), firstActivity, _context.ViewScrollContext);
-            _containers.AddFirst(FirstTerminate);
+            var firstTerminate = new PageFrameContainer(new TerminalPageFrameContent(_frameFactory.GetFirstTerminalRange(), firstActivity), firstActivity, _context.ViewScrollContext);
+            _firstTerminateNode =_containers.AddFirst(firstTerminate);
 
             var lastActivity = new PageFrameActivity();
-            LastTerminate = new PageFrameContainer(new TerminalPageFrameContent(_frameFactory.GetLastTerminalRange(), lastActivity), lastActivity, _context.ViewScrollContext);
-            _containers.AddLast(LastTerminate);
+            var lastTerminate = new PageFrameContainer(new TerminalPageFrameContent(_frameFactory.GetLastTerminalRange(), lastActivity), lastActivity, _context.ViewScrollContext);
+            _lastTerminateNode = _containers.AddLast(lastTerminate);
 
             _anchor = new PageFrameContainerAnchor(this);
 
@@ -105,8 +106,8 @@ namespace NeeView.PageFrames
 
         public PageFrameContainerAnchor Anchor => _anchor;
 
-        public PageFrameContainer FirstTerminate { get; }
-        public PageFrameContainer LastTerminate { get; }
+        public PageFrameContainer FirstTerminate => _firstTerminateNode.Value;
+        public PageFrameContainer LastTerminate => _lastTerminateNode.Value;
 
 
         public IEnumerator<PageFrameContainer> GetEnumerator()
@@ -246,7 +247,7 @@ namespace NeeView.PageFrames
                 return null;
             }
 
-            var node = CollectNode(direction).FirstOrDefault(e => e.Value.FrameRange.Top(direction.ToSign()) == pos);
+            var node = CollectNode<PageFrameContent>(direction).FirstOrDefault(e => e.Value.FrameRange.Top(direction.ToSign()) == pos);
 
             // 対応するコンテナが存在するときにはエラー
             if (node is not null) throw new ArgumentException("The target container already exists.");
@@ -297,15 +298,19 @@ namespace NeeView.PageFrames
 
             while (targetNode != null)
             {
-                if (node.Value.Identifier < targetNode.Value.Identifier)
+                if (targetNode.Value.Content is PageFrameContent && node.Value.Identifier < targetNode.Value.Identifier)
                 {
                     _containers.AddBefore(targetNode, node);
+                    Debug.Assert(_containers.First ==  _firstTerminateNode);
+                    Debug.Assert(_containers.Last ==  _lastTerminateNode);
                     return;
                 }
                 targetNode = targetNode.Next;
             }
 
-            _containers.AddLast(node);
+            _containers.AddBefore(_lastTerminateNode, node);
+            Debug.Assert(_containers.First == _firstTerminateNode);
+            Debug.Assert(_containers.Last == _lastTerminateNode);
         }
 
         private void Container_TransformChanged(object? sender, TransformChangedEventArgs e)
@@ -355,7 +360,7 @@ namespace NeeView.PageFrames
         private void RemoveConflictContainer(LinkedListNode<PageFrameContainer> anchor, LinkedListDirection direction)
         {
             var node = anchor.GetNext(direction);
-            while (node is not null && node.Value.FrameRange.Confrict(anchor.Value.FrameRange))
+            while (node is not null && node.Value.FrameRange.Conflict(anchor.Value.FrameRange))
             {
                 var next = node.GetNext(direction);
                 if (!node.Value.IsLocked)
@@ -380,6 +385,26 @@ namespace NeeView.PageFrames
             {
                 var next = node.GetNext(direction);
                 if (!node.Value.IsLocked)
+                {
+                    RemoveContainerNode(node);
+                }
+                node = next;
+            }
+        }
+
+        /// <summary>
+        /// 範囲外のコンテナをすべて削除
+        /// </summary>
+        public void RemoveOutRangeContainers(PageRange range)
+        {
+            var node = _containers.First;
+
+            if (node is null) return;
+
+            while (node is not null)
+            {
+                var next = node.Next;
+                if (!node.Value.IsLocked && !range.Contains(node.Value.FrameRange))
                 {
                     RemoveContainerNode(node);
                 }

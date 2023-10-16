@@ -40,6 +40,42 @@ namespace NeeLaboratory
             return Math.Floor((val + tick * 0.5) / tick) * tick;
         }
 
+        public static int CycleLoopRange(int val, int min, int max)
+        {
+            if (min > max) throw new ArgumentException("need min <= max");
+
+            if (val >= max)
+            {
+                return (val - min) / (max - min + 1);
+            }
+            else if (val < min)
+            {
+                return (val - min + 1) / (max - min + 1) - 1;
+            }
+            else
+            {
+                return 0;
+            }
+        }
+
+        public static int NormalizeLoopRange(int val, int min, int max)
+        {
+            if (min > max) throw new ArgumentException("need min <= max");
+
+            if (val >= max)
+            {
+                return min + (val - min) % (max - min + 1);
+            }
+            else if (val < min)
+            {
+                return max - (min - val - 1) % (max - min + 1);
+            }
+            else
+            {
+                return val;
+            }
+        }
+
         public static double NormalizeLoopRange(double val, double min, double max)
         {
             if (min >= max) throw new ArgumentException("need min < max");

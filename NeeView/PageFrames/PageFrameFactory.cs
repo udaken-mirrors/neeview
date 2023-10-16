@@ -20,7 +20,7 @@ namespace NeeView.PageFrames
         private readonly PageFrameContext _context;
 
 
-        public PageFrameFactory(BookContext bookContext, PageFrameContext context, ContentSizeCalculator calculator)
+        public PageFrameFactory(PageFrameContext context, BookContext bookContext, ContentSizeCalculator calculator)
         {
             _bookContext = bookContext;
             _context = context;
@@ -45,25 +45,20 @@ namespace NeeView.PageFrames
         /// </summary>
         /// <param name="position">開始座標</param>
         /// <param name="direction">作成方向</param>
-        /// <param name="start"></param>
         /// <returns>フレーム。範囲は正規化されている</returns>
-        public PageFrame? CreatePageFrame(PagePosition position, int direction, bool start = false)
+        public PageFrame? CreatePageFrame(PagePosition position, int direction)
         {
-            if (position.IsEmpty() || !_book.ContainsIndex(position.Index))
+            if (!_context.IsLoopPage && !_book.ContainsIndex(position.Index))
             {
                 return null;
             }
 
-            if (start)
-            {
-                position = FixFramePosition(position, direction);
-            }
             Debug.Assert(IsValidFramePosition(position, direction));
 
 #warning 生成中?に PageMode が変更されて不正なフレームが生成されることがある？
             var frame = CreatePageFrame(CreatePageSource(position, direction), direction);
             Debug.Assert(frame != null);
-            Debug.Assert(frame.FrameRange.IsContains(position));
+            Debug.Assert(frame.FrameRange.Contains(position));
             frame.AssertValid(_context);
 
             return frame;
@@ -108,6 +103,11 @@ namespace NeeView.PageFrames
         /// <returns>適切であれば true</returns>
         private bool IsValidFramePosition(PagePosition position, int direction)
         {
+            if (_context.IsLoopPage)
+            {
+                position = _book.NormalizePosition(position);
+            }
+
             return position == FixFramePosition(position, direction);
         }
 
@@ -124,7 +124,7 @@ namespace NeeView.PageFrames
                 return null;
             }
 
-            var page = _book.GetPage(position.Index);
+            var page = _book.GetPage(position.Index, _context.IsLoopPage);
             if (page is null)
             {
                 return null;
@@ -138,7 +138,7 @@ namespace NeeView.PageFrames
                 range = new PageRange(range.Top(direction), direction);
             }
 
-            return new PageFrameElement(_context, page, range, _context.ReadOrder.ToSign(), GetTerminal(range));
+            return new PageFrameElement(_context, _bookContext, page, range, _context.ReadOrder.ToSign(), GetTerminal(range));
         }
 
         private PageTerminal GetTerminal(PageRange range)
@@ -162,7 +162,7 @@ namespace NeeView.PageFrames
                     return CreateSinglePageFrame(source1);
                 }
 
-                var position = _book.ValidatePosition(source1.PageRange.Next(direction));
+                var position = _book.ValidatePosition(source1.PageRange.Next(direction), _context.IsLoopPage);
                 var source2 = CreatePageSource(position, direction);
                 if (source2 is null)
                 {

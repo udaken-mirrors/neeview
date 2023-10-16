@@ -2386,3 +2386,4 @@ ToggleIsAutoRotateForcedRightCommand.Remarks=Rotate 90 degrees to the right rega
 AutoRotateType.ForcedLeft=Forced left rotate
 AutoRotateType.ForcedRight=Forced right rotate
 BookSettingConfig.AutoRotate=Automatic rotation
+PageEndAction.SeamlessLoop=Seamless loop

@@ -21,19 +21,4 @@ namespace NeeView
         public BookMemento Memento { get; }
     }
 
-#if false
-    public partial class EmptyBook : IBook
-    {
-        [Subscribable]
-        public event EventHandler? PagesChanged;
-
-        public BookMemoryService BookMemoryService { get; } = new BookMemoryService();
-
-        public string Path => "";
-
-        public IReadOnlyList<Page> Pages { get; } = new List<Page>();
-
-        public BookMemento Memento { get; } = new BookMemento();
-    }
-#endif
 }

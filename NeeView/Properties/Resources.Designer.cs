@@ -11551,6 +11551,15 @@ namespace NeeView.Properties {
         }
         
         /// <summary>
+        ///   Seamless loop に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string PageEndAction_SeamlessLoop {
+            get {
+                return ResourceManager.GetString("PageEndAction.SeamlessLoop", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Please select an action. に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string PageEndDialog_Message {
