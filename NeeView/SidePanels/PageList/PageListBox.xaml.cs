@@ -213,7 +213,7 @@ namespace NeeView
             if (items.Count == 0)
             {
             }
-            if (items.Count == 1)
+            else if (items.Count == 1)
             {
                 ScrollIntoView(items.First());
             }

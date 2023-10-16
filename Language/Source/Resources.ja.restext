@@ -2387,3 +2387,4 @@ AutoRotateType.ForcedLeft=強制左回転
 AutoRotateType.ForcedRight=強制右回転
 BookSettingConfig.AutoRotate=自動回転
 PageEndAction.SeamlessLoop=シームレス ループ
+FilmStripConfig.IsWheelMovePage=ホイール操作でページ移動

@@ -7592,4 +7592,7 @@ nv.ShowToast(nv.Book.ViewPages[0].Path)</value>
   <data name="PageEndAction.SeamlessLoop" xml:space="preserve">
     <value>シームレス ループ</value>
   </data>
+  <data name="FilmStripConfig.IsWheelMovePage" xml:space="preserve">
+    <value>ホイール操作でページ移動</value>
+  </data>
 </root>

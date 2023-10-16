@@ -512,11 +512,11 @@ namespace NeeView
 
         private void ThumbnailListBox_MouseWheel(object sender, MouseWheelEventArgs e)
         {
+            if (_vm is null) return;
             int delta = -_mouseWheelDelta.NotchCount(e);
             if (delta != 0)
             {
-                if (PageSlider.Current.IsSliderDirectionReversed) delta = -delta;
-                MoveSelectedIndex(delta);
+                _vm.MoveWheel(delta, PageSlider.Current.IsSliderDirectionReversed);
             }
             e.Handled = true;
         }

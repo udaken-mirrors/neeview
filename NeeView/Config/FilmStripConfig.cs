@@ -15,6 +15,7 @@ namespace NeeView
         private bool _isSelectedCenter;
         private bool _isManipulationBoundaryFeedbackEnabled = true;
         private bool _isVisiblePlaylistMark;
+        private bool _isWheelMovePage;
 
 
         /// <summary>
@@ -57,7 +58,6 @@ namespace NeeView
             set { SetProperty(ref _isVisiblePlaylistMark, value); }
         }
 
-
         /// <summary>
         /// ページ番号の表示
         /// </summary>
@@ -67,8 +67,6 @@ namespace NeeView
             get { return _isVisibleNumber; }
             set { SetProperty(ref _isVisibleNumber, value); }
         }
-
-
 
         /// <summary>
         /// スクロールビュータッチ操作の終端挙動
@@ -88,6 +86,16 @@ namespace NeeView
         {
             get { return _isSelectedCenter; }
             set { SetProperty(ref _isSelectedCenter, value); }
+        }
+
+        /// <summary>
+        /// ホイール操作でページ移動
+        /// </summary>
+        [PropertyMember]
+        public bool IsWheelMovePage
+        {
+            get { return _isWheelMovePage; }
+            set { SetProperty(ref _isWheelMovePage, value); }
         }
 
         #region Obsolete

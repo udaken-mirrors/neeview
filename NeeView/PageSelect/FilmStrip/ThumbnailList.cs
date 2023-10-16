@@ -275,6 +275,33 @@ namespace NeeView
             SelectedIndex = GetIndexWithDirectionReverse(PageSelector.Current.SelectedIndex);
         }
 
+
+        public void MoveWheel(int delta, bool isDirectionReverse)
+        {
+            if (Config.Current.FilmStrip.IsWheelMovePage)
+            {
+                MovePage(delta);
+            }
+            else
+            {
+                MoveSelectedIndex(delta, isDirectionReverse);
+            }
+        }
+
+        private void MoveSelectedIndex(int delta, bool isDirectionReverse)
+        {
+            if (_disposedValue) return;
+            if (SelectedIndex < 0) return;
+
+            if (isDirectionReverse)
+            {
+                delta = -delta;
+            }
+
+            MoveSelectedIndex(delta);
+        }
+
+
         public void MoveSelectedIndex(int delta)
         {
             if (_disposedValue) return;
@@ -292,6 +319,24 @@ namespace NeeView
 
             SelectedIndex = index;
         }
+
+        private void MovePage(int delta)
+        {
+            if (_disposedValue) return;
+
+            for (int i = 0; i < Math.Abs(delta); ++i)
+            {
+                if (delta < 0)
+                {
+                    BookOperation.Current.Control.MovePrev(this);
+                }
+                else
+                {
+                    BookOperation.Current.Control.MoveNext(this);
+                }
+            }
+        }
+
 
         public void FlushSelectedIndex()
         {

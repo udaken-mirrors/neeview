@@ -5,7 +5,6 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
-using System.Windows.Data;
 
 namespace NeeView
 {
@@ -43,6 +42,11 @@ namespace NeeView
             set { if (_model != value) { _model = value; RaisePropertyChanged(); } }
         }
 
+
+        public void MoveWheel(int delta, bool isDirectionReverse)
+        {
+            _model.MoveWheel(delta, isDirectionReverse);
+        }
 
         public void MoveSelectedIndex(int delta)
         {

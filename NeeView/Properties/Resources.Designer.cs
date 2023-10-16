@@ -6080,6 +6080,15 @@ namespace NeeView.Properties {
         }
         
         /// <summary>
+        ///   Move pages by wheel operation に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string FilmStripConfig_IsWheelMovePage {
+            get {
+                return ResourceManager.GetString("FilmStripConfig.IsWheelMovePage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   First page に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string FirstPageCommand {
