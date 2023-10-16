@@ -327,6 +327,7 @@ namespace NeeView
             if (x != a0)
             {
                 _listPanel.SetHorizontalOffset(x);
+                _listPanel.UpdateLayout();
             }
         }
 
@@ -341,24 +342,17 @@ namespace NeeView
             if (_vm.Model.IsItemsDirty) return;
             if (!this.IsVisible) return;
 
-            if (items.Count == 1)
+            if (items.Count == 0)
+            {
+            }
+            else if (items.Count == 1)
             {
                 ScrollIntoView(items.First());
-            }
-            else if (direction < 0)
-            {
-                ScrollIntoView(items.First());
-            }
-            else if (direction > 0)
-            {
-                ScrollIntoView(items.Last());
             }
             else
             {
-                foreach (var item in items)
-                {
-                    ScrollIntoView(item);
-                }
+                ScrollIntoView(items.Last());
+                ScrollIntoView(items.First());
             }
         }
 

@@ -1,4 +1,5 @@
-﻿using NeeLaboratory.ComponentModel;
+﻿using NeeLaboratory;
+using NeeLaboratory.ComponentModel;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -229,12 +230,15 @@ namespace NeeView
         /// </summary>
         private void RefreshSelectedItem()
         {
-            var pages = CollectPage(BookOperation.Current.Book, BookOperation.Current.Control.SelectedRange);
+            var book = BookOperation.Current.Book;
+            if (book is null) return;
+
+            var range = BookOperation.Current.Control.SelectedRange;
+            var pages = CollectPage(book, range);
             if (pages == null) return;
 
-            var viewPages = pages.Where(i => i != null).OrderBy(i => i.Index).ToList();
+            var viewPages = pages.Where(i => i != null).ToList();
 
-            //this.SelectedItem = viewPages.FirstOrDefault();
             var page = viewPages.FirstOrDefault();
             if (page is null) return;
 
@@ -250,8 +254,9 @@ namespace NeeView
         private List<Page>? CollectPage(Book? book, PageRange range)
         {
             if (book is null) return null;
-            var indexs = Enumerable.Range(range.Min.Index, range.Max.Index - range.Min.Index + 1);
-            return indexs.Where(e => book.Pages.IsValidIndex(e)).Select(e => book.Pages[e]).ToList();
+            var indexes = Enumerable.Range(range.Min.Index, range.Max.Index - range.Min.Index + 1)
+                .Select(e => MathUtility.NormalizeLoopRange(e, 0, book.Pages.Count - 1));
+            return indexes.Where(e => book.Pages.IsValidIndex(e)).Select(e => book.Pages[e]).ToList();
         }
 
 

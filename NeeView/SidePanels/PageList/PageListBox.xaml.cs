@@ -210,25 +210,17 @@ namespace NeeView
             if (_vm.Model.Items == null) return;
             if (!this.IsVisible) return;
 
+            if (items.Count == 0)
+            {
+            }
             if (items.Count == 1)
             {
                 ScrollIntoView(items.First());
             }
-            else if (direction < 0)
-            {
-                ScrollIntoView(items.First());
-            }
-            else if (direction > 0)
-            {
-                ScrollIntoView(items.Last());
-            }
             else
             {
-                foreach (var item in items)
-                {
-                    ScrollIntoView(item);
-                    this.ListBox.UpdateLayout();
-                }
+                ScrollIntoView(items.Last());
+                ScrollIntoView(items.First());
             }
         }
 
@@ -236,6 +228,7 @@ namespace NeeView
         {
             ////Debug.WriteLine($"#### PL:ScrollIntoView: {item}");
             this.ListBox.ScrollIntoView(item);
+            this.ListBox.UpdateLayout();
         }
 
         public void FocusSelectedItem(bool isForce)
