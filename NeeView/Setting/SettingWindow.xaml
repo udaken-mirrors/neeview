@@ -131,7 +131,10 @@
 
                 <nvc:SearchBox DockPanel.Dock="Top" Margin="5,5,5,0" SearchKeyword="{Binding SearchKeyword}" />
 
-                <TreeView x:Name="IndexTree" ItemsSource="{Binding Model.Pages}" BorderThickness="0" Margin="5,5,1,5" SelectedItemChanged="IndexTree_SelectedItemChanged">
+                <TreeView x:Name="IndexTree" ItemsSource="{Binding Model.Pages}" BorderThickness="0" Margin="5,5,1,5" SelectedItemChanged="IndexTree_SelectedItemChanged"
+                          VirtualizingStackPanel.ScrollUnit="Item"
+                          VirtualizingStackPanel.IsVirtualizing="True"
+                          VirtualizingStackPanel.VirtualizationMode="Recycling">
                     <TreeView.Resources>
                         <Style TargetType="TreeViewItem" BasedOn="{StaticResource NVTreeViewItem}">
                             <Setter Property="IsSelected" Value="{Binding Path=IsSelected, Mode=TwoWay}" />

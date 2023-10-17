@@ -8,7 +8,7 @@ namespace NeeView
         private bool _useWicInformation = true;
         private bool _isAspectRatioEnabled;
         private bool _isAnimatedGifEnabled = true;
-        private bool _isAnimatedPngEnabled = false;
+        private bool _isAnimatedPngEnabled = true;
         private bool _isAllFileSupported;
         private FileTypeCollection? _supportFileTypes = null;
 

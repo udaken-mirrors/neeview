@@ -70,10 +70,13 @@
 
                             <Button DockPanel.Dock="Bottom" x:Name="ResetButton" Content="{x:Static properties:Resources.Word_Reset}" Click="ResetButton_Click" TabIndex="15"/>
                         </DockPanel>
-                            <TreeView x:Name="ContextMenuTreeView" BorderBrush="{DynamicResource Control.Border}" BorderThickness="1" TabIndex="10"
+                        <TreeView x:Name="ContextMenuTreeView" BorderBrush="{DynamicResource Control.Border}" BorderThickness="1" TabIndex="10"
                                       HorizontalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                                      ItemsSource="{Binding Root.Children}" ItemTemplate="{StaticResource treeViewTemplate}" Padding="5" >
-                            </TreeView>
+                                      ItemsSource="{Binding Root.Children}" ItemTemplate="{StaticResource treeViewTemplate}" Padding="5"
+                                      VirtualizingStackPanel.ScrollUnit="Item"
+                                      VirtualizingStackPanel.IsVirtualizing="True"
+                                      VirtualizingStackPanel.VirtualizationMode="Recycling">
+                        </TreeView>
                     </DockPanel>
                 </DockPanel>
 
