@@ -252,7 +252,7 @@ namespace NeeView
 
             _book = book;
 
-            _context = new PageFrameContext(_config, _shareContext, ViewScrollContext);
+            _context = new PageFrameContext(_config, _shareContext, ViewScrollContext, _book.IsMedia);
             _bookContext = new BookContext(_book);
 
             _box = new PageFrameBox(_context, _bookContext);

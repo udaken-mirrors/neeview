@@ -502,6 +502,8 @@ namespace NeeView.PageFrames
                     break;
 
                 case nameof(Context.StretchMode):
+                case nameof(Context.AllowEnlarge):
+                case nameof(Context.AllowReduce):
                     UpdateContainers(PageFrameDirtyLevel.Moderate, TransformMask.Scale, false, true);
                     break;
 

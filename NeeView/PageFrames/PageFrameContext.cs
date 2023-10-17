@@ -22,12 +22,14 @@ namespace NeeView.PageFrames
         private readonly BookShareContext _share;
         private readonly BooleanLockValue _isSnapAnchor = new();
         private readonly ViewScrollContext _viewScrollContext;
+        private readonly bool _isMediaBook;
 
-        public PageFrameContext(Config config, BookShareContext share, ViewScrollContext viewScrollContext)
+        public PageFrameContext(Config config, BookShareContext share, ViewScrollContext viewScrollContext, bool isMediaBook)
         {
             _config = config;
             _share = share;
             _viewScrollContext = viewScrollContext;
+            _isMediaBook = isMediaBook;
             _bookSetting = _config.BookSetting;
 
             _frameProfile = new PageFrameProfile(_config);
@@ -71,7 +73,7 @@ namespace NeeView.PageFrames
             : _config.View.StretchMode;
 
         public bool IsInsertDummyPage => _config.Book.IsInsertDummyPage;
-        public bool IsLoopPage => _config.Book.PageEndAction == PageEndAction.SeamlessLoop;
+        public bool IsLoopPage => !_isMediaBook && _config.Book.PageEndAction == PageEndAction.SeamlessLoop;
 
         public bool AllowFileContentAutoRotate => _config.View.AllowFileContentAutoRotate;
         public bool AllowEnlarge => _config.View.AllowStretchScaleUp;
