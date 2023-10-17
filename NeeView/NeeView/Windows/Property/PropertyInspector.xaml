@@ -23,14 +23,17 @@
                 <DataTemplate DataType="{x:Type local:PropertyTitleElement}">
                     <TextBlock Text="{Binding Name}" TextTrimming="CharacterEllipsis" FontWeight="Bold" Margin="0,10,0,5" />
                 </DataTemplate>
-                
+
                 <DataTemplate DataType="{x:Type local:PropertyMemberElement}">
                     <local:PropertyControl Header="{Binding Name}" Value="{Binding TypeValue}" Tips="{Binding Tips}"
                                        ColumnRate="{Binding RelativeSource={RelativeSource AncestorType=UserControl}, Path=ColumnRate}"/>
                 </DataTemplate>
 
+                <Style TargetType="{x:Type ComboBox}" BasedOn="{StaticResource {x:Type ComboBox}}">
+                    <Setter Property="HorizontalAlignment" Value="Right"/>
+                </Style>
+                
             </ResourceDictionary>
-
         </Grid.Resources>
 
         <StackPanel>

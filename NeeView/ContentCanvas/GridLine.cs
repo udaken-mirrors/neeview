@@ -1,5 +1,4 @@
 ﻿using NeeLaboratory.ComponentModel;
-using NeeView.Windows.Property;
 using System;
 using System.ComponentModel;
 using System.Runtime.Serialization;
@@ -12,16 +11,22 @@ namespace NeeView
 {
     public class GridLine : ContentControl, IDisposable
     {
+        private readonly ImageGridConfig _imageGrid;
         private bool _disposedValue;
         private readonly DisposableCollection _disposables = new();
+        private readonly ImageGridTarget _target;
 
-
-        public GridLine()
+        public GridLine(ImageGridTarget target)
         {
+            _target = target;
+            _imageGrid = Config.Current.ImageGrid;
+
             this.Focusable = false;
 
-            _disposables.Add(Config.Current.ImageGrid.SubscribePropertyChanged((s, e) => Update()));
+            _disposables.Add(_imageGrid.SubscribePropertyChanged((s, e) => Update()));
             _disposables.Add(this.SubscribeSizeChanged((s, e) => Update()));
+
+            Update();
         }
 
 
@@ -49,26 +54,34 @@ namespace NeeView
             GC.SuppressFinalize(this);
         }
 
+        private bool IsActive()
+        {
+            return _imageGrid.IsEnabled && _imageGrid.Target == _target;
+        }
+
         private void Update()
         {
             if (_disposedValue) return;
+
+            this.Visibility = IsActive() ? Visibility.Visible : Visibility.Collapsed;
             this.Content = CreatePath();
 
             // センタリング配置
-            Canvas.SetLeft(this, -Width * 0.5);
-            Canvas.SetTop(this, -Height * 0.5);
+            Canvas.SetLeft(this, -ActualWidth * 0.5);
+            Canvas.SetTop(this, -ActualHeight * 0.5);
         }
 
         private UIElement? CreatePath()
         {
-            var imageGrid = Config.Current.ImageGrid;
+            var width = ActualWidth;
+            var height = ActualHeight;
 
-            if (!imageGrid.IsEnabled || Width <= 0.0 || Height <= 0.0) return null;
+            if (!IsActive() || width <= 0.0 || height <= 0.0) return null;
 
-            double cellX = imageGrid.DivX > 0 ? Width / imageGrid.DivX : Width;
-            double cellY = imageGrid.DivY > 0 ? Height / imageGrid.DivY : Height;
+            double cellX = _imageGrid.DivX > 0 ? width / _imageGrid.DivX : width;
+            double cellY = _imageGrid.DivY > 0 ? height / _imageGrid.DivY : height;
 
-            if (imageGrid.IsSquare)
+            if (_imageGrid.IsSquare)
             {
                 if (cellX < cellY)
                 {
@@ -81,24 +94,24 @@ namespace NeeView
             }
 
             var canvas = new Canvas();
-            canvas.Width = Width;
-            canvas.Height = Height;
+            canvas.Width = width;
+            canvas.Height = height;
 
-            var stroke = new SolidColorBrush(imageGrid.Color);
+            var stroke = new SolidColorBrush(_imageGrid.Color);
 
-            canvas.Children.Add(CreatePath(new Point(0, 0), new Point(0, Height), stroke));
-            canvas.Children.Add(CreatePath(new Point(Width, 0), new Point(Width, Height), stroke));
-            canvas.Children.Add(CreatePath(new Point(0, 0), new Point(Width, 0), stroke));
-            canvas.Children.Add(CreatePath(new Point(0, Height), new Point(Width, Height), stroke));
+            canvas.Children.Add(CreatePath(new Point(0, 0), new Point(0, height), stroke));
+            canvas.Children.Add(CreatePath(new Point(width, 0), new Point(width, height), stroke));
+            canvas.Children.Add(CreatePath(new Point(0, 0), new Point(width, 0), stroke));
+            canvas.Children.Add(CreatePath(new Point(0, height), new Point(width, height), stroke));
 
-            for (double i = cellX; i < Width - 1; i += cellX)
+            for (double i = cellX; i < width - 1; i += cellX)
             {
-                canvas.Children.Add(CreatePath(new Point(i, 0), new Point(i, Height), stroke));
+                canvas.Children.Add(CreatePath(new Point(i, 0), new Point(i, height), stroke));
             }
 
-            for (double i = cellY; i < Height - 1; i += cellY)
+            for (double i = cellY; i < height - 1; i += cellY)
             {
-                canvas.Children.Add(CreatePath(new Point(0, i), new Point(Width, i), stroke));
+                canvas.Children.Add(CreatePath(new Point(0, i), new Point(width, i), stroke));
             }
 
             return canvas;

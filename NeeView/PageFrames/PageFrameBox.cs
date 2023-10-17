@@ -104,6 +104,10 @@ namespace NeeView.PageFrames
             effectGrid.Children.Add(_scrollViewer);
             this.Children.Add(effectGrid);
 
+            var gridLine = new GridLine(ImageGridTarget.Screen) { Name = "ScreenGridLine" };
+            _disposables.Add(gridLine);
+            this.Children.Add(gridLine);
+
             var viewContext = new ViewTransformContext(_context, _viewBox, _rectMath, _scrollViewer);
             _transformControlFactory = new TransformControlFactory(_context, viewContext, loupeContext, _scrollLock);
 

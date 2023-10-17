@@ -12,12 +12,21 @@ namespace NeeView
         private int _divX = 8;
         private int _divY = 8;
         private bool _isSquare;
+        private ImageGridTarget _target;
+
 
         [PropertyMember(IsVisible = false)]
         public bool IsEnabled
         {
             get { return _isEnabled; }
             set { SetProperty(ref _isEnabled, value); }
+        }
+
+        [PropertyMember, DefaultValue(ImageGridTarget.Image)]
+        public ImageGridTarget Target
+        {
+            get { return _target; }
+            set { SetProperty(ref _target, value); }
         }
 
         [PropertyMember, DefaultValue(typeof(Color), "#80808080")]
@@ -47,5 +56,12 @@ namespace NeeView
             get { return _isSquare; }
             set { SetProperty(ref _isSquare, value); }
         }
+    }
+
+
+    public enum ImageGridTarget
+    {
+        Image,
+        Screen,
     }
 }

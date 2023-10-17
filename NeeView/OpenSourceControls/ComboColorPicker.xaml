@@ -18,6 +18,7 @@
         </DataTemplate>
     </UserControl.Resources>
     <ComboBox Name="ColorList1"
+              HorizontalAlignment="Stretch"
               SelectedValue="{Binding ElementName=ThisColorPicker, Path=SelectedColor}" 
               SnapsToDevicePixels="True" TabIndex="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}, Path=TabIndex}">
     </ComboBox>

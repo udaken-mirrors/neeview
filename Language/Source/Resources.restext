@@ -2388,3 +2388,4 @@ AutoRotateType.ForcedRight=Forced right rotate
 BookSettingConfig.AutoRotate=Automatic rotation
 PageEndAction.SeamlessLoop=Seamless loop
 FilmStripConfig.IsWheelMovePage=Move pages by wheel operation
+ImageGridConfig.Target=Target

@@ -113,7 +113,7 @@ namespace NeeView.PageFrames
 
             // grid line
             _sizeSource = new SizeSource(_pageFrame.StretchedSize);
-            _gridLine = new GridLine();
+            _gridLine = new GridLine(ImageGridTarget.Image);
             _disposables.Add(_gridLine);
             _sizeSource.BindTo(_gridLine);
             _canvas.Children.Add(_gridLine);

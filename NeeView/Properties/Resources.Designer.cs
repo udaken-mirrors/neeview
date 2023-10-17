@@ -7268,6 +7268,15 @@ namespace NeeView.Properties {
         }
         
         /// <summary>
+        ///   Target に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string ImageGridConfig_Target {
+            get {
+                return ResourceManager.GetString("ImageGridConfig.Target", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Failed to load image. に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string ImageLoadFailedException_Message {
