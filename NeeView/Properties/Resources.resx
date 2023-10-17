@@ -7593,4 +7593,7 @@ nv.ShowToast(nv.Book.ViewPages[0].Path)</value>
   <data name="ImageGridConfig.Target" xml:space="preserve">
     <value>Target</value>
   </data>
+  <data name="BookConfig.IsTwoPagePanorama" xml:space="preserve">
+    <value>"@PageMode.Panorama" in two-page units</value>
+  </data>
 </root>

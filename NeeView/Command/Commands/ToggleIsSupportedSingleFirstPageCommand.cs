@@ -24,7 +24,7 @@ namespace NeeView
 
         public override bool CanExecute(object? sender, CommandContext e)
         {
-            return BookSettings.Current.CanPageModeSubSetting(PageMode.WidePage);
+            return BookSettings.Current.CanPageSizeSubSetting(2);
         }
 
         [MethodArgument("@ToggleCommand.Execute.Remarks")]

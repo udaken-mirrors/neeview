@@ -154,7 +154,7 @@ namespace NeeView.PageFrames
             var source1 = source;
             if (source1 is null) return null;
 
-            if (_context.PageMode == PageMode.WidePage && !_bookContext.IsMedia)
+            if (_context.FramePageSize == 2 && !_bookContext.IsMedia)
             {
                 // TODO: SinglePageFrame 作成が分散しているのでまとめる？
                 if (_context.IsSupportedWidePage && source1.IsLandscape())

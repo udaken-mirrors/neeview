@@ -24,11 +24,11 @@ namespace NeeView
         private string? _terminalSound;
         private bool _isAutoRecursive = false;
         private bool _isSortFileFirst;
-        private double _bookPageSize = 300.0;
         private bool _resetPageWhenRandomSort;
         private bool _isInsertDummyPage;
         private Color _dummyPageColor = Colors.White;
         private PageFrameOrientation _orientation = PageFrameOrientation.Horizontal;
+        private bool _isTwoPagePanorama;
 
 
         /// <summary>
@@ -134,13 +134,6 @@ namespace NeeView
             set { SetProperty(ref _isSortFileFirst, value); }
         }
 
-        // ブックページ画像サイズ
-        [PropertyRange(100.0, 600.0, TickFrequency = 10.0, IsEditable = true, Format = "{0} × {0}")]
-        public double BookPageSize
-        {
-            get { return _bookPageSize; }
-            set { SetProperty(ref _bookPageSize, Math.Max(value, 64.0)); }
-        }
 
         // ランダムソートでページをリセット
         [PropertyMember]
@@ -166,8 +159,13 @@ namespace NeeView
             set { SetProperty(ref _dummyPageColor, value); }
         }
 
-
-
+        // ２ページ単位のパノラマモード
+        [PropertyMember]
+        public bool IsTwoPagePanorama
+        {
+            get { return _isTwoPagePanorama; }
+            set { SetProperty(ref _isTwoPagePanorama, value); }
+        }
 
         #region Obsolete
 
@@ -179,6 +177,15 @@ namespace NeeView
         public bool IsMultiplePageMove
         {
             get { return true; }
+            set { }
+        }
+
+        // ブックページ画像サイズ
+        [Obsolete("no used"), Alternative(null, 40, ScriptErrorLevel.Info)] // ver.40
+        [JsonIgnore]
+        public double BookPageSize
+        {
+            get { return 300.0; }
             set { }
         }
 

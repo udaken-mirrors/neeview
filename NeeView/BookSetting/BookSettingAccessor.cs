@@ -93,6 +93,11 @@ namespace NeeView
             set => _setting.AutoRotate = value;
         }
 
+        // ページ数での可否
+        public bool CanPageSizeSubSetting(int size)
+        {
+            return CanEdit && Config.Current.GetFramePageSize(_setting.PageMode) == size;
+        }
 
         // 単ページ/見開き表示設定の可否
         public bool CanPageModeSubSetting(PageMode mode)

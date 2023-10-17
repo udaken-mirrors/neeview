@@ -65,7 +65,7 @@ namespace NeeView.PageFrames
         public double FrameMargin => IsStaticFrame ? 1.0 : _config.Book.FrameSpace;
 
         // TODO: 更新イベントが余計に発生している？Propertyパターンにして抑制させることも可能(優先度低)
-        public double ContentsSpace => _bookSetting.PageMode == PageMode.WidePage ? _config.Book.ContentsSpace : 0.0;
+        public double ContentsSpace => FramePageSize == 2 ? _config.Book.ContentsSpace : 0.0;
         public PageStretchMode StretchMode => _bookSetting.PageMode == PageMode.Panorama && _config.View.StretchMode == PageStretchMode.Uniform
             ? _config.Book.Orientation == PageFrameOrientation.Horizontal ? PageStretchMode.UniformToVertical : PageStretchMode.UniformToHorizontal
             : _config.View.StretchMode;
@@ -83,11 +83,12 @@ namespace NeeView.PageFrames
 
 
         public PageMode PageMode => _bookSetting.PageMode;
+        public int FramePageSize => _config.GetFramePageSize(_bookSetting.PageMode);
         public PageReadOrder ReadOrder => _bookSetting.BookReadOrder;
         public bool IsSupportedDividePage => _bookSetting.IsSupportedDividePage && _bookSetting.PageMode == PageMode.SinglePage;
-        public bool IsSupportedWidePage => _bookSetting.IsSupportedWidePage && _bookSetting.PageMode == PageMode.WidePage;
-        public bool IsSupportedSingleFirstPage => _bookSetting.IsSupportedSingleFirstPage && _bookSetting.PageMode == PageMode.WidePage;
-        public bool IsSupportedSingleLastPage => _bookSetting.IsSupportedSingleLastPage && _bookSetting.PageMode == PageMode.WidePage;
+        public bool IsSupportedWidePage => _bookSetting.IsSupportedWidePage && FramePageSize == 2;
+        public bool IsSupportedSingleFirstPage => _bookSetting.IsSupportedSingleFirstPage && FramePageSize == 2;
+        public bool IsSupportedSingleLastPage => _bookSetting.IsSupportedSingleLastPage && FramePageSize == 2;
         public bool IsRecursiveFolder => _bookSetting.IsRecursiveFolder;
         public AutoRotateType AutoRotate => _bookSetting.AutoRotate;
 
@@ -162,6 +163,10 @@ namespace NeeView.PageFrames
                 case nameof(BookConfig.PageEndAction):
                     RaisePropertyChanged(nameof(IsLoopPage));
                     break;
+
+                case nameof(BookConfig.IsTwoPagePanorama):
+                    RaisePropertyChanged(nameof(FramePageSize));
+                    break;
             }
         }
 
@@ -219,6 +224,7 @@ namespace NeeView.PageFrames
                     RaisePropertyChanged(nameof(PageMode));
                     RaisePropertyChanged(nameof(StretchMode));
                     RaisePropertyChanged(nameof(ContentsSpace));
+                    RaisePropertyChanged(nameof(FramePageSize));
                     //RaisePropertyChanged(nameof(IsSupportedDividePage));
                     //RaisePropertyChanged(nameof(IsSupportedWidePage));
                     //RaisePropertyChanged(nameof(IsSupportedSingleFirstPage));

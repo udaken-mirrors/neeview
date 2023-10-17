@@ -1093,6 +1093,15 @@ namespace NeeView.Properties {
         }
         
         /// <summary>
+        ///   &quot;@PageMode.Panorama&quot; in two-page units に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string BookConfig_IsTwoPagePanorama {
+            get {
+                return ResourceManager.GetString("BookConfig.IsTwoPagePanorama", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Behavior when trying to move past the end of the page に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string BookConfig_PageEndAction {

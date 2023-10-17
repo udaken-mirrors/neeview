@@ -124,7 +124,7 @@ namespace NeeView
                 _source.IsRecursiveFolder = setting.IsRecursiveFolder;
             }
             if (isAll || e.PropertyName == nameof(setting.SortMode))
-            { 
+            {
                 _source.Pages.SortMode = setting.SortMode;
             }
         }
@@ -158,7 +158,7 @@ namespace NeeView
 
                 // 最終ページリセット
                 // NOTE: ワイドページ判定は行わないため、2ページモードの場合に不正確な場合がある
-                int lastPageOffset = (_setting.PageMode == PageMode.WidePage && !_setting.IsSupportedSingleLastPage) ? 1 : 0;
+                int lastPageOffset = (Config.Current.GetFramePageSize(_setting.PageMode) == 2 && !_setting.IsSupportedSingleLastPage) ? 1 : 0;
                 if (startPage.IsResetLastPage && index >= _source.Pages.LastPosition().Index - lastPageOffset)
                 {
                     position = _source.Pages.FirstPosition();

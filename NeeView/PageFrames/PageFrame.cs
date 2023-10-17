@@ -190,7 +190,7 @@ namespace NeeView.PageFrames
         [Conditional("DEBUG")]
         public void AssertValid(PageFrameContext context)
         {
-            if (context.PageMode == PageMode.WidePage)
+            if (context.FramePageSize == 2)
             {
                 if (_elements.Count == 1)
                 {

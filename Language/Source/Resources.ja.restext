@@ -2389,3 +2389,4 @@ BookSettingConfig.AutoRotate=自動回転
 PageEndAction.SeamlessLoop=シームレス ループ
 FilmStripConfig.IsWheelMovePage=ホイール操作でページ移動
 ImageGridConfig.Target=対象
+BookConfig.IsTwoPagePanorama=「@PageMode.Panorama」を 2 ページ単位にする

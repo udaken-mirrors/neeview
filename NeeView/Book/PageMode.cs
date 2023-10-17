@@ -33,11 +33,6 @@ namespace NeeView
             }
         }
 
-        public static int Size(this PageMode mode)
-        {
-            return mode == PageMode.WidePage ? 2 : 1;
-        }
-
         public static PageMode Validate(this PageMode mode)
         {
             if (mode < PageMode.SinglePage) return PageMode.SinglePage;

@@ -2389,3 +2389,4 @@ BookSettingConfig.AutoRotate=Automatic rotation
 PageEndAction.SeamlessLoop=Seamless loop
 FilmStripConfig.IsWheelMovePage=Move pages by wheel operation
 ImageGridConfig.Target=Target
+BookConfig.IsTwoPagePanorama="@PageMode.Panorama" in two-page units

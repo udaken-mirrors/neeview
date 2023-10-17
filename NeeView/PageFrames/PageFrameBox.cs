@@ -515,6 +515,7 @@ namespace NeeView.PageFrames
                     break;
 
                 case nameof(Context.PageMode):
+                case nameof(Context.FramePageSize):
                     MoveToFixPosition();
                     UpdateContainers(PageFrameDirtyLevel.Replace, TransformMask.Point, true, true);
                     break;
@@ -705,7 +706,7 @@ namespace NeeView.PageFrames
         {
             if (!_bookContext.IsEnabled) return;
 
-            if (_context.PageMode != PageMode.WidePage)
+            if (_context.FramePageSize == 1)
             {
                 MoveToNextFrame(direction);
                 return;
