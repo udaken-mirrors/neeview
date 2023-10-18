@@ -1,4 +1,4 @@
-﻿//#define LOCAL_DEBUG
+﻿#define LOCAL_DEBUG
 
 using NeeLaboratory.ComponentModel;
 using NeeLaboratory.Generators;
@@ -56,8 +56,18 @@ namespace NeeView
         /// ImageSource (寿命あり)
         /// </summary>
         private ImageSource? _imageSource;
-        
-        
+
+        /// <summary>
+        /// ImageSource 生成中
+        /// </summary>
+        private int _imageSourceLoading;
+
+
+        public Thumbnail()
+        {
+        }
+
+
         /// <summary>
         /// 参照イベント
         /// </summary>
@@ -66,39 +76,19 @@ namespace NeeView
 
 
         /// <summary>
-        /// ImageSource
+        /// 寿命間利用シリアルナンバー
         /// </summary>
-        public ImageSource? ImageSource
-        {
-            get
-            {
-                var imageSource = _imageSource;
-                if (imageSource is null)
-                {
-                    Task.Run(() =>
-                    {
-                        imageSource = CreateImageSource();
-                        lock (_lock)
-                        {
-                            _imageSource = imageSource;
-                            ThumbnailLifetimeManagement.Current.Add(this);
-                        }
-                        RaisePropertyChanged(nameof(ImageSource));
-                    });
-                }
-                return imageSource;
-            }
-        }
+        public int LifeSerial { get; set; }
+
+        /// <summary>
+        /// キャッシュ使用
+        /// </summary>
+        public bool IsCacheEnabled { get; set; }
 
         /// <summary>
         /// 有効判定
         /// </summary>
         public bool IsValid => _image != null;
-
-        /// <summary>
-        /// Empty画像？
-        /// </summary>
-        public bool IsEmptyImage => _image == ThumbnailResource.EmptyImage;
 
         /// <summary>
         /// Jpeg化された画像
@@ -113,12 +103,29 @@ namespace NeeView
                 {
                     _image = value;
                     Trace($"Image={_image is not null}");
+                    RaisePropertyChanged();
+                    RaisePropertyChanged(nameof(IsValid));
                     if (_image != null)
                     {
                         Touched?.Invoke(this, EventArgs.Empty);
-                        RaisePropertyChanged("");
+                        RaisePropertyChanged(nameof(ImageSource));
+                        RaisePropertyChanged(nameof(IsUniqueImage));
+                        RaisePropertyChanged(nameof(IsNormalImage));
+                        RaisePropertyChanged(nameof(Background));
                     }
                 }
+            }
+        }
+
+        /// <summary>
+        /// ImageSource
+        /// </summary>
+        public ImageSource? ImageSource
+        {
+            get
+            {
+                LoadImageSourceAsync();
+                return _imageSource;
             }
         }
 
@@ -165,16 +172,44 @@ namespace NeeView
             }
         }
 
-        /// <summary>
-        /// 寿命間利用シリアルナンバー
-        /// </summary>
-        public int LifeSerial { get; set; }
 
-        /// <summary>
-        /// キャッシュ使用
-        /// </summary>
-        public bool IsCacheEnabled { get; set; }
+        private void LoadImageSourceAsync()
+        {
+            if (_imageSource is not null) return;
 
+            var image = _image;
+            if (image is null) return;
+
+            if (_imageSourceLoading > 0) return;
+            Interlocked.Increment(ref _imageSourceLoading);
+
+            Trace("Create ImageSourceAsync...");
+            Task.Run(() =>
+            {
+                try
+                {
+                    var imageSource = CreateImageSource(image);
+                    if (imageSource is not null)
+                    {
+                        lock (_lock)
+                        {
+                            _imageSource = imageSource;
+                            ThumbnailLifetimeManagement.Current.Add(this);
+                        }
+                        Trace("Create ImageSourceAsync done.");
+                        RaisePropertyChanged(nameof(ImageSource));
+                    }
+                    else
+                    {
+                        Trace("Create ImageSourceAsync is null");
+                    }
+                }
+                finally
+                {
+                    Interlocked.Decrement(ref _imageSourceLoading);
+                }
+            });
+        }
 
 
         /// <summary>
@@ -184,10 +219,10 @@ namespace NeeView
         {
             lock (_lock)
             {
+                Trace("Remove ImageSource");
                 _imageSource = null;
             }
         }
-
 
         /// <summary>
         /// キャッシュを使用してサムネイル生成を試みる
@@ -298,16 +333,20 @@ namespace NeeView
             Touched?.Invoke(this, EventArgs.Empty);
         }
 
-
         /// <summary>
-        /// ImageSource取得
+        /// ImageSource生成
         /// </summary>
-        /// <returns></returns>
         public ImageSource? CreateImageSource()
         {
-            if (_disposedValue) return null;
+            return CreateImageSource(_image);
+        }
 
-            var image = _image;
+        /// <summary>
+        /// ImageSource生成
+        /// </summary>
+        private ImageSource? CreateImageSource(byte[]? image)
+        {
+            if (_disposedValue) return null;
             if (image is null) return null;
 
             Touched?.Invoke(this, EventArgs.Empty);
