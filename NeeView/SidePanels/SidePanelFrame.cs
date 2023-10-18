@@ -17,11 +17,18 @@ namespace NeeView
     public class VisibleAtOnceRequestEventArgs : EventArgs
     {
         public VisibleAtOnceRequestEventArgs(string key)
+            : this(key, true)
         {
-            Key = key;
         }
 
-        public string Key { get; set; }
+        public VisibleAtOnceRequestEventArgs(string key, bool isVisible)
+        {
+            Key = key;
+            IsVisible = isVisible;
+        }
+
+        public string Key { get; init; }
+        public bool IsVisible { get; init; }
     }
 
     /// <summary>
@@ -82,11 +89,10 @@ namespace NeeView
         }
 
 
-        public void VisibleAtOnce(string key)
+        public void VisibleAtOnce(string key, bool isVisible = true)
         {
-            VisibleAtOnceRequest?.Invoke(this, new VisibleAtOnceRequestEventArgs(key));
+            VisibleAtOnceRequest?.Invoke(this, new VisibleAtOnceRequestEventArgs(key, isVisible));
         }
-
 
         private static bool IsVisiblePanel(string key)
         {

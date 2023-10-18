@@ -185,9 +185,9 @@ namespace NeeView.Windows.Controls
         }
 
         public static readonly DependencyProperty FocusLockModeProperty =
-            DependencyProperty.Register("FocusLockMode", typeof(AutoHideFocusLockMode), typeof(AutoHideBehavior), new PropertyMetadata(AutoHideFocusLockMode.None, OnFocusLockModePropertyChangd));
+            DependencyProperty.Register("FocusLockMode", typeof(AutoHideFocusLockMode), typeof(AutoHideBehavior), new PropertyMetadata(AutoHideFocusLockMode.None, OnFocusLockModePropertyChanged));
 
-        private static void OnFocusLockModePropertyChangd(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        private static void OnFocusLockModePropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             if (d is AutoHideBehavior control)
             {
@@ -238,7 +238,7 @@ namespace NeeView.Windows.Controls
         private bool _isAttached;
         private bool _isMouseOver;
         private bool _isFocusLock;
-        private bool _isVisibilityHolded;
+        private bool _isVisibilityHoled;
 
 
         protected override void OnAttached()
@@ -249,7 +249,7 @@ namespace NeeView.Windows.Controls
 
             _delayVisibility.SetValue(this.AssociatedObject.Visibility);
             _delayVisibility.ValueChanged += DelayVisibility_ValueChanged;
-            this.Description?.RaiseVisibilityChanged(this, new VisibillityChangedEventArgs(_delayVisibility.Value));
+            this.Description?.RaiseVisibilityChanged(this, new VisibilityChangedEventArgs(_delayVisibility.Value));
 
             this.AssociatedObject.IsKeyboardFocusWithinChanged += AssociatedObject_IsKeyboardFocusWithinChanged;
             this.AssociatedObject.GotFocus += AssociatedObject_GotFocus;
@@ -306,9 +306,9 @@ namespace NeeView.Windows.Controls
             if (!IsEnabled) return;
             if (sender is null) return;
 
-            if (_isVisibilityHolded && ((Window)sender).WindowState != WindowState.Minimized)
+            if (_isVisibilityHoled && ((Window)sender).WindowState != WindowState.Minimized)
             {
-                _isVisibilityHolded = false;
+                _isVisibilityHoled = false;
                 AppDispatcher.BeginInvoke(() =>
                 {
                     FlushVisibility();
@@ -325,7 +325,7 @@ namespace NeeView.Windows.Controls
             }
             else
             {
-                _isVisibilityHolded = true;
+                _isVisibilityHoled = true;
             }
         }
 
@@ -333,7 +333,7 @@ namespace NeeView.Windows.Controls
         {
             var visibility = _delayVisibility.Value;
             this.AssociatedObject.Visibility = visibility;
-            this.Description?.RaiseVisibilityChanged(this, new VisibillityChangedEventArgs(visibility));
+            this.Description?.RaiseVisibilityChanged(this, new VisibilityChangedEventArgs(visibility));
         }
 
         private void AssociatedObject_IsKeyboardFocusWithinChanged(object? sender, DependencyPropertyChangedEventArgs e)
@@ -378,9 +378,9 @@ namespace NeeView.Windows.Controls
             UpdateVisibility(UpdateVisibilityOption.UpdateMouseOver);
         }
 
-        private void Description_VisibleOnce(object? sender, EventArgs e)
+        private void Description_VisibleOnce(object? sender, VisibleOnceEventArgs e)
         {
-            VisibleOnce();
+            VisibleOnce(e.IsVisible);
         }
 
         /// <summary>
@@ -535,12 +535,12 @@ namespace NeeView.Windows.Controls
         }
 
 
-        public void VisibleOnce()
+        public void VisibleOnce(bool isVisible)
         {
             if (!_isAttached) return;
             if (!IsEnabled) return;
 
-            SetVisibility(isVisible: true, isVisibleDelay: false, now: true, isForce: true);
+            SetVisibility(isVisible: isVisible, isVisibleDelay: false, now: true, isForce: true);
             UpdateVisibility();
         }
 
@@ -561,9 +561,9 @@ namespace NeeView.Windows.Controls
     /// <summary>
     /// VisibilityChangedイベントの引数
     /// </summary>
-    public class VisibillityChangedEventArgs : EventArgs
+    public class VisibilityChangedEventArgs : EventArgs
     {
-        public VisibillityChangedEventArgs(Visibility visibility)
+        public VisibilityChangedEventArgs(Visibility visibility)
         {
             Visibility = visibility;
         }
@@ -573,12 +573,12 @@ namespace NeeView.Windows.Controls
 
 
     /// <summary>
-    /// AutoHideBehavor補足
+    /// AutoHideBehavior補足
     /// </summary>
     public class AutoHideDescription
     {
-        public event EventHandler<VisibillityChangedEventArgs>? VisibilityChanged;
-        public event EventHandler? VisibleOnceCall;
+        public event EventHandler<VisibilityChangedEventArgs>? VisibilityChanged;
+        public event EventHandler<VisibleOnceEventArgs>? VisibleOnceCall;
 
         /// <summary>
         /// 表示ロック追加フラグ
@@ -589,9 +589,9 @@ namespace NeeView.Windows.Controls
         }
 
         /// <summary>
-        /// VisublityChangedイベント発行用。AutoHideBehaviorから呼ばれる
+        /// VisibilityChangedイベント発行用。AutoHideBehaviorから呼ばれる
         /// </summary>
-        public void RaiseVisibilityChanged(object sender, VisibillityChangedEventArgs args)
+        public void RaiseVisibilityChanged(object sender, VisibilityChangedEventArgs args)
         {
             VisibilityChanged?.Invoke(sender, args);
         }
@@ -599,9 +599,9 @@ namespace NeeView.Windows.Controls
         /// <summary>
         /// 一度だけ表示させる命令をBehaviorに送る
         /// </summary>
-        public void VisibleOnce()
+        public void VisibleOnce(bool isVisible)
         {
-            VisibleOnceCall?.Invoke(this, EventArgs.Empty);
+            VisibleOnceCall?.Invoke(this, new VisibleOnceEventArgs(isVisible));
         }
 
         /// <summary>
@@ -611,5 +611,19 @@ namespace NeeView.Windows.Controls
         {
             return false;
         }
+    }
+
+    public class VisibleOnceEventArgs : EventArgs
+    {
+        public VisibleOnceEventArgs()
+        {
+        }
+
+        public VisibleOnceEventArgs(bool isVisible)
+        {
+            IsVisible = isVisible;
+        }
+
+        public bool IsVisible { get; } = true;
     }
 }

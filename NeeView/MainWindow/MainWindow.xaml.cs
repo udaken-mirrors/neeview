@@ -787,8 +787,8 @@ namespace NeeView
 
         private void ThumbnailList_Visible(object? sender, VisibleEventArgs e)
         {
-            _vm.StatusAutoHideDescrption.VisibleOnce();
-            _vm.ThumbnailListusAutoHideDescrption.VisibleOnce();
+            _vm.StatusAutoHideDescription.VisibleOnce(true);
+            _vm.ThumbnailListAutoHideDescription.VisibleOnce(true);
 
             if (e.IsFocus)
             {

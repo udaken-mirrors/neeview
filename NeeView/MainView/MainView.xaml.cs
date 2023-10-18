@@ -44,6 +44,10 @@ namespace NeeView
             this.Loaded += MainView_Loaded;
             this.Unloaded += MainView_Unloaded;
             this.DataContextChanged += MainView_DataContextChanged;
+
+            this.View.PreviewMouseDown += View_PreviewMouseDown;
+            this.View.PreviewMouseWheel += View_PreviewMouseWheel;
+            this.View.GotFocus += View_GotFocus;
         }
 
 
@@ -109,7 +113,6 @@ namespace NeeView
             }
         }
 
-
         private void MainView_Loaded(object sender, RoutedEventArgs e)
         {
             var window = Window.GetWindow(this);
@@ -124,6 +127,27 @@ namespace NeeView
         private void MainView_Unloaded(object sender, RoutedEventArgs e)
         {
             ResetOwnerWindow();
+        }
+        
+        private void View_PreviewMouseDown(object sender, MouseButtonEventArgs e)
+        {
+            AllPanelHideAtOnce();
+        }
+
+        private void View_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
+        {
+            AllPanelHideAtOnce();
+        }
+
+        private void View_GotFocus(object sender, RoutedEventArgs e)
+        {
+            AllPanelHideAtOnce();
+        }
+
+        private static void AllPanelHideAtOnce()
+        {
+            MainWindowModel.Current.VisibleAtOnce("", false);
+            SidePanelFrame.Current.VisibleAtOnce("", false);
         }
 
         private void SetOwnerWindow(Window window)

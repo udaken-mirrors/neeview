@@ -101,8 +101,8 @@ namespace NeeView
             _viewComponent = MainViewComponent.Current;
 
             MenuAutoHideDescription = new MenuAutoHideDescription(MainWindow.Current.LayerMenuSocket, MainWindow.Current.SidePanelFrame);
-            StatusAutoHideDescrption = new StatusAutoHideDescription(MainWindow.Current.LayerStatusArea, MainWindow.Current.SidePanelFrame);
-            ThumbnailListusAutoHideDescrption = new StatusAutoHideDescription(MainWindow.Current.LayerThumbnailListSocket, MainWindow.Current.SidePanelFrame);
+            StatusAutoHideDescription = new StatusAutoHideDescription(MainWindow.Current.LayerStatusArea, MainWindow.Current.SidePanelFrame);
+            ThumbnailListAutoHideDescription = new StatusAutoHideDescription(MainWindow.Current.LayerThumbnailListSocket, MainWindow.Current.SidePanelFrame);
 
             // icon
             InitializeWindowIcons();
@@ -124,6 +124,8 @@ namespace NeeView
                 (s, e) => UpdateSidePanelMargin());
 
             _model.FocusMainViewCall += Model_FocusMainViewCall;
+
+            _model.VisibleAtOnceRequest += Model_VisibleAtOnceRequest;
 
             MainWindow.Current.Activated +=
                 (s, e) => RaisePropertyChanged(nameof(IsMenuBarActive));
@@ -161,7 +163,6 @@ namespace NeeView
                 System.IO.Directory.CreateDirectory(Temporary.Current.TempDownloadDirectory);
             }
         }
-
 
 
         public event EventHandler? FocusMainViewCall;
@@ -217,9 +218,9 @@ namespace NeeView
         /// <summary>
         /// FilmStrep, Slider 用 AutoHideBehavior 補足
         /// </summary>
-        public BasicAutoHideDescription StatusAutoHideDescrption { get; }
+        public BasicAutoHideDescription StatusAutoHideDescription { get; }
 
-        public BasicAutoHideDescription ThumbnailListusAutoHideDescrption { get; }
+        public BasicAutoHideDescription ThumbnailListAutoHideDescription { get; }
 
         public bool IsMenuBarActive => MainWindow.Current.IsActive;
 
@@ -260,6 +261,36 @@ namespace NeeView
             if (IsClosing) return;
 
             _ = ArchiverManager.Current.UnlockAllArchivesAsync();
+        }
+
+        /// <summary>
+        /// パネルの一時表示要求
+        /// </summary>
+        private void Model_VisibleAtOnceRequest(object? sender, VisibleAtOnceRequestEventArgs e)
+        {
+            switch (e.Key)
+            {
+                case "Menu":
+                    MenuAutoHideDescription.VisibleOnce(e.IsVisible);
+                    break;
+
+                case "Status":
+                    StatusAutoHideDescription.VisibleOnce(e.IsVisible);
+                    break;
+
+                case "ThumbnailList":
+                    ThumbnailListAutoHideDescription.VisibleOnce(e.IsVisible);
+                    break;
+
+                case "" or null:
+                    MenuAutoHideDescription.VisibleOnce(e.IsVisible);
+                    StatusAutoHideDescription.VisibleOnce(e.IsVisible);
+                    ThumbnailListAutoHideDescription.VisibleOnce(e.IsVisible);
+                    break;
+
+                default:
+                    throw new NotSupportedException();
+            }
         }
     }
 }

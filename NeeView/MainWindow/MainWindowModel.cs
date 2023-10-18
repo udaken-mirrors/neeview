@@ -141,6 +141,7 @@ namespace NeeView
 
         public event EventHandler? FocusMainViewCall;
 
+        public event EventHandler<VisibleAtOnceRequestEventArgs>? VisibleAtOnceRequest;
 
 
         public MainWindowController WindowController => _windowController;
@@ -475,6 +476,15 @@ namespace NeeView
             FocusMainViewCall?.Invoke(this, EventArgs.Empty);
         }
 
+        /// <summary>
+        /// パネルの自動非表示の一度の状態設定
+        /// </summary>
+        /// <param name="key">Menu or Status or ThumbnailList. "" ですべてのパネル</param>
+        /// <param name="isVisible">表示/非表示</param>
+        public void VisibleAtOnce(string key, bool isVisible)
+        {
+            VisibleAtOnceRequest?.Invoke(this, new VisibleAtOnceRequestEventArgs(key, isVisible));
+        }
     }
 
 }
