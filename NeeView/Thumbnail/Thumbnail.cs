@@ -75,12 +75,16 @@ namespace NeeView
                 var imageSource = _imageSource;
                 if (imageSource is null)
                 {
-                    imageSource = CreateImageSource();
-                }
-                lock (_lock)
-                {
-                    _imageSource = imageSource;
-                    ThumbnailLifetimeManagement.Current.Add(this);
+                    Task.Run(() =>
+                    {
+                        imageSource = CreateImageSource();
+                        lock (_lock)
+                        {
+                            _imageSource = imageSource;
+                            ThumbnailLifetimeManagement.Current.Add(this);
+                        }
+                        RaisePropertyChanged(nameof(ImageSource));
+                    });
                 }
                 return imageSource;
             }
