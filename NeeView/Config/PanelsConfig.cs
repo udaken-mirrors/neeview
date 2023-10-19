@@ -22,6 +22,8 @@ namespace NeeView
         private double _leftPanelWidth = 300.0;
         private double _rightPanelWidth = 300.0;
         private bool _isLimitPanelWidth;
+        private AlternativeContent _alternativeContent = AlternativeContent.Space;
+
 
         /// <summary>
         /// パネルを自動的に隠す
@@ -121,6 +123,16 @@ namespace NeeView
         {
             get { return _isLimitPanelWidth; }
             set { SetProperty(ref _isLimitPanelWidth, value); }
+        }
+
+        /// <summary>
+        /// メインビューの代替コンテンツ
+        /// </summary>
+        [PropertyMember]
+        public AlternativeContent AlternativeContent
+        {
+            get { return _alternativeContent; }
+            set { SetProperty(ref _alternativeContent, value); }
         }
 
 
@@ -226,5 +238,17 @@ namespace NeeView
     {
         Left,
         Right
+    }
+
+    /// <summary>
+    /// メインビューの代替コンテンツ
+    /// </summary>
+    public enum AlternativeContent
+    {
+        [AliasName]
+        Space,
+
+        [AliasName]
+        PageList,
     }
 }

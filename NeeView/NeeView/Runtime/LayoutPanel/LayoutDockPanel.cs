@@ -98,10 +98,10 @@ namespace NeeView.Runtime.LayoutPanel
                 foreach (var container in containers)
                 {
                     {
-                        var rowDefinigion = new RowDefinition();
-                        rowDefinigion.MinHeight = minLength;
-                        rowDefinigion.SetBinding(RowDefinition.HeightProperty, new Binding(nameof(LayoutPanel.GridLength)) { Source = container.LayoutPanel, Mode = BindingMode.TwoWay });
-                        this.RowDefinitions.Add(rowDefinigion);
+                        var rowDefinition = new RowDefinition();
+                        rowDefinition.MinHeight = minLength;
+                        rowDefinition.SetBinding(RowDefinition.HeightProperty, new Binding(nameof(LayoutPanel.GridLength)) { Source = container.LayoutPanel, Mode = BindingMode.TwoWay });
+                        this.RowDefinitions.Add(rowDefinition);
                         Grid.SetRow(container, this.RowDefinitions.Count - 1);
                         this.Children.Add(container);
                     }
@@ -110,9 +110,9 @@ namespace NeeView.Runtime.LayoutPanel
                     bool isLast = container == containers.Last();
                     if (!isLast)
                     {
-                        var rowDefinigion = new RowDefinition();
-                        rowDefinigion.Height = new GridLength(splitterHeight);
-                        this.RowDefinitions.Add(rowDefinigion);
+                        var rowDefinition = new RowDefinition();
+                        rowDefinition.Height = new GridLength(splitterHeight);
+                        this.RowDefinitions.Add(rowDefinition);
                         var splitter = new GridSplitter()
                         {
                             HorizontalAlignment = HorizontalAlignment.Stretch,

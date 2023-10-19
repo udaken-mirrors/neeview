@@ -7596,4 +7596,19 @@ nv.ShowToast(nv.Book.ViewPages[0].Path)</value>
   <data name="BookConfig.IsTwoPagePanorama" xml:space="preserve">
     <value>"@PageMode.Panorama" in two-page units</value>
   </data>
+  <data name="AlternativeContent.Space" xml:space="preserve">
+    <value>Space</value>
+  </data>
+  <data name="AlternativeContent.PageList" xml:space="preserve">
+    <value>PageList</value>
+  </data>
+  <data name="PanelsConfig.AlternativeContent" xml:space="preserve">
+    <value>Alternative content for main view</value>
+  </data>
+  <data name="PanelsConfig.AlternativeContent.Remarks" xml:space="preserve">
+    <value>Content to display instead when the main view window is displayed.</value>
+  </data>
+  <data name="SettingPage.Panels.MainView" xml:space="preserve">
+    <value>Main view</value>
+  </data>
 </root>

@@ -184,6 +184,24 @@ namespace NeeView.Properties {
         }
         
         /// <summary>
+        ///   PageList に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string AlternativeContent_PageList {
+            get {
+                return ResourceManager.GetString("AlternativeContent.PageList", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Space に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string AlternativeContent_Space {
+            get {
+                return ResourceManager.GetString("AlternativeContent.Space", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Specify the bookshelf location. に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string AppOption_FolderList {
@@ -12325,6 +12343,24 @@ namespace NeeView.Properties {
         }
         
         /// <summary>
+        ///   Alternative content for main view に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string PanelsConfig_AlternativeContent {
+            get {
+                return ResourceManager.GetString("PanelsConfig.AlternativeContent", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Content to display instead when the main view window is displayed. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string PanelsConfig_AlternativeContent_Remarks {
+            get {
+                return ResourceManager.GetString("PanelsConfig.AlternativeContent.Remarks", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Format path display of supplemental text に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string PanelsConfig_IsDecoratePlace {
@@ -15711,6 +15747,15 @@ namespace NeeView.Properties {
         public static string SettingPage_Panels_AutoHideMode_WindowState {
             get {
                 return ResourceManager.GetString("SettingPage.Panels.AutoHideMode.WindowState", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Main view に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string SettingPage_Panels_MainView {
+            get {
+                return ResourceManager.GetString("SettingPage.Panels.MainView", resourceCulture);
             }
         }
         

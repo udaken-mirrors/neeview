@@ -135,6 +135,12 @@ namespace NeeView.Runtime.LayoutPanel
                 return;
             }
 
+            if (_manager.IsSeparated(content))
+            {
+                e.Effects = DragDropEffects.None;
+                return;
+            }
+
             var dock = GetLayoutDockFromPosY(e.GetPosition(this).Y, this.ActualHeight);
 
             if (this.Parent is LayoutDockPanel dockPanel)
@@ -178,6 +184,13 @@ namespace NeeView.Runtime.LayoutPanel
             }
 
             if (content == this.LayoutPanel)
+            {
+                e.Effects = DragDropEffects.None;
+                e.Handled = true;
+                return;
+            }
+
+            if (_manager.IsSeparated(content))
             {
                 e.Effects = DragDropEffects.None;
                 e.Handled = true;

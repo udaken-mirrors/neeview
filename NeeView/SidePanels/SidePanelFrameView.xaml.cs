@@ -209,11 +209,11 @@ namespace NeeView
             private set { if (_vm != value) { _vm = value; RaisePropertyChanged(); } }
         }
 
-        private Thickness _viewpoartMargin;
-        public Thickness ViewpoartMargin
+        private Thickness _viewportMargin;
+        public Thickness ViewportMargin
         {
-            get { return _viewpoartMargin; }
-            set { SetProperty(ref _viewpoartMargin, value); }
+            get { return _viewportMargin; }
+            set { SetProperty(ref _viewportMargin, value); }
         }
 
 

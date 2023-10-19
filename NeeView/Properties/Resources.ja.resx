@@ -7601,4 +7601,19 @@ nv.ShowToast(nv.Book.ViewPages[0].Path)</value>
   <data name="BookConfig.IsTwoPagePanorama" xml:space="preserve">
     <value>「@PageMode.Panorama」を 2 ページ単位にする</value>
   </data>
+  <data name="AlternativeContent.Space" xml:space="preserve">
+    <value>空白</value>
+  </data>
+  <data name="AlternativeContent.PageList" xml:space="preserve">
+    <value>ページリスト</value>
+  </data>
+  <data name="PanelsConfig.AlternativeContent" xml:space="preserve">
+    <value>メインビューの代替コンテンツ</value>
+  </data>
+  <data name="PanelsConfig.AlternativeContent.Remarks" xml:space="preserve">
+    <value>メインビュー ウィンドウを表示している時に代わりに表示するコンテンツです。</value>
+  </data>
+  <data name="SettingPage.Panels.MainView" xml:space="preserve">
+    <value>メインビュー</value>
+  </data>
 </root>

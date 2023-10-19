@@ -3,19 +3,28 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Text.Encodings.Web;
-using System.Text.Json;
 using System.Windows;
 
 namespace NeeView.Runtime.LayoutPanel
 {
     public class LayoutPanelManager
     {
+        public LayoutPanelManager()
+        {
+            Windows = new LayoutPanelWindowManager(this);
+        }
+
+        public event EventHandler? DragBegin;
+        public event EventHandler? DragEnd;
+
+
         public Dictionary<string, LayoutPanel> Panels { get; protected set; } = new Dictionary<string, LayoutPanel>();
 
         public Dictionary<string, LayoutDockPanelContent> Docks { get; protected set; } = new Dictionary<string, LayoutDockPanelContent>();
 
         public LayoutPanelWindowManager Windows { get; protected set; }
+
+        public List<LayoutPanel> Separates { get; protected set; } = new();
 
         public Dictionary<string, string> Resources { get; private set; } = new Dictionary<string, string>()
         {
@@ -25,14 +34,6 @@ namespace NeeView.Runtime.LayoutPanel
         };
 
         public ILayoutPanelWindowBuilder? WindowBuilder { get; set; }
-
-        public LayoutPanelManager()
-        {
-            Windows = new LayoutPanelWindowManager(this);
-        }
-
-        public event EventHandler? DragBegin;
-        public event EventHandler? DragEnd;
 
 
         public LayoutDockPanelNode? FindLayoutDockPanelNode(LayoutPanel panel)
@@ -86,14 +87,40 @@ namespace NeeView.Runtime.LayoutPanel
             return (panel?.Content as UIElement)?.IsVisible == true;
         }
 
+        public bool IsPanelDock(LayoutPanel panel)
+        {
+            return !IsPanelFloating(panel) && !IsSeparated(panel);
+        }
+
         public bool IsPanelFloating(LayoutPanel panel)
         {
-            return panel.WindowPlacement.IsValid() || Windows.Contains(panel);
+            return (panel.WindowPlacement.IsValid() || Windows.Contains(panel)) && !IsSeparated(panel);
+        }
+
+        public bool IsSeparated(LayoutPanel panel)
+        {
+            return Separates.Contains(panel);
+        }
+
+        public void SetSeparate(LayoutPanel panel, bool separate)
+        {
+            if (separate)
+            {
+                if (Separates.Contains(panel)) return;
+                StandAlone(panel);
+                Close(panel);
+                Separates.Add(panel);
+            }
+            else
+            {
+                Separates.Remove(panel);
+            }
         }
 
         public void Open(LayoutPanel panel)
         {
             if (panel is null) throw new ArgumentNullException(nameof(panel));
+            if (IsSeparated(panel)) return;
 
             if (panel.WindowPlacement.IsValid() || Windows.Contains(panel))
             {
@@ -113,6 +140,7 @@ namespace NeeView.Runtime.LayoutPanel
         public void OpenWindow(LayoutPanel panel, WindowPlacement placement)
         {
             if (panel is null) throw new ArgumentNullException(nameof(panel));
+            if (IsSeparated(panel)) return;
 
             StandAlone(panel);
             CloseDock(panel);
@@ -122,6 +150,7 @@ namespace NeeView.Runtime.LayoutPanel
         public void OpenDock(LayoutPanel panel)
         {
             if (panel is null) throw new ArgumentNullException(nameof(panel));
+            if (IsSeparated(panel)) return;
 
             Windows.Close(panel);
             var node = FindLayoutDockPanelNode(panel);

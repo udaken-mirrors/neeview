@@ -16,23 +16,15 @@ namespace NeeView
 
 
         private MainViewWindow? _window;
-
         private readonly MainViewComponent _viewComponent;
-
         private readonly MainView _mainView;
         private readonly MainViewBay _mainViewBay;
-
+        private IDisposableContent? _alternativeContent;
         private readonly ContentControl _defaultSocket;
-
         private bool _isStoreEnabled = true;
-
         private readonly MainViewLockerMediator _mediator;
         private readonly MainViewLocker _dockingLocker;
         private MainViewLocker? _floatingLocker;
-
-        public MainViewWindow? Window => _window;
-        public MainView MainView => _mainView;
-        public MainViewBay MainViewBay => _mainViewBay;
 
 
         public static void Initialize(MainViewComponent viewComponent, ContentControl defaultSocket)
@@ -55,10 +47,18 @@ namespace NeeView
 
             Config.Current.MainView.AddPropertyChanged(nameof(MainViewConfig.IsFloating), (s, e) => Update());
 
+            Config.Current.Panels.SubscribePropertyChanged(nameof(PanelsConfig.AlternativeContent), (s, e) => UpdateAlternativeContent());
+
             _mediator = new MainViewLockerMediator(_mainView);
             _dockingLocker = new MainViewLocker(_mediator, MainWindow.Current);
             _dockingLocker.Activate();
         }
+
+
+        public MainViewWindow? Window => _window;
+        public MainView MainView => _mainView;
+        public MainViewBay MainViewBay => _mainViewBay;
+
 
         private void BookHub_BookChanging(object? sender, BookChangingEventArgs e)
         {
@@ -106,7 +106,8 @@ namespace NeeView
 
             _dockingLocker.Deactivate();
 
-            _defaultSocket.Content = _mainViewBay;
+            _alternativeContent = CreateAlternativeContent();
+            _defaultSocket.Content = _alternativeContent.Content;
 
             InfoMessage.Current.ClearMessage(ShowMessageStyle.Normal);
 
@@ -123,7 +124,6 @@ namespace NeeView
             _floatingLocker.Activate();
         }
 
-
         private void Docking()
         {
             if (_window is null) return;
@@ -139,12 +139,36 @@ namespace NeeView
             _window.Content = null;
             _window = null;
 
+            _alternativeContent?.Dispose();
+            _alternativeContent = null;
+
             // NOTE: コンテンツの差し替えでLoadedイベントが呼ばれないことがあるため、新規コントロールをはさむことで確実にLoadedイベントが呼ばれるようにする。
             _defaultSocket.Content = new ContentControl() { Content = _mainView, IsTabStop = false, Focusable = false };
 
             _dockingLocker.Activate();
         }
 
+        private IDisposableContent CreateAlternativeContent()
+        {
+            switch (Config.Current.Panels.AlternativeContent)
+            {
+                case AlternativeContent.Space:
+                    return new NormalAlternativeContent(_mainViewBay);
+                case AlternativeContent.PageList:
+                    return new LayoutPanelAlternativeContent(nameof(PageListPanel));
+                default:
+                    throw new NotSupportedException();
+            }
+        }
+
+        private void UpdateAlternativeContent()
+        {
+            if (_window is null) return;
+
+            _alternativeContent?.Dispose();
+            _alternativeContent = CreateAlternativeContent();
+            _defaultSocket.Content = _alternativeContent.Content;
+        }
 
 
         public void SetIsStoreEnabled(bool allow)
@@ -169,7 +193,4 @@ namespace NeeView
             }
         }
     }
-
-
-
 }

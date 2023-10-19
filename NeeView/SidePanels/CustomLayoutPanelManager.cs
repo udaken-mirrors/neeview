@@ -16,7 +16,7 @@ using System.Windows.Threading;
 namespace NeeView
 {
     // NOTE: Panels生成でインスタンスを参照しているため例外処理をCustomLayoutPanelManagerから分離させている
-    // PanelsSource -> SidePaneFatory > FolderPanel -> FolderListView -> FolderTreeVierw -> SidePanelFrame:42
+    // PanelsSource -> SidePaneFactory > FolderPanel -> FolderListView -> FolderTreeView -> SidePanelFrame:42
     public class CustomLayoutPanelMessenger
     {
         public static event EventHandler? CollectionChanged;
@@ -38,11 +38,11 @@ namespace NeeView
             _current = new CustomLayoutPanelManager();
 
             // TODO: Panels生成でインスタンスを参照しているため処理をコンストラクタから分離させているがよろしくない
-            // PanelsSource -> SidePaneFatory > FolderPanel -> FolderListView -> FolderTreeVierw -> SidePanelFrame:42
+            // PanelsSource -> SidePaneFactory > FolderPanel -> FolderListView -> FolderTreeView -> SidePanelFrame:42
             //_current.InitializePanels();
         }
 
-        // NTOE: 初期化前に復元を呼ばれる可能性があるためstaticメソッドを用意している
+        // NTOE: 初期化前に復元を呼ばれる可能性があるため static メソッドを用意している
         public static void RestoreMaybe()
         {
             if (_current is null) return;
@@ -72,7 +72,7 @@ namespace NeeView
 
             WindowBuilder = new LayoutPanelWindowBuilder();
 
-            var panelKyes = new[] {
+            var panelKeys = new[] {
                 nameof(FolderPanel),
                 nameof(PageListPanel),
                 nameof(HistoryPanel),
@@ -84,9 +84,9 @@ namespace NeeView
             };
 
             var panelLeftKeys = new[] { nameof(FolderPanel), nameof(PageListPanel), nameof(HistoryPanel) };
-            var panelRightKeys = panelKyes.Except(panelLeftKeys).ToArray();
+            var panelRightKeys = panelKeys.Except(panelLeftKeys).ToArray();
 
-            PanelsSource = SidePanelFactory.CreatePanels(panelKyes).ToDictionary(e => e.TypeCode, e => e);
+            PanelsSource = SidePanelFactory.CreatePanels(panelKeys).ToDictionary(e => e.TypeCode, e => e);
             Panels = LayoutPanelFactory.CreatePanels(PanelsSource.Values).ToDictionary(e => e.Key, e => e);
 
             LeftDock = new LayoutDockPanelContent(this);

@@ -63,6 +63,11 @@ namespace NeeView.Runtime.LayoutPanel
             get { return _selectedItem; }
             set
             {
+                if (value is not null && !IsItemDock(value))
+                {
+                    value = null;
+                }
+
                 if (_selectedItem != value)
                 {
                     _selectedItem = value != null && Items.Contains(value) ? value : null;
@@ -89,6 +94,10 @@ namespace NeeView.Runtime.LayoutPanel
             set { SetProperty(ref _leaderPanels, value); }
         }
 
+        private bool IsItemDock(LayoutPanelCollection item)
+        {
+            return item.All(e => LayoutPanelManager.IsPanelDock(e));
+        }
 
         private void AttachItemsChangeCallback(LayoutPanelCollection item)
         {
@@ -110,7 +119,12 @@ namespace NeeView.Runtime.LayoutPanel
         {
             if (SelectedItem is null)
             {
-                SelectedItem = LastSelectedItem ?? Items.FirstOrDefault();
+                var lastSelectedItem = LastSelectedItem;
+                if (lastSelectedItem is not null && !IsItemDock(lastSelectedItem))
+                {
+                    lastSelectedItem = null;
+                }
+                SelectedItem = lastSelectedItem ?? Items.FirstOrDefault(e => IsItemDock(e));
             }
             else
             {
