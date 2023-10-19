@@ -485,6 +485,15 @@ namespace NeeView
         {
             VisibleAtOnceRequest?.Invoke(this, new VisibleAtOnceRequestEventArgs(key, isVisible));
         }
+
+        /// <summary>
+        /// すべての自動パネルをすぐ閉じる
+        /// </summary>
+        public void AllPanelHideAtOnce()
+        {
+            VisibleAtOnce("", false);
+            SidePanelFrame.Current.VisibleAtOnce("", false);
+        }
     }
 
 }

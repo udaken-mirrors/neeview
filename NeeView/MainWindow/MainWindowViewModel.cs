@@ -292,5 +292,13 @@ namespace NeeView
                     throw new NotSupportedException();
             }
         }
+
+        /// <summary>
+        /// 自動表示パネルをすぐ閉じる
+        /// </summary>
+        public void AllPanelHideAtOnce()
+        {
+            _model.AllPanelHideAtOnce();
+        }
     }
 }

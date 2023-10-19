@@ -209,6 +209,10 @@ namespace NeeView
             // page caption
             InitializePageCaption();
 
+            // side panel quick hide
+            this.MainViewPanelRect.PreviewMouseDown += (s, e) => _vm.AllPanelHideAtOnce();
+            this.MainViewPanelRect.PreviewMouseWheel += (s, e) => _vm.AllPanelHideAtOnce();
+
             // 開発用初期化
             Debug_Initialize();
 
