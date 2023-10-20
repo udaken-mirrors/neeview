@@ -34,7 +34,7 @@ namespace NeeView.Interop
 
         public override string ToString()
         {
-            return $"{left},{top},{right},{bottom}";
+            return $"(x={left}, y={top}, width={right - left}, height={bottom - top})";
         }
 
         public static RECT Parse(string s)

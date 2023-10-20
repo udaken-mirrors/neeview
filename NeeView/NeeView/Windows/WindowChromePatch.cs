@@ -1,4 +1,6 @@
-﻿using System;
+﻿//#define LOCAL_DEBUG
+
+using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Windows;
@@ -105,10 +107,17 @@ namespace NeeView.Windows
             if (!NativeMethods.IsZoomed(hWnd)) return IntPtr.Zero;
 
             var rcsize = Marshal.PtrToStructure<NCCALCSIZE_PARAMS>(lParam);
-            //Debug.WriteLine("CalcNonClientSize {0}", rcsize.lppos.flags);
+            Trace("RCSize.LPPos.Flags {0}", rcsize.lppos.flags);
             if (rcsize.lppos.flags.HasFlag(SetWindowPosFlags.SWP_NOSIZE)) return IntPtr.Zero;
 
-            var hMonitor = NativeMethods.MonitorFromWindow(hWnd, (int)MonitorDefaultTo.MONITOR_DEFAULTTONEAREST);
+            Trace($"RCSize.rgrc[0] {rcsize.rgrc[0]}");
+            //Trace($"RCSize.rgrc[1] {rcsize.rgrc[1]}");
+            //Trace($"RCSize.rgrc[2] {rcsize.rgrc[2]}");
+            var rect = rcsize.rgrc[0];
+            var windowCenter = new  POINT((rect.right + rect.left) / 2, (rect.top + rect.bottom) / 2);
+            Trace($"RCSize.rgrc[0].Center: {windowCenter}");
+
+            var hMonitor = NativeMethods.MonitorFromPoint(windowCenter, (int)MonitorDefaultTo.MONITOR_DEFAULTTONEAREST);
             if (hMonitor == IntPtr.Zero) return IntPtr.Zero;
 
             var monitorInfo = new MONITORINFO()
@@ -116,6 +125,7 @@ namespace NeeView.Windows
                 cbSize = (uint)Marshal.SizeOf(typeof(MONITORINFO))
             };
             if (!NativeMethods.GetMonitorInfo(hMonitor, ref monitorInfo)) return IntPtr.Zero;
+            Trace($"MonitorInfo: Monitor={monitorInfo.rcMonitor}, Work={monitorInfo.rcWork}, Flags={monitorInfo.dwFlags}");
 
             RECT workArea;
             if (_window.WindowStyle == WindowStyle.None)
@@ -129,7 +139,7 @@ namespace NeeView.Windows
                 workArea = monitorInfo.rcWork;
                 AppBar.ApplyAppbarSpace(hMonitor, monitorInfo.rcMonitor, ref workArea);
             }
-            //Debug.WriteLine("CalcNonClientSize {0} {1} {2} {3}", workArea.left, workArea.top, workArea.right, workArea.bottom);
+            Trace($"Calc.RCSize {workArea}");
 
             rcsize.rgrc[0] = workArea;
             rcsize.rgrc[1] = workArea;
@@ -138,6 +148,19 @@ namespace NeeView.Windows
 
             handled = true;
             return (IntPtr)(WindowValidRects.WVR_ALIGNTOP | WindowValidRects.WVR_ALIGNLEFT | WindowValidRects.WVR_VALIDRECTS);
+        }
+
+
+        [Conditional("LOCAL_DEBUG")]
+        private void Trace(string message)
+        {
+            Debug.WriteLine($"{this.GetType().Name}: {message}");
+        }
+
+        [Conditional("LOCAL_DEBUG")]
+        private void Trace(string format, params object[] args)
+        {
+            Debug.WriteLine($"{this.GetType().Name}: {string.Format(format, args)}");
         }
     }
 }

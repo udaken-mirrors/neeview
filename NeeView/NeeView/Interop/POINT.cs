@@ -18,7 +18,7 @@ namespace NeeView.Interop
 
         public override string ToString()
         {
-            return $"{x},{y}";
+            return $"(x={x}, y={y})";
         }
 
         public static POINT Parse(string s)

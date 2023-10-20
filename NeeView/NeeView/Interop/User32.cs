@@ -18,6 +18,9 @@ namespace NeeView.Interop
         [DllImport("user32")]
         internal static extern IntPtr MonitorFromWindow(IntPtr handle, int flags);
 
+        [DllImport("User32.dll")]
+        internal static extern IntPtr MonitorFromPoint(POINT pt, int flags);
+
         [DllImport("user32", CharSet = CharSet.Unicode, EntryPoint = "GetMonitorInfoW", SetLastError = true, ExactSpelling = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
         internal static extern bool GetMonitorInfo(IntPtr hMonitor, ref MONITORINFO lpmi);
