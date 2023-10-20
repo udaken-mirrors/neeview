@@ -89,9 +89,10 @@ namespace NeeView.Runtime.LayoutPanel
 
         public bool IsPanelDock(LayoutPanel panel)
         {
-            return !IsPanelFloating(panel) && !IsSeparated(panel);
+            return !Windows.Contains(panel) && !IsSeparated(panel);
         }
 
+        // TODO: これ使用されてる？
         public bool IsPanelFloating(LayoutPanel panel)
         {
             return (panel.WindowPlacement.IsValid() || Windows.Contains(panel)) && !IsSeparated(panel);

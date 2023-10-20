@@ -25,6 +25,7 @@ namespace NeeView
         private List<Page>? _selectedItems;
         private List<Page> _viewItems = new();
         private ObservableCollection<Page>? _items;
+        private bool _isPageMoved;
 
 
         private PageList()
@@ -260,9 +261,41 @@ namespace NeeView
         }
 
 
-        public void Jump(Page page)
+        /// <summary>
+        /// ページ移動フラグクリア
+        /// </summary>
+        public void ResetMoveFlag()
         {
+            _isPageMoved = false;
+        }
+
+        /// <summary>
+        /// ページ移動
+        /// </summary>
+        /// <param name="page">移動先ページ</param>
+        public void MoveTo(Page page)
+        {
+            // MainViewWindow の最小化を解除
+            // TODO: これはもっと先でもよいかも？。 MainViewBayで最小化されている場合をどうするか。 MainViewBay タッチで開く？
+            var isRecovery = MainViewManager.Current.RecoveryFloating();
+
+            // ページ移動
+            // TODO: ウィンドウ復元時は即時移動反映。スクロールは不要。
+            _isPageMoved = true;
             BookOperation.Current.JumpPage(this, page);
+        }
+
+        /// <summary>
+        /// ページ移動終了処理
+        /// </summary>
+        public void MoveEnd()
+        {
+            if (!_isPageMoved) return;
+            _isPageMoved = false;
+
+            // 必要に応じてメインビューにフォーカスを移動する
+            if (!Config.Current.PageList.FocusMainView) return;
+            MainViewComponent.Current.RaiseFocusMainViewRequest();
         }
 
         public List<KeyValuePair<int, PageHistoryUnit>> GetHistory(int direction, int size)

@@ -105,7 +105,7 @@ namespace NeeView
                 // 水平ホイールのコマンド入れ替え初期化
                 self.Config.Command.IsReversePageMoveHorizontalWheel = self.Config.Command.IsReversePageMoveWheel;
 
-                // ページモード切替ジェスチャーの割当切り替え
+                // コマンド関係
                 if (self.Commands != null)
                 {
                     // ページモード切替ジェスチャが初期設定ならば切り替える
@@ -128,6 +128,12 @@ namespace NeeView
                         var togglePageModeReverse = togglePageModeReverseCommand.CreateMemento();
                         togglePageModeReverse.MouseGesture = "";
                         self.Commands[togglePageModeReverseCommand.Name] = togglePageModeReverse;
+                    }
+
+                    // メインビューウィンドウ切り替えコマンドにショートカットキーF12を設定
+                    if (self.Commands.TryGetValue("ToggleMainViewFloating", out var toggleMainViewFloating) && toggleMainViewFloating.ShortCutKey == "" && !self.Commands.Any(e => e.Key.Contains("F12")))
+                    {
+                        toggleMainViewFloating.ShortCutKey = "F12";
                     }
                 }
             }

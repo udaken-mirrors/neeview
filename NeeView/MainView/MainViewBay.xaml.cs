@@ -44,6 +44,13 @@ namespace NeeView
             // Drag&Drop設定
             this.AllowDrop = true;
             ContentDropManager.Current.SetDragDropEvent(this);
+
+            this.PreviewMouseLeftButtonDown += MainViewBay_PreviewMouseLeftButtonDown;
+        }
+
+        private void MainViewBay_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            MainViewManager.Current.RecoveryFloating();
         }
     }
 }

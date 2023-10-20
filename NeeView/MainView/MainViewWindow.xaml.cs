@@ -68,7 +68,11 @@ namespace NeeView
             this.Loaded += MainViewWindow_Loaded;
             this.DpiChanged += MainViewWindow_DpiChanged;
             this.Activated += MainViewWindow_Activated;
+            this.Closing += MainViewWindow_Closing;
             this.Closed += MainViewWindow_Closed;
+
+            // key event for window
+            this.KeyDown += MainViewWindow_KeyDown;
 
             UpdateCaptionBar();
 
@@ -144,10 +148,30 @@ namespace NeeView
             RoutedCommandTable.Current.UpdateInputGestures();
         }
 
+        private void MainViewWindow_KeyDown(object sender, KeyEventArgs e)
+        {
+            // ESCキーでウィンドウを閉じる
+            if (e.Key == Key.Escape)
+            {
+                SystemCommands.CloseWindow(this);
+                e.Handled = true;
+            }
+        }
+
         private void WindowStateManager_StateChanged(object? sender, EventArgs e)
         {
             UpdateCaptionBar();
             RaisePropertyChanged(nameof(IsFullScreen));
+        }
+
+        private void MainViewWindow_Closing(object? sender, CancelEventArgs e)
+        {
+            // ウィンドウを閉じる処理は最小化に置き換える
+            if (Config.Current.MainView.IsFloating)
+            {
+                SystemCommands.MinimizeWindow(this);
+                e.Cancel = true;
+            }
         }
 
         private void MainViewWindow_Closed(object? sender, EventArgs e)

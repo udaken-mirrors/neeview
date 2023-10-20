@@ -11695,6 +11695,24 @@ namespace NeeView.Properties {
         }
         
         /// <summary>
+        ///   Focus to main view に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string PageListConfig_FocusMainView {
+            get {
+                return ResourceManager.GetString("PageListConfig.FocusMainView", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   After selecting a page, move the focus to the main view. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string PageListConfig_FocusMainView_Remarks {
+            get {
+                return ResourceManager.GetString("PageListConfig.FocusMainView.Remarks", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Page name display format of PageList に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string PageListConfig_Format {
@@ -11709,6 +11727,15 @@ namespace NeeView.Properties {
         public static string PageListConfig_PanelListItemStyle {
             get {
                 return ResourceManager.GetString("PageListConfig.PanelListItemStyle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Show book title に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string PageListConfig_ShowBookTitle {
+            get {
+                return ResourceManager.GetString("PageListConfig.ShowBookTitle", resourceCulture);
             }
         }
         

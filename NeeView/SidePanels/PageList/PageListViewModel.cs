@@ -64,6 +64,7 @@ namespace NeeView
             set { if (_model != value) { _model = value; RaisePropertyChanged(); } }
         }
 
+        public PageListConfig PageListConfig => Config.Current.PageList;
 
         #region Commands
 
@@ -115,12 +116,26 @@ namespace NeeView
                 menu.Items.Add(CreateListItemStyleMenuItem(Properties.Resources.Word_StyleContent, PanelListItemStyle.Content));
                 menu.Items.Add(CreateListItemStyleMenuItem(Properties.Resources.Word_StyleBanner, PanelListItemStyle.Banner));
                 menu.Items.Add(CreateListItemStyleMenuItem(Properties.Resources.Word_StyleThumbnail, PanelListItemStyle.Thumbnail));
+                menu.Items.Add(new Separator());
+                menu.Items.Add(CreateCheckableMenuItem(Properties.Resources.PageListConfig_ShowBookTitle, new Binding(nameof(PageListConfig.ShowBookTitle)) { Source = Config.Current.PageList }));
+                menu.Items.Add(CreateCheckableMenuItem(Properties.Resources.PageListConfig_FocusMainView, new Binding(nameof(PageListConfig.FocusMainView)) { Source = Config.Current.PageList }));
                 return menu;
             }
 
             private MenuItem CreateListItemStyleMenuItem(string header, PanelListItemStyle style)
             {
                 return CreateListItemStyleMenuItem(header, _vm.SetListItemStyle, style, Config.Current.PageList);
+            }
+
+            private MenuItem CreateCheckableMenuItem(string header, Binding binding)
+            {
+                var menuItem = new MenuItem()
+                {
+                    Header=header,
+                    IsCheckable=true,
+                };
+                menuItem.SetBinding(MenuItem.IsCheckedProperty, binding);
+                return menuItem;
             }
         }
 

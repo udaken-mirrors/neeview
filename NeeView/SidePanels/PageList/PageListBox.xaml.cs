@@ -54,6 +54,7 @@ namespace NeeView
 
             this.Loaded += PageListBox_Loaded;
             this.Unloaded += PageListBox_Unloaded;
+            this.MouseLeave += PageListBox_MouseLeave;
         }
 
 
@@ -142,7 +143,7 @@ namespace NeeView
 
         private void InitializeCommand()
         {
-            this.ListBox.CommandBindings.Add(_commandResource.CreateCommandBinding(OpenCommand));
+            this.ListBox.CommandBindings.Add(new CommandBinding(OpenCommand, Open_Exec, Open_CanExec));
             this.ListBox.CommandBindings.Add(_commandResource.CreateCommandBinding(OpenBookCommand));
             this.ListBox.CommandBindings.Add(_commandResource.CreateCommandBinding(OpenExplorerCommand));
             this.ListBox.CommandBindings.Add(_commandResource.CreateCommandBinding(OpenExternalAppCommand));
@@ -158,6 +159,19 @@ namespace NeeView
 
         #endregion
 
+        /// <summary>
+        /// ページを開くコマンド
+        /// </summary>
+        private void Open_CanExec(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = (sender as ListBox)?.SelectedItem is Page;
+        }
+
+        private void Open_Exec(object sender, ExecutedRoutedEventArgs e)
+        {
+            if ((sender as ListBox)?.SelectedItem is not Page page) return;
+            _vm.Model.MoveTo(page);
+        }
 
         private void PageListBox_Loaded(object? sender, RoutedEventArgs e)
         {
@@ -168,9 +182,9 @@ namespace NeeView
             _thumbnailLoader = new ListBoxThumbnailLoader(this, _jobClient);
             _thumbnailLoader.Load();
 
-            Config.Current.Panels.ContentItemProfile.PropertyChanged += PanelListtemProfile_PropertyChanged;
-            Config.Current.Panels.BannerItemProfile.PropertyChanged += PanelListtemProfile_PropertyChanged;
-            Config.Current.Panels.ThumbnailItemProfile.PropertyChanged += PanelListtemProfile_PropertyChanged;
+            Config.Current.Panels.ContentItemProfile.PropertyChanged += PanelListItemProfile_PropertyChanged;
+            Config.Current.Panels.BannerItemProfile.PropertyChanged += PanelListItemProfile_PropertyChanged;
+            Config.Current.Panels.ThumbnailItemProfile.PropertyChanged += PanelListItemProfile_PropertyChanged;
 
             FocusSelectedItem(false);
         }
@@ -180,14 +194,19 @@ namespace NeeView
             _vm.Unloaded();
             _vm.ViewItemsChanged -= ViewModel_ViewItemsChanged;
 
-            Config.Current.Panels.ContentItemProfile.PropertyChanged -= PanelListtemProfile_PropertyChanged;
-            Config.Current.Panels.BannerItemProfile.PropertyChanged -= PanelListtemProfile_PropertyChanged;
-            Config.Current.Panels.ThumbnailItemProfile.PropertyChanged -= PanelListtemProfile_PropertyChanged;
+            Config.Current.Panels.ContentItemProfile.PropertyChanged -= PanelListItemProfile_PropertyChanged;
+            Config.Current.Panels.BannerItemProfile.PropertyChanged -= PanelListItemProfile_PropertyChanged;
+            Config.Current.Panels.ThumbnailItemProfile.PropertyChanged -= PanelListItemProfile_PropertyChanged;
 
             _jobClient?.Dispose();
         }
 
-        private void PanelListtemProfile_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+        private void PageListBox_MouseLeave(object sender, MouseEventArgs e)
+        {
+            _vm.Model.MoveEnd();
+        }
+
+        private void PanelListItemProfile_PropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
             this.ListBox.Items?.Refresh();
         }
@@ -251,6 +270,12 @@ namespace NeeView
             _vm.Model.SelectedItems = this.ListBox.SelectedItems.Cast<Page>().ToList();
         }
 
+        // マウス入力
+        private void PageList_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            _vm.Model.ResetMoveFlag();
+        }
+
         // リストのキ入力
         private void PageList_KeyDown(object? sender, KeyEventArgs e)
         {
@@ -293,7 +318,8 @@ namespace NeeView
                 if (e.Key == Key.Return && page is not null)
                 {
                     // 項目決定
-                    _vm.Model.Jump(page);
+                    // NOTE: コマンドバインドが優先されるためこの処理は実行されない
+                    _vm.Model.MoveTo(page);
                     e.Handled = true;
                 }
             }
@@ -306,6 +332,11 @@ namespace NeeView
                     e.Handled = true;
                 }
             }
+        }
+
+        private void PageList_KeyUp(object sender, KeyEventArgs e)
+        {
+            _vm.Model.MoveEnd();
         }
 
         private async void PageList_IsVisibleChanged(object? sender, DependencyPropertyChangedEventArgs e)
@@ -330,8 +361,13 @@ namespace NeeView
 
             if ((sender as ListBoxItem)?.Content is Page page)
             {
-                _vm.Model.Jump(page);
+                _vm.Model.MoveTo(page);
             }
+        }
+
+        private void PageListItem_MouseLeftButtonUp(object? sender, MouseButtonEventArgs e)
+        {
+            _vm.Model.MoveEnd();
         }
 
         // 項目ダブルクリック

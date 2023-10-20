@@ -184,6 +184,7 @@
 
         <Style x:Key="ListBoxItemStyle" TargetType="ListBoxItem" BasedOn="{StaticResource NVListBoxItem}">
             <EventSetter Event="PreviewMouseLeftButtonDown" Handler="PageListItem_MouseLeftButtonDown" />
+            <EventSetter Event="PreviewMouseLeftButtonUp" Handler="PageListItem_MouseLeftButtonUp" />
             <EventSetter Event="MouseDoubleClick" Handler="PageListItem_MouseDoubleClick" />
             <EventSetter Event="ContextMenuOpening" Handler="PageListItem_ContextMenuOpening" />
             <Setter Property="FocusVisualStyle" Value="{StaticResource NVListItemFocusVisual}" />
@@ -214,7 +215,9 @@
                  ItemsSource="{Binding Model.Items, NotifyOnTargetUpdated=True}"
                  SelectedItem="{Binding Model.SelectedItem}"
                  SelectionChanged="PageList_SelectionChanged"
+                 PreviewMouseLeftButtonDown="PageList_MouseLeftButtonDown"
                  KeyDown="PageList_KeyDown"
+                 KeyUp="PageList_KeyUp"
                  IsVisibleChanged="PageList_IsVisibleChanged"
                  TargetUpdated="PageList_TargetUpdated"
                  SelectionMode="Extended"

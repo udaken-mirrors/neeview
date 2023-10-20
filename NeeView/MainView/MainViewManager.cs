@@ -78,6 +78,20 @@ namespace NeeView
             Config.Current.MainView.IsFloating = isFloating;
         }
 
+        public bool RecoveryFloating()
+        {
+            if (_window is not null)
+            {
+                // ウィンドウが最小化されていたら復元する
+                if (_window.WindowState == WindowState.Minimized)
+                {
+                    _window.WindowState = WindowState.Normal;
+                    return true;
+                }
+            }
+            return false;
+        }
+
         public void Update()
         {
             if (Config.Current.MainView.IsFloating)

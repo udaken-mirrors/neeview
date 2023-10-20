@@ -7616,4 +7616,13 @@ nv.ShowToast(nv.Book.ViewPages[0].Path)</value>
   <data name="SettingPage.Panels.MainView" xml:space="preserve">
     <value>メインビュー</value>
   </data>
+  <data name="PageListConfig.ShowBookTitle" xml:space="preserve">
+    <value>ブック名を表示</value>
+  </data>
+  <data name="PageListConfig.FocusMainView" xml:space="preserve">
+    <value>メインビューにフォーカスする</value>
+  </data>
+  <data name="PageListConfig.FocusMainView.Remarks" xml:space="preserve">
+    <value>ページ選択後、メインビューにフォーカスを移動します。</value>
+  </data>
 </root>

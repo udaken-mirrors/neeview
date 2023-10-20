@@ -2395,3 +2395,6 @@ AlternativeContent.PageList=PageList
 PanelsConfig.AlternativeContent=Alternative content for main view
 PanelsConfig.AlternativeContent.Remarks=Content to display instead when the main view window is displayed.
 SettingPage.Panels.MainView=Main view
+PageListConfig.ShowBookTitle=Show book title
+PageListConfig.FocusMainView=Focus to main view
+PageListConfig.FocusMainView.Remarks=After selecting a page, move the focus to the main view.

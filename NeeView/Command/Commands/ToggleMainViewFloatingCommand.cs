@@ -9,6 +9,7 @@ namespace NeeView
         {
             this.Group = Properties.Resources.CommandGroup_Panel;
             this.IsShowMessage = false;
+            this.ShortCutKey = "F12";
         }
 
         public override Binding CreateIsCheckedBinding()

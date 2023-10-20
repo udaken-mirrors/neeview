@@ -60,7 +60,7 @@
 
         <StackPanel DockPanel.Dock="Top">
 
-            <Border>
+            <Border Visibility="{Binding PageListConfig.ShowBookTitle, Converter={StaticResource BooleanToVisibilityConverter}}">
                 <nwc:LeftTrimmingTextBlock TextSource="{Binding Model.PlaceDispString}" ToolTip="{Binding Model.PlaceDispString}" VerticalAlignment="Center" />
             </Border>
 
