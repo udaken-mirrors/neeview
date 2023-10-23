@@ -40,13 +40,15 @@
                                 <AdornerDecorator Grid.Row="1">
                                     <ContentPresenter />
                                 </AdornerDecorator>
-                                <ResizeGrip x:Name="WindowResizeGrip" Grid.Row="0" Grid.RowSpan="2" HorizontalAlignment="Right" VerticalAlignment="Bottom" Visibility="Collapsed" IsTabStop="false" />
+                                <Grid x:Name="PART_ResizeGrip" Grid.Row="0" Grid.RowSpan="2" HorizontalAlignment="Right" VerticalAlignment="Bottom" Visibility="Collapsed">
+                                    <ResizeGrip IsTabStop="false" Style="{StaticResource ResizeGripStyle}" />
+                                </Grid>
                             </Grid>
                         </Border>
                     </Grid>
                     <ControlTemplate.Triggers>
                         <Trigger Property="ResizeMode" Value="CanResizeWithGrip">
-                            <Setter TargetName="WindowResizeGrip" Property="Visibility" Value="Visible" />
+                            <Setter TargetName="PART_ResizeGrip" Property="Visibility" Value="Visible" />
                         </Trigger>
                         <Trigger Property="ResizeMode" Value="NoResize">
                             <Setter TargetName="PART_CaptionBar" Property="IsMinimizeEnabled" Value="False" />

@@ -85,6 +85,15 @@
 
     <!--#endregion NVFocusVisual-->
 
+    <Style x:Key="ResizeGripStyle" TargetType="{x:Type FrameworkElement}">
+        <Setter Property="WindowChrome.ResizeGripDirection" Value="BottomRight"/>
+        <Setter Property="Visibility" Value="Visible"/>
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding WindowState, RelativeSource={RelativeSource AncestorType=Window}}" Value="Maximized">
+                <Setter Property="Visibility" Value="Collapsed"/>
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
 
     <!--#region NVScrollViewer-->
 

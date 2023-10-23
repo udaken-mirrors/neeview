@@ -63,6 +63,10 @@
 
             <local:NormalInfoMessageView Grid.Row="1" Source="{Binding InfoMessage.NormalInfoMessage}" />
 
+            <Grid x:Name="ResizeGrip" Grid.Row="1" Style="{StaticResource ResizeGripStyle}" HorizontalAlignment="Right" VerticalAlignment="Bottom">
+                <Path Fill="Transparent" Data="M20,0V20H0Z"/>
+            </Grid>
+
         </Grid>
     </Border>
 

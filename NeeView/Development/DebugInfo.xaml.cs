@@ -86,12 +86,20 @@ namespace NeeView
 
         public void OnLoad()
         {
-            MainWindow.Current.MouseMove += MainWindow_MouseMove;
+            var mainWindow = Application.Current?.MainWindow;
+            if (mainWindow is not null)
+            {
+                mainWindow.MouseMove += MainWindow_MouseMove;
+            }
         }
 
         public void OnUnload()
         {
-            MainWindow.Current.MouseMove -= MainWindow_MouseMove;
+            var mainWindow = Application.Current?.MainWindow;
+            if (mainWindow is not null)
+            {
+                mainWindow.MouseMove -= MainWindow_MouseMove;
+            }
         }
 
         private void MainWindow_MouseMove(object? sender, MouseEventArgs e)

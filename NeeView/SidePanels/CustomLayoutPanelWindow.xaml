@@ -28,6 +28,10 @@
         <ContentControl x:Name="MainViewSocket" Grid.Row="1" Content="{Binding LayoutPanel.Content}" />
         <local:CaptionBar x:Name="CaptionBar" Grid.Row="0" MinHeight="30" VerticalAlignment="Top" Title="{Binding Title}" IsMinimizeEnabled="False" />
         <local:RenameManager x:Name="RenameManager"  d:IsHidden="True" />
+
+        <Grid x:Name="ResizeGrip" Grid.Row="1" Style="{StaticResource ResizeGripStyle}" HorizontalAlignment="Right" VerticalAlignment="Bottom">
+            <Path Fill="Transparent" Data="M20,0V20H0Z"/>
+        </Grid>
     </Grid>
 
 </layoutpanel:LayoutPanelWindow>
