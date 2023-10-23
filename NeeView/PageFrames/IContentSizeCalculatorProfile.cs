@@ -10,6 +10,7 @@ namespace NeeView.PageFrames
         public bool AllowFileContentAutoRotate { get; }
         public bool AllowEnlarge { get; }
         public bool AllowReduce { get; }
+        public Size ReferenceSize { get; }
         public Size CanvasSize { get; }
         public DpiScale DpiScale { get; }
     }

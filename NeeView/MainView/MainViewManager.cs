@@ -47,7 +47,7 @@ namespace NeeView
 
             Config.Current.MainView.AddPropertyChanged(nameof(MainViewConfig.IsFloating), (s, e) => Update());
 
-            Config.Current.Panels.SubscribePropertyChanged(nameof(PanelsConfig.AlternativeContent), (s, e) => UpdateAlternativeContent());
+            Config.Current.MainView.SubscribePropertyChanged(nameof(MainViewConfig.AlternativeContent), (s, e) => UpdateAlternativeContent());
 
             _mediator = new MainViewLockerMediator(_mainView);
             _dockingLocker = new MainViewLocker(_mediator, MainWindow.Current);
@@ -134,6 +134,11 @@ namespace NeeView
             _window.Show();
             _window.Activate();
 
+            if (Config.Current.MainView.IsAutoStretch)
+            {
+                _mainView.StretchWindow(false);
+            }
+
             _floatingLocker = new MainViewLocker(_mediator, _window);
             _floatingLocker.Activate();
         }
@@ -164,9 +169,9 @@ namespace NeeView
 
         private IDisposableContent CreateAlternativeContent()
         {
-            switch (Config.Current.Panels.AlternativeContent)
+            switch (Config.Current.MainView.AlternativeContent)
             {
-                case AlternativeContent.Space:
+                case AlternativeContent.Blank:
                     return new NormalAlternativeContent(_mainViewBay);
                 case AlternativeContent.PageList:
                     return new LayoutPanelAlternativeContent(nameof(PageListPanel));

@@ -7596,16 +7596,16 @@ nv.ShowToast(nv.Book.ViewPages[0].Path)</value>
   <data name="BookConfig.IsTwoPagePanorama" xml:space="preserve">
     <value>"@PageMode.Panorama" in two-page units</value>
   </data>
-  <data name="AlternativeContent.Space" xml:space="preserve">
-    <value>Space</value>
+  <data name="AlternativeContent.Blank" xml:space="preserve">
+    <value>Blank</value>
   </data>
   <data name="AlternativeContent.PageList" xml:space="preserve">
     <value>PageList</value>
   </data>
-  <data name="PanelsConfig.AlternativeContent" xml:space="preserve">
+  <data name="MainViewConfig.AlternativeContent" xml:space="preserve">
     <value>Alternative content for main view</value>
   </data>
-  <data name="PanelsConfig.AlternativeContent.Remarks" xml:space="preserve">
+  <data name="MainViewConfig.AlternativeContent.Remarks" xml:space="preserve">
     <value>Content to display instead when the main view window is displayed.</value>
   </data>
   <data name="SettingPage.Panels.MainView" xml:space="preserve">
@@ -7619,5 +7619,14 @@ nv.ShowToast(nv.Book.ViewPages[0].Path)</value>
   </data>
   <data name="PageListConfig.FocusMainView.Remarks" xml:space="preserve">
     <value>After selecting a page, move the focus to the main view.</value>
+  </data>
+  <data name="MainViewWindow.Menu.AutoStretch" xml:space="preserve">
+    <value>Auto stretch window</value>
+  </data>
+  <data name="ImageGridTarget.Image" xml:space="preserve">
+    <value>Image</value>
+  </data>
+  <data name="ImageGridTarget.Screen" xml:space="preserve">
+    <value>Screen</value>
   </data>
 </root>

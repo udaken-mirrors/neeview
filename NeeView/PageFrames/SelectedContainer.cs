@@ -76,11 +76,11 @@ namespace NeeView.PageFrames
         }
 
 
-        public void Set(LinkedListNode<PageFrameContainer> node)
+        public void Set(LinkedListNode<PageFrameContainer> node, bool force)
         {
             if (_disposedValue) return;
 
-            if (_node == node) return;
+            if (!force && _node == node) return;
             Debug.Assert(node?.Value.Content is PageFrameContent);
 
             Detach();
@@ -98,7 +98,7 @@ namespace NeeView.PageFrames
             if (_disposedValue) return;
             if (_selectFunc is null) return;
 
-            Set(_selectFunc.Invoke());
+            Set(_selectFunc.Invoke(), false);
         }
 
 
@@ -110,7 +110,7 @@ namespace NeeView.PageFrames
 
             if (_node.Value.Content is PageFrameContent content)
             {
-                ViewContentChanged?.Invoke(this, new FrameViewContentChangedEventArgs(ViewContentChangedAction.Selection, content.ViewContents, content.ViewContentsDirection));
+                ViewContentChanged?.Invoke(this, new FrameViewContentChangedEventArgs(ViewContentChangedAction.Selection, content, content.ViewContents, content.ViewContentsDirection));
             }
         }
 

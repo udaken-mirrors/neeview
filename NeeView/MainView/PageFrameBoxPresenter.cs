@@ -157,7 +157,6 @@ namespace NeeView
         }
 
 
-
         protected virtual void Dispose(bool disposing)
         {
             if (!disposedValue)
@@ -244,7 +243,7 @@ namespace NeeView
                 PagesChanged?.Invoke(this, EventArgs.Empty);
                 SelectedRangeChanged?.Invoke(this, EventArgs.Empty);
 
-                ViewContentChanged?.Invoke(this, new FrameViewContentChangedEventArgs(ViewContentChangedAction.ContentLoaded, Array.Empty<ViewContent>(), 1));
+                ViewContentChanged?.Invoke(this, new FrameViewContentChangedEventArgs(ViewContentChangedAction.ContentLoaded, null, Array.Empty<ViewContent>(), 1));
                 RaiseViewPageChanged(new ViewPageChangedEventArgs(Array.Empty<Page>()));
 
                 return;

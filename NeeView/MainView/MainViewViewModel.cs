@@ -1,4 +1,6 @@
-﻿using NeeLaboratory.ComponentModel;
+﻿//#define LOCAL_DEBUG
+
+using NeeLaboratory.ComponentModel;
 using NeeView.Effects;
 using NeeView.PageFrames;
 using System;
@@ -130,7 +132,7 @@ namespace NeeView
         /// <param name="contentSize"></param>
         /// <exception cref="ArgumentException"></exception>
         /// <exception cref="InvalidOperationException"></exception>
-        public static void StretchWindow(Window window, Size canvasSize, Size contentSize)
+        public static void StretchWindow(Window window, Size canvasSize, Size contentSize, bool adjustScale)
         {
             if (contentSize.IsEmptyOrZero())
             {
@@ -156,11 +158,6 @@ namespace NeeView
             var box = PageFrameBoxPresenter.Current.View;
             if (box is null) return;
 
-            var pageFrameContent = box.GetSelectedPageFrameContent();
-            if (pageFrameContent is null) return;
-
-            var baseAngle = pageFrameContent.PageFrame.Angle;
-
             var newCanvasSize = box.Context.StretchMode switch
             {
                 PageStretchMode.Uniform or PageStretchMode.UniformToSize
@@ -171,24 +168,25 @@ namespace NeeView
             window.Width = newCanvasSize.Width + frameWidth;
             window.Height = newCanvasSize.Height + frameHeight;
 
-            // NOTE: レンダリングに回転を反映させるためにタイミングを遅らせる
-            AppDispatcher.BeginInvoke(() =>
-            {
-                // 自動回転方向が変化したときの補正
-                var pageFrameContent = box.GetSelectedPageFrameContent();
-                if (pageFrameContent is null) return;
-                var deltaAngle = pageFrameContent.PageFrame.Angle - baseAngle;
-                if (Math.Abs(deltaAngle) > 1.0)
-                {
-                    var dragTransform = box.CreateDragTransformContext(false, false);
-                    if (dragTransform is null) return;
-                    var angle = dragTransform.Transform.Angle - deltaAngle;
-                    dragTransform.Transform.SetAngle(angle, TimeSpan.Zero);
-                }
+            StaticTrace($"StretchSize=({window.Width:f1},{window.Height:f1})");
 
+            if (adjustScale)
+            {
+                box.ResetReferenceSize();
                 box.Stretch(ignoreViewOrigin: true);
-            });
+            }
         }
 
+        [Conditional("LOCAL_DEBUG")]
+        private void Trace(string s, params object[] args)
+        {
+            Debug.WriteLine($"{this.GetType().Name}: {string.Format(s, args)}");
+        }
+
+        [Conditional("LOCAL_DEBUG")]
+        private static void StaticTrace(string s, params object[] args)
+        {
+            Debug.WriteLine($"{nameof(MainViewViewModel)}: {string.Format(s, args)}");
+        }
     }
 }

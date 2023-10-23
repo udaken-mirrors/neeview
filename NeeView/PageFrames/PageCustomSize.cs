@@ -40,8 +40,8 @@ namespace NeeView
         private Size ApplyApplicabilityRate(Size sourceSize, Size targetSize)
         {
             var width = MathUtility.Lerp(sourceSize.Width, targetSize.Width, _customSize.ApplicabilityRate);
-            var heigth = MathUtility.Lerp(sourceSize.Height, targetSize.Height, _customSize.ApplicabilityRate);
-            return new Size(width, heigth);
+            var height = MathUtility.Lerp(sourceSize.Height, targetSize.Height, _customSize.ApplicabilityRate);
+            return new Size(width, height);
         }
 
 

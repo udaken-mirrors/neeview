@@ -23,7 +23,8 @@ namespace NeeView.PageFrames
             _profile = profile;
         }
 
-        public Size CanvasSize => _profile.CanvasSize;
+
+        public Size CanvasSize => _profile.ReferenceSize;
         public AutoRotateType AutoRotate => _profile.AutoRotate;
         public bool AllowFileContentAutoRotate => _profile.AllowFileContentAutoRotate;
         public PageStretchMode StretchMode => _profile.StretchMode;

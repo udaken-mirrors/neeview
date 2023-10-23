@@ -38,7 +38,7 @@
 
         public void StretchWindow()
         {
-            _viewComponent.MainView.StretchWindow();
+            _viewComponent.MainView.StretchWindow(true);
         }
     }
 }

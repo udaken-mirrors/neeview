@@ -7601,16 +7601,16 @@ nv.ShowToast(nv.Book.ViewPages[0].Path)</value>
   <data name="BookConfig.IsTwoPagePanorama" xml:space="preserve">
     <value>「@PageMode.Panorama」を 2 ページ単位にする</value>
   </data>
-  <data name="AlternativeContent.Space" xml:space="preserve">
-    <value>空白</value>
+  <data name="AlternativeContent.Blank" xml:space="preserve">
+    <value>無し</value>
   </data>
   <data name="AlternativeContent.PageList" xml:space="preserve">
     <value>ページリスト</value>
   </data>
-  <data name="PanelsConfig.AlternativeContent" xml:space="preserve">
+  <data name="MainViewConfig.AlternativeContent" xml:space="preserve">
     <value>メインビューの代替コンテンツ</value>
   </data>
-  <data name="PanelsConfig.AlternativeContent.Remarks" xml:space="preserve">
+  <data name="MainViewConfig.AlternativeContent.Remarks" xml:space="preserve">
     <value>メインビュー ウィンドウを表示している時に代わりに表示するコンテンツです。</value>
   </data>
   <data name="SettingPage.Panels.MainView" xml:space="preserve">
@@ -7620,9 +7620,18 @@ nv.ShowToast(nv.Book.ViewPages[0].Path)</value>
     <value>ブック名を表示</value>
   </data>
   <data name="PageListConfig.FocusMainView" xml:space="preserve">
-    <value>メインビューにフォーカスする</value>
+    <value>メインビューをフォーカス</value>
   </data>
   <data name="PageListConfig.FocusMainView.Remarks" xml:space="preserve">
     <value>ページ選択後、メインビューにフォーカスを移動します。</value>
+  </data>
+  <data name="MainViewWindow.Menu.AutoStretch" xml:space="preserve">
+    <value>自動ウィンドウ サイズ調整</value>
+  </data>
+  <data name="ImageGridTarget.Image" xml:space="preserve">
+    <value>Image</value>
+  </data>
+  <data name="ImageGridTarget.Screen" xml:space="preserve">
+    <value>Screen</value>
   </data>
 </root>

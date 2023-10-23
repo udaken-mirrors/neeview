@@ -44,6 +44,7 @@
                         <MenuItem Header="{x:Static properties:Resources.StretchWindowCommand}" Command="{StaticResource StretchWindowCommand}" />
                         <Separator />
                         <MenuItem Header="{x:Static properties:Resources.MainViewWindow_Menu_AutoHideTitleBar}" IsCheckable="True" IsChecked="{Binding IsAutoHide}" />
+                        <MenuItem Header="{x:Static properties:Resources.MainViewWindow_Menu_AutoStretch}" IsCheckable="True" IsChecked="{Binding IsAutoStretch}" />
                         <MenuItem Header="{x:Static properties:Resources.Word_Topmost}" IsCheckable="True" IsChecked="{Binding IsTopmost}" />
                         <MenuItem Header="{x:Static properties:Resources.Word_FullScreen}" IsCheckable="True" IsChecked="{Binding IsFullScreen}" />
                         <Separator />

@@ -96,6 +96,7 @@ namespace NeeView.PageFrames
 
         public bool IsStaticFrame => _frameProfile.IsStaticFrame;
         public Size CanvasSize => _frameProfile.CanvasSize;
+        public Size ReferenceSize => _frameProfile.ReferenceSize;
         public DpiScale DpiScale => _frameProfile.DpiScale;
 
         public ViewConfig ViewConfig => _config.View;
@@ -177,18 +178,22 @@ namespace NeeView.PageFrames
             switch (e.PropertyName)
             {
                 case nameof(ViewConfig.StretchMode):
+                    _frameProfile.ResetReferenceSize();
                     RaisePropertyChanged(nameof(StretchMode));
                     break;
 
                 case nameof(ViewConfig.AllowFileContentAutoRotate):
+                    _frameProfile.ResetReferenceSize();
                     RaisePropertyChanged(nameof(AllowFileContentAutoRotate));
                     break;
 
                 case nameof(ViewConfig.AllowStretchScaleUp):
+                    _frameProfile.ResetReferenceSize();
                     RaisePropertyChanged(nameof(AllowEnlarge));
                     break;
 
                 case nameof(ViewConfig.AllowStretchScaleDown):
+                    _frameProfile.ResetReferenceSize();
                     RaisePropertyChanged(nameof(AllowReduce));
                     break;
 
@@ -262,6 +267,7 @@ namespace NeeView.PageFrames
                     break;
 
                 case nameof(BookSettingConfig.AutoRotate):
+                    _frameProfile.ResetReferenceSize();
                     RaisePropertyChanged(nameof(AutoRotate));
                     break;
             }
@@ -280,6 +286,10 @@ namespace NeeView.PageFrames
 
                 case nameof(PageFrameProfile.CanvasSize):
                     RaisePropertyChanged(nameof(CanvasSize));
+                    break;
+
+                case nameof(PageFrameProfile.ReferenceSize):
+                    RaisePropertyChanged(nameof(ReferenceSize));
                     break;
 
                 case nameof(PageFrameProfile.DpiScale):
@@ -302,28 +312,9 @@ namespace NeeView.PageFrames
             _frameProfile.DpiScale = dpiScale;
         }
 
-#if false
-        public BookMemento CreateMemento()
+        public void ResetReferenceSize()
         {
-            var bookSetting = _config.BookSetting;
-
-            var memento = new BookMemento
-            {
-                Path = _book.Path,
-                Page = this.Pages[this.SelectedRange.Min.Index].EntryName,
-
-                PageMode = bookSetting.PageMode,
-                BookReadOrder = bookSetting.BookReadOrder,
-                IsSupportedDividePage = bookSetting.IsSupportedDividePage,
-                IsSupportedSingleFirstPage = bookSetting.IsSupportedSingleFirstPage,
-                IsSupportedSingleLastPage = bookSetting.IsSupportedSingleLastPage,
-                IsSupportedWidePage = bookSetting.IsSupportedWidePage,
-                IsRecursiveFolder = bookSetting.IsRecursiveFolder,
-                SortMode = bookSetting.SortMode,
-            };
-
-            return memento;
+            _frameProfile.ResetReferenceSize();
         }
-#endif
     }
 }

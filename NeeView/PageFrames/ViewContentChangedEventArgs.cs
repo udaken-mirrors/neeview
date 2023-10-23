@@ -59,27 +59,32 @@ namespace NeeView.PageFrames
 
     public class FrameViewContentChangedEventArgs : EventArgs
     {
-        public FrameViewContentChangedEventArgs(ViewContentChangedAction action, IReadOnlyList<ViewContent> viewContents, int direction)
+        public FrameViewContentChangedEventArgs(ViewContentChangedAction action, PageFrameContent? content, IReadOnlyList<ViewContent> viewContents, int direction)
         {
             Debug.Assert(direction is -1 or +1);
             Action = action;
+            PageFrameContent = content;
             ViewContents = viewContents;
+            State = ViewContents.Select(e => e.State).DefaultIfEmpty(ViewContentState.Loaded).Min();
             Direction = direction;
         }
 
         // TODO: PageFrameContent は大雑把すぎる？ ViewContent[] でそれぞれ ViewContentChangedAction を保持するように？
-        //public PageFrameContent PageFrameContent { get; }
+        public PageFrameContent? PageFrameContent { get; }
 
         public ViewContentChangedAction Action { get; }
-        
+
         public IReadOnlyList<ViewContent> ViewContents { get; }
 
         public int Direction { get; }
 
-        public ViewContentState State => ViewContents.Select(e => e.State).DefaultIfEmpty(ViewContentState.Loaded).Min();
+        public ViewContentState State { get; }
 
         public ViewContentChangedEventArgs? InnerArgs { get; init; }
 
-
+        public override string ToString()
+        {
+            return $"(Action={Action}, State={State}, PageFrameContent={PageFrameContent})";
+        }
     }
 }

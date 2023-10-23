@@ -1,5 +1,6 @@
 ﻿using NeeLaboratory.Generators;
 using NeeView.ComponentModel;
+using NeeView.PageFrames;
 using NeeView.Runtime.LayoutPanel;
 using NeeView.Windows;
 using System;
@@ -33,6 +34,7 @@ namespace NeeView
         private readonly WindowController _windowController;
         private RoutedCommandBinding? _routedCommandBinding;
         private readonly WeakBindableBase<MainViewConfig> _mainViewConfig;
+        private Locker.Key? _referenceSizeLockLey;
 
         public MainViewWindow()
         {
@@ -63,6 +65,8 @@ namespace NeeView
             });
 
             MenuAutoHideDescription = new MainViewMenuAutoHideDescription(this.CaptionBar);
+
+            _referenceSizeLockLey = PageFrameProfile.ReferenceSizeLocker.Lock();
 
             this.SourceInitialized += MainViewWindow_SourceInitialized;
             this.Loaded += MainViewWindow_Loaded;
@@ -109,6 +113,12 @@ namespace NeeView
             set { Config.Current.MainView.IsHideTitleBar = value; }
         }
 
+        public bool IsAutoStretch
+        {
+            get { return Config.Current.MainView.IsAutoStretch; }
+            set { Config.Current.MainView.IsAutoStretch = value; }
+        }
+
         public bool CanHideMenu
         {
             get { return _canHideMenu; }
@@ -131,6 +141,9 @@ namespace NeeView
             }
 
             RestoreWindowPlacement(placement);
+
+            _referenceSizeLockLey?.Dispose();
+            _referenceSizeLockLey = null;
         }
 
         private void MainViewWindow_Loaded(object? sender, RoutedEventArgs e)
@@ -176,11 +189,11 @@ namespace NeeView
 
         private void MainViewWindow_Closed(object? sender, EventArgs e)
         {
-            if (_routedCommandBinding != null)
-            {
-                _routedCommandBinding.Dispose();
-                _routedCommandBinding = null;
-            }
+            _routedCommandBinding?.Dispose();
+            _routedCommandBinding = null;
+
+            _referenceSizeLockLey?.Dispose();
+            _referenceSizeLockLey = null;
         }
 
         private void UpdateCaptionBar()
@@ -218,7 +231,7 @@ namespace NeeView
         {
             if (this.MainViewSocket.Content is MainView mainView)
             {
-                mainView.StretchWindow();
+                mainView.StretchWindow(true);
             }
         }
     }

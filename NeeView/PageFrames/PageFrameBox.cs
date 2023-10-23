@@ -50,7 +50,7 @@ namespace NeeView.PageFrames
         private readonly DragTransformContextFactory _dragTransformContextFactory;
         private readonly OnceDispatcher _onceDispatcher;
         private bool _isStarted;
-
+        private PageRange _autoStretchTarget = PageRange.Empty;
 
         public PageFrameBox(PageFrameContext context, BookContext bookContext)
         {
@@ -155,7 +155,7 @@ namespace NeeView.PageFrames
             }
             else
             {
-                ViewContentChanged?.Invoke(this, new FrameViewContentChangedEventArgs(ViewContentChangedAction.ContentLoaded, Array.Empty<ViewContent>(), 1));
+                ViewContentChanged?.Invoke(this, new FrameViewContentChangedEventArgs(ViewContentChangedAction.ContentLoaded, null, Array.Empty<ViewContent>(), 1));
             }
 
             IsStarted = true;
@@ -230,6 +230,16 @@ namespace NeeView.PageFrames
         {
             Dispose(disposing: true);
             GC.SuppressFinalize(this);
+        }
+
+        public bool AutoStretchTargetEquals(PageRange range)
+        {
+            return _autoStretchTarget == range;
+        }
+
+        public void ResetAutoStretchTarget()
+        {
+            _autoStretchTarget = PageRange.Empty;
         }
 
         public DragTransformContext? CreateDragTransformContext(bool isPointContainer, bool isLoupeTransform)
@@ -629,6 +639,8 @@ namespace NeeView.PageFrames
         {
             if (!_bookContext.IsEnabled) return;
 
+            //Debug.WriteLine($"MoveTo: Position={position}, Direction={direction}");
+
             // position の補正
             if (_context.IsLoopPage && _selected.Node.Value.Content is PageFrameContent)
             {
@@ -654,12 +666,16 @@ namespace NeeView.PageFrames
             _containers.Anchor.Set(_rectMath.GetViewCenterContainer(_viewBox.Rect), direction);
             var next = _containers.EnsureLatestContainerNode(position, direction);
             if (next is null) return;
+
             _filler.FillContainersWhenAligned(_viewBox.Rect, next, direction);
             _layout.Layout();
             _layout.Flush();
             _containers.Anchor.Set(next, direction);
 
-            _selected.Set(next);
+            _autoStretchTarget = next.Value.FrameRange;
+            //Debug.WriteLine($"AutoStretchTarget: {next.Value.FrameRange}");
+
+            _selected.Set(next, true);
 
             ScrollToViewOrigin(next, direction);
             Cleanup();
@@ -737,7 +753,11 @@ namespace NeeView.PageFrames
             _layout.Flush();
             _containers.Anchor.Set(next, direction);
 
-            _selected.Set(next);
+            _autoStretchTarget = next.Value.FrameRange;
+            //Debug.WriteLine($"AutoStretchTarget: {next.Value.FrameRange}");
+
+            _selected.Set(next, true);
+
             AssertSelectedExists();
             ScrollToViewOrigin(next, direction);
             _scrollViewer.FlushScroll();
@@ -773,7 +793,11 @@ namespace NeeView.PageFrames
             _layout.Flush();
             _containers.Anchor.Set(next, direction);
 
-            _selected.Set(next);
+            _autoStretchTarget = next.Value.FrameRange;
+            //Debug.WriteLine($"AutoStretchTarget: {next.Value.FrameRange}");
+
+            _selected.Set(next, true);
+
             AssertSelectedExists();
             ScrollToViewOrigin(next, direction);
             Cleanup();
@@ -884,6 +908,7 @@ namespace NeeView.PageFrames
         /// </summary>
         private void ScrollIntoViewOrigin(LinkedListNode<PageFrameContainer> node, LinkedListDirection direction)
         {
+            //Debug.WriteLine($"{node.Value}: {node.Value.Rect:f0} / {_viewBox.Rect:f0}");
             var point = new FramePointMath(_context, node.Value.Rect, _viewBox.Rect).GetStartPoint(direction);
             _scrollViewer.SetPoint(new Point(-point.X, -point.Y), _context.PageChangeDuration);
         }
@@ -1032,6 +1057,15 @@ namespace NeeView.PageFrames
         public void ResetTransform()
         {
             _transformMap.Clear();
+        }
+
+        /// <summary>
+        /// リファレンスサイズを初期化
+        /// </summary>
+        public void ResetReferenceSize()
+        {
+            Context.ResetReferenceSize();
+            UpdateContainers(PageFrameDirtyLevel.Moderate, TransformMask.None, false, false);
         }
 
         /// <summary>

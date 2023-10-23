@@ -350,7 +350,7 @@ namespace NeeView.PageFrames
             if (_content is PageFrameContent pageFrameContent)
             {
                 var action = pageFrameContent.ViewContents.Select(e => e.State).Min().ToChangedAction();
-                ViewContentChanged?.Invoke(this, new FrameViewContentChangedEventArgs(action, pageFrameContent.ViewContents, pageFrameContent.ViewContentsDirection));
+                ViewContentChanged?.Invoke(this, new FrameViewContentChangedEventArgs(action, pageFrameContent, pageFrameContent.ViewContents, pageFrameContent.ViewContentsDirection));
             }
         }
 

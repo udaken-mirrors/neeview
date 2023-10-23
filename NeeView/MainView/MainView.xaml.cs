@@ -1,4 +1,6 @@
-﻿using NeeLaboratory.ComponentModel;
+﻿//#define LOCAL_DEBUG
+
+using NeeLaboratory.ComponentModel;
 using NeeLaboratory.Generators;
 using NeeView.PageFrames;
 using NeeView.Windows;
@@ -124,7 +126,7 @@ namespace NeeView
         {
             ResetOwnerWindow();
         }
-        
+
         private void SetOwnerWindow(Window window)
         {
             _owner = window;
@@ -167,7 +169,7 @@ namespace NeeView
         }
 
         // TODO: 都度取得でなく、対象のコンテナを確定させてから開始しよう
-        public void StretchWindow()
+        public void StretchWindow(bool adjustScale)
         {
             var window = Window.GetWindow(this);
             if (window is null) return;
@@ -176,10 +178,11 @@ namespace NeeView
 
             try
             {
+                using var key = PageFrameProfile.ReferenceSizeLocker.Lock();
                 var canvasSize = new Size(this.MainViewCanvas.ActualWidth, this.MainViewCanvas.ActualHeight);
-                var contentSize = GetContentRenderSize();
+                var contentSize = GetContentRenderSize(!adjustScale);
                 if (contentSize.IsEmptyOrZero()) return;
-                MainViewViewModel.StretchWindow(window, canvasSize, contentSize);
+                MainViewViewModel.StretchWindow(window, canvasSize, contentSize, adjustScale);
             }
             catch (Exception ex)
             {
@@ -188,7 +191,7 @@ namespace NeeView
             }
         }
 
-        private static Size GetContentRenderSize()
+        private static Size GetContentRenderSize(bool ignoreScale)
         {
             var box = PageFrameBoxPresenter.Current.View;
             if (box is null) return Size.Empty;
@@ -196,7 +199,13 @@ namespace NeeView
             var pageFrameContent = box.GetSelectedPageFrameContent();
             if (pageFrameContent is null) return Size.Empty;
 
-            return pageFrameContent.GetContentRect().Size;
+            StaticTrace($"GetContentRenderSize(): PageFrameContent={pageFrameContent}");
+
+            var size = pageFrameContent.GetContentRect().Size;
+            var scale = ignoreScale ? pageFrameContent.Transform.Scale : 1.0;
+            if (scale < 0.001) return Size.Empty;
+
+            return new Size(size.Width / scale, size.Height / scale);
         }
 
 
@@ -389,5 +398,18 @@ namespace NeeView
         }
 
         #endregion SizeChanged
+
+        [Conditional("LOCAL_DEBUG")]
+        private void Trace(string s, params object[] args)
+        {
+            Debug.WriteLine($"{this.GetType().Name}: {string.Format(s, args)}");
+        }
+
+
+        [Conditional("LOCAL_DEBUG")]
+        private static void StaticTrace(string s, params object[] args)
+        {
+            Debug.WriteLine($"{nameof(MainViewViewModel)}: {string.Format(s, args)}");
+        }
     }
 }

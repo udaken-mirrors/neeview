@@ -1,6 +1,7 @@
 ﻿using NeeLaboratory.ComponentModel;
 using NeeView.Windows;
 using NeeView.Windows.Property;
+using System.Windows;
 
 namespace NeeView
 {
@@ -9,6 +10,9 @@ namespace NeeView
         private bool _isFloating;
         private bool _isTopmost;
         private bool _isHideTitleBar;
+        private bool _isAutoStretch;
+        private Size _referenceSize;
+        private AlternativeContent _alternativeContent = AlternativeContent.PageList;
 
 
         [PropertyMember]
@@ -32,6 +36,23 @@ namespace NeeView
             set { SetProperty(ref _isHideTitleBar, value); }
         }
 
+        /// <summary>
+        /// メインビューの代替コンテンツ
+        /// </summary>
+        [PropertyMember]
+        public AlternativeContent AlternativeContent
+        {
+            get { return _alternativeContent; }
+            set { SetProperty(ref _alternativeContent, value); }
+        }
+
+        [PropertyMember]
+        public bool IsAutoStretch
+        {
+            get { return _isAutoStretch; }
+            set { SetProperty(ref _isAutoStretch, value); }
+        }
+
 
         /// <summary>
         /// 復元ウィンドウ座標
@@ -39,6 +60,29 @@ namespace NeeView
         [PropertyMapIgnore]
         [ObjectMergeReferenceCopy]
         public WindowPlacement WindowPlacement { get; set; } = WindowPlacement.None;
+
+        /// <summary>
+        /// リファレンスサイズ
+        /// </summary>
+        [PropertyMapIgnore]
+        public Size ReferenceSize
+        {
+            get { return _referenceSize; }
+            set { SetProperty(ref _referenceSize, value); }
+        }
+    }
+
+
+    /// <summary>
+    /// メインビューの代替コンテンツ
+    /// </summary>
+    public enum AlternativeContent
+    {
+        [AliasName]
+        Blank,
+
+        [AliasName]
+        PageList,
     }
 }
 

@@ -1,6 +1,9 @@
-﻿using NeeLaboratory.ComponentModel;
+﻿//#define LOCAL_DEBUG
+
+using NeeLaboratory.ComponentModel;
 using NeeLaboratory.Generators;
 using NeeView.PageFrames;
+using NeeView.Threading;
 using System;
 using System.Diagnostics;
 using System.Linq;
@@ -19,7 +22,7 @@ namespace NeeView
         private readonly MainView _mainView;
         private TouchEmurlateController _touchEmulateController = new();
         private bool _disposedValue;
-
+        private IntervalDelayAction _delayAction = new();
 
         public static void Initialize()
         {
@@ -37,7 +40,7 @@ namespace NeeView
             _mainView = new MainView();
 
             PageFrameBoxPresenter = PageFrameBoxPresenter.Current;
-            
+
             DragTransformControl = new DragTransformControlProxy(PageFrameBoxPresenter);
             LoupeContext = new LoupeContext(Config.Current.Loupe);
 
@@ -54,8 +57,31 @@ namespace NeeView
             PageFrameBoxPresenter.SelectedRangeChanged += PageFrameBoxPresenter_SelectedRangeChanged;
             PageFrameBoxPresenter.SelectedContainerLayoutChanged += PageFrameBoxPresenter_SelectedContainerLayoutChanged;
             PageFrameBoxPresenter.SelectedContentSizeChanged += PageFrameBoxPresenter_SelectedContentSizeChanged;
+            PageFrameBoxPresenter.ViewContentChanged += PageFrameBoxPresenter_ViewContentChanged;
 
             _mainView.DataContext = new MainViewViewModel(this);
+        }
+
+
+        private void PageFrameBoxPresenter_ViewContentChanged(object? sender, FrameViewContentChangedEventArgs e)
+        {
+            var box = PageFrameBoxPresenter.View;
+            if (box is null) return;
+
+            //Trace($"ViewContentChanged={e}, {e.PageFrameContent?.GetContentRect():f0}");
+            
+            // AutoStretch
+            if (e.State == ViewContentState.Loaded && e.PageFrameContent is not null && box.AutoStretchTargetEquals(e.PageFrameContent.FrameRange))
+            {
+                Trace($"ViewContentChanged: PageFrameContent={e.PageFrameContent}");
+                box.ResetAutoStretchTarget();
+                if (Config.Current.MainView.IsFloating && Config.Current.MainView.IsAutoStretch)
+                {
+                    // NOTE: StretchWindow() はさらなるページ処理を呼ぶ可能性があるためタイミングをずらす
+                    // NOTE: 連続して要求が来ることがあるので遅延させる
+                    _delayAction.Request(() => _mainView.StretchWindow(false), 1, 100);
+                }
+            }
         }
 
         // TODO: Selected 情報をまとめたなにか
@@ -89,7 +115,6 @@ namespace NeeView
         /// </summary>
         [Subscribable]
         public event EventHandler? FocusMainViewRequest;
-
 
 
         public MainView MainView => _mainView;
@@ -157,6 +182,12 @@ namespace NeeView
         public void TouchInputEmulate(object? sender)
         {
             _touchEmulateController.Execute(sender);
+        }
+
+        [Conditional("LOCAL_DEBUG")]
+        private void Trace(string s, params object[] args)
+        {
+            Debug.WriteLine($"{this.GetType().Name}: {string.Format(s, args)}");
         }
     }
 }

@@ -1,6 +1,8 @@
-﻿using System;
+﻿using NeeView.ComponentModel;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 
 namespace NeeView
 {
@@ -8,15 +10,15 @@ namespace NeeView
     {
         public class Key : IDisposable
         {
-            public Locker? Locker { get; set; }
+            private bool _disposedValue = false;
+
 
             public Key(Locker locker)
             {
                 this.Locker = locker;
             }
 
-            #region IDisposable Support
-            private bool _disposedValue = false;
+            public Locker? Locker { get; set; }
 
             protected virtual void Dispose(bool disposing)
             {
@@ -26,7 +28,6 @@ namespace NeeView
                     {
                         this.Locker?.Unlock(this);
                     }
-
                     _disposedValue = true;
                 }
             }
@@ -36,29 +37,26 @@ namespace NeeView
                 Dispose(true);
                 GC.SuppressFinalize(this);
             }
-            #endregion
         }
 
-        private readonly List<Key> _keys = new();
+        private int _lockCount;
 
-        public bool IsLocked => _keys.Any();
+        public bool IsLocked => _lockCount > 0;
 
         public Key Lock()
         {
-            var key = new Key(this);
-            _keys.Add(key);
-            return key;
+            Interlocked.Increment(ref _lockCount);
+            return new Key(this);
         }
 
         public void Unlock(Key key)
         {
             if (key.Locker == this)
             {
-                _keys.Remove(key);
                 key.Locker = null;
+                Interlocked.Decrement(ref _lockCount);
             }
         }
     }
-
 
 }

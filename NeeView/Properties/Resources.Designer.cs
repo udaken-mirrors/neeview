@@ -184,20 +184,20 @@ namespace NeeView.Properties {
         }
         
         /// <summary>
+        ///   Blank に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string AlternativeContent_Blank {
+            get {
+                return ResourceManager.GetString("AlternativeContent.Blank", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   PageList に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string AlternativeContent_PageList {
             get {
                 return ResourceManager.GetString("AlternativeContent.PageList", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Space に類似しているローカライズされた文字列を検索します。
-        /// </summary>
-        public static string AlternativeContent_Space {
-            get {
-                return ResourceManager.GetString("AlternativeContent.Space", resourceCulture);
             }
         }
         
@@ -7304,6 +7304,24 @@ namespace NeeView.Properties {
         }
         
         /// <summary>
+        ///   Image に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string ImageGridTarget_Image {
+            get {
+                return ResourceManager.GetString("ImageGridTarget.Image", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Screen に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string ImageGridTarget_Screen {
+            get {
+                return ResourceManager.GetString("ImageGridTarget.Screen", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Failed to load image. に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string ImageLoadFailedException_Message {
@@ -9301,6 +9319,24 @@ namespace NeeView.Properties {
         }
         
         /// <summary>
+        ///   Alternative content for main view に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string MainViewConfig_AlternativeContent {
+            get {
+                return ResourceManager.GetString("MainViewConfig.AlternativeContent", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Content to display instead when the main view window is displayed. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string MainViewConfig_AlternativeContent_Remarks {
+            get {
+                return ResourceManager.GetString("MainViewConfig.AlternativeContent.Remarks", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   MainView floating に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string MainViewConfig_IsFloating {
@@ -9333,6 +9369,15 @@ namespace NeeView.Properties {
         public static string MainViewWindow_Menu_AutoHideTitleBar {
             get {
                 return ResourceManager.GetString("MainViewWindow.Menu.AutoHideTitleBar", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Auto stretch window に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string MainViewWindow_Menu_AutoStretch {
+            get {
+                return ResourceManager.GetString("MainViewWindow.Menu.AutoStretch", resourceCulture);
             }
         }
         
@@ -12366,24 +12411,6 @@ namespace NeeView.Properties {
         public static string PanelListItemStyle_Thumbnail {
             get {
                 return ResourceManager.GetString("PanelListItemStyle.Thumbnail", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Alternative content for main view に類似しているローカライズされた文字列を検索します。
-        /// </summary>
-        public static string PanelsConfig_AlternativeContent {
-            get {
-                return ResourceManager.GetString("PanelsConfig.AlternativeContent", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Content to display instead when the main view window is displayed. に類似しているローカライズされた文字列を検索します。
-        /// </summary>
-        public static string PanelsConfig_AlternativeContent_Remarks {
-            get {
-                return ResourceManager.GetString("PanelsConfig.AlternativeContent.Remarks", resourceCulture);
             }
         }
         
