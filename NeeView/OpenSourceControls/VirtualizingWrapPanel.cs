@@ -1,5 +1,5 @@
 ﻿// from https://archive.codeplex.com/?p=uhimaniavwp
-// Liceise: Ms-PL
+// License: Ms-PL
 
 using System;
 using System.Collections.Generic;
@@ -387,7 +387,8 @@ namespace OpenSourceControls
                     this.BeginGenerate(index);
 
                 var child = this.generator.GenerateNext(out bool newlyRealized) as UIElement;
-                if (newlyRealized)
+
+                if (newlyRealized || !this.owner.InternalChildren.Contains(child))
                 {
                     if (this.currentGenerateIndex >= this.owner.InternalChildren.Count)
                         this.owner.AddInternalChild(child);
@@ -423,7 +424,7 @@ namespace OpenSourceControls
                     var index = generator.IndexFromGeneratorPosition(childPos);
                     if ((index < this.firstGeneratedIndex || index > this.lastGeneratedIndex) && !child.IsKeyboardFocusWithin)
                     {
-                        this.generator.Remove(childPos, 1);
+                        ((IRecyclingItemContainerGenerator)this.generator).Recycle(childPos, 1);
                         this.owner.RemoveInternalChildRange(i, 1);
                     }
                 }
