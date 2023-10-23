@@ -7403,4 +7403,7 @@ nv.ShowToast(nv.Book.ViewPages[0].Path)</value>
   <data name="BookSettingConfig.AutoRotate" xml:space="preserve">
     <value>自動旋轉</value>
   </data>
+  <data name="BookSettingConfig.BaseScale" xml:space="preserve">
+    <value>基礎比例</value>
+  </data>
 </root>

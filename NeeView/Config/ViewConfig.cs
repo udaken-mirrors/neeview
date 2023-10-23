@@ -31,7 +31,7 @@ namespace NeeView
         private bool _isKeepPageTransform;
         private double _scrollDuration = 0.2;
         private double _pageMoveDuration = 0.0;
-        private IHasAutoRotate? _autoRotateSource;
+        private BookSettingConfig? _bookSetting;
 
 
         // 回転の中心
@@ -175,15 +175,6 @@ namespace NeeView
             set { SetProperty(ref _isBaseScaleEnabled, value); }
         }
 
-        // 基底スケール
-        [PropertyPercent(0.1, 2.0, TickFrequency = 0.01)]
-        public double BaseScale
-        {
-            get { return _baseScale; }
-            set { SetProperty(ref _baseScale, Math.Max(value, 0.0)); }
-        }
-
-
         // ファイルコンテンツの自動回転を許可する
         public bool AllowFileContentAutoRotate
         {
@@ -257,18 +248,27 @@ namespace NeeView
         [JsonIgnore]
         public AutoRotateType AutoRotate
         {
-            get { return _autoRotateSource?.AutoRotate ?? default; }
-            set { if (_autoRotateSource is not null) _autoRotateSource.AutoRotate = value; }
+            get { return _bookSetting?.AutoRotate ?? default; }
+            set { if (_bookSetting is not null) _bookSetting.AutoRotate = value; }
         }
 
+        // 基底スケール
+        [PropertyPercent(0.1, 2.0, TickFrequency = 0.01)]
+        [Obsolete("no used"), Alternative($"nv.Config.BookSetting.BaseScale", 40, ScriptErrorLevel.Info)] // ver.40
+        [JsonIgnore]
+        public double BaseScale
+        {
+            get { return _bookSetting?.BaseScale ?? 1.0; }
+            set { if (_bookSetting is not null) _bookSetting.BaseScale = value; }
+        }
 
         /// <summary>
         /// AutoRotate プロパティを外部情報に依存させる
         /// </summary>
-        /// <param name="autoRotateSource"></param>
-        public void SetBookSettingSource(IHasAutoRotate autoRotateSource)
+        /// <param name="bookSetting"></param>
+        public void SetBookSettingSource(BookSettingConfig bookSetting)
         {
-            _autoRotateSource = autoRotateSource;
+            _bookSetting = bookSetting;
         }
 
         #endregion

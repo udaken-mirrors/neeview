@@ -16,6 +16,7 @@ namespace NeeView
         private BookSettingSelectMode _isRecursiveFolder = BookSettingSelectMode.RestoreOrDefault;
         private BookSettingSelectMode _sortMode = BookSettingSelectMode.RestoreOrDefault;
         private BookSettingSelectMode _autoRotate = BookSettingSelectMode.RestoreOrContinue;
+        private BookSettingSelectMode _baseScale = BookSettingSelectMode.RestoreOrDefault;
 
 
         [PropertyMember]
@@ -88,6 +89,12 @@ namespace NeeView
             set { SetProperty(ref _autoRotate, value); }
         }
 
+        [PropertyMember]
+        public BookSettingSelectMode BaseScale
+        {
+            get { return _baseScale; }
+            set { SetProperty(ref _baseScale, value); }
+        }
 
         public object Clone()
         {

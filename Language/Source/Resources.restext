@@ -2401,3 +2401,4 @@ PageListConfig.FocusMainView.Remarks=After selecting a page, move the focus to t
 MainViewWindow.Menu.AutoStretch=Auto stretch window
 ImageGridTarget.Image=Image
 ImageGridTarget.Screen=Screen
+BookSettingConfig.BaseScale=Base scale

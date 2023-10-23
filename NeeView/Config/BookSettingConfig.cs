@@ -17,6 +17,7 @@ namespace NeeView
         private bool _isRecursiveFolder;
         private PageSortMode _sortMode = PageSortMode.Entry;
         private AutoRotateType _autoRotate;
+        private double _baseScale = 1.0;
 
 
         // ページ
@@ -100,6 +101,14 @@ namespace NeeView
             set { SetProperty(ref _autoRotate, value); }
         }
 
+        // 基底スケール
+        [PropertyPercent(0.1, 2.0, TickFrequency = 0.01, IsEditable = true)]
+        public double BaseScale
+        {
+            get { return _baseScale; }
+            set { SetProperty(ref _baseScale, value); }
+        }
+
 
         public object Clone()
         {
@@ -118,7 +127,8 @@ namespace NeeView
                 this.IsSupportedWidePage == other.IsSupportedWidePage &&
                 this.IsRecursiveFolder == other.IsRecursiveFolder &&
                 this.SortMode == other.SortMode &&
-                this.AutoRotate == other.AutoRotate;
+                this.AutoRotate == other.AutoRotate &&
+                this.BaseScale == other.BaseScale;
         }
 
         public override bool Equals(object? obj)
@@ -139,6 +149,7 @@ namespace NeeView
             hash.Add(_isRecursiveFolder);
             hash.Add(_sortMode);
             hash.Add(_autoRotate);
+            hash.Add(_baseScale);
             return hash.ToHashCode();
         }
     }

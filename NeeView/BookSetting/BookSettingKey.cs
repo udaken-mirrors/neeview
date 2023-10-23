@@ -12,5 +12,6 @@
         IsRecursiveFolder,
         SortMode,
         AutoRotate,
+        BaseScale,
     }
 }

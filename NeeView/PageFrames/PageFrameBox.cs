@@ -83,7 +83,7 @@ namespace NeeView.PageFrames
             _disposables.Add(_loader);
             _disposables.Add(_loader.SubscribePropertyChanged(nameof(BookPageLoader.IsBusy), (s, e) => RaisePropertyChanged(nameof(IsBusy))));
 
-            var baseScaleTransform = new BaseScaleTransform(_context.ViewConfig);
+            var baseScaleTransform = new BaseScaleTransform(_context);
             _disposables.Add(baseScaleTransform);
             var containerFactory = new PageFrameContainerFactory(_context, _transformMap, _viewSourceMap, loupeContext, baseScaleTransform);
             _containers = new PageFrameContainerCollection(_context, frameFactory, containerFactory);

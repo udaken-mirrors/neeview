@@ -28,6 +28,7 @@ namespace NeeView
                     case BookSettingKey.IsRecursiveFolder: return _setting.IsRecursiveFolder;
                     case BookSettingKey.SortMode: return _setting.SortMode;
                     case BookSettingKey.AutoRotate: return _setting.AutoRotate;
+                    case BookSettingKey.BaseScale: return _setting.BaseScale;
                     default: throw new IndexOutOfRangeException();
                 }
             }
@@ -45,6 +46,7 @@ namespace NeeView
                     case BookSettingKey.IsRecursiveFolder: _setting.IsRecursiveFolder = (bool)value; break;
                     case BookSettingKey.SortMode: _setting.SortMode = (PageSortMode)value; break;
                     case BookSettingKey.AutoRotate: _setting.AutoRotate = (AutoRotateType)value; break;
+                    case BookSettingKey.BaseScale: _setting.BaseScale = (double)value; break;
                     default: throw new IndexOutOfRangeException();
                 }
             }

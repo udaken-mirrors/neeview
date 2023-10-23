@@ -16,6 +16,7 @@
             setting.IsRecursiveFolder = memento.IsRecursiveFolder;
             setting.SortMode = memento.SortMode;
             setting.AutoRotate = memento.AutoRotate;
+            setting.BaseScale = memento.BaseScale;
 
             return setting;
         }

@@ -248,6 +248,7 @@ namespace NeeView
                 IsRecursiveFolder = _source.IsRecursiveFolder,
                 SortMode = _source.Pages.SortMode,
                 AutoRotate = _setting.AutoRotate,
+                BaseScale = _setting.BaseScale,
             };
 
             return memento;
@@ -269,6 +270,7 @@ namespace NeeView
             _source.IsRecursiveFolder = memento.IsRecursiveFolder;
             _source.Pages.SortMode = memento.SortMode;
             _setting.AutoRotate = memento.AutoRotate;
+            _setting.BaseScale = memento.BaseScale;
         }
 
         #endregion

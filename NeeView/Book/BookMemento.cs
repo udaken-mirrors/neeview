@@ -47,6 +47,9 @@ namespace NeeView
         // 自動回転
         public AutoRotateType AutoRotate { get; set; }
 
+        // 基底スケール
+        public double BaseScale { get; set; }
+
         /// <summary>
         /// 複製
         /// </summary>
@@ -86,7 +89,8 @@ namespace NeeView
                    IsSupportedWidePage == other.IsSupportedWidePage &&
                    IsRecursiveFolder == other.IsRecursiveFolder &&
                    SortMode == other.SortMode &&
-                   AutoRotate == other.AutoRotate;
+                   AutoRotate == other.AutoRotate &&
+                   BaseScale == other.BaseScale;
         }
     }
 }

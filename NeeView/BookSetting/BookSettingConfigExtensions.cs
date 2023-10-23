@@ -19,6 +19,7 @@ namespace NeeView
             memento.IsRecursiveFolder = self.IsRecursiveFolder;
             memento.SortMode = self.SortMode;
             memento.AutoRotate = self.AutoRotate;
+            memento.BaseScale = self.BaseScale;
 
             return memento;
         }
@@ -37,6 +38,7 @@ namespace NeeView
             self.IsRecursiveFolder = memento.IsRecursiveFolder;
             self.SortMode = memento.SortMode;
             self.AutoRotate = memento.AutoRotate;
+            self.BaseScale = memento.BaseScale;
         }
 
         public static void CopyTo(this BookSettingConfig self, BookSettingConfig target)
@@ -51,6 +53,7 @@ namespace NeeView
             target.IsRecursiveFolder = self.IsRecursiveFolder;
             target.SortMode = self.SortMode;
             target.AutoRotate = self.AutoRotate;
+            target.BaseScale = self.BaseScale;
         }
     }
 

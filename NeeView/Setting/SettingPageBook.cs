@@ -107,6 +107,9 @@ namespace NeeView.Setting
             section.Children.Add(new SettingItemMultiProperty(
                 PropertyMemberElement.Create(defaultSetting, nameof(BookSettingConfig.IsRecursiveFolder)),
                 PropertyMemberElement.Create(settingPolicy, nameof(BookSettingPolicyConfig.IsRecursiveFolder))));
+            section.Children.Add(new SettingItemMultiProperty(
+                PropertyMemberElement.Create(defaultSetting, nameof(BookSettingConfig.BaseScale)),
+                PropertyMemberElement.Create(settingPolicy, nameof(BookSettingPolicyConfig.BaseScale))));
 
             this.Items.Add(section);
 

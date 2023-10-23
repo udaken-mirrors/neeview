@@ -151,7 +151,7 @@ namespace NeeView
                 throw new ArgumentException($"canvasSize must be smaller than Window.Size.", nameof(canvasSize));
             }
 
-            var fixedSize = Config.Current.View.IsBaseScaleEnabled ? contentSize.Multi(1.0 / Config.Current.View.BaseScale) : contentSize;
+            var fixedSize = Config.Current.View.IsBaseScaleEnabled ? contentSize.Multi(1.0 / Config.Current.BookSetting.BaseScale) : contentSize;
 
             var limitSize = new Size(SystemParameters.VirtualScreenWidth - frameWidth, SystemParameters.VirtualScreenHeight - frameHeight);
 

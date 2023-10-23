@@ -7629,4 +7629,7 @@ nv.ShowToast(nv.Book.ViewPages[0].Path)</value>
   <data name="ImageGridTarget.Screen" xml:space="preserve">
     <value>Screen</value>
   </data>
+  <data name="BookSettingConfig.BaseScale" xml:space="preserve">
+    <value>Base scale</value>
+  </data>
 </root>

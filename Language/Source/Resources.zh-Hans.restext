@@ -2317,3 +2317,4 @@ TogglePageModeCommandParameter.IsLoop=循环
 ImageStandardConfig.IsAnimatedPngEnabled=播放 PNG 动画
 ImageStandardConfig.IsAnimatedPngEnabled.Remarks=进行播放 PNG 动画。长时间的 PNG 可能会有内存资源消耗的问题发生。
 BookSettingConfig.AutoRotate=自动旋转
+BookSettingConfig.BaseScale=基础比例

@@ -1534,6 +1534,15 @@ namespace NeeView.Properties {
         }
         
         /// <summary>
+        ///   Base scale に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string BookSettingConfig_BaseScale {
+            get {
+                return ResourceManager.GetString("BookSettingConfig.BaseScale", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Book Orientation に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string BookSettingConfig_BookReadOrder {

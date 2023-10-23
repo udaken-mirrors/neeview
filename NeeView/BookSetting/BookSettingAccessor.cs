@@ -93,6 +93,12 @@ namespace NeeView
             set => _setting.AutoRotate = value;
         }
 
+        public double BaseScale
+        {
+            get => _setting.BaseScale;
+            set => _setting.BaseScale = value;
+        }
+
         // ページ数での可否
         public bool CanPageSizeSubSetting(int size)
         {

@@ -8,19 +8,21 @@ namespace NeeView.PageFrames
     public partial class BaseScaleTransform : IScaleControl, IDisposable
     {
         private double _scale = 1.0;
+        private readonly PageFrameContext _context;
         private readonly ViewConfig _viewConfig;
         private readonly ScaleTransform _scaleTransform;
         private bool _disposedValue;
         private readonly DisposableCollection _disposables = new();
 
-        public BaseScaleTransform(ViewConfig viewConfig)
+        public BaseScaleTransform(PageFrameContext context)
         {
-            _viewConfig = viewConfig;
+            _context = context;
+            _viewConfig = context.ViewConfig;
             _scaleTransform = new ScaleTransform();
 
             _disposables.Add(_viewConfig.SubscribePropertyChanged(nameof(ViewConfig.IsBaseScaleEnabled),
                 (s, e) => UpdateTransform()));
-            _disposables.Add(_viewConfig.SubscribePropertyChanged(nameof(ViewConfig.BaseScale),
+            _disposables.Add(_context.SubscribePropertyChanged(nameof(PageFrameContext.BaseScale),
                 (s, e) => UpdateTransform()));
 
             UpdateTransform();
@@ -56,12 +58,13 @@ namespace NeeView.PageFrames
 
         public void SetScale(double value, TimeSpan span)
         {
-            _viewConfig.BaseScale = value;
+            throw new NotImplementedException();
+            //_context.BaseScale = value;
         }
 
         private void UpdateTransform()
         {
-            var scale = _viewConfig.IsBaseScaleEnabled ? _viewConfig.BaseScale : 1.0;
+            var scale = _viewConfig.IsBaseScaleEnabled ? _context.BaseScale : 1.0;
             _scaleTransform.ScaleX = scale;
             _scaleTransform.ScaleY = scale;
 

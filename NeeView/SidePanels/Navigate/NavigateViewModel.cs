@@ -174,8 +174,8 @@ namespace NeeView
 
         public double BaseScale
         {
-            get => Config.Current.View.BaseScale * 100.0;
-            set => Config.Current.View.BaseScale = value / 100.0;
+            get => Config.Current.BookSetting.BaseScale * 100.0;
+            set => Config.Current.BookSetting.BaseScale = value / 100.0;
         }
 
 
@@ -247,6 +247,10 @@ namespace NeeView
                 case nameof(BookSettingConfig.AutoRotate):
                     RaisePropertyChanged(nameof(AutoRotate));
                     break;
+
+                case nameof(BookSettingConfig.BaseScale):
+                    RaisePropertyChanged(nameof(BaseScale));
+                    break;
             }
         }
 
@@ -277,10 +281,6 @@ namespace NeeView
 
                 case nameof(ViewConfig.IsBaseScaleEnabled):
                     RaisePropertyChanged(nameof(IsBaseScaleEnabled));
-                    break;
-
-                case nameof(ViewConfig.BaseScale):
-                    RaisePropertyChanged(nameof(BaseScale));
                     break;
             }
         }

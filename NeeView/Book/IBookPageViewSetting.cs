@@ -9,5 +9,6 @@
         bool IsSupportedWidePage { get; set; }
         PageMode PageMode { get; set; }
         AutoRotateType AutoRotate { get; set; }
+        double BaseScale { get; set; }
     }
 }
