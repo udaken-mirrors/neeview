@@ -5542,6 +5542,7 @@ Obsolete member access returns the default value for the type. It can be null, a
 $Page[LR] .. Current page number
 $PageMax .. Maximum page number
 $ViewScale .. Scale by view operation (%)
+$FullPath[LR] .. File full path
 $FullName[LR] .. File name including path
 $Name[LR] .. File name
 $Size[LR] .. File size (e.g. 100×100)

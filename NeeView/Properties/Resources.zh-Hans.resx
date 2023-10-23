@@ -5535,6 +5535,7 @@ Susie 档案无法辨别这个大小，仅在扩充套件设定上辨别预先�
 $Page[LR]  .. 目前页面编号
 $PageMax .. 最大页面编号
 $ViewScale .. 依照检视操作显示倍率 (%)
+$FullPath[LR] .. File full path
 $FullName[LR] .. 文件名包含路径
 $Name[LR] .. 文件名
 $Size[LR] .. 档案大小 (例如. 100×100)

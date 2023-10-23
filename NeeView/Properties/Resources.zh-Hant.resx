@@ -5547,6 +5547,7 @@ Susie 檔案無法辨別這個大小，僅在擴充套件設定上辨別預先�
 $Page[LR]  .. 目前頁面編號
 $PageMax .. 最大頁面編號
 $ViewScale .. 依照檢視操作顯示倍率 (%)
+$FullPath[LR] .. File full path
 $FullName[LR] .. 檔案名稱包含路徑
 $Name[LR] .. 檔案名稱
 $Size[LR] .. 檔案大小 (例如. 100×100)

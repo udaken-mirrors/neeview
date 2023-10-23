@@ -48,7 +48,7 @@ namespace NeeView
         public AutoRotateType AutoRotate { get; set; }
 
         // 基底スケール
-        public double BaseScale { get; set; }
+        public double BaseScale { get; set; } = 1.0;
 
         /// <summary>
         /// 複製

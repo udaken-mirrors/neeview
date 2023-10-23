@@ -16070,6 +16070,7 @@ namespace NeeView.Properties {
         ///$Page[LR] .. Current page number
         ///$PageMax .. Maximum page number
         ///$ViewScale .. Scale by view operation (%)
+        ///$FullPath[LR] .. File full path
         ///$FullName[LR] .. File name including path
         ///$Name[LR] .. File name
         ///$Size[LR] .. File size (e.g. 100×100)
@@ -16077,8 +16078,7 @@ namespace NeeView.Properties {
         ///$Scale[LR] .. Image scale (%)
         ///
         ///&quot;◯◯◯[LR]&quot; indicates that the variable name changes for 1 page or 2 pages.
-        ///For example, $Name is for 1 page, $NameL is for 2 pages left, $NameR is for 2 pages right.
-        ///$Name is the m [残りの文字列は切り詰められました]&quot;; に類似しているローカライズされた文字列を検索します。
+        ///For example, $Name is for 1 page, $NameL is for 2 pages left, $NameR is f [残りの文字列は切り詰められました]&quot;; に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string SettingPage_WindowTitle_Note {
             get {

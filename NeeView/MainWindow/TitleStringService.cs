@@ -92,6 +92,20 @@ namespace NeeView
                 return (pageElement.PageRange.PartSize == 2) ? (pageElement.Page.Index + 1).ToString() : (pageElement.Page.Index + 1).ToString() + (pageElement.PageRange.Min.Part == 1 ? ".5" : ".0");
             }
 
+            string fullPath0 = GetFullPath(contents.ElementAtOrDefault(0));
+            string fullPath1 = GetFullPath(contents.ElementAtOrDefault(1));
+            _replaceString.Set("$FullPath", isMainContent0 ? fullPath0 : fullPath1);
+            _replaceString.Set("$FullPathL", fullPath0);
+            _replaceString.Set("$FullPathR", fullPath1);
+
+            string GetFullPath(ViewContent? content)
+            {
+                if (content is null) return "";
+                var pageElement = content.Element;
+                var fullPath = pageElement.Page.EntryFullName;
+                return fullPath + GetPartString(content);
+            }
+
             string path0 = GetFullName(contents.ElementAtOrDefault(0));
             string path1 = GetFullName(contents.ElementAtOrDefault(1));
             _replaceString.Set("$FullName", isMainContent0 ? path0 : path1);

@@ -52,7 +52,7 @@ namespace NeeView
 
         public Point BasePoint { get; set; }
         public double BaseAngle { get; set; }
-        public double BaseScale { get; set; }
+        public double BaseScale { get; set; } = 1.0;
         public bool BaseFlipHorizontal { get; set; }
         public bool BaseFlipVertical { get; set; }
 

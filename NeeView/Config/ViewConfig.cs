@@ -22,7 +22,6 @@ namespace NeeView
         private bool _isViewStartPositionCenter;
         private double _angleFrequency = 0;
         private bool _isBaseScaleEnabled;
-        private double _baseScale = 1.0;
         private bool _isRotateStretchEnabled = true;
         private double _mainViewMargin;
         private bool _isKeepScaleBooks;
