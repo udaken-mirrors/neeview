@@ -53,7 +53,7 @@ namespace NeeView
                 if (_scalingMode != value)
                 {
                     _scalingMode = value;
-                    if (_mediaPlayer is IHasScalingMode hasScalingMode)
+                    if (_playerCanvas is IHasScalingMode hasScalingMode)
                     {
                         hasScalingMode.ScalingMode = _scalingMode;
                     }

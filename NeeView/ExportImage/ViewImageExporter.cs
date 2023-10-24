@@ -49,6 +49,8 @@ namespace NeeView
             rectangle.Fill = brush;
             rectangle.LayoutTransform = _source.ViewTransform;
             rectangle.Effect = _source.ViewEffect;
+            rectangle.UseLayoutRounding = true;
+            rectangle.SnapsToDevicePixels = true;
             grid.Children.Add(rectangle);
 
             // 描画サイズ取得

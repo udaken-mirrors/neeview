@@ -34,7 +34,8 @@ namespace NeeView
                 image.Source = imageSource;
                 RenderOptions.SetBitmapScalingMode(image, BitmapScalingMode.HighQuality);
 
-                return new ImageExporterContent(image, Size.Empty);
+                var size = imageSource is not null ? new Size(imageSource.GetPixelWidth(), imageSource.GetPixelHeight()) : Size.Empty;
+                return new ImageExporterContent(image, size);
             }
             catch (Exception ex)
             {
