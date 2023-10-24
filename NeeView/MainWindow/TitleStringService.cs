@@ -87,7 +87,7 @@ namespace NeeView
 
             string GetPageNum(ViewContent? content)
             {
-                if (content is null) return "";
+                if (content is null) return "0";
                 var pageElement = content.Element; 
                 return (pageElement.PageRange.PartSize == 2) ? (pageElement.Page.Index + 1).ToString() : (pageElement.Page.Index + 1).ToString() + (pageElement.PageRange.Min.Part == 1 ? ".5" : ".0");
             }

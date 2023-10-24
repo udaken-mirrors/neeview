@@ -97,17 +97,9 @@ namespace NeeView
         {
             var address = _bookHub.GetCurrentBook()?.Path;
 
-            if (_presenter.IsLoading)
-            {
-                Title = LoosePath.GetFileName(_bookHub.LoadingPath) + " " + Properties.Resources.Notice_LoadingTitle;
-            }
-            else if (address == null)
+            if (address == null)
             {
                 Title = _defaultWindowTitle;
-            }
-            else if (_presenter.GetSelectedPageFrameContent() == null)
-            {
-                Title = LoosePath.GetDispName(address);
             }
             else
             {
