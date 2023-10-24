@@ -2402,3 +2402,5 @@ MainViewWindow.Menu.AutoStretch=自動ウィンドウ サイズ調整
 ImageGridTarget.Image=Image
 ImageGridTarget.Screen=Screen
 BookSettingConfig.BaseScale=基底スケール
+ExportImageWindow.IsOriginalSize=オリジナルサイズ
+ExportImageWindow.IsDotKeep=ドットを維持

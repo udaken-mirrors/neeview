@@ -13,6 +13,9 @@ namespace NeeView
     public class ExportImageWindowViewModel : BindableBase
     {
         private readonly ExportImage _model;
+        private List<DestinationFolder>? _destinationFolderList;
+        private static DestinationFolder? _lastSelectedDestinationFolder;
+        private DestinationFolder? _selectedDestinationFolder = _lastSelectedDestinationFolder;
 
         public ExportImageWindowViewModel(ExportImage model)
         {
@@ -37,9 +40,31 @@ namespace NeeView
             set { _model.HasBackground = value; }
         }
 
+        public bool IsOriginalSize
+        {
+            get { return _model.IsOriginalSize; }
+            set { _model.IsOriginalSize = value; }
+        }
+
+        public bool IsDotKeep
+        {
+            get { return _model.IsDotKeep; }
+            set { _model.IsDotKeep = value; }
+        }
+
         public FrameworkElement? Preview
         {
             get { return _model.Preview; }
+        }
+
+        public double PreviewWidth
+        {
+            get { return _model.PreviewWidth; }
+        }
+
+        public double PreviewHeight
+        {
+            get { return _model.PreviewHeight; }
         }
 
         public string ImageFormatNote
@@ -49,16 +74,12 @@ namespace NeeView
 
 
         // NOTE: 未使用？
-        private List<DestinationFolder>? _destinationFolderList;
         public List<DestinationFolder>? DestinationFolderList
         {
             get { return _destinationFolderList; }
             set { SetProperty(ref _destinationFolderList, value); }
         }
 
-
-        private static DestinationFolder? _lastSelectedDestinationFolder;
-        private DestinationFolder? _selectedDestinationFolder = _lastSelectedDestinationFolder;
         public DestinationFolder? SelectedDestinationFolder
         {
             get { return _selectedDestinationFolder; }
@@ -71,7 +92,6 @@ namespace NeeView
             }
         }
 
-
         public void UpdateDestinationFolderList()
         {
             var oldSelect = _selectedDestinationFolder;
@@ -82,7 +102,6 @@ namespace NeeView
 
             SelectedDestinationFolder = list.FirstOrDefault(e => e.Equals(oldSelect)) ?? list.First();
         }
-
 
         private void Model_PropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
@@ -98,6 +117,14 @@ namespace NeeView
 
                 case nameof(_model.Preview):
                     RaisePropertyChanged(nameof(Preview));
+                    break;
+
+                case nameof(_model.PreviewWidth):
+                    RaisePropertyChanged(nameof(PreviewWidth));
+                    break;
+
+                case nameof(_model.PreviewHeight):
+                    RaisePropertyChanged(nameof(PreviewHeight));
                     break;
 
                 case nameof(_model.ImageFormatNote):

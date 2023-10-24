@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -9,24 +10,24 @@ using System.Windows.Shapes;
 
 namespace NeeView
 {
-    public class ViewImageExporter : IImageExporter
+    public class ViewImageExporter : IImageExporter, IDisposable
     {
         private readonly ExportImageSource _source;
+        private bool _disposedValue;
 
-        public bool HasBackground { get; set; }
 
         public ViewImageExporter(ExportImageSource source)
         {
             _source = source ?? throw new ArgumentNullException(nameof(source));
         }
 
-        public ImageExporterContent? CreateView()
+        public ImageExporterContent? CreateView(ImageExporterCreateOptions options)
         {
             if (_source == null) return null;
 
             var grid = new Grid();
 
-            if (HasBackground)
+            if (options.HasBackground)
             {
                 grid.Background = _source.Background;
 
@@ -54,12 +55,26 @@ namespace NeeView
             var rect = new Rect(0, 0, rectangle.Width, rectangle.Height);
             rect = _source.ViewTransform.TransformBounds(rect);
 
+            // オリジナルサイズ補正
+            if (options.IsOriginalSize)
+            {
+                var rawSize = _source.PageFrameContent.PageFrame.GetRawContentSize();
+                rectangle.Width = rawSize.Width;
+                rectangle.Height = rawSize.Height;
+                brush.Stretch = Stretch.Uniform;
+                rectangle.LayoutTransform = null;
+                rect = new Rect(0, 0, rectangle.Width, rectangle.Height);
+            }
+
+            // スケールモード設定
+            SetScalingMode(options.IsDotKeep ? BitmapScalingMode.NearestNeighbor : (options.IsOriginalSize ? BitmapScalingMode.HighQuality : null));
+
             return new ImageExporterContent(grid, rect.Size);
         }
 
-        public void Export(string path, bool isOverwrite, int qualityLevel)
+        public void Export(string path, bool isOverwrite, int qualityLevel, ImageExporterCreateOptions options)
         {
-            var bitmapSource = CreateBitmapSource();
+            var bitmapSource = CreateBitmapSource(options);
 
             var fileMode = isOverwrite ? FileMode.Create : FileMode.CreateNew;
 
@@ -82,13 +97,13 @@ namespace NeeView
             }
         }
 
-        private BitmapSource CreateBitmapSource()
+        private BitmapSource CreateBitmapSource(ImageExporterCreateOptions options)
         {
             if (_source.View == null) throw new InvalidOperationException();
 
             var canvas = new Canvas();
 
-            var content = CreateView();
+            var content = CreateView(options);
             if (content is null) throw new InvalidOperationException();
 
             canvas.Children.Add(content.View);
@@ -122,6 +137,38 @@ namespace NeeView
             var bookName = LoosePath.ValidFileName(LoosePath.GetFileNameWithoutExtension(_source.BookAddress));
             var indexLabel = (_source.Pages.Count > 1) ? $"{_source.Pages[0].Index:000}-{_source.Pages[1].Index:000}" : $"{_source.Pages[0].Index:000}";
             return $"{bookName}_{indexLabel}.png";
+        }
+
+        private void ResetScalingMode()
+        {
+            SetScalingMode(null);
+        }
+
+        private void SetScalingMode(BitmapScalingMode? scalingMode)
+        {
+            foreach (var viewContent in _source.PageFrameContent.ViewContents.OfType<IHasScalingMode>())
+            {
+                viewContent.ScalingMode = scalingMode;
+            }
+        }
+
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!_disposedValue)
+            {
+                if (disposing)
+                {
+                    ResetScalingMode();
+                }
+                _disposedValue = true;
+            }
+        }
+
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
         }
     }
 }

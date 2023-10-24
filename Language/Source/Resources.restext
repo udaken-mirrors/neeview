@@ -2402,3 +2402,5 @@ MainViewWindow.Menu.AutoStretch=Auto stretch window
 ImageGridTarget.Image=Image
 ImageGridTarget.Screen=Screen
 BookSettingConfig.BaseScale=Base scale
+ExportImageWindow.IsOriginalSize=Oroginal size
+ExportImageWindow.IsDotKeep=Keep dot

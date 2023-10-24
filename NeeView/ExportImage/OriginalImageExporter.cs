@@ -11,12 +11,11 @@ using System.Windows.Shapes;
 
 namespace NeeView
 {
-    public class OriginalImageExporter : IImageExporter
+    public class OriginalImageExporter : IImageExporter, IDisposable
     {
         private readonly ExportImageSource _source;
         private readonly Page _page;
 
-        public bool HasBackground { get; set; }
 
         public OriginalImageExporter(ExportImageSource source)
         {
@@ -24,14 +23,13 @@ namespace NeeView
             _page = _source?.Pages?.FirstOrDefault() ?? throw new ArgumentException("source must have any page");
         }
 
-        public ImageExporterContent? CreateView()
+        public ImageExporterContent? CreateView(ImageExporterCreateOptions options)
         {
             if (_page == null) return null;
 
             try
             {
-                var imageSource = Task.Run(() =>_page.LoadThumbnailAsync(CancellationToken.None)).Result;
-
+                var imageSource = (_source.PageFrameContent.ViewContents.FirstOrDefault() as IHasImageSource)?.ImageSource;
                 var image = new Image();
                 image.Source = imageSource;
                 RenderOptions.SetBitmapScalingMode(image, BitmapScalingMode.HighQuality);
@@ -45,7 +43,7 @@ namespace NeeView
             }
         }
 
-        public void Export(string path, bool isOverwrite, int qualityLevel)
+        public void Export(string path, bool isOverwrite, int qualityLevel, ImageExporterCreateOptions options)
         {
             _page.ArchiveEntry.ExtractToFile(path, isOverwrite);
         }
@@ -53,6 +51,11 @@ namespace NeeView
         public string CreateFileName()
         {
             return LoosePath.ValidFileName(_page.EntryLastName);
+        }
+
+        public void Dispose()
+        {
+            // nop.
         }
     }
 }

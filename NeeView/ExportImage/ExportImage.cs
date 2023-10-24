@@ -1,6 +1,4 @@
-﻿//using System.Drawing;
-
-using NeeLaboratory.ComponentModel;
+﻿using NeeLaboratory.ComponentModel;
 using System;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
@@ -15,22 +13,30 @@ namespace NeeView
     /// 画像ファイル出力
     /// </summary>
     // TODO: スケールをオリジナルにできないか？だがフィルターで求めるサイズにしている可能性も。悩ましい。
-    public class ExportImage : BindableBase
+    public class ExportImage : BindableBase, IDisposable
     {
         private readonly ExportImageSource _source;
-
         private IImageExporter _exporter;
+        private ExportImageMode _mode;
+        private bool _hasBackground;
+        private bool _isOriginalSize = true;
+        private bool _isDotKeep;
+        private FrameworkElement? _preview;
+        private double _previewWidth = double.NaN;
+        private double _previewHeight = double.NaN;
+        private string _imageFormatNote = "";
+        private bool _disposedValue;
+
 
         public ExportImage(ExportImageSource source)
         {
             _source = source;
-
             UpdateExporter();
         }
 
+
         public string? ExportFolder { get; set; }
 
-        private ExportImageMode _mode;
         public ExportImageMode Mode
         {
             get { return _mode; }
@@ -43,10 +49,6 @@ namespace NeeView
             }
         }
 
-        /// <summary>
-        /// ViewImage用：背景を含める
-        /// </summary>
-        private bool _hasBackground;
         public bool HasBackground
         {
             get { return _hasBackground; }
@@ -54,20 +56,54 @@ namespace NeeView
             {
                 if (SetProperty(ref _hasBackground, value))
                 {
-                    _exporter.HasBackground = _hasBackground;
                     UpdatePreview();
                 }
             }
         }
 
-        private FrameworkElement? _preview;
+        public bool IsOriginalSize
+        {
+            get { return _isOriginalSize; }
+            set
+            {
+                if (SetProperty(ref _isOriginalSize, value))
+                {
+                    UpdatePreview();
+                }
+            }
+        }
+
+        public bool IsDotKeep
+        {
+            get { return _isDotKeep; }
+            set
+            {
+                if (SetProperty(ref _isDotKeep, value))
+                {
+                    UpdatePreview();
+                }
+            }
+        }
+
         public FrameworkElement? Preview
         {
             get { return _preview; }
             set { SetProperty(ref _preview, value); }
         }
 
-        private string _imageFormatNote = "";
+        public double PreviewWidth
+        {
+            get { return _previewWidth; }
+            set { SetProperty(ref _previewWidth, value); }
+        }
+
+        public double PreviewHeight
+        {
+            get { return _previewHeight; }
+            set { SetProperty(ref _previewHeight, value); }
+        }
+
+
         public string ImageFormatNote
         {
             get { return _imageFormatNote; }
@@ -77,24 +113,42 @@ namespace NeeView
         public int QualityLevel { get; internal set; }
 
 
-        private static IImageExporter CreateExporter(ExportImageMode mode, ExportImageSource source, bool hasBackground)
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!_disposedValue)
+            {
+                if (disposing)
+                {
+                    _exporter?.Dispose();
+                }
+                _disposedValue = true;
+            }
+        }
+
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
+
+        private static IImageExporter CreateExporter(ExportImageMode mode, ExportImageSource source)
         {
             return mode switch
             {
                 ExportImageMode.Original
-                    => new OriginalImageExporter(source) { HasBackground = hasBackground },
+                    => new OriginalImageExporter(source),
                 ExportImageMode.View
-                    => new ViewImageExporter(source) { HasBackground = hasBackground },
-                _ 
+                    => new ViewImageExporter(source),
+                _
                     => throw new InvalidOperationException(),
             };
         }
 
-
         [MemberNotNull(nameof(_exporter))]
         public void UpdateExporter()
         {
-            _exporter = CreateExporter(_mode, _source, _hasBackground);
+            _exporter?.Dispose();
+            _exporter = CreateExporter(_mode, _source);
             UpdatePreview();
         }
 
@@ -104,26 +158,41 @@ namespace NeeView
             {
                 try
                 {
-                    var content = _exporter.CreateView();
+                    var options = new ImageExporterCreateOptions()
+                    {
+                        HasBackground = _hasBackground,
+                        IsOriginalSize = _isOriginalSize,
+                        IsDotKeep = _isDotKeep,
+                    };
+                    var content = _exporter.CreateView(options);
                     if (content is null) throw new InvalidOperationException();
                     Preview = content.View;
+                    PreviewWidth = content.Size.IsEmpty ? double.NaN : content.Size.Width;
+                    PreviewHeight = content.Size.IsEmpty ? double.NaN : content.Size.Height;
                     ImageFormatNote = content.Size.IsEmpty ? "" : $"{(int)content.Size.Width} x {(int)content.Size.Height}";
                 }
                 catch (Exception ex)
                 {
                     Debug.WriteLine(ex.Message);
                     Preview = null;
+                    PreviewWidth = double.NaN;
+                    PreviewHeight = double.NaN;
                     ImageFormatNote = "Error.";
                 }
             });
         }
 
-
         public void Export(string path, bool isOverwrite)
         {
             path = System.IO.Path.GetFullPath(path);
 
-            _exporter.Export(path, isOverwrite, QualityLevel);
+            var options = new ImageExporterCreateOptions()
+            {
+                HasBackground = _hasBackground,
+                IsOriginalSize = _isOriginalSize,
+                IsDotKeep = _isDotKeep,
+            };
+            _exporter.Export(path, isOverwrite, QualityLevel, options);
             ExportFolder = System.IO.Path.GetDirectoryName(path);
         }
 
@@ -153,5 +222,6 @@ namespace NeeView
                 return LoosePath.ValidFileName($"{bookName}_{indexLabel}{extension}");
             }
         }
+
     }
 }

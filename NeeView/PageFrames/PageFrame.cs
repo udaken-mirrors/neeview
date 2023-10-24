@@ -131,7 +131,7 @@ namespace NeeView.PageFrames
             return _elements.Any(e => e.Contains(index));
         }
 
-        private Size GetRawContentSize()
+        public Size GetRawContentSize()
         {
             if (!_elements.Any()) return new Size(0.0, 0.0);
             var width = Math.Max(_elements.Sum(e => e.Width), 0.0);

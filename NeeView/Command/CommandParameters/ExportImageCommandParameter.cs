@@ -7,6 +7,8 @@ namespace NeeView
     {
         private ExportImageMode _mode;
         private bool _hasBackground;
+        private bool _isOriginalSize = true;
+        private bool _isDotKeep;
         private string? _exportFolder;
         private ExportImageFileNameMode _fileNameMode;
         private ExportImageFormat _fileFormat;
@@ -24,6 +26,20 @@ namespace NeeView
         {
             get => _hasBackground;
             set => SetProperty(ref _hasBackground, value);
+        }
+
+        [PropertyMember]
+        public bool IsOriginalSize
+        {
+            get { return _isOriginalSize; }
+            set { SetProperty(ref _isOriginalSize, value); }
+        }
+
+        [PropertyMember]
+        public bool IsDotKeep
+        {
+            get { return _isDotKeep; }
+            set { SetProperty(ref _isDotKeep, value); }
         }
 
         [PropertyPath(FileDialogType = FileDialogType.Directory)]

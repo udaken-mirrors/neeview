@@ -5709,6 +5709,24 @@ namespace NeeView.Properties {
         }
         
         /// <summary>
+        ///   Keep dot に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string ExportImageWindow_IsDotKeep {
+            get {
+                return ResourceManager.GetString("ExportImageWindow.IsDotKeep", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Oroginal size に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string ExportImageWindow_IsOriginalSize {
+            get {
+                return ResourceManager.GetString("ExportImageWindow.IsOriginalSize", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Output image type に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string ExportImageWindow_Mode {

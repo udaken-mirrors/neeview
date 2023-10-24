@@ -7638,4 +7638,10 @@ nv.ShowToast(nv.Book.ViewPages[0].Path)</value>
   <data name="BookSettingConfig.BaseScale" xml:space="preserve">
     <value>基底スケール</value>
   </data>
+  <data name="ExportImageWindow.IsOriginalSize" xml:space="preserve">
+    <value>オリジナルサイズ</value>
+  </data>
+  <data name="ExportImageWindow.IsDotKeep" xml:space="preserve">
+    <value>ドットを維持</value>
+  </data>
 </root>

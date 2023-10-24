@@ -16,14 +16,16 @@ namespace NeeView
         {
             var source = ExportImageSource.Create();
 
-            var exporter = new ExportImage(source);
+            using var exporter = new ExportImage(source);
             exporter.ExportFolder = string.IsNullOrWhiteSpace(parameter.ExportFolder) ? System.Environment.GetFolderPath(System.Environment.SpecialFolder.MyPictures) : parameter.ExportFolder;
             exporter.Mode = parameter.Mode;
             exporter.HasBackground = parameter.HasBackground;
+            exporter.IsOriginalSize = parameter.IsOriginalSize;
+            exporter.IsDotKeep = parameter.IsDotKeep;
             exporter.QualityLevel = parameter.QualityLevel;
 
             string filename = exporter.CreateFileName(parameter.FileNameMode, parameter.FileFormat);
-            bool isOverweite;
+            bool isOverwrite;
 
             if (string.IsNullOrWhiteSpace(parameter.ExportFolder))
             {
@@ -31,16 +33,16 @@ namespace NeeView
                 var result = dialog.ShowDialog(MainWindow.Current);
                 if (result != true) return;
                 filename = dialog.FileName;
-                isOverweite = true;
+                isOverwrite = true;
             }
             else
             {
                 filename = LoosePath.Combine(exporter.ExportFolder, filename);
                 filename = FileIO.CreateUniquePath(filename);
-                isOverweite = false;
+                isOverwrite = false;
             }
 
-            exporter.Export(filename, isOverweite);
+            exporter.Export(filename, isOverwrite);
 
             var toast = new Toast(string.Format(Resources.ExportImage_Message_Success, filename));
             ToastService.Current.Show(toast);

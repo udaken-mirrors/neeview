@@ -11,27 +11,27 @@
             </ResourceDictionary.MergedDictionaries>
 
             <Style x:Key="TextButton" TargetType="Button" BasedOn="{StaticResource NVDialogButton}">
-            <Setter Property="Margin" Value="10,10,0,0" />
-            <Setter Property="MaxWidth" Value="512" />
-        </Style>
+                <Setter Property="Margin" Value="10,10,0,0" />
+                <Setter Property="MaxWidth" Value="512" />
+            </Style>
 
             <Style x:Key="TextButtonMain" TargetType="Button" BasedOn="{StaticResource NVDialogAccentButton}">
-            <Setter Property="Margin" Value="10,10,0,0" />
-            <Setter Property="MaxWidth" Value="512" />
-        </Style>
+                <Setter Property="Margin" Value="10,10,0,0" />
+                <Setter Property="MaxWidth" Value="512" />
+            </Style>
 
-        <Style x:Key="ItemStack" TargetType="StackPanel">
-            <Setter Property="Margin" Value="0,5" />
-        </Style>
+            <Style x:Key="ItemStack" TargetType="StackPanel">
+                <Setter Property="Margin" Value="0,5" />
+            </Style>
 
-        <Style x:Key="Header" TargetType="TextBlock">
-            <Setter Property="VerticalAlignment" Value="Center" />
-            <Setter Property="TextTrimming" Value="CharacterEllipsis" />
-        </Style>
+            <Style x:Key="Header" TargetType="TextBlock">
+                <Setter Property="VerticalAlignment" Value="Center" />
+                <Setter Property="TextTrimming" Value="CharacterEllipsis" />
+            </Style>
 
-        <Style x:Key="Body" TargetType="TextBlock">
-            <Setter Property="Background" Value="Transparent" />
-        </Style>
+            <Style x:Key="Body" TargetType="TextBlock">
+                <Setter Property="Background" Value="Transparent" />
+            </Style>
 
         </ResourceDictionary>
     </Window.Resources>
@@ -53,11 +53,10 @@
                     <StackPanel Style="{StaticResource ItemStack}">
                         <TextBlock Style="{StaticResource Header}" Text="{x:Static properties:Resources.ExportImageWindow_Mode}" />
                         <ComboBox ItemsSource="{Binding ExportImageModeList}" DisplayMemberPath="Value" SelectedValuePath="Key" SelectedValue="{Binding Mode}" TabIndex="1" />
-                        <CheckBox Content="{x:Static properties:Resources.ExportImageWindow_InclideBackground}" IsChecked="{Binding HasBackground}" Margin="20,10,0,0" TabIndex="1"
-                                FocusVisualStyle="{StaticResource NVBorderFocusVisual}">
-                            <CheckBox.Style>
-                                <Style TargetType="CheckBox" BasedOn="{StaticResource {x:Type CheckBox}}">
-                                    <Setter Property="VerticalContentAlignment" Value="Center" />
+
+                        <StackPanel>
+                            <StackPanel.Style>
+                                <Style TargetType="StackPanel">
                                     <Setter Property="Visibility" Value="Hidden" />
                                     <Style.Triggers>
                                         <DataTrigger Binding="{Binding Mode}" Value="{x:Static local:ExportImageMode.View}">
@@ -65,8 +64,19 @@
                                         </DataTrigger>
                                     </Style.Triggers>
                                 </Style>
-                            </CheckBox.Style>
-                        </CheckBox>
+                            </StackPanel.Style>
+
+                            <CheckBox Content="{x:Static properties:Resources.ExportImageWindow_InclideBackground}" IsChecked="{Binding HasBackground}" Margin="20,10,0,0" TabIndex="1"
+                                FocusVisualStyle="{StaticResource NVBorderFocusVisual}"/>
+
+                            <CheckBox Content="{x:Static properties:Resources.ExportImageWindow_IsOriginalSize}" IsChecked="{Binding IsOriginalSize}" Margin="20,10,0,0" TabIndex="1"
+                                FocusVisualStyle="{StaticResource NVBorderFocusVisual}"/>
+
+                            <CheckBox Content="{x:Static properties:Resources.ExportImageWindow_IsDotKeep}" IsChecked="{Binding IsDotKeep}" Margin="20,10,0,0" TabIndex="1"
+                                FocusVisualStyle="{StaticResource NVBorderFocusVisual}"/>
+
+                        </StackPanel>
+
                     </StackPanel>
                 </StackPanel>
 
@@ -89,7 +99,7 @@
         <Grid x:Name="Base" Grid.Column="1">
             <DockPanel Margin="20">
                 <TextBlock DockPanel.Dock="Bottom" Text="{Binding ImageFormatNote}" Margin="10" HorizontalAlignment="Center" />
-                <Viewbox Margin="20" HorizontalAlignment="Center" VerticalAlignment="Center">
+                <Viewbox x:Name="PreviewViewBox" Margin="20" HorizontalAlignment="Center" VerticalAlignment="Center" MaxWidth="{Binding PreviewWidth}" MaxHeight="{Binding PreviewHeight}">
                     <ContentControl Content="{Binding Preview}" HorizontalAlignment="Center" VerticalAlignment="Center" Focusable="False" IsTabStop="False" />
                 </Viewbox>
             </DockPanel>
