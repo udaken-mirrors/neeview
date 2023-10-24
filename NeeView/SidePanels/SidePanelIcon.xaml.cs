@@ -69,11 +69,27 @@ namespace NeeView
             }
         }
 
+        private void OpenDockCommand_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            if (this.DataContext is LayoutPanel layoutPanel)
+            {
+                e.CanExecute = !CustomLayoutPanelManager.Current.IsSeparated(layoutPanel);
+            }
+        }
+
         private void OpenDockCommand_Execute(object sender, ExecutedRoutedEventArgs e)
         {
             if (this.DataContext is LayoutPanel layoutPanel)
             {
                 CustomLayoutPanelManager.Current.OpenDock(layoutPanel);
+            }
+        }
+
+        private void OpenWindowCommand_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            if (this.DataContext is LayoutPanel layoutPanel)
+            {
+                e.CanExecute = !CustomLayoutPanelManager.Current.IsSeparated(layoutPanel);
             }
         }
 

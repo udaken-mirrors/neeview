@@ -68,13 +68,13 @@ namespace NeeView
             var box = PageFrameBoxPresenter.View;
             if (box is null) return;
 
-            //Trace($"ViewContentChanged={e}, {e.PageFrameContent?.GetContentRect():f0}");
+            Trace($"ViewContentChanged={e}, {e.PageFrameContent?.GetContentRect():f0}");
             
             // AutoStretch
-            if (e.State == ViewContentState.Loaded && e.PageFrameContent is not null && box.AutoStretchTargetEquals(e.PageFrameContent.FrameRange))
+            if (e.State == ViewContentState.Loaded && e.PageFrameContent is not null && box.Context.AutoStretchTarget.Conflict(e.PageFrameContent.FrameRange))
             {
                 Trace($"ViewContentChanged: PageFrameContent={e.PageFrameContent}");
-                box.ResetAutoStretchTarget();
+                box.Context.ResetAutoStretchTarget();
                 if (Config.Current.MainView.IsFloating && Config.Current.MainView.IsAutoStretch)
                 {
                     // NOTE: StretchWindow() はさらなるページ処理を呼ぶ可能性があるためタイミングをずらす

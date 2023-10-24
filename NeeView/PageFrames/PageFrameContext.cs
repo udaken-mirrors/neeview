@@ -1,5 +1,8 @@
-﻿using System;
+﻿//#define LOCAL_DEBUG
+
+using System;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Windows;
 using NeeLaboratory.ComponentModel;
 using NeeLaboratory.Generators;
@@ -23,6 +26,8 @@ namespace NeeView.PageFrames
         private readonly BooleanLockValue _isSnapAnchor = new();
         private readonly ViewScrollContext _viewScrollContext;
         private readonly bool _isMediaBook;
+        private PageRange _autoStretchTarget = PageRange.Empty;
+
 
         public PageFrameContext(Config config, BookShareContext share, ViewScrollContext viewScrollContext, bool isMediaBook)
         {
@@ -121,6 +126,7 @@ namespace NeeView.PageFrames
 
         public BooleanLockValue IsSnapAnchor => _isSnapAnchor;
 
+        public PageRange AutoStretchTarget => _autoStretchTarget;
 
 
         protected virtual void Dispose(bool disposing)
@@ -320,6 +326,24 @@ namespace NeeView.PageFrames
         public void ResetReferenceSize()
         {
             _frameProfile.ResetReferenceSize();
+        }
+
+        public void ResetAutoStretchTarget()
+        {
+            SetAutoStretchTarget(PageRange.Empty);
+        }
+
+        public void SetAutoStretchTarget(PageRange range)
+        {
+            Trace($"AutoStretchTarget: {range}");
+            _autoStretchTarget = range;
+        }
+
+
+        [Conditional("LOCAL_DEBUG")]
+        private void Trace(string s, params object[] args)
+        {
+            Debug.WriteLine($"{this.GetType().Name}: {string.Format(s, args)}");
         }
     }
 }

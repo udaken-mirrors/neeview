@@ -61,8 +61,13 @@ namespace NeeView.PageFrames
             {
                 if (SetProperty(ref _canvasSize, value))
                 {
-                    if (!ReferenceSizeLocker.IsLocked || _mainViewConfig.ReferenceSize.IsEmptyOrZero())
+                    if (!ReferenceSizeLocker.IsLocked)
                     {
+                        ResetReferenceSize();
+                    }
+                    else if (_mainViewConfig.ReferenceSize.IsEmptyOrZero())
+                    {
+                        ReferenceSizeLocker.ForceUnlock();
                         ResetReferenceSize();
                     }
                 }

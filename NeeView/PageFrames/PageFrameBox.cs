@@ -1,4 +1,6 @@
-﻿using System;
+﻿//#define LOCAL_DEBUG
+
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -50,7 +52,6 @@ namespace NeeView.PageFrames
         private readonly DragTransformContextFactory _dragTransformContextFactory;
         private readonly OnceDispatcher _onceDispatcher;
         private bool _isStarted;
-        private PageRange _autoStretchTarget = PageRange.Empty;
 
         public PageFrameBox(PageFrameContext context, BookContext bookContext)
         {
@@ -230,16 +231,6 @@ namespace NeeView.PageFrames
         {
             Dispose(disposing: true);
             GC.SuppressFinalize(this);
-        }
-
-        public bool AutoStretchTargetEquals(PageRange range)
-        {
-            return _autoStretchTarget == range;
-        }
-
-        public void ResetAutoStretchTarget()
-        {
-            _autoStretchTarget = PageRange.Empty;
         }
 
         public DragTransformContext? CreateDragTransformContext(bool isPointContainer, bool isLoupeTransform)
@@ -672,9 +663,7 @@ namespace NeeView.PageFrames
             _layout.Flush();
             _containers.Anchor.Set(next, direction);
 
-            _autoStretchTarget = next.Value.FrameRange;
-            //Debug.WriteLine($"AutoStretchTarget: {next.Value.FrameRange}");
-
+            _context.SetAutoStretchTarget(next.Value.FrameRange);
             _selected.Set(next, true);
 
             ScrollToViewOrigin(next, direction);
@@ -753,9 +742,7 @@ namespace NeeView.PageFrames
             _layout.Flush();
             _containers.Anchor.Set(next, direction);
 
-            _autoStretchTarget = next.Value.FrameRange;
-            //Debug.WriteLine($"AutoStretchTarget: {next.Value.FrameRange}");
-
+            _context.SetAutoStretchTarget(next.Value.FrameRange);
             _selected.Set(next, true);
 
             AssertSelectedExists();
@@ -793,9 +780,7 @@ namespace NeeView.PageFrames
             _layout.Flush();
             _containers.Anchor.Set(next, direction);
 
-            _autoStretchTarget = next.Value.FrameRange;
-            //Debug.WriteLine($"AutoStretchTarget: {next.Value.FrameRange}");
-
+            _context.SetAutoStretchTarget(next.Value.FrameRange);
             _selected.Set(next, true);
 
             AssertSelectedExists();
@@ -1177,6 +1162,11 @@ namespace NeeView.PageFrames
             PageTerminated?.Invoke(sender, new PageTerminatedEventArgs(direction));
         }
 
+        [Conditional("LOCAL_DEBUG")]
+        private void Trace(string s, params object[] args)
+        {
+            Debug.WriteLine($"{this.GetType().Name}: {string.Format(s, args)}");
+        }
     }
 
     public interface ICanvasToViewTranslator

@@ -27,8 +27,8 @@
 
     <UserControl.CommandBindings>
         <CommandBinding x:Name="TogglePanel" Command="{StaticResource TogglePanelCommand}" Executed="TogglePanelCommand_Execute" />
-        <CommandBinding x:Name="OpenDock" Command="{StaticResource OpenDockCommand}" Executed="OpenDockCommand_Execute" />
-        <CommandBinding x:Name="OpenWindow" Command="{StaticResource OpenWindowCommand}" Executed="OpenWindowCommand_Execute" />
+        <CommandBinding x:Name="OpenDock" Command="{StaticResource OpenDockCommand}" Executed="OpenDockCommand_Execute" CanExecute="OpenDockCommand_CanExecute" />
+        <CommandBinding x:Name="OpenWindow" Command="{StaticResource OpenWindowCommand}" Executed="OpenWindowCommand_Execute" CanExecute="OpenWindowCommand_CanExecute" />
     </UserControl.CommandBindings>
 
     <Button x:Name="Root" Style="{StaticResource PanelIconButtonStyle}" Command="{StaticResource TogglePanelCommand}">

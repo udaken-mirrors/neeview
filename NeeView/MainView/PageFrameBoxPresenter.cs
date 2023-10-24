@@ -268,6 +268,9 @@ namespace NeeView
 
             _bookMementoControl = new BookMementoControl(_book, BookHistoryCollection.Current);
 
+            // NOTE: 表示開始時の最初のサイズ変更を回避する
+            using var key = PageFrameProfile.ReferenceSizeLocker.Lock();
+
             RaisePropertyChanged(nameof(View));
             await WaitStableAsync(_box, token);
 

@@ -39,13 +39,18 @@ namespace NeeView
             }
         }
 
+
+        private readonly object _lock = new();
         private int _lockCount;
 
         public bool IsLocked => _lockCount > 0;
 
         public Key Lock()
         {
-            Interlocked.Increment(ref _lockCount);
+            lock (_lock)
+            {
+                _lockCount++;
+            }
             return new Key(this);
         }
 
@@ -54,9 +59,22 @@ namespace NeeView
             if (key.Locker == this)
             {
                 key.Locker = null;
-                Interlocked.Decrement(ref _lockCount);
+                lock (_lock)
+                {
+                    if (_lockCount > 0)
+                    {
+                        _lockCount--;
+                    }
+                }
+            }
+        }
+
+        public void ForceUnlock()
+        {
+            lock (_lock)
+            {
+                _lockCount = 0;
             }
         }
     }
-
 }
