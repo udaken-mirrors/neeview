@@ -45,10 +45,16 @@ namespace NeeView
 
             model.SearchBoxFocus += FolderList_SearchBoxFocus;
             model.FolderTreeFocus += FolderList_FolderTreeFocus;
+
+            this.SearchBox.SearchBoxFocusChanged += SearchBox_SearchBoxFocusChanged;
         }
 
 
-        public event EventHandler<FocusChangedEventArgs>? SearchBoxFocusChanged;
+        public event EventHandler<FocusChangedEventArgs>? SearchBoxFocusChanged
+        {
+            add => this.SearchBox.SearchBoxFocusChanged += value;
+            remove => this.SearchBox.SearchBoxFocusChanged -= value;
+        }
 
 
         protected override void OnDpiChanged(DpiScale oldDpi, DpiScale newDpi)
@@ -76,11 +82,9 @@ namespace NeeView
         /// <param name="e"></param>
         private void FolderList_SearchBoxFocus(object? sender, EventArgs e)
         {
-            if (!_vm.Model.IsFolderSearchBoxVisible) return;
-
             if (Interlocked.Exchange(ref _requestSearchBoxFocusValue, 1) == 0)
             {
-                _ = FocustSearchBoxAsync(); // 非同期
+                _ = FocusSearchBoxAsync(); // 非同期
             }
         }
 
@@ -88,15 +92,15 @@ namespace NeeView
         /// 検索ボックスにフォーカスをあわせる。
         /// </summary>
         /// <returns></returns>
-        private async Task FocustSearchBoxAsync()
+        private async Task FocusSearchBoxAsync()
         {
             // 表示が間に合わない場合があるので繰り返しトライする
-            while (_vm.Model.IsFolderSearchBoxVisible)
+            for (int i = 0; i < 10; i++)
             {
                 var searchBox = this.SearchBox;
                 if (searchBox != null && searchBox.IsLoaded && searchBox.IsVisible && this.IsVisible)
                 {
-                    searchBox.Focus();
+                    searchBox.FocusEditableTextBox();
                     var isFocused = searchBox.IsKeyboardFocusWithin;
                     //Debug.WriteLine($"Focus: {isFocused}");
                     if (isFocused) break;
@@ -139,46 +143,13 @@ namespace NeeView
         }
 
         /// <summary>
-        /// 単キーのショートカット無効
+        /// 検索ボックスのフォーカス変更イベント
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void Control_KeyDown_IgnoreSingleKeyGesture(object? sender, KeyEventArgs e)
+        private void SearchBox_SearchBoxFocusChanged(object? sender, FocusChangedEventArgs e)
         {
-            KeyExGesture.AllowSingleKey = false;
-        }
-
-        /// <summary>
-        /// 検索ボックスでのキー入力
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void SearchBox_KeyDown(object? sender, KeyEventArgs e)
-        {
-            KeyExGesture.AllowSingleKey = false;
-
-            if (e.Key == Key.Enter)
+            if (!e.IsFocused)
             {
-                _vm.Model.SetSearchKeywordAndSearch(this.SearchBox.Text);
-            }
-        }
-
-        /// <summary>
-        /// SearchBox: キーボードフォーカス変更イベント
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void SearchBox_IsKeyboardFocusWithinChanged(object? sender, DependencyPropertyChangedEventArgs e)
-        {
-            //Debug.WriteLine($"SBF.K: {this.SearchBox.IsKeyboardFocusWithin}");
-
-            // リストのフォーカス更新を停止
-            SearchBoxFocusChanged?.Invoke(this, new FocusChangedEventArgs(this.SearchBox.IsKeyboardFocusWithin));
-
-            // フォーカス解除で履歴登録
-            if (!this.SearchBox.IsKeyboardFocusWithin)
-            {
-                _vm.UpdateSearchHistory();
+                _vm.SearchBoxModel?.UpdateSearchHistory();
             }
         }
 
@@ -196,7 +167,7 @@ namespace NeeView
 
         #region DragDrop
 
-        private readonly DragDropGoast _goast = new();
+        private readonly DragDropGhost _ghost = new();
         private bool _isButtonDown;
         private Point _buttonDownPos;
 
@@ -244,26 +215,18 @@ namespace NeeView
                 var data = new DataObject();
                 data.SetData(new QueryPathCollection() { _vm.Model.Place });
 
-                _goast.Attach(this.PlaceBar, new Point(24, 24));
+                _ghost.Attach(this.PlaceBar, new Point(24, 24));
                 DragDrop.DoDragDrop(element, data, DragDropEffects.Copy);
-                _goast.Detach();
+                _ghost.Detach();
             }
         }
 
         private void PlaceIcon_QueryContinueDrag(object? sender, QueryContinueDragEventArgs e)
         {
-            _goast.QueryContinueDrag(sender, e);
+            _ghost.QueryContinueDrag(sender, e);
         }
 
         #endregion
-
-        private void SearchBox_TextChanged(object? sender, TextChangedEventArgs e)
-        {
-            if (e.OriginalSource is TextBox textBox)
-            {
-                _vm.Model.SetSearchKeywordDelay(textBox.Text);
-            }
-        }
 
         public void SetFolderListBoxContent(FolderListBox content)
         {
@@ -288,15 +251,13 @@ namespace NeeView
 
         public void SetSearchBoxText(string text)
         {
-            this.SearchBox.SetCurrentValue(ComboBox.TextProperty, text);
-            _vm.Model.SetSearchKeywordAndSearch(this.SearchBox.Text); // 即時検索
+            this.SearchBox.SetCurrentValue(SearchBox.TextProperty, text);
         }
 
         public string GetSearchBoxText()
         {
             return this.SearchBox.Text;
         }
-
 
         #endregion UI Accessor
     }

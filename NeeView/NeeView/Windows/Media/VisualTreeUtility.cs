@@ -196,7 +196,7 @@ namespace NeeView.Windows.Media
         /// <typeparam name="T">取得するコントロールの型</typeparam>
         /// <param name="visual">調査対象となるビジュアル</param>
         /// <param name="point">ビジュアル上の座標</param>
-        /// <returns>取得されたコントロール。なければnull</returns>
+        /// <returns>取得されたコントロール。なければ null</returns>
         public static T? HitTest<T>(Visual visual, Point point)
             where T : DependencyObject
         {

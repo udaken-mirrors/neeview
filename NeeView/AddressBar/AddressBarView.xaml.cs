@@ -140,7 +140,7 @@ namespace NeeView
 
         #region DragDrop
 
-        private readonly DragDropGoast _goast = new();
+        private readonly DragDropGhost _ghost = new();
         private bool _isButtonDown;
         private Point _buttonDownPos;
 
@@ -193,17 +193,17 @@ namespace NeeView
                 var data = new DataObject();
                 data.SetData(new QueryPathCollection() { new QueryPath(_vm.Model.Address) });
 
-                _goast.Attach(element, new Point(24, 24));
+                _ghost.Attach(element, new Point(24, 24));
                 DragDropWatcher.SetDragElement(sender, element);
                 DragDrop.DoDragDrop(element, data, DragDropEffects.Copy);
                 DragDropWatcher.SetDragElement(sender, null);
-                _goast.Detach();
+                _ghost.Detach();
             }
         }
 
         private void BookButton_QueryContinueDrag(object sender, QueryContinueDragEventArgs e)
         {
-            _goast.QueryContinueDrag(sender, e);
+            _ghost.QueryContinueDrag(sender, e);
         }
 
         #endregion

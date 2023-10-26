@@ -16,13 +16,14 @@ namespace NeeView.Threading
     {
         private readonly object _lock = new();
         private readonly DispatcherTimer _timer;
+        private readonly Action? _defaultAction;
+        private readonly TimeSpan _defaultDelay = TimeSpan.FromMilliseconds(1000);
         private Action? _action;
 
 
         public DelayAction(Dispatcher dispatcher)
         {
             _timer = new DispatcherTimer(DispatcherPriority.Normal, dispatcher);
-            _timer.Interval = TimeSpan.FromMilliseconds(1000);
             _timer.Tick += new EventHandler(DispatcherTimer_Tick);
         }
 
@@ -30,14 +31,14 @@ namespace NeeView.Threading
         {
         }
 
-        public DelayAction(Action action, TimeSpan delay, Dispatcher dispatcher) : this(dispatcher)
-        {
-            _timer.Interval = delay;
-            _action = action;
-        }
-
         public DelayAction(Action action, TimeSpan delay) : this(action, delay, Application.Current.Dispatcher)
         {
+        }
+
+        public DelayAction(Action action, TimeSpan delay, Dispatcher dispatcher) : this(dispatcher)
+        {
+            _defaultDelay = delay;
+            _defaultAction = action;
         }
 
 
@@ -48,17 +49,22 @@ namespace NeeView.Threading
         public void Request()
         {
             if (_disposedValue) return;
-            if (_action is null) return;
+            if (_defaultAction is null) return;
 
-            StartTimer();
+            Request(_defaultAction, _defaultDelay);
         }
 
+        /// <summary>
+        /// 実行要求
+        /// </summary>
         public void Request(Action action, TimeSpan delay)
         {
+            if (_disposedValue) return;
+
             _timer.Interval = delay;
             _action = action;
 
-            Request();
+            StartTimer();
         }
 
         /// <summary>

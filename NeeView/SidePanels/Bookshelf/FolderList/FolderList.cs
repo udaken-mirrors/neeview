@@ -74,11 +74,6 @@ namespace NeeView
         /// </summary>
         private readonly FolderSearchEngine _searchEngine;
 
-        /// <summary>
-        /// 検索キーワード
-        /// </summary>
-        private readonly DelayValue<string?> _searchKeyword;
-
         // フォルダーコレクション生成
         private readonly FolderCollectionFactory _folderCollectionFactory;
 
@@ -95,9 +90,6 @@ namespace NeeView
         private FolderCollection? _folderCollection;
         private FolderItem? _selectedItem;
 
-        private string? _inputKeyword;
-        private string? _searchKeywordErrorMessage;
-
         private readonly object _lock = new();
 
         private double _areaWidth = double.PositiveInfinity;
@@ -106,6 +98,7 @@ namespace NeeView
 
         private readonly DisposableCollection _disposables = new();
 
+        private SearchBoxModel? _searchBoxModel;
 
         protected FolderList(bool isSyncBookHub, bool isOverlayEnabled, FolderListConfig folderListConfig)
         {
@@ -114,21 +107,6 @@ namespace NeeView
             _searchEngine = new FolderSearchEngine();
 
             _folderCollectionFactory = new FolderCollectionFactory(_searchEngine, isOverlayEnabled);
-
-            _searchKeyword = new DelayValue<string?>();
-            _searchKeyword.ValueChanged += (s, e) =>
-            {
-                if (_disposedValue) return;
-
-                if (IsIncrementalSearchEnabled())
-                {
-                    RequestSearchPlace(false);
-                }
-                else
-                {
-                    UpdateSearchKeywordErrorMessage();
-                }
-            };
 
             if (isSyncBookHub)
             {
@@ -190,8 +168,6 @@ namespace NeeView
         }
 
 
-        // Events
-
         // 場所変更
         [Subscribable]
         public event EventHandler? PlaceChanged;
@@ -224,8 +200,6 @@ namespace NeeView
         [Subscribable]
         public event EventHandler<FolderListSelectedChangedEventArgs>? SelectedChanged;
 
-
-        // Properties
 
         /// <summary>
         /// 選択項目
@@ -300,14 +274,20 @@ namespace NeeView
         }
 
         /// <summary>
-        /// 検索リスト？
+        /// 検索ボックス
         /// </summary>
-        public bool IsFolderSearchCollection => FolderCollection is FolderSearchCollection;
+        public SearchBoxModel? SearchBoxModel
+        {
+            get { return _searchBoxModel; }
+            protected set { SetProperty(ref _searchBoxModel, value); }
+        }
+
 
         /// <summary>
         /// 検索許可？
         /// </summary>
         public bool IsFolderSearchEnabled => Place?.Path != null && FolderCollection != null && FolderCollection.IsSearchEnabled;
+
 
         /// <summary>
         /// 現在のフォルダー
@@ -319,34 +299,6 @@ namespace NeeView
         /// </summary>
         public bool IsPlaceValid => Place != null;
 
-        /// <summary>
-        /// 検索BOXの表示
-        /// </summary>
-        public bool IsFolderSearchBoxVisible => true;
-
-        /// <summary>
-        /// 入力キーワード
-        /// </summary>
-        public string? InputKeyword
-        {
-            get { return _inputKeyword; }
-            set
-            {
-                if (SetProperty(ref _inputKeyword, value))
-                {
-                    SetSearchKeywordDelay(_inputKeyword);
-                }
-            }
-        }
-
-        /// <summary>
-        /// 検索キーワードエラーメッセージ
-        /// </summary>
-        public string? SearchKeywordErrorMessage
-        {
-            get => _searchKeywordErrorMessage;
-            set => SetProperty(ref _searchKeywordErrorMessage, value);
-        }
 
         public bool IsFolderTreeVisible
         {
@@ -481,42 +433,6 @@ namespace NeeView
 
 
 
-        protected virtual bool IsIncrementalSearchEnabled() => false;
-
-        protected virtual bool IsSearchIncludeSubdirectories() => false;
-
-
-        // 検索キーワード即時反映
-        public void SetSearchKeyword(string keyword)
-        {
-            if (_disposedValue) return;
-
-            _searchKeyword.SetValue(keyword, 0, DelayValueOverwriteOption.Force);
-        }
-
-        // 検索キーワード遅延反映
-        public void SetSearchKeywordDelay(string? keyword)
-        {
-            if (_disposedValue) return;
-
-            _searchKeyword.SetValue(keyword, 500);
-        }
-
-        public void SetSearchKeywordAndSearch(string keyword)
-        {
-            if (_disposedValue) return;
-
-            SetSearchKeyword(keyword);
-
-            // 検索を重複させないための処置
-            if (!IsIncrementalSearchEnabled())
-            {
-                RequestSearchPlace(false);
-            }
-
-            UpdateSearchHistory();
-        }
-
         private void RaiseCollectionChanged()
         {
             if (_disposedValue) return;
@@ -527,7 +443,6 @@ namespace NeeView
             RaisePropertyChanged(nameof(IsPlaceValid));
             RaisePropertyChanged(nameof(FolderOrder));
             RaisePropertyChanged(nameof(IsFolderOrderEnabled));
-            RaisePropertyChanged(nameof(IsFolderSearchCollection));
             RaisePropertyChanged(nameof(IsFolderSearchEnabled));
         }
 
@@ -563,66 +478,38 @@ namespace NeeView
         }
 
 
-        /// <summary>
-        /// 検索キーワードのフォーマットチェック
-        /// </summary>
-        private void UpdateSearchKeywordErrorMessage()
-        {
-            var keyword = GetFixedSearchKeyword();
+        #region Search
 
-            try
-            {
-                _searchKeyAnalyzer.Analyze(keyword);
-                SearchKeywordErrorMessage = null;
-            }
-            catch (SearchKeywordOptionException ex)
-            {
-                SearchKeywordErrorMessage = string.Format(Properties.Resources.Notice_SearchKeywordOptionError, ex.Option);
-            }
-            catch (SearchKeywordDateTimeException)
-            {
-                SearchKeywordErrorMessage = Properties.Resources.Notice_SearchKeywordDateTimeError;
-            }
-            catch (SearchKeywordRegularExpressionException ex)
-            {
-                SearchKeywordErrorMessage = ex.InnerException?.Message;
-            }
-            catch (Exception ex)
-            {
-                SearchKeywordErrorMessage = ex.Message;
-            }
-        }
+        protected virtual bool IsSearchIncludeSubdirectories() => false;
+
 
         /// <summary>
         /// 検索更新
         /// </summary>
         public void RequestSearchPlace(bool isForce)
         {
+            if (_searchBoxModel is null) return;
+            RequestSearchPlace(_searchBoxModel.FixedKeyword, isForce);
+        }
+
+        protected void RequestSearchPlace(string keyword, bool isForce)
+        {
             if (_disposedValue) return;
+            if (_searchBoxModel is null) return;
+            if (Place is null || !IsFolderSearchEnabled) return;
 
-            UpdateSearchKeywordErrorMessage();
-
-            if (Place == null)
-            {
-                SearchKeywordErrorMessage = null;
-                return;
-            }
-
-            if (!IsFolderSearchEnabled)
-            {
-                SearchKeywordErrorMessage = null;
-                return;
-            }
-
-            if (SearchKeywordErrorMessage != null)
+            // 文法エラーがあるならば更新しない
+            if (_searchBoxModel.KeywordErrorMessage != null)
             {
                 return;
             }
 
-            var query = Place.ReplaceSearch(GetFixedSearchKeyword());
+            var query = Place.ReplaceSearch(keyword);
             var option = isForce ? FolderSetPlaceOption.Refresh : FolderSetPlaceOption.None;
             RequestPlace(query, null, option);
         }
+
+        #endregion Search
 
         /// <summary>
         /// フォルダーリスト更新要求
@@ -685,7 +572,7 @@ namespace NeeView
 
 
             // 更新が必要であれば、新しいFolderListBoxを作成する
-            if (CheckFolderListUpdateneNcessary(path, options))
+            if (CheckFolderListUpdateIfNecessary(path, options))
             {
                 try
                 {
@@ -709,13 +596,7 @@ namespace NeeView
                         Config.Current.StartUp.LastFolderPath = Place.SimpleQuery;
 
                         // 検索キーワード更新
-                        if (Place.Search != GetFixedSearchKeyword())
-                        {
-                            UpdateSearchHistory();
-                            // 入力文字のみ更新
-                            _inputKeyword = Place.Search;
-                            RaisePropertyChanged(nameof(InputKeyword));
-                        }
+                        _searchBoxModel?.ResetInputKeyword(Place.Search);
 
                         OnPlaceChanged(this, options);
                         PlaceChanged?.Invoke(this, EventArgs.Empty);
@@ -744,7 +625,7 @@ namespace NeeView
         /// <summary>
         /// リストの更新必要性チェック
         /// </summary>
-        private bool CheckFolderListUpdateneNcessary(QueryPath path, FolderSetPlaceOption options)
+        private bool CheckFolderListUpdateIfNecessary(QueryPath path, FolderSetPlaceOption options)
         {
             if (_isDirty || _folderCollection == null || path != _folderCollection.Place || options.HasFlag(FolderSetPlaceOption.Refresh))
             {
@@ -834,27 +715,6 @@ namespace NeeView
             if (_disposedValue) return;
 
             FolderTreeFocus?.Invoke(this, EventArgs.Empty);
-        }
-
-        /// <summary>
-        /// 検索キーワードの正規化
-        /// </summary>
-        private string GetFixedSearchKeyword()
-        {
-            return _searchKeyword.Value?.Trim() ?? "";
-        }
-
-
-        /// <summary>
-        /// 検索履歴更新
-        /// </summary>
-        public void UpdateSearchHistory()
-        {
-            if (_disposedValue) return;
-
-            var keyword = GetFixedSearchKeyword();
-            if (string.IsNullOrEmpty(keyword)) return;
-            BookHistoryCollection.Current.AddSearchHistory(keyword);
         }
 
         /// <summary>
@@ -1879,7 +1739,7 @@ namespace NeeView
 
                     _disposables.Dispose();
 
-                    _searchKeyword.Dispose();
+                    //_searchKeyword.Dispose();
                     _searchEngine.Dispose();
                 }
 

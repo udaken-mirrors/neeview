@@ -174,62 +174,14 @@
                     </WrapPanel>
                 </DockPanel>
 
-                <Border x:Name="SearchBoxRoot" Margin="0,2,0,5" Visibility="{Binding Model.IsFolderSearchBoxVisible, Converter={StaticResource BooleanToVisibilityConverter}}" BorderThickness="1">
-                    <Border.Resources>
-                        <Style TargetType="TextBox" BasedOn="{StaticResource NVTextBox}">
-                            <EventSetter Event="KeyDown" Handler="Control_KeyDown_IgnoreSingleKeyGesture" />
-                        </Style>
-                    </Border.Resources>
-                    <Border.Style>
-                        <Style TargetType="Border">
-                            <Setter Property="Background" Value="Transparent" />
-                            <Setter Property="BorderBrush" Value="{DynamicResource TextBox.Border}" />
-                            <Setter Property="ToolTip" Value="{Binding Model.SearchKeywordErrorMessage, Mode=OneWay}" />
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding ElementName=SearchBox, Path=IsKeyboardFocusWithin}" Value="True">
-                                    <Setter Property="BorderBrush" Value="{DynamicResource Control.Accent}" />
-                                    <Setter Property="Background" Value="{DynamicResource TextBox.Background}" />
-                                </DataTrigger>
-                                <DataTrigger Binding="{Binding Model.SearchKeywordErrorMessage, Converter={StaticResource IsNullConverter}}" Value="False">
-                                    <Setter Property="BorderBrush" Value="Crimson" />
-                                </DataTrigger>
-                                <DataTrigger Binding="{Binding Model.IsFolderSearchEnabled}" Value="False">
-                                    <Setter Property="IsEnabled" Value="False" />
-                                    <Setter Property="BorderBrush" Value="Transparent" />
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </Border.Style>
-                    <DockPanel KeyboardNavigation.TabNavigation="Local">
-                        <Image Source="{StaticResource ic_search_24px_g}" Width="14" Height="14" VerticalAlignment="Center" Margin="8,0,0,0">
-                            <Image.Style>
-                                <Style TargetType="Image">
-                                    <Style.Triggers>
-                                        <DataTrigger Binding="{Binding ElementName=SearchBoxRoot, Path=IsEnabled}" Value="False">
-                                            <Setter Property="Opacity" Value="0.5" />
-                                        </DataTrigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </Image.Style>
-                        </Image>
-                        <Button x:Name="ClearSearchButton" DockPanel.Dock="Right" VerticalAlignment="Center" Style="{StaticResource FolderListButtonStyle}" Width="24" Command="{Binding ClearSearch}"
-                                TabIndex="3" Visibility="{Binding ElementName=SearchBox, Path=Text, Converter={StaticResource StringNullOrWhiteSpaceToVisibilityConverter}}">
-                            <Image Source="{StaticResource ic_clear_24px_a}" />
-                        </Button>
-                        <ComboBox x:Name="SearchBox" Text="{Binding Model.InputKeyword, UpdateSourceTrigger=PropertyChanged}" TabIndex="1" TextBoxBase.TextChanged="SearchBox_TextChanged"
-                                MinHeight="{DynamicResource FontIconSize}" IsKeyboardFocusWithinChanged="SearchBox_IsKeyboardFocusWithinChanged"
-                                Background="{Binding ElementName=SearchBoxRoot, Path=Background}" VerticalAlignment="Stretch" KeyDown="SearchBox_KeyDown"
-                                ItemsSource="{Binding Source={x:Static local:BookHistoryCollection.Current}, Path=SearchHistory}" IsTextSearchCaseSensitive="True" IsEditable="True" BorderThickness="0">
-
-                            <ComboBox.ItemTemplate>
-                                <DataTemplate>
-                                    <TextBlock Text="{Binding}" TextTrimming="CharacterEllipsis" MaxWidth="{Binding ElementName=SearchBox,Path=ActualWidth}" MinWidth="200" />
-                                </DataTemplate>
-                            </ComboBox.ItemTemplate>
-                        </ComboBox>
-                    </DockPanel>
-                </Border>
-
+                <Grid Margin="0,2,0,5" IsEnabled="{Binding Model.IsFolderSearchEnabled}">
+                    <local:SearchBox x:Name="SearchBox" 
+                                 Text="{Binding SearchBoxModel.Keyword}"
+                                 ItemsSource="{Binding SearchBoxModel.History}"
+                                 SearchKeywordErrorMessage="{Binding SearchBoxModel.KeywordErrorMessage}"
+                                 SearchCommand="{Binding SearchBoxModel.SearchCommand}"
+                                 />
+                </Grid>
             </StackPanel>
         </Border>
 

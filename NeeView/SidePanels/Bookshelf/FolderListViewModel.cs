@@ -5,7 +5,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -24,7 +23,7 @@ namespace NeeView
     /// </summary>
     public class FolderListViewModel : BindableBase
     {
-        private BookshelfFolderList _model;
+        private readonly BookshelfFolderList _model;
         private Dictionary<FolderOrder, string> _folderOrderList = AliasNameExtensions.GetAliasNameDictionary<FolderOrder>();
         private double _dpi = 1.0;
 
@@ -54,6 +53,9 @@ namespace NeeView
             _model.AddPropertyChanged(nameof(_model.FolderTreeAreaHeight),
                 (s, e) => RaisePropertyChanged(nameof(FolderTreeAreaHeight)));
 
+            _model.AddPropertyChanged(nameof(_model.SearchBoxModel),
+                (s, e) => RaisePropertyChanged(nameof(SearchBoxModel)));
+
             MoreMenuDescription = new FolderListMoreMenuDescription(this);
         }
 
@@ -61,12 +63,10 @@ namespace NeeView
 
         public FolderCollection? FolderCollection => _model.FolderCollection;
 
+        public BookshelfFolderList Model => _model;
 
-        public BookshelfFolderList Model
-        {
-            get { return _model; }
-            set { if (_model != value) { _model = value; RaisePropertyChanged(); } }
-        }
+        public SearchBoxModel? SearchBoxModel => _model.SearchBoxModel;
+
 
         /// <summary>
         /// コンボボックス用リスト
@@ -125,8 +125,6 @@ namespace NeeView
         private RelayCommand? _moveToUp;
         private RelayCommand? _sync;
         private RelayCommand? _toggleFolderRecursive;
-        private RelayCommand? _search;
-        private RelayCommand? _clearSearch;
         private RelayCommand? _addQuickAccess;
         private RelayCommand<FolderTreeLayout>? _setFolderTreeLayout;
         private RelayCommand? _newFolderCommand;
@@ -182,33 +180,6 @@ namespace NeeView
         public RelayCommand ToggleFolderRecursive
         {
             get { return _toggleFolderRecursive = _toggleFolderRecursive ?? new RelayCommand(_model.ToggleFolderRecursive); }
-        }
-
-        public RelayCommand Search
-        {
-            get
-            {
-                return _search = _search ?? new RelayCommand(Execute);
-
-                void Execute()
-                {
-                    _model.RequestSearchPlace(true);
-                }
-            }
-        }
-
-        public RelayCommand ClearSearch
-        {
-            get
-            {
-                return _clearSearch = _clearSearch ?? new RelayCommand(Execute);
-
-                void Execute()
-                {
-                    _model.InputKeyword = "";
-                    _model.SetSearchKeywordAndSearch("");
-                }
-            }
         }
 
         public RelayCommand AddQuickAccess
@@ -373,7 +344,7 @@ namespace NeeView
         /// </summary>
         private void Model_CollectionChanged(object? sender, EventArgs e)
         {
-            UpdateFolderOrerList();
+            UpdateFolderOrderList();
             RaisePropertyChanged(nameof(FolderCollection));
         }
 
@@ -388,20 +359,12 @@ namespace NeeView
         /// <summary>
         /// 並び順リスト更新
         /// </summary>
-        public void UpdateFolderOrerList()
+        public void UpdateFolderOrderList()
         {
             if (FolderCollection is null) return;
 
             FolderOrderList = FolderCollection.FolderOrderClass.GetFolderOrderMap();
             RaisePropertyChanged(nameof(FolderOrder));
-        }
-
-        /// <summary>
-        /// 検索履歴更新
-        /// </summary>
-        public void UpdateSearchHistory()
-        {
-            _model.UpdateSearchHistory();
         }
 
         /// <summary>
@@ -421,4 +384,6 @@ namespace NeeView
             return Config.Current.Panels.IsLeftRightKeyEnabled || _model.PanelListItemStyle == PanelListItemStyle.Thumbnail;
         }
     }
+
+
 }

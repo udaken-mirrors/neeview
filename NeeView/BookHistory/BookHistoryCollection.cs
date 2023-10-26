@@ -4,7 +4,6 @@ using NeeView.Collections.Generic;
 using NeeView.Windows.Property;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
@@ -339,11 +338,10 @@ namespace NeeView
         #region for Folders
 
         // 検索履歴
-        private ObservableCollection<string> _searchHistory = new();
-        public ObservableCollection<string> SearchHistory
+        private HistoryStringCollection _searchHistory = new();
+        public HistoryStringCollection SearchHistory
         {
             get { return _searchHistory; }
-            set { SetProperty(ref _searchHistory, value); }
         }
 
         // フォルダー設定
@@ -369,36 +367,6 @@ namespace NeeView
 
             _folders.TryGetValue(path, out FolderParameter.Memento? memento);
             return memento ?? FolderParameter.Memento.GetDefault(path);
-        }
-
-        /// <summary>
-        /// 検索履歴登録
-        /// </summary>
-        public void AddSearchHistory(string keyword)
-        {
-            if (string.IsNullOrWhiteSpace(keyword)) return;
-
-            if (SearchHistory.Count <= 0)
-            {
-                SearchHistory.Add(keyword);
-            }
-            else if (SearchHistory.First() != keyword)
-            {
-                int index = SearchHistory.IndexOf(keyword);
-                if (index > 0)
-                {
-                    SearchHistory.Move(index, 0);
-                }
-                else
-                {
-                    SearchHistory.Insert(0, keyword);
-                }
-            }
-
-            while (SearchHistory.Count > 6)
-            {
-                SearchHistory.RemoveAt(this.SearchHistory.Count - 1);
-            }
         }
 
         #endregion for Folders
@@ -529,7 +497,7 @@ namespace NeeView
 
             if (Config.Current.History.IsKeepSearchHistory)
             {
-                this.SearchHistory = memento.SearchHistory != null ? new ObservableCollection<string>(memento.SearchHistory) : new ObservableCollection<string>();
+                this.SearchHistory.Replace(memento.SearchHistory);
             }
 
             this.Load(fromLoad ? Limit(memento.Items, Config.Current.History.LimitSize, Config.Current.History.LimitSpan) : memento.Items, memento.Books);

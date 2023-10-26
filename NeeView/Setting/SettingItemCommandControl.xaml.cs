@@ -232,7 +232,7 @@ namespace NeeView.Setting
             else
             {
                 var item = (CommandItem)eventArgs.Item;
-                var text = NeeLaboratory.IO.Search.Node.ToNormalisedWord(item.Command.GetSearchText(), true);
+                var text = NeeLaboratory.IO.Search.StringUtils.ToNormalizedWord(item.Command.GetSearchText(), true);
                 eventArgs.Accepted = _searchKeywordTokens.All(e => text.Contains(e, StringComparison.CurrentCulture));
             }
         }
@@ -523,7 +523,7 @@ namespace NeeView.Setting
         private void Search()
         {
             _searchKeywordTokens = this.SearchKeyword.Split(' ')
-                .Select(e => NeeLaboratory.IO.Search.Node.ToNormalisedWord(e.Trim(), true))
+                .Select(e => NeeLaboratory.IO.Search.StringUtils.ToNormalizedWord(e.Trim(), true))
                 .Where(e => !string.IsNullOrEmpty(e))
                 .ToList();
 

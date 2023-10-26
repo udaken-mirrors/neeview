@@ -19,11 +19,11 @@ namespace NeeView.Windows
     /// <summary>
     /// ドラッグドロップ用ゴースト
     /// </summary>
-    public class DragDropGoast
+    public class DragDropGhost
     {
         private UIElement? _element;
         private AdornerLayer? _layer;
-        private DragAdorner? _goast;
+        private DragAdorner? _ghost;
 
         /// <summary>
         /// 専用ビジュアルをゴーストにする
@@ -48,8 +48,8 @@ namespace NeeView.Windows
             {
                 _element = element;
                 _layer = AdornerLayer.GetAdornerLayer(root);
-                _goast = new DragAdorner(root, visual, 1.0, 0, pos);
-                _layer.Add(_goast);
+                _ghost = new DragAdorner(root, visual, 1.0, 0, pos);
+                _layer.Add(_ghost);
             }
         }
 
@@ -70,23 +70,23 @@ namespace NeeView.Windows
             {
                 _element = element;
                 _layer = AdornerLayer.GetAdornerLayer(root);
-                _goast = new DragAdorner(root, _element, 0.5, 0, pos);
-                _layer.Add(_goast);
+                _ghost = new DragAdorner(root, _element, 0.5, 0, pos);
+                _layer.Add(_ghost);
             }
         }
 
 
         public void Detach()
         {
-            _layer?.Remove(_goast);
+            _layer?.Remove(_ghost);
             _layer = null;
-            _goast = null;
+            _ghost = null;
             _element = null;
         }
 
         public void QueryContinueDrag(object? sender, QueryContinueDragEventArgs e)
         {
-            if (_goast == null || _element == null)
+            if (_ghost == null || _element == null)
             {
                 return;
             }
@@ -101,8 +101,8 @@ namespace NeeView.Windows
                     return;
                 }
 
-                _goast.LeftOffset = point.X;
-                _goast.TopOffset = point.Y;
+                _ghost.LeftOffset = point.X;
+                _ghost.TopOffset = point.Y;
             }
             catch (Exception ex)
             {

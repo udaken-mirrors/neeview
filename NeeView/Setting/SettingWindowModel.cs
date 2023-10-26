@@ -148,7 +148,7 @@ namespace NeeView.Setting
         public void UpdateSearchPage(string keyword)
         {
             var _searchKeywordTokens = keyword.Split(' ')
-                .Select(e => NeeLaboratory.IO.Search.Node.ToNormalisedWord(e.Trim(), true))
+                .Select(e => NeeLaboratory.IO.Search.StringUtils.ToNormalizedWord(e.Trim(), true))
                 .Where(e => !string.IsNullOrEmpty(e))
                 .ToList();
 
@@ -185,7 +185,7 @@ namespace NeeView.Setting
 
             bool IsMatch(SettingItemRecord record, List<string> tokens)
             {
-                var text = NeeLaboratory.IO.Search.Node.ToNormalisedWord(record.GetSearchText(), true);
+                var text = NeeLaboratory.IO.Search.StringUtils.ToNormalizedWord(record.GetSearchText(), true);
                 return tokens.All(e => text.Contains(e, StringComparison.CurrentCulture));
             }
         }

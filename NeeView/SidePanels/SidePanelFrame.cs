@@ -286,11 +286,6 @@ namespace NeeView
         }
 
         /// <summary>
-        /// 検索ボックス表示状態
-        /// </summary>
-        public bool IsVisibleBookshelfSearchBox => BookshelfFolderList.Current.IsFolderSearchBoxVisible && IsVisibleFolderList;
-
-        /// <summary>
         /// 検索ボックスにフォーカスを移す
         /// </summary>
         public void FocusBookshelfSearchBox(bool byMenu)

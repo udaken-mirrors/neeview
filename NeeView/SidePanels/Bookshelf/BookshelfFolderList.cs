@@ -56,7 +56,6 @@ namespace NeeView
                 RequestSearchPlace(true);
             }));
 
-
             _disposables.Add(BookOperation.Current.SubscribeBookChanging((s, e) =>
             {
                 UpdateVisibleItem(e.Address, false);
@@ -72,6 +71,7 @@ namespace NeeView
                 UpdateVisibleItem(BookOperation.Current.Address, true);
             }));
 
+            this.SearchBoxModel = new SearchBoxModel(new BookshelfSearchBoxComponent(this));
 
             UpdateExcludeRegex();
         }
@@ -239,14 +239,9 @@ namespace NeeView
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"FolderList exclute: {ex.Message}");
+                Debug.WriteLine($"FolderList exclude: {ex.Message}");
                 ExcludeRegex = null;
             }
-        }
-
-        protected override bool IsIncrementalSearchEnabled()
-        {
-            return Config.Current.Bookshelf.IsIncrementalSearchEnabled;
         }
 
         protected override bool IsSearchIncludeSubdirectories()
@@ -336,6 +331,26 @@ namespace NeeView
         }
 
         #endregion IDisposable support
+
+
+        /// <summary>
+        /// 検索ボックスコンポーネント
+        /// </summary>
+        public class BookshelfSearchBoxComponent : ISearchBoxComponent
+        {
+            private readonly BookshelfFolderList _self;
+
+            public BookshelfSearchBoxComponent(BookshelfFolderList self)
+            {
+                _self = self;
+            }
+
+            public HistoryStringCollection? History => BookHistoryCollection.Current.SearchHistory;
+
+            public bool IsIncrementalSearchEnabled => Config.Current.Bookshelf.IsIncrementalSearchEnabled;
+
+            public void Search(string keyword) => _self.RequestSearchPlace(keyword, false);
+        }
 
     }
 
