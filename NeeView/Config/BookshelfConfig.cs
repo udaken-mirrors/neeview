@@ -18,7 +18,6 @@ namespace NeeView
         private bool _isInsertItem = true;
         private bool _isMultipleRarFilterEnabled;
         private bool _isCruise;
-        private bool _isIncrementalSearchEnabled = true;
         private bool _isSearchIncludeSubdirectories = true;
         private FolderOrder _defaultFolderOrder;
         private FolderOrder _playlistFolderOrder;
@@ -140,16 +139,6 @@ namespace NeeView
         }
 
         /// <summary>
-        /// インクリメンタルサーチ有効
-        /// </summary>
-        [PropertyMember]
-        public bool IsIncrementalSearchEnabled
-        {
-            get { return _isIncrementalSearchEnabled; }
-            set { SetProperty(ref _isIncrementalSearchEnabled, value); }
-        }
-
-        /// <summary>
         /// サブフォルダーを含めた検索を行う
         /// </summary>
         [PropertyMember]
@@ -188,6 +177,22 @@ namespace NeeView
             get { return _isOrderWithoutFileType; }
             set { SetProperty(ref _isOrderWithoutFileType, value); }
         }
+
+
+        #region Obsolete
+
+        /// <summary>
+        /// インクリメンタルサーチ有効
+        /// </summary>
+        [Obsolete("no used"), Alternative("nv.Config.System.IsIncrementalSearchEnabled", 40, ScriptErrorLevel.Warning, IsFullName = true)] // ver.40
+        [JsonIgnore]
+        public bool IsIncrementalSearchEnabled
+        {
+            get { return false; }
+            set { }
+        }
+
+        #endregion Obsolete
     }
 
 }

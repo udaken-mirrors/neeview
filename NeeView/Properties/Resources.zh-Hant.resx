@@ -957,7 +957,7 @@ nv.Command.ToggleMediaPlay.Execute()
   <data name="BookshelfConfig.IsCruise.Remarks" xml:space="preserve">
     <value>進行包含資料夾父子級關係的移動。不適用於書庫的搜尋結果。</value>
   </data>
-  <data name="BookshelfConfig.IsIncrementalSearchEnabled" xml:space="preserve">
+  <data name="SystemConfig.IsIncrementalSearchEnabled" xml:space="preserve">
     <value>啟用增量搜尋</value>
   </data>
   <data name="BookshelfConfig.IsInsertItem" xml:space="preserve">

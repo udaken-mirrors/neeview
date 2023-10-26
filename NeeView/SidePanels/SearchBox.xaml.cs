@@ -30,15 +30,18 @@ namespace NeeView
             InitializeComponent();
             this.SearchBoxRoot.DataContext = this;
 
+            this.SearchBoxRoot.IsKeyboardFocusWithinChanged += SearchBoxRoot_IsKeyboardFocusWithinChanged;
+
             _delayAction = new DelayAction();
         }
+
 
         /// <summary>
         /// テキストボックスのキーボードフォーカス変更イベント
         /// </summary>
         public event EventHandler<FocusChangedEventArgs>? SearchBoxFocusChanged;
 
-
+        
         /// <summary>
         /// 検索エラーメッセージ
         /// </summary>
@@ -62,7 +65,7 @@ namespace NeeView
 
         public static readonly DependencyProperty TextProperty =
             DependencyProperty.Register("Text", typeof(string), typeof(SearchBox), new FrameworkPropertyMetadata("", FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
-
+        
         /// <summary>
         /// 検索キーワード候補。検索履歴とか。
         /// </summary>
@@ -87,6 +90,19 @@ namespace NeeView
         public static readonly DependencyProperty SearchCommandProperty =
             DependencyProperty.Register("SearchCommand", typeof(ICommand), typeof(SearchBox), new PropertyMetadata(null));
 
+
+        /// <summary>
+        /// キーボードフォーカス変更
+        /// </summary>
+        private void SearchBoxRoot_IsKeyboardFocusWithinChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            if (!this.SearchBoxRoot.IsKeyboardFocusWithin)
+            {
+                Text = this.SearchBoxComboBox.Text;
+                Search();
+            }
+        }
+
         /// <summary>
         /// クリアボタン
         /// </summary>
@@ -110,7 +126,6 @@ namespace NeeView
         {
             KeyExGesture.AllowSingleKey = false;
 
-            // 検索実行
             if (e.Key == Key.Enter)
             {
                 Text = this.SearchBoxComboBox.Text;

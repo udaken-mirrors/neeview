@@ -27,6 +27,8 @@ namespace NeeView
             Book.Default = this;
 
             this.Memento = memento.Clone();
+            this.Memento.IsRecursiveFolder = source.IsRecursiveFolder;
+            this.Memento.SortMode = source.Pages.SortMode;
 
             _address = address;
             _source = source;
@@ -35,8 +37,6 @@ namespace NeeView
             _loadOption = option;
 
             var currentMemento = this.Memento.Clone();
-            currentMemento.IsRecursiveFolder = _source.IsRecursiveFolder;
-            currentMemento.SortMode = _source.Pages.SortMode;
             AttachBookSetting(currentMemento.ToBookSetting());
 
             _source.Pages.PagesSorted += (s, e) => PagesChanged?.Invoke(s, e);

@@ -345,9 +345,9 @@ namespace NeeView
                 _self = self;
             }
 
-            public HistoryStringCollection? History => BookHistoryCollection.Current.SearchHistory;
+            public HistoryStringCollection? History => BookHistoryCollection.Current.BookshelfSearchHistory;
 
-            public bool IsIncrementalSearchEnabled => Config.Current.Bookshelf.IsIncrementalSearchEnabled;
+            public bool IsIncrementalSearchEnabled => Config.Current.System.IsIncrementalSearchEnabled;
 
             public void Search(string keyword) => _self.RequestSearchPlace(keyword, false);
         }

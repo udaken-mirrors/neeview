@@ -1,4 +1,5 @@
 ﻿using NeeLaboratory.ComponentModel;
+using NeeLaboratory.IO.Search;
 using NeeView.Collections;
 using System;
 using System.Collections.ObjectModel;
@@ -9,7 +10,7 @@ using System.Windows.Data;
 
 namespace NeeView
 {
-    public class BookHistory : BindableBase, IHasPage, IHasName, IHasKey<string>
+    public class BookHistory : BindableBase, IHasPage, IHasName, IHasKey<string>, ISearchItem
     {
         private string _path;
         private BookMementoUnit? _unit;
@@ -62,6 +63,17 @@ namespace NeeView
             get { return _unit = _unit ?? BookMementoCollection.Current.Set(Path); }
             private set { _unit = value; }
         }
+
+        #region ISearchItem
+
+        public bool IsDirectory => false;
+        public bool IsPushPin => false;
+        public string NormalizedUnitName => StringUtils.ToNormalizedWord(this.Name, false);
+        public string NormalizedFuzzyName => StringUtils.ToNormalizedWord(this.Name, true);
+        public DateTime DateTime => LastAccessTime;
+
+        #endregion ISearchItem
+
 
         public override string? ToString()
         {

@@ -10,5 +10,18 @@
         PageMode PageMode { get; set; }
         AutoRotateType AutoRotate { get; set; }
         double BaseScale { get; set; }
+
+        bool IsEquals(IBookPageViewSetting? other)
+        {
+            return other is not null &&
+                   PageMode == other.PageMode &&
+                   BookReadOrder == other.BookReadOrder &&
+                   IsSupportedDividePage == other.IsSupportedDividePage &&
+                   IsSupportedSingleFirstPage == other.IsSupportedSingleFirstPage &&
+                   IsSupportedSingleLastPage == other.IsSupportedSingleLastPage &&
+                   IsSupportedWidePage == other.IsSupportedWidePage &&
+                   AutoRotate == other.AutoRotate &&
+                   BaseScale == other.BaseScale;
+        }
     }
 }

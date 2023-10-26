@@ -955,7 +955,7 @@ Search for files updated in April 2019
   <data name="BookshelfConfig.IsCruise.Remarks" xml:space="preserve">
     <value>Move the folder including the parent and child of the folder. It does not apply when the bookshelf is a search result.</value>
   </data>
-  <data name="BookshelfConfig.IsIncrementalSearchEnabled" xml:space="preserve">
+  <data name="SystemConfig.IsIncrementalSearchEnabled" xml:space="preserve">
     <value>Incremental search enabled</value>
   </data>
   <data name="BookshelfConfig.IsInsertItem" xml:space="preserve">

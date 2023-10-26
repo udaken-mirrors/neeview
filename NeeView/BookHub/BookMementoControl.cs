@@ -119,7 +119,7 @@ namespace NeeView
             BookmarkCollection.Current.Update(memento, _pageChangedCount > 1);
 
             // 履歴の保存
-            if (CanHistory(book) || !memento.IsEquals(book.Memento)) 
+            if (CanHistory(book))
             {
                 BookHistoryCollection.Current.Add(memento, isKeepHistoryOrder);
             }

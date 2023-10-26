@@ -2002,15 +2002,6 @@ namespace NeeView.Properties {
         }
         
         /// <summary>
-        ///   Incremental search enabled に類似しているローカライズされた文字列を検索します。
-        /// </summary>
-        public static string BookshelfConfig_IsIncrementalSearchEnabled {
-            get {
-                return ResourceManager.GetString("BookshelfConfig.IsIncrementalSearchEnabled", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Insert additional file at sort position に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string BookshelfConfig_IsInsertItem {
@@ -16857,6 +16848,15 @@ namespace NeeView.Properties {
         public static string SystemConfig_IsIgnoreImageDpi_Remarks {
             get {
                 return ResourceManager.GetString("SystemConfig.IsIgnoreImageDpi.Remarks", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Incremental search enabled に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string SystemConfig_IsIncrementalSearchEnabled {
+            get {
+                return ResourceManager.GetString("SystemConfig.IsIncrementalSearchEnabled", resourceCulture);
             }
         }
         

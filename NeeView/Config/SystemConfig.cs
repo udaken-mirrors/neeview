@@ -30,6 +30,7 @@ namespace NeeView
         private ExternalAppCollection _externalAppCollection = new() { new ExternalApp() };
         private string? _textEditor;
         private string? _webBrowser;
+        private bool _isIncrementalSearchEnabled = true;
 
         [JsonInclude, JsonPropertyName(nameof(TemporaryDirectory))]
         public string? _temporaryDirectory;
@@ -203,6 +204,16 @@ namespace NeeView
         {
             get { return _webBrowser; }
             set { SetProperty(ref _webBrowser, string.IsNullOrWhiteSpace(value) ? null : value.Trim()); }
+        }
+
+        /// <summary>
+        /// インクリメンタルサーチ有効
+        /// </summary>
+        [PropertyMember]
+        public bool IsIncrementalSearchEnabled
+        {
+            get { return _isIncrementalSearchEnabled; }
+            set { SetProperty(ref _isIncrementalSearchEnabled, value); }
         }
     }
 }

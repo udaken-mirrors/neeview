@@ -36,6 +36,8 @@ namespace NeeView
         [Subscribable]
         public event EventHandler<BookMementoCollectionChangedArgs>? HistoryChanged;
 
+        // 履歴コレクションロック
+        public object ItemsLock => _lock;
 
         // 履歴コレクション
         public LinkedDicionary<string, BookHistory> Items { get; set; } = new LinkedDicionary<string, BookHistory>();
@@ -48,6 +50,12 @@ namespace NeeView
 
         // 先頭の要素
         public LinkedListNode<BookHistory>? First => Items.First;
+
+        // 本棚 検索履歴
+        public HistoryStringCollection BookshelfSearchHistory { get; } = new();
+
+        // 履歴 検索履歴
+        public HistoryStringCollection BookHistorySearchHistory { get; } = new();
 
 
         private void BookHistoryCollection_HistoryChanged(object? sender, BookMementoCollectionChangedArgs e)
@@ -337,12 +345,6 @@ namespace NeeView
 
         #region for Folders
 
-        // 検索履歴
-        private HistoryStringCollection _searchHistory = new();
-        public HistoryStringCollection SearchHistory
-        {
-            get { return _searchHistory; }
-        }
 
         // フォルダー設定
         public void SetFolderMemento(string path, FolderParameter.Memento memento)
@@ -387,8 +389,15 @@ namespace NeeView
 
             public Dictionary<string, FolderParameter.Memento>? Folders { get; set; }
 
-            public List<string>? SearchHistory { get; set; }
+            public List<string>? BookshelfSearchHistory { get; set; }
 
+            public List<string>? BookHistorySearchHistory { get; set; }
+
+            #region Obsolete
+            [Obsolete(), Alternative(nameof(BookshelfSearchHistory), 40)] // ver.40
+            [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+            public List<string>? SearchHistory { get; set; }
+            #endregion Obsolete
 
             public Memento()
             {
@@ -482,7 +491,8 @@ namespace NeeView
 
             if (Config.Current.History.IsKeepSearchHistory)
             {
-                memento.SearchHistory = this.SearchHistory.Any() ? this.SearchHistory.ToList() : null;
+                memento.BookshelfSearchHistory = this.BookshelfSearchHistory.Any() ? this.BookshelfSearchHistory.ToList() : null;
+                memento.BookHistorySearchHistory = this.BookHistorySearchHistory.Any() ? this.BookHistorySearchHistory.ToList() : null;
             }
 
             return memento;
@@ -497,7 +507,10 @@ namespace NeeView
 
             if (Config.Current.History.IsKeepSearchHistory)
             {
-                this.SearchHistory.Replace(memento.SearchHistory);
+#pragma warning disable CS0612 // 型またはメンバーが旧型式です
+                this.BookshelfSearchHistory.Replace(memento.BookshelfSearchHistory ?? memento.SearchHistory);
+#pragma warning restore CS0612 // 型またはメンバーが旧型式です
+                this.BookHistorySearchHistory.Replace(memento.BookHistorySearchHistory);
             }
 
             this.Load(fromLoad ? Limit(memento.Items, Config.Current.History.LimitSize, Config.Current.History.LimitSpan) : memento.Items, memento.Books);

@@ -78,19 +78,14 @@ namespace NeeView
         public bool IsEquals(BookMemento? other)
         {
             return other is not null &&
-                   Path == other.Path &&
-                   Name == other.Name &&
-                   Page == other.Page &&
-                   PageMode == other.PageMode &&
-                   BookReadOrder == other.BookReadOrder &&
-                   IsSupportedDividePage == other.IsSupportedDividePage &&
-                   IsSupportedSingleFirstPage == other.IsSupportedSingleFirstPage &&
-                   IsSupportedSingleLastPage == other.IsSupportedSingleLastPage &&
-                   IsSupportedWidePage == other.IsSupportedWidePage &&
-                   IsRecursiveFolder == other.IsRecursiveFolder &&
-                   SortMode == other.SortMode &&
-                   AutoRotate == other.AutoRotate &&
-                   BaseScale == other.BaseScale;
+                   ((IBookSetting)this).IsEquals(other) &&
+                   Path == other.Path;
+        }
+
+        // 設定のみの比較
+        public bool IsSettingEquals(BookMemento? other)
+        {
+            return ((IBookSetting)this).IsSettingEquals(other);
         }
     }
 }

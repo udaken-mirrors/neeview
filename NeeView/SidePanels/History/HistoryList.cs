@@ -1,10 +1,12 @@
 ﻿using NeeLaboratory.ComponentModel;
+using NeeLaboratory.IO.Search;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace NeeView
@@ -15,27 +17,38 @@ namespace NeeView
         public static HistoryList Current { get; }
 
 
-        private BookHub _bookHub;
-        private PageFrameBoxPresenter _presenter;
+        private readonly BookHub _bookHub;
 
         private string? _filterPath;
         private List<BookHistory> _items = new();
         private bool _isDirty = true;
-        private int _serialNumber = -1;
+        private string _searchKeyword = "";
+        private BookHistory? _selectedItem;
+        private bool _isEnabled;
 
 
         private HistoryList()
         {
             _bookHub = BookHub.Current;
-            _presenter = PageFrameBoxPresenter.Current;
 
             BookOperation.Current.BookChanged += BookOperation_BookChanged;
 
             Config.Current.History.AddPropertyChanged(nameof(HistoryConfig.IsCurrentFolder), (s, e) => UpdateFilterPath());
 
+            BookHistoryCollection.Current.HistoryChanged +=
+                (s, e) => AppDispatcher.Invoke(() => BookHistoryCollection_HistoryChanged(s, e));
+
+            BookHub.Current.HistoryListSync +=
+                (s, e) => AppDispatcher.Invoke(() => BookHub_HistoryListSync(s, e));
+
+            this.SearchBoxModel = new SearchBoxModel(new HistorySearchBoxComponent(this));
+
             UpdateFilterPath();
         }
 
+
+
+        public SearchBoxModel SearchBoxModel { get; }
 
         public bool IsThumbnailVisible
         {
@@ -56,6 +69,9 @@ namespace NeeView
             set => Config.Current.History.PanelListItemStyle = value;
         }
 
+        /// <summary>
+        /// パスフィルター
+        /// </summary>
         public string? FilterPath
         {
             get { return _filterPath; }
@@ -63,19 +79,46 @@ namespace NeeView
             {
                 if (SetProperty(ref _filterPath, value))
                 {
-                    SetDirty();
+                    _isDirty = true;
+                    _ = UpdateItemsAsync(CancellationToken.None);
                 }
             }
         }
 
-        public List<BookHistory> Items
+        /// <summary>
+        /// 検索キーワード
+        /// </summary>
+        public string SearchKeyword
         {
-            get
+            get { return _searchKeyword; }
+            set
             {
-                UpdateItems(true);
-                return _items;
+                if (SetProperty(ref _searchKeyword, value))
+                {
+                    _isDirty = true;
+                    _ = UpdateItemsAsync(CancellationToken.None);
+                }
             }
         }
+
+        /// <summary>
+        /// 履歴リスト
+        /// </summary>
+        public List<BookHistory> Items
+        {
+            get { return _items; }
+            private set { SetProperty(ref _items, value); }
+        }
+
+        /// <summary>
+        /// 選択項目
+        /// </summary>
+        public BookHistory? SelectedItem
+        {
+            get { return _selectedItem; }
+            set { SetProperty(ref _selectedItem, value); }
+        }
+
 
 
         private void BookOperation_BookChanged(object? sender, BookChangedEventArgs e)
@@ -83,72 +126,156 @@ namespace NeeView
             UpdateFilterPath();
         }
 
+
+        /// <summary>
+        /// 有効フラグ
+        /// </summary>
+        /// <remarks>
+        /// 有効の場合にのみ履歴リストは更新される
+        /// </remarks>
+        public bool IsEnabled
+        {
+            get { return _isEnabled; }
+            set
+            {
+                if (SetProperty(ref _isEnabled, value))
+                {
+                    if (_isEnabled)
+                    {
+                        _ = UpdateItemsAsync(CancellationToken.None);
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// 履歴更新イベント
+        /// </summary>
+        private void BookHistoryCollection_HistoryChanged(object? sender, BookMementoCollectionChangedArgs e)
+        {
+            if (e.HistoryChangedType == BookMementoCollectionChangedType.Update) return;
+            _isDirty = true;
+            _ = UpdateItemsAsync(CancellationToken.None);
+        }
+
+        /// <summary>
+        /// 履歴同期イベント
+        /// </summary>
+        private void BookHub_HistoryListSync(object? sender, BookPathEventArgs e)
+        {
+            if (e.Path is null) return;
+
+            SelectedItem = _items.FirstOrDefault(x => x.Path == e.Path);
+        }
+
+        /// <summary>
+        /// 履歴フィルター更新
+        /// </summary>
         private void UpdateFilterPath()
         {
             FilterPath = Config.Current.History.IsCurrentFolder ? LoosePath.GetDirectoryName(BookOperation.Current.Address) : "";
         }
 
-        public void UpdateItems(bool raisePropertyChanged = true)
+        /// <summary>
+        /// 履歴リスト更新
+        /// </summary>
+        public async Task UpdateItemsAsync(CancellationToken token)
         {
-            if (IsDirty())
-            {
-                ResetDirty();
-                _items = CreateItems();
+            if (!_isEnabled) return;
 
-                if (raisePropertyChanged)
+            token.ThrowIfCancellationRequested();
+            await Task.Run(() => UpdateItems(false, token));
+        }
+
+        /// <summary>
+        /// 履歴リスト更新
+        /// </summary>
+        public void UpdateItems(bool force, CancellationToken token)
+        {
+            if (!_isEnabled && !force) return;
+
+            if (!_isDirty) return;
+            _isDirty = false;
+
+            Items = CreateItems(token);
+        }
+
+        /// <summary>
+        /// 履歴リスト生成
+        /// </summary>
+        private List<BookHistory> CreateItems(CancellationToken token)
+        {
+            List<BookHistory> items;
+            lock (BookHistoryCollection.Current.ItemsLock)
+            {
+                items = BookHistoryCollection.Current.Items
+                    .Where(e => string.IsNullOrEmpty(FilterPath) || FilterPath == LoosePath.GetDirectoryName(e.Path))
+                    .ToList();
+            }
+
+            if (!string.IsNullOrEmpty(_searchKeyword))
+            {
+                try
                 {
-                    RaisePropertyChanged(nameof(Items));
+                    var searcher = new SearchCore();
+                    var options = new SearchOption();
+                    items = searcher.Search(_searchKeyword, options, items, token).Cast<BookHistory>().ToList();
+                }
+                catch (OperationCanceledException)
+                {
+                    throw;
+                }
+                catch (Exception ex)
+                {
+                    ToastService.Current.Show(new Toast(ex.Message, "", ToastIcon.Error));
                 }
             }
+
+            return items;
         }
 
-        private void SetDirty()
+        /// <summary>
+        /// 最新の履歴リスト取得
+        /// </summary>
+        public List<BookHistory> GetLatestItems()
         {
-            _isDirty = true;
+            UpdateItems(true, CancellationToken.None);
+            return _items;
         }
 
-        private void ResetDirty()
-        {
-            _isDirty = false;
-            _serialNumber = BookHistoryCollection.Current.SerialNumber;
-        }
-        private bool IsDirty()
-        {
-            return _isDirty || _serialNumber != BookHistoryCollection.Current.SerialNumber;
-        }
-
-        private List<BookHistory> CreateItems()
-        {
-            return BookHistoryCollection.Current.Items
-                .Where(e => string.IsNullOrEmpty(FilterPath) || FilterPath == LoosePath.GetDirectoryName(e.Path))
-                .ToList();
-        }
-
-        // 履歴を戻ることができる？
+        /// <summary>
+        /// 履歴を戻ることができる？
+        /// </summary>
         public bool CanPrevHistory()
         {
-            var index = Items.FindIndex(e => e.Path == _bookHub.Address);
+            var items = GetLatestItems();
+
+            var index = items.FindIndex(e => e.Path == _bookHub.Address);
 
             if (index < 0)
             {
-                return Items.Any();
+                return items.Any();
             }
             else
             {
-                return index < Items.Count - 1;
+                return index < items.Count - 1;
             }
         }
 
-        // 履歴を戻る
+        /// <summary>
+        /// 履歴を戻る
+        /// </summary>
         public void PrevHistory()
         {
-            if (_bookHub.IsLoading || Items.Count <= 0) return;
+            var items = GetLatestItems();
 
-            var index = Items.FindIndex(e => e.Path == _bookHub.Address);
+            if (_bookHub.IsLoading || items.Count <= 0) return;
+
+            var index = items.FindIndex(e => e.Path == _bookHub.Address);
 
             var prev = index < 0
-                ? Items.First()
-                : index < Items.Count - 1 ? Items[index + 1] : null;
+                ? items.First()
+                : index < items.Count - 1 ? items[index + 1] : null;
 
             if (prev != null)
             {
@@ -160,22 +287,28 @@ namespace NeeView
             }
         }
 
-        // 履歴を進めることができる？
+        /// <summary>
+        /// 履歴を進めることができる？
+        /// </summary>
         public bool CanNextHistory()
         {
-            var index = Items.FindIndex(e => e.Path == _bookHub.Address);
+            var items = GetLatestItems();
+
+            var index = items.FindIndex(e => e.Path == _bookHub.Address);
             return index > 0;
         }
 
-        // 履歴を進める
+        /// <summary>
+        /// 履歴を進める
+        /// </summary>
         public void NextHistory()
         {
-            if (_bookHub.IsLoading) return;
+            var items = GetLatestItems();
 
-            var index = Items.FindIndex(e => e.Path == _bookHub.Address);
+            var index = items.FindIndex(e => e.Path == _bookHub.Address);
             if (index > 0)
             {
-                var next = Items[index - 1];
+                var next = items[index - 1];
                 _bookHub.RequestLoad(this, next.Path, null, BookLoadOption.KeepHistoryOrder | BookLoadOption.SelectHistoryMaybe | BookLoadOption.IsBook, true);
             }
             else
@@ -184,5 +317,68 @@ namespace NeeView
             }
         }
 
+        /// <summary>
+        /// 履歴削除
+        /// </summary>
+        /// <param name="items">削除項目</param>
+        public void Remove(IEnumerable<BookHistory> items)
+        {
+            if (items == null) return;
+
+            // 位置ずらし
+            SelectedItem = GetNeighbor(_selectedItem, items);
+
+            // 削除実行
+            BookHistoryCollection.Current.Remove(items.Select(e => e.Path));
+        }
+
+        /// <summary>
+        /// となりを取得
+        /// </summary>
+        /// <param name="item">基準項目</param>
+        /// <param name="excludes">除外項目</param>
+        /// <returns></returns>
+        private BookHistory? GetNeighbor(BookHistory? item, IEnumerable<BookHistory> excludes)
+        {
+            var items = _items;
+
+            if (items == null || items.Count <= 0) return null;
+
+            if (item is null) return items[0];
+
+            int index = items.IndexOf(item);
+            if (index < 0) return items[0];
+
+            var next = items
+                .Skip(index)
+                .Concat(items.Take(index))
+                .Except(excludes)
+                .FirstOrDefault();
+
+            return next;
+        }
+
+
+
+        /// <summary>
+        /// 検索ボックスコンポーネント
+        /// </summary>
+        public class HistorySearchBoxComponent : ISearchBoxComponent
+        {
+            private readonly HistoryList _self;
+
+            public HistorySearchBoxComponent(HistoryList self)
+            {
+                _self = self;
+            }
+
+            public HistoryStringCollection? History => BookHistoryCollection.Current.BookHistorySearchHistory;
+
+            public bool IsIncrementalSearchEnabled => Config.Current.System.IsIncrementalSearchEnabled;
+
+            public void Search(string keyword) => _self.SearchKeyword = keyword;
+        }
     }
+
+
 }

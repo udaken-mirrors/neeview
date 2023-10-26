@@ -321,7 +321,7 @@ namespace NeeView
                 if (_vm._model.IsFolderSearchEnabled)
                 {
                     var subItem = new MenuItem() { Header = Properties.Resources.Bookshelf_MoreMenu_SearchOptions };
-                    subItem.Items.Add(CreateCheckMenuItem(Properties.Resources.Bookshelf_MoreMenu_SearchIncremental, new Binding(nameof(BookshelfConfig.IsIncrementalSearchEnabled)) { Source = Config.Current.Bookshelf }));
+                    //subItem.Items.Add(CreateCheckMenuItem(Properties.Resources.Bookshelf_MoreMenu_SearchIncremental, new Binding(nameof(SystemConfig.IsIncrementalSearchEnabled)) { Source = Config.Current.System }));
                     subItem.Items.Add(CreateCheckMenuItem(Properties.Resources.Bookshelf_MoreMenu_SearchIncludeSubdirectories, new Binding(nameof(BookshelfConfig.IsSearchIncludeSubdirectories)) { Source = Config.Current.Bookshelf }));
                     items.Add(new Separator());
                     items.Add(subItem);

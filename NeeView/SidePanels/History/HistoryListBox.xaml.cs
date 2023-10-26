@@ -1,10 +1,12 @@
-﻿using System;
+﻿using NeeLaboratory.ComponentModel;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -23,11 +25,13 @@ namespace NeeView
     /// </summary>
     public partial class HistoryListBox : UserControl, IPageListPanel, IDisposable
     {
-        private readonly HistoryListBoxViewModel? _vm;
-        private ListBoxThumbnailLoader? _thumbnailLoader;
-        private PageThumbnailJobClient? _jobClient;
+        private readonly HistoryListBoxViewModel _vm;
+        private readonly ListBoxThumbnailLoader _thumbnailLoader;
+        private readonly PageThumbnailJobClient _jobClient;
         private bool _focusRequest;
-
+        private ValidTimeFlag _focusRequestTimestamp = ValidTimeFlag.Empty;
+        private bool _disposedValue = false;
+        private readonly DisposableCollection _disposables = new();
 
 
         static HistoryListBox()
@@ -48,13 +52,21 @@ namespace NeeView
             // タッチスクロール操作の終端挙動抑制
             this.ListBox.ManipulationBoundaryFeedback += SidePanelFrame.Current.ScrollViewer_ManipulationBoundaryFeedback;
 
-            this.Loaded += HistoryListBox_Loaded;
-            this.Unloaded += HistoryListBox_Unloaded;
+            this.ListBox.GotFocus += ListBox_GotFocus;
+
+            _jobClient = new PageThumbnailJobClient("HistoryList", JobCategories.BookThumbnailCategory);
+            _disposables.Add(_jobClient);
+
+            _thumbnailLoader = new ListBoxThumbnailLoader(this, _jobClient);
+
+            _disposables.Add(Config.Current.Panels.ContentItemProfile.SubscribePropertyChanged(PanelListItemProfile_PropertyChanged));
+            _disposables.Add(Config.Current.Panels.BannerItemProfile.SubscribePropertyChanged(PanelListItemProfile_PropertyChanged));
+            _disposables.Add(Config.Current.Panels.ThumbnailItemProfile.SubscribePropertyChanged(PanelListItemProfile_PropertyChanged));
+
+            _disposables.Add(_vm.SubscribePropertyChanged(nameof(_vm.Items),
+                (s, e) => AppDispatcher.BeginInvoke(() => ViewModel_ItemsChanged(s, e))));
         }
 
-
-        #region IDisposable Support
-        private bool _disposedValue = false;
 
         protected virtual void Dispose(bool disposing)
         {
@@ -62,10 +74,7 @@ namespace NeeView
             {
                 if (disposing)
                 {
-                    if (_jobClient != null)
-                    {
-                        _jobClient.Dispose();
-                    }
+                    _disposables.Dispose();
                 }
                 _disposedValue = true;
             }
@@ -76,7 +85,7 @@ namespace NeeView
             Dispose(true);
             GC.SuppressFinalize(this);
         }
-        #endregion
+
 
         #region IPageListBox support
 
@@ -130,49 +139,36 @@ namespace NeeView
         #endregion
 
 
-        private void HistoryListBox_Loaded(object? sender, RoutedEventArgs e)
-        {
-            if (_vm is null) return;
-
-            _jobClient = new PageThumbnailJobClient("HistoryList", JobCategories.BookThumbnailCategory);
-            _thumbnailLoader = new ListBoxThumbnailLoader(this, _jobClient);
-            _thumbnailLoader.Load();
-
-            _vm.SelectedItemChanged += ViewModel_SelectedItemChanged;
-
-            Config.Current.Panels.ContentItemProfile.PropertyChanged += PanelListtemProfile_PropertyChanged;
-            Config.Current.Panels.BannerItemProfile.PropertyChanged += PanelListtemProfile_PropertyChanged;
-            Config.Current.Panels.ThumbnailItemProfile.PropertyChanged += PanelListtemProfile_PropertyChanged;
-        }
-
-
-        private void HistoryListBox_Unloaded(object? sender, RoutedEventArgs e)
-        {
-            if (_vm is null) return;
-
-            _vm.SelectedItemChanged -= ViewModel_SelectedItemChanged;
-
-            Config.Current.Panels.ContentItemProfile.PropertyChanged -= PanelListtemProfile_PropertyChanged;
-            Config.Current.Panels.BannerItemProfile.PropertyChanged -= PanelListtemProfile_PropertyChanged;
-            Config.Current.Panels.ThumbnailItemProfile.PropertyChanged -= PanelListtemProfile_PropertyChanged;
-
-            _jobClient?.Dispose();
-        }
-
-
-        private void ViewModel_SelectedItemChanged(object? sender, EventArgs e)
+        private void ViewModel_ItemsChanged(object? sender, PropertyChangedEventArgs e)
         {
             this.ListBox.SetAnchorItem(null);
 
-            if (this.ListBox.IsFocused)
+            // リストが更新されても選択項目のフォーカスを維持するための処理
+            // NOTE: この一連の処理はかなり無理やりな実装になっているので再検討対象です
+            if (this.ListBox.IsKeyboardFocusWithin)
             {
                 FocusSelectedItem(true);
+                _focusRequestTimestamp = ValidTimeFlag.Create();
             }
 
             this.ListBox.ScrollIntoView(this.ListBox.SelectedItem);
         }
 
-        private void PanelListtemProfile_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+        private void ListBox_GotFocus(object sender, RoutedEventArgs e)
+        {
+            if (!this.ListBox.IsFocused) return;
+
+            // フォーカス予約処理
+            // リストが更新されるとフォーカスはそのListBox自体に移るので、選択項目にフォーカスを戻す。
+            if (_focusRequestTimestamp.Condition(100))
+            {
+                _focusRequestTimestamp = ValidTimeFlag.Empty;
+                // このイベント内でフォーカス移動させるのは問題があるのでディスパッチ処理にする
+                AppDispatcher.BeginInvoke(() => FocusSelectedItem(true));
+            }
+        }
+
+        private void PanelListItemProfile_PropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
             this.ListBox.Items?.Refresh();
         }
@@ -283,7 +279,7 @@ namespace NeeView
 
             if (_vm.Visibility == Visibility.Visible)
             {
-                _vm.UpdateItems();
+                await _vm.UpdateItemsAsync(CancellationToken.None);
                 this.ListBox.UpdateLayout();
 
                 await Task.Yield();
@@ -310,7 +306,7 @@ namespace NeeView
         {
             if (_vm is null) return null;
 
-            _vm.UpdateItems();
+            _vm.UpdateItems(true, CancellationToken.None);
             return this.ListBox.Items?.Cast<BookHistory>().ToList();
         }
 

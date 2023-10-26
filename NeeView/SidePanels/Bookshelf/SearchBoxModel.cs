@@ -58,6 +58,11 @@ namespace NeeView
         }
 
         /// <summary>
+        /// 検索キーワードエラー？
+        /// </summary>
+        public bool IsKeywordError => _keywordErrorMessage != null;
+
+        /// <summary>
         /// 検索キーワード履歴
         /// </summary>
         public HistoryStringCollection? History => _component.History;
@@ -82,6 +87,8 @@ namespace NeeView
         /// </summary>
         public void Search()
         {
+            if (IsKeywordError) return;
+
             // 検索を重複させないための処置
             if (!IsIncrementalSearchEnabled)
             {
@@ -97,6 +104,8 @@ namespace NeeView
         /// </summary>
         private void IncrementalSearch()
         {
+            if (IsKeywordError) return;
+
             //Debug.WriteLine($"Search: {_searchKeyword.Value}");
             // インクリメンタルサーチなら検索実行
             if (IsIncrementalSearchEnabled)
@@ -110,6 +119,8 @@ namespace NeeView
         /// </summary>
         public void UpdateSearchHistory()
         {
+            if (IsKeywordError) return;
+
             var keyword = FixedKeyword;
             if (string.IsNullOrEmpty(keyword)) return;
             History?.Append(keyword);
@@ -161,5 +172,5 @@ namespace NeeView
         }
     }
 
-
+    
 }
