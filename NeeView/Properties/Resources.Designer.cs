@@ -1300,6 +1300,15 @@ namespace NeeView.Properties {
         }
         
         /// <summary>
+        ///   Perform a search including subfolders に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string BookmarkConfig_IsSearchIncludeSubdirectories {
+            get {
+                return ResourceManager.GetString("BookmarkConfig.IsSearchIncludeSubdirectories", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sync bookshelf when book is opened に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string BookmarkConfig_IsSyncBookshelfEnabled {

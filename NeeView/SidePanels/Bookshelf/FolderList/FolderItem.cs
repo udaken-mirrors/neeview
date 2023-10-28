@@ -1,5 +1,6 @@
 ﻿using NeeLaboratory.ComponentModel;
 using NeeLaboratory.IO;
+using NeeLaboratory.IO.Search;
 using NeeView.Collections;
 using System;
 using System.Collections.Generic;
@@ -9,10 +10,6 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace NeeView
 {
@@ -79,7 +76,7 @@ namespace NeeView
     /// フォルダー情報
     /// フォルダーリストの１項目の情報 
     /// </summary>
-    public abstract class FolderItem : BindableBase, IHasPage, IHasName, IRenameable
+    public abstract class FolderItem : BindableBase, IHasPage, IHasName, IRenameable, ISearchItem
     {
         private readonly bool _isOverlayEnabled;
 
@@ -89,7 +86,7 @@ namespace NeeView
         private QueryPath _targetPath = QueryPath.Empty;
         private QueryPath _entityPath = QueryPath.Empty;
         private bool _isReady;
-        private bool _isRecursived;
+        private bool _isRecursive;
         private FolderItemIconOverlay _iconOverlay = FolderItemIconOverlay.Uninitialized;
         private bool _isVisible;
 
@@ -206,8 +203,8 @@ namespace NeeView
         /// </summary>
         public bool IsRecursived
         {
-            get { return _isRecursived; }
-            set { if (_isRecursived != value) { _isRecursived = value; RaisePropertyChanged(); } }
+            get { return _isRecursive; }
+            set { if (_isRecursive != value) { _isRecursive = value; RaisePropertyChanged(); } }
         }
 
 
@@ -237,6 +234,18 @@ namespace NeeView
             set { SetProperty(ref _isVisible, value); }
         }
 
+        #region ISearchItem
+        public bool IsPushPin => false;
+
+        public string SearchName => this.Name ?? "";
+
+        public string NormalizedUnitName => StringUtils.ToNormalizedWord(SearchName, false);
+
+        public string NormalizedFuzzyName => StringUtils.ToNormalizedWord(SearchName, true);
+
+        public DateTime DateTime => LastWriteTime;
+
+        #endregion
 
         // TODO: IHasPageなのに nullを返すのはおかしいのでダミーで対応？
         public virtual Page? GetPage() => null;

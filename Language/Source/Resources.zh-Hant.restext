@@ -2325,3 +2325,4 @@ ImageStandardConfig.IsAnimatedPngEnabled=播放 PNG 動畫
 ImageStandardConfig.IsAnimatedPngEnabled.Remarks=進行播放 PNG 動畫。長時間的 PNG 可能會有記憶體資源消耗的問題發生。
 BookSettingConfig.AutoRotate=自動旋轉
 BookSettingConfig.BaseScale=基礎比例
+BookmarkConfig.IsSearchIncludeSubdirectories=搜尋包括子資料夾

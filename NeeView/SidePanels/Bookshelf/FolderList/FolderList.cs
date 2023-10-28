@@ -286,7 +286,7 @@ namespace NeeView
         /// <summary>
         /// 検索許可？
         /// </summary>
-        public bool IsFolderSearchEnabled => Place?.Path != null && FolderCollection != null && FolderCollection.IsSearchEnabled;
+        public bool IsFolderSearchEnabled => FolderCollection != null && FolderCollection.IsSearchEnabled;
 
 
         /// <summary>
@@ -431,6 +431,10 @@ namespace NeeView
             }
         }
 
+        /// <summary>
+        /// サブフォルダーを検索範囲に含める
+        /// </summary>
+        protected virtual bool IsSearchIncludeSubdirectories => false;
 
 
         private void RaiseCollectionChanged()
@@ -479,9 +483,6 @@ namespace NeeView
 
 
         #region Search
-
-        protected virtual bool IsSearchIncludeSubdirectories() => false;
-
 
         /// <summary>
         /// 検索更新
@@ -993,9 +994,6 @@ namespace NeeView
                 return null;
             }
 
-            // サブディレクトリー検索フラグを確定
-            _searchEngine.IncludeSubdirectories = IsSearchIncludeSubdirectories();
-
             if (path.Search != null && _folderCollection is FolderSearchCollection && _folderCollection.Place.FullPath == path.FullPath)
             {
                 ////Debug.WriteLine($"SearchEngine: Cancel");
@@ -1007,7 +1005,7 @@ namespace NeeView
                 _searchEngine.Reset();
             }
 
-            return await _folderCollectionFactory.CreateFolderCollectionAsync(path, true, token);
+            return await _folderCollectionFactory.CreateFolderCollectionAsync(path, true, IsSearchIncludeSubdirectories, token);
         }
 
         #endregion CreateFolderCollection

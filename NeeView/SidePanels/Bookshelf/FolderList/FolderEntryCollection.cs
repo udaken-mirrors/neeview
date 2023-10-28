@@ -34,7 +34,7 @@ namespace NeeView
         }
 
 
-        public override bool IsSearchEnabled => true;
+        public override bool IsSearchEnabled => Place.Path != null;
 
         public override FolderOrderClass FolderOrderClass => FolderOrderClass.Normal;
 

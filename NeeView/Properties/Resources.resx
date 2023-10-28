@@ -7639,4 +7639,7 @@ nv.ShowToast(nv.Book.ViewPages[0].Path)</value>
   <data name="ExportImageWindow.IsDotKeep" xml:space="preserve">
     <value>Keep dot</value>
   </data>
+  <data name="BookmarkConfig.IsSearchIncludeSubdirectories" xml:space="preserve">
+    <value>Perform a search including subfolders</value>
+  </data>
 </root>

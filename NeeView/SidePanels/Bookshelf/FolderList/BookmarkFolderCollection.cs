@@ -9,22 +9,18 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Data;
+using System.Collections.Generic;
 
 namespace NeeView
 {
     public class BookmarkFolderCollection : FolderCollection, IDisposable
     {
-        // Fields
-
         private TreeListNode<IBookmarkEntry> _bookmarkPlace = CreateBookmarkPlaceEmpty();
 
-
-        // Constructors
 
         public BookmarkFolderCollection(QueryPath path, bool isOverlayEnabled) : base(path, isOverlayEnabled)
         {
         }
-
 
         public override async Task InitializeItemsAsync(CancellationToken token)
         {
@@ -37,11 +33,7 @@ namespace NeeView
 
             _bookmarkPlace = BookmarkCollection.Current.FindNode(Place.FullPath) ?? CreateBookmarkPlaceEmpty();
 
-            var items = _bookmarkPlace.Children
-                .Select(e => CreateFolderItem(e))
-                .WhereNotNull()
-                .ToList();
-
+            var items = CreateFolderItemCollection(_bookmarkPlace, token);
             var list = Sort(items, token);
 
             if (!list.Any())
@@ -56,15 +48,24 @@ namespace NeeView
             BookmarkCollection.Current.BookmarkChanged += BookmarkCollection_BookmarkChanged;
         }
 
+        protected virtual List<FolderItem> CreateFolderItemCollection(TreeListNode<IBookmarkEntry> root, CancellationToken token)
+        {
+            var items = root.Children
+                .Select(e => CreateFolderItem(e))
+                .WhereNotNull()
+                .ToList();
 
-        // Properties
+            return items;
+        }
+
+
+
+        public override bool IsSearchEnabled => true;
 
         public override FolderOrderClass FolderOrderClass => FolderOrderClass.Full;
 
         public TreeListNode<IBookmarkEntry> BookmarkPlace => _bookmarkPlace;
 
-
-        // Methods
 
         private static TreeListNode<IBookmarkEntry> CreateBookmarkPlaceEmpty()
         {
@@ -111,7 +112,7 @@ namespace NeeView
                         var item = Items.FirstOrDefault(i => e.Item == i.Source);
                         if (item != null)
                         {
-                            if (e.Item.Value is BookmarkFolder bookmarkFlder)
+                            if (e.Item.Value is BookmarkFolder bookmarkFolder)
                             {
                                 RenameItem(item, e.Item.CreateQuery());
                             }
@@ -130,13 +131,13 @@ namespace NeeView
 
                 case EntryCollectionChangedAction.Replace:
                 case EntryCollectionChangedAction.Reset:
-                    // nop. (work at FoderList.)
+                    // nop. (work at FolderList.)
                     break;
             }
         }
 
 
-        private FolderItem? CreateFolderItem(TreeListNode<IBookmarkEntry>? node)
+        protected FolderItem? CreateFolderItem(TreeListNode<IBookmarkEntry>? node)
         {
             if (node is null) return null;
 

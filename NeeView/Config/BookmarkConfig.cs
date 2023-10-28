@@ -10,6 +10,7 @@ namespace NeeView
         private bool _isSaveBookmark = true;
         private bool _isSyncBookshelfEnabled = true;
         private FolderOrder _bookmarkFolderOrder;
+        private bool _isSearchIncludeSubdirectories = true;
 
         [JsonInclude, JsonPropertyName(nameof(BookmarkFilePath))]
         public string? _bookmarkFilePath;
@@ -50,6 +51,13 @@ namespace NeeView
             set { SetProperty(ref _bookmarkFolderOrder, value); }
         }
 
+        // サブフォルダーを含めた検索を行う
+        [PropertyMember]
+        public bool IsSearchIncludeSubdirectories
+        {
+            get { return _isSearchIncludeSubdirectories; }
+            set { SetProperty(ref _isSearchIncludeSubdirectories, value); }
+        }
     }
 }
 

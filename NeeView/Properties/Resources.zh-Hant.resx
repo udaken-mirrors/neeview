@@ -7407,4 +7407,7 @@ nv.ShowToast(nv.Book.ViewPages[0].Path)</value>
   <data name="BookSettingConfig.BaseScale" xml:space="preserve">
     <value>基礎比例</value>
   </data>
+  <data name="BookmarkConfig.IsSearchIncludeSubdirectories" xml:space="preserve">
+    <value>搜尋包括子資料夾</value>
+  </data>
 </root>

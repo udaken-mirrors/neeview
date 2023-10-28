@@ -54,6 +54,9 @@ namespace NeeView
         // 本棚 検索履歴
         public HistoryStringCollection BookshelfSearchHistory { get; } = new();
 
+        // ブックマーク 検索履歴
+        public HistoryStringCollection BookmarkSearchHistory { get; } = new();
+
         // 履歴 検索履歴
         public HistoryStringCollection BookHistorySearchHistory { get; } = new();
 
@@ -390,7 +393,7 @@ namespace NeeView
             public Dictionary<string, FolderParameter.Memento>? Folders { get; set; }
 
             public List<string>? BookshelfSearchHistory { get; set; }
-
+            public List<string>? BookmarkSearchHistory { get; set; }
             public List<string>? BookHistorySearchHistory { get; set; }
 
             #region Obsolete
@@ -492,6 +495,7 @@ namespace NeeView
             if (Config.Current.History.IsKeepSearchHistory)
             {
                 memento.BookshelfSearchHistory = this.BookshelfSearchHistory.Any() ? this.BookshelfSearchHistory.ToList() : null;
+                memento.BookmarkSearchHistory = this.BookmarkSearchHistory.Any() ? this.BookmarkSearchHistory.ToList() : null;
                 memento.BookHistorySearchHistory = this.BookHistorySearchHistory.Any() ? this.BookHistorySearchHistory.ToList() : null;
             }
 
@@ -510,6 +514,7 @@ namespace NeeView
 #pragma warning disable CS0612 // 型またはメンバーが旧型式です
                 this.BookshelfSearchHistory.Replace(memento.BookshelfSearchHistory ?? memento.SearchHistory);
 #pragma warning restore CS0612 // 型またはメンバーが旧型式です
+                this.BookmarkSearchHistory.Replace(memento.BookmarkSearchHistory);
                 this.BookHistorySearchHistory.Replace(memento.BookHistorySearchHistory);
             }
 

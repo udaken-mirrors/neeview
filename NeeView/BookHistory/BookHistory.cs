@@ -68,6 +68,7 @@ namespace NeeView
 
         public bool IsDirectory => false;
         public bool IsPushPin => false;
+        public string SearchName => this.Name;
         public string NormalizedUnitName => StringUtils.ToNormalizedWord(this.Name, false);
         public string NormalizedFuzzyName => StringUtils.ToNormalizedWord(this.Name, true);
         public DateTime DateTime => LastAccessTime;

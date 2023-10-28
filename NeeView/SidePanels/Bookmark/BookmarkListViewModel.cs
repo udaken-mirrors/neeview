@@ -27,7 +27,7 @@ namespace NeeView
     {
         private CancellationTokenSource? _removeUnlinkedCommandCancellationTokenSource;
         private readonly DpiScaleProvider _dpiProvider = new();
-        private FolderList _model;
+        private readonly FolderList _model;
         private ContextMenu? _moreMenu;
 
 
@@ -62,11 +62,9 @@ namespace NeeView
 
         public FolderCollection? FolderCollection => _model.FolderCollection;
 
-        public FolderList Model
-        {
-            get { return _model; }
-            set { if (_model != value) { _model = value; RaisePropertyChanged(); } }
-        }
+        public FolderList Model => _model;
+
+        public SearchBoxModel? SearchBoxModel => _model.SearchBoxModel;
 
         /// <summary>
         /// コンボボックス用リスト
@@ -236,6 +234,11 @@ namespace NeeView
                 items.Add(CreateCommandMenuItem(Properties.Resources.FolderTree_Menu_AddBookmark, _vm.AddBookmarkCommand));
                 items.Add(new Separator());
                 items.Add(CreateCheckMenuItem(Properties.Resources.BookmarkList_MoreMenu_SyncBookshelf, new Binding(nameof(BookmarkConfig.IsSyncBookshelfEnabled)) { Source = Config.Current.Bookmark }));
+
+                var subItem = new MenuItem() { Header = Properties.Resources.Bookshelf_MoreMenu_SearchOptions };
+                subItem.Items.Add(CreateCheckMenuItem(Properties.Resources.Bookshelf_MoreMenu_SearchIncludeSubdirectories, new Binding(nameof(BookmarkConfig.IsSearchIncludeSubdirectories)) { Source = Config.Current.Bookmark }));
+                items.Add(new Separator());
+                items.Add(subItem);
 
                 return menu;
             }

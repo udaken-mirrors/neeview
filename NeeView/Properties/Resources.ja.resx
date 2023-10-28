@@ -7644,4 +7644,7 @@ nv.ShowToast(nv.Book.ViewPages[0].Path)</value>
   <data name="ExportImageWindow.IsDotKeep" xml:space="preserve">
     <value>ドットを維持</value>
   </data>
+  <data name="BookmarkConfig.IsSearchIncludeSubdirectories" xml:space="preserve">
+    <value>サブフォルダーを含めた検索を行う</value>
+  </data>
 </root>

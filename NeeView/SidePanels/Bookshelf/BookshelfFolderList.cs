@@ -87,6 +87,12 @@ namespace NeeView
             set { SetProperty(ref _excludeRegex, value); }
         }
 
+        protected override bool IsSearchIncludeSubdirectories
+        {
+            get => Config.Current.Bookshelf.IsSearchIncludeSubdirectories;
+        }
+
+
         /// <summary>
         /// 現在ブックマーク更新
         /// </summary>
@@ -242,11 +248,6 @@ namespace NeeView
                 Debug.WriteLine($"FolderList exclude: {ex.Message}");
                 ExcludeRegex = null;
             }
-        }
-
-        protected override bool IsSearchIncludeSubdirectories()
-        {
-            return Config.Current.Bookshelf.IsSearchIncludeSubdirectories;
         }
 
         protected override void OnPlaceChanged(object? sender, FolderSetPlaceOption options)

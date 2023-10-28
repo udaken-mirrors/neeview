@@ -26,6 +26,8 @@ namespace NeeView
             {
                 RaisePropertyChanged(nameof(IsSyncBookshelfEnabled));
             }));
+
+            this.SearchBoxModel = new SearchBoxModel(new BookmarkSearchBoxComponent(this));
         }
 
 
@@ -33,6 +35,11 @@ namespace NeeView
         {
             get => Config.Current.Bookmark.IsSyncBookshelfEnabled;
             set => Config.Current.Bookmark.IsSyncBookshelfEnabled = value;
+        }
+
+        protected override bool IsSearchIncludeSubdirectories
+        {
+            get => Config.Current.Bookmark.IsSearchIncludeSubdirectories;
         }
 
         public void UpdateItems()
@@ -89,6 +96,25 @@ namespace NeeView
         }
 
         #endregion IDisposable support
-                
+
+
+        /// <summary>
+        /// 検索ボックスコンポーネント
+        /// </summary>
+        public class BookmarkSearchBoxComponent : ISearchBoxComponent
+        {
+            private readonly BookmarkFolderList _self;
+
+            public BookmarkSearchBoxComponent(BookmarkFolderList self)
+            {
+                _self = self;
+            }
+
+            public HistoryStringCollection? History => BookHistoryCollection.Current.BookmarkSearchHistory;
+
+            public bool IsIncrementalSearchEnabled => Config.Current.System.IsIncrementalSearchEnabled;
+
+            public void Search(string keyword) => _self.RequestSearchPlace(keyword, false);
+        }
     }
 }

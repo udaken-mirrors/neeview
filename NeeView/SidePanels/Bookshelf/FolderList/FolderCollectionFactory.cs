@@ -23,7 +23,7 @@ namespace NeeView
 
 
         // フォルダーコレクション作成
-        public async Task<FolderCollection> CreateFolderCollectionAsync(QueryPath path, bool isActive, CancellationToken token)
+        public async Task<FolderCollection> CreateFolderCollectionAsync(QueryPath path, bool isActive, bool includeSubdirectories, CancellationToken token)
         {
             token.ThrowIfCancellationRequested();
 
@@ -37,13 +37,20 @@ namespace NeeView
             }
             else if (path.Scheme == QueryScheme.Bookmark)
             {
-                return await CreateBookmarkFolderCollectionAsync(path, isActive, token);
+                if (path.Search != null)
+                {
+                    return await CreateSearchBookmarkFolderCollectionAsync(path, isActive, includeSubdirectories, token);
+                }
+                else
+                {
+                    return await CreateBookmarkFolderCollectionAsync(path, isActive, token);
+                }
             }
             else if (path.Scheme == QueryScheme.File)
             {
                 if (path.Search != null)
                 {
-                    return await CreateSearchFolderCollectionAsync(path, isActive, token);
+                    return await CreateSearchFolderCollectionAsync(path, isActive, includeSubdirectories, token);
                 }
                 else if (path.Path == null || Directory.Exists(path.Path))
                 {
@@ -65,7 +72,7 @@ namespace NeeView
         }
 
         // 検索コレクション作成
-        public async Task<FolderCollection> CreateSearchFolderCollectionAsync(QueryPath path, bool isActive, CancellationToken token)
+        public async Task<FolderCollection> CreateSearchFolderCollectionAsync(QueryPath path, bool isActive, bool includeSubdirectories, CancellationToken token)
         {
             if (_searchEngine == null) throw new InvalidOperationException("SearchEngine does not exist.");
             if (path.Search is null) throw new InvalidOperationException("path.Search must not be null.");
@@ -74,6 +81,7 @@ namespace NeeView
 
             try
             {
+                _searchEngine.IncludeSubdirectories = includeSubdirectories;
                 var result = await _searchEngine.SearchAsync(path.SimplePath, path.Search, token);
 
                 var collection = new FolderSearchCollection(path, result, isActive, _isOverlayEnabled);
@@ -120,6 +128,21 @@ namespace NeeView
             _ = isActive;
 
             var collection = new BookmarkFolderCollection(path, _isOverlayEnabled);
+            await collection.InitializeItemsAsync(token);
+
+            return collection;
+        }
+
+        // 検索ブックマークフォルダーコレクション作成
+        private async Task<FolderCollection> CreateSearchBookmarkFolderCollectionAsync(QueryPath path, bool isActive, bool includeSubdirectories, CancellationToken token)
+        {
+            if (path.Search is null) throw new InvalidOperationException("path.Search must not be null.");
+
+            token.ThrowIfCancellationRequested();
+
+            _ = isActive;
+
+            var collection = new SearchBookmarkFolderCollection(path, _isOverlayEnabled, includeSubdirectories);
             await collection.InitializeItemsAsync(token);
 
             return collection;
