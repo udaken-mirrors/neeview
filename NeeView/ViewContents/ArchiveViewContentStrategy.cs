@@ -11,7 +11,7 @@ namespace NeeView
     {
         private readonly ViewContent _viewContent;
         private ArchivePageControl? _pageControl;
-        private readonly InstantDelayAction _delayAction;
+        private readonly DelayAction _delayAction;
         private bool _disposedValue;
         private readonly DisposableCollection _disposables = new();
 
@@ -19,7 +19,7 @@ namespace NeeView
         {
             _viewContent = viewContent;
 
-            _delayAction = new InstantDelayAction();
+            _delayAction = new DelayAction();
             _disposables.Add(_delayAction);
         }
 

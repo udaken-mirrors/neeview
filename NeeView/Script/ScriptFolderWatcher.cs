@@ -10,7 +10,7 @@ namespace NeeView
     public partial class ScriptFolderWatcher : IDisposable
     {
         private FileSystemWatcher? _watcher;
-        private readonly InstantDelayAction _delayUpdate = new();
+        private readonly DelayAction _delayUpdate = new();
         private bool _disposedValue;
 
 

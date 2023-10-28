@@ -46,15 +46,12 @@ namespace NeeView
             model.SearchBoxFocus += FolderList_SearchBoxFocus;
             model.FolderTreeFocus += FolderList_FolderTreeFocus;
 
-            this.SearchBox.SearchBoxFocusChanged += SearchBox_SearchBoxFocusChanged;
+            this.SearchBox.IsKeyboardFocusedChanged +=
+                (s, e) => SearchBoxFocusChanged?.Invoke(this, new FocusChangedEventArgs((bool)e.NewValue));
         }
 
-
-        public event EventHandler<FocusChangedEventArgs>? SearchBoxFocusChanged
-        {
-            add => this.SearchBox.SearchBoxFocusChanged += value;
-            remove => this.SearchBox.SearchBoxFocusChanged -= value;
-        }
+        
+        public event EventHandler<FocusChangedEventArgs>? SearchBoxFocusChanged;
 
 
         protected override void OnDpiChanged(DpiScale oldDpi, DpiScale newDpi)
@@ -140,17 +137,6 @@ namespace NeeView
 
         private void FolderListView_IsVisibleChanged(object? sender, DependencyPropertyChangedEventArgs e)
         {
-        }
-
-        /// <summary>
-        /// 検索ボックスのフォーカス変更イベント
-        /// </summary>
-        private void SearchBox_SearchBoxFocusChanged(object? sender, FocusChangedEventArgs e)
-        {
-            if (!e.IsFocused)
-            {
-                _vm.SearchBoxModel?.UpdateSearchHistory();
-            }
         }
 
         private void Grid_SizeChanged(object? sender, SizeChangedEventArgs e)

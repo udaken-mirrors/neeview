@@ -17,7 +17,7 @@ namespace NeeView
     public class MouseInputDrag : MouseInputBase
     {
         readonly IDragTransformControl _dragTransformControl;
-        private readonly InstantDelayAction _delayAction = new();
+        private readonly DelayAction _delayAction = new();
 
 
         public MouseInputDrag(MouseInputContext context) : base(context)

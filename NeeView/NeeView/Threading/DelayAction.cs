@@ -49,7 +49,7 @@ namespace NeeView.Threading
         public void Request()
         {
             if (_disposedValue) return;
-            if (_defaultAction is null) return;
+            if (_defaultAction is null) throw new InvalidOperationException("Default action is not set");
 
             Request(_defaultAction, _defaultDelay);
         }

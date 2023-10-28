@@ -79,7 +79,7 @@
                 <Image Source="{StaticResource ic_clear_24px_a}" />
             </Button>
             <ComboBox x:Name="SearchBoxComboBox" Text="{Binding Text, UpdateSourceTrigger=Explicit}" TabIndex="1" TextBoxBase.TextChanged="SearchBox_TextChanged"
-                                MinHeight="{DynamicResource FontIconSize}" IsKeyboardFocusWithinChanged="SearchBox_IsKeyboardFocusWithinChanged"
+                                MinHeight="{DynamicResource FontIconSize}"
                                 Background="{Binding ElementName=SearchBoxRoot, Path=Background}" VerticalAlignment="Stretch" KeyDown="SearchBox_KeyDown"
                                 ItemsSource="{Binding ItemsSource}" IsTextSearchCaseSensitive="True" IsEditable="True" BorderThickness="0">
 

@@ -35,12 +35,6 @@ namespace NeeView
             _delayAction = new DelayAction();
         }
 
-
-        /// <summary>
-        /// テキストボックスのキーボードフォーカス変更イベント
-        /// </summary>
-        public event EventHandler<FocusChangedEventArgs>? SearchBoxFocusChanged;
-
         
         /// <summary>
         /// 検索エラーメッセージ
@@ -131,15 +125,6 @@ namespace NeeView
                 Text = this.SearchBoxComboBox.Text;
                 Search();
             }
-        }
-
-        /// <summary>
-        /// テキストボックスのキーボードフォーカス変更イベント
-        /// </summary>
-        private void SearchBox_IsKeyboardFocusWithinChanged(object sender, DependencyPropertyChangedEventArgs e)
-        {
-            //Debug.WriteLine($"SBF.K: {this.SearchBox.IsKeyboardFocusWithin}");
-            SearchBoxFocusChanged?.Invoke(this, new FocusChangedEventArgs(this.SearchBoxComboBox.IsKeyboardFocusWithin));
         }
 
         /// <summary>

@@ -15,7 +15,7 @@ namespace NeeView
     public class TouchInputDrag : TouchInputBase
     {
         private readonly TouchDragManipulation _manipulation;
-        private readonly InstantDelayAction _delayAction = new();
+        private readonly DelayAction _delayAction = new();
 
 
         /// <summary>

@@ -12,7 +12,7 @@ namespace NeeView
     public class ImageViewContentStrategy : IDisposable, IViewContentStrategy, IHasImageSource, IHasScalingMode
     {
         private readonly ViewContent _viewContent;
-        private readonly InstantDelayAction _delayAction = new();
+        private readonly DelayAction _delayAction = new();
         private ImageContentControl? _imageControl;
         private bool _disposedValue;
         private BitmapScalingMode? _scalingMode;

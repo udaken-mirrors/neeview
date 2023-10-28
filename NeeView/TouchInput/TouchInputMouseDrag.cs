@@ -14,7 +14,7 @@ namespace NeeView
     public class TouchInputMouseDrag : TouchInputBase
     {
         private readonly IDragTransformControl _drag;
-        private readonly InstantDelayAction _delayAction = new();
+        private readonly DelayAction _delayAction = new();
         private TouchContext? _touch;
 
 
