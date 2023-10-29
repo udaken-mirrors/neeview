@@ -13,17 +13,20 @@ namespace NeeView
 {
     public partial class BookPageCollection : BindableBase, IReadOnlyList<Page>, IEnumerable<Page>, IDisposable
     {
-        // サムネイル寿命管理
         private readonly PageThumbnailPool _thumbnailPool = new();
 
-        // ページ列
-        private PageSortMode _sortMode = PageSortMode.Entry;
-        private CancellationTokenSource? _sortCancellationTokenSource;
-
         private readonly List<Page> _sourcePages;
+        private PageSortMode _sortMode = PageSortMode.Entry;
+        private string _searchKeyword = "";
+        private CancellationTokenSource? _sortCancellationTokenSource;
+        private readonly Page _emptyPage;
+        private bool _disposedValue = false;
+
 
         public BookPageCollection(List<Page> pages)
         {
+            _emptyPage = CreateEmptyPage();
+
             _sourcePages = pages;
             Pages = pages;
 
@@ -64,6 +67,9 @@ namespace NeeView
 
         public MultiMap<string, Page> PageMap { get; private set; }
 
+        /// <summary>
+        /// ソートモード
+        /// </summary>
         public PageSortMode SortMode
         {
             get => _sortMode;
@@ -76,8 +82,36 @@ namespace NeeView
             }
         }
 
+        /// <summary>
+        /// 検索キーワード
+        /// </summary>
+        public string SearchKeyword
+        {
+            get { return _searchKeyword; }
+            set
+            {
+                if (SetProperty(ref _searchKeyword, value))
+                {
+                    UpdatePagesAsync();
+                }
+            }
+        }
+
+
+        /// <summary>
+        /// 初期化
+        /// </summary>
+        /// <param name="sortMode">ソートモード</param>
+        /// <param name="searchKeyword">検索キーワード</param>
+        /// <param name="token"></param>
+        public void Initialize(PageSortMode sortMode, string searchKeyword, CancellationToken token)
+        {
+            _sortMode = sortMode;
+            _searchKeyword = searchKeyword;
+            UpdatePages(_sortMode, _searchKeyword, token);
+        }
+
         #region IDisposable Support
-        private bool _disposedValue = false;
 
         protected virtual void Dispose(bool disposing)
         {
@@ -156,6 +190,19 @@ namespace NeeView
         #endregion
 
         /// <summary>
+        /// 空白ページ作成
+        /// </summary>
+        private Page CreateEmptyPage()
+        {
+            var emptyArchiveEntry = new ArchiveEntry(StaticFolderArchive.Default)
+            {
+                IsEmpty = true,
+                RawEntryName = Properties.Resources.Notice_NoFiles,
+            };
+            return new Page("", new EmptyPageContent(emptyArchiveEntry, null));
+        }
+
+        /// <summary>
         /// サムネイル参照イベント処理
         /// </summary>
         /// <param name="sender"></param>
@@ -207,15 +254,9 @@ namespace NeeView
             return 0 <= index && index < Pages.Count;
         }
 
-
-        #region ページの並び替え
-
-        public void InitializeSort(PageSortMode sortMode, CancellationToken token)
-        {
-            _sortMode = sortMode;
-            Sort(_sortMode, token);
-        }
-
+        /// <summary>
+        /// ページ更新
+        /// </summary>
         private void UpdatePagesAsync()
         {
             if (_disposedValue) return;
@@ -229,8 +270,7 @@ namespace NeeView
             {
                 try
                 {
-                    // TODO: SearchFilter
-                    Sort(_sortMode, _sortCancellationTokenSource.Token);
+                    UpdatePages(_sortMode, _searchKeyword, _sortCancellationTokenSource.Token);
                 }
                 catch (OperationCanceledException)
                 {
@@ -243,7 +283,7 @@ namespace NeeView
             });
         }
 
-        private void Sort(PageSortMode sortMode, CancellationToken token)
+        private void UpdatePages(PageSortMode sortMode, string searchKeyword, CancellationToken token)
         {
             if (_disposedValue) return;
             if (_sourcePages.Count <= 0) return;
@@ -251,7 +291,16 @@ namespace NeeView
             try
             {
                 //Debug.WriteLine($"Sort {sortMode} ...");
-                Pages = SortPages(_sourcePages, sortMode, token).ToList();
+                var pages = SelectSearchPages(_sourcePages, searchKeyword, token);
+                pages = SortPages(pages, sortMode, token);
+
+                if (!pages.Any())
+                {
+                    pages = new List<Page>() { _emptyPage };
+                }
+
+                Pages = pages.ToList();
+
                 //Debug.WriteLine($"Sort {sortMode} done.");
 
                 // ページ ナンバリング
@@ -266,8 +315,24 @@ namespace NeeView
             }
         }
 
+        #region ページの検索
+
+        private IEnumerable<Page> SelectSearchPages(IEnumerable<Page> pages, string keyword, CancellationToken token)
+        {
+            if (!pages.Any()) return pages;
+            if (string.IsNullOrEmpty(keyword)) return pages;
+
+            var search = new NeeLaboratory.IO.Search.SearchCore();
+            var options = new NeeLaboratory.IO.Search.SearchOption();
+            return search.Search(keyword, options, pages, token).Cast<Page>();
+        }
+
+        #endregion
+
+        #region ページの並び替え
+
         private IEnumerable<Page> SortPages(IEnumerable<Page> pages, PageSortMode sortMode, CancellationToken token)
-        { 
+        {
             if (_disposedValue) return pages;
             if (!pages.Any()) return pages;
 

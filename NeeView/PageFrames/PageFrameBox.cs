@@ -15,6 +15,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using NeeLaboratory.ComponentModel;
 using NeeLaboratory.Generators;
+using NeeView.Collections.Generic;
 using NeeView.ComponentModel;
 using NeeView.Effects;
 using NeeView.Maths;
@@ -354,7 +355,20 @@ namespace NeeView.PageFrames
 
         private void Context_PagesChanged(object? sender, EventArgs e)
         {
-            UpdateContainers(PageFrameDirtyLevel.Moderate, TransformMask.None, false, false);
+            _containers.SetDirty(PageFrameDirtyLevel.Moderate);
+
+            // ページ座標復元
+            var position = PagePosition.Zero;
+            var page = _selected.Page;
+            if (page is not null)
+            {
+                var index = _bookContext.Pages.IndexOf(page);
+                position = new PagePosition(index < 0 ? 0 : index, 0);
+            }
+
+            MoveTo(position, LinkedListDirection.Next);
+            FlushLayout();
+
             PagesChanged?.Invoke(this, e);
         }
 

@@ -55,13 +55,16 @@ namespace NeeView
 
         protected virtual Page? GetSelectedPage(object sender)
         {
-            return (sender as ListBox)?.SelectedItem as Page;
+            var page = (sender as ListBox)?.SelectedItem as Page;
+            if (page is null) return null;
+            return page.PageType != PageType.Empty ? page : null;
         }
 
         protected virtual List<Page>? GetSelectedPages(object sender)
         {
             return (sender as ListBox)?.SelectedItems?
                 .Cast<Page>()
+                .Where(e => e.PageType != PageType.Empty)
                 .WhereNotNull()
                 .ToList();
         }
@@ -367,7 +370,7 @@ namespace NeeView
             var item = GetSelectedPage(sender);
             if (item is null) return;
 
-            e.CanExecute = Config.Current.System.IsFileWriteAccessEnabled &&  item.CanRename();
+            e.CanExecute = Config.Current.System.IsFileWriteAccessEnabled && item.CanRename();
         }
 
         public async void Rename_Execute(object sender, ExecutedRoutedEventArgs e)

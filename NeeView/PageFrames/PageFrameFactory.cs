@@ -208,7 +208,7 @@ namespace NeeView.PageFrames
         /// <returns></returns>
         private PageFrame CreateWideFillPageFrame(PageFrameElement source1)
         {
-            if (_context.IsInsertDummyPage)
+            if (_context.IsInsertDummyPage && _book.Pages.Count > 1)
             {
                 var source2 = source1 with { IsDummy = true };
                 return CreateWidePageFrame(source1, source2, 1);

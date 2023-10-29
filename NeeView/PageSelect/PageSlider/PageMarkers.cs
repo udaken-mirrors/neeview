@@ -68,7 +68,7 @@ namespace NeeView
         private void Update()
         {
             var book = BookOperation.Current.Book;
-            if (book != null && book.Marker.Markers.Any())
+            if (book != null && book.Pages.Any() && book.Marker.Markers.Any())
             {
                 this.MarkerCollection = new PageMarkerCollection(
                     indexes: book.Marker.Markers.Select(e => e.Index).ToList(),

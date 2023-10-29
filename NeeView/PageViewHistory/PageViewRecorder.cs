@@ -73,6 +73,9 @@ namespace NeeView
                         case PageType.File:
                             _writeBuffer.Append("File");
                             break;
+                        case PageType.Empty:
+                            _writeBuffer.Append("Empty");
+                            break;
                         default:
                             _writeBuffer.Append("Unknown");
                             break;

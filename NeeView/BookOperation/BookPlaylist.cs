@@ -18,7 +18,7 @@ namespace NeeView
 
         public bool IsEnabled(Page page)
         {
-            if (page is null)
+            if (page is null || page.Content is EmptyPageContent)
             {
                 return false;
             }

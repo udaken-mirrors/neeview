@@ -4,5 +4,6 @@
     {
         Folder,
         File,
+        Empty,
     }
 }

@@ -37,9 +37,10 @@ namespace NeeView
 
             // Validate sort mode
             var sortMode = ValidatePageSortMode(setting.SortMode, archiveEntryCollection);
+            var searchKeyword = address.TargetPath.Search ?? "";
 
             var pageCollection = new BookPageCollection(pages);
-            pageCollection.InitializeSort(sortMode, token);
+            pageCollection.Initialize(sortMode, searchKeyword, token);
             var book = new BookSource(archiveEntryCollection, pageCollection, bookMemoryService);
             book.SubFolderCount = subFolderCount;
 

@@ -24,6 +24,9 @@
                 case MediaPageContent mediaPageContent:
                     return new MediaPageThumbnail(mediaPageContent);
 
+                case EmptyPageContent emptyPageContent:
+                    return new EmptyPageThumbnail(emptyPageContent);
+
                 default:
                     // not support yet.
                     return new PageThumbnail(content);

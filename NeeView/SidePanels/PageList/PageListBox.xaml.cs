@@ -427,7 +427,7 @@ namespace NeeView
 
         public async Task DragStartBehavior_DragBeginAsync(object? sender, Windows.DragStartEventArgs e, CancellationToken token)
         {
-            var pages = this.ListBox.SelectedItems.Cast<Page>().ToList();
+            var pages = this.ListBox.SelectedItems.Cast<Page>().Where(e => e.PageType != PageType.Empty).ToList();
             if (!pages.Any())
             {
                 e.Cancel = true;

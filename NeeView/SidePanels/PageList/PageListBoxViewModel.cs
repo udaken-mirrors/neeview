@@ -26,12 +26,8 @@ namespace NeeView
         public event EventHandler<ViewItemsChangedEventArgs>? ViewItemsChanged;
 
 
-        public PageList Model
-        {
-            get { return _model; }
-            set { if (_model != value) { _model = value; RaisePropertyChanged(); } }
-        }
-
+        public PageList Model => _model;
+        
         /// <summary>
         /// 一度だけフォーカスするフラグ
         /// </summary>

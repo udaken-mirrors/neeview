@@ -76,7 +76,7 @@ namespace NeeView
         /// <param name="pages">削除された可能性のあるページ</param>
         public void ValidateRemoveFile(IEnumerable<Page> pages)
         {
-            if (pages.All(e => e.ArchiveEntry.Exists())) return;
+            if (pages.Where(e => e.PageType != PageType.Empty).All(e => e.ArchiveEntry.Exists())) return;
             ReLoad();
         }
 

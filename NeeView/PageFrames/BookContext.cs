@@ -17,6 +17,7 @@ namespace NeeView.PageFrames
         private readonly Book _book;
         private readonly BookPageAccessor _accessor;
         private PageRange _selectedRange;
+        private List<Page> _selectedPages = new();
         private bool _disposedValue;
         private readonly DisposableCollection _disposables = new();
 
@@ -57,21 +58,21 @@ namespace NeeView.PageFrames
             get { return _selectedRange; }
             set
             {
-                if (SetProperty(ref _selectedRange, value))
+                var pages = GetPages(value);
+                if (_selectedRange != value || !pages.SequenceEqual(_selectedPages))
                 {
-                    _book.SetCurrentPages(SelectedPages);
+                    _selectedRange = value;
+                    _selectedPages = pages;
+                    _book.SetCurrentPages(pages);
+                    RaisePropertyChanged();
+                    RaisePropertyChanged(nameof(SelectedPages));
                     SelectedRangeChanged?.Invoke(this, EventArgs.Empty);
                 }
             }
         }
 
-        public IReadOnlyList<Page> SelectedPages
-        {
-            get
-            {
-                return _selectedRange.CollectPositions().Select(e => Pages[_accessor.NormalizeIndex(e.Index)]).Distinct().ToList();
-            }
-        }
+        public IReadOnlyList<Page> SelectedPages => _selectedPages;
+
 
         // NOTE: これは Book で保持する必要ある？ -> Page生成時に必要なのだ...
         public BookMemoryService BookMemoryService => _book.BookMemoryService;
@@ -149,6 +150,10 @@ namespace NeeView.PageFrames
         {
             return _accessor.GetPage(index, normalized);
         }
-
+      
+        private List<Page> GetPages(PageRange range)
+        {
+            return range.CollectPositions().Select(e => Pages[_accessor.NormalizeIndex(e.Index)]).Distinct().ToList();
+        }
     }
 }

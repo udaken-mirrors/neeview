@@ -21,6 +21,7 @@ namespace NeeView
                 SvgPageData => new SvgViewSourceStrategy(pageContent),
                 ArchivePageData => new ArchiveViewSourceStrategy(pageContent),
                 FilePageData => new FileViewSourceStrategy(pageContent),
+                EmptyPageData => new EmptyViewSourceStrategy(pageContent),
                 _ => throw new NotSupportedException(),
             };
         }

@@ -227,33 +227,33 @@ namespace NeeView
 
             if (!this.IsEnabled) return null;
 
-            path = LoosePath.NormalizeSeparator(path);
-            var sourcePath = path;
-            if (FileShortcut.IsShortcut(path) && (System.IO.File.Exists(path) || System.IO.Directory.Exists(path)))
+            var query = new QueryPath(path);
+            var sourcePath = query.SimpleQuery;
+            if (FileShortcut.IsShortcut(query.SimplePath) && (System.IO.File.Exists(query.SimplePath) || System.IO.Directory.Exists(query.SimplePath)))
             {
-                var shortcut = new FileShortcut(path);
+                var shortcut = new FileShortcut(query.SimplePath);
                 if (shortcut.TryGetTargetPath(out var target))
                 {
-                    path = target;
+                    query = new QueryPath(target, query.Search);
                 }
             }
 
-            if (path.StartsWith("pagemark:"))
+            query = new QueryPath(GetNormalizePathName(query.SimplePath), query.Search);
+
+            // Legacy:
+            if (query.SimplePath.StartsWith("pagemark:") == true)
             {
-                path = Config.Current.Playlist.PagemarkPlaylist;
+                query = new QueryPath(Config.Current.Playlist.PagemarkPlaylist);
             }
 
-            path = GetNormalizePathName(path);
-
             ////DebugTimer.Start($"\nStart: {path}");
+            if (_book?.Path == query.SimplePath && option.HasFlag(BookLoadOption.SkipSamePlace)) return null;
 
-            if (_book?.Path == path && option.HasFlag(BookLoadOption.SkipSamePlace)) return null;
-
-            this.Address = path;
+            this.Address = query.SimplePath;
 
             Interlocked.Increment(ref _requestLoadCount);
 
-            var command = new BookHubCommandLoad(this, new BookHubCommandLoadArgs(path, sourcePath)
+            var command = new BookHubCommandLoad(this, new BookHubCommandLoadArgs(query.SimpleQuery, sourcePath)
             {
                 Sender = sender,
                 //Path = path,
@@ -264,14 +264,14 @@ namespace NeeView
             });
 
             command.Completed += JobCommand_Completed;
-            LoadRequesting?.Invoke(this, new BookPathEventArgs(path));
+            LoadRequesting?.Invoke(this, new BookPathEventArgs(query.SimplePath));
             _commandEngine.Enqueue(command);
             return command;
         
             void JobCommand_Completed(object? sender, JobCompletedEventArgs e)
             {
                 command.Completed -= JobCommand_Completed;
-                LoadRequested?.Invoke(this, new BookPathEventArgs(path));
+                LoadRequested?.Invoke(this, new BookPathEventArgs(query.SimplePath));
             }
         }
 
@@ -333,7 +333,9 @@ namespace NeeView
 
             var book = _book;
             BookLoadOption options = book != null ? (book.LoadOption & BookLoadOption.KeepHistoryOrder) | BookLoadOption.Resume : BookLoadOption.None;
-            RequestLoad(sender, Address, start, options | BookLoadOption.IsBook | BookLoadOption.IgnoreCache, true);
+
+            var query = new QueryPath(Address, _book?.Pages.SearchKeyword);
+            RequestLoad(sender, query.SimpleQuery, start, options | BookLoadOption.IsBook | BookLoadOption.IgnoreCache, true);
         }
 
         // 上の階層に移動可能？

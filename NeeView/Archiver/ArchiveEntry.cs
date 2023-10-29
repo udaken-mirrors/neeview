@@ -35,7 +35,7 @@ namespace NeeView
         /// <summary>
         ///  Emptyインスタンス？
         /// </summary>
-        public bool IsEmpty { get; private set; }
+        public bool IsEmpty { get; init; }
 
         /// <summary>
         /// 仮のエントリー

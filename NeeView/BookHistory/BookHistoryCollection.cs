@@ -60,6 +60,9 @@ namespace NeeView
         // 履歴 検索履歴
         public HistoryStringCollection BookHistorySearchHistory { get; } = new();
 
+        // ページリスト 検索履歴
+        public HistoryStringCollection PageListSearchHistory { get; } = new();
+
 
         private void BookHistoryCollection_HistoryChanged(object? sender, BookMementoCollectionChangedArgs e)
         {
@@ -395,6 +398,7 @@ namespace NeeView
             public List<string>? BookshelfSearchHistory { get; set; }
             public List<string>? BookmarkSearchHistory { get; set; }
             public List<string>? BookHistorySearchHistory { get; set; }
+            public List<string>? PageListSearchHistory { get; set; }
 
             #region Obsolete
             [Obsolete(), Alternative(nameof(BookshelfSearchHistory), 40)] // ver.40
@@ -497,6 +501,7 @@ namespace NeeView
                 memento.BookshelfSearchHistory = this.BookshelfSearchHistory.Any() ? this.BookshelfSearchHistory.ToList() : null;
                 memento.BookmarkSearchHistory = this.BookmarkSearchHistory.Any() ? this.BookmarkSearchHistory.ToList() : null;
                 memento.BookHistorySearchHistory = this.BookHistorySearchHistory.Any() ? this.BookHistorySearchHistory.ToList() : null;
+                memento.PageListSearchHistory = this.PageListSearchHistory.Any() ? this.PageListSearchHistory.ToList() : null;
             }
 
             return memento;
@@ -516,6 +521,7 @@ namespace NeeView
 #pragma warning restore CS0612 // 型またはメンバーが旧型式です
                 this.BookmarkSearchHistory.Replace(memento.BookmarkSearchHistory);
                 this.BookHistorySearchHistory.Replace(memento.BookHistorySearchHistory);
+                this.PageListSearchHistory.Replace(memento.PageListSearchHistory);
             }
 
             this.Load(fromLoad ? Limit(memento.Items, Config.Current.History.LimitSize, Config.Current.History.LimitSpan) : memento.Items, memento.Books);

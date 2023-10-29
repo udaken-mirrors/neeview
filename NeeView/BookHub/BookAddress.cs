@@ -82,6 +82,7 @@ namespace NeeView
             token.ThrowIfCancellationRequested();
 
             this.SourcePath = sourceQuery ?? query;
+            var search = query.Search;
 
             // ブックマークは実体のパスへ
             if (query.Scheme == QueryScheme.Bookmark)
@@ -91,7 +92,7 @@ namespace NeeView
                 switch (node.Value)
                 {
                     case Bookmark bookmark:
-                        query = new QueryPath(bookmark.Path);
+                        query = new QueryPath(bookmark.Path, search);
                         break;
                     case BookmarkFolder folder:
                         throw new BookAddressException(string.Format(Properties.Resources.Notice_CannotOpenBookmarkFolder, query.SimplePath));
@@ -106,6 +107,12 @@ namespace NeeView
             {
                 this.TargetPath = query;
                 this.EntryName = entryName;
+            }
+            // 検索オプションが指定されてたらブック
+            if (search != null)
+            {
+                this.TargetPath = query;
+                this.EntryName = null;
             }
             // パスはブック
             else if (entry.IsBook() || option.HasFlag(BookLoadOption.IsBook))

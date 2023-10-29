@@ -276,6 +276,7 @@ namespace NeeView
             {
                 ThumbnailType.Media => ThumbnailResource.MediaImage,
                 ThumbnailType.Folder => ThumbnailResource.FolderImage,
+                ThumbnailType.NoEntry => ThumbnailResource.NoEntryImage,
                 _ => ThumbnailResource.EmptyImage,
             };
         }
@@ -362,6 +363,10 @@ namespace NeeView
             {
                 return ThumbnailResource.FolderBitmapSource;
             }
+            else if (image == ThumbnailResource.NoEntryImage)
+            {
+                return ThumbnailResource.NoEntryImageSource;
+            }
             else
             {
                 return DecodeFromImageData(image);
@@ -378,6 +383,8 @@ namespace NeeView
                     return ThumbnailResource.MediaBitmapSource;
                 case ThumbnailType.Folder:
                     return ThumbnailResource.FolderBitmapSource;
+                case ThumbnailType.NoEntry:
+                    return ThumbnailResource.NoEntryImageSource;
                 default:
                     return null;
             }
@@ -397,6 +404,10 @@ namespace NeeView
             else if (image == ThumbnailResource.FolderImage)
             {
                 return new ThumbnailSource(ThumbnailType.Folder);
+            }
+            else if (image ==ThumbnailResource.NoEntryImage)
+            {
+                return new ThumbnailSource(ThumbnailType.NoEntry);
             }
             else
             {

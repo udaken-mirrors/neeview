@@ -26,7 +26,7 @@ namespace NeeView
         private List<Page> _viewItems = new();
         private ObservableCollection<Page>? _items;
         private bool _isPageMoved;
-
+        private Book? _book;
 
         private PageList()
         {
@@ -34,6 +34,8 @@ namespace NeeView
             BookOperation.Current.Control.PagesChanged += BookOperation_PageListChanged;
 
             PageHistory.Current.Changed += (s, e) => PageHistoryChanged?.Invoke(s, e);
+
+            this.SearchBoxModel = new SearchBoxModel(new PageListSearchBoxComponent(this));
         }
 
 
@@ -50,6 +52,8 @@ namespace NeeView
         /// </summary>
         public event EventHandler<ViewItemsChangedEventArgs>? ViewItemsChanged;
 
+
+        public SearchBoxModel SearchBoxModel { get; }
 
         // サムネイル画像が表示される？？
         public bool IsThumbnailVisible
@@ -212,16 +216,20 @@ namespace NeeView
         {
             CollectionChanging?.Invoke(this, EventArgs.Empty);
 
+            _book = BookOperation.Current.Book;
+
             var pages = BookOperation.Current.Control.Pages;
             Items = new ObservableCollection<Page>(pages);
 
             RaisePropertyChanged(nameof(PlaceDispString));
 
-            PageSortModeClass = BookOperation.Current.Book != null ? BookOperation.Current.Book.PageSortModeClass : PageSortModeClass.Full;
+            PageSortModeClass = _book != null ? _book.PageSortModeClass : PageSortModeClass.Full;
             PageSortMode = PageSortModeClass.ValidatePageSortMode(Config.Current.BookSetting.SortMode);
             RaisePropertyChanged(nameof(PageSortMode));
 
             RefreshSelectedItem();
+
+            SearchBoxModel.Keyword = _book?.Pages.SearchKeyword;
 
             CollectionChanged?.Invoke(this, EventArgs.Empty);
         }
@@ -255,6 +263,8 @@ namespace NeeView
         private List<Page>? CollectPage(Book? book, PageRange range)
         {
             if (book is null) return null;
+            if (!book.Pages.Any()) return null;
+
             var indexes = Enumerable.Range(range.Min.Index, range.Max.Index - range.Min.Index + 1)
                 .Select(e => MathUtility.NormalizeLoopRange(e, 0, book.Pages.Count - 1));
             return indexes.Where(e => book.Pages.IsValidIndex(e)).Select(e => book.Pages[e]).ToList();
@@ -338,5 +348,32 @@ namespace NeeView
             BookHub.Current.RequestLoadParent(this);
         }
 
+        public void SetSearchKeyword(string keyword)
+        {
+            if (_book is not null)
+            {
+                _book.Pages.SearchKeyword = keyword;
+            }
+        }
+
+
+        /// <summary>
+        /// 検索ボックスコンポーネント
+        /// </summary>
+        public class PageListSearchBoxComponent : ISearchBoxComponent
+        {
+            private readonly PageList _self;
+
+            public PageListSearchBoxComponent(PageList self)
+            {
+                _self = self;
+            }
+
+            public HistoryStringCollection? History => BookHistoryCollection.Current.PageListSearchHistory;
+
+            public bool IsIncrementalSearchEnabled => Config.Current.System.IsIncrementalSearchEnabled;
+
+            public void Search(string keyword) => _self.SetSearchKeyword(keyword);
+        }
     }
 }

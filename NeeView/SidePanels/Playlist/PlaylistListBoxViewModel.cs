@@ -216,8 +216,9 @@ namespace NeeView
         {
             if (_items is null) return null;
 
-            var path = BookOperation.Current.Control.SelectedPages.FirstOrDefault()?.EntryFullName;
-            if (path is null) return null;
+            var page = BookOperation.Current.Control.SelectedPages.FirstOrDefault();
+            var path = page?.EntryFullName;
+            if (path is null || page?.Content is EmptyPageContent) return null;
 
             var targetItem = this.IsFirstIn ? _items.FirstOrDefault() : null;
             var result = Insert(new List<string> { path }, targetItem);

@@ -7,11 +7,12 @@ using System.Windows;
 using System.Windows.Media;
 using NeeLaboratory.ComponentModel;
 using NeeLaboratory.Generators;
+using NeeLaboratory.IO.Search;
 
 namespace NeeView
 {
     [NotifyPropertyChanged]
-    public partial class Page : IDisposable, INotifyPropertyChanged, IPageContentLoader, IPageThumbnailLoader, IHasPage, IRenameable
+    public partial class Page : IDisposable, INotifyPropertyChanged, IPageContentLoader, IPageThumbnailLoader, IHasPage, IRenameable, ISearchItem
     {
         private int _index;
         private readonly PageContent _content;
@@ -119,7 +120,7 @@ namespace NeeView
         /// <summary>
         /// ページの種類
         /// </summary>
-        public PageType PageType => _content is ArchivePageContent ? PageType.Folder : PageType.File;
+        public PageType PageType => _content.PageType;
 
         // 表示中?
         public bool IsVisible
@@ -149,6 +150,16 @@ namespace NeeView
         /// </summary>
         public bool IsDeleted => ArchiveEntry.IsDeleted;
 
+        #region ISearchItem
+
+        public bool IsDirectory => false;
+        public bool IsPushPin => false;
+        public string SearchName => EntryLastName;
+        public string NormalizedUnitName => StringUtils.ToNormalizedWord(SearchName, false);
+        public string NormalizedFuzzyName => StringUtils.ToNormalizedWord(SearchName, true);
+        public DateTime DateTime => LastWriteTime;
+
+        #endregion ISearchItem
 
         #region Thumbnail
 

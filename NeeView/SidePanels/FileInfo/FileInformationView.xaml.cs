@@ -171,6 +171,7 @@ namespace NeeView
         {
             var pages = this.ThumbnailListBox.SelectedItems.Cast<FileInformationSource>()
                 .Select(x => x.Page)
+                .Where(x => x.PageType != PageType.Empty)
                 .WhereNotNull()
                 .ToList();
 
@@ -224,7 +225,9 @@ namespace NeeView
         {
             if (sender is not ListBox listBox) return null;
 
-            return (listBox.SelectedItem as FileInformationSource)?.Page;
+            var page = (listBox.SelectedItem as FileInformationSource)?.Page;
+            if (page is null) return null;
+            return page.PageType != PageType.Empty ? page : null;
         }
 
         protected override List<Page>? GetSelectedPages(object sender)
@@ -234,6 +237,7 @@ namespace NeeView
             return listBox.SelectedItems
                 .Cast<FileInformationSource>()
                 .Select(e => e.Page)
+                .Where(e => e.PageType != PageType.Empty)
                 .WhereNotNull()
                 .ToList();
         }

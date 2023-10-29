@@ -9,5 +9,6 @@
         Empty,
         Media,
         Folder,
+        NoEntry,
     }
 }

@@ -58,11 +58,10 @@ namespace NeeView
             set => _model.PageSortMode = value;
         }
 
-        public PageList Model
-        {
-            get { return _model; }
-            set { if (_model != value) { _model = value; RaisePropertyChanged(); } }
-        }
+        public PageList Model => _model;
+
+        public SearchBoxModel SearchBoxModel => _model.SearchBoxModel;
+
 
         public PageListConfig PageListConfig => Config.Current.PageList;
 

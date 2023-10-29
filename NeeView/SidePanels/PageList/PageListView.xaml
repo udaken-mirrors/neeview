@@ -60,11 +60,11 @@
 
         <StackPanel DockPanel.Dock="Top">
 
-            <Border Visibility="{Binding PageListConfig.ShowBookTitle, Converter={StaticResource BooleanToVisibilityConverter}}">
+            <Border Visibility="{Binding PageListConfig.ShowBookTitle, Converter={StaticResource BooleanToVisibilityConverter}}" Margin="2">
                 <nwc:LeftTrimmingTextBlock TextSource="{Binding Model.PlaceDispString}" ToolTip="{Binding Model.PlaceDispString}" VerticalAlignment="Center" />
             </Border>
 
-            <DockPanel KeyboardNavigation.TabNavigation ="Local" >
+            <DockPanel KeyboardNavigation.TabNavigation ="Local" Margin="1" >
                 <local:MoreMenuButton Description="{Binding MoreMenuDescription}" DockPanel.Dock="Right" VerticalAlignment="Top" Height="{DynamicResource FontIconSize}" TabIndex="2" />
                 <WrapPanel MinWidth="150">
                     <Button x:Name="PrevButton" Style="{StaticResource FolderListButtonStyle}" Command="{Binding MoveToPreviousCommand}" TabIndex="1" ContextMenuService.Placement="Bottom"
@@ -92,6 +92,15 @@
                     </ComboBox>
                 </WrapPanel>
             </DockPanel>
+
+            <Grid Margin="0,2,0,5" IsEnabled="True">
+                <local:SearchBox x:Name="SearchBox"
+                                 Text="{Binding SearchBoxModel.Keyword}"
+                                 ItemsSource="{Binding SearchBoxModel.History}"
+                                 SearchKeywordErrorMessage="{Binding SearchBoxModel.KeywordErrorMessage}"
+                                 SearchCommand="{Binding SearchBoxModel.SearchCommand}"
+                                 />
+            </Grid>
         </StackPanel>
 
         <ContentControl x:Name="ListBoxContent" Focusable="False" />

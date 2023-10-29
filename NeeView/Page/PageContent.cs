@@ -64,6 +64,8 @@ namespace NeeView
             set { SetProperty(ref _state, value); }
         }
 
+        public virtual PageType PageType => PageType.File;
+
         public virtual bool IsFileContent => false;
 
         public ArchiveEntry ArchiveEntry => _archiveEntry;

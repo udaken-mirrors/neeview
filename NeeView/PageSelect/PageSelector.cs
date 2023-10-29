@@ -145,6 +145,8 @@ namespace NeeView
         {
             var book = BookOperation.Current.Book;
             if (book is null) return;
+            if (!book.Pages.Any()) return;
+
             var pages = CollectPage(book, range);
             if (pages is null) return;
 
@@ -159,6 +161,8 @@ namespace NeeView
         private List<Page>? CollectPage(Book? book, PageRange range)
         {
             if (book is null) return null;
+            if (!book.Pages.Any()) return null;
+
             var indexes = Enumerable.Range(range.Min.Index, range.Max.Index - range.Min.Index + 1)
                 .Select(e => MathUtility.NormalizeLoopRange(e, 0, book.Pages.Count - 1));
             return indexes.Where(e => book.Pages.IsValidIndex(e)).Select(e => book.Pages[e]).ToList();
