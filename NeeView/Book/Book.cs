@@ -254,6 +254,7 @@ namespace NeeView
             return memento;
         }
 
+#if false
         // bookに設定を反映させる
         public void Restore(BookMemento memento)
         {
@@ -272,6 +273,7 @@ namespace NeeView
             _setting.AutoRotate = memento.AutoRotate;
             _setting.BaseScale = memento.BaseScale;
         }
+#endif
 
         #endregion
     }

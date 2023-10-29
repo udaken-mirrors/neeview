@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace NeeView
 {
@@ -17,22 +18,25 @@ namespace NeeView
 
         // ページ列
         private PageSortMode _sortMode = PageSortMode.Entry;
+        private CancellationTokenSource? _sortCancellationTokenSource;
 
+        private readonly List<Page> _sourcePages;
 
         public BookPageCollection(List<Page> pages)
         {
+            _sourcePages = pages;
             Pages = pages;
 
-            PageMap = Pages.ToMultiMap(e => e.EntryFullName, e => e);
+            PageMap = _sourcePages.ToMultiMap(e => e.EntryFullName, e => e);
 
-            foreach (var page in Pages)
+            foreach (var page in _sourcePages)
             {
                 AttachPage(page);
             }
 
-            for (int i = 0; i < Pages.Count; ++i)
+            for (int i = 0; i < _sourcePages.Count; ++i)
             {
-                Pages[i].EntryIndex = i;
+                _sourcePages[i].EntryIndex = i;
             }
         }
 
@@ -67,8 +71,7 @@ namespace NeeView
             {
                 if (SetProperty(ref _sortMode, value))
                 {
-                    // TODO: 直接ソート命令が呼べれば良いのだが
-                    //Sort(CancellationToken.None);
+                    UpdatePagesAsync();
                 }
             }
         }
@@ -86,7 +89,10 @@ namespace NeeView
                     this.PageRemoved = null;
                     this.PagesSorted = null;
 
-                    foreach (var page in Pages)
+                    _sortCancellationTokenSource?.Cancel();
+                    _sortCancellationTokenSource?.Dispose();
+
+                    foreach (var page in _sourcePages)
                     {
                         DetachPage(page);
                         page.Dispose();
@@ -207,55 +213,46 @@ namespace NeeView
         public void InitializeSort(PageSortMode sortMode, CancellationToken token)
         {
             _sortMode = sortMode;
-            Sort(token);
+            Sort(_sortMode, token);
         }
 
-        public void Sort(CancellationToken token)
+        private void UpdatePagesAsync()
         {
             if (_disposedValue) return;
-            if (Pages.Count <= 0) return;
+            if (_sourcePages.Count <= 0) return;
 
-            var isSortFileFirst = Config.Current.Book.IsSortFileFirst;
+            _sortCancellationTokenSource?.Cancel();
+            _sortCancellationTokenSource?.Dispose();
+            _sortCancellationTokenSource = new();
 
-            IEnumerable<Page>? pages = null;
-
-            switch (SortMode)
+            Task.Run(() =>
             {
-                case PageSortMode.FileName:
-                    pages = Pages.OrderBy(e => e.PageType).ThenBy(e => e, new ComparerFileName(isSortFileFirst, token));
-                    break;
-                case PageSortMode.FileNameDescending:
-                    pages = Pages.OrderBy(e => e.PageType).ThenByDescending(e => e, new ComparerFileName(isSortFileFirst, token));
-                    break;
-                case PageSortMode.TimeStamp:
-                    pages = Pages.OrderBy(e => e.PageType).ThenBy(e => e.ArchiveEntry.LastWriteTime).ThenBy(e => e, new ComparerFileName(isSortFileFirst, token));
-                    break;
-                case PageSortMode.TimeStampDescending:
-                    pages = Pages.OrderBy(e => e.PageType).ThenByDescending(e => e.ArchiveEntry.LastWriteTime).ThenBy(e => e, new ComparerFileName(isSortFileFirst, token));
-                    break;
-                case PageSortMode.Size:
-                    pages = Pages.OrderBy(e => e.PageType).ThenBy(e => e.ArchiveEntry.Length).ThenBy(e => e, new ComparerFileName(isSortFileFirst, token));
-                    break;
-                case PageSortMode.SizeDescending:
-                    pages = Pages.OrderBy(e => e.PageType).ThenByDescending(e => e.ArchiveEntry.Length).ThenBy(e => e, new ComparerFileName(isSortFileFirst, token));
-                    break;
-                case PageSortMode.Random:
-                    var random = new Random();
-                    pages = Pages.OrderBy(e => e.PageType).ThenBy(e => random.Next());
-                    break;
-                case PageSortMode.Entry:
-                    pages = Pages.OrderBy(e => e.EntryIndex);
-                    break;
-                case PageSortMode.EntryDescending:
-                    pages = Pages.OrderByDescending(e => e.EntryIndex);
-                    break;
-                default:
-                    throw new NotImplementedException();
-            }
+                try
+                {
+                    // TODO: SearchFilter
+                    Sort(_sortMode, _sortCancellationTokenSource.Token);
+                }
+                catch (OperationCanceledException)
+                {
+                    // canceled.
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine($"Error: SortException: {ex}");
+                }
+            });
+        }
+
+        private void Sort(PageSortMode sortMode, CancellationToken token)
+        {
+            if (_disposedValue) return;
+            if (_sourcePages.Count <= 0) return;
 
             try
             {
-                Pages = pages.ToList();
+                //Debug.WriteLine($"Sort {sortMode} ...");
+                Pages = SortPages(_sourcePages, sortMode, token).ToList();
+                //Debug.WriteLine($"Sort {sortMode} done.");
 
                 // ページ ナンバリング
                 PagesNumbering();
@@ -267,6 +264,50 @@ namespace NeeView
             {
                 throw canceledException;
             }
+        }
+
+        private IEnumerable<Page> SortPages(IEnumerable<Page> pages, PageSortMode sortMode, CancellationToken token)
+        { 
+            if (_disposedValue) return pages;
+            if (!pages.Any()) return pages;
+
+            var isSortFileFirst = Config.Current.Book.IsSortFileFirst;
+
+            switch (sortMode)
+            {
+                case PageSortMode.FileName:
+                    pages = pages.OrderBy(e => e.PageType).ThenBy(e => e, new ComparerFileName(isSortFileFirst, token));
+                    break;
+                case PageSortMode.FileNameDescending:
+                    pages = pages.OrderBy(e => e.PageType).ThenByDescending(e => e, new ComparerFileName(isSortFileFirst, token));
+                    break;
+                case PageSortMode.TimeStamp:
+                    pages = pages.OrderBy(e => e.PageType).ThenBy(e => e.ArchiveEntry.LastWriteTime).ThenBy(e => e, new ComparerFileName(isSortFileFirst, token));
+                    break;
+                case PageSortMode.TimeStampDescending:
+                    pages = pages.OrderBy(e => e.PageType).ThenByDescending(e => e.ArchiveEntry.LastWriteTime).ThenBy(e => e, new ComparerFileName(isSortFileFirst, token));
+                    break;
+                case PageSortMode.Size:
+                    pages = pages.OrderBy(e => e.PageType).ThenBy(e => e.ArchiveEntry.Length).ThenBy(e => e, new ComparerFileName(isSortFileFirst, token));
+                    break;
+                case PageSortMode.SizeDescending:
+                    pages = pages.OrderBy(e => e.PageType).ThenByDescending(e => e.ArchiveEntry.Length).ThenBy(e => e, new ComparerFileName(isSortFileFirst, token));
+                    break;
+                case PageSortMode.Random:
+                    var random = new Random();
+                    pages = pages.OrderBy(e => e.PageType).ThenBy(e => random.Next());
+                    break;
+                case PageSortMode.Entry:
+                    pages = pages.OrderBy(e => e.EntryIndex);
+                    break;
+                case PageSortMode.EntryDescending:
+                    pages = pages.OrderByDescending(e => e.EntryIndex);
+                    break;
+                default:
+                    throw new NotImplementedException();
+            }
+
+            return pages;
         }
 
         /// <summary>

@@ -51,7 +51,6 @@ namespace NeeView
         private PageFrameContext? _context;
         private readonly BookShareContext _shareContext;
         private PageFrameBox? _box;
-        private BookCommandControl? _pageControl;
         private BookMementoControl? _bookMementoControl;
         private bool _isLoading;
         private string? _emptyMessage;
@@ -145,8 +144,6 @@ namespace NeeView
         public PageFrameBox? View => _box;
         public double ViewWidth => _box?.ActualWidth ?? 0.0;
         public double ViewHeight => _box?.ActualHeight ?? 0.0;
-
-        public BookCommandControl? PageControl => _pageControl;
 
         public bool IsMedia => _box?.Book.IsMedia ?? false;
 
@@ -264,8 +261,6 @@ namespace NeeView
             _box.SelectedContentSizeChanged += Box_SelectedContentSizeChanged;
             _box.SizeChanged += Box_SizeChanged;
 
-            _pageControl = new BookCommandControl(_bookContext, _box);
-
             _bookMementoControl = new BookMementoControl(_book, BookHistoryCollection.Current);
 
             // NOTE: 表示開始時の最初のサイズ変更を回避する
@@ -365,9 +360,6 @@ namespace NeeView
 
             _bookMementoControl?.Dispose();
             _bookMementoControl = null;
-
-            _pageControl?.Dispose();
-            _pageControl = null;
 
             _box.PagesChanged -= Box_PagesChanged;
             _box.SelectedRangeChanged -= Box_SelectedRangeChanged;
@@ -581,43 +573,10 @@ namespace NeeView
             return _box?.CreateDragTransformContext(container, isLoupeTransform);
         }
 
-        public void MoveTo(PagePosition position, LinkedListDirection direction)
-        {
-            var box = ValidBox();
-            if (box is null) return;
-            _pageControl?.Invoke(() => box.MoveTo(position, direction));
-        }
-
-        public void MoveToNextPage(LinkedListDirection direction)
-        {
-            var box = ValidBox();
-            if (box is null) return;
-            _pageControl?.Invoke(() => box.MoveToNextPage(direction));
-        }
-
-        public void MoveToNextFrame(LinkedListDirection direction)
-        {
-            var box = ValidBox();
-            if (box is null) return;
-            _pageControl?.Invoke(() => box.MoveToNextFrame(direction));
-        }
-
-        // 前のフォルダーに戻る
-        public void MoveToNextFolder(LinkedListDirection direction, bool isShowMessage)
-        {
-            var box = ValidBox();
-            if (box is null) return;
-            _pageControl?.Invoke(() =>
-            {
-                box.MoveToNextFolder(direction, isShowMessage);
-            });
-        }
-
+        // TODO: 呼ばれない？
         public void ScrollToNextFrame(LinkedListDirection direction, IScrollNTypeParameter parameter, LineBreakStopMode lineBreakStopMode, double endMargin)
         {
-            var box = ValidBox();
-            if (box is null) return;
-            _pageControl?.Invoke(() => box.ScrollToNextFrame(direction, parameter, lineBreakStopMode, endMargin));
+            ValidBox()?.ScrollToNextFrame(direction, parameter, lineBreakStopMode, endMargin);
         }
 
         public bool ScrollToNext(LinkedListDirection direction, IScrollNTypeParameter parameter)
@@ -656,6 +615,6 @@ namespace NeeView
             return _box?.GetSelectedPageFrameContent();
         }
 
-        #endregion IPageFrameBox
+#endregion IPageFrameBox
     }
 }
