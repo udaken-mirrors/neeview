@@ -20,6 +20,7 @@ namespace NeeView.PageFrames
         private List<Page> _selectedPages = new();
         private bool _disposedValue;
         private readonly DisposableCollection _disposables = new();
+        private ReferenceCounter _isSortBusyCounter = new();
 
         public BookContext(Book book)
         {
@@ -29,18 +30,24 @@ namespace NeeView.PageFrames
             _disposables.Add(_book.Pages.SubscribePropertyChanged(nameof(BookPageCollection.SortMode),
                 (s, e) => RaisePropertyChanged(nameof(SortMode))));
 
+            _disposables.Add(_book.Pages.SubscribePagesSorting((s, e) => _isSortBusyCounter.Increment()));
+            _disposables.Add(_book.Pages.SubscribePagesSorted((s, e) => _isSortBusyCounter.Decrement()));
+            _isSortBusyCounter.Changed += IsSortBusyCounter_Changed;
+
             _accessor = new BookPageAccessor(_book.Pages);
         }
 
         [Subscribable]
         public event PropertyChangedEventHandler? PropertyChanged;
-        
+
         [Subscribable]
         public event EventHandler? PagesChanged;
 
         [Subscribable]
         public event EventHandler? SelectedRangeChanged;
 
+        [Subscribable]
+        public event EventHandler<IsSortBusyChangedEventArgs>? IsSortBusyChanged;
 
         public Book Book => _book;
 
@@ -110,6 +117,12 @@ namespace NeeView.PageFrames
             GC.SuppressFinalize(this);
         }
 
+
+        private void IsSortBusyCounter_Changed(object? sender, ReferenceCounterChangedEventArgs e)
+        {
+            IsSortBusyChanged?.Invoke(this, new IsSortBusyChangedEventArgs(e.IsActive));
+        }
+
         private void Book_PagesChanged(object? sender, EventArgs e)
         {
             RaisePropertyChanged(nameof(Pages));
@@ -150,7 +163,7 @@ namespace NeeView.PageFrames
         {
             return _accessor.GetPage(index, normalized);
         }
-      
+
         private List<Page> GetPages(PageRange range)
         {
             return range.CollectPositions().Select(e => Pages[_accessor.NormalizeIndex(e.Index)]).Distinct().ToList();

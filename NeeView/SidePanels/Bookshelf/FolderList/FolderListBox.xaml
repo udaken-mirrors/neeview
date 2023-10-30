@@ -179,7 +179,7 @@
     </UserControl.Resources>
 
     <Grid x:Name="Root">
-
+        
         <nw:ListBoxExtended x:Name="ListBox" Focusable="True"
                 MinHeight="0"
                 FontSize="{DynamicResource PanelFontSize}"
@@ -238,9 +238,8 @@
             </ListBox.Style>
 
         </nw:ListBoxExtended>
-
-        <ContentControl x:Name="BusyFadeContent" Focusable="False" />
         
+        <local:BusyFadeView x:Name="BusyFade" Target="{Binding ElementName=ListBox}" Opacity="0"/>
     </Grid>
 
 </UserControl>

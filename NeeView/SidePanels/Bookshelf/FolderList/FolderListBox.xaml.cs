@@ -28,7 +28,6 @@ namespace NeeView
         private readonly FolderListBoxViewModel _vm;
         private ListBoxThumbnailLoader? _thumbnailLoader;
         private PageThumbnailJobClient? _jobClient;
-        private bool _isBuy;
 
 
         static FolderListBox()
@@ -770,8 +769,6 @@ namespace NeeView
 
         private void FolderListBox_Loaded(object? sender, RoutedEventArgs e)
         {
-            SetBusy(false);
-
             _jobClient = new PageThumbnailJobClient("FolderList", JobCategories.BookThumbnailCategory);
             _thumbnailLoader = new ListBoxThumbnailLoader(this, _jobClient);
 
@@ -1081,42 +1078,17 @@ namespace NeeView
             }
         }
 
-
         /// <summary>
         /// リスト更新中
         /// </summary>
         private void ViewModel_BusyChanged(object? sender, ReferenceCounterChangedEventArgs e)
         {
-            SetBusy(e.IsActive);
-        }
-
-
-        private void SetBusy(bool isBusy)
-        {
-            if (_isBuy == isBusy) return;
-            _isBuy = isBusy;
-
-            if (_isBuy)
+            this.BusyFade.IsBusy = e.IsActive;
+            if (e.IsActive)
             {
-                this.IsHitTestVisible = false;
-
-                this.ListBox.BeginAnimation(UIElement.OpacityProperty, new DoubleAnimation(0.0, TimeSpan.FromSeconds(0.5)) { BeginTime = TimeSpan.FromSeconds(1.0) });
-
-                this.BusyFadeContent.Content = new BusyFadeView();
-
                 RenameManager.GetRenameManager(this)?.CloseAll(false, false);
             }
-            else
-            {
-                this.IsHitTestVisible = true;
-
-                this.ListBox.BeginAnimation(UIElement.OpacityProperty, null);
-                this.ListBox.Opacity = 1.0;
-
-                this.BusyFadeContent.Content = null;
-            }
         }
-
 
         public void Refresh()
         {

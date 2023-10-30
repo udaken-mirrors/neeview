@@ -61,6 +61,7 @@ namespace NeeView.PageFrames
             _disposables.Add(_bookContext.SubscribePropertyChanged((s, e) => AppDispatcher.BeginInvoke(() => BookContext_PropertyChanged(s, e))));
             _disposables.Add(_bookContext.SubscribeSelectedRangeChanged((s, e) => SelectedRangeChanged?.Invoke(this, e)));
             _disposables.Add(_bookContext.SubscribePagesChanged((s, e) => AppDispatcher.BeginInvoke(() => Context_PagesChanged(s, e))));
+            _disposables.Add(_bookContext.SubscribeIsSortBusyChanged((s, e) => AppDispatcher.BeginInvoke(() => this.Cursor = e.IsSortBusy ? Cursors.Wait : null)));
 
             _onceDispatcher = new();
             _disposables.Add(_onceDispatcher);

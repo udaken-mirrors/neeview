@@ -5,21 +5,11 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:NeeView"
              mc:Ignorable="d" 
+             Focusable="False"
              d:DesignHeight="300" d:DesignWidth="300">
-    <UserControl.Resources>
-        <Storyboard x:Key="FadeInAnimation">
-            <DoubleAnimation Storyboard.TargetProperty="Opacity" BeginTime="0:0:1" From="0" To="1" Duration="0:0:0.5"/>
-        </Storyboard>
-    </UserControl.Resources>
-    <!--
-    Background="{DynamicResource NVBackground}"
-    -->
-    <Grid Opacity="0">
-        <Grid.Triggers>
-            <EventTrigger RoutedEvent="Loaded">
-                <BeginStoryboard Storyboard="{StaticResource FadeInAnimation}"/>
-            </EventTrigger>
-        </Grid.Triggers>
-        <local:BusyView VerticalAlignment="Top" Margin="0,50,0,0"/>
+
+    <Grid>
+        <local:ProgressRing VerticalAlignment="Top" Margin="0,50,0,0" />
     </Grid>
+    
 </UserControl>

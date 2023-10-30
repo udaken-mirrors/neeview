@@ -48,7 +48,7 @@
         <local:PageToNoteConverter x:Key="PageToNoteConverter"/>
         <local:ArchivePageToVisibilityConverter x:Key="ArchviePageToVisibilityConverter"/>
         <local:BrushAlphaToVisibilityConverter x:Key="BrushAlphaToVisibilityConverter" />
-        
+
         <Style x:Key="NameStyle" TargetType="TextBlock">
             <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
             <Setter Property="HorizontalAlignment" Value="Left"/>
@@ -205,7 +205,9 @@
 
     </UserControl.Resources>
 
-    <nw:ListBoxExtended x:Name="ListBox" Focusable="True"
+    <Grid x:Name="Root">
+
+        <nw:ListBoxExtended x:Name="ListBox" Focusable="True"
                  FontSize="{DynamicResource PanelFontSize}"
                  Background="Transparent"
                  Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=UserControl}}"
@@ -225,40 +227,44 @@
                  VirtualizingPanel.ScrollUnit="{StaticResource PanelScrollUnit}"
                  VirtualizingPanel.VirtualizationMode="Recycling">
 
-        <b:Interaction.Behaviors>
-            <nw:ListBoxExtendedDragDropStartBehavior AllowedEffects="Copy, Scroll" AllowRightButtonDrag="True" DragDropFormat="{x:Static local:PageListBox.DragDropFormat}" DragBeginAsync="DragStartBehavior_DragBeginAsync" />
-        </b:Interaction.Behaviors>
+            <b:Interaction.Behaviors>
+                <nw:ListBoxExtendedDragDropStartBehavior AllowedEffects="Copy, Scroll" AllowRightButtonDrag="True" DragDropFormat="{x:Static local:PageListBox.DragDropFormat}" DragBeginAsync="DragStartBehavior_DragBeginAsync" />
+            </b:Interaction.Behaviors>
 
-        <ListBox.Style>
-            <Style TargetType="ListBox" BasedOn="{StaticResource NVListBox}">
-                <Style.Triggers>
-                    <DataTrigger Binding="{Binding Source={x:Static local:Config.Current}, Path=PageList.PanelListItemStyle}" Value="Normal">
-                        <Setter Property="ItemTemplate" Value="{StaticResource NormalTemplate}"/>
-                        <Setter Property="ItemContainerStyle" Value="{StaticResource ListBoxItemStyle}" />
-                    </DataTrigger>
-                    <DataTrigger Binding="{Binding Source={x:Static local:Config.Current}, Path=PageList.PanelListItemStyle}" Value="Content">
-                        <Setter Property="ItemTemplate" Value="{StaticResource ContentTemplate}"/>
-                        <Setter Property="ItemContainerStyle" Value="{StaticResource ListBoxItemBorderStyle}" />
-                    </DataTrigger>
-                    <DataTrigger Binding="{Binding Source={x:Static local:Config.Current}, Path=PageList.PanelListItemStyle}" Value="Banner">
-                        <Setter Property="ItemTemplate" Value="{StaticResource BannerTemplate}"/>
-                        <Setter Property="ItemContainerStyle" Value="{StaticResource ListBoxItemBorderStyle}" />
-                    </DataTrigger>
-                    <DataTrigger Binding="{Binding Source={x:Static local:Config.Current}, Path=PageList.PanelListItemStyle}" Value="Thumbnail">
-                        <Setter Property="ItemTemplate" Value="{StaticResource ThumbnailTemplate}"/>
-                        <Setter Property="ItemContainerStyle" Value="{StaticResource ListBoxItemThumbnailStyle}" />
-                        <Setter Property="ItemsPanel">
-                            <Setter.Value>
-                                <ItemsPanelTemplate>
-                                    <osc:VirtualizingWrapPanel IsItemsHost="True" MouseWheelRate="{Binding Source={x:Static local:Config.Current}, Path=Panels.MouseWheelSpeedRate}" />
-                                </ItemsPanelTemplate>
-                            </Setter.Value>
-                        </Setter>
-                    </DataTrigger>
-                </Style.Triggers>
-            </Style>
-        </ListBox.Style>
+            <ListBox.Style>
+                <Style TargetType="ListBox" BasedOn="{StaticResource NVListBox}">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding Source={x:Static local:Config.Current}, Path=PageList.PanelListItemStyle}" Value="Normal">
+                            <Setter Property="ItemTemplate" Value="{StaticResource NormalTemplate}"/>
+                            <Setter Property="ItemContainerStyle" Value="{StaticResource ListBoxItemStyle}" />
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding Source={x:Static local:Config.Current}, Path=PageList.PanelListItemStyle}" Value="Content">
+                            <Setter Property="ItemTemplate" Value="{StaticResource ContentTemplate}"/>
+                            <Setter Property="ItemContainerStyle" Value="{StaticResource ListBoxItemBorderStyle}" />
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding Source={x:Static local:Config.Current}, Path=PageList.PanelListItemStyle}" Value="Banner">
+                            <Setter Property="ItemTemplate" Value="{StaticResource BannerTemplate}"/>
+                            <Setter Property="ItemContainerStyle" Value="{StaticResource ListBoxItemBorderStyle}" />
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding Source={x:Static local:Config.Current}, Path=PageList.PanelListItemStyle}" Value="Thumbnail">
+                            <Setter Property="ItemTemplate" Value="{StaticResource ThumbnailTemplate}"/>
+                            <Setter Property="ItemContainerStyle" Value="{StaticResource ListBoxItemThumbnailStyle}" />
+                            <Setter Property="ItemsPanel">
+                                <Setter.Value>
+                                    <ItemsPanelTemplate>
+                                        <osc:VirtualizingWrapPanel IsItemsHost="True" MouseWheelRate="{Binding Source={x:Static local:Config.Current}, Path=Panels.MouseWheelSpeedRate}" />
+                                    </ItemsPanelTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </ListBox.Style>
 
-    </nw:ListBoxExtended>
+        </nw:ListBoxExtended>
+
+        <local:BusyFadeView x:Name="BusyFade" Target="{Binding ElementName=ListBox}" Opacity="0"/>
+
+    </Grid>
 
 </UserControl>

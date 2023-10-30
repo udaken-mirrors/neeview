@@ -112,6 +112,9 @@ namespace NeeView
         [Subscribable]
         public event EventHandler<ViewPageChangedEventArgs>? ViewPageChanged;
 
+        [Subscribable]
+        private event EventHandler<IsSortBusyChangedEventArgs>? IsSortBusyChanged;
+
 
         public ViewScrollContext ViewScrollContext { get; } = new();
 
@@ -250,6 +253,7 @@ namespace NeeView
 
             _context = new PageFrameContext(_config, _shareContext, ViewScrollContext, _book.IsMedia);
             _bookContext = new BookContext(_book);
+            _bookContext.IsSortBusyChanged += BookContext_IsSortBusyChanged;
 
             _box = new PageFrameBox(_context, _bookContext);
             _box.PagesChanged += Box_PagesChanged;
@@ -272,6 +276,11 @@ namespace NeeView
             RaisePropertyChanged(null);
             PagesChanged?.Invoke(this, EventArgs.Empty);
             SelectedRangeChanged?.Invoke(this, EventArgs.Empty);
+        }
+
+        private void BookContext_IsSortBusyChanged(object? sender, IsSortBusyChangedEventArgs e)
+        {
+            AppDispatcher.BeginInvoke(() => IsSortBusyChanged?.Invoke(this, e));
         }
 
         /// <summary>
@@ -382,14 +391,17 @@ namespace NeeView
             _context = null;
 
             Debug.Assert(_bookContext is not null);
+            _bookContext.IsSortBusyChanged -= BookContext_IsSortBusyChanged;
             _bookContext.Dispose();
             _bookContext = null;
+
+            // 検索中状態を確実に解除
+            BookContext_IsSortBusyChanged(this, new IsSortBusyChangedEventArgs(false));
 
             Debug.Assert(_book is not null);
             _book = null; // Dispose は BookHub の仕事
 
             _viewPages = new List<Page>();
-
         }
 
 
@@ -615,6 +627,6 @@ namespace NeeView
             return _box?.GetSelectedPageFrameContent();
         }
 
-#endregion IPageFrameBox
+        #endregion IPageFrameBox
     }
 }

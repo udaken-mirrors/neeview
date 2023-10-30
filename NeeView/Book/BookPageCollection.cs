@@ -54,7 +54,9 @@ namespace NeeView
         }
 
 
-        // ソートされた
+        [Subscribable]
+        public event EventHandler? PagesSorting;
+
         [Subscribable]
         public event EventHandler? PagesSorted;
 
@@ -121,6 +123,7 @@ namespace NeeView
                 {
                     this.ResetPropertyChanged();
                     this.PageRemoved = null;
+                    this.PagesSorting = null;
                     this.PagesSorted = null;
 
                     _sortCancellationTokenSource?.Cancel();
@@ -290,6 +293,8 @@ namespace NeeView
 
             try
             {
+                PagesSorting?.Invoke(this, EventArgs.Empty);
+
                 //Debug.WriteLine($"Sort {sortMode} ...");
                 var pages = SelectSearchPages(_sourcePages, searchKeyword, token);
                 pages = SortPages(pages, sortMode, token);
@@ -305,13 +310,15 @@ namespace NeeView
 
                 // ページ ナンバリング
                 PagesNumbering();
-
-                PagesSorted?.Invoke(this, EventArgs.Empty);
             }
             // NOTE: LINQ.OrderBy内でのキャンセル例外は InvalidOperationException として返される
             catch (InvalidOperationException ex) when (ex.InnerException is OperationCanceledException canceledException)
             {
                 throw canceledException;
+            }
+            finally
+            {
+                PagesSorted?.Invoke(this, EventArgs.Empty);
             }
         }
 

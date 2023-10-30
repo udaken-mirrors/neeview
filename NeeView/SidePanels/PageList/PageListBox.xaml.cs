@@ -1,4 +1,6 @@
-﻿using NeeView.Collections.Generic;
+﻿using NeeLaboratory.ComponentModel;
+using NeeView.Collections.Generic;
+using NeeView.PageFrames;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -31,6 +33,8 @@ namespace NeeView
         private readonly PageListBoxViewModel _vm;
         private ListBoxThumbnailLoader? _thumbnailLoader;
         private PageThumbnailJobClient? _jobClient;
+        private bool _disposedValue = false;
+        private readonly DisposableCollection _disposables = new();
 
         static PageListBox()
         {
@@ -55,6 +59,8 @@ namespace NeeView
             this.Loaded += PageListBox_Loaded;
             this.Unloaded += PageListBox_Unloaded;
             this.MouseLeave += PageListBox_MouseLeave;
+
+            _disposables.Add(PageFrameBoxPresenter.Current.SubscribeIsSortBusyChanged(PageFrameBox_IsSortBusyChanged));
         }
 
 
@@ -68,9 +74,6 @@ namespace NeeView
             DependencyProperty.Register("IsToolTipEnabled", typeof(bool), typeof(PageListBox), new PropertyMetadata(true));
 
 
-        #region IDisposable Support
-        private bool _disposedValue = false;
-
         protected virtual void Dispose(bool disposing)
         {
             if (!_disposedValue)
@@ -79,6 +82,7 @@ namespace NeeView
                 {
                     if (_jobClient != null)
                     {
+                        _disposables.Dispose();
                         _jobClient.Dispose();
                     }
                 }
@@ -91,7 +95,15 @@ namespace NeeView
             Dispose(true);
             GC.SuppressFinalize(this);
         }
-        #endregion
+
+        private void PageFrameBox_IsSortBusyChanged(object? sender, IsSortBusyChangedEventArgs e)
+        {
+            this.BusyFade.IsBusy = e.IsSortBusy;
+            if (e.IsSortBusy)
+            {
+                RenameManager.GetRenameManager(this)?.CloseAll(false, false);
+            }
+        }
 
         private void ViewModel_CollectionChanged(object? sender, EventArgs e)
         {
