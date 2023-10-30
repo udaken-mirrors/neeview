@@ -78,11 +78,15 @@ namespace NeeView
 
                 var ani = new DoubleAnimation(1, TimeSpan.FromSeconds(0.5)) { BeginTime = TimeSpan.FromSeconds(0.5) };
                 this.NowLoading.BeginAnimation(UIElement.OpacityProperty, ani, HandoffBehavior.SnapshotAndReplace);
+
+                this.ProgressRing.IsActive = true;
             }
             else
             {
                 var ani = new DoubleAnimation(0, TimeSpan.FromSeconds(0.25));
                 this.NowLoading.BeginAnimation(UIElement.OpacityProperty, ani, HandoffBehavior.SnapshotAndReplace);
+
+                this.ProgressRing.IsActive = false;
             }
         }
     }

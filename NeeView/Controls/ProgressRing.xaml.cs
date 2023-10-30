@@ -26,7 +26,9 @@ namespace NeeView
             InitializeComponent();
 
             this.ProgressRingMark.Opacity = 0.0;
-            UpdateActivity();
+
+            this.Loaded += (s, e) => UpdateActivity();
+            this.IsVisibleChanged += (s, e) => UpdateActivity();
         }
 
 
@@ -48,9 +50,10 @@ namespace NeeView
             }
         }
 
+
         private void UpdateActivity()
         {
-            if (IsActive)
+            if (IsActive && IsVisible)
             {
                 var ani = new DoubleAnimation(1, TimeSpan.FromSeconds(0.0)) { BeginTime = TimeSpan.FromSeconds(0.0) };
                 this.ProgressRingMark.BeginAnimation(UIElement.OpacityProperty, ani, HandoffBehavior.SnapshotAndReplace);
@@ -63,15 +66,11 @@ namespace NeeView
             }
             else
             {
-                var ani = new DoubleAnimation(0, TimeSpan.FromSeconds(0.25));
-                this.ProgressRingMark.BeginAnimation(UIElement.OpacityProperty, ani, HandoffBehavior.SnapshotAndReplace);
+                this.ProgressRingMark.BeginAnimation(UIElement.OpacityProperty, null, HandoffBehavior.SnapshotAndReplace);
+                this.ProgressRingMark.Opacity = 0.0;
 
-                var aniRotate = new DoubleAnimation();
-                aniRotate.By = 45;
-                aniRotate.Duration = TimeSpan.FromSeconds(0.25);
-                this.ProgressRingMarkAngle.BeginAnimation(RotateTransform.AngleProperty, aniRotate);
+                this.ProgressRingMarkAngle.BeginAnimation(RotateTransform.AngleProperty, null, HandoffBehavior.SnapshotAndReplace);
             }
         }
-
     }
 }

@@ -68,6 +68,8 @@ namespace NeeView
                     Target.BeginAnimation(UIElement.OpacityProperty, new DoubleAnimation(0.0, TimeSpan.FromSeconds(0.5)) { BeginTime = TimeSpan.FromSeconds(1.0) });
                 }
 
+                this.ProgressRing.IsActive = true;
+
                 this.IsHitTestVisible = true;
                 this.Visibility = Visibility.Visible;
             }
@@ -81,6 +83,8 @@ namespace NeeView
                     Target.BeginAnimation(UIElement.OpacityProperty, null);
                     Target.Opacity = 1.0;
                 }
+
+                this.ProgressRing.IsActive = false;
 
                 this.IsHitTestVisible = false;
                 this.Visibility = Visibility.Collapsed;
