@@ -141,36 +141,42 @@ namespace NeeView.Runtime.LayoutPanel
                 return;
             }
 
-            var dock = GetLayoutDockFromPosY(e.GetPosition(this).Y, this.ActualHeight);
-
-            if (this.Parent is LayoutDockPanel dockPanel)
+            if (this.Parent is not LayoutDockPanel dockPanel)
             {
-                // 挿入位置
-                var list = dockPanel.ItemsSource;
-                var index = list.IndexOf(this.LayoutPanel);
-                if (index < 0) throw new InvalidOperationException();
+                e.Effects = DragDropEffects.None;
+                return;
+            }
 
-                if (list.Contains(content))
-                {
-                    // list内での移動
-                    var oldIndex = list.IndexOf(content);
-                    var newIndex = index + ((oldIndex < index) ? -1 : 0) + ((dock == Dock.Bottom) ? 1 : 0);
-                    list.Move(oldIndex, newIndex);
-                }
-                else
-                {
-                    // 管理からいったん削除
-                    _manager.Remove(content);
+            var dock = GetLayoutDockFromPos(e.GetPosition(this), this.ActualWidth, this.ActualHeight, dockPanel.ItemsSource);
 
-                    // GridLengthの補正
-                    var gridLength = new GridLength(LayoutPanel.GridLength.Value * 0.5, GridUnitType.Star);
-                    LayoutPanel.GridLength = gridLength;
-                    content.GridLength = gridLength;
+            // 挿入位置
+            var list = dockPanel.ItemsSource;
+            var index = list.IndexOf(this.LayoutPanel);
+            if (index < 0) throw new InvalidOperationException();
 
-                    // 登録
-                    var newIndex = index + ((dock == Dock.Bottom) ? 1 : 0);
-                    list.Insert(newIndex, content);
-                }
+            //並び方向更新
+            list.Orientation = (dock == Dock.Top || dock == Dock.Bottom) ? Orientation.Vertical : Orientation.Horizontal;
+
+            if (list.Contains(content))
+            {
+                // list内での移動
+                var oldIndex = list.IndexOf(content);
+                var newIndex = index + ((oldIndex < index) ? -1 : 0) + ((dock == Dock.Bottom || dock == Dock.Right) ? 1 : 0);
+                list.Move(oldIndex, newIndex);
+            }
+            else
+            {
+                // 管理からいったん削除
+                _manager.Remove(content);
+
+                // GridLengthの補正
+                var gridLength = new GridLength(LayoutPanel.GridLength.Value * 0.5, GridUnitType.Star);
+                LayoutPanel.GridLength = gridLength;
+                content.GridLength = gridLength;
+
+                // 登録
+                var newIndex = index + ((dock == Dock.Bottom || dock == Dock.Right) ? 1 : 0);
+                list.Insert(newIndex, content);
             }
         }
 
@@ -197,9 +203,17 @@ namespace NeeView.Runtime.LayoutPanel
                 return;
             }
 
+            if (this.Parent is not LayoutDockPanel dockPanel)
+            {
+                e.Effects = DragDropEffects.None;
+                e.Handled = true;
+                return;
+            }
+
             if (_adorner != null)
             {
-                var dock = GetLayoutDockFromPosY(e.GetPosition(this).Y, this.ActualHeight);
+                var dock = GetLayoutDockFromPos(e.GetPosition(this), this.ActualWidth, this.ActualHeight, dockPanel.ItemsSource);
+
                 switch (dock)
                 {
                     case Dock.Top:
@@ -209,6 +223,16 @@ namespace NeeView.Runtime.LayoutPanel
 
                     case Dock.Bottom:
                         _adorner.Start = new Point(0, this.ActualHeight * 0.5);
+                        _adorner.End = new Point(this.ActualWidth, this.ActualHeight);
+                        break;
+
+                    case Dock.Left:
+                        _adorner.Start = new Point(0, 0);
+                        _adorner.End = new Point(this.ActualWidth * 0.5, this.ActualHeight);
+                        break;
+
+                    case Dock.Right:
+                        _adorner.Start = new Point(this.ActualWidth * 0.5, 0);
                         _adorner.End = new Point(this.ActualWidth, this.ActualHeight);
                         break;
 
@@ -250,6 +274,44 @@ namespace NeeView.Runtime.LayoutPanel
         private void LayoutPanelContainer_PreviewDragEnter(object sender, DragEventArgs e)
         {
             LayoutPanelContainer_PreviewDragOver(sender, e);
+        }
+
+        private static Dock GetLayoutDockFromPos(Point pos, double width, double height, LayoutPanelCollection collection)
+        {
+            if (collection.Count <= 1)
+            {
+                return GetLayoutDockFromPos(pos, width, height);
+            }
+            else if (collection.Orientation == Orientation.Horizontal)
+            {
+                return GetLayoutDockFromPosX(pos.X, width);
+            }
+            else
+            {
+                return GetLayoutDockFromPosY(pos.Y, height);
+            }
+        }
+
+        private static Dock GetLayoutDockFromPos(Point pos, double width, double height)
+        {
+            if (width <= 0.0 || height <= 0.0) return Dock.Bottom;
+
+            var xRate = pos.X / width;
+            var yRate = pos.Y / height;
+
+            if (Math.Abs(xRate - 0.5) < Math.Abs(yRate - 0.5))
+            {
+                return yRate < 0.5 ? Dock.Top : Dock.Bottom;
+            }
+            else
+            {
+                return xRate < 0.5 ? Dock.Left : Dock.Right;
+            }
+        }
+
+        private static Dock GetLayoutDockFromPosX(double x, double width)
+        {
+            return (x < width * 0.5) ? Dock.Left : Dock.Right;
         }
 
         private static Dock GetLayoutDockFromPosY(double y, double height)

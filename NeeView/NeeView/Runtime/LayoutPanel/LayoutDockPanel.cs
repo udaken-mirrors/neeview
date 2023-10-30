@@ -13,6 +13,9 @@ namespace NeeView.Runtime.LayoutPanel
 {
     public class LayoutDockPanel : Grid
     {
+        const double _minContainerWidth = 40.0;
+        const double _splitterWidth = 8.0;
+
         public LayoutPanelManager Manager
         {
             get { return (LayoutPanelManager)GetValue(ManagerProperty); }
@@ -46,10 +49,9 @@ namespace NeeView.Runtime.LayoutPanel
             get { return (Brush)GetValue(BorderBrushProperty); }
             set { SetValue(BorderBrushProperty, value); }
         }
-        
+
         public static readonly DependencyProperty BorderBrushProperty =
             DependencyProperty.Register("BorderBrush", typeof(Brush), typeof(LayoutDockPanel), new PropertyMetadata(Brushes.Transparent));
-
 
 
 
@@ -70,63 +72,106 @@ namespace NeeView.Runtime.LayoutPanel
             Flush();
         }
 
-
         private void ItemsSource_CollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
             Flush();
         }
 
-
         private void Flush()
         {
             if (Manager is null) throw new InvalidOperationException("need Provider");
 
-            const double minLength = 40.0;
-            const double splitterHeight = 8.0;
-
             var containers = ItemsSource != null ? ItemsSource.Select(e => new LayoutPanelContainer(Manager, e)).ToList() : new List<LayoutPanelContainer>();
+            var orientation = ItemsSource?.Orientation ?? Orientation.Vertical;
 
             this.Children.Clear();
             this.RowDefinitions.Clear();
+            this.ColumnDefinitions.Clear();
 
-            if (containers.Count == 0)
+            foreach (var container in containers)
             {
-                return;
+                AddPanelContainer(container, orientation);
+                container.Snap();
+                if (container != containers.Last())
+                {
+                    AddPanelSplitter(orientation);
+                }
+            }
+        }
+
+        private void AddPanelContainer(LayoutPanelContainer container, Orientation orientation)
+        {
+            if (orientation == Orientation.Vertical)
+            {
+                AddPanelContainerVertical(container);
             }
             else
             {
-                foreach (var container in containers)
-                {
-                    {
-                        var rowDefinition = new RowDefinition();
-                        rowDefinition.MinHeight = minLength;
-                        rowDefinition.SetBinding(RowDefinition.HeightProperty, new Binding(nameof(LayoutPanel.GridLength)) { Source = container.LayoutPanel, Mode = BindingMode.TwoWay });
-                        this.RowDefinitions.Add(rowDefinition);
-                        Grid.SetRow(container, this.RowDefinitions.Count - 1);
-                        this.Children.Add(container);
-                    }
-
-                    // splitter
-                    bool isLast = container == containers.Last();
-                    if (!isLast)
-                    {
-                        var rowDefinition = new RowDefinition();
-                        rowDefinition.Height = new GridLength(splitterHeight);
-                        this.RowDefinitions.Add(rowDefinition);
-                        var splitter = new GridSplitter()
-                        {
-                            HorizontalAlignment = HorizontalAlignment.Stretch,
-                            VerticalAlignment = VerticalAlignment.Center,
-                            Height = splitterHeight - 2.0,
-                        };
-                        splitter.SetBinding(GridSplitter.BackgroundProperty, new Binding(nameof(BorderBrush)) { Source = this });
-                        Grid.SetRow(splitter, this.RowDefinitions.Count - 1);
-                        this.Children.Add(splitter);
-                    }
-
-                    container.Snap();
-                }
+                AddPanelContainerHorizontal(container);
             }
+        }
+
+        private void AddPanelContainerVertical(LayoutPanelContainer container)
+        {
+            var rowDefinition = new RowDefinition();
+            rowDefinition.MinHeight = _minContainerWidth;
+            rowDefinition.SetBinding(RowDefinition.HeightProperty, new Binding(nameof(LayoutPanel.GridLength)) { Source = container.LayoutPanel, Mode = BindingMode.TwoWay });
+            this.RowDefinitions.Add(rowDefinition);
+            Grid.SetRow(container, this.RowDefinitions.Count - 1);
+            this.Children.Add(container);
+        }
+
+        private void AddPanelContainerHorizontal(LayoutPanelContainer container)
+        {
+            var columnDefinition = new ColumnDefinition();
+            columnDefinition.MinWidth = _minContainerWidth;
+            columnDefinition.SetBinding(ColumnDefinition.WidthProperty, new Binding(nameof(LayoutPanel.GridLength)) { Source = container.LayoutPanel, Mode = BindingMode.TwoWay });
+            this.ColumnDefinitions.Add(columnDefinition);
+            Grid.SetColumn(container, this.ColumnDefinitions.Count - 1);
+            this.Children.Add(container);
+        }
+        private void AddPanelSplitter(Orientation orientation)
+        {
+            if (orientation == Orientation.Vertical)
+            {
+                AddPanelSplitterVertical();
+            }
+            else
+            {
+                AddPanelSplitterHorizontal();
+            }
+        }
+
+        private void AddPanelSplitterVertical()
+        {
+            var rowDefinition = new RowDefinition();
+            rowDefinition.Height = new GridLength(_splitterWidth);
+            this.RowDefinitions.Add(rowDefinition);
+            var splitter = new GridSplitter()
+            {
+                HorizontalAlignment = HorizontalAlignment.Stretch,
+                VerticalAlignment = VerticalAlignment.Center,
+                Height = _splitterWidth - 2.0,
+            };
+            splitter.SetBinding(GridSplitter.BackgroundProperty, new Binding(nameof(BorderBrush)) { Source = this });
+            Grid.SetRow(splitter, this.RowDefinitions.Count - 1);
+            this.Children.Add(splitter);
+        }
+
+        private void AddPanelSplitterHorizontal()
+        {
+            var columnDefinition = new ColumnDefinition();
+            columnDefinition.Width = new GridLength(_splitterWidth);
+            this.ColumnDefinitions.Add(columnDefinition);
+            var splitter = new GridSplitter()
+            {
+                HorizontalAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Stretch,
+                Width = _splitterWidth - 2.0,
+            };
+            splitter.SetBinding(GridSplitter.BackgroundProperty, new Binding(nameof(BorderBrush)) { Source = this });
+            Grid.SetColumn(splitter, this.ColumnDefinitions.Count - 1);
+            this.Children.Add(splitter);
         }
     }
 }

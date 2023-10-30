@@ -60,11 +60,11 @@
 
         <StackPanel DockPanel.Dock="Top">
 
-            <Border Visibility="{Binding PageListConfig.ShowBookTitle, Converter={StaticResource BooleanToVisibilityConverter}}" Margin="2">
+            <Border Visibility="{Binding PageListConfig.ShowBookTitle, Converter={StaticResource BooleanToVisibilityConverter}}" Margin="1,0">
                 <nwc:LeftTrimmingTextBlock TextSource="{Binding Model.PlaceDispString}" ToolTip="{Binding Model.PlaceDispString}" VerticalAlignment="Center" />
             </Border>
 
-            <DockPanel KeyboardNavigation.TabNavigation ="Local" Margin="1" >
+            <DockPanel KeyboardNavigation.TabNavigation ="Local" Margin="0,1,0,0" >
                 <local:MoreMenuButton Description="{Binding MoreMenuDescription}" DockPanel.Dock="Right" VerticalAlignment="Top" Height="{DynamicResource FontIconSize}" TabIndex="2" />
                 <WrapPanel MinWidth="150">
                     <Button x:Name="PrevButton" Style="{StaticResource FolderListButtonStyle}" Command="{Binding MoveToPreviousCommand}" TabIndex="1" ContextMenuService.Placement="Bottom"

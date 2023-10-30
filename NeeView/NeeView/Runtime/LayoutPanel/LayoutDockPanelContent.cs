@@ -6,6 +6,8 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
+using System.Text.Json.Serialization;
+using System.Windows.Controls;
 
 namespace NeeView.Runtime.LayoutPanel
 {
@@ -48,7 +50,7 @@ namespace NeeView.Runtime.LayoutPanel
         }
 
         private void UpdateLeaderPanels()
-        { 
+        {
             LeaderPanels = Items.Select(x => x.First()).ToList();
             CollectionChanged?.Invoke(this, EventArgs.Empty);
         }
@@ -150,7 +152,7 @@ namespace NeeView.Runtime.LayoutPanel
         public void Clear()
         {
             SelectedItem = null;
-            foreach(var item in Items)
+            foreach (var item in Items)
             {
                 DetachItemsChangeCallback(item);
             }
@@ -325,14 +327,41 @@ namespace NeeView.Runtime.LayoutPanel
 
         public class Memento
         {
-            public List<List<string>> Panels { get; set; } = new();
+            public List<PanelLayout> PanelLayout { get; set; } = new();
+
             public string? SelectedItem { get; set; }
+
+            [Obsolete] // ver 40.0
+            [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+            public List<List<string>>? Panels { get; set; }
+        }
+
+        public class PanelLayout
+        {
+            public PanelLayout()
+            {
+            }
+
+            public PanelLayout(LayoutPanelCollection collection)
+            {
+                Orientation = collection.Orientation;
+                Panels = collection.Select(e => e.Key).ToList();
+            }
+
+            public PanelLayout(Orientation orientation, List<string> panels)
+            {
+                Orientation = orientation;
+                Panels = panels;
+            }
+
+            public Orientation Orientation { get; set; } = Orientation.Vertical;
+            public List<string> Panels { get; set; } = new();
         }
 
         public Memento CreateMemento()
         {
             var memento = new Memento();
-            memento.Panels = Items.Select(e => e.Select(x => x.Key).ToList()).ToList();
+            memento.PanelLayout = Items.Select(e => new PanelLayout(e.Orientation, e.Select(x => x.Key).ToList())).ToList();
             memento.SelectedItem = SelectedItem?.First().Key;
             return memento;
         }
@@ -342,13 +371,25 @@ namespace NeeView.Runtime.LayoutPanel
             if (memento == null) return;
 
             Clear();
-            foreach (var item in memento.Panels.Select(e => new LayoutPanelCollection(e.Where(x => LayoutPanelManager.Panels.ContainsKey(x)).Select(x => LayoutPanelManager.Panels[x]))))
+
+#pragma warning disable CS0612 // 型またはメンバーが旧型式です
+            if (memento.Panels is not null && !memento.PanelLayout.Any())
             {
-                if (item.Any())
+                memento.PanelLayout = memento.Panels.Select(e => new PanelLayout(Orientation.Vertical, e)).ToList();
+            }
+#pragma warning restore CS0612 // 型またはメンバーが旧型式です
+
+            foreach (var panelSet in memento.PanelLayout)
+            {
+                var collection = new LayoutPanelCollection(panelSet.Panels.Where(x => LayoutPanelManager.Panels.ContainsKey(x)).Select(x => LayoutPanelManager.Panels[x]));
+                collection.Orientation = panelSet.Orientation;
+
+                if (collection.Any())
                 {
-                    Add(item);
+                    Add(collection);
                 }
             }
+
             SelectedItem = Items.FirstOrDefault(e => e.Any(x => x.Key == memento.SelectedItem));
         }
 

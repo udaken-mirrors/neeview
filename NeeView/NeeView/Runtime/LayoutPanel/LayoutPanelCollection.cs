@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Windows.Controls;
 
 namespace NeeView.Runtime.LayoutPanel
 {
@@ -16,6 +17,7 @@ namespace NeeView.Runtime.LayoutPanel
         {
         }
 
+        public Orientation Orientation { get; set; } = Orientation.Vertical;
 
         internal bool IsStandAlone(LayoutPanel panel)
         {
