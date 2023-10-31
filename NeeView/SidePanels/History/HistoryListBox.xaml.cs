@@ -150,8 +150,6 @@ namespace NeeView
                 FocusSelectedItem(true);
                 _focusRequestTimestamp = ValidTimeFlag.Create();
             }
-
-            this.ListBox.ScrollIntoView(this.ListBox.SelectedItem);
         }
 
         private void ListBox_GotFocus(object sender, RoutedEventArgs e)
