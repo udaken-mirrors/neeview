@@ -1,5 +1,6 @@
 ﻿using NeeLaboratory;
 using NeeLaboratory.ComponentModel;
+using NeeLaboratory.Generators;
 using NeeView.Windows.Property;
 using System;
 using System.Collections.Generic;
@@ -19,7 +20,8 @@ namespace NeeView
     /// <summary>
     /// スライドショー管理
     /// </summary>
-    public class SlideShow : BindableBase, IDisposable
+    [NotifyPropertyChanged]
+    public partial class SlideShow : INotifyPropertyChanged, IDisposable
     {
         static SlideShow() => Current = new SlideShow();
         public static SlideShow Current { get; }
@@ -38,30 +40,24 @@ namespace NeeView
             _timer.AutoReset = true;
             _timer.Elapsed += Timer_Tick;
 
-            _disposables.Add(Config.Current.SlideShow.SubscribePropertyChanged(nameof(SlideShowConfig.SlideShowInterval),
-                (s, e) => UpdateTimerInterval()));
+            _disposables.Add(Config.Current.SlideShow.SubscribePropertyChanged(nameof(SlideShowConfig.SlideShowInterval), SlideShowConfig_SlideShowIntervalPropertyChanged));
 
-            _disposables.Add(BookOperation.Current.SubscribeBookChanged(
-                (s, e) => ResetTimer()));
+            _disposables.Add(BookOperation.Current.SubscribeBookChanged(BookOperation_BookChanged));
 
             _disposables.Add(MainWindow.Current.SubscribePreviewKeyDown(
                 (s, e) => ResetTimer()));
 
-            _disposables.Add(MainViewComponent.Current.MainView.SubscribePreviewKeyDown(
-                (s, e) => ResetTimer()));
-
-            _disposables.Add(MainViewComponent.Current.MouseInput.SubscribeMouseMoved(
-                (s, e) =>
-                {
-                    if (Config.Current.SlideShow.IsCancelSlideByMouseMove)
-                    {
-                        ResetTimer();
-                    }
-                }));
-
             // アプリ終了前の開放予約
             ApplicationDisposer.Current.Add(this);
         }
+
+
+
+        [Subscribable]
+        public event PropertyChangedEventHandler? PropertyChanged;
+
+        [Subscribable]
+        public event EventHandler<SlideShowPlayedEventArgs>? Played;
 
 
         /// <summary>
@@ -87,6 +83,25 @@ namespace NeeView
                     }
                     RaisePropertyChanged();
                 }
+            }
+        }
+
+
+        private void SlideShowConfig_SlideShowIntervalPropertyChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            UpdateTimerInterval();
+            Played?.Invoke(this, new SlideShowPlayedEventArgs(_isPlayingSlideShow, _timer.Interval));
+        }
+
+        private void BookOperation_BookChanged(object? sender, BookChangedEventArgs e)
+        {
+            if (e.Book is null)
+            {
+                IsPlayingSlideShow = false;
+            }
+            else
+            {
+                ResetTimer();
             }
         }
 
@@ -147,6 +162,7 @@ namespace NeeView
 
             UpdateTimerInterval();
             _timer.Start();
+            Played?.Invoke(this, new SlideShowPlayedEventArgs(_isPlayingSlideShow, _timer.Interval));
         }
 
         /// <summary>
@@ -155,6 +171,7 @@ namespace NeeView
         private void StopTimer()
         {
             _timer.Stop();
+            Played?.Invoke(this, new SlideShowPlayedEventArgs(false, 0.0));
         }
 
         /// <summary>
@@ -166,6 +183,7 @@ namespace NeeView
             if (!_timer.Enabled) return;
 
             UpdateTimerInterval();
+            Played?.Invoke(this, new SlideShowPlayedEventArgs(_isPlayingSlideShow, _timer.Interval));
         }
 
         /// <summary>
@@ -187,6 +205,8 @@ namespace NeeView
                 // ページ移動
                 BookOperation.Current.Control.MoveNext(sender);
             });
+
+            Played?.Invoke(this, new SlideShowPlayedEventArgs(_isPlayingSlideShow, _timer.Interval));
         }
 
         #region IDisposable Support
@@ -218,4 +238,19 @@ namespace NeeView
         #endregion
 
     }
+
+
+
+    public class SlideShowPlayedEventArgs : EventArgs
+    {
+        public SlideShowPlayedEventArgs(bool isPlaying, double interval)
+        {
+            IsPlaying = isPlaying;
+            IntervalMilliseconds = interval;
+        }
+
+        public bool IsPlaying { get; }
+        public double IntervalMilliseconds { get; }
+    }
+
 }

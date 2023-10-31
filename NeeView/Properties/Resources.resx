@@ -7642,4 +7642,7 @@ nv.ShowToast(nv.Book.ViewPages[0].Path)</value>
   <data name="BookmarkConfig.IsSearchIncludeSubdirectories" xml:space="preserve">
     <value>Perform a search including subfolders</value>
   </data>
+  <data name="SlideShowConfig.IsTimerVisible" xml:space="preserve">
+    <value>Show timer</value>
+  </data>
 </root>

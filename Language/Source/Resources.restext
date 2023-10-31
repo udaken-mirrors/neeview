@@ -2405,3 +2405,4 @@ BookSettingConfig.BaseScale=Base scale
 ExportImageWindow.IsOriginalSize=Oroginal size
 ExportImageWindow.IsDotKeep=Keep dot
 BookmarkConfig.IsSearchIncludeSubdirectories=Perform a search including subfolders
+SlideShowConfig.IsTimerVisible=Show timer

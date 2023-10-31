@@ -16456,6 +16456,15 @@ namespace NeeView.Properties {
         }
         
         /// <summary>
+        ///   Show timer に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string SlideShowConfig_IsTimerVisible {
+            get {
+                return ResourceManager.GetString("SlideShowConfig.IsTimerVisible", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Display interval (sec) に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string SlideShowConfig_SlideShowInterval {

@@ -44,6 +44,11 @@
             </Grid>
         </Grid>
 
+        <!-- SlideShow time -->
+        <local:SimpleProgressBar x:Name="SlideShowTimer" VerticalAlignment="Top" HorizontalAlignment="Stretch" Height="4"
+                                 Foreground="{DynamicResource Control.Accent}" 
+                                 Visibility="Collapsed"/>
+        
         <!-- Now Loading -->
         <local:NowLoadingView x:Name="NowLoadingView" />
 

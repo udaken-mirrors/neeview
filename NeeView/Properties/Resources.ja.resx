@@ -7647,4 +7647,7 @@ nv.ShowToast(nv.Book.ViewPages[0].Path)</value>
   <data name="BookmarkConfig.IsSearchIncludeSubdirectories" xml:space="preserve">
     <value>サブフォルダーを含めた検索を行う</value>
   </data>
+  <data name="SlideShowConfig.IsTimerVisible" xml:space="preserve">
+    <value>タイマーを表示する</value>
+  </data>
 </root>

@@ -137,7 +137,7 @@ namespace NeeView
                 (s, e) => RaisePropertyChanged(nameof(IsTopmost)));
 
             // SlideShow link to WindowIcon
-            SlideShow.Current.AddPropertyChanged(nameof(SlideShow.IsPlayingSlideShow),
+            SlideShow.Current.SubscribePropertyChanged(nameof(SlideShow.IsPlayingSlideShow),
                 (s, e) => RaisePropertyChanged(nameof(WindowIcon)));
 
             ThumbnailList.Current.AddPropertyChanged(nameof(CanHideThumbnailList),

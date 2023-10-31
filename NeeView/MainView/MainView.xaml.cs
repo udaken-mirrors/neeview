@@ -6,6 +6,7 @@ using NeeView.PageFrames;
 using NeeView.Windows;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
@@ -17,6 +18,7 @@ using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
@@ -27,13 +29,14 @@ namespace NeeView
     /// <summary>
     /// MainView.xaml の相互作用ロジック
     /// </summary>
-    public partial class MainView : UserControl, IHasDeviceInput
+    public partial class MainView : UserControl, IHasDeviceInput, IDisposable
     {
         private MainViewViewModel? _vm;
         private Window? _owner;
         private readonly DpiScaleProvider _dpiProvider = new();
         private readonly PageFrameBackground _background;
-
+        private bool _disposedValue;
+        private readonly DisposableCollection _disposables = new();
 
         public MainView()
         {
@@ -45,7 +48,13 @@ namespace NeeView
 
             this.Loaded += MainView_Loaded;
             this.Unloaded += MainView_Unloaded;
+            this.PreviewKeyDown += MainView_PreviewKeyDown;
             this.DataContextChanged += MainView_DataContextChanged;
+
+            _disposables.Add(SlideShow.Current.SubscribePropertyChanged(nameof(SlideShow.IsPlayingSlideShow), SlideShow_IsPlayingSlideShowPropertyChanged));
+            _disposables.Add(SlideShow.Current.SubscribePlayed(SlideShow_Played));
+
+            _disposables.Add(Config.Current.SlideShow.SubscribePropertyChanged(nameof(SlideShowConfig.IsTimerVisible), SlideShowConfig_IsTimerVisiblePropertyChanged));
         }
 
 
@@ -62,10 +71,22 @@ namespace NeeView
         public DpiScaleProvider DpiProvider => _dpiProvider;
 
 
-        public IDisposable SubscribePreviewKeyDown(KeyEventHandler handler)
+        protected virtual void Dispose(bool disposing)
         {
-            PreviewKeyDown += handler;
-            return new AnonymousDisposable(() => PreviewKeyDown -= handler);
+            if (!_disposedValue)
+            {
+                if (disposing)
+                {
+                    _disposables.Dispose();
+                }
+                _disposedValue = true;
+            }
+        }
+
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
         }
 
         public void Initialize()
@@ -126,6 +147,40 @@ namespace NeeView
         {
             ResetOwnerWindow();
         }
+
+        private void MainView_PreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            SlideShow.Current.ResetTimer();
+        }
+
+        private void SlideShow_Played(object? sender, SlideShowPlayedEventArgs e)
+        {
+            //Debug.WriteLine($"## SlideShow: {e.IsPlaying}, {e.IntervalMilliseconds:f0}");
+
+            var isVisible = e.IsPlaying && Config.Current.SlideShow.IsTimerVisible;
+            AppDispatcher.BeginInvoke(() =>
+            {
+                var ani = isVisible ? new DoubleAnimation(1.0, 0.0, TimeSpan.FromMilliseconds(e.IntervalMilliseconds)) : null;
+                this.SlideShowTimer.BeginAnimation(SimpleProgressBar.ValueProperty, ani, HandoffBehavior.SnapshotAndReplace);
+            });
+        }
+
+        private void SlideShow_IsPlayingSlideShowPropertyChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            UpdateSlideShowTimerVisibility();
+        }
+
+        private void SlideShowConfig_IsTimerVisiblePropertyChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            UpdateSlideShowTimerVisibility();
+        }
+
+        private void UpdateSlideShowTimerVisibility()
+        {
+            this.SlideShowTimer.Visibility = (SlideShow.Current.IsPlayingSlideShow && Config.Current.SlideShow.IsTimerVisible) ? Visibility.Visible : Visibility.Collapsed;
+        }
+
+
 
         private void SetOwnerWindow(Window window)
         {
@@ -235,6 +290,8 @@ namespace NeeView
 
             Config.Current.Mouse.AddPropertyChanged(nameof(MouseConfig.IsCursorHideEnabled), (s, e) => UpdateNonActiveTimerActivity());
             UpdateNonActiveTimerActivity();
+
+            _disposables.Add(() => _nonActiveTimer.Stop());
         }
 
         private void UpdateNonActiveTimerActivity()

@@ -2405,3 +2405,4 @@ BookSettingConfig.BaseScale=基底スケール
 ExportImageWindow.IsOriginalSize=オリジナルサイズ
 ExportImageWindow.IsDotKeep=ドットを維持
 BookmarkConfig.IsSearchIncludeSubdirectories=サブフォルダーを含めた検索を行う
+SlideShowConfig.IsTimerVisible=タイマーを表示する

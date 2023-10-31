@@ -10,6 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Input;
 
 namespace NeeView
 {
@@ -20,9 +21,10 @@ namespace NeeView
 
 
         private readonly MainView _mainView;
-        private TouchEmurlateController _touchEmulateController = new();
+        private readonly TouchEmurlateController _touchEmulateController = new();
         private bool _disposedValue;
-        private IntervalDelayAction _delayAction = new();
+        private readonly DisposableCollection _disposables = new();
+        private readonly IntervalDelayAction _delayAction = new();
 
         public static void Initialize()
         {
@@ -38,6 +40,7 @@ namespace NeeView
             var bookHub = BookHub.Current;
 
             _mainView = new MainView();
+            _disposables.Add(_mainView);
 
             PageFrameBoxPresenter = PageFrameBoxPresenter.Current;
 
@@ -46,6 +49,7 @@ namespace NeeView
 
             TouchInput = new TouchInput(new TouchInputContext(_mainView.View, mouseGestureCommandCollection, PageFrameBoxPresenter, DragTransformControl, LoupeContext, ViewScrollContext));
             MouseInput = new MouseInput(new MouseInputContext(_mainView.View, mouseGestureCommandCollection, PageFrameBoxPresenter, DragTransformControl, LoupeContext, ViewScrollContext));
+            _disposables.Add(MouseInput.SubscribeMouseMoved(MouseInput_MouseMoved));
 
             PrintController = new PrintController(this, _mainView, PageFrameBoxPresenter);
             ViewTransformControl = new ViewTransformControl(PageFrameBoxPresenter);
@@ -60,47 +64,6 @@ namespace NeeView
             PageFrameBoxPresenter.ViewContentChanged += PageFrameBoxPresenter_ViewContentChanged;
 
             _mainView.DataContext = new MainViewViewModel(this);
-        }
-
-
-        private void PageFrameBoxPresenter_ViewContentChanged(object? sender, FrameViewContentChangedEventArgs e)
-        {
-            var box = PageFrameBoxPresenter.View;
-            if (box is null) return;
-
-            Trace($"ViewContentChanged={e}, {e.PageFrameContent?.GetContentRect():f0}");
-            
-            // AutoStretch
-            if (e.State == ViewContentState.Loaded && e.PageFrameContent is not null && box.Context.AutoStretchTarget.Conflict(e.PageFrameContent.FrameRange))
-            {
-                Trace($"ViewContentChanged: PageFrameContent={e.PageFrameContent}");
-                box.Context.ResetAutoStretchTarget();
-                if (Config.Current.MainView.IsFloating && Config.Current.MainView.IsAutoStretch)
-                {
-                    // NOTE: StretchWindow() はさらなるページ処理を呼ぶ可能性があるためタイミングをずらす
-                    // NOTE: 連続して要求が来ることがあるので遅延させる
-                    _delayAction.Request(() => _mainView.StretchWindow(false), 1, 100);
-                }
-            }
-        }
-
-        // TODO: Selected 情報をまとめたなにか
-        private void PageFrameBoxPresenter_SelectedContentSizeChanged(object? sender, EventArgs e)
-        {
-            MouseInput.UpdateSelectedFrame();
-            TouchInput.UpdateSelectedFrame();
-        }
-
-        private void PageFrameBoxPresenter_SelectedContainerLayoutChanged(object? sender, EventArgs e)
-        {
-            MouseInput.UpdateSelectedFrame();
-            TouchInput.UpdateSelectedFrame();
-        }
-
-        private void PageFrameBoxPresenter_SelectedRangeChanged(object? sender, EventArgs e)
-        {
-            MouseInput.UpdateSelectedFrame();
-            TouchInput.UpdateSelectedFrame();
         }
 
 
@@ -156,6 +119,7 @@ namespace NeeView
             {
                 if (disposing)
                 {
+                    _disposables.Dispose();
                     //ContentCanvas.Dispose();
                 }
 
@@ -167,6 +131,55 @@ namespace NeeView
         {
             Dispose(disposing: true);
             GC.SuppressFinalize(this);
+        }
+
+
+        private void MouseInput_MouseMoved(object? sender, MouseEventArgs e)
+        {
+            if (Config.Current.SlideShow.IsCancelSlideByMouseMove)
+            {
+                SlideShow.Current.ResetTimer();
+            }
+        }
+
+        private void PageFrameBoxPresenter_ViewContentChanged(object? sender, FrameViewContentChangedEventArgs e)
+        {
+            var box = PageFrameBoxPresenter.View;
+            if (box is null) return;
+
+            Trace($"ViewContentChanged={e}, {e.PageFrameContent?.GetContentRect():f0}");
+
+            // AutoStretch
+            if (e.State == ViewContentState.Loaded && e.PageFrameContent is not null && box.Context.AutoStretchTarget.Conflict(e.PageFrameContent.FrameRange))
+            {
+                Trace($"ViewContentChanged: PageFrameContent={e.PageFrameContent}");
+                box.Context.ResetAutoStretchTarget();
+                if (Config.Current.MainView.IsFloating && Config.Current.MainView.IsAutoStretch)
+                {
+                    // NOTE: StretchWindow() はさらなるページ処理を呼ぶ可能性があるためタイミングをずらす
+                    // NOTE: 連続して要求が来ることがあるので遅延させる
+                    _delayAction.Request(() => _mainView.StretchWindow(false), 1, 100);
+                }
+            }
+        }
+
+        // TODO: Selected 情報をまとめたなにか
+        private void PageFrameBoxPresenter_SelectedContentSizeChanged(object? sender, EventArgs e)
+        {
+            MouseInput.UpdateSelectedFrame();
+            TouchInput.UpdateSelectedFrame();
+        }
+
+        private void PageFrameBoxPresenter_SelectedContainerLayoutChanged(object? sender, EventArgs e)
+        {
+            MouseInput.UpdateSelectedFrame();
+            TouchInput.UpdateSelectedFrame();
+        }
+
+        private void PageFrameBoxPresenter_SelectedRangeChanged(object? sender, EventArgs e)
+        {
+            MouseInput.UpdateSelectedFrame();
+            TouchInput.UpdateSelectedFrame();
         }
 
         public void RaiseOpenContextMenuRequest()
