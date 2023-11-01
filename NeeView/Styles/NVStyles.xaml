@@ -698,7 +698,7 @@
                             <Grid x:Name="DropDown" SnapsToDevicePixels="True" MinWidth="{TemplateBinding ActualWidth}" MaxHeight="{TemplateBinding MaxDropDownHeight}">
                                 <Border x:Name="DropDownBorder" BorderThickness="1" BorderBrush="{DynamicResource Menu.Border}" Background="{DynamicResource Menu.Background}"
                                         TextElement.Foreground="{DynamicResource Menu.Foreground}">
-                                    <ScrollViewer Style="{StaticResource NVScrollViewer}" Margin="0" SnapsToDevicePixels="True">
+                                    <ScrollViewer Style="{StaticResource NVScrollViewer}" Margin="0" Padding="0" SnapsToDevicePixels="True">
                                         <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Contained" />
                                     </ScrollViewer>
                                 </Border>

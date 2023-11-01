@@ -180,6 +180,7 @@
                                  ItemsSource="{Binding SearchBoxModel.History}"
                                  SearchKeywordErrorMessage="{Binding SearchBoxModel.KeywordErrorMessage}"
                                  SearchCommand="{Binding SearchBoxModel.SearchCommand}"
+                                 DeleteCommand="{Binding SearchBoxModel.DeleteCommand}"
                                  />
                 </Grid>
             </StackPanel>

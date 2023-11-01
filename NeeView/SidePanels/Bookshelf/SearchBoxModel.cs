@@ -13,13 +13,17 @@ namespace NeeView
 
         private string? _keyword;
         private string? _keywordErrorMessage;
-        private RelayCommand? _searchCommand;
-
+        private RelayCommand _searchCommand;
+        private RelayCommand<string> _deleteCommand;
         private readonly ISearchBoxComponent _component;
+
 
         public SearchBoxModel(ISearchBoxComponent component)
         {
             _component = component;
+
+            _searchCommand = new RelayCommand(Search);
+            _deleteCommand = new RelayCommand<string>(DeleteSearchHistory);
         }
 
 
@@ -75,11 +79,12 @@ namespace NeeView
         /// <summary>
         /// 検索コマンド
         /// </summary>
-        public RelayCommand SearchCommand
-        {
-            get { return _searchCommand = _searchCommand ?? new RelayCommand(Search); }
-        }
+        public RelayCommand SearchCommand => _searchCommand;
 
+        /// <summary>
+        /// 履歴削除コマンド
+        /// </summary>
+        public RelayCommand<string> DeleteCommand => _deleteCommand;
 
 
         /// <summary>
@@ -124,6 +129,16 @@ namespace NeeView
             var keyword = FixedKeyword;
             if (string.IsNullOrEmpty(keyword)) return;
             History?.Append(keyword);
+        }
+
+        /// <summary>
+        /// 履歴削除
+        /// </summary>
+        /// <param name="keyword"></param>
+        public void DeleteSearchHistory(string? keyword)
+        {
+            if (string.IsNullOrEmpty(keyword)) return;
+            History?.Remove(keyword);
         }
 
         /// <summary>
@@ -172,5 +187,5 @@ namespace NeeView
         }
     }
 
-    
+
 }

@@ -25,6 +25,8 @@
 
             <local:IsNullConverter x:Key="IsNullConverter" />
             <local:StringNullOrWhiteSpaceToVisibilityConverter x:Key="StringNullOrWhiteSpaceToVisibilityConverter" True="Collapsed" False="Visible" />
+            <local:BooleanToVisibilityConverter x:Key="BooleanToVisibilityHiddenConverter" False="Hidden" />
+
 
             <Style TargetType="TextBox" BasedOn="{StaticResource NVTextBox}">
                 <EventSetter Event="KeyDown" Handler="Control_KeyDown_IgnoreSingleKeyGesture" />
@@ -35,10 +37,10 @@
                 <Setter Property="MinHeight" Value="{DynamicResource FontIconSize}" />
                 <Setter Property="Padding" Value="2" />
             </Style>
-            
+
         </ResourceDictionary>
     </UserControl.Resources>
-    
+
     <Border x:Name="SearchBoxRoot" Margin="0,2,0,5" BorderThickness="1">
 
         <Border.Style>
@@ -61,7 +63,7 @@
                 </Style.Triggers>
             </Style>
         </Border.Style>
-        
+
         <DockPanel KeyboardNavigation.TabNavigation="Local">
             <Image Source="{StaticResource ic_search_24px_g}" Width="14" Height="14" VerticalAlignment="Center" Margin="8,0,0,0">
                 <Image.Style>
@@ -85,9 +87,27 @@
 
                 <ComboBox.ItemTemplate>
                     <DataTemplate>
-                        <TextBlock Text="{Binding}" TextTrimming="CharacterEllipsis" MaxWidth="{Binding ElementName=SearchBoxComboBox, Path=ActualWidth}" MinWidth="200" />
+                        <DockPanel LastChildFill="True">
+                            <Button DockPanel.Dock="Right" VerticalAlignment="Center" Style="{StaticResource FolderListButtonStyle}" MinHeight="0" Padding="0" Margin="0"
+                                    Width="{Binding ActualHeight, ElementName=HistoryText}" MaxWidth="20"
+                                    Height="{Binding ActualHeight, ElementName=HistoryText}"
+                                    Visibility="{Binding IsMouseOver, RelativeSource={RelativeSource AncestorType=ComboBoxItem}, Converter={StaticResource BooleanToVisibilityHiddenConverter}}"
+                                    Command="{x:Static local:SearchBox.DeleteAction}" CommandParameter="{Binding}">
+                                <Image Source="{StaticResource ic_clear_24px_a}"  />
+                            </Button>
+                            <TextBlock x:Name="HistoryText" Padding="8,2" Text="{Binding}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" MaxWidth="{Binding ElementName=SearchBoxComboBox, Path=ActualWidth}" MinWidth="200" />
+                        </DockPanel>
                     </DataTemplate>
                 </ComboBox.ItemTemplate>
+
+                <ComboBox.ItemContainerStyle>
+                    <Style TargetType="ComboBoxItem">
+                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                        <Setter Property="Padding" Value="0"/>
+                        <Setter Property="Margin" Value="0"/>
+                    </Style>
+                </ComboBox.ItemContainerStyle>
+
             </ComboBox>
         </DockPanel>
     </Border>

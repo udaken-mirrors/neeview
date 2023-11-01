@@ -3,6 +3,7 @@ using NeeView.Windows.Media;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -23,19 +24,22 @@ namespace NeeView
     /// </summary>
     public partial class SearchBox : UserControl
     {
-        private readonly DelayAction _delayAction;
+        public readonly static RoutedCommand DeleteAction = new RoutedCommand("DeleteAction", typeof(SearchBox));
+
+        private readonly DelayAction _delayAction = new();
+
 
         public SearchBox()
         {
             InitializeComponent();
+
+            this.CommandBindings.Add(new CommandBinding(DeleteAction, DeleteAction_Execute));
+
             this.SearchBoxRoot.DataContext = this;
-
             this.SearchBoxRoot.IsKeyboardFocusWithinChanged += SearchBoxRoot_IsKeyboardFocusWithinChanged;
-
-            _delayAction = new DelayAction();
         }
 
-        
+
         /// <summary>
         /// 検索エラーメッセージ
         /// </summary>
@@ -59,7 +63,7 @@ namespace NeeView
 
         public static readonly DependencyProperty TextProperty =
             DependencyProperty.Register("Text", typeof(string), typeof(SearchBox), new FrameworkPropertyMetadata("", FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
-        
+
         /// <summary>
         /// 検索キーワード候補。検索履歴とか。
         /// </summary>
@@ -83,6 +87,19 @@ namespace NeeView
 
         public static readonly DependencyProperty SearchCommandProperty =
             DependencyProperty.Register("SearchCommand", typeof(ICommand), typeof(SearchBox), new PropertyMetadata(null));
+
+
+        /// <summary>
+        /// 履歴削除コマンド
+        /// </summary>
+        public ICommand? DeleteCommand
+        {
+            get { return (ICommand)GetValue(DeleteCommandProperty); }
+            set { SetValue(DeleteCommandProperty, value); }
+        }
+
+        public static readonly DependencyProperty DeleteCommandProperty =
+            DependencyProperty.Register("DeleteCommand", typeof(ICommand), typeof(SearchBox), new PropertyMetadata(null));
 
 
         /// <summary>
@@ -158,6 +175,17 @@ namespace NeeView
             {
                 SearchCommand?.Execute(null);
             }
+        }
+
+        /// <summary>
+        /// 履歴削除実行
+        /// </summary>
+        private void DeleteAction_Execute(object sender, ExecutedRoutedEventArgs e)
+        {
+            var content = e.Parameter as string;
+            if (string.IsNullOrEmpty(content)) return;
+
+            DeleteCommand?.Execute(content);
         }
     }
 }
