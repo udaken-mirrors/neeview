@@ -9364,6 +9364,42 @@ namespace NeeView.Properties {
         }
         
         /// <summary>
+        ///   Main view window auto close に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string MainViewConfig_IsAutoHide {
+            get {
+                return ResourceManager.GetString("MainViewConfig.IsAutoHide", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Minimizes the main view window when the book is closed. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string MainViewConfig_IsAutoHide_Remarks {
+            get {
+                return ResourceManager.GetString("MainViewConfig.IsAutoHide.Remarks", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Main view window auto stretch に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string MainViewConfig_IsAutoStretch {
+            get {
+                return ResourceManager.GetString("MainViewConfig.IsAutoStretch", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Adjust the window size to the image size. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string MainViewConfig_IsAutoStretch_Remarks {
+            get {
+                return ResourceManager.GetString("MainViewConfig.IsAutoStretch.Remarks", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   MainView floating に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string MainViewConfig_IsFloating {
@@ -15580,6 +15616,24 @@ namespace NeeView.Properties {
         }
         
         /// <summary>
+        ///   Main view に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string SettingPage_MainView {
+            get {
+                return ResourceManager.GetString("SettingPage.MainView", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Main view window に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string SettingPage_MainView_MainViewWindow {
+            get {
+                return ResourceManager.GetString("SettingPage.MainView.MainViewWindow", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   View operation に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string SettingPage_Manipurate {
@@ -15828,15 +15882,6 @@ namespace NeeView.Properties {
         public static string SettingPage_Panels_AutoHideMode_WindowState {
             get {
                 return ResourceManager.GetString("SettingPage.Panels.AutoHideMode.WindowState", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Main view に類似しているローカライズされた文字列を検索します。
-        /// </summary>
-        public static string SettingPage_Panels_MainView {
-            get {
-                return ResourceManager.GetString("SettingPage.Panels.MainView", resourceCulture);
             }
         }
         

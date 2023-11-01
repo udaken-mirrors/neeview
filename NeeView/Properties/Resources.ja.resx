@@ -7614,9 +7614,6 @@ nv.ShowToast(nv.Book.ViewPages[0].Path)</value>
   <data name="MainViewConfig.AlternativeContent.Remarks" xml:space="preserve">
     <value>メインビュー ウィンドウを表示している時に代わりに表示するコンテンツです。</value>
   </data>
-  <data name="SettingPage.Panels.MainView" xml:space="preserve">
-    <value>メインビュー</value>
-  </data>
   <data name="PageListConfig.ShowBookTitle" xml:space="preserve">
     <value>ブック名を表示</value>
   </data>
@@ -7649,5 +7646,23 @@ nv.ShowToast(nv.Book.ViewPages[0].Path)</value>
   </data>
   <data name="SlideShowConfig.IsTimerVisible" xml:space="preserve">
     <value>タイマーを表示する</value>
+  </data>
+  <data name="SettingPage.MainView" xml:space="preserve">
+    <value>メインビュー</value>
+  </data>
+  <data name="SettingPage.MainView.MainViewWindow" xml:space="preserve">
+    <value>メインビュー ウィンドウ</value>
+  </data>
+  <data name="MainViewConfig.IsAutoStretch" xml:space="preserve">
+    <value>メインビュー ウィンドウ自動サイズ補正</value>
+  </data>
+  <data name="MainViewConfig.IsAutoStretch.Remarks" xml:space="preserve">
+    <value>ウィンドウサイズを画像サイズに合わせます。</value>
+  </data>
+  <data name="MainViewConfig.IsAutoHide" xml:space="preserve">
+    <value>メインビュー ウィンドウ自動非表示</value>
+  </data>
+  <data name="MainViewConfig.IsAutoHide.Remarks" xml:space="preserve">
+    <value>ブックを閉じた時にメインビュー ウィンドウを最小化します。</value>
   </data>
 </root>

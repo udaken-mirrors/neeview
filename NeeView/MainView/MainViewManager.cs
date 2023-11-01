@@ -43,7 +43,8 @@ namespace NeeView
 
             _defaultSocket.Content = _mainView;
 
-            BookHub.Current.BookChanging += BookHub_BookChanging;
+            BookOperation.Current.BookChanging += BookOperation_BookChanging;
+            BookOperation.Current.BookChanged += BookOperation_BookChanged;
 
             Config.Current.MainView.AddPropertyChanged(nameof(MainViewConfig.IsFloating), (s, e) => Update());
 
@@ -60,10 +61,24 @@ namespace NeeView
         public MainViewBay MainViewBay => _mainViewBay;
 
 
-        private void BookHub_BookChanging(object? sender, BookChangingEventArgs e)
+        private void BookOperation_BookChanging(object? sender, BookChangingEventArgs e)
         {
             _mainView.MouseInput?.Cancel();
             _mainViewBay.MouseInput.Cancel();
+        }
+
+        private void BookOperation_BookChanged(object? sender, BookChangedEventArgs e)
+        {
+            if (_window is null) return;
+
+            if (e.Book is not null)
+            {
+                RecoveryFloating();
+            }
+            else if (Config.Current.MainView.IsAutoHide)
+            {
+                HideFloating();
+            }
         }
 
         public bool IsFloating()
@@ -90,6 +105,17 @@ namespace NeeView
                 }
             }
             return false;
+        }
+
+        public void HideFloating()
+        {
+            if (_window is not null)
+            {
+                if (_window.WindowState != WindowState.Minimized)
+                {
+                    _window.WindowState = WindowState.Minimized;
+                }
+            }
         }
 
         public void Update()

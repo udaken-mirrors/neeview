@@ -49,6 +49,7 @@ namespace NeeView.Setting
             {
                 new SettingPageFonts(),
                 new SettingPageWindowTitle(),
+                new SettingMainView(),
             };
 
             this.Items = new List<SettingItem>();
@@ -128,6 +129,29 @@ namespace NeeView.Setting
             section.Children.Add(new SettingItemNote(Properties.Resources.SettingPage_WindowTitle_Note, Properties.Resources.SettingPage_WindowTitle_Note_Title));
 
             this.Items = new List<SettingItem>() { section };
+        }
+    }
+
+    /// <summary>
+    /// SettingPage: MainView
+    /// </summary>
+    public class SettingMainView : SettingPage
+    {
+        public SettingMainView() : base(Properties.Resources.SettingPage_MainView)
+        {
+            this.Items = new List<SettingItem>();
+
+            var section = new SettingItemSection(Properties.Resources.SettingPage_MainView);
+            section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.View, nameof(ViewConfig.MainViewMargin))));
+            section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.MainView, nameof(MainViewConfig.AlternativeContent))));
+            this.Items.Add(section);
+
+            section = new SettingItemSection(Properties.Resources.SettingPage_MainView_MainViewWindow);
+            section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.MainView, nameof(MainViewConfig.IsTopmost))));
+            section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.MainView, nameof(MainViewConfig.IsHideTitleBar))));
+            section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.MainView, nameof(MainViewConfig.IsAutoStretch))));
+            section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.MainView, nameof(MainViewConfig.IsAutoHide))));
+            this.Items.Add(section);
         }
     }
 

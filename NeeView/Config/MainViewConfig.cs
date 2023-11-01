@@ -11,29 +11,19 @@ namespace NeeView
         private bool _isTopmost;
         private bool _isHideTitleBar;
         private bool _isAutoStretch;
+        private bool _isAutoHide = true;
         private Size _referenceSize;
         private AlternativeContent _alternativeContent = AlternativeContent.PageList;
 
 
+        /// <summary>
+        /// メインビューウィンドウ モード
+        /// </summary>
         [PropertyMember]
         public bool IsFloating
         {
             get { return _isFloating; }
             set { SetProperty(ref _isFloating, value); }
-        }
-
-        [PropertyMember]
-        public bool IsTopmost
-        {
-            get { return _isTopmost; }
-            set { SetProperty(ref _isTopmost, value); }
-        }
-
-        [PropertyMember]
-        public bool IsHideTitleBar
-        {
-            get { return _isHideTitleBar; }
-            set { SetProperty(ref _isHideTitleBar, value); }
         }
 
         /// <summary>
@@ -46,11 +36,44 @@ namespace NeeView
             set { SetProperty(ref _alternativeContent, value); }
         }
 
+        /// <summary>
+        /// メインビューウィンドウ 常に手前に表示
+        /// </summary>
+        [PropertyMember]
+        public bool IsTopmost
+        {
+            get { return _isTopmost; }
+            set { SetProperty(ref _isTopmost, value); }
+        }
+
+        /// <summary>
+        /// メインビューウィンドウ タイトルバー非表示
+        /// </summary>
+        [PropertyMember]
+        public bool IsHideTitleBar
+        {
+            get { return _isHideTitleBar; }
+            set { SetProperty(ref _isHideTitleBar, value); }
+        }
+
+        /// <summary>
+        /// メインビューウィンドウサイズを自動調整
+        /// </summary>
         [PropertyMember]
         public bool IsAutoStretch
         {
             get { return _isAutoStretch; }
             set { SetProperty(ref _isAutoStretch, value); }
+        }
+
+        /// <summary>
+        /// ブックを開いていない時にメインビューウィンドウを自動非表示
+        /// </summary>
+        [PropertyMember]
+        public bool IsAutoHide
+        {
+            get { return _isAutoHide; }
+            set { SetProperty(ref _isAutoHide, value); }
         }
 
 

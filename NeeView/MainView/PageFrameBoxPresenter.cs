@@ -606,6 +606,11 @@ namespace NeeView
             ValidBox()?.Stretch(ignoreViewOrigin);
         }
 
+        public void FlushLayout()
+        {
+            ValidBox()?.FlushLayout();
+        }
+
         public void Reset()
         {
             if (_book is null) return;

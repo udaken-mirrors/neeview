@@ -7609,9 +7609,6 @@ nv.ShowToast(nv.Book.ViewPages[0].Path)</value>
   <data name="MainViewConfig.AlternativeContent.Remarks" xml:space="preserve">
     <value>Content to display instead when the main view window is displayed.</value>
   </data>
-  <data name="SettingPage.Panels.MainView" xml:space="preserve">
-    <value>Main view</value>
-  </data>
   <data name="PageListConfig.ShowBookTitle" xml:space="preserve">
     <value>Show book title</value>
   </data>
@@ -7644,5 +7641,23 @@ nv.ShowToast(nv.Book.ViewPages[0].Path)</value>
   </data>
   <data name="SlideShowConfig.IsTimerVisible" xml:space="preserve">
     <value>Show timer</value>
+  </data>
+  <data name="SettingPage.MainView" xml:space="preserve">
+    <value>Main view</value>
+  </data>
+  <data name="SettingPage.MainView.MainViewWindow" xml:space="preserve">
+    <value>Main view window</value>
+  </data>
+  <data name="MainViewConfig.IsAutoStretch" xml:space="preserve">
+    <value>Main view window auto stretch</value>
+  </data>
+  <data name="MainViewConfig.IsAutoStretch.Remarks" xml:space="preserve">
+    <value>Adjust the window size to the image size.</value>
+  </data>
+  <data name="MainViewConfig.IsAutoHide" xml:space="preserve">
+    <value>Main view window auto close</value>
+  </data>
+  <data name="MainViewConfig.IsAutoHide.Remarks" xml:space="preserve">
+    <value>Minimizes the main view window when the book is closed.</value>
   </data>
 </root>

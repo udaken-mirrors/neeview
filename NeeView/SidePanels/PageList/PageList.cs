@@ -290,9 +290,12 @@ namespace NeeView
             var isRecovery = MainViewManager.Current.RecoveryFloating();
 
             // ページ移動
-            // TODO: ウィンドウ復元時は即時移動反映。スクロールは不要。
             _isPageMoved = true;
             BookOperation.Current.JumpPage(this, page);
+            if (isRecovery)
+            {
+                PageFrameBoxPresenter.Current.FlushLayout();
+            }
         }
 
         /// <summary>
