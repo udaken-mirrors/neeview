@@ -259,7 +259,9 @@ namespace NeeView
             }
             else if (state == WindowStateEx.FullScreen)
             {
-                state = Config.Current.StartUp.IsRestoreFullScreen ? WindowStateEx.FullScreen : WindowStateEx.Normal;
+                state = Config.Current.StartUp.IsRestoreFullScreen
+                    ? WindowStateEx.FullScreen
+                    : Config.Current.Window.LastState == WindowStateEx.Maximized ? WindowStateEx.Maximized : WindowStateEx.Normal;
             }
             else if (state == WindowStateEx.Minimized)
             {
