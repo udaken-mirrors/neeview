@@ -12,7 +12,7 @@ namespace NeeView
     /// </summary>
     public class ConstThumbnail : IThumbnail, INotifyPropertyChanged
     {
-        private ImageSource? _bitmapSource;
+        private readonly ImageSource? _bitmapSource;
         protected Func<ImageSource?>? _create;
 
         public ConstThumbnail()
@@ -29,8 +29,9 @@ namespace NeeView
             _create = crate;
         }
 
-
+#pragma warning disable CS0067
         public event PropertyChangedEventHandler? PropertyChanged;
+#pragma warning restore CS0067
 
         public bool IsValid => true;
         public bool IsUniqueImage => false;

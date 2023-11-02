@@ -33,6 +33,12 @@ namespace NeeView.PageFrames
             Activity = activity;
         }
 
+#pragma warning disable CS0067
+        public event TransformChangedEventHandler? TransformChanged;
+        public event EventHandler<FrameViewContentChangedEventArgs>? ViewContentChanged;
+        public event EventHandler? ContentSizeChanged;
+#pragma warning restore CS0067
+
         public virtual PageRange FrameRange => PageRange.Empty;
 
         public IPageFrameTransform Transform => new DummyPageFrameTransform();
@@ -55,9 +61,6 @@ namespace NeeView.PageFrames
 
         public bool IsStaticFrame => false;
 
-        public event TransformChangedEventHandler? TransformChanged;
-        public event EventHandler<FrameViewContentChangedEventArgs>? ViewContentChanged;
-        public event EventHandler? ContentSizeChanged;
 
         public void Dispose()
         {

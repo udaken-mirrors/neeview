@@ -43,9 +43,9 @@ namespace NeeView
         {
             if (_imageMap != null) return;
 
-            AppDispatcher.Invoke(() =>
+            _imageMap = AppDispatcher.Invoke(() =>
             {
-                _imageMap = new Dictionary<QueryScheme, ImageSource>()
+                return new Dictionary<QueryScheme, ImageSource>()
                 {
                     [QueryScheme.File] = MainWindow.Current.Resources["ic_desktop_windows_24px"] as ImageSource ?? throw new DirectoryNotFoundException(),
                     [QueryScheme.Root] = MainWindow.Current.Resources["ic_bookshelf"] as ImageSource ?? throw new DirectoryNotFoundException(),
@@ -60,9 +60,9 @@ namespace NeeView
         {
             if (_thumbnailImageMap != null) return;
 
-            AppDispatcher.Invoke(() =>
+            _thumbnailImageMap = AppDispatcher.Invoke(() =>
             {
-                _thumbnailImageMap = new Dictionary<QueryScheme, ImageSource>()
+                return new Dictionary<QueryScheme, ImageSource>()
                 {
                     [QueryScheme.File] = MainWindow.Current.Resources["ic_desktop_windows_24px_t"] as ImageSource ?? throw new DirectoryNotFoundException(),
                     [QueryScheme.Root] = MainWindow.Current.Resources["ic_bookshelf"] as ImageSource ?? throw new DirectoryNotFoundException(),

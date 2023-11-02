@@ -58,10 +58,6 @@ namespace NeeView
         }
 
 
-        [Subscribable]
-        public event EventHandler? TransformChanged;
-
-
         public PageFrameBackground PageFrameBackground => _background;
 
         public MouseInput? MouseInput => _vm?.MouseInput;
@@ -100,23 +96,6 @@ namespace NeeView
             ContentDropManager.Current.SetDragDropEvent(this.View);
 
             this.NowLoadingView.Source = NowLoading.Current;
-
-            // Transform はここでは処理しない
-#if false
-            // render transform
-            var transformView = new TransformGroup();
-            transformView.Children.Add(_vm.ViewComponent.DragTransform.TransformView);
-            transformView.Children.Add(_vm.ViewComponent.LoupeTransform.TransformView);
-            this.MainContent.RenderTransform = transformView;
-            this.MainContent.RenderTransformOrigin = new Point(0.5, 0.5);
-
-            _transformCalc = new TransformGroup();
-            _transformCalc.Children.Add(_vm.ViewComponent.DragTransform.TransformCalc);
-            _transformCalc.Children.Add(_vm.ViewComponent.LoupeTransform.TransformCalc);
-            _transformCalc.Changed += (s, e) => TransformChanged?.Invoke(s, e);
-            this.MainContentShadow.RenderTransform = _transformCalc;
-            this.MainContentShadow.RenderTransformOrigin = new Point(0.5, 0.5);
-#endif
 
             _vm.ViewComponent.OpenContextMenuRequest += (s, e) => OpenContextMenu();
             _vm.ViewComponent.FocusMainViewRequest += (s, e) => FocusMainView();

@@ -109,7 +109,9 @@ namespace NeeView
         [Subscribable]
         public event PropertyChangedEventHandler? PropertyChanged;
 
+#pragma warning disable CS0067
         public event EventHandler? MediaOpened;
+#pragma warning restore CS0067
         public event EventHandler? MediaEnded;
         public event EventHandler? MediaPlayed;
         public event EventHandler<ExceptionEventArgs>? MediaFailed;

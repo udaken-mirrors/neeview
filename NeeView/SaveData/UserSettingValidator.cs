@@ -256,9 +256,21 @@ namespace NeeView
                 {
                     dock.SelectedItem = dock.SelectedItem == oldName ? newName : dock.SelectedItem;
 
-                    dock.Panels = dock.Panels
-                        .Select(e => e.Select(x => x == oldName ? newName : x).ToList())
-                        .ToList();
+#pragma warning disable CS0612 // 型またはメンバーが旧型式です
+                    if (dock.Panels is not null)
+                    {
+                        dock.Panels = dock.Panels
+                            .Select(e => e.Select(x => x == oldName ? newName : x).ToList())
+                            .ToList();
+                    }
+#pragma warning restore CS0612 // 型またはメンバーが旧型式です
+
+                    foreach(var panelLayout in dock.PanelLayout)
+                    {
+                        panelLayout.Panels = panelLayout.Panels
+                            .Select(x => x == oldName ? newName : x).ToList()
+                            .ToList();
+                    }
                 }
             }
 

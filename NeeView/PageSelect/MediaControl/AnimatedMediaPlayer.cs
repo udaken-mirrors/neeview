@@ -51,10 +51,14 @@ namespace NeeView
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        public event EventHandler? MediaOpened;
+
         public event EventHandler? MediaEnded;
         public event EventHandler? MediaPlayed;
+
+#pragma warning disable CS0067
+        public event EventHandler? MediaOpened;
         public event EventHandler<ExceptionEventArgs>? MediaFailed;
+#pragma warning restore CS0067
 
 
         public Image Image => _image;
@@ -79,7 +83,7 @@ namespace NeeView
         {
             get { return false; }
             set { }
-        }    
+        }
 
         public bool IsMuted
         {
