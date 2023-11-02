@@ -146,7 +146,13 @@
             <Border DockPanel.Dock="Left" Width="250" Background="{DynamicResource Panel.Background}" BorderBrush="{DynamicResource Panel.Border}" BorderThickness="0,0,1,0">
                 <DockPanel>
 
-                    <nvc:SearchBox DockPanel.Dock="Top" Margin="5,5,5,0" SearchKeyword="{Binding SearchKeyword}" />
+                    <nv:SearchBox DockPanel.Dock="Top" Margin="5,5,5,0" 
+                        Text="{Binding SearchBoxModel.Keyword}"
+                        ItemsSource="{Binding SearchBoxModel.History}"
+                        SearchKeywordErrorMessage="{Binding SearchBoxModel.KeywordErrorMessage}"
+                        SearchCommand="{Binding SearchBoxModel.SearchCommand}"
+                        DeleteCommand="{Binding SearchBoxModel.DeleteCommand}"
+                        />
 
                     <TreeView x:Name="IndexTree" ItemsSource="{Binding Model.Pages}" BorderThickness="0" Margin="5,5,1,5" SelectedItemChanged="IndexTree_SelectedItemChanged"
                           VirtualizingStackPanel.ScrollUnit="Item"

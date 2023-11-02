@@ -10,6 +10,8 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Diagnostics;
+using NeeLaboratory.IO.Search;
+using System.Threading;
 
 namespace NeeView.Setting
 {
@@ -18,7 +20,7 @@ namespace NeeView.Setting
     /// </summary>
     public class SettingWindowModel : BindableBase
     {
-        private class SettingItemRecord
+        private class SettingItemRecord : ISearchItem
         {
             public SettingItemRecord(SettingPage page, SettingItemSection section, SettingItem item)
             {
@@ -34,6 +36,17 @@ namespace NeeView.Setting
 
             public SettingItem Item { get; }
 
+            #region ISearchItem
+
+            public bool IsDirectory => false;
+            public bool IsPushPin => false;
+            public string SearchName => GetSearchText();
+            public string NormalizedUnitName => StringUtils.ToNormalizedWord(SearchName, false);
+            public string NormalizedFuzzyName => StringUtils.ToNormalizedWord(SearchName, true);
+            public DateTime DateTime => default;
+
+            #endregion
+
             public string GetSearchText()
             {
                 return Page.GetSearchText() + " " + Section.GetSearchText() + " " + Item.GetSearchText();
@@ -45,6 +58,9 @@ namespace NeeView.Setting
 
         private readonly List<SettingPage> _pages;
         private readonly List<SettingItemRecord> _records;
+        private string _searchKeyword = "";
+        private SettingPage? _currentPage;
+        private SettingPage? _lastPage;
 
 
         public SettingWindowModel()
@@ -70,8 +86,53 @@ namespace NeeView.Setting
             }
 
             _records = CreateSettingItemRecordList(_pages);
+
+            this.SearchBoxModel = new SearchBoxModel(new SettingWindowSearchBoxComponent(this));
         }
 
+
+        public SearchBoxModel SearchBoxModel { get; }
+
+        public bool IsSearchPageSelected
+        {
+            get { return _currentPage == SearchPage; }
+        }
+
+        public string SearchKeyword
+        {
+            get { return _searchKeyword; }
+            set
+            {
+                if (SetProperty(ref _searchKeyword, value))
+                {
+                    if (!string.IsNullOrWhiteSpace(_searchKeyword))
+                    {
+                        ClearPageContentCache();
+                        UpdateSearchPage(_searchKeyword);
+                        CurrentPage = SearchPage;
+                    }
+                    else
+                    {
+                        if (IsSearchPageSelected && _lastPage != null)
+                        {
+                            _lastPage.IsSelected = true;
+                        }
+                    }
+                }
+            }
+        }
+
+        public SettingPage? CurrentPage
+        {
+            get { return _currentPage; }
+            set
+            {
+                if (SetProperty(ref _currentPage, value))
+                {
+                    SetSelectedPage(_currentPage);
+                }
+            }
+        }
 
         public List<SettingPage> Pages
         {
@@ -81,6 +142,16 @@ namespace NeeView.Setting
         public SettingPage SearchPage { get; } = new SettingPage(Properties.Resources.SettingPage_SearchResult);
 
 
+
+        public void SelectedItemChanged(SettingPage settingPage)
+        {
+            if (settingPage != null)
+            {
+                CurrentPage = settingPage;
+                _lastPage = settingPage;
+                SearchKeyword = "";
+            }
+        }
 
         private List<SettingItemRecord> CreateSettingItemRecordList(IEnumerable<SettingPage> pages)
         {
@@ -147,32 +218,29 @@ namespace NeeView.Setting
 
         public void UpdateSearchPage(string keyword)
         {
-            var _searchKeywordTokens = keyword.Split(' ')
-                .Select(e => NeeLaboratory.IO.Search.StringUtils.ToNormalizedWord(e.Trim(), true))
-                .Where(e => !string.IsNullOrEmpty(e))
-                .ToList();
+            var options = new SearchOption();
+            var search = new SearchCore();
+
+            List<SettingItemRecord> records;
+            try
+            {
+                records = search.Search(keyword, options, _records, CancellationToken.None).Cast<SettingItemRecord>().ToList();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+                return;
+            }
 
             var items = new List<SettingItem>();
-
-            if (_searchKeywordTokens.Any())
+            if (records.Any())
             {
-                var groups = _records
-                    .Where(e => IsMatch(e, _searchKeywordTokens))
-                    .GroupBy(e => e.Section);
-
-                if (groups.Any())
+                items.Add(new SettingItemSection(Properties.Resources.SettingPage_SearchResult));
+                foreach (var group in records.GroupBy(e => e.Section))
                 {
-                    items.Add(new SettingItemSection(Properties.Resources.SettingPage_SearchResult));
-                    foreach (var group in groups)
-                    {
-                        var section = new SettingItemSection(group.Key.Header, group.Key.Tips);
-                        section.Children.AddRange(group.Select(e => e.Item.SearchResultItem));
-                        items.Add(section);
-                    }
-                }
-                else
-                {
-                    items.Add(new SettingItemSection(Properties.Resources.SettingPage_SearchResult_NotFound));
+                    var section = new SettingItemSection(group.Key.Header, group.Key.Tips);
+                    section.Children.AddRange(group.Select(e => e.Item.SearchResultItem));
+                    items.Add(section);
                 }
             }
             else
@@ -181,14 +249,26 @@ namespace NeeView.Setting
             }
 
             SearchPage.SetItems(items);
-
-
-            bool IsMatch(SettingItemRecord record, List<string> tokens)
-            {
-                var text = NeeLaboratory.IO.Search.StringUtils.ToNormalizedWord(record.GetSearchText(), true);
-                return tokens.All(e => text.Contains(e, StringComparison.CurrentCulture));
-            }
         }
 
+
+        /// <summary>
+        /// 検索ボックスコンポーネント
+        /// </summary>
+        public class SettingWindowSearchBoxComponent : ISearchBoxComponent
+        {
+            private readonly SettingWindowModel _self;
+
+            public SettingWindowSearchBoxComponent(SettingWindowModel self)
+            {
+                _self = self;
+            }
+
+            public HistoryStringCollection? History { get; } = new HistoryStringCollection();
+
+            public bool IsIncrementalSearchEnabled => Config.Current.System.IsIncrementalSearchEnabled;
+
+            public void Search(string keyword) => _self.SearchKeyword = keyword;
+        }
     }
 }

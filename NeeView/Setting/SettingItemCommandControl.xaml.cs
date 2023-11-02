@@ -1,15 +1,17 @@
-﻿using NeeLaboratory.ComponentModel;
+﻿using NeeLaboratory.Collection;
+using NeeLaboratory.ComponentModel;
 using NeeLaboratory.Generators;
+using NeeLaboratory.IO.Search;
 using NeeLaboratory.Windows.Input;
 using NeeView.Data;
 using NeeView.Windows.Property;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -67,9 +69,9 @@ namespace NeeView.Setting
 
         private int _commandTableChangeCount;
         private readonly ObservableCollection<CommandItem> _commandItems;
+        private readonly SearchOption _searchOptions = new();
+        private readonly SearchCore _search = new();
         private string _searchKeyword = "";
-        private List<string> _searchKeywordTokens = new();
-
 
         public SettingItemCommandControl()
         {
@@ -87,6 +89,8 @@ namespace NeeView.Setting
 
             this.Loaded += SettingItemCommandControl_Loaded;
             this.Unloaded += SettingItemCommandControl_Unloaded;
+
+            this.SearchBoxModel = new SearchBoxModel(new CommandSearchBoxComponent(this));
         }
 
 
@@ -193,6 +197,8 @@ namespace NeeView.Setting
         #endregion Commands
 
 
+        public SearchBoxModel SearchBoxModel { get; }
+
         public CollectionViewSource ItemsViewSource { get; set; }
 
         public string SearchKeyword
@@ -225,15 +231,19 @@ namespace NeeView.Setting
 
         private void ItemsViewSource_Filter(object? sender, FilterEventArgs eventArgs)
         {
-            if (_searchKeywordTokens.Count <= 0)
-            {
-                eventArgs.Accepted = true;
-            }
-            else
+            if (string.IsNullOrEmpty(_searchKeyword)) return;
+
+            try
             {
                 var item = (CommandItem)eventArgs.Item;
-                var text = NeeLaboratory.IO.Search.StringUtils.ToNormalizedWord(item.Command.GetSearchText(), true);
-                eventArgs.Accepted = _searchKeywordTokens.All(e => text.Contains(e, StringComparison.CurrentCulture));
+                var commands = new SingleEnumerableValue<CommandElement>(item.Command);
+                var result = _search.Search(_searchKeyword, _searchOptions, commands, CancellationToken.None);
+                eventArgs.Accepted = result.Any();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+                eventArgs.Accepted = false;
             }
         }
 
@@ -519,17 +529,31 @@ namespace NeeView.Setting
             return null;
         }
 
-
         private void Search()
         {
-            _searchKeywordTokens = this.SearchKeyword.Split(' ')
-                .Select(e => NeeLaboratory.IO.Search.StringUtils.ToNormalizedWord(e.Trim(), true))
-                .Where(e => !string.IsNullOrEmpty(e))
-                .ToList();
-
             ItemsViewSource.View.Refresh();
         }
 
 
+        /// <summary>
+        /// 検索ボックスコンポーネント
+        /// </summary>
+        public class CommandSearchBoxComponent : ISearchBoxComponent
+        {
+            private readonly SettingItemCommandControl _self;
+
+            public CommandSearchBoxComponent(SettingItemCommandControl self)
+            {
+                _self = self;
+            }
+
+            public HistoryStringCollection? History { get; } = new HistoryStringCollection();
+
+            public bool IsIncrementalSearchEnabled => Config.Current.System.IsIncrementalSearchEnabled;
+
+            public void Search(string keyword) => _self.SearchKeyword = keyword;
+        }
     }
+
+
 }

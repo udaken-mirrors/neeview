@@ -16,14 +16,13 @@ namespace NeeView.Setting
     public class SettingWindowViewModel : BindableBase
     {
         private SettingWindowModel _model;
-        private string _searchKeyword = "";
-        private SettingPage? _currentPage;
-        private SettingPage? _lastPage;
 
 
         public SettingWindowViewModel(SettingWindowModel model)
         {
             _model = model;
+
+            _model.SubscribePropertyChanged(nameof(_model.CurrentPage), (s, e) => RaisePropertyChanged(nameof(CurrentPage)));
         }
 
 
@@ -33,56 +32,16 @@ namespace NeeView.Setting
             set { SetProperty(ref _model, value); }
         }
 
-        public bool IsSearchPageSelected
-        {
-            get { return _currentPage == _model.SearchPage; }
-        }
+        public SearchBoxModel SearchBoxModel => _model.SearchBoxModel;
 
-        public string SearchKeyword
-        {
-            get { return _searchKeyword; }
-            set
-            {
-                if (SetProperty(ref _searchKeyword, value))
-                {
-                    if (!string.IsNullOrWhiteSpace(_searchKeyword))
-                    {
-                        _model.ClearPageContentCache();
-                        _model.UpdateSearchPage(_searchKeyword);
-                        CurrentPage = _model.SearchPage;
-                    }
-                    else
-                    {
-                        if (IsSearchPageSelected && _lastPage != null)
-                        {
-                            _lastPage.IsSelected = true;
-                        }
-                    }
-                }
-            }
-        }
+        public SettingPage? CurrentPage => _model.CurrentPage;
 
-        public SettingPage? CurrentPage
-        {
-            get { return _currentPage; }
-            set
-            {
-                if (SetProperty(ref _currentPage, value))
-                {
-                    _model.SetSelectedPage(_currentPage);
-                }
-            }
-        }
+        public bool IsSearchPageSelected => _model.IsSearchPageSelected;
 
 
         public void SelectedItemChanged(SettingPage settingPage)
         {
-            if (settingPage != null)
-            {
-                CurrentPage = settingPage;
-                _lastPage = settingPage;
-                SearchKeyword = "";
-            }
+            _model.SelectedItemChanged(settingPage);
         }
     }
 }

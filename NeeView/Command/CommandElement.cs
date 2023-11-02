@@ -1,4 +1,5 @@
 ﻿using NeeLaboratory.ComponentModel;
+using NeeLaboratory.IO.Search;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -67,7 +68,7 @@ namespace NeeView
         [AliasName] Window,
     }
 
-    public abstract class CommandElement
+    public abstract class CommandElement : ISearchItem
     {
         public static CommandElement None { get; } = new NoneCommand();
 
@@ -227,8 +228,16 @@ namespace NeeView
             set => ParameterSource?.Set(value);
         }
 
-
         public CommandElement? Share { get; private set; }
+
+        #region ISeatchItem
+        public bool IsDirectory => false;
+        public bool IsPushPin => false;
+        public string SearchName => GetSearchText();
+        public string NormalizedUnitName => StringUtils.ToNormalizedWord(SearchName, false);
+        public string NormalizedFuzzyName => StringUtils.ToNormalizedWord(SearchName, true);
+        public DateTime DateTime => default;
+        #endregion
 
         public CommandElement SetShare(CommandElement share)
         {
