@@ -95,7 +95,7 @@ namespace NeeView
             var result = _component.Analyze(keyword);
             KeywordErrorMessage = result.Exception?.Message;
 
-            if (result.IsSuccess && result.Keys.Any())
+            if (result.IsSuccess)
             {
                 IncrementalSearch();
             }
