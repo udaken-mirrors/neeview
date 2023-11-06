@@ -1,5 +1,6 @@
 ﻿using NeeLaboratory.ComponentModel;
 using NeeLaboratory.IO.Search;
+using NeeLaboratory.IO.Search.FileNode;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -25,10 +26,14 @@ namespace NeeView
         private string _searchKeyword = "";
         private BookHistory? _selectedItem;
         private bool _isEnabled;
-
+        private readonly Searcher _searcher;
 
         private HistoryList()
         {
+            var searchContext = new SearchContext();
+            searchContext.AddProfile(new DateSearchProfile());
+            _searcher = new Searcher(searchContext);
+
             _bookHub = BookHub.Current;
 
             BookOperation.Current.BookChanged += BookOperation_BookChanged;
@@ -217,9 +222,7 @@ namespace NeeView
             {
                 try
                 {
-                    var searcher = new SearchCore();
-                    var options = new SearchOption();
-                    items = searcher.Search(_searchKeyword, options, items, token).Cast<BookHistory>().ToList();
+                    items = _searcher.Search(_searchKeyword, items, token).Cast<BookHistory>().ToList();
                 }
                 catch (OperationCanceledException)
                 {
@@ -359,6 +362,18 @@ namespace NeeView
         }
 
 
+        public SearchKeywordAnalyzeResult SearchKeywordAnalyze(string keyword)
+        {
+            try
+            {
+                return new SearchKeywordAnalyzeResult(_searcher.Analyze(keyword));
+            }
+            catch (Exception ex)
+            {
+                return new SearchKeywordAnalyzeResult(ex);
+            }
+        }
+
 
         /// <summary>
         /// 検索ボックスコンポーネント
@@ -375,6 +390,8 @@ namespace NeeView
             public HistoryStringCollection? History => BookHistoryCollection.Current.BookHistorySearchHistory;
 
             public bool IsIncrementalSearchEnabled => Config.Current.System.IsIncrementalSearchEnabled;
+
+            public SearchKeywordAnalyzeResult Analyze(string keyword) => _self.SearchKeywordAnalyze(keyword);
 
             public void Search(string keyword) => _self.SearchKeyword = keyword;
         }

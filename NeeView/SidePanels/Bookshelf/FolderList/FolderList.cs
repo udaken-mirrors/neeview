@@ -33,8 +33,6 @@ namespace NeeView
     /// </summary>
     public abstract partial class FolderList : BindableBase, IDisposable
     {
-        private static readonly SearchKeyAnalyzer _searchKeyAnalyzer = new();
-
         #region IsMoving (static)
 
         private static readonly ReferenceCounter _isMovingCount = new();
@@ -483,6 +481,23 @@ namespace NeeView
 
 
         #region Search
+
+        /// <summary>
+        /// 検索キーワードチェック
+        /// </summary>
+        /// <param name="keyword"></param>
+        /// <returns></returns>
+        public SearchKeywordAnalyzeResult SearchKeywordAnalyze(string keyword)
+        {
+            try
+            {
+                return new SearchKeywordAnalyzeResult(_searchEngine.Analyze(keyword));
+            }
+            catch (Exception ex)
+            {
+                return new SearchKeywordAnalyzeResult(ex);
+            }
+        }
 
         /// <summary>
         /// 検索更新

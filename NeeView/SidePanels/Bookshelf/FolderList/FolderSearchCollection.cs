@@ -8,6 +8,8 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Data;
+using NeeLaboratory.IO.Search.FileSearch;
+using NeeLaboratory.IO.Search.FileNode;
 
 namespace NeeView
 {
@@ -17,12 +19,12 @@ namespace NeeView
     /// </summary>
     public class FolderSearchCollection : FolderCollection, IDisposable
     {
-        private readonly NeeLaboratory.IO.Search.SearchResultWatcher _searchResult;
+        private readonly SearchResultWatcher _searchResult;
         private readonly FolderCollectionEngine? _engine;
         private readonly bool _isWatchSearchResult;
 
 
-        public FolderSearchCollection(QueryPath path, NeeLaboratory.IO.Search.SearchResultWatcher searchResult, bool isWatchSearchResult, bool isOverlayEnabled) : base(path, isOverlayEnabled)
+        public FolderSearchCollection(QueryPath path, SearchResultWatcher searchResult, bool isWatchSearchResult, bool isOverlayEnabled) : base(path, isOverlayEnabled)
         {
             if (searchResult == null) throw new ArgumentNullException(nameof(searchResult));
             Debug.Assert(path.Search == searchResult.Keyword);
@@ -97,20 +99,20 @@ namespace NeeView
             _engine?.RequestRename(oldPath, path);
         }
 
-        private void SearchResult_NodeChanged(object? sender, NeeLaboratory.IO.Search.SearchResultChangedEventArgs e)
+        private void SearchResult_NodeChanged(object? sender, SearchResultChangedEventArgs e)
         {
             if (_disposedValue) return;
 
             switch (e.Action)
             {
-                case NeeLaboratory.IO.Search.NodeChangedAction.Add:
+                case NodeChangedAction.Add:
                     RequestCreate(new QueryPath(e.Content.Path));
                     break;
-                case NeeLaboratory.IO.Search.NodeChangedAction.Remove:
+                case NodeChangedAction.Remove:
                     RequestDelete(new QueryPath(e.Content.Path));
                     break;
-                case NeeLaboratory.IO.Search.NodeChangedAction.Rename:
-                    var rename = (NeeLaboratory.IO.Search.SearchResultRenamedEventArgs)e;
+                case NodeChangedAction.Rename:
+                    var rename = (SearchResultRenamedEventArgs)e;
                     RequestRename(new QueryPath(rename.OldPath), new QueryPath(e.Content.Path));
                     break;
                 default:
@@ -122,7 +124,7 @@ namespace NeeView
         /// <summary>
         /// 検索結果からFolderItem作成
         /// </summary>
-        private FolderItem? CreateFolderItem(NeeLaboratory.IO.Search.NodeContent nodeContent)
+        private FolderItem? CreateFolderItem(NodeContent nodeContent)
         {
             if (nodeContent.FileInfo.IsDirectory)
             {
@@ -134,7 +136,7 @@ namespace NeeView
             }
         }
 
-        private FolderItem CreateFolderItemDirectory(NeeLaboratory.IO.Search.NodeContent nodeContent)
+        private FolderItem CreateFolderItemDirectory(NodeContent nodeContent)
         {
             return new FileFolderItem(_isOverlayEnabled)
             {
@@ -149,7 +151,7 @@ namespace NeeView
             };
         }
 
-        private FolderItem? CreateFolderItemFile(NeeLaboratory.IO.Search.NodeContent nodeContent)
+        private FolderItem? CreateFolderItemFile(NodeContent nodeContent)
         {
             if (FileShortcut.IsShortcut(nodeContent.Path))
             {

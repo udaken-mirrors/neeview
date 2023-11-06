@@ -1,5 +1,6 @@
 ﻿using NeeLaboratory;
 using NeeLaboratory.ComponentModel;
+using NeeLaboratory.IO.Search;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -359,6 +360,18 @@ namespace NeeView
             }
         }
 
+        public SearchKeywordAnalyzeResult SearchKeywordAnalyze(string keyword)
+        {
+            try
+            {
+                return new SearchKeywordAnalyzeResult(_book?.Pages.SearchKeywordAnalyze(keyword) ?? Array.Empty<SearchKey>());
+            }
+            catch (Exception ex)
+            {
+                return new SearchKeywordAnalyzeResult(ex);
+            }
+        }
+
 
         /// <summary>
         /// 検索ボックスコンポーネント
@@ -375,6 +388,8 @@ namespace NeeView
             public HistoryStringCollection? History => BookHistoryCollection.Current.PageListSearchHistory;
 
             public bool IsIncrementalSearchEnabled => Config.Current.System.IsIncrementalSearchEnabled;
+
+            public SearchKeywordAnalyzeResult Analyze(string keyword) => _self.SearchKeywordAnalyze(keyword);
 
             public void Search(string keyword) => _self.SetSearchKeyword(keyword);
         }

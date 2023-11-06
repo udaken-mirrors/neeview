@@ -1,5 +1,7 @@
 ﻿using NeeLaboratory.IO.Search;
+using NeeLaboratory.IO.Search.FileSearch;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
@@ -22,6 +24,11 @@ namespace NeeView
 
         // Methods
 
+        public IEnumerable<SearchKey> Analyze(string keyword)
+        {
+            return SearchEngine.DefaultSearcher.Analyze(keyword);
+        }
+
         public async Task<SearchResultWatcher> SearchAsync(string path, string keyword, CancellationToken token)
         {
             token.ThrowIfCancellationRequested();
@@ -30,11 +37,7 @@ namespace NeeView
             {
                 var searchEngine = GetSearchEngine(path, IncludeSubdirectories);
                 searchEngine.CancelSearch();
-                var option = new SearchOption()
-                {
-                    AllowFolder = true,
-                };
-                var result = await searchEngine.SearchAsync(keyword, option, token);
+                var result = await searchEngine.SearchAsync(keyword, token);
                 return result;
             }
             catch (OperationCanceledException)

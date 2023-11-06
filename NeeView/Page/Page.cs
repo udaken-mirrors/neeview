@@ -150,16 +150,6 @@ namespace NeeView
         /// </summary>
         public bool IsDeleted => ArchiveEntry.IsDeleted;
 
-        #region ISearchItem
-
-        public bool IsDirectory => false;
-        public bool IsPushPin => false;
-        public string SearchName => EntryLastName;
-        public string NormalizedUnitName => StringUtils.ToNormalizedWord(SearchName, false);
-        public string NormalizedFuzzyName => StringUtils.ToNormalizedWord(SearchName, true);
-        public DateTime DateTime => LastWriteTime;
-
-        #endregion ISearchItem
 
         #region Thumbnail
 
@@ -253,6 +243,20 @@ namespace NeeView
         {
             return this;
         }
+
+        public SearchValue GetValue(SearchPropertyProfile profile)
+        {
+            switch (profile.Name)
+            {
+                case "text":
+                    return new StringSearchValue(EntryLastName);
+                case "date":
+                    return new DateTimeSearchValue(LastWriteTime);
+                default:
+                    throw new NotSupportedException($"Not supported SearchProperty: {profile.Name}");
+            }
+        }
+
 
         #region Page functions
 

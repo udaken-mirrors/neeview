@@ -1,6 +1,8 @@
 ﻿using NeeLaboratory.Collection;
 using NeeLaboratory.ComponentModel;
 using NeeLaboratory.Generators;
+using NeeLaboratory.IO.Search;
+using NeeLaboratory.IO.Search.FileNode;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -21,11 +23,16 @@ namespace NeeView
         private CancellationTokenSource? _sortCancellationTokenSource;
         private readonly Page _emptyPage;
         private bool _disposedValue = false;
+        private readonly Searcher _searcher;
 
 
         public BookPageCollection(List<Page> pages)
         {
             _emptyPage = CreateEmptyPage();
+
+            var searchContext = new SearchContext();
+            searchContext.AddProfile(new DateSearchProfile());
+            _searcher = new Searcher(searchContext);
 
             _sourcePages = pages;
             Pages = pages;
@@ -324,14 +331,17 @@ namespace NeeView
 
         #region ページの検索
 
+        public IEnumerable<SearchKey> SearchKeywordAnalyze(string keyword)
+        {
+            return _searcher.Analyze(keyword);
+        }
+
         private IEnumerable<Page> SelectSearchPages(IEnumerable<Page> pages, string keyword, CancellationToken token)
         {
             if (!pages.Any()) return pages;
             if (string.IsNullOrEmpty(keyword)) return pages;
 
-            var search = new NeeLaboratory.IO.Search.SearchCore();
-            var options = new NeeLaboratory.IO.Search.SearchOption();
-            return search.Search(keyword, options, pages, token).Cast<Page>();
+            return _searcher.Search(keyword, pages, token).Cast<Page>();
         }
 
         #endregion

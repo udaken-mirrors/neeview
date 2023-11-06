@@ -230,14 +230,17 @@ namespace NeeView
 
         public CommandElement? Share { get; private set; }
 
-        #region ISeatchItem
-        public bool IsDirectory => false;
-        public bool IsPushPin => false;
-        public string SearchName => GetSearchText();
-        public string NormalizedUnitName => StringUtils.ToNormalizedWord(SearchName, false);
-        public string NormalizedFuzzyName => StringUtils.ToNormalizedWord(SearchName, true);
-        public DateTime DateTime => default;
-        #endregion
+
+        public SearchValue GetValue(SearchPropertyProfile profile)
+        {
+            switch (profile.Name)
+            {
+                case "text":
+                    return new StringSearchValue(GetSearchText());
+                default:
+                    throw new NotSupportedException($"Not supported SearchProperty: {profile.Name}");
+            }
+        }
 
         public CommandElement SetShare(CommandElement share)
         {

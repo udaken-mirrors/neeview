@@ -69,8 +69,7 @@ namespace NeeView.Setting
 
         private int _commandTableChangeCount;
         private readonly ObservableCollection<CommandItem> _commandItems;
-        private readonly SearchOption _searchOptions = new();
-        private readonly SearchCore _search = new();
+        private readonly Searcher _search = new Searcher(new SearchContext());
         private string _searchKeyword = "";
 
         public SettingItemCommandControl()
@@ -237,7 +236,7 @@ namespace NeeView.Setting
             {
                 var item = (CommandItem)eventArgs.Item;
                 var commands = new SingleEnumerableValue<CommandElement>(item.Command);
-                var result = _search.Search(_searchKeyword, _searchOptions, commands, CancellationToken.None);
+                var result = _search.Search(_searchKeyword, commands, CancellationToken.None);
                 eventArgs.Accepted = result.Any();
             }
             catch (Exception ex)
@@ -534,6 +533,17 @@ namespace NeeView.Setting
             ItemsViewSource.View.Refresh();
         }
 
+        private SearchKeywordAnalyzeResult SearchKeywordAnalyze(string keyword)
+        {
+            try
+            {
+                return new SearchKeywordAnalyzeResult(_search.Analyze(keyword));
+            }
+            catch (Exception ex)
+            {
+                return new SearchKeywordAnalyzeResult(ex);
+            }
+        }
 
         /// <summary>
         /// 検索ボックスコンポーネント
@@ -551,8 +561,11 @@ namespace NeeView.Setting
 
             public bool IsIncrementalSearchEnabled => Config.Current.System.IsIncrementalSearchEnabled;
 
+            public SearchKeywordAnalyzeResult Analyze(string keyword) => _self.SearchKeywordAnalyze(keyword);
+
             public void Search(string keyword) => _self.SearchKeyword = keyword;
         }
+
     }
 
 

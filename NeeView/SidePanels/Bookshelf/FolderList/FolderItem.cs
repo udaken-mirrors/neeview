@@ -234,18 +234,19 @@ namespace NeeView
             set { SetProperty(ref _isVisible, value); }
         }
 
-        #region ISearchItem
-        public bool IsPushPin => false;
 
-        public string SearchName => this.Name ?? "";
-
-        public string NormalizedUnitName => StringUtils.ToNormalizedWord(SearchName, false);
-
-        public string NormalizedFuzzyName => StringUtils.ToNormalizedWord(SearchName, true);
-
-        public DateTime DateTime => LastWriteTime;
-
-        #endregion
+        public SearchValue GetValue(SearchPropertyProfile profile)
+        {
+            switch (profile.Name)
+            {
+                case "text":
+                    return new StringSearchValue(this.Name ?? "");
+                case "date":
+                    return new DateTimeSearchValue(LastWriteTime);
+                default:
+                    throw new NotSupportedException($"Not supported SearchProperty: {profile.Name}");
+            }
+        }
 
         // TODO: IHasPageなのに nullを返すのはおかしいのでダミーで対応？
         public virtual Page? GetPage() => null;

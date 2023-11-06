@@ -350,6 +350,8 @@ namespace NeeView
 
             public bool IsIncrementalSearchEnabled => Config.Current.System.IsIncrementalSearchEnabled;
 
+            public SearchKeywordAnalyzeResult Analyze(string keyword) => _self.SearchKeywordAnalyze(keyword);
+
             public void Search(string keyword) => _self.RequestSearchPlace(keyword, false);
         }
 

@@ -1,4 +1,5 @@
-﻿using NeeLaboratory.IO.Search;
+﻿using NeeLaboratory.IO.Search.FileSearch;
+using NeeLaboratory.IO.Search.FileNode;
 using NeeView.IO;
 using System;
 using System.Collections.Generic;
@@ -8,6 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using NeeLaboratory.IO.Search;
 
 namespace NeeView
 {
@@ -16,6 +18,8 @@ namespace NeeView
     /// </summary>
     public class SearchEngine : IDisposable
     {
+        public static NodeSearcher DefaultSearcher { get; } = new NodeSearcher();
+
         /// <summary>
         /// インデックスフィルタ用無効パス
         /// </summary>
@@ -29,7 +33,7 @@ namespace NeeView
         /// <summary>
         /// 検索エンジン
         /// </summary>
-        private readonly NeeLaboratory.IO.Search.SearchEngine _engine;
+        private readonly NeeLaboratory.IO.Search.FileSearch.SearchEngine _engine;
 
 
 
@@ -39,9 +43,9 @@ namespace NeeView
             IncludeSubdirectories = includeSubdirectories;
 
             ////Debug.WriteLine($"SearchEngine: {path}");
-            _engine = new NeeLaboratory.IO.Search.SearchEngine();
+            _engine = new NeeLaboratory.IO.Search.FileSearch.SearchEngine();
             _engine.Context.NodeFilter = NodeFilter;
-            _engine.SetSearchAreas(new List<SearchArea> { new SearchArea(path, includeSubdirectories) });
+            _engine.SetSearchAreas(new List<NodeArea> { new NodeArea(path, includeSubdirectories) });
         }
 
 
@@ -104,14 +108,18 @@ namespace NeeView
             return true;
         }
 
-        public async Task<SearchResultWatcher> SearchAsync(string keyword, NeeLaboratory.IO.Search.SearchOption? option, CancellationToken token)
+        public IEnumerable<SearchKey> Analyze(string keyword)
+        {
+            return _engine.Analyze(keyword);
+        }
+
+        public async Task<SearchResultWatcher> SearchAsync(string keyword, CancellationToken token)
         {
             token.ThrowIfCancellationRequested();
             ThrowIfDisposed();
 
             // 検索
-            option = option ?? new NeeLaboratory.IO.Search.SearchOption();
-            var result = await _engine.SearchAsync(keyword.Trim(), option, token);
+            var result = await _engine.SearchAsync(keyword.Trim(), token);
 
             // 監視開始
             var watcher = new SearchResultWatcher(_engine, result);

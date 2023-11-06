@@ -36,16 +36,17 @@ namespace NeeView.Setting
 
             public SettingItem Item { get; }
 
-            #region ISearchItem
 
-            public bool IsDirectory => false;
-            public bool IsPushPin => false;
-            public string SearchName => GetSearchText();
-            public string NormalizedUnitName => StringUtils.ToNormalizedWord(SearchName, false);
-            public string NormalizedFuzzyName => StringUtils.ToNormalizedWord(SearchName, true);
-            public DateTime DateTime => default;
-
-            #endregion
+            public SearchValue GetValue(SearchPropertyProfile profile)
+            {
+                switch (profile.Name)
+                {
+                    case "text":
+                        return new StringSearchValue(GetSearchText());
+                    default:
+                        throw new NotSupportedException($"Not supported SearchProperty: {profile.Name}");
+                }
+            }
 
             public string GetSearchText()
             {
@@ -61,7 +62,7 @@ namespace NeeView.Setting
         private string _searchKeyword = "";
         private SettingPage? _currentPage;
         private SettingPage? _lastPage;
-
+        private readonly Searcher _searcher;
 
         public SettingWindowModel()
         {
@@ -86,6 +87,8 @@ namespace NeeView.Setting
             }
 
             _records = CreateSettingItemRecordList(_pages);
+
+            _searcher = new Searcher(new SearchContext());
 
             this.SearchBoxModel = new SearchBoxModel(new SettingWindowSearchBoxComponent(this));
         }
@@ -218,13 +221,10 @@ namespace NeeView.Setting
 
         public void UpdateSearchPage(string keyword)
         {
-            var options = new SearchOption();
-            var search = new SearchCore();
-
             List<SettingItemRecord> records;
             try
             {
-                records = search.Search(keyword, options, _records, CancellationToken.None).Cast<SettingItemRecord>().ToList();
+                records = _searcher.Search(keyword, _records, CancellationToken.None).Cast<SettingItemRecord>().ToList();
             }
             catch (Exception ex)
             {
@@ -251,6 +251,18 @@ namespace NeeView.Setting
             SearchPage.SetItems(items);
         }
 
+        public SearchKeywordAnalyzeResult SearchKeywordAnalyze(string keyword)
+        {
+            try
+            {
+                return new SearchKeywordAnalyzeResult(_searcher.Analyze(keyword));
+            }
+            catch (Exception ex)
+            {
+                return new SearchKeywordAnalyzeResult(ex);
+            }
+        }
+
 
         /// <summary>
         /// 検索ボックスコンポーネント
@@ -267,6 +279,8 @@ namespace NeeView.Setting
             public HistoryStringCollection? History { get; } = new HistoryStringCollection();
 
             public bool IsIncrementalSearchEnabled => Config.Current.System.IsIncrementalSearchEnabled;
+
+            public SearchKeywordAnalyzeResult Analyze(string keyword) => _self.SearchKeywordAnalyze(keyword);
 
             public void Search(string keyword) => _self.SearchKeyword = keyword;
         }

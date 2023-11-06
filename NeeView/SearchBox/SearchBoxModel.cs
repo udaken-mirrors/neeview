@@ -3,14 +3,13 @@ using NeeLaboratory.IO.Search;
 using NeeLaboratory.Windows.Input;
 using System;
 using System.ComponentModel;
+using System.Linq;
 
 namespace NeeView
 {
     [NotifyPropertyChanged]
     public partial class SearchBoxModel : INotifyPropertyChanged
     {
-        private static readonly SearchKeyAnalyzer _searchKeyAnalyzer = new();
-
         private string? _keyword;
         private string? _keywordErrorMessage;
         private RelayCommand _searchCommand;
@@ -40,8 +39,7 @@ namespace NeeView
             {
                 if (SetProperty(ref _keyword, value))
                 {
-                    UpdateSearchKeywordErrorMessage();
-                    IncrementalSearch();
+                    OnKeywordChanged();
                     RaisePropertyChanged(nameof(FixedKeyword));
                 }
             }
@@ -86,6 +84,22 @@ namespace NeeView
         /// </summary>
         public RelayCommand<string> DeleteCommand => _deleteCommand;
 
+
+        /// <summary>
+        /// キーワードプロパティ変更処理
+        /// </summary>
+        private void OnKeywordChanged()
+        {
+            var keyword = FixedKeyword;
+
+            var result = _component.Analyze(keyword);
+            KeywordErrorMessage = result.Exception?.Message;
+
+            if (result.IsSuccess && result.Keys.Any())
+            {
+                IncrementalSearch();
+            }
+        }
 
         /// <summary>
         /// 検索実行
@@ -139,36 +153,6 @@ namespace NeeView
         {
             if (string.IsNullOrEmpty(keyword)) return;
             History?.Remove(keyword);
-        }
-
-        /// <summary>
-        /// 検索キーワードのフォーマットチェック
-        /// </summary>
-        public void UpdateSearchKeywordErrorMessage()
-        {
-            var keyword = FixedKeyword;
-
-            try
-            {
-                _searchKeyAnalyzer.Analyze(keyword);
-                KeywordErrorMessage = null;
-            }
-            catch (SearchKeywordOptionException ex)
-            {
-                KeywordErrorMessage = string.Format(Properties.Resources.Notice_SearchKeywordOptionError, ex.Option);
-            }
-            catch (SearchKeywordDateTimeException)
-            {
-                KeywordErrorMessage = Properties.Resources.Notice_SearchKeywordDateTimeError;
-            }
-            catch (SearchKeywordRegularExpressionException ex)
-            {
-                KeywordErrorMessage = ex.InnerException?.Message;
-            }
-            catch (Exception ex)
-            {
-                KeywordErrorMessage = ex.Message;
-            }
         }
 
         /// <summary>

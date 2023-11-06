@@ -64,18 +64,6 @@ namespace NeeView
             private set { _unit = value; }
         }
 
-        #region ISearchItem
-
-        public bool IsDirectory => false;
-        public bool IsPushPin => false;
-        public string SearchName => this.Name;
-        public string NormalizedUnitName => StringUtils.ToNormalizedWord(this.Name, false);
-        public string NormalizedFuzzyName => StringUtils.ToNormalizedWord(this.Name, true);
-        public DateTime DateTime => LastAccessTime;
-
-        #endregion ISearchItem
-
-
         public override string? ToString()
         {
             return string.IsNullOrEmpty(Path) ? base.ToString() : Path;
@@ -84,6 +72,19 @@ namespace NeeView
         public Page GetPage()
         {
             return Unit.ArchivePage;
+        }
+
+        public SearchValue GetValue(SearchPropertyProfile profile)
+        {
+            switch(profile.Name)
+            {
+                case "text":
+                    return new StringSearchValue(Name);
+                case "date":
+                    return new DateTimeSearchValue(LastAccessTime);
+                default:
+                    throw new NotSupportedException($"Not supported SearchProperty: {profile.Name}");
+            }
         }
     }
 }
