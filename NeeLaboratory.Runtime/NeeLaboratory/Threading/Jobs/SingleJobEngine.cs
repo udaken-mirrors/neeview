@@ -131,6 +131,10 @@ namespace NeeLaboratory.Threading.Jobs
         /// </summary>
         public bool IsBusy => Count > 0;
 
+        /// <summary>
+        /// エンジン自体のキャンセルトークン
+        /// </summary>
+        public CancellationToken CancellationToken => _engineCancellationTokenSource.Token;
 
 
         /// <summary>

@@ -5,9 +5,9 @@ using System.Windows;
 using System.Windows.Media;
 using System.Diagnostics;
 using NeeView.ComponentModel;
-using NeeView.Threading;
 using System.ComponentModel;
 using NeeLaboratory.Generators;
+using NeeLaboratory.Threading;
 
 namespace NeeView
 {

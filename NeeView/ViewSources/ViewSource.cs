@@ -8,7 +8,7 @@ using System.Windows;
 using System.Windows.Media;
 using NeeLaboratory.Generators;
 using NeeView.ComponentModel;
-using NeeView.Threading;
+using NeeLaboratory.Threading;
 
 namespace NeeView
 {

@@ -81,6 +81,17 @@ namespace NeeView.Collections.Generic
         {
             return collection.Select((v, i) => (v, i));
         }
+
+        /// <summary>
+        /// 重複要素存在チェック
+        /// </summary>
+        /// <remarks>https://blog.beachside.dev/entry/2016/06/10/210000</remarks>
+        /// <param name="source"></param>
+        /// <returns></returns>
+        public static bool ContainsDuplicate(this IEnumerable<string> source)
+        {
+            return source.GroupBy(i => i).SelectMany(g => g.Skip(1)).Any();
+        }
     }
 
     /// <summary>

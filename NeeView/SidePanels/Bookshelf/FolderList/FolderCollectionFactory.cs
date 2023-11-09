@@ -12,10 +12,10 @@ namespace NeeView
     public class FolderCollectionFactory
     {
         private readonly bool _isOverlayEnabled;
-        private readonly FolderSearchEngine? _searchEngine;
+        private readonly FileSearchEngineProxy? _searchEngine;
 
 
-        public FolderCollectionFactory(FolderSearchEngine? searchEngine, bool isOverlayEnabled)
+        public FolderCollectionFactory(FileSearchEngineProxy? searchEngine, bool isOverlayEnabled)
         {
             _searchEngine = searchEngine;
             _isOverlayEnabled = isOverlayEnabled;

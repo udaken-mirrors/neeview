@@ -8,8 +8,6 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Data;
-using NeeLaboratory.IO.Search.FileSearch;
-using NeeLaboratory.IO.Search.FileNode;
 
 namespace NeeView
 {
@@ -19,12 +17,12 @@ namespace NeeView
     /// </summary>
     public class FolderSearchCollection : FolderCollection, IDisposable
     {
-        private readonly SearchResultWatcher _searchResult;
+        private readonly FileSearchResultWatcher _searchResult;
         private readonly FolderCollectionEngine? _engine;
         private readonly bool _isWatchSearchResult;
 
 
-        public FolderSearchCollection(QueryPath path, SearchResultWatcher searchResult, bool isWatchSearchResult, bool isOverlayEnabled) : base(path, isOverlayEnabled)
+        public FolderSearchCollection(QueryPath path, FileSearchResultWatcher searchResult, bool isWatchSearchResult, bool isOverlayEnabled) : base(path, isOverlayEnabled)
         {
             if (searchResult == null) throw new ArgumentNullException(nameof(searchResult));
             Debug.Assert(path.Search == searchResult.Keyword);
@@ -73,7 +71,7 @@ namespace NeeView
 
             if (_isWatchSearchResult)
             {
-                _searchResult.SearchResultChanged += SearchResult_NodeChanged;
+                _searchResult.CollectionChanged += SearchResult_CollectionChanged;
             }
         }
 
@@ -99,34 +97,36 @@ namespace NeeView
             _engine?.RequestRename(oldPath, path);
         }
 
-        private void SearchResult_NodeChanged(object? sender, SearchResultChangedEventArgs e)
+
+        private void SearchResult_CollectionChanged(object? sender, CollectionChangedEventArgs<FileItem> e)
         {
             if (_disposedValue) return;
 
             switch (e.Action)
             {
-                case NodeChangedAction.Add:
-                    RequestCreate(new QueryPath(e.Content.Path));
+                case CollectionChangedAction.Add:
+                    if (e.Item is null) throw new ArgumentException("e.Item is null");
+                    Trace($"Add: {e.Item}");
+                    RequestCreate(new QueryPath(e.Item.Path));
                     break;
-                case NodeChangedAction.Remove:
-                    RequestDelete(new QueryPath(e.Content.Path));
+
+                case CollectionChangedAction.Remove:
+                    Trace($"Remove: {e.Item}");
+                    if (e.Item is null) throw new ArgumentException("e.Item is null");
+                    RequestDelete(new QueryPath(e.Item.Path));
                     break;
-                case NodeChangedAction.Rename:
-                    var rename = (SearchResultRenamedEventArgs)e;
-                    RequestRename(new QueryPath(rename.OldPath), new QueryPath(e.Content.Path));
-                    break;
+
                 default:
                     throw new NotSupportedException();
             }
         }
 
-
         /// <summary>
         /// 検索結果からFolderItem作成
         /// </summary>
-        private FolderItem? CreateFolderItem(NodeContent nodeContent)
+        private FolderItem? CreateFolderItem(FileItem nodeContent)
         {
-            if (nodeContent.FileInfo.IsDirectory)
+            if (nodeContent.IsDirectory)
             {
                 return CreateFolderItemDirectory(nodeContent);
             }
@@ -136,7 +136,7 @@ namespace NeeView
             }
         }
 
-        private FolderItem CreateFolderItemDirectory(NodeContent nodeContent)
+        private FolderItem CreateFolderItemDirectory(FileItem nodeContent)
         {
             return new FileFolderItem(_isOverlayEnabled)
             {
@@ -144,14 +144,14 @@ namespace NeeView
                 Place = Place,
                 Name = Path.GetFileName(nodeContent.Path),
                 TargetPath = new QueryPath(nodeContent.Path),
-                LastWriteTime = nodeContent.FileInfo.LastWriteTime,
+                LastWriteTime = nodeContent.LastWriteTime,
                 Length = -1,
                 Attributes = FolderItemAttribute.Directory,
                 IsReady = true
             };
         }
 
-        private FolderItem? CreateFolderItemFile(NodeContent nodeContent)
+        private FolderItem? CreateFolderItemFile(FileItem nodeContent)
         {
             if (FileShortcut.IsShortcut(nodeContent.Path))
             {
@@ -168,8 +168,8 @@ namespace NeeView
                     Place = Place,
                     Name = Path.GetFileName(nodeContent.Path),
                     TargetPath = new QueryPath(nodeContent.Path),
-                    LastWriteTime = nodeContent.FileInfo.LastWriteTime,
-                    Length = nodeContent.FileInfo.Size,
+                    LastWriteTime = nodeContent.LastWriteTime,
+                    Length = nodeContent.Size,
                     IsReady = true
                 };
                 if (archiveType == ArchiverType.PlaylistArchiver)
@@ -215,5 +215,12 @@ namespace NeeView
             base.Dispose(disposing);
         }
         #endregion
+
+
+        [Conditional("LOCAL_DEBUG")]
+        private void Trace(string s, params object[] args)
+        {
+            Debug.WriteLine($"{this.GetType().Name}: {string.Format(s, args)}");
+        }
     }
 }

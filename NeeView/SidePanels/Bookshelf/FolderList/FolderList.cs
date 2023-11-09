@@ -70,7 +70,7 @@ namespace NeeView
         /// <summary>
         /// 検索エンジン
         /// </summary>
-        private readonly FolderSearchEngine _searchEngine;
+        private readonly FileSearchEngineProxy _searchEngine;
 
         // フォルダーコレクション生成
         private readonly FolderCollectionFactory _folderCollectionFactory;
@@ -102,7 +102,7 @@ namespace NeeView
         {
             _folderListConfig = folderListConfig;
 
-            _searchEngine = new FolderSearchEngine();
+            _searchEngine = new FileSearchEngineProxy();
 
             _folderCollectionFactory = new FolderCollectionFactory(_searchEngine, isOverlayEnabled);
 
@@ -586,6 +586,11 @@ namespace NeeView
                 select = null;
             }
 
+            // コレクション生成中ならばキャンセル
+            _updateFolderCancellationTokenSource?.Cancel();
+            _updateFolderCancellationTokenSource?.Dispose();
+            _updateFolderCancellationTokenSource = new CancellationTokenSource();
+            var token = _updateFolderCancellationTokenSource.Token;
 
             // 更新が必要であれば、新しいFolderListBoxを作成する
             if (CheckFolderListUpdateIfNecessary(path, options))
@@ -596,7 +601,7 @@ namespace NeeView
                     _isDirty = false;
 
                     // FolderCollection 更新
-                    var collection = await CreateFolderCollectionAsync(path, true);
+                    var collection = await CreateFixedFolderCollectionAsync(path, true, token);
                     if (collection != null)
                     {
                         this.FolderCollection = collection;
@@ -959,17 +964,13 @@ namespace NeeView
         /// <summary>
         /// コレクション作成
         /// </summary>
-        public async Task<FolderCollection?> CreateFolderCollectionAsync(QueryPath path, bool isForce)
+        public async Task<FolderCollection?> CreateFixedFolderCollectionAsync(QueryPath path, bool isForce, CancellationToken token)
         {
             if (_disposedValue) return null;
 
             try
             {
                 _busyCount.Increment();
-                _updateFolderCancellationTokenSource?.Cancel();
-                _updateFolderCancellationTokenSource?.Dispose();
-                _updateFolderCancellationTokenSource = new CancellationTokenSource();
-                var token = _updateFolderCancellationTokenSource.Token;
 
                 var collection = await CreateFolderCollectionAsync(path, isForce, token);
                 if (collection != null && !token.IsCancellationRequested)
@@ -1009,16 +1010,8 @@ namespace NeeView
                 return null;
             }
 
-            if (path.Search != null && _folderCollection is FolderSearchCollection && _folderCollection.Place.FullPath == path.FullPath)
-            {
-                ////Debug.WriteLine($"SearchEngine: Cancel");
-                _searchEngine.CancelSearch();
-            }
-            else
-            {
-                ////Debug.WriteLine($"SearchEngine: Reset");
-                _searchEngine.Reset();
-            }
+            // 場所が変更された場合は検索初期化
+            _searchEngine.ResetIfConditionChanged(path.SimplePath);
 
             return await _folderCollectionFactory.CreateFolderCollectionAsync(path, true, IsSearchIncludeSubdirectories, token);
         }

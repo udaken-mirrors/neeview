@@ -2,7 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace NeeView.Threading
+namespace NeeLaboratory.Threading
 {
     /// <summary>
     /// async な文脈での lock を提供します．
