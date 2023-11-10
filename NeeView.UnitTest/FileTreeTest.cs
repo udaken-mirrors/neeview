@@ -8,6 +8,7 @@ namespace NeeLaboratory.IO.NodesTest
 {
     public class FileTreeTest
     {
+#pragma warning disable CS0414 // フィールドが割り当てられていますが、値は使用されていません
         private static string RootPath { get; } = @"E:\Work\Labo\サンプル\フォルダー、サブフォルダーx3";
 
         private static readonly string _folderSource = @"TestFolders";
@@ -22,6 +23,7 @@ namespace NeeLaboratory.IO.NodesTest
         private static readonly string _fileAppend1 = @"_Work\SubFolder1\append1.txt";
         private static readonly string _fileAppend2 = @"_Work\SubFolder1\append2.bin";
         private static readonly string _fileAppend2Ex = @"_Work\SubFolder1\append2.txt";
+#pragma warning restore CS0414 // フィールドが割り当てられていますが、値は使用されていません
 
 
 
@@ -79,7 +81,7 @@ namespace NeeLaboratory.IO.NodesTest
             }
         }
 
-        public async Task DumpTree(FileTree tree)
+        private async Task DumpTree(FileTree tree)
         {
             using (await tree.LockAsync(CancellationToken.None))
             {

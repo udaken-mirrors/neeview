@@ -1,6 +1,4 @@
-﻿#define LOCAL_DEBUG
-using NeeLaboratory.IO.Search;
-using System.Linq.Expressions;
+﻿using NeeLaboratory.IO.Search;
 
 namespace NeeView
 {
@@ -9,8 +7,7 @@ namespace NeeView
         public FileSearchContext(SearchValueCache cache) : base(cache)
         {
             AddProfile(new DateSearchProfile());
-            AddProfile(new FileSearchProfile());
-            AddProfile(new DateSearchProfile());
+            AddProfile(new BookSearchProfile());
         }
     }
 

@@ -1,7 +1,5 @@
 ﻿#define LOCAL_DEBUG
 using NeeLaboratory.IO.Search;
-//using NeeLaboratory.IO.Search.FileNode;
-//using NeeLaboratory.IO.Search.FileSearch;
 using System;
 using System.IO;
 
@@ -26,6 +24,11 @@ namespace NeeView
 
         public long Size => _info is System.IO.FileInfo fileInfo ? fileInfo.Length : -1;
 
+        public bool IsBookmark => BookmarkCollection.Current.Contains(Path);
+
+        public bool IsHistory => BookHistoryCollection.Current.Contains(Path);
+
+
         public SearchValue GetValue(SearchPropertyProfile profile)
         {
             switch (profile.Name)
@@ -34,8 +37,10 @@ namespace NeeView
                     return new StringSearchValue(_info.Name);
                 case "date":
                     return new DateTimeSearchValue(_info.LastWriteTime);
-                case "isdir":
-                    return new BooleanSearchValue(IsDirectory);
+                case "bookmark":
+                    return new BooleanSearchValue(IsBookmark);
+                case "history":
+                    return new BooleanSearchValue(IsHistory);
                 default:
                     throw new NotSupportedException();
             }

@@ -47,6 +47,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AnimatedImage", "AnimatedIm
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AnimatedImage.Wpf", "AnimatedImage\AnimatedImage.Wpf\AnimatedImage.Wpf.csproj", "{EE871B3D-C785-4006-A9AF-6F31262FF1B8}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NeeLaboratory.IO.Search.Test", "NeeLaboratory.IO.Search\NeeLaboratory.IO.Search.Test\NeeLaboratory.IO.Search.Test.csproj", "{0C72C88D-5A7F-4A6B-ABB6-DC756664E26F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -330,6 +332,24 @@ Global
 		{EE871B3D-C785-4006-A9AF-6F31262FF1B8}.Remote|x64.Build.0 = Release|Any CPU
 		{EE871B3D-C785-4006-A9AF-6F31262FF1B8}.Remote|x86.ActiveCfg = Release|Any CPU
 		{EE871B3D-C785-4006-A9AF-6F31262FF1B8}.Remote|x86.Build.0 = Release|Any CPU
+		{0C72C88D-5A7F-4A6B-ABB6-DC756664E26F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0C72C88D-5A7F-4A6B-ABB6-DC756664E26F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0C72C88D-5A7F-4A6B-ABB6-DC756664E26F}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{0C72C88D-5A7F-4A6B-ABB6-DC756664E26F}.Debug|x64.Build.0 = Debug|Any CPU
+		{0C72C88D-5A7F-4A6B-ABB6-DC756664E26F}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{0C72C88D-5A7F-4A6B-ABB6-DC756664E26F}.Debug|x86.Build.0 = Debug|Any CPU
+		{0C72C88D-5A7F-4A6B-ABB6-DC756664E26F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0C72C88D-5A7F-4A6B-ABB6-DC756664E26F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0C72C88D-5A7F-4A6B-ABB6-DC756664E26F}.Release|x64.ActiveCfg = Release|Any CPU
+		{0C72C88D-5A7F-4A6B-ABB6-DC756664E26F}.Release|x64.Build.0 = Release|Any CPU
+		{0C72C88D-5A7F-4A6B-ABB6-DC756664E26F}.Release|x86.ActiveCfg = Release|Any CPU
+		{0C72C88D-5A7F-4A6B-ABB6-DC756664E26F}.Release|x86.Build.0 = Release|Any CPU
+		{0C72C88D-5A7F-4A6B-ABB6-DC756664E26F}.Remote|Any CPU.ActiveCfg = Release|Any CPU
+		{0C72C88D-5A7F-4A6B-ABB6-DC756664E26F}.Remote|Any CPU.Build.0 = Release|Any CPU
+		{0C72C88D-5A7F-4A6B-ABB6-DC756664E26F}.Remote|x64.ActiveCfg = Release|Any CPU
+		{0C72C88D-5A7F-4A6B-ABB6-DC756664E26F}.Remote|x64.Build.0 = Release|Any CPU
+		{0C72C88D-5A7F-4A6B-ABB6-DC756664E26F}.Remote|x86.ActiveCfg = Release|Any CPU
+		{0C72C88D-5A7F-4A6B-ABB6-DC756664E26F}.Remote|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

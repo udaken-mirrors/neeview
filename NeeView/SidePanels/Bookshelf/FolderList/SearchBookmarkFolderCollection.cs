@@ -5,7 +5,6 @@ using System.Linq;
 using System.Threading;
 using System.Collections.Generic;
 using NeeLaboratory.IO.Search;
-using NeeLaboratory.IO.Search.FileNode;
 
 namespace NeeView
 {
@@ -20,8 +19,9 @@ namespace NeeView
             _searchKeyword = Place.Search ?? throw new ArgumentException("Search keywords are required");
             _includeSubdirectories = includeSubdirectories;
 
-            var searchContext = new SearchContext();
-            searchContext.AddProfile(new DateSearchProfile());
+            var searchContext = new SearchContext()
+                .AddProfile(new DateSearchProfile())
+                .AddProfile(new BookSearchProfile());
             _searcher = new Searcher(searchContext);
         }
 

@@ -82,6 +82,10 @@ namespace NeeView
                     return new StringSearchValue(Name);
                 case "date":
                     return new DateTimeSearchValue(LastAccessTime);
+                case "bookmark":
+                    return new BooleanSearchValue(BookmarkCollection.Current.Contains(_path));
+                case "history":
+                    return new BooleanSearchValue(true);
                 default:
                     throw new NotSupportedException($"Not supported SearchProperty: {profile.Name}");
             }
