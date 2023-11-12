@@ -109,13 +109,24 @@ namespace NeeLaboratory.IO.Nodes
                 {
                     var sw = Stopwatch.StartNew();
 
-                    if (_recurseSubdirectories)
+                    try
                     {
-                        CreateChildrenRecursive(Trunk, new DirectoryInfo(Trunk.FullName), token);
+                        if (_recurseSubdirectories)
+                        {
+                            CreateChildrenRecursive(Trunk, new DirectoryInfo(Trunk.FullName), token);
+                        }
+                        else
+                        {
+                            CreateChildrenTop(Trunk, new DirectoryInfo(Trunk.FullName), token);
+                        }
                     }
-                    else
+                    catch (AggregateException ae)
                     {
-                        CreateChildrenTop(Trunk, new DirectoryInfo(Trunk.FullName), token);
+                        var ignoreExceptions = ae.Flatten().InnerExceptions.Where(ex => ex is not OperationCanceledException);
+                        if (ignoreExceptions.Any())
+                        {
+                            throw new AggregateException(ignoreExceptions);
+                        }
                     }
 
                     sw.Stop();

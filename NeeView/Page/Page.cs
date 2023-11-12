@@ -244,7 +244,7 @@ namespace NeeView
             return this;
         }
 
-        public SearchValue GetValue(SearchPropertyProfile profile)
+        public SearchValue GetValue(SearchPropertyProfile profile, string? parameter, CancellationToken token)
         {
             switch (profile.Name)
             {
@@ -252,9 +252,37 @@ namespace NeeView
                     return new StringSearchValue(EntryLastName);
                 case "date":
                     return new DateTimeSearchValue(LastWriteTime);
+                case "meta":
+                    return new StringSearchValue(GetMetadata(parameter, token));
                 default:
                     throw new NotSupportedException($"Not supported SearchProperty: {profile.Name}");
             }
+        }
+
+        public string GetMetadata(string? key, CancellationToken token)
+        {
+            // PictureInfo 取得
+            var pictureInfo = _content.PictureInfo;
+            if (pictureInfo is null)
+            {
+                 pictureInfo = _content.LoadPictureInfoAsync(token).Result;  // ## よろしくない？
+            }
+            if (pictureInfo is null) return "";
+
+            var meta = pictureInfo.Metadata;
+            if (meta is null) return "";
+
+            // NOTE: ひとまず "tags" のみ対応
+            // TODO: すべてのパラメータに対応
+            if (key == "tags")
+            {
+                if (meta.TryGetValue(Media.Imaging.Metadata.BitmapMetadataKey.Tags, out var value))
+                {
+                    return MetadataValueTools.ToDispString(value) ?? "";
+                }
+            }
+
+            return "";
         }
 
 

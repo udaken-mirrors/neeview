@@ -23,6 +23,20 @@ namespace NeeView
             _imageType = imageType;
         }
 
+        public override async Task<PictureInfo?> LoadPictureInfoCoreAsync(CancellationToken token)
+        {
+            NVDebug.AssertMTA();
+            token.ThrowIfCancellationRequested();
+
+            var streamSource = new ArchiveEntryStreamSource(ArchiveEntry);
+            using (var stream = streamSource.OpenStream())
+            {
+                var bitmapInfo = BitmapInfo.Create(stream); // TODO: async
+                var pictureInfo = PictureInfo.Create(bitmapInfo, "AnimatedImage");
+                return await Task.FromResult(pictureInfo);
+            }
+        }
+
         public override async Task<PageSource> LoadSourceAsync(CancellationToken token)
         {
             NVDebug.AssertMTA();
@@ -53,7 +67,7 @@ namespace NeeView
                 {
                     var loader = new BitmapPageContentLoader();
                     var createPictureInfo = PictureInfo is null;
-                    var imageData = await loader.LoadAsync(streamSource, createPictureInfo, token);
+                    var imageData = await loader.LoadAsync(streamSource, createPictureInfo, true, token);
                     return imageData;
                 }
 

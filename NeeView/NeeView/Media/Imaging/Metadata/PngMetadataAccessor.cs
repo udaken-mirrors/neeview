@@ -20,7 +20,7 @@ namespace NeeView.Media.Imaging.Metadata
             [BitmapMetadataKey.Comments] = "Comment",
             [BitmapMetadataKey.Author] = "Author",
             [BitmapMetadataKey.DateTaken] = "Creation Time",
-            [BitmapMetadataKey.ApplicatoinName] = "Software",
+            [BitmapMetadataKey.ApplicationName] = "Software",
             [BitmapMetadataKey.Copyright] = "Copyright",
         };
 
@@ -101,7 +101,7 @@ namespace NeeView.Media.Imaging.Metadata
                 BitmapMetadataKey.Comments => GetPngText(_tagMap[BitmapMetadataKey.Comments]),
                 BitmapMetadataKey.Author => GetPngTextCollection(_tagMap[BitmapMetadataKey.Author]),
                 BitmapMetadataKey.DateTaken => GetTime(),
-                BitmapMetadataKey.ApplicatoinName => GetPngText(_tagMap[BitmapMetadataKey.ApplicatoinName]),
+                BitmapMetadataKey.ApplicationName => GetPngText(_tagMap[BitmapMetadataKey.ApplicationName]),
                 BitmapMetadataKey.Copyright => GetPngText(_tagMap[BitmapMetadataKey.Copyright]),
                 // NOTE: PNGメタデータテキストの Warning, Disclaimer, Source は対応項目がない
                 _ => null,

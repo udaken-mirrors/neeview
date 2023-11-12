@@ -15,6 +15,14 @@ namespace NeeView
             _pdfArchive = archiveEntry.Archiver as PdfArchiver ?? throw new InvalidOperationException();
         }
 
+        public override async Task<PictureInfo?> LoadPictureInfoCoreAsync(CancellationToken token)
+        {
+            NVDebug.AssertMTA();
+            token.ThrowIfCancellationRequested();
+
+            var pictureInfo = CreatePictureInfo(token);
+            return await Task.FromResult(pictureInfo);
+        }
 
         public override async Task<PageSource> LoadSourceAsync(CancellationToken token)
         {

@@ -8,6 +8,7 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Windows.Data;
 using System.Windows.Input;
 
@@ -231,7 +232,7 @@ namespace NeeView
         public CommandElement? Share { get; private set; }
 
 
-        public SearchValue GetValue(SearchPropertyProfile profile)
+        public SearchValue GetValue(SearchPropertyProfile profile, string? parameter, CancellationToken token)
         {
             switch (profile.Name)
             {

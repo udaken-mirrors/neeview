@@ -30,8 +30,9 @@ namespace NeeView
         {
             _emptyPage = CreateEmptyPage();
 
-            var searchContext = new SearchContext();
-            searchContext.AddProfile(new DateSearchProfile());
+            var searchContext = new SearchContext()
+                .AddProfile(new DateSearchProfile())
+                .AddProfile(new PageSearchProfile());
             _searcher = new Searcher(searchContext);
 
             _sourcePages = pages;

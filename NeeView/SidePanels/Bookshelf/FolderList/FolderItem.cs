@@ -9,6 +9,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace NeeView
@@ -235,7 +236,7 @@ namespace NeeView
         }
 
 
-        public SearchValue GetValue(SearchPropertyProfile profile)
+        public SearchValue GetValue(SearchPropertyProfile profile, string? parameter, CancellationToken token)
         {
             switch (profile.Name)
             {

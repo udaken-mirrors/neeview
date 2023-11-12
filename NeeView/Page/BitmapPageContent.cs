@@ -15,6 +15,15 @@ namespace NeeView
             _loader = new BitmapPageContentLoader();
         }
 
+        public override async Task<PictureInfo?> LoadPictureInfoCoreAsync(CancellationToken token)
+        {
+            NVDebug.AssertMTA();
+            token.ThrowIfCancellationRequested();
+
+            var streamSource = new ArchiveEntryStreamSource(ArchiveEntry);
+            var imageData = await _loader.LoadAsync(streamSource, true, false, token);
+            return imageData.PictureInfo;
+        }
 
         public override async Task<PageSource> LoadSourceAsync(CancellationToken token)
         {
@@ -24,6 +33,7 @@ namespace NeeView
             {
                 token.ThrowIfCancellationRequested();
 
+#if false
 #if DEBUG
                 if (Debugger.IsAttached)
                 {
@@ -32,12 +42,13 @@ namespace NeeView
                     NVDebug.AssertMTA();
                 }
 #endif
+#endif
 
                 var streamSource = new ArchiveEntryStreamSource(ArchiveEntry);
                 streamSource.CreateCache();
 
                 var createPictureInfo = PictureInfo is null;
-                var imageData = await _loader.LoadAsync(streamSource, createPictureInfo, token);
+                var imageData = await _loader.LoadAsync(streamSource, createPictureInfo, true, token);
                 return imageData;
             }
             catch (OperationCanceledException)

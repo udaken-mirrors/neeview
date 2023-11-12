@@ -36,7 +36,7 @@ namespace NeeView
         // Origin
         Author = (InformationCategory.Metadata << 24) | (InformationGroup.Origin << 16) | BitmapMetadataKey.Author,
         DateTaken,
-        ApplicatoinName,
+        ApplicationName,
         DateAcquired,
         Copyright,
 

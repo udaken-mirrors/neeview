@@ -1,7 +1,8 @@
-﻿#define LOCAL_DEBUG
+﻿//#define LOCAL_DEBUG
 using NeeLaboratory.IO.Search;
 using System;
 using System.IO;
+using System.Threading;
 
 namespace NeeView
 {
@@ -29,7 +30,7 @@ namespace NeeView
         public bool IsHistory => BookHistoryCollection.Current.Contains(Path);
 
 
-        public SearchValue GetValue(SearchPropertyProfile profile)
+        public SearchValue GetValue(SearchPropertyProfile profile, string? parameter, CancellationToken token)
         {
             switch (profile.Name)
             {

@@ -17,7 +17,7 @@ namespace NeeView.Media.Imaging.Metadata
         // -- Origin
         Author,
         DateTaken,
-        ApplicatoinName,
+        ApplicationName,
         DateAcquired,
         Copyright,
 

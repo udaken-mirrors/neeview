@@ -11,9 +11,14 @@ namespace NeeView
 
         public override PageType PageType => PageType.Empty;
 
+        public override async Task<PictureInfo?> LoadPictureInfoCoreAsync(CancellationToken token)
+        {
+            return await Task.FromResult(new PictureInfo(DefaultSize));
+        }
+
         public override async Task<PageSource> LoadSourceAsync(CancellationToken token)
         {
-            return await Task.FromResult(new PageSource(new EmptyPageData(), null, new PictureInfo(DefaultSize)));;
+            return await Task.FromResult(new PageSource(new EmptyPageData(), null, new PictureInfo(DefaultSize)));
         }
     }
 

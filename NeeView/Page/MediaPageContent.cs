@@ -17,6 +17,18 @@ namespace NeeView
         {
         }
 
+        public override async Task<PictureInfo?> LoadPictureInfoCoreAsync(CancellationToken token)
+        {
+            NVDebug.AssertMTA();
+            token.ThrowIfCancellationRequested();
+
+            // ArchiveFileの場合はTempFile化
+            var fileProxy = ArchiveEntry.GetFileProxy(); // TODO: async化
+            var mediaInfo = CreateMediaInfo(fileProxy.Path); // TODO: async化
+            await Task.CompletedTask;
+            var pictureInfo = mediaInfo.PictureInfo;
+            return pictureInfo;
+        }
 
         public override async Task<PageSource> LoadSourceAsync(CancellationToken token)
         {

@@ -96,7 +96,7 @@ namespace NeeView.Media.Imaging.Metadata
                 // -- Origin
                 BitmapMetadataKey.Author => GetAuthor(),
                 BitmapMetadataKey.DateTaken => GetDateTaken(),
-                BitmapMetadataKey.ApplicatoinName => GetApplicationName(),
+                BitmapMetadataKey.ApplicationName => GetApplicationName(),
                 BitmapMetadataKey.DateAcquired => GetDateAcquired(),
                 BitmapMetadataKey.Copyright => GetCopyright(),
                 // -- Camera

@@ -104,7 +104,7 @@ namespace NeeView
                 var plugin = GetPlugin() ?? throw new SusieException("Cannot found archive plugin");
 
                 byte[] buffer = plugin.ExtractArchiveEntry(Path, info.Position);
-                return new MemoryStream(buffer);
+                return new MemoryStream(buffer, 0, buffer.Length, false, true);
             }
         }
 

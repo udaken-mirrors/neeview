@@ -86,7 +86,7 @@ namespace NeeView.Media.Imaging.Metadata
                 // -- Origin
                 case BitmapMetadataKey.Author: return _metadata.Author;
                 case BitmapMetadataKey.DateTaken: return GetDateTime(policy_DateTaken);
-                case BitmapMetadataKey.ApplicatoinName: return _metadata.ApplicationName;
+                case BitmapMetadataKey.ApplicationName: return _metadata.ApplicationName;
                 case BitmapMetadataKey.DateAcquired: return GetDateTime(policy_DateAcquired);
                 case BitmapMetadataKey.Copyright: return _metadata.Copyright;
 

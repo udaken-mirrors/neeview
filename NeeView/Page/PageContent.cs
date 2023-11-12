@@ -47,9 +47,9 @@ namespace NeeView
 
 
         public event PropertyChangedEventHandler? PropertyChanged;
-        
+
         public event EventHandler? ContentChanged;
-        
+
         public event EventHandler? SizeChanged;
 
 
@@ -125,8 +125,7 @@ namespace NeeView
         public bool IsMemoryLocked => _state != PageContentState.None;
 
 
-
-        public virtual async Task LoadAsync(CancellationToken token)
+        public async Task LoadAsync(CancellationToken token)
         {
             using (await _asyncLock.LockAsync(token))
             {
@@ -137,6 +136,7 @@ namespace NeeView
 
                 try
                 {
+                    // TODO: LockAsync されているのでこの CancellationTokenSource 再生成する必要なさそう？
                     _cancellationTokenSource?.Dispose();
                     _cancellationTokenSource = new CancellationTokenSource();
                     using var linkedTokenSource = CancellationTokenSource.CreateLinkedTokenSource(_cancellationTokenSource.Token, token);
@@ -160,6 +160,22 @@ namespace NeeView
         }
 
         public abstract Task<PageSource> LoadSourceAsync(CancellationToken token);
+
+        public async Task<PictureInfo?> LoadPictureInfoAsync(CancellationToken token)
+        {
+            if (_pictureInfo is not null) return _pictureInfo;
+
+            using (await _asyncLock.LockAsync(token))
+            {
+                _pictureInfo = _pictureInfo ?? await LoadPictureInfoCoreAsync(token);
+                return _pictureInfo;
+            }
+        }
+
+        public virtual async Task<PictureInfo?> LoadPictureInfoCoreAsync(CancellationToken token)
+        {
+            return await Task.FromResult<PictureInfo?>(null);
+        }
 
         public virtual void Unload()
         {

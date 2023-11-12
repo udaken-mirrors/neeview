@@ -14,6 +14,16 @@ namespace NeeView
         {
         }
 
+        public override async Task<PictureInfo?> LoadPictureInfoCoreAsync(CancellationToken token)
+        {
+            NVDebug.AssertMTA();
+            token.ThrowIfCancellationRequested();
+
+            var drawing = LoadDrawingImage(token);
+            var pictureInfo = CreatePictureInfo(drawing, token);
+            return await Task.FromResult(pictureInfo);
+        }
+
         public override async Task<PageSource> LoadSourceAsync(CancellationToken token)
         {
             NVDebug.AssertMTA();

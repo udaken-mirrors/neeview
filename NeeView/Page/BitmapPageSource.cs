@@ -17,7 +17,7 @@ namespace NeeView
         public IBitmapPageSourceLoader? ImageDataLoader { get; }
 
 
-        public static BitmapPageSource Create(BitmapPageData data, PictureInfo? pictureInfo, IBitmapPageSourceLoader imageDataLoader)
+        public static BitmapPageSource Create(BitmapPageData? data, PictureInfo? pictureInfo, IBitmapPageSourceLoader imageDataLoader)
         {
             return new BitmapPageSource(data, null, pictureInfo, imageDataLoader);
         }

@@ -22,7 +22,7 @@ namespace NeeView
     /// RenameManager.xaml の相互作用ロジック
     /// </summary>
     [NotifyPropertyChanged]
-    public partial class RenameManager : UserControl, INotifyPropertyChanged 
+    public partial class RenameManager : UserControl, INotifyPropertyChanged
     {
         public RenameManager()
         {
@@ -150,10 +150,11 @@ namespace NeeView
             if (window is IHasRenameManager hasRenameManager)
             {
                 renameMabager = hasRenameManager.GetRenameManager();
+                Debug.Assert(renameMabager != null);
+                return renameMabager;
             }
 
-            Debug.Assert(renameMabager != null);
-            return renameMabager;
+            return null;
         }
     }
 

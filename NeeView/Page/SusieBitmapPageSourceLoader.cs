@@ -8,7 +8,7 @@ namespace NeeView
 {
     public class SusieBitmapPageSourceLoader : IBitmapPageSourceLoader
     {
-        public async Task<BitmapPageSource> LoadAsync(ArchiveEntryStreamSource streamSource, bool createPictureInfo, CancellationToken token)
+        public async Task<BitmapPageSource> LoadAsync(ArchiveEntryStreamSource streamSource, bool createPictureInfo, bool createSource, CancellationToken token)
         {
             var entry = streamSource.ArchiveEntry;
             if (!Config.Current.Image.Standard.IsAllFileSupported && !PictureProfile.Current.IsSusieSupported(entry.Link ?? entry.EntryName))
@@ -18,14 +18,8 @@ namespace NeeView
 
             try
             {
-                if (entry.IsFileSystem)
-                {
-                    return CreateImageDataSource(await LoadFromFileAsync(streamSource, token), createPictureInfo);
-                }
-                else
-                {
-                    return CreateImageDataSource(await LoadFromStreamAsync(streamSource, token), createPictureInfo);
-                }
+                var susieImage = entry.IsFileSystem ? await LoadFromFileAsync(streamSource, token) : await LoadFromStreamAsync(streamSource, token);
+                return CreateImageDataSource(susieImage, createPictureInfo, createSource);
             }
             catch (OperationCanceledException)
             {
@@ -88,7 +82,7 @@ namespace NeeView
             return result;
         }
 
-        private BitmapPageSource CreateImageDataSource(SusieImage? susieImage, bool createPictureInfo)
+        private BitmapPageSource CreateImageDataSource(SusieImage? susieImage, bool createPictureInfo, bool createSource)
         {
             if (susieImage == null || susieImage.Plugin == null || susieImage.BitmapData == null)
             {
@@ -98,7 +92,8 @@ namespace NeeView
             {
                 var streamSource = new MemoryStreamSource(susieImage.BitmapData);
                 var pictureInfo = createPictureInfo ? PictureInfo.Create(streamSource, susieImage.Plugin.Name) : null;
-                return BitmapPageSource.Create(new BitmapPageData(streamSource), pictureInfo, this);
+                var data = createSource ? new BitmapPageData(streamSource) : null;
+                return BitmapPageSource.Create(data, pictureInfo, this);
             }
         }
     }

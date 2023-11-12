@@ -6,6 +6,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.Serialization;
 using System.Text;
+using System.Threading;
 using System.Windows.Data;
 
 namespace NeeView
@@ -74,7 +75,7 @@ namespace NeeView
             return Unit.ArchivePage;
         }
 
-        public SearchValue GetValue(SearchPropertyProfile profile)
+        public SearchValue GetValue(SearchPropertyProfile profile, string? parameter, CancellationToken token)
         {
             switch(profile.Name)
             {

@@ -22,6 +22,14 @@ namespace NeeView
         public Thumbnail Thumbnail { get; } = new Thumbnail();
 
 
+        public override async Task<PictureInfo?> LoadPictureInfoCoreAsync(CancellationToken token)
+        {
+            NVDebug.AssertMTA();
+            token.ThrowIfCancellationRequested();
+
+            return await Task.FromResult(new PictureInfo(DefaultSize));
+        }
+
         public override async Task<PageSource> LoadSourceAsync(CancellationToken token)
         {
             NVDebug.AssertMTA();

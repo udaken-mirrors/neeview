@@ -37,7 +37,7 @@ namespace NeeView.Setting
             public SettingItem Item { get; }
 
 
-            public SearchValue GetValue(SearchPropertyProfile profile)
+            public SearchValue GetValue(SearchPropertyProfile profile, string? parameter, CancellationToken token)
             {
                 switch (profile.Name)
                 {

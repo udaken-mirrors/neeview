@@ -15,12 +15,12 @@ namespace NeeView
         {
         }
 
-        public async Task<BitmapPageSource> LoadAsync(ArchiveEntryStreamSource streamSource, bool createPictureInfo, CancellationToken token)
+        public async Task<BitmapPageSource> LoadAsync(ArchiveEntryStreamSource streamSource, bool createPictureInfo, bool createSource, CancellationToken token)
         {
             BitmapPageSource? imageData = null;
             foreach (var loader in CreateOrderList())
             {
-                imageData = await loader.LoadAsync(streamSource, createPictureInfo, token);
+                imageData = await loader.LoadAsync(streamSource, createPictureInfo, createSource, token);
                 if (imageData.DataState == DataState.Loaded)
                 {
                     return imageData;
