@@ -97,6 +97,11 @@ namespace NeeView
 
             _nameMap = _defaultKeys.ToDictionary(e => e.ToString().ToLower());
 
+            //foreach(var pair in _nameMap)
+            //{
+            //    Debug.WriteLine($"<tr><td>{pair.Value.ToString()}</td><td>{pair.Value.ToAliasName()}</td></tr>");
+            //}
+
 #if DEBUG
             // check
             foreach (InformationCategory category in Enum.GetValues(typeof(InformationKey)).Cast<InformationKey>().Select(e => e.ToInformationCategory()))

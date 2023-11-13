@@ -298,7 +298,8 @@ nv.Command.ToggleMediaPlay.Execute()
 &lt;h2&gt; 検索オプション&lt;/h2&gt;
 &lt;p&gt;
     検索オプション指定がない場合はAND標準検索になります("/and /text /m2"を指定したのと同じ)。&lt;br/&gt;
-    検索オプションは直後の検索単語にのみ影響します。
+    検索オプションは直後の検索単語にのみ影響します。&lt;br/&gt;
+    検索オプションは大文字小文字を区別しません。
 &lt;/p&gt;
 
 &lt;h3&gt;接続オプション&lt;/h3&gt;
@@ -314,8 +315,16 @@ nv.Command.ToggleMediaPlay.Execute()
     &lt;tr&gt;&lt;th&gt;オプション&lt;/th&gt;&lt;th&gt;説明&lt;/th&gt;&lt;th&gt;補足&lt;/th&gt;&lt;/tr&gt;
     &lt;tr&gt;&lt;td&gt;/text&lt;/td&gt;&lt;td&gt;テキスト (デフォルト)&lt;/td&gt;&lt;td&gt;文字列。ファイル名やページ名&lt;/td&gt;&lt;/tr&gt;
     &lt;tr&gt;&lt;td&gt;/date&lt;/td&gt;&lt;td&gt;日時&lt;/td&gt;&lt;td&gt;日時。最終更新日。履歴の場合は最終閲覧日&lt;/td&gt;&lt;/tr&gt;
-    &lt;tr&gt;&lt;td&gt;/bookmark&lt;/td&gt;&lt;td&gt;ブックマーク判定&lt;/td&gt;&lt;td&gt;true/false。本棚、履歴、ブックマークパネルで有効&lt;/td&gt;&lt;/tr&gt;
-    &lt;tr&gt;&lt;td&gt;/history&lt;/td&gt;&lt;td&gt;履歴登録済判定&lt;/td&gt;&lt;td&gt;true/false。本棚、履歴、ブックマークパネルで有効&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;/size&lt;/td&gt;&lt;td&gt;サイズ&lt;/td&gt;&lt;td&gt;数値。ファイル サイズ&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;/bookmark&lt;/td&gt;&lt;td&gt;ブックマーク登録済&lt;/td&gt;&lt;td&gt;フィルター。本棚、履歴、ブックマーク パネルで有効&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;/history&lt;/td&gt;&lt;td&gt;履歴登録済&lt;/td&gt;&lt;td&gt;フィルター。本棚、履歴、ブックマーク パネルで有効&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;/playlist&lt;/td&gt;&lt;td&gt;プレイリスト登録済&lt;/td&gt;&lt;td&gt;フィルター。プレイリスト パネルで有効&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;/title&lt;/td&gt;&lt;td&gt;タイトル&lt;/td&gt;&lt;td&gt;文字列。ページ情報。プレイリスト パネルで有効&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;/subject&lt;/td&gt;&lt;td&gt;件名&lt;/td&gt;&lt;td&gt;文字列。ページ情報。プレイリスト パネルで有効&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;/rating&lt;/td&gt;&lt;td&gt;評価&lt;/td&gt;&lt;td&gt;数値。ページ情報。プレイリスト パネルで有効&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;/tags&lt;/td&gt;&lt;td&gt;タグ&lt;/td&gt;&lt;td&gt;文字列。ページ情報。プレイリスト パネルで有効&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;/comments&lt;/td&gt;&lt;td&gt;コメント&lt;/td&gt;&lt;td&gt;文字列。ページ情報。プレイリスト パネルで有効&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;/p.meta.[key]&lt;/td&gt;&lt;td&gt;メタ情報&lt;/td&gt;&lt;td&gt;文字列。ページ情報。プレイリスト パネルで有効。詳細は「メタ情報」セクションを参照&lt;/td&gt;&lt;/tr&gt;
 &lt;/table&gt;
 
 &lt;h3&gt;適合オプション&lt;/h3&gt;
@@ -323,11 +332,17 @@ nv.Command.ToggleMediaPlay.Execute()
     &lt;tr&gt;&lt;th&gt;オプション&lt;/th&gt;&lt;th&gt;説明&lt;/th&gt;&lt;th&gt;補足&lt;/th&gt;&lt;/tr&gt;
     &lt;tr&gt;&lt;td&gt;/m0, /exact&lt;/td&gt;&lt;td&gt;完全一致&lt;/td&gt;&lt;td&gt; "ダブルクオートで囲むのと同じ"&lt;/td&gt;&lt;/tr&gt;
     &lt;tr&gt;&lt;td&gt;/m1, /word&lt;/td&gt;&lt;td&gt;単語一致&lt;/td&gt;&lt;td&gt; 文字の種類で単語を識別しているので精度はあまりよくない&lt;/td&gt;&lt;/tr&gt;
-    &lt;tr&gt;&lt;td&gt;/m2&lt;/td&gt;&lt;td&gt;標準 (デフォルト)&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;/m2, /fuzzy&lt;/td&gt;&lt;td&gt;標準 (デフォルト)&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
     &lt;tr&gt;&lt;td&gt;/re&lt;/td&gt;&lt;td&gt;正規表現&lt;/td&gt;&lt;td&gt;&lt;a href="https://docs.microsoft.com/ja-jp/dotnet/standard/base-types/regular-expression-language-quick-reference"&gt;.NETの正規表現&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;
     &lt;tr&gt;&lt;td&gt;/ire&lt;/td&gt;&lt;td&gt;正規表現・大文字小文字無効&lt;/td&gt;&lt;td&gt;大文字と小文字を区別しない正規表現検索を行う&lt;/td&gt;&lt;/tr&gt;
     &lt;tr&gt;&lt;td&gt;/since&lt;/td&gt;&lt;td&gt;日時指定・以後&lt;/td&gt;&lt;td&gt;指定日時以後&lt;/td&gt;&lt;/tr&gt;
     &lt;tr&gt;&lt;td&gt;/until&lt;/td&gt;&lt;td&gt;日時指定・以前&lt;/td&gt;&lt;td&gt;指定日時以前&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;/lt&lt;/td&gt;&lt;td&gt;比較演算・より小さい&lt;/td&gt;&lt;td&gt;比較演算はサイズや日付などで適切に機能する&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;/le&lt;/td&gt;&lt;td&gt;比較演算・以下&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;/eq&lt;/td&gt;&lt;td&gt;比較演算・等しい&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;/ne&lt;/td&gt;&lt;td&gt;比較演算・等しくない&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;/ge&lt;/td&gt;&lt;td&gt;比較演算・以上&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;/gt&lt;/td&gt;&lt;td&gt;比較演算・より大きい&lt;/td&gt;&lt;/tr&gt;
 &lt;/table&gt;
 
 &lt;p&gt;
@@ -355,33 +370,15 @@ nv.Command.ToggleMediaPlay.Execute()
     "/since -5day" は「過去5日以内」という意味になります。
 &lt;/p&gt;
     
+&lt;h3&gt;数値フォーマット&lt;/h3&gt;
 
-&lt;h2&gt;使用例&lt;/h2&gt;
+&lt;p&gt;
+    整数に対応しています。&lt;br/&gt;
+    また、k,K,g,G,m,M の単位表記に対応しています。小文字は 1000 倍、大文字は 1024 倍です。
+&lt;/p&gt;
 
-"ABC","DEF"のAND標準検索
 
-&lt;blockquote&gt;ABC DEF&lt;/blockquote&gt;
-
-"^ABC$"の正規表現検索
-
-&lt;blockquote&gt;/re ^ABC$&lt;/blockquote&gt;
-
-"ABC DEF"の完全一致検索
-
-&lt;blockquote&gt;"ABC DEF"&lt;/blockquote&gt;
-
-"ABC"標準検索結果に対する、"DEF"NOT単語検索
-
-&lt;blockquote&gt;ABC /not /word DEF&lt;/blockquote&gt;
-
-2019年4月に更新されたファイルの検索
-
-&lt;blockquote&gt;/since 2019-04-01 /until 2019-05-01&lt;/blockquote&gt;
-
-ブックマーク検索結果に対する、"ABC"のAND標準検索
-
-&lt;blockquote&gt;/bookmark ABC&lt;/blockquote&gt;
-
+&lt;hr/&gt;
 &lt;h2&gt;詳細&lt;/h2&gt;
 
 これまでのオプションはエイリアスされた簡易なものです。詳細な定義をここで説明します。
@@ -411,8 +408,12 @@ nv.Command.ToggleMediaPlay.Execute()
     &lt;tr&gt;&lt;th&gt;オプション&lt;/th&gt;&lt;th&gt;説明&lt;/th&gt;&lt;th&gt;型&lt;/th&gt;&lt;/tr&gt;
     &lt;tr&gt;&lt;td&gt;/p.text&lt;/td&gt;&lt;td&gt;テキスト (デフォルト)&lt;td&gt;String&lt;/td&gt;&lt;/tr&gt;
     &lt;tr&gt;&lt;td&gt;/p.date&lt;/td&gt;&lt;td&gt;日時&lt;/td&gt;&lt;td&gt;DateTime&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;/p.size&lt;/td&gt;&lt;td&gt;サイズ&lt;/td&gt;&lt;td&gt;Integer&lt;/td&gt;&lt;/tr&gt;
     &lt;tr&gt;&lt;td&gt;/p.bookmark&lt;/td&gt;&lt;td&gt;ブックマーク判定&lt;/td&gt;&lt;td&gt;Boolean&lt;/td&gt;&lt;/tr&gt;
     &lt;tr&gt;&lt;td&gt;/p.history&lt;/td&gt;&lt;td&gt;履歴登録済判定&lt;/td&gt;&lt;td&gt;Boolean&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;/p.playlist&lt;/td&gt;&lt;td&gt;プレイリスト登録済判定&lt;/td&gt;&lt;td&gt;Boolean&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;/p.rating&lt;/td&gt;&lt;td&gt;メタ情報：評価&lt;/td&gt;&lt;td&gt;Integer&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;/p.meta.[key]&lt;/td&gt;&lt;td&gt;メタ情報汎用。詳細は「メタ情報」セクションを参照&lt;/td&gt;&lt;td&gt;String&lt;/td&gt;&lt;/tr&gt;
 &lt;/table&gt;
 
 &lt;h4&gt;適合オプション (/m.)&lt;/h4&gt;
@@ -449,6 +450,7 @@ nv.Command.ToggleMediaPlay.Execute()
     &lt;tr&gt;&lt;td&gt;/not&lt;/td&gt;&lt;td&gt;/c.not&lt;/td&gt;&lt;/tr&gt;
     &lt;tr&gt;&lt;td&gt;/text&lt;/td&gt;&lt;td&gt;/p.text&lt;/td&gt;&lt;/tr&gt;
     &lt;tr&gt;&lt;td&gt;/date&lt;/td&gt;&lt;td&gt;/p.date&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;/size&lt;/td&gt;&lt;td&gt;/p.size&lt;/td&gt;&lt;/tr&gt;
     &lt;tr&gt;&lt;td&gt;/re&lt;/td&gt;&lt;td&gt;/m.re&lt;/td&gt;&lt;/tr&gt;
     &lt;tr&gt;&lt;td&gt;/ire&lt;/td&gt;&lt;td&gt;/m.ire&lt;/td&gt;&lt;/tr&gt;
     &lt;tr&gt;&lt;td&gt;/exact&lt;/td&gt;&lt;td&gt;/m.exact&lt;/td&gt;&lt;/tr&gt;
@@ -467,7 +469,122 @@ nv.Command.ToggleMediaPlay.Execute()
     &lt;tr&gt;&lt;td&gt;/until&lt;/td&gt;&lt;td&gt;/p.date /m.le&lt;/td&gt;&lt;/tr&gt;
     &lt;tr&gt;&lt;td&gt;/bookmark&lt;/td&gt;&lt;td&gt;/p.bookmark /m.eq true&lt;/td&gt;&lt;/tr&gt;
     &lt;tr&gt;&lt;td&gt;/history&lt;/td&gt;&lt;td&gt;/p.history /m.eq true&lt;/td&gt;&lt;/tr&gt;
-&lt;/table&gt;</value>
+    &lt;tr&gt;&lt;td&gt;/playlist&lt;/td&gt;&lt;td&gt;/p.playlist /m.eq true&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;/title&lt;/td&gt;&lt;td&gt;/p.meta.title&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;/subject&lt;/td&gt;&lt;td&gt;/p.meta.subject&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;/rating&lt;/td&gt;&lt;td&gt;/p.rating&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;/tags&lt;/td&gt;&lt;td&gt;/p.meta.tags&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;/comments&lt;/td&gt;&lt;td&gt;/p.meta.comments&lt;/td&gt;&lt;/tr&gt;
+&lt;/table&gt;
+
+&lt;h3&gt;メタ情報&lt;/h3&gt;
+
+&lt;p&gt;
+    メタ情報は「情報パネル」に表示されている情報です。&lt;br/&gt;
+    メタ情報検索は次のフォーマットで指定します。
+    [key] にメタ情報の項目名を指定します。得られる値は表示されているものと同等の文字列です。
+    
+    &lt;blockquote&gt;/p.meta.[key]&lt;/blockquote&gt;
+    
+    メタ情報を取得するためにファイルを読み込むため、ページ数が多い場合に結果が出るまで時間がかかる場合があります。
+&lt;/p&gt;
+
+&lt;p&gt;
+    &lt;table class="table-slim table-topless"&gt;
+        &lt;tr&gt;&lt;th&gt;[key]&lt;/th&gt;&lt;th&gt;項目&lt;/th&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;FileName&lt;/td&gt;&lt;td&gt;ファイル名&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;FilePath&lt;/td&gt;&lt;td&gt;ファイル パス&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;CreationTime&lt;/td&gt;&lt;td&gt;作成日時&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;LastWriteTime&lt;/td&gt;&lt;td&gt;更新日時&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;FileSize&lt;/td&gt;&lt;td&gt;サイズ&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;ArchivePath&lt;/td&gt;&lt;td&gt;アーカイブ パス&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;Archiver&lt;/td&gt;&lt;td&gt;アーカイバー&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;Dimensions&lt;/td&gt;&lt;td&gt;大きさ&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;HorizontalResolution&lt;/td&gt;&lt;td&gt;水平方向の解像度&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;VerticalResolution&lt;/td&gt;&lt;td&gt;垂直方向の解像度&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;BitDepth&lt;/td&gt;&lt;td&gt;ビットの深さ&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;Decoder&lt;/td&gt;&lt;td&gt;デコーダー&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;Title&lt;/td&gt;&lt;td&gt;タイトル&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;Subject&lt;/td&gt;&lt;td&gt;件名&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;Rating&lt;/td&gt;&lt;td&gt;評価&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;Tags&lt;/td&gt;&lt;td&gt;タグ&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;Comments&lt;/td&gt;&lt;td&gt;コメント&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;Author&lt;/td&gt;&lt;td&gt;作成者&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;DateTaken&lt;/td&gt;&lt;td&gt;撮影日時&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;ApplicationName&lt;/td&gt;&lt;td&gt;プログラム名&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;DateAcquired&lt;/td&gt;&lt;td&gt;取得日時&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;Copyright&lt;/td&gt;&lt;td&gt;著作権&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;CameraMaker&lt;/td&gt;&lt;td&gt;カメラ メーカー&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;CameraModel&lt;/td&gt;&lt;td&gt;カメラ モデル&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;FNumber&lt;/td&gt;&lt;td&gt;絞り値&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;ExposureTime&lt;/td&gt;&lt;td&gt;露出時間&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;ISOSpeed&lt;/td&gt;&lt;td&gt;ISO 速度&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;ExposureBias&lt;/td&gt;&lt;td&gt;露出補正&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;FocalLength&lt;/td&gt;&lt;td&gt;焦点距離&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;MaxAperture&lt;/td&gt;&lt;td&gt;最大絞り&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;MeteringMode&lt;/td&gt;&lt;td&gt;測光モード&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;SubjectDistance&lt;/td&gt;&lt;td&gt;対象の距離&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;FlashMode&lt;/td&gt;&lt;td&gt;フラッシュ モード&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;FlashEnergy&lt;/td&gt;&lt;td&gt;フラッシュ エネルギー&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;FocalLengthIn35mmFilm&lt;/td&gt;&lt;td&gt;35mm 焦点距離&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;LensMaker&lt;/td&gt;&lt;td&gt;レンズ メーカー&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;LensModel&lt;/td&gt;&lt;td&gt;レンズ モデル&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;FlashMaker&lt;/td&gt;&lt;td&gt;フラッシュ メーカー&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;FlashModel&lt;/td&gt;&lt;td&gt;フラッシュ モデル&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;CameraSerialNumber&lt;/td&gt;&lt;td&gt;カメラ製造番号&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;Contrast&lt;/td&gt;&lt;td&gt;コントラスト&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;Brightness&lt;/td&gt;&lt;td&gt;明るさ&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;LightSource&lt;/td&gt;&lt;td&gt;光源&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;ExposureProgram&lt;/td&gt;&lt;td&gt;露出プログラム&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;Saturation&lt;/td&gt;&lt;td&gt;彩度&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;Sharpness&lt;/td&gt;&lt;td&gt;鮮明度&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;WhiteBalance&lt;/td&gt;&lt;td&gt;ホワイト バランス&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;PhotometricInterpretation&lt;/td&gt;&lt;td&gt;光度測定解釈&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;DigitalZoom&lt;/td&gt;&lt;td&gt;デジタル ズーム&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;Orientation&lt;/td&gt;&lt;td&gt;向き&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;EXIFVersion&lt;/td&gt;&lt;td&gt;EXIF バージョン&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;GPSLatitude&lt;/td&gt;&lt;td&gt;緯度&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;GPSLongitude&lt;/td&gt;&lt;td&gt;経度&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;GPSAltitude&lt;/td&gt;&lt;td&gt;高度&lt;/td&gt;&lt;/tr&gt;
+    &lt;/table&gt;
+
+    追加情報のキーはその項目名から空白を削除した文字列になります。
+&lt;/p&gt;
+
+&lt;hr/&gt;
+&lt;h2&gt;使用例&lt;/h2&gt;
+
+"ABC","DEF"のAND標準検索
+
+&lt;blockquote&gt;ABC DEF&lt;/blockquote&gt;
+
+"^ABC$"の正規表現検索
+
+&lt;blockquote&gt;/re ^ABC$&lt;/blockquote&gt;
+
+"ABC DEF"の完全一致検索
+
+&lt;blockquote&gt;"ABC DEF"&lt;/blockquote&gt;
+
+"ABC"標準検索結果に対する、"DEF"NOT単語検索
+
+&lt;blockquote&gt;ABC /not /word DEF&lt;/blockquote&gt;
+
+2019年4月に更新されたファイルの検索
+
+&lt;blockquote&gt;/since 2019-04-01 /until 2019-05-01&lt;/blockquote&gt;
+
+サイズ10MB未満のファイルの検索
+
+&lt;blockquote&gt;/size /lt 10M&lt;/blockquote&gt;
+
+ブックマーク検索結果に対する、"ABC"のAND標準検索
+
+&lt;blockquote&gt;/bookmark ABC&lt;/blockquote&gt;
+
+追加情報の "parameters" に "smile" を含むページを検索する
+
+&lt;blockquote&gt;/p.meta.parameters smile&lt;/blockquote&gt;</value>
   </data>
   <data name="AddParameterDialog.Tile" xml:space="preserve">
     <value>項目の追加</value>
