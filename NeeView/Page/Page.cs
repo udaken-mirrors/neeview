@@ -251,6 +251,8 @@ namespace NeeView
                     return new StringSearchValue(EntryLastName);
                 case "date":
                     return new DateTimeSearchValue(LastWriteTime);
+                case "playlist":
+                    return new BooleanSearchValue(IsMarked);
                 case "meta":
                     return new StringSearchValue(PageMetadataTools.GetValueString(this, parameter, token));
                 case "rating":
