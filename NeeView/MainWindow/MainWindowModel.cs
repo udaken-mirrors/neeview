@@ -1,6 +1,7 @@
 ﻿using Microsoft.Win32;
 using NeeLaboratory;
 using NeeLaboratory.ComponentModel;
+using NeeLaboratory.IO.Search;
 using NeeLaboratory.Windows.Input;
 using NeeView.Properties;
 using NeeView.Setting;
@@ -134,6 +135,14 @@ namespace NeeView
             RefreshCanHidePageSlider();
 
             PageViewRecorder.Initialize();
+
+            // 検索で使用する日時フォーマット指定
+            SearchDateTimeTools.SetDateTimeFormatInfo(new LocalDateTimeFormatInfo());
+        }
+
+        private class LocalDateTimeFormatInfo : IDateTimeFormatInfo
+        {
+            public string GetPattern() => DateTimeTools.DateTimePattern;
         }
 
 

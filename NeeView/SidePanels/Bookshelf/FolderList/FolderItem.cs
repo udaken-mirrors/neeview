@@ -503,7 +503,7 @@ namespace NeeView
         {
             if (!IsFileSystem() && IsDirectory) return null;
 
-            string GetLastWriteTimeString() => (LastWriteTime != default ? $"{LastWriteTime:yyyy/MM/dd HH:mm:ss}   " : "");
+            string GetLastWriteTimeString() => (LastWriteTime != default ? LastWriteTime.ToFormatString() + "   " : "");
 
             return order switch
             {

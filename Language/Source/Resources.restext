@@ -2411,3 +2411,4 @@ MainViewConfig.IsAutoStretch=Main view window auto stretch
 MainViewConfig.IsAutoStretch.Remarks=Adjust the window size to the image size.
 MainViewConfig.IsAutoHide=Main view window auto close
 MainViewConfig.IsAutoHide.Remarks=Minimizes the main view window when the book is closed.
+SystemConfig.DateTimeFormat=Date time format

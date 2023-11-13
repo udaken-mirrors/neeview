@@ -2411,3 +2411,4 @@ MainViewConfig.IsAutoStretch=メインビュー ウィンドウ自動サイズ�
 MainViewConfig.IsAutoStretch.Remarks=ウィンドウサイズを画像サイズに合わせます。
 MainViewConfig.IsAutoHide=メインビュー ウィンドウ自動非表示
 MainViewConfig.IsAutoHide.Remarks=ブックを閉じた時にメインビュー ウィンドウを最小化します。
+SystemConfig.DateTimeFormat=日時表示フォーマット

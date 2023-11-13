@@ -16834,6 +16834,15 @@ namespace NeeView.Properties {
         }
         
         /// <summary>
+        ///   Date time format に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string SystemConfig_DateTimeFormat {
+            get {
+                return ResourceManager.GetString("SystemConfig.DateTimeFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Destination folders に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string SystemConfig_DestinationFodlerCollection {

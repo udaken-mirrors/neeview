@@ -541,7 +541,7 @@ namespace NeeView
             {
                 if (page.LastWriteTime == default && page.Length == 0) return null;
 
-                var timeString = $"{page.LastWriteTime:yyyy/MM/dd HH:mm:ss}";
+                var timeString = page.LastWriteTime.ToFormatString();
                 var sizeString = FileSizeToStringConverter.ByteToDispString(page.Length);
                 return timeString + (string.IsNullOrEmpty(sizeString) ? "" : "   " + sizeString);
             }

@@ -3,6 +3,7 @@ using NeeView.Windows.Controls;
 using NeeView.Windows.Property;
 using System;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Runtime.Serialization;
 using System.Text.Json.Serialization;
@@ -32,6 +33,9 @@ namespace NeeView
         private string? _webBrowser;
         private bool _isIncrementalSearchEnabled = true;
 
+        [JsonInclude, JsonPropertyName(nameof(DateTimeFormat))]
+        public string? _dateTimeFormat;
+
         [JsonInclude, JsonPropertyName(nameof(TemporaryDirectory))]
         public string? _temporaryDirectory;
 
@@ -44,6 +48,18 @@ namespace NeeView
         {
             get { return _language ?? (_language = CultureInfoTools.GetBetterCulture(CultureInfo.CurrentCulture).Name); }
             set { SetProperty(ref _language, value); }
+        }
+
+        /// <summary>
+        /// 日付フォーマット
+        /// </summary>
+        [JsonIgnore]
+        [PropertyMember]
+        [NotNull]
+        public string? DateTimeFormat
+        {
+            get { return _dateTimeFormat ?? DateTimeTools.DefaultDateTimePattern; }
+            set { SetProperty(ref _dateTimeFormat, (string.IsNullOrWhiteSpace(value) || value == DateTimeTools.DefaultDateTimePattern) ? null : value); }
         }
 
         [PropertyMember]

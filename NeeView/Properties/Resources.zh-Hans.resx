@@ -7389,4 +7389,7 @@ nv.ShowToast(nv.Book.ViewPages[0].Path)</value>
   <data name="BookmarkConfig.IsSearchIncludeSubdirectories" xml:space="preserve">
     <value>搜寻包括子文件夹</value>
   </data>
+  <data name="SystemConfig.DateTimeFormat" xml:space="preserve">
+    <value>日期时间显示格式</value>
+  </data>
 </root>

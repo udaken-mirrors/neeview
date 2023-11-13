@@ -88,7 +88,7 @@ namespace NeeView
         private void UpdateFileTimestamp()
         {
             if (ArchiveEntry is null) return;
-            var format = 256.0 < this.Root.ActualWidth ? "yyyy/MM/dd HH:mm:ss" : "yyyy/MM/dd";
+            var format = 256.0 < this.Root.ActualWidth ? DateTimeTools.DefaultDateTimePattern : DateTimeTools.DefaultDatePattern;
             this.FileTimespampTextBlock.Text = ArchiveEntry.LastWriteTime.ToString(format);
         }
 

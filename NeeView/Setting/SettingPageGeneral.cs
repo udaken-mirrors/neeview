@@ -32,6 +32,7 @@ namespace NeeView.Setting
 
             var cultureMap = Environment.Cultures.Select(e => CultureInfo.GetCultureInfo(e)).OrderBy(e => e.NativeName).ToKeyValuePairList(e => e.Name, e => e.NativeName);
             section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.System, nameof(SystemConfig.Language), new PropertyMemberElementOptions() { StringMap = cultureMap })));
+            section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.System, nameof(SystemConfig.DateTimeFormat))));
 
             section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.System, nameof(SystemConfig.ArchiveRecursiveMode))));
             section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.System, nameof(SystemConfig.BookPageCollectMode))));

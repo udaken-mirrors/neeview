@@ -7660,4 +7660,7 @@ nv.ShowToast(nv.Book.ViewPages[0].Path)</value>
   <data name="MainViewConfig.IsAutoHide.Remarks" xml:space="preserve">
     <value>Minimizes the main view window when the book is closed.</value>
   </data>
+  <data name="SystemConfig.DateTimeFormat" xml:space="preserve">
+    <value>Date time format</value>
+  </data>
 </root>

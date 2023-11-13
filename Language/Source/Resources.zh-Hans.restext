@@ -2319,3 +2319,4 @@ ImageStandardConfig.IsAnimatedPngEnabled.Remarks=进行播放 PNG 动画。长�
 BookSettingConfig.AutoRotate=自动旋转
 BookSettingConfig.BaseScale=基础比例
 BookmarkConfig.IsSearchIncludeSubdirectories=搜寻包括子文件夹
+SystemConfig.DateTimeFormat=日期时间显示格式
