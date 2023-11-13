@@ -248,7 +248,7 @@ namespace NeeView
             switch (profile.Name)
             {
                 case "text":
-                    return new StringSearchValue(EntryLastName);
+                    return new StringSearchValue(GetDispName(Config.Current.PageList.Format));
                 case "date":
                     return new DateTimeSearchValue(LastWriteTime);
                 case "size":
@@ -262,6 +262,16 @@ namespace NeeView
                 default:
                     throw new NotSupportedException($"Not supported SearchProperty: {profile.Name}");
             }
+        }
+
+        public string GetDispName(PageNameFormat format)
+        {
+            return format switch
+            {
+                PageNameFormat.Smart => GetSmartFullName(),
+                PageNameFormat.NameOnly => EntryLastName,
+                _ => EntryName,
+            };
         }
 
         #region Page functions
@@ -354,4 +364,5 @@ namespace NeeView
 
         #endregion
     }
+
 }

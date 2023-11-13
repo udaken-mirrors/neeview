@@ -517,12 +517,7 @@ namespace NeeView
         {
             if (values[0] is Page page && values[1] is PageNameFormat format)
             {
-                return format switch
-                {
-                    PageNameFormat.Smart => page.GetSmartFullName(),
-                    PageNameFormat.NameOnly => page.EntryLastName,
-                    _ => page.EntryName,
-                };
+                return page.GetDispName(format);
             }
             return null;
         }
