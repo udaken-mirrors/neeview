@@ -245,7 +245,7 @@ namespace NeeView
                 case "date":
                     return new DateTimeSearchValue(LastWriteTime);
                 case "size":
-                    return new IntegerSearchValue((int)Length);
+                    return new IntegerSearchValue(Length);
                 case "bookmark":
                     return new BooleanSearchValue(IsBookmark());
                 case "history":

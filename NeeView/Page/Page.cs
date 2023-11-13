@@ -252,7 +252,7 @@ namespace NeeView
                 case "date":
                     return new DateTimeSearchValue(LastWriteTime);
                 case "size":
-                    return new IntegerSearchValue((int)Length);
+                    return new IntegerSearchValue(Length);
                 case "playlist":
                     return new BooleanSearchValue(IsMarked);
                 case "meta":
