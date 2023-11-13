@@ -38,6 +38,8 @@ namespace NeeView
                     return new StringSearchValue(_info.Name);
                 case "date":
                     return new DateTimeSearchValue(_info.LastWriteTime);
+                case "size":
+                    return new IntegerSearchValue((int)Size);
                 case "bookmark":
                     return new BooleanSearchValue(IsBookmark);
                 case "history":

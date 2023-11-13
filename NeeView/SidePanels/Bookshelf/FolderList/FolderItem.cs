@@ -244,6 +244,8 @@ namespace NeeView
                     return new StringSearchValue(this.Name ?? "");
                 case "date":
                     return new DateTimeSearchValue(LastWriteTime);
+                case "size":
+                    return new IntegerSearchValue((int)Length);
                 case "bookmark":
                     return new BooleanSearchValue(IsBookmark());
                 case "history":

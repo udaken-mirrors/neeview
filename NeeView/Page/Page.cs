@@ -251,6 +251,8 @@ namespace NeeView
                     return new StringSearchValue(EntryLastName);
                 case "date":
                     return new DateTimeSearchValue(LastWriteTime);
+                case "size":
+                    return new IntegerSearchValue((int)Length);
                 case "playlist":
                     return new BooleanSearchValue(IsMarked);
                 case "meta":

@@ -4,6 +4,7 @@ using NeeView.Collections;
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.IO;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading;
@@ -75,6 +76,14 @@ namespace NeeView
             return Unit.ArchivePage;
         }
 
+        public long GetLength()
+        {
+            var file = new FileInfo(_path);
+            if (file.Exists) return file.Length;
+
+            return -1;
+        }
+
         public SearchValue GetValue(SearchPropertyProfile profile, string? parameter, CancellationToken token)
         {
             switch(profile.Name)
@@ -83,6 +92,8 @@ namespace NeeView
                     return new StringSearchValue(Name);
                 case "date":
                     return new DateTimeSearchValue(LastAccessTime);
+                case "size":
+                    return new IntegerSearchValue((int)GetLength());
                 case "bookmark":
                     return new BooleanSearchValue(BookmarkCollection.Current.Contains(_path));
                 case "history":

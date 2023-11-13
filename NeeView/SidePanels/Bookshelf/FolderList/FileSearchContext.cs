@@ -7,6 +7,7 @@ namespace NeeView
         public FileSearchContext(SearchValueCache cache) : base(cache)
         {
             AddProfile(new DateSearchProfile());
+            AddProfile(new SizeSearchProfile());
             AddProfile(new BookSearchProfile());
         }
     }

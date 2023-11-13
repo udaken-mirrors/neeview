@@ -32,6 +32,7 @@ namespace NeeView
         {
             var searchContext = new SearchContext()
                 .AddProfile(new DateSearchProfile())
+                .AddProfile(new SizeSearchProfile())
                 .AddProfile(new BookSearchProfile());
             _searcher = new Searcher(searchContext);
 
