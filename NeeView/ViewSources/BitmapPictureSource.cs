@@ -101,7 +101,7 @@ namespace NeeView
             }
 
             size = ThumbnailProfile.GetThumbnailSize(size);
-            var setting = profile.CreateBitmapCreateSetting(bitmapInfo?.Metadata?.IsOriantationEnabled == true);
+            var setting = profile.CreateBitmapCreateSetting(bitmapInfo?.Metadata?.IsOrientationEnabled == true);
             stream.Seek(0, SeekOrigin.Begin);
             return CreateImage(stream, size, setting, Config.Current.Thumbnail.Format, Config.Current.Thumbnail.Quality, token);
         }

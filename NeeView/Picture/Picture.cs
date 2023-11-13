@@ -211,7 +211,7 @@ namespace NeeView
                 {
                     setting.Mode = BitmapCreateMode.HighQuality;
                     setting.ProcessImageSettings = Config.Current.ImageResizeFilter.CreateProcessImageSetting();
-                    setting.ProcessImageSettings.OrientationMode = this.PictureInfo?.Metadata?.IsOriantationEnabled == true ? OrientationMode.Normalize : OrientationMode.Ignore;
+                    setting.ProcessImageSettings.OrientationMode = this.PictureInfo?.Metadata?.IsOrientationEnabled == true ? OrientationMode.Normalize : OrientationMode.Ignore;
                 }
             }
 

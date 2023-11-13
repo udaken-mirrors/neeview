@@ -31,10 +31,17 @@ namespace NeeLaboratory.IO.Nodes
             return Parent != null && (Parent == node || Parent.HasParent(node));
         }
 
-        public void CreateChildren()
+        /// <summary>
+        /// 子ノード全削除
+        /// </summary>
+        public void ClearChildren()
         {
-            if (Children is not null) return;
-            Children = new List<Node>();
+            if (Children is null) return;
+            foreach(var child in Children)
+            {
+                child.Parent = null;
+            }
+            Children = null;
         }
 
         /// <summary>

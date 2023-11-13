@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 
 namespace NeeView.Media.Imaging.Metadata
 {
@@ -72,6 +73,23 @@ namespace NeeView.Media.Imaging.Metadata
         GPSAltitude,
     }
 
+    public static class BitmapMetadataKeyExtensions
+    {
+        private static Dictionary<string, BitmapMetadataKey> _nameMap;
+
+        static BitmapMetadataKeyExtensions()
+        {
+            _nameMap = Enum.GetValues(typeof(BitmapMetadataKey))
+                .Cast<BitmapMetadataKey>()
+                .ToDictionary(e => e.ToString().ToLower());
+        }
+
+        public static bool TryParse(string key, out BitmapMetadataKey value)
+        {
+            return _nameMap.TryGetValue(key, out value);
+        }
+
+    }
 }
 
 

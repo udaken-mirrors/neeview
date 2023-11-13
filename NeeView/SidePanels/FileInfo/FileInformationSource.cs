@@ -63,7 +63,7 @@ namespace NeeView
 
         public List<FileInformationRecord> CreateProperties()
         {
-            var factory = new InformationValueFactory(new InformationValueSource(Page, PictureInfo, Metadata));
+            var factory = new InformationValueFactory(Page);
             var defaults = InformationKeyExtensions.DefaultKeys.Select(e => new FileInformationRecord(e, factory.Create(e)));
             var extras = factory.GetExtraMap().Select(e => new FileInformationRecord(e.Key, InformationGroup.Extras, e.Value));
             return defaults.Concat(extras).ToList();

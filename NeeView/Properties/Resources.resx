@@ -2919,8 +2919,8 @@ Is it OK?</value>
   <data name="InformationGroup.Origin" xml:space="preserve">
     <value>Origin</value>
   </data>
-  <data name="InformationKey.ApplicatoinName" xml:space="preserve">
-    <value>Applicatoin name</value>
+  <data name="InformationKey.ApplicationName" xml:space="preserve">
+    <value>Application name</value>
   </data>
   <data name="InformationKey.ArchivePath" xml:space="preserve">
     <value>Archive path</value>

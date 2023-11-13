@@ -86,7 +86,7 @@ namespace NeeView
     public static class InformationKeyExtensions
     {
         private static List<InformationKey> _defaultKeys;
-
+        private static Dictionary<string, InformationKey> _nameMap;
 
         static InformationKeyExtensions()
         {
@@ -94,6 +94,8 @@ namespace NeeView
                 .Cast<InformationKey>()
                 .Where(e => !IsExtra(e))
                 .ToList();
+
+            _nameMap = _defaultKeys.ToDictionary(e => e.ToString().ToLower());
 
 #if DEBUG
             // check
@@ -143,6 +145,11 @@ namespace NeeView
             }
 
             throw new NotSupportedException();
+        }
+
+        public static bool TryParse(string key, out InformationKey value)
+        {
+            return _nameMap.TryGetValue(key, out value);
         }
     }
 }

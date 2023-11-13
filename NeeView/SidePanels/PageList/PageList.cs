@@ -187,6 +187,7 @@ namespace NeeView
         private void BookOperation_BookChanged(object? sender, BookChangedEventArgs e)
         {
             RefreshCollection();
+            SearchBoxModel.Keyword = _book?.Pages.SearchKeyword;
         }
 
         private void BookOperation_PageListChanged(object? sender, EventArgs e)
@@ -229,8 +230,6 @@ namespace NeeView
             RaisePropertyChanged(nameof(PageSortMode));
 
             RefreshSelectedItem();
-
-            SearchBoxModel.Keyword = _book?.Pages.SearchKeyword;
 
             CollectionChanged?.Invoke(this, EventArgs.Empty);
         }

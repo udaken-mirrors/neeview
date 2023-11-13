@@ -2924,7 +2924,7 @@ nv.Values.Test = "Hello!"</value>
   <data name="InformationGroup.Origin" xml:space="preserve">
     <value>原始</value>
   </data>
-  <data name="InformationKey.ApplicatoinName" xml:space="preserve">
+  <data name="InformationKey.ApplicationName" xml:space="preserve">
     <value>程式名稱</value>
   </data>
   <data name="InformationKey.ArchivePath" xml:space="preserve">

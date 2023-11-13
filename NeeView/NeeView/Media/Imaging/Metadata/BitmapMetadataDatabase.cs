@@ -16,7 +16,7 @@ namespace NeeView.Media.Imaging.Metadata
 
         private readonly Dictionary<BitmapMetadataKey, object?> _map;
         private readonly Dictionary<string, object?> _extraMap;
-
+        private Dictionary<string, object?>? _lowerExtraMap;
 
         public BitmapMetadataDatabase()
         {
@@ -32,6 +32,7 @@ namespace NeeView.Media.Imaging.Metadata
             {
                 _map = _emptyMap;
                 _extraMap = new();
+
                 this.Format = "(Undefined)";
             }
             else
@@ -40,7 +41,7 @@ namespace NeeView.Media.Imaging.Metadata
                 _extraMap = CreateExtraMap(accessor);
                 this.Format = accessor.GetFormat();
             }
-            this.IsOriantationEnabled = true;
+            this.IsOrientationEnabled = true;
         }
 
         public BitmapMetadataDatabase(Stream stream)
@@ -52,7 +53,7 @@ namespace NeeView.Media.Imaging.Metadata
 
             // NOTE: 既定のフォーマット以外はすべてOrientation適用済として処理する。
             // NOTE: おそらくコーデックによって変わるが、それを判断する情報がないため。
-            this.IsOriantationEnabled = false;
+            this.IsOrientationEnabled = false;
         }
 
 
@@ -60,7 +61,7 @@ namespace NeeView.Media.Imaging.Metadata
 
         public string Format { get; private set; }
 
-        public bool IsOriantationEnabled { get; private set; }
+        public bool IsOrientationEnabled { get; private set; }
 
 
         private static Dictionary<BitmapMetadataKey, object?> CreateMap(BitmapMetadataAccessor accessor)
@@ -97,8 +98,48 @@ namespace NeeView.Media.Imaging.Metadata
 
         public object? ElementAt(BitmapMetadataKey key) => _map[key];
 
+        /// <summary>
+        /// 拡張メタマップ
+        /// </summary>
         public Dictionary<string, object?> ExtraMap => _extraMap;
 
+        /// <summary>
+        /// キーを小文字にした拡張メタマップ
+        /// </summary>
+        public Dictionary<string, object?> LowerExtraMap
+        {
+            get
+            {
+                if (_lowerExtraMap is null)
+                {
+                    _lowerExtraMap = _extraMap.ToDictionary(e => e.Key.Replace(" ", "").ToLower(), e => e.Value);
+                }
+                return _lowerExtraMap;
+            }
+        }
+
+        /// <summary>
+        /// プロパティ名から値を取得する
+        /// </summary>
+        /// <remarks>
+        /// 標準メタと拡張メタからアクセス名を指定して値を取得する。
+        /// </remarks>
+        /// <param name="name">アクセス名。小文字空白なしのプロパティ名</param>
+        /// <param name="value">プロパティ値</param>
+        /// <returns></returns>
+        public bool TryGetValue(string name, out object? value)
+        {
+            if (BitmapMetadataKeyExtensions.TryParse(name, out BitmapMetadataKey key))
+            {
+                value = _map[key];
+                return true;
+            }
+
+            return LowerExtraMap.TryGetValue(name, out value);
+        }
+
+
+        // NOTE: この辞書インターフェイスは ExtraMap に非対応
         #region IReadOnlyDictionary
 
         public object? this[BitmapMetadataKey key] => ((IReadOnlyDictionary<BitmapMetadataKey, object?>)_map)[key];

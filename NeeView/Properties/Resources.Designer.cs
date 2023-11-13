@@ -7997,11 +7997,11 @@ namespace NeeView.Properties {
         }
         
         /// <summary>
-        ///   Applicatoin name に類似しているローカライズされた文字列を検索します。
+        ///   Application name に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        public static string InformationKey_ApplicatoinName {
+        public static string InformationKey_ApplicationName {
             get {
-                return ResourceManager.GetString("InformationKey.ApplicatoinName", resourceCulture);
+                return ResourceManager.GetString("InformationKey.ApplicationName", resourceCulture);
             }
         }
         

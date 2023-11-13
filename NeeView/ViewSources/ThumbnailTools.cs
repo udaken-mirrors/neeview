@@ -20,7 +20,7 @@ namespace NeeView
             token.ThrowIfCancellationRequested();
             pictureInfo = pictureInfo ?? CreatePictureInfo(stream);
             var size = ThumbnailProfile.GetThumbnailSize(pictureInfo.Size);
-            var setting = profile.CreateBitmapCreateSetting(pictureInfo.BitmapInfo?.Metadata?.IsOriantationEnabled == true);
+            var setting = profile.CreateBitmapCreateSetting(pictureInfo.BitmapInfo?.Metadata?.IsOrientationEnabled == true);
             stream.Seek(0, SeekOrigin.Begin);
             return CreateImage(stream, pictureInfo, size, setting, Config.Current.Thumbnail.Format, Config.Current.Thumbnail.Quality, token);
         }

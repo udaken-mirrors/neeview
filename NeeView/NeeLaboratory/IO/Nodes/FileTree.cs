@@ -111,6 +111,7 @@ namespace NeeLaboratory.IO.Nodes
 
                     try
                     {
+                        Trunk.ClearChildren();
                         if (_recurseSubdirectories)
                         {
                             CreateChildrenRecursive(Trunk, new DirectoryInfo(Trunk.FullName), token);
@@ -119,6 +120,17 @@ namespace NeeLaboratory.IO.Nodes
                         {
                             CreateChildrenTop(Trunk, new DirectoryInfo(Trunk.FullName), token);
                         }
+
+                        sw.Stop();
+                        Debug.WriteLine($"Initialize: {sw.ElapsedMilliseconds} ms, Count={Trunk.WalkChildren().Count()}");
+                        //Trunk.Dump();
+
+                        Validate();
+                        _initialized = true;
+                    }
+                    catch (OperationCanceledException)
+                    {
+                        Debug.WriteLine($"Initialize: Canceled.");
                     }
                     catch (AggregateException ae)
                     {
@@ -129,17 +141,8 @@ namespace NeeLaboratory.IO.Nodes
                         }
                     }
 
-                    sw.Stop();
-                    Debug.WriteLine($"Initialize: {sw.ElapsedMilliseconds} ms, Count={Trunk.WalkChildren().Count()}");
-                    //Trunk.Dump();
-
-                    Validate();
-
                     await Task.CompletedTask;
                 });
-
-
-                _initialized = true;
             }
         }
 
@@ -200,6 +203,7 @@ namespace NeeLaboratory.IO.Nodes
             // パラレルにしたほうが速いね
             var directories = entries.OfType<DirectoryInfo>().ToList();
             var directoryNodes = new Node[directories.Count];
+
             var parallelOptions = new ParallelOptions() { CancellationToken = token };
             Parallel.ForEach(directories, parallelOptions, (s, state, index) =>
             {

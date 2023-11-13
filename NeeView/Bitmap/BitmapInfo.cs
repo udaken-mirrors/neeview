@@ -34,7 +34,7 @@ namespace NeeView
 
             ////Debug.WriteLine($"Meta.Format: {this.Metadata.Format}");
 
-            if (this.Metadata.IsValid && this.Metadata.IsOriantationEnabled && this.Metadata[BitmapMetadataKey.Orientation] is ExifOrientation orientation)
+            if (this.Metadata.IsValid && this.Metadata.IsOrientationEnabled && this.Metadata[BitmapMetadataKey.Orientation] is ExifOrientation orientation)
             {
                 switch (orientation)
                 {

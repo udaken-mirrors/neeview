@@ -11,6 +11,11 @@ namespace NeeView.Media.Imaging.Metadata
             _value = value;
         }
 
+        public int ToInteger()
+        {
+            return _value;
+        }
+
         public string ToFormatString()
         {
             return new string(Enumerable.Range(1, 5).Select(e => e <= _value ? '★' : '☆').ToArray());

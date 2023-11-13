@@ -1,6 +1,5 @@
 ﻿using System;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -253,38 +252,13 @@ namespace NeeView
                 case "date":
                     return new DateTimeSearchValue(LastWriteTime);
                 case "meta":
-                    return new StringSearchValue(GetMetadata(parameter, token));
+                    return new StringSearchValue(PageMetadataTools.GetValueString(this, parameter, token));
+                case "rating":
+                    return new IntegerSearchValue(PageMetadataTools.GetRating(this, token));
                 default:
                     throw new NotSupportedException($"Not supported SearchProperty: {profile.Name}");
             }
         }
-
-        public string GetMetadata(string? key, CancellationToken token)
-        {
-            // PictureInfo 取得
-            var pictureInfo = _content.PictureInfo;
-            if (pictureInfo is null)
-            {
-                 pictureInfo = _content.LoadPictureInfoAsync(token).Result;  // ## よろしくない？
-            }
-            if (pictureInfo is null) return "";
-
-            var meta = pictureInfo.Metadata;
-            if (meta is null) return "";
-
-            // NOTE: ひとまず "tags" のみ対応
-            // TODO: すべてのパラメータに対応
-            if (key == "tags")
-            {
-                if (meta.TryGetValue(Media.Imaging.Metadata.BitmapMetadataKey.Tags, out var value))
-                {
-                    return MetadataValueTools.ToDispString(value) ?? "";
-                }
-            }
-
-            return "";
-        }
-
 
         #region Page functions
 
@@ -375,7 +349,5 @@ namespace NeeView
         }
 
         #endregion
-
-
     }
 }
