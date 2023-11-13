@@ -362,6 +362,11 @@ namespace NeeView
             RaisePropertyChanged(nameof(SystemPath));
         }
 
+        public string GetMetaValue(string key, CancellationToken token)
+        {
+            return PageMetadataTools.GetValueString(this, key.ToLower(), token);
+        }
+
         #endregion
     }
 

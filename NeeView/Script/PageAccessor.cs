@@ -1,4 +1,6 @@
-﻿namespace NeeView
+﻿using System.Threading;
+
+namespace NeeView
 {
     public class PageAccessor
     {
@@ -19,5 +21,13 @@
 
         [WordNodeMember]
         public string LastWriteTime => _page.LastWriteTime.ToString();
+
+
+        [WordNodeMember]
+        public string GetMetaValue(string key)
+        {
+            // TODO: スクリプト実行のキャンセルトークンを指定するように
+            return _page.GetMetaValue(key, CancellationToken.None);
+        }
     }
 }

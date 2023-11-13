@@ -3143,17 +3143,17 @@ nv.Values.Test = "Hello!"</value>
   <data name="InputTouchControl.TouchInput" xml:space="preserve">
     <value>在這裡使用觸控輸入</value>
   </data>
-  <data name="JavascriptEngine.ExecureFile" xml:space="preserve">
+  <data name="JavascriptEngine.ExecuteFile" xml:space="preserve">
     <value>讀入並執行腳本。</value>
   </data>
-  <data name="JavascriptEngine.ExecureFile.Example" xml:space="preserve">
+  <data name="JavascriptEngine.ExecuteFile.Example" xml:space="preserve">
     <value>// 讀入並執行 Sample.nvjs
 include("Sample.nvjs")</value>
   </data>
-  <data name="JavascriptEngine.ExecureFile.path" xml:space="preserve">
+  <data name="JavascriptEngine.ExecuteFile.path" xml:space="preserve">
     <value>腳本路徑。相對路徑以目前腳本位置為基準。</value>
   </data>
-  <data name="JavascriptEngine.ExecureFile.Returns" xml:space="preserve">
+  <data name="JavascriptEngine.ExecuteFile.Returns" xml:space="preserve">
     <value>腳本執行結果</value>
   </data>
   <data name="JavascriptEngine.Log" xml:space="preserve">
@@ -7412,5 +7412,14 @@ nv.ShowToast(nv.Book.ViewPages[0].Path)</value>
   </data>
   <data name="SystemConfig.DateTimeFormat" xml:space="preserve">
     <value>日期時間顯示格式</value>
+  </data>
+  <data name="BookSettingPolicyConfig.AutoRotate" xml:space="preserve">
+    <value>自動旋轉</value>
+  </data>
+  <data name="BookSettingPolicyConfig.BaseScale" xml:space="preserve">
+    <value>基礎比例</value>
+  </data>
+  <data name="BookConfigAccessor.AutoRotate" xml:space="preserve">
+    <value>自動旋轉</value>
   </data>
 </root>

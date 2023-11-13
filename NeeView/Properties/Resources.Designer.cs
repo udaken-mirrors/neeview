@@ -1174,6 +1174,15 @@ namespace NeeView.Properties {
         }
         
         /// <summary>
+        ///   Automatic rotation に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string BookConfigAccessor_AutoRotate {
+            get {
+                return ResourceManager.GetString("BookConfigAccessor.AutoRotate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Left Open / Right Open に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string BookConfigAccessor_BookReadOrder {
@@ -1665,6 +1674,24 @@ namespace NeeView.Properties {
         public static string BookSettingPageSelectMode_RestoreOrDefaultReset {
             get {
                 return ResourceManager.GetString("BookSettingPageSelectMode.RestoreOrDefaultReset", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Automatic rotation に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string BookSettingPolicyConfig_AutoRotate {
+            get {
+                return ResourceManager.GetString("BookSettingPolicyConfig.AutoRotate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Base scale に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string BookSettingPolicyConfig_BaseScale {
+            get {
+                return ResourceManager.GetString("BookSettingPolicyConfig.BaseScale", resourceCulture);
             }
         }
         
@@ -5601,6 +5628,24 @@ namespace NeeView.Properties {
         }
         
         /// <summary>
+        ///   Keep dot に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string ExportImageCommandParameter_IsDotKeep {
+            get {
+                return ResourceManager.GetString("ExportImageCommandParameter.IsDotKeep", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Output in original size に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string ExportImageCommandParameter_IsOriginalSize {
+            get {
+                return ResourceManager.GetString("ExportImageCommandParameter.IsOriginalSize", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Output image type に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string ExportImageCommandParameter_Mode {
@@ -7111,6 +7156,15 @@ namespace NeeView.Properties {
         public static string HyperLinkErrorDialog_Title {
             get {
                 return ResourceManager.GetString("HyperLinkErrorDialog.Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Video page repeat に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string ImageConfig_IsMediaRepeat {
+            get {
+                return ResourceManager.GetString("ImageConfig.IsMediaRepeat", resourceCulture);
             }
         }
         
@@ -8653,9 +8707,9 @@ namespace NeeView.Properties {
         /// <summary>
         ///   Load and execute the script. に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        public static string JavascriptEngine_ExecureFile {
+        public static string JavascriptEngine_ExecuteFile {
             get {
-                return ResourceManager.GetString("JavascriptEngine.ExecureFile", resourceCulture);
+                return ResourceManager.GetString("JavascriptEngine.ExecuteFile", resourceCulture);
             }
         }
         
@@ -8663,27 +8717,27 @@ namespace NeeView.Properties {
         ///   // Load and run Sample.nvjs
         ///include(&quot;Sample.nvjs&quot;) に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        public static string JavascriptEngine_ExecureFile_Example {
+        public static string JavascriptEngine_ExecuteFile_Example {
             get {
-                return ResourceManager.GetString("JavascriptEngine.ExecureFile.Example", resourceCulture);
+                return ResourceManager.GetString("JavascriptEngine.ExecuteFile.Example", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Script path. Relative paths are relative to the current script location. に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        public static string JavascriptEngine_ExecureFile_path {
+        public static string JavascriptEngine_ExecuteFile_path {
             get {
-                return ResourceManager.GetString("JavascriptEngine.ExecureFile.path", resourceCulture);
+                return ResourceManager.GetString("JavascriptEngine.ExecuteFile.path", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Script execution result に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        public static string JavascriptEngine_ExecureFile_Returns {
+        public static string JavascriptEngine_ExecuteFile_Returns {
             get {
-                return ResourceManager.GetString("JavascriptEngine.ExecureFile.Returns", resourceCulture);
+                return ResourceManager.GetString("JavascriptEngine.ExecuteFile.Returns", resourceCulture);
             }
         }
         
@@ -10475,6 +10529,15 @@ namespace NeeView.Properties {
         }
         
         /// <summary>
+        ///   Control bar in the navigator panel に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string NavigatorConfig_IsVisibleControlBar {
+            get {
+                return ResourceManager.GetString("NavigatorConfig.IsVisibleControlBar", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Show thumbnail に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string NavigatorConfig_IsVisibleThumbnail {
@@ -11637,6 +11700,33 @@ namespace NeeView.Properties {
         public static string PageAccessor_Example {
             get {
                 return ResourceManager.GetString("PageAccessor.Example", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Get page meta information に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string PageAccessor_GetMetaValue {
+            get {
+                return ResourceManager.GetString("PageAccessor.GetMetaValue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Meta information item name. See the search options help for more information. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string PageAccessor_GetMetaValue_key {
+            get {
+                return ResourceManager.GetString("PageAccessor.GetMetaValue.key", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Meta information value に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string PageAccessor_GetMetaValue_Returns {
+            get {
+                return ResourceManager.GetString("PageAccessor.GetMetaValue.Returns", resourceCulture);
             }
         }
         

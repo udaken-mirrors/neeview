@@ -3138,17 +3138,17 @@ Please substitute gesture for flick operation.</value>
   <data name="InputTouchControl.TouchInput" xml:space="preserve">
     <value>Here, touch input</value>
   </data>
-  <data name="JavascriptEngine.ExecureFile" xml:space="preserve">
+  <data name="JavascriptEngine.ExecuteFile" xml:space="preserve">
     <value>Load and execute the script.</value>
   </data>
-  <data name="JavascriptEngine.ExecureFile.Example" xml:space="preserve">
+  <data name="JavascriptEngine.ExecuteFile.Example" xml:space="preserve">
     <value>// Load and run Sample.nvjs
 include("Sample.nvjs")</value>
   </data>
-  <data name="JavascriptEngine.ExecureFile.path" xml:space="preserve">
+  <data name="JavascriptEngine.ExecuteFile.path" xml:space="preserve">
     <value>Script path. Relative paths are relative to the current script location.</value>
   </data>
-  <data name="JavascriptEngine.ExecureFile.Returns" xml:space="preserve">
+  <data name="JavascriptEngine.ExecuteFile.Returns" xml:space="preserve">
     <value>Script execution result</value>
   </data>
   <data name="JavascriptEngine.Log" xml:space="preserve">
@@ -7662,5 +7662,35 @@ nv.ShowToast(nv.Book.ViewPages[0].Path)</value>
   </data>
   <data name="SystemConfig.DateTimeFormat" xml:space="preserve">
     <value>Date time format</value>
+  </data>
+  <data name="PageAccessor.GetMetaValue" xml:space="preserve">
+    <value>Get page meta information</value>
+  </data>
+  <data name="PageAccessor.GetMetaValue.key" xml:space="preserve">
+    <value>Meta information item name. See the search options help for more information.</value>
+  </data>
+  <data name="PageAccessor.GetMetaValue.Returns" xml:space="preserve">
+    <value>Meta information value</value>
+  </data>
+  <data name="BookSettingPolicyConfig.AutoRotate" xml:space="preserve">
+    <value>Automatic rotation</value>
+  </data>
+  <data name="BookSettingPolicyConfig.BaseScale" xml:space="preserve">
+    <value>Base scale</value>
+  </data>
+  <data name="ImageConfig.IsMediaRepeat" xml:space="preserve">
+    <value>Video page repeat</value>
+  </data>
+  <data name="NavigatorConfig.IsVisibleControlBar" xml:space="preserve">
+    <value>Control bar in the navigator panel</value>
+  </data>
+  <data name="ExportImageCommandParameter.IsOriginalSize" xml:space="preserve">
+    <value>Output in original size</value>
+  </data>
+  <data name="ExportImageCommandParameter.IsDotKeep" xml:space="preserve">
+    <value>Keep dot</value>
+  </data>
+  <data name="BookConfigAccessor.AutoRotate" xml:space="preserve">
+    <value>Automatic rotation</value>
   </data>
 </root>

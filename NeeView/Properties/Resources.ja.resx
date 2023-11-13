@@ -3360,17 +3360,17 @@ Center がコマンドに割り当てられていない場合はその下のエ�
   <data name="InputTouchControl.TouchInput" xml:space="preserve">
     <value>ここでタッチ入力</value>
   </data>
-  <data name="JavascriptEngine.ExecureFile" xml:space="preserve">
+  <data name="JavascriptEngine.ExecuteFile" xml:space="preserve">
     <value>スクリプトを読み込んで実行します。</value>
   </data>
-  <data name="JavascriptEngine.ExecureFile.Example" xml:space="preserve">
+  <data name="JavascriptEngine.ExecuteFile.Example" xml:space="preserve">
     <value>// Sample.nvjs を読み込んで実行
 include("Sample.nvjs")</value>
   </data>
-  <data name="JavascriptEngine.ExecureFile.path" xml:space="preserve">
+  <data name="JavascriptEngine.ExecuteFile.path" xml:space="preserve">
     <value>スクリプトのパス。相対パスは現在のスクリプトの場所が基準になります。</value>
   </data>
-  <data name="JavascriptEngine.ExecureFile.Returns" xml:space="preserve">
+  <data name="JavascriptEngine.ExecuteFile.Returns" xml:space="preserve">
     <value>スクリプトの実行結果</value>
   </data>
   <data name="JavascriptEngine.Log" xml:space="preserve">
@@ -7884,5 +7884,35 @@ nv.ShowToast(nv.Book.ViewPages[0].Path)</value>
   </data>
   <data name="SystemConfig.DateTimeFormat" xml:space="preserve">
     <value>日時表示フォーマット</value>
+  </data>
+  <data name="PageAccessor.GetMetaValue" xml:space="preserve">
+    <value>ページのメタ情報を得る</value>
+  </data>
+  <data name="PageAccessor.GetMetaValue.key" xml:space="preserve">
+    <value>メタ情報の項目名。詳細は検索オプションのヘルプを参照してください。</value>
+  </data>
+  <data name="PageAccessor.GetMetaValue.Returns" xml:space="preserve">
+    <value>メタ情報の値</value>
+  </data>
+  <data name="BookSettingPolicyConfig.AutoRotate" xml:space="preserve">
+    <value>自動回転</value>
+  </data>
+  <data name="BookSettingPolicyConfig.BaseScale" xml:space="preserve">
+    <value>基底スケール</value>
+  </data>
+  <data name="ImageConfig.IsMediaRepeat" xml:space="preserve">
+    <value>動画ページのリピート</value>
+  </data>
+  <data name="NavigatorConfig.IsVisibleControlBar" xml:space="preserve">
+    <value>ナビゲーター パネルにコントロール バーを表示</value>
+  </data>
+  <data name="ExportImageCommandParameter.IsOriginalSize" xml:space="preserve">
+    <value>オリジナルサイズで出力</value>
+  </data>
+  <data name="ExportImageCommandParameter.IsDotKeep" xml:space="preserve">
+    <value>ドットを維持</value>
+  </data>
+  <data name="BookConfigAccessor.AutoRotate" xml:space="preserve">
+    <value>自動回転</value>
   </data>
 </root>
