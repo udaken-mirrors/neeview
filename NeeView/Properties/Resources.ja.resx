@@ -7907,7 +7907,7 @@ nv.ShowToast(nv.Book.ViewPages[0].Path)</value>
     <value>ナビゲーター パネルにコントロール バーを表示</value>
   </data>
   <data name="ExportImageCommandParameter.IsOriginalSize" xml:space="preserve">
-    <value>オリジナルサイズで出力</value>
+    <value>オリジナル サイズで出力</value>
   </data>
   <data name="ExportImageCommandParameter.IsDotKeep" xml:space="preserve">
     <value>ドットを維持</value>
@@ -7935,5 +7935,17 @@ nv.ShowToast(nv.Book.ViewPages[0].Path)</value>
   </data>
   <data name="ViewBaseScaleUpCommand.Remarks" xml:space="preserve">
     <value>基底スケールを拡大します。</value>
+  </data>
+  <data name="SettingPage.General.FileAccess" xml:space="preserve">
+    <value>ファイル アクセス</value>
+  </data>
+  <data name="SettingPage.General.Search" xml:space="preserve">
+    <value>検索</value>
+  </data>
+  <data name="SettingPage.General.Environment" xml:space="preserve">
+    <value>環境</value>
+  </data>
+  <data name="SystemConfig.SearchHistorySize" xml:space="preserve">
+    <value>検索履歴サイズ</value>
   </data>
 </root>

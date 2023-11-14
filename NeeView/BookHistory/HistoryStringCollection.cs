@@ -22,7 +22,7 @@ namespace NeeView
         /// <summary>
         /// 履歴最大数
         /// </summary>
-        private int MaxCount { get; init; } = 10;
+        private int MaxCount => Config.Current.System.SearchHistorySize;
 
 
         /// <summary>

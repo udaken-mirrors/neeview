@@ -32,6 +32,7 @@ namespace NeeView
         private string? _textEditor;
         private string? _webBrowser;
         private bool _isIncrementalSearchEnabled = true;
+        private int _searchHistorySize = 8;
 
         [JsonInclude, JsonPropertyName(nameof(DateTimeFormat))]
         public string? _dateTimeFormat;
@@ -230,6 +231,16 @@ namespace NeeView
         {
             get { return _isIncrementalSearchEnabled; }
             set { SetProperty(ref _isIncrementalSearchEnabled, value); }
+        }
+
+        /// <summary>
+        /// 検索ボックスの履歴数
+        /// </summary>
+        [PropertyMember]
+        public int SearchHistorySize
+        {
+            get { return _searchHistorySize; }
+            set { SetProperty(ref _searchHistorySize, Math.Max(0, value)); }
         }
     }
 }

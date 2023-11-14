@@ -2429,3 +2429,7 @@ ViewBaseScaleDownCommand=Base scale zoom out
 ViewBaseScaleDownCommand.Remarks=Reduces the base scale.
 ViewBaseScaleUpCommand=Base scale zoom in
 ViewBaseScaleUpCommand.Remarks=Enlarge the base scale.
+SettingPage.General.FileAccess=File access
+SettingPage.General.Search=Search
+SettingPage.General.Environment=Environment
+SystemConfig.SearchHistorySize=Search history size

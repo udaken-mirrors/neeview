@@ -15562,6 +15562,24 @@ namespace NeeView.Properties {
         }
         
         /// <summary>
+        ///   Environment に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string SettingPage_General_Environment {
+            get {
+                return ResourceManager.GetString("SettingPage.General.Environment", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   File access に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string SettingPage_General_FileAccess {
+            get {
+                return ResourceManager.GetString("SettingPage.General.FileAccess", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Location に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string SettingPage_General_Location {
@@ -15612,6 +15630,15 @@ namespace NeeView.Properties {
         public static string SettingPage_General_SaveDataTypes_Remarks {
             get {
                 return ResourceManager.GetString("SettingPage.General.SaveDataTypes.Remarks", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Search に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string SettingPage_General_Search {
+            get {
+                return ResourceManager.GetString("SettingPage.General.Search", resourceCulture);
             }
         }
         
@@ -17181,6 +17208,15 @@ namespace NeeView.Properties {
         public static string SystemConfig_Language_Remarks {
             get {
                 return ResourceManager.GetString("SystemConfig.Language.Remarks", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Search history size に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string SystemConfig_SearchHistorySize {
+            get {
+                return ResourceManager.GetString("SystemConfig.SearchHistorySize", resourceCulture);
             }
         }
         

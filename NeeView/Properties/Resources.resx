@@ -7714,4 +7714,16 @@ nv.ShowToast(nv.Book.ViewPages[0].Path)</value>
   <data name="ViewBaseScaleUpCommand.Remarks" xml:space="preserve">
     <value>Enlarge the base scale.</value>
   </data>
+  <data name="SettingPage.General.FileAccess" xml:space="preserve">
+    <value>File access</value>
+  </data>
+  <data name="SettingPage.General.Search" xml:space="preserve">
+    <value>Search</value>
+  </data>
+  <data name="SettingPage.General.Environment" xml:space="preserve">
+    <value>Environment</value>
+  </data>
+  <data name="SystemConfig.SearchHistorySize" xml:space="preserve">
+    <value>Search history size</value>
+  </data>
 </root>
