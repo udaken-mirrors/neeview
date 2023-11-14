@@ -63,6 +63,10 @@ namespace NeeView
                 }
             }
 
+            // ページ表示を停止
+            _bookControl.DisposeViewContent(pages);
+            await Task.Delay(16);
+
             try
             {
                 await PageFileIO.DeletePageAsync(pages);

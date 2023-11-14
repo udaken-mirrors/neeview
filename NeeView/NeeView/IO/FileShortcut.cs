@@ -88,6 +88,7 @@ namespace NeeView.IO
             try
             {
                 var targetPath = GetLinkTargetPath(source);
+                if (string.IsNullOrEmpty(targetPath)) throw new FileNotFoundException($"Shortcut link target not found: {source.FullName}");
 
                 var directoryInfo = new DirectoryInfo(targetPath);
                 if (directoryInfo.Attributes.HasFlag(FileAttributes.Directory))

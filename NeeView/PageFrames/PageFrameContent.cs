@@ -384,6 +384,21 @@ namespace NeeView.PageFrames
             return _viewContents.Select(e => e.State).Min();
         }
 
+        /// <summary>
+        /// ViewContent を Dispose
+        /// </summary>
+        /// <remarks>
+        /// ファイル削除するときに対応するページのリソースを開放するために使用。
+        /// その後の継続した使用は考慮されていない。
+        /// </remarks>
+        public void DisposeViewContent()
+        {
+            foreach(var content in _viewContents)
+            {
+                content.Dispose();
+            }
+        }
+
         public override string ToString()
         {
             return _pageFrame.ToString();

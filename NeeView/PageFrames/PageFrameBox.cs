@@ -1041,6 +1041,21 @@ namespace NeeView.PageFrames
             _cleaner.Cleanup(_viewBox.ViewingRect);
         }
 
+        /// <summary>
+        /// ViewContent を Dispose
+        /// </summary>
+        /// <remarks>
+        /// ファイル削除するときに対応するページのリソースを開放するために使用。
+        /// その後の継続した使用は考慮されていない。
+        /// </remarks>
+        public void DisposeViewContent(IEnumerable<Page> pages)
+        {
+            foreach(var content in _containers.Select(e => e.Content).OfType<PageFrameContent>().Where(e => pages.Any(x =>e.PageFrame.Contains(x))))
+            {
+                content.DisposeViewContent();
+            }
+        }
+
         public PageFrameTransformAccessor CreateSelectedTransform()
         {
             if (_selected.Container.Content is PageFrameContent pageFrameContent)

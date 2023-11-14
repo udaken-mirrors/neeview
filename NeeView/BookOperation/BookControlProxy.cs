@@ -75,6 +75,11 @@ namespace NeeView
             RaisePropertyChanged(e.PropertyName);
         }
 
+        public void DisposeViewContent(IEnumerable<Page> pages)
+        {
+            _source?.DisposeViewContent(pages);
+        }
+
         public bool CanDeleteBook()
         {
             return _source?.CanDeleteBook() ?? false;

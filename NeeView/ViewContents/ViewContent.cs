@@ -119,6 +119,8 @@ namespace NeeView
 
         public virtual void Initialize()
         {
+            if (_disposedValue) return;
+
             if (_initialized) return;
             _initialized = true;
 
@@ -170,6 +172,7 @@ namespace NeeView
         private void OnSourceChanged()
         {
             if (_disposedValue) return;
+
             _strategy?.OnSourceChanged();
         }
 
@@ -193,6 +196,8 @@ namespace NeeView
 
         private void ViewSource_DataChanged(object? sender, DataSourceChangedEventArgs e)
         {
+            if (_disposedValue) return;
+
             // NOTE: Unload()等でデータがないときは更新しない
             if (e.DataSource.DataState == DataState.None) return;
 
@@ -217,6 +222,8 @@ namespace NeeView
         /// <param name="token"></param>
         public void RequestLoadViewSource(CancellationToken token)
         {
+            if (_disposedValue) return;
+
             if (!_element.Page.Content.IsLoaded) return;
             Task.Run(() => LoadViewSourceAsync(token));
         }
@@ -228,6 +235,8 @@ namespace NeeView
         /// <returns></returns>
         public async Task LoadViewSourceAsync(CancellationToken token)
         {
+            if (_disposedValue) return;
+
             NVDebug.AssertMTA();
             var pictureSize = _viewContentSize.GetPictureSize();
             Trace($"LoadViewSourceAsync: {_element.Page}, PictureSize = {pictureSize:f0}");
@@ -246,8 +255,6 @@ namespace NeeView
             UpdateSize();
             ViewContentChanged?.Invoke(this, new ViewContentChangedEventArgs(State.ToChangedAction(), this));
         }
-
-
 
         private ViewContentData CreateContent(SizeSource size, DataSource data)
         {

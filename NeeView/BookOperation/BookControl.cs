@@ -53,6 +53,13 @@ namespace NeeView
             GC.SuppressFinalize(this);
         }
 
+        /// <summary>
+        /// ページ表示の停止
+        /// </summary>
+        public void DisposeViewContent(IEnumerable<Page> pages)
+        {
+            _box.DisposeViewContent(pages);
+        }
 
         /// <summary>
         /// ブックの再読み込み
