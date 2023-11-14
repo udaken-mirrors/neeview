@@ -1,20 +1,19 @@
 ﻿using System;
-using System.Diagnostics;
 
 namespace NeeView
 {
-    public class ScaleSliderCenteredDragAction : DragAction
+    public class BaseScaleSliderCenteredDragAction : DragAction
     {
-        public ScaleSliderCenteredDragAction()
+        public BaseScaleSliderCenteredDragAction()
         {
-            Note = Properties.Resources.DragActionType_ScaleSliderCentered;
+            Note = Properties.Resources.DragActionType_BaseScaleSliderCentered;
             ParameterSource = new DragActionParameterSource(typeof(SensitiveDragActionParameter));
             DragActionCategory = DragActionCategory.Scale;
         }
 
         public override DragActionControl CreateControl(DragTransformContext context)
         {
-            return new ScaleSliderCenteredActionControl(context, this, ScaleType.TransformScale);
+            return new ScaleSliderCenteredActionControl(context, this, ScaleType.BaseScale);
         }
     }
 

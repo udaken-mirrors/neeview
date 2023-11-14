@@ -5,7 +5,9 @@
         void ResetContentSizeAndTransform();
 
         void ScaleUp(ViewScaleCommandParameter parameter);
+        void ScaleUp(ScaleType scaleType, ViewScaleCommandParameter parameter);
         void ScaleDown(ViewScaleCommandParameter parameter);
+        void ScaleDown(ScaleType scaleType, ViewScaleCommandParameter parameter);
 
         void ViewRotateLeft(ViewRotateCommandParameter parameter);
         void ViewRotateRight(ViewRotateCommandParameter parameter);

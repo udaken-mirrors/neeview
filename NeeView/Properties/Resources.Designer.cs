@@ -4078,6 +4078,33 @@ namespace NeeView.Properties {
         }
         
         /// <summary>
+        ///   Base scaling に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string DragActionType_BaseScale {
+            get {
+                return ResourceManager.GetString("DragActionType.BaseScale", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Base scaling (horizontal slide) に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string DragActionType_BaseScaleSlider {
+            get {
+                return ResourceManager.GetString("DragActionType.BaseScaleSlider", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Base scaling (horizontal slide, centered) に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string DragActionType_BaseScaleSliderCentered {
+            get {
+                return ResourceManager.GetString("DragActionType.BaseScaleSliderCentered", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Flip horizontal に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string DragActionType_FlipHorizontal {
@@ -20052,6 +20079,42 @@ namespace NeeView.Properties {
         public static string VerticalAlignment_Top {
             get {
                 return ResourceManager.GetString("VerticalAlignment.Top", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Base scale zoom out に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string ViewBaseScaleDownCommand {
+            get {
+                return ResourceManager.GetString("ViewBaseScaleDownCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Reduces the base scale. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string ViewBaseScaleDownCommand_Remarks {
+            get {
+                return ResourceManager.GetString("ViewBaseScaleDownCommand.Remarks", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Base scale zoom in に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string ViewBaseScaleUpCommand {
+            get {
+                return ResourceManager.GetString("ViewBaseScaleUpCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Enlarge the base scale. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string ViewBaseScaleUpCommand_Remarks {
+            get {
+                return ResourceManager.GetString("ViewBaseScaleUpCommand.Remarks", resourceCulture);
             }
         }
         

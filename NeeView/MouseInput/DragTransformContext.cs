@@ -50,11 +50,12 @@ namespace NeeView
         public Rect ContentRect { get; private set; }
         public Point ContentCenter => ContentRect.Center();
 
-        public Point BasePoint { get; set; }
-        public double BaseAngle { get; set; }
-        public double BaseScale { get; set; } = 1.0;
-        public bool BaseFlipHorizontal { get; set; }
-        public bool BaseFlipVertical { get; set; }
+        public Point StartPoint { get; set; }
+        public double StartAngle { get; set; }
+        public double StartScale { get; set; } = 1.0;
+        public double StartBaseScale { get; set; } = 1.0;
+        public bool StartFlipHorizontal { get; set; }
+        public bool StartFlipVertical { get; set; }
 
         public Point RotateCenter { get; set; }
         public Point ScaleCenter { get; set; }
@@ -73,15 +74,17 @@ namespace NeeView
             OldTimeStamp = timestamp;
             LastTimeStamp = timestamp;
 
-            BasePoint = Transform.Point;
-            BaseAngle = Transform.Angle;
-            BaseScale = Transform.Scale;
-            BaseFlipHorizontal = Transform.IsFlipHorizontal;
-            BaseFlipVertical = Transform.IsFlipVertical;
+            StartPoint = Transform.Point;
+            StartAngle = Transform.Angle;
+            StartScale = Transform.Scale;
+            StartFlipHorizontal = Transform.IsFlipHorizontal;
+            StartFlipVertical = Transform.IsFlipVertical;
 
             RotateCenter = GetCenterPosition(ViewConfig.RotateCenter);
             ScaleCenter = GetCenterPosition(ViewConfig.ScaleCenter);
             FlipCenter = GetCenterPosition(ViewConfig.FlipCenter);
+
+            StartBaseScale = Config.Current.BookSetting.BaseScale;
         }
 
 
@@ -96,6 +99,15 @@ namespace NeeView
             };
         }
 
+        public double GetStartScale(ScaleType scaleType)
+        {
+            return scaleType switch
+            {
+                ScaleType.TransformScale => StartScale,
+                ScaleType.BaseScale => StartBaseScale,
+                _ => throw new ArgumentException("Not support ScaleType", nameof(scaleType))
+            };
+        }
 
         public void Update(Point point, int timestamp, DragActionUpdateOptions options)
         {
@@ -137,4 +149,12 @@ namespace NeeView
         None = 0,
         IgnoreUpdateState = (1 << 0),
     }
+
+
+    public enum ScaleType
+    {
+        TransformScale,
+        BaseScale,
+    }
+
 }

@@ -76,7 +76,7 @@ namespace NeeView
                 var p0 = Context.ContentCenter + (zoomRect.TopLeft - Context.ContentCenter) * zoom;
                 var p1 = Context.ContentCenter + (zoomRect.BottomRight - Context.ContentCenter) * zoom;
                 var vc = ((Vector)p0 + (Vector)p1) * 0.5;
-                Context.Transform.SetPoint(Context.BasePoint - vc, span);
+                Context.Transform.SetPoint(Context.StartPoint - vc, span);
             }
 
         }

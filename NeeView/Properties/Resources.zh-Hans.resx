@@ -7401,4 +7401,13 @@ nv.ShowToast(nv.Book.ViewPages[0].Path)</value>
   <data name="BookConfigAccessor.AutoRotate" xml:space="preserve">
     <value>自动旋转</value>
   </data>
+  <data name="DragActionType.BaseScale" xml:space="preserve">
+    <value>基础缩放</value>
+  </data>
+  <data name="DragActionType.BaseScaleSlider" xml:space="preserve">
+    <value>基础缩放 (滑动)</value>
+  </data>
+  <data name="DragActionType.BaseScaleSliderCentered" xml:space="preserve">
+    <value>基础缩放 (滑动、居中)</value>
+  </data>
 </root>

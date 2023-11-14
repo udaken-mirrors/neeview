@@ -116,30 +116,88 @@ namespace NeeView
         /// <summary>
         /// スケール変更
         /// </summary>
+        /// <param name="scaleType">変更するスケールの種類</param>
+        /// <param name="scale">新しいスケール</param>
+        /// <param name="span">変化時間</param>
+        /// <param name="withTransform">座標も更新する</param>
+        public void DoScale(ScaleType scaleType, double scale, TimeSpan span, bool withTransform = true)
+        {
+            switch (scaleType)
+            {
+                case ScaleType.TransformScale:
+                    DoScale(scale, span, withTransform);
+                    break;
+                case ScaleType.BaseScale:
+                    DoBaseScale(scale, span, withTransform);
+                    break;
+                default:
+                    throw new ArgumentException("Not support ScaleType", nameof(scaleType));
+            }
+        }
+
+        /// <summary>
+        /// スケール変更
+        /// </summary>
         /// <param name="scale">新しいスケール</param>
         /// <param name="span">変化時間</param>
         /// <param name="withTransform">座標も更新する</param>
         public void DoScale(double scale, TimeSpan span, bool withTransform = true)
         {
-            if (SnapScale > 0)
-            {
-                scale = Math.Floor((scale + SnapScale * 0.5) / SnapScale) * SnapScale;
-            }
+            scale = GetSnapScale(scale);
 
             _context.Transform.SetScale(scale, span);
 
             if (withTransform)
             {
-                // NOTE: NeeView移行時は、移動系の計算式はそのままつかえず移植困難
-                var v0 = _context.ContentCenter - _context.ScaleCenter;
-                var v1 = v0 * (_context.Transform.Scale / _context.BaseScale);
-                var delta = v1 - v0;
-                //Debug.WriteLine($"#Scale.Move: {_context.BasePoint:f0} + {delta:f0}");
-                var pos = _context.BasePoint + delta;
-                _context.Transform.SetPoint(pos, span);
+                var scaleRate = scale / _context.StartScale;
+                SetScaleTransform(scaleRate, span);
             }
         }
 
+        /// <summary>
+        /// 基底スケール変更
+        /// </summary>
+        /// <param name="scale">新しいスケール</param>
+        /// <param name="span">時間変化</param>
+        /// <param name="withTransform">座標も更新する</param>
+        public void DoBaseScale(double scale, TimeSpan span, bool withTransform = true)
+        {
+            scale = GetSnapScale(scale);
+
+            Config.Current.BookSetting.BaseScale = scale;
+
+            if (withTransform)
+            {
+                var scaleRate = scale / _context.StartBaseScale;
+                SetScaleTransform(scaleRate, span);
+            }
+        }
+
+        /// <summary>
+        /// スケール値をスナップ
+        /// </summary>
+        /// <param name="scale">入力スケール値</param>
+        /// <returns>スナップされたスケール値</returns>
+        private double GetSnapScale(double scale)
+        {
+            return SnapScale > 0
+                ? Math.Floor((scale + SnapScale * 0.5) / SnapScale) * SnapScale
+                : scale;
+        }
+
+        /// <summary>
+        /// スケールによる座標変更を反映
+        /// </summary>
+        /// <param name="scaleRate">スケール変化割合</param>
+        /// <param name="span">時間変化</param>
+        private void SetScaleTransform(double scaleRate, TimeSpan span)
+        {
+            var v0 = _context.ContentCenter - _context.ScaleCenter;
+            var v1 = v0 * scaleRate;
+            var delta = v1 - v0;
+            var pos = _context.StartPoint + delta;
+            _context.Transform.SetPoint(pos, span);
+        }
 
         /// <summary>
         /// 角度変更
@@ -158,11 +216,11 @@ namespace NeeView
             _context.Transform.SetAngle(angle, span);
 
             // 回転に伴う移動
-            var m = new RotateTransform(_context.Transform.Angle - _context.BaseAngle);
+            var m = new RotateTransform(_context.Transform.Angle - _context.StartAngle);
             var p0 = _context.ContentCenter;
             var p1 = _context.RotateCenter + (Vector)m.Transform(p0 - (Vector)_context.RotateCenter);
             var delta = p1 - p0;
-            var pos = _context.BasePoint + delta;
+            var pos = _context.StartPoint + delta;
             _context.Transform.SetPoint(pos, span);
         }
 
@@ -174,14 +232,14 @@ namespace NeeView
                 _context.Transform.SetFlipHorizontal(isFlip, span);
 
                 // 角度を反転
-                var angle = -MathUtility.NormalizeLoopRange(_context.BaseAngle, -180, 180);
+                var angle = -MathUtility.NormalizeLoopRange(_context.StartAngle, -180, 180);
                 _context.Transform.SetAngle(angle, span);
 
                 // 座標を反転
                 var v0 = _context.ContentCenter - _context.FlipCenter;
                 var v1 = new Vector(-v0.X, v0.Y);
                 var delta = v1 - v0;
-                _context.Transform.SetPoint(_context.BasePoint + delta, span);
+                _context.Transform.SetPoint(_context.StartPoint + delta, span);
             }
         }
 
@@ -200,7 +258,7 @@ namespace NeeView
                 var v0 = _context.ContentCenter - _context.FlipCenter;
                 var v1 = new Vector(v0.X, -v0.Y);
                 var delta = v1 - v0;
-                _context.Transform.SetPoint(_context.BasePoint + delta, span);
+                _context.Transform.SetPoint(_context.StartPoint + delta, span);
             }
         }
 

@@ -7693,4 +7693,25 @@ nv.ShowToast(nv.Book.ViewPages[0].Path)</value>
   <data name="BookConfigAccessor.AutoRotate" xml:space="preserve">
     <value>Automatic rotation</value>
   </data>
+  <data name="DragActionType.BaseScale" xml:space="preserve">
+    <value>Base scaling</value>
+  </data>
+  <data name="DragActionType.BaseScaleSlider" xml:space="preserve">
+    <value>Base scaling (horizontal slide)</value>
+  </data>
+  <data name="DragActionType.BaseScaleSliderCentered" xml:space="preserve">
+    <value>Base scaling (horizontal slide, centered)</value>
+  </data>
+  <data name="ViewBaseScaleDownCommand" xml:space="preserve">
+    <value>Base scale zoom out</value>
+  </data>
+  <data name="ViewBaseScaleDownCommand.Remarks" xml:space="preserve">
+    <value>Reduces the base scale.</value>
+  </data>
+  <data name="ViewBaseScaleUpCommand" xml:space="preserve">
+    <value>Base scale zoom in</value>
+  </data>
+  <data name="ViewBaseScaleUpCommand.Remarks" xml:space="preserve">
+    <value>Enlarge the base scale.</value>
+  </data>
 </root>

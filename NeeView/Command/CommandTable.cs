@@ -220,6 +220,8 @@ namespace NeeView
                 new ViewScrollRightCommand(),
                 new ViewScaleUpCommand(),
                 new ViewScaleDownCommand(),
+                new ViewBaseScaleUpCommand(),
+                new ViewBaseScaleDownCommand(),
                 new ViewRotateLeftCommand(),
                 new ViewRotateRightCommand(),
                 new ToggleIsAutoRotateLeftCommand(),
@@ -382,6 +384,7 @@ namespace NeeView
             _elements["ViewScrollLeft"].SetShare(_elements["ViewScrollUp"]);
             _elements["ViewScrollRight"].SetShare(_elements["ViewScrollUp"]);
             _elements["ViewScaleDown"].SetShare(_elements["ViewScaleUp"]);
+            _elements["ViewBaseScaleDown"].SetShare(_elements["ViewBaseScaleUp"]);
             _elements["ViewRotateRight"].SetShare(_elements["ViewRotateLeft"]);
 
             // TODO: pair...

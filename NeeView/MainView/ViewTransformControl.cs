@@ -27,9 +27,13 @@ namespace NeeView
         // TODO: どうやって取得？どこから取得？
         public double ViewHorizontalDirection => Config.Current.BookSetting.BookReadOrder == PageReadOrder.LeftToRight ? 1.0 : -1.0;
 
-
-
+        
         public void ScaleDown(ViewScaleCommandParameter parameter)
+        {
+            ScaleDown(ScaleType.TransformScale, parameter);
+        }
+
+        public void ScaleDown(ScaleType scaleType, ViewScaleCommandParameter parameter)
         {
             var control = GetDragTransform(Config.Current.View.ScaleCenter == DragControlCenter.Cursor);
             if (control is null) return;
@@ -37,7 +41,8 @@ namespace NeeView
             var scaleDelta = parameter.Scale;
             var isSnap = parameter.IsSnapDefaultScale;
             Debug.Assert(scaleDelta >= 0.0);
-            var scale = control.Context.BaseScale / (1.0 + scaleDelta);
+            var startScale = control.Context.GetStartScale(scaleType);
+            var scale = startScale / (1.0 + scaleDelta);
 
             // TODO: 100%となるスケール。表示の100%にするかソースの100%にするかで変わってくる
             var originalScale = 1.0;
@@ -47,7 +52,7 @@ namespace NeeView
                 if (Config.Current.Notice.IsOriginalScaleShowMessage && originalScale > 0.0)
                 {
                     // original scale 100% snap
-                    if (control.Context.BaseScale * originalScale > 1.01 && scale * originalScale < 1.01)
+                    if (startScale * originalScale > 1.01 && scale * originalScale < 1.01)
                     {
                         scale = 1.0 / originalScale;
                     }
@@ -55,25 +60,32 @@ namespace NeeView
                 else
                 {
                     // visual scale 100% snap
-                    if (control.Context.BaseScale > 1.01 && scale < 1.01)
+                    if (startScale > 1.01 && scale < 1.01)
                     {
                         scale = 1.0;
                     }
                 }
             }
 
-            control.DoScale(scale, TimeSpan.Zero);
+            control.DoScale(scaleType, scale, TimeSpan.Zero);
         }
+
 
         public void ScaleUp(ViewScaleCommandParameter parameter)
         {
+            ScaleUp(ScaleType.TransformScale, parameter);
+        }
+
+        public void ScaleUp(ScaleType scaleType, ViewScaleCommandParameter parameter)
+        {
             var control = GetDragTransform(Config.Current.View.ScaleCenter == DragControlCenter.Cursor);
             if (control is null) return;
 
             var scaleDelta = parameter.Scale;
             var isSnap = parameter.IsSnapDefaultScale;
             Debug.Assert(scaleDelta >= 0.0);
-            var scale = control.Context.BaseScale * (1.0 + scaleDelta);
+            var startScale = control.Context.GetStartScale(scaleType);
+            var scale = startScale * (1.0 + scaleDelta);
 
             // TODO: 100%となるスケール。表示の100%にするかソースの100%にするかで変わってくる
             var originalScale = 1.0;
@@ -83,7 +95,7 @@ namespace NeeView
                 if (Config.Current.Notice.IsOriginalScaleShowMessage && originalScale > 0.0)
                 {
                     // original scale 100% snap
-                    if (control.Context.BaseScale * originalScale < 0.99 && scale * originalScale > 0.99)
+                    if (startScale * originalScale < 0.99 && scale * originalScale > 0.99)
                     {
                         scale = 1.0 / originalScale;
                     }
@@ -91,14 +103,14 @@ namespace NeeView
                 else
                 {
                     // visual scale 100% snap
-                    if (control.Context.BaseScale < 0.99 && scale > 0.99)
+                    if (startScale < 0.99 && scale > 0.99)
                     {
                         scale = 1.0;
                     }
                 }
             }
 
-            control.DoScale(scale, TimeSpan.Zero);
+            control.DoScale(scaleType, scale, TimeSpan.Zero);
         }
 
 
@@ -123,7 +135,7 @@ namespace NeeView
                 angle = Config.Current.View.AngleFrequency * Math.Sign(angle);
             }
 
-            control.DoRotate(MathUtility.NormalizeLoopRange(control.Context.BaseAngle + angle, -180, 180), TimeSpan.Zero);
+            control.DoRotate(MathUtility.NormalizeLoopRange(control.Context.StartAngle + angle, -180, 180), TimeSpan.Zero);
 
             if (isStretch)
             {

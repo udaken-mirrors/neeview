@@ -2,17 +2,17 @@
 
 namespace NeeView
 {
-    public class ScaleDragAction : DragAction
+    public class BaseScaleDragAction : DragAction
     {
-        public ScaleDragAction()
+        public BaseScaleDragAction()
         {
-            Note = Properties.Resources.DragActionType_Scale;
+            Note = Properties.Resources.DragActionType_BaseScale;
             DragActionCategory = DragActionCategory.Scale;
         }
 
         public override DragActionControl CreateControl(DragTransformContext context)
         {
-            return new ScaleActionControl(context, this, ScaleType.TransformScale);
+            return new ScaleActionControl(context, this, ScaleType.BaseScale);
         }
     }
 }

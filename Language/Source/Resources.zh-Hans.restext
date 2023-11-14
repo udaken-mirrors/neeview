@@ -2323,3 +2323,6 @@ SystemConfig.DateTimeFormat=日期时间显示格式
 BookSettingPolicyConfig.AutoRotate=自动旋转
 BookSettingPolicyConfig.BaseScale=基础比例
 BookConfigAccessor.AutoRotate=自动旋转
+DragActionType.BaseScale=基础缩放
+DragActionType.BaseScaleSlider=基础缩放 (滑动)
+DragActionType.BaseScaleSliderCentered=基础缩放 (滑动、居中)

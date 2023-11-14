@@ -50,7 +50,7 @@ namespace NeeView
                     return;
                 }
 
-                double angle = MathUtility.NormalizeLoopRange(Context.BaseAngle + Vector.AngleBetween(v0, v1), -180, 180);
+                double angle = MathUtility.NormalizeLoopRange(Context.StartAngle + Vector.AngleBetween(v0, v1), -180, 180);
 
                 _transformControl.DoRotate(angle, TimeSpan.Zero);
             }

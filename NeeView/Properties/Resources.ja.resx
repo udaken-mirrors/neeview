@@ -7915,4 +7915,25 @@ nv.ShowToast(nv.Book.ViewPages[0].Path)</value>
   <data name="BookConfigAccessor.AutoRotate" xml:space="preserve">
     <value>自動回転</value>
   </data>
+  <data name="DragActionType.BaseScale" xml:space="preserve">
+    <value>基底拡大縮小</value>
+  </data>
+  <data name="DragActionType.BaseScaleSlider" xml:space="preserve">
+    <value>基底拡大縮小 (スライド式)</value>
+  </data>
+  <data name="DragActionType.BaseScaleSliderCentered" xml:space="preserve">
+    <value>基底拡大縮小 (スライド式、中央寄せ)</value>
+  </data>
+  <data name="ViewBaseScaleDownCommand" xml:space="preserve">
+    <value>基底スケール縮小</value>
+  </data>
+  <data name="ViewBaseScaleDownCommand.Remarks" xml:space="preserve">
+    <value>基底スケールを縮小します。</value>
+  </data>
+  <data name="ViewBaseScaleUpCommand" xml:space="preserve">
+    <value>基底スケール拡大</value>
+  </data>
+  <data name="ViewBaseScaleUpCommand.Remarks" xml:space="preserve">
+    <value>基底スケールを拡大します。</value>
+  </data>
 </root>
