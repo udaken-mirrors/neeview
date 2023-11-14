@@ -109,7 +109,7 @@ namespace NeeView
                 this.EntryName = entryName;
             }
             // 検索オプションが指定されてたらブック
-            if (search != null)
+            else if (search != null)
             {
                 this.TargetPath = query;
                 this.EntryName = null;
