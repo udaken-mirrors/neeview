@@ -24,9 +24,6 @@ namespace NeeView
 
         protected override void OnWindowStateChange(object sender, WindowStateChangeEventArgs e)
         {
-            // NOTE: 瞬時に切り替わるようにするため一時的に変更。WindowStateManagerで修正される
-            Window.WindowStyle = WindowStyle.None;
-
             base.OnWindowStateChange(sender, e);
         }
     }
