@@ -108,13 +108,15 @@ namespace NeeView.Windows
 
             var rcsize = Marshal.PtrToStructure<NCCALCSIZE_PARAMS>(lParam);
             Trace("RCSize.LPPos.Flags {0}", rcsize.lppos.flags);
-            if (rcsize.lppos.flags.HasFlag(SetWindowPosFlags.SWP_NOSIZE)) return IntPtr.Zero;
+
+            // NOTE: タスクバーが横に配置されているときに幅によっては SWP_NOSIZE が立って補正できないため、SWP_NOSIZE のときも補正するようにした 
+            //if (rcsize.lppos.flags.HasFlag(SetWindowPosFlags.SWP_NOSIZE)) return IntPtr.Zero;
 
             Trace($"RCSize.rgrc[0] {rcsize.rgrc[0]}");
             //Trace($"RCSize.rgrc[1] {rcsize.rgrc[1]}");
             //Trace($"RCSize.rgrc[2] {rcsize.rgrc[2]}");
-            var rect = rcsize.rgrc[0];
-            var windowCenter = new  POINT((rect.right + rect.left) / 2, (rect.top + rect.bottom) / 2);
+            var sourceArea = rcsize.rgrc[0];
+            var windowCenter = new  POINT((sourceArea.right + sourceArea.left) / 2, (sourceArea.top + sourceArea.bottom) / 2);
             Trace($"RCSize.rgrc[0].Center: {windowCenter}");
 
             var hMonitor = NativeMethods.MonitorFromPoint(windowCenter, (int)MonitorDefaultTo.MONITOR_DEFAULTTONEAREST);
@@ -140,6 +142,13 @@ namespace NeeView.Windows
                 AppBar.ApplyAppbarSpace(hMonitor, monitorInfo.rcMonitor, ref workArea);
             }
             Trace($"Calc.RCSize {workArea}");
+
+            // NOTE: 安全のため、補正サイズが元のサイズを超える場合は補正しない
+            if (workArea.left < sourceArea.left || sourceArea.right < workArea.right || workArea.top < sourceArea.top || sourceArea.bottom < workArea.bottom)
+            {
+                Trace($"Skip: RCSize is over the original range.");
+                return IntPtr.Zero;
+            }
 
             rcsize.rgrc[0] = workArea;
             rcsize.rgrc[1] = workArea;
