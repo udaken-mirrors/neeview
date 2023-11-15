@@ -5,13 +5,11 @@ namespace NeeLaboratory.Threading.Jobs
     /// <summary>
     /// JOB例外
     /// </summary>
-    [Serializable]
     public class JobException : Exception
     {
         /// <summary>
         /// 例外が発生したJOB
         /// </summary>
-        [NonSerialized]
         private readonly IJob _job;
 
 

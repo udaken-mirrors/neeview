@@ -12,14 +12,13 @@ using System.Windows.Media.Imaging;
 
 namespace NeeView
 {
-    // TODO: エクスプローラーの圧縮zip内からのドロップ対応
+    // TODO: エクスプローラーの圧縮 zip 内からのドロップ対応
     // TODO: 7zからのドロップ対応
 
     /// <summary>
     ///  Drop Exception
     ///  ユーザに知らせるべき例外
     /// </summary>
-    [Serializable]
     public class DropException : Exception
     {
         public DropException()

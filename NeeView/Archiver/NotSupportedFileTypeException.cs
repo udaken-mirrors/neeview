@@ -3,7 +3,6 @@ using System.Runtime.Serialization;
 
 namespace NeeView
 {
-    [Serializable]
     public class NotSupportedFileTypeException : Exception
     {
         public NotSupportedFileTypeException(string extension) : base(string.Format(Properties.Resources.Notice_NotSupportedFileType, extension))
@@ -22,11 +21,5 @@ namespace NeeView
         }
 
         public string Extension { get; set; }
-
-        public override void GetObjectData(SerializationInfo info, StreamingContext context)
-        {
-            base.GetObjectData(info, context);
-            info.AddValue("NotSupportedFileTypeException.Extension", this.Extension);
-        }
     }
 }

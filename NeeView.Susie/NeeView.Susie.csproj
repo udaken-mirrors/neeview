@@ -1,14 +1,14 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <Platforms>AnyCPU;x64;x86</Platforms>
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <PropertyGroup>
     <Authors>NeeLaboratory</Authors>
-    <Copyright>Copyright © 2016-2022 Ito Mitsuhiro (nee)</Copyright>
+    <Copyright>Copyright © 2016-2023 Ito Mitsuhiro (nee)</Copyright>
   </PropertyGroup>
 
   <ItemGroup>

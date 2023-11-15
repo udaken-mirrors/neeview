@@ -1,11 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <RootNamespace>NeeLaboratory.Remote</RootNamespace>
     <Authors>NeeLaboratory</Authors>
-    <Copyright>Copyright © 2016-2022 Ito Mitsuhiro (nee)</Copyright>
+    <Copyright>Copyright © 2016-2023 Ito Mitsuhiro (nee)</Copyright>
     <Platforms>AnyCPU</Platforms>
   </PropertyGroup>
 

@@ -1710,7 +1710,7 @@ namespace NeeView
                 var removes = items.Where(e => !FileIO.ExistsPath(e.TargetPath.SimplePath)).ToList();
                 foreach (var item in removes)
                 {
-                    _folderCollection?.RequestDelete(item.TargetPath);
+                    _folderCollection.RequestDelete(item.TargetPath);
                 }
 
                 if (next != null && !_folderCollection.IsEmpty())

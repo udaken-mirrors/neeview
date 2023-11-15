@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 
 namespace NeeView
 {
-    [Serializable]
     public class BookAddressException : Exception
     {
         public BookAddressException(string message) : base(message)
