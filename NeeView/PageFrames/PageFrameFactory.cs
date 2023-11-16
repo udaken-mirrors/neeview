@@ -55,7 +55,6 @@ namespace NeeView.PageFrames
 
             Debug.Assert(IsValidFramePosition(position, direction));
 
-#warning 生成中?に PageMode が変更されて不正なフレームが生成されることがある？
             var frame = CreatePageFrame(CreatePageSource(position, direction), direction);
             Debug.Assert(frame != null);
             Debug.Assert(frame.FrameRange.Contains(position));

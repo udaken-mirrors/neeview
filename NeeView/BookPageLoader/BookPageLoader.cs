@@ -282,6 +282,19 @@ namespace NeeView
         {
             var count = 0;
             var pos = position;
+
+            // 開始位置をページ先頭に補正
+            if (pos.Part == 0 && direction == -1)
+            {
+                pos = pos - 1;
+            }
+            else if (pos.Part == 1 && direction == 1)
+            {
+                pos = pos + 1;
+            }
+            if (!_bookContext.ContainsIndex(pos.Index)) return 0;
+            Debug.Assert((pos.Part == 0 && direction == 1) || (pos.Part == 1 && direction == -1));
+
             while (count < limit)
             {
                 NVDebug.AssertMTA();
