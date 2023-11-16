@@ -104,35 +104,61 @@ namespace NeeView.Windows
         /// <returns></returns>
         private IntPtr CalcNonClientSize(IntPtr hWnd, IntPtr lParam, ref bool handled)
         {
+            // タブレットモードでは処理しない
+            if (WindowParameters.IsTabletMode) return IntPtr.Zero;
+
             if (!NativeMethods.IsZoomed(hWnd)) return IntPtr.Zero;
 
-            var rcsize = Marshal.PtrToStructure<NCCALCSIZE_PARAMS>(lParam);
-            Trace("RCSize.LPPos.Flags {0}", rcsize.lppos.flags);
+            var nonClientCalcSize = Marshal.PtrToStructure<NCCALCSIZE_PARAMS>(lParam);
+            Trace("RCSize.LPPos.Flags {0}", nonClientCalcSize.lppos.flags);
 
             // NOTE: タスクバーが横に配置されているときに幅によっては SWP_NOSIZE が立って補正できないため、SWP_NOSIZE のときも補正するようにした 
-            //if (rcsize.lppos.flags.HasFlag(SetWindowPosFlags.SWP_NOSIZE)) return IntPtr.Zero;
+            //if (nonClientCalcSize.lppos.flags.HasFlag(SetWindowPosFlags.SWP_NOSIZE)) return IntPtr.Zero;
 
-            Trace($"RCSize.rgrc[0] {rcsize.rgrc[0]}");
-            //Trace($"RCSize.rgrc[1] {rcsize.rgrc[1]}");
-            //Trace($"RCSize.rgrc[2] {rcsize.rgrc[2]}");
-            var sourceArea = rcsize.rgrc[0];
-            var windowCenter = new  POINT((sourceArea.right + sourceArea.left) / 2, (sourceArea.top + sourceArea.bottom) / 2);
+            // NOTE: 最小化から復元するタイミングではウィンドウがタスクバーのモニター側に存在することがあるため、座標から対象モニターを取得する
+            Trace($"RCSize.rgrc[0] {nonClientCalcSize.rgrc[0]}");
+            var sourceArea = nonClientCalcSize.rgrc[0];
+            var windowCenter = new POINT((sourceArea.right + sourceArea.left) / 2, (sourceArea.top + sourceArea.bottom) / 2);
             Trace($"RCSize.rgrc[0].Center: {windowCenter}");
 
             var hMonitor = NativeMethods.MonitorFromPoint(windowCenter, (int)MonitorDefaultTo.MONITOR_DEFAULTTONEAREST);
             if (hMonitor == IntPtr.Zero) return IntPtr.Zero;
 
-            var monitorInfo = new MONITORINFO()
+            (bool isSuccess, RECT workArea) = GetMonitorWorkArea(hMonitor, (_window.WindowStyle == WindowStyle.None));
+            if (!isSuccess) return IntPtr.Zero;
+
+            // 安全のため、補正サイズが元のサイズを超える場合は補正しない
+            if (workArea.left < sourceArea.left || sourceArea.right < workArea.right || workArea.top < sourceArea.top || sourceArea.bottom < workArea.bottom)
             {
-                cbSize = (uint)Marshal.SizeOf(typeof(MONITORINFO))
-            };
-            if (!NativeMethods.GetMonitorInfo(hMonitor, ref monitorInfo)) return IntPtr.Zero;
+                Trace($"Skip: RCSize is over the original range.");
+                return IntPtr.Zero;
+            }
+
+            nonClientCalcSize.rgrc[0] = workArea;
+            nonClientCalcSize.rgrc[1] = workArea;
+            nonClientCalcSize.rgrc[2] = workArea;
+            Marshal.StructureToPtr(nonClientCalcSize, lParam, true);
+
+            handled = true;
+            return (IntPtr)(WindowValidRects.WVR_ALIGNTOP | WindowValidRects.WVR_ALIGNLEFT | WindowValidRects.WVR_VALIDRECTS);
+        }
+
+        /// <summary>
+        /// モニターのワークエリア取得
+        /// </summary>
+        /// <param name="hMonitor">モニターハンドル</param>
+        /// <param name="isFullScreen">フルスクリーンフラグ。 false のときはタスクバーを考慮しない</param>
+        /// <returns></returns>
+        private static (bool, RECT) GetMonitorWorkArea(IntPtr hMonitor, bool isFullScreen)
+        {
+            var monitorInfo = new MONITORINFO() { cbSize = (uint)Marshal.SizeOf(typeof(MONITORINFO)) };
+            if (!NativeMethods.GetMonitorInfo(hMonitor, ref monitorInfo)) return (false, new RECT());
             Trace($"MonitorInfo: Monitor={monitorInfo.rcMonitor}, Work={monitorInfo.rcWork}, Flags={monitorInfo.dwFlags}");
 
             RECT workArea;
-            if (_window.WindowStyle == WindowStyle.None)
+            if (isFullScreen)
             {
-                // フルスクリーン時(None)はモニターサイズにする。
+                // フルスクリーン時はモニターサイズにする。
                 workArea = monitorInfo.rcMonitor;
             }
             else
@@ -140,36 +166,60 @@ namespace NeeView.Windows
                 // 通常時はモニターのワークサイズを指定。タスクバーが自動非表示の場合のマージンも加味する。
                 workArea = monitorInfo.rcWork;
                 AppBar.ApplyAppbarSpace(hMonitor, monitorInfo.rcMonitor, ref workArea);
+
+                // もしタブレットモードでモニターサイズと一致している(非表示タスクバー情報の取得に失敗している)場合の補正
+                // モニターサイズで SetWindowPos() を呼んでも変化がない現象の対策
+                if (WindowParameters.IsTabletMode && workArea.Equals(monitorInfo.rcMonitor))
+                {
+                    Trace($"Cannot get auto hide AppBar");
+                    workArea.bottom--;
+                }
             }
             Trace($"Calc.RCSize {workArea}");
 
-            // NOTE: 安全のため、補正サイズが元のサイズを超える場合は補正しない
-            if (workArea.left < sourceArea.left || sourceArea.right < workArea.right || workArea.top < sourceArea.top || sourceArea.bottom < workArea.bottom)
+            return (true, workArea);
+        }
+
+        /// <summary>
+        /// 最大化ウィンドウサイズ補正 (タブレットモード専用)
+        /// </summary>
+        /// <param name="window">ウィンドウ</param>
+        /// <param name="isFullScreen">フルスクリーン？</param>
+        public static void ResetMaximizedWindowSize(Window window, bool isFullScreen)
+        {
+            // タブレットモードのみの処理
+            if (!WindowParameters.IsTabletMode) return;
+
+            var hWnd = new WindowInteropHelper(window).Handle;
+            if (hWnd == IntPtr.Zero) return;
+
+            //var windowInfo = new WINDOWINFO() { cbSize = (int)Marshal.SizeOf(typeof(WINDOWINFO)) };
+            //if (!NativeMethods.GetWindowInfo(hWnd, ref windowInfo)) return;
+            //var windowRect = windowInfo.rcWindow;
+            //Trace($"Window.Source: {windowInfo.rcWindow}");
+
+            var hMonitor = NativeMethods.MonitorFromWindow(hWnd, (int)MonitorDefaultTo.MONITOR_DEFAULTTONEAREST);
+            if (hMonitor == IntPtr.Zero) return;
+
+            (bool isSuccess, RECT rect) = GetMonitorWorkArea(hMonitor, isFullScreen);
+            if (isSuccess)
             {
-                Trace($"Skip: RCSize is over the original range.");
-                return IntPtr.Zero;
+                Trace($"Window.Reset: {rect}");
+                NativeMethods.SetWindowPos(hWnd, IntPtr.Zero, rect.left, rect.top, rect.Width, rect.Height, NativeMethods.SWP_NOZORDER);
             }
-
-            rcsize.rgrc[0] = workArea;
-            rcsize.rgrc[1] = workArea;
-            rcsize.rgrc[2] = workArea;
-            Marshal.StructureToPtr(rcsize, lParam, true);
-
-            handled = true;
-            return (IntPtr)(WindowValidRects.WVR_ALIGNTOP | WindowValidRects.WVR_ALIGNLEFT | WindowValidRects.WVR_VALIDRECTS);
         }
 
 
         [Conditional("LOCAL_DEBUG")]
-        private void Trace(string message)
+        private static void Trace(string message)
         {
-            Debug.WriteLine($"{this.GetType().Name}: {message}");
+            Debug.WriteLine($"{nameof(WindowChromePatch)}: {message}");
         }
 
         [Conditional("LOCAL_DEBUG")]
-        private void Trace(string format, params object[] args)
+        private static void Trace(string format, params object[] args)
         {
-            Debug.WriteLine($"{this.GetType().Name}: {string.Format(format, args)}");
+            Debug.WriteLine($"{nameof(WindowChromePatch)}: {string.Format(format, args)}");
         }
     }
 }

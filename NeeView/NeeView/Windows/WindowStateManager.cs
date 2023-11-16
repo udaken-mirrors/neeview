@@ -209,6 +209,8 @@ namespace NeeView.Windows
             _window.WindowStyle = WindowStyle.SingleBorderWindow;
             _window.WindowState = WindowState.Maximized;
 
+            WindowChromePatch.ResetMaximizedWindowSize(_window, false);
+
             EndEdit(editArgs);
         }
 
@@ -234,6 +236,8 @@ namespace NeeView.Windows
             _window.WindowState = WindowState.Maximized;
 
             SetFullScreenMode(true);
+
+            WindowChromePatch.ResetMaximizedWindowSize(_window, true);
 
             EndEdit(editArgs);
         }
