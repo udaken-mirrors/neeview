@@ -17,7 +17,7 @@ namespace NeeView
         private int _quality = 80;
         private int _thumbnailBookCapacity = 200;
         private int _thumbnailPageCapacity = 100;
-        private int _imageWidth = 128;
+        private int _imageWidth = 256;
 #if USE_WINRT
         private bool _isVideoThumbnailEnabled = true;
 #endif
