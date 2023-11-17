@@ -2,8 +2,8 @@
 {
     public class PdfViewSourceStrategy : ImageViewSourceStrategy
     {
-        public PdfViewSourceStrategy(PageContent pageContent)
-            : base(pageContent, new PdfPictureSource(pageContent))
+        public PdfViewSourceStrategy(ArchiveEntry archiveEntry, PictureInfo? pictureInfo)
+            : base(new PdfPictureSource(archiveEntry, pictureInfo))
         {
         }
     }

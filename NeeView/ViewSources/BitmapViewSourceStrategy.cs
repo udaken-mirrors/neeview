@@ -2,8 +2,8 @@
 {
     public class BitmapViewSourceStrategy : ImageViewSourceStrategy
     {
-        public BitmapViewSourceStrategy(PageContent pageContent)
-            : base(pageContent, new BitmapPictureSource(pageContent))
+        public BitmapViewSourceStrategy(ArchiveEntry archiveEntry, PictureInfo? pictureInfo)
+            : base(new BitmapPictureSource(archiveEntry, pictureInfo))
         {
         }
     }

@@ -16,18 +16,16 @@ namespace NeeView
         private static readonly BitmapFactory _bitmapFactory = new();
 
 
-        private readonly PageContent _pageContent;
-
-
-        public BitmapPictureSource(PageContent pageContent)
+        public BitmapPictureSource(ArchiveEntry archiveEntry, PictureInfo? pictureInfo)
         {
-            _pageContent = pageContent;
+            ArchiveEntry = archiveEntry;
+            PictureInfo = pictureInfo;
         }
 
 
-        public ArchiveEntry ArchiveEntry => _pageContent.ArchiveEntry;
+        public ArchiveEntry ArchiveEntry { get; } 
 
-        public PictureInfo? PictureInfo => _pageContent.PictureInfo;
+        public PictureInfo? PictureInfo { get; }
 
 
         /// <summary>

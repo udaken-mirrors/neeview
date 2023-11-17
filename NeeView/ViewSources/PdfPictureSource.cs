@@ -9,19 +9,20 @@ namespace NeeView
 {
     public class PdfPictureSource : IPictureSource<ArchiveEntry>
     {
-        private readonly PageContent _pageContent;
         private readonly PdfArchiver _pdfArchive;
 
-        public PdfPictureSource(PageContent pageContent)
+        public PdfPictureSource(ArchiveEntry archiveEntry, PictureInfo? pictureInfo)
         {
-            _pageContent = pageContent;
-            _pdfArchive = pageContent.ArchiveEntry.Archiver as PdfArchiver ?? throw new InvalidOperationException();
+            ArchiveEntry = archiveEntry;
+            PictureInfo = pictureInfo;
+
+            _pdfArchive = ArchiveEntry.Archiver as PdfArchiver ?? throw new InvalidOperationException();
         }
 
 
-        public ArchiveEntry ArchiveEntry => _pageContent.ArchiveEntry;
+        public ArchiveEntry ArchiveEntry { get; }
 
-        public PictureInfo? PictureInfo => _pageContent.PictureInfo;
+        public PictureInfo? PictureInfo { get; }
 
         private Size GetImageSize() => PictureInfo?.Size ?? new Size(480, 640);
 

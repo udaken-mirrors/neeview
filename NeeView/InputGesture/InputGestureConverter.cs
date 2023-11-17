@@ -109,7 +109,7 @@ namespace NeeView
         /// 文字列をInputGestureに変換する。MouseGestureのみ。
         /// </summary>
         /// <param name="source">ショートカット定義文字列</param>
-        /// <returns>InputGesture。変換出来なかった場合はnull</returns>
+        /// <returns>InputGesture。変換出来なかった場合は null</returns>
         public static InputGesture? ConvertFromMouseGestureString(string source)
         {
             try

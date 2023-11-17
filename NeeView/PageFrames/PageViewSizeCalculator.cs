@@ -5,20 +5,17 @@ namespace NeeView.PageFrames
 {
     public class PageSizeCalculator
     {
-        private Page _page;
-        private PageCustomSize _customSize;
-        private ImageTrimConfig _imageTrim;
+        private readonly PageDataSource _pageDataSource;
+        private readonly PageCustomSize _customSize;
+        private readonly ImageTrimConfig _imageTrim;
 
 
-        public PageSizeCalculator(PageFrameContext context, Page page)
+        public PageSizeCalculator(PageFrameContext context, PageDataSource pageDataSource)
         {
-            _page = page;
+            _pageDataSource = pageDataSource;
             _imageTrim = context.ImageTrimConfig;
             _customSize = new PageCustomSize(context.ImageCustomSizeConfig, context);
         }
-
-
-        public Page Page => _page;
 
 
         /// <summary>
@@ -27,7 +24,7 @@ namespace NeeView.PageFrames
         /// <returns>画像サイズから固定サイズとトリミングを反映したサイズ</returns>
         public Size GetPageSize()
         {
-            var size = _customSize.TransformToCustomSize(_page.Size);
+            var size = _customSize.TransformToCustomSize(_pageDataSource.Size);
 
             if (_imageTrim.IsEnabled)
             {
@@ -44,18 +41,18 @@ namespace NeeView.PageFrames
 
     public class PageViewSizeCalculator
     {
-        private PageRange _pagePart;
-        private int _direction;
-        private ImageTrimConfig _imageTrim;
-        private PageSizeCalculator _pageSizeCalculator;
+        private readonly PageRange _pagePart;
+        private readonly int _direction;
+        private readonly ImageTrimConfig _imageTrim;
+        private readonly PageSizeCalculator _pageSizeCalculator;
 
-        public PageViewSizeCalculator(PageFrameContext context, Page page, PageRange pagePart, int direction)
+        public PageViewSizeCalculator(PageFrameContext context, PageDataSource pageDataSource, PageRange pagePart, int direction)
         {
             _pagePart = pagePart;
             _direction = direction;
             _imageTrim = context.ImageTrimConfig;
 
-            _pageSizeCalculator = new PageSizeCalculator(context, page);
+            _pageSizeCalculator = new PageSizeCalculator(context, pageDataSource);
         }
 
 
@@ -97,13 +94,13 @@ namespace NeeView.PageFrames
             // トリミング逆補正
             if (_imageTrim.IsEnabled)
             {
-                var wrate = Math.Max(1.0 - (_imageTrim.Left + _imageTrim.Right), 0.0);
-                var hrate = Math.Max(1.0 - (_imageTrim.Top + _imageTrim.Bottom), 0.0);
+                var wRate = Math.Max(1.0 - (_imageTrim.Left + _imageTrim.Right), 0.0);
+                var hRate = Math.Max(1.0 - (_imageTrim.Top + _imageTrim.Bottom), 0.0);
 
-                if (wrate > 0.0 && hrate > 0.0)
+                if (wRate > 0.0 && hRate > 0.0)
                 {
-                    width = width / wrate;
-                    height = height / hrate;
+                    width = width / wRate;
+                    height = height / hRate;
                 }
             }
 

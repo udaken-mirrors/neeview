@@ -8,14 +8,11 @@ namespace NeeView
 {
     public class FileViewSourceStrategy : IViewSourceStrategy
     {
-        private readonly PageContent _pageContent;
-
-        public FileViewSourceStrategy(PageContent pageContent)
+        public FileViewSourceStrategy()
         {
-            _pageContent = pageContent;
         }
 
-        public async Task<DataSource> LoadCoreAsync(DataSource data, Size size, CancellationToken token)
+        public async Task<DataSource> LoadCoreAsync(PageDataSource data, Size size, CancellationToken token)
         {
             if (data.Data is not FilePageData pageData) throw new InvalidOperationException(nameof(data.Data));
 

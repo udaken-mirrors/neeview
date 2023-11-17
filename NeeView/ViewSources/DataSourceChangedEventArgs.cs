@@ -5,12 +5,12 @@ namespace NeeView
 {
     public class DataSourceChangedEventArgs : EventArgs
     {
-        public DataSourceChangedEventArgs(DataSource dataSource)
+        public DataSourceChangedEventArgs(PageDataSource dataSource)
         {
             DataSource = dataSource;
         }
 
-        public DataSource DataSource { get; }
+        public PageDataSource DataSource { get; }
     }
 
 }

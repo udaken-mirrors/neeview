@@ -7,11 +7,11 @@ namespace NeeView
 {
     public class EmptyViewSourceStrategy : IViewSourceStrategy
     {
-        public EmptyViewSourceStrategy(PageContent pageContent)
+        public EmptyViewSourceStrategy()
         {
         }
 
-        public async Task<DataSource> LoadCoreAsync(DataSource data, Size size, CancellationToken token)
+        public async Task<DataSource> LoadCoreAsync(PageDataSource data, Size size, CancellationToken token)
         {
             return await Task.FromResult(new DataSource(new EmptyViewData(), 0, null));
         }

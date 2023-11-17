@@ -8,14 +8,11 @@ namespace NeeView
 {
     public class MediaViewSourceStrategy : IViewSourceStrategy
     {
-        private readonly PageContent _pageContent;
-
-        public MediaViewSourceStrategy(PageContent pageContent)
+        public MediaViewSourceStrategy()
         {
-            _pageContent = pageContent;
         }
 
-        public async Task<DataSource> LoadCoreAsync(DataSource data, Size size, CancellationToken token)
+        public async Task<DataSource> LoadCoreAsync(PageDataSource data, Size size, CancellationToken token)
         {
             if (data.Data is not MediaPageData pageData) throw new InvalidOperationException(nameof(data.Data));
 

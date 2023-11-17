@@ -23,20 +23,14 @@ namespace NeeView
         /// 直前の選択ページのサイズが保持される。
         /// サイズ確定前のLoadingページのサイズになる。
         /// </reamerks>
-        /// 
         public static Size UndefinedSize { get; set; } = DefaultSize;
 
         private readonly ArchiveEntry _archiveEntry;
+        private PageDataSource? _pageDataSource;
         private readonly BookMemoryService? _bookMemoryService;
-        private PictureInfo? _pictureInfo;
-        private Size? _size;
         public PageContentState _state;
         private readonly AsyncLock _asyncLock = new();
-        private readonly object _lock = new();
         private CancellationTokenSource? _cancellationTokenSource;
-        private object? _data;
-        private long _dataSize;
-        private string? _errorMessage;
 
 
         public PageContent(ArchiveEntry archiveEntry, BookMemoryService? bookMemoryService)
@@ -72,66 +66,79 @@ namespace NeeView
 
         public BookMemoryService? BookMemoryService => _bookMemoryService;
 
-        /// <summary>
-        /// Picture info.
-        /// 一度だけ設定可能
-        /// </summary>
-        public PictureInfo? PictureInfo
-        {
-            get => _pictureInfo;
-            private set => _pictureInfo = _pictureInfo ?? value;
-        }
+        public PictureInfo? PictureInfo => PageDataSource.PictureInfo;
+
+        public Size Size => PageDataSource.Size;
+
+        public Color Color => PictureInfo?.Color ?? Colors.Black;
+
+
 
         /// <summary>
-        /// Picture size
+        /// 表示に必要な情報セット
         /// </summary>
-        public Size Size
+        /// <remarks>
+        /// PictureInfo は一度だけ設定可能。
+        /// Size は PictureInfo から求められるが、未設定のときは初回アクセス時に UndefinedSize が設定される。ページ切り替えのちらつき軽減用の特殊処理。
+        /// </remarks>
+        public PageDataSource PageDataSource
         {
-            get { return _size ?? UndefinedSize; }
-            protected set
+            get
             {
-                if (SetProperty(ref _size, value))
+                return _pageDataSource = _pageDataSource ?? CreatePageDataSource(null, null);
+            }
+            private set
+            {
+                var oldDataSource = _pageDataSource;
+                if (SetProperty(ref _pageDataSource, value))
                 {
-                    Debug.Assert(_size is not null && _size.Value.Width > 0);
-                    SizeChanged?.Invoke(this, EventArgs.Empty);
+                    Debug.Assert(_pageDataSource is not null);
+                    RaisePropertyChanged(nameof(Data));
+                    RaisePropertyChanged(nameof(DataSize));
+                    RaisePropertyChanged(nameof(ErrorMessage));
+                    if (oldDataSource?.PictureInfo != _pageDataSource.PictureInfo)
+                    {
+                        RaisePropertyChanged(nameof(PictureInfo));
+                    }
+                    if (oldDataSource?.Size != _pageDataSource.Size)
+                    {
+                        RaisePropertyChanged(nameof(Size));
+                        SizeChanged?.Invoke(this, EventArgs.Empty);
+                    }
                 }
             }
         }
 
-        public Color Color => PictureInfo?.Color ?? Colors.Black;
-
-        public object? Data
-        {
-            get { return _data; }
-            private set { SetProperty(ref _data, value); }
-        }
-
-        public long DataSize
-        {
-            get { return _dataSize; }
-            private set { SetProperty(ref _dataSize, value); }
-        }
-
-        public string? ErrorMessage
-        {
-            get { return _errorMessage; }
-            private set { SetProperty(ref _errorMessage, value); }
-        }
-
-        public bool IsLoaded => Data is not null || IsFailed;
-        public bool IsFailed => ErrorMessage is not null;
-        public DataState DataState => IsFailed ? DataState.Failed : IsLoaded ? DataState.Loaded : DataState.None;
+        // TODO: これら使ってる？
+        public object? Data => PageDataSource.Data;
+        public long DataSize => PageDataSource.DataSize;
+        public string? ErrorMessage => PageDataSource.ErrorMessage;
+        public bool IsLoaded => PageDataSource.IsLoaded;
+        public bool IsFailed => PageDataSource.IsFailed;
+        public DataState DataState => PageDataSource.DataState;
 
         public bool IsMemoryLocked => _state != PageContentState.None;
 
 
-        public async Task LoadAsync(CancellationToken token)
+        private PageDataSource CreatePageDataSource(IDataSource? dataSource, PictureInfo? pictureInfo)
+        {
+            return new PageDataSource()
+            {
+                Data = dataSource?.Data,
+                DataSize = dataSource?.DataSize ?? 0,
+                ErrorMessage = dataSource?.ErrorMessage,
+                PictureInfo = pictureInfo,
+                Size = pictureInfo?.Size ?? UndefinedSize,
+            };
+        }
+
+        public async Task<PageDataSource> LoadAsync(CancellationToken token)
         {
             using (await _asyncLock.LockAsync(token))
             {
                 if (IsLoaded)
                 {
-                    return;
+                    return PageDataSource;
                 }
 
                 try
@@ -142,13 +149,15 @@ namespace NeeView
                     using var linkedTokenSource = CancellationTokenSource.CreateLinkedTokenSource(_cancellationTokenSource.Token, token);
                     if (linkedTokenSource.Token.IsCancellationRequested)
                     {
-                        return;
+                        return PageDataSource;
                     }
                     var source = await LoadSourceAsync(token);
                     SetSource(source);
+                    return PageDataSource;
                 }
                 catch (OperationCanceledException)
                 {
+                    return PageDataSource;
                 }
                 finally
                 {
@@ -156,19 +165,22 @@ namespace NeeView
                     _cancellationTokenSource = null;
                 }
             }
-
         }
 
         public abstract Task<PageSource> LoadSourceAsync(CancellationToken token);
 
         public async Task<PictureInfo?> LoadPictureInfoAsync(CancellationToken token)
         {
-            if (_pictureInfo is not null) return _pictureInfo;
+            if (PictureInfo is not null) return PictureInfo;
 
             using (await _asyncLock.LockAsync(token))
             {
-                _pictureInfo = _pictureInfo ?? await LoadPictureInfoCoreAsync(token);
-                return _pictureInfo;
+                var pictureInfo = await LoadPictureInfoCoreAsync(token);
+                if (PictureInfo is null && pictureInfo is not null)
+                {
+                    PageDataSource = CreatePageDataSource(PageDataSource, pictureInfo);
+                }
+                return pictureInfo;
             }
         }
 
@@ -180,15 +192,8 @@ namespace NeeView
         public virtual void Unload()
         {
             _cancellationTokenSource?.Cancel();
-
-            lock (_lock)
-            {
-                Data = null;
-                DataSize = 0;
-                ErrorMessage = null;
-            }
+            PageDataSource = CreatePageDataSource(null, PictureInfo);
         }
-
 
         private void SetSource(PageSource source)
         {
@@ -198,38 +203,20 @@ namespace NeeView
                 return;
             }
 
-            lock (_lock)
+            PageDataSource = CreatePageDataSource(source, PictureInfo ?? source.PictureInfo);
+
+            if (GetMemorySize() > 0)
             {
-                Data = source.Data;
-                DataSize = source.DataSize;
-                ErrorMessage = source.ErrorMessage;
-                PictureInfo = source.PictureInfo;
-
-                if (GetMemorySize() > 0)
-                {
-                    _bookMemoryService?.AddPageContent(this);
-                }
-
-                Size = PictureInfo?.Size ?? UndefinedSize;
+                _bookMemoryService?.AddPageContent(this);
             }
 
             ContentChanged?.Invoke(this, EventArgs.Empty);
         }
 
-        public DataSource CreateDataSource()
-        {
-            lock (_lock)
-            {
-                return new DataSource(Data, DataSize, ErrorMessage);
-            }
-        }
-
-
-        public virtual long GetMemorySize()
+        public long GetMemorySize()
         {
             return DataSize;
         }
-
     }
 
 }

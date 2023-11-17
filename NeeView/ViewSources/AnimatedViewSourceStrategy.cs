@@ -11,16 +11,13 @@ namespace NeeView
 {
     public class AnimatedViewSourceStrategy : IViewSourceStrategy
     {
-        private readonly PageContent _pageContent;
 
-
-        public AnimatedViewSourceStrategy(PageContent pageContent)
+        public AnimatedViewSourceStrategy()
         {
-            _pageContent = pageContent;
         }
 
 
-        public async Task<DataSource> LoadCoreAsync(DataSource data, Size size, CancellationToken token)
+        public async Task<DataSource> LoadCoreAsync(PageDataSource data, Size size, CancellationToken token)
         {
             if (data.Data is not AnimatedPageData pageData) throw new InvalidOperationException(nameof(data.Data));
 
@@ -31,7 +28,7 @@ namespace NeeView
             // 色情報とBPP設定。
             if (image is not null)
             {
-                _pageContent.PictureInfo?.SetPixelInfo(image);
+                data.PictureInfo?.SetPixelInfo(image);
             }
 
             var viewData = new AnimatedViewData(pageData.MediaSource, image);

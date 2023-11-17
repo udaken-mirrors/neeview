@@ -17,16 +17,21 @@ namespace NeeView
     {
         private readonly PageContent _pageContent;
         private readonly BookMemoryService _bookMemoryService;
-        private DataSource _data = new();
-        private readonly object _lock = new();
+        private PageDataSource _data;
         private readonly AsyncLock _asyncLock = new();
         private IViewSourceStrategy? _strategy;
 
 
-        public ViewSource(PageContent pageContent, BookMemoryService bookMemoryService)
+        public ViewSource(PageContent pageContent, PageDataSource pageDataSource, BookMemoryService bookMemoryService)
         {
             _pageContent = pageContent;
             _bookMemoryService = bookMemoryService;
+
+            _data = new PageDataSource()
+            {
+                PictureInfo = pageDataSource.PictureInfo,
+                Size = pageDataSource.Size
+            };
         }
 
 
@@ -38,10 +43,10 @@ namespace NeeView
 
 
 
-        public DataSource DataSource
+        public PageDataSource DataSource
         {
             get { return _data; }
-            set
+            private set
             {
                 if (SetProperty(ref _data, value))
                 {
@@ -105,20 +110,19 @@ namespace NeeView
                     return;
                 }
 
-                // TODO: dataを返したほうが堅牢だね？
-                await _pageContent.LoadAsync(token);
+                // データ読み込み
+                var data = await _pageContent.LoadAsync(token);
 
-                var data = _pageContent.CreateDataSource();
                 if (data.IsFailed)
                 {
-                    SetData(null, 0, _pageContent.ErrorMessage);
+                    SetData(null, 0, data.ErrorMessage, data.PictureInfo, data.Size);
                     return;
                 }
 
                 // NOTE: エラーなく読み込んだのにデータが無いとかありえないが念のため
                 if (data.Data is null)
                 {
-                    SetData(null, 0, "InvalidOperationException: cannot load data");
+                    SetData(null, 0, "InvalidOperationException: cannot load data", data.PictureInfo, data.Size);
                     return;
                 }
 
@@ -132,18 +136,18 @@ namespace NeeView
                 }
                 catch (Exception ex)
                 {
-                    SetData(null, 0, ex.Message);
+                    SetData(null, 0, ex.Message, data.PictureInfo, data.Size);
                 }
             }
         }
 
-        private async Task LoadCoreAsync(DataSource data, Size size, CancellationToken token)
+        private async Task LoadCoreAsync(PageDataSource data, Size size, CancellationToken token)
         {
             NVDebug.AssertMTA();
 
             if (data.IsFailed)
             {
-                SetData(null, 0, data.ErrorMessage);
+                SetData(null, 0, data.ErrorMessage, data.PictureInfo, data.Size);
             }
             else
             {
@@ -154,47 +158,49 @@ namespace NeeView
 
                 if (_strategy is not null)
                 {
-                    SetData(await _strategy.LoadCoreAsync(data, size, token));
+                    SetData(await _strategy.LoadCoreAsync(data, size, token), data.PictureInfo, data.Size);
                 }
                 else
                 {
-                    SetData(null, 0, $"InvalidOperationException: No ViewSourceStrategy");
+                    SetData(null, 0, $"InvalidOperationException: No ViewSourceStrategy", data.PictureInfo, data.Size);
                 }
             }
         }
 
         public void Unload()
         {
-            if (Data is not null)
+            if (_data.Data is not null)
             {
                 _strategy?.Unload();
-                SetData(null, 0, null);
+                SetData(null, 0, null, _data.PictureInfo, _data.Size);
             }
         }
 
 
-        private void SetData(object? data, long dataSize, string? errorMessage)
+        private void SetData(object? data, long dataSize, string? errorMessage, PictureInfo? pictureInfo, Size size)
         {
-            SetData(new DataSource(data, dataSize, errorMessage));
-        }
-
-        private void SetData(DataSource data)
-        {
-            lock (_lock)
+            var pageDataSource = new PageDataSource()
             {
-                DataSource = data;
-#if false
-                if (_data != data)
-                {
-                    _data = data;
-                    if (_data.DataSize > 0)
-                    {
-                        _bookMemoryService.AddPictureSource(this);
-                    }
-                    DataSourceChanged?.Invoke(this, new DataSourceChangedEventArgs(_data));
-                }
-#endif
-            }
+                Data = data,
+                DataSize = dataSize,
+                ErrorMessage = errorMessage,
+                PictureInfo = pictureInfo,
+                Size = size
+            };
+            DataSource = pageDataSource;
+        }
+
+        private void SetData(DataSource data, PictureInfo? pictureInfo, Size size)
+        {
+            var pageDataSource = new PageDataSource()
+            {
+                Data = data.Data,
+                DataSize = data.DataSize,
+                ErrorMessage = data.ErrorMessage,
+                PictureInfo = pictureInfo,
+                Size = size
+            };
+            DataSource = pageDataSource;
         }
     }
 

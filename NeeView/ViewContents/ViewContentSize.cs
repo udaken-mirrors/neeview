@@ -34,7 +34,7 @@ namespace NeeView
         /// <summary>
         /// 元データのサイズ
         /// </summary>
-        public Size SourceSize => _element.Page.Content.Size;
+        public Size SourceSize => _element.PageDataSource.Size;
 
         /// <summary>
         /// レイアウトサイズ (LayoutTransform適用)

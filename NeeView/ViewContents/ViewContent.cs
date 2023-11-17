@@ -246,7 +246,7 @@ namespace NeeView
         /// <summary>
         /// Update ViewContent
         /// </summary>
-        private void UpdateContent(DataSource data)
+        private void UpdateContent(PageDataSource data)
         {
             NVDebug.AssertSTA();
             var unit = CreateContent(_sizeSource, data);
@@ -256,7 +256,7 @@ namespace NeeView
             ViewContentChanged?.Invoke(this, new ViewContentChangedEventArgs(State.ToChangedAction(), this));
         }
 
-        private ViewContentData CreateContent(SizeSource size, DataSource data)
+        private ViewContentData CreateContent(SizeSource size, PageDataSource data)
         {
             Debug.Assert(_initialized);
 
@@ -272,7 +272,7 @@ namespace NeeView
                     case DataState.Loaded:
                         Trace($"CreateContent.Loaded: {ArchiveEntry}");
                         Debug.Assert(data.Data is not null);
-                        PageContent.UndefinedSize = this.Page.Content.Size;
+                        PageContent.UndefinedSize = data.Size;
                         return new ViewContentData(CreateLoadedContent(data.Data), ViewContentState.Loaded);
 
                     case DataState.Failed:

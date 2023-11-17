@@ -4,7 +4,7 @@ namespace NeeView
 {
     public class ArchivePageData
     {
-        public ArchivePageData(ArchiveEntry archiveEntry, ThumbnailType thumbnailType, PageContent? pageContent, DataSource? dataSource)
+        public ArchivePageData(ArchiveEntry archiveEntry, ThumbnailType thumbnailType, PageContent? pageContent, PageDataSource? dataSource)
         {
             ArchiveEntry = archiveEntry;
             ThumbnailType = thumbnailType;
@@ -15,7 +15,7 @@ namespace NeeView
         public ArchiveEntry ArchiveEntry { get; }
         public ThumbnailType ThumbnailType { get; }
         public PageContent? PageContent { get; }
-        public DataSource? DataSource { get; }
+        public PageDataSource? DataSource { get; }
     }
 
 }

@@ -2,8 +2,8 @@
 {
     public class SvgViewSourceStrategy : ImageViewSourceStrategy
     {
-        public SvgViewSourceStrategy(PageContent pageContent)
-            : base(pageContent, new SvgPictureSource(pageContent))
+        public SvgViewSourceStrategy(ArchiveEntry archiveEntry, PictureInfo? pictureInfo)
+            : base(new SvgPictureSource(archiveEntry, pictureInfo))
         {
         }
     }

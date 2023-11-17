@@ -5,7 +5,7 @@ namespace NeeView
 {
     public class PdfPageThumbnail : ImagePageThumbnail
     {
-        public PdfPageThumbnail(PdfPageContent content) : base(content, new PdfPictureSource(content))
+        public PdfPageThumbnail(PdfPageContent content) : base(content, new PdfPictureSource(content.ArchiveEntry, content.PictureInfo))
         {
         }
     }

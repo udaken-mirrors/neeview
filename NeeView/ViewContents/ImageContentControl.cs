@@ -33,7 +33,7 @@ namespace NeeView
             var grid = new Grid();
 
             // background
-            if (source.Page.Content.PictureInfo?.HasAlpha == true)
+            if (source.PageDataSource.PictureInfo?.HasAlpha == true)
             {
                 var background = new Rectangle();
                 background.SetBinding(Rectangle.FillProperty, new Binding(nameof(PageBackgroundSource.Brush)) { Source = backgroundSource });

@@ -13,16 +13,15 @@ namespace NeeView
 {
     public class SvgPictureSource : IPictureSource<DrawingGroup>
     {
-        private readonly PageContent _pageContent;
-
-        public SvgPictureSource(PageContent pageContent)
+        public SvgPictureSource(ArchiveEntry archiveEntry, PictureInfo? pictureInfo)
         {
-            _pageContent = pageContent;
+            ArchiveEntry = archiveEntry;
+            PictureInfo = pictureInfo;
         }
 
-        public ArchiveEntry ArchiveEntry => _pageContent.ArchiveEntry;
+        public ArchiveEntry ArchiveEntry { get; }
 
-        public PictureInfo? PictureInfo => _pageContent.PictureInfo;
+        public PictureInfo? PictureInfo { get; }
 
 
         // TODO: async

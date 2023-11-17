@@ -10,13 +10,11 @@ namespace NeeView
 {
     public class ImageViewSourceStrategy : IViewSourceStrategy
     {
-        private readonly PageContent _pageContent;
         private readonly Picture _picture;
 
 
-        public ImageViewSourceStrategy(PageContent pageContent, IPictureSource pictureSource)
+        public ImageViewSourceStrategy(IPictureSource pictureSource)
         {
-            _pageContent = pageContent;
             _picture = new Picture(pictureSource);
         }
 
@@ -30,12 +28,12 @@ namespace NeeView
         }
 
 
-        public async Task<DataSource> LoadCoreAsync(DataSource data, Size size, CancellationToken token)
+        public async Task<DataSource> LoadCoreAsync(PageDataSource data, Size size, CancellationToken token)
         {
             // NOTE: 非同期で処理されることを期待している
             NVDebug.AssertMTA();
 
-            var pictureInfo = _pageContent.PictureInfo;
+            var pictureInfo = data.PictureInfo;
 
             if (data is not null && pictureInfo is not null)
             {

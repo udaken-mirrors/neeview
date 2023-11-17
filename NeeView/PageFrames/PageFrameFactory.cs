@@ -75,7 +75,8 @@ namespace NeeView.PageFrames
             if (page is null) return PagePosition.Empty;
 
             // 分割可能であれば修正不要
-            if (_context.PageMode == PageMode.SinglePage && _context.IsSupportedDividePage && IsLandscape(page))
+            // NOTE: page.Content.PageDataSource にアクセスしているが、ここの処理は Debug.Assert() でしか使用されていないので許容している。
+            if (_context.PageMode == PageMode.SinglePage && _context.IsSupportedDividePage && IsLandscape(page.Content.PageDataSource))
             {
                 return position;
             }
@@ -89,9 +90,9 @@ namespace NeeView.PageFrames
         /// </summary>
         /// <param name="page">ページ</param>
         /// <returns>横長？</returns>
-        private bool IsLandscape(Page page)
+        private bool IsLandscape(PageDataSource pageDataSource)
         {
-            return AspectRatioTools.IsLandscape(new PageSizeCalculator(_context, page).GetPageSize());
+            return AspectRatioTools.IsLandscape(new PageSizeCalculator(_context, pageDataSource).GetPageSize());
         }
 
         /// <summary>
@@ -129,15 +130,18 @@ namespace NeeView.PageFrames
                 return null;
             }
 
+            // 作成に使用するページ情報をここで確定する
+            var pageDataSource = page.Content.PageDataSource;
+
             var range = PageRange.CreatePageRangeForOnePage(position, direction);
 
             // 分割ページ
-            if (_context.PageMode == PageMode.SinglePage && _context.IsSupportedDividePage && IsLandscape(page))
+            if (_context.PageMode == PageMode.SinglePage && _context.IsSupportedDividePage && IsLandscape(pageDataSource))
             {
                 range = new PageRange(range.Top(direction), direction);
             }
 
-            return new PageFrameElement(_context, _bookContext, page, range, _context.ReadOrder.ToSign(), GetTerminal(range));
+            return new PageFrameElement(_context, _bookContext, page, pageDataSource, range, _context.ReadOrder.ToSign(), GetTerminal(range));
         }
 
         private PageTerminal GetTerminal(PageRange range)

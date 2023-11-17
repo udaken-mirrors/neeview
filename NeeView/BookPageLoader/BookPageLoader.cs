@@ -341,7 +341,7 @@ namespace NeeView
                 foreach (var element in frame.Elements)
                 {
                     token.ThrowIfCancellationRequested();
-                    var viewSource = _viewSourceMap.Get(element.Page, element.PagePart);
+                    var viewSource = _viewSourceMap.Get(element.Page, element.PagePart, element.PageDataSource);
                     var viewContentSize = ViewContentSizeFactory.Create(element, _elementScaleFactory.Create(frame));
                     var pictureSize = viewContentSize.GetPictureSize();
                     await viewSource.LoadAsync(pictureSize, token);

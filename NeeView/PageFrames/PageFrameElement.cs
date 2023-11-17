@@ -14,7 +14,7 @@ namespace NeeView.PageFrames
     {
         private PageFrameContext _context;
 
-        public PageFrameElement(PageFrameContext context, BookContext bookContext, Page page, PageRange range, int direction, PageTerminal terminal)
+        public PageFrameElement(PageFrameContext context, BookContext bookContext, Page page, PageDataSource pageDataSource, PageRange range, int direction, PageTerminal terminal)
         {
             Debug.Assert(range.IsOnePage());
             Debug.Assert(!range.IsEmpty());
@@ -26,6 +26,7 @@ namespace NeeView.PageFrames
             PageRange = range;
             Terminal = terminal;
             Page = page;
+            PageDataSource = pageDataSource;
             Direction = direction;
 
             RawSize = ViewSizeCalculator.GetViewSize();
@@ -33,6 +34,8 @@ namespace NeeView.PageFrames
 
         // ページ
         public Page Page { get; }
+
+        public PageDataSource PageDataSource { get; }
 
         /// <summary>
         /// ページ範囲
@@ -83,8 +86,8 @@ namespace NeeView.PageFrames
         /// ダミーページ
         /// </summary>
         public bool IsDummy { get; init; }
-        
-        public PageViewSizeCalculator ViewSizeCalculator => new PageViewSizeCalculator(_context, Page, PageRange, Direction);
+
+        public PageViewSizeCalculator ViewSizeCalculator => new PageViewSizeCalculator(_context, PageDataSource, PageRange, Direction);
 
 
         public bool Contains(Page page)
@@ -101,7 +104,7 @@ namespace NeeView.PageFrames
         {
             // TODO: _page.Size は Load によって変更される可能性があるのでこれは厳密には不正な処理になることがあるはず
             // TODO: ここで Config.Default を参照してるのはよろしくない
-            return AspectRatioTools.IsLandscape(new PageSizeCalculator(_context, Page).GetPageSize(), Config.Current.Book.WideRatio);
+            return AspectRatioTools.IsLandscape(new PageSizeCalculator(_context, PageDataSource).GetPageSize(), Config.Current.Book.WideRatio);
         }
 
         public bool IsLandscape()

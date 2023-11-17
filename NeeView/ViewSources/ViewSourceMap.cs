@@ -29,7 +29,7 @@ namespace NeeView
             }
         }
 
-        public ViewSource Get(Page page, PagePart pagePart)
+        public ViewSource Get(Page page, PagePart pagePart, PageDataSource pageDataSource)
         {
             lock (_lock)
             {
@@ -41,7 +41,7 @@ namespace NeeView
                 else
                 {
                     //Debug.WriteLine($"ViewSourceMap.Create: {key}");
-                    var viewSource = new ViewSource(page.Content, _bookMemoryService);
+                    var viewSource = new ViewSource(page.Content, pageDataSource, _bookMemoryService);
                     _map.Add(key, viewSource);
                     CollectionChanged?.Invoke(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, key));
                     return viewSource;

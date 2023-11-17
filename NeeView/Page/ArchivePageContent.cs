@@ -81,7 +81,7 @@ namespace NeeView
                 Debug.Assert(pageContent is not ArchivePageContent);
                 await pageContent.LoadAsync(token);
                 token.ThrowIfCancellationRequested();
-                var dataSource = pageContent.CreateDataSource();
+                var dataSource = pageContent.PageDataSource;
                 if (dataSource.DataState == DataState.None) return null;
                 return new ArchivePageData(ArchiveEntry, ThumbnailType.Unique, pageContent, dataSource);
             }

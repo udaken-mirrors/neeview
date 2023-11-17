@@ -5,23 +5,26 @@ namespace NeeView
 {
     public static class ViewSourceStrategyFactory
     {
-        public static IViewSourceStrategy? Create(PageContent pageContent, DataSource data) // data は pageContent から求まるよね？
+        public static IViewSourceStrategy? Create(PageContent pageContent, PageDataSource data)
         {
             if (!data.IsLoaded) return null;
 
             // NOTE: エラーデータは事前に弾いておくこと
             if (data.IsFailed) return null;
 
+            var archiveEntry = pageContent.ArchiveEntry;
+            var pictureInfo = data.PictureInfo;
+
             return data.Data switch
             {
-                BitmapPageData => new BitmapViewSourceStrategy(pageContent),
-                AnimatedPageData => new AnimatedViewSourceStrategy(pageContent),
-                MediaPageData => new MediaViewSourceStrategy(pageContent),
-                PdfPageData => new PdfViewSourceStrategy(pageContent),
-                SvgPageData => new SvgViewSourceStrategy(pageContent),
-                ArchivePageData => new ArchiveViewSourceStrategy(pageContent),
-                FilePageData => new FileViewSourceStrategy(pageContent),
-                EmptyPageData => new EmptyViewSourceStrategy(pageContent),
+                BitmapPageData => new BitmapViewSourceStrategy(archiveEntry, pictureInfo),
+                AnimatedPageData => new AnimatedViewSourceStrategy(),
+                MediaPageData => new MediaViewSourceStrategy(),
+                PdfPageData => new PdfViewSourceStrategy(archiveEntry, pictureInfo),
+                SvgPageData => new SvgViewSourceStrategy(archiveEntry, pictureInfo),
+                ArchivePageData => new ArchiveViewSourceStrategy(),
+                FilePageData => new FileViewSourceStrategy(),
+                EmptyPageData => new EmptyViewSourceStrategy(),
                 _ => throw new NotSupportedException(),
             };
         }

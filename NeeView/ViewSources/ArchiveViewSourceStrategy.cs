@@ -10,14 +10,11 @@ namespace NeeView
 {
     public class ArchiveViewSourceStrategy : IViewSourceStrategy
     {
-        private readonly PageContent _pageContent;
-
-        public ArchiveViewSourceStrategy(PageContent pageContent)
+        public ArchiveViewSourceStrategy()
         {
-            _pageContent = pageContent;
         }
 
-        public async Task<DataSource> LoadCoreAsync(DataSource data, Size size, CancellationToken token)
+        public async Task<DataSource> LoadCoreAsync(PageDataSource data, Size size, CancellationToken token)
         {
             if (data.Data is not ArchivePageData pageData) throw new InvalidOperationException(nameof(data.Data));
 
