@@ -63,6 +63,12 @@ namespace NeeView
             set => _model.Angle = value;
         }
 
+        public double SliderAngle
+        {
+            get => _model.Angle;
+            set => _model.Angle = MathUtility.Snap(value, SliderAngle, 0.0, 20.0);
+        }
+
         public AutoRotateType AutoRotate
         {
             get => Config.Current.BookSetting.AutoRotate;
@@ -86,9 +92,8 @@ namespace NeeView
         public double ScaleLog
         {
             get => _model.Scale > 0.0 ? Math.Log(_model.Scale, 2.0) : -5.0;
-            set => _model.Scale = Math.Pow(2, value);
+            set => _model.Scale = Math.Pow(2, MathUtility.Snap(value, ScaleLog, 0.0, 0.5));
         }
-
 
         public bool IsFlipHorizontal
         {
@@ -178,6 +183,11 @@ namespace NeeView
             set => Config.Current.BookSetting.BaseScale = value / 100.0;
         }
 
+        public double SliderBaseScale
+        {
+            get => Config.Current.BookSetting.BaseScale * 100.0;
+            set => Config.Current.BookSetting.BaseScale = MathUtility.Snap(value, SliderBaseScale, 100.0, 10.0) / 100.0;
+        }
 
 
         public RelayCommand RotateLeftCommand { get; private set; }

@@ -93,6 +93,13 @@ namespace NeeLaboratory
                 return val;
             }
         }
+
+        public static double Snap(double value, double oldValue, double snap, double margin)
+        {
+            var newLength = Math.Abs(value - snap);
+            var oldLength = Math.Abs(oldValue - snap);
+            return (oldLength < newLength && newLength < margin) ? snap : value;
+        }
     }
 }
 

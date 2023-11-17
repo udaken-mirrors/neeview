@@ -298,7 +298,7 @@
                                 <DockPanel Margin="0,2" Visibility="{Binding IsBaseScaleEnabled, Converter={StaticResource BooleanToVisibilityConverter}}">
                                     <nvc:EnterTriggerTextBox DockPanel.Dock="Right" Text="{Binding BaseScale, StringFormat={}{0:F0}}" Width="70" VerticalAlignment="Center" Margin="5,0,0,0"
                                             ValueDeltaChanged="BaseScale_ValueDelta" />
-                                    <Slider Value="{Binding BaseScale}" Minimum="10.0" Maximum="190.0" VerticalAlignment="Center" />
+                                    <Slider Value="{Binding SliderBaseScale}" Minimum="10.0" Maximum="190.0" VerticalAlignment="Center" />
                                 </DockPanel>
                             </StackPanel>
                         </StackPanel>
@@ -313,7 +313,7 @@
                                 <DockPanel Margin="0,2" KeyboardNavigation.TabNavigation="Local">
                                     <nvc:EnterTriggerTextBox DockPanel.Dock="Right" Text="{Binding Angle, StringFormat={}{0:F0}}" Width="70" VerticalAlignment="Center" Margin="5,0,0,0"
                                             ValueDeltaChanged="Angle_ValueDelta" TabIndex="2" />
-                                    <Slider Value="{Binding Angle}" Minimum="-180.0" Maximum="180.0" TickFrequency="1.0" SmallChange="1.0" LargeChange="45.0" VerticalAlignment="Center" TabIndex="1" />
+                                    <Slider Value="{Binding SliderAngle}" Minimum="-180.0" Maximum="180.0" TickFrequency="1.0" SmallChange="1.0" LargeChange="45.0" VerticalAlignment="Center" TabIndex="1" />
                                 </DockPanel>
                                 <DockPanel Margin="0,2" LastChildFill="False">
                                     <StackPanel Orientation="Horizontal">
