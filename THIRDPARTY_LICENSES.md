@@ -141,7 +141,7 @@ DLL: MediaInfo.dll
 * URL: [MediaInfo](https://mediaarea.net/en/MediaInfo)
 * License: [BSD-style license](https://mediaarea.net/en/MediaInfo/License)
 
- ### Vlc.DotNet
+### Vlc.DotNet
 
 * Copyright (c) 2014 ZeBobo5
 * URL: [Vlc.DotNet](https://github.com/ZeBobo5/Vlc.DotNet/)
@@ -149,13 +149,11 @@ DLL: MediaInfo.dll
 * Changed:
     * Custom for NeeView: [Project Page](https://github.com/neelabo/Vlc.DotNet)
 
- ### AnimatedImage
+### AnimatedImage
 
- DLL: AnimatedImage.dll, AnimatedImage.Wpf.dll
+DLL: AnimatedImage.dll, AnimatedImage.Wpf.dll
 
 * Copyright 2019 Thomas Levesque
 * URL: [AnimatedImage](https://github.com/whistyun/AnimatedImage)
 * URL: [WPF Animated GIF](https://github.com/XamlAnimatedGif/WpfAnimatedGif/)
 * License: [Apache-2.0 license](https://github.com/XamlAnimatedGif/WpfAnimatedGif/blob/master/LICENSE.txt)
-
-
