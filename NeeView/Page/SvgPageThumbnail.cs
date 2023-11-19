@@ -2,7 +2,7 @@
 {
     public class SvgPageThumbnail : ImagePageThumbnail
     {
-        public SvgPageThumbnail(SvgPageContent content) : base(content, new SvgPictureSource(content.ArchiveEntry, content.PictureInfo))
+        public SvgPageThumbnail(SvgPageContent content) : base(content)
         {
         }
     }

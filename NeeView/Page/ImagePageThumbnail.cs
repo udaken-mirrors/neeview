@@ -6,12 +6,10 @@ namespace NeeView
     public class ImagePageThumbnail : PageThumbnail
     {
         private readonly PageContent _content;
-        private readonly IPictureSource _source;
 
-        public ImagePageThumbnail(PageContent content, IPictureSource source) : base(content)
+        public ImagePageThumbnail(PageContent content) : base(content)
         {
             _content = content;
-            _source = source;
         }
 
         public override async Task<ThumbnailSource> LoadThumbnailAsync(CancellationToken token)
@@ -33,7 +31,8 @@ namespace NeeView
                     var data = (_content.Data as IHasRawData)?.RawData;
                     if (data != null)
                     {
-                        thumbnailRaw = MemoryControl.Current.RetryFuncWithMemoryCleanup(() => _source.CreateThumbnail(data, ThumbnailProfile.Current, token));
+                        var pictureSource = PictureSourceFactory.Create(_content);
+                        thumbnailRaw = MemoryControl.Current.RetryFuncWithMemoryCleanup(() => pictureSource.CreateThumbnail(data, ThumbnailProfile.Current, token));
                     }
                 }
                 catch
