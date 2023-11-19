@@ -152,7 +152,7 @@ namespace OpenSourceControls
             AddColor(Color.FromArgb(128, 255, 0, 0), "Red 50%");
             AddColor(Color.FromArgb(128, 0, 255, 0), "Green 50%");
             AddColor(Color.FromArgb(128, 0, 0, 255), "Blue 50%");
-            ColorList1.Items.Add(new Separator());
+            ColorList1.Items.Add(new SeparatorWithColorProperty());
 
             // Enumerate constant colors from the Colors class
             Type colorsType = typeof(Colors);
@@ -225,5 +225,24 @@ namespace OpenSourceControls
         public Color Color { get; set; }
         public Brush Brush { get { return new SolidColorBrush(Color); } }
         public string? Name { get; set; }
+    }
+
+
+    /// <summary>
+    /// Bind 警告回避するためだけの専用 Separator
+    /// </summary>
+    /// <remarks>
+    /// Color バインド警告が回避できないのでダミーのプロパティを実装することで対処
+    /// </remarks>
+    public class SeparatorWithColorProperty : Separator
+    {
+        public Color Color
+        {
+            get { return (Color)GetValue(ColorProperty); }
+            set { SetValue(ColorProperty, value); }
+        }
+
+        public static readonly DependencyProperty ColorProperty =
+            DependencyProperty.Register("Color", typeof(Color), typeof(SeparatorWithColorProperty), new PropertyMetadata(Colors.Transparent));
     }
 }
