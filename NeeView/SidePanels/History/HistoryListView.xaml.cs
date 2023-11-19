@@ -43,5 +43,18 @@ namespace NeeView
             this.SearchBox.FocusAsync();
         }
 
+        #region UI Accessor
+
+        public void SetSearchBoxText(string text)
+        {
+            this.SearchBox.SetCurrentValue(SearchBox.TextProperty, text);
+        }
+
+        public string GetSearchBoxText()
+        {
+            return this.SearchBox.Text;
+        }
+
+        #endregion UI Accessor
     }
 }

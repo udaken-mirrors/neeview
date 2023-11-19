@@ -22,6 +22,13 @@ namespace NeeView
             get { return _panel.Presenter.PageList.Path; }
         }
 
+        [WordNodeMember]
+        public string SearchWord
+        {
+            get { return AppDispatcher.Invoke(() => _panel.Presenter.PageListView.GetSearchBoxText()); }
+            set { AppDispatcher.Invoke(() => _panel.Presenter.PageListView.SetSearchBoxText(value)); }
+        }
+
         [WordNodeMember(DocumentType = typeof(PanelListItemStyle))]
         public string Style
         {

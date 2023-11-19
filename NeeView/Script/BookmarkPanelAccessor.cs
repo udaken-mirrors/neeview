@@ -23,6 +23,13 @@ namespace NeeView
             set { AppDispatcher.Invoke(() => _model.RequestPlace(new QueryPath(value), null, FolderSetPlaceOption.UpdateHistory)); }
         }
 
+        [WordNodeMember]
+        public string SearchWord
+        {
+            get { return AppDispatcher.Invoke(() => _panel.Presenter.BookmarkListView.GetSearchBoxText()); }
+            set { AppDispatcher.Invoke(() => _panel.Presenter.BookmarkListView.SetSearchBoxText(value)); }
+        }
+
         [WordNodeMember(DocumentType = typeof(PanelListItemStyle))]
         public string Style
         {

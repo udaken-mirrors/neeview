@@ -17,6 +17,13 @@ namespace NeeView
         }
 
 
+        [WordNodeMember]
+        public string SearchWord
+        {
+            get { return AppDispatcher.Invoke(() => _panel.Presenter.HistoryListView.GetSearchBoxText()); }
+            set { AppDispatcher.Invoke(() => _panel.Presenter.HistoryListView.SetSearchBoxText(value)); }
+        }
+
         [WordNodeMember(DocumentType = typeof(PanelListItemStyle))]
         public string Style
         {
