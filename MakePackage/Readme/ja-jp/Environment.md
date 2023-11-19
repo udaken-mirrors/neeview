@@ -1,15 +1,13 @@
 ## 動作環境
 
-  * Windows 7 SP1, Windows 8.1, Windows 10
-  * .NET Framework 4.8 が必要です。起動しない場合は [Microsoft .NET](https://dotnet.microsoft.com/download/dotnet-framework/net48) からRuntimeを入手してインストールしてください。
+  * Windows 10, Windows 11, 64bit
+  * .NET8 が必要です。アプリ起動時に表示されるメッセージに従って Microsoft のサイトからダウンロードしてインストールしてください。
 
 ## インストール・アンインストール方法
 
 ### Zip版
 
-  * NeeView<VERSION/>-x64/x86.zip
-
-  通常はx64版を使用します。OSが32bitの場合のみx86版を使用してください。
+  * NeeView<VERSION/>.zip
 
   インストール不要です。Zipを展開後、そのまま `NeeView.exe` を実行してください。  
   設定ファイル等ユーザーデータも同じ場所に保存されます。  
@@ -19,9 +17,7 @@
 
 ### インストーラー版
 
-  * NeeView<VERSION/>-x64/x86.msi
-
-  通常はx64版を使用します。OSが32bitの場合のみx86版を使用してください。
+  * NeeView<VERSION/>.msi
 
   実行するとインストールが開始されます。インストーラーの指示に従ってください。  
   設定ファイル等ユーザーデータは各ユーザのアプリデータフォルダーに保存されます。  

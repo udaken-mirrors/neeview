@@ -208,8 +208,8 @@ namespace NeeView
                 .GroupBy(e => e.Node.Alternative?.Version)
                 .OrderBy(e => e.Key);
 
-            // ver.39 and later
-            foreach (var group in groups.Where(e => e.Key >= 39))
+            // ver.40 and later
+            foreach (var group in groups.Where(e => e.Key >= 40))
             {
                 builder.Append($"<h2>Version {group.Key}.0</h2>");
                 builder.Append("<table class=\"table-slim table-topless\">");

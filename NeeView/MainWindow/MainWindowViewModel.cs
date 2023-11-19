@@ -73,19 +73,14 @@ namespace NeeView
         // ウィンドウアイコン：標準
         private ImageSource? _windowIconDefault;
 
-        // ウィンドウアイコン：スライドショー再生中
-        private ImageSource? _windowIconPlay;
-
         // ウィンドウアイコン初期化
         private void InitializeWindowIcons()
         {
             _windowIconDefault = null;
-            _windowIconPlay = BitmapFrame.Create(new Uri("pack://application:,,,/Resources/Play.ico", UriKind.RelativeOrAbsolute));
         }
 
         // 現在のウィンドウアイコン取得
-        public ImageSource? WindowIcon
-            => SlideShow.Current.IsPlayingSlideShow ? _windowIconPlay : _windowIconDefault;
+        public ImageSource? WindowIcon => _windowIconDefault;
 
         #endregion
 
@@ -107,7 +102,7 @@ namespace NeeView
             // icon
             InitializeWindowIcons();
 
-            // mainwindow model
+            // main window model
             _model = model;
 
             _model.AddPropertyChanged(nameof(_model.CanHideMenu),
@@ -135,10 +130,6 @@ namespace NeeView
 
             Config.Current.Window.AddPropertyChanged(nameof(WindowConfig.IsTopmost),
                 (s, e) => RaisePropertyChanged(nameof(IsTopmost)));
-
-            // SlideShow link to WindowIcon
-            SlideShow.Current.SubscribePropertyChanged(nameof(SlideShow.IsPlayingSlideShow),
-                (s, e) => RaisePropertyChanged(nameof(WindowIcon)));
 
             ThumbnailList.Current.AddPropertyChanged(nameof(CanHideThumbnailList),
                 (s, e) => RaisePropertyChanged(nameof(CanHideThumbnailList)));

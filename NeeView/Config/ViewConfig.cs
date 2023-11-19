@@ -243,7 +243,7 @@ namespace NeeView
         // スクリプト互換性用：自動回転左/右
         // 設定値は BookSetting のものを使用する
         [PropertyMember]
-        [Obsolete("no used"), Alternative($"nv.Config.BookSetting.AutoRotate", 40, ScriptErrorLevel.Info)] // ver.40
+        [Obsolete("no used"), Alternative($"nv.Config.BookSetting.AutoRotate", 40, ScriptErrorLevel.Info, IsFullName = true)] // ver.40
         [JsonIgnore]
         public AutoRotateType AutoRotate
         {
@@ -253,7 +253,7 @@ namespace NeeView
 
         // 基底スケール
         [PropertyPercent(0.1, 2.0, TickFrequency = 0.01)]
-        [Obsolete("no used"), Alternative($"nv.Config.BookSetting.BaseScale", 40, ScriptErrorLevel.Info)] // ver.40
+        [Obsolete("no used"), Alternative($"nv.Config.BookSetting.BaseScale", 40, ScriptErrorLevel.Info, IsFullName = true)] // ver.40
         [JsonIgnore]
         public double BaseScale
         {

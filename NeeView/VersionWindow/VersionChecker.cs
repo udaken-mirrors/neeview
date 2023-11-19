@@ -12,7 +12,7 @@ namespace NeeView
     /// </summary>
     public class VersionChecker : BindableBase
     {
-        private volatile bool _isCheching = false;
+        private volatile bool _isChecking = false;
         private volatile bool _isChecked = false;
         private string? _message;
 
@@ -51,7 +51,7 @@ namespace NeeView
 
         public void CheckStart()
         {
-            if (_isChecked || _isCheching) return;
+            if (_isChecked || _isChecking) return;
 
             if (IsEnabled)
             {
@@ -64,7 +64,7 @@ namespace NeeView
 
         private async Task CheckVersion(string extension)
         {
-            _isCheching = true;
+            _isChecking = true;
 
             try
             {
@@ -118,7 +118,7 @@ namespace NeeView
                 Message = Properties.Resources.VersionChecker_Message_Failed;
             }
 
-            _isCheching = false;
+            _isChecking = false;
         }
     }
 }

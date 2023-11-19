@@ -121,7 +121,6 @@
   <ItemGroup>
     <Resource Include="Resources\App.ico" />
     <Resource Include="Resources\Style.css" />
-    <Resource Include="Resources\Play.ico" />
     <Resource Include="Resources\SplashScreen.png" />
     <Resource Include="Resources\Media.png" />
     <Resource Include="Resources\Empty.png" />
