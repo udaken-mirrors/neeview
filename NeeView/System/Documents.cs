@@ -25,7 +25,7 @@ namespace NeeView
 
             using (var writer = new System.IO.StreamWriter(fileName, false))
             {
-                writer.WriteLine(HtmlHelpUtility.CraeteHeader("NeeView MainMenu List"));
+                writer.WriteLine(HtmlHelpUtility.CreateHeader("NeeView MainMenu List"));
 
                 writer.WriteLine($"<body><h1>NeeView {Properties.Resources.Word_MainMenu}</h1>");
 

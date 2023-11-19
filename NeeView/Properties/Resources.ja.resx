@@ -310,7 +310,7 @@ nv.Command.ToggleMediaPlay.Execute()
     &lt;tr&gt;&lt;td&gt;/not&lt;/td&gt;&lt;td&gt;NOT検索&lt;/td&gt;&lt;/tr&gt;
 &lt;/table&gt;
 
-&lt;h3&gt;対象オプション&lt;/h3&gt;
+&lt;h3&gt;項目オプション&lt;/h3&gt;
 &lt;table class="table-slim table-topless"&gt;
     &lt;tr&gt;&lt;th&gt;オプション&lt;/th&gt;&lt;th&gt;説明&lt;/th&gt;&lt;th&gt;補足&lt;/th&gt;&lt;/tr&gt;
     &lt;tr&gt;&lt;td&gt;/text&lt;/td&gt;&lt;td&gt;テキスト (デフォルト)&lt;/td&gt;&lt;td&gt;文字列。ファイル名やページ名&lt;/td&gt;&lt;/tr&gt;
@@ -318,13 +318,13 @@ nv.Command.ToggleMediaPlay.Execute()
     &lt;tr&gt;&lt;td&gt;/size&lt;/td&gt;&lt;td&gt;サイズ&lt;/td&gt;&lt;td&gt;数値。ファイル サイズ&lt;/td&gt;&lt;/tr&gt;
     &lt;tr&gt;&lt;td&gt;/bookmark&lt;/td&gt;&lt;td&gt;ブックマーク登録済&lt;/td&gt;&lt;td&gt;フィルター。本棚、履歴、ブックマーク パネルで有効&lt;/td&gt;&lt;/tr&gt;
     &lt;tr&gt;&lt;td&gt;/history&lt;/td&gt;&lt;td&gt;履歴登録済&lt;/td&gt;&lt;td&gt;フィルター。本棚、履歴、ブックマーク パネルで有効&lt;/td&gt;&lt;/tr&gt;
-    &lt;tr&gt;&lt;td&gt;/playlist&lt;/td&gt;&lt;td&gt;プレイリスト登録済&lt;/td&gt;&lt;td&gt;フィルター。プレイリスト パネルで有効&lt;/td&gt;&lt;/tr&gt;
-    &lt;tr&gt;&lt;td&gt;/title&lt;/td&gt;&lt;td&gt;タイトル&lt;/td&gt;&lt;td&gt;文字列。ページ情報。プレイリスト パネルで有効&lt;/td&gt;&lt;/tr&gt;
-    &lt;tr&gt;&lt;td&gt;/subject&lt;/td&gt;&lt;td&gt;件名&lt;/td&gt;&lt;td&gt;文字列。ページ情報。プレイリスト パネルで有効&lt;/td&gt;&lt;/tr&gt;
-    &lt;tr&gt;&lt;td&gt;/rating&lt;/td&gt;&lt;td&gt;評価&lt;/td&gt;&lt;td&gt;数値。ページ情報。プレイリスト パネルで有効&lt;/td&gt;&lt;/tr&gt;
-    &lt;tr&gt;&lt;td&gt;/tags&lt;/td&gt;&lt;td&gt;タグ&lt;/td&gt;&lt;td&gt;文字列。ページ情報。プレイリスト パネルで有効&lt;/td&gt;&lt;/tr&gt;
-    &lt;tr&gt;&lt;td&gt;/comments&lt;/td&gt;&lt;td&gt;コメント&lt;/td&gt;&lt;td&gt;文字列。ページ情報。プレイリスト パネルで有効&lt;/td&gt;&lt;/tr&gt;
-    &lt;tr&gt;&lt;td&gt;/p.meta.[key]&lt;/td&gt;&lt;td&gt;メタ情報&lt;/td&gt;&lt;td&gt;文字列。ページ情報。プレイリスト パネルで有効。詳細は「メタ情報」セクションを参照&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;/playlist&lt;/td&gt;&lt;td&gt;プレイリスト登録済&lt;/td&gt;&lt;td&gt;フィルター。ページリスト パネルで有効&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;/title&lt;/td&gt;&lt;td&gt;タイトル&lt;/td&gt;&lt;td&gt;文字列。ページ情報。ページリスト パネルで有効&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;/subject&lt;/td&gt;&lt;td&gt;件名&lt;/td&gt;&lt;td&gt;文字列。ページ情報。ページリスト パネルで有効&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;/rating&lt;/td&gt;&lt;td&gt;評価&lt;/td&gt;&lt;td&gt;数値。ページ情報。ページリスト パネルで有効&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;/tags&lt;/td&gt;&lt;td&gt;タグ&lt;/td&gt;&lt;td&gt;文字列。ページ情報。ページリスト パネルで有効&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;/comments&lt;/td&gt;&lt;td&gt;コメント&lt;/td&gt;&lt;td&gt;文字列。ページ情報。ページリスト パネルで有効&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;/p.meta.[key]&lt;/td&gt;&lt;td&gt;メタ情報&lt;/td&gt;&lt;td&gt;文字列。ページ情報。ページリスト パネルで有効。詳細は「メタ情報」セクションを参照&lt;/td&gt;&lt;/tr&gt;
 &lt;/table&gt;
 
 &lt;h3&gt;適合オプション&lt;/h3&gt;
@@ -385,9 +385,10 @@ nv.Command.ToggleMediaPlay.Execute()
 
 &lt;h3&gt;検索単位&lt;/h3&gt;
 
-検索の基本単位は
-&lt;blockquote&gt;検索オプション(/c.) | 対象オプション(/p.) | 適合オプション(/m.) | キーワード&lt;/blockquote&gt;
-のセットになります。
+検索の基本単位は次のセットになります。
+
+&lt;blockquote&gt;検索オプション(/c.) | 項目オプション(/p.) | 適合オプション(/m.) | キーワード&lt;/blockquote&gt;
+
 先頭が "/" で始まらない文字列がキーワードとなり、これが出現したときにこのセットが確定します。
 それまでに指定されていないオプションはデフォルト値が使用され、重複して指定されたカテゴリのオプションは上書きされます。
 
@@ -403,7 +404,7 @@ nv.Command.ToggleMediaPlay.Execute()
     &lt;tr&gt;&lt;td&gt;/c.not&lt;/td&gt;&lt;td&gt;NOT検索&lt;/td&gt;&lt;/tr&gt;
 &lt;/table&gt;
 
-&lt;h4&gt;対象オプション (/p.)&lt;/h4&gt;
+&lt;h4&gt;項目オプション (/p.)&lt;/h4&gt;
 &lt;table class="table-slim table-topless"&gt;
     &lt;tr&gt;&lt;th&gt;オプション&lt;/th&gt;&lt;th&gt;説明&lt;/th&gt;&lt;th&gt;型&lt;/th&gt;&lt;/tr&gt;
     &lt;tr&gt;&lt;td&gt;/p.text&lt;/td&gt;&lt;td&gt;テキスト (デフォルト)&lt;td&gt;String&lt;/td&gt;&lt;/tr&gt;
@@ -413,7 +414,7 @@ nv.Command.ToggleMediaPlay.Execute()
     &lt;tr&gt;&lt;td&gt;/p.history&lt;/td&gt;&lt;td&gt;履歴登録済判定&lt;/td&gt;&lt;td&gt;Boolean&lt;/td&gt;&lt;/tr&gt;
     &lt;tr&gt;&lt;td&gt;/p.playlist&lt;/td&gt;&lt;td&gt;プレイリスト登録済判定&lt;/td&gt;&lt;td&gt;Boolean&lt;/td&gt;&lt;/tr&gt;
     &lt;tr&gt;&lt;td&gt;/p.rating&lt;/td&gt;&lt;td&gt;メタ情報：評価&lt;/td&gt;&lt;td&gt;Integer&lt;/td&gt;&lt;/tr&gt;
-    &lt;tr&gt;&lt;td&gt;/p.meta.[key]&lt;/td&gt;&lt;td&gt;メタ情報汎用。詳細は「メタ情報」セクションを参照&lt;/td&gt;&lt;td&gt;String&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;/p.meta.[key]&lt;/td&gt;&lt;td&gt;メタ情報。詳細は「メタ情報」セクションを参照&lt;/td&gt;&lt;td&gt;String&lt;/td&gt;&lt;/tr&gt;
 &lt;/table&gt;
 
 &lt;h4&gt;適合オプション (/m.)&lt;/h4&gt;
@@ -424,20 +425,21 @@ nv.Command.ToggleMediaPlay.Execute()
     &lt;tr&gt;&lt;td&gt;/m.fuzzy&lt;/td&gt;&lt;td&gt;曖昧一致 (デフォルト)&lt;/td&gt;&lt;td&gt;String&lt;/td&gt;&lt;/tr&gt;
     &lt;tr&gt;&lt;td&gt;/m.re&lt;/td&gt;&lt;td&gt;正規表現&lt;/td&gt;&lt;td&gt;String&lt;/td&gt;&lt;/tr&gt;
     &lt;tr&gt;&lt;td&gt;/m.ire&lt;/td&gt;&lt;td&gt;正規表現・大文字小文字無効&lt;/td&gt;&lt;td&gt;String&lt;/td&gt;&lt;/tr&gt;
-    &lt;tr&gt;&lt;td&gt;/m.lt&lt;/td&gt;&lt;td&gt;より小さい&lt;/td&gt;&lt;td&gt;対象オプションの型&lt;/td&gt;&lt;/tr&gt;
-    &lt;tr&gt;&lt;td&gt;/m.le&lt;/td&gt;&lt;td&gt;以下&lt;/td&gt;&lt;td&gt;対象オプションの型&lt;/td&gt;&lt;/tr&gt;
-    &lt;tr&gt;&lt;td&gt;/m.eq&lt;/td&gt;&lt;td&gt;等しい&lt;/td&gt;&lt;td&gt;対象オプションの型&lt;/td&gt;&lt;/tr&gt;
-    &lt;tr&gt;&lt;td&gt;/m.ne&lt;/td&gt;&lt;td&gt;等しくない&lt;/td&gt;&lt;td&gt;対象オプションの型&lt;/td&gt;&lt;/tr&gt;
-    &lt;tr&gt;&lt;td&gt;/m.ge&lt;/td&gt;&lt;td&gt;以上&lt;/td&gt;&lt;td&gt;対象オプションの型&lt;/td&gt;&lt;/tr&gt;
-    &lt;tr&gt;&lt;td&gt;/m.gt&lt;/td&gt;&lt;td&gt;より大きい&lt;/td&gt;&lt;td&gt;対象オプションの型&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;/m.lt&lt;/td&gt;&lt;td&gt;より小さい&lt;/td&gt;&lt;td&gt;項目オプションの型&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;/m.le&lt;/td&gt;&lt;td&gt;以下&lt;/td&gt;&lt;td&gt;項目オプションの型&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;/m.eq&lt;/td&gt;&lt;td&gt;等しい&lt;/td&gt;&lt;td&gt;項目オプションの型&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;/m.ne&lt;/td&gt;&lt;td&gt;等しくない&lt;/td&gt;&lt;td&gt;項目オプションの型&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;/m.ge&lt;/td&gt;&lt;td&gt;以上&lt;/td&gt;&lt;td&gt;項目オプションの型&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;/m.gt&lt;/td&gt;&lt;td&gt;より大きい&lt;/td&gt;&lt;td&gt;項目オプションの型&lt;/td&gt;&lt;/tr&gt;
 &lt;/table&gt;
 
-対象オプションと適合オプションによって比較に使用する値の型が決まり、その型に変換してから適合チェックが行われます。
-たとえば、
+項目オプションと適合オプションによって比較に使用する値の型が決まり、その型に変換してから適合チェックが行われます。
+
+次の例では、DateTime型として日時比較を行います。
 &lt;blockquote&gt;/p.date /m.lt&lt;/blockquote&gt;
-ではDateTime型として日時比較を行いますが、
+
+次の例では、日時を文字列にして比較を行います。
 &lt;blockquote&gt;/p.date /m.fuzzy&lt;/blockquote&gt;
-では日時を文字列にして比較を行います。
 
 &lt;h3&gt;エイリアス&lt;/h3&gt;
 
@@ -492,63 +494,63 @@ nv.Command.ToggleMediaPlay.Execute()
 &lt;p&gt;
     &lt;table class="table-slim table-topless"&gt;
         &lt;tr&gt;&lt;th&gt;[key]&lt;/th&gt;&lt;th&gt;項目&lt;/th&gt;&lt;/tr&gt;
-        &lt;tr&gt;&lt;td&gt;FileName&lt;/td&gt;&lt;td&gt;ファイル名&lt;/td&gt;&lt;/tr&gt;
-        &lt;tr&gt;&lt;td&gt;FilePath&lt;/td&gt;&lt;td&gt;ファイル パス&lt;/td&gt;&lt;/tr&gt;
-        &lt;tr&gt;&lt;td&gt;CreationTime&lt;/td&gt;&lt;td&gt;作成日時&lt;/td&gt;&lt;/tr&gt;
-        &lt;tr&gt;&lt;td&gt;LastWriteTime&lt;/td&gt;&lt;td&gt;更新日時&lt;/td&gt;&lt;/tr&gt;
-        &lt;tr&gt;&lt;td&gt;FileSize&lt;/td&gt;&lt;td&gt;サイズ&lt;/td&gt;&lt;/tr&gt;
-        &lt;tr&gt;&lt;td&gt;ArchivePath&lt;/td&gt;&lt;td&gt;アーカイブ パス&lt;/td&gt;&lt;/tr&gt;
-        &lt;tr&gt;&lt;td&gt;Archiver&lt;/td&gt;&lt;td&gt;アーカイバー&lt;/td&gt;&lt;/tr&gt;
-        &lt;tr&gt;&lt;td&gt;Dimensions&lt;/td&gt;&lt;td&gt;大きさ&lt;/td&gt;&lt;/tr&gt;
-        &lt;tr&gt;&lt;td&gt;HorizontalResolution&lt;/td&gt;&lt;td&gt;水平方向の解像度&lt;/td&gt;&lt;/tr&gt;
-        &lt;tr&gt;&lt;td&gt;VerticalResolution&lt;/td&gt;&lt;td&gt;垂直方向の解像度&lt;/td&gt;&lt;/tr&gt;
-        &lt;tr&gt;&lt;td&gt;BitDepth&lt;/td&gt;&lt;td&gt;ビットの深さ&lt;/td&gt;&lt;/tr&gt;
-        &lt;tr&gt;&lt;td&gt;Decoder&lt;/td&gt;&lt;td&gt;デコーダー&lt;/td&gt;&lt;/tr&gt;
-        &lt;tr&gt;&lt;td&gt;Title&lt;/td&gt;&lt;td&gt;タイトル&lt;/td&gt;&lt;/tr&gt;
-        &lt;tr&gt;&lt;td&gt;Subject&lt;/td&gt;&lt;td&gt;件名&lt;/td&gt;&lt;/tr&gt;
-        &lt;tr&gt;&lt;td&gt;Rating&lt;/td&gt;&lt;td&gt;評価&lt;/td&gt;&lt;/tr&gt;
-        &lt;tr&gt;&lt;td&gt;Tags&lt;/td&gt;&lt;td&gt;タグ&lt;/td&gt;&lt;/tr&gt;
-        &lt;tr&gt;&lt;td&gt;Comments&lt;/td&gt;&lt;td&gt;コメント&lt;/td&gt;&lt;/tr&gt;
-        &lt;tr&gt;&lt;td&gt;Author&lt;/td&gt;&lt;td&gt;作成者&lt;/td&gt;&lt;/tr&gt;
-        &lt;tr&gt;&lt;td&gt;DateTaken&lt;/td&gt;&lt;td&gt;撮影日時&lt;/td&gt;&lt;/tr&gt;
-        &lt;tr&gt;&lt;td&gt;ApplicationName&lt;/td&gt;&lt;td&gt;プログラム名&lt;/td&gt;&lt;/tr&gt;
-        &lt;tr&gt;&lt;td&gt;DateAcquired&lt;/td&gt;&lt;td&gt;取得日時&lt;/td&gt;&lt;/tr&gt;
-        &lt;tr&gt;&lt;td&gt;Copyright&lt;/td&gt;&lt;td&gt;著作権&lt;/td&gt;&lt;/tr&gt;
-        &lt;tr&gt;&lt;td&gt;CameraMaker&lt;/td&gt;&lt;td&gt;カメラ メーカー&lt;/td&gt;&lt;/tr&gt;
-        &lt;tr&gt;&lt;td&gt;CameraModel&lt;/td&gt;&lt;td&gt;カメラ モデル&lt;/td&gt;&lt;/tr&gt;
-        &lt;tr&gt;&lt;td&gt;FNumber&lt;/td&gt;&lt;td&gt;絞り値&lt;/td&gt;&lt;/tr&gt;
-        &lt;tr&gt;&lt;td&gt;ExposureTime&lt;/td&gt;&lt;td&gt;露出時間&lt;/td&gt;&lt;/tr&gt;
-        &lt;tr&gt;&lt;td&gt;ISOSpeed&lt;/td&gt;&lt;td&gt;ISO 速度&lt;/td&gt;&lt;/tr&gt;
-        &lt;tr&gt;&lt;td&gt;ExposureBias&lt;/td&gt;&lt;td&gt;露出補正&lt;/td&gt;&lt;/tr&gt;
-        &lt;tr&gt;&lt;td&gt;FocalLength&lt;/td&gt;&lt;td&gt;焦点距離&lt;/td&gt;&lt;/tr&gt;
-        &lt;tr&gt;&lt;td&gt;MaxAperture&lt;/td&gt;&lt;td&gt;最大絞り&lt;/td&gt;&lt;/tr&gt;
-        &lt;tr&gt;&lt;td&gt;MeteringMode&lt;/td&gt;&lt;td&gt;測光モード&lt;/td&gt;&lt;/tr&gt;
-        &lt;tr&gt;&lt;td&gt;SubjectDistance&lt;/td&gt;&lt;td&gt;対象の距離&lt;/td&gt;&lt;/tr&gt;
-        &lt;tr&gt;&lt;td&gt;FlashMode&lt;/td&gt;&lt;td&gt;フラッシュ モード&lt;/td&gt;&lt;/tr&gt;
-        &lt;tr&gt;&lt;td&gt;FlashEnergy&lt;/td&gt;&lt;td&gt;フラッシュ エネルギー&lt;/td&gt;&lt;/tr&gt;
-        &lt;tr&gt;&lt;td&gt;FocalLengthIn35mmFilm&lt;/td&gt;&lt;td&gt;35mm 焦点距離&lt;/td&gt;&lt;/tr&gt;
-        &lt;tr&gt;&lt;td&gt;LensMaker&lt;/td&gt;&lt;td&gt;レンズ メーカー&lt;/td&gt;&lt;/tr&gt;
-        &lt;tr&gt;&lt;td&gt;LensModel&lt;/td&gt;&lt;td&gt;レンズ モデル&lt;/td&gt;&lt;/tr&gt;
-        &lt;tr&gt;&lt;td&gt;FlashMaker&lt;/td&gt;&lt;td&gt;フラッシュ メーカー&lt;/td&gt;&lt;/tr&gt;
-        &lt;tr&gt;&lt;td&gt;FlashModel&lt;/td&gt;&lt;td&gt;フラッシュ モデル&lt;/td&gt;&lt;/tr&gt;
-        &lt;tr&gt;&lt;td&gt;CameraSerialNumber&lt;/td&gt;&lt;td&gt;カメラ製造番号&lt;/td&gt;&lt;/tr&gt;
-        &lt;tr&gt;&lt;td&gt;Contrast&lt;/td&gt;&lt;td&gt;コントラスト&lt;/td&gt;&lt;/tr&gt;
-        &lt;tr&gt;&lt;td&gt;Brightness&lt;/td&gt;&lt;td&gt;明るさ&lt;/td&gt;&lt;/tr&gt;
-        &lt;tr&gt;&lt;td&gt;LightSource&lt;/td&gt;&lt;td&gt;光源&lt;/td&gt;&lt;/tr&gt;
-        &lt;tr&gt;&lt;td&gt;ExposureProgram&lt;/td&gt;&lt;td&gt;露出プログラム&lt;/td&gt;&lt;/tr&gt;
-        &lt;tr&gt;&lt;td&gt;Saturation&lt;/td&gt;&lt;td&gt;彩度&lt;/td&gt;&lt;/tr&gt;
-        &lt;tr&gt;&lt;td&gt;Sharpness&lt;/td&gt;&lt;td&gt;鮮明度&lt;/td&gt;&lt;/tr&gt;
-        &lt;tr&gt;&lt;td&gt;WhiteBalance&lt;/td&gt;&lt;td&gt;ホワイト バランス&lt;/td&gt;&lt;/tr&gt;
-        &lt;tr&gt;&lt;td&gt;PhotometricInterpretation&lt;/td&gt;&lt;td&gt;光度測定解釈&lt;/td&gt;&lt;/tr&gt;
-        &lt;tr&gt;&lt;td&gt;DigitalZoom&lt;/td&gt;&lt;td&gt;デジタル ズーム&lt;/td&gt;&lt;/tr&gt;
-        &lt;tr&gt;&lt;td&gt;Orientation&lt;/td&gt;&lt;td&gt;向き&lt;/td&gt;&lt;/tr&gt;
-        &lt;tr&gt;&lt;td&gt;EXIFVersion&lt;/td&gt;&lt;td&gt;EXIF バージョン&lt;/td&gt;&lt;/tr&gt;
-        &lt;tr&gt;&lt;td&gt;GPSLatitude&lt;/td&gt;&lt;td&gt;緯度&lt;/td&gt;&lt;/tr&gt;
-        &lt;tr&gt;&lt;td&gt;GPSLongitude&lt;/td&gt;&lt;td&gt;経度&lt;/td&gt;&lt;/tr&gt;
-        &lt;tr&gt;&lt;td&gt;GPSAltitude&lt;/td&gt;&lt;td&gt;高度&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;FileName&lt;/td&gt;&lt;td&gt;@InformationKey.FileName&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;FilePath&lt;/td&gt;&lt;td&gt;@InformationKey.FilePath&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;CreationTime&lt;/td&gt;&lt;td&gt;@InformationKey.CreationTime&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;LastWriteTime&lt;/td&gt;&lt;td&gt;@InformationKey.LastWriteTime&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;FileSize&lt;/td&gt;&lt;td&gt;@InformationKey.FileSize&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;ArchivePath&lt;/td&gt;&lt;td&gt;@InformationKey.ArchivePath&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;Archiver&lt;/td&gt;&lt;td&gt;@InformationKey.Archiver&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;Dimensions&lt;/td&gt;&lt;td&gt;@InformationKey.Dimensions&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;HorizontalResolution&lt;/td&gt;&lt;td&gt;@InformationKey.HorizontalResolution&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;VerticalResolution&lt;/td&gt;&lt;td&gt;@InformationKey.VerticalResolution&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;BitDepth&lt;/td&gt;&lt;td&gt;@InformationKey.BitDepth&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;Decoder&lt;/td&gt;&lt;td&gt;@InformationKey.Decoder&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;Title&lt;/td&gt;&lt;td&gt;@InformationKey.Title&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;Subject&lt;/td&gt;&lt;td&gt;@InformationKey.Subject&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;Rating&lt;/td&gt;&lt;td&gt;@InformationKey.Rating&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;Tags&lt;/td&gt;&lt;td&gt;@InformationKey.Tags&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;Comments&lt;/td&gt;&lt;td&gt;@InformationKey.Comments&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;Author&lt;/td&gt;&lt;td&gt;@InformationKey.Author&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;DateTaken&lt;/td&gt;&lt;td&gt;@InformationKey.DateTaken&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;ApplicationName&lt;/td&gt;&lt;td&gt;@InformationKey.ApplicationName&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;DateAcquired&lt;/td&gt;&lt;td&gt;@InformationKey.DateAcquired&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;Copyright&lt;/td&gt;&lt;td&gt;@InformationKey.Copyright&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;CameraMaker&lt;/td&gt;&lt;td&gt;@InformationKey.CameraMaker&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;CameraModel&lt;/td&gt;&lt;td&gt;@InformationKey.CameraModel&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;FNumber&lt;/td&gt;&lt;td&gt;@InformationKey.FNumber&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;ExposureTime&lt;/td&gt;&lt;td&gt;@InformationKey.ExposureTime&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;ISOSpeed&lt;/td&gt;&lt;td&gt;@InformationKey.ISOSpeed&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;ExposureBias&lt;/td&gt;&lt;td&gt;@InformationKey.ExposureBias&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;FocalLength&lt;/td&gt;&lt;td&gt;@InformationKey.FocalLength&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;MaxAperture&lt;/td&gt;&lt;td&gt;@InformationKey.MaxAperture&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;MeteringMode&lt;/td&gt;&lt;td&gt;@InformationKey.MeteringMode&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;SubjectDistance&lt;/td&gt;&lt;td&gt;@InformationKey.SubjectDistance&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;FlashMode&lt;/td&gt;&lt;td&gt;@InformationKey.FlashMode&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;FlashEnergy&lt;/td&gt;&lt;td&gt;@InformationKey.FlashEnergy&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;FocalLengthIn35mmFilm&lt;/td&gt;&lt;td&gt;@InformationKey.FocalLengthIn35mmFilm&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;LensMaker&lt;/td&gt;&lt;td&gt;@InformationKey.LensMaker&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;LensModel&lt;/td&gt;&lt;td&gt;@InformationKey.LensModel&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;FlashMaker&lt;/td&gt;&lt;td&gt;@InformationKey.FlashMaker&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;FlashModel&lt;/td&gt;&lt;td&gt;@InformationKey.FlashModel&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;CameraSerialNumber&lt;/td&gt;&lt;td&gt;@InformationKey.CameraSerialNumber&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;Contrast&lt;/td&gt;&lt;td&gt;@InformationKey.Contrast&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;Brightness&lt;/td&gt;&lt;td&gt;@InformationKey.Brightness&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;LightSource&lt;/td&gt;&lt;td&gt;@InformationKey.LightSource&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;ExposureProgram&lt;/td&gt;&lt;td&gt;@InformationKey.ExposureProgram&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;Saturation&lt;/td&gt;&lt;td&gt;@InformationKey.Saturation&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;Sharpness&lt;/td&gt;&lt;td&gt;@InformationKey.Sharpness&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;WhiteBalance&lt;/td&gt;&lt;td&gt;@InformationKey.WhiteBalance&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;PhotometricInterpretation&lt;/td&gt;&lt;td&gt;@InformationKey.PhotometricInterpretation&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;DigitalZoom&lt;/td&gt;&lt;td&gt;@InformationKey.DigitalZoom&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;Orientation&lt;/td&gt;&lt;td&gt;@InformationKey.Orientation&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;EXIFVersion&lt;/td&gt;&lt;td&gt;@InformationKey.EXIFVersion&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;GPSLatitude&lt;/td&gt;&lt;td&gt;@InformationKey.GPSLatitude&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;GPSLongitude&lt;/td&gt;&lt;td&gt;@InformationKey.GPSLongitude&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;GPSAltitude&lt;/td&gt;&lt;td&gt;@InformationKey.GPSAltitude&lt;/td&gt;&lt;/tr&gt;
     &lt;/table&gt;
 
-    追加情報のキーはその項目名から空白を削除した文字列になります。
+    "@InformationGroup.Extras" のキーはその項目名から空白を削除した文字列になります。
 &lt;/p&gt;
 
 &lt;hr/&gt;
@@ -582,7 +584,7 @@ nv.Command.ToggleMediaPlay.Execute()
 
 &lt;blockquote&gt;/bookmark ABC&lt;/blockquote&gt;
 
-追加情報の "parameters" に "smile" を含むページを検索する
+"@InformationGroup.Extras" の "parameters" に "smile" を含むページを検索する
 
 &lt;blockquote&gt;/p.meta.parameters smile&lt;/blockquote&gt;</value>
   </data>

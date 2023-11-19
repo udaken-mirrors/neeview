@@ -296,8 +296,9 @@ nv.Command.ToggleMediaPlay.Execute()
 
 &lt;h2&gt;Search options&lt;/h2&gt;
 &lt;p&gt;
-    If no search option is specified, it becomes AND-Standard search (same as specifying "/and /m2").&lt;br/&gt; 
-    Search options affect only the immediately following search words.
+    If no search option is specified, it becomes AND-Standard search (same as specifying "/and /text /m2").&lt;br/&gt; 
+    Search options affect only the immediately following search words.&lt;br/&gt;
+    Search options are not case sensitive.
 &lt;/p&gt;
 
 &lt;h3&gt;Connection options&lt;/h3&gt;
@@ -308,16 +309,39 @@ nv.Command.ToggleMediaPlay.Execute()
     &lt;tr&gt;&lt;td&gt;/not&lt;/td&gt;&lt;td&gt;NOT search&lt;/td&gt;&lt;/tr&gt;
 &lt;/table&gt;
 
+&lt;h3&gt;Property Options&lt;/h3&gt;
+&lt;table class="table-slim table-topless"&gt;
+    &lt;tr&gt;&lt;th&gt;Option&lt;/th&gt;&lt;th&gt;Description&lt;/th&gt;&lt;th&gt;Supplement&lt;/th&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;/text&lt;/td&gt;&lt;td&gt;Text (default)&lt;/td&gt;&lt;td&gt;String. File or page name.&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;/date&lt;/td&gt;&lt;td&gt;Date and Time&lt;/td&gt;&lt;td&gt;DateTime. Date of last update. For history, last viewed date.&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;/size&lt;/td&gt;&lt;td&gt;Size&lt;/td&gt;&lt;td&gt;Numerals. File size&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;/bookmark&lt;/td&gt;&lt;td&gt;Bookmarked&lt;/td&gt;&lt;td&gt;Filter. Valid in the Bookshelf, History, and Bookmarks panels.&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;/history&lt;/td&gt;&lt;td&gt;History registered&lt;/td&gt;&lt;td&gt;Filter. Valid in the Bookshelf, History, and Bookmarks panels.&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;/playlist&lt;/td&gt;&lt;td&gt;Playlist registered&lt;/td&gt;&lt;td&gt;Filter. Valid in the PageList panel.&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;/title&lt;/td&gt;&lt;td&gt;Title&lt;/td&gt;&lt;td&gt;String. Page information. Valid in the PageList panel.&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;/subject&lt;/td&gt;&lt;td&gt;Subject&lt;/td&gt;&lt;td&gt;String. Page information. Valid in the PageList panel.&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;/rating&lt;/td&gt;&lt;td&gt;Rating&lt;/td&gt;&lt;td&gt;Numerals. Page information. Valid in the PageList panel.&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;/tags&lt;/td&gt;&lt;td&gt;Tags&lt;/td&gt;&lt;td&gt;String. Page information. Valid in the PageList panel.&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;/comments&lt;/td&gt;&lt;td&gt;Comments&lt;/td&gt;&lt;td&gt;String. Page information. Valid in the PageList panel.&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;/p.meta.[key]&lt;/td&gt;&lt;td&gt;Meta information&lt;/td&gt;&lt;td&gt;String. Page information. Valid in the PageList panel. See "Meta Information" section for details&lt;/td&gt;&lt;/tr&gt;
+&lt;/table&gt;
+
 &lt;h3&gt;Match options&lt;/h3&gt;
 &lt;table class="table-slim table-topless"&gt;
     &lt;tr&gt;&lt;th&gt;Option&lt;/th&gt;&lt;th&gt;Description&lt;/th&gt;&lt;th&gt;Supplement&lt;/th&gt;&lt;/tr&gt;
     &lt;tr&gt;&lt;td&gt;/m0, /exact&lt;/td&gt;&lt;td&gt;ExactMatch&lt;/td&gt;&lt;td&gt;"Same as enclosing with double quotes"&lt;/td&gt;&lt;/tr&gt;
     &lt;tr&gt;&lt;td&gt;/m1, /word&lt;/td&gt;&lt;td&gt;WordMatch&lt;/td&gt;&lt;td&gt;Since we identify words by kind of letters, accuracy is not very good.&lt;/td&gt;&lt;/tr&gt;
-    &lt;tr&gt;&lt;td&gt;/m2&lt;/td&gt;&lt;td&gt;Standard (default)&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;/m2, /fuzzy&lt;/td&gt;&lt;td&gt;Standard (default)&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
     &lt;tr&gt;&lt;td&gt;/re&lt;/td&gt;&lt;td&gt;RegularExpression&lt;/td&gt;&lt;td&gt;&lt;a href="https://docs.microsoft.com/en-us/dotnet/standard/base-types/regular-expression-language-quick-reference"&gt;.NE Regular Expression&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;
     &lt;tr&gt;&lt;td&gt;/ire&lt;/td&gt;&lt;td&gt;RegularExpression / IgnoreCase&lt;/td&gt;&lt;td&gt;Perform regular expression search without case sensitivity.&lt;/td&gt;&lt;/tr&gt;
     &lt;tr&gt;&lt;td&gt;/since&lt;/td&gt;&lt;td&gt;DateTime / Since&lt;/td&gt;&lt;td&gt;After specified date&lt;/td&gt;&lt;/tr&gt;
     &lt;tr&gt;&lt;td&gt;/until&lt;/td&gt;&lt;td&gt;DateTime / Until&lt;/td&gt;&lt;td&gt;Before specified date&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;/lt&lt;/td&gt;&lt;td&gt;Comparison operation / less than&lt;/td&gt;&lt;td&gt;Comparison operations work properly with sizes, dates, etc.&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;/le&lt;/td&gt;&lt;td&gt;Comparison operation / less than equal&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;/eq&lt;/td&gt;&lt;td&gt;Comparison operation / equal&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;/ne&lt;/td&gt;&lt;td&gt;Comparison operation / not equal&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;/ge&lt;/td&gt;&lt;td&gt;Comparison operation / grater than equal&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;/gt&lt;/td&gt;&lt;td&gt;Comparison operation / grater than&lt;/td&gt;&lt;/tr&gt;
 &lt;/table&gt;
 
 &lt;p&gt;
@@ -345,6 +369,189 @@ nv.Command.ToggleMediaPlay.Execute()
     "/since -5day" means "within the past 5 days".
 &lt;/p&gt;
 
+&lt;h3&gt;Numeric format&lt;/h3&gt;
+
+&lt;p&gt;
+    Supports integers.&lt;br/&gt;
+    It also supports k, K, g, G, m, and M unit notations. Lowercase letters are multiplied by 1000, and uppercase letters are multiplied by 1024.
+&lt;/p&gt;
+
+&lt;hr/&gt;
+&lt;h2&gt;Details&lt;/h2&gt;
+
+The previous options are aliased and simplified. Detailed definitions are given here.
+
+&lt;h3&gt;Search unit&lt;/h3&gt;
+
+The basic unit of search is the following set
+
+&lt;blockquote&gt;Connection option(/c.) | Property option(/p.) | Match option(/m.) | Keyword&lt;/blockquote&gt;
+
+A string that does not begin with a "/" is a keyword, and this set is determined when it appears.
+Options not previously specified will use default values, and duplicate category options will be overwritten.
+
+&lt;h3&gt;Options&lt;/h3&gt;
+
+Options are categorized by prefix character.
+
+&lt;h4&gt;Connection options (/c.)&lt;/h4&gt;
+&lt;table class="table-slim table-topless"&gt;
+    &lt;tr&gt;&lt;th&gt;Option&lt;/th&gt;&lt;th&gt;Description&lt;/th&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;/c.and&lt;/td&gt;&lt;td&gt;AND search (default)&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;/c.or&lt;/td&gt;&lt;td&gt;OR search&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;/c.not&lt;/td&gt;&lt;td&gt;NOT search&lt;/td&gt;&lt;/tr&gt;
+&lt;/table&gt;
+
+&lt;h4&gt;Property Options (/p.)&lt;/h4&gt;
+&lt;table class="table-slim table-topless"&gt;
+    &lt;tr&gt;&lt;th&gt;Option&lt;/th&gt;&lt;th&gt;Description&lt;/th&gt;&lt;th&gt;Type&lt;/th&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;/p.text&lt;/td&gt;&lt;td&gt;Text (default)&lt;td&gt;String&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;/p.date&lt;/td&gt;&lt;td&gt;Date and Time&lt;/td&gt;&lt;td&gt;DateTime&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;/p.size&lt;/td&gt;&lt;td&gt;Size&lt;/td&gt;&lt;td&gt;Integer&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;/p.bookmark&lt;/td&gt;&lt;td&gt;Bookmarked&lt;/td&gt;&lt;td&gt;Boolean&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;/p.history&lt;/td&gt;&lt;td&gt;History registered&lt;/td&gt;&lt;td&gt;Boolean&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;/p.playlist&lt;/td&gt;&lt;td&gt;Playlist registered&lt;/td&gt;&lt;td&gt;Boolean&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;/p.rating&lt;/td&gt;&lt;td&gt;Meta Information: Rating&lt;/td&gt;&lt;td&gt;Integer&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;/p.meta.[key]&lt;/td&gt;&lt;td&gt;Meta Information. See Meta Information section for details.&lt;/td&gt;&lt;td&gt;String&lt;/td&gt;&lt;/tr&gt;
+&lt;/table&gt;
+
+&lt;h4&gt;Match options (/m.)&lt;/h4&gt;
+&lt;table class="table-slim table-topless"&gt;
+    &lt;tr&gt;&lt;th&gt;Option&lt;/th&gt;&lt;th&gt;Description&lt;/th&gt;&lt;td&gt;Type&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;/m.exact&lt;/td&gt;&lt;td&gt;ExactMatch&lt;/td&gt;&lt;td&gt;String&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;/m.word&lt;/td&gt;&lt;td&gt;WordMatch&lt;/td&gt;&lt;td&gt;String&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;/m.fuzzy&lt;/td&gt;&lt;td&gt;FuzzyMatch (default)&lt;/td&gt;&lt;td&gt;String&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;/m.re&lt;/td&gt;&lt;td&gt;RegularExpression&lt;/td&gt;&lt;td&gt;String&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;/m.ire&lt;/td&gt;&lt;td&gt;RegularExpression / IgnoreCase&lt;/td&gt;&lt;td&gt;String&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;/m.lt&lt;/td&gt;&lt;td&gt;Less than&lt;/td&gt;&lt;td&gt;Type of property option&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;/m.le&lt;/td&gt;&lt;td&gt;Less than equal&lt;/td&gt;&lt;td&gt;Type of property option&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;/m.eq&lt;/td&gt;&lt;td&gt;Equal&lt;/td&gt;&lt;td&gt;Type of property option&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;/m.ne&lt;/td&gt;&lt;td&gt;Not equal&lt;/td&gt;&lt;td&gt;Type of property option&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;/m.ge&lt;/td&gt;&lt;td&gt;Grater than equal&lt;/td&gt;&lt;td&gt;Type of property option&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;/m.gt&lt;/td&gt;&lt;td&gt;Grater than&lt;/td&gt;&lt;td&gt;Type of property option&lt;/td&gt;&lt;/tr&gt;
+&lt;/table&gt;
+
+The property and conforming options determine the type of value used for comparison, which is then converted to that type before the conformance check is performed.
+
+The following example performs a date/time comparison as a DateTime type.
+&lt;blockquote&gt;/p.date /m.lt&lt;/blockquote&gt;
+
+The following example compares the date and time as a string.
+&lt;blockquote&gt;/p.date /m.fuzzy&lt;/blockquote&gt;
+
+&lt;h3&gt;Alias&lt;/h3&gt;
+
+Options have aliases defined for ease of use, and in some cases are expanded into multiple options.
+
+&lt;table class="table-slim table-topless"&gt;
+    &lt;tr&gt;&lt;th&gt;Alias&lt;/th&gt;&lt;th&gt;Decode&lt;/th&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;/and&lt;/td&gt;&lt;td&gt;/c.and&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;/or&lt;/td&gt;&lt;td&gt;/c.or&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;/not&lt;/td&gt;&lt;td&gt;/c.not&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;/text&lt;/td&gt;&lt;td&gt;/p.text&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;/date&lt;/td&gt;&lt;td&gt;/p.date&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;/size&lt;/td&gt;&lt;td&gt;/p.size&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;/re&lt;/td&gt;&lt;td&gt;/m.re&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;/ire&lt;/td&gt;&lt;td&gt;/m.ire&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;/exact&lt;/td&gt;&lt;td&gt;/m.exact&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;/word&lt;/td&gt;&lt;td&gt;/m.word&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;/fuzzy&lt;/td&gt;&lt;td&gt;/m.fuzzy&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;/m0&lt;/td&gt;&lt;td&gt;/m.exact&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;/m1&lt;/td&gt;&lt;td&gt;/m.word&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;/m2&lt;/td&gt;&lt;td&gt;/m.fuzzy&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;/lt&lt;/td&gt;&lt;td&gt;/m.lt&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;/le&lt;/td&gt;&lt;td&gt;/m.le&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;/eq&lt;/td&gt;&lt;td&gt;/m.eq&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;/ne&lt;/td&gt;&lt;td&gt;/m.ne&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;/ge&lt;/td&gt;&lt;td&gt;/m.ge&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;/gt&lt;/td&gt;&lt;td&gt;/m.gt&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;/since&lt;/td&gt;&lt;td&gt;/p.date /m.ge&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;/until&lt;/td&gt;&lt;td&gt;/p.date /m.le&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;/bookmark&lt;/td&gt;&lt;td&gt;/p.bookmark /m.eq true&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;/history&lt;/td&gt;&lt;td&gt;/p.history /m.eq true&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;/playlist&lt;/td&gt;&lt;td&gt;/p.playlist /m.eq true&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;/title&lt;/td&gt;&lt;td&gt;/p.meta.title&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;/subject&lt;/td&gt;&lt;td&gt;/p.meta.subject&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;/rating&lt;/td&gt;&lt;td&gt;/p.rating&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;/tags&lt;/td&gt;&lt;td&gt;/p.meta.tags&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;/comments&lt;/td&gt;&lt;td&gt;/p.meta.comments&lt;/td&gt;&lt;/tr&gt;
+&lt;/table&gt;
+
+&lt;h3&gt;Meta Information&lt;/h3&gt;
+
+&lt;p&gt;
+    Meta information is the information displayed in the "Information Panel".&lt;br/&gt;
+    The meta information search is specified in the following format.
+    Specify the name of the meta information item in [key]. The resulting value is a string equivalent to the one displayed.
+    
+    &lt;blockquote&gt;/p.meta.[key]&lt;/blockquote&gt;
+    
+    It may take some time to get results when the number of pages is large because the files are read to retrieve meta information.
+&lt;/p&gt;
+
+&lt;p&gt;
+    &lt;table class="table-slim table-topless"&gt;
+        &lt;tr&gt;&lt;th&gt;[key]&lt;/th&gt;&lt;th&gt;Item&lt;/th&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;FileName&lt;/td&gt;&lt;td&gt;@InformationKey.FileName&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;FilePath&lt;/td&gt;&lt;td&gt;@InformationKey.FilePath&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;CreationTime&lt;/td&gt;&lt;td&gt;@InformationKey.CreationTime&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;LastWriteTime&lt;/td&gt;&lt;td&gt;@InformationKey.LastWriteTime&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;FileSize&lt;/td&gt;&lt;td&gt;@InformationKey.FileSize&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;ArchivePath&lt;/td&gt;&lt;td&gt;@InformationKey.ArchivePath&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;Archiver&lt;/td&gt;&lt;td&gt;@InformationKey.Archiver&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;Dimensions&lt;/td&gt;&lt;td&gt;@InformationKey.Dimensions&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;HorizontalResolution&lt;/td&gt;&lt;td&gt;@InformationKey.HorizontalResolution&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;VerticalResolution&lt;/td&gt;&lt;td&gt;@InformationKey.VerticalResolution&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;BitDepth&lt;/td&gt;&lt;td&gt;@InformationKey.BitDepth&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;Decoder&lt;/td&gt;&lt;td&gt;@InformationKey.Decoder&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;Title&lt;/td&gt;&lt;td&gt;@InformationKey.Title&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;Subject&lt;/td&gt;&lt;td&gt;@InformationKey.Subject&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;Rating&lt;/td&gt;&lt;td&gt;@InformationKey.Rating&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;Tags&lt;/td&gt;&lt;td&gt;@InformationKey.Tags&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;Comments&lt;/td&gt;&lt;td&gt;@InformationKey.Comments&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;Author&lt;/td&gt;&lt;td&gt;@InformationKey.Author&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;DateTaken&lt;/td&gt;&lt;td&gt;@InformationKey.DateTaken&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;ApplicationName&lt;/td&gt;&lt;td&gt;@InformationKey.ApplicationName&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;DateAcquired&lt;/td&gt;&lt;td&gt;@InformationKey.DateAcquired&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;Copyright&lt;/td&gt;&lt;td&gt;@InformationKey.Copyright&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;CameraMaker&lt;/td&gt;&lt;td&gt;@InformationKey.CameraMaker&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;CameraModel&lt;/td&gt;&lt;td&gt;@InformationKey.CameraModel&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;FNumber&lt;/td&gt;&lt;td&gt;@InformationKey.FNumber&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;ExposureTime&lt;/td&gt;&lt;td&gt;@InformationKey.ExposureTime&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;ISOSpeed&lt;/td&gt;&lt;td&gt;@InformationKey.ISOSpeed&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;ExposureBias&lt;/td&gt;&lt;td&gt;@InformationKey.ExposureBias&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;FocalLength&lt;/td&gt;&lt;td&gt;@InformationKey.FocalLength&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;MaxAperture&lt;/td&gt;&lt;td&gt;@InformationKey.MaxAperture&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;MeteringMode&lt;/td&gt;&lt;td&gt;@InformationKey.MeteringMode&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;SubjectDistance&lt;/td&gt;&lt;td&gt;@InformationKey.SubjectDistance&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;FlashMode&lt;/td&gt;&lt;td&gt;@InformationKey.FlashMode&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;FlashEnergy&lt;/td&gt;&lt;td&gt;@InformationKey.FlashEnergy&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;FocalLengthIn35mmFilm&lt;/td&gt;&lt;td&gt;@InformationKey.FocalLengthIn35mmFilm&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;LensMaker&lt;/td&gt;&lt;td&gt;@InformationKey.LensMaker&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;LensModel&lt;/td&gt;&lt;td&gt;@InformationKey.LensModel&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;FlashMaker&lt;/td&gt;&lt;td&gt;@InformationKey.FlashMaker&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;FlashModel&lt;/td&gt;&lt;td&gt;@InformationKey.FlashModel&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;CameraSerialNumber&lt;/td&gt;&lt;td&gt;@InformationKey.CameraSerialNumber&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;Contrast&lt;/td&gt;&lt;td&gt;@InformationKey.Contrast&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;Brightness&lt;/td&gt;&lt;td&gt;@InformationKey.Brightness&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;LightSource&lt;/td&gt;&lt;td&gt;@InformationKey.LightSource&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;ExposureProgram&lt;/td&gt;&lt;td&gt;@InformationKey.ExposureProgram&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;Saturation&lt;/td&gt;&lt;td&gt;@InformationKey.Saturation&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;Sharpness&lt;/td&gt;&lt;td&gt;@InformationKey.Sharpness&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;WhiteBalance&lt;/td&gt;&lt;td&gt;@InformationKey.WhiteBalance&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;PhotometricInterpretation&lt;/td&gt;&lt;td&gt;@InformationKey.PhotometricInterpretation&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;DigitalZoom&lt;/td&gt;&lt;td&gt;@InformationKey.DigitalZoom&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;Orientation&lt;/td&gt;&lt;td&gt;@InformationKey.Orientation&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;EXIFVersion&lt;/td&gt;&lt;td&gt;@InformationKey.EXIFVersion&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;GPSLatitude&lt;/td&gt;&lt;td&gt;@InformationKey.GPSLatitude&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;GPSLongitude&lt;/td&gt;&lt;td&gt;@InformationKey.GPSLongitude&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;GPSAltitude&lt;/td&gt;&lt;td&gt;@InformationKey.GPSAltitude&lt;/td&gt;&lt;/tr&gt;
+    &lt;/table&gt;
+
+    "@InformationGroup.Extras" key is a string with spaces removed from that item name.
+&lt;/p&gt;
+
+&lt;hr/&gt;
 &lt;h2&gt;Example of use&lt;/h2&gt;
 
 AND-Standard search of "ABC", "DEF"
@@ -365,7 +572,19 @@ ExactMatch search for "ABC DEF"
 
 Search for files updated in April 2019
 
-&lt;blockquote&gt;/since 2019-04-01 /until 2019-05-01&lt;/blockquote&gt;</value>
+&lt;blockquote&gt;/since 2019-04-01 /until 2019-05-01&lt;/blockquote&gt;
+
+Search for files less than 10 MB in size
+
+&lt;blockquote&gt;/size /lt 10M&lt;/blockquote&gt;
+
+AND standard search of "ABC" for bookmark search results
+
+&lt;blockquote&gt;/bookmark ABC&lt;/blockquote&gt;
+
+Search for pages containing "smile" in "parameters" in "@InformationGroup.Extras"
+
+&lt;blockquote&gt;/p.meta.parameters smile&lt;/blockquote&gt;</value>
   </data>
   <data name="AddParameterDialog.Tile" xml:space="preserve">
     <value>Add item</value>

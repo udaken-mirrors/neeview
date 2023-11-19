@@ -30,7 +30,7 @@ namespace NeeView
         {
             var builder = new StringBuilder();
 
-            builder.Append(HtmlHelpUtility.CraeteHeader("NeeView Script Manual"));
+            builder.Append(HtmlHelpUtility.CreateHeader("NeeView Script Manual"));
             builder.Append($"<body>");
 
             builder.Append(Properties.Resources._Document_ScriptManual_html);

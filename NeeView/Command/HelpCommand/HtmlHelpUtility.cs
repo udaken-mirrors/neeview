@@ -13,9 +13,9 @@ namespace NeeView
         public static string GetSearchHelp()
         {
             var builder = new StringBuilder();
-            builder.Append(HtmlHelpUtility.CraeteHeader("NeeView Search Options"));
+            builder.Append(HtmlHelpUtility.CreateHeader("NeeView Search Options"));
             builder.Append($"<body>");
-            builder.Append(Properties.Resources._Document_SearchOptions_html);
+            builder.Append(ResourceService.Replace(Properties.Resources._Document_SearchOptions_html));
             builder.Append("</body>");
 
             return builder.ToString();
@@ -26,7 +26,7 @@ namespace NeeView
         /// </summary>
         /// <param name="title"></param>
         /// <returns></returns>
-        public static string CraeteHeader(string title)
+        public static string CreateHeader(string title)
         {
             string stylesheet = "";
             var fileUri = new Uri("/Resources/Style.css", UriKind.Relative);

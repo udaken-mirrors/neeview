@@ -111,17 +111,16 @@ namespace NeeView.Properties {
         ///
         ///&lt;h2&gt;Search options&lt;/h2&gt;
         ///&lt;p&gt;
-        ///    If no search option is specified, it becomes AND-Standard search (same as specifying &quot;/and /m2&quot;).&lt;br/&gt; 
-        ///    Search options affect only the immediately following search words.
+        ///    If no search option is specified, it becomes AND-Standard search (same as specifying &quot;/and /text /m2&quot;).&lt;br/&gt; 
+        ///    Search options affect only the immediately following search words.&lt;br/&gt;
+        ///    Search options are not case sensitive.
         ///&lt;/p&gt;
         ///
         ///&lt;h3&gt;Connection options&lt;/h3&gt;
         ///&lt;table class=&quot;table-slim table-topless&quot;&gt;
         ///    &lt;tr&gt;&lt;th&gt;Option&lt;/th&gt;&lt;th&gt;Description&lt;/th&gt;&lt;/tr&gt;
         ///    &lt;tr&gt;&lt;td&gt;/and&lt;/td&gt;&lt;td&gt;AND search (default)&lt;/td&gt;&lt;/tr&gt;
-        ///    &lt;tr&gt;&lt;td&gt;/or&lt;/td&gt;&lt;td&gt;OR search&lt;/td&gt;&lt;/tr&gt;
-        ///    &lt;tr&gt;&lt;td&gt;/not&lt;/td&gt;&lt;td&gt;NOT search&lt;/td&gt;&lt;/tr&gt;
-        ///&lt;/ [残りの文字列は切り詰められました]&quot;; に類似しているローカライズされた文字列を検索します。
+        ///    &lt;tr&gt;&lt;td&gt;/or&lt;/td&gt;&lt;td&gt;OR search&lt;/td&gt; [残りの文字列は切り詰められました]&quot;; に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string _Document_SearchOptions_html {
             get {

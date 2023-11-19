@@ -606,7 +606,7 @@ namespace NeeView
 
             using (var writer = new System.IO.StreamWriter(fileName, false))
             {
-                writer.WriteLine(HtmlHelpUtility.CraeteHeader("NeeView Command List"));
+                writer.WriteLine(HtmlHelpUtility.CreateHeader("NeeView Command List"));
                 writer.WriteLine($"<body><h1>{Properties.Resources.HelpCommandList_Title}</h1>");
                 writer.WriteLine($"<p>{Properties.Resources.HelpCommandList_Message}</p>");
                 writer.WriteLine("<table class=\"table-slim table-topless\">");
