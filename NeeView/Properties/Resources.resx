@@ -1213,7 +1213,7 @@ Search for pages containing "smile" in "parameters" in "@InformationGroup.Extras
   <data name="BookshelfConfig.IsVisibleHistoryMark.Remarks" xml:space="preserve">
     <value>A check mark is displayed in the book remaining in the history.</value>
   </data>
-  <data name="BookshelfConfig.IsVisibleItemsCount" xml:space="preserve">
+  <data name="PanelsConfig.IsVisibleItemsCount" xml:space="preserve">
     <value>Show number of items</value>
   </data>
   <data name="BookshelfConfig.PlaylistFolderOrder" xml:space="preserve">

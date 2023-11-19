@@ -1213,7 +1213,7 @@ Search for pages containing "smile" in "parameters" in "@InformationGroup.Extras
   <data name="BookshelfConfig.IsVisibleHistoryMark.Remarks" xml:space="preserve">
     <value>在历史记录里留存的书本中显示确认标记。</value>
   </data>
-  <data name="BookshelfConfig.IsVisibleItemsCount" xml:space="preserve">
+  <data name="PanelsConfig.IsVisibleItemsCount" xml:space="preserve">
     <value>显示项目数</value>
   </data>
   <data name="BookshelfConfig.PlaylistFolderOrder" xml:space="preserve">

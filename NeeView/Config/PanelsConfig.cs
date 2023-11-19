@@ -22,6 +22,7 @@ namespace NeeView
         private double _leftPanelWidth = 300.0;
         private double _rightPanelWidth = 300.0;
         private bool _isLimitPanelWidth;
+        private bool _isVisibleItemsCount = true;
 
 
         /// <summary>
@@ -124,6 +125,15 @@ namespace NeeView
             set { SetProperty(ref _isLimitPanelWidth, value); }
         }
 
+        /// <summary>
+        /// コレクションアイテム数の表示
+        /// </summary>
+        [PropertyMember]
+        public bool IsVisibleItemsCount
+        {
+            get { return _isVisibleItemsCount; }
+            set { SetProperty(ref _isVisibleItemsCount, value); }
+        }
 
 
         [PropertyMapLabel("@Word.StyleContent")]

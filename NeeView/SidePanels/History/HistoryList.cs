@@ -114,7 +114,13 @@ namespace NeeView
         public List<BookHistory> Items
         {
             get { return _items; }
-            private set { SetProperty(ref _items, value); }
+            private set
+            {
+                if (SetProperty(ref _items, value))
+                {
+                    RaisePropertyChanged(nameof(ValidCount));
+                }
+            }
         }
 
         /// <summary>
@@ -125,6 +131,11 @@ namespace NeeView
             get { return _selectedItem; }
             set { SetProperty(ref _selectedItem, value); }
         }
+
+        /// <summary>
+        /// 項目数
+        /// </summary>
+        public int ValidCount => _items.Count;
 
 
 

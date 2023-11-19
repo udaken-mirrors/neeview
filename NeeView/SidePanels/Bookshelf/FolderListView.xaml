@@ -93,7 +93,7 @@
                     <Grid x:Name="PlaceGrid">
                         <DockPanel>
                             <TextBlock DockPanel.Dock="Right" Text="{Binding FolderCollection.ValidCount, StringFormat={}{0}}" Foreground="{DynamicResource Panel.Foreground}" Margin="5,0"
-                                    Visibility="{Binding Source={x:Static local:Config.Current}, Path=Bookshelf.IsVisibleItemsCount, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                                    Visibility="{Binding Source={x:Static local:Config.Current}, Path=Panels.IsVisibleItemsCount, Converter={StaticResource BooleanToVisibilityConverter}}" />
                             <DockPanel x:Name="PlaceBar">
                                 <Image x:Name="PlaceIcon" DockPanel.Dock="Left" Width="16" Height="16" VerticalAlignment="Center" Margin="0,0,0,0"
                                         PreviewMouseLeftButtonDown="PlaceIcon_MouseLeftButtonDown" PreviewMouseLeftButtonUp="PlaceIcon_MouseLeftButtonUp" PreviewMouseMove="PlaceIcon_MouseMove"

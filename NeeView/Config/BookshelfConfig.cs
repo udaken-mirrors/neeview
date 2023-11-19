@@ -8,7 +8,6 @@ namespace NeeView
 {
     public class BookshelfConfig : FolderListConfig
     {
-        private bool _IsVisibleItemsCount;
         private bool _isVisibleHistoryMark = true;
         private bool _isVisibleBookmarkMark = true;
         private string? _excludePattern;
@@ -35,16 +34,6 @@ namespace NeeView
         {
             get { return _home ?? BookshelfFolderList.GetDefaultHomePath(); }
             set { SetProperty(ref _home, (string.IsNullOrWhiteSpace(value) || value.Trim() == BookshelfFolderList.GetDefaultHomePath()) ? null : value.Trim()); }
-        }
-
-        /// <summary>
-        /// コレクションアイテム数の表示
-        /// </summary>
-        [PropertyMember]
-        public bool IsVisibleItemsCount
-        {
-            get { return _IsVisibleItemsCount; }
-            set { SetProperty(ref _IsVisibleItemsCount, value); }
         }
 
         /// <summary>
@@ -187,6 +176,17 @@ namespace NeeView
         [Obsolete("no used"), Alternative("nv.Config.System.IsIncrementalSearchEnabled", 40, ScriptErrorLevel.Warning, IsFullName = true)] // ver.40
         [JsonIgnore]
         public bool IsIncrementalSearchEnabled
+        {
+            get { return false; }
+            set { }
+        }
+
+        /// <summary>
+        /// コレクションアイテム数の表示
+        /// </summary>
+        [Obsolete("no used"), Alternative("nv.Config.Panels.IsVisibleItemsCount", 40, ScriptErrorLevel.Warning, IsFullName = true)] // ver.40
+        [JsonIgnore]
+        public bool IsVisibleItemsCount
         {
             get { return false; }
             set { }

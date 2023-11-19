@@ -60,11 +60,16 @@
 
         <StackPanel DockPanel.Dock="Top">
 
-            <Border Visibility="{Binding PageListConfig.ShowBookTitle, Converter={StaticResource BooleanToVisibilityConverter}}" Margin="1,0">
-                <nwc:LeftTrimmingTextBlock TextSource="{Binding Model.PlaceDispString}" ToolTip="{Binding Model.PlaceDispString}" VerticalAlignment="Center" />
+            <Border Margin="1,2">
+                <DockPanel>
+                    <TextBlock DockPanel.Dock="Right" Text="{Binding Model.ValidCount, StringFormat={}{0}}" Foreground="{DynamicResource Panel.Foreground}" Margin="5,0"
+                        Visibility="{Binding Source={x:Static local:Config.Current}, Path=Panels.IsVisibleItemsCount, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                    <nwc:LeftTrimmingTextBlock TextSource="{Binding Model.PlaceDispString}" ToolTip="{Binding Model.PlaceDispString}" VerticalAlignment="Center"
+                        Visibility="{Binding PageListConfig.ShowBookTitle, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                </DockPanel>
             </Border>
 
-            <DockPanel KeyboardNavigation.TabNavigation ="Local" Margin="0,1,0,0" >
+            <DockPanel KeyboardNavigation.TabNavigation ="Local" Margin="0" >
                 <local:MoreMenuButton Description="{Binding MoreMenuDescription}" DockPanel.Dock="Right" VerticalAlignment="Top" Height="{DynamicResource FontIconSize}" TabIndex="2" />
                 <WrapPanel MinWidth="150">
                     <Button x:Name="PrevButton" Style="{StaticResource FolderListButtonStyle}" Command="{Binding MoveToPreviousCommand}" TabIndex="1" ContextMenuService.Placement="Bottom"

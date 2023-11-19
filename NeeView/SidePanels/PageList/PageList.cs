@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
@@ -129,6 +130,7 @@ namespace NeeView
             {
                 if (SetProperty(ref _items, value))
                 {
+                    RaisePropertyChanged(nameof(ValidCount));
                     ValidateViewItems();
                 }
             }
@@ -162,6 +164,19 @@ namespace NeeView
             }
         }
 
+        /// <summary>
+        /// 選択項目
+        /// </summary>
+        public int ValidCount => IsEmpty() ? 0 : _items.Count;
+
+
+        [MemberNotNullWhen(false, nameof(_items))]
+        public bool IsEmpty()
+        {
+            return _items == null
+                || _items.Count == 0
+                || _items.Count == 1 && _items[0].Content is EmptyPageContent;
+        }
 
         private void ValidateViewItems()
         {

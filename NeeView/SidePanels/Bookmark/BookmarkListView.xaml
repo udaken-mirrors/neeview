@@ -64,11 +64,13 @@
 
         <StackPanel DockPanel.Dock="Top">
 
-            <StackPanel HorizontalAlignment="Stretch">
-                <Border x:Name="PlaceGrid" Margin="0,2">
+            <DockPanel HorizontalAlignment="Stretch">
+                <TextBlock DockPanel.Dock="Right" Text="{Binding FolderCollection.ValidCount, StringFormat={}{0}}" Foreground="{DynamicResource Panel.Foreground}" Margin="5,0"
+                                    Visibility="{Binding Source={x:Static local:Config.Current}, Path=Panels.IsVisibleItemsCount, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                <Border x:Name="PlaceGrid" Margin="1,0">
                     <nwc:LeftTrimmingTextBlock TextSource="{Binding FolderCollection.Place.Path}" ToolTip="{Binding FolderCollection.Place.Path}" VerticalAlignment="Center" />
                 </Border>
-            </StackPanel>
+            </DockPanel>
 
             <DockPanel KeyboardNavigation.TabNavigation="Local">
                 <StackPanel Orientation="Horizontal" DockPanel.Dock="Right" VerticalAlignment="Top">

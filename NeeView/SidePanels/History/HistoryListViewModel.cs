@@ -33,6 +33,8 @@ namespace NeeView
         }
 
 
+        public HistoryList Model => _model;
+
         public string FilterPath => string.IsNullOrEmpty(_model.FilterPath) ? Properties.Resources.Word_AllHistory : _model.FilterPath;
 
         public SearchBoxModel SearchBoxModel => _model.SearchBoxModel;

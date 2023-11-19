@@ -2145,15 +2145,6 @@ namespace NeeView.Properties {
         }
         
         /// <summary>
-        ///   Show number of items に類似しているローカライズされた文字列を検索します。
-        /// </summary>
-        public static string BookshelfConfig_IsVisibleItemsCount {
-            get {
-                return ResourceManager.GetString("BookshelfConfig.IsVisibleItemsCount", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Default order of playlists に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string BookshelfConfig_PlaylistFolderOrder {
@@ -12680,6 +12671,15 @@ namespace NeeView.Properties {
         public static string PanelsConfig_IsSideBarEnabled {
             get {
                 return ResourceManager.GetString("PanelsConfig.IsSideBarEnabled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Show number of items に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string PanelsConfig_IsVisibleItemsCount {
+            get {
+                return ResourceManager.GetString("PanelsConfig.IsVisibleItemsCount", resourceCulture);
             }
         }
         
