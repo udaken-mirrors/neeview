@@ -23,13 +23,25 @@ namespace NeeView
     {
         private readonly HistoryListViewModel _vm;
 
+
         public HistoryListView(HistoryList model)
         {
             InitializeComponent();
 
             _vm = new HistoryListViewModel(model);
             this.DockPanel.DataContext = _vm;
-        }
-    }
 
+            model.SearchBoxFocus += HistoryList_SearchBoxFocus;
+        }
+
+
+        /// <summary>
+        /// 検索ボックスのフォーカス要求処理
+        /// </summary>
+        private void HistoryList_SearchBoxFocus(object? sender, EventArgs e)
+        {
+            this.SearchBox.FocusAsync();
+        }
+
+    }
 }

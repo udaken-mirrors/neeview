@@ -2560,15 +2560,6 @@ nv.Values.Test = "Hello!"</value>
   <data name="FocusBookmarkListCommand.Remarks" xml:space="preserve">
     <value>顯示書庫的書籤資料夾。</value>
   </data>
-  <data name="FocusFolderSearchBoxCommand" xml:space="preserve">
-    <value>移動搜尋框焦點</value>
-  </data>
-  <data name="FocusFolderSearchBoxCommand.Menu" xml:space="preserve">
-    <value>搜尋框</value>
-  </data>
-  <data name="FocusFolderSearchBoxCommand.Remarks" xml:space="preserve">
-    <value>移動焦點到搜尋框。書庫會變成顯示狀態。</value>
-  </data>
   <data name="FocusMainViewCommand" xml:space="preserve">
     <value>移動焦點至主要檢視</value>
   </data>

@@ -29,6 +29,7 @@ namespace NeeView
             _vm = new BookmarkListViewModel(model);
             this.Root.DataContext = _vm;
 
+            model.SearchBoxFocus += FolderList_SearchBoxFocus;
             model.FolderTreeFocus += FolderList_FolderTreeFocus;
         }
 
@@ -50,6 +51,14 @@ namespace NeeView
             if (!_vm.Model.FolderListConfig.IsFolderTreeVisible) return;
 
             this.FolderTree.FocusSelectedItem();
+        }
+
+        /// <summary>
+        /// 検索ボックスのフォーカス要求処理
+        /// </summary>
+        private void FolderList_SearchBoxFocus(object? sender, EventArgs e)
+        {
+            this.SearchBox.FocusAsync();
         }
 
         private void BookmarkListView_IsVisibleChanged(object? sender, DependencyPropertyChangedEventArgs e)

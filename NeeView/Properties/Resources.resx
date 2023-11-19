@@ -2556,15 +2556,6 @@ Is it OK?</value>
   <data name="FocusBookmarkListCommand.Remarks" xml:space="preserve">
     <value>Display bookmark folder of the bookshelf.</value>
   </data>
-  <data name="FocusFolderSearchBoxCommand" xml:space="preserve">
-    <value>Focus search box</value>
-  </data>
-  <data name="FocusFolderSearchBoxCommand.Menu" xml:space="preserve">
-    <value>Search box</value>
-  </data>
-  <data name="FocusFolderSearchBoxCommand.Remarks" xml:space="preserve">
-    <value>Focus search box. The bookshelf is displayed.</value>
-  </data>
   <data name="FocusMainViewCommand" xml:space="preserve">
     <value>Focus on main view</value>
   </data>
@@ -7944,5 +7935,41 @@ nv.ShowToast(nv.Book.ViewPages[0].Path)</value>
   </data>
   <data name="SystemConfig.SearchHistorySize" xml:space="preserve">
     <value>Search history size</value>
+  </data>
+  <data name="FocusFolderSearchBoxCommand" xml:space="preserve">
+    <value>Focus on bookshelf search box</value>
+  </data>
+  <data name="FocusFolderSearchBoxCommand.Menu" xml:space="preserve">
+    <value>Bookshelf search box</value>
+  </data>
+  <data name="FocusFolderSearchBoxCommand.Remarks" xml:space="preserve">
+    <value>Focus on the bookshelf search box. The Bookshelf panel will be in the display state.</value>
+  </data>
+  <data name="FocusBookmarkSearchBoxCommand" xml:space="preserve">
+    <value>Focus on bookmark search box</value>
+  </data>
+  <data name="FocusBookmarkSearchBoxCommand.Menu" xml:space="preserve">
+    <value>Bookmark search box</value>
+  </data>
+  <data name="FocusBookmarkSearchBoxCommand.Remarks" xml:space="preserve">
+    <value>Focus on the bookmark search box. The Bookmark panel will be in the display state.</value>
+  </data>
+  <data name="FocusPageListSearchBoxCommand" xml:space="preserve">
+    <value>Focus on PageList search box</value>
+  </data>
+  <data name="FocusPageListSearchBoxCommand.Menu" xml:space="preserve">
+    <value>PageList search box</value>
+  </data>
+  <data name="FocusPageListSearchBoxCommand.Remarks" xml:space="preserve">
+    <value>Focus on the PageList search box. The PageList panel will be in the display state.</value>
+  </data>
+  <data name="FocusHistorySearchBoxCommand" xml:space="preserve">
+    <value>Focus on history search box</value>
+  </data>
+  <data name="FocusHistorySearchBoxCommand.Menu" xml:space="preserve">
+    <value>History search box</value>
+  </data>
+  <data name="FocusHistorySearchBoxCommand.Remarks" xml:space="preserve">
+    <value>Focus on the history search box. The History panel will be in the display state.</value>
   </data>
 </root>

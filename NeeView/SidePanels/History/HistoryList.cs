@@ -54,6 +54,9 @@ namespace NeeView
         }
 
 
+        // 検索ボックスにフォーカスを
+        public event EventHandler? SearchBoxFocus;
+
 
         public SearchBoxModel SearchBoxModel { get; }
 
@@ -385,6 +388,14 @@ namespace NeeView
             {
                 return new SearchKeywordAnalyzeResult(ex);
             }
+        }
+
+        /// <summary>
+        /// 検索ボックスにフォーカス要求
+        /// </summary>
+        public void RaiseSearchBoxFocus()
+        {
+            SearchBoxFocus?.Invoke(this, EventArgs.Empty);
         }
 
 

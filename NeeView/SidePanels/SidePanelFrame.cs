@@ -196,9 +196,9 @@ namespace NeeView
             set { SetVisiblePanel(nameof(PageListPanel), value); }
         }
 
-        public void SetVisiblePageList(bool isVisible, bool flush)
+        public void SetVisiblePageList(bool isVisible, bool flush, bool isFocus)
         {
-            SetVisiblePanel(nameof(PageListPanel), isVisible);
+            SetVisiblePanel(nameof(PageListPanel), isVisible, isFocus);
         }
 
         public bool ToggleVisiblePageList(bool byMenu)
@@ -214,9 +214,9 @@ namespace NeeView
             set { SetVisiblePanel(nameof(HistoryPanel), value); }
         }
 
-        public void SetVisibleHistoryList(bool isVisible, bool flush)
+        public void SetVisibleHistoryList(bool isVisible, bool flush, bool isFocus)
         {
-            SetVisiblePanel(nameof(HistoryPanel), isVisible);
+            SetVisiblePanel(nameof(HistoryPanel), isVisible, isFocus);
         }
 
         public bool ToggleVisibleHistoryList(bool byMenu)
@@ -232,9 +232,9 @@ namespace NeeView
             set { SetVisiblePanel(nameof(BookmarkPanel), value); }
         }
 
-        public void SetVisibleBookmarkList(bool isVisible, bool flush)
+        public void SetVisibleBookmarkList(bool isVisible, bool flush, bool isFocus)
         {
-            SetVisiblePanel(nameof(BookmarkPanel), isVisible);
+            SetVisiblePanel(nameof(BookmarkPanel), isVisible, isFocus);
         }
 
         public bool ToggleVisibleBookmarkList(bool byMenu)
@@ -286,12 +286,39 @@ namespace NeeView
         }
 
         /// <summary>
-        /// 検索ボックスにフォーカスを移す
+        /// 本棚の検索ボックスにフォーカスを移す
         /// </summary>
         public void FocusBookshelfSearchBox(bool byMenu)
         {
             SetVisibleFolderList(true, true, false);
             BookshelfFolderList.Current.RaiseSearchBoxFocus();
+        }
+
+        /// <summary>
+        /// ブックマークの検索ボックスにフォーカスを移す
+        /// </summary>
+        public void FocusBookmarkSearchBox(bool byMenu)
+        {
+            SetVisibleBookmarkList(true, true, false);
+            BookmarkFolderList.Current.RaiseSearchBoxFocus();
+        }
+
+        /// <summary>
+        /// ページリストの検索ボックスにフォーカスを移す
+        /// </summary>
+        public void FocusPageListSearchBox(bool byMenu)
+        {
+            SetVisiblePageList(true, true, false);
+            PageList.Current.RaiseSearchBoxFocus();
+        }
+
+        /// <summary>
+        /// 履歴の検索ボックスにフォーカスを移す
+        /// </summary>
+        public void FocusHistorySearchBox(bool byMenu)
+        {
+            SetVisibleHistoryList(true, true, false);
+            HistoryList.Current.RaiseSearchBoxFocus();
         }
 
         /// <summary>

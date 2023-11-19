@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Text;
 using System.Threading.Tasks;
@@ -27,6 +28,17 @@ namespace NeeView
 
             _vm = new PageListViewModel(model);
             this.DockPanel.DataContext = _vm;
+
+            model.SearchBoxFocus += PageList_SearchBoxFocus;
+        }
+
+
+        /// <summary>
+        /// 検索ボックスのフォーカス要求処理
+        /// </summary>
+        private void PageList_SearchBoxFocus(object? sender, EventArgs e)
+        {
+            this.SearchBox.FocusAsync();
         }
 
         /// <summary>

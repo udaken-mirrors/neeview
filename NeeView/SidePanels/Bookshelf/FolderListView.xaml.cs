@@ -31,7 +31,6 @@ namespace NeeView
     public partial class FolderListView : UserControl, IHasFolderListBox
     {
         private readonly FolderListViewModel _vm;
-        private int _requestSearchBoxFocusValue;
 
 
         public FolderListView(BookshelfFolderList model)
@@ -75,40 +74,9 @@ namespace NeeView
         /// <summary>
         /// 検索ボックスのフォーカス要求処理
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
         private void FolderList_SearchBoxFocus(object? sender, EventArgs e)
         {
-            if (Interlocked.Exchange(ref _requestSearchBoxFocusValue, 1) == 0)
-            {
-                _ = FocusSearchBoxAsync(); // 非同期
-            }
-        }
-
-        /// <summary>
-        /// 検索ボックスにフォーカスをあわせる。
-        /// </summary>
-        /// <returns></returns>
-        private async Task FocusSearchBoxAsync()
-        {
-            // 表示が間に合わない場合があるので繰り返しトライする
-            for (int i = 0; i < 10; i++)
-            {
-                var searchBox = this.SearchBox;
-                if (searchBox != null && searchBox.IsLoaded && searchBox.IsVisible && this.IsVisible)
-                {
-                    searchBox.FocusEditableTextBox();
-                    var isFocused = searchBox.IsKeyboardFocusWithin;
-                    //Debug.WriteLine($"Focus: {isFocused}");
-                    if (isFocused) break;
-                }
-
-                //Debug.WriteLine($"Focus: ready...");
-                await Task.Delay(100);
-            }
-
-            Interlocked.Exchange(ref _requestSearchBoxFocusValue, 0);
-            //Debug.WriteLine($"Focus: done.");
+            this.SearchBox?.FocusAsync();
         }
 
         /// <summary>

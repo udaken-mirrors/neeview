@@ -2547,15 +2547,6 @@ nv.Values.Test = "Hello!"</value>
   <data name="FocusBookmarkListCommand.Remarks" xml:space="preserve">
     <value>显示书库的书签文件夹。</value>
   </data>
-  <data name="FocusFolderSearchBoxCommand" xml:space="preserve">
-    <value>移动搜寻框焦点</value>
-  </data>
-  <data name="FocusFolderSearchBoxCommand.Menu" xml:space="preserve">
-    <value>搜寻框</value>
-  </data>
-  <data name="FocusFolderSearchBoxCommand.Remarks" xml:space="preserve">
-    <value>移动焦点到搜寻框。书库会变成显示状态。</value>
-  </data>
   <data name="FocusMainViewCommand" xml:space="preserve">
     <value>移动焦点至主要检视</value>
   </data>

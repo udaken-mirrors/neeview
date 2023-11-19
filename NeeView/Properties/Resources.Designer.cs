@@ -6250,7 +6250,34 @@ namespace NeeView.Properties {
         }
         
         /// <summary>
-        ///   Focus search box に類似しているローカライズされた文字列を検索します。
+        ///   Focus on bookmark search box に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string FocusBookmarkSearchBoxCommand {
+            get {
+                return ResourceManager.GetString("FocusBookmarkSearchBoxCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Bookmark search box に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string FocusBookmarkSearchBoxCommand_Menu {
+            get {
+                return ResourceManager.GetString("FocusBookmarkSearchBoxCommand.Menu", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Focus on the bookmark search box. The Bookmark panel will be in the display state. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string FocusBookmarkSearchBoxCommand_Remarks {
+            get {
+                return ResourceManager.GetString("FocusBookmarkSearchBoxCommand.Remarks", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Focus on bookshelf search box に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string FocusFolderSearchBoxCommand {
             get {
@@ -6259,7 +6286,7 @@ namespace NeeView.Properties {
         }
         
         /// <summary>
-        ///   Search box に類似しているローカライズされた文字列を検索します。
+        ///   Bookshelf search box に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string FocusFolderSearchBoxCommand_Menu {
             get {
@@ -6268,11 +6295,38 @@ namespace NeeView.Properties {
         }
         
         /// <summary>
-        ///   Focus search box. The bookshelf is displayed. に類似しているローカライズされた文字列を検索します。
+        ///   Focus on the bookshelf search box. The Bookshelf panel will be in the display state. に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string FocusFolderSearchBoxCommand_Remarks {
             get {
                 return ResourceManager.GetString("FocusFolderSearchBoxCommand.Remarks", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Focus on history search box に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string FocusHistorySearchBoxCommand {
+            get {
+                return ResourceManager.GetString("FocusHistorySearchBoxCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   History search box に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string FocusHistorySearchBoxCommand_Menu {
+            get {
+                return ResourceManager.GetString("FocusHistorySearchBoxCommand.Menu", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Focus on the history search box. The History panel will be in the display state. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string FocusHistorySearchBoxCommand_Remarks {
+            get {
+                return ResourceManager.GetString("FocusHistorySearchBoxCommand.Remarks", resourceCulture);
             }
         }
         
@@ -6336,6 +6390,33 @@ namespace NeeView.Properties {
         public static string FocusNextAppCommand_Remarks {
             get {
                 return ResourceManager.GetString("FocusNextAppCommand.Remarks", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Focus on PageList search box に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string FocusPageListSearchBoxCommand {
+            get {
+                return ResourceManager.GetString("FocusPageListSearchBoxCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   PageList search box に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string FocusPageListSearchBoxCommand_Menu {
+            get {
+                return ResourceManager.GetString("FocusPageListSearchBoxCommand.Menu", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Focus on the PageList search box. The PageList panel will be in the display state. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string FocusPageListSearchBoxCommand_Remarks {
+            get {
+                return ResourceManager.GetString("FocusPageListSearchBoxCommand.Remarks", resourceCulture);
             }
         }
         

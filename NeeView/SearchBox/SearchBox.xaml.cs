@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -27,6 +28,7 @@ namespace NeeView
         public readonly static RoutedCommand DeleteAction = new RoutedCommand("DeleteAction", typeof(SearchBox));
 
         private readonly DelayAction _delayAction = new();
+        private int _requestSearchBoxFocusValue;
 
 
         public SearchBox()
@@ -159,9 +161,46 @@ namespace NeeView
         }
 
         /// <summary>
+        /// 検索ボックスのフォーカス要求処理
+        /// </summary>
+        public void FocusAsync()
+        {
+            if (Interlocked.Exchange(ref _requestSearchBoxFocusValue, 1) == 0)
+            {
+                _ = FocusSearchBoxAsync(); // 非同期
+            }
+        }
+
+        /// <summary>
+        /// 検索ボックスにフォーカスをあわせる。
+        /// </summary>
+        /// <returns></returns>
+        private async Task FocusSearchBoxAsync()
+        {
+            // 表示が間に合わない場合があるので繰り返しトライする
+            for (int i = 0; i < 10; i++)
+            {
+                var searchBox = this;
+                if (searchBox != null && searchBox.IsLoaded && searchBox.IsVisible && this.IsVisible)
+                {
+                    searchBox.FocusEditableTextBox();
+                    var isFocused = searchBox.IsKeyboardFocusWithin;
+                    //Debug.WriteLine($"Focus: {isFocused}");
+                    if (isFocused) break;
+                }
+
+                //Debug.WriteLine($"Focus: ready...");
+                await Task.Delay(100);
+            }
+
+            Interlocked.Exchange(ref _requestSearchBoxFocusValue, 0);
+            //Debug.WriteLine($"Focus: done.");
+        }
+
+        /// <summary>
         /// テキストボックスにフォーカス
         /// </summary>
-        public bool FocusEditableTextBox()
+        private bool FocusEditableTextBox()
         {
             return this.SearchBoxComboBox.Focus();
         }
