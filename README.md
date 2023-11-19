@@ -7,7 +7,7 @@
 ## 開発環境
 
 * Windows 10 Pro 64bit
-* VisualStudio 2019
+* VisualStudio 2022
     - .Net デスクトップ開発
     - C++によるデスクトップ開発
 
