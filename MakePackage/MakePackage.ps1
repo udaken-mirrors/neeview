@@ -6,18 +6,24 @@
 
 Param(
 	[ValidateSet("All", "Zip", "Installer", "Appx", "Canary", "Beta")]$Target = "All",
+
+	# ビルドをスキップする
 	[switch]$continue,
+
+	# ログ出力のあるパッケージ作成
 	[switch]$trace,
-	[switch]$x86
+
+	# ターゲットx86
+	[switch]$x86,
+
+	# MSI作成時にMainComponents.wsxを更新する
+	[switch]$updateComponent
 )
 
 # error to break
 trap { break }
 
 $ErrorActionPreference = "stop"
-
-# MSI作成時にMainComponents.wsxを更新する?
-$isCreateMainComponentsWxs = $true;
 
 #
 $product = 'NeeView'
@@ -547,7 +553,7 @@ function New-Msi($arch, $packageDir, $packageAppendDir, $packageMsi)
 	}
 
 	## Create MainComponents.wxs
-	if ($isCreateMainComponentsWxs)
+	if ($updateComponent)
 	{
 		Write-Host "Create MainComponents.wsx`n" -fore Cyan
 		New-MainComponents
