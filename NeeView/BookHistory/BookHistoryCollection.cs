@@ -514,15 +514,12 @@ namespace NeeView
 
             _folders = memento.Folders ?? _folders;
 
-            if (Config.Current.History.IsKeepSearchHistory)
-            {
 #pragma warning disable CS0612 // 型またはメンバーが旧型式です
-                this.BookshelfSearchHistory.Replace(memento.BookshelfSearchHistory ?? memento.SearchHistory);
+            this.BookshelfSearchHistory.Replace(memento.BookshelfSearchHistory ?? memento.SearchHistory);
 #pragma warning restore CS0612 // 型またはメンバーが旧型式です
-                this.BookmarkSearchHistory.Replace(memento.BookmarkSearchHistory);
-                this.BookHistorySearchHistory.Replace(memento.BookHistorySearchHistory);
-                this.PageListSearchHistory.Replace(memento.PageListSearchHistory);
-            }
+            this.BookmarkSearchHistory.Replace(memento.BookmarkSearchHistory);
+            this.BookHistorySearchHistory.Replace(memento.BookHistorySearchHistory);
+            this.PageListSearchHistory.Replace(memento.PageListSearchHistory);
 
             this.Load(fromLoad ? Limit(memento.Items, Config.Current.History.LimitSize, Config.Current.History.LimitSpan) : memento.Items, memento.Books);
         }
