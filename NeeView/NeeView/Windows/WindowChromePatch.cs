@@ -104,10 +104,10 @@ namespace NeeView.Windows
         /// <returns></returns>
         private IntPtr CalcNonClientSize(IntPtr hWnd, IntPtr lParam, ref bool handled)
         {
+            if (!NativeMethods.IsZoomed(hWnd)) return IntPtr.Zero;
+
             // タブレットモードでは処理しない
             if (WindowParameters.IsTabletMode) return IntPtr.Zero;
-
-            if (!NativeMethods.IsZoomed(hWnd)) return IntPtr.Zero;
 
             var nonClientCalcSize = Marshal.PtrToStructure<NCCALCSIZE_PARAMS>(lParam);
             Trace("RCSize.LPPos.Flags {0}", nonClientCalcSize.lppos.flags);

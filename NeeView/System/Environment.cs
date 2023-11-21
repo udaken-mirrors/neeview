@@ -9,6 +9,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Reflection;
+using System.Security;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -33,6 +34,7 @@ namespace NeeView
         private static bool? _watermark;
         private static string? _logFile;
         private static Encoding? _encoding;
+        private static string? _neeviewProfile;
 
 
         // TODO: static でなくてよい
@@ -158,10 +160,40 @@ namespace NeeView
                 }
             }
         }
+
         /// <summary>
         /// プロダクトバージョン(int)
         /// </summary>
         public static int ProductVersionNumber { get; private set; }
+
+        /// <summary>
+        /// 環境変数 NEEVIEW_PROFILE 取得
+        /// </summary>
+        private static string NeeViewProfile
+        {
+            get
+            {
+                if (_neeviewProfile is null)
+                {
+                    // 環境変数 NEEVIEW_PROFILE から取得
+                    _neeviewProfile = GetEnvironmentValue("NEEVIEW_PROFILE").Trim();
+                    if (!string.IsNullOrEmpty(_neeviewProfile))
+                    {
+                        if (!Path.IsPathRooted(_neeviewProfile))
+                        {
+                            // Error: 環境変数 NEEVIEW_PROFILE は絶対パスではありません
+                            throw new IOException("NEEVIEW_PROFILE: Not an absolute path");
+                        }
+                        if (!Directory.Exists(_neeviewProfile))
+                        {
+                            // Error: 環境変数 NEEVIEW_PROFILE が示すディレクトリが存在しません: (path)
+                            throw new DirectoryNotFoundException($"NEEVIEW_PROFILE: Directory not found: {_neeviewProfile}");
+                        }
+                    }
+                }
+                return _neeviewProfile;
+            }
+        }
 
         /// <summary>
         /// アプリケーションデータフォルダー
@@ -172,25 +204,34 @@ namespace NeeView
             {
                 if (_localApplicationDataPath == null)
                 {
+                    // 環境変数 NEEVIEW_PROFILE から取得
+                    if (!string.IsNullOrEmpty(NeeViewProfile))
+                    {
+                        _localApplicationDataPath = NeeViewProfile;
+                    }
                     // configファイルの設定で LocalApplicationData を使用するかを判定。インストール版用
-                    if (IsUseLocalApplicationDataFolder)
+                    else if (IsUseLocalApplicationDataFolder)
                     {
                         _localApplicationDataPath = GetLocalAppDataPath();
                         CreateFolder(_localApplicationDataPath);
                     }
+                    // 既定ではアプリの場所の Profile フォルダーに作る
                     else
                     {
-                        _localApplicationDataPath = AssemblyFolder;
+                        _localApplicationDataPath = Path.Combine(AssemblyFolder, "Profile");
+                        CreateFolder(_localApplicationDataPath);
                     }
+                    Debug.WriteLine($"LocalApplicationDataPath: {_localApplicationDataPath}");
                 }
+
                 return _localApplicationDataPath;
             }
         }
 
 
-
         /// <summary>
         /// ユーザーデータフォルダー
+        /// ユーザーが直接編集する可能性のあるデータ(スクリプトとか)の場所を区別するため LocalApplicationDataPath とは別定義
         /// </summary>
         public static string UserDataPath
         {
@@ -198,8 +239,13 @@ namespace NeeView
             {
                 if (_userDataPath == null)
                 {
-#if true
-                    if (IsUseLocalApplicationDataFolder)
+                    // 環境変数 NEEVIEW_PROFILE から取得
+                    if (!string.IsNullOrEmpty(NeeViewProfile))
+                    {
+                        _userDataPath = NeeViewProfile;
+                    }
+                    // インストール版では MyDocument を使用
+                    else if (IsUseLocalApplicationDataFolder)
                     {
                         _userDataPath = GetMyDocumentPath();
                         if (string.IsNullOrEmpty(_userDataPath))
@@ -207,14 +253,12 @@ namespace NeeView
                             _userDataPath = LocalApplicationDataPath;
                         }
                     }
+                    // 既定では LocalApplicationDataPath
                     else
                     {
-                        _userDataPath = AssemblyFolder;
+                        _userDataPath = LocalApplicationDataPath;
                     }
-#else
-                    // [開発用] ## マイドキュメントが取得できないときの挙動検証用
-                    _userDataPath = "";
-#endif
+                    Debug.WriteLine($"UserDataPath: {_userDataPath}");
                 }
                 return _userDataPath;
             }
@@ -406,6 +450,23 @@ namespace NeeView
         }
 
 
+
+        /// <summary>
+        /// 環境変数取得
+        /// </summary>
+        /// <param name="variable">変数名</param>
+        /// <returns>値。取得できないときは空文字列</returns>
+        public static string GetEnvironmentValue(string variable)
+        {
+            try
+            {
+                return System.Environment.GetEnvironmentVariable(variable) ?? "";
+            }
+            catch (SecurityException)
+            {
+                return "";
+            }
+        }
 
         // ※ build は未使用
         public static int GenerateProductVersionNumber(int major, int minor, int build)
@@ -627,7 +688,7 @@ namespace NeeView
             }
             catch (Exception ex)
             {
-                Debug.WriteLine(nameof(CoorectLocalAppDataFolder) +" failed: " + ex.Message);
+                Debug.WriteLine(nameof(CoorectLocalAppDataFolder) + " failed: " + ex.Message);
             }
         }
     }

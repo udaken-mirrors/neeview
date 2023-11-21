@@ -7,8 +7,13 @@
 
 #### Important
 
-- Windows 10 and later, 64-bit versions only; packages for Windows 7, Windows 8.1, and 32-bit operating systems are not provided after version 40.0.
-- .NET8 framework. .NET8 Runtime from the Microsoft site and install it according to the message when starting the application.
+- Windows 10, Windows 11, and 64-bit operating systems only; packages for Windows 7, WIndows 8.1, and 32-bit operating systems are not provided after version 40.0.
+- It runs on .NET8. This framework is included as part of the application. There is no need to install it separately.
+
+#### User data storage location
+
+- The user data storage location for the ZIP version has been consolidated into the "Profile" folder.
+- The default storage location for user data can be specified with the NEEVIEW_PROFILE environment variable.
 
 #### Revamped page display code
 

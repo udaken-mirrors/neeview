@@ -1,7 +1,6 @@
 ## Environment
 
   * Windows 10, Windows 11, 64bit
-  * .NET8 is required. Follow the message displayed when launching the application to download and install it from the Microsoft site.
 
 ## How to install / uninstall
 

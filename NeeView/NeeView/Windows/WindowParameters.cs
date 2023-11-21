@@ -31,7 +31,7 @@ namespace NeeView.Windows
         {
             get
             {
-                if (_tabletModeWatcher is null) throw new InvalidOperationException();
+                if (_tabletModeWatcher is null) return false;
                 return _tabletModeWatcher.IsTabletMode;
             }
         }
