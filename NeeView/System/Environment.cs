@@ -24,7 +24,6 @@ namespace NeeView
     {
         private static string? _localApplicationDataPath;
         private static string? _userDataPath;
-        private static string? _librariesPath;
         private static string? _packageType;
         private static string? _revision;
         private static string? _dateVersion;
@@ -264,21 +263,10 @@ namespace NeeView
             }
         }
 
-
         /// <summary>
         /// ライブラリーパス
         /// </summary>
-        public static string LibrariesPath
-        {
-            get
-            {
-                if (_librariesPath == null)
-                {
-                    _librariesPath = Path.GetFullPath(Path.Combine(AssemblyFolder, ConfigurationManager.AppSettings["LibrariesPath"] ?? ""));
-                }
-                return _librariesPath;
-            }
-        }
+        public static string LibrariesPath => AssemblyFolder;
 
         /// <summary>
         /// ライブラリーパス(Platform別)

@@ -313,6 +313,8 @@ namespace NeeView
         /// <seealso href="https://github.com/microsoft/CsWinRT/issues/1249"/>
         private static void CallProcessTerminator()
         {
+            // 未使用
+#if false
             // NOTE: PDFでWinRTのレンダラーを使用している場合のみ機能させる
             if (PdfArchiveConfig.GetPdfRenderer() != PdfRenderer.WinRT) return;
 
@@ -333,6 +335,7 @@ namespace NeeView
             info.FileName = filename;
             info.Arguments = $"{process.Id} \"{process.ProcessName}\" {process.StartTime.ToFileTime()} {timeout}";
             Process.Start(info);
+#endif
         }
 
 
