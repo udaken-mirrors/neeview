@@ -1,0 +1,139 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Package xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"
+  xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
+  xmlns:uap2="http://schemas.microsoft.com/appx/manifest/uap/windows10/2"
+  xmlns:uap3="http://schemas.microsoft.com/appx/manifest/uap/windows10/3"
+  xmlns:uap4="http://schemas.microsoft.com/appx/manifest/uap/windows10/4"
+  xmlns:uap10="http://schemas.microsoft.com/appx/manifest/uap/windows10/10"
+  xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities"
+  xmlns:rescap3="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities/3"
+  xmlns:desktop="http://schemas.microsoft.com/appx/manifest/desktop/windows10"
+  xmlns:desktop2="http://schemas.microsoft.com/appx/manifest/desktop/windows10/2"
+  xmlns:com="http://schemas.microsoft.com/appx/manifest/com/windows10"
+  xmlns:wincap3="http://schemas.microsoft.com/appx/manifest/foundation/windows10/windowscapabilities/3"
+  IgnorableNamespaces="uap uap3 uap4 uap10 wincap3 rescap rescap3 desktop desktop2 com">
+  <Identity Name="%NAME%" ProcessorArchitecture="%ARCH%" Publisher="%PUBLISHER%" Version="%VERSION%" />
+  <Properties>
+    <DisplayName>NeeView</DisplayName>
+    <PublisherDisplayName>NeeLaboratory</PublisherDisplayName>
+    <Logo>Assets\AppStoreLogo.png</Logo>
+    <uap10:PackageIntegrity>
+      <uap10:Content Enforcement="on" />
+    </uap10:PackageIntegrity>
+  </Properties>
+  <Resources>
+    <Resource Language="en-us" />
+  </Resources>
+  <Dependencies>
+    <TargetDeviceFamily Name="Windows.Desktop" MinVersion="10.0.14393.0" MaxVersionTested="10.0.17763.0" />
+  </Dependencies>
+  <Capabilities>
+    <rescap:Capability Name="runFullTrust" />
+  </Capabilities>
+  <Applications>
+    <Application Id="NeeView" Executable="NeeView\NeeView.exe" EntryPoint="Windows.FullTrustApplication">
+      <uap:VisualElements DisplayName="NeeView" Description="NeeView" BackgroundColor="transparent" Square150x150Logo="Assets\AppMedTile.png" Square44x44Logo="Assets\AppList.png">
+        <!-- BackgroundColor=#298ECC -->
+        <uap:DefaultTile Wide310x150Logo="Assets\AppWideTile.png" Square310x310Logo="Assets\AppLargeTile.png" Square71x71Logo="Assets\AppSmallTile.png">
+          <uap:ShowNameOnTiles>
+            <uap:ShowOn Tile="square150x150Logo" />
+            <uap:ShowOn Tile="wide310x150Logo" />
+            <uap:ShowOn Tile="square310x310Logo" />
+          </uap:ShowNameOnTiles>
+        </uap:DefaultTile>
+      </uap:VisualElements>
+      <Extensions>
+        <uap3:Extension Category="windows.appExecutionAlias" Executable="NeeView\NeeView.exe" EntryPoint="Windows.FullTrustApplication">
+          <uap3:AppExecutionAlias>
+            <desktop:ExecutionAlias Alias="NeeView.exe" />
+          </uap3:AppExecutionAlias>
+        </uap3:Extension>
+        <uap3:Extension Category="windows.protocol">
+          <uap3:Protocol Name="neeview-open" Parameters="&quot;%1&quot;" />
+        </uap3:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="neeview-only">
+            <uap:Logo>Assets\ImageLogo.png</uap:Logo>
+            <uap:SupportedFileTypes>
+              <uap:FileType>.nvzip</uap:FileType>
+              <uap:FileType>.nvpls</uap:FileType>
+            </uap:SupportedFileTypes>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="neeview-archive">
+            <uap:Logo>Assets\BookLogo.png</uap:Logo>
+            <uap:SupportedFileTypes>
+              <uap:FileType>.zip</uap:FileType>
+              <uap:FileType>.rar</uap:FileType>
+              <uap:FileType>.lzh</uap:FileType>
+              <uap:FileType>.7z</uap:FileType>
+              <uap:FileType>.pdf</uap:FileType>
+              <uap:FileType>.cbr</uap:FileType>
+              <uap:FileType>.cbz</uap:FileType>
+              <uap:FileType>.cb7</uap:FileType>
+            </uap:SupportedFileTypes>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="neeview-media">
+            <uap:Logo>Assets\ImageLogo.png</uap:Logo>
+            <uap:SupportedFileTypes>
+              <uap:FileType>.asf</uap:FileType>
+              <uap:FileType>.avi</uap:FileType>
+              <uap:FileType>.mp4</uap:FileType>
+              <uap:FileType>.mkv</uap:FileType>
+              <uap:FileType>.mov</uap:FileType>
+              <uap:FileType>.wmv</uap:FileType>
+            </uap:SupportedFileTypes>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="neeview-image">
+            <uap:Logo>Assets\ImageLogo.png</uap:Logo>
+            <uap:SupportedFileTypes>
+              <uap:FileType ContentType="image/bmp">.bmp</uap:FileType>
+              <uap:FileType ContentType="image/bmp">.dib</uap:FileType>
+              <uap:FileType ContentType="image/bmp">.rle</uap:FileType>
+              <uap:FileType ContentType="image/jpeg">.jpg</uap:FileType>
+              <uap:FileType ContentType="image/jpeg">.jpe</uap:FileType>
+              <uap:FileType ContentType="image/jpeg">.jpeg</uap:FileType>
+              <uap:FileType ContentType="image/jpeg">.jfif</uap:FileType>
+              <uap:FileType ContentType="image/jpeg">.exif</uap:FileType>
+              <uap:FileType ContentType="image/png">.png</uap:FileType>
+              <uap:FileType ContentType="image/gif">.gif</uap:FileType>
+              <uap:FileType ContentType="image/tiff">.tif</uap:FileType>
+              <uap:FileType ContentType="image/tiff">.tiff</uap:FileType>
+              <uap:FileType>.ico</uap:FileType>
+              <uap:FileType>.icon</uap:FileType>
+              <uap:FileType>.wdp</uap:FileType>
+              <uap:FileType>.jxr</uap:FileType>
+              <uap:FileType>.dds</uap:FileType>
+              <uap:FileType>.arw</uap:FileType>
+              <uap:FileType>.cr2</uap:FileType>
+              <uap:FileType>.crw</uap:FileType>
+              <uap:FileType>.erf</uap:FileType>
+              <uap:FileType>.kdc</uap:FileType>
+              <uap:FileType>.mrw</uap:FileType>
+              <uap:FileType>.nef</uap:FileType>
+              <uap:FileType>.nrw</uap:FileType>
+              <uap:FileType>.orf</uap:FileType>
+              <uap:FileType>.pef</uap:FileType>
+              <uap:FileType>.raf</uap:FileType>
+              <uap:FileType>.raw</uap:FileType>
+              <uap:FileType>.rw2</uap:FileType>
+              <uap:FileType>.rwl</uap:FileType>
+              <uap:FileType>.sr2</uap:FileType>
+              <uap:FileType>.srw</uap:FileType>
+              <uap:FileType>.dng</uap:FileType>
+              <uap:FileType>.heic</uap:FileType>
+              <uap:FileType>.heif</uap:FileType>
+              <uap:FileType>.webp</uap:FileType>
+              <uap:FileType>.svg</uap:FileType>
+            </uap:SupportedFileTypes>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+      </Extensions>
+    </Application>
+  </Applications>
+</Package>

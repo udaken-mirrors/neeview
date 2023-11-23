@@ -597,6 +597,9 @@ function New-Appx($arch, $packageDir, $packageAppendDir, $appx)
 	# copy package base files
 	Copy-Item "Appx\Resources" $packgaeFilesDir -Recurse -Force
 
+	# copy resources.pri
+	Copy-Item "Appx\resources.pri" $packgaeFilesDir
+
 	# update assembly
 	Copy-Item $packageDir $contentDir -Recurse -Force
 	New-ConfigForAppx $packageDir "${product}.dll.config" $contentDir
@@ -605,20 +608,18 @@ function New-Appx($arch, $packageDir, $packageAppendDir, $appx)
 	New-Readme $contentDir "en-us" ".appx"
 	New-Readme $contentDir "ja-jp" ".appx"
 
-
 	. $env:CersPath/_Parameter.ps1
 	$param = Get-AppxParameter
 	$appxName = $param.name
 	$appxPublisher = $param.publisher
 
 	# generate AppManifest
-	$content = Get-Content "Appx\Resources\AppxManifest.xml"
+	$content = Get-Content "Appx\AppxManifest.xml"
 	$content = $content -replace "%NAME%","$appxName"
 	$content = $content -replace "%PUBLISHER%","$appxPublisher"
 	$content = $content -replace "%VERSION%","$assemblyVersion"
 	$content = $content -replace "%ARCH%", "$arch"
 	$content | Out-File -Encoding UTF8 "$packgaeFilesDir\AppxManifest.xml"
-
 
 	# re-package
 	& "$Win10SDK\makeappx.exe" pack /l /d "$packgaeFilesDir" /p "$appx"
@@ -774,6 +775,10 @@ function Build-Appx-x64
 
 	if (Test-Path "$env:CersPath\_Parameter.ps1")
 	{
+		if (Test-Path $packageAppxDir_x64)
+		{
+			Remove-Item $packageAppxDir_x64 -Recurse
+		}
 		New-Appx "x64" $packageDir_x64 $packageAppxDir_x64 $packageX64Appx
 		Write-Host "`nExport $packageX64Appx successed.`n" -fore Green
 	}

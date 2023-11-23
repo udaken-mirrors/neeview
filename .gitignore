@@ -223,6 +223,8 @@ ModelManifest.xml
 /MakePackage/*.appx
 /MakePackage/_*
 /MakePackage/Appx/_*
+/MakePackage/Appx/resources.pri.xml
+/MakePackage/Appx/Icons/Png-*
 !/MakePackage/WixSource/x64
 !/MakePackage/WixSource/x86
 /NeeView/Properties/PublishProfiles/_*
