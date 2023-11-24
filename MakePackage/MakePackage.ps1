@@ -156,15 +156,20 @@ function Get-ProjectOutputDir($projectDir, $platform)
 
 #----------------------
 # build
-function Build-Project($platform)
+function Build-Project($platform, $outputDir, $options)
 {
-	& dotnet publish $project -p:PublishProfile=FolderProfile-$platform.pubxml -c Release
+	$defaultOptions = @(
+		"-p:PublishProfile=FolderProfile-$platform.pubxml"
+		"-c", "Release"
+	)
+
+	& dotnet publish $project $defaultOptions $options -o Publish\$outputDir
 	if ($? -ne $true)
 	{
 		throw "build error"
 	}
 
-	& dotnet publish $projectSusie -p:PublishProfile=FolderProfile-$platform.pubxml -c Release
+	& dotnet publish $projectSusie $defaultOptions $options -o Publish\$outputDir\Libraries
 	if ($? -ne $true)
 	{
 		throw "build error"
@@ -173,9 +178,28 @@ function Build-Project($platform)
 	#& dotnet publish $ptojectTerminate -p:PublishProfile=FolderProfile-$platform.pubxml -c Release
 }
 
+function Build-ProjectSelfContained($platform)
+{
+	$options = @(
+		"--self-contained", "true"
+	)
+
+	Build-Project $platform "NeeView-$platform" $options
+}
+
+function Build-ProjectFrameworkDependent($platform)
+{
+	$options = @(
+		"-p:PublishTrimmed=false"
+		"--self-contained", "false"
+	)
+
+	Build-Project $platform "NeeView-$platform-fd" $options
+}
+
 #----------------------
 # package section
-function New-Package($platform, $productName, $productDir, $publishSusieDir, $packageDir)
+function New-Package($platform, $productName, $productDir, $packageDir)
 {
 	$temp = New-Item $packageDir -ItemType Directory
 
@@ -283,6 +307,15 @@ function New-Readme($packageDir, $culture, $target)
 	Remove-Item $readmeDir -Recurse
 }
 
+#--------------------------
+# remove ZIP
+function Remove-Zip($packageZip)
+{
+	if (Test-Path $packageZip)
+	{
+		Remove-Item $packageZip
+	}
+}
 
 #--------------------------
 # archive to ZIP
@@ -477,7 +510,22 @@ function New-PackageAppend($packageDir, $packageAppendDir)
 
 
 #--------------------------
-# WiX
+# remove Msi
+function Remove-Msi($packageAppendDir, $packageMsi)
+{
+	if (Test-Path $packageMsi)
+	{
+		Remove-Item $packageMsi
+	}
+
+	if (Test-Path $packageAppxDir_x64)
+	{
+		Remove-Item $packageAppxDir_x64 -Recurse
+	}
+}
+
+#--------------------------
+# Msi
 function New-Msi($arch, $packageDir, $packageAppendDir, $packageMsi)
 {
 	$candle = $env:WIX + 'bin\candle.exe'
@@ -586,6 +634,20 @@ function New-Msi($arch, $packageDir, $packageAppendDir, $packageMsi)
 }
 
 
+#--------------------------
+# Appx remove
+function Remove-Appx($packageAppendDir, $appx)
+{
+	if (Test-Path $appx)
+	{
+		Remove-Item $appx
+	}
+
+	if (Test-Path $packageAppxDir_x64)
+	{
+		Remove-Item $packageAppxDir_x64 -Recurse
+	}
+}
 
 #--------------------------
 # Appx 
@@ -639,6 +701,19 @@ function New-Appx($arch, $packageDir, $packageAppendDir, $appx)
 
 #--------------------------
 # archive to Canary.ZIP
+function Remove-Canary()
+{
+	if (Test-Path $packageCanary)
+	{
+		Remove-Item $packageCanary
+	}
+
+	if (Test-Path $packageCanaryDir)
+	{
+		Remove-Item $packageCanaryDir -Recurse
+	}
+}
+
 function New-Canary($packageDir)
 {
 	New-DevPackage $packageDir $packageCanaryDir $packageCanary ".canary"
@@ -651,6 +726,19 @@ function New-CanaryAnyCPU($packageDir)
 
 #--------------------------
 # archive to Beta.ZIP
+function Remove-Beta()
+{
+	if (Test-Path $packageBeta)
+	{
+		Remove-Item $packageBeta
+	}
+
+	if (Test-Path $packageBetaDir)
+	{
+		Remove-Item $packageBetaDir -Recurse
+	}
+}
+
 function New-Beta($packageDir)
 {
 	New-DevPackage $packageDir $packageBetaDir $packageBeta ".beta"
@@ -672,6 +760,9 @@ function New-DevPackage($packageDir, $devPackageDir, $devPackage, $target)
 }
 
 
+$build_x64 = $false
+$build_x86 = $false
+$build_x64_fd = $false
 
 #--------------------------
 # remove build objects
@@ -705,7 +796,6 @@ function Remove-BuildObjects
 	Start-Sleep -m 100
 }
 
-
 function Build-Clear
 {
 	# clear
@@ -713,32 +803,64 @@ function Build-Clear
 	Remove-BuildObjects
 }
 
+function Build-UpdateState
+{
+	$global:build_x64 = Test-Path $publishDir_x64
+	$global:build_x86 = Test-Path $publishDir_x86
+	$global:build_x64_fd = Test-Path $publishDir_x64_fd
+}
+
 function Build-PackageSorce-x64
 {
+	if ($global:build_x64 -eq $true) { return }
+
 	# build
 	Write-Host "`n[Build] ...`n" -fore Cyan
-	Build-Project "x64"
+	Build-ProjectSelfContained "x64"
 	
 	# create package source
 	Write-Host "`n[Package] ...`n" -fore Cyan
-	New-Package "x64" $product $publishDir_x64 $publishSusieDir $packageDir_x64
+	New-Package "x64" $product $publishDir_x64 $packageDir_x64
+
+	$global:build_x64 = $true
 }
 
 function Build-PackageSorce-x86
 {
+	if ($global:build_x86 -eq $true) { return }
+
 	# build
 	Write-Host "`n[Build x86] ...`n" -fore Cyan
-	Build-Project "x86"
+	Build-ProjectSelfContained "x86"
 	
 	# create package source
 	Write-Host "`n[Package x86] ...`n" -fore Cyan
-	New-Package "x86" $product $publishDir_x86 $publishSusieDir $packageDir_x86
+	New-Package "x86" $product $publishDir_x86 $packageDir_x86
+
+	$global:build_x86 = $true
 }
+
+function Build-PackageSorce-x64-fd
+{
+	if ($global:build_x64_fd -eq $true) { return }
+
+	# build
+	Write-Host "`n[Build frameword dependent] ...`n" -fore Cyan
+	Build-ProjectFrameworkDependent "x64"
+	
+	# create package source
+	Write-Host "`n[Package frameword dependent] ...`n" -fore Cyan
+	New-Package "x64-fd" $product $publishDir_x64_fd $packageDir_x64_fd
+
+	$global:build_x64_fd = $true
+}
+
 
 function Build-Zip-x64
 {
 	Write-Host "`[Zip] ...`n" -fore Cyan
 
+	Remove-Zip $packageZip_x64
 	New-Zip $packageDir_x64 $packageZip_x64
 	Write-Host "`nExport $packageZip_x64 successed.`n" -fore Green
 }
@@ -747,6 +869,7 @@ function Build-Zip-x86
 {
 	Write-Host "`[Zip x86] ...`n" -fore Cyan
 
+	Remove-Zip $packageZip_x86
 	New-Zip $packageDir_x86 $packageZip_x86
 	Write-Host "`nExport $packageZip_x86 successed.`n" -fore Green
 }
@@ -755,6 +878,7 @@ function Build-Installer-x64
 {
 	Write-Host "`n[Installer] ...`n" -fore Cyan
 	
+	Remove-Msi $packageAppendDir_x64 $packageMsi_x64
 	New-PackageAppend $packageDir_x64 $packageAppendDir_x64
 	New-Msi "x64" $packageDir_x64 $packageAppendDir_x64 $packageMsi_x64
 	Write-Host "`nExport $packageMsi_x64 successed.`n" -fore Green
@@ -764,6 +888,7 @@ function Build-Installer-x86
 {
 	Write-Host "`n[Installer x86] ...`n" -fore Cyan
 
+	Remove-Msi $packageAppendDir_x86 $packageMsi_x86
 	New-PackageAppend $packageDir_x86 $packageAppendDir_x86
 	New-Msi "x86" $packageDir_x86 $packageAppendDir_x86 $packageMsi_x86
 	Write-Host "`nExport $packageMsi_x86 successed.`n" -fore Green
@@ -775,10 +900,7 @@ function Build-Appx-x64
 
 	if (Test-Path "$env:CersPath\_Parameter.ps1")
 	{
-		if (Test-Path $packageAppxDir_x64)
-		{
-			Remove-Item $packageAppxDir_x64 -Recurse
-		}
+		Remove-Appx $packageAppxDir_x64 $packageX64Appx
 		New-Appx "x64" $packageDir_x64 $packageAppxDir_x64 $packageX64Appx
 		Write-Host "`nExport $packageX64Appx successed.`n" -fore Green
 	}
@@ -794,6 +916,7 @@ function Build-Appx-x86
 
 	if (Test-Path "$env:CersPath\_Parameter.ps1")
 	{
+		Remove-Appx $packageAppxDir_x86 $packageX86Appx
 		New-Appx "x86" $packageDir_x86 $packageAppxDir_x86 $packageX86Appx
 		Write-Host "`nExport $packageX86Appx successed.`n" -fore Green
 	}
@@ -806,13 +929,15 @@ function Build-Appx-x86
 function Build-Canary
 {
 	Write-Host "`n[Canary] ...`n" -fore Cyan
-	New-Canary $packageDir_x64
+	Remove-Canary
+	New-Canary $packageDir_x64_fd
 	Write-Host "`nExport $packageCanary successed.`n" -fore Green
 }
 
 function Build-Beta
 {
 	Write-Host "`n[Beta] ...`n" -fore Cyan
+	Remove-Beta
 	New-Beta $packageDir_x64
 	Write-Host "`nExport $packageBeta successed.`n" -fore Green
 }
@@ -851,9 +976,11 @@ $dateVersion = (Get-Date).ToString("MMdd")
 $publishDir = "Publish"
 $publishDir_x64 = "$publishDir\NeeView-x64"
 $publishDir_x86 = "$publishDir\NeeView-x86"
+$publishDir_x64_fd = "$publishDir\NeeView-x64-fd"
 $packagePrefix = "$product$version"
 $packageDir_x64 = "$product$version-x64"
 $packageDir_x86 = "$product$version-x86"
+$packageDir_x64_fd = "$product$version-x64-fd"
 $packageAppendDir_x64 = "$packageDir_x64.append"
 $packageAppendDir_x86 = "$packageDir_x86.append"
 $packageZip_x64 = "${product}${version}.zip"
@@ -877,24 +1004,20 @@ $packageBetaWild = "${product}Beta*.zip"
 if (-not $continue)
 {
 	Build-Clear
-	if ($x86)
-	{
-		Build-PackageSorce-x86
-	}
-	else
-	{
-		Build-PackageSorce-x64
-	}
 }
 
-if (($Target -eq "All") -or ($Target -eq "Zip") -or ($Target -eq "Canary") -or ($Target -eq "Beta"))
+Build-UpdateState
+
+if (($Target -eq "All") -or ($Target -eq "Zip"))
 {
 	if ($x86)
 	{
+		Build-PackageSorce-x86
 		Build-Zip-x86
 	}
 	else
 	{
+		Build-PackageSorce-x64
 		Build-Zip-x64
 	}
 }
@@ -903,10 +1026,12 @@ if (($Target -eq "All") -or ($Target -eq "Installer"))
 {
 	if ($x86)
 	{
+		Build-PackageSorce-x86
 		Build-Installer-x86
 	}
 	else
 	{
+		Build-PackageSorce-x64
 		Build-Installer-x64
 	}
 }
@@ -915,10 +1040,12 @@ if (($Target -eq "All") -or ($Target -eq "Appx"))
 {
 	if ($x86)
 	{
+		Build-PackageSorce-x86
 		Build-Appx-x86
 	}
 	else
 	{
+		Build-PackageSorce-x64
 		Build-Appx-x64
 	}
 }
@@ -927,20 +1054,29 @@ if (-not $x86)
 {
 	if (($Target -eq "All") -or ($Target -eq "Canary"))
 	{
+		Build-PackageSorce-x64-fd
 		Build-Canary
 	}
 
 	if (($Target -eq "All") -or ($Target -eq "Beta"))
 	{
+		Build-PackageSorce-x64
 		Build-Beta
 	}
 
-	Export-Current
+	if (-not $continue)
+	{
+		Build-PackageSorce-x64
+		Export-Current
+	}
 }
 
 #--------------------------
 # saev buid version
-Set-BuildCount $buildCount
+if (-not $continue)
+{
+	Set-BuildCount $buildCount
+}
 
 #-------------------------
 # Finish.
