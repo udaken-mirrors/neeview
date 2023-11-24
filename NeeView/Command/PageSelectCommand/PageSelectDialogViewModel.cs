@@ -18,11 +18,11 @@ namespace NeeView
 
     public class PageSelectDialogViewModel : BindableBase 
     {
-        private readonly PageSelecteDialogModel _model;
+        private readonly PageSelectDialogModel _model;
         private RelayCommand? _decideCommand;
         private RelayCommand? _cancelCommand;
 
-        public PageSelectDialogViewModel(PageSelecteDialogModel model)
+        public PageSelectDialogViewModel(PageSelectDialogModel model)
         {
             _model = model;
 

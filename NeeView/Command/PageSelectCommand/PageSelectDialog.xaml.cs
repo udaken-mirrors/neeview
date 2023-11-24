@@ -22,12 +22,12 @@ namespace NeeView
         private readonly MouseWheelDelta _mouseWheelDelta = new();
 
         // for designer
-        public PageSelectDialog() : this(new PageSelecteDialogModel(5,1,10))
+        public PageSelectDialog() : this(new PageSelectDialogModel(5,1,10))
         {
         }
 
 
-        public PageSelectDialog(PageSelecteDialogModel model)
+        public PageSelectDialog(PageSelectDialogModel model)
         {
             InitializeComponent();
 

@@ -7,11 +7,11 @@ namespace NeeView
     /// <summary>
     /// 「指定ページに移動」コマンド用
     /// </summary>
-    public class PageSelecteDialogModel : BindableBase
+    public class PageSelectDialogModel : BindableBase
     {
         private int _value;
 
-        public PageSelecteDialogModel(int value, int min, int max)
+        public PageSelectDialogModel(int value, int min, int max)
         {
             Value = value;
             Min = min;
