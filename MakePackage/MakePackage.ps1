@@ -874,6 +874,16 @@ function Build-Zip-x86
 	Write-Host "`nExport $packageZip_x86 successed.`n" -fore Green
 }
 
+function Build-Zip-x64-fd
+{
+	Write-Host "`[Zip fd] ...`n" -fore Cyan
+
+	Remove-Zip $packageZip_x64_fd
+	New-Zip $packageDir_x64_fd $packageZip_x64_fd
+	Write-Host "`nExport $packageZip_x64_fd successed.`n" -fore Green
+}
+
+
 function Build-Installer-x64
 {
 	Write-Host "`n[Installer] ...`n" -fore Cyan
@@ -985,6 +995,7 @@ $packageAppendDir_x64 = "$packageDir_x64.append"
 $packageAppendDir_x86 = "$packageDir_x86.append"
 $packageZip_x64 = "${product}${version}.zip"
 $packageZip_x86 = "${product}${version}-x86.zip"
+$packageZip_x64_fd = "${product}${version}-fd.zip"
 $packageMsi_x64 = "${product}${version}.msi"
 $packageMsi_x86 = "${product}${version}-x86.msi"
 $packageAppxDir_x64 = "${product}${version}-appx-x64"
@@ -1019,6 +1030,9 @@ if (($Target -eq "All") -or ($Target -eq "Zip"))
 	{
 		Build-PackageSorce-x64
 		Build-Zip-x64
+
+		Build-PackageSorce-x64-fd
+		Build-Zip-x64-fd
 	}
 }
 
