@@ -43,6 +43,7 @@
 
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
         <local:BooleanToVisibilityConverter x:Key="BooleanToVisibilityHiddenConverter" False="Hidden"/>
+        <local:BooleanToInverseVisibilityConverter x:Key="BooleanToInverseVisibilityConverter"/>
         <local:BooleanToTextWrappingConverter x:Key="BooleanToTextWrappingConverter"/>
         <local:PageNameFormatConverter x:Key="PageNameFormatConverter"/>
         <local:PageToNoteConverter x:Key="PageToNoteConverter"/>
@@ -88,10 +89,26 @@
         <Style x:Key="ThumbnailNameStyle" TargetType="TextBlock" BasedOn="{StaticResource NameStyle}">
             <Setter Property="TextWrapping" Value="{Binding Source={x:Static local:Config.Current}, Path=Panels.ThumbnailItemProfile.IsTextWrapped, Converter={StaticResource BooleanToTextWrappingConverter}}"/>
             <Setter Property="Height" Value="{Binding Source={x:Static local:Config.Current}, Path=Panels.ThumbnailItemProfile.TextHeight}"/>
-            <Setter Property="Visibility" Value="{Binding Source={x:Static local:Config.Current}, Path=Panels.ThumbnailItemProfile.IsTextVisible, Converter={StaticResource BooleanToVisibilityConverter}}"/>
             <Setter Property="ToolTip" Value="{x:Null}"/>
         </Style>
 
+        <Style x:Key="ThumbnailTextDockPanelStyle" TargetType="DockPanel">
+            <Setter Property="Visibility" Value="{Binding Source={x:Static local:Config.Current}, Path=Panels.ThumbnailItemProfile.IsTextVisible, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+            <Setter Property="MinHeight" Value="18"/>
+        </Style>
+
+        <Style x:Key="OverrideIconStackPanelStyle" TargetType="StackPanel">
+            <Setter Property="Visibility" Value="{Binding Source={x:Static local:Config.Current}, Path=Panels.ThumbnailItemProfile.IsTextVisible, Converter={StaticResource BooleanToInverseVisibilityConverter}}"/>
+            <Setter Property="Orientation" Value="Horizontal"/>
+            <Setter Property="VerticalAlignment" Value="Bottom"/>
+            <Setter Property="HorizontalAlignment" Value="Right"/>
+            <Setter Property="Margin" Value="2,4"/>
+            <Setter Property="Effect">
+                <Setter.Value>
+                    <DropShadowEffect ShadowDepth="1" Opacity="0.5"/>
+                </Setter.Value>
+            </Setter>
+        </Style>
 
         <Style x:Key="NoteTextStyle" TargetType="TextBlock" >
             <Setter Property="Margin" Value="5,0"/>
@@ -117,11 +134,11 @@
         </Style>
 
         <Style x:Key="PageMarkStyle" TargetType="Image" >
-            <Setter Property="Width" Value="12"/>
-            <Setter Property="Height" Value="12"/>
+            <Setter Property="Width" Value="16"/>
+            <Setter Property="Height" Value="16"/>
             <Setter Property="Source" Value="{StaticResource ic_bookmark_24px}"/>
             <Setter Property="Visibility" Value="{Binding IsMarked, Converter={StaticResource BooleanToVisibilityConverter}}"/>
-            <Setter Property="Margin" Value="3" />
+            <Setter Property="Margin" Value="1" />
         </Style>
 
         <Style x:Key="FolderIconStyle" TargetType="Image">
@@ -172,9 +189,15 @@
 
         <DataTemplate x:Key="ThumbnailTemplate">
             <StackPanel Margin="5" Width="{Binding Source={x:Static local:Config.Current}, Path=Panels.ThumbnailItemProfile.ShapeWidth}" ToolTip="{Binding EntryFullName}" ToolTipService.InitialShowDelay="1000">
-                <local:PanelListThumbnailImage Thumbnail="{Binding Thumbnail}" />
+                <Grid>
+                    <local:PanelListThumbnailImage Thumbnail="{Binding Thumbnail}" />
+                    <StackPanel Style="{StaticResource OverrideIconStackPanelStyle}">
+                        <Image DockPanel.Dock="Right" Style="{StaticResource PageMarkStyle}" VerticalAlignment="Top"/>
+                        <Image DockPanel.Dock="Right" Style="{StaticResource FolderIconStyle}" VerticalAlignment="Top"/>
+                    </StackPanel>
+                </Grid>
                 <Rectangle DockPanel.Dock="Bottom" Style="{StaticResource HorizontalSelectedStyle}" Margin="-5,0,-5,2"/>
-                <DockPanel>
+                <DockPanel Style="{StaticResource ThumbnailTextDockPanelStyle}">
                     <Image DockPanel.Dock="Right" Style="{StaticResource FolderIconStyle}" VerticalAlignment="Top"/>
                     <Image DockPanel.Dock="Right" Style="{StaticResource PageMarkStyle}" VerticalAlignment="Top"/>
                     <TextBlock x:Name="FileNameTextBlock" Style="{StaticResource ThumbnailNameStyle}" HorizontalAlignment="Center"/>
