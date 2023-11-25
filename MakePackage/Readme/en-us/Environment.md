@@ -14,6 +14,15 @@
   Uninstallation basically only removes files. 
   Please note only if you registered in the Explorer context menu in the settings. This feature uses the registry, and can be removed from the registry by turning it off in settings.
 
+### Zip version (framework dependent)
+
+  * NeeView<VERSION/>-fd.zip
+
+Equivalent to the ZIP version, but requires installation of ".NET8 Runtime - Windows x64" to operate.
+Follow the startup message to download and install ".NET8 Runtime - Windows x64" from the Microsoft page.
+
+If you want to use the Susie plug-in, you will also need to install ".NET8 Runtime - Windows x86".
+
 ### Installer version
 
   * NeeView<VERSION/>.msi
