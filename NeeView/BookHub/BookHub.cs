@@ -247,7 +247,7 @@ namespace NeeView
             }
 
             ////DebugTimer.Start($"\nStart: {path}");
-            if (_book?.Path == query.SimplePath && option.HasFlag(BookLoadOption.SkipSamePlace)) return null;
+            if (this.Address == query.SimplePath && option.HasFlag(BookLoadOption.SkipSamePlace)) return null;
 
             this.Address = query.SimplePath;
 
@@ -401,7 +401,7 @@ namespace NeeView
             var oldBook = _book;
             var lastBookMemento = oldBook?.Path != null ? oldBook.CreateMemento() : null;
 
-            Address = args.SourcePath;
+            this.Address = args.SourcePath;
 
             string place = args.Path;
 

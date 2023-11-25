@@ -195,7 +195,7 @@ namespace NeeView
 
             _bookMementoControl?.SaveBookMemento();
 
-            AppDispatcher.Invoke(() =>
+            AppDispatcher.BeginInvoke(() =>
             {
                 SetLoading(e.Address);
                 PageFrameBoxChanging?.Invoke(this, new PageFrameBoxChangingEventArgs(null, e));
