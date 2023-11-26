@@ -14,10 +14,10 @@ namespace NeeView
 
             try
             {
-                // 保存されたファイルをzipにまとめて出力
+                // 保存されたファイルを zip にまとめて出力
                 using (var archive = new ZipArchive(new FileStream(filename, FileMode.Create, FileAccess.ReadWrite), ZipArchiveMode.Update))
                 {
-                    archive.CreateEntryFromFile(SaveDataProfile.UserSettingFileName, SaveDataProfile.UserSettingFileName);
+                    archive.CreateEntryFromFile(SaveData.UserSettingFilePath, SaveDataProfile.UserSettingFileName);
 
                     if (File.Exists(SaveData.HistoryFilePath))
                     {
