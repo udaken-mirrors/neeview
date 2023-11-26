@@ -18,10 +18,10 @@
 
   * NeeView<VERSION/>-fd.zip
 
-Equivalent to the ZIP version, but requires installation of ".NET8 Runtime - Windows x64" to operate.
-Follow the startup message to download and install ".NET8 Runtime - Windows x64" from the Microsoft page.
+Equivalent to the ZIP version, but requires installation of ".NET 8.0 Desktop Runtime - Windows x64" to operate.
+Follow the startup message to download and install ".NET 8.0 Desktop Runtime - Windows x64" from the Microsoft page.
 
-If you want to use the Susie plug-in, you will also need to install ".NET8 Runtime - Windows x86".
+If you want to use the Susie plug-in, you will also need to install ".NET 8.0 Desktop Runtime - Windows x86".
 
 ### Installer version
 

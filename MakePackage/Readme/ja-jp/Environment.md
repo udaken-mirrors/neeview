@@ -18,10 +18,10 @@
 
   * NeeView<VERSION/>-fd.zip
 
-機能はZIP版と同じですが、動作させるために .NET8 Runtime - Windows x64 のインストールが必要になります。
-起動時のメッセージに従って Microsoft のページから .NET8 Runtime - Windows x64 をダウンロードしてインストールしてください。
+機能はZIP版と同じですが、動作させるために ".NET 8.0 Desktop Runtime - Windows x64" のインストールが必要になります。
+起動時のメッセージに従って Microsoft のページから ".NET 8.0 Desktop Runtime - Windows x64" をダウンロードしてインストールしてください。
 
-Susie プラグインを使用する場合は .NET8 Runtime - Windows x86 のインストールも別途必要になります。
+Susie プラグインを使用する場合は ".NET 8.0 Desktop Runtime - Windows x86" のインストールも別途必要になります。
 
 ### インストーラー版
 
