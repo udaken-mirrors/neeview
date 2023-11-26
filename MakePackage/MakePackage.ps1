@@ -956,20 +956,19 @@ function Build-Beta
 function Export-Current
 {
 	Write-Host "`n[Current] ...`n" -fore Cyan
-	if (Test-Path $packageDir_x64)
+	if (Test-Path $packageDir_x64_fd)
 	{
 		if (-not (Test-Path $product))
 		{
 			New-Item $product -ItemType Directory
 		}
-		Copy-Item "$packageDir_x64\*" "$product\" -Recurse -Force
+		Copy-Item "$packageDir_x64_fd\*" "$product\" -Recurse -Force
 	}
 	else
 	{
-		Write-Host "`nWarning: not exist $packageDir_x64. skip!`n" -fore Yellow
+		Write-Host "`nWarning: not exist $packageDir_x64_fd. skip!`n" -fore Yellow
 	}
 }
-
 
 #======================
 # main
@@ -1080,7 +1079,7 @@ if (-not $x86)
 
 	if (-not $continue)
 	{
-		Build-PackageSorce-x64
+		Build-PackageSorce-x64-fd
 		Export-Current
 	}
 }
