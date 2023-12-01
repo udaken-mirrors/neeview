@@ -7638,9 +7638,6 @@ nv.ShowToast(nv.Book.ViewPages[0].Path)</value>
   <data name="PageListItem.Menu.Rename" xml:space="preserve">
     <value>名前の変更(_M)</value>
   </data>
-  <data name="PageMode.Panorama" xml:space="preserve">
-    <value>パノラマ表示</value>
-  </data>
   <data name="PageFrameOrientation.Horizontal" xml:space="preserve">
     <value>水平</value>
   </data>
@@ -7808,9 +7805,6 @@ nv.ShowToast(nv.Book.ViewPages[0].Path)</value>
   </data>
   <data name="ImageGridConfig.Target" xml:space="preserve">
     <value>対象</value>
-  </data>
-  <data name="BookConfig.IsTwoPagePanorama" xml:space="preserve">
-    <value>「@PageMode.Panorama」を 2 ページ単位にする</value>
   </data>
   <data name="AlternativeContent.Blank" xml:space="preserve">
     <value>無し</value>
@@ -7991,5 +7985,44 @@ nv.ShowToast(nv.Book.ViewPages[0].Path)</value>
   </data>
   <data name="HistoryPanelAccessor.SearchWord" xml:space="preserve">
     <value>検索ボックスのテキスト</value>
+  </data>
+  <data name="ToggleIsPanoramaCommand" xml:space="preserve">
+    <value>パノラマ</value>
+  </data>
+  <data name="ToggleIsPanoramaCommand.Remarks" xml:space="preserve">
+    <value>連続したページを表示します。</value>
+  </data>
+  <data name="ToggleIsPanoramaCommand.Off" xml:space="preserve">
+    <value>パノラマ解除</value>
+  </data>
+  <data name="ToggleIsPanoramaCommand.On" xml:space="preserve">
+    <value>パノラマ</value>
+  </data>
+  <data name="BookConfig.Orientation" xml:space="preserve">
+    <value>ページの並び方向</value>
+  </data>
+  <data name="BookConfig.IsPanorama" xml:space="preserve">
+    <value>パノラマ</value>
+  </data>
+  <data name="BookConfig.IsPanorama.Remarks" xml:space="preserve">
+    <value>連続したページを表示します。</value>
+  </data>
+  <data name="SetPageOrientationHorizontalCommand" xml:space="preserve">
+    <value>水平ページ配置</value>
+  </data>
+  <data name="SetPageOrientationHorizontalCommand.Menu" xml:space="preserve">
+    <value>水平</value>
+  </data>
+  <data name="SetPageOrientationHorizontalCommand.Remarks" xml:space="preserve">
+    <value>ページを水平に並べる</value>
+  </data>
+  <data name="SetPageOrientationVerticalCommand" xml:space="preserve">
+    <value>垂直ベージ配置</value>
+  </data>
+  <data name="SetPageOrientationVerticalCommand.Menu" xml:space="preserve">
+    <value>垂直</value>
+  </data>
+  <data name="SetPageOrientationVerticalCommand.Remarks" xml:space="preserve">
+    <value>ページを垂直に並べる</value>
   </data>
 </root>

@@ -50,7 +50,7 @@ namespace NeeView.PageFrames
         public event PropertyChangedEventHandler? PropertyChanged;
 
 
-        public bool IsStaticFrame => _settingConfig.PageMode != PageMode.Panorama;
+        public bool IsStaticFrame => !_config.Book.IsPanorama;
 
         public double FrameMargin => _config.Book.FrameSpace;
 
@@ -128,17 +128,15 @@ namespace NeeView.PageFrames
                 case nameof(BookConfig.FrameSpace):
                     RaisePropertyChanged(nameof(FrameMargin));
                     break;
+
+                case nameof(BookConfig.IsPanorama):
+                    RaisePropertyChanged(nameof(IsStaticFrame));
+                    break;
             }
         }
 
         private void BookSettingConfig_PropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
-            switch (e.PropertyName)
-            {
-                case nameof(BookSettingConfig.PageMode):
-                    RaisePropertyChanged(nameof(IsStaticFrame));
-                    break;
-            }
         }
 
         private void MainViewConfig_PropertyChanged(object? sender, PropertyChangedEventArgs e)

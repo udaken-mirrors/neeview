@@ -534,6 +534,7 @@ namespace NeeView.PageFrames
 
                 case nameof(Context.PageMode):
                 case nameof(Context.FramePageSize):
+                case nameof(Context.IsPanorama):
                     MoveToFixPosition();
                     UpdateContainers(PageFrameDirtyLevel.Replace, TransformMask.Point, true, true);
                     break;
@@ -581,7 +582,7 @@ namespace NeeView.PageFrames
 
         private void ViewTransform_ViewPointChanged(object? sender, EventArgs e)
         {
-            if (_context.PageMode != PageMode.Panorama) return;
+            if (_context.IsStaticFrame) return;
 
             var c0 = new Point(_containers.FirstTerminate.X, _containers.FirstTerminate.Y);
             var c1 = new Point(_containers.LastTerminate.X, _containers.LastTerminate.Y);

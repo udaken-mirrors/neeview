@@ -7633,9 +7633,6 @@ nv.ShowToast(nv.Book.ViewPages[0].Path)</value>
   <data name="PageListItem.Menu.Rename" xml:space="preserve">
     <value>Rena_me</value>
   </data>
-  <data name="PageMode.Panorama" xml:space="preserve">
-    <value>Panorama</value>
-  </data>
   <data name="PageFrameOrientation.Horizontal" xml:space="preserve">
     <value>Horizontal</value>
   </data>
@@ -7803,9 +7800,6 @@ nv.ShowToast(nv.Book.ViewPages[0].Path)</value>
   </data>
   <data name="ImageGridConfig.Target" xml:space="preserve">
     <value>Target</value>
-  </data>
-  <data name="BookConfig.IsTwoPagePanorama" xml:space="preserve">
-    <value>"@PageMode.Panorama" in two-page units</value>
   </data>
   <data name="AlternativeContent.Blank" xml:space="preserve">
     <value>Blank</value>
@@ -7986,5 +7980,44 @@ nv.ShowToast(nv.Book.ViewPages[0].Path)</value>
   </data>
   <data name="HistoryPanelAccessor.SearchWord" xml:space="preserve">
     <value>Search box text</value>
+  </data>
+  <data name="ToggleIsPanoramaCommand" xml:space="preserve">
+    <value>Panorama</value>
+  </data>
+  <data name="ToggleIsPanoramaCommand.Remarks" xml:space="preserve">
+    <value>Displays consecutive pages.</value>
+  </data>
+  <data name="ToggleIsPanoramaCommand.Off" xml:space="preserve">
+    <value>Panorama OFF</value>
+  </data>
+  <data name="ToggleIsPanoramaCommand.On" xml:space="preserve">
+    <value>Panorama</value>
+  </data>
+  <data name="BookConfig.Orientation" xml:space="preserve">
+    <value>Page layout orientation</value>
+  </data>
+  <data name="BookConfig.IsPanorama" xml:space="preserve">
+    <value>Panorama</value>
+  </data>
+  <data name="BookConfig.IsPanorama.Remarks" xml:space="preserve">
+    <value>Displays consecutive pages.</value>
+  </data>
+  <data name="SetPageOrientationHorizontalCommand" xml:space="preserve">
+    <value>Horizontal page layout</value>
+  </data>
+  <data name="SetPageOrientationHorizontalCommand.Menu" xml:space="preserve">
+    <value>Horizontal</value>
+  </data>
+  <data name="SetPageOrientationHorizontalCommand.Remarks" xml:space="preserve">
+    <value>Align pages horizontally</value>
+  </data>
+  <data name="SetPageOrientationVerticalCommand" xml:space="preserve">
+    <value>Vertical page layout</value>
+  </data>
+  <data name="SetPageOrientationVerticalCommand.Menu" xml:space="preserve">
+    <value>Vertical</value>
+  </data>
+  <data name="SetPageOrientationVerticalCommand.Remarks" xml:space="preserve">
+    <value>Align pages vertically</value>
   </data>
 </root>

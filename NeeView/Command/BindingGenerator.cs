@@ -16,6 +16,7 @@ namespace NeeView
         private static readonly BackgroundStyleToBooleanConverter _backgroundStyleToBooleanConverter = new();
         private static readonly FolderOrderToBooleanConverter _folderOrderToBooleanConverter = new();
         private static readonly SortModeToBooleanConverter _sortModeToBooleanConverter = new();
+        private static readonly PageFrameOrientationToBooleanConverter _pageFrameOrientationToBooleanConverter = new();
 
         public static Binding BindingBookHub(string path)
         {
@@ -25,6 +26,11 @@ namespace NeeView
         public static Binding BindingBookSetting(string path)
         {
             return new Binding(path) { Source = Config.Current.BookSetting };
+        }
+
+        public static Binding BindingBookConfig(string path)
+        {
+            return new Binding(path) { Source = Config.Current.Book };
         }
 
         public static Binding StretchMode(PageStretchMode mode)
@@ -79,6 +85,14 @@ namespace NeeView
             var binding = BindingBookSetting(nameof(BookMemento.SortMode));
             binding.Converter = _sortModeToBooleanConverter;
             binding.ConverterParameter = mode.ToString();
+            return binding;
+        }
+
+        public static Binding PageFrameOrientation(PageFrameOrientation orientation)
+        {
+            var binding = BindingBookConfig(nameof(BookConfig.Orientation));
+            binding.Converter = _pageFrameOrientationToBooleanConverter;
+            binding.ConverterParameter = orientation.ToString();
             return binding;
         }
     }

@@ -1083,6 +1083,24 @@ namespace NeeView.Properties {
         }
         
         /// <summary>
+        ///   Panorama に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string BookConfig_IsPanorama {
+            get {
+                return ResourceManager.GetString("BookConfig.IsPanorama", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Displays consecutive pages. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string BookConfig_IsPanorama_Remarks {
+            get {
+                return ResourceManager.GetString("BookConfig.IsPanorama.Remarks", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Page movement priority に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string BookConfig_IsPrioritizePageMove {
@@ -1119,11 +1137,11 @@ namespace NeeView.Properties {
         }
         
         /// <summary>
-        ///   &quot;@PageMode.Panorama&quot; in two-page units に類似しているローカライズされた文字列を検索します。
+        ///   Page layout orientation に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        public static string BookConfig_IsTwoPagePanorama {
+        public static string BookConfig_Orientation {
             get {
-                return ResourceManager.GetString("BookConfig.IsTwoPagePanorama", resourceCulture);
+                return ResourceManager.GetString("BookConfig.Orientation", resourceCulture);
             }
         }
         
@@ -12225,15 +12243,6 @@ namespace NeeView.Properties {
         }
         
         /// <summary>
-        ///   Panorama に類似しているローカライズされた文字列を検索します。
-        /// </summary>
-        public static string PageMode_Panorama {
-            get {
-                return ResourceManager.GetString("PageMode.Panorama", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   One page に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string PageMode_SinglePage {
@@ -14873,6 +14882,60 @@ namespace NeeView.Properties {
         public static string SetPageModeTwoCommand_Remarks {
             get {
                 return ResourceManager.GetString("SetPageModeTwoCommand.Remarks", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Horizontal page layout に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string SetPageOrientationHorizontalCommand {
+            get {
+                return ResourceManager.GetString("SetPageOrientationHorizontalCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Horizontal に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string SetPageOrientationHorizontalCommand_Menu {
+            get {
+                return ResourceManager.GetString("SetPageOrientationHorizontalCommand.Menu", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Align pages horizontally に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string SetPageOrientationHorizontalCommand_Remarks {
+            get {
+                return ResourceManager.GetString("SetPageOrientationHorizontalCommand.Remarks", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Vertical page layout に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string SetPageOrientationVerticalCommand {
+            get {
+                return ResourceManager.GetString("SetPageOrientationVerticalCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Vertical に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string SetPageOrientationVerticalCommand_Menu {
+            get {
+                return ResourceManager.GetString("SetPageOrientationVerticalCommand.Menu", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Align pages vertically に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string SetPageOrientationVerticalCommand_Remarks {
+            get {
+                return ResourceManager.GetString("SetPageOrientationVerticalCommand.Remarks", resourceCulture);
             }
         }
         
@@ -18449,6 +18512,42 @@ namespace NeeView.Properties {
         public static string ToggleIsLoupeCommand_Remarks {
             get {
                 return ResourceManager.GetString("ToggleIsLoupeCommand.Remarks", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Panorama に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string ToggleIsPanoramaCommand {
+            get {
+                return ResourceManager.GetString("ToggleIsPanoramaCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Panorama OFF に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string ToggleIsPanoramaCommand_Off {
+            get {
+                return ResourceManager.GetString("ToggleIsPanoramaCommand.Off", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Panorama に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string ToggleIsPanoramaCommand_On {
+            get {
+                return ResourceManager.GetString("ToggleIsPanoramaCommand.On", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Displays consecutive pages. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string ToggleIsPanoramaCommand_Remarks {
+            get {
+                return ResourceManager.GetString("ToggleIsPanoramaCommand.Remarks", resourceCulture);
             }
         }
         

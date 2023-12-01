@@ -27,8 +27,8 @@ namespace NeeView
         private bool _resetPageWhenRandomSort;
         private bool _isInsertDummyPage;
         private Color _dummyPageColor = Colors.White;
+        private bool _isPanorama;
         private PageFrameOrientation _orientation = PageFrameOrientation.Horizontal;
-        private bool _isTwoPagePanorama;
 
 
         /// <summary>
@@ -49,6 +49,15 @@ namespace NeeView
         {
             get { return _excludes; }
             set { SetProperty(ref _excludes, value); }
+        }
+
+        /// <summary>
+        /// フレームの接続をパノラマにする
+        /// </summary>
+        public bool IsPanorama
+        {
+            get { return _isPanorama; }
+            set { SetProperty(ref _isPanorama, value); }
         }
 
         /// <summary>
@@ -157,14 +166,6 @@ namespace NeeView
         {
             get { return _dummyPageColor; }
             set { SetProperty(ref _dummyPageColor, value); }
-        }
-
-        // ２ページ単位のパノラマモード
-        [PropertyMember]
-        public bool IsTwoPagePanorama
-        {
-            get { return _isTwoPagePanorama; }
-            set { SetProperty(ref _isTwoPagePanorama, value); }
         }
 
         #region Obsolete

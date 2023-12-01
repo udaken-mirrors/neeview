@@ -11,9 +11,6 @@ namespace NeeView
 
         [AliasName]
         WidePage,
-
-        [AliasName]
-        Panorama,
     }
 
 
@@ -36,13 +33,13 @@ namespace NeeView
         public static PageMode Validate(this PageMode mode)
         {
             if (mode < PageMode.SinglePage) return PageMode.SinglePage;
-            if (mode > PageMode.Panorama) return PageMode.Panorama;
+            if (mode > PageMode.WidePage) return PageMode.WidePage;
             return mode;
         }
 
-        public static bool IsStaticFrame(this PageMode mode)
-        {
-            return mode != PageMode.Panorama;
-        }
+        //public static bool IsStaticFrame(this PageMode mode)
+        //{
+        //    return mode != PageMode.WidePage;
+        //}
     }
 }

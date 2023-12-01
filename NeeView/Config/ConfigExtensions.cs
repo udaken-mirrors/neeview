@@ -15,8 +15,6 @@ namespace NeeView
                     => 1,
                 PageMode.WidePage
                     => 2,
-                PageMode.Panorama
-                    => config.Book.IsTwoPagePanorama ? 2 : 1,
                 _
                     => throw new NotSupportedException()
             };

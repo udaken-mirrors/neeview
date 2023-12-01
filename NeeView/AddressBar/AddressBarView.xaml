@@ -72,6 +72,23 @@
                     </Image>
                 </Button>
 
+                <Button Style="{StaticResource AddressIconButton}" Command="{Binding BookCommands[ToggleIsPanorama]}" TabIndex="20">
+                    <Image>
+                        <Image.Style>
+                            <Style TargetType="Image">
+                                <Setter Property="Source" Value="{StaticResource ic_crop_original_24px}"/>
+                                <Setter Property="ToolTip" Value="{x:Static properties:Resources.ToggleIsPanoramaCommand_Off}"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding Config.Book.IsPanorama}" Value="True">
+                                        <Setter Property="Source" Value="{StaticResource ic_image_24px}"/>
+                                        <Setter Property="ToolTip" Value="{x:Static properties:Resources.ToggleIsPanoramaCommand_On}"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Image.Style>
+                    </Image>
+                </Button>
+
                 <Button Style="{StaticResource AddressIconButton}" Command="{Binding TogglePageModeCommand}" TabIndex="20">
                     <Image>
                         <Image.Style>
@@ -82,10 +99,6 @@
                                     <DataTrigger Binding="{Binding BookSetting.PageMode}"  Value="WidePage">
                                         <Setter Property="Source" Value="{StaticResource ic_looks_two_24px}"/>
                                         <Setter Property="ToolTip" Value="{x:Static properties:Resources.PageMode_WidePage}"/>
-                                    </DataTrigger>
-                                    <DataTrigger Binding="{Binding BookSetting.PageMode}"  Value="Panorama">
-                                        <Setter Property="Source" Value="{StaticResource ic_image_24px}"/>
-                                        <Setter Property="ToolTip" Value="{x:Static properties:Resources.PageMode_Panorama}"/>
                                     </DataTrigger>
                                 </Style.Triggers>
                             </Style>

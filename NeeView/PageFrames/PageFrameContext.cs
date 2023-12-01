@@ -68,12 +68,13 @@ namespace NeeView.PageFrames
         public BookShareContext ShareContext => _share;
         public ViewScrollContext ViewScrollContext => _viewScrollContext;
 
+        public bool IsPanorama => _config.Book.IsPanorama;
         public PageFrameOrientation FrameOrientation => _config.Book.Orientation;
         public double FrameMargin => IsStaticFrame ? 1.0 : _config.Book.FrameSpace;
 
         // TODO: 更新イベントが余計に発生している？Propertyパターンにして抑制させることも可能(優先度低)
         public double ContentsSpace => FramePageSize == 2 ? _config.Book.ContentsSpace : 0.0;
-        public PageStretchMode StretchMode => _bookSetting.PageMode == PageMode.Panorama && _config.View.StretchMode == PageStretchMode.Uniform
+        public PageStretchMode StretchMode => _config.Book.IsPanorama && _config.View.StretchMode == PageStretchMode.Uniform
             ? _config.Book.Orientation == PageFrameOrientation.Horizontal ? PageStretchMode.UniformToVertical : PageStretchMode.UniformToHorizontal
             : _config.View.StretchMode;
 
@@ -114,7 +115,7 @@ namespace NeeView.PageFrames
 
 
         public TimeSpan ScrollDuration => TimeSpan.FromSeconds(_config.View.ScrollDuration);
-        public TimeSpan PageChangeDuration => PageMode == PageMode.Panorama ? ScrollDuration : TimeSpan.FromSeconds(_config.View.PageMoveDuration);
+        public TimeSpan PageChangeDuration => _config.Book.IsPanorama ? ScrollDuration : TimeSpan.FromSeconds(_config.View.PageMoveDuration);
 
 
         public double LoupeScale
@@ -153,6 +154,11 @@ namespace NeeView.PageFrames
         {
             switch (e.PropertyName)
             {
+                case nameof(BookConfig.IsPanorama):
+                    RaisePropertyChanged(nameof(IsPanorama));
+                    RaisePropertyChanged(nameof(StretchMode));
+                    break;
+
                 case nameof(BookConfig.Orientation):
                     RaisePropertyChanged(nameof(FrameOrientation));
                     RaisePropertyChanged(nameof(StretchMode));
@@ -172,10 +178,6 @@ namespace NeeView.PageFrames
 
                 case nameof(BookConfig.PageEndAction):
                     RaisePropertyChanged(nameof(IsLoopPage));
-                    break;
-
-                case nameof(BookConfig.IsTwoPagePanorama):
-                    RaisePropertyChanged(nameof(FramePageSize));
                     break;
             }
         }

@@ -665,7 +665,11 @@ namespace NeeView
                     {
                         new MenuTree(MenuElementType.Command) { CommandName = "SetPageModeOne" },
                         new MenuTree(MenuElementType.Command) { CommandName = "SetPageModeTwo" },
-                        new MenuTree(MenuElementType.Command) { CommandName = "SetPageModePanorama" },
+                        new MenuTree(MenuElementType.Separator),
+                        new MenuTree(MenuElementType.Command) { CommandName = "ToggleIsPanorama" },
+                        new MenuTree(MenuElementType.Separator),
+                        new MenuTree(MenuElementType.Command) { CommandName = "SetPageOrientationHorizontal" },
+                        new MenuTree(MenuElementType.Command) { CommandName = "SetPageOrientationVertical" },
                         new MenuTree(MenuElementType.Separator),
                         new MenuTree(MenuElementType.Command) { CommandName = "SetBookReadOrderRight" },
                         new MenuTree(MenuElementType.Command) { CommandName = "SetBookReadOrderLeft" },
