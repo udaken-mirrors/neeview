@@ -78,6 +78,12 @@ namespace NeeView
             set { AppDispatcher.Invoke(() => BookSettings.Current.SetAutoRotate(value.ToEnum<AutoRotateType>())); }
         }
 
+        [WordNodeMember]
+        public double BaseScale
+        {
+            get { return BookSettings.Current.BaseScale; }
+            set { AppDispatcher.Invoke(() => BookSettings.Current.SetBaseScale(value)); }
+        }
 
         internal WordNode CreateWordNode(string name)
         {

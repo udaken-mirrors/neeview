@@ -224,6 +224,13 @@ namespace NeeView
             if (!CanEdit) return;
             _setting.AutoRotate = autoRotate;
         }
+
+        // 基底スケール
+        public void SetBaseScale(double baseScale)
+        {
+            if (!CanEdit) return;
+            _setting.BaseScale = baseScale;
+        }
     }
 
 }
