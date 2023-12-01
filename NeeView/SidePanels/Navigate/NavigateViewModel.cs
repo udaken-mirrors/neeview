@@ -210,6 +210,7 @@ namespace NeeView
                     break;
                 case nameof(DragTransform.Angle):
                     RaisePropertyChanged(nameof(Angle));
+                    RaisePropertyChanged(nameof(SliderAngle));
                     break;
                 case nameof(DragTransform.Scale):
                     RaisePropertyChanged(nameof(Scale));
@@ -260,6 +261,7 @@ namespace NeeView
 
                 case nameof(BookSettingConfig.BaseScale):
                     RaisePropertyChanged(nameof(BaseScale));
+                    RaisePropertyChanged(nameof(SliderBaseScale));
                     break;
             }
         }
