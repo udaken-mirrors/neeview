@@ -597,6 +597,15 @@ namespace NeeView.Properties {
         }
         
         /// <summary>
+        ///   Automatic rotation に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string AutoRotateType {
+            get {
+                return ResourceManager.GetString("AutoRotateType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Forced left rotate に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string AutoRotateType_ForcedLeft {
@@ -1182,6 +1191,15 @@ namespace NeeView.Properties {
         }
         
         /// <summary>
+        ///   Base scale に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string BookConfigAccessor_BaseScale {
+            get {
+                return ResourceManager.GetString("BookConfigAccessor.BaseScale", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Left Open / Right Open に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string BookConfigAccessor_BookReadOrder {
@@ -1412,6 +1430,15 @@ namespace NeeView.Properties {
         public static string BookmarkPanelAccessor_Path {
             get {
                 return ResourceManager.GetString("BookmarkPanelAccessor.Path", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Search box text に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string BookmarkPanelAccessor_SearchWord {
+            get {
+                return ResourceManager.GetString("BookmarkPanelAccessor.SearchWord", resourceCulture);
             }
         }
         
@@ -7177,6 +7204,15 @@ namespace NeeView.Properties {
         }
         
         /// <summary>
+        ///   Search box text に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string HistoryPanelAccessor_SearchWord {
+            get {
+                return ResourceManager.GetString("HistoryPanelAccessor.SearchWord", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Selected items に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string HistoryPanelAccessor_SelectedItems {
@@ -12149,6 +12185,15 @@ namespace NeeView.Properties {
         public static string PageListPanelAccessor_Path {
             get {
                 return ResourceManager.GetString("PageListPanelAccessor.Path", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Search box text に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string PageListPanelAccessor_SearchWord {
+            get {
+                return ResourceManager.GetString("PageListPanelAccessor.SearchWord", resourceCulture);
             }
         }
         

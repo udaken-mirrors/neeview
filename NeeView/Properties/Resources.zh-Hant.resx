@@ -7640,4 +7640,19 @@ nv.ShowToast(nv.Book.ViewPages[0].Path)</value>
   <data name="DragActionType.BaseScaleSliderCentered" xml:space="preserve">
     <value>基礎縮放 (滑動、居中)</value>
   </data>
+  <data name="AutoRotateType" xml:space="preserve">
+    <value>自動旋轉</value>
+  </data>
+  <data name="BookConfigAccessor.BaseScale" xml:space="preserve">
+    <value>基礎比例</value>
+  </data>
+  <data name="PageListPanelAccessor.SearchWord" xml:space="preserve">
+    <value>搜尋框的文字</value>
+  </data>
+  <data name="BookmarkPanelAccessor.SearchWord" xml:space="preserve">
+    <value>搜尋框的文字</value>
+  </data>
+  <data name="HistoryPanelAccessor.SearchWord" xml:space="preserve">
+    <value>搜尋框的文字</value>
+  </data>
 </root>

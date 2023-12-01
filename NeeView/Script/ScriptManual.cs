@@ -94,6 +94,7 @@ namespace NeeView
 
             htmlBuilder.Append($"<hr/>").AppendLine();
 
+            htmlBuilder.Append(typeof(AutoRotateType));
             htmlBuilder.Append(typeof(FolderOrder));
             htmlBuilder.Append(typeof(PageSortMode));
             htmlBuilder.Append(typeof(PageNameFormat));

@@ -7972,4 +7972,19 @@ nv.ShowToast(nv.Book.ViewPages[0].Path)</value>
   <data name="FocusHistorySearchBoxCommand.Remarks" xml:space="preserve">
     <value>Focus on the history search box. The History panel will be in the display state.</value>
   </data>
+  <data name="AutoRotateType" xml:space="preserve">
+    <value>Automatic rotation</value>
+  </data>
+  <data name="BookConfigAccessor.BaseScale" xml:space="preserve">
+    <value>Base scale</value>
+  </data>
+  <data name="PageListPanelAccessor.SearchWord" xml:space="preserve">
+    <value>Search box text</value>
+  </data>
+  <data name="BookmarkPanelAccessor.SearchWord" xml:space="preserve">
+    <value>Search box text</value>
+  </data>
+  <data name="HistoryPanelAccessor.SearchWord" xml:space="preserve">
+    <value>Search box text</value>
+  </data>
 </root>

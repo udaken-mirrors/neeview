@@ -7977,4 +7977,19 @@ nv.ShowToast(nv.Book.ViewPages[0].Path)</value>
   <data name="FocusHistorySearchBoxCommand.Remarks" xml:space="preserve">
     <value>履歴検索ボックスにフォーカスを移します。履歴パネルは表示状態になります。</value>
   </data>
+  <data name="AutoRotateType" xml:space="preserve">
+    <value>自動回転</value>
+  </data>
+  <data name="BookConfigAccessor.BaseScale" xml:space="preserve">
+    <value>基底スケール</value>
+  </data>
+  <data name="PageListPanelAccessor.SearchWord" xml:space="preserve">
+    <value>検索ボックスのテキスト</value>
+  </data>
+  <data name="BookmarkPanelAccessor.SearchWord" xml:space="preserve">
+    <value>検索ボックスのテキスト</value>
+  </data>
+  <data name="HistoryPanelAccessor.SearchWord" xml:space="preserve">
+    <value>検索ボックスのテキスト</value>
+  </data>
 </root>
