@@ -3,7 +3,7 @@
 ----
 
 ### 40.0
-(2023-??-??)
+(2023-12-??)
 
 #### Important
 
@@ -21,7 +21,6 @@
 The page display program has been reworked to accommodate the implementation of panorama mode. We have tried to match the previous behavior as much as possible, but there is a possibility that the behavior when changing the scale or rotation may have changed.
 
 - Added "Panorama" mode, which connects pages together.
-- Added a setting to align the display with two pages in panorama mode. (Settings > Book)
 - The page connection direction can be switched between portrait and landscape.
 - Scroll time settings for various scroll commands are combined into one. (Settings > View operation > Scroll time)
 - Enabled to switch pages with scrolling animation. (Settings > View operation > Page move time)
