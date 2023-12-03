@@ -119,7 +119,7 @@ namespace NeeView
             if (SlideShow.Current.IsPlayingSlideShow)
             {
                 // スライドショー解除
-                SlideShow.Current.Stop();
+                SlideShow.Current.PageEndAction();
             }
 
             // 通知。本の場合のみ処理。メディアでは不要

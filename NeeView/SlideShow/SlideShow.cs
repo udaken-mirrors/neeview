@@ -30,7 +30,7 @@ namespace NeeView
         private bool _isPlayingSlideShow;
         private bool _isPlayingSlideShowMemento;
         private readonly DisposableCollection _disposables = new();
-
+        private bool _isMoving;
 
         private SlideShow()
         {
@@ -206,10 +206,30 @@ namespace NeeView
                 }
 
                 // ページ移動
-                BookOperation.Current.Control.MoveNext(sender);
+                try
+                {
+                    _isMoving = true;
+                    BookOperation.Current.Control.MoveNext(sender);
+                }
+                finally
+                {
+                    _isMoving = false;
+                }
             });
 
             Played?.Invoke(this, new SlideShowPlayedEventArgs(_isPlayingSlideShow, _timer.Interval));
+        }
+
+        /// <summary>
+        /// ページ終端挙動
+        /// </summary>
+        public void PageEndAction()
+        {
+            if (_isMoving)
+            {
+                Stop();
+                InfoMessage.Current.SetMessage(InfoMessageType.Notify, Properties.Resources.ToggleSlideShowCommand_Off);
+            }
         }
 
         #region IDisposable Support
