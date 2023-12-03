@@ -49,7 +49,6 @@ namespace NeeView
 
             TouchInput = new TouchInput(new TouchInputContext(_mainView.View, mouseGestureCommandCollection, PageFrameBoxPresenter, DragTransformControl, LoupeContext, ViewScrollContext));
             MouseInput = new MouseInput(new MouseInputContext(_mainView.View, mouseGestureCommandCollection, PageFrameBoxPresenter, DragTransformControl, LoupeContext, ViewScrollContext));
-            _disposables.Add(MouseInput.SubscribeMouseMoved(MouseInput_MouseMoved));
 
             PrintController = new PrintController(this, _mainView, PageFrameBoxPresenter);
             ViewTransformControl = new ViewTransformControl(PageFrameBoxPresenter);
@@ -131,15 +130,6 @@ namespace NeeView
         {
             Dispose(disposing: true);
             GC.SuppressFinalize(this);
-        }
-
-
-        private void MouseInput_MouseMoved(object? sender, MouseEventArgs e)
-        {
-            if (Config.Current.SlideShow.IsCancelSlideByMouseMove)
-            {
-                SlideShow.Current.ResetTimer();
-            }
         }
 
         private void PageFrameBoxPresenter_ViewContentChanged(object? sender, FrameViewContentChangedEventArgs e)

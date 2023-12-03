@@ -11,7 +11,6 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 using System.Timers;
-using System.Windows;
 using System.Windows.Input;
 using System.Windows.Threading;
 
@@ -44,13 +43,11 @@ namespace NeeView
 
             _disposables.Add(BookOperation.Current.SubscribeBookChanged(BookOperation_BookChanged));
 
-            _disposables.Add(MainWindow.Current.SubscribePreviewKeyDown(
-                (s, e) => ResetTimer()));
+            _disposables.Add(PageFrameBoxPresenter.Current.SubscribeViewPageChanged(PageFrameBoxPresenter_ViewPageChanged));
 
             // アプリ終了前の開放予約
             ApplicationDisposer.Current.Add(this);
         }
-
 
 
         [Subscribable]
@@ -86,6 +83,12 @@ namespace NeeView
             }
         }
 
+
+        private void PageFrameBoxPresenter_ViewPageChanged(object? sender, ViewPageChangedEventArgs e)
+        {
+            //Debug.WriteLine($"ViewPageChanged: {string.Join(",", e.Pages.Select(e => e.Index.ToString()))}");
+            ResetTimer();
+        }
 
         private void SlideShowConfig_SlideShowIntervalPropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
@@ -237,20 +240,6 @@ namespace NeeView
         }
         #endregion
 
-    }
-
-
-
-    public class SlideShowPlayedEventArgs : EventArgs
-    {
-        public SlideShowPlayedEventArgs(bool isPlaying, double interval)
-        {
-            IsPlaying = isPlaying;
-            IntervalMilliseconds = interval;
-        }
-
-        public bool IsPlaying { get; }
-        public double IntervalMilliseconds { get; }
     }
 
 }

@@ -22,7 +22,7 @@ namespace NeeView
     {
         private readonly MouseInput _mouseInput;
         private readonly TouchInput _touchInput;
-
+        private SlideShowInput? _slideShowInput;
 
         public MouseInput MouseInput => _mouseInput;
         public TouchInput TouchInput => _touchInput;
@@ -45,7 +45,21 @@ namespace NeeView
             this.AllowDrop = true;
             ContentDropManager.Current.SetDragDropEvent(this);
 
+            this.Loaded += MainViewBay_Loaded;
+            this.Unloaded += MainViewBay_Unloaded;
             this.PreviewMouseLeftButtonDown += MainViewBay_PreviewMouseLeftButtonDown;
+        }
+
+
+        private void MainViewBay_Loaded(object sender, RoutedEventArgs e)
+        {
+            _slideShowInput?.Dispose();
+            _slideShowInput = new SlideShowInput(this, SlideShow.Current);
+        }
+
+        private void MainViewBay_Unloaded(object sender, RoutedEventArgs e)
+        {
+            _slideShowInput?.Dispose();
         }
 
         private void MainViewBay_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)

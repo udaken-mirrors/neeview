@@ -37,6 +37,7 @@ namespace NeeView
         private readonly PageFrameBackground _background;
         private bool _disposedValue;
         private readonly DisposableCollection _disposables = new();
+        private SlideShowInput? _slideShowInput;
 
         public MainView()
         {
@@ -48,7 +49,6 @@ namespace NeeView
 
             this.Loaded += MainView_Loaded;
             this.Unloaded += MainView_Unloaded;
-            this.PreviewKeyDown += MainView_PreviewKeyDown;
             this.DataContextChanged += MainView_DataContextChanged;
 
             _disposables.Add(SlideShow.Current.SubscribePropertyChanged(nameof(SlideShow.IsPlayingSlideShow), SlideShow_IsPlayingSlideShowPropertyChanged));
@@ -74,6 +74,7 @@ namespace NeeView
                 if (disposing)
                 {
                     _disposables.Dispose();
+                    _slideShowInput?.Dispose();
                 }
                 _disposedValue = true;
             }
@@ -113,6 +114,9 @@ namespace NeeView
 
         private void MainView_Loaded(object sender, RoutedEventArgs e)
         {
+            _slideShowInput?.Dispose();
+            _slideShowInput = new SlideShowInput(this, SlideShow.Current);
+
             var window = Window.GetWindow(this);
             if (_owner == window) return;
 
@@ -124,12 +128,9 @@ namespace NeeView
 
         private void MainView_Unloaded(object sender, RoutedEventArgs e)
         {
-            ResetOwnerWindow();
-        }
+            _slideShowInput?.Dispose();
 
-        private void MainView_PreviewKeyDown(object sender, KeyEventArgs e)
-        {
-            SlideShow.Current.ResetTimer();
+            ResetOwnerWindow();
         }
 
         private void SlideShow_Played(object? sender, SlideShowPlayedEventArgs e)
