@@ -331,9 +331,9 @@ namespace NeeView.Runtime.LayoutPanel
 
             public string? SelectedItem { get; set; }
 
+            // NOTE: 旧バージョンでの読み込みでエラーにさせないためにJSON出力している
             [Obsolete] // ver 40.0
-            [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-            public List<List<string>>? Panels { get; set; }
+            public List<List<string>> Panels { get; set; } = new();
         }
 
         public class PanelLayout
