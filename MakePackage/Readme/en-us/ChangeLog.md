@@ -3,13 +3,14 @@
 ----
 
 ### 40.0
-(2023-12-??)
+(2023-12-05)
 
 #### Important
 
 - Windows 10, Windows 11, and 64-bit operating systems only; packages for Windows 7, WIndows 8.1, and 32-bit operating systems are not provided after version 40.0.
 - It runs on .NET8. This framework is included as part of the application. There is no need to install it separately.
 - For environments that already have .NET8 installed, we have prepared a package "NeeView40-fd.zip" that does not include .
+- The ZIP version cannot be overwritten and updated because the file structure has changed significantly. Please use Export/Import to migrate your data. The installer version can be updated as is.
 
 #### User data storage location
 
