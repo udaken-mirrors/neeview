@@ -1,5 +1,6 @@
 ﻿using NeeView.Data;
 using System;
+using System.Diagnostics;
 
 namespace NeeView
 {
@@ -40,7 +41,8 @@ namespace NeeView
         {
             if (value != null && value.GetType() != _type)
             {
-                throw new ArgumentException($"{_type} is required: not {value.GetType()}");
+                Debug.Assert(false, $"{_type} is required: not {value.GetType()}");
+                return;
             }
 
             _parameter = value;

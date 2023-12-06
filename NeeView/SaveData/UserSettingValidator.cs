@@ -136,6 +136,15 @@ namespace NeeView
                         toggleMainViewFloating.ShortCutKey = "F12";
                     }
                 }
+
+                // Drag actions
+                if (self.DragActions != null)
+                {
+                    if (self.DragActions.TryGetValue("MoveScale", out var dragAction) && dragAction.Parameter is SensitiveDragActionParameter sensitiveParameter)
+                    {
+                        dragAction.Parameter = new MoveScaleDragActionParameter() { Sensitivity = sensitiveParameter.Sensitivity };
+                    }
+                }
             }
 
 #if false
