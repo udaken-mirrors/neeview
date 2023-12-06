@@ -59,6 +59,14 @@ namespace NeeView
                 .WhereNotNull()
                 .ToList();
 
+            // 除外フィルター
+            if (BookshelfFolderList.Current.ExcludeRegex != null)
+            {
+                items = items
+                    .Where(e => e.Name != null && !BookshelfFolderList.Current.ExcludeRegex.IsMatch(e.Name))
+                    .ToList();
+            }
+
             var list = Sort(items, token);
 
             if (!list.Any())
@@ -79,6 +87,13 @@ namespace NeeView
         public override void RequestCreate(QueryPath path)
         {
             if (_disposedValue) return;
+
+            // 除外フィルター
+            var excludeRegex = BookshelfFolderList.Current.ExcludeRegex;
+            if (excludeRegex != null && excludeRegex.IsMatch(LoosePath.GetFileName(path.SimplePath)))
+            {
+                return;
+            }
 
             _engine?.RequestCreate(path);
         }
