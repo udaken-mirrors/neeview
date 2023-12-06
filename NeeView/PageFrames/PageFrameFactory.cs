@@ -64,6 +64,22 @@ namespace NeeView.PageFrames
         }
 
         /// <summary>
+        /// フレームの次のページを取得
+        /// </summary>
+        /// <param name="frame">フレーム</param>
+        /// <param name="direction">作成方向</param>
+        /// <returns></returns>
+        public Page? GetNextPage(PageFrame frame, int direction)
+        {
+            var nextPage = _book.GetPage(frame.FrameRange.Next(direction).Index, _context.IsLoopPage);
+            if (nextPage is null) return null;
+
+            if (frame.Elements.Any(e => e.Page == nextPage)) return null;
+
+            return nextPage;
+        }
+
+        /// <summary>
         /// フレーム開始座標修正。分割されない設定での座標修正など。
         /// </summary>
         /// <param name="position">修正座標</param>

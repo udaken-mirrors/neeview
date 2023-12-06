@@ -27,6 +27,7 @@ namespace NeeView.PageFrames
         private readonly GridLine _gridLine;
         private readonly SizeSource _sizeSource;
         private PageFrame _pageFrame;
+        private readonly Page? _nextPage;
         private readonly PageFrameActivity _activity;
 
         /// <summary>
@@ -39,7 +40,7 @@ namespace NeeView.PageFrames
         /// </summary>
         private readonly LoupeTransformContext _loupeContext;
 
-        private readonly IStaticFrame _staticFrame;
+        private readonly PageFrameContext _context;
         private readonly List<Page> _pages;
         private List<ViewContent> _viewContents;
         
@@ -72,12 +73,13 @@ namespace NeeView.PageFrames
         /// PageFrameから構成されるPageFrameContainer用コンテンツ
         /// </summary>
         /// <param name="viewContentFactory">ViewContentファクトリ</param>
-        /// <param name="staticFrame">固定フレーム情報。コンテナサイズを確定させる</param>
+        /// <param name="context">固定フレーム情報。コンテナサイズを確定させる</param>
         /// <param name="pageFrame">PageFrame</param>
+        /// <param name="nextPage">PageFrameの次のページ。フレーム再生成チェック用</param>
         /// <param name="activity">コンテナの状態。表示中、選択中等</param>
         /// <param name="transform">レイアウト用Transform</param>
         /// <param name="loupeContext">ルーペ用Transform</param>
-        public PageFrameContent(ViewContentFactory viewContentFactory, IStaticFrame staticFrame, PageFrame pageFrame, PageFrameActivity activity, PageFrameTransformAccessor transform, LoupeTransformContext loupeContext, BaseScaleTransform baseScaleTransform)
+        public PageFrameContent(ViewContentFactory viewContentFactory, PageFrameContext context, PageFrame pageFrame, Page? nextPage, PageFrameActivity activity, PageFrameTransformAccessor transform, LoupeTransformContext loupeContext, BaseScaleTransform baseScaleTransform)
         {
             _canvas = new Canvas();
             _canvas.RenderTransform = _viewTransform;
@@ -86,14 +88,19 @@ namespace NeeView.PageFrames
             _canvas.Children.Add(_contentCanvas);
 
             _viewContentFactory = viewContentFactory;
-            _staticFrame = staticFrame;
-            //_disposables.Add(_staticFrame.SubscribePropertyChanged(nameof(staticFrame.CanvasSize), (_, _) => { IsDirty = true; }));
+            _context = context;
 
             _pageFrame = pageFrame;
             _pages = _pageFrame.Elements.Select(e => e.Page).Distinct().ToList();
             foreach (var page in _pages)
             {
                 _disposables.Add(page.SubscribeSizeChanged(AppDispatcher.BeginInvokeHandler(Page_SizeChanged)));
+            }
+
+            _nextPage = nextPage;
+            if (_nextPage is not null)
+            {
+                _disposables.Add(_nextPage.SubscribeSizeChanged(AppDispatcher.BeginInvokeHandler(NextPage_SizeChanged)));
             }
 
             _activity = activity;
@@ -163,7 +170,7 @@ namespace NeeView.PageFrames
         public TransformGroup ViewTransform => _viewTransform;
         public TransformGroup CalcTransform => _calcTransform;
 
-        public bool IsStaticFrame => _staticFrame.IsStaticFrame;
+        public bool IsStaticFrame => _context.IsStaticFrame;
 
 
         protected virtual void Dispose(bool disposing)
@@ -202,6 +209,21 @@ namespace NeeView.PageFrames
             ContentSizeChanged?.Invoke(this, EventArgs.Empty);
         }
 
+        private void NextPage_SizeChanged(object? sender, EventArgs e)
+        {
+            // ページ補填の余地あり？
+            if (_context.FramePageSize == 2 && _pageFrame.Elements.Count == 1 && !_pageFrame.Elements[0].IsLandscape())
+            {
+                //Debug.WriteLine($"NextPage.SizeChanged: Call");
+                DirtyLevel = PageFrameDirtyLevel.Moderate;
+                ContentSizeChanged?.Invoke(this, EventArgs.Empty);
+            }
+            else
+            {
+                //Debug.WriteLine($"NextPage.SizeChanged: Skip");
+            }
+        }
+
         public void SetSource(PageFrame pageFrame)
         {
             var isForce = DirtyLevel >= PageFrameDirtyLevel.Heavy;
@@ -224,7 +246,7 @@ namespace NeeView.PageFrames
 
         private PageFrameElementScale CreateElementScale()
         {
-            return PageFrameElementScaleFactory.Create(_pageFrame, _transform, _loupeContext, _staticFrame.DpiScale);
+            return PageFrameElementScaleFactory.Create(_pageFrame, _transform, _loupeContext, _context.DpiScale);
         }
 
 
@@ -261,9 +283,9 @@ namespace NeeView.PageFrames
         /// <returns></returns>
         public Size GetFrameSize()
         {
-            if (_staticFrame.IsStaticFrame)
+            if (_context.IsStaticFrame)
             {
-                return _staticFrame.CanvasSize;
+                return _context.CanvasSize;
             }
             else
             {
@@ -272,8 +294,8 @@ namespace NeeView.PageFrames
 
                 // TODO: １つのコンテナの画面幅に対する最小の割合。同時に多すぎる表示を回避するため。Configに設定を。
                 var limitScale = 0.10;
-                var width = Math.Max(bounds.Width, _staticFrame.CanvasSize.Width * limitScale);
-                var height = Math.Max(bounds.Height, _staticFrame.CanvasSize.Height * limitScale);
+                var width = Math.Max(bounds.Width, _context.CanvasSize.Width * limitScale);
+                var height = Math.Max(bounds.Height, _context.CanvasSize.Height * limitScale);
                 //Debug.WriteLine($"# FrameSize: {_pageFrame.FrameRange} => {width:f1}x{height:f1}");
                 return new Size(width, height);
             }

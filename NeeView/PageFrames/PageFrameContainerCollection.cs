@@ -247,12 +247,13 @@ namespace NeeView.PageFrames
                 return null;
             }
 
+            var nextPage = _frameFactory.GetNextPage(frame, direction.ToSign());
             var node = CollectNode<PageFrameContent>(direction).FirstOrDefault(e => e.Value.FrameRange.Top(direction.ToSign()) == pos);
 
             // 対応するコンテナが存在するときにはエラー
             if (node is not null) throw new ArgumentException("The target container already exists.");
 
-            var container = _containerFactory.Create(frame);
+            var container = _containerFactory.Create(frame, nextPage);
             _containerInitializer?.Initialize(container);
             node = new LinkedListNode<PageFrameContainer>(container);
             CollectionChanging?.Invoke(this, new PageFrameContainerCollectionChangedEventArgs(PageFrameContainerCollectionChangedEventAction.Add, node));
@@ -269,6 +270,7 @@ namespace NeeView.PageFrames
             var pos = node.Value.FrameRange.Top(direction.ToSign());
             var frame = _frameFactory.CreatePageFrame(pos, direction.ToSign());
             Debug.Assert(frame is not null);
+            var nextPage = _frameFactory.GetNextPage(frame, direction.ToSign());
 
             if (!node.Value.IsDirty && node.Value.Content is PageFrameContent item && item.PageFrame == frame)
             {
@@ -276,7 +278,7 @@ namespace NeeView.PageFrames
             }
 
             CollectionChanging?.Invoke(this, new PageFrameContainerCollectionChangedEventArgs(PageFrameContainerCollectionChangedEventAction.Update, node));
-            _containerFactory.Update(node.Value, frame);
+            _containerFactory.Update(node.Value, frame, nextPage);
             CollectionChanged?.Invoke(this, new PageFrameContainerCollectionChangedEventArgs(PageFrameContainerCollectionChangedEventAction.Update, node));
 
             RemoveConflictContainer(node);

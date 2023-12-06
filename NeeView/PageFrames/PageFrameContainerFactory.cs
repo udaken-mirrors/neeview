@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System.Diagnostics;
+using System.Windows;
 using System.Windows.Media;
 
 namespace NeeView.PageFrames
@@ -24,8 +25,10 @@ namespace NeeView.PageFrames
         }
 
 
-        public PageFrameContainer Create(PageFrame frame)
+        public PageFrameContainer Create(PageFrame frame, Page? nextPage)
         {
+            //Debug.WriteLine($"PageFrameContainer.Create: {frame}, {nextPage?.Index}");
+
             var activity = new PageFrameActivity();
             var key = PageFrameTransformTool.CreateKey(frame);
 
@@ -34,15 +37,17 @@ namespace NeeView.PageFrames
             {
                 rawTransform.Clear();
             }
-
+            
             var transform = new PageFrameTransformAccessor(_transformMap, rawTransform);
-            var content = new PageFrameContent(_viewContentFactory, _context, frame, activity, transform, _loupeContext, _baseScaleTransform);
+            var content = new PageFrameContent(_viewContentFactory, _context, frame, nextPage, activity, transform, _loupeContext, _baseScaleTransform);
             var container = new PageFrameContainer(content, activity, _context.ViewScrollContext);
             return container;
         }
 
-        public void Update(PageFrameContainer container, PageFrame frame)
+        public void Update(PageFrameContainer container, PageFrame frame, Page? nextPage)
         {
+            //Debug.WriteLine($"PageFrameContainer.Update: {frame}, {nextPage?.Index}");
+
             if (container.Content is PageFrameContent frameContent && frameContent.PageFrame.IsMatch(frame) && container.DirtyLevel < PageFrameDirtyLevel.Replace )
             {
                 frameContent.SetSource(frame);
@@ -53,7 +58,7 @@ namespace NeeView.PageFrames
                 var activity = container.Activity;
                 var key = PageFrameTransformTool.CreateKey(frame);
                 var transform = new PageFrameTransformAccessor(_transformMap, _transformMap.ElementAt(key));
-                var content = new PageFrameContent(_viewContentFactory, _context, frame, activity, transform, _loupeContext, _baseScaleTransform);
+                var content = new PageFrameContent(_viewContentFactory, _context, frame, nextPage, activity, transform, _loupeContext, _baseScaleTransform);
                 container.Content = content;
                 container.UpdateFrame();
             }

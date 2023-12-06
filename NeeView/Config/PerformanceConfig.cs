@@ -37,7 +37,7 @@ namespace NeeView
         public int PreLoadSize
         {
             get { return _preLoadSize; }
-            set { SetProperty(ref _preLoadSize, value); }
+            set { SetProperty(ref _preLoadSize, Math.Max(value, 1)); }
         }
 
         /// <summary>
