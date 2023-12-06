@@ -181,12 +181,12 @@ namespace NeeView
             foreach (var item in _items)
             {
                 var name = prefix + "." + item.Key;
-                if (item.Value is PropertyMap subMap)
+                if (item.Value.IsObsolete)
+                {
+                }
+                else if (item.Value is PropertyMap subMap)
                 {
                     s += subMap.CreateHelpHtml(name);
-                }
-                else if (item.Value.IsObsolete) // is PropertyMapObsolete)
-                {
                 }
                 else
                 {

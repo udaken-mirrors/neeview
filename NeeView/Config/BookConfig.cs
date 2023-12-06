@@ -54,6 +54,7 @@ namespace NeeView
         /// <summary>
         /// フレームの接続をパノラマにする
         /// </summary>
+        [PropertyMember]
         public bool IsPanorama
         {
             get { return _isPanorama; }
@@ -63,6 +64,7 @@ namespace NeeView
         /// <summary>
         /// フレームの並び方向
         /// </summary>
+        [PropertyMember]
         public PageFrameOrientation Orientation
         {
             get { return _orientation; }
