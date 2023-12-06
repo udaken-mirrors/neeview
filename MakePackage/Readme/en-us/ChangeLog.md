@@ -2,6 +2,18 @@
 
 ----
 
+### 40.1
+(2023-12-06)
+
+#### Fixed
+
+- Fixed a bug that data could not be read if the drag operation "Move (scale dependent)" parameter was specified in the previous version.
+- Fixed a bug that sometimes only one page is displayed even though the display mode is 2-page display mode.
+- Fixed a bug in which exclusion patterns were not applied in bookshelf searches.
+- Corrected a typo in the help.
+
+----
+
 ### 40.0
 (2023-12-05)
 
