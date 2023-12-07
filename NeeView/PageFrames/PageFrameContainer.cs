@@ -352,6 +352,8 @@ namespace NeeView.PageFrames
                 var action = pageFrameContent.ViewContents.Select(e => e.State).Min().ToChangedAction();
                 ViewContentChanged?.Invoke(this, new FrameViewContentChangedEventArgs(action, pageFrameContent, pageFrameContent.ViewContents, pageFrameContent.ViewContentsDirection));
             }
+
+            _content.OnAttached();
         }
 
 
@@ -362,6 +364,7 @@ namespace NeeView.PageFrames
             _content.TransformChanged -= Content_TransformChanged;
             _content.ViewContentChanged -= Content_ViewContentChanged;
             _content.ContentSizeChanged -= Content_ContentSizeChanged;
+            _content.OnDetached();
             _content.Dispose();
         }
 

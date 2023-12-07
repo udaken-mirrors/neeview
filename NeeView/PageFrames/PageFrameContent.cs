@@ -1,4 +1,6 @@
-﻿using System;
+﻿//#define LOCAL_DEBUG
+
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
@@ -12,6 +14,7 @@ using NeeLaboratory.Linq;
 using NeeView.ComponentModel;
 using NeeView;
 using NeeView.Windows;
+using NeeView.Maths;
 
 namespace NeeView.PageFrames
 {
@@ -43,7 +46,7 @@ namespace NeeView.PageFrames
         private readonly PageFrameContext _context;
         private readonly List<Page> _pages;
         private List<ViewContent> _viewContents;
-        
+
         /// <summary>
         /// レイアウト用。アニメーションあり
         /// </summary>
@@ -126,13 +129,22 @@ namespace NeeView.PageFrames
             _canvas.Children.Add(_gridLine);
 
             CreateContents();
+
+            // ページフレーム情報が既に古い？
+            if (IsPageFrameDirty() || IsWidePageFrameDirty())
+            {
+                Trace("PageFrameContent: PageFrame is dirty.");
+                DirtyLevel = PageFrameDirtyLevel.Moderate;
+            }
         }
+
 
 
         public event TransformChangedEventHandler? TransformChanged;
 
         public event EventHandler<FrameViewContentChangedEventArgs>? ViewContentChanged;
 
+        // NOTE: コンテンツサイズの変更イベントだが、用途はフレームの作り直し要求なので DirtyLevel 変更イベントのほうが適切かも
         public event EventHandler? ContentSizeChanged;
 
 
@@ -205,23 +217,66 @@ namespace NeeView.PageFrames
 
         private void Page_SizeChanged(object? sender, EventArgs e)
         {
-            DirtyLevel = PageFrameDirtyLevel.Moderate;
-            ContentSizeChanged?.Invoke(this, EventArgs.Empty);
+            Trace($"Page.SizeChanged: Call, {((Page?)sender)?.Size}");
+            RaiseContentSizeChanged();
         }
 
         private void NextPage_SizeChanged(object? sender, EventArgs e)
         {
             // ページ補填の余地あり？
-            if (_context.FramePageSize == 2 && _pageFrame.Elements.Count == 1 && !_pageFrame.Elements[0].IsLandscape())
+            if (IsWidePageFrameDirty())
             {
-                //Debug.WriteLine($"NextPage.SizeChanged: Call");
-                DirtyLevel = PageFrameDirtyLevel.Moderate;
-                ContentSizeChanged?.Invoke(this, EventArgs.Empty);
+                Trace($"NextPage.SizeChanged: Call, {((Page?)sender)?.Size}");
+                RaiseContentSizeChanged();
             }
             else
             {
-                //Debug.WriteLine($"NextPage.SizeChanged: Skip");
+                Trace($"NextPage.SizeChanged: Skip");
             }
+        }
+
+        public void OnAttached()
+        {
+            if (_dirtyLevel > PageFrameDirtyLevel.Clean)
+            {
+                AppDispatcher.BeginInvoke(() => RaiseContentSizeChanged());
+            }
+        }
+
+        public void OnDetached()
+        {
+        }
+
+        private bool IsPageFrameDirty()
+        {
+            // ページサイズが変更されている可能性
+            if (_pageFrame.Elements.Any(e => e.PageSize != e.Page.Size))
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        private bool IsWidePageFrameDirty()
+        {
+            if (_nextPage is null) return false;
+
+            // 2ページモードで1ページだけ表示しているときに、次のページによって2ページ表示になる可能性
+            if (_context.PageMode == PageMode.WidePage && _context.IsSupportedWidePage
+                && _pageFrame.IsSinglePortraitElement()
+                && AspectRatioTools.IsPortrait(_nextPage.Size))
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        private void RaiseContentSizeChanged()
+        {
+            DirtyLevel = PageFrameDirtyLevel.Moderate;
+            ContentSizeChanged?.Invoke(this, EventArgs.Empty);
         }
 
         public void SetSource(PageFrame pageFrame)
@@ -296,7 +351,7 @@ namespace NeeView.PageFrames
                 var limitScale = 0.10;
                 var width = Math.Max(bounds.Width, _context.CanvasSize.Width * limitScale);
                 var height = Math.Max(bounds.Height, _context.CanvasSize.Height * limitScale);
-                //Debug.WriteLine($"# FrameSize: {_pageFrame.FrameRange} => {width:f1}x{height:f1}");
+                Trace($"# FrameSize: {_pageFrame.FrameRange} => {width:f1}x{height:f1}");
                 return new Size(width, height);
             }
         }
@@ -330,7 +385,7 @@ namespace NeeView.PageFrames
         private void ViewContent_Changed(object? sender, ViewContentChangedEventArgs e)
         {
             var action = ViewContentChangedActionExtensions.Min(GetViewContentState().ToChangedAction(), e.Action);
-            ViewContentChanged?.Invoke(this, new FrameViewContentChangedEventArgs(action, this, ViewContents, ViewContentsDirection) { InnerArgs = e } );
+            ViewContentChanged?.Invoke(this, new FrameViewContentChangedEventArgs(action, this, ViewContents, ViewContentsDirection) { InnerArgs = e });
         }
 
         private void UpdateTransform()
@@ -380,7 +435,7 @@ namespace NeeView.PageFrames
             if (e.Action == TransformAction.Scale || e.Action == TransformAction.Angle)
             {
                 var scale = CreateElementScale(); // GetRenderScale();
-                //Debug.WriteLine($"{FrameRange}: Scale={scale:f2}");
+                Trace($"{FrameRange}: Scale={scale:f2}");
 
                 foreach (var viewContent in _viewContents)
                 {
@@ -415,7 +470,7 @@ namespace NeeView.PageFrames
         /// </remarks>
         public void DisposeViewContent()
         {
-            foreach(var content in _viewContents)
+            foreach (var content in _viewContents)
             {
                 content.Dispose();
             }
@@ -426,6 +481,12 @@ namespace NeeView.PageFrames
             return _pageFrame.ToString();
         }
 
+
+        [Conditional("LOCAL_DEBUG")]
+        private void Trace(string s, params object[] args)
+        {
+            Debug.WriteLine($"{this.GetType().Name}: {string.Format(s, args)}");
+        }
     }
 
 }

@@ -21,6 +21,8 @@ namespace NeeView.PageFrames
         PageFrameDirtyLevel DirtyLevel { get; set; }
         bool IsStaticFrame { get; }
 
+        void OnAttached();
+        void OnDetached();
         Rect GetContentRect();
         Size GetFrameSize();
     }
@@ -83,6 +85,14 @@ namespace NeeView.PageFrames
         public override string ToString()
         {
             return "Dummy";
+        }
+
+        public void OnAttached()
+        {
+        }
+
+        public void OnDetached()
+        {
         }
     }
 

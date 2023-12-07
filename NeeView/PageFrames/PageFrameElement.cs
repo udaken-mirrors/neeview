@@ -12,7 +12,7 @@ namespace NeeView.PageFrames
     /// </summary>
     public record class PageFrameElement : IEquatable<PageFrameElement?>
     {
-        private PageFrameContext _context;
+        private readonly PageFrameContext _context;
 
         public PageFrameElement(PageFrameContext context, BookContext bookContext, Page page, PageDataSource pageDataSource, PageRange range, int direction, PageTerminal terminal)
         {
@@ -56,6 +56,11 @@ namespace NeeView.PageFrames
         /// 表示スケール。２ページ表示で大きさを揃えるためのもの
         /// </summary>
         public double Scale { get; init; } = 1.0;
+
+        /// <summary>
+        /// ページサイズ
+        /// </summary>
+        public Size PageSize => PageDataSource.Size;
 
         /// <summary>
         /// 基準サイズ

@@ -156,6 +156,33 @@ namespace NeeView.PageFrames
             return bounds.Size;
         }
 
+        /// <summary>
+        /// 縦長１ページのフレーム？
+        /// </summary>
+        /// <remarks>
+        /// ダミーページは除外します。
+        /// </remarks>
+        /// <returns>縦長1ページのフレーム</returns>
+        public bool IsSinglePortraitElement()
+        {
+            if (!_elements.Any())
+            {
+                return false;
+            }
+            if (_elements.Count == 1)
+            {
+                return !_elements.First().IsLandscape();
+            }
+            if (_elements.Any(e => e.IsDummy))
+            {
+                Debug.Assert(_elements.Where(e => !e.IsDummy).Count() == 1); // 有効なページは１ページだけ
+                Debug.Assert(!_elements.Where(e => !e.IsDummy).First().IsLandscape()); // ダミーページは縦長の場合にだけ存在する
+                return true;
+            }
+
+            return false;
+        }
+
         public override string ToString()
         {
             return _range.ToString();
