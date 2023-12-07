@@ -1,5 +1,9 @@
-﻿using NeeLaboratory.ComponentModel;
+﻿//#define LOCAL_DEBUG
+
+using NeeLaboratory.ComponentModel;
 using System;
+using System.Diagnostics;
+using System.Linq;
 
 
 namespace NeeView
@@ -63,16 +67,28 @@ namespace NeeView
         }
 
 
-        private void Book_CurrentPageChanged(object? sender, EventArgs e)
+        private void Book_CurrentPageChanged(object? sender, CurrentPageChangedEventArgs e)
         {
             if (_disposedValue) return;
 
+            if (!e.IsTopPageChanged) return;
+            Trace("CurrentPageChanged");
+
+            _pageChangedCount++;
+            _historyRemoved = false;
+
+            TrySaveBookMemento();
+        }
+
+        /// <summary>
+        /// 必要であれば履歴保存する
+        /// </summary>
+        public void TrySaveBookMemento()
+        {
             var book = _book;
             if (book is null) return;
 
-            _pageChangedCount++;
-
-            _historyRemoved = false;
+            Trace("Try save BookMemento...");
 
             bool allowUpdateHistory = !book.IsKeepHistoryOrder || Config.Current.History.IsForceUpdateHistory;
 
@@ -84,9 +100,9 @@ namespace NeeView
                 if (memento is not null)
                 {
                     BookHistoryCollection.Current.Add(memento, false);
+                    Trace("Try save BookMemento: Saved");
                 }
             }
-
         }
 
 
@@ -121,6 +137,7 @@ namespace NeeView
             // 履歴の保存
             if (CanHistory(book))
             {
+                Trace("Save BookMemento.");
                 BookHistoryCollection.Current.Add(memento, isKeepHistoryOrder);
             }
         }
@@ -139,12 +156,17 @@ namespace NeeView
 
             return !_historyRemoved
                 && book.Pages.Count > 0
-                && (_historyEntry || _pageChangedCount > historyEntryPageCount || book.CurrentPage == book.Pages.Last())
+                && (_historyEntry || _pageChangedCount >= historyEntryPageCount || book.CurrentPages.LastOrDefault() == book.Pages.Last())
                 && (Config.Current.History.IsInnerArchiveHistoryEnabled || book.Source.ArchiveEntryCollection.Archiver?.Parent == null)
                 && (Config.Current.History.IsUncHistoryEnabled || !LoosePath.IsUnc(book.Path));
         }
 
 
+        [Conditional("LOCAL_DEBUG")]
+        private void Trace(string s, params object[] args)
+        {
+            Debug.WriteLine($"{this.GetType().Name}: {string.Format(s, args)}");
+        }
     }
 }
 

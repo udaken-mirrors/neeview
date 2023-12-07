@@ -273,6 +273,8 @@ namespace NeeView
             RaisePropertyChanged(nameof(View));
             await WaitStableAsync(_box, token);
 
+            _bookMementoControl.TrySaveBookMemento();
+
             RaisePropertyChanged(null);
             PagesChanged?.Invoke(this, EventArgs.Empty);
             SelectedRangeChanged?.Invoke(this, EventArgs.Empty);

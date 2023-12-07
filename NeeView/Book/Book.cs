@@ -50,7 +50,7 @@ namespace NeeView
         public event EventHandler? PagesChanged;
 
         [Subscribable]
-        public event EventHandler? CurrentPageChanged;
+        public event EventHandler<CurrentPageChangedEventArgs>? CurrentPageChanged;
 
 
         public BookSource Source => _source;
@@ -192,10 +192,11 @@ namespace NeeView
         {
             if (_currentPages.SequenceEqual(pages)) return;
 
+            var oldPages = _currentPages;
             _currentPages = pages.ToList();
 
-            //this.Memento.Page = CurrentPage?.EntryName ?? "";
-            CurrentPageChanged?.Invoke(this, EventArgs.Empty);
+            var eventArgs = new CurrentPageChangedEventArgs(_currentPages, oldPages);
+            CurrentPageChanged?.Invoke(this, eventArgs);
         }
 
 
@@ -278,4 +279,18 @@ namespace NeeView
         #endregion
     }
 
+
+    public class CurrentPageChangedEventArgs : EventArgs
+    {
+        public CurrentPageChangedEventArgs(List<Page> newValue, List<Page> oldValue)
+        {
+            NewValue = newValue;
+            OldValue = oldValue;
+        }
+
+        public List<Page> NewValue { get; init; }
+        public List<Page> OldValue { get; init; }
+
+        public bool IsTopPageChanged => NewValue.FirstOrDefault() != OldValue.FirstOrDefault();
+    }
 }
