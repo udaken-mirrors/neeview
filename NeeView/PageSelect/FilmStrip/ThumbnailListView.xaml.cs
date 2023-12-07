@@ -488,6 +488,7 @@ namespace NeeView
             {
                 await Task.Yield();
                 UpdateThumbnailListLayout(true);
+                _listPanel?.UpdateLayout();
                 FocusSelectedItem();
             }
         }
