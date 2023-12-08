@@ -4,7 +4,7 @@
 
 ## How to install / uninstall
 
-### Zip version
+### ZIP version
 
   * NeeView<VERSION/>.zip
 
@@ -14,7 +14,7 @@
   Uninstallation basically only removes files. 
   Please note only if you registered in the Explorer context menu in the settings. This feature uses the registry, and can be removed from the registry by turning it off in settings.
 
-### Zip version (framework dependent)
+### ZIP version (framework dependent)
 
   * NeeView<VERSION/>-fd.zip
 
