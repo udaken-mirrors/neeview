@@ -71,11 +71,12 @@ namespace NeeView
         {
             if (_disposedValue) return;
 
-            if (!e.IsTopPageChanged) return;
-            Trace("CurrentPageChanged");
-
-            _pageChangedCount++;
-            _historyRemoved = false;
+            if (e.IsTopPageChanged)
+            {
+                Trace("CurrentPageChanged");
+                _pageChangedCount++;
+                _historyRemoved = false;
+            }
 
             TrySaveBookMemento();
         }
