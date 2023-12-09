@@ -44,7 +44,7 @@ namespace NeeView.PageFrames
         public event EventHandler? PagesChanged;
 
         [Subscribable]
-        public event EventHandler? SelectedRangeChanged;
+        public event EventHandler<PageRangeChangedEventArgs>? SelectedRangeChanged;
 
         [Subscribable]
         public event EventHandler<IsSortBusyChangedEventArgs>? IsSortBusyChanged;
@@ -68,12 +68,13 @@ namespace NeeView.PageFrames
                 var pages = GetPages(value);
                 if (_selectedRange != value || !pages.SequenceEqual(_selectedPages))
                 {
+                    var oldRange = _selectedRange;
                     _selectedRange = value;
                     _selectedPages = pages;
                     _book.SetCurrentPages(pages);
                     RaisePropertyChanged();
                     RaisePropertyChanged(nameof(SelectedPages));
-                    SelectedRangeChanged?.Invoke(this, EventArgs.Empty);
+                    SelectedRangeChanged?.Invoke(this, new PageRangeChangedEventArgs(_selectedRange, oldRange));
                 }
             }
         }

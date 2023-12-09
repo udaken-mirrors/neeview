@@ -134,5 +134,16 @@ namespace NeeView
             }
         }
 
+        /// <summary>
+        /// フレーム変更
+        /// </summary>
+        /// <param name="changeType"></param>
+        public override void OnUpdateSelectedFrame(FrameChangeType changeType)
+        {
+            if (changeType == FrameChangeType.Range && Config.Current.Loupe.IsResetByPageChanged && !Config.Current.Book.IsPanorama)
+            {
+                AppDispatcher.BeginInvoke(ResetState);
+            }
+        }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using NeeLaboratory;
 using NeeLaboratory.ComponentModel;
 using NeeLaboratory.Generators;
+using NeeView.PageFrames;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -26,7 +27,7 @@ namespace NeeView
             BookOperation.Current.BookChanged += BookOperation_BookChanged;
             BookOperation.Current.Control.PagesChanged += BookOperation_PageListChanged;
             //BookOperation.Current.Property.ViewContentsChanged += BookOperation_ViewContentsChanged;
-            BookOperation.Current.Control.SelectedRangeChanged += BookOperation_SelectedRangeChanged; ;
+            BookOperation.Current.Control.SelectedRangeChanged += BookOperation_SelectedRangeChanged;
         }
 
 
@@ -136,7 +137,7 @@ namespace NeeView
         //    RaiseViewContentsChanged(sender, e?.ViewPageCollection, false);
         //}
 
-        private void BookOperation_SelectedRangeChanged(object? sender, EventArgs e)
+        private void BookOperation_SelectedRangeChanged(object? sender, PageRangeChangedEventArgs e)
         {
             RaiseViewContentsChanged(sender, BookOperation.Current.Control.SelectedRange, false);
         }

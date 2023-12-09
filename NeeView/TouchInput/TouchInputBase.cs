@@ -57,7 +57,7 @@ namespace NeeView
         public virtual void OnStylusSystemGesture(object sender, StylusSystemGestureEventArgs e) { }
         public virtual void OnMouseWheel(object sender, MouseWheelEventArgs e) { }
         public virtual void OnKeyDown(object sender, KeyEventArgs e) { }
-        public virtual void OnUpdateSelectedFrame() { }
+        public virtual void OnUpdateSelectedFrame(FrameChangeType changeType) { }
 
         /// <summary>
         /// 状態遷移：既定状態に移動

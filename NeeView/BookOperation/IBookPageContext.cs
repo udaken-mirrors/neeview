@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NeeView.PageFrames;
+using System;
 using System.Collections.Generic;
 
 namespace NeeView
@@ -9,7 +10,7 @@ namespace NeeView
     public interface IBookPageContext
     {
         event EventHandler? PagesChanged;
-        event EventHandler? SelectedRangeChanged;
+        event EventHandler<PageRangeChangedEventArgs>? SelectedRangeChanged;
 
         IReadOnlyList<Page> Pages { get; }
         IReadOnlyList<Page> SelectedPages { get; }

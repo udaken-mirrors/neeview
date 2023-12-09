@@ -286,9 +286,9 @@ namespace NeeView
             _current?.OnKeyDown(_sender, e);
         }
 
-        public void UpdateSelectedFrame()
+        public void UpdateSelectedFrame(FrameChangeType changeType)
         {
-            _current?.OnUpdateSelectedFrame();
+            _current?.OnUpdateSelectedFrame(changeType);
         }
 
 

@@ -211,12 +211,21 @@ namespace NeeView
             // ESC で 状態解除
             if (Config.Current.Loupe.IsEscapeKeyEnabled && e.Key == Key.Escape && Keyboard.Modifiers == ModifierKeys.None)
             {
-                // ルーペ解除
                 ResetState();
-
                 e.Handled = true;
             }
         }
 
+        /// <summary>
+        /// フレーム変更
+        /// </summary>
+        /// <param name="changeType"></param>
+        public override void OnUpdateSelectedFrame(FrameChangeType changeType)
+        {
+            if (changeType == FrameChangeType.Range && Config.Current.Loupe.IsResetByPageChanged && !Config.Current.Book.IsPanorama)
+            {
+                AppDispatcher.BeginInvoke(ResetState);
+            }
+        }
     }
 }

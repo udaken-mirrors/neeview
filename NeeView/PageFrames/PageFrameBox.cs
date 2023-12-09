@@ -186,7 +186,7 @@ namespace NeeView.PageFrames
         public event EventHandler? SelectedContainerLayoutChanged;
 
         [Subscribable]
-        public event EventHandler? SelectedRangeChanged;
+        public event EventHandler<PageRangeChangedEventArgs>? SelectedRangeChanged;
 
         [Subscribable]
         public event EventHandler? PagesChanged;
@@ -1051,7 +1051,7 @@ namespace NeeView.PageFrames
         /// </remarks>
         public void DisposeViewContent(IEnumerable<Page> pages)
         {
-            foreach(var content in _containers.Select(e => e.Content).OfType<PageFrameContent>().Where(e => pages.Any(x =>e.PageFrame.Contains(x))))
+            foreach (var content in _containers.Select(e => e.Content).OfType<PageFrameContent>().Where(e => pages.Any(x => e.PageFrame.Contains(x))))
             {
                 content.DisposeViewContent();
             }

@@ -156,20 +156,22 @@ namespace NeeView
         // TODO: Selected 情報をまとめたなにか
         private void PageFrameBoxPresenter_SelectedContentSizeChanged(object? sender, EventArgs e)
         {
-            MouseInput.UpdateSelectedFrame();
-            TouchInput.UpdateSelectedFrame();
+            MouseInput.UpdateSelectedFrame(FrameChangeType.Size);
+            TouchInput.UpdateSelectedFrame(FrameChangeType.Size);
         }
 
         private void PageFrameBoxPresenter_SelectedContainerLayoutChanged(object? sender, EventArgs e)
         {
-            MouseInput.UpdateSelectedFrame();
-            TouchInput.UpdateSelectedFrame();
+            MouseInput.UpdateSelectedFrame(FrameChangeType.Layout);
+            TouchInput.UpdateSelectedFrame(FrameChangeType.Layout);
         }
 
-        private void PageFrameBoxPresenter_SelectedRangeChanged(object? sender, EventArgs e)
+        private void PageFrameBoxPresenter_SelectedRangeChanged(object? sender, PageRangeChangedEventArgs e)
         {
-            MouseInput.UpdateSelectedFrame();
-            TouchInput.UpdateSelectedFrame();
+            //Debug.WriteLine($"SelectedRangeChanged: {e}");
+            var changeType = e.IsMatchAnyEdge() ? FrameChangeType.RangeSize : FrameChangeType.Range;
+            MouseInput.UpdateSelectedFrame(changeType);
+            TouchInput.UpdateSelectedFrame(changeType);
         }
 
         public void RaiseOpenContextMenuRequest()

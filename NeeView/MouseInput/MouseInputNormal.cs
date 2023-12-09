@@ -109,7 +109,7 @@ namespace NeeView
                 sender.Cursor = null;
             }
 
-            OnUpdateSelectedFrame();
+            OnUpdateSelectedFrame(FrameChangeType.None);
         }
 
         /// <summary>
@@ -254,7 +254,7 @@ namespace NeeView
         }
 
 
-        public override void OnUpdateSelectedFrame()
+        public override void OnUpdateSelectedFrame(FrameChangeType changeType)
         {
             _hoverTransformControl?.UpdateSelected();
         }

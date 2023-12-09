@@ -126,7 +126,7 @@ namespace NeeView
         /// <summary>
         /// 選択フレーム変更
         /// </summary>
-        public virtual void OnUpdateSelectedFrame() { }
+        public virtual void OnUpdateSelectedFrame(FrameChangeType changeType) { }
 
         /// <summary>
         /// 専有判定

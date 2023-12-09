@@ -42,7 +42,7 @@ namespace NeeView
 
 
         public event EventHandler? PagesChanged;
-        public event EventHandler? SelectedRangeChanged;
+        public event EventHandler<PageRangeChangedEventArgs>? SelectedRangeChanged;
 
         public IReadOnlyList<Page> Pages => _book.Pages;
         public IReadOnlyList<Page> SelectedPages => _selectedPages;
@@ -85,7 +85,7 @@ namespace NeeView
             AppDispatcher.Invoke(() => PagesChanged?.Invoke(sender, EventArgs.Empty));
         }
 
-        private void Book_SelectedRangeChanged(object? sender, EventArgs e)
+        private void Book_SelectedRangeChanged(object? sender, PageRangeChangedEventArgs e)
         {
             var range = SelectedRange;
             var indexes = Enumerable.Range(range.Min.Index, range.Max.Index - range.Min.Index + 1);

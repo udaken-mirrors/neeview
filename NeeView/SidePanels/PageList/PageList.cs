@@ -1,6 +1,7 @@
 ﻿using NeeLaboratory;
 using NeeLaboratory.ComponentModel;
 using NeeLaboratory.IO.Search;
+using NeeView.PageFrames;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -223,7 +224,7 @@ namespace NeeView
         //    RefreshSelectedItem();
         //}
 
-        private void BookOperation_SelectedRangeChanged(object? sender, EventArgs e)
+        private void BookOperation_SelectedRangeChanged(object? sender, PageRangeChangedEventArgs e)
         {
             RefreshSelectedItem();
         }

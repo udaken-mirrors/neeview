@@ -126,7 +126,7 @@ namespace NeeView
             HoverScrollIfEnabled(sender, e);
         }
 
-        public override void OnUpdateSelectedFrame()
+        public override void OnUpdateSelectedFrame(FrameChangeType changeType)
         {
             _hoverTransformControl?.UpdateSelected();
         }

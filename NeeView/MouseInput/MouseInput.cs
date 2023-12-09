@@ -458,9 +458,10 @@ namespace NeeView
         }
 
 
-        public void UpdateSelectedFrame()
+        public void UpdateSelectedFrame(FrameChangeType changeType)
         {
-            _current?.OnUpdateSelectedFrame();
+            //Debug.WriteLine($"UpdateSelectedFrame: {changeType}");
+            _current?.OnUpdateSelectedFrame(changeType);
         }
 
 

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NeeView.PageFrames;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
@@ -45,7 +46,7 @@ namespace NeeView
             _vm.Dispose();
         }
 
-        private void BookOperation_SelectedRangeChanged(object? sender, EventArgs e)
+        private void BookOperation_SelectedRangeChanged(object? sender, PageRangeChangedEventArgs e)
         {
             ////var page = BookOperation.Current.Book?.GetViewPage();
             ////this.Root.ScrollIntoView(page);

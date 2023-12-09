@@ -88,7 +88,7 @@ namespace NeeView
         public event EventHandler<PageFrameBoxChangedEventArgs>? PageFrameBoxChanged;
 
         [Subscribable]
-        public event EventHandler? SelectedRangeChanged;
+        public event EventHandler<PageRangeChangedEventArgs>? SelectedRangeChanged;
 
         [Subscribable]
         public event EventHandler<FrameViewContentChangedEventArgs>? ViewContentChanged;
@@ -241,7 +241,7 @@ namespace NeeView
                 RaisePropertyChanged(nameof(View));
                 RaisePropertyChanged(null);
                 PagesChanged?.Invoke(this, EventArgs.Empty);
-                SelectedRangeChanged?.Invoke(this, EventArgs.Empty);
+                SelectedRangeChanged?.Invoke(this, PageRangeChangedEventArgs.Empty);
 
                 ViewContentChanged?.Invoke(this, new FrameViewContentChangedEventArgs(ViewContentChangedAction.ContentLoaded, null, Array.Empty<ViewContent>(), 1));
                 RaiseViewPageChanged(new ViewPageChangedEventArgs(Array.Empty<Page>()));
@@ -277,7 +277,7 @@ namespace NeeView
 
             RaisePropertyChanged(null);
             PagesChanged?.Invoke(this, EventArgs.Empty);
-            SelectedRangeChanged?.Invoke(this, EventArgs.Empty);
+            SelectedRangeChanged?.Invoke(this, new PageRangeChangedEventArgs(_box.SelectedRange, PageRange.Empty));
         }
 
         private void BookContext_IsSortBusyChanged(object? sender, IsSortBusyChangedEventArgs e)
@@ -507,7 +507,7 @@ namespace NeeView
             PagesChanged?.Invoke(this, e);
         }
 
-        private void Box_SelectedRangeChanged(object? sender, EventArgs e)
+        private void Box_SelectedRangeChanged(object? sender, PageRangeChangedEventArgs e)
         {
             SelectedRangeChanged?.Invoke(this, e);
         }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NeeView.PageFrames;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
@@ -15,7 +16,7 @@ namespace NeeView
         }
 
         public event EventHandler? PagesChanged;
-        public event EventHandler? SelectedRangeChanged;
+        public event EventHandler<PageRangeChangedEventArgs>? SelectedRangeChanged;
 
         public IReadOnlyList<Page> Pages => _source?.Pages ?? new List<Page>();
         public IReadOnlyList<Page> SelectedPages => _source?.SelectedPages ?? new List<Page>();
@@ -76,7 +77,7 @@ namespace NeeView
             PagesChanged?.Invoke(sender, e);
         }
 
-        private void Source_SelectedItemChanged(object? sender, EventArgs e)
+        private void Source_SelectedItemChanged(object? sender, PageRangeChangedEventArgs e)
         {
             SelectedRangeChanged?.Invoke(sender, e);
         }
