@@ -1419,6 +1419,9 @@
         <Component Id="cmp37830DB725CE8DCC5E8516066239FDBF" Guid="*">
           <File Id="fil01C14520B94D5DF582DC90444367BECA" KeyPath="yes" Source="$(var.ContentDir)\pt-BR\Microsoft.VisualBasic.Forms.resources.dll" />
         </Component>
+        <Component Id="cmp720632ACCA8355114E23DD7D80A702A4" Guid="*">
+          <File Id="fil791AFCD0F2D310C629D36C82B3343308" KeyPath="yes" Source="$(var.ContentDir)\pt-BR\NeeView.resources.dll" />
+        </Component>
         <Component Id="cmpA56B056AB7FEBDC8D40408E0C9EB2F7F" Guid="*">
           <File Id="fil453207D66BAF7E21E079BB340A03359C" KeyPath="yes" Source="$(var.ContentDir)\pt-BR\PresentationCore.resources.dll" />
         </Component>
@@ -2162,6 +2165,7 @@
       <ComponentRef Id="cmpE7B88935D95196C8006E82A51B780AB5" />
       <ComponentRef Id="cmp9892F9C36F1A4435522B9A751FFCFCAA" />
       <ComponentRef Id="cmp37830DB725CE8DCC5E8516066239FDBF" />
+      <ComponentRef Id="cmp720632ACCA8355114E23DD7D80A702A4" />
       <ComponentRef Id="cmpA56B056AB7FEBDC8D40408E0C9EB2F7F" />
       <ComponentRef Id="cmpB6CEBD9E7DC5FBA3C204717F046133B0" />
       <ComponentRef Id="cmp3A92E633EA0433AF6999BA79D6EBA579" />

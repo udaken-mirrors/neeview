@@ -25,6 +25,12 @@ trap { break }
 
 $ErrorActionPreference = "stop"
 
+Write-Host "Target: $Target"
+Write-Host "Continue: $continue"
+Write-Host "Trace: $trace"
+Write-Host "x86: $x86"
+Write-Host "updateComponent: $updateComponent" 
+
 #
 $product = 'NeeView'
 $configuration = 'Release'
