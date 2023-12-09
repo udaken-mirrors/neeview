@@ -4,11 +4,11 @@ If you provide the created language file (.restext), we can incorporate it into 
 
 ## Environment
 
-- Visual Studio 2019
+- Visual Studio 2022
     
     Required to use ResGen.exe and Al.exe for conversion. Install the workload ".NET Desktop Development".
 
-- Zip version of NeeView (ver 39.0 or later or Canarry)
+- Zip version of NeeView (ver 40.0 or later or Canary)
     
     It is for operation check.
 
@@ -58,13 +58,12 @@ Create a culture folder in the NeeView folder of the product for operation check
     e.g.
     + NeeView.exe
     + NeeView.exe.config
-    + Libraries\
-        + de-DE\ <- Create this folder.
-            + NeeView.resources.dll <- Place here.
+    + de-DE\ <- Create this folder.
+        + NeeView.resources.dll <- Place here.
 
 ### Step.4 App settings
 
-Edit "NeeView.exe.config" to allow you to select the culture of the language you created.
+Edit "NeeView.dll.config" to allow you to select the culture of the language you created.
 Add the culture code to "Cultures" in "<appSettings>".
 
     e.g.
@@ -80,9 +79,9 @@ If the language file is reflected, it is successful.
 ### Step.2-B Low-level way to create NeeView.resources.dll
 
 Create "NeeView.resources.dll" from "Resource.[culture].restext" by a method different from Step.2.
-No dedicated script is used. Use only .NET Frameworl tools commands.
+No dedicated script is used. Use only .NET Framework tools commands.
 
-0. Visual Studio 2019 must be installed. This is to use the included Al.exe and ResGen.exe.
+0. Visual Studio 2022 must be installed. This is to use the included Al.exe and ResGen.exe.
 
 1. [Open Visual Studio Developer Command Prompt](https://docs.microsoft.com/en-us/visualstudio/ide/reference/command-prompt-powershell?view=vs-2019)
 
