@@ -20,6 +20,7 @@ namespace NeeView.PageFrames
             _loupeContext = loupeContext;
             _disposables.Add(_loupeContext.SubscribeTransformChanged(LoupeContext_TransformChanged));
             _disposables.Add(context.SubscribePropertyChanged(nameof(context.PageMode), (s, e) => Update()));
+            _disposables.Add(context.SubscribePropertyChanged(nameof(context.IsPanorama), (s, e) => Update()));
 
             TransformView.Changed += TransformView_Changed;
             _disposables.Add(() => TransformView.Changed -= TransformView_Changed);
