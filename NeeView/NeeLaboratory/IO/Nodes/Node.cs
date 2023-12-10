@@ -12,7 +12,8 @@ namespace NeeLaboratory.IO.Nodes
         {
             Name = name.TrimEnd('\\');
 
-            if (Name.Contains("\\")) throw new ArgumentException("It contains a delimiter: '\\'");
+            // NOTE: ネットワークパス用に先頭の区切り文字を許容する
+            if (Name.TrimStart('\\').Contains("\\")) throw new ArgumentException("It contains a delimiter: '\\'");
         }
 
         public string Name { get; set; }

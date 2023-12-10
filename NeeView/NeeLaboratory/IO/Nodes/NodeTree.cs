@@ -17,7 +17,7 @@ namespace NeeLaboratory.IO.Nodes
         public NodeTree(string path)
         {
             var node = _root;
-            var names = path.Split('\\', StringSplitOptions.RemoveEmptyEntries);
+            var names = SplitPath(path);
 
             foreach (var name in names)
             {
@@ -31,6 +31,23 @@ namespace NeeLaboratory.IO.Nodes
 
         public Node Trunk => _trunk;
 
+
+        private static IEnumerable<string> SplitPath(string path)
+        {
+            var tokens = path.Split('\\', StringSplitOptions.RemoveEmptyEntries);
+
+            // ネットワークパス用に先頭の区切り文字を戻す
+            if (tokens.Any())
+            {
+                foreach (var c in path)
+                {
+                    if (c != '\\') break;
+                    tokens[0] = "\\" + tokens[0];
+                }
+            }
+
+            return tokens;
+        }
 
         public Node? Find(string path)
         {
@@ -123,7 +140,7 @@ namespace NeeLaboratory.IO.Nodes
                 Debug.Assert(node.Children is null || !node.Children.GroupBy(i => i).SelectMany(g => g.Skip(1)).Any());
             }
 
-            
+
         }
     }
 
