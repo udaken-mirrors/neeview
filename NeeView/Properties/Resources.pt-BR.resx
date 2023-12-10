@@ -318,12 +318,12 @@ nv.Command.ToggleMediaPlay.Execute()
     &lt;tr&gt;&lt;td&gt;/bookmark&lt;/td&gt;&lt;td&gt;Bookmarked&lt;/td&gt;&lt;td&gt;Filter. Valid in the Bookshelf, History, and Bookmarks panels.&lt;/td&gt;&lt;/tr&gt;
     &lt;tr&gt;&lt;td&gt;/history&lt;/td&gt;&lt;td&gt;History registered&lt;/td&gt;&lt;td&gt;Filter. Valid in the Bookshelf, History, and Bookmarks panels.&lt;/td&gt;&lt;/tr&gt;
     &lt;tr&gt;&lt;td&gt;/playlist&lt;/td&gt;&lt;td&gt;Playlist registered&lt;/td&gt;&lt;td&gt;Filter. Valid in the PageList panel.&lt;/td&gt;&lt;/tr&gt;
-    &lt;tr&gt;&lt;td&gt;/title&lt;/td&gt;&lt;td&gt;Title&lt;/td&gt;&lt;td&gt;String. Page information. Valid in the PageList panel.&lt;/td&gt;&lt;/tr&gt;
-    &lt;tr&gt;&lt;td&gt;/subject&lt;/td&gt;&lt;td&gt;Subject&lt;/td&gt;&lt;td&gt;String. Page information. Valid in the PageList panel.&lt;/td&gt;&lt;/tr&gt;
-    &lt;tr&gt;&lt;td&gt;/rating&lt;/td&gt;&lt;td&gt;Rating&lt;/td&gt;&lt;td&gt;Numerals. Page information. Valid in the PageList panel.&lt;/td&gt;&lt;/tr&gt;
-    &lt;tr&gt;&lt;td&gt;/tags&lt;/td&gt;&lt;td&gt;Tags&lt;/td&gt;&lt;td&gt;String. Page information. Valid in the PageList panel.&lt;/td&gt;&lt;/tr&gt;
-    &lt;tr&gt;&lt;td&gt;/comments&lt;/td&gt;&lt;td&gt;Comments&lt;/td&gt;&lt;td&gt;String. Page information. Valid in the PageList panel.&lt;/td&gt;&lt;/tr&gt;
-    &lt;tr&gt;&lt;td&gt;/p.meta.[key]&lt;/td&gt;&lt;td&gt;Meta information&lt;/td&gt;&lt;td&gt;String. Page information. Valid in the PageList panel. See "Meta Information" section for details&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;/title&lt;/td&gt;&lt;td&gt;Title&lt;/td&gt;&lt;td&gt;String. Informação da página. Valid in the PageList panel.&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;/subject&lt;/td&gt;&lt;td&gt;Subject&lt;/td&gt;&lt;td&gt;String. Informação da página. Valid in the PageList panel.&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;/rating&lt;/td&gt;&lt;td&gt;Rating&lt;/td&gt;&lt;td&gt;Numerals. Informação da página. Valid in the PageList panel.&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;/tags&lt;/td&gt;&lt;td&gt;Tags&lt;/td&gt;&lt;td&gt;String. Informação da página. Valid in the PageList panel.&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;/comments&lt;/td&gt;&lt;td&gt;Comments&lt;/td&gt;&lt;td&gt;String. Informação da página. Valid in the PageList panel.&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;/p.meta.[key]&lt;/td&gt;&lt;td&gt;Meta information&lt;/td&gt;&lt;td&gt;String. Informação da página. Valid in the PageList panel. See "Meta Information" section for details&lt;/td&gt;&lt;/tr&gt;
 &lt;/table&gt;
 
 &lt;h3&gt;Match options&lt;/h3&gt;
@@ -635,7 +635,7 @@ Search for pages containing "smile" in "parameters" in "@InformationGroup.Extras
     <value>Especifique o caminho do arquivo de configuração "UserSetting.json"</value>
   </data>
   <data name="AppOption.Terminator" xml:space="preserve">
-    <value>Indica o fim da lista de opções. Os argumentos subsequentes são considerados nomes de arquivos.</value>
+    <value>Indica o fim da lista de opções. Os argumentos subseqüentes são considerados nomes de arquivos.</value>
   </data>
   <data name="AppOption.WindowState" xml:space="preserve">
     <value>Iniciar com estado da janela especificado</value>
@@ -680,10 +680,10 @@ Search for pages containing "smile" in "parameters" in "@InformationGroup.Extras
     <value>Arquivo temporário</value>
   </data>
   <data name="AutoHideConfig.AutoHideConfrictBottomMargin" xml:space="preserve">
-    <value>Exibir automaticamente julgamento do slider no painel lateral</value>
+    <value>Exibir automaticamente barra slider no painel lateral</value>
   </data>
   <data name="AutoHideConfig.AutoHideConfrictTopMargin" xml:space="preserve">
-    <value>Exibir automaticamente julgamento da barra de menu no painel lateral</value>
+    <value>Exibir automaticamente barra de menu no painel lateral</value>
   </data>
   <data name="AutoHideConfig.AutoHideDelayTime" xml:space="preserve">
     <value>Tempo para ocultar o painel de ocultação automática (seg)</value>
@@ -806,7 +806,7 @@ Search for pages containing "smile" in "parameters" in "@InformationGroup.Extras
     <value>Raio</value>
   </data>
   <data name="BookAccessor" xml:space="preserve">
-    <value>Acessador de livro</value>
+    <value>Acessor de livros</value>
   </data>
   <data name="BookAccessor.Config" xml:space="preserve">
     <value>Configuração do livro</value>
@@ -848,16 +848,16 @@ Search for pages containing "smile" in "parameters" in "@InformationGroup.Extras
     <value>Pastas excluídas</value>
   </data>
   <data name="BookConfig.IsAutoRecursive" xml:space="preserve">
-    <value>Se a subpasta for independente, leia-a sem verificar</value>
+    <value>Se a sub-pasta for independente, leia-a sem verificar</value>
   </data>
   <data name="BookConfig.IsAutoRecursive.Remarks" xml:space="preserve">
-    <value>Carrega subpastas automaticamente se não houver páginas e existir apenas uma subpasta.</value>
+    <value>Carrega subastas automaticamente se não houver páginas e existir apenas uma sub-pasta.</value>
   </data>
   <data name="BookConfig.IsConfirmRecursive" xml:space="preserve">
-    <value>Pergunte se deseja carregá-la quando tiver apenas uma subpasta</value>
+    <value>Pergunte se deseja carregá-la quando tiver apenas uma sub-pasta</value>
   </data>
   <data name="BookConfig.IsConfirmRecursive.Remarks" xml:space="preserve">
-    <value>Se não houver nenhuma página que possa ser exibida quando o livro for aberto e existir uma subpasta, uma caixa de diálogo será exibida perguntando se a subpasta deve ser carregada.</value>
+    <value>Se não houver nenhuma página que possa ser exibida quando o livro for aberto e existir uma sub-pasta, uma caixa de diálogo será exibida perguntando se a sub-pasta deve ser carregada.</value>
   </data>
   <data name="BookConfig.IsInsertDummyPage" xml:space="preserve">
     <value>Inserir uma página fictícia para uma página espelhada dupla</value>
@@ -908,7 +908,7 @@ Search for pages containing "smile" in "parameters" in "@InformationGroup.Extras
     <value>Aberto à esquerda / Aberto à direita</value>
   </data>
   <data name="BookConfigAccessor.IsRecursiveFolder" xml:space="preserve">
-    <value>Carregar subpasta</value>
+    <value>Carregar sub-pasta</value>
   </data>
   <data name="BookConfigAccessor.IsSupportedDividePage" xml:space="preserve">
     <value>Dividir página em paisagem</value>
@@ -932,7 +932,7 @@ Search for pages containing "smile" in "parameters" in "@InformationGroup.Extras
     <value>Pastas temporárias não podem ser marcadas</value>
   </data>
   <data name="Bookmark.Title" xml:space="preserve">
-    <value>Marcador</value>
+    <value>Marcadores</value>
   </data>
   <data name="Bookmark.Up.ToolTip" xml:space="preserve">
     <value>Subir (Alt+Up)</value>
@@ -989,13 +989,13 @@ Search for pages containing "smile" in "parameters" in "@InformationGroup.Extras
     <value>Orientação do livro</value>
   </data>
   <data name="BookMementoFilter.IsRecursiveFolder" xml:space="preserve">
-    <value>Carregar subpasta</value>
+    <value>Carregar sub-pasta</value>
   </data>
   <data name="BookMementoFilter.IsSupportedDividePage" xml:space="preserve">
     <value>Dividir página longa horizontalmente</value>
   </data>
   <data name="BookMementoFilter.IsSupportedSingleFirstPage" xml:space="preserve">
-    <value>A primeira página sozinha</value>
+    <value>Mostrar apenas a primeira página</value>
   </data>
   <data name="BookMementoFilter.IsSupportedSingleLastPage" xml:space="preserve">
     <value>A última página sozinha</value>
@@ -1025,7 +1025,7 @@ Search for pages containing "smile" in "parameters" in "@InformationGroup.Extras
     <value>Orientação do livro</value>
   </data>
   <data name="BookSettingConfig.IsRecursiveFolder" xml:space="preserve">
-    <value>Carregar subpasta</value>
+    <value>Carregar sub-pasta</value>
   </data>
   <data name="BookSettingConfig.IsRecursiveFolder.Remarks" xml:space="preserve">
     <value>Como pesquisa tudo na pasta a ser aberta, a carga pode ser alta dependendo do local onde for aberto.</value>
@@ -1034,7 +1034,7 @@ Search for pages containing "smile" in "parameters" in "@InformationGroup.Extras
     <value>Dividir página longa horizontalmente</value>
   </data>
   <data name="BookSettingConfig.IsSupportedSingleFirstPage" xml:space="preserve">
-    <value>A primeira página sozinha</value>
+    <value>Mostrar apenas a primeira página</value>
   </data>
   <data name="BookSettingConfig.IsSupportedSingleLastPage" xml:space="preserve">
     <value>A última página sozinha</value>
@@ -1094,7 +1094,7 @@ Search for pages containing "smile" in "parameters" in "@InformationGroup.Extras
     <value>Padrão</value>
   </data>
   <data name="BookSettingSelectMode.RestoreOrContinue" xml:space="preserve">
-    <value>Restaurar, caso contrário, continuar</value>
+    <value>Restaurar, caso contrário, continue</value>
   </data>
   <data name="BookSettingSelectMode.RestoreOrDefault" xml:space="preserve">
     <value>Restaurar, caso contrário, padrão</value>
@@ -1109,10 +1109,10 @@ Search for pages containing "smile" in "parameters" in "@InformationGroup.Extras
     <value>Falha na cópia</value>
   </data>
   <data name="Bookshelf.Home.Menu.Set" xml:space="preserve">
-    <value>Defina este lugar como página inicial</value>
+    <value>Defina este lugar como início</value>
   </data>
   <data name="Bookshelf.Home.ToolTip" xml:space="preserve">
-    <value>Ir para o Página Inicial (Alt+Home)</value>
+    <value>Ir para o Início (Alt+Home)</value>
   </data>
   <data name="Bookshelf.Message.MoveToFolderFailed" xml:space="preserve">
     <value>Falha na movimentação</value>
@@ -1136,13 +1136,13 @@ Search for pages containing "smile" in "parameters" in "@InformationGroup.Extras
     <value>Opções de busca</value>
   </data>
   <data name="Bookshelf.MoreMenu.Subfolder" xml:space="preserve">
-    <value>Carregar subpastas neste local</value>
+    <value>Carregar subastas neste local</value>
   </data>
   <data name="Bookshelf.Next.ToolTip" xml:space="preserve">
     <value>Próximo (Alt+Direita)</value>
   </data>
   <data name="Bookshelf.SubFolder.ToolTip" xml:space="preserve">
-    <value>Carregar subpasta</value>
+    <value>Carregar sub-pasta</value>
   </data>
   <data name="Bookshelf.Sync.ToolTip" xml:space="preserve">
     <value>Mover para o local atual do livro</value>
@@ -1169,7 +1169,7 @@ Search for pages containing "smile" in "parameters" in "@InformationGroup.Extras
     <value>Fechar o livro ao alterar o local</value>
   </data>
   <data name="BookshelfConfig.IsCruise" xml:space="preserve">
-    <value>Habilitar navegação por pastas</value>
+    <value>Habilitar Navegação por Pastas</value>
   </data>
   <data name="BookshelfConfig.IsCruise.Remarks" xml:space="preserve">
     <value>Mover a pasta incluindo o pai e o filho da pasta. Não se aplica quando a estante é um resultado de pesquisa.</value>
@@ -1196,13 +1196,13 @@ Search for pages containing "smile" in "parameters" in "@InformationGroup.Extras
     <value>Ordenar sem tipo de arquivo</value>
   </data>
   <data name="BookshelfConfig.IsSearchIncludeSubdirectories" xml:space="preserve">
-    <value>Faça uma pesquisa incluindo subpastas</value>
+    <value>Faça uma pesquisa incluindo sub-pastas</value>
   </data>
   <data name="BookshelfConfig.IsSyncFolderTree" xml:space="preserve">
     <value>Sincronizar árvore de pastas com botão de sincronização</value>
   </data>
   <data name="BookshelfConfig.IsVisibleBookmarkMark" xml:space="preserve">
-    <value>Exibir símbolos de marcador</value>
+    <value>Exibir símbolos de marcadores</value>
   </data>
   <data name="BookshelfConfig.IsVisibleBookmarkMark.Remarks" xml:space="preserve">
     <value>marca ★ é exibida no livro marcado.</value>
@@ -1253,7 +1253,7 @@ Search for pages containing "smile" in "parameters" in "@InformationGroup.Extras
     <value>Mover para _subpasta</value>
   </data>
   <data name="BookshelfItem.Menu.OpenBook" xml:space="preserve">
-    <value>_Abrit</value>
+    <value>_Abrir</value>
   </data>
   <data name="BookshelfItem.Menu.OpenExternalApp" xml:space="preserve">
     <value>Abrir em um _app externo</value>
@@ -1265,7 +1265,7 @@ Search for pages containing "smile" in "parameters" in "@InformationGroup.Extras
     <value>Reno_mear</value>
   </data>
   <data name="BookshelfItem.Menu.Subfolder" xml:space="preserve">
-    <value>Carregar subpasta</value>
+    <value>Carregar sub-pasta</value>
   </data>
   <data name="BookshelfItemAccessor" xml:space="preserve">
     <value>Acessador de itens de estante</value>
@@ -1280,7 +1280,7 @@ Search for pages containing "smile" in "parameters" in "@InformationGroup.Extras
     <value>Acessador de painel de estante</value>
   </data>
   <data name="BookshelfPanelAccessor.Example" xml:space="preserve">
-    <value>// Exemplo: Selecione itens que começam com "A"
+    <value>// Exemplo: Selecionar itens que começam com "A"
 nv.Bookshelf.SelectedItems = nv.Bookshelf.Items.filter(e =&gt; e.Name.startsWith('A'))</value>
   </data>
   <data name="BookshelfPanelAccessor.FolderOrder" xml:space="preserve">
@@ -1350,7 +1350,7 @@ nv.Bookshelf.SelectedItems = nv.Bookshelf.Items.filter(e =&gt; e.Name.startsWith
     <value>Interrompe um script em execução que possui uma instrução de "suspensão".</value>
   </data>
   <data name="CannotDeleteDataException_Message" xml:space="preserve">
-    <value>It is not an AppData folder, so it will not be deleted.</value>
+    <value>Não é uma pasta AppData, portanto não será excluída.</value>
   </data>
   <data name="ClearHistoryCommand" xml:space="preserve">
     <value>Limpar o histórico</value>
@@ -1408,7 +1408,7 @@ nv.Bookshelf.SelectedItems = nv.Bookshelf.Items.filter(e =&gt; e.Name.startsWith
 nv.Command.LoadAs.Execute("C:\\Foo\\Bar.zip")</value>
   </data>
   <data name="CommandAccessor.Execute.Remarks" xml:space="preserve">
-    <value>Alguns comandos permitem especificar argumentos. Eles podem ser usados com o propósito de omitir a seleção do usuário, especificando o argumento no comando que normalmente exibe a caixa de diálogo.</value>
+    <value>Alguns comandos permitem especificar argumentos. Eles podem ser usados ​​com o propósito de omitir a seleção do usuário, especificando o argumento no comando que normalmente exibe a caixa de diálogo.</value>
   </data>
   <data name="CommandAccessor.Execute.Returns" xml:space="preserve">
     <value>Sucesso ou falha na emissão do comando. Os comandos não podem ser emitidos durante o carregamento. O sucesso ou fracasso do comando em si não é determinado.</value>
@@ -1420,7 +1420,7 @@ nv.Command.LoadAs.Execute("C:\\Foo\\Bar.zip")</value>
     <value>Gestos do mouse</value>
   </data>
   <data name="CommandAccessor.MouseGesture.Example" xml:space="preserve">
-    <value>// Set "↑←↓" ao gesto do mouse de ViewRotateLeft command
+    <value>// Definir "↑←↓" ao gesto do mouse de ViewRotateLeft command
 nv.Command.ViewRotateLeft.MouseGesture = "ULD"</value>
   </data>
   <data name="CommandAccessor.Parameter" xml:space="preserve">
@@ -1482,7 +1482,7 @@ nv.Command.ViewRotateLeft.TouchGesture = "TouchCenter"</value>
     <value>Você pode selecionar correspondência apenas para operação do volante.</value>
   </data>
   <data name="CommandGroup.Bookmark" xml:space="preserve">
-    <value>Marcador</value>
+    <value>Marcadores</value>
   </data>
   <data name="CommandGroup.BookMove" xml:space="preserve">
     <value>Mover livro</value>
@@ -1500,7 +1500,7 @@ nv.Command.ViewRotateLeft.TouchGesture = "TouchCenter"</value>
     <value>Tira de filme</value>
   </data>
   <data name="CommandGroup.ImageScale" xml:space="preserve">
-    <value>Esticar</value>
+    <value>Alongar</value>
   </data>
   <data name="CommandGroup.Move" xml:space="preserve">
     <value>Mover página</value>
@@ -1591,8 +1591,8 @@ nv.Config.Theme.ThemeType = "Dark"</value>
     <value>Exiba a caixa de diálogo.</value>
   </data>
   <data name="CommandHost.ShowDialog.commands" xml:space="preserve">
-    <value>0: OK / 1: OKCancel / 2: YesNo
-Button types (opcional)</value>
+    <value>{0} OK/ 1: OKCancel / 2: YesNo
+Button types (optional)</value>
   </data>
   <data name="CommandHost.ShowDialog.Example" xml:space="preserve">
     <value>isYes = nv.ShowDialog("Isso é uma caneta?", "Acho que é uma caneta, sério?", 2)
@@ -1700,10 +1700,10 @@ nv.Values.Test = "Olá!"</value>
     <value>Restaurar comando</value>
   </data>
   <data name="ConfirmRecursiveDialog.Message" xml:space="preserve">
-    <value>Não há nenhum arquivo que possa ser lido em "{0}". Você também carrega subpastas ou arquivos compactados?</value>
+    <value>Não há nenhum arquivo que possa ser lido em "{0}". Você também carrega sub-pastas ou arquivos compactados?</value>
   </data>
   <data name="ConfirmRecursiveDialog.Title" xml:space="preserve">
-    <value>Você também lê subpastas?</value>
+    <value>Você também lê sub-pastas?</value>
   </data>
   <data name="ControlConfig.IsSelected" xml:space="preserve">
     <value>Painel selecionado</value>
@@ -1949,7 +1949,7 @@ Os seguintes dados serão excluídos
     <value>Mantenha o ponto</value>
   </data>
   <data name="Effect.ResizeFilter" xml:space="preserve">
-    <value>Filtro de resimensionamento</value>
+    <value>Filtro de redimensionamento</value>
   </data>
   <data name="Effect.ResizeInterpolation" xml:space="preserve">
     <value>Interpolação</value>
@@ -2069,58 +2069,58 @@ Os seguintes dados serão excluídos
     <value>Flash não disparou</value>
   </data>
   <data name="ExifFlashMode.FlashDidNotFire_AutoMode" xml:space="preserve">
-    <value>Flash did not fire, auto mode</value>
+    <value>Flash não disparou, modo automático</value>
   </data>
   <data name="ExifFlashMode.FlashDidNotFire_CompulsoryFlashMode" xml:space="preserve">
-    <value>Flash did not fire, compulsory flash mode</value>
+    <value>Flash não disparou, modo de flash forçado</value>
   </data>
   <data name="ExifFlashMode.FlashFired" xml:space="preserve">
     <value>Flash disparado</value>
   </data>
   <data name="ExifFlashMode.FlashFired_AutoMode" xml:space="preserve">
-    <value>Flash fired, auto mode</value>
+    <value>Flash disparado, modo automático</value>
   </data>
   <data name="ExifFlashMode.FlashFired_AutoMode_RedEyeReductionMode" xml:space="preserve">
-    <value>Flash fired, auto mode, red-eye reduction mode</value>
+    <value>Flash disparado, modo automático, modo de redução de olhos vermelhos</value>
   </data>
   <data name="ExifFlashMode.FlashFired_AutoMode_ReturnLightDetected" xml:space="preserve">
-    <value>Flash fired, auto mode, return light detected</value>
+    <value>Flash disparado, modo automático, luz de retorno detectada</value>
   </data>
   <data name="ExifFlashMode.FlashFired_AutoMode_ReturnLightDetected_RedEyeReductionMode" xml:space="preserve">
-    <value>Flash fired, auto mode, return light detected, red-eye reduction mode</value>
+    <value>Flash disparado, modo automático, luz de retorno detectada, modo de redução de olhos vermelhos</value>
   </data>
   <data name="ExifFlashMode.FlashFired_AutoMode_ReturnLightNotDetected" xml:space="preserve">
-    <value>Flash fired, auto mode, return light not detected</value>
+    <value>Flash disparado, modo automático, luz de retorno não detectada</value>
   </data>
   <data name="ExifFlashMode.FlashFired_AutoMode_ReturnLightNotDetected_RedEyeReductionMode" xml:space="preserve">
-    <value>Flash fired, auto mode, return light not detected, red-eye reduction mode</value>
+    <value>Flash disparado, modo automático, luz de retorno não detectada, modo de redução de olhos vermelhos</value>
   </data>
   <data name="ExifFlashMode.FlashFired_CompulsoryFlashMode" xml:space="preserve">
-    <value>Flash fired, compulsory flash mode</value>
+    <value>Flash disparado, modo flash obrigatório</value>
   </data>
   <data name="ExifFlashMode.FlashFired_CompulsoryFlashMode_RedEyeReductionMode" xml:space="preserve">
-    <value>Flash fired, compulsory flash mode, red-eye reduction mode</value>
+    <value>Flash disparado, modo automático, modo de redução de olhos vermelhos</value>
   </data>
   <data name="ExifFlashMode.FlashFired_CompulsoryFlashMode_RedEyeReductionMode_ReturnLightDetected" xml:space="preserve">
-    <value>Flash fired, compulsory flash mode, red-eye reduction mode, return light detected</value>
+    <value>Flash disparado, modo de flash obrigatório, modo de redução de olhos vermelhos, luz de retorno detectada</value>
   </data>
   <data name="ExifFlashMode.FlashFired_CompulsoryFlashMode_RedEyeReductionMode_ReturnLightNotDetected" xml:space="preserve">
-    <value>Flash fired, compulsory flash mode, red-eye reduction mode, return light not detected</value>
+    <value>Flash disparado, modo de flash obrigatório, modo de redução de olhos vermelhos, luz de retorno não detectada</value>
   </data>
   <data name="ExifFlashMode.FlashFired_CompulsoryFlashMode_ReturnLightDetected" xml:space="preserve">
-    <value>Flash fired, compulsory flash mode, return light detected</value>
+    <value>Flash disparado, modo de flash obrigatório, luz de retorno detectada</value>
   </data>
   <data name="ExifFlashMode.FlashFired_CompulsoryFlashMode_ReturnLightNotDetected" xml:space="preserve">
-    <value>Flash fired, compulsory flash mode, return light not detected</value>
+    <value>Flash disparado, modo de flash obrigatório, luz de retorno não detectada</value>
   </data>
   <data name="ExifFlashMode.FlashFired_RedEyeReductionMode" xml:space="preserve">
-    <value>Flash fired, red-eye reduction mode</value>
+    <value>Flash disparado, modo de redução de olhos vermelhos</value>
   </data>
   <data name="ExifFlashMode.FlashFired_RedEyeReductionMode_ReturnLightDetected" xml:space="preserve">
-    <value>Flash fired, red-eye reduction mode, return light detected</value>
+    <value>Flash disparado, modo de redução de olhos vermelhos, luz de retorno detectada</value>
   </data>
   <data name="ExifFlashMode.FlashFired_RedEyeReductionMode_ReturnLightNotDetected" xml:space="preserve">
-    <value>Flash fired, red-eye reduction mode, return light not detected</value>
+    <value>Flash disparado, modo de redução de olhos vermelhos, luz de retorno não detectada</value>
   </data>
   <data name="ExifFlashMode.NoFlashFunction" xml:space="preserve">
     <value>Sem função de flash</value>
@@ -2222,10 +2222,10 @@ Os seguintes dados serão excluídos
     <value>Espelho horizontal</value>
   </data>
   <data name="ExifOrientation.MirrorHorizontal_Rotate270" xml:space="preserve">
-    <value>Mirror horizontal, rotate270</value>
+    <value>Espelho horizontal, gire 270</value>
   </data>
   <data name="ExifOrientation.MirrorHorizontal_Rotate90" xml:space="preserve">
-    <value>Mirror horizontal, rotate90</value>
+    <value>Espelho horizontal, gire 90</value>
   </data>
   <data name="ExifOrientation.MirrorVertical" xml:space="preserve">
     <value>Espelho vertical</value>
@@ -2321,7 +2321,7 @@ Os seguintes dados serão excluídos
     <value>Exportar configurações</value>
   </data>
   <data name="ExportBackupCommand.Menu" xml:space="preserve">
-    <value>Exportar configurações...</value>
+    <value>Exportar Configurações...</value>
   </data>
   <data name="ExportBackupCommand.Remarks" xml:space="preserve">
     <value>Criar backups de configurações, histórico, marcadores. Não foi feito backup do cache de miniaturas.</value>
@@ -2548,13 +2548,13 @@ Está tudo bem?</value>
     <value>Mover para a primeira página.</value>
   </data>
   <data name="FocusBookmarkListCommand" xml:space="preserve">
-    <value>Exibir lista de marcador</value>
+    <value>Exibir lista de marcadores</value>
   </data>
   <data name="FocusBookmarkListCommand.Menu" xml:space="preserve">
-    <value>Painel de Marcador</value>
+    <value>Painel de marcadores</value>
   </data>
   <data name="FocusBookmarkListCommand.Remarks" xml:space="preserve">
-    <value>Exibir pasta de marcador da estante.</value>
+    <value>Exibir pasta de marcadores da estante.</value>
   </data>
   <data name="FocusMainViewCommand" xml:space="preserve">
     <value>Focar na exibição principal</value>
@@ -2650,7 +2650,7 @@ Está tudo bem?</value>
     <value>_Excluir</value>
   </data>
   <data name="FolderTree.Menu.DeleteInvalidBookmark" xml:space="preserve">
-    <value>Remover marcador inválido</value>
+    <value>Remover marcadores inválidos</value>
   </data>
   <data name="FolderTree.Menu.Explorer" xml:space="preserve">
     <value>Abrir no explorador</value>
@@ -2809,7 +2809,7 @@ Está tudo bem?</value>
     <value>_Remover histórico</value>
   </data>
   <data name="HistoryItem.Menu.OpenBook" xml:space="preserve">
-    <value>_Abrit</value>
+    <value>_Abrir</value>
   </data>
   <data name="HistoryItemAccessor" xml:space="preserve">
     <value>Acessador de item de histórico</value>
@@ -2998,10 +2998,10 @@ Está tudo bem?</value>
     <value>Indefinido</value>
   </data>
   <data name="ImportBackupCommand" xml:space="preserve">
-    <value>Configurações de Importação</value>
+    <value>Importar Configurações</value>
   </data>
   <data name="ImportBackupCommand.Menu" xml:space="preserve">
-    <value>Configurações de Importação...</value>
+    <value>Importar Configurações...</value>
   </data>
   <data name="ImportBackupCommand.Remarks" xml:space="preserve">
     <value>Selecione o item restaurado do arquivo de backup e restaure-o. Se todos os parâmetros forem definidos, a caixa de diálogo não será exibida.</value>
@@ -3467,7 +3467,7 @@ include("Sample.nvjs")</value>
     <value>caminho: termo|Caminho do arquivo ou pasta</value>
   </data>
   <data name="LoadAsCommand.Menu" xml:space="preserve">
-    <value>_Abrit...</value>
+    <value>_Abrir...</value>
   </data>
   <data name="LoadAsCommand.Remarks" xml:space="preserve">
     <value>Selecione e abra o arquivo compactado ou arquivo de imagem.</value>
@@ -3582,13 +3582,13 @@ include("Sample.nvjs")</value>
     <value>Raio externo</value>
   </data>
   <data name="MainViewConfig.IsFloating" xml:space="preserve">
-    <value>MainView flutuante</value>
+    <value>Exibição Principal flutuante</value>
   </data>
   <data name="MainViewConfig.IsHideTitleBar" xml:space="preserve">
-    <value>Ocultar automaticamente a barra de título da janela MainView</value>
+    <value>Ocultar automaticamente a barra de título da janela da Exibição Principal</value>
   </data>
   <data name="MainViewConfig.IsTopmost" xml:space="preserve">
-    <value>A janela MainView está no topo</value>
+    <value>A janela da Exibição Principal está no topo</value>
   </data>
   <data name="MainViewWindow.Menu.AutoHideTitleBar" xml:space="preserve">
     <value>Ocultar automaticamente a barra de título</value>
@@ -3657,7 +3657,7 @@ include("Sample.nvjs")</value>
     <value>Separador</value>
   </data>
   <data name="MenuTree.Bookmark" xml:space="preserve">
-    <value>_Marcador</value>
+    <value>_Marcadores</value>
   </data>
   <data name="MenuTree.Debug" xml:space="preserve">
     <value>_Debug</value>
@@ -3886,7 +3886,7 @@ Um clique esquerdo pode ser registrado como a última tecla de gesto.</value>
     <value>Aumentar a escala</value>
   </data>
   <data name="Navigator.Stretch" xml:space="preserve">
-    <value>Esticar</value>
+    <value>Alongar</value>
   </data>
   <data name="Navigator.StretchAllowScaleDown" xml:space="preserve">
     <value>Permitir redução da escala de alongamento</value>
@@ -3916,7 +3916,7 @@ Um clique esquerdo pode ser registrado como a última tecla de gesto.</value>
     <value>Coloque o próximo livro na estante.</value>
   </data>
   <data name="NextBookHistoryCommand" xml:space="preserve">
-    <value>Ir para o próxiimo</value>
+    <value>Ir para o próximo</value>
   </data>
   <data name="NextBookHistoryCommand.Remarks" xml:space="preserve">
     <value>Abrir um próximo livro aberto.</value>
@@ -3940,25 +3940,25 @@ Um clique esquerdo pode ser registrado como a última tecla de gesto.</value>
     <value>Mover para a próxima página de exibição</value>
   </data>
   <data name="NextOnePageCommand" xml:space="preserve">
-    <value>O próximo</value>
+    <value>Página Seguinte</value>
   </data>
   <data name="NextOnePageCommand.Remarks" xml:space="preserve">
     <value>Apenas uma página se moverá na próxima direção.</value>
   </data>
   <data name="NextPageCommand" xml:space="preserve">
-    <value>Avançar</value>
+    <value>Seguinte</value>
   </data>
   <data name="NextPageCommand.Remarks" xml:space="preserve">
     <value>Mover para a direção da próxima página. Se for uma exibição de 2 páginas, ele se moverá 2 páginas.</value>
   </data>
   <data name="NextPlaylistItemCommand" xml:space="preserve">
-    <value>Próximo item da lista de reprodução</value>
+    <value>Item seguinte da lista de reprodução</value>
   </data>
   <data name="NextPlaylistItemCommand.Remarks" xml:space="preserve">
     <value>Ir para a próxima marca de página.</value>
   </data>
   <data name="NextPlaylistItemInBookCommand" xml:space="preserve">
-    <value>Próximo item da lista de reprodução no livro</value>
+    <value>Item seguinte da lista de reprodução no livro</value>
   </data>
   <data name="NextPlaylistItemInBookCommand.Remarks" xml:space="preserve">
     <value>Mover para a próxima marca de página no livro atual.</value>
@@ -3970,7 +3970,7 @@ Um clique esquerdo pode ser registrado como a última tecla de gesto.</value>
     <value>Página Rola a imagem na próxima direção. Se não for possível rolar, passará para a próxima página. Ao usar uma lupa, mova apenas as páginas.</value>
   </data>
   <data name="NextSizePageCommand" xml:space="preserve">
-    <value>Próximo número</value>
+    <value>Avançar 10 Páginas</value>
   </data>
   <data name="NextSizePageCommand.Remarks" xml:space="preserve">
     <value>Mover para a próxima direção de acordo com o número definido de páginas.</value>
@@ -4043,7 +4043,7 @@ Restaurar o local do cache.</value>
     <value>Falha na decodificação da imagem.</value>
   </data>
   <data name="Notice.InvalidFileNameChars" xml:space="preserve">
-    <value>Os seguintes caracteres não podem ser usados no nome do arquivo:
+    <value>Os seguintes caracteres não podem ser usados ​​no nome do arquivo:
 \ / : * ? " &lt; &gt; |</value>
   </data>
   <data name="Notice.InvalidSeparatorChars" xml:space="preserve">
@@ -4102,7 +4102,7 @@ Restaurar o local do cache.</value>
     <value>{0} não tem páginas</value>
   </data>
   <data name="Notice.NotSupportedFileType" xml:space="preserve">
-    <value>Tipo de arquivo não compatível: {0}</value>
+    <value>Tipo de arquivo não suportado: {0}</value>
   </data>
   <data name="Notice.OutputFailed" xml:space="preserve">
     <value>Falha ao gerar o arquivo</value>
@@ -4111,7 +4111,7 @@ Restaurar o local do cache.</value>
     <value>Falha na reprodução</value>
   </data>
   <data name="Notice.PlaylistItemNextFailed" xml:space="preserve">
-    <value>Nenhum próximo item da lista de reprodução</value>
+    <value>Nenhum item seguinte da lista de reprodução</value>
   </data>
   <data name="Notice.PlaylistItemPrevFailed" xml:space="preserve">
     <value>Nenhum item anterior da lista de reprodução</value>
@@ -4151,7 +4151,7 @@ Restaurar o local temporário.</value>
     <value>Tornar a exibição da escala da operação de visualização o padrão de tamanho da imagem original</value>
   </data>
   <data name="NoticeConfig.IsOriginalScaleShowMessage.Remarks" xml:space="preserve">
-    <value>No caso de visualização de 2 páginas, referimo-nos à página com o número mais novo.</value>
+    <value>No caso de exibição de 2 páginas, referimos-nos à página com o número mais novo.</value>
   </data>
   <data name="NoticeConfig.NoticeShowMessageStyle" xml:space="preserve">
     <value>Informações gerais</value>
@@ -4362,7 +4362,7 @@ nv.ShowToast(nv.Book.Pages[0].Path)</value>
     <value>Mo_ver para pasta</value>
   </data>
   <data name="PageListItem.Menu.Open" xml:space="preserve">
-    <value>_Abrit</value>
+    <value>_Abrir</value>
   </data>
   <data name="PageListItem.Menu.OpenBook" xml:space="preserve">
     <value>_Abrir Livro</value>
@@ -4401,7 +4401,7 @@ nv.ShowToast(nv.Book.Pages[0].Path)</value>
     <value>Nome</value>
   </data>
   <data name="PageNameFormat.Raw" xml:space="preserve">
-    <value>Bruto</value>
+    <value>Puro</value>
   </data>
   <data name="PageNameFormat.Smart" xml:space="preserve">
     <value>Inteligente</value>
@@ -4602,7 +4602,7 @@ nv.ShowToast(nv.Book.Pages[0].Path)</value>
     <value>Tamanho padrão da página PDF</value>
   </data>
   <data name="PdfArchiveConfig.RenderSize.Remarks" xml:space="preserve">
-    <value>Normalmente renderizaremos de acordo com o tamanho do exibição, mas o limite inferior será esse tamanho padrão. Se ficar menor, será reduzido e exibido.</value>
+    <value>Normalmente renderizaremos de acordo com o tamanho do tela, mas o limite inferior será esse tamanho padrão. Se ficar menor, será reduzido e exibido.</value>
   </data>
   <data name="PdfArchiveConfig.SupportFileTypes" xml:space="preserve">
     <value>Extensão de arquivo PDF</value>
@@ -4699,7 +4699,7 @@ O arquivo Susie não determina esse tamanho, mas apenas a pré-extração nas co
     <value>_Novo</value>
   </data>
   <data name="Playlist.MoreMenu.Open" xml:space="preserve">
-    <value>_Abrit...</value>
+    <value>_Abrir...</value>
   </data>
   <data name="Playlist.MoreMenu.OpenAsBook" xml:space="preserve">
     <value>Abrir como um livro</value>
@@ -4759,7 +4759,7 @@ O arquivo Susie não determina esse tamanho, mas apenas a pré-extração nas co
     <value>Mover para outra lista de reprodução</value>
   </data>
   <data name="PlaylistItem.Menu.Open" xml:space="preserve">
-    <value>_Abrit</value>
+    <value>_Abrir</value>
   </data>
   <data name="PlaylistItem.Menu.Rename" xml:space="preserve">
     <value>Reno_mear</value>
@@ -4819,7 +4819,7 @@ O arquivo Susie não determina esse tamanho, mas apenas a pré-extração nas co
     <value>Mover para a página da exibição anterior.</value>
   </data>
   <data name="PrevOnePageCommand" xml:space="preserve">
-    <value>Uma Anterior</value>
+    <value>Página Anterior</value>
   </data>
   <data name="PrevOnePageCommand.Remarks" xml:space="preserve">
     <value>Avançar apenas uma página.</value>
@@ -4849,7 +4849,7 @@ O arquivo Susie não determina esse tamanho, mas apenas a pré-extração nas co
     <value>Role a imagem para frente na página. Se não for possível rolar, passará para a página anterior. Ao usar uma lupa, mova apenas as páginas.</value>
   </data>
   <data name="PrevSizePageCommand" xml:space="preserve">
-    <value>Número anterior</value>
+    <value>Voltar 10 Páginas</value>
   </data>
   <data name="PrevSizePageCommand.Remarks" xml:space="preserve">
     <value>Ele avança pelo número definido de páginas.</value>
@@ -4915,7 +4915,7 @@ O arquivo Susie não determina esse tamanho, mas apenas a pré-extração nas co
     <value>Alinhamento vertical</value>
   </data>
   <data name="QueryScheme.Bookmark" xml:space="preserve">
-    <value>Marcador</value>
+    <value>Marcadores</value>
   </data>
   <data name="QueryScheme.File" xml:space="preserve">
     <value>PC</value>
@@ -4945,10 +4945,10 @@ O arquivo Susie não determina esse tamanho, mas apenas a pré-extração nas co
     <value>Recarregar o livro</value>
   </data>
   <data name="ReloadSettingCommand" xml:space="preserve">
-    <value>Configurações de Recarregar</value>
+    <value>Recarregar Configurações</value>
   </data>
   <data name="ReloadSettingCommand.Remarks" xml:space="preserve">
-    <value>Configurações de Recarregar.</value>
+    <value>Recarregar Configurações</value>
   </data>
   <data name="RemoveUnlinkedHistoryCommand" xml:space="preserve">
     <value>Excluir itens inválidos do histórico</value>
@@ -4972,7 +4972,7 @@ O arquivo Susie não determina esse tamanho, mas apenas a pré-extração nas co
     <value>Centro</value>
   </data>
   <data name="RippleEffectUnit.Frequency" xml:space="preserve">
-    <value>Frequência</value>
+    <value>Freqüência</value>
   </data>
   <data name="RippleEffectUnit.Magnitude" xml:space="preserve">
     <value>Magnitude</value>
@@ -5038,7 +5038,7 @@ O script será interrompido.</value>
   <data name="ScriptErrorLevel.Info.Remarks" xml:space="preserve">
     <value>Notifique como informação. Notifique apenas o console de script.
 O script continuará.
-O acesso de membro obsoleto retorna o valor padrão para o tipo. Pode ser nulo e seu comportamento subsequente não é garantido.</value>
+O acesso de membro obsoleto retorna o valor padrão para o tipo. Pode ser nulo e seu comportamento subseqüente não é garantido.</value>
   </data>
   <data name="ScriptErrorLevel.Warning" xml:space="preserve">
     <value>Lv2: Aviso</value>
@@ -5055,7 +5055,7 @@ O acesso de membro obsoleto retorna o valor padrão para o tipo. Pode ser nulo e
     <value>{0} está obsoleto.</value>
   </data>
   <data name="ScriptOnBookLoadedCommand.Remarks" xml:space="preserve">
-    <value>Scrpit. Executa quando o livro é aberto.</value>
+    <value>Script. Executa quando o livro é aberto.</value>
   </data>
   <data name="ScriptOnPageChangedCommand.Remarks" xml:space="preserve">
     <value>Script. Executa quando as páginas de visualização são alteradas.</value>
@@ -5424,13 +5424,13 @@ O acesso de membro obsoleto retorna o valor padrão para o tipo. Pode ser nulo e
     <value>O item da esquerda é o valor padrão e o item da direita é o comportamento quando o livro é aberto.</value>
   </data>
   <data name="SettingPage.Book.SubFolder" xml:space="preserve">
-    <value>Subpasta</value>
+    <value>Sub-pasta</value>
   </data>
   <data name="SettingPage.Book.SubFolderAuto" xml:space="preserve">
-    <value>Determinação automática de carregamento de subpastas</value>
+    <value>Determinação automática de carregamento de sub-pastas</value>
   </data>
   <data name="SettingPage.Book.SubFolderConfirm" xml:space="preserve">
-    <value>Confirme o carregamento da subpasta</value>
+    <value>Confirme o carregamento da sub-pasta</value>
   </data>
   <data name="SettingPage.Book.Visual" xml:space="preserve">
     <value>Exibição de página</value>
@@ -5968,7 +5968,7 @@ $Name é a página principal (o número menor da página) ao exibir 2 páginas.<
     <value>Habilitar</value>
   </data>
   <data name="SusiePluginWindow.IsPreExtract" xml:space="preserve">
-    <value>Pré extrair</value>
+    <value>Pré-extrair</value>
   </data>
   <data name="SwirlEffectUnit.Center" xml:space="preserve">
     <value>Centro</value>
@@ -6160,13 +6160,13 @@ $Name é a página principal (o número menor da página) ao exibir 2 páginas.<
     <value>Mudar plano de fundo</value>
   </data>
   <data name="ToggleBackgroundCommand.Remarks" xml:space="preserve">
-    <value>Mude o fundo sequencialmente.</value>
+    <value>Mude o fundo seqüencialmente.</value>
   </data>
   <data name="ToggleBookmarkCommand" xml:space="preserve">
     <value>Alternar marcador</value>
   </data>
   <data name="ToggleBookmarkCommand.Menu" xml:space="preserve">
-    <value>Marcador</value>
+    <value>Marcadores</value>
   </data>
   <data name="ToggleBookmarkCommand.Off" xml:space="preserve">
     <value>Marcador removido</value>
@@ -6175,7 +6175,7 @@ $Name é a página principal (o número menor da página) ao exibir 2 páginas.<
     <value>Marcador adicionado</value>
   </data>
   <data name="ToggleBookmarkCommand.Remarks" xml:space="preserve">
-    <value>Alternar marcador do livro atualmente aberto.</value>
+    <value>Alternar marcadores do livro atualmente aberto.</value>
   </data>
   <data name="ToggleBookOrderCommand" xml:space="preserve">
     <value>Mudar ordem do livro</value>
@@ -6391,16 +6391,16 @@ $Name é a página principal (o número menor da página) ao exibir 2 páginas.<
     <value>Ligue ou desligue a lupa.</value>
   </data>
   <data name="ToggleIsRecursiveFolderCommand" xml:space="preserve">
-    <value>Carregar subpastas</value>
+    <value>Carregar sub-pastas</value>
   </data>
   <data name="ToggleIsRecursiveFolderCommand.Off" xml:space="preserve">
-    <value>Carregar subpastas DESLIGADO</value>
+    <value>Carregar sub-pastas DESLIGADO</value>
   </data>
   <data name="ToggleIsRecursiveFolderCommand.On" xml:space="preserve">
-    <value>Carregar subpastas</value>
+    <value>Carregar sub-pastas</value>
   </data>
   <data name="ToggleIsRecursiveFolderCommand.Remarks" xml:space="preserve">
-    <value>Ao carregar imagens de pastas, subpastas ou arquivos compactados também são carregados ao mesmo tempo.</value>
+    <value>Ao carregar imagens de pastas, sub-pastas ou arquivos compactados também são carregados ao mesmo tempo.</value>
   </data>
   <data name="ToggleIsSupportedDividePageCommand" xml:space="preserve">
     <value>Dividir página ampla</value>
@@ -6460,7 +6460,7 @@ $Name é a página principal (o número menor da página) ao exibir 2 páginas.<
     <value>Encaixe Exibição Principal</value>
   </data>
   <data name="ToggleMainViewFloatingCommand.On" xml:space="preserve">
-    <value>MainView flutuante</value>
+    <value>Exibição Principal flutuante</value>
   </data>
   <data name="ToggleMainViewFloatingCommand.Remarks" xml:space="preserve">
     <value>Transforme a Exibição Principal em uma janela.</value>
@@ -6475,13 +6475,13 @@ $Name é a página principal (o número menor da página) ao exibir 2 páginas.<
     <value>Alternar manter ponto</value>
   </data>
   <data name="ToggleNearestNeighborCommand.Menu" xml:space="preserve">
-    <value>Mantenha o ponto</value>
+    <value>Manter o ponto</value>
   </data>
   <data name="ToggleNearestNeighborCommand.Off" xml:space="preserve">
     <value>Manter o ponto DESLIGADO</value>
   </data>
   <data name="ToggleNearestNeighborCommand.On" xml:space="preserve">
-    <value>Mantenha o ponto</value>
+    <value>Manter o ponto</value>
   </data>
   <data name="ToggleNearestNeighborCommand.Remarks" xml:space="preserve">
     <value>Quando definido como LIGADO, ele se expandirá enquanto mantém o ponto. Quando estiver DESLIGADO, o processamento de conversão de escala (Fant) é executado.</value>
@@ -6520,13 +6520,13 @@ $Name é a página principal (o número menor da página) ao exibir 2 páginas.<
     <value>Alternar filtro de redimensionamento</value>
   </data>
   <data name="ToggleResizeFilterCommand.Menu" xml:space="preserve">
-    <value>Filtro de resimensionamento</value>
+    <value>Filtro de redimensionamento</value>
   </data>
   <data name="ToggleResizeFilterCommand.Off" xml:space="preserve">
     <value>Filtro de redimensionamento DESLIGADO</value>
   </data>
   <data name="ToggleResizeFilterCommand.On" xml:space="preserve">
-    <value>Filtro de resimensionamento</value>
+    <value>Filtro de redimensionamento</value>
   </data>
   <data name="ToggleResizeFilterCommand.Remarks" xml:space="preserve">
     <value>Ative/desative o filtro de redimensionamento.</value>
@@ -6538,7 +6538,7 @@ $Name é a página principal (o número menor da página) ao exibir 2 páginas.<
     <value>Slideshow</value>
   </data>
   <data name="ToggleSlideShowCommand.Off" xml:space="preserve">
-    <value>Parar slideshw</value>
+    <value>Parar slideshow</value>
   </data>
   <data name="ToggleSlideShowCommand.On" xml:space="preserve">
     <value>Reproduzir slideshow</value>
@@ -6649,13 +6649,13 @@ $Name é a página principal (o número menor da página) ao exibir 2 páginas.<
     <value>Alternar painel de marcadores</value>
   </data>
   <data name="ToggleVisibleBookmarkListCommand.Menu" xml:space="preserve">
-    <value>Painel de Marcador</value>
+    <value>Painel de marcadores</value>
   </data>
   <data name="ToggleVisibleBookmarkListCommand.Off" xml:space="preserve">
     <value>Painel de marcadores DESLIGADO</value>
   </data>
   <data name="ToggleVisibleBookmarkListCommand.On" xml:space="preserve">
-    <value>Painel de Marcador</value>
+    <value>Painel de marcadores</value>
   </data>
   <data name="ToggleVisibleBookmarkListCommand.Remarks" xml:space="preserve">
     <value>Alternar entre exibir/ocultar o painel de favoritos.</value>
@@ -6874,7 +6874,7 @@ $Name é a página principal (o número menor da página) ao exibir 2 páginas.<
     <value>Pressão longa Operação de arrastar e tocar</value>
   </data>
   <data name="TouchConfig.IsAngleEnabled" xml:space="preserve">
-    <value>Habilite a operação de rotação com multitoque</value>
+    <value>Habilite a operação de rotação com multi-toque</value>
   </data>
   <data name="TouchConfig.IsEnabled" xml:space="preserve">
     <value>Use a função de toque</value>
@@ -7823,7 +7823,7 @@ nv.ShowToast(nv.Book.ViewPages[0].Path)</value>
     <value>Após selecionar uma página, mova o foco para a visualização principal.</value>
   </data>
   <data name="MainViewWindow.Menu.AutoStretch" xml:space="preserve">
-    <value>Janela de alongamento automático</value>
+    <value>Auto alongar janela</value>
   </data>
   <data name="ImageGridTarget.Image" xml:space="preserve">
     <value>Imagem</value>
@@ -7841,7 +7841,7 @@ nv.ShowToast(nv.Book.ViewPages[0].Path)</value>
     <value>Mantenha o ponto</value>
   </data>
   <data name="BookmarkConfig.IsSearchIncludeSubdirectories" xml:space="preserve">
-    <value>Faça uma pesquisa incluindo subpastas</value>
+    <value>Faça uma pesquisa incluindo sub-pastas</value>
   </data>
   <data name="SlideShowConfig.IsTimerVisible" xml:space="preserve">
     <value>Mostrar cronômetro</value>
@@ -7868,13 +7868,13 @@ nv.ShowToast(nv.Book.ViewPages[0].Path)</value>
     <value>Formato de data e hora</value>
   </data>
   <data name="PageAccessor.GetMetaValue" xml:space="preserve">
-    <value>Obtenha metainformações da página</value>
+    <value>Obtenha meta-informações da página</value>
   </data>
   <data name="PageAccessor.GetMetaValue.key" xml:space="preserve">
-    <value>Nome do item de metainformação. Consulte a ajuda das opções de pesquisa para obter mais informações.</value>
+    <value>Nome do item de meta-informação. Consulte a ajuda das opções de pesquisa para obter mais informações.</value>
   </data>
   <data name="PageAccessor.GetMetaValue.Returns" xml:space="preserve">
-    <value>Valor da metainformação</value>
+    <value>Valor da meta-informação</value>
   </data>
   <data name="BookSettingPolicyConfig.AutoRotate" xml:space="preserve">
     <value>Rotação automática</value>
@@ -7952,7 +7952,7 @@ nv.ShowToast(nv.Book.ViewPages[0].Path)</value>
     <value>Concentre-se na caixa de pesquisa Lista de Páginas</value>
   </data>
   <data name="FocusPageListSearchBoxCommand.Menu" xml:space="preserve">
-    <value>Caixa de pesquisa Lista de Páginas</value>
+    <value>Caixa de pesquisa da Lista de Páginas</value>
   </data>
   <data name="FocusPageListSearchBoxCommand.Remarks" xml:space="preserve">
     <value>Concentre-se na caixa de pesquisa Lista de Páginas. O painel Lista de Páginas estará no estado de exibição.</value>
