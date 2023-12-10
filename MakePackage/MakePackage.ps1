@@ -17,7 +17,10 @@ Param(
 	[switch]$x86,
 
 	# MSI作成時にMainComponents.wsxを更新する
-	[switch]$updateComponent
+	[switch]$updateComponent,
+
+	# Postfix. Canary や Beta での番号重複回避用
+	[string]$versionPostfix = ""
 )
 
 # error to break
@@ -30,6 +33,7 @@ Write-Host "Continue: $continue"
 Write-Host "Trace: $trace"
 Write-Host "x86: $x86"
 Write-Host "updateComponent: $updateComponent" 
+Write-Host "versionPostfix: $versionPostfix" 
 
 #
 $product = 'NeeView'
@@ -986,7 +990,7 @@ $buildCount = Get-BuildCount
 $buildVersion = "$version.$buildCount"
 $assemblyVersion = "$version.$buildCount.0"
 $revision = (& git rev-parse --short HEAD).ToString()
-$dateVersion = (Get-Date).ToString("MMdd")
+$dateVersion = (Get-Date).ToString("MMdd") + $versionPostfix
 
 $publishDir = "Publish"
 $publishDir_x64 = "$publishDir\NeeView-x64"
