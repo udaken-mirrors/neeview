@@ -28,12 +28,12 @@ namespace NeeLaboratory.Remote
             _semaphore.Wait(token);
             try
             {
-                // 接続１秒タイムアウトで１０回リトライ
-                for (int retry = 0; retry < 10; ++retry)
+                // 接続5秒タイムアウトで2回リトライ
+                for (int retry = 0; retry < 2; ++retry)
                 {
                     try
                     {
-                        return await CallInnerAsync(args, 1000, token);
+                        return await CallInnerAsync(args, 5000, token);
                     }
                     catch (TimeoutException)
                     {
@@ -41,7 +41,7 @@ namespace NeeLaboratory.Remote
                     }
                 }
 
-                throw new TimeoutException();
+                throw new TimeoutException($"Susie server call has timed out");
             }
             finally
             {
