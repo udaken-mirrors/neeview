@@ -122,7 +122,7 @@ namespace NeeView.Setting
 
         public void OpenConfigDialog(Window owner)
         {
-            SusiePluginManager.Current.ShowPluginConfigulationDialog(_spi.Name, owner);
+            SusiePluginManager.Current.ShowPluginConfigurationDialog(_spi.Name, owner);
         }
 
         public void Flush()

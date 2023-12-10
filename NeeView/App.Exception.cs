@@ -15,6 +15,9 @@ namespace NeeView
 {
     public partial class App
     {
+        public static string ErrorLogFileName => System.IO.Path.Combine(Environment.LocalApplicationDataPath, "ErrorLog.txt");
+
+
         // 未処理例外発生数
         private int _exceptionCount = 0;
 
@@ -95,11 +98,8 @@ namespace NeeView
             string errorLog = CreateErrorLog(exception);
 
             // エラーログファイルに出力
-            var errorLogFileName = System.IO.Path.Combine(Environment.LocalApplicationDataPath, "ErrorLog.txt");
-            using (var writer = new StreamWriter(new FileStream(errorLogFileName, FileMode.Create, FileAccess.Write)))
-            {
-                writer.Write(errorLog);
-            }
+            string errorLogFileName = ErrorLogFileName;
+            ExportErrorLog(errorLogFileName, errorLog);
 
             // エラーダイアログ表示
             ShowErrorLogDialog(errorLog, errorLogFileName);
@@ -111,7 +111,7 @@ namespace NeeView
         /// エラーログテキスト作成
         /// </summary>
         /// <param name="exception">例外</param>
-        private static string CreateErrorLog(Exception exception)
+        public static string CreateErrorLog(Exception exception)
         {
             string errorLog;
             using (var writer = new StringWriter())
@@ -125,6 +125,29 @@ namespace NeeView
             }
 
             return errorLog;
+        }
+
+        /// <summary>
+        /// エラーログファイルに出力
+        /// </summary>
+        /// <param name="errorLog"></param>
+        /// <returns>エラーログファイル名</returns>
+        public static void ExportErrorLog(string errorLogFileName, string errorLog)
+        {
+            using (var writer = new StreamWriter(new FileStream(errorLogFileName, FileMode.Create, FileAccess.Write)))
+            {
+                writer.Write(errorLog);
+            }
+        }
+
+        /// <summary>
+        /// エラーログファイルに出力
+        /// </summary>
+        /// <param name="exception"></param>
+        /// <returns></returns>
+        public static void ExportErrorLog(string errorLogFileName, Exception exception)
+        {
+            ExportErrorLog(errorLogFileName, CreateErrorLog(exception));
         }
 
         /// <summary>

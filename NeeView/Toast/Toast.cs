@@ -49,6 +49,7 @@ namespace NeeView
         public string? ButtonContent { get; private set; }
         public Action? ButtonAction { get; private set; }
         public TimeSpan DisplayTime { get; private set; } = DefaultDisplayTime;
+        public bool IsXHtml { get; init; }
 
         public bool IsCanceled { get; private set; }
 

@@ -122,7 +122,7 @@ namespace NeeView
         // PluginCollectionのOpen/Close
         private void UpdateSusiePluginCollection()
         {
-            if (!_isInitialized) throw new InvalidOperationException();
+            if (!_isInitialized) throw new InvalidOperationException("Not initialized");
 
             if (Config.Current.Susie.IsEnabled && Directory.Exists(Config.Current.Susie.SusiePluginPath))
             {
@@ -149,13 +149,15 @@ namespace NeeView
             catch (Exception ex)
             {
                 Debug.WriteLine(ex.Message);
-                ToastService.Current.Show(new Toast(Resources.SusieConnectError_Message, null, ToastIcon.Error));
+                var errorLogFileName = App.ErrorLogFileName;
+                App.ExportErrorLog(errorLogFileName, ex);
+                ToastService.Current.Show(new Toast(Resources.SusieConnectError_Message + $"<br/><a href=\"{errorLogFileName}\">{errorLogFileName}</a>", null, ToastIcon.Error) { IsXHtml = true });
             }
         }
 
         private void LoadSusiePlugins()
         {
-            if (_client is null) throw new InvalidOperationException();
+            if (_client is null) throw new InvalidOperationException("Client is null");
 
             var settings = Plugins.Select(e => e.ToSusiePluginSetting()).ToList();
             _client.Initialize(System.IO.Path.GetFullPath(Config.Current.Susie.SusiePluginPath), settings);
@@ -198,7 +200,7 @@ namespace NeeView
             Debug.WriteLine("SusieIN Support: " + string.Join(" ", this.ImageExtensions));
         }
 
-        // Susies書庫プラグインのサポート拡張子を更新
+        // Susie書庫プラグインのサポート拡張子を更新
         public void UpdateArchiveExtensions()
         {
             var extensions = AMPlugins
@@ -212,7 +214,7 @@ namespace NeeView
 
         public void FlushSusiePluginSetting(string name)
         {
-            if (_client is null) throw new InvalidOperationException();
+            if (_client is null) throw new InvalidOperationException("Client is null");
 
             var settings = Plugins
                 .Where(e => e.Name == name)
@@ -224,7 +226,7 @@ namespace NeeView
 
         public void UpdateSusiePlugin(string name)
         {
-            if (_client is null) throw new InvalidOperationException();
+            if (_client is null) throw new InvalidOperationException("Client is null");
 
             var plugins = _client.GetPlugin(new List<string>() { name });
             if (plugins != null && plugins.Count == 1)
@@ -249,14 +251,14 @@ namespace NeeView
 
         public SusieImagePluginAccessor GetImagePluginAccessor()
         {
-            if (_client is null) throw new InvalidOperationException();
+            if (_client is null) throw new InvalidOperationException("Client is null");
 
             return new SusieImagePluginAccessor(_client, null);
         }
 
         public SusieImagePluginAccessor? GetImagePluginAccessor(string fileName, byte[] buff, bool isCheckExtension)
         {
-            if (_client is null) throw new InvalidOperationException();
+            if (_client is null) throw new InvalidOperationException("Client is null");
 
             var plugin = _client.GetImagePlugin(fileName, buff, isCheckExtension);
             if (plugin is null) return null;
@@ -266,7 +268,7 @@ namespace NeeView
 
         public SusieArchivePluginAccessor? GetArchivePluginAccessor(string fileName, byte[]? buff, bool isCheckExtension)
         {
-            if (_client is null) throw new InvalidOperationException();
+            if (_client is null) throw new InvalidOperationException("Client is null");
 
             var plugin = _client.GetArchivePlugin(fileName, buff, isCheckExtension);
             if (plugin is null) return null;
@@ -274,9 +276,9 @@ namespace NeeView
             return new SusieArchivePluginAccessor(_client, plugin);
         }
 
-        public void ShowPluginConfigulationDialog(string pluginName, Window owner)
+        public void ShowPluginConfigurationDialog(string pluginName, Window owner)
         {
-            if (_client is null) throw new InvalidOperationException();
+            if (_client is null) throw new InvalidOperationException("Client is null");
 
             var handle = new WindowInteropHelper(owner).Handle;
             _client.ShowConfigulationDlg(pluginName, handle.ToInt32());
@@ -287,7 +289,7 @@ namespace NeeView
         public SusiePluginCollection CreateSusiePluginCollection()
         {
             var collection = new SusiePluginCollection();
-            foreach(var item in this.Plugins)
+            foreach (var item in this.Plugins)
             {
                 collection.Add(item.Name, SusiePluginMemento.FromSusiePluginInfo(item));
             }

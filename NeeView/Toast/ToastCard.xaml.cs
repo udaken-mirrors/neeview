@@ -60,6 +60,7 @@ namespace NeeView
         {
             this.Caption.Text = _toast.Caption;
             this.Caption.Visibility = string.IsNullOrEmpty(_toast.Caption) ? Visibility.Collapsed : Visibility.Visible;
+            this.Message.IsXHtml = _toast.IsXHtml;
             this.Message.Source = _toast.Message;
             this.ConfirmButton.Content = _toast.ButtonContent;
             this.ConfirmButton.Visibility = _toast.ButtonContent is null ? Visibility.Collapsed : Visibility.Visible;
