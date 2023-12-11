@@ -9,17 +9,37 @@ using System.Threading.Tasks;
 
 namespace NeeView.Susie.Client
 {
-    public class SusiePluginClient : IRemoteSusiePlugin
+    public class SusiePluginClient : IRemoteSusiePlugin, IDisposable
     {
         private readonly SusiePluginRemoteClient _remote;
         private Action? _recoveryAction;
         private bool _isRecoveryDoing;
+        private bool _disposedValue;
 
-        public SusiePluginClient(SusiePluginRemoteClient remote)
+
+        public SusiePluginClient()
         {
-            _remote = remote;
+            _remote = new SusiePluginRemoteClient();
         }
 
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!_disposedValue)
+            {
+                if (disposing)
+                {
+                    _remote.Dispose();
+                }
+                _disposedValue = true;
+            }
+        }
+
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
 
         public void SetRecoveryAction(Action action)
         {
@@ -33,7 +53,7 @@ namespace NeeView.Susie.Client
             _isRecoveryDoing = true;
             try
             {
-                Debug.WriteLine($"SuisePluginClient: Recovery...");
+                Debug.WriteLine($"SusiePluginClient: Recovery...");
                 _remote.Disconnect();
                 _remote.Connect();
                 _recoveryAction?.Invoke();
@@ -60,15 +80,9 @@ namespace NeeView.Susie.Client
 
         private List<Chunk> Call(List<Chunk> args)
         {
-            if (!_remote.IsConnected)
-            {
-                Recovery();
-            }
-
-            var task = Task.Run(async () => await _remote.CallAsync(args, CancellationToken.None));
-
             try
             {
+                var task = Task.Run(async () => await CallAsync(args, CancellationToken.None));
                 return task.Result;
             }
             catch (AggregateException ex)
@@ -82,6 +96,35 @@ namespace NeeView.Susie.Client
                     throw;
                 }
             }
+        }
+
+        private async Task<List<Chunk>> CallAsync(List<Chunk> args, CancellationToken token)
+        {
+            //Debug.WriteLine($"SusiePluginClient.Call: {args[0].Id}");
+
+            if (!_remote.IsConnected)
+            {
+                Recovery();
+            }
+
+            Exception? exception = null;
+
+            // 3 retries
+            for (int retry = 0; retry < 3; retry++)
+            {
+                try
+                {
+                    return await _remote.CallAsync(args, token);
+                }
+                catch (TimeoutException ex)
+                {
+                    exception = ex;
+                    Debug.WriteLine($"SusiePluginClient.CallAsync: {ex.Message})");
+                    Recovery();
+                }
+            }
+
+            throw exception ?? new InvalidOperationException("Exception is null");
         }
 
         private static TResult DeserializeChunk<TResult>(Chunk chunk)

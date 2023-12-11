@@ -28,20 +28,8 @@ namespace NeeLaboratory.Remote
             _semaphore.Wait(token);
             try
             {
-                // 接続5秒タイムアウトで2回リトライ
-                for (int retry = 0; retry < 2; ++retry)
-                {
-                    try
-                    {
-                        return await CallInnerAsync(args, 5000, token);
-                    }
-                    catch (TimeoutException)
-                    {
-                        Debug.WriteLine($"Client: Connect {_serverPipeName} timeout. Retry!");
-                    }
-                }
-
-                throw new TimeoutException($"Susie server call has timed out");
+                // 接続 5 秒タイムアウト
+                return await CallInnerAsync(args, 5000, token);
             }
             finally
             {

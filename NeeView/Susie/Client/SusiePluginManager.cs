@@ -28,21 +28,17 @@ namespace NeeView
         public static SusiePluginManager Current { get; }
 
         private bool _isInitialized;
-        private readonly SusiePluginRemoteClient _remote;
         private SusiePluginClient? _client;
         private List<SusiePluginInfo> _unauthorizedPlugins;
         private ObservableCollection<SusiePluginInfo> _INPlugins;
         private ObservableCollection<SusiePluginInfo> _AMPlugins;
-
+        private static object _lock = new();
 
         private SusiePluginManager()
         {
             _unauthorizedPlugins = new List<SusiePluginInfo>();
             _INPlugins = new ObservableCollection<SusiePluginInfo>();
             _AMPlugins = new ObservableCollection<SusiePluginInfo>();
-
-            _remote = new SusiePluginRemoteClient();
-
         }
 
 
@@ -107,6 +103,21 @@ namespace NeeView
             });
 
             UpdateSusiePluginCollection();
+
+#if false
+            // [DEBUG] Susie.IsEnable ON/OFF Loop
+            Task.Run(async () =>
+            {
+                while (true)
+                {
+                    await Task.Delay(3000);
+                    await AppDispatcher.BeginInvoke(() =>
+                    {
+                        Config.Current.Susie.IsEnabled = !Config.Current.Susie.IsEnabled;
+                    });
+                }
+            });
+#endif
         }
 
 
@@ -137,21 +148,25 @@ namespace NeeView
 
         private void OpenSusiePluginCollection()
         {
-            CloseSusiePluginCollection();
-
-            _client = new SusiePluginClient(_remote);
-            _client.SetRecoveryAction(LoadSusiePlugins);
-
-            try
+            lock (_lock)
             {
-                LoadSusiePlugins();
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine(ex.Message);
-                var errorLogFileName = App.ErrorLogFileName;
-                App.ExportErrorLog(errorLogFileName, ex);
-                ToastService.Current.Show(new Toast(Resources.SusieConnectError_Message + $"<br/><a href=\"{errorLogFileName}\">{errorLogFileName}</a>", null, ToastIcon.Error) { IsXHtml = true });
+                CloseSusiePluginCollection();
+                Debug.Assert(_client is null);
+
+                _client = new SusiePluginClient();
+
+                try
+                {
+                    LoadSusiePlugins();
+                    _client.SetRecoveryAction(LoadSusiePlugins);
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine(ex.Message);
+                    var errorLogFileName = App.ErrorLogFileName;
+                    App.ExportErrorLog(errorLogFileName, ex);
+                    ToastService.Current.Show(new Toast(Resources.SusieConnectError_Message + $"<br/><a href=\"{errorLogFileName}\">{errorLogFileName}</a>", null, ToastIcon.Error) { IsXHtml = true });
+                }
             }
         }
 
@@ -175,16 +190,20 @@ namespace NeeView
 
         private void CloseSusiePluginCollection()
         {
-            if (_client == null) return;
+            lock (_lock)
+            {
+                if (_client == null) return;
 
-            _client = null;
+                _client.Dispose();
+                _client = null;
 
-            UnauthorizedPlugins = Plugins.ToList();
-            INPlugins = new ObservableCollection<SusiePluginInfo>();
-            AMPlugins = new ObservableCollection<SusiePluginInfo>();
+                UnauthorizedPlugins = Plugins.ToList();
+                INPlugins = new ObservableCollection<SusiePluginInfo>();
+                AMPlugins = new ObservableCollection<SusiePluginInfo>();
 
-            UpdateImageExtensions();
-            UpdateArchiveExtensions();
+                UpdateImageExtensions();
+                UpdateArchiveExtensions();
+            }
         }
 
 
@@ -214,31 +233,37 @@ namespace NeeView
 
         public void FlushSusiePluginSetting(string name)
         {
-            if (_client is null) throw new InvalidOperationException("Client is null");
+            lock (_lock)
+            {
+                if (_client is null) throw new InvalidOperationException("Client is null");
 
-            var settings = Plugins
-                .Where(e => e.Name == name)
-                .Select(e => e.ToSusiePluginSetting())
-                .ToList();
+                var settings = Plugins
+                    .Where(e => e.Name == name)
+                    .Select(e => e.ToSusiePluginSetting())
+                    .ToList();
 
-            _client.SetPlugin(settings);
+                _client.SetPlugin(settings);
+            }
         }
 
         public void UpdateSusiePlugin(string name)
         {
-            if (_client is null) throw new InvalidOperationException("Client is null");
-
-            var plugins = _client.GetPlugin(new List<string>() { name });
-            if (plugins != null && plugins.Count == 1)
+            lock (_lock)
             {
-                var collection = plugins[0].PluginType == SusiePluginType.Image ? INPlugins : AMPlugins;
-                var plugin = collection.FirstOrDefault(e => e.Name == name);
-                if (plugin is not null)
+                if (_client is null) throw new InvalidOperationException("Client is null");
+
+                var plugins = _client.GetPlugin(new List<string>() { name });
+                if (plugins != null && plugins.Count == 1)
                 {
-                    var index = collection.IndexOf(plugin);
-                    if (index >= 0)
+                    var collection = plugins[0].PluginType == SusiePluginType.Image ? INPlugins : AMPlugins;
+                    var plugin = collection.FirstOrDefault(e => e.Name == name);
+                    if (plugin is not null)
                     {
-                        collection[index] = plugins[0];
+                        var index = collection.IndexOf(plugin);
+                        if (index >= 0)
+                        {
+                            collection[index] = plugins[0];
+                        }
                     }
                 }
             }
@@ -246,42 +271,57 @@ namespace NeeView
 
         public void FlushSusiePluginOrder()
         {
-            _client?.SetPluginOrder(Plugins.Select(e => e.Name).ToList());
+            lock (_lock)
+            {
+                _client?.SetPluginOrder(Plugins.Select(e => e.Name).ToList());
+            }
         }
 
         public SusieImagePluginAccessor GetImagePluginAccessor()
         {
-            if (_client is null) throw new InvalidOperationException("Client is null");
+            lock (_lock)
+            {
+                if (_client is null) throw new InvalidOperationException("Client is null");
 
-            return new SusieImagePluginAccessor(_client, null);
+                return new SusieImagePluginAccessor(_client, null);
+            }
         }
 
         public SusieImagePluginAccessor? GetImagePluginAccessor(string fileName, byte[] buff, bool isCheckExtension)
         {
-            if (_client is null) throw new InvalidOperationException("Client is null");
+            lock (_lock)
+            {
+                if (_client is null) throw new InvalidOperationException("Client is null");
 
-            var plugin = _client.GetImagePlugin(fileName, buff, isCheckExtension);
-            if (plugin is null) return null;
+                var plugin = _client.GetImagePlugin(fileName, buff, isCheckExtension);
+                if (plugin is null) return null;
 
-            return new SusieImagePluginAccessor(_client, plugin);
+                return new SusieImagePluginAccessor(_client, plugin);
+            }
         }
 
         public SusieArchivePluginAccessor? GetArchivePluginAccessor(string fileName, byte[]? buff, bool isCheckExtension)
         {
-            if (_client is null) throw new InvalidOperationException("Client is null");
+            lock (_lock)
+            {
+                if (_client is null) throw new InvalidOperationException("Client is null");
 
-            var plugin = _client.GetArchivePlugin(fileName, buff, isCheckExtension);
-            if (plugin is null) return null;
+                var plugin = _client.GetArchivePlugin(fileName, buff, isCheckExtension);
+                if (plugin is null) return null;
 
-            return new SusieArchivePluginAccessor(_client, plugin);
+                return new SusieArchivePluginAccessor(_client, plugin);
+            }
         }
 
         public void ShowPluginConfigurationDialog(string pluginName, Window owner)
         {
-            if (_client is null) throw new InvalidOperationException("Client is null");
+            lock (_lock)
+            {
+                if (_client is null) throw new InvalidOperationException("Client is null");
 
-            var handle = new WindowInteropHelper(owner).Handle;
-            _client.ShowConfigulationDlg(pluginName, handle.ToInt32());
+                var handle = new WindowInteropHelper(owner).Handle;
+                _client.ShowConfigulationDlg(pluginName, handle.ToInt32());
+            }
         }
 
         #region Memento
