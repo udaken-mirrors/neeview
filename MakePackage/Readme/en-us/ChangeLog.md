@@ -2,6 +2,26 @@
 
 ----
 
+### 40.2
+(2023-12-12)
+
+#### New
+
+- Added Portuguese (pt-BR)
+
+#### Fixed
+
+- Fixed a bug that sometimes only one page is displayed even though the display mode is 2-page display mode.
+- Fixed a bug that film centering did not work immediately after the start of filmstrip display.
+- Fixed a bug that history may not be saved.
+- Fixed a bug that the loupe did not work immediately after switching to panorama mode.
+- Fixed a bug that loupe release on page move did not work.
+- Fixed a bug that prevented searching by network path in the bookshelf.
+- Fixed a bug in which the sub archive loading failure skip process did not work.
+- Susie plugin Improved access timeout handling.
+
+----
+
 ### 40.1
 (2023-12-06)
 
