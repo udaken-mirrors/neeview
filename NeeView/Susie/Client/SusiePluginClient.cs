@@ -109,8 +109,8 @@ namespace NeeView.Susie.Client
 
             Exception? exception = null;
 
-            // 3 retries
-            for (int retry = 0; retry < 3; retry++)
+            // 5 retries
+            for (int retry = 0; retry < 5; retry++)
             {
                 try
                 {

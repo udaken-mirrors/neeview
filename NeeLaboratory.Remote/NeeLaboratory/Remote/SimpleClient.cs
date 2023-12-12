@@ -28,8 +28,8 @@ namespace NeeLaboratory.Remote
             _semaphore.Wait(token);
             try
             {
-                // 接続 5 秒タイムアウト
-                return await CallInnerAsync(args, 5000, token);
+                // 接続 2 秒タイムアウト
+                return await CallInnerAsync(args, 2000, token);
             }
             finally
             {
