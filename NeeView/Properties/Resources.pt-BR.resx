@@ -806,7 +806,7 @@ Search for pages containing "smile" in "parameters" in "@InformationGroup.Extras
     <value>Raio</value>
   </data>
   <data name="BookAccessor" xml:space="preserve">
-    <value>Acessor de livros</value>
+    <value>Acessador de livro</value>
   </data>
   <data name="BookAccessor.Config" xml:space="preserve">
     <value>Configuração do livro</value>
@@ -1094,7 +1094,7 @@ Search for pages containing "smile" in "parameters" in "@InformationGroup.Extras
     <value>Padrão</value>
   </data>
   <data name="BookSettingSelectMode.RestoreOrContinue" xml:space="preserve">
-    <value>Restaurar, caso contrário, continue</value>
+    <value>Restaurar, caso contrário, continuar</value>
   </data>
   <data name="BookSettingSelectMode.RestoreOrDefault" xml:space="preserve">
     <value>Restaurar, caso contrário, padrão</value>
@@ -1136,7 +1136,7 @@ Search for pages containing "smile" in "parameters" in "@InformationGroup.Extras
     <value>Opções de busca</value>
   </data>
   <data name="Bookshelf.MoreMenu.Subfolder" xml:space="preserve">
-    <value>Carregar subastas neste local</value>
+    <value>Carregar sub-pastas neste local</value>
   </data>
   <data name="Bookshelf.Next.ToolTip" xml:space="preserve">
     <value>Próximo (Alt+Direita)</value>
@@ -3383,7 +3383,7 @@ include("Sample.nvjs")</value>
     <value>Caminho executável. Se você especificar um URL ou caminho de arquivo, o aplicativo associado será executado.</value>
   </data>
   <data name="JumpPageCommand" xml:space="preserve">
-    <value>Pular página</value>
+    <value>Mover para página</value>
   </data>
   <data name="JumpPageCommand.Execute.Remarks" xml:space="preserve">
     <value>número: int|Número da página</value>
@@ -3675,7 +3675,7 @@ include("Sample.nvjs")</value>
     <value>_Imagem</value>
   </data>
   <data name="MenuTree.Jump" xml:space="preserve">
-    <value>_Pular</value>
+    <value>_Mover Para</value>
   </data>
   <data name="MenuTree.Option" xml:space="preserve">
     <value>_Opção</value>
@@ -3910,16 +3910,16 @@ Um clique esquerdo pode ser registrado como a última tecla de gesto.</value>
     <value>Acessador do painel do navegador</value>
   </data>
   <data name="NextBookCommand" xml:space="preserve">
-    <value>Próximo Livro</value>
+    <value>Livro Seguinte</value>
   </data>
   <data name="NextBookCommand.Remarks" xml:space="preserve">
-    <value>Coloque o próximo livro na estante.</value>
+    <value>Coloque o livro seguinte na estante.</value>
   </data>
   <data name="NextBookHistoryCommand" xml:space="preserve">
     <value>Ir para o próximo</value>
   </data>
   <data name="NextBookHistoryCommand.Remarks" xml:space="preserve">
-    <value>Abrir um próximo livro aberto.</value>
+    <value>Abrir um livro seguinte aberto.</value>
   </data>
   <data name="NextFolderPageCommand" xml:space="preserve">
     <value>Próxima pasta</value>
@@ -3940,13 +3940,13 @@ Um clique esquerdo pode ser registrado como a última tecla de gesto.</value>
     <value>Mover para a próxima página de exibição</value>
   </data>
   <data name="NextOnePageCommand" xml:space="preserve">
-    <value>Página Seguinte</value>
+    <value>Avançar 1 Página</value>
   </data>
   <data name="NextOnePageCommand.Remarks" xml:space="preserve">
     <value>Apenas uma página se moverá na próxima direção.</value>
   </data>
   <data name="NextPageCommand" xml:space="preserve">
-    <value>Seguinte</value>
+    <value>Página Seguinte</value>
   </data>
   <data name="NextPageCommand.Remarks" xml:space="preserve">
     <value>Mover para a direção da próxima página. Se for uma exibição de 2 páginas, ele se moverá 2 páginas.</value>
@@ -3979,7 +3979,7 @@ Um clique esquerdo pode ser registrado como a última tecla de gesto.</value>
     <value>(vazio)</value>
   </data>
   <data name="Notice.BookNextFailed" xml:space="preserve">
-    <value>Nenhum próximo livro</value>
+    <value>Nenhum livro seguinte</value>
   </data>
   <data name="Notice.BookOperationPageLoop" xml:space="preserve">
     <value>Em loop.</value>
@@ -4308,7 +4308,7 @@ nv.ShowToast(nv.Book.Pages[0].Path)</value>
     <value>Loop</value>
   </data>
   <data name="PageEndAction.NextBook" xml:space="preserve">
-    <value>Mover para o próximo livro</value>
+    <value>Mover para o livro seguinte</value>
   </data>
   <data name="PageEndAction.None" xml:space="preserve">
     <value>Vazio</value>
@@ -4819,13 +4819,13 @@ O arquivo Susie não determina esse tamanho, mas apenas a pré-extração nas co
     <value>Mover para a página da exibição anterior.</value>
   </data>
   <data name="PrevOnePageCommand" xml:space="preserve">
-    <value>Página Anterior</value>
+    <value>Voltar 1 Página</value>
   </data>
   <data name="PrevOnePageCommand.Remarks" xml:space="preserve">
     <value>Avançar apenas uma página.</value>
   </data>
   <data name="PrevPageCommand" xml:space="preserve">
-    <value>Anterior</value>
+    <value>Página Anterior</value>
   </data>
   <data name="PrevPageCommand.Remarks" xml:space="preserve">
     <value>Mover para o início da página. Se for uma exibição de 2 páginas, ele se moverá 2 páginas.</value>
@@ -5887,7 +5887,7 @@ $Name é a página principal (o número menor da página) ao exibir 2 páginas.<
     <value>Comece a reproduzir o slideshow</value>
   </data>
   <data name="StartUpConfig.IsMultiBootEnabled" xml:space="preserve">
-    <value>Permitir múltiplas ativações</value>
+    <value>Permitir múltiplas instâncias</value>
   </data>
   <data name="StartUpConfig.IsOpenLastBook" xml:space="preserve">
     <value>Restaurar um livro aberto</value>
@@ -6454,7 +6454,7 @@ $Name é a página principal (o número menor da página) ao exibir 2 páginas.<
     <value>Alternar janela Exibição Principal</value>
   </data>
   <data name="ToggleMainViewFloatingCommand.Menu" xml:space="preserve">
-    <value>Janela de Exibição Principal</value>
+    <value>Janela da Exibição Principal</value>
   </data>
   <data name="ToggleMainViewFloatingCommand.Off" xml:space="preserve">
     <value>Encaixe Exibição Principal</value>
@@ -7409,7 +7409,7 @@ nv.ShowToast(nv.Book.ViewPages[0].Path)</value>
     <value>(vazio)</value>
   </data>
   <data name="Word.Jump" xml:space="preserve">
-    <value>Pular</value>
+    <value>Mover Para</value>
   </data>
   <data name="Word.Left" xml:space="preserve">
     <value>Esquerda</value>
@@ -7811,7 +7811,7 @@ nv.ShowToast(nv.Book.ViewPages[0].Path)</value>
     <value>Conteúdo alternativo para exibição principal</value>
   </data>
   <data name="MainViewConfig.AlternativeContent.Remarks" xml:space="preserve">
-    <value>Conteúdo a ser exibido quando a janela de exibição principal for exibida.</value>
+    <value>Conteúdo a ser exibido quando a janela da exibição principal for exibida.</value>
   </data>
   <data name="PageListConfig.ShowBookTitle" xml:space="preserve">
     <value>Mostrar título do livro</value>
@@ -7853,16 +7853,16 @@ nv.ShowToast(nv.Book.ViewPages[0].Path)</value>
     <value>Janela de Exibição Principal</value>
   </data>
   <data name="MainViewConfig.IsAutoStretch" xml:space="preserve">
-    <value>Alongamento automático da janela de exibição principal</value>
+    <value>Alongamento automático da janela da exibição principal</value>
   </data>
   <data name="MainViewConfig.IsAutoStretch.Remarks" xml:space="preserve">
     <value>Ajuste o tamanho da janela ao tamanho da imagem.</value>
   </data>
   <data name="MainViewConfig.IsAutoHide" xml:space="preserve">
-    <value>Fechamento automático da janela de exibição principal</value>
+    <value>Fechamento automático da janela da exibição principal</value>
   </data>
   <data name="MainViewConfig.IsAutoHide.Remarks" xml:space="preserve">
-    <value>Minimiza a janela de exibição principal quando o livro é fechado.</value>
+    <value>Minimiza a janela da exibição principal quando o livro é fechado.</value>
   </data>
   <data name="SystemConfig.DateTimeFormat" xml:space="preserve">
     <value>Formato de data e hora</value>
