@@ -52,7 +52,7 @@ namespace NeeView
         public double ScaleStep
         {
             get { return _scaleStep; }
-            set { SetProperty(ref _scaleStep, Math.Max(value, 0.1)); }
+            set { SetProperty(ref _scaleStep, Math.Max(value, 0.0)); }
         }
 
         [PropertyMember]
