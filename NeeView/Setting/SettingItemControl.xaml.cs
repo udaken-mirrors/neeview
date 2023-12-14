@@ -52,7 +52,7 @@ namespace NeeView.Setting
             if (!isContentStretch)
             {
                 this.ContentValue.HorizontalAlignment = HorizontalAlignment.Left;
-                this.ContentValue.Width = 300;
+                this.ContentValue.MinWidth = 300;
             }
         }
     }
