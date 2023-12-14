@@ -96,7 +96,7 @@ namespace NeeView
 
         public void MoveToLast(object? sender)
         {
-            _box.MoveTo(new PagePosition(Pages.Count - 1, 0), LinkedListDirection.Next);
+            _box.MoveTo(new PagePosition(Pages.Count - 1, 1), LinkedListDirection.Previous);
         }
     }
 
