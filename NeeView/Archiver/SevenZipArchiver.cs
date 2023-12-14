@@ -38,6 +38,7 @@ namespace NeeView
             // 直接の圧縮ファイルである場合のみアンロック
             if (this.Parent == null || this.Parent is FolderArchive)
             {
+                NVDebug.AssertMTA();
                 _accessor.Unlock();
             }
         }
@@ -52,12 +53,14 @@ namespace NeeView
         // Solid archive ?
         private bool IsSolid()
         {
+            NVDebug.AssertMTA();
             return _accessor.IsSolid;
         }
 
         // エントリーリストを得る
         protected override async Task<List<ArchiveEntry>> GetEntriesInnerAsync(CancellationToken token)
         {
+            NVDebug.AssertMTA();
             token.ThrowIfCancellationRequested();
 
             if (_disposedValue) return new List<ArchiveEntry>();
@@ -110,6 +113,7 @@ namespace NeeView
         // エントリーのストリームを得る
         protected override Stream OpenStreamInner(ArchiveEntry entry)
         {
+            NVDebug.AssertMTA();
             Debug.Assert(entry is not null);
             if (entry.Id < 0) throw new ArgumentException("Cannot open this entry: " + entry.EntryName);
 
@@ -130,6 +134,21 @@ namespace NeeView
         // ファイルに出力
         protected override void ExtractToFileInner(ArchiveEntry entry, string exportFileName, bool isOverwrite)
         {
+            // NOTE: MTAスレッドで実行。SevenZipSharpのCOM例外対策
+            if (Thread.CurrentThread.GetApartmentState() == ApartmentState.STA)
+            {
+                // TODO: Async化
+                Task.Run(() => ExtractToFileInnerCore(entry, exportFileName, isOverwrite)).Wait();
+            }
+            else
+            {
+                ExtractToFileInnerCore(entry, exportFileName, isOverwrite);
+            }
+        }
+
+        private void ExtractToFileInnerCore(ArchiveEntry entry, string exportFileName, bool isOverwrite)
+        { 
+            NVDebug.AssertMTA();
             Debug.Assert(entry is not null);
             Debug.Assert(!string.IsNullOrEmpty(exportFileName));
             if (entry.Id < 0) throw new ArgumentException("Cannot open this entry: " + entry.EntryName);
