@@ -97,7 +97,7 @@ namespace NeeView.PageFrames
 
         public bool Contains(Page page)
         {
-            return PageRange.Min.Index <= page.Index && page.Index <= PageRange.Max.Index;
+            return Page == page;
         }
 
         public bool Contains(PagePosition index)
