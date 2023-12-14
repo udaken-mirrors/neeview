@@ -97,7 +97,7 @@ namespace NeeView.PageFrames
 
         private Rect GetViewRect(TransformSelect select)
         {
-            return _view.Transform.GetTransform(select).Inverse.TransformBounds(_size.ToRect());
+            return _view.Transform.GetTransform(select).Inverse?.TransformBounds(_size.ToRect()) ?? new Rect();
         }
 
         private Rect CreateViewRect(Point center, Size size)

@@ -83,7 +83,7 @@ namespace NeeView
             var layoutHeight = _element.Height * _scale.LayoutScale;
             IsRightAngle = Math.Abs(_scale.RenderAngle % 90) < 1.0;
             LayoutSize = new Size(layoutWidth, layoutHeight);
-            RenderingSize = new Size(layoutWidth * _scale.RenderScale, layoutHeight * _scale.RenderScale);
+            RenderingSize = new Size(Math.Abs(layoutWidth * _scale.RenderScale), Math.Abs(layoutHeight * _scale.RenderScale));
             PixelSize = new Size(RenderingSize.Width * _scale.DpiScale.DpiScaleX, RenderingSize.Height * _scale.DpiScale.DpiScaleY);
         }
 

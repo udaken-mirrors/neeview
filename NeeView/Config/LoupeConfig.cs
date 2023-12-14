@@ -18,7 +18,6 @@ namespace NeeView
         private bool _isWheelScalingEnabled = true;
         private double _speed = 1.0;
         private bool _isEscapeKeyEnabled = true;
-        private double _loupeScale = 2.0;
 
 
         [PropertyMember]
@@ -46,20 +45,14 @@ namespace NeeView
         public double DefaultScale
         {
             get { return _defaultScale; }
-            set
-            {
-                if (SetProperty(ref _defaultScale, value))
-                {
-                    LoupeScale = _defaultScale;
-                }
-            }
+            set { SetProperty(ref _defaultScale, value); }
         }
 
         [PropertyRange(0.1, 5.0, TickFrequency = 0.1, IsEditable = true, Format = "{0:0.0}")]
         public double ScaleStep
         {
             get { return _scaleStep; }
-            set { SetProperty(ref _scaleStep, Math.Max(value, 0.0)); }
+            set { SetProperty(ref _scaleStep, Math.Max(value, 0.1)); }
         }
 
         [PropertyMember]
@@ -102,17 +95,6 @@ namespace NeeView
         {
             get { return _isVisibleLoupeInfo; }
             set { SetProperty(ref _isVisibleLoupeInfo, value); }
-        }
-
-
-        /// <summary>
-        /// 現在のルーペスケール。この値は保存されない。
-        /// </summary>
-        [JsonIgnore]
-        public double LoupeScale
-        {
-            get { return _loupeScale; }
-            set { SetProperty(ref _loupeScale, value); }
         }
 
     }

@@ -65,7 +65,7 @@ namespace NeeView
 
             if (Config.Current.Loupe.IsResetByRestart)
             {
-                Config.Current.Loupe.LoupeScale = Config.Current.Loupe.DefaultScale;
+                _loupe.Reset();
             }
         }
 
