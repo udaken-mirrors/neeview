@@ -58,7 +58,7 @@ namespace NeeView
         
         public bool IsSupportedSingleLastPage => BookOperation.Current.Book?.Setting.IsSupportedSingleLastPage ?? false;
 
-        public int ViewPageCount => BookOperation.Current.Book?.Pages.Count ?? 0;
+        public int ViewPageCount => BookOperation.Current.Book?.CurrentPages.Count ?? 0;
 
         public int MaxIndex => Math.Max(BookOperation.Current.Control.Pages.Count - 1, 0);
 
