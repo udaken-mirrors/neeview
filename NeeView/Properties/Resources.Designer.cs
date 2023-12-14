@@ -984,7 +984,7 @@ namespace NeeView.Properties {
         }
         
         /// <summary>
-        ///   Distance between pages in &quot;@PageMode.Panorama&quot; (pixels) に類似しているローカライズされた文字列を検索します。
+        ///   Distance between pages in &quot;@BookConfig.IsPanorama&quot; (pixels) に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string BookConfig_FrameSpace {
             get {
@@ -1038,6 +1038,24 @@ namespace NeeView.Properties {
         }
         
         /// <summary>
+        ///   Add a dummy page to the first page に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string BookConfig_IsInsertDummyFirstPage {
+            get {
+                return ResourceManager.GetString("BookConfig.IsInsertDummyFirstPage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Add a dummy page to the last page に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string BookConfig_IsInsertDummyLastPage {
+            get {
+                return ResourceManager.GetString("BookConfig.IsInsertDummyLastPage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Insert a dummy page for a double-page spread に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string BookConfig_IsInsertDummyPage {
@@ -1047,7 +1065,7 @@ namespace NeeView.Properties {
         }
         
         /// <summary>
-        ///   When there are not enough pages at the end of the two-page display, add a dummy page to align the spread. に類似しているローカライズされた文字列を検索します。
+        ///   When there are not enough pages at the two-page display, add a dummy page to align the spread. に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string BookConfig_IsInsertDummyPage_Remarks {
             get {

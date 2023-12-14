@@ -862,9 +862,6 @@ Search for pages containing "smile" in "parameters" in "@InformationGroup.Extras
   <data name="BookConfig.IsInsertDummyPage" xml:space="preserve">
     <value>Inserir uma página fictícia para uma página espelhada dupla</value>
   </data>
-  <data name="BookConfig.IsInsertDummyPage.Remarks" xml:space="preserve">
-    <value>Quando não houver páginas suficientes no final da exibição de duas páginas, adicione uma página fictícia para alinhar a página espelhada.</value>
-  </data>
   <data name="BookConfig.IsMultiplePageMove" xml:space="preserve">
     <value>Aceitar duplicação de comandos de movimentação de página</value>
   </data>
@@ -1591,7 +1588,7 @@ nv.Config.Theme.ThemeType = "Dark"</value>
     <value>Exiba a caixa de diálogo.</value>
   </data>
   <data name="CommandHost.ShowDialog.commands" xml:space="preserve">
-    <value>{0} OK/ 1: OKCancel / 2: YesNo
+    <value>0 OK/ 1: OKCancel / 2: YesNo
 Button types (optional)</value>
   </data>
   <data name="CommandHost.ShowDialog.Example" xml:space="preserve">
@@ -7667,7 +7664,7 @@ nv.ShowToast(nv.Book.ViewPages[0].Path)</value>
     <value>Cor da página fictícia</value>
   </data>
   <data name="BookConfig.FrameSpace" xml:space="preserve">
-    <value>Distância entre páginas em "@PageMode.Panorama" (pixels)</value>
+    <value>Distância entre páginas em "@BookConfig.IsPanorama" (pixels)</value>
   </data>
   <data name="BookConfig.FrameSpace.Remarks" xml:space="preserve">
     <value>Define o intervalo entre página e página. Valores negativos ​​significam sobreposição. Como cada página é dimensionada, é raro que não haja lacuna apenas em 0.</value>
@@ -8019,5 +8016,14 @@ nv.ShowToast(nv.Book.ViewPages[0].Path)</value>
   </data>
   <data name="SetPageOrientationVerticalCommand.Remarks" xml:space="preserve">
     <value>Alinhar páginas verticalmente</value>
+  </data>
+  <data name="BookConfig.IsInsertDummyPage.Remarks" xml:space="preserve">
+    <value>Quando não houver páginas suficientes na exibição de duas páginas, adicione uma página fictícia para alinhar a expansão.</value>
+  </data>
+  <data name="BookConfig.IsInsertDummyFirstPage" xml:space="preserve">
+    <value>Adicionar uma página fictícia à primeira página</value>
+  </data>
+  <data name="BookConfig.IsInsertDummyLastPage" xml:space="preserve">
+    <value>Adicionar uma página fictícia à última página</value>
   </data>
 </root>

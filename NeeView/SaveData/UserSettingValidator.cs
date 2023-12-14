@@ -147,6 +147,17 @@ namespace NeeView
                 }
             }
 
+            // ver.40.3
+            if (self.Format.CompareTo(new FormatVersion(Environment.SolutionName, 40, 3, 0)) < 0)
+            {
+                // ダミーページ挿入：40.0以降は挙動が同じになるような設定にする
+                if (self.Config.Book.IsInsertDummyPage && self.Format.CompareTo(new FormatVersion(Environment.SolutionName, 40, 0, 0)) >= 0)
+                {
+                    self.Config.Book.IsInsertDummyFirstPage = true;
+                    self.Config.Book.IsInsertDummyLastPage = true;
+                }
+            }
+
 #if false
             // ver.99 (バージョン変更処理テスト)
             if (self.Format.CompareTo(new FormatVersion(Environment.SolutionName, 99, 0, 0)) < 0)
@@ -156,7 +167,7 @@ namespace NeeView
             }
 #endif
 
-            return self;
+                return self;
         }
 
 #pragma warning restore CS0612, CS0618 // 型またはメンバーが旧型式です

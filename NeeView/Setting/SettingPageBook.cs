@@ -32,6 +32,14 @@ namespace NeeView.Setting
             section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.Book, nameof(BookConfig.IsSortFileFirst))));
             section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.Book, nameof(BookConfig.ResetPageWhenRandomSort))));
             section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.Book, nameof(BookConfig.IsInsertDummyPage))));
+            section.Children.Add(new SettingItemSubProperty(PropertyMemberElement.Create(Config.Current.Book, nameof(BookConfig.IsInsertDummyFirstPage)))
+            {
+                IsEnabled = new IsEnabledPropertyValue(Config.Current.Book, nameof(BookConfig.IsInsertDummyPage)),
+            });
+            section.Children.Add(new SettingItemSubProperty(PropertyMemberElement.Create(Config.Current.Book, nameof(BookConfig.IsInsertDummyLastPage)))
+            {
+                IsEnabled = new IsEnabledPropertyValue(Config.Current.Book, nameof(BookConfig.IsInsertDummyPage)),
+            });
             section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.Book, nameof(BookConfig.DummyPageColor))));
             this.Items = new List<SettingItem>() { section };
         }

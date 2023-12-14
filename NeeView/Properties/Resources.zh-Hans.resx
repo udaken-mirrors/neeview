@@ -862,9 +862,6 @@ Search for pages containing "smile" in "parameters" in "@InformationGroup.Extras
   <data name="BookConfig.IsInsertDummyPage" xml:space="preserve">
     <value>插入用于对开的虚拟页面</value>
   </data>
-  <data name="BookConfig.IsInsertDummyPage.Remarks" xml:space="preserve">
-    <value>在 2 页面显示的结尾页面不足时，加入虚拟页面与对开对齐。</value>
-  </data>
   <data name="BookConfig.IsMultiplePageMove" xml:space="preserve">
     <value>允许多重页面移动指令</value>
   </data>

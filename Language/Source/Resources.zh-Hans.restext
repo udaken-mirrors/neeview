@@ -93,7 +93,6 @@ BookConfig.IsAutoRecursive.Remarks=在没有页面，而且只存在一个子文
 BookConfig.IsConfirmRecursive=只有子文件夹时询问是否要读入
 BookConfig.IsConfirmRecursive.Remarks=当开启书本时没有可以显示的页面，但有子文件夹存在时，显示一并读入文件夹的询问读入对话框。
 BookConfig.IsInsertDummyPage=插入用于对开的虚拟页面
-BookConfig.IsInsertDummyPage.Remarks=在 2 页面显示的结尾页面不足时，加入虚拟页面与对开对齐。
 BookConfig.IsMultiplePageMove=允许多重页面移动指令
 BookConfig.IsMultiplePageMove.Remarks=执行全部被要求的页面移动指令。如果为关闭则重复的页面移动指令会被取消。
 BookConfig.IsNotifyPageLoop=页面循环通知

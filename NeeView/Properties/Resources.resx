@@ -862,9 +862,6 @@ Search for pages containing "smile" in "parameters" in "@InformationGroup.Extras
   <data name="BookConfig.IsInsertDummyPage" xml:space="preserve">
     <value>Insert a dummy page for a double-page spread</value>
   </data>
-  <data name="BookConfig.IsInsertDummyPage.Remarks" xml:space="preserve">
-    <value>When there are not enough pages at the end of the two-page display, add a dummy page to align the spread.</value>
-  </data>
   <data name="BookConfig.IsMultiplePageMove" xml:space="preserve">
     <value>Accept duplication of page movement commands</value>
   </data>
@@ -7667,7 +7664,7 @@ nv.ShowToast(nv.Book.ViewPages[0].Path)</value>
     <value>Dummy page color</value>
   </data>
   <data name="BookConfig.FrameSpace" xml:space="preserve">
-    <value>Distance between pages in "@PageMode.Panorama" (pixels)</value>
+    <value>Distance between pages in "@BookConfig.IsPanorama" (pixels)</value>
   </data>
   <data name="BookConfig.FrameSpace.Remarks" xml:space="preserve">
     <value>Sets the gap between page and page. Negative values ​​mean overlapping. Because each page is scaled, it is rare that there will be no gap just at 0.</value>
@@ -8019,5 +8016,14 @@ nv.ShowToast(nv.Book.ViewPages[0].Path)</value>
   </data>
   <data name="SetPageOrientationVerticalCommand.Remarks" xml:space="preserve">
     <value>Align pages vertically</value>
+  </data>
+  <data name="BookConfig.IsInsertDummyPage.Remarks" xml:space="preserve">
+    <value>When there are not enough pages at the two-page display, add a dummy page to align the spread.</value>
+  </data>
+  <data name="BookConfig.IsInsertDummyFirstPage" xml:space="preserve">
+    <value>Add a dummy page to the first page</value>
+  </data>
+  <data name="BookConfig.IsInsertDummyLastPage" xml:space="preserve">
+    <value>Add a dummy page to the last page</value>
   </data>
 </root>

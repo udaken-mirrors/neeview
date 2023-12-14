@@ -864,9 +864,6 @@ nv.Command.ToggleMediaPlay.Execute()
   <data name="BookConfig.IsInsertDummyPage" xml:space="preserve">
     <value>見開き用のダミー ページを挿入する</value>
   </data>
-  <data name="BookConfig.IsInsertDummyPage.Remarks" xml:space="preserve">
-    <value>2 ページ表示の終端でページが足りないときに、ダミー ページを追加して見開きを揃えます。</value>
-  </data>
   <data name="BookConfig.IsMultiplePageMove" xml:space="preserve">
     <value>ページ移動コマンドの重複許可</value>
   </data>
@@ -7672,7 +7669,7 @@ nv.ShowToast(nv.Book.ViewPages[0].Path)</value>
     <value>ダミー ページの色</value>
   </data>
   <data name="BookConfig.FrameSpace" xml:space="preserve">
-    <value>「@PageMode.Panorama」でのページ間の距離 (ピクセル)</value>
+    <value>「@BookConfig.IsPanorama」でのページ間の距離 (ピクセル)</value>
   </data>
   <data name="BookConfig.FrameSpace.Remarks" xml:space="preserve">
     <value>ページとページの隙間を設定します。マイナス値は重なることを意味します。各ページにスケールがかかるため、0 でちょうど隙間がなくなることは稀です。</value>
@@ -8024,5 +8021,14 @@ nv.ShowToast(nv.Book.ViewPages[0].Path)</value>
   </data>
   <data name="SetPageOrientationVerticalCommand.Remarks" xml:space="preserve">
     <value>ページを垂直に並べる</value>
+  </data>
+  <data name="BookConfig.IsInsertDummyPage.Remarks" xml:space="preserve">
+    <value>2 ページ表示でページが足りないときに、ダミー ページを追加して見開きを揃えます。</value>
+  </data>
+  <data name="BookConfig.IsInsertDummyFirstPage" xml:space="preserve">
+    <value>最初のページにダミー ページを追加する</value>
+  </data>
+  <data name="BookConfig.IsInsertDummyLastPage" xml:space="preserve">
+    <value>最後のページにダミー ページを追加する</value>
   </data>
 </root>

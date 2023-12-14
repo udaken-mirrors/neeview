@@ -26,6 +26,8 @@ namespace NeeView
         private bool _isSortFileFirst;
         private bool _resetPageWhenRandomSort;
         private bool _isInsertDummyPage;
+        private bool _isInsertDummyFirstPage = false;
+        private bool _isInsertDummyLastPage = true;
         private Color _dummyPageColor = Colors.White;
         private bool _isPanorama;
         private PageFrameOrientation _orientation = PageFrameOrientation.Horizontal;
@@ -160,6 +162,20 @@ namespace NeeView
         {
             get { return _isInsertDummyPage; }
             set { SetProperty(ref _isInsertDummyPage, value); }
+        }
+
+        [PropertyMember]
+        public bool IsInsertDummyFirstPage
+        {
+            get { return _isInsertDummyFirstPage; }
+            set { SetProperty(ref _isInsertDummyFirstPage, value); }
+        }
+
+        [PropertyMember]
+        public bool IsInsertDummyLastPage
+        {
+            get { return _isInsertDummyLastPage; }
+            set { SetProperty(ref _isInsertDummyLastPage, value); }
         }
 
         // ダミーページ色

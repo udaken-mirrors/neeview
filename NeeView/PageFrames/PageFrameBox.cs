@@ -550,6 +550,8 @@ namespace NeeView.PageFrames
                 case nameof(Context.ImageResizeFilterConfig):
                 case nameof(Context.ImageDotKeepConfig):
                 case nameof(Context.IsInsertDummyPage):
+                case nameof(Context.IsInsertDummyFirstPage):
+                case nameof(Context.IsInsertDummyLastPage):
                     UpdateContainers(PageFrameDirtyLevel.Heavy, TransformMask.None, false, false);
                     break;
             }
