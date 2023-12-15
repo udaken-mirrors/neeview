@@ -152,8 +152,7 @@ namespace NeeView.PageFrames
             // 最初のページ
             if (_bookContext.IsEnabled)
             {
-                var index = _bookContext.Book.CurrentPage?.Index ?? 0;
-                MoveTo(new PagePosition(index, 0), LinkedListDirection.Next);
+                MoveTo(_bookContext.Book.StartPosition.Position, LinkedListDirectionExtensions.FromSign(_bookContext.Book.StartPosition.Direction));
                 _scrollViewer.FlushScroll();
             }
             else

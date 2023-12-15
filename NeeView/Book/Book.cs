@@ -85,6 +85,11 @@ namespace NeeView
         public bool IsKeepHistoryOrder => (_loadOption & BookLoadOption.KeepHistoryOrder) == BookLoadOption.KeepHistoryOrder;
 
         /// <summary>
+        /// 初期ページ座標
+        /// </summary>
+        public DirectionalPagePosition StartPosition { get; private set; } = new();
+
+        /// <summary>
         /// 初期Memento
         /// </summary>
         public BookMemento Memento { get; private set; }
@@ -135,16 +140,16 @@ namespace NeeView
 
             // スタートページ取得
             PagePosition position = _source.Pages.FirstPosition();
-            //int direction = 1;
+            int direction = 1;
             if (startPage.StartPageType == BookStartPageType.FirstPage)
             {
                 position = _source.Pages.FirstPosition();
-                //direction = 1;
+                direction = 1;
             }
             else if (startPage.StartPageType == BookStartPageType.LastPage)
             {
                 position = _source.Pages.LastPosition();
-                //direction = -1;
+                direction = -1;
             }
             else
             {
@@ -154,7 +159,7 @@ namespace NeeView
                     this.NotFoundStartPage = startPage.PageName;
                 }
                 position = index >= 0 ? new PagePosition(index, 0) : _source.Pages.FirstPosition();
-                //direction = 1;
+                direction = 1;
 
                 // 最終ページリセット
                 // NOTE: ワイドページ判定は行わないため、2ページモードの場合に不正確な場合がある
@@ -176,7 +181,7 @@ namespace NeeView
             }
 
             // 初期ページ設定 
-            //_controller.JumpPage(sender, position, direction);
+            StartPosition = new DirectionalPagePosition(position, direction);
         }
 
         public void Start()
@@ -277,6 +282,25 @@ namespace NeeView
 #endif
 
         #endregion
+    }
+
+
+    public class DirectionalPagePosition
+    {
+        public DirectionalPagePosition() : this(PagePosition.Zero, 1)
+        {
+        }
+
+        public DirectionalPagePosition(PagePosition position, int direction)
+        {
+            Debug.Assert(!position.IsEmpty());
+            Debug.Assert(direction is -1 or +1);
+            Position = position;
+            Direction = direction == -1 ? -1 : +1;
+        }
+
+        public PagePosition Position { get; init; }
+        public int Direction { get; init; }
     }
 
 
