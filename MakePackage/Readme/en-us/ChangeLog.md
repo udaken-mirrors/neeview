@@ -2,6 +2,26 @@
 
 ----
 
+### 40.3
+(2023-12-16)
+
+#### New
+
+- Add "Added dummy page to the first/last page" settings.
+
+#### Fixed
+
+- Fixed a bug that caused an error in copying.
+- Fixed a bug that "Start loupe at standard magnification" of loupe did not work.
+- Fixed an issue with page slider movement in two-page display that caused misalignment when moving from a single page.
+- Corrected the number of pages displayed by the "Last Page" command in the two-page display.
+- Fixed a bug in seamless loop in two-page display where "First/Last page alone" did not work.
+- Adjust button widths on the settings page.
+- Fixed an issue with the number of pages displayed when returning to the previous book in an end-of-page book move.
+- Fixed a bug that sometimes moved two pages when moving one page.
+
+----
+
 ### 40.2
 (2023-12-12)
 
