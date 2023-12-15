@@ -736,7 +736,6 @@ namespace NeeView.PageFrames
                 return;
             }
 
-            // TODO: MoveToNextFrame と共通点が多いのでまとめられないだろうか
             var current = _selected.Node;
             Debug.Assert(current is not null);
             if (current is null) return;
@@ -746,29 +745,20 @@ namespace NeeView.PageFrames
                 return;
             }
 
-            var pos = new PagePosition(current.Value.FrameRange.Top(direction.ToSign()).Index + direction.ToSign(), direction == LinkedListDirection.Next ? 0 : 1);
-            var next = _containers.EnsureLatestContainerNode(pos, direction);
-            if (next?.Value.Content is not PageFrameContent)
+            var nextIndex = current.Value.FrameRange.Min.Index + direction.ToSign();
+            if (_context.IsLoopPage)
+            {
+                nextIndex = _bookContext.NormalizeIndex(nextIndex);
+            }
+            else if (!_bookContext.ContainsIndex(nextIndex))
             {
                 PageTerminated?.Invoke(this, new PageTerminatedEventArgs(direction.ToSign()));
                 return;
             }
-            _containers.Anchor.Set(null, direction);
-            _filler.FillContainersWhenAligned(_viewBox.Rect, next, direction);
-            _layout.Layout();
-            _layout.Flush();
-            _containers.Anchor.Set(next, direction);
 
-            _context.SetAutoStretchTarget(next.Value.FrameRange);
-            _selected.Set(next, true);
-
-            AssertSelectedExists();
-            ScrollToViewOrigin(next, direction);
-            _scrollViewer.FlushScroll();
-            Cleanup();
-
-            _scrollLock.Lock();
-            SetSnapAnchor();
+            //Debug.WriteLine($"MoveToNextPage: {current.Value.FrameRange} to {nextIndex}");
+            MoveTo(new PagePosition(nextIndex, 0), LinkedListDirection.Next);
+            FlushLayout();
         }
 
         public void MoveToNextFrame(LinkedListDirection direction)
