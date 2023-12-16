@@ -860,7 +860,7 @@ Search for pages containing "smile" in "parameters" in "@InformationGroup.Extras
     <value>Se não houver nenhuma página que possa ser exibida quando o livro for aberto e existir uma sub-pasta, uma caixa de diálogo será exibida perguntando se a sub-pasta deve ser carregada.</value>
   </data>
   <data name="BookConfig.IsInsertDummyPage" xml:space="preserve">
-    <value>Inserir uma página fictícia para uma página espelhada dupla</value>
+    <value>Inserir uma página fictícia para uma página dupla</value>
   </data>
   <data name="BookConfig.IsMultiplePageMove" xml:space="preserve">
     <value>Aceitar duplicação de comandos de movimentação de página</value>
@@ -1588,7 +1588,7 @@ nv.Config.Theme.ThemeType = "Dark"</value>
     <value>Exiba a caixa de diálogo.</value>
   </data>
   <data name="CommandHost.ShowDialog.commands" xml:space="preserve">
-    <value>0 OK/ 1: OKCancel / 2: YesNo
+    <value>{0} OK/ 1: OKCancel / 2: YesNo
 Button types (optional)</value>
   </data>
   <data name="CommandHost.ShowDialog.Example" xml:space="preserve">
@@ -3829,7 +3829,7 @@ Um clique esquerdo pode ser registrado como a última tecla de gesto.</value>
     <value>Ângulo</value>
   </data>
   <data name="Navigator.Flip" xml:space="preserve">
-    <value>Inveter</value>
+    <value>Inverter</value>
   </data>
   <data name="Navigator.FlipHorizontal" xml:space="preserve">
     <value>Virar horizontalmente</value>
@@ -7859,7 +7859,7 @@ nv.ShowToast(nv.Book.ViewPages[0].Path)</value>
     <value>Fechamento automático da janela da exibição principal</value>
   </data>
   <data name="MainViewConfig.IsAutoHide.Remarks" xml:space="preserve">
-    <value>Minimiza a janela da exibição principal quando o livro é fechado.</value>
+    <value>Minimiza a janela de visualização principal quando o livro é fechado.</value>
   </data>
   <data name="SystemConfig.DateTimeFormat" xml:space="preserve">
     <value>Formato de data e hora</value>
@@ -8018,7 +8018,7 @@ nv.ShowToast(nv.Book.ViewPages[0].Path)</value>
     <value>Alinhar páginas verticalmente</value>
   </data>
   <data name="BookConfig.IsInsertDummyPage.Remarks" xml:space="preserve">
-    <value>Quando não houver páginas suficientes na exibição de duas páginas, adicione uma página fictícia para alinhar a expansão.</value>
+    <value>Quando não houver páginas suficientes na exibição de duas páginas, adicione uma página fictícia para alinhar a página espelhada.</value>
   </data>
   <data name="BookConfig.IsInsertDummyFirstPage" xml:space="preserve">
     <value>Adicionar uma página fictícia à primeira página</value>
