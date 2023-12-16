@@ -7654,7 +7654,7 @@ nv.ShowToast(nv.Book.ViewPages[0].Path)</value>
     <value>ビューの変換を維持</value>
   </data>
   <data name="ViewConfig.IsKeepPageTransform.Remarks" xml:space="preserve">
-    <value>ページ単位の回転、拡縮、判定を維持します。</value>
+    <value>ページ単位の回転、拡縮、反転を維持します。</value>
   </data>
   <data name="MediaArchiveConfig.IsEnabled" xml:space="preserve">
     <value>動画をブックとして開く</value>
