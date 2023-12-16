@@ -8,6 +8,7 @@ namespace NeeView
         Remove,
         Refresh,
         Rename,
+        PathChanged,
     }
 
 

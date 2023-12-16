@@ -17,29 +17,55 @@ namespace NeeView
         public static QuickAccessCollection Current { get; }
 
 
+        private ObservableCollection<QuickAccess> _items = new();
+
+
         public QuickAccessCollection()
         {
-            QuickAccessNode.NameChanged += QuickAccessNode_NameChanged;
         }
 
 
         public event EventHandler<QuickAccessCollectionChangeEventArgs>? CollectionChanged;
 
-        private ObservableCollection<QuickAccess> _items = new();
+
         public ObservableCollection<QuickAccess> Items
         {
             get { return _items; }
-            set { SetProperty(ref _items, value); }
+            set
+            {
+                if (_items != value)
+                {
+                    _items.ForEach(DetachItem);
+                    _items = value;
+                    _items.ForEach(AttachItem);
+                    RaisePropertyChanged();
+                }
+            }
         }
 
 
-        private void QuickAccessNode_NameChanged(object? sender, EventArgs e)
+        private void AttachItem(QuickAccess item)
         {
-            if (sender is not QuickAccessNode node) return;
+            item.PropertyChanged += QuickAccess_PropertyChanged;
+        }
 
-            if (_items.Contains(node.QuickAccessSource))
+        private void DetachItem(QuickAccess item)
+        {
+            item.PropertyChanged -= QuickAccess_PropertyChanged;
+        }
+
+        private void QuickAccess_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            if (sender is not QuickAccess item) return;
+
+            switch (e.PropertyName)
             {
-                CollectionChanged?.Invoke(this, new QuickAccessCollectionChangeEventArgs(QuickAccessCollectionChangeAction.Rename, node.QuickAccessSource));
+                case nameof(QuickAccess.Name):
+                    CollectionChanged?.Invoke(this, new QuickAccessCollectionChangeEventArgs(QuickAccessCollectionChangeAction.Rename, item));
+                    break;
+                case nameof(QuickAccess.Path):
+                    CollectionChanged?.Invoke(this, new QuickAccessCollectionChangeEventArgs(QuickAccessCollectionChangeAction.PathChanged, item));
+                    break;
             }
         }
 
@@ -48,6 +74,7 @@ namespace NeeView
             if (item is null) throw new ArgumentNullException(nameof(item));
 
             Items.Insert(index, item);
+            AttachItem(item);
             CollectionChanged?.Invoke(this, new QuickAccessCollectionChangeEventArgs(QuickAccessCollectionChangeAction.Add, item));
         }
 
@@ -55,6 +82,7 @@ namespace NeeView
         {
             if (item is null) throw new ArgumentNullException(nameof(item));
 
+            DetachItem(item);
             var isRemoved = Items.Remove(item);
             CollectionChanged?.Invoke(this, new QuickAccessCollectionChangeEventArgs(QuickAccessCollectionChangeAction.Remove, item));
             return isRemoved;

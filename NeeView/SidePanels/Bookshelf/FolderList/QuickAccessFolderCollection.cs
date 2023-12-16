@@ -71,6 +71,7 @@ namespace NeeView
                     break;
 
                 case QuickAccessCollectionChangeAction.Rename:
+                case QuickAccessCollectionChangeAction.PathChanged:
                     // nop.
                     break;
             }

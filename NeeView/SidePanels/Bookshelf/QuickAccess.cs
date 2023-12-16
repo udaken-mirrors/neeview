@@ -90,7 +90,9 @@ namespace NeeView
 
         public object Clone()
         {
-            return (QuickAccess)MemberwiseClone();
+            var clone = new QuickAccess();
+            clone.Restore(CreateMemento());
+            return clone;
         }
 
 

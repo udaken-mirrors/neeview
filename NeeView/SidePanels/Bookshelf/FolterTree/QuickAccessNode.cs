@@ -8,8 +8,6 @@ namespace NeeView
 {
     public class QuickAccessNode : FolderTreeNodeBase
     {
-        public static event EventHandler? NameChanged;
-
         public QuickAccessNode(QuickAccess source, RootQuickAccessNode? parent)
         {
             Source = source;
@@ -41,7 +39,6 @@ namespace NeeView
             QuickAccessSource.Name = name;
             RaisePropertyChanged(nameof(Name));
             RaisePropertyChanged(nameof(DispName));
-            NameChanged?.Invoke(this, EventArgs.Empty);
             return await Task.FromResult(true);
         }
     }
