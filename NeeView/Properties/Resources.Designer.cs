@@ -20631,7 +20631,7 @@ namespace NeeView.Properties {
         }
         
         /// <summary>
-        ///   Valid when the page mode is &quot;@PageMode.SinglePage&quot; or &quot;@PageMode.WidePage&quot;. に類似しているローカライズされた文字列を検索します。
+        ///   Valid when &quot;@BookConfig.IsPanorama&quot; is OFF. に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string ViewConfig_PageMoveDuration_Remarks {
             get {

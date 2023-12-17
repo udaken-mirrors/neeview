@@ -7642,9 +7642,6 @@ nv.ShowToast(nv.Book.ViewPages[0].Path)</value>
   <data name="ViewConfig.PageMoveDuration" xml:space="preserve">
     <value>Tempo de movimentação da página (seg)</value>
   </data>
-  <data name="ViewConfig.PageMoveDuration.Remarks" xml:space="preserve">
-    <value>Válido quando o modo de página é "@PageMode.SinglePage" ou "@PageMode.WidePage".</value>
-  </data>
   <data name="ViewConfig.IsKeepPageTransform" xml:space="preserve">
     <value>Manter a transformação da visualização</value>
   </data>
@@ -8025,5 +8022,8 @@ nv.ShowToast(nv.Book.ViewPages[0].Path)</value>
   </data>
   <data name="BookConfig.IsInsertDummyLastPage" xml:space="preserve">
     <value>Adicionar uma página fictícia à última página</value>
+  </data>
+  <data name="ViewConfig.PageMoveDuration.Remarks" xml:space="preserve">
+    <value>Válido quando "@BookConfig.IsPanorama" estiver DESLIGADO.</value>
   </data>
 </root>

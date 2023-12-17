@@ -7647,9 +7647,6 @@ nv.ShowToast(nv.Book.ViewPages[0].Path)</value>
   <data name="ViewConfig.PageMoveDuration" xml:space="preserve">
     <value>ページ移動時間 (秒)</value>
   </data>
-  <data name="ViewConfig.PageMoveDuration.Remarks" xml:space="preserve">
-    <value>ページモードが「@PageMode.SinglePage」「@PageMode.WidePage」の時に有効です。</value>
-  </data>
   <data name="ViewConfig.IsKeepPageTransform" xml:space="preserve">
     <value>ビューの変換を維持</value>
   </data>
@@ -8030,5 +8027,8 @@ nv.ShowToast(nv.Book.ViewPages[0].Path)</value>
   </data>
   <data name="BookConfig.IsInsertDummyLastPage" xml:space="preserve">
     <value>最後のページにダミー ページを追加する</value>
+  </data>
+  <data name="ViewConfig.PageMoveDuration.Remarks" xml:space="preserve">
+    <value>「@BookConfig.IsPanorama」が OFF の時に有効です。</value>
   </data>
 </root>
