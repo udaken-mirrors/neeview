@@ -54,10 +54,7 @@ namespace NeeView
 
             // check header (PK34)
             Trace("Check ZIP Header...");
-            if (_reader.ReadSignature() != ZipSignatures.LocalFileHeader)
-            {
-                throw new FormatException("Signature is not PK34");
-            }
+            if (_reader.ReadSignature() != ZipSignatures.LocalFileHeader) throw new FormatException("Signature is not PK34");
 
             // read end of central directory (PK56)
             Trace("Read End of central directory...");
@@ -66,13 +63,40 @@ namespace NeeView
 
             // get number of central directory entries
             _reader.Seek(pos + 8, SeekOrigin.Begin);
-            var numOfEntries = _reader.ReadUInt16();
+            long numOfEntries = _reader.ReadUInt16();
             Trace($"numOfEntries={numOfEntries}");
 
             // get central directory offset
             _reader.Seek(pos + 16, SeekOrigin.Begin);
-            var centralDirectoryOffset = _reader.ReadUInt32();
+            long centralDirectoryOffset = _reader.ReadUInt32();
             Trace($"centralDirectoryOffset={centralDirectoryOffset}");
+
+            // Zip64 ?
+            if (numOfEntries == 0xffff || centralDirectoryOffset == 0xffffffff)
+            {
+                Trace($"Zip64 now.");
+                const int zip64EndOfCentralDirectoryLocatorSize = 20;
+                pos = _reader.Seek(pos - zip64EndOfCentralDirectoryLocatorSize, SeekOrigin.Begin);
+
+                Trace($"Read Zip64 central directory locator:");
+                if (_reader.ReadSignature() != ZipSignatures.Zip64EndOfCentralDirectoryLocator) throw new FormatException("Signature is not PK67");
+
+                _reader.Seek(pos + 8, SeekOrigin.Begin);
+                long zip64EndOfCentralDirectoryOffset = _reader.ReadInt64();
+                pos = _reader.Seek(zip64EndOfCentralDirectoryOffset, SeekOrigin.Begin);
+                Trace($"zip64EndOfCentralDirectoryOffset={zip64EndOfCentralDirectoryOffset}");
+
+                Trace($"Read Zip64 central directory record:");
+                if (_reader.ReadSignature() != ZipSignatures.Zip64EndOfCentralDirectoryRecord) throw new FormatException("Signature is not PK66");
+
+                _reader.Seek(pos + 24, SeekOrigin.Begin);
+                numOfEntries = _reader.ReadInt64();
+                Trace($"numOfEntries={numOfEntries}");
+
+                _reader.Seek(pos + 48, SeekOrigin.Begin);
+                centralDirectoryOffset = _reader.ReadInt64();
+                Trace($"centralDirectoryOffset={centralDirectoryOffset}");
+            }
 
             // read central directory entries (PK12)
             Trace("Read central directory entries...");
@@ -85,10 +109,7 @@ namespace NeeView
 
                 // check signature
                 Trace($"Read central directory entry[{i}]:");
-                if (_reader.ReadSignature() != ZipSignatures.CentralDirectoryEntry)
-                {
-                    throw new FormatException("Signature is not PK12");
-                }
+                if (_reader.ReadSignature() != ZipSignatures.CentralDirectoryEntry) throw new FormatException("Signature is not PK12");
 
                 // get entry bitflag
                 _reader.Seek(pos + 8, SeekOrigin.Begin);
@@ -205,14 +226,20 @@ namespace NeeView
         /// </summary>
         public class ZipSignatures
         {
-            // PK12
+            // PK12 : Central directory entry
             public const int CentralDirectoryEntry = 0x02014B50;
 
-            // PK34
+            // PK34 : Local file header
             public const int LocalFileHeader = 0x04034B50;
 
-            // PK56
+            // PK56 : End of central directory
             public const int EndOfCentralDirectory = 0x06054B50;
+
+            // PK66 : Zip64 end of central directory record
+            public const int Zip64EndOfCentralDirectoryRecord = 0x06064B50;
+
+            // PK67 : Zip64 end of central directory locator
+            public const int Zip64EndOfCentralDirectoryLocator = 0x07064B50;
         }
 
 
@@ -260,7 +287,6 @@ namespace NeeView
             {
                 return ReadInt32();
             }
-
         }
     }
 }
