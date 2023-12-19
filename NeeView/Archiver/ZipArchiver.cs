@@ -18,6 +18,9 @@ namespace NeeView
     /// </summary>
     public class ZipArchiver : Archiver
     {
+        private Encoding? _encoding;
+
+
         public ZipArchiver(string path, ArchiveEntry? source) : base(path, source)
         {
         }
@@ -67,8 +70,12 @@ namespace NeeView
                     throw new FormatException(string.Format(Properties.Resources.NotZipException_Message, Path));
                 }
 
+                // 文字エンコード取得
+                _encoding = GetEncoding(stream);
+
                 // エントリー取得
-                using (var archiver = new ZipArchive(stream, ZipArchiveMode.Read, false, Environment.Encoding))
+                stream.Seek(0, SeekOrigin.Begin);
+                using (var archiver = new ZipArchive(stream, ZipArchiveMode.Read, false, _encoding))
                 {
                     stream = null;
 
@@ -117,7 +124,7 @@ namespace NeeView
             if (entry.Id < 0) throw new ArgumentException("Cannot open this entry: " + entry.EntryName);
             if (entry.IsDirectory) throw new InvalidOperationException("Cannot open directory: " + entry.EntryName);
 
-            using (var archiver = ZipFile.Open(Path, ZipArchiveMode.Read, Environment.Encoding))
+            using (var archiver = ZipFile.Open(Path, ZipArchiveMode.Read, _encoding))
             {
                 ZipArchiveEntry archiveEntry = archiver.Entries[entry.Id];
                 if (!IsValidEntry(entry, archiveEntry)) throw new ValidationException(Properties.Resources.InconsistencyException_Message);
@@ -138,7 +145,7 @@ namespace NeeView
             if (entry.Id < 0) throw new ArgumentException("Cannot extract this entry: " + entry.EntryName);
             if (entry.IsDirectory) throw new InvalidOperationException("Cannot extract directory: " + entry.EntryName);
 
-            using (var archiver = ZipFile.Open(Path, ZipArchiveMode.Read, Environment.Encoding))
+            using (var archiver = ZipFile.Open(Path, ZipArchiveMode.Read, _encoding))
             {
                 ZipArchiveEntry archiveEntry = archiver.Entries[entry.Id];
                 if (!IsValidEntry(entry, archiveEntry)) throw new ValidationException(Properties.Resources.InconsistencyException_Message);
@@ -209,7 +216,7 @@ namespace NeeView
                 {
                     // NOTE: コピーしたファイルに対して操作と置き換えを行いアーカイブ破壊の可能性を最小限に抑える
                     File.Copy(Path, tempFilename);
-                    using (var archive = ZipFile.Open(tempFilename, ZipArchiveMode.Update, Environment.Encoding))
+                    using (var archive = ZipFile.Open(tempFilename, ZipArchiveMode.Update, _encoding))
                     {
                         ClearEntryCache();
                         var map = removes.Select(e => (Entry: e, ZipArchiveEntry: GetTargetEntry(archive, e))).ToList();
@@ -238,10 +245,45 @@ namespace NeeView
             }
         }
 
-        // NOTE：ZipArchvieの項目削除にはいろいろ課題があるため保留
+        /// <summary>
+        /// Zipの文字エンコードを取得。既定(UTF8)ならば null を返す。
+        /// </summary>
+        /// <param name="stream">Zip stream</param>
+        /// <returns></returns>
+        private Encoding? GetEncoding(Stream stream)
+        {
+            return Config.Current.Archive.Zip.Encoding switch
+            {
+                ZipEncoding.Local => Environment.Encoding,
+                ZipEncoding.UTF8 => null,
+                ZipEncoding.Auto => IsUTF8EncodingMaybe(stream) ? null : Environment.Encoding,
+                _ => null,
+            };
+        }
+
+        /// <summary>
+        /// Zipの文字エンコードがUTF8であるかを判定
+        /// </summary>
+        /// <param name="stream">Zip stream</param>
+        /// <returns></returns>
+        private bool IsUTF8EncodingMaybe(Stream stream)
+        {
+            try
+            {
+                using var analyzer = new ZipAnalyzer(stream, true);
+                return analyzer.IsEncodingUTF8();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+                return false;
+            }
+        }
+
+        // NOTE：ZipArchiveの項目削除にはいろいろ課題があるため保留
         // - 処理によりIDがずれてしまうためブックを開き直す必要がある -> ファイルと同様の操作感にならない
         //   - 同様の問題は削除処理にも存在するため、ブックのIDのずれを補正する包括的な処理がほしい
-        // - ZipArchvieに名前変更機能がないため、削除追加という処理になってしまい、重く日付も変更されてしまう ... 7Zip だとどうだろう？
+        // - ZipArchiveに名前変更機能がないため、削除追加という処理になってしまい、重く日付も変更されてしまう ... 7Zip だとどうだろう？
         // - フォルダーの変更処理。エントリすべてを変更する必要がある...重そうだな
 #if false
         /// <summary>
@@ -266,7 +308,7 @@ namespace NeeView
 
             var tempFilename = this.Path;
 
-            using (var archive = ZipFile.Open(tempFilename, ZipArchiveMode.Update, Environment.Encoding))
+            using (var archive = ZipFile.Open(tempFilename, ZipArchiveMode.Update, _encoding))
             {
                 ClearEntryCache();
 

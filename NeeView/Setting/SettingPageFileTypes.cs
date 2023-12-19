@@ -3,6 +3,7 @@ using NeeView.Text;
 using NeeView.Windows.Property;
 using System;
 using System.Collections.Generic;
+using System.Text;
 using System.Windows;
 
 namespace NeeView.Setting
@@ -73,12 +74,17 @@ namespace NeeView.Setting
     {
         public SettingPageArchiverZip() : base(Properties.Resources.SettingPage_Archive_Zip)
         {
+            var encodingMap = typeof(ZipEncoding).VisibleAliasNameDictionary();
+            encodingMap[ZipEncoding.Local] = Environment.Encoding.EncodingName;
+            encodingMap[ZipEncoding.UTF8] = Encoding.UTF8.EncodingName;
+
             var section = new SettingItemSection(Properties.Resources.SettingPage_Archive_ZipFeature);
 
             section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.Archive.Zip, nameof(ZipArchiveConfig.IsEnabled))));
             section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.Archive.Zip, nameof(ZipArchiveConfig.IsFileWriteAccessEnabled))));
             section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.Archive.Zip, nameof(ZipArchiveConfig.SupportFileTypes)),
                 new SettingItemCollectionControl() { Collection = Config.Current.Archive.Zip.SupportFileTypes, AddDialogHeader = Properties.Resources.Word_Extension, DefaultCollection = ZipArchiveConfig.DefaultSupportFileTypes }));
+            section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.Archive.Zip, nameof(ZipArchiveConfig.Encoding), new PropertyMemberElementOptions() { EnumMap = encodingMap })));
 
             this.Items = new List<SettingItem>() { section };
         }
@@ -96,7 +102,7 @@ namespace NeeView.Setting
 
             section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.Archive.SevenZip, nameof(SevenZipArchiveConfig.IsEnabled))));
             section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.Archive.SevenZip, nameof(SevenZipArchiveConfig.SupportFileTypes)),
-                new SettingItemCollectionControl() { Collection = Config.Current.Archive.SevenZip.SupportFileTypes, AddDialogHeader = Properties.Resources.Word_Extension, DefaultCollection= SevenZipArchiveConfig.DefaultSupportFileTypes }));
+                new SettingItemCollectionControl() { Collection = Config.Current.Archive.SevenZip.SupportFileTypes, AddDialogHeader = Properties.Resources.Word_Extension, DefaultCollection = SevenZipArchiveConfig.DefaultSupportFileTypes }));
 
             if (!Environment.IsX64)
             {
@@ -131,7 +137,7 @@ namespace NeeView.Setting
             }
             else
             {
-                section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.Archive.Pdf, nameof(PdfArchiveConfig.IsEnabled))) { IsEnabled = new IsEnabledPropertyValue(false)});
+                section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.Archive.Pdf, nameof(PdfArchiveConfig.IsEnabled))) { IsEnabled = new IsEnabledPropertyValue(false) });
                 section.Children.Add(new SettingItemHeader("Not supported on this OS."));
             }
 

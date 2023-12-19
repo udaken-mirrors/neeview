@@ -7621,10 +7621,10 @@ nv.ShowToast(nv.Book.ViewPages[0].Path)</value>
     <value>注意：完全に削除されます。</value>
   </data>
   <data name="ZipArchiveConfig.IsFileWriteAccessEnabled" xml:space="preserve">
-    <value>ZIPファイル編集可能</value>
+    <value>ZIP ファイル編集可能</value>
   </data>
   <data name="ZipArchiveConfig.IsFileWriteAccessEnabled.Remarks" xml:space="preserve">
-    <value>ZIP内のファイルを削除することが可能になります。「@SystemConfig.IsFileWriteAccessEnabled」設定が有効になっている必要があります。</value>
+    <value>ZIP 内のファイルを削除することが可能になります。「@SystemConfig.IsFileWriteAccessEnabled」設定が有効になっている必要があります。</value>
   </data>
   <data name="SystemConfig.IsFileWriteAccessEnabled" xml:space="preserve">
     <value>ファイル操作許可</value>
@@ -8030,5 +8030,8 @@ nv.ShowToast(nv.Book.ViewPages[0].Path)</value>
   </data>
   <data name="ViewConfig.PageMoveDuration.Remarks" xml:space="preserve">
     <value>「@BookConfig.IsPanorama」が OFF の時に有効です。</value>
+  </data>
+  <data name="ZipArchiveConfig.Encoding" xml:space="preserve">
+    <value>ZIP エントリ名のエンコード</value>
   </data>
 </root>

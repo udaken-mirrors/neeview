@@ -2460,3 +2460,4 @@ BookConfig.IsInsertDummyPage.Remarks=When there are not enough pages at the two-
 BookConfig.IsInsertDummyFirstPage=Add a dummy page to the first page
 BookConfig.IsInsertDummyLastPage=Add a dummy page to the last page
 ViewConfig.PageMoveDuration.Remarks=Valid when "@BookConfig.IsPanorama" is OFF.
+ZipArchiveConfig.Encoding=Encoding for ZIP entry names

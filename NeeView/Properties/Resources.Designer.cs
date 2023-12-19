@@ -22279,6 +22279,15 @@ namespace NeeView.Properties {
         }
         
         /// <summary>
+        ///   Encoding for ZIP entry names に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string ZipArchiveConfig_Encoding {
+            get {
+                return ResourceManager.GetString("ZipArchiveConfig.Encoding", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Use ZIP compressed file expansion with standard function に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string ZipArchiveConfig_IsEnabled {

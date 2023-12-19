@@ -8026,4 +8026,7 @@ nv.ShowToast(nv.Book.ViewPages[0].Path)</value>
   <data name="ViewConfig.PageMoveDuration.Remarks" xml:space="preserve">
     <value>Valid when "@BookConfig.IsPanorama" is OFF.</value>
   </data>
+  <data name="ZipArchiveConfig.Encoding" xml:space="preserve">
+    <value>Encoding for ZIP entry names</value>
+  </data>
 </root>
