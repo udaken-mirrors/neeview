@@ -22340,5 +22340,32 @@ namespace NeeView.Properties {
                 return ResourceManager.GetString("ZipArchiveConfig.SupportFileTypes.Remarks", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Auto に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string ZipEncoding_Auto {
+            get {
+                return ResourceManager.GetString("ZipEncoding.Auto", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Local に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string ZipEncoding_Local {
+            get {
+                return ResourceManager.GetString("ZipEncoding.Local", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   UTF-8 に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string ZipEncoding_UTF8 {
+            get {
+                return ResourceManager.GetString("ZipEncoding.UTF8", resourceCulture);
+            }
+        }
     }
 }

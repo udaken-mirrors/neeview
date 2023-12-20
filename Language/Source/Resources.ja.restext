@@ -2462,3 +2462,6 @@ BookConfig.IsInsertDummyLastPage=最後のページにダミー ページを追�
 ViewConfig.PageMoveDuration.Remarks=「@BookConfig.IsPanorama」が OFF の時に有効です。
 ZipArchiveConfig.Encoding=ZIP エントリ名のエンコード
 ZipArchiveConfig.Encoding.Remarks=UTF-8 フラグが設定されていない ZIP ファイル用です。
+ZipEncoding.Local=ローカル
+ZipEncoding.UTF8=UTF-8
+ZipEncoding.Auto=自動

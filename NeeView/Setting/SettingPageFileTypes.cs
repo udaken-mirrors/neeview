@@ -75,8 +75,7 @@ namespace NeeView.Setting
         public SettingPageArchiverZip() : base(Properties.Resources.SettingPage_Archive_Zip)
         {
             var encodingMap = typeof(ZipEncoding).VisibleAliasNameDictionary();
-            encodingMap[ZipEncoding.Local] = Environment.Encoding.EncodingName;
-            encodingMap[ZipEncoding.UTF8] = Encoding.UTF8.EncodingName;
+            encodingMap[ZipEncoding.Local] = encodingMap[ZipEncoding.Local] + " - " + Environment.Encoding.EncodingName;
 
             var section = new SettingItemSection(Properties.Resources.SettingPage_Archive_ZipFeature);
 

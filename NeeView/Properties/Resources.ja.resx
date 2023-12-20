@@ -8037,4 +8037,13 @@ nv.ShowToast(nv.Book.ViewPages[0].Path)</value>
   <data name="ZipArchiveConfig.Encoding.Remarks" xml:space="preserve">
     <value>UTF-8 フラグが設定されていない ZIP ファイル用です。</value>
   </data>
+  <data name="ZipEncoding.Local" xml:space="preserve">
+    <value>ローカル</value>
+  </data>
+  <data name="ZipEncoding.UTF8" xml:space="preserve">
+    <value>UTF-8</value>
+  </data>
+  <data name="ZipEncoding.Auto" xml:space="preserve">
+    <value>自動</value>
+  </data>
 </root>
