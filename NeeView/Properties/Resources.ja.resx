@@ -8034,4 +8034,7 @@ nv.ShowToast(nv.Book.ViewPages[0].Path)</value>
   <data name="ZipArchiveConfig.Encoding" xml:space="preserve">
     <value>ZIP エントリ名のエンコード</value>
   </data>
+  <data name="ZipArchiveConfig.Encoding.Remarks" xml:space="preserve">
+    <value>UTF-8 フラグが設定されていない ZIP ファイル用です。</value>
+  </data>
 </root>

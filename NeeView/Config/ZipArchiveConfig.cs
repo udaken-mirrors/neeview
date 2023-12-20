@@ -11,7 +11,7 @@ namespace NeeView
         private bool _isEnabled = true;
         private FileTypeCollection _supportFileTypes = (FileTypeCollection)DefaultSupportFileTypes.Clone();
         private bool _isWriteAccessEnabled = false;
-        private ZipEncoding _encoding = ZipEncoding.Auto;
+        private ZipEncoding _encoding = ZipEncoding.Local;
 
 
         [PropertyMember]

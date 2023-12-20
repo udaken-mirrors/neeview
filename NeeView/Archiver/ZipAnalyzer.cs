@@ -45,19 +45,20 @@ namespace NeeView
         /// ZIP の Encoding が UTF8 かを判定
         /// </summary>
         /// <remarks>
-        /// おおざっぱな判定。ZIP64 はサポート外
+        /// UTF8フラグのチェックを行う
         /// </remarks>
+        /// <param name="checkString">UTF8フラグがないときに文字列からコード判別を行う</param>
         /// <returns>UTF8 であるなら true</returns>
-        public bool IsEncodingUTF8()
+        public bool IsEncodingUTF8(bool checkString)
         {
             _reader.Seek(0, SeekOrigin.Begin);
 
             // check header (PK34)
-            Trace("Check ZIP Header...");
+            Trace("[PK34] LocalFileHeader:");
             if (_reader.ReadSignature() != ZipSignatures.LocalFileHeader) throw new FormatException("Signature is not PK34");
 
             // read end of central directory (PK56)
-            Trace("Read End of central directory...");
+            Trace("[PK56] End of central directory:");
             var pos = _reader.SeekEndOfCentralDirectory();
             if (pos < 0) throw new FormatException();
 
@@ -78,7 +79,7 @@ namespace NeeView
                 const int zip64EndOfCentralDirectoryLocatorSize = 20;
                 pos = _reader.Seek(pos - zip64EndOfCentralDirectoryLocatorSize, SeekOrigin.Begin);
 
-                Trace($"Read Zip64 central directory locator:");
+                Trace($"[PK67] Zip64 central directory locator:");
                 if (_reader.ReadSignature() != ZipSignatures.Zip64EndOfCentralDirectoryLocator) throw new FormatException("Signature is not PK67");
 
                 _reader.Seek(pos + 8, SeekOrigin.Begin);
@@ -86,7 +87,7 @@ namespace NeeView
                 pos = _reader.Seek(zip64EndOfCentralDirectoryOffset, SeekOrigin.Begin);
                 Trace($"zip64EndOfCentralDirectoryOffset={zip64EndOfCentralDirectoryOffset}");
 
-                Trace($"Read Zip64 central directory record:");
+                Trace($"[PK66] Zip64 central directory record:");
                 if (_reader.ReadSignature() != ZipSignatures.Zip64EndOfCentralDirectoryRecord) throw new FormatException("Signature is not PK66");
 
                 _reader.Seek(pos + 24, SeekOrigin.Begin);
@@ -108,7 +109,7 @@ namespace NeeView
                 pos = _reader.Position;
 
                 // check signature
-                Trace($"Read central directory entry[{i}]:");
+                Trace($"[PK12] central directory entry[{i}]:");
                 if (_reader.ReadSignature() != ZipSignatures.CentralDirectoryEntry) throw new FormatException("Signature is not PK12");
 
                 // get entry bitflag
@@ -119,37 +120,52 @@ namespace NeeView
                 // if bitflag.UTF8 return true
                 if (bitFlags.HasFlag(ZipGeneralBitFlags.UnicodeText))
                 {
-                    Trace($"bitFlags has UTF8 flag.");
+                    Trace($"[Result] UTF8 encoding.");
                     return true;
                 }
 
                 // get name length
                 _reader.Seek(pos + 28, SeekOrigin.Begin);
                 var nameLength = _reader.ReadUInt16();
-                var extraFieldLength = _reader.ReadUInt16();
-                var commentLength = _reader.ReadUInt16();
                 Trace($"nameLen={nameLength}");
+                var extraFieldLength = _reader.ReadUInt16();
+                Trace($"extraFieldLength={extraFieldLength}");
+                var commentLength = _reader.ReadUInt16();
+                Trace($"commentLength={commentLength}");
 
-
-                // get name.bytes[]
-                _reader.Seek(pos + 46, SeekOrigin.Begin);
-                var name = _reader.ReadBytes(nameLength);
-
-                // if (name.bytes is not UTF8) return false;
-                if (!IsUTF8Binary(name))
+                // check string
+                if (checkString)
                 {
-                    Trace($"name(???)={Environment.Encoding.GetString(name)}");
-                    Trace($"name is unknown encoding.");
-                    return false;
-                }
+                    // get name.bytes[]
+                    _reader.Seek(pos + 46, SeekOrigin.Begin);
+                    var name = _reader.ReadBytes(nameLength);
 
-                Trace($"name(UTF8)={Encoding.UTF8.GetString(name)}");
+                    // if (name.bytes is not UTF8) return false;
+                    if (!IsUTF8Binary(name))
+                    {
+                        Trace($"name(???)={Environment.Encoding.GetString(name)}");
+                        Trace($"[Result] Unknown encoding.");
+                        return false;
+                    }
+
+                    Trace($"name(UTF8)={Encoding.UTF8.GetString(name)}");
+                }
 
                 // seek next
                 _reader.Seek(pos + 46 + nameLength + extraFieldLength + commentLength, SeekOrigin.Begin);
             }
 
-            return true;
+            // result
+            if (checkString)
+            {
+                Trace($"[Result] UTF8 encoding maybe.");
+                return true;
+            }
+            else
+            {
+                Trace($"[Result] Unknown encoding.");
+                return false;
+            }
         }
 
 

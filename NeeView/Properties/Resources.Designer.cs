@@ -22288,6 +22288,15 @@ namespace NeeView.Properties {
         }
         
         /// <summary>
+        ///   For ZIP files without the UTF-8 flag set. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string ZipArchiveConfig_Encoding_Remarks {
+            get {
+                return ResourceManager.GetString("ZipArchiveConfig.Encoding.Remarks", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Use ZIP compressed file expansion with standard function に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string ZipArchiveConfig_IsEnabled {

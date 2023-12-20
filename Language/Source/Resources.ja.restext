@@ -2461,3 +2461,4 @@ BookConfig.IsInsertDummyFirstPage=最初のページにダミー ページを追
 BookConfig.IsInsertDummyLastPage=最後のページにダミー ページを追加する
 ViewConfig.PageMoveDuration.Remarks=「@BookConfig.IsPanorama」が OFF の時に有効です。
 ZipArchiveConfig.Encoding=ZIP エントリ名のエンコード
+ZipArchiveConfig.Encoding.Remarks=UTF-8 フラグが設定されていない ZIP ファイル用です。

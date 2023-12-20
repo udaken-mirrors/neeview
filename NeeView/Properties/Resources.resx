@@ -8029,4 +8029,7 @@ nv.ShowToast(nv.Book.ViewPages[0].Path)</value>
   <data name="ZipArchiveConfig.Encoding" xml:space="preserve">
     <value>Encoding for ZIP entry names</value>
   </data>
+  <data name="ZipArchiveConfig.Encoding.Remarks" xml:space="preserve">
+    <value>For ZIP files without the UTF-8 flag set.</value>
+  </data>
 </root>

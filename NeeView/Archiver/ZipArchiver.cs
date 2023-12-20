@@ -254,10 +254,16 @@ namespace NeeView
         {
             return Config.Current.Archive.Zip.Encoding switch
             {
-                ZipEncoding.Local => Environment.Encoding,
-                ZipEncoding.UTF8 => null,
-                ZipEncoding.Auto => IsUTF8EncodingMaybe(stream) ? null : Environment.Encoding,
-                _ => null,
+                // NOTE: .NET8 は UTF8 フラグが使用されていないため、対応されるまでは自前で判定する。
+                // https://github.com/dotnet/runtime/issues/92283
+                ZipEncoding.Local
+                    => IsUTF8EncodingMaybe(stream, false) ? null : Environment.Encoding,
+                ZipEncoding.UTF8
+                    => null,
+                ZipEncoding.Auto
+                    => IsUTF8EncodingMaybe(stream, true) ? null : Environment.Encoding,
+                _
+                    => null,
             };
         }
 
@@ -265,13 +271,14 @@ namespace NeeView
         /// Zipの文字エンコードがUTF8であるかを判定
         /// </summary>
         /// <param name="stream">Zip stream</param>
+        /// <param name="checkString">文字列チェックも行う</param>
         /// <returns></returns>
-        private bool IsUTF8EncodingMaybe(Stream stream)
+        private bool IsUTF8EncodingMaybe(Stream stream, bool checkString)
         {
             try
             {
                 using var analyzer = new ZipAnalyzer(stream, true);
-                return analyzer.IsEncodingUTF8();
+                return analyzer.IsEncodingUTF8(checkString);
             }
             catch (Exception ex)
             {
