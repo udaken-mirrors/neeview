@@ -918,6 +918,7 @@ namespace NeeView
 
         private void FolderList_SelectionChanged(object? sender, SelectionChangedEventArgs e)
         {
+            this.ListBox.FocusSelectedItemIfFocused();
         }
 
         //

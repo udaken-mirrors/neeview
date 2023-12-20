@@ -531,6 +531,32 @@ namespace NeeView.Windows
         public ListBoxExtended()
         {
             SelectionMode = SelectionMode.Extended;
+
+            this.IsKeyboardFocusWithinChanged += ListBoxExtended_IsKeyboardFocusWithinChanged;
+        }
+
+        private void ListBoxExtended_IsKeyboardFocusWithinChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            AppDispatcher.BeginInvoke(() => FocusSelectedItemIfFocused());
+        }
+
+        public void FocusSelectedItemIfFocused()
+        {
+            if (!this.IsKeyboardFocusWithin) return;
+            FocusSelectedItem();
+        }
+
+        public void FocusSelectedItem()
+        {
+            var selectedItem = this.SelectedItem;
+            if (selectedItem is null) return;
+
+            var listBoxItem = this.ItemContainerGenerator.ContainerFromItem(selectedItem) as ListBoxItem;
+            if (listBoxItem is not null)
+            {
+                this.SetAnchorItem(selectedItem);
+                listBoxItem.Focus();
+            }
         }
 
         public void SetAnchorItem(object? anchor)
@@ -561,8 +587,8 @@ namespace NeeView.Windows
                 var listBoxItem = (ListBoxItem)this.ItemContainerGenerator.ContainerFromItem(top);
                 if (listBoxItem != null)
                 {
-                    listBoxItem.Focus();
                     this.SetAnchorItem(top);
+                    listBoxItem.Focus();
                 }
             }
         }
