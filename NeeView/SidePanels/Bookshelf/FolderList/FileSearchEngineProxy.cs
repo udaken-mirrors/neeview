@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -29,9 +30,9 @@ namespace NeeView
         public bool IncludeSubdirectories { get; set; }
 
         /// <summary>
-        /// 隠しファイルを含む
+        /// 除外属性
         /// </summary>
-        public bool AllowHidden => Config.Current.System.IsHiddenFileVisibled;
+        public FileAttributes AttributesToSkip => FileIOProfile.Current.AttributesToSkip;
 
 
         protected virtual void Dispose(bool disposing)
@@ -93,7 +94,7 @@ namespace NeeView
             else
             {
                 _searchEngine?.Dispose();
-                _searchEngine = new FileSearchEngine(path, IncludeSubdirectories, AllowHidden);
+                _searchEngine = new FileSearchEngine(path, IncludeSubdirectories, AttributesToSkip);
                 return _searchEngine;
             }
         }
@@ -101,7 +102,7 @@ namespace NeeView
         [MemberNotNullWhen(true, nameof(_searchEngine))]
         private bool IsSearchEngineValid(string path)
         {
-            return _searchEngine != null && _searchEngine.Path == path && _searchEngine.IncludeSubdirectories == IncludeSubdirectories && _searchEngine.AllowHidden == AllowHidden;
+            return _searchEngine != null && _searchEngine.Path == path && _searchEngine.IncludeSubdirectories == IncludeSubdirectories && _searchEngine.AttributesToSkip == AttributesToSkip;
         }
 
         public void CancelSearch()

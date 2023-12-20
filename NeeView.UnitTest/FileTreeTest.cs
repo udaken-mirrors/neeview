@@ -43,7 +43,7 @@ namespace NeeLaboratory.IO.NodesTest
             if (Directory.Exists(_folderRoot2)) Directory.Delete(_folderRoot2, true);
             CopyDirectory(_folderSource, _folderRoot, true);
 
-            var tree = new FileTree(Path.GetFullPath(_folderRoot), IOExtensions.CreateEnumerationOptions(true, false));
+            var tree = new FileTree(Path.GetFullPath(_folderRoot), IOExtensions.CreateEnumerationOptions(true, FileAttributes.None));
             await tree.InitializeAsync(token);
             return tree;
         }
@@ -95,7 +95,7 @@ namespace NeeLaboratory.IO.NodesTest
         [Fact]
         public async Task FileTreeBasicTest()
         {
-            var tree = new FileTree(RootPath, IOExtensions.CreateEnumerationOptions(true, false));
+            var tree = new FileTree(RootPath, IOExtensions.CreateEnumerationOptions(true, FileAttributes.None));
 
             await DumpTree(tree);
         }

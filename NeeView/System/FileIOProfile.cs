@@ -19,11 +19,17 @@ namespace NeeView
 
 
         /// <summary>
+        /// ファイル除外属性
+        /// </summary>
+        public FileAttributes AttributesToSkip => Config.Current.System.IsHiddenFileVisibled ? FileAttributes.None : FileAttributes.Hidden;
+
+
+        /// <summary>
         /// ファイルは項目として有効か？
         /// </summary>
         public bool IsFileValid(FileAttributes attributes)
         {
-            return Config.Current.System.IsHiddenFileVisibled || (attributes & FileAttributes.Hidden) == 0;
+            return (attributes & AttributesToSkip) == 0;
         }
 
     }

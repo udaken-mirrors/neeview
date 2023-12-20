@@ -4,6 +4,7 @@ using NeeLaboratory.IO.Search;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -22,20 +23,20 @@ namespace NeeView
         private bool _disposedValue;
 
 
-        public FileSearchEngine(string path, bool includeSubdirectories, bool allowHidden)
+        public FileSearchEngine(string path, bool includeSubdirectories, FileAttributes attributesToSkip)
         {
             Path = path;
             IncludeSubdirectories = includeSubdirectories;
-            AllowHidden = allowHidden;
+            AttributesToSkip = attributesToSkip;
 
-            _tree = new FileItemTree(Path, IOExtensions.CreateEnumerationOptions(includeSubdirectories, allowHidden));
+            _tree = new FileItemTree(Path, IOExtensions.CreateEnumerationOptions(includeSubdirectories, attributesToSkip));
             _searcher = new Searcher(new FileSearchContext(SearchValueCacheFactory.Create()));
         }
 
 
         public bool IncludeSubdirectories { get; }
 
-        public bool AllowHidden { get; }
+        public FileAttributes AttributesToSkip { get; }
 
         public bool IsBusy { get; private set; }
 
