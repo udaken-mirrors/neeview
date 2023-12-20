@@ -51,8 +51,19 @@ namespace NeeView
             _cache = new ArchiverCache();
             _disposables.Add(_cache);
 
+            _disposables.Add(Config.Current.Archive.Zip.SubscribePropertyChanged(
+                (s, e) => _cache.Clear()));
+            _disposables.Add(Config.Current.Archive.SevenZip.SubscribePropertyChanged(
+                (s, e) => _cache.Clear()));
+            _disposables.Add(Config.Current.Archive.Pdf.SubscribePropertyChanged(
+                (s, e) => _cache.Clear()));
+            _disposables.Add(Config.Current.Archive.Media.SubscribePropertyChanged(
+                (s, e) => _cache.Clear()));
+            _disposables.Add(Config.Current.Susie.SubscribePropertyChanged(
+                (s, e) => _cache.Clear()));
+
             _disposables.Add(Config.Current.Archive.Zip.SubscribePropertyChanged(nameof(ZipArchiveConfig.IsEnabled),
-                    (s, e) => UpdateOrderList()));
+                (s, e) => UpdateOrderList()));
             _disposables.Add(Config.Current.Archive.SevenZip.SubscribePropertyChanged(nameof(SevenZipArchiveConfig.IsEnabled),
                 (s, e) => UpdateOrderList()));
             _disposables.Add(Config.Current.Archive.Pdf.SubscribePropertyChanged(nameof(PdfArchiveConfig.IsEnabled),

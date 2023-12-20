@@ -33,7 +33,7 @@ namespace NeeView
 
             lock (_lock)
             {
-                ////Debug.WriteLine($"ArchvierCache: Add {archiver.SystemPath}");
+                ////Debug.WriteLine($"ArchiverCache: Add {archiver.SystemPath}");
                 _caches[archiver.SystemPath] = new WeakReference<Archiver>(archiver);
             }
         }
@@ -48,7 +48,7 @@ namespace NeeView
 
             if (_caches.Count > 50)
             {
-                Debug.WriteLine($"ArchvierCache: CleanUp ...");
+                ////Debug.WriteLine($"ArchiverCache: CleanUp ...");
                 CleanUp();
                 ////Dump();
             }
@@ -68,6 +68,23 @@ namespace NeeView
             return false;
         }
 
+        /// <summary>
+        /// すべてのキャッシュを削除
+        /// </summary>
+        public void Clear()
+        {
+            if (_disposedValue) return;
+
+            lock (_lock)
+            {
+                ////Debug.WriteLine($"ArchiverCache: Clear all");
+                _caches.Clear();
+            }
+        }
+
+        /// <summary>
+        /// リファレンスが切れた項目を削除
+        /// </summary>
         public void CleanUp()
         {
             if (_disposedValue) return;
@@ -77,7 +94,7 @@ namespace NeeView
                 var removes = _caches.Where(e => !e.Value.TryGetTarget(out var archiver)).Select(e => e.Key).ToList();
                 foreach (var key in removes)
                 {
-                    ////Debug.WriteLine($"ArchvierCache: Remove {key}");
+                    ////Debug.WriteLine($"ArchiverCache: Remove {key}");
                     _caches.Remove(key);
                 }
             }
