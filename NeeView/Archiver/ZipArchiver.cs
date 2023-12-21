@@ -84,6 +84,7 @@ namespace NeeView
                         token.ThrowIfCancellationRequested();
 
                         var entry = archiver.Entries[id];
+                        ZipArchiveEntryHelper.RepairEntryName(entry);
 
                         var archiveEntry = new ArchiveEntry(this)
                         {
@@ -127,6 +128,7 @@ namespace NeeView
             using (var archiver = ZipFile.Open(Path, ZipArchiveMode.Read, _encoding))
             {
                 ZipArchiveEntry archiveEntry = archiver.Entries[entry.Id];
+                ZipArchiveEntryHelper.RepairEntryName(archiveEntry);
                 if (!IsValidEntry(entry, archiveEntry)) throw new ValidationException(Properties.Resources.InconsistencyException_Message);
 
                 using (var stream = archiveEntry.Open())
@@ -148,6 +150,7 @@ namespace NeeView
             using (var archiver = ZipFile.Open(Path, ZipArchiveMode.Read, _encoding))
             {
                 ZipArchiveEntry archiveEntry = archiver.Entries[entry.Id];
+                ZipArchiveEntryHelper.RepairEntryName(archiveEntry);
                 if (!IsValidEntry(entry, archiveEntry)) throw new ValidationException(Properties.Resources.InconsistencyException_Message);
 
                 archiveEntry.ExtractToFile(exportFileName, isOverwrite);
@@ -241,6 +244,7 @@ namespace NeeView
             static ZipArchiveEntry? GetTargetEntry(ZipArchive archive, ArchiveEntry entry)
             {
                 var zipArchiveEntry = archive.Entries[entry.Id];
+                ZipArchiveEntryHelper.RepairEntryName(zipArchiveEntry);
                 return IsValidEntry(entry, zipArchiveEntry) ? zipArchiveEntry : null;
             }
         }
@@ -254,14 +258,12 @@ namespace NeeView
         {
             return Config.Current.Archive.Zip.Encoding switch
             {
-                // NOTE: .NET8 は UTF8 フラグが使用されていないため、対応されるまでは自前で判定する。
-                // https://github.com/dotnet/runtime/issues/92283
                 ZipEncoding.Local
-                    => IsUTF8EncodingMaybe(stream, false) ? null : Environment.Encoding,
+                    => Environment.Encoding,
                 ZipEncoding.UTF8
                     => null,
                 ZipEncoding.Auto
-                    => IsUTF8EncodingMaybe(stream, true) ? null : Environment.Encoding,
+                    => IsUTF8EncodingMaybe(stream) ? null : Environment.Encoding,
                 _
                     => null,
             };
@@ -271,14 +273,13 @@ namespace NeeView
         /// Zipの文字エンコードがUTF8であるかを判定
         /// </summary>
         /// <param name="stream">Zip stream</param>
-        /// <param name="checkString">文字列チェックも行う</param>
         /// <returns></returns>
-        private bool IsUTF8EncodingMaybe(Stream stream, bool checkString)
+        private bool IsUTF8EncodingMaybe(Stream stream)
         {
             try
             {
                 using var analyzer = new ZipAnalyzer(stream, true);
-                return analyzer.IsEncodingUTF8(checkString);
+                return analyzer.IsEncodingUTF8();
             }
             catch (Exception ex)
             {
@@ -352,6 +353,7 @@ namespace NeeView
             static ZipArchiveEntry? GetTargetEntry(ZipArchive archive, ArchiveEntry entry)
             {
                 var zipArchiveEntry = archive.Entries[entry.Id];
+                ZipArchiveEntryHelper.RepairEntryName(zipArchiveEntry);
                 return IsValidEntry(entry, zipArchiveEntry) ? zipArchiveEntry : null;
             }
         }

@@ -42,20 +42,18 @@ namespace NeeView
         }
 
         /// <summary>
-        /// ZIP の Encoding が UTF8 かを判定
+        /// ZIP の Encoding が UTF-8 かを判定
         /// </summary>
         /// <remarks>
-        /// UTF8フラグのチェックを行う
+        /// UTF-8 フラグのないエントリ名の UTF-8 チェックを行う
         /// </remarks>
-        /// <param name="checkString">UTF8フラグがないときに文字列からコード判別を行う</param>
-        /// <returns>UTF8 であるなら true</returns>
-        public bool IsEncodingUTF8(bool checkString)
+        /// <returns>全て UTF-8 であるなら true</returns>
+        public bool IsEncodingUTF8()
         {
-            _reader.Seek(0, SeekOrigin.Begin);
-
             // check header (PK34)
-            Trace("[PK34] LocalFileHeader:");
-            if (_reader.ReadSignature() != ZipSignatures.LocalFileHeader) throw new FormatException("Signature is not PK34");
+            //Trace("[PK34] LocalFileHeader:");
+            //_reader.Seek(0, SeekOrigin.Begin);
+            //if (_reader.ReadSignature() != ZipSignatures.LocalFileHeader) throw new FormatException("Signature is not PK34");
 
             // read end of central directory (PK56)
             Trace("[PK56] End of central directory:");
@@ -117,12 +115,8 @@ namespace NeeView
                 var bitFlags = (ZipGeneralBitFlags)_reader.ReadUInt16();
                 Trace($"bitFlags={bitFlags}");
 
-                // if bitflag.UTF8 return true
-                if (bitFlags.HasFlag(ZipGeneralBitFlags.UnicodeText))
-                {
-                    Trace($"[Result] UTF8 encoding.");
-                    return true;
-                }
+                // has bitflag.UTF8
+                var isUTF8 = bitFlags.HasFlag(ZipGeneralBitFlags.UnicodeText);
 
                 // get name length
                 _reader.Seek(pos + 28, SeekOrigin.Begin);
@@ -134,7 +128,11 @@ namespace NeeView
                 Trace($"commentLength={commentLength}");
 
                 // check string
-                if (checkString)
+                if (isUTF8)
+                {
+                    Trace($"name(UTF8) skip.");
+                }
+                else
                 {
                     // get name.bytes[]
                     _reader.Seek(pos + 46, SeekOrigin.Begin);
@@ -156,16 +154,8 @@ namespace NeeView
             }
 
             // result
-            if (checkString)
-            {
-                Trace($"[Result] UTF8 encoding maybe.");
-                return true;
-            }
-            else
-            {
-                Trace($"[Result] Unknown encoding.");
-                return false;
-            }
+            Trace($"[Result] UTF8 encoding.");
+            return true;
         }
 
 
