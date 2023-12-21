@@ -2,6 +2,23 @@
 
 ----
 
+### 40.4
+(2023-12-22)
+
+#### New
+
+- Added encoding setting for ZIP files when the UTF-8 flag is not set.
+
+#### Fixed
+
+- ZIP files now load in UTF-8 when the UTF-8 flag is set.
+- Fixed a bug in which the file exclusion attribute differs between bookshelf and bookshelf search.
+- Fixed a bug where changes were not applied even if the book was reopened after changing archive settings.
+- Fixed a bug where QuickAccess property changes were sometimes not saved.
+- Fixed a bug where the keyboard focus was not following the change of selected items on the bookshelf.
+
+----
+
 ### 40.3
 (2023-12-16)
 
