@@ -83,7 +83,7 @@ namespace NeeView
             token.ThrowIfCancellationRequested();
 
             var pictureInfo = new PictureInfo();
-            var size = new Size(drawing.Bounds.Width, drawing.Bounds.Height);
+            var size = drawing.Bounds.IsEmpty ? new Size() : new Size(drawing.Bounds.Width, drawing.Bounds.Height);
             pictureInfo.OriginalSize = size;
             pictureInfo.Size = size;
             pictureInfo.BitsPerPixel = 32;

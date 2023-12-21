@@ -22,7 +22,7 @@
                 </Style>
             </Grid.Style>
             <Grid x:Name="NowLoadingNormal" Background="{DynamicResource Window.Background}">
-                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Orientation="Vertical">
+                <StackPanel x:Name="NowLoadingLabel" VerticalAlignment="Center" HorizontalAlignment="Center" Orientation="Vertical">
                     <TextBlock x:Name="NowLoadingText" Text="Now Loading"  TextAlignment="Center" VerticalAlignment="Center"
                                                    Foreground="{DynamicResource Window.Foreground}" FontFamily="Meiryo" FontSize="{StaticResource InfoTextFontSize}" Margin="8" TextTrimming="CharacterEllipsis"/>
                     <local:ProgressRing x:Name="ProgressRing" />

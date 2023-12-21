@@ -210,8 +210,8 @@ namespace NeeView
                 try
                 {
                     EmptyMessage = null;
-                    SetLoading(null);
                     await OpenAsync(_bookHub.GetCurrentBook(), _openCancellationTokenSource.Token);
+                    SetLoading(null);
                     EmptyMessage = e.EmptyMessage;
                     PageFrameBoxChanged?.Invoke(this, new PageFrameBoxChangedEventArgs(_box, e));
                     RaiseViewPageChanged();
@@ -272,6 +272,7 @@ namespace NeeView
 
             RaisePropertyChanged(nameof(View));
             await WaitStableAsync(_box, token);
+            _box.SetVisibility(Visibility.Visible);
 
             _bookMementoControl.TrySaveBookMemento();
 

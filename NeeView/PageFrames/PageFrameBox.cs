@@ -94,6 +94,7 @@ namespace NeeView.PageFrames
             _layout = new PageFrameContainerLayout(_context, _containers);
 
             _canvas = new PageFrameContainerCanvas(_context, _containers);
+            _canvas.Visibility = Visibility.Collapsed;
             _scrollViewer = new PageFrameScrollViewer(_context, _canvas, viewTransform);
             _viewBox = new PageFrameContainerViewBox(_context, _scrollViewer);
             _disposables.Add(_viewBox);
@@ -232,6 +233,11 @@ namespace NeeView.PageFrames
         {
             Dispose(disposing: true);
             GC.SuppressFinalize(this);
+        }
+
+        public void SetVisibility(Visibility visibility)
+        {
+            _canvas.Visibility = visibility;
         }
 
         public DragTransformContext? CreateDragTransformContext(bool isPointContainer, bool isLoupeTransform)
