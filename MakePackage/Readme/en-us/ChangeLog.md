@@ -16,6 +16,7 @@
 - Fixed a bug where changes were not applied even if the book was reopened after changing archive settings.
 - Fixed a bug where QuickAccess property changes were sometimes not saved.
 - Fixed a bug where the keyboard focus was not following the change of selected items on the bookshelf.
+- Reduces flash when switching books
 
 ----
 
