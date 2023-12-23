@@ -8024,6 +8024,21 @@ nv.ShowToast(nv.Book.ViewPages[0].Path)</value>
     <value>Adicionar uma página fictícia à última página</value>
   </data>
   <data name="ViewConfig.PageMoveDuration.Remarks" xml:space="preserve">
-    <value>Válido quando "@BookConfig.IsPanorama" estiver DESLIGADO.</value>
+    <value>Válido quando "@BookConfig.IsPanorama" está DESLIGADO.</value>
+  </data>
+  <data name="ZipArchiveConfig.Encoding" xml:space="preserve">
+    <value>Codificação para nomes de entradas ZIP</value>
+  </data>
+  <data name="ZipArchiveConfig.Encoding.Remarks" xml:space="preserve">
+    <value>Para arquivos ZIP sem o sinalizador UTF-8 definido.</value>
+  </data>
+  <data name="ZipEncoding.Local" xml:space="preserve">
+    <value>Local</value>
+  </data>
+  <data name="ZipEncoding.UTF8" xml:space="preserve">
+    <value>UTF-8</value>
+  </data>
+  <data name="ZipEncoding.Auto" xml:space="preserve">
+    <value>Auto</value>
   </data>
 </root>
