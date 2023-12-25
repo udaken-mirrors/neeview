@@ -43,6 +43,7 @@ namespace NeeView
         private VlcTrackCollectionSource? _audioTracks;
         private VlcTrackCollectionSource? _subtitles;
         private Uri? _uri;
+        private Locker.Key? _activeLockerKey;
 
         /// <summary>
         /// 再生位置要求
@@ -182,7 +183,21 @@ namespace NeeView
         public bool IsPlaying
         {
             get { return _isPlaying; }
-            private set { SetProperty(ref _isPlaying, value); }
+            private set
+            {
+                if (SetProperty(ref _isPlaying, value))
+                {
+                    if (_isPlaying)
+                    {
+                        _activeLockerKey = _activeLockerKey ?? MainViewComponent.Current.LockActiveMarker();
+                    }
+                    else
+                    {
+                        _activeLockerKey?.Dispose();
+                        _activeLockerKey = null;
+                    }
+                }
+            }
         }
 
         public bool ScrubbingEnabled
@@ -286,6 +301,7 @@ namespace NeeView
                     _audioTracks?.Dispose();
                     _subtitles?.Dispose();
                     _disposables.Dispose();
+                    _activeLockerKey?.Dispose();
                     Task.Run(() =>
                     {
                         try

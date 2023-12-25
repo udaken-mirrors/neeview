@@ -16,6 +16,9 @@
     <Grid x:Name="MainViewPanel" ContextMenu="{Binding ContextMenu}" ContextMenuOpening="MainViewPanel_ContextMenuOpening" Background="Transparent" >
         <Grid x:Name="MainViewCanvas" Margin="{Binding MainViewMargin}">
 
+            <!-- Active Marker -->
+            <local:ActiveMarker x:Name="ActiveMarker" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="5"/>
+
             <!-- メインビュー コンテンツ表示領域 -->
             <Grid x:Name="View" Background="Transparent" SizeChanged="MainView_SizeChanged" Focusable="True" KeyboardNavigation.IsTabStop="True"
                     FocusVisualStyle="{x:Null}"

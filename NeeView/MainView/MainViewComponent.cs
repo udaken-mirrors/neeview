@@ -25,6 +25,7 @@ namespace NeeView
         private bool _disposedValue;
         private readonly DisposableCollection _disposables = new();
         private readonly IntervalDelayAction _delayAction = new();
+        private readonly Locker _activeLocker = new();
 
         public static void Initialize()
         {
@@ -63,6 +64,8 @@ namespace NeeView
             PageFrameBoxPresenter.ViewContentChanged += PageFrameBoxPresenter_ViewContentChanged;
 
             _mainView.DataContext = new MainViewViewModel(this);
+
+            _activeLocker.LockCountChanged += ActiveLocker_LockCountChanged;
         }
 
 
@@ -130,6 +133,16 @@ namespace NeeView
         {
             Dispose(disposing: true);
             GC.SuppressFinalize(this);
+        }
+
+        public Locker.Key LockActiveMarker()
+        {
+            return _activeLocker.Lock();
+        }
+
+        private void ActiveLocker_LockCountChanged(object? sender, LockCountChangedEventArgs e)
+        {
+            _mainView.ActiveMarker.IsActive = e.LockCount > 0;
         }
 
         private void PageFrameBoxPresenter_ViewContentChanged(object? sender, FrameViewContentChangedEventArgs e)

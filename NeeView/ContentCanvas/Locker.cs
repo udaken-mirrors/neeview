@@ -26,10 +26,15 @@ namespace NeeView
                 {
                     if (disposing)
                     {
-                        this.Locker?.Unlock(this);
                     }
+                    this.Locker?.Unlock(this);
                     _disposedValue = true;
                 }
+            }
+
+            ~Key()
+            {
+                Dispose(disposing: false);
             }
 
             public void Dispose()
@@ -43,14 +48,20 @@ namespace NeeView
         private readonly object _lock = new();
         private int _lockCount;
 
+        public event EventHandler<LockCountChangedEventArgs>? LockCountChanged;
+
+        public int LockCount => _lockCount;
         public bool IsLocked => _lockCount > 0;
 
         public Key Lock()
         {
+            int count = -1;
             lock (_lock)
             {
                 _lockCount++;
+                count = _lockCount;
             }
+            LockCountChanged?.Invoke(this, new LockCountChangedEventArgs(count));
             return new Key(this);
         }
 
@@ -59,12 +70,18 @@ namespace NeeView
             if (key.Locker == this)
             {
                 key.Locker = null;
+                int count = -1;
                 lock (_lock)
                 {
                     if (_lockCount > 0)
                     {
                         _lockCount--;
+                        count = _lockCount;
                     }
+                }
+                if (0 <= count)
+                {
+                    LockCountChanged?.Invoke(this, new LockCountChangedEventArgs(count));
                 }
             }
         }
@@ -75,6 +92,18 @@ namespace NeeView
             {
                 _lockCount = 0;
             }
+            LockCountChanged?.Invoke(this, new LockCountChangedEventArgs(0));
         }
+    }
+
+
+    public class LockCountChangedEventArgs : EventArgs
+    {
+        public LockCountChangedEventArgs(int lockCount)
+        {
+            LockCount = lockCount;
+        }
+
+        public int LockCount { get; }
     }
 }
