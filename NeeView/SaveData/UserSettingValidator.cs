@@ -136,6 +136,39 @@ namespace NeeView
                 }
             }
 
+            // ver.40.5
+            if (self.Format.CompareTo(new FormatVersion(Environment.SolutionName, 40, 5, 0)) < 0)
+            {
+                if (self.Commands != null)
+                {
+                    // ver 40.0 前のデータならば TogglePageModeReverse の設定リセット
+                    if (self.Format.CompareTo(new FormatVersion(Environment.SolutionName, 40, 0, 0)) < 0)
+                    {
+                        var togglePageModeReverseCommand = new TogglePageModeReverseCommand();
+                        var togglePageModeReverse = togglePageModeReverseCommand.CreateMemento();
+                        self.Commands[togglePageModeReverseCommand.Name] = togglePageModeReverseCommand.CreateMemento();
+                    }
+                    // ver 40.0 以降のデータならば TogglePageMode/Reverse のパラメータ設定がないのであればループフラグを無効化
+                    else
+                    {
+                        if (self.Commands.TryGetValue("TogglePageMode", out var togglePageMode))
+                        {
+                            if (togglePageMode.Parameter is null)
+                            {
+                                togglePageMode.Parameter = new TogglePageModeCommandParameter() { IsLoop = false };
+                            }
+                        }
+                        if (self.Commands.TryGetValue("TogglePageModeReverse", out var togglePageModeReverse))
+                        {
+                            if (togglePageModeReverse.Parameter is null)
+                            {
+                                togglePageModeReverse.Parameter = new TogglePageModeCommandParameter() { IsLoop = false };
+                            }
+                        }
+                    }
+                }
+            }
+
 #if false
             // ver.99 (バージョン変更処理テスト)
             if (self.Format.CompareTo(new FormatVersion(Environment.SolutionName, 99, 0, 0)) < 0)
@@ -145,7 +178,7 @@ namespace NeeView
             }
 #endif
 
-                return self;
+            return self;
         }
 
 #pragma warning restore CS0612, CS0618 // 型またはメンバーが旧型式です
@@ -263,7 +296,7 @@ namespace NeeView
                     }
 #pragma warning restore CS0612 // 型またはメンバーが旧型式です
 
-                    foreach(var panelLayout in dock.PanelLayout)
+                    foreach (var panelLayout in dock.PanelLayout)
                     {
                         panelLayout.Panels = panelLayout.Panels
                             .Select(x => x == oldName ? newName : x).ToList()
