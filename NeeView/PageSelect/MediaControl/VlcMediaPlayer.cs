@@ -43,6 +43,7 @@ namespace NeeView
         private VlcTrackCollectionSource? _audioTracks;
         private VlcTrackCollectionSource? _subtitles;
         private Uri? _uri;
+        private AudioInfo? _audioInfo;
         private Locker.Key? _activeLockerKey;
 
         /// <summary>
@@ -367,6 +368,7 @@ namespace NeeView
 
             if (mediaSource.Path is null) throw new ArgumentException("VlcMediaPlayer requests a Path from mediaSource.");
             _uri = new Uri(mediaSource.Path);
+            _audioInfo = mediaSource.AudioInfo;
 
             _player.Playing += Player_FirstPlaying;
 
@@ -467,7 +469,7 @@ namespace NeeView
             if (_disposedValue) return;
 
             var media = _player.GetMedia();
-            HasAudio = media.Tracks.Any(e => e.Type == MediaTrackTypes.Audio);
+            HasAudio = media.Tracks.Any(e => e.Type == MediaTrackTypes.Audio) || _audioInfo is not null;
             HasVideo = media.Tracks.Any(e => e.Type == MediaTrackTypes.Video);
             Duration = new Duration(TimeSpan.FromMilliseconds(_player.Length));
         }
