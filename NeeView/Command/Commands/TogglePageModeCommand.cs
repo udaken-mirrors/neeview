@@ -2,12 +2,10 @@
 {
     public class TogglePageModeCommand : CommandElement
     {
-        public const string DefaultMouseGesture = "RD";
 
         public TogglePageModeCommand()
         {
             this.Group = Properties.Resources.CommandGroup_PageSetting;
-            this.MouseGesture = DefaultMouseGesture;
             this.IsShowMessage = true;
 
             this.ParameterSource = new CommandParameterSource(new TogglePageModeCommandParameter());

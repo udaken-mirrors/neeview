@@ -2,12 +2,10 @@
 {
     public class TogglePageModeReverseCommand : CommandElement
     {
-        public const string DefaultMouseGesture = "RU";
 
         public TogglePageModeReverseCommand()
         {
             this.Group = Properties.Resources.CommandGroup_PageSetting;
-            this.MouseGesture = DefaultMouseGesture;
             this.IsShowMessage = true;
 
             this.ParameterSource = new CommandParameterSource(new TogglePageModeCommandParameter());

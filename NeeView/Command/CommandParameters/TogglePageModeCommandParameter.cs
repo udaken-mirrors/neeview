@@ -4,7 +4,7 @@ namespace NeeView
 {
     public class TogglePageModeCommandParameter : CommandParameter
     {
-        private bool _isLoop;
+        private bool _isLoop = true;
 
         // ループ
         [PropertyMember]
