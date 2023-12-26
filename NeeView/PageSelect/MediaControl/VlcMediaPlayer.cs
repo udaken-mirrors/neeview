@@ -504,7 +504,7 @@ namespace NeeView
         private void UpdateMuted()
         {
             if (_disposedValue) return;
-            
+
             Task.Run(() => { _player.Audio.IsMute = _isMuted; });
         }
 
@@ -529,13 +529,27 @@ namespace NeeView
             {
                 _requestPosition = _player.Position;
             }
-            PlayStart();
+            PlayStartContinue();
         }
 
         private void PlayStart(double position)
         {
             _requestPosition = (float)position;
+            PlayStartContinue();
+        }
+
+        private void PlayStartContinue()
+        {
+            _player.Playing += Player_SecondPlaying;
+
             PlayStart();
+
+            void Player_SecondPlaying(object? sender, VlcMediaPlayerPlayingEventArgs e)
+            {
+                _player.Playing -= Player_SecondPlaying;
+                _audioTracks?.UpdateCurrent();
+                _subtitles?.UpdateCurrent();
+            }
         }
 
         private void PlayStart()

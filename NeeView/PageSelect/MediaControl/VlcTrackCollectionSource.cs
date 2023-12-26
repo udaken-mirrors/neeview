@@ -71,7 +71,7 @@ namespace NeeView
             UpdateCurrent();
         }
 
-        private void UpdateCurrent()
+        public void UpdateCurrent()
         {
             var selected = _collection.Selected;
             if (selected is not null)
