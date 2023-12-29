@@ -223,6 +223,7 @@ namespace NeeView
                 new ViewScrollRightCommand(),
                 new ViewScaleUpCommand(),
                 new ViewScaleDownCommand(),
+                new ViewScaleStretchCommand(),
                 new ViewBaseScaleUpCommand(),
                 new ViewBaseScaleDownCommand(),
                 new ViewRotateLeftCommand(),

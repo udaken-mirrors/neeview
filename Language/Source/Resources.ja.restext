@@ -2465,3 +2465,5 @@ ZipArchiveConfig.Encoding.Remarks=UTF-8 フラグが設定されていない ZIP
 ZipEncoding.Local=ローカル
 ZipEncoding.UTF8=UTF-8
 ZipEncoding.Auto=自動
+ViewScaleStretchCommand=ストレッチ
+ViewScaleStretchCommand.Remarks=スケールにストレッチを適用します。

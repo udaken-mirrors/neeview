@@ -8,6 +8,7 @@
         void ScaleUp(ScaleType scaleType, ViewScaleCommandParameter parameter);
         void ScaleDown(ViewScaleCommandParameter parameter);
         void ScaleDown(ScaleType scaleType, ViewScaleCommandParameter parameter);
+        void Stretch(bool ignoreViewOrigin);
 
         void ViewRotateLeft(ViewRotateCommandParameter parameter);
         void ViewRotateRight(ViewRotateCommandParameter parameter);

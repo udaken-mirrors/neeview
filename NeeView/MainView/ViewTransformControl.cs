@@ -139,12 +139,12 @@ namespace NeeView
 
             if (isStretch)
             {
-                Stretch();
+                Stretch(false);
             }
         }
 
 
-        public void Stretch(bool ignoreViewOrigin = false)
+        public void Stretch(bool ignoreViewOrigin)
         {
             _presenter.Stretch(ignoreViewOrigin);
         }

@@ -8046,4 +8046,10 @@ nv.ShowToast(nv.Book.ViewPages[0].Path)</value>
   <data name="ZipEncoding.Auto" xml:space="preserve">
     <value>自動</value>
   </data>
+  <data name="ViewScaleStretchCommand" xml:space="preserve">
+    <value>ストレッチ</value>
+  </data>
+  <data name="ViewScaleStretchCommand.Remarks" xml:space="preserve">
+    <value>スケールにストレッチを適用します。</value>
+  </data>
 </root>

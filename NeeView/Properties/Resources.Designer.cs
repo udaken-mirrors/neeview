@@ -20929,6 +20929,24 @@ namespace NeeView.Properties {
         }
         
         /// <summary>
+        ///   Stretch に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string ViewScaleStretchCommand {
+            get {
+                return ResourceManager.GetString("ViewScaleStretchCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Apply stretch to scale. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string ViewScaleStretchCommand_Remarks {
+            get {
+                return ResourceManager.GetString("ViewScaleStretchCommand.Remarks", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Zoom in に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string ViewScaleUpCommand {
