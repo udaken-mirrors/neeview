@@ -41,7 +41,7 @@ namespace NeeView
         }
 
         public static readonly DependencyProperty IsActiveProperty =
-            DependencyProperty.Register("IsActive", typeof(bool), typeof(ActiveMarker), new PropertyMetadata(true, IsActiveProperty_Changed));
+            DependencyProperty.Register("IsActive", typeof(bool), typeof(ActiveMarker), new PropertyMetadata(false, IsActiveProperty_Changed));
 
 
         private static void IsActiveProperty_Changed(DependencyObject d, DependencyPropertyChangedEventArgs e)
