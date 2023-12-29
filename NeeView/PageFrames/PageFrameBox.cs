@@ -1096,7 +1096,7 @@ namespace NeeView.PageFrames
 
             var rawSize = content.PageFrame.Size;
 
-            var scale = _calculator.CalcStretchScale(rawSize, new RotateTransform(transform.Angle));
+            var scale = _calculator.CalcModeStretchScale(rawSize, new RotateTransform(transform.Angle));
             transform.SetScale(scale, TimeSpan.Zero);
 
             var options = ignoreViewOrigin ? ScrollToViewOriginOption.IgnoreViewOrigin : ScrollToViewOriginOption.None;

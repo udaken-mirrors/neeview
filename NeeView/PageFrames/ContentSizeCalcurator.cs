@@ -71,6 +71,18 @@ namespace NeeView.PageFrames
         }
 
         /// <summary>
+        /// ストレッチモードを適用したストレッチスケールを求める
+        /// </summary>
+        /// <param name="size"></param>
+        /// <param name="rotate"></param>
+        /// <returns></returns>
+        public double CalcModeStretchScale(Size size, RotateTransform rotate)
+        {
+            var scales = GetFillScale(size, rotate);
+            return CalcStretchScale(StretchMode, scales, size);
+        }
+
+        /// <summary>
         /// ストレッチスケールを求める。PageFrame用
         /// </summary>
         /// <param name="size">コンテンツサイズ</param>
