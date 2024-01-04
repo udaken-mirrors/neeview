@@ -2467,3 +2467,6 @@ ZipEncoding.UTF8=UTF-8
 ZipEncoding.Auto=Auto
 ViewScaleStretchCommand=Stretch
 ViewScaleStretchCommand.Remarks=Apply stretch to scale.
+ViewConfig.IsScaleStretchTracking=Stretch tracking
+ViewConfig.IsScaleStretchTracking.Remarks=Adjusts the scale according to the stretch mode when rotating.
+Navigator.IsScaleStretchTracking=Stretch tracking

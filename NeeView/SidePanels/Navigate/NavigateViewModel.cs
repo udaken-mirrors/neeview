@@ -135,6 +135,12 @@ namespace NeeView
             set => _model.IsKeepAngleBooks = value;
         }
 
+        public bool IsScaleStretchTracking
+        {
+            get => _model.IsScaleStretchTracking;
+            set => _model.IsScaleStretchTracking = value;
+        }
+
         public bool IsKeepScale
         {
             get => _model.IsKeepScale;

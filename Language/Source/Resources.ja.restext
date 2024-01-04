@@ -2467,3 +2467,6 @@ ZipEncoding.UTF8=UTF-8
 ZipEncoding.Auto=自動
 ViewScaleStretchCommand=ストレッチ
 ViewScaleStretchCommand.Remarks=スケールにストレッチを適用します。
+ViewConfig.IsScaleStretchTracking=ストレッチ追従
+ViewConfig.IsScaleStretchTracking.Remarks=回転している場合にストレッチ モードに応じてスケールを調整します。
+Navigator.IsScaleStretchTracking=ストレッチ追従

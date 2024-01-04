@@ -182,6 +182,7 @@
 
             <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
             <local:BooleanToVisibilityConverter x:Key="BooleanToVisibilityInverseConverter" True="Collapsed" False="Visible" />
+            <local:BooleanReverseConverter x:Key="BooleanReverseConverter"/>
             <local:DoubleToGridLengthConverter x:Key="DoubleToGridLengthConverter" />
 
             <DataTemplate DataType="{x:Type nvp:PropertyValue_Boolean}">
@@ -382,6 +383,12 @@
                                         </Button>
                                     </StackPanel>
                                     <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+                                        <ToggleButton Style="{StaticResource NavigateToggleButtonStyle}" IsChecked="{Binding IsScaleStretchTracking}"
+                                                IsEnabled="{Binding IsKeepScale, Converter={StaticResource BooleanReverseConverter}}"
+                                                ToolTip="{x:Static properties:Resources.Navigator_IsScaleStretchTracking}">
+                                            <Image Source="{StaticResource ic_center_focus_strong_24px}" />
+                                        </ToggleButton>
+                                        
                                         <ToggleButton Style="{StaticResource NavigateToggleButtonStyle}" IsChecked="{Binding IsKeepScale}"
                                                 ToolTip="{x:Static properties:Resources.Navigator_IsKeepScale}">
                                             <Image Source="{StaticResource ic_pushpin_b}" />

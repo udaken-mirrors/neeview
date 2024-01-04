@@ -10564,6 +10564,15 @@ namespace NeeView.Properties {
         }
         
         /// <summary>
+        ///   Stretch tracking に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string Navigator_IsScaleStretchTracking {
+            get {
+                return ResourceManager.GetString("Navigator.IsScaleStretchTracking", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Control bar に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string Navigator_MoreMenu_IsVisibleControlBar {
@@ -20591,6 +20600,24 @@ namespace NeeView.Properties {
         public static string ViewConfig_IsRotateStretchEnabled {
             get {
                 return ResourceManager.GetString("ViewConfig.IsRotateStretchEnabled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Stretch tracking に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string ViewConfig_IsScaleStretchTracking {
+            get {
+                return ResourceManager.GetString("ViewConfig.IsScaleStretchTracking", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Adjusts the scale according to the stretch mode when rotating. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string ViewConfig_IsScaleStretchTracking_Remarks {
+            get {
+                return ResourceManager.GetString("ViewConfig.IsScaleStretchTracking.Remarks", resourceCulture);
             }
         }
         

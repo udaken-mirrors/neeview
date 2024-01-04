@@ -62,15 +62,18 @@ namespace NeeView.PageFrames
         /// </summary>
         private readonly TransformGroup _boundsTransform;
 
-        private PageFrameDirtyLevel _dirtyLevel;
 
         /// <summary>
         /// 基底スケールのトランスフォーム
         /// </summary>
         private readonly BaseScaleTransform _baseScaleTransform;
 
+        private readonly ContentSizeCalculator _calculator;
+        private PageFrameDirtyLevel _dirtyLevel;
+        
         private bool _disposedValue = false;
         private readonly DisposableCollection _disposables = new();
+
 
         /// <summary>
         /// PageFrameから構成されるPageFrameContainer用コンテンツ
@@ -82,7 +85,7 @@ namespace NeeView.PageFrames
         /// <param name="activity">コンテナの状態。表示中、選択中等</param>
         /// <param name="transform">レイアウト用Transform</param>
         /// <param name="loupeContext">ルーペ用Transform</param>
-        public PageFrameContent(ViewContentFactory viewContentFactory, PageFrameContext context, PageFrame pageFrame, Page? nextPage, PageFrameActivity activity, PageFrameTransformAccessor transform, LoupeTransformContext loupeContext, BaseScaleTransform baseScaleTransform)
+        public PageFrameContent(ViewContentFactory viewContentFactory, PageFrameContext context, PageFrame pageFrame, Page? nextPage, PageFrameActivity activity, PageFrameTransformAccessor transform, LoupeTransformContext loupeContext, BaseScaleTransform baseScaleTransform, ContentSizeCalculator calculator)
         {
             _canvas = new Canvas();
             _canvas.RenderTransform = _viewTransform;
@@ -114,6 +117,8 @@ namespace NeeView.PageFrames
 
             _baseScaleTransform = baseScaleTransform;
             _disposables.Add(_baseScaleTransform.SubscribeScaleChanged(BaseScaleTransform_ScaleChanged));
+
+            _calculator = calculator;
 
             _loupeContext = loupeContext;
 
@@ -295,6 +300,7 @@ namespace NeeView.PageFrames
             }
             UpdateTransform();
             UpdateElementLayout();
+            Stretch(false);
 
             _sizeSource.SetSize(_pageFrame.StretchedSize);
         }
@@ -379,7 +385,7 @@ namespace NeeView.PageFrames
 
             UpdateTransform();
             UpdateElementLayout();
-
+            Stretch(false);
         }
 
         private void ViewContent_Changed(object? sender, ViewContentChangedEventArgs e)
@@ -476,11 +482,58 @@ namespace NeeView.PageFrames
             }
         }
 
+        /// <summary>
+        /// ストレッチ追従であればストレッチする
+        /// </summary>
+        /// <param name="force">強制実行</param>
+        public void Stretch(bool force)
+        {
+            if (!force && !_context.IsScaleStretchTracking) return;
+
+            var scale = CalcStretchScale(_context.ReferenceSize);
+            _transform.SetScale(scale, TimeSpan.Zero);
+        }
+
+        /// <summary>
+        /// ストレッチ追従であればストレッチする
+        /// </summary>
+        /// <param name="force">強制実行</param>
+        /// <param name="rate">ストレッチスケールのスケール倍率</param>
+        public void Stretch(bool force, double rate)
+        {
+            if (!force && !_context.IsScaleStretchTracking) return;
+
+            var scale = CalcStretchScale(_context.ReferenceSize);
+            _transform.SetScale(scale * rate, TimeSpan.Zero);
+        }
+
+        /// <summary>
+        /// ストレッチスケールのスケール倍率を計算
+        /// </summary>
+        /// <param name="canvasSize"></param>
+        /// <returns></returns>
+        public double CalcStretchScaleRate(Size canvasSize)
+        {
+            var oldStretchScale = CalcStretchScale(canvasSize);
+            if (oldStretchScale <= 0.0) return 1.0;
+            return _transform.Scale / oldStretchScale;
+        }
+
+        /// <summary>
+        /// ストレッチスケールを計算
+        /// </summary>
+        /// <param name="canvasSize"></param>
+        /// <returns></returns>
+        public double CalcStretchScale(Size canvasSize)
+        {
+            return _calculator.CalcModeStretchScale(_pageFrame.Size, new RotateTransform(_transform.Angle), canvasSize);
+        }
+
+
         public override string ToString()
         {
             return _pageFrame.ToString();
         }
-
 
         [Conditional("LOCAL_DEBUG")]
         private void Trace(string s, params object[] args)

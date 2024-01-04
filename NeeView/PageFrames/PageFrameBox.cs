@@ -53,6 +53,8 @@ namespace NeeView.PageFrames
         private readonly DragTransformContextFactory _dragTransformContextFactory;
         private readonly OnceDispatcher _onceDispatcher;
         private bool _isStarted;
+        private Dictionary<PageFrameContent, double> _stretchScaleRateMap = new();
+
 
         public PageFrameBox(PageFrameContext context, BookContext bookContext)
         {
@@ -88,7 +90,7 @@ namespace NeeView.PageFrames
 
             var baseScaleTransform = new BaseScaleTransform(_context);
             _disposables.Add(baseScaleTransform);
-            var containerFactory = new PageFrameContainerFactory(_context, _transformMap, _viewSourceMap, loupeContext, baseScaleTransform);
+            var containerFactory = new PageFrameContainerFactory(_context, _transformMap, _viewSourceMap, loupeContext, baseScaleTransform, _calculator);
             _containers = new PageFrameContainerCollection(_context, frameFactory, containerFactory);
             _rectMath = new PageFrameContainerCollectionRectMath(_context, _containers);
             _layout = new PageFrameContainerLayout(_context, _containers);
@@ -352,11 +354,13 @@ namespace NeeView.PageFrames
         private void Context_SizeChanging(object? sender, SizeChangedEventArgs e)
         {
             _containers.Anchor.Set(_rectMath.GetViewCenterContainer(_viewBox.Rect), _containers.Anchor.Direction);
+            StoreStretchScaleRate(e.PreviousSize);
         }
 
         private void Context_SizeChanged(object? sender, SizeChangedEventArgs e)
         {
             UpdateContainers(PageFrameDirtyLevel.Moderate, TransformMask.None, false, false);
+            CorrectStretchScale();
         }
 
         private void Context_PagesChanged(object? sender, EventArgs e)
@@ -526,6 +530,7 @@ namespace NeeView.PageFrames
                 case nameof(Context.AllowEnlarge):
                 case nameof(Context.AllowReduce):
                     UpdateContainers(PageFrameDirtyLevel.Moderate, TransformMask.Scale, false, true);
+                    UpdateScaleStretchTracking();
                     break;
 
                 case nameof(Context.AutoRotate):
@@ -558,6 +563,10 @@ namespace NeeView.PageFrames
                 case nameof(Context.IsInsertDummyFirstPage):
                 case nameof(Context.IsInsertDummyLastPage):
                     UpdateContainers(PageFrameDirtyLevel.Heavy, TransformMask.None, false, false);
+                    break;
+
+                case nameof(Context.IsScaleStretchTracking):
+                    UpdateScaleStretchTracking();
                     break;
             }
         }
@@ -1090,18 +1099,76 @@ namespace NeeView.PageFrames
             var node = _selected.Node;
             if (node?.Value.Content is not PageFrameContent content) return;
 
+            content.Stretch(true);
+
             SetControlContainer(node);
-
-            var transform = content.Transform;
-
-            var rawSize = content.PageFrame.Size;
-
-            var scale = _calculator.CalcModeStretchScale(rawSize, new RotateTransform(transform.Angle));
-            transform.SetScale(scale, TimeSpan.Zero);
-
             var options = ignoreViewOrigin ? ScrollToViewOriginOption.IgnoreViewOrigin : ScrollToViewOriginOption.None;
             ScrollToViewOrigin(node, _containers.Anchor.Direction, options);
             _scrollViewer.FlushScroll();
+        }
+
+        /// <summary>
+        /// ストレッチ追従切り替えの反映
+        /// </summary>
+        public void UpdateScaleStretchTracking()
+        {
+            var contents = _containers.Select(e => e.Content).OfType<PageFrameContent>().ToList();
+            if (_context.IsScaleStretchTracking)
+            {
+                contents.ForEach(e => e.Stretch(true));
+            }
+            else
+            {
+                contents.ForEach(e => e.Transform.SetScale(1.0, TimeSpan.Zero));
+            }
+
+            var node = _selected.Node;
+            if (node?.Value.Content is not PageFrameContent) return;
+            SetControlContainer(node);
+            ScrollToViewOrigin(node, _containers.Anchor.Direction, ScrollToViewOriginOption.None);
+            _scrollViewer.FlushScroll();
+        }
+
+        /// <summary>
+        /// ストレッチスケールレートを保存する
+        /// </summary>
+        /// <remarks>
+        /// StretchScaleTracking 有効時にのみ機能する。
+        /// キャンバスサイズが変更されたとき用。
+        /// </remarks>
+        /// <param name="canvasSize"></param>
+        public void StoreStretchScaleRate(Size canvasSize)
+        {
+            if (!_context.IsScaleStretchTracking) return;
+
+            // スケールが変化して座標が変わるのでフレームのスナップは無効にする
+            _context.IsSnapAnchor.Reset();
+
+            _stretchScaleRateMap = _containers
+                .Select(e => e.Content)
+                .OfType<PageFrameContent>()
+                .ToDictionary(e => e, e => e.CalcStretchScaleRate(canvasSize));
+        }
+
+        /// <summary>
+        /// ストレッチスケールを補正する
+        /// </summary>
+        /// <remarks>
+        /// StretchScaleTracking 有効時にのみ機能する。
+        /// キャンバスサイズが変更されたとき用。
+        /// </remarks>
+        public void CorrectStretchScale()
+        {
+            if (!_context.IsScaleStretchTracking) return;
+
+            var contents = _containers.Select(e => e.Content).OfType<PageFrameContent>().ToList();
+            foreach(var content in contents)
+            {
+                if (_stretchScaleRateMap.TryGetValue(content, out double rate))
+                {
+                    content.Stretch(true, rate);
+                }
+            }
         }
 
 
@@ -1202,4 +1269,18 @@ namespace NeeView.PageFrames
         Point TranslateCanvasToViewPoint(Point point);
         Point TranslateViewToCanvas(Point point);
     }
+
+
+#if false
+    public static class PageFrameContentTools
+    {
+        public static void StretchIfTracking(PageFrameContent content, ContentSizeCalculator calculator)
+        {
+            if (!Config.Current.View.IsScaleStretchTracking) return;
+            if (Config.Current.View.IsKeepScale) return;
+
+            content.Stretch(calculator);
+        }
+    }
+#endif
 }

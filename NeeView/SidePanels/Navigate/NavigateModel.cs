@@ -120,6 +120,12 @@ namespace NeeView
             set => Config.Current.View.IsKeepAngleBooks = value;
         }
 
+        public bool IsScaleStretchTracking
+        {
+            get => Config.Current.View.IsScaleStretchTracking;
+            set => Config.Current.View.IsScaleStretchTracking = value;
+        }
+
         public bool IsKeepScale
         {
             get => Config.Current.View.IsKeepScale;
@@ -183,6 +189,9 @@ namespace NeeView
                     break;
                 case nameof(ViewConfig.IsKeepAngleBooks):
                     RaisePropertyChanged(nameof(IsKeepAngleBooks));
+                    break;
+                case nameof(ViewConfig.IsScaleStretchTracking):
+                    RaisePropertyChanged(nameof(IsScaleStretchTracking));
                     break;
                 case nameof(ViewConfig.IsKeepScale):
                     RaisePropertyChanged(nameof(IsKeepScale));

@@ -16,6 +16,7 @@ namespace NeeView
         private DragControlCenter _rotateCenter;
         private DragControlCenter _scaleCenter;
         private DragControlCenter _flipCenter;
+        private bool _isScaleStretchTracking;
         private bool _isKeepScale;
         private bool _isKeepAngle;
         private bool _isKeepFlip;
@@ -55,6 +56,14 @@ namespace NeeView
         {
             get { return _flipCenter; }
             set { SetProperty(ref _flipCenter, value); }
+        }
+
+        // スケールのストレッチモード追従
+        [PropertyMember]
+        public bool IsScaleStretchTracking
+        {
+            get { return _isScaleStretchTracking; }
+            set { SetProperty(ref _isScaleStretchTracking, value); }
         }
 
         // 拡大率キープ

@@ -36,8 +36,21 @@ namespace NeeView.PageFrames
         /// 自動回転を求める
         /// </summary>
         /// <param name="size"></param>
+        /// <param name="isFileContent"></param>
         /// <returns></returns>
         public double CalcAutoRotate(Size size, bool isFileContent)
+        {
+            return CalcAutoRotate(size, isFileContent, CanvasSize);
+        }
+
+        /// <summary>
+        /// 自動回転を求める
+        /// </summary>
+        /// <param name="size"></param>
+        /// <param name="isFileContent"></param>
+        /// <param name="canvasSize"></param>
+        /// <returns></returns>
+        public double CalcAutoRotate(Size size, bool isFileContent, Size canvasSize)
         {
             if (isFileContent && !AllowFileContentAutoRotate)
             {
@@ -50,7 +63,7 @@ namespace NeeView.PageFrames
             }
 
             var isContentLandscape = AspectRatioTools.IsLandscape(size);
-            var isCanvasLandscape = CanvasSize.Width >= CanvasSize.Height;
+            var isCanvasLandscape = canvasSize.Width >= canvasSize.Height;
             return (isContentLandscape != isCanvasLandscape || AutoRotate.IsForced()) ? AutoRotate.ToAngle() : 0.0;
         }
 
@@ -62,12 +75,20 @@ namespace NeeView.PageFrames
         /// <returns></returns>
         public double CalcStretchScale(Size size, RotateTransform rotate)
         {
-            //return CalcStretchScale(StretchMode, GetFillScale(size, rotate), size);
-            var scales = GetFillScale(size, rotate);
+            return CalcStretchScale(size, rotate, CanvasSize);
+        }
 
-            var max = Math.Max(scales.X, scales.Y);
-            var min = Math.Min(scales.X, scales.Y);
-            return min;
+        /// <summary>
+        /// ストレッチスケールを求める
+        /// </summary>
+        /// <param name="size"></param>
+        /// <param name="angle"></param>
+        /// <param name="canvasSize"></param>
+        /// <returns></returns>
+        public double CalcStretchScale(Size size, RotateTransform rotate, Size canvasSize)
+        {
+            var scales = GetFillScale(size, rotate, canvasSize);
+            return Math.Min(scales.X, scales.Y);
         }
 
         /// <summary>
@@ -78,8 +99,20 @@ namespace NeeView.PageFrames
         /// <returns></returns>
         public double CalcModeStretchScale(Size size, RotateTransform rotate)
         {
-            var scales = GetFillScale(size, rotate);
-            return CalcStretchScale(StretchMode, scales, size);
+            return CalcModeStretchScale(size, rotate, CanvasSize);
+        }
+
+        /// <summary>
+        /// ストレッチモードを適用したストレッチスケールを求める
+        /// </summary>
+        /// <param name="size"></param>
+        /// <param name="rotate"></param>
+        /// <param name="canvasSize"></param>
+        /// <returns></returns>
+        public double CalcModeStretchScale(Size size, RotateTransform rotate, Size canvasSize)
+        {
+            var scales = GetFillScale(size, rotate, canvasSize);
+            return CalcStretchScale(StretchMode, scales, size, canvasSize);
         }
 
         /// <summary>
@@ -91,11 +124,24 @@ namespace NeeView.PageFrames
         /// <returns></returns>
         public double CalcFrameStretchScale(Size size, double span, RotateTransform rotate)
         {
-            return CalcStretchScale(StretchMode, GetFillScaleWithSpan(size, span, rotate.Angle), size);
+            return CalcFrameStretchScale(size, span, rotate, CanvasSize);
+        }
+
+        /// <summary>
+        /// ストレッチスケールを求める。PageFrame用
+        /// </summary>
+        /// <param name="size"></param>
+        /// <param name="span"></param>
+        /// <param name="rotate"></param>
+        /// <param name="canvasSize"></param>
+        /// <returns></returns>
+        public double CalcFrameStretchScale(Size size, double span, RotateTransform rotate, Size canvasSize)
+        {
+            return CalcStretchScale(StretchMode, GetFillScaleWithSpan(size, span, rotate.Angle, canvasSize), size, canvasSize);
         }
 
 
-        private double CalcStretchScale(PageStretchMode stretchMode, Vector scales, Size size)
+        private double CalcStretchScale(PageStretchMode stretchMode, Vector scales, Size size, Size canvasSize)
         {
             return stretchMode switch
             {
@@ -104,33 +150,33 @@ namespace NeeView.PageFrames
                 PageStretchMode.UniformToFill => Math.Max(scales.X, scales.Y),
                 PageStretchMode.UniformToHorizontal => scales.X,
                 PageStretchMode.UniformToVertical => scales.Y,
-                PageStretchMode.UniformToSize => GetFillSizeScale(size),
+                PageStretchMode.UniformToSize => GetFillSizeScale(size, canvasSize),
                 _ => throw new NotImplementedException(),
             };
         }
 
-        private double GetFillSizeScale(Size size)
+        private double GetFillSizeScale(Size size, Size canvasSize)
         {
             if (size.Width <= 0.0 || size.Height <= 0.0) return 1.0;
-            var s0 = CanvasSize.Width * CanvasSize.Height;
+            var s0 = canvasSize.Width * canvasSize.Height;
             var s1 = size.Width * size.Height;
             var scale = AllowScale(Math.Sqrt(s0 / s1));
             return scale;
         }
-
 
         /// <summary>
         /// Calculate fill-scale
         /// </summary>
         /// <param name="size"></param>
         /// <param name="rotate"></param>
+        /// <param name="canvasSize"></param>
         /// <returns></returns>
-        private Vector GetFillScale(Size size, RotateTransform rotate)
+        private Vector GetFillScale(Size size, RotateTransform rotate, Size canvasSize)
         {
             if (size.Width <= 0.0 || size.Height <= 0.0) return new Vector(1.0, 1.0);
             var bounds = rotate.TransformBounds(size.ToRect());
-            var scaleX = AllowScale(CanvasSize.Width / bounds.Width);
-            var scaleY = AllowScale(CanvasSize.Height / bounds.Height);
+            var scaleX = AllowScale(canvasSize.Width / bounds.Width);
+            var scaleY = AllowScale(canvasSize.Height / bounds.Height);
             return new Vector(scaleX, scaleY);
         }
 
@@ -140,8 +186,9 @@ namespace NeeView.PageFrames
         /// <param name="size"></param>
         /// <param name="span">PageContent 間の距離。スケールに影響されない固定値</param>
         /// <param name="angle">自動回転角度。90度単位のみ対応</param>
+        /// <param name="canvasSize"></param>
         /// <returns>回転前に適用されるScale</returns>
-        private Vector GetFillScaleWithSpan(Size size, double span, double angle)
+        private Vector GetFillScaleWithSpan(Size size, double span, double angle, Size canvasSize)
         {
             Debug.Assert(Math.Abs(angle % 90) < 1.0, "Only 90-degree units are supported.");
 
@@ -150,14 +197,14 @@ namespace NeeView.PageFrames
             var isTranspose = Math.Abs(Math.Sin(radian)) > 0.5;
             if (isTranspose)
             {
-                var scaleY = AllowScale((CanvasSize.Height - span) / size.Width);
-                var scaleX = AllowScale(CanvasSize.Width / size.Height);
+                var scaleY = AllowScale((canvasSize.Height - span) / size.Width);
+                var scaleX = AllowScale(canvasSize.Width / size.Height);
                 return new Vector(scaleX, scaleY);
             }
             else
             {
-                var scaleX = AllowScale((CanvasSize.Width - span) / size.Width);
-                var scaleY = AllowScale(CanvasSize.Height / size.Height);
+                var scaleX = AllowScale((canvasSize.Width - span) / size.Width);
+                var scaleY = AllowScale(canvasSize.Height / size.Height);
                 return new Vector(scaleX, scaleY);
             }
         }

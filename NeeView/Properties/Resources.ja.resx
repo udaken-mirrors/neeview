@@ -8052,4 +8052,13 @@ nv.ShowToast(nv.Book.ViewPages[0].Path)</value>
   <data name="ViewScaleStretchCommand.Remarks" xml:space="preserve">
     <value>スケールにストレッチを適用します。</value>
   </data>
+  <data name="ViewConfig.IsScaleStretchTracking" xml:space="preserve">
+    <value>ストレッチ追従</value>
+  </data>
+  <data name="ViewConfig.IsScaleStretchTracking.Remarks" xml:space="preserve">
+    <value>回転している場合にストレッチ モードに応じてスケールを調整します。</value>
+  </data>
+  <data name="Navigator.IsScaleStretchTracking" xml:space="preserve">
+    <value>ストレッチ追従</value>
+  </data>
 </root>

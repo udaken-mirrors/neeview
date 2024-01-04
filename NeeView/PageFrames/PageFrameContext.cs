@@ -87,6 +87,7 @@ namespace NeeView.PageFrames
         public bool AllowEnlarge => _config.View.AllowStretchScaleUp;
         public bool AllowReduce => _config.View.AllowStretchScaleDown;
         public bool IsFlipLocked => _config.View.IsKeepFlip;
+        public bool IsScaleStretchTracking => _config.View.IsScaleStretchTracking && !_config.View.IsKeepScale;
         public bool IsScaleLocked => _config.View.IsKeepScale;
         public bool IsAngleLocked => _config.View.IsKeepAngle;
         public bool IsIgnoreImageDpi => _config.System.IsIgnoreImageDpi;
@@ -222,8 +223,13 @@ namespace NeeView.PageFrames
                     RaisePropertyChanged(nameof(IsFlipLocked));
                     break;
 
+                case nameof(ViewConfig.IsScaleStretchTracking):
+                    RaisePropertyChanged(nameof(IsScaleStretchTracking));
+                    break;
+
                 case nameof(ViewConfig.IsKeepScale):
                     RaisePropertyChanged(nameof(IsScaleLocked));
+                    RaisePropertyChanged(nameof(IsScaleStretchTracking));
                     break;
 
                 case nameof(ViewConfig.IsKeepAngle):

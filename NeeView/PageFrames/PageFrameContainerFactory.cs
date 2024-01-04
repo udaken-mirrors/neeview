@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Media;
 
@@ -14,14 +15,17 @@ namespace NeeView.PageFrames
         private LoupeTransformContext _loupeContext;
         private ViewContentFactory _viewContentFactory;
         private BaseScaleTransform _baseScaleTransform;
+        private readonly ContentSizeCalculator _calculator;
 
-        public PageFrameContainerFactory(PageFrameContext context, PageFrameTransformMap transformMap, ViewSourceMap viewSourceMap, LoupeTransformContext loupeContext, BaseScaleTransform baseScaleTransform)
+
+        public PageFrameContainerFactory(PageFrameContext context, PageFrameTransformMap transformMap, ViewSourceMap viewSourceMap, LoupeTransformContext loupeContext, BaseScaleTransform baseScaleTransform, ContentSizeCalculator calculator)
         {
             _context = context;
             _transformMap = transformMap;
             _loupeContext = loupeContext;
             _viewContentFactory = new ViewContentFactory(viewSourceMap);
             _baseScaleTransform = baseScaleTransform;
+            _calculator = calculator;
         }
 
 
@@ -37,9 +41,9 @@ namespace NeeView.PageFrames
             {
                 rawTransform.Clear();
             }
-            
+
             var transform = new PageFrameTransformAccessor(_transformMap, rawTransform);
-            var content = new PageFrameContent(_viewContentFactory, _context, frame, nextPage, activity, transform, _loupeContext, _baseScaleTransform);
+            var content = new PageFrameContent(_viewContentFactory, _context, frame, nextPage, activity, transform, _loupeContext, _baseScaleTransform, _calculator);
             var container = new PageFrameContainer(content, activity, _context.ViewScrollContext);
             return container;
         }
@@ -48,7 +52,7 @@ namespace NeeView.PageFrames
         {
             //Debug.WriteLine($"PageFrameContainer.Update: {frame}, {nextPage?.Index}");
 
-            if (container.Content is PageFrameContent frameContent && frameContent.PageFrame.IsMatch(frame) && container.DirtyLevel < PageFrameDirtyLevel.Replace )
+            if (container.Content is PageFrameContent frameContent && frameContent.PageFrame.IsMatch(frame) && container.DirtyLevel < PageFrameDirtyLevel.Replace)
             {
                 frameContent.SetSource(frame);
                 container.UpdateFrame();
@@ -58,7 +62,7 @@ namespace NeeView.PageFrames
                 var activity = container.Activity;
                 var key = PageFrameTransformTool.CreateKey(frame);
                 var transform = new PageFrameTransformAccessor(_transformMap, _transformMap.ElementAt(key));
-                var content = new PageFrameContent(_viewContentFactory, _context, frame, nextPage, activity, transform, _loupeContext, _baseScaleTransform);
+                var content = new PageFrameContent(_viewContentFactory, _context, frame, nextPage, activity, transform, _loupeContext, _baseScaleTransform, _calculator);
                 container.Content = content;
                 container.UpdateFrame();
             }

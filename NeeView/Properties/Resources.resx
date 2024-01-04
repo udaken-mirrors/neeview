@@ -8047,4 +8047,13 @@ nv.ShowToast(nv.Book.ViewPages[0].Path)</value>
   <data name="ViewScaleStretchCommand.Remarks" xml:space="preserve">
     <value>Apply stretch to scale.</value>
   </data>
+  <data name="ViewConfig.IsScaleStretchTracking" xml:space="preserve">
+    <value>Stretch tracking</value>
+  </data>
+  <data name="ViewConfig.IsScaleStretchTracking.Remarks" xml:space="preserve">
+    <value>Adjusts the scale according to the stretch mode when rotating.</value>
+  </data>
+  <data name="Navigator.IsScaleStretchTracking" xml:space="preserve">
+    <value>Stretch tracking</value>
+  </data>
 </root>
