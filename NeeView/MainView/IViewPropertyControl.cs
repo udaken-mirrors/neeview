@@ -24,7 +24,7 @@ namespace NeeView
 
         PageStretchMode GetToggleStretchMode(ToggleStretchModeCommandParameter parameter);
         PageStretchMode GetToggleStretchModeReverse(ToggleStretchModeCommandParameter parameter);
-        void SetStretchMode(PageStretchMode mode, bool isToggle);
+        void SetStretchMode(PageStretchMode mode, bool isToggle, bool force);
         bool TestStretchMode(PageStretchMode mode, bool isToggle);
     }
 }

@@ -31,7 +31,7 @@ namespace NeeView
 
         public override void Execute(object? sender, CommandContext e)
         {
-            MainViewComponent.Current.ViewPropertyControl.SetStretchMode(PageStretchMode.UniformToVertical, (e.Parameter.Cast<StretchModeCommandParameter>()).IsToggle);
+            MainViewComponent.Current.ViewPropertyControl.SetStretchMode(PageStretchMode.UniformToVertical, (e.Parameter.Cast<StretchModeCommandParameter>()).IsToggle, true);
         }
     }
 }

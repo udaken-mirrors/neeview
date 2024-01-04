@@ -148,9 +148,9 @@ namespace NeeView
             return _viewConfig.StretchMode;
         }
 
-        public void SetStretchMode(PageStretchMode mode, bool isToggle)
+        public void SetStretchMode(PageStretchMode mode, bool isToggle, bool force)
         {
-            _viewConfig.StretchMode = GetFixedStretchMode(mode, isToggle);
+            _viewConfig.SetStretchMode(GetFixedStretchMode(mode, isToggle), force);
         }
 
         public bool TestStretchMode(PageStretchMode mode, bool isToggle)

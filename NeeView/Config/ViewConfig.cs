@@ -143,16 +143,7 @@ namespace NeeView
         public PageStretchMode StretchMode
         {
             get { return _stretchMode; }
-            set
-            {
-                if (_stretchMode != value)
-                {
-                    _stretchMode = value;
-                    _validStretchMode = _stretchMode != PageStretchMode.None ? value : _validStretchMode;
-                    RaisePropertyChanged();
-                    RaisePropertyChanged(nameof(ValidStretchMode));
-                }
-            }
+            set { SetStretchMode(value, false); }
         }
 
         // 有効なスケールモード
@@ -280,5 +271,22 @@ namespace NeeView
         }
 
         #endregion
+
+
+        /// <summary>
+        /// ストレッチモード設定
+        /// </summary>
+        /// <param name="value">ストレッチモード</param>
+        /// <param name="force">強制更新</param>
+        public void SetStretchMode(PageStretchMode value, bool force)
+        {
+            if (force || _stretchMode != value)
+            {
+                _stretchMode = value;
+                _validStretchMode = _stretchMode != PageStretchMode.None ? value : _validStretchMode;
+                RaisePropertyChanged(nameof(StretchMode));
+                RaisePropertyChanged(nameof(ValidStretchMode));
+            }
+        }
     }
 }

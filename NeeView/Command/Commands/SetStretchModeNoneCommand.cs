@@ -23,7 +23,7 @@ namespace NeeView
 
         public override void Execute(object? sender, CommandContext e)
         {
-            MainViewComponent.Current.ViewPropertyControl.SetStretchMode(PageStretchMode.None, false);
+            MainViewComponent.Current.ViewPropertyControl.SetStretchMode(PageStretchMode.None, false, true);
         }
     }
 }
