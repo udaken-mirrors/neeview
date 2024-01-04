@@ -20703,6 +20703,15 @@ namespace NeeView.Properties {
         }
         
         /// <summary>
+        ///   Display start position に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string ViewConfig_ViewOrigin {
+            get {
+                return ResourceManager.GetString("ViewConfig.ViewOrigin", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Flip horizontal OFF に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string ViewFlipHorizontalOffCommand {
@@ -20771,6 +20780,33 @@ namespace NeeView.Properties {
         public static string ViewFlipVerticalOnCommand_Remarks {
             get {
                 return ResourceManager.GetString("ViewFlipVerticalOnCommand.Remarks", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Image center に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string ViewOrigin_Center {
+            get {
+                return ResourceManager.GetString("ViewOrigin.Center", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Direction dependent に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string ViewOrigin_DirectionDependent {
+            get {
+                return ResourceManager.GetString("ViewOrigin.DirectionDependent", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Direction dependent, top に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string ViewOrigin_DirectionDependentAndTop {
+            get {
+                return ResourceManager.GetString("ViewOrigin.DirectionDependentAndTop", resourceCulture);
             }
         }
         

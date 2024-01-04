@@ -20,7 +20,7 @@ namespace NeeView
         private bool _isKeepScale;
         private bool _isKeepAngle;
         private bool _isKeepFlip;
-        private bool _isViewStartPositionCenter;
+        private ViewOrigin _viewOrigin = ViewOrigin.DirectionDependent;
         private double _angleFrequency = 0;
         private bool _isBaseScaleEnabled = true;
         private bool _isRotateStretchEnabled = true;
@@ -116,10 +116,10 @@ namespace NeeView
 
         // 表示開始時の基準
         [PropertyMember]
-        public bool IsViewStartPositionCenter
+        public ViewOrigin ViewOrigin
         {
-            get { return _isViewStartPositionCenter; }
-            set { SetProperty(ref _isViewStartPositionCenter, value); }
+            get { return _viewOrigin; }
+            set { SetProperty(ref _viewOrigin, value); }
         }
 
         // 回転スナップ。0で無効
@@ -224,6 +224,15 @@ namespace NeeView
 
         #region Obsolete
 
+        [PropertyMember]
+        [Obsolete("no used"), Alternative(nameof(ViewOrigin), 40, ScriptErrorLevel.Warning)] // ver.40.5
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+        public bool IsViewStartPositionCenter
+        {
+            get { return false; }
+            set { ViewOrigin = value ? ViewOrigin.Center : ViewOrigin.DirectionDependent; }
+        }
+
         [Obsolete("Typo"), Alternative(nameof(MainViewMargin), 40, ScriptErrorLevel.Info)] // ver.40
         [JsonIgnore]
         public double MainViewMergin
@@ -288,5 +297,27 @@ namespace NeeView
                 RaisePropertyChanged(nameof(ValidStretchMode));
             }
         }
+    }
+
+
+    /// <summary>
+    /// 表示開始時の基準
+    /// </summary>
+    public enum ViewOrigin
+    {
+        /// <summary>
+        /// 中央
+        /// </summary>
+        Center,
+
+        /// <summary>
+        /// 方向に依存
+        /// </summary>
+        DirectionDependent,
+
+        /// <summary>
+        /// 方向に依存、縦方向は上に固定
+        /// </summary>
+        DirectionDependentAndTop,
     }
 }

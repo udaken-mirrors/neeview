@@ -33,7 +33,12 @@ namespace NeeView.PageFrames
 
         public Point GetStartPoint(LinkedListDirection direction)
         {
-            return GetAlignedPoint(GetStartHorizontalAlignment(direction), GetStartVerticalAlignment(direction));
+            return GetStartPoint(direction, direction);
+        }
+
+        public Point GetStartPoint(LinkedListDirection directionX, LinkedListDirection directionY)
+        {
+            return GetAlignedPoint(GetStartHorizontalAlignment(directionX), GetStartVerticalAlignment(directionY));
         }
 
 

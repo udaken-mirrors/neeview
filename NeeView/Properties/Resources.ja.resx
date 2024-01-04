@@ -8061,4 +8061,16 @@ nv.ShowToast(nv.Book.ViewPages[0].Path)</value>
   <data name="Navigator.IsScaleStretchTracking" xml:space="preserve">
     <value>ストレッチ追従</value>
   </data>
+  <data name="ViewConfig.ViewOrigin" xml:space="preserve">
+    <value>表示開始位置</value>
+  </data>
+  <data name="ViewOrigin.Center" xml:space="preserve">
+    <value>画像の中心</value>
+  </data>
+  <data name="ViewOrigin.DirectionDependent" xml:space="preserve">
+    <value>方向に依存</value>
+  </data>
+  <data name="ViewOrigin.DirectionDependentAndTop" xml:space="preserve">
+    <value>方向に依存、トップ</value>
+  </data>
 </root>

@@ -2470,3 +2470,7 @@ ViewScaleStretchCommand.Remarks=スケールにストレッチを適用します
 ViewConfig.IsScaleStretchTracking=ストレッチ追従
 ViewConfig.IsScaleStretchTracking.Remarks=回転している場合にストレッチ モードに応じてスケールを調整します。
 Navigator.IsScaleStretchTracking=ストレッチ追従
+ViewConfig.ViewOrigin=表示開始位置
+ViewOrigin.Center=画像の中心
+ViewOrigin.DirectionDependent=方向に依存
+ViewOrigin.DirectionDependentAndTop=方向に依存、トップ

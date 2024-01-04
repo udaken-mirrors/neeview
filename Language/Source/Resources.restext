@@ -2470,3 +2470,7 @@ ViewScaleStretchCommand.Remarks=Apply stretch to scale.
 ViewConfig.IsScaleStretchTracking=Stretch tracking
 ViewConfig.IsScaleStretchTracking.Remarks=Adjusts the scale according to the stretch mode when rotating.
 Navigator.IsScaleStretchTracking=Stretch tracking
+ViewConfig.ViewOrigin=Display start position
+ViewOrigin.Center=Image center
+ViewOrigin.DirectionDependent=Direction dependent
+ViewOrigin.DirectionDependentAndTop=Direction dependent, top

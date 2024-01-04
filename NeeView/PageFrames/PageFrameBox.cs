@@ -710,7 +710,7 @@ namespace NeeView.PageFrames
         /// <summary>
         /// コンテンツをフレーム中央にスクロール。フレームオーバーの場合は方向に依存する
         /// </summary>
-        private void ContentScrollToViewOrigin(LinkedListNode<PageFrameContainer> node, LinkedListDirection direction)
+        private void ContentScrollToViewOrigin(LinkedListNode<PageFrameContainer> node, LinkedListDirection direction, LinkedListDirection directionY)
         {
             if (!_context.IsStaticFrame) return;
 
@@ -720,7 +720,7 @@ namespace NeeView.PageFrames
 
             var contentRect = node.Value.GetContentRect().Size.ToRect();
             var viewRect = _viewBox.Rect.Size.ToRect();
-            var point = new FramePointMath(_context, contentRect, viewRect).GetStartPoint(direction);
+            var point = new FramePointMath(_context, contentRect, viewRect).GetStartPoint(direction, directionY);
             point.X = -point.X; // コンテンツ座標系に補正する
             point.Y = -point.Y;
 
@@ -913,10 +913,10 @@ namespace NeeView.PageFrames
         /// <summary>
         /// コンテナを表示中央にスクロール。サイズオーバーする場合は方向指定で表示位置を決定する。
         /// </summary>
-        private void ScrollIntoViewOrigin(LinkedListNode<PageFrameContainer> node, LinkedListDirection direction)
+        private void ScrollIntoViewOrigin(LinkedListNode<PageFrameContainer> node, LinkedListDirection direction, LinkedListDirection directionY)
         {
             //Debug.WriteLine($"{node.Value}: {node.Value.Rect:f0} / {_viewBox.Rect:f0}");
-            var point = new FramePointMath(_context, node.Value.Rect, _viewBox.Rect).GetStartPoint(direction);
+            var point = new FramePointMath(_context, node.Value.Rect, _viewBox.Rect).GetStartPoint(direction, directionY);
             _scrollViewer.SetPoint(new Point(-point.X, -point.Y), _context.PageChangeDuration);
         }
 
@@ -1185,7 +1185,7 @@ namespace NeeView.PageFrames
         /// </summary>
         private void ScrollToViewOrigin(LinkedListNode<PageFrameContainer> node, LinkedListDirection direction, ScrollToViewOriginOption options = ScrollToViewOriginOption.None)
         {
-            if (_context.ViewConfig.IsViewStartPositionCenter || options.HasFlag(ScrollToViewOriginOption.IgnoreViewOrigin))
+            if (_context.ViewConfig.ViewOrigin == ViewOrigin.Center || options.HasFlag(ScrollToViewOriginOption.IgnoreViewOrigin))
             {
                 if (!options.HasFlag(ScrollToViewOriginOption.IgnoreFrameScroll))
                 {
@@ -1195,11 +1195,12 @@ namespace NeeView.PageFrames
             }
             else
             {
+                var directionY = _context.ViewConfig.ViewOrigin == ViewOrigin.DirectionDependentAndTop ? LinkedListDirection.Next : direction;
                 if (!options.HasFlag(ScrollToViewOriginOption.IgnoreFrameScroll))
                 {
-                    ScrollIntoViewOrigin(node, direction);
+                    ScrollIntoViewOrigin(node, direction, directionY);
                 }
-                ContentScrollToViewOrigin(node, direction);
+                ContentScrollToViewOrigin(node, direction, directionY);
             }
         }
 
