@@ -108,9 +108,9 @@ namespace NeeView.PageFrames
             _source?.SetFlipVertical(value, span);
         }
 
-        public void SetScale(double value, TimeSpan span)
+        public void SetScale(double value, TimeSpan span, TransformTrigger trigger = TransformTrigger.None)
         {
-            _source?.SetScale(value, span);
+            _source?.SetScale(value, span, trigger);
         }
 
         public void SnapView()

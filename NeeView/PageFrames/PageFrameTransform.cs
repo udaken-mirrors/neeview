@@ -43,12 +43,12 @@ namespace NeeView.PageFrames
         public Transform TransformView => _transform.TransformView;
 
 
-        public void SetScale(double value, TimeSpan span)
+        public void SetScale(double value, TimeSpan span, TransformTrigger trigger = TransformTrigger.None)
         {
             if (SetProperty(ref _scale, value, nameof(Scale)))
             {
                 _transform.SetScale(_scale, span);
-                TransformChanged?.Invoke(this, new TransformChangedEventArgs(this, TransformCategory.Content, TransformAction.Scale));
+                TransformChanged?.Invoke(this, new TransformChangedEventArgs(this, TransformCategory.Content, TransformAction.Scale, trigger));
             }
         }
 

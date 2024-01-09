@@ -488,10 +488,7 @@ namespace NeeView.PageFrames
         /// <param name="force">強制実行</param>
         public void Stretch(bool force)
         {
-            if (!force && !_context.IsScaleStretchTracking) return;
-
-            var scale = CalcStretchScale(_context.ReferenceSize);
-            _transform.SetScale(scale, TimeSpan.Zero);
+            Stretch(force, 1.0, TransformTrigger.None);
         }
 
         /// <summary>
@@ -501,10 +498,22 @@ namespace NeeView.PageFrames
         /// <param name="rate">ストレッチスケールのスケール倍率</param>
         public void Stretch(bool force, double rate)
         {
+            Stretch(force, rate, TransformTrigger.None);
+        }
+
+        /// <summary>
+        /// ストレッチ追従であればストレッチする
+        /// </summary>
+        /// <param name="force">強制実行</param>
+        /// <param name="rate">ストレッチスケールのスケール倍率</param>
+        /// <param name="trigger">トリガーアクション</param>
+        public void Stretch(bool force, double rate, TransformTrigger trigger)
+        {
             if (!force && !_context.IsScaleStretchTracking) return;
 
+            trigger = trigger != TransformTrigger.None ? trigger : force ? TransformTrigger.Snap : TransformTrigger.SnapTracking;
             var scale = CalcStretchScale(_context.ReferenceSize);
-            _transform.SetScale(scale * rate, TimeSpan.Zero);
+            _transform.SetScale(scale * rate, TimeSpan.Zero, trigger);
         }
 
         /// <summary>

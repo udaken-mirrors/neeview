@@ -33,9 +33,9 @@ namespace NeeView.PageFrames
             // nop.
         }
 
-        public void SetScale(double value, TimeSpan span)
+        public void SetScale(double value, TimeSpan span, TransformTrigger trigger = TransformTrigger.None)
         {
-            _loupeContext.SetScale(value, span);
+            _loupeContext.SetScale(value, span, trigger);
         }
 
         public void SetAngle(double value, TimeSpan span)

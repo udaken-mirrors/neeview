@@ -11,7 +11,7 @@ namespace NeeView.PageFrames
     public interface IScaleControl : ITransformControlObject
     {
         public double Scale { get; }
-        public void SetScale(double value, TimeSpan span);
+        public void SetScale(double value, TimeSpan span, TransformTrigger trigger = TransformTrigger.None);
     }
 
     public interface IAngleControl : ITransformControlObject

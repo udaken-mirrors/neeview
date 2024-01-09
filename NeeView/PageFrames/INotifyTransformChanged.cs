@@ -34,9 +34,37 @@ namespace NeeView.PageFrames
         FlipVertical,
     }
 
+    public enum TransformTrigger
+    {
+        None,
+        Clear,
+        Snap,
+        SnapTracking,
+        WindowSnap,
+    }
+
+    public static class TransformActionTriggerExtensions
+    {
+        public static bool IsManualTrigger(this TransformTrigger trigger)
+        {
+            return trigger switch
+            {
+                TransformTrigger.None => true,
+                TransformTrigger.Snap => true,
+                _ => false
+            };
+        }
+    }
+
+
     public class TransformChangedEventArgs : EventArgs
     {
         public TransformChangedEventArgs(ITransformControlObject source, TransformCategory category, TransformAction action)
+            : this(source, category, action, TransformTrigger.None)
+        {
+        }
+
+        public TransformChangedEventArgs(ITransformControlObject source, TransformCategory category, TransformAction action, TransformTrigger trigger)
         {
             switch (action)
             {
@@ -60,6 +88,7 @@ namespace NeeView.PageFrames
             Source = source;
             Category = category;
             Action = action;
+            Trigger = trigger;
         }
 
         public TransformChangedEventArgs(TransformChangedEventArgs source)
@@ -67,12 +96,14 @@ namespace NeeView.PageFrames
             Source = source.Source;
             Category = source.Category;
             Action = source.Action;
+            Trigger = source.Trigger;
         }
 
 
         public ITransformControlObject Source { get; set; }
         public TransformCategory Category { get; }
         public TransformAction Action { get; }
+        public TransformTrigger Trigger { get; init; }
     }
 
     /// <summary>

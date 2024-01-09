@@ -173,7 +173,7 @@ namespace NeeView
             if (adjustScale)
             {
                 box.ResetReferenceSize();
-                box.Stretch(ignoreViewOrigin: true);
+                box.Stretch(true, TransformTrigger.WindowSnap);
             }
         }
 

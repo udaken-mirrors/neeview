@@ -165,7 +165,7 @@ namespace NeeView.PageFrames
             _share.SetScale(scale, TimeSpan.Zero);
             foreach (var transform in _map.Values)
             {
-                transform.SetScale(1.0, TimeSpan.Zero);
+                transform.SetScale(1.0, TimeSpan.Zero, TransformTrigger.Clear);
             }
         }
 

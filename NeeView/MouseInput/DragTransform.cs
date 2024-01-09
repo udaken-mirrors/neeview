@@ -55,9 +55,9 @@ namespace NeeView
             _context.Transform.AddPoint(value, span, easeX, easeY);
         }
 
-        public void SetScale(double value, TimeSpan span)
+        public void SetScale(double value, TimeSpan span, TransformTrigger trigger = TransformTrigger.None)
         {
-            _context.Transform.SetScale(value, span);
+            _context.Transform.SetScale(value, span, trigger);
         }
 
         public void SetAngle(double value, TimeSpan span)

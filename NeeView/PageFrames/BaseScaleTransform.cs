@@ -62,6 +62,10 @@ namespace NeeView.PageFrames
             //_context.BaseScale = value;
         }
 
+        public void SetScale(double value, TimeSpan span, TransformTrigger trigger)
+        {
+        }
+
         private void UpdateTransform()
         {
             var scale = _viewConfig.IsBaseScaleEnabled ? _context.BaseScale : 1.0;

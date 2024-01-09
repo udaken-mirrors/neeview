@@ -39,9 +39,9 @@ namespace NeeView.PageFrames
             _container.Transform.SetFlipVertical(value, span);
         }
 
-        public void SetScale(double value, TimeSpan span)
+        public void SetScale(double value, TimeSpan span, TransformTrigger trigger = TransformTrigger.None)
         {
-            _container.Transform.SetScale(value, span);
+            _container.Transform.SetScale(value, span, trigger);
             _scrollLock.Unlock();
         }
 

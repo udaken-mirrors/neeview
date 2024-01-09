@@ -463,7 +463,7 @@ namespace NeeView
                     break;
                 case TransformCategory.Content:
                     var originalScale = e is OriginalScaleTransformChangedEventArgs arg ? arg.OriginalScale : 1.0;
-                    ShowContentTransformMessage(e.Source, e.Action, originalScale);
+                    ShowContentTransformMessage(e.Source, e.Action, e.Trigger, originalScale);
                     break;
             }
 
@@ -540,10 +540,11 @@ namespace NeeView
             }
         }
 
-        private void ShowContentTransformMessage(ITransformControlObject source, TransformAction action, double originalScale)
+        private void ShowContentTransformMessage(ITransformControlObject source, TransformAction action, TransformTrigger trigger, double originalScale)
         {
             var infoMessage = InfoMessage.Current; // TODO: not singleton
             if (Config.Current.Notice.ViewTransformShowMessageStyle == ShowMessageStyle.None) return;
+            if (!trigger.IsManualTrigger()) return;
 
             switch (action)
             {
@@ -606,7 +607,7 @@ namespace NeeView
 
         public void Stretch(bool ignoreViewOrigin)
         {
-            ValidBox()?.Stretch(ignoreViewOrigin);
+            ValidBox()?.Stretch(ignoreViewOrigin, TransformTrigger.None);
         }
 
         public void FlushLayout()

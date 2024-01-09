@@ -71,13 +71,13 @@ namespace NeeView.PageFrames
         }
 
 
-        public void SetScale(double value, TimeSpan span)
+        public void SetScale(double value, TimeSpan span, TransformTrigger trigger = TransformTrigger.None)
         {
             if (_transform.Scale != value)
             {
                 _transform.SetScale(value);
                 RaisePropertyChanged(nameof(Scale));
-                TransformChanged?.Invoke(this, new TransformChangedEventArgs(this, TransformCategory.Loupe, TransformAction.Scale));
+                TransformChanged?.Invoke(this, new TransformChangedEventArgs(this, TransformCategory.Loupe, TransformAction.Scale, trigger));
             }
         }
     }

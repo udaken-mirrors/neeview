@@ -122,6 +122,13 @@ namespace NeeView.PageFrames
             _scaleSource.SetScale(value, span);
         }
 
+        public void SetScale(double value, TimeSpan span, TransformTrigger trigger = TransformTrigger.None)
+        {
+            if (_disposedValue) return;
+
+            _scaleSource.SetScale(value, span, trigger);
+        }
+
         public void SetAngle(double value, TimeSpan span)
         {
             if (_disposedValue) return;

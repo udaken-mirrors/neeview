@@ -508,9 +508,9 @@ namespace NeeView.PageFrames
             Transform.SetAngle(value, span);
         }
 
-        public void SetScale(double value, TimeSpan span)
+        public void SetScale(double value, TimeSpan span, TransformTrigger trigger = TransformTrigger.None)
         {
-            Transform.SetScale(value, span);
+            Transform.SetScale(value, span, trigger);
         }
 
         public void SetFlipHorizontal(bool value, TimeSpan span)

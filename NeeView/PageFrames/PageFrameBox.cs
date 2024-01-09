@@ -1094,12 +1094,12 @@ namespace NeeView.PageFrames
         /// 表示領域にストレッチするようにスケール変更
         /// </summary>
         /// <param name="ignoreViewOrigin">ストレッチ後のコンテナ座標をViewOriginでなくCenterにする</param>
-        public void Stretch(bool ignoreViewOrigin)
+        public void Stretch(bool ignoreViewOrigin, TransformTrigger trigger)
         {
             var node = _selected.Node;
             if (node?.Value.Content is not PageFrameContent content) return;
 
-            content.Stretch(true);
+            content.Stretch(true, 1.0, trigger);
 
             SetControlContainer(node);
             var options = ignoreViewOrigin ? ScrollToViewOriginOption.IgnoreViewOrigin : ScrollToViewOriginOption.None;
@@ -1115,7 +1115,7 @@ namespace NeeView.PageFrames
             var contents = _containers.Select(e => e.Content).OfType<PageFrameContent>().ToList();
             if (_context.IsScaleStretchTracking)
             {
-                contents.ForEach(e => e.Stretch(true));
+                contents.ForEach(e => e.Stretch(false));
             }
             else
             {
@@ -1166,7 +1166,7 @@ namespace NeeView.PageFrames
             {
                 if (_stretchScaleRateMap.TryGetValue(content, out double rate))
                 {
-                    content.Stretch(true, rate);
+                    content.Stretch(false, rate);
                 }
             }
         }

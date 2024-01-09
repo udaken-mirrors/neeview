@@ -46,7 +46,7 @@ namespace NeeView.PageFrames
         {
         }
 
-        public void SetScale(double value, TimeSpan span)
+        public void SetScale(double value, TimeSpan span, TransformTrigger trigger = TransformTrigger.None)
         {
         }
 

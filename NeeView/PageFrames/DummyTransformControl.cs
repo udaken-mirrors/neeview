@@ -16,7 +16,7 @@ namespace NeeView.PageFrames
 
         public bool IsFlipVertical => false;
 
-        public void SetScale(double value, TimeSpan span)
+        public void SetScale(double value, TimeSpan span, TransformTrigger trigger = TransformTrigger.None)
         {
         }
 
