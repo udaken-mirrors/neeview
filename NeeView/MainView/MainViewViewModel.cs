@@ -123,59 +123,84 @@ namespace NeeView
             _contextMenu.UpdateInputGestureText();
         }
 
-
         /// <summary>
         /// ウィンドウサイズをコンテンツサイズに合わせる
         /// </summary>
-        /// <param name="window"></param>
-        /// <param name="canvasSize"></param>
-        /// <param name="contentSize"></param>
-        /// <exception cref="ArgumentException"></exception>
-        /// <exception cref="InvalidOperationException"></exception>
-        public static void StretchWindow(Window window, Size canvasSize, Size contentSize, bool adjustScale)
+        /// <param name="window">ウィンドウ</param>
+        /// <param name="canvasSize">現在のキャンバスサイズ</param>
+        /// <param name="content">コンテンツ</param>
+        public static void StretchWindow(Window window, Size canvasSize, PageFrameContent content)
         {
-            if (contentSize.IsEmptyOrZero())
-            {
-                throw new ArgumentException($"canvasSize is 0.", nameof(canvasSize));
-            }
+            if (window.WindowState != WindowState.Normal) return;
 
-            if (window.WindowState != WindowState.Normal)
-            {
-                throw new InvalidOperationException($"need Window.State is Normal");
-            }
+            var box = PageFrameBoxPresenter.Current.View;
+            if (box is null) return;
 
+            var contentSize = content.GetContentRect();
+
+            // ウィンドウサイズに適用
+            SetWindowSize(window, canvasSize, contentSize.Size);
+
+            // (自動でコンテンツサイズが更新されるはず..)
+
+            // コンテンツにストレッチ適用
+            box.Stretch(true, TransformTrigger.WindowSnap);
+        }
+
+        /// <summary>
+        /// ウィンドウサイズをリファレンスサイズに合わせる。
+        /// 自動ウィンドウサイズ補正用
+        /// </summary>
+        /// <param name="window">ウィンドウ</param>
+        /// <param name="canvasSize">現在のキャンバスサイズ</param>
+        /// <param name="content">コンテンツ</param>
+        public static void StretchReferenceWindow(Window window, Size canvasSize, PageFrameContent content)
+        {
+            if (window.WindowState != WindowState.Normal) return;
+
+            var box = PageFrameBoxPresenter.Current.View;
+            if (box is null) return;
+
+            var bounds = box.CalcStretchContentBounds(content, box.Context.ReferenceSize);
+
+            // スケールが変化して座標が変わるのでフレームのスナップは無効にする
+            box.Context.IsSnapAnchor.Reset();
+
+            // ウィンドウサイズ変更前に現在のコンテンツでスケールだけ先に合わせてチラつきを軽減する ... ここでは遅い？
+            //if (Math.Abs(content.Transform.Angle) > 0.1)
+            //{
+            //    content.Transform.SetScale(bounds.Scale, TimeSpan.Zero, TransformTrigger.WindowSnap);
+            //}
+
+            // ウィンドウサイズに適用
+            SetWindowSize(window, canvasSize, bounds.Size);
+
+            // (自動でコンテンツサイズが更新されるはず..)
+
+            // コンテンツにストレッチ適用
+            box.Stretch(true, TransformTrigger.WindowSnap);
+        }
+
+        /// <summary>
+        /// ウィンドウサイズをキャンバスサイズで設定。
+        /// 同時にスケールストレッチを行う
+        /// </summary>
+        /// <param name="window">ウィンドウ</param>
+        /// <param name="canvasSize">現在のキャンバスサイズ</param>
+        /// <param name="newCanvasSize">新しいキャンバスサイズ</param>
+        /// <exception cref="ArgumentException"></exception>
+        private static void SetWindowSize(Window window, Size canvasSize, Size newCanvasSize)
+        {
             var frameWidth = window.ActualWidth - canvasSize.Width;
             var frameHeight = window.ActualHeight - canvasSize.Height;
             if (frameWidth < 0.0 || frameHeight < 0.0)
             {
                 throw new ArgumentException($"canvasSize must be smaller than Window.Size.", nameof(canvasSize));
             }
-
-            var fixedSize = Config.Current.View.IsBaseScaleEnabled ? contentSize.Multi(1.0 / Config.Current.BookSetting.BaseScale) : contentSize;
-
-            var limitSize = new Size(SystemParameters.VirtualScreenWidth - frameWidth, SystemParameters.VirtualScreenHeight - frameHeight);
-
-            var box = PageFrameBoxPresenter.Current.View;
-            if (box is null) return;
-
-            var newCanvasSize = box.Context.StretchMode switch
-            {
-                PageStretchMode.Uniform or PageStretchMode.UniformToSize
-                    => fixedSize.Limit(limitSize),
-                _
-                    => fixedSize.Clamp(limitSize),
-            };
             window.Width = newCanvasSize.Width + frameWidth;
             window.Height = newCanvasSize.Height + frameHeight;
-
-            StaticTrace($"StretchSize=({window.Width:f1},{window.Height:f1})");
-
-            if (adjustScale)
-            {
-                box.ResetReferenceSize();
-                box.Stretch(true, TransformTrigger.WindowSnap);
-            }
         }
+
 
         [Conditional("LOCAL_DEBUG")]
         private void Trace(string s, params object[] args)

@@ -1171,6 +1171,28 @@ namespace NeeView.PageFrames
             }
         }
 
+        /// <summary>
+        /// コンテンツストレッチサイズを計算。
+        /// 自動ウィンドウサイズ調整用
+        /// </summary>
+        /// <param name="content"></param>
+        /// <param name="canvasSize"></param>
+        /// <returns></returns>
+        /// <exception cref="InvalidOperationException"></exception>
+        public (Size Size, double Scale) CalcStretchContentBounds(PageFrameContent content, Size canvasSize)
+        {
+            var contentSize = content.FrameSize;
+
+            var scale = _calculator.CalcModeStretchScale(contentSize, new RotateTransform(), canvasSize);
+
+            var transform = new TransformGroup();
+            transform.Children.Add(new ScaleTransform(scale, scale));
+            transform.Children.Add(new RotateTransform(content.Transform.Angle));
+            var bounds = transform.TransformBounds(contentSize.ToRect());
+
+            return (bounds.Size, scale);
+        }
+
 
         [Flags]
         private enum ScrollToViewOriginOption

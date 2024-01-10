@@ -161,7 +161,7 @@ namespace NeeView
                 {
                     // NOTE: StretchWindow() はさらなるページ処理を呼ぶ可能性があるためタイミングをずらす
                     // NOTE: 連続して要求が来ることがあるので遅延させる
-                    _delayAction.Request(() => _mainView.StretchWindow(false), 1, 100);
+                    _delayAction.Request(() => _mainView.AutoStretchWindow(), 1, 100);
                 }
             }
         }

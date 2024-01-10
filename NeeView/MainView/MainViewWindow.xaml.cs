@@ -231,7 +231,7 @@ namespace NeeView
         {
             if (this.MainViewSocket.Content is MainView mainView)
             {
-                mainView.StretchWindow(true);
+                mainView.StretchWindow();
             }
         }
     }

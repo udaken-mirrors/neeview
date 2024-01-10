@@ -203,8 +203,34 @@ namespace NeeView
             this.View.Focus();
         }
 
-        // TODO: 都度取得でなく、対象のコンテナを確定させてから開始しよう
-        public void StretchWindow(bool adjustScale)
+        /// <summary>
+        /// ウィンドウサイズ補正
+        /// </summary>
+        public void StretchWindow()
+        {
+            var window = Window.GetWindow(this);
+            if (window is null) return;
+            if (window.WindowState != WindowState.Normal) return;
+            if (_vm is null) return;
+
+            try
+            {
+                var canvasSize = new Size(this.MainViewCanvas.ActualWidth, this.MainViewCanvas.ActualHeight);
+                var content = GetSelectedPageFrameContent();
+                if (content is null) return;
+                MainViewViewModel.StretchWindow(window, canvasSize, content);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+                return;
+            }
+        }
+
+        /// <summary>
+        /// 自動ウィンドウサイズ補正用
+        /// </summary>
+        public void AutoStretchWindow()
         {
             var window = Window.GetWindow(this);
             if (window is null) return;
@@ -215,15 +241,26 @@ namespace NeeView
             {
                 using var key = PageFrameProfile.ReferenceSizeLocker.Lock();
                 var canvasSize = new Size(this.MainViewCanvas.ActualWidth, this.MainViewCanvas.ActualHeight);
-                var contentSize = GetContentRenderSize(!adjustScale);
-                if (contentSize.IsEmptyOrZero()) return;
-                MainViewViewModel.StretchWindow(window, canvasSize, contentSize, adjustScale);
+                var content = GetSelectedPageFrameContent();
+                if (content is null) return;
+                MainViewViewModel.StretchReferenceWindow(window, canvasSize, content);
             }
             catch (Exception ex)
             {
                 Debug.WriteLine(ex.Message);
                 return;
             }
+        }
+
+        private static PageFrameContent? GetSelectedPageFrameContent()
+        {
+            var box = PageFrameBoxPresenter.Current.View;
+            if (box is null) return null;
+
+            var pageFrameContent = box.GetSelectedPageFrameContent();
+            if (pageFrameContent is null) return null;
+
+            return pageFrameContent;
         }
 
         private static Size GetContentRenderSize(bool ignoreScale)

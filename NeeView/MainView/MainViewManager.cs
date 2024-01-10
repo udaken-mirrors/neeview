@@ -162,7 +162,7 @@ namespace NeeView
 
             if (Config.Current.MainView.IsAutoStretch)
             {
-                _mainView.StretchWindow(false);
+                _mainView.AutoStretchWindow();
             }
 
             _floatingLocker = new MainViewLocker(_mediator, _window);
