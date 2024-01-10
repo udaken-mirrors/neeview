@@ -1,4 +1,5 @@
 ﻿using MediaInfoLib;
+using NeeLaboratory;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -86,6 +87,16 @@ namespace NeeView
 
                 var aspectRatio = double.Parse(mediaInfo.Get(StreamKind.Video, 0, "PixelAspectRatio"));
                 width = (int)(width * aspectRatio);
+
+                // libVlc 使用時は回転を反映。 MediaPlayer 使用時は回転を無視。
+                if (Config.Current.Archive.Media.IsLibVlcEnabled)
+                {
+                    var rotation = double.Parse(mediaInfo.Get(StreamKind.Video, 0, "Rotation"));
+                    if (MathUtility.DegreeToDirection(rotation).IsHorizontal())
+                    {
+                        (width, height) = (height, width);
+                    }
+                }
             }
 
             var pictureInfo = new PictureInfo();

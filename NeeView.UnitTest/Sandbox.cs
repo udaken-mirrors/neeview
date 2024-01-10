@@ -141,5 +141,43 @@ namespace NeeView.UnitTest
             Assert.Equal(-4, MathUtility.CycleLoopRange(-9, 1, 3));
             Assert.Equal(-4, MathUtility.CycleLoopRange(-10, 1, 3));
         }
+
+
+        [Theory]
+        [InlineData(0.0, AngleDirection.Forward)]
+        [InlineData(90.0, AngleDirection.Right)]
+        [InlineData(180.0, AngleDirection.Back)]
+        [InlineData(270.0, AngleDirection.Left)]
+        [InlineData(360.0, AngleDirection.Forward)]
+        [InlineData(450.0, AngleDirection.Right)]
+        [InlineData(-90.0, AngleDirection.Left)]
+        [InlineData(-180.0, AngleDirection.Back)]
+        [InlineData(-270.0, AngleDirection.Right)]
+        [InlineData(-360.0, AngleDirection.Forward)]
+        [InlineData(-450.0, AngleDirection.Left)]
+        [InlineData(44.0, AngleDirection.Forward)]
+        [InlineData(46.0, AngleDirection.Right)]
+        [InlineData(-44.0, AngleDirection.Forward)]
+        [InlineData(-46.0, AngleDirection.Left)]
+        public void DegreeToDirectionTest(double degree, AngleDirection isRotate)
+        {
+            var result = MathUtility.DegreeToDirection(degree);
+            Assert.Equal(isRotate, result);
+            Assert.Equal(isRotate, result);
+        }
+
+        [Fact]
+        public void DirectionExtensionsTest()
+        {
+            Assert.False(AngleDirection.Forward.IsHorizontal());
+            Assert.True(AngleDirection.Forward.IsVertical());
+            Assert.False(AngleDirection.Back.IsHorizontal());
+            Assert.True(AngleDirection.Back.IsVertical());
+
+            Assert.True(AngleDirection.Left.IsHorizontal());
+            Assert.False(AngleDirection.Left.IsVertical());
+            Assert.True(AngleDirection.Right.IsHorizontal());
+            Assert.False(AngleDirection.Right.IsVertical());
+        }
     }
 }

@@ -100,6 +100,19 @@ namespace NeeLaboratory
             var oldLength = Math.Abs(oldValue - snap);
             return (oldLength < newLength && newLength < margin) ? snap : value;
         }
+
+        public static AngleDirection DegreeToDirection(double degree)
+        {
+            var value = (int)(NormalizeLoopRange(degree, 0.0, 360.0) / 45.0);
+            return value switch
+            {
+                0 or 7 => AngleDirection.Forward,
+                1 or 2 => AngleDirection.Right,
+                3 or 4 => AngleDirection.Back,
+                5 or 6 => AngleDirection.Left,
+                _ => AngleDirection.Forward
+            };
+        }
     }
 }
 
