@@ -664,6 +664,8 @@ namespace NeeView.PageFrames
 
             //Debug.WriteLine($"MoveTo: Position={position}, Direction={direction}");
 
+            using var forceTrack = _context.ForceScaleStretchTracking.Lock(_context.IsAutoStretch);
+
             // position の補正
             if (_context.IsLoopPage && _selected.Node.Value.Content is PageFrameContent)
             {
@@ -705,6 +707,11 @@ namespace NeeView.PageFrames
 
             _scrollLock.Lock();
             SetSnapAnchor();
+
+            if (_context.IsAutoStretch)
+            {
+                Flush();
+            }
         }
 
         /// <summary>
@@ -789,6 +796,8 @@ namespace NeeView.PageFrames
                 return;
             }
 
+            using var forceTrack = _context.ForceScaleStretchTracking.Lock(_context.IsAutoStretch);
+
             var pos = current.Value.FrameRange.Next(direction.ToSign());
             var next = _containers.EnsureLatestContainerNode(pos, direction);
             if (next?.Value.Content is not PageFrameContent)
@@ -811,6 +820,11 @@ namespace NeeView.PageFrames
 
             _scrollLock.Lock();
             SetSnapAnchor();
+
+            if (_context.IsAutoStretch)
+            {
+                Flush();
+            }
         }
 
         public void MoveToNextFolder(LinkedListDirection direction, bool isShowMessage)
@@ -1139,7 +1153,7 @@ namespace NeeView.PageFrames
         /// <param name="canvasSize"></param>
         public void StoreStretchScaleRate(Size canvasSize)
         {
-            if (!_context.IsScaleStretchTracking) return;
+            if (!_context.ShouldScaleStretchTracking) return;
 
             // スケールが変化して座標が変わるのでフレームのスナップは無効にする
             _context.IsSnapAnchor.Reset();
@@ -1159,7 +1173,7 @@ namespace NeeView.PageFrames
         /// </remarks>
         public void CorrectStretchScale()
         {
-            if (!_context.IsScaleStretchTracking) return;
+            if (!_context.ShouldScaleStretchTracking) return;
 
             var contents = _containers.Select(e => e.Content).OfType<PageFrameContent>().ToList();
             foreach(var content in contents)

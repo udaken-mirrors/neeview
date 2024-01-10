@@ -12,6 +12,9 @@ namespace NeeView
         {
             private bool _disposedValue = false;
 
+            public Key()
+            {
+            }
 
             public Key(Locker locker)
             {
@@ -53,8 +56,10 @@ namespace NeeView
         public int LockCount => _lockCount;
         public bool IsLocked => _lockCount > 0;
 
-        public Key Lock()
+        public Key Lock(bool isLock = true)
         {
+            if (!isLock) return new Key();
+
             int count = -1;
             lock (_lock)
             {

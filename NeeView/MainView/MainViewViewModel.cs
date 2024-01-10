@@ -136,10 +136,11 @@ namespace NeeView
             var box = PageFrameBoxPresenter.Current.View;
             if (box is null) return;
 
-            var contentSize = content.GetContentRect();
+            // スケールストレッチ強制有効
+            using var forceTrack = box.Context.ForceScaleStretchTracking.Lock();
 
             // ウィンドウサイズに適用
-            SetWindowSize(window, canvasSize, contentSize.Size);
+            SetWindowSize(window, canvasSize, content.GetContentRect().Size);
 
             // (自動でコンテンツサイズが更新されるはず..)
 
@@ -166,11 +167,8 @@ namespace NeeView
             // スケールが変化して座標が変わるのでフレームのスナップは無効にする
             box.Context.IsSnapAnchor.Reset();
 
-            // ウィンドウサイズ変更前に現在のコンテンツでスケールだけ先に合わせてチラつきを軽減する ... ここでは遅い？
-            //if (Math.Abs(content.Transform.Angle) > 0.1)
-            //{
-            //    content.Transform.SetScale(bounds.Scale, TimeSpan.Zero, TransformTrigger.WindowSnap);
-            //}
+            // スケールストレッチ強制有効
+            using var forceTrack = box.Context.ForceScaleStretchTracking.Lock();
 
             // ウィンドウサイズに適用
             SetWindowSize(window, canvasSize, bounds.Size);

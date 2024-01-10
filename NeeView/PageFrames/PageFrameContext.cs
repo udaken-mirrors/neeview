@@ -92,6 +92,9 @@ namespace NeeView.PageFrames
         public bool IsAngleLocked => _config.View.IsKeepAngle;
         public bool IsIgnoreImageDpi => _config.System.IsIgnoreImageDpi;
 
+        public bool IsAutoStretch => _config.MainView.IsFloating && _config.MainView.IsAutoStretch;
+        public Locker ForceScaleStretchTracking { get; } = new();
+        public bool ShouldScaleStretchTracking => IsScaleStretchTracking || ForceScaleStretchTracking.IsLocked;
 
         public PageMode PageMode => _bookSetting.PageMode;
         public int FramePageSize => _config.GetFramePageSize(_bookSetting.PageMode);

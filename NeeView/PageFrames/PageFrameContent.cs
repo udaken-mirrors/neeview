@@ -509,7 +509,7 @@ namespace NeeView.PageFrames
         /// <param name="trigger">トリガーアクション</param>
         public void Stretch(bool force, double rate, TransformTrigger trigger)
         {
-            if (!force && !_context.IsScaleStretchTracking) return;
+            if (!force && !_context.ShouldScaleStretchTracking) return;
 
             trigger = trigger != TransformTrigger.None ? trigger : force ? TransformTrigger.Snap : TransformTrigger.SnapTracking;
             var scale = CalcStretchScale(_context.CanvasSize);
