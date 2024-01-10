@@ -82,19 +82,30 @@ namespace NeeView
             int videoCount = mediaInfo.Count_Get(StreamKind.Video);
             if (videoCount > 0)
             {
-                width = int.Parse(mediaInfo.Get(StreamKind.Video, 0, "Width"));
-                height = int.Parse(mediaInfo.Get(StreamKind.Video, 0, "Height"));
+                if (!int.TryParse(mediaInfo.Get(StreamKind.Video, 0, "Width"), out width))
+                {
+                    width = 512;
+                }
 
-                var aspectRatio = double.Parse(mediaInfo.Get(StreamKind.Video, 0, "PixelAspectRatio"));
-                width = (int)(width * aspectRatio);
+                if (!int.TryParse(mediaInfo.Get(StreamKind.Video, 0, "Height"), out height))
+                {
+                    height = 512;
+                }
+
+                if (double.TryParse(mediaInfo.Get(StreamKind.Video, 0, "PixelAspectRatio"), out var aspectRatio))
+                {
+                    width = (int)(width * aspectRatio);
+                }
 
                 // libVlc 使用時は回転を反映。 MediaPlayer 使用時は回転を無視。
                 if (Config.Current.Archive.Media.IsLibVlcEnabled)
                 {
-                    var rotation = double.Parse(mediaInfo.Get(StreamKind.Video, 0, "Rotation"));
-                    if (MathUtility.DegreeToDirection(rotation).IsHorizontal())
+                    if (double.TryParse(mediaInfo.Get(StreamKind.Video, 0, "Rotation"), out var rotation))
                     {
-                        (width, height) = (height, width);
+                        if (MathUtility.DegreeToDirection(rotation).IsHorizontal())
+                        {
+                            (width, height) = (height, width);
+                        }
                     }
                 }
             }
