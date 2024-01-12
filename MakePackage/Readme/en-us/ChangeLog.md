@@ -2,6 +2,34 @@
 
 ----
 
+### 40.5
+(2024-01-12)
+
+#### New
+
+- Added "Stretch Tracking" toggle button to the Scale section of the Navigator panel. This function corrects the scale according to the stretch mode for images that are rotated, etc.
+- Added "Stretch" command to apply stretching to scale.
+
+#### Changed
+
+- Changed the display start position setting to selective. Added "Direction dependent, top". (Settings > View operation > Display start position)
+- Script: nv.Config.View.IsViewStartPositionCenter is obsolete. Use nv.Config.View.ViewOrigin instead.
+- Set the default for the "Toggle page mode" command to loop. The default for the mouse gesture to set the page mode is now a dedicated command and behaves the same as before.
+- Switching is now performed when the same stretch mode is specified in the stretch mode specification command, so that the behavior is the same as before.
+- Changed scale calculation method for "Auto stretch window" to be more natural.
+
+#### Fixed
+
+- Fixed a bug that the stretch mode was not applied to the stretch apply button in the navigator.
+- Fixed a bug that sometimes prevented alphabetic word searches.
+- Reduced frame dropping in VLC video.
+- Fixed a bug that sometimes caused application errors with VLC videos.
+- Fixed a bug that rotation information was not reflected correctly in VLC videos.
+- Fixed a bug that disabled track designation when switching repeat settings in VLC video.
+- Fixed a bug in VLC video where media with audio information only was sometimes not determined to be audio.
+
+----
+
 ### 40.4
 (2023-12-22)
 
