@@ -2889,7 +2889,7 @@ namespace NeeView.Properties {
         
         /// <summary>
         ///   // Set &quot;Ctrl+A&quot; as shortcut for ViewRotateLeft command
-        ///nv.Command.ViewRotateLeft.ShourtCutKey = &quot;Ctrl+A&quot; に類似しているローカライズされた文字列を検索します。
+        ///nv.Command.ViewRotateLeft.ShortCutKey = &quot;Ctrl+A&quot; に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string CommandAccessor_ShortCutKey_Example {
             get {
@@ -5843,7 +5843,7 @@ namespace NeeView.Properties {
         }
         
         /// <summary>
-        ///   Oroginal size に類似しているローカライズされた文字列を検索します。
+        ///   Original size に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string ExportImageWindow_IsOriginalSize {
             get {
@@ -7258,7 +7258,7 @@ namespace NeeView.Properties {
         }
         
         /// <summary>
-        ///   List item stye に類似しているローカライズされた文字列を検索します。
+        ///   List item style に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string HistoryPanelAccessor_Style {
             get {
@@ -11486,7 +11486,7 @@ namespace NeeView.Properties {
         }
         
         /// <summary>
-        ///   Sbow status change by drag operation に類似しているローカライズされた文字列を検索します。
+        ///   Show status change by drag operation に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string NoticeConfig_ViewTransformShowMessageStyle {
             get {
@@ -12261,7 +12261,7 @@ namespace NeeView.Properties {
         }
         
         /// <summary>
-        ///   List item stye に類似しているローカライズされた文字列を検索します。
+        ///   List item style に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string PageListPanelAccessor_Style {
             get {
@@ -12567,7 +12567,7 @@ namespace NeeView.Properties {
         }
         
         /// <summary>
-        ///   Save page view recods に類似しているローカライズされた文字列を検索します。
+        ///   Save page view records に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string PageViewRecorderConfig_IsSavePageViewRecord {
             get {
@@ -14292,7 +14292,7 @@ namespace NeeView.Properties {
         }
         
         /// <summary>
-        ///   Scrpit. Executes when the book is opened. に類似しているローカライズされた文字列を検索します。
+        ///   Script. Executes when the book is opened. に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string ScriptOnBookLoadedCommand_Remarks {
             get {
@@ -14301,7 +14301,7 @@ namespace NeeView.Properties {
         }
         
         /// <summary>
-        ///   Scrpit. Executes when the view pages is changed. に類似しているローカライズされた文字列を検索します。
+        ///   Script. Executes when the view pages is changed. に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string ScriptOnPageChangedCommand_Remarks {
             get {
@@ -14778,7 +14778,7 @@ namespace NeeView.Properties {
         }
         
         /// <summary>
-        ///   Set the order of books in descending order by darte. に類似しているローカライズされた文字列を検索します。
+        ///   Set the order of books in descending order by date. に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string SetBookOrderByTimeStampDCommand_Remarks {
             get {
@@ -19083,7 +19083,7 @@ namespace NeeView.Properties {
         }
         
         /// <summary>
-        ///   Stop slideshw に類似しているローカライズされた文字列を検索します。
+        ///   Stop slideshow に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string ToggleSlideShowCommand_Off {
             get {
@@ -19344,7 +19344,7 @@ namespace NeeView.Properties {
         }
         
         /// <summary>
-        ///   Toggle flip vertial に類似しているローカライズされた文字列を検索します。
+        ///   Toggle flip vertical に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string ToggleViewFlipVerticalCommand {
             get {
@@ -19398,7 +19398,7 @@ namespace NeeView.Properties {
         }
         
         /// <summary>
-        ///   Toggle vidible / hide of the address bar. に類似しているローカライズされた文字列を検索します。
+        ///   Toggle visible / hide of the address bar. に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string ToggleVisibleAddressBarCommand_Remarks {
             get {
@@ -19443,7 +19443,7 @@ namespace NeeView.Properties {
         }
         
         /// <summary>
-        ///   Toggle vidible / hide of the bookmark panel. に類似しているローカライズされた文字列を検索します。
+        ///   Toggle visible / hide of the bookmark panel. に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string ToggleVisibleBookmarkListCommand_Remarks {
             get {
@@ -19668,7 +19668,7 @@ namespace NeeView.Properties {
         }
         
         /// <summary>
-        ///   Toggle vidible / hide of the history panel. に類似しているローカライズされた文字列を検索します。
+        ///   Toggle visible / hide of the history panel. に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string ToggleVisibleHistoryListCommand_Remarks {
             get {
@@ -19848,7 +19848,7 @@ namespace NeeView.Properties {
         }
         
         /// <summary>
-        ///   Toggle vidible / hide of the playlist panel. に類似しているローカライズされた文字列を検索します。
+        ///   Toggle visible / hide of the playlist panel. に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string ToggleVisiblePlaylistCommand_Remarks {
             get {
@@ -20748,7 +20748,7 @@ namespace NeeView.Properties {
         }
         
         /// <summary>
-        ///   Flip vertial OFF に類似しているローカライズされた文字列を検索します。
+        ///   Flip vertical OFF に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string ViewFlipVerticalOffCommand {
             get {
@@ -20766,7 +20766,7 @@ namespace NeeView.Properties {
         }
         
         /// <summary>
-        ///   Flip vertial に類似しているローカライズされた文字列を検索します。
+        ///   Flip vertical に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string ViewFlipVerticalOnCommand {
             get {
@@ -21820,7 +21820,7 @@ namespace NeeView.Properties {
         }
         
         /// <summary>
-        ///   Innner に類似しているローカライズされた文字列を検索します。
+        ///   Inner に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string Word_Inner {
             get {
@@ -21919,7 +21919,7 @@ namespace NeeView.Properties {
         }
         
         /// <summary>
-        ///   Netword drive に類似しているローカライズされた文字列を検索します。
+        ///   Network drive に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string Word_NetworkDrive {
             get {

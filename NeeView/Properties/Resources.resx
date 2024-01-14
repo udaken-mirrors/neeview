@@ -1445,7 +1445,7 @@ nv.Command.ViewRotateLeft.Patch({"Angle": 5}).Execute()</value>
   </data>
   <data name="CommandAccessor.ShortCutKey.Example" xml:space="preserve">
     <value>// Set "Ctrl+A" as shortcut for ViewRotateLeft command
-nv.Command.ViewRotateLeft.ShourtCutKey = "Ctrl+A"</value>
+nv.Command.ViewRotateLeft.ShortCutKey = "Ctrl+A"</value>
   </data>
   <data name="CommandAccessor.TouchGesture" xml:space="preserve">
     <value>Touch operation</value>
@@ -2830,7 +2830,7 @@ Is it OK?</value>
     <value>Selected items</value>
   </data>
   <data name="HistoryPanelAccessor.Style" xml:space="preserve">
-    <value>List item stye</value>
+    <value>List item style</value>
   </data>
   <data name="HorizontalAlignment.Center" xml:space="preserve">
     <value>Center</value>
@@ -4157,7 +4157,7 @@ Reset the temporary location.</value>
     <value>Show Now Loading</value>
   </data>
   <data name="NoticeConfig.ViewTransformShowMessageStyle" xml:space="preserve">
-    <value>Sbow status change by drag operation</value>
+    <value>Show status change by drag operation</value>
   </data>
   <data name="NotSupportedKeyException.Message" xml:space="preserve">
     <value>The combination of {0} key and modifier key is not supported in {1}.</value>
@@ -4383,7 +4383,7 @@ nv.ShowToast(nv.Book.Pages[0].Path)</value>
     <value>Page sort mode</value>
   </data>
   <data name="PageListPanelAccessor.Style" xml:space="preserve">
-    <value>List item stye</value>
+    <value>List item style</value>
   </data>
   <data name="PageMode.SinglePage" xml:space="preserve">
     <value>One page</value>
@@ -4485,7 +4485,7 @@ nv.ShowToast(nv.Book.Pages[0].Path)</value>
     <value>For video</value>
   </data>
   <data name="PageViewRecorderConfig.IsSavePageViewRecord" xml:space="preserve">
-    <value>Save page view recods</value>
+    <value>Save page view records</value>
   </data>
   <data name="PageViewRecorderConfig.PageViewRecordFilePath" xml:space="preserve">
     <value>Page view recording path</value>
@@ -5052,10 +5052,10 @@ Obsolete member access returns the default value for the type. It can be null, a
     <value>{0} is obsolete.</value>
   </data>
   <data name="ScriptOnBookLoadedCommand.Remarks" xml:space="preserve">
-    <value>Scrpit. Executes when the book is opened.</value>
+    <value>Script. Executes when the book is opened.</value>
   </data>
   <data name="ScriptOnPageChangedCommand.Remarks" xml:space="preserve">
-    <value>Scrpit. Executes when the view pages is changed.</value>
+    <value>Script. Executes when the view pages is changed.</value>
   </data>
   <data name="ScriptReference" xml:space="preserve">
     <value>Script reference</value>
@@ -5214,7 +5214,7 @@ Obsolete member access returns the default value for the type. It can be null, a
     <value>Book Date Descending</value>
   </data>
   <data name="SetBookOrderByTimeStampDCommand.Remarks" xml:space="preserve">
-    <value>Set the order of books in descending order by darte.</value>
+    <value>Set the order of books in descending order by date.</value>
   </data>
   <data name="SetBookReadOrderLeftCommand" xml:space="preserve">
     <value>Left to right</value>
@@ -6535,7 +6535,7 @@ $Name is the main page (the smaller page number) when displaying 2 pages.</value
     <value>Slideshow</value>
   </data>
   <data name="ToggleSlideShowCommand.Off" xml:space="preserve">
-    <value>Stop slideshw</value>
+    <value>Stop slideshow</value>
   </data>
   <data name="ToggleSlideShowCommand.On" xml:space="preserve">
     <value>Play slideshow</value>
@@ -6622,7 +6622,7 @@ $Name is the main page (the smaller page number) when displaying 2 pages.</value
     <value>Flip the image left and right.</value>
   </data>
   <data name="ToggleViewFlipVerticalCommand" xml:space="preserve">
-    <value>Toggle flip vertial</value>
+    <value>Toggle flip vertical</value>
   </data>
   <data name="ToggleViewFlipVerticalCommand.Remarks" xml:space="preserve">
     <value>Flip the image upside down.</value>
@@ -6640,7 +6640,7 @@ $Name is the main page (the smaller page number) when displaying 2 pages.</value
     <value>Address bar</value>
   </data>
   <data name="ToggleVisibleAddressBarCommand.Remarks" xml:space="preserve">
-    <value>Toggle vidible / hide of the address bar.</value>
+    <value>Toggle visible / hide of the address bar.</value>
   </data>
   <data name="ToggleVisibleBookmarkListCommand" xml:space="preserve">
     <value>Toggle bookmark panel</value>
@@ -6655,7 +6655,7 @@ $Name is the main page (the smaller page number) when displaying 2 pages.</value
     <value>Bookmark panel</value>
   </data>
   <data name="ToggleVisibleBookmarkListCommand.Remarks" xml:space="preserve">
-    <value>Toggle vidible / hide of the bookmark panel.</value>
+    <value>Toggle visible / hide of the bookmark panel.</value>
   </data>
   <data name="ToggleVisibleBookshelfCommand" xml:space="preserve">
     <value>Toggle bookshelf</value>
@@ -6730,7 +6730,7 @@ $Name is the main page (the smaller page number) when displaying 2 pages.</value
     <value>History panel</value>
   </data>
   <data name="ToggleVisibleHistoryListCommand.Remarks" xml:space="preserve">
-    <value>Toggle vidible / hide of the history panel.</value>
+    <value>Toggle visible / hide of the history panel.</value>
   </data>
   <data name="ToggleVisibleNavigatorCommand" xml:space="preserve">
     <value>Toggle navigator</value>
@@ -6790,7 +6790,7 @@ $Name is the main page (the smaller page number) when displaying 2 pages.</value
     <value>Playlist panel</value>
   </data>
   <data name="ToggleVisiblePlaylistCommand.Remarks" xml:space="preserve">
-    <value>Toggle vidible / hide of the playlist panel.</value>
+    <value>Toggle visible / hide of the playlist panel.</value>
   </data>
   <data name="ToggleVisibleSideBarCommand" xml:space="preserve">
     <value>Toggle side bar</value>
@@ -7048,13 +7048,13 @@ $Name is the main page (the smaller page number) when displaying 2 pages.</value
     <value>Flip the image left and right.</value>
   </data>
   <data name="ViewFlipVerticalOffCommand" xml:space="preserve">
-    <value>Flip vertial OFF</value>
+    <value>Flip vertical OFF</value>
   </data>
   <data name="ViewFlipVerticalOffCommand.Remarks" xml:space="preserve">
     <value>Cancel flip.</value>
   </data>
   <data name="ViewFlipVerticalOnCommand" xml:space="preserve">
-    <value>Flip vertial</value>
+    <value>Flip vertical</value>
   </data>
   <data name="ViewFlipVerticalOnCommand.Remarks" xml:space="preserve">
     <value>Turn it upside down.</value>
@@ -7391,7 +7391,7 @@ nv.ShowToast(nv.Book.ViewPages[0].Path)</value>
     <value>Import</value>
   </data>
   <data name="Word.Inner" xml:space="preserve">
-    <value>Innner</value>
+    <value>Inner</value>
   </data>
   <data name="Word.IsPanelSelected" xml:space="preserve">
     <value>Panel selected</value>
@@ -7424,7 +7424,7 @@ nv.ShowToast(nv.Book.ViewPages[0].Path)</value>
     <value>Name</value>
   </data>
   <data name="Word.NetworkDrive" xml:space="preserve">
-    <value>Netword drive</value>
+    <value>Network drive</value>
   </data>
   <data name="Word.NewFolder" xml:space="preserve">
     <value>New Folder</value>
@@ -7829,7 +7829,7 @@ nv.ShowToast(nv.Book.ViewPages[0].Path)</value>
     <value>Base scale</value>
   </data>
   <data name="ExportImageWindow.IsOriginalSize" xml:space="preserve">
-    <value>Oroginal size</value>
+    <value>Original size</value>
   </data>
   <data name="ExportImageWindow.IsDotKeep" xml:space="preserve">
     <value>Keep dot</value>
