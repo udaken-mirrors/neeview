@@ -806,7 +806,7 @@ Search for pages containing "smile" in "parameters" in "@InformationGroup.Extras
     <value>Raio</value>
   </data>
   <data name="BookAccessor" xml:space="preserve">
-    <value>Acessador de livro</value>
+    <value>Acessor de livros</value>
   </data>
   <data name="BookAccessor.Config" xml:space="preserve">
     <value>Configuração do livro</value>
@@ -4302,7 +4302,7 @@ nv.ShowToast(nv.Book.Pages[0].Path)</value>
     <value>Selecionar na caixa de diálogo</value>
   </data>
   <data name="PageEndAction.Loop" xml:space="preserve">
-    <value>Loop</value>
+    <value>Repetir</value>
   </data>
   <data name="PageEndAction.NextBook" xml:space="preserve">
     <value>Mover para o livro seguinte</value>
@@ -6967,7 +6967,7 @@ $Name é a página principal (o número menor da página) ao exibir 2 páginas.<
     <value>Permitir aumento de escala por alongamento</value>
   </data>
   <data name="ViewConfig.AngleFrequency" xml:space="preserve">
-    <value>Snap giratório</value>
+    <value>Girar rotativo</value>
   </data>
   <data name="ViewConfig.AutoRotate" xml:space="preserve">
     <value>Rotação automática</value>
@@ -7406,13 +7406,13 @@ nv.ShowToast(nv.Book.ViewPages[0].Path)</value>
     <value>(vazio)</value>
   </data>
   <data name="Word.Jump" xml:space="preserve">
-    <value>Mover Para</value>
+    <value>Pular</value>
   </data>
   <data name="Word.Left" xml:space="preserve">
     <value>Esquerda</value>
   </data>
   <data name="Word.Loop" xml:space="preserve">
-    <value>Loop</value>
+    <value>Repetir</value>
   </data>
   <data name="Word.MainMenu" xml:space="preserve">
     <value>Menu Principal</value>
@@ -7727,7 +7727,7 @@ nv.ShowToast(nv.Book.ViewPages[0].Path)</value>
     <value>Alternar entre a orientação horizontal e vertical.</value>
   </data>
   <data name="TogglePageModeCommandParameter.IsLoop" xml:space="preserve">
-    <value>Loop</value>
+    <value>Repetir</value>
   </data>
   <data name="MouseConfig.InertiaSensitivity" xml:space="preserve">
     <value>Sensibilidade à inércia</value>
@@ -7787,7 +7787,7 @@ nv.ShowToast(nv.Book.ViewPages[0].Path)</value>
     <value>Rotação automática</value>
   </data>
   <data name="PageEndAction.SeamlessLoop" xml:space="preserve">
-    <value>Loop contínuo</value>
+    <value>Repetição contínua</value>
   </data>
   <data name="FilmStripConfig.IsWheelMovePage" xml:space="preserve">
     <value>Mover páginas por operação de roda</value>
@@ -8040,5 +8040,32 @@ nv.ShowToast(nv.Book.ViewPages[0].Path)</value>
   </data>
   <data name="ZipEncoding.Auto" xml:space="preserve">
     <value>Auto</value>
+  </data>
+  <data name="ViewScaleStretchCommand" xml:space="preserve">
+    <value>Alongar</value>
+  </data>
+  <data name="ViewScaleStretchCommand.Remarks" xml:space="preserve">
+    <value>Aplique alongamento em escala.</value>
+  </data>
+  <data name="ViewConfig.IsScaleStretchTracking" xml:space="preserve">
+    <value>Rastreamento de alongamento</value>
+  </data>
+  <data name="ViewConfig.IsScaleStretchTracking.Remarks" xml:space="preserve">
+    <value>Ajusta a escala de acordo com o modo de estiramento durante a rotação.</value>
+  </data>
+  <data name="Navigator.IsScaleStretchTracking" xml:space="preserve">
+    <value>Rastreamento de alongamento</value>
+  </data>
+  <data name="ViewConfig.ViewOrigin" xml:space="preserve">
+    <value>Exibir posição inicial</value>
+  </data>
+  <data name="ViewOrigin.Center" xml:space="preserve">
+    <value>Centro da imagem</value>
+  </data>
+  <data name="ViewOrigin.DirectionDependent" xml:space="preserve">
+    <value>Dependente da direção</value>
+  </data>
+  <data name="ViewOrigin.DirectionDependentAndTop" xml:space="preserve">
+    <value>Dependente da direção, superior</value>
   </data>
 </root>
