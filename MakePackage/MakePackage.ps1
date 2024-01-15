@@ -5,7 +5,7 @@
 #   - pandoc
 
 Param(
-	[ValidateSet("All", "Zip", "Installer", "Appx", "Canary", "Beta")]$Target = "All",
+	[ValidateSet("All", "Zip", "Installer", "Appx", "Canary", "Beta", "Dev")]$Target = "All",
 
 	# ビルドをスキップする
 	[switch]$continue,
@@ -1096,7 +1096,7 @@ if (-not $x86)
 
 #--------------------------
 # saev buid version
-if (-not $continue)
+if ((-not $continue) -and ($Target -eq "Dev"))
 {
 	Set-BuildCount $buildCount
 }
