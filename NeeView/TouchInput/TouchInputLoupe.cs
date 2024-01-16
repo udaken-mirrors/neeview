@@ -31,15 +31,12 @@ namespace NeeView
         /// <param name="parameter">TouchContext</param>
         public override void OnOpened(FrameworkElement sender, object? parameter)
         {
-            _transformContext = _context.DragTransformContextFactory?.CreateDragTransformContext(false, true) as LoupeDragTransformContext;
-            if (_transformContext is null) throw new NotImplementedException(); // TODO: モード拒否
+            _touch = parameter as TouchContext ?? throw new InvalidOperationException("parameter must be TouchContext");
 
-            _transformContext.AttachLoupeContext(_loupe);
+            AttachLoupe(sender);
 
             sender.Focus();
             sender.Cursor = Cursors.None;
-
-            _touch = parameter as TouchContext ?? throw new InvalidOperationException("parameter must be TouchContext");
 
             _loupe.IsEnabled = true;
 
@@ -54,9 +51,44 @@ namespace NeeView
         /// </summary>
         public override void OnClosed(FrameworkElement sender)
         {
+            DetachLoupe(sender);
+
             sender.Cursor = null;
 
             _loupe.IsEnabled = false;
+        }
+
+        /// <summary>
+        /// ブック変更によるルーペ設定更新
+        /// </summary>
+        /// <param name="sender"></param>
+        public override void OnPageFrameBoxChanged(FrameworkElement sender)
+        {
+            DetachLoupe(sender);
+            AttachLoupe(sender);
+        }
+
+        /// <summary>
+        /// ルーペ適用
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <exception cref="NotImplementedException"></exception>
+        private void AttachLoupe(FrameworkElement sender)
+        {
+            _transformContext = _context.DragTransformContextFactory?.CreateLoupeDragTransformContext();
+            if (_transformContext is null) throw new NotImplementedException(); // TODO: モード拒否
+
+            _transformContext.AttachLoupeContext(_loupe);
+        }
+
+        /// <summary>
+        /// ルーペ解除
+        /// </summary>
+        /// <param name="sender"></param>
+        private void DetachLoupe(FrameworkElement sender)
+        {
+            _transformContext?.DetachLoupeContext();
+            _transformContext = null;
         }
 
         public override void OnStylusDown(object sender, StylusDownEventArgs e)

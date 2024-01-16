@@ -2,7 +2,7 @@
 
 namespace NeeView
 {
-    public class ScaleSliderActionControl : DragActionControl
+    public class ScaleSliderActionControl : NormalDragActionControl
     {
         private readonly DragTransform _transformControl;
         private readonly SensitiveDragActionParameter _parameter;
@@ -11,7 +11,7 @@ namespace NeeView
         public ScaleSliderActionControl(DragTransformContext context, DragAction source, ScaleType scaleType) : base(context, source)
         {
             _parameter = Parameter as SensitiveDragActionParameter ?? throw new ArgumentNullException(nameof(source));
-            _transformControl = new DragTransform(context);
+            _transformControl = new DragTransform(Context);
             _scaleType = scaleType;
         }
 

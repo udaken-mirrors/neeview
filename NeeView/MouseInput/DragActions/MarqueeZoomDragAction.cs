@@ -17,7 +17,7 @@ namespace NeeView
             return new ActionControl(context, this);
         }
 
-        private class ActionControl : DragActionControl, IDisposable
+        private class ActionControl : NormalDragActionControl, IDisposable
         {
             private AreaSelectAdorner _adorner;
             private bool _disposedValue;

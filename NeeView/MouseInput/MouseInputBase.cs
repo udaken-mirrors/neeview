@@ -107,6 +107,11 @@ namespace NeeView
         public virtual void OnCaptureClosed(FrameworkElement sender) { }
 
         /// <summary>
+        /// ブック変更イベント
+        /// </summary>
+        public virtual void OnPageFrameBoxChanged(FrameworkElement sender) { }
+
+        /// <summary>
         /// 各種入力イベント
         /// </summary>
         /// <param name="sender"></param>

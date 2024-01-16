@@ -48,8 +48,8 @@ namespace NeeView
             DragTransformControl = new DragTransformControlProxy(PageFrameBoxPresenter);
             LoupeContext = new LoupeContext(Config.Current.Loupe);
 
-            TouchInput = new TouchInput(new TouchInputContext(_mainView.View, mouseGestureCommandCollection, PageFrameBoxPresenter, DragTransformControl, LoupeContext, ViewScrollContext));
-            MouseInput = new MouseInput(new MouseInputContext(_mainView.View, mouseGestureCommandCollection, PageFrameBoxPresenter, DragTransformControl, LoupeContext, ViewScrollContext));
+            TouchInput = new TouchInput(new TouchInputContext(_mainView.View, mouseGestureCommandCollection, PageFrameBoxPresenter, PageFrameBoxPresenter, DragTransformControl, LoupeContext, ViewScrollContext));
+            MouseInput = new MouseInput(new MouseInputContext(_mainView.View, mouseGestureCommandCollection, PageFrameBoxPresenter, PageFrameBoxPresenter, DragTransformControl, LoupeContext, ViewScrollContext));
 
             PrintController = new PrintController(this, _mainView, PageFrameBoxPresenter);
             ViewTransformControl = new ViewTransformControl(PageFrameBoxPresenter);

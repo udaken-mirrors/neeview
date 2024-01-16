@@ -37,9 +37,18 @@ namespace NeeView
         public PageFrameBox? Box { get; }
     }
 
+    public partial interface INotifyPageFrameBoxChanged
+    {
+        [Subscribable]
+        public event EventHandler<PageFrameBoxChangingEventArgs>? PageFrameBoxChanging;
+
+        [Subscribable]
+        public event EventHandler<PageFrameBoxChangedEventArgs>? PageFrameBoxChanged;
+    }
+
 
     [NotifyPropertyChanged]
-    public partial class PageFrameBoxPresenter : INotifyPropertyChanged, IDragTransformContextFactory, IBookPageContext, IDisposable
+    public partial class PageFrameBoxPresenter : INotifyPropertyChanged, IDragTransformContextFactory, IBookPageContext, IDisposable, INotifyPageFrameBoxChanged
     {
         public static PageFrameBoxPresenter Current { get; } = new PageFrameBoxPresenter();
 
@@ -579,14 +588,27 @@ namespace NeeView
             return IsLoading ? null : _box;
         }
 
-        public DragTransformContext? CreateDragTransformContext(bool isPointContainer, bool isLoupeTransform)
+        public ContentDragTransformContext? CreateContentDragTransformContext(bool isPointContainer)
         {
-            return _box?.CreateDragTransformContext(isPointContainer, isLoupeTransform);
+            return _box?.CreateContentDragTransformContext(isPointContainer);
         }
 
-        public DragTransformContext? CreateDragTransformContext(PageFrameContainer container, bool isLoupeTransform)
+        public ContentDragTransformContext? CreateContentDragTransformContext(PageFrameContainer container)
         {
-            return _box?.CreateDragTransformContext(container, isLoupeTransform);
+            return _box?.CreateContentDragTransformContext(container);
+        }
+
+        public LoupeDragTransformContext? CreateLoupeDragTransformContext()
+        {
+            return _box?.CreateLoupeDragTransformContext() ?? CreateLoupeDragTransformContextDummy();
+        }
+
+        private LoupeDragTransformContext? CreateLoupeDragTransformContextDummy()
+        {
+            var transformControl = new DummyTransformControl();
+            var dragContext = new LoupeDragTransformContext(MainViewComponent.Current.MainView, transformControl, Config.Current.View, Config.Current.Mouse, Config.Current.Loupe);
+            dragContext.Initialize(new Point(), System.Environment.TickCount);
+            return dragContext;
         }
 
         // TODO: 呼ばれない？
@@ -636,6 +658,6 @@ namespace NeeView
             return _box?.GetSelectedPageFrameContent();
         }
 
-        #endregion IPageFrameBox
+#endregion IPageFrameBox
     }
 }

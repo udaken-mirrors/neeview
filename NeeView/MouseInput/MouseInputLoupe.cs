@@ -39,14 +39,7 @@ namespace NeeView
         /// <param name="parameter">trueならば長押しモード</param>
         public override void OnOpened(FrameworkElement sender, object? parameter)
         {
-            _transformContext = _context.DragTransformContextFactory?.CreateDragTransformContext(false, true) as LoupeDragTransformContext;
-            if (_transformContext is null) throw new NotImplementedException(); // TODO: モード拒否
-
-            _transformContext.AttachLoupeContext(_loupe);
-
-            var action = new LoupeDragAction().CreateControl(_transformContext);
-            _action.SetAction(action);
-            _action.ExecuteBegin(ToDragCoord(Mouse.GetPosition(sender)), System.Environment.TickCount);
+            AttachLoupe(sender);
 
             if (parameter is bool isLongDownMode)
             {
@@ -75,17 +68,52 @@ namespace NeeView
         /// <param name="sender"></param>
         public override void OnClosed(FrameworkElement sender)
         {
+            DetachLoupe(sender);
+
             sender.Cursor = null;
 
+            _loupe.IsEnabled = false;
+        }
+
+        /// <summary>
+        /// ブック変更によるルーペ設定更新
+        /// </summary>
+        /// <param name="sender"></param>
+        public override void OnPageFrameBoxChanged(FrameworkElement sender)
+        {
+            DetachLoupe(sender);
+            AttachLoupe(sender);
+        }
+
+        /// <summary>
+        /// ルーペ適用
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <exception cref="NotImplementedException"></exception>
+        private void AttachLoupe(FrameworkElement sender)
+        {
+            _transformContext = _context.DragTransformContextFactory?.CreateLoupeDragTransformContext();
+            if (_transformContext is null) throw new NotImplementedException(); // TODO: モード拒否
+
+            _transformContext.AttachLoupeContext(_loupe);
+
+            var action = new LoupeDragAction().CreateControl(_transformContext);
+            _action.SetAction(action);
+            _action.ExecuteBegin(ToDragCoord(Mouse.GetPosition(sender)), System.Environment.TickCount);
+        }
+
+        /// <summary>
+        /// ルーペ解除
+        /// </summary>
+        /// <param name="sender"></param>
+        private void DetachLoupe(FrameworkElement sender)
+        {
             _action.ExecuteEnd(ToDragCoord(Mouse.GetPosition(sender)), System.Environment.TickCount, _context.Speedometer, options: DragActionUpdateOptions.None, continued: false);
             _action.ClearAction();
-
-            _loupe.IsEnabled = false;
 
             _transformContext?.DetachLoupeContext();
             _transformContext = null;
         }
-
 
         public override void OnCaptureOpened(FrameworkElement sender)
         {

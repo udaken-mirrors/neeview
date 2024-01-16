@@ -36,7 +36,7 @@ namespace NeeView
         {
             if (_isEnabled)
             {
-                _transformContext = _dragTransformContextFactory.CreateDragTransformContext(false, false);
+                _transformContext = _dragTransformContextFactory.CreateContentDragTransformContext(false);
                 if (_transformContext is null)
                 {
                     _action.ClearAction();

@@ -4,14 +4,14 @@ using System.Windows;
 
 namespace NeeView
 {
-    public class ScaleSliderCenteredActionControl : DragActionControl
+    public class ScaleSliderCenteredActionControl : NormalDragActionControl
     {
         private readonly DragTransform _transformControl;
         private readonly ScaleType _scaleType;
 
         public ScaleSliderCenteredActionControl(DragTransformContext context, DragAction source, ScaleType scaleType) : base(context, source)
         {
-            _transformControl = new DragTransform(context);
+            _transformControl = new DragTransform(Context);
             _scaleType = scaleType;
         }
 

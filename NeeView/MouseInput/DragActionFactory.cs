@@ -24,7 +24,9 @@ namespace NeeView
             if (!_table.TryGetValue(dragKey, out var source)) return null;
 
             bool isLoupeTransform = source is LoupeDragAction;
-            var context = _contextFactory.CreateDragTransformContext(IsPointed(source.DragActionCategory), isLoupeTransform);
+            DragTransformContext? context = isLoupeTransform
+                ? _contextFactory.CreateLoupeDragTransformContext()
+                : _contextFactory.CreateContentDragTransformContext(IsPointed(source.DragActionCategory));
             if (context is null) return null;
             return source.CreateControl(context);
         }

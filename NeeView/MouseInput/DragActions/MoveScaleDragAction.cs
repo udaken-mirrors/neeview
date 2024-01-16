@@ -20,14 +20,14 @@ namespace NeeView
             return new ActionControl(context, this);
         }
 
-        public class ActionControl : DragActionControl
+        public class ActionControl : NormalDragActionControl
         {
             private readonly DragTransform _transformControl;
             private readonly MoveScaleDragActionParameter _parameter;
 
             public ActionControl(DragTransformContext context, DragAction source) : base(context, source)
             {
-                _transformControl = new DragTransform(context);
+                _transformControl = new DragTransform(Context);
                 _parameter = Parameter as MoveScaleDragActionParameter ?? throw new ArgumentNullException(nameof(source));
             }
 
