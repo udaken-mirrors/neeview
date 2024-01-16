@@ -48,6 +48,11 @@ namespace NeeView
         public virtual void OnClosed(FrameworkElement sender) { }
 
         /// <summary>
+        /// ブック変更イベント
+        /// </summary>
+        public virtual void OnPageFrameBoxChanged(FrameworkElement sender) { }
+
+        /// <summary>
         /// 各種入力イベント
         /// </summary>
         public abstract void OnStylusDown(object sender, StylusDownEventArgs e);

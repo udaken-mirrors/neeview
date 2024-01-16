@@ -20,13 +20,13 @@ namespace NeeView
         }
 
 
-        private class ActionControl : DragActionControl
+        private class ActionControl : NormalDragActionControl
         {
             private DragTransform _transformControl;
 
             public ActionControl(DragTransformContext context, DragAction source) : base(context, source)
             {
-                _transformControl = new DragTransform(context);
+                _transformControl = new DragTransform(Context);
             }
 
             public override void Execute()

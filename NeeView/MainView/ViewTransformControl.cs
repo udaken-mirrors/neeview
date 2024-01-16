@@ -269,7 +269,7 @@ namespace NeeView
 
         private DragTransform? GetDragTransform(bool isPointed)
         {
-            var context = _presenter.CreateDragTransformContext(isPointed, false);
+            var context = _presenter.CreateContentDragTransformContext(isPointed);
             if (context is null) return null;
             return new DragTransform(context);
         }

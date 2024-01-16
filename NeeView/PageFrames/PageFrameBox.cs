@@ -242,26 +242,33 @@ namespace NeeView.PageFrames
             _canvas.Visibility = visibility;
         }
 
-        public DragTransformContext? CreateDragTransformContext(bool isPointContainer, bool isLoupeTransform)
+        public ContentDragTransformContext? CreateContentDragTransformContext(bool isPointContainer)
         {
             var pos = GetViewPosition();
             var node = isPointContainer ? GetPointedContainer(pos) : _selected.Node;
             if (node is null) return null;
-            return CreateDragTransformContext(node, isLoupeTransform);
+            return CreateDragTransformContext(node);
         }
 
-        public DragTransformContext? CreateDragTransformContext(PageFrameContainer container, bool isLoupeTransform)
+        public ContentDragTransformContext? CreateContentDragTransformContext(PageFrameContainer container)
         {
             var node = _containers.Find(container);
             if (node is null) return null;
-            return CreateDragTransformContext(node, isLoupeTransform);
+            return CreateDragTransformContext(node);
         }
 
-        private DragTransformContext? CreateDragTransformContext(LinkedListNode<PageFrameContainer> node, bool isLoupeTransform)
+        private ContentDragTransformContext? CreateDragTransformContext(LinkedListNode<PageFrameContainer> node)
         {
-            var dragContext = _dragTransformContextFactory.Create(node.Value, isLoupeTransform);
+            var dragContext = _dragTransformContextFactory.CreateContentDragTransformContext(node.Value);
             dragContext.Initialize(GetViewPosition(), System.Environment.TickCount);
             SetControlContainer(node); // TODO: ここで指定していいの？
+            return dragContext;
+        }
+
+        public LoupeDragTransformContext? CreateLoupeDragTransformContext()
+        {
+            var dragContext = _dragTransformContextFactory.CreateLoupeDragTransformContext();
+            dragContext.Initialize(GetViewPosition(), System.Environment.TickCount);
             return dragContext;
         }
 

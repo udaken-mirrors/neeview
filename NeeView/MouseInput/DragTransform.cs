@@ -14,9 +14,9 @@ namespace NeeView
     /// </summary>
     public class DragTransform : IScaleControl, IAngleControl, IPointControl, IFlipControl
     {
-        private readonly DragTransformContext _context;
+        private readonly ContentDragTransformContext _context;
 
-        public DragTransform(DragTransformContext context)
+        public DragTransform(ContentDragTransformContext context)
         {
             _context = context;
         }
@@ -26,7 +26,7 @@ namespace NeeView
         /// </summary>
         private double SnapScale { get; set; } = 0;
 
-        public DragTransformContext Context => _context;
+        public ContentDragTransformContext Context => _context;
 
         public bool IsFlipHorizontal => _context.Transform.IsFlipHorizontal;
         public bool IsFlipVertical => _context.Transform.IsFlipVertical;

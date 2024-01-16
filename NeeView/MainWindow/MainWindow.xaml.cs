@@ -104,7 +104,7 @@ namespace NeeView
             _routedCommandBinding = new RoutedCommandBinding(this, RoutedCommandTable.Current);
 
             // MainWindow MouseCommand Terminator
-            var mouseContext = new MouseInputContext(this, MouseGestureCommandCollection.Current, null, null, null, null)
+            var mouseContext = new MouseInputContext(this, MouseGestureCommandCollection.Current, null, null, null, null, null)
             {
                 IsGestureEnabled = false,
                 IsLeftButtonDownEnabled = false,

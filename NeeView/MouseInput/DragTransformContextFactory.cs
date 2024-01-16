@@ -25,28 +25,17 @@ namespace NeeView
             _loupeConfig = loupeConfig;
         }
 
-        public DragTransformContext Create(PageFrameContainer container, bool isLoupe)
-        {
-            if (isLoupe)
-            {
-                return CreateLoupe(container);
-            }
-            else
-            {
-                return CreateNormal(container);
-            }
-        }
 
-        private DragTransformContext CreateNormal(PageFrameContainer container)
+        public ContentDragTransformContext CreateContentDragTransformContext(PageFrameContainer container)
         {
             var transformControl = _transformControlFactory.Create(container);
-            return new DragTransformContext(_box, transformControl, container, _box, _viewConfig, _mouseConfig);
+            return new ContentDragTransformContext(_box, transformControl, container, _box, _viewConfig, _mouseConfig);
         }
 
-        private DragTransformContext CreateLoupe(PageFrameContainer container)
+        public LoupeDragTransformContext CreateLoupeDragTransformContext()
         {
-            var transformControl = _transformControlFactory.CreateLoupe(container);
-            return new LoupeDragTransformContext(_box, transformControl, container, _box, _viewConfig, _mouseConfig, _loupeConfig);
+            var transformControl = _transformControlFactory.CreateLoupe();
+            return new LoupeDragTransformContext(_box, transformControl, _viewConfig, _mouseConfig, _loupeConfig);
         }
 
 #if false

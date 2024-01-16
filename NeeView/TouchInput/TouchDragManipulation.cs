@@ -20,7 +20,7 @@ namespace NeeView
     public class TouchDragManipulation
     {
         private readonly IDragTransformContextFactory _transformContextFactory;
-        private DragTransformContext? _transformContext;
+        private ContentDragTransformContext? _transformContext;
 
         private DragTransform? _transform;
         private TouchDragContext? _origin;
@@ -47,7 +47,7 @@ namespace NeeView
 
         public void Initialize()
         {
-            _transformContext = _transformContextFactory.CreateDragTransformContext(true, false);
+            _transformContext = _transformContextFactory.CreateContentDragTransformContext(true);
             if (_transformContext is null)
             {
                 if (Debugger.IsAttached)

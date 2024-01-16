@@ -1,26 +1,19 @@
 ﻿using System;
 using System.Windows;
 using System.Windows.Input;
-using NeeView.ComponentModel;
 using NeeView.PageFrames;
 
 namespace NeeView
 {
     /// <summary>
-    /// 表示座標系操作のリソース
+    /// 座標系操作のリソース基底
     /// </summary>
-    public class DragTransformContext 
+    public class DragTransformContext
     {
-        private readonly ICanvasToViewTranslator _canvasToViewTranslator;
-
-
-        public DragTransformContext(FrameworkElement sender, ITransformControl transform, PageFrameContainer container, ICanvasToViewTranslator canvasToViewTranslator, ViewConfig viewConfig, MouseConfig mouseConfig)
+        public DragTransformContext(FrameworkElement sender, ITransformControl transform, ViewConfig viewConfig, MouseConfig mouseConfig)
         {
             Sender = sender;
-            Container = container;
-            _canvasToViewTranslator = canvasToViewTranslator;
             ViewRect = CreateViewRect();
-            ContentRect = CreateContentRect(Container);
             ViewConfig = viewConfig;
             MouseConfig = mouseConfig;
             Transform = transform;
@@ -43,12 +36,8 @@ namespace NeeView
         public int FirstTimeStamp { get; set; }
         public int OldTimeStamp { get; set; }
         public int LastTimeStamp { get; set; }
-        
-        public PageFrameContainer Container { get; }
 
         public Rect ViewRect { get; private set; }
-        public Rect ContentRect { get; private set; }
-        public Point ContentCenter => ContentRect.Center();
 
         public Point StartPoint { get; set; }
         public double StartAngle { get; set; }
@@ -56,10 +45,6 @@ namespace NeeView
         public double StartBaseScale { get; set; } = 1.0;
         public bool StartFlipHorizontal { get; set; }
         public bool StartFlipVertical { get; set; }
-
-        public Point RotateCenter { get; set; }
-        public Point ScaleCenter { get; set; }
-        public Point FlipCenter { get; set; }
 
 
         public virtual void Initialize(Point point, int timestamp)
@@ -80,23 +65,7 @@ namespace NeeView
             StartFlipHorizontal = Transform.IsFlipHorizontal;
             StartFlipVertical = Transform.IsFlipVertical;
 
-            RotateCenter = GetCenterPosition(ViewConfig.RotateCenter);
-            ScaleCenter = GetCenterPosition(ViewConfig.ScaleCenter);
-            FlipCenter = GetCenterPosition(ViewConfig.FlipCenter);
-
             StartBaseScale = Config.Current.BookSetting.BaseScale;
-        }
-
-
-        private Point GetCenterPosition(DragControlCenter dragControlCenter)
-        {
-            return dragControlCenter switch
-            {
-                DragControlCenter.View => ViewRect.Center(), // NOTE: 常に(0,0)
-                DragControlCenter.Target => ContentRect.Center(),
-                DragControlCenter.Cursor => First,
-                _ => throw new NotImplementedException(),
-            };
         }
 
         public double GetStartScale(ScaleType scaleType)
@@ -120,25 +89,15 @@ namespace NeeView
             }
         }
 
-        public void UpdateRect()
+        public void UpdateViewRect()
         {
             ViewRect = CreateViewRect();
-            ContentRect = CreateContentRect(Container);
         }
 
         private Rect CreateViewRect()
         {
             var viewRect = new Size(Sender.ActualWidth, Sender.ActualHeight).ToRect();
             return viewRect;
-        }
-
-        private Rect CreateContentRect(PageFrameContainer container)
-        {
-            var rect = container.GetContentRect();
-            var p0 = _canvasToViewTranslator.TranslateCanvasToViewPoint(container.TranslateContentToCanvasPoint(rect.TopLeft));
-            var p1 = _canvasToViewTranslator.TranslateCanvasToViewPoint(container.TranslateContentToCanvasPoint(rect.BottomRight));
-            var contentRect = new Rect(p0, p1);
-            return contentRect;
         }
     }
 

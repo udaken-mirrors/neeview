@@ -8,7 +8,7 @@ namespace NeeView
     {
         private DragAction _source;
         private bool _disposedValue;
-
+        
         public DragActionControl(DragTransformContext context, DragAction source)
         {
             Context = context;
@@ -60,5 +60,32 @@ namespace NeeView
     }
 
 
+    /// <summary>
+    /// Normal DragActionControl.
+    /// Context is NormalDragTransformContext 
+    /// </summary>
+    public class NormalDragActionControl : DragActionControl
+    {
+        public NormalDragActionControl(DragTransformContext context, DragAction source) : base(context, source)
+        {
+            Context = context as ContentDragTransformContext ?? throw new ArgumentException("need NormalDragTransformContext", nameof(context));
+        }
+
+        public new ContentDragTransformContext Context { get; }
+    }
+
+    /// <summary>
+    /// DragActionControl for Loupe.
+    /// Context is LoupeDragTransformContext 
+    /// </summary>
+    public class LoupeDragActionControl : DragActionControl
+    {
+        public LoupeDragActionControl(DragTransformContext context, DragAction source) : base(context, source)
+        {
+            Context = context as LoupeDragTransformContext ?? throw new ArgumentException("need LoupeDragTransformContext", nameof(context));
+        }
+
+        public new LoupeDragTransformContext Context { get; }
+    }
 
 }

@@ -136,6 +136,9 @@ namespace NeeView
 
             // ルーペモード監視
             _context.Loupe?.SubscribePropertyChanged(nameof(LoupeContext.IsEnabled), LoupeContext_IsEnabledChanged);
+
+            // ブック変更監視
+            _context.NotifyPageFrameBoxChanged?.SubscribePageFrameBoxChanged(OnPageFrameBoxChanged);
         }
 
 
@@ -447,6 +450,14 @@ namespace NeeView
             {
                 _current?.OnKeyDown(_sender, e);
             }
+        }
+
+        /// <summary>
+        /// Book changed
+        /// </summary>
+        private void OnPageFrameBoxChanged(object? sender, PageFrameBoxChangedEventArgs e)
+        {
+            _current?.OnPageFrameBoxChanged(_sender);
         }
 
         /// <summary>

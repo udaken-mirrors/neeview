@@ -6,17 +6,16 @@ namespace NeeView.PageFrames
 {
     public class LoupeTransformControl : ITransformControl
     {
-        private PageFrameContainer _container;
         private LoupeTransformContext _loupeContext;
 
 
-        public LoupeTransformControl(PageFrameContainer container, LoupeTransformContext loupeContext)
+        public LoupeTransformControl(LoupeTransformContext loupeContext)
         {
-            _container = container;
             _loupeContext = loupeContext;
         }
 
-        public double Scale => _container.Transform.Scale;
+        public double Scale => _loupeContext.Scale;
+
         public double Angle => 0.0;
         public Point Point => _loupeContext.Point;
         public bool IsFlipHorizontal => false;

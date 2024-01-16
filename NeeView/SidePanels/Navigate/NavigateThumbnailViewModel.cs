@@ -225,7 +225,7 @@ namespace NeeView
             var x = (this.ThumbnailWidth * 0.5 - point.X) / _rate;
             var y = (this.ThumbnailHeight * 0.5 - point.Y) / _rate;
 
-            var transformContext = _presenter.CreateDragTransformContext(false, false);
+            var transformContext = _presenter.CreateContentDragTransformContext(false);
             if (transformContext is null) return;
 
             var frameAngle = 0.0;

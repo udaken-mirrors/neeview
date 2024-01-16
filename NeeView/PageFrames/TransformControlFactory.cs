@@ -33,9 +33,9 @@ namespace NeeView.PageFrames
             }
         }
 
-        public ITransformControl CreateLoupe(PageFrameContainer container)
+        public ITransformControl CreateLoupe()
         {
-            return new LoupeTransformControl(container, _loupeContext);
+            return new LoupeTransformControl(_loupeContext);
         }
 
         public Rect CreateContentRect(PageFrameContainer container)

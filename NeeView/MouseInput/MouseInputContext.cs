@@ -6,12 +6,13 @@ using System.Windows.Input;
 
 namespace NeeView
 {
-    public class MouseInputContext : BindableBase 
+    public class MouseInputContext : BindableBase
     {
-        public MouseInputContext(FrameworkElement sender, MouseGestureCommandCollection? gestureCommandCollection, IDragTransformContextFactory? dragTransformContextFactory, IDragTransformControl? dragTransformControl, LoupeContext? loupe, ViewScrollContext? viewScrollContext)
+        public MouseInputContext(FrameworkElement sender, MouseGestureCommandCollection? gestureCommandCollection, INotifyPageFrameBoxChanged? notifyPageFrameBoxChanged, IDragTransformContextFactory? dragTransformContextFactory, IDragTransformControl? dragTransformControl, LoupeContext? loupe, ViewScrollContext? viewScrollContext)
         {
             this.Sender = sender;
             this.GestureCommandCollection = gestureCommandCollection;
+            this.NotifyPageFrameBoxChanged = notifyPageFrameBoxChanged;
             this.DragTransformContextFactory = dragTransformContextFactory;
             this.DragTransformControl = dragTransformControl;
             //this.DragTransform = dragTransform;
@@ -34,6 +35,8 @@ namespace NeeView
         /// ジェスチャーコマンドテーブル
         /// </summary>
         public MouseGestureCommandCollection? GestureCommandCollection { get; init; }
+
+        public INotifyPageFrameBoxChanged? NotifyPageFrameBoxChanged { get; init; }
 
         public IDragTransformContextFactory? DragTransformContextFactory { get; init; }
 
