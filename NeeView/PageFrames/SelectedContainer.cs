@@ -85,12 +85,12 @@ namespace NeeView.PageFrames
 
             Detach();
             _node = node;
-            Attach();
             RaisePropertyChanged(nameof(Node));
             RaisePropertyChanged(nameof(Container));
             RaisePropertyChanged(nameof(Page));
             RaisePropertyChanged(nameof(PageRange));
             RaisePropertyChanged(nameof(PagePosition));
+            Attach();
         }
 
         public void SetAuto()
