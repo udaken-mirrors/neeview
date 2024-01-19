@@ -51,11 +51,9 @@ namespace NeeView
         /// </summary>
         public override void OnClosed(FrameworkElement sender)
         {
-            DetachLoupe(sender);
-
             sender.Cursor = null;
-
             _loupe.IsEnabled = false;
+            DetachLoupe(sender);
         }
 
         /// <summary>
