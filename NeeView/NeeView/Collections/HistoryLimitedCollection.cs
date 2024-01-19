@@ -1,4 +1,6 @@
-﻿using NeeLaboratory;
+﻿//#define LOCAL_DEBUG
+
+using NeeLaboratory;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -73,6 +75,7 @@ namespace NeeView.Collections
 
             Set(_bufferSize - 1, element);
             _current = _bufferSize;
+            Trace($"Add: {element}: {GetInfoString()}");
             Changed?.Invoke(this, EventArgs.Empty);
         }
 
@@ -85,12 +88,14 @@ namespace NeeView.Collections
             if (_current > _bufferSize)
             {
                 _current = _bufferSize;
+                Trace($"TrimEnd: {GetInfoString()}");
             }
         }
 
         public void Move(int delta)
         {
             _current = MathUtility.Clamp(_current + delta, 0, _bufferSize);
+            Trace($"Move: Delta={delta}: {GetInfoString()}");
             Changed?.Invoke(this, EventArgs.Empty);
         }
 
@@ -127,15 +132,16 @@ namespace NeeView.Collections
         public void SetCurrent(int index)
         {
             _current = MathUtility.Clamp(index, 0, _bufferSize);
+            Trace($"SetCurrent: Index={index}: {GetInfoString()}");
             Changed?.Invoke(this, EventArgs.Empty);
         }
 
         internal List<KeyValuePair<int, T>> GetHistory(int direction, int size)
         {
-            return direction < 0 ? GetPrevousHistory(size) : GetNextHistory(size);
+            return direction < 0 ? GetPreviousHistory(size) : GetNextHistory(size);
         }
 
-        internal List<KeyValuePair<int, T>> GetPrevousHistory(int size)
+        internal List<KeyValuePair<int, T>> GetPreviousHistory(int size)
         {
             var list = new List<KeyValuePair<int, T>>();
             for (int i = 0; i < size; ++i)
@@ -161,6 +167,17 @@ namespace NeeView.Collections
                 list.Add(new KeyValuePair<int, T>(index, item));
             }
             return list;
+        }
+
+        private string GetInfoString()
+        {
+            return $"Top={_bufferTop}, Size={_bufferSize}, Current={_current}";
+        }
+
+        [Conditional("LOCAL_DEBUG")]
+        private void Trace(string s, params object[] args)
+        {
+            Debug.WriteLine($"{this.GetType().Name}: {string.Format(s, args)}");
         }
     }
 }

@@ -1,4 +1,6 @@
-﻿using NeeView.Collections;
+﻿//#define LOCAL_DEBUG
+
+using NeeView.Collections;
 using NeeView.PageFrames;
 using System;
 using System.Collections.Generic;
@@ -55,6 +57,11 @@ namespace NeeView
         public static bool operator !=(PageHistoryUnit lhs, PageHistoryUnit rhs)
         {
             return !(lhs.Equals(rhs));
+        }
+
+        public override string ToString()
+        {
+            return LoosePath.Combine(BookAddress, PageName);
         }
     }
 
@@ -132,8 +139,8 @@ namespace NeeView
             if (!_history.CanPrevious()) return;
 
             var query = _history.GetPrevious();
-            LoadPage(query);
             _history.Move(-1);
+            LoadPage(query);
         }
 
         public bool CanMoveToNext()
@@ -146,15 +153,15 @@ namespace NeeView
             if (!_history.CanNext()) return;
 
             var query = _history.GetNext();
-            LoadPage(query);
             _history.Move(+1);
+            LoadPage(query);
         }
 
         public void MoveToHistory(KeyValuePair<int, PageHistoryUnit> item)
         {
             var query = _history.GetHistory(item.Key);
-            LoadPage(query);
             _history.SetCurrent(item.Key + 1);
+            LoadPage(query);
         }
 
         private void LoadPage(PageHistoryUnit unit)
@@ -175,6 +182,13 @@ namespace NeeView
         internal List<KeyValuePair<int, PageHistoryUnit>> GetHistory(int direction, int size)
         {
             return _history.GetHistory(direction, size);
+        }
+
+
+        [Conditional("LOCAL_DEBUG")]
+        private void Trace(string s, params object[] args)
+        {
+            Debug.WriteLine($"{this.GetType().Name}: {string.Format(s, args)}");
         }
     }
 }
