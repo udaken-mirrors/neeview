@@ -164,42 +164,30 @@ namespace NeeView
 
         #region BookCommand : メディア操作
 
-        // 動画再生中？
-        public bool IsMediaPlaying()
+        /// <summary>
+        /// 動画有効？
+        /// </summary>
+        /// <returns></returns>
+        public bool MediaExists()
         {
-            if (MediaPlayerOperator.Current is null) return false;
-
-            if (this.Book != null && this.Book.IsMedia)
-            {
-                return MediaPlayerOperator.Current.IsPlaying;
-            }
-            else
-            {
-                return false;
-            }
+            return MediaPlayerOperator.CurrentMediaOperator is not null;
         }
 
-        // 動画再生ON/OFF
-        public bool ToggleMediaPlay()
+        /// <summary>
+        /// 動画再生中？
+        /// </summary>
+        /// <returns></returns>
+        public bool IsMediaPlaying()
         {
-            if (MediaPlayerOperator.Current is null) return false;
+            return MediaPlayerOperator.CurrentMediaOperator?.IsPlaying ?? false;
+        }
 
-            if (this.Book != null && this.Book.IsMedia)
-            {
-                if (MediaPlayerOperator.Current.IsPlaying)
-                {
-                    MediaPlayerOperator.Current.Pause();
-                }
-                else
-                {
-                    MediaPlayerOperator.Current.Play();
-                }
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+        /// <summary>
+        /// 動画再生ON/OFF
+        /// </summary>
+        public void ToggleMediaPlay()
+        {
+            MediaPlayerOperator.CurrentMediaOperator?.TogglePlay();
         }
 
         #endregion
