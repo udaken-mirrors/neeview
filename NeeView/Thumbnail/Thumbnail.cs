@@ -37,7 +37,7 @@ namespace NeeView
         /// <summary>
         /// キャシュ用ヘッダ
         /// </summary>
-        private ThumbnailCacheHeader? _header;
+        private ThumbnailCacheHeader _header;
 
         /// <summary>
         /// 排他制御ロック
@@ -63,8 +63,11 @@ namespace NeeView
         private int _imageSourceLoading;
 
 
-        public Thumbnail()
+        public Thumbnail(ArchiveEntry entry)
         {
+            // NOTE: ディレクトリは更新日をサイズとする
+            var length = entry.IsDirectory ? entry.LastWriteTime.ToBinary() : entry.Length;
+            _header = new ThumbnailCacheHeader(entry.SystemPath, length, null, Config.Current.Thumbnail.GetThumbnailImageGenerateHash());
         }
 
 
@@ -96,7 +99,7 @@ namespace NeeView
         public byte[]? Image
         {
             get { return _image; }
-            set
+            private set
             {
                 if (_disposedValue) return;
                 if (_image != value)
@@ -227,7 +230,7 @@ namespace NeeView
         /// <summary>
         /// キャッシュを使用してサムネイル生成を試みる
         /// </summary>
-        public async Task InitializeFromCacheAsync(ArchiveEntry entry, string? appendix, CancellationToken token)
+        public async Task InitializeFromCacheAsync(CancellationToken token)
         {
             if (_disposedValue) return;
             if (IsValid || !IsCacheEnabled) return;
@@ -239,10 +242,7 @@ namespace NeeView
                 return;
             }
 #endif
-            // NOTE: ディレクトリは更新日をサイズとする
-            var length = entry.IsDirectory ? entry.LastWriteTime.ToBinary() : entry.Length;
 
-            _header = new ThumbnailCacheHeader(entry.SystemPath, length, appendix, Config.Current.Thumbnail.GetThumbnailImageGenerateHash());
             var image = await ThumbnailCache.Current.LoadAsync(_header, token);
             Trace($"Initialize: from cache={_header.Key}: {(image == null ? "Miss" : "Hit!")}");
             Image = image;

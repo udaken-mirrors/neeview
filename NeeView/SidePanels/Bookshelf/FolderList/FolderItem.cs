@@ -281,6 +281,7 @@ namespace NeeView
         {
             this.TargetPath = path;
             this.Name = path.FileName;
+            OnRenamed();
         }
 
         /// <summary>
@@ -408,21 +409,13 @@ namespace NeeView
             var dst = FileIO.CreateRenameDst(src, name, showConfirmDialog: true);
             if (dst is null) return false;
 
-            // 先に項目の名前変更反映 (A)
-            // NOTE: FileIO.RenameAsync前でないと表示変更が遅れる。何故！？
-            this.SetTargetPath(new QueryPath(dst));
-
-            // ファイル名変更処理は非同期で
             var isSuccess = await FileIO.RenameAsync(src, dst, restoreBook: true); // TODO: 現在の本を開き直すのは上位で行う
-            if (!isSuccess)
-            {
-                // Renameに失敗した場合は元に戻す。(A)用
-                this.SetTargetPath(new QueryPath(src));
-            }
-
             return isSuccess;
         }
 
+        protected virtual void OnRenamed()
+        {
+        }
     }
 
     /// <summary>
@@ -431,6 +424,7 @@ namespace NeeView
     public class FileFolderItem : FolderItem, IDisposable
     {
         private Page? _archivePage;
+        private readonly object _lock = new();
 
 
         public FileFolderItem(bool isOverlayEnabled) : base(isOverlayEnabled)
@@ -459,7 +453,7 @@ namespace NeeView
             {
                 if (disposing)
                 {
-                    _archivePage?.Dispose();
+                    DisposeArchivePage(_archivePage);
                     _archivePage = null;
                 }
                 _disposedValue = true;
@@ -474,6 +468,24 @@ namespace NeeView
         #endregion
 
 
+        protected override void OnRenamed()
+        {
+            lock (_lock)
+            {
+                if (_disposedValue) return;
+                if (_archivePage is null) return;
+
+                var image = _archivePage.Thumbnail.Image;
+                DisposeArchivePage(_archivePage);
+                _archivePage = null;
+
+                var page = GetArchivePage();
+                if (page is null) return;
+                page.Thumbnail.Initialize(image);
+                RaisePropertyChanged(nameof(Thumbnail));
+            }
+        }
+
         public override Page? GetPage()
         {
             return GetArchivePage();
@@ -481,15 +493,31 @@ namespace NeeView
 
         private Page? GetArchivePage()
         {
-            if (_disposedValue) return null;
-
-            if (_archivePage == null)
+            lock (_lock)
             {
-                _archivePage = new Page("", new ArchivePageContent(ArchiveEntryUtility.CreateTemporaryEntry(TargetPath.SimplePath), null));
-                _archivePage.Thumbnail.IsCacheEnabled = true;
-                _archivePage.Thumbnail.Touched += Thumbnail_Touched;
+                if (_disposedValue) return null;
+
+                if (_archivePage == null)
+                {
+                    _archivePage = CreateArchivePage(TargetPath.SimplePath);
+                }
+                return _archivePage;
             }
-            return _archivePage;
+        }
+
+        private Page CreateArchivePage(string path)
+        {
+            var page = new Page("", new ArchivePageContent(ArchiveEntryUtility.CreateTemporaryEntry(path), null));
+            page.Thumbnail.IsCacheEnabled = true;
+            page.Thumbnail.Touched += Thumbnail_Touched;
+            return page;
+        }
+
+        private void DisposeArchivePage(Page? page)
+        {
+            if (page is null) return;
+            page.Thumbnail.Touched -= Thumbnail_Touched;
+            page.Dispose();
         }
 
         private void Thumbnail_Touched(object? sender, EventArgs e)
