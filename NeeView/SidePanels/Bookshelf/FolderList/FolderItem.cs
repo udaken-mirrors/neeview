@@ -475,13 +475,10 @@ namespace NeeView
                 if (_disposedValue) return;
                 if (_archivePage is null) return;
 
-                var image = _archivePage.Thumbnail.Image;
-                DisposeArchivePage(_archivePage);
-                _archivePage = null;
-
-                var page = GetArchivePage();
-                if (page is null) return;
-                page.Thumbnail.Initialize(image);
+                var oldArchivePage = _archivePage;
+                _archivePage = CreateArchivePage(TargetPath.SimplePath);
+                _archivePage?.Thumbnail.Initialize(oldArchivePage.Thumbnail);
+                DisposeArchivePage(oldArchivePage);
                 RaisePropertyChanged(nameof(Thumbnail));
             }
         }

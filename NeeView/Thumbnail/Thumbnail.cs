@@ -123,6 +123,9 @@ namespace NeeView
         /// <summary>
         /// ImageSource
         /// </summary>
+        /// <remarks>
+        /// 非同期でのImageSource生成トリガにもなる
+        /// </remarks>
         public ImageSource? ImageSource
         {
             get
@@ -246,6 +249,23 @@ namespace NeeView
             var image = await ThumbnailCache.Current.LoadAsync(_header, token);
             Trace($"Initialize: from cache={_header.Key}: {(image == null ? "Miss" : "Hit!")}");
             Image = image;
+        }
+
+        /// <summary>
+        /// サムネイルデータを引き継いで初期化
+        /// </summary>
+        /// <param name="thumbnail"></param>
+        public void Initialize(Thumbnail thumbnail)
+        {
+            if (_disposedValue) return;
+            if (!thumbnail.IsValid) return;
+
+            Initialize(thumbnail._image);
+            _imageSource = thumbnail._imageSource;
+            if (_imageSource is not null)
+            {
+                RaisePropertyChanged(nameof(ImageSource));
+            }
         }
 
         /// <summary>
@@ -405,7 +425,7 @@ namespace NeeView
             {
                 return new ThumbnailSource(ThumbnailType.Folder);
             }
-            else if (image ==ThumbnailResource.NoEntryImage)
+            else if (image == ThumbnailResource.NoEntryImage)
             {
                 return new ThumbnailSource(ThumbnailType.NoEntry);
             }
