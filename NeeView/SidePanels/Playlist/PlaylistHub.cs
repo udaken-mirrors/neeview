@@ -293,7 +293,7 @@ namespace NeeView
         {
             if (string.IsNullOrEmpty(NewPlaylist))
             {
-                new MessageDialog(Properties.Resources.PlaylistErrorDialog_FolderIsNotSet, Properties.Resources.Word_Error).ShowDialog();
+                new MessageDialog(Properties.TextResources.GetString("PlaylistErrorDialog.FolderIsNotSet"), Properties.TextResources.GetString("Word.Error")).ShowDialog();
                 return;
             }
 
@@ -323,7 +323,7 @@ namespace NeeView
             if (!File.Exists(SelectedItem)) return;
 
             var entry = ArchiveEntryUtility.CreateTemporaryEntry(SelectedItem);
-            bool isSucceed = await ConfirmFileIO.DeleteAsync(entry, Properties.Resources.Playlist_DeleteDialog_Title, null);
+            bool isSucceed = await ConfirmFileIO.DeleteAsync(entry, Properties.TextResources.GetString("Playlist.DeleteDialog.Title"), null);
             if (isSucceed)
             {
                 SelectedItem = DefaultPlaylist;

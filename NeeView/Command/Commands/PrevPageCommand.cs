@@ -4,7 +4,7 @@
     {
         public PrevPageCommand()
         {
-            this.Group = Properties.Resources.CommandGroup_Move;
+            this.Group = Properties.TextResources.GetString("CommandGroup.Move");
             this.ShortCutKey = "Right,RightClick";
             this.TouchGesture = "TouchR1,TouchR2";
             this.MouseGesture = "R";

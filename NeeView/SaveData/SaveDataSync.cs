@@ -134,10 +134,10 @@ namespace NeeView
             }
             catch (Exception ex)
             {
-                var message = Properties.Resources.FailedToSaveDataDialog_Setting_Message + System.Environment.NewLine + ex.Message;
+                var message = Properties.TextResources.GetString("FailedToSaveDataDialog.Setting.Message") + System.Environment.NewLine + ex.Message;
                 if (handleException)
                 {
-                    ToastService.Current.Show(new Toast(message, Properties.Resources.FailedToSaveDataDialog_Title, ToastIcon.Error));
+                    ToastService.Current.Show(new Toast(message, Properties.TextResources.GetString("FailedToSaveDataDialog.Title"), ToastIcon.Error));
                     return;
                 }
                 else
@@ -165,10 +165,10 @@ namespace NeeView
             }
             catch (Exception ex)
             {
-                var message = Properties.Resources.FailedToSaveDataDialog_History_Message + System.Environment.NewLine + ex.Message;
+                var message = Properties.TextResources.GetString("FailedToSaveDataDialog.History.Message") + System.Environment.NewLine + ex.Message;
                 if (handleException)
                 {
-                    ToastService.Current.Show(new Toast(message, Properties.Resources.FailedToSaveDataDialog_Title, ToastIcon.Error));
+                    ToastService.Current.Show(new Toast(message, Properties.TextResources.GetString("FailedToSaveDataDialog.Title"), ToastIcon.Error));
                     return;
                 }
                 else
@@ -188,10 +188,10 @@ namespace NeeView
             }
             catch (Exception ex)
             {
-                var message = Properties.Resources.FailedToSaveDataDialog_Bookmark_Message + System.Environment.NewLine + ex.Message;
+                var message = Properties.TextResources.GetString("FailedToSaveDataDialog.Bookmark.Message") + System.Environment.NewLine + ex.Message;
                 if (handleException)
                 {
-                    ToastService.Current.Show(new Toast(message, Properties.Resources.FailedToSaveDataDialog_Title, ToastIcon.Error));
+                    ToastService.Current.Show(new Toast(message, Properties.TextResources.GetString("FailedToSaveDataDialog.Title"), ToastIcon.Error));
                     return;
                 }
                 else

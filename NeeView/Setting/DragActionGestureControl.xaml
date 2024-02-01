@@ -21,9 +21,9 @@
 
     <DockPanel x:Name="Root">
         <DockPanel DockPanel.Dock="Bottom" Margin="0,0,0,5">
-            <TextBlock Text="{x:Static properties:Resources.MouseDragSettingWindow_New}" VerticalAlignment="Center" MinWidth="90" />
+            <TextBlock Text="{properties:TextBinding MouseDragSettingWindow.New}" VerticalAlignment="Center" MinWidth="90" />
 
-            <Button DockPanel.Dock="Right" Margin="5,0,5,0" Padding="10,0" VerticalAlignment="Center" Content="{x:Static properties:Resources.Word_Clear}" Command="{Binding ClearCommand}" TabIndex="4" />
+            <Button DockPanel.Dock="Right" Margin="5,0,5,0" Padding="10,0" VerticalAlignment="Center" Content="{properties:TextBinding Word.Clear}" Command="{Binding ClearCommand}" TabIndex="4" />
 
             <DockPanel ToolTip="{Binding DragToken.OverlapsText}">
                 <Image Source="{StaticResource ic_warning_48px}" Width="12" Margin="0,0,2,2" VerticalAlignment="Center">
@@ -42,7 +42,7 @@
         </DockPanel>
 
         <DockPanel DockPanel.Dock="Bottom" Margin="0,5,0,0">
-            <TextBlock Text="{x:Static properties:Resources.MouseDragSettingWindow_Old}" VerticalAlignment="Center" MinWidth="90" />
+            <TextBlock Text="{properties:TextBinding MouseDragSettingWindow.Old}" VerticalAlignment="Center" MinWidth="90" />
             <Grid x:Name="Dummy" Width="12" Margin="0,0,2,2" />
             <TextBox DockPanel.Dock="Bottom" x:Name="OldGestureText" Margin="0" VerticalAlignment="Center" IsReadOnly="True" IsHitTestVisible="False" BorderBrush="Transparent" IsTabStop="False"
                     Text="{Binding OriginalDrag}" />
@@ -55,13 +55,13 @@
         </Grid>
         <Popup Style="{StaticResource NVPopup}" IsOpen="{Binding ElementName=WindowHelp, Path=IsChecked}" PlacementTarget="{Binding ElementName=WindowHelp}" Placement="Top" HorizontalAlignment="Right">
             <ContentControl Style="{StaticResource NVPopupContent}">
-                <TextBlock Margin="10" Text="{x:Static properties:Resources.MouseDragSettingWindow_Remarks}" />
+                <TextBlock Margin="10" Text="{properties:TextBinding MouseDragSettingWindow.Remarks}" />
             </ContentControl>
         </Popup>
 
         <Grid x:Name="GestureBox" Margin="2,2,2,10" Background="{DynamicResource Window.Background}">
             <Border BorderBrush="{DynamicResource Control.Border}" BorderThickness="4" Background="{StaticResource DiagonalBrush}">
-                <TextBlock Text="{x:Static properties:Resources.MouseDragSettingWindow_Input}" VerticalAlignment="Center" HorizontalAlignment="Center" TextAlignment="Center"
+                <TextBlock Text="{properties:TextBinding MouseDragSettingWindow.Input}" VerticalAlignment="Center" HorizontalAlignment="Center" TextAlignment="Center"
                         Foreground="{DynamicResource Control.GrayText}" Background="{DynamicResource Window.Background}" Padding="10,5" />
             </Border>
         </Grid>

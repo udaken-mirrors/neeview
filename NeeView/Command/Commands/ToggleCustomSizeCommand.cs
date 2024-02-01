@@ -8,7 +8,7 @@ namespace NeeView
     {
         public ToggleCustomSizeCommand()
         {
-            this.Group = Properties.Resources.CommandGroup_ImageScale;
+            this.Group = Properties.TextResources.GetString("CommandGroup.ImageScale");
             this.IsShowMessage = true;
         }
 
@@ -19,7 +19,7 @@ namespace NeeView
 
         public override string ExecuteMessage(object? sender, CommandContext e)
         {
-            return Config.Current.ImageCustomSize.IsEnabled ? Properties.Resources.ToggleCustomSizeCommand_Off : Properties.Resources.ToggleCustomSizeCommand_On;
+            return Config.Current.ImageCustomSize.IsEnabled ? Properties.TextResources.GetString("ToggleCustomSizeCommand.Off") : Properties.TextResources.GetString("ToggleCustomSizeCommand.On");
         }
 
         public override bool CanExecute(object? sender, CommandContext e)

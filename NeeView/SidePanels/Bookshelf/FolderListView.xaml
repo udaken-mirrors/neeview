@@ -106,7 +106,7 @@
                                     </Image.Source>
                                 </Image>
                                 <Image DockPanel.Dock="Right" Source="{StaticResource fic_recursive_folder_24px}" Width="12" Height="12" VerticalAlignment="Center" Margin="0,2,0,0"
-                                        ToolTip="{x:Static properties:Resources.Bookshelf_SubFolder_ToolTip}"
+                                        ToolTip="{properties:TextBinding Bookshelf.SubFolder.ToolTip}"
                                         Visibility="{Binding FolderCollection, Converter={StaticResource FolderCollectionToFolderRecursiveVisibilityConverter}}" />
                                 <Border Margin="5,0">
                                     <nwc:LeftTrimmingTextBlock TextSource="{Binding FolderCollection.PlaceDispString}" ToolTip="{Binding FolderCollection.PlaceDispString}" VerticalAlignment="Center" />
@@ -119,15 +119,15 @@
 
                 <DockPanel KeyboardNavigation.TabNavigation="Local">
                     <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Top">
-                        <Button x:Name="FoderTreeButton" Style="{StaticResource FolderListButtonStyle}" TabIndex="2" ToolTip="{x:Static properties:Resources.Word_FoldersTree}"
+                        <Button x:Name="FoderTreeButton" Style="{StaticResource FolderListButtonStyle}" TabIndex="2" ToolTip="{properties:TextBinding Word.FoldersTree}"
                                 Command="{Binding ToggleVisibleFoldersTree}">
                             <Image Source="{StaticResource ic_treeview_a}" />
                             <Button.ContextMenu>
                                 <ContextMenu>
-                                    <MenuItem Header="{x:Static properties:Resources.FolderTreeLayout_Top}"
+                                    <MenuItem Header="{properties:TextBinding FolderTreeLayout.Top}"
                                             IsChecked="{Binding Model.FolderTreeLayout, Converter={StaticResource FolderTreeLayoutToBooleanConverter}, ConverterParameter={x:Static local:FolderTreeLayout.Top}}"
                                             Command="{Binding SetFolderTreeLayout}" CommandParameter="{x:Static local:FolderTreeLayout.Top}" />
-                                    <MenuItem Header="{x:Static properties:Resources.FolderTreeLayout_Left}"
+                                    <MenuItem Header="{properties:TextBinding FolderTreeLayout.Left}"
                                             IsChecked="{Binding Model.FolderTreeLayout, Converter={StaticResource FolderTreeLayoutToBooleanConverter}, ConverterParameter={x:Static local:FolderTreeLayout.Left}}"
                                             Command="{Binding SetFolderTreeLayout}" CommandParameter="{x:Static local:FolderTreeLayout.Left}" />
                                 </ContextMenu>
@@ -137,34 +137,34 @@
                     </StackPanel>
                     <WrapPanel Orientation="Horizontal" VerticalAlignment="Top" MinWidth="150">
                         <Button x:Name="FolderHomeButton" Style="{StaticResource FolderListButtonStyle}" Command="{Binding MoveToHome}" TabIndex="1"
-                                ToolTip="{x:Static properties:Resources.Bookshelf_Home_ToolTip}">
+                                ToolTip="{properties:TextBinding Bookshelf.Home.ToolTip}">
                             <Image Source="{StaticResource ic_home_24px_a}" />
                             <Button.ContextMenu>
                                 <ContextMenu>
-                                    <MenuItem Header="{x:Static properties:Resources.Bookshelf_Home_Menu_Set}" Command="{Binding SetHome}" />
+                                    <MenuItem Header="{properties:TextBinding Bookshelf.Home.Menu.Set}" Command="{Binding SetHome}" />
                                 </ContextMenu>
                             </Button.ContextMenu>
                         </Button>
                         <Button x:Name="FolderPrevButton" Style="{StaticResource FolderListButtonStyle}" Command="{Binding MoveToPrevious}" TabIndex="1" ContextMenuService.Placement="Bottom"
-                                ContextMenuOpening="FolderPrevButton_ContextMenuOpening" ToolTip="{x:Static properties:Resources.Bookshelf_Back_ToolTip}">
+                                ContextMenuOpening="FolderPrevButton_ContextMenuOpening" ToolTip="{properties:TextBinding Bookshelf.Back.ToolTip}">
                             <Image Source="{StaticResource ic_arrow_back_24px_a}" />
                             <Button.ContextMenu>
                                 <ContextMenu x:Name="FolderPrevButtonContextMenu" ItemContainerStyle="{StaticResource HistoryMenuItemContainerStyle}" />
                             </Button.ContextMenu>
                         </Button>
                         <Button x:Name="FolderNextButton" Style="{StaticResource FolderListButtonStyle}" Command="{Binding MoveToNext}" TabIndex="1" ContextMenuService.Placement="Bottom"
-                                ContextMenuOpening="FolderNextButton_ContextMenuOpening" ToolTip="{x:Static properties:Resources.Bookshelf_Next_ToolTip}">
+                                ContextMenuOpening="FolderNextButton_ContextMenuOpening" ToolTip="{properties:TextBinding Bookshelf.Next.ToolTip}">
                             <Image Source="{StaticResource ic_arrow_forward_24px_a}" />
                             <Button.ContextMenu>
                                 <ContextMenu x:Name="FolderNextButtonContextMenu" ItemContainerStyle="{StaticResource HistoryMenuItemContainerStyle}" />
                             </Button.ContextMenu>
                         </Button>
                         <Button x:Name="FolderUpButton" Style="{StaticResource FolderListButtonStyle}" Command="{Binding MoveToUp}" TabIndex="1"
-                                ToolTip="{x:Static properties:Resources.Bookshelf_Up_ToolTip}">
+                                ToolTip="{properties:TextBinding Bookshelf.Up.ToolTip}">
                             <Image Source="{StaticResource ic_arrow_up_24px_a}" />
                         </Button>
                         <Button x:Name="FolderSync" Style="{StaticResource FolderListButtonStyle}" Command="{Binding Sync}" TabIndex="1"
-                                ToolTip="{x:Static properties:Resources.Bookshelf_Sync_ToolTip}">
+                                ToolTip="{properties:TextBinding Bookshelf.Sync.ToolTip}">
                             <Image Source="{StaticResource ic_sync_24px_a}" />
                         </Button>
                         <ComboBox x:Name="FolderOrderComboBox" FontFamily="{DynamicResource ArrowFontFamily}" TabIndex="1" ItemsSource="{Binding FolderOrderList}" SelectedValuePath="Key"

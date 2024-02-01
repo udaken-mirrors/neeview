@@ -82,7 +82,7 @@ namespace NeeView
             var path = Config.Current.Script.ScriptFolder;
             if (string.IsNullOrEmpty(path))
             {
-                new MessageDialog(Properties.Resources.OpenScriptsFolderErrorDialog_FolderIsNotSet, Properties.Resources.OpenScriptsFolderErrorDialog_Title).ShowDialog();
+                new MessageDialog(Properties.TextResources.GetString("OpenScriptsFolderErrorDialog.FolderIsNotSet"), Properties.TextResources.GetString("OpenScriptsFolderErrorDialog.Title")).ShowDialog();
                 return;
             }
 
@@ -99,7 +99,7 @@ namespace NeeView
             }
             catch (Exception ex)
             {
-                new MessageDialog(ex.Message, Properties.Resources.OpenScriptsFolderErrorDialog_Title).ShowDialog();
+                new MessageDialog(ex.Message, Properties.TextResources.GetString("OpenScriptsFolderErrorDialog.Title")).ShowDialog();
             }
         }
 

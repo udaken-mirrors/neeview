@@ -96,7 +96,7 @@ namespace NeeView
         {
             var oldSelect = _selectedDestinationFolder;
 
-            var list = new List<DestinationFolder> { new DestinationFolder(Properties.Resources.Word_None, "") };
+            var list = new List<DestinationFolder> { new DestinationFolder(Properties.TextResources.GetString("Word.None"), "") };
             list.AddRange(Config.Current.System.DestinationFodlerCollection);
             DestinationFolderList = list;
 

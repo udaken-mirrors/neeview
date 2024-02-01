@@ -228,7 +228,7 @@ namespace NeeView
             if (_isMoving)
             {
                 Stop();
-                InfoMessage.Current.SetMessage(InfoMessageType.Notify, Properties.Resources.ToggleSlideShowCommand_Off);
+                InfoMessage.Current.SetMessage(InfoMessageType.Notify, Properties.TextResources.GetString("ToggleSlideShowCommand.Off"));
             }
         }
 

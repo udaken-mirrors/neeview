@@ -4,7 +4,7 @@
     {
         public StretchWindowCommand()
         {
-            this.Group = Properties.Resources.CommandGroup_Window;
+            this.Group = Properties.TextResources.GetString("CommandGroup.Window");
             this.IsShowMessage = false;
         }
 

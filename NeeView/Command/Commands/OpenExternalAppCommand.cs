@@ -6,7 +6,7 @@ namespace NeeView
     {
         public OpenExternalAppCommand()
         {
-            this.Group = Properties.Resources.CommandGroup_File;
+            this.Group = Properties.TextResources.GetString("CommandGroup.File");
             this.IsShowMessage = false;
 
             this.ParameterSource = new CommandParameterSource(new OpenExternalAppCommandParameter());

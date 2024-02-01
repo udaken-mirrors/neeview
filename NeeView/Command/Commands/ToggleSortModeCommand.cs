@@ -4,7 +4,7 @@
     {
         public ToggleSortModeCommand()
         {
-            this.Group = Properties.Resources.CommandGroup_PageOrder;
+            this.Group = Properties.TextResources.GetString("CommandGroup.PageOrder");
             this.IsShowMessage = true;
         }
         public override string ExecuteMessage(object? sender, CommandContext e)

@@ -141,7 +141,7 @@ namespace NeeView
             var text = new string(source.Where(e => !_invalidChars.Contains(e)).ToArray());
             if (withToast && text != source)
             {
-                ToastService.Current.Show(new Toast(Properties.Resources.Notice_InvalidFileNameChars, "", ToastIcon.Information));
+                ToastService.Current.Show(new Toast(Properties.TextResources.GetString("Notice.InvalidFileNameChars"), "", ToastIcon.Information));
             }
             return text;
         }
@@ -151,7 +151,7 @@ namespace NeeView
             var text = new string(source.Where(e => !LoosePath.Separators.Contains(e)).ToArray());
             if (withToast && text != source)
             {
-                ToastService.Current.Show(new Toast(Properties.Resources.Notice_InvalidSeparatorChars, "", ToastIcon.Information));
+                ToastService.Current.Show(new Toast(Properties.TextResources.GetString("Notice.InvalidSeparatorChars"), "", ToastIcon.Information));
             }
             return text;
         }

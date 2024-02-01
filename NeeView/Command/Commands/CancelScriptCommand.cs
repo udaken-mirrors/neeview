@@ -4,7 +4,7 @@
     {
         public CancelScriptCommand()
         {
-            this.Group = Properties.Resources.CommandGroup_Script;
+            this.Group = Properties.TextResources.GetString("CommandGroup.Script");
             this.IsShowMessage = false;
         }
 

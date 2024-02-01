@@ -7,7 +7,7 @@
         xmlns:properties="clr-namespace:NeeView.Properties"
         mc:Ignorable="d"
         Style="{StaticResource ChromeDialogStyle}"
-        Title="{x:Static properties:Resources.Word_Rename}" SizeToContent="Height" Width="512" ResizeMode="NoResize">
+        Title="{properties:TextBinding Word.Rename}" SizeToContent="Height" Width="512" ResizeMode="NoResize">
 
     <Window.Resources>
         <Style TargetType="Button" BasedOn="{StaticResource NVButton}">
@@ -19,9 +19,9 @@
     <DockPanel Margin="5,10" >
 
         <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" FlowDirection="RightToLeft">
-            <Button x:Name="CancelButton" Content="{x:Static properties:Resources.Word_Cancel}" Click="CancelButton_Click" TabIndex="4"/>
-            <Button x:Name="OKButton" Content="{x:Static properties:Resources.Word_OK}" Click="OKButton_Click" TabIndex="3"/>
-            <Button x:Name="ResetButton" Content="{x:Static properties:Resources.Word_Reset}" Click="ResetButton_Click" TabIndex="2"/>
+            <Button x:Name="CancelButton" Content="{properties:TextBinding Word.Cancel}" Click="CancelButton_Click" TabIndex="4"/>
+            <Button x:Name="OKButton" Content="{properties:TextBinding Word.OK}" Click="OKButton_Click" TabIndex="3"/>
+            <Button x:Name="ResetButton" Content="{properties:TextBinding Word.Reset}" Click="ResetButton_Click" TabIndex="2"/>
         </StackPanel>
         <Grid Margin="5">
             <TextBox VerticalAlignment="Center" x:Name="NameTextBox" Text="{Binding Text, Mode=TwoWay}" Margin="0,5" TabIndex="1"/>

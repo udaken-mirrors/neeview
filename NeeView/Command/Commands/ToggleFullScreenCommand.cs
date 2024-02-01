@@ -7,7 +7,7 @@ namespace NeeView
     {
         public ToggleFullScreenCommand()
         {
-            this.Group = Properties.Resources.CommandGroup_Window;
+            this.Group = Properties.TextResources.GetString("CommandGroup.Window");
             this.ShortCutKey = "F11";
             this.MouseGesture = "U";
             this.IsShowMessage = false;
@@ -22,7 +22,7 @@ namespace NeeView
         public override string ExecuteMessage(object? sender, CommandContext e)
         {
             var windowStateManager = MainWindow.Current.WindowStateManager;
-            return windowStateManager.IsFullScreen ? Properties.Resources.ToggleFullScreenCommand_Off : Properties.Resources.ToggleFullScreenCommand_On;
+            return windowStateManager.IsFullScreen ? Properties.TextResources.GetString("ToggleFullScreenCommand.Off") : Properties.TextResources.GetString("ToggleFullScreenCommand.On");
         }
 
         public override void Execute(object? sender, CommandContext e)

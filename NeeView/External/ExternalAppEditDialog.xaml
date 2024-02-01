@@ -8,7 +8,7 @@
         xmlns:properties="clr-namespace:NeeView.Properties"
         mc:Ignorable="d"
         Style="{StaticResource ChromeDialogStyle}" ResizeMode="NoResize"
-        Title="{x:Static properties:Resources.ExternalAppEditDialog_Title}"
+        Title="{properties:TextBinding ExternalAppEditDialog.Title}"
         SizeToContent="Height" Width="600">
 
 
@@ -35,8 +35,8 @@
     <DockPanel Margin="5" >
 
         <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" HorizontalAlignment="Right" Margin="5">
-            <Button x:Name="OKButton" Style="{StaticResource ButtonStyle}" Content="{x:Static properties:Resources.Word_OK}" Click="OKButton_Click" />
-            <Button x:Name="CancelButton" Style="{StaticResource ButtonStyle}" Content="{x:Static properties:Resources.Word_Cancel}" Click="CancelButton_Click" />
+            <Button x:Name="OKButton" Style="{StaticResource ButtonStyle}" Content="{properties:TextBinding Word.OK}" Click="OKButton_Click" />
+            <Button x:Name="CancelButton" Style="{StaticResource ButtonStyle}" Content="{properties:TextBinding Word.Cancel}" Click="CancelButton_Click" />
         </StackPanel>
 
         <Grid DockPanel.Dock="Top" Margin="10">
@@ -53,19 +53,19 @@
                 <RowDefinition Height="auto" />
             </Grid.RowDefinitions>
 
-            <TextBlock Grid.Column="0" Grid.Row="0" Style="{StaticResource HeaderStyle}" Text="{x:Static properties:Resources.Word_Name}" />
+            <TextBlock Grid.Column="0" Grid.Row="0" Style="{StaticResource HeaderStyle}" Text="{properties:TextBinding Word.Name}" />
             <TextBox Grid.Column="1" Grid.Row="0" VerticalAlignment="Center" Text="{Binding Name}" />
 
-            <TextBlock Grid.Column="0" Grid.Row="1" Style="{StaticResource HeaderStyle}" Text="{x:Static properties:Resources.OpenExternalAppCommandParameter_Command}" />
+            <TextBlock Grid.Column="0" Grid.Row="1" Style="{StaticResource HeaderStyle}" Text="{properties:TextBinding OpenExternalAppCommandParameter.Command}" />
             <nvc:FileNameBox Grid.Column="1" Grid.Row="1" VerticalAlignment="Center" Text="{Binding Command, Mode=TwoWay}" FileDialogType="OpenFile" Filter="EXE|*.exe|All|*.*" />
 
-            <TextBlock Grid.Column="0" Grid.Row="2" Style="{StaticResource HeaderStyle}" Text="{x:Static properties:Resources.OpenExternalAppCommandParameter_Parameter}" />
+            <TextBlock Grid.Column="0" Grid.Row="2" Style="{StaticResource HeaderStyle}" Text="{properties:TextBinding OpenExternalAppCommandParameter.Parameter}" />
             <TextBox Grid.Column="1" Grid.Row="2" VerticalAlignment="Center" Text="{Binding Model.Parameter}" />
 
-            <TextBlock Grid.Column="0" Grid.Row="3" Style="{StaticResource HeaderStyle}" Text="{x:Static properties:Resources.OpenExternalAppCommandParameter_WorkingDirectory}" />
+            <TextBlock Grid.Column="0" Grid.Row="3" Style="{StaticResource HeaderStyle}" Text="{properties:TextBinding OpenExternalAppCommandParameter.WorkingDirectory}" />
             <nvc:FileNameBox Grid.Column="1" Grid.Row="3" VerticalAlignment="Center" Text="{Binding Model.WorkingDirectory, Mode=TwoWay}" FileDialogType="Directory" />
 
-            <TextBlock Grid.Column="0" Grid.Row="4" Style="{StaticResource HeaderStyle}" Text="{x:Static properties:Resources.OpenExternalAppCommandParameter_ArchivePolicy}" />
+            <TextBlock Grid.Column="0" Grid.Row="4" Style="{StaticResource HeaderStyle}" Text="{properties:TextBinding OpenExternalAppCommandParameter.ArchivePolicy}" />
             <ComboBox Grid.Column="1" Grid.Row="4" VerticalAlignment="Center" ItemsSource="{Binding ArchivePolicyList}" DisplayMemberPath="Value" SelectedValuePath="Key" SelectedValue="{Binding Model.ArchivePolicy}" />
 
             <TextBlock Grid.Column="0" Grid.Row="5" Style="{StaticResource HeaderStyle}" Text="" />

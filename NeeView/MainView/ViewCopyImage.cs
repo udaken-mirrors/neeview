@@ -1,5 +1,4 @@
-﻿using NeeView.Properties;
-using System;
+﻿using System;
 using System.Linq;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -34,7 +33,7 @@ namespace NeeView
             }
             catch (Exception e)
             {
-                new MessageDialog($"{Resources.Word_Cause}: {e.Message}", Resources.CopyImageErrorDialog_Title).ShowDialog();
+                new MessageDialog($"{Properties.TextResources.GetString("Word.Cause")}: {e.Message}", Properties.TextResources.GetString("CopyImageErrorDialog.Title")).ShowDialog();
             }
         }
 

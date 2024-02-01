@@ -12,7 +12,7 @@ namespace NeeView.Setting
     /// </summary>
     public class SettingPageHistory : SettingPage
     {
-        public SettingPageHistory() : base(Properties.Resources.SettingPage_History)
+        public SettingPageHistory() : base(Properties.TextResources.GetString("SettingPage.History"))
         {
             this.Children = new List<SettingPage>
             {
@@ -21,16 +21,16 @@ namespace NeeView.Setting
 
             this.Items = new List<SettingItem>();
 
-            var section = new SettingItemSection(Properties.Resources.SettingPage_History_General);
+            var section = new SettingItemSection(Properties.TextResources.GetString("SettingPage.History.General"));
             section.Children.Add(new SettingItemIndexValue<int>(PropertyMemberElement.Create(Config.Current.History, nameof(HistoryConfig.HistoryEntryPageCount)), new HistoryEntryPageCount(), true));
             section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.History, nameof(HistoryConfig.IsInnerArchiveHistoryEnabled))));
             section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.History, nameof(HistoryConfig.IsUncHistoryEnabled))));
             section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.History, nameof(HistoryConfig.IsForceUpdateHistory))));
             section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.History, nameof(HistoryConfig.IsAutoCleanupEnabled))));
-            section.Children.Add(new SettingItemButton(Properties.Resources.SettingPage_History_GeneralDelete, Properties.Resources.SettingPage_History_GeneralDeleteButton, RemoveHistory));
+            section.Children.Add(new SettingItemButton(Properties.TextResources.GetString("SettingPage.History.GeneralDelete"), Properties.TextResources.GetString("SettingPage.History.GeneralDeleteButton"), RemoveHistory));
             this.Items.Add(section);
 
-            section = new SettingItemSection(Properties.Resources.SettingPage_History_GeneralLimit, Properties.Resources.SettingPage_History_GeneralLimit_Remarks);
+            section = new SettingItemSection(Properties.TextResources.GetString("SettingPage.History.GeneralLimit"), Properties.TextResources.GetString("SettingPage.History.GeneralLimit.Remarks"));
             section.Children.Add(new SettingItemIndexValue<int>(PropertyMemberElement.Create(Config.Current.History, nameof(HistoryConfig.LimitSize)), new HistoryLimitSize(), false));
             section.Children.Add(new SettingItemIndexValue<TimeSpan>(PropertyMemberElement.Create(Config.Current.History, nameof(HistoryConfig.LimitSpan)), new HistoryLimitSpan(), false));
             this.Items.Add(section);
@@ -48,7 +48,7 @@ namespace NeeView.Setting
         {
             BookHistoryCollection.Current.Clear();
 
-            var dialog = new MessageDialog("", Properties.Resources.HistoryDeletedDialog_Title);
+            var dialog = new MessageDialog("", Properties.TextResources.GetString("HistoryDeletedDialog.Title"));
             if (element != null)
             {
                 dialog.Owner = Window.GetWindow(element);
@@ -83,7 +83,7 @@ namespace NeeView.Setting
                 Value = value;
             }
 
-            public override string ValueString => $"{Value} {Properties.Resources.Word_Page}";
+            public override string ValueString => $"{Value} {Properties.TextResources.GetString("Word.Page")}";
         }
 
         #endregion
@@ -107,7 +107,7 @@ namespace NeeView.Setting
                 Value = value;
             }
 
-            public override string ValueString => Value == -1 ? Properties.Resources.Word_NoLimit : Value.ToString();
+            public override string ValueString => Value == -1 ? Properties.TextResources.GetString("Word.NoLimit") : Value.ToString();
         }
 
         /// <summary>
@@ -136,7 +136,7 @@ namespace NeeView.Setting
                 Value = value;
             }
 
-            public override string ValueString => Value == default ? Properties.Resources.Word_NoLimit : string.Format(Properties.Resources.Word_DaysAgo, Value.Days);
+            public override string ValueString => Value == default ? Properties.TextResources.GetString("Word.NoLimit") : string.Format(Properties.TextResources.GetString("Word.DaysAgo"), Value.Days);
         }
 
         #endregion
@@ -148,9 +148,9 @@ namespace NeeView.Setting
     /// </summary>
     public class SettingPageHistoryPageView : SettingPage
     {
-        public SettingPageHistoryPageView() : base(Properties.Resources.SettingPage_History_PageViewRecord)
+        public SettingPageHistoryPageView() : base(Properties.TextResources.GetString("SettingPage.History.PageViewRecord"))
         {
-            var section = new SettingItemSection(Properties.Resources.SettingPage_History_PageViewRecord);
+            var section = new SettingItemSection(Properties.TextResources.GetString("SettingPage.History.PageViewRecord"));
             section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.PageViewRecorder, nameof(PageViewRecorderConfig.IsSavePageViewRecord))));
             section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.PageViewRecorder, nameof(PageViewRecorderConfig.PageViewRecordFilePath))) { IsStretch = true });
 

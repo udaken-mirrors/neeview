@@ -27,7 +27,7 @@ namespace NeeView
             {
                 writer.WriteLine(HtmlHelpUtility.CreateHeader("NeeView MainMenu List"));
 
-                writer.WriteLine($"<body><h1>NeeView {Properties.Resources.Word_MainMenu}</h1>");
+                writer.WriteLine($"<body><h1>NeeView {Properties.TextResources.GetString("Word.MainMenu")}</h1>");
 
                 foreach (var pair in groups)
                 {

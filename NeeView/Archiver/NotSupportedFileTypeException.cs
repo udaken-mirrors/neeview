@@ -5,7 +5,7 @@ namespace NeeView
 {
     public class NotSupportedFileTypeException : Exception
     {
-        public NotSupportedFileTypeException(string extension) : base(string.Format(Properties.Resources.Notice_NotSupportedFileType, extension))
+        public NotSupportedFileTypeException(string extension) : base(string.Format(Properties.TextResources.GetString("Notice.NotSupportedFileType"), extension))
         {
             Extension = extension;
         }

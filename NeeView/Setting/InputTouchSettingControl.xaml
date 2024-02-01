@@ -59,7 +59,7 @@
             </Grid>
             <Popup Style="{StaticResource NVPopup}" IsOpen="{Binding ElementName=WindowHelp, Path=IsChecked}" PlacementTarget="{Binding ElementName=WindowHelp}" Placement="Top" HorizontalAlignment="Right">
                 <ContentControl Style="{StaticResource NVPopupContent}">
-                    <TextBlock Margin="10" Text="{x:Static properties:Resources.InputTouchControl_Remarks}" />
+                    <TextBlock Margin="10" Text="{properties:TextBinding InputTouchControl.Remarks}" />
                 </ContentControl>
             </Popup>
 
@@ -113,7 +113,7 @@
                     <TextBlock Text="Center" Grid.Column="2" Grid.ColumnSpan="2" Margin="6" Foreground="{DynamicResource Control.GrayText}" Background="{DynamicResource Window.Background}"
                             HorizontalAlignment="Center" VerticalAlignment="Top" />
                 </Grid>
-                <TextBlock Text="{x:Static properties:Resources.InputTouchControl_TouchInput}" VerticalAlignment="Center" HorizontalAlignment="Center" TextAlignment="Center" Padding="10,5"
+                <TextBlock Text="{properties:TextBinding InputTouchControl.TouchInput}" VerticalAlignment="Center" HorizontalAlignment="Center" TextAlignment="Center" Padding="10,5"
                         Foreground="{DynamicResource Control.GrayText}" Background="{DynamicResource Window.Background}" />
 
             </Grid>

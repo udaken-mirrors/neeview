@@ -5,7 +5,7 @@
     {
         public GestureDragAction(string name) : base(name)
         {
-            Note = Properties.Resources.DragActionType_Gesture;
+            Note = Properties.TextResources.GetString("DragActionType.Gesture");
             IsLocked = true;
             IsDummy = true;
             DragKey = new DragKey("RightButton");

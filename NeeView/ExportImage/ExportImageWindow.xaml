@@ -1,7 +1,7 @@
 ﻿<Window x:Class="NeeView.ExportImageWindow" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:local="clr-namespace:NeeView"
         xmlns:nw="clr-namespace:NeeView.Windows" xmlns:properties="clr-namespace:NeeView.Properties" mc:Ignorable="d" Style="{StaticResource ChromeWindowStyle}"
-        Title="{x:Static properties:Resources.ExportImageWindow_Title}" Height="600" Width="800" ResizeMode="CanResizeWithGrip">
+        Title="{properties:TextBinding ExportImageWindow.Title}" Height="600" Width="800" ResizeMode="CanResizeWithGrip">
 
     <Window.Resources>
         <ResourceDictionary>
@@ -46,12 +46,12 @@
         <Border BorderThickness="0,0,1,0" BorderBrush="{DynamicResource Panel.Border}" Background="{DynamicResource Panel.Background}">
             <DockPanel>
                 <StackPanel x:Name="Buttons" DockPanel.Dock="Bottom" Orientation="Horizontal" HorizontalAlignment="Right" Margin="10">
-                    <Button x:Name="SaveButton" Style="{StaticResource TextButtonMain}" Content="{x:Static properties:Resources.ExportImageWindow_SaveAs}" Click="SaveButton_Click" />
-                    <Button x:Name="CancelButton" Style="{StaticResource TextButton}" Content="{x:Static properties:Resources.Word_Cancel}" Click="CancelButton_Click" />
+                    <Button x:Name="SaveButton" Style="{StaticResource TextButtonMain}" Content="{properties:TextBinding ExportImageWindow.SaveAs}" Click="SaveButton_Click" />
+                    <Button x:Name="CancelButton" Style="{StaticResource TextButton}" Content="{properties:TextBinding Word.Cancel}" Click="CancelButton_Click" />
                 </StackPanel>
                 <StackPanel DockPanel.Dock="Top" Margin="10">
                     <StackPanel Style="{StaticResource ItemStack}">
-                        <TextBlock Style="{StaticResource Header}" Text="{x:Static properties:Resources.ExportImageWindow_Mode}" />
+                        <TextBlock Style="{StaticResource Header}" Text="{properties:TextBinding ExportImageWindow.Mode}" />
                         <ComboBox ItemsSource="{Binding ExportImageModeList}" DisplayMemberPath="Value" SelectedValuePath="Key" SelectedValue="{Binding Mode}" TabIndex="1" />
 
                         <StackPanel>
@@ -66,13 +66,13 @@
                                 </Style>
                             </StackPanel.Style>
 
-                            <CheckBox Content="{x:Static properties:Resources.ExportImageWindow_InclideBackground}" IsChecked="{Binding HasBackground}" Margin="20,10,0,0" TabIndex="1"
+                            <CheckBox Content="{properties:TextBinding ExportImageWindow.InclideBackground}" IsChecked="{Binding HasBackground}" Margin="20,10,0,0" TabIndex="1"
                                 FocusVisualStyle="{StaticResource NVBorderFocusVisual}"/>
 
-                            <CheckBox Content="{x:Static properties:Resources.ExportImageWindow_IsOriginalSize}" IsChecked="{Binding IsOriginalSize}" Margin="20,10,0,0" TabIndex="1"
+                            <CheckBox Content="{properties:TextBinding ExportImageWindow.IsOriginalSize}" IsChecked="{Binding IsOriginalSize}" Margin="20,10,0,0" TabIndex="1"
                                 FocusVisualStyle="{StaticResource NVBorderFocusVisual}"/>
 
-                            <CheckBox Content="{x:Static properties:Resources.ExportImageWindow_IsDotKeep}" IsChecked="{Binding IsDotKeep}" Margin="20,10,0,0" TabIndex="1"
+                            <CheckBox Content="{properties:TextBinding ExportImageWindow.IsDotKeep}" IsChecked="{Binding IsDotKeep}" Margin="20,10,0,0" TabIndex="1"
                                 FocusVisualStyle="{StaticResource NVBorderFocusVisual}"/>
 
                         </StackPanel>
@@ -83,7 +83,7 @@
                 <StackPanel DockPanel.Dock="Bottom" VerticalAlignment="Bottom" Margin="10,0">
 
                     <StackPanel Style="{StaticResource ItemStack}">
-                        <TextBlock Style="{StaticResource Header}" Text="{x:Static properties:Resources.ExportImageWindow_Folder}" />
+                        <TextBlock Style="{StaticResource Header}" Text="{properties:TextBinding ExportImageWindow.Folder}" />
                         <DockPanel>
                             <Button x:Name="DestinationFolderOptionButton" DockPanel.Dock="Right" Style="{StaticResource IconButton}" Click="DestinationFolderOptionButton_Click" TabIndex="102">
                                 <Image Source="{StaticResource ic_setting_24px_a}" Width="16" Height="16" />

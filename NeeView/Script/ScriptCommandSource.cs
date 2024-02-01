@@ -41,15 +41,15 @@ namespace NeeView
             switch (filename)
             {
                 case OnBookLoadedFilename:
-                    source.Remarks = Properties.Resources.ScriptOnBookLoadedCommand_Remarks;
+                    source.Remarks = Properties.TextResources.GetString("ScriptOnBookLoadedCommand.Remarks");
                     break;
 
                 case OnPageChangedFilename:
-                    source.Remarks = Properties.Resources.ScriptOnPageChangedCommand_Remarks;
+                    source.Remarks = Properties.TextResources.GetString("ScriptOnPageChangedCommand.Remarks");
                     break;
 
                 default:
-                    source.Remarks = Properties.Resources.ScriptCommand_Remarks;
+                    source.Remarks = Properties.TextResources.GetString("ScriptCommand.Remarks");
                     source.IsCloneable = true;
                     break;
             }

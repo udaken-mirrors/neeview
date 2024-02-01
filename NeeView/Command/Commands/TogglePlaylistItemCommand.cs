@@ -8,7 +8,7 @@ namespace NeeView
     {
         public TogglePlaylistItemCommand()
         {
-            this.Group = Properties.Resources.CommandGroup_Playlist;
+            this.Group = Properties.TextResources.GetString("CommandGroup.Playlist");
             this.ShortCutKey = "Ctrl+M";
             this.IsShowMessage = true;
         }
@@ -20,7 +20,7 @@ namespace NeeView
 
         public override string ExecuteMessage(object? sender, CommandContext e)
         {
-            return BookOperation.Current.Playlist.IsMarked ? Properties.Resources.TogglePlaylistItemCommand_Off : Properties.Resources.TogglePlaylistItemCommand_On;
+            return BookOperation.Current.Playlist.IsMarked ? Properties.TextResources.GetString("TogglePlaylistItemCommand.Off") : Properties.TextResources.GetString("TogglePlaylistItemCommand.On");
         }
 
         public override bool CanExecute(object? sender, CommandContext e)

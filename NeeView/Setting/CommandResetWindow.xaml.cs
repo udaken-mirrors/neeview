@@ -72,9 +72,9 @@ namespace NeeView.Setting
         /// </summary>
         public Dictionary<InputScheme, string> InputScemeList { get; } = new Dictionary<InputScheme, string>
         {
-            [InputScheme.TypeA] = Properties.Resources.InputSceme_TypeA,
-            [InputScheme.TypeB] = Properties.Resources.InputSceme_TypeB,
-            [InputScheme.TypeC] = Properties.Resources.InputSceme_TypeC
+            [InputScheme.TypeA] = Properties.TextResources.GetString("InputSceme.TypeA"),
+            [InputScheme.TypeB] = Properties.TextResources.GetString("InputSceme.TypeB"),
+            [InputScheme.TypeC] = Properties.TextResources.GetString("InputSceme.TypeC")
         };
 
         /// <summary>
@@ -82,9 +82,9 @@ namespace NeeView.Setting
         /// </summary>
         public Dictionary<InputScheme, string> InputScemeNoteList { get; } = new Dictionary<InputScheme, string>
         {
-            [InputScheme.TypeA] = ResourceService.Replace(Properties.Resources.InputSceme_TypeA_Remarks),
-            [InputScheme.TypeB] = ResourceService.Replace(Properties.Resources.InputSceme_TypeB_Remarks),
-            [InputScheme.TypeC] = ResourceService.Replace(Properties.Resources.InputSceme_TypeC_Remarks),
+            [InputScheme.TypeA] = ResourceService.Replace(Properties.TextResources.GetString("InputSceme.TypeA.Remarks")),
+            [InputScheme.TypeB] = ResourceService.Replace(Properties.TextResources.GetString("InputSceme.TypeB.Remarks")),
+            [InputScheme.TypeC] = ResourceService.Replace(Properties.TextResources.GetString("InputSceme.TypeC.Remarks")),
         };
 
         /// <summary>

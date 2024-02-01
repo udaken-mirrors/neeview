@@ -17,9 +17,9 @@
         
         <DockPanel Margin="10" KeyboardNavigation.TabNavigation="Local">
             <DockPanel DockPanel.Dock="Bottom">
-                <TextBlock Text="{x:Static properties:Resources.MouseGestureControl_New}" VerticalAlignment="Center" MinWidth="90"/>
+                <TextBlock Text="{properties:TextBinding MouseGestureControl.New}" VerticalAlignment="Center" MinWidth="90"/>
 
-                <Button DockPanel.Dock="Right" VerticalAlignment="Center" Margin="2" Padding="10,2" Content="{x:Static properties:Resources.Word_Clear}" Command="{Binding ClearCommand}" FocusVisualStyle="{StaticResource NVBorderFocusVisual}" TabIndex="2"/>
+                <Button DockPanel.Dock="Right" VerticalAlignment="Center" Margin="2" Padding="10,2" Content="{properties:TextBinding Word.Clear}" Command="{Binding ClearCommand}" FocusVisualStyle="{StaticResource NVBorderFocusVisual}" TabIndex="2"/>
 
                 <DockPanel ToolTip="{Binding GestureToken.OverlapsText}">
 
@@ -41,7 +41,7 @@
 
             </DockPanel>
             <DockPanel DockPanel.Dock="Bottom">
-                <TextBlock Text="{x:Static properties:Resources.MouseGestureControl_Old}"  VerticalAlignment="Center" MinWidth="90"/>
+                <TextBlock Text="{properties:TextBinding MouseGestureControl.Old}"  VerticalAlignment="Center" MinWidth="90"/>
                 <Grid Width="12" Margin="0,0,2,2"/>
                 <TextBox DockPanel.Dock="Bottom" x:Name="OldGestureText" Margin="2" FontFamily="Meiryo" VerticalAlignment="Center" IsReadOnly="True" IsHitTestVisible="False" BorderBrush="Transparent" IsTabStop="False"
                            Text="{Binding OriginalGesture, Converter={StaticResource MouseGestureToDispTextConverter}}" />
@@ -54,13 +54,13 @@
             </Grid>
             <Popup Style="{StaticResource NVPopup}" IsOpen="{Binding ElementName=WindowHelp, Path=IsChecked}" PlacementTarget="{Binding ElementName=WindowHelp}" Placement="Top" HorizontalAlignment="Right">
                 <ContentControl Style="{StaticResource NVPopupContent}">
-                    <TextBlock Margin="10" Text="{x:Static properties:Resources.MouseGestureControl_Remarks}"/>
+                    <TextBlock Margin="10" Text="{properties:TextBinding MouseGestureControl.Remarks}"/>
                 </ContentControl>
             </Popup>
 
             <Border x:Name="GestureBox" Margin="2" Background="{DynamicResource Window.Background}">
                 <Border BorderThickness="4" BorderBrush="{DynamicResource Control.Border}" Background="{StaticResource DiagonalBrush}">
-                <TextBlock Text="{x:Static properties:Resources.MouseGestureControl_InputGesture}" VerticalAlignment="Center" HorizontalAlignment="Center" TextAlignment="Center"
+                <TextBlock Text="{properties:TextBinding MouseGestureControl.InputGesture}" VerticalAlignment="Center" HorizontalAlignment="Center" TextAlignment="Center"
                         Foreground="{DynamicResource Control.GrayText}" Background="{DynamicResource Window.Background}" Padding="20,10" />
                 </Border>
             </Border>

@@ -68,7 +68,7 @@ namespace NeeView.Data
                 TypeCode.String => "string",
                 TypeCode.Int32 => "number",
                 TypeCode.Double => "number",
-                _ => throw new NotSupportedException(string.Format(Properties.Resources.OptionArgumentException_NotSupportType, _info.PropertyType)),
+                _ => throw new NotSupportedException(string.Format(Properties.TextResources.GetString("OptionArgumentException.NotSupportType"), _info.PropertyType)),
             };
         }
 
@@ -104,7 +104,7 @@ namespace NeeView.Data
                     _info.SetValue(_source, double.Parse(value, CultureInfo.InvariantCulture));
                     break;
                 default:
-                    throw new NotSupportedException(string.Format(Properties.Resources.OptionArgumentException_NotSupportType, _info.PropertyType.Name));
+                    throw new NotSupportedException(string.Format(Properties.TextResources.GetString("OptionArgumentException.NotSupportType"), _info.PropertyType.Name));
             }
         }
     }

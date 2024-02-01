@@ -96,7 +96,7 @@ namespace NeeView
                 return "";
             }
 
-            var inner = archiver.Parent != null ? Properties.Resources.Word_Inner + " " : "";
+            var inner = archiver.Parent != null ? Properties.TextResources.GetString("Word.Inner") + " " : "";
 
             var extension = LoosePath.GetExtension(archiver.EntryName);
 
@@ -104,17 +104,17 @@ namespace NeeView
             return archiverType switch
             {
                 ArchiverType.FolderArchive
-                    => Properties.Resources.ArchiveFormat_Folder,
+                    => Properties.TextResources.GetString("ArchiveFormat.Folder"),
                 ArchiverType.ZipArchiver or ArchiverType.SevenZipArchiver or ArchiverType.SusieArchiver
-                    => inner + Properties.Resources.ArchiveFormat_CompressedFile + $"({extension})",
+                    => inner + Properties.TextResources.GetString("ArchiveFormat.CompressedFile") + $"({extension})",
                 ArchiverType.PdfArchiver
-                    => inner + Properties.Resources.ArchiveFormat_Pdf + $"({extension})",
+                    => inner + Properties.TextResources.GetString("ArchiveFormat.Pdf") + $"({extension})",
                 ArchiverType.MediaArchiver
-                    => inner + Properties.Resources.ArchiveFormat_Media + $"({extension})",
+                    => inner + Properties.TextResources.GetString("ArchiveFormat.Media") + $"({extension})",
                 ArchiverType.PlaylistArchiver
-                    => Properties.Resources.ArchiveFormat_Playlist,
+                    => Properties.TextResources.GetString("ArchiveFormat.Playlist"),
                 _
-                    => Properties.Resources.ArchiveFormat_Unknown,
+                    => Properties.TextResources.GetString("ArchiveFormat.Unknown"),
             };
         }
 
@@ -122,7 +122,7 @@ namespace NeeView
         {
             string text = "";
             text += GetArchiverDetail() + "\n";
-            text += string.Format(Properties.Resources.BookAddressInfo_Page, Pages.Count);
+            text += string.Format(Properties.TextResources.GetString("BookAddressInfo.Page"), Pages.Count);
             return text;
         }
 

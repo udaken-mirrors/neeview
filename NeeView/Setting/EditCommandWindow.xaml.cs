@@ -92,7 +92,7 @@ namespace NeeView.Setting
 
             var commandMap = CommandTable.Current;
 
-            this.Title = $"{commandMap[key].Text} - {Properties.Resources.EditCommandWindow_Title}";
+            this.Title = $"{commandMap[key].Text} - {Properties.TextResources.GetString("EditCommandWindow.Title")}";
 
             this.Note = commandMap[key].Remarks;
             this.IsShowMessage = commandMap[key].IsShowMessage;

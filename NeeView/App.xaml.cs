@@ -1,5 +1,6 @@
 ﻿using NeeView.Interop;
 using NeeView.Native;
+using NeeView.Properties;
 using NeeView.Windows;
 using System;
 using System.Collections.Generic;
@@ -125,6 +126,8 @@ namespace NeeView
         /// </summary>
         private async Task InitializeAsync(StartupEventArgs e)
         {
+            TextResources.LanguageResource.SetFolder(Path.Combine(Environment.AssemblyFolder, "Languages"));
+
             NVInterop.TryLoadNativeLibrary(Environment.LibrariesPath);
 
             this.ShutdownMode = ShutdownMode.OnExplicitShutdown;
@@ -160,7 +163,9 @@ namespace NeeView
             Debug.WriteLine($"App.UserSettingLoaded: {Stopwatch.ElapsedMilliseconds}ms");
 
             // 言語適用。初期化に影響するため優先して設定
-            NeeView.Properties.Resources.Culture = CultureInfo.GetCultureInfo(config.System.Language);
+            var culture = CultureInfo.GetCultureInfo(config.System.Language);
+            TextResources.Culture = culture;
+            TextResources.Resource.Load(culture);
 
             // スプラッシュスクリーン
             ShowSplashScreen(config);

@@ -8,7 +8,7 @@ namespace NeeView
     {
         public ToggleVisibleBookmarkListCommand()
         {
-            this.Group = Properties.Resources.CommandGroup_Panel;
+            this.Group = Properties.TextResources.GetString("CommandGroup.Panel");
             this.ShortCutKey = "D";
             this.IsShowMessage = false;
         }
@@ -20,7 +20,7 @@ namespace NeeView
 
         public override string ExecuteMessage(object? sender, CommandContext e)
         {
-            return SidePanelFrame.Current.IsVisibleBookmarkList ? Properties.Resources.ToggleVisibleBookmarkListCommand_Off : Properties.Resources.ToggleVisibleBookmarkListCommand_On;
+            return SidePanelFrame.Current.IsVisibleBookmarkList ? Properties.TextResources.GetString("ToggleVisibleBookmarkListCommand.Off") : Properties.TextResources.GetString("ToggleVisibleBookmarkListCommand.On");
         }
 
         [MethodArgument("@ToggleCommand.Execute.Remarks")]

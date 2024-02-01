@@ -4,7 +4,7 @@
     {
         public ViewScrollLeftCommand()
         {
-            this.Group = Properties.Resources.CommandGroup_ViewManipulation;
+            this.Group = Properties.TextResources.GetString("CommandGroup.ViewManipulation");
             this.IsShowMessage = false;
             
             // ViewScrollUp

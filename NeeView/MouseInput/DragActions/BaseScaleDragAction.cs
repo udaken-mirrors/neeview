@@ -6,7 +6,7 @@ namespace NeeView
     {
         public BaseScaleDragAction()
         {
-            Note = Properties.Resources.DragActionType_BaseScale;
+            Note = Properties.TextResources.GetString("DragActionType.BaseScale");
             DragActionCategory = DragActionCategory.Scale;
         }
 

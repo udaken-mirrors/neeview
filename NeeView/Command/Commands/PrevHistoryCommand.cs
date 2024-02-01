@@ -4,7 +4,7 @@
     {
         public PrevHistoryCommand()
         {
-            this.Group = Properties.Resources.CommandGroup_BookMove;
+            this.Group = Properties.TextResources.GetString("CommandGroup.BookMove");
             this.IsShowMessage = false;
         }
 

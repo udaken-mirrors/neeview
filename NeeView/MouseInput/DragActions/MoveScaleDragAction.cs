@@ -9,7 +9,7 @@ namespace NeeView
     {
         public MoveScaleDragAction()
         {
-            Note = Properties.Resources.DragActionType_MoveScale;
+            Note = Properties.TextResources.GetString("DragActionType.MoveScale");
             DragActionCategory = DragActionCategory.Point;
 
             ParameterSource = new DragActionParameterSource(typeof(MoveScaleDragActionParameter));

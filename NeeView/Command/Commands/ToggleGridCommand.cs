@@ -8,7 +8,7 @@ namespace NeeView
     {
         public ToggleGridCommand()
         {
-            this.Group = Properties.Resources.CommandGroup_Effect;
+            this.Group = Properties.TextResources.GetString("CommandGroup.Effect");
         }
 
         public override Binding CreateIsCheckedBinding()
@@ -18,7 +18,7 @@ namespace NeeView
 
         public override string ExecuteMessage(object? sender, CommandContext e)
         {
-            return Config.Current.ImageGrid.IsEnabled ? Properties.Resources.ToggleGridCommand_Off : Properties.Resources.ToggleGridCommand_On;
+            return Config.Current.ImageGrid.IsEnabled ? Properties.TextResources.GetString("ToggleGridCommand.Off") : Properties.TextResources.GetString("ToggleGridCommand.On");
         }
 
         [MethodArgument("@ToggleCommand.Execute.Remarks")]

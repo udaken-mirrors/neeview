@@ -57,7 +57,7 @@ namespace NeeView
             {
                 // チェック開始
                 LastVersion = new FormatVersion(Environment.SolutionName, 0, 0, 0);
-                Message = Properties.Resources.VersionChecker_Message_Checking;
+                Message = Properties.TextResources.GetString("VersionChecker.Message.Checking");
                 Task.Run(() => CheckVersion(Environment.IsZipLikePackage ? ".zip" : Environment.PackageType));
             }
         }
@@ -80,7 +80,7 @@ namespace NeeView
 
                     var regex = new Regex(@"NeeView(?<major>\d+)\.(?<minor>\d+)(?<arch>-[^\.]+)?" + Regex.Escape(extension));
                     var matches = regex.Matches(text);
-                    if (matches.Count <= 0) throw new ApplicationException(Properties.Resources.VersionChecker_Message_WrongFormat);
+                    if (matches.Count <= 0) throw new ApplicationException(Properties.TextResources.GetString("VersionChecker.Message.WrongFormat"));
                     foreach (Match match in matches)
                     {
                         var major = int.Parse(match.Groups["major"].Value);
@@ -96,15 +96,15 @@ namespace NeeView
 
                     if (LastVersion == CurrentVersion)
                     {
-                        Message = Properties.Resources.VersionChecker_Message_Lastest;
+                        Message = Properties.TextResources.GetString("VersionChecker.Message.Lastest");
                     }
                     else if (LastVersion.CompareTo(CurrentVersion) < 0)
                     {
-                        Message = Properties.Resources.VersionChecker_Message_Unknown;
+                        Message = Properties.TextResources.GetString("VersionChecker.Message.Unknown");
                     }
                     else
                     {
-                        Message = Properties.Resources.VersionChecker_Message_New;
+                        Message = Properties.TextResources.GetString("VersionChecker.Message.New");
                         IsExistNewVersion = true;
                         RaisePropertyChanged(nameof(IsExistNewVersion));
                     }
@@ -115,7 +115,7 @@ namespace NeeView
             catch (Exception ex)
             {
                 Debug.WriteLine(ex.Message);
-                Message = Properties.Resources.VersionChecker_Message_Failed;
+                Message = Properties.TextResources.GetString("VersionChecker.Message.Failed");
             }
 
             _isChecking = false;

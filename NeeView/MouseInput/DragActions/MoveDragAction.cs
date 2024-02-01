@@ -9,7 +9,7 @@ namespace NeeView
     {
         public MoveDragAction()
         {
-            Note = Properties.Resources.DragActionType_Move;
+            Note = Properties.TextResources.GetString("DragActionType.Move");
             DragKey = new DragKey("LeftButton");
             DragActionCategory = DragActionCategory.Point;
 

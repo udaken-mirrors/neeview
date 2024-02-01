@@ -13,7 +13,7 @@ namespace NeeView
     {
         public VersionWindowViewModel()
         {
-            var readmeFile = (NeeView.Properties.Resources.Culture.Name == "ja") ? "README.ja-jp.html" : "README.html";
+            var readmeFile = (Properties.TextResources.Culture.Name == "ja") ? "README.ja-jp.html" : "README.html";
             LicenseUri = "file://" + Environment.AssemblyFolder.Replace('\\', '/').TrimEnd('/') + $"/{readmeFile}";
 
             this.Icon = ResourceBitmapUtility.GetIconBitmapFrame("/Resources/App.ico", 256);

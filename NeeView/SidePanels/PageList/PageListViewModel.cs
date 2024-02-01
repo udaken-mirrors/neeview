@@ -111,13 +111,13 @@ namespace NeeView
             public override ContextMenu Create()
             {
                 var menu = new ContextMenu();
-                menu.Items.Add(CreateListItemStyleMenuItem(Properties.Resources.Word_StyleList, PanelListItemStyle.Normal));
-                menu.Items.Add(CreateListItemStyleMenuItem(Properties.Resources.Word_StyleContent, PanelListItemStyle.Content));
-                menu.Items.Add(CreateListItemStyleMenuItem(Properties.Resources.Word_StyleBanner, PanelListItemStyle.Banner));
-                menu.Items.Add(CreateListItemStyleMenuItem(Properties.Resources.Word_StyleThumbnail, PanelListItemStyle.Thumbnail));
+                menu.Items.Add(CreateListItemStyleMenuItem(Properties.TextResources.GetString("Word.StyleList"), PanelListItemStyle.Normal));
+                menu.Items.Add(CreateListItemStyleMenuItem(Properties.TextResources.GetString("Word.StyleContent"), PanelListItemStyle.Content));
+                menu.Items.Add(CreateListItemStyleMenuItem(Properties.TextResources.GetString("Word.StyleBanner"), PanelListItemStyle.Banner));
+                menu.Items.Add(CreateListItemStyleMenuItem(Properties.TextResources.GetString("Word.StyleThumbnail"), PanelListItemStyle.Thumbnail));
                 menu.Items.Add(new Separator());
-                menu.Items.Add(CreateCheckableMenuItem(Properties.Resources.PageListConfig_ShowBookTitle, new Binding(nameof(PageListConfig.ShowBookTitle)) { Source = Config.Current.PageList }));
-                menu.Items.Add(CreateCheckableMenuItem(Properties.Resources.PageListConfig_FocusMainView, new Binding(nameof(PageListConfig.FocusMainView)) { Source = Config.Current.PageList }));
+                menu.Items.Add(CreateCheckableMenuItem(Properties.TextResources.GetString("PageListConfig.ShowBookTitle"), new Binding(nameof(PageListConfig.ShowBookTitle)) { Source = Config.Current.PageList }));
+                menu.Items.Add(CreateCheckableMenuItem(Properties.TextResources.GetString("PageListConfig.FocusMainView"), new Binding(nameof(PageListConfig.FocusMainView)) { Source = Config.Current.PageList }));
                 return menu;
             }
 

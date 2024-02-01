@@ -7,7 +7,7 @@ namespace NeeView
     {
         public FlipVerticalDragAction()
         {
-            Note = Properties.Resources.DragActionType_FlipVertical;
+            Note = Properties.TextResources.GetString("DragActionType.FlipVertical");
             //DragKey = new DragKey("Alt+RightButton");
             DragActionCategory = DragActionCategory.Flip;
         }

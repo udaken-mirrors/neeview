@@ -613,10 +613,10 @@ namespace NeeView
             using (var writer = new System.IO.StreamWriter(fileName, false))
             {
                 writer.WriteLine(HtmlHelpUtility.CreateHeader("NeeView Command List"));
-                writer.WriteLine($"<body><h1>{Properties.Resources.HelpCommandList_Title}</h1>");
-                writer.WriteLine($"<p>{Properties.Resources.HelpCommandList_Message}</p>");
+                writer.WriteLine($"<body><h1>{Properties.TextResources.GetString("HelpCommandList.Title")}</h1>");
+                writer.WriteLine($"<p>{Properties.TextResources.GetString("HelpCommandList.Message")}</p>");
                 writer.WriteLine("<table class=\"table-slim table-topless\">");
-                writer.WriteLine($"<tr><th>{Properties.Resources.Word_Group}</th><th>{Properties.Resources.Word_Command}</th><th>{Properties.Resources.Word_Shortcut}</th><th>{Properties.Resources.Word_Gesture}</th><th>{Properties.Resources.Word_Touch}</th><th>{Properties.Resources.Word_Summary}</th></tr>");
+                writer.WriteLine($"<tr><th>{Properties.TextResources.GetString("Word.Group")}</th><th>{Properties.TextResources.GetString("Word.Command")}</th><th>{Properties.TextResources.GetString("Word.Shortcut")}</th><th>{Properties.TextResources.GetString("Word.Gesture")}</th><th>{Properties.TextResources.GetString("Word.Touch")}</th><th>{Properties.TextResources.GetString("Word.Summary")}</th></tr>");
                 foreach (var command in _elements.Values.OrderBy(e => e.Order))
                 {
                     writer.WriteLine($"<tr><td>{command.Group}</td><td>{command.Text}</td><td>{command.ShortCutKey}</td><td>{new MouseGestureSequence(command.MouseGesture).ToDispString()}</td><td>{command.TouchGesture}</td><td>{command.Remarks}</td></tr>");

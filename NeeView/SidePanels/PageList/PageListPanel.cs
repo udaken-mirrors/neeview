@@ -39,7 +39,7 @@ namespace NeeView
 
         public ImageSource Icon { get; private set; }
 
-        public string IconTips => Properties.Resources.PageList_Title;
+        public string IconTips => Properties.TextResources.GetString("PageList.Title");
 
         public FrameworkElement View => _view;
 

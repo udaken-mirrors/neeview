@@ -60,11 +60,11 @@
                         <Image.Style>
                             <Style TargetType="Image">
                                 <Setter Property="Source" Value="{StaticResource ic_panorama_horizontal_24px}"/>
-                                <Setter Property="ToolTip" Value="{x:Static properties:Resources.PageFrameOrientation_Horizontal}"/>
+                                <Setter Property="ToolTip" Value="{properties:TextBinding PageFrameOrientation.Horizontal}"/>
                                 <Style.Triggers>
                                     <DataTrigger Binding="{Binding Config.Book.Orientation}"  Value="Vertical">
                                         <Setter Property="Source" Value="{StaticResource ic_panorama_vertical_24px}"/>
-                                        <Setter Property="ToolTip" Value="{x:Static properties:Resources.PageFrameOrientation_Vertical}"/>
+                                        <Setter Property="ToolTip" Value="{properties:TextBinding PageFrameOrientation.Vertical}"/>
                                     </DataTrigger>
                                 </Style.Triggers>
                             </Style>
@@ -77,11 +77,11 @@
                         <Image.Style>
                             <Style TargetType="Image">
                                 <Setter Property="Source" Value="{StaticResource ic_crop_original_24px}"/>
-                                <Setter Property="ToolTip" Value="{x:Static properties:Resources.ToggleIsPanoramaCommand_Off}"/>
+                                <Setter Property="ToolTip" Value="{properties:TextBinding ToggleIsPanoramaCommand.Off}"/>
                                 <Style.Triggers>
                                     <DataTrigger Binding="{Binding Config.Book.IsPanorama}" Value="True">
                                         <Setter Property="Source" Value="{StaticResource ic_image_24px}"/>
-                                        <Setter Property="ToolTip" Value="{x:Static properties:Resources.ToggleIsPanoramaCommand_On}"/>
+                                        <Setter Property="ToolTip" Value="{properties:TextBinding ToggleIsPanoramaCommand.On}"/>
                                     </DataTrigger>
                                 </Style.Triggers>
                             </Style>
@@ -94,11 +94,11 @@
                         <Image.Style>
                             <Style TargetType="Image">
                                 <Setter Property="Source" Value="{StaticResource ic_looks_one_24px}"/>
-                                <Setter Property="ToolTip" Value="{x:Static properties:Resources.PageMode_SinglePage}"/>
+                                <Setter Property="ToolTip" Value="{properties:TextBinding PageMode.SinglePage}"/>
                                 <Style.Triggers>
                                     <DataTrigger Binding="{Binding BookSetting.PageMode}"  Value="WidePage">
                                         <Setter Property="Source" Value="{StaticResource ic_looks_two_24px}"/>
-                                        <Setter Property="ToolTip" Value="{x:Static properties:Resources.PageMode_WidePage}"/>
+                                        <Setter Property="ToolTip" Value="{properties:TextBinding PageMode.WidePage}"/>
                                     </DataTrigger>
                                 </Style.Triggers>
                             </Style>
@@ -111,11 +111,11 @@
                         <Image.Style>
                             <Style TargetType="Image">
                                 <Setter Property="Source" Value="{StaticResource ic_left_to_right_24px}" />
-                                <Setter Property="ToolTip" Value="{x:Static properties:Resources.PageReadOrder_LeftToRight}" />
+                                <Setter Property="ToolTip" Value="{properties:TextBinding PageReadOrder.LeftToRight}" />
                                 <Style.Triggers>
                                     <DataTrigger Binding="{Binding BookSetting.BookReadOrder}" Value="RightToLeft">
                                         <Setter Property="Source" Value="{StaticResource ic_right_to_left_24px}" />
-                                        <Setter Property="ToolTip" Value="{x:Static properties:Resources.PageReadOrder_RightToLeft}" />
+                                        <Setter Property="ToolTip" Value="{properties:TextBinding PageReadOrder.RightToLeft}" />
                                     </DataTrigger>
                                 </Style.Triggers>
                             </Style>
@@ -144,7 +144,7 @@
             <Button x:Name="PrevHistoryButton" Command="{Binding BookCommands[PrevBookHistory]}" Style="{StaticResource AddressIconButton}" TabIndex="1"
                                     ContextMenuService.Placement="Bottom"
                                     ContextMenuOpening="PrevHistoryButton_ContextMenuOpening"
-                                    ToolTip="{x:Static properties:Resources.AddressBar_Back_ToolTip}">
+                                    ToolTip="{properties:TextBinding AddressBar.Back.ToolTip}">
                 <Image Source="{StaticResource ic_arrow_back_24px}" />
                 <Button.ContextMenu>
                     <ContextMenu ItemContainerStyle="{StaticResource HistoryMenuItemContainerStyle}" />
@@ -153,14 +153,14 @@
             <Button x:Name="NextHistoryButton" Command="{Binding BookCommands[NextBookHistory]}"  Style="{StaticResource AddressIconButton}" TabIndex="2"
                                     ContextMenuService.Placement="Bottom"
                                     ContextMenuOpening="NextHistoryButton_ContextMenuOpening"
-                                    ToolTip="{x:Static properties:Resources.AddressBar_Next_ToolTip}">
+                                    ToolTip="{properties:TextBinding AddressBar.Next.ToolTip}">
                 <Image Source="{StaticResource ic_arrow_forward_24px}" />
                 <Button.ContextMenu>
                     <ContextMenu ItemContainerStyle="{StaticResource HistoryMenuItemContainerStyle}" />
                 </Button.ContextMenu>
             </Button>
             <Button x:Name="MoveToParentButton" Command="{Binding BookCommands[MoveToParentBook]}"  Style="{StaticResource AddressIconButton}" TabIndex="3"
-                                    ToolTip="{x:Static properties:Resources.AddressBar_Up_ToolTip}">
+                                    ToolTip="{properties:TextBinding AddressBar.Up.ToolTip}">
                 <Image Source="{StaticResource ic_arrow_up_24px}" />
 
             </Button>
@@ -168,12 +168,12 @@
             <Grid>
                 <Button Command="{Binding BookCommands[ReLoad]}" Style="{StaticResource AddressIconButton}" TabIndex="4"
                         Visibility="{Binding IsLoading, Converter={StaticResource BooleanToInverseVisibilityConverter}}"
-                        ToolTip="{x:Static properties:Resources.AddressBar_ReLoad_ToolTip}">
+                        ToolTip="{properties:TextBinding AddressBar.ReLoad.ToolTip}">
                     <Image Source="{StaticResource ic_refresh_24px}" />
                 </Button>
                 <Button Command="{Binding BookCommands[Unload]}" Style="{StaticResource AddressIconButton}" TabIndex="5"
                         Visibility="{Binding IsLoading, Converter={StaticResource BooleanToVisibilityConverter}}"
-                        ToolTip="{x:Static properties:Resources.AddressBar_Unload_ToolTip}">
+                        ToolTip="{properties:TextBinding AddressBar.Unload.ToolTip}">
                     <Image Source="{StaticResource ic_close_24px}" />
                 </Button>
             </Grid>

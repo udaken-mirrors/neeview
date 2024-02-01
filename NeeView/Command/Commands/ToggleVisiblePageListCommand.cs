@@ -8,7 +8,7 @@ namespace NeeView
     {
         public ToggleVisiblePageListCommand()
         {
-            this.Group = Properties.Resources.CommandGroup_Panel;
+            this.Group = Properties.TextResources.GetString("CommandGroup.Panel");
             this.ShortCutKey = "P";
             this.IsShowMessage = false;
         }
@@ -20,7 +20,7 @@ namespace NeeView
 
         public override string ExecuteMessage(object? sender, CommandContext e)
         {
-            return SidePanelFrame.Current.IsVisiblePageList ? Properties.Resources.ToggleVisiblePageListCommand_Off : Properties.Resources.ToggleVisiblePageListCommand_On;
+            return SidePanelFrame.Current.IsVisiblePageList ? Properties.TextResources.GetString("ToggleVisiblePageListCommand.Off") : Properties.TextResources.GetString("ToggleVisiblePageListCommand.On");
         }
 
         [MethodArgument("@ToggleCommand.Execute.Remarks")]

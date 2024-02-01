@@ -6,7 +6,7 @@ namespace NeeView
     {
         public JumpPageCommand()
         {
-            this.Group = Properties.Resources.CommandGroup_Move;
+            this.Group = Properties.TextResources.GetString("CommandGroup.Move");
             this.IsShowMessage = false;
         }
 

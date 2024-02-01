@@ -4,7 +4,7 @@
     {
         public HelpMainMenuCommand()
         {
-            this.Group = Properties.Resources.CommandGroup_Other;
+            this.Group = Properties.TextResources.GetString("CommandGroup.Other");
             this.IsShowMessage = false;
         }
 

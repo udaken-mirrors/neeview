@@ -14,7 +14,7 @@ namespace NeeView.Setting
         /// <summary>
         /// Setting: Panels
         /// </summary>
-        public SettingPagePanels() : base(Properties.Resources.SettingPage_Panels)
+        public SettingPagePanels() : base(Properties.TextResources.GetString("SettingPage.Panels"))
         {
             this.Children = new List<SettingPage>
             {
@@ -29,7 +29,7 @@ namespace NeeView.Setting
 
             this.Items = new List<SettingItem>();
 
-            var section = new SettingItemSection(Properties.Resources.SettingPage_Panels_AutoHide);
+            var section = new SettingItemSection(Properties.TextResources.GetString("SettingPage.Panels.AutoHide"));
             section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.AutoHide, nameof(AutoHideConfig.AutoHideFocusLockMode))));
             section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.AutoHide, nameof(AutoHideConfig.IsAutoHideKeyDownDelay))));
             section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.AutoHide, nameof(AutoHideConfig.AutoHideDelayVisibleTime))));
@@ -40,8 +40,8 @@ namespace NeeView.Setting
             section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.AutoHide, nameof(AutoHideConfig.AutoHideConfrictBottomMargin))));
             this.Items.Add(section);
 
-            section = new SettingItemSection(Properties.Resources.SettingPage_Panels_AutoHideMode);
-            section.Children.Add(new SettingItemHeader(Properties.Resources.SettingPage_Panels_AutoHideMode_WindowState));
+            section = new SettingItemSection(Properties.TextResources.GetString("SettingPage.Panels.AutoHideMode"));
+            section.Children.Add(new SettingItemHeader(Properties.TextResources.GetString("SettingPage.Panels.AutoHideMode.WindowState")));
             section.Children.Add(new SettingItemSubProperty(PropertyMemberElement.Create(Config.Current.Window, nameof(WindowConfig.IsAutoHideInFullScreen), new PropertyMemberElementOptions() { Name = AliasNameExtensions.GetAliasName(WindowStateEx.FullScreen) })));
             section.Children.Add(new SettingItemSubProperty(PropertyMemberElement.Create(Config.Current.Window, nameof(WindowConfig.IsAutoHidInMaximized), new PropertyMemberElementOptions() { Name = AliasNameExtensions.GetAliasName(WindowStateEx.Maximized) })));
             section.Children.Add(new SettingItemSubProperty(PropertyMemberElement.Create(Config.Current.Window, nameof(WindowConfig.IsAutoHideInNormal), new PropertyMemberElementOptions() { Name = AliasNameExtensions.GetAliasName(WindowStateEx.Normal) })));
@@ -50,7 +50,7 @@ namespace NeeView.Setting
             section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.Slider, nameof(SliderConfig.IsHidePageSliderInAutoHideMode))));
             this.Items.Add(section);
 
-            section = new SettingItemSection(Properties.Resources.SettingPage_Panels_SidePanels);
+            section = new SettingItemSection(Properties.TextResources.GetString("SettingPage.Panels.SidePanels"));
             section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.Panels, nameof(PanelsConfig.Opacity))));
             section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.Panels, nameof(PanelsConfig.OpenWithDoubleClick))));
             section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.Panels, nameof(PanelsConfig.IsLeftRightKeyEnabled))));
@@ -67,11 +67,11 @@ namespace NeeView.Setting
     /// </summary>
     public class SettingPagePanelItems : SettingPage
     {
-        public SettingPagePanelItems() : base(Properties.Resources.SettingPage_PanelItems)
+        public SettingPagePanelItems() : base(Properties.TextResources.GetString("SettingPage.PanelItems"))
         {
             this.Items = new List<SettingItem>();
 
-            var section = new SettingItemSection(Properties.Resources.SettingPage_PanelItems_StyleContent);
+            var section = new SettingItemSection(Properties.TextResources.GetString("SettingPage.PanelItems.StyleContent"));
             section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.Panels.ContentItemProfile, nameof(PanelListItemProfile.ImageWidth))));
             section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.Panels.ContentItemProfile, nameof(PanelListItemProfile.ImageShape))));
             section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.Panels.ContentItemProfile, nameof(PanelListItemProfile.IsImagePopupEnabled))));
@@ -79,13 +79,13 @@ namespace NeeView.Setting
             section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.Panels, nameof(PanelsConfig.IsDecoratePlace))));
             this.Items.Add(section);
 
-            section = new SettingItemSection(Properties.Resources.SettingPage_PanelItems_StyleBanner);
+            section = new SettingItemSection(Properties.TextResources.GetString("SettingPage.PanelItems.StyleBanner"));
             section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.Panels.BannerItemProfile, nameof(PanelListItemProfile.ImageWidth))));
             section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.Panels.BannerItemProfile, nameof(PanelListItemProfile.IsImagePopupEnabled))));
             section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.Panels.BannerItemProfile, nameof(PanelListItemProfile.IsTextWrapped))));
             this.Items.Add(section);
 
-            section = new SettingItemSection(Properties.Resources.SettingPage_PanelItems_StyleThumbnail);
+            section = new SettingItemSection(Properties.TextResources.GetString("SettingPage.PanelItems.StyleThumbnail"));
             section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.Panels.ThumbnailItemProfile, nameof(PanelListItemProfile.ImageWidth))));
             section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.Panels.ThumbnailItemProfile, nameof(PanelListItemProfile.ImageShape))));
             section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.Panels.ThumbnailItemProfile, nameof(PanelListItemProfile.IsImagePopupEnabled))));
@@ -102,11 +102,11 @@ namespace NeeView.Setting
     /// </summary>
     public class SettingPageBookshelf : SettingPage
     {
-        public SettingPageBookshelf() : base(Properties.Resources.SettingPage_Bookshelf)
+        public SettingPageBookshelf() : base(Properties.TextResources.GetString("SettingPage.Bookshelf"))
         {
             this.Items = new List<SettingItem>();
 
-            var section = new SettingItemSection(Properties.Resources.SettingPage_Bookshelf_General);
+            var section = new SettingItemSection(Properties.TextResources.GetString("SettingPage.Bookshelf.General"));
             section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.Bookshelf, nameof(BookshelfConfig.Home))) { IsStretch = true });
             section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.Bookshelf, nameof(BookshelfConfig.IsVisibleBookmarkMark))));
             section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.Bookshelf, nameof(BookshelfConfig.IsVisibleHistoryMark))));
@@ -123,7 +123,7 @@ namespace NeeView.Setting
             section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.Bookmark, nameof(BookmarkConfig.BookmarkFolderOrder), new PropertyMemberElementOptions() { EnumMap = FolderOrderClass.Full.GetFolderOrderMap().ToDictionary(e => (Enum)e.Key, e => e.Value) })));
             this.Items.Add(section);
 
-            section = new SettingItemSection(Properties.Resources.SettingPage_Bookshelf_Tree);
+            section = new SettingItemSection(Properties.TextResources.GetString("SettingPage.Bookshelf.Tree"));
             section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.Bookshelf, nameof(BookshelfConfig.FolderTreeLayout))));
             //section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.Panels, nameof(PanelsConfig.FolderTreeFontSize))));
             section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.Bookshelf, nameof(BookshelfConfig.IsSyncFolderTree))));
@@ -137,9 +137,9 @@ namespace NeeView.Setting
     /// </summary>
     public class SettingPageFileInfo : SettingPage
     {
-        public SettingPageFileInfo() : base(Properties.Resources.SettingPage_Information)
+        public SettingPageFileInfo() : base(Properties.TextResources.GetString("SettingPage.Information"))
         {
-            var section = new SettingItemSection(Properties.Resources.SettingPage_Information_Visual);
+            var section = new SettingItemSection(Properties.TextResources.GetString("SettingPage.Information.Visual"));
             section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.Information, nameof(InformationConfig.DateTimeFormat))));
             ////section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.Information, nameof(InformationConfig.MapProgramFormat))) { IsStretch = true });
 
@@ -153,9 +153,9 @@ namespace NeeView.Setting
     /// </summary>
     public class SettingPageEffect : SettingPage
     {
-        public SettingPageEffect() : base(Properties.Resources.SettingPage_Effect)
+        public SettingPageEffect() : base(Properties.TextResources.GetString("SettingPage.Effect"))
         {
-            var section = new SettingItemSection(Properties.Resources.SettingPage_Effect_Visual);
+            var section = new SettingItemSection(Properties.TextResources.GetString("SettingPage.Effect.Visual"));
             section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.ImageDotKeep, nameof(ImageDotKeepConfig.Threshold))));
             section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.ImageEffect, nameof(ImageEffectConfig.IsHsvMode))));
 
@@ -169,9 +169,9 @@ namespace NeeView.Setting
     /// </summary>
     public class SettingPageFilmstrip : SettingPage
     {
-        public SettingPageFilmstrip() : base(Properties.Resources.SettingPage_Filmstrip)
+        public SettingPageFilmstrip() : base(Properties.TextResources.GetString("SettingPage.Filmstrip"))
         {
-            var section = new SettingItemSection(Properties.Resources.SettingPage_Filmstrip);
+            var section = new SettingItemSection(Properties.TextResources.GetString("SettingPage.Filmstrip"));
             section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.FilmStrip, nameof(FilmStripConfig.ImageWidth))));
             section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.Slider, nameof(SliderConfig.IsSliderLinkedFilmStrip))));
             section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.FilmStrip, nameof(FilmStripConfig.IsVisibleNumber))));
@@ -197,7 +197,7 @@ namespace NeeView.Setting
             {
                 ThumbnailCache.Current.Remove();
 
-                var dialog = new MessageDialog("", Properties.Resources.CacheDeletedDialog_Title);
+                var dialog = new MessageDialog("", Properties.TextResources.GetString("CacheDeletedDialog.Title"));
                 if (element != null)
                 {
                     dialog.Owner = Window.GetWindow(element);
@@ -206,7 +206,7 @@ namespace NeeView.Setting
             }
             catch (Exception ex)
             {
-                var dialog = new MessageDialog(ex.Message, Properties.Resources.CacheDeletedFailedDialog_Title);
+                var dialog = new MessageDialog(ex.Message, Properties.TextResources.GetString("CacheDeletedFailedDialog.Title"));
                 if (element != null)
                 {
                     dialog.Owner = Window.GetWindow(element);
@@ -224,9 +224,9 @@ namespace NeeView.Setting
     /// </summary>
     public class SettingPageSlider : SettingPage
     {
-        public SettingPageSlider() : base(Properties.Resources.SettingPage_Slider)
+        public SettingPageSlider() : base(Properties.TextResources.GetString("SettingPage.Slider"))
         {
-            var section = new SettingItemSection(Properties.Resources.SettingPage_Slider);
+            var section = new SettingItemSection(Properties.TextResources.GetString("SettingPage.Slider"));
             section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.Slider, nameof(SliderConfig.Thickness))));
             section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.Slider, nameof(SliderConfig.Opacity))));
             section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.Slider, nameof(SliderConfig.SliderDirection))));
@@ -244,14 +244,14 @@ namespace NeeView.Setting
     /// </summary>
     public class SettingPagePageTitle : SettingPage
     {
-        public SettingPagePageTitle() : base(Properties.Resources.SettingPage_PageTitle)
+        public SettingPagePageTitle() : base(Properties.TextResources.GetString("SettingPage.PageTitle"))
         {
-            var section = new SettingItemSection(Properties.Resources.SettingPage_PageTitle);
+            var section = new SettingItemSection(Properties.TextResources.GetString("SettingPage.PageTitle"));
             section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.PageTitle, nameof(PageTitleConfig.IsEnabled))));
             section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.PageTitle, nameof(PageTitleConfig.PageTitleFormat1))) { IsStretch = true });
             section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.PageTitle, nameof(PageTitleConfig.PageTitleFormat2))) { IsStretch = true });
             section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.PageTitle, nameof(PageTitleConfig.PageTitleFormatMedia))) { IsStretch = true });
-            section.Children.Add(new SettingItemNote(Properties.Resources.SettingPage_WindowTitle_Note, Properties.Resources.SettingPage_WindowTitle_Note_Title));
+            section.Children.Add(new SettingItemNote(Properties.TextResources.GetString("SettingPage.WindowTitle.Note"), Properties.TextResources.GetString("SettingPage.WindowTitle.Note.Title")));
 
             this.Items = new List<SettingItem>() { section };
         }

@@ -4,7 +4,7 @@
     {
         public NextOnePageCommand()
         {
-            this.Group = Properties.Resources.CommandGroup_Move;
+            this.Group = Properties.TextResources.GetString("CommandGroup.Move");
             this.MouseGesture = "RL";
             this.IsShowMessage = false;
             this.PairPartner = "PrevOnePage";

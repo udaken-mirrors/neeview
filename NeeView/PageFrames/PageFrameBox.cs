@@ -853,8 +853,8 @@ namespace NeeView.PageFrames
         private void ShowMoveFolderPageMessage(int index, LinkedListDirection direction, bool isShowMessage)
         {
             var terminateMessage = direction == LinkedListDirection.Previous
-                ? Properties.Resources.Notice_FirstFolderPage
-                : Properties.Resources.Notice_LastFolderPage;
+                ? Properties.TextResources.GetString("Notice.FirstFolderPage")
+                : Properties.TextResources.GetString("Notice.LastFolderPage");
 
             if (index < 0)
             {

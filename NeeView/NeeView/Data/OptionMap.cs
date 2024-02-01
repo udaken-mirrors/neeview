@@ -113,7 +113,7 @@ namespace NeeView.Data
                 text += $"{key}{keyValue}\n                {element.HelpText}\n";
             }
 
-            text += $"--\n                {Properties.Resources.AppOption_Terminator}";
+            text += $"--\n                {Properties.TextResources.GetString("AppOption.Terminator")}";
 
             return text;
         }
@@ -152,7 +152,7 @@ namespace NeeView.Data
                         var element = GetElement(key);
                         if (element == null)
                         {
-                            var message = string.Format(Properties.Resources.OptionArgumentException_Unknown, key) + "\n\n" + GetCommandLineHelpText();
+                            var message = string.Format(Properties.TextResources.GetString("OptionArgumentException.Unknown"), key) + "\n\n" + GetCommandLineHelpText();
                             throw new ArgumentException(message);
                         }
 
@@ -214,10 +214,10 @@ namespace NeeView.Data
                 Debug.WriteLine($"Option: {item.Key} = {item.Value}");
 
                 var element = GetElement(item.Key);
-                if (element == null) throw new ArgumentException(string.Format(Properties.Resources.OptionArgumentException_Unknown, item.Key));
+                if (element == null) throw new ArgumentException(string.Format(Properties.TextResources.GetString("OptionArgumentException.Unknown"), item.Key));
 
                 var value = item.Value ?? element.Default;
-                if (value == null) throw new ArgumentException(string.Format(Properties.Resources.OptionArgumentException_Empty, item.Key));
+                if (value == null) throw new ArgumentException(string.Format(Properties.TextResources.GetString("OptionArgumentException.Empty"), item.Key));
 
                 try
                 {
@@ -226,7 +226,7 @@ namespace NeeView.Data
                 catch (Exception ex)
                 {
                     Debug.WriteLine(ex.Message);
-                    throw new ArgumentException(string.Format(Properties.Resources.OptionArgumentException_Failed, item.Key, value));
+                    throw new ArgumentException(string.Format(Properties.TextResources.GetString("OptionArgumentException.Failed"), item.Key, value));
                 }
             }
 

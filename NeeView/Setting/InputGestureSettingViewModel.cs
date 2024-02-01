@@ -70,7 +70,7 @@ namespace NeeView.Setting
         {
             _commandMap = commandMap;
             Command = command;
-            Header = $"{CommandTable.Current.GetElement(Command).Text} - {Properties.Resources.InputGestureControl_Title}";
+            Header = $"{CommandTable.Current.GetElement(Command).Text} - {Properties.TextResources.GetString("InputGestureControl.Title")}";
 
             _gestureTokens = CreateGestures();
         }
@@ -115,7 +115,7 @@ namespace NeeView.Setting
             if (overlaps.Count > 0)
             {
                 element.Conflicts = overlaps;
-                element.OverlapsText = string.Format(Properties.Resources.Notice_Conflict, ResourceService.Join(overlaps.Select(e => CommandTable.Current.GetElement(e).Text)));
+                element.OverlapsText = string.Format(Properties.TextResources.GetString("Notice.Conflict"), ResourceService.Join(overlaps.Select(e => CommandTable.Current.GetElement(e).Text)));
             }
 
             return element;

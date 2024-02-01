@@ -30,7 +30,7 @@ namespace NeeView
                 Place = _place,
                 Name = ".",
                 TargetPath = _place.ReplacePath(LoosePath.Combine(_place.Path, ".")),
-                DispName = Properties.Resources.Notice_NoFiles,
+                DispName = Properties.TextResources.GetString("Notice.NoFiles"),
                 Attributes = FolderItemAttribute.Empty,
             };
         }

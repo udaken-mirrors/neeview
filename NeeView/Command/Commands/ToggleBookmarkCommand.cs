@@ -8,7 +8,7 @@ namespace NeeView
     {
         public ToggleBookmarkCommand()
         {
-            this.Group = Properties.Resources.CommandGroup_Bookmark;
+            this.Group = Properties.TextResources.GetString("CommandGroup.Bookmark");
             this.ShortCutKey = "Ctrl+D";
             this.IsShowMessage = true;
         }
@@ -19,7 +19,7 @@ namespace NeeView
 
         public override string ExecuteMessage(object? sender, CommandContext e)
         {
-            return BookOperation.Current.BookControl.IsBookmark ? Properties.Resources.ToggleBookmarkCommand_Off : Properties.Resources.ToggleBookmarkCommand_On;
+            return BookOperation.Current.BookControl.IsBookmark ? Properties.TextResources.GetString("ToggleBookmarkCommand.Off") : Properties.TextResources.GetString("ToggleBookmarkCommand.On");
         }
 
         public override bool CanExecute(object? sender, CommandContext e)

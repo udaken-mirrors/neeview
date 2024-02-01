@@ -186,13 +186,13 @@ namespace NeeView
                     continue;
                 }
 
-                throw new NotSupportedException(string.Format(Properties.Resources.NotSupportedKeyException_Message, source, "DragKey"));
+                throw new NotSupportedException(string.Format(Properties.TextResources.GetString("NotSupportedKeyException.Message"), source, "DragKey"));
             }
 
             //
             if (mouseButtonBits == MouseButtonBits.None)
             {
-                throw new NotSupportedException(string.Format(Properties.Resources.NotSupportedKeyException_Message, source, "DragKey"));
+                throw new NotSupportedException(string.Format(Properties.TextResources.GetString("NotSupportedKeyException.Message"), source, "DragKey"));
             }
 
             return new DragKey(mouseButtonBits, modifierKeys);

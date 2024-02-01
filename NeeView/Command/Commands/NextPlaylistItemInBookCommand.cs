@@ -6,7 +6,7 @@ namespace NeeView
     {
         public NextPlaylistItemInBookCommand()
         {
-            this.Group = Properties.Resources.CommandGroup_Playlist;
+            this.Group = Properties.TextResources.GetString("CommandGroup.Playlist");
             this.IsShowMessage = false;
 
             // PrevPlaylistItemInBook

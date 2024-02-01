@@ -8,7 +8,7 @@ namespace NeeView
     {
         public ToggleNearestNeighborCommand()
         {
-            this.Group = Properties.Resources.CommandGroup_Effect;
+            this.Group = Properties.TextResources.GetString("CommandGroup.Effect");
             this.IsShowMessage = true;
         }
 
@@ -19,7 +19,7 @@ namespace NeeView
 
         public override string ExecuteMessage(object? sender, CommandContext e)
         {
-            return Config.Current.ImageDotKeep.IsEnabled ? Properties.Resources.ToggleNearestNeighborCommand_Off : Properties.Resources.ToggleNearestNeighborCommand_On;
+            return Config.Current.ImageDotKeep.IsEnabled ? Properties.TextResources.GetString("ToggleNearestNeighborCommand.Off") : Properties.TextResources.GetString("ToggleNearestNeighborCommand.On");
         }
 
         public override bool CanExecute(object? sender, CommandContext e)

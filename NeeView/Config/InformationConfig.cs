@@ -11,7 +11,7 @@ namespace NeeView
 {
     public class InformationConfig : BindableBase
     {
-        private static readonly string _defaultDateTimeFormat = Properties.Resources.Information_DateFormat;
+        private static readonly string _defaultDateTimeFormat = Properties.TextResources.GetString("Information.DateFormat");
         private static readonly string _defaultMapProgramFormat = @"https://www.google.com/maps/place/$Lat+$Lon/";
         private GridLength _propertyHeaderWidth = new(128.0);
 

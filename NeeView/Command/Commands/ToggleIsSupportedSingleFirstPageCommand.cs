@@ -8,7 +8,7 @@ namespace NeeView
     {
         public ToggleIsSupportedSingleFirstPageCommand()
         {
-            this.Group = Properties.Resources.CommandGroup_PageSetting;
+            this.Group = Properties.TextResources.GetString("CommandGroup.PageSetting");
             this.IsShowMessage = true;
         }
 
@@ -19,7 +19,7 @@ namespace NeeView
 
         public override string ExecuteMessage(object? sender, CommandContext e)
         {
-            return Config.Current.BookSetting.IsSupportedSingleFirstPage ? Properties.Resources.ToggleIsSupportedSingleFirstPageCommand_Off : Properties.Resources.ToggleIsSupportedSingleFirstPageCommand_On;
+            return Config.Current.BookSetting.IsSupportedSingleFirstPage ? Properties.TextResources.GetString("ToggleIsSupportedSingleFirstPageCommand.Off") : Properties.TextResources.GetString("ToggleIsSupportedSingleFirstPageCommand.On");
         }
 
         public override bool CanExecute(object? sender, CommandContext e)

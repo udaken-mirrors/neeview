@@ -1,5 +1,4 @@
-﻿using NeeView.Properties;
-using System;
+﻿using System;
 
 namespace NeeView
 {
@@ -33,7 +32,7 @@ namespace NeeView
             }
             catch (Exception ex)
             {
-                new MessageDialog($"{Resources.Word_Cause}: {ex.Message}", Resources.ExportErrorDialog_Title).ShowDialog();
+                new MessageDialog($"{Properties.TextResources.GetString("Word.Cause")}: {ex.Message}", Properties.TextResources.GetString("ExportErrorDialog.Title")).ShowDialog();
             }
         }
 
@@ -62,7 +61,7 @@ namespace NeeView
                 }
                 catch (Exception ex)
                 {
-                    new MessageDialog($"{Resources.Word_Cause}: {ex.Message}", Resources.ImportErrorDialog_Title).ShowDialog();
+                    new MessageDialog($"{Properties.TextResources.GetString("Word.Cause")}: {ex.Message}", Properties.TextResources.GetString("ImportErrorDialog.Title")).ShowDialog();
                 }
             }
         }

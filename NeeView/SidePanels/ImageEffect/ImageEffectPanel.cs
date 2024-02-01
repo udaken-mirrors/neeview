@@ -36,7 +36,7 @@ namespace NeeView
 
         public ImageSource Icon { get; private set; }
 
-        public string IconTips => Properties.Resources.Effect_Title;
+        public string IconTips => Properties.TextResources.GetString("Effect.Title");
 
         public FrameworkElement View => _view;
 

@@ -302,7 +302,7 @@ namespace NeeView
             }
             else
             {
-                InfoMessage.Current.SetMessage(InfoMessageType.Notify, Properties.Resources.Notice_HistoryTerminal);
+                InfoMessage.Current.SetMessage(InfoMessageType.Notify, Properties.TextResources.GetString("Notice.HistoryTerminal"));
             }
         }
 
@@ -332,7 +332,7 @@ namespace NeeView
             }
             else
             {
-                InfoMessage.Current.SetMessage(InfoMessageType.Notify, Properties.Resources.Notice_HistoryLastest);
+                InfoMessage.Current.SetMessage(InfoMessageType.Notify, Properties.TextResources.GetString("Notice.HistoryLastest"));
             }
         }
 

@@ -1,4 +1,4 @@
-/*  Copyright (c) MediaArea.net SARL. All Rights Reserved.
+ï»¿/*  Copyright (c) MediaArea.net SARL. All Rights Reserved.
  *
  *  Use of this source code is governed by a BSD-style license that can
  *  be found in the License.html file in the root of the source tree.
@@ -18,9 +18,9 @@ using System;
 using System.Runtime.InteropServices;
 
 //#pragma warning disable 1591 // Disable XML documentation warnings
-#pragma warning disable CS8603 // Null QÆ–ß‚è’l‚Å‚ ‚é‰Â”\«‚ª‚ ‚è‚Ü‚·B
-#pragma warning disable CS8600 // Null ƒŠƒeƒ‰ƒ‹‚Ü‚½‚Í Null ‚Ì‰Â”\«‚ª‚ ‚é’l‚ğ Null ”ñ‹–—eŒ^‚É•ÏŠ·‚µ‚Ä‚¢‚Ü‚·B
-#pragma warning disable IDE0044 // “Ç‚İæ‚èê—pCüq‚ğ’Ç‰Á‚µ‚Ü‚·
+#pragma warning disable CS8603 // Null ï¿½Qï¿½Æ–ß‚ï¿½lï¿½Å‚ï¿½ï¿½ï¿½Â”\ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ü‚ï¿½ï¿½B
+#pragma warning disable CS8600 // Null ï¿½ï¿½ï¿½eï¿½ï¿½ï¿½ï¿½ï¿½Ü‚ï¿½ï¿½ï¿½ Null ï¿½Ì‰Â”\ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½lï¿½ï¿½ Null ï¿½ñ‹–—eï¿½^ï¿½É•ÏŠï¿½ï¿½ï¿½ï¿½Ä‚ï¿½ï¿½Ü‚ï¿½ï¿½B
+#pragma warning disable IDE0044 // ï¿½Ç‚İï¿½ï¿½ï¿½pï¿½Cï¿½ï¿½ï¿½qï¿½ï¿½Ç‰ï¿½ï¿½ï¿½ï¿½Ü‚ï¿½
 
 
 namespace MediaInfoLib

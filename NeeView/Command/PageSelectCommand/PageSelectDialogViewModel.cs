@@ -34,9 +34,9 @@ namespace NeeView
         public event EventHandler<PageSelectDialogDecidedEventArgs>? Decided;
 
 
-        public string Caption => Properties.Resources.JumpPageCommand;
+        public string Caption => Properties.TextResources.GetString("JumpPageCommand");
 
-        public string Label => string.Format(Properties.Resources.Notice_JumpPageLabel, _model.Min, _model.Max);
+        public string Label => string.Format(Properties.TextResources.GetString("Notice.JumpPageLabel"), _model.Min, _model.Max);
 
         public int Value
         {

@@ -21,7 +21,7 @@ namespace NeeView
 
         public override string Name { get => QueryScheme.QuickAccess.ToSchemeString(); set { } }
 
-        public override string DispName { get => Properties.Resources.Word_QuickAccess; set { } }
+        public override string DispName { get => Properties.TextResources.GetString("Word.QuickAccess"); set { } }
 
         public override IImageSourceCollection Icon { get; } 
 

@@ -73,10 +73,10 @@ namespace NeeView.Setting
         private readonly ResolveConflictDialogContext _context;
 
         // window title
-        public string Title => $"{CommandTable.Current.GetElement(_context.Command).Text} - {Properties.Resources.ResolveConflictDialog_Title}";
+        public string Title => $"{CommandTable.Current.GetElement(_context.Command).Text} - {Properties.TextResources.GetString("ResolveConflictDialog.Title")}";
 
         ////public string Gesture => _context.Gesture;
-        public string Note => string.Format(Properties.Resources.ResolveConflictDialog_Message, _context.Gesture);
+        public string Note => string.Format(Properties.TextResources.GetString("ResolveConflictDialog.Message"), _context.Gesture);
 
         public List<ConflictItem> Conflicts => _context.Conflicts;
 

@@ -92,7 +92,7 @@ namespace NeeView
                 {
                     if (!File.Exists(this.SettingFilename))
                     {
-                        throw new ArgumentException($"{Properties.Resources.OptionArgumentException_FileNotFound}: {this.SettingFilename}");
+                        throw new ArgumentException($"{Properties.TextResources.GetString("OptionArgumentException.FileNotFound")}: {this.SettingFilename}");
                     }
                     this.SettingFilename = Path.GetFullPath(this.SettingFilename);
                 }
@@ -103,7 +103,7 @@ namespace NeeView
             }
             catch (Exception ex)
             {
-                new MessageDialog(ex.Message, Properties.Resources.BootErrorDialog_Title).ShowDialog();
+                new MessageDialog(ex.Message, Properties.TextResources.GetString("BootErrorDialog.Title")).ShowDialog();
                 throw new OperationCanceledException("Wrong startup parameter");
             }
         }
@@ -194,13 +194,13 @@ namespace NeeView
             }
             catch (Exception ex)
             {
-                new MessageDialog(ex.Message, NeeView.Properties.Resources.BootErrorDialog_Title).ShowDialog();
+                new MessageDialog(ex.Message, NeeView.Properties.TextResources.GetString("BootErrorDialog.Title")).ShowDialog();
                 throw new OperationCanceledException("Wrong startup parameter");
             }
 
             if (option.IsHelp)
             {
-                var dialog = new MessageDialog(optionMap.GetCommandLineHelpText(), NeeView.Properties.Resources.BootOptionDialog_Title);
+                var dialog = new MessageDialog(optionMap.GetCommandLineHelpText(), NeeView.Properties.TextResources.GetString("BootOptionDialog.Title"));
                 dialog.SizeToContent = SizeToContent.WidthAndHeight;
                 dialog.ContentRendered += (s, e) => dialog.InvalidateVisual();
                 dialog.ShowDialog();

@@ -33,7 +33,7 @@ namespace NeeView
             builder.Append(HtmlHelpUtility.CreateHeader("NeeView Script Manual"));
             builder.Append($"<body>");
 
-            builder.Append(Properties.Resources._Document_ScriptManual_html);
+            builder.Append(Properties.TextResources.GetString(".Document.ScriptManual.html"));
 
             AppendScriptReference(builder);
 
@@ -43,7 +43,7 @@ namespace NeeView
 
             AppendObsoleteList(builder);
 
-            builder.Append(Properties.Resources._Document_ScriptManualExample_html);
+            builder.Append(Properties.TextResources.GetString(".Document.ScriptManualExample.html"));
 
             builder.Append("</body>");
             builder.Append(HtmlHelpUtility.CreateFooter());
@@ -106,9 +106,9 @@ namespace NeeView
 
         private static StringBuilder AppendConfigList(StringBuilder builder)
         {
-            builder.Append($"<h1 class=\"sub\" id=\"ConfigList\">{Properties.Resources.Word_ConfigList}</h1>");
+            builder.Append($"<h1 class=\"sub\" id=\"ConfigList\">{Properties.TextResources.GetString("Word.ConfigList")}</h1>");
             builder.Append("<table class=\"table-slim table-topless\">");
-            builder.Append($"<tr><th>{Properties.Resources.Word_Name}</th><th>{Properties.Resources.Word_Type}</th><th>{Properties.Resources.Word_Summary}</th></tr>");
+            builder.Append($"<tr><th>{Properties.TextResources.GetString("Word.Name")}</th><th>{Properties.TextResources.GetString("Word.Type")}</th><th>{Properties.TextResources.GetString("Word.Summary")}</th></tr>");
             builder.Append(new ConfigMap(null).Map.CreateHelpHtml("nv.Config"));
             builder.Append("</table>");
             return builder;
@@ -118,9 +118,9 @@ namespace NeeView
         {
             var executeMethodArgTypes = new Type[] { typeof(object), typeof(CommandContext) };
 
-            builder.Append($"<h1 class=\"sub\" id=\"CommandList\">{Properties.Resources.Word_CommandList}</h1>");
+            builder.Append($"<h1 class=\"sub\" id=\"CommandList\">{Properties.TextResources.GetString("Word.CommandList")}</h1>");
             builder.Append("<table class=\"table-slim table-topless\">");
-            builder.Append($"<tr><th>{Properties.Resources.Word_Group}</th><th>{Properties.Resources.Word_Command}</th><th>{Properties.Resources.Word_CommandName}</th><th>{Properties.Resources.Word_Argument}</th><th>{Properties.Resources.Word_CommandParameter}</th><th>{Properties.Resources.Word_Summary}</th></tr>");
+            builder.Append($"<tr><th>{Properties.TextResources.GetString("Word.Group")}</th><th>{Properties.TextResources.GetString("Word.Command")}</th><th>{Properties.TextResources.GetString("Word.CommandName")}</th><th>{Properties.TextResources.GetString("Word.Argument")}</th><th>{Properties.TextResources.GetString("Word.CommandParameter")}</th><th>{Properties.TextResources.GetString("Word.Summary")}</th></tr>");
             foreach (var command in CommandTable.Current.Values.OrderBy(e => e.Order))
             {
                 string argument = "";
@@ -151,7 +151,7 @@ namespace NeeView
 
                     if (command.Share != null)
                     {
-                        properties = "<p style=\"color:red\">" + string.Format(Properties.Resources.CommandParameter_Share, command.Share.Name) + "</p>";
+                        properties = "<p style=\"color:red\">" + string.Format(Properties.TextResources.GetString("CommandParameter.Share"), command.Share.Name) + "</p>";
                     }
 
                     foreach (PropertyInfo info in type.GetProperties())
@@ -171,7 +171,7 @@ namespace NeeView
                                 enums = string.Join(" / ", info.PropertyType.VisibleAliasNameDictionary().Select(e => $"\"{e.Key}\": {e.Value}")) + "<br/>";
                             }
 
-                            var propertyName = PropertyMemberAttributeExtensions.GetPropertyName(info, attribute).TrimEnd(Properties.Resources.Word_Period.ToArray()) + Properties.Resources.Word_Period;
+                            var propertyName = PropertyMemberAttributeExtensions.GetPropertyName(info, attribute).TrimEnd(Properties.TextResources.GetString("Word.Period").ToArray()) + Properties.TextResources.GetString("Word.Period");
                             var text = title + propertyName;
 
                             var propertyTips = PropertyMemberAttributeExtensions.GetPropertyTips(info, attribute);
@@ -199,7 +199,7 @@ namespace NeeView
 
         private static StringBuilder AppendObsoleteList(StringBuilder builder)
         {
-            builder.Append($"<h1 class=\"sub\" id=\"ObsoleteList\">{Properties.Resources.Word_ObsoleteList}</h1>");
+            builder.Append($"<h1 class=\"sub\" id=\"ObsoleteList\">{Properties.TextResources.GetString("Word.ObsoleteList")}</h1>");
 
             var commandHost = new CommandHost();
             var root = ScriptNodeTreeBuilder.Create(commandHost, "nv");
@@ -214,7 +214,7 @@ namespace NeeView
             {
                 builder.Append($"<h2>Version {group.Key}.0</h2>");
                 builder.Append("<table class=\"table-slim table-topless\">");
-                builder.Append($"<tr><th>{Properties.Resources.Word_Name}</th><th>{Properties.Resources.Word_Alternative}</th></tr>");
+                builder.Append($"<tr><th>{Properties.TextResources.GetString("Word.Name")}</th><th>{Properties.TextResources.GetString("Word.Alternative")}</th></tr>");
                 foreach (var unit in group.OrderBy(e => e.FullName))
                 {
                     builder.Append($"<tr><td>{unit.FullName}</td><td>{unit.Alternative}</td>");

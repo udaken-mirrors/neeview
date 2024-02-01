@@ -9,9 +9,9 @@ namespace NeeView.Setting
     /// </summary>
     public class SettingPageSlideshow : SettingPage
     {
-        public SettingPageSlideshow() : base(Properties.Resources.SettingPage_Slideshow)
+        public SettingPageSlideshow() : base(Properties.TextResources.GetString("SettingPage.Slideshow"))
         {
-            var section = new SettingItemSection(Properties.Resources.SettingPage_Slideshow);
+            var section = new SettingItemSection(Properties.TextResources.GetString("SettingPage.Slideshow"));
             section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.SlideShow, nameof(SlideShowConfig.IsSlideShowByLoop))));
             section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.SlideShow, nameof(SlideShowConfig.IsCancelSlideByMouseMove))));
             section.Children.Add(new SettingItemIndexValue<double>(PropertyMemberElement.Create(Config.Current.SlideShow, nameof(SlideShowConfig.SlideShowInterval)), new SlideShowInterval(), true));
@@ -43,7 +43,7 @@ namespace NeeView.Setting
                 Value = value;
             }
 
-            public override string ValueString => $"{Value}{Properties.Resources.Word_Sec}";
+            public override string ValueString => $"{Value}{Properties.TextResources.GetString("Word.Sec")}";
         }
 
         #endregion

@@ -1,5 +1,4 @@
 ﻿using Microsoft.Win32;
-using NeeView.Properties;
 using System;
 using System.Linq;
 using System.Windows;
@@ -34,7 +33,7 @@ namespace NeeView
             }
             catch (Exception ex)
             {
-                new MessageDialog($"{Resources.ImageExportErrorDialog_Message}\n{Resources.Word_Cause}: {ex.Message}", Resources.ImageExportErrorDialog_Title).ShowDialog();
+                new MessageDialog($"{Properties.TextResources.GetString("ImageExportErrorDialog.Message")}\n{Properties.TextResources.GetString("Word.Cause")}: {ex.Message}", Properties.TextResources.GetString("ImageExportErrorDialog.Title")).ShowDialog();
                 return false;
             }
         }

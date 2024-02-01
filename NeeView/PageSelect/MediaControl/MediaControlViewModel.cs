@@ -240,7 +240,7 @@ namespace NeeView
                 }
                 else
                 {
-                    menu.Items.Add(new MenuItem() { Header = Properties.Resources.MediaControl_MoreMenu_NoAudio, IsEnabled = false });
+                    menu.Items.Add(new MenuItem() { Header = Properties.TextResources.GetString("MediaControl.MoreMenu.NoAudio"), IsEnabled = false });
                 }
 
                 menu.Items.Add(new Separator());
@@ -255,7 +255,7 @@ namespace NeeView
                 }
                 else
                 {
-                    menu.Items.Add(new MenuItem() { Header = Properties.Resources.MediaControl_MoreMenu_NoSubtitle, IsEnabled = false });
+                    menu.Items.Add(new MenuItem() { Header = Properties.TextResources.GetString("MediaControl.MoreMenu.NoSubtitle"), IsEnabled = false });
                 }
 
                 return menu;

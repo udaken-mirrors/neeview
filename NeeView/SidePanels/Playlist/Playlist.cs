@@ -3,7 +3,6 @@ using NeeLaboratory.Collection;
 using NeeLaboratory.ComponentModel;
 using NeeLaboratory.IO;
 using NeeLaboratory.Linq;
-using NeeView.Properties;
 using NeeView.Threading;
 using System;
 using System.Collections.Generic;
@@ -336,7 +335,7 @@ namespace NeeView
 
             // 削除実行
             Remove(unlinked);
-            ToastService.Current.Show(new Toast(string.Format(Properties.Resources.Playlist_DeleteItemsMessage, unlinked.Count)));
+            ToastService.Current.Show(new Toast(string.Format(Properties.TextResources.GetString("Playlist.DeleteItemsMessage"), unlinked.Count)));
         }
 
         public void Move(PlaylistItem item, PlaylistItem? targetItem)
@@ -567,7 +566,7 @@ namespace NeeView
                     if (this.IsEditable)
                     {
                         this.IsEditable = false; // 以後編集不可
-                        ToastService.Current.Show(new Toast(ex.Message, Properties.Resources.Playlist_FailedToSave, ToastIcon.Error));
+                        ToastService.Current.Show(new Toast(ex.Message, Properties.TextResources.GetString("Playlist.FailedToSave"), ToastIcon.Error));
                     }
                     return false;
                 }
@@ -609,7 +608,7 @@ namespace NeeView
                     }
                     catch (Exception ex)
                     {
-                        ToastService.Current.Show(new Toast(ex.Message, Properties.Resources.Playlist_FailedToLoad, ToastIcon.Error));
+                        ToastService.Current.Show(new Toast(ex.Message, Properties.TextResources.GetString("Playlist.FailedToLoad"), ToastIcon.Error));
                         return new Playlist(path) { ErrorMessage = ex.Message };
                     }
                 }
@@ -687,7 +686,7 @@ namespace NeeView
             {
                 if (FileIO.ContainsInvalidFileNameChars(newName))
                 {
-                    throw new IOException(Resources.FileRenameInvalidDialog_Message);
+                    throw new IOException(Properties.TextResources.GetString("FileRenameInvalidDialog.Message"));
                 }
 
                 var newPath = FileIO.CreateUniquePath(System.IO.Path.Combine(System.IO.Path.GetDirectoryName(Path) ?? ".", newName.TrimStart() + System.IO.Path.GetExtension(Path)));
@@ -699,7 +698,7 @@ namespace NeeView
             }
             catch (Exception ex) when (useErrorDialog)
             {
-                ToastService.Current.Show(new Toast(ex.Message, Properties.Resources.Playlist_ErrorDialog_Title, ToastIcon.Error));
+                ToastService.Current.Show(new Toast(ex.Message, Properties.TextResources.GetString("Playlist.ErrorDialog.Title"), ToastIcon.Error));
                 return false;
             }
         }

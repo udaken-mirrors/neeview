@@ -63,10 +63,10 @@ namespace NeeView
                     var query = new QueryPath(_address);
                     if (query.Scheme == QueryScheme.Bookmark)
                     {
-                        text = Properties.Resources.BookAddressInfo_Bookmark;
+                        text = Properties.TextResources.GetString("BookAddressInfo.Bookmark");
                     }
                 }
-                return text ?? Properties.Resources.BookAddressInfo_Invalid;
+                return text ?? Properties.TextResources.GetString("BookAddressInfo.Invalid");
             }
         }
 

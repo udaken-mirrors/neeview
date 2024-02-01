@@ -40,7 +40,7 @@ namespace NeeView
 
         public ImageSource Icon { get; private set; }
 
-        public string IconTips => Properties.Resources.Navigator_Title;
+        public string IconTips => Properties.TextResources.GetString("Navigator.Title");
 
         public FrameworkElement View => _view;
 

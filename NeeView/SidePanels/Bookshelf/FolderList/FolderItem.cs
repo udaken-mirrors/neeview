@@ -533,7 +533,7 @@ namespace NeeView
             return order switch
             {
                 FolderOrder.FileType or FolderOrder.FileTypeDescending
-                    => GetLastWriteTimeString() + (IsDirectoryMaybe() ? Properties.Resources.Word_Folder : LoosePath.GetExtension(Name)),
+                    => GetLastWriteTimeString() + (IsDirectoryMaybe() ? Properties.TextResources.GetString("Word.Folder") : LoosePath.GetExtension(Name)),
                 FolderOrder.Path or FolderOrder.PathDescending
                     => SidePanelProfile.GetDecoratePlaceName(LoosePath.GetDirectoryName(TargetPath.SimplePath)),
                 _

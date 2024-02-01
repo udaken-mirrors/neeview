@@ -21,7 +21,7 @@ namespace NeeView.Setting
             }
         }
 
-        public SettingPageFileTypes() : base(Properties.Resources.SettingPage_Archive)
+        public SettingPageFileTypes() : base(Properties.TextResources.GetString("SettingPage.Archive"))
         {
             this.Children = new List<SettingPage>
             {
@@ -34,9 +34,9 @@ namespace NeeView.Setting
 
             this.Items = new List<SettingItem>();
 
-            var section = new SettingItemSection(Properties.Resources.SettingPage_FileTypes);
+            var section = new SettingItemSection(Properties.TextResources.GetString("SettingPage.FileTypes"));
 
-            var supportFileTypeEditor = new SettingItemCollectionControl() { Collection = (FileTypeCollection)PictureProfile.Current.SupportFileTypes.Clone(), AddDialogHeader = Properties.Resources.Word_Extension, IsAlwaysResetEnabled = true, Description = new SettingItemCollectionDescription() };
+            var supportFileTypeEditor = new SettingItemCollectionControl() { Collection = (FileTypeCollection)PictureProfile.Current.SupportFileTypes.Clone(), AddDialogHeader = Properties.TextResources.GetString("Word.Extension"), IsAlwaysResetEnabled = true, Description = new SettingItemCollectionDescription() };
             supportFileTypeEditor.CollectionChanged += SupportFileTypeEditor_CollectionChanged;
             section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(PictureProfile.Current, nameof(PictureProfile.SupportFileTypes)), supportFileTypeEditor));
 
@@ -50,10 +50,10 @@ namespace NeeView.Setting
             section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.Background, nameof(BackgroundConfig.IsPageBackgroundChecker))));
             this.Items.Add(section);
 
-            section = new SettingItemSection(Properties.Resources.SettingPage_FileTypes_Svg);
+            section = new SettingItemSection(Properties.TextResources.GetString("SettingPage.FileTypes.Svg"));
             section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.Image.Svg, nameof(ImageSvgConfig.IsEnabled))));
             section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.Image.Svg, nameof(ImageSvgConfig.SupportFileTypes)),
-                new SettingItemCollectionControl() { Collection = Config.Current.Image.Svg.SupportFileTypes, AddDialogHeader = Properties.Resources.Word_Extension, DefaultCollection = ImageSvgConfig.DefaultSupportFileTypes }));
+                new SettingItemCollectionControl() { Collection = Config.Current.Image.Svg.SupportFileTypes, AddDialogHeader = Properties.TextResources.GetString("Word.Extension"), DefaultCollection = ImageSvgConfig.DefaultSupportFileTypes }));
             this.Items.Add(section);
         }
 
@@ -72,17 +72,17 @@ namespace NeeView.Setting
     /// </summary>
     public class SettingPageArchiverZip : SettingPage
     {
-        public SettingPageArchiverZip() : base(Properties.Resources.SettingPage_Archive_Zip)
+        public SettingPageArchiverZip() : base(Properties.TextResources.GetString("SettingPage.Archive.Zip"))
         {
             var encodingMap = typeof(ZipEncoding).VisibleAliasNameDictionary();
             encodingMap[ZipEncoding.Local] = encodingMap[ZipEncoding.Local] + " - " + Environment.Encoding.EncodingName;
 
-            var section = new SettingItemSection(Properties.Resources.SettingPage_Archive_ZipFeature);
+            var section = new SettingItemSection(Properties.TextResources.GetString("SettingPage.Archive.ZipFeature"));
 
             section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.Archive.Zip, nameof(ZipArchiveConfig.IsEnabled))));
             section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.Archive.Zip, nameof(ZipArchiveConfig.IsFileWriteAccessEnabled))));
             section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.Archive.Zip, nameof(ZipArchiveConfig.SupportFileTypes)),
-                new SettingItemCollectionControl() { Collection = Config.Current.Archive.Zip.SupportFileTypes, AddDialogHeader = Properties.Resources.Word_Extension, DefaultCollection = ZipArchiveConfig.DefaultSupportFileTypes }));
+                new SettingItemCollectionControl() { Collection = Config.Current.Archive.Zip.SupportFileTypes, AddDialogHeader = Properties.TextResources.GetString("Word.Extension"), DefaultCollection = ZipArchiveConfig.DefaultSupportFileTypes }));
             section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.Archive.Zip, nameof(ZipArchiveConfig.Encoding), new PropertyMemberElementOptions() { EnumMap = encodingMap })));
 
             this.Items = new List<SettingItem>() { section };
@@ -95,13 +95,13 @@ namespace NeeView.Setting
     /// </summary>
     public class SettingPageArchiverSevenZip : SettingPage
     {
-        public SettingPageArchiverSevenZip() : base(Properties.Resources.SettingPage_Archive_rSevenZip)
+        public SettingPageArchiverSevenZip() : base(Properties.TextResources.GetString("SettingPage.Archive.rSevenZip"))
         {
-            var section = new SettingItemSection(Properties.Resources.SettingPage_Archive_rSevenZipFeature);
+            var section = new SettingItemSection(Properties.TextResources.GetString("SettingPage.Archive.rSevenZipFeature"));
 
             section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.Archive.SevenZip, nameof(SevenZipArchiveConfig.IsEnabled))));
             section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.Archive.SevenZip, nameof(SevenZipArchiveConfig.SupportFileTypes)),
-                new SettingItemCollectionControl() { Collection = Config.Current.Archive.SevenZip.SupportFileTypes, AddDialogHeader = Properties.Resources.Word_Extension, DefaultCollection = SevenZipArchiveConfig.DefaultSupportFileTypes }));
+                new SettingItemCollectionControl() { Collection = Config.Current.Archive.SevenZip.SupportFileTypes, AddDialogHeader = Properties.TextResources.GetString("Word.Extension"), DefaultCollection = SevenZipArchiveConfig.DefaultSupportFileTypes }));
 
             if (!Environment.IsX64)
             {
@@ -123,15 +123,15 @@ namespace NeeView.Setting
     /// </summary>
     public class SettingPageArchivePdf : SettingPage
     {
-        public SettingPageArchivePdf() : base(Properties.Resources.SettingPage_Archive_Pdf)
+        public SettingPageArchivePdf() : base(Properties.TextResources.GetString("SettingPage.Archive.Pdf"))
         {
-            var section = new SettingItemSection(Properties.Resources.SettingPage_Archive_PdfFeature);
+            var section = new SettingItemSection(Properties.TextResources.GetString("SettingPage.Archive.PdfFeature"));
 
             if (PdfArchiveConfig.IsPdfArchiveSupported)
             {
                 section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.Archive.Pdf, nameof(PdfArchiveConfig.IsEnabled))));
                 section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.Archive.Pdf, nameof(PdfArchiveConfig.SupportFileTypes)),
-                     new SettingItemCollectionControl() { Collection = Config.Current.Archive.Pdf.SupportFileTypes, AddDialogHeader = Properties.Resources.Word_Extension, DefaultCollection = PdfArchiveConfig.DefaultSupportFileTypes }));
+                     new SettingItemCollectionControl() { Collection = Config.Current.Archive.Pdf.SupportFileTypes, AddDialogHeader = Properties.TextResources.GetString("Word.Extension"), DefaultCollection = PdfArchiveConfig.DefaultSupportFileTypes }));
                 section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.Archive.Pdf, nameof(PdfArchiveConfig.RenderSize))));
             }
             else
@@ -151,15 +151,15 @@ namespace NeeView.Setting
     /// </summary>
     public class SettingPageArchiveMedia : SettingPage
     {
-        public SettingPageArchiveMedia() : base(Properties.Resources.SettingPage_Archive_Media)
+        public SettingPageArchiveMedia() : base(Properties.TextResources.GetString("SettingPage.Archive.Media"))
         {
-            var section = new SettingItemSection(Properties.Resources.SettingPage_Archive_MediaFeature);
+            var section = new SettingItemSection(Properties.TextResources.GetString("SettingPage.Archive.MediaFeature"));
 
             section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.Archive.Media, nameof(MediaArchiveConfig.IsEnabled))));
             section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.Archive.Media, nameof(MediaArchiveConfig.IsMediaPageEnabled))));
 
             section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.Archive.Media, nameof(MediaArchiveConfig.SupportFileTypes)),
-                new SettingItemCollectionControl() { Collection = Config.Current.Archive.Media.SupportFileTypes, AddDialogHeader = Properties.Resources.Word_Extension, DefaultCollection = MediaArchiveConfig.DefaultSupportFileTypes }));
+                new SettingItemCollectionControl() { Collection = Config.Current.Archive.Media.SupportFileTypes, AddDialogHeader = Properties.TextResources.GetString("Word.Extension"), DefaultCollection = MediaArchiveConfig.DefaultSupportFileTypes }));
             section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.Archive.Media, nameof(MediaArchiveConfig.PageSeconds))));
             section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.Archive.Media, nameof(MediaArchiveConfig.MediaStartDelaySeconds))));
 
@@ -179,11 +179,11 @@ namespace NeeView.Setting
     /// </summary>
     public class SettingPageSusie : SettingPage
     {
-        public SettingPageSusie() : base(Properties.Resources.SettingPage_Susie)
+        public SettingPageSusie() : base(Properties.TextResources.GetString("SettingPage.Susie"))
         {
             this.Items = new List<SettingItem>();
 
-            var section = new SettingItemSection(Properties.Resources.SettingPage_Susie_GeneralGeneral, Properties.Resources.SettingPage_Susie_GeneralGeneral_Remarks);
+            var section = new SettingItemSection(Properties.TextResources.GetString("SettingPage.Susie.GeneralGeneral"), Properties.TextResources.GetString("SettingPage.Susie.GeneralGeneral.Remarks"));
             section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.Susie, nameof(SusieConfig.IsEnabled))));
             section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.Susie, nameof(SusieConfig.SusiePluginPath)))
             {
@@ -194,11 +194,11 @@ namespace NeeView.Setting
             section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.Susie, nameof(SusieConfig.IsFirstOrderSusieArchive))));
             this.Items.Add(section);
 
-            section = new SettingItemSection(Properties.Resources.SettingPage_Susie_ImagePlugin);
+            section = new SettingItemSection(Properties.TextResources.GetString("SettingPage.Susie.ImagePlugin"));
             section.Children.Add(new SettingItemSusiePlugin(SusiePluginType.Image));
             this.Items.Add(section);
 
-            section = new SettingItemSection(Properties.Resources.SettingPage_Susie_ArchivePlugin);
+            section = new SettingItemSection(Properties.TextResources.GetString("SettingPage.Susie.ArchivePlugin"));
             section.Children.Add(new SettingItemSusiePlugin(SusiePluginType.Archive));
             this.Items.Add(section);
         }

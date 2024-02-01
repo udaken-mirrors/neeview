@@ -8,7 +8,7 @@ namespace NeeView
     {
         public ToggleStretchAllowScaleDownCommand()
         {
-            this.Group = Properties.Resources.CommandGroup_ImageScale;
+            this.Group = Properties.TextResources.GetString("CommandGroup.ImageScale");
             this.IsShowMessage = true;
         }
 

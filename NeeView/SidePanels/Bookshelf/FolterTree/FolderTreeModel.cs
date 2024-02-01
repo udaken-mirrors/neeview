@@ -250,7 +250,7 @@ namespace NeeView
             }
             if (path.StartsWith(Temporary.Current.TempDirectory))
             {
-                ToastService.Current.Show(new Toast(Properties.Resources.QuickAccessTempError_Message, null, ToastIcon.Error));
+                ToastService.Current.Show(new Toast(Properties.TextResources.GetString("QuickAccessTempError.Message"), null, ToastIcon.Error));
                 return;
             }
 
@@ -309,7 +309,7 @@ namespace NeeView
                     var count = item.BookmarkSource.Count(e => e.Value is Bookmark);
                     if (count > 0)
                     {
-                        var toast = new Toast(string.Format(Properties.Resources.BookmarkFolderDelete_Message, count), null, ToastIcon.Information, Properties.Resources.Word_Restore, () => BookmarkCollection.Current.Restore(memento));
+                        var toast = new Toast(string.Format(Properties.TextResources.GetString("BookmarkFolderDelete.Message"), count), null, ToastIcon.Information, Properties.TextResources.GetString("Word.Restore"), () => BookmarkCollection.Current.Restore(memento));
                         ToastService.Current.Show("FolderList", toast);
                     }
                 }

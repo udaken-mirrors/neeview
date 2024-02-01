@@ -9,7 +9,7 @@ namespace NeeView
     {
         public ToggleEffectCommand()
         {
-            this.Group = Properties.Resources.CommandGroup_Effect;
+            this.Group = Properties.TextResources.GetString("CommandGroup.Effect");
             this.ShortCutKey = "Ctrl+E";
             this.IsShowMessage = true;
         }
@@ -21,7 +21,7 @@ namespace NeeView
 
         public override string ExecuteMessage(object? sender, CommandContext e)
         {
-            return Config.Current.ImageEffect.IsEnabled ? Properties.Resources.ToggleEffectCommand_Off : Properties.Resources.ToggleEffectCommand_On;
+            return Config.Current.ImageEffect.IsEnabled ? Properties.TextResources.GetString("ToggleEffectCommand.Off") : Properties.TextResources.GetString("ToggleEffectCommand.On");
         }
 
         [MethodArgument("@ToggleCommand.Execute.Remarks")]

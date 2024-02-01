@@ -4,7 +4,7 @@
     {
         public ToggleBackgroundCommand()
         {
-            this.Group = Properties.Resources.CommandGroup_Effect;
+            this.Group = Properties.TextResources.GetString("CommandGroup.Effect");
             this.IsShowMessage = true;
         }
 

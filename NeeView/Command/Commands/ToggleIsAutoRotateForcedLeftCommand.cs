@@ -8,7 +8,7 @@ namespace NeeView
     {
         public ToggleIsAutoRotateForcedLeftCommand()
         {
-            this.Group = Properties.Resources.CommandGroup_ViewManipulation;
+            this.Group = Properties.TextResources.GetString("CommandGroup.ViewManipulation");
             this.IsShowMessage = true;
         }
 
@@ -19,7 +19,7 @@ namespace NeeView
 
         public override string ExecuteMessage(object? sender, CommandContext e)
         {
-            return MainViewComponent.Current.ViewPropertyControl.GetAutoRotateForcedLeft() ? Properties.Resources.ToggleIsAutoRotateForcedLeftCommand_Off : Properties.Resources.ToggleIsAutoRotateForcedLeftCommand_On;
+            return MainViewComponent.Current.ViewPropertyControl.GetAutoRotateForcedLeft() ? Properties.TextResources.GetString("ToggleIsAutoRotateForcedLeftCommand.Off") : Properties.TextResources.GetString("ToggleIsAutoRotateForcedLeftCommand.On");
         }
 
         public override bool CanExecute(object? sender, CommandContext e)

@@ -128,13 +128,13 @@ namespace NeeView
             contextMenu.Items.Clear();
 
             var listBox = this.ThumbnailListBox;
-            contextMenu.Items.Add(new MenuItem() { Header = Properties.Resources.PageListItem_Menu_AddToPlaylist, Command = PlaylistMarkCommand, IsChecked = _commandResource.PlaylistMark_IsChecked(listBox) });
+            contextMenu.Items.Add(new MenuItem() { Header = Properties.TextResources.GetString("PageListItem.Menu.AddToPlaylist"), Command = PlaylistMarkCommand, IsChecked = _commandResource.PlaylistMark_IsChecked(listBox) });
             contextMenu.Items.Add(new Separator());
-            contextMenu.Items.Add(new MenuItem() { Header = Properties.Resources.PageListItem_Menu_Explorer, Command = OpenExplorerCommand });
+            contextMenu.Items.Add(new MenuItem() { Header = Properties.TextResources.GetString("PageListItem.Menu.Explorer"), Command = OpenExplorerCommand });
             contextMenu.Items.Add(ExternalAppCollectionUtility.CreateExternalAppItem(_commandResource.OpenExternalApp_CanExecute(listBox), OpenExternalAppCommand, OpenExternalAppDialogCommand));
-            contextMenu.Items.Add(new MenuItem() { Header = Properties.Resources.PageListItem_Menu_Copy, Command = CopyCommand });
-            contextMenu.Items.Add(DestinationFolderCollectionUtility.CreateDestinationFolderItem(Properties.Resources.PageListItem_Menu_CopyToFolder, _commandResource.CopyToFolder_CanExecute(listBox), CopyToFolderCommand, OpenDestinationFolderCommand));
-            contextMenu.Items.Add(DestinationFolderCollectionUtility.CreateDestinationFolderItem(Properties.Resources.PageListItem_Menu_MoveToFolder, _commandResource.MoveToFolder_CanExecute(listBox), MoveToFolderCommand, OpenDestinationFolderCommand));
+            contextMenu.Items.Add(new MenuItem() { Header = Properties.TextResources.GetString("PageListItem.Menu.Copy"), Command = CopyCommand });
+            contextMenu.Items.Add(DestinationFolderCollectionUtility.CreateDestinationFolderItem(Properties.TextResources.GetString("PageListItem.Menu.CopyToFolder"), _commandResource.CopyToFolder_CanExecute(listBox), CopyToFolderCommand, OpenDestinationFolderCommand));
+            contextMenu.Items.Add(DestinationFolderCollectionUtility.CreateDestinationFolderItem(Properties.TextResources.GetString("PageListItem.Menu.MoveToFolder"), _commandResource.MoveToFolder_CanExecute(listBox), MoveToFolderCommand, OpenDestinationFolderCommand));
         }
 
         private void ThumbnailListBox_PreviewMouseWheel(object? sender, MouseWheelEventArgs e)

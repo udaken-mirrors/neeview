@@ -8,7 +8,7 @@ namespace NeeView
     {
         public TogglePermitFileCommand()
         {
-            this.Group = Properties.Resources.CommandGroup_Other;
+            this.Group = Properties.TextResources.GetString("CommandGroup.Other");
             this.IsShowMessage = true;
         }
 
@@ -19,7 +19,7 @@ namespace NeeView
 
         public override string ExecuteMessage(object? sender, CommandContext e)
         {
-            return Config.Current.System.IsFileWriteAccessEnabled ? Properties.Resources.TogglePermitFileCommand_Off : Properties.Resources.TogglePermitFileCommand_On;
+            return Config.Current.System.IsFileWriteAccessEnabled ? Properties.TextResources.GetString("TogglePermitFileCommand.Off") : Properties.TextResources.GetString("TogglePermitFileCommand.On");
         }
 
         [MethodArgument("@ToggleCommand.Execute.Remarks")]

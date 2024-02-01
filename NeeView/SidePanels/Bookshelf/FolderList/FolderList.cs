@@ -770,7 +770,7 @@ namespace NeeView
                 if (result != true)
                 {
                     SoundPlayerService.Current.PlaySeCannotMove();
-                    InfoMessage.Current.SetMessage(InfoMessageType.Notify, Properties.Resources.Notice_BookNextFailed);
+                    InfoMessage.Current.SetMessage(InfoMessageType.Notify, Properties.TextResources.GetString("Notice.BookNextFailed"));
                 }
             }
             finally
@@ -793,7 +793,7 @@ namespace NeeView
                 if (result != true)
                 {
                     SoundPlayerService.Current.PlaySeCannotMove();
-                    InfoMessage.Current.SetMessage(InfoMessageType.Notify, Properties.Resources.Notice_BookPrevFailed);
+                    InfoMessage.Current.SetMessage(InfoMessageType.Notify, Properties.TextResources.GetString("Notice.BookPrevFailed"));
                 }
             }
             finally
@@ -1634,7 +1634,7 @@ namespace NeeView
 
             if (count >= 2)
             {
-                var toast = new Toast(string.Format(Properties.Resources.BookmarkFolderDelete_Message, count), null, ToastIcon.Information, Properties.Resources.Word_Restore,
+                var toast = new Toast(string.Format(Properties.TextResources.GetString("BookmarkFolderDelete.Message"), count), null, ToastIcon.Information, Properties.TextResources.GetString("Word.Restore"),
                     () => { foreach (var memento in mementos) BookmarkCollection.Current.Restore(memento); });
                 ToastService.Current.Show("BookmarkList", toast);
             }
@@ -1704,7 +1704,7 @@ namespace NeeView
             }
 
             var entries = items.Select(e => ArchiveEntryUtility.CreateTemporaryEntry(e.TargetPath.SimplePath)).ToList();
-            var removed = await ConfirmFileIO.DeleteAsync(entries, Properties.Resources.FileDeleteBookDialog_Title, null);
+            var removed = await ConfirmFileIO.DeleteAsync(entries, Properties.TextResources.GetString("FileDeleteBookDialog.Title"), null);
             if (removed && _folderCollection != null)
             {
                 var removes = items.Where(e => !FileIO.ExistsPath(e.TargetPath.SimplePath)).ToList();

@@ -4,7 +4,7 @@
     {
         public ToggleStretchModeReverseCommand()
         {
-            this.Group = Properties.Resources.CommandGroup_ImageScale;
+            this.Group = Properties.TextResources.GetString("CommandGroup.ImageScale");
             this.ShortCutKey = "LeftButton+WheelUp";
             this.IsShowMessage = true;
 

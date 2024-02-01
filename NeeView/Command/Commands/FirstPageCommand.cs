@@ -4,7 +4,7 @@
     {
         public FirstPageCommand()
         {
-            this.Group = Properties.Resources.CommandGroup_Move;
+            this.Group = Properties.TextResources.GetString("CommandGroup.Move");
             this.ShortCutKey = "Ctrl+Right";
             this.MouseGesture = "UR";
             this.IsShowMessage = true;

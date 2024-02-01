@@ -1,6 +1,5 @@
 ﻿using NeeLaboratory.ComponentModel;
 using NeeView.PageFrames;
-using NeeView.Properties;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -110,7 +109,7 @@ namespace NeeView
                 else if (FileIO.ExistsPath(bookAddress))
                 {
                     var entry = StaticFolderArchive.Default.CreateArchiveEntry(bookAddress);
-                    await ConfirmFileIO.DeleteAsync(entry, Resources.FileDeleteBookDialog_Title, null);
+                    await ConfirmFileIO.DeleteAsync(entry, Properties.TextResources.GetString("FileDeleteBookDialog.Title"), null);
                 }
             }
         }
@@ -135,7 +134,7 @@ namespace NeeView
                     // ignore temporary directory
                     if (_book.Path.StartsWith(Temporary.Current.TempDirectory))
                     {
-                        ToastService.Current.Show(new Toast(Resources.Bookmark_Message_TemporaryNotSupportedError, "", ToastIcon.Error));
+                        ToastService.Current.Show(new Toast(Properties.TextResources.GetString("Bookmark.Message.TemporaryNotSupportedError"), "", ToastIcon.Error));
                         return;
                     }
 

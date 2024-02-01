@@ -44,12 +44,12 @@
         <DockPanel>
 
             <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" HorizontalAlignment="Right" Margin="10,5,10,5">
-                <Button x:Name="CloseButton" Content="{x:Static properties:Resources.Word_OK}" Click="CloseButton_Click" TabIndex="10"/>
+                <Button x:Name="CloseButton" Content="{properties:TextBinding Word.OK}" Click="CloseButton_Click" TabIndex="10"/>
             </StackPanel>
 
             <DockPanel Margin="10">
 
-                <GroupBox DockPanel.Dock="Top" Header="{x:Static properties:Resources.SusiePluginWindow_About}">
+                <GroupBox DockPanel.Dock="Top" Header="{properties:TextBinding SusiePluginWindow.About}">
                     <DockPanel>
                         <TextBlock DockPanel.Dock="Top" Text="{Binding Name}" TextWrapping="Wrap" FontWeight="Bold" Margin="10,10,10,0" />
 
@@ -60,7 +60,7 @@
                                     Visibility="{Binding CanOpenConfigDialog, Converter={StaticResource BooleanToVisibilityConverter}}" TabIndex="1">
                                 <StackPanel Orientation="Horizontal">
                                     <Image Source="{StaticResource ic_setting_24px}" Width="16" Height="16" VerticalAlignment="Center" />
-                                    <TextBlock Text="{x:Static properties:Resources.Word_Config}" Margin="5,0" VerticalAlignment="Center" />
+                                    <TextBlock Text="{properties:TextBinding Word.Config}" Margin="5,0" VerticalAlignment="Center" />
                                 </StackPanel>
                             </Button>
                         </DockPanel>
@@ -68,13 +68,13 @@
                 </GroupBox>
 
                 <StackPanel DockPanel.Dock="Top" Margin="0,15,0,5">
-                    <CheckBox Content="{x:Static properties:Resources.SusiePluginWindow_IsEnabled}" IsChecked="{Binding IsEnabled}" TabIndex="1"/>
-                    <CheckBox Content="{x:Static properties:Resources.SusiePluginWindow_IsCacheEnabled}" IsChecked="{Binding IsCacheEnabled}" TabIndex="1"/>
-                    <CheckBox Content="{x:Static properties:Resources.SusiePluginWindow_IsPreExtract}" IsChecked="{Binding IsPreExtract}" TabIndex="1"
+                    <CheckBox Content="{properties:TextBinding SusiePluginWindow.IsEnabled}" IsChecked="{Binding IsEnabled}" TabIndex="1"/>
+                    <CheckBox Content="{properties:TextBinding SusiePluginWindow.IsCacheEnabled}" IsChecked="{Binding IsCacheEnabled}" TabIndex="1"/>
+                    <CheckBox Content="{properties:TextBinding SusiePluginWindow.IsPreExtract}" IsChecked="{Binding IsPreExtract}" TabIndex="1"
                             Visibility="{Binding IsArchiver, Converter={StaticResource BooleanToVisibilityConverter}}" />
                 </StackPanel>
 
-                <TextBlock DockPanel.Dock="Top" Text="{x:Static properties:Resources.Word_Extension}" FontWeight="Bold" Margin="0,15,0,5"/>
+                <TextBlock DockPanel.Dock="Top" Text="{properties:TextBinding Word.Extension}" FontWeight="Bold" Margin="0,15,0,5"/>
                 <local:SettingItemCollectionControl Collection="{Binding Extensions}" DefaultCollection="{Binding DefaultExtensions}" IsHeightLocked="False" TabIndex="1" KeyboardNavigation.TabNavigation="Local"/>
             </DockPanel>
         </DockPanel>

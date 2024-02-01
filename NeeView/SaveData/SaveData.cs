@@ -1,5 +1,4 @@
 ﻿using NeeView.Effects;
-using NeeView.Properties;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -81,11 +80,11 @@ namespace NeeView
                 var filename = App.Current.Option.SettingFilename;
                 var extension = Path.GetExtension(filename)?.ToLower();
 
-                var failedDialog = new LoadFailedDialog(Resources.Notice_LoadSettingFailed, Resources.Notice_LoadSettingFailedTitle);
-                failedDialog.OKCommand = new UICommand(Resources.Notice_LoadSettingFailedButtonContinue) { IsPossible = true };
+                var failedDialog = new LoadFailedDialog("@Notice.LoadSettingFailed", "@Notice.LoadSettingFailedTitle");
+                failedDialog.OKCommand = new UICommand("@Notice.LoadSettingFailedButtonContinue") { IsPossible = true };
                 if (cancellable)
                 {
-                    failedDialog.CancelCommand = new UICommand(Resources.Notice_LoadSettingFailedButtonQuit) { Alignment = UICommandAlignment.Left };
+                    failedDialog.CancelCommand = new UICommand("@Notice.LoadSettingFailedButtonQuit") { Alignment = UICommandAlignment.Left };
                 }
 
                 if (extension == ".json" && File.Exists(filename))
@@ -114,7 +113,7 @@ namespace NeeView
             {
                 var filename = HistoryFilePath;
                 var extension = Path.GetExtension(filename).ToLower();
-                var failedDialog = new LoadFailedDialog(Resources.Notice_LoadHistoryFailed, Resources.Notice_LoadHistoryFailedTitle);
+                var failedDialog = new LoadFailedDialog("@Notice.LoadHistoryFailed", "@Notice.LoadHistoryFailedTitle");
 
                 var fileInfo = new FileInfo(filename);
                 if (extension == ".json" && fileInfo.Exists)
@@ -133,7 +132,7 @@ namespace NeeView
             {
                 var filename = BookmarkFilePath;
                 var extension = Path.GetExtension(filename).ToLower();
-                var failedDialog = new LoadFailedDialog(Resources.Notice_LoadBookmarkFailed, Resources.Notice_LoadBookmarkFailedTitle);
+                var failedDialog = new LoadFailedDialog("@Notice.LoadBookmarkFailed", "@Notice.LoadBookmarkFailedTitle");
 
                 if (extension == ".json" && File.Exists(filename))
                 {
@@ -268,7 +267,7 @@ namespace NeeView
                     if (fileInfo.Exists && (_historyMergeFlag || fileInfo.LastWriteTime > _historyLastWriteTime))
                     {
                         //Debug.WriteLine("SaveData.SaveHistory(): merge.");
-                        var failedDialog = new LoadFailedDialog(Resources.Notice_LoadHistoryFailed, Resources.Notice_LoadHistoryFailedTitle);
+                        var failedDialog = new LoadFailedDialog("@Notice.LoadHistoryFailed", "@Notice.LoadHistoryFailedTitle");
                         var margeMemento = SafetyLoad(BookHistoryCollection.Memento.Load, HistoryFilePath, failedDialog);
                         bookHistoryMemento.Merge(margeMemento);
                         _historyMergeFlag = true;
@@ -401,13 +400,13 @@ namespace NeeView
             var textBox = new System.Windows.Controls.TextBox()
             {
                 IsReadOnly = true,
-                Text = Message + System.Environment.NewLine + ex.Message,
+                Text = ResourceService.GetString(Message) + System.Environment.NewLine + ex.Message,
                 TextWrapping = System.Windows.TextWrapping.Wrap,
                 VerticalScrollBarVisibility = System.Windows.Controls.ScrollBarVisibility.Auto,
                 HorizontalScrollBarVisibility = System.Windows.Controls.ScrollBarVisibility.Disabled,
             };
 
-            var dialog = new MessageDialog(textBox, Title);
+            var dialog = new MessageDialog(textBox, ResourceService.GetString(Title));
             dialog.SizeToContent = System.Windows.SizeToContent.Manual;
             dialog.Height = 320.0;
             dialog.ResizeMode = System.Windows.ResizeMode.CanResize;

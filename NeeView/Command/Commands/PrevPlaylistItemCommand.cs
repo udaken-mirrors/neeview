@@ -4,7 +4,7 @@
     {
         public PrevPlaylistItemCommand()
         {
-            this.Group = Properties.Resources.CommandGroup_Playlist;
+            this.Group = Properties.TextResources.GetString("CommandGroup.Playlist");
             this.IsShowMessage = false;
         }
 
@@ -18,7 +18,7 @@
             var isSuccess = PlaylistPresenter.Current?.PlaylistListBox?.MovePrevious();
             if (isSuccess != true)
             {
-                InfoMessage.Current.SetMessage(InfoMessageType.Command, Properties.Resources.Notice_PlaylistItemPrevFailed);
+                InfoMessage.Current.SetMessage(InfoMessageType.Command, Properties.TextResources.GetString("Notice.PlaylistItemPrevFailed"));
             }
         }
     }

@@ -14,9 +14,9 @@
     <Grid MinWidth="512">
         <DockPanel LastChildFill="True" Margin="20">
             <StackPanel DockPanel.Dock="Bottom" HorizontalAlignment="Right" Orientation="Horizontal">
-                <Button Style="{StaticResource NVDialogAccentButton}" Content="{x:Static properties:Resources.Word_Jump}"
+                <Button Style="{StaticResource NVDialogAccentButton}" Content="{properties:TextBinding Word.Jump}"
                         Command="{Binding DecideCommand}"/>
-                <Button Style="{StaticResource NVDialogButton}" Content="{x:Static properties:Resources.Word_Cancel}"
+                <Button Style="{StaticResource NVDialogButton}" Content="{properties:TextBinding Word.Cancel}"
                         Command="{Binding CancelCommand}"/>
             </StackPanel>
             <StackPanel DockPanel.Dock="Top" >

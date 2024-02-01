@@ -16,7 +16,7 @@
         ShowInTaskbar="True"
         Deactivated="Window_Deactivated"
         Closed="SettingWindow_Closed"
-        Title="{x:Static properties:Resources.WindowSettingTitle}"
+        Title="{properties:TextBinding WindowSettingTitle}"
         Height="704" Width="960">
     
     <Window.Resources>

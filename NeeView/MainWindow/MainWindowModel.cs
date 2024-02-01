@@ -3,7 +3,6 @@ using NeeLaboratory;
 using NeeLaboratory.ComponentModel;
 using NeeLaboratory.IO.Search;
 using NeeLaboratory.Windows.Input;
-using NeeView.Properties;
 using NeeView.Setting;
 using NeeView.Windows.Property;
 using System;
@@ -411,7 +410,7 @@ namespace NeeView
         {
             if (Environment.IsAppxPackage)
             {
-                new MessageDialog(Resources.OpenSettingFolderErrorDialog_Message, Resources.OpenSettingFolderErrorDialog_Title).ShowDialog();
+                new MessageDialog(Properties.TextResources.GetString("OpenSettingFolderErrorDialog.Message"), Properties.TextResources.GetString("OpenSettingFolderErrorDialog.Title")).ShowDialog();
                 return;
             }
 

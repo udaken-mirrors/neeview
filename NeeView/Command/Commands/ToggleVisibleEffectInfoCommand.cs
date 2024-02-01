@@ -8,7 +8,7 @@ namespace NeeView
     {
         public ToggleVisibleEffectInfoCommand()
         {
-            this.Group = Properties.Resources.CommandGroup_Panel;
+            this.Group = Properties.TextResources.GetString("CommandGroup.Panel");
             this.ShortCutKey = "E";
             this.IsShowMessage = false;
         }
@@ -20,7 +20,7 @@ namespace NeeView
 
         public override string ExecuteMessage(object? sender, CommandContext e)
         {
-            return SidePanelFrame.Current.IsVisibleEffectInfo ? Properties.Resources.ToggleVisibleEffectInfoCommand_Off : Properties.Resources.ToggleVisibleEffectInfoCommand_On;
+            return SidePanelFrame.Current.IsVisibleEffectInfo ? Properties.TextResources.GetString("ToggleVisibleEffectInfoCommand.Off") : Properties.TextResources.GetString("ToggleVisibleEffectInfoCommand.On");
         }
 
         [MethodArgument("@ToggleCommand.Execute.Remarks")]

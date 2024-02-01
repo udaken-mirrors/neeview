@@ -8,7 +8,7 @@ namespace NeeView
     {
         public ToggleIsSupportedSingleLastPageCommand()
         {
-            this.Group = Properties.Resources.CommandGroup_PageSetting;
+            this.Group = Properties.TextResources.GetString("CommandGroup.PageSetting");
             this.IsShowMessage = true;
         }
 
@@ -19,7 +19,7 @@ namespace NeeView
 
         public override string ExecuteMessage(object? sender, CommandContext e)
         {
-            return BookSettings.Current.IsSupportedSingleLastPage ? Properties.Resources.ToggleIsSupportedSingleLastPageCommand_Off : Properties.Resources.ToggleIsSupportedSingleLastPageCommand_On;
+            return BookSettings.Current.IsSupportedSingleLastPage ? Properties.TextResources.GetString("ToggleIsSupportedSingleLastPageCommand.Off") : Properties.TextResources.GetString("ToggleIsSupportedSingleLastPageCommand.On");
         }
 
         public override bool CanExecute(object? sender, CommandContext e)

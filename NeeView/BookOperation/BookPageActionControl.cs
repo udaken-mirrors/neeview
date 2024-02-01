@@ -1,5 +1,4 @@
-﻿using NeeView.Properties;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using System;
 using System.Linq;
@@ -73,7 +72,7 @@ namespace NeeView
             }
             catch (Exception ex)
             {
-                new MessageDialog($"{Resources.Word_Cause}: {ex.Message}", Resources.FileDeleteErrorDialog_Title).ShowDialog();
+                new MessageDialog($"{Properties.TextResources.GetString("Word.Cause")}: {ex.Message}", Properties.TextResources.GetString("FileDeleteErrorDialog.Title")).ShowDialog();
             }
 
             _bookControl.ReLoad();
@@ -122,7 +121,7 @@ namespace NeeView
                 }
                 catch (Exception ex)
                 {
-                    new MessageDialog(ex.Message, Properties.Resources.OpenApplicationErrorDialog_Title).ShowDialog();
+                    new MessageDialog(ex.Message, Properties.TextResources.GetString("OpenApplicationErrorDialog.Title")).ShowDialog();
                 }
             }
         }
@@ -169,7 +168,7 @@ namespace NeeView
                 }
                 catch (Exception e)
                 {
-                    new MessageDialog($"{Resources.Word_Cause}: {e.Message}", Resources.CopyErrorDialog_Title).ShowDialog();
+                    new MessageDialog($"{Properties.TextResources.GetString("Word.Cause")}: {e.Message}", Properties.TextResources.GetString("CopyErrorDialog.Title")).ShowDialog();
                 }
             }
         }
@@ -199,7 +198,7 @@ namespace NeeView
                 }
                 catch (Exception e)
                 {
-                    new MessageDialog($"{Resources.ImageExportErrorDialog_Message}\n{Resources.Word_Cause}: {e.Message}", Resources.ImageExportErrorDialog_Title).ShowDialog();
+                    new MessageDialog($"{Properties.TextResources.GetString("ImageExportErrorDialog.Message")}\n{Properties.TextResources.GetString("Word.Cause")}: {e.Message}", Properties.TextResources.GetString("ImageExportErrorDialog.Title")).ShowDialog();
                     return;
                 }
             }
@@ -216,7 +215,7 @@ namespace NeeView
                 }
                 catch (Exception e)
                 {
-                    new MessageDialog($"{Resources.ImageExportErrorDialog_Message}\n{Resources.Word_Cause}: {e.Message}", Resources.ImageExportErrorDialog_Title).ShowDialog();
+                    new MessageDialog($"{Properties.TextResources.GetString("ImageExportErrorDialog.Message")}\n{Properties.TextResources.GetString("Word.Cause")}: {e.Message}", Properties.TextResources.GetString("ImageExportErrorDialog.Title")).ShowDialog();
                     return;
                 }
             }

@@ -51,13 +51,13 @@ namespace NeeView
         {
             if (GroupName == InformationGroup.File.ToAliasName())
             {
-                this.Content = Properties.Resources.Information_OpenFolder;
+                this.Content = Properties.TextResources.GetString("Information.OpenFolder");
                 this.Command = OpenFolderCommand;
                 this.Visibility = OpenFolderCommand_CanExecute() ? Visibility.Visible : Visibility.Collapsed;
             }
             else if (GroupName == InformationGroup.Gps.ToAliasName())
             {
-                this.Content = Properties.Resources.Information_OpenMap;
+                this.Content = Properties.TextResources.GetString("Information.OpenMap");
                 this.Command = OpenMapCommand;
                 this.Visibility = OpenMapCommand_CanExecute() ? Visibility.Visible : Visibility.Collapsed;
             }

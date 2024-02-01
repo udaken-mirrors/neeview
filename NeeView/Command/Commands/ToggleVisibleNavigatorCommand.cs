@@ -8,7 +8,7 @@ namespace NeeView
     {
         public ToggleVisibleNavigatorCommand()
         {
-            this.Group = Properties.Resources.CommandGroup_Panel;
+            this.Group = Properties.TextResources.GetString("CommandGroup.Panel");
             this.ShortCutKey = "N";
             this.IsShowMessage = false;
         }
@@ -20,7 +20,7 @@ namespace NeeView
 
         public override string ExecuteMessage(object? sender, CommandContext e)
         {
-            return SidePanelFrame.Current.IsVisibleNavigator ? Properties.Resources.ToggleVisibleNavigatorCommand_Off : Properties.Resources.ToggleVisibleNavigatorCommand_On;
+            return SidePanelFrame.Current.IsVisibleNavigator ? Properties.TextResources.GetString("ToggleVisibleNavigatorCommand.Off") : Properties.TextResources.GetString("ToggleVisibleNavigatorCommand.On");
         }
 
         [MethodArgument("@ToggleCommand.Execute.Remarks")]

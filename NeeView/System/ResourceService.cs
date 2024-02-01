@@ -57,7 +57,8 @@ namespace NeeView
         public static string? GetResourceString(string key)
         {
             if (key is null || key[0] != '@') return null;
-            return Properties.Resources.ResourceManager.GetString(key[1..], Properties.Resources.Culture);
+            //return Properties.TextResources.GetString("ResourceManager").GetString(key[1..], Properties.TextResources.GetString("Culture"));
+            return Properties.TextResources.GetStringRaw(key[1..]);
         }
 
         /// <summary>
@@ -86,7 +87,7 @@ namespace NeeView
         /// </summary>
         public static string Join(IEnumerable<string> tokens)
         {
-            return string.Join(" ", tokens.Select(e => string.Format(Properties.Resources.TokenFormat, e)));
+            return string.Join(" ", tokens.Select(e => string.Format(Properties.TextResources.GetStringRaw("TokenFormat") ?? "", e)));
         }
     }
 }

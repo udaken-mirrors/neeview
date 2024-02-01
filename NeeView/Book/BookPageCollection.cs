@@ -209,7 +209,7 @@ namespace NeeView
             var emptyArchiveEntry = new ArchiveEntry(StaticFolderArchive.Default)
             {
                 IsEmpty = true,
-                RawEntryName = Properties.Resources.Notice_NoFiles,
+                RawEntryName = Properties.TextResources.GetString("Notice.NoFiles"),
             };
             return new Page("", new EmptyPageContent(emptyArchiveEntry, null));
         }

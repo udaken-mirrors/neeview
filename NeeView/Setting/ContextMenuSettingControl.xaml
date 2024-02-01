@@ -57,18 +57,18 @@
                 <DockPanel Margin="5,5,10,10">
                     <DockPanel DockPanel.Dock="Top">
                         <StackPanel DockPanel.Dock="Right">
-                            <Button x:Name="AddButton" Content="{x:Static properties:Resources.Word_Add}" Command="{x:Static local:ContextMenuSettingControl.AddCommand}" TabIndex="2"/>
+                            <Button x:Name="AddButton" Content="{properties:TextBinding Word.Add}" Command="{x:Static local:ContextMenuSettingControl.AddCommand}" TabIndex="2"/>
                         </StackPanel>
                         <ComboBox x:Name="SourceComboBox" VerticalAlignment="Center" ItemsSource="{Binding SourceElementList}" SelectedIndex="{Binding SelectedElementIndex}" DisplayMemberPath="DefaultLongLabel" TabIndex="1"/>
                     </DockPanel>
                     <DockPanel Margin="0,5,0,0">
                         <DockPanel DockPanel.Dock="Right" LastChildFill="False">
-                            <Button DockPanel.Dock="Top" x:Name="RemoveButton" Content="{x:Static properties:Resources.Word_Remove}" Command="{x:Static local:ContextMenuSettingControl.RemoveCommand}" TabIndex="11"/>
-                            <Button DockPanel.Dock="Top" x:Name="MoveUpButton" Content="{x:Static properties:Resources.Word_ToUp}" Command="{x:Static local:ContextMenuSettingControl.MoveUpCommand}" TabIndex="12"/>
-                            <Button DockPanel.Dock="Top" x:Name="MoveDownButton" Content="{x:Static properties:Resources.Word_ToDown}" Command="{x:Static local:ContextMenuSettingControl.MoveDownCommand}" TabIndex="13"/>
-                            <Button DockPanel.Dock="Top" x:Name="RenameButton" Content="{x:Static properties:Resources.Word_Rename}" Command="{x:Static local:ContextMenuSettingControl.RenameCommand}" TabIndex="14"/>
+                            <Button DockPanel.Dock="Top" x:Name="RemoveButton" Content="{properties:TextBinding Word.Remove}" Command="{x:Static local:ContextMenuSettingControl.RemoveCommand}" TabIndex="11"/>
+                            <Button DockPanel.Dock="Top" x:Name="MoveUpButton" Content="{properties:TextBinding Word.ToUp}" Command="{x:Static local:ContextMenuSettingControl.MoveUpCommand}" TabIndex="12"/>
+                            <Button DockPanel.Dock="Top" x:Name="MoveDownButton" Content="{properties:TextBinding Word.ToDown}" Command="{x:Static local:ContextMenuSettingControl.MoveDownCommand}" TabIndex="13"/>
+                            <Button DockPanel.Dock="Top" x:Name="RenameButton" Content="{properties:TextBinding Word.Rename}" Command="{x:Static local:ContextMenuSettingControl.RenameCommand}" TabIndex="14"/>
 
-                            <Button DockPanel.Dock="Bottom" x:Name="ResetButton" Content="{x:Static properties:Resources.Word_Reset}" Click="ResetButton_Click" TabIndex="15"/>
+                            <Button DockPanel.Dock="Bottom" x:Name="ResetButton" Content="{properties:TextBinding Word.Reset}" Click="ResetButton_Click" TabIndex="15"/>
                         </DockPanel>
                         <TreeView x:Name="ContextMenuTreeView" BorderBrush="{DynamicResource Control.Border}" BorderThickness="1" TabIndex="10"
                                       HorizontalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Disabled"

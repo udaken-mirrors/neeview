@@ -1,7 +1,7 @@
 ﻿<Window x:Class="NeeView.DestinationFolderDialog" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:local="clr-namespace:NeeView"
         xmlns:properties="clr-namespace:NeeView.Properties" xmlns:behaviors="http://schemas.microsoft.com/xaml/behaviors" mc:Ignorable="d"
-        Title="{x:Static properties:Resources.DestinationFolderDialog_Title}" Height="450" Width="800" Style="{StaticResource ChromeWindowStyle}">
+        Title="{properties:TextBinding DestinationFolderDialog.Title}" Height="450" Width="800" Style="{StaticResource ChromeWindowStyle}">
 
     <Window.Resources>
 
@@ -16,14 +16,14 @@
 
         <DockPanel DockPanel.Dock="Right" LastChildFill="False" Margin="5">
             <StackPanel DockPanel.Dock="Top">
-                <Button Content="{x:Static properties:Resources.Word_Add}" Command="{Binding AddCommand}" />
-                <Button Content="{x:Static properties:Resources.Word_Edit}" Command="{Binding EditCommand}" />
-                <Button Content="{x:Static properties:Resources.Word_ToUp}" Command="{Binding MoveUpCommand}" />
-                <Button Content="{x:Static properties:Resources.Word_ToDown}" Command="{Binding MoveDownCommand}" />
-                <Button Content="{x:Static properties:Resources.Word_Delete}" Command="{Binding DeleteCommand}" />
+                <Button Content="{properties:TextBinding Word.Add}" Command="{Binding AddCommand}" />
+                <Button Content="{properties:TextBinding Word.Edit}" Command="{Binding EditCommand}" />
+                <Button Content="{properties:TextBinding Word.ToUp}" Command="{Binding MoveUpCommand}" />
+                <Button Content="{properties:TextBinding Word.ToDown}" Command="{Binding MoveDownCommand}" />
+                <Button Content="{properties:TextBinding Word.Delete}" Command="{Binding DeleteCommand}" />
             </StackPanel>
             <StackPanel DockPanel.Dock="Bottom">
-                <Button x:Name="CloseButton" Content="{x:Static properties:Resources.Word_Close}" Click="CloseButton_Click" />
+                <Button x:Name="CloseButton" Content="{properties:TextBinding Word.Close}" Click="CloseButton_Click" />
             </StackPanel>
         </DockPanel>
 
@@ -41,14 +41,14 @@
 
             <ListView.View>
                 <GridView>
-                    <GridViewColumn Header="{x:Static properties:Resources.Word_Name}" Width="150">
+                    <GridViewColumn Header="{properties:TextBinding Word.Name}" Width="150">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <TextBlock Text="{Binding Name}" TextTrimming="CharacterEllipsis" />
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    <GridViewColumn Header="{x:Static properties:Resources.Word_Path}">
+                    <GridViewColumn Header="{properties:TextBinding Word.Path}">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <TextBlock Text="{Binding Path}" TextTrimming="CharacterEllipsis" />

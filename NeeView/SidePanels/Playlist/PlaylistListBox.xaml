@@ -175,8 +175,8 @@
                 <Image Source="{StaticResource ic_add_24px_a}" />
                 <Button.ContextMenu>
                     <ContextMenu>
-                        <MenuItem Header="{x:Static properties:Resources.Playlist_FirstIn}" IsChecked="{Binding IsFirstIn}" IsCheckable="True" />
-                        <MenuItem Header="{x:Static properties:Resources.Playlist_LastIn}" IsChecked="{Binding IsLastIn}" IsCheckable="True" />
+                        <MenuItem Header="{properties:TextBinding Playlist.FirstIn}" IsChecked="{Binding IsFirstIn}" IsCheckable="True" />
+                        <MenuItem Header="{properties:TextBinding Playlist.LastIn}" IsChecked="{Binding IsLastIn}" IsCheckable="True" />
                     </ContextMenu>
                 </Button.ContextMenu>
             </Button>
@@ -243,7 +243,7 @@
 
             <Border Background="Transparent" Visibility="{Binding ErrorMessage, Converter={StaticResource StringNullOrWhiteSpaceToVisibilityInverseConverter}}" d:IsHidden="True">
                 <StackPanel VerticalAlignment="Top" Margin="0,20">
-                    <TextBlock Text="{x:Static properties:Resources.Playlist_FailedToLoad}" HorizontalAlignment="Center" Margin="0,5" />
+                    <TextBlock Text="{properties:TextBinding Playlist.FailedToLoad}" HorizontalAlignment="Center" Margin="0,5" />
                     <TextBlock Text="{Binding ErrorMessage}" HorizontalAlignment="Center" Margin="0,5" TextWrapping="Wrap" />
                 </StackPanel>
             </Border>

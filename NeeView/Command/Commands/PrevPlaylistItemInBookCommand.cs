@@ -4,7 +4,7 @@
     {
         public PrevPlaylistItemInBookCommand()
         {
-            this.Group = Properties.Resources.CommandGroup_Playlist;
+            this.Group = Properties.TextResources.GetString("CommandGroup.Playlist");
             this.IsShowMessage = false;
 
             this.ParameterSource = new CommandParameterSource(new MovePlaylsitItemInBookCommandParameter());

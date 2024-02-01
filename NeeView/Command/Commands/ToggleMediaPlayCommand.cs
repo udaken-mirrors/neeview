@@ -4,11 +4,11 @@
     {
         public ToggleMediaPlayCommand()
         {
-            this.Group = Properties.Resources.CommandGroup_Video;
+            this.Group = Properties.TextResources.GetString("CommandGroup.Video");
         }
         public override string ExecuteMessage(object? sender, CommandContext e)
         {
-            return BookOperation.Current.IsMediaPlaying() ? Properties.Resources.Word_Stop : Properties.Resources.Word_Play;
+            return BookOperation.Current.IsMediaPlaying() ? Properties.TextResources.GetString("Word.Stop") : Properties.TextResources.GetString("Word.Play");
         }
 
         public override bool CanExecute(object? sender, CommandContext e)

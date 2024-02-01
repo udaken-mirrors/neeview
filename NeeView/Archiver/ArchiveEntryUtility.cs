@@ -70,11 +70,11 @@ namespace NeeView
                 }
                 catch (Exception ex)
                 {
-                    throw new FileNotFoundException(string.Format(Properties.Resources.FileNotFoundException_Message, path), ex);
+                    throw new FileNotFoundException(string.Format(Properties.TextResources.GetString("FileNotFoundException.Message"), path), ex);
                 }
             }
 
-            throw new FileNotFoundException(string.Format(Properties.Resources.FileNotFoundException_Message, path));
+            throw new FileNotFoundException(string.Format(Properties.TextResources.GetString("FileNotFoundException.Message"), path));
         }
 
         /// <summary>

@@ -355,8 +355,8 @@ namespace NeeView
             public override ContextMenu Create()
             {
                 var menu = new ContextMenu();
-                menu.Items.Add(CreateCheckMenuItem(Properties.Resources.Navigator_MoreMenu_IsVisibleThumbnail, new Binding(nameof(NavigatorConfig.IsVisibleThumbnail)) { Source = Config.Current.Navigator }));
-                menu.Items.Add(CreateCheckMenuItem(Properties.Resources.Navigator_MoreMenu_IsVisibleControlBar, new Binding(nameof(NavigatorConfig.IsVisibleControlBar)) { Source = Config.Current.Navigator }));
+                menu.Items.Add(CreateCheckMenuItem(Properties.TextResources.GetString("Navigator.MoreMenu.IsVisibleThumbnail"), new Binding(nameof(NavigatorConfig.IsVisibleThumbnail)) { Source = Config.Current.Navigator }));
+                menu.Items.Add(CreateCheckMenuItem(Properties.TextResources.GetString("Navigator.MoreMenu.IsVisibleControlBar"), new Binding(nameof(NavigatorConfig.IsVisibleControlBar)) { Source = Config.Current.Navigator }));
                 return menu;
             }
         }

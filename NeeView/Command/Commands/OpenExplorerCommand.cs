@@ -4,7 +4,7 @@
     {
         public OpenExplorerCommand()
         {
-            this.Group = Properties.Resources.CommandGroup_File;
+            this.Group = Properties.TextResources.GetString("CommandGroup.File");
             this.IsShowMessage = false;
         }
 

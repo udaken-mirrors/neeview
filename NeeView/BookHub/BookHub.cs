@@ -77,7 +77,7 @@ namespace NeeView
                     var book = _book;
                     if (book?.NotFoundStartPage != null && book.Pages.Count > 0)
                     {
-                        InfoMessage.Current.SetMessage(InfoMessageType.BookName, string.Format(Properties.Resources.Notice_CannotOpen, LoosePath.GetFileName(book.NotFoundStartPage)), null, 2.0);
+                        InfoMessage.Current.SetMessage(InfoMessageType.BookName, string.Format(Properties.TextResources.GetString("Notice.CannotOpen"), LoosePath.GetFileName(book.NotFoundStartPage)), null, 2.0);
                     }
                     else
                     {
@@ -477,7 +477,7 @@ namespace NeeView
                 isEmptyBook = (book != null && book.Pages.Count <= 0);
                 if (isEmptyBook)
                 {
-                    bookChangedEventArgs.EmptyMessage = string.Format(Properties.Resources.Notice_NoPages, book?.Path);
+                    bookChangedEventArgs.EmptyMessage = string.Format(Properties.TextResources.GetString("Notice.NoPages"), book?.Path);
                 }
             }
             catch (OperationCanceledException)
@@ -493,7 +493,7 @@ namespace NeeView
                 else
                 {
                     // ファイル読み込み失敗通知
-                    var message = string.Format(Properties.Resources.LoadFailedException_Message, place, ex.Message);
+                    var message = string.Format(Properties.TextResources.GetString("LoadFailedException.Message"), place, ex.Message);
                     bookChangedEventArgs.EmptyMessage = message;
                 }
 
@@ -534,7 +534,7 @@ namespace NeeView
 
             token.ThrowIfCancellationRequested();
 
-            var dialog = new MessageDialog(string.Format(Properties.Resources.ConfirmRecursiveDialog_Message, book.Path), Properties.Resources.ConfirmRecursiveDialog_Title);
+            var dialog = new MessageDialog(string.Format(Properties.TextResources.GetString("ConfirmRecursiveDialog.Message"), book.Path), Properties.TextResources.GetString("ConfirmRecursiveDialog.Title"));
             dialog.Commands.Add(UICommands.Yes);
             dialog.Commands.Add(UICommands.No);
 

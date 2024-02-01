@@ -7,7 +7,7 @@ namespace NeeView
     {
         public ToggleTopmostCommand()
         {
-            this.Group = Properties.Resources.CommandGroup_Window;
+            this.Group = Properties.TextResources.GetString("CommandGroup.Window");
             this.IsShowMessage = true;
         }
 
@@ -18,7 +18,7 @@ namespace NeeView
 
         public override string ExecuteMessage(object? sender, CommandContext e)
         {
-            return Config.Current.Window.IsTopmost ? Properties.Resources.ToggleTopmostCommand_Off : Properties.Resources.ToggleTopmostCommand_On;
+            return Config.Current.Window.IsTopmost ? Properties.TextResources.GetString("ToggleTopmostCommand.Off") : Properties.TextResources.GetString("ToggleTopmostCommand.On");
         }
 
         public override void Execute(object? sender, CommandContext e)

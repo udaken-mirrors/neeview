@@ -1,5 +1,4 @@
 ﻿using NeeLaboratory.IO;
-using NeeView.Properties;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -44,7 +43,7 @@ namespace NeeView
 
             exporter.Export(filename, isOverwrite);
 
-            var toast = new Toast(string.Format(Resources.ExportImage_Message_Success, filename));
+            var toast = new Toast(string.Format(Properties.TextResources.GetString("ExportImage.Message.Success"), filename));
             ToastService.Current.Show(toast);
         }
 

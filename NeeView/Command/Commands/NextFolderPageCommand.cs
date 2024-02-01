@@ -4,7 +4,7 @@
     {
         public NextFolderPageCommand()
         {
-            this.Group = Properties.Resources.CommandGroup_Move;
+            this.Group = Properties.TextResources.GetString("CommandGroup.Move");
             this.IsShowMessage = true;
             this.PairPartner = "PrevFolderPage";
 

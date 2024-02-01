@@ -4,7 +4,7 @@
     {
         public ExportBackupCommand()
         {
-            this.Group = Properties.Resources.CommandGroup_Other;
+            this.Group = Properties.TextResources.GetString("CommandGroup.Other");
             this.IsShowMessage = false;
 
             this.ParameterSource = new CommandParameterSource(new ExportBackupCommandParameter());

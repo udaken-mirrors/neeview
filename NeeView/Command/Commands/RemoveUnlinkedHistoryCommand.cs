@@ -7,7 +7,7 @@ namespace NeeView
     {
         public RemoveUnlinkedHistoryCommand()
         {
-            this.Group = Properties.Resources.CommandGroup_File;
+            this.Group = Properties.TextResources.GetString("CommandGroup.File");
             this.IsShowMessage = true;
         }
 

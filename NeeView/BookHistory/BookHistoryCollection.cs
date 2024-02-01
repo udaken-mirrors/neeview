@@ -279,7 +279,7 @@ namespace NeeView
 
         public void ShowRemovedMessage(int removedCount)
         {
-            ToastService.Current.Show(new Toast(string.Format(Properties.Resources.History_DeleteItemsMessage, removedCount)));
+            ToastService.Current.Show(new Toast(string.Format(Properties.TextResources.GetString("History.DeleteItemsMessage"), removedCount)));
         }
 
 

@@ -55,7 +55,7 @@ namespace NeeView
 
             if (withToast)
             {
-                ToastService.Current.Show("ScriptNotice", new Toast(message, Properties.Resources.ScriptErrorDialog_Title_Info, ToastIcon.Information, Properties.Resources.ScriptErrorDialog_OpenConsole, () => OpenWindow()));
+                ToastService.Current.Show("ScriptNotice", new Toast(message, Properties.TextResources.GetString("ScriptErrorDialog.Title.Info"), ToastIcon.Information, Properties.TextResources.GetString("ScriptErrorDialog.OpenConsole"), () => OpenWindow()));
             }
         }
 
@@ -67,7 +67,7 @@ namespace NeeView
 
             if (withToast)
             {
-                ToastService.Current.Show("ScriptNotice", new Toast(message, Properties.Resources.ScriptErrorDialog_Title_Warning, ToastIcon.Warning, Properties.Resources.ScriptErrorDialog_OpenConsole, () => OpenWindow()));
+                ToastService.Current.Show("ScriptNotice", new Toast(message, Properties.TextResources.GetString("ScriptErrorDialog.Title.Warning"), ToastIcon.Warning, Properties.TextResources.GetString("ScriptErrorDialog.OpenConsole"), () => OpenWindow()));
             }
         }
 
@@ -79,7 +79,7 @@ namespace NeeView
 
             if (withToast)
             {
-                ToastService.Current.Show("ScriptNotice", new Toast(message, Properties.Resources.ScriptErrorDialog_Title_Error, ToastIcon.Error, Properties.Resources.ScriptErrorDialog_OpenConsole, () => OpenWindow()));
+                ToastService.Current.Show("ScriptNotice", new Toast(message, Properties.TextResources.GetString("ScriptErrorDialog.Title.Error"), ToastIcon.Error, Properties.TextResources.GetString("ScriptErrorDialog.OpenConsole"), () => OpenWindow()));
             }
         }
 

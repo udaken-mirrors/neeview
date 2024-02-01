@@ -9,7 +9,7 @@ namespace NeeView
     {
         public ViewScaleUpCommand()
         {
-            this.Group = Properties.Resources.CommandGroup_ViewManipulation;
+            this.Group = Properties.TextResources.GetString("CommandGroup.ViewManipulation");
             this.ShortCutKey = "RightButton+WheelUp";
             this.IsShowMessage = false;
             this.ParameterSource = new CommandParameterSource(new ViewScaleCommandParameter());

@@ -21,7 +21,7 @@ namespace NeeView
             _path = path;
             _sourceMap = sourceMap ?? throw new ArgumentNullException(nameof(sourceMap));
 
-            this.Group = Properties.Resources.CommandGroup_Script;
+            this.Group = Properties.TextResources.GetString("CommandGroup.Script");
             this.Text = LoosePath.GetFileNameWithoutExtension(_path);
 
             this.ParameterSource = new CommandParameterSource(new ScriptCommandParameter());

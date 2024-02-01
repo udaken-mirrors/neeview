@@ -8,7 +8,7 @@
         mc:Ignorable="d"
         Style="{StaticResource ChromeDialogStyle}"
         x:Name="MyWindow"
-        Title="{x:Static properties:Resources.CommandResetWindow_Title}" Height="300" Width="512">
+        Title="{properties:TextBinding CommandResetWindow.Title}" Height="300" Width="512">
 
     <Window.Resources>
         <ResourceDictionary>
@@ -28,15 +28,15 @@
     <Grid>
         <DockPanel Margin="5">
             <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0">
-                <Button x:Name="OkButton" Style="{StaticResource ButtonStyle}" Content="{x:Static properties:Resources.Word_OK}" Command="{Binding OkCommand}" CommandParameter="{Binding ElementName=MyWindow}"/>
-                <Button x:Name="CancelButton" Style="{StaticResource ButtonStyle}" Content="{x:Static properties:Resources.Word_Cancel}" Command="{Binding CancelCommand}" CommandParameter="{Binding ElementName=MyWindow}"/>
+                <Button x:Name="OkButton" Style="{StaticResource ButtonStyle}" Content="{properties:TextBinding Word.OK}" Command="{Binding OkCommand}" CommandParameter="{Binding ElementName=MyWindow}"/>
+                <Button x:Name="CancelButton" Style="{StaticResource ButtonStyle}" Content="{properties:TextBinding Word.Cancel}" Command="{Binding CancelCommand}" CommandParameter="{Binding ElementName=MyWindow}"/>
             </StackPanel>
             <DockPanel Margin="0">
                 <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="10">
                     <Image Source="{StaticResource ic_warning_48px}" Width="20" Height="20" Margin="5"/>
-                    <TextBlock Text="{x:Static properties:Resources.CommandResetWindow_Message}" VerticalAlignment="Center"/>
+                    <TextBlock Text="{properties:TextBinding CommandResetWindow.Message}" VerticalAlignment="Center"/>
                 </StackPanel>
-                <GroupBox Header="{x:Static properties:Resources.CommandResetWindow_ResetType_Title}" Margin="5">
+                <GroupBox Header="{properties:TextBinding CommandResetWindow.ResetType.Title}" Margin="5">
                     <StackPanel Margin="5">
                         <ComboBox Margin="5" ItemsSource="{Binding InputScemeList}" SelectedValuePath="Key" DisplayMemberPath="Value" SelectedValue="{Binding InputSceme}" FocusVisualStyle="{StaticResource NVBorderFocusVisual}"/>
                         <TextBlock Margin="5" Text="{Binding InputScemeNote}" TextWrapping="Wrap"/>

@@ -6,7 +6,7 @@ namespace NeeView
     {
         public ExportImageCommand()
         {
-            this.Group = Properties.Resources.CommandGroup_File;
+            this.Group = Properties.TextResources.GetString("CommandGroup.File");
             this.ShortCutKey = "Shift+Ctrl+S";
             this.IsShowMessage = true;
 

@@ -7,7 +7,7 @@ namespace NeeView
     {
         public SetSortModeFileNameDescendingCommand()
         {
-            this.Group = Properties.Resources.CommandGroup_PageOrder;
+            this.Group = Properties.TextResources.GetString("CommandGroup.PageOrder");
             this.IsShowMessage = true;
         }
 

@@ -122,7 +122,7 @@ namespace NeeView.Setting
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            return (bool)value ? Properties.Resources.Word_On : Properties.Resources.Word_Off;
+            return (bool)value ? Properties.TextResources.GetString("Word.On") : Properties.TextResources.GetString("Word.Off");
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

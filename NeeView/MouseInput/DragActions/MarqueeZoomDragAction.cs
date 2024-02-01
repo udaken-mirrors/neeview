@@ -7,7 +7,7 @@ namespace NeeView
     {
         public MarqueeZoomDragAction()
         {
-            Note = Properties.Resources.DragActionType_MarqueeZoom;
+            Note = Properties.TextResources.GetString("DragActionType.MarqueeZoom");
             //DragKey = new DragKey("Shift+RightButton");
             DragActionCategory = DragActionCategory.Scale;
         }

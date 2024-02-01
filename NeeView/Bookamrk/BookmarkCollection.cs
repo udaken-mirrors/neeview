@@ -252,7 +252,7 @@ namespace NeeView
             if (target == Items || target.Value is BookmarkFolder)
             {
                 var ignoreNames = target.Children.Where(e => e.Value is BookmarkFolder).Select(e => e.Value.Name).WhereNotNull();
-                var name = GetValidateFolderName(ignoreNames, Properties.Resources.Word_NewFolder, Properties.Resources.Word_NewFolder);
+                var name = GetValidateFolderName(ignoreNames, Properties.TextResources.GetString("Word.NewFolder"), Properties.TextResources.GetString("Word.NewFolder"));
                 var node = new TreeListNode<IBookmarkEntry>(new BookmarkFolder() { Name = name });
 
                 target.Add(node);

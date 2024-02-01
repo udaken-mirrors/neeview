@@ -46,7 +46,7 @@ namespace NeeView
 
         public MenuItem CreateDevMenuItem()
         {
-            var top = new MenuItem() { Header = Properties.Resources.MenuTree_Debug };
+            var top = new MenuItem() { Header = Properties.TextResources.GetString("MenuTree.Debug") };
             var collection = top.Items;
 
             var item = new MenuItem() { Header = "Debug Window", IsCheckable = true };

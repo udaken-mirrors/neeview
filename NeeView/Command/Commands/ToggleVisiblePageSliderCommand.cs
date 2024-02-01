@@ -8,7 +8,7 @@ namespace NeeView
     {
         public ToggleVisiblePageSliderCommand()
         {
-            this.Group = Properties.Resources.CommandGroup_Window;
+            this.Group = Properties.TextResources.GetString("CommandGroup.Window");
             this.IsShowMessage = false;
         }
 
@@ -19,7 +19,7 @@ namespace NeeView
 
         public override string ExecuteMessage(object? sender, CommandContext e)
         {
-            return Config.Current.Slider.IsEnabled ? Properties.Resources.ToggleVisiblePageSliderCommand_Off : Properties.Resources.ToggleVisiblePageSliderCommand_On;
+            return Config.Current.Slider.IsEnabled ? Properties.TextResources.GetString("ToggleVisiblePageSliderCommand.Off") : Properties.TextResources.GetString("ToggleVisiblePageSliderCommand.On");
         }
 
         [MethodArgument("@ToggleCommand.Execute.Remarks")]

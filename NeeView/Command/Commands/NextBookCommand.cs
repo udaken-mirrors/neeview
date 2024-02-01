@@ -4,7 +4,7 @@
     {
         public NextBookCommand()
         {
-            this.Group = Properties.Resources.CommandGroup_BookMove;
+            this.Group = Properties.TextResources.GetString("CommandGroup.BookMove");
             this.ShortCutKey = "Down";
             this.MouseGesture = "LD";
             this.IsShowMessage = false;

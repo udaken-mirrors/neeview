@@ -7,7 +7,7 @@
         xmlns:properties="clr-namespace:NeeView.Properties"
         mc:Ignorable="d"
         ShowInTaskbar="True"
-        Title="{x:Static properties:Resources.CriticalExceptionDialog_Title}" Height="450" Width="800">
+        Title="{properties:TextBinding CriticalExceptionDialog.Title}" Height="450" Width="800">
 
     <Window.Resources>
 
@@ -46,14 +46,14 @@
         <DockPanel DockPanel.Dock="Bottom" Margin="0,20,0,0" LastChildFill="False">
             <Button x:Name="OkButton" DockPanel.Dock="Right"  Content="OK" Click="OkButton_Click" TabIndex="4"/>
             <Button x:Name="CopyButton" Margin="0" Click="CopyButton_Click" TabIndex="3">
-                <TextBlock Text="{x:Static properties:Resources.CriticalExceptionDialog_Copy}"  Margin="10,0" /> 
+                <TextBlock Text="{properties:TextBinding CriticalExceptionDialog.Copy}"  Margin="10,0" /> 
             </Button> 
         </DockPanel>
         <DockPanel DockPanel.Dock="Top" Margin="0,0,0,10">
         <Image Source="{StaticResource tic_error}" Width="48"/>
-            <TextBlock x:Name="Caption" Text="{x:Static properties:Resources.CriticalExceptionDialog_Message}" TextWrapping="Wrap" FontSize="{DynamicResource SystemFontSizeHuge}" Margin="10,0" VerticalAlignment="Center"/>
+            <TextBlock x:Name="Caption" Text="{properties:TextBinding CriticalExceptionDialog.Message}" TextWrapping="Wrap" FontSize="{DynamicResource SystemFontSizeHuge}" Margin="10,0" VerticalAlignment="Center"/>
         </DockPanel>
-        <TextBlock x:Name="Message" DockPanel.Dock="Top" Text="{x:Static properties:Resources.CriticalExceptionDialog_Header}" TextWrapping="Wrap" Margin="0,5"/>
+        <TextBlock x:Name="Message" DockPanel.Dock="Top" Text="{properties:TextBinding CriticalExceptionDialog.Header}" TextWrapping="Wrap" Margin="0,5"/>
         <local:XHtmlTextBlock x:Name="ErrorLogLocate" DockPanel.Dock="Bottom" TextWrapping="Wrap" Margin="0,5" KeyboardNavigation.TabNavigation="Local" KeyboardNavigation.TabIndex="2"/>
         <TextBox x:Name="ErrorLog" IsReadOnly="True" VerticalScrollBarVisibility="Visible" TabIndex="1"/>
     </DockPanel>

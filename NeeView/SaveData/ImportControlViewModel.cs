@@ -1,5 +1,4 @@
-﻿using NeeView.Properties;
-using System.Linq;
+﻿using System.Linq;
 
 namespace NeeView
 {
@@ -12,7 +11,7 @@ namespace NeeView
             _model = model;
         }
 
-        public string Title => $"{Resources.Word_Import}: {System.IO.Path.GetFileName(_model.FileName)}";
+        public string Title => $"{Properties.TextResources.GetString("Word.Import")}: {System.IO.Path.GetFileName(_model.FileName)}";
 
         public bool UserSettingExists => _model.UserSettingExists;
 
@@ -54,7 +53,7 @@ namespace NeeView
             set => _model.IsPlaylistsEnabled = value;
         }
 
-        public string PlaylistsCheckBoxContent => string.Format(Properties.Resources.ImportControl_Playlist, _model.PlaylistEntries.Count);
+        public string PlaylistsCheckBoxContent => string.Format(Properties.TextResources.GetString("ImportControl.Playlist"), _model.PlaylistEntries.Count);
 
         public bool ThemesExists => _model.ThemesExists;
 
@@ -64,7 +63,7 @@ namespace NeeView
             set => _model.IsThemesEnabled = value;
         }
 
-        public string ThemesCheckBoxContent => string.Format(Properties.Resources.ImportControl_Theme, _model.ThemeEntries.Count);
+        public string ThemesCheckBoxContent => string.Format(Properties.TextResources.GetString("ImportControl.Theme"), _model.ThemeEntries.Count);
 
         public bool ScriptsExists => _model.ScriptsExists;
 
@@ -74,6 +73,6 @@ namespace NeeView
             set => _model.IsScriptsEnabled = value;
         }
 
-        public string ScriptsCheckBoxContent => string.Format(Properties.Resources.ImportControl_Script, _model.ScriptEntries.Count);
+        public string ScriptsCheckBoxContent => string.Format(Properties.TextResources.GetString("ImportControl.Script"), _model.ScriptEntries.Count);
     }
 }

@@ -6,7 +6,7 @@ namespace NeeView
     {
         public ToggleIsPanoramaCommand()
         {
-            this.Group = Properties.Resources.CommandGroup_PageSetting;
+            this.Group = Properties.TextResources.GetString("CommandGroup.PageSetting");
             this.IsShowMessage = true;
         }
 
@@ -17,7 +17,7 @@ namespace NeeView
 
         public override string ExecuteMessage(object? sender, CommandContext e)
         {
-            return Config.Current.Book.IsPanorama ? Properties.Resources.ToggleIsPanoramaCommand_Off : Properties.Resources.ToggleIsPanoramaCommand_On;
+            return Config.Current.Book.IsPanorama ? Properties.TextResources.GetString("ToggleIsPanoramaCommand.Off") : Properties.TextResources.GetString("ToggleIsPanoramaCommand.On");
         }
 
         public override void Execute(object? sender, CommandContext e)

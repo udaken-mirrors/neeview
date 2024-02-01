@@ -4,7 +4,7 @@
     {
         public FocusBookmarkListCommand()
         {
-            this.Group = Properties.Resources.CommandGroup_Panel;
+            this.Group = Properties.TextResources.GetString("CommandGroup.Panel");
             this.IsShowMessage = false;
         }
         public override void Execute(object? sender, CommandContext e)

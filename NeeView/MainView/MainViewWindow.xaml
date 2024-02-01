@@ -41,14 +41,14 @@
                                 <Setter Property="CommandTarget" Value="{Binding Path=PlacementTarget, RelativeSource={RelativeSource AncestorType=ContextMenu}}" />
                             </Style>
                         </ContextMenu.Resources>
-                        <MenuItem Header="{x:Static properties:Resources.StretchWindowCommand}" Command="{StaticResource StretchWindowCommand}" />
+                        <MenuItem Header="{properties:TextBinding StretchWindowCommand}" Command="{StaticResource StretchWindowCommand}" />
                         <Separator />
-                        <MenuItem Header="{x:Static properties:Resources.MainViewWindow_Menu_AutoHideTitleBar}" IsCheckable="True" IsChecked="{Binding IsAutoHide}" />
-                        <MenuItem Header="{x:Static properties:Resources.MainViewWindow_Menu_AutoStretch}" IsCheckable="True" IsChecked="{Binding IsAutoStretch}" />
-                        <MenuItem Header="{x:Static properties:Resources.Word_Topmost}" IsCheckable="True" IsChecked="{Binding IsTopmost}" />
-                        <MenuItem Header="{x:Static properties:Resources.Word_FullScreen}" IsCheckable="True" IsChecked="{Binding IsFullScreen}" />
+                        <MenuItem Header="{properties:TextBinding MainViewWindow.Menu.AutoHideTitleBar}" IsCheckable="True" IsChecked="{Binding IsAutoHide}" />
+                        <MenuItem Header="{properties:TextBinding MainViewWindow.Menu.AutoStretch}" IsCheckable="True" IsChecked="{Binding IsAutoStretch}" />
+                        <MenuItem Header="{properties:TextBinding Word.Topmost}" IsCheckable="True" IsChecked="{Binding IsTopmost}" />
+                        <MenuItem Header="{properties:TextBinding Word.FullScreen}" IsCheckable="True" IsChecked="{Binding IsFullScreen}" />
                         <Separator />
-                        <MenuItem Header="{x:Static properties:Resources.Word_Close}" Command="{x:Static SystemCommands.CloseWindowCommand}" />
+                        <MenuItem Header="{properties:TextBinding Word.Close}" Command="{x:Static SystemCommands.CloseWindowCommand}" />
                     </ContextMenu>
                 </local:CaptionBar.ContextMenu>
 

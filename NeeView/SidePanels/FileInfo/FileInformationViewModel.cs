@@ -54,14 +54,14 @@ namespace NeeView
             public override ContextMenu Create()
             {
                 var menu = new ContextMenu();
-                menu.Items.Add(CreateCheckMenuItem(Properties.Resources.InformationGroup_File, new Binding(nameof(InformationConfig.IsVisibleFile)) { Source = Config.Current.Information }));
-                menu.Items.Add(CreateCheckMenuItem(Properties.Resources.InformationGroup_Image, new Binding(nameof(InformationConfig.IsVisibleImage)) { Source = Config.Current.Information }));
-                menu.Items.Add(CreateCheckMenuItem(Properties.Resources.InformationGroup_Description, new Binding(nameof(InformationConfig.IsVisibleDescription)) { Source = Config.Current.Information }));
-                menu.Items.Add(CreateCheckMenuItem(Properties.Resources.InformationGroup_Origin, new Binding(nameof(InformationConfig.IsVisibleOrigin)) { Source = Config.Current.Information }));
-                menu.Items.Add(CreateCheckMenuItem(Properties.Resources.InformationGroup_Camera, new Binding(nameof(InformationConfig.IsVisibleCamera)) { Source = Config.Current.Information }));
-                menu.Items.Add(CreateCheckMenuItem(Properties.Resources.InformationGroup_AdvancedPhoto, new Binding(nameof(InformationConfig.IsVisibleAdvancedPhoto)) { Source = Config.Current.Information }));
-                menu.Items.Add(CreateCheckMenuItem(Properties.Resources.InformationGroup_Gps, new Binding(nameof(InformationConfig.IsVisibleGps)) { Source = Config.Current.Information }));
-                menu.Items.Add(CreateCheckMenuItem(Properties.Resources.InformationGroup_Extras, new Binding(nameof(InformationConfig.IsVisibleExtras)) { Source = Config.Current.Information }));
+                menu.Items.Add(CreateCheckMenuItem(Properties.TextResources.GetString("InformationGroup.File"), new Binding(nameof(InformationConfig.IsVisibleFile)) { Source = Config.Current.Information }));
+                menu.Items.Add(CreateCheckMenuItem(Properties.TextResources.GetString("InformationGroup.Image"), new Binding(nameof(InformationConfig.IsVisibleImage)) { Source = Config.Current.Information }));
+                menu.Items.Add(CreateCheckMenuItem(Properties.TextResources.GetString("InformationGroup.Description"), new Binding(nameof(InformationConfig.IsVisibleDescription)) { Source = Config.Current.Information }));
+                menu.Items.Add(CreateCheckMenuItem(Properties.TextResources.GetString("InformationGroup.Origin"), new Binding(nameof(InformationConfig.IsVisibleOrigin)) { Source = Config.Current.Information }));
+                menu.Items.Add(CreateCheckMenuItem(Properties.TextResources.GetString("InformationGroup.Camera"), new Binding(nameof(InformationConfig.IsVisibleCamera)) { Source = Config.Current.Information }));
+                menu.Items.Add(CreateCheckMenuItem(Properties.TextResources.GetString("InformationGroup.AdvancedPhoto"), new Binding(nameof(InformationConfig.IsVisibleAdvancedPhoto)) { Source = Config.Current.Information }));
+                menu.Items.Add(CreateCheckMenuItem(Properties.TextResources.GetString("InformationGroup.Gps"), new Binding(nameof(InformationConfig.IsVisibleGps)) { Source = Config.Current.Information }));
+                menu.Items.Add(CreateCheckMenuItem(Properties.TextResources.GetString("InformationGroup.Extras"), new Binding(nameof(InformationConfig.IsVisibleExtras)) { Source = Config.Current.Information }));
                 return menu;
             }
         }

@@ -4,7 +4,7 @@
     {
         public ShowHiddenPanelsCommand()
         {
-            this.Group = Properties.Resources.CommandGroup_Window;
+            this.Group = Properties.TextResources.GetString("CommandGroup.Window");
             this.TouchGesture = "TouchCenter";
             this.IsShowMessage = false;
         }

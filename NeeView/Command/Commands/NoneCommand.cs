@@ -4,7 +4,7 @@
     {
         public NoneCommand() : base("")
         {
-            this.Group = Properties.Resources.CommandGroup_None;
+            this.Group = Properties.TextResources.GetString("CommandGroup.None");
         }
 
         public override bool CanExecute(object? sender, CommandContext e)

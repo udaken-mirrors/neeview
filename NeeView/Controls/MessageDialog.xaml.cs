@@ -49,12 +49,12 @@ namespace NeeView
     /// </summary>
     public static class UICommands
     {
-        public static UICommand OK { get; } = new UICommand(Properties.Resources.Word_OK) { IsPossible = true };
-        public static UICommand Yes { get; } = new UICommand(Properties.Resources.Word_Yes) { IsPossible = true };
-        public static UICommand No { get; } = new UICommand(Properties.Resources.Word_No);
-        public static UICommand Cancel { get; } = new UICommand(Properties.Resources.Word_Cancel);
-        public static UICommand Delete { get; } = new UICommand(Properties.Resources.Word_Delete) { IsPossible = true };
-        public static UICommand Retry { get; } = new UICommand(Properties.Resources.Word_Retry) { IsPossible = true };
+        public static UICommand OK { get; } = new UICommand("@Word.OK") { IsPossible = true };
+        public static UICommand Yes { get; } = new UICommand("@Word.Yes") { IsPossible = true };
+        public static UICommand No { get; } = new UICommand("@Word.No");
+        public static UICommand Cancel { get; } = new UICommand("@Word.Cancel");
+        public static UICommand Delete { get; } = new UICommand("@Word.Delete") { IsPossible = true };
+        public static UICommand Retry { get; } = new UICommand("@Word.Retry") { IsPossible = true };
 
         // dialog.Commands.AddRange(...) のような使用を想定したセット
         public static readonly List<UICommand> YesNo = new() { Yes, No };
@@ -228,7 +228,7 @@ namespace NeeView
             var button = new Button()
             {
                 Style = App.Current.Resources[isDefault ? "NVDialogAccentButton" : "NVDialogButton"] as Style,
-                Content = command.Label,
+                Content = ResourceService.GetString(command.Label),
                 Command = ButtonClickedCommand,
                 CommandParameter = command,
             };

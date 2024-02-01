@@ -7,7 +7,7 @@ namespace NeeView
     {
         public ToggleMainViewFloatingCommand()
         {
-            this.Group = Properties.Resources.CommandGroup_Panel;
+            this.Group = Properties.TextResources.GetString("CommandGroup.Panel");
             this.IsShowMessage = false;
             this.ShortCutKey = "F12";
         }
@@ -19,7 +19,7 @@ namespace NeeView
 
         public override string ExecuteMessage(object? sender, CommandContext e)
         {
-            return Config.Current.MainView.IsFloating ? Properties.Resources.ToggleMainViewFloatingCommand_Off : Properties.Resources.ToggleMainViewFloatingCommand_On;
+            return Config.Current.MainView.IsFloating ? Properties.TextResources.GetString("ToggleMainViewFloatingCommand.Off") : Properties.TextResources.GetString("ToggleMainViewFloatingCommand.On");
         }
 
         public override void Execute(object? sender, CommandContext e)

@@ -251,7 +251,7 @@ namespace NeeView
             }
             catch (Exception ex)
             {
-                ToastService.Current.Show(new Toast(ex.Message, Properties.Resources.Bookshelf_CopyToFolderFailed, ToastIcon.Error));
+                ToastService.Current.Show(new Toast(ex.Message, Properties.TextResources.GetString("Bookshelf.CopyToFolderFailed"), ToastIcon.Error));
             }
             finally
             {
@@ -297,7 +297,7 @@ namespace NeeView
             }
             catch (Exception ex)
             {
-                ToastService.Current.Show(new Toast(ex.Message, Properties.Resources.PageList_Message_MoveToFolderFailed, ToastIcon.Error));
+                ToastService.Current.Show(new Toast(ex.Message, Properties.TextResources.GetString("PageList.Message.MoveToFolderFailed"), ToastIcon.Error));
             }
             finally
             {

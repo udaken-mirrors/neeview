@@ -8,7 +8,7 @@ namespace NeeView
     {
         public ToggleVisibleFileInfoCommand()
         {
-            this.Group = Properties.Resources.CommandGroup_Panel;
+            this.Group = Properties.TextResources.GetString("CommandGroup.Panel");
             this.ShortCutKey = "I";
             this.IsShowMessage = false;
         }
@@ -20,7 +20,7 @@ namespace NeeView
 
         public override string ExecuteMessage(object? sender, CommandContext e)
         {
-            return SidePanelFrame.Current.IsVisibleFileInfo ? Properties.Resources.ToggleVisibleFileInfoCommand_Off : Properties.Resources.ToggleVisibleFileInfoCommand_On;
+            return SidePanelFrame.Current.IsVisibleFileInfo ? Properties.TextResources.GetString("ToggleVisibleFileInfoCommand.Off") : Properties.TextResources.GetString("ToggleVisibleFileInfoCommand.On");
         }
 
         [MethodArgument("@ToggleCommand.Execute.Remarks")]

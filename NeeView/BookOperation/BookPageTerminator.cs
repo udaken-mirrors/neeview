@@ -95,7 +95,7 @@ namespace NeeView
             }
             if (Config.Current.Book.IsNotifyPageLoop)
             {
-                InfoMessage.Current.SetMessage(InfoMessageType.Notify, Properties.Resources.Notice_BookOperationPageLoop);
+                InfoMessage.Current.SetMessage(InfoMessageType.Notify, Properties.TextResources.GetString("Notice.BookOperationPageLoop"));
             }
         }
 
@@ -128,12 +128,12 @@ namespace NeeView
                 if (e.Direction < 0)
                 {
                     SoundPlayerService.Current.PlaySeCannotMove();
-                    InfoMessage.Current.SetMessage(InfoMessageType.Notify, Properties.Resources.Notice_FirstPage);
+                    InfoMessage.Current.SetMessage(InfoMessageType.Notify, Properties.TextResources.GetString("Notice.FirstPage"));
                 }
                 else
                 {
                     SoundPlayerService.Current.PlaySeCannotMove();
-                    InfoMessage.Current.SetMessage(InfoMessageType.Notify, Properties.Resources.Notice_LastPage);
+                    InfoMessage.Current.SetMessage(InfoMessageType.Notify, Properties.TextResources.GetString("Notice.LastPage"));
                 }
             }
         }
@@ -157,11 +157,11 @@ namespace NeeView
 
         private void PageEndAction_DialogCore(object? sender, PageTerminatedEventArgs e)
         {
-            var title = (e.Direction < 0) ? Resources.Notice_FirstPage : Resources.Notice_LastPage;
-            var dialog = new MessageDialog(Resources.PageEndDialog_Message, title);
-            var nextCommand = new UICommand(Properties.Resources.PageEndAction_NextBook);
-            var loopCommand = new UICommand(Properties.Resources.PageEndAction_Loop);
-            var noneCommand = new UICommand(Properties.Resources.PageEndAction_None);
+            var title = (e.Direction < 0) ? Properties.TextResources.GetString("Notice.FirstPage") : Properties.TextResources.GetString("Notice.LastPage");
+            var dialog = new MessageDialog(Properties.TextResources.GetString("PageEndDialog.Message"), title);
+            var nextCommand = new UICommand("@PageEndAction.NextBook");
+            var loopCommand = new UICommand("@PageEndAction.Loop");
+            var noneCommand = new UICommand("@PageEndAction.None");
             dialog.Commands.Add(nextCommand);
             dialog.Commands.Add(loopCommand);
             dialog.Commands.Add(noneCommand);

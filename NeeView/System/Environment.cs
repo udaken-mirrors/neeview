@@ -1,5 +1,4 @@
-﻿using NeeView.Properties;
-using PdfiumViewer;
+﻿using PdfiumViewer;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -356,21 +355,6 @@ namespace NeeView
         }
 
         /// <summary>
-        /// 対応言語
-        /// </summary>
-        public static List<string> Cultures
-        {
-            get
-            {
-                if (_cultures == null)
-                {
-                    _cultures = (ConfigurationManager.AppSettings["Cultures"] ?? "en").Split(',').ToList();
-                }
-                return _cultures;
-            }
-        }
-
-        /// <summary>
         /// システムのエンコーディング
         /// </summary>
         public static Encoding Encoding
@@ -379,7 +363,6 @@ namespace NeeView
             {
                 if (_encoding is null)
                 {
-
                     _encoding = Encoding.GetEncoding(System.Globalization.CultureInfo.CurrentCulture.TextInfo.ANSICodePage);
                 }
                 return _encoding;
@@ -593,7 +576,7 @@ namespace NeeView
         // 全ユーザデータ削除
         public static void RemoveApplicationData(Window? owner)
         {
-            var dialog = new MessageDialog(Resources.DeleteApplicationDataDialog_Message, Resources.DeleteApplicationDataDialog_Title);
+            var dialog = new MessageDialog(Properties.TextResources.GetString("DeleteApplicationDataDialog.Message"), Properties.TextResources.GetString("DeleteApplicationDataDialog.Title"));
             dialog.Commands.Add(UICommands.Delete);
             dialog.Commands.Add(UICommands.Cancel);
             var result = dialog.ShowDialog(owner);
@@ -606,12 +589,12 @@ namespace NeeView
                 try
                 {
                     RemoveApplicationDataCore();
-                    new MessageDialog(Resources.DeleteApplicationDataCompleteDialog_Message, Resources.DeleteApplicationDataCompleteDialog_Title).ShowDialog(owner);
+                    new MessageDialog(Properties.TextResources.GetString("DeleteApplicationDataCompleteDialog.Message"), Properties.TextResources.GetString("DeleteApplicationDataCompleteDialog.Title")).ShowDialog(owner);
                     LocalApplicationDataRemoved?.Invoke(null, EventArgs.Empty);
                 }
                 catch (Exception ex)
                 {
-                    new MessageDialog(ex.Message, Resources.DeleteApplicationDataErrorDialog_Title).ShowDialog(owner);
+                    new MessageDialog(ex.Message, Properties.TextResources.GetString("DeleteApplicationDataErrorDialog.Title")).ShowDialog(owner);
                 }
             }
         }
@@ -622,7 +605,7 @@ namespace NeeView
             // LocalApplicationDataフォルダーを使用している場合のみ
             if (!IsUseLocalApplicationDataFolder)
             {
-                throw new ApplicationException(Properties.Resources.CannotDeleteDataException_Message);
+                throw new ApplicationException(Properties.TextResources.GetString("CannotDeleteDataException.Message"));
             }
 
             Debug.WriteLine("RemoveAllApplicationData ...");

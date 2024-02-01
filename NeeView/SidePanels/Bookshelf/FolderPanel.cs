@@ -32,7 +32,7 @@ namespace NeeView
 
         public ImageSource Icon { get; private set; }
 
-        public string IconTips => Properties.Resources.Bookshelf_Title;
+        public string IconTips => Properties.TextResources.GetString("Bookshelf.Title");
 
         public FrameworkElement View => _view;
 

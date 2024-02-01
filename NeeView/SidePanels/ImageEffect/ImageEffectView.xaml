@@ -53,7 +53,7 @@
                 <DockPanel Margin="0,5">
                     <nvc:ToggleSwitch DockPanel.Dock="Right" IsChecked="{Binding Source={x:Static local:Config.Current}, Path=ImageCustomSize.IsEnabled}"
                             VerticalAlignment="Center" />
-                    <TextBlock Text="{x:Static properties:Resources.Effect_CustomSize}" VerticalAlignment="Center" />
+                    <TextBlock Text="{properties:TextBinding Effect.CustomSize}" VerticalAlignment="Center" />
                 </DockPanel>
 
                 <StackPanel Margin="10,0,0,5" Visibility="{Binding Source={x:Static local:Config.Current}, Path=ImageCustomSize.IsEnabled, Converter={StaticResource BooleanToVisibilityConverter}}">
@@ -70,7 +70,7 @@
                 <DockPanel Margin="0,5">
                     <nvc:ToggleSwitch DockPanel.Dock="Right" IsChecked="{Binding Source={x:Static local:Config.Current}, Path=ImageTrim.IsEnabled}"
                             VerticalAlignment="Center" />
-                    <TextBlock Text="{x:Static properties:Resources.Effect_Trim}" VerticalAlignment="Center" />
+                    <TextBlock Text="{properties:TextBinding Effect.Trim}" VerticalAlignment="Center" />
                 </DockPanel>
 
                 <StackPanel Margin="10,0,0,5" Visibility="{Binding Source={x:Static local:Config.Current}, Path=ImageTrim.IsEnabled, Converter={StaticResource BooleanToVisibilityConverter}}">
@@ -82,7 +82,7 @@
                 <DockPanel Margin="0,5">
                     <nvc:ToggleSwitch DockPanel.Dock="Right" IsChecked="{Binding Source={x:Static local:Config.Current}, Path=ImageDotKeep.IsEnabled}"
                             VerticalAlignment="Center" />
-                    <TextBlock Text="{x:Static properties:Resources.Effect_KeepDot}" VerticalAlignment="Center" />
+                    <TextBlock Text="{properties:TextBinding Effect.KeepDot}" VerticalAlignment="Center" />
                 </DockPanel>
 
                 <Separator />
@@ -90,7 +90,7 @@
                 <DockPanel Margin="0,5">
                     <nvc:ToggleSwitch DockPanel.Dock="Right" IsChecked="{Binding Source={x:Static local:Config.Current}, Path=ImageResizeFilter.IsEnabled}"
                             VerticalAlignment="Center" />
-                    <TextBlock Text="{x:Static properties:Resources.Effect_ResizeFilter}" VerticalAlignment="Center" />
+                    <TextBlock Text="{properties:TextBinding Effect.ResizeFilter}" VerticalAlignment="Center" />
                 </DockPanel>
 
                 <StackPanel Visibility="{Binding Source={x:Static local:Config.Current}, Path=ImageResizeFilter.IsEnabled, Converter={StaticResource BooleanToVisibilityConverter}}">
@@ -98,13 +98,13 @@
                     <DockPanel Margin="0,5">
                         <ComboBox DockPanel.Dock="Right" ItemsSource="{x:Static local:ResizeInterpolationExtensions.ResizeInterpolationList}"
                                 SelectedValue="{Binding Source={x:Static local:Config.Current}, Path=ImageResizeFilter.ResizeInterpolation}" />
-                        <TextBlock Text="{x:Static properties:Resources.Effect_ResizeInterpolation}" VerticalAlignment="Center" />
+                        <TextBlock Text="{properties:TextBinding Effect.ResizeInterpolation}" VerticalAlignment="Center" />
                     </DockPanel>
 
                     <DockPanel Margin="0,5">
                         <nvc:ToggleSwitch DockPanel.Dock="Right"
                                 IsChecked="{Binding Source={x:Static local:Config.Current}, Path=ImageResizeFilter.IsUnsharpMaskEnabled}" VerticalAlignment="Center" />
-                        <TextBlock Text="{x:Static properties:Resources.Effect_ResizeUnsharp}" VerticalAlignment="Center" />
+                        <TextBlock Text="{properties:TextBinding Effect.ResizeUnsharp}" VerticalAlignment="Center" />
                     </DockPanel>
 
                     <Grid Margin="10,0,0,10"
@@ -113,7 +113,7 @@
                     </Grid>
 
                     <Button x:Name="ResetButton" Style="{StaticResource IconButton}" HorizontalAlignment="Right" Margin="5" Click="Reset">
-                        <TextBlock Margin="5" Text="{x:Static properties:Resources.Effect_ResizeReset}" Foreground="{DynamicResource Control.Accent}" />
+                        <TextBlock Margin="5" Text="{properties:TextBinding Effect.ResizeReset}" Foreground="{DynamicResource Control.Accent}" />
                     </Button>
                 </StackPanel>
 
@@ -123,7 +123,7 @@
                 <DockPanel Margin="0,5">
                     <nvc:ToggleSwitch DockPanel.Dock="Right" IsChecked="{Binding Source={x:Static local:Config.Current}, Path=ImageGrid.IsEnabled}"
                             VerticalAlignment="Center" />
-                    <TextBlock Text="{x:Static properties:Resources.Effect_Grid}" VerticalAlignment="Center" />
+                    <TextBlock Text="{properties:TextBinding Effect.Grid}" VerticalAlignment="Center" />
                 </DockPanel>
 
                 <StackPanel Margin="10,0,0,5" Visibility="{Binding Source={x:Static local:Config.Current}, Path=ImageGrid.IsEnabled, Converter={StaticResource BooleanToVisibilityConverter}}">
@@ -135,14 +135,14 @@
                 <DockPanel Margin="0,5">
                     <nvc:ToggleSwitch DockPanel.Dock="Right" IsChecked="{Binding Source={x:Static local:Config.Current}, Path=ImageEffect.IsEnabled}"
                             VerticalAlignment="Center" />
-                    <TextBlock Text="{x:Static properties:Resources.Effect_Effect}" VerticalAlignment="Center" />
+                    <TextBlock Text="{properties:TextBinding Effect.Effect}" VerticalAlignment="Center" />
                 </DockPanel>
 
                 <StackPanel Visibility="{Binding Source={x:Static local:Config.Current}, Path=ImageEffect.IsEnabled, Converter={StaticResource BooleanToVisibilityConverter}}">
                     <DockPanel Margin="0,5">
                         <ComboBox DockPanel.Dock="Right" ItemsSource="{Binding EffectTypeList}" DisplayMemberPath="Value" SelectedValuePath="Key"
                                 SelectedValue="{Binding Source={x:Static local:Config.Current}, Path=ImageEffect.EffectType}" />
-                        <TextBlock Text="{x:Static properties:Resources.Effect_EffectType}" VerticalAlignment="Center" />
+                        <TextBlock Text="{properties:TextBinding Effect.EffectType}" VerticalAlignment="Center" />
                     </DockPanel>
                     <Grid Margin="0,10">
                         <nvp:PropertyInspector x:Name="inspector" Document="{Binding Model.EffectParameters}" IsResetButtonVisible="True"

@@ -6,7 +6,7 @@ namespace NeeView
     {
         public SetPageOrientationVerticalCommand()
         {
-            this.Group = Properties.Resources.CommandGroup_PageSetting;
+            this.Group = Properties.TextResources.GetString("CommandGroup.PageSetting");
             this.IsShowMessage = true;
         }
 
@@ -17,7 +17,7 @@ namespace NeeView
 
         public override string ExecuteMessage(object? sender, CommandContext e)
         {
-            return Properties.Resources.PageFrameOrientation_Vertical;
+            return Properties.TextResources.GetString("PageFrameOrientation.Vertical");
         }
 
         public override void Execute(object? sender, CommandContext e)

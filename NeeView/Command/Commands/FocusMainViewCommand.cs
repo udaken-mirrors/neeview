@@ -6,7 +6,7 @@ namespace NeeView
     {
         public FocusMainViewCommand()
         {
-            this.Group = Properties.Resources.CommandGroup_Panel;
+            this.Group = Properties.TextResources.GetString("CommandGroup.Panel");
             this.IsShowMessage = false;
 
             this.ParameterSource = new CommandParameterSource(new FocusMainViewCommandParameter());

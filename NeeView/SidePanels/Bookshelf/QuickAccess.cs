@@ -79,7 +79,7 @@ namespace NeeView
             get
             {
                 var query = new QueryPath(_path);
-                return query.SimplePath + (query.Search != null ? $"\n{Properties.Resources.Word_SearchWord}: {query.Search}" : null);
+                return query.SimplePath + (query.Search != null ? $"\n{Properties.TextResources.GetString("Word.SearchWord")}: {query.Search}" : null);
             }
         }
 

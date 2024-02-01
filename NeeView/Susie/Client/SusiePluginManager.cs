@@ -17,7 +17,6 @@ using System.Collections.Specialized;
 using System.Windows;
 using System.Windows.Interop;
 using System.Threading;
-using NeeView.Properties;
 using NeeLaboratory.Collections.Specialized;
 
 namespace NeeView
@@ -165,7 +164,7 @@ namespace NeeView
                     Debug.WriteLine(ex.Message);
                     var errorLogFileName = App.ErrorLogFileName;
                     App.ExportErrorLog(errorLogFileName, ex);
-                    ToastService.Current.Show(new Toast(Resources.SusieConnectError_Message + $"<br/><a href=\"{errorLogFileName}\">{errorLogFileName}</a>", null, ToastIcon.Error) { IsXHtml = true });
+                    ToastService.Current.Show(new Toast(Properties.TextResources.GetString("SusieConnectError.Message") + $"<br/><a href=\"{errorLogFileName}\">{errorLogFileName}</a>", null, ToastIcon.Error) { IsXHtml = true });
                 }
             }
         }

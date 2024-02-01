@@ -8,7 +8,7 @@ namespace NeeView
     {
         public ToggleVisiblePlaylistCommand()
         {
-            this.Group = Properties.Resources.CommandGroup_Panel;
+            this.Group = Properties.TextResources.GetString("CommandGroup.Panel");
             this.ShortCutKey = "M";
             this.IsShowMessage = false;
         }
@@ -20,7 +20,7 @@ namespace NeeView
 
         public override string ExecuteMessage(object? sender, CommandContext e)
         {
-            return SidePanelFrame.Current.IsVisiblePlaylist ? Properties.Resources.ToggleVisiblePlaylistCommand_Off : Properties.Resources.ToggleVisiblePlaylistCommand_On;
+            return SidePanelFrame.Current.IsVisiblePlaylist ? Properties.TextResources.GetString("ToggleVisiblePlaylistCommand.Off") : Properties.TextResources.GetString("ToggleVisiblePlaylistCommand.On");
         }
 
         [MethodArgument("@ToggleCommand.Execute.Remarks")]

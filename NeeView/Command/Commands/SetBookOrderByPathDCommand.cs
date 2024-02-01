@@ -7,7 +7,7 @@ namespace NeeView
     {
         public SetBookOrderByPathDCommand()
         {
-            this.Group = Properties.Resources.CommandGroup_BookOrder;
+            this.Group = Properties.TextResources.GetString("CommandGroup.BookOrder");
             this.IsShowMessage = true;
         }
 

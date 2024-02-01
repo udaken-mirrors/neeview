@@ -8,7 +8,7 @@ namespace NeeView
     {
         public AngleSliderDragAction()
         {
-            Note = Properties.Resources.DragActionType_AngleSlider;
+            Note = Properties.TextResources.GetString("DragActionType.AngleSlider");
             ParameterSource = new DragActionParameterSource(typeof(SensitiveDragActionParameter));
             //DragKey = new DragKey("Shift+RightButton");
             DragActionCategory = DragActionCategory.Angle;

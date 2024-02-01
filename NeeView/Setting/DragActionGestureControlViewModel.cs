@@ -85,7 +85,7 @@ namespace NeeView.Setting
 
                 if (token.Conflicts.Count > 0)
                 {
-                    token.OverlapsText = string.Format(Properties.Resources.Notice_Conflict, ResourceService.Join(token.Conflicts.Select(i => DragActionTable.Current.Elements[i].Note)));
+                    token.OverlapsText = string.Format(Properties.TextResources.GetString("Notice.Conflict"), ResourceService.Join(token.Conflicts.Select(i => DragActionTable.Current.Elements[i].Note)));
                 }
             }
 

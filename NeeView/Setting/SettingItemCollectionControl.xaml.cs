@@ -29,9 +29,9 @@ namespace NeeView.Setting
         {
             InitializeComponent();
             this.Root.DataContext = this;
-            this.AddButton.Content = Properties.Resources.Word_Add + "...";
-            this.RemoveButton.Content = Properties.Resources.Word_Remove;
-            this.ResetButton.Content = Properties.Resources.Word_Reset;
+            this.AddButton.Content = Properties.TextResources.GetString("Word.Add") + "...";
+            this.RemoveButton.Content = Properties.TextResources.GetString("Word.Remove");
+            this.ResetButton.Content = Properties.TextResources.GetString("Word.Reset");
 
             this.CollectionChanged += SettingItemCollectionControl_CollectionChanged;
         }
@@ -140,7 +140,7 @@ namespace NeeView.Setting
             if (Collection == null) return;
 
             var dialog = new AddParameterDialog();
-            dialog.Title = AddDialogTitle ?? Properties.Resources.AddParameterDialog_Tile;
+            dialog.Title = AddDialogTitle ?? Properties.TextResources.GetString("AddParameterDialog.Tile");
             dialog.Header = AddDialogHeader ?? "";
             dialog.Owner = Window.GetWindow(this);
             dialog.WindowStartupLocation = WindowStartupLocation.CenterOwner;

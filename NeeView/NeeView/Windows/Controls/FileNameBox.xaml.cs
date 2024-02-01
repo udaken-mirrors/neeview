@@ -177,7 +177,7 @@ namespace NeeView.Windows.Controls
 
         public string EmptyMessage
         {
-            get => Note ?? (FileDialogType == FileDialogType.Directory ? Properties.Resources.FileNameBox_Directory_Message : Properties.Resources.FileNameBox_File_Message);
+            get => Note ?? (FileDialogType == FileDialogType.Directory ? Properties.TextResources.GetString("FileNameBox.Directory.Message") : Properties.TextResources.GetString("FileNameBox.File.Message"));
         }
 
 
@@ -197,7 +197,7 @@ namespace NeeView.Windows.Controls
             if (FileDialogType == FileDialogType.Directory)
             {
                 var dialog = new System.Windows.Forms.FolderBrowserDialog();
-                dialog.Description = Title ?? Properties.Resources.FileNameBox_SelectDirectory;
+                dialog.Description = Title ?? Properties.TextResources.GetString("FileNameBox.SelectDirectory");
                 dialog.SelectedPath = path;
 
                 if (string.IsNullOrWhiteSpace(dialog.SelectedPath))
@@ -214,7 +214,7 @@ namespace NeeView.Windows.Controls
             else if (FileDialogType == FileDialogType.SaveFile)
             {
                 var dialog = new System.Windows.Forms.SaveFileDialog();
-                dialog.Title = Title ?? Properties.Resources.FileNameBox_SelectFile;
+                dialog.Title = Title ?? Properties.TextResources.GetString("FileNameBox.SelectFile");
                 dialog.InitialDirectory = string.IsNullOrWhiteSpace(path) ? null : Path.GetDirectoryName(path);
                 dialog.FileName = string.IsNullOrWhiteSpace(path) ? DefaultText : Path.GetFileName(path);
                 dialog.Filter = Filter;
@@ -230,7 +230,7 @@ namespace NeeView.Windows.Controls
             else
             {
                 var dialog = new System.Windows.Forms.OpenFileDialog();
-                dialog.Title = Title ?? Properties.Resources.FileNameBox_SelectFile;
+                dialog.Title = Title ?? Properties.TextResources.GetString("FileNameBox.SelectFile");
                 dialog.InitialDirectory = string.IsNullOrWhiteSpace(path) ? null : Path.GetDirectoryName(path);
                 dialog.FileName = string.IsNullOrWhiteSpace(path) ? DefaultText : Path.GetFileName(path);
                 dialog.Filter = Filter;

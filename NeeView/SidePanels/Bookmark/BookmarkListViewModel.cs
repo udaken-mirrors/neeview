@@ -223,20 +223,20 @@ namespace NeeView
                 var items = menu.Items;
 
                 items.Clear();
-                items.Add(CreateListItemStyleMenuItem(Properties.Resources.Word_StyleList, PanelListItemStyle.Normal));
-                items.Add(CreateListItemStyleMenuItem(Properties.Resources.Word_StyleContent, PanelListItemStyle.Content));
-                items.Add(CreateListItemStyleMenuItem(Properties.Resources.Word_StyleBanner, PanelListItemStyle.Banner));
-                items.Add(CreateListItemStyleMenuItem(Properties.Resources.Word_StyleThumbnail, PanelListItemStyle.Thumbnail));
+                items.Add(CreateListItemStyleMenuItem(Properties.TextResources.GetString("Word.StyleList"), PanelListItemStyle.Normal));
+                items.Add(CreateListItemStyleMenuItem(Properties.TextResources.GetString("Word.StyleContent"), PanelListItemStyle.Content));
+                items.Add(CreateListItemStyleMenuItem(Properties.TextResources.GetString("Word.StyleBanner"), PanelListItemStyle.Banner));
+                items.Add(CreateListItemStyleMenuItem(Properties.TextResources.GetString("Word.StyleThumbnail"), PanelListItemStyle.Thumbnail));
                 items.Add(new Separator());
-                items.Add(CreateCommandMenuItem(Properties.Resources.FolderTree_Menu_DeleteInvalidBookmark, _vm.RemoveUnlinkedCommand));
+                items.Add(CreateCommandMenuItem(Properties.TextResources.GetString("FolderTree.Menu.DeleteInvalidBookmark"), _vm.RemoveUnlinkedCommand));
                 items.Add(new Separator());
-                items.Add(CreateCommandMenuItem(Properties.Resources.Word_NewFolder, _vm.NewFolderCommand));
-                items.Add(CreateCommandMenuItem(Properties.Resources.FolderTree_Menu_AddBookmark, _vm.AddBookmarkCommand));
+                items.Add(CreateCommandMenuItem(Properties.TextResources.GetString("Word.NewFolder"), _vm.NewFolderCommand));
+                items.Add(CreateCommandMenuItem(Properties.TextResources.GetString("FolderTree.Menu.AddBookmark"), _vm.AddBookmarkCommand));
                 items.Add(new Separator());
-                items.Add(CreateCheckMenuItem(Properties.Resources.BookmarkList_MoreMenu_SyncBookshelf, new Binding(nameof(BookmarkConfig.IsSyncBookshelfEnabled)) { Source = Config.Current.Bookmark }));
+                items.Add(CreateCheckMenuItem(Properties.TextResources.GetString("BookmarkList.MoreMenu.SyncBookshelf"), new Binding(nameof(BookmarkConfig.IsSyncBookshelfEnabled)) { Source = Config.Current.Bookmark }));
 
-                var subItem = new MenuItem() { Header = Properties.Resources.Bookshelf_MoreMenu_SearchOptions };
-                subItem.Items.Add(CreateCheckMenuItem(Properties.Resources.Bookshelf_MoreMenu_SearchIncludeSubdirectories, new Binding(nameof(BookmarkConfig.IsSearchIncludeSubdirectories)) { Source = Config.Current.Bookmark }));
+                var subItem = new MenuItem() { Header = Properties.TextResources.GetString("Bookshelf.MoreMenu.SearchOptions") };
+                subItem.Items.Add(CreateCheckMenuItem(Properties.TextResources.GetString("Bookshelf.MoreMenu.SearchIncludeSubdirectories"), new Binding(nameof(BookmarkConfig.IsSearchIncludeSubdirectories)) { Source = Config.Current.Bookmark }));
                 items.Add(new Separator());
                 items.Add(subItem);
 

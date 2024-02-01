@@ -33,7 +33,7 @@ namespace NeeView.Setting
             if (commandElement.Share != null)
             {
                 _key = commandElement.Share.Name;
-                this.Note = string.Format(Properties.Resources.CommandParameter_Share, CommandTable.Current.GetElement(_key).Text);
+                this.Note = string.Format(Properties.TextResources.GetString("CommandParameter.Share"), CommandTable.Current.GetElement(_key).Text);
             }
 
             _defaultParameter = commandElement.ParameterSource?.GetDefault();

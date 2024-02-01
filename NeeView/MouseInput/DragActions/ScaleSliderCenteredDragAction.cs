@@ -7,7 +7,7 @@ namespace NeeView
     {
         public ScaleSliderCenteredDragAction()
         {
-            Note = Properties.Resources.DragActionType_ScaleSliderCentered;
+            Note = Properties.TextResources.GetString("DragActionType.ScaleSliderCentered");
             ParameterSource = new DragActionParameterSource(typeof(SensitiveDragActionParameter));
             DragActionCategory = DragActionCategory.Scale;
         }

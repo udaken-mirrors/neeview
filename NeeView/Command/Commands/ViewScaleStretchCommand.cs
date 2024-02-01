@@ -4,7 +4,7 @@
     {
         public ViewScaleStretchCommand()
         {
-            this.Group = Properties.Resources.CommandGroup_ViewManipulation;
+            this.Group = Properties.TextResources.GetString("CommandGroup.ViewManipulation");
         }
 
         public override void Execute(object? sender, CommandContext e)

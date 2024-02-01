@@ -7,7 +7,7 @@ namespace NeeView
     {
         public ScaleSliderDragAction()
         {
-            Note = Properties.Resources.DragActionType_ScaleSlider;
+            Note = Properties.TextResources.GetString("DragActionType.ScaleSlider");
             DragKey = new DragKey("Ctrl+LeftButton");
             ParameterSource = new DragActionParameterSource(typeof(SensitiveDragActionParameter));
             DragActionCategory = DragActionCategory.Scale;

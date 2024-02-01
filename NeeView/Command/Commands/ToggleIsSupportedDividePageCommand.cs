@@ -8,7 +8,7 @@ namespace NeeView
     {
         public ToggleIsSupportedDividePageCommand()
         {
-            this.Group = Properties.Resources.CommandGroup_PageSetting;
+            this.Group = Properties.TextResources.GetString("CommandGroup.PageSetting");
             this.IsShowMessage = true;
         }
 
@@ -19,7 +19,7 @@ namespace NeeView
 
         public override string ExecuteMessage(object? sender, CommandContext e)
         {
-            return BookSettings.Current.IsSupportedDividePage ? Properties.Resources.ToggleIsSupportedDividePageCommand_Off : Properties.Resources.ToggleIsSupportedDividePageCommand_On;
+            return BookSettings.Current.IsSupportedDividePage ? Properties.TextResources.GetString("ToggleIsSupportedDividePageCommand.Off") : Properties.TextResources.GetString("ToggleIsSupportedDividePageCommand.On");
         }
 
         public override bool CanExecute(object? sender, CommandContext e)

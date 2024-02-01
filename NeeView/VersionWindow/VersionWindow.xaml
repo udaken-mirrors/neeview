@@ -7,7 +7,7 @@
         xmlns:properties="clr-namespace:NeeView.Properties"
         mc:Ignorable="d"
         Style="{StaticResource ChromeDialogStyle}"
-        Title="{x:Static properties:Resources.VersionWindow_Title}" Width="512" SizeToContent="Height" ResizeMode="NoResize" >
+        Title="{properties:TextBinding VersionWindow.Title}" Width="512" SizeToContent="Height" ResizeMode="NoResize" >
     <Window.Resources>
 
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
@@ -30,13 +30,13 @@
 
             <TextBlock DockPanel.Dock="Left" Style="{StaticResource LinkedTextBlock}">
                 <Hyperlink NavigateUri="{Binding LicenseUri}">
-                    <TextBlock Text="{x:Static properties:Resources.VersionWindow_License}"/>
+                    <TextBlock Text="{properties:TextBinding VersionWindow.License}"/>
                 </Hyperlink>
             </TextBlock>
 
             <TextBlock DockPanel.Dock="Right" Style="{StaticResource LinkedTextBlock}">
                 <Hyperlink NavigateUri="{Binding ProjectUri}" >
-                    <TextBlock Text="{x:Static properties:Resources.VersionWindow_Project}"/>
+                    <TextBlock Text="{properties:TextBinding VersionWindow.Project}"/>
                 </Hyperlink>
             </TextBlock>
         </DockPanel>
@@ -45,7 +45,7 @@
 
             <DockPanel.ContextMenu>
                 <ContextMenu x:Name="CopyContextMenu">
-                    <MenuItem Header="{x:Static properties:Resources.VersionWindow_Menu_Copy}" Command="{x:Static local:VersionWindow.CopyCommand}" />
+                    <MenuItem Header="{properties:TextBinding VersionWindow.Menu.Copy}" Command="{x:Static local:VersionWindow.CopyCommand}" />
                 </ContextMenu>
             </DockPanel.ContextMenu>
 
@@ -72,7 +72,7 @@
                     </TextBlock>
                     <TextBlock HorizontalAlignment="Center" Margin="0,0,0,0">
                         <Hyperlink NavigateUri="{Binding Checker.DownloadUri}" IsEnabled="{Binding Checker.IsExistNewVersion}">
-                            <TextBlock Text="{x:Static properties:Resources.VersionWindow_Download}"/>
+                            <TextBlock Text="{properties:TextBinding VersionWindow.Download}"/>
                         </Hyperlink>
                         <TextBlock.Style>
                             <Style TargetType="TextBlock">

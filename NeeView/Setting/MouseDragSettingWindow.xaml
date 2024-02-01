@@ -1,6 +1,6 @@
 ﻿<Window x:Class="NeeView.Setting.MouseDragSettingWindow" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:local="clr-namespace:NeeView.Setting"
-        xmlns:properties="clr-namespace:NeeView.Properties" mc:Ignorable="d" Style="{StaticResource ChromeDialogStyle}" Title="{x:Static properties:Resources.MouseDragSettingWindow_Title}"
+        xmlns:properties="clr-namespace:NeeView.Properties" mc:Ignorable="d" Style="{StaticResource ChromeDialogStyle}" Title="{properties:TextBinding MouseDragSettingWindow.Title}"
         Height="400" Width="512">
 
     <Window.Resources>
@@ -19,15 +19,15 @@
         <DockPanel Margin="10">
 
             <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" HorizontalAlignment="Right">
-                <Button x:Name="OkButton" Content="{x:Static properties:Resources.Word_OK}" Click="OkButton_Click" TabIndex="10" />
-                <Button x:Name="CancelButton" Content="{x:Static properties:Resources.Word_Cancel}" Click="CancelButton_Click" TabIndex="10" />
+                <Button x:Name="OkButton" Content="{properties:TextBinding Word.OK}" Click="OkButton_Click" TabIndex="10" />
+                <Button x:Name="CancelButton" Content="{properties:TextBinding Word.Cancel}" Click="CancelButton_Click" TabIndex="10" />
             </StackPanel>
 
             <TabControl>
                 <TabItem x:Name="MouseGestureTab">
                     <TabItem.Header>
                         <Grid MinWidth="60" MinHeight="30">
-                            <TextBlock Text="{x:Static properties:Resources.EditCommandWindow_Tab_Gesture}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                            <TextBlock Text="{properties:TextBinding EditCommandWindow.Tab.Gesture}" HorizontalAlignment="Center" VerticalAlignment="Center" />
                         </Grid>
                     </TabItem.Header>
                     <local:DragActionGestureControl x:Name="MouseGesture"/>
@@ -36,7 +36,7 @@
                 <TabItem x:Name="ParameterTab">
                     <TabItem.Header>
                         <Grid MinWidth="60" MinHeight="30">
-                            <TextBlock Text="{x:Static properties:Resources.EditCommandWindow_Tab_Parameter}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                            <TextBlock Text="{properties:TextBinding EditCommandWindow.Tab.Parameter}" HorizontalAlignment="Center" VerticalAlignment="Center" />
                         </Grid>
                     </TabItem.Header>
                     <local:DragActionParameterControl x:Name="Parameter" />

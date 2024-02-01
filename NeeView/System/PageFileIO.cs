@@ -1,5 +1,4 @@
 ﻿using NeeLaboratory.Linq;
-using NeeView.Properties;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -27,7 +26,7 @@ namespace NeeView
         {
             var thumbnail = (pages.Count == 1) ? await pages.First().CreatePageVisualAsync() : null;
             var entries = pages.Select(e => e.ArchiveEntry).ToList();
-            return ConfirmFileIO.CreateDeleteConfirmDialog(entries, Resources.FileDeletePageDialog_Title, thumbnail, isCompletely);
+            return ConfirmFileIO.CreateDeleteConfirmDialog(entries, Properties.TextResources.GetString("FileDeletePageDialog.Title"), thumbnail, isCompletely);
         }
 
         /// <summary>

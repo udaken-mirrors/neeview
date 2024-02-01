@@ -94,7 +94,7 @@ namespace NeeView
                         query = new QueryPath(bookmark.Path, search);
                         break;
                     case BookmarkFolder folder:
-                        throw new BookAddressException(string.Format(Properties.Resources.Notice_CannotOpenBookmarkFolder, query.SimplePath));
+                        throw new BookAddressException(string.Format(Properties.TextResources.GetString("Notice.CannotOpenBookmarkFolder"), query.SimplePath));
                 }
             }
 

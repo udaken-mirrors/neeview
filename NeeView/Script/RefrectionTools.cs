@@ -48,10 +48,10 @@ namespace NeeView
         {
             if (obsolete is null) return null;
 
-            var message = string.Format(Properties.Resources.ScriptErrorMessage_Obsolete, name);
+            var message = string.Format(Properties.TextResources.GetString("ScriptErrorMessage.Obsolete"), name);
             if (alternative?.Alternative != null)
             {
-                message += " " + string.Format(Properties.Resources.ScriptErrorMessage_Alternative, alternative.Alternative);
+                message += " " + string.Format(Properties.TextResources.GetString("ScriptErrorMessage.Alternative"), alternative.Alternative);
             }
 
             return message;

@@ -8,7 +8,7 @@ namespace NeeView
     {
         public WindowMoveDragAction()
         {
-            Note = Properties.Resources.DragActionType_WindowMove;
+            Note = Properties.TextResources.GetString("DragActionType.WindowMove");
             DragKey = new DragKey("RightButton+LeftButton");
             DragActionCategory = DragActionCategory.None;
         }

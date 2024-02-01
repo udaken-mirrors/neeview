@@ -67,7 +67,7 @@ namespace NeeView
                 // ヘッダチェック
                 if (!CheckSignature(stream))
                 {
-                    throw new FormatException(string.Format(Properties.Resources.NotZipException_Message, Path));
+                    throw new FormatException(string.Format(Properties.TextResources.GetString("NotZipException.Message"), Path));
                 }
 
                 // 文字エンコード取得
@@ -129,7 +129,7 @@ namespace NeeView
             {
                 ZipArchiveEntry archiveEntry = archiver.Entries[entry.Id];
                 ZipArchiveEntryHelper.RepairEntryName(archiveEntry);
-                if (!IsValidEntry(entry, archiveEntry)) throw new ValidationException(Properties.Resources.InconsistencyException_Message);
+                if (!IsValidEntry(entry, archiveEntry)) throw new ValidationException(Properties.TextResources.GetString("InconsistencyException.Message"));
 
                 using (var stream = archiveEntry.Open())
                 {
@@ -151,7 +151,7 @@ namespace NeeView
             {
                 ZipArchiveEntry archiveEntry = archiver.Entries[entry.Id];
                 ZipArchiveEntryHelper.RepairEntryName(archiveEntry);
-                if (!IsValidEntry(entry, archiveEntry)) throw new ValidationException(Properties.Resources.InconsistencyException_Message);
+                if (!IsValidEntry(entry, archiveEntry)) throw new ValidationException(Properties.TextResources.GetString("InconsistencyException.Message"));
 
                 archiveEntry.ExtractToFile(exportFileName, isOverwrite);
             }

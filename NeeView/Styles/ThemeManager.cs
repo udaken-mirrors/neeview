@@ -166,7 +166,7 @@ namespace NeeView
             }
             catch (Exception ex)
             {
-                ToastService.Current.Show(new Toast(ex.Message, Properties.Resources.ThemeErrorDialog_Title, ToastIcon.Error));
+                ToastService.Current.Show(new Toast(ex.Message, Properties.TextResources.GetString("ThemeErrorDialog.Title"), ToastIcon.Error));
 
                 if (theneId.Type is ThemeType.Custom)
                 {
@@ -222,7 +222,7 @@ namespace NeeView
                 case ThemeType.Custom:
                     if (string.IsNullOrEmpty(Config.Current.Theme.CustomThemeFolder))
                     {
-                        ToastService.Current.Show(new Toast(Properties.Resources.ThemeErrorDialog_FolderIsNotSet, Properties.Resources.ThemeErrorDialog_Title, ToastIcon.Error));
+                        ToastService.Current.Show(new Toast(Properties.TextResources.GetString("ThemeErrorDialog.FolderIsNotSet"), Properties.TextResources.GetString("ThemeErrorDialog.Title"), ToastIcon.Error));
                     }
                     else
                     {
@@ -233,7 +233,7 @@ namespace NeeView
                         }
                         catch (Exception ex)
                         {
-                            ToastService.Current.Show(new Toast(ex.Message, Properties.Resources.ThemeErrorDialog_Title, ToastIcon.Error));
+                            ToastService.Current.Show(new Toast(ex.Message, Properties.TextResources.GetString("ThemeErrorDialog.Title"), ToastIcon.Error));
                         }
                     }
                     return LoadThemeProfile(new TheneSource(ThemeType.Dark));
@@ -272,7 +272,7 @@ namespace NeeView
         {
             if (string.IsNullOrEmpty(Config.Current.Theme.CustomThemeFolder))
             {
-                new MessageDialog(Properties.Resources.ThemeErrorDialog_FolderIsNotSet, Properties.Resources.Word_Error).ShowDialog();
+                new MessageDialog(Properties.TextResources.GetString("ThemeErrorDialog.FolderIsNotSet"), Properties.TextResources.GetString("Word.Error")).ShowDialog();
                 return;
             }
 
@@ -288,7 +288,7 @@ namespace NeeView
             }
             catch (Exception ex)
             {
-                new MessageDialog(ex.Message, Properties.Resources.Word_Error).ShowDialog();
+                new MessageDialog(ex.Message, Properties.TextResources.GetString("Word.Error")).ShowDialog();
             }
         }
 

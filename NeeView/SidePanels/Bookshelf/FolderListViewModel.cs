@@ -290,19 +290,19 @@ namespace NeeView
                 var items = menu.Items;
 
                 items.Clear();
-                items.Add(CreateListItemStyleMenuItem(Properties.Resources.Word_StyleList, PanelListItemStyle.Normal));
-                items.Add(CreateListItemStyleMenuItem(Properties.Resources.Word_StyleContent, PanelListItemStyle.Content));
-                items.Add(CreateListItemStyleMenuItem(Properties.Resources.Word_StyleBanner, PanelListItemStyle.Banner));
-                items.Add(CreateListItemStyleMenuItem(Properties.Resources.Word_StyleThumbnail, PanelListItemStyle.Thumbnail));
+                items.Add(CreateListItemStyleMenuItem(Properties.TextResources.GetString("Word.StyleList"), PanelListItemStyle.Normal));
+                items.Add(CreateListItemStyleMenuItem(Properties.TextResources.GetString("Word.StyleContent"), PanelListItemStyle.Content));
+                items.Add(CreateListItemStyleMenuItem(Properties.TextResources.GetString("Word.StyleBanner"), PanelListItemStyle.Banner));
+                items.Add(CreateListItemStyleMenuItem(Properties.TextResources.GetString("Word.StyleThumbnail"), PanelListItemStyle.Thumbnail));
                 items.Add(new Separator());
-                items.Add(CreateCommandMenuItem(Properties.Resources.Bookshelf_MoreMenu_AddQuickAccess, _vm.AddQuickAccess));
-                items.Add(CreateCommandMenuItem(Properties.Resources.Bookshelf_MoreMenu_ClearHistory, "ClearHistoryInPlace"));
+                items.Add(CreateCommandMenuItem(Properties.TextResources.GetString("Bookshelf.MoreMenu.AddQuickAccess"), _vm.AddQuickAccess));
+                items.Add(CreateCommandMenuItem(Properties.TextResources.GetString("Bookshelf.MoreMenu.ClearHistory"), "ClearHistoryInPlace"));
 
                 switch (_vm._model.FolderCollection)
                 {
                     case FolderEntryCollection:
                         items.Add(new Separator());
-                        items.Add(CreateCommandMenuItem(Properties.Resources.Bookshelf_MoreMenu_Subfolder, _vm.ToggleFolderRecursive, new Binding("FolderCollection.FolderParameter.IsFolderRecursive") { Source = _vm._model }));
+                        items.Add(CreateCommandMenuItem(Properties.TextResources.GetString("Bookshelf.MoreMenu.Subfolder"), _vm.ToggleFolderRecursive, new Binding("FolderCollection.FolderParameter.IsFolderRecursive") { Source = _vm._model }));
                         break;
 
                     case FolderArchiveCollection:
@@ -313,16 +313,16 @@ namespace NeeView
 
                     case BookmarkFolderCollection:
                         items.Add(new Separator());
-                        items.Add(CreateCommandMenuItem(Properties.Resources.Word_NewFolder, _vm.NewFolderCommand));
-                        items.Add(CreateCommandMenuItem(Properties.Resources.FolderTree_Menu_AddBookmark, _vm.AddBookmarkCommand));
+                        items.Add(CreateCommandMenuItem(Properties.TextResources.GetString("Word.NewFolder"), _vm.NewFolderCommand));
+                        items.Add(CreateCommandMenuItem(Properties.TextResources.GetString("FolderTree.Menu.AddBookmark"), _vm.AddBookmarkCommand));
                         break;
                 }
 
                 if (_vm._model.IsFolderSearchEnabled)
                 {
-                    var subItem = new MenuItem() { Header = Properties.Resources.Bookshelf_MoreMenu_SearchOptions };
-                    //subItem.Items.Add(CreateCheckMenuItem(Properties.Resources.Bookshelf_MoreMenu_SearchIncremental, new Binding(nameof(SystemConfig.IsIncrementalSearchEnabled)) { Source = Config.Current.System }));
-                    subItem.Items.Add(CreateCheckMenuItem(Properties.Resources.Bookshelf_MoreMenu_SearchIncludeSubdirectories, new Binding(nameof(BookshelfConfig.IsSearchIncludeSubdirectories)) { Source = Config.Current.Bookshelf }));
+                    var subItem = new MenuItem() { Header = Properties.TextResources.GetString("Bookshelf.MoreMenu.SearchOptions") };
+                    //subItem.Items.Add(CreateCheckMenuItem(Properties.TextResources.GetString("Bookshelf.MoreMenu.SearchIncremental"), new Binding(nameof(SystemConfig.IsIncrementalSearchEnabled)) { Source = Config.Current.System }));
+                    subItem.Items.Add(CreateCheckMenuItem(Properties.TextResources.GetString("Bookshelf.MoreMenu.SearchIncludeSubdirectories"), new Binding(nameof(BookshelfConfig.IsSearchIncludeSubdirectories)) { Source = Config.Current.Bookshelf }));
                     items.Add(new Separator());
                     items.Add(subItem);
                 }

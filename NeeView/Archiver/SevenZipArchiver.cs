@@ -122,7 +122,7 @@ namespace NeeView
             var archiveEntry = _accessor.ArchiveFileData[entry.Id];
             if (archiveEntry.FileName != entry.RawEntryName)
             {
-                throw new ApplicationException(Properties.Resources.InconsistencyException_Message);
+                throw new ApplicationException(Properties.TextResources.GetString("InconsistencyException.Message"));
             }
 
             var ms = new MemoryStream();

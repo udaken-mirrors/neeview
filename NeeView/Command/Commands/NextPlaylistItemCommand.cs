@@ -4,7 +4,7 @@
     {
         public NextPlaylistItemCommand()
         {
-            this.Group = Properties.Resources.CommandGroup_Playlist;
+            this.Group = Properties.TextResources.GetString("CommandGroup.Playlist");
             this.IsShowMessage = false;
         }
 
@@ -18,7 +18,7 @@
             var isSuccess = PlaylistPresenter.Current?.PlaylistListBox?.MoveNext();
             if (isSuccess != true)
             {
-                InfoMessage.Current.SetMessage(InfoMessageType.Command, Properties.Resources.Notice_PlaylistItemNextFailed);
+                InfoMessage.Current.SetMessage(InfoMessageType.Command, Properties.TextResources.GetString("Notice.PlaylistItemNextFailed"));
             }
         }
     }

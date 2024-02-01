@@ -8,7 +8,7 @@ namespace NeeView
     {
         public ToggleVisibleHistoryListCommand()
         {
-            this.Group = Properties.Resources.CommandGroup_Panel;
+            this.Group = Properties.TextResources.GetString("CommandGroup.Panel");
             this.ShortCutKey = "H";
             this.IsShowMessage = false;
         }
@@ -20,7 +20,7 @@ namespace NeeView
 
         public override string ExecuteMessage(object? sender, CommandContext e)
         {
-            return SidePanelFrame.Current.IsVisibleHistoryList ? Properties.Resources.ToggleVisibleHistoryListCommand_Off : Properties.Resources.ToggleVisibleHistoryListCommand_On;
+            return SidePanelFrame.Current.IsVisibleHistoryList ? Properties.TextResources.GetString("ToggleVisibleHistoryListCommand.Off") : Properties.TextResources.GetString("ToggleVisibleHistoryListCommand.On");
         }
 
         [MethodArgument("@ToggleCommand.Execute.Remarks")]

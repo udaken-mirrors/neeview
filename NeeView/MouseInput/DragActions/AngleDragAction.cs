@@ -10,7 +10,7 @@ namespace NeeView
     {
         public AngleDragAction()
         {
-            Note = Properties.Resources.DragActionType_Angle;
+            Note = Properties.TextResources.GetString("DragActionType.Angle");
             DragKey = new DragKey("Shift+LeftButton");
             DragActionCategory = DragActionCategory.Angle;
         }

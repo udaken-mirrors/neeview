@@ -7,7 +7,7 @@ namespace NeeView
     {
         public SetBookReadOrderRightCommand()
         {
-            this.Group = Properties.Resources.CommandGroup_PageSetting;
+            this.Group = Properties.TextResources.GetString("CommandGroup.PageSetting");
             this.IsShowMessage = true;
         }
 
