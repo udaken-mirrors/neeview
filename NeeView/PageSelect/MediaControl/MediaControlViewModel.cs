@@ -119,10 +119,14 @@ namespace NeeView
 
             RaisePropertyChanged("");
 
-
+            // TODO: 特殊な処理になっているので整備が必要
             if (e.IsMainMediaPlayer)
             {
-                MediaPlayerOperator.Current = Operator;
+                MediaPlayerOperator.BookMediaOperator = Operator;
+            }
+            else
+            {
+                MediaPlayerOperator.PageMediaOperator = Operator;
             }
         }
 

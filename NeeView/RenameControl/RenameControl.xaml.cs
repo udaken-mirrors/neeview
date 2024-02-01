@@ -207,6 +207,9 @@ namespace NeeView
             {
                 this.Text = isSuccess ? newText : _oldText;
                 await OnRenameAsync(_oldValue, newValue);
+
+                // NOTE: テキスト切り替えを隠すために閉じるのを遅らせる
+                await Task.Delay(100);
             }
 
             _manager.Remove(this);

@@ -11,9 +11,10 @@ namespace NeeView
         public PageThumbnail(PageContent content)
         {
             _content = content;
+            Thumbnail = new Thumbnail(_content.ArchiveEntry);
         }
 
-        public Thumbnail Thumbnail { get; } = new Thumbnail();
+        public Thumbnail Thumbnail { get; }
 
 
         public async Task LoadAsync(CancellationToken token)
@@ -22,7 +23,7 @@ namespace NeeView
             NVDebug.AssertMTA();
             if (Thumbnail.IsValid) return;
 
-            await Thumbnail.InitializeFromCacheAsync(_content.ArchiveEntry, null, token);
+            await Thumbnail.InitializeFromCacheAsync(token);
             if (Thumbnail.IsValid) return;
 
             var source = await LoadThumbnailAsync(token);

@@ -22,12 +22,12 @@ namespace NeeView
 
         public void MoveToFirst(object? sender)
         {
-            MediaPlayerOperator.Current?.SetPositionFirst();
+            MediaPlayerOperator.BookMediaOperator?.SetPositionFirst();
         }
 
         public void MoveToLast(object? sender)
         {
-            MediaPlayerOperator.Current?.SetPositionLast();
+            MediaPlayerOperator.BookMediaOperator?.SetPositionLast();
         }
 
         public void MovePrev(object? sender)
@@ -99,9 +99,9 @@ namespace NeeView
         // ページ移動量をメディアの時間移動量に変換して移動
         private void MoveMediaPage(object? sender, int delta)
         {
-            if (MediaPlayerOperator.Current == null) return;
+            if (MediaPlayerOperator.BookMediaOperator == null) return;
 
-            var isTerminated = MediaPlayerOperator.Current.AddPosition(TimeSpan.FromSeconds(delta * Config.Current.Archive.Media.PageSeconds));
+            var isTerminated = MediaPlayerOperator.BookMediaOperator.AddPosition(TimeSpan.FromSeconds(delta * Config.Current.Archive.Media.PageSeconds));
 
             if (isTerminated)
             {

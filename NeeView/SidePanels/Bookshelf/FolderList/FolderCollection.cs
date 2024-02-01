@@ -567,8 +567,7 @@ namespace NeeView
         {
             if (item == null) return;
 
-            item.TargetPath = path;
-            item.Name = path.FileName;
+            item.SetTargetPath(path);
         }
 
 

@@ -16,11 +16,24 @@ namespace NeeView
     /// </summary>
     public class MediaPlayerOperator : BindableBase, IDisposable
     {
+        // TODO: ブックとページの MediaPlayerOperator インスタンスアクセス方法が特殊すぎるので整備せよ
+
         /// <summary>
-        /// 現在有効なMediaPlayerOperator。
+        /// ブックの現在有効なMediaPlayerOperator。
         /// シングルトンではない。
         /// </summary>
-        public static MediaPlayerOperator? Current { get; set; }
+        public static MediaPlayerOperator? BookMediaOperator { get; set; }
+
+        /// <summary>
+        /// ページの現在有効なMediaPlayerOperator
+        /// </summary>
+        public static MediaPlayerOperator? PageMediaOperator { get; set; }
+
+        /// <summary>
+        /// どちらか有効なオペレーターを返す
+        /// </summary>
+        public static MediaPlayerOperator? CurrentMediaOperator => BookMediaOperator ?? PageMediaOperator;
+
 
 
         private readonly IMediaPlayer _player;

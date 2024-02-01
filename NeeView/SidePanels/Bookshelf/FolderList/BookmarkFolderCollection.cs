@@ -95,7 +95,6 @@ namespace NeeView
                     break;
 
                 case EntryCollectionChangedAction.Remove:
-                    if (e.Parent == _bookmarkPlace)
                     {
                         var item = Items.FirstOrDefault(i => e.Item == i.Source);
                         if (item != null)
@@ -107,7 +106,6 @@ namespace NeeView
 
                 case EntryCollectionChangedAction.Rename:
                     if (e.Item is null) throw new InvalidOperationException();
-                    if (e.Parent == _bookmarkPlace)
                     {
                         var item = Items.FirstOrDefault(i => e.Item == i.Source);
                         if (item != null)

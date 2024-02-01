@@ -12,14 +12,11 @@ namespace NeeView
         public ArchivePageContent(ArchiveEntry archiveEntry, BookMemoryService? bookMemoryService)
             : base(archiveEntry, bookMemoryService)
         {
-            Thumbnail.IsCacheEnabled = true;
         }
 
         public override PageType PageType => PageType.Folder;
 
         public override bool IsFileContent => true;
-
-        public Thumbnail Thumbnail { get; } = new Thumbnail();
 
 
         public override async Task<PictureInfo?> LoadPictureInfoCoreAsync(CancellationToken token)

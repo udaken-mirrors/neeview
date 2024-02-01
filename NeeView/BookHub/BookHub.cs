@@ -662,7 +662,7 @@ namespace NeeView
         {
             // 再生中のメディアをPAUSE
             // TODO: ここでUI操作を行うのはいかがなものか。イベントかMessengerにする必要あり。
-            AppDispatcher.Invoke(() => MediaPlayerOperator.Current?.Pause());
+            AppDispatcher.Invoke(() => MediaPlayerOperator.BookMediaOperator?.Pause());
 
             var book = _book;
             _book = null;
