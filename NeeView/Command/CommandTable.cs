@@ -416,6 +416,12 @@ namespace NeeView
 
         #region Methods
 
+        public CommandElement GetElement<T>() where T : CommandElement
+        {
+            var key = CommandElementTools.CreateCommandName<T>();
+            return GetElement(key);
+        }
+
         public CommandElement GetElement(string? key)
         {
             if (key is null) return CommandElement.None;

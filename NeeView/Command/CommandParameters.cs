@@ -36,6 +36,11 @@ namespace NeeView
             return MemberwiseClone();
         }
 
+        public T Clone<T>() where T : CommandParameter
+        {
+            return (T)MemberwiseClone();
+        }
+
         public bool MemberwiseEquals(CommandParameter? other)
         {
             if (other is null) return false;

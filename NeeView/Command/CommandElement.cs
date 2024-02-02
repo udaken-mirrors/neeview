@@ -7,7 +7,6 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Text.Json.Serialization;
-using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows.Data;
 using System.Windows.Input;
@@ -75,8 +74,6 @@ namespace NeeView
 
         public static object[] EmptyArgs { get; } = Array.Empty<object>();
 
-        private static readonly Regex _trimCommand = new(@"Command$", RegexOptions.Compiled);
-
         private string? _menuText;
         private string? _remarksText;
         private string _shortCutKey = "";
@@ -91,7 +88,7 @@ namespace NeeView
 
         public CommandElement(string? name)
         {
-            NameSource = new CommandNameSource(name ?? _trimCommand.Replace(this.GetType().Name, ""), 0);
+            NameSource = new CommandNameSource(name ?? CommandElementTools.CreateCommandName(this.GetType()), 0);
 
             Text = GetResourceTextRequired(null, null);
             Menu = GetResourceText(nameof(Menu));
