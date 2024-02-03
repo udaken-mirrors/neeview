@@ -566,6 +566,7 @@ namespace NeeView.PageFrames
                 case nameof(Context.ImageTrimConfig):
                 case nameof(Context.ImageResizeFilterConfig):
                 case nameof(Context.ImageDotKeepConfig):
+                case nameof(Context.IsAspectRatioEnabled):
                 case nameof(Context.IsInsertDummyPage):
                 case nameof(Context.IsInsertDummyFirstPage):
                 case nameof(Context.IsInsertDummyLastPage):

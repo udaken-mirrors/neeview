@@ -17,6 +17,7 @@ namespace NeeView
 
         public PictureInfo? PictureInfo { get; init; }
         public Size Size { get; init; }
+        public Size AspectSize { get; init; }
     }
 
 }

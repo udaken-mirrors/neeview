@@ -100,7 +100,7 @@ namespace NeeView
                     {
                         RaisePropertyChanged(nameof(PictureInfo));
                     }
-                    if (oldDataSource?.Size != _pageDataSource.Size)
+                    if (oldDataSource?.Size != _pageDataSource.Size || oldDataSource?.AspectSize != _pageDataSource.AspectSize)
                     {
                         RaisePropertyChanged(nameof(Size));
                         SizeChanged?.Invoke(this, EventArgs.Empty);
@@ -129,6 +129,7 @@ namespace NeeView
                 ErrorMessage = dataSource?.ErrorMessage,
                 PictureInfo = pictureInfo,
                 Size = pictureInfo?.Size ?? UndefinedSize,
+                AspectSize = pictureInfo?.AspectSize ?? UndefinedSize,
             };
         }
 

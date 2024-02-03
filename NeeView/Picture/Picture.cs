@@ -131,21 +131,9 @@ namespace NeeView
                 size = Size.Empty;
             }
 
-            // アスペクト比固定?
-            var customSize = Config.Current.ImageCustomSize;
-            var keepAspectRatio = size.IsEmpty || !customSize.IsEnabled || customSize.AspectRatio == CustomSizeAspectRatio.Origin;
-            if (keepAspectRatio && !size.IsEmpty)
-            {
-                if (this.PictureInfo.Size.Width > 0.0)
-                {
-                    var rate = size.Width / this.PictureInfo.Size.Width;
-                    size.Height = this.PictureInfo.Size.Height * rate;
-                }
-            }
-
             int filterHashCode = GetEnvironmentHashCode(); // PDFやSVGには関係ないけどまあいっか？
 
-            return new PictureSizeSource(size, filterHashCode, keepAspectRatio);
+            return new PictureSizeSource(size, filterHashCode, false);
         }
 
 
@@ -165,7 +153,7 @@ namespace NeeView
                 return false;
             }
 
-           // Debug.WriteLine($"## PDF: {_sizeSource.Size:f2}");
+            // Debug.WriteLine($"## PDF: {_sizeSource.Size:f2}");
 
 #if false
             Debug.WriteLine($"Resize: {this.PictureSource.ArchiveEntry.EntryLastName}");
