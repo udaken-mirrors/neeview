@@ -31,18 +31,16 @@ namespace NeeView
         /// <param name="collection"></param>
         public void Replace(IEnumerable<string>? collection)
         {
-            using (BlockReentrancy())
+            CheckReentrancy();
+            this.Items.Clear();
+            if (collection is not null)
             {
-                this.Clear();
-                if (collection is not null)
+                foreach (var item in collection)
                 {
-                    foreach (var item in collection)
-                    {
-                        this.Add(item);
-                    }
+                    this.Items.Add(item);
                 }
-                this.OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
             }
+            this.OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
         }
 
         /// <summary>
