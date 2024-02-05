@@ -120,7 +120,7 @@ namespace NeeView
         // ブックマーク登録可能？
         public bool CanBookmark()
         {
-            return true;
+            return !_book.Path.StartsWith(Temporary.Current.TempDirectory);
         }
 
         // ブックマーク設定

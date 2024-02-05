@@ -15,6 +15,8 @@ namespace NeeView
         private AddressBar _model;
         private RelayCommand<KeyValuePair<int, QueryPath>>? _moveToHistory;
         private RelayCommand? _togglePageModeCommand;
+        private RelayCommand? _toggleBookmarkCommand;
+        private RelayCommand? _moveToParentBookCommand;
         private readonly DelayValue<bool> _isLoading;
 
 
@@ -25,6 +27,11 @@ namespace NeeView
             _isLoading = new DelayValue<bool>();
             _isLoading.ValueChanged += (s, e) => RaisePropertyChanged(nameof(IsLoading));
             PageFrameBoxPresenter.Current.Loading += Presenter_Loading;
+            BookOperation.Current.BookChanged += (s, e) =>
+            {
+                ToggleBookmarkCommand.RaiseCanExecuteChanged();
+                MoveToParentBookCommand.RaiseCanExecuteChanged();
+            };
         }
 
 
@@ -65,7 +72,15 @@ namespace NeeView
             get { return _togglePageModeCommand = _togglePageModeCommand ?? new RelayCommand(TogglePageModeCommand_Execute); }
         }
 
+        public RelayCommand ToggleBookmarkCommand
+        {
+            get { return _toggleBookmarkCommand = _toggleBookmarkCommand ?? new RelayCommand(ToggleBookmarkCommand_Execute, ToggleBookmarkCommand_CanExecute); }
+        }
 
+        public RelayCommand MoveToParentBookCommand
+        {
+            get { return _moveToParentBookCommand = _moveToParentBookCommand ?? new RelayCommand(MoveToParentBookCommand_Execute, MoveToParentBookCommand_CanExecute); }
+        }
 
         private void Presenter_Loading(object? sender, BookPathEventArgs e)
         {
@@ -89,5 +104,24 @@ namespace NeeView
             BookSettings.Current.TogglePageMode(+1, true);
         }
 
+        private bool ToggleBookmarkCommand_CanExecute()
+        {
+            return BookOperation.Current.BookControl.CanBookmark();
+        }
+
+        private void ToggleBookmarkCommand_Execute()
+        {
+            BookOperation.Current.BookControl.ToggleBookmark();
+        }
+
+        private bool MoveToParentBookCommand_CanExecute()
+        {
+            return BookHub.Current.CanLoadParent();
+        }
+
+        private void MoveToParentBookCommand_Execute()
+        {
+            BookHub.Current.RequestLoadParent(this);
+        }
     }
 }
