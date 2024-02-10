@@ -1,5 +1,14 @@
 ## ChangeLog
 
+### 40.7
+(2024-02-10)
+
+#### Fixed
+
+- Copy command parameters are now reflected in copying page lists, etc. only for text settings. Fixed the same when dragging.
+
+----
+
 ### 40.6
 (2024-02-09)
 
