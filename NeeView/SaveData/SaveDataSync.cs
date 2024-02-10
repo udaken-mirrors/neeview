@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
@@ -46,7 +47,9 @@ namespace NeeView
                 if (disposing)
                 {
                     BookmarkCollection.Current.BookmarkChanged -= BookmarkCollection_BookmarkChanged;
+                    QuickAccessCollection.Current.CollectionChanged -= QuickAccessCollection_CollectionChanged;
                     BookHistoryCollection.Current.HistoryChanged -= BookHistoryCollection_HistoryChanged;
+                    BookHistoryCollection.Current.SearchChanged -= Search_HistoryChanged;
                     _delaySaveBookmark.Dispose();
                     _delaySaveHistory.Dispose();
                 }
@@ -67,6 +70,7 @@ namespace NeeView
             BookmarkCollection.Current.BookmarkChanged += BookmarkCollection_BookmarkChanged;
             QuickAccessCollection.Current.CollectionChanged += QuickAccessCollection_CollectionChanged;
             BookHistoryCollection.Current.HistoryChanged += BookHistoryCollection_HistoryChanged;
+            BookHistoryCollection.Current.SearchChanged += Search_HistoryChanged;
         }
 
         private void QuickAccessCollection_CollectionChanged(object? sender, QuickAccessCollectionChangeEventArgs e)
@@ -85,6 +89,13 @@ namespace NeeView
         {
             if (e.HistoryChangedType == BookMementoCollectionChangedType.Load) return;
             //Debug.WriteLine($"{nameof(SaveDataSync)}.{nameof(BookHistoryCollection_HistoryChanged)}: Request.");
+            _delaySaveHistory.Request();
+        }
+        
+        private void Search_HistoryChanged(object? sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (e.Action == NotifyCollectionChangedAction.Reset) return;
+            //Debug.WriteLine($"{nameof(SaveDataSync)}.{nameof(Search_HistoryChanged)}: Request: {sender}, {e.Action}");
             _delaySaveHistory.Request();
         }
 

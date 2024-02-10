@@ -1,5 +1,35 @@
 ## ChangeLog
 
+### 40.7
+(2024-02-10)
+
+#### Fixed
+
+- Copy command parameters are now reflected in copying page lists, etc. only for text settings. Fixed the same when dragging.
+
+----
+
+### 40.6
+(2024-02-09)
+
+#### Changed
+
+- Language files pt-BR, zh-Hans updated.
+- "Play/Stop" command now works for video pages and animated images.
+
+#### Fixed
+
+- Corrected timing of address bar button updates.
+- Fixed a bug that search history may not be saved.
+- Fixed a bug that the "Apply image resolution information" setting did not work.
+- Fixed a problem in which the parameters of the copy command were not reflected when copying a page list, etc.
+- Fixed thumbnail bug in file renaming.
+- Error sometimes occurring when deleting bookmarks from search results fixed.
+- Fixed a bug that page history was not functioning properly.
+- Fixed a bug that the playlist registered flag in the context menu was not displayed correctly.
+- Fixed a bug that caused an error when enabling loupe when no book is open.
+- Fixed a bug that caused the loupe to stop functioning when another book was opened with the loupe open.
+
 ----
 
 ### 40.5

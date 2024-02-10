@@ -159,7 +159,7 @@
                     <ContextMenu ItemContainerStyle="{StaticResource HistoryMenuItemContainerStyle}" />
                 </Button.ContextMenu>
             </Button>
-            <Button x:Name="MoveToParentButton" Command="{Binding BookCommands[MoveToParentBook]}"  Style="{StaticResource AddressIconButton}" TabIndex="3"
+            <Button x:Name="MoveToParentButton" Command="{Binding MoveToParentBookCommand}"  Style="{StaticResource AddressIconButton}" TabIndex="3"
                                     ToolTip="{properties:TextBinding AddressBar.Up.ToolTip}">
                 <Image Source="{StaticResource ic_arrow_up_24px}" />
 
@@ -192,7 +192,7 @@
                     </Style>
                 </Border.Style>
                 <DockPanel Margin="0">
-                    <Button DockPanel.Dock="Right" Style="{StaticResource AddressIconButton}" Margin="0" Command="{Binding BookCommands[ToggleBookmark]}" TabIndex="13">
+                    <Button DockPanel.Dock="Right" Style="{StaticResource AddressIconButton}" Margin="0" Command="{Binding ToggleBookmarkCommand}" TabIndex="13">
                         <TextBlock FontSize="20" FontFamily="Meyrio">
                             <TextBlock.Style>
                                 <Style TargetType="TextBlock">

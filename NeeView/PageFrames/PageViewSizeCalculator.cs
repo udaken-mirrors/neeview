@@ -24,7 +24,9 @@ namespace NeeView.PageFrames
         /// <returns>画像サイズから固定サイズとトリミングを反映したサイズ</returns>
         public Size GetPageSize()
         {
-            var size = _customSize.TransformToCustomSize(_pageDataSource.Size);
+            var originalSize = Config.Current.Image.Standard.IsAspectRatioEnabled ? _pageDataSource.AspectSize : _pageDataSource.Size;
+            
+            var size = _customSize.TransformToCustomSize(originalSize);
 
             if (_imageTrim.IsEnabled)
             {

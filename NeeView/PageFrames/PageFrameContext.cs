@@ -51,6 +51,7 @@ namespace NeeView.PageFrames
             _disposables.Add(ImageCustomSizeConfig.SubscribePropertyChanged((s, e) => RaisePropertyChanged(nameof(ImageCustomSizeConfig))));
             _disposables.Add(ImageTrimConfig.SubscribePropertyChanged((s, e) => RaisePropertyChanged(nameof(ImageTrimConfig))));
             _disposables.Add(ImageDotKeepConfig.SubscribePropertyChanged((s, e) => RaisePropertyChanged(nameof(ImageDotKeepConfig))));
+            _disposables.Add(_config.Image.Standard.SubscribePropertyChanged(nameof(ImageStandardConfig.IsAspectRatioEnabled), (s, e) => RaisePropertyChanged(nameof(IsAspectRatioEnabled))));
             _disposables.Add(() => _viewScrollContext.Clear());
         }
 
@@ -118,6 +119,7 @@ namespace NeeView.PageFrames
         public ImageCustomSizeConfig ImageCustomSizeConfig => _config.ImageCustomSize;
         public ImageTrimConfig ImageTrimConfig => _config.ImageTrim;
         public ImageDotKeepConfig ImageDotKeepConfig => _config.ImageDotKeep;
+        public bool IsAspectRatioEnabled => _config.Image.Standard.IsAspectRatioEnabled;
 
 
         public TimeSpan ScrollDuration => TimeSpan.FromSeconds(_config.View.ScrollDuration);

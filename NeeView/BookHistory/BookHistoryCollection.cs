@@ -4,6 +4,7 @@ using NeeView.Collections.Generic;
 using NeeView.Windows.Property;
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
@@ -30,11 +31,20 @@ namespace NeeView
         private BookHistoryCollection()
         {
             HistoryChanged += BookHistoryCollection_HistoryChanged;
+
+            BookshelfSearchHistory.CollectionChanged += SearchHistoryChanged;
+            BookmarkSearchHistory.CollectionChanged += SearchHistoryChanged;
+            BookHistorySearchHistory.CollectionChanged += SearchHistoryChanged;
+            PageListSearchHistory.CollectionChanged += SearchHistoryChanged;
         }
 
 
         [Subscribable]
         public event EventHandler<BookMementoCollectionChangedArgs>? HistoryChanged;
+
+        [Subscribable]
+        public event NotifyCollectionChangedEventHandler? SearchChanged;
+
 
         // 履歴コレクションロック
         public object ItemsLock => _lock;
@@ -68,6 +78,11 @@ namespace NeeView
         {
             SerialNumber++;
             RaisePropertyChanged(nameof(Count));
+        }
+
+        private void SearchHistoryChanged(object? sender, NotifyCollectionChangedEventArgs e)
+        {
+            SearchChanged?.Invoke(sender, e);
         }
 
         // 履歴クリア

@@ -12,7 +12,33 @@ namespace NeeView
     // コピー設定
     public static class ClipboardUtility
     {
-        // クリップボードにコピー
+        /// <summary>
+        /// 汎用の画像ファイルコピーパラメータを作成
+        /// </summary>
+        /// <remarks>
+        /// 一時ファイル、複数コピー。テキストは CopyCommand のパラメータに依存する
+        /// </remarks>
+        /// <returns></returns>
+        public static CopyFileCommandParameter CreateCopyParameter()
+        {
+            var sourceParameter = CommandTable.Current.GetElement<CopyFileCommand>().Parameter.Cast<CopyFileCommandParameter>();
+            var parameter = new CopyFileCommandParameter()
+            {
+                MultiPagePolicy = MultiPagePolicy.All,
+                TextCopyPolicy = sourceParameter.TextCopyPolicy,
+            };
+            return parameter;
+        }
+
+        /// <summary>
+        /// クリップボードにコピー
+        /// </summary>
+        /// <param name="pages"></param>
+        public static void Copy(List<Page> pages)
+        {
+            Copy(pages, CreateCopyParameter());
+        }
+
         public static void Copy(List<Page> pages, CopyFileCommandParameter parameter)
         {
             var data = new System.Windows.DataObject();
@@ -23,6 +49,10 @@ namespace NeeView
             }
         }
 
+        public static bool SetData(System.Windows.DataObject data, List<Page> pages, CancellationToken token)
+        {
+            return SetData(data, pages, CreateCopyParameter(), token);
+        }
 
         public static bool SetData(System.Windows.DataObject data, List<Page> pages, CopyFileCommandParameter parameter, CancellationToken token)
         {

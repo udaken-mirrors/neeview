@@ -13,11 +13,6 @@
             return BookSettings.Current.BookReadOrder.GetToggle().ToAliasName();
         }
 
-        public override bool CanExecute(object? sender, CommandContext e)
-        {
-            return BookSettings.Current.CanEdit;
-        }
-
         public override void Execute(object? sender, CommandContext e)
         {
             BookSettings.Current.ToggleBookReadOrder();

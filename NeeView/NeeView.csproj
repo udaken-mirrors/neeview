@@ -24,7 +24,7 @@
   </Target>
 
   <PropertyGroup>
-    <Version>40.5.0</Version>
+    <Version>40.7.0</Version>
     <Authors>NeeLaboratory</Authors>
     <Copyright>Copyright © 2016-2023 Ito Mitsuhiro (nee)</Copyright>
     <Description>Image viewer</Description>

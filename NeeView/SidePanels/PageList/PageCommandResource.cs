@@ -199,7 +199,7 @@ namespace NeeView
 
         private static void Copy(List<Page> pages)
         {
-            ClipboardUtility.Copy(pages, new CopyFileCommandParameter() { MultiPagePolicy = MultiPagePolicy.All });
+            ClipboardUtility.Copy(pages);
         }
 
         private static bool CanCopyToFolder(IEnumerable<Page> pages)
