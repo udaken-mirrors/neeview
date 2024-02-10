@@ -199,11 +199,7 @@ namespace NeeView
 
         private static void Copy(List<Page> pages)
         {
-            // CopyFileCommand の Parameter を使用する
-            // ページリストの複数選択用に、常に複数ページとしてを実行
-            var parameter = CommandTable.Current.GetElement<CopyFileCommand>().Parameter?.Clone<CopyFileCommandParameter>() ?? new CopyFileCommandParameter();
-            parameter.MultiPagePolicy = MultiPagePolicy.All;
-            ClipboardUtility.Copy(pages, parameter);
+            ClipboardUtility.Copy(pages);
         }
 
         private static bool CanCopyToFolder(IEnumerable<Page> pages)
