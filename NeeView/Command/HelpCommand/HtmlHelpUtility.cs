@@ -15,7 +15,7 @@ namespace NeeView
             var builder = new StringBuilder();
             builder.Append(HtmlHelpUtility.CreateHeader("NeeView Search Options"));
             builder.Append($"<body>");
-            builder.Append(ResourceService.Replace(Properties.TextResources.GetString(".Document.SearchOptions.html")));
+            builder.Append(ResourceService.Replace(Properties.TextResources.GetString("_Document.SearchOptions.html")));
             builder.Append("</body>");
 
             return builder.ToString();

@@ -33,7 +33,7 @@ namespace NeeView
             builder.Append(HtmlHelpUtility.CreateHeader("NeeView Script Manual"));
             builder.Append($"<body>");
 
-            builder.Append(Properties.TextResources.GetString(".Document.ScriptManual.html"));
+            builder.Append(Properties.TextResources.GetString("_Document.ScriptManual.html"));
 
             AppendScriptReference(builder);
 
@@ -43,7 +43,7 @@ namespace NeeView
 
             AppendObsoleteList(builder);
 
-            builder.Append(Properties.TextResources.GetString(".Document.ScriptManualExample.html"));
+            builder.Append(Properties.TextResources.GetString("_Document.ScriptManualExample.html"));
 
             builder.Append("</body>");
             builder.Append(HtmlHelpUtility.CreateFooter());

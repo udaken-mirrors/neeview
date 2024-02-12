@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using NeeLaboratory.Text;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
@@ -49,7 +50,8 @@ namespace NeeLaboratory.Resources
 
             return File.ReadLines(path)
                 .Select(e => Parse(e))
-                .OfType<KeyValuePair<string, string>>();
+                .OfType<KeyValuePair<string, string>>()
+                .ToList();
 
             static KeyValuePair<string, string>? Parse(string s)
             {
@@ -64,10 +66,10 @@ namespace NeeLaboratory.Resources
                     Debug.WriteLine($"ResText: FormatException");
                     return null;
                 }
-                return new(tokens[0].Trim(), tokens[1].Trim());
+                var key = tokens[0].Trim();
+                var body = tokens[1].Trim().Unescape();
+                return new(key, body);
             }
         }
-
-
     }
 }
