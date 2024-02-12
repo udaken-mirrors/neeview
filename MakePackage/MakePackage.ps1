@@ -34,15 +34,15 @@ Write-Host "Trace: $trace"
 Write-Host "x86: $x86"
 Write-Host "updateComponent: $updateComponent" 
 Write-Host "versionPostfix: $versionPostfix" 
+Write-Host
+Read-Host "Press Enter to continue"
 
 #
 $product = 'NeeView'
-$configuration = 'Release'
-$framework = 'net6.0-windows'
+$Win10SDK = "C:\Program Files (x86)\Windows Kits\10\bin\10.0.22621.0\x64"
 
-#
-$Win10SDK = "C:\Program Files (x86)\Windows Kits\10\bin\10.0.17763.0\x64"
-
+# sync current directory
+[System.IO.Directory]::SetCurrentDirectory((Get-Location -PSProvider FileSystem).Path)
 
 #---------------------
 # get fileversion
@@ -77,7 +77,8 @@ function Get-Version($projectFile)
 function Get-BuildCount()
 {
 	# auto increment build version
-	$xml = [xml](Get-Content "BuildCount.xml")
+	$path = Convert-Path "BuildCount.xml"
+	$xml = [xml](Get-Content $path)
 	return [int]$xml.build + 1
 }
 
@@ -85,9 +86,10 @@ function Get-BuildCount()
 # set build count
 function Set-BuildCount($buildCount)
 {
-	$xml = [xml](Get-Content "BuildCount.xml")
+	$path = Convert-Path "BuildCount.xml"
+	$xml = [xml](Get-Content $path)
 	$xml.build = [string]$buildCount
-	$xml.Save("BuildCount.xml")
+	$xml.Save($path)
 }
 
 #---------------------
@@ -145,24 +147,11 @@ $solutionDir = Convert-Path "$scriptPath\.."
 $solution = "$solutionDir\$product.sln"
 $projectDir = "$solutionDir\$product"
 $project = "$projectDir\$product.csproj"
-$projectSusieDir = "$solutionDir\NeeView.Susie.Server"
-$projectSusie = "$projectSusieDir\NeeView.Susie.Server.csproj"
-$projectTerminateDir = "$solutionDir\NeeView.Terminator"
-$ptojectTerminate = "$projectTerminateDir\NeeView.Terminator.csproj"
+$projectSusieDir = "$solutionDir\$product.Susie.Server"
+$projectSusie = "$projectSusieDir\$product.Susie.Server.csproj"
+#$projectTerminateDir = "$solutionDir\$product.Terminator"
+#$ptojectTerminate = "$projectTerminateDir\$product.Terminator.csproj"
 
-#-----------------------
-# procject output dir
-function Get-ProjectOutputDir($projectDir, $platform)
-{
-	if ($platform -eq "AnyCPU")
-	{
-		"$projectDir\bin\$configuration\$framework"
-	}
-	else
-	{
-		"$projectDir\bin\$platform\$configuration\$framework"
-	}
-}
 
 #----------------------
 # build
@@ -194,7 +183,7 @@ function Build-ProjectSelfContained($platform)
 		"--self-contained", "true"
 	)
 
-	Build-Project $platform "NeeView-$platform" $options
+	Build-Project $platform "$product-$platform" $options
 }
 
 function Build-ProjectFrameworkDependent($platform)
@@ -204,7 +193,7 @@ function Build-ProjectFrameworkDependent($platform)
 		"--self-contained", "false"
 	)
 
-	Build-Project $platform "NeeView-$platform-fd" $options
+	Build-Project $platform "$product-$platform-fd" $options
 }
 
 #----------------------
@@ -213,7 +202,7 @@ function New-Package($platform, $productName, $productDir, $packageDir)
 {
 	$temp = New-Item $packageDir -ItemType Directory
 
-	Copy-Item $productDir\* $packageDir -Recurse -Exclude ("*.pdb", "NeeView.dll.config")
+	Copy-Item $productDir\* $packageDir -Recurse -Exclude ("*.pdb", "$product.dll.config")
 	
 	# fix native dll
 	if ($platform -eq "x86")
@@ -255,7 +244,7 @@ function New-Readme($packageDir, $culture, $target)
 
 	if ($target -eq ".canary")
 	{
-		Get-GitLogMarkdown "NeeView <VERSION/> - ChangeLog" | Set-Content -Encoding UTF8 "$readmeDir\ChangeLog.md"
+		Get-GitLogMarkdown "$product <VERSION/> - ChangeLog" | Set-Content -Encoding UTF8 "$readmeDir\ChangeLog.md"
 	}
 	else
 	{
@@ -308,7 +297,7 @@ function New-Readme($packageDir, $culture, $target)
 	$css = "Readme\Style.html"
 	
 	# markdown to html by pandoc
-	pandoc -s -t html5 -o $output --metadata title="NeeView $postfix" -H $css $inputs
+	pandoc -s -t html5 -o $output --metadata title="$product $postfix" -H $css $inputs
 	if ($? -ne $true)
 	{
 		throw "pandoc error"
@@ -556,7 +545,7 @@ function New-Msi($arch, $packageDir, $packageAppendDir, $packageMsi)
 
 	function New-MainComponents
 	{
-		$wxs = "WixSource\$arch\MainComponents.wxs";
+		$wxs = Convert-Path "WixSource\$arch\MainComponents.wxs"
 		& $heat dir "$packageDir" -cg MainComponents -ag -pog:Binaries -sfrag -srd -sreg -var var.ContentDir -dr INSTALLFOLDER -out $wxs
 		if ($? -ne $true)
 		{
@@ -565,8 +554,8 @@ function New-Msi($arch, $packageDir, $packageAppendDir, $packageMsi)
 
 		[xml]$xml = Get-Content $wxs
 
-		# remove NeeView.exe
-		$node = $xml.Wix.Fragment[0].DirectoryRef.Component | Where-Object{$_.File.Source -match "NeeView\.exe"}
+		# remove $product.exe
+		$node = $xml.Wix.Fragment[0].DirectoryRef.Component | Where-Object{$_.File.Source -match "$product\.exe"}
 		if ($null -ne $node)
 		{
 			$componentId = $node.Id
@@ -576,8 +565,8 @@ function New-Msi($arch, $packageDir, $packageAppendDir, $packageMsi)
 			$xml.Wix.Fragment[1].ComponentGroup.RemoveChild($node)
 		}
 
-		# remove NeeView.dll.config
-		$node = $xml.Wix.Fragment[0].DirectoryRef.Component | Where-Object{$_.File.Source -match "NeeView\.dll\.config"}
+		# remove $product.dll.config
+		$node = $xml.Wix.Fragment[0].DirectoryRef.Component | Where-Object{$_.File.Source -match "$product\.dll\.config"}
 		if ($null -ne $node)
 		{
 			$componentId = $node.Id
@@ -664,7 +653,7 @@ function Remove-Appx($packageAppendDir, $appx)
 function New-Appx($arch, $packageDir, $packageAppendDir, $appx)
 {
 	$packgaeFilesDir = "$packageAppendDir/PackageFiles"
-	$contentDir = "$packgaeFilesDir/NeeView"
+	$contentDir = "$packgaeFilesDir/$product"
 
 	# copy package base files
 	Copy-Item "Appx\Resources" $packgaeFilesDir -Recurse -Force
@@ -680,7 +669,7 @@ function New-Appx($arch, $packageDir, $packageAppendDir, $appx)
 	New-Readme $contentDir "en-us" ".appx"
 	New-Readme $contentDir "ja-jp" ".appx"
 
-	. $env:CersPath/_Parameter.ps1
+	. $env:CersPath/_$product.Parameter.ps1
 	$param = Get-AppxParameter
 	$appxName = $param.name
 	$appxPublisher = $param.publisher
@@ -701,7 +690,7 @@ function New-Appx($arch, $packageDir, $packageAppendDir, $appx)
 	}
 
 	# signing
-	& "$Win10SDK\signtool.exe" sign -f "$env:CersPath/_neeview.pfx" -fd SHA256 -v "$appx"
+	& "$Win10SDK\signtool.exe" sign -f "$env:CersPath/_$product.pfx" -fd SHA256 -v "$appx"
 	if ($? -ne $true)
 	{
 		throw "signtool.exe error"
@@ -993,9 +982,9 @@ $revision = (& git rev-parse --short HEAD).ToString()
 $dateVersion = (Get-Date).ToString("MMdd") + $versionPostfix
 
 $publishDir = "Publish"
-$publishDir_x64 = "$publishDir\NeeView-x64"
-$publishDir_x86 = "$publishDir\NeeView-x86"
-$publishDir_x64_fd = "$publishDir\NeeView-x64-fd"
+$publishDir_x64 = "$publishDir\$product-x64"
+$publishDir_x86 = "$publishDir\$product-x86"
+$publishDir_x64_fd = "$publishDir\$product-x64-fd"
 $packagePrefix = "$product$version"
 $packageDir_x64 = "$product$version-x64"
 $packageDir_x86 = "$product$version-x86"

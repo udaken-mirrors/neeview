@@ -1090,9 +1090,6 @@
         <Component Id="cmp47C738CB872180B6EA1D5EDFE6CFAAB0" Guid="*">
           <File Id="filD1AA2801F69A379AE8E9D89A393BF5AF" KeyPath="yes" Source="$(var.ContentDir)\ja\Microsoft.VisualBasic.Forms.resources.dll" />
         </Component>
-        <Component Id="cmpE61E631FB4D9B5607DB3871EAC766ADA" Guid="*">
-          <File Id="fil7338EA1788F2BC4263E15B05A3D357B7" KeyPath="yes" Source="$(var.ContentDir)\ja\NeeView.resources.dll" />
-        </Component>
         <Component Id="cmpE1B0B56DD8A04749F3D9A9D667CE1EE0" Guid="*">
           <File Id="filBE74B3BEA88B40A7FB603E9BB314AFDA" KeyPath="yes" Source="$(var.ContentDir)\ja\PresentationCore.resources.dll" />
         </Component>
@@ -1193,6 +1190,23 @@
         </Component>
         <Component Id="cmpDF14F26F883AD5F59988A4676B23EA34" Guid="*">
           <File Id="filB01BB48E45970E6A9850BD357591E000" KeyPath="yes" Source="$(var.ContentDir)\ko\WindowsFormsIntegration.resources.dll" />
+        </Component>
+      </Directory>
+      <Directory Id="dir4A939956C3CBABAE8772A809E8B414F8" Name="Languages">
+        <Component Id="cmpA5BC39CE1EA92B7BEC4FA7B7FAD1CE05" Guid="*">
+          <File Id="fil720A49012A6CB57B79F60103841201A1" KeyPath="yes" Source="$(var.ContentDir)\Languages\en.restext" />
+        </Component>
+        <Component Id="cmp989C19077DC6F4DAC1363D8CC76D00CD" Guid="*">
+          <File Id="filD2A4214DD92E7DF41B668DD2F3D62D00" KeyPath="yes" Source="$(var.ContentDir)\Languages\ja.restext" />
+        </Component>
+        <Component Id="cmp354396F3BBFE5AA8D8F300BB7FAC836C" Guid="*">
+          <File Id="filA6C67CB30699C7580764A47A9DCC4346" KeyPath="yes" Source="$(var.ContentDir)\Languages\pt-BR.restext" />
+        </Component>
+        <Component Id="cmp9FA19ABB45FE51FEEB8229218B21DCE0" Guid="*">
+          <File Id="fil14CB382A55130D2F1BDA8B2051FA057B" KeyPath="yes" Source="$(var.ContentDir)\Languages\zh-Hans.restext" />
+        </Component>
+        <Component Id="cmp66E7601A3F85F7B9D552371104360426" Guid="*">
+          <File Id="fil5C1640F1467A1229D2FFD0283F206DB9" KeyPath="yes" Source="$(var.ContentDir)\Languages\zh-Hant.restext" />
         </Component>
       </Directory>
       <Directory Id="dir767958332488D010DC9D9657D1813D0E" Name="Libraries">
@@ -1419,9 +1433,6 @@
         <Component Id="cmp37830DB725CE8DCC5E8516066239FDBF" Guid="*">
           <File Id="fil01C14520B94D5DF582DC90444367BECA" KeyPath="yes" Source="$(var.ContentDir)\pt-BR\Microsoft.VisualBasic.Forms.resources.dll" />
         </Component>
-        <Component Id="cmp720632ACCA8355114E23DD7D80A702A4" Guid="*">
-          <File Id="fil791AFCD0F2D310C629D36C82B3343308" KeyPath="yes" Source="$(var.ContentDir)\pt-BR\NeeView.resources.dll" />
-        </Component>
         <Component Id="cmpA56B056AB7FEBDC8D40408E0C9EB2F7F" Guid="*">
           <File Id="fil453207D66BAF7E21E079BB340A03359C" KeyPath="yes" Source="$(var.ContentDir)\pt-BR\PresentationCore.resources.dll" />
         </Component>
@@ -1589,9 +1600,6 @@
         <Component Id="cmpB462DC79860C0949DAC4A531BA5A688A" Guid="*">
           <File Id="filD1AD47059B93F1821E770A5E5B5CF5FB" KeyPath="yes" Source="$(var.ContentDir)\zh-Hans\Microsoft.VisualBasic.Forms.resources.dll" />
         </Component>
-        <Component Id="cmp04F56CB91472CC3AE3A8B56EFEA374DD" Guid="*">
-          <File Id="fil3D7F8C30132CC3F04C7633F92254FD03" KeyPath="yes" Source="$(var.ContentDir)\zh-Hans\NeeView.resources.dll" />
-        </Component>
         <Component Id="cmpA31D5FE2F3B997531BF836D3F79B582F" Guid="*">
           <File Id="fil791B75A6246AC381A694503B41B43684" KeyPath="yes" Source="$(var.ContentDir)\zh-Hans\PresentationCore.resources.dll" />
         </Component>
@@ -1644,9 +1652,6 @@
       <Directory Id="dir083BC4C92455CD933FA93376E7459C85" Name="zh-Hant">
         <Component Id="cmp9A3A0106F32CEF5956B1966B61E20A43" Guid="*">
           <File Id="filFE1CF4058DCF8CAF23FBFF6F060C95BE" KeyPath="yes" Source="$(var.ContentDir)\zh-Hant\Microsoft.VisualBasic.Forms.resources.dll" />
-        </Component>
-        <Component Id="cmp8BC4DF58689D669A201DCB46A9A1216B" Guid="*">
-          <File Id="fil51E090F3FC084719560A68D6DF3F44A1" KeyPath="yes" Source="$(var.ContentDir)\zh-Hant\NeeView.resources.dll" />
         </Component>
         <Component Id="cmp490FE357FE43FD118BC8BA5F43B714C6" Guid="*">
           <File Id="fil2158AC8E8B532D330229F79A2C98C34C" KeyPath="yes" Source="$(var.ContentDir)\zh-Hant\PresentationCore.resources.dll" />
@@ -2060,7 +2065,6 @@
       <ComponentRef Id="cmpD43D39280F57808610A471DE057305DE" />
       <ComponentRef Id="cmp56485A8724BC110E2E03BB06E2C98DB4" />
       <ComponentRef Id="cmp47C738CB872180B6EA1D5EDFE6CFAAB0" />
-      <ComponentRef Id="cmpE61E631FB4D9B5607DB3871EAC766ADA" />
       <ComponentRef Id="cmpE1B0B56DD8A04749F3D9A9D667CE1EE0" />
       <ComponentRef Id="cmpF4AB2164B5CE90AA56D141F40128F821" />
       <ComponentRef Id="cmp5032C0B020E441D50703FC79A630C0E3" />
@@ -2094,6 +2098,11 @@
       <ComponentRef Id="cmp022F32A526B7EDBD986B272576393BD8" />
       <ComponentRef Id="cmpE9012E210B59112504B1B1CA4E0E3494" />
       <ComponentRef Id="cmpDF14F26F883AD5F59988A4676B23EA34" />
+      <ComponentRef Id="cmpA5BC39CE1EA92B7BEC4FA7B7FAD1CE05" />
+      <ComponentRef Id="cmp989C19077DC6F4DAC1363D8CC76D00CD" />
+      <ComponentRef Id="cmp354396F3BBFE5AA8D8F300BB7FAC836C" />
+      <ComponentRef Id="cmp9FA19ABB45FE51FEEB8229218B21DCE0" />
+      <ComponentRef Id="cmp66E7601A3F85F7B9D552371104360426" />
       <ComponentRef Id="cmp3AE7AAFB20F62A6AAD8416717F568715" />
       <ComponentRef Id="cmpECB4B384072ADF0FC7ECD0BB98ED1724" />
       <ComponentRef Id="cmp946CF534135B1D9218B5758A8346A2C6" />
@@ -2165,7 +2174,6 @@
       <ComponentRef Id="cmpE7B88935D95196C8006E82A51B780AB5" />
       <ComponentRef Id="cmp9892F9C36F1A4435522B9A751FFCFCAA" />
       <ComponentRef Id="cmp37830DB725CE8DCC5E8516066239FDBF" />
-      <ComponentRef Id="cmp720632ACCA8355114E23DD7D80A702A4" />
       <ComponentRef Id="cmpA56B056AB7FEBDC8D40408E0C9EB2F7F" />
       <ComponentRef Id="cmpB6CEBD9E7DC5FBA3C204717F046133B0" />
       <ComponentRef Id="cmp3A92E633EA0433AF6999BA79D6EBA579" />
@@ -2219,7 +2227,6 @@
       <ComponentRef Id="cmp93376EE54A201CE8EFB62F355E94E24F" />
       <ComponentRef Id="cmp5407035CF10622807020A08C96FB6E0C" />
       <ComponentRef Id="cmpB462DC79860C0949DAC4A531BA5A688A" />
-      <ComponentRef Id="cmp04F56CB91472CC3AE3A8B56EFEA374DD" />
       <ComponentRef Id="cmpA31D5FE2F3B997531BF836D3F79B582F" />
       <ComponentRef Id="cmpC224A7DE7B681B58A73CF6855E233061" />
       <ComponentRef Id="cmpAE67184FD10CD77E97C5727A0A288158" />
@@ -2237,7 +2244,6 @@
       <ComponentRef Id="cmp0CD41DBB88FA7325E16B8AAF88565777" />
       <ComponentRef Id="cmp249425C4AEEDC47693AA5390214A03BA" />
       <ComponentRef Id="cmp9A3A0106F32CEF5956B1966B61E20A43" />
-      <ComponentRef Id="cmp8BC4DF58689D669A201DCB46A9A1216B" />
       <ComponentRef Id="cmp490FE357FE43FD118BC8BA5F43B714C6" />
       <ComponentRef Id="cmp96A22611074DC804DB12BE620D3574A0" />
       <ComponentRef Id="cmpD6017C843F8CE9B32DDCFC74702F4D00" />
