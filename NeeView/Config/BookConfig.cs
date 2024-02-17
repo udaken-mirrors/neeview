@@ -17,6 +17,7 @@ namespace NeeView
         private StringCollection _excludes = (StringCollection)DefaultExcludes.Clone();
         private PageEndAction _pageEndAction;
         private bool _isPrioritizePageMove = true;
+        private bool _isReadyToPageMove;
         private bool _isNotifyPageLoop;
         private bool _isConfirmRecursive;
         private double _contentSpace = -1.0;
@@ -99,6 +100,16 @@ namespace NeeView
         {
             get { return _isPrioritizePageMove; }
             set { SetProperty(ref _isPrioritizePageMove, value); }
+        }
+
+        /// <summary>
+        /// 表示準備ができてからページを移動する
+        /// </summary>
+        [PropertyMember]
+        public bool IsReadyToPageMove
+        {
+            get { return _isReadyToPageMove; }
+            set { SetProperty(ref _isReadyToPageMove, value); }
         }
 
         // ページ終端でのアクション

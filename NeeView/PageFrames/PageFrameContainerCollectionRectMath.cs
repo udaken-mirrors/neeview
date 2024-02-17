@@ -51,8 +51,14 @@ namespace NeeView.PageFrames
         /// </summary>
         public LinkedListNode<PageFrameContainer>? GetViewCenterContainer(Rect viewRect)
         {
-            var nodes = _containers.CollectNode<PageFrameContent>();
+            return GetViewCenterContainer(viewRect, _containers.CollectNode<PageFrameContent>());
+        }
 
+        /// <summary>
+        /// 表示の中心に最も近いコンテナを取得 
+        /// </summary>
+        public LinkedListNode<PageFrameContainer>? GetViewCenterContainer(Rect viewRect, IEnumerable<LinkedListNode<PageFrameContainer>> nodes)
+        {
             var node = nodes.FirstOrDefault(e => _math.GetConflict(e.Value.Rect, viewRect).IsCentered())
                 ?? nodes.MinBy(e => GetCenterDistance(e.Value));
 

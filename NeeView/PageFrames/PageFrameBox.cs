@@ -5,8 +5,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -54,7 +52,7 @@ namespace NeeView.PageFrames
         private readonly OnceDispatcher _onceDispatcher;
         private bool _isStarted;
         private Dictionary<PageFrameContent, double> _stretchScaleRateMap = new();
-
+        private PageFrameBoxDelayMove _delayMove;
 
         public PageFrameBox(PageFrameContext context, BookContext bookContext)
         {
@@ -121,8 +119,13 @@ namespace NeeView.PageFrames
 
             _selected = new SelectedContainer(_containers, SelectCenterNode);
             _disposables.Add(_selected);
-            _disposables.Add(_selected.SubscribePropertyChanged(nameof(_selected.PagePosition),
+#if false
+            _disposables.Add(_selected.SubscribePropertyChanged(nameof(_selected.NextPageRange),
+                (s, e) => _bookContext.SelectedRange = _selected.NextPageRange));
+#else
+            _disposables.Add(_selected.SubscribePropertyChanged(nameof(_selected.PageRange),
                 (s, e) => _bookContext.SelectedRange = _selected.PageRange));
+#endif
             _disposables.Add(_selected.SubscribeViewContentChanged(
                  (s, e) => ViewContentChanged?.Invoke(this, e)));
 
@@ -133,6 +136,14 @@ namespace NeeView.PageFrames
 
             // 表示ページ監視
             _disposables.Add(new PageFrameContainerSelectedPageWatcher(this, _bookContext.Book));
+
+            // 遅延ロード
+            var pageLoading = new PageLoading();
+            var pageLoadingControl = new PageLoadingControl();
+            pageLoadingControl.DataContext = new PageLoadingViewModel(pageLoading);
+            this.Children.Add(pageLoadingControl);
+            _delayMove = new PageFrameBoxDelayMove(this, _loader, pageLoading);
+            _disposables.Add(_delayMove);
 
             Loaded += PageFrameBox_Loaded;
         }
@@ -155,8 +166,7 @@ namespace NeeView.PageFrames
             // 最初のページ
             if (_bookContext.IsEnabled)
             {
-                MoveTo(_bookContext.Book.StartPosition.Position, LinkedListDirectionExtensions.FromSign(_bookContext.Book.StartPosition.Direction));
-                _scrollViewer.FlushScroll();
+                MoveTo(_bookContext.Book.StartPosition.Position, LinkedListDirectionExtensions.FromSign(_bookContext.Book.StartPosition.Direction), false, true);
             }
             else
             {
@@ -370,11 +380,15 @@ namespace NeeView.PageFrames
             CorrectStretchScale();
         }
 
+        /// <summary>
+        /// ブックのページが増減した時の処理
+        /// </summary>
         private void Context_PagesChanged(object? sender, EventArgs e)
         {
             _containers.SetDirty(PageFrameDirtyLevel.Moderate);
 
-            // ページ座標復元
+            // ページ位置復元
+            // ページが増減しページ位置がずれていることがあるのでページそのもので位置を復元する
             var position = PagePosition.Zero;
             var page = _selected.Page;
             if (page is not null)
@@ -383,8 +397,7 @@ namespace NeeView.PageFrames
                 position = new PagePosition(index < 0 ? 0 : index, 0);
             }
 
-            MoveTo(position, LinkedListDirection.Next);
-            FlushLayout();
+            MoveTo(position, LinkedListDirection.Next, false, true);
 
             PagesChanged?.Invoke(this, e);
         }
@@ -524,7 +537,7 @@ namespace NeeView.PageFrames
 
                 case nameof(Context.IsSupportedDividePage):
                     MoveToFixPosition();
-                    Flush();
+                    FlushLayout();
                     break;
 
                 case nameof(Context.IsSupportedSingleFirstPage):
@@ -639,7 +652,7 @@ namespace NeeView.PageFrames
         {
             // NOTE: 切り替えるときは常にページ先頭になる。分割ページから分割ページに切り替わることはないはず
             _containers.SetDirty(PageFrameDirtyLevel.Moderate);
-            MoveTo(_selected.PagePosition.Truncate(), LinkedListDirection.Next);
+            MoveTo(_selected.PageRange.Min.Truncate(), LinkedListDirection.Next);
         }
 
         /// <summary>
@@ -647,9 +660,9 @@ namespace NeeView.PageFrames
         /// </summary>
         private void MoveToOtherPosition()
         {
-            if (_context.IsSupportedDividePage && _selected.Container.FrameRange.PartSize == 1)
+            if (_context.IsSupportedDividePage && _selected.Node.Value.FrameRange.PartSize == 1)
             {
-                MoveTo(_selected.PagePosition.OtherPart(), LinkedListDirection.Next);
+                MoveTo(_selected.PageRange.Min.OtherPart(), LinkedListDirection.Next);
             }
         }
 
@@ -662,11 +675,21 @@ namespace NeeView.PageFrames
 
             var selectedPosition = _selected.Node.Value.Identifier;
             var position = _bookContext.NormalizePosition(selectedPosition);
-            MoveTo(position, LinkedListDirection.Next);
-            FlushLayout();
+            MoveTo(position, LinkedListDirection.Next, false, true);
+        }
+
+
+        public void MoveTo(PageFrameMoveParameter parameter)
+        {
+            MoveTo(parameter.Position, parameter.Direction, false, parameter.IsFlush);
         }
 
         public void MoveTo(PagePosition position, LinkedListDirection direction)
+        {
+            MoveTo(position, direction, false, false);
+        }
+
+        public void MoveTo(PagePosition position, LinkedListDirection direction, bool continued, bool flush)
         {
             if (!_bookContext.IsEnabled) return;
 
@@ -675,6 +698,75 @@ namespace NeeView.PageFrames
             using var forceTrack = _context.ForceScaleStretchTracking.Lock(_context.IsAutoStretch);
 
             // position の補正
+            if (!continued)
+            {
+                (position, direction) = CorrectPosition(new(position, direction));
+            }
+
+            var next = _containers.EnsureLatestContainerNode(position, direction, CreateContainerNodeOptions.None);
+            if (next is null) return;
+
+            // 現在の遅延コンテナを削除
+            _containers.RemoveContainers(e => e != next && !e.Value.IsStable);
+
+            // もし準備できていなければ処理を遅延させる
+            if (_context.IsReadyToPageMove && !next.Value.IsStable && next.Value.Content is PageFrameContent item && item.GetViewContentState() < ViewContentState.Loaded)
+            {
+                next.Value.SetStable(false);
+                _selected.SetNext(next);
+                _delayMove.MoveTo(new PageFrameMoveParameter(next.Value, direction, continued, flush), next.Value);
+            }
+            else
+            {
+                _delayMove.Cancel();
+                _containers.Anchor.Set(_rectMath.GetViewCenterContainer(_viewBox.Rect, _containers.CollectNode<PageFrameContent>().Where(e => e != next)), direction);
+                // TODO: MoveToNextFrame では以下のように基準が null だった。この差が必要なのか確認する。
+                //_containers.Anchor.Set(null, direction);
+
+                _containers.RemoveConflictContainer(next);
+                next.Value.SetStable(true);
+                MoveToCore(next, direction, flush);
+            }
+        }
+
+        /// <summary>
+        /// フレーム移動
+        /// </summary>
+        /// <param name="next">移動先フレーム</param>
+        /// <param name="direction">移動方向</param>
+        /// <param name="flush">表示の即座反映</param>
+        private void MoveToCore(LinkedListNode<PageFrameContainer> next, LinkedListDirection direction, bool flush)
+        {
+            _filler.FillContainersWhenAligned(_viewBox.Rect, next, direction);
+            _layout.Layout();
+            _layout.Flush();
+            _containers.Anchor.Set(next, direction);
+
+            _context.SetAutoStretchTarget(next.Value.FrameRange);
+            _selected.Set(next, true);
+
+            AssertSelectedExists();
+            ScrollToViewOrigin(next, direction);
+            Cleanup();
+
+            _scrollLock.Lock();
+            SetSnapAnchor();
+
+            if (flush || _context.IsAutoStretch)
+            {
+                FlushLayout();
+            }
+        }
+
+        /// <summary>
+        /// ページ位置の補正
+        /// </summary>
+        /// <param name="source"></param>
+        /// <returns></returns>
+        public DirectionalPagePosition CorrectPosition(DirectionalPagePosition source)
+        {
+            var (position, direction) = source;
+
             if (_context.IsLoopPage && _selected.Node.Value.Content is PageFrameContent)
             {
                 var selectedIndex = _selected.Node.Value.Identifier.Index;
@@ -696,30 +788,7 @@ namespace NeeView.PageFrames
                 }
             }
 
-            _containers.Anchor.Set(_rectMath.GetViewCenterContainer(_viewBox.Rect), direction);
-            var next = _containers.EnsureLatestContainerNode(position, direction);
-            if (next is null) return;
-
-            _filler.FillContainersWhenAligned(_viewBox.Rect, next, direction);
-            _layout.Layout();
-            _layout.Flush();
-            _containers.Anchor.Set(next, direction);
-
-            _context.SetAutoStretchTarget(next.Value.FrameRange);
-            _selected.Set(next, true);
-
-            ScrollToViewOrigin(next, direction);
-            Cleanup();
-
-            AssertSelectedExists();
-
-            _scrollLock.Lock();
-            SetSnapAnchor();
-
-            if (_context.IsAutoStretch)
-            {
-                Flush();
-            }
+            return new(position, direction);
         }
 
         /// <summary>
@@ -766,16 +835,16 @@ namespace NeeView.PageFrames
                 return;
             }
 
-            var current = _selected.Node;
-            Debug.Assert(current is not null);
-            if (current is null) return;
+            var frameRange = GetCurrentPageRange();
+            Debug.Assert(!frameRange.IsEmpty());
+            if (frameRange.IsEmpty()) return;
 
             if (!BookProfile.Current.CanPrioritizePageMove() && IsSelectedPageFrameLoading())
             {
                 return;
             }
 
-            var nextIndex = current.Value.FrameRange.Min.Index + direction.ToSign();
+            var nextIndex = frameRange.Min.Index + direction.ToSign();
             if (_context.IsLoopPage)
             {
                 nextIndex = _bookContext.NormalizeIndex(nextIndex);
@@ -787,17 +856,16 @@ namespace NeeView.PageFrames
             }
 
             //Debug.WriteLine($"MoveToNextPage: {current.Value.FrameRange} to {nextIndex}");
-            MoveTo(new PagePosition(nextIndex, 0), LinkedListDirection.Next);
-            FlushLayout();
+            MoveTo(new PagePosition(nextIndex, 0), LinkedListDirection.Next, false, true);
         }
 
         public void MoveToNextFrame(LinkedListDirection direction)
         {
             if (!_bookContext.IsEnabled) return;
 
-            var current = _selected.Node;
-            Debug.Assert(current is not null);
-            if (current is null) return;
+            var frameRange = GetCurrentPageRange();
+            Debug.Assert(!frameRange.IsEmpty());
+            if (frameRange.IsEmpty()) return;
 
             if (!BookProfile.Current.CanPrioritizePageMove() && IsSelectedPageFrameLoading())
             {
@@ -806,33 +874,24 @@ namespace NeeView.PageFrames
 
             using var forceTrack = _context.ForceScaleStretchTracking.Lock(_context.IsAutoStretch);
 
-            var pos = current.Value.FrameRange.Next(direction.ToSign());
-            var next = _containers.EnsureLatestContainerNode(pos, direction);
-            if (next?.Value.Content is not PageFrameContent)
+            var pos = frameRange.Next(direction.ToSign());
+
+            if (!_bookContext.ContainsIndex(pos.Index))
             {
                 PageTerminated?.Invoke(this, new PageTerminatedEventArgs(direction.ToSign()));
                 return;
             }
-            _containers.Anchor.Set(null, direction);
-            _filler.FillContainersWhenAligned(_viewBox.Rect, next, direction);
-            _layout.Layout();
-            _layout.Flush();
-            _containers.Anchor.Set(next, direction);
 
-            _context.SetAutoStretchTarget(next.Value.FrameRange);
-            _selected.Set(next, true);
+            MoveTo(pos, direction, true, false);
+        }
 
-            AssertSelectedExists();
-            ScrollToViewOrigin(next, direction);
-            Cleanup();
-
-            _scrollLock.Lock();
-            SetSnapAnchor();
-
-            if (_context.IsAutoStretch)
-            {
-                Flush();
-            }
+        /// <summary>
+        /// 遅延を含めた表示ページ範囲
+        /// </summary>
+        /// <returns></returns>
+        private PageRange GetCurrentPageRange()
+        {
+            return _selected.NextNode?.Value.FrameRange ?? PageRange.Empty;
         }
 
         public void MoveToNextFolder(LinkedListDirection direction, bool isShowMessage)
@@ -840,8 +899,8 @@ namespace NeeView.PageFrames
             if (!_bookContext.IsEnabled) return;
 
             var index = direction == LinkedListDirection.Previous
-                ? _bookContext.Book.Pages.GetPrevFolderIndex(_selected.PageRange.Min.Index)
-                : _bookContext.Book.Pages.GetNextFolderIndex(_selected.PageRange.Min.Index);
+                ? _bookContext.Book.Pages.GetPrevFolderIndex(_selected.NextPageRange.Min.Index)
+                : _bookContext.Book.Pages.GetNextFolderIndex(_selected.NextPageRange.Min.Index);
             if (index >= 0)
             {
                 MoveTo(new PagePosition(index, 0), LinkedListDirection.Next);
@@ -1045,15 +1104,6 @@ namespace NeeView.PageFrames
             _layout.Layout(anchor);
         }
 
-        /// <summary>
-        /// 表示即時反映
-        /// </summary>
-        private void Flush()
-        {
-            _layout.Flush();
-            _scrollViewer.FlushScroll();
-            Cleanup();
-        }
 
         private void Cleanup(bool isUpdateSelected)
         {
@@ -1087,7 +1137,7 @@ namespace NeeView.PageFrames
 
         public PageFrameTransformAccessor CreateSelectedTransform()
         {
-            if (_selected.Container.Content is PageFrameContent pageFrameContent)
+            if (_selected.Node.Value.Content is PageFrameContent pageFrameContent)
             {
                 var key = PageFrameTransformTool.CreateKey(pageFrameContent.PageFrame);
                 return _transformMap.CreateAccessor(key);
@@ -1184,7 +1234,7 @@ namespace NeeView.PageFrames
             if (!_context.ShouldScaleStretchTracking) return;
 
             var contents = _containers.Select(e => e.Content).OfType<PageFrameContent>().ToList();
-            foreach(var content in contents)
+            foreach (var content in contents)
             {
                 if (_stretchScaleRateMap.TryGetValue(content, out double rate))
                 {
@@ -1280,12 +1330,26 @@ namespace NeeView.PageFrames
         }
 
         /// <summary>
+        /// 選択している？ページの <see cref="PageFrameContent"/> を取得する。
+        /// </summary>
+        /// <returns><see cref="PageFrameContent"/> 存在しない場合はNULL</returns>
+        public PageFrameContent? GetNextPageFrameContent()
+        {
+            var node = _selected.NextNode;
+            if (node?.Value.Content is PageFrameContent pageFrameContent)
+            {
+                return pageFrameContent;
+            }
+            return null;
+        }
+
+        /// <summary>
         /// 選択ページの読み込み中判定
         /// </summary>
         /// <returns></returns>
         public bool IsSelectedPageFrameLoading()
         {
-            var pageFrameContent = GetSelectedPageFrameContent();
+            var pageFrameContent = GetNextPageFrameContent();
             if (pageFrameContent is null) return false;
             return pageFrameContent.GetViewContentState() < ViewContentState.Loaded;
         }
@@ -1314,18 +1378,4 @@ namespace NeeView.PageFrames
         Point TranslateCanvasToViewPoint(Point point);
         Point TranslateViewToCanvas(Point point);
     }
-
-
-#if false
-    public static class PageFrameContentTools
-    {
-        public static void StretchIfTracking(PageFrameContent content, ContentSizeCalculator calculator)
-        {
-            if (!Config.Current.View.IsScaleStretchTracking) return;
-            if (Config.Current.View.IsKeepScale) return;
-
-            content.Stretch(calculator);
-        }
-    }
-#endif
 }

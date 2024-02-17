@@ -23,7 +23,7 @@ namespace NeeView.PageFrames
             _context = context;
             _transformMap = transformMap;
             _loupeContext = loupeContext;
-            _viewContentFactory = new ViewContentFactory(viewSourceMap);
+            _viewContentFactory = new ViewContentFactory(_context, viewSourceMap);
             _baseScaleTransform = baseScaleTransform;
             _calculator = calculator;
         }

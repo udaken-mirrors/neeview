@@ -28,6 +28,7 @@ namespace NeeView
     public partial class ViewContent : ContentControl, IDisposable, IHasImageSource, IHasMediaPlayer, IHasScalingMode
     {
         private bool _initialized;
+        private readonly PageFrameContext _context;
         private PageFrameElement _element;
         private PageFrameElementScale _scale;
         private readonly PageFrameActivity _activity;
@@ -51,10 +52,10 @@ namespace NeeView
         /// <param name="activity">表示状態</param>
         /// <param name="backgroundSource">ページ背景</param>
         /// <param name="index">フレーム内のページ要素番号</param>
-        public ViewContent(PageFrameElement element, PageFrameElementScale scale, ViewSource viewSource, PageFrameActivity activity, PageBackgroundSource backgroundSource, int index)
+        public ViewContent(PageFrameContext context, PageFrameElement element, PageFrameElementScale scale, ViewSource viewSource, PageFrameActivity activity, PageBackgroundSource backgroundSource, int index)
         {
             this.Focusable = false;
-
+            _context = context;
             _element = element;
             _scale = scale;
             _viewSource = viewSource;
@@ -244,6 +245,21 @@ namespace NeeView
         }
 
         /// <summary>
+        /// Wait Load ViewSource
+        /// </summary>
+        /// <param name="token"></param>
+        /// <returns></returns>
+        public async Task WaitLoadAsync(CancellationToken token)
+        {
+            using var disposables = new DisposableCollection();
+            var tcs = new TaskCompletionSource();
+            disposables.Add(token.Register(() => tcs.TrySetCanceled()));
+            disposables.Add(_viewSource.SubscribeDataSourceChanged((s, e) => { if (_viewSource.IsLoaded) { tcs.TrySetResult(); } }));
+            if (_viewSource.IsLoaded) return;
+            await tcs.Task;
+        }
+
+        /// <summary>
         /// Update ViewContent
         /// </summary>
         private void UpdateContent(PageDataSource data)
@@ -267,7 +283,7 @@ namespace NeeView
                     case DataState.None:
                         Trace($"CreateContent.Ready: {ArchiveEntry}");
                         bool isBlackBackground = this.Page.Content is MediaPageContent;
-                        return new ViewContentData(ViewContentTools.CreateLoadingContent(Element, isBlackBackground), ViewContentState.Loading);
+                        return new ViewContentData(ViewContentTools.CreateLoadingContent(Element, isBlackBackground, !_context.IsReadyToPageMove), ViewContentState.Loading);
 
                     case DataState.Loaded:
                         Trace($"CreateContent.Loaded: {ArchiveEntry}");

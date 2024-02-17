@@ -60,6 +60,32 @@ namespace NeeView.PageFrames
 
 
     /// <summary>
+    /// コンテナノード生成オプション
+    /// </summary>
+    [Flags]
+    public enum CreateContainerNodeOptions
+    {
+        None = 0,
+
+        /// <summary>
+        /// IsStableフラグを立てる
+        /// </summary>
+        Stable = 1 << 1,
+
+        /// <summary>
+        /// ページ範囲が衝突するコンテナを削除する
+        /// </summary>
+        RemoveConflict = 1 << 2,
+
+        /// <summary>
+        /// 標準
+        /// </summary>
+        Default = Stable | RemoveConflict,
+    }
+
+
+
+    /// <summary>
     /// PageFrameContainer のコレクションを管理
     /// </summary>
     public partial class PageFrameContainerCollection : IEnumerable<PageFrameContainer>
@@ -81,7 +107,7 @@ namespace NeeView.PageFrames
 
             var firstActivity = new PageFrameActivity();
             var firstTerminate = new PageFrameContainer(new TerminalPageFrameContent(_frameFactory.GetFirstTerminalRange(), firstActivity), firstActivity, _context.ViewScrollContext);
-            _firstTerminateNode =_containers.AddFirst(firstTerminate);
+            _firstTerminateNode = _containers.AddFirst(firstTerminate);
 
             var lastActivity = new PageFrameActivity();
             var lastTerminate = new PageFrameContainer(new TerminalPageFrameContent(_frameFactory.GetLastTerminalRange(), lastActivity), lastActivity, _context.ViewScrollContext);
@@ -193,15 +219,42 @@ namespace NeeView.PageFrames
                 .MinBy(e => e.Value, comparer);
         }
 
-
+        /// <summary>
+        /// 最新コンテナの確保
+        /// </summary>
+        /// <remarks>
+        /// すべてのコンテナ生成はここで行われる。
+        /// </remarks>
+        /// <param name="position">フレーム位置</param>
+        /// <param name="direction">フレーム方向</param>
+        /// <param name="options">生成オプション</param>
+        /// <returns>確保したコンテナ</returns>
+        public LinkedListNode<PageFrameContainer>? EnsureLatestContainerNode(PagePosition position, LinkedListDirection direction, CreateContainerNodeOptions options)
+        {
+            var node = FindOrCreateLatestContainerNode(position, direction);
+            if (node is not null)
+            {
+                RegisterContainerNode(node);
+                if (options.HasFlag(CreateContainerNodeOptions.RemoveConflict))
+                {
+                    RemoveConflictContainer(node);
+                }
+                if (options.HasFlag(CreateContainerNodeOptions.Stable))
+                {
+                    node.Value.SetStable(true);
+                }
+            }
+            return node;
+        }
 
         /// <summary>
         /// 最新コンテナの確保。すべてのコンテナ生成はここで行われる。
+        /// 新たに生成した場合はまだリストに登録されていない。
         /// </summary>
         /// <param name="position">フレーム位置</param>
         /// <param name="direction">フレーム方向</param>
         /// <returns>確保したコンテナ</returns>
-        public LinkedListNode<PageFrameContainer>? EnsureLatestContainerNode(PagePosition position, LinkedListDirection direction)
+        private LinkedListNode<PageFrameContainer>? FindOrCreateLatestContainerNode(PagePosition position, LinkedListDirection direction)
         {
             var node = Find(position, direction);
             if (node is not null)
@@ -210,28 +263,10 @@ namespace NeeView.PageFrames
             }
             else
             {
-                // create
                 node = CreateContainerNode(position, direction);
-                // TODO: コンテナの衝突による削除でアンカーが変更され未配置状態の自身がアンカーになる時がある。どう回避する？
-                // TODO: たとえばコンテナにアンカーフラグを保持し、衝突時にはアンカーのコンテナ座標を反映させるとか？
-                // TODO: 新規コンテナはすべてアンカーと同じ座標に設定しておくとか？
-                if (node is not null)
-                {
-                    // TODO: これアンカー実装では？
-                    node.Value.Center = _anchor.Node.Value.Center;
-                }
             }
-
             return node;
         }
-
-        public LinkedListNode<PageFrameContainer>? EnsureLatestContainerNode(LinkedListNode<PageFrameContainer> node, LinkedListDirection direction)
-        {
-            if (node.Value.Content is not PageFrameContent) return node;
-            return EnsureLatestContainerNode(node.Value.FrameRange.Top(direction.ToSign()), direction);
-        }
-
-
 
         /// <summary>
         /// コンテナの作成・更新 ... 機能重複はよろしくない
@@ -239,7 +274,7 @@ namespace NeeView.PageFrames
         /// <param name="pos">フレーム位置</param>
         /// <param name="direction">フレーム方向</param>
         /// <returns>作られたコンテナノード。作成出来ない場合は null を返す</returns>
-        public LinkedListNode<PageFrameContainer>? CreateContainerNode(PagePosition pos, LinkedListDirection direction)
+        private LinkedListNode<PageFrameContainer>? CreateContainerNode(PagePosition pos, LinkedListDirection direction)
         {
             var frame = _frameFactory.CreatePageFrame(pos, direction.ToSign());
             if (frame is null)
@@ -254,17 +289,26 @@ namespace NeeView.PageFrames
             if (node is not null) throw new ArgumentException("The target container already exists.");
 
             var container = _containerFactory.Create(frame, nextPage);
-            _containerInitializer?.Initialize(container);
-            node = new LinkedListNode<PageFrameContainer>(container);
+            return new LinkedListNode<PageFrameContainer>(container);
+        }
+
+        private void RegisterContainerNode(LinkedListNode<PageFrameContainer> node)
+        {
+            if (node.List == _containers) return;
+            if (node.List is not null) throw new InvalidOperationException("Already on another list");
+
+            // TODO: コンテナの衝突による削除でアンカーが変更され未配置状態の自身がアンカーになる時がある。どう回避する？
+            // TODO: たとえばコンテナにアンカーフラグを保持し、衝突時にはアンカーのコンテナ座標を反映させるとか？
+            // TODO: 新規コンテナはすべてアンカーと同じ座標に設定しておくとか？
+            // TODO: これアンカー実装では？
+            node.Value.Center = _anchor.Node.Value.Center;
+
             CollectionChanging?.Invoke(this, new PageFrameContainerCollectionChangedEventArgs(PageFrameContainerCollectionChangedEventAction.Add, node));
             AddContainerNode(node);
             CollectionChanged?.Invoke(this, new PageFrameContainerCollectionChangedEventArgs(PageFrameContainerCollectionChangedEventAction.Add, node));
-            RemoveConflictContainer(node);
-
-            return node;
         }
 
-        public void UpdateContainerNode(LinkedListNode<PageFrameContainer> node, LinkedListDirection direction)
+        private void UpdateContainerNode(LinkedListNode<PageFrameContainer> node, LinkedListDirection direction)
         {
             Debug.Assert(node.Value.Content is PageFrameContent);
             var pos = node.Value.FrameRange.Top(direction.ToSign());
@@ -280,10 +324,7 @@ namespace NeeView.PageFrames
             CollectionChanging?.Invoke(this, new PageFrameContainerCollectionChangedEventArgs(PageFrameContainerCollectionChangedEventAction.Update, node));
             _containerFactory.Update(node.Value, frame, nextPage);
             CollectionChanged?.Invoke(this, new PageFrameContainerCollectionChangedEventArgs(PageFrameContainerCollectionChangedEventAction.Update, node));
-
-            RemoveConflictContainer(node);
         }
-
 
         /// <summary>
         /// コンテナをコレクションに追加。
@@ -294,6 +335,7 @@ namespace NeeView.PageFrames
         {
             var targetNode = _containers.First;
 
+            _containerInitializer?.Initialize(node.Value);
             node.Value.TransformChanged += Container_TransformChanged;
             node.Value.ContentSizeChanged += Container_ContentSizeChanged;
             node.Value.ContainerLayoutChanged += Container_ContainerLayoutChanged;
@@ -303,8 +345,8 @@ namespace NeeView.PageFrames
                 if (targetNode.Value.Content is PageFrameContent && node.Value.Identifier < targetNode.Value.Identifier)
                 {
                     _containers.AddBefore(targetNode, node);
-                    Debug.Assert(_containers.First ==  _firstTerminateNode);
-                    Debug.Assert(_containers.Last ==  _lastTerminateNode);
+                    Debug.Assert(_containers.First == _firstTerminateNode);
+                    Debug.Assert(_containers.Last == _lastTerminateNode);
                     return;
                 }
                 targetNode = targetNode.Next;
@@ -347,13 +389,11 @@ namespace NeeView.PageFrames
             CollectionChanged?.Invoke(this, new PageFrameContainerCollectionChangedEventArgs(PageFrameContainerCollectionChangedEventAction.UpdateContainerLayout, node));
         }
 
-
-
         /// <summary>
         /// 衝突しているコンテナを削除
         /// </summary>
         /// <param name="container"></param>
-        private void RemoveConflictContainer(LinkedListNode<PageFrameContainer> anchor)
+        public void RemoveConflictContainer(LinkedListNode<PageFrameContainer> anchor)
         {
             RemoveConflictContainer(anchor, LinkedListDirection.Previous);
             RemoveConflictContainer(anchor, LinkedListDirection.Next);
@@ -373,6 +413,18 @@ namespace NeeView.PageFrames
             }
         }
 
+        /// <summary>
+        /// コンテナ削除
+        /// </summary>
+        /// <param name="condition">削除条件</param>
+        public void RemoveContainers(Func<LinkedListNode<PageFrameContainer>, bool> condition)
+        {
+            var removes = CollectNode().Where(e => condition(e) && !e.Value.IsLocked).ToList();
+            foreach (var node in removes)
+            {
+                RemoveContainerNode(node);
+            }
+        }
 
         /// <summary>
         /// コンテナ削除
@@ -459,7 +511,7 @@ namespace NeeView.PageFrames
             var direction = GetContainerDirection(node);
             var position = node.Value.FrameRange.Top(direction.ToSign());
 
-            var newer = EnsureLatestContainerNode(position, direction);
+            var newer = EnsureLatestContainerNode(position, direction, CreateContainerNodeOptions.Default);
             Debug.Assert(newer is not null && newer.Value.CompareTo(node.Value) == 0);
         }
 
@@ -471,4 +523,6 @@ namespace NeeView.PageFrames
                 : node.Value.Identifier < Anchor.Container.Identifier ? LinkedListDirection.Previous : LinkedListDirection.Next;
         }
     }
+
+
 }

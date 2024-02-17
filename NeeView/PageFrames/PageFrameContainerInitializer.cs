@@ -14,7 +14,7 @@ namespace NeeView.PageFrames
 
         public void Initialize(PageFrameContainer item)
         {
-            item.Visibility = Visibility.Visible;
+            //item.Visibility = Visibility.Visible;
             _canvas.Children.Add(item);
         }
 

@@ -71,12 +71,12 @@ namespace NeeView.PageFrames
                 // NOTE: 連続性に問題があったり更新が必要である場合は生成する
                 if (node?.Value.Content is not PageFrameContent item || item.IsDirty || item.FrameRange.Top(direction.ToSign()) != pos || !IsValidContainerFormat(node))
                 {
-                    
+
                     if (node?.Value.Content is PageFrameContent)
                     {
                         SetContainerAlignment(anchor, node);
                     }
-                    node = _containers.EnsureLatestContainerNode(pos, direction);
+                    node = _containers.EnsureLatestContainerNode(pos, direction, CreateContainerNodeOptions.Default);
                 }
                 if (node is null) break;
                 rest -= GetContainerSpan(node.Value);

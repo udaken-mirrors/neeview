@@ -10,37 +10,40 @@ namespace NeeView
 {
     public static class ViewContentTools
     {
-        public static FrameworkElement CreateLoadingContent(PageFrameElement source, bool isBlackBackground)
+        public static FrameworkElement CreateLoadingContent(PageFrameElement source, bool isBlackBackground, bool showProgress)
         {
             var grid = new Grid();
             grid.Background = isBlackBackground ? new SolidColorBrush(Color.FromRgb(0x10, 0x10, 0x10)) : new SolidColorBrush(Color.FromRgb(0xE0, 0xE0, 0xE0));
 
-            var stackPanel = new StackPanel()
+            if (showProgress)
             {
-                HorizontalAlignment = HorizontalAlignment.Center,
-                VerticalAlignment = VerticalAlignment.Center,
-            };
-            grid.Children.Add(stackPanel);
+                var stackPanel = new StackPanel()
+                {
+                    HorizontalAlignment = HorizontalAlignment.Center,
+                    VerticalAlignment = VerticalAlignment.Center,
+                };
+                grid.Children.Add(stackPanel);
 
-            var foregroundBrush = Brushes.Gray;
+                var foregroundBrush = Brushes.Gray;
 
-            var textBlock = new TextBlock()
-            {
-                Text = source.Page.EntryLastName,
-                Foreground = foregroundBrush,
-                FontSize = 20,
-                Margin = new Thickness(10),
-                HorizontalAlignment = HorizontalAlignment.Center,
-                VerticalAlignment = VerticalAlignment.Center,
-            };
-            stackPanel.Children.Add(textBlock);
+                var textBlock = new TextBlock()
+                {
+                    Text = source.Page.EntryLastName,
+                    Foreground = foregroundBrush,
+                    FontSize = 20,
+                    Margin = new Thickness(10),
+                    HorizontalAlignment = HorizontalAlignment.Center,
+                    VerticalAlignment = VerticalAlignment.Center,
+                };
+                stackPanel.Children.Add(textBlock);
 
-            var loading = new ProgressRing()
-            {
-                Foreground = foregroundBrush,
-                HorizontalAlignment = HorizontalAlignment.Center,
-            };
-            stackPanel.Children.Add(loading);
+                var loading = new ProgressRing()
+                {
+                    Foreground = foregroundBrush,
+                    HorizontalAlignment = HorizontalAlignment.Center,
+                };
+                stackPanel.Children.Add(loading);
+            }
 
             return grid;
         }

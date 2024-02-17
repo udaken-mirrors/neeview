@@ -131,8 +131,12 @@ namespace NeeView
             }
         }
 
-
         public void RequestLoad(PageRange range, int direction)
+        {
+            RequestLoad(range, direction, _performanceConfig.PreLoadSize);
+        }
+
+        public void RequestLoad(PageRange range, int direction, int limit)
         {
             if (_disposedValue) return;
             if (range.IsEmpty()) return;
@@ -141,15 +145,15 @@ namespace NeeView
             {
                 if (!_isEnabled)
                 {
-                    _loadContext = new BookLoadContext(range, direction);
+                    _loadContext = new BookLoadContext(range, direction, limit);
                     return;
                 }
             }
 
-            Task.Run(() => LoadAsync(range, direction, CancellationToken.None));
+            Task.Run(() => LoadAsync(range, direction, limit, CancellationToken.None));
         }
 
-        private async Task LoadAsync(PageRange range, int direction, CancellationToken token)
+        private async Task LoadAsync(PageRange range, int direction, int limit, CancellationToken token)
         {
             Debug.Assert(direction is 1 or -1);
 
@@ -172,15 +176,13 @@ namespace NeeView
 
                 linkedTokenSource.Token.ThrowIfCancellationRequested();
 
-                // 先読みサイズ
-                int limit = _performanceConfig.PreLoadSize;
-
                 // ページ状態クリア
                 ClearPageState();
 
-
                 // 指定分読み込み
+                Trace($"LoadMainAsync...");
                 await LoadMainAsync(range, direction, linkedTokenSource.Token);
+                Trace($"LoadMainAsync done.");
 
                 // 先読み 次方向
                 var count = await LoadAheadAsync(range.Next(direction), direction, limit, linkedTokenSource.Token);
@@ -369,14 +371,16 @@ namespace NeeView
             PageRange = PageRange.Empty;
         }
 
-        public BookLoadContext(PageRange pageRange, int direction)
+        public BookLoadContext(PageRange pageRange, int direction, int limit)
         {
             PageRange = pageRange;
             Direction = direction;
+            Limit = limit;
         }
 
         public PageRange PageRange { get; init; }
         public int Direction { get; init; }
+        public int Limit { get; init; }
 
         public bool IsValid => !PageRange.IsEmpty();
     }

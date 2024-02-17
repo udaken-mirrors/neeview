@@ -72,6 +72,7 @@ namespace NeeView.PageFrames
             HorizontalAlignment = HorizontalAlignment.Center;
             VerticalAlignment = VerticalAlignment.Center;
             ClipToBounds = true;
+            Visibility = Visibility.Collapsed;
 
             Canvas.SetTop(this, _x);
             Canvas.SetLeft(this, _y);
@@ -90,8 +91,8 @@ namespace NeeView.PageFrames
             // [DEV]
             _textBlock = new TextBlock()
             {
-                HorizontalAlignment = HorizontalAlignment.Center,
-                VerticalAlignment = VerticalAlignment.Center,
+                HorizontalAlignment = HorizontalAlignment.Left,
+                VerticalAlignment = VerticalAlignment.Top,
                 FontSize = 16.0,
                 Foreground = Brushes.Orange,
                 Visibility = PageFrameDebug.Visibility,
@@ -144,6 +145,13 @@ namespace NeeView.PageFrames
             set => _content.DirtyLevel = value;
         }
 
+        /// <summary>
+        /// ページ遅延移動用。
+        /// </summary>
+        /// <remarks>
+        /// 遅延ページ移動に使用される。通常のコンテナとして使用されるようになれば true を設定する。
+        /// </remarks>
+        public bool IsStable { get; private set; }
 
         // TODO: これどうなん？
         public PagePosition Identifier => FrameRange.Min;
@@ -527,9 +535,12 @@ namespace NeeView.PageFrames
         {
             SetPoint(ViewPoint, TimeSpan.Zero);
         }
+
+        public void SetStable(bool stable)
+        {
+            IsStable = stable;
+            this.Visibility = IsStable ? Visibility.Visible : Visibility.Collapsed;
+        }
     }
-
-
-
 
 }

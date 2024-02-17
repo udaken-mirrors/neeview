@@ -110,5 +110,7 @@ namespace NeeView
         }
 
         public int LockCount { get; }
+
+        public bool IsLocked => LockCount > 0;
     }
 }

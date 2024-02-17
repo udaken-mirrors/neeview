@@ -14,6 +14,7 @@ namespace NeeView.PageFrames
         private readonly PageFrameContainerCollection _containers;
         private readonly Func<LinkedListNode<PageFrameContainer>> _selectFunc;
         private LinkedListNode<PageFrameContainer> _node;
+        private LinkedListNode<PageFrameContainer>? _nextNode;
         private bool _disposedValue;
 
 
@@ -36,14 +37,17 @@ namespace NeeView.PageFrames
 
         public LinkedListNode<PageFrameContainer> Node => _node;
 
-        public PageFrameContainer Container => _node.Value;
-
         public Page? Page => (_node.Value.Content as PageFrameContent)?.PageFrame.Elements[0].Page;
 
         public PageRange PageRange => _node.Value.FrameRange;
-        public PagePosition PagePosition => _node.Value.Identifier;
 
         public bool IsValid => _node.Value.Content is PageFrameContent;
+
+        // NOTE: 遅延移動時の次の選択ノード
+        // TODO: 選択ノード自体を NextNode 化して大丈夫か調査する
+        public LinkedListNode<PageFrameContainer> NextNode => _nextNode ?? _node;
+
+        public PageRange NextPageRange => NextNode.Value.FrameRange;
 
 
         private void Dispose(bool disposing)
@@ -75,6 +79,17 @@ namespace NeeView.PageFrames
             }
         }
 
+        public void SetNext(LinkedListNode<PageFrameContainer>? node)
+        {
+            if (_disposedValue) return;
+            if (_nextNode != node)
+            {
+                _nextNode = node;
+                RaisePropertyChanged(nameof(NextNode));
+                RaisePropertyChanged(nameof(NextPageRange));
+            }
+        }
+
 
         public void Set(LinkedListNode<PageFrameContainer> node, bool force)
         {
@@ -86,10 +101,11 @@ namespace NeeView.PageFrames
             Detach();
             _node = node;
             RaisePropertyChanged(nameof(Node));
-            RaisePropertyChanged(nameof(Container));
             RaisePropertyChanged(nameof(Page));
             RaisePropertyChanged(nameof(PageRange));
-            RaisePropertyChanged(nameof(PagePosition));
+            _nextNode = node;
+            RaisePropertyChanged(nameof(NextNode));
+            RaisePropertyChanged(nameof(NextPageRange));
             Attach();
         }
 
@@ -128,16 +144,12 @@ namespace NeeView.PageFrames
         {
             RaisePropertyChanged(nameof(Page));
             RaisePropertyChanged(nameof(PageRange));
-            RaisePropertyChanged(nameof(PagePosition));
         }
 
         private void Container_ViewContentChanged(object? sender, FrameViewContentChangedEventArgs e)
         {
             ViewContentChanged?.Invoke(this, e);
         }
-
-
     }
-
 
 }

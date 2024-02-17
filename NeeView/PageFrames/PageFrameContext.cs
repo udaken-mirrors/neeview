@@ -83,6 +83,7 @@ namespace NeeView.PageFrames
         public bool IsInsertDummyFirstPage => _config.Book.IsInsertDummyPage && _config.Book.IsInsertDummyFirstPage;
         public bool IsInsertDummyLastPage => _config.Book.IsInsertDummyPage && _config.Book.IsInsertDummyLastPage;
         public bool IsLoopPage => !_isMediaBook && _config.Book.PageEndAction == PageEndAction.SeamlessLoop;
+        public bool IsReadyToPageMove => _config.Book.IsReadyToPageMove && !_config.Book.IsPanorama;
 
         public bool AllowFileContentAutoRotate => _config.View.AllowFileContentAutoRotate;
         public bool AllowEnlarge => _config.View.AllowStretchScaleUp;
@@ -165,6 +166,7 @@ namespace NeeView.PageFrames
                 case nameof(BookConfig.IsPanorama):
                     RaisePropertyChanged(nameof(IsPanorama));
                     RaisePropertyChanged(nameof(StretchMode));
+                    RaisePropertyChanged(nameof(IsReadyToPageMove));
                     break;
 
                 case nameof(BookConfig.Orientation):
@@ -196,6 +198,10 @@ namespace NeeView.PageFrames
 
                 case nameof(BookConfig.PageEndAction):
                     RaisePropertyChanged(nameof(IsLoopPage));
+                    break;
+
+                case nameof(BookConfig.IsReadyToPageMove):
+                    RaisePropertyChanged(nameof(IsReadyToPageMove));
                     break;
             }
         }
