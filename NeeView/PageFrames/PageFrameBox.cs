@@ -713,7 +713,7 @@ namespace NeeView.PageFrames
             if (_context.IsReadyToPageMove && !next.Value.IsStable && next.Value.Content is PageFrameContent item && item.GetViewContentState() < ViewContentState.Loaded)
             {
                 next.Value.SetStable(false);
-                _selected.SetNext(next);
+                _selected.Set(next, true);
                 _delayMove.MoveTo(new PageFrameMoveParameter(next.Value, direction, continued, flush), next.Value);
             }
             else
@@ -891,7 +891,7 @@ namespace NeeView.PageFrames
         /// <returns></returns>
         private PageRange GetCurrentPageRange()
         {
-            return _selected.NextNode?.Value.FrameRange ?? PageRange.Empty;
+            return _selected.Node?.Value.FrameRange ?? PageRange.Empty;
         }
 
         public void MoveToNextFolder(LinkedListDirection direction, bool isShowMessage)
@@ -899,8 +899,8 @@ namespace NeeView.PageFrames
             if (!_bookContext.IsEnabled) return;
 
             var index = direction == LinkedListDirection.Previous
-                ? _bookContext.Book.Pages.GetPrevFolderIndex(_selected.NextPageRange.Min.Index)
-                : _bookContext.Book.Pages.GetNextFolderIndex(_selected.NextPageRange.Min.Index);
+                ? _bookContext.Book.Pages.GetPrevFolderIndex(_selected.PageRange.Min.Index)
+                : _bookContext.Book.Pages.GetNextFolderIndex(_selected.PageRange.Min.Index);
             if (index >= 0)
             {
                 MoveTo(new PagePosition(index, 0), LinkedListDirection.Next);
@@ -1335,7 +1335,7 @@ namespace NeeView.PageFrames
         /// <returns><see cref="PageFrameContent"/> 存在しない場合はNULL</returns>
         public PageFrameContent? GetNextPageFrameContent()
         {
-            var node = _selected.NextNode;
+            var node = _selected.Node;
             if (node?.Value.Content is PageFrameContent pageFrameContent)
             {
                 return pageFrameContent;
