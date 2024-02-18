@@ -30,7 +30,7 @@ namespace NeeView
 
         public void Throw(Exception ex, ScriptErrorLevel errorLevel)
         {
-            var _engine = JavascriptEngineMap.Current.GetCurrentEngine();
+            var _engine = JavaScriptEngineMap.Current.GetCurrentEngine();
 
             var message = _engine.CreateScriptErrorMessage(ex);
 

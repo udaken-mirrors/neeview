@@ -96,7 +96,7 @@ namespace NeeView
 
                     if (LastVersion == CurrentVersion)
                     {
-                        Message = Properties.TextResources.GetString("VersionChecker.Message.Lastest");
+                        Message = Properties.TextResources.GetString("VersionChecker.Message.Latest");
                     }
                     else if (LastVersion.CompareTo(CurrentVersion) < 0)
                     {

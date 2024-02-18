@@ -107,7 +107,7 @@
                                         <DockPanel>
                                             <ComboBox DockPanel.Dock="Right" ItemsSource="{Binding Model.VerticalAlignmentList}" DisplayMemberPath="Value" SelectedValuePath="Key"
                                                     SelectedValue="{Binding Model.VerticalAlignment}" TabIndex="2" />
-                                            <TextBlock Style="{StaticResource Header}" Text="{properties:TextBinding PrintWindow.Vertival}" />
+                                            <TextBlock Style="{StaticResource Header}" Text="{properties:TextBinding PrintWindow.Vertical}" />
                                         </DockPanel>
                                     </StackPanel>
                                     <StackPanel Style="{StaticResource ItemStack}">

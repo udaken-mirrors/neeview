@@ -108,22 +108,22 @@ namespace NeeView
             return _source?.CanMark(page) ?? false;
         }
 
-        public bool CanNextMarkInPlace(MovePlaylsitItemInBookCommandParameter param)
+        public bool CanNextMarkInPlace(MovePlaylistItemInBookCommandParameter param)
         {
             return _source?.CanNextMarkInPlace(param) ?? false;
         }
 
-        public bool CanPrevMarkInPlace(MovePlaylsitItemInBookCommandParameter param)
+        public bool CanPrevMarkInPlace(MovePlaylistItemInBookCommandParameter param)
         {
             return _source?.CanPrevMarkInPlace(param) ?? false;
         }
 
-        public void NextMarkInPlace(object? sender, MovePlaylsitItemInBookCommandParameter param)
+        public void NextMarkInPlace(object? sender, MovePlaylistItemInBookCommandParameter param)
         {
             _source?.NextMarkInPlace(sender, param);
         }
 
-        public void PrevMarkInPlace(object? sender, MovePlaylsitItemInBookCommandParameter param)
+        public void PrevMarkInPlace(object? sender, MovePlaylistItemInBookCommandParameter param)
         {
             _source?.PrevMarkInPlace(sender, param);
         }

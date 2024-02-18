@@ -58,7 +58,7 @@ namespace NeeView.Setting
         /// <returns></returns>
         public CommandCollection CreateCommandMemento()
         {
-            return CommandTable.CreateDefaultMemento(_vm.InputSceme);
+            return CommandTable.CreateDefaultMemento(_vm.InputScheme);
         }
     }
 
@@ -70,37 +70,37 @@ namespace NeeView.Setting
         /// <summary>
         /// InputScheme 表示テーブル
         /// </summary>
-        public Dictionary<InputScheme, string> InputScemeList { get; } = new Dictionary<InputScheme, string>
+        public Dictionary<InputScheme, string> InputSchemeList { get; } = new Dictionary<InputScheme, string>
         {
-            [InputScheme.TypeA] = Properties.TextResources.GetString("InputSceme.TypeA"),
-            [InputScheme.TypeB] = Properties.TextResources.GetString("InputSceme.TypeB"),
-            [InputScheme.TypeC] = Properties.TextResources.GetString("InputSceme.TypeC")
+            [InputScheme.TypeA] = Properties.TextResources.GetString("InputScheme.TypeA"),
+            [InputScheme.TypeB] = Properties.TextResources.GetString("InputScheme.TypeB"),
+            [InputScheme.TypeC] = Properties.TextResources.GetString("InputScheme.TypeC")
         };
 
         /// <summary>
-        /// ImputScheme 説明テーブル
+        /// InputScheme 説明テーブル
         /// </summary>
-        public Dictionary<InputScheme, string> InputScemeNoteList { get; } = new Dictionary<InputScheme, string>
+        public Dictionary<InputScheme, string> InputSchemeNoteList { get; } = new Dictionary<InputScheme, string>
         {
-            [InputScheme.TypeA] = ResourceService.Replace(Properties.TextResources.GetString("InputSceme.TypeA.Remarks")),
-            [InputScheme.TypeB] = ResourceService.Replace(Properties.TextResources.GetString("InputSceme.TypeB.Remarks")),
-            [InputScheme.TypeC] = ResourceService.Replace(Properties.TextResources.GetString("InputSceme.TypeC.Remarks")),
+            [InputScheme.TypeA] = ResourceService.Replace(Properties.TextResources.GetString("InputScheme.TypeA.Remarks")),
+            [InputScheme.TypeB] = ResourceService.Replace(Properties.TextResources.GetString("InputScheme.TypeB.Remarks")),
+            [InputScheme.TypeC] = ResourceService.Replace(Properties.TextResources.GetString("InputScheme.TypeC.Remarks")),
         };
 
         /// <summary>
-        /// InputSceme property.
+        /// InputScheme property.
         /// </summary>
-        private InputScheme _InputSceme;
-        public InputScheme InputSceme
+        private InputScheme _InputScheme;
+        public InputScheme InputScheme
         {
-            get { return _InputSceme; }
-            set { if (_InputSceme != value) { _InputSceme = value; RaisePropertyChanged(); RaisePropertyChanged(nameof(InputScemeNote)); } }
+            get { return _InputScheme; }
+            set { if (_InputScheme != value) { _InputScheme = value; RaisePropertyChanged(); RaisePropertyChanged(nameof(InputSchemeNote)); } }
         }
 
         /// <summary>
-        /// InputScemeNote property.
+        /// InputSchemeNote property.
         /// </summary>
-        public string InputScemeNote => InputScemeNoteList[InputSceme];
+        public string InputSchemeNote => InputSchemeNoteList[InputScheme];
 
         /// <summary>
         /// OkCommand command.

@@ -292,7 +292,7 @@ namespace NeeView
             return result;
         }
 
-        public int CompareConfrictTo(PageRange other)
+        public int CompareConflictTo(PageRange other)
         {
             // 範囲が被っているときは０を返す
             var minCompare = Math.Clamp(Min.CompareTo(other.Min), -1, +1);

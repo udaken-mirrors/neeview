@@ -68,6 +68,10 @@ namespace NeeLaboratory.Resources
                 }
                 var key = tokens[0].Trim();
                 var body = tokens[1].Trim().Unescape();
+                if (string.IsNullOrEmpty(body))
+                {
+                    return null;
+                }
                 return new(key, body);
             }
         }

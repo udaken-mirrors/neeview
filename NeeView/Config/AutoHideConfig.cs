@@ -14,8 +14,8 @@ namespace NeeView
         private bool _isAutoHideKeyDownDelay = true;
         private double _autoHideHitTestHorizontalMargin = 32.0;
         private double _autoHideHitTestVerticalMargin = 32.0;
-        private AutoHideConfrictMode _autoHideConfrictTopMargin = AutoHideConfrictMode.AllowPixel;
-        private AutoHideConfrictMode _autoHideConfrictBottomMargin = AutoHideConfrictMode.Allow;
+        private AutoHideConflictMode _autoHideConflictTopMargin = AutoHideConflictMode.AllowPixel;
+        private AutoHideConflictMode _autoHideConflictBottomMargin = AutoHideConflictMode.Allow;
 
         // パネルやメニューが自動的に消えるまでの時間(秒)
         [PropertyMember]
@@ -68,18 +68,18 @@ namespace NeeView
 
         // サイドパネルとメニューの自動非表示判定が重なった場合
         [PropertyMember]
-        public AutoHideConfrictMode AutoHideConfrictTopMargin
+        public AutoHideConflictMode AutoHideConflictTopMargin
         {
-            get { return _autoHideConfrictTopMargin; }
-            set { SetProperty(ref _autoHideConfrictTopMargin, value); }
+            get { return _autoHideConflictTopMargin; }
+            set { SetProperty(ref _autoHideConflictTopMargin, value); }
         }
 
         // サイドパネルとスライダーの自動非表示判定が重なった場合
         [PropertyMember]
-        public AutoHideConfrictMode AutoHideConfrictBottomMargin
+        public AutoHideConflictMode AutoHideConflictBottomMargin
         {
-            get { return _autoHideConfrictBottomMargin; }
-            set { SetProperty(ref _autoHideConfrictBottomMargin, value); }
+            get { return _autoHideConflictBottomMargin; }
+            set { SetProperty(ref _autoHideConflictBottomMargin, value); }
         }
 
         #region Obsolete
@@ -93,11 +93,27 @@ namespace NeeView
             set { AutoHideHitTestHorizontalMargin = value; AutoHideHitTestVerticalMargin = value; }
         }
 
+        [Obsolete("Typo"), Alternative(nameof(AutoHideConflictTopMargin), 41, ScriptErrorLevel.Info)] // ver.41
+        [JsonIgnore]
+        public AutoHideConflictMode AutoHideConfrictTopMargin
+        {
+            get { return AutoHideConflictTopMargin; }
+            set { AutoHideConflictTopMargin = value; }
+        }
+
+        [Obsolete("Typo"), Alternative(nameof(AutoHideConflictBottomMargin), 41, ScriptErrorLevel.Info)] // ver.41
+        [JsonIgnore]
+        public AutoHideConflictMode AutoHideConfrictBottomMargin
+        {
+            get { return AutoHideConflictBottomMargin; }
+            set { AutoHideConflictBottomMargin = value; }
+        }
+
         #endregion Obsolete
     }
 
 
-    public enum AutoHideConfrictMode
+    public enum AutoHideConflictMode
     {
         Allow,
         AllowPixel,

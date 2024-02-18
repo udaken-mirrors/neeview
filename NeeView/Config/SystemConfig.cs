@@ -143,9 +143,8 @@ namespace NeeView
         }
 
         // 隠しファイルを表示する？
-        // TODO: [Typo] Visibled -> Visible
         [PropertyMember]
-        public bool IsHiddenFileVisibled
+        public bool IsHiddenFileVisible
         {
             get { return _isHiddenFileVisible; }
             set { SetProperty(ref _isHiddenFileVisible, value); }
@@ -161,9 +160,8 @@ namespace NeeView
 
         // 「ブックを開く」ダイアログを現在の場所を基準にして開く
         // TODO: LoadAs のコマンドパラメータにする
-        // TODO: [Typo] Openbook -> OpenBook
         [PropertyMember]
-        public bool IsOpenbookAtCurrentPlace
+        public bool IsOpenBookAtCurrentPlace
         {
             get { return _isOpenBookAtCurrentPlace; }
             set { SetProperty(ref _isOpenBookAtCurrentPlace, value); }
@@ -187,11 +185,10 @@ namespace NeeView
 
 
         // コピーまたは移動先フォルダーのリスト
-        // TODO: [Typo] Fdler -> Folder
         [PropertyMember]
         [PropertyMapIgnore]
         [ObjectMergeReferenceCopy]
-        public DestinationFolderCollection DestinationFodlerCollection
+        public DestinationFolderCollection DestinationFolderCollection
         {
             get { return _destinationFolderCollection; }
             set { SetProperty(ref _destinationFolderCollection, value); }
@@ -242,5 +239,33 @@ namespace NeeView
             get { return _searchHistorySize; }
             set { SetProperty(ref _searchHistorySize, Math.Max(0, value)); }
         }
+
+        #region Obsolete
+
+        [Obsolete("Typo"), Alternative(nameof(IsHiddenFileVisible), 41, ScriptErrorLevel.Info)] // ver.41
+        [JsonIgnore]
+        public bool IsHiddenFileVisibled
+        {
+            get { return IsHiddenFileVisible; }
+            set { IsHiddenFileVisible = value; }
+        }
+
+        [Obsolete("Typo"), Alternative(nameof(IsOpenBookAtCurrentPlace), 41, ScriptErrorLevel.Info)] // ver.41
+        [JsonIgnore]
+        public bool IsOpenbookAtCurrentPlace
+        {
+            get { return IsOpenBookAtCurrentPlace; }
+            set { IsOpenBookAtCurrentPlace = value; }
+        }
+
+        [Obsolete("Typo"), Alternative(nameof(DestinationFolderCollection), 41, ScriptErrorLevel.Info)] // ver.41
+        [JsonIgnore]
+        public DestinationFolderCollection DestinationFodlerCollection
+        {
+            get { return DestinationFolderCollection; }
+            set { DestinationFolderCollection = value; }
+        }
+
+        #endregion Obsolete
     }
 }

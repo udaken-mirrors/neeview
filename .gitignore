@@ -230,8 +230,6 @@ ModelManifest.xml
 /NeeView/Properties/PublishProfiles/_*
 !/NeeView/x64/
 !/NeeView/x86/
-/Language/Resources.xlsx
-/Language/_*
 
 Thumbs.db
 launchSettings.json

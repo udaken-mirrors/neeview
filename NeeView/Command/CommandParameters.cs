@@ -90,7 +90,7 @@ namespace NeeView
             typeof(ViewScrollCommandParameter),
             typeof(ViewScaleCommandParameter),
             typeof(ViewRotateCommandParameter),
-            typeof(MovePlaylsitItemInBookCommandParameter),
+            typeof(MovePlaylistItemInBookCommandParameter),
             typeof(ScrollPageCommandParameter),
             typeof(FocusMainViewCommandParameter),
             typeof(ExportImageAsCommandParameter),
@@ -121,6 +121,12 @@ namespace NeeView
                 throw new JsonException();
             }
             var typeString = reader.GetString();
+
+            // Typo ver.41
+            if (typeString == "MovePlaylsitItemInBookCommandParameter")
+            {
+                typeString = "MovePlaylistItemInBookCommandParameter";
+            }
 
             Type? type = KnownTypes.FirstOrDefault(e => e.Name == typeString);
             Debug.Assert(type != null);

@@ -10,10 +10,10 @@ namespace NeeView
 
         bool CanMark();
         bool CanMark(Page page);
-        bool CanNextMarkInPlace(MovePlaylsitItemInBookCommandParameter param);
-        bool CanPrevMarkInPlace(MovePlaylsitItemInBookCommandParameter param);
-        void NextMarkInPlace(object? sender, MovePlaylsitItemInBookCommandParameter param);
-        void PrevMarkInPlace(object? sender, MovePlaylsitItemInBookCommandParameter param);
+        bool CanNextMarkInPlace(MovePlaylistItemInBookCommandParameter param);
+        bool CanPrevMarkInPlace(MovePlaylistItemInBookCommandParameter param);
+        void NextMarkInPlace(object? sender, MovePlaylistItemInBookCommandParameter param);
+        void PrevMarkInPlace(object? sender, MovePlaylistItemInBookCommandParameter param);
         PlaylistItem? SetMark(bool isMark);
         PlaylistItem? ToggleMark();
         void UpdateMarkers();

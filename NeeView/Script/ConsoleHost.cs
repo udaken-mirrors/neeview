@@ -9,7 +9,7 @@ namespace NeeView
     public class ConsoleHost : IConsoleHost 
     {
         private readonly Window _owner;
-        private JavascriptEngine _engine;
+        private JavaScriptEngine _engine;
         private WordTree _wordTree;
 
 
@@ -17,7 +17,7 @@ namespace NeeView
         {
             _owner = owner;
 
-            _engine = CreateJavascriptEngine();
+            _engine = CreateJavaScriptEngine();
             _wordTree = CreateWordTree(_engine);
         }
 
@@ -41,19 +41,19 @@ namespace NeeView
         {
             if (_engine != null && !_engine.IsDirty) return;
 
-            _engine = CreateJavascriptEngine();
+            _engine = CreateJavaScriptEngine();
             _wordTree = CreateWordTree(_engine);
         }
 
-        private static JavascriptEngine CreateJavascriptEngine()
+        private static JavaScriptEngine CreateJavaScriptEngine()
         {
-            var engine = new JavascriptEngine();
+            var engine = new JavaScriptEngine();
             engine.CurrentFolder = Config.Current.Script.ScriptFolder;
 
             return engine;
         }
 
-        private static WordTree CreateWordTree(JavascriptEngine engine)
+        private static WordTree CreateWordTree(JavaScriptEngine engine)
         {
             var wordTreeRoot = new WordNode()
             {
@@ -87,11 +87,11 @@ namespace NeeView
 
                 default:
                     UpdateEngine();
-                    JavascriptEngineMap.Current.Add(_engine);
+                    JavaScriptEngineMap.Current.Add(_engine);
                     try
                     {
                         var result = _engine.Execute(null, input, token);
-                        return ToJavascriptString(result);
+                        return ToJavaScriptString(result);
                     }
                     catch (Exception ex)
                     {
@@ -100,13 +100,13 @@ namespace NeeView
                     }
                     finally
                     {
-                        JavascriptEngineMap.Current.Remove(_engine);
+                        JavaScriptEngineMap.Current.Remove(_engine);
                         CommandTable.Current.FlushInputGesture();
                     }
             }
         }
 
-        private static string ToJavascriptString(object? source)
+        private static string ToJavaScriptString(object? source)
         {
             var builder = new JsonStringBulder();
             return builder.AppendObject(source).ToString();

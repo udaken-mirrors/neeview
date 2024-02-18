@@ -15,7 +15,7 @@ namespace NeeView
 
         public DestinationFolderDialogViewModel()
         {
-            _items = new ObservableCollection<DestinationFolder>(Config.Current.System.DestinationFodlerCollection);
+            _items = new ObservableCollection<DestinationFolder>(Config.Current.System.DestinationFolderCollection);
 
             AddCommand = new RelayCommand(AddCommand_Execute);
             EditCommand = new RelayCommand(EditCommand_Execute, SelectedItemCommand_CanExecute);
@@ -140,7 +140,7 @@ namespace NeeView
 
         public void Decide()
         {
-            Config.Current.System.DestinationFodlerCollection = new DestinationFolderCollection(_items);
+            Config.Current.System.DestinationFolderCollection = new DestinationFolderCollection(_items);
         }
     }
 }

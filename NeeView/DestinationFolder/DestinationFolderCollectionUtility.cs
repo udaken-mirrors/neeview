@@ -18,11 +18,11 @@ namespace NeeView
         {
             var subItem = new MenuItem() { Header = title, IsEnabled = isEnabled };
 
-            if (Config.Current.System.DestinationFodlerCollection.Any())
+            if (Config.Current.System.DestinationFolderCollection.Any())
             {
-                for (int i = 0; i < Config.Current.System.DestinationFodlerCollection.Count; ++i)
+                for (int i = 0; i < Config.Current.System.DestinationFolderCollection.Count; ++i)
                 {
-                    var folder = Config.Current.System.DestinationFodlerCollection[i];
+                    var folder = Config.Current.System.DestinationFolderCollection[i];
                     var header = new TextBlock(new Run(folder.Name));
                     subItem.Items.Add(new MenuItem() { Header = header, ToolTip = folder.Path, Command = command, CommandParameter = folder });
                 }

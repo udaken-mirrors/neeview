@@ -28,9 +28,9 @@ namespace NeeView
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060:未使用のパラメーターを削除します", Justification = "<保留中>")]
         private void ExecuteInner(object? sender, string path, string? argument)
         {
-            var engine = new JavascriptEngine() { IsToastEnable = true };
+            var engine = new JavaScriptEngine() { IsToastEnable = true };
 
-            JavascriptEngineMap.Current.Add(engine);
+            JavaScriptEngineMap.Current.Add(engine);
             try
             {
                 ////engine.Log($"Script: {LoosePath.GetFileName(path)} ...");
@@ -45,7 +45,7 @@ namespace NeeView
             }
             finally
             {
-                JavascriptEngineMap.Current.Remove(engine);
+                JavaScriptEngineMap.Current.Remove(engine);
                 AppDispatcher.BeginInvoke(() => CommandTable.Current.FlushInputGesture());
                 _pool.Remove(this);
             }

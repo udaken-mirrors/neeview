@@ -31,7 +31,7 @@ namespace NeeView
 
             ApplicationDisposer.Current.Add(this);
 
-            _disposables.Add(Config.Current.System.SubscribePropertyChanged(nameof(SystemConfig.IsHiddenFileVisibled), async (s, e) =>
+            _disposables.Add(Config.Current.System.SubscribePropertyChanged(nameof(SystemConfig.IsHiddenFileVisible), async (s, e) =>
             {
                 await RefreshAsync(true, true);
             }));

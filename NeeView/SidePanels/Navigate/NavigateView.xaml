@@ -324,7 +324,7 @@
                                         <Button Style="{StaticResource NavigateButtonStyle}" Command="{Binding RotateRightCommand}" ToolTip="{properties:TextBinding Navigator.RotateRight}">
                                             <Image Source="{StaticResource ic_rotate_right_90_24px_b}" />
                                         </Button>
-                                        <Button Style="{StaticResource NavigateButtonStyle}" Command="{Binding RotateResetCommand}" ToolTip="{properties:TextBinding Navigator.RotateRerset}">
+                                        <Button Style="{StaticResource NavigateButtonStyle}" Command="{Binding RotateResetCommand}" ToolTip="{properties:TextBinding Navigator.RotateReset}">
                                             <Image Source="{StaticResource ic_clear_24px_b2}" />
                                         </Button>
                                         <ToggleButton Style="{StaticResource NavigateToggleButtonStyle}" IsChecked="{Binding IsRotateStretchEnabled}"

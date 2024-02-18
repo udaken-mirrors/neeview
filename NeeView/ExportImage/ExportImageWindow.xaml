@@ -66,7 +66,7 @@
                                 </Style>
                             </StackPanel.Style>
 
-                            <CheckBox Content="{properties:TextBinding ExportImageWindow.InclideBackground}" IsChecked="{Binding HasBackground}" Margin="20,10,0,0" TabIndex="1"
+                            <CheckBox Content="{properties:TextBinding ExportImageWindow.IncludeBackground}" IsChecked="{Binding HasBackground}" Margin="20,10,0,0" TabIndex="1"
                                 FocusVisualStyle="{StaticResource NVBorderFocusVisual}"/>
 
                             <CheckBox Content="{properties:TextBinding ExportImageWindow.IsOriginalSize}" IsChecked="{Binding IsOriginalSize}" Margin="20,10,0,0" TabIndex="1"

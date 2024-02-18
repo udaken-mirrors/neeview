@@ -215,22 +215,22 @@ namespace NeeView
             RaisePropertyChanged(nameof(IsMarked));
         }
 
-        public bool CanPrevMarkInPlace(MovePlaylsitItemInBookCommandParameter param)
+        public bool CanPrevMarkInPlace(MovePlaylistItemInBookCommandParameter param)
         {
             return (_book.Marker.Markers != null && _book.Marker.Markers.Count > 0) || param.IsIncludeTerminal;
         }
 
-        public bool CanNextMarkInPlace(MovePlaylsitItemInBookCommandParameter param)
+        public bool CanNextMarkInPlace(MovePlaylistItemInBookCommandParameter param)
         {
             return (_book.Marker.Markers != null && _book.Marker.Markers.Count > 0) || param.IsIncludeTerminal;
         }
 
-        public void PrevMarkInPlace(object? sender, MovePlaylsitItemInBookCommandParameter param)
+        public void PrevMarkInPlace(object? sender, MovePlaylistItemInBookCommandParameter param)
         {
             MoveMarkInPlace(-1, param.IsLoop, param.IsIncludeTerminal);
         }
 
-        public void NextMarkInPlace(object? sender, MovePlaylsitItemInBookCommandParameter param)
+        public void NextMarkInPlace(object? sender, MovePlaylistItemInBookCommandParameter param)
         {
             MoveMarkInPlace(+1, param.IsLoop, param.IsIncludeTerminal);
         }

@@ -23,17 +23,17 @@ namespace NeeView
                 return false;
             }
 
-            switch (Config.Current.AutoHide.AutoHideConfrictBottomMargin)
+            switch (Config.Current.AutoHide.AutoHideConflictBottomMargin)
             {
                 default:
-                case AutoHideConfrictMode.Allow:
+                case AutoHideConflictMode.Allow:
                     return false;
 
-                case AutoHideConfrictMode.AllowPixel:
+                case AutoHideConflictMode.AllowPixel:
                     var pos = Mouse.GetPosition(_sidePanelFrame);
                     return pos.Y < _sidePanelFrame.ActualHeight - 1.5;
 
-                case AutoHideConfrictMode.Deny:
+                case AutoHideConflictMode.Deny:
                     return true;
             }
         }

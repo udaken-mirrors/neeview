@@ -97,7 +97,7 @@ namespace NeeView
             var oldSelect = _selectedDestinationFolder;
 
             var list = new List<DestinationFolder> { new DestinationFolder(Properties.TextResources.GetString("Word.None"), "") };
-            list.AddRange(Config.Current.System.DestinationFodlerCollection);
+            list.AddRange(Config.Current.System.DestinationFolderCollection);
             DestinationFolderList = list;
 
             SelectedDestinationFolder = list.FirstOrDefault(e => e.Equals(oldSelect)) ?? list.First();

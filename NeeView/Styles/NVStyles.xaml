@@ -746,7 +746,7 @@
     <!-- https://stackoverflow.com/questions/664632/highlight-whole-treeviewitem-line-in-wpf -->
 
     <local:TreeViewIndentConverter x:Key="TreeViewIndentConverter" />
-    <local:TreeViewVerticalMarginConverter x:Key="TreeViewVertivalMarginConverter" />
+    <local:TreeViewVerticalMarginConverter x:Key="TreeViewVerticalMarginConverter" />
 
     <Style x:Key="NVExpandCollapseToggleStyle" TargetType="ToggleButton">
         <Setter Property="Focusable" Value="False" />
@@ -787,7 +787,7 @@
                 <ControlTemplate TargetType="{x:Type TreeViewItem}">
                     <StackPanel>
                         <StackPanel.Margin>
-                            <MultiBinding Converter="{StaticResource TreeViewVertivalMarginConverter}">
+                            <MultiBinding Converter="{StaticResource TreeViewVerticalMarginConverter}">
                                 <Binding RelativeSource="{RelativeSource Mode=TemplatedParent}" />
                                 <Binding Path="(local:TreeViewItemTools.VerticalMargin)" RelativeSource="{RelativeSource Mode=TemplatedParent}" BindsDirectlyToSource="False" />
                             </MultiBinding>

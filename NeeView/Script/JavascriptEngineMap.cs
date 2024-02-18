@@ -7,21 +7,21 @@ namespace NeeView
     /// <summary>
     /// スレッドIDとエンジンの対応表
     /// </summary>
-    public class JavascriptEngineMap
+    public class JavaScriptEngineMap
     {
-        static JavascriptEngineMap() => Current = new JavascriptEngineMap();
-        public static JavascriptEngineMap Current { get; }
+        static JavaScriptEngineMap() => Current = new JavaScriptEngineMap();
+        public static JavaScriptEngineMap Current { get; }
 
 
-        private readonly ConcurrentDictionary<int, JavascriptEngine> _map = new();
+        private readonly ConcurrentDictionary<int, JavaScriptEngine> _map = new();
 
 
-        private JavascriptEngineMap()
+        private JavaScriptEngineMap()
         {
         }
 
 
-        public void Add(JavascriptEngine engine)
+        public void Add(JavaScriptEngine engine)
         {
             if (engine is null)
             {
@@ -29,13 +29,13 @@ namespace NeeView
             }
 
             int id = System.Environment.CurrentManagedThreadId;
-            //Debug.WriteLine($"> JavascriptEngine.{id}: add");
+            //Debug.WriteLine($"> JavaScriptEngine.{id}: add");
             Debug.Assert(!_map.ContainsKey(id));
             var result = _map.TryAdd(id, engine);
             Debug.Assert(result);
         }
 
-        public void Remove(JavascriptEngine engine)
+        public void Remove(JavaScriptEngine engine)
         {
             if (engine is null)
             {
@@ -43,15 +43,15 @@ namespace NeeView
             }
 
             int id = System.Environment.CurrentManagedThreadId;
-            //Debug.WriteLine($"> JavascriptEngine.{id}: remove");
+            //Debug.WriteLine($"> JavaScriptEngine.{id}: remove");
             var result = _map.TryRemove(id, out var target);
             Debug.Assert(result && target == engine);
         }
 
-        public JavascriptEngine GetCurrentEngine()
+        public JavaScriptEngine GetCurrentEngine()
         {
             int id = System.Environment.CurrentManagedThreadId;
-            //Debug.WriteLine($"> JavascriptEngine.{id}: access");
+            //Debug.WriteLine($"> JavaScriptEngine.{id}: access");
             _map.TryGetValue(id, out var engine);
             Debug.Assert(engine != null);
             return engine;

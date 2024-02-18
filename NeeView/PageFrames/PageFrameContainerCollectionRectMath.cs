@@ -31,7 +31,7 @@ namespace NeeView.PageFrames
         /// </summary>
         public bool WithinView(Rect viewRect, LinkedListNode<PageFrameContainer> node)
         {
-            return _math.GetConflict(node.Value.Rect, viewRect).IsConfrict();
+            return _math.GetConflict(node.Value.Rect, viewRect).IsConflict();
         }
 
         /// <summary>
@@ -41,7 +41,7 @@ namespace NeeView.PageFrames
         public List<PageFrameContainer> CollectViewContainers(Rect viewRect)
         {
             return _containers.Collect<PageFrameContent>()
-                .Where(e => _math.GetConflict(e.Rect, viewRect).IsConfrict())
+                .Where(e => _math.GetConflict(e.Rect, viewRect).IsConflict())
                 .ToList();
         }
 
@@ -77,7 +77,7 @@ namespace NeeView.PageFrames
         {
             // TODO: ViewRect内のコンテナを取得する処理が PageFrameContainersArea と重複している
             var nodes = _containers.CollectNode<PageFrameContent>()
-                .Where(e => _math.GetConflict(e.Value.Rect, viewRect).IsConfrict())
+                .Where(e => _math.GetConflict(e.Value.Rect, viewRect).IsConflict())
                 .ToList();
 
             if (!nodes.Any())

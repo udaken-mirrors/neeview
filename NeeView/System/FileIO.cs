@@ -288,7 +288,7 @@ namespace NeeView
                 // 確認
                 if (showConfirmDialog)
                 {
-                    var dialog = new MessageDialog(string.Format(Properties.TextResources.GetString("FileRenameConfrictDialog.Message"), Path.GetFileName(dstBase), Path.GetFileName(dst)), Properties.TextResources.GetString("FileRenameConfrictDialog.Title"));
+                    var dialog = new MessageDialog(string.Format(Properties.TextResources.GetString("FileRenameConflictDialog.Message"), Path.GetFileName(dstBase), Path.GetFileName(dst)), Properties.TextResources.GetString("FileRenameConflictDialog.Title"));
                     dialog.Commands.Add(new UICommand("@Word.Rename"));
                     dialog.Commands.Add(UICommands.Cancel);
                     var answer = dialog.ShowDialog();

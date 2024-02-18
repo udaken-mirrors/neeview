@@ -21,7 +21,7 @@ namespace NeeView
         /// <summary>
         /// ファイル除外属性
         /// </summary>
-        public FileAttributes AttributesToSkip => Config.Current.System.IsHiddenFileVisibled ? FileAttributes.None : FileAttributes.Hidden;
+        public FileAttributes AttributesToSkip => Config.Current.System.IsHiddenFileVisible ? FileAttributes.None : FileAttributes.Hidden;
 
 
         /// <summary>

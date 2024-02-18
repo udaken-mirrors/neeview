@@ -319,7 +319,7 @@ namespace NeeView
         {
             // 既に開いている場合、その場所を起点とする
             var book = BookHub.Current.GetCurrentBook();
-            if (Config.Current.System.IsOpenbookAtCurrentPlace && book != null)
+            if (Config.Current.System.IsOpenBookAtCurrentPlace && book != null)
             {
                 return System.IO.Path.GetDirectoryName(book.Path) ?? "";
             }

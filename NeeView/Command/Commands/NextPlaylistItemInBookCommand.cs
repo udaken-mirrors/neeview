@@ -10,17 +10,17 @@ namespace NeeView
             this.IsShowMessage = false;
 
             // PrevPlaylistItemInBook
-            this.ParameterSource = new CommandParameterSource(new MovePlaylsitItemInBookCommandParameter());
+            this.ParameterSource = new CommandParameterSource(new MovePlaylistItemInBookCommandParameter());
         }
 
         public override bool CanExecute(object? sender, CommandContext e)
         {
-            return BookOperation.Current.Playlist.CanNextMarkInPlace(e.Parameter.Cast<MovePlaylsitItemInBookCommandParameter>());
+            return BookOperation.Current.Playlist.CanNextMarkInPlace(e.Parameter.Cast<MovePlaylistItemInBookCommandParameter>());
         }
 
         public override void Execute(object? sender, CommandContext e)
         {
-            BookOperation.Current.Playlist.NextMarkInPlace(sender, e.Parameter.Cast<MovePlaylsitItemInBookCommandParameter>());
+            BookOperation.Current.Playlist.NextMarkInPlace(sender, e.Parameter.Cast<MovePlaylistItemInBookCommandParameter>());
         }
     }
 

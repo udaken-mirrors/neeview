@@ -8,14 +8,14 @@ using Jint;
 
 namespace NeeView
 {
-    public class JavascriptEngine
+    public class JavaScriptEngine
     {
         private readonly Jint.Engine _engine;
         private readonly CommandHost _commandHost;
         private CancellationToken _cancellationToken;
 
 
-        public JavascriptEngine()
+        public JavaScriptEngine()
         {
             _commandHost = new CommandHost();
             _engine = new Jint.Engine(config => config

@@ -67,9 +67,9 @@ namespace NeeView.PageFrames
                 : new Rect(rect.X, rect.Y - margin, rect.Width, rect.Height + margin * 2.0);
         }
 
-        public PageFrameRectConfrict GetConflict(Rect rect, Rect rectTarget)
+        public PageFrameRectConflict GetConflict(Rect rect, Rect rectTarget)
         {
-            return new PageFrameRectConfrict(GetConflictRate(GetMin(rect), rectTarget), GetConflictRate(GetMax(rect), rectTarget), GetWidth(rectTarget));
+            return new PageFrameRectConflict(GetConflictRate(GetMin(rect), rectTarget), GetConflictRate(GetMax(rect), rectTarget), GetWidth(rectTarget));
         }
 
         public double GetConflictRate(double x, Rect rect)
@@ -85,9 +85,9 @@ namespace NeeView.PageFrames
 
 
 
-    public struct PageFrameRectConfrict
+    public struct PageFrameRectConflict
     {
-        public PageFrameRectConfrict(double minRate, double maxRate, double width)
+        public PageFrameRectConflict(double minRate, double maxRate, double width)
         {
             MinRate = minRate;
             MaxRate = maxRate;
@@ -103,12 +103,12 @@ namespace NeeView.PageFrames
         public int Max => RateToState(MaxRate);
 
 
-        public bool IsConfrict()
+        public bool IsConflict()
         {
             return Min == 0 || Max == 0 || IsFilled();
         }
 
-        public bool IsInclued()
+        public bool IsInclude()
         {
             return Min == 0 && Max == 0;
         }
