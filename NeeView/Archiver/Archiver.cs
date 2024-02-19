@@ -206,11 +206,19 @@ namespace NeeView
             _entries = await Task.Run(async () =>
             {
                 return (await GetEntriesInnerAsync(token))
-                    .Where(e => !BookProfile.Current.IsExcludedPath(e.EntryName))
+                    .Where(e => !IsExcludedPath(e.EntryName))
                     .ToList();
             });
 
             return _entries;
+        }
+
+        /// <summary>
+        /// 除外パス判定
+        /// </summary>
+        private bool IsExcludedPath(string path)
+        {
+            return path.Split('/', '\\').Any(e => Config.Current.Book.Excludes.ConainsOrdinalIgnoreCase(e));
         }
 
         /// <summary>

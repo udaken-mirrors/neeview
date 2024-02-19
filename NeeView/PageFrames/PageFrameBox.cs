@@ -839,7 +839,7 @@ namespace NeeView.PageFrames
             Debug.Assert(!frameRange.IsEmpty());
             if (frameRange.IsEmpty()) return;
 
-            if (!BookProfile.Current.CanPrioritizePageMove() && IsSelectedPageFrameLoading())
+            if (!_context.CanPrioritizePageMove && IsSelectedPageFrameLoading())
             {
                 return;
             }
@@ -867,7 +867,7 @@ namespace NeeView.PageFrames
             Debug.Assert(!frameRange.IsEmpty());
             if (frameRange.IsEmpty()) return;
 
-            if (!BookProfile.Current.CanPrioritizePageMove() && IsSelectedPageFrameLoading())
+            if (!_context.CanPrioritizePageMove && IsSelectedPageFrameLoading())
             {
                 return;
             }
