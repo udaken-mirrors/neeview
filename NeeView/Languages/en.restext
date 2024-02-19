@@ -2474,3 +2474,5 @@ ZipArchiveConfig.SupportFileTypes.Remarks=Only ZIP format is supported.
 ZipEncoding.Auto=Auto
 ZipEncoding.Local=Local
 ZipEncoding.UTF8=UTF-8
+BookConfig.IsReadyToPageMove=Ready to page move
+BookConfig.IsReadyToPageMove.Remarks=Switch display when page is ready.
