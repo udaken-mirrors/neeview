@@ -16,6 +16,9 @@ namespace NeeView
 {
     public static class UserSettingTools
     {
+        private static JsonSerializerOptions? _serializerOptions;
+
+
         public static UserSetting CreateUserSetting()
         {
             // 情報の確定
@@ -57,6 +60,12 @@ namespace NeeView
         }
 
         public static JsonSerializerOptions GetSerializerOptions()
+        {
+            _serializerOptions ??= CreateSerializerOptions();
+            return _serializerOptions;
+        }
+
+        public static JsonSerializerOptions CreateSerializerOptions()
         {
             var options = new JsonSerializerOptions();
 

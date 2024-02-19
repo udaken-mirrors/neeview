@@ -250,6 +250,14 @@ namespace NeeView
             set { IsHiddenFileVisible = value; }
         }
 
+        [Obsolete("Typo json interface"), PropertyMapIgnore]
+        [JsonPropertyName("IsHiddenFileVisibled"), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+        public bool IsHiddenFileVisibled_Typo
+        {
+            get { return default; }
+            set { IsHiddenFileVisible = value; }
+        }
+
         [Obsolete("Typo"), Alternative(nameof(IsOpenBookAtCurrentPlace), 41, ScriptErrorLevel.Info)] // ver.41
         [JsonIgnore]
         public bool IsOpenbookAtCurrentPlace
@@ -258,11 +266,29 @@ namespace NeeView
             set { IsOpenBookAtCurrentPlace = value; }
         }
 
+        [Obsolete("Typo json interface"), PropertyMapIgnore]
+        [JsonPropertyName("IsOpenbookAtCurrentPlace"), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+        public bool IsOpenbookAtCurrentPlace_Typo
+        {
+            get { return default; }
+            set { IsOpenBookAtCurrentPlace = value; }
+        }
+
         [Obsolete("Typo"), Alternative(nameof(DestinationFolderCollection), 41, ScriptErrorLevel.Info)] // ver.41
         [JsonIgnore]
+        [PropertyMapIgnore]
+        [ObjectMergeReferenceCopy]
         public DestinationFolderCollection DestinationFodlerCollection
         {
             get { return DestinationFolderCollection; }
+            set { DestinationFolderCollection = value; }
+        }
+
+        [Obsolete("Typo json interface"), PropertyMapIgnore]
+        [JsonPropertyName("DestinationFodlerCollection"), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+        public DestinationFolderCollection DestinationFodlerCollection_Typo
+        {
+            get { return default; }
             set { DestinationFolderCollection = value; }
         }
 

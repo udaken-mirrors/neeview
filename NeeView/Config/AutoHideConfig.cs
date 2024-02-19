@@ -101,11 +101,28 @@ namespace NeeView
             set { AutoHideConflictTopMargin = value; }
         }
 
+        [Obsolete("Typo json interface"), PropertyMapIgnore]
+        [JsonPropertyName("AutoHideConfrictTopMargin"), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+        public AutoHideConflictMode AutoHideConfrictTopMargin_Typo
+        {
+            get { return default; }
+            set { AutoHideConflictTopMargin = value; }
+        }
+
+
         [Obsolete("Typo"), Alternative(nameof(AutoHideConflictBottomMargin), 41, ScriptErrorLevel.Info)] // ver.41
         [JsonIgnore]
         public AutoHideConflictMode AutoHideConfrictBottomMargin
         {
             get { return AutoHideConflictBottomMargin; }
+            set { AutoHideConflictBottomMargin = value; }
+        }
+
+        [Obsolete("Typo json interface"), PropertyMapIgnore]
+        [JsonPropertyName("AutoHideConfrictBottomMargin"), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+        public AutoHideConflictMode AutoHideConfrictBottomMargin_Typo
+        {
+            get { return default; }
             set { AutoHideConflictBottomMargin = value; }
         }
 
