@@ -77,7 +77,7 @@ namespace NeeView.PageFrames
         {
             try
             {
-                _loader.RequestLoad(item.FrameRange, parameter.Direction.ToSign(), 0);
+                _loader.RequestLoad(item.FrameRange, parameter.Direction.ToSign());
                 await Task.WhenAll(item.ViewContents.Select(e => e.WaitLoadAsync(token)));
                 _ = AppDispatcher.BeginInvoke(() => _box.MoveTo(parameter));
             }

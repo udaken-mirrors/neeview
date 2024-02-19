@@ -1,4 +1,4 @@
-﻿//#define LOCAL_DEBUG
+﻿#define LOCAL_DEBUG
 
 using System;
 using System.Collections.Generic;
@@ -39,6 +39,7 @@ namespace NeeView
 
         private bool _isEnabled = true;
         private BookLoadContext _loadContext = new();
+        private LatestValue<BookLoadContext> _latestContext = new();
 
         private bool _isBusy;
         private int _busyCount;
@@ -126,47 +127,51 @@ namespace NeeView
                 _isEnabled = true;
                 if (_loadContext.IsValid)
                 {
-                    RequestLoad(_loadContext.PageRange, _loadContext.Direction);
+                    RequestLoad(_loadContext);
                 }
             }
         }
 
         public void RequestLoad(PageRange range, int direction)
         {
-            RequestLoad(range, direction, _performanceConfig.PreLoadSize);
+            RequestLoad(new BookLoadContext(range, direction, _performanceConfig.PreLoadSize));
         }
 
-        public void RequestLoad(PageRange range, int direction, int limit)
+        public void RequestLoad(BookLoadContext context)
         {
             if (_disposedValue) return;
-            if (range.IsEmpty()) return;
+            if (context.PageRange.IsEmpty()) return;
 
             lock (_lock)
             {
                 if (!_isEnabled)
                 {
-                    _loadContext = new BookLoadContext(range, direction, limit);
+                    _loadContext = context;
                     return;
                 }
             }
 
-            Task.Run(() => LoadAsync(range, direction, limit, CancellationToken.None));
+            Task.Run(() => LoadAsync(context, CancellationToken.None));
         }
 
-        private async Task LoadAsync(PageRange range, int direction, int limit, CancellationToken token)
+        private async Task LoadAsync(BookLoadContext context, CancellationToken token)
         {
-            Debug.Assert(direction is 1 or -1);
+            Debug.Assert(context.Direction is 1 or -1);
 
             if (_disposedValue) return;
 
+            var operation = _latestContext.CompareSet(context);
+            if (operation is null) return;
+            
             lock (_lock)
             {
-                Trace($"LoadAsync: {range}, {direction}");
+                Trace($"LoadAsync: {context}");
                 _cancellationTokenSource?.Cancel();
                 _cancellationTokenSource?.Dispose();
                 _cancellationTokenSource = new CancellationTokenSource();
             }
 
+            var (range, direction, limit) = context;
             using var linkedTokenSource = CancellationTokenSource.CreateLinkedTokenSource(_cancellationTokenSource.Token, token);
             linkedTokenSource.Token.ThrowIfCancellationRequested();
 
@@ -200,6 +205,7 @@ namespace NeeView
             }
             finally
             {
+                operation.Dispose();
                 DecrementBusyCount();
             }
 
@@ -357,6 +363,12 @@ namespace NeeView
         }
 
         [Conditional("LOCAL_DEBUG")]
+        private void Trace(string s)
+        {
+            Debug.WriteLine($"{this.GetType().Name}: {s}");
+        }
+
+        [Conditional("LOCAL_DEBUG")]
         private void Trace(string s, params object[] args)
         {
             Debug.WriteLine($"{this.GetType().Name}: {string.Format(s, args)}");
@@ -364,23 +376,9 @@ namespace NeeView
     }
 
 
-    public record class BookLoadContext
+    public record class BookLoadContext(PageRange PageRange, int Direction, int Limit)
     {
-        public BookLoadContext()
-        {
-            PageRange = PageRange.Empty;
-        }
-
-        public BookLoadContext(PageRange pageRange, int direction, int limit)
-        {
-            PageRange = pageRange;
-            Direction = direction;
-            Limit = limit;
-        }
-
-        public PageRange PageRange { get; init; }
-        public int Direction { get; init; }
-        public int Limit { get; init; }
+        public BookLoadContext() : this(PageRange.Empty, 0, 0) { }
 
         public bool IsValid => !PageRange.IsEmpty();
     }
