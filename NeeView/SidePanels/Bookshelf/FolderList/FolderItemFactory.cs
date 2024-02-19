@@ -95,7 +95,7 @@ namespace NeeView
 
 
         /// <summary>
-        /// DriveInfoからFodlerItem作成
+        /// DriveInfoからFolderItem作成
         /// </summary>
         public FolderItem? CreateFolderItem(DriveInfo e)
         {

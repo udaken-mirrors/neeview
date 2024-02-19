@@ -78,6 +78,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Languages\ConvertRestext.ps1" />
     <None Remove="Resources\Scripts\Sample.nvjs" />
   </ItemGroup>
 

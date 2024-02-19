@@ -231,6 +231,7 @@ ModelManifest.xml
 !/NeeView/x64/
 !/NeeView/x86/
 /NeeView/Languages/_*
+/NeeView/Languages/Language.json
 
 Thumbs.db
 launchSettings.json
