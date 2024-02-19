@@ -2475,4 +2475,4 @@ ZipEncoding.Auto=Auto
 ZipEncoding.Local=Local
 ZipEncoding.UTF8=UTF-8
 BookConfig.IsReadyToPageMove=Ready to page move
-BookConfig.IsReadyToPageMove.Remarks=Switch display when page is ready.
+BookConfig.IsReadyToPageMove.Remarks=Switch display when page is ready. Not valid in "@BookConfig.IsPanorama".

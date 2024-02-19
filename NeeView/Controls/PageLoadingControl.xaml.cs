@@ -1,7 +1,5 @@
-﻿using NeeLaboratory.Generators;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -15,7 +13,6 @@ using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace NeeView
 {
@@ -57,7 +54,7 @@ namespace NeeView
             if (IsActive)
             {
                 this.Root.Opacity = 0;
-                var ani = new DoubleAnimation(1, TimeSpan.FromSeconds(0.5)) { BeginTime = TimeSpan.FromSeconds(0.5) };
+                var ani = new DoubleAnimation(1, TimeSpan.FromSeconds(0.2)) { BeginTime = TimeSpan.FromSeconds(0.2) };
                 this.Root.BeginAnimation(UIElement.OpacityProperty, ani, HandoffBehavior.SnapshotAndReplace);
                 this.Root.Visibility = Visibility.Visible;
 
@@ -70,74 +67,6 @@ namespace NeeView
 
                 this.ProgressRing.IsActive = false;
             }
-        }
-    }
-
-
-
-    [NotifyPropertyChanged]
-    public partial class PageLoadingViewModel : INotifyPropertyChanged
-    {
-        private PageLoading _model;
-
-        public PageLoadingViewModel(PageLoading model)
-        {
-            _model = model;
-            _model.SubscribePropertyChanged(nameof(_model.IsActive), (s, e) => RaisePropertyChanged(nameof(IsActive)));
-            _model.SubscribePropertyChanged(nameof(_model.Message), (s, e) => RaisePropertyChanged(nameof(Message)));
-        }
-
-        public event PropertyChangedEventHandler? PropertyChanged;
-
-        public bool IsActive
-        {
-            get => _model.IsActive;
-            set => _model.IsActive = value;
-        }
-
-        public string Message
-        {
-            get => _model.Message;
-            set => _model.Message = value;
-        }
-    }
-
-
-    [NotifyPropertyChanged]
-    public partial class PageLoading : INotifyPropertyChanged
-    {
-        private Locker _locker;
-        private bool _isActive;
-        private string _message = "Loading...";
-
-        public PageLoading()
-        {
-            _locker = new Locker();
-            _locker.LockCountChanged += Locker_LockCountChanged;
-        }
-
-
-        public event PropertyChangedEventHandler? PropertyChanged;
-
-
-        public bool IsActive
-        {
-            get { return _isActive; }
-            set { SetProperty(ref _isActive, value); }
-        }
-
-        public string Message
-        {
-            get { return _message; }
-            set { SetProperty(ref _message, value); }
-        }
-
-
-        public Locker.Key Lock() => _locker.Lock();
-
-        private void Locker_LockCountChanged(object? sender, LockCountChangedEventArgs e)
-        {
-            IsActive = e.IsLocked;
         }
     }
 }

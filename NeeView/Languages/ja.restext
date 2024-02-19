@@ -2475,4 +2475,4 @@ ZipEncoding.Auto=自動
 ZipEncoding.Local=ローカル
 ZipEncoding.UTF8=UTF-8
 BookConfig.IsReadyToPageMove=ページ移動準備
-BookConfig.IsReadyToPageMove.Remarks=ページの準備ができたら表示を切り替えます。
+BookConfig.IsReadyToPageMove.Remarks=ページの準備ができたら表示を切り替えます。「@BookConfig.IsPanorama」では無効です。
