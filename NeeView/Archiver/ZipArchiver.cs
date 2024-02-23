@@ -120,7 +120,7 @@ namespace NeeView
             return list;
         }
 
-        protected override Stream OpenStreamInner(ArchiveEntry entry)
+        protected override async Task<Stream> OpenStreamInnerAsync(ArchiveEntry entry, CancellationToken token)
         {
             if (entry.Id < 0) throw new ArgumentException("Cannot open this entry: " + entry.EntryName);
             if (entry.IsDirectory) throw new InvalidOperationException("Cannot open directory: " + entry.EntryName);
@@ -134,14 +134,14 @@ namespace NeeView
                 using (var stream = archiveEntry.Open())
                 {
                     var ms = new MemoryStream();
-                    stream.CopyTo(ms);
+                    await stream.CopyToAsync(ms, token);
                     ms.Seek(0, SeekOrigin.Begin);
                     return ms;
                 }
             }
         }
 
-        protected override void ExtractToFileInner(ArchiveEntry entry, string exportFileName, bool isOverwrite)
+        protected override async Task ExtractToFileInnerAsync(ArchiveEntry entry, string exportFileName, bool isOverwrite, CancellationToken token)
         {
             // TODO: Directoryフォルダーの出力に対応
             if (entry.Id < 0) throw new ArgumentException("Cannot extract this entry: " + entry.EntryName);
@@ -153,7 +153,8 @@ namespace NeeView
                 ZipArchiveEntryHelper.RepairEntryName(archiveEntry);
                 if (!IsValidEntry(entry, archiveEntry)) throw new ValidationException(Properties.TextResources.GetString("InconsistencyException.Message"));
 
-                archiveEntry.ExtractToFile(exportFileName, isOverwrite);
+                token.ThrowIfCancellationRequested();
+                await Task.Run(() => archiveEntry.ExtractToFile(exportFileName, isOverwrite));
             }
         }
 

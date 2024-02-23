@@ -16,30 +16,26 @@ namespace NeeView
     /// </summary>
     public class ArchiveEntryExtractor : IDisposable
     {
+        private static TempArchiveEntryNamePolicy _namePolicy = new(false, "arcv");
+
         private readonly ArchiveEntry _entry;
-        private readonly string _extractFileName;
         private readonly Task _task;
-        private TempFile? _tempFile;
+        private FileProxy? _tempFile;
         private bool _disposedValue;
 
-
+        // TODO: いきなり処理が始まっているのはよろしくない。実行は別メソッドで。
         public ArchiveEntryExtractor(ArchiveEntry entry)
         {
             _entry = entry;
-            _extractFileName = Temporary.Current.CreateCountedTempFileName("arcv", Path.GetExtension(entry.EntryName));
 
-            _task = Task.Run(() =>
+            _task = Task.Run(async () =>
             {
-                //Debug.WriteLine($"## Start: {_extractFileName}");
-                _entry.ExtractToFile(_extractFileName, false);
-                //Debug.WriteLine($"## Completed: {_extractFileName}");
-                _tempFile = new TempFile(_extractFileName);
+                _tempFile = await _entry.CreateFileProxyAsync(_namePolicy, false, CancellationToken.None); // ## TODO cancellationToken
             });
 
             _task.ContinueWith(async (t) =>
             {
                 await Task.Delay(1000);
-                //Debug.WriteLine($"## Expired.{(_tempFile is null ? 'o' : 'x')}: {_extractFileName}");
                 Expired?.Invoke(this, new(_entry, t.Exception));
             });
         }
@@ -48,7 +44,7 @@ namespace NeeView
         public event EventHandler<ArchiveEntryExtractorExpiredEventArgs>? Expired;
 
 
-        public async Task<TempFile> WaitAsync(CancellationToken token)
+        public async Task<FileProxy> WaitAsync(CancellationToken token)
         {
             ThrowIfDisposed();
 

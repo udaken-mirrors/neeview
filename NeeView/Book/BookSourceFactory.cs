@@ -29,9 +29,6 @@ namespace NeeView
                 subFolderCount = entries.Count;
             }
 
-            // 事前展開処理
-            await PreExtractAsync(pages, token);
-
             // prefix設定
             SetPagePrefix(pages);
 
@@ -211,27 +208,6 @@ namespace NeeView
             return s0;
         }
 
-
-        // 事前展開
-        // TODO: 事前展開の非同期化。ページアクセスをトリガーにする
-        private static async Task PreExtractAsync(List<Page> pages, CancellationToken token)
-        {
-            var archivers = pages
-                .Select(e => e.ArchiveEntry.Archiver)
-                .Distinct()
-                .WhereNotNull()
-                .Where(e => !e.IsFileSystem)
-                .ToList();
-
-            foreach (var archiver in archivers)
-            {
-                if (await archiver.CanPreExtractAsync(token))
-                {
-                    Debug.WriteLine($"PreExtract: EXTRACT {archiver.EntryName}");
-                    await archiver.PreExtractAsync(token);
-                }
-            }
-        }
     }
 
 }

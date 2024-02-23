@@ -111,9 +111,9 @@ namespace NeeView
         }
 
         // ストリームを開く
-        protected override Stream OpenStreamInner(ArchiveEntry entry)
+        protected override async Task<Stream> OpenStreamInnerAsync(ArchiveEntry entry, CancellationToken token)
         {
-            return GetTargetEntry(entry).OpenEntry();
+            return await GetTargetEntry(entry).OpenEntryAsync(token);
         }
 
         // ファイルパス取得
@@ -123,9 +123,9 @@ namespace NeeView
         }
 
         // ファイル出力
-        protected override void ExtractToFileInner(ArchiveEntry entry, string exportFileName, bool isOverwrite)
+        protected override async Task ExtractToFileInnerAsync(ArchiveEntry entry, string exportFileName, bool isOverwrite, CancellationToken token)
         {
-            GetTargetEntry(entry).ExtractToFile(exportFileName, isOverwrite);
+            await GetTargetEntry(entry).ExtractToFileAsync(exportFileName, isOverwrite, token);
         }
     }
 }

@@ -26,10 +26,9 @@ namespace NeeView
         /// <param name="pages">実行するページ群</param>
         /// <param name="options">実行オプション</param>
         /// <param name="token">キャンセルトークン</param>
-        public void Call(IEnumerable<Page> pages, OpenExternalAppCommandParameter options, CancellationToken token)
+        public async Task CallAsync(IEnumerable<Page> pages, OpenExternalAppCommandParameter options, CancellationToken token)
         {
-            var files = PageUtility.CreateFilePathList(pages, options.MultiPagePolicy, options.ArchivePolicy, token);
-
+            var files = await PageUtility.CreateFilePathListAsync(pages, options.MultiPagePolicy, options.ArchivePolicy, token);
             Call(files, options);
         }
 

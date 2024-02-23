@@ -24,7 +24,7 @@ namespace NeeView
             token.ThrowIfCancellationRequested();
 
             // ArchiveFileの場合はTempFile化
-            var fileProxy = ArchiveEntry.GetFileProxy(); // TODO: async化
+            var fileProxy = await ArchiveEntry.GetFileProxyAsync(false, token);
             var mediaInfo = CreateMediaInfo(fileProxy.Path); // TODO: async化
             await Task.CompletedTask;
             var pictureInfo = mediaInfo.PictureInfo;
@@ -38,7 +38,7 @@ namespace NeeView
             try
             {
                 // ArchiveFileの場合はTempFile化
-                var fileProxy = ArchiveEntry.GetFileProxy(); // TODO: async化
+                var fileProxy = await ArchiveEntry.GetFileProxyAsync(false, token);
                 var mediaInfo = CreateMediaInfo(fileProxy.Path); // TODO: async化
                 var pictureInfo = mediaInfo.PictureInfo;
                 await Task.CompletedTask;

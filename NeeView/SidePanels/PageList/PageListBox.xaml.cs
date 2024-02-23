@@ -446,18 +446,7 @@ namespace NeeView
                 return;
             }
 
-            var isSuccess = await Task.Run(() =>
-            {
-                try
-                {
-                    return ClipboardUtility.SetData(e.Data, pages, token);
-                }
-                catch (OperationCanceledException)
-                {
-                    return false;
-                }
-            });
-
+            var isSuccess = await ClipboardUtility.SetDataAsync(e.Data, pages, token);
             if (!isSuccess)
             {
                 e.Cancel = true;

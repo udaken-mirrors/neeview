@@ -169,6 +169,8 @@ namespace NeeView
 
         public async Task DragStartBehavior_DragBeginAsync(object? sender, Windows.DragStartEventArgs e, CancellationToken token)
         {
+            token.ThrowIfCancellationRequested();
+
             var pages = this.ThumbnailListBox.SelectedItems.Cast<FileInformationSource>()
                 .Select(x => x.Page)
                 .Where(x => x.PageType != PageType.Empty)
@@ -181,18 +183,7 @@ namespace NeeView
                 return;
             }
 
-            var isSuccess = await Task.Run(() =>
-            {
-                try
-                {
-                    return ClipboardUtility.SetData(e.Data, pages, token);
-                }
-                catch (OperationCanceledException)
-                {
-                    return false;
-                }
-            });
-
+            var isSuccess = await ClipboardUtility.SetDataAsync(e.Data, pages, token);
             if (!isSuccess)
             {
                 e.Cancel = true;

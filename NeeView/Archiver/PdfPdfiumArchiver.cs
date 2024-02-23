@@ -73,16 +73,17 @@ namespace NeeView
 
         // エントリーのストリームを得る
         // PDFは画像化したものをストリームにして返す
-        protected override Stream OpenStreamInner(ArchiveEntry entry)
+        protected override async Task<Stream> OpenStreamInnerAsync(ArchiveEntry entry, CancellationToken token)
         {
             using (var stream = new FileStream(Path, FileMode.Open, FileAccess.Read))
             using (var pdfDocument = PdfDocument.Load(stream))
             {
                 var size = GetRenderSize(pdfDocument, entry.Id);
-                var image = pdfDocument.Render(entry.Id, (int)size.Width, (int)size.Height, 96, 96, false);
+                var image = pdfDocument.Render(entry.Id, (int)size.Width, (int)size.Height, 96, 96, false); // TODO: async
 
                 var ms = new MemoryStream();
-                image.Save(ms, System.Drawing.Imaging.ImageFormat.Bmp);
+                token.ThrowIfCancellationRequested();
+                await Task.Run(() => image.Save(ms, System.Drawing.Imaging.ImageFormat.Bmp));
                 ms.Seek(0, SeekOrigin.Begin);
                 return ms;
             }
@@ -127,22 +128,28 @@ namespace NeeView
 
 
         // ファイルとして出力
-        protected override void ExtractToFileInner(ArchiveEntry entry, string exportFileName, bool isOverwrite)
+        protected override async Task ExtractToFileInnerAsync(ArchiveEntry entry, string exportFileName, bool isOverwrite, CancellationToken token)
         {
+            // 上書き時は移動前に削除
+            if (isOverwrite && File.Exists(exportFileName))
+            {
+                File.Delete(exportFileName);
+            }
+
             using (var stream = new FileStream(Path, FileMode.Open, FileAccess.Read))
             using (var pdfDocument = PdfDocument.Load(stream))
             {
                 var size = GetRenderSize(pdfDocument, entry.Id);
-                var image = pdfDocument.Render(entry.Id, (int)size.Width, (int)size.Height, 96, 96, false);
-
-                image.Save(exportFileName, System.Drawing.Imaging.ImageFormat.Png);
+                var image = pdfDocument.Render(entry.Id, (int)size.Width, (int)size.Height, 96, 96, false); // TODO: async
+                token.ThrowIfCancellationRequested();
+                await Task.Run(() => image.Save(exportFileName, System.Drawing.Imaging.ImageFormat.Png));
             }
         }
 
         /// <summary>
         /// To Bitmap
         /// </summary>
-        public override System.Drawing.Image CraeteBitmap(ArchiveEntry entry, Size size)
+        public override System.Drawing.Image CreateBitmap(ArchiveEntry entry, Size size)
         {
             using (var stream = new FileStream(Path, FileMode.Open, FileAccess.Read))
             using (var pdfDocument = PdfDocument.Load(stream))
@@ -156,7 +163,7 @@ namespace NeeView
         /// </summary>
         public override BitmapSource CreateBitmapSource(ArchiveEntry entry, Size size)
         {
-            return CraeteBitmap(entry, size).ToBitmapSource() ?? throw new InvalidOperationException();
+            return CreateBitmap(entry, size).ToBitmapSource() ?? throw new InvalidOperationException();
         }
 
         /// <summary>
@@ -166,7 +173,7 @@ namespace NeeView
         {
             using (var outStream = new MemoryStream())
             {
-                CraeteBitmap(entry, size).SaveWithQuality(outStream, CreateFormat(format), quality);
+                CreateBitmap(entry, size).SaveWithQuality(outStream, CreateFormat(format), quality);
                 return outStream.ToArray();
             }
 

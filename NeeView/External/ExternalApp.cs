@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Text.Json.Serialization;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace NeeView
 {
@@ -71,12 +72,12 @@ namespace NeeView
             return parameter;
         }
 
-        public void Execute(IEnumerable<Page> pages)
+        public async Task Execute(IEnumerable<Page> pages, CancellationToken token)
         {
             var external = new ExternalAppUtility();
             try
             {
-                external.Call(pages, CreateCommandParameter(), CancellationToken.None);
+                await external.CallAsync(pages, CreateCommandParameter(), token);
             }
             catch (OperationCanceledException)
             {

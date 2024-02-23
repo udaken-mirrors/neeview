@@ -64,14 +64,17 @@ namespace NeeView
         /// 展開
         /// テンポラリファイルはキャッシュを活用する
         /// </summary>
-        public async Task<TempFile> ExtractAsync(ArchiveEntry entry, CancellationToken token)
+        public async Task<FileProxy> ExtractAsync(ArchiveEntry entry, CancellationToken token)
         {
-            var tempFile = TempFileCache.Current.Get(entry.Ident);
-            if (tempFile != null) return tempFile;
+            var cachedTempFile = TempFileCache.Current.Get(entry.Ident);
+            if (cachedTempFile != null) return cachedTempFile;
 
-            tempFile = await ExtractRawAsync(entry, token);
-            TempFileCache.Current.Add(entry.Ident, tempFile);
-            return tempFile;
+            var proxyFile = await ExtractRawAsync(entry, token);
+            if (proxyFile is TempFile tempFile)
+            {
+                TempFileCache.Current.Add(entry.Ident, tempFile);
+            }
+            return proxyFile;
         }
 
         /// <summary>
@@ -79,7 +82,7 @@ namespace NeeView
         /// ファイルはテンポラリに生成される
         /// </summary>
         /// <returns>展開後されたファイル名</returns>
-        public async Task<TempFile> ExtractRawAsync(ArchiveEntry entry, CancellationToken token)
+        public async Task<FileProxy> ExtractRawAsync(ArchiveEntry entry, CancellationToken token)
         {
             //Debug.WriteLine($"EXT: {entry.Ident}");
 
@@ -93,9 +96,9 @@ namespace NeeView
                     extractor = new ArchiveEntryExtractor(entry);
                     extractor.Expired += Extractor_Expired;
                 }
-                var tempFile = await extractor.WaitAsync(token);
+                var proxyFile = await extractor.WaitAsync(token);
                 extractor.Dispose();
-                return tempFile;
+                return proxyFile;
             }
             catch (OperationCanceledException)
             {

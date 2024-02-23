@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NeeLaboratory.Generators;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -11,15 +12,18 @@ namespace NeeView
     /// <summary>
     /// アーカイブエントリ
     /// </summary>
-    public class ArchiveEntry : IRenameable
+    public partial class ArchiveEntry : IRenameable, IDisposable
     {
         /// <summary>
         /// Emptyインスタンス
         /// </summary>
         public static ArchiveEntry Empty { get; } = new ArchiveEntry(StaticFolderArchive.Default) { IsEmpty = true };
 
-
+        private string _rawEntryName = "";
         private FileProxy? _fileProxy;
+        public object? _data;
+        private PreExtractMemory.Key? _preExtractMemoryKey;
+        private bool _disposedValue;
 
 
         /// <summary>
@@ -30,6 +34,10 @@ namespace NeeView
         {
             Archiver = archiver;
         }
+
+
+        [Subscribable]
+        public event EventHandler? DataChanged;
 
 
         /// <summary>
@@ -62,10 +70,10 @@ namespace NeeView
         /// エントリデータ。
         /// 先読みデータ。テンポラリファイル名もしくはバイナリデータ
         /// </summary>
-        public object? Data { get; set; }
+        public object? Data => _data;
 
         /// <summary>
-        /// キャッシュデータ存在
+        /// エントリデータ存在？
         /// </summary>
         public bool HasCache => Data is not null;
 
@@ -89,7 +97,6 @@ namespace NeeView
         /// エントリ名(重複有)
         /// </summary>
         /// c\001.jpg
-        private string _rawEntryName = "";
         public string RawEntryName
         {
             get { return _rawEntryName; }
@@ -210,14 +217,21 @@ namespace NeeView
         }
 
         /// <summary>
-        /// エントリデータを先読みデータとして返す
+        /// エントリデータ設定
         /// </summary>
-        /// <returns></returns>
-        public byte[]? GetRawData()
+        /// <param name="value"></param>
+        public void SetData(object? value)
         {
-            return Data as byte[];
+            if (_data != value)
+            {
+                _preExtractMemoryKey?.Dispose();
+                _data = value;
+                _preExtractMemoryKey = (value is byte[] rawData) ? PreExtractMemory.Current.Open(rawData) : null;
+                DataChanged?.Invoke(this, EventArgs.Empty);
+            }
         }
 
+#if false
         /// <summary>
         /// データを読み込む
         /// </summary>
@@ -226,17 +240,16 @@ namespace NeeView
         /// <exception cref="IOException"></exception>
         public async Task<byte[]> LoadAsync(CancellationToken token)
         {
-            var data = GetRawData();
-            if (data is not null) return data;
+            if (Data is byte[] rawData) return rawData;
 
-            using var stream = OpenEntry();
+            using var stream = await OpenEntryAsync(token);
             var length = stream.Length;
             var buffer = new byte[length];
             var readSize = await stream.ReadAsync(buffer, 0, (int)length, token);
             if (readSize < length) throw new IOException("This file size is too large to read.");
             return buffer;
         }
-
+#endif
 
         /// <summary>
         /// ファイルシステムでのパスを返す
@@ -248,12 +261,21 @@ namespace NeeView
         }
 
         /// <summary>
-        /// ストリームを開く
+        /// ストリームを開く (非推奨)
         /// </summary>
         /// <returns>Stream</returns>
         public Stream OpenEntry()
         {
-            return Archiver.OpenStream(this);
+            return Archiver.OpenStreamAsync(this, CancellationToken.None).Result;
+        }
+
+        /// <summary>
+        /// ストリームを開く
+        /// </summary>
+        /// <returns>Stream</returns>
+        public async Task<Stream> OpenEntryAsync(CancellationToken token)
+        {
+            return await Archiver.OpenStreamAsync(this, token);
         }
 
         /// <summary>
@@ -261,11 +283,11 @@ namespace NeeView
         /// </summary>
         /// <param name="exportFileName">出力ファイル名</param>
         /// <param name="isOverwrite">上書き許可フラグ</param>
-        public void ExtractToFile(string exportFileName, bool isOverwrite)
+        public async Task ExtractToFileAsync(string exportFileName, bool isOverwrite, CancellationToken token)
         {
             if (exportFileName is null) throw new ArgumentNullException(nameof(exportFileName));
 
-            Archiver.ExtractToFile(this, exportFileName, isOverwrite);
+            await Archiver.ExtractToFileAsync(this, exportFileName, isOverwrite, token);
         }
 
 
@@ -275,27 +297,64 @@ namespace NeeView
         /// </summary>
         /// <param name="entry"></param>
         /// <param name="isKeepFileName">エントリー名をファイル名にする</param>
-        public FileProxy GetFileProxy(bool isKeepFileName = false)
+        public async Task<FileProxy> GetFileProxyAsync(bool isKeepFileName, CancellationToken token)
         {
-            _fileProxy = _fileProxy ?? CreateFileProxy(isKeepFileName);
+            _fileProxy = _fileProxy ?? await CreateFileProxyAsync(new TempArchiveEntryNamePolicy(isKeepFileName, "entry"), false, token);
             return _fileProxy;
         }
 
-        private FileProxy CreateFileProxy(bool isKeepFileName)
+        /// <summary>
+        /// テンポラリアーカイブエントリを得る。
+        /// 場合によっては存在するファイルをそのまま返す。
+        /// </summary>
+        /// <param name="fileNamePolicy">ファイル名ポリシ―</param>
+        /// <param name="isOverwrite">上書き許可</param>
+        /// <returns>ファイル</returns>
+        public async Task<FileProxy> CreateFileProxyAsync(TempArchiveEntryNamePolicy fileNamePolicy, bool isOverwrite, CancellationToken token)
         {
             var targetPath = Link ?? GetFileSystemPath();
             if (targetPath is not null && (this.Archiver is FolderArchive || this.Archiver is MediaArchiver || IsFileSystem))
             {
                 return new FileProxy(targetPath);
             }
-            else
+
+            await WaitPreExtractAsync(token);
+
+            var tempFileName = fileNamePolicy.Create(this);
+
+            if (this.Data is string fileName)
             {
-                string tempFileName = isKeepFileName
-                    ? Temporary.Current.CreateTempFileName(LoosePath.GetFileName(EntryName))
-                    : Temporary.Current.CreateCountedTempFileName("entry", System.IO.Path.GetExtension(EntryName));
-                ExtractToFile(tempFileName, false);
+                if (fileNamePolicy.IsKeepFileName && fileName != tempFileName)
+                {
+                    await FileIO.CopyFileAsync(fileName, tempFileName, isOverwrite, token);
+                    return new TempFile(fileName);
+                }
+                else
+                {
+                    return new FileProxy(fileName);
+                }
+            }
+            else if (this.Data is byte[] rawData)
+            {
+                FileIO.CheckOverwrite(tempFileName, isOverwrite);
+                await File.WriteAllBytesAsync(tempFileName, rawData, token);
                 return new TempFile(tempFileName);
             }
+            else
+            {
+                await ExtractToFileAsync(tempFileName, isOverwrite, token);
+                return new TempFile(tempFileName);
+            }
+        }
+
+        /// <summary>
+        /// エントリ単位で事前展開完了を待機する
+        /// </summary>
+        /// <param name="token"></param>
+        /// <returns></returns>
+        public async Task WaitPreExtractAsync(CancellationToken token)
+        {
+            await Archiver.WaitPreExtractAsync(this, token);
         }
 
         /// <summary>
@@ -417,6 +476,25 @@ namespace NeeView
         {
             return await Archiver.RenameAsync(this, name);
         }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!_disposedValue)
+            {
+                if (disposing)
+                {
+                    _preExtractMemoryKey?.Dispose();
+                }
+                _disposedValue = true;
+            }
+        }
+
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
     }
+
 }
 

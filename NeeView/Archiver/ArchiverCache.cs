@@ -131,7 +131,7 @@ namespace NeeView
                 {
                     if (item.TryGetTarget(out var archiver))
                     {
-                        Debug.WriteLine($"ArchiveCache[{count}]: {archiver.SystemPath} => {archiver.TempFile?.Path}");
+                        Debug.WriteLine($"ArchiveCache[{count}]: {archiver.SystemPath} => {archiver.ProxyFile?.Path}");
                     }
                     else
                     {

@@ -1,7 +1,6 @@
 ﻿using NeeLaboratory.Threading.Tasks;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -12,17 +11,16 @@ namespace NeeView
     /// <summary>
     /// アーカイバー基底クラス
     /// </summary>
-    public abstract class Archiver
+    public abstract class Archiver : IDisposable
     {
         /// <summary>
         /// ArchiveEntry Cache
         /// </summary>
         private List<ArchiveEntry>? _entries;
 
-        /// <summary>
-        /// 事前展開フォルダー
-        /// </summary>
-        private TempDirectory? _preExtractDirectory;
+        private readonly ArchivePreExtractor _preExtractor;
+        private bool _disposedValue;
+
 
         /// <summary>
         /// コンストラクタ
@@ -31,6 +29,8 @@ namespace NeeView
         /// <param name="source">基となるエントリ</param>
         public Archiver(string path, ArchiveEntry? source)
         {
+            _preExtractor = new ArchivePreExtractor(this);
+
             Path = path;
 
             if (source != null)
@@ -75,7 +75,7 @@ namespace NeeView
         public string Path { get; protected set; }
 
         // 内部アーカイブのテンポラリファイル。インスタンス保持用
-        public TempFile? TempFile { get; set; }
+        public FileProxy? ProxyFile { get; set; }
 
         // ファイルシステムの場合は true
         public virtual bool IsFileSystem { get; } = false;
@@ -250,50 +250,59 @@ namespace NeeView
         /// <summary>
         /// エントリーのストリームを取得
         /// </summary>
-        public Stream OpenStream(ArchiveEntry entry)
+        public async Task<Stream> OpenStreamAsync(ArchiveEntry entry, CancellationToken token)
         {
             if (entry.Id < 0) throw new ApplicationException("Cannot open this entry: " + entry.EntryName);
 
+            await WaitPreExtractAsync(entry, token);
+
             if (entry.Data is byte[] rawData)
             {
-                return new MemoryStream(rawData);
+                return new MemoryStream(rawData, 0, rawData.Length, false, true);
             }
-            if (entry.Data is string fileName)
+            else if (entry.Data is string fileName)
             {
                 return new FileStream(fileName, FileMode.Open, FileAccess.Read);
             }
             else
             {
-                return OpenStreamInner(entry);
+                return await OpenStreamInnerAsync(entry, token);
             }
         }
 
         /// <summary>
         /// エントリのストリームを取得 (Inner)
         /// </summary>
-        protected abstract Stream OpenStreamInner(ArchiveEntry entry);
+        protected abstract Task<Stream> OpenStreamInnerAsync(ArchiveEntry entry, CancellationToken token);
 
         /// <summary>
         /// エントリーをファイルとして出力
         /// </summary>
-        public void ExtractToFile(ArchiveEntry entry, string exportFileName, bool isOverwrite)
+        public async Task ExtractToFileAsync(ArchiveEntry entry, string exportFileName, bool isOverwrite, CancellationToken token)
         {
             if (entry.Id < 0) throw new ApplicationException("Cannot open this entry: " + entry.EntryName);
 
+            await WaitPreExtractAsync(entry, token);
+
             if (entry.Data is string fileName)
             {
-                File.Copy(fileName, exportFileName, isOverwrite);
+                await FileIO.CopyFileAsync(fileName, exportFileName, isOverwrite, token);
+            }
+            else if (entry.Data is byte[] rawData)
+            {
+                FileIO.CheckOverwrite(exportFileName, isOverwrite);
+                await File.WriteAllBytesAsync(exportFileName, rawData, token);
             }
             else
             {
-                ExtractToFileInner(entry, exportFileName, isOverwrite);
+                await ExtractToFileInnerAsync(entry, exportFileName, isOverwrite, token);
             }
         }
 
         /// <summary>
         /// エントリをファイルとして出力 (Inner)
         /// </summary>
-        protected abstract void ExtractToFileInner(ArchiveEntry entry, string exportFileName, bool isOverwrite);
+        protected abstract Task ExtractToFileInnerAsync(ArchiveEntry entry, string exportFileName, bool isOverwrite, CancellationToken token);
 
 
         /// <summary>
@@ -352,41 +361,37 @@ namespace NeeView
         /// <summary>
         /// 事前展開する？
         /// </summary>
-        public virtual async Task<bool> CanPreExtractAsync(CancellationToken token)
+        public virtual bool CanPreExtract()
         {
-            await Task.CompletedTask;
             return false;
         }
 
         /// <summary>
-        /// 事前展開処理
+        /// 事前展開
         /// </summary>
-        public async Task PreExtractAsync(CancellationToken token)
-        {
-            if (_preExtractDirectory != null) return;
-
-            var directory = Temporary.Current.CreateCountedTempFileName("arc", "");
-            Directory.CreateDirectory(directory);
-
-            await PreExtractInnerAsync(directory, token);
-
-            _preExtractDirectory = new TempDirectory(directory);
-        }
-
-        /// <summary>
-        /// 事前展開 (Inner)
-        /// </summary>
-        public virtual async Task PreExtractInnerAsync(string directory, CancellationToken token)
+        public virtual async Task PreExtractAsync(string directory, CancellationToken token)
         {
             var entries = await GetEntriesAsync(token);
             foreach (var entry in entries)
             {
+                token.ThrowIfCancellationRequested();
                 if (entry.IsDirectory) continue;
                 var filename = $"{entry.Id:000000}{System.IO.Path.GetExtension(entry.EntryName)}";
                 var path = System.IO.Path.Combine(directory, filename);
-                entry.ExtractToFile(path, true);
-                entry.Data = path;
+                await entry.ExtractToFileAsync(path, true, token);
+                entry.SetData(path);
             }
+        }
+
+        /// <summary>
+        /// エントリの事前展開完了を待機
+        /// </summary>
+        /// <param name="entry"></param>
+        /// <param name="token"></param>
+        /// <returns></returns>
+        public async Task WaitPreExtractAsync(ArchiveEntry entry, CancellationToken token)
+        {
+            await _preExtractor.WaitPreExtractAsync(entry, token);
         }
 
         // エントリー実体のファイルシステム判定
@@ -394,7 +399,6 @@ namespace NeeView
         {
             return IsFileSystem || entry.Link != null;
         }
-
 
         /// <summary>
         /// exists?
@@ -451,6 +455,31 @@ namespace NeeView
         {
             return await Task.FromResult(false);
         }
+
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!_disposedValue)
+            {
+                if (disposing)
+                {
+                }
+                _preExtractor.Dispose();
+                _disposedValue = true;
+            }
+        }
+
+        ~Archiver()
+        {
+            Dispose(disposing: false);
+        }
+
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
     }
+
 }
 

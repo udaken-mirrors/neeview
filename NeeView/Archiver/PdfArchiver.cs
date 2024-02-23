@@ -10,7 +10,7 @@ namespace NeeView
         }
 
         public abstract Size GetSourceSize(ArchiveEntry entry);
-        public abstract System.Drawing.Image CraeteBitmap(ArchiveEntry entry, Size size);
+        public abstract System.Drawing.Image CreateBitmap(ArchiveEntry entry, Size size);
         public abstract BitmapSource CreateBitmapSource(ArchiveEntry entry, Size size);
         public abstract byte[] CreateBitmapData(ArchiveEntry entry, Size size, BitmapCreateSetting setting, BitmapImageFormat format, int quality);
     }

@@ -24,13 +24,13 @@ namespace NeeView
         /// <summary>
         /// ページ群の実ファイルリストを取得
         /// </summary>
-        public static List<string> CreateRealizedFilePathList(IEnumerable<Page> pages, CancellationToken token)
+        public static async Task<List<string>> CreateRealizedFilePathListAsync(IEnumerable<Page> pages, CancellationToken token)
         {
-            return CreateFilePathList(pages, MultiPagePolicy.All, ArchivePolicy.SendExtractFile, token);
+            return await CreateFilePathListAsync(pages, MultiPagePolicy.All, ArchivePolicy.SendExtractFile, token);
         }
 
 
-        public static List<string> CreateFilePathList(IEnumerable<Page> pages, MultiPagePolicy multiPagePolicy, ArchivePolicy archivePolicy, CancellationToken token)
+        public static async Task<List<string>> CreateFilePathListAsync(IEnumerable<Page> pages, MultiPagePolicy multiPagePolicy, ArchivePolicy archivePolicy, CancellationToken token)
         {
             var files = new List<string>();
 
@@ -71,7 +71,8 @@ namespace NeeView
                         case ArchivePolicy.SendExtractFile:
                             if (!page.Content.ArchiveEntry.IsArchiveDirectory())
                             {
-                                files.Add(page.ArchiveEntry.GetFileProxy(true).Path);
+                                var proxy = await page.ArchiveEntry.GetFileProxyAsync(true, token);
+                                files.Add(proxy.Path);
                             }
                             else
                             {

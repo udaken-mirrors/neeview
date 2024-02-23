@@ -42,7 +42,7 @@ namespace NeeView
 
         private bool _disposedValue = false;
 
-        protected virtual void Dispose(bool disposing)
+        protected override void Dispose(bool disposing)
         {
             if (!_disposedValue)
             {
@@ -64,6 +64,8 @@ namespace NeeView
                 }
 
                 _disposedValue = true;
+
+                base.Dispose(disposing);
             }
         }
 
@@ -72,11 +74,6 @@ namespace NeeView
             Dispose(false);
         }
 
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
         #endregion
     }
 }

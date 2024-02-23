@@ -32,7 +32,7 @@ namespace NeeView
             }
             else
             {
-                return ArchiveEntry.OpenEntry();
+                return ArchiveEntry.OpenEntry(); // TODO: async
             }
         }
 
@@ -44,7 +44,7 @@ namespace NeeView
             }
             else
             {
-                using var stream = ArchiveEntry.OpenEntry();
+                using var stream = ArchiveEntry.OpenEntry(); // TODO: async
                 return stream.ToSpan(0, (int)ArchiveEntry.Length);
             }
         }
@@ -54,7 +54,7 @@ namespace NeeView
             // 展開処理の重複を避けるため、ファイルシステムエントリ以外はキャッシュを作る
             if (_cache.Array is not null || ArchiveEntry.HasCache || ArchiveEntry.IsFileSystem) return;
 
-            using var stream = ArchiveEntry.OpenEntry();
+            using var stream = ArchiveEntry.OpenEntry(); // TODO: async
 
             // メモリストリームであればバッファを直接取得
             if (stream is MemoryStream memoryStream)

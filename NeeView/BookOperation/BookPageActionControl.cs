@@ -101,9 +101,14 @@ namespace NeeView
             }
         }
 
-
         // 外部アプリで開く
         public void OpenApplication(OpenExternalAppCommandParameter parameter)
+        {
+            _ = OpenApplicationAsync(parameter, CancellationToken.None);
+        }
+
+        // 外部アプリで開く
+        public async Task OpenApplicationAsync(OpenExternalAppCommandParameter parameter, CancellationToken token)
         {
             var book = this._book;
             if (book is null) return;
@@ -114,7 +119,7 @@ namespace NeeView
                 {
                     var external = new ExternalAppUtility();
                     var pages = CollectPages(book, parameter.MultiPagePolicy);
-                    external.Call(pages, parameter, CancellationToken.None);
+                    await external.CallAsync(pages, parameter, token);
                 }
                 catch (OperationCanceledException)
                 {
@@ -156,6 +161,12 @@ namespace NeeView
         // クリップボードにコピー
         public void CopyToClipboard(CopyFileCommandParameter parameter)
         {
+            _ = CopyToClipboardAsync(parameter, CancellationToken.None);
+        }
+
+        // クリップボードにコピー
+        public async Task CopyToClipboardAsync(CopyFileCommandParameter parameter, CancellationToken token)
+        {
             var book = this._book;
             if (book is null) return;
 
@@ -164,7 +175,7 @@ namespace NeeView
                 try
                 {
                     var pages = CollectPages(book, parameter.MultiPagePolicy);
-                    ClipboardUtility.Copy(pages, parameter);
+                    await ClipboardUtility.CopyAsync(pages, parameter, token);
                 }
                 catch (Exception e)
                 {
@@ -221,6 +232,6 @@ namespace NeeView
             }
         }
 
-#endregion ページ出力
+        #endregion ページ出力
     }
 }

@@ -8,6 +8,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 
@@ -26,6 +27,38 @@ namespace NeeView
         public static bool ExistsPath(string path)
         {
             return File.Exists(path) || Directory.Exists(path);
+        }
+
+        /// <summary>
+        /// ファイル上書きチェック
+        /// </summary>
+        /// <param name="path"></param>
+        /// <param name="isOverwrite"></param>
+        /// <exception cref="IOException"></exception>
+        public static void CheckOverwrite(string path, bool isOverwrite)
+        {
+            if (!isOverwrite && File.Exists(path)) throw new IOException($"File already exists: {path}");
+        }
+
+        /// <summary>
+        /// ファイル上書き前処理
+        /// </summary>
+        /// <param name="path"></param>
+        /// <param name="isOverwrite"></param>
+        /// <exception cref="IOException"></exception>
+        public static void ReadyOverwrite(string path, bool isOverwrite)
+        {
+            if (File.Exists(path))
+            {
+                if (isOverwrite)
+                {
+                    File.Delete(path);
+                }
+                else
+                {
+                    throw new IOException($"File already exists: {path}");
+                }
+            }
         }
 
         /// <summary>
@@ -97,6 +130,22 @@ namespace NeeView
         }
 
         #region Copy
+
+        /// <summary>
+        /// 非同期ファイルコピー
+        /// </summary>
+        /// <param name="sourceFileName"></param>
+        /// <param name="destFileName"></param>
+        /// <param name="isOverwrite"></param>
+        /// <param name="token"></param>
+        /// <returns></returns>
+        public static async Task CopyFileAsync(string sourceFileName, string destFileName, bool isOverwrite, CancellationToken token)
+        {
+            var mode = isOverwrite ? FileMode.Create : FileMode.CreateNew;
+            using var source = new FileStream(sourceFileName, FileMode.Open, FileAccess.Read);
+            using var destination = new FileStream(destFileName, mode, FileAccess.Write);
+            await source.CopyToAsync(destination, token);
+        }
 
         /// <summary>
         /// ファイル、ディレクトリーを指定のフォルダーにコピーする

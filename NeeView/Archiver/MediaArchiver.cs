@@ -45,9 +45,9 @@ namespace NeeView
             return Config.Current.Archive.Media.IsEnabled;
         }
 
-        protected override Stream OpenStreamInner(ArchiveEntry entry)
+        protected override async Task<Stream> OpenStreamInnerAsync(ArchiveEntry entry, CancellationToken token)
         {
-            return new FileStream(GetFileSystemPath(entry), FileMode.Open, FileAccess.Read);
+            return await Task.FromResult(new FileStream(GetFileSystemPath(entry), FileMode.Open, FileAccess.Read));
         }
 
         public override string GetFileSystemPath(ArchiveEntry entry)
@@ -56,9 +56,9 @@ namespace NeeView
             return Path;
         }
 
-        protected override void ExtractToFileInner(ArchiveEntry entry, string exportFileName, bool isOverwrite)
+        protected override async Task ExtractToFileInnerAsync(ArchiveEntry entry, string exportFileName, bool isOverwrite, CancellationToken token)
         {
-            File.Copy(GetFileSystemPath(entry), exportFileName, isOverwrite);
+            await FileIO.CopyFileAsync(GetFileSystemPath(entry), exportFileName, isOverwrite, token);
         }
     }
 }

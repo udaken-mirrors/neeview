@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace NeeView
 {
@@ -34,27 +35,27 @@ namespace NeeView
         /// クリップボードにコピー
         /// </summary>
         /// <param name="pages"></param>
-        public static void Copy(List<Page> pages)
+        public static async Task CopyAsync(List<Page> pages, CancellationToken token)
         {
-            Copy(pages, CreateCopyParameter());
+            await CopyAsync(pages, CreateCopyParameter(), token);
         }
 
-        public static void Copy(List<Page> pages, CopyFileCommandParameter parameter)
+        public static async Task CopyAsync(List<Page> pages, CopyFileCommandParameter parameter, CancellationToken token)
         {
             var data = new System.Windows.DataObject();
 
-            if (SetData(data, pages, parameter, CancellationToken.None))
+            if (await SetDataAsync(data, pages, parameter, token))
             {
                 System.Windows.Clipboard.SetDataObject(data);
             }
         }
 
-        public static bool SetData(System.Windows.DataObject data, List<Page> pages, CancellationToken token)
+        public static async Task<bool> SetDataAsync(System.Windows.DataObject data, List<Page> pages, CancellationToken token)
         {
-            return SetData(data, pages, CreateCopyParameter(), token);
+            return await SetDataAsync(data, pages, CreateCopyParameter(), token);
         }
 
-        public static bool SetData(System.Windows.DataObject data, List<Page> pages, CopyFileCommandParameter parameter, CancellationToken token)
+        public static async Task<bool> SetDataAsync(System.Windows.DataObject data, List<Page> pages, CopyFileCommandParameter parameter, CancellationToken token)
         {
             bool result = false;
 
@@ -64,7 +65,7 @@ namespace NeeView
                 result = true;
             }
 
-            var files = PageUtility.CreateFilePathList(pages, parameter.MultiPagePolicy, parameter.ArchivePolicy, token);
+            var files = await PageUtility.CreateFilePathListAsync(pages, parameter.MultiPagePolicy, parameter.ArchivePolicy, token);
 
             if (files.Count > 0)
             {
@@ -73,7 +74,7 @@ namespace NeeView
                 if (parameter.TextCopyPolicy != TextCopyPolicy.None)
                 {
                     var paths = (parameter.ArchivePolicy == ArchivePolicy.SendExtractFile && parameter.TextCopyPolicy == TextCopyPolicy.OriginalPath)
-                        ? PageUtility.CreateFilePathList(pages, parameter.MultiPagePolicy, ArchivePolicy.SendArchivePath, token)
+                        ? await PageUtility.CreateFilePathListAsync(pages, parameter.MultiPagePolicy, ArchivePolicy.SendArchivePath, token)
                         : files;
                     data.SetData(System.Windows.DataFormats.UnicodeText, string.Join(System.Environment.NewLine, paths));
                 }

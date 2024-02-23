@@ -157,14 +157,14 @@ namespace NeeView
             return items != null && items.Any() && CanCopyToFolder(items);
         }
 
-        public void OpenExternalApp_Executed(object sender, ExecutedRoutedEventArgs e)
+        public async void OpenExternalApp_Executed(object sender, ExecutedRoutedEventArgs e)
         {
             if (e.Parameter is not ExternalApp externalApp) return;
 
             var items = GetSelectedPages(sender);
             if (items != null && items.Any())
             {
-                externalApp.Execute(items);
+                await externalApp.Execute(items, CancellationToken.None);
             }
         }
 
@@ -177,7 +177,7 @@ namespace NeeView
             e.CanExecute = items != null && items.Any() && CanCopyToFolder(items);
         }
 
-        public void Copy_Exec(object sender, ExecutedRoutedEventArgs e)
+        public async void Copy_Exec(object sender, ExecutedRoutedEventArgs e)
         {
             var items = GetSelectedPages(sender);
 
@@ -186,7 +186,7 @@ namespace NeeView
                 try
                 {
                     App.Current.MainWindow.Cursor = Cursors.Wait;
-                    Copy(items);
+                    await CopyAsync(items, CancellationToken.None);
                 }
                 finally
                 {
@@ -197,9 +197,9 @@ namespace NeeView
             e.Handled = true;
         }
 
-        private static void Copy(List<Page> pages)
+        private static async Task CopyAsync(List<Page> pages, CancellationToken token)
         {
-            ClipboardUtility.Copy(pages);
+            await ClipboardUtility.CopyAsync(pages, token);
         }
 
         private static bool CanCopyToFolder(IEnumerable<Page> pages)
@@ -207,9 +207,9 @@ namespace NeeView
             return PageUtility.CanCreateRealizedFilePathList(pages);
         }
 
-        private static void CopyToFolder(IEnumerable<Page> pages, string destDirPath)
+        private static async Task CopyToFolderAsync(IEnumerable<Page> pages, string destDirPath, CancellationToken token)
         {
-            var paths = PageUtility.CreateRealizedFilePathList(pages, CancellationToken.None);
+            var paths = await PageUtility.CreateRealizedFilePathListAsync(pages, token);
             FileIO.CopyToFolder(paths, destDirPath);
         }
 
@@ -228,7 +228,7 @@ namespace NeeView
             return items != null && items.Any() && CanCopyToFolder(items);
         }
 
-        public void CopyToFolder_Execute(object sender, ExecutedRoutedEventArgs e)
+        public async void CopyToFolder_Execute(object sender, ExecutedRoutedEventArgs e)
         {
             if (e.Parameter is not DestinationFolder folder) return;
 
@@ -243,7 +243,7 @@ namespace NeeView
                 if (items != null && items.Any())
                 {
                     ////Debug.WriteLine($"CopyToFolder: to {folder.Path}");
-                    CopyToFolder(items, folder.Path);
+                    await CopyToFolderAsync(items, folder.Path, CancellationToken.None);
                 }
             }
             catch (OperationCanceledException)

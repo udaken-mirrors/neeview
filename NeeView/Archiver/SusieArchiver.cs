@@ -94,9 +94,11 @@ namespace NeeView
 
 
         // エントリーのストリームを得る
-        protected override Stream OpenStreamInner(ArchiveEntry entry)
+        protected override async Task<Stream> OpenStreamInnerAsync(ArchiveEntry entry, CancellationToken token)
         {
             if (entry.Id < 0) throw new ApplicationException("Cannot open this entry: " + entry.EntryName);
+
+            await Task.CompletedTask; // TODO: async
 
             lock (_lock)
             {
@@ -110,12 +112,14 @@ namespace NeeView
 
 
         // ファイルに出力する
-        protected override void ExtractToFileInner(ArchiveEntry entry, string extractFileName, bool isOverwrite)
+        protected override async Task ExtractToFileInnerAsync(ArchiveEntry entry, string extractFileName, bool isOverwrite, CancellationToken token)
         {
             if (entry.Id < 0) throw new ApplicationException("Cannot open this entry: " + entry.EntryName);
 
             var info = entry.Instance as SusieArchiveEntry ?? throw new InvalidCastException();
             var plugin = GetPlugin() ?? throw new SusieException("Cannot found archive plugin");
+
+            await Task.CompletedTask; // TODO: async
 
             // 16MB以上のエントリは直接ファイル出力を試みる
             if (entry.Length > 16 * 1024 * 1024)
@@ -175,11 +179,8 @@ namespace NeeView
         /// <summary>
         /// 事前展開？
         /// </summary>
-        public override async Task<bool> CanPreExtractAsync(CancellationToken token)
+        public override bool CanPreExtract()
         {
-            await Task.CompletedTask;
-
-            // NOTE: Susieプラグインの場合、サイズに関係なくプラグインに設定されたフラグでのみ判定
             var plugin = GetPlugin();
             return plugin != null && plugin.Plugin.IsPreExtract;
         }
