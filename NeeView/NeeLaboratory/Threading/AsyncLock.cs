@@ -21,6 +21,17 @@ namespace NeeLaboratory.Threading
             return new Handler(_semaphore);
         }
 
+        public IDisposable Lock()
+        {
+            return Lock(CancellationToken.None);
+        }
+
+        public IDisposable Lock(CancellationToken token)
+        {
+            _semaphore.Wait(token);
+            return new Handler(_semaphore);
+        }
+
         private sealed class Handler : IDisposable
         {
             private readonly SemaphoreSlim _semaphore;

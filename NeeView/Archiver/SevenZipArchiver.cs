@@ -18,19 +18,21 @@ namespace NeeView
     // TODO: [v] SolidArchive の場合は _accessor.ExtractFile() ではなく事前展開を実行し待機する。
     // TODO: [v] メディアファイルはファイル展開
     // TODO: [x] メディア判定とかアーカイブ判定とかはページの種類判定と同じものにせよ
+    // TODO: [x] ArchiveEntry の Dispose()
+    // TODO: [v] RawData開放が即時反映されない原因の調査 ... 攻撃的GCをしないといけないようだ
+    // TODO: [x] Solid判定の非同期化
+    // TODO: [x]↑アーカイブ初期化のキャンセル対応
+    // TODO: Book を閉じる前に PageFrameBox を閉じるようにする
     // TODO: [.] Archiver.Dispose() を呼び出す、もしくは使用停止した時点で PreExtract をキャンセルする
     // TODO: ↑サムネイル生成でも使用されている可能性が？リファレンスカウンタ方式にする？
     // TODO: ↑事前展開はブック用の機能とする。ブック以外からの展開は別処理にする。
-    // TODO: [x] ArchiveEntry の Dispose()
     // TODO: アーカイブをストリームソース対応にして、アーカイブの事前展開先をオンメモリ可能にする。
-    // TODO: Solid判定の非同期化
-    // TODO: ↑アーカイブ初期化のキャンセル対応
-    // TODO: Book を閉じる前に PageFrameBox を閉じるようにする
     // TODO: 圧縮サブフォルダーの動作確認
     // TODO: ArchiveEntry.OpenEntryAsync() 対応
     // TODO: SusieArchiver の TODO:Async
+    // --
     // TODO: 複雑なのでUnitTestしたい
-    // TODO: RawData開放が即時反映されない原因の調査
+    // TODO: GCのタイミング整備
     // TODO: 休眠書庫の寿命をどうしようか？
 
     /// <summary>
@@ -38,11 +40,9 @@ namespace NeeView
     /// </summary>
     public class SevenZipArchiver : Archiver
     {
-        private static readonly object _staticLock = new();
-
         private readonly SevenZipAccessor _accessor;
         private string? _format;
-        private bool? _isSolid;
+        private bool _isSolid;
 
 
         public SevenZipArchiver(string path, ArchiveEntry? source) : base(path, source)
@@ -73,19 +73,8 @@ namespace NeeView
             return true;
         }
 
-        // Solid archive ?
-        private bool IsSolid()
-        {
-            if (_isSolid.HasValue)
-            {
-                return _isSolid.Value;
-            }
-            else
-            {
-                NVDebug.AssertMTA();
-                return _accessor.IsSolid;
-            }
-        }
+        // [開発用] 初期化済？
+        private bool Initialized() => _format != null;
 
         // エントリーリストを得る
         protected override async Task<List<ArchiveEntry>> GetEntriesInnerAsync(CancellationToken token)
@@ -98,16 +87,9 @@ namespace NeeView
             var list = new List<ArchiveEntry>();
             var directories = new List<ArchiveEntry>();
 
-            ReadOnlyCollection<ArchiveFileInfo> entries;
-
-            // NOTE: 異なるスレッドで処理するととても重くなることがあるので排他処理にする
-            // TODO: アーカイブ初期化でエントリ生成しているが、キャンセルできるようにならないか？
-            lock (_staticLock)
-            {
-                _format = _accessor.Format;
-                _isSolid = _accessor.IsSolid;
-                entries = _accessor.ArchiveFileData;
-            }
+            // NOTE: 最初のアーカイブ初期化に時間がかかることがあるが、外部DLL内なのでキャンセルできない。
+            // NOTE: アーカイブの種類によっては進捗が取得できるようだ。
+            (_isSolid, _format, var entries) = _accessor.GetArchiveInfo();
 
             for (int id = 0; id < entries.Count; ++id)
             {
@@ -147,7 +129,8 @@ namespace NeeView
         {
             NVDebug.AssertMTA();
             Debug.Assert(entry is not null);
-            Debug.Assert(!IsSolid(), "Pre-extract, so no direct extract.");
+            Debug.Assert(Initialized());
+            Debug.Assert(!_isSolid, "Pre-extract, so no direct extract.");
             if (entry.Id < 0) throw new ArgumentException("Cannot open this entry: " + entry.EntryName);
 
             ThrowIfDisposed();
@@ -184,7 +167,8 @@ namespace NeeView
             NVDebug.AssertMTA();
             Debug.Assert(entry is not null);
             Debug.Assert(!string.IsNullOrEmpty(exportFileName));
-            Debug.Assert(!IsSolid(), "Pre-extract, so no direct extract.");
+            Debug.Assert(Initialized());
+            Debug.Assert(!_isSolid, "Pre-extract, so no direct extract.");
             if (entry.Id < 0) throw new ArgumentException("Cannot open this entry: " + entry.EntryName);
 
             if (_disposedValue) return;
@@ -202,7 +186,8 @@ namespace NeeView
         public override bool CanPreExtract()
         {
             if (_disposedValue) return false;
-            return IsSolid();
+            Debug.Assert(Initialized());
+            return _isSolid;
         }
 
         /// <summary>
@@ -217,12 +202,8 @@ namespace NeeView
             var entries = await GetEntriesAsync(token);
             token.ThrowIfCancellationRequested();
 
-            using (var extractor = new SevenZipExtractor(this.Path))
-            {
-                var preExtractor = new SevenZipHybridExtractor(extractor, directory, new SevenZipFileExtraction(entries));
-                await preExtractor.ExtractAsync(token);
-                token.ThrowIfCancellationRequested();
-            }
+            await _accessor.PreExtractAsync(directory, new SevenZipFileExtraction(entries), token);
+            token.ThrowIfCancellationRequested();
         }
 
 

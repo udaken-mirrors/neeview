@@ -65,7 +65,7 @@ namespace NeeView
 
             // done.
             GCSettings.LargeObjectHeapCompactionMode = GCLargeObjectHeapCompactionMode.CompactOnce;
-            GC.Collect();
+            GC.Collect(GC.MaxGeneration, GCCollectionMode.Aggressive);
             GC.WaitForPendingFinalizers();
 
             Debug.WriteLine($"[DebugTest] done: {sw.ElapsedMilliseconds:#,0}ms");

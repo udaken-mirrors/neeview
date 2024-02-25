@@ -1,9 +1,12 @@
-﻿using SevenZip;
+﻿using NeeLaboratory.Threading;
+using SevenZip;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace NeeView
 {
@@ -14,6 +17,9 @@ namespace NeeView
     public class SevenZipAccessor : IDisposable
     {
         private static bool _isLibraryInitialized;
+
+        // NOTE: 7zアクセス制限を解除して様子見 (static でなくして複数の 7z の並列アクセスを許可する)
+        private readonly AsyncLock _asyncLock = new();
 
         public static void InitializeLibrary()
         {
@@ -50,7 +56,7 @@ namespace NeeView
         {
             get
             {
-                lock (_lock)
+                using (_asyncLock.Lock())
                 {
                     if (_disposedValue) return "";
                     return GetExtractor().Format.ToString();
@@ -62,7 +68,7 @@ namespace NeeView
         {
             get
             {
-                lock (_lock)
+                using (_asyncLock.Lock())
                 {
                     if (_disposedValue) return false;
                     return GetExtractor().IsSolid;
@@ -75,7 +81,7 @@ namespace NeeView
         {
             get
             {
-                lock (_lock)
+                using (_asyncLock.Lock())
                 {
                     if (_disposedValue) return new List<ArchiveFileInfo>().AsReadOnly();
                     // TODO: 重い処理。キャンセルできるようにしたい
@@ -108,22 +114,83 @@ namespace NeeView
         /// </summary>
         public void Unlock()
         {
-            if (_disposedValue) return;
-
-            lock (_lock)
+            using (_asyncLock.Lock())
             {
-                _extractor?.Dispose();
-                _extractor = null;
+                if (_disposedValue) return;
+                lock (_lock)
+                {
+                    _extractor?.Dispose();
+                    _extractor = null;
+                }
             }
         }
 
+#if false
+        /// <summary>
+        /// アーカイブ初期化 (未使用)
+        /// </summary>
+        /// <remarks>
+        /// 他のアクセス時に自動的に呼ばれるアーカイブ情報収集を明示的に行う。
+        /// IArchiveOpenCallback をうまく使えば進捗を取得できる。7zはなぜか取得できない。
+        /// </remarks>
+        public void GetArchiveInfo()
+        {
+            using (_asyncLock.Lock())
+            {
+                if (_disposedValue) return;
+                GetExtractor().GetArchiveInfo(); // 未定義。IArchiveOpenCallback を使用する改造を行う場合にまとめて実装
+            }
+        }
+#endif
 
+        /// <summary>
+        /// アーカイブ情報をまとめて取得
+        /// </summary>
+        /// <returns></returns>
+        public ArchiveInfo GetArchiveInfo()
+        {
+            using (_asyncLock.Lock())
+            {
+                if (_disposedValue) return new();
+                var extractor = GetExtractor();
+                return new(extractor.IsSolid, extractor.Format.ToString(), extractor.ArchiveFileData);
+            }
+        }
+
+        /// <summary>
+        /// アーカイブエントリを出力する
+        /// </summary>
+        /// <param name="index">エントリ番号</param>
+        /// <param name="extractStream">出力ストリーム</param>
         public void ExtractFile(int index, Stream extractStream)
         {
-            lock (_lock)
+            using (_asyncLock.Lock())
             {
                 if (_disposedValue) return;
                 GetExtractor().ExtractFile(index, extractStream);
+            }
+        }
+
+        /// <summary>
+        /// すべてのアーカイブエントリを出力する
+        /// </summary>
+        /// <remarks>
+        /// ソリッドアーカイブ用。
+        /// すべてのエントリを連続処理し、コールバックで各エントリの出力を制御する。
+        /// </remarks>
+        /// <param name="directory">ファイルの出力フォルダー</param>
+        /// <param name="fileExtraction">エントリの出力定義</param>
+        /// <param name="token"></param>
+        /// <returns></returns>
+        public async Task PreExtractAsync(string directory, SevenZipFileExtraction fileExtraction, CancellationToken token)
+        {
+            Debug.Assert(!string.IsNullOrEmpty(directory));
+
+            using (await _asyncLock.LockAsync(token))
+            {
+                if (_disposedValue) return;
+                var preExtractor = new SevenZipHybridExtractor(GetExtractor(), directory, fileExtraction);
+                await preExtractor.ExtractAsync(token);
             }
         }
 
@@ -166,6 +233,13 @@ namespace NeeView
             GC.SuppressFinalize(this);
         }
         #endregion
+    }
+
+
+
+    public record ArchiveInfo(bool IsSolid, string Format, ReadOnlyCollection<ArchiveFileInfo> ArchiveFileData)
+    {
+        public ArchiveInfo() : this(false, "", new List<ArchiveFileInfo>().AsReadOnly()) { }
     }
 
 }

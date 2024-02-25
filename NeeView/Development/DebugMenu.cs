@@ -152,7 +152,7 @@ namespace NeeView
         private static void DebugGC()
         {
             GCSettings.LargeObjectHeapCompactionMode = GCLargeObjectHeapCompactionMode.CompactOnce;
-            GC.Collect();
+            GC.Collect(GC.MaxGeneration, GCCollectionMode.Aggressive);
             GC.WaitForPendingFinalizers();
             GC.Collect();
         }
