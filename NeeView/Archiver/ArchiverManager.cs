@@ -1,14 +1,11 @@
 ﻿using NeeLaboratory.ComponentModel;
-using NeeView.Windows.Property;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Security.Permissions;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -300,6 +297,7 @@ namespace NeeView
                 if (archiver is not null && archiver.LastWriteTime == source.LastWriteTime && archiver.Length == source.Length)
                 {
                     ////Debug.WriteLine($"Archiver: Find cache: {systemPath}");
+                    archiver.Resume();
                     return archiver;
                 }
                 else

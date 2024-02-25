@@ -17,16 +17,14 @@ namespace NeeView
         private readonly Dictionary<int, SevenZipStreamInfo> _map = new();
         private CancellationToken _cancellationToken;
         private Stopwatch _stopwatch = new();
+        private ISevenZipFileExtraction _fileExtraction;
 
-
-        public SevenZipHybridExtractor(SevenZipExtractor extractor, string directory)
+        public SevenZipHybridExtractor(SevenZipExtractor extractor, string directory, ISevenZipFileExtraction fileExtraction)
         {
             _extractor = extractor;
             _directory = directory;
+            _fileExtraction = fileExtraction;
         }
-
-
-        public event EventHandler<SevenZipEntry>? TempFileExtractionFinished;
 
 
         public async Task ExtractAsync(CancellationToken token)
@@ -34,21 +32,21 @@ namespace NeeView
             _map.Clear();
             _cancellationToken = token;
 
+            Trace($"PreExtract: ...");
+            _stopwatch.Restart();
             try
             {
                 _extractor.FileExtractionStarted += Extractor_FileExtractionStarted;
                 _extractor.FileExtractionFinished += Extractor_FileExtractionFinished;
-                Trace($"PreExtract: ...");
-                _stopwatch.Restart();
                 await Task.Run(() => _extractor.ExtractArchive(GetStreamFunc));
-                _stopwatch.Stop();
-                Trace($"PreExtract: done. {_stopwatch.ElapsedMilliseconds}ms");
                 _cancellationToken.ThrowIfCancellationRequested();
             }
             finally
             {
                 _extractor.FileExtractionStarted -= Extractor_FileExtractionStarted;
                 _extractor.FileExtractionFinished -= Extractor_FileExtractionFinished;
+                _stopwatch.Stop();
+                Trace($"PreExtract: done. {_stopwatch.ElapsedMilliseconds}ms");
             }
         }
 
@@ -62,19 +60,28 @@ namespace NeeView
         {
             e.Cancel = _cancellationToken.IsCancellationRequested;
             if (e.Cancel) return;
-            
+
             if (_map.TryGetValue(e.FileInfo.Index, out SevenZipStreamInfo? item))
             {
                 _map.Remove(e.FileInfo.Index);
-                var data = item.Data;
                 item.Stream.Dispose();
-                Trace($"Extract.Finished: {e.FileInfo}, {e.FileInfo.Size:N0}byte, {_stopwatch.ElapsedMilliseconds}ms");
-                TempFileExtractionFinished?.Invoke(sender, new SevenZipEntry(item.FileInfo, item.Data));
+                //Trace($"Extract.Finished: {e.FileInfo}, {e.FileInfo.Size:N0}byte, {_stopwatch.ElapsedMilliseconds}ms");
+                if (item.Data is not null)
+                {
+                    Debug.Assert(item.Data is not byte[] rawData || (int)e.FileInfo.Size == rawData.Length);
+                    _fileExtraction.SetData(e.FileInfo, item.Data);
+                }
             }
         }
 
-        private Stream GetStreamFunc(ArchiveFileInfo info)
+        private Stream? GetStreamFunc(ArchiveFileInfo info)
         {
+            // 既にデータが存在しているときはスキップ
+            if (_fileExtraction.DataExists(info))
+            {
+                return null;
+            }
+
             // 展開先をメモリがファイルかを判断する
             // TODO: ArchiveをStream対応させ、オンメモリ展開も選択できるようにする
             SevenZipStreamInfo streamInfo;
@@ -85,7 +92,7 @@ namespace NeeView
             }
             else
             {
-                streamInfo = new MemorySevenZipStreamInfo(info, new MemoryStream());
+                streamInfo = new MemorySevenZipStreamInfo(info, new MemoryStream((int)info.Size));
             }
             _map.Add(info.Index, streamInfo);
             return streamInfo.Stream;
@@ -127,6 +134,14 @@ namespace NeeView
     }
 
 
+
+    public interface ISevenZipFileExtraction
+    {
+        bool DataExists(ArchiveFileInfo info);
+        void SetData(ArchiveFileInfo info, object data);
+    }
+
+
     public record struct SevenZipEntry(ArchiveFileInfo FileInfo, object? Data);
 
 
@@ -149,7 +164,7 @@ namespace NeeView
         {
         }
 
-        public override object? Data => ((MemoryStream)Stream).ToArray();
+        public override object? Data => ((MemoryStream)Stream).GetBuffer();
     }
 
     public class TempFileSevenZipStreamInfo : SevenZipStreamInfo

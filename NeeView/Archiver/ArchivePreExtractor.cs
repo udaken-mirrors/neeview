@@ -16,9 +16,10 @@ namespace NeeView
     public partial class ArchivePreExtractor : IDisposable
     {
         private readonly Archiver _archiver;
-        private readonly CancellationTokenSource _cancellationTokenSource = new();
+        private CancellationTokenSource _cancellationTokenSource = new();
         private ArchivePreExtractState _state;
         private TempDirectory? _extractDirectory;
+        private readonly object _lock = new();
         private bool _disposedValue;
 
 
@@ -32,20 +33,17 @@ namespace NeeView
         [Subscribable]
         public event EventHandler<PreExtractStateChangedEventArgs>? StateChanged;
 
+        [Subscribable]
+        public event EventHandler<PreExtractExceptionEventArgs>? ExtractCanceled;
 
-        public ArchivePreExtractState State
-        {
-            get { return _state; }
-            private set
-            {
-                if (_state != value)
-                {
-                    _state = value;
-                    Trace($"State = {value}");
-                    StateChanged?.Invoke(this, new PreExtractStateChangedEventArgs(value));
-                }
-            }
-        }
+        [Subscribable]
+        public event EventHandler<PreExtractExceptionEventArgs>? ExtractFailed;
+
+        [Subscribable]
+        public event EventHandler? ExtractCompleted;
+
+
+        public ArchivePreExtractState State => _state;
 
 
         protected virtual void Dispose(bool disposing)
@@ -72,6 +70,35 @@ namespace NeeView
         }
 
 
+        public void Sleep()
+        {
+            if (_disposedValue) return;
+
+            _cancellationTokenSource.Cancel();
+            SetState(ArchivePreExtractState.Sleep, true);
+        }
+
+        public void Resume()
+        {
+            if (_disposedValue) return;
+
+            _cancellationTokenSource.Cancel();
+            _cancellationTokenSource = new CancellationTokenSource();
+            SetState(ArchivePreExtractState.None, true);
+        }
+
+
+        private void SetState(ArchivePreExtractState state, bool force = false)
+        {
+            if (_state != state && (force || !_cancellationTokenSource.IsCancellationRequested))
+            {
+                _state = state;
+                Trace($"State = {state}");
+                StateChanged?.Invoke(this, new PreExtractStateChangedEventArgs(state));
+            }
+        }
+
+
         /// <summary>
         /// 可能であれば状態を初期化する
         /// </summary>
@@ -79,7 +106,7 @@ namespace NeeView
         {
             if (State.IsReady())
             {
-                State = ArchivePreExtractState.None;
+                SetState(ArchivePreExtractState.None);
             }
         }
 
@@ -89,16 +116,32 @@ namespace NeeView
             return _archiver.CanPreExtract();
         }
 
-        private async Task PreExtractAsync(CancellationToken token)
-        {
-            Debug.Assert(CanPreExtract());
-            if (!State.IsReady()) return;
 
-            State = ArchivePreExtractState.Extracting;
-            using var linked = CancellationTokenSource.CreateLinkedTokenSource(token, _cancellationTokenSource.Token);
+        /// <summary>
+        /// 事前展開メイン
+        /// </summary>
+        /// <param name="token"></param>
+        /// <returns>事前展開が実行され完了すれば true, 実行されなければ false</returns>
+        /// <exception cref="ObjectDisposedException"></exception>
+        /// <exception cref="InvalidOperationException">スリープ状態です</exception>
+        private async Task<bool> PreExtractAsync(CancellationToken token)
+        {
+            if (_disposedValue) throw new ObjectDisposedException(GetType().FullName);
+
+            Debug.Assert(CanPreExtract());
+
+            // NOTE: 実行は同時に１つのみ
+            lock (_lock)
+            {
+                if (State == ArchivePreExtractState.Sleep) throw new InvalidOperationException("PreExtractor is asleep");
+                if (!State.IsReady()) return false;
+                SetState(ArchivePreExtractState.Extracting);
+            }
 
             try
             {
+                using var linked = CancellationTokenSource.CreateLinkedTokenSource(token, _cancellationTokenSource.Token);
+
                 var sw = Stopwatch.StartNew();
                 Trace($"PreExtract ...");
                 if (_extractDirectory is null)
@@ -112,16 +155,56 @@ namespace NeeView
                 await _archiver.PreExtractAsync(_extractDirectory.Path, linked.Token);
                 sw.Stop();
                 Trace($"PreExtract done. {sw.ElapsedMilliseconds}ms");
-                State = ArchivePreExtractState.Done;
+                SetState(ArchivePreExtractState.Done);
+                return true;
             }
             catch (OperationCanceledException)
             {
-                State = ArchivePreExtractState.Canceled;
+                SetState(ArchivePreExtractState.Canceled);
+                throw;
             }
-            catch (Exception)
+            catch
             {
-                State = ArchivePreExtractState.Failed;
+                SetState(ArchivePreExtractState.Failed);
+                throw;
             }
+        }
+
+        /// <summary>
+        /// 事前展開リクエスト
+        /// </summary>
+        /// <param name="token"></param>
+        private void RunPreExtractAsync(CancellationToken token)
+        {
+            if (_disposedValue) throw new ObjectDisposedException(GetType().FullName);
+
+            // 実行は同時に１つのみ
+            lock (_lock)
+            {
+                if (State == ArchivePreExtractState.Sleep) throw new InvalidOperationException("PreExtractor is asleep");
+                if (!State.IsReady()) return;
+            }
+
+            // 非同期に実行。例外はイベントで通知する
+            Task.Run(async () =>
+            {
+                try
+                {
+                    var isCompleted = await PreExtractAsync(token);
+                    if (isCompleted)
+                    {
+                        ExtractCompleted?.Invoke(this, EventArgs.Empty);
+                    }
+                }
+                catch (OperationCanceledException ex)
+                {
+                    ExtractCanceled?.Invoke(this, new PreExtractExceptionEventArgs(ex));
+                }
+                catch (Exception ex)
+                {
+                    ExtractFailed?.Invoke(this, new PreExtractExceptionEventArgs(ex));
+                }
+            });
         }
 
         /// <summary>
@@ -141,21 +224,27 @@ namespace NeeView
             // キャンセル状態を初期状態に戻す
             ResetState();
 
-            // 事前展開を非同期に実行
-            // TODO: 事前展開のキャンセルリクエストはエントリ要求とは別
-            _ = PreExtractAsync(CancellationToken.None);
-
             Trace($"WaitPreExtract: {entry} ...");
+
+            RunPreExtractAsync(CancellationToken.None);
 
             // wait for entry.Data changed
             using var disposables = new DisposableCollection();
             var tcs = new TaskCompletionSource();
             disposables.Add(token.Register(() => tcs.TrySetCanceled()));
             disposables.Add(entry.SubscribeDataChanged((s, e) => tcs.TrySetResult()));
-            disposables.Add(this.SubscribeStateChanged((s, e) => { if (e.State.IsCompleted()) tcs.TrySetResult(); }));
+            disposables.Add(this.SubscribeExtractCompleted((s, e) => tcs.TrySetResult()));
+            disposables.Add(this.SubscribeExtractCanceled((s, e) => tcs.TrySetCanceled()));
+            disposables.Add(this.SubscribeExtractFailed((s, e) => tcs.TrySetException(e.Exception)));
+
             if (entry.Data is null && !State.IsCompleted())
             {
                 await tcs.Task;
+            }
+
+            if (entry.Data is null)
+            {
+                throw new InvalidOperationException($"Could not pre extract: {entry}");
             }
 
             Trace($"WaitPreExtract: {entry} done.");
@@ -179,6 +268,11 @@ namespace NeeView
     public class PreExtractStateChangedEventArgs(ArchivePreExtractState state) : EventArgs
     {
         public ArchivePreExtractState State { get; } = state;
+    }
+
+    public class PreExtractExceptionEventArgs(Exception exception) : EventArgs
+    {
+        public Exception Exception { get; } = exception;
     }
 }
 

@@ -10,16 +10,16 @@ namespace NeeView
         public class Key : IDisposable
         {
             private PreExtractMemory? _man;
-            private readonly byte[] _data;
+            private readonly long _size;
             private bool _disposedValue;
 
-            public Key(PreExtractMemory man, byte[] data)
+            public Key(PreExtractMemory man, long size)
             {
                 _man = man;
-                _data = data;
+                _size = size;
             }
 
-            public int Size => _data.Length;
+            public long Size => _size;
 
             public void Detach()
             {
@@ -74,9 +74,9 @@ namespace NeeView
         }
 
 
-        public Key Open(byte[] data)
+        public Key Open(long size)
         {
-            var key = new Key(this, data);
+            var key = new Key(this, size);
             _size += key.Size;
             Trace($"Open: {key.Size:N0}byte: {Size:N0}/{Capacity:N0}");
             return key;

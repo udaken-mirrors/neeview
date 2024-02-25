@@ -76,6 +76,7 @@ namespace NeeView
                     this.DirtyBook = null;
                     BookMemoryService.Dispose();
                     Pages.Dispose();
+                    SleepArchivers();
                 }
                 _disposedValue = true;
             }
@@ -130,6 +131,19 @@ namespace NeeView
         {
             return ArchiveEntryCollection.GetFolderPlace();
         }
+
+        /// <summary>
+        /// アーカイバー休眠
+        /// </summary>
+        private void SleepArchivers()
+        {
+            foreach (var archiver in Pages.CollectArchiver())
+            {
+                archiver.Sleep();
+                archiver.ResetRawData();
+            }
+        }
+
     }
 
 }

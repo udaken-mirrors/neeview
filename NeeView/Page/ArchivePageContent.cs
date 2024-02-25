@@ -19,7 +19,7 @@ namespace NeeView
         public override bool IsFileContent => true;
 
 
-        public override async Task<PictureInfo?> LoadPictureInfoCoreAsync(CancellationToken token)
+        protected override async Task<PictureInfo?> LoadPictureInfoCoreAsync(CancellationToken token)
         {
             NVDebug.AssertMTA();
             token.ThrowIfCancellationRequested();
@@ -27,7 +27,7 @@ namespace NeeView
             return await Task.FromResult(new PictureInfo(DefaultSize));
         }
 
-        public override async Task<PageSource> LoadSourceAsync(CancellationToken token)
+        protected override async Task<PageSource> LoadSourceAsync(CancellationToken token)
         {
             NVDebug.AssertMTA();
 

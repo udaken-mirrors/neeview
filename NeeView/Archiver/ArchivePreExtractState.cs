@@ -7,6 +7,7 @@
         Canceled,
         Done,
         Failed,
+        Sleep,
     }
 
     public static class ArchivePreExtractStateExtensions
@@ -18,7 +19,7 @@
 
         public static bool IsCompleted(this ArchivePreExtractState state)
         {
-            return state is ArchivePreExtractState.Canceled or ArchivePreExtractState.Done or ArchivePreExtractState.Failed;
+            return state is ArchivePreExtractState.Canceled or ArchivePreExtractState.Done or ArchivePreExtractState.Failed or ArchivePreExtractState.Sleep;
         }
     }
 }

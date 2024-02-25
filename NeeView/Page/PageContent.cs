@@ -12,7 +12,7 @@ using NeeLaboratory.Threading;
 namespace NeeView
 {
     [NotifyPropertyChanged]
-    public abstract partial class PageContent : IDataSource, IMemoryElement, INotifyPropertyChanged
+    public abstract partial class PageContent : IDataSource, IMemoryElement, INotifyPropertyChanged, IDisposable
     {
         public static Size DefaultSize { get; } = new(480, 640);
 
@@ -31,7 +31,7 @@ namespace NeeView
         public PageContentState _state;
         private readonly AsyncLock _asyncLock = new();
         private CancellationTokenSource? _cancellationTokenSource;
-
+        private bool _disposedValue;
 
         public PageContent(ArchiveEntry archiveEntry, BookMemoryService? bookMemoryService)
         {
@@ -89,6 +89,7 @@ namespace NeeView
             }
             private set
             {
+                if (_disposedValue) return;
                 var oldDataSource = _pageDataSource;
                 if (SetProperty(ref _pageDataSource, value))
                 {
@@ -120,6 +121,23 @@ namespace NeeView
         public bool IsMemoryLocked => _state != PageContentState.None;
 
 
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!_disposedValue)
+            {
+                if (disposing)
+                {
+                }
+                _disposedValue = true;
+            }
+        }
+
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
+
         private PageDataSource CreatePageDataSource(IDataSource? dataSource, PictureInfo? pictureInfo)
         {
             return new PageDataSource()
@@ -135,6 +153,8 @@ namespace NeeView
 
         public async Task<PageDataSource> LoadAsync(CancellationToken token)
         {
+            if (_disposedValue) throw new ObjectDisposedException(this.GetType().FullName);
+
             using (await _asyncLock.LockAsync(token))
             {
                 if (IsLoaded)
@@ -168,11 +188,13 @@ namespace NeeView
             }
         }
 
-        public abstract Task<PageSource> LoadSourceAsync(CancellationToken token);
+        protected abstract Task<PageSource> LoadSourceAsync(CancellationToken token);
 
         public async Task<PictureInfo?> LoadPictureInfoAsync(CancellationToken token)
         {
             if (PictureInfo is not null) return PictureInfo;
+
+            if (_disposedValue) return new PictureInfo(DefaultSize);
 
             using (await _asyncLock.LockAsync(token))
             {
@@ -185,7 +207,7 @@ namespace NeeView
             }
         }
 
-        public virtual async Task<PictureInfo?> LoadPictureInfoCoreAsync(CancellationToken token)
+        protected virtual async Task<PictureInfo?> LoadPictureInfoCoreAsync(CancellationToken token)
         {
             return await Task.FromResult<PictureInfo?>(null);
         }
@@ -198,6 +220,8 @@ namespace NeeView
 
         private void SetSource(PageSource source)
         {
+            if (_disposedValue) return;
+
             if (source.PictureInfo is not null && source.PictureInfo.Size.IsEmptyArea())
             {
                 SetSource(PageSource.CreateError("Image area is empty"));
@@ -218,6 +242,8 @@ namespace NeeView
         {
             return DataSize;
         }
+
+
     }
 
 }

@@ -1,6 +1,6 @@
-﻿using NeeLaboratory.Threading.Tasks;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -13,13 +13,13 @@ namespace NeeView
     /// </summary>
     public abstract class Archiver : IDisposable
     {
+        private readonly ArchivePreExtractor _preExtractor;
+        private bool _disposedValue;
+
         /// <summary>
         /// ArchiveEntry Cache
         /// </summary>
         private List<ArchiveEntry>? _entries;
-
-        private readonly ArchivePreExtractor _preExtractor;
-        private bool _disposedValue;
 
 
         /// <summary>
@@ -30,7 +30,7 @@ namespace NeeView
         public Archiver(string path, ArchiveEntry? source)
         {
             _preExtractor = new ArchivePreExtractor(this);
-
+            
             Path = path;
 
             if (source != null)
@@ -381,6 +381,48 @@ namespace NeeView
                 await entry.ExtractToFileAsync(path, true, token);
                 entry.SetData(path);
             }
+        }
+
+        /// <summary>
+        /// RawData 開放
+        /// </summary>
+        /// <remarks>
+        /// メモリ上の展開データを開放する。
+        /// ファイルに展開したデータはそのまま。
+        /// </remarks>
+        public void ResetRawData()
+        {
+            if (_entries is null) return;
+
+            foreach (var entry in _entries)
+            {
+                if (entry.Data is byte[])
+                {
+                    entry.ResetData();
+                }
+            }
+            
+            // NOTE: 効果ない？
+            GC.Collect();
+        }
+
+        /// <summary>
+        /// スリープ
+        /// </summary>
+        /// <remarks>
+        /// 再利用されるまでアーカイバを機能停止状態にする。
+        /// </remarks>
+        public void Sleep()
+        {
+            _preExtractor.Sleep();
+        }
+
+        /// <summary>
+        /// スリープ復帰
+        /// </summary>
+        public void Resume()
+        {
+            _preExtractor.Resume();
         }
 
         /// <summary>

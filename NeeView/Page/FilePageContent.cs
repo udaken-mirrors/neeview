@@ -31,12 +31,12 @@ namespace NeeView
 
         public override bool IsFileContent => true;
 
-        public override async Task<PictureInfo?> LoadPictureInfoCoreAsync(CancellationToken token)
+        protected override async Task<PictureInfo?> LoadPictureInfoCoreAsync(CancellationToken token)
         {
             return await Task.FromResult(new PictureInfo(DefaultSize));
         }
 
-        public override async Task<PageSource> LoadSourceAsync(CancellationToken token)
+        protected override async Task<PageSource> LoadSourceAsync(CancellationToken token)
         {
             return await Task.FromResult(new PageSource(_source, null, new PictureInfo(DefaultSize)));
         }

@@ -11,19 +11,27 @@ using System.Threading.Tasks;
 
 namespace NeeView
 {
-    // TODO: [.] 事前展開の非同期化。エントリ単位で事前展開完了を待機できるようにする。
-    // TODO: [.] 事前展開のキャンセル対応
+    // * 事前展開の最適化
+    // TODO: [v] 事前展開の非同期化。エントリ単位で事前展開完了を待機できるようにする。
+    // TODO: [v] 事前展開のキャンセル対応
     // TODO: [v] 事前展開メモリサイズに応じてメモリ展開とファイル展開をエントリ単位で切り替える。
-    // TODO: [.] SolidArchive の場合は _accessor.ExtractFile() ではなく事前展開を実行し待機する。
+    // TODO: [v] SolidArchive の場合は _accessor.ExtractFile() ではなく事前展開を実行し待機する。
     // TODO: [v] メディアファイルはファイル展開
     // TODO: [x] メディア判定とかアーカイブ判定とかはページの種類判定と同じものにせよ
-    // TODO: Archiver.Dispose() を呼び出す、もしくは使用停止した時点で PreExtract をキャンセルする
-    // TODO: ArchiveEntry の Dispose()
+    // TODO: [.] Archiver.Dispose() を呼び出す、もしくは使用停止した時点で PreExtract をキャンセルする
+    // TODO: ↑サムネイル生成でも使用されている可能性が？リファレンスカウンタ方式にする？
+    // TODO: ↑事前展開はブック用の機能とする。ブック以外からの展開は別処理にする。
+    // TODO: [x] ArchiveEntry の Dispose()
     // TODO: アーカイブをストリームソース対応にして、アーカイブの事前展開先をオンメモリ可能にする。
     // TODO: Solid判定の非同期化
+    // TODO: ↑アーカイブ初期化のキャンセル対応
+    // TODO: Book を閉じる前に PageFrameBox を閉じるようにする
     // TODO: 圧縮サブフォルダーの動作確認
     // TODO: ArchiveEntry.OpenEntryAsync() 対応
     // TODO: SusieArchiver の TODO:Async
+    // TODO: 複雑なのでUnitTestしたい
+    // TODO: RawData開放が即時反映されない原因の調査
+    // TODO: 休眠書庫の寿命をどうしようか？
 
     /// <summary>
     /// アーカイバー：7z.dll
@@ -150,7 +158,7 @@ namespace NeeView
                 throw new ApplicationException(Properties.TextResources.GetString("InconsistencyException.Message"));
             }
 
-            var ms = new MemoryStream();
+            var ms = new MemoryStream((int)entry.Length);
             token.ThrowIfCancellationRequested();
             await Task.Run(() => _accessor.ExtractFile(entry.Id, ms));
             ms.Seek(0, SeekOrigin.Begin);
@@ -206,34 +214,14 @@ namespace NeeView
 
             if (_disposedValue) return;
 
-            await PreExtractHybridAsync(directory, token);
-        }
-
-
-        private async Task PreExtractHybridAsync(string directory, CancellationToken token)
-        {
-            Debug.Assert(!string.IsNullOrEmpty(directory));
-
-            if (_disposedValue) return;
-
             var entries = await GetEntriesAsync(token);
             token.ThrowIfCancellationRequested();
 
             using (var extractor = new SevenZipExtractor(this.Path))
             {
-                var tempExtractor = new SevenZipHybridExtractor(extractor, directory);
-                tempExtractor.TempFileExtractionFinished += Temp_TempFileExtractionFinished;
-                await tempExtractor.ExtractAsync(token);
+                var preExtractor = new SevenZipHybridExtractor(extractor, directory, new SevenZipFileExtraction(entries));
+                await preExtractor.ExtractAsync(token);
                 token.ThrowIfCancellationRequested();
-            }
-
-            void Temp_TempFileExtractionFinished(object? sender, SevenZipEntry e)
-            {
-                var entry = entries.FirstOrDefault(a => a.Id == e.FileInfo.Index);
-                if (entry != null)
-                {
-                    entry.SetData(e.Data);
-                }
             }
         }
 
@@ -260,5 +248,42 @@ namespace NeeView
         }
         #endregion
     }
+
+
+    /// <summary>
+    /// ストリーム展開時のエントリアクセサ
+    /// </summary>
+    public class SevenZipFileExtraction : ISevenZipFileExtraction
+    {
+        private readonly Dictionary<int, ArchiveEntry> _map;
+
+        public SevenZipFileExtraction(List<ArchiveEntry> entries)
+        {
+            _map = entries.Where(e => e.Id >= 0).ToDictionary(e => e.Id);
+        }
+
+        public bool DataExists(ArchiveFileInfo info)
+        {
+            if (_map.TryGetValue(info.Index, out var entry))
+            {
+                return entry.Data is not null;
+            }
+            return true;
+        }
+
+        public void SetData(ArchiveFileInfo info, object data)
+        {
+            if (_map.TryGetValue(info.Index, out var entry))
+            {
+                entry.SetData(data);
+            }
+            else
+            {
+                Debug.Assert(false, "Don't come here: Entry not found");
+            }
+        }
+    }
+
+
 
 }

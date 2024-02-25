@@ -2,7 +2,7 @@
 using NeeLaboratory.ComponentModel;
 using NeeLaboratory.Generators;
 using NeeLaboratory.IO.Search;
-using NeeLaboratory.IO.Search.FileNode;
+using NeeLaboratory.Linq;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -17,7 +17,7 @@ namespace NeeView
     {
         private readonly PageThumbnailPool _thumbnailPool = new();
 
-        private readonly List<Page> _sourcePages;
+        private List<Page> _pages;
         private PageSortMode _sortMode = PageSortMode.Entry;
         private string _searchKeyword = "";
         private CancellationTokenSource? _sortCancellationTokenSource;
@@ -36,20 +36,20 @@ namespace NeeView
                 .AddProfile(new PageSearchProfile());
             _searcher = new Searcher(searchContext);
 
-            _sourcePages = pages;
-            Pages = pages;
+            _pages = pages;
 
-            PageMap = _sourcePages.ToMultiMap(e => e.EntryFullName, e => e);
+            PageMap = _pages.ToMultiMap(e => e.EntryFullName, e => e);
 
-            foreach (var page in _sourcePages)
+            foreach (var page in _pages)
             {
                 AttachPage(page);
             }
 
-            for (int i = 0; i < _sourcePages.Count; ++i)
+            for (int i = 0; i < _pages.Count; ++i)
             {
-                _sourcePages[i].EntryIndex = i;
+                _pages[i].EntryIndex = i;
             }
+
         }
 
         private void AttachPage(Page page)
@@ -74,9 +74,10 @@ namespace NeeView
         public event EventHandler<PageRemovedEventArgs>? PageRemoved;
 
 
-        public List<Page> Pages { get; private set; }
+        public List<Page> Pages => _pages;
 
         public MultiMap<string, Page> PageMap { get; private set; }
+
 
         /// <summary>
         /// ソートモード
@@ -138,7 +139,7 @@ namespace NeeView
                     _sortCancellationTokenSource?.Cancel();
                     _sortCancellationTokenSource?.Dispose();
 
-                    foreach (var page in _sourcePages)
+                    foreach (var page in _pages)
                     {
                         DetachPage(page);
                         page.Dispose();
@@ -272,7 +273,7 @@ namespace NeeView
         private void UpdatePagesAsync()
         {
             if (_disposedValue) return;
-            if (_sourcePages.Count <= 0) return;
+            if (_pages.Count <= 0) return;
 
             _sortCancellationTokenSource?.Cancel();
             _sortCancellationTokenSource?.Dispose();
@@ -298,14 +299,14 @@ namespace NeeView
         private void UpdatePages(PageSortMode sortMode, string searchKeyword, CancellationToken token)
         {
             if (_disposedValue) return;
-            if (_sourcePages.Count <= 0) return;
+            if (_pages.Count <= 0) return;
 
             try
             {
                 PagesSorting?.Invoke(this, EventArgs.Empty);
 
                 //Debug.WriteLine($"Sort {sortMode} ...");
-                var pages = SelectSearchPages(_sourcePages, searchKeyword, token);
+                var pages = SelectSearchPages(_pages, searchKeyword, token);
                 pages = SortPages(pages, sortMode, token);
 
                 if (!pages.Any())
@@ -313,7 +314,7 @@ namespace NeeView
                     pages = new List<Page>() { _emptyPage };
                 }
 
-                Pages = pages.ToList();
+                _pages = pages.ToList();
 
                 //Debug.WriteLine($"Sort {sortMode} done.");
 
@@ -465,9 +466,10 @@ namespace NeeView
 
             foreach (var page in removes)
             {
-                DetachPage(page);
                 Pages.Remove(page);
                 PageMap.Remove(page.EntryFullName, page);
+                DetachPage(page);
+                page.Dispose();
             }
 
             PagesNumbering();
@@ -562,5 +564,19 @@ namespace NeeView
         }
 
         #endregion
+
+        /// <summary>
+        /// 依存しているアーカイバを収集
+        /// </summary>
+        /// <returns></returns>
+        public List<Archiver> CollectArchiver()
+        {
+            var archivers = Pages
+                .Select(e => e.ArchiveEntry.Archiver)
+                .Distinct()
+                .WhereNotNull()
+                .ToList();
+            return archivers;
+        }
     }
 }

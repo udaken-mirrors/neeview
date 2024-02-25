@@ -111,7 +111,16 @@ namespace NeeView
                 }
 
                 // データ読み込み
-                var data = await _pageContent.LoadAsync(token);
+                PageDataSource data;
+                try
+                {
+                    data = await _pageContent.LoadAsync(token);
+                }
+                catch (Exception ex)
+                {
+                    SetData(null, 0, ex.Message, null, PageContent.DefaultSize);
+                    return;
+                }
 
                 if (data.IsFailed)
                 {

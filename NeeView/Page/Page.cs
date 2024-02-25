@@ -18,7 +18,6 @@ namespace NeeView
         private bool _isVisible;
         private bool _isMarked;
         private bool _disposedValue;
-        private readonly DisposableCollection _disposables = new();
 
 
         public Page(string bookPrefix, PageContent content)
@@ -193,7 +192,7 @@ namespace NeeView
                 {
                     _content.ContentChanged -= Content_ContentChanged;
                     _content.SizeChanged -= Content_SizeChanged;
-                    _disposables.Dispose();
+                    _content.Dispose();
                 }
 
                 _disposedValue = true;
@@ -208,6 +207,8 @@ namespace NeeView
 
         private void Content_ContentChanged(object? sender, EventArgs e)
         {
+            if (_disposedValue) return;
+
             RaisePropertyChanged(nameof(Content));
             RaisePropertyChanged(nameof(Color));
             ContentChanged?.Invoke(this, EventArgs.Empty);
@@ -215,6 +216,8 @@ namespace NeeView
 
         private void Content_SizeChanged(object? sender, EventArgs e)
         {
+            if (_disposedValue) return;
+
             RaisePropertyChanged(nameof(Size));
             SizeChanged?.Invoke(this, EventArgs.Empty);
         }
@@ -222,12 +225,16 @@ namespace NeeView
         // TODO: これをPageのメソッドとして公開するのは？
         public async Task LoadContentAsync(CancellationToken token)
         {
+            if (_disposedValue) return;
+
             await _content.LoadAsync(token);
         }
 
         // TODO: PageLoader管理と競合している問題
         public void Unload()
         {
+            if (_disposedValue) return;
+
             _content.Unload();
             ContentChanged?.Invoke(this, EventArgs.Empty);
         }
@@ -347,6 +354,8 @@ namespace NeeView
 
         public async Task<bool> RenameAsync(string name)
         {
+            if (_disposedValue) return false;
+
             var isSuccess = await ArchiveEntry.RenameAsync(name);
             RaiseNamePropertyChanged();
             FileInformation.Current.Update(); // TODO: 伝達方法がよろしくない
@@ -355,6 +364,8 @@ namespace NeeView
 
         private void RaiseNamePropertyChanged()
         {
+            if (_disposedValue) return;
+
             RaisePropertyChanged(nameof(EntryName));
             RaisePropertyChanged(nameof(EntryLastName));
             RaisePropertyChanged(nameof(EntrySmartName));

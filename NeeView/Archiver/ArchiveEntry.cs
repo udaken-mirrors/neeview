@@ -24,7 +24,7 @@ namespace NeeView
         public object? _data;
         private PreExtractMemory.Key? _preExtractMemoryKey;
         private bool _disposedValue;
-
+        private readonly object _lock = new();
 
         /// <summary>
         /// コンストラクタ
@@ -220,36 +220,37 @@ namespace NeeView
         /// エントリデータ設定
         /// </summary>
         /// <param name="value"></param>
-        public void SetData(object? value)
+        public void SetData(object value)
         {
-            if (_data != value)
+            if (_disposedValue) return;
+
+            lock (_lock)
             {
-                _preExtractMemoryKey?.Dispose();
+                if (_data == value) return;
+                ResetData();
+                if (value is null) return;
                 _data = value;
-                _preExtractMemoryKey = (value is byte[] rawData) ? PreExtractMemory.Current.Open(rawData) : null;
-                DataChanged?.Invoke(this, EventArgs.Empty);
+                if (value is byte[] rawData)
+                {
+                    _preExtractMemoryKey = PreExtractMemory.Current.Open(rawData.Length);
+                }
+            }
+            DataChanged?.Invoke(this, EventArgs.Empty);
+        }
+
+        /// <summary>
+        /// エントリーデータリセット
+        /// </summary>
+        public void ResetData()
+        {
+            lock (_lock)
+            {
+                if (_data is null) return;
+                _preExtractMemoryKey?.Dispose();
+                _preExtractMemoryKey = null;
+                _data = null;
             }
         }
-
-#if false
-        /// <summary>
-        /// データを読み込む
-        /// </summary>
-        /// <param name="token"></param>
-        /// <returns></returns>
-        /// <exception cref="IOException"></exception>
-        public async Task<byte[]> LoadAsync(CancellationToken token)
-        {
-            if (Data is byte[] rawData) return rawData;
-
-            using var stream = await OpenEntryAsync(token);
-            var length = stream.Length;
-            var buffer = new byte[length];
-            var readSize = await stream.ReadAsync(buffer, 0, (int)length, token);
-            if (readSize < length) throw new IOException("This file size is too large to read.");
-            return buffer;
-        }
-#endif
 
         /// <summary>
         /// ファイルシステムでのパスを返す
@@ -266,7 +267,22 @@ namespace NeeView
         /// <returns>Stream</returns>
         public Stream OpenEntry()
         {
-            return Archiver.OpenStreamAsync(this, CancellationToken.None).Result;
+            try
+            {
+                return Archiver.OpenStreamAsync(this, CancellationToken.None).Result;
+            }
+            catch (AggregateException ex) 
+            {
+                // NOTE: Task.Wait() の例外は AggregateException になる
+                if (ex.InnerException != null)
+                {
+                    throw ex.InnerException;
+                }
+                else
+                {
+                    throw;
+                }
+            }
         }
 
         /// <summary>
@@ -275,7 +291,14 @@ namespace NeeView
         /// <returns>Stream</returns>
         public async Task<Stream> OpenEntryAsync(CancellationToken token)
         {
-            return await Archiver.OpenStreamAsync(this, token);
+            try
+            {
+                return await Archiver.OpenStreamAsync(this, token);
+            }
+            catch
+            {
+                throw;
+            }
         }
 
         /// <summary>
