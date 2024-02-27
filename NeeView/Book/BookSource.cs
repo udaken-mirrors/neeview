@@ -11,8 +11,10 @@ namespace NeeView
             ArchiveEntryCollection = archiveEntryCollection;
             Pages = pages;
             BookMemoryService = bookMemoryService;
-
+            
             _isRecursiveFolder = ArchiveEntryCollection.Mode == ArchiveEntryCollectionMode.IncludeSubArchives;
+            
+            ActivatePreExtractor();
         }
 
 
@@ -76,7 +78,7 @@ namespace NeeView
                     this.DirtyBook = null;
                     BookMemoryService.Dispose();
                     Pages.Dispose();
-                    SleepArchivers();
+                    DeactivatePreExtractor();
                 }
                 _disposedValue = true;
             }
@@ -133,14 +135,25 @@ namespace NeeView
         }
 
         /// <summary>
-        /// アーカイバー休眠
+        /// アーカイバ事前展開を許可
         /// </summary>
-        private void SleepArchivers()
+        private void ActivatePreExtractor()
         {
             foreach (var archiver in Pages.CollectArchiver())
             {
-                archiver.Sleep();
-                archiver.ResetRawData();
+                archiver.ActivatePreExtractor();
+            }
+        }
+
+        /// <summary>
+        /// アーカイバ事前展開を停止
+        /// </summary>
+        private void DeactivatePreExtractor()
+        {
+            foreach (var archiver in Pages.CollectArchiver())
+            {
+                archiver.DeactivatePreExtractor();
+                archiver.ClearRawData();
             }
         }
 

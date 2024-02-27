@@ -297,7 +297,6 @@ namespace NeeView
                 if (archiver is not null && archiver.LastWriteTime == source.LastWriteTime && archiver.Length == source.Length)
                 {
                     ////Debug.WriteLine($"Archiver: Find cache: {systemPath}");
-                    archiver.Resume();
                     return archiver;
                 }
                 else

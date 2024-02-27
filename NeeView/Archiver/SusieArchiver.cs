@@ -179,7 +179,7 @@ namespace NeeView
         /// <summary>
         /// 事前展開？
         /// </summary>
-        public override bool CanPreExtract()
+        protected override bool CanPreExtractInner()
         {
             var plugin = GetPlugin();
             return plugin != null && plugin.Plugin.IsPreExtract;

@@ -69,35 +69,42 @@ namespace NeeView
             GC.SuppressFinalize(this);
         }
 
-
         public void Sleep()
         {
             if (_disposedValue) return;
+            if (_state == ArchivePreExtractState.Sleep) return;
 
             _cancellationTokenSource.Cancel();
-            SetState(ArchivePreExtractState.Sleep, true);
+            SetState(ArchivePreExtractState.Sleep);
         }
 
         public void Resume()
         {
             if (_disposedValue) return;
+            if (_state != ArchivePreExtractState.Sleep) return;
 
+            Trace($"Resume");
             _cancellationTokenSource.Cancel();
             _cancellationTokenSource = new CancellationTokenSource();
-            SetState(ArchivePreExtractState.None, true);
+            SetState(ArchivePreExtractState.None);
         }
 
-
-        private void SetState(ArchivePreExtractState state, bool force = false)
+        private void SetState(ArchivePreExtractState state, CancellationToken sleepToken)
         {
-            if (_state != state && (force || !_cancellationTokenSource.IsCancellationRequested))
+            if (sleepToken.IsCancellationRequested) return;
+
+            SetState(state);
+        }
+
+        private void SetState(ArchivePreExtractState state)
+        {
+            if (_state != state)
             {
                 _state = state;
                 Trace($"State = {state}");
                 StateChanged?.Invoke(this, new PreExtractStateChangedEventArgs(state));
             }
         }
-
 
         /// <summary>
         /// 可能であれば状態を初期化する
@@ -106,7 +113,7 @@ namespace NeeView
         {
             if (State.IsReady())
             {
-                SetState(ArchivePreExtractState.None);
+                SetState(ArchivePreExtractState.None, _cancellationTokenSource.Token);
             }
         }
 
@@ -130,17 +137,19 @@ namespace NeeView
 
             Debug.Assert(CanPreExtract());
 
+            var sleepToken = _cancellationTokenSource.Token;
+
             // NOTE: 実行は同時に１つのみ
             lock (_lock)
             {
-                if (State == ArchivePreExtractState.Sleep) throw new InvalidOperationException("PreExtractor is asleep");
+                if (sleepToken.IsCancellationRequested) throw new InvalidOperationException("PreExtractor is asleep");
                 if (!State.IsReady()) return false;
-                SetState(ArchivePreExtractState.Extracting);
+                SetState(ArchivePreExtractState.Extracting, sleepToken);
             }
 
             try
             {
-                using var linked = CancellationTokenSource.CreateLinkedTokenSource(token, _cancellationTokenSource.Token);
+                using var linked = CancellationTokenSource.CreateLinkedTokenSource(token, sleepToken);
 
                 var sw = Stopwatch.StartNew();
                 Trace($"PreExtract ...");
@@ -155,17 +164,17 @@ namespace NeeView
                 await _archiver.PreExtractAsync(_extractDirectory.Path, linked.Token);
                 sw.Stop();
                 Trace($"PreExtract done. {sw.ElapsedMilliseconds}ms");
-                SetState(ArchivePreExtractState.Done);
+                SetState(ArchivePreExtractState.Done, sleepToken);
                 return true;
             }
             catch (OperationCanceledException)
             {
-                SetState(ArchivePreExtractState.Canceled);
+                SetState(ArchivePreExtractState.Canceled, sleepToken);
                 throw;
             }
             catch
             {
-                SetState(ArchivePreExtractState.Failed);
+                SetState(ArchivePreExtractState.Failed, sleepToken);
                 throw;
             }
         }
@@ -251,16 +260,21 @@ namespace NeeView
         }
 
 
+        private string TraceHeader()
+        {
+            return this.GetType().Name + "[" + _archiver.EntryName + "]";
+        }
+
         [Conditional("LOCAL_DEBUG")]
         private void Trace(string s)
         {
-            Debug.WriteLine($"{this.GetType().Name}: {s}");
+            Debug.WriteLine(TraceHeader() + ": " + s);
         }
 
         [Conditional("LOCAL_DEBUG")]
         private void Trace(string s, params object[] args)
         {
-            Debug.WriteLine($"{this.GetType().Name}: {string.Format(s, args)}");
+            Debug.WriteLine(TraceHeader() + ": " + string.Format(s, args));
         }
     }
 

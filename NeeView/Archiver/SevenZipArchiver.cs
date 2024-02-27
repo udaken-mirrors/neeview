@@ -22,10 +22,10 @@ namespace NeeView
     // TODO: [v] RawData開放が即時反映されない原因の調査 ... 攻撃的GCをしないといけないようだ
     // TODO: [x] Solid判定の非同期化
     // TODO: [x]↑アーカイブ初期化のキャンセル対応
+    // TODO: [v] Archiver.Dispose() を呼び出す、もしくは使用停止した時点で PreExtract をキャンセルする
+    // TODO: [v] Book でアーカイブを使用するときのみ事前展開を許可
+    // TODO: 関連設定の見直し
     // TODO: Book を閉じる前に PageFrameBox を閉じるようにする
-    // TODO: [.] Archiver.Dispose() を呼び出す、もしくは使用停止した時点で PreExtract をキャンセルする
-    // TODO: ↑サムネイル生成でも使用されている可能性が？リファレンスカウンタ方式にする？
-    // TODO: ↑事前展開はブック用の機能とする。ブック以外からの展開は別処理にする。
     // TODO: アーカイブをストリームソース対応にして、アーカイブの事前展開先をオンメモリ可能にする。
     // TODO: 圧縮サブフォルダーの動作確認
     // TODO: ArchiveEntry.OpenEntryAsync() 対応
@@ -130,7 +130,7 @@ namespace NeeView
             NVDebug.AssertMTA();
             Debug.Assert(entry is not null);
             Debug.Assert(Initialized());
-            Debug.Assert(!_isSolid, "Pre-extract, so no direct extract.");
+            Debug.Assert(!CanPreExtract(), "Pre-extract, so no direct extract.");
             if (entry.Id < 0) throw new ArgumentException("Cannot open this entry: " + entry.EntryName);
 
             ThrowIfDisposed();
@@ -168,7 +168,7 @@ namespace NeeView
             Debug.Assert(entry is not null);
             Debug.Assert(!string.IsNullOrEmpty(exportFileName));
             Debug.Assert(Initialized());
-            Debug.Assert(!_isSolid, "Pre-extract, so no direct extract.");
+            Debug.Assert(!CanPreExtract(), "Pre-extract, so no direct extract.");
             if (entry.Id < 0) throw new ArgumentException("Cannot open this entry: " + entry.EntryName);
 
             if (_disposedValue) return;
@@ -183,7 +183,7 @@ namespace NeeView
         /// <summary>
         /// 事前展開？
         /// </summary>
-        public override bool CanPreExtract()
+        protected override bool CanPreExtractInner()
         {
             if (_disposedValue) return false;
             Debug.Assert(Initialized());

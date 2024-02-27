@@ -14,6 +14,7 @@ namespace NeeView
     public abstract class Archiver : IDisposable
     {
         private readonly ArchivePreExtractor _preExtractor;
+        private int _preExtractorActivateCount;
         private bool _disposedValue;
 
         /// <summary>
@@ -29,8 +30,6 @@ namespace NeeView
         /// <param name="source">基となるエントリ</param>
         public Archiver(string path, ArchiveEntry? source)
         {
-            _preExtractor = new ArchivePreExtractor(this);
-            
             Path = path;
 
             if (source != null)
@@ -52,22 +51,16 @@ namespace NeeView
             {
                 // ファイルシステムとみなし情報を取得する
                 EntryName = LoosePath.GetFileName(Path);
-                var directoryInfo = new DirectoryInfo(Path);
-                if (directoryInfo.Exists)
+                var fileSystemInfo = FileIO.CreateFileSystemInfo(Path);
+                if (fileSystemInfo.Exists)
                 {
-                    Length = -1;
-                    LastWriteTime = directoryInfo.LastWriteTime;
-                    return;
-                }
-
-                var fileInfo = new FileInfo(Path);
-                if (fileInfo.Exists)
-                {
-                    Length = fileInfo.Length;
-                    LastWriteTime = fileInfo.LastWriteTime;
-                    return;
+                    Length = fileSystemInfo is FileInfo fileInfo ? fileInfo.Length : -1;
+                    LastWriteTime = fileSystemInfo.LastWriteTime;
                 }
             }
+
+            _preExtractor = new ArchivePreExtractor(this);
+            _preExtractor.Sleep();
         }
 
 
@@ -361,7 +354,12 @@ namespace NeeView
         /// <summary>
         /// 事前展開する？
         /// </summary>
-        public virtual bool CanPreExtract()
+        public bool CanPreExtract()
+        {
+            return _preExtractorActivateCount > 0 && CanPreExtractInner();
+        }
+
+        protected virtual bool CanPreExtractInner()
         {
             return false;
         }
@@ -390,7 +388,7 @@ namespace NeeView
         /// メモリ上の展開データを開放する。
         /// ファイルに展開したデータはそのまま。
         /// </remarks>
-        public void ResetRawData()
+        public void ClearRawData()
         {
             if (_entries is null) return;
 
@@ -414,22 +412,25 @@ namespace NeeView
         }
 
         /// <summary>
-        /// スリープ
+        /// 事前展開を許可
         /// </summary>
-        /// <remarks>
-        /// 再利用されるまでアーカイバを機能停止状態にする。
-        /// </remarks>
-        public void Sleep()
+        public void ActivatePreExtractor()
         {
-            _preExtractor.Sleep();
+            if (Interlocked.Increment(ref _preExtractorActivateCount) == 1)
+            {
+                _preExtractor.Resume();
+            }
         }
 
         /// <summary>
-        /// スリープ復帰
+        /// 事前展開を停止
         /// </summary>
-        public void Resume()
+        public void DeactivatePreExtractor()
         {
-            _preExtractor.Resume();
+            if (Interlocked.Decrement(ref _preExtractorActivateCount) == 0)
+            {
+                _preExtractor.Sleep();
+            }
         }
 
         /// <summary>

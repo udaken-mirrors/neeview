@@ -30,6 +30,18 @@ namespace NeeView
         }
 
         /// <summary>
+        /// FileSystemInfoを取得
+        /// </summary>
+        /// <param name="path"></param>
+        /// <returns></returns>
+        public static FileSystemInfo CreateFileSystemInfo(string path)
+        {
+            var directoryInfo = new DirectoryInfo(path);
+            if (directoryInfo.Exists) return directoryInfo;
+            else return new FileInfo(path);
+        }
+
+        /// <summary>
         /// ファイル上書きチェック
         /// </summary>
         /// <param name="path"></param>
