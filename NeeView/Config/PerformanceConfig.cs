@@ -2,7 +2,7 @@
 using NeeLaboratory.ComponentModel;
 using NeeView.Windows.Property;
 using System;
-using System.Runtime.Serialization;
+using System.Text.Json.Serialization;
 using System.Windows;
 
 namespace NeeView
@@ -16,7 +16,6 @@ namespace NeeView
         private bool _isLimitSourceSize;
         private bool _isLoadingPageVisible = true;
         private int _preExtractSolidSize = 1000;
-        private bool _isPreExtractToMemory;
 
 
         /// <summary>
@@ -76,7 +75,7 @@ namespace NeeView
             set { SetProperty(ref _isLoadingPageVisible, value); }
         }
 
-        // 事前展開サイズ上限(MB)
+        // 事前展開メモリサイズ(MB)
         [PropertyMember]
         public int PreExtractSolidSize
         {
@@ -84,14 +83,17 @@ namespace NeeView
             set { SetProperty(ref _preExtractSolidSize, value); }
         }
 
-        // 事前展開先をメモリにする
-        [PropertyMember]
+        #region Obsolete
+
+        [Obsolete("no used"), Alternative(null, 41, ScriptErrorLevel.Info)] // ver.41
+        [JsonIgnore]
         public bool IsPreExtractToMemory
         {
-            get { return _isPreExtractToMemory; }
-            set { SetProperty(ref _isPreExtractToMemory, value); }
+            get { return true; }
+            set { }
         }
 
+        #endregion Obsolete
 
         /// <summary>
         /// 最大キャッシュメモリサイズ計算
