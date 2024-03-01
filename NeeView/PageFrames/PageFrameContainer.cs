@@ -368,7 +368,6 @@ namespace NeeView.PageFrames
         private void DetachContent()
         {
             if (_content is null) return;
-            _contentControl.Content = null;
             _content.TransformChanged -= Content_TransformChanged;
             _content.ViewContentChanged -= Content_ViewContentChanged;
             _content.ContentSizeChanged -= Content_ContentSizeChanged;

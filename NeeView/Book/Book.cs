@@ -38,6 +38,7 @@ namespace NeeView
 
             var currentMemento = this.Memento.Clone();
             AttachBookSetting(currentMemento.ToBookSetting());
+            Debug.Assert(_setting != null);
 
             _source.Pages.PagesSorted += (s, e) => PagesChanged?.Invoke(s, e);
 
@@ -100,9 +101,10 @@ namespace NeeView
         public BookSettingConfig Setting => _setting;
 
 
-        [MemberNotNull(nameof(_setting))]
         public void AttachBookSetting(BookSettingConfig setting)
         {
+            if (_disposedValue) return;
+
             DetachBookSetting();
 
             // 新しい設定の反映
@@ -121,6 +123,7 @@ namespace NeeView
 
         private void Setting_PropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
+            if (_disposedValue) return;
             if (sender is not BookSettingConfig setting) return;
 
             var isAll = string.IsNullOrEmpty(e.PropertyName);
@@ -195,6 +198,7 @@ namespace NeeView
 
         public void SetCurrentPages(IEnumerable<Page> pages)
         {
+            if (_disposedValue) return;
             if (_currentPages.SequenceEqual(pages)) return;
 
             var oldPages = _currentPages;
@@ -207,6 +211,8 @@ namespace NeeView
 
         #region IDisposable Support
         private bool _disposedValue = false;
+
+        public bool IsDisposed => _disposedValue;
 
         protected virtual void Dispose(bool disposing)
         {

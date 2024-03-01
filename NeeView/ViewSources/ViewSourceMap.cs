@@ -1,14 +1,16 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Diagnostics;
 
 namespace NeeView
 {
-    public class ViewSourceMap : INotifyCollectionChanged
+    public class ViewSourceMap : INotifyCollectionChanged, IDisposable
     {
         private readonly Dictionary<ViewSourceKey, ViewSource> _map = new();
         private readonly object _lock = new();
         private readonly BookMemoryService _bookMemoryService;
+        private bool _disposedValue;
 
 
         public ViewSourceMap(BookMemoryService bookMemoryService)
@@ -56,6 +58,24 @@ namespace NeeView
                 _map.Clear();
                 CollectionChanged?.Invoke(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
             }
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!_disposedValue)
+            {
+                if (disposing)
+                {
+                    _map.Clear();
+                }
+                _disposedValue = true;
+            }
+        }
+
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
         }
     }
 

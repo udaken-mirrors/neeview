@@ -47,9 +47,6 @@ namespace NeeView
         {
             if (!CanPrint()) return;
 
-            // 掃除しておく
-            GC.Collect();
-
             var contents = content.ViewContents;
             var mainContent = content.ViewContents.FirstOrDefault();
 

@@ -19,6 +19,10 @@ using NeeView.Effects;
 using NeeView.Maths;
 using NeeView.Windows;
 
+// TODO: Dispose の整備。大きなメモリ解放と機能停止のみで表示に影響する処理はしないようにする。
+// TODO: ファイナライザの整備。ファイナライザでマネージドオブジェクトにアクセスしないように。
+// TODO: Dispose でメディア操作をすべて禁止する
+
 namespace NeeView.PageFrames
 {
     // TODO: ごちゃっとしてるので整備する
@@ -77,10 +81,12 @@ namespace NeeView.PageFrames
             _disposables.Add(viewTransform.SubscribeViewPointChanged(ViewTransform_ViewPointChanged));
 
             _transformMap = new PageFrameTransformMap(_context.ShareContext);
+            _disposables.Add(_transformMap);
 
             _calculator = new ContentSizeCalculator(_context);
             var frameFactory = new PageFrameFactory(_context, _bookContext, _calculator);
             _viewSourceMap = new ViewSourceMap(_bookContext.BookMemoryService);
+            _disposables.Add(_viewSourceMap);
             var elementScaleFactory = new PageFrameElementScaleFactory(_context, _transformMap, loupeContext);
             _loader = new BookPageLoader(_bookContext, frameFactory, _viewSourceMap, elementScaleFactory, _bookContext.BookMemoryService, _context.PerformanceConfig);
             _disposables.Add(_loader);
@@ -90,6 +96,7 @@ namespace NeeView.PageFrames
             _disposables.Add(baseScaleTransform);
             var containerFactory = new PageFrameContainerFactory(_context, _transformMap, _viewSourceMap, loupeContext, baseScaleTransform, _calculator);
             _containers = new PageFrameContainerCollection(_context, frameFactory, containerFactory);
+            _disposables.Add(_containers);
             _rectMath = new PageFrameContainerCollectionRectMath(_context, _containers);
             _layout = new PageFrameContainerLayout(_context, _containers);
 
@@ -151,6 +158,8 @@ namespace NeeView.PageFrames
 
         private void PageFrameBox_Loaded(object sender, RoutedEventArgs e)
         {
+            if (_disposedValue) return;
+
             Loaded -= PageFrameBox_Loaded;
             InitializeDpiScaleProvider();
 
@@ -234,7 +243,6 @@ namespace NeeView.PageFrames
                 if (disposing)
                 {
                     _disposables.Dispose();
-                    _containers.Clear();
                 }
 
                 _disposedValue = true;
@@ -247,6 +255,14 @@ namespace NeeView.PageFrames
             GC.SuppressFinalize(this);
         }
 
+
+        // Subscribe SizeChanged event
+        public IDisposable SubscribeSizeChanged(SizeChangedEventHandler handler)
+        {
+            SizeChanged += handler;
+            return new AnonymousDisposable(() => SizeChanged -= handler);
+        }
+
         public void SetVisibility(Visibility visibility)
         {
             _canvas.Visibility = visibility;
@@ -254,6 +270,8 @@ namespace NeeView.PageFrames
 
         public ContentDragTransformContext? CreateContentDragTransformContext(bool isPointContainer)
         {
+            if (_disposedValue) return null;
+
             var pos = GetViewPosition();
             var node = isPointContainer ? GetPointedContainer(pos) : _selected.Node;
             if (node is null) return null;
@@ -262,6 +280,8 @@ namespace NeeView.PageFrames
 
         public ContentDragTransformContext? CreateContentDragTransformContext(PageFrameContainer container)
         {
+            if (_disposedValue) return null;
+
             var node = _containers.Find(container);
             if (node is null) return null;
             return CreateDragTransformContext(node);
@@ -277,6 +297,8 @@ namespace NeeView.PageFrames
 
         public LoupeDragTransformContext? CreateLoupeDragTransformContext()
         {
+            if (_disposedValue) return null;
+
             var dragContext = _dragTransformContextFactory.CreateLoupeDragTransformContext();
             dragContext.Initialize(GetViewPosition(), System.Environment.TickCount);
             return dragContext;
@@ -297,12 +319,16 @@ namespace NeeView.PageFrames
 
         protected override void OnDpiChanged(DpiScale oldDpi, DpiScale newDpi)
         {
+            if (_disposedValue) return;
+
             base.OnDpiChanged(oldDpi, newDpi);
             _dpiScaleProvider.SetDipScale(newDpi);
         }
 
         private void ContainerCollection_CollectionChanged(object? sender, PageFrameContainerCollectionChangedEventArgs e)
         {
+            if (_disposedValue) return;
+
             switch (e.Action)
             {
                 case PageFrameContainerCollectionChangedEventAction.Add:
@@ -370,12 +396,16 @@ namespace NeeView.PageFrames
 
         private void Context_SizeChanging(object? sender, SizeChangedEventArgs e)
         {
+            if (_disposedValue) return;
+
             _containers.Anchor.Set(_rectMath.GetViewCenterContainer(_viewBox.Rect), _containers.Anchor.Direction);
             StoreStretchScaleRate(e.PreviousSize);
         }
 
         private void Context_SizeChanged(object? sender, SizeChangedEventArgs e)
         {
+            if (_disposedValue) return;
+
             UpdateContainers(PageFrameDirtyLevel.Moderate, TransformMask.None, false, false);
             CorrectStretchScale();
         }
@@ -385,6 +415,8 @@ namespace NeeView.PageFrames
         /// </summary>
         private void Context_PagesChanged(object? sender, EventArgs e)
         {
+            if (_disposedValue) return;
+
             _containers.SetDirty(PageFrameDirtyLevel.Moderate);
 
             // ページ位置復元
@@ -468,6 +500,8 @@ namespace NeeView.PageFrames
         /// </remarks>
         public void FlushLayout()
         {
+            if (_disposedValue) return;
+
             _layout.Flush();
             _scrollViewer.FlushScroll();
             Cleanup();
@@ -478,10 +512,13 @@ namespace NeeView.PageFrames
         /// </summary>
         private void ViewBox_RectChanging(object? sender, RectChangeEventArgs e)
         {
+            if (_disposedValue) return;
         }
 
         private void ViewBox_RectChanged(object? sender, RectChangeEventArgs e)
         {
+            if (_disposedValue) return;
+
             _containers.SetDirty(PageFrameDirtyLevel.Moderate);
             FillContainers();
         }
@@ -489,6 +526,8 @@ namespace NeeView.PageFrames
 
         private void BookContext_PropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
+            if (_disposedValue) return;
+
             switch (e.PropertyName)
             {
                 case nameof(_bookContext.SelectedRange):
@@ -594,6 +633,8 @@ namespace NeeView.PageFrames
 
         private void VisiblePageWatcher_VisibleContainersChanged(object? sender, VisibleContainersChangedEventArgs e)
         {
+            if (_disposedValue) return;
+
             foreach (var container in _containers)
             {
                 container.Activity.IsVisible = e.Containers.Contains(container);
@@ -604,6 +645,8 @@ namespace NeeView.PageFrames
 
         private void ViewTransform_TransformChanged(object? sender, TransformChangedEventArgs e)
         {
+            if (_disposedValue) return;
+
             _viewBox.UpdateViewRect();
 
             if (e.Category == TransformCategory.View && e.Action == TransformAction.Point)
@@ -619,6 +662,7 @@ namespace NeeView.PageFrames
 
         private void ViewTransform_ViewPointChanged(object? sender, EventArgs e)
         {
+            if (_disposedValue) return;
             if (_context.IsStaticFrame) return;
 
             var c0 = new Point(_containers.FirstTerminate.X, _containers.FirstTerminate.Y);
@@ -640,7 +684,7 @@ namespace NeeView.PageFrames
             _context.IsSnapAnchor.Set();
         }
 
-        public void ResetSnapAnchor()
+        private void ResetSnapAnchor()
         {
             _context.IsSnapAnchor.Reset();
         }
@@ -681,16 +725,21 @@ namespace NeeView.PageFrames
 
         public void MoveTo(PageFrameMoveParameter parameter)
         {
+            if (_disposedValue) return;
+
             MoveTo(parameter.Position, parameter.Direction, false, parameter.IsFlush);
         }
 
         public void MoveTo(PagePosition position, LinkedListDirection direction)
         {
+            if (_disposedValue) return;
+
             MoveTo(position, direction, false, false);
         }
 
         public void MoveTo(PagePosition position, LinkedListDirection direction, bool continued, bool flush)
         {
+            if (_disposedValue) return;
             if (!_bookContext.IsEnabled) return;
 
             //Debug.WriteLine($"MoveTo: Position={position}, Direction={direction}");
@@ -763,7 +812,7 @@ namespace NeeView.PageFrames
         /// </summary>
         /// <param name="source"></param>
         /// <returns></returns>
-        public DirectionalPagePosition CorrectPosition(DirectionalPagePosition source)
+        private DirectionalPagePosition CorrectPosition(DirectionalPagePosition source)
         {
             var (position, direction) = source;
 
@@ -827,6 +876,7 @@ namespace NeeView.PageFrames
 
         public void MoveToNextPage(LinkedListDirection direction)
         {
+            if (_disposedValue) return;
             if (!_bookContext.IsEnabled) return;
 
             if (_context.FramePageSize == 1)
@@ -861,6 +911,7 @@ namespace NeeView.PageFrames
 
         public void MoveToNextFrame(LinkedListDirection direction)
         {
+            if (_disposedValue) return;
             if (!_bookContext.IsEnabled) return;
 
             var frameRange = GetCurrentPageRange();
@@ -896,6 +947,7 @@ namespace NeeView.PageFrames
 
         public void MoveToNextFolder(LinkedListDirection direction, bool isShowMessage)
         {
+            if (_disposedValue) return;
             if (!_bookContext.IsEnabled) return;
 
             var index = direction == LinkedListDirection.Previous
@@ -934,6 +986,7 @@ namespace NeeView.PageFrames
         // Scroll + NextFrame
         public void ScrollToNextFrame(LinkedListDirection direction, IScrollNTypeParameter parameter, LineBreakStopMode lineBreakStopMode, double endMargin)
         {
+            if (_disposedValue) return;
             if (!_bookContext.IsEnabled) return;
 
             var isTerminated = ScrollToNext(direction, parameter, lineBreakStopMode, endMargin);
@@ -950,6 +1003,9 @@ namespace NeeView.PageFrames
         /// <returns>is scroll terminated</returns>
         public bool ScrollToNext(LinkedListDirection direction, IScrollNTypeParameter parameter)
         {
+            if (_disposedValue) return false;
+            if (!_bookContext.IsEnabled) return false;
+
             return ScrollToNext(direction, parameter, LineBreakStopMode.Line, 0.0);
         }
 
@@ -958,9 +1014,10 @@ namespace NeeView.PageFrames
         /// </summary>
         /// <param name="direction"></param>
         /// <returns>is scroll terminated</returns>
-        public bool ScrollToNext(LinkedListDirection direction, IScrollNTypeParameter parameter, LineBreakStopMode lineBreakStopMode, double endMargin)
+        private bool ScrollToNext(LinkedListDirection direction, IScrollNTypeParameter parameter, LineBreakStopMode lineBreakStopMode, double endMargin)
         {
-            if (!_bookContext.IsEnabled) return true;
+            if (_disposedValue) return false;
+            if (!_bookContext.IsEnabled) return false;
 
             // line break repeat limiter
             var isLimit = _scrollRepeatLimiter.IsLimit((int)(parameter.LineBreakStopTime * 1000.0));
@@ -1014,8 +1071,9 @@ namespace NeeView.PageFrames
         // TODO: now 引数はどうなのか？
         // - NScroll の時間パラメータ
         // - 連続判定によるカーブ指定
-        public void AddPosition(double dx, double dy, TimeSpan span)
+        private void AddPosition(double dx, double dy, TimeSpan span)
         {
+            if (_disposedValue) return;
             if (!_bookContext.IsEnabled) return;
 
             var node = _selected.Node;
@@ -1050,13 +1108,13 @@ namespace NeeView.PageFrames
             transform.SnapView();
         }
 
-        public LinkedListNode<PageFrameContainer>? GetPointedContainer(Point point)
+        private LinkedListNode<PageFrameContainer>? GetPointedContainer(Point point)
         {
             return _containers.Find(TranslateViewToCanvas(point), _context.FrameOrientation);
         }
 
         // 操作するコンテナを宣言
-        public void SetControlContainer(LinkedListNode<PageFrameContainer> node)
+        private void SetControlContainer(LinkedListNode<PageFrameContainer> node)
         {
             _containers.Anchor.Set(node);
             node.Value.HorizontalAlignment = HorizontalAlignment.Center;
@@ -1080,7 +1138,7 @@ namespace NeeView.PageFrames
         /// <summary>
         /// 現在ページを画面中央のものに更新
         /// </summary>
-        public void UpdatePosition()
+        private void UpdatePosition()
         {
             try
             {
@@ -1103,7 +1161,6 @@ namespace NeeView.PageFrames
             _filler.FillContainers(_viewBox.Rect, anchor);
             _layout.Layout(anchor);
         }
-
 
         private void Cleanup(bool isUpdateSelected)
         {
@@ -1129,14 +1186,18 @@ namespace NeeView.PageFrames
         /// </remarks>
         public void DisposeViewContent(IEnumerable<Page> pages)
         {
+            if (_disposedValue) return;
+
             foreach (var content in _containers.Select(e => e.Content).OfType<PageFrameContent>().Where(e => pages.Any(x => e.PageFrame.Contains(x))))
             {
                 content.DisposeViewContent();
             }
         }
 
-        public PageFrameTransformAccessor CreateSelectedTransform()
+        public PageFrameTransformAccessor? CreateSelectedTransform()
         {
+            if (_disposedValue) return null;
+
             if (_selected.Node.Value.Content is PageFrameContent pageFrameContent)
             {
                 var key = PageFrameTransformTool.CreateKey(pageFrameContent.PageFrame);
@@ -1150,6 +1211,8 @@ namespace NeeView.PageFrames
 
         public void ResetTransform()
         {
+            if (_disposedValue) return;
+
             _transformMap.Clear();
         }
 
@@ -1158,6 +1221,8 @@ namespace NeeView.PageFrames
         /// </summary>
         public void ResetReferenceSize()
         {
+            if (_disposedValue) return;
+
             Context.ResetReferenceSize();
             UpdateContainers(PageFrameDirtyLevel.Moderate, TransformMask.None, false, false);
         }
@@ -1168,6 +1233,8 @@ namespace NeeView.PageFrames
         /// <param name="ignoreViewOrigin">ストレッチ後のコンテナ座標をViewOriginでなくCenterにする</param>
         public void Stretch(bool ignoreViewOrigin, TransformTrigger trigger)
         {
+            if (_disposedValue) return;
+
             var node = _selected.Node;
             if (node?.Value.Content is not PageFrameContent content) return;
 
@@ -1182,7 +1249,7 @@ namespace NeeView.PageFrames
         /// <summary>
         /// ストレッチ追従切り替えの反映
         /// </summary>
-        public void UpdateScaleStretchTracking()
+        private void UpdateScaleStretchTracking()
         {
             var contents = _containers.Select(e => e.Content).OfType<PageFrameContent>().ToList();
             if (_context.IsScaleStretchTracking)
@@ -1209,7 +1276,7 @@ namespace NeeView.PageFrames
         /// キャンバスサイズが変更されたとき用。
         /// </remarks>
         /// <param name="canvasSize"></param>
-        public void StoreStretchScaleRate(Size canvasSize)
+        private void StoreStretchScaleRate(Size canvasSize)
         {
             if (!_context.ShouldScaleStretchTracking) return;
 
@@ -1229,7 +1296,7 @@ namespace NeeView.PageFrames
         /// StretchScaleTracking 有効時にのみ機能する。
         /// キャンバスサイズが変更されたとき用。
         /// </remarks>
-        public void CorrectStretchScale()
+        private void CorrectStretchScale()
         {
             if (!_context.ShouldScaleStretchTracking) return;
 
@@ -1253,6 +1320,8 @@ namespace NeeView.PageFrames
         /// <exception cref="InvalidOperationException"></exception>
         public (Size Size, double Scale) CalcStretchContentBounds(PageFrameContent content, Size canvasSize)
         {
+            if (_disposedValue) return (Size.Empty, 1.0);
+
             var contentSize = content.FrameSize;
 
             var scale = _calculator.CalcModeStretchScale(contentSize, new RotateTransform(), canvasSize);
@@ -1321,6 +1390,8 @@ namespace NeeView.PageFrames
         /// <returns><see cref="PageFrameContent"/> 存在しない場合はNULL</returns>
         public PageFrameContent? GetSelectedPageFrameContent()
         {
+            if (_disposedValue) return null;
+
             var node = _selected.Node;
             if (node?.Value.Content is PageFrameContent pageFrameContent)
             {
@@ -1333,7 +1404,7 @@ namespace NeeView.PageFrames
         /// 選択している？ページの <see cref="PageFrameContent"/> を取得する。
         /// </summary>
         /// <returns><see cref="PageFrameContent"/> 存在しない場合はNULL</returns>
-        public PageFrameContent? GetNextPageFrameContent()
+        private PageFrameContent? GetNextPageFrameContent()
         {
             var node = _selected.Node;
             if (node?.Value.Content is PageFrameContent pageFrameContent)
@@ -1349,6 +1420,8 @@ namespace NeeView.PageFrames
         /// <returns></returns>
         public bool IsSelectedPageFrameLoading()
         {
+            if (_disposedValue) return false;
+
             var pageFrameContent = GetNextPageFrameContent();
             if (pageFrameContent is null) return false;
             return pageFrameContent.GetViewContentState() < ViewContentState.Loaded;
@@ -1362,6 +1435,8 @@ namespace NeeView.PageFrames
         /// <param name="isMedia">メディア操作での要求。ブックメディアとページメディアを区別するため</param>
         public void RaisePageTerminatedEvent(object? sender, int direction, bool isMedia)
         {
+            if (_disposedValue) return;
+
             if (isMedia && !_bookContext.IsMedia) return;
             PageTerminated?.Invoke(sender, new PageTerminatedEventArgs(direction));
         }

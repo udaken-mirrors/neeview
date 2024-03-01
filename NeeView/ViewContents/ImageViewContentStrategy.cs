@@ -51,7 +51,6 @@ namespace NeeView
                 {
                     _delayAction.Dispose();
                     _imageControl?.Dispose();
-                    _imageControl = null;
                 }
                 _disposedValue = true;
             }
@@ -76,6 +75,8 @@ namespace NeeView
 
         public FrameworkElement CreateLoadedContent(object data)
         {
+            if (_disposedValue) throw new ObjectDisposedException(this.GetType().FullName);
+
             var viewData = data as ImageViewData ?? throw new InvalidOperationException();
 
             Trace($"Create={_viewContent.Page}, {_imageControl is not null}");

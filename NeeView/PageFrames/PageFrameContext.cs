@@ -16,24 +16,24 @@ namespace NeeView.PageFrames
     [NotifyPropertyChanged]
     public partial class PageFrameContext : INotifyPropertyChanged, IStaticFrame, IDisposable, IContentSizeCalculatorProfile
     {
+        private readonly BookShareContext _shareContext;
         private readonly Config _config;
         private readonly BookSettingConfig _bookSetting;
         private readonly PageFrameProfile _frameProfile;
         private double _loupeScale;
         private readonly DisposableCollection _disposables = new();
         private bool _disposedValue;
-        private readonly BookShareContext _share;
         private readonly BooleanLockValue _isSnapAnchor = new();
         private readonly ViewScrollContext _viewScrollContext;
         private readonly bool _isMediaBook;
         private PageRange _autoStretchTarget = PageRange.Empty;
 
-
-        public PageFrameContext(Config config, BookShareContext share, ViewScrollContext viewScrollContext, bool isMediaBook)
+        
+        public PageFrameContext(BookShareContext shareContext, bool isMediaBook)
         {
-            _config = config;
-            _share = share;
-            _viewScrollContext = viewScrollContext;
+            _shareContext = shareContext;
+            _config = shareContext.Config;
+            _viewScrollContext = shareContext.ViewScrollContext;
             _isMediaBook = isMediaBook;
             _bookSetting = _config.BookSetting;
 
@@ -66,7 +66,7 @@ namespace NeeView.PageFrames
         public event EventHandler<SizeChangedEventArgs>? SizeChanged;
 
 
-        public BookShareContext ShareContext => _share;
+        public BookShareContext ShareContext => _shareContext;
         public ViewScrollContext ViewScrollContext => _viewScrollContext;
 
         public bool IsPanorama => _config.Book.IsPanorama;

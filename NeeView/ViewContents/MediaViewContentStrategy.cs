@@ -68,8 +68,6 @@ namespace NeeView
                 if (disposing)
                 {
                     _playerCanvas?.Dispose();
-                    _playerCanvas = null;
-
                     _mediaPlayer.Dispose();
                     ReleaseMediaPlayer(_player);
                 }
@@ -90,6 +88,8 @@ namespace NeeView
 
         public FrameworkElement CreateLoadedContent(object data)
         {
+            if (_disposedValue) throw new ObjectDisposedException(this.GetType().FullName);
+
             Debug.WriteLine($"Create.MediaPlayer: {_viewContent.ArchiveEntry}");
             var viewData = data as MediaViewData ?? throw new InvalidOperationException();
 

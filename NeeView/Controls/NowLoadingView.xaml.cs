@@ -53,17 +53,17 @@ namespace NeeView
             this.Root.DataContext = _vm;
 
             _vm.AddPropertyChanged(nameof(_vm.IsDispNowLoading),
-                (s, e) => DispNowLoading(_vm.IsDispNowLoading));
+                (s, e) => DisplayNowLoading(_vm.IsDispNowLoading));
         }
 
 
         /// <summary>
         /// NowLoadingの表示/非表示
         /// </summary>
-        /// <param name="isDisp"></param>
-        private void DispNowLoading(bool isDisp)
+        /// <param name="isDisplay"></param>
+        private void DisplayNowLoading(bool isDisplay)
         {
-            if (isDisp && Config.Current.Notice.NowLoadingShowMessageStyle != ShowMessageStyle.None)
+            if (isDisplay && Config.Current.Notice.NowLoadingShowMessageStyle != ShowMessageStyle.None)
             {
                 if (Config.Current.Notice.NowLoadingShowMessageStyle == ShowMessageStyle.Normal)
                 {
@@ -76,12 +76,8 @@ namespace NeeView
                     this.NowLoadingTiny.Visibility = Visibility.Visible;
                 }
 
-                var ani = new DoubleAnimation(1, TimeSpan.Zero);
+                var ani = new DoubleAnimation(1, TimeSpan.FromSeconds(0.5)) { BeginTime = TimeSpan.FromSeconds(0.5) };
                 this.NowLoading.BeginAnimation(UIElement.OpacityProperty, ani, HandoffBehavior.SnapshotAndReplace);
-
-                this.NowLoadingLabel.Opacity = 0;
-                ani = new DoubleAnimation(1, TimeSpan.FromSeconds(0.5)) { BeginTime = TimeSpan.FromSeconds(0.5) };
-                this.NowLoadingLabel.BeginAnimation(UIElement.OpacityProperty, ani, HandoffBehavior.SnapshotAndReplace);
 
                 this.ProgressRing.IsActive = true;
             }
@@ -89,8 +85,6 @@ namespace NeeView
             {
                 var ani = new DoubleAnimation(0, TimeSpan.FromSeconds(0.25));
                 this.NowLoading.BeginAnimation(UIElement.OpacityProperty, ani, HandoffBehavior.SnapshotAndReplace);
-
-                this.NowLoadingLabel.BeginAnimation(UIElement.OpacityProperty, null, HandoffBehavior.SnapshotAndReplace);
 
                 this.ProgressRing.IsActive = false;
             }

@@ -23,7 +23,8 @@
             <Grid x:Name="View" Background="Transparent" SizeChanged="MainView_SizeChanged" Focusable="True" KeyboardNavigation.IsTabStop="True"
                     FocusVisualStyle="{x:Null}"
                     AllowDrop="True">
-                <ContentControl x:Name="Socket" Content="{Binding PageFrameBoxPresenter.View}" Focusable="False"/>
+                <ContentControl x:Name="SocketView" Content="{Binding PageFrameBoxPresenter.View}" Focusable="False"/>
+                <ContentControl x:Name="SocketNext" Content="{Binding PageFrameBoxPresenter.ViewNext}" Focusable="False" Visibility="Hidden"/>
             </Grid>
         </Grid>
 

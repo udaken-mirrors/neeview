@@ -286,10 +286,10 @@ namespace NeeView
 
         [Obsolete("Typo json interface"), PropertyMapIgnore]
         [JsonPropertyName("DestinationFodlerCollection"), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
-        public DestinationFolderCollection DestinationFodlerCollection_Typo
+        public DestinationFolderCollection? DestinationFodlerCollection_Typo
         {
             get { return default; }
-            set { DestinationFolderCollection = value; }
+            set { DestinationFolderCollection = value ?? new(); }
         }
 
         #endregion Obsolete

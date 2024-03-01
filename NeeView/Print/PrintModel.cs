@@ -488,8 +488,6 @@ namespace NeeView
         /// </summary>
         public void Print()
         {
-            GC.Collect();
-
             var name = "NeeView - " + GetPrintName();
             Debug.WriteLine($"Print {name}...");
             _printDialog.PrintDocument(CreateDocument().DocumentPaginator, name);

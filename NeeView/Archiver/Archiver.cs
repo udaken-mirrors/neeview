@@ -392,22 +392,12 @@ namespace NeeView
         {
             if (_entries is null) return;
 
-            // 100MB以上使用している場合は攻撃的GCを要求する
-            bool requestGarbageCollection = PreExtractMemory.Current.Size > 100 * 1024 * 1024;
-
             foreach (var entry in _entries)
             {
                 if (entry.Data is byte[])
                 {
                     entry.ResetData();
                 }
-            }
-
-            if (requestGarbageCollection)
-            {
-                Debug.WriteLine($"** Aggressive GC!! **");
-                GC.Collect(GC.MaxGeneration, GCCollectionMode.Aggressive);
-                GC.WaitForPendingFinalizers();
             }
         }
 

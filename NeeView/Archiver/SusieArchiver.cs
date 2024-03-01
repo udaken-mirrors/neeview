@@ -172,7 +172,6 @@ namespace NeeView
                 {
                     ms.WriteTo(stream);
                 }
-                GC.Collect();
             }
         }
 

@@ -30,10 +30,10 @@ namespace NeeView.UnitTest
 
             _output.WriteLine("start...");
             var sw = Stopwatch.StartNew();
-            _ = Task.Run(() =>
+            _ = Task.Run(async () =>
             {
                 _output.WriteLine("task start");
-                Task.Delay(1000).Wait();
+                await Task.Delay(1000);
                 _output.WriteLine("job disposed.");
                 job.Dispose();
             });

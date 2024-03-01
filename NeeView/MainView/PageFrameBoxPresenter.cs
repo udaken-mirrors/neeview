@@ -54,17 +54,21 @@ namespace NeeView
 
         private readonly Config _config;
         private readonly BookHub _bookHub;
-
-        private Book? _book;
-        private BookContext? _bookContext;
-        private PageFrameContext? _context;
         private readonly BookShareContext _shareContext;
-        private PageFrameBox? _box;
-        private BookMementoControl? _bookMementoControl;
         private bool _isLoading;
         private string? _emptyMessage;
         private readonly ReferenceCounter _loadRequestCount = new();
         private CancellationTokenSource _openCancellationTokenSource = new();
+
+        private List<Page> _viewPages = new();
+        private readonly object _lock = new();
+        private ViewPageChangedEventArgs? _viewPageChangedEventArgs;
+        private bool _disposedValue;
+
+        private PageFrameBoxContext? _box;
+        private PageFrameBoxContext? _boxView;
+        private PageFrameBoxContext? _boxNext;
+        private DisposableCollection? _boxDisposables;
 
 
         private PageFrameBoxPresenter()
@@ -131,7 +135,7 @@ namespace NeeView
 
         public bool IsLoading => _isLoading;
 
-        public Book? Book => _book;
+        public Book? Book => _box?.Book;
 
         public IReadOnlyList<Page> Pages => _box?.Pages ?? new List<Page>();
 
@@ -150,12 +154,19 @@ namespace NeeView
             }
         }
 
+        /// <summary>
+        /// 安定した選択ページ<br/>
+        /// TODO: 必要性の検証。SelectedPages で十分では？
+        /// </summary>
+        public IReadOnlyList<Page> ViewPages => _viewPages;
+
         public PageFrameBox? ValidPageFrameBox => ValidBox();
 
 
-        public PageFrameBox? View => _box;
-        public double ViewWidth => _box?.ActualWidth ?? 0.0;
-        public double ViewHeight => _box?.ActualHeight ?? 0.0;
+        public PageFrameBox? View => _boxView?.Box;
+        public PageFrameBox? ViewNext => _boxNext?.Box;
+        public double ViewWidth => View?.ActualWidth ?? 0.0;
+        public double ViewHeight => View?.ActualHeight ?? 0.0;
 
         public bool IsMedia => _box?.Book.IsMedia ?? false;
 
@@ -168,14 +179,15 @@ namespace NeeView
 
         protected virtual void Dispose(bool disposing)
         {
-            if (!disposedValue)
+            if (!_disposedValue)
             {
                 if (disposing)
                 {
-                    _bookMementoControl?.SaveBookMemento();
-                    Close();
+                    _box?.BookMementoControl.SaveBookMemento();
+                    DetachPageFrameBoxContext();
+                    ClearViewPages();
                 }
-                disposedValue = true;
+                _disposedValue = true;
             }
         }
 
@@ -196,13 +208,20 @@ namespace NeeView
             _loadRequestCount.Decrement();
         }
 
+
         private void BookHub_BookChanging(object? sender, BookChangingEventArgs e)
         {
             _openCancellationTokenSource.Cancel();
             _openCancellationTokenSource.Dispose();
             _openCancellationTokenSource = new();
 
-            _bookMementoControl?.SaveBookMemento();
+            _box?.BookMementoControl?.SaveBookMemento();
+
+            AppDispatcher.Invoke(() =>
+            {
+                View?.FlushLayout();
+                DetachPageFrameBoxContext();
+            });
 
             AppDispatcher.BeginInvoke(() =>
             {
@@ -214,22 +233,26 @@ namespace NeeView
 
         private void BookHub_BookChanged(object? sender, BookChangedEventArgs e)
         {
+            var token = _openCancellationTokenSource.Token;
+            if (token.IsCancellationRequested) return;
+
             AppDispatcher.BeginInvoke(async () =>
             {
                 try
                 {
+                    // NOTE: ブックの切替時にLOHを含めた積極的ガベージコレクションを行う
+                    GC.Collect(GC.MaxGeneration, GCCollectionMode.Aggressive);
+
                     EmptyMessage = null;
-                    await OpenAsync(_bookHub.GetCurrentBook(), _openCancellationTokenSource.Token);
+                    await OpenAsync(_bookHub.GetCurrentBook(), token);
                     SetLoading(null);
                     EmptyMessage = e.EmptyMessage;
-                    PageFrameBoxChanged?.Invoke(this, new PageFrameBoxChangedEventArgs(_box, e));
+                    PageFrameBoxChanged?.Invoke(this, new PageFrameBoxChangedEventArgs(_box?.Box, e));
                     RaiseViewPageChanged();
                 }
                 catch (OperationCanceledException)
                 {
                 }
-
-                MemoryControl.Current.GarbageCollect();
             });
         }
 
@@ -244,10 +267,13 @@ namespace NeeView
         {
             token.ThrowIfCancellationRequested();
 
-            Close();
+            DetachPageFrameBoxContext();
+            ClearViewPages();
+
             if (book is null || book.Pages.Count <= 0)
             {
-                RaisePropertyChanged(nameof(View));
+                StagePageFrameBoxContext();
+                ReleasePageFrameBoxContext();
                 RaisePropertyChanged(null);
                 PagesChanged?.Invoke(this, EventArgs.Empty);
                 SelectedRangeChanged?.Invoke(this, PageRangeChangedEventArgs.Empty);
@@ -258,42 +284,27 @@ namespace NeeView
                 return;
             }
 
-            _book = book;
-
-            _context = new PageFrameContext(_config, _shareContext, ViewScrollContext, _book.IsMedia);
-            _bookContext = new BookContext(_book);
-            _bookContext.IsSortBusyChanged += BookContext_IsSortBusyChanged;
-
-            _box = new PageFrameBox(_context, _bookContext);
-            _box.PagesChanged += Box_PagesChanged;
-            _box.SelectedRangeChanged += Box_SelectedRangeChanged;
-            _box.PropertyChanged += Box_PropertyChanged;
-            _box.ViewContentChanged += Box_ViewContentChanged;
-            _box.TransformChanged += Box_TransformChanged;
-            _box.SelectedContainerLayoutChanged += Box_SelectedContainerLayoutChanged;
-            _box.SelectedContentSizeChanged += Box_SelectedContentSizeChanged;
-            _box.SizeChanged += Box_SizeChanged;
-
-            _bookMementoControl = new BookMementoControl(_book, BookHistoryCollection.Current);
+            var box = new PageFrameBoxContext(_shareContext, book);
+            AttachPageFrameBoxContext(box);
+            StagePageFrameBoxContext();
 
             // NOTE: 表示開始時の最初のサイズ変更を回避する
             using var key = PageFrameProfile.ReferenceSizeLocker.Lock();
 
-            RaisePropertyChanged(nameof(View));
-            await WaitStableAsync(_box, token);
-            _box.SetVisibility(Visibility.Visible);
+            RaisePropertyChanged(nameof(ViewNext));
 
-            _bookMementoControl.TrySaveBookMemento();
+            await WaitStableAsync(box.Box, token);
+
+            ReleasePageFrameBoxContext();
+
+            box.BookMementoControl.TrySaveBookMemento();
 
             RaisePropertyChanged(null);
+
             PagesChanged?.Invoke(this, EventArgs.Empty);
-            SelectedRangeChanged?.Invoke(this, new PageRangeChangedEventArgs(_box.SelectedRange, PageRange.Empty));
+            SelectedRangeChanged?.Invoke(this, new PageRangeChangedEventArgs(box.SelectedRange, PageRange.Empty));
         }
 
-        private void BookContext_IsSortBusyChanged(object? sender, IsSortBusyChangedEventArgs e)
-        {
-            AppDispatcher.BeginInvoke(() => IsSortBusyChanged?.Invoke(this, e));
-        }
 
         /// <summary>
         /// ページ表示完了まで待機
@@ -324,7 +335,7 @@ namespace NeeView
         /// </summary>
         /// <param name="token"></param>
         /// <returns></returns>
-        public async Task WaitForBookStableAsync(CancellationToken token)
+        private async Task WaitForBookStableAsync(CancellationToken token)
         {
             if (!IsLoading()) return;
 
@@ -360,7 +371,7 @@ namespace NeeView
             try
             {
                 using var tokenSource = CancellationTokenSource.CreateLinkedTokenSource(token, boxToken);
-                await WaitStableAsync(box, tokenSource.Token);
+                await WaitStableAsync(box.Box, tokenSource.Token);
             }
             catch (OperationCanceledException)
             {
@@ -374,72 +385,11 @@ namespace NeeView
         }
 
 
-
-        private void Close()
+        private void ClearViewPages()
         {
-            if (_box is null) return;
-
-            _bookMementoControl?.Dispose();
-            _bookMementoControl = null;
-
-            _box.PagesChanged -= Box_PagesChanged;
-            _box.SelectedRangeChanged -= Box_SelectedRangeChanged;
-            _box.PropertyChanged -= Box_PropertyChanged;
-            _box.ViewContentChanged -= Box_ViewContentChanged;
-            _box.TransformChanged -= Box_TransformChanged;
-            _box.SelectedContainerLayoutChanged -= Box_SelectedContainerLayoutChanged;
-            _box.SelectedContentSizeChanged -= Box_SelectedContentSizeChanged;
-            _box.SizeChanged -= Box_SizeChanged;
-            (_box as IDisposable)?.Dispose();
-            _box = null;
-
-            RaisePropertyChanged(nameof(View));
-
-            Debug.Assert(_context is not null);
-            //_bookContext.PagesChanged -= Box_PagesChanged;
-            //_bookContext.SelectedRangeChanged -= Box_SelectedRangeChanged;
-            //_bookContext.PropertyChanged -= Box_PropertyChanged;
-            _context.Dispose();
-            _context = null;
-
-            Debug.Assert(_bookContext is not null);
-            _bookContext.IsSortBusyChanged -= BookContext_IsSortBusyChanged;
-            _bookContext.Dispose();
-            _bookContext = null;
-
-            // 検索中状態を確実に解除
-            BookContext_IsSortBusyChanged(this, new IsSortBusyChangedEventArgs(false));
-
-            Debug.Assert(_book is not null);
-            _book = null; // Dispose は BookHub の仕事
-
-            _viewPages = new List<Page>();
+            _viewPages = [];
         }
 
-
-        private List<Page> _viewPages = new();
-
-        /// <summary>
-        /// 安定した選択ページ
-        /// </summary>
-        public IReadOnlyList<Page> ViewPages => _viewPages;
-
-        private void Box_ViewContentChanged(object? sender, FrameViewContentChangedEventArgs e)
-        {
-            ViewContentChanged?.Invoke(this, e);
-
-            if (e.State < ViewContentState.Loaded) return;
-
-            var pages = e.ViewContents.Select(e => e.Page).Distinct().ToList();
-            if (_viewPages.SequenceEqual(pages)) return;
-
-            _viewPages = pages;
-            RaiseViewPageChanged(new ViewPageChangedEventArgs(_viewPages));
-        }
-
-        private readonly object _lock = new();
-        private ViewPageChangedEventArgs? _viewPageChangedEventArgs;
-        private bool disposedValue;
 
         private void RaiseViewPageChanged()
         {
@@ -461,6 +411,26 @@ namespace NeeView
                     _viewPageChangedEventArgs = null;
                 }
             }
+        }
+
+        #region Box events
+
+        private void Box_IsSortBusyChanged(object? sender, IsSortBusyChangedEventArgs e)
+        {
+            AppDispatcher.BeginInvoke(() => IsSortBusyChanged?.Invoke(this, e));
+        }
+
+        private void Box_ViewContentChanged(object? sender, FrameViewContentChangedEventArgs e)
+        {
+            ViewContentChanged?.Invoke(this, e);
+
+            if (e.State < ViewContentState.Loaded) return;
+
+            var pages = e.ViewContents.Select(e => e.Page).Distinct().ToList();
+            if (_viewPages.SequenceEqual(pages)) return;
+
+            _viewPages = pages;
+            RaiseViewPageChanged(new ViewPageChangedEventArgs(_viewPages));
         }
 
         private void Box_TransformChanged(object? sender, TransformChangedEventArgs e)
@@ -490,47 +460,24 @@ namespace NeeView
             SelectedContentSizeChanged?.Invoke(this, e);
         }
 
-
-        private void Box_SizeChanged(object sender, SizeChangedEventArgs e)
+        private void Box_ViewSizeChanged(object sender, SizeChangedEventArgs e)
         {
             ViewSizeChanged?.Invoke(this, e);
         }
-
-
-
-        private void Box_PropertyChanged(object? sender, PropertyChangedEventArgs e)
-        {
-
-            switch (e.PropertyName)
-            {
-                case nameof(PageFrameBox.SelectedRange):
-                    RaisePropertyChanged(nameof(SelectedRange));
-                    break;
-                case nameof(PageFrameBox.Pages):
-                    RaisePropertyChanged(nameof(Pages));
-                    break;
-            }
-        }
-
+        
         private void Box_PagesChanged(object? sender, EventArgs e)
         {
+            RaisePropertyChanged(nameof(Pages));
             PagesChanged?.Invoke(this, e);
         }
 
         private void Box_SelectedRangeChanged(object? sender, PageRangeChangedEventArgs e)
         {
+            RaisePropertyChanged(nameof(SelectedRange));
             SelectedRangeChanged?.Invoke(this, e);
         }
 
-        public void ReOpen()
-        {
-            if (_context is null) return;
-
-            _bookHub.RequestReLoad(this);
-            //var memento = _bookContext.CreateMemento();
-            //_bookHub.RequestLoad(memento);
-        }
-
+        #endregion Box events
 
         private static void ShowLoupeTransformMessage(ITransformControlObject source, TransformAction action)
         {
@@ -585,7 +532,7 @@ namespace NeeView
 
         private PageFrameBox? ValidBox()
         {
-            return IsLoading ? null : _box;
+            return IsLoading ? null : _box?.Box;
         }
 
         public ContentDragTransformContext? CreateContentDragTransformContext(bool isPointContainer)
@@ -637,17 +584,10 @@ namespace NeeView
             ValidBox()?.FlushLayout();
         }
 
-        public void Reset()
-        {
-            if (_book is null) return;
-            ReOpen();
-        }
-
         public PageFrameTransformAccessor? CreateSelectedTransform()
         {
-            return _box?.CreateSelectedTransform();
+            return _box?.Box.CreateSelectedTransform();
         }
-
 
         /// <summary>
         /// 選択中の <see cref="PageFrameContent"/> を取得
@@ -655,9 +595,61 @@ namespace NeeView
         /// <returns></returns>
         public PageFrameContent? GetSelectedPageFrameContent()
         {
-            return _box?.GetSelectedPageFrameContent();
+            return _box?.Box.GetSelectedPageFrameContent();
         }
 
-#endregion IPageFrameBox
+        #endregion IPageFrameBox
+
+
+        #region PageFrameBoxContext
+
+        private void AttachPageFrameBoxContext(PageFrameBoxContext boxContext)
+        {
+            DetachPageFrameBoxContext();
+
+            _boxDisposables =
+            [
+                boxContext.SubscribeIsSortBusyChanged(Box_IsSortBusyChanged),
+                boxContext.SubscribePagesChanged(Box_PagesChanged),
+                boxContext.SubscribeSelectedRangeChanged(Box_SelectedRangeChanged),
+                boxContext.SubscribeViewContentChanged(Box_ViewContentChanged),
+                boxContext.SubscribeTransformChanged(Box_TransformChanged),
+                boxContext.SubscribeSelectedContainerLayoutChanged(Box_SelectedContainerLayoutChanged),
+                boxContext.SubscribeSelectedContentSizeChanged(Box_SelectedContentSizeChanged),
+                boxContext.SubscribeViewSizeChanged(Box_ViewSizeChanged),
+            ];
+
+            _box = boxContext;
+        }
+
+        private void DetachPageFrameBoxContext()
+        {
+            if (_box is null) return;
+            _boxDisposables?.Dispose();
+            _boxDisposables = null;
+            _box.Dispose();
+            _box = null;
+        }
+
+        // TODO: _boxNext は最初のページ表示までに必要なフレームサイズ取得用にVisualTreeに接続するためのものだが、接続せずに計算させる方法を考える
+        private void StagePageFrameBoxContext()
+        {
+            _boxNext?.Dispose();
+            _boxNext = _box;
+            RaisePropertyChanged(nameof(ViewNext));
+        }
+
+        private void ReleasePageFrameBoxContext()
+        {
+            _boxView?.Dispose();
+            _boxView = _boxNext;
+            _boxView?.Box.SetVisibility(Visibility.Visible);
+            _boxNext = null;
+            RaisePropertyChanged(nameof(View));
+            RaisePropertyChanged(nameof(ViewNext));
+        }
+
+        #endregion PageFrameBoxContext
     }
+
 }

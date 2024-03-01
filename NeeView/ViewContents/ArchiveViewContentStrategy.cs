@@ -53,6 +53,8 @@ namespace NeeView
 
         public FrameworkElement CreateLoadedContent(object data)
         {
+            if (_disposedValue) throw new ObjectDisposedException(this.GetType().FullName);
+
             if (_pageControl is not null)
             {
                 return _pageControl;

@@ -12,6 +12,10 @@
             _config = config;
         }
 
+        public Config Config => _config;
+
+        public ViewScrollContext ViewScrollContext { get; } = new();
+
         public bool IsFlipLocked => _config.View.IsKeepFlip;
         public bool IsScaleLocked => _config.View.IsKeepScale;
         public bool IsAngleLocked => _config.View.IsKeepAngle;

@@ -88,7 +88,7 @@ namespace NeeView.PageFrames
     /// <summary>
     /// PageFrameContainer のコレクションを管理
     /// </summary>
-    public partial class PageFrameContainerCollection : IEnumerable<PageFrameContainer>
+    public partial class PageFrameContainerCollection : IEnumerable<PageFrameContainer>, IDisposable
     {
         private readonly LinkedList<PageFrameContainer> _containers = new();
         private readonly PageFrameContext _context;
@@ -96,6 +96,7 @@ namespace NeeView.PageFrames
         private readonly PageFrameContainerFactory _containerFactory;
         private readonly PageFrameContainerAnchor _anchor;
         private IInitializable<PageFrameContainer>? _containerInitializer;
+        private bool _disposedValue;
         private readonly LinkedListNode<PageFrameContainer> _firstTerminateNode;
         private readonly LinkedListNode<PageFrameContainer> _lastTerminateNode;
 
@@ -184,28 +185,38 @@ namespace NeeView.PageFrames
 
         public bool Contains(PageFrameContainer container)
         {
+            if (_disposedValue) return false;
+
             return _containers.Contains(container);
         }
 
         public bool ContainsNode(LinkedListNode<PageFrameContainer> node)
         {
+            if (_disposedValue) return false;
+
             return node.List == _containers;
         }
 
 
         public LinkedListNode<PageFrameContainer>? Find(PageFrameContainer container)
         {
+            if (_disposedValue) return null;
+
             return _containers.Find(container);
         }
 
         public LinkedListNode<PageFrameContainer>? Find(PagePosition position)
         {
+            if (_disposedValue) return null;
+
             return CollectNode<PageFrameContent>()
                 .FirstOrDefault(e => e.Value.Identifier == position);
         }
 
         public LinkedListNode<PageFrameContainer>? Find(PagePosition position, LinkedListDirection direction)
         {
+            if (_disposedValue) return null;
+
             return CollectNode<PageFrameContent>(direction)
                 .FirstOrDefault(e => e.Value.FrameRange.Top(direction.ToSign()) == position);
         }
@@ -213,6 +224,8 @@ namespace NeeView.PageFrames
         // TODO: 座標に関係するものはここで実装しないほうが良い？
         public LinkedListNode<PageFrameContainer>? Find(Point point, PageFrameOrientation orientation)
         {
+            if (_disposedValue) return null;
+
             var comparer = new PointToContainerDistanceComparer(orientation, point);
 
             return CollectNode<PageFrameContent>()
@@ -231,6 +244,8 @@ namespace NeeView.PageFrames
         /// <returns>確保したコンテナ</returns>
         public LinkedListNode<PageFrameContainer>? EnsureLatestContainerNode(PagePosition position, LinkedListDirection direction, CreateContainerNodeOptions options)
         {
+            if (_disposedValue) return null;
+
             var node = FindOrCreateLatestContainerNode(position, direction);
             if (node is not null)
             {
@@ -395,6 +410,8 @@ namespace NeeView.PageFrames
         /// <param name="container"></param>
         public void RemoveConflictContainer(LinkedListNode<PageFrameContainer> anchor)
         {
+            if (_disposedValue) return;
+
             RemoveConflictContainer(anchor, LinkedListDirection.Previous);
             RemoveConflictContainer(anchor, LinkedListDirection.Next);
         }
@@ -419,6 +436,8 @@ namespace NeeView.PageFrames
         /// <param name="condition">削除条件</param>
         public void RemoveContainers(Func<LinkedListNode<PageFrameContainer>, bool> condition)
         {
+            if (_disposedValue) return;
+
             var removes = CollectNode().Where(e => condition(e) && !e.Value.IsLocked).ToList();
             foreach (var node in removes)
             {
@@ -433,6 +452,7 @@ namespace NeeView.PageFrames
         /// <param name="direction">削除方向</param>
         public void RemoveContainers(LinkedListNode<PageFrameContainer>? node, LinkedListDirection direction)
         {
+            if (_disposedValue) return;
             if (node is null) return;
 
             while (node is not null)
@@ -451,6 +471,8 @@ namespace NeeView.PageFrames
         /// </summary>
         public void RemoveOutRangeContainers(PageRange range)
         {
+            if (_disposedValue) return;
+
             var node = _containers.First;
 
             if (node is null) return;
@@ -472,6 +494,7 @@ namespace NeeView.PageFrames
         /// <param name="node"></param>
         public void RemoveContainerNode(LinkedListNode<PageFrameContainer> node)
         {
+            if (_disposedValue) return;
             Debug.Assert(!node.Value.IsLocked);
 
             CollectionChanging?.Invoke(this, new PageFrameContainerCollectionChangedEventArgs(PageFrameContainerCollectionChangedEventAction.Remove, node));
@@ -489,6 +512,8 @@ namespace NeeView.PageFrames
         /// </summary>
         public void Clear()
         {
+            if (_disposedValue) return;
+            
             RemoveContainers(_containers.First, LinkedListDirection.Next);
         }
 
@@ -497,6 +522,8 @@ namespace NeeView.PageFrames
         /// </summary>
         public void SetDirty(PageFrameDirtyLevel level)
         {
+            if (_disposedValue) return;
+
             foreach (var container in _containers.ToList())
             {
                 container.DirtyLevel = level;
@@ -505,6 +532,7 @@ namespace NeeView.PageFrames
 
         public void UpdateContainer(LinkedListNode<PageFrameContainer> node)
         {
+            if (_disposedValue) return;
             if (node.Value.Content is not PageFrameContent) return;
             if (!node.Value.IsDirty) return;
 
@@ -521,6 +549,27 @@ namespace NeeView.PageFrames
             return node == Anchor.Node
                 ? Anchor.Direction
                 : node.Value.Identifier < Anchor.Container.Identifier ? LinkedListDirection.Previous : LinkedListDirection.Next;
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!_disposedValue)
+            {
+                if (disposing)
+                {
+                    foreach (var container in _containers)
+                    {
+                        container.Dispose();
+                    }
+                }
+                _disposedValue = true;
+            }
+        }
+
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
         }
     }
 

@@ -25,6 +25,7 @@ namespace NeeView.UnitTest
             }
             """;
 
+#pragma warning disable CS0618 // 型またはメンバーが旧型式です
             // ver.41
             var config = JsonSerializer.Deserialize<AutoHideConfig>(json, options);
             Assert.NotNull(config);
@@ -34,6 +35,7 @@ namespace NeeView.UnitTest
             Assert.Equal(AutoHideConflictMode.Deny, config.AutoHideConflictBottomMargin);
             Assert.Equal(AutoHideConflictMode.Deny, config.AutoHideConfrictBottomMargin);
             Assert.Equal(AutoHideConflictMode.Allow, config.AutoHideConfrictBottomMargin_Typo);
+#pragma warning restore CS0618 // 型またはメンバーが旧型式です
         }
 
         [Fact]
@@ -54,6 +56,9 @@ namespace NeeView.UnitTest
             }
             """;
 
+#pragma warning disable CS0618 // 型またはメンバーが旧型式です
+#pragma warning disable xUnit2004 // Do not use equality check to test for boolean conditions
+#pragma warning disable xUnit2003 // Do not use equality check to test for null value
             // ver.41
             var config = JsonSerializer.Deserialize<SystemConfig>(json, options);
             Assert.NotNull(config);
@@ -70,6 +75,9 @@ namespace NeeView.UnitTest
             Assert.Equal("Pictures", config.DestinationFodlerCollection[0].Name);
             Assert.Equal("C:\\Pictures", config.DestinationFodlerCollection[0].Path);
             Assert.Equal(null, config.DestinationFodlerCollection_Typo);
+#pragma warning restore xUnit2003 // Do not use equality check to test for null value
+#pragma warning restore xUnit2004 // Do not use equality check to test for boolean conditions
+#pragma warning restore CS0618 // 型またはメンバーが旧型式です
         }
     }
 }

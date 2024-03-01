@@ -163,6 +163,7 @@ namespace NeeView
             if (box is null) return;
 
             var bounds = box.CalcStretchContentBounds(content, box.Context.ReferenceSize);
+            if (bounds.Size.IsEmpty) return;
 
             // スケールが変化して座標が変わるのでフレームのスナップは無効にする
             box.Context.IsSnapAnchor.Reset();

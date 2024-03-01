@@ -107,6 +107,9 @@ namespace NeeView.PageFrames
                 if (disposing)
                 {
                     _disposables.Dispose();
+
+                    // 検索状態終了を通知
+                    IsSortBusyChanged?.Invoke(this, new IsSortBusyChangedEventArgs(false));
                 }
                 _disposedValue = true;
             }

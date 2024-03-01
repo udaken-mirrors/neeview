@@ -147,9 +147,6 @@ namespace NeeView
         {
             if (TempDirectory == null) return;
 
-            GC.Collect();
-            GC.WaitForPendingFinalizers();
-
             try
             {
                 var name = Process.GetCurrentProcess().ProcessName;

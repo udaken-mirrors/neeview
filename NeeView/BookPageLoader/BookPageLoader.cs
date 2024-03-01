@@ -27,6 +27,7 @@ namespace NeeView
         private CancellationTokenSource? _cancellationTokenSource;
 
         private readonly DisposableCollection _disposables = new();
+        private bool _disposingValue;
         private bool _disposedValue;
 
         private readonly PageContentJobClient _jobClient;
@@ -92,12 +93,12 @@ namespace NeeView
         {
             if (!_disposedValue)
             {
+                _disposingValue = true;
                 if (disposing)
                 {
                     Cancel();
                     _disposables.Dispose();
                 }
-
                 _disposedValue = true;
             }
         }
@@ -112,6 +113,7 @@ namespace NeeView
         public void Pause()
         {
             if (_disposedValue) return;
+
             lock (_lock)
             {
                 _isEnabled = false;
@@ -122,6 +124,7 @@ namespace NeeView
         public void Resume()
         {
             if (_disposedValue) return;
+
             lock (_lock)
             {
                 _isEnabled = true;
@@ -134,6 +137,8 @@ namespace NeeView
 
         public void RequestLoad(PageRange range, int direction)
         {
+            if (_disposedValue) return;
+
             RequestLoad(new BookLoadContext(range, direction, _performanceConfig.PreLoadSize));
         }
 
@@ -158,7 +163,7 @@ namespace NeeView
         {
             Debug.Assert(context.Direction is 1 or -1);
 
-            if (_disposedValue) return;
+            if (_disposedValue || _disposingValue) return;
 
             var operation = _latestContext.CompareSet(context);
             if (operation is null) return;
@@ -237,6 +242,7 @@ namespace NeeView
         public void Cancel()
         {
             if (_disposedValue) return;
+
             lock (_lock)
             {
                 _cancellationTokenSource?.Cancel();
@@ -253,7 +259,7 @@ namespace NeeView
         /// <param name="range">ページ範囲</param>
         /// <param name="direction">ページ方向</param>
         /// <param name="token">キャンセルトークン</param>
-        public async Task LoadMainAsync(PageRange range, int direction, CancellationToken token)
+        private async Task LoadMainAsync(PageRange range, int direction, CancellationToken token)
         {
             var indexes = Enumerable.Range(range.Min.Index, range.Max.Index - range.Min.Index + 1).ToList();
             var pages = indexes.Direction(direction).Select(e => _bookContext.GetPage(e, true)).WhereNotNull().ToList();
@@ -286,7 +292,7 @@ namespace NeeView
         /// <param name="direction">先読み方向</param>
         /// <param name="limit">先読みページ数上限</param>
         /// <param name="token">キャンセルトークン</param>
-        public async Task<int> LoadAheadAsync(PagePosition position, int direction, int limit, CancellationToken token)
+        private async Task<int> LoadAheadAsync(PagePosition position, int direction, int limit, CancellationToken token)
         {
             var count = 0;
             var pos = position;

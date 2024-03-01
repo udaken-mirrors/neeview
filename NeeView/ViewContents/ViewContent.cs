@@ -105,7 +105,6 @@ namespace NeeView
                     _disposables.Dispose();
 
                     (Content as IDisposable)?.Dispose();
-                    Content = null;
                 }
                 _disposedValue = true;
             }
@@ -191,6 +190,8 @@ namespace NeeView
 
         protected virtual void OnContentChanged()
         {
+            if (_disposedValue) return;
+
             RequestLoadViewSource(CancellationToken.None);
         }
 
@@ -251,6 +252,8 @@ namespace NeeView
         /// <returns></returns>
         public async Task WaitLoadAsync(CancellationToken token)
         {
+            if (_disposedValue) return;
+
             using var disposables = new DisposableCollection();
             var tcs = new TaskCompletionSource();
             disposables.Add(token.Register(() => tcs.TrySetCanceled()));

@@ -69,7 +69,8 @@ namespace NeeView
         private void GarbageCollectCore()
         {
             GCSettings.LargeObjectHeapCompactionMode = GCLargeObjectHeapCompactionMode.CompactOnce; // cost +20ms
-            GC.Collect();
+            GC.Collect(GC.MaxGeneration, GCCollectionMode.Aggressive);
+            GC.WaitForPendingFinalizers();
         }
 
         /// <summary>

@@ -73,6 +73,8 @@ namespace NeeView
 
         private void ViewSourceMap_CollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
+            if (_disposedValue) return;
+
             switch (e.Action)
             {
                 case System.Collections.Specialized.NotifyCollectionChangedAction.Add:
@@ -92,7 +94,7 @@ namespace NeeView
         }
 
 
-        public void UpdateViewSource(ViewSourceMap viewSourceMap)
+        private void UpdateViewSource(ViewSourceMap viewSourceMap)
         {
             if (_viewSourceMap.TryGet(Page, PagePart.All, out var viewSourceAll))
             {

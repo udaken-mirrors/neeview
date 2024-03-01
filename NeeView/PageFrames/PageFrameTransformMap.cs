@@ -30,7 +30,7 @@ namespace NeeView.PageFrames
 
     // TODO: Lock用Transform は専用のものでよいのでは？
     [NotifyPropertyChanged]
-    public partial class PageFrameTransformMap : INotifyPropertyChanged
+    public partial class PageFrameTransformMap : INotifyPropertyChanged, IDisposable
     {
         private readonly Dictionary<PageFrameTransformKey, PageFrameTransform> _map = new();
         private PageFrameTransform _share = new();
@@ -39,7 +39,7 @@ namespace NeeView.PageFrames
         private bool _isFlipLocked;
         private bool _isScaleLocked;
         private bool _isAngleLocked;
-
+        private bool _disposedValue;
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
@@ -110,8 +110,30 @@ namespace NeeView.PageFrames
         public PageFrameTransform Share => _share;
 
 
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!_disposedValue)
+            {
+                if (disposing)
+                {
+                    _share.TransformChanged -= Share_TransformChanged;
+                    _map.Clear();
+                }
+                _disposedValue = true;
+            }
+        }
+
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
+
+
         private void Share_TransformChanged(object? sender, TransformChangedEventArgs e)
         {
+            if (_disposedValue) return;
+
             switch (e.Action)
             {
                 case TransformAction.Scale:
@@ -129,26 +151,31 @@ namespace NeeView.PageFrames
             }
         }
 
-        // NOTE: Disposable
-        public PageFrameTransformAccessor CreateAccessor(PageFrameTransformKey position)
+        public PageFrameTransformAccessor? CreateAccessor(PageFrameTransformKey position)
         {
+            if (_disposedValue) return null;
+
             return new PageFrameTransformAccessor(this, ElementAt(position));
         }
 
         public PageFrameTransform ElementAt(PageFrameTransformKey position)
         {
+            if (_disposedValue) return new();
+
             if (_map.TryGetValue(position, out var transform))
                 return transform;
             else
-                return _map[position] = new PageFrameTransform();
+                return _map[position] = new();
         }
 
         public bool ContainsKey(PageFrameTransformKey position)
         {
+            if (_disposedValue) return false;
+
             return _map.ContainsKey(position);
         }
 
-        public void ClearFlip(bool isFlipHorizontal, bool isFlipVertical)
+        private void ClearFlip(bool isFlipHorizontal, bool isFlipVertical)
         {
             _share.SetFlipHorizontal(isFlipHorizontal, TimeSpan.Zero);
             _share.SetFlipVertical(isFlipVertical, TimeSpan.Zero);
@@ -160,7 +187,7 @@ namespace NeeView.PageFrames
             }
         }
 
-        public void ClearScale(double scale)
+        private void ClearScale(double scale)
         {
             _share.SetScale(scale, TimeSpan.Zero);
             foreach (var transform in _map.Values)
@@ -169,7 +196,7 @@ namespace NeeView.PageFrames
             }
         }
 
-        public void ClearAngle(double angle)
+        private void ClearAngle(double angle)
         {
             _share.SetAngle(angle, TimeSpan.Zero);
             foreach (var transform in _map.Values)
@@ -178,7 +205,7 @@ namespace NeeView.PageFrames
             }
         }
 
-        public void ClearPoint(Point point)
+        private void ClearPoint(Point point)
         {
             _share.SetPoint(point, TimeSpan.Zero);
             foreach (var transform in _map.Values)
@@ -190,11 +217,15 @@ namespace NeeView.PageFrames
 
         public void Clear()
         {
+            if (_disposedValue) return;
+
             Clear(TransformMask.All);
         }
 
         public void Clear(TransformMask mask)
         {
+            if (_disposedValue) return;
+
             if (mask.HasFlag(TransformMask.Flip))
             {
                 ClearFlip(false, false);
@@ -222,6 +253,8 @@ namespace NeeView.PageFrames
         /// <returns></returns>
         public (bool IsFlipHorizontal, bool IsFlipVertical) GetFlip(PageFrameTransformKey position)
         {
+            if (_disposedValue) return (false, false);
+
             if (IsFlipLocked)
             {
                 return (_share.IsFlipHorizontal, _share.IsFlipVertical);
@@ -243,6 +276,8 @@ namespace NeeView.PageFrames
         /// <returns></returns>
         public double GetScale(PageFrameTransformKey position)
         {
+            if (_disposedValue) return 1.0;
+
             if (IsScaleLocked)
             {
                 return _share.Scale;
@@ -264,6 +299,8 @@ namespace NeeView.PageFrames
         /// <returns></returns>
         public double GetAngle(PageFrameTransformKey position)
         {
+            if (_disposedValue) return 0.0;
+
             if (IsAngleLocked)
             {
                 return _share.Angle;
@@ -285,6 +322,8 @@ namespace NeeView.PageFrames
         /// <returns></returns>
         public Point GetPoint(PageFrameTransformKey position)
         {
+            if (_disposedValue) return default;
+
             if (_map.TryGetValue(position, out var transform))
             {
                 return transform.Point;

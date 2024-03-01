@@ -11,28 +11,13 @@ using System.Threading.Tasks;
 
 namespace NeeView
 {
-    // * 事前展開の最適化
-    // TODO: [v] 事前展開の非同期化。エントリ単位で事前展開完了を待機できるようにする。
-    // TODO: [v] 事前展開のキャンセル対応
-    // TODO: [v] 事前展開メモリサイズに応じてメモリ展開とファイル展開をエントリ単位で切り替える。
-    // TODO: [v] SolidArchive の場合は _accessor.ExtractFile() ではなく事前展開を実行し待機する。
-    // TODO: [v] メディアファイルはファイル展開
-    // TODO: [x] メディア判定とかアーカイブ判定とかはページの種類判定と同じものにせよ
-    // TODO: [x] ArchiveEntry の Dispose()
-    // TODO: [v] RawData開放が即時反映されない原因の調査 ... 攻撃的GCをしないといけないようだ
-    // TODO: [x] Solid判定の非同期化
-    // TODO: [x]↑アーカイブ初期化のキャンセル対応
-    // TODO: [v] Archiver.Dispose() を呼び出す、もしくは使用停止した時点で PreExtract をキャンセルする
-    // TODO: [v] Book でアーカイブを使用するときのみ事前展開を許可
-    // TODO: 関連設定の見直し
-    // TODO: Book を閉じる前に PageFrameBox を閉じるようにする
+    // # 事前展開の最適化 (#621)
     // TODO: アーカイブをストリームソース対応にして、アーカイブの事前展開先をオンメモリ可能にする。
     // TODO: 圧縮サブフォルダーの動作確認
     // TODO: ArchiveEntry.OpenEntryAsync() 対応
     // TODO: SusieArchiver の TODO:Async
     // --
     // TODO: 複雑なのでUnitTestしたい
-    // TODO: GCのタイミング整備
     // TODO: 休眠書庫の寿命をどうしようか？
 
     /// <summary>
