@@ -105,11 +105,11 @@ namespace NeeView
             {
                 if (e.Direction < 0)
                 {
-                    await BookshelfFolderList.Current.PrevFolder(BookLoadOption.LastPage);
+                    await BookshelfFolderList.Current.PrevFolder(false, BookLoadOption.LastPage);
                 }
                 else
                 {
-                    await BookshelfFolderList.Current.NextFolder(BookLoadOption.FirstPage);
+                    await BookshelfFolderList.Current.NextFolder(false, BookLoadOption.FirstPage);
                 }
             });
         }

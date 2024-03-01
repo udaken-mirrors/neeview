@@ -2476,3 +2476,4 @@ BookConfig.IsReadyToPageMove=ページ移動準備
 BookConfig.IsReadyToPageMove.Remarks=ページの準備ができたら表示を切り替えます。「@BookConfig.IsPanorama」では無効です。
 PerformanceConfig.PreExtractSolidSize=ソリッド圧縮ファイルの事前展開に使用するメモリサイズ (MB)
 PerformanceConfig.PreExtractSolidSize.Remarks=足りない場合は一時ファイルに展開します。
+BookConfig.IsPrioritizeBookMove=ブック移動優先

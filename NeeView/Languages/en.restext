@@ -2476,3 +2476,4 @@ BookConfig.IsReadyToPageMove=Ready to page move
 BookConfig.IsReadyToPageMove.Remarks=Switch display when page is ready. Not valid in "@BookConfig.IsPanorama".
 PerformanceConfig.PreExtractSolidSize=Memory size used to pre-decompress solid compressed files (MB)
 PerformanceConfig.PreExtractSolidSize.Remarks=If not enough, extract to a temporary file.
+BookConfig.IsPrioritizeBookMove=Book movement priority

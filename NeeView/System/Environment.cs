@@ -27,7 +27,6 @@ namespace NeeView
         private static string? _revision;
         private static string? _dateVersion;
         private static bool? _isUseLocalApplicationDataFolder;
-        private static List<string>? _cultures;
         private static string? _pdfRenderer;
         private static bool? _watermark;
         private static string? _logFile;

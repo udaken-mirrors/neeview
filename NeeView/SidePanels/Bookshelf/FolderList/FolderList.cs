@@ -757,11 +757,11 @@ namespace NeeView
         #region MoveFolder
 
         // 次のフォルダーに移動
-        public async Task NextFolder(BookLoadOption option = BookLoadOption.None)
+        public async Task NextFolder(bool isPrioritizeBookMove, BookLoadOption option = BookLoadOption.None)
         {
             if (_disposedValue) return;
 
-            if (BookHub.Current.IsBusy) return; // 相対移動の場合はキャンセルしない
+            if (!isPrioritizeBookMove && BookHub.Current.IsBusy) return;
 
             try
             {
@@ -780,11 +780,11 @@ namespace NeeView
         }
 
         // 前のフォルダーに移動
-        public async Task PrevFolder(BookLoadOption option = BookLoadOption.None)
+        public async Task PrevFolder(bool isPrioritizeBookMove, BookLoadOption option = BookLoadOption.None)
         {
             if (_disposedValue) return;
 
-            if (BookHub.Current.IsBusy) return; // 相対移動の場合はキャンセルしない
+            if (!isPrioritizeBookMove && BookHub.Current.IsBusy) return;
 
             try
             {

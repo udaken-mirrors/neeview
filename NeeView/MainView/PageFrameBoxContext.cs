@@ -54,12 +54,6 @@ namespace NeeView
         public event EventHandler<IsSortBusyChangedEventArgs>? IsSortBusyChanged;
 
         [Subscribable]
-        public event PropertyChangedEventHandler? PropertyChanged;
-
-        [Subscribable]
-        public event EventHandler<PageTerminatedEventArgs>? PageTerminated;
-
-        [Subscribable]
         public event EventHandler<FrameViewContentChangedEventArgs>? ViewContentChanged;
 
         [Subscribable]

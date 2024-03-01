@@ -2476,3 +2476,4 @@ BookConfig.IsReadyToPageMove=
 BookConfig.IsReadyToPageMove.Remarks=
 PerformanceConfig.PreExtractSolidSize=
 PerformanceConfig.PreExtractSolidSize.Remarks=
+BookConfig.IsPrioritizeBookMove=

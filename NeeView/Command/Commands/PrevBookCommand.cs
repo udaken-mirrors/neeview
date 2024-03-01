@@ -12,12 +12,12 @@
 
         public override bool CanExecute(object? sender, CommandContext e)
         {
-            return !NowLoading.Current.IsDispNowLoading;
+            return Config.Current.Book.IsPrioritizeBookMove || !NowLoading.Current.IsDispNowLoading;
         }
 
         public override void Execute(object? sender, CommandContext e)
         {
-            _ = BookshelfFolderList.Current.PrevFolder();
+            _ = BookshelfFolderList.Current.PrevFolder(Config.Current.Book.IsPrioritizeBookMove);
         }
     }
 }

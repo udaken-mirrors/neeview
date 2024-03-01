@@ -16,6 +16,7 @@ namespace NeeView
         private double _wideRatio = 1.0;
         private StringCollection _excludes = (StringCollection)DefaultExcludes.Clone();
         private PageEndAction _pageEndAction;
+        private bool _isPrioritizeBookMove = false;
         private bool _isPrioritizePageMove = true;
         private bool _isReadyToPageMove;
         private bool _isNotifyPageLoop;
@@ -90,6 +91,16 @@ namespace NeeView
         {
             get { return _frameSpace; }
             set { SetProperty(ref _frameSpace, value); }
+        }
+
+        /// <summary>
+        /// ブック移動優先設定
+        /// </summary>
+        [PropertyMember]
+        public bool IsPrioritizeBookMove
+        {
+            get { return _isPrioritizeBookMove; }
+            set { SetProperty(ref _isPrioritizeBookMove, value); }
         }
 
         /// <summary>
