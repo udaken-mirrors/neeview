@@ -19,10 +19,6 @@ using NeeView.Effects;
 using NeeView.Maths;
 using NeeView.Windows;
 
-// TODO: Dispose の整備。大きなメモリ解放と機能停止のみで表示に影響する処理はしないようにする。
-// TODO: ファイナライザの整備。ファイナライザでマネージドオブジェクトにアクセスしないように。
-// TODO: Dispose でメディア操作をすべて禁止する
-
 namespace NeeView.PageFrames
 {
     // TODO: ごちゃっとしてるので整備する

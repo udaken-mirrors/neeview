@@ -169,6 +169,9 @@ namespace NeeView.PageFrames
 
         public void SetContainerInitializer(IInitializable<PageFrameContainer>? containerInitializer)
         {
+            // NOTE: 初期化で呼ばれるものなので disposed 処理は行わない
+            //if (_disposedValue) return;
+
             foreach (var container in _containers)
             {
                 _containerInitializer?.Uninitialized(container);
@@ -374,6 +377,8 @@ namespace NeeView.PageFrames
 
         private void Container_TransformChanged(object? sender, TransformChangedEventArgs e)
         {
+            Debug.Assert(!_disposedValue);
+
             if (sender is not PageFrameContainer container) return;
 
             var node = Find(container);
@@ -384,6 +389,8 @@ namespace NeeView.PageFrames
 
         private void Container_ContentSizeChanged(object? sender, EventArgs e)
         {
+            Debug.Assert(!_disposedValue);
+
             if (sender is not PageFrameContainer container) return;
 
             var node = Find(container);
@@ -396,6 +403,8 @@ namespace NeeView.PageFrames
 
         private void Container_ContainerLayoutChanged(object? sender, EventArgs e)
         {
+            Debug.Assert(!_disposedValue);
+
             if (sender is not PageFrameContainer container) return;
 
             var node = Find(container);

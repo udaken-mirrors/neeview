@@ -24,6 +24,12 @@ namespace NeeView
 
         public bool TryGet(Page page, PagePart pagePart, out ViewSource? viewSource)
         {
+            if (_disposedValue)
+            {
+                viewSource = null;
+                return false;
+            }
+
             lock (_lock)
             {
                 var key = new ViewSourceKey(page, pagePart);
@@ -33,6 +39,12 @@ namespace NeeView
 
         public ViewSource Get(Page page, PagePart pagePart, PageDataSource pageDataSource)
         {
+            if (_disposedValue)
+            {
+                // TODO: 理想はダミーを返す
+                return new ViewSource(page.Content, pageDataSource, _bookMemoryService);
+            }
+
             lock (_lock)
             {
                 var key = new ViewSourceKey(page, pagePart);
@@ -53,6 +65,8 @@ namespace NeeView
 
         public void Clear()
         {
+            if (_disposedValue) return;
+
             lock (_lock)
             {
                 _map.Clear();
@@ -66,7 +80,10 @@ namespace NeeView
             {
                 if (disposing)
                 {
-                    _map.Clear();
+                    lock (_lock)
+                    {
+                        _map.Clear();
+                    }
                 }
                 _disposedValue = true;
             }

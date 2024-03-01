@@ -102,13 +102,21 @@ namespace NeeView
         public bool IsEnabled
         {
             get => _player.IsEnabled;
-            set => _player.IsEnabled = value;
+            set
+            {
+                if (_disposedValue) return;
+                _player.IsEnabled = value;
+            }
         }
 
         public bool IsAudioEnabled
         {
             get => _player.IsAudioEnabled;
-            set => _player.IsAudioEnabled = value;
+            set
+            {
+                if (_disposedValue) return;
+                _player.IsAudioEnabled = value;
+            }
         }
 
         public bool HasAudio => _player.HasAudio;
@@ -120,7 +128,6 @@ namespace NeeView
         public bool ScrubbingEnabled
         {
             get => _player.ScrubbingEnabled;
-            //set => _player.ScrubbingEnabled = value;
         }
 
         public Duration Duration => _player.Duration;
@@ -128,7 +135,11 @@ namespace NeeView
         public double Position
         {
             get => _player.Position;
-            set => _player.Position = value;
+            set
+            {
+                if (_disposedValue) return;
+                _player.Position = value;
+            }
         }
 
         public bool CanControlTracks => _player.CanControlTracks;
@@ -146,19 +157,31 @@ namespace NeeView
         public bool IsMuted
         {
             get => _mediaContext.IsMuted;
-            set => _mediaContext.IsMuted = value;
+            set
+            {
+                if (_disposedValue) return;
+                _mediaContext.IsMuted = value;
+            }
         }
 
         public double Volume
         {
             get => _mediaContext.Volume;
-            set => _mediaContext.Volume = value;
+            set
+            {
+                if (_disposedValue) return;
+                _mediaContext.Volume = value;
+            }
         }
 
         public bool IsRepeat
         {
             get => _mediaContext.IsRepeat;
-            set => _mediaContext.IsRepeat = value;
+            set
+            {
+                if (_disposedValue) return;
+                _mediaContext.IsRepeat = value;
+            }
         }
 
 
@@ -195,7 +218,7 @@ namespace NeeView
         private void Update()
         {
             if (_disposedValue) return;
-            
+
             //Debug.WriteLine($"Media.UpdateState: {Page}");
             _player.IsEnabled = _activity.IsVisible;
             _player.IsMuted = _mediaContext.IsMuted;

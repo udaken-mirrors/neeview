@@ -142,6 +142,7 @@ namespace NeeView
             get { return _position; }
             set
             {
+                if (_disposedValue) return;
                 if (SetProperty(ref _position, MathUtility.Clamp(value, 0.0, 1.0)))
                 {
                     _player.Position = _position;
@@ -157,8 +158,12 @@ namespace NeeView
         // [0..1]
         public double Volume
         {
-            get => _player.Volume;
-            set => _player.Volume = value;
+            get { return _player.Volume; }
+            set
+            {
+                if (_disposedValue) return;
+                _player.Volume = value;
+            }
         }
 
         public bool IsTimeLeftDisp
@@ -202,6 +207,7 @@ namespace NeeView
             get { return _isPlaying; }
             set
             {
+                if (_disposedValue) return;
                 if (SetProperty(ref _isPlaying, value))
                 {
                     UpdatePlaying();
@@ -212,13 +218,21 @@ namespace NeeView
         public bool IsRepeat
         {
             get => _player.IsRepeat;
-            set => _player.IsRepeat = value;
+            set
+            {
+                if (_disposedValue) return;
+                _player.IsRepeat = value;
+            }
         }
 
         public bool IsMuted
         {
             get => _player.IsMuted;
-            set => _player.IsMuted = value;
+            set
+            {
+                if (_disposedValue) return;
+                _player.IsMuted = value;
+            }
         }
 
         public bool ScrubbingEnabled
@@ -302,6 +316,7 @@ namespace NeeView
 
         private void Player_MediaEnded(object? sender, EventArgs e)
         {
+            if (_disposedValue) return;
             if (!IsRepeat)
             {
                 MediaEnded?.Invoke(this, EventArgs.Empty);
@@ -361,6 +376,8 @@ namespace NeeView
 
         public void TogglePlay()
         {
+            if (_disposedValue) return;
+
             if (!IsPlaying)
             {
                 Play();
@@ -449,22 +466,26 @@ namespace NeeView
 
         public void SetPositionFirst()
         {
+            if (_disposedValue) return;
+
             SetPosition(TimeSpan.Zero);
         }
 
         public void SetPositionLast()
         {
+            if (_disposedValue) return;
+
             SetPosition(_durationTimeSpan);
         }
 
         // コマンドによる移動
-        public void SetPosition(TimeSpan span)
+        private void SetPosition(TimeSpan span)
         {
             SetPosition(span.Divide(_durationTimeSpan));
         }
 
         // コマンドによる移動[0..1]
-        public void SetPosition(double position)
+        private void SetPosition(double position)
         {
             if (_disposedValue) return;
             if (!_player.ScrubbingEnabled) return;
@@ -480,6 +501,8 @@ namespace NeeView
         /// <param name="delta">増減値</param>
         public void AddVolume(double delta)
         {
+            if (_disposedValue) return;
+
             Volume = MathUtility.Clamp(Volume + delta, 0.0, 1.0);
         }
 

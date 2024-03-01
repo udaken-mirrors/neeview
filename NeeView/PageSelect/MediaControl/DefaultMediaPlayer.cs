@@ -83,31 +83,46 @@ namespace NeeView
         public bool IsMuted
         {
             get { return _isMuted; }
-            set { SetProperty(ref _isMuted, value); }
+            set
+            {
+                if (_disposedValue) return;
+                SetProperty(ref _isMuted, value);
+            }
         }
 
         public bool IsRepeat
         {
             get { return _isRepeat; }
-            set { SetProperty(ref _isRepeat, value); }
+            set
+            {
+                if (_disposedValue) return;
+                SetProperty(ref _isRepeat, value);
+            }
         }
 
         public bool IsPlaying
         {
             get { return _isPlaying; }
-            private set { SetProperty(ref _isPlaying, value); }
+            private set
+            {
+                if (_disposedValue) return;
+                SetProperty(ref _isPlaying, value);
+            }
         }
 
         public double Volume
         {
             get { return _player.Volume; }
-            set { _player.Volume = value; }
+            set
+            {
+                if (_disposedValue) return;
+                _player.Volume = value;
+            }
         }
 
         public bool ScrubbingEnabled
         {
             get { return _player.ScrubbingEnabled; }
-            //set { _player.ScrubbingEnabled = value; }
         }
 
         public double Position
@@ -115,6 +130,7 @@ namespace NeeView
             get { return Duration.HasTimeSpan ? _player.Position.Divide(Duration.TimeSpan) : 0.0; }
             set
             {
+                if (_disposedValue) return;
                 var newPosition = Duration.HasTimeSpan ? Duration.TimeSpan.Multiply(value) : TimeSpan.Zero;
                 if (_player.Position != newPosition)
                 {
@@ -263,6 +279,8 @@ namespace NeeView
 
         private void Player_MediaOpened(object? sender, EventArgs e)
         {
+            if (_disposedValue) return;
+
             RaisePropertyChanged(nameof(HasVideo));
             RaisePropertyChanged(nameof(HasAudio));
             RaisePropertyChanged(nameof(Duration));
@@ -271,6 +289,8 @@ namespace NeeView
 
         private void Player_MediaEnded(object? sender, EventArgs e)
         {
+            if (_disposedValue) return;
+
             if (_isRepeat)
             {
                 Replay();
@@ -283,11 +303,15 @@ namespace NeeView
 
         private void Player_MediaFailed(object? sender, System.Windows.Media.ExceptionEventArgs e)
         {
+            if (_disposedValue) return;
+
             MediaFailed?.Invoke(sender, new ExceptionEventArgs(e.ErrorException));
         }
 
         private void IsRepeat_Changed(object? sender, PropertyChangedEventArgs e)
         {
+            if (_disposedValue) return;
+
             if (_isRepeat && _isEnded && _isPlaying)
             {
                 Replay();

@@ -12,8 +12,8 @@ namespace NeeView
     /// </remarks>
     public class OnceDispatcher : IDisposable
     {
-        private Dictionary<object, DispatcherOperation> _map = new();
-        private object _lock = new object();
+        private readonly Dictionary<object, DispatcherOperation> _map = new();
+        private readonly object _lock = new();
         private bool _disposedValue;
 
 
@@ -25,7 +25,6 @@ namespace NeeView
                 {
                     Clear();
                 }
-
                 _disposedValue = true;
             }
         }
@@ -43,6 +42,8 @@ namespace NeeView
         /// <param name="action">実行する処理</param>
         public void BeginInvoke(object key, Action action)
         {
+            if (_disposedValue) return;
+
             lock (_lock)
             {
                 if (_map.TryGetValue(key, out var operation))
@@ -65,6 +66,8 @@ namespace NeeView
 
         public void Clear()
         {
+            if (_disposedValue) return;
+
             lock (_lock)
             {
                 foreach (var operation in _map.Values)

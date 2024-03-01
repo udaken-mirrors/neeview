@@ -33,9 +33,9 @@ namespace NeeView.PageFrames
     public partial class PageFrameTransformMap : INotifyPropertyChanged, IDisposable
     {
         private readonly Dictionary<PageFrameTransformKey, PageFrameTransform> _map = new();
-        private PageFrameTransform _share = new();
+        private readonly PageFrameTransform _share = new();
 
-        private IShareTransformContext _shareContext;
+        private readonly IShareTransformContext _shareContext;
         private bool _isFlipLocked;
         private bool _isScaleLocked;
         private bool _isAngleLocked;
@@ -75,6 +75,7 @@ namespace NeeView.PageFrames
             get { return _isFlipLocked; }
             set
             {
+                if (_disposedValue) return;
                 if (SetProperty(ref _isFlipLocked, value))
                 {
                     ClearFlip(false, false);
@@ -87,6 +88,7 @@ namespace NeeView.PageFrames
             get { return _isScaleLocked; }
             set
             {
+                if (_disposedValue) return;
                 if (SetProperty(ref _isScaleLocked, value))
                 {
                     ClearScale(1.0);
@@ -99,6 +101,7 @@ namespace NeeView.PageFrames
             get { return _isAngleLocked; }
             set
             {
+                if (_disposedValue) return;
                 if (SetProperty(ref _isAngleLocked, value))
                 {
                     ClearAngle(0.0);
@@ -132,7 +135,7 @@ namespace NeeView.PageFrames
 
         private void Share_TransformChanged(object? sender, TransformChangedEventArgs e)
         {
-            if (_disposedValue) return;
+            Debug.Assert(!_disposedValue);
 
             switch (e.Action)
             {

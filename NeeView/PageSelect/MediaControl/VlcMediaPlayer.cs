@@ -124,13 +124,21 @@ namespace NeeView
         public bool HasAudio
         {
             get { return _hasAudio; }
-            private set { SetProperty(ref _hasAudio, value); }
+            private set
+            {
+                if (_disposedValue) return;
+                SetProperty(ref _hasAudio, value);
+            }
         }
 
         public bool HasVideo
         {
             get { return _hasVideo; }
-            private set { SetProperty(ref _hasVideo, value); }
+            private set
+            {
+                if (_disposedValue) return;
+                SetProperty(ref _hasVideo, value);
+            }
         }
 
         public bool IsEnabled
@@ -138,6 +146,7 @@ namespace NeeView
             get { return _isEnabled; }
             set
             {
+                if (_disposedValue) return;
                 if (SetProperty(ref _isEnabled, value))
                 {
                     UpdatePlayed();
@@ -150,6 +159,7 @@ namespace NeeView
             get { return _isAudioEnabled; }
             set
             {
+                if (_disposedValue) return;
                 if (SetProperty(ref _isAudioEnabled, value))
                 {
                     UpdateAudioTrackActivity();
@@ -162,6 +172,7 @@ namespace NeeView
             get { return _isMuted; }
             set
             {
+                if (_disposedValue) return;
                 if (SetProperty(ref _isMuted, value))
                 {
                     UpdateMuted();
@@ -174,6 +185,7 @@ namespace NeeView
             get { return _isRepeat; }
             set
             {
+                if (_disposedValue) return;
                 if (SetProperty(ref _isRepeat, value))
                 {
                     UpdateRepeat();
@@ -186,6 +198,7 @@ namespace NeeView
             get { return _isPlaying; }
             private set
             {
+                if (_disposedValue) return;
                 if (SetProperty(ref _isPlaying, value))
                 {
                     if (_isPlaying)
@@ -204,14 +217,22 @@ namespace NeeView
         public bool ScrubbingEnabled
         {
             get { return _scrubbingEnabled; }
-            private set { SetProperty(ref _scrubbingEnabled, value); }
+            private set
+            {
+                if (_disposedValue) return;
+                SetProperty(ref _scrubbingEnabled, value);
+            }
         }
 
 
         public Duration Duration
         {
             get { return _duration; }
-            set { SetProperty(ref _duration, value); }
+            set
+            {
+                if (_disposedValue) return;
+                SetProperty(ref _duration, value);
+            }
         }
 
 
@@ -386,6 +407,8 @@ namespace NeeView
 
         private void Player_Playing(object? sender, VlcMediaPlayerPlayingEventArgs e)
         {
+            if (_disposedValue) return;
+            
             Task.Run(() =>
             {
                 Trace($"Playing: {_player.Position} => {_requestPosition}");
@@ -400,17 +423,23 @@ namespace NeeView
 
         private void Player_EndReached(object? sender, VlcMediaPlayerEndReachedEventArgs e)
         {
+            if (_disposedValue) return;
+
             RaisePropertyChanged(nameof(Position));
             AppDispatcher.BeginInvoke(() => MediaEnded?.Invoke(this, e));
         }
 
         private void Player_EncounteredError(object? sender, VlcMediaPlayerEncounteredErrorEventArgs e)
         {
+            if (_disposedValue) return;
+
             AppDispatcher.BeginInvoke(() => MediaFailed?.Invoke(this, new ExceptionEventArgs(new ApplicationException("libVLC Failed"))));
         }
 
         private void Player_PositionChanged(object? sender, VlcMediaPlayerPositionChangedEventArgs e)
         {
+            if (_disposedValue) return;
+
             if (0.0 <= _requestPosition && _requestPosition <= e.NewPosition)
             {
                 //Trace($"RequestPosition.Reset");
@@ -420,11 +449,15 @@ namespace NeeView
 
         private void Player_AudioVolume(object? sender, VlcMediaPlayerAudioVolumeEventArgs e)
         {
+            if (_disposedValue) return;
+
             RaisePropertyChanged(nameof(Volume));
         }
 
         private void Player_SeekableChanged(object? sender, VlcMediaPlayerSeekableChangedEventArgs e)
         {
+            if (_disposedValue) return;
+
             RaisePropertyChanged(nameof(ScrubbingEnabled));
         }
 

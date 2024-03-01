@@ -12,8 +12,8 @@ namespace NeeView.PageFrames
     {
         private readonly MultiTransform _transform = new();
         private readonly LoupeTransformContext _loupeContext;
-        private bool _disposedValue;
         private readonly DisposableCollection _disposables = new();
+        private bool _disposedValue;
 
         public PageFrameViewTransform(PageFrameContext context, LoupeTransformContext loupeContext)
         {
@@ -77,12 +77,16 @@ namespace NeeView.PageFrames
 
         private void TransformView_Changed(object? sender, EventArgs e)
         {
+            Debug.Assert(!_disposedValue);
+
             ViewPointChanged?.Invoke(this, EventArgs.Empty);
         }
 
 
         private void LoupeContext_TransformChanged(object? sender, TransformChangedEventArgs e)
         {
+            Debug.Assert(!_disposedValue);
+
             TransformChanged?.Invoke(sender, e);
         }
 
@@ -93,11 +97,14 @@ namespace NeeView.PageFrames
 
         public void SetPoint(Point value, TimeSpan span)
         {
+            if (_disposedValue) return;
+
             SetPoint(value, span, null, null);
         }
 
         public void SetPoint(Point value, TimeSpan span, IEasingFunction? easeX, IEasingFunction? easeY)
         {
+            if (_disposedValue) return;
             if (_transform.Point == value) return;
 
             //Debug.WriteLine($"$$ {{{Point:f0}}} to {{{value:f0}}} ({span.TotalMilliseconds})");
@@ -112,11 +119,15 @@ namespace NeeView.PageFrames
 
         public void ResetVelocity()
         {
+            if (_disposedValue) return;
+
             _transform.ResetVelocity();
         }
 
         public void Flush()
         {
+            if (_disposedValue) return;
+
             _transform.Flush();
         }
 

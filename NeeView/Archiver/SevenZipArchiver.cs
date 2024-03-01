@@ -11,14 +11,7 @@ using System.Threading.Tasks;
 
 namespace NeeView
 {
-    // # 事前展開の最適化 (#621)
-    // TODO: アーカイブをストリームソース対応にして、アーカイブの事前展開先をオンメモリ可能にする。
-    // TODO: 圧縮サブフォルダーの動作確認
-    // TODO: ArchiveEntry.OpenEntryAsync() 対応
-    // TODO: SusieArchiver の TODO:Async
-    // --
-    // TODO: 複雑なのでUnitTestしたい
-    // TODO: 休眠書庫の寿命をどうしようか？
+
 
     /// <summary>
     /// アーカイバー：7z.dll

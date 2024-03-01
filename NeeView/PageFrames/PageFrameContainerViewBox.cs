@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Windows;
 using NeeLaboratory.Generators;
 using NeeView.ComponentModel;
@@ -64,6 +65,7 @@ namespace NeeView.PageFrames
             get { return _rect; }
             private set
             {
+                if (_disposedValue) return;
                 if (_rect != value)
                 {
                     var args = new RectChangeEventArgs(value, _rect);
@@ -86,12 +88,16 @@ namespace NeeView.PageFrames
 
         private void View_SizeChanged(object? sender, SizeChangedEventArgs e)
         {
+            Debug.Assert(!_disposedValue);
+
             _size = e.NewSize;
             UpdateViewRect();
         }
 
         public void UpdateViewRect()
         {
+            if (_disposedValue) return;
+
             Rect = GetViewRect(TransformSelect.Calc);
         }
 

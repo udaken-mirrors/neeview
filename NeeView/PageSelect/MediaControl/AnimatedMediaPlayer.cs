@@ -72,6 +72,7 @@ namespace NeeView
             get { return _isEnabled; }
             set
             {
+                if (_disposedValue) return;
                 if (SetProperty(ref _isEnabled, value))
                 {
                     UpdatePlayed();
@@ -96,6 +97,7 @@ namespace NeeView
             get { return _isRepeat; }
             set
             {
+                if (_disposedValue) return;
                 if (SetProperty(ref _isRepeat, value))
                 {
                     UpdateRepeat();
@@ -106,7 +108,11 @@ namespace NeeView
         public bool IsPlaying
         {
             get { return _isPlaying; }
-            private set { SetProperty(ref _isPlaying, value); }
+            private set
+            {
+                if (_disposedValue) return;
+                SetProperty(ref _isPlaying, value);
+            }
         }
 
         public bool ScrubbingEnabled => true;
@@ -121,7 +127,11 @@ namespace NeeView
         public double Position
         {
             get { return GetPosition(); }
-            set { SetPosition(value); }
+            set
+            {
+                if (_disposedValue) return;
+                SetPosition(value);
+            }
         }
 
         public double Volume
@@ -192,6 +202,7 @@ namespace NeeView
 
         public void Close()
         {
+            if (_disposedValue) return;
             if (_player is null) return;
 
             _player.CurrentFrameChanged -= Player_CurrentFrameChanged;
@@ -216,11 +227,15 @@ namespace NeeView
 
         private void Image_Completed(object sender, RoutedEventArgs e)
         {
+            if (_disposedValue) return;
+
             MediaEnded?.Invoke(this, EventArgs.Empty);
         }
 
         private void Player_CurrentFrameChanged(object? sender, EventArgs e)
         {
+            if (_disposedValue) return;
+
             RaisePropertyChanged(nameof(Position));
         }
 
