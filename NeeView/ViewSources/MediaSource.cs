@@ -1,5 +1,7 @@
 ﻿using System;
 using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace NeeView
 {
@@ -31,11 +33,11 @@ namespace NeeView
             return Path ?? "StreamSource";
         }
 
-        public Stream OpenStream()
+        public async Task<Stream> OpenStreamAsync(CancellationToken token)
         {
             if (StreamSource is not null)
             {
-                return StreamSource.OpenStream();
+                return await StreamSource.OpenStreamAsync(token);
             }
             else if (Path is not null)
             {

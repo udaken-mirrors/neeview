@@ -39,8 +39,7 @@ namespace NeeView
             {
                 var rawData = (data.Data as IHasRawData)?.RawData;
                 if (rawData is null) throw new InvalidOperationException($"No elements required for image generation");
-                _picture.CreateImageSource(rawData, size, token);
-                await Task.CompletedTask;
+                await _picture.CreateImageSourceAsync(rawData, size, token);
 
 #if DEBUG
                 if (pictureInfo is not null && _picture.ImageSource is not null)

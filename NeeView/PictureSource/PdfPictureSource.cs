@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Documents;
 using System.Windows.Media;
@@ -27,18 +28,19 @@ namespace NeeView
         private Size GetImageSize() => PictureInfo?.Size ?? new Size(480, 640);
 
 
-        public byte[] CreateImage(ArchiveEntry entry, Size size, BitmapCreateSetting setting, BitmapImageFormat format, int quality, CancellationToken token)
+        public async Task<byte[]> CreateImageAsync(ArchiveEntry entry, Size size, BitmapCreateSetting setting, BitmapImageFormat format, int quality, CancellationToken token)
         {
             Debug.Assert(entry == ArchiveEntry);
             size = size.IsEmpty ? GetImageSize() : size;
-            return _pdfArchive.CreateBitmapData(entry, size, setting, format, quality);
+            return await Task.FromResult(_pdfArchive.CreateBitmapData(entry, size, setting, format, quality)); // TODO: async
         }
 
-        public ImageSource CreateImageSource(ArchiveEntry entry, Size size, BitmapCreateSetting setting, CancellationToken token)
+        public async Task<ImageSource> CreateImageSourceAsync(ArchiveEntry entry, Size size, BitmapCreateSetting setting, CancellationToken token)
         {
             Debug.Assert(entry == ArchiveEntry);
             size = size.IsEmpty ? GetImageSize() : size;
-            var bitmap = _pdfArchive.CreateBitmapSource(entry, size);
+            var bitmap = _pdfArchive.CreateBitmapSource(entry, size); // TODO: async
+            await Task.CompletedTask;
 
             // 色情報設定
             PictureInfo?.SetPixelInfo(bitmap);
@@ -46,12 +48,12 @@ namespace NeeView
             return bitmap;
         }
 
-        public byte[] CreateThumbnail(ArchiveEntry entry, ThumbnailProfile profile, CancellationToken token)
+        public async Task<byte[]> CreateThumbnailAsync(ArchiveEntry entry, ThumbnailProfile profile, CancellationToken token)
         {
             Debug.Assert(entry == ArchiveEntry);
             var size = ThumbnailProfile.GetThumbnailSize(GetImageSize());
             var setting = profile.CreateBitmapCreateSetting(true);
-            return CreateImage(entry, size, setting, Config.Current.Thumbnail.Format, Config.Current.Thumbnail.Quality, token);
+            return await CreateImageAsync(entry, size, setting, Config.Current.Thumbnail.Format, Config.Current.Thumbnail.Quality, token);
         }
 
 

@@ -45,7 +45,7 @@ namespace NeeView
 #endif
 
                 var streamSource = new ArchiveEntryStreamSource(ArchiveEntry);
-                streamSource.CreateCache();
+                await streamSource.CreateCacheAsync(token);
 
                 var createPictureInfo = PictureInfo is null;
                 var imageData = await _loader.LoadAsync(streamSource, createPictureInfo, true, token);

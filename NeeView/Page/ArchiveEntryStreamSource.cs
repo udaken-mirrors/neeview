@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace NeeView
 {
@@ -22,9 +24,9 @@ namespace NeeView
 
         public long CacheSize => _cache.Count;
 
-        public Stream OpenStream()
+        public async Task<Stream> OpenStreamAsync(CancellationToken token)
         {
-            CreateCache();
+            await CreateCacheAsync(token);
 
             if (_cache.Array is not null)
             {
@@ -32,29 +34,16 @@ namespace NeeView
             }
             else
             {
-                return ArchiveEntry.OpenEntry(); // TODO: async
+                return await ArchiveEntry.OpenEntryAsync(token);
             }
         }
 
-        public ReadOnlySpan<byte> GetSpan()
-        {
-            if (_cache.Array is not null)
-            {
-                return _cache.AsSpan();
-            }
-            else
-            {
-                using var stream = ArchiveEntry.OpenEntry(); // TODO: async
-                return stream.ToSpan(0, (int)ArchiveEntry.Length);
-            }
-        }
-
-        public void CreateCache()
+        public async Task CreateCacheAsync(CancellationToken token)
         {
             // 展開処理の重複を避けるため、ファイルシステムエントリ以外はキャッシュを作る
             if (_cache.Array is not null || ArchiveEntry.HasCache || ArchiveEntry.IsFileSystem) return;
 
-            using var stream = ArchiveEntry.OpenEntry(); // TODO: async
+            using var stream = await ArchiveEntry.OpenEntryAsync(token);
 
             // メモリストリームであればバッファを直接取得
             if (stream is MemoryStream memoryStream)

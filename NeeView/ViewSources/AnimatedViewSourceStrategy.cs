@@ -22,7 +22,7 @@ namespace NeeView
             if (data.Data is not AnimatedPageData pageData) throw new InvalidOperationException(nameof(data.Data));
 
             // TODO: この画像が何度も読み込まれてないか調査すること
-            var image = LoadImage(pageData.MediaSource);
+            var image = await LoadImageAsync(pageData.MediaSource, token);
             await Task.CompletedTask;
 
             // 色情報とBPP設定。
@@ -37,11 +37,11 @@ namespace NeeView
 
 
         // TODO: Async
-        private BitmapImage? LoadImage(MediaSource mediaSource)
+        private async Task<BitmapImage?> LoadImageAsync(MediaSource mediaSource, CancellationToken token)
         {
             try
             {
-                using (var stream = mediaSource.OpenStream())
+                using (var stream = await mediaSource.OpenStreamAsync(token))
                 {
                     var bitmap = new BitmapImage();
                     bitmap.BeginInit();

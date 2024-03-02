@@ -32,7 +32,7 @@ namespace NeeView
                     if (data != null)
                     {
                         var pictureSource = PictureSourceFactory.Create(_content);
-                        thumbnailRaw = MemoryControl.Current.RetryFuncWithMemoryCleanup(() => pictureSource.CreateThumbnail(data, ThumbnailProfile.Current, token));
+                        thumbnailRaw = await MemoryControl.Current.RetryFuncWithMemoryCleanupAsync(pictureSource.CreateThumbnailAsync(data, ThumbnailProfile.Current, token));
                     }
                 }
                 catch

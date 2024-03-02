@@ -10,6 +10,9 @@ namespace NeeView
 {
     public class SvgPageContent : PageContent
     {
+        private readonly object _lock = new();
+
+
         public SvgPageContent(ArchiveEntry archiveEntry, BookMemoryService? bookMemoryService) : base(archiveEntry, bookMemoryService)
         {
         }
@@ -19,7 +22,7 @@ namespace NeeView
             NVDebug.AssertMTA();
             token.ThrowIfCancellationRequested();
 
-            var drawing = LoadDrawingImage(token);
+            var drawing = await LoadDrawingImageAsync(token);
             var pictureInfo = CreatePictureInfo(drawing, token);
             return await Task.FromResult(pictureInfo);
         }
@@ -32,7 +35,7 @@ namespace NeeView
             try
             {
                 token.ThrowIfCancellationRequested();
-                var drawing = LoadDrawingImage(token);
+                var drawing = await LoadDrawingImageAsync(token);
                 var pictureInfo = CreatePictureInfo(drawing, token);
                 return PageSource.Create(new SvgPageData(drawing), pictureInfo);
             }
@@ -46,17 +49,11 @@ namespace NeeView
             }
         }
 
-        private object _lock = new();
-
-        // TODO: async
-        private DrawingGroup LoadDrawingImage(CancellationToken token)
+        private async Task<DrawingGroup> LoadDrawingImageAsync(CancellationToken token)
         {
-            //if (_imageSource != null) return;
-
             token.ThrowIfCancellationRequested();
 
-            //using (var stream = _streamSource.CreateStream(token))
-            using (var stream = ArchiveEntry.OpenEntry()) // TODO: async
+            using (var stream = await ArchiveEntry.OpenEntryAsync(token))
             {
                 var settings = new WpfDrawingSettings();
                 settings.IncludeRuntime = false;
@@ -71,10 +68,6 @@ namespace NeeView
                 drawing.Freeze();
 
                 return drawing;
-
-                //var image = new DrawingImage();
-                //image.Drawing = drawing;
-                //image.Freeze();
             }
         }
 

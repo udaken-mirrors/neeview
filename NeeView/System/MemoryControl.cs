@@ -123,6 +123,22 @@ namespace NeeView
         }
 
         /// <summary>
+        /// OutOfMemory発生でメモリクリーンアップしてリトライ (タスク)
+        /// </summary>
+        public async Task<T> RetryFuncWithMemoryCleanupAsync<T>(Task<T> task)
+        {
+            try
+            {
+                return await task;
+            }
+            catch (OutOfMemoryException)
+            {
+                CleanupDeep();
+                return await task;
+            }
+        }
+
+        /// <summary>
         /// キャッシュメモリクリーンアップ
         /// </summary>
         private void CleanupDeep()

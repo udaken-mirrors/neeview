@@ -29,7 +29,7 @@ namespace NeeView
             token.ThrowIfCancellationRequested();
 
             var streamSource = new ArchiveEntryStreamSource(ArchiveEntry);
-            using (var stream = streamSource.OpenStream())
+            using (var stream = await streamSource.OpenStreamAsync(token))
             {
                 var bitmapInfo = BitmapInfo.Create(stream); // TODO: async
                 var pictureInfo = PictureInfo.Create(bitmapInfo, "AnimatedImage");
@@ -44,12 +44,12 @@ namespace NeeView
             try
             {
                 var streamSource = new ArchiveEntryStreamSource(ArchiveEntry);
-                streamSource.CreateCache();
+                await streamSource.CreateCacheAsync(token);
 
                 // 初回アニメーション判定
                 if (_contentType == PageContentType.None)
                 {
-                    using var stream = streamSource.OpenStream();
+                    using var stream = await streamSource.OpenStreamAsync(token);
                     _contentType = AnimatedImageChecker.IsAnimatedImage(stream, _imageType) ? PageContentType.Animated : PageContentType.Bitmap;
                 }
 
@@ -57,7 +57,7 @@ namespace NeeView
                 if (_contentType == PageContentType.Animated)
                 {
                     // pictureInfo
-                    using var stream = streamSource.OpenStream();
+                    using var stream = await streamSource.OpenStreamAsync(token);
                     var bitmapInfo = BitmapInfo.Create(stream); // TODO: async
                     var pictureInfo = PictureInfo.Create(bitmapInfo, "AnimatedImage");
                     return new AnimatedPageSource(new AnimatedPageData(new MediaSource(streamSource)), null, pictureInfo);

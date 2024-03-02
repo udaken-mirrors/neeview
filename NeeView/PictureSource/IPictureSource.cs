@@ -1,4 +1,5 @@
 ﻿using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
 
@@ -10,32 +11,32 @@ namespace NeeView
         PictureInfo? PictureInfo { get; }
 
         Size FixedSize(Size size);
-        ImageSource CreateImageSource(object data, Size size, BitmapCreateSetting setting, CancellationToken token);
-        byte[] CreateImage(object data, Size size, BitmapCreateSetting setting, BitmapImageFormat format, int quality, CancellationToken token);
-        byte[] CreateThumbnail(object data, ThumbnailProfile profile, CancellationToken token);
+        Task<ImageSource> CreateImageSourceAsync(object data, Size size, BitmapCreateSetting setting, CancellationToken token);
+        Task<byte[]> CreateImageAsync(object data, Size size, BitmapCreateSetting setting, BitmapImageFormat format, int quality, CancellationToken token);
+        Task<byte[]> CreateThumbnailAsync(object data, ThumbnailProfile profile, CancellationToken token);
     }
 
 
     public interface IPictureSource<T> : IPictureSource
     {
-        ImageSource IPictureSource.CreateImageSource(object data, Size size, BitmapCreateSetting setting, CancellationToken token)
+        async Task<ImageSource> IPictureSource.CreateImageSourceAsync(object data, Size size, BitmapCreateSetting setting, CancellationToken token)
         {
-            return CreateImageSource((T)data, size, setting, token);
+            return await CreateImageSourceAsync((T)data, size, setting, token);
         }
 
-        byte[] IPictureSource.CreateImage(object data, Size size, BitmapCreateSetting setting, BitmapImageFormat format, int quality, CancellationToken token)
+        async Task<byte[]> IPictureSource.CreateImageAsync(object data, Size size, BitmapCreateSetting setting, BitmapImageFormat format, int quality, CancellationToken token)
         {
-            return CreateImage((T)data, size, setting, format, quality, token);
+            return await CreateImageAsync((T)data, size, setting, format, quality, token);
         }
 
-        byte[] IPictureSource.CreateThumbnail(object data, ThumbnailProfile profile, CancellationToken token)
+        async Task<byte[]> IPictureSource.CreateThumbnailAsync(object data, ThumbnailProfile profile, CancellationToken token)
         {
-            return CreateThumbnail((T)data, profile, token);
+            return await CreateThumbnailAsync((T)data, profile, token);
         }
 
-        ImageSource CreateImageSource(T data, Size size, BitmapCreateSetting setting, CancellationToken token);
-        byte[] CreateImage(T data, Size size, BitmapCreateSetting setting, BitmapImageFormat format, int quality, CancellationToken token);
-        byte[] CreateThumbnail(T data, ThumbnailProfile profile, CancellationToken token);
+        Task<ImageSource> CreateImageSourceAsync(T data, Size size, BitmapCreateSetting setting, CancellationToken token);
+        Task<byte[]> CreateImageAsync(T data, Size size, BitmapCreateSetting setting, BitmapImageFormat format, int quality, CancellationToken token);
+        Task<byte[]> CreateThumbnailAsync(T data, ThumbnailProfile profile, CancellationToken token);
     }
 
 }

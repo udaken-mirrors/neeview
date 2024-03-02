@@ -1,4 +1,6 @@
 ﻿using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace NeeView
 {
@@ -16,9 +18,9 @@ namespace NeeView
 
         public byte[] Bytes { get; }
 
-        public Stream OpenStream()
+        public async Task<Stream> OpenStreamAsync(CancellationToken token)
         {
-            return new MemoryStream(Bytes);
+            return await Task.FromResult(new MemoryStream(Bytes));
         }
 
         public long GetMemorySize() => Length;

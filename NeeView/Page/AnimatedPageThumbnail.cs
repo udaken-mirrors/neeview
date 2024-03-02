@@ -29,7 +29,7 @@ namespace NeeView
             {
                 try
                 {
-                    using (var stream = CreateEntryStream())
+                    using (var stream = await CreateEntryStreamAsync(token))
                     {
                         thumbnailRaw = ThumbnailTools.CreateThumbnailImage(stream, _content.PictureInfo, ThumbnailProfile.Current, token);
                     }
@@ -51,7 +51,7 @@ namespace NeeView
         /// ロード済の場合はそのメモリから、そうでない場合は ArchiveEntry から。
         /// </remarks>
         /// <returns></returns>
-        private Stream CreateEntryStream()
+        private async Task<Stream> CreateEntryStreamAsync(CancellationToken token)
         {
             if (_content.Data is byte[] bytes)
             {
@@ -59,7 +59,7 @@ namespace NeeView
             }
             else
             {
-                return _content.ArchiveEntry.OpenEntry(); // TODO: async
+                return await _content.ArchiveEntry.OpenEntryAsync(token);
             }
         }
     }

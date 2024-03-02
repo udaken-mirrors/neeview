@@ -19,7 +19,7 @@ namespace NeeView
             try
             {
                 var susieImage = entry.IsFileSystem ? await LoadFromFileAsync(streamSource, token) : await LoadFromStreamAsync(streamSource, token);
-                return CreateImageDataSource(susieImage, createPictureInfo, createSource);
+                return await CreateImageDataSourceAsync(susieImage, createPictureInfo, createSource, token);
             }
             catch (OperationCanceledException)
             {
@@ -37,7 +37,7 @@ namespace NeeView
             var entry = streamSource.ArchiveEntry;
 
             byte[] buff;
-            using (var stream = streamSource.OpenStream())
+            using (var stream = await streamSource.OpenStreamAsync(token))
             {
                 buff = stream.ToArray(0, (int)entry.Length);
             }
@@ -82,7 +82,7 @@ namespace NeeView
             return result;
         }
 
-        private BitmapPageSource CreateImageDataSource(SusieImage? susieImage, bool createPictureInfo, bool createSource)
+        private async Task<BitmapPageSource> CreateImageDataSourceAsync(SusieImage? susieImage, bool createPictureInfo, bool createSource, CancellationToken token)
         {
             if (susieImage == null || susieImage.Plugin == null || susieImage.BitmapData == null)
             {
@@ -91,7 +91,7 @@ namespace NeeView
             else
             {
                 var streamSource = new MemoryStreamSource(susieImage.BitmapData);
-                var pictureInfo = createPictureInfo ? PictureInfo.Create(streamSource, susieImage.Plugin.Name) : null;
+                var pictureInfo = createPictureInfo ? await PictureInfo.CreateAsync(streamSource, susieImage.Plugin.Name, token) : null;
                 var data = createSource ? new BitmapPageData(streamSource) : null;
                 return BitmapPageSource.Create(data, pictureInfo, this);
             }

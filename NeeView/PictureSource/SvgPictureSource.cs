@@ -24,14 +24,14 @@ namespace NeeView
         public PictureInfo? PictureInfo { get; }
 
 
-        // TODO: async
-        public byte[] CreateImage(DrawingGroup drawing, Size size, BitmapCreateSetting setting, BitmapImageFormat format, int quality, CancellationToken token)
+        public async Task<byte[]> CreateImageAsync(DrawingGroup drawing, Size size, BitmapCreateSetting setting, BitmapImageFormat format, int quality, CancellationToken token)
         {
             if (size.IsEmptyOrZero()) throw new ArgumentOutOfRangeException(nameof(size));
 
             token.ThrowIfCancellationRequested();
 
-            var imageSource = CreateImageSource(drawing);
+            var imageSource = CreateImageSource(drawing); // TODO: async
+            await Task.CompletedTask;
 
             var bitmap = AppDispatcher.Invoke(() => imageSource.CreateThumbnail(size));
 
@@ -44,13 +44,13 @@ namespace NeeView
             }
         }
 
-        public ImageSource CreateImageSource(DrawingGroup drawing, Size size, BitmapCreateSetting setting, CancellationToken token)
+        public async Task<ImageSource> CreateImageSourceAsync(DrawingGroup drawing, Size size, BitmapCreateSetting setting, CancellationToken token)
         {
             token.ThrowIfCancellationRequested();
-            return CreateImageSource(drawing);
+            return await Task.FromResult(CreateImageSource(drawing)); // TODO: async
         }
 
-        public byte[] CreateThumbnail(DrawingGroup drawing, ThumbnailProfile profile, CancellationToken token)
+        public async Task<byte[]> CreateThumbnailAsync(DrawingGroup drawing, ThumbnailProfile profile, CancellationToken token)
         {
             token.ThrowIfCancellationRequested();
 
@@ -59,7 +59,7 @@ namespace NeeView
             
             size = ThumbnailProfile.GetThumbnailSize(size);
             var setting = profile.CreateBitmapCreateSetting(true);
-            return CreateImage(drawing, size, setting, Config.Current.Thumbnail.Format, Config.Current.Thumbnail.Quality, token);
+            return await CreateImageAsync(drawing, size, setting, Config.Current.Thumbnail.Format, Config.Current.Thumbnail.Quality, token);
         }
 
         private ImageSource CreateImageSource(DrawingGroup drawing)

@@ -1,6 +1,8 @@
 ﻿using NeeView.Media.Imaging.Metadata;
 using System;
 using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -107,9 +109,9 @@ namespace NeeView
             }
         }
 
-        public static PictureInfo Create(IStreamSource streamSource, string? decoder)
+        public static async Task<PictureInfo> CreateAsync(IStreamSource streamSource, string? decoder, CancellationToken token)
         {
-            using (var stream = streamSource.OpenStream())
+            using (var stream = await streamSource.OpenStreamAsync(token))
             {
                 return Create(stream, decoder);
             }

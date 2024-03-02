@@ -186,7 +186,7 @@ namespace NeeView
             Debug.Assert(_player is null);
             if (_disposedValue) return;
 
-            var stream = mediaSource.OpenStream();
+            var stream = mediaSource.OpenStreamAsync(CancellationToken.None).GetAwaiter().GetResult(); // TODO: async
             _disposables.Add(stream);
 
             var bitmapSource = new BitmapImage();

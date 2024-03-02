@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.IO;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Documents;
 using System.Windows.Media;
@@ -39,13 +40,13 @@ namespace NeeView
         /// <param name="setting">生成オプション</param>
         /// <param name="token">キャンセルトークン</param>
         /// <returns>ImageSource</returns>
-        public ImageSource CreateImageSource(IStreamSource streamSource, Size size, BitmapCreateSetting setting, CancellationToken token)
+        public async Task<ImageSource> CreateImageSourceAsync(IStreamSource streamSource, Size size, BitmapCreateSetting setting, CancellationToken token)
         {
             token.ThrowIfCancellationRequested();
 
             //Debug.WriteLine($"{ArchiveEntry}, {size:f0}", "CreateImageSource()");
 
-            using var stream = streamSource.OpenStream();
+            using var stream = await streamSource.OpenStreamAsync(token);
 
             if (setting.IsKeepAspectRatio && !size.IsEmpty)
             {
@@ -60,9 +61,9 @@ namespace NeeView
             return bitmapSource;
         }
 
-        public byte[] CreateImage(IStreamSource streamSource, Size size, BitmapCreateSetting setting, BitmapImageFormat format, int quality, CancellationToken token)
+        public async Task<byte[]> CreateImageAsync(IStreamSource streamSource, Size size, BitmapCreateSetting setting, BitmapImageFormat format, int quality, CancellationToken token)
         {
-            using var stream = streamSource.OpenStream();
+            using var stream = await streamSource.OpenStreamAsync(token);
             return CreateImage(stream, size, setting, format, quality, token);
         }
 
@@ -75,9 +76,9 @@ namespace NeeView
             return outStream.ToArray();
         }
 
-        public byte[] CreateThumbnail(IStreamSource streamSource, ThumbnailProfile profile, CancellationToken token)
+        public async Task<byte[]> CreateThumbnailAsync(IStreamSource streamSource, ThumbnailProfile profile, CancellationToken token)
         {
-            using var stream = streamSource.OpenStream();
+            using var stream = await streamSource.OpenStreamAsync(token);
             return CreateThumbnail(stream, profile, token);
         }
 

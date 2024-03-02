@@ -262,43 +262,12 @@ namespace NeeView
         }
 
         /// <summary>
-        /// ストリームを開く (非推奨)
-        /// </summary>
-        /// <returns>Stream</returns>
-        public Stream OpenEntry()
-        {
-            try
-            {
-                return Archiver.OpenStreamAsync(this, CancellationToken.None).Result;
-            }
-            catch (AggregateException ex) 
-            {
-                // NOTE: Task.Wait() の例外は AggregateException になる
-                if (ex.InnerException != null)
-                {
-                    throw ex.InnerException;
-                }
-                else
-                {
-                    throw;
-                }
-            }
-        }
-
-        /// <summary>
         /// ストリームを開く
         /// </summary>
         /// <returns>Stream</returns>
         public async Task<Stream> OpenEntryAsync(CancellationToken token)
         {
-            try
-            {
-                return await Archiver.OpenStreamAsync(this, token);
-            }
-            catch
-            {
-                throw;
-            }
+            return await Archiver.OpenStreamAsync(this, token);
         }
 
         /// <summary>

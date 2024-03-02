@@ -1,5 +1,7 @@
 ﻿using System;
 using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace NeeView
 {
@@ -11,7 +13,7 @@ namespace NeeView
         // TODO: PageContent保持メモリサイズ用。本来の用途ではないのでどうにかする
         long Length => throw new NotSupportedException();
 
-        Stream OpenStream();
+        Task<Stream> OpenStreamAsync(CancellationToken token);
 
         // TODO: PageContent保持メモリサイズ用。本来の用途ではないのでどうにかする
         long GetMemorySize(); //=> 0L;

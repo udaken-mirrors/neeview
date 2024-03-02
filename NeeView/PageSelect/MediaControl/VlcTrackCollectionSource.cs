@@ -39,6 +39,7 @@ namespace NeeView
             get { return _isEnabled; }
             set
             {
+                if (_disposedValue) return;
                 if (_isEnabled != value)
                 {
                     _isEnabled = value;
@@ -73,18 +74,28 @@ namespace NeeView
 
         public void UpdateCurrent()
         {
+            if (_disposedValue) return;
+
             var selected = _collection.Selected;
             if (selected is not null)
             {
                 Task.Run(() =>
                 {
-                    if (_isEnabled)
+                    if (_disposedValue) return;
+                    try
                     {
-                        _source.Current = _source.All.FirstOrDefault(x => x.ID == selected.ID) ?? _source.Current;
+                        if (_isEnabled)
+                        {
+                            _source.Current = _source.All.FirstOrDefault(x => x.ID == selected.ID) ?? _source.Current;
+                        }
+                        else
+                        {
+                            _source.Current = _source.All.FirstOrDefault() ?? _source.Current;
+                        }
                     }
-                    else
+                    catch
                     {
-                        _source.Current = _source.All.FirstOrDefault() ?? _source.Current;
+                        // nop.
                     }
                 });
             }

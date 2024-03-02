@@ -408,7 +408,7 @@ namespace NeeView
         private void Player_Playing(object? sender, VlcMediaPlayerPlayingEventArgs e)
         {
             if (_disposedValue) return;
-            
+
             Task.Run(() =>
             {
                 Trace($"Playing: {_player.Position} => {_requestPosition}");
@@ -468,7 +468,10 @@ namespace NeeView
 
             _isOpened = true;
 
+            _audioTracks?.Dispose();
             _audioTracks = CreateAudioTracks();
+
+            _subtitles?.Dispose();
             _subtitles = CreateSubtitles();
 
             UpdatePlayed();
@@ -582,6 +585,7 @@ namespace NeeView
             void Player_SecondPlaying(object? sender, VlcMediaPlayerPlayingEventArgs e)
             {
                 _player.Playing -= Player_SecondPlaying;
+                if (_disposedValue) return;
                 _audioTracks?.UpdateCurrent();
                 _subtitles?.UpdateCurrent();
             }
