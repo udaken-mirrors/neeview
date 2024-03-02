@@ -2475,5 +2475,5 @@ ZipEncoding.UTF8=
 BookConfig.IsReadyToPageMove=
 BookConfig.IsReadyToPageMove.Remarks=
 PerformanceConfig.PreExtractSolidSize=
-PerformanceConfig.PreExtractSolidSize.Remarks=argggsrg
+PerformanceConfig.PreExtractSolidSize.Remarks=
 BookConfig.IsPrioritizeBookMove=

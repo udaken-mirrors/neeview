@@ -24,12 +24,16 @@ Json file name. Default is Language.json
 
 .PARAMETER Sort
 Sort data by key
+
+.PARAMETER Trim
+For FromJson, trim empty data.
 #>
 
 param (
    	[ValidateSet("ToJson", "FromJson")]$Mode = "ToJson",
     [string]$JsonFile = "Language.json",
-    [switch]$Sort
+    [switch]$Sort,
+    [switch]$Trim
 )
 
 
@@ -76,7 +80,7 @@ function Add-RestextToRestextTable
     foreach ($property in $table.psobject.Properties)
     {
         $key = $property.Name
-        $value = $map.$key ?? ""
+        $value = $map.$key ?? $null
         $property.Value | Add-Member -MemberType NoteProperty -Name $culture -Value $value
     }
 }
@@ -87,6 +91,10 @@ function ConvertTo-RestextFromRestextTable
     $lines = @()
     foreach ($property in $table.psobject.Properties)
     {
+        if ($Trim -and ($null -eq $property.Value.$culture))
+        {
+            continue 
+        }
         $lines += $property.Name + "=" + $property.Value.$culture
     }
     return $lines
