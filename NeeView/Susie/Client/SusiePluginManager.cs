@@ -370,6 +370,7 @@ namespace NeeView
             var setting = new SusiePluginMemento();
             setting.IsEnabled = info.IsEnabled;
             setting.IsCacheEnabled = info.IsCacheEnabled;
+            setting.IsPreExtract = info.IsPreExtract;
             setting.UserExtensions = info.UserExtension?.ToOneLine();
             return setting;
         }
@@ -379,6 +380,7 @@ namespace NeeView
             var memento = new SusiePluginMemento();
             memento.IsEnabled = setting.IsEnabled;
             memento.IsCacheEnabled = setting.IsCacheEnabled;
+            memento.IsPreExtract = setting.IsPreExtract;
             memento.UserExtensions = setting.UserExtensions;
             return memento;
         }
@@ -388,6 +390,7 @@ namespace NeeView
             var info = new SusiePluginInfo(name);
             info.IsEnabled = IsEnabled;
             info.IsCacheEnabled = IsCacheEnabled;
+            info.IsPreExtract = IsPreExtract;
             info.UserExtension = UserExtensions != null ? new FileExtensionCollection(UserExtensions) : null;
             return info;
         }

@@ -26,6 +26,7 @@ namespace NeeView.Susie
             var info = new SusiePluginInfo(Name);
             info.IsEnabled = IsEnabled;
             info.IsCacheEnabled = IsCacheEnabled;
+            info.IsPreExtract = IsPreExtract;
             info.UserExtension = UserExtensions is not null ? new FileExtensionCollection(UserExtensions) : null;
             return info;
         }
