@@ -2472,8 +2472,4 @@ ZipArchiveConfig.SupportFileTypes.Remarks=仅支持 ZIP 格式。
 ZipEncoding.Auto=自动
 ZipEncoding.Local=本地
 ZipEncoding.UTF8=UTF-8
-BookConfig.IsReadyToPageMove=
-BookConfig.IsReadyToPageMove.Remarks=
-PerformanceConfig.PreExtractSolidSize=
-PerformanceConfig.PreExtractSolidSize.Remarks=
-BookConfig.IsPrioritizeBookMove=
+
