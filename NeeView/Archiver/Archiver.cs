@@ -367,18 +367,9 @@ namespace NeeView
         /// <summary>
         /// 事前展開
         /// </summary>
-        public virtual async Task PreExtractAsync(string directory, CancellationToken token)
+        public virtual Task PreExtractAsync(string directory, CancellationToken token)
         {
-            var entries = await GetEntriesAsync(token);
-            foreach (var entry in entries)
-            {
-                token.ThrowIfCancellationRequested();
-                if (entry.IsDirectory) continue;
-                var filename = $"{entry.Id:000000}{System.IO.Path.GetExtension(entry.EntryName)}";
-                var path = System.IO.Path.Combine(directory, filename);
-                await entry.ExtractToFileAsync(path, true, token);
-                entry.SetData(path);
-            }
+            throw new NotImplementedException("This archiver does not support pre-extract");
         }
 
         /// <summary>

@@ -17,7 +17,7 @@ namespace NeeView
     public class SusieArchiver : Archiver
     {
         private SusieArchivePluginAccessor? _susiePlugin;
-        private readonly AsyncLock _asyncLock = new();
+        private static readonly AsyncLock _asyncLock = new();
 
 
         public SusieArchiver(string path, ArchiveEntry? source) : base(path, source)
@@ -101,14 +101,10 @@ namespace NeeView
 
             using (await _asyncLock.LockAsync(token))
             {
-                var info = entry.Instance as SusieArchiveEntry ?? throw new InvalidCastException();
-                var plugin = GetPlugin() ?? throw new SusieException("Cannot found archive plugin");
-
-                byte[] buffer = await Task.Run(() => plugin.ExtractArchiveEntry(Path, info.Position));
+                var buffer = ExtractToMemoryCore(entry);
                 return new MemoryStream(buffer, 0, buffer.Length, false, true);
             }
         }
-
 
         // ファイルに出力する
         protected override async Task ExtractToFileInnerAsync(ArchiveEntry entry, string extractFileName, bool isOverwrite, CancellationToken token)
@@ -117,62 +113,86 @@ namespace NeeView
 
             using (await _asyncLock.LockAsync(token))
             {
-                var info = entry.Instance as SusieArchiveEntry ?? throw new InvalidCastException();
-                var plugin = GetPlugin() ?? throw new SusieException("Cannot found archive plugin");
+                ExtractToFile(entry, extractFileName, isOverwrite);
+            }
+        }
 
-                // 16MB以上のエントリは直接ファイル出力を試みる
-                if (entry.Length > 16 * 1024 * 1024)
+        /// <summary>
+        /// エントリをプラグインからメモリに直接展開
+        /// </summary>
+        /// <param name="entry"></param>
+        /// <returns></returns>
+        /// <exception cref="InvalidCastException"></exception>
+        /// <exception cref="SusieException"></exception>
+        private byte[] ExtractToMemoryCore(ArchiveEntry entry)
+        {
+            var info = entry.Instance as SusieArchiveEntry ?? throw new InvalidCastException();
+            var plugin = GetPlugin() ?? throw new SusieException("Cannot found archive plugin");
+
+            return plugin.ExtractArchiveEntry(Path, info.Position);
+        }
+
+        /// <summary>
+        /// エントリをプラグインからファイルに直接展開
+        /// </summary>
+        /// <param name="entry"></param>
+        /// <param name="extractFileName">出力ファイル名</param>
+        /// <param name="isOverwrite">上書き許可</param>
+        /// <returns></returns>
+        /// <exception cref="InvalidCastException"></exception>
+        /// <exception cref="SusieException"></exception>
+        private string ExtractToFileCore(ArchiveEntry entry, string extractFileName, bool isOverwrite)
+        {
+            var info = entry.Instance as SusieArchiveEntry ?? throw new InvalidCastException();
+            var plugin = GetPlugin() ?? throw new SusieException("Cannot found archive plugin");
+
+            // NOTE: プラグインからのファイル出力は名前を指定できない
+            using (var tempDirectory = new SusieExtractDirectory())
+            {
+                // 注意：失敗することがよくある。ファイル展開のAPIが実装されていない
+                plugin.ExtracArchiveEntrytToFolder(Path, info.Position, tempDirectory.Path);
+
+                // 上書き時は移動前に削除
+                FileIO.ReadyOverwrite(extractFileName, isOverwrite);
+
+                // 出力ファイル名にかかわらずファイル移動を行う
+                var files = Directory.GetFiles(tempDirectory.Path);
+                File.Move(files[0], extractFileName);
+
+                return extractFileName;
+            }
+        }
+
+        /// <summary>
+        /// エントリをファイルに展開。必要であればメモリ展開を経由する。
+        /// </summary>
+        /// <param name="entry"></param>
+        /// <param name="extractFileName"></param>
+        /// <param name="isOverwrite"></param>
+        /// <returns></returns>
+        private string ExtractToFile(ArchiveEntry entry, string extractFileName, bool isOverwrite)
+        {
+            // 16MB以上のエントリは直接ファイル出力を試みる
+            if (entry.Length > 16 * 1024 * 1024)
+            {
+                try
                 {
-                    string tempDirectory = Temporary.Current.CreateCountedTempFileName("susie", "");
-
-                    try
-                    {
-                        // susieプラグインでは出力ファイル名を指定できないので、
-                        // テンポラリフォルダーに出力してから移動する
-                        Directory.CreateDirectory(tempDirectory);
-
-                        // 注意：失敗することがよくある
-                        await Task.Run(() => plugin.ExtracArchiveEntrytToFolder(Path, info.Position, tempDirectory));
-
-                        // 上書き時は移動前に削除
-                        if (isOverwrite && File.Exists(extractFileName))
-                        {
-                            File.Delete(extractFileName);
-                        }
-
-                        var files = Directory.GetFiles(tempDirectory);
-                        File.Move(files[0], extractFileName);
-                        Directory.Delete(tempDirectory, true);
-
-                        return;
-                    }
-
-                    // 失敗したら：メモリ展開からのファイル保存を行う
-                    catch (SusieException e)
-                    {
-                        Debug.WriteLine(e.Message);
-                    }
-
-                    // 後始末
-                    finally
-                    {
-                        if (Directory.Exists(tempDirectory))
-                        {
-                            Directory.Delete(tempDirectory, true);
-                        }
-                    }
+                    return ExtractToFileCore(entry, extractFileName, isOverwrite);
                 }
-
-                // メモリ展開からのファイル保存
+                catch (SusieException e)
                 {
-                    byte[] buffer = await Task.Run(() => plugin.ExtractArchiveEntry(Path, info.Position));
-                    using (var ms = new System.IO.MemoryStream(buffer, false))
-                    using (var stream = new System.IO.FileStream(extractFileName, System.IO.FileMode.Create))
-                    {
-                        ms.WriteTo(stream);
-                    }
+                    Debug.WriteLine(e.Message);
                 }
             }
+
+            // メモリ展開からのファイル保存
+            var buffer = ExtractToMemoryCore(entry);
+            using (var ms = new System.IO.MemoryStream(buffer, false))
+            using (var stream = new System.IO.FileStream(extractFileName, System.IO.FileMode.Create))
+            {
+                ms.WriteTo(stream);
+            }
+            return extractFileName;
         }
 
         /// <summary>
@@ -182,6 +202,95 @@ namespace NeeView
         {
             var plugin = GetPlugin();
             return plugin != null && plugin.Plugin.IsPreExtract;
+        }
+
+        /// <summary>
+        /// 事前展開
+        /// </summary>
+        /// <param name="directory">事前展開ファイル用フォルダ</param>
+        public override async Task PreExtractAsync(string directory, CancellationToken token)
+        {
+            using (await _asyncLock.LockAsync(token))
+            {
+                var entries = await GetEntriesAsync(token);
+                foreach (var entry in entries)
+                {
+                    token.ThrowIfCancellationRequested();
+
+                    if (entry.IsDirectory)
+                    {
+                        continue;
+                    }
+                    else if (entry.Length <= 0)
+                    {
+                        // no extract
+                        entry.SetData(Array.Empty<byte>());
+                    }
+                    else if (PreExtractMemory.Current.IsFull(entry.Length))
+                    {
+                        // extract to file
+                        var extractFileName = GetTempFileName(directory, entry);
+                        entry.SetData(ExtractToFile(entry, extractFileName, false));
+                    }
+                    else
+                    {
+                        // extract to memory
+                        entry.SetData(ExtractToMemoryCore(entry));
+                    }
+                }
+            }
+        }
+
+        private static string GetTempFileName(string directory, ArchiveEntry entry)
+        {
+            var filename = $"{entry.Id:000000}{System.IO.Path.GetExtension(entry.EntryName)}";
+            return System.IO.Path.Combine(directory, filename);
+        }
+    }
+
+
+    /// <summary>
+    /// Susie アーカイブ一時出力用ディレクトリ
+    /// </summary>
+    public class SusieExtractDirectory : IDisposable
+    {
+        private readonly string _path;
+        private bool _disposedValue;
+
+        public SusieExtractDirectory()
+        {
+            _path = Temporary.Current.CreateCountedTempFileName("susie", "");
+            Directory.CreateDirectory(_path);
+        }
+
+        public string Path => _path;
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!_disposedValue)
+            {
+                if (disposing)
+                {
+                }
+
+                if (Directory.Exists(_path))
+                {
+                    Directory.Delete(_path, true);
+                }
+
+                _disposedValue = true;
+            }
+        }
+
+        ~SusieExtractDirectory()
+        {
+            Dispose(disposing: false);
+        }
+
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
         }
     }
 }
