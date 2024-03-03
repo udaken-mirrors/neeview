@@ -253,6 +253,7 @@ namespace NeeView
                     _requestPosition = float.NegativeInfinity;
                     Task.Run(() =>
                     {
+                        if (_disposedValue) return;
                         _player.Position = newPosition;
                         if (_player.State == MediaStates.Ended)
                         {
@@ -563,6 +564,8 @@ namespace NeeView
 
         private void PlayStart(bool keepPosition)
         {
+            if (_disposedValue) return;
+
             if (keepPosition)
             {
                 _requestPosition = _player.Position;
@@ -572,12 +575,16 @@ namespace NeeView
 
         private void PlayStart(double position)
         {
+            if (_disposedValue) return;
+
             _requestPosition = (float)position;
             PlayStartContinue();
         }
 
         private void PlayStartContinue()
         {
+            if (_disposedValue) return;
+
             _player.Playing += Player_SecondPlaying;
 
             PlayStart();
