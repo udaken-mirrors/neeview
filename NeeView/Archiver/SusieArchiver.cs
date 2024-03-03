@@ -1,4 +1,5 @@
-﻿using NeeView.Susie;
+﻿using NeeLaboratory.Threading;
+using NeeView.Susie;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -16,7 +17,7 @@ namespace NeeView
     public class SusieArchiver : Archiver
     {
         private SusieArchivePluginAccessor? _susiePlugin;
-        private readonly object _lock = new();
+        private readonly AsyncLock _asyncLock = new();
 
 
         public SusieArchiver(string path, ArchiveEntry? source) : base(path, source)
@@ -98,14 +99,12 @@ namespace NeeView
         {
             if (entry.Id < 0) throw new ApplicationException("Cannot open this entry: " + entry.EntryName);
 
-            await Task.CompletedTask; // TODO: async
-
-            lock (_lock)
+            using (await _asyncLock.LockAsync(token))
             {
                 var info = entry.Instance as SusieArchiveEntry ?? throw new InvalidCastException();
                 var plugin = GetPlugin() ?? throw new SusieException("Cannot found archive plugin");
 
-                byte[] buffer = plugin.ExtractArchiveEntry(Path, info.Position);
+                byte[] buffer = await Task.Run(() => plugin.ExtractArchiveEntry(Path, info.Position));
                 return new MemoryStream(buffer, 0, buffer.Length, false, true);
             }
         }
@@ -116,61 +115,62 @@ namespace NeeView
         {
             if (entry.Id < 0) throw new ApplicationException("Cannot open this entry: " + entry.EntryName);
 
-            var info = entry.Instance as SusieArchiveEntry ?? throw new InvalidCastException();
-            var plugin = GetPlugin() ?? throw new SusieException("Cannot found archive plugin");
-
-            await Task.CompletedTask; // TODO: async
-
-            // 16MB以上のエントリは直接ファイル出力を試みる
-            if (entry.Length > 16 * 1024 * 1024)
+            using (await _asyncLock.LockAsync(token))
             {
-                string tempDirectory = Temporary.Current.CreateCountedTempFileName("susie", "");
+                var info = entry.Instance as SusieArchiveEntry ?? throw new InvalidCastException();
+                var plugin = GetPlugin() ?? throw new SusieException("Cannot found archive plugin");
 
-                try
+                // 16MB以上のエントリは直接ファイル出力を試みる
+                if (entry.Length > 16 * 1024 * 1024)
                 {
-                    // susieプラグインでは出力ファイル名を指定できないので、
-                    // テンポラリフォルダーに出力してから移動する
-                    Directory.CreateDirectory(tempDirectory);
+                    string tempDirectory = Temporary.Current.CreateCountedTempFileName("susie", "");
 
-                    // 注意：失敗することがよくある
-                    plugin.ExtracArchiveEntrytToFolder(Path, info.Position, tempDirectory);
-
-                    // 上書き時は移動前に削除
-                    if (isOverwrite && File.Exists(extractFileName))
+                    try
                     {
-                        File.Delete(extractFileName);
-                    }
+                        // susieプラグインでは出力ファイル名を指定できないので、
+                        // テンポラリフォルダーに出力してから移動する
+                        Directory.CreateDirectory(tempDirectory);
 
-                    var files = Directory.GetFiles(tempDirectory);
-                    File.Move(files[0], extractFileName);
-                    Directory.Delete(tempDirectory, true);
+                        // 注意：失敗することがよくある
+                        await Task.Run(() => plugin.ExtracArchiveEntrytToFolder(Path, info.Position, tempDirectory));
 
-                    return;
-                }
+                        // 上書き時は移動前に削除
+                        if (isOverwrite && File.Exists(extractFileName))
+                        {
+                            File.Delete(extractFileName);
+                        }
 
-                // 失敗したら：メモリ展開からのファイル保存を行う
-                catch (SusieException e)
-                {
-                    Debug.WriteLine(e.Message);
-                }
-
-                // 後始末
-                finally
-                {
-                    if (Directory.Exists(tempDirectory))
-                    {
+                        var files = Directory.GetFiles(tempDirectory);
+                        File.Move(files[0], extractFileName);
                         Directory.Delete(tempDirectory, true);
+
+                        return;
+                    }
+
+                    // 失敗したら：メモリ展開からのファイル保存を行う
+                    catch (SusieException e)
+                    {
+                        Debug.WriteLine(e.Message);
+                    }
+
+                    // 後始末
+                    finally
+                    {
+                        if (Directory.Exists(tempDirectory))
+                        {
+                            Directory.Delete(tempDirectory, true);
+                        }
                     }
                 }
-            }
 
-            // メモリ展開からのファイル保存
-            {
-                byte[] buffer = plugin.ExtractArchiveEntry(Path, info.Position);
-                using (var ms = new System.IO.MemoryStream(buffer, false))
-                using (var stream = new System.IO.FileStream(extractFileName, System.IO.FileMode.Create))
+                // メモリ展開からのファイル保存
                 {
-                    ms.WriteTo(stream);
+                    byte[] buffer = await Task.Run(() => plugin.ExtractArchiveEntry(Path, info.Position));
+                    using (var ms = new System.IO.MemoryStream(buffer, false))
+                    using (var stream = new System.IO.FileStream(extractFileName, System.IO.FileMode.Create))
+                    {
+                        ms.WriteTo(stream);
+                    }
                 }
             }
         }
