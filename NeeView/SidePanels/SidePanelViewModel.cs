@@ -47,6 +47,7 @@ namespace NeeView
             _dock.AddPropertyChanged(nameof(_dock.SelectedItem), (s, e) =>
             {
                 RaisePropertyChanged(nameof(PanelVisibility));
+                RaisePropertyChanged(nameof(SelectedItem));
                 if (_dock.SelectedItem != null)
                 {
                     AutoHideDescription.VisibleOnce(true);
@@ -140,6 +141,13 @@ namespace NeeView
             }
         }
 
+        /// <summary>
+        /// 選択されているパネル
+        /// </summary>
+        public LayoutPanelCollection? SelectedItem
+        {
+            get { return _dock.SelectedItem; }
+        }
 
         /// <summary>
         /// パネルがなにか選択されている

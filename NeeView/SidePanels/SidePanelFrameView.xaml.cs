@@ -223,7 +223,9 @@ namespace NeeView
 
             CustomLayoutPanelManager.Initialize();
             var leftPanelViewModel = new LeftPanelViewModel(this.LeftIconList, CustomLayoutPanelManager.Current.LeftDock, LeftPanelElementContains);
+            leftPanelViewModel.AddPropertyChanged(nameof(leftPanelViewModel.SelectedItem), (s, e) => model.RaisePanelPropertyChanged());
             var rightPanelViewModel = new RightPanelViewModel(this.RightIconList, CustomLayoutPanelManager.Current.RightDock, RightPanelElementContains);
+            rightPanelViewModel.AddPropertyChanged(nameof(rightPanelViewModel.SelectedItem), (s, e) => model.RaisePanelPropertyChanged());
             this.VM = new SidePanelFrameViewModel(model, leftPanelViewModel, rightPanelViewModel);
             this.VM.PanelVisibilityChanged += (s, e) => UpdateCanvas();
 

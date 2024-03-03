@@ -76,7 +76,7 @@ namespace NeeView
 
         #region Panels Visibility
 
-        private void RaisePanelPropertyChanged()
+        public void RaisePanelPropertyChanged()
         {
             RaisePropertyChanged(nameof(IsVisibleFolderList));
             RaisePropertyChanged(nameof(IsVisibleHistoryList));
