@@ -18,8 +18,8 @@ namespace NeeView
     {
         private static bool _isLibraryInitialized;
 
-        // NOTE: 7zアクセス制限を解除して様子見 (static でなくして複数の 7z の並列アクセスを許可する)
-        private readonly AsyncLock _asyncLock = new();
+        // NOTE: 複数のアーカイブに同時にアクセスすると処理が極端に落ち込むようなので、並列アクセスを制限してみる
+        private static readonly AsyncLock _asyncLock = new();
 
         public static void InitializeLibrary()
         {
