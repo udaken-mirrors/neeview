@@ -12,17 +12,23 @@ namespace NeeView.Native
     {
         private static class NativeMethods
         {
-            [DllImport("NeeView.Interop.dll", CharSet = CharSet.Unicode)]
-            [return: MarshalAs(UnmanagedType.I1)]
-            internal static extern bool NVGetImageCodecInfo(uint index, StringBuilder friendryName, StringBuilder fileExtensions);
+#if X64
+            private const string DllName = @"Libraries\x64\NeeView.Interop.dll";
+#else
+            private const string DllName = @"Libraries\x86\NeeView.Interop.dll";
+#endif
 
-            [DllImport("NeeView.Interop.dll")]
+            [DllImport(DllName, CharSet = CharSet.Unicode)]
+            [return: MarshalAs(UnmanagedType.I1)]
+            internal static extern bool NVGetImageCodecInfo(uint index, StringBuilder friendlyName, StringBuilder fileExtensions);
+
+            [DllImport(DllName)]
             internal static extern void NVCloseImageCodecInfo();
 
-            [DllImport("NeeView.Interop.dll")]
+            [DllImport(DllName)]
             internal static extern void NVFpReset();
 
-            [DllImport("NeeView.Interop.dll", CharSet = CharSet.Unicode)]
+            [DllImport(DllName, CharSet = CharSet.Unicode)]
             [return: MarshalAs(UnmanagedType.I1)]
             internal static extern bool NVGetFullPathFromShortcut([MarshalAs(UnmanagedType.LPWStr)] string shortcut, StringBuilder fullPath);
 
@@ -48,21 +54,9 @@ namespace NeeView.Native
 #endif
         }
 
-        public static bool TryLoadNativeLibrary(string path)
+        public static bool NVGetImageCodecInfo(uint index, StringBuilder friendlyName, StringBuilder fileExtensions)
         {
-            if (path == null)
-            {
-                return false;
-            }
-
-            path = Path.Combine(path, Environment.PlatformName, "NeeView.Interop.dll");
-
-            return File.Exists(path) && Interop.NativeMethods.LoadLibrary(path) != IntPtr.Zero;
-        }
-
-        public static bool NVGetImageCodecInfo(uint index, StringBuilder friendryName, StringBuilder fileExtensions)
-        {
-            return NativeMethods.NVGetImageCodecInfo(index, friendryName, fileExtensions);
+            return NativeMethods.NVGetImageCodecInfo(index, friendlyName, fileExtensions);
         }
 
         public static void NVCloseImageCodecInfo()

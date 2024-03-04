@@ -18,10 +18,8 @@ using System;
 using System.Runtime.InteropServices;
 
 //#pragma warning disable 1591 // Disable XML documentation warnings
-#pragma warning disable CS8603 // Null �Q�Ɩ߂�l�ł���\��������܂��B
-#pragma warning disable CS8600 // Null ���e�����܂��� Null �̉\��������l�� Null �񋖗e�^�ɕϊ����Ă��܂��B
-#pragma warning disable IDE0044 // �ǂݎ���p�C���q��ǉ����܂�
-
+#pragma warning disable CS8603 // Null 参照戻り値である可能性があります。
+#pragma warning disable CS8600 // Null リテラルまたは Null の可能性がある値を Null 非許容型に変換しています。
 
 namespace MediaInfoLib
 {
@@ -77,7 +75,11 @@ namespace MediaInfoLib
 
     public class MediaInfo
     {
-        private const string DllName = "MediaInfo\\MediaInfo.dll";
+#if X64
+        private const string DllName = @"Libraries\x64\MediaInfo.dll";
+#else
+        private const string DllName = @"Libraries\x86\MediaInfo.dll";
+#endif
 
         //Import of DLL functions. DO NOT USE until you know what you do (MediaInfo DLL do NOT use CoTaskMemAlloc to allocate memory)
         [DllImport(DllName)]

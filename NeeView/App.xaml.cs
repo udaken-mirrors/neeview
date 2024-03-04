@@ -128,8 +128,6 @@ namespace NeeView
         {
             TextResources.LanguageResource.SetFolder(Path.Combine(Environment.AssemblyFolder, "Languages"));
 
-            NVInterop.TryLoadNativeLibrary(Environment.LibrariesPath);
-
             this.ShutdownMode = ShutdownMode.OnExplicitShutdown;
 
             // APPXデータフォルダ移動 (ver.38)

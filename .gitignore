@@ -228,8 +228,8 @@ ModelManifest.xml
 !/MakePackage/WixSource/x64
 !/MakePackage/WixSource/x86
 /NeeView/Properties/PublishProfiles/_*
-!/NeeView/x64/
-!/NeeView/x86/
+!/NeeView/Libraries/x64/
+!/NeeView/Libraries/x86/
 /NeeView/Languages/_*
 /NeeView/Languages/Language.json
 

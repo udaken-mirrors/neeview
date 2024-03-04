@@ -31,9 +31,9 @@ $ErrorActionPreference = "stop"
 Write-Host "Target: $Target"
 Write-Host "Continue: $continue"
 Write-Host "Trace: $trace"
-Write-Host "x86: $x86"
-Write-Host "updateComponent: $updateComponent" 
-Write-Host "versionPostfix: $versionPostfix" 
+Write-Host "X86: $x86"
+Write-Host "UpdateComponent: $updateComponent" 
+Write-Host "VersionPostfix: $versionPostfix" 
 Write-Host
 Read-Host "Press Enter to continue"
 
@@ -168,7 +168,7 @@ function Build-Project($platform, $outputDir, $options)
 		throw "build error"
 	}
 
-	& dotnet publish $projectSusie $defaultOptions $options -o Publish\$outputDir\Libraries
+	& dotnet publish $projectSusie $defaultOptions $options -o Publish\$outputDir\Libraries\Susie
 	if ($? -ne $true)
 	{
 		throw "build error"
@@ -207,11 +207,13 @@ function New-Package($platform, $productName, $productDir, $packageDir)
 	# fix native dll
 	if ($platform -eq "x86")
 	{
-		Remove-Item $packageDir\x64 -Recurse
+		#Write-Host Remove native x64
+		Remove-Item $packageDir\Libraries\x64 -Recurse
 	}
 	if ($platform -eq "x64")
 	{
-		Remove-Item $packageDir\x86 -Recurse
+		#Write-Host Remove native x86
+		Remove-Item $packageDir\Libraries\x86 -Recurse
 	}
 
 	# custom config
@@ -318,8 +320,10 @@ function Remove-Zip($packageZip)
 
 #--------------------------
 # archive to ZIP
-function New-Zip($packageDir, $packageZip)
+function New-Zip($referenceDir, $packageDir, $packageZip)
 {
+	Copy-Item $referenceDir $packageDir -Recurse
+	Optimize-Package $packageDir
 	Compress-Archive $packageDir -DestinationPath $packageZip
 }
 
@@ -755,7 +759,23 @@ function New-DevPackage($packageDir, $devPackageDir, $devPackage, $target)
 	New-Readme $devPackageDir "en-us" $target
 	New-Readme $devPackageDir "ja-jp" $target
 
+	Optimize-Package $devPackageDir
 	Compress-Archive $devPackageDir -DestinationPath $devPackage
+}
+
+#--------------------------
+# Optimizing file placement with NetBeauty
+# https://github.com/nulastudio/NetBeauty2
+function Optimize-Package($packageDir)
+{
+	Write-Host "NetBeauty2" -fore Cyan
+	nbeauty2 --usepatch --loglevel Detail $packageDir Libraries
+
+	$unusedFile = "$packageDir\hostfxr.dll.bak"
+	if (Test-Path $unusedFile)
+	{
+		Remove-Item $unusedFile
+	}
 }
 
 
@@ -849,7 +869,7 @@ function Build-PackageSorce-x64-fd
 	
 	# create package source
 	Write-Host "`n[Package frameword dependent] ...`n" -fore Cyan
-	New-Package "x64-fd" $product $publishDir_x64_fd $packageDir_x64_fd
+	New-Package "x64" $product $publishDir_x64_fd $packageDir_x64_fd
 
 	$global:build_x64_fd = $true
 }
@@ -860,7 +880,7 @@ function Build-Zip-x64
 	Write-Host "`[Zip] ...`n" -fore Cyan
 
 	Remove-Zip $packageZip_x64
-	New-Zip $packageDir_x64 $packageZip_x64
+	New-Zip $packageDir_x64 $packageName_x64 $packageZip_x64
 	Write-Host "`nExport $packageZip_x64 successed.`n" -fore Green
 }
 
@@ -869,7 +889,7 @@ function Build-Zip-x86
 	Write-Host "`[Zip x86] ...`n" -fore Cyan
 
 	Remove-Zip $packageZip_x86
-	New-Zip $packageDir_x86 $packageZip_x86
+	New-Zip $packageDir_x86 $packageName_x86 $packageZip_x86
 	Write-Host "`nExport $packageZip_x86 successed.`n" -fore Green
 }
 
@@ -878,7 +898,7 @@ function Build-Zip-x64-fd
 	Write-Host "`[Zip fd] ...`n" -fore Cyan
 
 	Remove-Zip $packageZip_x64_fd
-	New-Zip $packageDir_x64_fd $packageZip_x64_fd
+	New-Zip $packageDir_x64_fd $packageName_x64_fd $packageZip_x64_fd
 	Write-Host "`nExport $packageZip_x64_fd successed.`n" -fore Green
 }
 
@@ -991,11 +1011,14 @@ $packageDir_x86 = "$product$version-x86"
 $packageDir_x64_fd = "$product$version-x64-fd"
 $packageAppendDir_x64 = "$packageDir_x64.append"
 $packageAppendDir_x86 = "$packageDir_x86.append"
-$packageZip_x64 = "${product}${version}.zip"
-$packageZip_x86 = "${product}${version}-x86.zip"
-$packageZip_x64_fd = "${product}${version}-fd.zip"
-$packageMsi_x64 = "${product}${version}.msi"
-$packageMsi_x86 = "${product}${version}-x86.msi"
+$packageName_x64 = "${product}${version}"
+$packageName_x86 = "${product}${version}-x86"
+$packageName_x64_fd = "${product}${version}-fd"
+$packageZip_x64 = "$packageName_x64.zip"
+$packageZip_x86 = "$packageName_x86.zip"
+$packageZip_x64_fd = "$packageName_x64_fd.zip"
+$packageMsi_x64 = "$packageName_x64.msi"
+$packageMsi_x86 = "$packageName_x86.msi"
 $packageAppxDir_x64 = "${product}${version}-appx-x64"
 $packageAppxDir_x86 = "${product}${version}-appx-x84"
 $packageX86Appx = "${product}${version}-x86.appx"

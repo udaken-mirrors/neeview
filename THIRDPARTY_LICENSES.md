@@ -157,3 +157,9 @@ DLL: AnimatedImage.dll, AnimatedImage.Wpf.dll
 * URL: [AnimatedImage](https://github.com/whistyun/AnimatedImage)
 * URL: [WPF Animated GIF](https://github.com/XamlAnimatedGif/WpfAnimatedGif/)
 * License: [Apache-2.0 license](https://github.com/XamlAnimatedGif/WpfAnimatedGif/blob/master/LICENSE.txt)
+
+### NetBeauty 2
+
+* Copyright (C) 2022 nulastudio
+* URL: [NetBeauty2](https://github.com/nulastudio/NetBeauty2)
+* License: [MIT License](https://github.com/nulastudio/NetBeauty2/blob/master/LICENSE)

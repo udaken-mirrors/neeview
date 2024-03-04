@@ -271,7 +271,7 @@ namespace NeeView
         /// </summary>
         public static string LibrariesPlatformPath
         {
-            get { return Path.Combine(LibrariesPath, PlatformName); }
+            get { return Path.Combine(LibrariesPath, "Libraries", PlatformName); }
         }
 
         /// <summary>
