@@ -839,12 +839,8 @@ namespace NeeView
 
         public async void ViewModel_SelectedChanged(object? sender, FolderListSelectedChangedEventArgs e)
         {
-            if (this.ListBox.IsFocused)
-            {
-                FocusSelectedItem(true);
-            }
-
             this.ListBox.ScrollIntoView(this.ListBox.SelectedItem);
+            this.ListBox.FocusSelectedItem(false);
 
             _thumbnailLoader?.Load();
 
@@ -918,7 +914,6 @@ namespace NeeView
 
         private void FolderList_SelectionChanged(object? sender, SelectionChangedEventArgs e)
         {
-            this.ListBox.FocusSelectedItemIfFocused();
         }
 
         //
