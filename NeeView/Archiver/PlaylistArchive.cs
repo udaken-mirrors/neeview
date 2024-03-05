@@ -78,6 +78,16 @@ namespace NeeView
         {
             var targetPath = item.Path;
 
+            // プレイリストに動画ブックの特殊形式 (/path/to/movie.mp4/movie.mp4) があるときの補正
+            if (ArchiverManager.Current.GetSupportedType(targetPath) == ArchiverType.MediaArchiver && !File.Exists(targetPath))
+            {
+                var targetDirectory = LoosePath.GetDirectoryName(targetPath);
+                if (ArchiverManager.Current.GetSupportedType(targetDirectory) == ArchiverType.MediaArchiver)
+                {
+                    targetPath = targetDirectory;
+                }
+            }
+
             if (FileShortcut.IsShortcut(item.Path))
             {
                 var shortcut = new FileShortcut(item.Path);
@@ -87,7 +97,7 @@ namespace NeeView
                 }
             }
 
-            var innterEntry = await ArchiveEntryUtility.CreateAsync(targetPath, token);
+            var innerEntry = await ArchiveEntryUtility.CreateAsync(targetPath, token);
 
             var entry = new ArchiveEntry(this)
             {
@@ -95,10 +105,10 @@ namespace NeeView
                 Id = id,
                 RawEntryName = item.Name,
                 Link = targetPath,
-                Instance = innterEntry,
-                Length = innterEntry.Length,
-                CreationTime = innterEntry.CreationTime,
-                LastWriteTime = innterEntry.LastWriteTime,
+                Instance = innerEntry,
+                Length = innerEntry.Length,
+                CreationTime = innerEntry.CreationTime,
+                LastWriteTime = innerEntry.LastWriteTime,
             };
 
             return entry;

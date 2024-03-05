@@ -234,7 +234,7 @@ namespace NeeView
         public static IEnumerable<ArchiveEntry> WherePageAll(this IEnumerable<ArchiveEntry> source)
         {
             var directories = source.Select(e => LoosePath.GetDirectoryName(e.SystemPath)).Distinct().ToList();
-            return source.Where(e => !directories.Contains(e.SystemPath));
+            return source.Where(e => e.Link != null || !directories.Contains(e.SystemPath));
         }
     }
 }
