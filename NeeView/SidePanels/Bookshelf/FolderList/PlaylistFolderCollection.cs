@@ -103,7 +103,15 @@ namespace NeeView
             }
             else
             {
-                return _folderItemFactory.CreateFolderItem(entity, null);
+                var archiveType = ArchiverManager.Current.GetSupportedType(entity.EntryLastName);
+                if (archiveType != ArchiverType.None)
+                {
+                    return _folderItemFactory.CreateFolderItem(entity, null);
+                }
+                else
+                {
+                    return null;
+                }
             }
         }
     }
