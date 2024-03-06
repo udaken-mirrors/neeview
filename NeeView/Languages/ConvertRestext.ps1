@@ -27,14 +27,27 @@ Sort data by key
 
 .PARAMETER Trim
 For FromJson, trim empty data.
+
+.PARAMETER Cultures
+For FromJson, Specify the culture to be processed.
+Specify cultures separated by commas. If not specified, all cultures are processed.
+e.g., -Cultures en,ja
+
 #>
 
 param (
    	[ValidateSet("ToJson", "FromJson")]$Mode = "ToJson",
     [string]$JsonFile = "Language.json",
     [switch]$Sort,
-    [switch]$Trim
+    [switch]$Trim,
+    [string[]]$Cultures = @()
 )
+
+if (Cultures.Length -ne 0)
+{
+    Write-Host Cultures: Cultures
+}
+$Filter = $Cultures
 
 
 $defaultCulture = "en"
@@ -139,13 +152,28 @@ function Get-RestextTable
 function Set-RestextTable
 {
     param([PSCustomObject]$table, [string[]]$cultures)
-    foreach ($culture in $cultures)
+    foreach ($culture in Get-FilteredCultures($cultures))
     {
         $restext = "$culture.restext"
         Write-Host Write $restext 
         ConvertTo-RestextFromRestextTable $table $culture | Set-Content $restext -Encoding utf8
     }
 }
+
+function Get-FilteredCultures
+{
+    param([string[]]$cultures)
+
+    if ($Filter.Length -eq 0)
+    {
+        return $cultures
+    }
+    else
+    {
+        return $cultures | Where-Object { $Filter.Contains($_) }
+    }
+}
+
 
 function Sort-RestextTable
 { 

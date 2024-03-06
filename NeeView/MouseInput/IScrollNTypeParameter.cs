@@ -23,6 +23,11 @@ namespace NeeView
         /// 改行遅延時間
         /// </summary>
         double LineBreakStopTime { get; set; }
+
+        /// <summary>
+        /// パノラマモードでは全てのページを１ページとみなす
+        /// </summary>
+        bool PagesAsOne { get; set; }
     }
 
 }

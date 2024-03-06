@@ -2477,3 +2477,5 @@ BookConfig.IsReadyToPageMove.Remarks=ページの準備ができたら表示を�
 PerformanceConfig.PreExtractSolidSize=ソリッド圧縮ファイルの事前展開に使用するメモリサイズ (MB)
 PerformanceConfig.PreExtractSolidSize.Remarks=足りない場合は一時ファイルに展開します。
 BookConfig.IsPrioritizeBookMove=ブック移動優先
+ScrollPageCommandParameter.PagesAsOne=パノラマ モードでは全てのページを 1 ページとみなす
+ViewScrollNTypeCommandParameter.PagesAsOne=パノラマ モードでは全てのページを 1 ページとみなす

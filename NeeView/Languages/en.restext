@@ -2477,3 +2477,5 @@ BookConfig.IsReadyToPageMove.Remarks=Switch display when page is ready. Not vali
 PerformanceConfig.PreExtractSolidSize=Memory size used to pre-decompress solid compressed files (MB)
 PerformanceConfig.PreExtractSolidSize.Remarks=If not enough, extract to a temporary file.
 BookConfig.IsPrioritizeBookMove=Book movement priority
+ScrollPageCommandParameter.PagesAsOne=In panorama mode, all pages are considered as one page
+ViewScrollNTypeCommandParameter.PagesAsOne=In panorama mode, all pages are considered as one page

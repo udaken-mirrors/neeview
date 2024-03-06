@@ -1,4 +1,7 @@
-﻿using System.Diagnostics;
+﻿using System.Collections;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
 
@@ -73,6 +76,48 @@ namespace NeeView.ComponentModel
             return new Rect(x, y, width, height);
         }
 
+        public static Rect InflateLeft(this Rect rect, double dx)
+        {
+            return new Rect(rect.X - dx, rect.Y, rect.Width + dx, rect.Height);
+        }
+
+        public static Rect InflateRight(this Rect rect, double dx)
+        {
+            return new Rect(rect.X, rect.Y, rect.Width + dx, rect.Height);
+        }
+
+        public static Rect InflateTop(this Rect rect, double dy)
+        {
+            return new Rect(rect.X, rect.Y - dy, rect.Width, rect.Height + dy);
+        }
+
+        public static Rect InflateBottom(this Rect rect, double dy)
+        {
+            return new Rect(rect.X, rect.Y, rect.Width, rect.Height + dy);
+        }
+
+        public static Rect InflateHorizontal(this Rect rect, double dx, int direction)
+        {
+            Debug.Assert(direction is -1 or 1);
+            return (direction < 0) ? InflateLeft(rect, dx) : InflateRight(rect, dx);
+        }
+
+        public static Rect InflateVertical(this Rect rect, double dy, int direction)
+        {
+            Debug.Assert(direction is -1 or 1);
+            return (direction < 0) ? InflateTop(rect, dy) : InflateBottom(rect, dy);
+        }
+
+        public static Rect Union(this IEnumerable<Rect> rects)
+        {
+            if (!rects.Any()) return Rect.Empty;
+
+            var left = rects.Select(x => x.Left).Min();
+            var right = rects.Select(x => x.Right).Max();
+            var top = rects.Select(x => x.Top).Min();
+            var bottom = rects.Select(x => x.Bottom).Max();
+            return new Rect(left, top, right - left, bottom - top);
+        }
     }
 
 

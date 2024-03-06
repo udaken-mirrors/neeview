@@ -13,6 +13,8 @@ namespace NeeView
         private NScrollType _scrollType = NScrollType.NType;
         private double _scroll = 1.0;
         private double _lineBreakStopTime;
+        private bool _pagesAsOne;
+
 
         [PropertyMember]
         public NScrollType ScrollType
@@ -34,6 +36,14 @@ namespace NeeView
             get { return _lineBreakStopTime; }
             set { SetProperty(ref _lineBreakStopTime, value); }
         }
+
+        [PropertyMember]
+        public bool PagesAsOne
+        {
+            get { return _pagesAsOne; }
+            set { SetProperty(ref _pagesAsOne, value); }
+        }
+
 
         #region Obsolete
 

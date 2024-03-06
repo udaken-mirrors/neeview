@@ -15,6 +15,7 @@ namespace NeeView
         private double _endMargin = 10.0;
         private double _lineBreakStopTime;
         private LineBreakStopMode _lineBreakStopMode = LineBreakStopMode.Line;
+        private bool _pagesAsOne;
 
 
         [PropertyMember]
@@ -51,6 +52,13 @@ namespace NeeView
         {
             get { return _lineBreakStopMode; }
             set { SetProperty(ref _lineBreakStopMode, value); }
+        }
+
+        [PropertyMember]
+        public bool PagesAsOne
+        {
+            get { return _pagesAsOne; }
+            set { SetProperty(ref _pagesAsOne, value); }
         }
 
 

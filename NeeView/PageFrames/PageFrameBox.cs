@@ -1022,7 +1022,8 @@ namespace NeeView.PageFrames
             var node = _selected.Node;
             AssertSelectedExists();
             if (node?.Value.Content is not PageFrameContent) return false;
-            var contentRect = _transformControlFactory.CreateContentRect(node.Value);
+
+            var contentRect = (_context.IsPanorama && parameter.PagesAsOne) ? CreatePanoramaContentRect() : _transformControlFactory.CreateContentRect(node.Value);
             var viewRect = _transformControlFactory.CreateViewRect(_viewBox.Rect);
 
             var math = new NScroll(_context, contentRect, viewRect);
@@ -1042,6 +1043,34 @@ namespace NeeView.PageFrames
                 AddPosition(scroll.Vector.X, scroll.Vector.Y, _context.ScrollDuration);
                 return false;
             }
+        }
+
+        private Rect CreatePanoramaContentRect()
+        {
+            var contentRect = _containers.Collect<PageFrameContent>().Select(e => e.Rect).Union();
+            if (_containers.Collect<PageFrameContent>().All(e => !e.Content.IsFirstFrame))
+            {
+                if (_context.FrameOrientation == PageFrameOrientation.Horizontal)
+                {
+                    contentRect = contentRect.InflateHorizontal(_viewBox.Rect.Width, -1 * _context.ReadOrder.ToSign());
+                }
+                else
+                {
+                    contentRect = contentRect.InflateVertical(_viewBox.Rect.Height, -1);
+                }
+            }
+            if (_containers.Collect<PageFrameContent>().All(e => !e.Content.IsLastFrame))
+            {
+                if (_context.FrameOrientation == PageFrameOrientation.Horizontal)
+                {
+                    contentRect = contentRect.InflateHorizontal(_viewBox.Rect.Width, +1 * _context.ReadOrder.ToSign());
+                }
+                else
+                {
+                    contentRect = contentRect.InflateVertical(_viewBox.Rect.Height, +1);
+                }
+            }
+            return contentRect;
         }
 
         /// <summary>
