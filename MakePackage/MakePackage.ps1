@@ -102,6 +102,7 @@ function Get-GitLog()
 	$result = Invoke-Expression "git log $descrive..head --encoding=Shift_JIS --pretty=format:`"%ae %s`""
 	$result = $result | Where-Object {$_ -match "^nee.laboratory"} | ForEach-Object {$_ -replace "^[\w\.@]+ ",""}
 	$result = $result | Where-Object { -not ($_ -match '^m.rge|^開発用|^作業中|\(dev\)|^-|^\.\.') } 
+	$result = $result | ForEach-Object {$_ -replace "#(\d+)", "[#`$1](https://bitbucket.org/neelabo/neeview/issues/`$1)"}
 
     return "[${branch}] $descrive to head", $date, $result
 }
@@ -121,7 +122,7 @@ function Get-GitLogMarkdown($title)
 	""
 	$logs | ForEach-Object { "- $_" }
 	""
-	"This list of changes was auto generated."
+	"This change log was generated automatically."
 }
 
 #--------------------
