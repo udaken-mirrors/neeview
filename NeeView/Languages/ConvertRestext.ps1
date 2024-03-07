@@ -43,9 +43,9 @@ param (
     [string[]]$Cultures = @()
 )
 
-if (Cultures.Length -ne 0)
+if ($Cultures.Length -ne 0)
 {
-    Write-Host Cultures: Cultures
+    Write-Host Cultures: $Cultures
 }
 $Filter = $Cultures
 
