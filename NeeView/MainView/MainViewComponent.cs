@@ -54,6 +54,7 @@ namespace NeeView
             PrintController = new PrintController(this, _mainView, PageFrameBoxPresenter);
             ViewTransformControl = new ViewTransformControl(PageFrameBoxPresenter);
             ViewLoupeControl = new ViewLoupeControl(this);
+            ViewAutoScrollControl = new ViewAutoScrollControl(this);
             ViewWindowControl = new ViewWindowControl(this);
             ViewPropertyControl = new ViewPropertyControl(Config.Current.View, Config.Current.BookSetting);
             ViewCopyImage = new ViewCopyImage(PageFrameBoxPresenter);
@@ -103,6 +104,7 @@ namespace NeeView
 
         public IViewTransformControl ViewTransformControl { get; private set; }
         public IViewLoupeControl ViewLoupeControl { get; private set; }
+        public IViewAutoScrollControl ViewAutoScrollControl { get; private set; }
         public IViewWindowControl ViewWindowControl { get; private set; }
         public IViewPropertyControl ViewPropertyControl { get; private set; }
         public IViewCopyImage ViewCopyImage { get; private set; }

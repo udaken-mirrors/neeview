@@ -2479,3 +2479,6 @@ PerformanceConfig.PreExtractSolidSize.Remarks=足りない場合は一時ファ�
 BookConfig.IsPrioritizeBookMove=ブック移動優先
 ScrollPageCommandParameter.PagesAsOne=パノラマ モードでは全てのページを 1 ページとみなす
 ViewScrollNTypeCommandParameter.PagesAsOne=パノラマ モードでは全てのページを 1 ページとみなす
+LongButtonDownMode.AutoScroll=オート スクロール
+AutoScrollOnCommand=オート スクロール
+AutoScrollOnCommand.Remarks=オート スクロール モードにします。

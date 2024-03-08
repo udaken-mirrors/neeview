@@ -332,6 +332,9 @@ namespace NeeView
                 new LoupeOffCommand(),
                 new LoupeScaleUpCommand(),
                 new LoupeScaleDownCommand(),
+
+                new AutoScrollOnCommand(),
+
                 new OpenOptionsWindowCommand(),
                 new OpenSettingFilesFolderCommand(),
                 new OpenScriptsFolderCommand(),

@@ -26,6 +26,7 @@ namespace NeeView
         Loupe,
         Drag,
         Gesture,
+        AutoScroll
     }
 
     /// <summary>
@@ -111,13 +112,23 @@ namespace NeeView
                 this.Gesture.GestureProgressed += (s, e) => _context.GestureCommandCollection?.ShowProgressed(e.Sequence);
             }
 
+            if (_context.DragTransformContextFactory != null)
+            {
+                this.AutoScroll = new MouseInputAutoScroll(_context);
+                this.AutoScroll.StateChanged += StateChanged;
+                this.AutoScroll.MouseButtonChanged += Mouse_MouseButtonChanged;
+                this.AutoScroll.MouseWheelChanged += (s, e) => MouseWheelChanged?.Invoke(_sender, e);
+                this.AutoScroll.MouseHorizontalWheelChanged += (s, e) => MouseHorizontalWheelChanged?.Invoke(_sender, e);
+            }
+
             // initialize state
             _mouseInputCollection = new Dictionary<MouseInputState, MouseInputBase?>
             {
                 { MouseInputState.Normal, this.Normal },
                 { MouseInputState.Loupe, this.Loupe },
                 { MouseInputState.Drag, this.Drag },
-                { MouseInputState.Gesture, this.Gesture }
+                { MouseInputState.Gesture, this.Gesture },
+                { MouseInputState.AutoScroll, this.AutoScroll }
             };
             SetState(MouseInputState.Normal, null);
 
@@ -187,6 +198,16 @@ namespace NeeView
         /// 状態：ジェスチャー
         /// </summary>
         public MouseInputGesture? Gesture { get; private set; }
+
+        /// <summary>
+        /// 状態：オートスクロール
+        /// </summary>
+        public MouseInputAutoScroll? AutoScroll { get; private set; }
+
+        /// <summary>
+        /// 現在の状態
+        /// </summary>
+        public MouseInputState State => _state;
 
 
         /// <summary>

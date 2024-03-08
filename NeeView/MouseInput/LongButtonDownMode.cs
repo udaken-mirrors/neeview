@@ -10,6 +10,9 @@
         Loupe,
 
         [AliasName]
+        AutoScroll,
+
+        [AliasName]
         Repeat,
     }
 }

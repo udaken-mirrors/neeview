@@ -74,6 +74,14 @@ namespace NeeView
                     });
                     break;
 
+                case LongButtonDownMode.AutoScroll:
+                    StopTimer();
+                    AppDispatcher.Invoke(() =>
+                    {
+                        SetState(MouseInputState.AutoScroll, true);
+                    });
+                    break;
+
                 case LongButtonDownMode.Repeat:
                     var interval = Config.Current.Mouse.LongButtonRepeatTime * 1000.0;
                     if (_timer.Interval != interval)
@@ -138,6 +146,15 @@ namespace NeeView
 
             _context.StartPoint = e.GetPosition(_context.Sender);
             _context.StartTimestamp = e.Timestamp;
+
+#if false
+            // # オートスクロール
+            if (e.MiddleButton == MouseButtonState.Pressed)
+            {
+                SetState(MouseInputState.AutoScroll);
+                return;
+            }
+#endif
 
             // ダブルクリック？
             if (e.ClickCount >= 2)

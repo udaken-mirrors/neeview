@@ -26,11 +26,13 @@ namespace NeeView
                 self.Config.Image.Standard.SupportFileTypes = PictureFileExtensionTools.CreateDefaultSupportedFileTypes(self.Config.Image.Standard.UseWicInformation);
             }
 
+#if !DEBUG
             // 現在のバージョンであればチェック不要
             if (self.Format.Equals(new FormatVersion(Environment.SolutionName)))
             {
                 return self;
             }
+#endif
 
             // ver.38
             if (self.Format.CompareTo(new FormatVersion(Environment.SolutionName, 38, 0, 0)) < 0)
@@ -169,6 +171,16 @@ namespace NeeView
                 }
             }
 
+            // ver.41.0
+            if (self.Format.CompareTo(new FormatVersion(Environment.SolutionName, 41, 0, 0)) < 0)
+            {
+                if (self.Commands != null)
+                {
+                    // 新規追加されたAutoScrollOnCommand のショートカットの衝突を解決する
+                    ResolveCommandShortCutKeyConflicts(self.Commands, new AutoScrollOnCommand());
+                }
+            }
+
 #if false
             // ver.99 (バージョン変更処理テスト)
             if (self.Format.CompareTo(new FormatVersion(Environment.SolutionName, 99, 0, 0)) < 0)
@@ -179,6 +191,46 @@ namespace NeeView
 #endif
 
             return self;
+        }
+
+
+        /// <summary>
+        /// CommandCollection に含まれているショートカットキーと衝突しないように新しいコマンドを登録する
+        /// </summary>
+        /// <param name="commands"></param>
+        /// <param name="command">登録するコマンド</param>
+        private static void ResolveCommandShortCutKeyConflicts(CommandCollection commands, CommandElement command)
+        {
+            if (commands.ContainsKey(command.Name)) return;
+            if (string.IsNullOrEmpty(command.ShortCutKey)) return;
+
+            command.ShortCutKey = ResolveShortCutKeyConflicts(commands, command.ShortCutKey);
+            commands[command.Name] = command.CreateMemento();
+        }
+
+        /// <summary>
+        /// CommandCollection に含まれているショートカットキーを除外したショートカットキー列を作る
+        /// </summary>
+        /// <param name="commands"></param>
+        /// <param name="shortCutKey">要求するショートカットキー列 (カンマ区切り)</param>
+        /// <returns></returns>
+        private static string ResolveShortCutKeyConflicts(CommandCollection commands, string shortCutKey)
+        {
+            if (string.IsNullOrEmpty(shortCutKey)) return "";
+
+            var keys = shortCutKey.Split(',');
+            return string.Join(',', keys.Where(e => !ContainsShortCutKey(commands, e)));
+        }
+
+        /// <summary>
+        /// CommandCollection に特定のショートカットキー設定が含まれているかをチェックする
+        /// </summary>
+        /// <param name="commands"></param>
+        /// <param name="shortCutKey">判定するショートカットキー</param>
+        /// <returns></returns>
+        private static bool ContainsShortCutKey(CommandCollection commands, string shortCutKey)
+        {
+            return commands.Values.Where(e => !string.IsNullOrEmpty(e.ShortCutKey)).Any(e => e.ShortCutKey.Split(',').Contains(shortCutKey));
         }
 
 #pragma warning restore CS0612, CS0618 // 型またはメンバーが旧型式です

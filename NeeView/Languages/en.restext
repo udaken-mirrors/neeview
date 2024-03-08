@@ -2479,3 +2479,6 @@ PerformanceConfig.PreExtractSolidSize.Remarks=If not enough, extract to a tempor
 BookConfig.IsPrioritizeBookMove=Book movement priority
 ScrollPageCommandParameter.PagesAsOne=In panorama mode, all pages are considered as one page
 ViewScrollNTypeCommandParameter.PagesAsOne=In panorama mode, all pages are considered as one page
+LongButtonDownMode.AutoScroll=Auto scroll
+AutoScrollOnCommand=Auto scroll
+AutoScrollOnCommand.Remarks=Change to auto scroll mode.
