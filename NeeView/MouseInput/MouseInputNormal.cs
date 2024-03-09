@@ -112,10 +112,7 @@ namespace NeeView
         public override void OnOpened(FrameworkElement sender, object? parameter)
         {
             _isButtonDown = false;
-            if (sender.Cursor != Cursors.None)
-            {
-                sender.Cursor = null;
-            }
+            SetCursor(null);
 
             OnUpdateSelectedFrame(FrameChangeType.None);
         }
@@ -146,15 +143,6 @@ namespace NeeView
 
             _context.StartPoint = e.GetPosition(_context.Sender);
             _context.StartTimestamp = e.Timestamp;
-
-#if false
-            // # オートスクロール
-            if (e.MiddleButton == MouseButtonState.Pressed)
-            {
-                SetState(MouseInputState.AutoScroll);
-                return;
-            }
-#endif
 
             // ダブルクリック？
             if (e.ClickCount >= 2)

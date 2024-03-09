@@ -40,7 +40,7 @@ namespace NeeView
             _isLongDownMode = parameter is bool isLongDownMode && isLongDownMode;
 
             sender.Focus();
-            sender.Cursor = Cursors.ScrollAll;
+            SetCursor(Cursors.ScrollAll);
 
             _transformControl = CreateTransformControl();
             _start = Mouse.GetPosition(_context.Sender);
@@ -56,7 +56,7 @@ namespace NeeView
         /// <param name="sender"></param>
         public override void OnClosed(FrameworkElement sender)
         {
-            sender.Cursor = null;
+            SetCursor(null);
 
             _renderingSubscriber?.Dispose();
             _renderingSubscriber = null;
@@ -144,7 +144,7 @@ namespace NeeView
             var delta = (_end - _start) * scale;
             _velocity = new Vector(LimitScalarValue(delta.X, min, max), LimitScalarValue(delta.Y, min, max));
 
-            _context.Sender.Cursor = GetScrollCursor(_velocity);
+            SetCursor(GetScrollCursor(_velocity));
         }
 
         /// <summary>

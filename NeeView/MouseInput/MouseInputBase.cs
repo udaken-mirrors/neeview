@@ -219,5 +219,14 @@ namespace NeeView
             var y = point.Y - _context.Sender.ActualHeight * 0.5;
             return new Point(x, y);
         }
+
+        /// <summary>
+        /// カーソル設定
+        /// </summary>
+        /// <param name="cursor"></param>
+        protected void SetCursor(Cursor? cursor)
+        {
+            _context.CursorSetter?.SetCursor(cursor);
+        }
     }
 }

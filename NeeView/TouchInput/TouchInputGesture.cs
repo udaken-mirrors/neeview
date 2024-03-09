@@ -66,10 +66,7 @@ namespace NeeView
             _touch = parameter as TouchContext ?? throw new InvalidOperationException("parameter must be TouchContext");
 
             MouseInputHelper.CaptureMouse(this, sender);
-            if (sender.Cursor != Cursors.None)
-            {
-                sender.Cursor = null;
-            }
+            SetCursor(null);
             Reset();
         }
 

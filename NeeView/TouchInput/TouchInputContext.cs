@@ -9,9 +9,10 @@ namespace NeeView
 {
     public class TouchInputContext
     {
-        public TouchInputContext(FrameworkElement sender, MouseGestureCommandCollection? gestureCommandCollection, INotifyPageFrameBoxChanged? notifyPageFrameBoxChanged, IDragTransformContextFactory? dragTransformContextFactory, IDragTransformControl? dragTransformControl, LoupeContext? loupe, ViewScrollContext? viewScrollContext)
+        public TouchInputContext(FrameworkElement sender, ICursorSetter? cursorSetter, MouseGestureCommandCollection? gestureCommandCollection, INotifyPageFrameBoxChanged? notifyPageFrameBoxChanged, IDragTransformContextFactory? dragTransformContextFactory, IDragTransformControl? dragTransformControl, LoupeContext? loupe, ViewScrollContext? viewScrollContext)
         {
             this.Sender = sender;
+            this.CursorSetter = cursorSetter;
             this.GestureCommandCollection = gestureCommandCollection;
             this.NotifyPageFrameBoxChanged = notifyPageFrameBoxChanged;
             this.DragTransformContextFactory = dragTransformContextFactory;
@@ -29,6 +30,8 @@ namespace NeeView
         /// イベント受取エレメント
         /// </summary>
         public FrameworkElement Sender { get; set; }
+
+        public ICursorSetter? CursorSetter { get; set; }
 
         /// <summary>
         /// ジェスチャーコマンドテーブル

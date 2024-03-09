@@ -54,10 +54,7 @@ namespace NeeView
         /// <param name="parameter"></param>
         public override void OnOpened(FrameworkElement sender, object? parameter)
         {
-            if (sender.Cursor != Cursors.None)
-            {
-                sender.Cursor = null;
-            }
+            SetCursor(null);
             ////Reset();
 
             _gesture.Reset(_context.StartPoint);

@@ -8,9 +8,10 @@ namespace NeeView
 {
     public class MouseInputContext : BindableBase
     {
-        public MouseInputContext(FrameworkElement sender, MouseGestureCommandCollection? gestureCommandCollection, INotifyPageFrameBoxChanged? notifyPageFrameBoxChanged, IDragTransformContextFactory? dragTransformContextFactory, IDragTransformControl? dragTransformControl, LoupeContext? loupe, ViewScrollContext? viewScrollContext)
+        public MouseInputContext(FrameworkElement sender, ICursorSetter? cursorSetter, MouseGestureCommandCollection? gestureCommandCollection, INotifyPageFrameBoxChanged? notifyPageFrameBoxChanged, IDragTransformContextFactory? dragTransformContextFactory, IDragTransformControl? dragTransformControl, LoupeContext? loupe, ViewScrollContext? viewScrollContext)
         {
             this.Sender = sender;
+            this.CursorSetter = cursorSetter;
             this.GestureCommandCollection = gestureCommandCollection;
             this.NotifyPageFrameBoxChanged = notifyPageFrameBoxChanged;
             this.DragTransformContextFactory = dragTransformContextFactory;
@@ -26,6 +27,8 @@ namespace NeeView
         /// イベント受取エレメント
         /// </summary>
         public FrameworkElement Sender { get; init; }
+
+        public ICursorSetter? CursorSetter { get; set; }
 
         public LoupeContext? Loupe { get; init; }
 

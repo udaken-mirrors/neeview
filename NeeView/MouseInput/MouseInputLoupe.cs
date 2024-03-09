@@ -51,7 +51,7 @@ namespace NeeView
             }
 
             sender.Focus();
-            sender.Cursor = Cursors.None;
+            SetCursor(Cursors.None);
 
             _loupe.IsEnabled = true;
             _isButtonDown = false;
@@ -68,7 +68,7 @@ namespace NeeView
         /// <param name="sender"></param>
         public override void OnClosed(FrameworkElement sender)
         {
-            sender.Cursor = null;
+            SetCursor(null);
             _loupe.IsEnabled = false;
             DetachLoupe(sender);
         }

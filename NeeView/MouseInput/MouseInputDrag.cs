@@ -29,7 +29,7 @@ namespace NeeView
 
         public override void OnOpened(FrameworkElement sender, object? parameter)
         {
-            sender.Cursor = Cursors.Hand;
+            SetCursor(Cursors.Hand);
 
             _dragTransformControl.ResetState();
             _dragTransformControl.UpdateState(CreateMouseButtonBits(), Keyboard.Modifiers, ToDragCoord(_context.StartPoint), _context.StartTimestamp, _context.Speedometer, DragActionUpdateOptions.None);
