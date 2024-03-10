@@ -191,7 +191,7 @@ namespace NeeView
                 _fileSystemWatcher.Path = path;
                 _fileSystemWatcher.IncludeSubdirectories = false;
                 _fileSystemWatcher.NotifyFilter = NotifyFilters.FileName | NotifyFilters.DirectoryName;
-                _fileSystemWatcher.Created += Watcher_Creaded;
+                _fileSystemWatcher.Created += Watcher_Created;
                 _fileSystemWatcher.Deleted += Watcher_Deleted;
                 _fileSystemWatcher.Renamed += Watcher_Renamed;
                 _fileSystemWatcher.Error += Watcher_Error;
@@ -209,7 +209,7 @@ namespace NeeView
             var ex = e.GetException();
             Debug.WriteLine($"FileSystemWatcher Error!! : {ex} : {ex.Message}");
 
-            // recoverty...
+            // recovery...
             ////var path = _fileSystemWatcher.Path;
             ////TerminateWatcher();
             ////InitializeWatcher(path);
@@ -224,7 +224,7 @@ namespace NeeView
             {
                 _fileSystemWatcher.EnableRaisingEvents = false;
                 _fileSystemWatcher.Error -= Watcher_Error;
-                _fileSystemWatcher.Created -= Watcher_Creaded;
+                _fileSystemWatcher.Created -= Watcher_Created;
                 _fileSystemWatcher.Deleted -= Watcher_Deleted;
                 _fileSystemWatcher.Renamed -= Watcher_Renamed;
                 _fileSystemWatcher.Dispose();
@@ -248,7 +248,7 @@ namespace NeeView
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void Watcher_Creaded(object sender, FileSystemEventArgs e)
+        private void Watcher_Created(object sender, FileSystemEventArgs e)
         {
             if (e.Name is null) return;
 

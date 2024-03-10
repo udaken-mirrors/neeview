@@ -30,8 +30,9 @@ namespace NeeView
             _engine = engine;
             _result = result;
 
-            _engine.Tree.AddContentChanged += Tree_AddContentChanged;
-            _engine.Tree.RemoveContentChanged += Tree_RemoveContentChanged;
+            _engine.Tree.ContentAdded += Tree_ContentAdded;
+            _engine.Tree.ContentRemoved += Tree_ContentRemoved;
+            _engine.Tree.ContentChanged += Tree_ContentChanged;
         }
 
 
@@ -42,7 +43,7 @@ namespace NeeView
 
 
         // TODO: 投げっぱなし非同期なので例外処理をここで行う
-        private async void Tree_AddContentChanged(object? sender, FileItemTree.FileTreeContentChangedEventArgs e)
+        private async void Tree_ContentAdded(object? sender, FileItemTree.FileTreeContentChangedEventArgs e)
         {
             if (_disposedValue) return;
 
@@ -58,7 +59,7 @@ namespace NeeView
         }
 
 
-        private void Tree_RemoveContentChanged(object? sender, FileItemTree.FileTreeContentChangedEventArgs e)
+        private void Tree_ContentRemoved(object? sender, FileItemTree.FileTreeContentChangedEventArgs e)
         {
             if (_disposedValue) return;
 
@@ -67,6 +68,26 @@ namespace NeeView
             CollectionChanged?.Invoke(this, new CollectionChangedEventArgs<FileItem>(CollectionChangedAction.Remove, e.FileItem));
         }
 
+        private void Tree_ContentChanged(object? sender, FileItemTree.FileTreeContentChangedEventArgs e)
+        {
+            if (_disposedValue) return;
+            Debug.Assert(e.OldFileItem != null);
+            if (e.OldFileItem is null) return;
+
+            Trace($"Change: {e.FileItem.Path} <- {e.OldFileItem.Path}");
+            var index = _result.Items.IndexOf(e.OldFileItem);
+            if (index < 0)
+            {
+                // 項目の追加検索
+                Tree_ContentAdded(sender, e);
+            }
+            else
+            {
+                // 項目の入れ替え
+                _result.Items[index] = e.FileItem;
+                CollectionChanged?.Invoke(this, new CollectionChangedEventArgs<FileItem>(CollectionChangedAction.Rename, e.FileItem, e.OldFileItem));
+            }
+        }
 
         #region ISearchResult Support
 
@@ -101,8 +122,9 @@ namespace NeeView
             {
                 if (disposing)
                 {
-                    _engine.Tree.AddContentChanged -= Tree_AddContentChanged;
-                    _engine.Tree.RemoveContentChanged -= Tree_RemoveContentChanged;
+                    _engine.Tree.ContentAdded -= Tree_ContentAdded;
+                    _engine.Tree.ContentRemoved -= Tree_ContentRemoved;
+                    _engine.Tree.ContentChanged -= Tree_ContentChanged;
                 }
 
                 _disposedValue = true;

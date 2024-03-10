@@ -315,7 +315,7 @@ namespace NeeLaboratory.IO.Nodes
             Rename(oldPath, Path.GetFileName(path));
 
             // コンテンツ更新
-            OnUpdateContent(node, true);
+            UpdateContent(node, true);
 
             Validate();
         }
@@ -348,7 +348,7 @@ namespace NeeLaboratory.IO.Nodes
         {
         }
 
-        protected virtual void OnUpdateContent(Node? node, bool isRecursive)
+        protected virtual void UpdateContent(Node? node, bool isRecursive)
         {
         }
 

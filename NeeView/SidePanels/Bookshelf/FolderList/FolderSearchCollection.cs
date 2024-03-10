@@ -131,6 +131,13 @@ namespace NeeView
                     RequestDelete(new QueryPath(e.Item.Path));
                     break;
 
+                case CollectionChangedAction.Rename:
+                    Trace($"Rename: {e.Item} <= {e.OldItem}");
+                    if (e.OldItem is null) throw new ArgumentException("e.OldItem is null");
+                    if (e.Item is null) throw new ArgumentException("e.Item is null");
+                    RequestRename(new QueryPath(e.OldItem.Path), new QueryPath(e.Item.Path));
+                    break;
+
                 default:
                     throw new NotSupportedException();
             }
