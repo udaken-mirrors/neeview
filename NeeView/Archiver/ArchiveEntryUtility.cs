@@ -130,6 +130,7 @@ namespace NeeView
                 else
                 {
                     var archiver = await ArchiverManager.Current.CreateArchiverAsync(source, false, token);
+                    await archiver.WaitFileReadableAsync(TimeSpan.FromMilliseconds(1000), token);
                     entries = await archiver.GetEntriesAsync(token);
                 }
 

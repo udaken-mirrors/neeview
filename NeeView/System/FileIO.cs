@@ -141,6 +141,48 @@ namespace NeeView
             return path1 == path2;
         }
 
+       /// <summary>
+       /// ファイルロックチェック
+       /// </summary>
+       /// <param name="file"></param>
+       /// <returns></returns>
+        public static bool IsFileLocked(FileInfo file, FileShare share = FileShare.None)
+        {
+            try
+            {
+                using (FileStream stream = file.Open(FileMode.Open, FileAccess.Read, share))
+                {
+                    stream.Close();
+                }
+            }
+            catch (IOException)
+            {
+                return true;
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// ファイルが読み込み可能になるまで待機
+        /// </summary>
+        /// <param name="file"></param>
+        /// <param name="timeout"></param>
+        /// <param name="token"></param>
+        /// <returns></returns>
+        /// <exception cref="TimeoutException"></exception>
+        public static async Task WaitFileReadableAsync(FileInfo file, TimeSpan timeout, CancellationToken token)
+        {
+            var time = new TimeSpan();
+            var interval = TimeSpan.FromMilliseconds(500); 
+            while (IsFileLocked(file, FileShare.Read))
+            {
+                if (time > timeout) throw new TimeoutException();
+                await Task.Delay(interval, token);
+                time += interval;
+            }
+        }
+
+
         #region Copy
 
         /// <summary>

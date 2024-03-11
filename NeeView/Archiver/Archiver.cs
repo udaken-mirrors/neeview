@@ -177,6 +177,21 @@ namespace NeeView
         {
         }
 
+        /// <summary>
+        /// アーカイブが読み込み可能になるまで待機
+        /// </summary>
+        /// <param name="timeout"></param>
+        /// <param name="token"></param>
+        /// <returns></returns>
+        public async ValueTask WaitFileReadableAsync(TimeSpan timeout, CancellationToken token)
+        {
+            if (string.IsNullOrEmpty(Path)) return;
+            var fileInfo = new FileInfo(Path);
+            if (fileInfo.Exists)
+            {
+                await FileIO.WaitFileReadableAsync(fileInfo, timeout, token);
+            }
+        }
 
         /// <summary>
         /// エントリリストを取得 (Archive内でのみ使用)
