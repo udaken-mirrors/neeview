@@ -27,7 +27,7 @@ namespace NeeView
         private AddressBarViewModel? _vm;
         private UIElement? _popupClosedFocusElement;
 
-        
+
         public AddressBarView()
         {
             InitializeComponent();
@@ -191,7 +191,7 @@ namespace NeeView
                 }
 
                 var data = new DataObject();
-                data.SetData(new QueryPathCollection() { new QueryPath(_vm.Model.Address) });
+                data.SetQueryDropList(new QueryPath(_vm.Model.Address));
 
                 _ghost.Attach(element, new Point(24, 24));
                 DragDropWatcher.SetDragElement(sender, element);

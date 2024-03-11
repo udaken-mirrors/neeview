@@ -610,8 +610,8 @@ namespace NeeView
                     e.AllowedEffects = DragDropEffects.Copy | DragDropEffects.Move;
                     break;
 
-                case DirectoryNode direcory:
-                    e.Data.SetFileDropList(new System.Collections.Specialized.StringCollection() { direcory.Path });
+                case DirectoryNode directory:
+                    e.Data.SetFileDropList(new System.Collections.Specialized.StringCollection() { directory.Path });
                     e.AllowedEffects = DragDropEffects.Copy;
                     break;
 
@@ -964,40 +964,6 @@ namespace NeeView
 #pragma warning restore IDE0060 // 未使用のパラメーターを削除します
 
         #endregion DragDrop
-    }
-
-    public static class IDataObjectExtensions
-    {
-        public static T? GetData<T>(this IDataObject data)
-            where T : class
-        {
-            try
-            {
-                return data.GetData(typeof(T)) as T;
-            }
-            catch (Exception)
-            {
-                return null;
-            }
-        }
-
-        public static T? GetData<T>(this IDataObject data, string format)
-            where T : class
-        {
-            try
-            {
-                return data.GetData(format) as T;
-            }
-            catch (Exception)
-            {
-                return null;
-            }
-        }
-
-        public static string[] GetFileDrop(this IDataObject data)
-        {
-            return (string[])data.GetData(DataFormats.FileDrop, false);
-        }
     }
 
 

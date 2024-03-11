@@ -49,7 +49,7 @@ namespace NeeView
                 (s, e) => SearchBoxFocusChanged?.Invoke(this, new FocusChangedEventArgs((bool)e.NewValue));
         }
 
-        
+
         public event EventHandler<FocusChangedEventArgs>? SearchBoxFocusChanged;
 
 
@@ -167,7 +167,7 @@ namespace NeeView
                 }
 
                 var data = new DataObject();
-                data.SetData(new QueryPathCollection() { _vm.Model.Place });
+                data.SetQueryDropList(_vm.Model.Place);
 
                 _ghost.Attach(this.PlaceBar, new Point(24, 24));
                 DragDrop.DoDragDrop(element, data, DragDropEffects.Copy);
