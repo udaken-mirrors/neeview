@@ -58,7 +58,7 @@ namespace NeeView
 
             var htmlBuilder = new HtmlReferenceBuilder(builder);
 
-            htmlBuilder.CreateMethods(typeof(JavaScriptEngine), null);
+            htmlBuilder.CreateMethodTable(typeof(JavaScriptEngine), null);
 
             htmlBuilder.Append($"<hr/>").AppendLine();
 

@@ -125,7 +125,7 @@ namespace NeeView
                 builder.Append("<tr>");
                 foreach (DataColumn col in dataTable.Columns)
                 {
-                    builder.Append($"<td>{ row[col]}</td>");
+                    builder.Append($"<td>{row[col]}</td>");
                 }
                 builder.Append("</tr>").AppendLine();
             }
@@ -175,22 +175,24 @@ namespace NeeView
 
             builder.Append($"<h2 id=\"{type.Name}\">{title}</h2>").AppendLine();
 
+            var properties = type.GetProperties().Where(e => IsDocumentable(e)).OrderBy(e => e.Name);
+            var methods = type.GetMethods().Where(e => IsDocumentable(e)).OrderBy(e => e.Name);
+
             // summary
             AppendSummary(type.Name);
 
             // property
-            builder.Append($"<h4>{ResourceService.GetString("@Word.Properties")}</h4>").AppendLine();
-            var properties = type.GetProperties().Where(e => IsDocumentable(e));
-            AppendDataTable(PropertiesToDataTable(properties), false);
-
-            // examples
-            AppendExamples(properties.Select(e => e.DeclaringType?.Name + "." + e.Name).Prepend(type.Name));
+            if (properties.Any())
+            {
+                builder.Append($"<h4>{ResourceService.GetString("@Word.Properties")}</h4>").AppendLine();
+                AppendDataTable(PropertiesToDataTable(properties), false);
+            }
 
             // method
-            var methods = type.GetMethods().Where(e => IsDocumentable(e));
-            foreach (var method in methods)
+            if (methods.Any())
             {
-                AppendMethod(method, className);
+                builder.Append($"<h4>{ResourceService.GetString("@Word.Methods")}</h4>").AppendLine();
+                AppendDataTable(MethodsToDataTable(methods), false);
             }
 
             return this;
@@ -207,6 +209,17 @@ namespace NeeView
                 AppendMethod(method, prefix);
             }
 
+            return this;
+        }
+
+        public HtmlReferenceBuilder CreateMethodTable(Type type, string? prefix)
+        {
+            var methods = type.GetMethods().Where(e => IsDocumentable(e));
+            if (methods.Any())
+            {
+                Append($"<h4>{ResourceService.GetString("@Word.Methods")}</h4>").AppendLine();
+                AppendDataTable(MethodsToDataTable(methods), false);
+            }
             return this;
         }
 
@@ -265,6 +278,14 @@ namespace NeeView
         }
 
         /// <summary>
+        /// 使用例の存在チェック
+        /// </summary
+        private bool ExampleExists(string name)
+        {
+            return GetDocument(name, ".Example", false) is not null;
+        }
+
+        /// <summary>
         /// 使用例の出力
         /// </summary>
         private HtmlReferenceBuilder AppendExample(string name)
@@ -311,12 +332,79 @@ namespace NeeView
                 var attribute = property.GetCustomAttribute<DocumentableAttribute>();
                 var typeString = TypeToString(property.PropertyType) + (attribute?.DocumentType != null ? $" ({TypeToString(attribute.DocumentType)})" : "");
                 var rw = (property.CanRead ? "r" : "") + (property.CanWrite ? "w" : "");
-                var summary = GetHtmlDocument(name, "");
+                var summary = GetHtmlDocument(name, "") + CreatePropertyDetail(property);
 
                 dataTable.Rows.Add(property.Name, typeString, rw, summary);
             }
 
             return dataTable;
+        }
+
+        private string CreatePropertyDetail(PropertyInfo property)
+        {
+            var name = property.DeclaringType?.Name + "." + property.Name;
+            if (!ExampleExists(name)) return "";
+
+            var builder = new HtmlReferenceBuilder();
+            builder.Append("<details>");
+            builder.AppendExample(name);
+            builder.Append("</details>");
+            return builder.ToString();
+        }
+
+        /// <summary>
+        /// メソッドのDataTable化
+        /// </summary>
+        private DataTable MethodsToDataTable(IEnumerable<MethodInfo> methods)
+        {
+            var dataTable = new DataTable("Methods");
+            dataTable.Columns.Add(new DataColumn("name", typeof(string)));
+            dataTable.Columns.Add(new DataColumn("return", typeof(string)));
+            dataTable.Columns.Add(new DataColumn("summary", typeof(string)));
+
+            foreach (var method in methods)
+            {
+                var name = method.DeclaringType?.Name + "." + method.Name;
+                var attribute = method.GetCustomAttribute<DocumentableAttribute>();
+                var title = (attribute?.Name ?? method.Name) + "(" + string.Join(", ", method.GetParameters().Select(e => TypeToString(e.ParameterType))) + ")";
+                var typeString = TypeToString(method.ReturnType) + (attribute?.DocumentType != null ? $" ({TypeToString(attribute.DocumentType)})" : "");
+                var summary = GetHtmlDocument(name, "") + CreateMethodDetail(method);
+
+                dataTable.Rows.Add(title, typeString, summary);
+            }
+
+            return dataTable;
+        }
+
+        private string CreateMethodDetail(MethodInfo method)
+        {
+            var name = method.DeclaringType?.Name + "." + method.Name;
+            var parameters = method.GetParameters();
+            if (parameters.Length <= 0 && method.ReturnType == typeof(void) && !ExampleExists(name)) return "";
+
+            var builder = new HtmlReferenceBuilder();
+
+            builder.Append("<details>");
+
+            if (parameters.Length > 0)
+            {
+                builder.Append($"<h4>{ResourceService.GetString("@Word.Parameters")}</h4>").AppendLine();
+                builder.AppendDataTable(ParametersToDataTable(method, parameters), false);
+            }
+
+            if (method.ReturnType != typeof(void))
+            {
+                builder.Append($"<h4>{ResourceService.GetString("@Word.Returns")}</h4>").AppendLine();
+                var typeString = TypeToString(method.ReturnType);
+                var summary = GetHtmlDocument(name, ".Returns") ?? "";
+                builder.AppendDictionary(new Dictionary<string, string> { [typeString] = summary }, "table-none");
+            }
+
+            builder.AppendExample(name);
+
+            builder.Append("</details>");
+
+            return builder.ToString();
         }
 
         /// <summary>
