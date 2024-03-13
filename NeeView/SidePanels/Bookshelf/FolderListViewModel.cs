@@ -132,6 +132,7 @@ namespace NeeView
         private RelayCommand? _addBookmarkCommand;
         private RelayCommand<PanelListItemStyle>? _setListItemStyle;
         private RelayCommand? _toggleVisibleFoldersTree;
+        private RelayCommand? _clearHistoryInPlace;
 
         public string MoveToHomeToolTip { get; } = CommandTools.CreateToolTipText("@Bookshelf.Home.ToolTip", Key.Home, ModifierKeys.Alt);
         public string MoveToPreviousToolTip { get; } = CommandTools.CreateToolTipText("@Bookshelf.Back.ToolTip", Key.Left, ModifierKeys.Alt);
@@ -205,6 +206,11 @@ namespace NeeView
                     _model.AddQuickAccess();
                 }
             }
+        }
+
+        public RelayCommand ClearHistoryInPlace
+        {
+            get { return _clearHistoryInPlace = _clearHistoryInPlace ?? new RelayCommand(_model.ClearHistoryInPlace); }
         }
 
         public RelayCommand<FolderTreeLayout> SetFolderTreeLayout
@@ -356,11 +362,19 @@ namespace NeeView
         }
 
         /// <summary>
-        /// 履歴取得
+        /// 前履歴取得
         /// </summary>
-        internal List<KeyValuePair<int, QueryPath>> GetHistory(int direction, int size)
+        internal List<KeyValuePair<int, QueryPath>> GetPreviousHistory()
         {
-            return _model.History.GetHistory(direction, size);
+            return _model.GetPreviousHistory();
+        }
+
+        /// <summary>
+        /// 次履歴取得
+        /// </summary>
+        internal List<KeyValuePair<int, QueryPath>> GetNextHistory()
+        {
+            return _model.GetNextHistory();
         }
 
         /// <summary>

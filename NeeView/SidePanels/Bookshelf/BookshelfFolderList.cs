@@ -87,9 +87,10 @@ namespace NeeView
             set { SetProperty(ref _excludeRegex, value); }
         }
 
-        protected override bool IsSearchIncludeSubdirectories
+        public override bool IsSearchIncludeSubdirectories
         {
             get => Config.Current.Bookshelf.IsSearchIncludeSubdirectories;
+            set => Config.Current.Bookshelf.IsSearchIncludeSubdirectories = value;
         }
 
 
@@ -265,6 +266,21 @@ namespace NeeView
         }
 
         #region FolderHistory
+
+        public List<KeyValuePair<int, QueryPath>> GetHistory(int direction, int size)
+        {
+            return History.GetHistory(direction, size);
+        }
+
+        public List<KeyValuePair<int, QueryPath>> GetPreviousHistory()
+        {
+            return GetHistory(-1, 10);
+        }
+
+        public List<KeyValuePair<int, QueryPath>> GetNextHistory()
+        {
+            return GetHistory(+1, 10);
+        }
 
         public bool CanMoveToPrevious()
         {

@@ -94,8 +94,10 @@ namespace NeeView
 
             htmlBuilder.Append($"<hr/>").AppendLine();
 
+            // TODO: 記載すべき enum の自動抽出
             htmlBuilder.Append(typeof(AutoRotateType));
             htmlBuilder.Append(typeof(FolderOrder));
+            htmlBuilder.Append(typeof(FolderTreeLayout));
             htmlBuilder.Append(typeof(PageSortMode));
             htmlBuilder.Append(typeof(PageNameFormat));
             htmlBuilder.Append(typeof(PageReadOrder));

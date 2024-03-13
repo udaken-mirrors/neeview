@@ -432,9 +432,13 @@ namespace NeeView
         /// <summary>
         /// サブフォルダーを検索範囲に含める
         /// </summary>
-        protected virtual bool IsSearchIncludeSubdirectories => false;
+        public virtual bool IsSearchIncludeSubdirectories
+        {
+            get { return false; }
+            set { }
+        }
 
-
+        
         private void RaiseCollectionChanged()
         {
             if (_disposedValue) return;
@@ -1034,6 +1038,19 @@ namespace NeeView
         public string? GetCurrentQueryPath()
         {
             return Place?.SimpleQuery;
+        }
+
+        // TODO: BookshelfFolderList じゃね？
+        public void ClearHistoryInPlace()
+        {
+            if (_disposedValue) return;
+
+            // TODO: コマンドKeyはクラス名から生成するように
+            var command = CommandTable.Current.GetElement("ClearHistoryInPlace");
+            if (command.CanExecute(this, CommandArgs.Empty))
+            {
+                command.Execute(this, CommandArgs.Empty);
+            }
         }
 
         public bool CanSetHome()

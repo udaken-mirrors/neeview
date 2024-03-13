@@ -58,6 +58,40 @@ namespace NeeView
             set { AppDispatcher.Invoke(() => SetSelectedItems(value)); }
         }
 
+        [WordNodeMember]
+        public string[] PreviousHistory
+        {
+            get => _model.GetPreviousHistory().Select(e => e.Value.SimpleQuery).ToArray();
+        }
+
+        [WordNodeMember]
+        public string[] NextHistory
+        {
+            get => _model.GetNextHistory().Select(e => e.Value.SimpleQuery).ToArray();
+        }
+
+        [WordNodeMember]
+        public bool IsFolderTreeVisible
+        {
+            get => _model.IsFolderTreeVisible;
+            set => AppDispatcher.Invoke(() => _model.IsFolderTreeVisible = value);
+        }
+
+        [WordNodeMember(DocumentType = typeof(FolderTreeLayout))]
+        public string FolderTreeLayout
+        {
+            get { return _model.FolderTreeLayout.ToString(); }
+            set { AppDispatcher.Invoke(() => _model.FolderTreeLayout = value.ToEnum<FolderTreeLayout>()); }
+        }
+
+        [WordNodeMember]
+        public bool IsSearchIncludeSubdirectories
+        {
+            get => _model.IsSearchIncludeSubdirectories;
+            set => AppDispatcher.Invoke(() => _model.IsSearchIncludeSubdirectories = value);
+        }
+
+
         private BookshelfItemAccessor[] GetItems()
         {
             return ToStringArray(_panel.Presenter.FolderListBox?.GetItems());
@@ -80,6 +114,61 @@ namespace NeeView
         {
             return items?.Select(e => new BookshelfItemAccessor(e)).ToArray() ?? Array.Empty<BookshelfItemAccessor>();
         }
+
+        [WordNodeMember]
+        public void MoveToHome()
+        {
+            _model.MoveToHome();
+        }
+
+        [WordNodeMember]
+        public void SetHome()
+        {
+            _model.SetHome();
+        }
+
+        [WordNodeMember]
+        public void MoveTo(string path)
+        {
+            _model.MoveTo(new QueryPath(path));
+        }
+
+        [WordNodeMember]
+        public void MoveToPrevious()
+        {
+            _model.MoveToPrevious();
+        }
+
+        [WordNodeMember]
+        public void MoveToNext()
+        {
+            _model.MoveToNext();
+        }
+
+        [WordNodeMember]
+        public void MoveToParent()
+        {
+            _model.MoveToParent();
+        }
+
+        [WordNodeMember]
+        public void Sync()
+        {
+            _model.Sync();
+        }
+
+        [WordNodeMember]
+        public void AddQuickAccess()
+        {
+            AppDispatcher.Invoke(() => _model.AddQuickAccess());
+        }
+
+        [WordNodeMember]
+        public void ClearHistoryInPlace()
+        {
+            AppDispatcher.Invoke(() => _model.ClearHistoryInPlace());
+        }
+
 
         internal WordNode CreateWordNode(string name)
         {

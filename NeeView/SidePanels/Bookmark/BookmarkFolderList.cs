@@ -37,9 +37,10 @@ namespace NeeView
             set => Config.Current.Bookmark.IsSyncBookshelfEnabled = value;
         }
 
-        protected override bool IsSearchIncludeSubdirectories
+        public override bool IsSearchIncludeSubdirectories
         {
             get => Config.Current.Bookmark.IsSearchIncludeSubdirectories;
+            set => Config.Current.Bookmark.IsSearchIncludeSubdirectories = value;
         }
 
         public void UpdateItems()

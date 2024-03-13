@@ -321,6 +321,7 @@ namespace NeeView
             HistoryList.Current.RaiseSearchBoxFocus();
         }
 
+        // TODO: 本棚専用コマンドなのにサイドパネルに定義されているのはよろしくない
         /// <summary>
         /// フォルダーツリー表示状態
         /// </summary>

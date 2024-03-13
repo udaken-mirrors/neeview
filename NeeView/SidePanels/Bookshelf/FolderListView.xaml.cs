@@ -88,7 +88,7 @@ namespace NeeView
         {
             var menu = (sender as FrameworkElement)?.ContextMenu;
             if (menu == null) return;
-            menu.ItemsSource = _vm.GetHistory(-1, 10);
+            menu.ItemsSource = _vm.GetPreviousHistory();
         }
 
         /// <summary>
@@ -100,7 +100,7 @@ namespace NeeView
         {
             var menu = (sender as FrameworkElement)?.ContextMenu;
             if (menu == null) return;
-            menu.ItemsSource = _vm.GetHistory(+1, 10);
+            menu.ItemsSource = _vm.GetNextHistory();
         }
 
         private void FolderListView_IsVisibleChanged(object? sender, DependencyPropertyChangedEventArgs e)
