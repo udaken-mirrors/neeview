@@ -118,43 +118,43 @@ namespace NeeView
         [WordNodeMember]
         public void MoveToHome()
         {
-            _model.MoveToHome();
+            AppDispatcher.Invoke(() => _model.MoveToHome());
         }
 
         [WordNodeMember]
         public void SetHome()
         {
-            _model.SetHome();
+            AppDispatcher.Invoke(() => _model.SetHome());
         }
 
         [WordNodeMember]
         public void MoveTo(string path)
         {
-            _model.MoveTo(new QueryPath(path));
+            AppDispatcher.Invoke(() => _model.MoveTo(new QueryPath(path)));
         }
 
         [WordNodeMember]
         public void MoveToPrevious()
         {
-            _model.MoveToPrevious();
+            AppDispatcher.Invoke(() => _model.MoveToPrevious());
         }
 
         [WordNodeMember]
         public void MoveToNext()
         {
-            _model.MoveToNext();
+            AppDispatcher.Invoke(() => _model.MoveToNext());
         }
 
         [WordNodeMember]
         public void MoveToParent()
         {
-            _model.MoveToParent();
+            AppDispatcher.Invoke(() => _model.MoveToParent());
         }
 
         [WordNodeMember]
         public void Sync()
         {
-            _model.Sync();
+            AppDispatcher.Invoke(() => _model.Sync());
         }
 
         [WordNodeMember]

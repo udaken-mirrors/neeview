@@ -247,13 +247,13 @@ namespace NeeView
         }
 
 
-        public TreeListNode<IBookmarkEntry>? AddNewFolder(TreeListNode<IBookmarkEntry> target)
+        public TreeListNode<IBookmarkEntry>? AddNewFolder(TreeListNode<IBookmarkEntry> target, string? name)
         {
             if (target == Items || target.Value is BookmarkFolder)
             {
                 var ignoreNames = target.Children.Where(e => e.Value is BookmarkFolder).Select(e => e.Value.Name).WhereNotNull();
-                var name = GetValidateFolderName(ignoreNames, Properties.TextResources.GetString("Word.NewFolder"), Properties.TextResources.GetString("Word.NewFolder"));
-                var node = new TreeListNode<IBookmarkEntry>(new BookmarkFolder() { Name = name });
+                var validName = GetValidateFolderName(ignoreNames, name, Properties.TextResources.GetString("Word.NewFolder"));
+                var node = new TreeListNode<IBookmarkEntry>(new BookmarkFolder() { Name = validName });
 
                 target.Add(node);
                 target.IsExpanded = true;
@@ -418,7 +418,7 @@ namespace NeeView
         }
 
 
-        private static string GetValidateFolderName(IEnumerable<string> names, string name, string defaultName)
+        private static string GetValidateFolderName(IEnumerable<string> names, string? name, string defaultName)
         {
             name = BookmarkFolder.GetValidateName(name);
             if (string.IsNullOrWhiteSpace(name))
@@ -451,7 +451,7 @@ namespace NeeView
 
                 var folder = ((BookmarkFolder)child.Value);
 
-                var name = BookmarkFolder.GetValidateName(folder.Name ?? "");
+                var name = BookmarkFolder.GetValidateName(folder.Name);
                 if (string.IsNullOrWhiteSpace(name))
                 {
                     name = "_";

@@ -15,8 +15,9 @@ namespace NeeView
             set { SetProperty(ref _name, value); }
         }
 
-        public static string GetValidateName(string name)
+        public static string GetValidateName(string? name)
         {
+            if (name is null) return "";
             return name.Trim().Replace('/', '_').Replace('\\', '_');
         }
 

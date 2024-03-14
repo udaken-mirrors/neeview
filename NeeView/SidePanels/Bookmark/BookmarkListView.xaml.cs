@@ -20,7 +20,7 @@ namespace NeeView
         private readonly BookmarkListViewModel? _vm;
 
 
-        public BookmarkListView(FolderList model)
+        public BookmarkListView(BookmarkFolderList model)
         {
             InitializeComponent();
 

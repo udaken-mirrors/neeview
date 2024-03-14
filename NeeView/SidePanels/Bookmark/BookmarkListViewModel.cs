@@ -25,13 +25,12 @@ namespace NeeView
     /// </summary>
     public class BookmarkListViewModel : BindableBase
     {
-        private CancellationTokenSource? _removeUnlinkedCommandCancellationTokenSource;
         private readonly DpiScaleProvider _dpiProvider = new();
-        private readonly FolderList _model;
+        private readonly BookmarkFolderList _model;
         private ContextMenu? _moreMenu;
 
 
-        public BookmarkListViewModel(FolderList model)
+        public BookmarkListViewModel(BookmarkFolderList model)
         {
             _model = model;
 
@@ -168,18 +167,15 @@ namespace NeeView
         }
 
 
-        private RelayCommand? _removeUnlinkedCommand;
-        public RelayCommand RemoveUnlinkedCommand
+        private RelayCommand? _deleteInvalidBookmarkCommand;
+        public RelayCommand DeleteInvalidBookmarkCommand
         {
-            get { return _removeUnlinkedCommand = _removeUnlinkedCommand ?? new RelayCommand(RemoveUnlinkedCommand_Executed); }
+            get { return _deleteInvalidBookmarkCommand = _deleteInvalidBookmarkCommand ?? new RelayCommand(DeleteInvalidBookmark); }
         }
 
-        private async void RemoveUnlinkedCommand_Executed()
+        private async void DeleteInvalidBookmark()
         {
-            // 直前の命令はキャンセル
-            _removeUnlinkedCommandCancellationTokenSource?.Cancel();
-            _removeUnlinkedCommandCancellationTokenSource = new CancellationTokenSource();
-            await BookmarkCollection.Current.RemoveUnlinkedAsync(_removeUnlinkedCommandCancellationTokenSource.Token);
+            await _model.DeleteInvalidBookmark();
         }
 
         private RelayCommand? _ToggleVisibleFoldersTree;
@@ -230,7 +226,7 @@ namespace NeeView
                 items.Add(CreateListItemStyleMenuItem(Properties.TextResources.GetString("Word.StyleBanner"), PanelListItemStyle.Banner));
                 items.Add(CreateListItemStyleMenuItem(Properties.TextResources.GetString("Word.StyleThumbnail"), PanelListItemStyle.Thumbnail));
                 items.Add(new Separator());
-                items.Add(CreateCommandMenuItem(Properties.TextResources.GetString("FolderTree.Menu.DeleteInvalidBookmark"), _vm.RemoveUnlinkedCommand));
+                items.Add(CreateCommandMenuItem(Properties.TextResources.GetString("FolderTree.Menu.DeleteInvalidBookmark"), _vm.DeleteInvalidBookmarkCommand));
                 items.Add(new Separator());
                 items.Add(CreateCommandMenuItem(Properties.TextResources.GetString("Word.NewFolder"), _vm.NewFolderCommand));
                 items.Add(CreateCommandMenuItem(Properties.TextResources.GetString("FolderTree.Menu.AddBookmark"), _vm.AddBookmarkCommand));

@@ -3,6 +3,8 @@ using System;
 using System.ComponentModel;
 using System.Globalization;
 using System.Runtime.Serialization;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace NeeView
 {
@@ -15,6 +17,7 @@ namespace NeeView
         public static BookmarkFolderList Current { get; }
 
 
+        private CancellationTokenSource? _removeUnlinkedCancellationTokenSource;
         private readonly DisposableCollection _disposables = new();
 
 
@@ -77,6 +80,14 @@ namespace NeeView
             return true;
         }
 
+        public async Task DeleteInvalidBookmark()
+        {
+            // 直前の命令はキャンセル
+            _removeUnlinkedCancellationTokenSource?.Cancel();
+            _removeUnlinkedCancellationTokenSource = new CancellationTokenSource();
+            await BookmarkCollection.Current.RemoveUnlinkedAsync(_removeUnlinkedCancellationTokenSource.Token);
+        }
+
         #region IDisposable support
 
         private bool _disposedValue;
@@ -87,6 +98,7 @@ namespace NeeView
             {
                 if (disposing)
                 {
+                    _removeUnlinkedCancellationTokenSource?.Cancel();
                     _disposables.Dispose();
                 }
 

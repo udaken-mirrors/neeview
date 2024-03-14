@@ -331,7 +331,7 @@ namespace NeeView
 
             item.IsExpanded = true;
 
-            var node = BookmarkCollection.Current.AddNewFolder(item.BookmarkSource);
+            var node = BookmarkCollection.Current.AddNewFolder(item.BookmarkSource, null);
             if (node == null)
             {
                 return null;

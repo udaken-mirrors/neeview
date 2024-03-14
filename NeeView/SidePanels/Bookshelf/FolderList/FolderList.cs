@@ -438,7 +438,7 @@ namespace NeeView
             set { }
         }
 
-        
+
         private void RaiseCollectionChanged()
         {
             if (_disposedValue) return;
@@ -1537,20 +1537,19 @@ namespace NeeView
         public void NewFolder()
         {
             if (_disposedValue) return;
-
-            if (FolderCollection is BookmarkFolderCollection)
-            {
-                NewBookmarkFolder();
-            }
+            
+            NewFolder(null);
         }
 
-        public void NewBookmarkFolder()
+        public void NewFolder(string? name)
         {
             if (_disposedValue) return;
 
             if (FolderCollection is BookmarkFolderCollection bookmarkFolderCollection)
             {
-                var node = BookmarkCollection.Current.AddNewFolder(bookmarkFolderCollection.BookmarkPlace);
+                var nameless = string.IsNullOrWhiteSpace(name);
+
+                var node = BookmarkCollection.Current.AddNewFolder(bookmarkFolderCollection.BookmarkPlace, name);
                 if (node is null) return;
 
                 var item = bookmarkFolderCollection.FirstOrDefault(e => e.Attributes.HasFlag(FolderItemAttribute.Directory) && e.Name == node.Value.Name);
@@ -1558,7 +1557,7 @@ namespace NeeView
                 if (item != null)
                 {
                     SelectedItem = item;
-                    SelectedChanged?.Invoke(this, new FolderListSelectedChangedEventArgs() { IsFocus = true, IsNewFolder = true });
+                    SelectedChanged?.Invoke(this, new FolderListSelectedChangedEventArgs() { IsFocus = true, IsNewFolder = nameless });
                 }
             }
         }
