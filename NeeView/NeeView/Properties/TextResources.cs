@@ -14,7 +14,7 @@ namespace NeeView.Properties
     {
         public static CultureInfo Culture { get; set; } = CultureInfo.CurrentCulture;
 
-        public static LanguageResource LanguageResource { get; } = new();
+        public static FileLanguageResource LanguageResource { get; } = new();
 
         public static TextResourceManager Resource { get; } = new(LanguageResource);
 
@@ -32,6 +32,17 @@ namespace NeeView.Properties
         public static string? GetStringRaw(string name, CultureInfo culture)
         {
             return Resource.GetString(name, culture);
+        }
+
+        public static string GetCaseString(string name, string pattern)
+        {
+            return Resource.GetCaseString(name, pattern) ?? "@" + name;
+        }
+
+        public static string GetFormatString(string name, object? arg0)
+        {
+            var pattern = arg0?.ToString() ?? "";
+            return string.Format(GetCaseString(name, pattern), arg0);
         }
     }
 }

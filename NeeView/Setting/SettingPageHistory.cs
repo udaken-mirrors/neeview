@@ -136,7 +136,7 @@ namespace NeeView.Setting
                 Value = value;
             }
 
-            public override string ValueString => Value == default ? Properties.TextResources.GetString("Word.NoLimit") : string.Format(Properties.TextResources.GetString("Word.DaysAgo"), Value.Days);
+            public override string ValueString => Value == default ? Properties.TextResources.GetString("Word.NoLimit") : Properties.TextResources.GetFormatString("Word.DaysAgo", Value.Days);
         }
 
         #endregion

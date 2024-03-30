@@ -53,7 +53,7 @@ namespace NeeView
             set => _model.IsPlaylistsEnabled = value;
         }
 
-        public string PlaylistsCheckBoxContent => string.Format(Properties.TextResources.GetString("ImportControl.Playlist"), _model.PlaylistEntries.Count);
+        public string PlaylistsCheckBoxContent => Properties.TextResources.GetFormatString("ImportControl.Playlist", _model.PlaylistEntries.Count);
 
         public bool ThemesExists => _model.ThemesExists;
 
@@ -63,7 +63,7 @@ namespace NeeView
             set => _model.IsThemesEnabled = value;
         }
 
-        public string ThemesCheckBoxContent => string.Format(Properties.TextResources.GetString("ImportControl.Theme"), _model.ThemeEntries.Count);
+        public string ThemesCheckBoxContent => Properties.TextResources.GetFormatString("ImportControl.Theme", _model.ThemeEntries.Count);
 
         public bool ScriptsExists => _model.ScriptsExists;
 
@@ -73,6 +73,6 @@ namespace NeeView
             set => _model.IsScriptsEnabled = value;
         }
 
-        public string ScriptsCheckBoxContent => string.Format(Properties.TextResources.GetString("ImportControl.Script"), _model.ScriptEntries.Count);
+        public string ScriptsCheckBoxContent => Properties.TextResources.GetFormatString("ImportControl.Script", _model.ScriptEntries.Count);
     }
 }

@@ -126,7 +126,7 @@ namespace NeeView
         /// </summary>
         private async Task InitializeAsync(StartupEventArgs e)
         {
-            TextResources.LanguageResource.SetFolder(Path.Combine(Environment.AssemblyFolder, "Languages"));
+            TextResources.LanguageResource.Initialize(Path.Combine(Environment.AssemblyFolder, "Languages"));
 
             this.ShutdownMode = ShutdownMode.OnExplicitShutdown;
 

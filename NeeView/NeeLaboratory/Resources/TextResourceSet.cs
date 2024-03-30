@@ -9,7 +9,7 @@ namespace NeeLaboratory.Resources
     public class TextResourceSet
     {
         private readonly CultureInfo _culture;
-        private readonly Dictionary<string, string> _map;
+        private readonly Dictionary<string, TextResourceItem> _map;
 
 
         public TextResourceSet()
@@ -18,7 +18,7 @@ namespace NeeLaboratory.Resources
             _map = new();
         }
 
-        public TextResourceSet(CultureInfo culture, Dictionary<string, string> map)
+        public TextResourceSet(CultureInfo culture, Dictionary<string, TextResourceItem> map)
         {
             _culture = culture;
             _map = map;
@@ -27,7 +27,7 @@ namespace NeeLaboratory.Resources
 
         public CultureInfo Culture => _culture;
 
-        public Dictionary<string, string> Map => _map;
+        public Dictionary<string, TextResourceItem> Map => _map;
 
         public bool IsValid => !_culture.Equals(CultureInfo.InvariantCulture);
 
@@ -39,7 +39,12 @@ namespace NeeLaboratory.Resources
 
         public string? GetString(string name)
         {
-            return _map.TryGetValue(name, out var value) ? value : null;
+            return _map.TryGetValue(name, out var value) ? value.Text : null;
+        }
+
+        public string? GetCaseString(string name, string pattern)
+        {
+            return _map.TryGetValue(name, out var value) ? value.GetCaseText(pattern) : null;
         }
     }
 }

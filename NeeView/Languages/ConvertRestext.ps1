@@ -3,7 +3,7 @@
 Converting Language Files and Json
 
 .DESCRIPTION
-Converts between language files ([culture].restext) and Json. This is a convenience tool, not a required feature.
+Converts between language files ([culture].restext) and JSON. This is a utility tool, not a required feature.
 
 .EXAMPLE
 > .\ConvertRestext.ps1
@@ -66,9 +66,14 @@ function Get-Restext
     foreach($line in Get-Content $restext) 
     {
         $tokens = $line -split "=", 2
-        $array += [PSCustomObject]@{
-            Key = $tokens[0]
-            Value = $tokens[1]
+        $key = $tokens[0]
+        $value = $tokens[1]
+        if (($culture -eq $defaultCulture) -or (-not [string]::IsNullOrEmpty($value)))
+        {
+            $array += [PSCustomObject]@{
+                Key = $key
+                Value = $value
+            }
         }
     }
     return $array
@@ -90,11 +95,22 @@ function Add-RestextToRestextTable
     param([PSCustomObject]$table, [string]$culture)
     $array = Get-Restext $culture
     $map = ConvertTo-RestextMap $array
-    foreach ($property in $table.psobject.Properties)
+
+    foreach ($entry in $map.GetEnumerator())
     {
-        $key = $property.Name
-        $value = $map.$key ?? $null
-        $property.Value | Add-Member -MemberType NoteProperty -Name $culture -Value $value
+        $key = $entry.Key
+        $value = $entry.Value
+        if ($null -ne $table.$key)
+        {
+            $table.$key | Add-Member -MemberType NoteProperty -Name $culture -Value $value
+        }
+        elseif ($key.Contains(':'))
+        {
+            $obj = [PSCustomObject]@{
+                $culture = $value
+            }
+            $table | Add-Member -MemberType NoteProperty -Name $key -Value $obj
+        }
     }
 }
 
@@ -104,11 +120,28 @@ function ConvertTo-RestextFromRestextTable
     $lines = @()
     foreach ($property in $table.psobject.Properties)
     {
-        if ($Trim -and ($null -eq $property.Value.$culture))
+        $key = $property.Name
+        $value = $property.Value.$culture
+        
+        $isCaseText = $key.Contains(':')
+        $isEmpty = $null -eq $value
+        $isTrimEmpty = $Trim -and $isEmpty
+        $isRequired = ($null -ne $property.Value.$defaultCulture) -and (-not $isCaseText)
+
+        if ($isCaseText)
         {
-            continue 
+            if (-not $isEmpty)
+            {
+                $lines += $key + "=" + $value
+            }
         }
-        $lines += $property.Name + "=" + $property.Value.$culture
+        else
+        {
+            if ($isRequired -and (-not $isTrimEmpty))
+            {
+                $lines += $key + "=" + $value
+            }
+        }
     }
     return $lines
 }
