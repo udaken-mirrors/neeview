@@ -21,6 +21,8 @@ If not defined, fall back to en.restext.
 ## Text
 `Text` is the corresponding text.
 
+If empty, fall back to en.restext.
+
  `{0}` is replaced by the argument programmatically.  
 e.g., "BookAddressInfo.Page={0} pages"
 
