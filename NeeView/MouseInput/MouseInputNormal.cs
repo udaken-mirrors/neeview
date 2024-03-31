@@ -70,6 +70,7 @@ namespace NeeView
                     StopTimer();
                     AppDispatcher.Invoke(() =>
                     {
+                        if (CheckLongButtonUp()) return;
                         SetState(MouseInputState.Loupe, true);
                     });
                     break;
@@ -78,6 +79,7 @@ namespace NeeView
                     StopTimer();
                     AppDispatcher.Invoke(() =>
                     {
+                        if (CheckLongButtonUp()) return;
                         SetState(MouseInputState.AutoScroll, true);
                     });
                     break;
@@ -90,6 +92,7 @@ namespace NeeView
                     }
                     AppDispatcher.Invoke(() =>
                     {
+                        if (CheckLongButtonUp()) return;
                         if (_mouseButtonEventArgs != null)
                         {
                             MouseButtonChanged?.Invoke(sender, _mouseButtonEventArgs);
@@ -101,6 +104,15 @@ namespace NeeView
                 default:
                     StopTimer();
                     break;
+            }
+
+            bool CheckLongButtonUp()
+            {
+                if (IsLongButtonPressed()) return false;
+
+                _isButtonDown = false;
+                StopTimer();
+                return true;
             }
         }
 
