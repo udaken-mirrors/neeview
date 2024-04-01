@@ -309,7 +309,7 @@ namespace NeeView
                     var count = item.BookmarkSource.Count(e => e.Value is Bookmark);
                     if (count > 0)
                     {
-                        var toast = new Toast(string.Format(Properties.TextResources.GetString("BookmarkFolderDelete.Message"), count), null, ToastIcon.Information, Properties.TextResources.GetString("Word.Restore"), () => BookmarkCollection.Current.Restore(memento));
+                        var toast = new Toast(Properties.TextResources.GetFormatString("BookmarkFolderDelete.Message", count), null, ToastIcon.Information, Properties.TextResources.GetString("Word.Restore"), () => BookmarkCollection.Current.Restore(memento));
                         ToastService.Current.Show("FolderList", toast);
                     }
                 }

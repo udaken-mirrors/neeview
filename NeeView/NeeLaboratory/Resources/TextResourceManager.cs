@@ -31,7 +31,7 @@ namespace NeeLaboratory.Resources
         /// <summary>
         /// テキストリソース
         /// </summary>
-        public TextResourceSet Resource => ValidResourceSet();
+        public TextResourceSet Resource => _resource;
 
 
         /// <summary>
@@ -51,7 +51,8 @@ namespace NeeLaboratory.Resources
         /// <returns>対応するテキスト。存在しない場合 null</returns>
         public string? GetString(string name)
         {
-            return ValidResourceSet().GetString(name);
+            Debug.WriteLineIf(!Resource.IsValid, $"## Resource not loaded: request key = {name}");
+            return Resource.GetString(name);
         }
 
         /// <summary>
@@ -66,10 +67,32 @@ namespace NeeLaboratory.Resources
         }
 
         /// <summary>
+        /// テキスト取得：パターン別
+        /// </summary>
+        /// <param name="name">リソース名</param>
+        /// <param name="pattern">パターン</param>
+        /// <returns></returns>
+        public string? GetCaseString(string name, string pattern)
+        {
+            Debug.WriteLineIf(!Resource.IsValid, $"## Resource not loaded: request key = {name}");
+            return Resource.GetCaseString(name, pattern);
+        }
+
+        /// <summary>
+        /// 一時的なカルチャ指定を伴うテキスト取得
+        /// </summary>
+        /// <param name="name">リソース名</param>
+        /// <param name="culture">カルチャ</param>
+        /// <returns></returns>
+        public string? GetCaseString(string name, string pattern, CultureInfo culture)
+        {
+            return InstantResourceSet(culture).GetCaseString(name, pattern);
+        }
+
+        /// <summary>
         /// 言語リソース読み込み
         /// </summary>
         /// <param name="culture">カルチャ</param>
-        /// <exception cref="InvalidOperationException"></exception>
         public void Load(CultureInfo culture)
         {
             _resource = LoadCore(_languageResource.ValidateCultureInfo(culture));
@@ -77,20 +100,14 @@ namespace NeeLaboratory.Resources
 
         private TextResourceSet LoadCore(CultureInfo culture)
         {
-            _languageResource.Load();
             return new TextResourceFactory(_languageResource).Load(culture);
         }
 
-        private TextResourceSet ValidResourceSet()
-        {
-            if (_resource.IsValid)
-            {
-                return _resource;
-            }
-            _resource = LoadCore(_languageResource.ValidateCultureInfo(CultureInfo.CurrentCulture));
-            return _resource;
-        }
-
+        /// <summary>
+        /// 一時言語リソース取得
+        /// </summary>
+        /// <param name="culture">カルチャ</param>
+        /// <returns></returns>
         private TextResourceSet InstantResourceSet(CultureInfo culture)
         {
             var validCulture = _languageResource.ValidateCultureInfo(culture);

@@ -1,9 +1,6 @@
-﻿using NeeLaboratory.Linq;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Globalization;
-using System.IO;
 using System.Linq;
 using System.Resources;
 
@@ -14,20 +11,14 @@ namespace NeeLaboratory.Resources
     /// </summary>
     public class LanguageResource
     {
-        private const string _ext = ".restext";
+        protected const string _ext = ".restext";
 
-        private string _path;
         private readonly CultureInfo _defaultCulture;
-        private List<CultureInfo>? _cultures;
+        private List<CultureInfo> _cultures = new();
 
 
-        public LanguageResource() : this("")
+        public LanguageResource()
         {
-        }
-
-        public LanguageResource(string path)
-        {
-            _path = path;
             _defaultCulture = CultureInfo.GetCultureInfo("en");
         }
 
@@ -40,54 +31,23 @@ namespace NeeLaboratory.Resources
         /// <summary>
         /// 選択可能なカルチャリスト
         /// </summary>
-        public IReadOnlyList<CultureInfo> Cultures => _cultures ?? new();
+        public IReadOnlyList<CultureInfo> Cultures => _cultures;
 
 
-
-        /// <summary>
-        /// 言語ファイルフォルダ
-        /// </summary>
-        public void SetFolder(string value)
+        public void Clear()
         {
-            if (_path != value)
-            {
-                _path = value;
-                _cultures = null;
-            }
+            _cultures = new();
         }
 
-        /// <summary>
-        /// リソースが存在するカルチャリストを作成する
-        /// </summary>
-        public void Load()
+        public void AddCulture(CultureInfo culture)
         {
-            if (_cultures is not null) return;
-            if (string.IsNullOrEmpty(_path)) throw new InvalidOperationException();
-
-            _cultures = Directory.GetFiles(_path, "*" + _ext)
-                .Select(e => GetCultureInfoFromFileName(e))
-                .WhereNotNull()
-                .OrderBy(e => e.NativeName)
-                .ToList();
+            if (_cultures.Contains(culture)) return;
+            _cultures.Add(culture);
         }
 
-        /// <summary>
-        /// リソースファイル名前からカルチャを得る
-        /// </summary>
-        /// <param name="fileName"></param>
-        /// <returns></returns>
-        private static CultureInfo? GetCultureInfoFromFileName(string fileName)
+        public void SetCultures(IEnumerable<CultureInfo> cultures)
         {
-            try
-            {
-                var name = Path.GetFileNameWithoutExtension(fileName);
-                return CultureInfo.GetCultureInfo(name);
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine(ex.Message);
-                return null;
-            }
+            _cultures = cultures.ToList();
         }
 
         /// <summary>
@@ -98,7 +58,7 @@ namespace NeeLaboratory.Resources
         public CultureInfo ValidateCultureInfo(CultureInfo culture)
         {
             if (culture.Equals(CultureInfo.InvariantCulture)) return _defaultCulture;
-            Load();
+
             var result = _cultures?.FirstOrDefault(e => culture.Equals(e));
             return result ?? ValidateCultureInfo(culture.Parent);
         }
@@ -108,10 +68,19 @@ namespace NeeLaboratory.Resources
         /// </summary>
         /// <param name="culture"></param>
         /// <returns></returns>
-        public string CreateResTextFileName(CultureInfo culture)
+        protected string CreateResTextFileName(CultureInfo culture)
         {
-            return Path.Combine(_path, culture.Name + _ext);
+            return culture.Name + _ext;
         }
 
+        /// <summary>
+        /// カルチャからファイルソースを作成する
+        /// </summary>
+        /// <param name="culture"></param>
+        /// <returns></returns>
+        public virtual IFileSource CreateFileSource(CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

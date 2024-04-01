@@ -1,9 +1,12 @@
 ﻿using NeeLaboratory.Text;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Text;
+using System.Text.RegularExpressions;
 
 namespace NeeLaboratory.Resources
 {
@@ -12,6 +15,9 @@ namespace NeeLaboratory.Resources
     /// </summary>
     public class TextResourceFactory
     {
+        private static readonly char[] _tokenSeparator = new char[] { '=' };
+        private static readonly char[] _caseSeparator = new char[] { ':' };
+
         private readonly LanguageResource _languageResource;
 
         public TextResourceFactory(LanguageResource languageResource)
@@ -24,56 +30,101 @@ namespace NeeLaboratory.Resources
             var culture0 = _languageResource.DefaultCulture;
             var culture1 = culture;
 
-            var res0 = LoadResText(culture0);
-            var res = res0;
+            var res = LoadResText(culture0);
 
             if (!culture1.Equals(culture0))
             {
                 var res1 = LoadResText(culture1);
-                res = res1.Concat(res0).GroupBy(e => e.Key, (key, keyValues) => keyValues.First());
+                res1.ToList().ForEach(e => res[e.Key] = e.Value);
             }
 
-            return new TextResourceSet(culture1, res.ToDictionary(e => e.Key, e => e.Value));
+            return new TextResourceSet(culture1, res);
         }
 
-        private IEnumerable<KeyValuePair<string, string>> LoadResText(CultureInfo culture)
+        private Dictionary<string, TextResourceItem> LoadResText(CultureInfo culture)
         {
-            return LoadResText(_languageResource.CreateResTextFileName(culture));
+            return LoadResText(_languageResource.CreateFileSource(culture));
         }
 
-        private static IEnumerable<KeyValuePair<string, string>> LoadResText(string path)
+        private static Dictionary<string, TextResourceItem> LoadResText(IFileSource fileSource)
         {
-            if (!File.Exists(path))
+            Stream stream;
+            try
             {
-                return new List<KeyValuePair<string, string>>();
+                stream = fileSource.Open();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+                return new Dictionary<string, TextResourceItem>();
             }
 
-            return File.ReadLines(path)
-                .Select(e => Parse(e))
-                .OfType<KeyValuePair<string, string>>()
-                .ToList();
-
-            static KeyValuePair<string, string>? Parse(string s)
+            try
             {
-                s = s.Trim();
-                if (string.IsNullOrEmpty(s) || s[0] == ';' || s[0] == '#')
+                using var reader = new StreamReader(stream, Encoding.UTF8);
+
+                var dictionary = new Dictionary<string, TextResourceItem>();
+
+                foreach (var pair in ReadLines(reader).Select(e => DeserializeResText(e)).Where(e => !string.IsNullOrEmpty(e.Key)))
                 {
-                    return null;
+                    var tokens = pair.Key.Split(_caseSeparator, 2);
+                    var key = tokens[0];
+                    var regex = tokens.Length >= 2 ? CreateFullRegex(tokens[1]) : null;
+                    var text = pair.Value;
+
+                    if (!dictionary.TryGetValue(key, out var value))
+                    {
+                        value = new TextResourceItem();
+                        dictionary.Add(key, value);
+                    }
+
+                    value.AddText(text, regex);
                 }
-                var tokens = s.Split('=', 2);
-                if (tokens.Length != 2)
-                {
-                    Debug.WriteLine($"ResText: FormatException");
-                    return null;
-                }
-                var key = tokens[0].Trim();
-                var body = tokens[1].Trim().Unescape();
-                if (string.IsNullOrEmpty(body))
-                {
-                    return null;
-                }
-                return new(key, body);
+
+                return dictionary;
             }
+            finally
+            {
+                stream.Dispose();
+            }
+        }
+
+        private static Regex CreateFullRegex(string s)
+        {
+            return new Regex("^" + s.TrimStart('^').TrimEnd('$') + "$");
+        }
+
+        private static IEnumerable<string> ReadLines(StreamReader reader)
+        {
+            while (true)
+            {
+                var s = reader.ReadLine();
+                if (s is null) yield break;
+                yield return s;
+            }
+        }
+
+        private static (string Key, string Value) DeserializeResText(string s)
+        {
+            s = s.Trim();
+            if (string.IsNullOrEmpty(s) || s[0] == ';' || s[0] == '#')
+            {
+                return ("", "");
+            }
+            var tokens = s.Split(_tokenSeparator, 2);
+            if (tokens.Length != 2)
+            {
+                Debug.WriteLine($"ResText: FormatException");
+                return ("", "");
+            }
+            var key = tokens[0].Trim();
+            var body = tokens[1].Trim().Unescape();
+            if (string.IsNullOrEmpty(body))
+            {
+                return ("", "");
+            }
+
+            return (key, body);
         }
     }
 }

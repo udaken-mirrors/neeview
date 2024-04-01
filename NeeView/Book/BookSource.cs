@@ -125,7 +125,7 @@ namespace NeeView
         {
             string text = "";
             text += GetArchiverDetail() + "\n";
-            text += string.Format(Properties.TextResources.GetString("BookAddressInfo.Page"), Pages.Count);
+            text += Properties.TextResources.GetFormatString("BookAddressInfo.Page", Pages.Count);
             return text;
         }
 

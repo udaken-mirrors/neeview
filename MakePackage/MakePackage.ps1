@@ -1109,9 +1109,14 @@ if (-not $x86)
 
 #--------------------------
 # saev buid version
-if ((-not $continue) -and ($Target -eq "Dev"))
+if ((-not $continue) -and ($Target -ne "Dev"))
 {
+	Write-Host Increased build count: $buildCount
 	Set-BuildCount $buildCount
+}
+else
+{
+	Write-Host Keep build count.
 }
 
 #-------------------------

@@ -130,7 +130,7 @@ namespace NeeView
         private static FrameworkElement CreateDeleteDialogContentMulti(List<ArchiveEntry> entries, bool isCompletely)
         {
             var message = new TextBlock();
-            message.Inlines.Add(new Run(string.Format(Properties.TextResources.GetString("FileDeleteMultiDialog.Message"), entries.Count)));
+            message.Inlines.Add(new Run(Properties.TextResources.GetFormatString("FileDeleteMultiDialog.Message", entries.Count)));
             if (isCompletely)
             {
                 message.Inlines.Add(new LineBreak());

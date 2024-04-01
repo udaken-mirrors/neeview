@@ -335,7 +335,7 @@ namespace NeeView
 
             // 削除実行
             Remove(unlinked);
-            ToastService.Current.Show(new Toast(string.Format(Properties.TextResources.GetString("Playlist.DeleteItemsMessage"), unlinked.Count)));
+            ToastService.Current.Show(new Toast(Properties.TextResources.GetFormatString("Playlist.DeleteItemsMessage", unlinked.Count)));
         }
 
         public void Move(PlaylistItem item, PlaylistItem? targetItem)
