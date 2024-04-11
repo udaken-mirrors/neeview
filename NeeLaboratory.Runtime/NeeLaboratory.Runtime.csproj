@@ -3,10 +3,15 @@
   <PropertyGroup>
     <TargetFramework>net8.0-windows</TargetFramework>
     <Nullable>enable</Nullable>
-    <Authors>NeeLaboratory</Authors>
-    <Copyright>Copyright © 2016-2023 Ito Mitsuhiro (nee)</Copyright>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <Version>41.0.0</Version>
+    <Authors>NeeLaboratory</Authors>
+    <Copyright>Copyright © 2016-2024 Ito Mitsuhiro (nee)</Copyright>
+    <Description>Runtime for NeeLaboratory applications</Description>
+  </PropertyGroup>
+  
   <ItemGroup>
     <ProjectReference Include="..\NeeLaboratory.SourceGenerator\NeeLaboratory.SourceGenerator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false"/>
   </ItemGroup>
