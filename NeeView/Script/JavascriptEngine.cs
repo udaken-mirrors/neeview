@@ -187,7 +187,7 @@ namespace NeeView
 
         public ScriptNotice CreateScriptErrorMessage(string s)
         {
-            var location = _engine.DebugHandler?.CurrentLocation;
+            var location = _engine.Debugger?.CurrentLocation;
 
             string? source = null;
             int line = -1;
