@@ -1,5 +1,14 @@
 ## ChangeLog
 
+### 40.8
+(2024-04-12)
+
+#### Security
+
+- Updated to .NET 8.0.4. For more information on this vulnerability, please visit [.NET Blog](https://devblogs.microsoft.com/dotnet/april-2024-updates/).
+
+----
+
 ### 40.7
 (2024-02-10)
 
