@@ -26,6 +26,7 @@
 - Fixed a bug in file manipulation of network folder search results in the bookshelf.
 - Fixed a bug where an incorrect page was sometimes created when a playlist was opened as a book.
 - Fixed a bug that sometimes caused incorrect behavior in bookshelf range selection. 
+- Fixed a bug that prevented the Susie Plug-in all ON/OFF settings from working properly.
 - Fixed incorrect panel display status flag in menus. 
 - Reduced the problem of book thumbnails not being generated when files are added.
 
