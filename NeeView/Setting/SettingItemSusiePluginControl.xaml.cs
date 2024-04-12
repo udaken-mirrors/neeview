@@ -139,8 +139,13 @@ namespace NeeView.Setting
                 {
                     plugin.IsEnabled = flag;
                 }
+
+                var settings = collection.Select(e => e.ToSusiePluginSetting()).ToList();
+                SusiePluginManager.Current.FlushSusiePluginSetting(settings);
+                UpdateExtensions();
+
+                this.PluginList.Items.Refresh();
             }
-            this.PluginList.Items.Refresh();
         }
 
         #endregion
