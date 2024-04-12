@@ -333,7 +333,7 @@ namespace NeeView
                 if (_client is null) throw new InvalidOperationException("Client is null");
 
                 var handle = new WindowInteropHelper(owner).Handle;
-                _client.ShowConfigulationDlg(pluginName, handle.ToInt32());
+                _client.ShowConfigurationDlg(pluginName, handle.ToInt32());
             }
         }
 

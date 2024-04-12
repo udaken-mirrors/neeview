@@ -36,7 +36,7 @@ namespace NeeView.Susie
         /// <param name="fileName">画像ファイル名</param>
         /// <param name="buff">ヘッダ(2KB)。nullの場合はファイルから読み込む</param>
         /// <param name="isCheckExtension">プラグインに設定されている拡張子でも判定を行う</param>
-        /// <returns>対応したプラグイン情報。見つからなければnull</returns>
+        /// <returns>対応したプラグイン情報。見つからなければ null</returns>
         SusiePluginInfo? GetImagePlugin(string fileName, byte[] buff, bool isCheckExtension);
 
         /// <summary>
@@ -45,7 +45,7 @@ namespace NeeView.Susie
         /// <param name="fileName">書庫ファイル名</param>
         /// <param name="buff">ヘッダ(2KB)。nullの場合はファイルから読み込む</param>
         /// <param name="isCheckExtension">プラグインに設定されている拡張子でも判定を行う</param>
-        /// <returns>対応したプラグイン情報。見つからなければnull</returns>
+        /// <returns>対応したプラグイン情報。見つからなければ null</returns>
         SusiePluginInfo? GetArchivePlugin(string fileName, byte[] buff, bool isCheckExtension);
 
         /// <summary>
@@ -53,7 +53,7 @@ namespace NeeView.Susie
         /// </summary>
         /// <param name="pluginName">プラグイン名</param>
         /// <param name="hWnd">親のウィンドウハンドル(32bit)</param>
-        void ShowConfigulationDlg(string pluginName, int hWnd);
+        void ShowConfigurationDlg(string pluginName, int hWnd);
 
         /// <summary>
         /// 画像取得
@@ -62,7 +62,7 @@ namespace NeeView.Susie
         /// <param name="fileName">画像ファイル名</param>
         /// <param name="buff">画像データ。nullの場合はファイルから読み込む</param>
         /// <param name="isCheckExtension">プラグインに設定されている拡張子でも判定を行う</param>
-        /// <returns>Bitmap画像データ。読み込めなかった場合はnull</returns>
+        /// <returns>Bitmap画像データ。読み込めなかった場合は null</returns>
         SusieImage? GetImage(string? pluginName, string fileName, byte[] buff, bool isCheckExtension);
 
         /// <summary>

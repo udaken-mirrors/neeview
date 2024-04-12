@@ -121,9 +121,9 @@ namespace NeeView.Susie.Server
         {
             if (orders == null) return;
 
-            var comparar = new PluginOrderComparer(orders);
-            INPluginList = new List<SusiePlugin>(INPluginList.OrderBy(e => e, comparar));
-            AMPluginList = new List<SusiePlugin>(AMPluginList.OrderBy(e => e, comparar));
+            var comparer = new PluginOrderComparer(orders);
+            INPluginList = new List<SusiePlugin>(INPluginList.OrderBy(e => e, comparer));
+            AMPluginList = new List<SusiePlugin>(AMPluginList.OrderBy(e => e, comparer));
         }
 
 
@@ -189,7 +189,7 @@ namespace NeeView.Susie.Server
                 }
                 catch (Exception ex)
                 {
-                    Trace.WriteLine($"SusiePluginCollection.GetPlugin: Excepion: {ex.Message}");
+                    Trace.WriteLine($"SusiePluginCollection.GetPlugin: Exception: {ex.Message}");
                 }
             }
             return null;

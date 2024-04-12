@@ -13,8 +13,8 @@ namespace NeeView.Susie
 
             try
             {
-                RegistryKey? regkey = Registry.CurrentUser.OpenSubKey(@"Software\Takechin\Susie\Plug-in", false);
-                _susiePluginInstallPath = (string?)regkey?.GetValue("Path") ?? "";
+                RegistryKey? regKey = Registry.CurrentUser.OpenSubKey(@"Software\Takechin\Susie\Plug-in", false);
+                _susiePluginInstallPath = (string?)regKey?.GetValue("Path") ?? "";
             }
             catch
             {

@@ -21,7 +21,7 @@ namespace NeeView.Susie
         public const int SetPluginOrder = 0x0004;
         public const int GetImagePlugin = 0x0005;
         public const int GetArchivePlugin = 0x0006;
-        public const int ShowConfigulationDlg = 0x0007;
+        public const int ShowConfigurationDlg = 0x0007;
         public const int GetImage = 0x0008;
         public const int GetArchiveEntries = 0x0009;
         public const int ExtractArchiveEntry = 0x000A;
@@ -68,12 +68,12 @@ namespace NeeView.Susie
 
     public class SusiePluginCommandGetPluginResult
     {
-        public SusiePluginCommandGetPluginResult(List<SusiePluginInfo> pluginInfos)
+        public SusiePluginCommandGetPluginResult(List<SusiePluginInfo> pluginInfoList)
         {
-            PluginInfos = pluginInfos;
+            PluginInfoList = pluginInfoList;
         }
 
-        public List<SusiePluginInfo> PluginInfos { get; set; }
+        public List<SusiePluginInfo> PluginInfoList { get; set; }
     }
 
 
@@ -99,9 +99,9 @@ namespace NeeView.Susie
     }
 
 
-    public class SusiePluginCommandShowConfigulationDlg
+    public class SusiePluginCommandShowConfigurationDlg
     {
-        public SusiePluginCommandShowConfigulationDlg(string pluginName, int hWnd)
+        public SusiePluginCommandShowConfigurationDlg(string pluginName, int hWnd)
         {
             PluginName = pluginName;
             HWnd = hWnd;

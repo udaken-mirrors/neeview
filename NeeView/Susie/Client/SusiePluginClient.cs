@@ -148,7 +148,7 @@ namespace NeeView.Susie.Client
         public List<SusiePluginInfo> GetPlugin(List<string>? pluginNames)
         {
             var chunks = Call(SusiePluginCommandId.GetPlugin, new SusiePluginCommandGetPlugin(pluginNames));
-            return DeserializeChunk<SusiePluginCommandGetPluginResult>(chunks[0]).PluginInfos;
+            return DeserializeChunk<SusiePluginCommandGetPluginResult>(chunks[0]).PluginInfoList;
         }
 
         public void SetPlugin(List<SusiePluginSetting> settings)
@@ -161,9 +161,9 @@ namespace NeeView.Susie.Client
             Call(SusiePluginCommandId.SetPluginOrder, new SusiePluginCommandSetPluginOrder(order));
         }
 
-        public void ShowConfigulationDlg(string pluginName, int hwnd)
+        public void ShowConfigurationDlg(string pluginName, int hwnd)
         {
-            Call(SusiePluginCommandId.ShowConfigulationDlg, new SusiePluginCommandShowConfigulationDlg(pluginName, hwnd));
+            Call(SusiePluginCommandId.ShowConfigurationDlg, new SusiePluginCommandShowConfigurationDlg(pluginName, hwnd));
         }
 
         public SusiePluginInfo? GetArchivePlugin(string fileName, byte[]? buff, bool isCheckExtension)

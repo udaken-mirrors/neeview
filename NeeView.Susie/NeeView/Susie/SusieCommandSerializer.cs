@@ -27,7 +27,7 @@ namespace NeeView.Susie
     [JsonSerializable(typeof(SusiePluginCommandGetPluginResult))]
     [JsonSerializable(typeof(SusiePluginCommandSetPlugin))]
     [JsonSerializable(typeof(SusiePluginCommandSetPluginOrder))]
-    [JsonSerializable(typeof(SusiePluginCommandShowConfigulationDlg))]
+    [JsonSerializable(typeof(SusiePluginCommandShowConfigurationDlg))]
     [JsonSerializable(typeof(SusiePluginCommandGetArchivePlugin))]
     [JsonSerializable(typeof(SusiePluginCommandGetArchivePluginResult))]
     [JsonSerializable(typeof(SusiePluginCommandGetImagePlugin))]

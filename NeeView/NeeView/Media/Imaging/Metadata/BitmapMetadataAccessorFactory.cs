@@ -32,7 +32,7 @@ namespace NeeView.Media.Imaging.Metadata
                 case "gif": return new GifMetadataAccessor(meta);
             }
 
-            Debug.WriteLine($"BitmapMetadataAccessor: not supprot BitmapMetadata.Format: {format}");
+            Debug.WriteLine($"BitmapMetadataAccessor: not support BitmapMetadata.Format: {format}");
             return null;
         }
     }
