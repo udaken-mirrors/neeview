@@ -150,14 +150,14 @@ namespace NeeView
         }
 
 
-        public void SetValue(string name, object value)
+        public void SetValue(string name, object? value)
         {
             _cancellationToken.ThrowIfCancellationRequested();
 
             _engine.SetValue(name, value);
         }
 
-        public object GetValue(string name)
+        public object? GetValue(string name)
         {
             _cancellationToken.ThrowIfCancellationRequested();
 
