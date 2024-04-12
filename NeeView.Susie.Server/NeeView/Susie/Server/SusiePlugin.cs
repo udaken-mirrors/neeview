@@ -42,7 +42,6 @@ namespace NeeView.Susie.Server
 
         // プラグイン名
         public string Name { get { return Path.GetFileName(FileName); } }
-        //public string? Name { get { return FileName != null ? Path.GetFileName(FileName) : null; } }
 
         // APIバージョン
         public string? ApiVersion { get; private set; }
@@ -120,7 +119,7 @@ namespace NeeView.Susie.Server
         /// プラグインアクセサ作成
         /// </summary>
         /// <param name="fileName">プラグインファイルのパス</param>
-        /// <returns>プラグイン。失敗したらnullを返す</returns>
+        /// <returns>プラグイン。失敗したら nullを返す</returns>
         public static SusiePlugin? Create(string fileName)
         {
             var spi = new SusiePlugin(fileName);
@@ -139,7 +138,7 @@ namespace NeeView.Susie.Server
         /// 初期化
         /// </summary>
         /// <param name="fileName">プラグインファイルのパス</param>
-        /// <returns>成功したらtrue</returns>
+        /// <returns>成功したら true</returns>
         public bool Initialize()
         {
             try
@@ -163,7 +162,7 @@ namespace NeeView.Susie.Server
             }
             catch (Exception ex)
             {
-                Trace.WriteLine($"SusiePlugin.Initialze: FileName={FileName}: {ex.Message}");
+                Trace.WriteLine($"SusiePlugin.Initialize: FileName={FileName}: {ex.Message}");
                 return false;
             }
         }
@@ -235,14 +234,6 @@ namespace NeeView.Susie.Server
         /// </summary>
         /// <param name="parent">親ウィンドウ</param>
         /// <returns>成功した場合は0</returns>
-#if false
-        public int AboutDlg(Window parent)
-        {
-            IntPtr hwnd = parent != null ? new WindowInteropHelper(parent).Handle : IntPtr.Zero;
-            return AboutDlg(hwnd);
-        }
-#endif
-
         public int AboutDlg(IntPtr hwnd)
         {
             if (FileName == null) throw new InvalidOperationException();
@@ -268,14 +259,6 @@ namespace NeeView.Susie.Server
         /// </summary>
         /// <param name="parent">親ウィンドウ</param>
         /// <returns>成功した場合は0</returns>
-#if false
-        public int ConfigurationDlg(Window parent)
-        {
-            IntPtr hwnd = parent != null ? new WindowInteropHelper(parent).Handle : IntPtr.Zero;
-            return ConfigurationDlg(hwnd);
-        }
-#endif
-
         public int ConfigurationDlg(IntPtr hwnd)
         {
             if (FileName == null) throw new InvalidOperationException();
@@ -300,34 +283,7 @@ namespace NeeView.Susie.Server
         /// <summary>
         /// 設定ダイアログもしくは情報ダイアログを開く
         /// </summary>
-#if false
-        public void OpenConfigulationDialog(Window owner)
-        {
-            int result;
-            try
-            {
-                result = ConfigurationDlg(owner);
-            }
-            catch
-            {
-                result = -1;
-            }
-
-            // 設定ウィンドウが呼び出せなかった場合は情報画面でお茶を濁す
-            if (result < 0)
-            {
-                try
-                {
-                    AboutDlg(owner);
-                }
-                catch
-                {
-                }
-            }
-        }
-#endif
-
-        public void OpenConfigulationDialog(IntPtr hWnd)
+        public void OpenConfigurationDialog(IntPtr hWnd)
         {
             int result;
             try
@@ -359,7 +315,7 @@ namespace NeeView.Susie.Server
         /// </summary>
         /// <param name="fileName">ファイル名</param>
         /// <param name="head">ヘッダ(2KB)</param>
-        /// <returns>プラグインが対応していればtrue</returns>
+        /// <returns>プラグインが対応していれば true</returns>
         public bool IsSupported(string fileName, byte[] head, bool isCheckExtension)
         {
             if (FileName == null) throw new InvalidOperationException();
@@ -411,7 +367,7 @@ namespace NeeView.Susie.Server
         /// アーカイブ情報取得(IsSupport判定有)
         /// </summary>
         /// <param name="fileName">アーカイブファイル名</param>
-        /// <returns>アーカイブ情報。失敗した場合はnull</returns>
+        /// <returns>アーカイブ情報。失敗した場合は null</returns>
         public ArchiveEntryCollection? GetArchiveEntryCollection(string fileName, byte[] head)
         {
             if (FileName == null) throw new InvalidOperationException();
@@ -445,7 +401,7 @@ namespace NeeView.Susie.Server
         /// <param name="fileName">画像ファイル名(サポート判定用)</param>
         /// <param name="buff">画像データ</param>
         /// <param name="isCheckExtension">拡張子をチェックする</param>
-        /// <returns>Bitmap。失敗した場合はnull</returns>
+        /// <returns>Bitmap。失敗した場合は null</returns>
         public byte[]? GetPicture(string fileName, byte[] buff, bool isCheckExtension)
         {
             if (FileName == null) throw new InvalidOperationException();
@@ -476,7 +432,7 @@ namespace NeeView.Susie.Server
         /// <param name="fileName">画像ファイルパス</param>
         /// <param name="fileName">ファイルヘッダ2KB</param>
         /// <param name="isCheckExtension">拡張子をチェックする</param>
-        /// <returns>Bitmap。失敗した場合はnull</returns>
+        /// <returns>Bitmap。失敗した場合は null</returns>
         public byte[]? GetPictureFromFile(string fileName, byte[] head, bool isCheckExtension)
         {
             if (FileName == null) throw new InvalidOperationException();
@@ -542,12 +498,12 @@ namespace NeeView.Susie.Server
         /// アーカイブエントリをフォルダーに出力
         /// </summary>
         /// <param name="extractFolder"></param>
-        public void ExtracArchiveEntrytToFolder(string archiveFileName, ArchiveFileInfoRaw info, string extractFolder)
+        public void ExtractArchiveEntryToFolder(string archiveFileName, ArchiveFileInfoRaw info, string extractFolder)
         {
-            ExtracArchiveEntrytToFolder(archiveFileName, (int)info.position, extractFolder);
+            ExtractArchiveEntryToFolder(archiveFileName, (int)info.position, extractFolder);
         }
 
-        public void ExtracArchiveEntrytToFolder(string archiveFileName, int position, string extractFolder)
+        public void ExtractArchiveEntryToFolder(string archiveFileName, int position, string extractFolder)
         {
             if (_isDisposed)
             {
@@ -642,12 +598,12 @@ namespace NeeView.Susie.Server
             // WoW64回避
             if (Environment.Is64BitOperatingSystem)
             {
-                var windir = Environment.GetEnvironmentVariable("WINDIR") ?? @"C:\Windows";
-                var system32dir = Path.Combine(windir, "System32") + "\\";
+                var winDir = Environment.GetEnvironmentVariable("WINDIR") ?? @"C:\Windows";
+                var system32dir = Path.Combine(winDir, "System32") + "\\";
 
                 if (source.StartsWith(system32dir, StringComparison.OrdinalIgnoreCase))
                 {
-                    path = string.Concat(Path.Combine(windir, "Sysnative"), "\\", path.AsSpan(system32dir.Length));
+                    path = string.Concat(Path.Combine(winDir, "Sysnative"), "\\", path.AsSpan(system32dir.Length));
                     return path;
 
                     // NOTE: System32、Sysnative は特殊なフォルダーのためか GetShortPathName が正常に動作しない

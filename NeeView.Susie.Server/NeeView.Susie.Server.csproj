@@ -5,14 +5,14 @@
     <TargetFramework>net8.0</TargetFramework> 
     <Platforms>x86</Platforms>
     <Nullable>enable</Nullable>
+    <ApplicationIcon>App.ico</ApplicationIcon>
   </PropertyGroup>
 
   <PropertyGroup>
     <Product>NeeView SusiePlugin Server</Product>
-    <Version>40.0.0</Version>
+    <Version>41.0.0</Version>
     <Authors>NeeLaboratory</Authors>
-    <Copyright>Copyright © 2016-2023 Ito Mitsuhiro (nee)</Copyright>
-    <ApplicationIcon>App.ico</ApplicationIcon>
+    <Copyright>Copyright © 2016-2024 Ito Mitsuhiro (nee)</Copyright>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86'">

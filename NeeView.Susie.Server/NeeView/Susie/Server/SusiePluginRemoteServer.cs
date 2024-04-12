@@ -27,7 +27,7 @@ namespace NeeView.Susie.Server
             _server.AddReciever(SusiePluginCommandId.GetPlugin, GetPlugin);
             _server.AddReciever(SusiePluginCommandId.SetPlugin, SetPlugin);
             _server.AddReciever(SusiePluginCommandId.SetPluginOrder, SetPluginOrder);
-            _server.AddReciever(SusiePluginCommandId.ShowConfigulationDlg, ShowConfigulationDlg);
+            _server.AddReciever(SusiePluginCommandId.ShowConfigurationDlg, ShowConfigurationDlg);
             _server.AddReciever(SusiePluginCommandId.GetArchivePlugin, GetArchivePlugin);
             _server.AddReciever(SusiePluginCommandId.GetImagePlugin, GetImagePlugin);
             _server.AddReciever(SusiePluginCommandId.GetImage, GetImage);
@@ -77,8 +77,8 @@ namespace NeeView.Susie.Server
         {
             var args = DeserializeChunk<SusiePluginCommandGetPlugin>(command[0]);
             Trace.WriteLine($"Remote.GetPlugin: {args.PluginNames}");
-            var pluginInfos = _process.GetPlugin(args.PluginNames);
-            return CreateResult(SusiePluginCommandId.GetPlugin, new SusiePluginCommandGetPluginResult(pluginInfos));
+            var pluginInfoList = _process.GetPlugin(args.PluginNames);
+            return CreateResult(SusiePluginCommandId.GetPlugin, new SusiePluginCommandGetPluginResult(pluginInfoList));
         }
 
         private List<Chunk> SetPlugin(List<Chunk> command)
@@ -97,12 +97,12 @@ namespace NeeView.Susie.Server
             return CreateResultIsSuccess(SusiePluginCommandId.SetPluginOrder, true);
         }
 
-        private List<Chunk> ShowConfigulationDlg(List<Chunk> command)
+        private List<Chunk> ShowConfigurationDlg(List<Chunk> command)
         {
-            var args = DeserializeChunk<SusiePluginCommandShowConfigulationDlg>(command[0]);
-            Trace.WriteLine($"Remote.ShowConfigulationDlg: {args.PluginName}");
-            _process.ShowConfigulationDlg(args.PluginName, args.HWnd);
-            return CreateResultIsSuccess(SusiePluginCommandId.ShowConfigulationDlg, true);
+            var args = DeserializeChunk<SusiePluginCommandShowConfigurationDlg>(command[0]);
+            Trace.WriteLine($"Remote.ShowConfigurationDlg: {args.PluginName}");
+            _process.ShowConfigurationDlg(args.PluginName, args.HWnd);
+            return CreateResultIsSuccess(SusiePluginCommandId.ShowConfigurationDlg, true);
         }
 
 

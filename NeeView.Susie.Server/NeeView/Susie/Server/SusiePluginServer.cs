@@ -54,7 +54,7 @@ namespace NeeView.Susie.Server
             var plugin = _pluginCollection.AMPluginList.FirstOrDefault(e => e.Name == pluginName);
             if (plugin == null) throw new SusieException($"Cannot found plugin", pluginName);
 
-            plugin.ExtracArchiveEntrytToFolder(fileName, position, extractFolder);
+            plugin.ExtractArchiveEntryToFolder(fileName, position, extractFolder);
         }
 
         public List<SusieArchiveEntry> GetArchiveEntries(string pluginName, string fileName)
@@ -150,12 +150,12 @@ namespace NeeView.Susie.Server
         }
 
 
-        public void ShowConfigulationDlg(string pluginName, int hwnd)
+        public void ShowConfigurationDlg(string pluginName, int hwnd)
         {
             var plugin = _pluginCollection.GetPluginFromName(pluginName);
             if (plugin is null) return;
 
-            plugin.OpenConfigulationDialog(new IntPtr(hwnd));
+            plugin.OpenConfigurationDialog(new IntPtr(hwnd));
         }
     }
 }

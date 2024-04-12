@@ -162,7 +162,7 @@ namespace NeeView.Susie.Server
         /// Plug-inに関する情報を得る
         /// </summary>
         /// <param name="infono">取得する情報番号</param>
-        /// <returns>情報の文字列。情報番号が無効の場合はnullを返す</returns>
+        /// <returns>情報の文字列。情報番号が無効の場合は nullを返す</returns>
         public string? GetPluginInfo(int infono)
         {
             if (hModule == IntPtr.Zero) throw new InvalidOperationException();
@@ -204,7 +204,7 @@ namespace NeeView.Susie.Server
         /// 注意：Susie本体はこの関数(ファイル版)を使用していないため、正常に動作しないプラグインが存在します！
         /// </summary>
         /// <param name="filename">ファイル名</param>
-        /// <returns>サポートしていればtrue</returns>
+        /// <returns>サポートしていれば true</returns>
         public bool IsSupported(string filename)
         {
             if (hModule == IntPtr.Zero) throw new InvalidOperationException();
@@ -221,7 +221,7 @@ namespace NeeView.Susie.Server
         /// </summary>
         /// <param name="filename">ファイル名(判定用)</param>
         /// <param name="buff">対象データ</param>
-        /// <returns>サポートしていればtrue</returns>
+        /// <returns>サポートしていれば true</returns>
         public bool IsSupported(string filename, byte[] buff)
         {
             if (hModule == IntPtr.Zero) throw new InvalidOperationException();
@@ -240,7 +240,7 @@ namespace NeeView.Susie.Server
         /// アーカイブ情報取得
         /// </summary>
         /// <param name="file">アーカイブファイル名</param>
-        /// <returns>アーカイブエントリ情報(RAW)。失敗した場合はnull</returns>
+        /// <returns>アーカイブエントリ情報(RAW)。失敗した場合は null</returns>
         public List<ArchiveFileInfoRaw>? GetArchiveInfo(string file)
         {
             if (hModule == IntPtr.Zero) throw new InvalidOperationException();
@@ -278,15 +278,15 @@ namespace NeeView.Susie.Server
 
 
         #region 00AM 必須 GetFile()
-        private delegate int GetFileFromFileHandler(string filename, int position, out IntPtr hBuff, uint flag, ProgressCallback lpPrgressCallback, int lData);
-        private delegate int GetFileFromFileToFileHandler(string filename, int position, string dest, uint flag, ProgressCallback lpPrgressCallback, int lData);
+        private delegate int GetFileFromFileHandler(string filename, int position, out IntPtr hBuff, uint flag, ProgressCallback lpProgressCallback, int lData);
+        private delegate int GetFileFromFileToFileHandler(string filename, int position, string dest, uint flag, ProgressCallback lpProgressCallback, int lData);
 
         /// <summary>
         /// アーカイブエントリ取得(メモリ版)
         /// </summary>
         /// <param name="file">アーカイブファイル名</param>
         /// <param name="position">アーカイブエントリ位置</param>
-        /// <returns>出力されたバッファ。失敗した場合はnull</returns>
+        /// <returns>出力されたバッファ。失敗した場合は null</returns>
         public byte[]? GetFile(string file, int position)
         {
             if (hModule == IntPtr.Zero) throw new InvalidOperationException();
@@ -342,7 +342,7 @@ namespace NeeView.Susie.Server
         /// 画像取得(メモリ版)
         /// </summary>
         /// <param name="buff">入力画像データ</param>
-        /// <returns>Bitmap。失敗した場合はnull</returns>
+        /// <returns>Bitmap。失敗した場合は null</returns>
         public byte[]? GetPicture(byte[] buff)
         {
             if (hModule == IntPtr.Zero) throw new InvalidOperationException();
@@ -359,7 +359,7 @@ namespace NeeView.Susie.Server
                     int pBInfoSize = (int)NativeMethods.LocalSize(pHBInfo);
                     IntPtr pBm = NativeMethods.LocalLock(pHBm);
                     int pBmSize = (int)NativeMethods.LocalSize(pHBm);
-                    return CraeteBitmapImage(pBInfo, pBInfoSize, pBm, pBmSize);
+                    return CreateBitmapImage(pBInfo, pBInfoSize, pBm, pBmSize);
                 }
                 return null;
             }
@@ -377,7 +377,7 @@ namespace NeeView.Susie.Server
         /// 画像取得(ファイル版)
         /// </summary>
         /// <param name="filename">入力ファイル名</param>
-        /// <returns>Bitmap。失敗した場合はnull</returns>
+        /// <returns>Bitmap。失敗した場合は null</returns>
         public byte[]? GetPicture(string filename)
         {
             if (hModule == IntPtr.Zero) throw new InvalidOperationException();
@@ -394,7 +394,7 @@ namespace NeeView.Susie.Server
                     int pBInfoSize = (int)NativeMethods.LocalSize(pHBInfo);
                     IntPtr pBm = NativeMethods.LocalLock(pHBm);
                     int pBmSize = (int)NativeMethods.LocalSize(pHBm);
-                    return CraeteBitmapImage(pBInfo, pBInfoSize, pBm, pBmSize);
+                    return CreateBitmapImage(pBInfo, pBInfoSize, pBm, pBmSize);
                 }
                 return null;
             }
@@ -409,7 +409,7 @@ namespace NeeView.Susie.Server
 
 
         // Bitmap 作成
-        private static byte[] CraeteBitmapImage(IntPtr pBInfo, int pBInfoSize, IntPtr pBm, int pBmSize)
+        private static byte[] CreateBitmapImage(IntPtr pBInfo, int pBInfoSize, IntPtr pBm, int pBmSize)
         {
             if (pBInfoSize == 0 || pBmSize == 0)
             {
@@ -427,7 +427,7 @@ namespace NeeView.Susie.Server
             int infoSizeReal = pBInfoSize;
             if (infoSizeReal < infoSize)
             {
-                Trace.WriteLine($"SusiePluginApi.CraeteBitmapImage: illigal pBInfo size: request={infoSize}, real={infoSizeReal}");
+                Trace.WriteLine($"SusiePluginApi.CreateBitmapImage: Illegal pBInfo size: request={infoSize}, real={infoSizeReal}");
                 infoSize = infoSizeReal;
                 if (infoSize <= 0) throw new SusieException("Memory error.");
             }
@@ -437,7 +437,7 @@ namespace NeeView.Susie.Server
             int dataSizeReal = pBmSize;
             if (dataSizeReal < dataSize)
             {
-                Trace.WriteLine($"SusiePluginApi.CraeteBitmapImage: illigal pBm size: request={dataSize}, real={dataSizeReal}");
+                Trace.WriteLine($"SusiePluginApi.CreateBitmapImage: Illegal pBm size: request={dataSize}, real={dataSizeReal}");
                 dataSize = dataSizeReal;
                 if (dataSize <= 0) throw new SusieException("Memory error.");
             }
@@ -447,7 +447,7 @@ namespace NeeView.Susie.Server
         }
 
 
-        // BitmaiFileHeader作成
+        // BitmapFileHeader作成
         private static BitmapFileHeader CreateBitmapFileHeader(BitmapInfoHeader bi)
         {
             var bf = new BitmapFileHeader();

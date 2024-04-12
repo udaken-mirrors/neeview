@@ -241,6 +241,20 @@ namespace NeeView
                     .Select(e => e.ToSusiePluginSetting())
                     .ToList();
 
+                FlushSusiePluginSetting(settings);
+            }
+        }
+
+        public void FlushSusiePluginSetting(List<SusiePluginSetting> settings)
+        {
+            Debug.WriteLine($"FlushSusiePluginSetting: {string.Join(", ", settings.Select(e => e.Name).ToArray())}");
+
+            if (settings.Count == 0) return;
+            
+            lock (_lock)
+            {
+                if (_client is null) throw new InvalidOperationException("Client is null");
+
                 _client.SetPlugin(settings);
             }
         }
@@ -319,7 +333,7 @@ namespace NeeView
                 if (_client is null) throw new InvalidOperationException("Client is null");
 
                 var handle = new WindowInteropHelper(owner).Handle;
-                _client.ShowConfigulationDlg(pluginName, handle.ToInt32());
+                _client.ShowConfigurationDlg(pluginName, handle.ToInt32());
             }
         }
 

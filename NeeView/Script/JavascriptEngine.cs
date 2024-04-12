@@ -150,14 +150,14 @@ namespace NeeView
         }
 
 
-        public void SetValue(string name, object value)
+        public void SetValue(string name, object? value)
         {
             _cancellationToken.ThrowIfCancellationRequested();
 
             _engine.SetValue(name, value);
         }
 
-        public object GetValue(string name)
+        public object? GetValue(string name)
         {
             _cancellationToken.ThrowIfCancellationRequested();
 
@@ -187,7 +187,7 @@ namespace NeeView
 
         public ScriptNotice CreateScriptErrorMessage(string s)
         {
-            var location = _engine.DebugHandler?.CurrentLocation;
+            var location = _engine.Debugger?.CurrentLocation;
 
             string? source = null;
             int line = -1;

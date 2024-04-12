@@ -57,7 +57,7 @@ namespace NeeView.Susie.Server
         /// フォルダーに出力。ファイル名は変更しない
         public void ExtractToFolder(string extractFolder)
         {
-            _spi.ExtracArchiveEntrytToFolder(ArchiveShortFileName, _info, extractFolder);
+            _spi.ExtractArchiveEntryToFolder(ArchiveShortFileName, _info, extractFolder);
         }
 
         /// ファイルに出力

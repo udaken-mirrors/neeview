@@ -150,7 +150,7 @@ namespace NeeView
             using (var tempDirectory = new SusieExtractDirectory())
             {
                 // 注意：失敗することがよくある。ファイル展開のAPIが実装されていない
-                plugin.ExtracArchiveEntrytToFolder(Path, info.Position, tempDirectory.Path);
+                plugin.ExtractArchiveEntryToFolder(Path, info.Position, tempDirectory.Path);
 
                 // 上書き時は移動前に削除
                 FileIO.ReadyOverwrite(extractFileName, isOverwrite);
