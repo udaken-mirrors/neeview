@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.IO;
 using System.Text.RegularExpressions;
 
 namespace NeeView
@@ -76,7 +77,8 @@ namespace NeeView
 
         public static void OpenWithTextEditor(string path)
         {
-            var textEditor = Config.Current.System.TextEditor ?? "notepad.exe";
+            string winDir = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Windows);
+            var textEditor = Config.Current.System.TextEditor ?? Path.Combine(winDir, "System32", "notepad.exe");
             Start(textEditor, $"\"{path}\"");
         }
 
@@ -85,6 +87,13 @@ namespace NeeView
         {
             var isResult = _httpPrefix.IsMatch(path) || _htmlPostfix.IsMatch(path);
             return isResult;
+        }
+
+        public static void OpenWithExplorer(string arg, ExternalProcessOptions? options = null)
+        {
+            string winDir = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Windows);
+            var explorer = Path.Combine(winDir, "explorer.exe");
+            Start(explorer, arg, options);
         }
     }
 }

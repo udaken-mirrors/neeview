@@ -415,7 +415,7 @@ namespace NeeView
                 return;
             }
 
-            ExternalProcess.Start("explorer.exe", $"\"{Environment.LocalApplicationDataPath}\"");
+            ExternalProcess.OpenWithExplorer($"\"{Environment.LocalApplicationDataPath}\"");
         }
 
 

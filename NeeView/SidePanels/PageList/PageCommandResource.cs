@@ -139,7 +139,7 @@ namespace NeeView
                 {
                     path = ArchiveEntryUtility.GetExistEntryName(item.SystemPath);
                 }
-                ExternalProcess.Start("explorer.exe", "/select,\"" + path + "\"");
+                ExternalProcess.OpenWithExplorer("/select,\"" + path + "\"");
             }
         }
 

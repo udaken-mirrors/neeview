@@ -173,7 +173,7 @@ namespace NeeView
         private static void DebugOpenFolder(string path)
         {
             Debug.WriteLine($"OpenFolder: {path}");
-            ExternalProcess.Start("explorer.exe", path);
+            ExternalProcess.OpenWithExplorer(path);
         }
     }
 #endif // DEBUG
