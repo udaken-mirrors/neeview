@@ -34,6 +34,67 @@ e.g., "BookConfig.ContentsSpace=Distance between pages in "@PageMode.WidePage" (
 For example, it is used when the expression changes in the plural.  
 e.g., "BookAddressInfo.Page:1={0} page"
 
+## Shortcut key name
+
+Shortcut keys can be multilingual. 
+Define only as much as you need.
+
+### Key
+
+General Key.
+
+Prefix is `Key.` .  
+See [.NET Key Enum](https://learn.microsoft.com/en-us/dotnet/api/system.windows.input.key) for available names.
+
+e.g., "Key.Enter=EINGABE"
+
+### Modifier keys
+
+Modifier key.
+
+Prefix is `ModifierKeys.` .  
+See [.NET ModifierKeys Enum](https://learn.microsoft.com/en-us/dotnet/api/system.windows.input.modifierkeys) for available names.
+
+e.g., "ModifierKeys.Control=STRG"
+
+### Mouse action
+
+Mouse action.
+
+Prefix is `MouseAction.` .  
+The available names are as follows
+
+- LeftClick
+- RightClick
+- MiddleClick
+- LeftDoubleClick
+- RightDoubleClick
+- MiddleDoubleClick
+- XButton1Click
+- XButton1DoubleClick
+- XButton2Click
+- XButton2DoubleClick
+- WheelUp
+- WheelDown
+- WheelLeft
+- WheelRight
+
+e.g., "MouseAction.LeftClick=Linksklick"
+
+### Modifier mouse buttons
+
+Modified mouse button. Used when multiple mouse buttons are pressed at the same time.
+
+Prefix is `ModifierMouseButtons.` .  
+Available names are as follows
+
+- LeftButton
+- MiddleButton
+- RightButton
+- XButton1
+- XButton2
+
+e.g., "ModifierMouseButtons.LeftButton=LinkeTaste"
 
 # ConvertRestext.ps1
 

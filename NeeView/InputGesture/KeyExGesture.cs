@@ -16,6 +16,8 @@ namespace NeeView
     [TypeConverter(typeof(KeyExGestureConverter))]
     public class KeyExGesture : InputGesture
     {
+        private const char _modifiersDelimiter = '+';
+
         // メインキー
         public Key Key { get; private set; }
 
@@ -56,11 +58,28 @@ namespace NeeView
             return this.Key == key && this.ModifierKeys == Keyboard.Modifiers;
         }
 
-        // 
         private static bool IsDefinedKey(Key key)
         {
             return Key.None <= key && key <= Key.OemClear;
         }
-    }
 
+
+        public string GetDisplayString()
+        {
+            if (Key == Key.None) return "";
+
+            string strBinding = "";
+            string? strKey = Key.GetDisplayString();
+            if (strKey != string.Empty)
+            {
+                strBinding += ModifierKeys.GetDisplayString();
+                if (strBinding != string.Empty)
+                {
+                    strBinding += _modifiersDelimiter;
+                }
+                strBinding += strKey;
+            }
+            return strBinding;
+        }
+    }
 }

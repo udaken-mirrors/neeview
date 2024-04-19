@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
 using System.Windows.Input;
@@ -7,6 +8,42 @@ namespace NeeView
 {
     public class KeyExConverter : TypeConverter
     {
+        public static Dictionary<Key, string> DefaultKeyStringMap { get; } = new()
+        {
+            [Key.Back] = "Backspace",
+            [Key.LineFeed] = "Clear",
+            [Key.Return] = "Enter",
+            [Key.Capital] = "CapsLock",
+            [Key.HangulMode] = "KanaMode",
+            [Key.HanjaMode] = "KanjiMode",
+            [Key.Escape] = "Esc",
+            [Key.Prior] = "PageUp",
+            [Key.Next] = "PageDown",
+            [Key.Snapshot] = "PrintScreen",
+            [Key.Oem1] = "OemSemicolon",
+            [Key.Oem2] = "OemQuestion",
+            [Key.Oem3] = "OemTilde",
+            [Key.Oem4] = "OemOpenBrackets",
+            [Key.Oem5] = "OemPipe",
+            [Key.Oem6] = "OemCloseBrackets",
+            [Key.Oem7] = "OemQuotes",
+            [Key.Oem102] = "OemBackslash",
+            [Key.OemAttn] = "DbeAlphanumeric",
+            [Key.OemFinish] = "DbeKatakana",
+            [Key.OemCopy] = "DbeHiragana",
+            [Key.OemAuto] = "DbeSbcsChar",
+            [Key.OemEnlw] = "DbeDbcsChar",
+            [Key.OemBackTab] = "DbeRoman",
+            [Key.Attn] = "DbeNoRoman",
+            [Key.CrSel] = "DbeEnterWordRegisterMode",
+            [Key.ExSel] = "DbeEnterImeConfigureMode",
+            [Key.EraseEof] = "DbeFlushString",
+            [Key.Play] = "DbeCodeInput",
+            [Key.Zoom] = "DbeNoCodeInput",
+            [Key.NoName] = "DbeDetermineString",
+            [Key.Pa1] = "DbeEnterDialogConversionMode",
+        };
+
         public override bool CanConvertFrom(ITypeDescriptorContext? context, Type sourceType)
         {
             if (sourceType == typeof(string))
@@ -181,40 +218,9 @@ namespace NeeView
             }
             else
             {
-                switch (key)
+                if (DefaultKeyStringMap.TryGetValue(key, out var result))
                 {
-                    case Key.Back: return "Backspace";
-                    case Key.LineFeed: return "Clear";
-                    case Key.Return: return "Enter";
-                    case Key.Capital: return "CapsLock";
-                    case Key.KanaMode: return "HangulMode";
-                    case Key.HanjaMode: return "KanjiMode";
-                    case Key.Escape: return "Esc";
-                    case Key.Prior: return "PageUp";
-                    case Key.Next: return "PageDown";
-                    case Key.Snapshot: return "PrintScreen";
-                    case Key.Oem1: return "OemSemicolon";
-                    case Key.Oem2: return "OemQuestion";
-                    case Key.Oem3: return "OemTilde";
-                    case Key.Oem4: return "OemOpenBrackets";
-                    case Key.Oem5: return "OemPipe";
-                    case Key.Oem6: return "OemCloseBrackets";
-                    case Key.Oem7: return "OemQuotes";
-                    case Key.Oem102: return "OemBackslash";
-                    case Key.OemAttn: return "DbeAlphanumeric";
-                    case Key.OemFinish: return "DbeKatakana";
-                    case Key.OemCopy: return "DbeHiragana";
-                    case Key.OemAuto: return "DbeSbcsChar";
-                    case Key.OemEnlw: return "DbeDbcsChar";
-                    case Key.OemBackTab: return "DbeRoman";
-                    case Key.Attn: return "DbeNoRoman";
-                    case Key.CrSel: return "DbeEnterWordRegisterMode";
-                    case Key.ExSel: return "DbeEnterImeConfigureMode";
-                    case Key.EraseEof: return "DbeFlushString";
-                    case Key.Play: return "DbeCodeInput";
-                    case Key.Zoom: return "DbeNoCodeInput";
-                    case Key.NoName: return "DbeDetermineString";
-                    case Key.Pa1: return "DbeEnterDialogConversionMode";
+                    return result;
                 }
             }
 

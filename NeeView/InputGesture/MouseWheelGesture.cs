@@ -11,6 +11,8 @@ namespace NeeView
     /// </summary>
     public class MouseWheelGesture : InputGesture
     {
+        private const char _modifiersDelimiter = '+';
+
         // マウスホイールアクション
         public MouseWheelAction MouseWheelAction { get; private set; }
 
@@ -57,6 +59,33 @@ namespace NeeView
                 modifierMouseButtons |= ModifierMouseButtons.XButton2;
 
             return this.MouseWheelAction == wheelAction && ModifierKeys == Keyboard.Modifiers && ModifierMouseButtons == modifierMouseButtons;
+        }
+
+
+        public string GetDisplayString()
+        {
+            if (MouseWheelAction == MouseWheelAction.None) return "";
+
+            string strBinding = "";
+            string? strKey = MouseWheelAction.GetDisplayString();
+            if (strKey != string.Empty)
+            {
+                strBinding += ModifierKeys.GetDisplayString();
+                if (strBinding != string.Empty)
+                {
+                    strBinding += _modifiersDelimiter;
+                }
+
+                var buttons = ModifierMouseButtons.GetDisplayString();
+                if (buttons != string.Empty)
+                {
+                    strBinding += buttons;
+                    strBinding += _modifiersDelimiter;
+                }
+
+                strBinding += strKey;
+            }
+            return strBinding;
         }
     }
 

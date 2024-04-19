@@ -126,6 +126,8 @@ namespace NeeView
         /// </summary>
         private async Task InitializeAsync(StartupEventArgs e)
         {
+            Debug.WriteLine($"App.InitializeAsync: {Stopwatch.ElapsedMilliseconds}ms");
+
             TextResources.LanguageResource.Initialize(Path.Combine(Environment.AssemblyFolder, "Languages"));
 
             this.ShutdownMode = ShutdownMode.OnExplicitShutdown;
@@ -164,6 +166,9 @@ namespace NeeView
             var culture = CultureInfo.GetCultureInfo(config.System.Language);
             TextResources.Culture = culture;
             TextResources.Resource.Load(culture);
+            InputGestureDisplayString.Initialize(TextResources.Resource);
+
+            Debug.WriteLine($"App.Culture: {Stopwatch.ElapsedMilliseconds}ms");
 
             // スプラッシュスクリーン
             ShowSplashScreen(config);

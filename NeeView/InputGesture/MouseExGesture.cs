@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -13,6 +12,8 @@ namespace NeeView
     /// </summary>
     public class MouseExGesture : InputGesture
     {
+        private const char _modifiersDelimiter = '+';
+
         // メインアクション
         public MouseExAction MouseExAction { get; private set; }
 
@@ -75,6 +76,33 @@ namespace NeeView
                 modifierMouseButtons |= ModifierMouseButtons.XButton2;
 
             return this.MouseExAction == action && this.ModifierMouseButtons == modifierMouseButtons && ModifierKeys == Keyboard.Modifiers;
+        }
+
+
+        public string GetDisplayString()
+        {
+            if (MouseExAction == MouseExAction.None) return "";
+
+            string strBinding = "";
+            string? strKey = MouseExAction.GetDisplayString();
+            if (strKey != string.Empty)
+            {
+                strBinding += ModifierKeys.GetDisplayString();
+                if (strBinding != string.Empty)
+                {
+                    strBinding += _modifiersDelimiter;
+                }
+
+                var buttons = ModifierMouseButtons.GetDisplayString();
+                if (buttons != string.Empty)
+                {
+                    strBinding += buttons;
+                    strBinding += _modifiersDelimiter;
+                }
+
+                strBinding += strKey;
+            }
+            return strBinding;
         }
     }
 }

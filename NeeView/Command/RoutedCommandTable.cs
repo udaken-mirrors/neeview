@@ -213,7 +213,7 @@ namespace NeeView
                 var inputGestures = CommandTable.Current.GetElement(command.Key).GetInputGestureCollection();
                 foreach (var gesture in inputGestures)
                 {
-                    if (gesture is MouseGesture mouseClick)
+                    if (gesture is MouseGesture)
                     {
                         mouseNormalHandlers.Add((s, x) => InputGestureCommandExecute(s, x, gesture, command.Value));
                     }
