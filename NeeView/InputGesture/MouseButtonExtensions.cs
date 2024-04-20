@@ -12,6 +12,13 @@ namespace NeeView
             [MouseButton.Right] = "RightButton",
         };
 
+        private static StringConverter _displayStringConverter = StringConverter.Default;
+
+        public static void SetDisplayStringConverter(StringConverter converter)
+        {
+            _displayStringConverter = converter;
+        }
+
         public static void SetDisplayString(this MouseButton button, string value)
         {
             _map[button] = value;
@@ -19,12 +26,7 @@ namespace NeeView
 
         public static string GetDisplayString(this MouseButton button)
         {
-            if (_map.TryGetValue(button, out var s))
-            {
-                return s;
-            }
-
-            return button.ToString();
+            return _displayStringConverter.Convert(_map.TryGetValue(button, out var s) ? s : button.ToString());
         }
     }
 

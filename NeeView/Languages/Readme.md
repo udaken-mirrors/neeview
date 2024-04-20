@@ -48,6 +48,10 @@ See [.NET Key Enum](https://learn.microsoft.com/en-us/dotnet/api/system.windows.
 
 e.g., "Key.Enter=EINGABE"
 
+Set `_Uppercase` to `true` to make all uppercase.
+
+e.g., "Key._Uppercase=true"
+
 ### Modifier keys
 
 Modifier key.
@@ -56,6 +60,8 @@ Prefix is `ModifierKeys.` .
 See [.NET ModifierKeys Enum](https://learn.microsoft.com/en-us/dotnet/api/system.windows.input.modifierkeys) for available names.
 
 e.g., "ModifierKeys.Control=STRG"
+
+Set `_Uppercase` to `true` to make all uppercase.
 
 ### Mouse button
 

@@ -27,6 +27,12 @@ namespace NeeView
     public static class MouseExActionExtensions
     {
         private static readonly Dictionary<MouseExAction, string> _map = new();
+        private static StringConverter _displayStringConverter = StringConverter.Default;
+
+        public static void SetDisplayStringConverter(StringConverter converter)
+        {
+            _displayStringConverter = converter;
+        }
 
         public static void SetDisplayString(this MouseExAction action, string value)
         {
@@ -35,12 +41,7 @@ namespace NeeView
 
         public static string GetDisplayString(this MouseExAction action)
         {
-            if (_map.TryGetValue(action, out var s))
-            {
-                return s;
-            }
-
-            return action.ToString();
+            return _displayStringConverter.Convert(_map.TryGetValue(action, out var s) ? s : action.ToString());
         }
     }
 }

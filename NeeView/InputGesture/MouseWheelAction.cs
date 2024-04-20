@@ -13,6 +13,12 @@ namespace NeeView
     public static class MouseWheelActionExtensions
     {
         private static readonly Dictionary<MouseWheelAction, string> _map = new();
+        private static StringConverter _displayStringConverter = StringConverter.Default;
+
+        public static void SetDisplayStringConverter(StringConverter converter)
+        {
+            _displayStringConverter = converter;
+        }
 
         public static void SetDisplayString(this MouseWheelAction action, string value)
         {
@@ -21,12 +27,7 @@ namespace NeeView
 
         public static string GetDisplayString(this MouseWheelAction action)
         {
-            if (_map.TryGetValue(action, out var s))
-            {
-                return s;
-            }
-
-            return action.ToString();
+            return  _displayStringConverter.Convert(_map.TryGetValue(action, out var s) ? s : action.ToString());
         }
     }
 }

@@ -4,13 +4,19 @@ using System.Windows.Input;
 
 namespace NeeView
 {
-    public static class KeyExtension
+    public static class KeyExtensions
     {
         private static readonly Dictionary<Key, string> _map;
+        private static StringConverter _displayStringConverter = StringConverter.Default;
 
-        static KeyExtension()
+        static KeyExtensions()
         {
             _map = KeyExConverter.DefaultKeyStringMap.ToDictionary(e => e.Key, e => e.Value);
+        }
+
+        public static void SetDisplayStringConverter(StringConverter converter)
+        {
+            _displayStringConverter = converter;
         }
 
         public static void SetDisplayString(this Key key, string value)
@@ -27,7 +33,7 @@ namespace NeeView
 
             if (_map.TryGetValue(key, out var s))
             {
-                return s;
+                return _displayStringConverter.Convert(s);
             }
 
             if (key >= Key.D0 && key <= Key.D9)
@@ -42,7 +48,7 @@ namespace NeeView
 
             if (KeyExConverter.IsDefinedKey(key))
             {
-                return key.ToString();
+                return _displayStringConverter.Convert(key.ToString());
             }
 
             return "";

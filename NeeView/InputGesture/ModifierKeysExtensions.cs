@@ -4,7 +4,7 @@ using System.Windows.Input;
 
 namespace NeeView
 {
-    public static class ModifierKeysExtension
+    public static class ModifierKeysExtensions
     {
         private const char _modifierDelimiter = '+';
 
@@ -13,6 +13,12 @@ namespace NeeView
             [ModifierKeys.Control] = "Ctrl",
         };
 
+        private static StringConverter _displayStringConverter = StringConverter.Default;
+
+        public static void SetDisplayStringConverter(StringConverter converter)
+        {
+            _displayStringConverter = converter;
+        }
 
         public static void SetDisplayString(this ModifierKeys modifiers, string value)
         {
@@ -51,16 +57,12 @@ namespace NeeView
                 strModifiers += MatchModifiers(ModifierKeys.Shift);
             }
 
-            return strModifiers;
+            return _displayStringConverter.Convert(strModifiers);
         }
 
         private static string MatchModifiers(ModifierKeys modifierKeys)
         {
-            if (_map.TryGetValue(modifierKeys, out var s))
-            {
-                return s;
-            }
-            return modifierKeys.ToString();
+            return _map.TryGetValue(modifierKeys, out var s) ? s : modifierKeys.ToString();
         }
     }
 

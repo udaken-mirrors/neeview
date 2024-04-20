@@ -16,43 +16,59 @@ namespace NeeView
             InitializeMouseActionMap(resource);
         }
 
+        private static StringConverter GetDisplayStringStringConverter(TextResourceManager resource, string prefix)
+        {
+            return new InputGestureStringConverter(resource.GetString(prefix + "_Uppercase")?.ToUpper() == "TRUE");
+        }
+
+        private static IEnumerable<KeyValuePair<string, TextResourceItem>> CollectTextItems(TextResourceManager resource, string prefix)
+        {
+            return resource.Map.Where(e => e.Key.StartsWith(prefix) && e.Key.Length > prefix.Length && e.Key[prefix.Length] != '_');
+        }
+
         private static void InitializeKeyMap(TextResourceManager resource)
         {
             var prefix = nameof(Key) + ".";
-            foreach (var pair in resource.Map.Where(e => e.Key.StartsWith(prefix)))
+            foreach (var pair in CollectTextItems(resource, prefix))
             {
                 var key = (Key)Enum.Parse(typeof(Key), pair.Key.AsSpan(prefix.Length), true);
                 key.SetDisplayString(pair.Value.Text);
             }
+
+            KeyExtensions.SetDisplayStringConverter(GetDisplayStringStringConverter(resource, prefix));
         }
 
         private static void InitializeModifierKeysMap(TextResourceManager resource)
         {
             var prefix = nameof(ModifierKeys) + ".";
-            foreach (var pair in resource.Map.Where(e => e.Key.StartsWith(prefix)))
+            foreach (var pair in CollectTextItems(resource, prefix))
             {
                 var key = (ModifierKeys)Enum.Parse(typeof(ModifierKeys), pair.Key.AsSpan(prefix.Length), true);
                 key.SetDisplayString(pair.Value.Text);
             }
+
+            ModifierKeysExtensions.SetDisplayStringConverter(GetDisplayStringStringConverter(resource, prefix));
         }
 
         private static void InitializeMouseButtonMap(TextResourceManager resource)
         {
             var prefix = nameof(MouseButton) + ".";
-            foreach (var pair in resource.Map.Where(e => e.Key.StartsWith(prefix)))
+            foreach (var pair in CollectTextItems(resource, prefix))
             {
                 var key = (MouseButton)Enum.Parse(typeof(MouseButton), pair.Key.AsSpan(prefix.Length), true);
                 key.SetDisplayString(pair.Value.Text);
             }
+
+            MouseButtonExtensions.SetDisplayStringConverter(GetDisplayStringStringConverter(resource, prefix));
         }
 
-            private static void InitializeMouseActionMap(TextResourceManager resource)
+        private static void InitializeMouseActionMap(TextResourceManager resource)
         {
             var prefix = nameof(MouseAction) + ".";
-            foreach (var pair in resource.Map.Where(e => e.Key.StartsWith(prefix)))
+            foreach (var pair in CollectTextItems(resource, prefix))
             {
                 var name = pair.Key.AsSpan(prefix.Length);
-                switch(name)
+                switch (name)
                 {
                     case nameof(MouseWheelAction.WheelUp):
                     case nameof(MouseWheelAction.WheelDown):
@@ -70,6 +86,23 @@ namespace NeeView
                         }
                         break;
 
+                    case nameof(MouseAction.LeftClick):
+                    case nameof(MouseAction.RightClick):
+                    case nameof(MouseAction.MiddleClick):
+                    case nameof(MouseAction.WheelClick):
+                    case nameof(MouseAction.LeftDoubleClick):
+                    case nameof(MouseAction.RightDoubleClick):
+                    case nameof(MouseAction.MiddleDoubleClick):
+                        {
+                            var key = (MouseAction)Enum.Parse(typeof(MouseAction), name, true);
+                            key.SetDisplayString(pair.Value.Text);
+                        }
+                        { 
+                            var key = (MouseExAction)Enum.Parse(typeof(MouseExAction), name, true);
+                            key.SetDisplayString(pair.Value.Text);
+                        }
+                        break;
+
                     default:
                         {
                             var key = (MouseExAction)Enum.Parse(typeof(MouseExAction), name, true);
@@ -78,6 +111,12 @@ namespace NeeView
                         break;
                 }
             }
+
+            var converter = GetDisplayStringStringConverter(resource, prefix);
+            MouseActionExtensions.SetDisplayStringConverter(GetDisplayStringStringConverter(resource, prefix));
+            MouseExActionExtensions.SetDisplayStringConverter(GetDisplayStringStringConverter(resource, prefix));
+            MouseWheelActionExtensions.SetDisplayStringConverter(GetDisplayStringStringConverter(resource, prefix));
+            MouseHorizontalWheelActionExtensions.SetDisplayStringConverter(GetDisplayStringStringConverter(resource, prefix));
         }
 
 
@@ -87,4 +126,19 @@ namespace NeeView
         }
     }
 
+
+    public class InputGestureStringConverter : StringConverter
+    {
+        private readonly bool _isUppercase;
+
+        public InputGestureStringConverter(bool isUppercase)
+        {
+            _isUppercase = isUppercase;
+        }
+
+        public override string Convert(string value)
+        {
+            return _isUppercase ? value.ToUpper() : value;
+        }
+    }
 }

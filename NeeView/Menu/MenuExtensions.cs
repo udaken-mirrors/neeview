@@ -24,13 +24,9 @@ namespace NeeView
                     foreach (InputGesture gesture in command.InputGestures)
                     {
                         // キーショートカットのみ対応
-                        if (gesture is KeyGesture keyGesture)
+                        if (gesture is KeyGesture or KeyExGesture)
                         {
-                            text += ((text.Length > 0) ? ", " : "") + keyGesture.GetDisplayString();
-                        }
-                        else if (gesture is KeyExGesture keyExGesture)
-                        {
-                            text += ((text.Length > 0) ? ", " : "") + keyExGesture.GetDisplayString();
+                            text += ((text.Length > 0) ? ", " : "") + InputGestureDisplayString.GetDisplayString(gesture);
                         }
                     }
                     item.InputGestureText = text;
