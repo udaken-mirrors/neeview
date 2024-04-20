@@ -1,6 +1,7 @@
-﻿using NeeLaboratory.ComponentModel;
+﻿using NeeLaboratory.Generators;
 using NeeLaboratory.Windows.Input;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -11,40 +12,17 @@ namespace NeeView.Setting
     /// <summary>
     /// MouseDragSetting ViewModel
     /// </summary>
-    public class DragActionGestureControlViewModel : BindableBase
+    [NotifyPropertyChanged]
+    public partial class DragActionGestureControlViewModel : INotifyPropertyChanged
     {
         private readonly DragActionCollection _sources;
         private readonly string _key;
-
-        /// <summary>
-        /// Property: DragToken
-        /// </summary>
         private DragToken _dragToken = new();
-        public DragToken DragToken
-        {
-            get { return _dragToken; }
-            set { if (_dragToken != value) { _dragToken = value; RaisePropertyChanged(); } }
-        }
-
-        /// <summary>
-        /// Property: Original Drag
-        /// </summary>
-        public string OriginalDrag { get; set; }
-
-        /// <summary>
-        /// NewGesture property.
-        /// </summary>
-        private string _NewDrag = "";
-        public string NewDrag
-        {
-            get { return _NewDrag; }
-            set { if (_NewDrag != value) { _NewDrag = value; RaisePropertyChanged(); } }
-        }
+        private DragKey _originalDrag = DragKey.Empty;
+        private DragKey _newDrag = DragKey.Empty;
+        private RelayCommand? _clearCommand;
 
 
-        /// <summary>
-        /// Constructor
-        /// </summary>
         public DragActionGestureControlViewModel(DragActionCollection memento, string key, FrameworkElement gestureSender)
         {
             _sources = memento;
@@ -52,31 +30,53 @@ namespace NeeView.Setting
 
             gestureSender.MouseDown += GestureSender_MouseDown;
 
-            OriginalDrag = NewDrag = _sources[_key].MouseButton; // _context.Gesture;
+            OriginalDrag = NewDrag = _sources[_key].MouseButton ?? DragKey.Empty;
             UpdateGestureToken(NewDrag);
         }
+
+
+        public event PropertyChangedEventHandler? PropertyChanged;
+
+
+        public DragToken DragToken
+        {
+            get { return _dragToken; }
+            set { SetProperty(ref _dragToken, value); }
+        }
+
+        public DragKey OriginalDrag
+        {
+            get { return _originalDrag; }
+            set { SetProperty(ref _originalDrag, value); }
+        }
+
+        public DragKey NewDrag
+        {
+            get { return _newDrag; }
+            set { SetProperty(ref _newDrag, value); }
+        }
+
 
         private void GestureSender_MouseDown(object sender, MouseButtonEventArgs e)
         {
             var dragKey = new DragKey(MouseButtonBitsExtensions.Create(e), Keyboard.Modifiers);
 
-            UpdateGestureToken(dragKey.ToString());
+            UpdateGestureToken(dragKey);
         }
 
 
         /// <summary>
         /// Update Gesture Information
         /// </summary>
-        /// <param name="gesture"></param>
-        public void UpdateGestureToken(string gesture)
+        public void UpdateGestureToken(DragKey dragKey)
         {
-            NewDrag = gesture;
+            NewDrag = dragKey;
 
             // Check Conflict
             var token = new DragToken();
-            token.Gesture = gesture;
+            token.Gesture = dragKey;
 
-            if (!string.IsNullOrEmpty(token.Gesture))
+            if (token.Gesture.IsValid)
             {
                 token.Conflicts = _sources 
                     .Where(i => i.Key != _key && i.Value.MouseButton == token.Gesture)
@@ -105,7 +105,6 @@ namespace NeeView.Setting
         /// <summary>
         /// Command: ClearCommand
         /// </summary>
-        private RelayCommand? _clearCommand;
         public RelayCommand ClearCommand
         {
             get { return _clearCommand = _clearCommand ?? new RelayCommand(ClearCommand_Executed); }
@@ -113,7 +112,7 @@ namespace NeeView.Setting
 
         private void ClearCommand_Executed()
         {
-            UpdateGestureToken("");
+            UpdateGestureToken(DragKey.Empty);
         }
     }
 }

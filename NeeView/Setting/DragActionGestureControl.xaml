@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:NeeView.Setting"
+             xmlns:nv="clr-namespace:NeeView"
              xmlns:properties="clr-namespace:NeeView.Properties"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
@@ -17,6 +18,7 @@
             <Setter Property="Padding" Value="10,5" />
         </Style>
 
+        <nv:DragKeyToDisplayStringConverter x:Key="DragKeyToDisplayStringConverter"/>
     </UserControl.Resources>
 
     <DockPanel x:Name="Root">
@@ -37,7 +39,7 @@
                         </Style>
                     </Image.Style>
                 </Image>
-                <TextBox x:Name="GestureText" Margin="2" IsReadOnly="True" VerticalAlignment="Center" Text="{Binding DragToken.Gesture}" IsTabStop="False" />
+                <TextBox x:Name="GestureText" Margin="2" IsReadOnly="True" VerticalAlignment="Center" Text="{Binding DragToken.Gesture, Converter={StaticResource DragKeyToDisplayStringConverter}}" IsTabStop="False" />
             </DockPanel>
         </DockPanel>
 
@@ -45,7 +47,7 @@
             <TextBlock Text="{properties:TextBinding MouseDragSettingWindow.Old}" VerticalAlignment="Center" MinWidth="90" />
             <Grid x:Name="Dummy" Width="12" Margin="0,0,2,2" />
             <TextBox DockPanel.Dock="Bottom" x:Name="OldGestureText" Margin="0" VerticalAlignment="Center" IsReadOnly="True" IsHitTestVisible="False" BorderBrush="Transparent" IsTabStop="False"
-                    Text="{Binding OriginalDrag}" />
+                    Text="{Binding OriginalDrag, Converter={StaticResource DragKeyToDisplayStringConverter}}" />
         </DockPanel>
 
         <Grid DockPanel.Dock="Top">

@@ -57,6 +57,15 @@ See [.NET ModifierKeys Enum](https://learn.microsoft.com/en-us/dotnet/api/system
 
 e.g., "ModifierKeys.Control=STRG"
 
+### Mouse button
+
+Mouse button.
+
+Prefix is `MouseButton.` .  
+See [.NET MouseButton Enum](https://learn.microsoft.com/en-us/dotnet/api/system.windows.input.mousebutton) for available names.
+
+e.g., "MouseButton.Left=LinkeTaste"
+
 ### Mouse action
 
 Mouse action.
@@ -80,21 +89,6 @@ The available names are as follows
 - WheelRight
 
 e.g., "MouseAction.LeftClick=Linksklick"
-
-### Modifier mouse buttons
-
-Modified mouse button. Used when multiple mouse buttons are pressed at the same time.
-
-Prefix is `ModifierMouseButtons.` .  
-Available names are as follows
-
-- LeftButton
-- MiddleButton
-- RightButton
-- XButton1
-- XButton2
-
-e.g., "ModifierMouseButtons.LeftButton=LinkeTaste"
 
 # ConvertRestext.ps1
 

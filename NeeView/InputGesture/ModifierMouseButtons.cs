@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Windows.Input;
 
 namespace NeeView
 {
@@ -21,14 +22,6 @@ namespace NeeView
     {
         private const char _modifierDelimiter = '+';
 
-        private static readonly Dictionary<ModifierMouseButtons, string> _map = new();
-
-
-        public static void SetDisplayString(this ModifierMouseButtons modifiers, string value)
-        {
-            _map[modifiers] = value;
-        }
-
         public static string GetDisplayString(this ModifierMouseButtons modifiers)
         {
             if (!ModifierMouseButtonsConverter.IsDefinedModifierMouseButtons(modifiers))
@@ -40,43 +33,34 @@ namespace NeeView
 
             if ((modifiers & ModifierMouseButtons.LeftButton) == ModifierMouseButtons.LeftButton)
             {
-                strModifiers += MatchModifiers(ModifierMouseButtons.LeftButton);
+                strModifiers += MouseButton.Left.GetDisplayString();
             }
 
             if ((modifiers & ModifierMouseButtons.MiddleButton) == ModifierMouseButtons.MiddleButton)
             {
                 if (strModifiers.Length > 0) strModifiers += _modifierDelimiter;
-                strModifiers += MatchModifiers(ModifierMouseButtons.MiddleButton);
+                strModifiers += MouseButton.Middle.GetDisplayString();
             }
 
             if ((modifiers & ModifierMouseButtons.RightButton) == ModifierMouseButtons.RightButton)
             {
                 if (strModifiers.Length > 0) strModifiers += _modifierDelimiter;
-                strModifiers += MatchModifiers(ModifierMouseButtons.RightButton);
+                strModifiers += MouseButton.Right.GetDisplayString();
             }
 
             if ((modifiers & ModifierMouseButtons.XButton1) == ModifierMouseButtons.XButton1)
             {
                 if (strModifiers.Length > 0) strModifiers += _modifierDelimiter;
-                strModifiers += MatchModifiers(ModifierMouseButtons.XButton1);
+                strModifiers += MouseButton.XButton1.GetDisplayString();
             }
 
             if ((modifiers & ModifierMouseButtons.XButton2) == ModifierMouseButtons.XButton2)
             {
                 if (strModifiers.Length > 0) strModifiers += _modifierDelimiter;
-                strModifiers += MatchModifiers(ModifierMouseButtons.XButton2);
+                strModifiers += MouseButton.XButton2.GetDisplayString();
             }
 
             return strModifiers;
-        }
-
-        private static string MatchModifiers(ModifierMouseButtons modifiers)
-        {
-            if (_map.TryGetValue(modifiers, out var s))
-            {
-                return s;
-            }
-            return modifiers.ToString();
         }
     }
 }

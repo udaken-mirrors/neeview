@@ -22,6 +22,7 @@
         </DrawingImage>
         
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+        <nv:DragKeyToDisplayStringConverter x:Key="DragKeyToDisplayStringConverter"/>
     </UserControl.Resources>
     
     <Grid x:Name="Root">
@@ -73,7 +74,7 @@
                             <GridViewColumn Header="{properties:TextBinding MouseDragList.Header.Drag}" Width="300" >
                                 <GridViewColumn.CellTemplate>
                                     <DataTemplate>
-                                        <TextBlock Text="{Binding DragAction.DragKey}" TextTrimming="CharacterEllipsis"/>
+                                        <TextBlock Text="{Binding DragAction.DragKey, Converter={StaticResource DragKeyToDisplayStringConverter}}" TextTrimming="CharacterEllipsis"/>
                                     </DataTemplate>
                                 </GridViewColumn.CellTemplate>
                             </GridViewColumn>

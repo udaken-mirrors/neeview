@@ -12,8 +12,8 @@ namespace NeeView
         {
             InitializeKeyMap(resource);
             InitializeModifierKeysMap(resource);
+            InitializeMouseButtonMap(resource);
             InitializeMouseActionMap(resource);
-            InitializeModifierMouseButtonsMap(resource);
         }
 
         private static void InitializeKeyMap(TextResourceManager resource)
@@ -36,7 +36,17 @@ namespace NeeView
             }
         }
 
-        private static void InitializeMouseActionMap(TextResourceManager resource)
+        private static void InitializeMouseButtonMap(TextResourceManager resource)
+        {
+            var prefix = nameof(MouseButton) + ".";
+            foreach (var pair in resource.Map.Where(e => e.Key.StartsWith(prefix)))
+            {
+                var key = (MouseButton)Enum.Parse(typeof(MouseButton), pair.Key.AsSpan(prefix.Length), true);
+                key.SetDisplayString(pair.Value.Text);
+            }
+        }
+
+            private static void InitializeMouseActionMap(TextResourceManager resource)
         {
             var prefix = nameof(MouseAction) + ".";
             foreach (var pair in resource.Map.Where(e => e.Key.StartsWith(prefix)))
@@ -67,16 +77,6 @@ namespace NeeView
                         }
                         break;
                 }
-            }
-        }
-
-        private static void InitializeModifierMouseButtonsMap(TextResourceManager resource)
-        {
-            var prefix = nameof(ModifierMouseButtons) + ".";
-            foreach (var pair in resource.Map.Where(e => e.Key.StartsWith(prefix)))
-            {
-                var key = (ModifierMouseButtons)Enum.Parse(typeof(ModifierMouseButtons), pair.Key.AsSpan(prefix.Length), true);
-                key.SetDisplayString(pair.Value.Text);
             }
         }
 
