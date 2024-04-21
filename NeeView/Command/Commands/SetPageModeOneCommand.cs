@@ -8,7 +8,7 @@ namespace NeeView
         public SetPageModeOneCommand()
         {
             this.Group = Properties.TextResources.GetString("CommandGroup.PageSetting");
-            this.ShortCutKey = "Ctrl+1";
+            this.ShortCutKey = new ShortcutKey("Ctrl+1");
             this.MouseGesture = "RU";
             this.IsShowMessage = true;
         }

@@ -15,6 +15,7 @@
         </Style>
 
         <nv:IsNullConverter x:Key="IsNullConverter"/>
+        <nv:InputGestureSourceToDisplayStringConverter x:Key="InputGestureSourceToDisplayStringConverter"/>
     </UserControl.Resources>
 
     <Border BorderBrush="{DynamicResource Control.Border}" BorderThickness="1" Margin="5">
@@ -45,7 +46,8 @@
 
                             <Border>
                                 <TextBlock x:Name="KeyGestureText" VerticalAlignment="Center" HorizontalAlignment="Center" Focusable="False" IsHitTestVisible="False"
-                                        Foreground="{DynamicResource Window.Foreground}" />
+                                           Text="{Binding KeyGesture, Converter={StaticResource InputGestureSourceToDisplayStringConverter}}"
+                                            Foreground="{DynamicResource Window.Foreground}" />
                             </Border>
 
                             <Border Background="{StaticResource DiagonalBrush}">
@@ -55,7 +57,7 @@
                                     <Style TargetType="Border">
                                         <Setter Property="Visibility" Value="Hidden" />
                                         <Style.Triggers>
-                                            <DataTrigger Binding="{Binding ElementName=KeyGestureText, Path=Text}" Value="">
+                                            <DataTrigger Binding="{Binding KeyGesture}" Value="{x:Null}">
                                                 <Setter Property="Visibility" Value="Visible" />
                                             </DataTrigger>
                                         </Style.Triggers>
@@ -70,7 +72,7 @@
                         <Button.Style>
                             <Style TargetType="Button" BasedOn="{StaticResource ButtonBase}">
                                 <Style.Triggers>
-                                    <DataTrigger Binding="{Binding ElementName=KeyGestureText, Path=Text}" Value="">
+                                    <DataTrigger Binding="{Binding KeyGesture}" Value="{x:Null}">
                                         <Setter Property="IsEnabled" Value="False" />
                                     </DataTrigger>
                                 </Style.Triggers>
@@ -97,7 +99,8 @@
                             <Grid>
                                 <Border>
                                     <TextBlock x:Name="MouseGestureText" VerticalAlignment="Center" HorizontalAlignment="Center" Focusable="False" IsHitTestVisible="False"
-                                            Foreground="{DynamicResource Window.Foreground}" />
+                                               Text="{Binding MouseGesture, Converter={StaticResource InputGestureSourceToDisplayStringConverter}}"
+                                                Foreground="{DynamicResource Window.Foreground}" />
                                 </Border>
                                 <Border Background="{StaticResource DiagonalBrush}">
                                     <TextBlock Text="{properties:TextBinding InputGestureControl.InputMouse}" Foreground="{DynamicResource Control.GrayText}" VerticalAlignment="Center" Background="{DynamicResource Window.Background}" Padding="10,2"
@@ -106,7 +109,7 @@
                                         <Style TargetType="Border">
                                             <Setter Property="Visibility" Value="Hidden" />
                                             <Style.Triggers>
-                                                <DataTrigger Binding="{Binding ElementName=MouseGestureText, Path=Text}" Value="">
+                                                <DataTrigger Binding="{Binding MouseGesture}" Value="{x:Null}">
                                                     <Setter Property="Visibility" Value="Visible" />
                                                 </DataTrigger>
                                             </Style.Triggers>
@@ -121,7 +124,7 @@
                         <Button.Style>
                             <Style TargetType="Button" BasedOn="{StaticResource ButtonBase}">
                                 <Style.Triggers>
-                                    <DataTrigger Binding="{Binding ElementName=MouseGestureText, Path=Text}" Value="">
+                                    <DataTrigger Binding="{Binding MouseGesture}" Value="{x:Null}">
                                         <Setter Property="IsEnabled" Value="False"/>
                                     </DataTrigger>
                                 </Style.Triggers>
@@ -147,7 +150,7 @@
                                         </Style>
                                     </Image.Style>
                                 </Image>
-                                <TextBlock Text="{Binding Gesture}" VerticalAlignment="Center" Margin="2,0"/>
+                                <TextBlock Text="{Binding Gesture, Converter={StaticResource InputGestureSourceToDisplayStringConverter}}" VerticalAlignment="Center" Margin="2,0"/>
                             </StackPanel>
                         </DataTemplate>
                     </ListBox.ItemTemplate>

@@ -9,7 +9,7 @@ namespace NeeView
         public ToggleVisibleNavigatorCommand()
         {
             this.Group = Properties.TextResources.GetString("CommandGroup.Panel");
-            this.ShortCutKey = "N";
+            this.ShortCutKey = new ShortcutKey("N");
             this.IsShowMessage = false;
         }
 

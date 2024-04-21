@@ -9,7 +9,7 @@ namespace NeeView
         public TogglePlaylistItemCommand()
         {
             this.Group = Properties.TextResources.GetString("CommandGroup.Playlist");
-            this.ShortCutKey = "Ctrl+M";
+            this.ShortCutKey = new ShortcutKey("Ctrl+M");
             this.IsShowMessage = true;
         }
 

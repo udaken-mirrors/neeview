@@ -115,9 +115,9 @@ namespace NeeView
             {
                 if (context?.Instance is MouseHorizontalWheelGesture mouseGesture)
                 {
-                    return (ModifierKeysConverter.IsDefinedModifierKeys(mouseGesture.ModifierKeys)
-                           && ModifierMouseButtonsConverter.IsDefinedModifierMouseButtons(mouseGesture.ModifierMouseButtons)
-                           && MouseHorizontalWheelActionConverter.IsDefinedMouseWheelAction(mouseGesture.MouseWheelAction));
+                    return (ModifierKeysConverter.IsDefinedModifierKeys(mouseGesture.Modifiers)
+                           && ModifierMouseButtonsConverter.IsDefinedModifierMouseButtons(mouseGesture.ModifierButtons)
+                           && MouseHorizontalWheelActionConverter.IsDefinedMouseWheelAction(mouseGesture.WheelAction));
                 }
             }
             return false;
@@ -142,19 +142,19 @@ namespace NeeView
                 {
                     string strGesture = "";
 
-                    strGesture += _modifierKeysConverter.ConvertTo(context, culture, mouseGesture.ModifierKeys, destinationType) as string;
+                    strGesture += _modifierKeysConverter.ConvertTo(context, culture, mouseGesture.Modifiers, destinationType) as string;
                     if (strGesture != string.Empty)
                     {
                         strGesture += _modifiersDelimiter;
                     }
 
-                    strGesture += _modifierMouseButtonsConverter.ConvertTo(context, culture, mouseGesture.ModifierMouseButtons, destinationType) as string;
+                    strGesture += _modifierMouseButtonsConverter.ConvertTo(context, culture, mouseGesture.ModifierButtons, destinationType) as string;
                     if (strGesture != string.Empty && strGesture[^1] != _modifiersDelimiter)
                     {
                         strGesture += _modifiersDelimiter;
                     }
 
-                    strGesture += _mouseActionConverter.ConvertTo(context, culture, mouseGesture.MouseWheelAction, destinationType) as string;
+                    strGesture += _mouseActionConverter.ConvertTo(context, culture, mouseGesture.WheelAction, destinationType) as string;
 
                     return strGesture;
                 }

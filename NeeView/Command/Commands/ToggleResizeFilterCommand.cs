@@ -9,7 +9,7 @@ namespace NeeView
         public ToggleResizeFilterCommand()
         {
             this.Group = Properties.TextResources.GetString("CommandGroup.Effect");
-            this.ShortCutKey = "Ctrl+R";
+            this.ShortCutKey = new ShortcutKey("Ctrl+R");
             this.IsShowMessage = true;
         }
 

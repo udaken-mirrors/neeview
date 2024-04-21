@@ -210,7 +210,7 @@ namespace NeeView
 
             foreach (var command in this.Commands)
             {
-                var inputGestures = CommandTable.Current.GetElement(command.Key).GetInputGestureCollection();
+                var inputGestures = CommandTable.Current.GetElement(command.Key).ShortCutKey.Gestures.Select(e => e.GetInputGesture()); 
                 foreach (var gesture in inputGestures)
                 {
                     if (gesture is MouseGesture)
@@ -263,8 +263,8 @@ namespace NeeView
 
             foreach (var command in this.Commands)
             {
-                var inputGestures = CommandTable.Current.GetElement(command.Key).GetInputGestureCollection();
-                foreach (var gesture in inputGestures.Where(e => e is KeyGesture || e is KeyExGesture))
+                var inputGestures = CommandTable.Current.GetElement(command.Key).ShortCutKey.Gestures.OfType<KeyGestureSource>().Select(e => e.GetInputGesture());
+                foreach (var gesture in inputGestures)
                 {
                     if (gesture.HasImeKey())
                     {
@@ -287,7 +287,7 @@ namespace NeeView
 
             foreach (var command in this.Commands)
             {
-                var inputGestures = CommandTable.Current.GetElement(command.Key).GetInputGestureCollection();
+                var inputGestures = CommandTable.Current.GetElement(command.Key).ShortCutKey.Gestures.OfType<KeyGestureSource>().Select(e => e.GetInputGesture());
                 foreach (var gesture in inputGestures)
                 {
                     switch (gesture)

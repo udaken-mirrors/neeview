@@ -16,16 +16,16 @@ namespace NeeView
     [TypeConverter(typeof(KeyExGestureConverter))]
     public class KeyExGesture : InputGesture
     {
-        private const char _modifiersDelimiter = '+';
+        // 入力許可フラグ
+        // NOTE: キーボード入力を一律拒否する挙動のためのフラグだがあまりよろしくない実装
+        public static bool AllowSingleKey { get; set; }
+
 
         // メインキー
         public Key Key { get; private set; }
 
         // 修飾キー
         public ModifierKeys ModifierKeys { get; private set; }
-
-        // 入力許可フラグ
-        public static bool AllowSingleKey { get; set; }
 
 
         // コンストラクタ
@@ -63,23 +63,9 @@ namespace NeeView
             return Key.None <= key && key <= Key.OemClear;
         }
 
-
         public string GetDisplayString()
         {
-            if (Key == Key.None) return "";
-
-            string strBinding = "";
-            string? strKey = Key.GetDisplayString();
-            if (strKey != string.Empty)
-            {
-                strBinding += ModifierKeys.GetDisplayString();
-                if (strBinding != string.Empty)
-                {
-                    strBinding += _modifiersDelimiter;
-                }
-                strBinding += strKey;
-            }
-            return strBinding;
+            return new KeyGestureSource(Key, ModifierKeys).GetDisplayString();
         }
     }
 }

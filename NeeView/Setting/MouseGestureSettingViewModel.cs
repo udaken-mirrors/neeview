@@ -15,38 +15,10 @@ namespace NeeView.Setting
         private readonly string _key;
         private readonly TouchInputForGestureEditor _touchGesture;
         private readonly MouseInputForGestureEditor _mouseGesture;
+        private StringGestureToken _gestureToken = new();
+        private string _newGesture = "";
 
-        /// <summary>
-        /// Property: GestureToken
-        /// </summary>
-        private GestureToken _gestureToken = new();
-        public GestureToken GestureToken
-        {
-            get { return _gestureToken; }
-            set { if (_gestureToken != value) { _gestureToken = value; RaisePropertyChanged(); } }
-        }
-
-        /// <summary>
-        /// Property: Original Gesture
-        /// </summary>
-        public string OriginalGesture { get; set; }
-
-        /// <summary>
-        /// NewGesture property.
-        /// </summary>
-        private string _NewGesture = "";
-        public string NewGesture
-        {
-            get { return _NewGesture; }
-            set { if (_NewGesture != value) { _NewGesture = value; RaisePropertyChanged(); } }
-        }
-
-
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        /// <param name="context"></param>
-        /// <param name="gestureSender"></param>
+        
         public MouseGestureSettingViewModel(IDictionary<string, CommandElement> commandMap, string key, FrameworkElement gestureSender)
         {
             _commandMap = commandMap;
@@ -62,6 +34,22 @@ namespace NeeView.Setting
             UpdateGestureToken(NewGesture);
         }
 
+
+        public StringGestureToken GestureToken
+        {
+            get { return _gestureToken; }
+            set { if (_gestureToken != value) { _gestureToken = value; RaisePropertyChanged(); } }
+        }
+
+        public string OriginalGesture { get; set; }
+
+        public string NewGesture
+        {
+            get { return _newGesture; }
+            set { if (_newGesture != value) { _newGesture = value; RaisePropertyChanged(); } }
+        }
+
+
         /// <summary>
         /// Gesture Changed
         /// </summary>
@@ -73,7 +61,6 @@ namespace NeeView.Setting
             UpdateGestureToken(NewGesture);
         }
 
-
         /// <summary>
         /// Update Gesture Information
         /// </summary>
@@ -81,7 +68,7 @@ namespace NeeView.Setting
         public void UpdateGestureToken(string gesture)
         {
             // Check Conflict
-            var token = new GestureToken(gesture);
+            var token = new StringGestureToken(gesture);
 
             if (!string.IsNullOrEmpty(token.Gesture))
             {
@@ -99,7 +86,6 @@ namespace NeeView.Setting
             GestureToken = token;
         }
 
-
         /// <summary>
         /// 決定
         /// </summary>
@@ -107,7 +93,6 @@ namespace NeeView.Setting
         {
             _commandMap[_key].MouseGesture = NewGesture;
         }
-
 
         /// <summary>
         /// Command: ClearCommand
@@ -123,5 +108,33 @@ namespace NeeView.Setting
             _commandMap[_key].MouseGesture = "";
             _mouseGesture.Gesture.Reset();
         }
+    }
+
+
+    public class StringGestureToken
+    {
+        public StringGestureToken()
+        {
+            Gesture = "";
+        }
+
+        public StringGestureToken(string gesture)
+        {
+            Gesture = gesture;
+        }
+
+
+        // ジェスチャー文字列（１ジェスチャー）
+        public string Gesture { get; set; }
+
+        // 競合しているコマンド群
+        public List<string>? Conflicts { get; set; }
+
+        // 競合メッセージ
+        public string? OverlapsText { get; set; }
+
+        public bool IsConflict => Conflicts != null && Conflicts.Count > 0;
+
+        public bool IsExist => this.Gesture is not null;
     }
 }

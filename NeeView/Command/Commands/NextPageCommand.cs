@@ -5,7 +5,7 @@
         public NextPageCommand()
         {
             this.Group = Properties.TextResources.GetString("CommandGroup.Move");
-            this.ShortCutKey = "Left,LeftClick";
+            this.ShortCutKey = new ShortcutKey("Left,LeftClick");
             this.TouchGesture = "TouchL1,TouchL2";
             this.MouseGesture = "L";
             this.IsShowMessage = false;

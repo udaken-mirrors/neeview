@@ -9,7 +9,7 @@ namespace NeeView
         public ToggleVisibleBookmarkListCommand()
         {
             this.Group = Properties.TextResources.GetString("CommandGroup.Panel");
-            this.ShortCutKey = "D";
+            this.ShortCutKey = new ShortcutKey("D");
             this.IsShowMessage = false;
         }
 

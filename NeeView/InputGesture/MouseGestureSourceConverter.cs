@@ -1,15 +1,15 @@
-﻿using System;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Globalization;
+using System;
 using System.Windows.Input;
 
 namespace NeeView
 {
-    public class MouseExGestureConverter : TypeConverter
+    public class MouseGestureSourceConverter : TypeConverter
     {
         private const char _modifiersDelimiter = '+';
 
-        private static readonly MouseExActionConverter _mouseActionConverter = new();
+        private static readonly MouseActionConverter _mouseActionConverter = new();
         private static readonly ModifierKeysConverter _modifierKeysConverter = new();
         private static readonly ModifierMouseButtonsConverter _modifierMouseButtonsConverter = new();
 
@@ -38,7 +38,7 @@ namespace NeeView
 
                 if (fullName == string.Empty)
                 {
-                    return new MouseExGesture(MouseExAction.None, ModifierKeys.None, ModifierMouseButtons.None);
+                    return new MouseGestureSource(MouseAction.None, ModifierKeys.None, ModifierMouseButtons.None);
                 }
 
                 int offset = fullName.LastIndexOf(_modifiersDelimiter);
@@ -102,7 +102,7 @@ namespace NeeView
                         }
                     }
 
-                    return new MouseExGesture((MouseExAction)mouseAction, (ModifierKeys)modifierKeys, (ModifierMouseButtons)modifierMouseButtons);
+                    return new MouseGestureSource((MouseAction)mouseAction, (ModifierKeys)modifierKeys, (ModifierMouseButtons)modifierMouseButtons);
                 }
             }
             throw GetConvertFromException(source);
@@ -113,11 +113,11 @@ namespace NeeView
         {
             if (destinationType == typeof(string))
             {
-                if (context?.Instance is MouseExGesture mouseGesture)
+                if (context?.Instance is MouseGestureSource mouseGesture)
                 {
                     return (ModifierKeysConverter.IsDefinedModifierKeys(mouseGesture.Modifiers)
                            && ModifierMouseButtonsConverter.IsDefinedModifierMouseButtons(mouseGesture.ModifierButtons)
-                           && MouseExActionConverter.IsDefinedMouseAction(mouseGesture.Action));
+                           && MouseActionConverter.IsDefinedMouseAction(mouseGesture.Action));
                 }
             }
             return false;
@@ -138,7 +138,7 @@ namespace NeeView
                     return string.Empty;
                 }
 
-                if (value is MouseExGesture mouseGesture)
+                if (value is MouseGestureSource mouseGesture)
                 {
                     string strGesture = "";
 
@@ -163,4 +163,5 @@ namespace NeeView
             throw GetConvertToException(value, destinationType);
         }
     }
+
 }

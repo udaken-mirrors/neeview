@@ -9,7 +9,7 @@ namespace NeeView
         public ToggleVisibleFileInfoCommand()
         {
             this.Group = Properties.TextResources.GetString("CommandGroup.Panel");
-            this.ShortCutKey = "I";
+            this.ShortCutKey = new ShortcutKey("I");
             this.IsShowMessage = false;
         }
 

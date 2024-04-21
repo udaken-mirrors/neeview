@@ -8,7 +8,7 @@ namespace NeeView
         public ToggleFullScreenCommand()
         {
             this.Group = Properties.TextResources.GetString("CommandGroup.Window");
-            this.ShortCutKey = "F11";
+            this.ShortCutKey = new ShortcutKey("F11");
             this.MouseGesture = "U";
             this.IsShowMessage = false;
         }

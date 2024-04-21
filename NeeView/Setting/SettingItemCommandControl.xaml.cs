@@ -335,13 +335,13 @@ namespace NeeView.Setting
             {
                 item.ShortCutNote = null;
 
-                if (!string.IsNullOrEmpty(item.Command.ShortCutKey))
+                if (!item.Command.ShortCutKey.IsEmpty)
                 {
                     var shortcuts = new ObservableCollection<GestureElement>();
-                    foreach (var key in item.Command.ShortCutKey.Split(','))
+                    foreach (var key in item.Command.ShortCutKey.Gestures)
                     {
                         var overlaps = _commandItems
-                            .Where(e => !string.IsNullOrEmpty(e.Command.ShortCutKey) && e.Key != item.Key && e.Command.ShortCutKey.Split(',').Contains(key))
+                            .Where(e => !e.Command.ShortCutKey.IsEmpty && e.Key != item.Key && e.Command.ShortCutKey.Gestures.Contains(key))
                             .Select(e => CommandTable.Current.GetElement(e.Key).Text)
                             .ToList();
 
@@ -352,7 +352,7 @@ namespace NeeView.Setting
                         }
 
                         var element = new GestureElement();
-                        element.Gesture = key;
+                        element.Gesture = key.GetDisplayString();
                         element.IsConflict = overlaps.Count > 0;
                         element.Splitter = ",";
 

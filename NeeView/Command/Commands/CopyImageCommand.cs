@@ -9,7 +9,7 @@ namespace NeeView
         public CopyImageCommand()
         {
             this.Group = Properties.TextResources.GetString("CommandGroup.File");
-            this.ShortCutKey = "Ctrl+Shift+C";
+            this.ShortCutKey = new ShortcutKey("Ctrl+Shift+C");
             this.IsShowMessage = true;
         }
 

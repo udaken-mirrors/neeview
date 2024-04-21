@@ -9,7 +9,7 @@ namespace NeeView
         public ToggleVisiblePageListCommand()
         {
             this.Group = Properties.TextResources.GetString("CommandGroup.Panel");
-            this.ShortCutKey = "P";
+            this.ShortCutKey = new ShortcutKey("P");
             this.IsShowMessage = false;
         }
 

@@ -22,26 +22,4 @@ namespace NeeView
         XButton2Click,
         XButton2DoubleClick,
     }
-
-
-    public static class MouseExActionExtensions
-    {
-        private static readonly Dictionary<MouseExAction, string> _map = new();
-        private static StringConverter _displayStringConverter = StringConverter.Default;
-
-        public static void SetDisplayStringConverter(StringConverter converter)
-        {
-            _displayStringConverter = converter;
-        }
-
-        public static void SetDisplayString(this MouseExAction action, string value)
-        {
-            _map[action] = value;
-        }
-
-        public static string GetDisplayString(this MouseExAction action)
-        {
-            return _displayStringConverter.Convert(_map.TryGetValue(action, out var s) ? s : action.ToString());
-        }
-    }
 }

@@ -9,7 +9,7 @@ namespace NeeView
         public ToggleBookmarkCommand()
         {
             this.Group = Properties.TextResources.GetString("CommandGroup.Bookmark");
-            this.ShortCutKey = "Ctrl+D";
+            this.ShortCutKey = new ShortcutKey("Ctrl+D");
             this.IsShowMessage = true;
         }
         public override Binding CreateIsCheckedBinding()

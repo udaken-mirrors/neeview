@@ -7,7 +7,7 @@ namespace NeeView
         public LoadAsCommand()
         {
             this.Group = Properties.TextResources.GetString("CommandGroup.File");
-            this.ShortCutKey = "Ctrl+O";
+            this.ShortCutKey = new ShortcutKey("Ctrl+O");
             this.IsShowMessage = false;
         }
 

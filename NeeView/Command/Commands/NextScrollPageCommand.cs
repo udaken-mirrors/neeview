@@ -9,7 +9,7 @@ namespace NeeView
         public NextScrollPageCommand()
         {
             this.Group = Properties.TextResources.GetString("CommandGroup.Move");
-            this.ShortCutKey = "WheelDown";
+            this.ShortCutKey = new ShortcutKey("WheelDown");
             this.IsShowMessage = false;
             this.PairPartner = "PrevScrollPage";
 

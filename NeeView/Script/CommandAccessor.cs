@@ -31,8 +31,8 @@ namespace NeeView
         [WordNodeMember]
         public string ShortCutKey
         {
-            get { return _command.ShortCutKey; }
-            set { _command.ShortCutKey = value ?? ""; }
+            get { return _command.ShortCutKey.ToString(); }
+            set { _command.ShortCutKey = new ShortcutKey(value); }
         }
 
         [WordNodeMember]

@@ -9,7 +9,7 @@ namespace NeeView
         public ToggleVisibleHistoryListCommand()
         {
             this.Group = Properties.TextResources.GetString("CommandGroup.Panel");
-            this.ShortCutKey = "H";
+            this.ShortCutKey = new ShortcutKey("H");
             this.IsShowMessage = false;
         }
 

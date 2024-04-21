@@ -5,7 +5,7 @@
         public DeleteFileCommand()
         {
             this.Group = Properties.TextResources.GetString("CommandGroup.File");
-            this.ShortCutKey = "Delete";
+            this.ShortCutKey = new ShortcutKey("Delete");
             this.IsShowMessage = false;
         }
 

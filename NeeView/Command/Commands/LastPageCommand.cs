@@ -5,7 +5,7 @@
         public LastPageCommand()
         {
             this.Group = Properties.TextResources.GetString("CommandGroup.Move");
-            this.ShortCutKey = "Ctrl+Left";
+            this.ShortCutKey = new ShortcutKey("Ctrl+Left");
             this.MouseGesture = "UL";
             this.IsShowMessage = true;
             this.PairPartner = "FirstPage";

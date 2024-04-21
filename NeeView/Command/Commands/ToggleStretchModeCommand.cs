@@ -11,7 +11,7 @@ namespace NeeView
         public ToggleStretchModeCommand()
         {
             this.Group = Properties.TextResources.GetString("CommandGroup.ImageScale");
-            this.ShortCutKey = "LeftButton+WheelDown";
+            this.ShortCutKey = new ShortcutKey("LeftButton+WheelDown");
             this.IsShowMessage = true;
 
             this.ParameterSource = new CommandParameterSource(new ToggleStretchModeCommandParameter());

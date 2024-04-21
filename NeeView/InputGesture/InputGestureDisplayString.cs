@@ -67,58 +67,12 @@ namespace NeeView
             var prefix = nameof(MouseAction) + ".";
             foreach (var pair in CollectTextItems(resource, prefix))
             {
-                var name = pair.Key.AsSpan(prefix.Length);
-                switch (name)
-                {
-                    case nameof(MouseWheelAction.WheelUp):
-                    case nameof(MouseWheelAction.WheelDown):
-                        {
-                            var key = (MouseWheelAction)Enum.Parse(typeof(MouseWheelAction), name, true);
-                            key.SetDisplayString(pair.Value.Text);
-                        }
-                        break;
-
-                    case nameof(MouseHorizontalWheelAction.WheelLeft):
-                    case nameof(MouseHorizontalWheelAction.WheelRight):
-                        {
-                            var key = (MouseHorizontalWheelAction)Enum.Parse(typeof(MouseHorizontalWheelAction), name, true);
-                            key.SetDisplayString(pair.Value.Text);
-                        }
-                        break;
-
-                    case nameof(MouseAction.LeftClick):
-                    case nameof(MouseAction.RightClick):
-                    case nameof(MouseAction.MiddleClick):
-                    case nameof(MouseAction.WheelClick):
-                    case nameof(MouseAction.LeftDoubleClick):
-                    case nameof(MouseAction.RightDoubleClick):
-                    case nameof(MouseAction.MiddleDoubleClick):
-                        {
-                            var key = (MouseAction)Enum.Parse(typeof(MouseAction), name, true);
-                            key.SetDisplayString(pair.Value.Text);
-                        }
-                        { 
-                            var key = (MouseExAction)Enum.Parse(typeof(MouseExAction), name, true);
-                            key.SetDisplayString(pair.Value.Text);
-                        }
-                        break;
-
-                    default:
-                        {
-                            var key = (MouseExAction)Enum.Parse(typeof(MouseExAction), name, true);
-                            key.SetDisplayString(pair.Value.Text);
-                        }
-                        break;
-                }
+                var key = (MouseAction)Enum.Parse(typeof(MouseAction), pair.Key.AsSpan(prefix.Length), true);
+                key.SetDisplayString(pair.Value.Text);
             }
 
-            var converter = GetDisplayStringStringConverter(resource, prefix);
             MouseActionExtensions.SetDisplayStringConverter(GetDisplayStringStringConverter(resource, prefix));
-            MouseExActionExtensions.SetDisplayStringConverter(GetDisplayStringStringConverter(resource, prefix));
-            MouseWheelActionExtensions.SetDisplayStringConverter(GetDisplayStringStringConverter(resource, prefix));
-            MouseHorizontalWheelActionExtensions.SetDisplayStringConverter(GetDisplayStringStringConverter(resource, prefix));
         }
-
 
         public static string GetDisplayString(InputGesture gesture)
         {

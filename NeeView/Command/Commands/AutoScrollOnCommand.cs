@@ -9,7 +9,7 @@ namespace NeeView
         public AutoScrollOnCommand()
         {
             this.Group = Properties.TextResources.GetString("CommandGroup.ViewManipulation");
-            this.ShortCutKey = "MiddleClick";
+            this.ShortCutKey = new ShortcutKey("MiddleClick");
             this.IsShowMessage = false;
         }
 

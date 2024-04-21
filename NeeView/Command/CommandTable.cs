@@ -534,20 +534,20 @@ namespace NeeView
                     break;
 
                 case InputScheme.TypeB: // wheel page, right click context menu
-                    memento["NextScrollPage"].ShortCutKey = "";
-                    memento["PrevScrollPage"].ShortCutKey = "";
-                    memento["NextPage"].ShortCutKey = "Left,WheelDown";
-                    memento["PrevPage"].ShortCutKey = "Right,WheelUp";
-                    memento["OpenContextMenu"].ShortCutKey = "RightClick";
+                    memento["NextScrollPage"].ShortCutKey = ShortcutKey.Empty;
+                    memento["PrevScrollPage"].ShortCutKey = ShortcutKey.Empty;
+                    memento["NextPage"].ShortCutKey = new ShortcutKey("Left,WheelDown");
+                    memento["PrevPage"].ShortCutKey = new ShortcutKey("Right,WheelUp");
+                    memento["OpenContextMenu"].ShortCutKey = new ShortcutKey("RightClick");
                     break;
 
                 case InputScheme.TypeC: // click page
-                    memento["NextScrollPage"].ShortCutKey = "";
-                    memento["PrevScrollPage"].ShortCutKey = "";
-                    memento["NextPage"].ShortCutKey = "Left,LeftClick";
-                    memento["PrevPage"].ShortCutKey = "Right,RightClick";
-                    memento["ViewScrollUp"].ShortCutKey = "WheelUp";
-                    memento["ViewScrollDown"].ShortCutKey = "WheelDown";
+                    memento["NextScrollPage"].ShortCutKey = ShortcutKey.Empty;
+                    memento["PrevScrollPage"].ShortCutKey = ShortcutKey.Empty;
+                    memento["NextPage"].ShortCutKey = new ShortcutKey("Left,LeftClick");
+                    memento["PrevPage"].ShortCutKey = new ShortcutKey("Right,RightClick");
+                    memento["ViewScrollUp"].ShortCutKey = new ShortcutKey("WheelUp");
+                    memento["ViewScrollDown"].ShortCutKey = new ShortcutKey("WheelDown");
                     break;
             }
 
@@ -590,29 +590,6 @@ namespace NeeView
             }
         }
 
-
-        // ショートカット重複チェック
-        public List<string> GetOverlapShortCut(string shortcut)
-        {
-            var overlaps = _elements
-                .Where(e => !string.IsNullOrEmpty(e.Value.ShortCutKey) && e.Value.ShortCutKey.Split(',').Contains(shortcut))
-                .Select(e => e.Key)
-                .ToList();
-
-            return overlaps;
-        }
-
-        // マウスジェスチャー重複チェック
-        public List<string> GetOverlapMouseGesture(string gesture)
-        {
-            var overlaps = _elements
-                .Where(e => !string.IsNullOrEmpty(e.Value.MouseGesture) && e.Value.MouseGesture.Split(',').Contains(gesture))
-                .Select(e => e.Key)
-                .ToList();
-
-            return overlaps;
-        }
-
         // コマンドリストをブラウザで開く
         public void OpenCommandListHelp()
         {
@@ -639,7 +616,7 @@ namespace NeeView
             ExternalProcess.Start(fileName);
         }
 
-        #endregion
+#endregion
 
         #region Scripts
 

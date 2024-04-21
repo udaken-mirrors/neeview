@@ -10,7 +10,7 @@ namespace NeeView
         public ToggleEffectCommand()
         {
             this.Group = Properties.TextResources.GetString("CommandGroup.Effect");
-            this.ShortCutKey = "Ctrl+E";
+            this.ShortCutKey = new ShortcutKey("Ctrl+E");
             this.IsShowMessage = true;
         }
 

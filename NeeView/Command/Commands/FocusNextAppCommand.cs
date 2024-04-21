@@ -5,7 +5,7 @@
         public FocusNextAppCommand()
         {
             this.Group = Properties.TextResources.GetString("CommandGroup.Window");
-            this.ShortCutKey = "Ctrl+Tab";
+            this.ShortCutKey = new ShortcutKey("Ctrl+Tab");
             this.IsShowMessage = false;
         }
 

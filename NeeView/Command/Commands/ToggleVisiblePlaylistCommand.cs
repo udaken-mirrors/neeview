@@ -9,7 +9,7 @@ namespace NeeView
         public ToggleVisiblePlaylistCommand()
         {
             this.Group = Properties.TextResources.GetString("CommandGroup.Panel");
-            this.ShortCutKey = "M";
+            this.ShortCutKey = new ShortcutKey("M");
             this.IsShowMessage = false;
         }
 

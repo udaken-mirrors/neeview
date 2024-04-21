@@ -5,7 +5,7 @@
         public MoveToParentBookCommand()
         {
             this.Group = Properties.TextResources.GetString("CommandGroup.BookMove");
-            this.ShortCutKey = "Alt+Up";
+            this.ShortCutKey = new ShortcutKey("Alt+Up");
             this.IsShowMessage = false;
         }
 

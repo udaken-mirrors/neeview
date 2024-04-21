@@ -10,7 +10,7 @@ namespace NeeView
         public ViewScaleDownCommand()
         {
             this.Group = Properties.TextResources.GetString("CommandGroup.ViewManipulation");
-            this.ShortCutKey = "RightButton+WheelDown";
+            this.ShortCutKey = new ShortcutKey("RightButton+WheelDown");
             this.IsShowMessage = false;
 
             // ViewScaleUp

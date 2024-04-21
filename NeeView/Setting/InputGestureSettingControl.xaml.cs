@@ -20,6 +20,13 @@ namespace NeeView.Setting
     /// </summary>
     public partial class InputGestureSettingControl : UserControl
     {
+        private static Key[] _ignoreKeys = new Key[]
+        {
+            Key.System, Key.LeftShift, Key.LeftCtrl, Key.RightShift, Key.RightCtrl, Key.LWin, Key.RWin, Key.LeftAlt, Key.RightAlt,
+            Key.ImeProcessed, Key.ImeModeChange, Key.ImeAccept,
+            Key.Apps, Key.NumLock
+        };
+
         private InputGestureSettingViewModel? _vm;
 
 
@@ -58,10 +65,12 @@ namespace NeeView.Setting
             }
         }
 
+
         // キー入力処理
         // 押されているキーの状態からショートカットテキスト作成
         private void KeyGestureBox_PreviewKeyDown(object sender, KeyEventArgs e)
         {
+            if (_vm is null) return;
             if (e.IsRepeat) return;
 
             // TAB, ALT+にも対応
@@ -75,65 +84,24 @@ namespace NeeView.Setting
 
             ////Debug.WriteLine($"{Keyboard.Modifiers}+{e.Key}({key})");
 
-            Key[] ignoreKeys = new Key[]
+            if (_ignoreKeys.Contains(key))
             {
-                Key.System, Key.LeftShift, Key.LeftCtrl, Key.RightShift, Key.RightCtrl, Key.LWin, Key.RWin, Key.LeftAlt, Key.RightAlt,
-                Key.ImeProcessed, Key.ImeModeChange, Key.ImeAccept,
-                Key.Apps, Key.NumLock
-            };
-
-            if (ignoreKeys.Contains(key))
-            {
-                this.KeyGestureText.Text = null;
+                _vm.KeyGesture = null;
                 return;
             }
 
-            KeyExGesture? keyExGesture = null;
-            try
-            {
-                keyExGesture = new KeyExGesture(key, Keyboard.Modifiers);
-            }
-            catch { }
-
-            if (keyExGesture != null)
-            {
-                var converter = new KeyExGestureConverter();
-                this.KeyGestureText.Text = ValidateKeyGestureText(converter.ConvertToString(keyExGesture));
-            }
-            else
-            {
-                this.KeyGestureText.Text = null;
-            }
+            _vm.KeyGesture = new KeyGestureSource(key, Keyboard.Modifiers); ;
 
             e.Handled = true;
         }
-
-        /// <summary>
-        /// キーコード表示補正
-        /// </summary>
-        /// <param name="source"></param>
-        /// <returns></returns>
-        private static string? ValidateKeyGestureText(string? source)
-        {
-            if (source is null) return null;
-
-            var keys = source.Split('+');
-
-            // Next ->PageDown
-            // NextとPageDownはキーコードが同一であるため、表示文字列が意図しない物になることがある
-            var tokens = keys.Select(e => e == "Next" ? "PageDown" : e);
-
-            return string.Join("+", tokens);
-        }
-
 
         // 追加ボタン処理
         private void AddKeyGestureButton_Click(object sender, RoutedEventArgs e)
         {
             if (_vm is null) return;
 
-            _vm.AddGesture(this.KeyGestureText.Text);
-            this.KeyGestureText.Text = null;
+            _vm.AddGesture(_vm.KeyGesture);
+            _vm.KeyGesture = null;
         }
 
         // 削除ボタン処理
@@ -141,7 +109,7 @@ namespace NeeView.Setting
         {
             if (_vm is null) return;
 
-            if (this.InputGestureList.SelectedValue is GestureToken token)
+            if (this.InputGestureList.SelectedValue is InputGestureToken token)
             {
                 _vm.RemoveGesture(token.Gesture);
             }
@@ -152,26 +120,81 @@ namespace NeeView.Setting
         // マウスの状態からショートカットテキスト作成
         private void MouseGestureBox_PreviewMouseDown(object sender, MouseButtonEventArgs e)
         {
-            MouseExAction exAction = MouseExAction.None;
+            if (_vm is null) return;
+
+            MouseAction action = MouseAction.None;
             switch (e.ChangedButton)
             {
                 case MouseButton.Left:
-                    exAction = e.ClickCount >= 2 ? MouseExAction.LeftDoubleClick : MouseExAction.LeftClick;
+                    action = e.ClickCount >= 2 ? MouseAction.LeftDoubleClick : MouseAction.LeftClick;
                     break;
                 case MouseButton.Right:
-                    exAction = e.ClickCount >= 2 ? MouseExAction.RightDoubleClick : MouseExAction.RightClick;
+                    action = e.ClickCount >= 2 ? MouseAction.RightDoubleClick : MouseAction.RightClick;
                     break;
                 case MouseButton.Middle:
-                    exAction = e.ClickCount >= 2 ? MouseExAction.MiddleDoubleClick : MouseExAction.MiddleClick;
+                    action = e.ClickCount >= 2 ? MouseAction.MiddleDoubleClick : MouseAction.MiddleClick;
                     break;
                 case MouseButton.XButton1:
-                    exAction = e.ClickCount >= 2 ? MouseExAction.XButton1DoubleClick : MouseExAction.XButton1Click;
+                    action = e.ClickCount >= 2 ? MouseAction.XButton1DoubleClick : MouseAction.XButton1Click;
                     break;
                 case MouseButton.XButton2:
-                    exAction = e.ClickCount >= 2 ? MouseExAction.XButton2DoubleClick : MouseExAction.XButton2Click;
+                    action = e.ClickCount >= 2 ? MouseAction.XButton2DoubleClick : MouseAction.XButton2Click;
                     break;
             }
 
+            SetMouseGesture(action, Keyboard.Modifiers, GetModifierMouseButtons(e));
+        }
+
+
+        // マウスホイール入力処理
+        // マウスの状態からショートカットテキスト作成
+        private void MouseGestureBox_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
+        {
+            if (_vm is null) return;
+
+            MouseAction wheelAction = MouseAction.None;
+            if (e.Delta > 0)
+            {
+                wheelAction = MouseAction.WheelUp;
+            }
+            else if (e.Delta < 0)
+            {
+                wheelAction = MouseAction.WheelDown;
+            }
+
+            SetMouseGesture(wheelAction, Keyboard.Modifiers, GetModifierMouseButtons(e));
+        }
+
+        // マウス水平ホイール入力処理
+        // マウスの状態からショートカットテキスト作成
+        private void MouseGestureBox_MouseHorizontalWheelChanged(object sender, MouseWheelEventArgs e)
+        {
+            if (_vm is null) return;
+
+            MouseAction wheelAction = MouseAction.None;
+            if (e.Delta > 0)
+            {
+                wheelAction = MouseAction.WheelRight;
+            }
+            else if (e.Delta < 0)
+            {
+                wheelAction = MouseAction.WheelLeft;
+            }
+
+            SetMouseGesture(wheelAction, Keyboard.Modifiers, GetModifierMouseButtons(e));
+        }
+
+        private void SetMouseGesture(MouseAction key, ModifierKeys modifiers, ModifierMouseButtons modifierMouseButtons)
+        {
+            if (_vm is null) return;
+            if (key == MouseAction.None) return;
+
+            _vm.MouseGesture = new MouseGestureSource(key, modifiers, modifierMouseButtons);
+            this.AddMouseGestureButton.Focus();
+        }
+
+        private ModifierMouseButtons GetModifierMouseButtons(MouseButtonEventArgs e)
+        {
             ModifierMouseButtons modifierMouseButtons = ModifierMouseButtons.None;
             if (e.LeftButton == MouseButtonState.Pressed && e.ChangedButton != MouseButton.Left)
                 modifierMouseButtons |= ModifierMouseButtons.LeftButton;
@@ -183,48 +206,11 @@ namespace NeeView.Setting
                 modifierMouseButtons |= ModifierMouseButtons.XButton1;
             if (e.XButton2 == MouseButtonState.Pressed && e.ChangedButton != MouseButton.XButton2)
                 modifierMouseButtons |= ModifierMouseButtons.XButton2;
-
-            // 拡張マウス入力で判定 (標準マウス入力も含まれるため）
-            {
-                MouseExGesture? mouseGesture = null;
-                try
-                {
-                    mouseGesture = new MouseExGesture(exAction, Keyboard.Modifiers, modifierMouseButtons);
-                }
-                catch { }
-
-                if (mouseGesture != null)
-                {
-                    var converter = new MouseExGestureConverter();
-                    this.MouseGestureText.Text = converter.ConvertToString(mouseGesture);
-                }
-                else
-                {
-                    this.MouseGestureText.Text = null;
-                }
-            }
-
-            if (this.MouseGestureText.Text != null)
-            {
-                this.AddMouseGestureButton.Focus();
-            }
+            return modifierMouseButtons;
         }
 
-
-        // マウスホイール入力処理
-        // マウスの状態からショートカットテキスト作成
-        private void MouseGestureBox_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
+        private ModifierMouseButtons GetModifierMouseButtons(MouseEventArgs e)
         {
-            MouseWheelAction wheelAction = MouseWheelAction.None;
-            if (e.Delta > 0)
-            {
-                wheelAction = MouseWheelAction.WheelUp;
-            }
-            else if (e.Delta < 0)
-            {
-                wheelAction = MouseWheelAction.WheelDown;
-            }
-
             ModifierMouseButtons modifierMouseButtons = ModifierMouseButtons.None;
             if (e.LeftButton == MouseButtonState.Pressed)
                 modifierMouseButtons |= ModifierMouseButtons.LeftButton;
@@ -236,77 +222,7 @@ namespace NeeView.Setting
                 modifierMouseButtons |= ModifierMouseButtons.XButton1;
             if (e.XButton2 == MouseButtonState.Pressed)
                 modifierMouseButtons |= ModifierMouseButtons.XButton2;
-
-            MouseWheelGesture? mouseGesture = null;
-            try
-            {
-                mouseGesture = new MouseWheelGesture(wheelAction, Keyboard.Modifiers, modifierMouseButtons);
-            }
-            catch { }
-
-            if (mouseGesture != null)
-            {
-                var converter = new MouseWheelGestureConverter();
-                this.MouseGestureText.Text = converter.ConvertToString(mouseGesture);
-            }
-            else
-            {
-                this.MouseGestureText.Text = null;
-            }
-
-            if (this.MouseGestureText.Text != null)
-            {
-                this.AddMouseGestureButton.Focus();
-            }
-        }
-
-        // マウス水平ホイール入力処理
-        // マウスの状態からショートカットテキスト作成
-        private void MouseGestureBox_MouseHorizontalWheelChanged(object sender, MouseWheelEventArgs e)
-        {
-            MouseHorizontalWheelAction wheelAction = MouseHorizontalWheelAction.None;
-            if (e.Delta > 0)
-            {
-                wheelAction = MouseHorizontalWheelAction.WheelRight;
-            }
-            else if (e.Delta < 0)
-            {
-                wheelAction = MouseHorizontalWheelAction.WheelLeft;
-            }
-
-            ModifierMouseButtons modifierMouseButtons = ModifierMouseButtons.None;
-            if (e.LeftButton == MouseButtonState.Pressed)
-                modifierMouseButtons |= ModifierMouseButtons.LeftButton;
-            if (e.RightButton == MouseButtonState.Pressed)
-                modifierMouseButtons |= ModifierMouseButtons.RightButton;
-            if (e.MiddleButton == MouseButtonState.Pressed)
-                modifierMouseButtons |= ModifierMouseButtons.MiddleButton;
-            if (e.XButton1 == MouseButtonState.Pressed)
-                modifierMouseButtons |= ModifierMouseButtons.XButton1;
-            if (e.XButton2 == MouseButtonState.Pressed)
-                modifierMouseButtons |= ModifierMouseButtons.XButton2;
-
-            MouseHorizontalWheelGesture? mouseGesture = null;
-            try
-            {
-                mouseGesture = new MouseHorizontalWheelGesture(wheelAction, Keyboard.Modifiers, modifierMouseButtons);
-            }
-            catch { }
-
-            if (mouseGesture != null)
-            {
-                var converter = new MouseHorizontalWheelGestureConverter();
-                this.MouseGestureText.Text = converter.ConvertToString(mouseGesture);
-            }
-            else
-            {
-                this.MouseGestureText.Text = null;
-            }
-
-            if (this.MouseGestureText.Text != null)
-            {
-                this.AddMouseGestureButton.Focus();
-            }
+            return modifierMouseButtons;
         }
 
 
@@ -315,8 +231,8 @@ namespace NeeView.Setting
         {
             if (_vm is null) return;
 
-            _vm.AddGesture(this.MouseGestureText.Text);
-            this.MouseGestureText.Text = null;
+            _vm.AddGesture(_vm.MouseGesture);
+            _vm.MouseGesture = null;
         }
 
         /// <summary>
@@ -328,7 +244,7 @@ namespace NeeView.Setting
         {
             if (_vm is null) return;
 
-            if (this.InputGestureList.SelectedValue is GestureToken item)
+            if (this.InputGestureList.SelectedValue is InputGestureToken item)
             {
                 _vm.ResolveConflict(item, Window.GetWindow(this));
             }

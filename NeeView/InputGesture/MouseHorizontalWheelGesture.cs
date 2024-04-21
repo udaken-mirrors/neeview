@@ -7,23 +7,21 @@ namespace NeeView
     /// </summary>
     public class MouseHorizontalWheelGesture : InputGesture
     {
-        private const char _modifiersDelimiter = '+';
-        
         // マウスホイールアクション
-        public MouseHorizontalWheelAction MouseWheelAction { get; private set; }
+        public MouseHorizontalWheelAction WheelAction { get; private set; }
 
         // 修飾キー
-        public ModifierKeys ModifierKeys { get; private set; }
+        public ModifierKeys Modifiers { get; private set; }
 
         // 修飾マウスボタン
-        public ModifierMouseButtons ModifierMouseButtons { get; private set; }
+        public ModifierMouseButtons ModifierButtons { get; private set; }
 
         // コンストラクタ
-        public MouseHorizontalWheelGesture(MouseHorizontalWheelAction wheelAction, ModifierKeys modifierKeys, ModifierMouseButtons modifierMouseButtons)
+        public MouseHorizontalWheelGesture(MouseHorizontalWheelAction wheelAction, ModifierKeys modifiers, ModifierMouseButtons modifierButtons)
         {
-            this.MouseWheelAction = wheelAction;
-            this.ModifierKeys = modifierKeys;
-            this.ModifierMouseButtons = modifierMouseButtons;
+            this.WheelAction = wheelAction;
+            this.Modifiers = modifiers;
+            this.ModifierButtons = modifierButtons;
         }
 
         // 入力判定
@@ -54,34 +52,13 @@ namespace NeeView
             if (mouseEventArgs.XButton2 == MouseButtonState.Pressed)
                 modifierMouseButtons |= ModifierMouseButtons.XButton2;
 
-            return this.MouseWheelAction == wheelAction && ModifierKeys == Keyboard.Modifiers && ModifierMouseButtons == modifierMouseButtons;
+            return this.WheelAction == wheelAction && Modifiers == Keyboard.Modifiers && ModifierButtons == modifierMouseButtons;
         }
 
 
         public string GetDisplayString()
         {
-            if (MouseWheelAction == MouseHorizontalWheelAction.None) return "";
-
-            string strBinding = "";
-            string? strKey = MouseWheelAction.GetDisplayString();
-            if (strKey != string.Empty)
-            {
-                strBinding += ModifierKeys.GetDisplayString();
-                if (strBinding != string.Empty)
-                {
-                    strBinding += _modifiersDelimiter;
-                }
-
-                var buttons = ModifierMouseButtons.GetDisplayString();
-                if (buttons != string.Empty)
-                {
-                    strBinding += buttons;
-                    strBinding += _modifiersDelimiter;
-                }
-
-                strBinding += strKey;
-            }
-            return strBinding;
+            return new MouseGestureSource(MouseActionExtensions.ConvertFrom(WheelAction), Modifiers, ModifierButtons).GetDisplayString();
         }
     }
 

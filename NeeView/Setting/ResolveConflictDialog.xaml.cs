@@ -58,9 +58,9 @@ namespace NeeView.Setting
 
         public string Text => CommandTable.Current.GetElement(CommandName).Text;
 
-        public ConflictItem(string cmmandName, bool isChecked)
+        public ConflictItem(string commandName, bool isChecked)
         {
-            CommandName = cmmandName;
+            CommandName = commandName;
             IsChecked = isChecked;
         }
     }
@@ -76,7 +76,7 @@ namespace NeeView.Setting
         public string Title => $"{CommandTable.Current.GetElement(_context.Command).Text} - {Properties.TextResources.GetString("ResolveConflictDialog.Title")}";
 
         ////public string Gesture => _context.Gesture;
-        public string Note => string.Format(Properties.TextResources.GetString("ResolveConflictDialog.Message"), _context.Gesture);
+        public string Note => string.Format(Properties.TextResources.GetString("ResolveConflictDialog.Message"), _context.Gesture.GetDisplayString());
 
         public List<ConflictItem> Conflicts => _context.Conflicts;
 
@@ -92,17 +92,13 @@ namespace NeeView.Setting
     /// </summary>
     public class ResolveConflictDialogContext
     {
-        public string Command { get; set; }
-        public string Gesture { get; set; }
-        public List<ConflictItem> Conflicts { get; set; }
-
         /// <summary>
         /// constructor
         /// </summary>
-        /// <param name="command">currrent command</param>
+        /// <param name="command">current command</param>
         /// <param name="gesture">conflict gesture</param>
         /// <param name="commands">conflict commands</param>
-        public ResolveConflictDialogContext(string gesture, List<string> commands, string command)
+        public ResolveConflictDialogContext(InputGestureSource gesture, List<string> commands, string command)
         {
             Command = command;
             Gesture = gesture;
@@ -111,5 +107,10 @@ namespace NeeView.Setting
                 .Select(e => new ConflictItem(e, e == command))
                 .ToList();
         }
+
+        public string Command { get; set; }
+        public InputGestureSource Gesture { get; set; }
+        public List<ConflictItem> Conflicts { get; set; }
+
     }
 }

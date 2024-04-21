@@ -5,7 +5,7 @@
         public FocusPrevAppCommand()
         {
             this.Group = Properties.TextResources.GetString("CommandGroup.Window");
-            this.ShortCutKey = "Ctrl+Shift+Tab";
+            this.ShortCutKey = new ShortcutKey("Ctrl+Shift+Tab");
             this.IsShowMessage = false;
         }
 
