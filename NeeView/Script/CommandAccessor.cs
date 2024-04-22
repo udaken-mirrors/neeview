@@ -38,8 +38,8 @@ namespace NeeView
         [WordNodeMember]
         public string TouchGesture
         {
-            get { return _command.TouchGesture; }
-            set { _command.TouchGesture = value ?? ""; }
+            get { return _command.TouchGesture.ToString(); }
+            set { _command.TouchGesture = new TouchGesture(value); }
         }
 
         [WordNodeMember]

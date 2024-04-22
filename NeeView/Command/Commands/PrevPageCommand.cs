@@ -6,7 +6,7 @@
         {
             this.Group = Properties.TextResources.GetString("CommandGroup.Move");
             this.ShortCutKey = new ShortcutKey("Right,RightClick");
-            this.TouchGesture = "TouchR1,TouchR2";
+            this.TouchGesture = new TouchGesture("TouchR1,TouchR2");
             this.MouseGesture = "R";
             this.IsShowMessage = false;
             this.PairPartner = "NextPage";

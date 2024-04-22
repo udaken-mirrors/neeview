@@ -96,6 +96,21 @@ The available names are as follows
 
 e.g., "MouseAction.LeftClick=Linksklick"
 
+### Touch area
+
+Touch area.
+
+Prefix is `TouchArea.` .  
+The available names are as follows
+
+- TouchL1
+- TouchL2
+- TouchR1
+- TouchR2
+- TouchCenter
+
+e.g., "TouchArea.TouchL1=BerührenL1"
+
 # ConvertRestext.ps1
 
 Converts between language files (*.restext) and JSON. This is a utility tool, not a required feature.

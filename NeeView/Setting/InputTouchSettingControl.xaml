@@ -81,23 +81,23 @@
                         <RowDefinition Height="1*" />
                     </Grid.RowDefinitions>
                     <Rectangle Grid.Column="0" Grid.ColumnSpan="3" Grid.Row="0" Grid.RowSpan="2"
-                            Fill="{Binding TouchAreaMap, Converter={StaticResource TouchAreaToBrush}, ConverterParameter={x:Static nv:TouchGesture.TouchL1}}" />
+                            Fill="{Binding TouchAreaMap, Converter={StaticResource TouchAreaToBrush}, ConverterParameter={x:Static nv:TouchArea.TouchL1}}" />
                     <Rectangle Grid.Column="0" Grid.ColumnSpan="3" Grid.Row="0" Grid.RowSpan="2" Margin="0,0,-1,-1" Stroke="{DynamicResource Control.Border}" StrokeThickness="2" StrokeDashArray="2,2"
                             Fill="{StaticResource DiagonalBrush}" />
                     <Rectangle Grid.Column="3" Grid.ColumnSpan="3" Grid.Row="0" Grid.RowSpan="2"
-                            Fill="{Binding TouchAreaMap, Converter={StaticResource TouchAreaToBrush}, ConverterParameter={x:Static nv:TouchGesture.TouchR1}}" />
+                            Fill="{Binding TouchAreaMap, Converter={StaticResource TouchAreaToBrush}, ConverterParameter={x:Static nv:TouchArea.TouchR1}}" />
                     <Rectangle Grid.Column="3" Grid.ColumnSpan="3" Grid.Row="0" Grid.RowSpan="2" Margin="-1,0,0,-1" Stroke="{DynamicResource Control.Border}" StrokeThickness="2" StrokeDashArray="2,2"
                             Fill="{StaticResource DiagonalBrush}" />
                     <Rectangle Grid.Column="0" Grid.ColumnSpan="3" Grid.Row="2" Grid.RowSpan="2"
-                            Fill="{Binding TouchAreaMap, Converter={StaticResource TouchAreaToBrush}, ConverterParameter={x:Static nv:TouchGesture.TouchL2}}" />
+                            Fill="{Binding TouchAreaMap, Converter={StaticResource TouchAreaToBrush}, ConverterParameter={x:Static nv:TouchArea.TouchL2}}" />
                     <Rectangle Grid.Column="0" Grid.ColumnSpan="3" Grid.Row="2" Grid.RowSpan="2" Margin="0,-1,-1,0" Stroke="{DynamicResource Control.Border}" StrokeThickness="2" StrokeDashArray="2,2"
                             Fill="{StaticResource DiagonalBrush}" />
                     <Rectangle Grid.Column="3" Grid.ColumnSpan="3" Grid.Row="2" Grid.RowSpan="2"
-                            Fill="{Binding TouchAreaMap, Converter={StaticResource TouchAreaToBrush}, ConverterParameter={x:Static nv:TouchGesture.TouchR2}}" />
+                            Fill="{Binding TouchAreaMap, Converter={StaticResource TouchAreaToBrush}, ConverterParameter={x:Static nv:TouchArea.TouchR2}}" />
                     <Rectangle Grid.Column="3" Grid.ColumnSpan="3" Grid.Row="2" Grid.RowSpan="2" Margin="-1,-1,0,0" Stroke="{DynamicResource Control.Border}" StrokeThickness="2" StrokeDashArray="2,2"
                             Fill="{StaticResource DiagonalBrush}" />
                     <Rectangle Grid.Column="2" Grid.ColumnSpan="2" Grid.Row="0" Grid.RowSpan="3"
-                            Fill="{Binding TouchAreaMap, Converter={StaticResource TouchAreaToBrush}, ConverterParameter={x:Static nv:TouchGesture.TouchCenter}}" />
+                            Fill="{Binding TouchAreaMap, Converter={StaticResource TouchAreaToBrush}, ConverterParameter={x:Static nv:TouchArea.TouchCenter}}" />
                     <Rectangle Grid.Column="2" Grid.ColumnSpan="2" Grid.Row="0" Grid.RowSpan="3" Stroke="{DynamicResource Control.Border}" StrokeThickness="2" StrokeDashArray="2,2"
                             Fill="{StaticResource DiagonalBrush}" />
                     <Rectangle Grid.Column="0" Grid.ColumnSpan="6" Grid.Row="0" Grid.RowSpan="4" Stroke="{DynamicResource Control.Border}" StrokeThickness="4" />

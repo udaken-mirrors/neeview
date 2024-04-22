@@ -184,14 +184,14 @@ namespace NeeView
 
             foreach (var command in this.Commands)
             {
-                var touchGestures = CommandTable.Current.GetElement(command.Key).GetTouchGestureCollection();
-                foreach (var gesture in touchGestures)
+                var areas = CommandTable.Current.GetElement(command.Key).TouchGesture.Areas;
+                foreach (var area in areas)
                 {
                     touch.TouchGestureChanged += (s, x) =>
                     {
                         if (command.Key == "TouchEmulate") return;
 
-                        if (!x.Handled && x.Gesture == gesture)
+                        if (!x.Handled && x.Area == area)
                         {
                             command.Value.Execute(null, (s as IInputElement) ?? MainWindow.Current);
                             x.Handled = true;

@@ -409,24 +409,24 @@ namespace NeeView.Setting
             {
                 item.TouchGestureNote = null;
 
-                if (!string.IsNullOrEmpty(item.Command.TouchGesture))
+                if (!item.Command.TouchGesture.IsEmpty)
                 {
                     var elements = new ObservableCollection<GestureElement>();
-                    foreach (var key in item.Command.TouchGesture.Split(','))
+                    foreach (var area in item.Command.TouchGesture.Areas)
                     {
                         var overlaps = _commandItems
-                            .Where(e => !string.IsNullOrEmpty(e.Command.TouchGesture) && e.Key != item.Key && e.Command.TouchGesture.Split(',').Contains(key))
+                            .Where(e => !e.Command.TouchGesture.IsEmpty && e.Key != item.Key && e.Command.TouchGesture.Areas.Contains(area))
                             .Select(e => CommandTable.Current.GetElement(e.Key).Text)
                             .ToList();
 
                         if (overlaps.Count > 0)
                         {
                             if (item.TouchGestureNote != null) item.TouchGestureNote += "\n";
-                            item.TouchGestureNote += string.Format(Properties.TextResources.GetString("Notice.ConflictWith"), key, ResourceService.Join(overlaps));
+                            item.TouchGestureNote += string.Format(Properties.TextResources.GetString("Notice.ConflictWith"), area.GetDisplayString(), ResourceService.Join(overlaps));
                         }
 
                         var element = new GestureElement();
-                        element.Gesture = key;
+                        element.Gesture = area.GetDisplayString();
                         element.IsConflict = overlaps.Count > 0;
                         element.Splitter = ",";
 

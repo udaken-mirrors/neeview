@@ -9,7 +9,7 @@ using System.Diagnostics;
 namespace NeeView
 {
     [JsonConverter(typeof(JsonShortcutKeyConverter))]
-    public class ShortcutKey : IEquatable<ShortcutKey>
+    public record ShortcutKey : IEquatable<ShortcutKey>
     {
         public static ShortcutKey Empty { get; } = new ShortcutKey();
 
@@ -35,15 +35,13 @@ namespace NeeView
         public bool IsEmpty => Gestures.Count == 0;
 
 
-        public bool Equals(ShortcutKey? other)
+        public virtual bool Equals(ShortcutKey? other)
         {
-            if (other == null) return false;
+            if (other is null) return false;
+            if (EqualityContract != other.EqualityContract) return false;
+            if (ReferenceEquals(this, other)) return true;
+            
             return this.Gestures.SequenceEqual(other.Gestures);
-        }
-
-        public override bool Equals(object? obj)
-        {
-            return Equals(obj as ShortcutKey);
         }
 
         public override int GetHashCode()
