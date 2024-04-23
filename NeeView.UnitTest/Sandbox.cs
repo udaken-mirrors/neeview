@@ -203,6 +203,28 @@ namespace NeeView.UnitTest
         }
 
         [Fact]
+        public void MouseSequenceTest()
+        {
+            var l1a = new MouseSequence("LRL");
+            var l1b = new MouseSequence("LRL");
+            var r1a = new MouseSequence("LRLC");
+
+#pragma warning disable CS1718 // 同じ変数と比較されました
+            Assert.True(l1a == l1a);
+#pragma warning restore CS1718 // 同じ変数と比較されました
+            Assert.True(l1a == l1b);
+            Assert.False(l1a == r1a);
+
+            Assert.True(l1a.Equals(l1a));
+            Assert.True(l1a.Equals(l1b));
+            Assert.False(l1a.Equals(r1a));
+
+            Assert.True(ReferenceEquals(l1a, l1a));
+            Assert.False(ReferenceEquals(l1a, l1b));
+            Assert.False(ReferenceEquals(l1a, r1a));
+        }
+
+        [Fact]
         public void TouchGestureTest()
         {
             var l1a = new TouchGesture("TouchL1");

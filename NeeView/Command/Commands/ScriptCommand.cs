@@ -52,7 +52,7 @@ namespace NeeView
                 command.Remarks = source.Remarks;
                 command.ShortCutKey = ShortcutKey.Empty;
                 command.TouchGesture = TouchGesture.Empty;
-                command.MouseGesture = "";
+                command.MouseGesture = MouseSequence.Empty;
             }
             return command;
         }
@@ -85,7 +85,7 @@ namespace NeeView
                 if (isForce || (_defaultGestures != null && _defaultGestures.IsEquals(this) && !IsCloneCommand()))
                 {
                     ShortCutKey = new ShortcutKey(source.ShortCutKey);
-                    MouseGesture = source.MouseGesture ?? "";
+                    MouseGesture = new MouseSequence(source.MouseGesture);
                     TouchGesture = new TouchGesture(source.TouchGesture);
 
                     StoreDefault();

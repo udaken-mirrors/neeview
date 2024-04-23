@@ -7,7 +7,7 @@
             this.Group = Properties.TextResources.GetString("CommandGroup.Move");
             this.ShortCutKey = new ShortcutKey("Left,LeftClick");
             this.TouchGesture = new TouchGesture("TouchL1,TouchL2");
-            this.MouseGesture = "L";
+            this.MouseGesture = new MouseSequence("L");
             this.IsShowMessage = false;
             this.PairPartner = "PrevPage";
 

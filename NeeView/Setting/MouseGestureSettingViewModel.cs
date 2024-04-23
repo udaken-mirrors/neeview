@@ -15,10 +15,10 @@ namespace NeeView.Setting
         private readonly string _key;
         private readonly TouchInputForGestureEditor _touchGesture;
         private readonly MouseInputForGestureEditor _mouseGesture;
-        private StringGestureToken _gestureToken = new();
-        private string _newGesture = "";
+        private MouseGestureToken _gestureToken = new(MouseSequence.Empty);
+        private MouseSequence _newGesture = MouseSequence.Empty;
 
-        
+
         public MouseGestureSettingViewModel(IDictionary<string, CommandElement> commandMap, string key, FrameworkElement gestureSender)
         {
             _commandMap = commandMap;
@@ -35,15 +35,15 @@ namespace NeeView.Setting
         }
 
 
-        public StringGestureToken GestureToken
+        public MouseGestureToken GestureToken
         {
             get { return _gestureToken; }
             set { if (_gestureToken != value) { _gestureToken = value; RaisePropertyChanged(); } }
         }
 
-        public string OriginalGesture { get; set; }
+        public MouseSequence OriginalGesture { get; set; }
 
-        public string NewGesture
+        public MouseSequence NewGesture
         {
             get { return _newGesture; }
             set { if (_newGesture != value) { _newGesture = value; RaisePropertyChanged(); } }
@@ -57,7 +57,7 @@ namespace NeeView.Setting
         /// <param name="e"></param>
         private void Gesture_MouseGestureProgressed(object? sender, MouseGestureEventArgs e)
         {
-            NewGesture = e.Sequence.ToString();
+            NewGesture = e.Sequence;
             UpdateGestureToken(NewGesture);
         }
 
@@ -65,12 +65,12 @@ namespace NeeView.Setting
         /// Update Gesture Information
         /// </summary>
         /// <param name="gesture"></param>
-        public void UpdateGestureToken(string gesture)
+        public void UpdateGestureToken(MouseSequence gesture)
         {
             // Check Conflict
-            var token = new StringGestureToken(gesture);
+            var token = new MouseGestureToken(gesture);
 
-            if (!string.IsNullOrEmpty(token.Gesture))
+            if (!token.Gesture.IsEmpty)
             {
                 token.Conflicts = _commandMap
                     .Where(i => i.Key != _key && i.Value.MouseGesture == token.Gesture)
@@ -105,36 +105,8 @@ namespace NeeView.Setting
 
         private void ClearCommand_Executed()
         {
-            _commandMap[_key].MouseGesture = "";
+            _commandMap[_key].MouseGesture = MouseSequence.Empty;
             _mouseGesture.Gesture.Reset();
         }
-    }
-
-
-    public class StringGestureToken
-    {
-        public StringGestureToken()
-        {
-            Gesture = "";
-        }
-
-        public StringGestureToken(string gesture)
-        {
-            Gesture = gesture;
-        }
-
-
-        // ジェスチャー文字列（１ジェスチャー）
-        public string Gesture { get; set; }
-
-        // 競合しているコマンド群
-        public List<string>? Conflicts { get; set; }
-
-        // 競合メッセージ
-        public string? OverlapsText { get; set; }
-
-        public bool IsConflict => Conflicts != null && Conflicts.Count > 0;
-
-        public bool IsExist => this.Gesture is not null;
     }
 }

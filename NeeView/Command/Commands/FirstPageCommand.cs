@@ -6,7 +6,7 @@
         {
             this.Group = Properties.TextResources.GetString("CommandGroup.Move");
             this.ShortCutKey = new ShortcutKey("Ctrl+Right");
-            this.MouseGesture = "UR";
+            this.MouseGesture = new MouseSequence("UR");
             this.IsShowMessage = true;
             this.PairPartner = "LastPage";
 

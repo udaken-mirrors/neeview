@@ -75,7 +75,7 @@ namespace NeeView
         private string? _remarksText;
         private ShortcutKey _shortCutKey = ShortcutKey.Empty;
         private TouchGesture _touchGesture = TouchGesture.Empty;
-        private string _mouseGesture = "";
+        private MouseSequence _mouseGesture = MouseSequence.Empty;
         private bool _isCloneable = true;
 
 
@@ -188,14 +188,14 @@ namespace NeeView
         }
 
         // マウスジェスチャー
-        public string MouseGesture
+        public MouseSequence MouseGesture
         {
             get { return _mouseGesture; }
             set
             {
                 if (_mouseGesture != value)
                 {
-                    _mouseGesture = value?.Trim() ?? "";
+                    _mouseGesture = value;
                     IsInputGestureDirty = true;
                 }
             }
@@ -301,7 +301,7 @@ namespace NeeView
         // 検索用文字列を取得
         public string GetSearchText()
         {
-            return string.Join(",", new string[] { this.Group, this.Text, this.Menu, this.Remarks, this.ShortCutKey.GetDisplayString(), this.MouseGesture, new MouseGestureSequence(this.MouseGesture).ToDispString(), this.TouchGesture.GetDisplayString() });
+            return string.Join(",", new string[] { this.Group, this.Text, this.Menu, this.Remarks, this.ShortCutKey.GetDisplayString(), this.MouseGesture.ToString(), this.MouseGesture.GetDisplayString(), this.TouchGesture.GetDisplayString() });
         }
 
         protected virtual CommandElement CloneInstance()
@@ -340,7 +340,7 @@ namespace NeeView
         {
             this.ShortCutKey = ShortcutKey.Empty;
             this.TouchGesture = TouchGesture.Empty;
-            this.MouseGesture = "";
+            this.MouseGesture = MouseSequence.Empty;
         }
 
 
@@ -361,7 +361,7 @@ namespace NeeView
         {
             public ShortcutKey ShortCutKey { get; set; } = ShortcutKey.Empty;
             public TouchGesture TouchGesture { get; set; } = TouchGesture.Empty;
-            public string MouseGesture { get; set; } = "";
+            public MouseSequence MouseGesture { get; set; } = MouseSequence.Empty;
             public bool IsShowMessage { get; set; }
             public CommandParameter? Parameter { get; set; }
 
@@ -391,7 +391,7 @@ namespace NeeView
 
             memento.ShortCutKey = ShortCutKey;
             memento.TouchGesture = TouchGesture;
-            memento.MouseGesture = MouseGesture ?? "";
+            memento.MouseGesture = MouseGesture;
             memento.IsShowMessage = IsShowMessage;
             ////memento.Parameter = (CommandParameter)ParameterSource?.GetRaw()?.Clone();
             memento.Parameter = Parameter?.Clone() as CommandParameter;
@@ -407,7 +407,7 @@ namespace NeeView
 
             ShortCutKey = memento.ShortCutKey;
             TouchGesture = memento.TouchGesture;
-            MouseGesture = memento.MouseGesture ?? "";
+            MouseGesture = memento.MouseGesture;
             IsShowMessage = memento.IsShowMessage;
             ParameterSource?.Set(memento.Parameter);
         }
@@ -420,7 +420,7 @@ namespace NeeView
         {
             public ShortcutKey ShortCutKey { get; set; } = ShortcutKey.Empty;
             public TouchGesture TouchGesture { get; set; } = TouchGesture.Empty;
-            public string MouseGesture { get; set; } = "";
+            public MouseSequence MouseGesture { get; set; } = MouseSequence.Empty;
 
             public bool IsGesturesEquals(GesturesMemento other)
             {
@@ -441,7 +441,7 @@ namespace NeeView
 
             memento.ShortCutKey = ShortCutKey;
             memento.TouchGesture = TouchGesture;
-            memento.MouseGesture = MouseGesture ?? "";
+            memento.MouseGesture = MouseGesture;
 
             return memento;
         }
@@ -452,7 +452,7 @@ namespace NeeView
 
             ShortCutKey = memento.ShortCutKey;
             TouchGesture = memento.TouchGesture;
-            MouseGesture = memento.MouseGesture ?? "";
+            MouseGesture = memento.MouseGesture;
         }
 
         #endregion GesturesMemento

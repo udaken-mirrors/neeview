@@ -9,7 +9,7 @@ namespace NeeView
         {
             this.Group = Properties.TextResources.GetString("CommandGroup.PageSetting");
             this.ShortCutKey = new ShortcutKey("Ctrl+2");
-            this.MouseGesture = "RD";
+            this.MouseGesture = new MouseSequence("RD");
             this.IsShowMessage = true;
         }
 

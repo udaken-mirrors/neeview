@@ -378,7 +378,7 @@ namespace NeeView.Setting
         {
             foreach (var item in _commandItems)
             {
-                if (!string.IsNullOrEmpty(item.Command.MouseGesture))
+                if (!item.Command.MouseGesture.IsEmpty)
                 {
                     var overlaps = _commandItems
                         .Where(e => e.Key != item.Key && e.Command.MouseGesture == item.Command.MouseGesture)
@@ -386,7 +386,7 @@ namespace NeeView.Setting
                         .ToList();
 
                     var element = new GestureElement();
-                    element.Gesture = item.Command.MouseGesture;
+                    element.Gesture = item.Command.MouseGesture.GetDisplayString();
                     element.IsConflict = overlaps.Count > 0;
                     if (overlaps.Count > 0)
                     {

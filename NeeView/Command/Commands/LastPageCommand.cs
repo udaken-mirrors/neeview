@@ -6,7 +6,7 @@
         {
             this.Group = Properties.TextResources.GetString("CommandGroup.Move");
             this.ShortCutKey = new ShortcutKey("Ctrl+Left");
-            this.MouseGesture = "UL";
+            this.MouseGesture = new MouseSequence("UL");
             this.IsShowMessage = true;
             this.PairPartner = "FirstPage";
 

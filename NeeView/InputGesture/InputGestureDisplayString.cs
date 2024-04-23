@@ -15,6 +15,7 @@ namespace NeeView
             InitializeMouseButtonMap(resource);
             InitializeMouseActionMap(resource);
             InitializeTouchAreaMap(resource);
+            InitializeMouseGestureDirectionMap(resource);
         }
 
         private static StringConverter GetDisplayStringStringConverter(TextResourceManager resource, string prefix)
@@ -85,6 +86,18 @@ namespace NeeView
             }
 
             TouchAreaExtensions.SetDisplayStringConverter(GetDisplayStringStringConverter(resource, prefix));
+        }
+
+        private static void InitializeMouseGestureDirectionMap(TextResourceManager resource)
+        {
+            var prefix = nameof(MouseDirection) + ".";
+            foreach (var pair in CollectTextItems(resource, prefix))
+            {
+                var key = (MouseDirection)Enum.Parse(typeof(MouseDirection), pair.Key.AsSpan(prefix.Length), true);
+                key.SetDisplayString(pair.Value.Text);
+            }
+
+            MouseGestureDirectionExtensions.SetDisplayStringConverter(GetDisplayStringStringConverter(resource, prefix));
         }
 
         public static string GetDisplayString(InputGesture gesture)

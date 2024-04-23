@@ -16,7 +16,7 @@ namespace NeeView
         /// <summary>
         /// ジェスチャー入力
         /// </summary>
-        private readonly MouseGestureSequenceTracker _gesture;
+        private readonly MouseSequenceBuilder _builder;
 
         /// <summary>
         /// 監視するデバイス
@@ -30,8 +30,8 @@ namespace NeeView
         /// <param name="context"></param>
         public TouchInputGesture(TouchInputContext context) : base(context)
         {
-            _gesture = new MouseGestureSequenceTracker();
-            _gesture.GestureProgressed += (s, e) => GestureProgressed?.Invoke(this, new MouseGestureEventArgs(_gesture.Sequence));
+            _builder = new MouseSequenceBuilder();
+            _builder.GestureProgressed += (s, e) => GestureProgressed?.Invoke(this, new MouseGestureEventArgs(_builder.ToMouseSequence()));
         }
 
 
@@ -50,7 +50,7 @@ namespace NeeView
         public void Reset()
         {
             if (_touch == null) return;
-            _gesture.Reset(_touch.StartPoint);
+            _builder.Reset(_touch.StartPoint);
         }
 
 
@@ -100,9 +100,9 @@ namespace NeeView
         public override void OnStylusUp(object sender, StylusEventArgs e)
         {
             // ジェスチャーコマンド実行
-            if (_gesture.Sequence.Count > 0)
+            if (!_builder.IsEmpty)
             {
-                var args = new MouseGestureEventArgs(_gesture.Sequence);
+                var args = new MouseGestureEventArgs(_builder.ToMouseSequence());
                 GestureChanged?.Invoke(sender, args);
                 e.Handled = args.Handled;
             }
@@ -124,7 +124,7 @@ namespace NeeView
 
             var point = e.GetPosition(_context.Sender);
 
-            _gesture.Move(point);
+            _builder.Move(point);
         }
 
     }

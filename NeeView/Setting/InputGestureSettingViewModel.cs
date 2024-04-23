@@ -69,7 +69,7 @@ namespace NeeView.Setting
             {
                 foreach (var gesture in _commandMap[Command].ShortCutKey.Gestures)
                 {
-                    var element = CreateShortCutElement(gesture);
+                    var element = CreateShortcutElement(gesture);
                     items.Add(element);
                 }
             }
@@ -81,7 +81,7 @@ namespace NeeView.Setting
         /// </summary>
         /// <param name="gesture"></param>
         /// <returns></returns>
-        public InputGestureToken CreateShortCutElement(InputGestureSource gesture)
+        public InputGestureToken CreateShortcutElement(InputGestureSource gesture)
         {
             var element = new InputGestureToken(gesture);
 
@@ -109,7 +109,7 @@ namespace NeeView.Setting
 
             if (!GestureTokens.Any(item => item.Gesture == gesture))
             {
-                var element = CreateShortCutElement(gesture);
+                var element = CreateShortcutElement(gesture);
                 GestureTokens.Add(element);
             }
         }
@@ -173,38 +173,5 @@ namespace NeeView.Setting
                 UpdateGestures();
             }
         }
-    }
-
-
-    /// <summary>
-    /// ショートカット キーの情報
-    /// </summary>
-    /// <remarks>
-    /// キーの情報のみでなく、衝突しているコマンドの情報も持つ
-    /// </remarks>
-    public class InputGestureToken
-    {
-        public InputGestureToken()
-        {
-        }
-
-        public InputGestureToken(InputGestureSource gesture)
-        {
-            Gesture = gesture;
-        }
-
-
-        // ジェスチャー（１ジェスチャー）
-        public InputGestureSource? Gesture { get; set; }
-
-        // 競合しているコマンド群
-        public List<string>? Conflicts { get; set; }
-
-        // 競合メッセージ
-        public string? OverlapsText { get; set; }
-
-        public bool IsConflict => Conflicts != null && Conflicts.Count > 0;
-
-        public bool IsExist => this.Gesture is not null;
     }
 }

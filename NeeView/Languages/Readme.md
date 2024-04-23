@@ -29,19 +29,18 @@ e.g., "BookAddressInfo.Page={0} pages"
 `@Key` specifies a key to be replaced by another resource.
 e.g., "BookConfig.ContentsSpace=Distance between pages in "@PageMode.WidePage" (pixels)"
 
-## Pattern
+## Pattern (optional)
 `Pattern` is a regular expression to select a variation of the expression depending on the argument. Define it only if necessary.
 For example, it is used when the expression changes in the plural.  
 e.g., "BookAddressInfo.Page:1={0} page"
 
-## Shortcut key name
+## Input key name (optional)
 
-Shortcut keys can be multilingual. 
 Define only as much as you need.
 
 ### Key
 
-General Key.
+General key. Used to display shortcut.
 
 Prefix is `Key.` .  
 See [.NET Key Enum](https://learn.microsoft.com/en-us/dotnet/api/system.windows.input.key) for available names.
@@ -52,12 +51,16 @@ Set `_Uppercase` to `true` to make all uppercase.
 
 e.g., "Key._Uppercase=true"
 
-### Modifier keys
+### Modifier key
 
-Modifier key.
+Modifier key. Used to display shortcuts, etc.
 
 Prefix is `ModifierKeys.` .  
-See [.NET ModifierKeys Enum](https://learn.microsoft.com/en-us/dotnet/api/system.windows.input.modifierkeys) for available names.
+The available names are as follows
+
+- Alt	
+- Control (default: `Ctrl`)
+- Shift
 
 e.g., "ModifierKeys.Control=STRG"
 
@@ -68,7 +71,13 @@ Set `_Uppercase` to `true` to make all uppercase.
 Mouse button.
 
 Prefix is `MouseButton.` .  
-See [.NET MouseButton Enum](https://learn.microsoft.com/en-us/dotnet/api/system.windows.input.mousebutton) for available names.
+The available names are as follows
+
+- Left (default: 'LeftButton')
+- Middle (default: 'MiddleButton')
+- Right (default: 'RightButton')	
+- XButton1
+- XButton2
 
 e.g., "MouseButton.Left=LinkeTaste"
 
@@ -96,6 +105,21 @@ The available names are as follows
 
 e.g., "MouseAction.LeftClick=Linksklick"
 
+### Mouse direction
+
+Used to display mouse gestures.
+
+Prefix is `MouseDirection.` .  
+The available names are as follows
+
+- Up (default: `↑`)
+- Down (default: `↓`)
+- Left (default: `←`)
+- Right (default: `→`)
+- Click
+
+e.g., "MouseDirection.Click=Klick"
+
 ### Touch area
 
 Touch area.
@@ -117,4 +141,4 @@ Converts between language files (*.restext) and JSON. This is a utility tool, no
 
 See Get-Help for details.
 
-> Get-Help .\ConvertRestext.ps1
+> \> Get-Help .\ConvertRestext.ps1

@@ -45,8 +45,8 @@ namespace NeeView
         [WordNodeMember]
         public string MouseGesture
         {
-            get { return _command.MouseGesture; }
-            set { _command.MouseGesture = value?.Replace("←", "L").Replace("↑", "U").Replace("→", "R").Replace("↓", "L").Replace("Click", "C") ?? ""; }
+            get { return _command.MouseGesture.ToString(); }
+            set { _command.MouseGesture = new MouseSequence(value?.Replace("←", "L").Replace("↑", "U").Replace("→", "R").Replace("↓", "L").Replace("Click", "C") ?? ""); }
         }
 
         [WordNodeMember(IsAutoCollect = false)]
