@@ -307,7 +307,7 @@ namespace NeeView.PageFrames
 
         private PageFrameElementScale CreateElementScale()
         {
-            return PageFrameElementScaleFactory.Create(_pageFrame, _transform, _loupeContext, _context.DpiScale);
+            return PageFrameElementScaleFactory.Create(_pageFrame, _transform, _loupeContext, _baseScaleTransform, _context.DpiScale);
         }
 
 
@@ -418,13 +418,17 @@ namespace NeeView.PageFrames
         {
             _transform.TransformChanged += ViewTransform_TransformChanged;
             _loupeContext.TransformChanged += ViewTransform_TransformChanged;
+            _baseScaleTransform.ScaleChanged += ViewBaseScaleTransform_ScaleChanged;
         }
+
 
         private void DetachTransform()
         {
             _transform.TransformChanged -= ViewTransform_TransformChanged;
             _loupeContext.TransformChanged -= ViewTransform_TransformChanged;
+            _baseScaleTransform.ScaleChanged -= ViewBaseScaleTransform_ScaleChanged;
         }
+
 
 #if false
         private double GetRenderScale()
@@ -448,6 +452,15 @@ namespace NeeView.PageFrames
                     viewContent.SetSource(viewContent.Element, scale, false);
                     //viewContent.SetRenderScale(scale);
                 }
+            }
+        }
+
+        private void ViewBaseScaleTransform_ScaleChanged(object? sender, EventArgs e)
+        {
+            var scale = CreateElementScale();
+            foreach (var viewContent in _viewContents)
+            {
+                viewContent.SetSource(viewContent.Element, scale, false);
             }
         }
 

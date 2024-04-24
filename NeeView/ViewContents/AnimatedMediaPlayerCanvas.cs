@@ -124,7 +124,7 @@ namespace NeeView
         }
 #endif
 
-        private void ContentSize_SizeChanged(object? sender, EventArgs e)
+        private void ContentSize_SizeChanged(object? sender, ViewContentSizeChangedEventArgs e)
         {
             UpdateBitmapScalingMode();
         }

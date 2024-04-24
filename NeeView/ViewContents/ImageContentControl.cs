@@ -97,7 +97,7 @@ namespace NeeView
 
         protected abstract TargetElement CreateTarget(ImageSource imageSource, Rect viewbox);
 
-        private void ContentSize_SizeChanged(object? sender, EventArgs e)
+        private void ContentSize_SizeChanged(object? sender, ViewContentSizeChangedEventArgs e)
         {
             UpdateBitmapScalingMode();
         }

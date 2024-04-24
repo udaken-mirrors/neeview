@@ -28,7 +28,7 @@ namespace NeeView
 
         public override string ToString()
         {
-            return "Folder";
+            return Properties.TextResources.GetString("Archiver.Folder");
         }
 
         // サポート判定

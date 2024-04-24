@@ -31,7 +31,7 @@ namespace NeeView
 
         public override string ToString()
         {
-            return "7-Zip" + (_format != null ? $" ({_format})" : null);
+            return Properties.TextResources.GetString("Archiver.SevenZip") + (_format != null ? $" ({_format})" : null);
         }
 
         public override void Unlock()
