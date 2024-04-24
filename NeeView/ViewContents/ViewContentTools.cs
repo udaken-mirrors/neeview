@@ -1,4 +1,7 @@
-﻿using System;
+﻿//#define LOCAL_DEBUG
+
+using System;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -70,14 +73,14 @@ namespace NeeView
             // ScalingMode が指定されている
             if (scalingMode is not null)
             {
-                //Debug.WriteLine($"XX: Force {_scalingMode.Value}: {_element.Page}: {imageSize:f0}");
+                Trace($"XX: Force {scalingMode.Value}: {imageSize:f0}");
                 RenderOptions.SetBitmapScalingMode(element, scalingMode.Value);
                 element.SnapsToDevicePixels = scalingMode.Value == BitmapScalingMode.NearestNeighbor;
             }
             // 画像サイズがビッタリの場合はドットバイドットになるような設定
             else if (contentSize.IsRightAngle && Math.Abs(contentSize.PixelSize.Width - imageSize.Width) < 1.1 && Math.Abs(contentSize.PixelSize.Height - imageSize.Height) < 1.1)
             {
-                //Debug.WriteLine($"OO: NearestNeighbor: {_element.Page}: {imageSize:f0}");
+                Trace($"OO: NearestNeighbor: {imageSize:f0}");
                 RenderOptions.SetBitmapScalingMode(element, BitmapScalingMode.NearestNeighbor);
                 element.SnapsToDevicePixels = true;
             }
@@ -85,16 +88,24 @@ namespace NeeView
             // TODO: Config.Current参照はよろしくない
             else if (Config.Current.ImageDotKeep.IsImageDotKeep(contentSize.PixelSize, imageSize))
             {
-                //Debug.WriteLine($"XX: NearestNeighbor: {_element.Page}: {imageSize:f0} != request {_contentSize.PixelSize:f0}");
+                Trace($"XX: NearestNeighbor: {imageSize:f0} != request {contentSize.PixelSize:f0}");
                 RenderOptions.SetBitmapScalingMode(element, BitmapScalingMode.NearestNeighbor);
                 element.SnapsToDevicePixels = true;
             }
             else
             {
-                //Debug.WriteLine($"XX: Fantastic: {_element.Page}: {imageSize:f0} != request {_contentSize.PixelSize:f0}");
+                Trace($"XX: Fantastic: {imageSize:f0} != request {contentSize.PixelSize:f0}");
                 RenderOptions.SetBitmapScalingMode(element, BitmapScalingMode.Fant);
                 element.SnapsToDevicePixels = false;
             }
         }
+
+
+        [Conditional("LOCAL_DEBUG")]
+        private static void Trace(string message)
+        {
+            Debug.WriteLine($"{nameof(ViewContentTools)}: {message}");
+        }
+
     }
 }

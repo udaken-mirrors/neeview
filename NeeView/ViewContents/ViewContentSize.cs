@@ -21,6 +21,8 @@ namespace NeeView
         private PageFrameElement _element;
         private PageFrameElementScale _scale;
         private Size _pixelSize;
+        private bool _isRightAngle;
+
 
         public ViewContentSize(PageFrameElement element, PageFrameElementScale scale)
         {
@@ -28,7 +30,7 @@ namespace NeeView
         }
 
 
-        public event EventHandler? SizeChanged;
+        public event EventHandler<ViewContentSizeChangedEventArgs>? SizeChanged;
 
 
         /// <summary>
@@ -57,16 +59,26 @@ namespace NeeView
                 if (_pixelSize != value)
                 {
                     _pixelSize = value;
-                    SizeChanged?.Invoke(this, EventArgs.Empty);
+                    SizeChanged?.Invoke(this, ViewContentSizeChangedEventArgs.SizeEventArgs);
                 }
             }
         }
 
-
         /// <summary>
         /// 直角か？
         /// </summary>
-        public bool IsRightAngle { get; private set; }
+        public bool IsRightAngle
+        {
+            get { return _isRightAngle; }
+            private set
+            {
+                if (_isRightAngle != value)
+                {
+                    _isRightAngle = value;
+                    SizeChanged?.Invoke(this, ViewContentSizeChangedEventArgs.IsRightAngleEventArgs);
+                }
+            }
+        }
 
 
         [MemberNotNull(nameof(_element), nameof(_scale))]
@@ -84,7 +96,7 @@ namespace NeeView
             IsRightAngle = Math.Abs(_scale.RenderAngle % 90) < 1.0;
             LayoutSize = new Size(layoutWidth, layoutHeight);
             RenderingSize = new Size(Math.Abs(layoutWidth * _scale.RenderScale), Math.Abs(layoutHeight * _scale.RenderScale));
-            PixelSize = new Size(RenderingSize.Width * _scale.DpiScale.DpiScaleX, RenderingSize.Height * _scale.DpiScale.DpiScaleY);
+            PixelSize = new Size(RenderingSize.Width * _scale.BaseScale * _scale.DpiScale.DpiScaleX, RenderingSize.Height * _scale.BaseScale * _scale.DpiScale.DpiScaleY);
         }
 
         /// <summary>
@@ -96,5 +108,25 @@ namespace NeeView
         {
             return _element.ViewSizeCalculator.GetSourceSize(PixelSize);
         }
+    }
+
+    public enum ViewContentSizeChangedAction
+    {
+        None,
+        Size,
+        IsRightAngle,
+    }
+
+    public class ViewContentSizeChangedEventArgs : EventArgs
+    {
+        public static ViewContentSizeChangedEventArgs SizeEventArgs { get; } = new ViewContentSizeChangedEventArgs(ViewContentSizeChangedAction.Size);
+        public static ViewContentSizeChangedEventArgs IsRightAngleEventArgs { get; } = new ViewContentSizeChangedEventArgs(ViewContentSizeChangedAction.IsRightAngle);
+
+        public ViewContentSizeChangedEventArgs(ViewContentSizeChangedAction action)
+        {
+            Action = action;
+        }
+
+        public ViewContentSizeChangedAction Action { get; }
     }
 }
