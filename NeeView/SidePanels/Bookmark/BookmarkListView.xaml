@@ -94,7 +94,7 @@
                         <Image Source="{StaticResource ic_add_24px_a}" />
                     </Button>
                     <Button x:Name="FolderUpButton" Style="{StaticResource FolderListButtonStyle}" Command="{Binding MoveToUp}" TabIndex="1"
-                        ToolTip="{properties:TextBinding Bookmark.Up.ToolTip}">
+                        ToolTip="{Binding MoveToUpToolTip}">
                         <Image Source="{StaticResource ic_arrow_up_24px_a}" />
                     </Button>
                     <ComboBox x:Name="FolderOrderComboBox" FontFamily="{DynamicResource ArrowFontFamily}" TabIndex="1"

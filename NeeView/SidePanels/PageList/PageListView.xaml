@@ -73,20 +73,20 @@
                 <local:MoreMenuButton Description="{Binding MoreMenuDescription}" DockPanel.Dock="Right" VerticalAlignment="Top" Height="{DynamicResource FontIconSize}" TabIndex="2" />
                 <WrapPanel MinWidth="150">
                     <Button x:Name="PrevButton" Style="{StaticResource FolderListButtonStyle}" Command="{Binding MoveToPreviousCommand}" TabIndex="1" ContextMenuService.Placement="Bottom"
-                            ContextMenuOpening="PrevButton_ContextMenuOpening" ToolTip="{properties:TextBinding PageList.Back.ToolTip}">
+                            ContextMenuOpening="PrevButton_ContextMenuOpening" ToolTip="{Binding MoveToPreviousCommandToolTip}">
                         <Image Source="{StaticResource ic_arrow_back_24px_a}" />
                         <Button.ContextMenu>
                             <ContextMenu x:Name="PrevButtonContextMenu" ItemContainerStyle="{StaticResource HistoryMenuItemContainerStyle}" />
                         </Button.ContextMenu>
                     </Button>
                     <Button x:Name="NextButton" Style="{StaticResource FolderListButtonStyle}" Command="{Binding MoveToNextCommand}" TabIndex="1" ContextMenuService.Placement="Bottom"
-                            ContextMenuOpening="NextButton_ContextMenuOpening" ToolTip="{properties:TextBinding PageList.Next.ToolTip}">
+                            ContextMenuOpening="NextButton_ContextMenuOpening" ToolTip="{Binding MoveToNextCommandToolTip}">
                         <Image Source="{StaticResource ic_arrow_forward_24px_a}" />
                         <Button.ContextMenu>
                             <ContextMenu x:Name="NextButtonContextMenu" ItemContainerStyle="{StaticResource HistoryMenuItemContainerStyle}" />
                         </Button.ContextMenu>
                     </Button>
-                    <Button x:Name="UpButton" Style="{StaticResource FolderListButtonStyle}" Command="{Binding MoveToUpCommand}" TabIndex="1" ToolTip="{properties:TextBinding PageList.Up.ToolTip}">
+                    <Button x:Name="UpButton" Style="{StaticResource FolderListButtonStyle}" Command="{Binding MoveToUpCommand}" TabIndex="1" ToolTip="{Binding MoveToUpCommandToolTip}">
                         <Image Source="{StaticResource ic_arrow_up_24px_a}" />
                     </Button>
                     <ComboBox x:Name="FormatComboBox" TabIndex="1"

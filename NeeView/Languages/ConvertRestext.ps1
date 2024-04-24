@@ -93,7 +93,7 @@ function ConvertTo-RestextMap
 function Test-AdditionalKey
 {
     param ([string]$key)
-    return ($key.Contains(':') -or $key.StartsWith("Key.") -or $key.StartsWith("ModifierKeys.") -or $key.StartsWith("MouseAction.") -or $key.StartsWith("MouseButton.") -or $key.StartsWith("TouchArea."))
+    return ($key.Contains(':') -or $key.StartsWith("Key.") -or $key.StartsWith("ModifierKeys.") -or $key.StartsWith("MouseAction.") -or $key.StartsWith("MouseButton.") -or $key.StartsWith("MouseDirection.") -or $key.StartsWith("TouchArea."))
 }
 
 function Add-RestextToRestextTable
