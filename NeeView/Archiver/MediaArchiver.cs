@@ -18,7 +18,7 @@ namespace NeeView
 
         public override string ToString()
         {
-            return "MediaPlayer";
+            return Properties.TextResources.GetString("Archiver.Media");
         }
 
         protected override async Task<List<ArchiveEntry>> GetEntriesInnerAsync(CancellationToken token)

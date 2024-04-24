@@ -28,7 +28,7 @@ namespace NeeView
 
         public override string ToString()
         {
-            return ".NET ZipArchiver";
+            return Properties.TextResources.GetString("Archiver.Zip");
         }
 
         // サポート判定

@@ -35,7 +35,7 @@ namespace NeeView
 
         public override string ToString()
         {
-            return "Playlist";
+            return Properties.TextResources.GetString("Archiver.Playlist");
         }
 
         // サポート判定

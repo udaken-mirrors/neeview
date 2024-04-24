@@ -19,9 +19,6 @@ namespace NeeView
     /// </summary>
     public class PdfPdfiumArchiver : PdfArchiver
     {
-        public const string Identify = "Pdfium";
-
-
         public PdfPdfiumArchiver(string path, ArchiveEntry? source) : base(path, source)
         {
         }
@@ -29,7 +26,7 @@ namespace NeeView
 
         public override string ToString()
         {
-            return Identify;
+            return Properties.TextResources.GetString("Archiver.Pdfium");
         }
 
         // サポート判定
