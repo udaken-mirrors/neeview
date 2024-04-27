@@ -1,11 +1,12 @@
 ## ChangeLog
 
 ### 40.8
-(2024-04-12)
+(2024-05-01)
 
 #### Security
 
 - Updated to .NET 8.0.4. For more information on this vulnerability, please visit [.NET Blog](https://devblogs.microsoft.com/dotnet/april-2024-updates/).
+- Change explorer path to absolute path.
 
 ----
 
