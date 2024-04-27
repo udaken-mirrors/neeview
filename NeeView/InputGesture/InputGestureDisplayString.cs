@@ -8,96 +8,155 @@ namespace NeeView
 {
     public static class InputGestureDisplayString
     {
+        public static List<string> ErrorMessages { get; private set; } = new();
+
         public static void Initialize(TextResourceManager resource)
         {
-            InitializeKeyMap(resource);
-            InitializeModifierKeysMap(resource);
-            InitializeMouseButtonMap(resource);
-            InitializeMouseActionMap(resource);
-            InitializeTouchAreaMap(resource);
-            InitializeMouseGestureDirectionMap(resource);
+            var factory = new TextResourceSegmentFactory(resource.Map);
+
+            InitializeKeyMap(factory);
+            InitializeModifierKeysMap(factory);
+            InitializeMouseButtonMap(factory);
+            InitializeMouseActionMap(factory);
+            InitializeTouchAreaMap(factory);
+            InitializeMouseDirectionMap(factory);
         }
 
-        private static StringConverter GetDisplayStringStringConverter(TextResourceManager resource, string prefix)
+        private static InputGestureStringConverter GetDisplayStringStringConverter(TextResourceSegment map, string prefix)
         {
-            return new InputGestureStringConverter(resource.GetString(prefix + "_Uppercase")?.ToUpper() == "TRUE");
+            var uppercase = map.TryGetValue(prefix + "._Uppercase", out var value) && value.Text.Equals("true", StringComparison.OrdinalIgnoreCase);
+            return new InputGestureStringConverter(uppercase);
         }
 
-        private static IEnumerable<KeyValuePair<string, TextResourceItem>> CollectTextItems(TextResourceManager resource, string prefix)
+        private static IEnumerable<KeyValuePair<string, TextResourceItem>> CollectTextItems(TextResourceSegment map, string prefix)
         {
-            return resource.Map.Where(e => e.Key.StartsWith(prefix) && e.Key.Length > prefix.Length && e.Key[prefix.Length] != '_');
+            return map.Where(e => e.Key[prefix.Length + 1] != '_');
         }
 
-        private static void InitializeKeyMap(TextResourceManager resource)
+        private static void InitializeKeyMap(TextResourceSegmentFactory factory)
         {
-            var prefix = nameof(Key) + ".";
-            foreach (var pair in CollectTextItems(resource, prefix))
+            var prefix = nameof(Key);
+            var map = factory.Create(prefix);
+
+            foreach (var pair in CollectTextItems(map, prefix))
             {
-                var key = (Key)Enum.Parse(typeof(Key), pair.Key.AsSpan(prefix.Length), true);
-                key.SetDisplayString(pair.Value.Text);
+                var name = pair.Key.AsSpan(prefix.Length + 1);
+                if (Enum.TryParse<Key>(name, true, out var key))
+                {
+                    key.SetDisplayString(pair.Value.Text);
+                }
+                else
+                {
+                    ErrorMessages.Add($"{prefix}.{name} is not valid.");
+                }
             }
 
-            KeyExtensions.SetDisplayStringConverter(GetDisplayStringStringConverter(resource, prefix));
+            KeyExtensions.SetDisplayStringConverter(GetDisplayStringStringConverter(map, prefix));
         }
 
-        private static void InitializeModifierKeysMap(TextResourceManager resource)
+        private static void InitializeModifierKeysMap(TextResourceSegmentFactory factory)
         {
-            var prefix = nameof(ModifierKeys) + ".";
-            foreach (var pair in CollectTextItems(resource, prefix))
+            var prefix = nameof(ModifierKeys);
+            var map = factory.Create(prefix);
+
+            foreach (var pair in CollectTextItems(map, prefix))
             {
-                var key = (ModifierKeys)Enum.Parse(typeof(ModifierKeys), pair.Key.AsSpan(prefix.Length), true);
-                key.SetDisplayString(pair.Value.Text);
+                var name = pair.Key.AsSpan(prefix.Length + 1);
+                if (Enum.TryParse<ModifierKeys>(name, true, out var key))
+                {
+                    key.SetDisplayString(pair.Value.Text);
+                }
+                else
+                {
+                    ErrorMessages.Add($"{prefix}.{name} is not valid.");
+                }
             }
 
-            ModifierKeysExtensions.SetDisplayStringConverter(GetDisplayStringStringConverter(resource, prefix));
+            ModifierKeysExtensions.SetDisplayStringConverter(GetDisplayStringStringConverter(map, prefix));
         }
 
-        private static void InitializeMouseButtonMap(TextResourceManager resource)
+        private static void InitializeMouseButtonMap(TextResourceSegmentFactory factory)
         {
-            var prefix = nameof(MouseButton) + ".";
-            foreach (var pair in CollectTextItems(resource, prefix))
+            var prefix = nameof(MouseButton);
+            var map = factory.Create(prefix);
+
+            foreach (var pair in CollectTextItems(map, prefix))
             {
-                var key = (MouseButton)Enum.Parse(typeof(MouseButton), pair.Key.AsSpan(prefix.Length), true);
-                key.SetDisplayString(pair.Value.Text);
+                var name = pair.Key.AsSpan(prefix.Length + 1);
+                if (Enum.TryParse<MouseButton>(name, true, out var key))
+                {
+                    key.SetDisplayString(pair.Value.Text);
+                }
+                else
+                {
+                    ErrorMessages.Add($"{prefix}.{name} is not valid.");
+                }
             }
 
-            MouseButtonExtensions.SetDisplayStringConverter(GetDisplayStringStringConverter(resource, prefix));
+            MouseButtonExtensions.SetDisplayStringConverter(GetDisplayStringStringConverter(map, prefix));
         }
 
-        private static void InitializeMouseActionMap(TextResourceManager resource)
+        private static void InitializeMouseActionMap(TextResourceSegmentFactory factory)
         {
-            var prefix = nameof(MouseAction) + ".";
-            foreach (var pair in CollectTextItems(resource, prefix))
+            var prefix = nameof(MouseAction);
+            var map = factory.Create(prefix);
+
+            foreach (var pair in CollectTextItems(map, prefix))
             {
-                var key = (MouseAction)Enum.Parse(typeof(MouseAction), pair.Key.AsSpan(prefix.Length), true);
-                key.SetDisplayString(pair.Value.Text);
+                var name = pair.Key.AsSpan(prefix.Length + 1);
+                if (Enum.TryParse<MouseAction>(name, true, out var key))
+                {
+                    key.SetDisplayString(pair.Value.Text);
+                }
+                else
+                {
+                    ErrorMessages.Add($"{prefix}.{name} is not valid.");
+                }
             }
 
-            MouseActionExtensions.SetDisplayStringConverter(GetDisplayStringStringConverter(resource, prefix));
+            MouseActionExtensions.SetDisplayStringConverter(GetDisplayStringStringConverter(map, prefix));
         }
 
-        private static void InitializeTouchAreaMap(TextResourceManager resource)
+        private static void InitializeTouchAreaMap(TextResourceSegmentFactory factory)
         {
-            var prefix = nameof(TouchArea) + ".";
-            foreach (var pair in CollectTextItems(resource, prefix))
+            var prefix = nameof(TouchArea);
+            var map = factory.Create(prefix);
+
+            foreach (var pair in CollectTextItems(map, prefix))
             {
-                var key = (TouchArea)Enum.Parse(typeof(TouchArea), pair.Key.AsSpan(prefix.Length), true);
-                key.SetDisplayString(pair.Value.Text);
+                var name = pair.Key.AsSpan(prefix.Length + 1);
+                if (Enum.TryParse<TouchArea>(name, true, out var key))
+                {
+                    key.SetDisplayString(pair.Value.Text);
+                }
+                else
+                {
+                    ErrorMessages.Add($"{prefix}.{name} is not valid.");
+                }
             }
 
-            TouchAreaExtensions.SetDisplayStringConverter(GetDisplayStringStringConverter(resource, prefix));
+            TouchAreaExtensions.SetDisplayStringConverter(GetDisplayStringStringConverter(map, prefix));
         }
 
-        private static void InitializeMouseGestureDirectionMap(TextResourceManager resource)
+        private static void InitializeMouseDirectionMap(TextResourceSegmentFactory factory)
         {
-            var prefix = nameof(MouseDirection) + ".";
-            foreach (var pair in CollectTextItems(resource, prefix))
+            var prefix = nameof(MouseDirection);
+            var map = factory.Create(prefix);
+
+            foreach (var pair in CollectTextItems(map, prefix))
             {
-                var key = (MouseDirection)Enum.Parse(typeof(MouseDirection), pair.Key.AsSpan(prefix.Length), true);
-                key.SetDisplayString(pair.Value.Text);
+                var name = pair.Key.AsSpan(prefix.Length + 1);
+                if (Enum.TryParse<MouseDirection>(name, true, out var key))
+                {
+                    key.SetDisplayString(pair.Value.Text);
+                }
+                else
+                {
+                    ErrorMessages.Add($"{prefix}.{name} is not valid.");
+                }
             }
 
-            MouseGestureDirectionExtensions.SetDisplayStringConverter(GetDisplayStringStringConverter(resource, prefix));
+            MouseGestureDirectionExtensions.SetDisplayStringConverter(GetDisplayStringStringConverter(map, prefix));
         }
 
         public static string GetDisplayString(InputGesture gesture)
