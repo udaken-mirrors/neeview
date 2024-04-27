@@ -109,6 +109,8 @@ namespace NeeView
 
         #region Commands
 
+        public string MoveToUpToolTip { get; } = CommandTools.CreateToolTipText("@Bookmark.Up.ToolTip", Key.Up, ModifierKeys.Alt);
+
         /// <summary>
         /// MoveTo command.
         /// </summary>

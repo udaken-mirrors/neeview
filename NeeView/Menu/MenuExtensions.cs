@@ -16,8 +16,6 @@ namespace NeeView
         {
             if (control == null) return;
 
-            var kgc = new KeyGestureConverter();
-            var kgxc = new KeyExGestureConverter();
             foreach (var item in control.Items.OfType<MenuItem>())
             {
                 if (item.Command is RoutedCommand command)
@@ -26,13 +24,9 @@ namespace NeeView
                     foreach (InputGesture gesture in command.InputGestures)
                     {
                         // キーショートカットのみ対応
-                        if (gesture is KeyGesture)
+                        if (gesture is KeyGesture or KeyExGesture)
                         {
-                            text += ((text.Length > 0) ? ", " : "") + kgc.ConvertToString(gesture);
-                        }
-                        else if (gesture is KeyExGesture)
-                        {
-                            text += ((text.Length > 0) ? ", " : "") + kgxc.ConvertToString(gesture);
+                            text += ((text.Length > 0) ? ", " : "") + InputGestureDisplayString.GetDisplayString(gesture);
                         }
                     }
                     item.InputGestureText = text;

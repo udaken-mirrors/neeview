@@ -5,7 +5,7 @@
         public PasteCommand()
         {
             this.Group = Properties.TextResources.GetString("CommandGroup.File");
-            this.ShortCutKey = "Ctrl+V";
+            this.ShortCutKey = new ShortcutKey("Ctrl+V");
             this.IsShowMessage = false;
         }
 

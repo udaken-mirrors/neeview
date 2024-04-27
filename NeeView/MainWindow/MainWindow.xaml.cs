@@ -453,6 +453,11 @@ namespace NeeView
 
             _vm.Loaded();
 
+            if (InputGestureDisplayString.ErrorMessages.Count > 0)
+            {
+                ToastService.Current.Show(new Toast(string.Join(System.Environment.NewLine, InputGestureDisplayString.ErrorMessages), "Text resource errors", ToastIcon.Warning));
+            }
+
             App.Current.IsMainWindowLoaded = true;
 
             Trace.WriteLine($"App.MainWindow.Loaded.Done: {App.Current.Stopwatch.ElapsedMilliseconds}ms");

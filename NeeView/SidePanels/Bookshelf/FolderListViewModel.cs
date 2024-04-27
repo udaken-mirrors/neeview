@@ -15,6 +15,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using System.Windows.Input;
 
 namespace NeeView
 {
@@ -131,6 +132,12 @@ namespace NeeView
         private RelayCommand? _addBookmarkCommand;
         private RelayCommand<PanelListItemStyle>? _setListItemStyle;
         private RelayCommand? _toggleVisibleFoldersTree;
+
+        public string MoveToHomeToolTip { get; } = CommandTools.CreateToolTipText("@Bookshelf.Home.ToolTip", Key.Home, ModifierKeys.Alt);
+        public string MoveToPreviousToolTip { get; } = CommandTools.CreateToolTipText("@Bookshelf.Back.ToolTip", Key.Left, ModifierKeys.Alt);
+        public string MoveToNextToolTip { get; } = CommandTools.CreateToolTipText("@Bookshelf.Next.ToolTip", Key.Right, ModifierKeys.Alt);
+        public string MoveToUpToolTip { get; } = CommandTools.CreateToolTipText("@Bookshelf.Up.ToolTip", Key.Up, ModifierKeys.Alt);
+
 
         public RelayCommand ToggleVisibleFoldersTree
         {

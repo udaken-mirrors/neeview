@@ -1,71 +1,25 @@
 ﻿using NeeLaboratory.ComponentModel;
+using NeeLaboratory.Linq;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace NeeView.Setting
 {
-    /// <summary>
-    /// 
-    /// </summary>
-    public class GestureToken
-    {
-        public GestureToken()
-        {
-            Gesture = "";
-        }
-
-        public GestureToken(string gesture)
-        {
-            Gesture = gesture;
-        }
-
-
-        // ジェスチャー文字列（１ジェスチャー）
-        public string Gesture { get; set; }
-
-        // 競合しているコマンド群
-        public List<string>? Conflicts { get; set; }
-
-        // 競合メッセージ
-        public string? OverlapsText { get; set; }
-
-        public bool IsConflict => Conflicts != null && Conflicts.Count > 0;
-
-        public bool IsExist => !string.IsNullOrEmpty(this.Gesture);
-    }
-
-    /// <summary>
-    /// 
-    /// </summary>
     public class InputGestureSettingViewModel : BindableBase
     {
         // すべてのコマンドのショートカット
         private readonly IDictionary<string, CommandElement> _commandMap;
+        private KeyGestureSource? _keyGesture;
+        private MouseGestureSource? _mouseGesture;
+        private ObservableCollection<InputGestureToken> _gestureTokens;
 
-        // 編集するコマンド
-        public string Command { get; set; }
 
-        /// <summary>
-        /// ショートカットテキストのリスト
-        /// </summary>
-        private ObservableCollection<GestureToken> _gestureTokens;
-        public ObservableCollection<GestureToken> GestureTokens
-        {
-            get { return _gestureTokens; }
-            set { if (_gestureTokens != value) { _gestureTokens = value; RaisePropertyChanged(); } }
-        }
-
-        // ウィンドウタイトル？
-        public string Header { get; set; }
-
-        /// <summary>
-        /// constructor
-        /// </summary>
         public InputGestureSettingViewModel(IDictionary<string, CommandElement> commandMap, string command)
         {
             _commandMap = commandMap;
@@ -75,6 +29,31 @@ namespace NeeView.Setting
             _gestureTokens = CreateGestures();
         }
 
+        // 編集するコマンド
+        public string Command { get; set; }
+
+        public KeyGestureSource? KeyGesture
+        {
+            get { return _keyGesture; }
+            set { SetProperty(ref _keyGesture, value); }
+        }
+
+        public MouseGestureSource? MouseGesture
+        {
+            get { return _mouseGesture; }
+            set { SetProperty(ref _mouseGesture, value); }
+        }
+
+        public ObservableCollection<InputGestureToken> GestureTokens
+        {
+            get { return _gestureTokens; }
+            set { if (_gestureTokens != value) { _gestureTokens = value; RaisePropertyChanged(); } }
+        }
+
+        // ウィンドウタイトル？
+        public string Header { get; set; }
+
+
         /// <summary>
         /// ジェスチャーリスト更新
         /// </summary>
@@ -83,15 +62,14 @@ namespace NeeView.Setting
             GestureTokens = CreateGestures();
         }
 
-        private ObservableCollection<GestureToken> CreateGestures()
+        private ObservableCollection<InputGestureToken> CreateGestures()
         {
-            var items = new ObservableCollection<GestureToken>();
-            if (!string.IsNullOrEmpty(_commandMap[Command].ShortCutKey))
+            var items = new ObservableCollection<InputGestureToken>();
+            if (!_commandMap[Command].ShortCutKey.IsEmpty)
             {
-                foreach (var gesture in _commandMap[Command].ShortCutKey.Split(','))
+                foreach (var gesture in _commandMap[Command].ShortCutKey.Gestures)
                 {
-                    if (gesture == "") continue;
-                    var element = CreateShortCutElement(gesture);
+                    var element = CreateShortcutElement(gesture);
                     items.Add(element);
                 }
             }
@@ -103,12 +81,12 @@ namespace NeeView.Setting
         /// </summary>
         /// <param name="gesture"></param>
         /// <returns></returns>
-        public GestureToken CreateShortCutElement(string gesture)
+        public InputGestureToken CreateShortcutElement(InputGestureSource gesture)
         {
-            var element = new GestureToken(gesture);
+            var element = new InputGestureToken(gesture);
 
             var overlaps = _commandMap
-                .Where(e => !string.IsNullOrEmpty(e.Value.ShortCutKey) && e.Key != Command && e.Value.ShortCutKey.Split(',').Contains(gesture))
+                .Where(e => !e.Value.ShortCutKey.IsEmpty && e.Key != Command && e.Value.ShortCutKey.Gestures.Contains(gesture))
                 .Select(e => e.Key)
                 .ToList();
 
@@ -125,13 +103,13 @@ namespace NeeView.Setting
         /// ジェスチャーの追加
         /// </summary>
         /// <param name="gesture"></param>
-        public void AddGesture(string gesture)
+        public void AddGesture(InputGestureSource? gesture)
         {
-            if (string.IsNullOrEmpty(gesture)) return;
+            if (gesture is null) return;
 
             if (!GestureTokens.Any(item => item.Gesture == gesture))
             {
-                var element = CreateShortCutElement(gesture);
+                var element = CreateShortcutElement(gesture);
                 GestureTokens.Add(element);
             }
         }
@@ -140,8 +118,10 @@ namespace NeeView.Setting
         /// ジェスチャーの削除
         /// </summary>
         /// <param name="gesture"></param>
-        public void RemoveGesture(string gesture)
+        public void RemoveGesture(InputGestureSource? gesture)
         {
+            if (gesture is null) return;
+
             var token = GestureTokens.FirstOrDefault(e => e.Gesture == gesture);
             if (token != null)
             {
@@ -155,19 +135,20 @@ namespace NeeView.Setting
         public void Flush()
         {
             _commandMap[Command].ShortCutKey = GestureTokens.Count > 0
-                ? string.Join(",", GestureTokens.Select(e => e.Gesture))
-                : "";
+                ? new ShortcutKey(GestureTokens.Select(e => e.Gesture).WhereNotNull())
+                : ShortcutKey.Empty;
         }
 
 
         /// <summary>
         /// 競合の解決
         /// </summary>
-        public void ResolveConflict(GestureToken item, System.Windows.Window owner)
+        public void ResolveConflict(InputGestureToken item, System.Windows.Window owner)
         {
             Flush();
-            
+
             if (item.Conflicts is null) return;
+            if (item.Gesture is null) return;
 
             var conflicts = new List<string>(item.Conflicts);
             conflicts.Insert(0, Command);
@@ -185,8 +166,8 @@ namespace NeeView.Setting
                 {
                     if (!conflictItem.IsChecked)
                     {
-                        var newGesture = string.Join(",", _commandMap[conflictItem.CommandName].ShortCutKey.Split(',').Where(i => i != item.Gesture));
-                        _commandMap[conflictItem.CommandName].ShortCutKey = string.IsNullOrEmpty(newGesture) ? "" : newGesture;
+                        var newGesture = new ShortcutKey(_commandMap[conflictItem.CommandName].ShortCutKey.Gestures.Where(i => i != item.Gesture));
+                        _commandMap[conflictItem.CommandName].ShortCutKey = newGesture;
                     }
                 }
                 UpdateGestures();

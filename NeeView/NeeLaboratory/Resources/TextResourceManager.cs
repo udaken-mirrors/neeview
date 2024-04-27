@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 
@@ -29,9 +30,9 @@ namespace NeeLaboratory.Resources
         public LanguageResource LanguageResource => _languageResource ?? throw new InvalidOperationException();
 
         /// <summary>
-        /// テキストリソース
+        /// テキスト マップ
         /// </summary>
-        public TextResourceSet Resource => _resource;
+        public Dictionary<string, TextResourceItem> Map => _resource.Map;
 
 
         /// <summary>
@@ -51,8 +52,8 @@ namespace NeeLaboratory.Resources
         /// <returns>対応するテキスト。存在しない場合 null</returns>
         public string? GetString(string name)
         {
-            Debug.WriteLineIf(!Resource.IsValid, $"## Resource not loaded: request key = {name}");
-            return Resource.GetString(name);
+            Debug.WriteLineIf(!_resource.IsValid, $"## Resource not loaded: request key = {name}");
+            return _resource.GetString(name);
         }
 
         /// <summary>
@@ -74,8 +75,8 @@ namespace NeeLaboratory.Resources
         /// <returns></returns>
         public string? GetCaseString(string name, string pattern)
         {
-            Debug.WriteLineIf(!Resource.IsValid, $"## Resource not loaded: request key = {name}");
-            return Resource.GetCaseString(name, pattern);
+            Debug.WriteLineIf(!_resource.IsValid, $"## Resource not loaded: request key = {name}");
+            return _resource.GetCaseString(name, pattern);
         }
 
         /// <summary>

@@ -5,7 +5,7 @@
         public NextBookHistoryCommand()
         {
             this.Group = Properties.TextResources.GetString("CommandGroup.BookMove");
-            this.ShortCutKey = "Alt+Right";
+            this.ShortCutKey = new ShortcutKey("Alt+Right");
             this.IsShowMessage = false;
         }
 

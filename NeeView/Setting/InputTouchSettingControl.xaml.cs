@@ -61,9 +61,9 @@ namespace NeeView.Setting
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             var map = (TouchAreaMap)value;
-            var gesture = (TouchGesture)parameter;
+            var area = (TouchArea)parameter;
 
-            return map[gesture] ? App.Current.Resources["Control.Accent"] : App.Current.Resources["Window.Background"];
+            return map[area] ? App.Current.Resources["Control.Accent"] : App.Current.Resources["Window.Background"];
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

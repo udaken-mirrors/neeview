@@ -49,16 +49,16 @@ namespace NeeView
             {
                 switch (mouse.MouseAction)
                 {
-                    case MouseAction.LeftDoubleClick:
-                    case MouseAction.RightDoubleClick:
-                    case MouseAction.MiddleDoubleClick:
+                    case System.Windows.Input.MouseAction.LeftDoubleClick:
+                    case System.Windows.Input.MouseAction.RightDoubleClick:
+                    case System.Windows.Input.MouseAction.MiddleDoubleClick:
                         _skipMouseButtonUp = true;
                         break;
                 }
             }
             else if (e.Gesture is MouseExGesture mouseEx)
             {
-                switch (mouseEx.MouseExAction)
+                switch (mouseEx.Action)
                 {
                     case MouseExAction.LeftDoubleClick:
                     case MouseExAction.RightDoubleClick:

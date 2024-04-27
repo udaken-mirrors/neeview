@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Windows;
 using System.Windows.Data;
 
 namespace NeeView
@@ -9,8 +10,12 @@ namespace NeeView
     {
         public object? Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
-            if (value == null) return null;
-            return new MouseGestureSequence((string)value).ToDispString();
+            if (value is MouseSequence gesture)
+            {
+                return gesture.GetDisplayString();
+            }
+
+            return DependencyProperty.UnsetValue;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)

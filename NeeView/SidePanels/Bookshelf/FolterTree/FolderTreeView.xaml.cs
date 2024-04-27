@@ -173,7 +173,7 @@ namespace NeeView
                 {
                     if (this.TreeView.SelectedItem is DirectoryNode item)
                     {
-                        ExternalProcess.Start("explorer.exe", item.Path);
+                        ExternalProcess.OpenWithExplorer(item.Path);
                     }
                 }
             }

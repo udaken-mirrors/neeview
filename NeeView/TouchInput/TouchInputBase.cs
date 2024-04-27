@@ -145,15 +145,15 @@ namespace NeeView
             var yRate = point.Y / _context.Sender.ActualHeight;
             
             // TouchCenter を優先的に判定
-            if (TouchGesture.TouchCenter.IsTouched(xRate, yRate))
+            if (TouchArea.TouchCenter.IsTouched(xRate, yRate))
             {
-                var arg = new TouchGestureEventArgs(TouchGesture.TouchCenter);
+                var arg = new TouchGestureEventArgs(TouchArea.TouchCenter);
                 TouchGestureChanged?.Invoke(this, arg);
                 if (arg.Handled) return;
             }
 
             // TouchLeft / Right
-            var gesture = TouchGestureExtensions.GetTouchGestureLast(xRate, yRate);
+            var gesture = TouchAreaExtensions.GetTouchAreaLast(xRate, yRate);
             TouchGestureChanged?.Invoke(this, new TouchGestureEventArgs(gesture));
         }
 

@@ -5,7 +5,7 @@
         public PrintCommand()
         {
             this.Group = Properties.TextResources.GetString("CommandGroup.File");
-            this.ShortCutKey = "Ctrl+P";
+            this.ShortCutKey = new ShortcutKey("Ctrl+P");
             this.IsShowMessage = false;
         }
 

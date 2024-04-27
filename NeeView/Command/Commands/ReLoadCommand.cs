@@ -5,7 +5,7 @@
         public ReLoadCommand()
         {
             this.Group = Properties.TextResources.GetString("CommandGroup.File");
-            this.MouseGesture = "UD";
+            this.MouseGesture = new MouseSequence("UD");
             this.IsShowMessage = false;
         }
 

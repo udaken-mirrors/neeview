@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -14,20 +13,20 @@ namespace NeeView
     public class MouseExGesture : InputGesture
     {
         // メインアクション
-        public MouseExAction MouseExAction { get; private set; }
+        public MouseExAction Action { get; private set; }
 
         // 修飾キー
-        public ModifierKeys ModifierKeys { get; private set; }
+        public ModifierKeys Modifiers { get; private set; }
 
         // 修飾マウスボタン
-        public ModifierMouseButtons ModifierMouseButtons { get; private set; }
+        public ModifierMouseButtons ModifierButtons { get; private set; }
 
         // コンストラクタ
-        public MouseExGesture(MouseExAction action, ModifierKeys modifierKeys, ModifierMouseButtons modifierMouseButtons)
+        public MouseExGesture(MouseExAction action, ModifierKeys modifiers, ModifierMouseButtons modifierButtons)
         {
-            this.MouseExAction = action;
-            this.ModifierKeys = modifierKeys;
-            this.ModifierMouseButtons = modifierMouseButtons;
+            this.Action = action;
+            this.Modifiers = modifiers;
+            this.ModifierButtons = modifierButtons;
         }
 
         // 入力判定
@@ -74,7 +73,13 @@ namespace NeeView
             if (mouseEventArgs.XButton2 == MouseButtonState.Pressed && mouseEventArgs.ChangedButton != MouseButton.XButton2)
                 modifierMouseButtons |= ModifierMouseButtons.XButton2;
 
-            return this.MouseExAction == action && this.ModifierMouseButtons == modifierMouseButtons && ModifierKeys == Keyboard.Modifiers;
+            return this.Action == action && this.ModifierButtons == modifierMouseButtons && Modifiers == Keyboard.Modifiers;
+        }
+
+
+        public string GetDisplayString()
+        {
+            return new MouseGestureSource(MouseActionExtensions.ConvertFrom(Action), Modifiers, ModifierButtons).GetDisplayString();
         }
     }
 }

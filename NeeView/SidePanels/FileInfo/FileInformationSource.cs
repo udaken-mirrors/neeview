@@ -200,7 +200,7 @@ namespace NeeView
             var place = Page?.GetFolderOpenPlace();
             if (!string.IsNullOrWhiteSpace(place))
             {
-                ExternalProcess.Start("explorer.exe", "/select,\"" + place + "\"");
+                ExternalProcess.OpenWithExplorer("/select,\"" + place + "\"");
             }
         }
 

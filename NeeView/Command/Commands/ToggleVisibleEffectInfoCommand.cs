@@ -9,7 +9,7 @@ namespace NeeView
         public ToggleVisibleEffectInfoCommand()
         {
             this.Group = Properties.TextResources.GetString("CommandGroup.Panel");
-            this.ShortCutKey = "E";
+            this.ShortCutKey = new ShortcutKey("E");
             this.IsShowMessage = false;
         }
 

@@ -7,6 +7,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Runtime.Serialization;
 using System.Windows.Controls;
 using System.Windows.Data;
+using System.Windows.Input;
 
 namespace NeeView
 {
@@ -71,6 +72,11 @@ namespace NeeView
         public RelayCommand MoveToNextCommand { get; private set; }
         public RelayCommand<KeyValuePair<int, PageHistoryUnit>> MoveToHistoryCommand { get; private set; }
         public RelayCommand MoveToUpCommand { get; private set; }
+
+        public string MoveToPreviousCommandToolTip { get; } = CommandTools.CreateToolTipText("@PageList.Back.ToolTip", Key.Left, ModifierKeys.Alt);
+        public string MoveToNextCommandToolTip { get; } = CommandTools.CreateToolTipText("@PageList.Next.ToolTip", Key.Right, ModifierKeys.Alt);
+        public string MoveToUpCommandToolTip { get; } = CommandTools.CreateToolTipText("@PageList.Up.ToolTip", Key.Up, ModifierKeys.Alt);
+
 
         [MemberNotNull(nameof(MoveToPreviousCommand), nameof(MoveToNextCommand), nameof(MoveToHistoryCommand), nameof(MoveToUpCommand))]
         private void InitializeCommands()

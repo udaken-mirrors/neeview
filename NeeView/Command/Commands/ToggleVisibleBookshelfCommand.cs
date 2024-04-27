@@ -9,7 +9,7 @@ namespace NeeView
         public ToggleVisibleBookshelfCommand()
         {
             this.Group = Properties.TextResources.GetString("CommandGroup.Panel");
-            this.ShortCutKey = "B";
+            this.ShortCutKey = new ShortcutKey("B");
             this.IsShowMessage = false;
         }
 

@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Windows.Input;
 
 namespace NeeView
 {
@@ -37,13 +38,6 @@ namespace NeeView
             // ver.38
             if (self.Format.CompareTo(new FormatVersion(Environment.SolutionName, 38, 0, 0)) < 0)
             {
-                Debug.WriteLine($"ValidateShortCutKey...");
-                foreach (var command in self.Commands.Values)
-                {
-                    command.ValidateShortCutKey();
-                }
-                Debug.WriteLine($"ValidateShortCutKey done.");
-
                 // NOTE: Config.Panels.PanelDocks は継承しません。
 
                 self.Commands?.ValidateRename(CommandNameValidator.RenameMap_38_0_0);
@@ -111,9 +105,10 @@ namespace NeeView
                 if (self.Commands != null)
                 {
                     // メインビューウィンドウ切り替えコマンドにショートカットキーF12を設定
-                    if (self.Commands.TryGetValue("ToggleMainViewFloating", out var toggleMainViewFloating) && toggleMainViewFloating.ShortCutKey == "" && !self.Commands.Any(e => e.Key.Contains("F12")))
+                    var gestureF12 = new KeyGestureSource(Key.F12);
+                    if (self.Commands.TryGetValue("ToggleMainViewFloating", out var toggleMainViewFloating) && toggleMainViewFloating.ShortCutKey.IsEmpty && !self.Commands.Any(e => e.Value.ShortCutKey.Gestures.Contains(gestureF12)))
                     {
-                        toggleMainViewFloating.ShortCutKey = "F12";
+                        toggleMainViewFloating.ShortCutKey = new ShortcutKey(new List<InputGestureSource>() { gestureF12 });
                     }
                 }
 
@@ -202,7 +197,7 @@ namespace NeeView
         private static void ResolveCommandShortCutKeyConflicts(CommandCollection commands, CommandElement command)
         {
             if (commands.ContainsKey(command.Name)) return;
-            if (string.IsNullOrEmpty(command.ShortCutKey)) return;
+            if (command.ShortCutKey.IsEmpty) return;
 
             command.ShortCutKey = ResolveShortCutKeyConflicts(commands, command.ShortCutKey);
             commands[command.Name] = command.CreateMemento();
@@ -212,25 +207,26 @@ namespace NeeView
         /// CommandCollection に含まれているショートカットキーを除外したショートカットキー列を作る
         /// </summary>
         /// <param name="commands"></param>
-        /// <param name="shortCutKey">要求するショートカットキー列 (カンマ区切り)</param>
+        /// <param name="shortCutKey">要求するショートカットキー</param>
         /// <returns></returns>
-        private static string ResolveShortCutKeyConflicts(CommandCollection commands, string shortCutKey)
+        private static ShortcutKey ResolveShortCutKeyConflicts(CommandCollection commands, ShortcutKey shortCutKey)
         {
-            if (string.IsNullOrEmpty(shortCutKey)) return "";
+            if (shortCutKey.IsEmpty) return ShortcutKey.Empty;
 
-            var keys = shortCutKey.Split(',');
-            return string.Join(',', keys.Where(e => !ContainsShortCutKey(commands, e)));
+            return new ShortcutKey(shortCutKey.Gestures.Where(e => !ContainsShortcutGesture(commands, e)));
         }
 
         /// <summary>
         /// CommandCollection に特定のショートカットキー設定が含まれているかをチェックする
         /// </summary>
         /// <param name="commands"></param>
-        /// <param name="shortCutKey">判定するショートカットキー</param>
+        /// <param name="gesture">判定するショートカットキー</param>
         /// <returns></returns>
-        private static bool ContainsShortCutKey(CommandCollection commands, string shortCutKey)
+        private static bool ContainsShortcutGesture(CommandCollection commands, InputGestureSource gesture)
         {
-            return commands.Values.Where(e => !string.IsNullOrEmpty(e.ShortCutKey)).Any(e => e.ShortCutKey.Split(',').Contains(shortCutKey));
+            return commands.Values
+                .Where(e => !e.ShortCutKey.IsEmpty)
+                .Any(e => e.ShortCutKey.Gestures.Contains(gesture));
         }
 
 #pragma warning restore CS0612, CS0618 // 型またはメンバーが旧型式です

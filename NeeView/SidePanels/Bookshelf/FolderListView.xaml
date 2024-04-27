@@ -137,7 +137,7 @@
                     </StackPanel>
                     <WrapPanel Orientation="Horizontal" VerticalAlignment="Top" MinWidth="150">
                         <Button x:Name="FolderHomeButton" Style="{StaticResource FolderListButtonStyle}" Command="{Binding MoveToHome}" TabIndex="1"
-                                ToolTip="{properties:TextBinding Bookshelf.Home.ToolTip}">
+                                ToolTip="{Binding MoveToHomeToolTip}">
                             <Image Source="{StaticResource ic_home_24px_a}" />
                             <Button.ContextMenu>
                                 <ContextMenu>
@@ -146,21 +146,21 @@
                             </Button.ContextMenu>
                         </Button>
                         <Button x:Name="FolderPrevButton" Style="{StaticResource FolderListButtonStyle}" Command="{Binding MoveToPrevious}" TabIndex="1" ContextMenuService.Placement="Bottom"
-                                ContextMenuOpening="FolderPrevButton_ContextMenuOpening" ToolTip="{properties:TextBinding Bookshelf.Back.ToolTip}">
+                                ContextMenuOpening="FolderPrevButton_ContextMenuOpening" ToolTip="{Binding MoveToPreviousToolTip}">
                             <Image Source="{StaticResource ic_arrow_back_24px_a}" />
                             <Button.ContextMenu>
                                 <ContextMenu x:Name="FolderPrevButtonContextMenu" ItemContainerStyle="{StaticResource HistoryMenuItemContainerStyle}" />
                             </Button.ContextMenu>
                         </Button>
                         <Button x:Name="FolderNextButton" Style="{StaticResource FolderListButtonStyle}" Command="{Binding MoveToNext}" TabIndex="1" ContextMenuService.Placement="Bottom"
-                                ContextMenuOpening="FolderNextButton_ContextMenuOpening" ToolTip="{properties:TextBinding Bookshelf.Next.ToolTip}">
+                                ContextMenuOpening="FolderNextButton_ContextMenuOpening" ToolTip="{Binding MoveToNextToolTip}">
                             <Image Source="{StaticResource ic_arrow_forward_24px_a}" />
                             <Button.ContextMenu>
                                 <ContextMenu x:Name="FolderNextButtonContextMenu" ItemContainerStyle="{StaticResource HistoryMenuItemContainerStyle}" />
                             </Button.ContextMenu>
                         </Button>
                         <Button x:Name="FolderUpButton" Style="{StaticResource FolderListButtonStyle}" Command="{Binding MoveToUp}" TabIndex="1"
-                                ToolTip="{properties:TextBinding Bookshelf.Up.ToolTip}">
+                                ToolTip="{Binding MoveToUpToolTip}">
                             <Image Source="{StaticResource ic_arrow_up_24px_a}" />
                         </Button>
                         <Button x:Name="FolderSync" Style="{StaticResource FolderListButtonStyle}" Command="{Binding Sync}" TabIndex="1"

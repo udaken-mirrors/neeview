@@ -50,9 +50,9 @@ namespace NeeView
             {
                 command.Text = source.Text;
                 command.Remarks = source.Remarks;
-                command.ShortCutKey = "";
-                command.MouseGesture = "";
-                command.TouchGesture = "";
+                command.ShortCutKey = ShortcutKey.Empty;
+                command.TouchGesture = TouchGesture.Empty;
+                command.MouseGesture = MouseSequence.Empty;
             }
             return command;
         }
@@ -84,9 +84,9 @@ namespace NeeView
 
                 if (isForce || (_defaultGestures != null && _defaultGestures.IsEquals(this) && !IsCloneCommand()))
                 {
-                    ShortCutKey = source.ShortCutKey ?? "";
-                    MouseGesture = source.MouseGesture ?? "";
-                    TouchGesture = source.TouchGesture ?? "";
+                    ShortCutKey = new ShortcutKey(source.ShortCutKey);
+                    MouseGesture = new MouseSequence(source.MouseGesture);
+                    TouchGesture = new TouchGesture(source.TouchGesture);
 
                     StoreDefault();
                 }

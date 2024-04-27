@@ -1,11 +1,19 @@
 ﻿using System;
+using System.Globalization;
 using System.Linq;
+using System.Text.Json.Serialization;
+using System.Text.Json;
+using System.Windows;
+using System.Windows.Data;
 using System.Windows.Input;
 
 namespace NeeView
 {
+    [JsonConverter(typeof(JsonDragKeyConverter))]
     public record class DragKey
     {
+        private const char _modifierDelimiter = '+';
+
         public static DragKey Empty { get; } = new DragKey();
 
 
@@ -36,107 +44,53 @@ namespace NeeView
 
         public MouseButtonBits MouseButtonBits { get; init; }
         public ModifierKeys ModifierKeys { get; init; }
-
-
-
-#if false
-        #region IEquatable
-
-        /// <summary>
-        /// 比較
-        /// </summary>
-        /// <param name="obj"></param>
-        /// <returns></returns>
-        public override bool Equals(object? obj)
-        {
-            // If parameter is null return false.
-            if (obj == null)
-            {
-                return false;
-            }
-
-            // If parameter cannot be cast to Point return false.
-            if (obj is not DragKey p)
-            {
-                return false;
-            }
-
-            // Return true if the fields match:
-            return (_mouseButtonBits == p._mouseButtonBits) && (_modifierKeys == p._modifierKeys);
-        }
-
-        /// <summary>
-        /// 比較
-        /// </summary>
-        /// <param name="p"></param>
-        /// <returns></returns>
-        public bool Equals(DragKey? p)
-        {
-            // If parameter is null return false:
-            if (p is null)
-            {
-                return false;
-            }
-
-            // Return true if the fields match:
-            return (_mouseButtonBits == p._mouseButtonBits) && (_modifierKeys == p._modifierKeys);
-        }
-
-        /// <summary>
-        /// ハッシュ値
-        /// </summary>
-        /// <returns></returns>
-        public override int GetHashCode()
-        {
-            return _mouseButtonBits.GetHashCode() ^ _modifierKeys.GetHashCode();
-        }
-
-        /// <summary>
-        /// 比較演算子
-        /// </summary>
-        /// <param name="a"></param>
-        /// <param name="b"></param>
-        /// <returns></returns>
-        public static bool operator ==(DragKey a, DragKey b)
-        {
-            // If both are null, or both are same instance, return true.
-            if (System.Object.ReferenceEquals(a, b))
-            {
-                return true;
-            }
-
-            // If one is null, but not both, return false.
-            if ((a is null) || (b is null))
-            {
-                return false;
-            }
-
-            // Return true if the fields match:
-            return (a._mouseButtonBits == b._mouseButtonBits) && (a._modifierKeys == b._modifierKeys);
-        }
-
-        /// <summary>
-        /// 比較演算子
-        /// </summary>
-        /// <param name="a"></param>
-        /// <param name="b"></param>
-        /// <returns></returns>
-        public static bool operator !=(DragKey a, DragKey b)
-        {
-            return !(a == b);
-        }
-
-        #endregion
-#endif
-
         public bool IsValid => MouseButtonBits != MouseButtonBits.None;
 
         public override string ToString()
         {
             return DragKeyConverter.ConvertToString(this);
         }
+
+        public string GetDisplayString()
+        {
+            if (!IsValid) return "";
+
+            string text = "";
+
+            foreach (ModifierKeys key in Enum.GetValues(typeof(ModifierKeys)))
+            {
+                if ((ModifierKeys & key) != ModifierKeys.None)
+                {
+                    text += _modifierDelimiter + key.GetDisplayString();
+                }
+            }
+
+            text += _modifierDelimiter + MouseButtonBits.GetDisplayString();
+
+            return text.TrimStart(_modifierDelimiter);
+        }
     }
 
+    /// <summary>
+    /// DragKey to DisplayString converter
+    /// </summary>
+    public class DragKeyToDisplayStringConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value is DragKey dragKey)
+            {
+                return dragKey.GetDisplayString();
+            }
+
+            return DependencyProperty.UnsetValue;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
 
 
     /// <summary>
@@ -144,6 +98,8 @@ namespace NeeView
     /// </summary>
     public class DragKeyConverter
     {
+        private const char _modifierDelimiter = '+';
+
         /// <summary>
         ///  文字列からマウスドラッグアクションに変換する
         /// </summary>
@@ -153,6 +109,8 @@ namespace NeeView
         {
             // ex. LeftButton
             // ex. Ctrl+XButton1+LeftButton
+
+            if (string.IsNullOrEmpty(source)) return DragKey.Empty;
 
             // １操作のみサポート
             source = source.Split(',').First();
@@ -211,14 +169,29 @@ namespace NeeView
             {
                 if ((gesture.ModifierKeys & key) != ModifierKeys.None)
                 {
-                    text += "+" + ((key == ModifierKeys.Control) ? "Ctrl" : key.ToString());
+                    text += _modifierDelimiter + ((key == ModifierKeys.Control) ? "Ctrl" : key.ToString());
                 }
             }
 
-            text += "+" + string.Join("+", gesture.MouseButtonBits.ToString().Split(',').Select(e => e.Trim()).Reverse());
+            text += _modifierDelimiter + string.Join(_modifierDelimiter, gesture.MouseButtonBits.ToString().Split(',').Select(e => e.Trim()));
 
             return text.TrimStart('+');
         }
     }
 
+
+    public sealed class JsonDragKeyConverter : JsonConverter<DragKey>
+    {
+        public override DragKey? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+        {
+            var s = reader.GetString();
+            if (s is null) return DragKey.Empty;
+            return DragKeyConverter.ConvertFromString(s);
+        }
+
+        public override void Write(Utf8JsonWriter writer, DragKey value, JsonSerializerOptions options)
+        {
+            writer.WriteStringValue(value.ToString());
+        }
+    }
 }

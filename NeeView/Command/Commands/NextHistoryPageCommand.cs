@@ -5,7 +5,7 @@
         public NextHistoryPageCommand()
         {
             this.Group = Properties.TextResources.GetString("CommandGroup.Move");
-            this.ShortCutKey = "Shift+Back";
+            this.ShortCutKey = new ShortcutKey("Shift+Back");
             this.IsShowMessage = false;
         }
 

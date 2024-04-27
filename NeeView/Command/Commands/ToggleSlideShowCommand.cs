@@ -9,7 +9,7 @@ namespace NeeView
         public ToggleSlideShowCommand()
         {
             this.Group = Properties.TextResources.GetString("CommandGroup.ViewManipulation");
-            this.ShortCutKey = "F5";
+            this.ShortCutKey = new ShortcutKey("F5");
             this.IsShowMessage = true;
         }
 

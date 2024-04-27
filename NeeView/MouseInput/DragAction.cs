@@ -47,7 +47,7 @@ namespace NeeView
 
         public class Memento
         {
-            public string MouseButton { get; set; } = "";
+            public DragKey MouseButton { get; set; } = DragKey.Empty;
 
             public DragActionParameter? Parameter { get; set; }
 
@@ -61,7 +61,7 @@ namespace NeeView
         public Memento CreateMemento()
         {
             var memento = new Memento();
-            memento.MouseButton = DragKey.ToString();
+            memento.MouseButton = DragKey;
             memento.Parameter = (DragActionParameter?)Parameter?.Clone();
             return memento;
         }
@@ -69,7 +69,7 @@ namespace NeeView
         public void Restore(Memento memento)
         {
             if (memento == null) return;
-            DragKey = new DragKey(memento.MouseButton);
+            DragKey = memento.MouseButton;
             Parameter = (DragActionParameter?)memento.Parameter?.Clone();
         }
 

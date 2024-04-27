@@ -16,7 +16,7 @@ namespace NeeView
         /// <summary>
         /// 入力トラッカー
         /// </summary>
-        private readonly MouseGestureSequenceTracker _gesture;
+        private readonly MouseSequenceBuilder _builder;
 
         /// <summary>
         /// コンストラクタ
@@ -24,8 +24,8 @@ namespace NeeView
         /// <param name="context"></param>
         public MouseInputGesture(MouseInputContext context) : base(context)
         {
-            _gesture = new MouseGestureSequenceTracker();
-            _gesture.GestureProgressed += (s, e) => GestureProgressed?.Invoke(this, new MouseGestureEventArgs(_gesture.Sequence));
+            _builder = new MouseSequenceBuilder();
+            _builder.GestureProgressed += (s, e) => GestureProgressed?.Invoke(this, new MouseGestureEventArgs(_builder.ToMouseSequence()));
         }
 
 
@@ -40,12 +40,10 @@ namespace NeeView
         public event EventHandler<MouseGestureEventArgs>? GestureChanged;
 
 
-        //
         public void Reset()
         {
-            _gesture.Reset(_context.StartPoint);
+            _builder.Reset(_context.StartPoint);
         }
-
 
         /// <summary>
         /// 状態開始
@@ -55,9 +53,7 @@ namespace NeeView
         public override void OnOpened(FrameworkElement sender, object? parameter)
         {
             SetCursor(null);
-            ////Reset();
-
-            _gesture.Reset(_context.StartPoint);
+            _builder.Reset(_context.StartPoint);
         }
 
         /// <summary>
@@ -89,11 +85,11 @@ namespace NeeView
             if (e.Handled) return;
 
             // 右ボタンのみジェスチャー終端として認識
-            if (e.ChangedButton == MouseButton.Left && _gesture.Sequence.Count > 0)
+            if (e.ChangedButton == MouseButton.Left && !_builder.IsEmpty)
             {
                 // ジェスチャーコマンド実行
-                _gesture.Sequence.Add(MouseGestureDirection.Click);
-                var args = new MouseGestureEventArgs(_gesture.Sequence);
+                _builder.AddClick();
+                var args = new MouseGestureEventArgs(_builder.ToMouseSequence());
                 GestureChanged?.Invoke(sender, args);
             }
 
@@ -109,9 +105,9 @@ namespace NeeView
         public override void OnMouseButtonUp(object? sender, MouseButtonEventArgs e)
         {
             // ジェスチャーコマンド実行
-            if (_gesture.Sequence.Count > 0)
+            if (!_builder.IsEmpty)
             {
-                var args = new MouseGestureEventArgs(_gesture.Sequence);
+                var args = new MouseGestureEventArgs(_builder.ToMouseSequence());
                 GestureChanged?.Invoke(sender, args);
                 e.Handled = args.Handled;
             }
@@ -155,7 +151,7 @@ namespace NeeView
         private void UpdateState(object? sender, MouseEventArgs e)
         {
             // ジェスチャー認識前に他のドラッグに切り替わったら処理を切り替える
-            if (_gesture.Sequence.Count > 0) return;
+            if (!_builder.IsEmpty) return;
 
             var action = DragActionTable.Current.GetActionType(new DragKey(CreateMouseButtonBits(e), Keyboard.Modifiers));
             switch (action ?? "")
@@ -183,7 +179,7 @@ namespace NeeView
 
             var point = e.GetPosition(_context.Sender);
 
-            _gesture.Move(point);
+            _builder.Move(point);
         }
 
     }

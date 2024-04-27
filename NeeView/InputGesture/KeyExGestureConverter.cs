@@ -62,20 +62,19 @@ namespace NeeView
                 }
 
                 ModifierKeys modifiers = ModifierKeys.None;
-                object? resultkey = _keyConverter.ConvertFrom(context, culture, keyToken);
-                if (resultkey != null)
+                object? resultKey = _keyConverter.ConvertFrom(context, culture, keyToken);
+                if (resultKey != null)
                 {
                     object temp = _modifierKeysConverter.ConvertFrom(context, culture, modifiersToken);
                     if (temp != null)
                     {
                         modifiers = (ModifierKeys)temp;
                     }
-                    return new KeyExGesture((Key)resultkey, modifiers);
+                    return new KeyExGesture((Key)resultKey, modifiers);
                 }
             }
             throw GetConvertFromException(source);
         }
-
 
         public override object? ConvertTo(ITypeDescriptorContext? context, CultureInfo? culture, object? value, Type destinationType)
         {

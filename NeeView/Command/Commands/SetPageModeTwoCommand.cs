@@ -8,8 +8,8 @@ namespace NeeView
         public SetPageModeTwoCommand()
         {
             this.Group = Properties.TextResources.GetString("CommandGroup.PageSetting");
-            this.ShortCutKey = "Ctrl+2";
-            this.MouseGesture = "RD";
+            this.ShortCutKey = new ShortcutKey("Ctrl+2");
+            this.MouseGesture = new MouseSequence("RD");
             this.IsShowMessage = true;
         }
 

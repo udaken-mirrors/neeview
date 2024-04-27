@@ -1,12 +1,9 @@
-﻿using NeeLaboratory.ComponentModel;
-using NeeLaboratory.IO.Search;
+﻿using NeeLaboratory.IO.Search;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Runtime.Serialization;
-using System.Text.Json.Serialization;
 using System.Threading;
 using System.Windows.Data;
 using System.Windows.Input;
@@ -76,9 +73,9 @@ namespace NeeView
 
         private string? _menuText;
         private string? _remarksText;
-        private string _shortCutKey = "";
-        private string _touchGesture = "";
-        private string _mouseGesture = "";
+        private ShortcutKey _shortCutKey = ShortcutKey.Empty;
+        private TouchGesture _touchGesture = TouchGesture.Empty;
+        private MouseSequence _mouseGesture = MouseSequence.Empty;
         private bool _isCloneable = true;
 
 
@@ -163,42 +160,42 @@ namespace NeeView
         public bool IsInputGestureDirty { get; set; }
 
         // ショートカットキー
-        public string ShortCutKey
+        public ShortcutKey ShortCutKey
         {
             get { return _shortCutKey; }
             set
             {
                 if (_shortCutKey != value)
                 {
-                    _shortCutKey = value?.Trim() ?? "";
+                    _shortCutKey = value;
                     IsInputGestureDirty = true;
                 }
             }
         }
 
         // タッチ
-        public string TouchGesture
+        public TouchGesture TouchGesture
         {
             get { return _touchGesture; }
             set
             {
                 if (_touchGesture != value)
                 {
-                    _touchGesture = value?.Trim() ?? "";
+                    _touchGesture = value;
                     IsInputGestureDirty = true;
                 }
             }
         }
 
         // マウスジェスチャー
-        public string MouseGesture
+        public MouseSequence MouseGesture
         {
             get { return _mouseGesture; }
             set
             {
                 if (_mouseGesture != value)
                 {
-                    _mouseGesture = value?.Trim() ?? "";
+                    _mouseGesture = value;
                     IsInputGestureDirty = true;
                 }
             }
@@ -301,47 +298,10 @@ namespace NeeView
             return clone;
         }
 
-        // ショートカットキー を InputGestureのコレクションに変換
-        public List<InputGesture> GetInputGestureCollection()
-        {
-            var list = new List<InputGesture>();
-            if (!string.IsNullOrWhiteSpace(ShortCutKey))
-            {
-                foreach (var key in ShortCutKey.Split(','))
-                {
-                    InputGesture? inputGesture = InputGestureConverter.ConvertFromString(key);
-                    if (inputGesture != null)
-                    {
-                        list.Add(inputGesture);
-                    }
-                }
-            }
-
-            return list;
-        }
-
-        // タッチコレクション取得
-        public List<TouchGesture> GetTouchGestureCollection()
-        {
-            var list = new List<TouchGesture>();
-            if (!string.IsNullOrWhiteSpace(this.TouchGesture))
-            {
-                foreach (var key in this.TouchGesture.Split(','))
-                {
-                    if (Enum.TryParse(key, out TouchGesture gesture))
-                    {
-                        list.Add(gesture);
-                    }
-                }
-            }
-
-            return list;
-        }
-
         // 検索用文字列を取得
         public string GetSearchText()
         {
-            return string.Join(",", new string[] { this.Group, this.Text, this.Menu, this.Remarks, this.ShortCutKey, this.MouseGesture, new MouseGestureSequence(this.MouseGesture).ToDispString(), this.TouchGesture });
+            return string.Join(",", new string[] { this.Group, this.Text, this.Menu, this.Remarks, this.ShortCutKey.GetDisplayString(), this.MouseGesture.ToString(), this.MouseGesture.GetDisplayString(), this.TouchGesture.GetDisplayString() });
         }
 
         protected virtual CommandElement CloneInstance()
@@ -378,9 +338,9 @@ namespace NeeView
 
         private void ClearGestures()
         {
-            this.ShortCutKey = "";
-            this.TouchGesture = "";
-            this.MouseGesture = "";
+            this.ShortCutKey = ShortcutKey.Empty;
+            this.TouchGesture = TouchGesture.Empty;
+            this.MouseGesture = MouseSequence.Empty;
         }
 
 
@@ -399,9 +359,9 @@ namespace NeeView
         [Memento]
         public class Memento : ICloneable
         {
-            public string ShortCutKey { get; set; } = "";
-            public string TouchGesture { get; set; } = "";
-            public string MouseGesture { get; set; } = "";
+            public ShortcutKey ShortCutKey { get; set; } = ShortcutKey.Empty;
+            public TouchGesture TouchGesture { get; set; } = TouchGesture.Empty;
+            public MouseSequence MouseGesture { get; set; } = MouseSequence.Empty;
             public bool IsShowMessage { get; set; }
             public CommandParameter? Parameter { get; set; }
 
@@ -409,22 +369,8 @@ namespace NeeView
             public object Clone()
             {
                 var clone = (Memento)MemberwiseClone();
-                clone.Parameter =this.Parameter?.Clone() as CommandParameter;
+                clone.Parameter = this.Parameter?.Clone() as CommandParameter;
                 return clone;
-            }
-
-            // ショートカットキーの補正
-            public void ValidateShortCutKey()
-            {
-                if (string.IsNullOrWhiteSpace(ShortCutKey)) return;
-
-                var gestures = ShortCutKey.Split(',').Select(e => InputGestureConverter.ConvertFromString(e)).Where(e => e != null).ToList();
-                var validShortCutKey = string.Join(",", gestures.Select(e => InputGestureConverter.ConvertToString(e)));
-                if (validShortCutKey != ShortCutKey)
-                {
-                    Debug.WriteLine($"ValidateShortCutKey: {ShortCutKey} => {validShortCutKey}");
-                    ShortCutKey = validShortCutKey;
-                }
             }
 
             public bool MemberwiseEquals(Memento other)
@@ -443,9 +389,9 @@ namespace NeeView
         {
             var memento = new Memento();
 
-            memento.ShortCutKey = ShortCutKey ?? "";
-            memento.TouchGesture = TouchGesture ?? "";
-            memento.MouseGesture = MouseGesture ?? "";
+            memento.ShortCutKey = ShortCutKey;
+            memento.TouchGesture = TouchGesture;
+            memento.MouseGesture = MouseGesture;
             memento.IsShowMessage = IsShowMessage;
             ////memento.Parameter = (CommandParameter)ParameterSource?.GetRaw()?.Clone();
             memento.Parameter = Parameter?.Clone() as CommandParameter;
@@ -459,9 +405,9 @@ namespace NeeView
         {
             if (memento == null) return;
 
-            ShortCutKey = memento.ShortCutKey?.TrimStart(',') ?? "";
-            TouchGesture = memento.TouchGesture ?? "";
-            MouseGesture = memento.MouseGesture ?? "";
+            ShortCutKey = memento.ShortCutKey;
+            TouchGesture = memento.TouchGesture;
+            MouseGesture = memento.MouseGesture;
             IsShowMessage = memento.IsShowMessage;
             ParameterSource?.Set(memento.Parameter);
         }
@@ -472,15 +418,15 @@ namespace NeeView
 
         public class GesturesMemento
         {
-            public string ShortCutKey { get; set; } = "";
-            public string MouseGesture { get; set; } = "";
-            public string TouchGesture { get; set; } = "";
+            public ShortcutKey ShortCutKey { get; set; } = ShortcutKey.Empty;
+            public TouchGesture TouchGesture { get; set; } = TouchGesture.Empty;
+            public MouseSequence MouseGesture { get; set; } = MouseSequence.Empty;
 
             public bool IsGesturesEquals(GesturesMemento other)
             {
                 return ShortCutKey == other.ShortCutKey
-                    && MouseGesture == other.MouseGesture
-                    && MouseGesture == other.TouchGesture;
+                    && TouchGesture == other.TouchGesture
+                    && MouseGesture == other.MouseGesture;
             }
 
             public bool IsEquals(CommandElement other)
@@ -493,9 +439,9 @@ namespace NeeView
         {
             var memento = new GesturesMemento();
 
-            memento.ShortCutKey = ShortCutKey ?? "";
-            memento.TouchGesture = TouchGesture ?? "";
-            memento.MouseGesture = MouseGesture ?? "";
+            memento.ShortCutKey = ShortCutKey;
+            memento.TouchGesture = TouchGesture;
+            memento.MouseGesture = MouseGesture;
 
             return memento;
         }
@@ -504,9 +450,9 @@ namespace NeeView
         {
             if (memento == null) return;
 
-            ShortCutKey = memento.ShortCutKey?.TrimStart(',') ?? "";
-            TouchGesture = memento.TouchGesture ?? "";
-            MouseGesture = memento.MouseGesture ?? "";
+            ShortCutKey = memento.ShortCutKey;
+            TouchGesture = memento.TouchGesture;
+            MouseGesture = memento.MouseGesture;
         }
 
         #endregion GesturesMemento

@@ -5,7 +5,7 @@
         public PrevHistoryPageCommand()
         {
             this.Group = Properties.TextResources.GetString("CommandGroup.Move");
-            this.ShortCutKey = "Back";
+            this.ShortCutKey = new ShortcutKey("Back");
             this.IsShowMessage = false;
         }
 

@@ -90,6 +90,12 @@ function ConvertTo-RestextMap
     return $map
 }
 
+function Test-AdditionalKey
+{
+    param ([string]$key)
+    return ($key.Contains(':') -or $key.StartsWith("Key.") -or $key.StartsWith("ModifierKeys.") -or $key.StartsWith("MouseAction.") -or $key.StartsWith("MouseButton.") -or $key.StartsWith("MouseDirection.") -or $key.StartsWith("TouchArea."))
+}
+
 function Add-RestextToRestextTable
 {
     param([PSCustomObject]$table, [string]$culture)
@@ -104,7 +110,7 @@ function Add-RestextToRestextTable
         {
             $table.$key | Add-Member -MemberType NoteProperty -Name $culture -Value $value
         }
-        elseif ($key.Contains(':'))
+        elseif(Test-AdditionalKey $key)
         {
             $obj = [PSCustomObject]@{
                 $culture = $value
@@ -123,12 +129,12 @@ function ConvertTo-RestextFromRestextTable
         $key = $property.Name
         $value = $property.Value.$culture
         
-        $isCaseText = $key.Contains(':')
+        $isAdditionalKey = Test-AdditionalKey $key
         $isEmpty = $null -eq $value
         $isTrimEmpty = $Trim -and $isEmpty
-        $isRequired = ($null -ne $property.Value.$defaultCulture) -and (-not $isCaseText)
+        $isRequired = ($null -ne $property.Value.$defaultCulture) -and (-not $isAdditionalKey)
 
-        if ($isCaseText)
+        if ($isAdditionalKey)
         {
             if (-not $isEmpty)
             {

@@ -115,9 +115,9 @@ namespace NeeView
             {
                 if (context?.Instance is MouseExGesture mouseGesture)
                 {
-                    return (ModifierKeysConverter.IsDefinedModifierKeys(mouseGesture.ModifierKeys)
-                           && ModifierMouseButtonsConverter.IsDefinedModifierMouseButtons(mouseGesture.ModifierMouseButtons)
-                           && MouseExActionConverter.IsDefinedMouseAction(mouseGesture.MouseExAction));
+                    return (ModifierKeysConverter.IsDefinedModifierKeys(mouseGesture.Modifiers)
+                           && ModifierMouseButtonsConverter.IsDefinedModifierMouseButtons(mouseGesture.ModifierButtons)
+                           && MouseExActionConverter.IsDefinedMouseAction(mouseGesture.Action));
                 }
             }
             return false;
@@ -142,20 +142,20 @@ namespace NeeView
                 {
                     string strGesture = "";
 
-                    strGesture += _modifierKeysConverter.ConvertTo(context, culture, mouseGesture.ModifierKeys, destinationType) as string;
+                    strGesture += _modifierKeysConverter.ConvertTo(context, culture, mouseGesture.Modifiers, destinationType) as string;
                     if (strGesture != string.Empty)
                     {
                         strGesture += _modifiersDelimiter;
                     }
 
-                    var buttons = _modifierMouseButtonsConverter.ConvertTo(context, culture, mouseGesture.ModifierMouseButtons, destinationType) as string;
+                    var buttons = _modifierMouseButtonsConverter.ConvertTo(context, culture, mouseGesture.ModifierButtons, destinationType) as string;
                     if (buttons != string.Empty)
                     {
                         strGesture += buttons;
                         strGesture += _modifiersDelimiter;
                     }
 
-                    strGesture += _mouseActionConverter.ConvertTo(context, culture, mouseGesture.MouseExAction, destinationType) as string;
+                    strGesture += _mouseActionConverter.ConvertTo(context, culture, mouseGesture.Action, destinationType) as string;
 
                     return strGesture;
                 }

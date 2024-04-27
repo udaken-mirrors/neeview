@@ -184,14 +184,14 @@ namespace NeeView
 
             foreach (var command in this.Commands)
             {
-                var touchGestures = CommandTable.Current.GetElement(command.Key).GetTouchGestureCollection();
-                foreach (var gesture in touchGestures)
+                var areas = CommandTable.Current.GetElement(command.Key).TouchGesture.Areas;
+                foreach (var area in areas)
                 {
                     touch.TouchGestureChanged += (s, x) =>
                     {
                         if (command.Key == "TouchEmulate") return;
 
-                        if (!x.Handled && x.Gesture == gesture)
+                        if (!x.Handled && x.Area == area)
                         {
                             command.Value.Execute(null, (s as IInputElement) ?? MainWindow.Current);
                             x.Handled = true;
@@ -210,10 +210,10 @@ namespace NeeView
 
             foreach (var command in this.Commands)
             {
-                var inputGestures = CommandTable.Current.GetElement(command.Key).GetInputGestureCollection();
+                var inputGestures = CommandTable.Current.GetElement(command.Key).ShortCutKey.Gestures.Select(e => e.GetInputGesture()); 
                 foreach (var gesture in inputGestures)
                 {
-                    if (gesture is MouseGesture mouseClick)
+                    if (gesture is MouseGesture)
                     {
                         mouseNormalHandlers.Add((s, x) => InputGestureCommandExecute(s, x, gesture, command.Value));
                     }
@@ -263,8 +263,8 @@ namespace NeeView
 
             foreach (var command in this.Commands)
             {
-                var inputGestures = CommandTable.Current.GetElement(command.Key).GetInputGestureCollection();
-                foreach (var gesture in inputGestures.Where(e => e is KeyGesture || e is KeyExGesture))
+                var inputGestures = CommandTable.Current.GetElement(command.Key).ShortCutKey.Gestures.OfType<KeyGestureSource>().Select(e => e.GetInputGesture());
+                foreach (var gesture in inputGestures)
                 {
                     if (gesture.HasImeKey())
                     {
@@ -287,7 +287,7 @@ namespace NeeView
 
             foreach (var command in this.Commands)
             {
-                var inputGestures = CommandTable.Current.GetElement(command.Key).GetInputGestureCollection();
+                var inputGestures = CommandTable.Current.GetElement(command.Key).ShortCutKey.Gestures.OfType<KeyGestureSource>().Select(e => e.GetInputGesture());
                 foreach (var gesture in inputGestures)
                 {
                     switch (gesture)

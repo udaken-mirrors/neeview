@@ -7,7 +7,6 @@ using System.Windows;
 
 namespace NeeView.Setting
 {
-
     /// <summary>
     /// MouseGestureSetting ViewModel
     /// </summary>
@@ -15,58 +14,44 @@ namespace NeeView.Setting
     {
         private readonly IDictionary<string, CommandElement> _commandMap;
         private readonly string _key;
+        private ObservableCollection<GestureElement> _gestureToken = new();
+        private string? _gestureTokenNote;
 
-        /// <summary>
-        /// GestureElements property.
-        /// </summary>
+
+        public InputTouchSettingViewModel(IDictionary<string, CommandElement> commandMap, string key, FrameworkElement gestureSender)
+        {
+            _commandMap = commandMap;
+            _key = key;
+
+            this.TouchAreaMap = new TouchAreaMap(_commandMap[_key].TouchGesture.Areas);
+            UpdateGestureToken(this.TouchAreaMap);
+        }
+
+
         public ObservableCollection<GestureElement> GestureToken
         {
             get { return _gestureToken; }
             set { if (_gestureToken != value) { _gestureToken = value; RaisePropertyChanged(); } }
         }
 
-        private ObservableCollection<GestureElement> _gestureToken = new();
-
-        /// <summary>
-        /// GestoreTokenNote property.
-        /// </summary>
         public string? GestureTokenNote
         {
             get { return _gestureTokenNote; }
             set { if (_gestureTokenNote != value) { _gestureTokenNote = value; RaisePropertyChanged(); } }
         }
 
-        private string? _gestureTokenNote;
-
-
         public TouchAreaMap TouchAreaMap { get; set; }
 
 
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        /// <param name="context"></param>
-        /// <param name="gestureSender"></param>
-        public InputTouchSettingViewModel(IDictionary<string, CommandElement> commandMap, string key, FrameworkElement gestureSender)
-        {
-            _commandMap = commandMap;
-            _key = key;
-
-            this.TouchAreaMap = new TouchAreaMap(_commandMap[_key].TouchGesture);
-            UpdateGestureToken(this.TouchAreaMap);
-        }
-
-        //
         internal void SetTouchGesture(Point pos, double width, double height)
         {
-            var gesture = TouchGestureExtensions.GetTouchGesture(pos.X / width, pos.Y / height);
+            var area = TouchAreaExtensions.GetTouchArea(pos.X / width, pos.Y / height);
 
-            this.TouchAreaMap.Toggle(gesture);
+            this.TouchAreaMap.Toggle(area);
             RaisePropertyChanged(nameof(TouchAreaMap));
 
             UpdateGestureToken(this.TouchAreaMap);
         }
-
 
         /// <summary>
         /// Update Gesture Information
@@ -74,27 +59,27 @@ namespace NeeView.Setting
         /// <param name="map"></param>
         public void UpdateGestureToken(TouchAreaMap map)
         {
-            string gestures = map.ToString();
+            var areas = map.ToAreas();
             this.GestureTokenNote = null;
 
-            if (!string.IsNullOrEmpty(gestures))
+            if (areas.Count > 0)
             {
                 var shortcuts = new ObservableCollection<GestureElement>();
-                foreach (var key in gestures.Split(','))
+                foreach (var area in areas)
                 {
                     var overlaps = _commandMap
-                        .Where(i => i.Key != _key && i.Value.TouchGesture.Split(',').Contains(key))
+                        .Where(i => i.Key != _key && i.Value.TouchGesture.Areas.Contains(area))
                         .Select(e => CommandTable.Current.GetElement(e.Key).LongText)
                         .ToList();
 
                     if (overlaps.Count > 0)
                     {
                         if (this.GestureTokenNote != null) this.GestureTokenNote += "\n";
-                        this.GestureTokenNote += string.Format(Properties.TextResources.GetString("Notice.ConflictWith"), key, ResourceService.Join(overlaps));
+                        this.GestureTokenNote += string.Format(Properties.TextResources.GetString("Notice.ConflictWith"), area.GetDisplayString(), ResourceService.Join(overlaps));
                     }
 
                     var element = new GestureElement();
-                    element.Gesture = key;
+                    element.Gesture = area.GetDisplayString();
                     element.IsConflict = overlaps.Count > 0;
                     element.Splitter = ",";
 
@@ -114,13 +99,12 @@ namespace NeeView.Setting
             }
         }
 
-
         /// <summary>
-        /// 決定
+        /// Decide
         /// </summary>
         public void Flush()
         {
-            _commandMap[_key].TouchGesture = this.TouchAreaMap.ToString();
+            _commandMap[_key].TouchGesture = new TouchGesture(this.TouchAreaMap.ToAreas());
         }
     }
 
@@ -130,40 +114,29 @@ namespace NeeView.Setting
     /// </summary>
     public class TouchAreaMap
     {
-        //
-        private readonly Dictionary<TouchGesture, bool> _map;
+        private readonly Dictionary<TouchArea, bool> _map;
 
-        //
-        public TouchAreaMap(string gestureString)
+        public TouchAreaMap(List<TouchArea> areas)
         {
-            _map = Enum.GetValues(typeof(TouchGesture)).Cast<TouchGesture>().ToDictionary(e => e, e => false);
+            _map = Enum.GetValues(typeof(TouchArea)).Cast<TouchArea>().ToDictionary(e => e, e => false);
 
-            if (gestureString != null)
+            foreach(var area in areas)
             {
-                foreach (var token in gestureString.Split(','))
-                {
-                    if (Enum.TryParse(token, out TouchGesture key))
-                    {
-                        _map[key] = true;
-                    }
-                }
+                _map[area] = true;
             }
         }
 
-        //
-        public bool this[TouchGesture gesture]
+        public bool this[TouchArea area]
         {
-            get { return _map[gesture]; }
-            set { _map[gesture] = value; }
+            get { return _map[area]; }
+            set { _map[area] = value; }
         }
 
-        //
-        public void Toggle(TouchGesture gesture)
+        public void Toggle(TouchArea area)
         {
-            _map[gesture] = !_map[gesture];
+            _map[area] = !_map[area];
         }
 
-        //
         public void Clear()
         {
             foreach (var key in _map.Keys)
@@ -172,10 +145,14 @@ namespace NeeView.Setting
             }
         }
 
-        //
+        public List<TouchArea> ToAreas()
+        {
+            return _map.Where(e => e.Key != TouchArea.None && e.Value == true).Select(e => e.Key).ToList();
+        }
+
         public override string ToString()
         {
-            return string.Join(",", _map.Where(e => e.Key != TouchGesture.None && e.Value == true).Select(e => e.Key.ToString()));
+            return string.Join(",", _map.Where(e => e.Key != TouchArea.None && e.Value == true).Select(e => e.Key.ToString()));
         }
     }
 

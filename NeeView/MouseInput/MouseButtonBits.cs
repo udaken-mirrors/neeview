@@ -18,8 +18,11 @@ namespace NeeView
         All = LeftButton | MiddleButton | RightButton | XButton1 | XButton2,
     }
 
+
     public static class MouseButtonBitsExtensions
     {
+        private const char _modifierDelimiter = '+';
+
         /// <summary>
         /// なにか押されている
         /// </summary>
@@ -92,6 +95,49 @@ namespace NeeView
 
             return bits;
         }
+
+
+        public static string GetDisplayString(this MouseButtonBits bits)
+        {
+            if (bits == MouseButtonBits.None)
+            {
+                return "";
+            }
+
+            string strButtons = "";
+
+            if ((bits & MouseButtonBits.LeftButton) == MouseButtonBits.LeftButton)
+            {
+                strButtons += MouseButton.Left.GetDisplayString();
+            }
+
+            if ((bits & MouseButtonBits.MiddleButton) == MouseButtonBits.MiddleButton)
+            {
+                if (strButtons.Length > 0) strButtons += _modifierDelimiter;
+                strButtons += MouseButton.Middle.GetDisplayString();
+            }
+
+            if ((bits & MouseButtonBits.RightButton) == MouseButtonBits.RightButton)
+            {
+                if (strButtons.Length > 0) strButtons += _modifierDelimiter;
+                strButtons += MouseButton.Right.GetDisplayString();
+            }
+
+            if ((bits & MouseButtonBits.XButton1) == MouseButtonBits.XButton1)
+            {
+                if (strButtons.Length > 0) strButtons += _modifierDelimiter;
+                strButtons += MouseButton.XButton1.GetDisplayString();
+            }
+
+            if ((bits & MouseButtonBits.XButton2) == MouseButtonBits.XButton2)
+            {
+                if (strButtons.Length > 0) strButtons += _modifierDelimiter;
+                strButtons += MouseButton.XButton2.GetDisplayString();
+            }
+
+            return strButtons;
+        }
+
     }
 
 }

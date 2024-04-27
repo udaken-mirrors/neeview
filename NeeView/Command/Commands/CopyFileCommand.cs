@@ -7,7 +7,7 @@ namespace NeeView
         public CopyFileCommand()
         {
             this.Group = Properties.TextResources.GetString("CommandGroup.File");
-            this.ShortCutKey = "Ctrl+C";
+            this.ShortCutKey = new ShortcutKey("Ctrl+C");
             this.IsShowMessage = true;
 
             this.ParameterSource = new CommandParameterSource(new CopyFileCommandParameter());

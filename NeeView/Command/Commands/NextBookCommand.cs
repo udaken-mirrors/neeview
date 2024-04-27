@@ -5,8 +5,8 @@
         public NextBookCommand()
         {
             this.Group = Properties.TextResources.GetString("CommandGroup.BookMove");
-            this.ShortCutKey = "Down";
-            this.MouseGesture = "LD";
+            this.ShortCutKey = new ShortcutKey("Down");
+            this.MouseGesture = new MouseSequence("LD");
             this.IsShowMessage = false;
         }
 

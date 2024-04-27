@@ -102,8 +102,8 @@ namespace NeeView.Setting
         {
         }
 
-        // ジェスチャー文字列（１ジェスチャー）
-        public string? Gesture { get; set; }
+        // ジェスチャー（１ジェスチャー）
+        public DragKey Gesture { get; set; } = DragKey.Empty;
 
         // 競合しているコマンド群
         public List<string>? Conflicts { get; set; }

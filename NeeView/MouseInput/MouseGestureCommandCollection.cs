@@ -18,14 +18,14 @@ namespace NeeView
         /// <summary>
         /// シーケンスとコマンドの対応辞書
         /// </summary>
-        private readonly Dictionary<string, string> _commands;
+        private readonly Dictionary<MouseSequence, string> _commands;
 
         /// <summary>
         /// コンストラクター
         /// </summary>
         public MouseGestureCommandCollection()
         {
-            _commands = new Dictionary<string, string>();
+            _commands = new Dictionary<MouseSequence, string>();
         }
 
         /// <summary>
@@ -41,7 +41,7 @@ namespace NeeView
         /// </summary>
         /// <param name="gestureText"></param>
         /// <param name="command"></param>
-        public void Add(string gestureText, string command)
+        public void Add(MouseSequence gestureText, string command)
         {
             _commands[gestureText] = command;
         }
@@ -51,15 +51,13 @@ namespace NeeView
         /// </summary>
         /// <param name="gesture"></param>
         /// <returns></returns>
-        public string GetCommand(MouseGestureSequence gesture)
+        public string GetCommand(MouseSequence gesture)
         {
-            if (gesture == null || gesture.Count == 0) return "";
+            if (gesture == null || gesture.IsEmpty) return "";
 
-            string key = gesture.ToString();
-
-            if (_commands.ContainsKey(key))
+            if (_commands.ContainsKey(gesture))
             {
-                return _commands[key];
+                return _commands[gesture];
             }
             else
             {
@@ -71,20 +69,11 @@ namespace NeeView
         /// ジェスチャーシーケンスからコマンドを実行
         /// </summary>
         /// <param name="gesture"></param>
-        public void Execute(MouseGestureSequence gesture)
+        public void Execute(MouseSequence gesture)
         {
-            Execute(gesture.ToString());
-        }
-
-        /// <summary>
-        /// ジェスチャー文字列からコマンドを実行
-        /// </summary>
-        /// <param name="gestureText"></param>
-        public void Execute(string gestureText)
-        {
-            if (_commands.ContainsKey(gestureText))
+            if (_commands.ContainsKey(gesture))
             {
-                var routedCommand = RoutedCommandTable.Current.Commands[_commands[gestureText]];
+                var routedCommand = RoutedCommandTable.Current.Commands[_commands[gesture]];
                 if (routedCommand != null && routedCommand.CanExecute(null, null))
                 {
                     routedCommand.Execute(null, null);
@@ -92,13 +81,12 @@ namespace NeeView
             }
         }
 
-
         /// <summary>
         /// マウスジェスチャー通知
         /// </summary>
-        public void ShowProgressed(MouseGestureSequence sequence)
+        public void ShowProgressed(MouseSequence sequence)
         {
-            var gesture = sequence.ToDispString();
+            var gesture = sequence.GetDisplayString();
 
             var commandName = GetCommand(sequence);
             var commandText = RoutedCommandTable.Current.GetFixedRoutedCommand(commandName, true)?.Text;

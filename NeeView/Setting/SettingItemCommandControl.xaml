@@ -171,8 +171,8 @@
                                                     </Style>
                                                 </Image.Style>
                                             </Image>
-
-                                            <TextBlock Text="{Binding MouseGestureElement.Gesture, Converter={StaticResource MouseGestureToDispTextConverter}}" TextTrimming="CharacterEllipsis"
+                                            
+                                            <TextBlock Text="{Binding MouseGestureElement.Gesture}" TextTrimming="CharacterEllipsis"
                                                     FontFamily="Meiryo" Margin="0,0,2,0" VerticalAlignment="Center" />
                                         </StackPanel>
                                     </DataTemplate>

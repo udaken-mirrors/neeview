@@ -5,8 +5,8 @@
         public PrevBookCommand()
         {
             this.Group = Properties.TextResources.GetString("CommandGroup.BookMove");
-            this.ShortCutKey = "Up";
-            this.MouseGesture = "LU";
+            this.ShortCutKey = new ShortcutKey("Up");
+            this.MouseGesture = new MouseSequence("LU");
             this.IsShowMessage = false;
         }
 
