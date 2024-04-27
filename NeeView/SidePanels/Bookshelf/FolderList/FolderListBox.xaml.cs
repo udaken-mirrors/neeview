@@ -439,7 +439,7 @@ namespace NeeView
             {
                 var path = item.TargetPath.SimplePath;
                 path = item.Attributes.AnyFlag(FolderItemAttribute.Bookmark | FolderItemAttribute.ArchiveEntry | FolderItemAttribute.Empty) ? ArchiverManager.Current.GetExistPathName(path) : path;
-                ExternalProcess.Start("explorer.exe", "/select,\"" + path + "\"");
+                ExternalProcess.OpenWithExplorer("/select,\"" + path + "\"");
             }
         }
 

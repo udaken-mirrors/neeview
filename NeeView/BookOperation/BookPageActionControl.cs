@@ -96,7 +96,7 @@ namespace NeeView
                 string? place = _book?.CurrentPage?.GetFolderOpenPlace();
                 if (place != null)
                 {
-                    ExternalProcess.Start("explorer.exe", "/select,\"" + place + "\"");
+                    ExternalProcess.OpenWithExplorer("/select,\"" + place + "\"");
                 }
             }
         }
