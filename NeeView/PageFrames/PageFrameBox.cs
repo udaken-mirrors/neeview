@@ -106,8 +106,8 @@ namespace NeeView.PageFrames
             _visiblePageWatcher = new PageFrameContainerVisiblePageWatcher(_context, _viewBox, _rectMath, _layout);
 
             var effectGrid = new Grid() { Name = "EffectLayer" };
-            effectGrid.SetBinding(Grid.EffectProperty, new Binding(nameof(ImageEffect.Effect)) { Source = ImageEffect.Current });
-            _disposables.Add(() => BindingOperations.ClearBinding(effectGrid, Grid.EffectProperty));
+            effectGrid.Loaded += (s, e) => ((Grid)s).SetBinding(Grid.EffectProperty, new Binding(nameof(ImageEffect.Effect)) { Source = ImageEffect.Current });
+            effectGrid.Unloaded += (s, e) => BindingOperations.ClearBinding((Grid)s, Grid.EffectProperty);
             effectGrid.Children.Add(_scrollViewer);
             this.Children.Add(effectGrid);
 
