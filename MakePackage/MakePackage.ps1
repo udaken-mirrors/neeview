@@ -71,25 +71,42 @@ function Get-Version($projectFile)
     throw "Cannot get Version."
 }
 
-
 #---------------------
-# get build count
-function Get-BuildCount()
+# build versions
+
+$buildVersionsPath = Join-Path (Resolve-Path .) "_BuildVersions.json"
+
+function Get-BuildCount($version)
 {
-	# auto increment build version
-	$path = Convert-Path "BuildCount.xml"
-	$xml = [xml](Get-Content $path)
-	return [int]$xml.build + 1
+	$map = Get-BuildVersions
+	return $map.$version ?? 0
 }
 
-#---------------------
-# set build count
-function Set-BuildCount($buildCount)
+function Set-BuildCount($version, $buildCount)
 {
-	$path = Convert-Path "BuildCount.xml"
-	$xml = [xml](Get-Content $path)
-	$xml.build = [string]$buildCount
-	$xml.Save($path)
+	$map = Get-BuildVersions
+	if ($null -ne $map.$version) {
+		$map.$version = $buildCount
+	}
+	else {
+		$map | Add-Member -MemberType NoteProperty -Name $version -Value $buildCount
+	}
+	Set-BuildVersions $map
+}
+
+function Get-BuildVersions()
+{
+	if (Test-Path $buildVersionsPath) {
+		return Get-Content -Raw $buildVersionsPath | ConvertFrom-Json
+	}
+	else {
+		return [PSCustomObject]@{}
+	}
+}
+
+function Set-BuildVersions($versions)
+{
+	$versions | ConvertTo-Json | Set-Content $buildVersionsPath
 }
 
 #---------------------
@@ -996,7 +1013,7 @@ function Export-Current
 
 # versions
 $version = Get-Version $project
-$buildCount = Get-BuildCount
+$buildCount = (Get-BuildCount $version) + 1
 $buildVersion = "$version.$buildCount"
 $assemblyVersion = "$version.$buildCount.0"
 $revision = (& git rev-parse --short HEAD).ToString()
@@ -1111,8 +1128,8 @@ if (-not $x86)
 # saev buid version
 if ((-not $continue) -and ($Target -ne "Dev"))
 {
-	Write-Host Increased build count: $buildCount
-	Set-BuildCount $buildCount
+	Write-Host "Update build version: $version.$buildCount"
+	Set-BuildCount $version $buildCount
 }
 else
 {
