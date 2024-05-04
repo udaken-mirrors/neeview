@@ -1,7 +1,7 @@
 ## ChangeLog
 
 ### 41.0
-(2024-04-??)
+(2024-05-??)
 
 ### Added
 
@@ -29,7 +29,8 @@
 - Fixed a bug that prevented the Susie Plug-in all ON/OFF settings from working properly.
 - Fixed incorrect panel display status flag in menus. 
 - Reduced the problem of book thumbnails not being generated when files are added.
-
+- Fixed a bug that window dragging did not work when a book was closed.
+- Fixed a bug that shortcut archives were not recognized as pages.
 ----
 
 Please see [here](https://bitbucket.org/neelabo/neeview/wiki/ChangeLog) for the previous change log.

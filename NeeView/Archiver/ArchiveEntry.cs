@@ -360,7 +360,7 @@ namespace NeeView
                 return true;
             }
 
-            return ArchiverManager.Current.IsSupported(EntryName, false, true);
+            return ArchiverManager.Current.IsSupported(this.Link ?? this.EntryName, false, true);
         }
 
         /// <summary>
@@ -374,7 +374,7 @@ namespace NeeView
                 return this.IsFileSystem; // アーカイブディレクトリは除外
             }
 
-            return ArchiverManager.Current.IsSupported(EntryName, false, false);
+            return ArchiverManager.Current.IsSupported(this.Link ?? this.EntryName, false, false);
         }
 
         /// <summary>
@@ -390,7 +390,7 @@ namespace NeeView
         /// </summary>
         public bool IsMedia()
         {
-            return !this.IsDirectory && ArchiverManager.Current.GetSupportedType(this.EntryLastName) == ArchiverType.MediaArchiver;
+            return !this.IsDirectory && ArchiverManager.Current.GetSupportedType(this.Link ?? this.EntryLastName) == ArchiverType.MediaArchiver;
         }
 
         /// <summary>

@@ -29,7 +29,7 @@ namespace NeeView
         public ContentDragTransformContext CreateContentDragTransformContext(PageFrameContainer container)
         {
             var transformControl = _transformControlFactory.Create(container);
-            return new ContentDragTransformContext(_box, transformControl, container, _box, _viewConfig, _mouseConfig);
+            return new PageFrameContentDragTransformContext(_box, transformControl, container, _box, _viewConfig, _mouseConfig);
         }
 
         public LoupeDragTransformContext CreateLoupeDragTransformContext()
@@ -37,22 +37,5 @@ namespace NeeView
             var transformControl = _transformControlFactory.CreateLoupe();
             return new LoupeDragTransformContext(_box, transformControl, _viewConfig, _mouseConfig, _loupeConfig);
         }
-
-#if false
-        private Rect CreateViewRect()
-        {
-            var viewRect = new Size(_box.ActualWidth, _box.ActualHeight).ToRect();
-            return viewRect;
-        }
-
-        private Rect CreateContentRect(PageFrameContainer container)
-        {
-            var rect = container.GetContentRect();
-            var p0 = _box.TranslateCanvasToViewPoint(container.TranslateContentToCanvasPoint(rect.TopLeft));
-            var p1 = _box.TranslateCanvasToViewPoint(container.TranslateContentToCanvasPoint(rect.BottomRight));
-            var contentRect = new Rect(p0, p1);
-            return contentRect;
-        }
-#endif
     }
 }

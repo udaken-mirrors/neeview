@@ -45,7 +45,7 @@ namespace NeeView
 
             PageFrameBoxPresenter = PageFrameBoxPresenter.Current;
 
-            DragTransformControl = new DragTransformControlProxy(PageFrameBoxPresenter);
+            DragTransformControl = new DragTransformControlProxy(PageFrameBoxPresenter, new DummyDragTransformContextFactory(_mainView, Config.Current.View, Config.Current.Mouse));
             LoupeContext = new LoupeContext(Config.Current.Loupe);
 
             TouchInput = new TouchInput(new TouchInputContext(_mainView.View, _mainView, mouseGestureCommandCollection, PageFrameBoxPresenter, PageFrameBoxPresenter, DragTransformControl, LoupeContext, ViewScrollContext));
