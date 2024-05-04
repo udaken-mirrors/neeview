@@ -229,11 +229,11 @@ namespace NeeView
             if (transformContext is null) return;
 
             var frameAngle = 0.0;
-            if (transformContext.Container.Content is PageFrameContent pageFrameContent)
+            var pageFrameContent = transformContext.GetPageFrameContent();
+            if (pageFrameContent is not null)
             {
                 frameAngle = pageFrameContent.PageFrame.Angle;
             }
-
 
             LookAt(transformContext.Transform, frameAngle, new Point(x, y));
         }

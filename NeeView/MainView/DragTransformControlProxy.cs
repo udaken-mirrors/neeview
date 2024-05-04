@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NeeView.PageFrames;
+using System;
 using System.Windows;
 using System.Windows.Input;
 
@@ -7,12 +8,16 @@ namespace NeeView
     public class DragTransformControlProxy : IDisposable, IDragTransformControl
     {
         private readonly PageFrameBoxPresenter _presenter;
+        private readonly IDragTransformContextFactory _transformContextFactory;
         private DragTransformControl? _dragTransformControl;
         private bool _disposedValue;
 
-        public DragTransformControlProxy(PageFrameBoxPresenter presenter)
+        public DragTransformControlProxy(PageFrameBoxPresenter presenter, IDragTransformContextFactory transformContextFactory)
         {
             _presenter = presenter;
+            _transformContextFactory = transformContextFactory;
+            _dragTransformControl = CreateDragTransformControl(_transformContextFactory);
+
             _presenter.PageFrameBoxChanging += Presenter_PageFrameBoxChanging;
             _presenter.PageFrameBoxChanged += Presenter_PageFrameBoxChanged;
         }
@@ -44,14 +49,12 @@ namespace NeeView
 
         private void Presenter_PageFrameBoxChanged(object? sender, PageFrameBoxChangedEventArgs e)
         {
-            if (e.Box is not null)
-            {
-                _dragTransformControl = new DragTransformControl(e.Box, DragActionTable.Current, Config.Current.View);
-            }
-            else
-            {
-                _dragTransformControl = null;
-            }
+            _dragTransformControl = CreateDragTransformControl(e.Box ?? _transformContextFactory);
+        }
+
+        private DragTransformControl CreateDragTransformControl(IDragTransformContextFactory factory)
+        {
+            return new DragTransformControl(factory, DragActionTable.Current, Config.Current.View);
         }
 
         public void ResetState()
