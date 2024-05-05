@@ -1,6 +1,6 @@
 ﻿namespace NeeView
 {
-    public class BookmarkItemAccessor
+    public record class BookmarkItemAccessor
     {
         private readonly FolderItem _source;
 

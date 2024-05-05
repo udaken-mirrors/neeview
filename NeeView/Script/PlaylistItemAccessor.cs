@@ -1,6 +1,6 @@
 ﻿namespace NeeView
 {
-    public class PlaylistItemAccessor
+    public record class PlaylistItemAccessor
     {
         private readonly PlaylistItem _source;
 

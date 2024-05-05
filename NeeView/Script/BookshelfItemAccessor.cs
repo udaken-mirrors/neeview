@@ -1,6 +1,6 @@
 ﻿namespace NeeView
 {
-    public class BookshelfItemAccessor
+    public record class BookshelfItemAccessor
     {
         private readonly FolderItem _source;
 

@@ -1,6 +1,6 @@
 ﻿namespace NeeView
 {
-    public class ViewPageAccessor : PageAccessor
+    public record class ViewPageAccessor : PageAccessor
     {
         public ViewPageAccessor(Page page) : base(page)
         {
@@ -37,5 +37,9 @@
                 }
             }
         }
+
+
+        [WordNodeMember]
+        public PageAccessor ToPageAccessor() => new PageAccessor(Source);
     }
 }

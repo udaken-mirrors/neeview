@@ -2,7 +2,7 @@
 
 namespace NeeView
 {
-    public class PageAccessor
+    public record class PageAccessor
     {
         private readonly Page _page;
 
