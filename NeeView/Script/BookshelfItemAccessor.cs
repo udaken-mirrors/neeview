@@ -1,20 +1,9 @@
 ﻿namespace NeeView
 {
-    public record class BookshelfItemAccessor
+    public record class BookshelfItemAccessor : BookItemAccessor
     {
-        private readonly FolderItem _source;
-
-        public BookshelfItemAccessor(FolderItem source)
+        public BookshelfItemAccessor(FolderItem source) : base(source)
         {
-            _source = source;
         }
-
-        internal FolderItem Source => _source;
-
-        [WordNodeMember]
-        public string? Name => _source.DispName;
-
-        [WordNodeMember]
-        public string Path => _source.TargetPath.SimplePath;
     }
 }

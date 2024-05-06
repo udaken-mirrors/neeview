@@ -1,20 +1,10 @@
 ﻿namespace NeeView
 {
-    public record class BookmarkItemAccessor
+
+    public record class BookmarkItemAccessor : BookItemAccessor
     {
-        private readonly FolderItem _source;
-
-        public BookmarkItemAccessor(FolderItem source)
+        public BookmarkItemAccessor(FolderItem source) : base(source)
         {
-            _source = source;
         }
-
-        internal FolderItem Source => _source;
-
-        [WordNodeMember]
-        public string? Name => _source.DispName;
-
-        [WordNodeMember]
-        public string Path => _source.TargetPath.SimplePath;
     }
 }
