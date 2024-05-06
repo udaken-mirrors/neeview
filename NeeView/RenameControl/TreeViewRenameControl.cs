@@ -31,7 +31,7 @@ namespace NeeView
             var treeViewItem = VisualTreeUtility.FindContainer<TreeViewItem>(treeView, item) ?? throw new InvalidOperationException("Container not found: TreeViewItem");
             treeViewItem.BringIntoView(); // TODO: ScrollIntoView的なものは上位で？
             treeView.UpdateLayout();
-            var textBlock = VisualTreeUtility.FindVisualChild<TextBlock>(treeViewItem, "FileNameTextBlock") ?? throw new InvalidOperationException("Control not foud: FileNameTextBlock");
+            var textBlock = VisualTreeUtility.FindVisualChild<TextBlock>(treeViewItem, "FileNameTextBlock") ?? throw new InvalidOperationException("Control not found: FileNameTextBlock");
             return new RenameControlSource(treeViewItem, textBlock, item.GetRenameText());
         }
 

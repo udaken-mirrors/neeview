@@ -341,6 +341,7 @@ namespace NeeView
             if (newItem != null)
             {
                 SelectedItem = newItem;
+                SelectedItemChanged?.Invoke(this, EventArgs.Empty);
             }
 
             return newItem;

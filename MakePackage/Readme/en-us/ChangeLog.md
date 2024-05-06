@@ -31,6 +31,8 @@
 - Reduced the problem of book thumbnails not being generated when files are added.
 - Fixed a bug that window dragging did not work when a book was closed.
 - Fixed a bug that shortcut archives were not recognized as pages.
+- Fixed an issue where the app would sometimes crash when creating a bookmark folder in the folder tree.
+
 ----
 
 Please see [here](https://bitbucket.org/neelabo/neeview/wiki/ChangeLog) for the previous change log.
