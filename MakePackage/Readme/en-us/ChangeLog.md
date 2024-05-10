@@ -1,9 +1,9 @@
 ## ChangeLog
 
 ### 41.0
-(2024-05-??)
+(2024-05-10)
 
-### Added
+#### Added
 
 - Added Italian language.
 - Direct editing of language resources. (/Languages/*.restext) 
@@ -13,14 +13,14 @@
 - Add ability to switch display when page is ready. Suppresses temporary display on page switching. (Settings > Move > Ready to page move)
 - Added the ability to drop the bookshelf location icon and the information icon in the address bar to other apps
 
-### Changed
+#### Changed
 
 - ZIP version places DLL files in the Libraries folder.
 - The current view is maintained as much as possible when switching books.
 - Asynchronous pre-decompression of solid compressed archives
 - Various library updates
 
-### Fixed
+#### Fixed
 
 - Fixed a bug where the mouse button would sometimes enter long-press mode even when it was released.
 - Fixed a bug in file manipulation of network folder search results in the bookshelf.
