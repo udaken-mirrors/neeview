@@ -4,6 +4,7 @@ using NeeLaboratory.ComponentModel;
 using NeeView.Effects;
 using NeeView.PageFrames;
 using System;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
@@ -47,6 +48,8 @@ namespace NeeView
             _presenter.SubscribePropertyChanged(nameof(PageFrameBoxPresenter.IsLoading),
                 (s, e) => UpdateBusyVisibility());
 
+            _presenter.SubscribePropertyChanged(nameof(PageFrameBoxPresenter.View), Presenter_ViewChanged);
+
             _presenter.SubscribeViewContentChanged(Presenter_ViewContentChanged);
         }
 
@@ -80,6 +83,7 @@ namespace NeeView
             set { if (_busyVisibility != value) { _busyVisibility = value; RaisePropertyChanged(); } }
         }
 
+        // NOTE: 背景色をページに依存させる設定で使用される
         public Page? SelectedPage
         {
             get { return _selectedPage; }
@@ -87,13 +91,18 @@ namespace NeeView
         }
 
 
+        private void Presenter_ViewChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            var box = _presenter.View;
+            SelectedPage = box is null || !box.Context.IsStaticFrame ? null : box.BookContext.SelectedPages.FirstOrDefault();
+        }
 
         private void Presenter_ViewContentChanged(object? sender, FrameViewContentChangedEventArgs e)
         {
             if (e.State < ViewContentState.Loaded) return;
+            if (_presenter.View is null) return;
 
-            var isStaticFrame = _presenter.View?.Context.IsStaticFrame ?? false;
-            SelectedPage = isStaticFrame ? e.ViewContents.FirstOrDefault()?.Page : null;
+            SelectedPage = _presenter.View.Context.IsStaticFrame ? e.ViewContents.FirstOrDefault()?.Page : null;
         }
 
         private void UpdateBusyVisibility()
