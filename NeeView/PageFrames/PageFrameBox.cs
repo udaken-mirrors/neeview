@@ -923,7 +923,10 @@ namespace NeeView.PageFrames
 
             var pos = frameRange.Next(direction.ToSign());
 
-            if (!_bookContext.ContainsIndex(pos.Index))
+            if (_context.IsLoopPage)
+            {
+            }
+            else if (!_bookContext.ContainsIndex(pos.Index))
             {
                 PageTerminated?.Invoke(this, new PageTerminatedEventArgs(direction.ToSign()));
                 return;
