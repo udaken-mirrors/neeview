@@ -7,9 +7,9 @@ using System.Windows.Media;
 
 namespace NeeView
 {
-    public class RootDirectoryNode : FolderTreeNodeDelayBase
+    public class RootDirectoryNode : DirectoryNode
     {
-        public RootDirectoryNode(FolderTreeNodeBase parent)
+        public RootDirectoryNode(FolderTreeNodeBase parent) : base("", parent)
         {
             Parent = parent;
 
@@ -181,7 +181,7 @@ namespace NeeView
                     switch (e.ChangeType)
                     {
                         case DirectoryChangeType.Created:
-                            Directory_Creaded(e.FullPath);
+                            Directory_Created(e.FullPath);
                             break;
                         case DirectoryChangeType.Deleted:
                             Directory_Deleted(e.FullPath);
@@ -199,16 +199,16 @@ namespace NeeView
             });
         }
 
-        private void Directory_Creaded(string fullpath)
+        private void Directory_Created(string fullPath)
         {
-            ////Debug.WriteLine("Create: " + fullpath);
+            ////Debug.WriteLine("Create: " + fullPath);
 
-            var directory = LoosePath.GetDirectoryName(fullpath);
+            var directory = LoosePath.GetDirectoryName(fullPath);
 
             var parent = GetDirectoryNode(directory);
             if (parent != null)
             {
-                var name = LoosePath.GetFileName(fullpath);
+                var name = LoosePath.GetFileName(fullPath);
                 var node = new DirectoryNode(name, null);
                 AppDispatcher.BeginInvoke(() => parent.Add(node));
             }
@@ -218,16 +218,16 @@ namespace NeeView
             }
         }
 
-        private void Directory_Deleted(string fullpath)
+        private void Directory_Deleted(string fullPath)
         {
-            ////Debug.WriteLine("Delete: " + fullpath);
+            ////Debug.WriteLine("Delete: " + fullPath);
 
-            var directory = LoosePath.GetDirectoryName(fullpath);
+            var directory = LoosePath.GetDirectoryName(fullPath);
 
             var parent = GetDirectoryNode(directory);
             if (parent != null)
             {
-                var name = LoosePath.GetFileName(fullpath);
+                var name = LoosePath.GetFileName(fullPath);
                 AppDispatcher.BeginInvoke(() => parent.Remove(name));
             }
             else
@@ -236,17 +236,17 @@ namespace NeeView
             }
         }
 
-        private void Directory_Renamed(string oldFullpath, string fullpath)
+        private void Directory_Renamed(string oldFullPath, string fullPath)
         {
-            ////Debug.WriteLine("Rename: " + oldFullpath + " -> " + fullpath);
+            ////Debug.WriteLine("Rename: " + oldFullPath + " -> " + fullPath);
 
-            var directory = LoosePath.GetDirectoryName(oldFullpath);
+            var directory = LoosePath.GetDirectoryName(oldFullPath);
 
             var parent = GetDirectoryNode(directory);
             if (parent != null)
             {
-                var oldName = LoosePath.GetFileName(oldFullpath);
-                var name = LoosePath.GetFileName(fullpath);
+                var oldName = LoosePath.GetFileName(oldFullPath);
+                var name = LoosePath.GetFileName(fullPath);
                 AppDispatcher.BeginInvoke(() => parent.Rename(oldName, name));
             }
             else

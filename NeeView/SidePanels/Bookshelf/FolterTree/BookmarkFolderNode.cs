@@ -63,10 +63,15 @@ namespace NeeView
 
         public override async Task<bool> RenameAsync(string name)
         {
+            return await Task.FromResult(Rename(name));
+        }
+
+        public bool Rename(string name)
+        {
             if (this.Name == name) return false;
-            
+
             BookmarkCollectionService.Rename(this.BookmarkSource, name);
-            return await Task.FromResult(true);
+            return true;
         }
     }
 

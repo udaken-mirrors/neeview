@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 
 namespace NeeView
 {
@@ -14,8 +13,13 @@ namespace NeeView
         {
             _panel = (FolderPanel)CustomLayoutPanelManager.Current.GetPanel(nameof(FolderPanel));
             _model = _panel.Presenter.FolderList;
+
+            FolderTree = new BookshelfFolderTreeAccessor(BookshelfFolderTreeModel.Current ?? throw new InvalidOperationException());
         }
 
+
+        [WordNodeMember(IsAutoCollect = false)]
+        public BookshelfFolderTreeAccessor FolderTree { get; }
 
         [WordNodeMember]
         public string? Path
@@ -70,27 +74,6 @@ namespace NeeView
             get => _model.GetNextHistory().Select(e => e.Value.SimpleQuery).ToArray();
         }
 
-        [WordNodeMember]
-        public bool IsFolderTreeVisible
-        {
-            get => _model.IsFolderTreeVisible;
-            set => AppDispatcher.Invoke(() => _model.IsFolderTreeVisible = value);
-        }
-
-        [WordNodeMember(DocumentType = typeof(FolderTreeLayout))]
-        public string FolderTreeLayout
-        {
-            get { return _model.FolderTreeLayout.ToString(); }
-            set { AppDispatcher.Invoke(() => _model.FolderTreeLayout = value.ToEnum<FolderTreeLayout>()); }
-        }
-
-        [WordNodeMember]
-        public bool IsSearchIncludeSubdirectories
-        {
-            get => _model.IsSearchIncludeSubdirectories;
-            set => AppDispatcher.Invoke(() => _model.IsSearchIncludeSubdirectories = value);
-        }
-
 
         private BookshelfItemAccessor[] GetItems()
         {
@@ -116,63 +99,16 @@ namespace NeeView
         }
 
         [WordNodeMember]
-        public void MoveToHome()
-        {
-            AppDispatcher.Invoke(() => _model.MoveToHome());
-        }
-
-        [WordNodeMember]
-        public void SetHome()
-        {
-            AppDispatcher.Invoke(() => _model.SetHome());
-        }
-
-        [WordNodeMember]
-        public void MoveTo(string path)
-        {
-            AppDispatcher.Invoke(() => _model.MoveTo(new QueryPath(path)));
-        }
-
-        [WordNodeMember]
-        public void MoveToPrevious()
-        {
-            AppDispatcher.Invoke(() => _model.MoveToPrevious());
-        }
-
-        [WordNodeMember]
-        public void MoveToNext()
-        {
-            AppDispatcher.Invoke(() => _model.MoveToNext());
-        }
-
-        [WordNodeMember]
-        public void MoveToParent()
-        {
-            AppDispatcher.Invoke(() => _model.MoveToParent());
-        }
-
-        [WordNodeMember]
         public void Sync()
         {
             AppDispatcher.Invoke(() => _model.Sync());
         }
 
-        [WordNodeMember]
-        public void AddQuickAccess()
-        {
-            AppDispatcher.Invoke(() => _model.AddQuickAccess());
-        }
-
-        [WordNodeMember]
-        public void ClearHistoryInPlace()
-        {
-            AppDispatcher.Invoke(() => _model.ClearHistoryInPlace());
-        }
-
-
         internal WordNode CreateWordNode(string name)
         {
-            return WordNodeHelper.CreateClassWordNode(name, this.GetType());
+            var node = WordNodeHelper.CreateClassWordNode(name, this.GetType());
+            node.Children?.Add(FolderTree.CreateWordNode(nameof(FolderTree)));
+            return node;
         }
     }
 

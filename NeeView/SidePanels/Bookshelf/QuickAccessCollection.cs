@@ -73,7 +73,7 @@ namespace NeeView
         {
             if (item is null) throw new ArgumentNullException(nameof(item));
 
-            Items.Insert(index, item);
+            Items.Insert(Math.Clamp(index, 0, Items.Count), item);
             AttachItem(item);
             CollectionChanged?.Invoke(this, new QuickAccessCollectionChangeEventArgs(QuickAccessCollectionChangeAction.Add, item));
         }

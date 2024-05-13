@@ -20,6 +20,8 @@ namespace NeeView
 
         public override string DispName { get => Name; set { } }
 
+        public string Path { get => QuickAccessSource.Path; }
+
         public override IImageSourceCollection Icon => PathToPlaceIconConverter.Convert(new QueryPath(QuickAccessSource.Path));
 
         public override string GetRenameText()
@@ -34,12 +36,25 @@ namespace NeeView
 
         public override async Task<bool> RenameAsync(string name)
         {
+            return await Task.FromResult(Rename(name));
+        }
+
+        public bool Rename(string name)
+        {
             if (this.Name == name) return false;
 
             QuickAccessSource.Name = name;
             RaisePropertyChanged(nameof(Name));
             RaisePropertyChanged(nameof(DispName));
-            return await Task.FromResult(true);
+            return true;
+        }
+
+        public void SetPath(string path)
+        {
+            if (this.QuickAccessSource.Path == path) return;
+
+            QuickAccessSource.Path = path;
+            RefreshAllProperties();
         }
     }
 }

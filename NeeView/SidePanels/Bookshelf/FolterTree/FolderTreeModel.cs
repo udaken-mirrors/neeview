@@ -77,7 +77,9 @@ namespace NeeView
         // Properties
 
         public RootFolderTree Root => _root;
-
+        public RootQuickAccessNode? RootQuickAccess => _rootQuickAccess;
+        public RootDirectoryNode? RootDirectory => _rootDirectory;
+        public RootBookmarkFolderNode? RootBookmarkFolder => _rootBookmarkFolder;
 
         private FolderTreeNodeBase? _selectedItem;
         public FolderTreeNodeBase? SelectedItem
@@ -97,6 +99,12 @@ namespace NeeView
 
 
         // Methods
+
+        public void SetSelectedItem(FolderTreeNodeBase? node)
+        {
+            SelectedItem = node;
+            SelectedItemChanged?.Invoke(this, EventArgs.Empty);
+        }
 
         public void FocusAtOnce()
         {
