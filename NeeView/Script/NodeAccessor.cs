@@ -3,12 +3,13 @@ using System.Linq;
 
 namespace NeeView
 {
-    public record class FolderNodeAccessor
+    [DocumentableBaseClass(typeof(NodeAccessor))]
+    public record class NodeAccessor
     {
         private readonly FolderTreeModel _model;
         private readonly FolderTreeNodeBase _node;
 
-        public FolderNodeAccessor(FolderTreeModel model, FolderTreeNodeBase node)
+        public NodeAccessor(FolderTreeModel model, FolderTreeNodeBase node)
         {
             _model = model;
             _node = node;
@@ -32,20 +33,17 @@ namespace NeeView
             set { AppDispatcher.Invoke(() => _node.IsExpanded = value); }
         }
 
-        [WordNodeMember]
-        public FolderNodeAccessor? Parent
+
+        protected NodeAccessor? GetParent()
         {
-            get
-            {
-                if (_node.Parent is null) return null;
-                if (_node.Parent is RootFolderTree) return null;
-                return FolderNodeAccessorFactory.Create(_model, _node.Parent);
-            }
+            if (_node.Parent is null) return null;
+            if (_node.Parent is RootFolderTree) return null;
+            return FolderNodeAccessorFactory.Create(_model, _node.Parent);
         }
 
-        protected FolderNodeAccessor[] GetChildren()
+        protected NodeAccessor[] GetChildren()
         {
-            return _node.Children?.Select(e => FolderNodeAccessorFactory.Create(_model, e)).ToArray() ?? Array.Empty<FolderNodeAccessor>();
+            return _node.Children?.Select(e => FolderNodeAccessorFactory.Create(_model, e)).ToArray() ?? Array.Empty<NodeAccessor>();
         }
     }
 }

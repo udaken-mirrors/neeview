@@ -48,7 +48,7 @@ namespace NeeView
             }
             set
             {
-                var name = value?.Trim();
+                var name = GetValidateName(value?.Trim());
                 SetProperty(ref _name, string.IsNullOrEmpty(name) || name == DefaultName ? null : name); 
             }
         }
@@ -95,6 +95,11 @@ namespace NeeView
             return clone;
         }
 
+        public static string GetValidateName(string? name)
+        {
+            if (name is null) return "";
+            return name.Trim().Replace('/', '_').Replace('\\', '_');
+        }
 
         #region Memento
         [Memento]

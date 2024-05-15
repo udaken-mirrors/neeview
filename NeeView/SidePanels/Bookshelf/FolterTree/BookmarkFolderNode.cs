@@ -68,6 +68,7 @@ namespace NeeView
 
         public bool Rename(string name)
         {
+            if (!CanRename()) return false;
             if (this.Name == name) return false;
 
             BookmarkCollectionService.Rename(this.BookmarkSource, name);

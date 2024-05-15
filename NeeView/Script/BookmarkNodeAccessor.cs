@@ -2,18 +2,26 @@
 
 namespace NeeView
 {
-    public record class BookmarkFolderNodeAccessorBase : FolderNodeAccessor
+    public record class BookmarkNodeAccessor : NodeAccessor
     {
         private readonly BookmarkFolderNode _node;
 
-        public BookmarkFolderNodeAccessorBase(FolderTreeModel model, BookmarkFolderNode name) : base(model, name)
+        public BookmarkNodeAccessor(FolderTreeModel model, BookmarkFolderNode name) : base(model, name)
         {
             _node = name;
         }
 
+        [WordNodeMember]
+        public BookmarkNodeAccessor[] Children
+        {
+            get { return GetChildren().OfType<BookmarkNodeAccessor>().ToArray(); }
+        }
 
-        protected BookmarkFolderNode Node => _node;
-
+        [WordNodeMember]
+        public BookmarkNodeAccessor? Parent
+        {
+            get { return GetParent() as BookmarkNodeAccessor; }
+        }
 
         [WordNodeMember]
         public string Path
@@ -25,16 +33,8 @@ namespace NeeView
         public virtual string Name
         {
             get { return _node.DispName; }
-            set { }
+            set { AppDispatcher.Invoke(() => _node.Rename(value)); }
         }
-
-
-        [WordNodeMember]
-        public BookmarkNodeAccessor[] Children
-        {
-            get { return GetChildren().OfType<BookmarkNodeAccessor>().ToArray(); }
-        }
-
 
         [WordNodeMember]
         public BookmarkNodeAccessor? Insert(int index, string name)
@@ -56,33 +56,11 @@ namespace NeeView
                 Model.RemoveBookmarkFolder(_node);
             });
         }
-    }
-
-
-    public record class RootBookmarkNodeAccessor : BookmarkFolderNodeAccessorBase
-    {
-        public RootBookmarkNodeAccessor(FolderTreeModel model, RootBookmarkFolderNode node) : base(model, node)
-        {
-        }
 
         internal WordNode CreateWordNode(string name)
         {
             var node = WordNodeHelper.CreateClassWordNode(name, this.GetType());
             return node;
-        }
-    }
-
-    public record class BookmarkNodeAccessor : BookmarkFolderNodeAccessorBase
-    {
-        public BookmarkNodeAccessor(FolderTreeModel model, BookmarkFolderNode node) : base(model, node)
-        {
-        }
-
-        [WordNodeMember]
-        public override string Name
-        {
-            get { return Node.Name; }
-            set { AppDispatcher.Invoke(() => Node.Rename(value)); }
         }
     }
 }

@@ -40,6 +40,6 @@
 
 
         [WordNodeMember]
-        public PageAccessor ToPageAccessor() => new PageAccessor(Source);
+        public PageAccessor GetPageAccessor() => new PageAccessor(Source);
     }
 }

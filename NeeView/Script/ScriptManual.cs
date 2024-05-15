@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
-using System.Windows.Resources;
 
 namespace NeeView
 {
@@ -64,44 +63,19 @@ namespace NeeView
 
             htmlBuilder.Append(typeof(CommandHost), "nv");
 
-            htmlBuilder.Append(typeof(CommandAccessor));
+            var collection = DocumentableTypeCollector.Collect(typeof(CommandHost));
 
-            htmlBuilder.Append(typeof(EnvironmentAccessor));
-            htmlBuilder.Append(typeof(BookAccessor));
-            htmlBuilder.Append(typeof(BookConfigAccessor));
-            htmlBuilder.Append(typeof(PageAccessor));
-            htmlBuilder.Append(typeof(ViewPageAccessor));
-
-            htmlBuilder.Append(typeof(BookshelfPanelAccessor));
-            htmlBuilder.Append(typeof(BookshelfItemAccessor));
-
-            htmlBuilder.Append(typeof(PageListPanelAccessor));
-
-            htmlBuilder.Append(typeof(BookmarkPanelAccessor));
-            htmlBuilder.Append(typeof(BookmarkItemAccessor));
-
-            htmlBuilder.Append(typeof(PlaylistPanelAccessor));
-            htmlBuilder.Append(typeof(PlaylistItemAccessor));
-
-            htmlBuilder.Append(typeof(HistoryPanelAccessor));
-            htmlBuilder.Append(typeof(HistoryItemAccessor));
-
-            htmlBuilder.Append(typeof(InformationPanelAccessor));
-
-            htmlBuilder.Append(typeof(EffectPanelAccessor));
-
-            htmlBuilder.Append(typeof(NavigatorPanelAccessor));
+            foreach(var classType in collection.Where(e => !e.IsEnum).OrderBy(e => e.Name))
+            {
+                htmlBuilder.Append(classType);
+            }
 
             htmlBuilder.Append($"<hr/>").AppendLine();
 
-            // TODO: 記載すべき enum の自動抽出
-            htmlBuilder.Append(typeof(AutoRotateType));
-            htmlBuilder.Append(typeof(FolderOrder));
-            htmlBuilder.Append(typeof(FolderTreeLayout));
-            htmlBuilder.Append(typeof(PageSortMode));
-            htmlBuilder.Append(typeof(PageNameFormat));
-            htmlBuilder.Append(typeof(PageReadOrder));
-            htmlBuilder.Append(typeof(PanelListItemStyle));
+            foreach (var enumType in collection.Where(e => e.IsEnum).OrderBy(e => e.Name))
+            {
+                htmlBuilder.Append(enumType);
+            }
 
             return htmlBuilder.ToStringBuilder();
         }

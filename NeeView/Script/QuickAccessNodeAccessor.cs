@@ -1,6 +1,6 @@
 ﻿namespace NeeView
 {
-    public record class QuickAccessNodeAccessor : FolderNodeAccessor
+    public record class QuickAccessNodeAccessor : NodeAccessor
     {
         private readonly QuickAccessNode _node;
 

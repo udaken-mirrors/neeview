@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -84,7 +85,7 @@ namespace NeeView
         /// DictionaryをHTMLテーブルとして出力する
         /// </summary>
         /// <param name="dictionary"></param>
-        /// <param name="style">tableのclass。nullで標準</param>
+        /// <param name="style">table の class。nullで標準</param>
         /// <returns></returns>
         private HtmlReferenceBuilder AppendDictionary(Dictionary<string, string> dictionary, string? style = null)
         {
@@ -180,6 +181,15 @@ namespace NeeView
 
             // summary
             AppendSummary(type.Name);
+
+            // base class
+            var attribute = type.GetCustomAttribute<DocumentableBaseClassAttribute>();
+            if (attribute != null && attribute.BaseClass != type)
+            {
+                Debug.Assert(type.IsSubclassOf(attribute.BaseClass));
+                // TODO: restext support
+                builder.Append($"<p>This class inherits from {TypeToString(attribute.BaseClass)}.</p>").AppendLine();
+            }
 
             // property
             if (properties.Any())

@@ -135,5 +135,10 @@ namespace NeeView
             return GetFolderTreeNode(path, false, false) as BookmarkFolderNode;
         }
 
+        public override bool CanRename()
+        {
+            return false;
+        }
+
     }
 }
