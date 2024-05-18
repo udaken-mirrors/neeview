@@ -1,5 +1,19 @@
 ## ChangeLog
 
+### 41.1
+(2024-05-18)
+
+#### Changed
+
+- Update various libraries
+
+#### Fixed
+
+- Fixed a bug that prevented seamless loops from working.
+- Fixed an issue where automatic background color setting is not reflected when a book is opened.
+
+----
+
 ### 41.0
 (2024-05-10)
 
