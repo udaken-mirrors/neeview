@@ -14,7 +14,13 @@ namespace NeeView
         {
             _panel = (BookmarkPanel)CustomLayoutPanelManager.Current.GetPanel(nameof(BookmarkPanel));
             _model = _panel.Presenter.BookmarkFolderList;
+
+            FolderTree = new BookmarkFolderTreeAccessor(BookmarkFolderTreeModel.Current ?? throw new InvalidOperationException());
         }
+
+
+        [WordNodeMember(IsAutoCollect = false)]
+        public BookmarkFolderTreeAccessor FolderTree { get; }
 
         [WordNodeMember]
         public string? Path
@@ -57,34 +63,6 @@ namespace NeeView
             set { AppDispatcher.Invoke(() => SetSelectedItems(value)); }
         }
 
-        [WordNodeMember]
-        public bool IsFolderTreeVisible
-        {
-            get => _model.IsFolderTreeVisible;
-            set => AppDispatcher.Invoke(() => _model.IsFolderTreeVisible = value);
-        }
-
-        [WordNodeMember(DocumentType = typeof(FolderTreeLayout))]
-        public string FolderTreeLayout
-        {
-            get { return _model.FolderTreeLayout.ToString(); }
-            set { AppDispatcher.Invoke(() => _model.FolderTreeLayout = value.ToEnum<FolderTreeLayout>()); }
-        }
-
-        [WordNodeMember]
-        public bool IsSyncBookshelfEnabled
-        {
-            get { return _model.IsSyncBookshelfEnabled; }
-            set { AppDispatcher.Invoke(() => _model.IsSyncBookshelfEnabled = value); }
-        }
-
-        [WordNodeMember]
-        public bool IsSearchIncludeSubdirectories
-        {
-            get => _model.IsSearchIncludeSubdirectories;
-            set => AppDispatcher.Invoke(() => _model.IsSearchIncludeSubdirectories = value);
-        }
-
 
         private BookmarkItemAccessor[] GetItems()
         {
@@ -108,24 +86,6 @@ namespace NeeView
         }
 
         [WordNodeMember]
-        public void AddBookmark()
-        {
-            AppDispatcher.Invoke(() => _model.AddBookmark());
-        }
-
-        [WordNodeMember]
-        public void MoveToParent()
-        {
-            AppDispatcher.Invoke(() => _model.MoveToParent());
-        }
-
-        [WordNodeMember]
-        public async void DeleteInvalidBookmark()
-        {
-            await AppDispatcher.BeginInvoke(async () => await _model.DeleteInvalidBookmark());
-        }
-
-        [WordNodeMember]
         public void NewFolder(string? name)
         {
             AppDispatcher.Invoke(() => _model.NewFolder(name));
@@ -135,7 +95,7 @@ namespace NeeView
         internal WordNode CreateWordNode(string name)
         {
             var node = WordNodeHelper.CreateClassWordNode(name, this.GetType());
-
+            node.Children?.Add(FolderTree.CreateWordNode(nameof(FolderTree)));
             return node;
         }
     }

@@ -87,6 +87,10 @@ namespace NeeView
             get { return _selectedItem; }
             set
             {
+                if (value is not null && !value.ContainsRoot(_root))
+                {
+                    return;
+                }
                 _selectedItem = value;
                 if (_selectedItem != null)
                 {

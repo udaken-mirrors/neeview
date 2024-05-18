@@ -192,7 +192,7 @@ namespace NeeView
 
         /// <summary>
         /// Childrenの実体化
-        /// <para>遅延生成される場合にoverrideして使用する</para>
+        /// <para>遅延生成される場合に override して使用する</para>
         /// </summary>
         protected virtual void RealizeChildren()
         {
@@ -298,7 +298,7 @@ namespace NeeView
             node.IsSelected = isSelected;
         }
 
-        protected IImageSourceCollection CreateIcomFromResource(string key)
+        protected IImageSourceCollection CreateIconFromResource(string key)
         {
             return new SingleImageSourceCollection(MainWindow.Current.Resources[key] as ImageSource
                 ?? throw new InvalidOperationException($"Cannot found resource: {key}"));
@@ -317,6 +317,12 @@ namespace NeeView
         public virtual async Task<bool> RenameAsync(string name)
         {
             return await Task.FromResult(false);
+        }
+
+        public bool ContainsRoot(FolderTreeNodeBase root)
+        {
+            if (this == root) return true;
+            return this.Parent is not null && this.Parent.ContainsRoot(root);
         }
     }
 }
