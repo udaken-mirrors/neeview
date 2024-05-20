@@ -1,5 +1,6 @@
 ﻿namespace NeeView
 {
+    [DocumentableBaseClass(typeof(PageAccessor))]
     public record class ViewPageAccessor : PageAccessor
     {
         public ViewPageAccessor(Page page) : base(page)

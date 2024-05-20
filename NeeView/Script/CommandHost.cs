@@ -34,6 +34,7 @@ namespace NeeView
             Information = new InformationPanelAccessor();
             Effect = new EffectPanelAccessor();
             Navigator = new NavigatorPanelAccessor();
+            ExternalAppCollection = new ExternalAppCollectionAccessor();
         }
 
 
@@ -78,6 +79,9 @@ namespace NeeView
 
         [WordNodeMember(IsAutoCollect = false)]
         public NavigatorPanelAccessor Navigator { get; }
+
+        [WordNodeMember(IsAutoCollect = false)]
+        public ExternalAppCollectionAccessor ExternalAppCollection { get; }
 
         [WordNodeMember]
         [Obsolete("no used"), Alternative(nameof(Playlist), 39)] // ver.39
@@ -164,7 +168,7 @@ namespace NeeView
         {
             var node = WordNodeHelper.CreateClassWordNode(name, this.GetType());
             if (node.Children is null) throw new InvalidOperationException();
-            
+
             node.Children.Add(new WordNode(nameof(Args)));
             node.Children.Add(new WordNode(nameof(Values)));
             node.Children.Add(Config.CreateWordNode(nameof(Config)));
@@ -179,6 +183,7 @@ namespace NeeView
             node.Children.Add(Information.CreateWordNode(nameof(Information)));
             node.Children.Add(Effect.CreateWordNode(nameof(Effect)));
             node.Children.Add(Navigator.CreateWordNode(nameof(Navigator)));
+            node.Children.Add(ExternalAppCollection.CreateWordNode(nameof(ExternalAppCollection)));
 
             return node;
         }

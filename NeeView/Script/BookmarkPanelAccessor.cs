@@ -66,12 +66,12 @@ namespace NeeView
 
         private BookmarkItemAccessor[] GetItems()
         {
-            return ToStringArray(_panel.Presenter.FolderListBox?.GetItems());
+            return ToItemAccessorArray(_panel.Presenter.FolderListBox?.GetItems());
         }
 
         private BookmarkItemAccessor[] GetSelectedItems()
         {
-            return ToStringArray(_panel.Presenter.FolderListBox?.GetSelectedItems());
+            return ToItemAccessorArray(_panel.Presenter.FolderListBox?.GetSelectedItems());
         }
 
         private void SetSelectedItems(BookmarkItemAccessor[] selectedItems)
@@ -80,7 +80,7 @@ namespace NeeView
             _panel.Presenter.FolderListBox?.SetSelectedItems(selectedItems.Select(e => e.Source));
         }
 
-        private static BookmarkItemAccessor[] ToStringArray(IEnumerable<FolderItem>? items)
+        private static BookmarkItemAccessor[] ToItemAccessorArray(IEnumerable<FolderItem>? items)
         {
             return items?.Select(e => new BookmarkItemAccessor(e)).ToArray() ?? Array.Empty<BookmarkItemAccessor>();
         }
