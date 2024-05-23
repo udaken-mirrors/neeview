@@ -11,5 +11,12 @@ namespace NeeView
         public DestinationFolderCollection(IEnumerable<DestinationFolder> collection) : base(collection)
         {
         }
+
+        public DestinationFolder CreateNew()
+        {
+            var item = new DestinationFolder();
+            this.Add(item);
+            return item;
+        }
     }
 }

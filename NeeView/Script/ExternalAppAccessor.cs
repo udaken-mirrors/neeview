@@ -61,7 +61,7 @@ namespace NeeView
         [WordNodeMember]
         public void Execute(PageAccessor[] pages)
         {
-            AppDispatcher.Invoke(() => _externalApp.Execute(pages.Select(e => e.Source).ToList(), CancellationToken.None));
+            _externalApp.ExecuteAsync(pages.Select(e => e.Source).ToList(), CancellationToken.None).Wait();
         }
 
         [WordNodeMember]
@@ -73,15 +73,15 @@ namespace NeeView
         [WordNodeMember]
         public void Execute(string[] paths)
         {
-            AppDispatcher.Invoke(() => ExecuteAsync(paths, CancellationToken.None));
+            ExecuteAsync(paths, CancellationToken.None).Wait();
         }
 
         private async Task ExecuteAsync(string[] paths, CancellationToken token)
-        { 
+        {
             var pages = paths.Select(e => GetPage(e)).ToList();
             if (pages.All(e => e is not null))
             {
-                await _externalApp.Execute(pages.WhereNotNull(), token);
+                await _externalApp.ExecuteAsync(pages.WhereNotNull(), token);
             }
             else
             {
@@ -96,17 +96,7 @@ namespace NeeView
         /// <returns>現在ブックに対応するページ。存在しない場合は null</returns>
         private static Page? GetPage(string path)
         {
-            var book = BookHub.Current.GetCurrentBook();
-            if (book is not null)
-            {
-                var page = book.Pages.FirstOrDefault(e => e.EntryFullName == path);
-                if (page is not null)
-                {
-                    return page;
-                }
-            }
-
-            return null;
+            return BookHub.Current.GetCurrentBook()?.Pages.GetPageWithEntryFullName(path);
         }
     }
 

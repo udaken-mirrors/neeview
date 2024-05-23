@@ -164,7 +164,7 @@ namespace NeeView
             var items = GetSelectedPages(sender);
             if (items != null && items.Any())
             {
-                await externalApp.Execute(items, CancellationToken.None);
+                await externalApp.ExecuteAsync(items, CancellationToken.None);
             }
         }
 
@@ -207,12 +207,6 @@ namespace NeeView
             return PageUtility.CanCreateRealizedFilePathList(pages);
         }
 
-        private static async Task CopyToFolderAsync(IEnumerable<Page> pages, string destDirPath, CancellationToken token)
-        {
-            var paths = await PageUtility.CreateRealizedFilePathListAsync(pages, token);
-            FileIO.CopyToFolder(paths, destDirPath);
-        }
-
 
         /// <summary>
         /// フォルダーにコピーコマンド用
@@ -234,16 +228,11 @@ namespace NeeView
 
             try
             {
-                if (!Directory.Exists(folder.Path))
-                {
-                    throw new DirectoryNotFoundException();
-                }
-
                 var items = GetSelectedPages(sender);
-                if (items != null && items.Any())
+                if (items is not null)
                 {
-                    ////Debug.WriteLine($"CopyToFolder: to {folder.Path}");
-                    await CopyToFolderAsync(items, folder.Path, CancellationToken.None);
+                    var paths = await PageUtility.CreateRealizedFilePathListAsync(items, CancellationToken.None);
+                    folder.Copy(paths);
                 }
             }
             catch (OperationCanceledException)
@@ -274,22 +263,21 @@ namespace NeeView
             return Config.Current.System.IsFileWriteAccessEnabled && items != null && items.Any() && CanMoveToFolder(items);
         }
 
-        public void MoveToFolder_Execute(object sender, ExecutedRoutedEventArgs e)
+        public async void MoveToFolder_Execute(object sender, ExecutedRoutedEventArgs e)
         {
             if (e.Parameter is not DestinationFolder folder) return;
 
             try
             {
-                if (!Directory.Exists(folder.Path))
-                {
-                    throw new DirectoryNotFoundException();
-                }
-
                 var items = GetSelectedPages(sender);
-                if (items != null && items.Any())
+                if (items is not null)
                 {
-                    ////Debug.WriteLine($"MoveToFolder: to {folder.Path}");
-                    MoveToFolder(items, folder.Path);
+                    var movePages = items.Where(e => e.ArchiveEntry.IsFileSystem).ToList();
+                    var paths = movePages.Select(e => e.GetFilePlace()).WhereNotNull().ToList();
+
+                    await folder.MoveAsync(paths, CancellationToken.None);
+
+                    BookOperation.Current.BookControl.ValidateRemoveFile(movePages);
                 }
             }
             catch (OperationCanceledException)
@@ -308,17 +296,6 @@ namespace NeeView
         protected virtual bool CanMoveToFolder(IEnumerable<Page> pages)
         {
             return pages.All(e => e.ArchiveEntry.IsFileSystem && e.ArchiveEntry.Archiver is not PlaylistArchive);
-        }
-
-        private static void MoveToFolder(IEnumerable<Page> pages, string destDirPath)
-        {
-            var movePages = pages.Where(e => e.ArchiveEntry.IsFileSystem).ToList();
-            var paths = movePages.Select(e => e.GetFilePlace()).WhereNotNull().ToList();
-            FileIO.MoveToFolder(paths, destDirPath);
-
-            // 移動後のブックページ整合性処理
-            // TODO: しっかり実装するならページのファイルシステムの監視が必要になる。ファイルの追加削除が自動的にページに反映するように。
-            BookOperation.Current.BookControl.ValidateRemoveFile(movePages);
         }
 
         #region Remove

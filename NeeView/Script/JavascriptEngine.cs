@@ -97,6 +97,11 @@ namespace NeeView
             {
                 throw new ScriptException(new ScriptNotice(ex.Error), ex);
             }
+            catch (AggregateException ex) when (ex.InnerExceptions.Count == 1)
+            {
+                var exception = ex.InnerExceptions[0];
+                throw new ScriptException(CreateScriptErrorMessage(exception.Message), exception);
+            }
             catch (Exception ex)
             {
                 throw new ScriptException(CreateScriptErrorMessage(ex.Message), ex);

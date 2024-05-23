@@ -141,11 +141,11 @@ namespace NeeView
             return path1 == path2;
         }
 
-       /// <summary>
-       /// ファイルロックチェック
-       /// </summary>
-       /// <param name="file"></param>
-       /// <returns></returns>
+        /// <summary>
+        /// ファイルロックチェック
+        /// </summary>
+        /// <param name="file"></param>
+        /// <returns></returns>
         public static bool IsFileLocked(FileInfo file, FileShare share = FileShare.None)
         {
             try
@@ -173,13 +173,53 @@ namespace NeeView
         public static async Task WaitFileReadableAsync(FileInfo file, TimeSpan timeout, CancellationToken token)
         {
             var time = new TimeSpan();
-            var interval = TimeSpan.FromMilliseconds(500); 
+            var interval = TimeSpan.FromMilliseconds(500);
             while (IsFileLocked(file, FileShare.Read))
             {
                 if (time > timeout) throw new TimeoutException();
                 await Task.Delay(interval, token);
                 time += interval;
             }
+        }
+
+        /// <summary>
+        /// ディレクトリ確保
+        /// </summary>
+        /// <param name="path"></param>
+        /// <returns></returns>
+        private static string EnsureDirectory(string path)
+        {
+            var directoryPath = LoosePath.TrimDirectoryEnd(path);
+            var dir = new DirectoryInfo(LoosePath.TrimDirectoryEnd(directoryPath));
+            if (!dir.Exists)
+            {
+                dir.Create();
+            }
+            return directoryPath;
+        }
+
+        /// <summary>
+        /// ブックを閉じてアーカイブを開放する。
+        /// </summary>
+        /// <remarks>
+        /// ファイル操作前の処理用。
+        /// </remarks>
+        /// <param name="path"></param>
+        /// <returns></returns>
+        private static async Task<CloseBookResult> CloseBookAsync(string path)
+        {
+            return await CloseBookAsync([path]);
+        }
+
+        private static async Task<CloseBookResult> CloseBookAsync(IEnumerable<string> paths)
+        {
+            // 開いている本であるならば閉じる
+            var result = await BookHubTools.CloseBookAsync(paths);
+
+            // 全てのファイルロックをはずす
+            await ArchiverManager.Current.UnlockAllArchivesAsync();
+
+            return result;
         }
 
 
@@ -204,17 +244,10 @@ namespace NeeView
         /// <summary>
         /// ファイル、ディレクトリーを指定のフォルダーにコピーする
         /// </summary>
-        public static void CopyToFolder(IEnumerable<string> froms, string toDirectory)
+        public static void CopyToFolder(IEnumerable<string> paths, string toDirectory)
         {
-            var toDirPath = LoosePath.TrimDirectoryEnd(toDirectory);
-
-            var dir = new DirectoryInfo(toDirPath);
-            if (!dir.Exists)
-            {
-                dir.Create();
-            }
-
-            ShellFileOperation.Copy(App.Current.MainWindow, froms, toDirPath);
+            var directoryPath = EnsureDirectory(toDirectory);
+            AppDispatcher.Invoke(() => ShellFileOperation.Copy(App.Current.MainWindow, paths, directoryPath));
         }
 
         #endregion Copy
@@ -224,18 +257,24 @@ namespace NeeView
         /// <summary>
         /// ファイル、ディレクトリーを指定のフォルダーに移動する
         /// </summary>
-        public static void MoveToFolder(IEnumerable<string> froms, string toDirectory)
+        public static async Task MoveToFolderAsync(IEnumerable<string> paths, string toDirectory, CancellationToken token)
         {
+            await CloseBookAsync(paths);
+            var directoryPath = EnsureDirectory(toDirectory);
+            await AppDispatcher.BeginInvoke(() => ShellFileOperation.Move(App.Current.MainWindow, paths, directoryPath));
+        }
 
-            var toDirPath = LoosePath.TrimDirectoryEnd(toDirectory);
+        /// <summary>
+        /// ファイル、ディレクトリーを指定のフォルダーに移動する
+        /// </summary>
+        public static void MoveToFolder(IEnumerable<string> paths, string toDirectory)
+        {
+            // NOTE: 現状ではMTAスレッド用。UIスレッドから呼ぶとデッドロックする可能性あり。
+            NVDebug.AssertMTA();
 
-            var dir = new DirectoryInfo(toDirPath);
-            if (!dir.Exists)
-            {
-                dir.Create();
-            }
-
-            ShellFileOperation.Move(App.Current.MainWindow, froms, toDirPath);
+            Task.Run(async () => await CloseBookAsync(paths)).Wait();
+            var directoryPath = EnsureDirectory(toDirectory);
+            AppDispatcher.Invoke(() => ShellFileOperation.Move(App.Current.MainWindow, paths, directoryPath));
         }
 
         #endregion Move
@@ -263,12 +302,7 @@ namespace NeeView
         {
             try
             {
-                // 開いている本であるならば閉じる
-                await BookHubTools.CloseBookAsync(paths);
-
-                // 全てのファイルロックをはずす
-                await ArchiverManager.Current.UnlockAllArchivesAsync();
-
+                await CloseBookAsync(paths);
                 ShellFileOperation.Delete(Application.Current.MainWindow, paths, Config.Current.System.IsRemoveWantNukeWarning);
                 return true;
             }
@@ -410,11 +444,7 @@ namespace NeeView
         /// </summary>
         public static async Task<bool> RenameAsync(string src, string dst, bool restoreBook)
         {
-            // 現在の本ならば閉じる
-            var closeBookResult = await BookHubTools.CloseBookAsync(src);
-
-            // 全てのファイルロックをはずす
-            await ArchiverManager.Current.UnlockAllArchivesAsync();
+            var closeBookResult = await CloseBookAsync(src);
 
             // rename main
             var isSuccess = RenameRetry(src, dst);

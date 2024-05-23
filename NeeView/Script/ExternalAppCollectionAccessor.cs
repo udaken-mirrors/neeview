@@ -1,11 +1,10 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 
 namespace NeeView
 {
     public class ExternalAppCollectionAccessor
     {
-        private ExternalAppCollection _collection;
+        private readonly ExternalAppCollection _collection;
 
         public ExternalAppCollectionAccessor()
         {
@@ -38,5 +37,4 @@ namespace NeeView
             return node;
         }
     }
-
 }

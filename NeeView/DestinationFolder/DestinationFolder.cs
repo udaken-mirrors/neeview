@@ -1,7 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace NeeView
 {
@@ -63,6 +67,42 @@ namespace NeeView
         public override int GetHashCode()
         {
             return Name.GetHashCode() ^ Path.GetHashCode();
+        }
+
+        public void Copy(IEnumerable<string> paths)
+        {
+            if (!paths.Any()) return;
+
+            if (!Directory.Exists(this.Path))
+            {
+                throw new DirectoryNotFoundException();
+            }
+
+            FileIO.CopyToFolder(paths, this.Path);
+        }
+
+        public async Task MoveAsync(IEnumerable<string> paths, CancellationToken token)
+        {
+            if (!paths.Any()) return;
+
+            if (!Directory.Exists(this.Path))
+            {
+                throw new DirectoryNotFoundException();
+            }
+
+            await FileIO.MoveToFolderAsync(paths, this.Path, token);
+        }
+
+        public void Move(IEnumerable<string> paths)
+        {
+            if (!paths.Any()) return;
+
+            if (!Directory.Exists(this.Path))
+            {
+                throw new DirectoryNotFoundException();
+            }
+
+            FileIO.MoveToFolder(paths, this.Path);
         }
     }
 }

@@ -358,15 +358,8 @@ namespace NeeView
                 var items = this.ListBox.SelectedItems.Cast<FolderItem>();
                 if (items != null && items.Any())
                 {
-                    // 開いている本であるならば閉じる
-                    if (items.Any(x => x.TargetPath.SimplePath == BookHub.Current.Address))
-                    {
-                        await BookHub.Current.RequestUnload(this, true).WaitAsync();
-                        await ArchiverManager.Current.UnlockAllArchivesAsync();
-                    }
-
                     ////Debug.WriteLine($"MoveToFolder: to {folder.Path}");
-                    FileIO.MoveToFolder(items.Select(x => x.TargetPath.SimplePath), folder.Path);
+                    await FileIO.MoveToFolderAsync(items.Select(x => x.TargetPath.SimplePath), folder.Path, CancellationToken.None);
                 }
             }
             catch (OperationCanceledException)
@@ -533,7 +526,7 @@ namespace NeeView
             _vm.Model.AddBookmark();
         }
 
-        #endregion
+#endregion
 
         #region DragDrop
 
