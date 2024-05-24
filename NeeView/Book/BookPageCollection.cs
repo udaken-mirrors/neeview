@@ -17,7 +17,7 @@ namespace NeeView
     {
         private readonly PageThumbnailPool _thumbnailPool = new();
 
-        private List<Page> _pages;
+        private List<Page> _sourcePages;
         private PageSortMode _sortMode = PageSortMode.Entry;
         private string _searchKeyword = "";
         private CancellationTokenSource? _sortCancellationTokenSource;
@@ -36,18 +36,19 @@ namespace NeeView
                 .AddProfile(new PageSearchProfile());
             _searcher = new Searcher(searchContext);
 
-            _pages = pages;
+            _sourcePages = pages;
+            Pages = pages;
 
-            PageMap = _pages.ToMultiMap(e => e.EntryFullName, e => e);
+            PageMap = _sourcePages.ToMultiMap(e => e.EntryFullName, e => e);
 
-            foreach (var page in _pages)
+            foreach (var page in _sourcePages)
             {
                 AttachPage(page);
             }
 
-            for (int i = 0; i < _pages.Count; ++i)
+            for (int i = 0; i < _sourcePages.Count; ++i)
             {
-                _pages[i].EntryIndex = i;
+                _sourcePages[i].EntryIndex = i;
             }
 
         }
@@ -74,7 +75,7 @@ namespace NeeView
         public event EventHandler<PageRemovedEventArgs>? PageRemoved;
 
 
-        public List<Page> Pages => _pages;
+        public List<Page> Pages { get; private set; }
 
         public MultiMap<string, Page> PageMap { get; private set; }
 
@@ -139,7 +140,7 @@ namespace NeeView
                     _sortCancellationTokenSource?.Cancel();
                     _sortCancellationTokenSource?.Dispose();
 
-                    foreach (var page in _pages)
+                    foreach (var page in _sourcePages)
                     {
                         DetachPage(page);
                         page.Dispose();
@@ -273,7 +274,7 @@ namespace NeeView
         private void UpdatePagesAsync()
         {
             if (_disposedValue) return;
-            if (_pages.Count <= 0) return;
+            if (_sourcePages.Count <= 0) return;
 
             _sortCancellationTokenSource?.Cancel();
             _sortCancellationTokenSource?.Dispose();
@@ -299,14 +300,14 @@ namespace NeeView
         private void UpdatePages(PageSortMode sortMode, string searchKeyword, CancellationToken token)
         {
             if (_disposedValue) return;
-            if (_pages.Count <= 0) return;
+            if (_sourcePages.Count <= 0) return;
 
             try
             {
                 PagesSorting?.Invoke(this, EventArgs.Empty);
 
                 //Debug.WriteLine($"Sort {sortMode} ...");
-                var pages = SelectSearchPages(_pages, searchKeyword, token);
+                var pages = SelectSearchPages(_sourcePages, searchKeyword, token);
                 pages = SortPages(pages, sortMode, token);
 
                 if (!pages.Any())
@@ -314,7 +315,7 @@ namespace NeeView
                     pages = new List<Page>() { _emptyPage };
                 }
 
-                _pages = pages.ToList();
+                Pages = pages.ToList();
 
                 //Debug.WriteLine($"Sort {sortMode} done.");
 
