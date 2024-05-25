@@ -840,6 +840,7 @@ namespace NeeView
         public async void ViewModel_SelectedChanged(object? sender, FolderListSelectedChangedEventArgs e)
         {
             this.ListBox.ScrollIntoView(this.ListBox.SelectedItem);
+            this.ListBox.UpdateLayout();
             this.ListBox.FocusSelectedItem(false);
 
             _thumbnailLoader?.Load();
