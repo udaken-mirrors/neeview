@@ -267,7 +267,7 @@ namespace NeeView
             LoadRequesting?.Invoke(this, new BookPathEventArgs(query.SimplePath));
             _commandEngine.Enqueue(command);
             return command;
-        
+
             void JobCommand_Completed(object? sender, JobCompletedEventArgs e)
             {
                 command.Completed -= JobCommand_Completed;
@@ -335,7 +335,7 @@ namespace NeeView
             BookLoadOption options = book != null ? (book.LoadOption & BookLoadOption.KeepHistoryOrder) | BookLoadOption.Resume : BookLoadOption.None;
 
             var query = new QueryPath(Address, _book?.Pages.SearchKeyword);
-            RequestLoad(sender, query.SimpleQuery, start, options | BookLoadOption.IsBook | BookLoadOption.IgnoreCache, true);
+            RequestLoad(sender, query.SimpleQuery, start, options | BookLoadOption.IsBook | BookLoadOption.IgnoreCache, false);
         }
 
         // 上の階層に移動可能？
@@ -614,7 +614,7 @@ namespace NeeView
             book.Source.DirtyBook -= BookSource_DirtyBook;
         }
 
-#endregion BookHubCommand.Load
+        #endregion BookHubCommand.Load
 
         #region BookHubCommand.Unload
 
