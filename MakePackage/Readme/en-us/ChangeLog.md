@@ -1,5 +1,21 @@
 ## ChangeLog
 
+----
+
+### 41.2
+(2024-05-31)
+
+#### Changed
+
+- Update 7z.dll to ver 24.06
+
+#### Fixed
+
+- Fixed a bug that the focus was not set correctly when switching lists in the thumbnail layout. 
+- Fixed a problem updating the search filter in the PageList.
+
+----
+
 ### 41.1
 (2024-05-18)
 
