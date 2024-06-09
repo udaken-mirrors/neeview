@@ -46,7 +46,7 @@ namespace NeeLaboratory.Resources
             return LoadResText(_languageResource.CreateFileSource(culture));
         }
 
-        private static Dictionary<string, TextResourceItem> LoadResText(IFileSource fileSource)
+        public static Dictionary<string, TextResourceItem> LoadResText(IFileSource fileSource)
         {
             Stream stream;
             try

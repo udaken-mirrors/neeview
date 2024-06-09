@@ -164,8 +164,7 @@ namespace NeeView
 
             // 言語適用。初期化に影響するため優先して設定
             var culture = CultureInfo.GetCultureInfo(config.System.Language);
-            TextResources.Culture = culture;
-            TextResources.Resource.Load(culture);
+            TextResources.Initialize(culture);
             InputGestureDisplayString.Initialize(TextResources.Resource);
 
             Debug.WriteLine($"App.Culture: {Stopwatch.ElapsedMilliseconds}ms");

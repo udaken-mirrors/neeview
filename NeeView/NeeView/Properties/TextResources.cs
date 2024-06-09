@@ -12,12 +12,25 @@ namespace NeeView.Properties
     /// </summary>
     internal class TextResources
     {
+        private static bool _initialized;
+
+
         public static CultureInfo Culture { get; set; } = CultureInfo.CurrentCulture;
 
         public static FileLanguageResource LanguageResource { get; } = new();
 
         public static TextResourceManager Resource { get; } = new(LanguageResource);
 
+
+        public static void Initialize(CultureInfo culture)
+        {
+            if (_initialized) throw new InvalidOperationException("Already initialized.");
+            _initialized = true;
+
+            Culture = culture;
+            Resource.Load(culture);
+            Resource.Add(new AppFileSource(new Uri("/NeeView/Properties/Append.restext", UriKind.Relative))); 
+        }
 
         public static string GetString(string name)
         {

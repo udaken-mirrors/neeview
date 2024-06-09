@@ -46,5 +46,13 @@ namespace NeeLaboratory.Resources
         {
             return _map.TryGetValue(name, out var value) ? value.GetCaseText(pattern) : null;
         }
+
+        public void Add(Dictionary<string, TextResourceItem> map)
+        {
+            foreach (var item in map)
+            {
+                _map[item.Key] = item.Value;
+            }
+        }
     }
 }

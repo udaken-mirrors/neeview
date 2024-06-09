@@ -105,6 +105,15 @@ namespace NeeLaboratory.Resources
         }
 
         /// <summary>
+        /// 言語リソース追加読み込み
+        /// </summary>
+        /// <param name="fileSource"></param>
+        public void Add(IFileSource  fileSource)
+        {
+            _resource.Add(TextResourceFactory.LoadResText(fileSource));
+        }
+
+        /// <summary>
         /// 一時言語リソース取得
         /// </summary>
         /// <param name="culture">カルチャ</param>
