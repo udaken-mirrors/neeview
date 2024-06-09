@@ -104,6 +104,25 @@ namespace NeeView
             AppDispatcher.Invoke(() => _model.Sync());
         }
 
+        [WordNodeMember]
+        public void MoveToParent()
+        {
+            AppDispatcher.Invoke(() => _model.MoveToParent());
+        }
+
+        [WordNodeMember]
+        public void MoveToPrevious()
+        {
+            AppDispatcher.Invoke(() => _model.MoveToPrevious());
+        }
+
+        [WordNodeMember]
+        public void MoveToNext()
+        {
+            AppDispatcher.Invoke(() => _model.MoveToNext());
+        }
+
+
         internal WordNode CreateWordNode(string name)
         {
             var node = WordNodeHelper.CreateClassWordNode(name, this.GetType());

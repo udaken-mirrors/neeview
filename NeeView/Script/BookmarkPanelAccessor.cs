@@ -91,6 +91,12 @@ namespace NeeView
             AppDispatcher.Invoke(() => _model.NewFolder(name));
         }
 
+        [WordNodeMember]
+        public void MoveToParent()
+        {
+            AppDispatcher.Invoke(() => _model.MoveToParent());
+        }
+
 
         internal WordNode CreateWordNode(string name)
         {
