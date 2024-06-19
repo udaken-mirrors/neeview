@@ -331,7 +331,13 @@ namespace NeeView.PageFrames
             Debug.Assert(node.Value.Content is PageFrameContent);
             var pos = node.Value.FrameRange.Top(direction.ToSign());
             var frame = _frameFactory.CreatePageFrame(pos, direction.ToSign());
-            Debug.Assert(frame is not null);
+
+            // NOTE: ページ検索で現在表示されているページそのものが無くなった場合に null になることがある。この場合は処理を行わない
+            if (frame is null) 
+            {
+                return;
+            }
+
             var nextPage = _frameFactory.GetNextPage(frame, direction.ToSign());
 
             if (!node.Value.IsDirty && node.Value.Content is PageFrameContent item && item.PageFrame == frame)
@@ -522,7 +528,7 @@ namespace NeeView.PageFrames
         public void Clear()
         {
             if (_disposedValue) return;
-            
+
             RemoveContainers(_containers.First, LinkedListDirection.Next);
         }
 
