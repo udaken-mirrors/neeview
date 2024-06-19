@@ -143,7 +143,7 @@ namespace NeeView
             get
             {
                 var image = _image;
-                return image == null || (image != ThumbnailResource.EmptyImage && image != ThumbnailResource.MediaImage && image != ThumbnailResource.FolderImage);
+                return image == null || (image != ThumbnailResource.EmptyImage && image != ThumbnailResource.MediaImage && image != ThumbnailResource.FolderImage && image != ThumbnailResource.NoEntryImage);
             }
         }
 
@@ -332,7 +332,7 @@ namespace NeeView
             if (!IsCacheEnabled || _header == null) return;
 
             var image = _image;
-            if (image == null || image == ThumbnailResource.EmptyImage || image == ThumbnailResource.MediaImage || image == ThumbnailResource.FolderImage) return;
+            if (image == null || image == ThumbnailResource.EmptyImage || image == ThumbnailResource.MediaImage || image == ThumbnailResource.FolderImage || image == ThumbnailResource.NoEntryImage) return;
 
             ThumbnailCache.Current.EntrySaveQueue(_header, image);
         }
