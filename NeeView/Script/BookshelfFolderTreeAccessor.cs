@@ -34,7 +34,7 @@ namespace NeeView
 
 
         [WordNodeMember]
-        public void SyncDirectory(string path)
+        public void Expand(string path)
         {
             AppDispatcher.Invoke(() => _model.SyncDirectory(path));
         }

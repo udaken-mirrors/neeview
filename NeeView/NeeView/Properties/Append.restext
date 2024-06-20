@@ -1,5 +1,0 @@
-BookshelfPanelAccessor.MoveToParent=@Bookshelf.Up.ToolTip
-BookshelfPanelAccessor.MoveToNext=@Bookshelf.Next.ToolTip
-BookshelfPanelAccessor.MoveToPrevious=@Bookshelf.Back.ToolTip
-BookshelfPanelAccessor.Sync=@Bookshelf.Sync.ToolTip
-BookmarkPanelAccessor.MoveToParent=@Bookmark.Up.ToolTip

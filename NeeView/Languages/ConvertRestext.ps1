@@ -65,6 +65,10 @@ function Get-Restext
     $array = @()
     foreach($line in Get-Content $restext) 
     {
+        if ([string]::IsNullOrWhitespace($line))
+        {
+            continue
+        }
         $tokens = $line -split "=", 2
         $key = $tokens[0]
         $value = $tokens[1]
@@ -154,7 +158,7 @@ function ConvertTo-RestextFromRestextTable
 
 function Get-RestextCultures
 {
-    $cultures = Get-ChildItem *.restext | ForEach-Object {[System.IO.Path]::GetFileNameWithoutExtension($_.Name)}
+    $cultures = Get-ChildItem *.restext -Exclude shared.restext | ForEach-Object {[System.IO.Path]::GetFileNameWithoutExtension($_.Name)}
     return $cultures
 }
 
