@@ -1,0 +1,2 @@
+// Set "↑←↓" to the mouse gesture of ViewRotateLeft command
+nv.Command.ViewRotateLeft.MouseGesture = "ULD"

@@ -1,0 +1,2 @@
+// open C:\Foo\Bar.zip
+nv.Command.LoadAs.Execute("C:\\Foo\\Bar.zip")

@@ -10,7 +10,7 @@ namespace NeeView
 {
     internal static class ResourceService
     {
-        private static readonly Regex _regexKey = new(@"@[a-zA-Z0-9_\.#]+");
+        private static readonly Regex _regexKey = new(@"@[a-zA-Z0-9_\.#]+[a-zA-Z0-9]");
         private static readonly Regex _regexResKey = new Regex(@"@\[([^\]]+)\]");
 
         /// <summary>
@@ -38,7 +38,6 @@ namespace NeeView
             }
         }
 
-
         /// <summary>
         /// @で始まる文字列をリソースキーとして文字列を入れ替える。
         /// </summary>
@@ -52,9 +51,8 @@ namespace NeeView
         {
             if (recursionLimit <= 0) return s;
 
-            var result = _regexKey.Replace(s, ReplaceMatchEvaluator);
-            return ReplaceEmbeddedText(result);
-
+            return ReplaceEmbeddedText(_regexKey.Replace(s, ReplaceMatchEvaluator));
+         
             string ReplaceMatchEvaluator(Match m)
             {
                 var s = GetResourceString(m.Value);

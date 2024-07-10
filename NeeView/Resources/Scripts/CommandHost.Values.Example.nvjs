@@ -1,0 +1,4 @@
+// Store value
+nv.Values["Test"] = "Hello!"
+// As well
+nv.Values.Test = "Hello!"

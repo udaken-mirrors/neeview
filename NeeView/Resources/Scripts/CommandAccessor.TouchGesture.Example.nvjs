@@ -1,0 +1,2 @@
+// Set "TouchCenter" for touch operation of ViewRotateLeft command
+nv.Command.ViewRotateLeft.TouchGesture = "TouchCenter"

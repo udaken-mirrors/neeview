@@ -1,0 +1,2 @@
+// Example: Select items that starts with "A"
+nv.Bookshelf.SelectedItems = nv.Bookshelf.Items.filter(e => e.Name.startsWith('A'))

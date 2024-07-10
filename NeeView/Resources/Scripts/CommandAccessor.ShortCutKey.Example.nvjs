@@ -1,0 +1,2 @@
+// Set "Ctrl+A" as shortcut for ViewRotateLeft command
+nv.Command.ViewRotateLeft.ShortCutKey = "Ctrl+A"

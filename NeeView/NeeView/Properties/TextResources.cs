@@ -29,7 +29,7 @@ namespace NeeView.Properties
 
             Culture = culture;
             Resource.Load(culture);
-            Resource.Add(new AppFileSource(new Uri("/Languages/shared.restext", UriKind.Relative))); 
+            Resource.Add(new AppFileSource(new Uri("/Languages/shared.restext", UriKind.Relative)));
         }
 
         public static string GetString(string name)

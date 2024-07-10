@@ -1,0 +1,2 @@
+// Display the first page name with toast
+nv.ShowToast(nv.Book.Pages[0].Path)

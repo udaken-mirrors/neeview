@@ -1,0 +1,4 @@
+// Execute "NextPage" command
+nv.Command["NextPage"].Execute()
+// As well
+nv.Command.NextPage.Execute()

@@ -1,0 +1,2 @@
+//  Display the view page name with toast
+nv.ShowToast(nv.Book.ViewPages[0].Path)

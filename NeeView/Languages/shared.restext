@@ -23,5 +23,20 @@ QuickAccessNodeAccessor.Name=@Word.Name
 QuickAccessNodeAccessor.Path=@Word.Path
 RootQuickAccessNodeAccessor.Children=Word.ChildNodes
 
+BookshelfPanelAccessor.Example=@[/Resources/Scripts/BookshelfPanelAccessor.Example.nvjs]
+CommandAccessor.Execute.Example=@[/Resources/Scripts/CommandAccessor.Execute.Example.nvjs]
+CommandAccessor.MouseGesture.Example=@[/Resources/Scripts/CommandAccessor.MouseGesture.Example.nvjs]
+CommandAccessor.Parameter.Example=@[/Resources/Scripts/CommandAccessor.Parameter.Example.nvjs]
+CommandAccessor.Patch.Example=@[/Resources/Scripts/CommandAccessor.Patch.Example.nvjs]
+CommandAccessor.ShortCutKey.Example=@[/Resources/Scripts/CommandAccessor.ShortCutKey.Example.nvjs]
+CommandAccessor.TouchGesture.Example=@[/Resources/Scripts/CommandAccessor.TouchGesture.Example.nvjs]
+CommandHost.Command.Example=@[/Resources/Scripts/CommandHost.Command.Example.nvjs]
+CommandHost.Config.Example=@[/Resources/Scripts/CommandHost.Config.Example.nvjs]
+CommandHost.ShowDialog.Example=@[/Resources/Scripts/CommandHost.ShowDialog.Example.nvjs]
+CommandHost.Values.Example=@[/Resources/Scripts/CommandHost.Values.Example.nvjs]
+JavaScriptEngine.ExecuteFile.Example=@[/Resources/Scripts/JavaScriptEngine.ExecuteFile.Example.nvjs]
+PageAccessor.Example=@[/Resources/Scripts/PageAccessor.Example.nvjs]
+ViewPageAccessor.Example=@[/Resources/Scripts/ViewPageAccessor.Example.nvjs]
+
 Homepage.Jint=<a href="https://github.com/sebastienros/jint">Jint</a>
 Homepage.ScriptSamples=<a href="https://bitbucket.org/neelabo/neeview.scriptsamples/">NeeView Script Samples</a>

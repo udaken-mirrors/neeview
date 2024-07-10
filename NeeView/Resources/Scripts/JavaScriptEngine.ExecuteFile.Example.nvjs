@@ -1,0 +1,2 @@
+// Load and run Sample.nvjs
+include("Sample.nvjs")

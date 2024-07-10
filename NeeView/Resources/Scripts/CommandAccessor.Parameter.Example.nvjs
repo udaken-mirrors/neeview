@@ -1,0 +1,2 @@
+// Change the rotation amount of "ViewRotateLeft" command to 45 degrees
+nv.Command.ViewRotateLeft.Parameter.Angle = 45

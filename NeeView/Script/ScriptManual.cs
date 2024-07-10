@@ -12,7 +12,7 @@ namespace NeeView
         private static readonly string _manualTemplate = """
             <h1>@_ScriptManual.Title</h1>
 
-            <h2>@_ScriptManual.S1.Title</h2>
+            <h2>@_ScriptManual.S1</h2>
             <p>
                 @_ScriptManual.S1.P1
             </p>
@@ -39,7 +39,7 @@ namespace NeeView
                 </table>
             </p>
 
-            <h2>@_ScriptManual.S2.Title</h2>
+            <h2>@_ScriptManual.S2</h2>
             <p>
                 @_ScriptManual.S2.P1
 
@@ -49,7 +49,7 @@ namespace NeeView
                 </ul>
             </p>
 
-            <h2>@_ScriptManual.S3.Title</h2>
+            <h2>@_ScriptManual.S3</h2>
             <p>
                 @_ScriptManual.S3.P1
 
@@ -59,12 +59,12 @@ namespace NeeView
                 </table>
             </p>
 
-            <h2>@_ScriptManual.S4.Title</h2>
+            <h2>@_ScriptManual.S4</h2>
             <p>
                 @_ScriptManual.S4.P1
             </p>
 
-            <h4>@_ScriptManual.S4.T.Title</h4>
+            <h4>@_ScriptManual.S4.T</h4>
             <p>
                 <table class="table-slim">
                     <tr><td>cls</td><td>@_ScriptManual.S4.T.T01</td></tr>
@@ -75,31 +75,31 @@ namespace NeeView
             """;
 
         private static readonly string _exampleTemplate = """
-            <h1 class="sub">@_ScriptManual.S5.Title</h1>
+            <h1 class="sub">@_ScriptManual.S9</h1>
 
-            @_ScriptManual.S5.P1
+            @_ScriptManual.S9.P1
 
-            <h3>@_ScriptManual.S5.S1.Title</h3>
+            <h3>@_ScriptManual.S9.S1</h3>
             <p>
               <pre>OpenMsPaint.nvjs<code class="example">@[/Resources/Scripts/OpenMsPaint.nvjs]</code></pre>
             </p>
 
-            <h3>@_ScriptManual.S5.S2.Title</h3>
+            <h3>@_ScriptManual.S9.S2</h3>
             <p>
               <pre>OpenNeeView.nvjs<code class="example">@[/Resources/Scripts/OpenNeeView.nvjs]</code></pre>
             </p>
 
-            <h3>@_ScriptManual.S5.S3.Title</h3>
+            <h3>@_ScriptManual.S9.S3</h3>
             <p>
              <pre>ToggleUnsharpMask.nvjs<code class="example">@[/Resources/Scripts/ToggleUnsharpMask.nvjs]</code></pre>
             </p>
 
-            <h3>@_ScriptManual.S5.S4.Title</h3>
+            <h3>@_ScriptManual.S9.S4</h3>
             <p>
               <pre>OnBookLoaded.nvjs<code class="example">@[/Resources/Scripts/OnBookLoaded.ReadOrder.nvjs]</code></pre>
             </p>
 
-            <h3>@_ScriptManual.S5.S5.Title</h3>
+            <h3>@_ScriptManual.S9.S5</h3>
             <p>
               <pre>OnBookLoaded.nvjs<code class="example">@[/Resources/Scripts/OnBookLoaded.Media.nvjs]</code></pre>
             </p>
@@ -160,8 +160,8 @@ namespace NeeView
 
         private static StringBuilder AppendScriptReference(StringBuilder builder)
         {
-            builder.Append($"<h1 class=\"sub\">{ResourceService.GetString("@ScriptReference")}</h1>");
-            builder.Append($"<p>{ResourceService.GetString("@ScriptReference.Summary")}</p>").AppendLine();
+            builder.Append($"<h1 class=\"sub\">{ResourceService.GetString("@_ScriptManual.S5")}</h1>");
+            builder.Append($"<p>{ResourceService.GetString("@_ScriptManual.S5.P1")}</p>").AppendLine();
 
             var htmlBuilder = new HtmlReferenceBuilder(builder);
 
@@ -190,7 +190,7 @@ namespace NeeView
 
         private static StringBuilder AppendConfigList(StringBuilder builder)
         {
-            builder.Append($"<h1 class=\"sub\" id=\"ConfigList\">{Properties.TextResources.GetString("Word.ConfigList")}</h1>");
+            builder.Append($"<h1 class=\"sub\" id=\"ConfigList\">{ResourceService.GetString("@_ScriptManual.S6")}</h1>");
             builder.Append("<table class=\"table-slim table-topless\">");
             builder.Append($"<tr><th>{Properties.TextResources.GetString("Word.Name")}</th><th>{Properties.TextResources.GetString("Word.Type")}</th><th>{Properties.TextResources.GetString("Word.Summary")}</th></tr>");
             builder.Append(new ConfigMap(null).Map.CreateHelpHtml("nv.Config"));
@@ -202,7 +202,7 @@ namespace NeeView
         {
             var executeMethodArgTypes = new Type[] { typeof(object), typeof(CommandContext) };
 
-            builder.Append($"<h1 class=\"sub\" id=\"CommandList\">{Properties.TextResources.GetString("Word.CommandList")}</h1>");
+            builder.Append($"<h1 class=\"sub\" id=\"CommandList\">{ResourceService.GetString("@_ScriptManual.S7")}</h1>");
             builder.Append("<table class=\"table-slim table-topless\">");
             builder.Append($"<tr><th>{Properties.TextResources.GetString("Word.Group")}</th><th>{Properties.TextResources.GetString("Word.Command")}</th><th>{Properties.TextResources.GetString("Word.CommandName")}</th><th>{Properties.TextResources.GetString("Word.Argument")}</th><th>{Properties.TextResources.GetString("Word.CommandParameter")}</th><th>{Properties.TextResources.GetString("Word.Summary")}</th></tr>");
             foreach (var command in CommandTable.Current.Values.OrderBy(e => e.Order))
@@ -283,7 +283,7 @@ namespace NeeView
 
         private static StringBuilder AppendObsoleteList(StringBuilder builder)
         {
-            builder.Append($"<h1 class=\"sub\" id=\"ObsoleteList\">{Properties.TextResources.GetString("Word.ObsoleteList")}</h1>");
+            builder.Append($"<h1 class=\"sub\" id=\"ObsoleteList\">{ResourceService.GetString("@_ScriptManual.S8")}</h1>");
 
             var commandHost = new CommandHost();
             var root = ScriptNodeTreeBuilder.Create(commandHost, "nv");
