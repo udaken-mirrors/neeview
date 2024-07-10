@@ -1,0 +1,11 @@
+// @name Book start action
+// @description Events when a book is opened
+
+if (nv.Book.IsNew) {
+    if (nv.Book.Path.match(/English/) != null) {
+        nv.Book.Config.BookReadOrder = "LeftToRight"
+    }
+    else {
+        nv.Book.Config.BookReadOrder = "RightToLeft"
+    }
+}

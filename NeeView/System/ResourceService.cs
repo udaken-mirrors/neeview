@@ -1,6 +1,8 @@
-﻿using System;
+﻿using NeeLaboratory.Resources;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 
@@ -9,6 +11,7 @@ namespace NeeView
     internal static class ResourceService
     {
         private static readonly Regex _regexKey = new(@"@[a-zA-Z0-9_\.#]+");
+        private static readonly Regex _regexResKey = new Regex(@"@\[([^\]]+)\]");
 
         /// <summary>
         /// @で始まる文字列はリソースキーとしてその値を返す。
@@ -42,18 +45,45 @@ namespace NeeView
         public static string Replace(string s)
         {
             // limit is 5 depth
-            for (int depth = 0; depth < 5 && _regexKey.IsMatch(s); ++depth)
+            return Replace(s, 5);
+        }
+
+        public static string Replace(string s, int recursionLimit)
+        {
+            if (recursionLimit <= 0) return s;
+
+            var result = _regexKey.Replace(s, ReplaceMatchEvaluator);
+            return ReplaceEmbeddedText(result);
+
+            string ReplaceMatchEvaluator(Match m)
             {
-                s = _regexKey.Replace(s, m => GetResourceString(m.Value) ?? m.Value);
+                var s = GetResourceString(m.Value);
+                return s is not null ? Replace(s, recursionLimit - 1) : m.Value;
             }
-            return s;
+        }
+
+        /// <summary>
+        /// @[...] という文字列をテキストリソースのパスとして文字列を入れ替える
+        /// </summary>
+        public static string ReplaceEmbeddedText(string s)
+        {
+            return _regexResKey.Replace(s, FileNameToTextMatchEvaluator);
+        }
+
+        private static string FileNameToTextMatchEvaluator(Match match)
+        {
+            var fileName = match.Groups[1].Value;
+            var fileSource = new AppFileSource(new Uri(fileName, UriKind.Relative));
+            using var stream = fileSource.Open();
+            using var reader = new StreamReader(stream);
+            return reader.ReadToEnd();
         }
 
         /// <summary>
         /// リソースキーからリソース文字列取得
         /// </summary>
         /// <param name="key">@で始まるリソースキー</param>
-        /// <returns>存在しない場合はnull</returns>
+        /// <returns>存在しない場合は null</returns>
         public static string? GetResourceString(string key)
         {
             if (key is null || key[0] != '@') return null;
@@ -66,7 +96,7 @@ namespace NeeView
         /// </summary>
         /// <param name="key">@で始まるリソースキー</param>
         /// <param name="isRecursive">結果に含まれるキーを変換する</param>
-        /// <returns>存在しない場合はnull</returns>
+        /// <returns>存在しない場合は null</returns>
         public static string? GetResourceString(string key, bool isRecursive)
         {
             var text = GetResourceString(key);

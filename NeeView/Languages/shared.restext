@@ -22,3 +22,6 @@ DirectoryNodeAccessor.Path=@Word.Path
 QuickAccessNodeAccessor.Name=@Word.Name
 QuickAccessNodeAccessor.Path=@Word.Path
 RootQuickAccessNodeAccessor.Children=Word.ChildNodes
+
+Homepage.Jint=<a href="https://github.com/sebastienros/jint">Jint</a>
+Homepage.ScriptSamples=<a href="https://bitbucket.org/neelabo/neeview.scriptsamples/">NeeView Script Samples</a>

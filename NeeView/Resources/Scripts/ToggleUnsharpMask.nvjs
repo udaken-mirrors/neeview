@@ -1,0 +1,15 @@
+// @name Unsharp Mask ON/OFF
+// @description Unsharp Mask toggle. Displays a warning when the resize filter is not effective.
+
+if (nv.Config.ImageResizeFilter.IsEnabled) {
+    nv.Config.ImageResizeFilter.IsUnsharpMaskEnabled = !nv.Config.ImageResizeFilter.IsUnsharpMaskEnabled
+    if (nv.Config.ImageResizeFilter.IsUnsharpMaskEnabled) {
+        nv.ShowMessage("UnsharpMask ON")
+    }
+    else {
+        nv.ShowMessage("UnsharpMask OFF")
+    }
+}
+else {
+    nv.ShowMessage("ResizeFilter is not active")
+}

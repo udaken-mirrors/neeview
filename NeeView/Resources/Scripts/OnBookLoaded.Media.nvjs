@@ -1,0 +1,15 @@
+// @name Book start action
+// @description Events when a book is opened
+
+if (nv.Book.IsMedia) {
+    // Video: click to play/stop, double-click to toggle full screen
+    nv.Command.ToggleMediaPlay.ShortCutKey = "LeftClick"
+    nv.Command.Script_ToggleFullScreenAndMediaPlay.ShortCutKey = "LeftDoubleClick"
+    nv.Command.NextPage.ShortCutKey = "Left"
+}
+else {
+    // Normal: Standard setting
+    nv.Command.ToggleMediaPlay.ShortCutKey = null
+    nv.Command.Script_ToggleFullScreenAndMediaPlay.ShortCutKey = null
+    nv.Command.NextPage.ShortCutKey = "Left,LeftClick"
+}

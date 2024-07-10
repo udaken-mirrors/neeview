@@ -1,0 +1,8 @@
+// @name MS Paint
+// @description Open the file in MS Paint.
+
+param = {
+    "Command": "mspaint.exe",
+    "Parameter": "\"$File\""
+}
+nv.Command.OpenExternalApp.Patch(param).Execute()

@@ -79,7 +79,13 @@
 
   <ItemGroup>
     <None Remove="Languages\ConvertRestext.ps1" />
+    <None Remove="Resources\Scripts\OnBookLoaded.Media.nvjs" />
+    <None Remove="Resources\Scripts\OnBookLoaded.ReadOrder.nvjs" />
+    <None Remove="Resources\Scripts\OpenMsPaint.nvjs" />
+    <None Remove="Resources\Scripts\OpenNeeView.nvjs" />
     <None Remove="Resources\Scripts\Sample.nvjs" />
+    <None Remove="Resources\Scripts\ToggleFullScreenAndMediaPlay.nvjs" />
+    <None Remove="Resources\Scripts\ToggleUnsharpMask.nvjs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -122,6 +128,12 @@
 
   <ItemGroup>
     <Resource Include="Resources\App.ico" />
+    <Resource Include="Resources\Scripts\OnBookLoaded.Media.nvjs" />
+    <Resource Include="Resources\Scripts\OnBookLoaded.ReadOrder.nvjs" />
+    <Resource Include="Resources\Scripts\OpenMsPaint.nvjs" />
+    <Resource Include="Resources\Scripts\OpenNeeView.nvjs" />
+    <Resource Include="Resources\Scripts\ToggleFullScreenAndMediaPlay.nvjs" />
+    <Resource Include="Resources\Scripts\ToggleUnsharpMask.nvjs" />
     <Resource Include="Resources\Style.css" />
     <Resource Include="Resources\SplashScreen.png" />
     <Resource Include="Resources\Media.png" />

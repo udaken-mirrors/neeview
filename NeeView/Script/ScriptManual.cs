@@ -9,6 +9,105 @@ namespace NeeView
 {
     public class ScriptManual
     {
+        private static readonly string _manualTemplate = """
+            <h1>@_ScriptManual.Title</h1>
+
+            <h2>@_ScriptManual.S1.Title</h2>
+            <p>
+                @_ScriptManual.S1.P1
+            </p>
+            <p>
+                @_ScriptManual.S1.P2
+
+                <ul>
+                    <li>@_ScriptManual.S1.P2.I1</li>
+                    <li>@_ScriptManual.S1.P2.I2</li>
+                    <li>@_ScriptManual.S1.P2.I3</li>
+                    <li>@_ScriptManual.S1.P2.I4</li>
+                </ul>
+            </p>
+            <p>
+                @_ScriptManual.S1.P3
+
+                <table class="table-slim table-topless">
+                    <tr><th>@_ScriptManual.S1.P3.T00</th><th>@_ScriptManual.S1.P3.T01</th></tr>
+                    <tr><td>&#64;name</td><td>@_ScriptManual.S1.P3.T11</td></tr>
+                    <tr><td>&#64;description</td><td>@_ScriptManual.S1.P3.T21</td></tr>
+                    <tr><td>&#64;shortCutKey</td><td>@_ScriptManual.S1.P3.T31</td></tr>
+                    <tr><td>&#64;mouseGesture</td><td>@_ScriptManual.S1.P3.T41</td></tr>
+                    <tr><td>&#64;touchGesture</td><td>@_ScriptManual.S1.P3.T51</td></tr>
+                </table>
+            </p>
+
+            <h2>@_ScriptManual.S2.Title</h2>
+            <p>
+                @_ScriptManual.S2.P1
+
+                <ul>
+                    <li>@_ScriptManual.S2.P1.I1</li>
+                    <li>@_ScriptManual.S2.P1.I2</li>
+                </ul>
+            </p>
+
+            <h2>@_ScriptManual.S3.Title</h2>
+            <p>
+                @_ScriptManual.S3.P1
+
+                <table class="table-slim">
+                    <tr><td>OnBookLoaded.nvjs</td><td>@_ScriptManual.S3.P1.T01</td></tr>
+                    <tr><td>OnPageChanged.nvjs</td><td>@_ScriptManual.S3.P1.T11</td></tr>
+                </table>
+            </p>
+
+            <h2>@_ScriptManual.S4.Title</h2>
+            <p>
+                @_ScriptManual.S4.P1
+            </p>
+
+            <h4>@_ScriptManual.S4.T.Title</h4>
+            <p>
+                <table class="table-slim">
+                    <tr><td>cls</td><td>@_ScriptManual.S4.T.T01</td></tr>
+                    <tr><td>exit</td><td>@_ScriptManual.S4.T.T11</td></tr>
+                    <tr><td>help, ?</td><td>@_ScriptManual.S4.T.T21</td></tr>
+                </table>
+            </p>
+            """;
+
+        private static readonly string _exampleTemplate = """
+            <h1 class="sub">@_ScriptManual.S5.Title</h1>
+
+            @_ScriptManual.S5.P1
+
+            <h3>@_ScriptManual.S5.S1.Title</h3>
+            <p>
+              <pre>OpenMsPaint.nvjs<code class="example">@[/Resources/Scripts/OpenMsPaint.nvjs]</code></pre>
+            </p>
+
+            <h3>@_ScriptManual.S5.S2.Title</h3>
+            <p>
+              <pre>OpenNeeView.nvjs<code class="example">@[/Resources/Scripts/OpenNeeView.nvjs]</code></pre>
+            </p>
+
+            <h3>@_ScriptManual.S5.S3.Title</h3>
+            <p>
+             <pre>ToggleUnsharpMask.nvjs<code class="example">@[/Resources/Scripts/ToggleUnsharpMask.nvjs]</code></pre>
+            </p>
+
+            <h3>@_ScriptManual.S5.S4.Title</h3>
+            <p>
+              <pre>OnBookLoaded.nvjs<code class="example">@[/Resources/Scripts/OnBookLoaded.ReadOrder.nvjs]</code></pre>
+            </p>
+
+            <h3>@_ScriptManual.S5.S5.Title</h3>
+            <p>
+              <pre>OnBookLoaded.nvjs<code class="example">@[/Resources/Scripts/OnBookLoaded.Media.nvjs]</code></pre>
+            </p>
+            <p>
+              <pre>ToggleFullScreenAndMediaPlay.nvjs<code class="example">@[/Resources/Scripts/ToggleFullScreenAndMediaPlay.nvjs]</code></pre>
+            </p>
+            """;
+
         public void OpenScriptManual()
         {
             Directory.CreateDirectory(Temporary.Current.TempSystemDirectory);
@@ -24,15 +123,24 @@ namespace NeeView
             ExternalProcess.Start(fileName);
         }
 
+        private string GetScriptManualText()
+        {
+            return ResourceService.Replace(_manualTemplate);
+        }
+
+        private string GetScriptExampleText()
+        {
+            return ResourceService.Replace(_exampleTemplate);
+        }
 
         private string CreateScriptManualText()
         {
             var builder = new StringBuilder();
 
-            builder.Append(HtmlHelpUtility.CreateHeader("NeeView Script Manual"));
+            builder.Append(HtmlHelpUtility.CreateHeader(ResourceService.GetString("@_ScriptManual.Title")));
             builder.Append($"<body>");
 
-            builder.Append(Properties.TextResources.GetString("_Document.ScriptManual.html"));
+            builder.Append(GetScriptManualText());
 
             AppendScriptReference(builder);
 
@@ -42,7 +150,7 @@ namespace NeeView
 
             AppendObsoleteList(builder);
 
-            builder.Append(Properties.TextResources.GetString("_Document.ScriptManualExample.html"));
+            builder.Append(GetScriptExampleText());
 
             builder.Append("</body>");
             builder.Append(HtmlHelpUtility.CreateFooter());
@@ -65,7 +173,7 @@ namespace NeeView
 
             var collection = DocumentableTypeCollector.Collect(typeof(CommandHost));
 
-            foreach(var classType in collection.Where(e => !e.IsEnum).OrderBy(e => e.Name))
+            foreach (var classType in collection.Where(e => !e.IsEnum).OrderBy(e => e.Name))
             {
                 htmlBuilder.Append(classType);
             }
