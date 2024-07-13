@@ -83,8 +83,8 @@
       <Component Id="cmpE35DDB3C925C83E74C7DAAE6FEA6C156" Guid="*">
         <File Id="filEAEAE1CB9E8AC1FF00B05453ABEE2ADF" KeyPath="yes" Source="$(var.ContentDir)\mscordaccore.dll" />
       </Component>
-      <Component Id="cmp0717CAF1ACFE234076960B46F5FEBA97" Guid="*">
-        <File Id="filF5FDF0A056A0F661A4F67625573CEAE8" KeyPath="yes" Source="$(var.ContentDir)\mscordaccore_amd64_amd64_8.0.524.21615.dll" />
+      <Component Id="cmpA95899238733E405FEB5D94AC66BD4A5" Guid="*">
+        <File Id="fil3BB683E31AE49D361083786442278FD5" KeyPath="yes" Source="$(var.ContentDir)\mscordaccore_amd64_amd64_8.0.724.31311.dll" />
       </Component>
       <Component Id="cmpA5ABEAD31F33B1E5825EC6F159ABFB0F" Guid="*">
         <File Id="fil1A6B0EBD5A5BF8DD0582A2665D3492F1" KeyPath="yes" Source="$(var.ContentDir)\mscordbi.dll" />
@@ -1244,8 +1244,8 @@
           <Component Id="cmp620E6A8A65099E23C2FC56F51544CB8A" Guid="*">
             <File Id="fil4D50294E23D523D63C887A6045F27332" KeyPath="yes" Source="$(var.ContentDir)\Libraries\Susie\mscordaccore.dll" />
           </Component>
-          <Component Id="cmpA254C041ACF3261F063B194FEB75FB91" Guid="*">
-            <File Id="fil91133E4CEA267DA613FA80B22AC94B8D" KeyPath="yes" Source="$(var.ContentDir)\Libraries\Susie\mscordaccore_x86_x86_8.0.524.21615.dll" />
+          <Component Id="cmpCCCFA765F8BEE1257AC657F571A5CEDE" Guid="*">
+            <File Id="filA958703C151B72D99472F8F4421DA3E9" KeyPath="yes" Source="$(var.ContentDir)\Libraries\Susie\mscordaccore_x86_x86_8.0.724.31311.dll" />
           </Component>
           <Component Id="cmpD22E178AE73A0AF977242A30ED02CB00" Guid="*">
             <File Id="fil8DFFD54540681D5DF7E603C946DC0DA1" KeyPath="yes" Source="$(var.ContentDir)\Libraries\Susie\mscordbi.dll" />
@@ -1736,7 +1736,7 @@
       <ComponentRef Id="cmp16861E24C897764CA922EC062BA74EC9" />
       <ComponentRef Id="cmp8AC833CFB7DC6722697152FE46DA157A" />
       <ComponentRef Id="cmpE35DDB3C925C83E74C7DAAE6FEA6C156" />
-      <ComponentRef Id="cmp0717CAF1ACFE234076960B46F5FEBA97" />
+      <ComponentRef Id="cmpA95899238733E405FEB5D94AC66BD4A5" />
       <ComponentRef Id="cmpA5ABEAD31F33B1E5825EC6F159ABFB0F" />
       <ComponentRef Id="cmp5D6845991403E371A015DF7EBDF71F13" />
       <ComponentRef Id="cmp57B8361D25AD503DC733F4039E5A38B0" />
@@ -2117,7 +2117,7 @@
       <ComponentRef Id="cmpC6ACA3AB1FE9EA3620AFB5F89F5A17F4" />
       <ComponentRef Id="cmpA4DA0F1EEC09884CC9566F685ABA3EDF" />
       <ComponentRef Id="cmp620E6A8A65099E23C2FC56F51544CB8A" />
-      <ComponentRef Id="cmpA254C041ACF3261F063B194FEB75FB91" />
+      <ComponentRef Id="cmpCCCFA765F8BEE1257AC657F571A5CEDE" />
       <ComponentRef Id="cmpD22E178AE73A0AF977242A30ED02CB00" />
       <ComponentRef Id="cmpDF6FD84A4BA876C320BD9B9D2730031E" />
       <ComponentRef Id="cmpD16546F7AEC55E3BE9552DE2E4D0F505" />
