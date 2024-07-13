@@ -2,6 +2,22 @@
 
 ----
 
+### 41.3
+(2024-07-14)
+
+#### Changed
+
+- .NET 8.0.7
+- 7z.dll ver 24.07
+
+#### Fixed
+
+- Fixed a bug that sometimes caused an error when switching page filters.
+- Fixed a bug that caused a huge popup with a dummy icon in the page list.
+- Fixed a bug that sometimes caused an error when switching books during animation frame generation.
+
+----
+
 ### 41.2
 (2024-05-31)
 
