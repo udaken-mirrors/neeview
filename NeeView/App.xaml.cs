@@ -1,6 +1,7 @@
 ﻿using NeeView.Interop;
 using NeeView.Native;
 using NeeView.Properties;
+using NeeView.Text.SimpleHtmlBuilder;
 using NeeView.Windows;
 using System;
 using System.Collections.Generic;
@@ -129,6 +130,7 @@ namespace NeeView
             Debug.WriteLine($"App.InitializeAsync: {Stopwatch.ElapsedMilliseconds}ms");
 
             TextResources.LanguageResource.Initialize(Path.Combine(Environment.AssemblyFolder, "Languages"));
+            HtmlNode.DefaultTextEvaluator = ResourceService.ReplaceFallback;
 
             this.ShutdownMode = ShutdownMode.OnExplicitShutdown;
 

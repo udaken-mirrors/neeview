@@ -52,6 +52,30 @@ namespace NeeView
 
         /// <summary>
         /// @で始まる文字列をリソースキーとして文字列を入れ替える。
+        /// 対応するリソースキーがなければ空文字に置換する。
+        /// </summary>
+        /// <remarks>
+        /// HtmlNode の TextEvaluator 用
+        /// </remarks>
+        public static string ReplaceEmpty(string s)
+        {
+            return Replace(s, false);
+        }
+
+        /// <summary>
+        /// @で始まる文字列をリソースキーとして文字列を入れ替える。
+        /// 対応するリソースキーがなければそのままにする。
+        /// </summary>
+        /// <remarks>
+        /// HtmlNode の TextEvaluator 用
+        /// </remarks>
+        public static string ReplaceFallback(string s)
+        {
+            return Replace(s, true);
+        }
+
+        /// <summary>
+        /// @で始まる文字列をリソースキーとして文字列を入れ替える。
         /// </summary>
         public static string Replace(string s)
         {

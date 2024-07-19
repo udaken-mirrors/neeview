@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NeeView.Text.SimpleHtmlBuilder;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -23,24 +24,28 @@ namespace NeeView
 
             using (var writer = new System.IO.StreamWriter(fileName, false))
             {
-                writer.WriteLine(HtmlHelpUtility.CreateHeader("NeeView MainMenu List"));
+                var title = "NeeView " + ResourceService.GetString("@Word.MainMenu");
+                writer.WriteLine(HtmlHelpUtility.CreateHeader(title));
 
-                writer.WriteLine($"<body><h1>NeeView {Properties.TextResources.GetString("Word.MainMenu")}</h1>");
+                var node = new TagNode("body");
+                node.AddNode(new TagNode("h1").AddText(title));
 
                 foreach (var pair in groups)
                 {
-                    writer.WriteLine($"<h3>{pair.Key.Replace("_", "")}</h3>");
-                    writer.WriteLine("<table class=\"table-slim\">");
+                    node.AddNode(new TagNode("h3").AddText(pair.Key.Replace("_", "")));
+
+                    var table = new TagNode("table", "table-slim");
                     foreach (var item in pair.Value)
                     {
                         string name = string.Concat(Enumerable.Repeat("&nbsp;", item.Depth * 2)) + item.Element.DispLabel;
-
-                        writer.WriteLine($"<td>{name}<td>{item.Element.Note}<tr>");
+                        table.AddNode(new TagNode("tr")
+                            .AddNode(new TagNode("td").AddText(name))
+                            .AddNode(new TagNode("td").AddText(item.Element.Note)));
                     }
-                    writer.WriteLine("</table>");
+                    node.AddNode(table);
                 }
-                writer.WriteLine("</body>");
 
+                writer.WriteLine(node.ToString());
                 writer.WriteLine(HtmlHelpUtility.CreateFooter());
             }
 

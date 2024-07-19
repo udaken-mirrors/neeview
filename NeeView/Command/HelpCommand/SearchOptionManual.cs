@@ -177,20 +177,8 @@ namespace NeeView
             ExternalProcess.Start(fileName);
         }
 
-        private static string ReplaceEmpty(string s)
-        {
-            return ResourceService.Replace(s, false);
-        }
-
-        private static string ReplaceFallback(string s)
-        {
-            return ResourceService.Replace(s, true);
-        }
-
         public static string CreateSearchOptionManual()
         {
-            HtmlNode.DefaultTextEvaluator = ReplaceFallback;
-
             var builder = new StringBuilder();
             builder.AppendLine(HtmlHelpUtility.CreateHeader(ResourceService.GetString("@_SearchManual.Title")));
             builder.AppendLine($"<body>");
@@ -264,7 +252,7 @@ namespace NeeView
                 node.AddNode(new TagNode("tr")
                     .AddNode(new TagNode("td", "nowrap").AddText(option))
                     .AddNode(new TagNode("td").AddText(key))
-                    .AddNode(new TagNode("td").AddText(key + ".Remarks", ReplaceEmpty)));
+                    .AddNode(new TagNode("td").AddText(key + ".Remarks", ResourceService.ReplaceEmpty)));
             }
 
             node.AddNode(new TagNode("tr")
@@ -296,7 +284,7 @@ namespace NeeView
                 node.AddNode(new TagNode("tr")
                     .AddNode(new TagNode("td").AddText(string.Join(", ", option)))
                     .AddNode(new TagNode("td").AddText(key))
-                    .AddNode(new TagNode("td").AddText(key + ".Remarks", ReplaceEmpty)));
+                    .AddNode(new TagNode("td").AddText(key + ".Remarks", ResourceService.ReplaceEmpty)));
             }
 
             return node.ToString();
