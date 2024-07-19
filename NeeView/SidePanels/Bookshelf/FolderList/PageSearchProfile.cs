@@ -10,7 +10,7 @@ namespace NeeView
             Options.Add(PageSearchPropertyProfiles.Meta);
             Options.Add(PageSearchPropertyProfiles.Rating);
 
-            Alias.Add("/playlist", new() { "/p.playlist", "true" });
+            Alias.Add("/playlist", new() { "/p.playlist", "/m.eq", "true" });
             Alias.Add("/title", new() { "/p.meta.title" });
             Alias.Add("/subject", new() { "/p.meta.subject" });
             Alias.Add("/rating", new() { "/p.rating" });

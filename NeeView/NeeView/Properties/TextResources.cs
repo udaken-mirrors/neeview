@@ -27,6 +27,18 @@ namespace NeeView.Properties
             if (_initialized) throw new InvalidOperationException("Already initialized.");
             _initialized = true;
 
+#if false
+            // 開発用：各カルチャのテスト
+            foreach (var c in LanguageResource.Cultures)
+            {
+                System.Diagnostics.Debug.WriteLine($"Culture: {c}");
+                Resource.Load(c);
+                Resource.Add(new AppFileSource(new Uri("/Languages/shared.restext", UriKind.Relative)));
+                SearchOptionManual.OpenSearchOptionManual();
+                System.Threading.Thread.Sleep(2000);
+            }
+#endif
+
             Culture = culture;
             Resource.Load(culture);
             Resource.Add(new AppFileSource(new Uri("/Languages/shared.restext", UriKind.Relative)));

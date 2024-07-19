@@ -124,3 +124,7 @@ hr {
 .table-topless tr:nth-child(1) {
     border-top: 0px;
 }
+
+.nowrap {
+    white-space: nowrap;
+}

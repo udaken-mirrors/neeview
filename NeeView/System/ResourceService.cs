@@ -10,7 +10,7 @@ namespace NeeView
 {
     internal static class ResourceService
     {
-        private static readonly Regex _regexKey = new(@"@[a-zA-Z0-9_\.#]+[a-zA-Z0-9]");
+        private static readonly Regex _regexKey = new(@"@[a-zA-Z0-9_\.\-#]+[a-zA-Z0-9]");
         private static readonly Regex _regexResKey = new Regex(@"@\[([^\]]+)\]");
 
         /// <summary>
@@ -18,6 +18,18 @@ namespace NeeView
         /// そうでない場合はそのまま返す。
         /// </summary>
         public static string GetString(string? key)
+        {
+            return GetString(key, true);
+        }
+
+        /// <summary>
+        /// @で始まる文字列はリソースキーとしてその値を返す。
+        /// そうでない場合はそのまま返す。
+        /// </summary>
+        /// <param name="key">キー</param>
+        /// <param name="fallback">trueの場合、存在しないときにはそのまま key を返す。falseの場合、空文字を返す</param>
+        /// <returns></returns>
+        public static string GetString(string? key, bool fallback)
         {
             if (string.IsNullOrWhiteSpace(key) || key[0] != '@')
             {
@@ -28,12 +40,12 @@ namespace NeeView
                 var text = GetResourceString(key);
                 if (text != null)
                 {
-                    return Replace(text);
+                    return Replace(text, fallback);
                 }
                 else
                 {
                     Debug.WriteLine($"Error: Not found resource key: {key[1..]}");
-                    return key;
+                    return fallback ? key : "";
                 }
             }
         }
@@ -43,20 +55,27 @@ namespace NeeView
         /// </summary>
         public static string Replace(string s)
         {
-            // limit is 5 depth
-            return Replace(s, 5);
+            return Replace(s, true);
         }
 
-        public static string Replace(string s, int recursionLimit)
+        /// <summary>
+        /// @で始まる文字列をリソースキーとして文字列を入れ替える
+        /// </summary>
+        /// <param name="s">変換元文字列</param>
+        /// <param name="fallback">true のとき、リソースキーが存在しないときはリソースキー名のままにする。false のときは "" に変換する</param>
+        /// <param name="depth">再帰の深さ。計算リミット用</param>
+        /// <returns></returns>
+        public static string Replace(string s, bool fallback, int depth=0)
         {
-            if (recursionLimit <= 0) return s;
+            // limit is 5 depth
+            if (depth >= 5) return s;
 
             return ReplaceEmbeddedText(_regexKey.Replace(s, ReplaceMatchEvaluator));
          
             string ReplaceMatchEvaluator(Match m)
             {
                 var s = GetResourceString(m.Value);
-                return s is not null ? Replace(s, recursionLimit - 1) : m.Value;
+                return s is not null ? Replace(s, fallback, depth + 1) : (fallback ? m.Value : "");
             }
         }
 

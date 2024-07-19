@@ -189,7 +189,7 @@ namespace NeeView
                 Debug.Assert(type.IsSubclassOf(attribute.BaseClass));
                 // TODO: restext support
                 //builder.Append($"<p>This class inherits from {TypeToString(attribute.BaseClass)}.</p>").AppendLine()
-                builder.Append("<p>" + string.Format(ResourceService.GetString("@_Document.ClassInheritance"), TypeToString(attribute.BaseClass)) + "</p>").AppendLine();
+                builder.Append("<p>" + string.Format(ResourceService.GetString("@_ScriptManual.ClassInheritance"), TypeToString(attribute.BaseClass)) + "</p>").AppendLine();
             }
 
             // property

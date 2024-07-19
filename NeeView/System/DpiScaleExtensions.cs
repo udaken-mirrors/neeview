@@ -9,7 +9,7 @@ namespace NeeView
         public static DpiScale OneDpiScale { get; } = new DpiScale(1, 1);
 
         /// <summary>
-        /// IsIgnoreImageDpiを適用したDpiScalenに変換
+        /// IsIgnoreImageDpiを 適用した DpiScale に変換
         /// </summary>
         public static DpiScale ToFixedScale(this DpiScale self)
         {

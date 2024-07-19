@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Globalization;
+using System.Linq;
 using System.Text;
 
 namespace NeeLaboratory.Text
@@ -68,6 +70,19 @@ namespace NeeLaboratory.Text
             }
 
             return sb.ToString();
+        }
+
+        /// <summary>
+        /// 先頭を大文字にした TitleCase 文字列を作成する
+        /// </summary>
+        /// <param name="s">入力文字列</param>
+        /// <param name="complete">先頭以外の文字を小文字にする</param>
+        /// <returns></returns>
+        public static string ToTitleCase(this string s, bool complete = false)
+        {
+            var a = s.Take(1).Select(e => char.ToUpper(e, CultureInfo.InvariantCulture));
+            var b = complete ? s.Skip(1).Select(e => char.ToLower(e, CultureInfo.InvariantCulture)) : s.Skip(1);
+            return new string(a.Concat(b).ToArray());
         }
     }
 }

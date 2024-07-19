@@ -15,7 +15,7 @@ Generate language files from Language.json.
 -Sort by key if specified.
 
 .PARAMETER Mode
-Convert mode
+Convert mode 
     ToJson: Convert to Json file (default)
     FromJson: Convert Json file to language files
 
@@ -24,6 +24,9 @@ Json file name. Default is Language.json
 
 .PARAMETER Sort
 Sort data by key
+
+.PARAMETER Clean
+For FromJson, clear if the text is the same as English.
 
 .PARAMETER Trim
 For FromJson, trim empty data.
@@ -36,9 +39,10 @@ e.g., -Cultures en,ja
 #>
 
 param (
-   	[ValidateSet("ToJson", "FromJson")]$Mode = "ToJson",
+    [ValidateSet("ToJson", "FromJson")]$Mode = "ToJson",
     [string]$JsonFile = "Language.json",
     [switch]$Sort,
+    [switch]$Clean,
     [switch]$Trim,
     [string[]]$Cultures = @()
 )
@@ -132,8 +136,15 @@ function ConvertTo-RestextFromRestextTable
     {
         $key = $property.Name
         $value = $property.Value.$culture
-        
+        $value_en = $property.Value.en
+
         $isAdditionalKey = Test-AdditionalKey $key
+
+        if ($Clean -and ($value -eq $value_en))
+        {
+            $value = $null
+        }
+
         $isEmpty = $null -eq $value
         $isTrimEmpty = $Trim -and $isEmpty
         $isRequired = ($null -ne $property.Value.$defaultCulture) -and (-not $isAdditionalKey)

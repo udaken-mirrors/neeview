@@ -1,26 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Windows.Resources;
-using System.Linq;
-using System.Text;
 
 namespace NeeView
 {
     public static class HtmlHelpUtility
     {
-        public static string GetSearchHelp()
-        {
-            var builder = new StringBuilder();
-            builder.Append(HtmlHelpUtility.CreateHeader("NeeView Search Options"));
-            builder.Append($"<body>");
-            builder.Append(ResourceService.Replace(Properties.TextResources.GetString("_Document.SearchOptions.html")));
-            builder.Append("</body>");
-
-            return builder.ToString();
-        }
-
         /// <summary>
         /// ヘルプ用HTMLヘッダ生成
         /// </summary>
