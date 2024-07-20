@@ -95,9 +95,9 @@ namespace NeeView.Setting
     /// </summary>
     public class SettingPageArchiverSevenZip : SettingPage
     {
-        public SettingPageArchiverSevenZip() : base(Properties.TextResources.GetString("SettingPage.Archive.rSevenZip"))
+        public SettingPageArchiverSevenZip() : base(Properties.TextResources.GetString("SettingPage.Archive.SevenZip"))
         {
-            var section = new SettingItemSection(Properties.TextResources.GetString("SettingPage.Archive.rSevenZipFeature"));
+            var section = new SettingItemSection(Properties.TextResources.GetString("SettingPage.Archive.SevenZipFeature"));
 
             section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.Archive.SevenZip, nameof(SevenZipArchiveConfig.IsEnabled))));
             section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.Archive.SevenZip, nameof(SevenZipArchiveConfig.SupportFileTypes)),

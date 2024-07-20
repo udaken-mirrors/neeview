@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NeeLaboratory.Text;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics;
@@ -316,7 +317,7 @@ namespace NeeView
 
             foreach (var parameter in parameters)
             {
-                var name = string.Join(".", new string?[] { method.DeclaringType?.Name, method.Name, parameter.Name });
+                var name = string.Join(".", new string?[] { method.DeclaringType?.Name, method.Name, parameter.Name?.ToTitleCase() });
                 var typeString = TypeToString(parameter.ParameterType);
                 var summary = GetHtmlDocument(name, "");
 

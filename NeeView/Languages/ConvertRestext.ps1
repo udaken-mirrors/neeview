@@ -135,12 +135,14 @@ function ConvertTo-RestextFromRestextTable
     foreach ($property in $table.psobject.Properties)
     {
         $key = $property.Name
+        #$key = [regex]::Replace($property.Name, "\.([a-z])", { $args.value.toUpper() })
+
         $value = $property.Value.$culture
-        $value_en = $property.Value.en
+        $defaultValue = $property.Value.$defaultCulture
 
         $isAdditionalKey = Test-AdditionalKey $key
 
-        if ($Clean -and ($value -eq $value_en))
+        if ($Clean -and ($culture -ne $defaultCulture) -and ($value -eq $defaultValue))
         {
             $value = $null
         }

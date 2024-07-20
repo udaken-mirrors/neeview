@@ -22,51 +22,51 @@ namespace NeeView
                 </ul>
             </p>
 
-            <h3>@_SearchManual.S1-1</h3>
+            <h3>@_SearchManual.S11</h3>
 
             [[ConjunctionAliasTable]]
 
-            <h3>@_SearchManual.S1-2</h3>
+            <h3>@_SearchManual.S12</h3>
 
             [[PropertyAliasTable]]
 
-            <h3>@_SearchManual.S1-3</h3>
+            <h3>@_SearchManual.S13</h3>
 
             [[MatchAliasTable]]
 
             <p>
-                @_SearchManual.S1-3.P1
+                @_SearchManual.S13.P1
     
                 <ul>
-                    <li>@_SearchManual.S1-3.P1.I1</li>
-                    <li>@_SearchManual.S1-3.P1.I2</li>
-                    <li>@_SearchManual.S1-3.P1.I3</li>
-                    <li>@_SearchManual.S1-3.P1.I4</li>
-                    <li>@_SearchManual.S1-3.P1.I5</li>
+                    <li>@_SearchManual.S13.P1.I1</li>
+                    <li>@_SearchManual.S13.P1.I2</li>
+                    <li>@_SearchManual.S13.P1.I3</li>
+                    <li>@_SearchManual.S13.P1.I4</li>
+                    <li>@_SearchManual.S13.P1.I5</li>
                 </ul>
             </p>
 
-            <h3>@_SearchManual.S1-4</h3>
+            <h3>@_SearchManual.S14</h3>
 
             <p>
-                @_SearchManual.S1-4.P1
+                @_SearchManual.S14.P1
             </p>
 
             <p>
-                @_SearchManual.S1-4.P2
+                @_SearchManual.S14.P2
             </p>
 
             <p>
-                @_SearchManual.S1-4.P3
+                @_SearchManual.S14.P3
             </p>
     
-            <h3>@_SearchManual.S1-5</h3>
+            <h3>@_SearchManual.S15</h3>
 
             <p>
-                @_SearchManual.S1-5.P1
+                @_SearchManual.S15.P1
             </p>
             <p>
-                @_SearchManual.S1-5.P2
+                @_SearchManual.S15.P2
             </p>
 
             <hr/>
@@ -74,65 +74,65 @@ namespace NeeView
 
             @_SearchManual.S2.P1
 
-            <h3>@_SearchManual.S2-1</h3>
+            <h3>@_SearchManual.S21</h3>
 
-            @_SearchManual.S2-1.P1
+            @_SearchManual.S21.P1
             
-            <blockquote>@_SearchManual.S2-1.P2</blockquote>
+            <blockquote>@_SearchManual.S21.P2</blockquote>
 
-            @_SearchManual.S2-1.P3
+            @_SearchManual.S21.P3
 
-            <h3>@_SearchManual.S2-2</h3>
+            <h3>@_SearchManual.S22</h3>
 
-            @_SearchManual.S2-2.P1
+            @_SearchManual.S22.P1
 
-            <h4>@_SearchManual.S2-2-1</h4>
+            <h4>@_SearchManual.S22-1</h4>
 
             [[ConjunctionTable]]
 
-            <h4>@_SearchManual.S2-2-2</h4>
+            <h4>@_SearchManual.S22-2</h4>
 
             [[PropertyTable]]
 
-            <h4>@_SearchManual.S2-2-3</h4>
+            <h4>@_SearchManual.S22-3</h4>
 
             [[MatchTable]]
 
             <p>
-              @_SearchManual.S2-2.P2
+              @_SearchManual.S22.P2
             </p>
 
             <p>
-              @_SearchManual.S2-2.P3
+              @_SearchManual.S22.P3
               <blockquote>/p.date /m.lt</blockquote>
             </p>
 
             <p>
-              @_SearchManual.S2-2.P4
+              @_SearchManual.S22.P4
               <blockquote>/p.date /m.fuzzy</blockquote>
             </p>
 
-            <h3>@_SearchManual.S2-3</h3>
+            <h3>@_SearchManual.S23</h3>
 
-            @_SearchManual.S2-3.P1
+            @_SearchManual.S23.P1
 
             [[AliasTable]]
 
-            <h3>@_SearchManual.S2-4</h3>
+            <h3>@_SearchManual.S24</h3>
 
             <p>
-                @_SearchManual.S2-4.P1
+                @_SearchManual.S24.P1
             </p>
                 
             <p>
-                @_SearchManual.S2-4.P2
+                @_SearchManual.S24.P2
                 <blockquote>/p.meta.[key]</blockquote>
-                @_SearchManual.S2-4.P3
+                @_SearchManual.S24.P3
             </p>
 
             <p>
                 [[MetaTable]]
-                @_SearchManual.S2-4.P4
+                @_SearchManual.S24.P4
             </p>
 
             <hr/>

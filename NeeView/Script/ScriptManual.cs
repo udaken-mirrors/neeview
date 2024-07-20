@@ -79,27 +79,27 @@ namespace NeeView
 
             @_ScriptManual.S9.P1
 
-            <h3>@_ScriptManual.S9-1</h3>
+            <h3>@_ScriptManual.S91</h3>
             <p>
               <pre>OpenMsPaint.nvjs<code class="example">@[/Resources/Scripts/OpenMsPaint.nvjs]</code></pre>
             </p>
 
-            <h3>@_ScriptManual.S9-2</h3>
+            <h3>@_ScriptManual.S92</h3>
             <p>
               <pre>OpenNeeView.nvjs<code class="example">@[/Resources/Scripts/OpenNeeView.nvjs]</code></pre>
             </p>
 
-            <h3>@_ScriptManual.S9-3</h3>
+            <h3>@_ScriptManual.S93</h3>
             <p>
              <pre>ToggleUnsharpMask.nvjs<code class="example">@[/Resources/Scripts/ToggleUnsharpMask.nvjs]</code></pre>
             </p>
 
-            <h3>@_ScriptManual.S9-4</h3>
+            <h3>@_ScriptManual.S94</h3>
             <p>
               <pre>OnBookLoaded.nvjs<code class="example">@[/Resources/Scripts/OnBookLoaded.ReadOrder.nvjs]</code></pre>
             </p>
 
-            <h3>@_ScriptManual.S9-5</h3>
+            <h3>@_ScriptManual.S95</h3>
             <p>
               <pre>OnBookLoaded.nvjs<code class="example">@[/Resources/Scripts/OnBookLoaded.Media.nvjs]</code></pre>
             </p>
