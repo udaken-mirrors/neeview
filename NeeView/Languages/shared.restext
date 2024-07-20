@@ -9,21 +9,14 @@ BookmarkNodeAccessor.Parent=@Word.ParentNode
 BookmarkNodeAccessor.Path=@Word.Path
 BookmarkPanelAccessor.MoveToParent=@Bookmark.Up.ToolTip
 BookmarkPanelAccessor.NewFolder.name=@Word.Name
+BookSettingPageSelectMode.Default=@BookSettingSelectMode.Default
+BookSettingPageSelectMode.RestoreOrDefault=@BookSettingSelectMode.RestoreOrDefault
+BookSettingPageSelectMode.RestoreOrDefaultReset=@BookSettingSelectMode.RestoreOrDefaultReset
+BookshelfPanelAccessor.Example=@[/Resources/Scripts/BookshelfPanelAccessor.Example.nvjs]
 BookshelfPanelAccessor.MoveToNext=@Bookshelf.Next.ToolTip
 BookshelfPanelAccessor.MoveToParent=@Bookshelf.Up.ToolTip
 BookshelfPanelAccessor.MoveToPrevious=@Bookshelf.Back.ToolTip
 BookshelfPanelAccessor.Sync=@Bookshelf.Sync.ToolTip
-DestinationFolderAccessor.Name=@Word.Name
-DestinationFolderAccessor.Path=@Word.Path
-DirectoryNodeAccessor.Children=@Word.ChildNodes
-DirectoryNodeAccessor.Name=@Word.Name
-DirectoryNodeAccessor.Parent=@Word.ParentNode
-DirectoryNodeAccessor.Path=@Word.Path
-QuickAccessNodeAccessor.Name=@Word.Name
-QuickAccessNodeAccessor.Path=@Word.Path
-RootQuickAccessNodeAccessor.Children=Word.ChildNodes
-
-BookshelfPanelAccessor.Example=@[/Resources/Scripts/BookshelfPanelAccessor.Example.nvjs]
 CommandAccessor.Execute.Example=@[/Resources/Scripts/CommandAccessor.Execute.Example.nvjs]
 CommandAccessor.MouseGesture.Example=@[/Resources/Scripts/CommandAccessor.MouseGesture.Example.nvjs]
 CommandAccessor.Parameter.Example=@[/Resources/Scripts/CommandAccessor.Parameter.Example.nvjs]
@@ -34,31 +27,43 @@ CommandHost.Command.Example=@[/Resources/Scripts/CommandHost.Command.Example.nvj
 CommandHost.Config.Example=@[/Resources/Scripts/CommandHost.Config.Example.nvjs]
 CommandHost.ShowDialog.Example=@[/Resources/Scripts/CommandHost.ShowDialog.Example.nvjs]
 CommandHost.Values.Example=@[/Resources/Scripts/CommandHost.Values.Example.nvjs]
-JavaScriptEngine.ExecuteFile.Example=@[/Resources/Scripts/JavaScriptEngine.ExecuteFile.Example.nvjs]
-PageAccessor.Example=@[/Resources/Scripts/PageAccessor.Example.nvjs]
-ViewPageAccessor.Example=@[/Resources/Scripts/ViewPageAccessor.Example.nvjs]
-
-SearchOp.Alias.Property.Text=@SearchOp.Property.Text
-SearchOp.Alias.Property.Date=@SearchOp.Property.Date
-SearchOp.Alias.Property.Size=@SearchOp.Property.Size
-SearchOp.Alias.Property.Bookmark=@SearchOp.Property.Bookmark
-SearchOp.Alias.Property.History=@SearchOp.Property.History
-SearchOp.Alias.Property.Playlist=@SearchOp.Property.Playlist
-SearchOp.Alias.Match.M0=@SearchOp.Match.Exact
-SearchOp.Alias.Match.M1=@SearchOp.Match.Word
-SearchOp.Alias.Match.Re=@SearchOp.Match.Re
-SearchOp.Alias.Match.Ire=@SearchOp.Match.Ire
-SearchOp.Alias.Match.Lt=@SearchOp.Match.Lt
-SearchOp.Alias.Match.Le=@SearchOp.Match.Le
-SearchOp.Alias.Match.Eq=@SearchOp.Match.Eq
-SearchOp.Alias.Match.Ne=@SearchOp.Match.Ne
-SearchOp.Alias.Match.Ge=@SearchOp.Match.Ge
-SearchOp.Alias.Match.Gt=@SearchOp.Match.Gt
-
-
+DestinationFolderAccessor.Name=@Word.Name
+DestinationFolderAccessor.Path=@Word.Path
+DirectoryNodeAccessor.Children=@Word.ChildNodes
+DirectoryNodeAccessor.Name=@Word.Name
+DirectoryNodeAccessor.Parent=@Word.ParentNode
+DirectoryNodeAccessor.Path=@Word.Path
+Homepage.DotNetDateTime=<a href="https://docs.microsoft.com/dotnet/standard/base-types/parsing-datetime">@Word.DotNetDateTime</a>
+Homepage.DotNetRegex=<a href="https://docs.microsoft.com/dotnet/standard/base-types/regular-expression-language-quick-reference">@Word.DotNetRegex</a>
 Homepage.Jint=<a href="https://github.com/sebastienros/jint">Jint</a>
 Homepage.ScriptSamples=<a href="https://bitbucket.org/neelabo/neeview.scriptsamples/">NeeView Script Samples</a>
-Homepage.DotNetRegex=<a href="https://docs.microsoft.com/dotnet/standard/base-types/regular-expression-language-quick-reference">@Word.DotNetRegex</a>
-Homepage.DotNetDateTime=<a href="https://docs.microsoft.com/dotnet/standard/base-types/parsing-datetime">@Word.DotNetDateTime</a>
-
+JavaScriptEngine.ExecuteFile.Example=@[/Resources/Scripts/JavaScriptEngine.ExecuteFile.Example.nvjs]
+PageAccessor.Example=@[/Resources/Scripts/PageAccessor.Example.nvjs]
+QuickAccessNodeAccessor.Name=@Word.Name
+QuickAccessNodeAccessor.Path=@Word.Path
+RootQuickAccessNodeAccessor.Children=Word.ChildNodes
+SearchOp.Alias.Match.Eq=@SearchOp.Match.Eq
+SearchOp.Alias.Match.Ge=@SearchOp.Match.Ge
+SearchOp.Alias.Match.Gt=@SearchOp.Match.Gt
+SearchOp.Alias.Match.Ire=@SearchOp.Match.Ire
+SearchOp.Alias.Match.Le=@SearchOp.Match.Le
+SearchOp.Alias.Match.Lt=@SearchOp.Match.Lt
+SearchOp.Alias.Match.M0=@SearchOp.Match.Exact
+SearchOp.Alias.Match.M1=@SearchOp.Match.Word
+SearchOp.Alias.Match.Ne=@SearchOp.Match.Ne
+SearchOp.Alias.Match.Re.Remarks=@Homepage.DotNetRegex
+SearchOp.Alias.Match.Re=@SearchOp.Match.Re
+SearchOp.Alias.Property.Bookmark=@SearchOp.Property.Bookmark
+SearchOp.Alias.Property.Date=@SearchOp.Property.Date
+SearchOp.Alias.Property.History=@SearchOp.Property.History
+SearchOp.Alias.Property.Playlist=@SearchOp.Property.Playlist
+SearchOp.Alias.Property.Size=@SearchOp.Property.Size
+SearchOp.Alias.Property.Text=@SearchOp.Property.Text
+ToggleStretchModeCommandParameter.IsEnableNone=@PageStretchMode.None
+ToggleStretchModeCommandParameter.IsEnableUniform=@PageStretchMode.Uniform
+ToggleStretchModeCommandParameter.IsEnableUniformToFill=@PageStretchMode.UniformToFill
+ToggleStretchModeCommandParameter.IsEnableUniformToHorizontal=@PageStretchMode.UniformToHorizontal
+ToggleStretchModeCommandParameter.IsEnableUniformToSize=@PageStretchMode.UniformToSize
+ToggleStretchModeCommandParameter.IsEnableUniformToVertical=@PageStretchMode.UniformToVertical
+ViewPageAccessor.Example=@[/Resources/Scripts/ViewPageAccessor.Example.nvjs]
 
