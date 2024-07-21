@@ -171,7 +171,7 @@ namespace NeeView.PageFrames
             // 最初のページ
             if (_bookContext.IsEnabled)
             {
-                MoveTo(_bookContext.Book.StartPosition.Position, LinkedListDirectionExtensions.FromSign(_bookContext.Book.StartPosition.Direction), false, true);
+                MoveTo(_bookContext.Book.StartPosition.Position, LinkedListDirectionExtensions.FromSign(_bookContext.Book.StartPosition.Direction), false, false, true);
             }
             else
             {
@@ -425,7 +425,7 @@ namespace NeeView.PageFrames
                 position = new PagePosition(index < 0 ? 0 : index, 0);
             }
 
-            MoveTo(position, LinkedListDirection.Next, false, true);
+            MoveTo(position, LinkedListDirection.Next, false, false, true);
 
             PagesChanged?.Invoke(this, e);
         }
@@ -715,7 +715,7 @@ namespace NeeView.PageFrames
 
             var selectedPosition = _selected.Node.Value.Identifier;
             var position = _bookContext.NormalizePosition(selectedPosition);
-            MoveTo(position, LinkedListDirection.Next, false, true);
+            MoveTo(position, LinkedListDirection.Next, false, false, true);
         }
 
 
@@ -723,17 +723,25 @@ namespace NeeView.PageFrames
         {
             if (_disposedValue) return;
 
-            MoveTo(parameter.Position, parameter.Direction, false, parameter.IsFlush);
+            MoveTo(parameter.Position, parameter.Direction, parameter.IsPositionFixed, parameter.IsRelational, parameter.IsFlush);
         }
 
         public void MoveTo(PagePosition position, LinkedListDirection direction)
         {
             if (_disposedValue) return;
 
-            MoveTo(position, direction, false, false);
+            MoveTo(position, direction, false, false, false);
         }
 
-        public void MoveTo(PagePosition position, LinkedListDirection direction, bool continued, bool flush)
+        /// <summary>
+        ///  ページ移動
+        /// </summary>
+        /// <param name="position">ページ位置</param>
+        /// <param name="direction">ページ位置を基準とした表示方向</param>
+        /// <param name="positionFixed">ページ位置は補正済である</param>
+        /// <param name="relational">移動は相対的な移動である。ページ補正に影響する</param>
+        /// <param name="flush">スクロールを省略する</param>
+        public void MoveTo(PagePosition position, LinkedListDirection direction, bool positionFixed, bool relational, bool flush)
         {
             if (_disposedValue) return;
             if (!_bookContext.IsEnabled) return;
@@ -743,9 +751,9 @@ namespace NeeView.PageFrames
             using var forceTrack = _context.ForceScaleStretchTracking.Lock(_context.IsAutoStretch);
 
             // position の補正
-            if (!continued)
+            if (!positionFixed)
             {
-                (position, direction) = CorrectPosition(new(position, direction));
+                (position, direction) = CorrectPosition(new(position, direction), relational);
             }
 
             var next = _containers.EnsureLatestContainerNode(position, direction, CreateContainerNodeOptions.None);
@@ -759,7 +767,7 @@ namespace NeeView.PageFrames
             {
                 next.Value.SetStable(false);
                 _selected.Set(next, true);
-                _delayMove.MoveTo(new PageFrameMoveParameter(next.Value, direction, continued, flush), next.Value);
+                _delayMove.MoveTo(new PageFrameMoveParameter(next.Value, direction, true, relational, flush), next.Value);
             }
             else
             {
@@ -808,16 +816,24 @@ namespace NeeView.PageFrames
         /// </summary>
         /// <param name="source"></param>
         /// <returns></returns>
-        private DirectionalPagePosition CorrectPosition(DirectionalPagePosition source)
+        private DirectionalPagePosition CorrectPosition(DirectionalPagePosition source, bool relational)
         {
             var (position, direction) = source;
 
             if (_context.IsLoopPage && _selected.Node.Value.Content is PageFrameContent)
             {
                 var selectedIndex = _selected.Node.Value.Identifier.Index;
-                var normalIndex = _bookContext.NormalizeIndex(selectedIndex);
-                var diff = position.Index - normalIndex;
-                position = new PagePosition(selectedIndex + diff, position.Part);
+                if (relational)
+                {
+                    // nop.
+                }
+                else
+                {
+                    var selectedNormalIndex = _bookContext.NormalizeIndex(selectedIndex);
+                    var positionNormalIndex = _bookContext.NormalizeIndex(position.Index);
+                    var diff = positionNormalIndex - selectedNormalIndex;
+                    position = new PagePosition(selectedIndex + diff, position.Part);
+                }
             }
             else
             {
@@ -902,7 +918,7 @@ namespace NeeView.PageFrames
             }
 
             //Debug.WriteLine($"MoveToNextPage: {current.Value.FrameRange} to {nextIndex}");
-            MoveTo(new PagePosition(nextIndex, 0), LinkedListDirection.Next, false, true);
+            MoveTo(new PagePosition(nextIndex, 0), LinkedListDirection.Next, false, false, true);
         }
 
         public void MoveToNextFrame(LinkedListDirection direction)
@@ -932,7 +948,7 @@ namespace NeeView.PageFrames
                 return;
             }
 
-            MoveTo(pos, direction, true, false);
+            MoveTo(pos, direction, false, true, false);
         }
 
         /// <summary>
