@@ -71,12 +71,12 @@ namespace NeeView
 
         public void MovePrevSize(object? sender, int size)
         {
-            _box.MoveTo(new PagePosition(SelectedRange.Min.Index - size, 0), LinkedListDirection.Next, false, true, false);
+            _box.MoveToNextStep(-size);
         }
 
         public void MoveNextSize(object? sender, int size)
         {
-            _box.MoveTo(new PagePosition(SelectedRange.Min.Index + size, 0), LinkedListDirection.Next, false, true, false);
+            _box.MoveToNextStep(+size);
         }
 
         public void MovePrevFolder(object? sender, bool isShowMessage)

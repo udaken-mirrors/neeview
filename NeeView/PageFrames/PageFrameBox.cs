@@ -886,6 +886,10 @@ namespace NeeView.PageFrames
             _transformMap.ElementAt(key).SetPoint(default, TimeSpan.Zero);
         }
 
+        /// <summary>
+        /// 次のページに移動
+        /// </summary>
+        /// <param name="direction"></param>
         public void MoveToNextPage(LinkedListDirection direction)
         {
             if (_disposedValue) return;
@@ -921,6 +925,10 @@ namespace NeeView.PageFrames
             MoveTo(new PagePosition(nextIndex, 0), LinkedListDirection.Next, false, false, true);
         }
 
+        /// <summary>
+        /// 次のフレームに移動
+        /// </summary>
+        /// <param name="direction"></param>
         public void MoveToNextFrame(LinkedListDirection direction)
         {
             if (_disposedValue) return;
@@ -950,6 +958,34 @@ namespace NeeView.PageFrames
 
             MoveTo(pos, direction, false, true, false);
         }
+
+        /// <summary>
+        /// 設定ページ数だけ移動
+        /// </summary>
+        /// <param name="delta"></param>
+        public void MoveToNextStep(int delta)
+        {
+            if (_disposedValue) return;
+            if (!_bookContext.IsEnabled) return;
+
+            var position = new PagePosition(SelectedRange.Min.Index + delta, 0);
+            var direction = LinkedListDirection.Next;
+            if (_context.IsLoopPage)
+            {
+            }
+            else if (!_bookContext.ContainsIndex(position.Index))
+            {
+                (var nextPosition, var nextDirection) = CorrectPosition(new(position, direction), true);
+                if ((nextDirection == LinkedListDirection.Next ? SelectedRange.Min.Index : SelectedRange.Max.Index) == nextPosition.Index)
+                {
+                    PageTerminated?.Invoke(this, new PageTerminatedEventArgs(Math.Sign(delta)));
+                    return;
+                }
+            }
+
+            MoveTo(position, direction, false, true, false);
+        }
+
 
         /// <summary>
         /// 遅延を含めた表示ページ範囲
