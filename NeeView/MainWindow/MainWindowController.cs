@@ -39,7 +39,7 @@ namespace NeeView
             Config.Current.Window.AddPropertyChanged(nameof(WindowConfig.IsAutoHideInNormal),
                 (s, e) => UpdatePanelHideMode());
 
-            Config.Current.Window.AddPropertyChanged(nameof(WindowConfig.IsAutoHidInMaximized),
+            Config.Current.Window.AddPropertyChanged(nameof(WindowConfig.IsAutoHideInMaximized),
                 (s, e) => UpdatePanelHideMode());
 
             Config.Current.Window.AddPropertyChanged(nameof(WindowConfig.IsAutoHideInFullScreen),
@@ -74,7 +74,7 @@ namespace NeeView
             AutoHideMode = _manager.CurrentState switch
             {
                 WindowStateEx.Normal => Config.Current.Window.IsAutoHideInNormal,
-                WindowStateEx.Maximized => Config.Current.Window.IsAutoHidInMaximized,
+                WindowStateEx.Maximized => Config.Current.Window.IsAutoHideInMaximized,
                 WindowStateEx.FullScreen => Config.Current.Window.IsAutoHideInFullScreen,
                 _ => false,
             };

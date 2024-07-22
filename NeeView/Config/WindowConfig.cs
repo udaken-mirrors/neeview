@@ -70,7 +70,7 @@ namespace NeeView
         }
 
         [PropertyMember]
-        public bool IsAutoHidInMaximized
+        public bool IsAutoHideInMaximized
         {
             get { return _isAutoHideInMaximized; }
             set { SetProperty(ref _isAutoHideInMaximized, value); }
@@ -126,6 +126,14 @@ namespace NeeView
         {
             get { return 0.0; }
             set { }
+        }
+
+        [Obsolete("Typo"), Alternative(nameof(IsAutoHideInMaximized), 42, ScriptErrorLevel.Info)] // ver.42
+        [JsonIgnore]
+        public bool IsAutoHidInMaximized
+        {
+            get { return IsAutoHideInMaximized; }
+            set { IsAutoHideInMaximized = value; }
         }
 
         #endregion Obsolete
