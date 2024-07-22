@@ -966,8 +966,8 @@ namespace NeeView.PageFrames
             if (!_bookContext.IsEnabled) return;
 
             var index = direction == LinkedListDirection.Previous
-                ? _bookContext.Book.Pages.GetPrevFolderIndex(_selected.PageRange.Min.Index)
-                : _bookContext.Book.Pages.GetNextFolderIndex(_selected.PageRange.Min.Index);
+                ? _bookContext.Book.Pages.GetPrevFolderIndex(_bookContext.NormalizeIndex(_selected.PageRange.Min.Index))
+                : _bookContext.Book.Pages.GetNextFolderIndex(_bookContext.NormalizeIndex(_selected.PageRange.Min.Index));
             if (index >= 0)
             {
                 MoveTo(new PagePosition(index, 0), LinkedListDirection.Next);
