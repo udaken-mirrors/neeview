@@ -116,6 +116,9 @@ namespace NeeView
         public event TransformChangedEventHandler? TransformChanged;
 
         [Subscribable]
+        public event EventHandler? StretchChanged;
+
+        [Subscribable]
         public event SizeChangedEventHandler? ViewSizeChanged;
 
         // ロード中通知
@@ -449,6 +452,11 @@ namespace NeeView
             TransformChanged?.Invoke(this, e);
         }
 
+        private void Box_StretchChanged(object? sender, EventArgs e)
+        {
+            StretchChanged?.Invoke(this, e);
+        }
+
         // TODO: Selected の情報をまとめたクラスみたいなものがほしいかも？
         private void Box_SelectedContainerLayoutChanged(object? sender, EventArgs e)
         {
@@ -614,6 +622,7 @@ namespace NeeView
                 boxContext.SubscribeSelectedRangeChanged(Box_SelectedRangeChanged),
                 boxContext.SubscribeViewContentChanged(Box_ViewContentChanged),
                 boxContext.SubscribeTransformChanged(Box_TransformChanged),
+                boxContext.SubscribeStretchChanged(Box_StretchChanged),
                 boxContext.SubscribeSelectedContainerLayoutChanged(Box_SelectedContainerLayoutChanged),
                 boxContext.SubscribeSelectedContentSizeChanged(Box_SelectedContentSizeChanged),
                 boxContext.SubscribeViewSizeChanged(Box_ViewSizeChanged),

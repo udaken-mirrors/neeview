@@ -42,6 +42,7 @@ namespace NeeView
             _disposables.Add(_box.SubscribeSelectedRangeChanged((s, e) => SelectedRangeChanged?.Invoke(s, e)));
             _disposables.Add(_box.SubscribeViewContentChanged((s, e) => ViewContentChanged?.Invoke(s, e)));
             _disposables.Add(_box.SubscribeTransformChanged((s, e) => TransformChanged?.Invoke(s, e)));
+            _disposables.Add(_box.SubscribeStretchChanged((s, e) => StretchChanged?.Invoke(s, e)));
             _disposables.Add(_box.SubscribeSelectedContainerLayoutChanged((s, e) => SelectedContainerLayoutChanged?.Invoke(s, e)));
             _disposables.Add(_box.SubscribeSelectedContentSizeChanged((s, e) => SelectedContentSizeChanged?.Invoke(s, e)));
             _disposables.Add(_box.SubscribeSizeChanged((s, e) => ViewSizeChanged?.Invoke(s, e)));
@@ -58,6 +59,9 @@ namespace NeeView
 
         [Subscribable]
         public event TransformChangedEventHandler? TransformChanged;
+
+        [Subscribable]
+        public event EventHandler? StretchChanged;
 
         [Subscribable]
         public event EventHandler? SelectedContentSizeChanged;

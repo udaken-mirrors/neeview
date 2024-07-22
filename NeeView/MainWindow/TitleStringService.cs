@@ -41,6 +41,11 @@ namespace NeeView
                 }
             };
 
+            _presenter.StretchChanged += (s, e) =>
+            {
+                Update();
+            };
+
             _replaceString.Changed += ReplaceString_Changed;
         }
 

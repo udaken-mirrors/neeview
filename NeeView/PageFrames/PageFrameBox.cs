@@ -197,6 +197,9 @@ namespace NeeView.PageFrames
         public event TransformChangedEventHandler? TransformChanged;
 
         [Subscribable]
+        public event EventHandler? StretchChanged;
+
+        [Subscribable]
         public event EventHandler? SelectedContentSizeChanged;
 
         [Subscribable]
@@ -586,6 +589,7 @@ namespace NeeView.PageFrames
                 case nameof(Context.AllowReduce):
                     UpdateContainers(PageFrameDirtyLevel.Moderate, TransformMask.Scale, false, true);
                     UpdateScaleStretchTracking();
+                    StretchChanged?.Invoke(this, EventArgs.Empty);
                     break;
 
                 case nameof(Context.AutoRotate):
