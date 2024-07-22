@@ -59,11 +59,13 @@ namespace NeeView
 
         public void MoveTo(object? sender, int index)
         {
-            _box.MoveTo(new PagePosition(index, 0), LinkedListDirection.Next);
+            if (Pages.Count <= 0) return;
+            _box.MoveTo(new PagePosition(Math.Clamp(index, 0, Pages.Count - 1), 0), LinkedListDirection.Next);
         }
 
         public void MoveToRandom(object? sender)
         {
+            if (Pages.Count <= 0) return;
             var random = new Random();
             var index = random.Next(Pages.Count);
             _box.MoveTo(new PagePosition(index, 0), LinkedListDirection.Next);

@@ -85,6 +85,7 @@ namespace NeeView.PageFrames
         public bool IsLoopPage => !_isMediaBook && _config.Book.PageEndAction == PageEndAction.SeamlessLoop;
         public bool CanPrioritizePageMove => _config.Book.IsPrioritizePageMove && !SlideShow.Current.IsPlayingSlideShow;
         public bool IsReadyToPageMove => _config.Book.IsReadyToPageMove && !_config.Book.IsPanorama;
+        public bool IsNotifyPageLoop => _config.Book.IsNotifyPageLoop && !SlideShow.Current.IsPlayingSlideShow;
 
         public bool AllowFileContentAutoRotate => _config.View.AllowFileContentAutoRotate;
         public bool AllowEnlarge => _config.View.AllowStretchScaleUp;

@@ -93,6 +93,12 @@ namespace NeeView
             {
                 _control.MoveToFirst(sender);
             }
+
+            NotifyPageLoop();
+        }
+
+        public static void NotifyPageLoop()
+        {
             if (Config.Current.Book.IsNotifyPageLoop)
             {
                 InfoMessage.Current.SetMessage(InfoMessageType.Notify, Properties.TextResources.GetString("Notice.BookOperationPageLoop"));

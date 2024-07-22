@@ -786,10 +786,22 @@ namespace NeeView.PageFrames
         /// フレーム移動
         /// </summary>
         /// <param name="next">移動先フレーム</param>
-        /// <param name="direction">移動方向</param>
+        /// <param name="direction">ページ方向</param>
         /// <param name="flush">表示の即座反映</param>
         private void MoveToCore(LinkedListNode<PageFrameContainer> next, LinkedListDirection direction, bool flush)
         {
+            if (_context.IsLoopPage && _context.IsNotifyPageLoop)
+            {
+                var selectedIndex = _selected.PageRange.Min.Index;
+                var nextIndex = next.Value.FrameRange.Min.Index;
+                var selectedNormalIndex = _bookContext.NormalizeIndex(selectedIndex);
+                var nextNormalIndex = _bookContext.NormalizeIndex(nextIndex);
+                if ((nextIndex - selectedIndex) * (nextNormalIndex - selectedNormalIndex) < 0)
+                {
+                    BookPageTerminator.NotifyPageLoop();
+                }
+            }
+
             _filler.FillContainersWhenAligned(_viewBox.Rect, next, direction);
             _layout.Layout();
             _layout.Flush();
