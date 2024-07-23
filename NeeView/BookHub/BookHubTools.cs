@@ -127,7 +127,7 @@ namespace NeeView
             // 本を開く
             if (requestLoadCount == BookHub.Current.RequestLoadCount)
             {
-                BookHub.Current.RequestLoad(null, path, null, BookLoadOption.Resume | BookLoadOption.IsBook, false);
+                BookHub.Current.RequestLoad(null, path, null, BookLoadOption.Resume | BookLoadOption.IsBook | BookLoadOption.Rename, false);
             }
         }
     }

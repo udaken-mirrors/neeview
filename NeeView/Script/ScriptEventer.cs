@@ -47,6 +47,11 @@ namespace NeeView
             NVDebug.AssertSTA();
             if (e.Box is null) return;
 
+            if (e.Box.BookContext.Book.LoadOption.HasFlag(BookLoadOption.Rename) && !Config.Current.Script.OnBookLoadedWhenRenamed)
+            {
+                return;
+            }
+ 
             // Script: OnBookLoaded
             CommandTable.Current.TryExecute(this, ScriptCommand.EventOnBookLoaded, null, CommandOption.None);
         }

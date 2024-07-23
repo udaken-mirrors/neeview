@@ -12,12 +12,12 @@ namespace NeeView
         None = 0,
 
         /// <summary>
-        /// 再帰 s
+        /// 再帰
         /// </summary>
         Recursive = 0x0001,
 
         /// <summary>
-        /// 再帰しない s
+        /// 再帰しない
         /// </summary>
         NotRecursive = 0x0002,
 
@@ -85,6 +85,11 @@ namespace NeeView
         /// 最終ページならばリセット
         /// </summary>
         ResetLastPage = 0x4000,
+
+        /// <summary>
+        /// 名前変更による再読み込み
+        /// </summary>
+        Rename = 0x8000,
     };
 
 

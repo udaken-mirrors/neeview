@@ -9,6 +9,7 @@ namespace NeeView
     {
         private bool _isScriptFolderEnabled;
         private ScriptErrorLevel _errorLevel = ScriptErrorLevel.Error;
+        private bool _onBookLoadedWhenRenamed = true;
 
 
         [JsonInclude]
@@ -37,5 +38,13 @@ namespace NeeView
             get { return _errorLevel; }
             set { SetProperty(ref _errorLevel, value); }
         }
+
+        [PropertyMember]
+        public bool OnBookLoadedWhenRenamed
+        {
+            get { return _onBookLoadedWhenRenamed; }
+            set { SetProperty(ref _onBookLoadedWhenRenamed, value); }
+        }
+
     }
 }
