@@ -6,24 +6,21 @@ using System.Threading.Tasks;
 
 namespace NeeView
 {
-    /// <summary>
-    /// プロセス間セマフォ
-    /// </summary>
-    public static class ProcessLock
+    public class ProcessLockCore
     {
-        private const string _semaphoreLabel = "NeeView.s0001";
-        private static readonly Semaphore _semaphore;
+        private readonly Semaphore _semaphore;
+        private readonly int _timeout;
 
-        static ProcessLock()
+        public ProcessLockCore(string label, int millisecondsTimeout = -1)
         {
-            _semaphore = new Semaphore(1, 1, _semaphoreLabel, out bool isCreateNew);
-            Debug.WriteLine($"Process Semaphore isCreateNew: {isCreateNew}");
+            _timeout = millisecondsTimeout;
+            _semaphore = new Semaphore(1, 1, label, out bool isCreateNew);
+            Debug.WriteLine($"Process Semaphore({label}) isCreateNew: {isCreateNew}");
         }
 
-        public static IDisposable Lock()
+        public IDisposable Lock()
         {
-            // 10秒待っても取得できないときは例外
-            if (_semaphore.WaitOne(1000 * 10) != true)
+            if (_semaphore.WaitOne(_timeout) != true)
             {
                 throw new TimeoutException("Cannot sync with other NeeViews. There may be a problem with NeeView already running.");
             }
@@ -31,7 +28,7 @@ namespace NeeView
             return new Handler(_semaphore);
         }
 
-        public static async Task<IDisposable> LockAsync(int timeout)
+        public async Task<IDisposable> LockAsync(int timeout)
         {
             await _semaphore.AsTask().WaitAsync(TimeSpan.FromMilliseconds(timeout));
             return new Handler(_semaphore);

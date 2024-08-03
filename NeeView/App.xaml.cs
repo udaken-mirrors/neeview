@@ -81,22 +81,24 @@ namespace NeeView
             Trace.WriteLine($"Trace: Start ({nowTime})");
 #endif
 
-            // [開発用] ログ出力設定
-            if (!string.IsNullOrEmpty(Environment.LogFile))
-            {
-                var twtl = new TextWriterTraceListener(Environment.LogFile, "TraceLog");
-                Trace.Listeners.Add(twtl);
-                Trace.AutoFlush = true;
-                Trace.WriteLine(System.Environment.NewLine + new string('=', 80));
-            }
-
-            Trace.WriteLine($"App.Startup: PID={System.Environment.ProcessId}: {DateTime.Now}");
-
-            // 未処理例外ハンドル
-            InitializeUnhandledException();
+            var bootLock = BootProcessLock.Lock();
 
             try
             {
+                // [開発用] ログ出力設定
+                if (!string.IsNullOrEmpty(Environment.LogFile))
+                {
+                    var twtl = new TextWriterTraceListener(Environment.LogFile, "TraceLog");
+                    Trace.Listeners.Add(twtl);
+                    Trace.AutoFlush = true;
+                    Trace.WriteLine(System.Environment.NewLine + new string('=', 80));
+                }
+
+                Trace.WriteLine($"App.Startup: PID={System.Environment.ProcessId}: {DateTime.Now}");
+
+                // 未処理例外ハンドル
+                InitializeUnhandledException();
+
                 await InitializeAsync(e);
             }
             catch (OperationCanceledException ex)
@@ -104,6 +106,10 @@ namespace NeeView
                 Trace.WriteLine("InitializeCancelException: " + ex.Message);
                 ShutdownWithoutSave();
                 return;
+            }
+            finally
+            {
+                bootLock.Dispose();
             }
 
             Trace.WriteLine($"App.Initialized: {Stopwatch.ElapsedMilliseconds}ms");
