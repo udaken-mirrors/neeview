@@ -119,6 +119,8 @@ namespace NeeView
         public string Name => Node.Name;
         public string FullName => CreateFullName();
 
+        public ScriptErrorLevel ErrorLevel => Node.Alternative?.ErrorLevel ?? ScriptErrorLevel.Error;
+
         public string Alternative
         {
             get

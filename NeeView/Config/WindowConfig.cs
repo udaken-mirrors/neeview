@@ -120,7 +120,7 @@ namespace NeeView
             set { }
         }
 
-        [Obsolete("no used"), Alternative(null, 40, ScriptErrorLevel.Info)] // ver.40
+        [Obsolete("no used"), Alternative(null, 40, ScriptErrorLevel.Warning)] // ver.40
         [JsonIgnore]
         public double MaximizeWindowGapWidth
         {

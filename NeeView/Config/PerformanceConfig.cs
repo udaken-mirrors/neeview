@@ -85,7 +85,7 @@ namespace NeeView
 
         #region Obsolete
 
-        [Obsolete("no used"), Alternative(null, 41, ScriptErrorLevel.Info)] // ver.41
+        [Obsolete("no used"), Alternative(null, 41, ScriptErrorLevel.Warning)] // ver.41
         [JsonIgnore]
         public bool IsPreExtractToMemory
         {

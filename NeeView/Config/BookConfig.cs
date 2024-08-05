@@ -213,7 +213,7 @@ namespace NeeView
         /// <summary>
         /// ページ移動命令重複許可
         /// </summary>
-        [Obsolete("no used"), Alternative(null, 40, ScriptErrorLevel.Info)] // ver.40
+        [Obsolete("no used"), Alternative(null, 40, ScriptErrorLevel.Warning)] // ver.40
         [JsonIgnore]
         public bool IsMultiplePageMove
         {
@@ -222,7 +222,7 @@ namespace NeeView
         }
 
         // ブックページ画像サイズ
-        [Obsolete("no used"), Alternative(null, 40, ScriptErrorLevel.Info)] // ver.40
+        [Obsolete("no used"), Alternative(null, 40, ScriptErrorLevel.Warning)] // ver.40
         [JsonIgnore]
         public double BookPageSize
         {

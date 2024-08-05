@@ -1,4 +1,5 @@
-﻿using NeeView.Windows.Property;
+﻿using NeeView.Text.SimpleHtmlBuilder;
+using NeeView.Windows.Property;
 using System;
 using System.IO;
 using System.Linq;
@@ -285,6 +286,22 @@ namespace NeeView
         {
             builder.Append($"<h1 class=\"sub\" id=\"ObsoleteList\">{ResourceService.GetString("@_ScriptManual.S8")}</h1>");
 
+            // Obsolete levels
+            builder.Append(ResourceService.Replace($"<h4>@Word.ObsoleteLevel</h4>"));
+            var obsoleteLevels = new TagNode("p")
+                .AddNode(new TagNode("table", "table-slim")
+                    .AddNode(new TagNode("tr")
+                        .AddNode(new TagNode("td").AddText($"{ScriptErrorLevel.Error}"))
+                        .AddNode(new TagNode("td").AddText($"@ScriptErrorLevel.Error.Obsolete")))
+                    .AddNode(new TagNode("tr")
+                        .AddNode(new TagNode("td").AddText($"{ScriptErrorLevel.Warning}"))
+                        .AddNode(new TagNode("td").AddText($"@ScriptErrorLevel.Warning.Obsolete")))
+                    .AddNode(new TagNode("tr")
+                        .AddNode(new TagNode("td").AddText($"{ScriptErrorLevel.Info}"))
+                        .AddNode(new TagNode("td").AddText($"@ScriptErrorLevel.Info.Obsolete")))
+                );
+            builder.Append(obsoleteLevels.ToString());
+
             var commandHost = new CommandHost();
             var root = ScriptNodeTreeBuilder.Create(commandHost, "nv");
 
@@ -293,17 +310,25 @@ namespace NeeView
                 .GroupBy(e => e.Node.Alternative?.Version)
                 .OrderBy(e => e.Key);
 
-            // ver.40 and later
-            foreach (var group in groups.Where(e => e.Key >= 40))
+            // ver.42 and later
+            foreach (var group in groups.Where(e => e.Key >= 42))
             {
                 builder.Append($"<h2>Version {group.Key}.0</h2>");
-                builder.Append("<table class=\"table-slim table-topless\">");
-                builder.Append($"<tr><th>{Properties.TextResources.GetString("Word.Name")}</th><th>{Properties.TextResources.GetString("Word.Alternative")}</th></tr>");
-                foreach (var unit in group.OrderBy(e => e.FullName))
+
+                var table = new TagNode("table", "table-slim table-topless")
+                    .AddNode(new TagNode("tr")
+                        .AddNode(new TagNode("th").AddText($"@Word.ObsoleteLevel"))
+                        .AddNode(new TagNode("th").AddText($"@Word.Name"))
+                        .AddNode(new TagNode("th").AddText($"@Word.Alternative")));
+
+                foreach (var unit in group.OrderByDescending(e => e.ErrorLevel).ThenBy(e => e.FullName))
                 {
-                    builder.Append($"<tr><td>{unit.FullName}</td><td>{unit.Alternative}</td>");
+                    table.AddNode(new TagNode("tr")
+                        .AddNode(new TagNode("td")).AddText(unit.ErrorLevel.ToString())
+                        .AddNode(new TagNode("td")).AddText(unit.FullName)
+                        .AddNode(new TagNode("td")).AddText(unit.Alternative));
                 }
-                builder.Append("</table>");
+                builder.Append(table.ToString());
             }
 
             return builder;
