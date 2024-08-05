@@ -423,6 +423,7 @@ namespace NeeView
 
             public Memento()
             {
+                Format = new FormatVersion(Environment.SolutionName + ".History");
                 Items = new List<BookHistory>();
                 Books = new List<BookMemento>();
             }
@@ -430,8 +431,6 @@ namespace NeeView
 
             public void Save(string path)
             {
-                Format = new FormatVersion(Environment.SolutionName + ".History");
-
                 var json = JsonSerializer.SerializeToUtf8Bytes(this, UserSettingTools.GetSerializerOptions());
                 File.WriteAllBytes(path, json);
             }
