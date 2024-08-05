@@ -1454,6 +1454,7 @@ PageAccessor=页面存取器。存取页面信息。
 PageAccessor.GetMetaValue=获取页面元数据信息
 PageAccessor.GetMetaValue.Key=元数据的键名。查看搜索选项说明获取更多信息。
 PageAccessor.GetMetaValue.Returns=元数据的值
+PageAccessor.Index=
 PageAccessor.LastWriteTime=文件最后更新日期
 PageAccessor.Path=页面路径
 PageAccessor.Size=文件大小 (Byte)

@@ -1468,6 +1468,7 @@ PageAccessor=Page accessor
 PageAccessor.GetMetaValue=Ottieni informazioni meta della pagina
 PageAccessor.GetMetaValue.Key=Meta informazioni nome elemento. Vedi l'aiuto sulle opzioni di ricerca per più informazioni.
 PageAccessor.GetMetaValue.Returns=Valore informazioni meta
+PageAccessor.Index=
 PageAccessor.LastWriteTime=Ultimo tempo di scrittura del file
 PageAccessor.Path=Percorso pagina
 PageAccessor.Size=Dimensione file (Byte)

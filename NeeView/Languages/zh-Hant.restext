@@ -1454,6 +1454,7 @@ PageAccessor=頁面存取器。存取頁面資訊。
 PageAccessor.GetMetaValue=
 PageAccessor.GetMetaValue.Key=
 PageAccessor.GetMetaValue.Returns=
+PageAccessor.Index=
 PageAccessor.LastWriteTime=檔案最後更新日期
 PageAccessor.Path=頁面路徑
 PageAccessor.Size=檔案大小 (Byte)

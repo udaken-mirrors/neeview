@@ -14,6 +14,9 @@ namespace NeeView
         internal Page Source => _page;
 
         [WordNodeMember]
+        public int Index => _page.Index;
+
+        [WordNodeMember]
         public string Path => _page.EntryFullName;
 
         [WordNodeMember]

@@ -1462,6 +1462,7 @@ PageAccessor=Page accessor
 PageAccessor.GetMetaValue=Get page meta information
 PageAccessor.GetMetaValue.Key=Meta information item name. See the search options help for more information.
 PageAccessor.GetMetaValue.Returns=Meta information value
+PageAccessor.Index=Page index. Numbers begin with 0.
 PageAccessor.LastWriteTime=Last write time of the file
 PageAccessor.Path=Page path
 PageAccessor.Size=File size (Byte)
