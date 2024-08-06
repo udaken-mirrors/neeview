@@ -152,14 +152,27 @@ namespace NeeView
         }
 
         [WordNodeMember]
-        public string? ShowInputDialog(string title, string? text = null)
+        public string? ShowInputDialog(string title)
         {
-            return AppDispatcher.Invoke(() => ShowInputDialogInner(title, text));
+            return AppDispatcher.Invoke(() => ShowInputDialogInner(title, null, null));
         }
 
-        private static string? ShowInputDialogInner(string title, string? text)
+        [WordNodeMember]
+        public string? ShowInputDialog(string title, string text)
         {
-            var component = new InputDialogComponent(text);
+            return AppDispatcher.Invoke(() => ShowInputDialogInner(title, null, text));
+        }
+
+        [WordNodeMember]
+        public string? ShowInputDialog(string title, string message, string text)
+        {
+            return AppDispatcher.Invoke(() => ShowInputDialogInner(title, message, text));
+        }
+
+
+        private static string? ShowInputDialogInner(string title, string? message, string? text)
+        {
+            var component = new InputDialogComponent(message, text);
             var dialog = new MessageDialog(component, title);
             dialog.Commands.Add(UICommands.OK);
             dialog.Commands.Add(UICommands.Cancel);
@@ -196,12 +209,27 @@ namespace NeeView
 
         private class InputDialogComponent : IMessageDialogContentComponent
         {
+            private readonly StackPanel _panel;
             private readonly TextBox _textBox;
 
-            public InputDialogComponent(string? text)
+            public InputDialogComponent(string? message, string? text)
             {
+                _panel = new StackPanel();
+
+                if (!string.IsNullOrEmpty(message))
+                {
+                    var messageText = new TextBlock()
+                    {
+                        Margin = new Thickness(0, 0, 0, 4),
+                        Text = message,
+                        TextWrapping = TextWrapping.Wrap
+                    };
+                    _panel.Children.Add(messageText);
+                }
+
                 _textBox = new TextBox() { Text = text ?? "", Padding = new Thickness(5.0) };
                 _textBox.PreviewKeyDown += TextBox_PreviewKeyDown;
+                _panel.Children.Add(_textBox);
             }
 
             private void TextBox_PreviewKeyDown(object sender, KeyEventArgs e)
@@ -215,7 +243,7 @@ namespace NeeView
 
             public event EventHandler? Decide;
 
-            public object Content => _textBox;
+            public object Content => _panel;
 
             public string Text => _textBox.Text;
 
