@@ -459,6 +459,7 @@ CommandHost.Book=開いているブックのアクセサ
 CommandHost.Bookmark=ブックマーク パネルのアクセサ
 CommandHost.Bookshelf=本棚パネルのアクセサ
 CommandHost.Command=コマンド アクセサの連想配列です。\nコマンドは 設定 > コマンド設定 で表示されるコマンドと同じものです。詳細は <a href="#CommandList">コマンド一覧</a> を参照してください。
+CommandHost.CommandName=自己のコマンド名
 CommandHost.Config=アプリ設定の連想配列です。設定値を参照、変更します。\n設定値の種類は <a href="#ConfigList">設定値一覧</a> を参照してください。
 CommandHost.DestinationFolderCollection=保存先フォルダー リストのアクセサ
 CommandHost.Effect=エフェクト パネルのアクセサ

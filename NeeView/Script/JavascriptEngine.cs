@@ -42,6 +42,10 @@ namespace NeeView
         [Documentable(Name = "nv")]
         public CommandHost CommandHost => _commandHost;
 
+        public void SetCommandName(string name)
+        {
+            _commandHost.SetCommandName(name);
+        }
 
         public void SetArgs(List<string> args)
         {

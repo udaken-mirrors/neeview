@@ -59,7 +59,7 @@ namespace NeeView
 
         public override void Execute(object? sender, CommandContext e)
         {
-            ScriptManager.Current.Execute(sender, _path, (e.Parameter.Cast<ScriptCommandParameter>()).Argument);
+            ScriptManager.Current.Execute(sender, _path, Name, (e.Parameter.Cast<ScriptCommandParameter>()).Argument);
         }
 
         private void StoreDefault()

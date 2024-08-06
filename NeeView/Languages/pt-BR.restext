@@ -461,6 +461,7 @@ CommandHost.Book=Acessador de livro atual
 CommandHost.Bookmark=Acessador do painel de marcadores
 CommandHost.Bookshelf=Acessador de painel de estante
 CommandHost.Command=Uma matriz associativa de acessadores de comando. Os comandos são os mesmos exibidos em Opções > Configurações de comando. Para obter detalhes, consulte <a href="#CommandList"/>Lista de comandos</a>.
+CommandHost.CommandName=
 CommandHost.Config=Uma matriz associativa de configurações do aplicativo. Refere-se e altera o valor definido. Para os tipos de valores definidos, consulte <a href="#ConfigList">Lista de configurações</a>.
 CommandHost.DestinationFolderCollection=
 CommandHost.Effect=Acessador de painel de efeitos

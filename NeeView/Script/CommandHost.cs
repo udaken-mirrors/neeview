@@ -14,6 +14,7 @@ namespace NeeView
     {
         private readonly CommandHostStaticResource _resource;
         private readonly ScriptAccessDiagnostics _accessDiagnostics;
+        private string _commandName = "";
         private List<string> _args = new();
 
 
@@ -38,6 +39,8 @@ namespace NeeView
             DestinationFolderCollection = new DestinationFolderCollectionAccessor();
         }
 
+        [WordNodeMember(IsAutoCollect = false)]
+        public string CommandName => _commandName;
 
         [WordNodeMember(IsAutoCollect = false)]
         public List<string> Args => _args;
@@ -105,6 +108,11 @@ namespace NeeView
         internal void SetCancellationToken(CancellationToken cancellationToken)
         {
             Book.SetCancellationToken(cancellationToken);
+        }
+
+        internal void SetCommandName(string name)
+        {
+            _commandName = name;
         }
 
         internal void SetArgs(List<string> args)

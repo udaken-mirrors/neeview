@@ -461,6 +461,7 @@ CommandHost.Book=Current book accessor
 CommandHost.Bookmark=Bookmark panel accessor
 CommandHost.Bookshelf=Bookshelf panel accessor
 CommandHost.Command=An associative array of command accessors. The commands are the same as those displayed under Options > Command Settings. For details, refer to <a href="#CommandList"/>Command list</a>.
+CommandHost.CommandName=
 CommandHost.Config=An associative array of application settings. Refers to and changes the set value. For the types of set values, refer to <a href="#ConfigList">Config list</a>.
 CommandHost.DestinationFolderCollection=
 CommandHost.Effect=Effect panel accessor

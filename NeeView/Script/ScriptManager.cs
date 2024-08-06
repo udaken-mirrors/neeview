@@ -128,11 +128,12 @@ namespace NeeView
         }
 
 
-        public void Execute(object? sender, string path, string? argument)
+        public void Execute(object? sender, string path, string? name, string? argument)
         {
             if (_disposedValue) return;
 
-            _pool.Run(sender, path, argument);
+            name = name ?? Path.GetFileName(path);
+            _pool.Run(sender, path, name, argument);
         }
 
         public void CancelAll()
