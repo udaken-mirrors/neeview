@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 
 namespace NeeView
 {
@@ -8,6 +9,7 @@ namespace NeeView
     {
         private readonly FolderPanel _panel;
         private readonly BookshelfFolderList _model;
+        private CancellationToken _cancellationToken;
 
         public BookshelfPanelAccessor() : base(nameof(FolderPanel))
         {
@@ -122,6 +124,16 @@ namespace NeeView
             AppDispatcher.Invoke(() => _model.MoveToNext());
         }
 
+        [WordNodeMember]
+        public void Wait()
+        {
+            _model.WaitAsync(_cancellationToken).Wait();
+        }
+
+        internal void SetCancellationToken(CancellationToken cancellationToken)
+        {
+            _cancellationToken = cancellationToken;
+        }
 
         internal WordNode CreateWordNode(string name)
         {

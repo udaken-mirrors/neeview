@@ -108,6 +108,7 @@ namespace NeeView
         internal void SetCancellationToken(CancellationToken cancellationToken)
         {
             Book.SetCancellationToken(cancellationToken);
+            Bookshelf.SetCancellationToken(cancellationToken);
         }
 
         internal void SetCommandName(string name)

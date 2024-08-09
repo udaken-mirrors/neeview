@@ -22,6 +22,8 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using NeeLaboratory.Generators;
+using NeeLaboratory.Threading;
+using NeeLaboratory.Threading.Tasks;
 
 namespace NeeView
 {
@@ -84,6 +86,7 @@ namespace NeeView
         private List<Action> _collectionCreatedCallback = new();
 
         private ReferenceCounter _busyCount = new();
+        private BusyLockEvent _busyLockEvent = new();
 
         private FolderCollection? _folderCollection;
         private FolderItem? _selectedItem;
@@ -105,6 +108,8 @@ namespace NeeView
             _searchEngine = new FileSearchEngineProxy();
 
             _folderCollectionFactory = new FolderCollectionFactory(_searchEngine, isOverlayEnabled);
+
+            _disposables.Add(_busyLockEvent);
 
             if (isSyncBookHub)
             {
@@ -532,6 +537,17 @@ namespace NeeView
         #endregion Search
 
         /// <summary>
+        /// フォルダーリスト安定チェック
+        /// </summary>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        /// <exception cref="NotImplementedException"></exception>
+        public async Task WaitAsync(CancellationToken cancellationToken)
+        {
+            await _busyLockEvent.WaitHandle.AsTask().WaitAsync(cancellationToken);
+        }
+
+        /// <summary>
         /// フォルダーリスト更新要求
         /// </summary>
         public void RequestPlace(QueryPath path, FolderItemPosition? select, FolderSetPlaceOption options)
@@ -575,6 +591,8 @@ namespace NeeView
             }
 
             path = path.ToEntityPath();
+
+            using var busyLock = _busyLockEvent.CreateBusyLock();
 
             // 現在フォルダーの情報を記憶
             SavePlace(Place, SelectedItem, GetFolderItemIndex(SelectedItem));

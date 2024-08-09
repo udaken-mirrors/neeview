@@ -384,6 +384,7 @@ BookshelfPanelAccessor.PreviousHistory=
 BookshelfPanelAccessor.SearchWord=Casella ricerca testo
 BookshelfPanelAccessor.SelectedItems=Elementi selezionati
 BookshelfPanelAccessor.Style=Stile elenco elementi
+BookshelfPanelAccessor.Wait=
 BootErrorDialog.Title=Errore avvio NeeView
 BootOptionDialog.Title=Opzioni avvio NeeView
 BrushSource.Color=Colore

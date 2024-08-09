@@ -382,6 +382,7 @@ BookshelfPanelAccessor.PreviousHistory=
 BookshelfPanelAccessor.SearchWord=搜索框的文字
 BookshelfPanelAccessor.SelectedItems=已选择的列表项目
 BookshelfPanelAccessor.Style=列表项目显示格式
+BookshelfPanelAccessor.Wait=
 BootErrorDialog.Title=NeeView 启动错误
 BootOptionDialog.Title=NeeView 启动选项
 BrushSource.Color=颜色

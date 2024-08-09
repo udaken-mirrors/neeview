@@ -382,6 +382,7 @@ BookshelfPanelAccessor.PreviousHistory=本棚での前の履歴
 BookshelfPanelAccessor.SearchWord=検索ボックスのテキスト
 BookshelfPanelAccessor.SelectedItems=選択されているリスト項目
 BookshelfPanelAccessor.Style=リスト項目表示形式
+BookshelfPanelAccessor.Wait=表示が完了するまで待機する
 BootErrorDialog.Title=NeeView 起動エラー
 BootOptionDialog.Title=NeeView 起動オプション
 BrushSource.Color=色
