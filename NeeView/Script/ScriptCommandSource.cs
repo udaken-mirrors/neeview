@@ -28,8 +28,7 @@ namespace NeeView
         public string ShortCutKey { get; private set; } = "";
         public string MouseGesture { get; private set; } = "";
         public string TouchGesture { get; private set; } = "";
-
-
+        public string Args { get; private set; } = "";
 
         public static ScriptCommandSource Create(string path)
         {
@@ -70,17 +69,20 @@ namespace NeeView
                             var value = match.Groups[2].Value.Trim();
                             switch (key)
                             {
-                                case "@name":
-                                    source.Text = value;
+                                case "@args":
+                                    source.Args = value;
                                     break;
                                 case "@description":
                                     source.Remarks = value;
                                     break;
-                                case "@shortcutkey":
-                                    source.ShortCutKey = value;
-                                    break;
                                 case "@mousegesture":
                                     source.MouseGesture = value;
+                                    break;
+                                case "@name":
+                                    source.Text = value;
+                                    break;
+                                case "@shortcutkey":
+                                    source.ShortCutKey = value;
                                     break;
                                 case "@touchgesture":
                                     source.TouchGesture = value;

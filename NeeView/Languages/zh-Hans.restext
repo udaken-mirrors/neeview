@@ -14,6 +14,7 @@ _ScriptManual.S1.P3.T21=指令说明
 _ScriptManual.S1.P3.T31=默认的快捷键
 _ScriptManual.S1.P3.T41=默认的鼠标手势
 _ScriptManual.S1.P3.T51=默认的触控操作
+_ScriptManual.S1.P3.T61=
 _ScriptManual.S2=指令脚本
 _ScriptManual.S2.P1=脚本文件夹中的脚本文件可以作为指令使用。 一个文件就是一个指令。
 _ScriptManual.S2.P1.I1=可以像普通指令一样在设置的“指令设置”里设置快捷键。

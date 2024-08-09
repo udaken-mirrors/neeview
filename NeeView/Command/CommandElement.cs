@@ -354,6 +354,10 @@ namespace NeeView
             return Name ?? base.ToString();
         }
 
+        public virtual void UpdateDefaultParameter()
+        {
+        }
+
         #region Memento
 
         [Memento]

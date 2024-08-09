@@ -32,10 +32,11 @@ namespace NeeView
 
                 <table class="table-slim table-topless">
                     <tr><th>@_ScriptManual.S1.P3.T00</th><th>@_ScriptManual.S1.P3.T01</th></tr>
-                    <tr><td>&#64;name</td><td>@_ScriptManual.S1.P3.T11</td></tr>
+                    <tr><td>&#64;args</td><td>@_ScriptManual.S1.P3.T61</td></tr>
                     <tr><td>&#64;description</td><td>@_ScriptManual.S1.P3.T21</td></tr>
-                    <tr><td>&#64;shortCutKey</td><td>@_ScriptManual.S1.P3.T31</td></tr>
                     <tr><td>&#64;mouseGesture</td><td>@_ScriptManual.S1.P3.T41</td></tr>
+                    <tr><td>&#64;name</td><td>@_ScriptManual.S1.P3.T11</td></tr>
+                    <tr><td>&#64;shortCutKey</td><td>@_ScriptManual.S1.P3.T31</td></tr>
                     <tr><td>&#64;touchGesture</td><td>@_ScriptManual.S1.P3.T51</td></tr>
                 </table>
             </p>

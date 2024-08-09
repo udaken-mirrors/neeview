@@ -8,16 +8,20 @@ namespace NeeView
     {
         private CommandParameter? _parameter;
         private readonly Type _type;
-
+        private readonly ICommandParameterDecorator? _defaultParameterDecorator;
 
         // TODO: 型を直接指定するように
-        public CommandParameterSource(CommandParameter defaultParameter)
+        public CommandParameterSource(CommandParameter defaultParameter) : this(defaultParameter, null)
+        {
+        }
+
+        public CommandParameterSource(CommandParameter defaultParameter, ICommandParameterDecorator? defaultParameterDecorator)
         {
             if (defaultParameter == null) throw new ArgumentNullException(nameof(defaultParameter));
 
-            _type = defaultParameter.GetType(); // ##
+            _type = defaultParameter.GetType();
+            _defaultParameterDecorator = defaultParameterDecorator;
         }
-
 
         public CommandParameter? GetRaw()
         {
@@ -27,6 +31,7 @@ namespace NeeView
         public CommandParameter GetDefault()
         {
             var parameter = Activator.CreateInstance(_type) as CommandParameter ?? throw new InvalidOperationException();
+            _defaultParameterDecorator?.DecorateCommandParameter(parameter);
             return parameter;
         }
 
