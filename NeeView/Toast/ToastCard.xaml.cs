@@ -1,4 +1,7 @@
-﻿using System;
+﻿using NeeView.Windows.Media;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -22,19 +25,22 @@ namespace NeeView
     /// </summary>
     public partial class ToastCard : UserControl
     {
+        public readonly static RoutedCommand CopyCommand = new("CopyCommand", typeof(ToastCard), new InputGestureCollection(new List<InputGesture>() { new KeyGesture(Key.C, ModifierKeys.Control) }));
+
         private readonly Toast _toast;
 
         // for Designer
-        public ToastCard()
+        public ToastCard(): this(new Toast("TEST"))
         {
-            InitializeComponent();
-            _toast = new Toast("TEST");
-            Refresh();
         }
 
         public ToastCard(Toast toast)
         {
             InitializeComponent();
+
+            this.Root.PreviewMouseDown += (s, e) => this.Root.Focus();
+            this.Root.CommandBindings.Add(new CommandBinding(CopyCommand, Copy_Execute));
+
             _toast = toast;
             Refresh();
         }
@@ -71,6 +77,13 @@ namespace NeeView
                 ToastIcon.Error => (DrawingImage)this.Resources["tic_error"],
                 _ => (DrawingImage)this.Resources["tic_info"],
             };
+        }
+
+        private void Copy_Execute(object sender, ExecutedRoutedEventArgs e)
+        {
+            var caption = VisualTreeUtility.CollectElementText(this.Caption);
+            var message = VisualTreeUtility.CollectElementText(this.Message);
+            Clipboard.SetText(caption + message);
         }
 
         private void CloseButton_Click(object sender, RoutedEventArgs e)

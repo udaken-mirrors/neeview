@@ -1,5 +1,6 @@
 ﻿using NeeLaboratory.Generators;
 using NeeLaboratory.Windows.Input;
+using NeeView.Windows.Media;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -93,6 +94,7 @@ namespace NeeView
     [NotifyPropertyChanged]
     public partial class MessageDialog : Window, INotifyPropertyChanged
     {
+        public readonly static RoutedCommand CopyCommand = new("CopyCommand", typeof(MessageDialog), new InputGestureCollection(new List<InputGesture>() { new KeyGesture(Key.C, ModifierKeys.Control) }));
         public static Window? OwnerWindow { get; set; }
 
         private UICommand? _resultCommand;
@@ -107,6 +109,8 @@ namespace NeeView
             this.WindowStartupLocation = WindowStartupLocation.CenterOwner;
 
             this.ShowInTaskbar = IsShowInTaskBar || OwnerWindow is null;
+
+            this.CommandBindings.Add(new CommandBinding(CopyCommand, Copy_Execute));
         }
 
         public MessageDialog(string message, string title) : this()
@@ -155,6 +159,13 @@ namespace NeeView
         private UICommand? GetDefaultCommand()
         {
             return (DefaultCommandIndex >= 0 && DefaultCommandIndex < Commands.Count) ? Commands[DefaultCommandIndex] : null;
+        }
+        
+        private void Copy_Execute(object sender, ExecutedRoutedEventArgs e)
+        {
+            var caption = VisualTreeUtility.CollectElementText(this.Caption);
+            var message = VisualTreeUtility.CollectElementText(this.Message);
+            Clipboard.SetText(caption + message);
         }
 
         public MessageDialogResult ShowDialog(Window? owner)

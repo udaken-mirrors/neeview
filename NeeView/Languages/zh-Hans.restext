@@ -506,6 +506,7 @@ CommandParameterControl.Empty=并没有参数
 CommandResetWindow.Message=重设所有的指令设置。确定吗？
 CommandResetWindow.ResetType.Title=范本
 CommandResetWindow.Title=重设指令设置
+Common.Menu.Copy=复制(_C)
 ConfirmRecursiveDialog.Message=没有可载入"{0}"  的文件。要载入子文件夹或是压缩文件吗？
 ConfirmRecursiveDialog.Title=要一起载入子文件夹吗？
 ControlConfig.IsSelected=面板选择状态

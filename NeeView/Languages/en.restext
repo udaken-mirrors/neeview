@@ -508,6 +508,7 @@ CommandParameterControl.Empty=There are no parameters
 CommandResetWindow.Message=Reset all command settings. Is it OK?
 CommandResetWindow.ResetType.Title=Preset
 CommandResetWindow.Title=Reset command
+Common.Menu.Copy=_Copy
 ConfirmRecursiveDialog.Message=There is no file that can be read in "{0}". Do you also want to load subfolders or compressed files?
 ConfirmRecursiveDialog.Title=Do you also want to read subfolders?
 ControlConfig.IsSelected=Panel selected

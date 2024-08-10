@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+using System.Windows.Documents;
 using System.Windows.Media;
 
 
@@ -410,6 +411,65 @@ namespace NeeView.Windows.Media
                 .ToList();
 
             return children;
+        }
+
+        public static string CollectElementText(DependencyObject root)
+        {
+            if (root == null)
+            {
+                return "";
+            }
+
+            if (root is Button)
+            {
+                return "";
+            }
+
+            var text = GetElementText(root);
+            if (!string.IsNullOrEmpty(text))
+            {
+                return text + System.Environment.NewLine;
+            }
+
+            var s = new StringBuilder();
+            int childCount = VisualTreeHelper.GetChildrenCount(root);
+            for (int i = 0; i < childCount; i++)
+            {
+                var childText = CollectElementText(VisualTreeHelper.GetChild(root, i));
+                if (!string.IsNullOrEmpty(childText))
+                {
+                    s.Append(childText);
+                }
+            }
+            return s.ToString();
+        }
+
+
+        private static string GetElementText(DependencyObject element)
+        {
+            return element switch
+            {
+                TextBox textBox => textBox.Text,
+                TextBlock textBlock => GetStringFromInlineCollection(textBlock.Inlines),
+                _ => ""
+            };
+        }
+
+        private static string GetStringFromInlineCollection(InlineCollection inlineCollection)
+        {
+            var s = new StringBuilder();
+            foreach (Inline inline in inlineCollection)
+            {
+                if (inline is Run run)
+                {
+                    s.Append(run.Text);
+                }
+                else if (inline is Span span)
+                {
+                    s.Append(GetStringFromInlineCollection(span.Inlines));
+                }
+            }
+            return s.ToString();
         }
 
     }

@@ -506,6 +506,7 @@ CommandParameterControl.Empty=パラメーターはありません
 CommandResetWindow.Message=コマンドの設定を全てリセットします。よろしいですか？
 CommandResetWindow.ResetType.Title=プリセット
 CommandResetWindow.Title=コマンド設定をリセット
+Common.Menu.Copy=コピー(_C)
 ConfirmRecursiveDialog.Message="{0}" には読み込めるファイルがありません。サブフォルダーまたは圧縮ファイルも読み込みますか？
 ConfirmRecursiveDialog.Title=サブフォルダーも読み込みますか？
 ControlConfig.IsSelected=パネル選択状態

@@ -508,6 +508,7 @@ CommandParameterControl.Empty=Non ci sono parametri
 CommandResetWindow.Message=Ripristina tutte le impostazioni dei comandi. È OK?
 CommandResetWindow.ResetType.Title=Preimpostazione
 CommandResetWindow.Title=Ripristina comando
+Common.Menu.Copy=Copia
 ConfirmRecursiveDialog.Message=Non c'è alcun file che possa essere letto in "{0}". Vuoi caricare anche sottocartelle o file compressi?
 ConfirmRecursiveDialog.Title=Vuoi leggere anche le sottocartelle?
 ControlConfig.IsSelected=Pannello selezionato

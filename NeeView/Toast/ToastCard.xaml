@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:NeeView"
+             xmlns:properties="clr-namespace:NeeView.Properties"
              mc:Ignorable="d" 
              FontSize="{DynamicResource DefaultFontSize}"
              d:DesignHeight="500" d:DesignWidth="600">
@@ -75,8 +76,8 @@
 
     </UserControl.Resources>
 
-    <Border MinWidth="400" MaxWidth="500" MinHeight="100" Margin="20,40" HorizontalAlignment="Right" VerticalAlignment="Bottom" Background="{DynamicResource Toast.Background}"
-            BorderBrush="{DynamicResource Toast.Border}" BorderThickness="1" RenderTransformOrigin="1,1">
+    <Border x:Name="Root" MinWidth="400" MaxWidth="500" MinHeight="100" Margin="20,40" HorizontalAlignment="Right" VerticalAlignment="Bottom" Background="{DynamicResource Toast.Background}"
+            BorderBrush="{DynamicResource Toast.Border}" BorderThickness="1" RenderTransformOrigin="1,1" Focusable="True">
         <Border.RenderTransform>
             <TranslateTransform X="0" />
         </Border.RenderTransform>
@@ -89,6 +90,11 @@
                 </BeginStoryboard>
             </EventTrigger>
         </Border.Triggers>
+        <Border.ContextMenu>
+            <ContextMenu x:Name="CopyContextMenu">
+                <MenuItem Header="{properties:TextBinding Common.Menu.Copy}" Command="{x:Static local:ToastCard.CopyCommand}" />
+            </ContextMenu>
+        </Border.ContextMenu>
         <DockPanel Margin="10">
             <Button x:Name="CloseButton" DockPanel.Dock="Right" VerticalAlignment="Top" Width="16" Height="16" Style="{StaticResource IconButton}" Click="CloseButton_Click">
                 <Path Data="M0,0 L10,10 M0,10 L10,0" Stroke="{DynamicResource Toast.Foreground}" StrokeThickness="1" VerticalAlignment="Center" HorizontalAlignment="Center" />
