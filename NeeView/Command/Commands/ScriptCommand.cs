@@ -34,6 +34,7 @@ namespace NeeView
         public const string Prefix = "Script_";
         public const string EventOnBookLoaded = Prefix + ScriptCommandSource.OnBookLoadedFilename;
         public const string EventOnPageChanged = Prefix + ScriptCommandSource.OnPageChangedFilename;
+        public const string EventOnWindowStateChanged = Prefix + ScriptCommandSource.OnWindowStateChangedFilename;
 
         private readonly string _path;
         private readonly ScriptCommandSourceMap _sourceMap;

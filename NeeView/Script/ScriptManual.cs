@@ -56,8 +56,9 @@ namespace NeeView
                 @_ScriptManual.S3.P1
 
                 <table class="table-slim">
-                    <tr><td>OnBookLoaded.nvjs</td><td>@_ScriptManual.S3.P1.T01</td></tr>
-                    <tr><td>OnPageChanged.nvjs</td><td>@_ScriptManual.S3.P1.T11</td></tr>
+                    <tr><td>OnBookLoaded.nvjs</td><td>@ScriptOnBookLoadedCommand.Remarks</td></tr>
+                    <tr><td>OnPageChanged.nvjs</td><td>@ScriptOnPageChangedCommand.Remarks</td></tr>
+                    <tr><td>OnWindowStateChanged.nvjs</td><td>@ScriptOnWindowStateChangedCommand.Remarks</td></tr>
                 </table>
             </p>
 

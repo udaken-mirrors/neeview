@@ -67,6 +67,8 @@ namespace NeeView
         {
             Config.Current.Window.State = e.NewState;
             UpdatePanelHideMode();
+
+            CommandTable.Current.TryExecute(this, ScriptCommand.EventOnWindowStateChanged, null, CommandOption.None);
         }
 
         public void UpdatePanelHideMode()
