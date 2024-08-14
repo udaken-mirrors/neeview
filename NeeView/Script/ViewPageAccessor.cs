@@ -3,8 +3,11 @@
     [DocumentableBaseClass(typeof(PageAccessor))]
     public record class ViewPageAccessor : PageAccessor
     {
-        public ViewPageAccessor(Page page) : base(page)
+        private readonly IMediaPlayer? _mediaPlayer;
+
+        public ViewPageAccessor(Page page, IMediaPlayer? mediaPlayer) : base(page)
         {
+            _mediaPlayer = mediaPlayer;
         }
 
         [WordNodeMember]
@@ -38,6 +41,9 @@
                 }
             }
         }
+
+        [WordNodeMember]
+        public MediaPlayerAccessor? Player => _mediaPlayer is not null ? new MediaPlayerAccessor(_mediaPlayer) : null;
 
 
         [WordNodeMember]

@@ -61,6 +61,7 @@ namespace NeeView
         private CancellationTokenSource _openCancellationTokenSource = new();
 
         private List<Page> _viewPages = new();
+        private List<ViewContent> _viewContents = new();
         private readonly object _lock = new();
         private ViewPageChangedEventArgs? _viewPageChangedEventArgs;
         private bool _disposedValue;
@@ -162,6 +163,8 @@ namespace NeeView
         /// TODO: 必要性の検証。SelectedPages で十分では？
         /// </summary>
         public IReadOnlyList<Page> ViewPages => _viewPages;
+
+        public List<ViewContent> ViewContents => _viewContents;
 
         public PageFrameBox? ValidPageFrameBox => ValidBox();
 
@@ -391,6 +394,7 @@ namespace NeeView
         private void ClearViewPages()
         {
             _viewPages = [];
+            _viewContents = [];
         }
 
 
@@ -431,10 +435,13 @@ namespace NeeView
 
             var pages = e.ViewContents.Select(e => e.Page).Distinct().ToList();
             if (_viewPages.SequenceEqual(pages)) return;
-
+            
             _viewPages = pages;
+            _viewContents = new List<ViewContent>(e.ViewContents);
+
             RaiseViewPageChanged(new ViewPageChangedEventArgs(_viewPages));
         }
+
 
         private void Box_TransformChanged(object? sender, TransformChangedEventArgs e)
         {

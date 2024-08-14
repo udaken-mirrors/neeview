@@ -5,6 +5,7 @@ using NeeView.PageFrames;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -64,6 +65,7 @@ namespace NeeView
 
         public BookPageControlProxy Control => _control;
 
+        public IReadOnlyList<Page> ViewPages => _presenter.ViewPages;
 
 
         private void Presenter_PageFrameBoxChanging(object? sender, PageFrameBoxChangingEventArgs e)
@@ -165,6 +167,16 @@ namespace NeeView
         #region BookCommand : メディア操作
 
         /// <summary>
+        /// ページを指定して有効な MediaPlayer を取得
+        /// </summary>
+        /// <param name="page"></param>
+        /// <returns></returns>
+        public IMediaPlayer? GetMediaPlayer(Page page)
+        {
+            return _presenter.ViewContents.FirstOrDefault(e => e.Page == page)?.Player;
+        }
+
+        /// <summary>
         /// 動画有効？
         /// </summary>
         /// <returns></returns>
@@ -212,8 +224,6 @@ namespace NeeView
         #endregion
 
         #region ページ読み込み完了待機
-
-        public IReadOnlyList<Page> ViewPages => _presenter.ViewPages;
 
         /// <summary>
         /// 表示ページ読み込み完了まで待機
