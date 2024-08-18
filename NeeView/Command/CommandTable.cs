@@ -27,7 +27,7 @@ namespace NeeView
     /// <summary>
     /// コマンド設定テーブル
     /// </summary>
-    public partial class CommandTable : BindableBase, IDictionary<string, CommandElement>
+    public partial class CommandTable : BindableBase, IReadOnlyDictionary<string, CommandElement>
     {
         static CommandTable() => Current = new CommandTable();
         public static CommandTable Current { get; }
@@ -55,69 +55,27 @@ namespace NeeView
 
         public int ChangeCount { get; private set; }
 
-        public Dictionary<string, CommandElement> Elements => _elements;
-
         public Dictionary<string, ObsoleteCommandItem> ObsoleteCommands { get; private set; }
 
-        #region IDictionary Support
 
-        public ICollection<string> Keys => ((IDictionary<string, CommandElement>)_elements).Keys;
+        #region IReadOnlyDictionary Support
 
-        public ICollection<CommandElement> Values => ((IDictionary<string, CommandElement>)_elements).Values;
+        public IEnumerable<string> Keys => ((IReadOnlyDictionary<string, CommandElement>)_elements).Keys;
 
-        public int Count => ((ICollection<KeyValuePair<string, CommandElement>>)_elements).Count;
+        public IEnumerable<CommandElement> Values => ((IReadOnlyDictionary<string, CommandElement>)_elements).Values;
 
-        public bool IsReadOnly => ((ICollection<KeyValuePair<string, CommandElement>>)_elements).IsReadOnly;
+        public int Count => ((IReadOnlyCollection<KeyValuePair<string, CommandElement>>)_elements).Count;
 
-        public CommandElement this[string key]
+        public CommandElement this[string key] => ((IReadOnlyDictionary<string, CommandElement>)_elements)[key];
+
+        public bool ContainsKey(string key)
         {
-            get => ((IDictionary<string, CommandElement>)_elements)[key];
-            set => ((IDictionary<string, CommandElement>)_elements)[key] = value;
-        }
-
-        public void Add(string key, CommandElement value)
-        {
-            ((IDictionary<string, CommandElement>)_elements).Add(key, value);
-        }
-
-        public bool Remove(string key)
-        {
-            return ((IDictionary<string, CommandElement>)_elements).Remove(key);
-        }
-
-        public void Add(KeyValuePair<string, CommandElement> item)
-        {
-            ((ICollection<KeyValuePair<string, CommandElement>>)_elements).Add(item);
-        }
-
-        public void Clear()
-        {
-            ((ICollection<KeyValuePair<string, CommandElement>>)_elements).Clear();
-        }
-
-        public bool Contains(KeyValuePair<string, CommandElement> item)
-        {
-            return ((ICollection<KeyValuePair<string, CommandElement>>)_elements).Contains(item);
-        }
-
-        public bool ContainsKey(string? key)
-        {
-            return key != null && _elements.ContainsKey(key);
+            return ((IReadOnlyDictionary<string, CommandElement>)_elements).ContainsKey(key);
         }
 
         public bool TryGetValue(string key, [MaybeNullWhen(false)] out CommandElement value)
         {
-            return ((IDictionary<string, CommandElement>)_elements).TryGetValue(key, out value);
-        }
-
-        public void CopyTo(KeyValuePair<string, CommandElement>[] array, int arrayIndex)
-        {
-            ((ICollection<KeyValuePair<string, CommandElement>>)_elements).CopyTo(array, arrayIndex);
-        }
-
-        public bool Remove(KeyValuePair<string, CommandElement> item)
-        {
-            return ((ICollection<KeyValuePair<string, CommandElement>>)_elements).Remove(item);
+            return ((IReadOnlyDictionary<string, CommandElement>)_elements).TryGetValue(key, out value);
         }
 
         public IEnumerator<KeyValuePair<string, CommandElement>> GetEnumerator()
@@ -429,7 +387,7 @@ namespace NeeView
         {
             if (key is null) return CommandElement.None;
 
-            if (TryGetValue(key, out CommandElement? command))
+            if (_elements.TryGetValue(key, out CommandElement? command))
             {
                 return command;
             }
@@ -437,6 +395,19 @@ namespace NeeView
             {
                 return CommandElement.None;
             }
+        }
+
+        private void AddCommand(string name, CommandElement command)
+        {
+            _elements.Add(name, command);
+        }
+
+        private bool RemoveCommand(string name)
+        {
+            if (!_elements.TryGetValue(name, out var command)) return false;
+
+            (command as IDisposable)?.Dispose();
+            return _elements.Remove(name);
         }
 
         public CommandElement CreateCloneCommand(CommandElement source)
@@ -452,7 +423,7 @@ namespace NeeView
         {
             if (command.IsCloneCommand())
             {
-                _elements.Remove(command.Name);
+                RemoveCommand(command.Name);
 
                 Changed?.Invoke(this, new CommandChangedEventArgs(false));
             }
@@ -467,7 +438,7 @@ namespace NeeView
         private CommandElement CloneCommand(CommandElement source, CommandNameSource name)
         {
             var cloneCommand = source.CloneCommand(name);
-            _elements.Add(cloneCommand.Name, cloneCommand);
+            AddCommand(cloneCommand.Name, cloneCommand);
             ValidateOrder();
             return cloneCommand;
         }
@@ -556,7 +527,7 @@ namespace NeeView
 
         public bool TryExecute(object sender, string commandName, object[]? args, CommandOption option)
         {
-            if (TryGetValue(commandName, out CommandElement? command))
+            if (_elements.TryGetValue(commandName, out CommandElement? command))
             {
                 var arguments = new CommandArgs(args, option);
                 if (command.CanExecute(sender, arguments))
@@ -616,7 +587,7 @@ namespace NeeView
             ExternalProcess.Start(fileName);
         }
 
-#endregion
+        #endregion
 
         #region Scripts
 
@@ -639,7 +610,7 @@ namespace NeeView
             {
                 foreach (var command in oldies)
                 {
-                    _elements.Remove(command.Name);
+                    RemoveCommand(command.Name);
                 }
                 oldies = new List<ScriptCommand>();
             }
@@ -649,7 +620,7 @@ namespace NeeView
             var excepts = oldies.Where(e => !newPaths.Contains(e.Path)).ToList();
             foreach (var command in excepts)
             {
-                _elements.Remove(command.Name);
+                RemoveCommand(command.Name);
             }
 
             // 既存のものは情報更新
@@ -664,7 +635,7 @@ namespace NeeView
             var newcomer = news.Where(e => !overwritesPaths.Contains(e.Path)).ToList();
             foreach (var command in newcomer)
             {
-                _elements.Add(command.Name, command);
+                AddCommand(command.Name, command);
             }
 
             // re order
@@ -733,7 +704,7 @@ namespace NeeView
 
         #endregion
     }
- 
+
 
     /// <summary>
     /// 保存用コマンドコレクション

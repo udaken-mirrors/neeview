@@ -14,13 +14,13 @@ namespace NeeView.Setting
     public class InputGestureSettingViewModel : BindableBase
     {
         // すべてのコマンドのショートカット
-        private readonly IDictionary<string, CommandElement> _commandMap;
+        private readonly IReadOnlyDictionary<string, CommandElement> _commandMap;
         private KeyGestureSource? _keyGesture;
         private MouseGestureSource? _mouseGesture;
         private ObservableCollection<InputGestureToken> _gestureTokens;
 
 
-        public InputGestureSettingViewModel(IDictionary<string, CommandElement> commandMap, string command)
+        public InputGestureSettingViewModel(IReadOnlyDictionary<string, CommandElement> commandMap, string command)
         {
             _commandMap = commandMap;
             Command = command;

@@ -12,13 +12,13 @@ namespace NeeView.Setting
     /// </summary>
     public class InputTouchSettingViewModel : BindableBase
     {
-        private readonly IDictionary<string, CommandElement> _commandMap;
+        private readonly IReadOnlyDictionary<string, CommandElement> _commandMap;
         private readonly string _key;
         private ObservableCollection<GestureElement> _gestureToken = new();
         private string? _gestureTokenNote;
 
 
-        public InputTouchSettingViewModel(IDictionary<string, CommandElement> commandMap, string key, FrameworkElement gestureSender)
+        public InputTouchSettingViewModel(IReadOnlyDictionary<string, CommandElement> commandMap, string key, FrameworkElement gestureSender)
         {
             _commandMap = commandMap;
             _key = key;

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ObservableCollections;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 
@@ -24,7 +25,8 @@ namespace NeeView
             UpdateCommandAccessMap();
         }
 
-        public Dictionary<string, object> Values { get; } = new Dictionary<string, object>();
+
+        public ObservableDictionary<string, object> Values { get; } = new ObservableDictionary<string, object>();
         public ScriptAccessDiagnostics AccessDiagnostics => _accessDiagnostics;
         public ConfigMap ConfigMap => _configMap;
         public CommandAccessorMap CommandAccessMap => _commandAccessMap;

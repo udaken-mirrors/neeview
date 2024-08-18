@@ -25,7 +25,7 @@ namespace NeeView.Setting
             InitializeComponent();
         }
 
-        public void Initialize(IDictionary<string, CommandElement> commandMap, string key)
+        public void Initialize(IReadOnlyDictionary<string, CommandElement> commandMap, string key)
         {
             _vm = new MouseGestureSettingViewModel(commandMap, key, this.GestureBox);
             this.DataContext = _vm;

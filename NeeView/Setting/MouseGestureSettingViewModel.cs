@@ -11,7 +11,7 @@ namespace NeeView.Setting
     /// </summary>
     public class MouseGestureSettingViewModel : BindableBase
     {
-        private readonly IDictionary<string, CommandElement> _commandMap;
+        private readonly IReadOnlyDictionary<string, CommandElement> _commandMap;
         private readonly string _key;
         private readonly TouchInputForGestureEditor _touchGesture;
         private readonly MouseInputForGestureEditor _mouseGesture;
@@ -19,7 +19,7 @@ namespace NeeView.Setting
         private MouseSequence _newGesture = MouseSequence.Empty;
 
 
-        public MouseGestureSettingViewModel(IDictionary<string, CommandElement> commandMap, string key, FrameworkElement gestureSender)
+        public MouseGestureSettingViewModel(IReadOnlyDictionary<string, CommandElement> commandMap, string key, FrameworkElement gestureSender)
         {
             _commandMap = commandMap;
             _key = key;

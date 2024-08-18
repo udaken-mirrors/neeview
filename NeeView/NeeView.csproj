@@ -86,6 +86,7 @@
     <PackageReference Include="Jint" Version="3.1.1" />
     <PackageReference Include="MetadataExtractor" Version="2.8.1" />
     <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.77" />
+    <PackageReference Include="ObservableCollections" Version="2.2.0" />
     <PackageReference Include="PdfiumViewer.Updated" Version="2.14.4" />
     <PackageReference Include="PhotoSauce.MagicScaler" Version="0.14.2" />
     <PackageReference Include="SharpVectors" Version="1.8.4" />

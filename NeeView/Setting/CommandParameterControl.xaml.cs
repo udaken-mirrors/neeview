@@ -40,7 +40,7 @@ namespace NeeView.Setting
             InitializeComponent();
         }
 
-        public void Initialize(IDictionary<string, CommandElement> commandMap, string key)
+        public void Initialize(IReadOnlyDictionary<string, CommandElement> commandMap, string key)
         {
             InitializeComponent();
 

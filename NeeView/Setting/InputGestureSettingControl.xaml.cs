@@ -45,7 +45,7 @@ namespace NeeView.Setting
             source.MouseHorizontalWheelChanged += MouseGestureBox_MouseHorizontalWheelChanged;
         }
 
-        public void Initialize(IDictionary<string, CommandElement> commandMap, string key)
+        public void Initialize(IReadOnlyDictionary<string, CommandElement> commandMap, string key)
         {
             _vm = new InputGestureSettingViewModel(commandMap, key);
             this.DataContext = _vm;

@@ -46,7 +46,7 @@ namespace NeeView
         public List<string> Args => _args;
 
         [WordNodeMember(IsAutoCollect = false)]
-        public Dictionary<string, object> Values => _resource.Values;
+        public IDictionary<string, object> Values => _resource.Values;
 
         [WordNodeMember(IsAutoCollect = false)]
         public PropertyMap Config { get; }

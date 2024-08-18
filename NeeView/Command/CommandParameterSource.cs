@@ -23,6 +23,10 @@ namespace NeeView
             _defaultParameterDecorator = defaultParameterDecorator;
         }
 
+
+        public event EventHandler<ParameterChangedEventArgs>? ParameterChanged;
+
+
         public CommandParameter? GetRaw()
         {
             return _parameter;
@@ -52,7 +56,27 @@ namespace NeeView
                 throw new ArgumentException($"{_type} is required: not {value.GetType()}");
             }
 
-            _parameter = value;
+            if (_parameter != value)
+            {
+                if (_parameter != null)
+                {
+                    _parameter.PropertyChanged -= Parameter_PropertyChanged;
+                }
+
+                _parameter = value;
+
+                if (_parameter != null)
+                {
+                    _parameter.PropertyChanged += Parameter_PropertyChanged;
+                }
+
+                ParameterChanged?.Invoke(this, new ParameterChangedEventArgs(null));
+            }
+        }
+
+        private void Parameter_PropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            ParameterChanged?.Invoke(this, new ParameterChangedEventArgs(e.PropertyName));
         }
 
         public bool EqualsDefault()
@@ -61,4 +85,16 @@ namespace NeeView
         }
 
     }
+
+
+    public class ParameterChangedEventArgs : EventArgs
+    {
+        public ParameterChangedEventArgs(string? propertyName)
+        {
+            PropertyName = propertyName;
+        }
+
+        public string? PropertyName { get; }
+    }
+
 }
