@@ -10,6 +10,7 @@ namespace NeeView
         private bool _isScriptFolderEnabled;
         private ScriptErrorLevel _errorLevel = ScriptErrorLevel.Error;
         private bool _onBookLoadedWhenRenamed = true;
+        private bool _isSQLiteEnabled;
 
 
         [JsonInclude]
@@ -44,6 +45,13 @@ namespace NeeView
         {
             get { return _onBookLoadedWhenRenamed; }
             set { SetProperty(ref _onBookLoadedWhenRenamed, value); }
+        }
+
+        [PropertyMember]
+        public bool IsSQLiteEnabled
+        {
+            get { return _isSQLiteEnabled; }
+            set { SetProperty(ref _isSQLiteEnabled, value); }
         }
 
     }

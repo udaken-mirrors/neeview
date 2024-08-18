@@ -18,9 +18,17 @@ namespace NeeView
         public JavaScriptEngine()
         {
             _commandHost = new CommandHost();
-            _engine = new Jint.Engine(config => config
+
+            var options = new Jint.Options()
                 .DebugMode(true)
-                .AllowClr(typeof(System.Diagnostics.Process).Assembly));
+                .AllowClr(typeof(System.Diagnostics.Process).Assembly);
+
+            if (Config.Current.Script.IsSQLiteEnabled)
+            {
+                options.AllowClr(typeof(System.Data.SQLite.SQLiteContext).Assembly);
+            }
+
+            _engine = new Jint.Engine(options);
 
             _engine.SetValue("sleep", (Action<int>)Sleep);
             _engine.SetValue("log", (Action<object>)Log);

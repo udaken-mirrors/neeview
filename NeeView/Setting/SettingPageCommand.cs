@@ -62,6 +62,7 @@ namespace NeeView.Setting
             });
 
             section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.Script, nameof(ScriptConfig.ErrorLevel))) { SubContent = CreateScriptErrorLevelRemarks() });
+            section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.Script, nameof(ScriptConfig.IsSQLiteEnabled))));
             section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.Script, nameof(ScriptConfig.OnBookLoadedWhenRenamed))));
 
             this.Items.Add(section);
