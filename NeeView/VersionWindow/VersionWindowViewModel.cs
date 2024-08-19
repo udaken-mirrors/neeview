@@ -31,7 +31,7 @@ namespace NeeView
 
         public BitmapFrame Icon { get; set; }
 
-        // バージョンチェッカーは何度もチェックしないようにstaticで確保する
+        // バージョンチェッカーは何度もチェックしないように static で確保する
         public static VersionChecker Checker { get; set; } = new VersionChecker();
 
 
@@ -39,7 +39,7 @@ namespace NeeView
         {
             var s = new StringBuilder();
             s.AppendLine($"Version: {ApplicationName} {DispVersion}");
-            s.AppendLine($"Package: {Environment.PackageType.TrimStart('.')}");
+            s.AppendLine($"Package: {Environment.PackageType} {Environment.DateVersion}");
             s.AppendLine($"OS: {System.Environment.OSVersion}");
 
             Debug.WriteLine(s);

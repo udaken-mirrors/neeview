@@ -48,7 +48,7 @@ namespace NeeView
                 // チェック開始
                 LastVersion = new FormatVersion(Environment.SolutionName, 0, 0, 0);
                 Message = Properties.TextResources.GetString("VersionChecker.Message.Checking");
-                Task.Run(() => CheckVersion(Environment.IsZipLikePackage ? ".zip" : Environment.PackageType));
+                Task.Run(() => CheckVersion(Environment.PackageTypeExtension));
             }
         }
 

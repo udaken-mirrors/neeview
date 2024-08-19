@@ -26,7 +26,9 @@ namespace NeeView
         private static string? _packageType;
         private static string? _revision;
         private static string? _dateVersion;
+        private static string? _buildVersion;
         private static bool? _isUseLocalApplicationDataFolder;
+        private static bool? _selfContained;
         private static string? _pdfRenderer;
         private static bool? _watermark;
         private static string? _logFile;
@@ -34,7 +36,6 @@ namespace NeeView
         private static string? _neeviewProfile;
         private static FormatVersion? _checkVersion;
         private static string? _distributionUrl;
-
 
         // TODO: static でなくてよい
         static Environment()
@@ -157,6 +158,14 @@ namespace NeeView
                 {
                     return ProductVersion;
                 }
+            }
+        }
+
+        public static string UserAgent
+        {
+            get
+            {
+                return "NeeView/" + ProductVersion + $".{BuildVersion} ({System.Environment.OSVersion}; {(IsX64 ? "x64" : "x86")}) {PackageType}/{DateVersion} (Rev {Revision}{(SelfContained ? "" : "; fd")})";
             }
         }
 
@@ -302,6 +311,19 @@ namespace NeeView
             }
         }
 
+        // 自己完結型？
+        public static bool SelfContained
+        {
+            get
+            {
+                if (_selfContained == null)
+                {
+                    _selfContained = string.Compare(ConfigurationManager.AppSettings["SelfContained"], "True", true) == 0;
+                }
+                return (bool)_selfContained;
+            }
+        }
+
         // パッケージの種類(拡張子)
         public static string PackageType
         {
@@ -309,19 +331,38 @@ namespace NeeView
             {
                 if (_packageType == null)
                 {
-                    _packageType = ConfigurationManager.AppSettings["PackageType"] ?? ".zip";
-                    ////if (_packageType != ".msi") _packageType = ".zip";
+                    _packageType = ConfigurationManager.AppSettings["PackageType"] ?? "Dev";
                 }
                 return _packageType;
             }
         }
 
-        public static bool IsDevPackage => PackageType == ".dev";
-        public static bool IsZipPackage => PackageType == ".zip";
-        public static bool IsMsiPackage => PackageType == ".msi";
-        public static bool IsAppxPackage => PackageType == ".appx";
-        public static bool IsCanaryPackage => PackageType == ".canary";
-        public static bool IsBetaPackage => PackageType == ".beta";
+        /// <summary>
+        /// パッケージタイプに対応した拡張子を取得
+        /// </summary>
+        public static string PackageTypeExtension
+        {
+            get
+            {
+                return PackageType switch
+                {
+                    "Dev" => ".zip",
+                    "Zip" => ".zip",
+                    "Msi" => ".msi",
+                    "Appx" => ".appx",
+                    "Canary" => ".zip",
+                    "Beta" => ".zip",
+                    _ => throw new NotSupportedException(),
+                };
+            }
+        }
+
+        public static bool IsDevPackage => PackageType == "Dev";
+        public static bool IsZipPackage => PackageType == "Zip";
+        public static bool IsMsiPackage => PackageType == "Msi";
+        public static bool IsAppxPackage => PackageType == "Appx";
+        public static bool IsCanaryPackage => PackageType == "Canary";
+        public static bool IsBetaPackage => PackageType == "Beta";
 
         public static bool IsZipLikePackage => IsZipPackage || IsCanaryPackage || IsBetaPackage || IsDevPackage;
 
@@ -352,6 +393,18 @@ namespace NeeView
                     _dateVersion = ConfigurationManager.AppSettings["DateVersion"] ?? "??";
                 }
                 return _dateVersion;
+            }
+        }
+
+        public static string BuildVersion
+        {
+            get
+            {
+                if (_buildVersion == null)
+                {
+                    _buildVersion = ConfigurationManager.AppSettings["BuildVersion"] ?? "??";
+                }
+                return _buildVersion;
             }
         }
 
@@ -406,7 +459,7 @@ namespace NeeView
                     _checkVersion = version is null ? new FormatVersion(Environment.SolutionName) : new FormatVersion(Environment.SolutionName, version);
                 }
                 return _checkVersion;
-        }
+            }
         }
 
         // [開発用] バージョンチェック用のパッケージ配布場所
@@ -442,7 +495,6 @@ namespace NeeView
                 return _logFile;
             }
         }
-
 
 
         /// <summary>

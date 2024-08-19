@@ -238,8 +238,8 @@ function New-Package($platform, $productName, $productDir, $packageDir)
 	New-ConfigForZip $productDir "$productName.dll.config" $packageDir
 
 	# generate README.html
-	New-Readme $packageDir "en-us" ".zip"
-	New-Readme $packageDir "ja-jp" ".zip"
+	New-Readme $packageDir "en-us" "Zip"
+	New-Readme $packageDir "ja-jp" "Zip"
 }
 
 #----------------------
@@ -262,7 +262,7 @@ function New-Readme($packageDir, $culture, $target)
 	Copy-Item "$solutionDir\THIRDPARTY_LICENSES.md" $readmeDir
 	Copy-Item "$solutionDir\NeeLaboratory.IO.Search\THIRDPARTY_LICENSES.md" "$readmeDir\NeeLaboratory.IO.Search_THIRDPARTY_LICENSES.md"
 
-	if ($target -eq ".canary")
+	if ($target -eq "Canary")
 	{
 		Get-GitLogMarkdown "$product <VERSION/> - ChangeLog" | Set-Content -Encoding UTF8 "$readmeDir\ChangeLog.md"
 	}
@@ -273,7 +273,7 @@ function New-Readme($packageDir, $culture, $target)
 
 	$postfix = $version
 	$announce = ""
-	if ($target -eq ".canary")
+	if ($target -eq "Canary")
 	{
 		$postfix = "Canary ${dateVersion}"
 		$announce = "Rev. ${revision}`r`n`r`n" + (Get-Content -Path "$readmeDir/Canary.md" -Raw -Encoding UTF8)
@@ -296,7 +296,7 @@ function New-Readme($packageDir, $culture, $target)
 	$inputs = @()
 	$inputs += "$readmeDir\Overview.md"
 
-	if ($target -ne ".appx")
+	if ($target -ne "Appx")
 	{
 		$inputs += "$readmeDir\Environment.md"
 	}
@@ -350,7 +350,7 @@ function New-Zip($referenceDir, $packageDir, $packageZip)
 function Get-CulturesFromConfig($inputDir, $config)
 {
 	[xml]$xml = Get-Content "$inputDir\$config"
-
+	
 	$add = $xml.configuration.appSettings.add | Where { $_.key -eq 'Cultures' } | Select -First 1
 	return $add.value.Split(",")
 }
@@ -359,11 +359,17 @@ function Get-CulturesFromConfig($inputDir, $config)
 #
 function New-ConfigForZip($inputDir, $config, $outputDir)
 {
+	$selfContained = Test-Path("$inputDir\hostfxr.dll")
+	
 	# make config for zip
 	[xml]$xml = Get-Content "$inputDir\$config"
-
+	$xml.SelectNodes("//comment()") | ForEach-Object { $_.ParentNode.RemoveChild($_) }
+	
 	$add = $xml.configuration.appSettings.add | Where { $_.key -eq 'PackageType' } | Select -First 1
-	$add.value = '.zip'
+	$add.value = 'Zip'
+
+	$add = $xml.configuration.appSettings.add | Where { $_.key -eq 'SelfContained' } | Select -First 1
+	$add.value = $selfContained ? 'True' : 'False'
 
 	$add = $xml.configuration.appSettings.add | Where { $_.key -eq 'Watermark' } | Select -First 1
 	$add.value = 'False'
@@ -380,6 +386,9 @@ function New-ConfigForZip($inputDir, $config, $outputDir)
 	$add = $xml.configuration.appSettings.add | Where { $_.key -eq 'DateVersion' } | Select -First 1
 	$add.value = $dateVersion
 	
+	$add = $xml.configuration.appSettings.add | Where { $_.key -eq 'BuildVersion' } | Select -First 1
+	$add.value = $buildCount
+
 	if ($trace)
 	{
 		#<add key="LogFile" value="TraceLog.txt" />
@@ -407,9 +416,13 @@ function New-ConfigForMsi($inputDir, $config, $outputDir)
 {
 	# make config for installer
 	[xml]$xml = Get-Content "$inputDir\$config"
+	$xml.SelectNodes("//comment()") | ForEach-Object { $_.ParentNode.RemoveChild($_) }
 
 	$add = $xml.configuration.appSettings.add | Where { $_.key -eq 'PackageType' } | Select -First 1
-	$add.value = '.msi'
+	$add.value = 'Msi'
+
+	$add = $xml.configuration.appSettings.add | Where { $_.key -eq 'SelfContained' } | Select -First 1
+	$add.value = 'True'
 
 	$add = $xml.configuration.appSettings.add | Where { $_.key -eq 'Watermark' } | Select -First 1
 	$add.value = 'False'
@@ -425,6 +438,9 @@ function New-ConfigForMsi($inputDir, $config, $outputDir)
 
 	$add = $xml.configuration.appSettings.add | Where { $_.key -eq 'DateVersion' } | Select -First 1
 	$add.value = $dateVersion
+
+	$add = $xml.configuration.appSettings.add | Where { $_.key -eq 'BuildVersion' } | Select -First 1
+	$add.value = $buildCount
 
 	$utf8WithoutBom = New-Object System.Text.UTF8Encoding($false)
 	$outputFile = Join-Path (Convert-Path $outputDir) $config
@@ -440,9 +456,13 @@ function New-ConfigForAppx($inputDir, $config, $outputDir)
 {
 	# make config for appx
 	[xml]$xml = Get-Content "$inputDir\$config"
+	$xml.SelectNodes("//comment()") | ForEach-Object { $_.ParentNode.RemoveChild($_) }
 
 	$add = $xml.configuration.appSettings.add | Where { $_.key -eq 'PackageType' } | Select -First 1
-	$add.value = '.appx'
+	$add.value = 'Appx'
+
+	$add = $xml.configuration.appSettings.add | Where { $_.key -eq 'SelfContained' } | Select -First 1
+	$add.value = 'True'
 
 	$add = $xml.configuration.appSettings.add | Where { $_.key -eq 'Watermark' } | Select -First 1
 	$add.value = 'False'
@@ -458,6 +478,9 @@ function New-ConfigForAppx($inputDir, $config, $outputDir)
 
 	$add = $xml.configuration.appSettings.add | Where { $_.key -eq 'DateVersion' } | Select -First 1
 	$add.value = $dateVersion
+
+	$add = $xml.configuration.appSettings.add | Where { $_.key -eq 'BuildVersion' } | Select -First 1
+	$add.value = $buildCount
 
 	$utf8WithoutBom = New-Object System.Text.UTF8Encoding($false)
 	$outputFile = Join-Path (Convert-Path $outputDir) $config
@@ -471,11 +494,17 @@ function New-ConfigForAppx($inputDir, $config, $outputDir)
 #
 function New-ConfigForDevPackage($inputDir, $config, $target, $outputDir)
 {
+	$selfContained = Test-Path("$inputDir\hostfxr.dll")
+
 	# make config for canary
 	[xml]$xml = Get-Content "$inputDir\$config"
+	$xml.SelectNodes("//comment()") | ForEach-Object { $_.ParentNode.RemoveChild($_) }
 
 	$add = $xml.configuration.appSettings.add | Where { $_.key -eq 'PackageType' } | Select -First 1
 	$add.value = $target
+
+	$add = $xml.configuration.appSettings.add | Where { $_.key -eq 'SelfContained' } | Select -First 1
+	$add.value = $selfContained ? 'True' : 'False'
 
 	$add = $xml.configuration.appSettings.add | Where { $_.key -eq 'Watermark' } | Select -First 1
 	$add.value = 'True'
@@ -491,6 +520,9 @@ function New-ConfigForDevPackage($inputDir, $config, $target, $outputDir)
 
 	$add = $xml.configuration.appSettings.add | Where { $_.key -eq 'DateVersion' } | Select -First 1
 	$add.value = $dateVersion
+
+	$add = $xml.configuration.appSettings.add | Where { $_.key -eq 'BuildVersion' } | Select -First 1
+	$add.value = $buildCount
 
 	$utf8WithoutBom = New-Object System.Text.UTF8Encoding($false)
 	$outputFile = Join-Path (Convert-Path $outputDir) $config
@@ -688,8 +720,8 @@ function New-Appx($arch, $packageDir, $packageAppendDir, $appx)
 	New-ConfigForAppx $packageDir "${product}.dll.config" $contentDir
 
 	# generate README.html
-	New-Readme $contentDir "en-us" ".appx"
-	New-Readme $contentDir "ja-jp" ".appx"
+	New-Readme $contentDir "en-us" "Appx"
+	New-Readme $contentDir "ja-jp" "Appx"
 
 	. $env:CersPath/_$product.Parameter.ps1
 	$param = Get-AppxParameter
@@ -737,12 +769,12 @@ function Remove-Canary()
 
 function New-Canary($packageDir)
 {
-	New-DevPackage $packageDir $packageCanaryDir $packageCanary ".canary"
+	New-DevPackage $packageDir $packageCanaryDir $packageCanary "Canary"
 }
 
 function New-CanaryAnyCPU($packageDir)
 {
-	New-DevPackage $packageDir $packageCanaryDir_AnyCPU $packageCanary_AnyCPU ".canary"
+	New-DevPackage $packageDir $packageCanaryDir_AnyCPU $packageCanary_AnyCPU "Canary"
 }
 
 #--------------------------
@@ -762,7 +794,7 @@ function Remove-Beta()
 
 function New-Beta($packageDir)
 {
-	New-DevPackage $packageDir $packageBetaDir $packageBeta ".beta"
+	New-DevPackage $packageDir $packageBetaDir $packageBeta "Beta"
 }
 
 #--------------------------

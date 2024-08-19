@@ -5,23 +5,16 @@ namespace NeeView
     public class EnvironmentAccessor
     {
         [WordNodeMember]
-        public string NeeViewPath
-        {
-            get
-            {
-                return NeeView.Environment.AssemblyLocation;
-            }
-        }
+        public string NeeViewPath => Environment.AssemblyLocation;
 
         [WordNodeMember]
-        public string UserSettingFilePath
-        {
-            get
-            {
-                return SaveData.UserSettingFilePath;
-            }
-        }
+        public string UserSettingFilePath => SaveData.UserSettingFilePath;
 
+        [WordNodeMember]
+        public string PackageType => Environment.PackageType;
+
+        [WordNodeMember]
+        public string UserAgent => Environment.UserAgent;
 
         internal WordNode CreateWordNode(string name)
         {
