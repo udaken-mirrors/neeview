@@ -22,6 +22,16 @@ namespace NeeView
             MinorVersion = minorVersion;
             BuildVersion = buildVersion;
         }
+        
+        public FormatVersion(string name, string version)
+        {
+            Name = name;
+            var tokens = version.Split('.');
+            MajorVersion = int.Parse(tokens[0]);
+            MinorVersion = tokens.Length > 1 ? int.Parse(tokens[1]) : 0;
+            BuildVersion = tokens.Length > 2 ? int.Parse(tokens[2]) : 0;
+        }
+
 
         public string Name { get; private set; }
 

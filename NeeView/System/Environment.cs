@@ -32,6 +32,8 @@ namespace NeeView
         private static string? _logFile;
         private static Encoding? _encoding;
         private static string? _neeviewProfile;
+        private static FormatVersion? _checkVersion;
+        private static string? _distributionUrl;
 
 
         // TODO: static でなくてよい
@@ -393,6 +395,28 @@ namespace NeeView
             }
         }
 
+        // [開発用] バージョンチェック用のバージョンを指定
+        public static FormatVersion CheckVersion
+        {
+            get
+            {
+                if (_checkVersion is null)
+                {
+                    var version = ConfigurationManager.AppSettings["CheckVersion"];
+                    _checkVersion = version is null ? new FormatVersion(Environment.SolutionName) : new FormatVersion(Environment.SolutionName, version);
+                }
+                return _checkVersion;
+        }
+        }
+
+        // [開発用] バージョンチェック用のパッケージ配布場所
+        public static string DistributionUrl
+        {
+            get
+            {
+                return _distributionUrl ??= ConfigurationManager.AppSettings["DistributionUrl"] ?? "https://bitbucket.org/neelabo/neeview/downloads";
+            }
+        }
 
         // [開発用] 出力用ログファイル名
         public static string LogFile

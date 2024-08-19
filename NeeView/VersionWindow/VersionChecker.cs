@@ -19,21 +19,11 @@ namespace NeeView
 
         public VersionChecker()
         {
-            CurrentVersion = new FormatVersion(Environment.SolutionName);
+            CurrentVersion = Environment.CheckVersion;
             LastVersion = new FormatVersion(Environment.SolutionName, 0, 0, 0);
-
-#if DEBUG
-            // for Debug
-            //CurrentVersion = new FormatVersion(Environment.SolutionName, 36, 2, 0);
-#endif
         }
 
-
-#if DEBUG
-        public static string DownloadUri => "https://neelabo.bitbucket.io/NeeViewUpdateCheck.html";
-#else
-        public static string DownloadUri => "https://bitbucket.org/neelabo/neeview/downloads";
-#endif
+        public static string DownloadUri => Environment.DistributionUrl;
 
         public bool IsEnabled => Config.Current.System.IsNetworkEnabled && !Environment.IsAppxPackage && !Environment.IsCanaryPackage && !Environment.IsBetaPackage;
 
@@ -68,6 +58,7 @@ namespace NeeView
 
             try
             {
+                Debug.WriteLine($"CheckVersion: {CurrentVersion}, {DownloadUri}");
                 using (var client = new HttpClient())
                 {
                     var response = await client.GetAsync(new Uri(DownloadUri));
