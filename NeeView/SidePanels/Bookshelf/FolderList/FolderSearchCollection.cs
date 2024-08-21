@@ -167,6 +167,7 @@ namespace NeeView
                 Name = Path.GetFileName(nodeContent.Path),
                 TargetPath = new QueryPath(nodeContent.Path),
                 LastWriteTime = nodeContent.LastWriteTime,
+                CreationTime = nodeContent.CreationTime,
                 Length = -1,
                 Attributes = FolderItemAttribute.Directory,
                 IsReady = true
@@ -191,6 +192,7 @@ namespace NeeView
                     Name = Path.GetFileName(nodeContent.Path),
                     TargetPath = new QueryPath(nodeContent.Path),
                     LastWriteTime = nodeContent.LastWriteTime,
+                    CreationTime = nodeContent.CreationTime,
                     Length = nodeContent.Size,
                     IsReady = true
                 };

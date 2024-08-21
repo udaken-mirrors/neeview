@@ -393,7 +393,7 @@ namespace NeeView
                     {
                         var item = new MenuItem();
 
-                        if (CommandTable.Current.ContainsKey(this.CommandName))
+                        if (this.CommandName is not null && CommandTable.Current.ContainsKey(this.CommandName))
                         {
                             item.Header = this.Label;
                             item.Tag = this.CommandName;
@@ -752,7 +752,7 @@ namespace NeeView
             {
                 if (node.MenuElementType == MenuElementType.Command)
                 {
-                    Debug.Assert(CommandTable.Current.ContainsKey(node.CommandName));
+                    Debug.Assert(node.CommandName is not null && CommandTable.Current.ContainsKey(node.CommandName));
                 }
             }
         }

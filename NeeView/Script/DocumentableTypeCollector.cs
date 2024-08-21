@@ -108,6 +108,7 @@ namespace NeeView
                 case TypeCode.Double:
                 case TypeCode.String:
                 case TypeCode.Char:
+                case TypeCode.DateTime:
                     return false;
             }
 

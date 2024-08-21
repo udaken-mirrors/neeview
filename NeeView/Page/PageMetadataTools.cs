@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading;
 using NeeView.Media.Imaging.Metadata;
 using NeeView.Text;
@@ -29,6 +31,18 @@ namespace NeeView
             return MetadataValueTools.ToDispString(value) ?? "";
         }
 
+        public static Dictionary<string, string> GetValueStringMap(Page page, CancellationToken token)
+        {
+            var dic1 = InformationKeyExtensions.DefaultKeys.ToDictionary(e => e.ToString(), e => GetDefinedValue(page, e, token));
+
+            var pictureInfo = LoadPictureInfo(page, token);
+            var dic2 = pictureInfo?.Metadata?.ExtraMap.ToDictionary(e => e.Key, e => e.Value) ?? new();
+
+            var merged = dic1.Concat(dic2.Where(pair => !dic1.ContainsKey(pair.Key)))
+                .ToDictionary(pair => pair.Key, pair => MetadataValueTools.ToDispString(pair.Value) ?? "");
+
+            return merged;
+        }
 
         public static object? GetValue(Page page, string? name, CancellationToken token)
         {
@@ -36,19 +50,29 @@ namespace NeeView
 
             if (InformationKeyExtensions.TryParse(name, out var key))
             {
-                return key.ToInformationCategory() switch
-                {
-                    InformationCategory.File => CreateInformationFileValue(page, key),
-                    InformationCategory.Image => CreateInformationImageValue(page, key, token),
-                    InformationCategory.Metadata => CreateInformationMetaValue(page, key, token),
-                    _ => throw new NotSupportedException(),
-                };
+                return GetDefinedValue(page, key, token);
             }
             else
             {
-                var pictureInfo = LoadPictureInfo(page, token);
-                return pictureInfo?.Metadata?.LowerExtraMap.TryGetValue(name, out var value) == true ? value : "";
+                return GetExtraValue(page, name, token);
             }
+        }
+
+        public static object? GetDefinedValue(Page page, InformationKey key, CancellationToken token)
+        {
+            return key.ToInformationCategory() switch
+            {
+                InformationCategory.File => CreateInformationFileValue(page, key),
+                InformationCategory.Image => CreateInformationImageValue(page, key, token),
+                InformationCategory.Metadata => CreateInformationMetaValue(page, key, token),
+                _ => throw new NotSupportedException(),
+            };
+        }
+
+        public static object? GetExtraValue(Page page, string name, CancellationToken token)
+        {
+            var pictureInfo = LoadPictureInfo(page, token);
+            return pictureInfo?.Metadata?.LowerExtraMap.TryGetValue(name.ToLower(), out var value) == true ? value : null;
         }
 
         public static object? GetValue(Page page, InformationKey key)
@@ -147,7 +171,7 @@ namespace NeeView
         /// <param name="page"></param>
         /// <param name="token"></param>
         /// <returns></returns>
-        private static PictureInfo? LoadPictureInfo(Page page,CancellationToken token)
+        private static PictureInfo? LoadPictureInfo(Page page, CancellationToken token)
         {
             var pictureInfo = page.Content.PictureInfo;
             if (pictureInfo is null)

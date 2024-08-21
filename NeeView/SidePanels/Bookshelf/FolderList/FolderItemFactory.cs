@@ -140,6 +140,7 @@ namespace NeeView
                 Name = e.Name,
                 TargetPath = new QueryPath(e.FullName),
                 LastWriteTime = e.LastWriteTime,
+                CreationTime = e.CreationTime,
                 Length = -1,
                 Attributes = FolderItemAttribute.Directory,
                 IsReady = true
@@ -174,6 +175,7 @@ namespace NeeView
                     Name = e.Name,
                     TargetPath = new QueryPath(e.FullName),
                     LastWriteTime = e.LastWriteTime,
+                    CreationTime= e.CreationTime,
                     Length = e.Length,
                     IsReady = true
                 };
@@ -239,6 +241,7 @@ namespace NeeView
                 Name = name,
                 TargetPath = new QueryPath(entry.SystemPath),
                 LastWriteTime = entry.LastWriteTime,
+                CreationTime = entry.CreationTime,
                 Length = entry.Length,
                 Attributes = FolderItemAttribute.ArchiveEntry,
                 IsReady = true

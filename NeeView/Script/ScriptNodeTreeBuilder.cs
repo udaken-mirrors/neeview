@@ -121,15 +121,17 @@ namespace NeeView
 
         public ScriptErrorLevel ErrorLevel => Node.Alternative?.ErrorLevel ?? ScriptErrorLevel.Error;
 
-        public string Alternative
+        public string Alternative => CreateAlternativeMessage();
+
+        private string CreateAlternativeMessage()
         {
-            get
+            string msg = "";
+            if (Node.Alternative?.Alternative is not null)
             {
-                if (Node.Alternative?.Alternative is null) return "x";
                 var alt = Node.Alternative;
-                var msg = alt.IsFullName ? alt.Alternative : Prefixed(alt.Alternative);
-                return msg;
+                msg = alt.IsFullName ? alt.Alternative : Prefixed(alt.Alternative);
             }
+            return string.IsNullOrEmpty(msg) ? "x" : msg;
         }
 
         private string CreateFullName()
@@ -180,7 +182,7 @@ namespace NeeView
     }
 
 
-    
+
     /// <summary>
     /// ScriptNode: sourceをそのまま参照するタイプ
     /// </summary>
@@ -284,7 +286,7 @@ namespace NeeView
                 _ => throw new NotSupportedException(),
             };
         }
-        
+
         public object? GetValue()
         {
             return MemberInfo.Type switch

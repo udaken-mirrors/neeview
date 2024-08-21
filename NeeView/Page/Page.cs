@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
@@ -376,6 +377,11 @@ namespace NeeView
         public string GetMetaValue(string key, CancellationToken token)
         {
             return PageMetadataTools.GetValueString(this, key.ToLower(), token);
+        }
+
+        public Dictionary<string, string> GetMetaValueMap(CancellationToken token)
+        {
+            return PageMetadataTools.GetValueStringMap(this, token);
         }
 
         #endregion

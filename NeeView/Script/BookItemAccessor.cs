@@ -1,4 +1,6 @@
-﻿namespace NeeView
+﻿using System;
+
+namespace NeeView
 {
     public record class BookItemAccessor
     {
@@ -16,6 +18,15 @@
 
         [WordNodeMember]
         public string Path => _source.TargetPath.SimplePath;
+
+        [WordNodeMember]
+        public long Size => _source.Length;
+
+        [WordNodeMember]
+        public DateTime LastWriteTime => _source.LastWriteTime;
+
+        [WordNodeMember]
+        public DateTime CreationTime => _source.CreationTime;
     }
 
 }

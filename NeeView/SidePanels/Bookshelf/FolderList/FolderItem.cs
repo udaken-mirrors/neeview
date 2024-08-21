@@ -167,6 +167,8 @@ namespace NeeView
             get { return _entityPath; }
         }
 
+        // 作成日
+        public DateTime CreationTime { get; set; }
 
         // 最終更新日
         public DateTime LastWriteTime { get; set; }

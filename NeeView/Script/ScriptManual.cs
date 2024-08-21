@@ -1,6 +1,7 @@
 ﻿using NeeView.Text.SimpleHtmlBuilder;
 using NeeView.Windows.Property;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -111,6 +112,15 @@ namespace NeeView
             </p>
             """;
 
+        private static readonly List<Type> _typeCollection;
+
+
+        static ScriptManual()
+        {
+            _typeCollection = DocumentableTypeCollector.Collect(typeof(CommandHost));
+        }
+
+
         public void OpenScriptManual()
         {
             Directory.CreateDirectory(Temporary.Current.TempSystemDirectory);
@@ -174,16 +184,14 @@ namespace NeeView
 
             htmlBuilder.Append(typeof(CommandHost), "nv");
 
-            var collection = DocumentableTypeCollector.Collect(typeof(CommandHost));
-
-            foreach (var classType in collection.Where(e => !e.IsEnum).OrderBy(e => e.Name))
+            foreach (var classType in _typeCollection.Where(e => !e.IsEnum).OrderBy(e => e.Name))
             {
                 htmlBuilder.Append(classType);
             }
 
             htmlBuilder.Append($"<hr/>").AppendLine();
 
-            foreach (var enumType in collection.Where(e => e.IsEnum).OrderBy(e => e.Name))
+            foreach (var enumType in _typeCollection.Where(e => e.IsEnum).OrderBy(e => e.Name))
             {
                 htmlBuilder.Append(enumType);
             }
@@ -289,46 +297,56 @@ namespace NeeView
             builder.Append($"<h1 class=\"sub\" id=\"ObsoleteList\">{ResourceService.GetString("@_ScriptManual.S8")}</h1>");
 
             // Obsolete levels
-            builder.Append(ResourceService.Replace($"<h4>@Word.ObsoleteLevel</h4>"));
+            builder.Append(ResourceService.Replace($"<h4>@Word.Severity</h4>"));
             var obsoleteLevels = new TagNode("p")
                 .AddNode(new TagNode("table", "table-slim")
                     .AddNode(new TagNode("tr")
                         .AddNode(new TagNode("td").AddText($"{ScriptErrorLevel.Error}"))
-                        .AddNode(new TagNode("td").AddText($"@ScriptErrorLevel.Error.Obsolete")))
+                        .AddNode(new TagNode("td").AddText($"@ScriptErrorLevel.Error.Severity")))
                     .AddNode(new TagNode("tr")
                         .AddNode(new TagNode("td").AddText($"{ScriptErrorLevel.Warning}"))
-                        .AddNode(new TagNode("td").AddText($"@ScriptErrorLevel.Warning.Obsolete")))
+                        .AddNode(new TagNode("td").AddText($"@ScriptErrorLevel.Warning.Severity")))
                     .AddNode(new TagNode("tr")
                         .AddNode(new TagNode("td").AddText($"{ScriptErrorLevel.Info}"))
-                        .AddNode(new TagNode("td").AddText($"@ScriptErrorLevel.Info.Obsolete")))
+                        .AddNode(new TagNode("td").AddText($"@ScriptErrorLevel.Info.Severity")))
                 );
             builder.Append(obsoleteLevels.ToString());
 
             var commandHost = new CommandHost();
             var root = ScriptNodeTreeBuilder.Create(commandHost, "nv");
 
-            var groups = root.GetUnitEnumerator(null)
-                .Where(e => e.Node.Obsolete != null)
-                .GroupBy(e => e.Node.Alternative?.Version)
+            var nodeItems = root.GetUnitEnumerator(null)
+                .Where(e => e.Node.Obsolete != null || e.Node.Alternative != null)
+                .Select(e => new ScriptMemberAlternative(e.FullName, e.Node.Obsolete, e.Node.Alternative) { AlternativeMessage = e.Alternative });
+
+            var classItems = _typeCollection.Where(e => !e.IsEnum)
+                .SelectMany(e => new ScriptClassInfo(e).Members)
+                .Where(e => e.HasObsolete || e.HasAlternative)
+                .Select(e => new ScriptMemberAlternative(e.Name, e.ObsoleteAttribute, e.AlternativeAttribute));
+
+            var groups = nodeItems.Concat(classItems)
+                .GroupBy(e => e.Version)
                 .OrderBy(e => e.Key);
 
-            // ver.42 and later
-            foreach (var group in groups.Where(e => e.Key >= 42))
+            // ver.40 and later
+            foreach (var group in groups.Where(e => e.Key >= 40).OrderByDescending(e => e.Key))
             {
                 builder.Append($"<h2>Version {group.Key}.0</h2>");
 
                 var table = new TagNode("table", "table-slim table-topless")
                     .AddNode(new TagNode("tr")
-                        .AddNode(new TagNode("th").AddText($"@Word.ObsoleteLevel"))
+                        .AddNode(new TagNode("th").AddText($"@Word.Severity"))
                         .AddNode(new TagNode("th").AddText($"@Word.Name"))
+                        .AddNode(new TagNode("th").AddText($"@Word.Category"))
                         .AddNode(new TagNode("th").AddText($"@Word.Alternative")));
 
-                foreach (var unit in group.OrderByDescending(e => e.ErrorLevel).ThenBy(e => e.FullName))
+                foreach (var item in group.OrderByDescending(e => e.ErrorLevel).ThenBy(e => e.Name))
                 {
                     table.AddNode(new TagNode("tr")
-                        .AddNode(new TagNode("td")).AddText(unit.ErrorLevel.ToString())
-                        .AddNode(new TagNode("td")).AddText(unit.FullName)
-                        .AddNode(new TagNode("td")).AddText(unit.Alternative));
+                        .AddNode(new TagNode("td")).AddText(item.ErrorLevel.ToString())
+                        .AddNode(new TagNode("td")).AddText(item.Name)
+                        .AddNode(new TagNode("td")).AddText(item.HasObsolete ? "@Word.Obsolete" : "@Word.Changed")
+                        .AddNode(new TagNode("td")).AddText(item.AlternativeMessage));
                 }
                 builder.Append(table.ToString());
             }

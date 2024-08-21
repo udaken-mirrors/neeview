@@ -23,6 +23,8 @@ namespace NeeView
 
         public DateTime LastWriteTime => _info.LastWriteTime;
 
+        public DateTime CreationTime => _info.CreationTime;
+
         public long Size => _info is System.IO.FileInfo fileInfo ? fileInfo.Length : -1;
 
         public bool IsBookmark => BookmarkCollection.Current.Contains(Path);

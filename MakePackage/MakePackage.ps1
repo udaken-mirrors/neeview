@@ -363,7 +363,7 @@ function New-ConfigForZip($inputDir, $config, $outputDir)
 	
 	# make config for zip
 	[xml]$xml = Get-Content "$inputDir\$config"
-	$xml.SelectNodes("//comment()") | ForEach-Object { $_.ParentNode.RemoveChild($_) }
+	$null = $xml.SelectNodes("//comment()") | ForEach-Object { $_.ParentNode.RemoveChild($_) }
 	
 	$add = $xml.configuration.appSettings.add | Where { $_.key -eq 'PackageType' } | Select -First 1
 	$add.value = 'Zip'
@@ -416,7 +416,7 @@ function New-ConfigForMsi($inputDir, $config, $outputDir)
 {
 	# make config for installer
 	[xml]$xml = Get-Content "$inputDir\$config"
-	$xml.SelectNodes("//comment()") | ForEach-Object { $_.ParentNode.RemoveChild($_) }
+	$null = $xml.SelectNodes("//comment()") | ForEach-Object { $_.ParentNode.RemoveChild($_) }
 
 	$add = $xml.configuration.appSettings.add | Where { $_.key -eq 'PackageType' } | Select -First 1
 	$add.value = 'Msi'
@@ -456,7 +456,7 @@ function New-ConfigForAppx($inputDir, $config, $outputDir)
 {
 	# make config for appx
 	[xml]$xml = Get-Content "$inputDir\$config"
-	$xml.SelectNodes("//comment()") | ForEach-Object { $_.ParentNode.RemoveChild($_) }
+	$null = $xml.SelectNodes("//comment()") | ForEach-Object { $_.ParentNode.RemoveChild($_) }
 
 	$add = $xml.configuration.appSettings.add | Where { $_.key -eq 'PackageType' } | Select -First 1
 	$add.value = 'Appx'
@@ -498,7 +498,7 @@ function New-ConfigForDevPackage($inputDir, $config, $target, $outputDir)
 
 	# make config for canary
 	[xml]$xml = Get-Content "$inputDir\$config"
-	$xml.SelectNodes("//comment()") | ForEach-Object { $_.ParentNode.RemoveChild($_) }
+	$null = $xml.SelectNodes("//comment()") | ForEach-Object { $_.ParentNode.RemoveChild($_) }
 
 	$add = $xml.configuration.appSettings.add | Where { $_.key -eq 'PackageType' } | Select -First 1
 	$add.value = $target

@@ -1,6 +1,4 @@
 BookItemAccessor.Name=@Word.Name
-BookItemAccessor.Name=@Word.Name
-BookItemAccessor.Path=@Word.Path
 BookItemAccessor.Path=@Word.Path
 BookmarkNodeAccessor.Children=@Word.ChildNodes
 BookmarkNodeAccessor.Insert.Name=@Word.Name
@@ -67,3 +65,10 @@ ToggleStretchModeCommandParameter.IsEnableUniformToSize=@PageStretchMode.Uniform
 ToggleStretchModeCommandParameter.IsEnableUniformToVertical=@PageStretchMode.UniformToVertical
 ViewPageAccessor.Example=@[/Resources/Scripts/ViewPageAccessor.Example.nvjs]
 
+PageAccessor.LastWriteTime=@Word.LastWriteTime
+PageAccessor.CreationTime=@Word.CreationTime
+BookAccessor.LastWriteTime=@Word.LastWriteTime
+BookAccessor.CreationTime=@Word.CreationTime
+BookItemAccessor.LastWriteTime=@Word.LastWriteTime
+BookItemAccessor.CreationTime=@Word.CreationTime
+BookItemAccessor.Size=@BookAccessor.Size

@@ -1,4 +1,6 @@
-﻿using System.Threading;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading;
 
 namespace NeeView
 {
@@ -23,7 +25,11 @@ namespace NeeView
         public long Size => _page.Length;
 
         [WordNodeMember]
-        public string LastWriteTime => _page.LastWriteTime.ToString();
+        [Alternative("@_ScriptManual.DateTypeChangeNote", 42, ErrorLevel = ScriptErrorLevel.Error, IsFullName = true)]
+        public DateTime LastWriteTime => _page.LastWriteTime;
+
+        [WordNodeMember]
+        public DateTime CreationTime => _page.CreationTime;
 
 
         [WordNodeMember]
@@ -31,6 +37,13 @@ namespace NeeView
         {
             // TODO: スクリプト実行のキャンセルトークンを指定するように
             return _page.GetMetaValue(key, CancellationToken.None);
+        }
+
+        [WordNodeMember]
+        public Dictionary<string, string> GetMetaValueMap()
+        {
+            // TODO: スクリプト実行のキャンセルトークンを指定するように
+            return _page.GetMetaValueMap(CancellationToken.None);
         }
     }
 }

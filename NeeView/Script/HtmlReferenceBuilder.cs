@@ -498,6 +498,8 @@ namespace NeeView
                     return "double";
                 case TypeCode.String:
                     return "string";
+                case TypeCode.DateTime:
+                    return "Date";
             }
 
             if (type == typeof(object))

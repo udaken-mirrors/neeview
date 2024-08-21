@@ -20,6 +20,7 @@ namespace NeeView
         public string Path => _source.Path;
 
         [WordNodeMember]
-        public string LastAccessTime => _source.LastAccessTime.ToString();
+        [Alternative("@_ScriptManual.DateTypeChangeNote", 42, ErrorLevel = ScriptErrorLevel.Error, IsFullName = true)] // ver.42
+        public DateTime LastAccessTime => _source.LastAccessTime;
     }
 }
