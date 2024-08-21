@@ -22,5 +22,13 @@ namespace NeeView
         [WordNodeMember]
         [Alternative("@_ScriptManual.DateTypeChangeNote", 42, ErrorLevel = ScriptErrorLevel.Error, IsFullName = true)] // ver.42
         public DateTime LastAccessTime => _source.LastAccessTime;
+
+
+        [WordNodeMember]
+        public void Open()
+        {
+            var option = BookLoadOption.IsBook | BookLoadOption.KeepHistoryOrder;
+            BookHub.Current.RequestLoad(this, _source.Path, null, option, true);
+        }
     }
 }

@@ -31,6 +31,9 @@ namespace NeeView
         [WordNodeMember]
         public DateTime CreationTime => _page.CreationTime;
 
+        [WordNodeMember]
+        public bool IsBook => _page.PageType == PageType.Folder;
+
 
         [WordNodeMember]
         public string GetMetaValue(string key)
@@ -44,6 +47,26 @@ namespace NeeView
         {
             // TODO: スクリプト実行のキャンセルトークンを指定するように
             return _page.GetMetaValueMap(CancellationToken.None);
+        }
+
+
+        [WordNodeMember]
+        public void Open()
+        {
+            AppDispatcher.BeginInvoke(() =>
+            {
+                var handled = BookOperation.Current.JumpPageWithPath(this, _page.EntryFullName);
+                if (!handled)
+                {
+                    BookHub.Current.RequestLoad(this, _page.BookAddress, _page.EntryName, BookLoadOption.IsPage, true);
+                }
+            });
+        }
+
+        [WordNodeMember]
+        public void OpenAsBook()
+        {
+            BookHub.Current.RequestLoad(this, _page.EntryFullName, null, BookLoadOption.IsBook, true);
         }
     }
 }

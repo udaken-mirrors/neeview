@@ -27,6 +27,21 @@ namespace NeeView
 
         [WordNodeMember]
         public DateTime CreationTime => _source.CreationTime;
+
+
+        [WordNodeMember]
+        public void Open()
+        {
+            var option = BookLoadOption.IsBook | (_source.CanRemove() ? BookLoadOption.None : BookLoadOption.Undeletable);
+            BookHub.Current.RequestLoad(this, _source.TargetPath.SimplePath, null, option, true);
+        }
+
+        [WordNodeMember]
+        public void Open(bool isRecursive)
+        {
+            var option = BookLoadOption.IsBook | (_source.CanRemove() ? BookLoadOption.None : BookLoadOption.Undeletable) | (isRecursive ? BookLoadOption.Recursive : BookLoadOption.NotRecursive);
+            BookHub.Current.RequestLoad(this, _source.TargetPath.SimplePath, null, option, true);
+        }
     }
 
 }

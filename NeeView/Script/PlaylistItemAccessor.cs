@@ -17,6 +17,13 @@
 
         [WordNodeMember]
         public string Path => _source.Path;
+
+
+        [WordNodeMember]
+        public void Open()
+        {
+            BookHub.Current.RequestLoad(this, _source.Path, null, BookLoadOption.None, true);
+        }
     }
 
 }

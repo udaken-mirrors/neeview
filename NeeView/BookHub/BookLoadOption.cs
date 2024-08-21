@@ -126,21 +126,21 @@ namespace NeeView
         /// <summary>
         /// 設定を加味した再帰フラグを取得
         /// </summary>
-        /// <param name="isRecursived">デフォルト値</param>
+        /// <param name="isRecursive">デフォルト値</param>
         /// <param name="setting">設定</param>
-        public static bool CreateIsRecursiveFolder(bool isRecursived, BookLoadOption optios)
+        public static bool CreateIsRecursiveFolder(bool isRecursive, BookLoadOption options)
         {
-            if (optios.HasFlag(BookLoadOption.NotRecursive))
+            if (options.HasFlag(BookLoadOption.NotRecursive))
             {
                 return false;
             }
-            else if (optios.HasFlag(BookLoadOption.Recursive))
+            else if (options.HasFlag(BookLoadOption.Recursive))
             {
                 return true;
             }
             else
             {
-                return isRecursived;
+                return isRecursive;
             }
         }
 
