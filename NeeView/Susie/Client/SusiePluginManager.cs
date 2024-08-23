@@ -205,6 +205,18 @@ namespace NeeView
             }
         }
 
+        // Susie プラグインのサポート拡張子を更新
+        public void UpdateExtensions(SusiePluginType pluginType)
+        {
+            if (pluginType == SusiePluginType.Image)
+            {
+                UpdateImageExtensions();
+            }
+            else
+            {
+                UpdateArchiveExtensions();
+            }
+        }
 
         // Susie画像プラグインのサポート拡張子を更新
         public void UpdateImageExtensions()
@@ -228,6 +240,20 @@ namespace NeeView
             ArchiveExtensions.Restore(extensions);
 
             Debug.WriteLine("SusieAM Support: " + string.Join(" ", this.ArchiveExtensions));
+        }
+
+        // SusiePluginInfo を上書き
+        public void WriteSusiePluginInfo(SusiePluginInfo pluginInfo)
+        {
+            lock (_lock)
+            {
+                if (_client is null) throw new InvalidOperationException("Client is null");
+
+                var plugin = Plugins.FirstOrDefault(e => e.Name == pluginInfo.Name);
+                if (plugin is null) return;
+
+                plugin.Set(pluginInfo);
+            }
         }
 
         public void FlushSusiePluginSetting(string name)
@@ -275,11 +301,20 @@ namespace NeeView
                         var index = collection.IndexOf(plugin);
                         if (index >= 0)
                         {
-                            collection[index] = plugins[0];
+                            collection[index].Set(plugins[0]);
                         }
                     }
                 }
             }
+        }
+
+        // プラグイン設定の更新
+        public void UpdatePlugin(SusiePluginInfo pluginInfo)
+        {
+            WriteSusiePluginInfo(pluginInfo);
+            FlushSusiePluginSetting(pluginInfo.Name);
+            UpdateSusiePlugin(pluginInfo.Name);
+            UpdateExtensions(pluginInfo.PluginType);
         }
 
         public void FlushSusiePluginOrder()

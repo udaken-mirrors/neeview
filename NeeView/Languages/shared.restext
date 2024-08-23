@@ -72,3 +72,10 @@ BookAccessor.CreationTime=@Word.CreationTime
 BookItemAccessor.LastWriteTime=@Word.LastWriteTime
 BookItemAccessor.CreationTime=@Word.CreationTime
 BookItemAccessor.Size=@BookAccessor.Size
+
+SusiePluginAccessor.IsCacheEnabled=@SusiePluginWindow.IsCacheEnabled
+SusiePluginAccessor.IsEnabled=@SusiePluginWindow.IsEnabled
+SusiePluginAccessor.IsPreExtract=@SusiePluginWindow.IsPreExtract
+SusiePluginAccessor.Name=@Word.Name
+SusiePluginAccessor.Path=@Word.Path
+SusiePluginAccessor.PluginType=@SusiePluginType

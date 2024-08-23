@@ -37,6 +37,7 @@ namespace NeeView
             Navigator = new NavigatorPanelAccessor();
             ExternalAppCollection = new ExternalAppCollectionAccessor();
             DestinationFolderCollection = new DestinationFolderCollectionAccessor();
+            SusiePluginCollection = new SusiePluginCollectionAccessor();
         }
 
         [WordNodeMember(IsAutoCollect = false)]
@@ -89,8 +90,12 @@ namespace NeeView
 
         [WordNodeMember(IsAutoCollect = false)]
         public DestinationFolderCollectionAccessor DestinationFolderCollection { get; }
+        
+        [WordNodeMember(IsAutoCollect = false)]
+        public SusiePluginCollectionAccessor SusiePluginCollection { get; }
 
-        [WordNodeMember]
+
+    [WordNodeMember]
         [Obsolete("no used"), Alternative(nameof(Playlist), 39)] // ver.39
         public object? Pagemark
         {
@@ -211,6 +216,7 @@ namespace NeeView
             node.Children.Add(Navigator.CreateWordNode(nameof(Navigator)));
             node.Children.Add(ExternalAppCollection.CreateWordNode(nameof(ExternalAppCollection)));
             node.Children.Add(DestinationFolderCollection.CreateWordNode(nameof(DestinationFolderCollection)));
+            node.Children.Add(SusiePluginCollection.CreateWordNode(nameof(SusiePluginCollection)));
 
             return node;
         }
