@@ -761,6 +761,7 @@ ExportImageCommandParameter.FileNameMode=输出文件名
 ExportImageCommandParameter.HasBackground=包括背景
 ExportImageCommandParameter.IsDotKeep=保持点
 ExportImageCommandParameter.IsOriginalSize=以原始大小输出
+ExportImageCommandParameter.IsShowToast=
 ExportImageCommandParameter.Mode=输出图像类别
 ExportImageCommandParameter.QualityLevel=JPEG 品质
 ExportImageCommandParameter.QualityLevel.Remarks=仅在需要转换时才会被使用。

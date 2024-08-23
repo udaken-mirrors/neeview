@@ -43,8 +43,11 @@ namespace NeeView
 
             exporter.Export(filename, isOverwrite);
 
-            var toast = new Toast(string.Format(Properties.TextResources.GetString("ExportImage.Message.Success"), filename));
-            ToastService.Current.Show(toast);
+            if (parameter.IsShowToast)
+            {
+                var toast = new Toast(string.Format(Properties.TextResources.GetString("ExportImage.Message.Success"), filename));
+                ToastService.Current.Show(toast);
+            }
         }
 
     }

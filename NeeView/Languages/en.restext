@@ -763,6 +763,7 @@ ExportImageCommandParameter.FileNameMode=Output file name
 ExportImageCommandParameter.HasBackground=Include background
 ExportImageCommandParameter.IsDotKeep=Keep dot
 ExportImageCommandParameter.IsOriginalSize=Output in original size
+ExportImageCommandParameter.IsShowToast=Toast notification
 ExportImageCommandParameter.Mode=Output image type
 ExportImageCommandParameter.QualityLevel=JPEG quality
 ExportImageCommandParameter.QualityLevel.Remarks=It is used only when conversion is required.

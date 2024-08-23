@@ -763,6 +763,7 @@ ExportImageCommandParameter.FileNameMode=Nome do arquivo de saída
 ExportImageCommandParameter.HasBackground=Incluir plano de fundo
 ExportImageCommandParameter.IsDotKeep=Manter o ponto
 ExportImageCommandParameter.IsOriginalSize=Saída no tamanho original
+ExportImageCommandParameter.IsShowToast=
 ExportImageCommandParameter.Mode=Tipo de imagem de saída
 ExportImageCommandParameter.QualityLevel=Qualidade JPEG
 ExportImageCommandParameter.QualityLevel.Remarks=É usado somente quando a conversão é necessária.

@@ -13,6 +13,8 @@ namespace NeeView
         private ExportImageFileNameMode _fileNameMode;
         private ExportImageFormat _fileFormat;
         private int _qualityLevel = 80;
+        private bool _isShowToast = true;
+
 
         [PropertyMember]
         public ExportImageMode Mode
@@ -68,6 +70,13 @@ namespace NeeView
         {
             get => _qualityLevel;
             set => SetProperty(ref _qualityLevel, value);
+        }
+
+        [PropertyMember]
+        public bool IsShowToast
+        {
+            get { return _isShowToast; }
+            set { SetProperty(ref _isShowToast, value); }
         }
     }
 }
