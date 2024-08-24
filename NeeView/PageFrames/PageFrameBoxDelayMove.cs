@@ -62,7 +62,7 @@ namespace NeeView.PageFrames
                 token = _cancellationTokenSource.Token;
             }
 
-            Task.Run(() => MoveToAsync(parameter, item, lockKey, token));
+            Task.Run(() => MoveToAsync(parameter, container, lockKey, token));
         }
 
         /// <summary>
@@ -73,12 +73,12 @@ namespace NeeView.PageFrames
         /// <param name="lockKey"></param>
         /// <param name="token"></param>
         /// <returns></returns>
-        private async Task MoveToAsync(PageFrameMoveParameter parameter, PageFrameContent item, Locker.Key lockKey, CancellationToken token)
+        private async Task MoveToAsync(PageFrameMoveParameter parameter, PageFrameContainer container, Locker.Key lockKey, CancellationToken token)
         {
             try
             {
-                _loader.RequestLoad(item.FrameRange, parameter.Direction.ToSign());
-                await Task.WhenAll(item.ViewContents.Select(e => e.WaitLoadAsync(token)));
+                _loader.RequestLoad(container.FrameRange, parameter.Direction.ToSign());
+                await container.WaitLoadAsync(token);
                 _ = AppDispatcher.BeginInvoke(() => _box.MoveTo(parameter));
             }
             catch (OperationCanceledException)

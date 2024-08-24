@@ -4,10 +4,13 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Threading.Tasks;
+using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
+using NeeLaboratory.ComponentModel;
 using NeeLaboratory.Generators;
 
 
@@ -45,7 +48,7 @@ namespace NeeView.PageFrames
 
 
 
-    public class PageFrameContainer : Grid, IDisposable, IComparable<PageFrameContainer>, INotifyTransformChanged, IScaleControl, IAngleControl, IPointControl, IFlipControl, IScrollable
+    public partial class PageFrameContainer : Grid, IDisposable, IComparable<PageFrameContainer>, INotifyTransformChanged, IScaleControl, IAngleControl, IPointControl, IFlipControl, IScrollable
     {
         private double _ms = 0.0;
 
@@ -124,10 +127,19 @@ namespace NeeView.PageFrames
         }
 
 
+        [Subscribable] 
         public event TransformChangedEventHandler? TransformChanged;
+        
+        [Subscribable]
         public event EventHandler? ContentSizeChanged;
+
+        [Subscribable]
         public event EventHandler? ContainerLayoutChanged;
+        
+        [Subscribable]
         public event EventHandler? ContentChanged;
+
+        [Subscribable]
         public event EventHandler<FrameViewContentChangedEventArgs>? ViewContentChanged;
 
 
@@ -539,6 +551,28 @@ namespace NeeView.PageFrames
         {
             IsStable = stable;
             this.Visibility = IsStable ? Visibility.Visible : Visibility.Collapsed;
+        }
+
+        /// <summary>
+        /// Wait Load ViewSource
+        /// </summary>
+        /// <param name="token"></param>
+        /// <returns></returns>
+        public async Task WaitLoadAsync(CancellationToken token)
+        {
+            if (_disposedValue) return;
+
+            using var disposables = new DisposableCollection();
+            var tcs = new TaskCompletionSource();
+            disposables.Add(token.Register(() => tcs.TrySetCanceled()));
+            disposables.Add(SubscribeViewContentChanged((s, e) => { if (IsViewSourceLoaded()) { tcs.TrySetResult(); } }));
+            if (IsViewSourceLoaded()) return;
+            await tcs.Task;
+        }
+
+        private bool IsViewSourceLoaded()
+        {
+            return _content is PageFrameContent content ? content.ViewContents.All(e => e.ViewSource.IsLoaded) : true;
         }
     }
 
