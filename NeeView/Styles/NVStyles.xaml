@@ -201,7 +201,7 @@
             <VisualStateManager.VisualStateGroups>
                 <VisualStateGroup x:Name="CommonStates">
                     <VisualState x:Name="Normal">
-                        <Storyboard BeginTime="0:0:2.0">
+                        <Storyboard BeginTime="0:0:1.0">
                             <DoubleAnimation Duration="0:0:0.1" Storyboard.TargetProperty="ScaleX" Storyboard.TargetName="Scaler" To="0.125" />
                             <DoubleAnimation Duration="0:0:0.1" Storyboard.TargetProperty="Opacity" Storyboard.TargetName="Bd" To="0" />
                             <DoubleAnimation Duration="0:0:0.1" Storyboard.TargetProperty="Opacity" Storyboard.TargetName="UpButton" To="0" />
@@ -209,8 +209,8 @@
                         </Storyboard>
                     </VisualState>
                     <VisualState x:Name="MouseOver">
-                        <Storyboard BeginTime="0:0:0.1">
-                            <DoubleAnimation Duration="0:0:0.0" Storyboard.TargetProperty="ScaleX" Storyboard.TargetName="Scaler" To="1.0" />
+                        <Storyboard BeginTime="0:0:0.0">
+                            <DoubleAnimation Duration="0:0:0.1" Storyboard.TargetProperty="ScaleX" Storyboard.TargetName="Scaler" To="1.0" />
                             <DoubleAnimation Duration="0:0:0.1" Storyboard.TargetProperty="Opacity" Storyboard.TargetName="Bd" To="1" />
                             <DoubleAnimation Duration="0:0:0.1" Storyboard.TargetProperty="Opacity" Storyboard.TargetName="UpButton" To="1" />
                             <DoubleAnimation Duration="0:0:0.1" Storyboard.TargetProperty="Opacity" Storyboard.TargetName="DownButton" To="1" />
@@ -253,7 +253,7 @@
             <VisualStateManager.VisualStateGroups>
                 <VisualStateGroup x:Name="CommonStates">
                     <VisualState x:Name="Normal">
-                        <Storyboard BeginTime="0:0:2.0">
+                        <Storyboard BeginTime="0:0:1.0">
                             <DoubleAnimation Duration="0:0:0.1" Storyboard.TargetProperty="ScaleY" Storyboard.TargetName="Scaler" To="0.125" />
                             <DoubleAnimation Duration="0:0:0.1" Storyboard.TargetProperty="Opacity" Storyboard.TargetName="Bd" To="0" />
                             <DoubleAnimation Duration="0:0:0.1" Storyboard.TargetProperty="Opacity" Storyboard.TargetName="LeftButton" To="0" />
@@ -261,8 +261,8 @@
                         </Storyboard>
                     </VisualState>
                     <VisualState x:Name="MouseOver">
-                        <Storyboard BeginTime="0:0:0.1">
-                            <DoubleAnimation Duration="0:0:0.0" Storyboard.TargetProperty="ScaleY" Storyboard.TargetName="Scaler" To="1.0" />
+                        <Storyboard BeginTime="0:0:0.0">
+                            <DoubleAnimation Duration="0:0:0.1" Storyboard.TargetProperty="ScaleY" Storyboard.TargetName="Scaler" To="1.0" />
                             <DoubleAnimation Duration="0:0:0.1" Storyboard.TargetProperty="Opacity" Storyboard.TargetName="Bd" To="1" />
                             <DoubleAnimation Duration="0:0:0.1" Storyboard.TargetProperty="Opacity" Storyboard.TargetName="LeftButton" To="1" />
                             <DoubleAnimation Duration="0:0:0.1" Storyboard.TargetProperty="Opacity" Storyboard.TargetName="RightButton" To="1" />
