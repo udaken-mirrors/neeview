@@ -7,6 +7,7 @@ namespace NeeView
     public class ScriptCommandSource
     {
         public const string Extension = ".nvjs";
+        public const string OnStartupFilename = "OnStartup";
         public const string OnBookLoadedFilename = "OnBookLoaded";
         public const string OnPageChangedFilename = "OnPageChanged";
         public const string OnWindowStateChangedFilename = "OnWindowStateChanged";
@@ -40,6 +41,10 @@ namespace NeeView
 
             switch (filename)
             {
+                case OnStartupFilename:
+                    source.Remarks = Properties.TextResources.GetString("ScriptOnStartupCommand.Remarks");
+                    break;
+
                 case OnBookLoadedFilename:
                     source.Remarks = Properties.TextResources.GetString("ScriptOnBookLoadedCommand.Remarks");
                     break;

@@ -1763,6 +1763,7 @@ ScriptErrorMessage.Alternative=请改用替代的 {0} 。
 ScriptErrorMessage.Obsolete={0} 已被废除。
 ScriptOnBookLoadedCommand.Remarks=当开启书本时执行。
 ScriptOnPageChangedCommand.Remarks=当显示页面被更改时执行。
+ScriptOnStartupCommand.Remarks=
 ScriptOnWindowStateChangedCommand.Remarks=
 ScrollPageCommandParameter.EndMargin=滚动结尾边距 (像素)
 ScrollPageCommandParameter.EndMargin.Remarks=在达到这个滚动距离之前先优先以行移动。

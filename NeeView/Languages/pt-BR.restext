@@ -1772,6 +1772,7 @@ ScriptErrorMessage.Alternative=Use {0} em vez disso.
 ScriptErrorMessage.Obsolete={0} está obsoleto.
 ScriptOnBookLoadedCommand.Remarks=Executa quando o livro é aberto.
 ScriptOnPageChangedCommand.Remarks=Executa quando as páginas de visualização são alteradas.
+ScriptOnStartupCommand.Remarks=
 ScriptOnWindowStateChangedCommand.Remarks=
 ScrollPageCommandParameter.EndMargin=Rolar ao final da margem
 ScrollPageCommandParameter.EndMargin.Remarks=Se a distância de rolagem for menor que isso, o movimento da linha será priorizado.

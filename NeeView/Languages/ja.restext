@@ -1763,6 +1763,7 @@ ScriptErrorMessage.Alternative=代わりに {0} を使用してください。
 ScriptErrorMessage.Obsolete={0} は廃止されました。
 ScriptOnBookLoadedCommand.Remarks=ブックを開いたときに実行されます。
 ScriptOnPageChangedCommand.Remarks=表示ページが変更されたときに実行されます。
+ScriptOnStartupCommand.Remarks=アプリ起動時に実行されます。
 ScriptOnWindowStateChangedCommand.Remarks=ウィンドウ状態が変更されたときに実行されます。
 ScrollPageCommandParameter.EndMargin=スクロール終端マージン (ピクセル)
 ScrollPageCommandParameter.EndMargin.Remarks=このスクロール距離未満では行移動が優先されます。

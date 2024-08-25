@@ -287,6 +287,9 @@ namespace NeeView
             {
                 ScriptManager.Current.Execute(this, App.Current.Option.ScriptFile, null, null);
             }
+
+            // Script: OnStartup
+            CommandTable.Current.TryExecute(this, ScriptCommand.EventOnStartup, null, CommandOption.None);
         }
 
         public void ContentRendered()
