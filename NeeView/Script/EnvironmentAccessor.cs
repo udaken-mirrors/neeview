@@ -14,6 +14,24 @@ namespace NeeView
         public string PackageType => Environment.PackageType;
 
         [WordNodeMember]
+        public string Version => Environment.DispVersionShort;
+
+        [WordNodeMember]
+        public string ProductVersion => Environment.ProductVersion + "." + Environment.BuildVersion;
+
+        [WordNodeMember]
+        public string DateVersion => Environment.DateVersion;
+
+        [WordNodeMember]
+        public string Revision => Environment.Revision;
+
+        [WordNodeMember]
+        public bool SelfContained => Environment.SelfContained;
+
+        [WordNodeMember]
+        public string OSVersion => Environment.OSVersion;
+
+        [WordNodeMember]
         public string UserAgent => Environment.UserAgent;
 
         internal WordNode CreateWordNode(string name)

@@ -165,9 +165,12 @@ namespace NeeView
         {
             get
             {
-                return "NeeView/" + ProductVersion + $".{BuildVersion} ({System.Environment.OSVersion}; {(IsX64 ? "x64" : "x86")}) {PackageType}/{DateVersion} (Rev {Revision}{(SelfContained ? "" : "; fd")})";
+                return SolutionName + "/" + ProductVersion + $".{BuildVersion} ({OSVersion}) {PackageType}/{DateVersion} (Rev {Revision}{(SelfContained ? "" : "; fd")})";
             }
         }
+
+        public static string OSVersion => $"{System.Environment.OSVersion}; {(IsX64 ? "x64" : "x86")}";
+
 
         /// <summary>
         /// プロダクトバージョン(int)
