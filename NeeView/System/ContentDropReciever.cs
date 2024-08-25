@@ -69,9 +69,19 @@ namespace NeeView
         // ドラッグ＆ドロップで処理を開始する
         private async void Element_Drop(object sender, DragEventArgs e)
         {
+            FocusWindow(sender as DependencyObject);
             await LoadDataObjectAsync(e.Data);
         }
 
+        // ウィンドウフォーカスを得る
+        private static void FocusWindow(DependencyObject? dependencyObject)
+        {
+            if (dependencyObject is null) return;
+
+            var window = Window.GetWindow(dependencyObject);
+            window?.Activate();
+            (dependencyObject as FrameworkElement)?.Focus();
+        }
 
         // コピー＆ペーストできる？
         public bool CanLoadFromClipboard()
