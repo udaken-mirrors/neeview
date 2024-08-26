@@ -189,7 +189,7 @@ namespace NeeView
         /// </summary>
         private void RemoveHistory_CanExecute(object? sender, CanExecuteRoutedEventArgs e)
         {
-            e.CanExecute = sender is ListBox { SelectedItem: FolderItem item } && BookHistoryCollection.Current.Contains(item.TargetPath.SimplePath);
+            e.CanExecute = true;
         }
 
         /// <summary>
@@ -197,11 +197,7 @@ namespace NeeView
         /// </summary>
         private void RemoveHistory_Executed(object? sender, ExecutedRoutedEventArgs e)
         {
-            if (sender is ListBox { SelectedItem: FolderItem item })
-            {
-                BookHistoryCollection.Current.Remove(item.TargetPath.SimplePath);
-            }
-
+            BookHistoryCollection.Current.Remove(this.ListBox.SelectedItems.Cast<FolderItem>().Select(e => e.TargetPath.SimplePath));
         }
 
         /// <summary>
@@ -526,7 +522,7 @@ namespace NeeView
             _vm.Model.AddBookmark();
         }
 
-#endregion
+        #endregion
 
         #region DragDrop
 
