@@ -18,16 +18,16 @@ namespace NeeView
 
         protected override RenameControl CreateRenameControl(ListBox listBox, PlaylistItem item)
         {
-            return new PlaylistItemmRenameControl(listBox, item, _renameFunc);
+            return new PlaylistItemRenameControl(listBox, item, _renameFunc);
         }
     }
 
 
-    public class PlaylistItemmRenameControl : ListBoxItemRenameControl<PlaylistItem>
+    public class PlaylistItemRenameControl : ListBoxItemRenameControl<PlaylistItem>
     {
         private readonly Func<PlaylistItem, string, bool> _renameFunc;
 
-        public PlaylistItemmRenameControl(ListBox listBox, PlaylistItem item, Func<PlaylistItem, string, bool> renameFunc) : base(listBox, item)
+        public PlaylistItemRenameControl(ListBox listBox, PlaylistItem item, Func<PlaylistItem, string, bool> renameFunc) : base(listBox, item)
         {
             _renameFunc = renameFunc;
 

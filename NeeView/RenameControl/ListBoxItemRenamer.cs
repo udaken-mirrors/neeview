@@ -14,9 +14,14 @@ namespace NeeView
     {
         private readonly ListBox _listBox;
         private readonly IToolTipService? _toolTipService;
+        private readonly bool _selectItem;
 
 
-        public ListBoxItemRenamer(ListBox listBox, IToolTipService? toolTipService)
+        public ListBoxItemRenamer(ListBox listBox, IToolTipService? toolTipService) : this(listBox, toolTipService, true)
+        {
+        }
+
+        public ListBoxItemRenamer(ListBox listBox, IToolTipService? toolTipService, bool selectItem)
         {
             _listBox = listBox;
             _toolTipService = toolTipService;
@@ -50,7 +55,10 @@ namespace NeeView
             {
                 while (item != null && item.CanRename())
                 {
-                    SelectItem(listBox, item);
+                    if (_selectItem)
+                    {
+                        SelectItem(listBox, item);
+                    }
                     var control = CreateRenameControl(listBox, item);
                     var result = await control.ShowAsync();
                     item = ListBoxItemRenamer<TItem>.GetNextItem(listBox, item, result.MoveRename);

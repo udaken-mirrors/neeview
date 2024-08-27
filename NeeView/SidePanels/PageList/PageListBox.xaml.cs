@@ -45,7 +45,7 @@ namespace NeeView
         {
             InitializeComponent();
 
-            _commandResource = new PageCommandResource(this);
+            _commandResource = new PageListItemCommandResource(this);
             InitializeCommand();
 
             _vm = vm;
@@ -141,7 +141,7 @@ namespace NeeView
         public static readonly RoutedCommand OpenExternalAppDialogCommand = new(nameof(OpenExternalAppDialogCommand), typeof(PageListBox));
         public static readonly RoutedCommand PlaylistMarkCommand = new(nameof(PlaylistMarkCommand), typeof(PageListBox));
 
-        private readonly PageCommandResource _commandResource;
+        private readonly PageListItemCommandResource _commandResource;
 
         private static void InitializeCommandStatic()
         {

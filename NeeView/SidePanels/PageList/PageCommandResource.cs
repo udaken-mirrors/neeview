@@ -11,7 +11,8 @@ using System.Windows.Input;
 
 namespace NeeView
 {
-    public class PageCommandResource
+    public class PageCommandResource<TItem>
+        where TItem : class, IRenameable
     {
         private readonly IToolTipService? _toolTipService;
 
@@ -355,13 +356,18 @@ namespace NeeView
             var listBox = GetListBox(sender);
             if (listBox is null) return;
 
-            var item = GetSelectedPage(sender);
+            var item = listBox.SelectedItem as TItem;
             if (item is null) return;
 
-            var renamer = new PageListItemRenamer(listBox, _toolTipService);
-            renamer.SelectedItemChanged += (s, e) => BookOperation.Current.JumpPage(this, listBox.SelectedItem as Page);
-            renamer.ArchiveChanged += (s, e) => BookOperation.Current.BookControl.ReLoad();
+            var renamer = CreateListBoxItemRenamer(listBox, item, _toolTipService);
+            if (renamer is null) return;
+
             await renamer.RenameAsync(item);
+        }
+    
+        protected virtual ListBoxItemRenamer<TItem>? CreateListBoxItemRenamer(ListBox listBox, TItem item, IToolTipService? toolTipService)
+        {
+            return null;
         }
 
         #endregion Rename

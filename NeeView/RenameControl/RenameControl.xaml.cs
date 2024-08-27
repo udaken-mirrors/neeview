@@ -38,14 +38,17 @@ namespace NeeView
         {
             InitializeComponent();
 
-            _manager = RenameManager.GetRenameManager(source.Target)
+            _manager = RenameManager.GetRenameManager(source.Target ?? source.TargetContainer)
                 ?? throw new InvalidOperationException("RenameManager must not be null.");
 
             this.Target = source.Target;
             this.StoredFocusTarget = source.TargetContainer;
-            this.RenameTextBox.FontFamily = this.Target.FontFamily;
-            this.RenameTextBox.FontSize = this.Target.FontSize;
-            _text = source.Text; // GetFixedText(source.Text, false);
+            if (this.Target is not null)
+            {
+                this.RenameTextBox.FontFamily = this.Target.FontFamily;
+                this.RenameTextBox.FontSize = this.Target.FontSize;
+            }
+            _text = source.Text;
             _oldText = _text;
             _oldValue = _text;
 
@@ -62,7 +65,7 @@ namespace NeeView
 
 
         // リネームを行うTextBlock
-        public TextBlock Target { get; private set; }
+        public TextBlock? Target { get; private set; }
 
         // ファイル名禁則文字制御
         public bool IsInvalidFileNameChars
@@ -117,7 +120,7 @@ namespace NeeView
         }
 
         // フォーカスを戻すコントロール
-        public UIElement? StoredFocusTarget { get; set; }
+        public UIElement StoredFocusTarget { get; set; }
 
 
         private string GetFixedText(string source, bool withToast)
@@ -299,13 +302,26 @@ namespace NeeView
         /// </summary>
         public void SyncLayout()
         {
-            if (this.Target is null) throw new InvalidOperationException();
-
-            var pos = this.Target.TranslatePoint(new Point(0, 0), _manager) - new Vector(3, 2);
+            Point pos;
+            if (this.Target is not null)
+            {
+                pos = this.Target.TranslatePoint(new Point(-3, -2), _manager);
+            }
+            else
+            {
+                pos = this.StoredFocusTarget.TranslatePoint(new Point(2, 2), _manager);
+            }
             Canvas.SetLeft(this, pos.X);
             Canvas.SetTop(this, pos.Y);
 
             this.MaxWidth = _manager.ActualWidth - pos.X - 8;
+        }
+
+        public void SetTargetVisibility(Visibility visibility)
+        {
+            if (this.Target is null) return;
+
+            this.Target.Visibility = visibility;
         }
     }
 }

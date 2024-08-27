@@ -1,5 +1,4 @@
-﻿using NeeLaboratory.Linq;
-using NeeView.Windows;
+﻿using NeeView.Windows;
 using NeeView.Windows.Media;
 using System;
 using System.Collections.Generic;
@@ -82,7 +81,7 @@ namespace NeeView
         public static readonly RoutedCommand OpenDestinationFolderCommand = new(nameof(OpenDestinationFolderCommand), typeof(PlaylistListBox));
         public static readonly RoutedCommand OpenExternalAppDialogCommand = new(nameof(OpenExternalAppDialogCommand), typeof(PlaylistListBox));
 
-        private readonly PlaylistPageCommandResource _commandResource = new();
+        private readonly PlaylistItemCommandResource _commandResource = new();
 
         private static void InitializeCommandStatic()
         {
@@ -634,27 +633,5 @@ namespace NeeView
         }
 
         #endregion UI Accessor
-    }
-
-    public class PlaylistPageCommandResource : PageCommandResource
-    {
-        protected override Page? GetSelectedPage(object sender)
-        {
-            return ((sender as ListBox)?.SelectedItem as PlaylistItem)?.ArchivePage;
-        }
-
-        protected override List<Page>? GetSelectedPages(object sender)
-        {
-            return (sender as ListBox)?.SelectedItems?
-                .Cast<PlaylistItem>()
-                .WhereNotNull()
-                .Select(e => e.ArchivePage)
-                .ToList();
-        }
-
-        protected override bool CanMoveToFolder(IEnumerable<Page> pages)
-        {
-            return false;
-        }
     }
 }

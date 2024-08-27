@@ -93,7 +93,7 @@ namespace NeeView
         {
             InitializeComponent();
 
-            _commandResource = new PageCommandResource(null);
+            _commandResource = new ThumbnailListItemCommandResource();
             InitializeCommand();
 
             this.Root.IsVisibleChanged +=
@@ -111,11 +111,12 @@ namespace NeeView
         public static readonly RoutedCommand CopyToFolderCommand = new(nameof(CopyToFolderCommand), typeof(ThumbnailListView));
         public static readonly RoutedCommand MoveToFolderCommand = new(nameof(MoveToFolderCommand), typeof(ThumbnailListView));
         public static readonly RoutedCommand RemoveCommand = new(nameof(RemoveCommand), typeof(ThumbnailListView));
+        public static readonly RoutedCommand RenameCommand = new(nameof(RenameCommand), typeof(ThumbnailListView));
         public static readonly RoutedCommand OpenDestinationFolderCommand = new(nameof(OpenDestinationFolderCommand), typeof(ThumbnailListView));
         public static readonly RoutedCommand OpenExternalAppDialogCommand = new(nameof(OpenExternalAppDialogCommand), typeof(ThumbnailListView));
         public static readonly RoutedCommand PlaylistMarkCommand = new(nameof(PlaylistMarkCommand), typeof(ThumbnailListView));
 
-        private readonly PageCommandResource _commandResource;
+        private readonly ThumbnailListItemCommandResource _commandResource;
 
         private static void InitializeCommandStatic()
         {
@@ -123,6 +124,7 @@ namespace NeeView
             ////OpenBookCommand.InputGestures.Add(new KeyGesture(Key.Down, ModifierKeys.Alt));
             CopyCommand.InputGestures.Add(new KeyGesture(Key.C, ModifierKeys.Control));
             RemoveCommand.InputGestures.Add(new KeyGesture(Key.Delete));
+            RenameCommand.InputGestures.Add(new KeyGesture(Key.F2));
             PlaylistMarkCommand.InputGestures.Add(new KeyGesture(Key.M, ModifierKeys.Control));
         }
 
@@ -136,6 +138,7 @@ namespace NeeView
             this.ThumbnailListBox.CommandBindings.Add(_commandResource.CreateCommandBinding(CopyToFolderCommand));
             this.ThumbnailListBox.CommandBindings.Add(_commandResource.CreateCommandBinding(MoveToFolderCommand));
             this.ThumbnailListBox.CommandBindings.Add(_commandResource.CreateCommandBinding(RemoveCommand));
+            this.ThumbnailListBox.CommandBindings.Add(_commandResource.CreateCommandBinding(RenameCommand));
             this.ThumbnailListBox.CommandBindings.Add(_commandResource.CreateCommandBinding(OpenDestinationFolderCommand));
             this.ThumbnailListBox.CommandBindings.Add(_commandResource.CreateCommandBinding(OpenExternalAppDialogCommand));
             this.ThumbnailListBox.CommandBindings.Add(_commandResource.CreateCommandBinding(PlaylistMarkCommand));
@@ -592,6 +595,7 @@ namespace NeeView
             contextMenu.Items.Add(DestinationFolderCollectionUtility.CreateDestinationFolderItem(Properties.TextResources.GetString("PageListItem.Menu.MoveToFolder"), _commandResource.MoveToFolder_CanExecute(listBox), MoveToFolderCommand, OpenDestinationFolderCommand));
             contextMenu.Items.Add(new Separator());
             contextMenu.Items.Add(new MenuItem() { Header = Properties.TextResources.GetString("PageListItem.Menu.Delete"), Command = RemoveCommand });
+            contextMenu.Items.Add(new MenuItem() { Header = Properties.TextResources.GetString("PageListItem.Menu.Rename"), Command = RenameCommand });
         }
 
         #endregion

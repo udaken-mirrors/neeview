@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -16,7 +17,7 @@ using System.Windows.Media.Effects;
 namespace NeeView
 {
 
-    public class FileInformationSource : BindableBase
+    public class FileInformationSource : BindableBase, IRenameable
     {
         private List<FileInformationRecord>? _properties;
 
@@ -214,5 +215,23 @@ namespace NeeView
             GpsLocation?.OpenMap(Config.Current.Information.MapProgramFormat);
         }
 
+        #region IRenameable
+
+        public string GetRenameText()
+        {
+            return ((IRenameable)Page).GetRenameText();
+        }
+
+        public bool CanRename()
+        {
+            return ((IRenameable)Page).CanRename();
+        }
+
+        public Task<bool> RenameAsync(string name)
+        {
+            return ((IRenameable)Page).RenameAsync(name);
+        }
+
+        #endregion IRenameable
     }
 }

@@ -37,6 +37,12 @@ namespace NeeView
                 return VisualTreeUtility.HasParentElement(popupElement, _target, true);
             }
 
+            var renameElement = MainWindow.Current.RenameManager.RenameElement;
+            if (renameElement != null)
+            {
+                return VisualTreeUtility.HasParentElement(renameElement, _target);
+            }
+
             return false;
         }
     }

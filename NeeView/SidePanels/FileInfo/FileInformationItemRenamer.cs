@@ -6,36 +6,34 @@ using System.Windows.Controls;
 namespace NeeView
 {
     /// <summary>
-    /// ページリスト用名前変更機能
+    /// 情報ページ用名前変更機能
     /// </summary>
-    public class PageListItemRenamer : ListBoxItemRenamer<Page>
+    public class FileInformationItemRenamer : ListBoxItemRenamer<FileInformationSource>
     {
-        private readonly bool _findTextBlock;
-
-        public PageListItemRenamer(ListBox listBox, IToolTipService? toolTipService, bool findTextBlock) : base(listBox, toolTipService)
+        public FileInformationItemRenamer(ListBox listBox, IToolTipService? toolTipService) : base(listBox, toolTipService, false)
         {
-            _findTextBlock = findTextBlock;
         }
 
         public event EventHandler? ArchiveChanged;
 
-        protected override RenameControl CreateRenameControl(ListBox listBox, Page item)
+        protected override RenameControl CreateRenameControl(ListBox listBox, FileInformationSource item)
         {
-            var control = new PageListItemRenameControl(listBox, item, _findTextBlock);
+            var control = new FileInformationItemRenameControl(listBox, item);
             control.ArchiveChanged += (s, e) => ArchiveChanged?.Invoke(s, e);
             return control;
         }
     }
 
-    public class PageListItemRenameControl : ListBoxItemRenameControl<Page>
+
+    public class FileInformationItemRenameControl : ListBoxItemRenameControl<FileInformationSource>
     {
         private readonly bool _isFileSystem;
 
-        public PageListItemRenameControl(ListBox listBox, Page item, bool findTextBlock) : base(listBox, item, findTextBlock)
+        public FileInformationItemRenameControl(ListBox listBox, FileInformationSource item) : base(listBox, item, false)
         {
-            if (item.ArchiveEntry.IsFileSystem)
+            if (item.Page.ArchiveEntry.IsFileSystem)
             {
-                this.IsSeleftFileNameBody = !item.ArchiveEntry.IsDirectory;
+                this.IsSeleftFileNameBody = !item.Page.ArchiveEntry.IsDirectory;
                 this.IsInvalidFileNameChars = true;
                 _isFileSystem = true;
             }
@@ -43,7 +41,6 @@ namespace NeeView
             {
                 this.IsInvalidSeparatorChars = true;
                 _isFileSystem = false;
-
             }
         }
 

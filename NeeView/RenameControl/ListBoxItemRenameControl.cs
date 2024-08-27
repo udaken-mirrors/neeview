@@ -20,8 +20,11 @@ namespace NeeView
         protected ListBox _listBox;
         protected TItem _item;
 
+        public ListBoxItemRenameControl(ListBox listBox, TItem item) : this(listBox, item, true)
+        {
+        }
 
-        public ListBoxItemRenameControl(ListBox listBox, TItem item) : base(CreateRenameControlSource(listBox, item))
+        public ListBoxItemRenameControl(ListBox listBox, TItem item, bool findTextBlock) : base(CreateRenameControlSource(listBox, item, findTextBlock))
         {
             _window = Window.GetWindow(listBox);
             _listBox = listBox;
@@ -31,12 +34,12 @@ namespace NeeView
         }
 
 
-        private static RenameControlSource CreateRenameControlSource(ListBox listBox, TItem item)
+        private static RenameControlSource CreateRenameControlSource(ListBox listBox, TItem item, bool findTextBlock)
         {
             listBox.ScrollIntoView(item);
             listBox.UpdateLayout();
             var listBoxItem = VisualTreeUtility.GetListBoxItemFromItem(listBox, item) ?? throw new InvalidOperationException("ListBoxItem not found.");
-            var textBlock = VisualTreeUtility.FindVisualChild<TextBlock>(listBoxItem, "FileNameTextBlock") ?? throw new InvalidOperationException("TextBlock(FileNameTextBlock) not foud.");
+            var textBlock = findTextBlock ? VisualTreeUtility.FindVisualChild<TextBlock>(listBoxItem, "FileNameTextBlock") ?? throw new InvalidOperationException("TextBlock(FileNameTextBlock) not found.") : null;
             return new RenameControlSource(listBoxItem, textBlock, item.GetRenameText());
         }
 

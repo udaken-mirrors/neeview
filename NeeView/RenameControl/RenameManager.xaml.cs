@@ -8,13 +8,6 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace NeeView
 {
@@ -45,7 +38,7 @@ namespace NeeView
                 if (this.Root.Children != null && this.Root.Children.Count > 0)
                 {
                     var renameControl = (RenameControl)this.Root.Children[0];
-                    return renameControl.Target;
+                    return renameControl.Target ?? renameControl.StoredFocusTarget;
                 }
                 else
                 {
@@ -73,7 +66,6 @@ namespace NeeView
         public void Add(RenameControl rename)
         {
             if (rename is null) throw new ArgumentException("element must be RenameControl");
-            if (rename.Target is null) throw new InvalidOperationException();
 
             if (this.Root.Children.Contains(rename)) return;
 
@@ -81,7 +73,7 @@ namespace NeeView
 
             this.Root.Children.Add(rename);
 
-            rename.Target.Visibility = Visibility.Hidden;
+            rename.SetTargetVisibility(Visibility.Hidden);
 
             RaisePropertyChanged(nameof(IsRenaming));
         }
@@ -93,9 +85,8 @@ namespace NeeView
         public void Remove(RenameControl rename)
         {
             if (rename is null) throw new ArgumentException("element must be RenameControl");
-            if (rename.Target is null) throw new InvalidOperationException();
 
-            rename.Target.Visibility = Visibility.Visible;
+            rename.SetTargetVisibility(Visibility.Visible);
 
             // NOTE: ウィンドウのディアクティブタイミングで閉じたときに再度アクティブ化するのを防ぐためにタイミングをずらす。動作原理不明。
             AppDispatcher.BeginInvoke(() =>
@@ -144,14 +135,14 @@ namespace NeeView
         /// <returns></returns>
         public static RenameManager? GetRenameManager(UIElement element)
         {
-            RenameManager? renameMabager = null;
+            RenameManager? renameManager = null;
 
             var window = Window.GetWindow(element);
             if (window is IHasRenameManager hasRenameManager)
             {
-                renameMabager = hasRenameManager.GetRenameManager();
-                Debug.Assert(renameMabager != null);
-                return renameMabager;
+                renameManager = hasRenameManager.GetRenameManager();
+                Debug.Assert(renameManager != null);
+                return renameManager;
             }
 
             return null;
