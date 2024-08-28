@@ -428,7 +428,10 @@ namespace NeeView
             {
                 var path = item.TargetPath.SimplePath;
                 path = item.Attributes.AnyFlag(FolderItemAttribute.Bookmark | FolderItemAttribute.ArchiveEntry | FolderItemAttribute.Empty) ? ArchiverManager.Current.GetExistPathName(path) : path;
-                ExternalProcess.OpenWithExplorer("/select,\"" + path + "\"");
+                if (!string.IsNullOrWhiteSpace(path))
+                {
+                    ExternalProcess.OpenWithFileManager(path);
+                }
             }
         }
 

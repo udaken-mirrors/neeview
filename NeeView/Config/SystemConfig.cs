@@ -12,6 +12,9 @@ namespace NeeView
 {
     public class SystemConfig : BindableBase
     {
+        private static readonly string _defaultFileManagerFileArgs = "/select,\"$File\"";
+        private static readonly string _defaultFileManagerFolderArgs = "\"$File\"";
+
         private ArchiveEntryCollectionMode _archiveRecursiveMode = ArchiveEntryCollectionMode.IncludeSubArchives;
         private bool _isNetworkEnabled = true;
         private bool _isSettingBackup;
@@ -31,6 +34,7 @@ namespace NeeView
         private ExternalAppCollection _externalAppCollection = new() { new ExternalApp() };
         private string? _textEditor;
         private string? _webBrowser;
+        private string? _fileManager;
         private bool _isIncrementalSearchEnabled = true;
         private int _searchHistorySize = 8;
 
@@ -39,6 +43,12 @@ namespace NeeView
 
         [JsonInclude, JsonPropertyName(nameof(TemporaryDirectory))]
         public string? _temporaryDirectory;
+
+        [JsonInclude, JsonPropertyName(nameof(FileManagerFileArgs))]
+        public string? _fileManagerFileArgs;
+
+        [JsonInclude, JsonPropertyName(nameof(FileManagerFolderArgs))]
+        public string? _fileManagerFolderArgs;
 
 
         /// <summary>
@@ -218,6 +228,42 @@ namespace NeeView
         {
             get { return _webBrowser; }
             set { SetProperty(ref _webBrowser, string.IsNullOrWhiteSpace(value) ? null : value.Trim()); }
+        }
+
+        // ファイルマネージャー
+        [PropertyPath(Filter = "EXE|*.exe|All|*.*")]
+        public string? FileManager
+        {
+            get { return _fileManager; }
+            set
+            {
+                if (SetProperty(ref _fileManager, string.IsNullOrWhiteSpace(value) ? null : value.Trim()))
+                {
+                    if (_fileManager is null)
+                    {
+                        FileManagerFileArgs = _defaultFileManagerFileArgs;
+                        FileManagerFolderArgs = _defaultFileManagerFolderArgs;
+                    }
+                }
+            }
+        }
+
+        // ファイルマネージャーの起動引数 (ファイル)
+        [JsonIgnore]
+        [PropertyMember]
+        public string FileManagerFileArgs
+        {
+            get { return _fileManagerFileArgs ?? _defaultFileManagerFileArgs; }
+            set { SetProperty(ref _fileManagerFileArgs, string.IsNullOrWhiteSpace(value) || value.Trim() == _defaultFileManagerFileArgs ? null : value.Trim()); }
+        }
+
+        // ファイルマネージャーの起動引数 (フォルダー)
+        [JsonIgnore]
+        [PropertyMember]
+        public string FileManagerFolderArgs
+        {
+            get { return _fileManagerFolderArgs ?? _defaultFileManagerFolderArgs; }
+            set { SetProperty(ref _fileManagerFolderArgs, string.IsNullOrWhiteSpace(value) || value.Trim() == _defaultFileManagerFolderArgs ? null : value.Trim()); }
         }
 
         /// <summary>

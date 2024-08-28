@@ -9,6 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Data;
 
 namespace NeeView.Setting
 {
@@ -58,8 +59,28 @@ namespace NeeView.Setting
             {
                 section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(ExplorerContextMenu.Current, nameof(ExplorerContextMenu.IsEnabled))));
             }
+            this.Items.Add(section);
+
+            section = new SettingItemSection(ResourceService.GetString("@SettingPage.General.WebBrowser"));
             section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.System, nameof(SystemConfig.WebBrowser))) { IsStretch = true });
+            this.Items.Add(section);
+
+            section = new SettingItemSection(ResourceService.GetString("@SettingPage.General.TextEditor"));
             section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.System, nameof(SystemConfig.TextEditor))) { IsStretch = true });
+            this.Items.Add(section);
+            
+            section = new SettingItemSection(ResourceService.GetString("@SettingPage.General.FileManager"));
+            section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.System, nameof(SystemConfig.FileManager))) { IsStretch = true });
+            section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.System, nameof(SystemConfig.FileManagerFileArgs)))
+            {
+                IsStretch = true,
+                IsEnabled = new IsEnabledPropertyValue(new Binding(nameof(SystemConfig.FileManager)) { Source = Config.Current.System, Converter = new IsNotNullConverter() }),
+            });
+            section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.System, nameof(SystemConfig.FileManagerFolderArgs)))
+            {
+                IsStretch = true,
+                IsEnabled = new IsEnabledPropertyValue(new Binding(nameof(SystemConfig.FileManager)) { Source = Config.Current.System, Converter = new IsNotNullConverter() }),
+            });
             this.Items.Add(section);
         }
     }
@@ -120,7 +141,7 @@ namespace NeeView.Setting
                 IsStretch = true,
             });
             section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.System, nameof(SystemConfig.IsSyncUserSetting))));
-  
+
             if (!Environment.IsAppxPackage)
             {
                 section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.System, nameof(SystemConfig.IsSettingBackup))));

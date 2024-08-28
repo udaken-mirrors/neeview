@@ -79,3 +79,7 @@ SusiePluginAccessor.IsPreExtract=@SusiePluginWindow.IsPreExtract
 SusiePluginAccessor.Name=@Word.Name
 SusiePluginAccessor.Path=@Word.Path
 SusiePluginAccessor.PluginType=@SusiePluginType
+
+SettingPage.General.WebBrowser=@SystemConfig.WebBrowser
+SettingPage.General.TextEditor=@SystemConfig.TextEditor
+SettingPage.General.FileManager=@SystemConfig.FileManager

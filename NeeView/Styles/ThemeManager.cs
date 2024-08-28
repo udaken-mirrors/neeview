@@ -284,7 +284,7 @@ namespace NeeView
                     directory.Create();
                     ThemeProfileTools.SaveFromContent(_customThemeTemplateContentPath, Path.Combine(directory.FullName, "Sample.json"));
                 }
-                ExternalProcess.OpenWithExplorer($"\"{directory.FullName}\"", new ExternalProcessOptions() { IsThrowException = true });
+                ExternalProcess.OpenWithFileManager(directory.FullName, true, new ExternalProcessOptions() { IsThrowException = true });
             }
             catch (Exception ex)
             {

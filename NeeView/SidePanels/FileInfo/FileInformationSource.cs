@@ -201,7 +201,7 @@ namespace NeeView
             var place = Page?.GetFolderOpenPlace();
             if (!string.IsNullOrWhiteSpace(place))
             {
-                ExternalProcess.OpenWithExplorer("/select,\"" + place + "\"");
+                ExternalProcess.OpenWithFileManager(place);
             }
         }
 

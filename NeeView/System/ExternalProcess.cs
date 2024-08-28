@@ -89,11 +89,24 @@ namespace NeeView
             return isResult;
         }
 
-        public static void OpenWithExplorer(string arg, ExternalProcessOptions? options = null)
+        public static void OpenWithFileManager(string path, bool isFolder = false, ExternalProcessOptions? options = null)
         {
-            string winDir = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Windows);
-            var explorer = Path.Combine(winDir, "explorer.exe");
-            Start(explorer, arg, options);
+            var systemConfig = Config.Current.System;
+            var fileManager = systemConfig.FileManager ?? GetExplorerPath();
+            var args = ValidateArgs(isFolder ? systemConfig.FileManagerFolderArgs : systemConfig.FileManagerFileArgs, path);
+            Start(fileManager, args, options);
+        }
+
+        private static string GetExplorerPath()
+        {
+            var winDir = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Windows);
+            return Path.Combine(winDir, "explorer.exe");
+        }
+
+        private static string ValidateArgs(string source, string file)
+        {
+            var text = source.Replace("$File", file);
+            return string.IsNullOrWhiteSpace(text) ? file : text;
         }
     }
 }

@@ -140,7 +140,10 @@ namespace NeeView
                 {
                     path = ArchiveEntryUtility.GetExistEntryName(item.SystemPath);
                 }
-                ExternalProcess.OpenWithExplorer("/select,\"" + path + "\"");
+                if (!string.IsNullOrWhiteSpace(path))
+                {
+                    ExternalProcess.OpenWithFileManager(path);
+                }
             }
         }
 
@@ -364,7 +367,7 @@ namespace NeeView
 
             await renamer.RenameAsync(item);
         }
-    
+
         protected virtual ListBoxItemRenamer<TItem>? CreateListBoxItemRenamer(ListBox listBox, TItem item, IToolTipService? toolTipService)
         {
             return null;

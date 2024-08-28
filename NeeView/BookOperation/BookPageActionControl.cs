@@ -94,9 +94,9 @@ namespace NeeView
             if (CanOpenFilePlace())
             {
                 string? place = _book?.CurrentPage?.GetFolderOpenPlace();
-                if (place != null)
+                if (!string.IsNullOrWhiteSpace(place))
                 {
-                    ExternalProcess.OpenWithExplorer("/select,\"" + place + "\"");
+                    ExternalProcess.OpenWithFileManager(place);
                 }
             }
         }
