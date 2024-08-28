@@ -5,6 +5,10 @@ using System.ComponentModel;
 
 namespace NeeView
 {
+    /// <summary>
+    /// nv.Values[] 変数を IsChecked のバインディングソースにする
+    /// </summary>
+    [Obsolete]
     [NotifyPropertyChanged]
     public partial class ScriptValueFlagBindingSource : INotifyPropertyChanged, IDisposable
     {

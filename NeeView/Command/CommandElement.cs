@@ -1,4 +1,5 @@
-﻿using NeeLaboratory.IO.Search;
+﻿using NeeLaboratory.Generators;
+using NeeLaboratory.IO.Search;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -65,7 +66,7 @@ namespace NeeView
         [AliasName] Window,
     }
 
-    public abstract class CommandElement : ISearchItem
+    public abstract partial class CommandElement : ISearchItem
     {
         public static CommandElement None { get; } = new NoneCommand();
 
@@ -77,6 +78,7 @@ namespace NeeView
         private TouchGesture _touchGesture = TouchGesture.Empty;
         private MouseSequence _mouseGesture = MouseSequence.Empty;
         private bool _isCloneable = true;
+        private CommandParameterSource? _parameterSource;
 
 
         public CommandElement() : this(null)
@@ -91,6 +93,11 @@ namespace NeeView
             Menu = GetResourceText(nameof(Menu));
             Remarks = GetResourceText(nameof(Remarks));
         }
+
+
+        [Subscribable]
+        public event EventHandler<ParameterChangedEventArgs>? ParameterChanged;
+
 
         private string GetResourceKey(string? property, string? postfix = null)
         {
@@ -215,7 +222,33 @@ namespace NeeView
         // TODO: CommandElementを直接指定
         public string? PairPartner { get; set; }
 
-        public CommandParameterSource? ParameterSource { get; set; }
+
+        public CommandParameterSource? ParameterSource
+        {
+            get { return _parameterSource; }
+            set
+            {
+                if (_parameterSource != value)
+                {
+                    if (_parameterSource != null)
+                    {
+                        _parameterSource.ParameterChanged -= ParameterSource_ParameterChanged;
+                    }
+
+                    _parameterSource = value;
+
+                    if (_parameterSource != null)
+                    {
+                        _parameterSource.ParameterChanged += ParameterSource_ParameterChanged;
+                    }
+
+                    ParameterChanged?.Invoke(this, new ParameterChangedEventArgs(null));
+                }
+
+                void ParameterSource_ParameterChanged(object? sender, ParameterChangedEventArgs e) => ParameterChanged?.Invoke(this, e);
+            }
+        }
+
 
         public CommandParameter? Parameter
         {

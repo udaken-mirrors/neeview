@@ -1,11 +1,12 @@
 ﻿using NeeView.Windows.Property;
+using System;
 
 namespace NeeView
 {
     public class ScriptCommandParameter : CommandParameter
     {
         private string? _argument;
-        private string? _checkFlagKey;
+        private bool _isChecked;
 
         [PropertyMember]
         public string? Argument
@@ -15,13 +16,11 @@ namespace NeeView
         }
 
         [PropertyMember]
-
-        public string? CheckFlagKey
+        public bool IsChecked
         {
-            get { return _checkFlagKey; }
-            set { SetProperty(ref _checkFlagKey, string.IsNullOrWhiteSpace(value) ? null : value.Trim()); }
+            get { return _isChecked; }
+            set { SetProperty(ref _isChecked, value); }
         }
-
     }
 
 }

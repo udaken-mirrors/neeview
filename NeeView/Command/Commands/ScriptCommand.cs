@@ -41,7 +41,7 @@ namespace NeeView
         private readonly ScriptCommandSourceMap _sourceMap;
         private GesturesMemento? _defaultGestures;
         private string? _defaultArgs;
-        private ScriptValueFlagBindingSource? _bindingSource;
+        private ScriptIsCheckedBindingSource? _bindingSource;
         private bool _disposedValue;
 
         public ScriptCommand(string path, ScriptCommandSourceMap sourceMap) : base(PathToScriptCommandName(path))
@@ -53,18 +53,10 @@ namespace NeeView
             this.Text = LoosePath.GetFileNameWithoutExtension(_path);
 
             this.ParameterSource = new CommandParameterSource(new ScriptCommandParameter(), new ScriptCommandParameterDecorator(path, sourceMap));
-            this.ParameterSource.ParameterChanged += ParameterSource_ParameterChanged;
 
             UpdateDocument(true);
         }
 
-        private void ParameterSource_ParameterChanged(object? sender, ParameterChangedEventArgs e)
-        {
-            if (_bindingSource != null && (string.IsNullOrEmpty(e.PropertyName) || e.PropertyName == nameof(ScriptCommandParameter.CheckFlagKey)))
-            {
-                _bindingSource.Key = GetScriptCommandParameter().CheckFlagKey;
-            }
-        }
 
         public string Path => _path;
 
@@ -118,7 +110,7 @@ namespace NeeView
             return (ParameterSource?.GetDefault() as ScriptCommandParameter)?.Argument;
         }
 
-        private ScriptCommandParameter GetScriptCommandParameter()
+        public ScriptCommandParameter GetScriptCommandParameter()
         {
             return (Parameter as ScriptCommandParameter) ?? throw new InvalidOperationException();
         }
@@ -164,9 +156,8 @@ namespace NeeView
         {
             if (_disposedValue) return null;
 
-            _bindingSource ??= new ScriptValueFlagBindingSource(CommandHostStaticResource.Current);
-            _bindingSource.Key = GetScriptCommandParameter().CheckFlagKey;
-            return new Binding(nameof(_bindingSource.IsChecked)) { Source = _bindingSource };
+            _bindingSource ??= new ScriptIsCheckedBindingSource(this);
+            return new Binding(nameof(_bindingSource.IsChecked)) { Source = _bindingSource, Mode = BindingMode.OneWay };
         }
 
         protected virtual void Dispose(bool disposing)
@@ -176,10 +167,6 @@ namespace NeeView
                 if (disposing)
                 {
                     _bindingSource?.Dispose();
-                    if (this.ParameterSource != null)
-                    {
-                        this.ParameterSource.ParameterChanged -= ParameterSource_ParameterChanged;
-                    }
                 }
 
                 _disposedValue = true;

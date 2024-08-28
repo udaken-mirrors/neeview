@@ -1,10 +1,9 @@
-﻿using NeeView.Data;
+﻿using NeeLaboratory.Generators;
 using System;
-using System.Runtime.Serialization;
 
 namespace NeeView
 {
-    public class CommandParameterSource
+    public partial class CommandParameterSource
     {
         private CommandParameter? _parameter;
         private readonly Type _type;
@@ -24,6 +23,7 @@ namespace NeeView
         }
 
 
+        [Subscribable]
         public event EventHandler<ParameterChangedEventArgs>? ParameterChanged;
 
 
@@ -44,6 +44,7 @@ namespace NeeView
             if (_parameter is null)
             {
                 _parameter = GetDefault();
+                _parameter.PropertyChanged += Parameter_PropertyChanged;
             }
 
             return _parameter;
@@ -69,7 +70,7 @@ namespace NeeView
                 {
                     _parameter.PropertyChanged += Parameter_PropertyChanged;
                 }
-
+              
                 ParameterChanged?.Invoke(this, new ParameterChangedEventArgs(null));
             }
         }
