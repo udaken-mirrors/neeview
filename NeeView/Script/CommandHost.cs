@@ -14,7 +14,7 @@ namespace NeeView
     {
         private readonly CommandHostStaticResource _resource;
         private readonly ScriptAccessDiagnostics _accessDiagnostics;
-        private string _commandName = "";
+        private CommandAccessor? _command;
         private List<string> _args = new();
 
 
@@ -40,8 +40,9 @@ namespace NeeView
             SusiePluginCollection = new SusiePluginCollectionAccessor();
         }
 
+
         [WordNodeMember(IsAutoCollect = false)]
-        public string CommandName => _commandName;
+        public CommandAccessor? CurrentCommand => _command;
 
         [WordNodeMember(IsAutoCollect = false)]
         public List<string> Args => _args;
@@ -118,7 +119,7 @@ namespace NeeView
 
         internal void SetCommandName(string name)
         {
-            _commandName = name;
+            _command = Command[name] as CommandAccessor;
         }
 
         internal void SetArgs(List<string> args)
@@ -200,6 +201,7 @@ namespace NeeView
             var node = WordNodeHelper.CreateClassWordNode(name, this.GetType());
             if (node.Children is null) throw new InvalidOperationException();
 
+            node.Children.Add(new WordNode(nameof(CurrentCommand)));
             node.Children.Add(new WordNode(nameof(Args)));
             node.Children.Add(new WordNode(nameof(Values)));
             node.Children.Add(Config.CreateWordNode(nameof(Config)));

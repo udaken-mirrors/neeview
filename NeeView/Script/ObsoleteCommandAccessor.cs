@@ -14,6 +14,10 @@ namespace NeeView
             _obsoleteInfo = obsoleteInfo;
         }
 
+        public string Name
+        {
+            get => _name;
+        }
 
         public bool IsShowMessage
         {

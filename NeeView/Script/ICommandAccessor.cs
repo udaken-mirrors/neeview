@@ -5,6 +5,7 @@ namespace NeeView
     [Documentable(DocumentType = typeof(CommandAccessor))]
     public interface ICommandAccessor
     {
+        string Name { get; }
         bool IsShowMessage { get; set; }
         string MouseGesture { get; set; }
         PropertyMap? Parameter { get; }

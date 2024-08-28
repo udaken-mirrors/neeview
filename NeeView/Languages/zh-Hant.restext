@@ -463,8 +463,8 @@ CommandHost.Book=已開啟書本存取器
 CommandHost.Bookmark=書籤面板存取器
 CommandHost.Bookshelf=書庫面板存取器
 CommandHost.Command=指令存取器的關聯陣列。\n指令與 設定 > 指令設定中顯示的指令相同。詳細情況請到 <a href="#CommandList">指令列表</a> 。
-CommandHost.CommandName=
 CommandHost.Config=應用程式設定的關聯陣列。可瀏覽或更改設定值。\n設定值的類別請到 <a href="#ConfigList">設定値列表</a> 。
+CommandHost.CurrentCommand=
 CommandHost.DestinationFolderCollection=
 CommandHost.Effect=效果面板存取器
 CommandHost.Environment=環境存取器

@@ -83,3 +83,4 @@ SusiePluginAccessor.PluginType=@SusiePluginType
 SettingPage.General.WebBrowser=@SystemConfig.WebBrowser
 SettingPage.General.TextEditor=@SystemConfig.TextEditor
 SettingPage.General.FileManager=@SystemConfig.FileManager
+CommandAccessor.Name=@Word.CommandName

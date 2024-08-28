@@ -20,6 +20,11 @@ namespace NeeView
             Parameter = _command.Parameter != null ? new PropertyMap($"nv.Command.{_command.Name}.Parameter", _command.Parameter, _accessDiagnostics) : null;
         }
 
+        [WordNodeMember]
+        public string Name
+        {
+            get { return _command.Name; }
+        }
 
         [WordNodeMember]
         public bool IsShowMessage
