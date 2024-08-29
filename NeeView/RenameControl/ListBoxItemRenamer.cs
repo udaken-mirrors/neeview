@@ -25,6 +25,7 @@ namespace NeeView
         {
             _listBox = listBox;
             _toolTipService = toolTipService;
+            _selectItem = selectItem;
         }
 
 
