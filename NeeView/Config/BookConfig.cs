@@ -33,6 +33,7 @@ namespace NeeView
         private Color _dummyPageColor = Colors.White;
         private bool _isPanorama;
         private PageFrameOrientation _orientation = PageFrameOrientation.Horizontal;
+        private double _dividePageRate = 0.5;
 
 
         /// <summary>
@@ -207,6 +208,14 @@ namespace NeeView
             get { return _dummyPageColor; }
             set { SetProperty(ref _dummyPageColor, value); }
         }
+
+        [PropertyRange(0.25, 0.75, TickFrequency = 0.01, IsEditable = true)]
+        public double DividePageRate
+        {
+            get { return _dividePageRate; }
+            set { SetProperty(ref _dividePageRate, Math.Clamp(MathUtility.SnapValue(value, 0.5, 0.0001), 0.1, 1.0)); }
+        }
+
 
         #region Obsolete
 

@@ -35,10 +35,6 @@ namespace NeeLaboratory
             return v0 + (v1 - v0) * rate;
         }
 
-        public static double Snap(double val, double tick)
-        {
-            return Math.Floor((val + tick * 0.5) / tick) * tick;
-        }
 
         public static int CycleLoopRange(int val, int min, int max)
         {
@@ -92,6 +88,16 @@ namespace NeeLaboratory
             {
                 return val;
             }
+        }
+
+        public static double SnapValue(double value, double target, double margin)
+        {
+            return (Math.Abs(target - value) < margin) ? target : value;
+        }
+
+        public static double Snap(double val, double tick)
+        {
+            return Math.Floor((val + tick * 0.5) / tick) * tick;
         }
 
         public static double Snap(double value, double oldValue, double snap, double margin)

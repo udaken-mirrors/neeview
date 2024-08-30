@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Windows;
 
 namespace NeeView.PageFrames
@@ -25,7 +26,7 @@ namespace NeeView.PageFrames
         public Size GetPageSize()
         {
             var originalSize = Config.Current.Image.Standard.IsAspectRatioEnabled ? _pageDataSource.AspectSize : _pageDataSource.Size;
-            
+
             var size = _customSize.TransformToCustomSize(originalSize);
 
             if (_imageTrim.IsEnabled)
@@ -47,16 +48,18 @@ namespace NeeView.PageFrames
         private readonly int _direction;
         private readonly ImageTrimConfig _imageTrim;
         private readonly PageSizeCalculator _pageSizeCalculator;
+        private readonly double _partRate;
 
         public PageViewSizeCalculator(PageFrameContext context, PageDataSource pageDataSource, PageRange pagePart, int direction)
         {
             _pagePart = pagePart;
             _direction = direction;
             _imageTrim = context.ImageTrimConfig;
+            _partRate = context.DividePageRate;
+            Debug.Assert(_partRate >= 0.01 && _partRate <= 1.0);
 
             _pageSizeCalculator = new PageSizeCalculator(context, pageDataSource);
         }
-
 
 
         /// <summary>
@@ -70,7 +73,7 @@ namespace NeeView.PageFrames
             return _pagePart.PartSize switch
             {
                 0 => new Size(0.0, size.Height),
-                1 => new Size(Math.Floor(size.Width * 0.5 + 0.4), size.Height),
+                1 => new Size(size.Width * _partRate, size.Height),
                 _ => size,
             };
         }
@@ -90,7 +93,7 @@ namespace NeeView.PageFrames
             // ページ分割逆補正
             if (_pagePart.PartSize == 1)
             {
-                width = width * 2.0;
+                width = width / _partRate;
             }
 
             // トリミング逆補正
@@ -124,7 +127,7 @@ namespace NeeView.PageFrames
             }
 
             // ページパートで領域分割
-            crop = CropByPagePart(_pagePart, _direction, crop);
+            crop = CropByPagePart(_pagePart, _partRate, _direction, crop);
 
             // NOTE: ポリゴンの歪み補正
             crop.Offset(new Vector(-0.00001, -0.00001));
@@ -132,7 +135,7 @@ namespace NeeView.PageFrames
             return crop;
         }
 
-        private static Rect CropByPagePart(PageRange pagePart, int direction, Rect rect)
+        private static Rect CropByPagePart(PageRange pagePart, double partRate, int direction, Rect rect)
         {
             switch (pagePart.PartSize)
             {
@@ -142,8 +145,8 @@ namespace NeeView.PageFrames
                 case 1:
                     bool isLeftPart = pagePart.Min.Part == 0;
                     if (direction == -1) isLeftPart = !isLeftPart;
-                    double half = rect.Width * 0.5;
-                    double left = isLeftPart ? rect.X : rect.X + half;
+                    double half = rect.Width * partRate;
+                    double left = isLeftPart ? rect.X : rect.X + rect.Width - half;
                     return new Rect(left, rect.Y, half, rect.Height);
 
                 default:

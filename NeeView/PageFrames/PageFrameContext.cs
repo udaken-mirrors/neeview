@@ -72,6 +72,7 @@ namespace NeeView.PageFrames
         public bool IsPanorama => _config.Book.IsPanorama;
         public PageFrameOrientation FrameOrientation => _config.Book.Orientation;
         public double FrameMargin => IsStaticFrame ? 1.0 : _config.Book.FrameSpace;
+        public double DividePageRate => _config.Book.DividePageRate;
 
         // TODO: 更新イベントが余計に発生している？Propertyパターンにして抑制させることも可能(優先度低)
         public double ContentsSpace => FramePageSize == 2 ? _config.Book.ContentsSpace : 0.0;
@@ -182,6 +183,10 @@ namespace NeeView.PageFrames
 
                 case nameof(BookConfig.ContentsSpace):
                     RaisePropertyChanged(nameof(ContentsSpace));
+                    break;
+
+                case nameof(BookConfig.DividePageRate):
+                    RaisePropertyChanged(nameof(DividePageRate));
                     break;
 
                 case nameof(BookConfig.IsInsertDummyPage):

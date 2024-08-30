@@ -622,6 +622,7 @@ namespace NeeView.PageFrames
                 case nameof(Context.IsInsertDummyPage):
                 case nameof(Context.IsInsertDummyFirstPage):
                 case nameof(Context.IsInsertDummyLastPage):
+                case nameof(Context.DividePageRate):
                     UpdateContainers(PageFrameDirtyLevel.Heavy, TransformMask.None, false, false);
                     break;
 
