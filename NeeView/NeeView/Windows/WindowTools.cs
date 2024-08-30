@@ -41,7 +41,7 @@ namespace NeeView.Windows
             }
 
             void UpdateSystemMenu()
-            { 
+            {
                 var handle = new System.Windows.Interop.WindowInteropHelper(window).Handle;
                 var style = NativeMethods.GetWindowLong(handle, (int)WindowLongFlags.GWL_STYLE);
                 style = style & (~(int)disableStyleFlags);
@@ -74,5 +74,26 @@ namespace NeeView.Windows
             NativeMethods.PostMessage(hWnd, (uint)WindowMessages.WM_SYSCOMMAND, new IntPtr(command), IntPtr.Zero);
         }
 
+        /// <summary>
+        /// オブジェクトの所属するウィンドウのハンドルを取得する
+        /// </summary>
+        /// <param name="dependencyObject"></param>
+        /// <returns></returns>
+        public static IntPtr GetWindowHandle(DependencyObject dependencyObject)
+        {
+            var window = dependencyObject as Window ?? Window.GetWindow(dependencyObject);
+            if (window is null) return IntPtr.Zero;
+
+            return new WindowInteropHelper(window).Handle;
+        }
+
+        /// <summary>
+        /// メインウィンドウのハンドルを取得する
+        /// </summary>
+        /// <returns></returns>
+        public static IntPtr GetWindowHandle()
+        {
+            return AppDispatcher.Invoke(() => GetWindowHandle(App.Current.MainWindow));
+        }
     }
 }

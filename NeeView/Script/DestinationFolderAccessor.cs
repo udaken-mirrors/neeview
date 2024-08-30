@@ -35,15 +35,15 @@ namespace NeeView
 
 
         [WordNodeMember]
-        public void Copy(PageAccessor page)
+        public void CopyPage(PageAccessor page)
         {
-            Copy([page]);
+            CopyPage([page]);
         }
 
         [WordNodeMember]
-        public void Copy(PageAccessor[] pages)
+        public void CopyPage(PageAccessor[] pages)
         {
-           _folder.Copy(CreateRealizedFilePathList(pages.Select(e => e.Source)));
+            var async = CopyAsync(pages, CancellationToken.None);
         }
 
         [WordNodeMember]
@@ -55,28 +55,44 @@ namespace NeeView
         [WordNodeMember]
         public void Copy(string[] paths)
         {
-            var pages = paths.Select(e => GetPage(e)).ToList();
-            if (pages.All(e => e is not null))
-            {
-                _folder.Copy(CreateRealizedFilePathList(pages.WhereNotNull()));
-            }
-            else
-            {
-                _folder.Copy(paths);
-            }
+            var async = CopyAsync(paths, CancellationToken.None);
+        }
+
+        private async Task CopyAsync(PageAccessor[] pages, CancellationToken token)
+        {
+            // ページは実体化する
+            var items = await CreateRealizedFilePathListAsync(pages.Select(e => e.Source), token);
+            await _folder.CopyAsyncNoExceptions(items, token);
+        }
+
+        private async Task CopyAsync(string[] paths, CancellationToken token)
+        {
+            // ページは実体化する
+            var map = paths.Select(e => (Key: e, Page: GetPage(e))).ToList();
+            var items1 = map.Where(e => e.Page is null).Select(e => e.Key);
+            var items2 = await CreateRealizedFilePathListAsync(map.Where(e => e.Page is not null).Select(e => e.Page).WhereNotNull(), token);
+            var items = items1.Concat(items2).ToList();
+            await _folder.CopyAsyncNoExceptions(items, token);
         }
 
 
         [WordNodeMember]
-        public void Move(PageAccessor page)
+        public void MovePage(PageAccessor page)
         {
-            Move([page]);
+            MovePage([page]);
         }
 
         [WordNodeMember]
-        public void Move(PageAccessor[] pages)
+        public void MovePage(PageAccessor[] pages)
         {
-            Move(pages.Select(e => e.Source));
+            var paths = pages
+                .Select(e => e.Source)
+                .Where(e => e.ArchiveEntry.IsFileSystem)
+                .Select(e => e.EntryFullName)
+                .WhereNotNull()
+                .ToArray();
+
+            Move(paths);
         }
 
         [WordNodeMember]
@@ -88,28 +104,8 @@ namespace NeeView
         [WordNodeMember]
         public void Move(string[] paths)
         {
-            var pages = paths.Select(e => GetPage(e)).ToList();
-            if (pages.All(e => e is not null))
-            {
-                Move(pages.WhereNotNull());
-            }
-            else
-            {
-                _folder.Move(paths);
-            }
+            var async = _folder.MoveAsyncNoExceptions(paths, CancellationToken.None);
         }
-
-        private void Move(IEnumerable<Page> pages)
-        {
-            // 移動可能なのはファイルシステムエントリのみ
-            var movePages = pages.Where(e => e.ArchiveEntry.IsFileSystem).ToList();
-            var paths = movePages.Select(e => e.GetFilePlace()).WhereNotNull().ToList();
-
-            _folder.Move(paths);
-
-            BookOperation.Current.BookControl.ValidateRemoveFile(movePages);
-        }
-
 
         private static Page? GetPage(string path)
         {

@@ -236,7 +236,7 @@ namespace NeeView
                 if (items is not null)
                 {
                     var paths = await PageUtility.CreateRealizedFilePathListAsync(items, CancellationToken.None);
-                    folder.Copy(paths);
+                    await folder.CopyAsync(paths, CancellationToken.None);
                 }
             }
             catch (OperationCanceledException)
@@ -280,8 +280,6 @@ namespace NeeView
                     var paths = movePages.Select(e => e.GetFilePlace()).WhereNotNull().ToList();
 
                     await folder.MoveAsync(paths, CancellationToken.None);
-
-                    BookOperation.Current.BookControl.ValidateRemoveFile(movePages);
                 }
             }
             catch (OperationCanceledException)

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
@@ -69,7 +70,23 @@ namespace NeeView
             return Name.GetHashCode() ^ Path.GetHashCode();
         }
 
-        public void Copy(IEnumerable<string> paths)
+        public async Task CopyAsyncNoExceptions(IEnumerable<string> paths, CancellationToken token)
+        {
+            try
+            {
+                await CopyAsync(paths, CancellationToken.None);
+            }
+            catch (OperationCanceledException)
+            {
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+                ToastService.Current.Show(new Toast(ex.Message, ResourceService.GetString("@Bookshelf.CopyToFolderFailed"), ToastIcon.Error));
+            }
+        }
+
+        public async Task CopyAsync(IEnumerable<string> paths, CancellationToken token)
         {
             if (!paths.Any()) return;
 
@@ -78,7 +95,23 @@ namespace NeeView
                 throw new DirectoryNotFoundException();
             }
 
-            FileIO.CopyToFolder(paths, this.Path);
+            await FileIO.CopyToFolderAsync(paths, this.Path, token);
+        }
+
+        public async Task MoveAsyncNoExceptions(IEnumerable<string> paths, CancellationToken token)
+        {
+            try
+            {
+                await MoveAsync(paths, CancellationToken.None);
+            }
+            catch (OperationCanceledException)
+            {
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+                ToastService.Current.Show(new Toast(ex.Message, ResourceService.GetString("@PageList.Message.MoveToFolderFailed"), ToastIcon.Error));
+            }
         }
 
         public async Task MoveAsync(IEnumerable<string> paths, CancellationToken token)
@@ -92,17 +125,6 @@ namespace NeeView
 
             await FileIO.MoveToFolderAsync(paths, this.Path, token);
         }
-
-        public void Move(IEnumerable<string> paths)
-        {
-            if (!paths.Any()) return;
-
-            if (!Directory.Exists(this.Path))
-            {
-                throw new DirectoryNotFoundException();
-            }
-
-            FileIO.MoveToFolder(paths, this.Path);
-        }
     }
+
 }

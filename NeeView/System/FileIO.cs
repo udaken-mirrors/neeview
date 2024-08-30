@@ -1,5 +1,7 @@
-﻿using NeeView.Interop;
+﻿using NeeLaboratory.Linq;
+using NeeView.Interop;
 using NeeView.IO;
+using NeeView.Windows;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -222,6 +224,16 @@ namespace NeeView
             return result;
         }
 
+        // 開いている本のページの削除処理
+        private static void ValidateBookPages(IEnumerable<string> paths)
+        {
+            var book = BookOperation.Current.Book;
+            if (book is null) return;
+            var pages = paths.Select(e => book.Pages.GetPageWithEntryFullName(e)).WhereNotNull();
+            if (!pages.Any()) return;
+            BookOperation.Current.BookControl.ValidateRemoveFile(pages);
+        }
+
 
         #region Copy
 
@@ -244,10 +256,15 @@ namespace NeeView
         /// <summary>
         /// ファイル、ディレクトリーを指定のフォルダーにコピーする
         /// </summary>
-        public static void CopyToFolder(IEnumerable<string> paths, string toDirectory)
+        public static async Task CopyToFolderAsync(IEnumerable<string> paths, string toDirectory, CancellationToken token)
+        {
+            await CopyToFolderAsync(WindowTools.GetWindowHandle(), paths, toDirectory, token);
+        }
+
+        public static async Task CopyToFolderAsync(IntPtr hwnd, IEnumerable<string> paths, string toDirectory, CancellationToken token)
         {
             var directoryPath = EnsureDirectory(toDirectory);
-            AppDispatcher.Invoke(() => ShellFileOperation.Copy(App.Current.MainWindow, paths, directoryPath));
+            await Task.Run(() => ShellFileOperation.Copy(hwnd, paths, directoryPath), token);
         }
 
         #endregion Copy
@@ -259,22 +276,15 @@ namespace NeeView
         /// </summary>
         public static async Task MoveToFolderAsync(IEnumerable<string> paths, string toDirectory, CancellationToken token)
         {
-            await CloseBookAsync(paths);
-            var directoryPath = EnsureDirectory(toDirectory);
-            await AppDispatcher.BeginInvoke(() => ShellFileOperation.Move(App.Current.MainWindow, paths, directoryPath));
+            await MoveToFolderAsync(WindowTools.GetWindowHandle(), paths, toDirectory, token);
         }
 
-        /// <summary>
-        /// ファイル、ディレクトリーを指定のフォルダーに移動する
-        /// </summary>
-        public static void MoveToFolder(IEnumerable<string> paths, string toDirectory)
+        public static async Task MoveToFolderAsync(IntPtr hwnd, IEnumerable<string> paths, string toDirectory, CancellationToken token)
         {
-            // NOTE: 現状ではMTAスレッド用。UIスレッドから呼ぶとデッドロックする可能性あり。
-            NVDebug.AssertMTA();
-
-            Task.Run(async () => await CloseBookAsync(paths)).Wait();
+            await CloseBookAsync(paths);
             var directoryPath = EnsureDirectory(toDirectory);
-            AppDispatcher.Invoke(() => ShellFileOperation.Move(App.Current.MainWindow, paths, directoryPath));
+            await Task.Run(() => ShellFileOperation.Move(hwnd, paths, directoryPath), token);
+            ValidateBookPages(paths);
         }
 
         #endregion Move

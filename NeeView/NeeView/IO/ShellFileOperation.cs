@@ -50,14 +50,14 @@ namespace NeeView.IO
                 case FileOperationErrors.DE_ERROR_UNKNOWN:
                 case FileOperationErrors.ERRORONDEST:
                 case FileOperationErrors.DE_DESTROOTDIR:
-                    throw new IOException($"Code=0x{result:x4}");
+                    throw new IOException($"Code=0x{result:x4}, {(FileOperationErrors)result}");
 
                 default:
                     var message = new StringBuilder(1024);
                     var length = NativeMethods.FormatMessage((uint)FormatMessages.FORMAT_MESSAGE_FROM_SYSTEM, IntPtr.Zero, (uint)result, 0, message, message.Capacity, IntPtr.Zero);
                     if (length > 0)
                     {
-                        throw new IOException(message.ToString());
+                        throw new IOException($"Code=0x{result:x4}, {message.ToString()}");
                     }
                     else
                     {
@@ -76,11 +76,16 @@ namespace NeeView.IO
 
         public static void Copy(Window owner, IEnumerable<string> paths, string dest)
         {
+            Copy(GetHWnd(owner), paths, dest);
+        }
+
+        public static void Copy(IntPtr hwnd, IEnumerable<string> paths, string dest)
+        {
             if (paths == null || !paths.Any()) throw new ArgumentException("Empty paths");
             if (dest == null) throw new ArgumentNullException(nameof(dest));
 
             SHFILEOPSTRUCT shfos;
-            shfos.hwnd = GetHWnd(owner);
+            shfos.hwnd = hwnd;
             shfos.wFunc = FileFuncFlags.FO_COPY;
             shfos.pFrom = string.Join("\0", paths) + "\0\0";
             shfos.pTo = dest + "\0\0";
@@ -92,14 +97,18 @@ namespace NeeView.IO
             SHFileOperation(ref shfos);
         }
 
-
         public static void Move(Window owner, IEnumerable<string> paths, string dest)
+        {
+            Move(GetHWnd(owner), paths, dest);
+        }
+
+        public static void Move(IntPtr hwnd, IEnumerable<string> paths, string dest)
         {
             if (paths == null || !paths.Any()) throw new ArgumentException("Empty paths");
             if (dest == null) throw new ArgumentNullException(nameof(dest));
 
             SHFILEOPSTRUCT shfos;
-            shfos.hwnd = GetHWnd(owner);
+            shfos.hwnd = hwnd;
             shfos.wFunc = FileFuncFlags.FO_MOVE;
             shfos.pFrom = string.Join("\0", paths) + "\0\0";
             shfos.pTo = dest + "\0\0";
@@ -111,8 +120,12 @@ namespace NeeView.IO
             SHFileOperation(ref shfos);
         }
 
-
         public static void Delete(Window owner, IEnumerable<string> paths, bool wantNukeWarning)
+        {
+            Delete(GetHWnd(owner), paths, wantNukeWarning);
+        }
+
+        public static void Delete(IntPtr hwnd, IEnumerable<string> paths, bool wantNukeWarning)
         {
             if (paths == null || !paths.Any()) throw new ArgumentException("Empty paths");
 
@@ -123,7 +136,7 @@ namespace NeeView.IO
             }
 
             SHFILEOPSTRUCT shfos;
-            shfos.hwnd = GetHWnd(owner);
+            shfos.hwnd = hwnd;
             shfos.wFunc = FileFuncFlags.FO_DELETE;
             shfos.pFrom = string.Join("\0", paths) + "\0\0";
             shfos.pTo = null;

@@ -299,7 +299,7 @@ namespace NeeView
             return items != null && items.All(x => x.IsEditable);
         }
 
-        public void CopyToFolder_Execute(object? sender, ExecutedRoutedEventArgs e)
+        public async void CopyToFolder_Execute(object? sender, ExecutedRoutedEventArgs e)
         {
             if (e.Parameter is not DestinationFolder folder) return;
 
@@ -314,7 +314,7 @@ namespace NeeView
                 if (items != null && items.Any())
                 {
                     ////Debug.WriteLine($"CopyToFolder: to {folder.Path}");
-                    FileIO.CopyToFolder(items.Select(x => x.TargetPath.SimplePath), folder.Path);
+                    await FileIO.CopyToFolderAsync(items.Select(x => x.TargetPath.SimplePath), folder.Path, CancellationToken.None);
                 }
             }
             catch (OperationCanceledException)
