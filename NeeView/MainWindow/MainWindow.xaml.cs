@@ -460,6 +460,12 @@ namespace NeeView
 
             App.Current.IsMainWindowLoaded = true;
 
+            // activate
+            if (this.WindowState != WindowState.Minimized)
+            {
+                this.Activate();
+            }
+
             Trace.WriteLine($"App.MainWindow.Loaded.Done: {App.Current.Stopwatch.ElapsedMilliseconds}ms");
         }
 
