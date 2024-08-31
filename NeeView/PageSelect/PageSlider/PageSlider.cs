@@ -106,12 +106,13 @@ namespace NeeView
 
         private int GetFixedIndex(int value)
         {
-            if (!Config.Current.Slider.IsSyncPageMode)
+            if (Config.Current.GetFramePageSize(PageSelector.PageMode) != 2)
             {
                 return value;
             }
 
-            if (Config.Current.GetFramePageSize(PageSelector.PageMode) != 2)
+            // 変更なければそのまま
+            if (value == PageSelector.SelectedIndex)
             {
                 return value;
             }
@@ -122,31 +123,45 @@ namespace NeeView
                 return value;
             }
 
-            if (value == PageSelector.SelectedIndex)
-            {
-                return value;
-            }
-
             // 「終端１ページを単独表示」対応
             if (value == PageSelector.MaxIndex && PageSelector.IsSupportedSingleLastPage)
             {
                 return value;
             }
 
-            var baseIndex = PageSelector.SelectedIndex;
-            if (PageSelector.ViewPageCount < 2)
+            // ２ページアライメント
+            if (Config.Current.Book.IsStaticWidePage)
             {
-                baseIndex = Math.Min(PageSelector.MaxIndex, baseIndex + (value > baseIndex ? 1 : 0));
+                if (PageSelector.IsSupportedSingleFirstPage)
+                {
+                    return ((value-1) & ~1) + 1;
+                }
+                else
+                {
+                    return (value & ~1);
+                }
             }
-            else if (Math.Abs(value - baseIndex) < 2)
+            
+            // スライダーの移動量をページモードに従う
+            if (Config.Current.Slider.IsSyncPageMode)
             {
-                return baseIndex;
+                var baseIndex = PageSelector.SelectedIndex;
+                if (PageSelector.ViewPageCount < 2)
+                {
+                    baseIndex = Math.Min(PageSelector.MaxIndex, baseIndex + (value > baseIndex ? 1 : 0));
+                }
+                else if (Math.Abs(value - baseIndex) < 2)
+                {
+                    return baseIndex;
+                }
+
+                var delta = value - baseIndex;
+                var newDelta = delta - (delta % 2);
+                var newValue = baseIndex + newDelta;
+                return newValue;
             }
 
-            var delta = value - baseIndex;
-            var newDelta = delta - (delta % 2);
-            var newValue = baseIndex + newDelta;
-            return newValue;
+            return value;
         }
 
 

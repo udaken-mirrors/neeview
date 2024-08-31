@@ -183,6 +183,11 @@ namespace NeeView.PageFrames
                     return CreateSinglePageFrame(source1);
                 }
 
+                if (_context.IsStaticWidePage && !IsNeedSecondPageWhenStaticWidePage(source1.PageRange.Top(direction), direction))
+                {
+                    return CreateWideFillPageFrame(source1);
+                }
+
                 var position = _book.ValidatePosition(source1.PageRange.Next(direction), _context.IsLoopPage);
                 var source2 = CreatePageSource(position, direction);
                 if (source2 is null)
@@ -207,6 +212,26 @@ namespace NeeView.PageFrames
             else
             {
                 return CreateSinglePageFrame(source1);
+            }
+        }
+
+        // 静的ワイドページのときに、2ページ目が必要なページ位置か
+        private bool IsNeedSecondPageWhenStaticWidePage(PagePosition position, int direction)
+        {
+            var index = _book.NormalizeIndex(position.Index);
+            if (direction > 0)
+            {
+                Debug.Assert(position.Part == 0);
+                if (index == _book.FirstIndex && _context.IsSupportedSingleFirstPage) return false;
+                if (index == _book.LastIndex) return false;
+                return (index & 1) == (_context.IsSupportedSingleFirstPage ? 1 : 0);
+            }
+            else
+            {
+                Debug.Assert(position.Part == 1);
+                if (index == _book.LastIndex && _context.IsSupportedSingleLastPage) return false;
+                if (index == _book.FirstIndex) return false;
+                return (index & 1) == (_context.IsSupportedSingleFirstPage ? 0 : 1);
             }
         }
 

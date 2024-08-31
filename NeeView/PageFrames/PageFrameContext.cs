@@ -87,6 +87,7 @@ namespace NeeView.PageFrames
         public bool CanPrioritizePageMove => _config.Book.IsPrioritizePageMove && !SlideShow.Current.IsPlayingSlideShow;
         public bool IsReadyToPageMove => _config.Book.IsReadyToPageMove && !_config.Book.IsPanorama;
         public bool IsNotifyPageLoop => _config.Book.IsNotifyPageLoop && !SlideShow.Current.IsPlayingSlideShow;
+        public bool IsStaticWidePage => _config.Book.IsStaticWidePage && _bookSetting.PageMode == PageMode.WidePage;
 
         public bool AllowFileContentAutoRotate => _config.View.AllowFileContentAutoRotate;
         public bool AllowEnlarge => _config.View.AllowStretchScaleUp;

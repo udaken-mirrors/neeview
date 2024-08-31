@@ -927,7 +927,7 @@ namespace NeeView.PageFrames
                 return;
             }
 
-            var nextIndex = frameRange.Min.Index + direction.ToSign();
+            var nextIndex = frameRange.Top(direction.ToSign()).Index + direction.ToSign();
             if (_context.IsLoopPage)
             {
                 nextIndex = _bookContext.NormalizeIndex(nextIndex);
@@ -938,8 +938,9 @@ namespace NeeView.PageFrames
                 return;
             }
 
-            //Debug.WriteLine($"MoveToNextPage: {current.Value.FrameRange} to {nextIndex}");
-            MoveTo(new PagePosition(nextIndex, 0), LinkedListDirection.Next, false, false, true);
+            var nextPosition = new PagePosition(nextIndex, (direction == LinkedListDirection.Next ? 0 : 1));
+            //Debug.WriteLine($"MoveToNextPage: {frameRange} to {nextPosition},{direction}");
+            MoveTo(nextPosition, direction, false, false, true);
         }
 
         /// <summary>

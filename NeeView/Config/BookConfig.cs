@@ -34,6 +34,7 @@ namespace NeeView
         private bool _isPanorama;
         private PageFrameOrientation _orientation = PageFrameOrientation.Horizontal;
         private double _dividePageRate = 0.5;
+        private bool _isStaticWidePage;
 
 
         /// <summary>
@@ -216,6 +217,13 @@ namespace NeeView
             set { SetProperty(ref _dividePageRate, Math.Clamp(MathUtility.SnapValue(value, 0.5, 0.0001), 0.1, 1.0)); }
         }
 
+        // ２ページモードでの静的なインデックス
+        [PropertyMember]
+        public bool IsStaticWidePage
+        {
+            get { return _isStaticWidePage; }
+            set { SetProperty(ref _isStaticWidePage, value); }
+        }
 
         #region Obsolete
 
