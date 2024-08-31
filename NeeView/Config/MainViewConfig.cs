@@ -14,6 +14,7 @@ namespace NeeView
         private bool _isAutoHide = true;
         private Size _referenceSize;
         private AlternativeContent _alternativeContent = AlternativeContent.PageList;
+        private bool _isFloatingEndWhenClosed;
 
 
         /// <summary>
@@ -24,6 +25,16 @@ namespace NeeView
         {
             get { return _isFloating; }
             set { SetProperty(ref _isFloating, value); }
+        }
+
+        /// <summary>
+        /// メインビューウィンドウを閉じたときにウィンドウモードを解除するか
+        /// </summary>
+        [PropertyMember]
+        public bool IsFloatingEndWhenClosed
+        {
+            get { return _isFloatingEndWhenClosed; }
+            set { SetProperty(ref _isFloatingEndWhenClosed, value); }
         }
 
         /// <summary>

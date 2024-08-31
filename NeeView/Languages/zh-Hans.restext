@@ -1223,6 +1223,7 @@ MainViewConfig.IsAutoHide.Remarks=当关闭书本时最小化主视图窗口。
 MainViewConfig.IsAutoStretch=自动拉伸主视图窗口
 MainViewConfig.IsAutoStretch.Remarks=调整窗口尺寸适应图像尺寸。
 MainViewConfig.IsFloating=主视图的浮动
+MainViewConfig.IsFloatingEndWhenClosed=
 MainViewConfig.IsHideTitleBar=自动隐藏主视图窗口
 MainViewConfig.IsTopmost=总是置顶主视图窗口
 MainViewWindow.Menu.AutoHideTitleBar=自动隐藏标题栏

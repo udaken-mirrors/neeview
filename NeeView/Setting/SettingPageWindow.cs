@@ -147,6 +147,7 @@ namespace NeeView.Setting
             this.Items.Add(section);
 
             section = new SettingItemSection(Properties.TextResources.GetString("SettingPage.MainView.MainViewWindow"));
+            section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.MainView, nameof(MainViewConfig.IsFloatingEndWhenClosed))));
             section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.MainView, nameof(MainViewConfig.IsTopmost))));
             section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.MainView, nameof(MainViewConfig.IsHideTitleBar))));
             section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.MainView, nameof(MainViewConfig.IsAutoStretch))));

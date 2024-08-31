@@ -180,7 +180,7 @@ namespace NeeView
         private void MainViewWindow_Closing(object? sender, CancelEventArgs e)
         {
             // ウィンドウを閉じる処理は最小化に置き換える
-            if (Config.Current.MainView.IsFloating)
+            if (Config.Current.MainView.IsFloating && !Config.Current.MainView.IsFloatingEndWhenClosed)
             {
                 SystemCommands.MinimizeWindow(this);
                 e.Cancel = true;

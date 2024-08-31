@@ -1230,6 +1230,7 @@ MainViewConfig.IsAutoHide.Remarks=Minimiza a janela de visualização principal 
 MainViewConfig.IsAutoStretch=Alongamento automático da janela da exibição principal
 MainViewConfig.IsAutoStretch.Remarks=Ajuste o tamanho da janela ao tamanho da imagem.
 MainViewConfig.IsFloating=Exibição Principal flutuante
+MainViewConfig.IsFloatingEndWhenClosed=
 MainViewConfig.IsHideTitleBar=Ocultar automaticamente a barra de título da janela da Exibição Principal
 MainViewConfig.IsTopmost=A janela da Exibição Principal está no topo
 MainViewWindow.Menu.AutoHideTitleBar=Ocultar automaticamente a barra de título

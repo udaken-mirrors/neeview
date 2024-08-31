@@ -1223,6 +1223,7 @@ MainViewConfig.IsAutoHide.Remarks=
 MainViewConfig.IsAutoStretch=
 MainViewConfig.IsAutoStretch.Remarks=
 MainViewConfig.IsFloating=主要檢視的浮動
+MainViewConfig.IsFloatingEndWhenClosed=
 MainViewConfig.IsHideTitleBar=自動隱藏主要檢視視窗
 MainViewConfig.IsTopmost=總是以最上層顯示主要檢視視窗
 MainViewWindow.Menu.AutoHideTitleBar=自動隱藏標題列

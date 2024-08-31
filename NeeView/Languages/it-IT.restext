@@ -1235,6 +1235,7 @@ MainViewConfig.IsAutoHide.Remarks=Minimizza la finestra vista principale quando 
 MainViewConfig.IsAutoStretch=Auto estendi finestra vista principale
 MainViewConfig.IsAutoStretch.Remarks=Adatta la dimensione della finestra alla dimensione dell'immagine.
 MainViewConfig.IsFloating=MainView floating
+MainViewConfig.IsFloatingEndWhenClosed=
 MainViewConfig.IsHideTitleBar=Automaticamente nascondi barra del titolo della finestra vista principale
 MainViewConfig.IsTopmost=Finestra vista principale è in primo piano
 MainViewWindow.Menu.AutoHideTitleBar=Auto-nascondi barra del titolo

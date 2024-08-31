@@ -1223,6 +1223,7 @@ MainViewConfig.IsAutoHide.Remarks=ブックを閉じた時にメインビュー 
 MainViewConfig.IsAutoStretch=メインビュー ウィンドウ自動サイズ補正
 MainViewConfig.IsAutoStretch.Remarks=ウィンドウサイズを画像サイズに合わせます。
 MainViewConfig.IsFloating=メインビューのフローティング
+MainViewConfig.IsFloatingEndWhenClosed=メインビュー ウィンドウを閉じたときにモードを解除する
 MainViewConfig.IsHideTitleBar=メインビューウィンドウ タイトルの自動非表示
 MainViewConfig.IsTopmost=メインビューウィンドウを常に手前に表示
 MainViewWindow.Menu.AutoHideTitleBar=タイトル バーを自動的に隠す

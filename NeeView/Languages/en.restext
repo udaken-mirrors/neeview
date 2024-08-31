@@ -1230,6 +1230,7 @@ MainViewConfig.IsAutoHide.Remarks=Minimizes the main view window when the book i
 MainViewConfig.IsAutoStretch=Main view window auto stretch
 MainViewConfig.IsAutoStretch.Remarks=Adjust the window size to the image size.
 MainViewConfig.IsFloating=MainView floating
+MainViewConfig.IsFloatingEndWhenClosed=Deactivate the mode when the MainView window is closed
 MainViewConfig.IsHideTitleBar=Automatically hide MainView window title bar
 MainViewConfig.IsTopmost=MainView window is topmost
 MainViewWindow.Menu.AutoHideTitleBar=Auto-hide title bar
