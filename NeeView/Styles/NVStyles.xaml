@@ -1174,6 +1174,7 @@
         <Setter Property="Stroke" Value="{DynamicResource Window.Foreground}" />
         <Setter Property="CheckedBrush" Value="{DynamicResource Control.Accent}" />
         <Setter Property="CheckedThumbBrush" Value="{DynamicResource Control.AccentText}" />
+        <Setter Property="DisableBrush" Value="{DynamicResource Control.GrayText}" />
         <Setter Property="Margin" Value="5,0" />
         <Setter Property="Height" Value="30" />
     </Style>

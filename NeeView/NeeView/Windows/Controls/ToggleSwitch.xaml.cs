@@ -38,6 +38,8 @@ namespace NeeView.Windows.Controls
 
             _onAnimation = (Storyboard)this.Root.Resources["OnAnimation"];
             _offAnimation = (Storyboard)this.Root.Resources["OffAnimation"];
+
+            this.IsEnabledChanged += (s, e) => UpdateBrush();
         }
 
 
@@ -59,6 +61,16 @@ namespace NeeView.Windows.Controls
 
         public static readonly DependencyProperty FillProperty =
             DependencyProperty.Register("Fill", typeof(Brush), typeof(ToggleSwitch), new PropertyMetadata(Brushes.White, BrushProperty_Changed));
+
+
+        public Brush DisableBrush
+        {
+            get { return (Brush)GetValue(DisableBrushProperty); }
+            set { SetValue(DisableBrushProperty, value); }
+        }
+
+        public static readonly DependencyProperty DisableBrushProperty =
+            DependencyProperty.Register("DisableBrush", typeof(Brush), typeof(ToggleSwitch), new PropertyMetadata(Brushes.Gray, BrushProperty_Changed));
 
 
         public Brush CheckedBrush
@@ -115,15 +127,15 @@ namespace NeeView.Windows.Controls
             }
             else if (this.IsChecked)
             {
-                this.rectangle.Fill = this.CheckedBrush;
-                this.rectangle.Stroke = this.CheckedBrush;
+                this.rectangle.Fill = IsEnabled ? this.CheckedBrush : this.DisableBrush;
+                this.rectangle.Stroke = IsEnabled ? this.CheckedBrush : this.DisableBrush;
                 this.ellipse.Fill = this.CheckedThumbBrush;
             }
             else
             {
                 this.rectangle.Fill = this.Fill;
-                this.rectangle.Stroke = this.Stroke;
-                this.ellipse.Fill = this.Stroke;
+                this.rectangle.Stroke = IsEnabled ? this.Stroke : this.DisableBrush;
+                this.ellipse.Fill = IsEnabled ? this.Stroke : this.DisableBrush;
             }
         }
 
