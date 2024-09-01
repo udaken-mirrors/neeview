@@ -1,5 +1,4 @@
-﻿using ObservableCollections;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 
@@ -26,7 +25,7 @@ namespace NeeView
         }
 
 
-        public ObservableDictionary<string, object> Values { get; } = new ObservableDictionary<string, object>();
+        public Dictionary<string, object> Values { get; } = new Dictionary<string, object>();
         public ScriptAccessDiagnostics AccessDiagnostics => _accessDiagnostics;
         public ConfigMap ConfigMap => _configMap;
         public CommandAccessorMap CommandAccessMap => _commandAccessMap;

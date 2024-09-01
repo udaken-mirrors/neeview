@@ -164,10 +164,3 @@ DLL: AnimatedImage.dll, AnimatedImage.Wpf.dll
 * URL: [NetBeauty2](https://github.com/nulastudio/NetBeauty2)
 * License: [MIT License](https://github.com/nulastudio/NetBeauty2/blob/master/LICENSE)
 
-### ObservableCollections
-
-DLL: ObservableCollections.dll
-
-* Copyright (c) 2021 Cysharp, Inc.
-* URL: [ObservableCollections](https://github.com/Cysharp/ObservableCollections)
-* License: [MIT License](https://github.com/Cysharp/ObservableCollections/blob/master/LICENSE)
