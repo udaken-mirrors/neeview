@@ -17,6 +17,7 @@ namespace NeeView.Windows.Property
         public string? Tips;
         public bool IsVisible = true;
         public string? EmptyMessage;
+        public bool HasDecimalPoint;
 
         public PropertyMemberAttribute() { }
     }

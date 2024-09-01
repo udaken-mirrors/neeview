@@ -17,7 +17,7 @@ namespace NeeView.Windows.Controls
         {
             base.OnValueChanged(oldValue, newValue);
 
-            // NOTE: SliderTools でのドラッグ開始時のTnumb移動に反応しないようにする
+            // NOTE: SliderTools でのドラッグ開始時の Thumb 移動に反応しないようにする
             if (_isDragging || (this.IsMouseOver && Mouse.LeftButton == MouseButtonState.Pressed))
             {
                 return;

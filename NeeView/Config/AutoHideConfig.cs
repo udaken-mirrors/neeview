@@ -18,7 +18,7 @@ namespace NeeView
         private AutoHideConflictMode _autoHideConflictBottomMargin = AutoHideConflictMode.Allow;
 
         // パネルやメニューが自動的に消えるまでの時間(秒)
-        [PropertyMember]
+        [PropertyMember(HasDecimalPoint = true)]
         public double AutoHideDelayTime
         {
             get { return _autoHideDelayTime; }
@@ -26,7 +26,7 @@ namespace NeeView
         }
 
         // パネルやメニューが自動的に消えるまでの時間(秒)
-        [PropertyMember]
+        [PropertyMember(HasDecimalPoint = true)]
         public double AutoHideDelayVisibleTime
         {
             get { return _autoHideDelayVisibleTime; }

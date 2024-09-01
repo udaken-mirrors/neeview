@@ -40,7 +40,7 @@ namespace NeeView
         /// <summary>
         /// 横長画像判定用比率
         /// </summary>
-        [PropertyMember]
+        [PropertyMember(HasDecimalPoint = true)]
         public double WideRatio
         {
             get { return _wideRatio; }
@@ -210,7 +210,7 @@ namespace NeeView
             set { SetProperty(ref _dummyPageColor, value); }
         }
 
-        [PropertyRange(0.25, 0.75, TickFrequency = 0.01, IsEditable = true)]
+        [PropertyPercent(0.25, 0.75, TickFrequency = 0.01, IsEditable = true)]
         public double DividePageRate
         {
             get { return _dividePageRate; }

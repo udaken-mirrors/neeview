@@ -207,7 +207,7 @@ namespace NeeView
 
 
         // スクロール時間 (秒)
-        [PropertyRange(0.0, 1.0, TickFrequency = 0.1, IsEditable = true)]
+        [PropertyRange(0.0, 1.0, TickFrequency = 0.1, IsEditable = true, HasDecimalPoint = true)]
         public double ScrollDuration
         {
             get { return _scrollDuration; }
@@ -215,7 +215,7 @@ namespace NeeView
         }
 
         // ページ変更時間(秒)
-        [PropertyRange(0.0, 1.0, TickFrequency = 0.1, IsEditable = true)]
+        [PropertyRange(0.0, 1.0, TickFrequency = 0.1, IsEditable = true, HasDecimalPoint = true)]
         public double PageMoveDuration
         {
             get { return _pageMoveDuration; }

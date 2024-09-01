@@ -13,7 +13,7 @@ namespace NeeView
         /// <summary>
         /// スライドショーの表示間隔(秒)
         /// </summary>
-        [PropertyMember]
+        [PropertyMember(HasDecimalPoint = true)]
         public double SlideShowInterval
         {
             get { return _slideShowInterval; }

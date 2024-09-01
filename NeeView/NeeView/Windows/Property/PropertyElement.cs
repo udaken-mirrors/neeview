@@ -157,7 +157,7 @@ namespace NeeView.Windows.Property
         }
 
         [MemberNotNull(nameof(TypeValue))]
-        private void InitializeByDefaultAttribute(PropertyMemberAttribute _)
+        private void InitializeByDefaultAttribute(PropertyMemberAttribute attribute)
         {
             if (_info.PropertyType.IsEnum)
             {
@@ -178,7 +178,14 @@ namespace NeeView.Windows.Property
                     this.TypeValue = new PropertyValue_Integer(this);
                     break;
                 case TypeCode.Double:
-                    this.TypeValue = new PropertyValue_Double(this);
+                    if (attribute.HasDecimalPoint)
+                    {
+                        this.TypeValue = new PropertyValue_DoubleFloat(this);
+                    }
+                    else
+                    {
+                        this.TypeValue = new PropertyValue_Double(this);
+                    }
                     break;
                 default:
                     if (_info.PropertyType == typeof(Point))
@@ -214,7 +221,7 @@ namespace NeeView.Windows.Property
             this.TypeValue = typeCode switch
             {
                 TypeCode.Int32 => CreatePropertyValue(new RangeProfile_Integer(value, attribute.Minimum, attribute.Maximum, attribute.TickFrequency, attribute.IsEditable, attribute.Format)),
-                TypeCode.Double => CreatePropertyValue(new RangeProfile_Double(value, attribute.Minimum, attribute.Maximum, attribute.TickFrequency, attribute.IsEditable, attribute.Format)),
+                TypeCode.Double => CreatePropertyValue(new RangeProfile_Double(value, attribute.Minimum, attribute.Maximum, attribute.TickFrequency, attribute.IsEditable, attribute.Format, attribute.HasDecimalPoint)),
                 _ => throw new NotSupportedException(),
             };
         }
@@ -251,7 +258,7 @@ namespace NeeView.Windows.Property
             TypeCode typeCode = Type.GetTypeCode(_info.PropertyType);
             this.TypeValue = typeCode switch
             {
-                TypeCode.Double => new PropertyValue_Percent(this, new RangeProfile_Double(value, attribute.Minimum, attribute.Maximum, attribute.TickFrequency, attribute.IsEditable, attribute.Format)),
+                TypeCode.Double => new PropertyValue_Percent(this, new RangeProfile_Double(value, attribute.Minimum, attribute.Maximum, attribute.TickFrequency, attribute.IsEditable, attribute.Format, attribute.HasDecimalPoint)),
                 _ => throw new NotSupportedException(),
             };
         }

@@ -70,14 +70,14 @@ namespace NeeView
             set { SetProperty(ref _longButtonMask, value); }
         }
 
-        [PropertyRange(0.1, 2.0, TickFrequency = 0.1)]
+        [PropertyRange(0.1, 2.0, TickFrequency = 0.1, HasDecimalPoint = true)]
         public double LongButtonDownTime
         {
             get { return _longButtonDownTime; }
             set { SetProperty(ref _longButtonDownTime, value); }
         }
 
-        [PropertyRange(0.01, 1.0, TickFrequency = 0.01)]
+        [PropertyRange(0.01, 1.0, TickFrequency = 0.01, HasDecimalPoint = true)]
         public double LongButtonRepeatTime
         {
             get { return _longButtonRepeatTime; }
@@ -94,7 +94,7 @@ namespace NeeView
             set { SetProperty(ref _isCursorHideEnabled, value); }
         }
 
-        [PropertyRange(1.0, 10.0, TickFrequency = 0.2, IsEditable = true)]
+        [PropertyRange(1.0, 10.0, TickFrequency = 0.2, IsEditable = true, HasDecimalPoint = true)]
         public double CursorHideTime
         {
             get { return _cursorHideTime; }
@@ -122,7 +122,7 @@ namespace NeeView
             set { SetProperty(ref _isHoverScroll, value); }
         }
 
-        [PropertyRange(0.0, 1.0, TickFrequency = 0.1, IsEditable = true)]
+        [PropertyRange(0.0, 1.0, TickFrequency = 0.1, IsEditable = true, HasDecimalPoint = true)]
         public double HoverScrollDuration
         {
             get { return _hoverScrollDuration; }

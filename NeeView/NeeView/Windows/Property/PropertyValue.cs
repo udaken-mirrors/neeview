@@ -193,7 +193,13 @@ namespace NeeView.Windows.Property
         }
     }
 
-
+    //
+    public class PropertyValue_DoubleFloat : PropertyValue_Double
+    {
+        public PropertyValue_DoubleFloat(PropertyMemberElement setter) : base(setter)
+        {
+        }
+    }
 
     //
     public class PropertyValue_Enum : PropertyValue<object>
@@ -351,8 +357,13 @@ namespace NeeView.Windows.Property
 
     public class RangeProfile_Double : RangeProfile<double>
     {
-        public RangeProfile_Double(IValueSetter setter, double min, double max, double tickFrequency, bool isEditable, string? format) : base(setter, min, max, tickFrequency, isEditable, format)
+        public RangeProfile_Double(IValueSetter setter, double min, double max, double tickFrequency, bool isEditable, string? format, bool hasDecimalPoint) : base(setter, min, max, tickFrequency, isEditable, FixDoubleFormat(format, hasDecimalPoint))
         {
+        }
+
+        private static string? FixDoubleFormat(string? format, bool hasDecimalPoint)
+        {
+            return format ?? (hasDecimalPoint ? "{0:0.0####}" : "{0:0.#####}");
         }
     }
 

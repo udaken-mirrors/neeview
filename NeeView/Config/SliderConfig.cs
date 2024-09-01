@@ -68,7 +68,7 @@ namespace NeeView
         }
 
         // スライダーの厚さ
-        [PropertyRange(15.0, 50.0, TickFrequency = 5.0)]
+        [PropertyRange(15.0, 50.0, TickFrequency = 1.0)]
         public double Thickness
         {
             get { return _thickness; }

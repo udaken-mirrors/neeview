@@ -18,7 +18,12 @@
 * URL: [Small ColorPicker for WPF](http://www.codeproject.com/Articles/34376/Small-ColorPicker-for-WPF)
 * License: [CPOL](https://www.codeproject.com/info/cpol10.aspx)
 
+### Some embedded codes (URL link is written in each code)
 
+* Copyright (c) .NET Foundation and Contributors
+* URL: [Windows Presentation Foundation (WPF)](https://github.com/dotnet/wpf)
+* License: [MIT License](https://github.com/dotnet/wpf/blob/main/LICENSE.TXT)
+ 
 ### その他
 
 ブログ等を参考にして作成されたコードには、そのURLを記載しています。  
