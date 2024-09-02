@@ -20,45 +20,27 @@ namespace NeeView.PageFrames
             _viewRect = viewRect;
         }
 
-        public Point GetCenterPoint()
+
+        public bool ContainsHorizontal()
         {
-            return GetAlignedPoint(HorizontalAlignment.Center, VerticalAlignment.Center);
+            return _rect.Width <= _viewRect.Width;
         }
 
-        public Rect GetStartRect(LinkedListDirection direction)
+        public bool ContainsVertical()
         {
-            var point = GetStartPoint(direction);
-            return new Rect(point.X, point.Y, _viewRect.Width, _viewRect.Height);
+            return _rect.Height <= _viewRect.Height;
         }
 
-        public Point GetStartPoint(LinkedListDirection direction)
+        public HorizontalAlignment GetHorizontalAlignment(int direction)
         {
-            return GetStartPoint(direction, direction);
+            return direction < 0 ? HorizontalAlignment.Right : HorizontalAlignment.Left;
         }
 
-        public Point GetStartPoint(LinkedListDirection directionX, LinkedListDirection directionY)
+        public VerticalAlignment GetVerticalAlignment(int direction)
         {
-            return GetAlignedPoint(GetStartHorizontalAlignment(directionX), GetStartVerticalAlignment(directionY));
+            return direction < 0 ? VerticalAlignment.Bottom : VerticalAlignment.Top;
         }
 
-
-        public HorizontalAlignment GetStartHorizontalAlignment(LinkedListDirection direction)
-        {
-            return _rect.Width <= _viewRect.Width
-                ? HorizontalAlignment.Center
-                : (_context.ReadOrder == PageReadOrder.LeftToRight ? +1 : -1) * direction.ToSign() < 0
-                    ? HorizontalAlignment.Right
-                    : HorizontalAlignment.Left;
-        }
-
-        public VerticalAlignment GetStartVerticalAlignment(LinkedListDirection direction)
-        {
-            return _rect.Height <= _viewRect.Height
-                ? VerticalAlignment.Center
-                : direction < 0
-                    ? VerticalAlignment.Bottom
-                    : VerticalAlignment.Top;
-        }
 
         public Point GetAlignedPoint(HorizontalAlignment horizontalAlignment, VerticalAlignment verticalAlignment)
         {
@@ -70,7 +52,7 @@ namespace NeeView.PageFrames
 
     }
 
-    public static class HorzontalAlignmentExtensions
+    public static class HorizontalAlignmentExtensions
     {
         // アライメント基準に配置する方向
         public static int ToDirection(this HorizontalAlignment horizontalAlignment)

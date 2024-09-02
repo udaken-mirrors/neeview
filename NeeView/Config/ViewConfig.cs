@@ -20,7 +20,8 @@ namespace NeeView
         private bool _isKeepScale;
         private bool _isKeepAngle;
         private bool _isKeepFlip;
-        private ViewOrigin _viewOrigin = ViewOrigin.DirectionDependent;
+        private ViewHorizontalOrigin _viewHorizontalOrigin = ViewHorizontalOrigin.CenterOrDirectionDependent;
+        private ViewVerticalOrigin _viewVerticalOrigin = ViewVerticalOrigin.CenterOrDirectionDependent;
         private double _angleFrequency = 0;
         private bool _isBaseScaleEnabled = true;
         private bool _isRotateStretchEnabled = true;
@@ -114,12 +115,20 @@ namespace NeeView
             set { SetProperty(ref _isKeepFlipBooks, value); }
         }
 
-        // 表示開始時の基準
+        // 開始時の水平配置
         [PropertyMember]
-        public ViewOrigin ViewOrigin
+        public ViewHorizontalOrigin ViewHorizontalOrigin
         {
-            get { return _viewOrigin; }
-            set { SetProperty(ref _viewOrigin, value); }
+            get { return _viewHorizontalOrigin; }
+            set { SetProperty(ref _viewHorizontalOrigin, value); }
+        }
+
+        // 開始時の垂直配置
+        [PropertyMember]
+        public ViewVerticalOrigin ViewVerticalOrigin
+        {
+            get { return _viewVerticalOrigin; }
+            set { SetProperty(ref _viewVerticalOrigin, value); }
         }
 
         // 回転スナップ。0で無効
@@ -224,8 +233,55 @@ namespace NeeView
 
         #region Obsolete
 
+        [Obsolete("no used"), Alternative($"{nameof(ViewHorizontalOrigin)}, {nameof(ViewVerticalOrigin)}", 42, ScriptErrorLevel.Warning)] // ver.42
+        [JsonIgnore]
+        public ViewOrigin ViewOrigin
+        {
+            get
+            {
+                if (ViewHorizontalOrigin == ViewHorizontalOrigin.Center && ViewVerticalOrigin == ViewVerticalOrigin.Center)
+                {
+                    return ViewOrigin.Center;
+                }
+                else if (ViewHorizontalOrigin == ViewHorizontalOrigin.CenterOrDirectionDependent && ViewVerticalOrigin == ViewVerticalOrigin.CenterOrTop)
+                {
+                    return ViewOrigin.DirectionDependentAndTop;
+                }
+                else
+                {
+                    return ViewOrigin.DirectionDependent;
+                }
+            }
+            set
+            {
+                switch (value)
+                {
+                    case ViewOrigin.Center:
+                        ViewHorizontalOrigin = ViewHorizontalOrigin.Center;
+                        ViewVerticalOrigin = ViewVerticalOrigin.Center;
+                        break;
+                    case ViewOrigin.DirectionDependent:
+                        ViewHorizontalOrigin = ViewHorizontalOrigin.CenterOrDirectionDependent;
+                        ViewVerticalOrigin = ViewVerticalOrigin.CenterOrDirectionDependent;
+                        break;
+                    case ViewOrigin.DirectionDependentAndTop:
+                        ViewHorizontalOrigin = ViewHorizontalOrigin.CenterOrDirectionDependent;
+                        ViewVerticalOrigin = ViewVerticalOrigin.CenterOrTop;
+                        break;
+                }
+            }
+        }
+
+        [Obsolete("ViewOrigin interface"), PropertyMapIgnore]
+        [JsonPropertyName("ViewOrigin"), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+        public ViewOrigin ViewOrigin_Legacy
+        {
+            get { return default; }
+            set { ViewOrigin = value; }
+        }
+
         [PropertyMember]
-        [Obsolete("no used"), Alternative(nameof(ViewOrigin), 40, ScriptErrorLevel.Warning)] // ver.40.5
+        [Obsolete("no used"), Alternative($"{nameof(ViewHorizontalOrigin)},{nameof(ViewVerticalOrigin)}", 40, ScriptErrorLevel.Warning)] // ver.40.5
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         public bool IsViewStartPositionCenter
         {
@@ -303,6 +359,7 @@ namespace NeeView
     /// <summary>
     /// 表示開始時の基準
     /// </summary>
+    [Obsolete]
     public enum ViewOrigin
     {
         /// <summary>
@@ -320,4 +377,27 @@ namespace NeeView
         /// </summary>
         DirectionDependentAndTop,
     }
+
+    public enum ViewHorizontalOrigin
+    {
+        Center,
+        Left,
+        Right,
+        DirectionDependent,
+        CenterOrLeft,
+        CenterOrRight,
+        CenterOrDirectionDependent,
+    }
+
+    public enum ViewVerticalOrigin
+    {
+        Center,
+        Top,
+        Bottom,
+        DirectionDependent,
+        CenterOrTop,
+        CenterOrBottom,
+        CenterOrDirectionDependent,
+    }
+
 }

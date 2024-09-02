@@ -870,37 +870,60 @@ namespace NeeView.PageFrames
         }
 
         /// <summary>
-        /// コンテンツをフレーム中央にスクロール。フレームオーバーの場合は方向に依存する
+        /// コンテンツを基準位置にスクロール
         /// </summary>
-        private void ContentScrollToViewOrigin(LinkedListNode<PageFrameContainer> node, LinkedListDirection direction, LinkedListDirection directionY)
+        private void ScrollContentToOrigin(LinkedListNode<PageFrameContainer> node, ViewHorizontalOrigin horizontalOrigin, ViewVerticalOrigin verticalOrigin, LinkedListDirection direction)
         {
             if (!_context.IsStaticFrame) return;
-
             if (node?.Value.Content is not PageFrameContent pageFrameContent) return;
 
-            // TODO: ページ移動による初期位置パラメータの反映。なにもしないという設定も新しく追加
-
+            // calc content origin position
             var contentRect = node.Value.GetContentRect().Size.ToRect();
             var viewRect = _viewBox.Rect.Size.ToRect();
-            var point = new FramePointMath(_context, contentRect, viewRect).GetStartPoint(direction, directionY);
+            var math = new FramePointMath(_context, contentRect, viewRect);
+            var horizontalAlignment = GetHorizontalAlignment(math, horizontalOrigin, direction);
+            var verticalAlignment = GetVerticalAlignment(math, verticalOrigin, direction);
+            var point = math.GetAlignedPoint(horizontalAlignment, verticalAlignment);
+
+            // scroll content
             point.X = -point.X; // コンテンツ座標系に補正する
             point.Y = -point.Y;
-
             var key = PageFrameTransformTool.CreateKey(pageFrameContent.PageFrame);
             _transformMap.ElementAt(key).SetPoint(point, TimeSpan.Zero);
         }
 
-        /// <summary>
-        /// コンテンツをフレーム中央にスクロール
-        /// </summary>
-        private void ContentScrollToCenter(LinkedListNode<PageFrameContainer> node)
+        private HorizontalAlignment GetHorizontalAlignment(FramePointMath math, ViewHorizontalOrigin origin, LinkedListDirection direction)
         {
-            if (!_context.IsStaticFrame) return;
+            var dir = (_context.ReadOrder == PageReadOrder.LeftToRight ? +1 : -1) * direction.ToSign();
 
-            if (node?.Value.Content is not PageFrameContent pageFrameContent) return;
+            return origin switch
+            {
+                ViewHorizontalOrigin.Center => HorizontalAlignment.Center,
+                ViewHorizontalOrigin.Left => HorizontalAlignment.Left,
+                ViewHorizontalOrigin.Right => HorizontalAlignment.Right,
+                ViewHorizontalOrigin.DirectionDependent => math.GetHorizontalAlignment(dir),
+                ViewHorizontalOrigin.CenterOrLeft=> math.ContainsHorizontal() ? HorizontalAlignment.Center : HorizontalAlignment.Left,
+                ViewHorizontalOrigin.CenterOrRight => math.ContainsHorizontal() ? HorizontalAlignment.Center : HorizontalAlignment.Right,
+                ViewHorizontalOrigin.CenterOrDirectionDependent => math.ContainsHorizontal() ? HorizontalAlignment.Center : math.GetHorizontalAlignment(dir),
+                _ => throw new InvalidEnumArgumentException(nameof(origin), (int)origin, typeof(ViewHorizontalOrigin)),
+            };
+        }
 
-            var key = PageFrameTransformTool.CreateKey(pageFrameContent.PageFrame);
-            _transformMap.ElementAt(key).SetPoint(default, TimeSpan.Zero);
+        private VerticalAlignment GetVerticalAlignment(FramePointMath math, ViewVerticalOrigin origin, LinkedListDirection direction)
+        {
+            var dir = direction.ToSign();
+
+            return origin switch
+            {
+                ViewVerticalOrigin.Center => VerticalAlignment.Center,
+                ViewVerticalOrigin.Top => VerticalAlignment.Top,
+                ViewVerticalOrigin.Bottom => VerticalAlignment.Bottom,
+                ViewVerticalOrigin.DirectionDependent => math.GetVerticalAlignment(dir),
+                ViewVerticalOrigin.CenterOrTop => math.ContainsVertical() ? VerticalAlignment.Center : VerticalAlignment.Top,
+                ViewVerticalOrigin.CenterOrBottom => math.ContainsVertical() ? VerticalAlignment.Center : VerticalAlignment.Bottom,
+                ViewVerticalOrigin.CenterOrDirectionDependent => math.ContainsVertical() ? VerticalAlignment.Center : math.GetVerticalAlignment(dir),
+                _ => throw new InvalidEnumArgumentException(nameof(origin), (int)origin, typeof(ViewVerticalOrigin)),
+            };
         }
 
         /// <summary>
@@ -1147,24 +1170,19 @@ namespace NeeView.PageFrames
         }
 
         /// <summary>
-        /// コンテナを表示中央にスクロール。サイズオーバーする場合は方向指定で表示位置を決定する。
+        /// コンテナが基準位置になるようにスクロール
         /// </summary>
-        private void ScrollIntoViewOrigin(LinkedListNode<PageFrameContainer> node, LinkedListDirection direction, LinkedListDirection directionY)
+        private void ScrollIntoViewOrigin(LinkedListNode<PageFrameContainer> node, ViewHorizontalOrigin horizontalOrigin, ViewVerticalOrigin verticalOrigin, LinkedListDirection direction)
         {
-            //Debug.WriteLine($"{node.Value}: {node.Value.Rect:f0} / {_viewBox.Rect:f0}");
-            var point = new FramePointMath(_context, node.Value.Rect, _viewBox.Rect).GetStartPoint(direction, directionY);
+            // calc view origin position
+            var math = new FramePointMath(_context, node.Value.Rect, _viewBox.Rect);
+            var horizontalAlignment = GetHorizontalAlignment(math, horizontalOrigin, direction);
+            var verticalAlignment = GetVerticalAlignment(math, verticalOrigin, direction);
+            var point = math.GetAlignedPoint(horizontalAlignment, verticalAlignment);
+
+            // scroll view
             _scrollViewer.SetPoint(new Point(-point.X, -point.Y), _context.PageChangeDuration);
         }
-
-        /// <summary>
-        /// コンテナを表示中央にスクロール
-        /// </summary>
-        private void ScrollIntoViewCenter(LinkedListNode<PageFrameContainer> node)
-        {
-            var point = new FramePointMath(_context, node.Value.Rect, _viewBox.Rect).GetCenterPoint();
-            _scrollViewer.SetPoint(new Point(-point.X, -point.Y), _context.PageChangeDuration);
-        }
-
 
         // TODO: now 引数はどうなのか？
         // - NScroll の時間パラメータ
@@ -1446,23 +1464,24 @@ namespace NeeView.PageFrames
         /// </summary>
         private void ScrollToViewOrigin(LinkedListNode<PageFrameContainer> node, LinkedListDirection direction, ScrollToViewOriginOption options = ScrollToViewOriginOption.None)
         {
-            if (_context.ViewConfig.ViewOrigin == ViewOrigin.Center || options.HasFlag(ScrollToViewOriginOption.IgnoreViewOrigin))
+            var horizontalOrigin = _context.ViewConfig.ViewHorizontalOrigin;
+            var verticalOrigin = _context.ViewConfig.ViewVerticalOrigin;
+
+            // IgnoreViewOrigin は ストレッチ用で Center を強制する
+            if (options.HasFlag(ScrollToViewOriginOption.IgnoreViewOrigin))
             {
-                if (!options.HasFlag(ScrollToViewOriginOption.IgnoreFrameScroll))
-                {
-                    ScrollIntoViewCenter(node);
-                }
-                ContentScrollToCenter(node);
+                horizontalOrigin = ViewHorizontalOrigin.Center;
+                verticalOrigin = ViewVerticalOrigin.Center;
             }
-            else
+
+            // scroll frame
+            if (!options.HasFlag(ScrollToViewOriginOption.IgnoreFrameScroll))
             {
-                var directionY = _context.ViewConfig.ViewOrigin == ViewOrigin.DirectionDependentAndTop ? LinkedListDirection.Next : direction;
-                if (!options.HasFlag(ScrollToViewOriginOption.IgnoreFrameScroll))
-                {
-                    ScrollIntoViewOrigin(node, direction, directionY);
-                }
-                ContentScrollToViewOrigin(node, direction, directionY);
+                ScrollIntoViewOrigin(node, horizontalOrigin, verticalOrigin, direction);
             }
+
+            // scroll content
+            ScrollContentToOrigin(node, horizontalOrigin, verticalOrigin, direction);
         }
 
 
