@@ -26,9 +26,9 @@ namespace NeeView
         /// <param name="pages">実行するページ群</param>
         /// <param name="options">実行オプション</param>
         /// <param name="token">キャンセルトークン</param>
-        public async Task CallAsync(IEnumerable<Page> pages, OpenExternalAppCommandParameter options, CancellationToken token)
+        public async Task CallAsync(IEnumerable<Page> pages, IExternalAppParameter options, CancellationToken token)
         {
-            var files = await PageUtility.CreateFilePathListAsync(pages, options.MultiPagePolicy, options.ArchivePolicy, token);
+            var files = await PageUtility.CreateFilePathListAsync(pages, options.ArchivePolicy, token);
             Call(files, options);
         }
 
@@ -38,19 +38,18 @@ namespace NeeView
         /// <param name="paths">実行するファイルパス群</param>
         /// <param name="options">実行オプション</param>
         /// <param name="token">キャンセルトークン</param>
-        public void Call(IEnumerable<string> paths, OpenExternalAppCommandParameter options)
+        public void Call(IEnumerable<string> paths, IExternalAppParameter options)
         {
+            // options.MultiPagePolicy は無視される。paths に渡される時点で処理済みであること。
             foreach (var path in paths.Distinct())
             {
                 CallProcess(path, options);
-
-                if (options.MultiPagePolicy == MultiPagePolicy.Once) break;
             }
         }
 
 
         // 外部アプリの実行(コア)
-        private static void CallProcess(string fileName, OpenExternalAppCommandParameter options)
+        private static void CallProcess(string fileName, IExternalAppParameter options)
         {
             string param = ReplaceKeyword(ValidateApplicationParam(options.Parameter), fileName);
 

@@ -22,7 +22,9 @@ namespace NeeView
         void OpenFilePlace();
         
         void CopyToClipboard(CopyFileCommandParameter parameter);
-        void OpenApplication(OpenExternalAppCommandParameter parameter);
+
+        bool CanOpenApplication(IExternalAppParameter parameter);
+        void OpenApplication(IExternalAppParameter parameter);
 
         //void OpenExternalApp(object? sender, OpenExternalAppCommandParameter parameter);
         //void ExportImage(object? sender, ExportImageCommandParameter parameter);

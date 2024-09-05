@@ -101,14 +101,19 @@ namespace NeeView
             }
         }
 
+        public bool CanOpenApplication(IExternalAppParameter parameter)
+        {
+            return _book?.CurrentPage != null;
+        }
+
         // 外部アプリで開く
-        public void OpenApplication(OpenExternalAppCommandParameter parameter)
+        public void OpenApplication(IExternalAppParameter parameter)
         {
             _ = OpenApplicationAsync(parameter, CancellationToken.None);
         }
 
         // 外部アプリで開く
-        public async Task OpenApplicationAsync(OpenExternalAppCommandParameter parameter, CancellationToken token)
+        public async Task OpenApplicationAsync(IExternalAppParameter parameter, CancellationToken token)
         {
             var book = this._book;
             if (book is null) return;

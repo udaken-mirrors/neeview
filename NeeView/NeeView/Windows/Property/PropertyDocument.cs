@@ -23,12 +23,12 @@ namespace NeeView.Windows.Property
         public PropertyDocument(object source)
         {
             this.Source = source;
-            this.Elements = CreateProperyContentList(source);
+            this.Elements = CreatePropertyContentList(source);
         }
 
         public PropertyDocument(IEnumerable<object> sources)
         {
-            this.Elements = sources.Select(e => CreateProperyContentList(e)).SelectMany(e => e).ToList();
+            this.Elements = sources.Select(e => CreatePropertyContentList(e)).SelectMany(e => e).ToList();
         }
 
 
@@ -85,14 +85,14 @@ namespace NeeView.Windows.Property
 
         public void SetVisualType<T>(string visualType)
         {
-            foreach (var proertyValue in this.PropertyMembers.Select(e => e.TypeValue).Where(e => e is T))
+            foreach (var propertyValue in this.PropertyMembers.Select(e => e.TypeValue).Where(e => e is T))
             {
-                proertyValue.VisualType = visualType;
+                propertyValue.VisualType = visualType;
             }
         }
 
 
-        private static List<PropertyDrawElement> CreateProperyContentList(object source)
+        private static List<PropertyDrawElement> CreatePropertyContentList(object source)
         {
             var type = source.GetType();
 

@@ -38,6 +38,7 @@ namespace NeeView
         private readonly DisposableCollection _disposables = new();
         private SlideShowInput? _slideShowInput;
         private readonly MainViewCursor _mainViewCursor;
+        private CommandMenuAdapter _commandMenu;
 
         public MainView()
         {
@@ -46,6 +47,8 @@ namespace NeeView
             _background = new PageFrameBackground(_dpiProvider);
             _background.SetBinding(PageFrameBackground.PageProperty, new Binding(nameof(MainViewViewModel.SelectedPage)));
             this.MainViewPanel.Children.Insert(0, _background);
+
+            _commandMenu = new CommandMenuAdapter(this.CommandContextMenu);
 
             _mainViewCursor = new MainViewCursor(this.View);
             _disposables.Add(_mainViewCursor);
@@ -68,6 +71,8 @@ namespace NeeView
         public TouchInput? TouchInput => _vm?.TouchInput;
 
         public DpiScaleProvider DpiProvider => _dpiProvider;
+
+        public CommandMenuAdapter CommandMenu => _commandMenu;
 
 
         protected virtual void Dispose(bool disposing)

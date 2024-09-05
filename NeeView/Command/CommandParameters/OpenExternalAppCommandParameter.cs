@@ -3,7 +3,7 @@ using System.ComponentModel;
 
 namespace NeeView
 {
-    public class OpenExternalAppCommandParameter : CommandParameter, INotifyPropertyChanged
+    public class OpenExternalAppCommandParameter : CommandParameter, INotifyPropertyChanged, IExternalAppParameter
     {
         // コマンドパラメータで使用されるキーワード
         public const string KeyFile = "$File";
@@ -26,7 +26,7 @@ namespace NeeView
         }
 
         // コマンドパラメータ
-        // $FILE = 渡されるファイルパス
+        // $File = 渡されるファイルパス
         [PropertyMember]
         public string Parameter
         {

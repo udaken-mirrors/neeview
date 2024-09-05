@@ -26,11 +26,11 @@ namespace NeeView
         /// </summary>
         public static async Task<List<string>> CreateRealizedFilePathListAsync(IEnumerable<Page> pages, CancellationToken token)
         {
-            return await CreateFilePathListAsync(pages, MultiPagePolicy.All, ArchivePolicy.SendExtractFile, token);
+            return await CreateFilePathListAsync(pages, ArchivePolicy.SendExtractFile, token);
         }
 
 
-        public static async Task<List<string>> CreateFilePathListAsync(IEnumerable<Page> pages, MultiPagePolicy multiPagePolicy, ArchivePolicy archivePolicy, CancellationToken token)
+        public static async Task<List<string>> CreateFilePathListAsync(IEnumerable<Page> pages, ArchivePolicy archivePolicy, CancellationToken token)
         {
             var files = new List<string>();
 
@@ -89,7 +89,6 @@ namespace NeeView
                             throw new ArgumentOutOfRangeException(nameof(archivePolicy));
                     }
                 }
-                if (multiPagePolicy == MultiPagePolicy.Once) break;
             }
 
             return files.Distinct().ToList();

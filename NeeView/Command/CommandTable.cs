@@ -104,6 +104,7 @@ namespace NeeView
                 new ReLoadCommand(),
                 new UnloadCommand(),
                 new OpenExternalAppCommand(),
+                new OpenExternalAppAsCommand(),
                 new OpenExplorerCommand(),
                 new ExportImageAsCommand(),
                 new ExportImageCommand(),

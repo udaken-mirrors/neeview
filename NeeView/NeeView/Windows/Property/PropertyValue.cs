@@ -30,6 +30,11 @@ namespace NeeView.Windows.Property
         }
 
         /// <summary>
+        /// NoteConverter 用のソース
+        /// </summary>
+        public abstract object? RawValue { get; }
+
+        /// <summary>
         /// 表示形式を指定する文字列
         /// </summary>
         public string? VisualType { get; set; }
@@ -46,7 +51,12 @@ namespace NeeView.Windows.Property
         public PropertyValue(IValueSetter setter)
         {
             Setter = setter;
-            Setter.ValueChanged += (s, e) => RaisePropertyChanged(nameof(Value));
+            Setter.ValueChanged += (s, e) =>
+            {
+                OnValueChanged();
+                RaisePropertyChanged(nameof(Value));
+                RaisePropertyChanged(nameof(RawValue));
+            };
         }
 
         public T? Value
@@ -54,6 +64,8 @@ namespace NeeView.Windows.Property
             get { return GetValue(); }
             set { SetValue(value); }
         }
+
+        public override object? RawValue => Value;
 
         public virtual T? GetValue()
         {
@@ -69,6 +81,10 @@ namespace NeeView.Windows.Property
         public override string GetValueString()
         {
             return Value?.ToString() ?? "";
+        }
+
+        protected virtual void OnValueChanged()
+        {
         }
     }
 
@@ -443,6 +459,36 @@ namespace NeeView.Windows.Property
             Filter = filter;
             Note = note;
             DefaultFileName = defaultFileName;
+        }
+    }
+
+
+    public class PropertyValue_PropertyValueWithNote : PropertyValue
+    {
+        private readonly PropertyValue _propertyValue;
+        private readonly IValueConverter _converter;
+
+        public PropertyValue_PropertyValueWithNote(PropertyValue propertyValue, Type converterType)
+        {
+            _propertyValue = propertyValue;
+            _propertyValue.SubscribePropertyChanged(nameof(_propertyValue.RawValue), (s, e) => RaisePropertyChanged(nameof(Note)));
+            _converter = Activator.CreateInstance(converterType) as IValueConverter ?? throw new ArgumentException($"{nameof(converterType)} is not IValueConverter.");
+        }
+
+        public PropertyValue PropertyValue => _propertyValue;
+
+        public override object? RawValue => _propertyValue.RawValue;
+
+        public object Note => _converter.Convert(_propertyValue.RawValue, typeof(string), null, CultureInfo.CurrentCulture);
+
+        public override string GetValueString()
+        {
+            return _propertyValue.GetValueString();
+        }
+
+        public override void SetValueFromString(string value)
+        {
+            _propertyValue.SetValueFromString(value);
         }
     }
 }

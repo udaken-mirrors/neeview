@@ -159,56 +159,63 @@ namespace NeeView.Windows.Property
         [MemberNotNull(nameof(TypeValue))]
         private void InitializeByDefaultAttribute(PropertyMemberAttribute attribute)
         {
+            var typeValue = CreateDefaultPropertyValue(attribute);
+            if (attribute.NoteConverter is null)
+            {
+                this.TypeValue = typeValue;
+            }
+            else
+            {
+                this.TypeValue = new PropertyValue_PropertyValueWithNote(typeValue, attribute.NoteConverter);
+            }
+        }
+
+        private PropertyValue CreateDefaultPropertyValue(PropertyMemberAttribute attribute)
+        {
             if (_info.PropertyType.IsEnum)
             {
-                this.TypeValue = new PropertyValue_Enum(this, _info.PropertyType);
-                return;
+                return new PropertyValue_Enum(this, _info.PropertyType);
             }
 
             TypeCode typeCode = Type.GetTypeCode(_info.PropertyType);
             switch (typeCode)
             {
                 case TypeCode.Boolean:
-                    this.TypeValue = new PropertyValue_Boolean(this);
-                    break;
+                    return new PropertyValue_Boolean(this);
                 case TypeCode.String:
-                    this.TypeValue = new PropertyValue_String(this);
-                    break;
+                    return new PropertyValue_String(this);
                 case TypeCode.Int32:
-                    this.TypeValue = new PropertyValue_Integer(this);
-                    break;
+                    return new PropertyValue_Integer(this);
                 case TypeCode.Double:
                     if (attribute.HasDecimalPoint)
                     {
-                        this.TypeValue = new PropertyValue_DoubleFloat(this);
+                        return new PropertyValue_DoubleFloat(this);
                     }
                     else
                     {
-                        this.TypeValue = new PropertyValue_Double(this);
+                        return new PropertyValue_Double(this);
                     }
-                    break;
                 default:
                     if (_info.PropertyType == typeof(Point))
                     {
-                        this.TypeValue = new PropertyValue_Point(this);
+                        return new PropertyValue_Point(this);
                     }
                     else if (_info.PropertyType == typeof(Color))
                     {
-                        this.TypeValue = new PropertyValue_Color(this);
+                        return new PropertyValue_Color(this);
                     }
                     else if (_info.PropertyType == typeof(Size))
                     {
-                        this.TypeValue = new PropertyValue_Size(this);
+                        return new PropertyValue_Size(this);
                     }
                     else if (_info.PropertyType == typeof(TimeSpan))
                     {
-                        this.TypeValue = new PropertyValue_TimeSpan(this);
+                        return new PropertyValue_TimeSpan(this);
                     }
                     else
                     {
-                        this.TypeValue = new PropertyValue_Object(this);
+                        return new PropertyValue_Object(this);
                     }
-                    break;
             }
         }
 
@@ -365,7 +372,7 @@ namespace NeeView.Windows.Property
 
             var attribute = GetPropertyMemberAttribute(info);
             if (attribute is null) throw new InvalidOperationException($"Need PropertyMemberAttribute at {source.GetType()}.{name}");
-              
+
             return new PropertyMemberElement(source, info, attribute, options);
         }
 

@@ -8,13 +8,14 @@ using System.Threading.Tasks;
 
 namespace NeeView
 {
-    public class ExternalApp : BindableBase, ICloneable
+    public class ExternalApp : BindableBase, ICloneable, IExternalAppParameter
     {
         private string? _name;
         private string? _command;
         private string _parameter = OpenExternalAppCommandParameter.DefaultParameter;
         private ArchivePolicy _archivePolicy = ArchivePolicy.SendExtractFile;
         private string? _workingDirectory;
+        private MultiPagePolicy _multiPagePolicy = MultiPagePolicy.Once;
 
 
         // 表示名
@@ -43,13 +44,6 @@ namespace NeeView
             set { SetProperty(ref _parameter, string.IsNullOrWhiteSpace(value) ? OpenExternalAppCommandParameter.DefaultParameter : value); }
         }
 
-        // 圧縮ファイルのときの動作
-        public ArchivePolicy ArchivePolicy
-        {
-            get { return _archivePolicy; }
-            set { SetProperty(ref _archivePolicy, value); }
-        }
-
         // 作業フォルダー
         public string? WorkingDirectory
         {
@@ -57,27 +51,27 @@ namespace NeeView
             set { SetProperty(ref _workingDirectory, string.IsNullOrWhiteSpace(value) ? null : value.Trim()); }
         }
 
-
-        private OpenExternalAppCommandParameter CreateCommandParameter()
+        // 複数ページのときの動作
+        public MultiPagePolicy MultiPagePolicy
         {
-            var parameter = new OpenExternalAppCommandParameter()
-            {
-                Command = Command,
-                Parameter = Parameter,
-                MultiPagePolicy = MultiPagePolicy.All,
-                ArchivePolicy = ArchivePolicy,
-                WorkingDirectory = WorkingDirectory,
-            };
-
-            return parameter;
+            get { return _multiPagePolicy; }
+            set { SetProperty(ref _multiPagePolicy, value); }
         }
+
+        // 圧縮ファイルのときの動作
+        public ArchivePolicy ArchivePolicy
+        {
+            get { return _archivePolicy; }
+            set { SetProperty(ref _archivePolicy, value); }
+        }
+
 
         public async Task ExecuteAsync(IEnumerable<Page> pages, CancellationToken token)
         {
             var external = new ExternalAppUtility();
             try
             {
-                await external.CallAsync(pages, CreateCommandParameter(), token);
+                await external.CallAsync(pages, this, token);
             }
             catch (OperationCanceledException)
             {
@@ -93,7 +87,7 @@ namespace NeeView
             var external = new ExternalAppUtility();
             try
             {
-                external.Call(files, CreateCommandParameter());
+                external.Call(files, this);
             }
             catch (OperationCanceledException)
             {

@@ -18,6 +18,11 @@ namespace NeeView
             this.Add(item);
             return item;
         }
+
+        public bool IsValidIndex(int index)
+        {
+            return 0 <= index && index < this.Count;
+        }
     }
 
 

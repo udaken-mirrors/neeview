@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
+using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
 
@@ -390,6 +391,12 @@ namespace NeeView
         public virtual void UpdateDefaultParameter()
         {
         }
+
+        public virtual MenuItem? CreateMenuItem()
+        {
+            return null;
+        }
+
 
         #region Memento
 

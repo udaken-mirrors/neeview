@@ -206,7 +206,12 @@ namespace NeeView
             _actionControl.ExportDialog(parameter);
         }
 
-        public void OpenApplication(OpenExternalAppCommandParameter parameter)
+        public bool CanOpenApplication(IExternalAppParameter parameter)
+        {
+            return _actionControl.CanOpenApplication(parameter);
+        }
+
+        public void OpenApplication(IExternalAppParameter parameter)
         {
             _actionControl.OpenApplication(parameter);
         }

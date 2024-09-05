@@ -195,7 +195,12 @@ namespace NeeView
             _source?.ExportDialog(parameter);
         }
 
-        public void OpenApplication(OpenExternalAppCommandParameter parameter)
+        public bool CanOpenApplication(IExternalAppParameter parameter)
+        {
+            return _source?.CanOpenApplication(parameter) ?? false;
+        }
+
+        public void OpenApplication(IExternalAppParameter parameter)
         {
             _source?.OpenApplication(parameter);
         }

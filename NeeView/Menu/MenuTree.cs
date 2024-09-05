@@ -393,13 +393,22 @@ namespace NeeView
                     {
                         var item = new MenuItem();
 
-                        if (this.CommandName is not null && CommandTable.Current.ContainsKey(this.CommandName))
+                        if (this.CommandName is not null && CommandTable.Current.TryGetValue(this.CommandName, out var command))
                         {
+                            var menuItem = command.CreateMenuItem();
+                            if (menuItem is not null)
+                            {
+                                item = menuItem;
+                            }
+                            else
+                            {
+                                item.Command = RoutedCommandTable.Current.Commands[this.CommandName ?? "None"];
+                                item.CommandParameter = MenuCommandTag.Tag; // コマンドがメニューからであることをパラメータで伝えてみる
+                            }
+
                             item.Header = this.Label;
                             item.Tag = this.CommandName;
-                            item.Command = RoutedCommandTable.Current.Commands[this.CommandName ?? "None"];
-                            item.CommandParameter = MenuCommandTag.Tag; // コマンドがメニューからであることをパラメータで伝えてみる
-                            var binding = CommandTable.Current.GetElement(this.CommandName).CreateIsCheckedBinding();
+                            var binding = command.CreateIsCheckedBinding();
                             if (binding != null)
                             {
                                 item.SetBinding(MenuItem.IsCheckedProperty, binding);
@@ -584,8 +593,8 @@ namespace NeeView
                         new MenuTree(MenuElementType.Command) { CommandName = "Unload" },
                         new MenuTree(MenuElementType.History),
                         new MenuTree(MenuElementType.Separator),
-                        new MenuTree(MenuElementType.Command) { CommandName = "OpenExternalApp" },
                         new MenuTree(MenuElementType.Command) { CommandName = "OpenExplorer" },
+                        new MenuTree(MenuElementType.Command) { CommandName = "OpenExternalAppAs" },
                         new MenuTree(MenuElementType.Separator),
                         new MenuTree(MenuElementType.Command) { CommandName = "CopyFile" },
                         new MenuTree(MenuElementType.Command) { CommandName = "Paste" },

@@ -65,7 +65,7 @@ namespace NeeView
                 result = true;
             }
 
-            var files = await PageUtility.CreateFilePathListAsync(pages, parameter.MultiPagePolicy, parameter.ArchivePolicy, token);
+            var files = await PageUtility.CreateFilePathListAsync(pages, parameter.ArchivePolicy, token);
 
             if (files.Count > 0)
             {
@@ -74,7 +74,7 @@ namespace NeeView
                 if (parameter.TextCopyPolicy != TextCopyPolicy.None)
                 {
                     var paths = (parameter.ArchivePolicy == ArchivePolicy.SendExtractFile && parameter.TextCopyPolicy == TextCopyPolicy.OriginalPath)
-                        ? await PageUtility.CreateFilePathListAsync(pages, parameter.MultiPagePolicy, ArchivePolicy.SendArchivePath, token)
+                        ? await PageUtility.CreateFilePathListAsync(pages, ArchivePolicy.SendArchivePath, token)
                         : files;
                     data.SetData(System.Windows.DataFormats.UnicodeText, string.Join(System.Environment.NewLine, paths));
                 }
