@@ -24,6 +24,7 @@ namespace NeeView.PageFrames
         private readonly double _angle;
         private readonly double _scale;
         private readonly double _span;
+        private readonly double _totalSpan;
         private readonly Size _stretchedSize;
         private readonly Size _size;
 
@@ -58,8 +59,8 @@ namespace NeeView.PageFrames
 
             // stretch
             _span = calculator.ContentsSpace;
-            var totalSpan = Math.Max(0.0, (_elements.Count - 1) * _span);
-            _scale = calculator.CalcFrameStretchScale(rawSize, totalSpan, RotateTransform);
+            _totalSpan = Math.Max(0.0, (_elements.Count - 1) * _span);
+            _scale = calculator.CalcFrameStretchScale(rawSize, _totalSpan, RotateTransform);
 
             // frame size
             _stretchedSize = GetStretchedContentSize(calculator);
@@ -86,6 +87,11 @@ namespace NeeView.PageFrames
         /// コンテンツ間のスペース
         /// </summary>
         public double Span => _span;
+
+        /// <summary>
+        /// コンテンツ間のスペース (合計)
+        /// </summary>
+        public double TotalSpan => _totalSpan;
 
         /// <summary>
         /// ストレッチケールを適用したサイズ
@@ -142,7 +148,7 @@ namespace NeeView.PageFrames
         private Size GetStretchedContentSize(ContentSizeCalculator calculator)
         {
             var size = GetRawContentSize();
-            var width = Math.Max(size.Width * _scale + Span, 0.0);
+            var width = Math.Max(size.Width * _scale + _totalSpan, 0.0);
             var height = Math.Max(size.Height * _scale, 0.0 );
             return new Size(width, height);
         }
@@ -294,6 +300,7 @@ namespace NeeView.PageFrames
                _angle == frame._angle &&
                _scale == frame._scale &&
                _span == frame._span &&
+               _totalSpan == frame._totalSpan &&
                EqualityComparer<Size>.Default.Equals(_stretchedSize, frame._stretchedSize) &&
                EqualityComparer<Size>.Default.Equals(_size, frame._size);
         }
