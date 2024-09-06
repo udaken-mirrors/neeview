@@ -120,7 +120,7 @@ namespace NeeView
 
         public Duration Duration
         {
-            get { return Duration.Automatic; }
+            get { return GetDuration(); }
         }
 
 
@@ -164,6 +164,10 @@ namespace NeeView
             GC.SuppressFinalize(this);
         }
 
+        private Duration GetDuration()
+        {
+            return _player?.Duration ?? Duration.Automatic;
+        }
 
         private double GetPosition()
         {
@@ -223,6 +227,7 @@ namespace NeeView
             UpdateRepeat();
 
             MediaPlayed?.Invoke(this, EventArgs.Empty);
+            RaisePropertyChanged("");
         }
 
         private void Image_Completed(object sender, RoutedEventArgs e)

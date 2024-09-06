@@ -12,7 +12,7 @@
         [WordNodeMember]
         public double Duration
         {
-            get => _player.Duration.TimeSpan.TotalSeconds;
+            get => AppDispatcher.Invoke(() => _player.Duration.HasTimeSpan ? _player.Duration.TimeSpan.TotalSeconds : 0.0);
         }
 
         [WordNodeMember]
@@ -31,35 +31,35 @@
         public double Volume
         {
             get => Config.Current.Archive.Media.Volume;
-            set => Config.Current.Archive.Media.Volume = value;
+            set => AppDispatcher.Invoke(() => Config.Current.Archive.Media.Volume = value);
         }
 
         [WordNodeMember]
         public bool IsMuted
         {
             get => Config.Current.Archive.Media.IsMuted;
-            set => Config.Current.Archive.Media.IsMuted = value;
+            set => AppDispatcher.Invoke(() => Config.Current.Archive.Media.IsMuted = value);
         }
 
         [WordNodeMember]
         public bool IsRepeat
         {
             get => _player.IsRepeat;
-            set => AppDispatcher.BeginInvoke(() => _player.IsRepeat = value);
+            set => AppDispatcher.Invoke(() => _player.IsRepeat = value);
         }
 
         [WordNodeMember]
         public double Position
         {
-            get => _player.Position;
-            set => AppDispatcher.BeginInvoke(() => _player.Position = value);
+            get => AppDispatcher.Invoke(() => _player.Position);
+            set => AppDispatcher.Invoke(() => _player.Position = value);
         }
 
         [WordNodeMember]
         public bool IsPlaying
         {
             get => _player.IsPlaying;
-            set => AppDispatcher.BeginInvoke(() =>
+            set => AppDispatcher.Invoke(() =>
             {
                 if (value)
                 {
