@@ -115,6 +115,7 @@ namespace NeeView
                 new CopyImageCommand(),
                 new PasteCommand(),
                 new CopyToFolderAsCommand(),
+                new MoveToFolderAsCommand(),
 
                 new ClearHistoryCommand(),
                 new ClearHistoryInPlaceCommand(),

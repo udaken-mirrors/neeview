@@ -24,6 +24,12 @@ namespace NeeView
             _contextMenu.IsOpen = true;
         }
 
+        public void OpenMoveToFolderMenu(ICommandParameterFactory<DestinationFolder> parameterFactory)
+        {
+            MainViewMoveToFolderTools.UpdateMoveToFolderMenu(_contextMenu.Items, parameterFactory);
+            _contextMenu.IsOpen = true;
+        }
+
         public void Close()
         {
             _contextMenu.IsOpen = false;

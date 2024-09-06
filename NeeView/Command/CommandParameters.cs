@@ -103,6 +103,7 @@ namespace NeeView
             typeof(ImportBackupCommandParameter),
             typeof(ExportBackupCommandParameter),
             typeof(CopyToFolderAsCommandParameter),
+            typeof(MoveToFolderAsCommandParameter),
         };
 
 

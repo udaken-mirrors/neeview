@@ -4,6 +4,7 @@ using System;
 using System.Linq;
 using System.Threading;
 using NeeView.PageFrames;
+using NeeLaboratory.Linq;
 
 namespace NeeView
 {
@@ -101,17 +102,11 @@ namespace NeeView
             }
         }
 
-        public bool CanOpenApplication(IExternalAppParameter parameter)
-        {
-            return _book?.CurrentPage != null;
-        }
-
 
         public bool CanCopyToFolder(DestinationFolder parameter, MultiPagePolicy multiPagePolicy)
         {
             return _book?.CurrentPage != null;
         }
-
 
         public void CopyToFolder(DestinationFolder parameter, MultiPagePolicy multiPagePolicy)
         {
@@ -127,8 +122,8 @@ namespace NeeView
             try
             {
                 var pages = CollectPages(book, multiPagePolicy);
-                var items = await PageUtility.CreateRealizedFilePathListAsync(pages, token);
-                await parameter.CopyAsync(items, token);
+                var paths = await PageUtility.CreateRealizedFilePathListAsync(pages, token);
+                await parameter.CopyAsync(paths, token);
             }
             catch (OperationCanceledException)
             {
@@ -139,6 +134,51 @@ namespace NeeView
             }
         }
 
+
+        // NOTE: parameter は未使用
+        public bool CanMoveToFolder(DestinationFolder parameter, MultiPagePolicy multiPagePolicy)
+        {
+            var book = this._book;
+            if (book is null) return false;
+
+            var items = CollectPages(book, multiPagePolicy);
+            return Config.Current.System.IsFileWriteAccessEnabled
+                && items != null
+                && items.Any()
+                && items.All(e => e.ArchiveEntry.IsFileSystem && e.ArchiveEntry.Archiver is not PlaylistArchive);
+        }
+
+        public void MoveToFolder(DestinationFolder parameter, MultiPagePolicy multiPagePolicy)
+        {
+            _ = MoveToFolderAsync(parameter, multiPagePolicy, CancellationToken.None);
+        }
+
+        public async Task MoveToFolderAsync(DestinationFolder parameter, MultiPagePolicy multiPagePolicy, CancellationToken token)
+        {
+            var book = this._book;
+            if (book is null) return;
+            if (!CanMoveToFolder(parameter, multiPagePolicy)) return;
+
+            try
+            {
+                var pages = CollectPages(book, multiPagePolicy).Where(e => e.ArchiveEntry.IsFileSystem);
+                var paths = pages.Select(e => e.GetFilePlace()).WhereNotNull().ToList();
+                await parameter.MoveAsync(paths, token);
+            }
+            catch (OperationCanceledException)
+            {
+            }
+            catch (Exception ex)
+            {
+                new MessageDialog(ex.Message, Properties.TextResources.GetString("PageList.Message.MoveToFolderFailed")).ShowDialog();
+            }
+        }
+
+
+        public bool CanOpenApplication(IExternalAppParameter parameter)
+        {
+            return _book?.CurrentPage != null;
+        }
 
         // 外部アプリで開く
         public void OpenApplication(IExternalAppParameter parameter)

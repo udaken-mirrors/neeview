@@ -11,45 +11,44 @@ using System.Windows.Input;
 namespace NeeView
 {
     /// <summary>
-    /// メインビュー用のフォルダーにコピーコマンド メニュー
+    /// メインビュー用のフォルダーに移動コマンド メニュー
     /// </summary>
-    public static class MainViewCopyToFolderTools
+    public static class MainViewMoveToFolderTools
     {
-        private static readonly CopyToFolderCommand _command = new();
+        private static readonly MoveToFolderCommand _command = new();
         private static readonly OpenDestinationFolderDialogCommand _dialogCommand = new();
 
-
-        public static MenuItem CreateCopyToFolderItem(ICommandParameterFactory<DestinationFolder> parameterFactory)
+        public static MenuItem CreateMoveToFolderItem(ICommandParameterFactory<DestinationFolder> parameterFactory, MoveableViewPageBindingSource bindingSource)
         {
-            var menuItem = DestinationFolderCollectionUtility.CreateDestinationFolderItem(ResourceService.GetString("@CopyToFolderAsCommand.Menu"), true, _command, _dialogCommand, parameterFactory);
-            menuItem.SetBinding(MenuItem.IsEnabledProperty, new Binding(nameof(ViewPageBindingSource.AnyViewPages)) { Source = ViewPageBindingSource.Default });
-            menuItem.SubmenuOpened += (s, e) => UpdateCopyToFolderMenu(menuItem.Items, parameterFactory);
+            var menuItem = DestinationFolderCollectionUtility.CreateDestinationFolderItem(ResourceService.GetString("@MoveToFolderAsCommand.Menu"), true, _command, _dialogCommand, parameterFactory);
+            menuItem.SetBinding(MenuItem.IsEnabledProperty, new Binding(nameof(MoveableViewPageBindingSource.AnyMoveableViewPages)) { Source = bindingSource });
+            menuItem.SubmenuOpened += (s, e) => UpdateMoveToFolderMenu(menuItem.Items, parameterFactory);
             return menuItem;
         }
 
-        public static void UpdateCopyToFolderMenu(ItemCollection items, ICommandParameterFactory<DestinationFolder> parameterFactory)
+        public static void UpdateMoveToFolderMenu(ItemCollection items, ICommandParameterFactory<DestinationFolder> parameterFactory)
         {
             DestinationFolderCollectionUtility.UpdateDestinationFolderItems(items, _command, _dialogCommand, parameterFactory);
         }
 
 
         /// <summary>
-        /// メインビュー用 対象フォルダーにコピーするコマンド
+        /// メインビュー用 対象フォルダーに移動するコマンド
         /// </summary>
-        private class CopyToFolderCommand : ICommand
+        private class MoveToFolderCommand : ICommand
         {
             public event EventHandler? CanExecuteChanged;
 
             public bool CanExecute(object? parameter)
             {
                 if (parameter is not DestinationFolderParameter e) return false;
-                return BookOperation.Current.Control.CanCopyToFolder(e.DestinationFolder, e.Option.MultiPagePolicy);
+                return BookOperation.Current.Control.CanMoveToFolder(e.DestinationFolder, e.Option.MultiPagePolicy);
             }
 
             public void Execute(object? parameter)
             {
                 if (parameter is not DestinationFolderParameter e) return;
-                BookOperation.Current.Control.CopyToFolder(e.DestinationFolder, e.Option.MultiPagePolicy);
+                BookOperation.Current.Control.MoveToFolder(e.DestinationFolder, e.Option.MultiPagePolicy);
             }
 
             public void RaiseCanExecuteChanged()

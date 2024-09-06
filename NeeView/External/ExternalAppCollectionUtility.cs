@@ -15,7 +15,7 @@ namespace NeeView
         /// <param name="OpenExternalAppDialogCommand">設定コマンド</param>
         public static MenuItem CreateExternalAppItem(bool isEnabled, ICommand command, ICommand OpenExternalAppDialogCommand)
         {
-            var subItem = new MenuItem() { Header = Properties.TextResources.GetString("BookshelfItem.Menu.OpenExternalApp"), IsEnabled = isEnabled };
+            var subItem = new MenuItem() { Header = ResourceService.GetString("@OpenExternalAppAsCommand.Menu"), IsEnabled = isEnabled };
             UpdateExternalAppItems(subItem.Items, command, OpenExternalAppDialogCommand);
             return subItem;
         }
@@ -35,11 +35,11 @@ namespace NeeView
             }
             else
             {
-                items.Add(new MenuItem() { Header = Properties.TextResources.GetString("Word.ItemNone"), IsEnabled = false });
+                items.Add(new MenuItem() { Header = ResourceService.GetString("@Word.ItemNone"), IsEnabled = false });
             }
 
             items.Add(new Separator());
-            items.Add(new MenuItem() { Header = Properties.TextResources.GetString("BookshelfItem.Menu.ExternalAppOption"), Command = OpenExternalAppDialogCommand });
+            items.Add(new MenuItem() { Header = ResourceService.GetString("@BookshelfItem.Menu.ExternalAppOption"), Command = OpenExternalAppDialogCommand });
         }
     }
 

@@ -501,19 +501,19 @@ namespace NeeView
 
             var listBox = this.ListBox;
             contextMenu.Items.Clear();
-            contextMenu.Items.Add(new MenuItem() { Header = Properties.TextResources.GetString("PlaylistItem.Menu.Open"), Command = OpenCommand });
+            contextMenu.Items.Add(new MenuItem() { Header = ResourceService.GetString("@PlaylistItem.Menu.Open"), Command = OpenCommand });
             contextMenu.Items.Add(new Separator());
-            contextMenu.Items.Add(new MenuItem() { Header = Properties.TextResources.GetString("PlaylistItem.Menu.Explorer"), Command = OpenExplorerCommand });
+            contextMenu.Items.Add(new MenuItem() { Header = ResourceService.GetString("@PlaylistItem.Menu.Explorer"), Command = OpenExplorerCommand });
             contextMenu.Items.Add(ExternalAppCollectionUtility.CreateExternalAppItem(_commandResource.OpenExternalApp_CanExecute(listBox), OpenExternalAppCommand, OpenExternalAppDialogCommand));
-            contextMenu.Items.Add(new MenuItem() { Header = Properties.TextResources.GetString("PlaylistItem.Menu.Copy"), Command = CopyCommand });
-            contextMenu.Items.Add(DestinationFolderCollectionUtility.CreateDestinationFolderItem(Properties.TextResources.GetString("PlaylistItem.Menu.CopyToFolder"), _commandResource.CopyToFolder_CanExecute(listBox), CopyToFolderCommand, OpenDestinationFolderCommand));
-            contextMenu.Items.Add(DestinationFolderCollectionUtility.CreateDestinationFolderItem(Properties.TextResources.GetString("PlaylistItem.Menu.MoveToFolder"), _commandResource.MoveToFolder_CanExecute(listBox), MoveToFolderCommand, OpenDestinationFolderCommand));
+            contextMenu.Items.Add(new MenuItem() { Header = ResourceService.GetString("@PlaylistItem.Menu.Copy"), Command = CopyCommand });
+            contextMenu.Items.Add(DestinationFolderCollectionUtility.CreateDestinationFolderItem(ResourceService.GetString("@PlaylistItem.Menu.CopyToFolder"), _commandResource.CopyToFolder_CanExecute(listBox), CopyToFolderCommand, OpenDestinationFolderCommand));
+            contextMenu.Items.Add(DestinationFolderCollectionUtility.CreateDestinationFolderItem(ResourceService.GetString("@PlaylistItem.Menu.MoveToFolder"), _commandResource.MoveToFolder_CanExecute(listBox), MoveToFolderCommand, OpenDestinationFolderCommand));
             contextMenu.Items.Add(new Separator());
-            contextMenu.Items.Add(new MenuItem() { Header = Properties.TextResources.GetString("PlaylistItem.Menu.Delete"), Command = RemoveCommand });
-            contextMenu.Items.Add(new MenuItem() { Header = Properties.TextResources.GetString("PlaylistItem.Menu.Rename"), Command = RenameCommand });
+            contextMenu.Items.Add(new MenuItem() { Header = ResourceService.GetString("@PlaylistItem.Menu.Delete"), Command = RemoveCommand });
+            contextMenu.Items.Add(new MenuItem() { Header = ResourceService.GetString("@PlaylistItem.Menu.Rename"), Command = RenameCommand });
             contextMenu.Items.Add(new Separator());
 
-            var menuItem = new MenuItem() { Header = Properties.TextResources.GetString("PlaylistItem.Menu.MoveToAnother") };
+            var menuItem = new MenuItem() { Header = ResourceService.GetString("@PlaylistItem.Menu.MoveToAnother") };
             var paths = _vm.CollectAnotherPlaylists();
             if (paths.Any())
             {

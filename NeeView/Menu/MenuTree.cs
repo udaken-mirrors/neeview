@@ -599,6 +599,7 @@ namespace NeeView
                         new MenuTree(MenuElementType.Command) { CommandName = "CopyFile" },
                         new MenuTree(MenuElementType.Command) { CommandName = "Paste" },
                         new MenuTree(MenuElementType.Command) { CommandName = "CopyToFolderAs" },
+                        new MenuTree(MenuElementType.Command) { CommandName = "MoveToFolderAs" },
                         new MenuTree(MenuElementType.Command) { CommandName = "ExportImageAs" },
                         new MenuTree(MenuElementType.Command) { CommandName = "Print" },
                         new MenuTree(MenuElementType.Separator),

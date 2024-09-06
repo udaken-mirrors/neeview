@@ -579,23 +579,23 @@ namespace NeeView
 
             if (item.PageType == PageType.Folder)
             {
-                contextMenu.Items.Add(new MenuItem() { Header = Properties.TextResources.GetString("PageListItem.Menu.OpenBook"), Command = OpenBookCommand });
+                contextMenu.Items.Add(new MenuItem() { Header = ResourceService.GetString("@PageListItem.Menu.OpenBook"), Command = OpenBookCommand });
                 contextMenu.Items.Add(new Separator());
             }
 
             var listBox = this.ThumbnailListBox;
-            contextMenu.Items.Add(new MenuItem() { Header = Properties.TextResources.GetString("PageListItem.Menu.Open"), Command = OpenCommand });
+            contextMenu.Items.Add(new MenuItem() { Header = ResourceService.GetString("@PageListItem.Menu.Open"), Command = OpenCommand });
             contextMenu.Items.Add(new Separator());
-            contextMenu.Items.Add(new MenuItem() { Header = Properties.TextResources.GetString("PageListItem.Menu.AddToPlaylist"), Command = PlaylistMarkCommand, IsChecked = _commandResource.PlaylistMark_IsChecked(listBox) });
+            contextMenu.Items.Add(new MenuItem() { Header = ResourceService.GetString("@PageListItem.Menu.AddToPlaylist"), Command = PlaylistMarkCommand, IsChecked = _commandResource.PlaylistMark_IsChecked(listBox) });
             contextMenu.Items.Add(new Separator());
-            contextMenu.Items.Add(new MenuItem() { Header = Properties.TextResources.GetString("PageListItem.Menu.Explorer"), Command = OpenExplorerCommand });
+            contextMenu.Items.Add(new MenuItem() { Header = ResourceService.GetString("@PageListItem.Menu.Explorer"), Command = OpenExplorerCommand });
             contextMenu.Items.Add(ExternalAppCollectionUtility.CreateExternalAppItem(_commandResource.OpenExternalApp_CanExecute(listBox), OpenExternalAppCommand, OpenExternalAppDialogCommand));
-            contextMenu.Items.Add(new MenuItem() { Header = Properties.TextResources.GetString("PageListItem.Menu.Copy"), Command = CopyCommand });
-            contextMenu.Items.Add(DestinationFolderCollectionUtility.CreateDestinationFolderItem(Properties.TextResources.GetString("PageListItem.Menu.CopyToFolder"), _commandResource.CopyToFolder_CanExecute(listBox), CopyToFolderCommand, OpenDestinationFolderCommand));
-            contextMenu.Items.Add(DestinationFolderCollectionUtility.CreateDestinationFolderItem(Properties.TextResources.GetString("PageListItem.Menu.MoveToFolder"), _commandResource.MoveToFolder_CanExecute(listBox), MoveToFolderCommand, OpenDestinationFolderCommand));
+            contextMenu.Items.Add(new MenuItem() { Header = ResourceService.GetString("@PageListItem.Menu.Copy"), Command = CopyCommand });
+            contextMenu.Items.Add(DestinationFolderCollectionUtility.CreateDestinationFolderItem(ResourceService.GetString("@PageListItem.Menu.CopyToFolder"), _commandResource.CopyToFolder_CanExecute(listBox), CopyToFolderCommand, OpenDestinationFolderCommand));
+            contextMenu.Items.Add(DestinationFolderCollectionUtility.CreateDestinationFolderItem(ResourceService.GetString("@PageListItem.Menu.MoveToFolder"), _commandResource.MoveToFolder_CanExecute(listBox), MoveToFolderCommand, OpenDestinationFolderCommand));
             contextMenu.Items.Add(new Separator());
-            contextMenu.Items.Add(new MenuItem() { Header = Properties.TextResources.GetString("PageListItem.Menu.Delete"), Command = RemoveCommand });
-            contextMenu.Items.Add(new MenuItem() { Header = Properties.TextResources.GetString("PageListItem.Menu.Rename"), Command = RenameCommand });
+            contextMenu.Items.Add(new MenuItem() { Header = ResourceService.GetString("@PageListItem.Menu.Delete"), Command = RemoveCommand });
+            contextMenu.Items.Add(new MenuItem() { Header = ResourceService.GetString("@PageListItem.Menu.Rename"), Command = RenameCommand });
         }
 
         #endregion
