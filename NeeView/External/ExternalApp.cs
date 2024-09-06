@@ -8,14 +8,13 @@ using System.Threading.Tasks;
 
 namespace NeeView
 {
-    public class ExternalApp : BindableBase, ICloneable, IExternalAppParameter
+    public class ExternalApp : BindableBase, ICloneable, IExternalApp
     {
         private string? _name;
         private string? _command;
         private string _parameter = OpenExternalAppCommandParameter.DefaultParameter;
         private ArchivePolicy _archivePolicy = ArchivePolicy.SendExtractFile;
         private string? _workingDirectory;
-        private MultiPagePolicy _multiPagePolicy = MultiPagePolicy.Once;
 
 
         // 表示名
@@ -49,13 +48,6 @@ namespace NeeView
         {
             get { return _workingDirectory; }
             set { SetProperty(ref _workingDirectory, string.IsNullOrWhiteSpace(value) ? null : value.Trim()); }
-        }
-
-        // 複数ページのときの動作
-        public MultiPagePolicy MultiPagePolicy
-        {
-            get { return _multiPagePolicy; }
-            set { SetProperty(ref _multiPagePolicy, value); }
         }
 
         // 圧縮ファイルのときの動作

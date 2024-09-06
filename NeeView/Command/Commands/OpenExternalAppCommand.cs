@@ -19,7 +19,8 @@ namespace NeeView
 
         public override void Execute(object? sender, CommandContext e)
         {
-            BookOperation.Current.Control.OpenApplication(e.Parameter.Cast<OpenExternalAppCommandParameter>());
+            var parameter = e.Parameter.Cast<OpenExternalAppCommandParameter>();
+            BookOperation.Current.Control.OpenApplication(parameter, parameter.MultiPagePolicy);
         }
     }
 

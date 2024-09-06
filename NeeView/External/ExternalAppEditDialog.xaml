@@ -51,7 +51,6 @@
                 <RowDefinition Height="auto" />
                 <RowDefinition Height="auto" />
                 <RowDefinition Height="auto" />
-                <RowDefinition Height="auto" />
             </Grid.RowDefinitions>
 
             <TextBlock Grid.Column="0" Grid.Row="0" Style="{StaticResource HeaderStyle}" Text="{properties:TextBinding Word.Name}" />
@@ -71,14 +70,7 @@
 
             <TextBlock Grid.Column="0" Grid.Row="5" Style="{StaticResource HeaderStyle}" Text="" />
             <TextBlock Grid.Column="1" Grid.Row="5" VerticalAlignment="Center" Text="{Binding Model.ArchivePolicy, Converter={StaticResource ArchivePolicyToSampleStringConverter}}" Foreground="Gray" Padding="2" />
-            
-            <TextBlock Grid.Column="0" Grid.Row="6" Style="{StaticResource HeaderStyle}">
-                <Run Text="{properties:TextBinding OpenExternalAppCommandParameter.MultiPagePolicy, Mode=OneWay}"/>
-                <LineBreak/>
-                <Run Text="{properties:TextBinding Note.MainViewOnly, Mode=OneWay}" Foreground="Gray" />
-            </TextBlock>
-            <ComboBox Grid.Column="1" Grid.Row="6" VerticalAlignment="Center" ItemsSource="{Binding MultiPagePolicyList}" DisplayMemberPath="Value" SelectedValuePath="Key" SelectedValue="{Binding Model.MultiPagePolicy}" />
         </Grid>
-       
+
     </DockPanel>
 </Window>

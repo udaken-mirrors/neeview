@@ -15,17 +15,17 @@ namespace NeeView
         private static readonly OpenExternalAppDialogCommand _openExternalAppDialogCommand = new();
 
 
-        public static MenuItem CreateExternalAppItem()
+        public static MenuItem CreateExternalAppItem(ICommandParameterFactory<ExternalApp> parameterFactory)
         {
             var menuItem = ExternalAppCollectionUtility.CreateExternalAppItem(true, _openExternalAppCommand, _openExternalAppDialogCommand);
             menuItem.SetBinding(MenuItem.IsEnabledProperty, new Binding(nameof(ViewPageBindingSource.AnyViewPages)) { Source = ViewPageBindingSource.Default });
-            menuItem.SubmenuOpened += (s, e) => UpdateExternalAppMenu(menuItem.Items);
+            menuItem.SubmenuOpened += (s, e) => UpdateExternalAppMenu(menuItem.Items, parameterFactory);
             return menuItem;
         }
 
-        public static void UpdateExternalAppMenu(ItemCollection items)
+        public static void UpdateExternalAppMenu(ItemCollection items, ICommandParameterFactory<ExternalApp> parameterFactory)
         {
-            ExternalAppCollectionUtility.UpdateExternalAppItems(items, _openExternalAppCommand, _openExternalAppDialogCommand);
+            ExternalAppCollectionUtility.UpdateExternalAppItems(items, _openExternalAppCommand, _openExternalAppDialogCommand, parameterFactory);
         }
 
 
@@ -60,14 +60,14 @@ namespace NeeView
 
             public bool CanExecute(object? parameter)
             {
-                if (parameter is not ExternalApp externalApp) return false;
-                return BookOperation.Current.Control.CanOpenApplication(externalApp);
+                if (parameter is not ExternalAppParameter e) return false;
+                return BookOperation.Current.Control.CanOpenApplication(e.ExternalApp, e.Option.MultiPagePolicy);
             }
 
             public void Execute(object? parameter)
             {
-                if (parameter is not ExternalApp externalApp) return;
-                BookOperation.Current.Control.OpenApplication(externalApp);
+                if (parameter is not ExternalAppParameter e) return;
+                BookOperation.Current.Control.OpenApplication(e.ExternalApp, e.Option.MultiPagePolicy);
             }
 
             public void RaiseCanExecuteChanged()

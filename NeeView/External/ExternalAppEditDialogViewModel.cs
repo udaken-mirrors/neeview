@@ -52,8 +52,5 @@ namespace NeeView
 
 
         public Dictionary<ArchivePolicy, string> ArchivePolicyList => AliasNameExtensions.GetAliasNameDictionary<ArchivePolicy>();
-
-        public Dictionary<MultiPagePolicy, string> MultiPagePolicyList => AliasNameExtensions.GetAliasNameDictionary<MultiPagePolicy>();
-
     }
 }

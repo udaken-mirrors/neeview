@@ -7,20 +7,27 @@ namespace NeeView
 {
     public static class ExternalAppCollectionUtility
     {
+        private static readonly ExternalAppCommandParameterFactory _defaultCommandParameterFactory = new();
+
         /// <summary>
         /// 「外部アプリで開く」メニュー作成
         /// </summary>
         /// <param name="isEnabled">メニューの有効/無効</param>
         /// <param name="command">実行コマンド</param>
-        /// <param name="OpenExternalAppDialogCommand">設定コマンド</param>
-        public static MenuItem CreateExternalAppItem(bool isEnabled, ICommand command, ICommand OpenExternalAppDialogCommand)
+        /// <param name="dialogCommand">設定コマンド</param>
+        public static MenuItem CreateExternalAppItem(bool isEnabled, ICommand command, ICommand dialogCommand)
+        {
+            return CreateExternalAppItem(isEnabled, command, dialogCommand, _defaultCommandParameterFactory);
+        }
+
+        public static MenuItem CreateExternalAppItem(bool isEnabled, ICommand command, ICommand dialogCommand, ICommandParameterFactory<ExternalApp> parameterFactory)
         {
             var subItem = new MenuItem() { Header = ResourceService.GetString("@OpenExternalAppAsCommand.Menu"), IsEnabled = isEnabled };
-            UpdateExternalAppItems(subItem.Items, command, OpenExternalAppDialogCommand);
+            UpdateExternalAppItems(subItem.Items, command, dialogCommand, parameterFactory);
             return subItem;
         }
 
-        public static void UpdateExternalAppItems(ItemCollection items, ICommand command, ICommand OpenExternalAppDialogCommand)
+        public static void UpdateExternalAppItems(ItemCollection items, ICommand command, ICommand dialogCommand, ICommandParameterFactory<ExternalApp> parameterFactory)
         {
             items.Clear();
 
@@ -28,9 +35,10 @@ namespace NeeView
             {
                 for (int i = 0; i < Config.Current.System.ExternalAppCollection.Count; ++i)
                 {
-                    var folder = Config.Current.System.ExternalAppCollection[i];
-                    var header = MenuItemTools.IntegerToAccessKey(i + 1) + " " + MenuItemTools.EscapeMenuItemString(folder.DispName);
-                    items.Add(new MenuItem() { Header = header, ToolTip = folder.Command, Command = command, CommandParameter = folder });
+                    var externalApp = Config.Current.System.ExternalAppCollection[i];
+                    var header = MenuItemTools.IntegerToAccessKey(i + 1) + " " + MenuItemTools.EscapeMenuItemString(externalApp.DispName);
+                    var parameter = parameterFactory.CreateParameter(externalApp);
+                    items.Add(new MenuItem() { Header = header, ToolTip = externalApp.Command, Command = command, CommandParameter = parameter });
                 }
             }
             else
@@ -39,9 +47,16 @@ namespace NeeView
             }
 
             items.Add(new Separator());
-            items.Add(new MenuItem() { Header = ResourceService.GetString("@BookshelfItem.Menu.ExternalAppOption"), Command = OpenExternalAppDialogCommand });
+            items.Add(new MenuItem() { Header = ResourceService.GetString("@BookshelfItem.Menu.ExternalAppOption"), Command = dialogCommand });
         }
     }
 
 
+    public class ExternalAppCommandParameterFactory : ICommandParameterFactory<ExternalApp>
+    {
+        public object CreateParameter(ExternalApp folder)
+        {
+            return folder;
+        }
+    }
 }

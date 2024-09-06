@@ -175,29 +175,29 @@ namespace NeeView
         }
 
 
-        public bool CanOpenApplication(IExternalAppParameter parameter)
+        public bool CanOpenApplication(IExternalApp parameter, MultiPagePolicy multiPagePolicy)
         {
             return _book?.CurrentPage != null;
         }
 
         // 外部アプリで開く
-        public void OpenApplication(IExternalAppParameter parameter)
+        public void OpenApplication(IExternalApp parameter, MultiPagePolicy multiPagePolicy)
         {
-            _ = OpenApplicationAsync(parameter, CancellationToken.None);
+            _ = OpenApplicationAsync(parameter, multiPagePolicy, CancellationToken.None);
         }
 
         // 外部アプリで開く
-        public async Task OpenApplicationAsync(IExternalAppParameter parameter, CancellationToken token)
+        public async Task OpenApplicationAsync(IExternalApp parameter, MultiPagePolicy multiPagePolicy, CancellationToken token)
         {
             var book = this._book;
             if (book is null) return;
 
-            if (CanOpenFilePlace())
+            if (CanOpenApplication(parameter, multiPagePolicy))
             {
                 try
                 {
                     var external = new ExternalAppUtility();
-                    var pages = CollectPages(book, parameter.MultiPagePolicy);
+                    var pages = CollectPages(book, multiPagePolicy);
                     await external.CallAsync(pages, parameter, token);
                 }
                 catch (OperationCanceledException)

@@ -1,6 +1,6 @@
 ﻿namespace NeeView
 {
-    public interface IExternalAppParameter
+    public interface IExternalApp
     {
         /// <summary>
         /// コマンド
@@ -17,12 +17,6 @@
         /// 作業フォルダー
         /// </summary>
         string? WorkingDirectory { get; set; }
-
-        /// <summary>
-        /// 複数ページのときの動作
-        /// メインビューを処理するときに使用される
-        /// </summary>
-        MultiPagePolicy MultiPagePolicy { get; set; }
 
         /// <summary>
         /// 圧縮ファイルのときの動作

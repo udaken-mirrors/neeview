@@ -29,8 +29,8 @@ namespace NeeView
         bool CanMoveToFolder(DestinationFolder parameter, MultiPagePolicy multiPagePolicy);
         void MoveToFolder(DestinationFolder parameter, MultiPagePolicy multiPagePolicy);
 
-        bool CanOpenApplication(IExternalAppParameter parameter);
-        void OpenApplication(IExternalAppParameter parameter);
+        bool CanOpenApplication(IExternalApp parameter, MultiPagePolicy multiPagePolicy);
+        void OpenApplication(IExternalApp parameter, MultiPagePolicy multiPagePolicy);
 
         //void OpenExternalApp(object? sender, OpenExternalAppCommandParameter parameter);
         //void ExportImage(object? sender, ExportImageCommandParameter parameter);

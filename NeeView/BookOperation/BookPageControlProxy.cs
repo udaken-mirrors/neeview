@@ -215,14 +215,14 @@ namespace NeeView
             _source?.MoveToFolder(parameter, multiPagePolicy);
         }
 
-        public bool CanOpenApplication(IExternalAppParameter parameter)
+        public bool CanOpenApplication(IExternalApp parameter, MultiPagePolicy multiPagePolicy)
         {
-            return _source?.CanOpenApplication(parameter) ?? false;
+            return _source?.CanOpenApplication(parameter, multiPagePolicy) ?? false;
         }
 
-        public void OpenApplication(IExternalAppParameter parameter)
+        public void OpenApplication(IExternalApp parameter, MultiPagePolicy multiPagePolicy)
         {
-            _source?.OpenApplication(parameter);
+            _source?.OpenApplication(parameter, multiPagePolicy);
         }
 
         public void OpenFilePlace()

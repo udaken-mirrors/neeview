@@ -7,7 +7,19 @@ namespace NeeView
 {
     public class OpenExternalAppAsCommandParameter : CommandParameter
     {
+        private MultiPagePolicy _multiPagePolicy = MultiPagePolicy.Once;
         private int _index;
+
+
+        /// <summary>
+        /// 複数ページのときの動作
+        /// </summary>
+        [PropertyMember]
+        public MultiPagePolicy MultiPagePolicy
+        {
+            get { return _multiPagePolicy; }
+            set { _multiPagePolicy = value; }
+        }
 
         /// <summary>
         /// 選択された外部アプリの番号。0 は未選択
