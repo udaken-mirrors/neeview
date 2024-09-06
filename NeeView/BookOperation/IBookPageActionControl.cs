@@ -23,6 +23,9 @@ namespace NeeView
         
         void CopyToClipboard(CopyFileCommandParameter parameter);
 
+        bool CanCopyToFolder(DestinationFolder parameter, MultiPagePolicy multiPagePolicy);
+        void CopyToFolder(DestinationFolder parameter, MultiPagePolicy multiPagePolicy);
+
         bool CanOpenApplication(IExternalAppParameter parameter);
         void OpenApplication(IExternalAppParameter parameter);
 

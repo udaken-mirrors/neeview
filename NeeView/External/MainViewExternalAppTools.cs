@@ -1,8 +1,4 @@
-﻿using NeeLaboratory.Generators;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
+﻿using System;
 using System.Threading;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -17,13 +13,12 @@ namespace NeeView
     {
         private static readonly OpenExternalAppCommand _openExternalAppCommand = new();
         private static readonly OpenExternalAppDialogCommand _openExternalAppDialogCommand = new();
-        private static readonly ViewPageBindingSource _viewPageBindingSource = new(PageFrameBoxPresenter.Current);
 
 
         public static MenuItem CreateExternalAppItem()
         {
             var menuItem = ExternalAppCollectionUtility.CreateExternalAppItem(true, _openExternalAppCommand, _openExternalAppDialogCommand);
-            menuItem.SetBinding(MenuItem.IsEnabledProperty, new Binding(nameof(ViewPageBindingSource.AnyViewPages)) { Source = _viewPageBindingSource });
+            menuItem.SetBinding(MenuItem.IsEnabledProperty, new Binding(nameof(ViewPageBindingSource.AnyViewPages)) { Source = ViewPageBindingSource.Default });
             menuItem.SubmenuOpened += (s, e) => UpdateExternalAppMenu(menuItem.Items);
             return menuItem;
         }
@@ -98,30 +93,11 @@ namespace NeeView
                 var window = MainViewComponent.Current.GetWindow();
                 ExternalAppDialog.ShowDialog(window);
             }
-        }
-    }
 
-
-    [NotifyPropertyChanged]
-    public partial class ViewPageBindingSource : INotifyPropertyChanged
-    {
-        private readonly PageFrameBoxPresenter _presenter;
-
-        public ViewPageBindingSource(PageFrameBoxPresenter presenter)
-        {
-            _presenter = presenter;
-            _presenter.ViewPageChanged += PageFrameBoxPresenter_ViewPageChanged;
-        }
-
-        public event PropertyChangedEventHandler? PropertyChanged;
-
-        public IReadOnlyList<Page> ViewPages => _presenter.ViewPages;
-
-        public bool AnyViewPages => ViewPages.Any();
-
-        private void PageFrameBoxPresenter_ViewPageChanged(object? sender, ViewPageChangedEventArgs e)
-        {
-            RaisePropertyChanged("");
+            public void RaiseCanExecuteChanged()
+            {
+                CanExecuteChanged?.Invoke(this, EventArgs.Empty);
+            }
         }
     }
 }

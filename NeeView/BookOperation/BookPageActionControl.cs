@@ -106,6 +106,40 @@ namespace NeeView
             return _book?.CurrentPage != null;
         }
 
+
+        public bool CanCopyToFolder(DestinationFolder parameter, MultiPagePolicy multiPagePolicy)
+        {
+            return _book?.CurrentPage != null;
+        }
+
+
+        public void CopyToFolder(DestinationFolder parameter, MultiPagePolicy multiPagePolicy)
+        {
+            _ = CopyToFolderAsync(parameter, multiPagePolicy, CancellationToken.None);
+        }
+
+        public async Task CopyToFolderAsync(DestinationFolder parameter, MultiPagePolicy multiPagePolicy, CancellationToken token)
+        {
+            var book = this._book;
+            if (book is null) return;
+            if (!CanCopyToFolder(parameter, multiPagePolicy)) return;
+
+            try
+            {
+                var pages = CollectPages(book, multiPagePolicy);
+                var items = await PageUtility.CreateRealizedFilePathListAsync(pages, token);
+                await parameter.CopyAsync(items, token);
+            }
+            catch (OperationCanceledException)
+            {
+            }
+            catch (Exception ex)
+            {
+                new MessageDialog(ex.Message, Properties.TextResources.GetString("Bookshelf.CopyToFolderFailed")).ShowDialog();
+            }
+        }
+
+
         // 外部アプリで開く
         public void OpenApplication(IExternalAppParameter parameter)
         {

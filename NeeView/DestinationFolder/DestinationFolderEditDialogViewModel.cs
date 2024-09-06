@@ -2,12 +2,12 @@
 
 namespace NeeView
 {
-    public class DestinationFolderEditDialogViewMdoel : BindableBase
+    public class DestinationFolderEditDialogViewModel : BindableBase
     {
         private readonly DestinationFolder _model;
 
 
-        public DestinationFolderEditDialogViewMdoel(DestinationFolder model)
+        public DestinationFolderEditDialogViewModel(DestinationFolder model)
         {
             _model = model;
         }
@@ -28,5 +28,6 @@ namespace NeeView
                 RaisePropertyChanged(nameof(Name));
             }
         }
+
     }
 }

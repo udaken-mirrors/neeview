@@ -35,7 +35,7 @@ namespace NeeView
             }
             else
             {
-                MainViewComponent.Current.MainView.CommandMenu.Open(CommandMenuType.ExternalApp);
+                MainViewComponent.Current.MainView.CommandMenu.OpenExternalAppMenu();
             }
         }
 
@@ -44,5 +44,4 @@ namespace NeeView
             return MainViewExternalAppTools.CreateExternalAppItem();
         }
     }
-
 }

@@ -19,7 +19,7 @@ namespace NeeView
     /// </summary>
     public partial class DestinationFolderEditDialog : Window
     {
-        private readonly DestinationFolderEditDialogViewMdoel _vm;
+        private readonly DestinationFolderEditDialogViewModel _vm;
 
         // for designer
         public DestinationFolderEditDialog(): this(new DestinationFolder())
@@ -30,7 +30,7 @@ namespace NeeView
         {
             InitializeComponent();
 
-            _vm = new DestinationFolderEditDialogViewMdoel(model);
+            _vm = new DestinationFolderEditDialogViewModel(model);
             this.DataContext = _vm;
         }
 

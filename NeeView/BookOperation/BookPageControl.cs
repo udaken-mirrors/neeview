@@ -206,6 +206,16 @@ namespace NeeView
             _actionControl.ExportDialog(parameter);
         }
 
+        public bool CanCopyToFolder(DestinationFolder parameter, MultiPagePolicy multiPagePolicy)
+        {
+            return _actionControl.CanCopyToFolder(parameter, multiPagePolicy);
+        }
+
+        public void CopyToFolder(DestinationFolder parameter, MultiPagePolicy multiPagePolicy)
+        {
+            _actionControl.CopyToFolder(parameter, multiPagePolicy);
+        }
+
         public bool CanOpenApplication(IExternalAppParameter parameter)
         {
             return _actionControl.CanOpenApplication(parameter);

@@ -12,16 +12,15 @@ namespace NeeView
             _contextMenu = contextMenu;
         }
 
-        public void Open(CommandMenuType menuType)
+        public void OpenExternalAppMenu()
         {
-            if (_contextMenu.IsOpen)
-            {
-                _contextMenu.IsOpen = false;
-                return;
-            }
+            MainViewExternalAppTools.UpdateExternalAppMenu(_contextMenu.Items);
+            _contextMenu.IsOpen = true;
+        }
 
-            Update(menuType);
-
+        public void OpenCopyToFolderMenu(ICommandParameterFactory<DestinationFolder> parameterFactory)
+        {
+            MainViewCopyToFolderTools.UpdateCopyToFolderMenu(_contextMenu.Items, parameterFactory);
             _contextMenu.IsOpen = true;
         }
 
@@ -30,35 +29,5 @@ namespace NeeView
             _contextMenu.IsOpen = false;
         }
 
-        private void Update(CommandMenuType menuType)
-        {
-            switch (menuType)
-            {
-                case CommandMenuType.ExternalApp:
-                    MainViewExternalAppTools.UpdateExternalAppMenu(_contextMenu.Items);
-                    break;
-                default:
-                    throw new NotImplementedException();
-            }
-        }
-    }
-
-
-    public enum CommandMenuType
-    {
-        /// <summary>
-        /// 外部アプリ メニュー
-        /// </summary>
-        ExternalApp,
-
-        /// <summary>
-        /// フォルダーへコピー メニュー
-        /// </summary>
-        CopyToFolder,
-
-        /// <summary>
-        /// フォルダーへ移動 メニュー
-        /// </summary>
-        MoveToFolder,
     }
 }

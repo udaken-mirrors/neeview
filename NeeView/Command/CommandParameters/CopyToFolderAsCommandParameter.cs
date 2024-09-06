@@ -5,14 +5,26 @@ using System.Windows.Data;
 
 namespace NeeView
 {
-    public class OpenExternalAppAsCommandParameter : CommandParameter
+    public class CopyToFolderAsCommandParameter : CommandParameter
     {
+        private MultiPagePolicy _multiPagePolicy = MultiPagePolicy.Once;
         private int _index;
 
+
         /// <summary>
-        /// 選択された外部アプリの番号。0 は未選択
+        /// 複数ページのときの動作
         /// </summary>
-        [PropertyMember(NoteConverter = typeof(IntToExternalAppString))]
+        [PropertyMember]
+        public MultiPagePolicy MultiPagePolicy
+        {
+            get { return _multiPagePolicy; }
+            set { _multiPagePolicy = value; }
+        }
+
+        /// <summary>
+        /// 選択されたフォルダーの番号。0 は未選択
+        /// </summary>
+        [PropertyMember(NoteConverter = typeof(IntToDestinationFolderString))]
         public int Index
         {
             get { return _index; }
@@ -21,7 +33,7 @@ namespace NeeView
     }
 
 
-    public class IntToExternalAppString : IValueConverter
+    public class IntToDestinationFolderString : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
@@ -30,10 +42,10 @@ namespace NeeView
             if (index <= 0) return ResourceService.GetString("@Word.SelectionMenu");
             index--;
 
-            var items = Config.Current.System.ExternalAppCollection;
+            var items = Config.Current.System.DestinationFolderCollection;
             if (items.Count <= index) return ResourceService.GetString("@Word.Undefined");
 
-            return Config.Current.System.ExternalAppCollection[index].DispName;
+            return items[index].Name;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

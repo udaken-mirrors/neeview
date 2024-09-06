@@ -105,7 +105,7 @@
     <DataTemplate DataType="{x:Type local:PropertyValue_PropertyValueWithNote}">
         <StackPanel>
             <ContentControl Content="{Binding PropertyValue}" />
-            <TextBlock Text="{Binding Note}" Margin="3,0"/>
+            <TextBlock Text="{Binding Note}" Margin="5,2" HorizontalAlignment="Right" />
         </StackPanel>
     </DataTemplate>
     
