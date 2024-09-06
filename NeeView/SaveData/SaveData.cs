@@ -159,6 +159,7 @@ namespace NeeView
             {
                 if (loadFailedDialog != null)
                 {
+                    Properties.TextResources.InitializeMinimum();
                     var result = loadFailedDialog.ShowDialog(ex);
                     if (result != true)
                     {

@@ -44,6 +44,15 @@ namespace NeeView.Properties
             Resource.Add(new AppFileSource(new Uri("/Languages/shared.restext", UriKind.Relative)));
         }
 
+        /// <summary>
+        /// 最低限の初期化。設定ファイル読み込み前のエラー等の正常初期化前の処理用。
+        /// </summary>
+        public static void InitializeMinimum()
+        {
+            if (_initialized) return;
+            Initialize(CultureInfo.CurrentCulture);
+        }
+
         public static string GetString(string name)
         {
             return Resource.GetString(name) ?? "@" + name;

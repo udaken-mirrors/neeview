@@ -132,8 +132,7 @@ namespace NeeView
             }
 
             Type? type = KnownTypes.FirstOrDefault(e => e.Name == typeString);
-            Debug.Assert(type != null);
-            if (type is null) throw new JsonException($"Nor support type: {typeString}");
+            Debug.Assert(type != null, $"Not support type: {typeString}");
 
             if (!reader.Read() || reader.GetString() != "Value")
             {
@@ -151,8 +150,7 @@ namespace NeeView
             }
             else
             {
-                Debug.WriteLine($"Nor support type: {typeString}");
-                reader.Skip();
+                SkipBlock(ref reader);
                 instance = null;
             }
 
@@ -162,6 +160,27 @@ namespace NeeView
             }
 
             return instance as CommandParameter;
+        }
+
+        private static void SkipBlock(ref Utf8JsonReader reader)
+        {
+            if (reader.TokenType == JsonTokenType.StartObject || reader.TokenType == JsonTokenType.StartArray)
+            {
+                int depth = reader.CurrentDepth;
+                do
+                {
+                    bool result = reader.Read();
+                    if (!result)
+                    {
+                        throw new JsonException();
+                    }
+                }
+                while (depth < reader.CurrentDepth);
+            }
+            else
+            {
+                throw new JsonException($"Unexpected TokenType: {reader.TokenType}");
+            }
         }
 
         public override void Write(Utf8JsonWriter writer, CommandParameter value, JsonSerializerOptions options)
