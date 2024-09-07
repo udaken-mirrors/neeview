@@ -319,7 +319,7 @@ namespace NeeView
             {
                 var name = string.Join(".", new string?[] { method.DeclaringType?.Name, method.Name, parameter.Name?.ToTitleCase() });
                 var typeString = TypeToString(parameter.ParameterType);
-                var summary = GetHtmlDocument(name, "");
+                var summary = GetHtmlDocumentWithRemarks(name);
 
                 dataTable.Rows.Add(parameter.Name, typeString, summary);
             }
@@ -344,7 +344,7 @@ namespace NeeView
                 var attribute = property.GetCustomAttribute<DocumentableAttribute>();
                 var typeString = TypeToString(property.PropertyType) + (attribute?.DocumentType != null ? $" ({TypeToString(attribute.DocumentType)})" : "");
                 var rw = (property.CanRead ? "r" : "") + (property.CanWrite ? "w" : "");
-                var summary = GetHtmlDocument(name, "") + CreatePropertyDetail(property);
+                var summary = GetHtmlDocumentWithRemarks(name) + CreatePropertyDetail(property);
 
                 dataTable.Rows.Add(property.Name, typeString, rw, summary);
             }
@@ -380,7 +380,7 @@ namespace NeeView
                 var attribute = method.GetCustomAttribute<DocumentableAttribute>();
                 var title = (attribute?.Name ?? method.Name) + "(" + string.Join(", ", method.GetParameters().Select(e => TypeToString(e.ParameterType))) + ")";
                 var typeString = TypeToString(method.ReturnType) + (attribute?.DocumentType != null ? $" ({TypeToString(attribute.DocumentType)})" : "");
-                var summary = GetHtmlDocument(name, "") + CreateMethodDetail(method);
+                var summary = GetHtmlDocumentWithRemarks(name) + CreateMethodDetail(method);
 
                 dataTable.Rows.Add(title, typeString, summary);
             }
@@ -449,6 +449,25 @@ namespace NeeView
                 text = resourceId;
             }
             return text;
+        }
+
+        /// <summary>
+        /// name + name.Remarks の HTML 文字列を作成する
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="postfix"></param>
+        /// <param name="notNull"></param>
+        /// <returns></returns>
+        private static string? GetHtmlDocumentWithRemarks(string name, bool notNull = true)
+        {
+            var text = GetDocument(name, "", notNull);
+            if (text is null) return null;
+            var remarks = GetDocument(name, ".Remarks", false);
+            if (remarks is not null)
+            {
+                text += "\r\n" + remarks;
+            }
+            return TextToHtmlFormat(text);
         }
 
         /// <summary>

@@ -49,7 +49,7 @@ namespace NeeView
         }
 
         [WordNodeMember]
-        public void Remove(QuickAccessNodeAccessor item)
+        public void Remove()
         {
             AppDispatcher.Invoke(() =>
             {
