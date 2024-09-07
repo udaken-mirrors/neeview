@@ -9,7 +9,7 @@
             Message = message;
         }
 
-        public ScriptNotice(Esprima.ParseError err) : this(err.Source, err.LineNumber, err.Description)
+        public ScriptNotice(Acornima.ParseError err) : this(err.SourceFile, err.LineNumber, err.Description)
         {
         }
 

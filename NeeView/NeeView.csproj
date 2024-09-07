@@ -83,7 +83,7 @@
 
   <ItemGroup>
     <PackageReference Include="bblanchon.PDFium.Win32" Version="126.0.6476" />
-    <PackageReference Include="Jint" Version="3.1.1" />
+    <PackageReference Include="Jint" Version="4.0.2" />
     <PackageReference Include="MetadataExtractor" Version="2.8.1" />
     <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.77" />
     <PackageReference Include="PdfiumViewer.Updated" Version="2.14.4" />

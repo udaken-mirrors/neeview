@@ -105,7 +105,7 @@ namespace NeeView
             {
                 throw;
             }
-            catch (Esprima.ParserException ex) when (ex.Error is not null)
+            catch (Acornima.ParseErrorException ex) when (ex.Error is not null)
             {
                 throw new ScriptException(new ScriptNotice(ex.Error), ex);
             }
@@ -128,7 +128,7 @@ namespace NeeView
         {
             var message = ex switch
             {
-                Esprima.ParserException pex when pex.Error is not null
+                Acornima.ParseErrorException pex when pex.Error is not null
                     => new ScriptNotice(pex.Error).ToString(),
                 OperationCanceledException or ScriptException
                     => ex.Message,
@@ -195,7 +195,7 @@ namespace NeeView
         {
             return ex switch
             {
-                Esprima.ParserException pex when pex.Error is not null
+                Acornima.ParseErrorException pex when pex.Error is not null
                     => new ScriptNotice(pex.Error),
                 _
                     => CreateScriptErrorMessage(ex.Message),
@@ -219,7 +219,7 @@ namespace NeeView
             }
             if (location.HasValue)
             {
-                source = location.Value.Source;
+                source = location.Value.SourceFile;
                 line = location.Value.Start.Line;
             }
 
