@@ -144,7 +144,7 @@ namespace NeeView
         {
             _cancellationToken.ThrowIfCancellationRequested();
 
-            var message = log as string ?? new JsonStringBulder(log).ToString();
+            var message = log as string ?? new JsonStringBuilder(log).ToString();
             ConsoleWindowManager.Current.WriteLine(ScriptMessageLevel.None, message);
         }
 

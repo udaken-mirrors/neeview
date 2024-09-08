@@ -33,11 +33,35 @@ namespace NeeView
     [AttributeUsage(AttributeTargets.Class)]
     public class DocumentableBaseClassAttribute : Attribute
     {
-        public Type BaseClass { get; }
+        public Type BaseClass;
 
         public DocumentableBaseClassAttribute(Type baseClass)
         {
             BaseClass = baseClass;
+        }
+    }
+
+
+    [AttributeUsage(AttributeTargets.Class, Inherited = false)]
+    public class DocumentableDerivedClassAttribute : Attribute
+    {
+        public Type[] DerivedClass;
+
+        public DocumentableDerivedClassAttribute(params Type[] derivedClass)
+        {
+            DerivedClass = derivedClass;
+        }
+    }
+
+
+    [AttributeUsage(AttributeTargets.Method | AttributeTargets.Property)]
+    public class ReturnTypeAttribute : Attribute
+    {
+        public Type ReturnType;
+
+        public ReturnTypeAttribute(Type returnType)
+        {
+            ReturnType = returnType;
         }
     }
 }

@@ -108,7 +108,7 @@ namespace NeeView
 
         private static string ToJavaScriptString(object? source)
         {
-            var builder = new JsonStringBulder();
+            var builder = new JsonStringBuilder();
             return builder.AppendObject(source).ToString();
         }
     }

@@ -58,21 +58,9 @@ namespace NeeView
     }
 
 
-    public static class ListExtensions
-    {
-        public static void SetSize<T>(this List<T> self, int size)
-        {
-            if (self.Count <= size) return;
-            self.RemoveRange(size, self.Count - size);
-        }
-    }
-
 
     public class DevInfoViewModel : BindableBase
     {
-
-
-
         public DevInfoViewModel()
         {
             JobEngine.Current.PropertyChanged += (s, e) =>

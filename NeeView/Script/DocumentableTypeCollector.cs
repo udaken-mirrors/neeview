@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NeeLaboratory.Collection;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -38,20 +39,30 @@ namespace NeeView
             foreach (var property in properties)
             {
                 var attribute = property.GetCustomAttribute<DocumentableAttribute>();
-                var propertyType = GetAnchorType(attribute?.DocumentType ?? property.PropertyType);
-                if (propertyType is not null)
+                types.AddIfNotNull(GetAnchorType(attribute?.DocumentType ?? property.PropertyType));
+                var returnTypeAttribute = property.GetCustomAttribute<ReturnTypeAttribute>();
+                if (returnTypeAttribute is not null)
                 {
-                    types.Add(propertyType);
+                    types.AddIfNotNull(GetAnchorType(returnTypeAttribute.ReturnType));
                 }
             }
 
             foreach (var method in methods)
             {
                 var attribute = method.GetCustomAttribute<DocumentableAttribute>();
-                var returnType = GetAnchorType(attribute?.DocumentType ?? method.ReturnType);
-                if (returnType is not null)
+                types.AddIfNotNull(GetAnchorType(attribute?.DocumentType ?? method.ReturnType));
+                var returnTypeAttribute = method.GetCustomAttribute<ReturnTypeAttribute>();
+                if (returnTypeAttribute is not null)
                 {
-                    types.Add(returnType);
+                    types.AddIfNotNull(GetAnchorType(returnTypeAttribute.ReturnType));
+                }
+            }
+
+            {
+                var attribute = type.GetCustomAttribute<DocumentableDerivedClassAttribute>();
+                if (attribute is not null && attribute.DerivedClass.Any())
+                {
+                    types.AddRange(attribute.DerivedClass);
                 }
             }
 

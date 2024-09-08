@@ -188,9 +188,15 @@ namespace NeeView
             if (attribute != null && attribute.BaseClass != type)
             {
                 Debug.Assert(type.IsSubclassOf(attribute.BaseClass));
-                // TODO: restext support
-                //builder.Append($"<p>This class inherits from {TypeToString(attribute.BaseClass)}.</p>").AppendLine()
                 builder.Append("<p>" + string.Format(ResourceService.GetString("@_ScriptManual.ClassInheritance"), TypeToString(attribute.BaseClass)) + "</p>").AppendLine();
+            }
+
+            // derived class
+            var derivedAttribute = type.GetCustomAttribute<DocumentableDerivedClassAttribute>();
+            if (derivedAttribute != null && derivedAttribute.DerivedClass.Any())
+            {
+                Debug.Assert(derivedAttribute.DerivedClass.All(e => e.IsSubclassOf(type)));
+                builder.Append("<p>" + string.Format(ResourceService.GetString("@_ScriptManual.ClassDerivation"), derivedAttribute.DerivedClass.Select(e => TypeToString(e))) + "</p>").AppendLine();
             }
 
             // property
@@ -342,7 +348,8 @@ namespace NeeView
             {
                 var name = property.DeclaringType?.Name + "." + property.Name;
                 var attribute = property.GetCustomAttribute<DocumentableAttribute>();
-                var typeString = TypeToString(property.PropertyType) + (attribute?.DocumentType != null ? $" ({TypeToString(attribute.DocumentType)})" : "");
+                var returnTypeAttribute = property.GetCustomAttribute<ReturnTypeAttribute>();
+                var typeString = TypeToString(property.PropertyType, returnTypeAttribute?.ReturnType) + (attribute?.DocumentType != null ? $" ({TypeToString(attribute.DocumentType)})" : "");
                 var rw = (property.CanRead ? "r" : "") + (property.CanWrite ? "w" : "");
                 var summary = GetHtmlDocumentWithRemarks(name) + CreatePropertyDetail(property);
 
@@ -379,7 +386,8 @@ namespace NeeView
                 var name = method.DeclaringType?.Name + "." + method.Name;
                 var attribute = method.GetCustomAttribute<DocumentableAttribute>();
                 var title = (attribute?.Name ?? method.Name) + "(" + string.Join(", ", method.GetParameters().Select(e => TypeToString(e.ParameterType))) + ")";
-                var typeString = TypeToString(method.ReturnType) + (attribute?.DocumentType != null ? $" ({TypeToString(attribute.DocumentType)})" : "");
+                var returnTypeAttribute = method.GetCustomAttribute<ReturnTypeAttribute>();
+                var typeString = TypeToString(method.ReturnType, returnTypeAttribute?.ReturnType) + (attribute?.DocumentType != null ? $" ({TypeToString(attribute.DocumentType)})" : "");
                 var summary = GetHtmlDocumentWithRemarks(name) + CreateMethodDetail(method);
 
                 dataTable.Rows.Add(title, typeString, summary);
@@ -486,7 +494,7 @@ namespace NeeView
         /// <summary>
         /// リファレンスに適した型名を取得する
         /// </summary>
-        private string TypeToString(Type type)
+        private string TypeToString(Type type, Type? objectType = null)
         {
             if (type == typeof(void))
             {
@@ -502,7 +510,7 @@ namespace NeeView
             {
                 var elementType = type.GetElementType();
                 if (elementType is null) throw new InvalidOperationException();
-                var elementTypeString = TypeToString(elementType);
+                var elementTypeString = TypeToString(elementType, objectType);
                 return elementTypeString + "[]";
             }
 
@@ -523,7 +531,7 @@ namespace NeeView
 
             if (type == typeof(object))
             {
-                return "object";
+                return objectType is not null ? TypeToString(objectType, null) : "object";
             }
 
             var propertyIndexer = type.GetProperties().Where(p => p.GetIndexParameters().Length != 0).FirstOrDefault();
