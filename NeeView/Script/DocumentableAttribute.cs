@@ -26,7 +26,30 @@ namespace NeeView
         /// <summary>
         /// 型。stringであるが、実態はEnumである場合等に指定する
         /// </summary>
-        public Type? DocumentType { get; set; }
+        public Type? DocumentType;
+
+        /// <summary>
+        /// 基底クラスでのみドキュメント化する
+        /// </summary>
+        public bool IsBaseClassOnly;
+
+        /// <summary>
+        /// ドキュメント化する？
+        /// </summary>
+        public bool IsEnabled = true;
+
+        /// <summary>
+        /// 未定義のときにキー名に使用するクラス
+        /// </summary>
+        public Type? AltClassType;
+
+        /// <summary>
+        /// 未定義のときにキー名に使用する名前
+        /// </summary>
+        public string? AltName;
+
+
+        public bool HasAltName() => AltClassType != null || AltName != null;
     }
 
 

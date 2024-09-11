@@ -1,0 +1,2 @@
+// Create a bookmark folder by name
+nv.Bookshelf.FolderTree.BookmarkNode.Add({Name:"AAA"})

@@ -15,12 +15,17 @@ namespace NeeView
         public string? _name;
 
 
-        public QuickAccess()
+        public QuickAccess() : this(null, null)
         { 
         }
 
-        public QuickAccess(string path)
+        public QuickAccess(string? path) : this(null, path)
         {
+        }
+
+        public QuickAccess(string? name, string? path)
+        {
+            _name = name;
             _path = path;
         }
 

@@ -14,8 +14,9 @@ namespace NeeView
     /// <summary>
     /// TreeViewNode基底.
     /// </summary>
-    public abstract class FolderTreeNodeBase : BindableBase, IRenameable
+    public abstract class FolderTreeNodeBase : BindableBase, IRenameable, IDisposable
     {
+        private bool _isDisposed;
         private bool _isSelected;
         private bool _isExpanded;
         protected ObservableCollection<FolderTreeNodeBase>? _children;
@@ -26,6 +27,11 @@ namespace NeeView
         }
 
 
+        public bool IsDisposed
+        {
+            get { return _isDisposed || _parent?.IsDisposed == true; }
+        }
+
         public bool IsSelected
         {
             get { return _isSelected; }
@@ -35,13 +41,34 @@ namespace NeeView
         public virtual bool IsExpanded
         {
             get { return _isExpanded; }
-            set { SetProperty(ref _isExpanded, value); }
+            set
+            {
+                if (value && _parent is not null)
+                {
+                    _parent.IsExpanded = value;
+                }
+
+                SetProperty(ref _isExpanded, value);
+            }
         }
 
         public virtual ObservableCollection<FolderTreeNodeBase>? Children
         {
             get { return _children; }
-            set { SetProperty(ref _children, value); }
+            set
+            {
+                if (_children != value)
+                {
+                    if (_children is not null)
+                    {
+                        foreach (var child in _children)
+                        {
+                            child.Dispose();
+                        }
+                    }
+                    SetProperty(ref _children, value);
+                }
+            }
         }
 
         public ObservableCollection<FolderTreeNodeBase>? ChildrenRaw => _children;
@@ -141,7 +168,7 @@ namespace NeeView
             {
                 foreach (var child in _children)
                 {
-                    child.Parent = null;
+                    child.Dispose();
                 }
             }
             _children = null;
@@ -200,7 +227,7 @@ namespace NeeView
 
         /// <summary>
         /// 子の検索
-        /// <para>Sourceのリファレンス比較のみなので、必要に応じてovrrideをして使用する</para>
+        /// <para>Sourceのリファレンス比較のみなので、必要に応じて override をして使用する</para>
         /// </summary>
         public virtual FolderTreeNodeBase? FindChild(object? source)
         {
@@ -249,6 +276,7 @@ namespace NeeView
                 node.Parent = null;
                 node.IsSelected = false;
                 node.IsExpanded = false;
+                node.Dispose();
             }
         }
 
@@ -323,6 +351,12 @@ namespace NeeView
         {
             if (this == root) return true;
             return this.Parent is not null && this.Parent.ContainsRoot(root);
+        }
+
+        public void Dispose()
+        {
+            _isDisposed = true;
+            _parent = null;
         }
     }
 }

@@ -1,39 +1,47 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 
 namespace NeeView
 {
     public record class DirectoryNodeAccessor : NodeAccessor
     {
         private readonly DirectoryNode _node;
+        private readonly DirectoryNodeSource _value;
 
         public DirectoryNodeAccessor(FolderTreeModel model, DirectoryNode node) : base(model, node)
         {
             _node = node;
+            _value = new DirectoryNodeSource(_node);
         }
 
-        [WordNodeMember]
-        public DirectoryNodeAccessor[] Children
+
+        [WordNodeMember(AltName = "@DirectoryNodeSource")]
+        [ReturnType(typeof(DirectoryNodeSource))]
+        public override object? Value => _value;
+
+
+        [WordNodeMember(AltClassType = typeof(NodeAccessor))]
+        public override NodeAccessor[]? Children
         {
-            get { return GetChildren().OfType<DirectoryNodeAccessor>().ToArray(); }
+            get
+            {
+                if (_node.ChildrenRaw is null)
+                {
+                    _node.CreateChildren(false);
+                }
+                return GetChildren() ?? [];
+            }
         }
 
-        [WordNodeMember]
-        public DirectoryNodeAccessor? Parent
+
+        protected override string GetName() => _value.Name;
+
+        [WordNodeMember(AltClassType = typeof(NodeAccessor))]
+        public override int IndexOf(NodeAccessor item)
         {
-            get { return GetParent() as DirectoryNodeAccessor; }
+            return base.IndexOf(item);
         }
 
-        [WordNodeMember]
-        public string Path
-        {
-            get { return _node.Path; }
-        }
-
-        [WordNodeMember]
-        public string Name
-        {
-            get { return _node.DispName; }
-        }
 
         internal WordNode CreateWordNode(string name)
         {

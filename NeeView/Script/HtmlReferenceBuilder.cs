@@ -1,4 +1,5 @@
-﻿using NeeLaboratory.Text;
+﻿using NeeLaboratory.Linq;
+using NeeLaboratory.Text;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -73,7 +74,8 @@ namespace NeeView
 
             builder.Append($"<h2 id=\"{type.Name}\">{title}</h2>").AppendLine();
 
-            AppendSummary(type.Name);
+            var memberName = new DocumentMemberName(type);
+            AppendSummary(memberName);
 
             builder.Append($"<h4>{ResourceService.GetString("@Word.Fields")}</h4>").AppendLine();
 
@@ -144,14 +146,14 @@ namespace NeeView
         /// <param name="name">対象のリソーステキスト名</param>
         /// <param name="isRemarks">Remarksを含める</param>
         /// <returns></returns>
-        private HtmlReferenceBuilder AppendSummary(string name, bool isRemarks = true)
+        private HtmlReferenceBuilder AppendSummary(DocumentMemberName name, bool isRemarks = true)
         {
-            var summary = GetHtmlDocument(name, "");
+            var summary = name.GetHtmlDocument("");
             builder.Append($"<p>").Append(summary).Append("</p>").AppendLine();
 
             if (isRemarks)
             {
-                var remarks = GetHtmlDocument(name, ".Remarks", false);
+                var remarks = name.GetHtmlDocument(".Remarks", false);
                 if (remarks != null)
                 {
                     builder.Append($"<p>").Append(remarks).Append("</p>").AppendLine();
@@ -163,7 +165,12 @@ namespace NeeView
 
         private static bool IsDocumentable(MemberInfo info)
         {
-            return info.GetCustomAttribute<DocumentableAttribute>() != null && info.GetCustomAttribute<ObsoleteAttribute>() == null;
+            if (info.GetCustomAttribute<ObsoleteAttribute>() is not null) return false;
+
+            var attribute = info.GetCustomAttribute<DocumentableAttribute>();
+            if (attribute is null) return false;
+
+            return attribute != null && attribute.IsEnabled && (!attribute.IsBaseClassOnly || info.DeclaringType == info.ReflectedType);
         }
 
 
@@ -181,7 +188,8 @@ namespace NeeView
             var methods = type.GetMethods().Where(e => IsDocumentable(e)).OrderBy(e => e.Name);
 
             // summary
-            AppendSummary(type.Name);
+            var memberName = new DocumentMemberName(type);
+            AppendSummary(memberName);
 
             // base class
             var attribute = type.GetCustomAttribute<DocumentableBaseClassAttribute>();
@@ -250,10 +258,12 @@ namespace NeeView
 
             var documentable = method.GetCustomAttribute<DocumentableAttribute>();
 
+            var memberName = new DocumentMemberName(method);
+
             var title = (string.IsNullOrEmpty(prefix) ? "" : prefix + ".") + (documentable?.Name ?? method.Name) + "(" + string.Join(", ", method.GetParameters().Select(e => e.Name)) + ")";
             builder.Append($"<h3>{title}</h3>").AppendLine();
 
-            AppendSummary(name);
+            AppendSummary(memberName);
 
             var parameters = method.GetParameters();
             if (parameters.Length > 0)
@@ -266,7 +276,7 @@ namespace NeeView
             {
                 builder.Append($"<h4>{ResourceService.GetString("@Word.Returns")}</h4>").AppendLine();
                 var typeString = TypeToString(method.ReturnType);
-                var summary = GetHtmlDocument(name, ".Returns") ?? "";
+                var summary = memberName.GetHtmlDocument(".Returns") ?? "";
                 AppendDictionary(new Dictionary<string, string> { [typeString] = summary }, "table-none");
             }
 
@@ -321,12 +331,12 @@ namespace NeeView
             dataTable.Columns.Add(new DataColumn("type", typeof(string)));
             dataTable.Columns.Add(new DataColumn("summary", typeof(string)));
 
+            var memberName = new DocumentMemberName(method);
+
             foreach (var parameter in parameters)
             {
-                var name = string.Join(".", new string?[] { method.DeclaringType?.Name, method.Name, parameter.Name?.ToTitleCase() });
                 var typeString = TypeToString(parameter.ParameterType);
-                var summary = GetHtmlDocumentWithRemarks(name);
-
+                var summary = memberName.GetHtmlDocumentWithRemarks(parameter.Name?.ToTitleCase());
                 dataTable.Rows.Add(parameter.Name, typeString, summary);
             }
 
@@ -349,10 +359,10 @@ namespace NeeView
                 var name = property.DeclaringType?.Name + "." + property.Name;
                 var attribute = property.GetCustomAttribute<DocumentableAttribute>();
                 var returnTypeAttribute = property.GetCustomAttribute<ReturnTypeAttribute>();
-                var typeString = TypeToString(property.PropertyType, returnTypeAttribute?.ReturnType) + (attribute?.DocumentType != null ? $" ({TypeToString(attribute.DocumentType)})" : "");
+                var typeString = TypeToString(returnTypeAttribute?.ReturnType ?? property.PropertyType) + (attribute?.DocumentType != null ? $" ({TypeToString(attribute.DocumentType)})" : "");
                 var rw = (property.CanRead ? "r" : "") + (property.CanWrite ? "w" : "");
-                var summary = GetHtmlDocumentWithRemarks(name) + CreatePropertyDetail(property);
-
+                var memberName = new DocumentMemberName(property);
+                var summary = memberName.GetHtmlDocumentWithRemarks() + CreatePropertyDetail(property);
                 dataTable.Rows.Add(property.Name, typeString, rw, summary);
             }
 
@@ -384,11 +394,12 @@ namespace NeeView
             foreach (var method in methods)
             {
                 var name = method.DeclaringType?.Name + "." + method.Name;
-                var attribute = method.GetCustomAttribute<DocumentableAttribute>();
-                var title = (attribute?.Name ?? method.Name) + "(" + string.Join(", ", method.GetParameters().Select(e => TypeToString(e.ParameterType))) + ")";
+                var attribute = method.GetCustomAttribute<DocumentableAttribute>() ?? throw new InvalidOperationException();
+                var title = (attribute.Name ?? method.Name) + "(" + string.Join(", ", method.GetParameters().Select(e => TypeToString(e.ParameterType))) + ")";
                 var returnTypeAttribute = method.GetCustomAttribute<ReturnTypeAttribute>();
-                var typeString = TypeToString(method.ReturnType, returnTypeAttribute?.ReturnType) + (attribute?.DocumentType != null ? $" ({TypeToString(attribute.DocumentType)})" : "");
-                var summary = GetHtmlDocumentWithRemarks(name) + CreateMethodDetail(method);
+                var typeString = TypeToString(returnTypeAttribute?.ReturnType ?? method.ReturnType) + (attribute?.DocumentType != null ? $" ({TypeToString(attribute.DocumentType)})" : "");
+                var memberName = new DocumentMemberName(method);
+                var summary = memberName.GetHtmlDocumentWithRemarks() + CreateMethodDetail(method);
 
                 dataTable.Rows.Add(title, typeString, summary);
             }
@@ -412,11 +423,15 @@ namespace NeeView
                 builder.AppendDataTable(ParametersToDataTable(method, parameters), false);
             }
 
+            var attribute = method.GetCustomAttribute<DocumentableAttribute>();
+            Debug.Assert(attribute != null);
+
             if (method.ReturnType != typeof(void))
             {
                 builder.Append($"<h4>{ResourceService.GetString("@Word.Returns")}</h4>").AppendLine();
                 var typeString = TypeToString(method.ReturnType);
-                var summary = GetHtmlDocument(name, ".Returns") ?? "";
+                var memberName = new DocumentMemberName(method);
+                var summary = memberName.GetHtmlDocument(".Returns") ?? "";
                 builder.AppendDictionary(new Dictionary<string, string> { [typeString] = summary }, "table-none");
             }
 
@@ -448,15 +463,22 @@ namespace NeeView
         /// <param name="postfix">リソース属性名 (e.g. #Remarks)</param>
         /// <param name="notNull">trueの場合、リソースが存在しなければリソース名を返す</param>
         /// <returns>取得された文字列</returns>
-        private static string? GetDocument(string name, string postfix, bool notNull = true)
+        private static string? GetDocument(string name, string? postfix, bool notNull = true)
         {
-            var resourceId = $"@{name}{postfix}";
+            var resourceId = "@" + JoinName(name, postfix);
             var text = ResourceService.GetResourceString(resourceId, true);
             if (text is null && notNull)
             {
                 text = resourceId;
             }
             return text;
+        }
+
+        private static string JoinName(string s1, string? s2)
+        {
+            if (string.IsNullOrEmpty(s2)) return s1;
+
+            return s1 + (s2.StartsWith('.') ? "" : ".") + s2;
         }
 
         /// <summary>
@@ -485,7 +507,7 @@ namespace NeeView
         /// <param name="postfix">リソース属性名 (e.g. #Remarks)</param>
         /// <param name="notNull">trueの場合、リソースが存在しなければリソース名を返す</param>
         /// <returns>HTML化された文字列</returns>
-        private static string? GetHtmlDocument(string name, string postfix, bool notNull = true)
+        private static string? GetHtmlDocument(string name, string? postfix, bool notNull = true)
         {
             var text = GetDocument(name, postfix, notNull);
             return TextToHtmlFormat(text);
@@ -494,7 +516,7 @@ namespace NeeView
         /// <summary>
         /// リファレンスに適した型名を取得する
         /// </summary>
-        private string TypeToString(Type type, Type? objectType = null)
+        private string TypeToString(Type type)
         {
             if (type == typeof(void))
             {
@@ -510,7 +532,7 @@ namespace NeeView
             {
                 var elementType = type.GetElementType();
                 if (elementType is null) throw new InvalidOperationException();
-                var elementTypeString = TypeToString(elementType, objectType);
+                var elementTypeString = TypeToString(elementType);
                 return elementTypeString + "[]";
             }
 
@@ -531,7 +553,7 @@ namespace NeeView
 
             if (type == typeof(object))
             {
-                return objectType is not null ? TypeToString(objectType, null) : "object";
+                return "object";
             }
 
             var propertyIndexer = type.GetProperties().Where(p => p.GetIndexParameters().Length != 0).FirstOrDefault();
@@ -590,6 +612,100 @@ namespace NeeView
         {
             id = id ?? "#" + src;
             return $"<a href=\"{id}\">{src}</a>";
+        }
+
+
+        private class DocumentMemberName
+        {
+            private readonly DocumentableAttribute? _attribute;
+            private readonly Type? _type;
+            private readonly string? _member;
+
+            public DocumentMemberName(Type type)
+            {
+                _type = type;
+                _member = null;
+                _attribute = type.GetCustomAttribute<DocumentableAttribute>();
+            }
+
+            public DocumentMemberName(MemberInfo memberInfo)
+            {
+                _type = memberInfo.DeclaringType;
+                _member = memberInfo.Name;
+                _attribute = memberInfo.GetCustomAttribute<DocumentableAttribute>() ?? throw new ArgumentException("DocumentableAttribute is required.");
+            }
+
+            public bool HasAltName => _attribute?.HasAltName() ?? false;
+
+            private string JoinName(params string?[] names)
+            {
+                return string.Join(".", names.WhereNotNull());
+            }
+
+            public string GetName()
+            {
+                return JoinName(_type?.Name, _member);
+            }
+
+            public string GetAltName()
+            {
+                if (_attribute != null && _attribute.AltName != null && _attribute.AltName.StartsWith("@"))
+                {
+                    return _attribute.AltName[1..];
+                }
+                else
+                {
+                    return (_attribute?.AltClassType ?? _type)?.Name + "." + (_attribute?.AltName ?? _member);
+                }
+            }
+
+            public string GetAltParameterName(DocumentableAttribute attr)
+            {
+                if (attr.AltName != null && attr.AltName.StartsWith("@"))
+                {
+                    return attr.AltName[1..];
+                }
+                else
+                {
+                    return (attr.AltClassType ?? _attribute?.AltClassType ?? _type)?.Name + "." + (attr.AltName ?? _attribute?.AltName ?? _member);
+                }
+            }
+
+            public string? GetHtmlDocument(string? postfix = null, bool notNull = true)
+            {
+                var summary = HtmlReferenceBuilder.GetHtmlDocument(GetName(), postfix, false);
+                if (summary is null)
+                {
+                    summary = HtmlReferenceBuilder.GetHtmlDocument(GetAltName(), postfix, false);
+                }
+                return summary ?? (notNull ? "@" + JoinName(GetName(), postfix) : null);
+            }
+
+            public string? GetHtmlDocumentWithRemarks(string? postfix = null, bool notNull = true)
+            {
+                var summary = HtmlReferenceBuilder.GetHtmlDocumentWithRemarks(JoinName(GetName(), postfix), false);
+                if (summary is null)
+                {
+                    summary = HtmlReferenceBuilder.GetHtmlDocumentWithRemarks(JoinName(GetAltName(), postfix), false);
+                }
+                return summary ?? (notNull ? "@" + JoinName(GetName(), postfix) : null);
+            }
+
+            public string? GetHtmlDocumentWithRemarks(ParameterInfo parameterInfo)
+            {
+                var attr = parameterInfo.GetCustomAttribute<DocumentableAttribute>();
+                var postfix = parameterInfo.Name?.ToTitleCase();
+                if (attr is null) return GetHtmlDocumentWithRemarks(postfix);
+
+                var summary = HtmlReferenceBuilder.GetHtmlDocumentWithRemarks(HtmlReferenceBuilder.JoinName(GetName(), postfix), false);
+                if (summary is not null) return summary;
+
+                summary = HtmlReferenceBuilder.GetHtmlDocumentWithRemarks(HtmlReferenceBuilder.JoinName(GetAltParameterName(attr), postfix), true);
+                if (summary is not null) return summary;
+
+                summary = HtmlReferenceBuilder.GetHtmlDocumentWithRemarks(HtmlReferenceBuilder.JoinName(GetAltName(), postfix), true);
+                return summary ?? "";
+            }
         }
     }
 }

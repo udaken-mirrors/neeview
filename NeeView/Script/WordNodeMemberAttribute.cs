@@ -5,6 +5,6 @@
     /// </summary>
     public class WordNodeMemberAttribute : DocumentableAttribute
     {
-        public bool IsAutoCollect { get; set; } = true;
+        public bool IsAutoCollect = true;
     }
 }

@@ -10,18 +10,18 @@ namespace NeeView
         {
             _model = model;
 
-            BookmarkNode = new BookmarkNodeAccessor(_model, _model.RootBookmarkFolder ?? throw new InvalidOperationException());
+            BookmarkNode = new BookmarkFolderNodeAccessor(_model, _model.RootBookmarkFolder ?? throw new InvalidOperationException());
         }
 
 
         [WordNodeMember(IsAutoCollect = false)]
-        public BookmarkNodeAccessor BookmarkNode { get; }
+        public BookmarkFolderNodeAccessor BookmarkNode { get; }
 
         [WordNodeMember]
         public NodeAccessor? SelectedItem
         {
             get { return _model.SelectedItem is not null ? FolderNodeAccessorFactory.Create(_model, _model.SelectedItem) : null; }
-            set { AppDispatcher.Invoke(() => _model.SetSelectedItem(value?.Source)); }
+            set { AppDispatcher.Invoke(() => _model.SetSelectedItem(value?.Node)); }
         }
 
 

@@ -9,6 +9,8 @@ using System.Linq;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
+// TODO: パネルからのUI操作とスクリプトからの操作の２系統がごちゃまぜになっているので整備する
+
 namespace NeeView
 {
     public class RootFolderTree : FolderTreeNodeBase
@@ -218,6 +220,76 @@ namespace NeeView
             _folderList.RequestPlace(new QueryPath(path), null, FolderSetPlaceOption.UpdateHistory | FolderSetPlaceOption.ResetKeyword);
         }
 
+        /// <summary>
+        /// 新しいノードの作成と追加 (スクリプト用)
+        /// </summary>
+        /// <param name="parent">親ノード</param>
+        /// <returns>新しいノード。作れなかったら null</returns>
+        public FolderTreeNodeBase? NewNode(FolderTreeNodeBase parent)
+        {
+            if (parent is null) return null;
+
+            switch (parent)
+            {
+                case RootQuickAccessNode n:
+                    return NewQuickAccess(n);
+                case BookmarkFolderNode n:
+                    return NewBookmarkFolder(n);
+                default:
+                    return null;
+            }
+        }
+
+        /// <summary>
+        /// 新しいノードの作成と挿入 (スクリプト用)
+        /// </summary>
+        /// <param name="parent">親ノード</param>
+        /// <param name="index">挿入位置</param>
+        /// <returns>新しいノード。作れなかったら null</returns>
+        public FolderTreeNodeBase? NewNode(FolderTreeNodeBase parent, int index)
+        {
+            if (parent is null) return null;
+
+            switch (parent)
+            {
+                case RootQuickAccessNode n:
+                    return NewQuickAccess(n, index);
+                case BookmarkFolderNode n:
+                    return NewBookmarkFolder(n); // ブックマークフォルダ―は挿入できない
+                default:
+                    return null;
+            }
+        }
+
+        /// <summary>
+        /// 新しいクイックアクセスの作成と追加 (スクリプト用)
+        /// </summary>
+        private QuickAccessNode? NewQuickAccess(RootQuickAccessNode parent)
+        {
+            return NewQuickAccess(parent, 0);
+        }
+
+        /// <summary>
+        /// 新しいクイックアクセスの作成と挿入 (スクリプト用)
+        /// </summary>
+        private QuickAccessNode? NewQuickAccess(RootQuickAccessNode parent, int index)
+        {
+            if (_rootQuickAccess != parent) throw new ArgumentException("Not root node", nameof(parent));
+
+            parent.IsExpanded = true;
+
+            var quickAccess = new QuickAccess(_folderList.GetCurrentQueryPath());
+            QuickAccessCollection.Current.Insert(index, quickAccess);
+
+            var newItem = parent.Children.Cast<QuickAccessNode>().FirstOrDefault(e => e.QuickAccessSource == quickAccess);
+            if (newItem is not null)
+            {
+                SelectedItem = newItem;
+                SelectedItemChanged?.Invoke(this, EventArgs.Empty);
+            }
+            return newItem;
+        }
+
         public void AddQuickAccess(object item)
         {
             switch (item)
@@ -283,11 +355,11 @@ namespace NeeView
             QuickAccessCollection.Current.Insert(index, new QuickAccess(path));
         }
 
-        public void RemoveQuickAccess(QuickAccessNode item)
+        public bool RemoveQuickAccess(QuickAccessNode item)
         {
             if (item == null)
             {
-                return;
+                return false;
             }
 
             var next = item.Next ?? item.Previous ?? item.Parent;
@@ -300,13 +372,14 @@ namespace NeeView
                     SelectedItem = next;
                 }
             }
+            return isRemoved;
         }
 
-        public void RemoveBookmarkFolder(BookmarkFolderNode item)
+        public bool RemoveBookmarkFolder(BookmarkFolderNode item)
         {
             if (item == null || item is RootBookmarkFolderNode)
             {
-                return;
+                return false;
             }
 
             var next = item.Next ?? item.Previous ?? item.Parent;
@@ -332,24 +405,55 @@ namespace NeeView
                     SelectedItem = next;
                 }
             }
+            return isRemoved;
         }
 
-        public BookmarkFolderNode? NewBookmarkFolder(BookmarkFolderNode item)
+        /// <summary>
+        /// ノードの削除 (スクリプト用)
+        /// </summary>
+        /// <param name="item">削除ノード</param>
+        /// <returns>成否</returns>
+        /// <exception cref="NotSupportedException">削除できないノード</exception>
+        public bool RemoveNode(FolderTreeNodeBase item)
         {
-            if (item == null)
+            switch (item)
+            {
+                case QuickAccessNode n:
+                    return RemoveQuickAccess(n);
+                case BookmarkFolderNode n:
+                    return RemoveBookmarkFolder(n);
+                default:
+                    throw new NotSupportedException($"Unsupported node type: {item.GetType().FullName}");
+            }
+        }
+
+        public bool RemoveNodeAt(FolderTreeNodeBase parent, int index)
+        {
+            var item = parent.Children?[index];
+            if (item is null) return false;
+
+            return RemoveNode(item);
+        }
+
+        /// <summary>
+        /// 新しいブックマークフォルダーの作成と追加
+        /// </summary>
+        public BookmarkFolderNode? NewBookmarkFolder(BookmarkFolderNode parent)
+        {
+            if (parent == null)
             {
                 return null;
             }
 
-            item.IsExpanded = true;
+            parent.IsExpanded = true;
 
-            var node = BookmarkCollection.Current.AddNewFolder(item.BookmarkSource, null);
+            var node = BookmarkCollection.Current.AddNewFolder(parent.BookmarkSource, null);
             if (node == null)
             {
                 return null;
             }
 
-            var newItem = item.Children.OfType<BookmarkFolderNode>().FirstOrDefault(e => e.Source == node);
+            var newItem = parent.Children.OfType<BookmarkFolderNode>().FirstOrDefault(e => e.Source == node);
             if (newItem != null)
             {
                 SelectedItem = newItem;
@@ -396,6 +500,20 @@ namespace NeeView
                 return;
             }
             QuickAccessCollection.Current.Move(srcIndex, dstIndex);
+        }
+
+        /// <summary>
+        /// ノードの移動 (スクリプト用。実質クイックアクセス専用)
+        /// </summary>
+        /// <param name="parent">親ノード</param>
+        /// <param name="oldIndex">移動する項目のインデックス番号</param>
+        /// <param name="newIndex">項目の新しいインデックス番号</param>
+        /// <exception cref="NotSupportedException"></exception>
+        public void MoveNode(FolderTreeNodeBase parent, int oldIndex, int newIndex)
+        {
+            if (parent is not RootQuickAccessNode) throw new NotSupportedException();
+
+            QuickAccessCollection.Current.Move(oldIndex, newIndex);
         }
 
         public void SyncDirectory(string place)

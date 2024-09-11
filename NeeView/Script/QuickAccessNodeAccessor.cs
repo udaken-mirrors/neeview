@@ -1,26 +1,36 @@
-﻿namespace NeeView
+﻿using System;
+using System.Collections;
+using System.Reflection.Metadata;
+
+namespace NeeView
 {
     public record class QuickAccessNodeAccessor : NodeAccessor
     {
         private readonly QuickAccessNode _node;
+        private readonly QuickAccessNodeSource _value;
 
         public QuickAccessNodeAccessor(FolderTreeModel model, QuickAccessNode node) : base(model, node)
         {
             _node = node;
+            _value = new QuickAccessNodeSource(_node);
         }
 
-        [WordNodeMember]
-        public string Path
+
+        [WordNodeMember(AltName = "@QuickAccessNodeSource")]
+        [ReturnType(typeof(QuickAccessNodeSource))]
+        public override object? Value => _value;
+
+
+        [WordNodeMember(IsEnabled = false)]
+        public override bool IsExpanded
         {
-            get { return _node.Path; }
-            set { AppDispatcher.Invoke(() => _node.SetPath(value)); }
+            get => false;
+            set { }
         }
 
-        [WordNodeMember]
-        public string Name
-        {
-            get { return _node.Name; }
-            set { AppDispatcher.Invoke(() => _node.Rename(value)); }
-        }
+        [WordNodeMember(IsEnabled = false)]
+        public override NodeAccessor[]? Children => base.Children;
+
+        protected override string GetName() => _value.Name;
     }
 }

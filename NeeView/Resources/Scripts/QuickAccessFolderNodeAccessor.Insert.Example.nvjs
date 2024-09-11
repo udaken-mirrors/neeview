@@ -1,0 +1,2 @@
+// Create quick access with name and path
+nv.Bookshelf.FolderTree.QuickAccessNode.Insert(0, {Name:"AAA", Path:"C:\\FooBar"})

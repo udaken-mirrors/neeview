@@ -121,6 +121,7 @@
 
   <ItemGroup>
     <Resource Include="Resources\App.ico" />
+    <Resource Include="Resources\Scripts\BookmarkFolderNodeAccessor.Add.Example.nvjs" />
     <Resource Include="Resources\Scripts\BookshelfPanelAccessor.Example.nvjs" />
     <Resource Include="Resources\Scripts\CommandAccessor.Execute.Example.nvjs" />
     <Resource Include="Resources\Scripts\CommandAccessor.MouseGesture.Example.nvjs" />
@@ -138,6 +139,8 @@
     <Resource Include="Resources\Scripts\OpenMsPaint.nvjs" />
     <Resource Include="Resources\Scripts\OpenNeeView.nvjs" />
     <Resource Include="Resources\Scripts\PageAccessor.Example.nvjs" />
+    <Resource Include="Resources\Scripts\QuickAccessFolderNodeAccessor.Add.Example.nvjs" />
+    <Resource Include="Resources\Scripts\QuickAccessFolderNodeAccessor.Insert.Example.nvjs" />
     <Resource Include="Resources\Scripts\ToggleFullScreenAndMediaPlay.nvjs" />
     <Resource Include="Resources\Scripts\ToggleUnsharpMask.nvjs" />
     <Resource Include="Resources\Scripts\ViewPageAccessor.Example.nvjs" />

@@ -10,26 +10,26 @@ namespace NeeView
         {
             _model = model;
 
-            QuickAccessNode = new RootQuickAccessNodeAccessor(_model, _model.RootQuickAccess ?? throw new InvalidOperationException());
+            QuickAccessNode = new QuickAccessFolderNodeAccessor(_model, _model.RootQuickAccess ?? throw new InvalidOperationException());
             DirectoryNode = new DirectoryNodeAccessor(_model, _model.RootDirectory ?? throw new InvalidOperationException());
-            BookmarkNode = new BookmarkNodeAccessor(_model, _model.RootBookmarkFolder ?? throw new InvalidOperationException());
+            BookmarkNode = new BookmarkFolderNodeAccessor(_model, _model.RootBookmarkFolder ?? throw new InvalidOperationException());
         }
 
 
         [WordNodeMember(IsAutoCollect = false)]
-        public RootQuickAccessNodeAccessor QuickAccessNode { get; }
+        public QuickAccessFolderNodeAccessor QuickAccessNode { get; }
 
         [WordNodeMember(IsAutoCollect = false)]
         public DirectoryNodeAccessor DirectoryNode { get; }
 
         [WordNodeMember(IsAutoCollect = false)]
-        public BookmarkNodeAccessor BookmarkNode { get; }
+        public BookmarkFolderNodeAccessor BookmarkNode { get; }
 
         [WordNodeMember]
         public NodeAccessor? SelectedItem
         {
             get { return _model.SelectedItem is not null ? FolderNodeAccessorFactory.Create(_model, _model.SelectedItem) : null; }
-            set { AppDispatcher.Invoke(() => _model.SetSelectedItem(value?.Source)); }
+            set { AppDispatcher.Invoke(() => _model.SetSelectedItem(value?.Node)); }
         }
 
 

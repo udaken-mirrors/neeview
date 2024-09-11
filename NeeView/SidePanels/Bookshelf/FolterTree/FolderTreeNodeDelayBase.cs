@@ -22,14 +22,13 @@ namespace NeeView
         /// <summary>Expandのタイミングまで子供の生成を遅らせる</summary>
         public bool IsDelayCreation { get; set; }
 
-        private bool _isExpanded;
         public override bool IsExpanded
         {
-            get { return _isExpanded; }
+            get { return base.IsExpanded; }
             set
             {
-                SetProperty(ref _isExpanded, value);
-                if (_children == null && _isExpanded == true)
+                base.IsExpanded = value;
+                if (_children == null && base.IsExpanded == true)
                 {
                     CreateChildren(true);
                 }
@@ -49,7 +48,7 @@ namespace NeeView
             }
             set
             {
-                SetProperty(ref _children, value);
+                base.Children = value;
             }
         }
 

@@ -9,7 +9,7 @@ namespace NeeView
             return node switch
             {
                 RootQuickAccessNode n
-                    => new RootQuickAccessNodeAccessor(model, n),
+                    => new QuickAccessFolderNodeAccessor(model, n),
                 QuickAccessNode n
                     => new QuickAccessNodeAccessor(model, n),
                 RootDirectoryNode n
@@ -17,9 +17,9 @@ namespace NeeView
                 DirectoryNode n
                     => new DirectoryNodeAccessor(model, n),
                 RootBookmarkFolderNode n
-                    => new BookmarkNodeAccessor(model, n),
+                    => new BookmarkFolderNodeAccessor(model, n),
                 BookmarkFolderNode n
-                    => new BookmarkNodeAccessor(model, n),
+                    => new BookmarkFolderNodeAccessor(model, n),
                 DummyNode n
                     => new NodeAccessor(model, n),
                 _
