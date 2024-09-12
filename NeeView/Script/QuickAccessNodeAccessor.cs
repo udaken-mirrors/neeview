@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Reflection.Metadata;
 
 namespace NeeView
@@ -30,6 +31,13 @@ namespace NeeView
 
         [WordNodeMember(IsEnabled = false)]
         public override NodeAccessor[]? Children => base.Children;
+
+
+        [WordNodeMember(AltClassType = typeof(NodeAccessor))]
+        public override void MoveTo(int newIndex)
+        {
+            base.MoveTo(newIndex);
+        }
 
         protected override string GetName() => _value.Name;
     }

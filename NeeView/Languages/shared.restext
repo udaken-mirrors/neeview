@@ -106,8 +106,6 @@ PageListItem.Menu.MoveToFolder=@MoveToFolderAsCommand.Menu
 PlaylistItem.Menu.MoveToFolder=@MoveToFolderAsCommand.Menu
 
 QuickAccessFolderNodeAccessor.Insert.Index=@NodeAccessor.Insert.Index
-NodeAccessor.RemoveAt=@NodeAccessor.Remove
-NodeAccessor.RemoveAt.Returns=@NodeAccessor.Remove.Returns
 
 QuickAccessFolderNodeAccessor.Add.Example=@[/Resources/Scripts/QuickAccessFolderNodeAccessor.Add.Example.nvjs]
 QuickAccessFolderNodeAccessor.Insert.Example=@[/Resources/Scripts/QuickAccessFolderNodeAccessor.Insert.Example.nvjs]

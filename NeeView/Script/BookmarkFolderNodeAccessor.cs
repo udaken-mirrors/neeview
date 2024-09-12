@@ -37,24 +37,6 @@ namespace NeeView
             return base.Add(parameter);
         }
 
-        [WordNodeMember(AltClassType = typeof(NodeAccessor))]
-        public override bool Remove(NodeAccessor item)
-        {
-            return base.Remove(item);
-        }
-
-        [WordNodeMember(AltClassType = typeof(NodeAccessor))]
-        public override bool RemoveAt(int index)
-        {
-            return base.RemoveAt(index);
-        }
-
-        [WordNodeMember(AltClassType = typeof(NodeAccessor))]
-        public override int IndexOf(NodeAccessor item)
-        {
-            return base.IndexOf(item);
-        }
-
 
         internal WordNode CreateWordNode(string name)
         {

@@ -423,7 +423,7 @@ namespace NeeView
                 case BookmarkFolderNode n:
                     return RemoveBookmarkFolder(n);
                 default:
-                    throw new NotSupportedException($"Unsupported node type: {item.GetType().FullName}");
+                    throw new NotSupportedException($"Unsupported type: {item.GetType().FullName}");
             }
         }
 

@@ -42,29 +42,12 @@ namespace NeeView
             return base.Insert(index, parameter);
         }
 
-        [WordNodeMember(AltClassType = typeof(NodeAccessor))]
-        public override bool Remove(NodeAccessor item)
+        [WordNodeMember(IsEnabled = false)]
+        public override bool Remove()
         {
-            return base.Remove(item);
+            throw new NotSupportedException();
         }
 
-        [WordNodeMember(AltClassType = typeof(NodeAccessor))]
-        public override bool RemoveAt(int index)
-        {
-            return base.RemoveAt(index);
-        }
-
-        [WordNodeMember(AltClassType = typeof(NodeAccessor))]
-        public override int IndexOf(NodeAccessor item)
-        {
-            return base.IndexOf(item);
-        }
-
-        [WordNodeMember(AltClassType = typeof(NodeAccessor))]
-        public override void Move(int oldIndex, int newIndex)
-        {
-            base.Move(oldIndex, newIndex);
-        }
 
         internal WordNode CreateWordNode(string name)
         {

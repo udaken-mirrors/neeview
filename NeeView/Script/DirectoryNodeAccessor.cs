@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace NeeView
@@ -36,10 +37,22 @@ namespace NeeView
 
         protected override string GetName() => _value.Name;
 
-        [WordNodeMember(AltClassType = typeof(NodeAccessor))]
-        public override int IndexOf(NodeAccessor item)
+        [WordNodeMember(IsEnabled = false)]
+        public override NodeAccessor Add(IDictionary<string, object?>? parameter)
         {
-            return base.IndexOf(item);
+            throw new NotSupportedException();
+        }
+
+        [WordNodeMember(IsEnabled = false)]
+        public override NodeAccessor Insert(int index, IDictionary<string, object?>? parameter)
+        {
+            throw new NotSupportedException();
+        }
+
+        [WordNodeMember(IsEnabled = false)]
+        public override bool Remove()
+        {
+            throw new NotSupportedException();
         }
 
 

@@ -66,6 +66,9 @@ namespace NeeView
                     }
                     break;
 
+                case QuickAccessCollectionChangeAction.Move:
+                    break;
+
                 case QuickAccessCollectionChangeAction.Refresh:
                     BookshelfFolderList.Current.RequestPlace(new QueryPath(QueryScheme.QuickAccess, null), null, FolderSetPlaceOption.UpdateHistory | FolderSetPlaceOption.ResetKeyword | FolderSetPlaceOption.Refresh);
                     break;

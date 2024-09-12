@@ -2,6 +2,7 @@
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Windows.Media;
@@ -63,6 +64,11 @@ namespace NeeView
                     Remove(removeItem);
                     break;
 
+                case QuickAccessCollectionChangeAction.Move:
+                    this.Children.Move(e.OldIndex, e.NewIndex);
+                    AssertChildrenOrder();
+                    break;
+
                 case QuickAccessCollectionChangeAction.Rename:
                 case QuickAccessCollectionChangeAction.PathChanged:
                     // nop
@@ -70,5 +76,16 @@ namespace NeeView
             }
         }
 
+        [Conditional("DEBUG")]
+        private void AssertChildrenOrder()
+        {
+            Debug.Assert(this.Children.Count == QuickAccessCollection.Current.Items.Count);
+            for (int i = 0; i < this.Children.Count; i++)
+            {
+                var quickAccess = this.Children[i].Source as QuickAccess;
+                Debug.Assert(quickAccess is not null);
+                Debug.Assert(QuickAccessCollection.Current.Items[i] == quickAccess);
+            }
+        }
     }
 }

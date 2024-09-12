@@ -88,17 +88,14 @@ namespace NeeView
             return isRemoved;
         }
 
-        public void Move(int srcIndex, int dstIndex)
+        public void Move(int oldIndex, int newIndex)
         {
-            if (srcIndex == dstIndex) return;
+            newIndex = Math.Clamp(newIndex, 0, Items.Count - 1);
+            if (oldIndex == newIndex) return;
 
-            var item = Items[srcIndex];
-
-            Items.RemoveAt(srcIndex);
-            CollectionChanged?.Invoke(this, new QuickAccessCollectionChangeEventArgs(QuickAccessCollectionChangeAction.Remove, item));
-
-            Items.Insert(dstIndex, item);
-            CollectionChanged?.Invoke(this, new QuickAccessCollectionChangeEventArgs(QuickAccessCollectionChangeAction.Add, item));
+            var item = Items[oldIndex];
+            Items.Move(oldIndex, newIndex);
+            CollectionChanged?.Invoke(this, new QuickAccessCollectionChangeEventArgs(QuickAccessCollectionChangeAction.Move, item, oldIndex, newIndex));
         }
 
 
