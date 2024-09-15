@@ -223,6 +223,8 @@ namespace NeeView.PageFrames
 
         public PageRange SelectedRange => _bookContext.SelectedRange;
 
+        public IReadOnlyList<Page> SelectedPages => _bookContext.SelectedPages;
+
         public bool IsBusy => _loader.IsBusy;
 
         public bool IsStarted

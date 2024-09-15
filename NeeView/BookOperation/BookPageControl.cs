@@ -10,7 +10,6 @@ namespace NeeView
     {
         private readonly PageFrameBox _box;
         private readonly Book _book;
-        private List<Page> _selectedPages = new();
         private readonly IBookPageMoveControl _moveControl;
         private readonly IBookPageActionControl _actionControl;
         private bool _disposedValue;
@@ -35,8 +34,6 @@ namespace NeeView
 
             _book.Pages.PagesSorted += Book_PagesSorted;
             _book.Pages.PageRemoved += Book_PageRemoved;
-            //_book.Viewer.SelectedRangeChanged += Book_SelectedRangeChanged;
-            //_presenter.SelectedRangeChanged += Book_SelectedRangeChanged;
             _box.SelectedRangeChanged += Book_SelectedRangeChanged;
         }
 
@@ -45,9 +42,8 @@ namespace NeeView
         public event EventHandler<PageRangeChangedEventArgs>? SelectedRangeChanged;
 
         public IReadOnlyList<Page> Pages => _book.Pages;
-        public IReadOnlyList<Page> SelectedPages => _selectedPages;
-        //public PageRange SelectedRange => _book.Viewer.SelectedRange;
         public PageRange SelectedRange => _box.SelectedRange;
+        public IReadOnlyList<Page> SelectedPages => _box.SelectedPages;
 
 
 
@@ -59,8 +55,6 @@ namespace NeeView
                 {
                     _book.Pages.PagesSorted -= Book_PagesSorted;
                     _book.Pages.PageRemoved -= Book_PageRemoved;
-                    //_book.Viewer.SelectedRangeChanged -= Book_SelectedRangeChanged;
-                    //_presenter.SelectedRangeChanged -= Book_SelectedRangeChanged;
                     _box.SelectedRangeChanged -= Book_SelectedRangeChanged;
                 }
                 _disposedValue = true;
@@ -87,10 +81,6 @@ namespace NeeView
 
         private void Book_SelectedRangeChanged(object? sender, PageRangeChangedEventArgs e)
         {
-            var range = SelectedRange;
-            var indexes = Enumerable.Range(range.Min.Index, range.Max.Index - range.Min.Index + 1);
-            _selectedPages = indexes.Where(e => _book.Pages.IsValidIndex(e)).Select(e => _book.Pages[e]).ToList();
-
             AppDispatcher.Invoke(() => SelectedRangeChanged?.Invoke(sender, e));
         }
 
