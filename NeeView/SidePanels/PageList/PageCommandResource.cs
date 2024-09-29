@@ -396,7 +396,7 @@ namespace NeeView
 
             if (items != null && items.Count > 0)
             {
-                e.CanExecute = items.All(x => bookPlaylist.IsEnabled(x));
+                e.CanExecute = items.All(x => bookPlaylist.CanRegister(x));
             }
             else
             {

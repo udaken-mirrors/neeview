@@ -7,6 +7,8 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Data;
 
@@ -38,6 +40,9 @@ namespace NeeView
 
             BookOperation.Current.BookChanged +=
                 (s, e) => UpdateFilter(false);
+
+            PageFrameBoxPresenter.Current.ViewPageChanged +=
+                (s, e) => RaisePropertyChanged(nameof(IsAddButtonEnabled));
         }
 
 
@@ -71,6 +76,11 @@ namespace NeeView
         public bool IsEditable
         {
             get { return _model is not null && _model.IsEditable; }
+        }
+
+        public bool IsAddButtonEnabled
+        {
+            get { return IsCurrentPageEnabled(); }
         }
 
         public bool IsGroupBy
@@ -212,18 +222,37 @@ namespace NeeView
             }
         }
 
+        public bool IsCurrentPageEnabled()
+        {
+            if (_items is null) return false;
+
+            var book = BookOperation.Current.Book;
+            if (book is null) return false;
+
+            var page = BookOperation.Current.Control.SelectedPages.FirstOrDefault();
+            if (page is null) return false;
+
+            var bookPlaylist = new BookPlaylist(book, PlaylistHub.Current.Playlist);
+            return bookPlaylist.CanRegister(page);
+        }
+
         public PlaylistItem? AddCurrentPage()
         {
             if (_items is null) return null;
 
-            var page = BookOperation.Current.Control.SelectedPages.FirstOrDefault();
-            if (page is null || page.Content is EmptyPageContent) return null;
-            
-            var path = (page.ArchiveEntry.Archiver is PlaylistArchive) ? page.SystemPath : page.EntryFullName;
+            var book = BookOperation.Current.Book;
+            if (book is null) return null;
 
-            var targetItem = this.IsFirstIn ? _items.FirstOrDefault() : null;
-            var result = Insert(new List<string> { path }, targetItem);
-            return result?.FirstOrDefault();
+            var page = BookOperation.Current.Control.SelectedPages.FirstOrDefault();
+            if (page is null) return null;
+
+            var bookPlaylist = new BookPlaylist(book, PlaylistHub.Current.Playlist);
+            if (!bookPlaylist.CanRegister(page)) return null;
+
+            var item = bookPlaylist.Add(page);
+            this.SelectedItem = item ?? this.SelectedItem;
+
+            return item;
         }
 
         public bool CanMoveUp()
@@ -250,19 +279,26 @@ namespace NeeView
             _model?.MoveDown(this.SelectedItem);
         }
 
-
-        public List<PlaylistItem>? Insert(IEnumerable<string> paths, PlaylistItem? targetItem)
+        public async Task<List<PlaylistItem>?> InsertAsync(IEnumerable<string> paths, PlaylistItem? targetItem, CancellationToken token)
         {
             if (_model is null) return null;
             if (!_model.IsEditable) return null;
 
-            this.SelectedItem = null;
-
-            var items = _model.Insert(paths, targetItem);
-
-            this.SelectedItem = items?.FirstOrDefault();
-
+            var fixedPaths = await ValidatePlaylistItemPath(paths, token);
+            var items = _model.Insert(fixedPaths, targetItem);
             return items;
+        }
+
+        public async Task<List<string>> ValidatePlaylistItemPath(IEnumerable<string> paths, CancellationToken token)
+        {
+            var list = new List<string>();
+            foreach (var path in paths)
+            {
+                var entry = await ArchiveEntryUtility.CreateAsync(path, token);
+                var fix = entry.Archiver is PlaylistArchive ? entry.SystemPath : entry.EntryFullName;
+                list.Add(fix);
+            }
+            return list;
         }
 
         public void Remove(IEnumerable<PlaylistItem> items)

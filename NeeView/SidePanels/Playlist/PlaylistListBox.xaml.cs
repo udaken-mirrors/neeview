@@ -329,12 +329,15 @@ namespace NeeView
 
             if (isDrop)
             {
-                var items = _vm.Insert(paths, targetItem);
-                if (items != null)
+                AppDispatcher.BeginInvoke(async () =>
                 {
-                    this.ListBox.SetSelectedItems(items);
-                    this.ListBox.ScrollItemsIntoView(items);
-                }
+                    var items = await _vm.InsertAsync(paths, targetItem, CancellationToken.None);
+                    if (items != null)
+                    {
+                        this.ListBox.SetSelectedItems(items);
+                        this.ListBox.ScrollItemsIntoView(items);
+                    }
+                });
             }
 
             e.Effects = DragDropEffects.Copy;
@@ -355,12 +358,15 @@ namespace NeeView
 
             if (isDrop)
             {
-                var items = _vm.Insert(fileNames, targetItem);
-                if (items != null)
+                AppDispatcher.BeginInvoke(async () =>
                 {
-                    this.ListBox.SetSelectedItems(items);
-                    this.ListBox.ScrollItemsIntoView(items);
-                }
+                    var items = await _vm.InsertAsync(fileNames, targetItem, CancellationToken.None);
+                    if (items != null)
+                    {
+                        this.ListBox.SetSelectedItems(items);
+                        this.ListBox.ScrollItemsIntoView(items);
+                    }
+                });
             }
 
             e.Effects = DragDropEffects.Copy;

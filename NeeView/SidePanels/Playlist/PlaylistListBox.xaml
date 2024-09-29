@@ -171,7 +171,7 @@
 
     <DockPanel KeyboardNavigation.TabNavigation="Local">
         <DockPanel DockPanel.Dock="Top" LastChildFill="False">
-            <Button x:Name="AddButton" Style="{StaticResource IconButtonStyle}" Command="{x:Static local:PlaylistListBox.AddCommand}" TabIndex="1">
+            <Button x:Name="AddButton" Style="{StaticResource IconButtonStyle}" Command="{x:Static local:PlaylistListBox.AddCommand}" IsEnabled="{Binding IsAddButtonEnabled}" TabIndex="1">
                 <Image Source="{StaticResource ic_add_24px_a}" />
                 <Button.ContextMenu>
                     <ContextMenu>

@@ -16,7 +16,7 @@ namespace NeeView
             _playlist = playlist;
         }
 
-        public bool IsEnabled(Page page)
+        public bool CanRegister(Page page)
         {
             if (page is null || page.Content is EmptyPageContent)
             {
@@ -28,7 +28,7 @@ namespace NeeView
                 return false;
             }
 
-            if (_book.IsMedia || _book.IsPlaylist || _book.IsTemporary)
+            if (_book.IsTemporary)
             {
                 return false;
             }
@@ -65,7 +65,25 @@ namespace NeeView
             if (_playlist is null) return null;
             if (pages is null) return null;
 
-            return _playlist.Add(pages.Select(e => e.EntryFullName).ToList());
+            var paths = pages.Select(e => (e.ArchiveEntry.Archiver is PlaylistArchive) ? e.SystemPath : e.EntryFullName).ToList();
+            return _playlist.Add(paths);
+        }
+
+        public PlaylistItem? Insert(Page page, PlaylistItem? targetItem)
+        {
+            if (_playlist is null) return null;
+            if (page is null) return null;
+
+            return Insert(new List<Page> { page }, targetItem)?.FirstOrDefault();
+        }
+
+        public List<PlaylistItem>? Insert(IEnumerable<Page> pages, PlaylistItem? targetItem)
+        {
+            if (_playlist is null) return null;
+            if (pages is null) return null;
+
+            var paths = pages.Select(e => (e.ArchiveEntry.Archiver is PlaylistArchive) ? e.SystemPath : e.EntryFullName).ToList();
+            return _playlist.Insert(paths, targetItem);
         }
 
 

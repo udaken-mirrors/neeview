@@ -149,7 +149,7 @@ namespace NeeView
         public bool CanMark(Page page)
         {
             var bookPlaylist = new BookPlaylist(_book, PlaylistHub.Current.Playlist);
-            return bookPlaylist.IsEnabled(page);
+            return bookPlaylist.CanRegister(page);
         }
 
         // マーカー追加/削除
