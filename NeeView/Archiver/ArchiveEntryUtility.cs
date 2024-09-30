@@ -55,6 +55,12 @@ namespace NeeView
                             var archiver = await ArchiverManager.Current.CreateArchiverAsync(StaticFolderArchive.Default.CreateArchiveEntry(archivePath), false, token);
                             var entries = await archiver.GetEntriesAsync(token);
 
+                            // メディア アーカイブの場合、ページ指定は無効
+                            if (archiver is MediaArchiver)
+                            {
+                                return entries.First();
+                            }
+
                             var entryName = path[archivePath.Length..].TrimStart(LoosePath.Separators);
                             var entry = entries.FirstOrDefault(e => e.EntryName == entryName);
                             if (entry != null)

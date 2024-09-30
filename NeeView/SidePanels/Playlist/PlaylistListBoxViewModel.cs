@@ -295,7 +295,7 @@ namespace NeeView
             foreach (var path in paths)
             {
                 var entry = await ArchiveEntryUtility.CreateAsync(path, token);
-                var fix = entry.Archiver is PlaylistArchive ? entry.SystemPath : entry.EntryFullName;
+                var fix = BookPlaylist.ArchiveEntryToValidPath(entry);
                 list.Add(fix);
             }
             return list;
