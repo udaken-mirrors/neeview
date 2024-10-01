@@ -173,7 +173,7 @@ namespace NeeView
         public async Task<List<ArchiveEntry>> GetEntriesWhereSubArchivesAsync(CancellationToken token)
         {
             var entries = await GetEntriesAsync(token);
-            return entries.Where(e => e.IsArchive()).ToList();
+            return entries.Where(e => e.IsArchive() || e.IsMedia()).ToList();
         }
 
         // filter: 含まれるブックを抽出
