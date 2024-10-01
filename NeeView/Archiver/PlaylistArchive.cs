@@ -28,6 +28,11 @@ namespace NeeView
         public override bool IsFileSystem { get; } = false;
 
 
+        public override bool IsFileSystemEntry(ArchiveEntry entry)
+        {
+            return entry.Instance is ArchiveEntry innerEntry && innerEntry.IsFileSystem;
+        }
+
         public static bool IsSupportExtension(string path)
         {
             return LoosePath.GetExtension(path) == Extension;
