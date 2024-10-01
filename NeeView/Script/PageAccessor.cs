@@ -32,7 +32,7 @@ namespace NeeView
         public DateTime CreationTime => _page.CreationTime;
 
         [WordNodeMember]
-        public bool IsBook => _page.PageType == PageType.Folder;
+        public bool IsBook =>_page.IsBook;
 
 
         [WordNodeMember]

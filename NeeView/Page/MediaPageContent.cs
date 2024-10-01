@@ -18,6 +18,10 @@ namespace NeeView
         {
         }
 
+
+        public override bool IsBook => Config.Current.Archive.Media.IsEnabled && ArchiveEntry.Archiver is not MediaArchiver;
+
+
         protected override async Task<PictureInfo?> LoadPictureInfoCoreAsync(CancellationToken token)
         {
             NVDebug.AssertMTA();

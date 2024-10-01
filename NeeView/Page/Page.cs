@@ -121,6 +121,11 @@ namespace NeeView
         /// </summary>
         public PageType PageType => _content.PageType;
 
+        /// <summary>
+        /// ブックとして開くことができる
+        /// </summary>
+        public bool IsBook => _content.IsBook;
+
         // 表示中?
         public bool IsVisible
         {

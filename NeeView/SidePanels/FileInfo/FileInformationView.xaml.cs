@@ -129,9 +129,9 @@ namespace NeeView
             var listBox = this.ThumbnailListBox;
 
             contextMenu.Items.Clear();
-            if (item.PageType == PageType.Folder)
+            if (item.IsBook)
             {
-                contextMenu.Items.Add(new MenuItem() { Header = ResourceService.GetString("@PageListItem.Menu.OpenBook"), Command = OpenBookCommand });
+                contextMenu.Items.Add(new MenuItem() { Header = ResourceService.GetString("@PageListItem.Menu.OpenAsBook"), Command = OpenBookCommand });
                 contextMenu.Items.Add(new Separator());
             }
             contextMenu.Items.Add(new MenuItem() { Header = ResourceService.GetString("@PageListItem.Menu.AddToPlaylist"), Command = PlaylistMarkCommand, IsChecked = _commandResource.PlaylistMark_IsChecked(listBox) });

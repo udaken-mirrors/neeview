@@ -103,7 +103,7 @@ namespace NeeView
         public void OpenBook_CanExec(object sender, CanExecuteRoutedEventArgs e)
         {
             var page = GetSelectedPage(sender);
-            e.CanExecute = page != null && page.PageType == PageType.Folder;
+            e.CanExecute = page != null && page.IsBook;
         }
 
         public void OpenBook_Exec(object sender, ExecutedRoutedEventArgs e)
@@ -111,7 +111,7 @@ namespace NeeView
             var page = GetSelectedPage(sender);
             if (page == null) return;
 
-            if (page.PageType == PageType.Folder)
+            if (page.IsBook)
             {
                 BookHub.Current.RequestLoad(this, page.ArchiveEntry.SystemPath, null, BookLoadOption.IsBook | BookLoadOption.SkipSamePlace, true);
             }

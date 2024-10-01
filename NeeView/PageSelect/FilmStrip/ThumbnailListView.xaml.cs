@@ -577,9 +577,9 @@ namespace NeeView
 
             contextMenu.Items.Clear();
 
-            if (item.PageType == PageType.Folder)
+            if (item.IsBook)
             {
-                contextMenu.Items.Add(new MenuItem() { Header = ResourceService.GetString("@PageListItem.Menu.OpenBook"), Command = OpenBookCommand });
+                contextMenu.Items.Add(new MenuItem() { Header = ResourceService.GetString("@PageListItem.Menu.OpenAsBook"), Command = OpenBookCommand });
                 contextMenu.Items.Add(new Separator());
             }
 
