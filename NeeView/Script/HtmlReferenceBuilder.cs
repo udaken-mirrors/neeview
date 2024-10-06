@@ -429,7 +429,8 @@ namespace NeeView
             if (method.ReturnType != typeof(void))
             {
                 builder.Append($"<h4>{ResourceService.GetString("@Word.Returns")}</h4>").AppendLine();
-                var typeString = TypeToString(method.ReturnType);
+                var returnTypeAttribute = method.GetCustomAttribute<ReturnTypeAttribute>();
+                var typeString = TypeToString(returnTypeAttribute?.ReturnType ?? method.ReturnType) + (attribute?.DocumentType != null ? $" ({TypeToString(attribute.DocumentType)})" : "");
                 var memberName = new DocumentMemberName(method);
                 var summary = memberName.GetHtmlDocument(".Returns") ?? "";
                 builder.AppendDictionary(new Dictionary<string, string> { [typeString] = summary }, "table-none");
