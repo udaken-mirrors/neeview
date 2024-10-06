@@ -425,16 +425,21 @@ namespace NeeView
         {
             if (item is null) return;
 
-            // try jump in current book.
-            var isSuccess = BookOperation.Current.JumpPageWithPath(this, item.Path);
-            if (isSuccess)
+            if (this.Path == BookOperation.Current.Address)
             {
-                return;
+                // try jump in current book.
+                var isSuccess = BookOperation.Current.JumpPageWithTarget(this, item.Path);
+                if (!isSuccess)
+                {
+                    ToastService.Current.Show(new Toast(ResourceService.GetString("@Notice.CannotOpenThisItem"), null, ToastIcon.Warning));
+                }
             }
-
-            // try open page at new book.
-            var options = BookLoadOption.None;
-            BookHub.Current.RequestLoad(this, item.Path, null, options, true);
+            else
+            {
+                // try open page at new book.
+                var options = BookLoadOption.None;
+                BookHub.Current.RequestLoad(this, item.Path, null, options, true);
+            }
         }
 
         public bool CanMoveUp(PlaylistItem? item)

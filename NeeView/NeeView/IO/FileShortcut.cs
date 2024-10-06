@@ -78,6 +78,19 @@ namespace NeeView.IO
             }
         }
 
+        public static string ResolveShortcutPath(string path)
+        {
+            if (IsShortcut(path))
+            {
+                var shortcut = new FileShortcut(path);
+                if (shortcut.TryGetTargetPath(out var targetPath))
+                {
+                    return targetPath;
+                }
+            }
+            return path;
+        }
+
         [MemberNotNull(nameof(_source))]
         public void Open(FileInfo source)
         {

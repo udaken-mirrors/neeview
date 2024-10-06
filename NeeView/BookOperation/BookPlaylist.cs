@@ -95,7 +95,7 @@ namespace NeeView
         {
             return entry.Archiver switch
             {
-                PlaylistArchive => entry.SystemPath,
+                PlaylistArchive => entry.Target ?? entry.SystemPath,
                 MediaArchiver => entry.Archiver.SystemPath,
                 _ => entry.EntryFullName
             };

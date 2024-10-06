@@ -93,15 +93,6 @@ namespace NeeView
                 }
             }
 
-            if (FileShortcut.IsShortcut(item.Path))
-            {
-                var shortcut = new FileShortcut(item.Path);
-                if (shortcut.TryGetTargetPath(out var target))
-                {
-                    targetPath = target;
-                }
-            }
-
             var innerEntry = await ArchiveEntryUtility.CreateAsync(targetPath, token);
 
             var entry = new ArchiveEntry(this)
@@ -109,7 +100,8 @@ namespace NeeView
                 IsValid = true,
                 Id = id,
                 RawEntryName = item.Name,
-                Link = targetPath,
+                Target = targetPath,
+                Link = FileShortcut.ResolveShortcutPath(targetPath),
                 Instance = innerEntry,
                 Length = innerEntry.Length,
                 CreationTime = innerEntry.CreationTime,

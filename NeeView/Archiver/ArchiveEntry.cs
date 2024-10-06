@@ -117,8 +117,14 @@ namespace NeeView
         public string EntryName { get; private set; } = "";
 
         /// <summary>
+        /// エントリのターゲットパス。<br/>
+        /// プレイリストの場合の参照先パスになる(アーカイブパスの可能性あり)
+        /// </summary>
+        public string? Target { get; set; }
+
+        /// <summary>
         /// ショートカットの場合のリンク先パス。<br/>
-        /// ページマークの場合の参照先パスにもなる(アーカイブパスの可能性あり)
+        /// プレイリストの場合はリンクを解決した参照先パスになる
         /// </summary>
         public string? Link { get; set; }
 

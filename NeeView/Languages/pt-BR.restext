@@ -1426,6 +1426,7 @@ Notice.CacheErrorTitle=Erro de cache
 Notice.CannotDisplay=Nenhuma página
 Notice.CannotOpen=Não é possível abrir {0}
 Notice.CannotOpenBookmarkFolder={0} é uma pasta de marcadores
+Notice.CannotOpenThisItem=
 Notice.Conflict=Em conflito com {0}
 Notice.ConflictWith="{0}" entra em conflito com {1}
 Notice.ContentFailed=Falha ao carregar conteúdo

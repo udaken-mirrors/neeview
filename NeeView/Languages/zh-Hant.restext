@@ -1419,6 +1419,7 @@ Notice.CacheErrorTitle=快取錯誤
 Notice.CannotDisplay=無法顯示
 Notice.CannotOpen=無法開啟 {0}
 Notice.CannotOpenBookmarkFolder={0} 為書籤資料夾
+Notice.CannotOpenThisItem=
 Notice.Conflict=與 {0} 衝突
 Notice.ConflictWith={0} 和 {1} 衝突
 Notice.ContentFailed=內容讀入失敗了

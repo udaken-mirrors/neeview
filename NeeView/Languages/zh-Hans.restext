@@ -1419,6 +1419,7 @@ Notice.CacheErrorTitle=缓存错误
 Notice.CannotDisplay=无法显示
 Notice.CannotOpen=无法开启 {0}
 Notice.CannotOpenBookmarkFolder={0} 为书签文件夹
+Notice.CannotOpenThisItem=
 Notice.Conflict=与 {0} 冲突
 Notice.ConflictWith={0} 和 {1} 冲突
 Notice.ContentFailed=内容载入失败了

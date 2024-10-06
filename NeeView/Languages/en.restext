@@ -1426,6 +1426,7 @@ Notice.CacheErrorTitle=Cache error
 Notice.CannotDisplay=No pages
 Notice.CannotOpen=Cannot open {0}
 Notice.CannotOpenBookmarkFolder={0} is a bookmark folder
+Notice.CannotOpenThisItem=Cannot open this item
 Notice.Conflict=Conflicting with {0}
 Notice.ConflictWith="{0}" conflicts with {1}
 Notice.ContentFailed=Failed to load content

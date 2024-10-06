@@ -13,19 +13,17 @@ namespace NeeView
         private Page? _archivePage;
         private bool? _isArchive;
 
-        public PlaylistItem(string path)
+        public PlaylistItem(string path) : this(path, null)
         {
-            _item = new PlaylistSourceItem(path);
         }
 
-        public PlaylistItem(string path, string name)
+        public PlaylistItem(PlaylistSourceItem item) : this(item.Path, item.Name)
         {
-            _item = new PlaylistSourceItem(path, name);
         }
 
-        public PlaylistItem(PlaylistSourceItem item)
+        public PlaylistItem(string path, string? name)
         {
-            _item = new PlaylistSourceItem(item.Path, item.Name);
+            _item = new PlaylistSourceItem(ValidPath(path), name);
         }
 
 
@@ -36,7 +34,7 @@ namespace NeeView
             {
                 if (_item.Path != value)
                 {
-                    _item.Path = value;
+                    _item.Path = ValidPath(value);
                     RaisePropertyChanged();
                     RaisePropertyChanged(nameof(Name));
                 }
@@ -129,6 +127,21 @@ namespace NeeView
         public Page GetPage()
         {
             return ArchivePage;
+        }
+
+        private static string ValidPath(string path)
+        {
+            // 動画名が重複するパスを修正する
+            if (ArchiverManager.Current.IsSupported(path, ArchiverType.MediaArchiver))
+            {
+                var tokens = path.Split(LoosePath.Separators);
+                var count = tokens.Length;
+                if (count >= 2 && tokens[count - 1] == tokens[count - 2] && !System.IO.File.Exists(path))
+                {
+                    return LoosePath.GetDirectoryName(path);
+                }
+            }
+            return path;
         }
 
         public PlaylistSourceItem ToPlaylistItem()

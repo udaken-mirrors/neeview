@@ -171,6 +171,12 @@ namespace NeeView
             return order;
         }
 
+        // アーカイバを指定してサポートしているかを判定
+        public bool IsSupported(string fileName, ArchiverType archiverType)
+        {
+            string ext = LoosePath.GetExtension(fileName);
+            return _supportedFileTypes[archiverType].Contains(ext);
+        }
 
         // サポートしているアーカイバーがあるか判定
         public bool IsSupported(string fileName, bool isAllowFileSystem = true, bool isAllowMedia = true)
@@ -179,7 +185,6 @@ namespace NeeView
 
             return GetSupportedType(fileName, isAllowFileSystem, isAllowMedia) != ArchiverType.None;
         }
-
 
         // サポートしているアーカイバーを取得
         public ArchiverType GetSupportedType(string fileName, bool isArrowFileSystem = true, bool isAllowMedia = true)
