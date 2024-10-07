@@ -145,7 +145,14 @@ namespace NeeView
             else if (Config.Current.Playlist.IsCurrentBookFilterEnabled && book is not null)
             {
                 var item = (PlaylistItem)e.Item;
-                e.Accepted = book is null || (item.Path.StartsWith(book.Path) && book.Pages.PageMap.ContainsKey(item.Path));
+                if (book.IsPlaylist)
+                {
+                    e.Accepted = book.Path == _model?.Path && book.Pages.PageTargetMap.ContainsKey(item.Path);
+                }
+                else
+                {
+                    e.Accepted = item.Path.StartsWith(book.Path) && book.Pages.PageMap.ContainsKey(item.Path);
+                }
             }
             else
             {
