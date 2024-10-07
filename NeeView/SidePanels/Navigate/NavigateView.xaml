@@ -156,23 +156,23 @@
                 </DrawingImage.Drawing>
             </DrawingImage>
 
-            <!-- https://www.onlinewebfonts.com/icon/425378 -->
-            <PathGeometry x:Key="g_pushpin" FillRule="Nonzero"
-                    Figures="M10,-30L175.8,198.7 426.5,450.2 255,623.3 500,623.3 718,851.2 689.4,880.6C681.2,888.2 677.1,897.8 677.1,909.2 677.1,920.6 681.2,930.2 689.4,937.8 697.6,946 707.1,950.1 718,950.1 729.4,950.1 739,946 746.6,937.8L977.7,707.5C985.9,699.3 990,689.5 990,678.1 990,667.2 985.9,657.7 977.7,649.5 970.1,641.3 960.5,637.2 949.1,637.2 937.7,637.2 928.1,641.3 920.5,649.5L891.2,678 663.3,460 663.3,215 490.2,386.5 238.7,135.8 10,-30z" />
-
-            <DrawingImage x:Key="ic_pushpin_b">
+            <DrawingImage x:Key="ic_push_pin_b">
                 <DrawingImage.Drawing>
                     <DrawingGroup>
-                        <DrawingGroup>
-                            <GeometryDrawing Brush="Transparent">
-                                <GeometryDrawing.Geometry>
-                                    <RectangleGeometry Rect="-200,-200,1400,1400" />
-                                </GeometryDrawing.Geometry>
-                            </GeometryDrawing>
-                        </DrawingGroup>
-                        <DrawingGroup Transform="1,0,0,-1,0,960">
-                            <GeometryDrawing Brush="{DynamicResource Control.Accent}" Geometry="{StaticResource g_pushpin}" />
-                        </DrawingGroup>
+                        <DrawingGroup.Transform>
+                            <RotateTransform Angle="90"/>
+                        </DrawingGroup.Transform>
+                        <GeometryDrawing Brush="Transparent" Geometry="{StaticResource g_rect24x24}" />
+                        <GeometryDrawing Brush="{DynamicResource Control.Accent}" Pen="{x:Null}" Geometry="{StaticResource g_push_pin_24px}" />
+                    </DrawingGroup>
+                </DrawingImage.Drawing>
+            </DrawingImage>
+
+            <DrawingImage x:Key="ic_push_pin_fill_b">
+                <DrawingImage.Drawing>
+                    <DrawingGroup>
+                        <GeometryDrawing Brush="Transparent" Geometry="{StaticResource g_rect24x24}" />
+                        <GeometryDrawing Brush="{DynamicResource Control.Accent}" Pen="{x:Null}" Geometry="{StaticResource g_push_pin_fill_24px}" />
                     </DrawingGroup>
                 </DrawingImage.Drawing>
             </DrawingImage>
@@ -209,6 +209,15 @@
             <Style x:Key="NavigateToggleButtonStyle" TargetType="ToggleButton" BasedOn="{StaticResource IconToggleButton}">
                 <Setter Property="Width" Value="28" />
                 <Setter Property="MinHeight" Value="{DynamicResource FontIconSize}" />
+            </Style>
+
+            <Style x:Key="PushPinImage" TargetType="Image">
+                <Setter Property="Source" Value="{StaticResource ic_push_pin_b}"/>
+                <Style.Triggers>
+                    <DataTrigger Binding="{Binding IsChecked, RelativeSource={RelativeSource AncestorType=ToggleButton}}" Value="True">
+                        <Setter Property="Source" Value="{StaticResource ic_push_pin_fill_b}"/>
+                    </DataTrigger>
+                </Style.Triggers>
             </Style>
 
         </ResourceDictionary>
@@ -343,7 +352,7 @@
                                         </ComboBox>
                                         <ToggleButton Style="{StaticResource NavigateToggleButtonStyle}" IsChecked="{Binding IsKeepAngle}"
                                                 ToolTip="{properties:TextBinding Navigator.IsKeepAngle}">
-                                            <Image Source="{StaticResource ic_pushpin_b}" />
+                                            <Image Style="{StaticResource PushPinImage}" />
                                             <ToggleButton.ContextMenu>
                                                 <ContextMenu>
                                                     <MenuItem Header="{properties:TextBinding Navigator.IsKeepAngleBooks}" IsCheckable="True" IsChecked="{Binding IsKeepAngleBooks}" />
@@ -388,10 +397,10 @@
                                                 ToolTip="{properties:TextBinding Navigator.IsScaleStretchTracking}">
                                             <Image Source="{StaticResource ic_center_focus_strong_24px}" />
                                         </ToggleButton>
-                                        
+
                                         <ToggleButton Style="{StaticResource NavigateToggleButtonStyle}" IsChecked="{Binding IsKeepScale}"
                                                 ToolTip="{properties:TextBinding Navigator.IsKeepScale}">
-                                            <Image Source="{StaticResource ic_pushpin_b}" />
+                                            <Image Style="{StaticResource PushPinImage}" />
                                             <ToggleButton.ContextMenu>
                                                 <ContextMenu>
                                                     <MenuItem Header="{properties:TextBinding Navigator.IsKeepScaleBooks}" IsCheckable="True" IsChecked="{Binding IsKeepScaleBooks}" />
@@ -421,7 +430,7 @@
                                     </StackPanel>
                                     <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
                                         <ToggleButton Style="{StaticResource NavigateToggleButtonStyle}" IsChecked="{Binding IsKeepFlip}" ToolTip="{properties:TextBinding Navigator.IsKeepFlip}">
-                                            <Image Source="{StaticResource ic_pushpin_b}" />
+                                            <Image Style="{StaticResource PushPinImage}" />
                                             <ToggleButton.ContextMenu>
                                                 <ContextMenu>
                                                     <MenuItem Header="{properties:TextBinding Navigator.IsKeepFlipBooks}" IsCheckable="True" IsChecked="{Binding IsKeepFlipBooks}" />
