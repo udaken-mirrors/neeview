@@ -27,6 +27,8 @@ namespace NeeView
         public SidePanelIcon()
         {
             InitializeComponent();
+
+            this.Unloaded += (s, e) => Detach(Descriptor);
         }
 
 
@@ -43,10 +45,29 @@ namespace NeeView
         {
             if (d is SidePanelIcon control)
             {
+                control.Detach((ISidePanelIconDescriptor)e.OldValue);
                 control.Update();
+                control.Attach((ISidePanelIconDescriptor)e.NewValue);
+                control.UpdateSelected();
             }
         }
 
+        public HorizontalAlignment MarkerAlignment
+        {
+            get { return (HorizontalAlignment)GetValue(MarkerAlignmentProperty); }
+            set { SetValue(MarkerAlignmentProperty, value); }
+        }
+
+        public static readonly DependencyProperty MarkerAlignmentProperty =
+            DependencyProperty.Register("MarkerAlignment", typeof(HorizontalAlignment), typeof(SidePanelIcon), new PropertyMetadata(HorizontalAlignment.Left, MarkerAlignmentChanged));
+
+        private static void MarkerAlignmentChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            if (d is SidePanelIcon control)
+            {
+                control.SelectedMark.HorizontalAlignment = (HorizontalAlignment)e.NewValue;
+            }
+        }
 
         private void Update()
         {
@@ -60,6 +81,41 @@ namespace NeeView
             }
         }
 
+        private void Attach(ISidePanelIconDescriptor descriptor)
+        {
+            if (descriptor is null) return;
+
+            descriptor.SelectedPanelChanged += Descriptor_SelectedPanelChanged;
+        }
+
+        private void Detach(ISidePanelIconDescriptor descriptor)
+        {
+            if (descriptor is null) return;
+
+            descriptor.SelectedPanelChanged -= Descriptor_SelectedPanelChanged;
+        }
+
+        private void Descriptor_SelectedPanelChanged(object? sender, EventArgs e)
+        {
+            UpdateSelected();
+        }
+
+        private void UpdateSelected()
+        {
+            if (Descriptor is null) return;
+
+            if (this.DataContext is LayoutPanel layoutPanel)
+            {
+                if (Descriptor.IsSelected(layoutPanel))
+                {
+                    SelectedMark.Visibility = Visibility.Visible;
+                }
+                else
+                {
+                    SelectedMark.Visibility = Visibility.Hidden;
+                }
+            }
+        }
 
         private void TogglePanelCommand_Execute(object sender, ExecutedRoutedEventArgs e)
         {
@@ -112,8 +168,11 @@ namespace NeeView
         }
     }
 
-    public interface ISidePanelIconDescriptor
+    public interface ISidePanelIconDescriptor 
     {
+        event EventHandler? SelectedPanelChanged;
+
+        bool IsSelected(LayoutPanel panel);
         FrameworkElement CreateButtonContent(LayoutPanel panel);
         void ToggleLayoutPanel(LayoutPanel panel);
         void DragBegin();

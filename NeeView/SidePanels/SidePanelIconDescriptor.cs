@@ -9,10 +9,22 @@ namespace NeeView
     public class SidePanelIconDescriptor : ISidePanelIconDescriptor
     {
         private readonly SidePanelFrameViewModel _vm;
+        private readonly LayoutDockPanelContent _dock;
 
-        public SidePanelIconDescriptor(SidePanelFrameViewModel vm)
+        public SidePanelIconDescriptor(SidePanelFrameViewModel vm, LayoutDockPanelContent dock)
         {
             _vm = vm;
+            _dock = dock;
+
+            _dock.AddPropertyChanged(nameof(_dock.SelectedItem),
+                (s, e) => SelectedPanelChanged?.Invoke(this, EventArgs.Empty));
+        }
+
+        public event EventHandler? SelectedPanelChanged;
+
+        public bool IsSelected(LayoutPanel panel)
+        {
+            return _dock.SelectedItem?.Contains(panel) ?? false;
         }
 
         public FrameworkElement CreateButtonContent(LayoutPanel panel)

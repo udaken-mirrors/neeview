@@ -1,7 +1,16 @@
-﻿<UserControl x:Class="NeeView.SidePanelIcon" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
-        xmlns:nw="clr-namespace:NeeView.Windows" xmlns:properties="clr-namespace:NeeView.Properties" xmlns:local="clr-namespace:NeeView" mc:Ignorable="d" d:DesignHeight="450"
+﻿<UserControl x:Class="NeeView.SidePanelIcon"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+        xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
+        xmlns:nw="clr-namespace:NeeView.Windows" 
+        xmlns:properties="clr-namespace:NeeView.Properties"
+        xmlns:local="clr-namespace:NeeView"
+        mc:Ignorable="d"
+        d:DesignHeight="450"
         d:DesignWidth="800">
+    
     <UserControl.Resources>
 
         <Style x:Key="PanelIconButtonStyle" TargetType="{x:Type Button}" BasedOn="{StaticResource IconButton}">
@@ -42,6 +51,7 @@
             </ContextMenu>
         </Button.ContextMenu>
         <Grid Width="32" Height="32" Background="Transparent">
+            <Grid x:Name="SelectedMark" Background="{DynamicResource Control.Accent}" Width="4" HorizontalAlignment="Left" Margin="-4,-2" />
             <ContentControl x:Name="ButtonContent" Margin="5" IsTabStop="False" />
         </Grid>
     </Button>

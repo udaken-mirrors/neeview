@@ -46,14 +46,16 @@ namespace NeeView
             MainLayoutPanelManager.DragEnd +=
                 (s, e) => DragEnd(this, EventArgs.Empty);
 
-            SidePanelIconDescriptor = new SidePanelIconDescriptor(this);
+            LeftSidePanelIconDescriptor = new SidePanelIconDescriptor(this, MainLayoutPanelManager.LeftDock);
+            RightSidePanelIconDescriptor = new SidePanelIconDescriptor(this, MainLayoutPanelManager.RightDock);
         }
 
 
         public event EventHandler? PanelVisibilityChanged;
 
 
-        public SidePanelIconDescriptor SidePanelIconDescriptor { get; }
+        public SidePanelIconDescriptor LeftSidePanelIconDescriptor { get; }
+        public SidePanelIconDescriptor RightSidePanelIconDescriptor { get; }
 
         public bool IsSideBarVisible
         {

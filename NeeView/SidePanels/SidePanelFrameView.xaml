@@ -19,11 +19,11 @@
         <local:MultiBooleanOrConverter x:Key="MultiBooleanOrConverter" />
 
         <DataTemplate x:Key="LeftPanelIconTemplate">
-            <local:SidePanelIcon Descriptor="{Binding Path=DataContext.VM.SidePanelIconDescriptor, RelativeSource={RelativeSource AncestorType={x:Type Grid}}}" />
+            <local:SidePanelIcon Descriptor="{Binding Path=DataContext.VM.LeftSidePanelIconDescriptor, RelativeSource={RelativeSource AncestorType={x:Type Grid}}}" MarkerAlignment="Left" />
         </DataTemplate>
 
         <DataTemplate x:Key="RightPanelIconTemplate">
-            <local:SidePanelIcon Descriptor="{Binding Path=DataContext.VM.SidePanelIconDescriptor, RelativeSource={RelativeSource AncestorType={x:Type Grid}}}" />
+            <local:SidePanelIcon Descriptor="{Binding Path=DataContext.VM.RightSidePanelIconDescriptor, RelativeSource={RelativeSource AncestorType={x:Type Grid}}}" MarkerAlignment="Right" />
         </DataTemplate>
 
         <Style x:Key="PanelIconBorderStyle" TargetType="Border">
