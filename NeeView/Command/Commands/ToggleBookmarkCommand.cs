@@ -12,6 +12,7 @@ namespace NeeView
             this.ShortCutKey = new ShortcutKey("Ctrl+D");
             this.IsShowMessage = true;
         }
+
         public override Binding CreateIsCheckedBinding()
         {
             return new Binding(nameof(BookOperation.Current.BookControl.IsBookmark)) { Source = BookOperation.Current.BookControl, Mode = BindingMode.OneWay };
@@ -26,7 +27,7 @@ namespace NeeView
         {
             return BookOperation.Current.BookControl.CanBookmark();
         }
-        
+
         [MethodArgument("@ToggleCommand.Execute.Remarks")]
         public override void Execute(object? sender, CommandContext e)
         {

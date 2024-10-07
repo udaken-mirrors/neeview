@@ -28,8 +28,8 @@
             </DrawingGroup>
         </DrawingImage.Drawing>
     </DrawingImage>
-    
-    
+
+
     <DrawingImage x:Key="ic_menu_24px">
         <DrawingImage.Drawing>
             <DrawingGroup>
@@ -38,7 +38,7 @@
             </DrawingGroup>
         </DrawingImage.Drawing>
     </DrawingImage>
-    
+
     <DrawingImage x:Key="ic_info_outline_24px">
         <DrawingImage.Drawing>
             <DrawingGroup>
@@ -144,5 +144,43 @@
         </DrawingImage.Drawing>
     </DrawingImage>
 
+    <DrawingImage x:Key="ic_lock_24px">
+        <DrawingImage.Drawing>
+            <DrawingGroup>
+                <GeometryDrawing Brush="Transparent" Geometry="{StaticResource g_rect24x24}" />
+                <GeometryDrawing Brush="{DynamicResource MenuBar.Foreground}" Pen="{x:Null}" Geometry="{StaticResource g_lock_24px}" />
+            </DrawingGroup>
+        </DrawingImage.Drawing>
+    </DrawingImage>
+
+    <DrawingImage x:Key="ic_lock_open_24px">
+        <DrawingImage.Drawing>
+            <DrawingGroup>
+                <GeometryDrawing Brush="Transparent" Geometry="{StaticResource g_rect24x24}" />
+                <GeometryDrawing Brush="{DynamicResource MenuBar.Foreground}" Pen="{x:Null}" Geometry="{StaticResource g_lock_open_24px}" />
+            </DrawingGroup>
+        </DrawingImage.Drawing>
+    </DrawingImage>
+
+    <DrawingImage x:Key="ic_push_pin_24px">
+        <DrawingImage.Drawing>
+            <DrawingGroup>
+                <DrawingGroup.Transform>
+                    <RotateTransform Angle="90"/>
+                </DrawingGroup.Transform>
+                <GeometryDrawing Brush="Transparent" Geometry="{StaticResource g_rect24x24}" />
+                <GeometryDrawing Brush="{DynamicResource MenuBar.Foreground}" Pen="{x:Null}" Geometry="{StaticResource g_push_pin_24px}" />
+            </DrawingGroup>
+        </DrawingImage.Drawing>
+    </DrawingImage>
+
+    <DrawingImage x:Key="ic_push_pin_fill_24px">
+        <DrawingImage.Drawing>
+            <DrawingGroup>
+                <GeometryDrawing Brush="Transparent" Geometry="{StaticResource g_rect24x24}" />
+                <GeometryDrawing Brush="{DynamicResource MenuBar.Foreground}" Pen="{x:Null}" Geometry="{StaticResource g_push_pin_fill_24px}" />
+            </DrawingGroup>
+        </DrawingImage.Drawing>
+    </DrawingImage>
 
 </ResourceDictionary>

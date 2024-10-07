@@ -107,6 +107,8 @@ namespace NeeView
 
         private void PageEndAction_NextBook(object? sender, PageTerminatedEventArgs e)
         {
+            if (BookHub.Current.IsBookLocked) return;
+
             AppDispatcher.Invoke(async () =>
             {
                 if (e.Direction < 0)

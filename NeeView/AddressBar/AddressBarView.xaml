@@ -185,8 +185,14 @@
                         <Setter Property="Background" Value="{DynamicResource MenuBar.Address.Background}"/>
                         <Style.Triggers>
                             <DataTrigger Binding="{Binding ElementName=AddressTextBox, Path=IsKeyboardFocusWithin}" Value="True">
-                                <Setter Property="BorderBrush" Value="{DynamicResource Control.Accent}" />
                                 <Setter Property="Background" Value="{DynamicResource TextBox.Background}" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding Model.IsBookLocked}" Value="True">
+                                <Setter Property="BorderBrush" Value="Transparent" />
+                                <Setter Property="Background" Value="Transparent"/>
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding ElementName=AddressTextBox, Path=IsKeyboardFocusWithin}" Value="True">
+                                <Setter Property="BorderBrush" Value="{DynamicResource Control.Accent}" />
                             </DataTrigger>
                         </Style.Triggers>
                     </Style>
@@ -210,6 +216,20 @@
                     </Button>
 
                     <DockPanel x:Name="AddressGroup">
+                        <Button DockPanel.Dock="Left" Style="{StaticResource AddressIconButton}" Margin="0" Command="{Binding ToggleBookLockCommand}" Width="26" Padding="4" TabIndex="11">
+                            <Image>
+                                <Image.Style>
+                                    <Style TargetType="Image">
+                                        <Setter Property="Source" Value="{StaticResource ic_push_pin_24px}"/>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding Model.IsBookLocked}" Value="True">
+                                                <Setter Property="Source" Value="{StaticResource ic_push_pin_fill_24px}"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Image.Style>
+                            </Image>
+                        </Button>
                         <Button x:Name="BookButton" Style="{StaticResource IconButton}" Width="26" Padding="4" TabIndex="11"
                                 Click="BookButton_Click"
                                 PreviewMouseLeftButtonDown="BookButton_MouseLeftButtonDown"
@@ -219,7 +239,7 @@
                             <Image Source="{StaticResource ic_info_outline_24px}" />
                         </Button>
                         <TextBox x:Name="AddressTextBox" Text="{Binding Model.Address}" BorderThickness="0" VerticalAlignment="Center" TabIndex="12" KeyDown="AddressTextBox_KeyDown"
-                                 Background="Transparent"/>
+                                 Background="Transparent" IsReadOnly="{Binding Model.IsBookLocked}"/>
                     </DockPanel>
 
                 </DockPanel>

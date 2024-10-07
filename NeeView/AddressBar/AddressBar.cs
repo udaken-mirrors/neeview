@@ -23,6 +23,9 @@ namespace NeeView
 
             BookHub.Current.BookmarkChanged +=
                 (s, e) => RaisePropertyChanged(nameof(IsBookmark));
+
+            BookHub.Current.SubscribePropertyChanged(nameof(BookHub.IsBookLocked),
+                (s, e) => RaisePropertyChanged(nameof(IsBookLocked)));
         }
 
 
@@ -42,6 +45,12 @@ namespace NeeView
                     }
                 }
             }
+        }
+
+        public bool IsBookLocked
+        {
+            get => BookHub.Current.IsBookLocked;
+            set => BookHub.Current.IsBookLocked = value;
         }
 
         public bool IsBookmark

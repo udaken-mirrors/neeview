@@ -61,11 +61,13 @@ namespace NeeView
 
         private Toast? _bookHubToast;
         private bool _isLoading;
+        private bool _isBookLocked;
         private Book? _book;
         private string? _address;
         private readonly BookHubCommandEngine _commandEngine;
         private int _requestLoadCount;
         private readonly DisposableCollection _disposables = new();
+
 
         private BookHub()
         {
@@ -192,6 +194,14 @@ namespace NeeView
         /// </summary>
         public int RequestLoadCount => _requestLoadCount;
 
+        /// <summary>
+        /// ブックの切り替えを禁止する
+        /// </summary>
+        public bool IsBookLocked
+        {
+            get { return _isBookLocked; }
+            set { SetProperty(ref _isBookLocked, value); }
+        }
 
 
         /// <summary>
@@ -249,6 +259,9 @@ namespace NeeView
             ////DebugTimer.Start($"\nStart: {path}");
             if (this.Address == query.SimplePath && option.HasFlag(BookLoadOption.SkipSamePlace)) return null;
 
+            // ブック固定ならば同じアドレスでのみ有効
+            if (this.IsBookLocked && this.Address != query.SimplePath) return null;
+
             this.Address = query.SimplePath;
 
             Interlocked.Increment(ref _requestLoadCount);
@@ -292,6 +305,8 @@ namespace NeeView
         public BookHubCommandUnload RequestUnload(object? sender, bool isClearViewContent, string? message = null)
         {
             ThrowIfDisposed();
+
+            IsBookLocked = false;
 
             var command = new BookHubCommandUnload(this, new BookHubCommandUnloadArgs()
             {

@@ -14,6 +14,7 @@ namespace NeeView
     {
         private AddressBar _model;
         private RelayCommand<KeyValuePair<int, QueryPath>>? _moveToHistory;
+        private RelayCommand? _toggleBookLockCommand;
         private RelayCommand? _togglePageModeCommand;
         private RelayCommand? _toggleBookmarkCommand;
         private RelayCommand? _moveToParentBookCommand;
@@ -67,6 +68,11 @@ namespace NeeView
             get { return _moveToHistory = _moveToHistory ?? new RelayCommand<KeyValuePair<int, QueryPath>>(MoveToHistory_Executed); }
         }
 
+        public RelayCommand ToggleBookLockCommand
+        {
+            get { return _toggleBookLockCommand = _toggleBookLockCommand ?? new RelayCommand(ToggleBookLockCommand_Execute); }
+        }
+
         public RelayCommand TogglePageModeCommand
         {
             get { return _togglePageModeCommand = _togglePageModeCommand ?? new RelayCommand(TogglePageModeCommand_Execute); }
@@ -97,6 +103,11 @@ namespace NeeView
         private void MoveToHistory_Executed(KeyValuePair<int, QueryPath> item)
         {
             BookHubHistory.Current.MoveToHistory(item);
+        }
+        
+        private void ToggleBookLockCommand_Execute()
+        {
+            _model.IsBookLocked = !_model.IsBookLocked;
         }
 
         private void TogglePageModeCommand_Execute()

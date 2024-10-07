@@ -221,6 +221,7 @@ namespace NeeView
                 new PrevHistoryPageCommand(),
                 new NextHistoryPageCommand(),
 
+                new ToggleBookLockCommand(),
                 new PrevBookCommand(),
                 new NextBookCommand(),
                 new RandomBookCommand(),
