@@ -122,26 +122,35 @@ namespace NeeView
 
         private void MoveUpCommand_CanExecute(object? sender, CanExecuteRoutedEventArgs e)
         {
-            e.CanExecute = _vm.CanMoveUp() && this.ListBox.SelectedItems.Count == 1;
+            e.CanExecute = _vm.CanMoveUp(GetOrderedSelectedItems(), GetViewItems());
         }
 
         private void MoveUpCommand_Execute(object? sender, ExecutedRoutedEventArgs e)
         {
-            _vm.MoveUp();
+            _vm.MoveUp(GetOrderedSelectedItems(), GetViewItems());
             ScrollIntoView();
         }
 
         private void MoveDownCommand_CanExecute(object? sender, CanExecuteRoutedEventArgs e)
         {
-            e.CanExecute = _vm.CanMoveDown() && this.ListBox.SelectedItems.Count == 1;
+            e.CanExecute = _vm.CanMoveDown(GetOrderedSelectedItems(), GetViewItems());
         }
 
         private void MoveDownCommand_Execute(object? sender, ExecutedRoutedEventArgs e)
         {
-            _vm.MoveDown();
+            _vm.MoveDown(GetOrderedSelectedItems(), GetViewItems());
             ScrollIntoView();
         }
 
+        private List<PlaylistItem> GetOrderedSelectedItems()
+        {
+            return this.ListBox.SelectedItems.Cast<PlaylistItem>().OrderBy(e => this.ListBox.Items.IndexOf(e)).ToList();
+        }
+
+        private List<PlaylistItem> GetViewItems()
+        {
+            return this.ListBox.Items.Cast<PlaylistItem>().ToList();
+        }
 
         private void OpenCommand_CanExecute(object? sender, CanExecuteRoutedEventArgs e)
         {

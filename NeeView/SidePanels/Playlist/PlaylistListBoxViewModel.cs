@@ -255,28 +255,28 @@ namespace NeeView
             return item;
         }
 
-        public bool CanMoveUp()
+        public bool CanMoveUp(List<PlaylistItem> items, List<PlaylistItem> viewItems)
         {
             if (_model is null) return false;
 
-            return _model.CanMoveUp(this.SelectedItem);
+            return _model.CanMoveUp(items, viewItems);
         }
 
-        public void MoveUp()
+        public void MoveUp(List<PlaylistItem> items, List<PlaylistItem> viewItems)
         {
-            _model?.MoveUp(this.SelectedItem);
+            _model?.MoveUp(items, viewItems);
         }
 
-        public bool CanMoveDown()
+        public bool CanMoveDown(List<PlaylistItem> items, List<PlaylistItem> viewItems)
         {
             if (_model is null) return false;
 
-            return _model.CanMoveDown(this.SelectedItem);
+            return _model.CanMoveDown(items, viewItems);
         }
 
-        public void MoveDown()
+        public void MoveDown(List<PlaylistItem> items, List<PlaylistItem> viewItems)
         {
-            _model?.MoveDown(this.SelectedItem);
+            _model?.MoveDown(items, viewItems);
         }
 
         public async Task<List<PlaylistItem>?> InsertAsync(IEnumerable<string> paths, PlaylistItem? targetItem, CancellationToken token)

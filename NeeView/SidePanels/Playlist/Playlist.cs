@@ -442,62 +442,95 @@ namespace NeeView
             }
         }
 
-        public bool CanMoveUp(PlaylistItem? item)
+        private List<PlaylistItem> CreateTargetItems(List<PlaylistItem> viewItems, PlaylistItem sample)
+        {
+            return Config.Current.Playlist.IsGroupBy ? viewItems.Where(e => e.Place == sample.Place).ToList() : viewItems;
+        }
+
+        public bool CanMoveUp(List<PlaylistItem> items, List<PlaylistItem> viewItems)
         {
             if (!IsEditable) return false;
-            if (item is null) return false;
+            if (items is null || items.Count == 0) return false;
 
-            var index = _items.IndexOf(item);
-            if (index <= 0) return false;
+            Debug.Assert(items.SequenceEqual(items.OrderBy(e => _items.IndexOf(e))));
 
             if (Config.Current.Playlist.IsGroupBy)
             {
-                return _items.Take(index).Any(e => e.Place == item.Place);
+                var place = items.First().Place;
+                if (items.Any(e => e.Place != place)) return false;
             }
 
-            return true;
+            var targetItems = CreateTargetItems(viewItems, items.First());
+            return items.Count < targetItems.Count && targetItems[items.Count - 1] != items.Last();
         }
 
-        public void MoveUp(PlaylistItem? item)
+        public void MoveUp(IEnumerable<PlaylistItem> items, List<PlaylistItem> viewItems)
         {
-            if (item is null) return;
-            if (!CanMoveUp(item)) return;
+            if (!IsEditable) return;
+            if (items is null || !items.Any()) return;
+            Debug.Assert(items.SequenceEqual(items.OrderBy(e => _items.IndexOf(e))));
 
-            var index = _items.IndexOf(item);
-            var target = Config.Current.Playlist.IsGroupBy ? _items.Take(index).LastOrDefault(e => e.Place == item.Place) : _items[index - 1];
-            if (target is null) return;
+            var targetItems = CreateTargetItems(viewItems, items.First());
 
-            Move(item, target);
+            int top = 0;
+            foreach (var item in items)
+            {
+                var index = _items.IndexOf(item);
+                var viewIndex = targetItems.IndexOf(item);
+                if (index > top && viewIndex > 0)
+                {
+                    var target = targetItems[viewIndex - 1];
+                    Move(item, target);
+                    top = _items.IndexOf(item) + 1;
+                }
+                else
+                {
+                    top = index + 1;
+                }
+            }
         }
 
-        public bool CanMoveDown(PlaylistItem? item)
+        public bool CanMoveDown(List<PlaylistItem> items, List<PlaylistItem> viewItems)
         {
             if (!IsEditable) return false;
-            if (item is null) return false;
+            if (items is null || items.Count == 0) return false;
 
-            var index = _items.IndexOf(item);
-            if (index < 0) return false;
-            if (index >= _items.Count - 1) return false;
+            Debug.Assert(items.SequenceEqual(items.OrderBy(e => _items.IndexOf(e))));
 
             if (Config.Current.Playlist.IsGroupBy)
             {
-                return _items.Skip(index + 1).Any(e => e.Place == item.Place);
+                var place = items.First().Place;
+                if (items.Any(e => e.Place != place)) return false;
             }
 
-            return true;
+            var targetItems = CreateTargetItems(viewItems, items.First());
+            return items.Count < targetItems.Count && targetItems[targetItems.Count - items.Count] != items.First();
         }
 
-        public void MoveDown(PlaylistItem? item)
+        public void MoveDown(IEnumerable<PlaylistItem> items, List<PlaylistItem> viewItems)
         {
-            if (item is null) return;
-            if (!CanMoveDown(item)) return;
+            if (!IsEditable) return;
+            if (items is null || !items.Any()) return;
+            Debug.Assert(items.SequenceEqual(items.OrderBy(e => _items.IndexOf(e))));
 
-            var index = _items.IndexOf(item);
+            var targetItems = CreateTargetItems(viewItems, items.First());
 
-            var target = Config.Current.Playlist.IsGroupBy ? _items.Skip(index + 1).FirstOrDefault(e => e.Place == item.Place) : _items[index + 1];
-            if (target is null) return;
-
-            Move(item, target);
+            int bottom = _items.Count - 1;
+            foreach (var item in items.Reverse())
+            {
+                var index = _items.IndexOf(item);
+                var viewIndex = targetItems.IndexOf(item);
+                if (index < bottom && viewIndex >= 0 && viewIndex < targetItems.Count - 1)
+                {
+                    var target = targetItems[viewIndex + 1];
+                    Move(item, target);
+                    bottom = _items.IndexOf(item) - 1;
+                }
+                else
+                {
+                    bottom = index - 1;
+                }
+            }
         }
 
 
