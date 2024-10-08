@@ -11,7 +11,7 @@ namespace NeeView
         public async Task<BitmapPageSource> LoadAsync(ArchiveEntryStreamSource streamSource, bool createPictureInfo, bool createSource, CancellationToken token)
         {
             var entry = streamSource.ArchiveEntry;
-            if (!Config.Current.Image.Standard.IsAllFileSupported && !PictureProfile.Current.IsSusieSupported(entry.Link ?? entry.EntryName))
+            if (!Config.Current.Image.Standard.IsAllFileSupported || !PictureProfile.Current.IsSusieSupported(entry.Link ?? entry.EntryName))
             {
                 return BitmapPageSource.CreateError("not support format");
             }
