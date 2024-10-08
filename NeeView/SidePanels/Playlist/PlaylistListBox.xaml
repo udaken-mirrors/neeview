@@ -7,6 +7,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:NeeView"
              xmlns:nw="clr-namespace:NeeView.Windows"
+             xmlns:nwc="clr-namespace:NeeView.Windows.Controls"
              xmlns:properties="clr-namespace:NeeView.Properties" 
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300" Foreground="{DynamicResource Panel.Foreground}">
@@ -180,12 +181,42 @@
                     </ContextMenu>
                 </Button.ContextMenu>
             </Button>
-            <RepeatButton x:Name="MoveUpButton" Style="{StaticResource RepeatButtonStyle}" Command="{x:Static local:PlaylistListBox.MoveUpCommand}" TabIndex="1">
-                <Image Source="{StaticResource ic_keyboard_arrow_up_24px}" />
-            </RepeatButton>
-            <RepeatButton x:Name="MoveDownButton" Style="{StaticResource RepeatButtonStyle}" Command="{x:Static local:PlaylistListBox.MoveDownCommand}" TabIndex="1">
-                <Image Source="{StaticResource ic_keyboard_arrow_down_24px}" />
-            </RepeatButton>
+            
+            <nwc:ModifierRepeatButton x:Name="MoveUpButton" Style="{StaticResource RepeatButtonStyle}" Command="{x:Static local:PlaylistListBox.MoveUpCommand}" TabIndex="1">
+                <Image>
+                    <Image.Style>
+                        <Style TargetType="Image">
+                            <Setter Property="Source" Value="{StaticResource ic_keyboard_arrow_up_24px}"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsCtrlPressed, RelativeSource={RelativeSource AncestorType=nwc:ModifierRepeatButton}}" Value="True">
+                                    <Setter Property="Source" Value="{StaticResource ic_keyboard_double_arrow_up_24px}"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Image.Style>
+                </Image>
+                <RepeatButton.ToolTip>
+                    <ToolTip Content="{properties:TextBinding Playlist.MoveUpButtonTips}"/>
+                </RepeatButton.ToolTip>
+            </nwc:ModifierRepeatButton>
+            
+            <nwc:ModifierRepeatButton x:Name="MoveDownButton" Style="{StaticResource RepeatButtonStyle}" Command="{x:Static local:PlaylistListBox.MoveDownCommand}" TabIndex="1" >
+                <Image>
+                    <Image.Style>
+                        <Style TargetType="Image">
+                            <Setter Property="Source" Value="{StaticResource ic_keyboard_arrow_down_24px}"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsCtrlPressed, RelativeSource={RelativeSource AncestorType=nwc:ModifierRepeatButton}}" Value="True">
+                                    <Setter Property="Source" Value="{StaticResource ic_keyboard_double_arrow_down_24px}"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Image.Style>
+                </Image>
+                <RepeatButton.ToolTip>
+                    <ToolTip Content="{properties:TextBinding Playlist.MoveDownButtonTips}"/>
+                </RepeatButton.ToolTip>
+            </nwc:ModifierRepeatButton>
 
             <Image DockPanel.Dock="Right" Width="24" Height="24" Margin="2,0" Source="{StaticResource ic_lock_outline_24px}" VerticalAlignment="Center"
                     Visibility="{Binding IsEditable, Converter={StaticResource BooleanToVisibilityInverseConverter}}" ToolTip="Read only" />

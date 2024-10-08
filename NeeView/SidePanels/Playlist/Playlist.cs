@@ -533,6 +533,41 @@ namespace NeeView
             }
         }
 
+        public void MoveTop(IEnumerable<PlaylistItem> items, List<PlaylistItem> viewItems)
+        {
+            if (!IsEditable) return;
+            if (items is null || !items.Any()) return;
+            Debug.Assert(items.SequenceEqual(items.OrderBy(e => _items.IndexOf(e))));
+
+            var targetItems = CreateTargetItems(viewItems, items.First());
+
+            var target = targetItems.FirstOrDefault();
+            if (target is null) return;
+            foreach (var item in items.Reverse())
+            {
+                Move(item, target);
+                target = item;
+            }
+        }
+
+        public void MoveBottom(IEnumerable<PlaylistItem> items, List<PlaylistItem> viewItems)
+        {
+            if (!IsEditable) return;
+            if (items is null || !items.Any()) return;
+            Debug.Assert(items.SequenceEqual(items.OrderBy(e => _items.IndexOf(e))));
+
+            var targetItems = CreateTargetItems(viewItems, items.First());
+
+            var target = targetItems.LastOrDefault();
+            if (target is null) return;
+
+            foreach (var item in items)
+            {
+                Move(item, target);
+                target = item;
+            }
+        }
+
 
         #region Save
 

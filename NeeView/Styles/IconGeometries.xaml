@@ -129,7 +129,13 @@
 
     <PathGeometry x:Key="g_keyboard_arrow_down_24px" FillRule=" Nonzero" Figures="M7.41,7.84L12,12.42 16.59,7.84 18,9.25 12,15.25 6,9.25z" />
 
-    <PathGeometry x:Key="g_keyboard_arrow_up_24px"  FillRule="Nonzero" Figures="M7.41,15.41L12,10.83 16.59,15.41 18,14 12,8 6,14z" />
+    <PathGeometry x:Key="g_keyboard_arrow_up_24px" FillRule="Nonzero" Figures="M7.41,15.41L12,10.83 16.59,15.41 18,14 12,8 6,14z" />
+
+    <PathGeometry x:Key="g_keyboard_double_arrow_down_24px_p1" FillRule="Nonzero" Figures="M18,6.41L16.59,5L12,9.58L7.41,5L6,6.41L12,12.41z" />
+    <PathGeometry x:Key="g_keyboard_double_arrow_down_24px_p2" FillRule="Nonzero" Figures="M18,13L16.59,11.59L12,16.17L7.41,11.59L6,13L12,19z" />
+
+    <PathGeometry x:Key="g_keyboard_double_arrow_up_24px_p1" FillRule="Nonzero" Figures="M6,17.59L7.41,19L12,14.42L16.59,19L18,17.59L12,11.59z" />
+    <PathGeometry x:Key="g_keyboard_double_arrow_up_24px_p2" FillRule="Nonzero" Figures="M6,11L7.41,12.41L12,7.83L16.59,12.41L18,11L12,5z" />
 
     <PathGeometry x:Key="g_lock_24px" FillRule="Nonzero" Figures="M18,8L17,8 17,6C17,3.24 14.76,1 12,1 9.24,1 7,3.24 7,6L7,8 6,8C4.9,8,4,8.9,4,10L4,20C4,21.1,4.9,22,6,22L18,22C19.1,22,20,21.1,20,20L20,10C20,8.9,19.1,8,18,8z M12,17C10.9,17 10,16.1 10,15 10,13.9 10.9,13 12,13 13.1,13 14,13.9 14,15 14,16.1 13.1,17 12,17z M15.1,8L8.9,8 8.9,6C8.9,4.29 10.29,2.9 12,2.9 13.71,2.9 15.1,4.29 15.1,6L15.1,8z" />
 

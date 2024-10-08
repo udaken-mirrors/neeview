@@ -34,7 +34,7 @@ namespace NeeView.Properties
         {
             if (parameter != null && parameter is string name)
             {
-                return TextResources.GetString(name);
+                return ResourceService.GetString(ResourceService.ValidateKeyName(name));
             }
 
             return "";

@@ -11,6 +11,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Data;
+using System.Windows.Input;
 
 namespace NeeView
 {
@@ -271,7 +272,16 @@ namespace NeeView
 
         public void MoveUp(List<PlaylistItem> items, List<PlaylistItem> viewItems)
         {
-            _model?.MoveUp(items, viewItems);
+            if (_model is null) return;
+
+            if (Keyboard.Modifiers == ModifierKeys.Control)
+            {
+                _model.MoveTop(items, viewItems);
+            }
+            else
+            {
+                _model.MoveUp(items, viewItems);
+            }
         }
 
         public bool CanMoveDown(List<PlaylistItem> items, List<PlaylistItem> viewItems)
@@ -283,7 +293,16 @@ namespace NeeView
 
         public void MoveDown(List<PlaylistItem> items, List<PlaylistItem> viewItems)
         {
-            _model?.MoveDown(items, viewItems);
+            if (_model is null) return;
+
+            if (Keyboard.Modifiers == ModifierKeys.Control)
+            {
+                _model.MoveBottom(items, viewItems);
+            }
+            else
+            {
+                _model.MoveDown(items, viewItems);
+            }
         }
 
         public async Task<List<PlaylistItem>?> InsertAsync(IEnumerable<string> paths, PlaylistItem? targetItem, CancellationToken token)

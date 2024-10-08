@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Windows.Input;
 
 namespace NeeView
 {
@@ -89,13 +90,13 @@ namespace NeeView
         /// <param name="fallback">true のとき、リソースキーが存在しないときはリソースキー名のままにする。false のときは "" に変換する</param>
         /// <param name="depth">再帰の深さ。計算リミット用</param>
         /// <returns></returns>
-        public static string Replace(string s, bool fallback, int depth=0)
+        public static string Replace(string s, bool fallback, int depth = 0)
         {
             // limit is 5 depth
             if (depth >= 5) return s;
 
             return ReplaceEmbeddedText(_regexKey.Replace(s, ReplaceMatchEvaluator));
-         
+
             string ReplaceMatchEvaluator(Match m)
             {
                 var s = GetResourceString(m.Value);
@@ -128,8 +129,18 @@ namespace NeeView
         public static string? GetResourceString(string key)
         {
             if (key is null || key[0] != '@') return null;
-            //return Properties.TextResources.GetString("ResourceManager").GetString(key[1..], Properties.TextResources.GetString("Culture"));
-            return Properties.TextResources.GetStringRaw(key[1..]);
+
+            var rawKey = key[1..];
+            var tokens = rawKey.Split('.', 2);
+            return tokens[0] switch
+            {
+                nameof(Key)
+                    => Enum.TryParse<Key>(tokens[1], out var inputKey) ? inputKey.GetDisplayString() : null,
+                nameof(ModifierKeys)
+                    => Enum.TryParse<ModifierKeys>(tokens[1], out var modifierKey) ? modifierKey.GetDisplayString() : null,
+                _
+                    => Properties.TextResources.GetStringRaw(rawKey),
+            };
         }
 
         /// <summary>
@@ -152,13 +163,36 @@ namespace NeeView
             }
         }
 
-
         /// <summary>
         /// 連結単語文字列を生成
         /// </summary>
         public static string Join(IEnumerable<string> tokens)
         {
             return string.Join(" ", tokens.Select(e => string.Format(Properties.TextResources.GetStringRaw("TokenFormat") ?? "", e)));
+        }
+
+        /// <summary>
+        /// リソースキー名補正
+        /// </summary>
+        /// <remarks>
+        /// 先頭に @ があることを保証する
+        /// </remarks>
+        /// <param name="key"></param>
+        /// <returns>@付きリソースキー名</returns>
+        public static string ValidateKeyName(string key)
+        {
+            if (string.IsNullOrEmpty(key))
+            {
+                return "Undefined";
+            }
+            else if (key[0] == '@')
+            {
+                return key;
+            }
+            else
+            {
+                return '@' + key;
+            }
         }
     }
 }
