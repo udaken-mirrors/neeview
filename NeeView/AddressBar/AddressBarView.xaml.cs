@@ -32,6 +32,7 @@ namespace NeeView
         {
             InitializeComponent();
 
+            this.AddressTextBox.PreviewMouseLeftButtonDown += AddressTextBox_PreviewMouseLeftButtonDown;
             this.AddressTextBox.IsKeyboardFocusedChanged += AddressTextBox_IsKeyboardFocusedChanged;
         }
 
@@ -63,8 +64,24 @@ namespace NeeView
             this.Root.DataContext = _vm;
         }
 
+        private void AddressTextBox_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            if (sender is not TextBox t) return;
+
+            if (!t.IsFocused)
+            {
+                t.Focus();
+                e.Handled = true;
+            }
+        }
+
         private void AddressTextBox_IsKeyboardFocusedChanged(object? sender, DependencyPropertyChangedEventArgs e)
         {
+            if (this.AddressTextBox.IsKeyboardFocused)
+            {
+                this.AddressTextBox.SelectAll();
+            }
+
             IsAddressTextBoxFocusedChanged?.Invoke(sender, e);
         }
 
