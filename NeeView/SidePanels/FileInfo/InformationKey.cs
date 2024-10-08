@@ -80,6 +80,7 @@ namespace NeeView
 
         // Extras
         ExtraValue = (InformationCategory.Metadata << 24) | (InformationGroup.Extras << 16) | 0,
+        ExtraEmpty,
     }
 
 

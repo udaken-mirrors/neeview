@@ -30,14 +30,15 @@ namespace NeeView
 
 
 
-        public bool IsExtra()
+        public bool IsExtraValue()
         {
-            return Key.IsExtra();
+            return Key == InformationKey.ExtraValue;
         }
+
 
         public override string ToString()
         {
-            if (IsExtra())
+            if (IsExtraValue())
             {
                 return Name;
             }

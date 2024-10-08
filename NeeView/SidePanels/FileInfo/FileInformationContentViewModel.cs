@@ -10,12 +10,14 @@ namespace NeeView
     // TODO: 今のところ破棄されないので不要であるが、正しく上位からDispose()を呼ぶようにしておく
     public class FileInformationContentViewModel : BindableBase, IDisposable
     {
+        private static readonly FileInformationRecord _extraEmptyRecord = new FileInformationRecord(InformationKey.ExtraEmpty, null);
         private readonly MappedCollection<FileInformationKey, FileInformationRecord> _collection;
         private FileInformationSource? _source;
         private CollectionViewSource _collectionViewSource;
         private FileInformationRecord? _selectedItem;
-        private bool _IsVisibleImage;
+        private bool _isVisibleImage;
         private bool _isVisibleMetadata;
+        private bool _anyExtraValues;
         private IDisposable? _subscribeDisposer;
         private bool _disposedValue;
 
@@ -23,6 +25,7 @@ namespace NeeView
         public FileInformationContentViewModel()
         {
             _collection = new MappedCollection<FileInformationKey, FileInformationRecord>(InformationKeyExtensions.DefaultKeys.Select(e => new FileInformationRecord(e, null)));
+            _collection.Add(_extraEmptyRecord.Key, _extraEmptyRecord);
 
             _collectionViewSource = new CollectionViewSource();
             _collectionViewSource.Source = _collection.Collection;
@@ -59,30 +62,6 @@ namespace NeeView
             set { SetProperty(ref _selectedItem, value); }
         }
 
-        public bool IsVisibleImage
-        {
-            get { return _IsVisibleImage; }
-            set
-            {
-                if (SetProperty(ref _IsVisibleImage, value))
-                {
-                    UpdateFilter();
-                }
-            }
-        }
-
-        public bool IsVisibleMetadata
-        {
-            get { return _isVisibleMetadata; }
-            set
-            {
-                if (SetProperty(ref _isVisibleMetadata, value))
-                {
-                    UpdateFilter();
-                }
-            }
-        }
-
 
         private void Information_PropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
@@ -115,14 +94,14 @@ namespace NeeView
                 using (_collectionViewSource.DeferRefresh())
                 {
                     // Clear extra values
-                    foreach (var item in _collection.Where(e => e.Key.IsExtra()))
+                    foreach (var item in _collection.Where(e => e.Key.IsExtraValue()))
                     {
                         item.Value = null;
                     }
 
                     foreach (var item in _source.Properties)
                     {
-                        if (_collection.ContainsKey(item.Key))
+                        if (!item.Key.IsExtraValue() || _collection.ContainsKey(item.Key))
                         {
                             // NOTE: UI高速化のため、表示値だけを変更
                             _collection[item.Key].Value = item.Value;
@@ -134,16 +113,52 @@ namespace NeeView
                         }
                     }
 
-                    var removes = _collection.Where(e => e.Key.IsExtra() && e.Value is null).ToList();
+                    var removes = _collection.Where(e => e.Key.IsExtraValue() && e.Value is null).ToList();
                     foreach (var item in removes)
                     {
                         _collection.Remove(item.Key);
                     }
 
-                    IsVisibleImage = _source.PictureInfo != null;
-                    IsVisibleMetadata = _source.Metadata != null;
+                    if (UpdateDatabaseState())
+                    {
+                        UpdateFilter();
+                    }
                 }
             }
+        }
+
+        /// <summary>
+        /// データによるプロパティ表示状態更新
+        /// </summary>
+        /// <returns>表示範囲が変化してフィルターの更新が必要な場合は true</returns>
+        private bool UpdateDatabaseState()
+        {
+            if (_source is null) return false;
+
+            bool isChanged = false;
+
+            var isVisibleImage = _source.PictureInfo != null;
+            if (_isVisibleImage != isVisibleImage)
+            {
+                _isVisibleImage = isVisibleImage;
+                isChanged = true;
+            }
+
+            var isVisibleMetadata = _source.Metadata != null;
+            if (_isVisibleMetadata != isVisibleMetadata)
+            {
+                _isVisibleMetadata = isVisibleMetadata;
+                isChanged = true;
+            }
+
+            var anyExtraValues = _collection.Any(e => e.Key.IsExtraValue());
+            if (_anyExtraValues != anyExtraValues)
+            {
+                _anyExtraValues = anyExtraValues;
+                isChanged = true;
+            }
+
+            return isChanged;
         }
 
         private void UpdateFilter()
@@ -159,13 +174,17 @@ namespace NeeView
             if (e.Item is FileInformationRecord record)
             {
                 var category = record.Group.ToInformationCategory();
-                if (category == InformationCategory.Image && !IsVisibleImage)
+                if (category == InformationCategory.Image && !_isVisibleImage)
                 {
                     e.Accepted = false;
                 }
-                else if (category == InformationCategory.Metadata && !IsVisibleMetadata)
+                else if (category == InformationCategory.Metadata && !_isVisibleMetadata)
                 {
                     e.Accepted = false;
+                }
+                else if (record.Key.Key == InformationKey.ExtraEmpty)
+                {
+                    e.Accepted = Config.Current.Information.IsVisibleGroup(record.Group) && !_anyExtraValues;
                 }
                 else
                 {

@@ -110,3 +110,5 @@ QuickAccessFolderNodeAccessor.Insert.Index=@NodeAccessor.Insert.Index
 QuickAccessFolderNodeAccessor.Add.Example=@[/Resources/Scripts/QuickAccessFolderNodeAccessor.Add.Example.nvjs]
 QuickAccessFolderNodeAccessor.Insert.Example=@[/Resources/Scripts/QuickAccessFolderNodeAccessor.Insert.Example.nvjs]
 BookmarkFolderNodeAccessor.Add.Example=@[/Resources/Scripts/BookmarkFolderNodeAccessor.Add.Example.nvjs]
+
+InformationKey.ExtraEmpty=@Word.None
