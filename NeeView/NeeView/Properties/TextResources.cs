@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Data;
 
@@ -47,29 +48,36 @@ namespace NeeView.Properties
         /// <summary>
         /// 最低限の初期化。設定ファイル読み込み前のエラー等の正常初期化前の処理用。
         /// </summary>
-        public static void InitializeMinimum()
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static void InitializeMinimum()
         {
-            if (_initialized) return;
-            Initialize(CultureInfo.CurrentCulture);
+            if (!_initialized)
+            {
+                Initialize(CultureInfo.CurrentCulture);
+            }
         }
 
         public static string GetString(string name)
         {
+            InitializeMinimum();
             return Resource.GetString(name) ?? "@" + name;
         }
 
         public static string? GetStringRaw(string name)
         {
+            InitializeMinimum();
             return Resource.GetString(name);
         }
 
         public static string? GetStringRaw(string name, CultureInfo culture)
         {
+            InitializeMinimum();
             return Resource.GetString(name, culture);
         }
 
         public static string GetCaseString(string name, string pattern)
         {
+            InitializeMinimum();
             return Resource.GetCaseString(name, pattern) ?? "@" + name;
         }
 

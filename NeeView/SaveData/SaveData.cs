@@ -146,7 +146,7 @@ namespace NeeView
         /// 正規ファイルの読み込みに失敗したらバックアップからの復元を試みる。
         /// エラー時にはダイアログ表示。選択によってはOperationCancelExceptionを発生させる。
         /// </summary>
-        /// <param name="useDefault">データが読み込めなかった場合に初期化されたインスタンスを返す。falseの場合はnullを返す</param>
+        /// <param name="useDefault">データが読み込めなかった場合に初期化されたインスタンスを返す。falseの場合は null を返す</param>
         private static T? SafetyLoad<T>(Func<string, T?> load, string path, LoadFailedDialog loadFailedDialog, bool useDefault = false, Action? loadBackupCallback = null)
             where T : class, new()
         {
@@ -159,7 +159,6 @@ namespace NeeView
             {
                 if (loadFailedDialog != null)
                 {
-                    Properties.TextResources.InitializeMinimum();
                     var result = loadFailedDialog.ShowDialog(ex);
                     if (result != true)
                     {
