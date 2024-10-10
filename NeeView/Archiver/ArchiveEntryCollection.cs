@@ -87,7 +87,7 @@ namespace NeeView
 
             Archiver = rootArchiver;
 
-            Mode = Archiver.IsFileSystem ? _mode : _modeIfArchive;
+            Mode = (Archiver.IsFileSystem || Archiver is PlaylistArchive) ? _mode : _modeIfArchive;
 
             var includeSubDirectories = Mode == ArchiveEntryCollectionMode.IncludeSubDirectories || Mode == ArchiveEntryCollectionMode.IncludeSubArchives;
             var entries = (await rootArchiver.GetEntriesAsync(rootArchiverPath, includeSubDirectories, token)).Select(e => new ArchiveEntryNode(null, e)).ToList();

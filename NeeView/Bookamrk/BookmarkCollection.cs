@@ -494,6 +494,8 @@ namespace NeeView
         [Memento]
         public class Memento
         {
+            public static string FormatName => Environment.SolutionName + ".Bookmark";
+
             public FormatVersion? Format { get; set; }
 
             public BookmarkNode? Nodes { get; set; }
@@ -512,7 +514,7 @@ namespace NeeView
 
             public void Save(string path)
             {
-                Format = new FormatVersion(Environment.SolutionName + ".Bookmark");
+                Format = new FormatVersion(FormatName);
 
                 var json = JsonSerializer.SerializeToUtf8Bytes(this, UserSettingTools.GetSerializerOptions());
                 File.WriteAllBytes(path, json);
@@ -528,9 +530,7 @@ namespace NeeView
             {
                 var memento = JsonSerializer.Deserialize<Memento>(stream, UserSettingTools.GetSerializerOptions());
                 if (memento is null) throw new FormatException();
-                return memento;
-
-                // TODO: v.38以後の互換性処理をここで？
+                return memento.Validate();
             }
         }
 

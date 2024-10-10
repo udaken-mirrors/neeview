@@ -210,7 +210,7 @@ namespace NeeView
             e.CanExecute = sender is ListBox { SelectedItem: FolderItem item }
                 && !item.Attributes.AnyFlag(FolderItemAttribute.Drive | FolderItemAttribute.Empty)
                 && (Config.Current.System.ArchiveRecursiveMode == ArchiveEntryCollectionMode.IncludeSubArchives
-                    ? item.Attributes.HasFlag(FolderItemAttribute.Directory)
+                    ? (item.Attributes & (FolderItemAttribute.Directory | FolderItemAttribute.Playlist)) != 0
                     : ArchiverManager.Current.GetSupportedType(item.TargetPath.SimplePath).IsRecursiveSupported());
         }
 

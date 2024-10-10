@@ -402,6 +402,8 @@ namespace NeeView
         [Memento]
         public class Memento : BindableBase
         {
+            public static string FormatName => Environment.SolutionName + ".History";
+
             public FormatVersion? Format { get; set; }
 
             public List<BookHistory> Items { get; set; }
@@ -423,7 +425,7 @@ namespace NeeView
 
             public Memento()
             {
-                Format = new FormatVersion(Environment.SolutionName + ".History");
+                Format = new FormatVersion(FormatName);
                 Items = new List<BookHistory>();
                 Books = new List<BookMemento>();
             }
@@ -445,9 +447,7 @@ namespace NeeView
             {
                 var memento = JsonSerializer.Deserialize<Memento>(stream, UserSettingTools.GetSerializerOptions());
                 if (memento is null) throw new FormatException();
-                return memento;
-
-                // TODO: v.38以後の互換性処理をここで？
+                return memento.Validate();
             }
 
             // 合成
