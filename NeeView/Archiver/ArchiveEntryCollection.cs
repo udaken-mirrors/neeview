@@ -18,7 +18,7 @@ namespace NeeView
         private readonly ArchiveEntryCollectionMode _mode;
         private readonly ArchiveEntryCollectionMode _modeIfArchive;
         private readonly bool _ignoreCache;
-        private List<ArchiveEntry>? _entries;
+        private List<ArchiveEntryNode>? _entries;
 
         /// <summary>
         /// コンストラクタ
@@ -44,7 +44,7 @@ namespace NeeView
         /// <summary>
         /// ArchiveEntry収集
         /// </summary>
-        public async Task<List<ArchiveEntry>> GetEntriesAsync(CancellationToken token)
+        public async Task<List<ArchiveEntryNode>> GetEntriesAsync(CancellationToken token)
         {
             if (_entries != null) return _entries;
 
@@ -82,7 +82,7 @@ namespace NeeView
 
             if (rootArchiver is null)
             {
-                return new List<ArchiveEntry>() { rootEntry };
+                return new List<ArchiveEntryNode>() { new ArchiveEntryNode(null, rootEntry) };
             }
 
             Archiver = rootArchiver;
@@ -90,7 +90,7 @@ namespace NeeView
             Mode = Archiver.IsFileSystem ? _mode : _modeIfArchive;
 
             var includeSubDirectories = Mode == ArchiveEntryCollectionMode.IncludeSubDirectories || Mode == ArchiveEntryCollectionMode.IncludeSubArchives;
-            var entries = await rootArchiver.GetEntriesAsync(rootArchiverPath, includeSubDirectories, token);
+            var entries = (await rootArchiver.GetEntriesAsync(rootArchiverPath, includeSubDirectories, token)).Select(e => new ArchiveEntryNode(null, e)).ToList();
 
             var includeAllSubDirectories = Mode == ArchiveEntryCollectionMode.IncludeSubArchives;
             if (includeAllSubDirectories)
@@ -103,26 +103,26 @@ namespace NeeView
         }
 
 
-        private async Task<List<ArchiveEntry>> GetSubArchivesEntriesAsync(List<ArchiveEntry> entries, CancellationToken token)
+        private async Task<List<ArchiveEntryNode>> GetSubArchivesEntriesAsync(List<ArchiveEntryNode> entries, CancellationToken token)
         {
-            var result = new List<ArchiveEntry>();
+            var result = new List<ArchiveEntryNode>();
 
             foreach (var entry in entries)
             {
                 result.Add(entry);
 
-                if (entry.IsArchive())
+                if (entry.ArchiveEntry.IsArchive())
                 {
-                    // リンクエントリーは除外
-                    if (entry.Link != null)
+                    // 無限ループを避けるためショートカットは除外する
+                    if (entry.ArchiveEntry.IsShortcut)
                     {
                         continue;
                     }
 
                     try
                     {
-                        var subArchive = await ArchiverManager.Current.CreateArchiverAsync(entry, _ignoreCache, token);
-                        var subEntries = await subArchive.GetEntriesAsync(token);
+                        var subArchive = await ArchiverManager.Current.CreateArchiverAsync(entry.ArchiveEntry, _ignoreCache, token);
+                        var subEntries = (await subArchive.GetEntriesAsync(token)).Select(e => new ArchiveEntryNode(entry, e)).ToList();
                         result.AddRange(await GetSubArchivesEntriesAsync(subEntries, token));
                     }
                     catch (OperationCanceledException)
@@ -132,7 +132,7 @@ namespace NeeView
                     catch (Exception ex)
                     {
                         Debug.WriteLine(ex.Message);
-                        Debug.WriteLine($"ArchiveEntryCollection.Skip: {entry.EntryName}");
+                        Debug.WriteLine($"ArchiveEntryCollection.Skip: {entry.ArchiveEntry.EntryName}");
                     }
                 }
             }
@@ -142,51 +142,51 @@ namespace NeeView
 
 
         // filter: ページとして画像ファイルのみリストアップ
-        public async Task<List<ArchiveEntry>> GetEntriesWhereImageAsync(CancellationToken token)
+        public async Task<List<ArchiveEntryNode>> GetEntriesWhereImageAsync(CancellationToken token)
         {
             var entries = await GetEntriesAsync(token);
-            return entries.Where(e => e.IsImage()).ToList();
+            return entries.Where(e => e.ArchiveEntry.IsImage()).ToList();
         }
 
         // filter: ページとして画像ファイルとアーカイブをリストアップ
-        public async Task<List<ArchiveEntry>> GetEntriesWhereImageAndArchiveAsync(CancellationToken token)
+        public async Task<List<ArchiveEntryNode>> GetEntriesWhereImageAndArchiveAsync(CancellationToken token)
         {
             var entries = await GetEntriesAsync(token);
             if (Mode == ArchiveEntryCollectionMode.CurrentDirectory)
             {
-                return entries.Where(e => e.IsImage() || e.IsBook()).ToList();
+                return entries.Where(e => e.ArchiveEntry.IsImage() || e.ArchiveEntry.IsBook()).ToList();
             }
             else
             {
-                return entries.WherePageAll().Where(e => e.IsImage() || e.IsBook()).ToList();
+                return entries.WherePageAll().Where(e => e.ArchiveEntry.IsImage() || e.ArchiveEntry.IsBook()).ToList();
             }
         }
 
         // filter: ページとしてすべてのファイルをリストアップ。フォルダーは空きフォルダーのみリストアップ
-        public async Task<List<ArchiveEntry>> GetEntriesWherePageAllAsync(CancellationToken token)
+        public async Task<List<ArchiveEntryNode>> GetEntriesWherePageAllAsync(CancellationToken token)
         {
             var entries = await GetEntriesAsync(token);
             return entries.WherePageAll().ToList();
         }
 
         // filter: 含まれるサブアーカイブのみ抽出
-        public async Task<List<ArchiveEntry>> GetEntriesWhereSubArchivesAsync(CancellationToken token)
+        public async Task<List<ArchiveEntryNode>> GetEntriesWhereSubArchivesAsync(CancellationToken token)
         {
             var entries = await GetEntriesAsync(token);
-            return entries.Where(e => e.IsArchive() || e.IsMedia()).ToList();
+            return entries.Where(e => e.ArchiveEntry.IsArchive() || e.ArchiveEntry.IsMedia()).ToList();
         }
 
         // filter: 含まれるブックを抽出
-        public async Task<List<ArchiveEntry>> GetEntriesWhereBookAsync(CancellationToken token)
+        public async Task<List<ArchiveEntryNode>> GetEntriesWhereBookAsync(CancellationToken token)
         {
             var entries = await GetEntriesAsync(token);
             if (Mode == ArchiveEntryCollectionMode.CurrentDirectory)
             {
-                return entries.Where(e => e.IsBook()).ToList();
+                return entries.Where(e => e.ArchiveEntry.IsBook()).ToList();
             }
             else
             {
-                return entries.Where(e => e.IsBook() && !e.IsArchiveDirectory()).ToList();
+                return entries.Where(e => e.ArchiveEntry.IsBook() && !e.ArchiveEntry.IsArchiveDirectory()).ToList();
             }
         }
 
@@ -230,11 +230,21 @@ namespace NeeView
 
     public static class ArchiveEntryCollectionExtensions
     {
-        // filter: ディレクトリとなるエントリをすべて除外
-        public static IEnumerable<ArchiveEntry> WherePageAll(this IEnumerable<ArchiveEntry> source)
+        /// <summary>
+        /// filter: ディレクトリとなるエントリをすべて除外
+        /// </summary>
+        public static IEnumerable<ArchiveEntryNode> WherePageAll(this IEnumerable<ArchiveEntryNode> source)
         {
-            var directories = source.Select(e => LoosePath.GetDirectoryName(e.SystemPath)).Distinct().ToList();
-            return source.Where(e => e.Link != null || !directories.Contains(e.SystemPath));
+            var directories = source.Select(e => LoosePath.GetDirectoryName(e.ArchiveEntry.SystemPath)).Distinct().ToList();
+            return source.Where(e => e.ArchiveEntry.IsShortcut || !directories.Contains(e.ArchiveEntry.SystemPath));
+        }
+
+        /// <summary>
+        /// ArchiveEntryNode リストから ArchiveEntry リストを取得する
+        /// </summary>
+        public static List<ArchiveEntry> ToArchiveEntryCollection(this IEnumerable<ArchiveEntryNode> source)
+        {
+            return source.Select(e => e.ArchiveEntry).ToList();
         }
     }
 }

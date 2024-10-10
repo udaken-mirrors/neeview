@@ -82,7 +82,7 @@ namespace NeeView
                     _writeBuffer.Append('\t');
                     _writeBuffer.Append((now - _viewedPagesDateTime).TotalSeconds.ToString("#0.0000000"));
                     _writeBuffer.Append('\t');
-                    _writeBuffer.Append(page.BookPrefix);
+                    _writeBuffer.Append(LoosePath.TrimDirectoryEnd(page.BookPath));
                     _writeBuffer.Append('\t');
                     _writeBuffer.Append(page.EntryName);
                     _writeBuffer.AppendLine();

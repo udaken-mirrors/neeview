@@ -45,10 +45,10 @@ namespace NeeView
             switch (_mode)
             {
                 case ArchiveEntryCollectionMode.CurrentDirectory:
-                    entries = await _collection.GetEntriesWhereBookAsync(token);
+                    entries = (await _collection.GetEntriesWhereBookAsync(token)).ToArchiveEntryCollection();
                     break;
                 case ArchiveEntryCollectionMode.IncludeSubDirectories:
-                    entries = await _collection.GetEntriesWhereSubArchivesAsync(token);
+                    entries = (await _collection.GetEntriesWhereSubArchivesAsync(token)).ToArchiveEntryCollection();
                     break;
                 default:
                     this.Items = new ObservableCollection<FolderItem>() { _folderItemFactory.CreateFolderItemEmpty() };

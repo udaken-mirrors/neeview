@@ -213,6 +213,14 @@ namespace NeeView
         /// </summary>
         public bool IsDeleted { get; set; }
 
+        /// <summary>
+        /// ショートカット判定
+        /// </summary>
+        /// <remarks>
+        /// プレイリスト自体はショートカット扱いとする。
+        /// プレイリスト項目はショートカットとみなさない。
+        /// </remarks>
+        public bool IsShortcut => PlaylistArchive.IsSupportExtension(EntryName) || (Archiver is not PlaylistArchive && Link != null);
 
         /// <summary>
         /// エントリ名の正規化

@@ -111,10 +111,10 @@ namespace NeeView
                 //var archives = entries.Select(e => e.IsArchive())
             }
 
-            private static void DumpEntries(string label, IEnumerable<ArchiveEntry> entries, string prefix)
+            private static void DumpEntries(string label, IEnumerable<ArchiveEntryNode> entries, string prefix)
             {
                 Debug.WriteLine($"\n[{label}]");
-                foreach (var entry in entries)
+                foreach (var entry in entries.Select(e => e.ArchiveEntry))
                 {
                     var attribute = entry.IsDirectory ? "D" : entry.IsArchive() ? "A" : entry.IsImage() ? "I" : "?";
                     var name = entry.SystemPath[prefix.Length..];

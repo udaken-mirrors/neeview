@@ -34,7 +34,7 @@ namespace NeeView
 
             _collection = new ArchiveEntryCollection(this.Place.SimplePath, ArchiveEntryCollectionMode.CurrentDirectory, ArchiveEntryCollectionMode.CurrentDirectory, ArchiveEntryCollectionOption.None);
 
-            var entries = await _collection.GetEntriesAsync(token);
+            var entries = (await _collection.GetEntriesAsync(token)).ToArchiveEntryCollection();
 
             var items = entries
                 .Select(e => CreateFolderItem(e, e.Id))

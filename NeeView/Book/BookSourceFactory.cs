@@ -65,14 +65,14 @@ namespace NeeView
         /// </summary>
         private static async Task<List<Page>> CreatePageCollection(ArchiveEntryCollection archiveEntryCollection, BookPageCollectMode bookPageCollectMode, PageContentFactory contentFactory, CancellationToken token)
         {
-            List<ArchiveEntry> entries = bookPageCollectMode switch
+            List<ArchiveEntryNode> entries = bookPageCollectMode switch
             {
                 BookPageCollectMode.Image => await archiveEntryCollection.GetEntriesWhereImageAsync(token),
                 BookPageCollectMode.ImageAndBook => await archiveEntryCollection.GetEntriesWhereImageAndArchiveAsync(token),
                 _ => await archiveEntryCollection.GetEntriesWherePageAllAsync(token),
             };
-            var bookPrefix = LoosePath.TrimDirectoryEnd(archiveEntryCollection.Path);
-            return entries.Select(e => CreatePage(bookPrefix, e, contentFactory, token)).ToList();
+            var bookPath = archiveEntryCollection.Path;
+            return entries.Select(e => CreatePage(bookPath, e, contentFactory, token)).ToList();
         }
 
         /// <summary>
@@ -80,65 +80,11 @@ namespace NeeView
         /// </summary>
         /// <param name="entry">ファイルエントリ</param>
         /// <returns></returns>
-        private static Page CreatePage(string bookPrefix, ArchiveEntry entry, PageContentFactory contentFactory, CancellationToken token)
+        private static Page CreatePage(string bookPath, ArchiveEntryNode entry, PageContentFactory contentFactory, CancellationToken token)
         {
             token.ThrowIfCancellationRequested();
 
-            return new Page(bookPrefix, contentFactory.CreatePageContent(entry, token));
-#if false
-            Page page;
-
-            if (entry.IsImage())
-            {
-                if (entry.Archiver is MediaArchiver)
-                {
-                    page = new Page(bookPrefix, new MediaContent(entry));
-                }
-                else if (entry.Archiver is PdfArchiver)
-                {
-                    page = new Page(bookPrefix, new PdfContent(entry));
-                }
-                else if (Config.Current.Image.Standard.IsAnimatedGifEnabled && LoosePath.GetExtension(entry.Link ?? entry.EntryName) == ".gif")
-                {
-                    page = new Page(bookPrefix, new AnimatedContent(entry));
-                }
-                else
-                {
-                    page = new Page(bookPrefix, new BitmapContent(entry));
-                }
-            }
-            else if (entry.IsBook())
-            {
-                page = new Page(bookPrefix, new ArchiveContent(entry));
-                page.Thumbnail.IsCacheEnabled = true;
-            }
-            else
-            {
-                var type = entry.IsDirectory ? ArchiverType.FolderArchive : ArchiverManager.Current.GetSupportedType(entry.Link ?? entry.EntryName);
-                switch (type)
-                {
-                    case ArchiverType.None:
-                        if (Config.Current.Image.Standard.IsAllFileSupported)
-                        {
-                            entry.IsIgnoreFileExtension = true;
-                            page = new Page(bookPrefix, new BitmapContent(entry));
-                        }
-                        else
-                        {
-                            page = new Page(bookPrefix, new FileContent(entry, FilePageIcon.File, null));
-                        }
-                        break;
-                    case ArchiverType.FolderArchive:
-                        page = new Page(bookPrefix, new FileContent(entry, FilePageIcon.Folder, null));
-                        break;
-                    default:
-                        page = new Page(bookPrefix, new FileContent(entry, FilePageIcon.Archive, null));
-                        break;
-                }
-            }
-
-            return page;
-#endif
+            return new Page(contentFactory.CreatePageContent(entry.ArchiveEntry, token), bookPath, entry.Path);
         }
 
 

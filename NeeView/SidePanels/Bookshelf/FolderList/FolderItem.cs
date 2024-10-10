@@ -506,7 +506,7 @@ namespace NeeView
 
         private Page CreateArchivePage(string path)
         {
-            var page = new Page("", new ArchivePageContent(ArchiveEntryUtility.CreateTemporaryEntry(path), null));
+            var page = new Page(new ArchivePageContent(ArchiveEntryUtility.CreateTemporaryEntry(path), null));
             page.Thumbnail.IsCacheEnabled = true;
             page.Thumbnail.Touched += Thumbnail_Touched;
             return page;

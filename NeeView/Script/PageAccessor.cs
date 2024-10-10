@@ -58,7 +58,7 @@ namespace NeeView
                 var handled = BookOperation.Current.JumpPageWithPath(this, _page.EntryFullName);
                 if (!handled)
                 {
-                    BookHub.Current.RequestLoad(this, _page.BookAddress, _page.EntryName, BookLoadOption.IsPage, true);
+                    BookHub.Current.RequestLoad(this, _page.BookPath, _page.EntryName, BookLoadOption.IsPage, true);
                 }
             });
         }

@@ -20,10 +20,14 @@ namespace NeeView
         private bool _isMarked;
         private bool _disposedValue;
 
-
-        public Page(string bookPrefix, PageContent content)
+        public Page(PageContent content) : this(content, "", content.ArchiveEntry.EntryFullName)
         {
-            BookPrefix = bookPrefix;
+        }
+
+        public Page(PageContent content, string bookPath, string entryName)
+        {
+            BookPath = bookPath;
+            EntryName = entryName;
 
             _content = content;
             _content.ContentChanged += Content_ContentChanged;
@@ -68,7 +72,7 @@ namespace NeeView
         public int IndexPlusOne => Index + 1;
 
         // ページ名 : エントリ名
-        public string EntryName => ArchiveEntry.EntryFullName[BookPrefix.Length..];
+        public string EntryName { get; }
 
         // ページ名：ファイル名のみ
         public string EntryLastName => ArchiveEntry.EntryLastName;
@@ -82,14 +86,11 @@ namespace NeeView
         // ページ名：システムパス (リンクは実体に変換済)
         public string SystemPath => ArchiveEntry.SystemPath;
 
-        // ページ名：ブックプレフィックス
-        public string BookPrefix { get; private set; }
-
         // ページ名：スマート名用プレフィックス
         public string? Prefix { get; set; }
 
         // ブックのパス
-        public string BookAddress => LoosePath.TrimEnd(BookPrefix);
+        public string BookPath { get; }
 
         // ファイル情報：ファイル作成日
         public DateTime CreationTime => ArchiveEntry != null ? ArchiveEntry.CreationTime : default;

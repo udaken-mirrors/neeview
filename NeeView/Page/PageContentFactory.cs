@@ -19,7 +19,7 @@ namespace NeeView
         public PageContent CreatePageContent(ArchiveEntry entry, CancellationToken token)
         {
             token.ThrowIfCancellationRequested();
-
+            
             var name = entry.Link ?? entry.EntryName;
             if (entry.IsImage())
             {

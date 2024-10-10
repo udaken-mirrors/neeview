@@ -238,7 +238,7 @@ namespace NeeView
                 IsEmpty = true,
                 RawEntryName = Properties.TextResources.GetString("Notice.NoFiles"),
             };
-            return new Page("", new EmptyPageContent(emptyArchiveEntry, null));
+            return new Page(new EmptyPageContent(emptyArchiveEntry, null));
         }
 
         /// <summary>

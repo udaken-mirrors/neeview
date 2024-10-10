@@ -104,7 +104,7 @@ namespace NeeView
             if (viewPages != null && viewPages.Count > 0)
             {
                 var page = viewPages.Select(page => (page.Index, page)).Min().page;
-                pageHistoryUnit = new PageHistoryUnit(page.BookAddress, page.EntryName);
+                pageHistoryUnit = new PageHistoryUnit(page.BookPath, page.EntryName);
             }
             else
             {
