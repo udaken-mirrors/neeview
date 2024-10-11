@@ -8,7 +8,7 @@ using Jint;
 
 namespace NeeView
 {
-    public class JavaScriptEngine
+    public class JavaScriptEngine : IHasScriptPath
     {
         private readonly Jint.Engine _engine;
         private readonly CommandHost _commandHost;
@@ -17,7 +17,7 @@ namespace NeeView
 
         public JavaScriptEngine()
         {
-            _commandHost = new CommandHost();
+            _commandHost = new CommandHost(this);
 
             var options = new Jint.Options()
                 .DebugMode(true)
@@ -38,9 +38,9 @@ namespace NeeView
         }
 
 
-        public string? CurrentPath { get; private set; }
+        public string? ScriptPath { get; private set; }
 
-        public string? CurrentFolder { get; set; }
+        public string? ScriptDirectory { get; set; }
 
         public bool IsToastEnable { get; set; }
 
@@ -73,15 +73,15 @@ namespace NeeView
             var fullPath = GetFullPath(path);
             string script = File.ReadAllText(fullPath, Encoding.UTF8);
 
-            var oldFolder = CurrentFolder;
+            var oldFolder = ScriptDirectory;
             try
             {
-                CurrentFolder = LoosePath.GetDirectoryName(fullPath);
+                ScriptDirectory = LoosePath.GetDirectoryName(fullPath);
                 return Execute(fullPath, script, token);
             }
             finally
             {
-                CurrentFolder = oldFolder;
+                ScriptDirectory = oldFolder;
             }
         }
 
@@ -90,10 +90,10 @@ namespace NeeView
             _cancellationToken = token;
             _commandHost.SetCancellationToken(token);
 
-            var oldPath = CurrentPath;
+            var oldPath = ScriptPath;
             try
             {
-                CurrentPath = path;
+                ScriptPath = path;
                 var result = path is null ? _engine.Evaluate(script) : _engine.Evaluate(script, path);
                 return result?.ToObject();
             }
@@ -120,7 +120,7 @@ namespace NeeView
             }
             finally
             {
-                CurrentPath = oldPath;
+                ScriptPath = oldPath;
             }
         }
 
@@ -183,9 +183,9 @@ namespace NeeView
 
         private string GetFullPath(string path)
         {
-            if (CurrentFolder != null && !Path.IsPathRooted(path))
+            if (ScriptDirectory != null && !Path.IsPathRooted(path))
             {
-                path = Path.Combine(CurrentFolder, path);
+                path = Path.Combine(ScriptDirectory, path);
             }
 
             return Path.GetFullPath(path);

@@ -481,6 +481,7 @@ CommandHost.Information=Information panel accessor
 CommandHost.Navigator=Navigator panel accessor
 CommandHost.PageList=PageList panel accessor
 CommandHost.Playlist=Playlist panel accessor
+CommandHost.ScriptPath=Path of currently running script file
 CommandHost.ShowDialog=Display the dialog.
 CommandHost.ShowDialog.Commands=0: OK / 1: OKCancel / 2: YesNo\nButton types (optional)
 CommandHost.ShowDialog.Message=Message (optional)

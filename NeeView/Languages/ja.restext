@@ -479,6 +479,7 @@ CommandHost.Information=情報パネルのアクセサ
 CommandHost.Navigator=ナビゲーター パネルのアクセサ
 CommandHost.PageList=ページリスト パネルのアクセサ
 CommandHost.Playlist=プレイリスト パネルのアクセサ
+CommandHost.ScriptPath=現在実行中のスクリプト ファイルのパス
 CommandHost.ShowDialog=ダイアログを表示します。
 CommandHost.ShowDialog.Commands=0: OK / 1: OKCancel / 2: YesNo\nボタンの種類 (省略可)
 CommandHost.ShowDialog.Message=メッセージ (省略可)

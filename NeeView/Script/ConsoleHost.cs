@@ -48,7 +48,7 @@ namespace NeeView
         private static JavaScriptEngine CreateJavaScriptEngine()
         {
             var engine = new JavaScriptEngine();
-            engine.CurrentFolder = Config.Current.Script.ScriptFolder;
+            engine.ScriptDirectory = Config.Current.Script.ScriptFolder;
 
             return engine;
         }

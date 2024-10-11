@@ -481,6 +481,7 @@ CommandHost.Information=Acessador do painel de informações
 CommandHost.Navigator=Acessador do painel do navegador
 CommandHost.PageList=Acessador do painel da Lista de Páginas
 CommandHost.Playlist=Acessador do painel da lista de reprodução
+CommandHost.ScriptPath=
 CommandHost.ShowDialog=Exiba a caixa de diálogo.
 CommandHost.ShowDialog.Commands=0: OK/ 1: OKCancel / 2: YesNo\nTipos de botões (opcional)
 CommandHost.ShowDialog.Message=Mensagem (opcional)

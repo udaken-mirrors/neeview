@@ -479,6 +479,7 @@ CommandHost.Information=信息面板存取器
 CommandHost.Navigator=导航面板存取器
 CommandHost.PageList=页面列表面板存取器
 CommandHost.Playlist=播放列表面板存取器
+CommandHost.ScriptPath=
 CommandHost.ShowDialog=显示对话框。
 CommandHost.ShowDialog.Commands=0: OK / 1: OKCancel / 2: YesNo\n按键的类别 (可省略)
 CommandHost.ShowDialog.Message=消息 (可省略)

@@ -14,14 +14,20 @@ namespace NeeView
     {
         private readonly CommandHostStaticResource _resource;
         private readonly ScriptAccessDiagnostics _accessDiagnostics;
+        private readonly IHasScriptPath _scriptPath;
         private CommandAccessor? _command;
         private List<string> _args = new();
 
 
-        public CommandHost()
+        public CommandHost() : this(new DummyScriptPath())
+        {
+        }
+
+        public CommandHost(IHasScriptPath scriptPath)
         {
             _resource = CommandHostStaticResource.Current;
             _accessDiagnostics = _resource.AccessDiagnostics;
+            _scriptPath = scriptPath;
 
             Config = _resource.ConfigMap.Map;
             Command = _resource.CommandAccessMap;
@@ -43,6 +49,9 @@ namespace NeeView
 
         [WordNodeMember(IsAutoCollect = false)]
         public CommandAccessor? CurrentCommand => _command;
+
+        [WordNodeMember]
+        public string? ScriptPath => _scriptPath.ScriptPath;
 
         [WordNodeMember(IsAutoCollect = false)]
         public List<string> Args => _args;
@@ -91,12 +100,12 @@ namespace NeeView
 
         [WordNodeMember(IsAutoCollect = false)]
         public DestinationFolderCollectionAccessor DestinationFolderCollection { get; }
-        
+
         [WordNodeMember(IsAutoCollect = false)]
         public SusiePluginCollectionAccessor SusiePluginCollection { get; }
 
 
-    [WordNodeMember]
+        [WordNodeMember]
         [Obsolete("no used"), Alternative(nameof(Playlist), 39)] // ver.39
         public object? Pagemark
         {
