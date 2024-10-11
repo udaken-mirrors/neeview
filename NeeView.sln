@@ -13,6 +13,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.editorconfig = .editorconfig
 		LICENSE.ja-jp.md = LICENSE.ja-jp.md
 		LICENSE.md = LICENSE.md
+		NeeView.props = NeeView.props
 		README.md = README.md
 		THIRDPARTY_LICENSES _CODEIN.md = THIRDPARTY_LICENSES _CODEIN.md
 		THIRDPARTY_LICENSES.md = THIRDPARTY_LICENSES.md

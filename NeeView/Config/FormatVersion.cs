@@ -1,18 +1,19 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
 namespace NeeView
 {
     [JsonConverter(typeof(JsonFormatVersionConverter))]
-    public class FormatVersion : IComparable<FormatVersion>, IEquatable<FormatVersion>
+    public record class FormatVersion : IComparable<FormatVersion>
     {
         public FormatVersion(string name)
         {
             Name = name;
             MajorVersion = Environment.AssemblyVersion.Major;
             MinorVersion = Environment.AssemblyVersion.Minor;
-            BuildVersion = 0;
+            BuildVersion = Environment.AssemblyVersion.Build;
         }
 
         public FormatVersion(string name, int majorVersion, int minorVersion, int buildVersion)
@@ -38,9 +39,6 @@ namespace NeeView
         public int MajorVersion { get; private set; }
         public int MinorVersion { get; private set; }
         public int BuildVersion { get; private set; }
-
-
-        public int VersionNumber => MajorVersion << 16 | MinorVersion << 8 | BuildVersion;
 
 
         public override string ToString()
@@ -79,6 +77,9 @@ namespace NeeView
         {
             if (other is null) return 1;
 
+            // 名前が一致してなければ比較する意味がない
+            Debug.Assert(this.Name == other.Name);
+
             if (this.Name != other.Name)
             {
                 return this.Name.CompareTo(other.Name);
@@ -96,51 +97,6 @@ namespace NeeView
                 return this.BuildVersion - other.BuildVersion;
             }
             return 0;
-        }
-
-        public bool Equals(FormatVersion? other)
-        {
-            if (other is null) return false;
-
-            return this.Name == other.Name &&
-                this.MajorVersion == other.MajorVersion &&
-                this.MinorVersion == other.MinorVersion &&
-                this.BuildVersion == other.BuildVersion;
-        }
-
-        public override bool Equals(object? other)
-        {
-            if (other is null) return false;
-
-            if (other is not FormatVersion formatVersion)
-            {
-                return false;
-            }
-            else
-            {
-                return Equals(formatVersion);
-            }
-        }
-
-        public override int GetHashCode()
-        {
-            return Name.GetHashCode() ^ VersionNumber;
-        }
-
-        public static bool operator ==(FormatVersion? v1, FormatVersion? v2)
-        {
-            if (((object?)v1) == null || ((object?)v2) == null)
-                return Equals(v1, v2);
-
-            return v1.Equals(v2);
-        }
-
-        public static bool operator !=(FormatVersion? v1, FormatVersion? v2)
-        {
-            if (((object?)v1) == null || ((object?)v2) == null)
-                return !Equals(v1, v2);
-
-            return !(v1.Equals(v2));
         }
     }
 

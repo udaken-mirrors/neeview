@@ -26,7 +26,6 @@ namespace NeeView
         private static string? _packageType;
         private static string? _revision;
         private static string? _dateVersion;
-        private static string? _buildVersion;
         private static bool? _isUseLocalApplicationDataFolder;
         private static bool? _selfContained;
         private static string? _pdfRenderer;
@@ -113,9 +112,17 @@ namespace NeeView
         public static string ApplicationName => AssemblyTitle;
 
         /// <summary>
-        /// プロダクトバージョン
+        /// プロダクトバージョン (Major.Minor.Build)
         /// </summary>
         public static string ProductVersion { get; private set; }
+
+        /// <summary>
+        /// アプリバージョン (Major.Minor)
+        /// </summary>
+        /// <remarks>
+        /// 表示には通常こちらを使用します。
+        /// </remarks>
+        public static string ApplicationVersion { get; private set; }
 
         /// <summary>
         /// 表示用バージョン
@@ -124,17 +131,21 @@ namespace NeeView
         {
             get
             {
-                if (IsCanaryPackage)
+                if (IsDevPackage)
+                {
+                    return ProductVersion + "-Dev";
+                }
+                else if (IsCanaryPackage)
                 {
                     return $"Canary {DateVersion} / Rev. {Revision}";
                 }
                 else if (IsBetaPackage)
                 {
-                    return ProductVersion + $".Beta {DateVersion} / Rev. {Revision}";
+                    return ApplicationVersion + $"-Beta {DateVersion} / Rev. {Revision}";
                 }
                 else
                 {
-                    return ProductVersion;
+                    return ApplicationVersion;
                 }
             }
         }
@@ -146,17 +157,21 @@ namespace NeeView
         {
             get
             {
-                if (IsCanaryPackage)
+                if (IsDevPackage)
+                {
+                    return ProductVersion + "-Dev";
+                }
+                else if (IsCanaryPackage)
                 {
                     return $"Canary {DateVersion}";
                 }
                 else if (IsBetaPackage)
                 {
-                    return ProductVersion + $".Beta {DateVersion}";
+                    return ApplicationVersion + $"-Beta {DateVersion}";
                 }
                 else
                 {
-                    return ProductVersion;
+                    return ApplicationVersion;
                 }
             }
         }
@@ -165,17 +180,11 @@ namespace NeeView
         {
             get
             {
-                return SolutionName + "/" + ProductVersion + $".{BuildVersion} ({OSVersion}) {PackageType}/{DateVersion} (Rev {Revision}{(SelfContained ? "" : "; fd")})";
+                return SolutionName + "/" + ProductVersion + $" ({OSVersion}) {PackageType}/{DateVersion} (Rev {Revision}{(SelfContained ? "" : "; fd")})";
             }
         }
 
         public static string OSVersion => $"{System.Environment.OSVersion}; {(IsX64 ? "x64" : "x86")}";
-
-
-        /// <summary>
-        /// プロダクトバージョン(int)
-        /// </summary>
-        public static int ProductVersionNumber { get; private set; }
 
         /// <summary>
         /// 環境変数 NEEVIEW_PROFILE 取得
@@ -399,18 +408,6 @@ namespace NeeView
             }
         }
 
-        public static string BuildVersion
-        {
-            get
-            {
-                if (_buildVersion == null)
-                {
-                    _buildVersion = ConfigurationManager.AppSettings["BuildVersion"] ?? "??";
-                }
-                return _buildVersion;
-            }
-        }
-
         /// <summary>
         /// システムのエンコーディング
         /// </summary>
@@ -517,24 +514,6 @@ namespace NeeView
             }
         }
 
-        // ※ build は未使用
-        public static int GenerateProductVersionNumber(int major, int minor, int build)
-        {
-            return major << 16 | minor << 8;
-        }
-
-        // プロダクトバージョン(int)からメジャーバージョンを取得
-        public static int GetMajorVersionNumber(int versionNumber)
-        {
-            return (versionNumber >> 16) & 0xff;
-        }
-
-        // プロダクトバージョン(int)からマイナーバージョンを取得
-        public static int GetMinorVersionNumber(int versionNumber)
-        {
-            return (versionNumber >> 8) & 0xff;
-        }
-
         // PCメモリサイズ
         public static ulong GetTotalPhysicalMemory()
         {
@@ -546,7 +525,7 @@ namespace NeeView
         /// アセンブリ情報収集
         /// </summary>
         /// <param name="asm"></param>
-        [MemberNotNull(nameof(CompanyName), nameof(AssemblyTitle), nameof(AssemblyProduct), nameof(AssemblyVersion), nameof(ProductVersion), nameof(ProductVersionNumber))]
+        [MemberNotNull(nameof(CompanyName), nameof(AssemblyTitle), nameof(AssemblyProduct), nameof(AssemblyVersion), nameof(ProductVersion), nameof(ApplicationVersion))]
         private static void ValidateProductInfo(Assembly asm)
         {
             // 会社名
@@ -563,8 +542,8 @@ namespace NeeView
 
             // バージョンの取得
             AssemblyVersion = asm.GetName().Version ?? throw new InvalidOperationException("Cannot get AssemblyVersion");
-            ProductVersion = $"{AssemblyVersion.Major}.{AssemblyVersion.Minor}";
-            ProductVersionNumber = GenerateProductVersionNumber(AssemblyVersion.Major, AssemblyVersion.Minor, 0);
+            ProductVersion = $"{AssemblyVersion.Major}.{AssemblyVersion.Minor}.{AssemblyVersion.Build}";
+            ApplicationVersion = $"{AssemblyVersion.Major}.{AssemblyVersion.Minor}";
         }
 
         /// <summary>

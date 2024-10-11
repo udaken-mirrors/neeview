@@ -5,6 +5,9 @@
       <Component Id="cmp2D5D0706F016AA20825C868A7DBC7634" Guid="*">
         <File Id="fil73D9EEE9E6F72A2A485AFB3F749860B9" KeyPath="yes" Source="$(var.ContentDir)\Accessibility.dll" />
       </Component>
+      <Component Id="cmpB8147DBA12899C452FC3925BA9A1A97B" Guid="*">
+        <File Id="fil94692AC0593BA05AE84A3591C99B61EE" KeyPath="yes" Source="$(var.ContentDir)\Acornima.dll" />
+      </Component>
       <Component Id="cmpCC7F63B6DD13FD5BC7B004BB877B7596" Guid="*">
         <File Id="fil4B03A370175C15902E03BE8F24A22F96" KeyPath="yes" Source="$(var.ContentDir)\AnimatedImage.dll" />
       </Component>
@@ -31,9 +34,6 @@
       </Component>
       <Component Id="cmpC8D84524EA3808AF29E9A098AF886DF5" Guid="*">
         <File Id="fil34408C899878BB81924DD927327B1FD0" KeyPath="yes" Source="$(var.ContentDir)\DirectWriteForwarder.dll" />
-      </Component>
-      <Component Id="cmp9BD8386B56714DD2B5F78D159AB49F2E" Guid="*">
-        <File Id="filE148B3DEA846E65BF24466F6BD3810A7" KeyPath="yes" Source="$(var.ContentDir)\Esprima.dll" />
       </Component>
       <Component Id="cmpD51C7DCAA0760E3A269231CFA7A989BF" Guid="*">
         <File Id="fil85A6359F27FC15BF6766873998D82972" KeyPath="yes" Source="$(var.ContentDir)\hostfxr.dll" />
@@ -121,9 +121,6 @@
       </Component>
       <Component Id="cmp2D22C362F8F0B3B68D8A335DB9874738" Guid="*">
         <File Id="fil0C7258C62EED04D203F333E1383578C2" KeyPath="yes" Source="$(var.ContentDir)\netstandard.dll" />
-      </Component>
-      <Component Id="cmpBA30ECED457738A459F281A234962E58" Guid="*">
-        <File Id="fil37809A3BB726693C79976A35A1027449" KeyPath="yes" Source="$(var.ContentDir)\ObservableCollections.dll" />
       </Component>
       <Component Id="cmpE9F08FAD2A628FCE472306FE8DCE93D5" Guid="*">
         <File Id="fil30EDA5C30D6FBF24B7553A1EAE1D4103" KeyPath="yes" Source="$(var.ContentDir)\pdfium.dll" />
@@ -1713,6 +1710,7 @@
   <Fragment>
     <ComponentGroup Id="MainComponents">
       <ComponentRef Id="cmp2D5D0706F016AA20825C868A7DBC7634" />
+      <ComponentRef Id="cmpB8147DBA12899C452FC3925BA9A1A97B" />
       <ComponentRef Id="cmpCC7F63B6DD13FD5BC7B004BB877B7596" />
       <ComponentRef Id="cmpE74B87B06D9AA178BC711079DD69E9A5" />
       <ComponentRef Id="cmp4FD0997C338542D825893A7B99BCB1EF" />
@@ -1722,7 +1720,6 @@
       <ComponentRef Id="cmpCDA382E0F76D6A7D9FE703F14C8A2D62" />
       <ComponentRef Id="cmp63C170ACC5D9139D96E32073358D1BE1" />
       <ComponentRef Id="cmpC8D84524EA3808AF29E9A098AF886DF5" />
-      <ComponentRef Id="cmp9BD8386B56714DD2B5F78D159AB49F2E" />
       <ComponentRef Id="cmpD51C7DCAA0760E3A269231CFA7A989BF" />
       <ComponentRef Id="cmp2257790539B8870843640B5857727F5B" />
       <ComponentRef Id="cmp4EF347C4F9445E9C039128F17B101763" />
@@ -1752,7 +1749,6 @@
       <ComponentRef Id="cmpA3FCF16F2E20DA494D7CF6D407CBF180" />
       <ComponentRef Id="cmp3105E7032A1F432DA2A9ACACC3049772" />
       <ComponentRef Id="cmp2D22C362F8F0B3B68D8A335DB9874738" />
-      <ComponentRef Id="cmpBA30ECED457738A459F281A234962E58" />
       <ComponentRef Id="cmpE9F08FAD2A628FCE472306FE8DCE93D5" />
       <ComponentRef Id="cmp71610846D41DA0F78A7BD98E9FF6F86C" />
       <ComponentRef Id="cmp2331B7D07912805FDD8E30EBA7274C0A" />

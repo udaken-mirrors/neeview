@@ -11,7 +11,7 @@ namespace NeeView
             if (self.Format is null) throw new FormatException("UserSetting.Format must not be null.");
 
             // ver.42.0
-            if (self.Format.CompareTo(new FormatVersion(BookmarkCollection.Memento.FormatName, 42, 0, 0)) < 0)
+            if (self.Format.CompareTo(new FormatVersion(BookmarkCollection.Memento.FormatName, 42, 0, 6)) < 0)
             {
                 // プレイリストブックのサブフォルダ読み込みを解除
                 if (self.Books is not null)

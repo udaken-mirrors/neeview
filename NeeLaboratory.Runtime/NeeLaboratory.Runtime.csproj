@@ -1,14 +1,13 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
+  <Import Project="..\NeeView.props" />
+
   <PropertyGroup>
     <TargetFramework>net8.0-windows</TargetFramework>
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <PropertyGroup>
-    <Version>42.0.0</Version>
-    <Authors>NeeLaboratory</Authors>
-    <Copyright>Copyright © 2016-2024 Ito Mitsuhiro (nee)</Copyright>
     <Description>Runtime for NeeLaboratory applications</Description>
   </PropertyGroup>
   

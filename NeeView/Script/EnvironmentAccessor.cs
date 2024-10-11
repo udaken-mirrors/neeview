@@ -17,7 +17,7 @@ namespace NeeView
         public string Version => Environment.DispVersionShort;
 
         [WordNodeMember]
-        public string ProductVersion => Environment.ProductVersion + "." + Environment.BuildVersion;
+        public string ProductVersion => Environment.ProductVersion;
 
         [WordNodeMember]
         public string DateVersion => Environment.DateVersion;

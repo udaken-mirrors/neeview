@@ -3,7 +3,7 @@
 <?define Bits = "all" ?>
 
 <?if $(var.Platform) = "x86" ?>
-  <?define ProductName = "NeeView $(var.ProductVersion) (x86)" ?>
+  <?define ProductName = "NeeView $(var.AppVersion) (x86)" ?>
   <?define UpgradeCode = "1615bc9c-ddfd-4d61-9ac1-3ebc5c8787a8" ?>
   <?define SystemDir = "SystemFolder" ?>
   <?define ProgramFilesDir = "ProgramFilesFolder" ?>
@@ -11,7 +11,7 @@
   <?define IdentName = "NeeViewX86" ?>
   <?define ExeName = "NeeView (x86)" ?>
 <?elseif $(var.Platform) = "x64" ?>
-  <?define ProductName = "NeeView $(var.ProductVersion)" ?>
+  <?define ProductName = "NeeView $(var.AppVersion)" ?>
   <?define UpgradeCode = "6db6317b-b2a3-42b3-aa6e-102b0d7bb0dc" ?>
   <?define SystemDir = "System64Folder" ?>
   <?define ProgramFilesDir = "ProgramFiles64Folder" ?>
@@ -28,7 +28,7 @@
 
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi"
          xmlns:netfx="http://schemas.microsoft.com/wix/NetFxExtension">
-  <Product Id="*" Name="$(var.ProductName)" Version="$(var.BuildVersion)" Language="!(loc.language)" Codepage="$(var.codepage)" Manufacturer="NeeLaboratory" UpgradeCode="$(var.UpgradeCode)">
+  <Product Id="*" Name="$(var.ProductName)" Version="$(var.ProductVersion)" Language="!(loc.language)" Codepage="$(var.codepage)" Manufacturer="NeeLaboratory" UpgradeCode="$(var.UpgradeCode)">
     <Package InstallerVersion="500" Compressed="yes" InstallScope="perMachine" SummaryCodepage="$(var.codepage)" Comments="NeeView is picture viewer." Platform="$(var.Platform)"/>
 
     <MajorUpgrade DowngradeErrorMessage="!(loc.downgradeErrorMessage)" />

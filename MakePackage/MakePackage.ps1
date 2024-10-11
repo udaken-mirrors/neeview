@@ -28,12 +28,32 @@ trap { break }
 
 $ErrorActionPreference = "stop"
 
+$updateBuildVersion = $false
+if ($Target -ne "Dev")
+{
+	$tChoiceDescription = "System.Management.Automation.Host.ChoiceDescription"
+	$options = @(
+		New-Object $tChoiceDescription ("&Yes", "Update version")
+		New-Object $tChoiceDescription ("&No", "Keep version")
+	)
+
+	$result = $host.ui.PromptForChoice("Update version", "Increment build version after build?", $options, 0)
+	switch ($result)
+	{
+		0 { $updateBuildVersion = $true; break; }
+		1 { $updateBuildVersion = $false; break; }
+	}
+}
+
+Write-Host
+Write-Host "[Properties] ..." -fore Cyan
 Write-Host "Target: $Target"
 Write-Host "Continue: $continue"
 Write-Host "Trace: $trace"
 Write-Host "X86: $x86"
 Write-Host "UpdateComponent: $updateComponent" 
 Write-Host "VersionPostfix: $versionPostfix" 
+Write-Host "UpdateBuildVersion: $updateBuildVersion" 
 Write-Host
 Read-Host "Press Enter to continue"
 
@@ -58,55 +78,59 @@ function Get-FileVersion($fileName)
 
 
 #---------------------
-# get base vsersion
+# load vsersion
 function Get-Version($projectFile)
 {
 	$xml = [xml](Get-Content $projectFile)
-	$version = [String]$xml.Project.PropertyGroup.Version;
-	if ($version -match '(\d+\.\d+)\.\d+')
+
+	$version = [String]$xml.Project.PropertyGroup.VersionPrefix
+
+	if ($version -match '\d+\.\d+\.\d+')
 	{
-		return $Matches[1]
+		return $version
 	}
 	
-    throw "Cannot get Version."
+    throw "Cannot get version."
+}
+
+function Get-AppVersion($version)
+{
+	$tokens = $version.Split(".")
+	if ($tokens.Length -ne 3)
+	{
+		throw "Wrong version format."
+	}
+	$tokens = $version.Split(".")
+	$majorVersion = [int]$tokens[0]
+	$minorVersion = [int]$tokens[1]
+	return "$majorVersion.$minorVersion"
 }
 
 #---------------------
-# build versions
-
-$buildVersionsPath = Join-Path (Resolve-Path .) "_BuildVersions.json"
-
-function Get-BuildCount($version)
+# save vsersion
+function Set-Version($projectFile, $version)
 {
-	$map = Get-BuildVersions
-	return $map.$version ?? 0
+	$xml = [xml](Get-Content $projectFile)
+
+	$xml.Project.PropertyGroup.VersionPefix = $version
+
+	$xml.Save( $projectFile )
 }
 
-function Set-BuildCount($version, $buildCount)
+#---------------------
+# increment version
+function Add-Version($version)
 {
-	$map = Get-BuildVersions
-	if ($null -ne $map.$version) {
-		$map.$version = $buildCount
+	$tokens = $version.Split(".")
+	if ($tokens.Length -ne 3)
+	{
+		throw "Wrong version format."
 	}
-	else {
-		$map | Add-Member -MemberType NoteProperty -Name $version -Value $buildCount
-	}
-	Set-BuildVersions $map
-}
-
-function Get-BuildVersions()
-{
-	if (Test-Path $buildVersionsPath) {
-		return Get-Content -Raw $buildVersionsPath | ConvertFrom-Json
-	}
-	else {
-		return [PSCustomObject]@{}
-	}
-}
-
-function Set-BuildVersions($versions)
-{
-	$versions | ConvertTo-Json | Set-Content $buildVersionsPath
+	$tokens = $version.Split(".")
+	$majorVersion = [int]$tokens[0]
+	$minorVersion = [int]$tokens[1]
+	$buildVersion = [int]$tokens[2] + 1
+	return "$majorVersion.$minorVersion.$buildVersion"
 }
 
 #---------------------
@@ -169,7 +193,7 @@ $projectSusieDir = "$solutionDir\$product.Susie.Server"
 $projectSusie = "$projectSusieDir\$product.Susie.Server.csproj"
 #$projectTerminateDir = "$solutionDir\$product.Terminator"
 #$ptojectTerminate = "$projectTerminateDir\$product.Terminator.csproj"
-
+$projectProps = "$solutionDir\$product.props"
 
 #----------------------
 # build
@@ -179,6 +203,13 @@ function Build-Project($platform, $outputDir, $options)
 		"-p:PublishProfile=FolderProfile-$platform.pubxml"
 		"-c", "Release"
 	)
+
+	switch ($Target)
+	{
+		"Dev" { $defaultOptions += "-p:VersionSuffix=dev-${dateVersion}"; break; }
+		"Canary" { $defaultOptions += "-p:VersionSuffix=canary-${dateVersion}"; break; }
+		"Beta" { $defaultOptions += "-p:VersionSuffix=beta-${dateVersion}"; break; }
+	}
 
 	& dotnet publish $project $defaultOptions $options -o Publish\$outputDir
 	if ($? -ne $true)
@@ -271,7 +302,7 @@ function New-Readme($packageDir, $culture, $target)
 		Copy-Item "$readmeSource\ChangeLog.md" $readmeDir
 	}
 
-	$postfix = $version
+	$postfix = $appVersion
 	$announce = ""
 	if ($target -eq "Canary")
 	{
@@ -386,9 +417,6 @@ function New-ConfigForZip($inputDir, $config, $outputDir)
 	$add = $xml.configuration.appSettings.add | Where { $_.key -eq 'DateVersion' } | Select -First 1
 	$add.value = $dateVersion
 	
-	$add = $xml.configuration.appSettings.add | Where { $_.key -eq 'BuildVersion' } | Select -First 1
-	$add.value = $buildCount
-
 	if ($trace)
 	{
 		#<add key="LogFile" value="TraceLog.txt" />
@@ -439,9 +467,6 @@ function New-ConfigForMsi($inputDir, $config, $outputDir)
 	$add = $xml.configuration.appSettings.add | Where { $_.key -eq 'DateVersion' } | Select -First 1
 	$add.value = $dateVersion
 
-	$add = $xml.configuration.appSettings.add | Where { $_.key -eq 'BuildVersion' } | Select -First 1
-	$add.value = $buildCount
-
 	$utf8WithoutBom = New-Object System.Text.UTF8Encoding($false)
 	$outputFile = Join-Path (Convert-Path $outputDir) $config
 	$sw = New-Object System.IO.StreamWriter($outputFile, $false, $utf8WithoutBom)
@@ -478,9 +503,6 @@ function New-ConfigForAppx($inputDir, $config, $outputDir)
 
 	$add = $xml.configuration.appSettings.add | Where { $_.key -eq 'DateVersion' } | Select -First 1
 	$add.value = $dateVersion
-
-	$add = $xml.configuration.appSettings.add | Where { $_.key -eq 'BuildVersion' } | Select -First 1
-	$add.value = $buildCount
 
 	$utf8WithoutBom = New-Object System.Text.UTF8Encoding($false)
 	$outputFile = Join-Path (Convert-Path $outputDir) $config
@@ -520,9 +542,6 @@ function New-ConfigForDevPackage($inputDir, $config, $target, $outputDir)
 
 	$add = $xml.configuration.appSettings.add | Where { $_.key -eq 'DateVersion' } | Select -First 1
 	$add.value = $dateVersion
-
-	$add = $xml.configuration.appSettings.add | Where { $_.key -eq 'BuildVersion' } | Select -First 1
-	$add.value = $buildCount
 
 	$utf8WithoutBom = New-Object System.Text.UTF8Encoding($false)
 	$outputFile = Join-Path (Convert-Path $outputDir) $config
@@ -640,7 +659,7 @@ function New-Msi($arch, $packageDir, $packageAppendDir, $packageMsi)
 		$wixObjDir = "$packageAppendDir\obj.$culture"
 		New-EmptyFolder $wixObjDir
 
-		& $candle -arch $arch -d"Platform=$arch" -d"BuildVersion=$buildVersion" -d"ProductVersion=$version" -d"ContentDir=$packageDir\\" -d"AppendDir=$packageDir.append\\" -d"LibrariesDir=$packageDir\\Libraries" -d"culture=$culture" -ext WixNetFxExtension -out "$wixObjDir\\"  WixSource\*.wxs .\WixSource\$arch\*.wxs
+		& $candle -arch $arch -d"Platform=$arch" -d"AppVersion=$appVersion" -d"ProductVersion=$version" -d"ContentDir=$packageDir\\" -d"AppendDir=$packageDir.append\\" -d"LibrariesDir=$packageDir\\Libraries" -d"culture=$culture" -ext WixNetFxExtension -out "$wixObjDir\\"  WixSource\*.wxs .\WixSource\$arch\*.wxs
 		if ($? -ne $true)
 		{
 			throw "candle error"
@@ -914,11 +933,11 @@ function Build-PackageSorce-x64-fd
 	if ($global:build_x64_fd -eq $true) { return }
 
 	# build
-	Write-Host "`n[Build frameword dependent] ...`n" -fore Cyan
+	Write-Host "`n[Build framework dependent] ...`n" -fore Cyan
 	Build-ProjectFrameworkDependent "x64"
 	
 	# create package source
-	Write-Host "`n[Package frameword dependent] ...`n" -fore Cyan
+	Write-Host "`n[Package framework dependent] ...`n" -fore Cyan
 	New-Package "x64" $product $publishDir_x64_fd $packageDir_x64_fd
 
 	$global:build_x64_fd = $true
@@ -1044,10 +1063,9 @@ function Export-Current
 #======================
 
 # versions
-$version = Get-Version $project
-$buildCount = (Get-BuildCount $version) + 1
-$buildVersion = "$version.$buildCount"
-$assemblyVersion = "$version.$buildCount.0"
+$version = Get-Version $projectProps
+$appVersion = Get-AppVersion $version
+$assemblyVersion = "$version.0"
 $revision = (& git rev-parse --short HEAD).ToString()
 $dateVersion = (Get-Date).ToString("MMdd") + $versionPostfix
 
@@ -1055,24 +1073,24 @@ $publishDir = "Publish"
 $publishDir_x64 = "$publishDir\$product-x64"
 $publishDir_x86 = "$publishDir\$product-x86"
 $publishDir_x64_fd = "$publishDir\$product-x64-fd"
-$packagePrefix = "$product$version"
-$packageDir_x64 = "$product$version-x64"
-$packageDir_x86 = "$product$version-x86"
-$packageDir_x64_fd = "$product$version-x64-fd"
+$packagePrefix = "$product$appVersion"
+$packageDir_x64 = "$product$appVersion-x64"
+$packageDir_x86 = "$product$appVersion-x86"
+$packageDir_x64_fd = "$product$appVersion-x64-fd"
 $packageAppendDir_x64 = "$packageDir_x64.append"
 $packageAppendDir_x86 = "$packageDir_x86.append"
-$packageName_x64 = "${product}${version}"
-$packageName_x86 = "${product}${version}-x86"
-$packageName_x64_fd = "${product}${version}-fd"
+$packageName_x64 = "${product}${appVersion}"
+$packageName_x86 = "${product}${appVersion}-x86"
+$packageName_x64_fd = "${product}${appVersion}-fd"
 $packageZip_x64 = "$packageName_x64.zip"
 $packageZip_x86 = "$packageName_x86.zip"
 $packageZip_x64_fd = "$packageName_x64_fd.zip"
 $packageMsi_x64 = "$packageName_x64.msi"
 $packageMsi_x86 = "$packageName_x86.msi"
-$packageAppxDir_x64 = "${product}${version}-appx-x64"
-$packageAppxDir_x86 = "${product}${version}-appx-x84"
-$packageX86Appx = "${product}${version}-x86.appx"
-$packageX64Appx = "${product}${version}.appx"
+$packageAppxDir_x64 = "${product}${appVersion}-appx-x64"
+$packageAppxDir_x86 = "${product}${appVersion}-appx-x84"
+$packageX86Appx = "${product}${appVersion}-x86.appx"
+$packageX64Appx = "${product}${appVersion}.appx"
 $packageCanaryDir = "${product}Canary"
 $packageCanaryDir_AnyCPU = "${product}Canary-AnyCPU"
 $packageCanary = "${product}Canary${dateVersion}.zip"
@@ -1137,13 +1155,13 @@ if (($Target -eq "All") -or ($Target -eq "Appx"))
 
 if (-not $x86)
 {
-	if (($Target -eq "All") -or ($Target -eq "Canary"))
+	if ($Target -eq "Canary")
 	{
 		Build-PackageSorce-x64-fd
 		Build-Canary
 	}
 
-	if (($Target -eq "All") -or ($Target -eq "Beta"))
+	if ($Target -eq "Beta")
 	{
 		Build-PackageSorce-x64
 		Build-Beta
@@ -1158,19 +1176,20 @@ if (-not $x86)
 
 #--------------------------
 # saev buid version
-if ((-not $continue) -and ($Target -ne "Dev"))
+if ($updateBuildVersion)
 {
-	Write-Host "Update build version: $version.$buildCount"
-	Set-BuildCount $version $buildCount
+	$nextVersion = Add-Version $version
+	Write-Host "Update build version: $nextVersion"
+	Set-Version $projectProps $nextVersion
 }
 else
 {
-	Write-Host Keep build count.
+	Write-Host "Keep build version."
 }
 
 #-------------------------
 # Finish.
-Write-Host "`nBuild $buildVersion All done.`n" -fore Green
+Write-Host "`nBuild $version All done.`n" -fore Green
 
 
 
