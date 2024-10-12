@@ -21,6 +21,9 @@ namespace NeeView
 
         [AliasName]
         QuickAccess,
+
+        [AliasName]
+        Script,
     }
 
     public static class QuerySchemeExtensions
@@ -31,6 +34,7 @@ namespace NeeView
             [QueryScheme.Root] = "root:",
             [QueryScheme.Bookmark] = "bookmark:",
             [QueryScheme.QuickAccess] = "quickaccess:",
+            [QueryScheme.Script] = "script:",
         };
 
         static Dictionary<QueryScheme, ImageSource>? _imageMap;
@@ -51,6 +55,7 @@ namespace NeeView
                     [QueryScheme.Root] = MainWindow.Current.Resources["ic_bookshelf"] as ImageSource ?? throw new DirectoryNotFoundException(),
                     [QueryScheme.Bookmark] = MainWindow.Current.Resources["ic_grade_24px"] as ImageSource ?? throw new DirectoryNotFoundException(),
                     [QueryScheme.QuickAccess] = MainWindow.Current.Resources["ic_lightning"] as ImageSource ?? throw new DirectoryNotFoundException(),
+                    [QueryScheme.Script] = MainWindow.Current.Resources["ic_javascript_24px"] as ImageSource ?? throw new DirectoryNotFoundException(),
                 };
             });
         }
@@ -68,6 +73,7 @@ namespace NeeView
                     [QueryScheme.Root] = MainWindow.Current.Resources["ic_bookshelf"] as ImageSource ?? throw new DirectoryNotFoundException(),
                     [QueryScheme.Bookmark] = MainWindow.Current.Resources["ic_grade_24px_t"] as ImageSource ?? throw new DirectoryNotFoundException(),
                     [QueryScheme.QuickAccess] = MainWindow.Current.Resources["ic_lightning"] as ImageSource ?? throw new DirectoryNotFoundException(),
+                    [QueryScheme.Script] = MainWindow.Current.Resources["ic_javascript_24px"] as ImageSource ?? throw new DirectoryNotFoundException(),
                 };
             });
         }
@@ -258,6 +264,10 @@ namespace NeeView
                     return char.ToUpper(s[0]) + ":\\";
                 }
             }
+            else
+            {
+                s = '\\' + s.TrimStart('\\');
+            }
 
             return string.IsNullOrWhiteSpace(s) ? null : s;
         }
@@ -381,17 +391,31 @@ namespace NeeView
     public static class QueryPathExtensions
     {
         /// <summary>
-        /// ショートカットならば実体のパスに変換する
+        /// 実体のパスに変換する
         /// </summary>
+        /// <remarks>
+        /// ショートカットならば実体のパスに変換する。
+        /// スクリプトスキームならばファイルパスに変換する。
+        /// 他のスキームは非対応
+        /// </remarks>
         public static QueryPath ToEntityPath(this QueryPath source)
         {
-            if (source.Scheme == QueryScheme.File && FileShortcut.IsShortcut(source.SimplePath))
+            if (source.Path is null) return source;
+
+            if (source.Scheme == QueryScheme.File)
             {
-                var shortcut = new FileShortcut(source.SimplePath);
-                if (shortcut.IsValid)
+                if (FileShortcut.IsShortcut(source.SimplePath))
                 {
-                    return new QueryPath(shortcut.TargetPath);
+                    var shortcut = new FileShortcut(source.SimplePath);
+                    if (shortcut.IsValid)
+                    {
+                        return new QueryPath(shortcut.TargetPath);
+                    }
                 }
+            }
+            else if (source.Scheme == QueryScheme.Script)
+            {
+                return ToEntityPath(new QueryPath(QueryScheme.File, Path.Combine(Config.Current.Script.ScriptFolder, source.Path)));
             }
 
             return source;

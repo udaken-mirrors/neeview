@@ -271,7 +271,7 @@ namespace NeeView
             BookmarkFolderList.Current.UpdateItems();
 
             // オプション指定があればフォルダーリスト表示
-            if (!string.IsNullOrEmpty(App.Current.Option.FolderList))
+            if (App.Current.Option.FolderListQuery is not null)
             {
                 SidePanelFrame.Current.IsVisibleFolderList = true;
             }
@@ -283,9 +283,13 @@ namespace NeeView
             }
 
             // 起動時スクリプトの実行
-            if (!string.IsNullOrWhiteSpace(App.Current.Option.ScriptFile))
+            if (App.Current.Option.ScriptQuery is not null)
             {
-                ScriptManager.Current.Execute(this, App.Current.Option.ScriptFile, null, null);
+                var path = App.Current.Option.ScriptQuery.ToEntityPath().SimplePath;
+                if (!string.IsNullOrEmpty(path))
+                { 
+                    ScriptManager.Current.Execute(this, path, null, null);
+                }
             }
 
             // Script: OnStartup

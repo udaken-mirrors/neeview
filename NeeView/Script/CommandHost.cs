@@ -128,7 +128,7 @@ namespace NeeView
 
         internal void SetCommandName(string name)
         {
-            _command = Command[name] as CommandAccessor;
+            _command = Command.TryGetCommand(name, out var command) ? command as CommandAccessor : null;
         }
 
         internal void SetArgs(List<string> args)

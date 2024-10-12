@@ -17,7 +17,7 @@ namespace NeeView
         public void Load()
         {
             _bookPaths = null;
-            _folderPath = App.Current.Option.FolderList;
+            _folderPath = App.Current.Option.FolderListQuery?.SimpleQuery;
 
             if (Config.Current.StartUp.LastBookPath?.StartsWith(Temporary.Current.TempRootPath) == true)
             {

@@ -92,4 +92,13 @@
         </DrawingImage.Drawing>
     </DrawingImage>
 
+    <DrawingImage x:Key="ic_javascript_24px">
+        <DrawingImage.Drawing>
+            <DrawingGroup>
+                <GeometryDrawing Brush="Transparent" Geometry="{StaticResource g_rect24x24}" />
+                <GeometryDrawing Brush="{DynamicResource Panel.Foreground}" Pen="{x:Null}" Geometry="{StaticResource g_javascript_24px}" />
+            </DrawingGroup>
+        </DrawingImage.Drawing>
+    </DrawingImage>
+
 </ResourceDictionary>

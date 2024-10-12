@@ -50,8 +50,9 @@ namespace NeeView
         [Documentable(Name = "nv")]
         public CommandHost CommandHost => _commandHost;
 
-        public void SetCommandName(string name)
+        public void SetCommandName(string? name)
         {
+            if (string.IsNullOrEmpty(name)) return;
             _commandHost.SetCommandName(name);
         }
 

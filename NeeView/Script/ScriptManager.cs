@@ -132,7 +132,6 @@ namespace NeeView
         {
             if (_disposedValue) return;
 
-            name = name ?? Path.GetFileName(path);
             _pool.Run(sender, path, name, argument);
         }
 

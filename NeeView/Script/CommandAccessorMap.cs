@@ -40,6 +40,10 @@ namespace NeeView
             }
         }
 
+        internal bool TryGetCommand(string key, out ICommandAccessor? command)
+        {
+            return _map.TryGetValue(key, out command);
+        }
 
         internal ICommandAccessor GetCommand(string key)
         {

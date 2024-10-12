@@ -1,14 +1,11 @@
-﻿using NeeView.Data;
-using NeeLaboratory.Linq;
+﻿using NeeLaboratory.Linq;
+using NeeView.Data;
+using NeeView.Windows;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using NeeView.Windows;
 
 namespace NeeView
 {
@@ -74,19 +71,22 @@ namespace NeeView
         [OptionMember(null, "script", HasParameter = true, RequireParameter = true, HelpText = "@AppOption.ScriptFile")]
         public string? ScriptFile { get; set; }
 
-
         [OptionValues]
         public List<string> Values { get; set; } = new List<string>();
+
+
+        public QueryPath? FolderListQuery { get; private set; }
+        public QueryPath? ScriptQuery { get; private set; }
 
 
         public void Validate()
         {
             try
             {
-                Values = Values.Select(e => GetFullPath(e)).WhereNotNull().ToList();
+                Values = Values.Select(e => Path.GetFullPath(e)).WhereNotNull().ToList();
 
-                FolderList = GetFullQueryPath(FolderList)?.SimpleQuery;
-                ScriptFile = GetFullPath(ScriptFile);
+                FolderListQuery = GetFullQueryPath(FolderList);
+                ScriptQuery = GetFullQueryPath(ScriptFile);
 
                 if (this.SettingFilename != null)
                 {
@@ -111,59 +111,17 @@ namespace NeeView
 
         private QueryPath? GetFullQueryPath(string? src)
         {
-            if (src is null) return null;
+            if (string.IsNullOrWhiteSpace(src)) return null;
 
             var query = new QueryPath(src);
+            if (query.Path is null) return null;
+            
             if (query.Scheme != QueryScheme.File)
             {
                 return query;
             }
 
-            return query.ReplacePath(GetFullPath(query.Path));
-        }
-
-        private string? GetFullPath(string? src)
-        {
-            if (src is null) return null;
-
-            var path = src.Replace('/', '\\');
-
-            if (Directory.Exists(path))
-            {
-                return System.IO.Path.GetFullPath(path);
-            }
-
-            try
-            {
-                return GetFullArchivePath(path);
-            }
-            catch (FileNotFoundException)
-            {
-                return src;
-            }
-        }
-
-        private string? GetFullArchivePath(string path)
-        {
-            if (path is null) return null;
-
-            if (File.Exists(path))
-            {
-                return System.IO.Path.GetFullPath(path);
-            }
-
-            var index = path.LastIndexOf('\\');
-            if (index < 0)
-            {
-                throw new FileNotFoundException();
-            }
-
-            var directory = path[..index];
-            var filename = path[index..];
-
-            directory = GetFullArchivePath(directory);
-
-            return LoosePath.Combine(directory, filename);
+            return query.ReplacePath(Path.GetFullPath(query.Path));
         }
     }
 

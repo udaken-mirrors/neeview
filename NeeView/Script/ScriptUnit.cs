@@ -20,13 +20,13 @@ namespace NeeView
             _pool = pool;
         }
 
-        public void Execute(object? sender, string path, string name, string? argument)
+        public void Execute(object? sender, string path, string? name, string? argument)
         {
             Task.Run(() => ExecuteInner(sender, path, name, argument));
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060:未使用のパラメーターを削除します", Justification = "<保留中>")]
-        private void ExecuteInner(object? sender, string path, string name, string? argument)
+        private void ExecuteInner(object? sender, string path, string? name, string? argument)
         {
             var engine = new JavaScriptEngine() { IsToastEnable = true };
 
