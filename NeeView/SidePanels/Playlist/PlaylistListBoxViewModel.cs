@@ -19,6 +19,7 @@ namespace NeeView
     {
         private Playlist? _model;
         private ObservableCollection<PlaylistItem>? _items;
+        private PlaylistItem? _selectedItem;
         private Visibility _visibility = Visibility.Hidden;
 
 
@@ -49,6 +50,8 @@ namespace NeeView
 
         public bool IsThumbnailVisible => _model is not null && _model.IsThumbnailVisible;
 
+        public bool IsCurrentPlaylistBookOpened => _model is not null && _model.IsCurrentPlaylistBookOpened;
+
         public CollectionViewSource CollectionViewSource { get; private set; }
 
 
@@ -58,8 +61,6 @@ namespace NeeView
             get { return _items; }
             private set { SetProperty(ref _items, value); }
         }
-
-        private PlaylistItem? _selectedItem;
 
         public PlaylistItem? SelectedItem
         {
@@ -377,6 +378,13 @@ namespace NeeView
             if (_model is null) return;
 
             _model.Open(item);
+        }
+
+        public void OpenSource(PlaylistItem item)
+        {
+            if (_model is null) return;
+
+            _model.OpenSource(item);
         }
 
         public bool CanMovePrevious()

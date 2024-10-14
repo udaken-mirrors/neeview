@@ -128,6 +128,8 @@ namespace NeeView
             }
         }
 
+        public bool IsCurrentPlaylistBookOpened => this.Path is not null && this.Path == BookOperation.Current.Address;
+
         public PanelListItemStyle PanelListItemStyle
         {
             get => Config.Current.Playlist.PanelListItemStyle;
@@ -425,7 +427,7 @@ namespace NeeView
         {
             if (item is null) return;
 
-            if (this.Path == BookOperation.Current.Address)
+            if (IsCurrentPlaylistBookOpened)
             {
                 // try jump in current book.
                 var isSuccess = BookOperation.Current.JumpPageWithTarget(this, item.Path);
@@ -437,9 +439,16 @@ namespace NeeView
             else
             {
                 // try open page at new book.
-                var options = BookLoadOption.None;
-                BookHub.Current.RequestLoad(this, item.Path, null, options, true);
+                OpenSource(item);
             }
+        }
+
+        public void OpenSource(PlaylistItem item)
+        {
+            if (item is null) return;
+
+            var options = BookLoadOption.None;
+            BookHub.Current.RequestLoad(this, item.Path, null, options, true);
         }
 
         private List<PlaylistItem> CreateTargetItems(List<PlaylistItem> viewItems, PlaylistItem sample)

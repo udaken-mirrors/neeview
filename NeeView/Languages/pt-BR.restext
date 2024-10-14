@@ -1702,6 +1702,7 @@ PlaylistItem.Menu.Delete=_Excluir
 PlaylistItem.Menu.Explorer=Abrir no e_xplorer
 PlaylistItem.Menu.MoveToAnother=Mover para outra lista de reprodução
 PlaylistItem.Menu.Open=_Abrir
+PlaylistItem.Menu.OpenSource=
 PlaylistItem.Menu.Rename=Reno_mear
 PlaylistItemAccessor=Acessador de itens da lista de reprodução
 PlaylistItemAccessor.Name=Nome do item

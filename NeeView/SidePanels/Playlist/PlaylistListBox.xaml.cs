@@ -70,6 +70,7 @@ namespace NeeView
         public readonly static RoutedCommand MoveUpCommand = new(nameof(MoveUpCommand), typeof(PlaylistListBox));
         public readonly static RoutedCommand MoveDownCommand = new(nameof(MoveDownCommand), typeof(PlaylistListBox));
         public readonly static RoutedCommand OpenCommand = new(nameof(OpenCommand), typeof(PlaylistListBox));
+        public readonly static RoutedCommand OpenSourceCommand = new(nameof(OpenSourceCommand), typeof(PlaylistListBox));
         public readonly static RoutedCommand RenameCommand = new(nameof(RenameCommand), typeof(PlaylistListBox));
         public readonly static RoutedCommand RemoveCommand = new(nameof(RemoveCommand), typeof(PlaylistListBox));
         public readonly static RoutedCommand MoveToAnotherCommand = new(nameof(MoveToAnotherCommand), typeof(PlaylistListBox));
@@ -96,6 +97,7 @@ namespace NeeView
             this.CommandBindings.Add(new CommandBinding(MoveUpCommand, MoveUpCommand_Execute, MoveUpCommand_CanExecute));
             this.CommandBindings.Add(new CommandBinding(MoveDownCommand, MoveDownCommand_Execute, MoveDownCommand_CanExecute));
             this.ListBox.CommandBindings.Add(new CommandBinding(OpenCommand, OpenCommand_Execute, OpenCommand_CanExecute));
+            this.ListBox.CommandBindings.Add(new CommandBinding(OpenSourceCommand, OpenSourceCommand_Execute, OpenSourceCommand_CanExecute));
             this.ListBox.CommandBindings.Add(new CommandBinding(RenameCommand, RenameCommand_Execute, RenameCommand_CanExecute));
             this.ListBox.CommandBindings.Add(new CommandBinding(RemoveCommand, RemoveCommand_Execute, RemoveCommand_CanExecute));
             this.ListBox.CommandBindings.Add(new CommandBinding(MoveToAnotherCommand, MoveToAnotherCommand_Execute, MoveToAnotherCommand_CanExecute));
@@ -161,6 +163,17 @@ namespace NeeView
         {
             if (this.ListBox.SelectedItem is not PlaylistItem item) return;
             _vm.Open(item);
+        }
+        
+        private void OpenSourceCommand_CanExecute(object? sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = true;
+        }
+
+        private void OpenSourceCommand_Execute(object? sender, ExecutedRoutedEventArgs e)
+        {
+            if (this.ListBox.SelectedItem is not PlaylistItem item) return;
+            _vm.OpenSource(item);
         }
 
         private void RenameCommand_CanExecute(object? sender, CanExecuteRoutedEventArgs e)
@@ -517,6 +530,12 @@ namespace NeeView
             var listBox = this.ListBox;
             contextMenu.Items.Clear();
             contextMenu.Items.Add(new MenuItem() { Header = ResourceService.GetString("@PlaylistItem.Menu.Open"), Command = OpenCommand });
+
+            if (_vm.IsCurrentPlaylistBookOpened)
+            {
+                contextMenu.Items.Add(new MenuItem() { Header = ResourceService.GetString("@PlaylistItem.Menu.OpenSource"), Command = OpenSourceCommand });
+            }
+
             contextMenu.Items.Add(new Separator());
             contextMenu.Items.Add(new MenuItem() { Header = ResourceService.GetString("@PlaylistItem.Menu.Explorer"), Command = OpenExplorerCommand });
             contextMenu.Items.Add(ExternalAppCollectionUtility.CreateExternalAppItem(_commandResource.OpenExternalApp_CanExecute(listBox), OpenExternalAppCommand, OpenExternalAppDialogCommand));

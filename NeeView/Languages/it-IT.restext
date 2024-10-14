@@ -1708,6 +1708,7 @@ PlaylistItem.Menu.Delete=Elimina
 PlaylistItem.Menu.Explorer=Apri in Esplora file
 PlaylistItem.Menu.MoveToAnother=Sposta in altra playlist
 PlaylistItem.Menu.Open=Apri
+PlaylistItem.Menu.OpenSource=
 PlaylistItem.Menu.Rename=Rinomina
 PlaylistItemAccessor=Playlist item accessor
 PlaylistItemAccessor.Name=Nome elemento

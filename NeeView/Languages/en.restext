@@ -1702,6 +1702,7 @@ PlaylistItem.Menu.Delete=_Delete
 PlaylistItem.Menu.Explorer=Open in e_xplorer
 PlaylistItem.Menu.MoveToAnother=Move to another playlist
 PlaylistItem.Menu.Open=_Open
+PlaylistItem.Menu.OpenSource=Open source file
 PlaylistItem.Menu.Rename=Rena_me
 PlaylistItemAccessor=Playlist item accessor
 PlaylistItemAccessor.Name=Item name

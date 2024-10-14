@@ -1693,6 +1693,7 @@ PlaylistItem.Menu.Delete=削除(_D)
 PlaylistItem.Menu.Explorer=エクスプローラーで開く(_X)
 PlaylistItem.Menu.MoveToAnother=ほかのプレイリストに移動
 PlaylistItem.Menu.Open=開く(_O)
+PlaylistItem.Menu.OpenSource=元のファイルを開く
 PlaylistItem.Menu.Rename=名前の変更(_M)
 PlaylistItemAccessor=プレイリスト項目のアクセサ
 PlaylistItemAccessor.Name=項目名

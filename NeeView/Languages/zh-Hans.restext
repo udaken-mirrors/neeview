@@ -1693,6 +1693,7 @@ PlaylistItem.Menu.Delete=删除(_D)
 PlaylistItem.Menu.Explorer=用资源管理器打开(_X)
 PlaylistItem.Menu.MoveToAnother=移动到别的播放列表
 PlaylistItem.Menu.Open=打开(_O)
+PlaylistItem.Menu.OpenSource=
 PlaylistItem.Menu.Rename=重新命名(_M)
 PlaylistItemAccessor=播放列表项目存取器
 PlaylistItemAccessor.Name=项目名称
