@@ -112,3 +112,11 @@ QuickAccessFolderNodeAccessor.Insert.Example=@[/Resources/Scripts/QuickAccessFol
 BookmarkFolderNodeAccessor.Add.Example=@[/Resources/Scripts/BookmarkFolderNodeAccessor.Add.Example.nvjs]
 
 InformationKey.ExtraEmpty=@Word.None
+
+WidePageStretch.None=@Word.None
+
+WidePageVerticalAlignment.Top=@VerticalAlignment.Top
+WidePageVerticalAlignment.Center=@VerticalAlignment.Center
+WidePageVerticalAlignment.Bottom=@VerticalAlignment.Bottom
+
+SettingPage.Book.WidePage=@PageMode.WidePage

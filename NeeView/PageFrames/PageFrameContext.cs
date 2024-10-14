@@ -88,6 +88,8 @@ namespace NeeView.PageFrames
         public bool IsReadyToPageMove => _config.Book.IsReadyToPageMove && !_config.Book.IsPanorama;
         public bool IsNotifyPageLoop => _config.Book.IsNotifyPageLoop && !SlideShow.Current.IsPlayingSlideShow;
         public bool IsStaticWidePage => _config.Book.IsStaticWidePage && _bookSetting.PageMode == PageMode.WidePage;
+        public WidePageStretch WidePageStretch => _config.Book.WidePageStretch;
+        public WidePageVerticalAlignment WidePageVerticalAlignment => _config.Book.WidePageVerticalAlignment;
 
         public bool AllowFileContentAutoRotate => _config.View.AllowFileContentAutoRotate;
         public bool AllowEnlarge => _config.View.AllowStretchScaleUp;
@@ -210,6 +212,14 @@ namespace NeeView.PageFrames
 
                 case nameof(BookConfig.IsReadyToPageMove):
                     RaisePropertyChanged(nameof(IsReadyToPageMove));
+                    break;
+
+                case nameof(BookConfig.WidePageStretch):
+                    RaisePropertyChanged(nameof(WidePageStretch));
+                    break;
+
+                case nameof(BookConfig.WidePageVerticalAlignment):
+                    RaisePropertyChanged(nameof(WidePageVerticalAlignment));
                     break;
             }
         }

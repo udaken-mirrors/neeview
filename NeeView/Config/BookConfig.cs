@@ -35,6 +35,8 @@ namespace NeeView
         private PageFrameOrientation _orientation = PageFrameOrientation.Horizontal;
         private double _dividePageRate = 0.5;
         private bool _isStaticWidePage;
+        private WidePageStretch _widePageStretch = WidePageStretch.UniformHeight;
+        private WidePageVerticalAlignment _widePageVerticalAlignment = WidePageVerticalAlignment.Center;
 
 
         /// <summary>
@@ -223,6 +225,22 @@ namespace NeeView
         {
             get { return _isStaticWidePage; }
             set { SetProperty(ref _isStaticWidePage, value); }
+        }
+
+        // 2ページモードでの拡大方法
+        [PropertyMember]
+        public WidePageStretch WidePageStretch
+        {
+            get { return _widePageStretch; }
+            set { SetProperty(ref _widePageStretch, value); }
+        }
+
+        // 2ページモードでの縦方向の配置方法
+        [PropertyMember]
+        public WidePageVerticalAlignment WidePageVerticalAlignment
+        {
+            get { return _widePageVerticalAlignment; }
+            set { SetProperty(ref _widePageVerticalAlignment, value); }
         }
 
         #region Obsolete

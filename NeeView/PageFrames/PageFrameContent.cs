@@ -469,8 +469,14 @@ namespace NeeView.PageFrames
             var x = _pageFrame.StretchedSize.Width * -0.5;
             foreach (var content in _viewContents.Direction(_pageFrame.Direction))
             {
+                var y = _context.WidePageVerticalAlignment switch
+                {
+                    WidePageVerticalAlignment.Top => _pageFrame.StretchedSize.Height * -0.5,
+                    WidePageVerticalAlignment.Bottom => _pageFrame.StretchedSize.Height * 0.5 - content.Height,
+                    _ => content.Height * -0.5,
+                };
                 Canvas.SetLeft(content, x);
-                Canvas.SetTop(content, content.Height * -0.5);
+                Canvas.SetTop(content, y);
                 x += content.Width + _pageFrame.Span;
             }
         }

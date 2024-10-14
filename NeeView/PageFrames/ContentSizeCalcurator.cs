@@ -14,7 +14,7 @@ namespace NeeView.PageFrames
     /// </summary>
     // NOTE: NeeView exist
     // TODO: ２つ並べたコンテンツのサイズをあわせる計算。 PageSource に Scale を保持させる
-    public class ContentSizeCalculator
+    public class ContentSizeCalculator : IContentSizeCalculatorProfile
     {
         private readonly IContentSizeCalculatorProfile _profile;
 
@@ -31,6 +31,10 @@ namespace NeeView.PageFrames
         public double ContentsSpace => _profile.ContentsSpace;
         public bool AllowEnlarge => _profile.AllowEnlarge;
         public bool AllowReduce => _profile.AllowReduce;
+        public Size ReferenceSize => _profile.ReferenceSize;
+        public DpiScale DpiScale => _profile.DpiScale;
+        public WidePageStretch WidePageStretch => _profile.WidePageStretch;
+
 
         /// <summary>
         /// 自動回転を求める
@@ -239,8 +243,25 @@ namespace NeeView.PageFrames
                 return contents.Select(e => 1.0).ToArray();
             }
 
+            return WidePageStretch switch
+            {
+                WidePageStretch.None => contents.Select(e => 1.0).ToArray(),
+                WidePageStretch.UniformHeight => CalcUniformHeightScale(contents),
+                WidePageStretch.UniformWidth => CalcUniformWidthScale(contents),
+                _ => throw new InvalidOperationException($"WidePageAlignment.{WidePageStretch} is not supported."),
+            };
+        }
+
+        private static double[] CalcUniformHeightScale(IEnumerable<Size> contents)
+        {
             var height = contents.Max(e => e.Height);
             return contents.Select(e => height / e.Height).ToArray();
+        }
+
+        private static double[] CalcUniformWidthScale(IEnumerable<Size> contents)
+        {
+            var width = contents.Sum(e => e.Width) / contents.Count();
+            return contents.Select(e => width / e.Width).ToArray();
         }
 
         // DPIを加味した基準スケール

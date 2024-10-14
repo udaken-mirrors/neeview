@@ -13,5 +13,6 @@ namespace NeeView.PageFrames
         public Size ReferenceSize { get; }
         public Size CanvasSize { get; }
         public DpiScale DpiScale { get; }
+        public WidePageStretch WidePageStretch { get; }
     }
 }

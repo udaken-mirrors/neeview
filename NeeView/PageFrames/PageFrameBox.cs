@@ -583,6 +583,8 @@ namespace NeeView.PageFrames
                 case nameof(Context.IsSupportedSingleFirstPage):
                 case nameof(Context.IsSupportedSingleLastPage):
                 case nameof(Context.IsSupportedWidePage):
+                case nameof(Context.WidePageStretch):
+                case nameof(Context.WidePageVerticalAlignment):
                     UpdateContainers(PageFrameDirtyLevel.Replace, TransformMask.None, true, true);
                     break;
 

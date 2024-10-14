@@ -20,18 +20,25 @@ namespace NeeView.Setting
                 new SettingPageBookMove(),
             };
 
+            this.Items = new List<SettingItem>();
+
             var section = new SettingItemSection(Properties.TextResources.GetString("SettingPage.Book.General"));
             section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.System, nameof(SystemConfig.ArchiveRecursiveMode))));
             section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.System, nameof(SystemConfig.BookPageCollectMode))));
             section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.System, nameof(SystemConfig.IsOpenBookAtCurrentPlace))));
             section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.Book, nameof(BookConfig.Excludes)),
                 new SettingItemCollectionControl() { Collection = Config.Current.Book.Excludes, AddDialogHeader = Properties.TextResources.GetString("Word.ExcludePath"), DefaultCollection = BookConfig.DefaultExcludes }));
-            section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.Book, nameof(BookConfig.WideRatio))));
-            section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.Book, nameof(BookConfig.ContentsSpace))));
             section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.Book, nameof(BookConfig.FrameSpace))));
+            section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.Book, nameof(BookConfig.WideRatio))));
             section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.Book, nameof(BookConfig.DividePageRate))));
             section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.Book, nameof(BookConfig.IsSortFileFirst))));
             section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.Book, nameof(BookConfig.ResetPageWhenRandomSort))));
+            this.Items.Add(section);
+
+            section = new SettingItemSection(ResourceService.GetString("@SettingPage.Book.WidePage"));
+            section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.Book, nameof(BookConfig.ContentsSpace))));
+            section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.Book, nameof(BookConfig.WidePageStretch))));
+            section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.Book, nameof(BookConfig.WidePageVerticalAlignment))));
             section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.Book, nameof(BookConfig.IsStaticWidePage))));
             section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.Book, nameof(BookConfig.IsInsertDummyPage))));
             section.Children.Add(new SettingItemSubProperty(PropertyMemberElement.Create(Config.Current.Book, nameof(BookConfig.IsInsertDummyFirstPage)))
@@ -43,7 +50,7 @@ namespace NeeView.Setting
                 IsEnabled = new IsEnabledPropertyValue(Config.Current.Book, nameof(BookConfig.IsInsertDummyPage)),
             });
             section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.Book, nameof(BookConfig.DummyPageColor))));
-            this.Items = new List<SettingItem>() { section };
+            this.Items.Add(section);
         }
     }
 
