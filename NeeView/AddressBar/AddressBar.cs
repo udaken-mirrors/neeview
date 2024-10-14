@@ -100,7 +100,7 @@ namespace NeeView
                 path = target;
             }
 
-            BookHub.Current.RequestLoad(this, path, null, option | BookLoadOption.IsBook, true);
+            BookHub.Current.RequestLoad(this, path, null, option, true);
         }
     }
 }
