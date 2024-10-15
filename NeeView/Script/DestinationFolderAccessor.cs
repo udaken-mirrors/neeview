@@ -57,24 +57,6 @@ namespace NeeView
             var async = CopyAsync(paths, CancellationToken.None);
         }
 
-        private async Task CopyAsync(PageAccessor[] pages, CancellationToken token)
-        {
-            // ページは実体化する
-            var items = await CreateRealizedFilePathListAsync(pages.Select(e => e.Source), token);
-            await _folder.CopyAsyncNoExceptions(items, token);
-        }
-
-        private async Task CopyAsync(string[] paths, CancellationToken token)
-        {
-            // ページは実体化する
-            var map = paths.Select(e => (Key: e, Page: GetPage(e))).ToList();
-            var items1 = map.Where(e => e.Page is null).Select(e => e.Key);
-            var items2 = await CreateRealizedFilePathListAsync(map.Where(e => e.Page is not null).Select(e => e.Page).WhereNotNull(), token);
-            var items = items1.Concat(items2).ToList();
-            await _folder.CopyAsyncNoExceptions(items, token);
-        }
-
-
         [WordNodeMember]
         public void MovePage(PageAccessor page)
         {
@@ -106,19 +88,69 @@ namespace NeeView
             var async = _folder.MoveAsyncNoExceptions(paths, CancellationToken.None);
         }
 
+
         private static Page? GetPage(string path)
         {
             return BookHub.Current.GetCurrentBook()?.Pages.GetPageWithEntryFullName(path);
         }
 
-        private static async Task<List<string>> CreateRealizedFilePathListAsync(IEnumerable<Page> pages, CancellationToken token)
+        private async Task CopyAsync(PageAccessor[] pages, CancellationToken token)
         {
-            return await PageUtility.CreateRealizedFilePathListAsync(pages, token);
+            try
+            {
+                var entries = pages.Select(e => e.Source.ArchiveEntry);
+                var items = await RealizeArchiveEntry(entries, token);
+                await _folder.CopyAsyncNoExceptions(items, token);
+            }
+            catch (OperationCanceledException)
+            {
+            }
+            catch (Exception ex)
+            {
+                // NOTE: Script からのエラーは Toast で通知する
+                ToastService.Current.Show(new Toast(ex.Message, ResourceService.GetString("@Bookshelf.CopyToFolderFailed"), ToastIcon.Error));
+            }
         }
 
-        private static List<string> CreateRealizedFilePathList(IEnumerable<Page> pages)
+        private async Task CopyAsync(string[] paths, CancellationToken token)
         {
-            return Task.Run(async () => await PageUtility.CreateRealizedFilePathListAsync(pages, CancellationToken.None).ConfigureAwait(false)).Result;
+            try
+            {
+                var entries = await PathToArchiveEntry(paths, token);
+                var items = await RealizeArchiveEntry(entries, token);
+                await _folder.CopyAsyncNoExceptions(items, token);
+            }
+            catch (OperationCanceledException)
+            {
+            }
+            catch (Exception ex)
+            {
+                ToastService.Current.Show(new Toast(ex.Message, ResourceService.GetString("@Bookshelf.CopyToFolderFailed"), ToastIcon.Error));
+            }
+        }
+
+        private static async Task<List<ArchiveEntry>> PathToArchiveEntry(IEnumerable<string> paths, CancellationToken token)
+        {
+            var entries = new List<ArchiveEntry>();
+            foreach (var path in paths)
+            {
+                entries.Add(await ArchiveEntryUtility.CreateAsync(path, token));
+            }
+            return entries;
+        }
+
+        private static async Task<List<string>> RealizeArchiveEntry(IEnumerable<ArchiveEntry> entries, CancellationToken token)
+        {
+            var paths = new List<string>();
+            foreach (var entry in entries)
+            {
+                var path = await entry.RealizeAsync(token);
+                if (path is not null)
+                {
+                    paths.Add(path);
+                }
+            }
+            return paths.Distinct().ToList();
         }
 
     }

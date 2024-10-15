@@ -16,7 +16,7 @@ namespace NeeView
 
         public override bool CanExecute(object? sender, CommandContext e)
         {
-            return BookOperation.Current.Control.CanOpenFilePlace();
+            return BookOperation.Current.Control.CanCopyToClipboard(e.Parameter.Cast<CopyFileCommandParameter>());
         }
 
         public override void Execute(object? sender, CommandContext e)

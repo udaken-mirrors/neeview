@@ -61,17 +61,7 @@ namespace NeeView
         public async Task ExecuteAsync(IEnumerable<Page> pages, CancellationToken token)
         {
             var external = new ExternalAppUtility();
-            try
-            {
-                await external.CallAsync(pages, this, token);
-            }
-            catch (OperationCanceledException)
-            {
-            }
-            catch (Exception ex)
-            {
-                new MessageDialog(ex.Message, Properties.TextResources.GetString("OpenApplicationErrorDialog.Title")).ShowDialog();
-            }
+            await external.CallAsync(pages, this, token);
         }
 
         public void Execute(IEnumerable<string> files)

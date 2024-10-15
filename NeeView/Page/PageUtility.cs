@@ -18,7 +18,7 @@ namespace NeeView
         /// </summary>
         public static bool CanCreateRealizedFilePathList(IEnumerable<Page> pages)
         {
-            return pages.All(e => e.ArchiveEntry.IsFileSystem || !e.Content.ArchiveEntry.IsArchiveDirectory());
+            return pages.Any() && pages.All(e => e.ArchiveEntry.CanRealize());
         }
 
         /// <summary>
@@ -29,68 +29,17 @@ namespace NeeView
             return await CreateFilePathListAsync(pages, ArchivePolicy.SendExtractFile, token);
         }
 
-
         public static async Task<List<string>> CreateFilePathListAsync(IEnumerable<Page> pages, ArchivePolicy archivePolicy, CancellationToken token)
         {
             var files = new List<string>();
-
             foreach (var page in pages)
             {
-                token.ThrowIfCancellationRequested();
-
-                // file
-                if (page.ArchiveEntry.IsFileSystem)
+                var path = await page.ArchiveEntry.RealizeAsync(archivePolicy, token);
+                if (path != null)
                 {
-                    // TODO: IsFileSystemのときはGetFilePlace()は nullでないはず
-                    var path = page.GetFilePlace();
-                    if (path is not null)
-                    {
-                        files.Add(path);
-                    }
-                }
-                else if (page.ArchiveEntry.Instance is ArchiveEntry archiveEntry && archiveEntry.IsFileSystem)
-                {
-                    files.Add(archiveEntry.EntryFullName);
-                }
-                // in archive
-                else
-                {
-                    switch (archivePolicy)
-                    {
-                        case ArchivePolicy.None:
-                            break;
-
-                        case ArchivePolicy.SendArchiveFile:
-                            var path = page.GetFilePlace();
-                            if (path is not null)
-                            {
-                                files.Add(path);
-                            }
-                            break;
-
-                        case ArchivePolicy.SendExtractFile:
-                            if (!page.Content.ArchiveEntry.IsArchiveDirectory())
-                            {
-                                var proxy = await page.ArchiveEntry.GetFileProxyAsync(true, token);
-                                files.Add(proxy.Path);
-                            }
-                            else
-                            {
-                                Debug.WriteLine($"CreateFilePathList: Not support archive folder: {page.EntryName}");
-                                files.Add(page.ArchiveEntry.EntryFullName);
-                            }
-                            break;
-
-                        case ArchivePolicy.SendArchivePath:
-                            files.Add(page.ArchiveEntry.EntryFullName);
-                            break;
-
-                        default:
-                            throw new ArgumentOutOfRangeException(nameof(archivePolicy));
-                    }
+                    files.Add(path);
                 }
             }
-
             return files.Distinct().ToList();
         }
     }

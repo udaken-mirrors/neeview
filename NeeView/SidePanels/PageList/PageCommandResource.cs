@@ -192,6 +192,11 @@ namespace NeeView
                     App.Current.MainWindow.Cursor = Cursors.Wait;
                     await CopyAsync(items, CancellationToken.None);
                 }
+                catch (Exception ex)
+                {
+                    App.Current.MainWindow.Cursor = null;
+                    new MessageDialog(ex.Message, Properties.TextResources.GetString("CopyErrorDialog.Title")).ShowDialog();
+                }
                 finally
                 {
                     App.Current.MainWindow.Cursor = null;
@@ -244,7 +249,7 @@ namespace NeeView
             }
             catch (Exception ex)
             {
-                ToastService.Current.Show(new Toast(ex.Message, Properties.TextResources.GetString("Bookshelf.CopyToFolderFailed"), ToastIcon.Error));
+                new MessageDialog(ex.Message, Properties.TextResources.GetString("Bookshelf.CopyToFolderFailed")).ShowDialog();
             }
             finally
             {

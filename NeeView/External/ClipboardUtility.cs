@@ -55,34 +55,41 @@ namespace NeeView
             return await SetDataAsync(data, pages, CreateCopyParameter(), token);
         }
 
-        public static async Task<bool> SetDataAsync(System.Windows.DataObject data, List<Page> pages, CopyFileCommandParameter parameter, CancellationToken token)
+        /// <summary>
+        /// ページのコピーデータ―を DataObject に登録する
+        /// </summary>
+        /// <param name="data">登録先データオブジェクト</param>
+        /// <param name="pages">登録ページ</param>
+        /// <param name="parameter">登録方針</param>
+        /// <param name="token"></param>
+        /// <returns>登録成功/失敗</returns>
+        private static async Task<bool> SetDataAsync(System.Windows.DataObject data, List<Page> pages, CopyFileCommandParameter parameter, CancellationToken token)
         {
-            bool result = false;
+            if (pages.Count == 0) return false;
 
-            if (pages.Count > 0)
-            {
-                data.SetData(pages.Select(x => new QueryPath(x.EntryFullName)).ToQueryPathCollection());
-                result = true;
-            }
+            // query path
+            data.SetData(pages.Select(x => new QueryPath(x.EntryFullName)).ToQueryPathCollection());
 
+            // realize file path
             var files = await PageUtility.CreateFilePathListAsync(pages, parameter.ArchivePolicy, token);
-
             if (files.Count > 0)
             {
                 data.SetData(System.Windows.DataFormats.FileDrop, files.ToArray());
-
-                if (parameter.TextCopyPolicy != TextCopyPolicy.None)
-                {
-                    var paths = (parameter.ArchivePolicy == ArchivePolicy.SendExtractFile && parameter.TextCopyPolicy == TextCopyPolicy.OriginalPath)
-                        ? await PageUtility.CreateFilePathListAsync(pages, ArchivePolicy.SendArchivePath, token)
-                        : files;
-                    data.SetData(System.Windows.DataFormats.UnicodeText, string.Join(System.Environment.NewLine, paths));
-                }
-
-                result = true;
             }
 
-            return result;
+            // file path text
+            if (parameter.TextCopyPolicy != TextCopyPolicy.None)
+            {
+                var paths = (parameter.ArchivePolicy == ArchivePolicy.SendExtractFile && parameter.TextCopyPolicy == TextCopyPolicy.OriginalPath)
+                    ? await PageUtility.CreateFilePathListAsync(pages, ArchivePolicy.SendArchivePath, token)
+                    : files;
+                if (paths.Count > 0)
+                {
+                    data.SetData(System.Windows.DataFormats.UnicodeText, string.Join(System.Environment.NewLine, paths));
+                }
+            }
+
+            return true;
         }
 
         // クリップボードに画像をコピー

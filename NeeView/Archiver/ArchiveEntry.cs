@@ -483,6 +483,74 @@ namespace NeeView
             return await Archiver.RenameAsync(this, name);
         }
 
+        /// <summary>
+        /// エントリの実体化は可能か？
+        /// </summary>
+        public bool CanRealize()
+        {
+            return this.IsFileSystem || !this.IsArchiveDirectory();
+        }
+
+        /// <summary>
+        /// エントリを実体ファイルにする
+        /// </summary>
+        /// <param name="token"></param>
+        /// <returns>実体ファイルのパス</returns>
+        /// <exception cref="ArgumentException"></exception>
+        /// <exception cref="InvalidOperationException"></exception>
+        /// <exception cref="NotSupportedException"></exception>
+        public async Task<string?> RealizeAsync(CancellationToken token)
+        {
+            return await RealizeAsync(ArchivePolicy.SendExtractFile, token);
+        }
+
+        /// <summary>
+        /// エントリを実体ファイルにする
+        /// </summary>
+        /// <param name="archivePolicy">アーカイブファイルのときの方針</param>
+        /// <param name="token"></param>
+        /// <returns>実体ファイルのパス。取得できなかったときは null</returns>
+        /// <exception cref="NotSupportedException">サポートされていない ArchivePolicy</exception>
+        public async Task<string?> RealizeAsync(ArchivePolicy archivePolicy, CancellationToken token)
+        {
+            // file
+            if (this.IsFileSystem)
+            {
+                return this.GetFileSystemPath() ?? throw new InvalidOperationException();
+            }
+
+            // playlist item
+            if (this.Archiver is PlaylistArchive && this.Instance is ArchiveEntry archiveEntry)
+            {
+                return await archiveEntry.RealizeAsync(archivePolicy, token);
+            }
+
+            // in archive
+            switch (archivePolicy)
+            {
+                case ArchivePolicy.SendArchiveFile:
+                    return this.GetFileSystemPath() ?? this.Archiver.GetPlace();
+
+                case ArchivePolicy.SendExtractFile:
+                    if (!this.IsArchiveDirectory())
+                    {
+                        var proxy = await this.GetFileProxyAsync(true, token);
+                        return proxy.Path;
+                    }
+                    else
+                    {
+                        // TODO: ArchiveDirectory 対応
+                        return null;
+                    }
+
+                case ArchivePolicy.SendArchivePath:
+                    return this.EntryFullName;
+
+                default:
+                    throw new NotSupportedException($"Unsupported archive policy: {archivePolicy}");
+            }
+        }
+
         protected virtual void Dispose(bool disposing)
         {
             if (!_disposedValue)

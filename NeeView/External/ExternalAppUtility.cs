@@ -28,8 +28,18 @@ namespace NeeView
         /// <param name="token">キャンセルトークン</param>
         public async Task CallAsync(IEnumerable<Page> pages, IExternalApp options, CancellationToken token)
         {
-            var files = await PageUtility.CreateFilePathListAsync(pages, options.ArchivePolicy, token);
-            Call(files, options);
+            try
+            {
+                var files = await PageUtility.CreateFilePathListAsync(pages, options.ArchivePolicy, token);
+                Call(files, options);
+            }
+            catch (OperationCanceledException)
+            {
+            }
+            catch (Exception ex)
+            {
+                new MessageDialog(ex.Message, Properties.TextResources.GetString("OpenApplicationErrorDialog.Title")).ShowDialog();
+            }
         }
 
         /// <summary>

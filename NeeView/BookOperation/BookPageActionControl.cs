@@ -86,26 +86,23 @@ namespace NeeView
         // ファイルの場所を開くことが可能？
         public bool CanOpenFilePlace()
         {
-            return _book?.CurrentPage != null;
+            return _book.CurrentPage != null;
         }
 
         // ファイルの場所を開く
         public void OpenFilePlace()
         {
-            if (CanOpenFilePlace())
+            string? place = _book.CurrentPage?.GetFolderOpenPlace();
+            if (!string.IsNullOrWhiteSpace(place))
             {
-                string? place = _book?.CurrentPage?.GetFolderOpenPlace();
-                if (!string.IsNullOrWhiteSpace(place))
-                {
-                    ExternalProcess.OpenWithFileManager(place);
-                }
+                ExternalProcess.OpenWithFileManager(place);
             }
         }
 
-
         public bool CanCopyToFolder(DestinationFolder parameter, MultiPagePolicy multiPagePolicy)
         {
-            return _book?.CurrentPage != null;
+            var pages = CollectPages(_book, multiPagePolicy);
+            return PageUtility.CanCreateRealizedFilePathList(pages);
         }
 
         public void CopyToFolder(DestinationFolder parameter, MultiPagePolicy multiPagePolicy)
@@ -115,13 +112,9 @@ namespace NeeView
 
         public async Task CopyToFolderAsync(DestinationFolder parameter, MultiPagePolicy multiPagePolicy, CancellationToken token)
         {
-            var book = this._book;
-            if (book is null) return;
-            if (!CanCopyToFolder(parameter, multiPagePolicy)) return;
-
             try
             {
-                var pages = CollectPages(book, multiPagePolicy);
+                var pages = CollectPages(_book, multiPagePolicy);
                 var paths = await PageUtility.CreateRealizedFilePathListAsync(pages, token);
                 await parameter.CopyAsync(paths, token);
             }
@@ -134,14 +127,10 @@ namespace NeeView
             }
         }
 
-
         // NOTE: parameter は未使用
         public bool CanMoveToFolder(DestinationFolder parameter, MultiPagePolicy multiPagePolicy)
         {
-            var book = this._book;
-            if (book is null) return false;
-
-            var items = CollectPages(book, multiPagePolicy);
+            var items = CollectPages(_book, multiPagePolicy);
             return Config.Current.System.IsFileWriteAccessEnabled
                 && items != null
                 && items.Any()
@@ -155,13 +144,9 @@ namespace NeeView
 
         public async Task MoveToFolderAsync(DestinationFolder parameter, MultiPagePolicy multiPagePolicy, CancellationToken token)
         {
-            var book = this._book;
-            if (book is null) return;
-            if (!CanMoveToFolder(parameter, multiPagePolicy)) return;
-
             try
             {
-                var pages = CollectPages(book, multiPagePolicy).Where(e => e.ArchiveEntry.IsFileSystem);
+                var pages = CollectPages(_book, multiPagePolicy).Where(e => e.ArchiveEntry.IsFileSystem);
                 var paths = pages.Select(e => e.GetFilePlace()).WhereNotNull().ToList();
                 await parameter.MoveAsync(paths, token);
             }
@@ -174,10 +159,9 @@ namespace NeeView
             }
         }
 
-
         public bool CanOpenApplication(IExternalApp parameter, MultiPagePolicy multiPagePolicy)
         {
-            return _book?.CurrentPage != null;
+            return _book.CurrentPage != null;
         }
 
         // 外部アプリで開く
@@ -189,25 +173,9 @@ namespace NeeView
         // 外部アプリで開く
         public async Task OpenApplicationAsync(IExternalApp parameter, MultiPagePolicy multiPagePolicy, CancellationToken token)
         {
-            var book = this._book;
-            if (book is null) return;
-
-            if (CanOpenApplication(parameter, multiPagePolicy))
-            {
-                try
-                {
-                    var external = new ExternalAppUtility();
-                    var pages = CollectPages(book, multiPagePolicy);
-                    await external.CallAsync(pages, parameter, token);
-                }
-                catch (OperationCanceledException)
-                {
-                }
-                catch (Exception ex)
-                {
-                    new MessageDialog(ex.Message, Properties.TextResources.GetString("OpenApplicationErrorDialog.Title")).ShowDialog();
-                }
-            }
+            var pages = CollectPages(_book, multiPagePolicy);
+            var external = new ExternalAppUtility();
+            await external.CallAsync(pages, parameter, token);
         }
 
         private static List<Page> CollectPages(Book book, MultiPagePolicy policy)
@@ -236,6 +204,12 @@ namespace NeeView
             return pages.ToList();
         }
 
+        // クリップボードにコピー
+        public bool CanCopyToClipboard(CopyFileCommandParameter parameter)
+        {
+            var pages = CollectPages(_book, parameter.MultiPagePolicy);
+            return PageUtility.CanCreateRealizedFilePathList(pages);
+        }
 
         // クリップボードにコピー
         public void CopyToClipboard(CopyFileCommandParameter parameter)
@@ -246,20 +220,17 @@ namespace NeeView
         // クリップボードにコピー
         public async Task CopyToClipboardAsync(CopyFileCommandParameter parameter, CancellationToken token)
         {
-            var book = this._book;
-            if (book is null) return;
-
-            if (CanOpenFilePlace())
+            try
             {
-                try
-                {
-                    var pages = CollectPages(book, parameter.MultiPagePolicy);
-                    await ClipboardUtility.CopyAsync(pages, parameter, token);
-                }
-                catch (Exception e)
-                {
-                    new MessageDialog($"{Properties.TextResources.GetString("Word.Cause")}: {e.Message}", Properties.TextResources.GetString("CopyErrorDialog.Title")).ShowDialog();
-                }
+                var pages = CollectPages(_book, parameter.MultiPagePolicy);
+                await ClipboardUtility.CopyAsync(pages, parameter, token);
+            }
+            catch (OperationCanceledException)
+            {
+            }
+            catch (Exception e)
+            {
+                new MessageDialog($"{Properties.TextResources.GetString("Word.Cause")}: {e.Message}", Properties.TextResources.GetString("CopyErrorDialog.Title")).ShowDialog();
             }
         }
 
@@ -271,7 +242,6 @@ namespace NeeView
         {
             return _box.GetSelectedPageFrameContent()?.ViewContents.FirstOrDefault() is IHasImageSource;
         }
-
 
         // ファイルに保存する (ダイアログ)
         // TODO: OutOfMemory対策
