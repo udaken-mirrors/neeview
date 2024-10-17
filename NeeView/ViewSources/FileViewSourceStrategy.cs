@@ -18,7 +18,7 @@ namespace NeeView
 
             var bitmapSource = await AppDispatcher.InvokeAsync(() =>
             {
-                var bitmapSourceCollection = FileIconCollection.Current.CreateFileIcon(pageData.Entry.EntryFullName, IO.FileIconType.FileType, true, true);
+                var bitmapSourceCollection = FileIconCollection.Current.CreateFileIcon(pageData.Entry.SystemPath, IO.FileIconType.FileType, true, true);
                 bitmapSourceCollection.Freeze();
                 return bitmapSourceCollection.GetBitmapSource(48.0);
             });

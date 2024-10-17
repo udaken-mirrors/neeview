@@ -75,16 +75,16 @@ namespace NeeView
         public string EntryName { get; }
 
         // ページ名：ファイル名のみ
-        public string EntryLastName => ArchiveEntry.EntryLastName;
+        public string EntryLastName => LoosePath.GetFileName(EntryName);
 
         // ページ名：スマートパス
         public string EntrySmartName => Prefix == null ? EntryName : EntryName[Prefix.Length..];
 
         // ページ名：フルパス名 (リンクはそのまま)
-        public string EntryFullName => ArchiveEntry.EntryFullName;
+        public string EntryFullName => LoosePath.Combine(BookPath, EntryName);
 
         // ページ名：システムパス (リンクは実体に変換済)
-        public string SystemPath => ArchiveEntry.SystemPath;
+        public string TargetPath => ArchiveEntry.TargetPath;
 
         // ページ名：スマート名用プレフィックス
         public string? Prefix { get; set; }
@@ -311,7 +311,7 @@ namespace NeeView
         // ファイルの場所を取得
         public string GetFilePlace()
         {
-            return ArchiveEntry.GetFileSystemPath() ?? ArchiveEntry.Archiver.GetPlace();
+            return ArchiveEntry.EntityPath ?? ArchiveEntry.Archiver.GetPlace();
         }
 
         // フォルダーを開く、で取得するパス
@@ -377,7 +377,7 @@ namespace NeeView
             RaisePropertyChanged(nameof(EntryLastName));
             RaisePropertyChanged(nameof(EntrySmartName));
             RaisePropertyChanged(nameof(EntryFullName));
-            RaisePropertyChanged(nameof(SystemPath));
+            RaisePropertyChanged(nameof(TargetPath));
         }
 
         public string GetMetaValue(string key, CancellationToken token)

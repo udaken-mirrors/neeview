@@ -23,9 +23,6 @@ namespace NeeView
         }
 
 
-        public override bool IsFileSystem { get; } = true;
-
-
         public override string ToString()
         {
             return Properties.TextResources.GetString("Archiver.Folder");
@@ -100,7 +97,7 @@ namespace NeeView
                 {
                     if (target.Attributes.HasFlag(FileAttributes.Directory))
                     {
-                        entry.Link = target.FullName;
+                        entry.Instance = target.FullName;
                         entry.Length = -1;
                         entry.CreationTime = target.CreationTime;
                         entry.LastWriteTime = target.LastWriteTime;
@@ -108,7 +105,7 @@ namespace NeeView
                     else
                     {
                         var fileInfo = (FileInfo)target;
-                        entry.Link = target.FullName;
+                        entry.Instance = target.FullName;
                         entry.Length = fileInfo.Length;
                         entry.CreationTime = target.CreationTime;
                         entry.LastWriteTime = target.LastWriteTime;
@@ -136,22 +133,49 @@ namespace NeeView
             return entry;
         }
 
+        public override bool IsFileSystemEntry(ArchiveEntry entry)
+        {
+            Debug.Assert(entry.Archiver == this);
+            return true;
+        }
+
+        public override bool IsLinkEntry(ArchiveEntry entry)
+        {
+            Debug.Assert(entry.Archiver == this);
+            return entry.Instance is string;
+        }
+
         // ストリームを開く
         protected override async Task<Stream> OpenStreamInnerAsync(ArchiveEntry entry, CancellationToken token)
         {
-            return await Task.FromResult(new FileStream(entry.Link ?? GetFileSystemPath(entry), FileMode.Open, FileAccess.Read));
+            Debug.Assert(entry.Archiver == this);
+            Debug.Assert(entry.EntityPath is not null);
+            return await Task.FromResult(new FileStream(entry.EntityPath, FileMode.Open, FileAccess.Read));
         }
 
-        // ファイルパス取得
-        public override string GetFileSystemPath(ArchiveEntry entry)
+        public override string GetPlacePath(ArchiveEntry entry)
         {
-            return System.IO.Path.Combine(Path, entry.EntryName);
+            Debug.Assert(entry.Archiver == this);
+            return entry.SystemPath;
+        }
+
+        /// <summary>
+        /// エントリの実体パスを取得
+        /// </summary>
+        /// <param name="entry">エントリ</param>
+        /// <returns>実体パス。アーカイブパス等実在しない場合は null</returns>
+        public override string? GetEntityPath(ArchiveEntry entry)
+        {
+            Debug.Assert(entry.Archiver == this);
+            return entry.Instance is string path ? path : entry.SystemPath;
         }
 
         // ファイル出力
         protected override async Task ExtractToFileInnerAsync(ArchiveEntry entry, string exportFileName, bool isOverwrite, CancellationToken token)
         {
-            await FileIO.CopyFileAsync(GetFileSystemPath(entry), exportFileName, isOverwrite, token);
+            Debug.Assert(entry.Archiver == this);
+            Debug.Assert(entry.EntityPath is not null);
+            await FileIO.CopyFileAsync(entry.EntityPath, exportFileName, isOverwrite, token);
         }
 
         /// <summary>
@@ -159,10 +183,11 @@ namespace NeeView
         /// </summary>
         public override bool Exists(ArchiveEntry entry)
         {
+            Debug.Assert(entry.Archiver == this);
             if (entry.Archiver != this) return false;
             if (entry.IsDeleted) return false;
 
-            var path = entry.GetFileSystemPath();
+            var path = entry.EntityPath;
             return File.Exists(path) || Directory.Exists(path);
         }
 
@@ -175,7 +200,7 @@ namespace NeeView
             if (entries.Any(e => e.Archiver != this)) throw new ArgumentException("There are elements not registered with this archiver.", nameof(entries));
 
             // NOTE: 実際に削除可能かは調べない。削除で失敗させる。
-            return entries.All(e => e.GetFileSystemPath() is not null);
+            return entries.All(e => e.EntityPath is not null);
         }
 
         /// <summary>
@@ -186,7 +211,7 @@ namespace NeeView
         {
             if (entries.Any(e => e.Archiver != this)) throw new ArgumentException("There are elements not registered with this archiver.", nameof(entries));
 
-            var paths = entries.Select(e => e.GetFileSystemPath()).WhereNotNull().ToList();
+            var paths = entries.Select(e => e.EntityPath).WhereNotNull().ToList();
             if (!paths.Any()) return false;
 
             ClearEntryCache();
@@ -223,7 +248,7 @@ namespace NeeView
         {
             if (entry.Archiver != this) throw new ArgumentException("There are elements not registered with this archiver.", nameof(entry));
 
-            var src = entry.GetFileSystemPath();
+            var src = entry.EntityPath;
             if (src is null) return false;
 
             // TODO: 名前の補正処理をここで？UI呼ばせるのはよろしくないのでは？

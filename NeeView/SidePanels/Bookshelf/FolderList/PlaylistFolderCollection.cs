@@ -94,12 +94,11 @@ namespace NeeView
 
         private FolderItem? CreateFolderItem(ArchiveEntry entry)
         {
-            var entity = entry.Instance as ArchiveEntry ?? throw new InvalidOperationException("Playlist entry.Instance must be ArchiveEntry");
+            var entity = entry.InnerEntry ?? throw new InvalidOperationException("Playlist entry.Instance must be ArchiveEntry");
 
             if (entity.IsFileSystem)
             {
-                if (entry.Link is null) throw new InvalidOperationException("Playlist entry.Link must not be null");
-                return _folderItemFactory.CreateFolderItem(entry.Link);
+                return _folderItemFactory.CreateFolderItem(entity.SystemPath);
             }
             else
             {

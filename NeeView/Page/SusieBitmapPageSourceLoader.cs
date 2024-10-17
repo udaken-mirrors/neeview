@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -11,14 +12,14 @@ namespace NeeView
         public async Task<BitmapPageSource> LoadAsync(ArchiveEntryStreamSource streamSource, bool createPictureInfo, bool createSource, CancellationToken token)
         {
             var entry = streamSource.ArchiveEntry;
-            if (!Config.Current.Image.Standard.IsAllFileSupported && !PictureProfile.Current.IsSusieSupported(entry.Link ?? entry.EntryName))
+            if (!Config.Current.Image.Standard.IsAllFileSupported && !PictureProfile.Current.IsSusieSupported(entry.EntityName))
             {
                 return BitmapPageSource.CreateError("not support format");
             }
 
             try
             {
-                var susieImage = entry.IsFileSystem ? await LoadFromFileAsync(streamSource, token) : await LoadFromStreamAsync(streamSource, token);
+                var susieImage = entry.EntityPath is not null ? await LoadFromFileAsync(streamSource, token) : await LoadFromStreamAsync(streamSource, token);
                 return await CreateImageDataSourceAsync(susieImage, createPictureInfo, createSource, token);
             }
             catch (OperationCanceledException)
@@ -71,8 +72,8 @@ namespace NeeView
         {
             var entry = streamSource.ArchiveEntry;
 
-            var path = entry.Link ?? entry.GetFileSystemPath();
-            if (path is null) throw new InvalidOperationException();
+            Debug.Assert(entry.EntityPath != null);
+            var path = entry.EntityPath ?? throw new InvalidOperationException();
 
             var accessor = SusiePluginManager.Current.GetImagePluginAccessor();
             var isCheckExtension = !Config.Current.Image.Standard.IsAllFileSupported;

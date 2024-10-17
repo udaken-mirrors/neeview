@@ -22,7 +22,7 @@ namespace NeeView
             {
                 var bitmapSourceCollection = pageData.ArchiveEntry.IsDirectory
                     ? FileIconCollection.Current.CreateDefaultFolderIcon()
-                    : FileIconCollection.Current.CreateFileIcon(pageData.ArchiveEntry.EntryFullName, IO.FileIconType.FileType, true, true);
+                    : FileIconCollection.Current.CreateFileIcon(pageData.ArchiveEntry.SystemPath, IO.FileIconType.FileType, true, true);
                 bitmapSourceCollection.Freeze();
                 return bitmapSourceCollection.GetBitmapSource(48.0);
             });

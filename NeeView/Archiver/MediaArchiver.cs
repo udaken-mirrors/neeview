@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -45,20 +46,48 @@ namespace NeeView
             return Config.Current.Archive.Media.IsEnabled;
         }
 
-        protected override async Task<Stream> OpenStreamInnerAsync(ArchiveEntry entry, CancellationToken token)
+        public override string GetEntryFullName(ArchiveEntry entry)
         {
-            return await Task.FromResult(new FileStream(GetFileSystemPath(entry), FileMode.Open, FileAccess.Read));
+            Debug.Assert(entry.Archiver == this);
+            // MediaArchiver のエントリはダミーなのでアーカイブのパスをそのまま返す
+            return entry.Archiver.SystemPath;
         }
 
-        public override string GetFileSystemPath(ArchiveEntry entry)
+        public override string GetEntryIdent(ArchiveEntry entry)
         {
-            // エントリのパスはダミーなのでアーカイブのパスのみ返す
+            Debug.Assert(entry.Archiver == this);
+            return entry.Archiver.Ident;
+        }
+
+        public override string GetSystemPath(ArchiveEntry entry)
+        {
+            Debug.Assert(entry.Archiver == this);
+            return entry.Archiver.SystemPath;
+        }
+
+        /// <summary>
+        /// エントリの実体パスを取得
+        /// </summary>
+        /// <param name="entry">エントリ</param>
+        /// <returns>実体パス。アーカイブパス等実在しない場合は null</returns>
+        public override string? GetEntityPath(ArchiveEntry entry)
+        {
+            Debug.Assert(entry.Archiver == this);
             return Path;
+        }
+
+        protected override async Task<Stream> OpenStreamInnerAsync(ArchiveEntry entry, CancellationToken token)
+        {
+            Debug.Assert(entry.Archiver == this);
+            var path = entry.EntityPath ?? throw new InvalidOperationException("Must exist.");
+            return await Task.FromResult(new FileStream(path, FileMode.Open, FileAccess.Read));
         }
 
         protected override async Task ExtractToFileInnerAsync(ArchiveEntry entry, string exportFileName, bool isOverwrite, CancellationToken token)
         {
-            await FileIO.CopyFileAsync(GetFileSystemPath(entry), exportFileName, isOverwrite, token);
+            Debug.Assert(entry.Archiver == this);
+            var path = entry.EntityPath ?? throw new InvalidOperationException("Must exist.");
+            await FileIO.CopyFileAsync(path, exportFileName, isOverwrite, token);
         }
     }
 }

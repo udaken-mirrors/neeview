@@ -59,7 +59,7 @@ namespace NeeView
             {
                 var bitmapSourceCollection = entry.IsDirectory
                     ? FileIconCollection.Current.CreateDefaultFolderIcon()
-                    : FileIconCollection.Current.CreateFileIcon(entry.EntryFullName, IO.FileIconType.FileType, true, true);
+                    : FileIconCollection.Current.CreateFileIcon(entry.SystemPath, IO.FileIconType.FileType, true, true);
                 bitmapSourceCollection.Freeze();
                 return bitmapSourceCollection.GetBitmapSource(48.0);
             });

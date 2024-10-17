@@ -25,7 +25,6 @@ namespace NeeView
         private bool _disposedValue = false;
         private readonly Searcher _searcher;
         private MultiMap<string, Page>? _pageTargetMap;
-        private MultiMap<string, Page>? _pageLinkMap;
 
 
         public BookPageCollection(List<Page> pages)
@@ -87,21 +86,9 @@ namespace NeeView
             {
                 if (_pageTargetMap is null)
                 {
-                    _pageTargetMap = _sourcePages.ToMultiMap(e => e.ArchiveEntry.Target ?? e.EntryFullName, e => e);
+                    _pageTargetMap = _sourcePages.ToMultiMap(e => e.ArchiveEntry.SystemPath, e => e);
                 }
                 return _pageTargetMap;
-            }
-        }
-
-        public MultiMap<string, Page> PageLinkMap
-        {
-            get
-            {
-                if (_pageLinkMap is null)
-                {
-                    _pageLinkMap = _sourcePages.ToMultiMap(e => e.ArchiveEntry.Link ?? e.EntryFullName, e => e);
-                }
-                return _pageLinkMap;
             }
         }
 
@@ -269,13 +256,6 @@ namespace NeeView
             PageTargetMap.TryGetValue(name, out var page);
             return page;
         }
-
-        public Page? GetPageWithLink(string name)
-        {
-            PageLinkMap.TryGetValue(name, out var page);
-            return page;
-        }
-
 
         // ページ番号
         public int GetIndex(Page page) => Pages.IndexOf(page);

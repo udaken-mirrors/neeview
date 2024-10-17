@@ -67,7 +67,7 @@ namespace NeeView
         {
             // NOTE: ディレクトリは更新日をサイズとする
             var length = entry.IsDirectory ? entry.LastWriteTime.ToBinary() : entry.Length;
-            _header = new ThumbnailCacheHeader(entry.SystemPath, length, null, Config.Current.Thumbnail.GetThumbnailImageGenerateHash());
+            _header = new ThumbnailCacheHeader(entry.TargetPath, length, null, Config.Current.Thumbnail.GetThumbnailImageGenerateHash());
         }
 
 

@@ -65,7 +65,7 @@ namespace NeeView
             if (_playlist is null) return null;
             if (pages is null) return null;
 
-            var paths = pages.Select(e => PageToValidPath(e)).ToList();
+            var paths = pages.Select(e => e.ArchiveEntry.SystemPath).ToList();
             return _playlist.Add(paths);
         }
 
@@ -82,23 +82,8 @@ namespace NeeView
             if (_playlist is null) return null;
             if (pages is null) return null;
 
-            var paths = pages.Select(e => PageToValidPath(e)).ToList();
+            var paths = pages.Select(e => e.ArchiveEntry.SystemPath).ToList();
             return _playlist.Insert(paths, targetItem);
-        }
-
-        public static string PageToValidPath(Page page)
-        {
-            return ArchiveEntryToValidPath(page.ArchiveEntry);
-        }
-
-        public static string ArchiveEntryToValidPath(ArchiveEntry entry)
-        {
-            return entry.Archiver switch
-            {
-                PlaylistArchive => entry.Target ?? entry.SystemPath,
-                MediaArchiver => entry.Archiver.SystemPath,
-                _ => entry.EntryFullName
-            };
         }
 
         public bool Remove(Page page)

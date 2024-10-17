@@ -117,18 +117,6 @@ namespace NeeView
         public string EntryName { get; private set; } = "";
 
         /// <summary>
-        /// エントリのターゲットパス。<br/>
-        /// プレイリストの場合の参照先パスになる(アーカイブパスの可能性あり)
-        /// </summary>
-        public string? Target { get; set; }
-
-        /// <summary>
-        /// ショートカットの場合のリンク先パス。<br/>
-        /// プレイリストの場合はリンクを解決した参照先パスになる
-        /// </summary>
-        public string? Link { get; set; }
-
-        /// <summary>
         /// エントリ名のファイル名
         /// </summary>
         /// 001.jpg
@@ -137,7 +125,7 @@ namespace NeeView
         /// <summary>
         /// エントリのフルネーム
         /// </summary>
-        public string EntryFullName => LoosePath.Combine(Archiver.SystemPath, EntryName);
+        public string EntryFullName => Archiver.GetEntryFullName(this);
 
         /// <summary>
         /// ルートアーカイバー
@@ -152,28 +140,43 @@ namespace NeeView
         public string RootArchiverName => RootArchiver.EntryName;
 
         /// <summary>
-        /// エクスプローラーから指定可能なパス
+        /// 対象ファイルのパス<br/>
+        /// ファイルの場所を開くときに使用する
         /// </summary>
-        public string SystemPath
-        {
-            get
-            {
-                if (Link != null)
-                {
-                    return Link;
-                }
-                else
-                {
-                    return EntryFullName;
-                }
-            }
-        }
+        public string PlacePath => Archiver.GetPlacePath(this);
+
+        /// <summary>
+        /// 対象の絶対パス<br/>
+        /// プレイリストの場合はターゲットパスになる
+        /// </summary>
+        public string SystemPath => Archiver.GetSystemPath(this);
+
+        /// <summary>
+        /// 実体パス
+        /// </summary>
+        /// <remarks>
+        /// 存在するアクセス可能パス。アーカイブパス等では null
+        /// </remarks>
+        public string? EntityPath => Archiver.GetEntityPath(this);
+
+        /// <summary>
+        /// 実体パスの名前
+        /// </summary>
+        /// <remarks>
+        /// ファイルの種類判定に使用する
+        /// </remarks>
+        public string EntityName => EntityPath is not null ? LoosePath.GetFileName(EntityPath) : EntryLastName;
+
+        /// <summary>
+        /// リンクを解決した絶対パス
+        /// </summary>
+        public string TargetPath => EntityPath ?? SystemPath;
 
         /// <summary>
         /// 識別名
         /// アーカイブ内では重複名があるので登録番号を含めたユニークな名前にする
         /// </summary>
-        public string Ident => LoosePath.Combine(Archiver.Ident, $"{Id}.{EntryName}");
+        public string Ident => Archiver.GetEntryIdent(this);
 
         /// <summary>
         /// ファイルサイズ。
@@ -185,13 +188,6 @@ namespace NeeView
         /// ディレクトリ？
         /// </summary>
         public bool IsDirectory => Length == -1;
-
-#if false
-        /// <summary>
-        /// ディレクトリは空であるか
-        /// </summary>
-        public bool IsEmpty { get; set; }
-#endif
 
         /// <summary>
         /// ファイル作成日
@@ -206,6 +202,9 @@ namespace NeeView
         /// <summary>
         /// ファイルシステム所属判定
         /// </summary>
+        /// <remarks>
+        /// File.Move() できるかどうかの基準
+        /// </remarks>
         public bool IsFileSystem => Archiver.IsFileSystemEntry(this);
 
         /// <summary>
@@ -217,10 +216,17 @@ namespace NeeView
         /// ショートカット判定
         /// </summary>
         /// <remarks>
-        /// プレイリスト自体はショートカット扱いとする。
-        /// プレイリスト項目はショートカットとみなさない。
+        /// プレイリスト自体はショートカット扱いとするが、プレイリスト項目はショートカットとみなさない。
         /// </remarks>
-        public bool IsShortcut => PlaylistArchive.IsSupportExtension(EntryName) || (Archiver is not PlaylistArchive && Link != null);
+        public bool IsShortcut => PlaylistArchive.IsSupportExtension(EntityName) || Archiver.IsLinkEntry(this);
+
+        /// <summary>
+        /// 内部エントリ
+        /// </summary>
+        /// <remarks>
+        /// プレイリストのターゲット用
+        /// </remarks>
+        public ArchiveEntry? InnerEntry { get; init; }
 
         /// <summary>
         /// エントリ名の正規化
@@ -267,15 +273,6 @@ namespace NeeView
         }
 
         /// <summary>
-        /// ファイルシステムでのパスを返す
-        /// </summary>
-        /// <returns>パス。圧縮ファイルの場合は null</returns>
-        public string? GetFileSystemPath()
-        {
-            return Archiver.GetFileSystemPath(this);
-        }
-
-        /// <summary>
         /// ストリームを開く
         /// </summary>
         /// <returns>Stream</returns>
@@ -318,10 +315,10 @@ namespace NeeView
         /// <returns>ファイル</returns>
         public async Task<FileProxy> CreateFileProxyAsync(TempArchiveEntryNamePolicy fileNamePolicy, bool isOverwrite, CancellationToken token)
         {
-            var targetPath = Link ?? GetFileSystemPath();
-            if (targetPath is not null && (this.Archiver is FolderArchive || this.Archiver is MediaArchiver || IsFileSystem))
+            var entityPath = EntityPath;
+            if (entityPath is not null)
             {
-                return new FileProxy(targetPath);
+                return new FileProxy(entityPath);
             }
 
             await WaitPreExtractAsync(token);
@@ -363,6 +360,27 @@ namespace NeeView
             await Archiver.WaitPreExtractAsync(this, token);
         }
 
+
+        /// <summary>
+        /// アーカイブ判定
+        /// </summary>
+        /// <param name="isAllowFileSystem"></param>
+        /// <param name="isAllowMedia"></param>
+        /// <returns></returns>
+        public bool IsArchiveSupported(bool isAllowFileSystem = true, bool isAllowMedia = true)
+        {
+            return ArchiverManager.Current.IsSupported(TargetPath, isAllowFileSystem, isAllowMedia);
+        }
+
+        /// <summary>
+        /// アーカイブタイプ取得
+        /// </summary>
+        /// <returns></returns>
+        public ArchiverType GetArchiveSupportedType()
+        {
+            return ArchiverManager.Current.GetSupportedType(TargetPath);
+        }
+
         /// <summary>
         /// このエントリがブックであるかを判定。
         /// アーカイブのほかメディアを含める
@@ -374,7 +392,7 @@ namespace NeeView
                 return true;
             }
 
-            return ArchiverManager.Current.IsSupported(this.Link ?? this.EntryName, false, true);
+            return IsArchiveSupported(false, true);
         }
 
         /// <summary>
@@ -383,12 +401,17 @@ namespace NeeView
         /// </summary>
         public bool IsArchive()
         {
+            if (InnerEntry is not null)
+            {
+                return InnerEntry.IsArchive();
+            }
+
             if (this.IsDirectory)
             {
                 return this.IsFileSystem; // アーカイブディレクトリは除外
             }
 
-            return ArchiverManager.Current.IsSupported(this.Link ?? this.EntryName, false, false);
+            return IsArchiveSupported(false, false);
         }
 
         /// <summary>
@@ -404,7 +427,7 @@ namespace NeeView
         /// </summary>
         public bool IsMedia()
         {
-            return !this.IsDirectory && ArchiverManager.Current.GetSupportedType(this.Link ?? this.EntryLastName) == ArchiverType.MediaArchiver;
+            return !this.IsDirectory && GetArchiveSupportedType() == ArchiverType.MediaArchiver;
         }
 
         /// <summary>
@@ -413,7 +436,7 @@ namespace NeeView
         /// </summary>
         public bool IsImage(bool includeMedia = true)
         {
-            return !this.IsDirectory && ((this.Archiver is MediaArchiver) || PictureProfile.Current.IsSupported(this.Link ?? this.EntryName, includeMedia));
+            return !this.IsDirectory && ((this.Archiver is MediaArchiver) || PictureProfile.Current.IsSupported(TargetPath, includeMedia));
         }
 
         /// <summary>
@@ -513,28 +536,29 @@ namespace NeeView
         /// <exception cref="NotSupportedException">サポートされていない ArchivePolicy</exception>
         public async Task<string?> RealizeAsync(ArchivePolicy archivePolicy, CancellationToken token)
         {
-            // file
-            if (this.IsFileSystem)
+            // inner entry (for playlist)
+            if (InnerEntry is not null)
             {
-                return this.GetFileSystemPath() ?? throw new InvalidOperationException();
+                return await InnerEntry.RealizeAsync(archivePolicy, token);
             }
 
-            // playlist item
-            if (this.Archiver is PlaylistArchive && this.Instance is ArchiveEntry archiveEntry)
+            // file
+            if (IsFileSystem)
             {
-                return await archiveEntry.RealizeAsync(archivePolicy, token);
+                // NOTE: ショートカットもそのまま渡すよ
+                return SystemPath;
             }
 
             // in archive
             switch (archivePolicy)
             {
                 case ArchivePolicy.SendArchiveFile:
-                    return this.GetFileSystemPath() ?? this.Archiver.GetPlace();
+                    return PlacePath;
 
                 case ArchivePolicy.SendExtractFile:
-                    if (!this.IsArchiveDirectory())
+                    if (!IsArchiveDirectory())
                     {
-                        var proxy = await this.GetFileProxyAsync(true, token);
+                        var proxy = await GetFileProxyAsync(true, token);
                         return proxy.Path;
                     }
                     else
@@ -544,7 +568,7 @@ namespace NeeView
                     }
 
                 case ArchivePolicy.SendArchivePath:
-                    return this.EntryFullName;
+                    return SystemPath;
 
                 default:
                     throw new NotSupportedException($"Unsupported archive policy: {archivePolicy}");

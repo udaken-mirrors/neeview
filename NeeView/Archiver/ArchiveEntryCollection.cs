@@ -87,7 +87,7 @@ namespace NeeView
 
             Archiver = rootArchiver;
 
-            Mode = (Archiver.IsFileSystem || Archiver is PlaylistArchive) ? _mode : _modeIfArchive;
+            Mode = (Archiver is FolderArchive || Archiver is PlaylistArchive) ? _mode : _modeIfArchive;
 
             var includeSubDirectories = Mode == ArchiveEntryCollectionMode.IncludeSubDirectories || Mode == ArchiveEntryCollectionMode.IncludeSubArchives;
             var entries = (await rootArchiver.GetEntriesAsync(rootArchiverPath, includeSubDirectories, token)).Select(e => new ArchiveEntryNode(null, e)).ToList();
@@ -121,7 +121,8 @@ namespace NeeView
 
                     try
                     {
-                        var subArchive = await ArchiverManager.Current.CreateArchiverAsync(entry.ArchiveEntry, _ignoreCache, token);
+                        var entityEntry = entry.ArchiveEntry.InnerEntry ?? entry.ArchiveEntry;
+                        var subArchive = await ArchiverManager.Current.CreateArchiverAsync(entityEntry, _ignoreCache, token);
                         var subEntries = (await subArchive.GetEntriesAsync(token)).Select(e => new ArchiveEntryNode(entry, e)).ToList();
                         result.AddRange(await GetSubArchivesEntriesAsync(subEntries, token));
                     }

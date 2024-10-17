@@ -138,7 +138,7 @@ namespace NeeView
                 }
                 else
                 {
-                    path = ArchiveEntryUtility.GetExistEntryName(item.SystemPath);
+                    path = ArchiveEntryUtility.GetExistEntryName(item.TargetPath);
                 }
                 if (!string.IsNullOrWhiteSpace(path))
                 {
@@ -302,7 +302,7 @@ namespace NeeView
 
         protected virtual bool CanMoveToFolder(IEnumerable<Page> pages)
         {
-            return pages.All(e => e.ArchiveEntry.IsFileSystem && e.ArchiveEntry.Archiver is not PlaylistArchive);
+            return pages.All(e => e.ArchiveEntry.IsFileSystem);
         }
 
         #region Remove

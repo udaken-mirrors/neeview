@@ -25,14 +25,6 @@ namespace NeeView
         }
 
 
-        public override bool IsFileSystem { get; } = false;
-
-
-        public override bool IsFileSystemEntry(ArchiveEntry entry)
-        {
-            return entry.Instance is ArchiveEntry innerEntry && innerEntry.IsFileSystem;
-        }
-
         public static bool IsSupportExtension(string path)
         {
             return LoosePath.GetExtension(path) == Extension;
@@ -100,39 +92,55 @@ namespace NeeView
                 IsValid = true,
                 Id = id,
                 RawEntryName = item.Name,
-                Target = targetPath,
-                Link = FileShortcut.ResolveShortcutPath(targetPath),
-                Instance = innerEntry,
                 Length = innerEntry.Length,
                 CreationTime = innerEntry.CreationTime,
                 LastWriteTime = innerEntry.LastWriteTime,
+                InnerEntry = innerEntry,
             };
 
             return entry;
         }
 
-        private static ArchiveEntry GetTargetEntry(ArchiveEntry entry)
+        public override string GetPlacePath(ArchiveEntry entry)
         {
-            var target = entry.Instance as ArchiveEntry ?? throw new InvalidCastException();
-            return target;
+            Debug.Assert(entry.Archiver == this);
+            Debug.Assert(entry.InnerEntry is not null);
+            return entry.InnerEntry.PlacePath;
+        }
+
+        public override string GetSystemPath(ArchiveEntry entry) 
+        {
+            Debug.Assert(entry.Archiver == this);
+            Debug.Assert(entry.InnerEntry is not null);
+            return entry.InnerEntry.SystemPath;
+        }
+
+        /// <summary>
+        /// エントリの実体パスを取得
+        /// </summary>
+        /// <param name="entry">エントリ</param>
+        /// <returns>実体パス。アーカイブパス等実在しない場合は null</returns>
+        public override string? GetEntityPath(ArchiveEntry entry)
+        {
+            Debug.Assert(entry.Archiver == this);
+            Debug.Assert(entry.InnerEntry is not null);
+            return entry.InnerEntry.EntityPath;
         }
 
         // ストリームを開く
         protected override async Task<Stream> OpenStreamInnerAsync(ArchiveEntry entry, CancellationToken token)
         {
-            return await GetTargetEntry(entry).OpenEntryAsync(token);
-        }
-
-        // ファイルパス取得
-        public override string? GetFileSystemPath(ArchiveEntry entry)
-        {
-            return GetTargetEntry(entry).GetFileSystemPath();
+            Debug.Assert(entry.Archiver == this);
+            Debug.Assert(entry.InnerEntry is not null);
+            return await entry.InnerEntry.OpenEntryAsync(token);
         }
 
         // ファイル出力
         protected override async Task ExtractToFileInnerAsync(ArchiveEntry entry, string exportFileName, bool isOverwrite, CancellationToken token)
         {
-            await GetTargetEntry(entry).ExtractToFileAsync(exportFileName, isOverwrite, token);
+            Debug.Assert(entry.Archiver == this);
+            Debug.Assert(entry.InnerEntry is not null);
+            await entry.InnerEntry.ExtractToFileAsync(exportFileName, isOverwrite, token);
         }
     }
 }

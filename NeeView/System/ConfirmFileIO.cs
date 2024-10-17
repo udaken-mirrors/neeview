@@ -108,18 +108,18 @@ namespace NeeView
 
             if (thumbnail == null)
             {
-                thumbnail = CreateFileVisual(entry.EntryFullName);
+                thumbnail = CreateFileVisual(entry.SystemPath);
             }
 
             thumbnail.Margin = new Thickness(0, 0, 10, 0);
             dockPanel.Children.Add(thumbnail);
 
-            var textblock = new TextBlock();
-            textblock.Text = entry.EntryFullName;
-            textblock.VerticalAlignment = VerticalAlignment.Bottom;
-            textblock.TextWrapping = TextWrapping.Wrap;
-            textblock.Margin = new Thickness(0, 0, 0, 2);
-            dockPanel.Children.Add(textblock);
+            var textBlock = new TextBlock();
+            textBlock.Text = entry.SystemPath;
+            textBlock.VerticalAlignment = VerticalAlignment.Bottom;
+            textBlock.TextWrapping = TextWrapping.Wrap;
+            textBlock.Margin = new Thickness(0, 0, 0, 2);
+            dockPanel.Children.Add(textBlock);
 
             return dockPanel;
         }

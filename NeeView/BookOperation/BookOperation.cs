@@ -145,17 +145,6 @@ namespace NeeView
             return true;
         }
 
-        // リンクパスを指定して移動
-        public bool JumpPageWithLink(object? sender, string path)
-        {
-            if (this.Book == null || this.Book.IsMedia) return false;
-
-            var page = this.Book.Pages.GetPageWithLink(path);
-            if (page is null) return false;
-            _control.MoveTo(sender, page.Index);
-            return true;
-        }
-
         // ページを指定して移動
         public void JumpPageAs(object? sender)
         {
@@ -184,7 +173,7 @@ namespace NeeView
             _control.MoveTo(sender, page.Index);
         }
 
-        #endregion
+#endregion
 
         #region BookCommand : メディア操作
 
