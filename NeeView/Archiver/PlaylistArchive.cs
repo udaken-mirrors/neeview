@@ -68,10 +68,11 @@ namespace NeeView
                 }
             }
 
+            Debug.Assert(list.All(e => e is PlaylistArchiveEntry));
             return list;
         }
 
-        private async Task<ArchiveEntry> CreateEntryAsync(PlaylistSourceItem item, int id, CancellationToken token)
+        private async Task<PlaylistArchiveEntry> CreateEntryAsync(PlaylistSourceItem item, int id, CancellationToken token)
         {
             var targetPath = item.Path;
 
@@ -87,7 +88,7 @@ namespace NeeView
 
             var innerEntry = await ArchiveEntryUtility.CreateAsync(targetPath, token);
 
-            var entry = new ArchiveEntry(this)
+            var entry = new PlaylistArchiveEntry(this)
             {
                 IsValid = true,
                 Id = id,
@@ -101,46 +102,21 @@ namespace NeeView
             return entry;
         }
 
-        public override string GetPlacePath(ArchiveEntry entry)
-        {
-            Debug.Assert(entry.Archiver == this);
-            Debug.Assert(entry.InnerEntry is not null);
-            return entry.InnerEntry.PlacePath;
-        }
-
-        public override string GetSystemPath(ArchiveEntry entry) 
-        {
-            Debug.Assert(entry.Archiver == this);
-            Debug.Assert(entry.InnerEntry is not null);
-            return entry.InnerEntry.SystemPath;
-        }
-
-        /// <summary>
-        /// エントリの実体パスを取得
-        /// </summary>
-        /// <param name="entry">エントリ</param>
-        /// <returns>実体パス。アーカイブパス等実在しない場合は null</returns>
-        public override string? GetEntityPath(ArchiveEntry entry)
-        {
-            Debug.Assert(entry.Archiver == this);
-            Debug.Assert(entry.InnerEntry is not null);
-            return entry.InnerEntry.EntityPath;
-        }
 
         // ストリームを開く
         protected override async Task<Stream> OpenStreamInnerAsync(ArchiveEntry entry, CancellationToken token)
         {
             Debug.Assert(entry.Archiver == this);
-            Debug.Assert(entry.InnerEntry is not null);
-            return await entry.InnerEntry.OpenEntryAsync(token);
+            if (entry is not PlaylistArchiveEntry e) throw new InvalidCastException();
+            return await e.InnerEntry.OpenEntryAsync(token);
         }
 
         // ファイル出力
         protected override async Task ExtractToFileInnerAsync(ArchiveEntry entry, string exportFileName, bool isOverwrite, CancellationToken token)
         {
             Debug.Assert(entry.Archiver == this);
-            Debug.Assert(entry.InnerEntry is not null);
-            await entry.InnerEntry.ExtractToFileAsync(exportFileName, isOverwrite, token);
+            if (entry is not PlaylistArchiveEntry e) throw new InvalidCastException();
+            await e.InnerEntry.ExtractToFileAsync(exportFileName, isOverwrite, token);
         }
     }
 }

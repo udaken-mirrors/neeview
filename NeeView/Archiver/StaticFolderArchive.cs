@@ -31,25 +31,25 @@ namespace NeeView
         /// <param name="isForce">パスが存在しなくてもエントリを作成する</param>
         /// <returns></returns>
         /// <exception cref="FileNotFoundException">パスが存在しない</exception>
-        public ArchiveEntry CreateArchiveEntry(string path, bool isForce = false)
+        public FolderArchiveEntry CreateArchiveEntry(string path, bool isForce = false)
         {
-            var fullpath = System.IO.Path.GetFullPath(path);
-            var directoryInfo = new DirectoryInfo(fullpath);
+            var fullPath = System.IO.Path.GetFullPath(path);
+            var directoryInfo = new DirectoryInfo(fullPath);
             if (directoryInfo.Exists)
             {
                 return CreateArchiveEntry(directoryInfo, 0);
             }
-            var fileInfo = new FileInfo(fullpath);
+            var fileInfo = new FileInfo(fullPath);
             if (fileInfo.Exists)
             {
                 return CreateArchiveEntry(fileInfo, 0);
             }
             else if (isForce)
             {
-                return new ArchiveEntry(this) { RawEntryName = path, IsTemporary = true };
+                return new FolderArchiveEntry(this) { RawEntryName = path, IsTemporary = true };
             }
 
-            throw new FileNotFoundException("File not found.", fullpath);
+            throw new FileNotFoundException("File not found.", fullPath);
         }
     }
 }

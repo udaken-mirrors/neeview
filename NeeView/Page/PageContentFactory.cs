@@ -20,7 +20,7 @@ namespace NeeView
         {
             token.ThrowIfCancellationRequested();
 
-            var name = entry.EntityName;
+            var path = entry.TargetPath;
             if (entry.IsImage())
             {
                 if (entry.Archiver is MediaArchiver)
@@ -31,19 +31,19 @@ namespace NeeView
                 {
                     return new PdfPageContent(entry, _bookMemoryService);
                 }
-                else if (PictureProfile.Current.IsSvgSupported(name))
+                else if (PictureProfile.Current.IsSvgSupported(path))
                 {
                     return new SvgPageContent(entry, _bookMemoryService);
                 }
-                else if (PictureProfile.Current.IsMediaSupported(name))
+                else if (PictureProfile.Current.IsMediaSupported(path))
                 {
                     return new MediaPageContent(entry, _bookMemoryService);
                 }
-                else if (_allowAnimatedImage && PictureProfile.Current.IsAnimatedGifSupported(name))
+                else if (_allowAnimatedImage && PictureProfile.Current.IsAnimatedGifSupported(path))
                 {
                     return new AnimatedPageContent(entry, _bookMemoryService, AnimatedImageType.Gif);
                 }
-                else if (_allowAnimatedImage && PictureProfile.Current.IsAnimatedPngSupported(name))
+                else if (_allowAnimatedImage && PictureProfile.Current.IsAnimatedPngSupported(path))
                 {
                     return new AnimatedPageContent(entry, _bookMemoryService, AnimatedImageType.Png);
                 }
@@ -59,7 +59,7 @@ namespace NeeView
             }
             else
             {
-                var type = entry.IsDirectory ? ArchiverType.FolderArchive : ArchiverManager.Current.GetSupportedType(name);
+                var type = entry.IsDirectory ? ArchiverType.FolderArchive : ArchiverManager.Current.GetSupportedType(path);
                 switch (type)
                 {
                     case ArchiverType.None:

@@ -121,7 +121,7 @@ namespace NeeView
 
                     try
                     {
-                        var entityEntry = entry.ArchiveEntry.InnerEntry ?? entry.ArchiveEntry;
+                        var entityEntry = entry.ArchiveEntry.TargetArchiveEntry;
                         var subArchive = await ArchiverManager.Current.CreateArchiverAsync(entityEntry, _ignoreCache, token);
                         var subEntries = (await subArchive.GetEntriesAsync(token)).Select(e => new ArchiveEntryNode(entry, e)).ToList();
                         result.AddRange(await GetSubArchivesEntriesAsync(subEntries, token));

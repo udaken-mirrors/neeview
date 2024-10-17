@@ -70,36 +70,6 @@ namespace NeeView
         // 内部アーカイブのテンポラリファイル。インスタンス保持用
         public FileProxy? ProxyFile { get; set; }
 
-
-        /// <summary>
-        /// EntryFullName を取得
-        /// </summary>
-        public virtual string GetEntryFullName(ArchiveEntry entry) { return LoosePath.Combine(entry.Archiver.SystemPath, entry.EntryName); }
-
-        /// <summary>
-        /// Entry の Ident を取得
-        /// </summary>
-        public virtual string GetEntryIdent(ArchiveEntry entry) { return LoosePath.Combine(entry.Archiver.Ident, $"{Id}.{entry.EntryName}"); }
-
-        /// <summary>
-        /// エクスプローラーで開く場所を取得
-        /// </summary>
-        public virtual string GetPlacePath(ArchiveEntry entry) { return GetPlace(); }
-
-        /// <summary>
-        /// エントリのターゲットパスを取得
-        /// </summary>
-        /// <param name="entry">エントリ</param>
-        /// <returns>ファイル情報で表示されるパス</returns>
-        public virtual string GetSystemPath(ArchiveEntry entry) { return entry.EntryFullName; }
-
-        /// <summary>
-        /// エントリの実体パスを取得
-        /// </summary>
-        /// <param name="entry">エントリ</param>
-        /// <returns>実体パス。アーカイブパス等実在しない場合は null</returns>
-        public virtual string? GetEntityPath(ArchiveEntry entry) { return null; }
-
         // 対応判定
         public abstract bool IsSupported();
 
@@ -112,7 +82,6 @@ namespace NeeView
         /// 親アーカイブのエントリ表記
         /// </summary>
         public ArchiveEntry? Source { get; private set; }
-
 
         /// <summary>
         /// エントリでの名前
@@ -461,22 +430,6 @@ namespace NeeView
         public async Task WaitPreExtractAsync(ArchiveEntry entry, CancellationToken token)
         {
             await _preExtractor.WaitPreExtractAsync(entry, token);
-        }
-
-        // エントリー実体のファイルシステム判定
-        public virtual bool IsFileSystemEntry(ArchiveEntry entry)
-        {
-            return false;
-        }
-
-        /// <summary>
-        /// リンクエントリー判定
-        /// </summary>
-        /// <param name="entry"></param>
-        /// <returns>ショートカット、またはプレイリストのようにターゲットが別であるエントリの場合は true</returns>
-        public virtual bool IsLinkEntry(ArchiveEntry entry)
-        {
-            return false;
         }
 
         /// <summary>

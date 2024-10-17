@@ -1,5 +1,4 @@
 ﻿using NeeLaboratory.Threading;
-using NeeView.Susie;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -126,8 +125,8 @@ namespace NeeView
         /// <exception cref="SusieException"></exception>
         private byte[] ExtractToMemoryCore(ArchiveEntry entry)
         {
-            var info = entry.Instance as SusieArchiveEntry ?? throw new InvalidCastException();
-            var plugin = GetPlugin() ?? throw new SusieException("Cannot found archive plugin");
+            var info = entry.Instance as Susie.SusieArchiveEntry ?? throw new InvalidCastException();
+            var plugin = GetPlugin() ?? throw new Susie.SusieException("Cannot found archive plugin");
 
             return plugin.ExtractArchiveEntry(Path, info.Position);
         }
@@ -143,8 +142,8 @@ namespace NeeView
         /// <exception cref="SusieException"></exception>
         private string ExtractToFileCore(ArchiveEntry entry, string extractFileName, bool isOverwrite)
         {
-            var info = entry.Instance as SusieArchiveEntry ?? throw new InvalidCastException();
-            var plugin = GetPlugin() ?? throw new SusieException("Cannot found archive plugin");
+            var info = entry.Instance as Susie.SusieArchiveEntry ?? throw new InvalidCastException();
+            var plugin = GetPlugin() ?? throw new Susie.SusieException("Cannot found archive plugin");
 
             // NOTE: プラグインからのファイル出力は名前を指定できない
             using (var tempDirectory = new SusieExtractDirectory())
@@ -179,7 +178,7 @@ namespace NeeView
                 {
                     return ExtractToFileCore(entry, extractFileName, isOverwrite);
                 }
-                catch (SusieException e)
+                catch (Susie.SusieException e)
                 {
                     Debug.WriteLine(e.Message);
                 }

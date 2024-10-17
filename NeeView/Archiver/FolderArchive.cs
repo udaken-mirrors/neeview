@@ -62,10 +62,11 @@ namespace NeeView
                 list.Add(entry);
             }
 
+            Debug.Assert(list.All(e => e is FolderArchiveEntry));
             return await Task.FromResult(list);
         }
 
-        protected ArchiveEntry CreateArchiveEntry(FileSystemInfo info, int id)
+        protected FolderArchiveEntry CreateArchiveEntry(FileSystemInfo info, int id)
         {
             if (info is DirectoryInfo directoryInfo)
             {
@@ -81,12 +82,12 @@ namespace NeeView
             }
         }
 
-        protected ArchiveEntry CreateArchiveEntry(DirectoryInfo info, int id)
+        protected FolderArchiveEntry CreateArchiveEntry(DirectoryInfo info, int id)
         {
             return CreateCommonArchiveEntry(info, id);
         }
 
-        protected ArchiveEntry CreateArchiveEntry(FileInfo info, int id)
+        protected FolderArchiveEntry CreateArchiveEntry(FileInfo info, int id)
         {
             var entry = CreateCommonArchiveEntry(info, id);
 
@@ -97,7 +98,7 @@ namespace NeeView
                 {
                     if (target.Attributes.HasFlag(FileAttributes.Directory))
                     {
-                        entry.Instance = target.FullName;
+                        entry.Link = target.FullName;
                         entry.Length = -1;
                         entry.CreationTime = target.CreationTime;
                         entry.LastWriteTime = target.LastWriteTime;
@@ -105,7 +106,7 @@ namespace NeeView
                     else
                     {
                         var fileInfo = (FileInfo)target;
-                        entry.Instance = target.FullName;
+                        entry.Link = target.FullName;
                         entry.Length = fileInfo.Length;
                         entry.CreationTime = target.CreationTime;
                         entry.LastWriteTime = target.LastWriteTime;
@@ -116,11 +117,11 @@ namespace NeeView
             return entry;
         }
 
-        private ArchiveEntry CreateCommonArchiveEntry(FileSystemInfo info, int id)
+        private FolderArchiveEntry CreateCommonArchiveEntry(FileSystemInfo info, int id)
         {
             var name = string.IsNullOrEmpty(Path) ? info.FullName : info.FullName[Path.Length..].TrimStart('\\', '/');
 
-            var entry = new ArchiveEntry(this)
+            var entry = new FolderArchiveEntry(this)
             {
                 IsValid = true,
                 Id = id,
@@ -133,41 +134,12 @@ namespace NeeView
             return entry;
         }
 
-        public override bool IsFileSystemEntry(ArchiveEntry entry)
-        {
-            Debug.Assert(entry.Archiver == this);
-            return true;
-        }
-
-        public override bool IsLinkEntry(ArchiveEntry entry)
-        {
-            Debug.Assert(entry.Archiver == this);
-            return entry.Instance is string;
-        }
-
         // ストリームを開く
         protected override async Task<Stream> OpenStreamInnerAsync(ArchiveEntry entry, CancellationToken token)
         {
             Debug.Assert(entry.Archiver == this);
             Debug.Assert(entry.EntityPath is not null);
             return await Task.FromResult(new FileStream(entry.EntityPath, FileMode.Open, FileAccess.Read));
-        }
-
-        public override string GetPlacePath(ArchiveEntry entry)
-        {
-            Debug.Assert(entry.Archiver == this);
-            return entry.SystemPath;
-        }
-
-        /// <summary>
-        /// エントリの実体パスを取得
-        /// </summary>
-        /// <param name="entry">エントリ</param>
-        /// <returns>実体パス。アーカイブパス等実在しない場合は null</returns>
-        public override string? GetEntityPath(ArchiveEntry entry)
-        {
-            Debug.Assert(entry.Archiver == this);
-            return entry.Instance is string path ? path : entry.SystemPath;
         }
 
         // ファイル出力

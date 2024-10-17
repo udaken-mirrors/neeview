@@ -125,7 +125,7 @@ namespace NeeView
         /// <summary>
         /// エントリのフルネーム
         /// </summary>
-        public string EntryFullName => Archiver.GetEntryFullName(this);
+        public virtual string EntryFullName => LoosePath.Combine(Archiver.SystemPath, EntryName);
 
         /// <summary>
         /// ルートアーカイバー
@@ -143,13 +143,13 @@ namespace NeeView
         /// 対象ファイルのパス<br/>
         /// ファイルの場所を開くときに使用する
         /// </summary>
-        public string PlacePath => Archiver.GetPlacePath(this);
+        public virtual string PlacePath => Archiver.GetPlace();
 
         /// <summary>
-        /// 対象の絶対パス<br/>
-        /// プレイリストの場合はターゲットパスになる
+        /// システムパス<br/>
+        /// プレイリストではターゲットパスになる
         /// </summary>
-        public string SystemPath => Archiver.GetSystemPath(this);
+        public virtual string SystemPath => EntryFullName;
 
         /// <summary>
         /// 実体パス
@@ -157,18 +157,10 @@ namespace NeeView
         /// <remarks>
         /// 存在するアクセス可能パス。アーカイブパス等では null
         /// </remarks>
-        public string? EntityPath => Archiver.GetEntityPath(this);
+        public virtual string? EntityPath => null;
 
         /// <summary>
-        /// 実体パスの名前
-        /// </summary>
-        /// <remarks>
-        /// ファイルの種類判定に使用する
-        /// </remarks>
-        public string EntityName => EntityPath is not null ? LoosePath.GetFileName(EntityPath) : EntryLastName;
-
-        /// <summary>
-        /// リンクを解決した絶対パス
+        /// リンクを解決したシステムパス
         /// </summary>
         public string TargetPath => EntityPath ?? SystemPath;
 
@@ -176,7 +168,7 @@ namespace NeeView
         /// 識別名
         /// アーカイブ内では重複名があるので登録番号を含めたユニークな名前にする
         /// </summary>
-        public string Ident => Archiver.GetEntryIdent(this);
+        public virtual string Ident => LoosePath.Combine(Archiver.Ident, $"{Id}.{EntryName}");
 
         /// <summary>
         /// ファイルサイズ。
@@ -205,7 +197,7 @@ namespace NeeView
         /// <remarks>
         /// File.Move() できるかどうかの基準
         /// </remarks>
-        public bool IsFileSystem => Archiver.IsFileSystemEntry(this);
+        public virtual bool IsFileSystem => false;
 
         /// <summary>
         /// 削除済フラグ
@@ -218,15 +210,15 @@ namespace NeeView
         /// <remarks>
         /// プレイリスト自体はショートカット扱いとするが、プレイリスト項目はショートカットとみなさない。
         /// </remarks>
-        public bool IsShortcut => PlaylistArchive.IsSupportExtension(EntityName) || Archiver.IsLinkEntry(this);
+        public virtual bool IsShortcut => PlaylistArchive.IsSupportExtension(TargetPath);
 
         /// <summary>
-        /// 内部エントリ
+        /// 実エントリ
         /// </summary>
         /// <remarks>
-        /// プレイリストのターゲット用
+        /// 内部エントリがあればそれを優先して返す
         /// </remarks>
-        public ArchiveEntry? InnerEntry { get; init; }
+        public virtual ArchiveEntry TargetArchiveEntry => this;
 
         /// <summary>
         /// エントリ名の正規化
@@ -399,13 +391,8 @@ namespace NeeView
         /// このエントリがアーカイブであるかを判定。
         /// メディアは除外する
         /// </summary>
-        public bool IsArchive()
+        public virtual bool IsArchive()
         {
-            if (InnerEntry is not null)
-            {
-                return InnerEntry.IsArchive();
-            }
-
             if (this.IsDirectory)
             {
                 return this.IsFileSystem; // アーカイブディレクトリは除外
@@ -534,14 +521,8 @@ namespace NeeView
         /// <param name="token"></param>
         /// <returns>実体ファイルのパス。取得できなかったときは null</returns>
         /// <exception cref="NotSupportedException">サポートされていない ArchivePolicy</exception>
-        public async Task<string?> RealizeAsync(ArchivePolicy archivePolicy, CancellationToken token)
+        public virtual async Task<string?> RealizeAsync(ArchivePolicy archivePolicy, CancellationToken token)
         {
-            // inner entry (for playlist)
-            if (InnerEntry is not null)
-            {
-                return await InnerEntry.RealizeAsync(archivePolicy, token);
-            }
-
             // file
             if (IsFileSystem)
             {
