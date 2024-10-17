@@ -938,7 +938,7 @@ namespace NeeView
             bool isDropped = false;
             foreach (var fileName in fileNames)
             {
-                if (ArchiverManager.Current.IsSupported(fileName, true, true) || System.IO.Directory.Exists(fileName))
+                if (ArchiveManager.Current.IsSupported(fileName, true, true) || System.IO.Directory.Exists(fileName))
                 {
                     if (isDrop)
                     {

@@ -15,7 +15,7 @@ namespace NeeView
     /// </summary>
     public partial class ArchivePreExtractor : IDisposable
     {
-        private readonly Archiver _archiver;
+        private readonly Archive _archiver;
         private CancellationTokenSource _cancellationTokenSource = new();
         private ArchivePreExtractState _state;
         private TempDirectory? _extractDirectory;
@@ -23,7 +23,7 @@ namespace NeeView
         private bool _disposedValue;
 
 
-        public ArchivePreExtractor(Archiver archiver)
+        public ArchivePreExtractor(Archive archiver)
         {
             _archiver = archiver;
             _state = ArchivePreExtractState.None;

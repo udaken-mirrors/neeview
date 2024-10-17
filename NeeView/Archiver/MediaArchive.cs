@@ -10,9 +10,9 @@ using System.Windows.Media;
 
 namespace NeeView
 {
-    public class MediaArchiver : Archiver
+    public class MediaArchive : Archive
     {
-        public MediaArchiver(string path, ArchiveEntry? source) : base(path, source)
+        public MediaArchive(string path, ArchiveEntry? source) : base(path, source)
         {
         }
 
@@ -47,14 +47,14 @@ namespace NeeView
 
         protected override async Task<Stream> OpenStreamInnerAsync(ArchiveEntry entry, CancellationToken token)
         {
-            Debug.Assert(entry.Archiver == this);
+            Debug.Assert(entry.Archive == this);
             var path = entry.EntityPath ?? throw new InvalidOperationException("Must exist.");
             return await Task.FromResult(new FileStream(path, FileMode.Open, FileAccess.Read));
         }
 
         protected override async Task ExtractToFileInnerAsync(ArchiveEntry entry, string exportFileName, bool isOverwrite, CancellationToken token)
         {
-            Debug.Assert(entry.Archiver == this);
+            Debug.Assert(entry.Archive == this);
             var path = entry.EntityPath ?? throw new InvalidOperationException("Must exist.");
             await FileIO.CopyFileAsync(path, exportFileName, isOverwrite, token);
         }

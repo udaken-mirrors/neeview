@@ -251,7 +251,7 @@ namespace NeeView
         {
             if (IsClosing) return;
 
-            _ = ArchiverManager.Current.UnlockAllArchivesAsync();
+            _ = ArchiveManager.Current.UnlockAllArchivesAsync();
         }
 
         /// <summary>

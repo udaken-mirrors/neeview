@@ -2,7 +2,7 @@
 {
     public class FolderArchiveEntry : ArchiveEntry
     {
-        public FolderArchiveEntry(Archiver archiver) : base(archiver)
+        public FolderArchiveEntry(Archive archiver) : base(archiver)
         {
         }
 

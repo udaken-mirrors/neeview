@@ -23,11 +23,11 @@ namespace NeeView
             var path = entry.TargetPath;
             if (entry.IsImage())
             {
-                if (entry.Archiver is MediaArchiver)
+                if (entry.Archive is MediaArchive)
                 {
                     return new MediaPageContent(entry, _bookMemoryService);
                 }
-                else if (entry.Archiver is PdfArchiver)
+                else if (entry.Archive is PdfArchive)
                 {
                     return new PdfPageContent(entry, _bookMemoryService);
                 }
@@ -59,10 +59,10 @@ namespace NeeView
             }
             else
             {
-                var type = entry.IsDirectory ? ArchiverType.FolderArchive : ArchiverManager.Current.GetSupportedType(path);
+                var type = entry.IsDirectory ? ArchiveType.FolderArchive : ArchiveManager.Current.GetSupportedType(path);
                 switch (type)
                 {
-                    case ArchiverType.None:
+                    case ArchiveType.None:
                         if (Config.Current.Image.Standard.IsAllFileSupported)
                         {
                             return new BitmapPageContent(entry, _bookMemoryService);
@@ -71,7 +71,7 @@ namespace NeeView
                         {
                             return new FilePageContent(entry, FilePageIcon.File, null, _bookMemoryService);
                         }
-                    case ArchiverType.FolderArchive:
+                    case ArchiveType.FolderArchive:
                         return new FilePageContent(entry, FilePageIcon.Folder, null, _bookMemoryService);
                     default:
                         return new FilePageContent(entry, FilePageIcon.Archive, null, _bookMemoryService);

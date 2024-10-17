@@ -219,7 +219,7 @@ namespace NeeView
             var result = await BookHubTools.CloseBookAsync(paths);
 
             // 全てのファイルロックをはずす
-            await ArchiverManager.Current.UnlockAllArchivesAsync();
+            await ArchiveManager.Current.UnlockAllArchivesAsync();
 
             return result;
         }

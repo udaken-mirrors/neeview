@@ -11,19 +11,17 @@ using System.Threading.Tasks;
 
 namespace NeeView
 {
-
-
     /// <summary>
     /// アーカイバー：7z.dll
     /// </summary>
-    public class SevenZipArchiver : Archiver
+    public class SevenZipArchive : Archive
     {
         private readonly SevenZipAccessor _accessor;
         private string? _format;
         private bool _isSolid;
 
 
-        public SevenZipArchiver(string path, ArchiveEntry? source) : base(path, source)
+        public SevenZipArchive(string path, ArchiveEntry? source) : base(path, source)
         {
             _accessor = new SevenZipAccessor(Path);
         }

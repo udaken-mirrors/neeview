@@ -93,7 +93,7 @@ namespace NeeView.Setting
 
         public string? Version => _spi.PluginVersion;
 
-        public bool IsArchiver => _spi.PluginType == SusiePluginType.Archive;
+        public bool IsArchive => _spi.PluginType == SusiePluginType.Archive;
 
         public bool IsEnabled
         {

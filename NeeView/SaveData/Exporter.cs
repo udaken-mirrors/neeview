@@ -15,7 +15,7 @@ namespace NeeView
             try
             {
                 // 保存されたファイルを zip にまとめて出力
-                using (var archive = new ZipArchive(new FileStream(filename, FileMode.Create, FileAccess.ReadWrite), ZipArchiveMode.Update))
+                using (var archive = new System.IO.Compression.ZipArchive(new FileStream(filename, FileMode.Create, FileAccess.ReadWrite), ZipArchiveMode.Update))
                 {
                     archive.CreateEntryFromFile(SaveData.UserSettingFilePath, SaveDataProfile.UserSettingFileName);
 

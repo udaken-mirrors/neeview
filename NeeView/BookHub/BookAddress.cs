@@ -137,10 +137,10 @@ namespace NeeView
                                 this.TargetPath = query.GetParent();
                                 break;
                             case ArchiveEntryCollectionMode.IncludeSubDirectories:
-                                this.TargetPath = new QueryPath(entry.Archiver.SystemPath);
+                                this.TargetPath = new QueryPath(entry.Archive.SystemPath);
                                 break;
                             case ArchiveEntryCollectionMode.IncludeSubArchives:
-                                this.TargetPath = new QueryPath(entry.RootArchiver.SystemPath);
+                                this.TargetPath = new QueryPath(entry.RootArchive.SystemPath);
                                 break;
                             default:
                                 throw new NotSupportedException($"{nameof(ArchiveEntryCollectionMode)}.{mode} is not supported.");
@@ -180,21 +180,21 @@ namespace NeeView
             {
                 if (mode == ArchiveEntryCollectionMode.IncludeSubArchives)
                 {
-                    return new QueryPath(entry.Archiver.RootArchiver.SystemPath).GetParent();
+                    return new QueryPath(entry.Archive.RootArchive.SystemPath).GetParent();
                 }
                 else if (mode == ArchiveEntryCollectionMode.IncludeSubDirectories)
                 {
                     if (entry.IsArchive())
                     {
-                        return new QueryPath(entry.Archiver.SystemPath);
+                        return new QueryPath(entry.Archive.SystemPath);
                     }
-                    else if (entry.Archiver.Parent != null)
+                    else if (entry.Archive.Parent != null)
                     {
-                        return new QueryPath(entry.Archiver.Parent.SystemPath);
+                        return new QueryPath(entry.Archive.Parent.SystemPath);
                     }
                     else
                     {
-                        return new QueryPath(entry.Archiver.SystemPath).GetParent();
+                        return new QueryPath(entry.Archive.SystemPath).GetParent();
                     }
                 }
                 else

@@ -158,7 +158,7 @@ namespace NeeView
             return !_historyRemoved
                 && book.Pages.Count > 0
                 && (_historyEntry || _pageChangedCount >= historyEntryPageCount || book.CurrentPages.LastOrDefault() == book.Pages.Last())
-                && (Config.Current.History.IsInnerArchiveHistoryEnabled || book.Source.ArchiveEntryCollection.Archiver?.Parent == null)
+                && (Config.Current.History.IsInnerArchiveHistoryEnabled || book.Source.ArchiveEntryCollection.Archive?.Parent == null)
                 && (Config.Current.History.IsUncHistoryEnabled || !LoosePath.IsUnc(book.Path));
         }
 

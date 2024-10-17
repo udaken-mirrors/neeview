@@ -32,7 +32,7 @@ namespace NeeView
         {
             if (System.IO.Directory.Exists(entry.SystemPath) || entry.IsBook())
             {
-                if (ArchiverManager.Current.GetSupportedType(entry.SystemPath) == ArchiverType.MediaArchiver)
+                if (ArchiveManager.Current.GetSupportedType(entry.SystemPath) == ArchiveType.MediaArchive)
                 {
                     return entry;
                 }

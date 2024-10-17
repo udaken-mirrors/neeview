@@ -8,11 +8,11 @@ namespace NeeView
 {
     public class PdfPageContent : PageContent
     {
-        private readonly PdfArchiver _pdfArchive;
+        private readonly PdfArchive _pdfArchive;
 
         public PdfPageContent(ArchiveEntry archiveEntry, BookMemoryService? bookMemoryService) : base(archiveEntry, bookMemoryService)
         {
-            _pdfArchive = archiveEntry.Archiver as PdfArchiver ?? throw new InvalidOperationException();
+            _pdfArchive = archiveEntry.Archive as PdfArchive ?? throw new InvalidOperationException();
         }
 
         protected override async Task<PictureInfo?> LoadPictureInfoCoreAsync(CancellationToken token)

@@ -37,7 +37,7 @@ namespace NeeView
         }
 
         public string Path { get; }
-        public Archiver? Archiver { get; private set; }
+        public Archive? Archive { get; private set; }
 
         public ArchiveEntryCollectionMode Mode { get; private set; }
 
@@ -50,47 +50,47 @@ namespace NeeView
 
             var rootEntry = await ArchiveEntryUtility.CreateAsync(Path, token);
 
-            Archiver? rootArchiver;
-            string rootArchiverPath;
+            Archive? rootArchive;
+            string rootArchivePath;
 
             if (rootEntry.IsFileSystem)
             {
                 if (rootEntry.IsDirectory)
                 {
-                    rootArchiver = await ArchiverManager.Current.CreateArchiverAsync(StaticFolderArchive.Default.CreateArchiveEntry(Path), _ignoreCache, token);
-                    rootArchiverPath = "";
+                    rootArchive = await ArchiveManager.Current.CreateArchiveAsync(StaticFolderArchive.Default.CreateArchiveEntry(Path), _ignoreCache, token);
+                    rootArchivePath = "";
                 }
                 else
                 {
-                    rootArchiver = await ArchiverManager.Current.CreateArchiverAsync(rootEntry, _ignoreCache, token);
-                    rootArchiverPath = "";
+                    rootArchive = await ArchiveManager.Current.CreateArchiveAsync(rootEntry, _ignoreCache, token);
+                    rootArchivePath = "";
                 }
             }
             else
             {
                 if (rootEntry.IsArchive() || rootEntry.IsMedia())
                 {
-                    rootArchiver = await ArchiverManager.Current.CreateArchiverAsync(rootEntry, _ignoreCache, token);
-                    rootArchiverPath = "";
+                    rootArchive = await ArchiveManager.Current.CreateArchiveAsync(rootEntry, _ignoreCache, token);
+                    rootArchivePath = "";
                 }
                 else
                 {
-                    rootArchiver = rootEntry.Archiver;
-                    rootArchiverPath = rootEntry.EntryName;
+                    rootArchive = rootEntry.Archive;
+                    rootArchivePath = rootEntry.EntryName;
                 }
             }
 
-            if (rootArchiver is null)
+            if (rootArchive is null)
             {
                 return new List<ArchiveEntryNode>() { new ArchiveEntryNode(null, rootEntry) };
             }
 
-            Archiver = rootArchiver;
+            Archive = rootArchive;
 
-            Mode = (Archiver is FolderArchive || Archiver is PlaylistArchive) ? _mode : _modeIfArchive;
+            Mode = (Archive is FolderArchive || Archive is PlaylistArchive) ? _mode : _modeIfArchive;
 
             var includeSubDirectories = Mode == ArchiveEntryCollectionMode.IncludeSubDirectories || Mode == ArchiveEntryCollectionMode.IncludeSubArchives;
-            var entries = (await rootArchiver.GetEntriesAsync(rootArchiverPath, includeSubDirectories, token)).Select(e => new ArchiveEntryNode(null, e)).ToList();
+            var entries = (await rootArchive.GetEntriesAsync(rootArchivePath, includeSubDirectories, token)).Select(e => new ArchiveEntryNode(null, e)).ToList();
 
             var includeAllSubDirectories = Mode == ArchiveEntryCollectionMode.IncludeSubArchives;
             if (includeAllSubDirectories)
@@ -122,7 +122,7 @@ namespace NeeView
                     try
                     {
                         var entityEntry = entry.ArchiveEntry.TargetArchiveEntry;
-                        var subArchive = await ArchiverManager.Current.CreateArchiverAsync(entityEntry, _ignoreCache, token);
+                        var subArchive = await ArchiveManager.Current.CreateArchiveAsync(entityEntry, _ignoreCache, token);
                         var subEntries = (await subArchive.GetEntriesAsync(token)).Select(e => new ArchiveEntryNode(entry, e)).ToList();
                         result.AddRange(await GetSubArchivesEntriesAsync(subEntries, token));
                     }
@@ -196,12 +196,12 @@ namespace NeeView
         /// </summary>
         public string? GetFolderPlace()
         {
-            if (Path == null || Archiver == null)
+            if (Path == null || Archive == null)
             {
                 return null;
             }
 
-            if (Archiver == null)
+            if (Archive == null)
             {
                 Debug.Assert(false, "Invalid operation");
                 return null;
@@ -209,17 +209,17 @@ namespace NeeView
 
             if (Mode == ArchiveEntryCollectionMode.IncludeSubArchives)
             {
-                return LoosePath.GetDirectoryName(Archiver.RootArchiver?.SystemPath);
+                return LoosePath.GetDirectoryName(Archive.RootArchive?.SystemPath);
             }
             else if (Mode == ArchiveEntryCollectionMode.IncludeSubDirectories)
             {
-                if (Archiver.Parent != null)
+                if (Archive.Parent != null)
                 {
-                    return Archiver.Parent.SystemPath;
+                    return Archive.Parent.SystemPath;
                 }
                 else
                 {
-                    return LoosePath.GetDirectoryName(Archiver.SystemPath);
+                    return LoosePath.GetDirectoryName(Archive.SystemPath);
                 }
             }
             else

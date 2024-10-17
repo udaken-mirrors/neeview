@@ -43,7 +43,7 @@ namespace NeeView
 #if USE_WINRT
             return Environment.PdfRenderer switch
             {
-                PdfWinRTArchiver.Identify
+                PdfWinRTArchive.Identify
                     => PdfRenderer.WinRT,
                 _
                     => PdfRenderer.Pdfium,

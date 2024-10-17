@@ -11,7 +11,7 @@ namespace NeeView
     /// <summary>
     /// アーカイバー基底クラス
     /// </summary>
-    public abstract class Archiver : IDisposable
+    public abstract class Archive : IDisposable
     {
         private readonly ArchivePreExtractor _preExtractor;
         private int _preExtractorActivateCount;
@@ -28,13 +28,13 @@ namespace NeeView
         /// </summary>
         /// <param name="path">アーカイブ実体へのパス</param>
         /// <param name="source">基となるエントリ</param>
-        public Archiver(string path, ArchiveEntry? source)
+        public Archive(string path, ArchiveEntry? source)
         {
             Path = path;
 
             if (source != null)
             {
-                Parent = source.Archiver;
+                Parent = source.Archive;
                 EntryName = source.EntryName;
                 Id = source.Id;
                 CreationTime = source.CreationTime;
@@ -76,7 +76,7 @@ namespace NeeView
         /// <summary>
         /// 親アーカイブ
         /// </summary>
-        public Archiver? Parent { get; private set; }
+        public Archive? Parent { get; private set; }
 
         /// <summary>
         /// 親アーカイブのエントリ表記
@@ -116,7 +116,7 @@ namespace NeeView
         /// <summary>
         /// ルートアーカイバー取得
         /// </summary>
-        public Archiver RootArchiver => Parent == null ? this : Parent.RootArchiver;
+        public Archive RootArchive => Parent == null ? this : Parent.RootArchive;
 
         /// <summary>
         /// エクスプローラーで指定可能な絶対パス
@@ -437,7 +437,7 @@ namespace NeeView
         /// </summary>
         public virtual bool Exists(ArchiveEntry entry)
         {
-            return entry.Archiver == this && !entry.IsDeleted;
+            return entry.Archive == this && !entry.IsDeleted;
         }
 
         /// <summary>
@@ -501,7 +501,7 @@ namespace NeeView
             }
         }
 
-        ~Archiver()
+        ~Archive()
         {
             Dispose(disposing: false);
         }

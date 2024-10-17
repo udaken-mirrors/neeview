@@ -10,7 +10,7 @@ namespace NeeView
 {
     public class Importer : IDisposable
     {
-        private readonly ZipArchive _archive;
+        private readonly System.IO.Compression.ZipArchive _archive;
         private ZipArchiveEntry? _settingEntry;
         private ZipArchiveEntry? _historyEntry;
         private ZipArchiveEntry? _bookmarkEntry;

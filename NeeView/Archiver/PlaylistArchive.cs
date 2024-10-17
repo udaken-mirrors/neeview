@@ -15,7 +15,7 @@ namespace NeeView
     /// <summary>
     /// アーカイバー：プレイリスト方式
     /// </summary>
-    public class PlaylistArchive : Archiver
+    public class PlaylistArchive : Archive
     {
         public const string Extension = ".nvpls";
 
@@ -77,10 +77,10 @@ namespace NeeView
             var targetPath = item.Path;
 
             // プレイリストに動画ブックの特殊形式 (/path/to/movie.mp4/movie.mp4) があるときの補正
-            if (ArchiverManager.Current.GetSupportedType(targetPath) == ArchiverType.MediaArchiver && !File.Exists(targetPath))
+            if (ArchiveManager.Current.GetSupportedType(targetPath) == ArchiveType.MediaArchive && !File.Exists(targetPath))
             {
                 var targetDirectory = LoosePath.GetDirectoryName(targetPath);
-                if (ArchiverManager.Current.GetSupportedType(targetDirectory) == ArchiverType.MediaArchiver)
+                if (ArchiveManager.Current.GetSupportedType(targetDirectory) == ArchiveType.MediaArchive)
                 {
                     targetPath = targetDirectory;
                 }
@@ -106,7 +106,7 @@ namespace NeeView
         // ストリームを開く
         protected override async Task<Stream> OpenStreamInnerAsync(ArchiveEntry entry, CancellationToken token)
         {
-            Debug.Assert(entry.Archiver == this);
+            Debug.Assert(entry.Archive == this);
             if (entry is not PlaylistArchiveEntry e) throw new InvalidCastException();
             return await e.InnerEntry.OpenEntryAsync(token);
         }
@@ -114,7 +114,7 @@ namespace NeeView
         // ファイル出力
         protected override async Task ExtractToFileInnerAsync(ArchiveEntry entry, string exportFileName, bool isOverwrite, CancellationToken token)
         {
-            Debug.Assert(entry.Archiver == this);
+            Debug.Assert(entry.Archive == this);
             if (entry is not PlaylistArchiveEntry e) throw new InvalidCastException();
             await e.InnerEntry.ExtractToFileAsync(exportFileName, isOverwrite, token);
         }

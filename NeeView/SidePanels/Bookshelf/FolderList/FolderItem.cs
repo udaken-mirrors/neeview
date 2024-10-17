@@ -332,7 +332,7 @@ namespace NeeView
                 return true;
             }
 
-            var archiveType = ArchiverManager.Current.GetSupportedType(EntityPath.SimplePath, false);
+            var archiveType = ArchiveManager.Current.GetSupportedType(EntityPath.SimplePath, false);
             if (IsFileSystem() && Config.Current.System.ArchiveRecursiveMode != ArchiveEntryCollectionMode.IncludeSubArchives && archiveType.IsRecursiveSupported())
             {
                 return true;

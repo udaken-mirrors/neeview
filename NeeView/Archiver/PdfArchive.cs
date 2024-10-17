@@ -3,9 +3,9 @@ using System.Windows.Media.Imaging;
 
 namespace NeeView
 {
-    public abstract class PdfArchiver : Archiver
+    public abstract class PdfArchive : Archive
     {
-        protected PdfArchiver(string path, ArchiveEntry? source) : base(path, source)
+        protected PdfArchive(string path, ArchiveEntry? source) : base(path, source)
         {
         }
 

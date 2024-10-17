@@ -47,7 +47,7 @@ namespace NeeView
         private static PageSortMode ValidatePageSortMode(PageSortMode sortMode, ArchiveEntryCollection archiveEntryCollection)
         {
             // プレイリストならば登録順有効、それ以外は無効
-            var isPlaylist = archiveEntryCollection?.Archiver is PlaylistArchive;
+            var isPlaylist = archiveEntryCollection?.Archive is PlaylistArchive;
             var pageSortModeClass = isPlaylist ? PageSortModeClass.WithEntry : PageSortModeClass.Normal;
             return pageSortModeClass.ValidatePageSortMode(sortMode);
         }

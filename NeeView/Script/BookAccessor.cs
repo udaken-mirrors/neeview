@@ -26,13 +26,13 @@ namespace NeeView
         public string? Path => BookOperation.Current.Book?.Path;
 
         [WordNodeMember]
-        public long Size => GetArchiver()?.Length ?? 0;
+        public long Size => GetArchive()?.Length ?? 0;
 
         [WordNodeMember]
-        public DateTime LastWriteTime => GetArchiver()?.LastWriteTime ?? DateTime.MinValue;
+        public DateTime LastWriteTime => GetArchive()?.LastWriteTime ?? DateTime.MinValue;
 
         [WordNodeMember]
-        public DateTime CreationTime => GetArchiver()?.CreationTime ?? DateTime.MinValue;
+        public DateTime CreationTime => GetArchive()?.CreationTime ?? DateTime.MinValue;
 
         [WordNodeMember]
         public bool IsMedia => BookOperation.Current.Book?.IsMedia == true;
@@ -120,6 +120,6 @@ namespace NeeView
             return node;
         }
 
-        private Archiver? GetArchiver() => BookOperation.Current.Book?.Source.ArchiveEntryCollection.Archiver;
+        private Archive? GetArchive() => BookOperation.Current.Book?.Source.ArchiveEntryCollection.Archive;
     }
 }

@@ -8,7 +8,7 @@ using System.Windows;
 
 namespace NeeView
 {
-    public class PdfArchiverProfile : BindableBase
+    public class PdfArchiveProfile : BindableBase
     {
         // 最大画像サイズで制限したサイズ
         public static Size SizeLimitedRenderSize

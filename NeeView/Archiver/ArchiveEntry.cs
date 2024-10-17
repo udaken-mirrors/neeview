@@ -30,9 +30,9 @@ namespace NeeView
         /// コンストラクタ
         /// </summary>
         /// <param name="archiver">所属アーカイバ</param>
-        public ArchiveEntry(Archiver archiver)
+        public ArchiveEntry(Archive archiver)
         {
-            Archiver = archiver;
+            Archive = archiver;
         }
 
 
@@ -53,7 +53,7 @@ namespace NeeView
         /// <summary>
         /// 所属アーカイバ
         /// </summary>
-        public Archiver Archiver { get; private set; }
+        public Archive Archive { get; private set; }
 
         /// <summary>
         /// アーカイブ内登録番号
@@ -125,25 +125,25 @@ namespace NeeView
         /// <summary>
         /// エントリのフルネーム
         /// </summary>
-        public virtual string EntryFullName => LoosePath.Combine(Archiver.SystemPath, EntryName);
+        public virtual string EntryFullName => LoosePath.Combine(Archive.SystemPath, EntryName);
 
         /// <summary>
         /// ルートアーカイバー
         /// </summary>
         /// a.zip
-        // TODO: ArchiveEntry.RootArchiver is not null
-        public Archiver RootArchiver => Archiver.RootArchiver;
+        // TODO: ArchiveEntry.RootArchive is not null
+        public Archive RootArchive => Archive.RootArchive;
 
         /// <summary>
         /// 所属名
         /// </summary>
-        public string RootArchiverName => RootArchiver.EntryName;
+        public string RootArchiveName => RootArchive.EntryName;
 
         /// <summary>
         /// 対象ファイルのパス<br/>
         /// ファイルの場所を開くときに使用する
         /// </summary>
-        public virtual string PlacePath => Archiver.GetPlace();
+        public virtual string PlacePath => Archive.GetPlace();
 
         /// <summary>
         /// システムパス<br/>
@@ -168,7 +168,7 @@ namespace NeeView
         /// 識別名
         /// アーカイブ内では重複名があるので登録番号を含めたユニークな名前にする
         /// </summary>
-        public virtual string Ident => LoosePath.Combine(Archiver.Ident, $"{Id}.{EntryName}");
+        public virtual string Ident => LoosePath.Combine(Archive.Ident, $"{Id}.{EntryName}");
 
         /// <summary>
         /// ファイルサイズ。
@@ -270,7 +270,7 @@ namespace NeeView
         /// <returns>Stream</returns>
         public async Task<Stream> OpenEntryAsync(CancellationToken token)
         {
-            return await Archiver.OpenStreamAsync(this, token);
+            return await Archive.OpenStreamAsync(this, token);
         }
 
         /// <summary>
@@ -282,7 +282,7 @@ namespace NeeView
         {
             if (exportFileName is null) throw new ArgumentNullException(nameof(exportFileName));
 
-            await Archiver.ExtractToFileAsync(this, exportFileName, isOverwrite, token);
+            await Archive.ExtractToFileAsync(this, exportFileName, isOverwrite, token);
         }
 
 
@@ -349,7 +349,7 @@ namespace NeeView
         /// <returns></returns>
         public async Task WaitPreExtractAsync(CancellationToken token)
         {
-            await Archiver.WaitPreExtractAsync(this, token);
+            await Archive.WaitPreExtractAsync(this, token);
         }
 
 
@@ -361,16 +361,16 @@ namespace NeeView
         /// <returns></returns>
         public bool IsArchiveSupported(bool isAllowFileSystem = true, bool isAllowMedia = true)
         {
-            return ArchiverManager.Current.IsSupported(TargetPath, isAllowFileSystem, isAllowMedia);
+            return ArchiveManager.Current.IsSupported(TargetPath, isAllowFileSystem, isAllowMedia);
         }
 
         /// <summary>
         /// アーカイブタイプ取得
         /// </summary>
         /// <returns></returns>
-        public ArchiverType GetArchiveSupportedType()
+        public ArchiveType GetArchiveSupportedType()
         {
-            return ArchiverManager.Current.GetSupportedType(TargetPath);
+            return ArchiveManager.Current.GetSupportedType(TargetPath);
         }
 
         /// <summary>
@@ -414,16 +414,16 @@ namespace NeeView
         /// </summary>
         public bool IsMedia()
         {
-            return !this.IsDirectory && GetArchiveSupportedType() == ArchiverType.MediaArchiver;
+            return !this.IsDirectory && GetArchiveSupportedType() == ArchiveType.MediaArchive;
         }
 
         /// <summary>
         /// このエントリが画像であるか拡張子から判定。
-        /// MediaArchiverは無条件で画像と認識
+        /// MediaArchive は無条件で画像と認識
         /// </summary>
         public bool IsImage(bool includeMedia = true)
         {
-            return !this.IsDirectory && ((this.Archiver is MediaArchiver) || PictureProfile.Current.IsSupported(TargetPath, includeMedia));
+            return !this.IsDirectory && ((this.Archive is MediaArchive) || PictureProfile.Current.IsSupported(TargetPath, includeMedia));
         }
 
         /// <summary>
@@ -432,7 +432,7 @@ namespace NeeView
         public bool Exists()
         {
             if (IsDeleted) return false;
-            return Archiver.Exists(this);
+            return Archive.Exists(this);
         }
 
         /// <summary>
@@ -440,7 +440,7 @@ namespace NeeView
         /// </summary>
         public bool CanDelete()
         {
-            return Archiver.CanDelete(this);
+            return Archive.CanDelete(this);
         }
 
         /// <summary>
@@ -448,7 +448,7 @@ namespace NeeView
         /// </summary>
         public async Task<bool> DeleteAsync()
         {
-            return await Archiver.DeleteAsync(this);
+            return await Archive.DeleteAsync(this);
         }
 
         /// <summary>
@@ -458,7 +458,7 @@ namespace NeeView
         {
             if (!entries.Any()) return false;
 
-            foreach (var group in entries.GroupBy(e => e.Archiver))
+            foreach (var group in entries.GroupBy(e => e.Archive))
             {
                 var archiver = group.Key;
                 archiver.ClearEntryCache();
@@ -485,12 +485,12 @@ namespace NeeView
 
         public bool CanRename()
         {
-            return Archiver.CanRename(this);
+            return Archive.CanRename(this);
         }
 
         public async Task<bool> RenameAsync(string name)
         {
-            return await Archiver.RenameAsync(this, name);
+            return await Archive.RenameAsync(this, name);
         }
 
         /// <summary>

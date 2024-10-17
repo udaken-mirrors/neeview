@@ -36,7 +36,7 @@ namespace NeeView
         {
             if (!pages.Any()) return false;
 
-            foreach (var group in pages.Select(e => e.ArchiveEntry).GroupBy(e => e.Archiver))
+            foreach (var group in pages.Select(e => e.ArchiveEntry).GroupBy(e => e.Archive))
             {
                 var archiver = group.Key;
                 archiver.ClearEntryCache();

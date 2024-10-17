@@ -211,7 +211,7 @@ namespace NeeView
                 && !item.Attributes.AnyFlag(FolderItemAttribute.Drive | FolderItemAttribute.Empty)
                 && (Config.Current.System.ArchiveRecursiveMode == ArchiveEntryCollectionMode.IncludeSubArchives
                     ? (item.Attributes & (FolderItemAttribute.Directory | FolderItemAttribute.Playlist)) != 0
-                    : ArchiverManager.Current.GetSupportedType(item.TargetPath.SimplePath).IsRecursiveSupported());
+                    : ArchiveManager.Current.GetSupportedType(item.TargetPath.SimplePath).IsRecursiveSupported());
         }
 
 
@@ -427,7 +427,7 @@ namespace NeeView
             if (sender is ListBox { SelectedItem: FolderItem item })
             {
                 var path = item.TargetPath.SimplePath;
-                path = item.Attributes.AnyFlag(FolderItemAttribute.Bookmark | FolderItemAttribute.ArchiveEntry | FolderItemAttribute.Empty) ? ArchiverManager.Current.GetExistPathName(path) : path;
+                path = item.Attributes.AnyFlag(FolderItemAttribute.Bookmark | FolderItemAttribute.ArchiveEntry | FolderItemAttribute.Empty) ? ArchiveManager.Current.GetExistPathName(path) : path;
                 if (!string.IsNullOrWhiteSpace(path))
                 {
                     ExternalProcess.OpenWithFileManager(path);
@@ -464,7 +464,7 @@ namespace NeeView
         //private string GetExistPathName(FolderItem item)
         //{
         //    var path = item.TargetPath.SimplePath;
-        //    return item.Attributes.AnyFlag(FolderItemAttribute.Bookmark | FolderItemAttribute.ArchiveEntry | FolderItemAttribute.Empty) ? ArchiverManager.Current.GetExistPathName(path) : path;
+        //    return item.Attributes.AnyFlag(FolderItemAttribute.Bookmark | FolderItemAttribute.ArchiveEntry | FolderItemAttribute.Empty) ? ArchiveManager.Current.GetExistPathName(path) : path;
         //}
 
         public void Open_Executed(object? sender, ExecutedRoutedEventArgs e)
@@ -746,7 +746,7 @@ namespace NeeView
 
         private static bool CanDropToBookmark(string path)
         {
-            return ArchiverManager.Current.IsSupported(path, true, true) || System.IO.Directory.Exists(path);
+            return ArchiveManager.Current.IsSupported(path, true, true) || System.IO.Directory.Exists(path);
         }
 
         private static ListBoxItem? PointToViewItem(ListBox listBox, Point point)

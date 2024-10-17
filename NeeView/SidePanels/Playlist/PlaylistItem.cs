@@ -92,7 +92,7 @@ namespace NeeView
                     {
                         targetPath = new FileShortcut(Path).TargetPath ?? Path;
                     }
-                    _isArchive = ArchiverManager.Current.IsSupported(targetPath) || System.IO.Directory.Exists(targetPath);
+                    _isArchive = ArchiveManager.Current.IsSupported(targetPath) || System.IO.Directory.Exists(targetPath);
                 }
                 return _isArchive.Value;
             }
@@ -132,7 +132,7 @@ namespace NeeView
         private static string ValidPath(string path)
         {
             // 動画名が重複するパスを修正する
-            if (ArchiverManager.Current.IsSupported(path, ArchiverType.MediaArchiver))
+            if (ArchiveManager.Current.IsSupported(path, ArchiveType.MediaArchive))
             {
                 var tokens = path.Split(LoosePath.Separators);
                 var count = tokens.Length;

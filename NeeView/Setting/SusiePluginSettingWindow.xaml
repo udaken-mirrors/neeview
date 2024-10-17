@@ -71,7 +71,7 @@
                     <CheckBox Content="{properties:TextBinding SusiePluginWindow.IsEnabled}" IsChecked="{Binding IsEnabled}" TabIndex="1"/>
                     <CheckBox Content="{properties:TextBinding SusiePluginWindow.IsCacheEnabled}" IsChecked="{Binding IsCacheEnabled}" TabIndex="1"/>
                     <CheckBox Content="{properties:TextBinding SusiePluginWindow.IsPreExtract}" IsChecked="{Binding IsPreExtract}" TabIndex="1"
-                            Visibility="{Binding IsArchiver, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                            Visibility="{Binding IsArchive, Converter={StaticResource BooleanToVisibilityConverter}}" />
                 </StackPanel>
 
                 <TextBlock DockPanel.Dock="Top" Text="{properties:TextBinding Word.Extension}" FontWeight="Bold" Margin="0,15,0,5"/>

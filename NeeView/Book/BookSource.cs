@@ -32,14 +32,14 @@ namespace NeeView
         public string Path => this.ArchiveEntryCollection.Path;
 
         // この本はディレクトリ？
-        public bool IsDirectory => this.ArchiveEntryCollection.Archiver is FolderArchive;
+        public bool IsDirectory => this.ArchiveEntryCollection.Archive is FolderArchive;
 
         // メディアアーカイバ？
-        public bool IsMedia => ArchiveEntryCollection?.Archiver is MediaArchiver;
+        public bool IsMedia => ArchiveEntryCollection?.Archive is MediaArchive;
 
 
         // プレイリスト？
-        public bool IsPlaylist => ArchiveEntryCollection?.Archiver is PlaylistArchive;
+        public bool IsPlaylist => ArchiveEntryCollection?.Archive is PlaylistArchive;
 
         /// <summary>
         /// 読み込まれなかったサブフォルダ数。再帰判定用
@@ -91,9 +91,9 @@ namespace NeeView
         }
         #endregion
 
-        public string GetArchiverDetail()
+        public string GetArchiveDetail()
         {
-            var archiver = ArchiveEntryCollection?.Archiver;
+            var archiver = ArchiveEntryCollection?.Archive;
             if (archiver == null)
             {
                 return "";
@@ -103,18 +103,18 @@ namespace NeeView
 
             var extension = LoosePath.GetExtension(archiver.EntryName);
 
-            var archiverType = ArchiverManager.GetArchiverType(archiver);
+            var archiverType = ArchiveManager.GetArchiveType(archiver);
             return archiverType switch
             {
-                ArchiverType.FolderArchive
+                ArchiveType.FolderArchive
                     => Properties.TextResources.GetString("ArchiveFormat.Folder"),
-                ArchiverType.ZipArchiver or ArchiverType.SevenZipArchiver or ArchiverType.SusieArchiver
+                ArchiveType.ZipArchive or ArchiveType.SevenZipArchive or ArchiveType.SusieArchive
                     => inner + Properties.TextResources.GetString("ArchiveFormat.CompressedFile") + $"({extension})",
-                ArchiverType.PdfArchiver
+                ArchiveType.PdfArchive
                     => inner + Properties.TextResources.GetString("ArchiveFormat.Pdf") + $"({extension})",
-                ArchiverType.MediaArchiver
+                ArchiveType.MediaArchive
                     => inner + Properties.TextResources.GetString("ArchiveFormat.Media") + $"({extension})",
-                ArchiverType.PlaylistArchiver
+                ArchiveType.PlaylistArchive
                     => Properties.TextResources.GetString("ArchiveFormat.Playlist"),
                 _
                     => Properties.TextResources.GetString("ArchiveFormat.Unknown"),
@@ -124,7 +124,7 @@ namespace NeeView
         public string GetDetail()
         {
             string text = "";
-            text += GetArchiverDetail() + "\n";
+            text += GetArchiveDetail() + "\n";
             text += Properties.TextResources.GetFormatString("BookAddressInfo.Page", Pages.Count);
             return text;
         }
@@ -139,7 +139,7 @@ namespace NeeView
         /// </summary>
         private void ActivatePreExtractor()
         {
-            foreach (var archiver in Pages.CollectArchiver())
+            foreach (var archiver in Pages.CollectArchive())
             {
                 archiver.ActivatePreExtractor();
             }
@@ -150,7 +150,7 @@ namespace NeeView
         /// </summary>
         private void DeactivatePreExtractor()
         {
-            foreach (var archiver in Pages.CollectArchiver())
+            foreach (var archiver in Pages.CollectArchive())
             {
                 archiver.DeactivatePreExtractor();
                 archiver.ClearRawData();

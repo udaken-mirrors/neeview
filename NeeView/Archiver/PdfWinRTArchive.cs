@@ -14,12 +14,12 @@ namespace NeeView
     /// <summary>
     /// アーカイバー：WinRT によるPDFアーカイバ
     /// </summary>
-    public class PdfWinRTArchiver : PdfArchiver
+    public class PdfWinRTArchive : PdfArchive
     {
         public const string Identify = "WinRT";
 
 
-        public PdfWinRTArchiver(string path, ArchiveEntry? source) : base(path, source)
+        public PdfWinRTArchive(string path, ArchiveEntry? source) : base(path, source)
         {
         }
 
@@ -107,9 +107,9 @@ namespace NeeView
         private static Size GetRenderSize(PdfPage pdfPage)
         {
             var size = SizeExtensions.FromFoundationSize(pdfPage.Size);
-            if (PdfArchiverProfile.SizeLimitedRenderSize.IsContains(size))
+            if (PdfArchiveProfile.SizeLimitedRenderSize.IsContains(size))
             {
-                size = size.Uniformed(PdfArchiverProfile.SizeLimitedRenderSize);
+                size = size.Uniformed(PdfArchiveProfile.SizeLimitedRenderSize);
             }
             return size;
         }

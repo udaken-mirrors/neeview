@@ -17,9 +17,9 @@ namespace NeeView
     /// <summary>
     /// アーカイバー：PdfiumViewer によるPDFアーカイバ
     /// </summary>
-    public class PdfPdfiumArchiver : PdfArchiver
+    public class PdfPdfiumArchive : PdfArchive
     {
-        public PdfPdfiumArchiver(string path, ArchiveEntry? source) : base(path, source)
+        public PdfPdfiumArchive(string path, ArchiveEntry? source) : base(path, source)
         {
         }
 
@@ -116,9 +116,9 @@ namespace NeeView
         private static Size GetRenderSize(PdfDocument pdfDocument, int page)
         {
             var size = SizeExtensions.FromDrawingSize(pdfDocument.PageSizes[page]);
-            if (PdfArchiverProfile.SizeLimitedRenderSize.IsContains(size))
+            if (PdfArchiveProfile.SizeLimitedRenderSize.IsContains(size))
             {
-                size = size.Uniformed(PdfArchiverProfile.SizeLimitedRenderSize);
+                size = size.Uniformed(PdfArchiveProfile.SizeLimitedRenderSize);
             }
             return size;
         }

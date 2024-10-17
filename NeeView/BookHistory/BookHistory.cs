@@ -55,7 +55,7 @@ namespace NeeView
         public Page ArchivePage => Unit.ArchivePage;
 
         public string Name => Unit.Memento.Name;
-        public string? Note => Unit.ArchivePage.ArchiveEntry?.RootArchiverName;
+        public string? Note => Unit.ArchivePage.ArchiveEntry?.RootArchiveName;
         public string Detail => Path + "\n" + LastAccessTime;
 
         public IThumbnail Thumbnail => Unit.ArchivePage.Thumbnail;

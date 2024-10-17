@@ -90,7 +90,7 @@ namespace NeeView
             }
             else if (_collection == null)
             {
-                return new QueryPath(ArchiverManager.Current.GetExistPathName(Place.SimplePath));
+                return new QueryPath(ArchiveManager.Current.GetExistPathName(Place.SimplePath));
             }
             else
             {

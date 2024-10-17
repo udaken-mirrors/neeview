@@ -5,7 +5,7 @@ namespace NeeView
 {
     public class PlaylistArchiveEntry : ArchiveEntry
     {
-        public PlaylistArchiveEntry(Archiver archiver) : base(archiver)
+        public PlaylistArchiveEntry(Archive archiver) : base(archiver)
         {
         }
 

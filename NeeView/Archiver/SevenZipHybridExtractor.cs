@@ -85,7 +85,7 @@ namespace NeeView
             // 展開先をメモリがファイルかを判断する
             // TODO: ArchiveをStream対応させ、オンメモリ展開も選択できるようにする
             SevenZipStreamInfo streamInfo;
-            if (ArchiverManager.Current.IsSupported(info.FileName, false, true) || PreExtractMemory.Current.IsFull((long)info.Size))
+            if (ArchiveManager.Current.IsSupported(info.FileName, false, true) || PreExtractMemory.Current.IsFull((long)info.Size))
             {
                 var path = Path.Combine(_directory, GetTempFileName(info));
                 streamInfo = new TempFileSevenZipStreamInfo(info, path, File.Create(path));

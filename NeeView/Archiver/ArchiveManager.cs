@@ -14,38 +14,38 @@ namespace NeeView
     /// <summary>
     /// アーカイバーマネージャ
     /// </summary>
-    public class ArchiverManager : BindableBase, IDisposable
+    public class ArchiveManager : BindableBase, IDisposable
     {
-        static ArchiverManager() => Current = new ArchiverManager();
-        public static ArchiverManager Current { get; }
+        static ArchiveManager() => Current = new ArchiveManager();
+        public static ArchiveManager Current { get; }
 
 
         /// <summary>
         /// アーカイバのサポート拡張子
         /// </summary>
-        private readonly Dictionary<ArchiverType, FileTypeCollection> _supportedFileTypes = new()
+        private readonly Dictionary<ArchiveType, FileTypeCollection> _supportedFileTypes = new()
         {
-            [ArchiverType.SevenZipArchiver] = Config.Current.Archive.SevenZip.SupportFileTypes,
-            [ArchiverType.ZipArchiver] = Config.Current.Archive.Zip.SupportFileTypes,
-            [ArchiverType.PdfArchiver] = Config.Current.Archive.Pdf.SupportFileTypes,
-            [ArchiverType.MediaArchiver] = Config.Current.Archive.Media.SupportFileTypes,
-            [ArchiverType.SusieArchiver] = SusiePluginManager.Current.ArchiveExtensions,
-            [ArchiverType.PlaylistArchiver] = new FileTypeCollection(PlaylistArchive.Extension),
+            [ArchiveType.SevenZipArchive] = Config.Current.Archive.SevenZip.SupportFileTypes,
+            [ArchiveType.ZipArchive] = Config.Current.Archive.Zip.SupportFileTypes,
+            [ArchiveType.PdfArchive] = Config.Current.Archive.Pdf.SupportFileTypes,
+            [ArchiveType.MediaArchive] = Config.Current.Archive.Media.SupportFileTypes,
+            [ArchiveType.SusieArchive] = SusiePluginManager.Current.ArchiveExtensions,
+            [ArchiveType.PlaylistArchive] = new FileTypeCollection(PlaylistArchive.Extension),
         };
 
         // アーカイバの適用順
-        private List<ArchiverType> _orderList;
+        private List<ArchiveType> _orderList;
         private bool _isDirtyOrderList;
 
         private readonly DisposableCollection _disposables;
-        private readonly ArchiverCache _cache;
+        private readonly ArchiveCache _cache;
 
 
-        private ArchiverManager()
+        private ArchiveManager()
         {
             _disposables = new DisposableCollection();
 
-            _cache = new ArchiverCache();
+            _cache = new ArchiveCache();
             _disposables.Add(_cache);
 
             _disposables.Add(Config.Current.Archive.Zip.SubscribePropertyChanged(
@@ -80,7 +80,7 @@ namespace NeeView
 
 
         // 対応アーカイブ検索用リスト
-        private List<ArchiverType> OrderList
+        private List<ArchiveType> OrderList
         {
             get
             {
@@ -129,42 +129,42 @@ namespace NeeView
         }
 
         // 検索順を更新
-        private static List<ArchiverType> CreateOrderList()
+        private static List<ArchiveType> CreateOrderList()
         {
-            var order = new List<ArchiverType>
+            var order = new List<ArchiveType>
             {
-                ArchiverType.PlaylistArchiver
+                ArchiveType.PlaylistArchive
             };
 
             if (Config.Current.Archive.Zip.IsEnabled)
             {
-                order.Add(ArchiverType.ZipArchiver);
+                order.Add(ArchiveType.ZipArchive);
             }
 
             if (Config.Current.Archive.SevenZip.IsEnabled)
             {
-                order.Add(ArchiverType.SevenZipArchiver);
+                order.Add(ArchiveType.SevenZipArchive);
             }
 
             if (Config.Current.Archive.Pdf.IsEnabled)
             {
-                order.Add(ArchiverType.PdfArchiver);
+                order.Add(ArchiveType.PdfArchive);
             }
 
             if (Config.Current.Archive.Media.IsEnabled)
             {
-                order.Add(ArchiverType.MediaArchiver);
+                order.Add(ArchiveType.MediaArchive);
             }
 
             if (Config.Current.Susie.IsEnabled)
             {
                 if (Config.Current.Susie.IsFirstOrderSusieArchive)
                 {
-                    order.Insert(0, ArchiverType.SusieArchiver);
+                    order.Insert(0, ArchiveType.SusieArchive);
                 }
                 else
                 {
-                    order.Add(ArchiverType.SusieArchiver);
+                    order.Add(ArchiveType.SusieArchive);
                 }
             }
 
@@ -172,7 +172,7 @@ namespace NeeView
         }
 
         // アーカイバを指定してサポートしているかを判定
-        public bool IsSupported(string fileName, ArchiverType archiverType)
+        public bool IsSupported(string fileName, ArchiveType archiverType)
         {
             string ext = LoosePath.GetExtension(fileName);
             return _supportedFileTypes[archiverType].Contains(ext);
@@ -183,17 +183,17 @@ namespace NeeView
         {
             if (_disposedValue) return false;
 
-            return GetSupportedType(fileName, isAllowFileSystem, isAllowMedia) != ArchiverType.None;
+            return GetSupportedType(fileName, isAllowFileSystem, isAllowMedia) != ArchiveType.None;
         }
 
         // サポートしているアーカイバーを取得
-        public ArchiverType GetSupportedType(string fileName, bool isArrowFileSystem = true, bool isAllowMedia = true)
+        public ArchiveType GetSupportedType(string fileName, bool isArrowFileSystem = true, bool isAllowMedia = true)
         {
-            if (_disposedValue) return ArchiverType.None;
+            if (_disposedValue) return ArchiveType.None;
 
             if (isArrowFileSystem && (fileName.Last() == '\\' || fileName.Last() == '/'))
             {
-                return ArchiverType.FolderArchive;
+                return ArchiveType.FolderArchive;
             }
 
             string ext = LoosePath.GetExtension(fileName);
@@ -202,11 +202,11 @@ namespace NeeView
             {
                 if (_supportedFileTypes[type].Contains(ext))
                 {
-                    return (isAllowMedia || type != ArchiverType.MediaArchiver) ? type : ArchiverType.None;
+                    return (isAllowMedia || type != ArchiveType.MediaArchive) ? type : ArchiveType.None;
                 }
             }
 
-            return ArchiverType.None;
+            return ArchiveType.None;
         }
 
         /// <summary>
@@ -232,31 +232,31 @@ namespace NeeView
         /// <param name="source">元となったアーカイブエントリ</param>
         /// <param name="isRoot">ルートアーカイブとする</param>
         /// <returns>作成されたアーカイバー</returns>
-        private Archiver CreateArchiver(ArchiverType type, string path, ArchiveEntry? source)
+        private Archive CreateArchive(ArchiveType type, string path, ArchiveEntry? source)
         {
-            Archiver archiver;
+            Archive archiver;
 
             switch (type)
             {
-                case ArchiverType.FolderArchive:
+                case ArchiveType.FolderArchive:
                     archiver = new FolderArchive(path, source);
                     break;
-                case ArchiverType.ZipArchiver:
-                    archiver = new ZipArchiver(path, source);
+                case ArchiveType.ZipArchive:
+                    archiver = new ZipArchive(path, source);
                     break;
-                case ArchiverType.SevenZipArchiver:
-                    archiver = new SevenZipArchiver(path, source);
+                case ArchiveType.SevenZipArchive:
+                    archiver = new SevenZipArchive(path, source);
                     break;
-                case ArchiverType.PdfArchiver:
-                    archiver = PdfArchiverFactory.Create(path, source);
+                case ArchiveType.PdfArchive:
+                    archiver = PdfArchiveFactory.Create(path, source);
                     break;
-                case ArchiverType.MediaArchiver:
-                    archiver = new MediaArchiver(path, source);
+                case ArchiveType.MediaArchive:
+                    archiver = new MediaArchive(path, source);
                     break;
-                case ArchiverType.SusieArchiver:
-                    archiver = new SusieArchiver(path, source);
+                case ArchiveType.SusieArchive:
+                    archiver = new SusieArchive(path, source);
                     break;
-                case ArchiverType.PlaylistArchiver:
+                case ArchiveType.PlaylistArchive:
                     archiver = new PlaylistArchive(path, source);
                     break;
                 default:
@@ -271,15 +271,15 @@ namespace NeeView
         }
 
         // アーカイバー作成
-        private Archiver CreateArchiver(string path, ArchiveEntry? source)
+        private Archive CreateArchive(string path, ArchiveEntry? source)
         {
             if (Directory.Exists(path))
             {
-                return CreateArchiver(ArchiverType.FolderArchive, path, source);
+                return CreateArchive(ArchiveType.FolderArchive, path, source);
             }
             else
             {
-                return CreateArchiver(GetSupportedType(path), path, source);
+                return CreateArchive(GetSupportedType(path), path, source);
             }
         }
 
@@ -290,7 +290,7 @@ namespace NeeView
         /// <param name="source">ArchiveEntry</param>
         /// <param name="token"></param>
         /// <returns></returns>
-        public async Task<Archiver> CreateArchiverAsync(ArchiveEntry source, bool ignoreCache, CancellationToken token)
+        public async Task<Archive> CreateArchiveAsync(ArchiveEntry source, bool ignoreCache, CancellationToken token)
         {
             ThrowIfDisposed();
 
@@ -301,36 +301,36 @@ namespace NeeView
                 // 更新日、サイズを比較して再利用するかを判定
                 if (archiver is not null && archiver.LastWriteTime == source.LastWriteTime && archiver.Length == source.Length)
                 {
-                    ////Debug.WriteLine($"Archiver: Find cache: {systemPath}");
+                    ////Debug.WriteLine($"Archive: Find cache: {systemPath}");
                     return archiver;
                 }
                 else
                 {
-                    //// Debug.WriteLine($"Archiver: Old cache: {systemPath}");
+                    //// Debug.WriteLine($"Archive: Old cache: {systemPath}");
                 }
             }
             else
             {
                 if (ignoreCache)
                 {
-                    ////Debug.WriteLine($"Archiver: Ignore cache: {systemPath}");
+                    ////Debug.WriteLine($"Archive: Ignore cache: {systemPath}");
                 }
                 else
                 {
-                    ////Debug.WriteLine($"Archiver: Cache not found: {systemPath}");
+                    ////Debug.WriteLine($"Archive: Cache not found: {systemPath}");
                 }
             }
 
             if (source.IsFileSystem)
             {
-                return CreateArchiver(source.SystemPath, null);
+                return CreateArchive(source.SystemPath, null);
             }
             else
             {
                 // TODO: テンポラリファイルの指定方法をスマートに。
                 var proxyFile = await ArchiveEntryExtractorService.Current.ExtractAsync(source, token);
-                var archiverTemp = CreateArchiver(proxyFile.Path, source);
-                ////Debug.WriteLine($"Archiver: {archiverTemp.SystemPath} => {tempFile.Path}");
+                var archiverTemp = CreateArchive(proxyFile.Path, source);
+                ////Debug.WriteLine($"Archive: {archiverTemp.SystemPath} => {tempFile.Path}");
                 Debug.Assert(archiverTemp.ProxyFile == null);
                 archiverTemp.ProxyFile = proxyFile;
                 return archiverTemp;
@@ -388,19 +388,19 @@ namespace NeeView
             return null;
         }
 
-        public static ArchiverType GetArchiverType(Archiver archiver)
+        public static ArchiveType GetArchiveType(Archive archiver)
         {
             if (archiver is null) throw new ArgumentNullException(nameof(archiver));
             return archiver switch
             {
-                FolderArchive => ArchiverType.FolderArchive,
-                ZipArchiver => ArchiverType.ZipArchiver,
-                SevenZipArchiver => ArchiverType.SevenZipArchiver,
-                PdfArchiver => ArchiverType.PdfArchiver,
-                MediaArchiver => ArchiverType.MediaArchiver,
-                SusieArchiver => ArchiverType.SusieArchiver,
-                PlaylistArchive => ArchiverType.PlaylistArchiver,
-                _ => ArchiverType.None,
+                FolderArchive => ArchiveType.FolderArchive,
+                ZipArchive => ArchiveType.ZipArchive,
+                SevenZipArchive => ArchiveType.SevenZipArchive,
+                PdfArchive => ArchiveType.PdfArchive,
+                MediaArchive => ArchiveType.MediaArchive,
+                SusieArchive => ArchiveType.SusieArchive,
+                PlaylistArchive => ArchiveType.PlaylistArchive,
+                _ => ArchiveType.None,
             };
         }
 

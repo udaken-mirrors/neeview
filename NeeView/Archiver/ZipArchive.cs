@@ -16,12 +16,12 @@ namespace NeeView
     /// <summary>
     /// アーカイバー：標準Zipアーカイバー
     /// </summary>
-    public class ZipArchiver : Archiver
+    public class ZipArchive : Archive
     {
         private Encoding? _encoding;
 
 
-        public ZipArchiver(string path, ArchiveEntry? source) : base(path, source)
+        public ZipArchive(string path, ArchiveEntry? source) : base(path, source)
         {
         }
 
@@ -75,7 +75,7 @@ namespace NeeView
 
                 // エントリー取得
                 stream.Seek(0, SeekOrigin.Begin);
-                using (var archiver = new ZipArchive(stream, ZipArchiveMode.Read, false, _encoding))
+                using (var archiver = new System.IO.Compression.ZipArchive(stream, ZipArchiveMode.Read, false, _encoding))
                 {
                     stream = null;
 
@@ -187,10 +187,10 @@ namespace NeeView
         /// <exception cref="ArgumentException">Not registered with this archiver.</exception>
         public override bool CanDelete(List<ArchiveEntry> entries)
         {
-            if (entries.Any(e => e.Archiver != this)) throw new ArgumentException("There are elements not registered with this archiver.", nameof(entries));
+            if (entries.Any(e => e.Archive != this)) throw new ArgumentException("There are elements not registered with this archiver.", nameof(entries));
 
             if (!Config.Current.Archive.Zip.IsFileWriteAccessEnabled) return false;
-            return entries.All(e => e.Archiver == this && e.Archiver.IsRoot);
+            return entries.All(e => e.Archive == this && e.Archive.IsRoot);
         }
 
         /// <summary>
@@ -200,14 +200,14 @@ namespace NeeView
         public override async Task<bool> DeleteAsync(List<ArchiveEntry> entries)
         {
             if (!IsRoot) throw new ArgumentException("The archive is not a file.");
-            if (entries.Any(e => e.Archiver != this)) throw new ArgumentException("There are elements not registered with this archiver.", nameof(entries));
+            if (entries.Any(e => e.Archive != this)) throw new ArgumentException("There are elements not registered with this archiver.", nameof(entries));
             if (!entries.Any()) return false;
 
             var removes = entries;
             var directories = entries.Where(e => e.IsDirectory);
             if (directories.Any())
             {
-                var all = await entries.First().Archiver.GetEntriesAsync(CancellationToken.None);
+                var all = await entries.First().Archive.GetEntriesAsync(CancellationToken.None);
                 var children = directories.SelectMany(d => all.Where(e => e.Id >= 0 && e.EntryName.StartsWith(LoosePath.TrimDirectoryEnd(d.EntryName))));
                 removes = entries.Concat(children).Where(e => e.Id >= 0).Distinct().ToList();
             }
@@ -242,7 +242,7 @@ namespace NeeView
                 }
             });
 
-            static ZipArchiveEntry? GetTargetEntry(ZipArchive archive, ArchiveEntry entry)
+            static ZipArchiveEntry? GetTargetEntry(System.IO.Compression.ZipArchive archive, ArchiveEntry entry)
             {
                 var zipArchiveEntry = archive.Entries[entry.Id];
                 ZipArchiveEntryHelper.RepairEntryName(zipArchiveEntry);
@@ -300,7 +300,7 @@ namespace NeeView
         /// </summary>
         public override bool CanRename(ArchiveEntry entry)
         {
-            if (entry.Archiver != this) throw new ArgumentException("There are elements not registered with this archiver.", nameof(entry));
+            if (entry.Archive != this) throw new ArgumentException("There are elements not registered with this archiver.", nameof(entry));
 
             return IsRoot && Config.Current.Archive.Zip.IsFileWriteAccessEnabled;
         }
@@ -310,7 +310,7 @@ namespace NeeView
         /// </summary>
         public override async Task<bool> RenameAsync(ArchiveEntry entry, string name)
         {
-            if (entry.Archiver != this) throw new ArgumentException("There are elements not registered with this archiver.", nameof(entry));
+            if (entry.Archive != this) throw new ArgumentException("There are elements not registered with this archiver.", nameof(entry));
             if (!IsRoot) throw new ArgumentException("The archive is not a file.");
 
             //throw new NotImplementedException();

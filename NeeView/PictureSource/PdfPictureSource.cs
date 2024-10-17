@@ -10,14 +10,14 @@ namespace NeeView
 {
     public class PdfPictureSource : IPictureSource<ArchiveEntry>
     {
-        private readonly PdfArchiver _pdfArchive;
+        private readonly PdfArchive _pdfArchive;
 
         public PdfPictureSource(ArchiveEntry archiveEntry, PictureInfo? pictureInfo)
         {
             ArchiveEntry = archiveEntry;
             PictureInfo = pictureInfo;
 
-            _pdfArchive = ArchiveEntry.Archiver as PdfArchiver ?? throw new InvalidOperationException();
+            _pdfArchive = ArchiveEntry.Archive as PdfArchive ?? throw new InvalidOperationException();
         }
 
 

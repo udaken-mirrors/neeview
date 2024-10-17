@@ -13,13 +13,13 @@ namespace NeeView
     /// <summary>
     /// アーカイバー：Susieアーカイバー
     /// </summary>
-    public class SusieArchiver : Archiver
+    public class SusieArchive : Archive
     {
         private SusieArchivePluginAccessor? _susiePlugin;
         private static readonly AsyncLock _asyncLock = new();
 
 
-        public SusieArchiver(string path, ArchiveEntry? source) : base(path, source)
+        public SusieArchive(string path, ArchiveEntry? source) : base(path, source)
         {
         }
 

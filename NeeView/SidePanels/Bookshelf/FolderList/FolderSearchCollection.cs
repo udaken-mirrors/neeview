@@ -182,8 +182,8 @@ namespace NeeView
                 return _folderItemFactory.CreateFolderItem(shortcut);
             }
 
-            var archiveType = ArchiverManager.Current.GetSupportedType(nodeContent.Path);
-            if (archiveType != ArchiverType.None)
+            var archiveType = ArchiveManager.Current.GetSupportedType(nodeContent.Path);
+            if (archiveType != ArchiveType.None)
             {
                 var item = new FileFolderItem(_isOverlayEnabled)
                 {
@@ -196,7 +196,7 @@ namespace NeeView
                     Length = nodeContent.Size,
                     IsReady = true
                 };
-                if (archiveType == ArchiverType.PlaylistArchiver)
+                if (archiveType == ArchiveType.PlaylistArchive)
                 {
                     item.Type = FolderItemType.Playlist;
                     item.Attributes = FolderItemAttribute.Playlist;

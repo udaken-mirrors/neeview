@@ -8,11 +8,11 @@ using System.Threading.Tasks;
 namespace NeeView
 {
     /// <summary>
-    /// 生成したArchiver を弱参照で保持しておく機構
+    /// 生成したArchive を弱参照で保持しておく機構
     /// </summary>
-    public class ArchiverCache : IDisposable
+    public class ArchiveCache : IDisposable
     {
-        private readonly Dictionary<string, WeakReference<Archiver>> _caches = new();
+        private readonly Dictionary<string, WeakReference<Archive>> _caches = new();
         private readonly object _lock = new();
 
 
@@ -27,18 +27,18 @@ namespace NeeView
             }
         }
 
-        public void Add(Archiver archiver)
+        public void Add(Archive archiver)
         {
             if (_disposedValue) return;
 
             lock (_lock)
             {
-                ////Debug.WriteLine($"ArchiverCache: Add {archiver.SystemPath}");
-                _caches[archiver.SystemPath] = new WeakReference<Archiver>(archiver);
+                ////Debug.WriteLine($"ArchiveCache: Add {archiver.SystemPath}");
+                _caches[archiver.SystemPath] = new WeakReference<Archive>(archiver);
             }
         }
 
-        public bool TryGetValue(string path, out Archiver? archiver)
+        public bool TryGetValue(string path, out Archive? archiver)
         {
             if (_disposedValue)
             {
@@ -48,7 +48,7 @@ namespace NeeView
 
             if (_caches.Count > 50)
             {
-                ////Debug.WriteLine($"ArchiverCache: CleanUp ...");
+                ////Debug.WriteLine($"ArchiveCache: CleanUp ...");
                 CleanUp();
                 ////Dump();
             }
@@ -77,7 +77,7 @@ namespace NeeView
 
             lock (_lock)
             {
-                ////Debug.WriteLine($"ArchiverCache: Clear all");
+                ////Debug.WriteLine($"ArchiveCache: Clear all");
                 _caches.Clear();
             }
         }
@@ -94,7 +94,7 @@ namespace NeeView
                 var removes = _caches.Where(e => !e.Value.TryGetTarget(out var archiver)).Select(e => e.Key).ToList();
                 foreach (var key in removes)
                 {
-                    ////Debug.WriteLine($"ArchiverCache: Remove {key}");
+                    ////Debug.WriteLine($"ArchiveCache: Remove {key}");
                     _caches.Remove(key);
                 }
             }

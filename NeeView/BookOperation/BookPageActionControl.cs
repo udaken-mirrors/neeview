@@ -134,7 +134,7 @@ namespace NeeView
             return Config.Current.System.IsFileWriteAccessEnabled
                 && items != null
                 && items.Any()
-                && items.All(e => e.ArchiveEntry.IsFileSystem && e.ArchiveEntry.Archiver is not PlaylistArchive);
+                && items.All(e => e.ArchiveEntry.IsFileSystem && e.ArchiveEntry.Archive is not PlaylistArchive);
         }
 
         public void MoveToFolder(DestinationFolder parameter, MultiPagePolicy multiPagePolicy)

@@ -71,7 +71,7 @@ namespace NeeView
             }
             else if (_collection == null)
             {
-                return new QueryPath(ArchiverManager.Current.GetExistPathName(Place.SimplePath));
+                return new QueryPath(ArchiveManager.Current.GetExistPathName(Place.SimplePath));
             }
             else
             {
@@ -103,8 +103,8 @@ namespace NeeView
             }
             else
             {
-                var archiveType = ArchiverManager.Current.GetSupportedType(entity.EntryLastName);
-                if (archiveType != ArchiverType.None)
+                var archiveType = ArchiveManager.Current.GetSupportedType(entity.EntryLastName);
+                if (archiveType != ArchiveType.None)
                 {
                     return _folderItemFactory.CreateFolderItem(entity, null);
                 }

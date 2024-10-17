@@ -29,8 +29,8 @@ namespace NeeView
 
             try
             {
-                // Archvierのキャッシュ一覧
-                //ArchiverManager.Current.DumpCache();
+                // Archive のキャッシュ一覧
+                //ArchiveManager.Current.DumpCache();
 
                 //
                 ////new SevenZiPTest().Execute();
@@ -130,7 +130,7 @@ namespace NeeView
 
             public void Execute()
             {
-                SevenZipArchiver.InitializeLibrary();
+                SevenZipArchive.InitializeLibrary();
 
                 var path = @"E:\Work\Labo\サンプル\ソリッド圧縮ON.7z";
                 using (var extractor = new SevenZipExtractor(path))

@@ -2,16 +2,16 @@
 {
     public class MediaArchiveEntry : ArchiveEntry
     {
-        public MediaArchiveEntry(Archiver archiver) : base(archiver)
+        public MediaArchiveEntry(Archive archiver) : base(archiver)
         {
         }
 
-        public override string EntryFullName => Archiver.SystemPath;
+        public override string EntryFullName => Archive.SystemPath;
 
-        public override string SystemPath => Archiver.SystemPath;
+        public override string SystemPath => Archive.SystemPath;
 
-        public override string? EntityPath => Archiver.Path;
+        public override string? EntityPath => Archive.Path;
 
-        public override string Ident => Archiver.Ident;
+        public override string Ident => Archive.Ident;
     }
 }

@@ -77,7 +77,7 @@ namespace NeeView
             var frameContent = _presenter.GetSelectedPageFrameContent();
 
             var contents = (frameContent?.ViewContents ?? new List<ViewContent>()).Where(e => !e.Element.IsDummy).ToList();
-            var isMedia = contents.FirstOrDefault()?.Element.Page.ArchiveEntry.Archiver is MediaArchiver == true;
+            var isMedia = contents.FirstOrDefault()?.Element.Page.ArchiveEntry.Archive is MediaArchive == true;
 
             string format = isMedia
                 ? Config.Current.PageTitle.PageTitleFormatMedia

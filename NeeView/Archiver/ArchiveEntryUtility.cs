@@ -52,11 +52,11 @@ namespace NeeView
 
                         if (File.Exists(archivePath))
                         {
-                            var archiver = await ArchiverManager.Current.CreateArchiverAsync(StaticFolderArchive.Default.CreateArchiveEntry(archivePath), false, token);
+                            var archiver = await ArchiveManager.Current.CreateArchiveAsync(StaticFolderArchive.Default.CreateArchiveEntry(archivePath), false, token);
                             var entries = await archiver.GetEntriesAsync(token);
 
                             // メディア アーカイブの場合、ページ指定は無効
-                            if (archiver is MediaArchiver)
+                            if (archiver is MediaArchive)
                             {
                                 return entries.First();
                             }
@@ -87,7 +87,7 @@ namespace NeeView
         /// アーカイブ内のエントリーを返す。
         /// 入れ子になったアーカイブの場合、再帰処理する。
         /// </summary>
-        private static async Task<ArchiveEntry> CreateInnerAsync(Archiver archiver, string entryName, CancellationToken token)
+        private static async Task<ArchiveEntry> CreateInnerAsync(Archive archiver, string entryName, CancellationToken token)
         {
             token.ThrowIfCancellationRequested();
 
@@ -106,9 +106,9 @@ namespace NeeView
                 entry = entries.FirstOrDefault(e => e.EntryName == archivePath && e.IsArchive());
                 if (entry != null)
                 {
-                    var subArchiver = await ArchiverManager.Current.CreateArchiverAsync(entry, false, token);
+                    var subArchive = await ArchiveManager.Current.CreateArchiveAsync(entry, false, token);
                     var subEntryName = entryName[archivePath.Length..].TrimStart(LoosePath.Separators);
-                    return await CreateInnerAsync(subArchiver, subEntryName, token);
+                    return await CreateInnerAsync(subArchive, subEntryName, token);
                 }
             }
 
@@ -129,13 +129,13 @@ namespace NeeView
                 List<ArchiveEntry> entries;
                 if (!source.IsFileSystem && source.IsDirectory)
                 {
-                    entries = (await source.Archiver.GetEntriesAsync(token))
+                    entries = (await source.Archive.GetEntriesAsync(token))
                         .Where(e => e.EntryName.StartsWith(LoosePath.TrimDirectoryEnd(source.EntryName)))
                         .ToList();
                 }
                 else
                 {
-                    var archiver = await ArchiverManager.Current.CreateArchiverAsync(source, false, token);
+                    var archiver = await ArchiveManager.Current.CreateArchiveAsync(source, false, token);
                     await archiver.WaitFileReadableAsync(TimeSpan.FromMilliseconds(1000), token);
                     entries = await archiver.GetEntriesAsync(token);
                 }

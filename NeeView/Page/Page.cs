@@ -311,13 +311,13 @@ namespace NeeView
         // ファイルの場所を取得
         public string GetFilePlace()
         {
-            return ArchiveEntry.EntityPath ?? ArchiveEntry.Archiver.GetPlace();
+            return ArchiveEntry.EntityPath ?? ArchiveEntry.Archive.GetPlace();
         }
 
         // フォルダーを開く、で取得するパス
         public string GetFolderOpenPlace()
         {
-            if (ArchiveEntry.Archiver is FolderArchive)
+            if (ArchiveEntry.Archive is FolderArchive)
             {
                 return GetFilePlace();
             }
@@ -330,7 +330,7 @@ namespace NeeView
         // フォルダーの場所を取得
         public string GetFolderPlace()
         {
-            return ArchiveEntry.Archiver.GetSourceFileSystemPath();
+            return ArchiveEntry.Archive.GetSourceFileSystemPath();
         }
 
         /// <summary>

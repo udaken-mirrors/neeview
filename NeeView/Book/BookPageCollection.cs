@@ -587,10 +587,10 @@ namespace NeeView
         /// 依存しているアーカイバを収集
         /// </summary>
         /// <returns></returns>
-        public List<Archiver> CollectArchiver()
+        public List<Archive> CollectArchive()
         {
             var archivers = Pages
-                .Select(e => e.ArchiveEntry.Archiver)
+                .Select(e => e.ArchiveEntry.Archive)
                 .Distinct()
                 .WhereNotNull()
                 .ToList();

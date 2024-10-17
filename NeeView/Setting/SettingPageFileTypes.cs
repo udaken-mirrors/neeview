@@ -25,8 +25,8 @@ namespace NeeView.Setting
         {
             this.Children = new List<SettingPage>
             {
-                new SettingPageArchiverZip(),
-                new SettingPageArchiverSevenZip(),
+                new SettingPageArchiveZip(),
+                new SettingPageArchiveSevenZip(),
                 new SettingPageArchivePdf(),
                 new SettingPageArchiveMedia(),
                 new SettingPageSusie(),
@@ -70,9 +70,9 @@ namespace NeeView.Setting
     /// <summary>
     /// SettingPage: Archive ZIP
     /// </summary>
-    public class SettingPageArchiverZip : SettingPage
+    public class SettingPageArchiveZip : SettingPage
     {
-        public SettingPageArchiverZip() : base(Properties.TextResources.GetString("SettingPage.Archive.Zip"))
+        public SettingPageArchiveZip() : base(Properties.TextResources.GetString("SettingPage.Archive.Zip"))
         {
             var encodingMap = typeof(ZipEncoding).VisibleAliasNameDictionary();
             encodingMap[ZipEncoding.Local] = encodingMap[ZipEncoding.Local] + " - " + Environment.Encoding.EncodingName;
@@ -93,9 +93,9 @@ namespace NeeView.Setting
     /// <summary>
     /// SettingPage: Archive 7-Zip
     /// </summary>
-    public class SettingPageArchiverSevenZip : SettingPage
+    public class SettingPageArchiveSevenZip : SettingPage
     {
-        public SettingPageArchiverSevenZip() : base(Properties.TextResources.GetString("SettingPage.Archive.SevenZip"))
+        public SettingPageArchiveSevenZip() : base(Properties.TextResources.GetString("SettingPage.Archive.SevenZip"))
         {
             var section = new SettingItemSection(Properties.TextResources.GetString("SettingPage.Archive.SevenZipFeature"));
 

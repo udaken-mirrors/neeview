@@ -165,8 +165,8 @@ namespace NeeView
                 }
             }
 
-            var archiveType = ArchiverManager.Current.GetSupportedType(e.FullName);
-            if (archiveType != ArchiverType.None)
+            var archiveType = ArchiveManager.Current.GetSupportedType(e.FullName);
+            if (archiveType != ArchiveType.None)
             {
                 var item = new FileFolderItem(_isOverlayEnabled)
                 {
@@ -180,7 +180,7 @@ namespace NeeView
                     IsReady = true
                 };
 
-                if (archiveType == ArchiverType.PlaylistArchiver)
+                if (archiveType == ArchiveType.PlaylistArchive)
                 {
                     item.Type = FolderItemType.Playlist;
                     item.Attributes = FolderItemAttribute.Playlist;

@@ -16,7 +16,7 @@ namespace NeeView
     /// アーカイバー：通常ファイル
     /// ディレクトリをアーカイブとみなしてアクセスする
     /// </summary>
-    public class FolderArchive : Archiver
+    public class FolderArchive : Archive
     {
         public FolderArchive(string path, ArchiveEntry? source) : base(path, source)
         {
@@ -137,7 +137,7 @@ namespace NeeView
         // ストリームを開く
         protected override async Task<Stream> OpenStreamInnerAsync(ArchiveEntry entry, CancellationToken token)
         {
-            Debug.Assert(entry.Archiver == this);
+            Debug.Assert(entry.Archive == this);
             Debug.Assert(entry.EntityPath is not null);
             return await Task.FromResult(new FileStream(entry.EntityPath, FileMode.Open, FileAccess.Read));
         }
@@ -145,7 +145,7 @@ namespace NeeView
         // ファイル出力
         protected override async Task ExtractToFileInnerAsync(ArchiveEntry entry, string exportFileName, bool isOverwrite, CancellationToken token)
         {
-            Debug.Assert(entry.Archiver == this);
+            Debug.Assert(entry.Archive == this);
             Debug.Assert(entry.EntityPath is not null);
             await FileIO.CopyFileAsync(entry.EntityPath, exportFileName, isOverwrite, token);
         }
@@ -155,8 +155,8 @@ namespace NeeView
         /// </summary>
         public override bool Exists(ArchiveEntry entry)
         {
-            Debug.Assert(entry.Archiver == this);
-            if (entry.Archiver != this) return false;
+            Debug.Assert(entry.Archive == this);
+            if (entry.Archive != this) return false;
             if (entry.IsDeleted) return false;
 
             var path = entry.EntityPath;
@@ -169,7 +169,7 @@ namespace NeeView
         /// <exception cref="ArgumentException">Not registered with this archiver.</exception>
         public override bool CanDelete(List<ArchiveEntry> entries)
         {
-            if (entries.Any(e => e.Archiver != this)) throw new ArgumentException("There are elements not registered with this archiver.", nameof(entries));
+            if (entries.Any(e => e.Archive != this)) throw new ArgumentException("There are elements not registered with this archiver.", nameof(entries));
 
             // NOTE: 実際に削除可能かは調べない。削除で失敗させる。
             return entries.All(e => e.EntityPath is not null);
@@ -181,7 +181,7 @@ namespace NeeView
         /// <exception cref="ArgumentException">Not registered with this archiver.</exception>
         public override async Task<bool> DeleteAsync(List<ArchiveEntry> entries)
         {
-            if (entries.Any(e => e.Archiver != this)) throw new ArgumentException("There are elements not registered with this archiver.", nameof(entries));
+            if (entries.Any(e => e.Archive != this)) throw new ArgumentException("There are elements not registered with this archiver.", nameof(entries));
 
             var paths = entries.Select(e => e.EntityPath).WhereNotNull().ToList();
             if (!paths.Any()) return false;
@@ -208,7 +208,7 @@ namespace NeeView
         /// </summary>
         public override bool CanRename(ArchiveEntry entry)
         {
-            if (entry.Archiver != this) throw new ArgumentException("There are elements not registered with this archiver.", nameof(entry));
+            if (entry.Archive != this) throw new ArgumentException("There are elements not registered with this archiver.", nameof(entry));
 
             return true;
         }
@@ -218,7 +218,7 @@ namespace NeeView
         /// </summary>
         public override async Task<bool> RenameAsync(ArchiveEntry entry, string name)
         {
-            if (entry.Archiver != this) throw new ArgumentException("There are elements not registered with this archiver.", nameof(entry));
+            if (entry.Archive != this) throw new ArgumentException("There are elements not registered with this archiver.", nameof(entry));
 
             var src = entry.EntityPath;
             if (src is null) return false;
