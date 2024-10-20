@@ -112,7 +112,7 @@ function Set-Version($projectFile, $version)
 {
 	$xml = [xml](Get-Content $projectFile)
 
-	$xml.Project.PropertyGroup.VersionPefix = $version
+	$xml.Project.PropertyGroup.VersionPrefix = $version
 
 	$xml.Save( $projectFile )
 }
