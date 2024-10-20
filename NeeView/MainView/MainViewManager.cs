@@ -95,16 +95,19 @@ namespace NeeView
 
         public bool RecoveryFloating()
         {
-            if (_window is not null)
+            if (_window is null) return false;
+            if (!Config.Current.MainView.IsAutoShow) return false;
+
+            // ウィンドウが最小化されていたら復元する
+            if (_window.WindowState == WindowState.Minimized)
             {
-                // ウィンドウが最小化されていたら復元する
-                if (_window.WindowState == WindowState.Minimized)
-                {
-                    _window.WindowState = WindowState.Normal;
-                    return true;
-                }
+                _window.WindowState = WindowState.Normal;
+                return true;
             }
-            return false;
+            else
+            {
+                return false;
+            }
         }
 
         public void HideFloating()

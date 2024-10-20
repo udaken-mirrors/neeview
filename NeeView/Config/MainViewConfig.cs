@@ -12,6 +12,7 @@ namespace NeeView
         private bool _isHideTitleBar;
         private bool _isAutoStretch;
         private bool _isAutoHide = true;
+        private bool _isAutoShow = true;
         private Size _referenceSize;
         private AlternativeContent _alternativeContent = AlternativeContent.PageList;
         private bool _isFloatingEndWhenClosed;
@@ -87,6 +88,15 @@ namespace NeeView
             set { SetProperty(ref _isAutoHide, value); }
         }
 
+        /// <summary>
+        /// ページ切替時に最小化されているメインビューウィンドウを自動表示
+        /// </summary>
+        [PropertyMember]
+        public bool IsAutoShow
+        {
+            get { return _isAutoShow; }
+            set { SetProperty(ref _isAutoShow, value); }
+        }
 
         /// <summary>
         /// 復元ウィンドウ座標

@@ -152,6 +152,7 @@ namespace NeeView.Setting
             section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.MainView, nameof(MainViewConfig.IsHideTitleBar))));
             section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.MainView, nameof(MainViewConfig.IsAutoStretch))));
             section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.MainView, nameof(MainViewConfig.IsAutoHide))));
+            section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.MainView, nameof(MainViewConfig.IsAutoShow))));
             this.Items.Add(section);
         }
     }
