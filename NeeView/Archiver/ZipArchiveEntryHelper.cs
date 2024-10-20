@@ -1,5 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using System.IO.Compression;
+using System.Linq;
 using System.Reflection;
 using System.Text;
 
@@ -84,5 +88,70 @@ namespace NeeView
             if (_storedEntryNameField is null) return;
             _storedEntryNameField.SetValue(entry, entryName);
         }
+
+        /// <summary>
+        /// .NET8 の不具合の修正を適用する
+        /// </summary>
+        public static ZipArchiveEntry Hotfix(this ZipArchiveEntry entry)
+        {
+            RepairEntryName(entry);
+            return entry;
+        }
+
+        /// <summary>
+        /// .NET8 の不具合の修正を適用する
+        /// </summary>
+        public static System.IO.Compression.ZipArchive Hotfix(this System.IO.Compression.ZipArchive archive)
+        {
+            foreach (var e in archive.Entries)
+            {
+                RepairEntryName(e);
+            }
+            return archive;
+        }
+    }
+
+
+    public static class ZipArchiveExtensions
+    {
+        public static List<ZipArchiveEntry> CollectEntries(this System.IO.Compression.ZipArchive archive, string entryPrefix)
+        {
+            return archive.Entries.Where(e => LoosePath.NormalizeSeparator(e.FullName).StartsWith(entryPrefix)).ToList();
+        }
+    }
+
+    public static class ZipArchiveEntryExtensions
+    {
+        public static bool IsDirectory(this ZipArchiveEntry entry)
+        {
+            var last = entry.FullName.Last();
+            return (entry.Name == "" && (last == '\\' || last == '/'));
+        }
+
+        public static string CreateExportPath(this ZipArchiveEntry entry, string entryPrefix, string exportDirectory)
+        {
+            Debug.Assert(string.IsNullOrEmpty(entryPrefix) || LoosePath.ValidPath(entry.FullName).StartsWith(entryPrefix));
+            return FileIO.CreateUniquePath(LoosePath.Combine(exportDirectory, LoosePath.ValidPath(entry.FullName[entryPrefix.Length..])));
+        }
+
+        public static void Export(this ZipArchiveEntry entry, string output, bool overwrite)
+        {
+            if (IsDirectory(entry))
+            {
+                //Debug.WriteLine($"CreateDirectory: {output}");
+                Directory.CreateDirectory(output);
+            }
+            else
+            {
+                var outputDir = System.IO.Path.GetDirectoryName(output) ?? throw new IOException($"Illegal path: {output}");
+                if (!string.IsNullOrWhiteSpace(outputDir))
+                {
+                    Directory.CreateDirectory(outputDir);
+                }
+                //Debug.WriteLine($"Export: {output}");
+                entry.ExtractToFile(output, overwrite);
+            }
+        }
+
     }
 }

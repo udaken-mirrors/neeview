@@ -498,7 +498,7 @@ namespace NeeView
         /// </summary>
         public bool CanRealize()
         {
-            return this.IsFileSystem || !this.IsArchiveDirectory();
+            return Archive.CanRealize(this);
         }
 
         /// <summary>
@@ -537,7 +537,7 @@ namespace NeeView
                     return PlacePath;
 
                 case ArchivePolicy.SendExtractFile:
-                    if (!IsArchiveDirectory())
+                    if (CanRealize())
                     {
                         var proxy = await GetFileProxyAsync(true, token);
                         return proxy.Path;

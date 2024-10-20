@@ -168,12 +168,23 @@ namespace NeeView
             if (string.IsNullOrEmpty(s)) return "";
 
             string valid = s;
-            char[] invalidch = System.IO.Path.GetInvalidFileNameChars();
+            char[] invalids = System.IO.Path.GetInvalidFileNameChars();
 
-            foreach (char c in invalidch)
+            foreach (char c in invalids)
             {
                 valid = valid.Replace(c, '_');
             }
+            return valid;
+        }
+
+        // パスとして使えない文字を置換
+        // セパレータは標準化されます
+        public static string ValidPath(string? s)
+        {
+            if (string.IsNullOrEmpty(s)) return "";
+
+            var tokens = s.Split(Separators);
+            var valid = string.Join(DefaultSeparator, tokens.Select(e => ValidFileName(e)));
             return valid;
         }
 

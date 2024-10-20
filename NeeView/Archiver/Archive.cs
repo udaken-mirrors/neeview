@@ -280,8 +280,6 @@ namespace NeeView
         /// </summary>
         public async Task ExtractToFileAsync(ArchiveEntry entry, string exportFileName, bool isOverwrite, CancellationToken token)
         {
-            if (entry.Id < 0) throw new ApplicationException("Cannot open this entry: " + entry.EntryName);
-
             await WaitPreExtractAsync(entry, token);
 
             if (entry.Data is string fileName)
@@ -438,6 +436,14 @@ namespace NeeView
         public virtual bool Exists(ArchiveEntry entry)
         {
             return entry.Archive == this && !entry.IsDeleted;
+        }
+
+        /// <summary>
+        /// 実体化可能？
+        /// </summary>
+        public virtual bool CanRealize(ArchiveEntry entry)
+        {
+            return entry.IsFileSystem || !entry.IsArchiveDirectory();
         }
 
         /// <summary>

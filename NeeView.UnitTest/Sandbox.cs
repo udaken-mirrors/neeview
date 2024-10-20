@@ -245,5 +245,19 @@ namespace NeeView.UnitTest
             Assert.False(ReferenceEquals(l1a, l1b));
             Assert.False(ReferenceEquals(l1a, r1a));
         }
+
+
+
+        [Theory]
+        [InlineData("aaa", "aaa")]
+        [InlineData("a_a", "a:a")]
+        [InlineData("\\aa\\bb", "\\aa\\bb")]
+        [InlineData("\\aa\\bb", "/aa/bb")]
+        [InlineData("\\aa\\bb\\", "/aa/bb/")]
+        public void ValidPath(string expected, string actual)
+        {
+            var result = LoosePath.ValidPath(actual);
+            Assert.Equal(expected, result);
+        }
     }
 }

@@ -134,6 +134,12 @@ namespace NeeView
             return entry;
         }
 
+        public override bool CanRealize(ArchiveEntry entry)
+        {
+            Debug.Assert(entry.Archive == this);
+            return true;
+        }
+
         // ストリームを開く
         protected override async Task<Stream> OpenStreamInnerAsync(ArchiveEntry entry, CancellationToken token)
         {

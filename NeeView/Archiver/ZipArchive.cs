@@ -141,21 +141,84 @@ namespace NeeView
             }
         }
 
+        /// <summary>
+        /// 実体化可能なエントリ？
+        /// </summary>
+        public override bool CanRealize(ArchiveEntry entry)
+        {
+            Debug.Assert(entry.Archive == this);
+            return true;
+        }
+
+        /// <summary>
+        /// エントリをファイルまたはディレクトリにエクスポート
+        /// </summary>
+        /// <param name="entry"></param>
+        /// <param name="exportFileName">エクスポート先のパス</param>
+        /// <param name="isOverwrite">上書き許可</param>
+        /// <param name="token"></param>
         protected override async Task ExtractToFileInnerAsync(ArchiveEntry entry, string exportFileName, bool isOverwrite, CancellationToken token)
         {
-            // TODO: Directoryフォルダーの出力に対応
-            if (entry.Id < 0) throw new ArgumentException("Cannot extract this entry: " + entry.EntryName);
-            if (entry.IsDirectory) throw new InvalidOperationException("Cannot extract directory: " + entry.EntryName);
-
-            using (var archiver = ZipFile.Open(Path, ZipArchiveMode.Read, _encoding))
+            await Task.Run(() =>
             {
-                ZipArchiveEntry archiveEntry = archiver.Entries[entry.Id];
-                ZipArchiveEntryHelper.RepairEntryName(archiveEntry);
-                if (!IsValidEntry(entry, archiveEntry)) throw new ValidationException(Properties.TextResources.GetString("InconsistencyException.Message"));
+                using (var archiver = ZipFile.Open(Path, ZipArchiveMode.Read, _encoding))
+                {
+                    if (entry.IsDirectory)
+                    {
+                        ExtractDirectoryEntry(entry, exportFileName, isOverwrite, archiver);
+                    }
+                    else
+                    {
+                        ExtractEntry(entry, exportFileName, isOverwrite, archiver);
+                    }
+                }
+            }, token);
+        }
 
-                token.ThrowIfCancellationRequested();
-                await Task.Run(() => archiveEntry.ExtractToFile(exportFileName, isOverwrite));
+        /// <summary>
+        /// ファイルエントリのエクスポート
+        /// </summary>
+        private static void ExtractEntry(ArchiveEntry entry, string exportFileName, bool isOverwrite, System.IO.Compression.ZipArchive archiver)
+        {
+            if (entry.Id < 0) throw new ArgumentException("Cannot extract this entry: " + entry.EntryName);
+            if (entry.IsDirectory) throw new InvalidOperationException("Archive directory: " + entry.EntryName);
+
+            var rawEntry = archiver.Entries[entry.Id].Hotfix();
+            Debug.Assert(IsValidEntry(entry, rawEntry));
+
+            rawEntry.Export(exportFileName, isOverwrite);
+        }
+
+        /// <summary>
+        /// ディレクトリエントリのエクスポート
+        /// </summary>
+        private static void ExtractDirectoryEntry(ArchiveEntry entry, string exportFileName, bool isOverwrite, System.IO.Compression.ZipArchive archiver)
+        {
+            if (!entry.IsDirectory) throw new InvalidOperationException("Not archive directory: " + entry.EntryName);
+
+            if (!isOverwrite && Directory.Exists(exportFileName)) throw new IOException($"Directory already exists: {exportFileName}");
+
+            var prefix = CreateEntryPrefix(entry);
+
+            var rawEntries = archiver.CollectEntries(prefix);
+            if (rawEntries.Count == 0) throw new InvalidOperationException();
+
+            foreach (var rawEntry in rawEntries)
+            {
+                var output = rawEntry.CreateExportPath(prefix, exportFileName);
+                rawEntry.Export(output, false);
             }
+        }
+
+        /// <summary>
+        /// ディレクトリエントリ以下のエントリ識別用プレフィックスを作成
+        /// </summary>
+        /// <param name="entry">ディレクトリエントリ</param>
+        /// <returns></returns>
+        private static string CreateEntryPrefix(ArchiveEntry entry)
+        {
+            Debug.Assert(entry.IsDirectory);
+            return LoosePath.TrimDirectoryEnd(LoosePath.NormalizeSeparator(entry.RawEntryName));
         }
 
         /// <summary>
@@ -361,7 +424,7 @@ namespace NeeView
 #endif
     }
 
-
+#if false
     public static class ZipArchiveEntryExtension
     {
         public static bool IsDirectory(this ZipArchiveEntry self)
@@ -370,4 +433,5 @@ namespace NeeView
             return (self.Name == "" && (last == '\\' || last == '/'));
         }
     }
+#endif
 }
