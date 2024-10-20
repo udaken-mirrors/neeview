@@ -176,6 +176,23 @@ namespace NeeView
                 }
             }
 
+            // ver 42.0
+            if (self.Format.CompareTo(new FormatVersion(Environment.SolutionName, 42, 0, 6)) < 0)
+            {
+                // コピーパラメータのシステム化
+                if (self.Commands != null)
+                {
+                    if (self.Commands.TryGetValue("CopyFile", out var copyFile))
+                    {
+                        if (copyFile.Parameter is CopyFileCommandParameter parameter)
+                        {
+                            self.Config.System.ArchiveCopyPolicy = parameter.ArchivePolicy_Legacy;
+                            self.Config.System.TextCopyPolicy = parameter.TextCopyPolicy_Legacy;
+                        }
+                    }
+                }
+            }
+
 #if false
             // ver.99 (バージョン変更処理テスト)
             if (self.Format.CompareTo(new FormatVersion(Environment.SolutionName, 99, 0, 0)) < 0)

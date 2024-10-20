@@ -10,7 +10,7 @@ using System.Text.Json.Serialization;
 
 namespace NeeView
 {
-    public class SystemConfig : BindableBase
+    public class SystemConfig : BindableBase, ICopyPolicy
     {
         private static readonly string _defaultFileManagerFileArgs = "/select,\"$File\"";
         private static readonly string _defaultFileManagerFolderArgs = "\"$File\"";
@@ -37,6 +37,8 @@ namespace NeeView
         private string? _fileManager;
         private bool _isIncrementalSearchEnabled = true;
         private int _searchHistorySize = 8;
+        private ArchivePolicy _archiveCopyPolicy = ArchivePolicy.SendExtractFile;
+        private TextCopyPolicy _textCopyPolicy = TextCopyPolicy.None;
 
         [JsonInclude, JsonPropertyName(nameof(DateTimeFormat))]
         public string? _dateTimeFormat;
@@ -284,6 +286,22 @@ namespace NeeView
         {
             get { return _searchHistorySize; }
             set { SetProperty(ref _searchHistorySize, Math.Max(0, value)); }
+        }
+
+        // 圧縮ファイルコピーのヒント
+        [PropertyMember]
+        public ArchivePolicy ArchiveCopyPolicy
+        {
+            get { return _archiveCopyPolicy; }
+            set { SetProperty(ref _archiveCopyPolicy, value); }
+        }
+
+        // テキストコピーのヒント
+        [PropertyMember]
+        public TextCopyPolicy TextCopyPolicy
+        {
+            get { return _textCopyPolicy; }
+            set { SetProperty(ref _textCopyPolicy, value); }
         }
 
         #region Obsolete

@@ -14,9 +14,7 @@ namespace NeeView
 
         public static void SetQueryDropList(this DataObject data, IEnumerable<QueryPath> queries)
         {
-            // TODO: TextCopyPolicy の定義場所
-            var sourceParameter = CommandTable.Current.GetElement<CopyFileCommand>().Parameter.Cast<CopyFileCommandParameter>();
-            SetQueryDropList(data, queries, sourceParameter.TextCopyPolicy);
+            SetQueryDropList(data, queries, Config.Current.System.TextCopyPolicy);
         }
 
         public static void SetQueryDropList(this DataObject data, IEnumerable<QueryPath> queries, TextCopyPolicy policy)

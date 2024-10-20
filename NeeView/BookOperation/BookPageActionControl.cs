@@ -223,7 +223,7 @@ namespace NeeView
             try
             {
                 var pages = CollectPages(_book, parameter.MultiPagePolicy);
-                await ClipboardUtility.CopyAsync(pages, parameter, token);
+                await ClipboardUtility.CopyAsync(pages, token);
             }
             catch (OperationCanceledException)
             {

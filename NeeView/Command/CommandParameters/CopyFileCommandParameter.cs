@@ -1,15 +1,15 @@
 ﻿using NeeView.Windows.Property;
+using System;
+using System.Text.Json.Serialization;
 
 namespace NeeView
 {
     /// <summary>
     /// CopyFileCommand Parameter
     /// </summary>
-    public class CopyFileCommandParameter : CommandParameter 
+    public class CopyFileCommandParameter : CommandParameter
     {
-        private ArchivePolicy _archivePolicy = ArchivePolicy.SendExtractFile;
         private MultiPagePolicy _multiPagePolicy = MultiPagePolicy.Once;
-        private TextCopyPolicy _textCopyPolicy = TextCopyPolicy.None;
 
 
         // 複数ページのときの動作
@@ -20,42 +20,33 @@ namespace NeeView
             set { SetProperty(ref _multiPagePolicy, value); }
         }
 
+
+        #region Obsolete
+
         // 圧縮ファイルのときの動作
-        [PropertyMember]
+        [Obsolete("no used"), Alternative("nv.Config.ArchiveCopyPolicy", 42)] // ver.42
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         public ArchivePolicy ArchivePolicy
         {
-            get { return _archivePolicy; }
-            set { SetProperty(ref _archivePolicy, value); }
+            get => default;
+            set => ArchivePolicy_Legacy = value;
         }
+
+        [Obsolete, JsonIgnore]
+        public ArchivePolicy ArchivePolicy_Legacy { get; private set; }
 
         // テキストコピーのヒント
-        [PropertyMember]
+        [Obsolete("no used"), Alternative("nv.Config.TextCopyPolicy", 42)] // ver.42
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         public TextCopyPolicy TextCopyPolicy
         {
-            get { return _textCopyPolicy; }
-            set { SetProperty(ref _textCopyPolicy, value); }
+            get => default;
+            set => TextCopyPolicy_Legacy = value;
         }
-    }
 
+        [Obsolete, JsonIgnore]
+        public TextCopyPolicy TextCopyPolicy_Legacy { get; private set; }
 
-    /// <summary>
-    /// テキストコピーのヒント
-    /// </summary>
-    public enum TextCopyPolicy
-    {
-        /// <summary>
-        /// テキストにしない
-        /// </summary>
-        None,
-
-        /// <summary>
-        /// コピーファイルの実体パス
-        /// </summary>
-        CopyFilePath,
-
-        /// <summary>
-        /// 元のパス
-        /// </summary>
-        OriginalPath,
+        #endregion Obsolete
     }
 }

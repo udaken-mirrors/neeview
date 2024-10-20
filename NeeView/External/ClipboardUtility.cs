@@ -13,38 +13,11 @@ namespace NeeView
     // コピー設定
     public static class ClipboardUtility
     {
-        /// <summary>
-        /// 汎用の画像ファイルコピーパラメータを作成
-        /// </summary>
-        /// <remarks>
-        /// 一時ファイル、複数コピー。テキストは CopyCommand のパラメータに依存する
-        /// </remarks>
-        /// <returns></returns>
-        public static CopyFileCommandParameter CreateCopyParameter()
-        {
-            var sourceParameter = CommandTable.Current.GetElement<CopyFileCommand>().Parameter.Cast<CopyFileCommandParameter>();
-            var parameter = new CopyFileCommandParameter()
-            {
-                MultiPagePolicy = MultiPagePolicy.All,
-                TextCopyPolicy = sourceParameter.TextCopyPolicy,
-            };
-            return parameter;
-        }
-
-        /// <summary>
-        /// クリップボードにコピー
-        /// </summary>
-        /// <param name="pages"></param>
         public static async Task CopyAsync(List<Page> pages, CancellationToken token)
-        {
-            await CopyAsync(pages, CreateCopyParameter(), token);
-        }
-
-        public static async Task CopyAsync(List<Page> pages, CopyFileCommandParameter parameter, CancellationToken token)
         {
             var data = new System.Windows.DataObject();
 
-            if (await SetDataAsync(data, pages, parameter, token))
+            if (await SetDataAsync(data, pages, Config.Current.System, token))
             {
                 System.Windows.Clipboard.SetDataObject(data);
             }
@@ -52,7 +25,7 @@ namespace NeeView
 
         public static async Task<bool> SetDataAsync(System.Windows.DataObject data, List<Page> pages, CancellationToken token)
         {
-            return await SetDataAsync(data, pages, CreateCopyParameter(), token);
+            return await SetDataAsync(data, pages, Config.Current.System, token);
         }
 
         /// <summary>
@@ -60,10 +33,10 @@ namespace NeeView
         /// </summary>
         /// <param name="data">登録先データオブジェクト</param>
         /// <param name="pages">登録ページ</param>
-        /// <param name="parameter">登録方針</param>
+        /// <param name="policy">登録方針</param>
         /// <param name="token"></param>
         /// <returns>登録成功/失敗</returns>
-        private static async Task<bool> SetDataAsync(System.Windows.DataObject data, List<Page> pages, CopyFileCommandParameter parameter, CancellationToken token)
+        private static async Task<bool> SetDataAsync(System.Windows.DataObject data, List<Page> pages, ICopyPolicy policy, CancellationToken token)
         {
             if (pages.Count == 0) return false;
 
@@ -71,16 +44,16 @@ namespace NeeView
             data.SetData(pages.Select(x => new QueryPath(x.EntryFullName)).ToQueryPathCollection());
 
             // realize file path
-            var files = await PageUtility.CreateFilePathListAsync(pages, parameter.ArchivePolicy, token);
+            var files = await PageUtility.CreateFilePathListAsync(pages, policy.ArchiveCopyPolicy, token);
             if (files.Count > 0)
             {
                 data.SetData(System.Windows.DataFormats.FileDrop, files.ToArray());
             }
 
             // file path text
-            if (parameter.TextCopyPolicy != TextCopyPolicy.None)
+            if (policy.TextCopyPolicy != TextCopyPolicy.None)
             {
-                var paths = (parameter.ArchivePolicy == ArchivePolicy.SendExtractFile && parameter.TextCopyPolicy == TextCopyPolicy.OriginalPath)
+                var paths = (policy.ArchiveCopyPolicy == ArchivePolicy.SendExtractFile && policy.TextCopyPolicy == TextCopyPolicy.OriginalPath)
                     ? await PageUtility.CreateFilePathListAsync(pages, ArchivePolicy.SendArchivePath, token)
                     : files;
                 if (paths.Count > 0)

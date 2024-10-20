@@ -43,6 +43,11 @@ namespace NeeView.Setting
             section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.System, nameof(SystemConfig.IsRemoveWantNukeWarning))));
             this.Items.Add(section);
 
+            section = new SettingItemSection(Properties.TextResources.GetString("SettingPage.General.Copy"));
+            section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.System, nameof(SystemConfig.ArchiveCopyPolicy))));
+            section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.System, nameof(SystemConfig.TextCopyPolicy))));
+            this.Items.Add(section);
+
             section = new SettingItemSection(Properties.TextResources.GetString("SettingPage.General.Search"));
             section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.System, nameof(SystemConfig.IsIncrementalSearchEnabled))));
             section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.System, nameof(SystemConfig.SearchHistorySize))));
