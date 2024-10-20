@@ -141,7 +141,7 @@ namespace NeeView.Windows.Controls
 
         private void UpdateThumb()
         {
-            if (this.IsLoaded)
+            if (this.IsLoaded && SystemParameters.MenuAnimation)
             {
                 if (this.IsChecked)
                 {

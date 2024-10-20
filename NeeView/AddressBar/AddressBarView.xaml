@@ -130,7 +130,7 @@
                         <local:PageSortModeIcon PageSortMode="{Binding BookSetting.SortMode}" />
                     </Grid>
                 </Button>
-                <Popup x:Name="PageSortModePopup" PlacementTarget="{Binding ElementName=PageSortModeButton}" StaysOpen="False" AllowsTransparency="True" Opened="Popup_Opened" Closed="Popup_Closed">
+                <Popup x:Name="PageSortModePopup" PlacementTarget="{Binding ElementName=PageSortModeButton}" StaysOpen="False" AllowsTransparency="True" Opened="Popup_Opened" Closed="Popup_Closed" PopupAnimation="{DynamicResource {x:Static SystemParameters.MenuPopupAnimationKey}}">
                     <Grid Margin="5">
                         <Grid.Effect>
                             <DropShadowEffect Opacity="0.5" ShadowDepth="2"/>
@@ -247,7 +247,7 @@
 
         </DockPanel>
 
-        <Popup x:Name="BookPopup" PlacementTarget="{Binding ElementName=BookButton}" StaysOpen="False" AllowsTransparency="True" Opened="Popup_Opened" Closed="Popup_Closed">
+        <Popup x:Name="BookPopup" PlacementTarget="{Binding ElementName=BookButton}" StaysOpen="False" AllowsTransparency="True" Opened="Popup_Opened" Closed="Popup_Closed" PopupAnimation="{DynamicResource {x:Static SystemParameters.MenuPopupAnimationKey}}">
             <Border Margin="5" Background="{DynamicResource Menu.Background}" BorderBrush="{DynamicResource Menu.Border}" BorderThickness="1">
                 <Border.Effect>
                     <DropShadowEffect Opacity="0.5" ShadowDepth="2" />

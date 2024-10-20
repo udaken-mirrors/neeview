@@ -694,7 +694,7 @@
                                 </ControlTemplate>
                             </TextBox.Template>
                         </TextBox>
-                        <Popup x:Name="Popup" Placement="Bottom" IsOpen="{TemplateBinding IsDropDownOpen}" AllowsTransparency="True" Focusable="False" PopupAnimation="Slide">
+                        <Popup x:Name="Popup" Placement="Bottom" IsOpen="{TemplateBinding IsDropDownOpen}" AllowsTransparency="True" Focusable="False" PopupAnimation="{DynamicResource {x:Static SystemParameters.ComboBoxPopupAnimationKey}}">
                             <Grid x:Name="DropDown" SnapsToDevicePixels="True" MinWidth="{TemplateBinding ActualWidth}" MaxHeight="{TemplateBinding MaxDropDownHeight}">
                                 <Border x:Name="DropDownBorder" BorderThickness="1" BorderBrush="{DynamicResource Menu.Border}" Background="{DynamicResource Menu.Background}"
                                         TextElement.Foreground="{DynamicResource Menu.Foreground}">
@@ -964,7 +964,7 @@
         <Border x:Name="Border" BorderThickness="1" Background="Transparent">
             <Grid>
                 <ContentPresenter Margin="6,3,6,3" ContentSource="Header" RecognizesAccessKey="True" />
-                <Popup x:Name="Popup" Placement="Bottom" IsOpen="{TemplateBinding IsSubmenuOpen}" AllowsTransparency="True" Focusable="False" PopupAnimation="Fade">
+                <Popup x:Name="Popup" Placement="Bottom" IsOpen="{TemplateBinding IsSubmenuOpen}" AllowsTransparency="True" Focusable="False" PopupAnimation="{DynamicResource {x:Static SystemParameters.MenuPopupAnimationKey}}">
                     <Border x:Name="SubmenuBorder" SnapsToDevicePixels="True" BorderThickness="1" BorderBrush="{TemplateBinding BorderBrush}" Background="{TemplateBinding Background}">
                         <ScrollViewer CanContentScroll="True" Style="{StaticResource NVMenuScrollViewer}">
                             <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Cycle" Margin="2" />
@@ -1061,7 +1061,7 @@
                 <TextBlock x:Name="InputGestureText" Grid.Column="4" Text="{TemplateBinding InputGestureText}" HorizontalAlignment="Right" VerticalAlignment="Center"
                         Margin="{TemplateBinding MenuItem.Padding}" />
                 <Path Grid.Column="5" HorizontalAlignment="Center" VerticalAlignment="Center" StrokeThickness="1" Stroke="{TemplateBinding Foreground}" Data="M 0 0 l 4 4 l -4 4" />
-                <Popup x:Name="Popup" Placement="Right" HorizontalOffset="0" IsOpen="{TemplateBinding IsSubmenuOpen}" AllowsTransparency="True" Focusable="False" PopupAnimation="Fade">
+                <Popup x:Name="Popup" Placement="Right" HorizontalOffset="0" IsOpen="{TemplateBinding IsSubmenuOpen}" AllowsTransparency="True" Focusable="False" PopupAnimation="{DynamicResource {x:Static SystemParameters.MenuPopupAnimationKey}}">
                     <Border x:Name="SubmenuBorder" SnapsToDevicePixels="True" Background="{TemplateBinding Background}" BorderThickness="1" BorderBrush="{TemplateBinding BorderBrush}">
                         <ScrollViewer CanContentScroll="True" Style="{StaticResource NVMenuScrollViewer}">
                             <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Cycle" Margin="2" />
@@ -1759,6 +1759,7 @@
 
     <Style x:Key="NVPopup" TargetType="{x:Type Popup}">
         <Setter Property="AllowsTransparency" Value="True" />
+        <Setter Property="PopupAnimation" Value="{DynamicResource {x:Static SystemParameters.MenuPopupAnimationKey}}" />
     </Style>
 
     <Style x:Key="NVPopupContent" TargetType="{x:Type ContentControl}">
