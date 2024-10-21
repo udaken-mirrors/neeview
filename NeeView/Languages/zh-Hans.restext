@@ -182,6 +182,7 @@ BloomEffectUnit.Threshold=阈值
 BlurEffectUnit.Radius=半径
 BookAccessor=书本存取器
 BookAccessor.Config=书本设置
+BookAccessor.IsBookmarked=
 BookAccessor.IsMedia=书本是否为视频
 BookAccessor.IsNew=书本是否为没有历史记录且新开启的书本
 BookAccessor.Pages=构成书本的页面

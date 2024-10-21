@@ -182,6 +182,7 @@ BloomEffectUnit.Threshold=Soglia
 BlurEffectUnit.Radius=Raggio
 BookAccessor=Book accessor
 BookAccessor.Config=Config libro
+BookAccessor.IsBookmarked=
 BookAccessor.IsMedia=Se il libro è un video
 BookAccessor.IsNew=Se il libro è un nuovo libro aperto senza cronologia
 BookAccessor.Pages=Pagine che compongono il libro

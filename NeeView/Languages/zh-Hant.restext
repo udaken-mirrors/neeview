@@ -182,6 +182,7 @@ BloomEffectUnit.Threshold=Threshold
 BlurEffectUnit.Radius=Radius
 BookAccessor=書本存取器
 BookAccessor.Config=書本設定
+BookAccessor.IsBookmarked=
 BookAccessor.IsMedia=書本是否為影片
 BookAccessor.IsNew=書本是否為沒有歷史記錄且新開啟的書本
 BookAccessor.Pages=構成書本的頁面

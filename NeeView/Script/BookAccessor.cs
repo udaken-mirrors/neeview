@@ -40,6 +40,13 @@ namespace NeeView
         [WordNodeMember]
         public bool IsNew => BookOperation.Current.Book?.IsNew == true;
 
+        [WordNodeMember]
+        public bool IsBookmarked
+        {
+            get => BookOperation.Current.BookControl.IsBookmark == true;
+            set => AppDispatcher.Invoke(() => BookOperation.Current.BookControl.SetBookmark(value));
+        }
+
         [WordNodeMember(IsAutoCollect = false)]
         public BookConfigAccessor Config { get; } = new BookConfigAccessor();
 
