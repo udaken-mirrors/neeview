@@ -1,5 +1,6 @@
 ﻿using NeeView.Windows;
 using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -33,11 +34,8 @@ namespace NeeView
             InitializeComponent();
 
             this.AddressTextBox.PreviewMouseLeftButtonDown += AddressTextBox_PreviewMouseLeftButtonDown;
-            this.AddressTextBox.IsKeyboardFocusedChanged += AddressTextBox_IsKeyboardFocusedChanged;
+            this.AddressTextBox.GotFocus += AddressTextBox_GotFocus;
         }
-
-
-        public event DependencyPropertyChangedEventHandler? IsAddressTextBoxFocusedChanged;
 
 
         #region DependencyProperties
@@ -75,14 +73,11 @@ namespace NeeView
             }
         }
 
-        private void AddressTextBox_IsKeyboardFocusedChanged(object? sender, DependencyPropertyChangedEventArgs e)
+        private void AddressTextBox_GotFocus(object sender, RoutedEventArgs e)
         {
-            if (this.AddressTextBox.IsKeyboardFocused)
-            {
-                this.AddressTextBox.SelectAll();
-            }
+            if (sender is not TextBox textBox) return;
 
-            IsAddressTextBoxFocusedChanged?.Invoke(sender, e);
+            textBox.SelectAll();
         }
 
         // アドレスバー入力
