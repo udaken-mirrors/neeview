@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -17,6 +18,7 @@ namespace NeeView
         private readonly IHasScriptPath _scriptPath;
         private CommandAccessor? _command;
         private List<string> _args = new();
+        private CancellationToken _cancellationToken;
 
 
         public CommandHost() : this(new DummyScriptPath())
@@ -122,6 +124,7 @@ namespace NeeView
 
         internal void SetCancellationToken(CancellationToken cancellationToken)
         {
+            _cancellationToken = cancellationToken;
             Book.SetCancellationToken(cancellationToken);
             Bookshelf.SetCancellationToken(cancellationToken);
         }
@@ -202,6 +205,68 @@ namespace NeeView
             dialog.Commands.Add(UICommands.Cancel);
             var result = dialog.ShowDialog(App.Current.MainWindow);
             return result.IsPossible ? component.Text : null;
+        }
+
+        [WordNodeMember]
+        public void CopyFile(string source, string destination)
+        {
+            Task.Run(async () =>
+            {
+                try
+                {
+                    var entry = await ArchiveEntryUtility.CreateAsync(source, _cancellationToken);
+                    var path = await entry.RealizeAsync(_cancellationToken);
+                    if (path is not null)
+                    {
+                        await FileIO.CopyAsync(path, destination, _cancellationToken);
+                    }
+                }
+                catch (OperationCanceledException)
+                {
+                }
+                catch (Exception ex)
+                {
+                    ToastService.Current.Show(new Toast(ex.Message, nameof(CopyFile), ToastIcon.Error));
+                }
+            });
+        }
+
+        [WordNodeMember]
+        public void MoveFile(string source, string destination)
+        {
+            Task.Run(async () =>
+            {
+                try
+                {
+                    await FileIO.MoveAsync(source, destination, _cancellationToken);
+                }
+                catch (OperationCanceledException)
+                {
+                }
+                catch (Exception ex)
+                {
+                    ToastService.Current.Show(new Toast(ex.Message, nameof(MoveFile), ToastIcon.Error));
+                }
+            });
+        }
+
+        [WordNodeMember]
+        public void DeleteFile(string path)
+        {
+            Task.Run(async () =>
+            {
+                try
+                {
+                    await FileIO.DeleteAsync(path);
+                }
+                catch (OperationCanceledException)
+                {
+                }
+                catch (Exception ex)
+                {
+                    ToastService.Current.Show(new Toast(ex.Message, nameof(DeleteFile), ToastIcon.Error));
+                }
+            });
         }
 
 

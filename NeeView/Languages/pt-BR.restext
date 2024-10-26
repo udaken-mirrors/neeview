@@ -474,13 +474,21 @@ CommandHost.Bookmark=Acessador do painel de marcadores
 CommandHost.Bookshelf=Acessador de painel de estante
 CommandHost.Command=Uma matriz associativa de acessadores de comando. Os comandos são os mesmos exibidos em Opções > Configurações de comando. Para obter detalhes, consulte <a href="#CommandList"/>Lista de comandos</a>.
 CommandHost.Config=Uma matriz associativa de configurações do aplicativo. Refere-se e altera o valor definido. Para os tipos de valores definidos, consulte <a href="#ConfigList">Lista de configurações</a>.
+CommandHost.CopyFile=
+CommandHost.CopyFile.Destination=
+CommandHost.CopyFile.Source=
 CommandHost.CurrentCommand=Comando atualmente em execução
+CommandHost.DeleteFile=
+CommandHost.DeleteFile.Path=
 CommandHost.DestinationFolderCollection=Acessador da lista de pastas de destino
 CommandHost.Effect=Acessador de painel de efeitos
 CommandHost.Environment=Acessador de ambiente
 CommandHost.ExternalAppCollection=Acessador de lista de aplicativos externo
 CommandHost.History=Acessador do painel histórico
 CommandHost.Information=Acessador do painel de informações
+CommandHost.MoveFile=
+CommandHost.MoveFile.Destination=
+CommandHost.MoveFile.Source=
 CommandHost.Navigator=Acessador do painel do navegador
 CommandHost.PageList=Acessador do painel da Lista de Páginas
 CommandHost.Playlist=Acessador do painel da lista de reprodução

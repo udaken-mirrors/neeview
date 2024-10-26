@@ -50,18 +50,18 @@ namespace NeeView.IO
                 case FileOperationErrors.DE_ERROR_UNKNOWN:
                 case FileOperationErrors.ERRORONDEST:
                 case FileOperationErrors.DE_DESTROOTDIR:
-                    throw new IOException($"Code=0x{result:x4}, {(FileOperationErrors)result}");
+                    throw new IOException($"{(FileOperationErrors)result} (0x{result:x4})");
 
                 default:
                     var message = new StringBuilder(1024);
                     var length = NativeMethods.FormatMessage((uint)FormatMessages.FORMAT_MESSAGE_FROM_SYSTEM, IntPtr.Zero, (uint)result, 0, message, message.Capacity, IntPtr.Zero);
                     if (length > 0)
                     {
-                        throw new IOException($"Code=0x{result:x4}, {message.ToString()}");
+                        throw new IOException(message.ToString());
                     }
                     else
                     {
-                        throw new IOException($"Code=0x{result:x4}");
+                        throw new IOException($"Error code: 0x{result:x4}");
                     }
             }
         }

@@ -474,13 +474,21 @@ CommandHost.Bookmark=Bookmark panel accessor
 CommandHost.Bookshelf=Bookshelf panel accessor
 CommandHost.Command=An associative array of command accessors. The commands are the same as those displayed under Options > Command Settings. For details, refer to <a href="#CommandList"/>Command list</a>.
 CommandHost.Config=An associative array of application settings. Refers to and changes the set value. For the types of set values, refer to <a href="#ConfigList">Config list</a>.
+CommandHost.CopyFile=Copy a file or directory
+CommandHost.CopyFile.Destination=Destination path
+CommandHost.CopyFile.Source=Path of the copy source
 CommandHost.CurrentCommand=Currently running command
+CommandHost.DeleteFile=Delete a file or directory
+CommandHost.DeleteFile.Path=Path to be deleted
 CommandHost.DestinationFolderCollection=Destination folder list accessor
 CommandHost.Effect=Effects panel accessor
 CommandHost.Environment=Environment accessor
 CommandHost.ExternalAppCollection=External app list accessor
 CommandHost.History=History panel accessor
 CommandHost.Information=Information panel accessor
+CommandHost.MoveFile=Move a file or directory
+CommandHost.MoveFile.Destination=Destination path
+CommandHost.MoveFile.Source=Path of the move source
 CommandHost.Navigator=Navigator panel accessor
 CommandHost.PageList=PageList panel accessor
 CommandHost.Playlist=Playlist panel accessor

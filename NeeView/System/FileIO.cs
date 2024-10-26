@@ -267,6 +267,24 @@ namespace NeeView
             await Task.Run(() => ShellFileOperation.Copy(hwnd, paths, directoryPath), token);
         }
 
+        public static async Task CopyAsync(string source, string destination, CancellationToken token)
+        {
+            await CopyAsync(WindowTools.GetWindowHandle(), source, destination, token);
+        }
+
+        public static async Task CopyAsync(IntPtr hwnd, string source, string destination, CancellationToken token)
+        {
+            var dest = LoosePath.TrimEnd(destination);
+
+            // destination の終端がセパレート記号があるときはディレクトリ確定
+            if (LoosePath.IsDirectoryEnd(destination))
+            {
+                EnsureDirectory(dest);
+            }
+
+            await Task.Run(() => ShellFileOperation.Copy(hwnd, [source], dest), token);
+        }
+
         #endregion Copy
 
         #region Move
@@ -285,6 +303,16 @@ namespace NeeView
             var directoryPath = EnsureDirectory(toDirectory);
             await Task.Run(() => ShellFileOperation.Move(hwnd, paths, directoryPath), token);
             ValidateBookPages(paths);
+        }
+
+        public static async Task MoveAsync(string source, string destination, CancellationToken token)
+        {
+            await MoveAsync(WindowTools.GetWindowHandle(), source, destination, token);
+        }
+
+        public static async Task MoveAsync(IntPtr hwnd, string source, string destination, CancellationToken token)
+        {
+            await Task.Run(() => ShellFileOperation.Move(hwnd, [source], destination), token);
         }
 
         #endregion Move
@@ -308,12 +336,12 @@ namespace NeeView
         /// <summary>
         /// ファイル削除
         /// </summary>
-        public static async Task<bool> DeleteAsync(List<string> paths)
+        public static async Task<bool> DeleteAsync(IEnumerable<string> paths)
         {
             try
             {
                 await CloseBookAsync(paths);
-                ShellFileOperation.Delete(Application.Current.MainWindow, paths, Config.Current.System.IsRemoveWantNukeWarning);
+                ShellFileOperation.Delete(WindowTools.GetWindowHandle(), paths, Config.Current.System.IsRemoveWantNukeWarning);
                 return true;
             }
             catch (OperationCanceledException)

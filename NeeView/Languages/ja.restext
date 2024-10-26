@@ -472,13 +472,21 @@ CommandHost.Bookmark=ブックマーク パネルのアクセサ
 CommandHost.Bookshelf=本棚パネルのアクセサ
 CommandHost.Command=コマンド アクセサの連想配列です。\nコマンドは 設定 > コマンド設定 で表示されるコマンドと同じものです。詳細は <a href="#CommandList">コマンド一覧</a> を参照してください。
 CommandHost.Config=アプリ設定の連想配列です。設定値を参照、変更します。\n設定値の種類は <a href="#ConfigList">設定値一覧</a> を参照してください。
+CommandHost.CopyFile=ファイルまたはディレクトリをコピーする
+CommandHost.CopyFile.Destination=コピー先のパス
+CommandHost.CopyFile.Source=コピー元のパス
 CommandHost.CurrentCommand=現在実行中のコマンド
+CommandHost.DeleteFile=ファイルまたはディレクトリを削除する
+CommandHost.DeleteFile.Path=削除するパス
 CommandHost.DestinationFolderCollection=保存先フォルダー リストのアクセサ
 CommandHost.Effect=エフェクト パネルのアクセサ
 CommandHost.Environment=環境アクセサ
 CommandHost.ExternalAppCollection=外部アプリ リストのアクセサ
 CommandHost.History=履歴パネルのアクセサ
 CommandHost.Information=情報パネルのアクセサ
+CommandHost.MoveFile=ファイルまたはディレクトリを移動する
+CommandHost.MoveFile.Destination=移動先のパス
+CommandHost.MoveFile.Source=移動元のパス
 CommandHost.Navigator=ナビゲーター パネルのアクセサ
 CommandHost.PageList=ページリスト パネルのアクセサ
 CommandHost.Playlist=プレイリスト パネルのアクセサ

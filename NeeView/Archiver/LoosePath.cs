@@ -51,6 +51,15 @@ namespace NeeView
             return s.TrimEnd().TrimEnd(Separators) + '\\';
         }
 
+        /// <summary>
+        /// 終端にセパレート記号がある？
+        /// </summary>
+        public static bool IsDirectoryEnd(string? s)
+        {
+            if (string.IsNullOrEmpty(s)) return false;
+            return Separators.Contains(s.Last());
+        }
+
         //
         public static string[] Split(string? s)
         {

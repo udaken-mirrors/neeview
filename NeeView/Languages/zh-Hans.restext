@@ -472,13 +472,21 @@ CommandHost.Bookmark=书签面板存取器
 CommandHost.Bookshelf=书架面板存取器
 CommandHost.Command=指令存取器的关联数组。\n指令与 设置 > 指令设置中显示的指令相同。详细情况请到 <a href="#CommandList">指令列表</a> 。
 CommandHost.Config=应用设置的关联数组。可浏览或更改设置值。\n设置值的类别请到 <a href="#ConfigList">设置値列表</a> 。
+CommandHost.CopyFile=
+CommandHost.CopyFile.Destination=
+CommandHost.CopyFile.Source=
 CommandHost.CurrentCommand=
+CommandHost.DeleteFile=
+CommandHost.DeleteFile.Path=
 CommandHost.DestinationFolderCollection=
 CommandHost.Effect=效果面板存取器
 CommandHost.Environment=环境存取器
 CommandHost.ExternalAppCollection=
 CommandHost.History=历史记录面板存取器
 CommandHost.Information=信息面板存取器
+CommandHost.MoveFile=
+CommandHost.MoveFile.Destination=
+CommandHost.MoveFile.Source=
 CommandHost.Navigator=导航面板存取器
 CommandHost.PageList=页面列表面板存取器
 CommandHost.Playlist=播放列表面板存取器
