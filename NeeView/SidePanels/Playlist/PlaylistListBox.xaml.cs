@@ -270,6 +270,12 @@ namespace NeeView
 
             e.Data.SetData(items.Select(x => new QueryPath(x.Path)).ToQueryPathCollection());
 
+            if (Config.Current.System.TextCopyPolicy != TextCopyPolicy.None)
+            {
+                var text = string.Join(System.Environment.NewLine, items.Select(e => e.Path));
+                e.Data.SetText(text);
+            }
+
             await Task.CompletedTask;
         }
 

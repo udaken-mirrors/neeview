@@ -192,7 +192,7 @@ namespace NeeView
         /// <summary>
         /// 完全パス
         /// </summary>
-        public string FullPath => _scheme.ToSchemeString() + '\\' + _path;
+        public string FullPath => LoosePath.Combine(_scheme.ToSchemeString(), _path);
 
         /// <summary>
         /// 簡略化したパス

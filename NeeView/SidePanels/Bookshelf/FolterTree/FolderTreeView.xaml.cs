@@ -607,11 +607,16 @@ namespace NeeView
             {
                 case QuickAccessNode quickAccess:
                     e.Data.SetData(quickAccess);
+                    e.Data.SetText(quickAccess.Path);
                     e.AllowedEffects = DragDropEffects.Copy | DragDropEffects.Move;
                     break;
 
                 case DirectoryNode directory:
-                    e.Data.SetFileDropList(new System.Collections.Specialized.StringCollection() { directory.Path });
+                    if (System.IO.Path.Exists(directory.Path))
+                    {
+                        e.Data.SetFileDropList(new System.Collections.Specialized.StringCollection() { directory.Path });
+                    }
+                    e.Data.SetFileTextList([new QueryPath(directory.Path)]);
                     e.AllowedEffects = DragDropEffects.Copy;
                     break;
 
@@ -621,6 +626,7 @@ namespace NeeView
                 case BookmarkFolderNode bookmarkFolder:
                     var bookmarkNodeCollection = new BookmarkNodeCollection() { bookmarkFolder.BookmarkSource };
                     e.Data.SetData(bookmarkNodeCollection);
+                    e.Data.SetText(bookmarkFolder.Path);
                     e.AllowedEffects = DragDropEffects.Copy | DragDropEffects.Move;
                     break;
 

@@ -7,38 +7,39 @@ namespace NeeView
     // NOTE: NeeView設定を参照しているので一般化できない
     public static class DataObjectExtensions
     {
-        public static void SetQueryDropList(this DataObject data, QueryPath query)
+        public static void SetQueryPathAndFile(this DataObject data, QueryPath query)
         {
-            SetQueryDropList(data, new [] { query });
+            data.SetQueryPathList([query]);
+            if (System.IO.Path.Exists(query.SimplePath))
+            {
+                data.SetFileDropList([query]);
+            }
+            data.SetFileTextList([query]);
         }
 
-        public static void SetQueryDropList(this DataObject data, IEnumerable<QueryPath> queries)
-        {
-            SetQueryDropList(data, queries, Config.Current.System.TextCopyPolicy);
-        }
-
-        public static void SetQueryDropList(this DataObject data, IEnumerable<QueryPath> queries, TextCopyPolicy policy)
+        public static void SetQueryPathList(this DataObject data, IEnumerable<QueryPath> queries)
         {
             if (!queries.Any()) return;
 
             data.SetData(new QueryPathCollection(queries));
-
-            var files = queries.Where(e => e.Scheme == QueryScheme.File).Select(e => e.SimplePath);
-            if (!files.Any()) return;
-
-            var collection = new System.Collections.Specialized.StringCollection();
-            foreach(var file in files)
-            {
-                collection.Add(file);
-            }
-            data.SetFileDropList(collection);
-
-            // NOTE: ここでは一時ファイルの区別がつかないのでそのままテキスト化する
-            if (policy != TextCopyPolicy.None)
-            {
-                data.SetData(DataFormats.UnicodeText, string.Join(System.Environment.NewLine, files));
-            }
         }
 
+        public static void SetFileDropList(this DataObject data, IEnumerable<QueryPath> queries)
+        {
+            var files = queries.Where(e => e.Scheme == QueryScheme.File).Select(e => e.SimplePath).ToArray();
+            if (!files.Any()) return;
+
+            data.SetData(DataFormats.FileDrop, files);
+        }
+
+        public static void SetFileTextList(this DataObject data, IEnumerable<QueryPath> queries)
+        {
+            if (Config.Current.System.TextCopyPolicy == TextCopyPolicy.None) return;
+
+            var files = queries.Where(e => e.Scheme == QueryScheme.File).Select(e => e.SimplePath).ToArray();
+            if (!files.Any()) return;
+
+            data.SetData(DataFormats.UnicodeText, string.Join(System.Environment.NewLine, files));
+        }
     }
 }

@@ -167,7 +167,7 @@ namespace NeeView
                 }
 
                 var data = new DataObject();
-                data.SetQueryDropList(_vm.Model.Place);
+                data.SetQueryPathAndFile(_vm.Model.Place);
 
                 _ghost.Attach(this.PlaceBar, new Point(24, 24));
                 DragDrop.DoDragDrop(element, data, DragDropEffects.Copy);

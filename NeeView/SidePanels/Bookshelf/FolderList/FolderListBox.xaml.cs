@@ -552,8 +552,8 @@ namespace NeeView
                 e.Data.SetData(collection);
                 e.AllowedEffects |= DragDropEffects.Move;
             }
-            // files only
-            else
+            // files only, no archive path
+            else if (items.All(e => System.IO.Path.Exists(e.TargetPath.SimplePath)))
             {
                 var collection = new System.Collections.Specialized.StringCollection();
                 foreach (var path in items.Where(x => x.IsFileSystem()).Select(x => x.TargetPath.SimplePath).Distinct())
@@ -570,6 +570,13 @@ namespace NeeView
                         e.AllowedEffects |= DragDropEffects.Move;
                     }
                 }
+            }
+
+            // text
+            if (Config.Current.System.TextCopyPolicy != TextCopyPolicy.None)
+            {
+                var text = string.Join(System.Environment.NewLine, items.Select(e => e.TargetPath.SimplePath));
+                e.Data.SetText(text);
             }
 
             await Task.CompletedTask;

@@ -203,7 +203,7 @@ namespace NeeView
                 }
 
                 var data = new DataObject();
-                data.SetQueryDropList(new QueryPath(_vm.Model.Address));
+                data.SetQueryPathAndFile(new QueryPath(_vm.Model.Address));
 
                 _ghost.Attach(element, new Point(24, 24));
                 DragDropWatcher.SetDragElement(sender, element);
