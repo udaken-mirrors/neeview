@@ -50,7 +50,7 @@ namespace NeeView
         }
 
         // [開発用] 初期化済？
-        private bool Initialized() => _format != null;
+        public bool Initialized() => _format != null;
 
         // エントリーリストを得る
         protected override async Task<List<ArchiveEntry>> GetEntriesInnerAsync(CancellationToken token)
@@ -124,30 +124,35 @@ namespace NeeView
             return ms;
         }
 
-        // ファイルに出力
-        protected override async Task ExtractToFileInnerAsync(ArchiveEntry entry, string exportFileName, bool isOverwrite, CancellationToken token)
+        /// <summary>
+        /// 実体化可能なエントリ？
+        /// </summary>
+        public override bool CanRealize(ArchiveEntry entry)
         {
-            // NOTE: MTAスレッドで実行。SevenZipSharpのCOM例外対策
-            if (Thread.CurrentThread.GetApartmentState() == ApartmentState.STA)
-            {
-                await Task.Run(() => ExtractToFileInnerCore(entry, exportFileName, isOverwrite));
-            }
-            else
-            {
-                ExtractToFileInnerCore(entry, exportFileName, isOverwrite);
-            }
+            Debug.Assert(entry.Archive == this);
+            return true;
         }
 
-        private void ExtractToFileInnerCore(ArchiveEntry entry, string exportFileName, bool isOverwrite)
+        /// <summary>
+        /// エントリをファイルまたはディレクトリにエクスポート
+        /// </summary>
+        /// <param name="entry"></param>
+        /// <param name="exportFileName">エクスポート先のパス</param>
+        /// <param name="isOverwrite">上書き許可</param>
+        /// <param name="token"></param>
+        protected override async Task ExtractToFileInnerAsync(ArchiveEntry entry, string exportFileName, bool isOverwrite, CancellationToken token)
+        {
+            Debug.Assert(entry.Archive == this);
+            var extractor = new SevenZipArchiveExtractor(this);
+            await extractor.ExtractAsync(entry, exportFileName, isOverwrite, token);
+        }
+
+        public void Extract(ArchiveEntry entry, string exportFileName, bool isOverwrite, CancellationToken token)
         {
             NVDebug.AssertMTA();
-            Debug.Assert(entry is not null);
-            Debug.Assert(!string.IsNullOrEmpty(exportFileName));
-            Debug.Assert(Initialized());
-            Debug.Assert(!CanPreExtract(), "Pre-extract, so no direct extract.");
-            if (entry.Id < 0) throw new ArgumentException("Cannot open this entry: " + entry.EntryName);
-
-            if (_disposedValue) return;
+            Debug.Assert(entry.Archive == this);
+            if (entry.Id < 0) throw new ApplicationException("Cannot open this entry: " + entry.EntryName);
+            if (entry.IsDirectory) throw new ApplicationException("This entry is directory: " + entry.EntryName);
 
             var mode = isOverwrite ? FileMode.Create : FileMode.CreateNew;
             using (Stream fs = new FileStream(exportFileName, mode, FileAccess.Write))
@@ -240,7 +245,5 @@ namespace NeeView
             }
         }
     }
-
-
 
 }

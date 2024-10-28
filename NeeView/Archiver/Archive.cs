@@ -63,6 +63,8 @@ namespace NeeView
             _preExtractor.Sleep();
         }
 
+        // Disposed?
+        public bool IsDisposed => _disposedValue;
 
         // アーカイブ実体のパス
         public string Path { get; protected set; }

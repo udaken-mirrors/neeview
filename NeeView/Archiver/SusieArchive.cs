@@ -105,15 +105,26 @@ namespace NeeView
             }
         }
 
-        // ファイルに出力する
-        protected override async Task ExtractToFileInnerAsync(ArchiveEntry entry, string extractFileName, bool isOverwrite, CancellationToken token)
+        /// <summary>
+        /// 実体化可能なエントリ？
+        /// </summary>
+        public override bool CanRealize(ArchiveEntry entry)
         {
-            if (entry.Id < 0) throw new ApplicationException("Cannot open this entry: " + entry.EntryName);
+            Debug.Assert(entry.Archive == this);
+            return true;
+        }
 
-            using (await _asyncLock.LockAsync(token))
-            {
-                ExtractToFile(entry, extractFileName, isOverwrite);
-            }
+        /// <summary>
+        /// エントリをファイルまたはディレクトリにエクスポート
+        /// </summary>
+        /// <param name="entry"></param>
+        /// <param name="exportFileName">エクスポート先のパス</param>
+        /// <param name="isOverwrite">上書き許可</param>
+        /// <param name="token"></param>
+        protected override async Task ExtractToFileInnerAsync(ArchiveEntry entry, string exportFileName, bool isOverwrite, CancellationToken token)
+        {
+            var extractor = new SusieArchiveExtractor(this);
+            await extractor.ExtractAsync(entry, exportFileName, isOverwrite, token);
         }
 
         /// <summary>
@@ -192,6 +203,20 @@ namespace NeeView
                 ms.WriteTo(stream);
             }
             return extractFileName;
+        }
+
+        /// <summary>
+        /// エントリをファイルに展開
+        /// </summary>
+        public async Task ExtractAsync(ArchiveEntry entry, string extractFileName, bool isOverwrite, CancellationToken token)
+        {
+            if (entry.Id < 0) throw new ApplicationException("Cannot open this entry: " + entry.EntryName);
+            if (entry.IsDirectory) throw new ApplicationException("This entry is directory: " + entry.EntryName);
+
+            using (await _asyncLock.LockAsync(token))
+            {
+                ExtractToFile(entry, extractFileName, isOverwrite);
+            }
         }
 
         /// <summary>
