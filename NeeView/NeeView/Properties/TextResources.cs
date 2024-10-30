@@ -1,7 +1,9 @@
 ﻿using NeeLaboratory.Resources;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Data;
@@ -42,6 +44,28 @@ namespace NeeView.Properties
 
             Culture = culture;
             Resource.Load(culture);
+
+#if false
+            // 開発用：テキストの重複チェック
+            var resolved = new List<string>();
+            Debug.WriteLine("<ResourceText.Duplicate>");
+            foreach (var item in Resource.Map)
+            {
+                resolved.Add(item.Key);
+                var duplicates = Resource.Map.Where(e => e.Value.Text == item.Value.Text && !resolved.Contains(e.Key)).ToList();
+                if (duplicates.Any())
+                {
+                    resolved.AddRange(duplicates.Select(e => e.Key));
+                    Debug.WriteLine($"{item.Key}={item.Value.Text}");
+                    foreach (var dup in duplicates)
+                    {
+                        Debug.WriteLine($"  {dup.Key}");
+                    }
+                }
+            }
+            Debug.WriteLine("</ResourceText.Duplicate>");
+#endif
+
             Resource.Add(new AppFileSource(new Uri("/Languages/shared.restext", UriKind.Relative)));
         }
 

@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using NeeView;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 
 namespace NeeLaboratory.Resources
@@ -51,7 +53,34 @@ namespace NeeLaboratory.Resources
         {
             foreach (var item in map)
             {
+#if DEBUG
+                // 参照でないものは要注意
+                if (item.Value.Text[0] != '@')
+                {
+                    Debug.WriteLine($"Warning: {item.Key}={item.Value.Text}");
+                }
+#endif
+
+                // すでに存在している場合はそのまま
+                if (_map.ContainsKey(item.Key))
+                {
+                    Debug.WriteLine($"TextResource: {item.Key} already exists.");
+                    continue;
+                }
+
                 _map[item.Key] = item.Value;
+
+                // 単純な置き換えの場合はここで置き換える
+                if (item.Value.Text[0] == '@' && item.Value.Text[1] != '[')
+                {
+                    var sourceKey = item.Value.Text[1..];
+                    Debug.Assert(_map.ContainsKey(sourceKey));
+                    _map[item.Key] = _map.TryGetValue(sourceKey, out var value) ? value : item.Value;
+                }
+                else
+                {
+                    _map[item.Key] = item.Value;
+                }
             }
         }
     }

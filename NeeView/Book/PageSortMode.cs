@@ -9,31 +9,31 @@ namespace NeeView
     // ページ整列
     public enum PageSortMode
     {
-        [AliasName]
+        [AliasName("@SortOrder.FileName")]
         FileName,
 
-        [AliasName]
+        [AliasName("@SortOrder.FileNameDescending")]
         FileNameDescending,
 
-        [AliasName]
+        [AliasName("@SortOrder.TimeStamp")]
         TimeStamp,
 
-        [AliasName]
+        [AliasName("@SortOrder.TimeStampDescending")]
         TimeStampDescending,
 
-        [AliasName]
+        [AliasName("@SortOrder.Size")]
         Size,
 
-        [AliasName]
+        [AliasName("@SortOrder.SizeDescending")]
         SizeDescending,
 
-        [AliasName]
+        [AliasName("@SortOrder.Entry")]
         Entry,
 
-        [AliasName]
+        [AliasName("@SortOrder.EntryDescending")]
         EntryDescending,
 
-        [AliasName]
+        [AliasName("@SortOrder.Random")]
         Random,
     }
 

@@ -3,21 +3,21 @@
 Converting Language Files and Json
 
 .DESCRIPTION
-Converts between language files ([culture].restext) and JSON. This is a utility tool, not a required feature.
+Converts between language files ([culture].restext) and Json. This is a utility tool, not a required feature.
 
 .EXAMPLE
 > .\ConvertRestext.ps1
 Convert language files to Language.json.
 
 .EXAMPLE
-> .\ConvertRestext.ps1 -Mode FromJson -Sort
+> .\ConvertRestext.ps1 -Mode Release -Sort
 Generate language files from Language.json.
 -Sort by key if specified.
 
 .PARAMETER Mode
 Convert mode 
-    ToJson: Convert to Json file (default)
-    FromJson: Convert Json file to language files
+    Release: Convert Json file to language files
+    MakeJson: Convert language files to Json file
 
 .PARAMETER JsonFile
 Json file name. Default is Language.json
@@ -26,20 +26,22 @@ Json file name. Default is Language.json
 Sort data by key
 
 .PARAMETER Clean
-For FromJson, clear if the text is the same as English.
+For Release, clear if the text is the same as English.
 
 .PARAMETER Trim
-For FromJson, trim empty data.
+For Release, trim empty data.
 
 .PARAMETER Cultures
-For FromJson, Specify the culture to be processed.
+For Release, Specify the culture to be processed.
 Specify cultures separated by commas. If not specified, all cultures are processed.
 e.g., -Cultures en,ja
 
 #>
 
 param (
-    [ValidateSet("ToJson", "FromJson")]$Mode = "ToJson",
+    [Parameter(Mandatory=$true)]
+    [ArgumentCompletions("Release", "MakeJson")]
+    [string]$Mode,
     [string]$JsonFile = "Language.json",
     [switch]$Sort,
     [switch]$Clean,
@@ -307,7 +309,7 @@ function Get-ReplaceTypoTable
 # MAIN
 #
 
-if ($Mode -eq "FromJson")
+if ($Mode -eq "Release")
 {
     Write-Host Read $JsonFile
     $table = Get-Content $JsonFile | ConvertFrom-Json   
@@ -318,7 +320,7 @@ if ($Mode -eq "FromJson")
     $cultures = Get-CulturesFromRestextTable $table
     Set-ResTextTable $table $cultures
 }
-else
+elseif($Mode -eq "MakeJson")
 {
     $cultures = Get-RestextCultures
     $table = Get-RestextTable $cultures
@@ -328,5 +330,9 @@ else
     }
     Write-Host Write $JsonFile
     $table | ConvertTo-Json | Set-Content $JsonFile -Encoding utf8
+}
+else
+{ 
+    throw  "'$Mode' is an unknown mode. Specify 'Release' or 'MakeJson' as the mode."
 }
 

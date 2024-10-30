@@ -12,43 +12,43 @@ namespace NeeView
     /// </summary>
     public enum FolderOrder
     {
-        [AliasName]
+        [AliasName("@SortOrder.FileName")]
         FileName,
 
-        [AliasName]
+        [AliasName("@SortOrder.FileNameDescending")]
         FileNameDescending,
 
-        [AliasName]
+        [AliasName("@SortOrder.Path")]
         Path,
 
-        [AliasName]
+        [AliasName("@SortOrder.PathDescending")]
         PathDescending,
 
-        [AliasName]
+        [AliasName("@SortOrder.FileType")]
         FileType,
 
-        [AliasName]
+        [AliasName("@SortOrder.FileTypeDescending")]
         FileTypeDescending,
 
-        [AliasName]
+        [AliasName("@SortOrder.TimeStamp")]
         TimeStamp,
 
-        [AliasName]
+        [AliasName("@SortOrder.TimeStampDescending")]
         TimeStampDescending,
 
-        [AliasName]
+        [AliasName("@SortOrder.Size")]
         Size,
 
-        [AliasName]
+        [AliasName("@SortOrder.SizeDescending")]
         SizeDescending,
 
-        [AliasName]
+        [AliasName("@SortOrder.EntryTime")]
         EntryTime,
 
-        [AliasName]
+        [AliasName("@SortOrder.EntryTimeDescending")]
         EntryTimeDescending,
 
-        [AliasName]
+        [AliasName("@SortOrder.Random")]
         Random,
     }
 

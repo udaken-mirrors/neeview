@@ -161,41 +161,12 @@ namespace NeeView
         /// </summary>
         private static string GetDeleteDialogTitle(List<ArchiveEntry> entries)
         {
-            if (entries.Count == 1)
-            {
-                return GetDeleteDialogTitleSingle(entries[0]);
-            }
-            else
-            {
-                return GetDeleteDialogTitleMulti(entries);
-            }
+            return Properties.TextResources.GetString("FileDeleteDialog.Title");
         }
-
-        private static string GetDeleteDialogTitleSingle(ArchiveEntry entry)
-        {
-            return string.Format(Properties.TextResources.GetString("FileDeleteDialog.Title"), GetFilesTypeName(entry));
-        }
-
-        private static string GetDeleteDialogTitleMulti(List<ArchiveEntry> entries)
-        {
-            return string.Format(Properties.TextResources.GetString("FileDeleteDialog.Title"), GetFilesTypeName(entries));
-        }
-
 
         private static string GetFilesTypeName(ArchiveEntry entry)
         {
             return entry.IsDirectory ? Properties.TextResources.GetString("Word.Folder") : Properties.TextResources.GetString("Word.File");
-        }
-
-        private static string GetFilesTypeName(List<ArchiveEntry> entries)
-        {
-            if (entries.Count == 1)
-            {
-                return GetFilesTypeName(entries.First());
-            }
-
-            bool isDirectory = entries.All(e => e.IsDirectory);
-            return isDirectory ? Properties.TextResources.GetString("Word.Folders") : Properties.TextResources.GetString("Word.Files");
         }
     }
 }

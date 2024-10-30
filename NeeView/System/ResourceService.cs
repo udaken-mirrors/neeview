@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -11,7 +12,17 @@ namespace NeeView
 {
     internal static class ResourceService
     {
-        private static readonly Regex _regexKey = new(@"@[a-zA-Z0-9_\.\-#]+[a-zA-Z0-9]");
+        [StringSyntax(StringSyntaxAttribute.Regex)]
+        public const string KeyRegexPattern = @"[a-zA-Z0-9_\.\-#]+[a-zA-Z0-9]";
+
+        /// <summary>
+        /// テキストキーのパターン
+        /// </summary>
+        private static readonly Regex _regexKey = new("@" + KeyRegexPattern);
+
+        /// <summary>
+        /// リソース参照のパターン
+        /// </summary>
         private static readonly Regex _regexResKey = new Regex(@"@\[([^\]]+)\]");
 
         /// <summary>
