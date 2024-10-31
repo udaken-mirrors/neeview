@@ -1,7 +1,6 @@
 ﻿using PdfiumViewer;
 using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
@@ -317,7 +316,7 @@ namespace NeeView
             {
                 if (_isUseLocalApplicationDataFolder == null)
                 {
-                    _isUseLocalApplicationDataFolder = string.Compare(ConfigurationManager.AppSettings["UseLocalApplicationData"], "True", true) == 0;
+                    _isUseLocalApplicationDataFolder = AppSettings.Current.UseLocalApplicationData;
                 }
                 return (bool)_isUseLocalApplicationDataFolder;
             }
@@ -330,7 +329,7 @@ namespace NeeView
             {
                 if (_selfContained == null)
                 {
-                    _selfContained = string.Compare(ConfigurationManager.AppSettings["SelfContained"], "True", true) == 0;
+                    _selfContained = AppSettings.Current.SelfContained;
                 }
                 return (bool)_selfContained;
             }
@@ -343,7 +342,7 @@ namespace NeeView
             {
                 if (_packageType == null)
                 {
-                    _packageType = ConfigurationManager.AppSettings["PackageType"] ?? "Dev";
+                    _packageType = AppSettings.Current.PackageType;
                 }
                 return _packageType;
             }
@@ -390,7 +389,7 @@ namespace NeeView
             {
                 if (_revision == null)
                 {
-                    _revision = ConfigurationManager.AppSettings["Revision"] ?? "??";
+                    _revision = AppSettings.Current.Revision;
                 }
                 return _revision;
             }
@@ -402,7 +401,7 @@ namespace NeeView
             {
                 if (_dateVersion == null)
                 {
-                    _dateVersion = ConfigurationManager.AppSettings["DateVersion"] ?? "??";
+                    _dateVersion = AppSettings.Current.DateVersion;
                 }
                 return _dateVersion;
             }
@@ -430,7 +429,7 @@ namespace NeeView
             {
                 if (_pdfRenderer is null)
                 {
-                    _pdfRenderer = ConfigurationManager.AppSettings["PdfRenderer"] ?? "Pdfium";
+                    _pdfRenderer = AppSettings.Current.PdfRenderer ?? "Pdfium";
                 }
                 return _pdfRenderer;
             }
@@ -442,7 +441,7 @@ namespace NeeView
             {
                 if (_watermark is null)
                 {
-                    _watermark = string.Compare(ConfigurationManager.AppSettings["Watermark"], "True", true) == 0;
+                    _watermark = AppSettings.Current.Watermark;
                 }
                 return (bool)_watermark;
             }
@@ -455,7 +454,7 @@ namespace NeeView
             {
                 if (_checkVersion is null)
                 {
-                    var version = ConfigurationManager.AppSettings["CheckVersion"];
+                    var version = AppSettings.Current.CheckVersion;
                     _checkVersion = version is null ? new FormatVersion(Environment.SolutionName) : new FormatVersion(Environment.SolutionName, version);
                 }
                 return _checkVersion;
@@ -467,7 +466,8 @@ namespace NeeView
         {
             get
             {
-                return _distributionUrl ??= ConfigurationManager.AppSettings["DistributionUrl"] ?? "https://bitbucket.org/neelabo/neeview/downloads";
+                return _distributionUrl ??= AppSettings.Current.DistributionUrl ?? "https://bitbucket.org/neelabo/neeview/downloads";
+
             }
         }
 
@@ -478,7 +478,7 @@ namespace NeeView
             {
                 if (_logFile == null)
                 {
-                    var logFile = ConfigurationManager.AppSettings["LogFile"];
+                    var logFile = AppSettings.Current.LogFile;
                     if (string.IsNullOrEmpty(logFile))
                     {
                         _logFile = "";

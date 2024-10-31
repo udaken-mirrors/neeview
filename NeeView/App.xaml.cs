@@ -363,7 +363,5 @@ namespace NeeView
             Shutdown();
         }
 
-
-
     }
 }
