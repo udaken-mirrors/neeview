@@ -251,8 +251,8 @@ function New-Package($platform, $productName, $productDir, $packageDir)
 {
 	$temp = New-Item $packageDir -ItemType Directory
 
-	Copy-Item $productDir\* $packageDir -Recurse -Exclude ("*.pdb", "$product.dll.config")
-	
+	Copy-Item $productDir\* $packageDir -Recurse -Exclude ("*.pdb", "$product..settings.json")
+
 	# fix native dll
 	if ($platform -eq "x86")
 	{
@@ -266,7 +266,7 @@ function New-Package($platform, $productName, $productDir, $packageDir)
 	}
 
 	# custom config
-	New-ConfigForZip $productDir "$productName.dll.config" $packageDir
+	New-ConfigForZip $productDir "$productName.settings.json" $packageDir
 
 	# generate README.html
 	New-Readme $packageDir "en-us" "Zip"
@@ -376,179 +376,83 @@ function New-Zip($referenceDir, $packageDir, $packageZip)
 	Compress-Archive $packageDir -DestinationPath $packageZip
 }
 
-
 #--------------------------
-function Get-CulturesFromConfig($inputDir, $config)
-{
-	[xml]$xml = Get-Content "$inputDir\$config"
-	
-	$add = $xml.configuration.appSettings.add | Where { $_.key -eq 'Cultures' } | Select -First 1
-	return $add.value.Split(",")
-}
-
-#--------------------------
-#
+# make config for zip
 function New-ConfigForZip($inputDir, $config, $outputDir)
 {
-	$selfContained = Test-Path("$inputDir\hostfxr.dll")
-	
-	# make config for zip
-	[xml]$xml = Get-Content "$inputDir\$config"
-	$null = $xml.SelectNodes("//comment()") | ForEach-Object { $_.ParentNode.RemoveChild($_) }
-	
-	$add = $xml.configuration.appSettings.add | Where { $_.key -eq 'PackageType' } | Select -First 1
-	$add.value = 'Zip'
+	$jsonObject = (Get-Content "$inputDir\$config" | ConvertFrom-Json)
 
-	$add = $xml.configuration.appSettings.add | Where { $_.key -eq 'SelfContained' } | Select -First 1
-	$add.value = $selfContained ? 'True' : 'False'
+	$jsonObject.PackageType = "Zip"
+	$jsonObject.SelfContained = Test-Path("$inputDir\hostfxr.dll")
+	$jsonObject.Watermark = $false
+	$jsonObject.UseLocalApplicationData = $false
+	$jsonObject.Revision = $revision
+	$jsonObject.DateVersion = $dateVersion
 
-	$add = $xml.configuration.appSettings.add | Where { $_.key -eq 'Watermark' } | Select -First 1
-	$add.value = 'False'
-
-	$add = $xml.configuration.appSettings.add | Where { $_.key -eq 'UseLocalApplicationData' } | Select -First 1
-	$add.value = 'False'
-
-	#$add = $xml.configuration.appSettings.add | Where { $_.key -eq 'LibrariesPath' } | Select -First 1
-	#$add.value = 'Libraries'
-
-	$add = $xml.configuration.appSettings.add | Where { $_.key -eq 'Revision' } | Select -First 1
-	$add.value = $revision
-
-	$add = $xml.configuration.appSettings.add | Where { $_.key -eq 'DateVersion' } | Select -First 1
-	$add.value = $dateVersion
-	
 	if ($trace)
 	{
-		#<add key="LogFile" value="TraceLog.txt" />
-		$attribute1 = $xml.CreateAttribute('key')
-		$attribute1.Value = 'LogFile';
-		$attribute2 = $xml.CreateAttribute('value')
-		$attribute2.Value = 'TraceLog.txt';
-		$element = $xml.CreateElement('add');
-		$element.Attributes.Append($attribute1);
-		$element.Attributes.Append($attribute2);
-		$xml.configuration.appSettings.AppendChild($element);
+		$jsonObject | Add-Member NoteProperty LogFile "TraceLog.txt"
 	}
 
-	$utf8WithoutBom = New-Object System.Text.UTF8Encoding($false)
 	$outputFile = Join-Path (Convert-Path $outputDir) $config
-
-	$sw = New-Object System.IO.StreamWriter($outputFile, $false, $utf8WithoutBom)
-	$xml.Save( $sw )
-	$sw.Close()
+	ConvertTo-Json $jsonObject | Out-File $outputFile
 }
 
 #--------------------------
-#
+# make config for installer
 function New-ConfigForMsi($inputDir, $config, $outputDir)
 {
-	# make config for installer
-	[xml]$xml = Get-Content "$inputDir\$config"
-	$null = $xml.SelectNodes("//comment()") | ForEach-Object { $_.ParentNode.RemoveChild($_) }
+	$jsonObject = (Get-Content "$inputDir\$config" | ConvertFrom-Json)
 
-	$add = $xml.configuration.appSettings.add | Where { $_.key -eq 'PackageType' } | Select -First 1
-	$add.value = 'Msi'
+	$jsonObject.PackageType = "Msi"
+	$jsonObject.SelfContained = $true
+	$jsonObject.Watermark = $false
+	$jsonObject.UseLocalApplicationData = $true
+	$jsonObject.Revision = $revision
+	$jsonObject.DateVersion = $dateVersion
 
-	$add = $xml.configuration.appSettings.add | Where { $_.key -eq 'SelfContained' } | Select -First 1
-	$add.value = 'True'
-
-	$add = $xml.configuration.appSettings.add | Where { $_.key -eq 'Watermark' } | Select -First 1
-	$add.value = 'False'
-
-	$add = $xml.configuration.appSettings.add | Where { $_.key -eq 'UseLocalApplicationData' } | Select -First 1
-	$add.value = 'True'
-
-	#$add = $xml.configuration.appSettings.add | Where { $_.key -eq 'LibrariesPath' } | Select -First 1
-	#$add.value = 'Libraries'
-
-	$add = $xml.configuration.appSettings.add | Where { $_.key -eq 'Revision' } | Select -First 1
-	$add.value = $revision
-
-	$add = $xml.configuration.appSettings.add | Where { $_.key -eq 'DateVersion' } | Select -First 1
-	$add.value = $dateVersion
-
-	$utf8WithoutBom = New-Object System.Text.UTF8Encoding($false)
 	$outputFile = Join-Path (Convert-Path $outputDir) $config
-	$sw = New-Object System.IO.StreamWriter($outputFile, $false, $utf8WithoutBom)
-	$xml.Save( $sw )
-	$sw.Close()
+	ConvertTo-Json $jsonObject | Out-File $outputFile
 }
 
 
 #--------------------------
-#
+# make config for appx
 function New-ConfigForAppx($inputDir, $config, $outputDir)
 {
-	# make config for appx
-	[xml]$xml = Get-Content "$inputDir\$config"
-	$null = $xml.SelectNodes("//comment()") | ForEach-Object { $_.ParentNode.RemoveChild($_) }
+	$jsonObject = (Get-Content "$inputDir\$config" | ConvertFrom-Json)
 
-	$add = $xml.configuration.appSettings.add | Where { $_.key -eq 'PackageType' } | Select -First 1
-	$add.value = 'Appx'
+	$jsonObject.PackageType = "Appx"
+	$jsonObject.SelfContained = $true
+	$jsonObject.Watermark = $false
+	$jsonObject.UseLocalApplicationData = $true
+	$jsonObject.Revision = $revision
+	$jsonObject.DateVersion = $dateVersion
 
-	$add = $xml.configuration.appSettings.add | Where { $_.key -eq 'SelfContained' } | Select -First 1
-	$add.value = 'True'
-
-	$add = $xml.configuration.appSettings.add | Where { $_.key -eq 'Watermark' } | Select -First 1
-	$add.value = 'False'
-
-	$add = $xml.configuration.appSettings.add | Where { $_.key -eq 'UseLocalApplicationData' } | Select -First 1
-	$add.value = 'True'
-
-	#$add = $xml.configuration.appSettings.add | Where { $_.key -eq 'LibrariesPath' } | Select -First 1
-	#$add.value = 'Libraries'
-
-	$add = $xml.configuration.appSettings.add | Where { $_.key -eq 'Revision' } | Select -First 1
-	$add.value = $revision
-
-	$add = $xml.configuration.appSettings.add | Where { $_.key -eq 'DateVersion' } | Select -First 1
-	$add.value = $dateVersion
-
-	$utf8WithoutBom = New-Object System.Text.UTF8Encoding($false)
 	$outputFile = Join-Path (Convert-Path $outputDir) $config
-
-	$sw = New-Object System.IO.StreamWriter($outputFile, $false, $utf8WithoutBom)
-	$xml.Save( $sw )
-	$sw.Close()
+	ConvertTo-Json $jsonObject | Out-File $outputFile
 }
 
 #--------------------------
-#
+# make config for canary / beta
 function New-ConfigForDevPackage($inputDir, $config, $target, $outputDir)
 {
-	$selfContained = Test-Path("$inputDir\hostfxr.dll")
+	$jsonObject = (Get-Content "$inputDir\$config" | ConvertFrom-Json)
 
-	# make config for canary
-	[xml]$xml = Get-Content "$inputDir\$config"
-	$null = $xml.SelectNodes("//comment()") | ForEach-Object { $_.ParentNode.RemoveChild($_) }
+	$jsonObject.PackageType = $target
+	$jsonObject.SelfContained = Test-Path("$inputDir\hostfxr.dll")
+	$jsonObject.Watermark = $true
+	$jsonObject.UseLocalApplicationData = $false
+	$jsonObject.Revision = $revision
+	$jsonObject.DateVersion = $dateVersion
 
-	$add = $xml.configuration.appSettings.add | Where { $_.key -eq 'PackageType' } | Select -First 1
-	$add.value = $target
+	if ($trace)
+	{
+		$jsonObject | Add-Member NoteProperty LogFile "TraceLog.txt"
+	}
 
-	$add = $xml.configuration.appSettings.add | Where { $_.key -eq 'SelfContained' } | Select -First 1
-	$add.value = $selfContained ? 'True' : 'False'
-
-	$add = $xml.configuration.appSettings.add | Where { $_.key -eq 'Watermark' } | Select -First 1
-	$add.value = 'True'
-
-	$add = $xml.configuration.appSettings.add | Where { $_.key -eq 'UseLocalApplicationData' } | Select -First 1
-	$add.value = 'False'
-
-	#$add = $xml.configuration.appSettings.add | Where { $_.key -eq 'LibrariesPath' } | Select -First 1
-	#$add.value = 'Libraries'
-
-	$add = $xml.configuration.appSettings.add | Where { $_.key -eq 'Revision' } | Select -First 1
-	$add.value = $revision
-
-	$add = $xml.configuration.appSettings.add | Where { $_.key -eq 'DateVersion' } | Select -First 1
-	$add.value = $dateVersion
-
-	$utf8WithoutBom = New-Object System.Text.UTF8Encoding($false)
 	$outputFile = Join-Path (Convert-Path $outputDir) $config
-
-	$sw = New-Object System.IO.StreamWriter($outputFile, $false, $utf8WithoutBom)
-	$xml.Save( $sw )
-	$sw.Close()
+	ConvertTo-Json $jsonObject | Out-File $outputFile
 }
 
 #---------------------------
@@ -573,7 +477,7 @@ function New-PackageAppend($packageDir, $packageAppendDir)
 	New-EmptyFolder $packageAppendDir
 
 	# configure customize
-	New-ConfigForMsi $packageDir "${product}.dll.config" $packageAppendDir
+	New-ConfigForMsi $packageDir "${product}.settings.json" $packageAppendDir
 
 	# icons
 	Copy-Item "$projectDir\Resources\App.ico" $packageAppendDir
@@ -638,8 +542,8 @@ function New-Msi($arch, $packageDir, $packageAppendDir, $packageMsi)
 			$xml.Wix.Fragment[1].ComponentGroup.RemoveChild($node)
 		}
 
-		# remove $product.dll.config
-		$node = $xml.Wix.Fragment[0].DirectoryRef.Component | Where-Object{$_.File.Source -match "$product\.dll\.config"}
+		# remove $product.settings.json
+		$node = $xml.Wix.Fragment[0].DirectoryRef.Component | Where-Object{$_.File.Source -match "$product\.settings\.json"}
 		if ($null -ne $node)
 		{
 			$componentId = $node.Id
@@ -736,7 +640,7 @@ function New-Appx($arch, $packageDir, $packageAppendDir, $appx)
 
 	# update assembly
 	Copy-Item $packageDir $contentDir -Recurse -Force
-	New-ConfigForAppx $packageDir "${product}.dll.config" $contentDir
+	New-ConfigForAppx $packageDir "${product}.settings.json" $contentDir
 
 	# generate README.html
 	New-Readme $contentDir "en-us" "Appx"
@@ -822,7 +726,7 @@ function New-DevPackage($packageDir, $devPackageDir, $devPackage, $target)
 {
 	# update assembly
 	Copy-Item $packageDir $devPackageDir -Recurse
-	New-ConfigForDevPackage $packageDir "${product}.dll.config" $target $devPackageDir
+	New-ConfigForDevPackage $packageDir "${product}.settings.json" $target $devPackageDir
 
 	# generate README.html
 	New-Readme $devPackageDir "en-us" $target

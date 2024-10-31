@@ -242,10 +242,4 @@
     </Page>
   </ItemGroup>
 
-  <ItemGroup>
-    <None Update="App.config">
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-    </None>
-  </ItemGroup>
-
 </Project>

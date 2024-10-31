@@ -46,6 +46,8 @@ namespace NeeView
         public string? CheckVersion { get; set; }
         // e.g. https://neelabo.bitbucket.io/NeeViewUpdateCheck.html
         public string? DistributionUrl { get; set; }
+        // e.g. true
+        public bool TrimSaveData { get; set; } = true;
     }
 
 }
