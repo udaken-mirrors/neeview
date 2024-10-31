@@ -1,6 +1,7 @@
 ﻿using NeeLaboratory.ComponentModel;
 using System;
 using System.Collections;
+using System.Diagnostics;
 using System.Linq;
 using System.Text.Json.Serialization;
 
@@ -8,8 +9,21 @@ namespace NeeView
 {
     public class Config : BindableBase
     {
-        static Config() => Current = new Config();
-        public static Config Current { get; }
+        private static Config? _current;
+        public static Config Current
+        {
+            get
+            {
+                Debug.Assert(_current != null, "Current is undefined.");
+                return _current;
+            }
+        }
+
+        public static void SetCurrent(Config config)
+        {
+            Debug.Assert(_current is null, "Already set.");
+            _current = config;
+        }
 
         public Config()
         {

@@ -1,4 +1,5 @@
-﻿using System;
+﻿//#define LOCAL_DEBUG
+using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
@@ -38,15 +39,15 @@ namespace NeeView
                 }
                 else if (property.GetCustomAttribute(typeof(ObsoleteAttribute)) != null)
                 {
-                    Debug.WriteLine($"Merge: {property.Name} is obsolete");
+                    Trace($"Merge: {property.Name} is obsolete");
                 }
                 else if (options.IsIgnoreEnabled && property.GetCustomAttribute(typeof(ObjectMergeIgnoreAttribute)) != null)
                 {
-                    Debug.WriteLine($"Merge: {property.Name} is ignore");
+                    Trace($"Merge: {property.Name} is ignore");
                 }
                 else if (property.GetSetMethod(false) == null)
                 {
-                    Debug.WriteLine($"Merge: {property.Name} is readonly");
+                    Trace($"Merge: {property.Name} is readonly");
                 }
                 else if (property.PropertyType.IsValueType || property.PropertyType == typeof(string))
                 {
@@ -80,5 +81,20 @@ namespace NeeView
             }
         }
 
+        #region LOCAL_DEBUG
+
+        [Conditional("LOCAL_DEBUG")]
+        private static void Trace(string message)
+        {
+            Debug.WriteLine($"{nameof(ObjectMerge)}: {message}");
+        }
+
+        [Conditional("LOCAL_DEBUG")]
+        private static void Trace(string format, params object[] args)
+        {
+            Debug.WriteLine($"{nameof(ObjectMerge)}: {string.Format(format, args)}");
+        }
+
+        #endregion LOCAL_DEBUG
     }
 }

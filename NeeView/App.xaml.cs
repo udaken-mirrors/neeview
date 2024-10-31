@@ -181,7 +181,7 @@ namespace NeeView
             ShowSplashScreen(config);
 
             // 設定の適用
-            UserSettingTools.Restore(setting, new ObjectMergeOption() { IsIgnoreEnabled = false });
+            UserSettingTools.Restore(setting, true);
 
             // 画像拡張子初期化
             if (Config.Current.Image.Standard.SupportFileTypes is null)

@@ -85,13 +85,20 @@ namespace NeeView
             return options;
         }
 
-        public static void Restore(UserSetting setting, ObjectMergeOption? options = null)
+        public static void Restore(UserSetting setting, bool replaceConfig = false)
         {
             if (setting == null) return;
             if (setting.Config == null) return;
 
             // コンフィグ反映
-            ObjectMerge.Merge(Config.Current, setting.Config, options);
+            if (replaceConfig)
+            {
+                Config.SetCurrent(setting.Config);
+            }
+            else
+            { 
+                ObjectMerge.Merge(Config.Current, setting.Config);
+            }
 
             // レイアウト反映
             CustomLayoutPanelManager.RestoreMaybe();
