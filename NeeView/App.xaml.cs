@@ -166,7 +166,7 @@ namespace NeeView
 
             // 設定の読み込み 
             var setting = SaveData.Current.LoadUserSetting(true);
-            var config = setting.Config ?? Config.Current;
+            var config = setting.Config ??= new Config();
 
             Debug.WriteLine($"App.UserSettingLoaded: {Stopwatch.ElapsedMilliseconds}ms");
 
