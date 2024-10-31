@@ -87,7 +87,7 @@ namespace NeeView.Setting
         [MemberNotNull(nameof(_memento), nameof(_key), nameof(Note))]
         private void Initialize(string key, EditCommandWindowTab start)
         {
-            _memento = CommandTable.Current.CreateCommandCollectionMemento();
+            _memento = CommandTable.Current.CreateCommandCollectionMemento(false);
             _key = key;
 
             var commandMap = CommandTable.Current;

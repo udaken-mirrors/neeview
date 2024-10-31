@@ -361,7 +361,7 @@ namespace NeeView
             // TODO: pair...
 
             // デフォルト設定として記憶
-            DefaultMemento = CreateCommandCollectionMemento();
+            DefaultMemento = CreateCommandCollectionMemento(false);
 
             // 廃棄されたコマンドの情報
             var obsoleteCommands = new List<ObsoleteCommandItem>()
@@ -658,12 +658,26 @@ namespace NeeView
 
         #region Memento CommandCollection
 
-        public CommandCollection CreateCommandCollectionMemento()
+        public CommandCollection CreateCommandCollectionMemento(bool trim)
         {
             var collection = new CommandCollection();
             foreach (var item in _elements)
             {
-                collection.Add(item.Key, item.Value.CreateMemento());
+                var memento = item.Value.CreateMemento();
+
+                if (trim && DefaultMemento != null)
+                {
+                    // デフォルトと同じものは除外
+                    if (DefaultMemento.TryGetValue(item.Key, out var defaultMemento))
+                    {
+                        if (memento.MemberwiseEquals(defaultMemento))
+                        {
+                            continue;
+                        }
+                    }
+                }
+
+                collection.Add(item.Key, memento);
             }
             return collection;
         }

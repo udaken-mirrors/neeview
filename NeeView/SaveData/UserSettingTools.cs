@@ -19,7 +19,7 @@ namespace NeeView
         private static JsonSerializerOptions? _serializerOptions;
 
 
-        public static UserSetting CreateUserSetting()
+        public static UserSetting CreateUserSetting(bool trim)
         {
             // 情報の確定
             MainWindow.Current.StoreWindowPlacement();
@@ -32,14 +32,14 @@ namespace NeeView
                 Config = Config.Current,
                 ContextMenu = ContextMenuManager.Current.CreateContextMenuNode(),
                 SusiePlugins = SusiePluginManager.Current.CreateSusiePluginCollection(),
-                DragActions = DragActionTable.Current.CreateDragActionCollection(),
-                Commands = CommandTable.Current.CreateCommandCollectionMemento(),
+                DragActions = DragActionTable.Current.CreateDragActionCollection(trim),
+                Commands = CommandTable.Current.CreateCommandCollectionMemento(trim),
             };
         }
 
         public static void Save(string path)
         {
-            Save(path, CreateUserSetting());
+            Save(path, CreateUserSetting(AppSettings.Current.TrimSaveData));
         }
 
         public static void Save(string path, UserSetting setting)

@@ -78,7 +78,7 @@ namespace NeeView
             using (ProcessLock.Lock())
             {
                 var filename = App.Current.Option.SettingFilename;
-                var extension = Path.GetExtension(filename)?.ToLower();
+                var extension = Path.GetExtension(filename)?.ToLowerInvariant();
 
                 var failedDialog = new LoadFailedDialog("@Notice.LoadSettingFailed", "@Notice.LoadSettingFailedTitle");
                 failedDialog.OKCommand = new UICommand("@Notice.LoadSettingFailedButtonContinue") { IsPossible = true };
@@ -112,7 +112,7 @@ namespace NeeView
             using (ProcessLock.Lock())
             {
                 var filename = HistoryFilePath;
-                var extension = Path.GetExtension(filename).ToLower();
+                var extension = Path.GetExtension(filename).ToLowerInvariant();
                 var failedDialog = new LoadFailedDialog("@Notice.LoadHistoryFailed", "@Notice.LoadHistoryFailedTitle");
 
                 var fileInfo = new FileInfo(filename);
@@ -131,7 +131,7 @@ namespace NeeView
             using (ProcessLock.Lock())
             {
                 var filename = BookmarkFilePath;
-                var extension = Path.GetExtension(filename).ToLower();
+                var extension = Path.GetExtension(filename).ToLowerInvariant();
                 var failedDialog = new LoadFailedDialog("@Notice.LoadBookmarkFailed", "@Notice.LoadBookmarkFailedTitle");
 
                 if (extension == ".json" && File.Exists(filename))

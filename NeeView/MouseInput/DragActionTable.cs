@@ -44,7 +44,7 @@ namespace NeeView
 
             _elements = list.ToDictionary(e => e.Name);
 
-            _defaultMemento = CreateDragActionCollection();
+            _defaultMemento = CreateDragActionCollection(false);
 
             Config.Current.Mouse.AddPropertyChanged(nameof(MouseConfig.IsGestureEnabled),
                 (s, e) => UpdateGestureDragAction());
@@ -119,13 +119,27 @@ namespace NeeView
             return source is not null;
         }
 
-        public DragActionCollection CreateDragActionCollection()
+        public DragActionCollection CreateDragActionCollection(bool trim)
         {
             var collection = new DragActionCollection();
 
             foreach (var pair in _elements)
             {
-                collection.Add(pair.Key.ToString(), pair.Value.CreateMemento());
+                var memento = pair.Value.CreateMemento();
+
+                if (trim && _defaultMemento != null)
+                {
+                    // デフォルトと同じものは除外
+                    if (_defaultMemento.TryGetValue(pair.Key, out var defaultMemento))
+                    {
+                        if (memento.MemberwiseEquals(defaultMemento))
+                        {
+                            continue;
+                        }
+                    }
+                }
+
+                collection.Add(pair.Key.ToString(), memento);
             }
 
             return collection;
@@ -139,6 +153,7 @@ namespace NeeView
             {
                 if (_elements.ContainsKey(pair.Key))
                 {
+
                     _elements[pair.Key].Restore(pair.Value);
                 }
             }

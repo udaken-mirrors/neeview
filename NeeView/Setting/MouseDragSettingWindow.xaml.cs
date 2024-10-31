@@ -31,7 +31,7 @@ namespace NeeView.Setting
             this.Loaded += MouseDragSettingWindow_Loaded;
             this.KeyDown += MouseDragSettingWindow_KeyDown;
 
-            _memento = DragActionTable.Current.CreateDragActionCollection();
+            _memento = DragActionTable.Current.CreateDragActionCollection(false);
             _key = key;
 
             var note = DragActionTable.Current.Elements[_key].Note;

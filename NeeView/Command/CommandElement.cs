@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Text.Json.Serialization;
 using System.Threading;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -407,6 +408,8 @@ namespace NeeView
             public TouchGesture TouchGesture { get; set; } = TouchGesture.Empty;
             public MouseSequence MouseGesture { get; set; } = MouseSequence.Empty;
             public bool IsShowMessage { get; set; }
+
+            [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
             public CommandParameter? Parameter { get; set; }
 
 
