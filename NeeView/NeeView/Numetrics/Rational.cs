@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 
 namespace NeeView.Numetrics
 {
@@ -77,7 +78,7 @@ namespace NeeView.Numetrics
         public string ToRationalString()
         {
             var reduction = ApproximateReduction();
-            return reduction.Denominator == 1 ? reduction.Numerator.ToString() : $"{reduction.Numerator}/{reduction.Denominator}";
+            return reduction.Denominator == 1 ? reduction.Numerator.ToString(CultureInfo.InvariantCulture) : $"{reduction.Numerator}/{reduction.Denominator}";
         }
 
         public override string ToString()

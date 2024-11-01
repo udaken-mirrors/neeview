@@ -386,7 +386,7 @@ namespace NeeView
             }
             else if (this.IsFileSystem())
             {
-                if (this.TargetPath.SimplePath.StartsWith(Temporary.Current.TempDirectory))
+                if (this.TargetPath.SimplePath.StartsWith(Temporary.Current.TempDirectory, StringComparison.Ordinal))
                 {
                     return false;
                 }

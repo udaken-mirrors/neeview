@@ -300,12 +300,12 @@ namespace NeeView
         // ページ名：プレフィックスを除いたフルパス
         public string GetSmartFullName()
         {
-            return EntrySmartName.Replace("\\", " > ");
+            return EntrySmartName.Replace("\\", " > ", StringComparison.Ordinal);
         }
 
         public string GetSmartDirectoryName()
         {
-            return LoosePath.GetDirectoryName(EntrySmartName).Replace("\\", " > ");
+            return LoosePath.GetDirectoryName(EntrySmartName).Replace("\\", " > ", StringComparison.Ordinal);
         }
 
         // ファイルの場所を取得
@@ -382,7 +382,7 @@ namespace NeeView
 
         public string GetMetaValue(string key, CancellationToken token)
         {
-            return PageMetadataTools.GetValueString(this, key.ToLower(), token);
+            return PageMetadataTools.GetValueString(this, key.ToLowerInvariant(), token);
         }
 
         public Dictionary<string, string> GetMetaValueMap(CancellationToken token)

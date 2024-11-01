@@ -119,7 +119,7 @@ namespace NeeView
 
             for (int index = 0; index < _children.Count; ++index)
             {
-                if (string.Compare(name, _children[index].Name) < 0)
+                if (string.Compare(name, _children[index].Name, StringComparison.OrdinalIgnoreCase) < 0)
                 {
                     _children.Insert(index, new DriveDirectoryNode(driveInfo, this));
                     break;
@@ -135,7 +135,7 @@ namespace NeeView
 
         private static DriveInfo? CreateDriveInfo(string name)
         {
-            Debug.Assert(name.EndsWith("\\"));
+            Debug.Assert(name.EndsWith("\\", StringComparison.Ordinal));
 
             if (System.IO.Directory.GetLogicalDrives().Contains(name))
             {

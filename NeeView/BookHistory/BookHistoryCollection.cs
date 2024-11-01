@@ -502,7 +502,7 @@ namespace NeeView
         {
             var memento = new Memento();
 
-            memento.Items = Limit(this.Items.Where(e => !e.Path.StartsWith(Temporary.Current.TempDirectory)), Config.Current.History.LimitSize, Config.Current.History.LimitSpan).ToList();
+            memento.Items = Limit(this.Items.Where(e => !e.Path.StartsWith(Temporary.Current.TempDirectory, StringComparison.Ordinal)), Config.Current.History.LimitSize, Config.Current.History.LimitSpan).ToList();
             memento.Books = memento.Items.Select(e => e.Unit.Memento).ToList();
 
             if (Config.Current.History.IsKeepFolderStatus)

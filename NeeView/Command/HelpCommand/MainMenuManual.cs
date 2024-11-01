@@ -32,7 +32,7 @@ namespace NeeView
 
                 foreach (var pair in groups)
                 {
-                    node.AddNode(new TagNode("h3").AddText(pair.Key.Replace("_", "")));
+                    node.AddNode(new TagNode("h3").AddText(pair.Key.Replace("_", "", StringComparison.Ordinal)));
 
                     var table = new TagNode("table", "table-slim");
                     foreach (var item in pair.Value)

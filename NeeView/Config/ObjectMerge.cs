@@ -1,6 +1,7 @@
 ﻿//#define LOCAL_DEBUG
 using System;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using System.Reflection;
 
@@ -92,7 +93,7 @@ namespace NeeView
         [Conditional("LOCAL_DEBUG")]
         private static void Trace(string format, params object[] args)
         {
-            Debug.WriteLine($"{nameof(ObjectMerge)}: {string.Format(format, args)}");
+            Debug.WriteLine($"{nameof(ObjectMerge)}: {string.Format(CultureInfo.InvariantCulture, format, args)}");
         }
 
         #endregion LOCAL_DEBUG

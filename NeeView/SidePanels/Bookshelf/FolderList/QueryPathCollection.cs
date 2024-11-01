@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Globalization;
 
 namespace NeeView
 {
@@ -7,7 +8,7 @@ namespace NeeView
     /// </summary>
     public class QueryPathCollection : List<QueryPath>
     {
-        public static readonly string Format = FormatVersion.CreateFormatName(Environment.ProcessId.ToString(), nameof(QueryPathCollection));
+        public static readonly string Format = FormatVersion.CreateFormatName(Environment.ProcessId.ToString(CultureInfo.InvariantCulture), nameof(QueryPathCollection));
 
         public QueryPathCollection()
         {

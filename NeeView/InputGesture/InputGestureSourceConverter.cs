@@ -19,7 +19,7 @@ namespace NeeView
         /// <returns>InputGestureSource。変換出来なかった場合は null</returns>
         public static InputGestureSource? ConvertFromString(string source)
         {
-            if (source.Contains("Wheel") || source.Contains("Click"))
+            if (source.Contains("Wheel", StringComparison.Ordinal) || source.Contains("Click", StringComparison.Ordinal))
             {
                 return ConvertFromMouseGestureString(source);
             }

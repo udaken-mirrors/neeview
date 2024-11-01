@@ -116,7 +116,7 @@ namespace NeeView
             if (path.StartsWith(folder, System.StringComparison.OrdinalIgnoreCase))
             {
                 var shortPath = path.Substring(folder.Length);
-                if (!shortPath.Contains(LoosePath.DefaultSeparator))
+                if (!shortPath.Contains(LoosePath.DefaultSeparator, System.StringComparison.Ordinal))
                 {
                     return shortPath;
                 }

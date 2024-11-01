@@ -85,7 +85,7 @@ namespace NeeView
 
         public static QueryScheme GetScheme(string path)
         {
-            return _map.FirstOrDefault(e => path.StartsWith(e.Value)).Key;
+            return _map.FirstOrDefault(e => path.StartsWith(e.Value, StringComparison.Ordinal)).Key;
         }
 
         public static ImageSource ToImage(this QueryScheme scheme)
@@ -102,7 +102,7 @@ namespace NeeView
 
         public static bool IsMatch(this QueryScheme scheme, string path)
         {
-            return path.StartsWith(scheme.ToSchemeString());
+            return path.StartsWith(scheme.ToSchemeString(), StringComparison.Ordinal);
         }
     }
 
@@ -211,7 +211,7 @@ namespace NeeView
         {
             if (source != null)
             {
-                var index = source.IndexOf(_querySearch);
+                var index = source.IndexOf(_querySearch, StringComparison.Ordinal);
                 if (index >= 0)
                 {
                     searchWord = source[(index + _querySearch.Length)..];
@@ -229,7 +229,7 @@ namespace NeeView
             {
                 scheme = QuerySchemeExtensions.GetScheme(source);
                 var schemeString = scheme.ToSchemeString();
-                if (source.StartsWith(schemeString))
+                if (source.StartsWith(schemeString, StringComparison.Ordinal))
                 {
                     var length = schemeString.Length;
                     if (length < source.Length && (source[length] == '\\' || source[length] == '/'))
@@ -261,7 +261,7 @@ namespace NeeView
                 // is drive
                 if (s.Length == 2 && s[1] == ':')
                 {
-                    return char.ToUpper(s[0]) + ":\\";
+                    return char.ToUpperInvariant(s[0]) + ":\\";
                 }
             }
             else
@@ -316,7 +316,7 @@ namespace NeeView
             }
             else
             {
-                return pathY.StartsWith(pathX) && pathY[lengthX] == '\\';
+                return pathY.StartsWith(pathX, StringComparison.Ordinal) && pathY[lengthX] == '\\';
             }
         }
 
@@ -334,7 +334,7 @@ namespace NeeView
 
         public override int GetHashCode()
         {
-            return _scheme.GetHashCode() ^ (_path == null ? 0 : _path.GetHashCode()) ^ (_search == null ? 0 : _search.GetHashCode());
+            return _scheme.GetHashCode() ^ (_path == null ? 0 : _path.GetHashCode(StringComparison.Ordinal)) ^ (_search == null ? 0 : _search.GetHashCode(StringComparison.Ordinal));
         }
 
         public bool Equals(QueryPath? obj)

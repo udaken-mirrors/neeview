@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -81,7 +82,7 @@ namespace NeeView
 
             // page
             var pageMax = book != null ? book.Pages.Count : 0;
-            _replaceString.Set("$PageMax", pageMax.ToString());
+            _replaceString.Set("$PageMax", pageMax.ToString(CultureInfo.InvariantCulture));
 
 
             string pageNum0 = GetPageNum(contents.ElementAtOrDefault(0));
@@ -94,7 +95,7 @@ namespace NeeView
             {
                 if (content is null) return "0";
                 var pageElement = content.Element; 
-                return (pageElement.PageRange.PartSize == 2) ? (pageElement.Page.Index + 1).ToString() : (pageElement.Page.Index + 1).ToString() + (pageElement.PageRange.Min.Part == 1 ? ".5" : ".0");
+                return (pageElement.PageRange.PartSize == 2) ? (pageElement.Page.Index + 1).ToString(CultureInfo.InvariantCulture) : (pageElement.Page.Index + 1).ToString(CultureInfo.InvariantCulture) + (pageElement.PageRange.Min.Part == 1 ? ".5" : ".0");
             }
 
             string fullPath0 = GetFullPath(contents.ElementAtOrDefault(0));
@@ -122,7 +123,7 @@ namespace NeeView
                 if (content is null) return "";
                 var pageElement = content.Element;
                 var fullPath = pageElement.Page.EntryName;
-                return fullPath.Replace("/", " > ").Replace("\\", " > ") + GetPartString(content);
+                return fullPath.Replace("/", " > ", StringComparison.Ordinal).Replace("\\", " > ", StringComparison.Ordinal) + GetPartString(content);
             }
 
             string name0 = GetName(contents.ElementAtOrDefault(0));
@@ -168,7 +169,7 @@ namespace NeeView
 
             string GetSizeEx(PictureInfo? pictureInfo)
             {
-                return pictureInfo != null ? GetSize(pictureInfo) + "×" + pictureInfo.BitsPerPixel.ToString() : "";
+                return pictureInfo != null ? GetSize(pictureInfo) + "×" + pictureInfo.BitsPerPixel.ToString(CultureInfo.InvariantCulture) : "";
             }
 
             string size0 = GetSize(pictureInfo0);

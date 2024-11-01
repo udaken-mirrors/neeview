@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Text.Json;
@@ -29,7 +30,7 @@ namespace NeeView
 
         public override string ValidateItem(string item)
         {
-            return string.IsNullOrWhiteSpace(item) ? "" : "." + ReplaceInvalidFileNameChars(item).Trim().TrimStart('.').ToLower();
+            return string.IsNullOrWhiteSpace(item) ? "" : "." + ReplaceInvalidFileNameChars(item).Trim().TrimStart('.').ToLowerInvariant();
         }
 
         private static string ReplaceInvalidFileNameChars(string s)
@@ -58,7 +59,7 @@ namespace NeeView
 
         public override int GetHashCode()
         {
-            return this.ToString().GetHashCode();
+            return this.ToString().GetHashCode(StringComparison.Ordinal);
         }
     }
 

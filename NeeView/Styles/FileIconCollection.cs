@@ -45,7 +45,7 @@ namespace NeeView
 
             public override int GetHashCode()
             {
-                return FileName.GetHashCode() ^ IconType.GetHashCode();
+                return FileName.GetHashCode(StringComparison.Ordinal) ^ IconType.GetHashCode();
             }
 
             public static bool operator ==(Key lhs, Key rhs)

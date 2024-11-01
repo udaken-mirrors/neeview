@@ -30,11 +30,11 @@ namespace NeeView
                     var key = friendlyName.ToString();
                     if (collection.ContainsKey(key))
                     {
-                        collection[key] = collection[key].TrimEnd(',') + ',' + fileExtensions.ToString().ToLower();
+                        collection[key] = collection[key].TrimEnd(',') + ',' + fileExtensions.ToString().ToLowerInvariant();
                     }
                     else
                     {
-                        collection.Add(key, fileExtensions.ToString().ToLower());
+                        collection.Add(key, fileExtensions.ToString().ToLowerInvariant());
                     }
                 }
                 NVInterop.NVCloseImageCodecInfo();

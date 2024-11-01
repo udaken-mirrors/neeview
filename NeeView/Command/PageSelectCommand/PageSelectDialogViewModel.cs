@@ -3,6 +3,7 @@ using NeeLaboratory.Windows.Input;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Globalization;
 
 namespace NeeView
 {
@@ -36,7 +37,7 @@ namespace NeeView
 
         public string Caption => Properties.TextResources.GetString("JumpPageCommand");
 
-        public string Label => string.Format(Properties.TextResources.GetString("Notice.JumpPageLabel"), _model.Min, _model.Max);
+        public string Label => string.Format(CultureInfo.InvariantCulture, Properties.TextResources.GetString("Notice.JumpPageLabel"), _model.Min, _model.Max);
 
         public int Value
         {

@@ -69,7 +69,7 @@ namespace NeeView.Text
                         {
                             var kx = _kanjiOrderMap.TryGetValue(cx, out var indexX) ? (char)('あ' + indexX) : cx;
                             var ky = _kanjiOrderMap.TryGetValue(cy, out var indexY) ? (char)('あ' + indexY) : cy;
-                            return string.Compare(kx.ToString(), ky.ToString());
+                            return string.Compare(kx.ToString(), ky.ToString(), StringComparison.CurrentCulture);
                         }
 
                         // 文字比較
@@ -88,7 +88,7 @@ namespace NeeView.Text
             if (yresult) return -1;
 
             Debug.Assert(xresult == false && yresult == false);
-            return string.Compare(x, y);
+            return string.Compare(x, y, StringComparison.CurrentCulture);
         }
     }
 

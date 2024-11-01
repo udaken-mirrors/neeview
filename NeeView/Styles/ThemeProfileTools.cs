@@ -5,6 +5,7 @@ using System.Windows;
 using System.Xml.Linq;
 using System.Diagnostics;
 using System.Xml;
+using System.Globalization;
 
 namespace NeeView
 {
@@ -77,7 +78,7 @@ namespace NeeView
             {
                 var node = new XElement(ns + "SolidColorBrush",
                     new XAttribute(nsx + "Key", pair.Key),
-                    new XAttribute("Color", themeProfile.GetColor(pair.Key, 1.0).ToString()));
+                    new XAttribute("Color", themeProfile.GetColor(pair.Key, 1.0).ToString(CultureInfo.InvariantCulture)));
                 root.Add(node);
             }
 

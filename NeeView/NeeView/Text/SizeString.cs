@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -55,8 +56,8 @@ namespace NeeView.Text
 
             var match = _regex.Match(this.Value);
             if (!match.Success) throw new ArgumentException("wrong value format.");
-            this.Width = int.Parse(match.Groups[1].Value);
-            this.Height = int.Parse(match.Groups[2].Value);
+            this.Width = int.Parse(match.Groups[1].Value, CultureInfo.InvariantCulture);
+            this.Height = int.Parse(match.Groups[2].Value, CultureInfo.InvariantCulture);
         }
 
         /// <summary>

@@ -139,9 +139,9 @@ namespace NeeView
 
                 // プロトコル起動を吸収
                 const string scheme = "neeview-open:";
-                if (items.Any() && items[0].StartsWith(scheme))
+                if (items.Any() && items[0].StartsWith(scheme, StringComparison.Ordinal))
                 {
-                    items[0] = items[0].Replace(scheme, "");
+                    items[0] = items[0].Replace(scheme, "", StringComparison.Ordinal);
                     if (string.IsNullOrWhiteSpace(items[0]))
                     {
                         items.RemoveAt(0);

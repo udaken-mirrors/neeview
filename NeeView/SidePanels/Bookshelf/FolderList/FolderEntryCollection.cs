@@ -10,6 +10,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Data;
+using System.Globalization;
 
 namespace NeeView
 {
@@ -151,7 +152,7 @@ namespace NeeView
                 if (match.Success)
                 {
                     Key = match.Groups[1].Value;
-                    PartNumber = int.Parse(match.Groups[2].Value);
+                    PartNumber = int.Parse(match.Groups[2].Value, CultureInfo.InvariantCulture);
                 }
             }
         }

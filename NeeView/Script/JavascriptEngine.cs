@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -215,7 +216,7 @@ namespace NeeView
             var match = regex.Match(s);
             if (match.Success)
             {
-                line = int.Parse(match.Groups[1].Value);
+                line = int.Parse(match.Groups[1].Value, CultureInfo.InvariantCulture);
                 message = match.Groups[2].Value.Trim();
             }
             if (location.HasValue)

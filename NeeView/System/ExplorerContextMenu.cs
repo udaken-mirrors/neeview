@@ -75,7 +75,7 @@ namespace NeeView
         public void Create()
         {
             var commandName = "\"" + Environment.AssemblyLocation + "\"";
-            var label = Properties.TextResources.GetStringRaw("ExplorerContextMenu.OpenInNeeView", CultureInfo.CurrentCulture) ?? "Nee&View";
+            var label = Properties.TextResources.GetCultureStringRaw("ExplorerContextMenu.OpenInNeeView", CultureInfo.CurrentCulture) ?? "Nee&View";
             var icon = commandName + ",0";
             var command = commandName + " \"%1\"";
             var commandTypeV = commandName + " \"%V\"";

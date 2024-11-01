@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -28,7 +29,7 @@ namespace NeeView
         {
             this.ErrorLog.Text = errorLog;
             this.ErrorLogLocate.IsXHtml = true;
-            this.ErrorLogLocate.Source = string.Format(Properties.TextResources.GetString("CriticalExceptionDialog.LogPath"), System.Security.SecurityElement.Escape(errorLogPath));
+            this.ErrorLogLocate.Source = string.Format(CultureInfo.InvariantCulture, Properties.TextResources.GetString("CriticalExceptionDialog.LogPath"), System.Security.SecurityElement.Escape(errorLogPath));
 
             this.Loaded += (s, e) => System.Media.SystemSounds.Hand.Play();
         }

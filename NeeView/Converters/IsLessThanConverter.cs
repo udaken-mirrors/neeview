@@ -10,7 +10,7 @@ namespace NeeView
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
             var s = parameter as string ?? throw new ArgumentException();
-            var v = System.Convert.ToDouble(value);
+            var v = System.Convert.ToDouble(value, CultureInfo.InvariantCulture);
             var compareValue = double.Parse(s, CultureInfo.InvariantCulture);
             return v < compareValue;
         }

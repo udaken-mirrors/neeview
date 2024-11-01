@@ -190,14 +190,14 @@ namespace NeeView
              .AddProfile(new PageSearchProfile());
 
             var text = ResourceService.Replace(_template);
-            text = text.Replace("[[ConjunctionAliasTable]]", CreateConjunctionAliasTable(searchContext));
-            text = text.Replace("[[PropertyAliasTable]]", CreatePropertyAliasTable(searchContext));
-            text = text.Replace("[[MatchAliasTable]]", CreateMatchAliasTable(searchContext));
-            text = text.Replace("[[ConjunctionTable]]", CreateConjunctionTable(searchContext));
-            text = text.Replace("[[PropertyTable]]", CreatePropertyTable(searchContext));
-            text = text.Replace("[[MatchTable]]", CreateMatchTable(searchContext));
-            text = text.Replace("[[AliasTable]]", CreateAliasTable(searchContext));
-            text = text.Replace("[[MetaTable]]", CreateMetaTableString());
+            text = text.Replace("[[ConjunctionAliasTable]]", CreateConjunctionAliasTable(searchContext), StringComparison.Ordinal);
+            text = text.Replace("[[PropertyAliasTable]]", CreatePropertyAliasTable(searchContext), StringComparison.Ordinal);
+            text = text.Replace("[[MatchAliasTable]]", CreateMatchAliasTable(searchContext), StringComparison.Ordinal);
+            text = text.Replace("[[ConjunctionTable]]", CreateConjunctionTable(searchContext), StringComparison.Ordinal);
+            text = text.Replace("[[PropertyTable]]", CreatePropertyTable(searchContext), StringComparison.Ordinal);
+            text = text.Replace("[[MatchTable]]", CreateMatchTable(searchContext), StringComparison.Ordinal);
+            text = text.Replace("[[AliasTable]]", CreateAliasTable(searchContext), StringComparison.Ordinal);
+            text = text.Replace("[[MetaTable]]", CreateMetaTableString(), StringComparison.Ordinal);
             builder.Append(text);
 
             builder.AppendLine("</body>");
@@ -293,7 +293,7 @@ namespace NeeView
         // Conjunction Options (Detail)
         private static string CreateConjunctionTable(SearchContext searchContext)
         {
-            var options = searchContext.KeyOptions.Where(e => e.Key.StartsWith("/c."));
+            var options = searchContext.KeyOptions.Where(e => e.Key.StartsWith("/c.", StringComparison.Ordinal));
             //var options = new string[] { "/and", "/or", "/not" };
 
             var node = new TagNode("table", "table-slim table-topless");

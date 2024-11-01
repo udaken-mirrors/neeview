@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -14,7 +15,7 @@ namespace NeeView.Text.Json
             var s = reader.GetString();
             if (s == null) return new TimeSpan();
 
-            return TimeSpan.Parse(s);
+            return TimeSpan.Parse(s, CultureInfo.InvariantCulture);
         }
 
         public override void Write(Utf8JsonWriter writer, TimeSpan value, JsonSerializerOptions options)

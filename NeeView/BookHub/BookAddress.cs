@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Text;
 using System.Threading;
@@ -94,7 +95,7 @@ namespace NeeView
                         query = new QueryPath(bookmark.Path, search);
                         break;
                     case BookmarkFolder folder:
-                        throw new BookAddressException(string.Format(Properties.TextResources.GetString("Notice.CannotOpenBookmarkFolder"), query.SimplePath));
+                        throw new BookAddressException(string.Format(CultureInfo.InvariantCulture, Properties.TextResources.GetString("Notice.CannotOpenBookmarkFolder"), query.SimplePath));
                 }
             }
 
@@ -210,7 +211,7 @@ namespace NeeView
             if (address is null) throw new ArgumentNullException(nameof(address));
 
             var full = query.SimplePath;
-            if (!full.StartsWith(address.SimplePath)) throw new ArgumentException($"{address} is not include entry.", nameof(address));
+            if (!full.StartsWith(address.SimplePath, StringComparison.Ordinal)) throw new ArgumentException($"{address} is not include entry.", nameof(address));
             return full[address.SimplePath.Length..].TrimStart(LoosePath.Separators);
         }
     }

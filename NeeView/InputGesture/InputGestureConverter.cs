@@ -70,11 +70,11 @@ namespace NeeView
         public static InputGesture? ConvertFromString(string source)
         {
             // なるべく例外が発生しないようにコンバート順を考慮する
-            if (source.Contains("Wheel"))
+            if (source.Contains("Wheel", StringComparison.Ordinal))
             {
                 return ConvertFromStringByOrder(source, ConverterType.MouseWheel);
             }
-            else if (source.Contains("Click"))
+            else if (source.Contains("Click", StringComparison.Ordinal))
             {
                 return ConvertFromStringByOrder(source, ConverterType.Mouse);
             }

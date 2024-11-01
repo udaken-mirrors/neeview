@@ -116,7 +116,7 @@ namespace NeeView
             source = source.Split(',').First();
 
             // ～Drag → ～Button
-            source = source.Replace("Drag", "Button");
+            source = source.Replace("Drag", "Button", StringComparison.Ordinal);
 
             var keys = source.Split('+');
 
@@ -144,13 +144,13 @@ namespace NeeView
                     continue;
                 }
 
-                throw new NotSupportedException(string.Format(Properties.TextResources.GetString("NotSupportedKeyException.Message"), source, "DragKey"));
+                throw new NotSupportedException(string.Format(CultureInfo.InvariantCulture, Properties.TextResources.GetString("NotSupportedKeyException.Message"), source, "DragKey"));
             }
 
             //
             if (mouseButtonBits == MouseButtonBits.None)
             {
-                throw new NotSupportedException(string.Format(Properties.TextResources.GetString("NotSupportedKeyException.Message"), source, "DragKey"));
+                throw new NotSupportedException(string.Format(CultureInfo.InvariantCulture, Properties.TextResources.GetString("NotSupportedKeyException.Message"), source, "DragKey"));
             }
 
             return new DragKey(mouseButtonBits, modifierKeys);

@@ -1,5 +1,6 @@
 ﻿using NeeLaboratory.Linq;
 using System;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -17,7 +18,7 @@ namespace NeeView
     /// </summary>
     public partial class FileInformationView : UserControl
     {
-        public static readonly string DragDropFormat = FormatVersion.CreateFormatName(Environment.ProcessId.ToString(), nameof(FileInformationView));
+        public static readonly string DragDropFormat = FormatVersion.CreateFormatName(Environment.ProcessId.ToString(CultureInfo.InvariantCulture), nameof(FileInformationView));
 
         #region RoutedCommand
 

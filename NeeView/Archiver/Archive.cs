@@ -239,7 +239,7 @@ namespace NeeView
             path = LoosePath.TrimDirectoryEnd(path);
 
             var entries = (await GetEntriesAsync(token))
-                .Where(e => path.Length < e.EntryName.Length && e.EntryName.StartsWith(path));
+                .Where(e => path.Length < e.EntryName.Length && e.EntryName.StartsWith(path, StringComparison.Ordinal));
 
             if (!isRecursive)
             {

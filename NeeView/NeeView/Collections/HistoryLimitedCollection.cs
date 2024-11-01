@@ -4,6 +4,7 @@ using NeeLaboratory;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 
 namespace NeeView.Collections
 {
@@ -177,7 +178,7 @@ namespace NeeView.Collections
         [Conditional("LOCAL_DEBUG")]
         private void Trace(string s, params object[] args)
         {
-            Debug.WriteLine($"{this.GetType().Name}: {string.Format(s, args)}");
+            Debug.WriteLine($"{this.GetType().Name}: {string.Format(CultureInfo.InvariantCulture, s, args)}");
         }
     }
 }

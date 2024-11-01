@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -43,7 +44,7 @@ namespace NeeView.Windows.Media
         /// <returns></returns>
         public override string ToString()
         {
-            return string.Format("A:{0}, H:{1}, S:{2}, V:{3}", A, H, S, V);
+            return string.Format(CultureInfo.InvariantCulture, "A:{0}, H:{1}, S:{2}, V:{3}", A, H, S, V);
         }
 
         /// <summary>

@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -179,7 +180,7 @@ namespace NeeView
         /// </summary>
         public static string Join(IEnumerable<string> tokens)
         {
-            return string.Join(" ", tokens.Select(e => string.Format(Properties.TextResources.GetStringRaw("TokenFormat") ?? "", e)));
+            return string.Join(" ", tokens.Select(e => string.Format(CultureInfo.InvariantCulture, Properties.TextResources.GetStringRaw("TokenFormat") ?? "", e)));
         }
 
         /// <summary>

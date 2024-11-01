@@ -1,11 +1,12 @@
 ﻿using System;
+using System.Globalization;
 using System.Runtime.Serialization;
 
 namespace NeeView
 {
     public class NotSupportedFileTypeException : Exception
     {
-        public NotSupportedFileTypeException(string extension) : base(string.Format(Properties.TextResources.GetString("Notice.NotSupportedFileType"), extension))
+        public NotSupportedFileTypeException(string extension) : base(string.Format(CultureInfo.InvariantCulture, Properties.TextResources.GetString("Notice.NotSupportedFileType"), extension))
         {
             Extension = extension;
         }

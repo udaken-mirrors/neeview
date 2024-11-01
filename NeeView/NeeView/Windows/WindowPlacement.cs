@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Globalization;
 using System.Runtime.InteropServices;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -104,10 +105,10 @@ namespace NeeView.Windows
 
             var placement = new WindowPlacement(
                 windowState,
-                int.Parse(tokens[1]),
-                int.Parse(tokens[2]),
-                int.Parse(tokens[3]),
-                int.Parse(tokens[4]),
+                int.Parse(tokens[1], CultureInfo.InvariantCulture),
+                int.Parse(tokens[2], CultureInfo.InvariantCulture),
+                int.Parse(tokens[3], CultureInfo.InvariantCulture),
+                int.Parse(tokens[4], CultureInfo.InvariantCulture),
                 isFullScreen);
 
             return placement;

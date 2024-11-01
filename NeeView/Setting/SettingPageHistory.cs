@@ -3,6 +3,7 @@ using NeeView.Data;
 using NeeView.Windows.Property;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Windows;
 
 namespace NeeView.Setting
@@ -107,7 +108,7 @@ namespace NeeView.Setting
                 Value = value;
             }
 
-            public override string ValueString => Value == -1 ? Properties.TextResources.GetString("Word.NoLimit") : Value.ToString();
+            public override string ValueString => Value == -1 ? Properties.TextResources.GetString("Word.NoLimit") : Value.ToString(CultureInfo.InvariantCulture);
         }
 
         /// <summary>

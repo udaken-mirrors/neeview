@@ -145,7 +145,7 @@ namespace NeeView
         /// <returns></returns>
         public async Task<List<ArchiveEntry>> CollectEntriesAsync(string entryPrefix, CancellationToken token)
         {
-            return (await _archive.GetEntriesAsync(token)).Where(e => e.EntryName.StartsWith(entryPrefix)).ToList();
+            return (await _archive.GetEntriesAsync(token)).Where(e => e.EntryName.StartsWith(entryPrefix, StringComparison.Ordinal)).ToList();
         }
     }
 }

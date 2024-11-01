@@ -72,7 +72,7 @@ namespace NeeView
         public static object? GetExtraValue(Page page, string name, CancellationToken token)
         {
             var pictureInfo = LoadPictureInfo(page, token);
-            return pictureInfo?.Metadata?.LowerExtraMap.TryGetValue(name.ToLower(), out var value) == true ? value : null;
+            return pictureInfo?.Metadata?.LowerExtraMap.TryGetValue(name.ToLowerInvariant(), out var value) == true ? value : null;
         }
 
         public static object? GetValue(Page page, InformationKey key)

@@ -153,7 +153,7 @@ namespace NeeView
                 }
                 else
                 {
-                    e.Accepted = item.Path.StartsWith(book.Path) && book.Pages.PageMap.ContainsKey(item.Path);
+                    e.Accepted = item.Path.StartsWith(book.Path, StringComparison.Ordinal) && book.Pages.PageMap.ContainsKey(item.Path);
                 }
             }
             else

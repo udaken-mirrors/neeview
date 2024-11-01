@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using System.Windows.Media.Imaging;
 
@@ -59,7 +60,7 @@ namespace NeeView.Media.Imaging.Metadata
                 if (_meta.GetQuery(key) is BitmapMetadata chunk)
                 {
 
-                    foreach (var title in chunk.Where(e => e.StartsWith(_strElementPrefix)))
+                    foreach (var title in chunk.Where(e => e.StartsWith(_strElementPrefix, StringComparison.Ordinal)))
                     {
                         var keywordLength = title.Length - _strElementPrefix.Length - 1;
                         if (keywordLength > 1)
@@ -87,7 +88,7 @@ namespace NeeView.Media.Imaging.Metadata
 
         public override string GetFormat()
         {
-            return _meta.Format.ToUpper();
+            return _meta.Format.ToUpperInvariant();
         }
 
         public override object? GetValue(BitmapMetadataKey key)
@@ -125,7 +126,7 @@ namespace NeeView.Media.Imaging.Metadata
                 var timeMap = new Dictionary<string, int>();
                 foreach (var item in time)
                 {
-                    timeMap[item] = Convert.ToInt32(time.GetQuery(item));
+                    timeMap[item] = Convert.ToInt32(time.GetQuery(item), CultureInfo.InvariantCulture);
                 }
 
                 timeMap.TryGetValue("/Year", out int year);

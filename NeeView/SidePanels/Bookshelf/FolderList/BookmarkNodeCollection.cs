@@ -1,5 +1,6 @@
 ﻿using NeeView.Collections.Generic;
 using System.Collections.Generic;
+using System.Globalization;
 
 namespace NeeView
 {
@@ -8,7 +9,7 @@ namespace NeeView
     /// </summary>
     public class BookmarkNodeCollection : List<TreeListNode<IBookmarkEntry>>
     {
-        public static readonly string Format = FormatVersion.CreateFormatName(Environment.ProcessId.ToString(), nameof(BookmarkNodeCollection));
+        public static readonly string Format = FormatVersion.CreateFormatName(Environment.ProcessId.ToString(CultureInfo.InvariantCulture), nameof(BookmarkNodeCollection));
 
         public BookmarkNodeCollection()
         {

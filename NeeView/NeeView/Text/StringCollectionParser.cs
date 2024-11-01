@@ -114,7 +114,7 @@ namespace NeeView.Text
         {
             if (items is null) return "";
 
-            return string.Join(";", items.Select(e => e.Contains(';') || e.Contains('"') ? ("\"" + e.Replace("\"", "\"\"") + "\"") : e));
+            return string.Join(";", items.Select(e => e.Contains(';', StringComparison.Ordinal) || e.Contains('"', StringComparison.Ordinal) ? ("\"" + e.Replace("\"", "\"\"", StringComparison.Ordinal) + "\"") : e));
         }
 
         public static List<string> Parse(string source)

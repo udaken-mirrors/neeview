@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 
 namespace NeeView
 {
@@ -19,7 +20,7 @@ namespace NeeView
 
         public int Number { get; }
 
-        public string FullName => Number == 0 ? Name : Name + Separator + Number.ToString();
+        public string FullName => Number == 0 ? Name : Name + Separator + Number.ToString(CultureInfo.InvariantCulture);
 
         public bool IsClone => Number != 0;
 
@@ -75,7 +76,7 @@ namespace NeeView
 
         public int CompareTo(CommandNameSource? other)
         {
-            var result = Name.CompareTo(other?.Name);
+            var result = string.Compare(Name, other?.Name, StringComparison.Ordinal);
             if (result != 0) return result;
 
             return Number.CompareTo(other?.Number);
@@ -93,7 +94,7 @@ namespace NeeView
             var tokens = name.Split(Separator);
             if (tokens.Length == 2)
             {
-                return new CommandNameSource(tokens[0], int.Parse(tokens[1]));
+                return new CommandNameSource(tokens[0], int.Parse(tokens[1], CultureInfo.InvariantCulture));
             }
             else
             {

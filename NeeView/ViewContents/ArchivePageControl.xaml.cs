@@ -167,7 +167,7 @@ namespace NeeView
 
         public ImageSource? ImageSource => _content.ImageSource;
 
-        public string? Name => _content.Entry.EntryName?.TrimEnd('\\').Replace("\\", " > ");
+        public string? Name => _content.Entry.EntryName?.TrimEnd('\\').Replace("\\", " > ", StringComparison.Ordinal);
 
 
         public void OpenBook()

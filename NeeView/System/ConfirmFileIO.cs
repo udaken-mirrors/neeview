@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
@@ -96,7 +97,7 @@ namespace NeeView
             var dockPanel = new DockPanel();
 
             var message = new TextBlock();
-            message.Inlines.Add(new Run(string.Format(Properties.TextResources.GetString("FileDeleteDialog.Message"), GetFilesTypeName(entry))));
+            message.Inlines.Add(new Run(string.Format(CultureInfo.InvariantCulture, Properties.TextResources.GetString("FileDeleteDialog.Message"), GetFilesTypeName(entry))));
             if (isCompletely)
             {
                 message.Inlines.Add(new LineBreak());

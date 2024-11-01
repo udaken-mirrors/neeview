@@ -185,7 +185,7 @@ namespace NeeView.Susie.Server
 
                 // ifjpeg2k.spi用に区切り記号に","を追加
                 // ワイルド拡張子は無効
-                extensions.AddRange(filter.Split(';', ',').Select(e => e.TrimStart('*').ToLower().Trim()).Where(e => e != ".*"));
+                extensions.AddRange(filter.Split(';', ',').Select(e => e.TrimStart('*').ToLowerInvariant().Trim()).Where(e => e != ".*"));
             }
 
             DefaultExtensions = new FileExtensionCollection(extensions);
@@ -459,7 +459,7 @@ namespace NeeView.Susie.Server
 
         private static string GetExtension(string s)
         {
-            return "." + s.Split('.').Last().ToLower();
+            return "." + s.Split('.').Last().ToLowerInvariant();
         }
 
 

@@ -1,6 +1,7 @@
 ﻿
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -54,7 +55,7 @@ namespace NeeView
         //
         public override string ToString()
         {
-            return IsEmpty() ? "Empty" : Index.ToString() + (Part == 1 ? "b" : "a");
+            return IsEmpty() ? "Empty" : Index.ToString(CultureInfo.InvariantCulture) + (Part == 1 ? "b" : "a");
         }
 
         // truncate ... パーツ番号クリア

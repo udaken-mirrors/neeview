@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Text.Json;
@@ -176,7 +177,7 @@ namespace NeeView.Text
 
         public override int GetHashCode()
         {
-            return this.ToString().GetHashCode();
+            return this.ToString().GetHashCode(StringComparison.Ordinal);
         }
 
     }

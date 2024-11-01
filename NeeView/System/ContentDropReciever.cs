@@ -4,6 +4,7 @@ using NeeView.Text;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -271,7 +272,7 @@ namespace NeeView
             //if (!System.IO.Directory.Exists(downloadPath)) throw new DropException("保存先フォルダーが存在しません");
 
             // ファイル名は固定
-            name = DateTime.Now.ToString("yyyyMMddHHmmss");
+            name = DateTime.Now.ToString("yyyyMMddHHmmss", CultureInfo.InvariantCulture);
             string ext = "";
 
             // 画像ファイルチェック
@@ -319,7 +320,7 @@ namespace NeeView
             name = LoosePath.ValidFileName(name);
 
             // 拡張子取得
-            string ext = System.IO.Path.GetExtension(name).ToLower();
+            string ext = System.IO.Path.GetExtension(name).ToLowerInvariant();
 
             // 名前が長すぎる場合は独自名にする。64文字ぐらい？
             if (string.IsNullOrWhiteSpace(name) || name.Length > 64)
@@ -459,11 +460,11 @@ namespace NeeView
                 foreach (var url in HtmlString.CollectImgSrc(data.GetData("HTML Format").ToString()))
                 {
                     //data:[<mediatype>][;base64],<data>
-                    if (url.StartsWith("data:image/"))
+                    if (url.StartsWith("data:image/", StringComparison.Ordinal))
                     {
                         // base64 to binary
                         const string keyword = "base64,";
-                        var index = url.IndexOf(keyword);
+                        var index = url.IndexOf(keyword, StringComparison.Ordinal);
                         if (index < 0) continue;  // base64の埋め込みのサポート
                         var crypt = url[(index + keyword.Length)..];
                         var bytes = Convert.FromBase64String(crypt);
@@ -503,7 +504,7 @@ namespace NeeView
                     var fileNames = new List<string>();
                     foreach (var url in HtmlString.CollectImgSrc(data.GetData("HTML Format").ToString()))
                     {
-                        if (url.StartsWith("http://") || url.StartsWith("https://"))
+                        if (url.StartsWith("http://", StringComparison.Ordinal) || url.StartsWith("https://", StringComparison.Ordinal))
                         {
                             // download
                             var bytes = await client.GetByteArrayAsync(new Uri(url));
@@ -523,7 +524,7 @@ namespace NeeView
                 if (data.GetDataPresent("UniformResourceLocator") || data.GetDataPresent("UniformResourceLocatorW"))
                 {
                     var url = data.GetData(DataFormats.Text).ToString();
-                    if (url is not null && (url.StartsWith("http://") || url.StartsWith("https://")))
+                    if (url is not null && (url.StartsWith("http://", StringComparison.Ordinal) || url.StartsWith("https://", StringComparison.Ordinal)))
                     {
                         // download
                         var bytes = await client.GetByteArrayAsync(new Uri(url));
@@ -554,7 +555,7 @@ namespace NeeView
             {
                 if (data.GetData(DataFormats.Bitmap) is System.Windows.Interop.InteropBitmap bitmap)
                 {
-                    var name = DateTime.Now.ToString("yyyyMMddHHmmss") + ".png";
+                    var name = DateTime.Now.ToString("yyyyMMddHHmmss", CultureInfo.InvariantCulture) + ".png";
 
                     // ユニークなパスを作成
                     string fileName = FileIO.CreateUniquePath(System.IO.Path.Combine(downloadPath, name));

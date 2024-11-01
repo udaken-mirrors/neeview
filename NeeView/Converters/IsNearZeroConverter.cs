@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Globalization;
 using System.Windows.Data;
 
 namespace NeeView
@@ -11,7 +12,7 @@ namespace NeeView
         {
             try
             {
-                var v = System.Convert.ToDouble(value);
+                var v = System.Convert.ToDouble(value, CultureInfo.InvariantCulture);
                 return v < 0.01;
             }
             catch (Exception e)

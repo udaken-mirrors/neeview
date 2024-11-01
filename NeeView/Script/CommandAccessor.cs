@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.Immutable;
 
 namespace NeeView
@@ -51,7 +52,7 @@ namespace NeeView
         public string MouseGesture
         {
             get { return _command.MouseGesture.ToString(); }
-            set { _command.MouseGesture = new MouseSequence(value?.Replace("←", "L").Replace("↑", "U").Replace("→", "R").Replace("↓", "L").Replace("Click", "C") ?? ""); }
+            set { _command.MouseGesture = new MouseSequence(value?.Replace("←", "L", StringComparison.Ordinal).Replace("↑", "U", StringComparison.Ordinal).Replace("→", "R", StringComparison.Ordinal).Replace("↓", "L", StringComparison.Ordinal).Replace("Click", "C", StringComparison.Ordinal) ?? ""); }
         }
 
         [WordNodeMember(IsAutoCollect = false)]

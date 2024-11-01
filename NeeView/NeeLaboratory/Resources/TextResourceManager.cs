@@ -62,7 +62,7 @@ namespace NeeLaboratory.Resources
         /// <param name="name">リソース名</param>
         /// <param name="culture">カルチャ</param>
         /// <returns></returns>
-        public string? GetString(string name, CultureInfo culture)
+        public string? GetCultureString(string name, CultureInfo culture)
         {
             return InstantResourceSet(culture).GetString(name);
         }
@@ -85,7 +85,7 @@ namespace NeeLaboratory.Resources
         /// <param name="name">リソース名</param>
         /// <param name="culture">カルチャ</param>
         /// <returns></returns>
-        public string? GetCaseString(string name, string pattern, CultureInfo culture)
+        public string? GetCaseCultureString(string name, string pattern, CultureInfo culture)
         {
             return InstantResourceSet(culture).GetCaseString(name, pattern);
         }

@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -93,7 +94,7 @@ namespace NeeView.Setting
             if (overlaps.Count > 0)
             {
                 element.Conflicts = overlaps;
-                element.OverlapsText = string.Format(Properties.TextResources.GetString("Notice.Conflict"), ResourceService.Join(overlaps.Select(e => CommandTable.Current.GetElement(e).Text)));
+                element.OverlapsText = string.Format(CultureInfo.InvariantCulture, Properties.TextResources.GetString("Notice.Conflict"), ResourceService.Join(overlaps.Select(e => CommandTable.Current.GetElement(e).Text)));
             }
 
             return element;

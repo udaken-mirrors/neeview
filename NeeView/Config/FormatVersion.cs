@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Globalization;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -28,9 +29,9 @@ namespace NeeView
         {
             Name = name;
             var tokens = version.Split('.');
-            MajorVersion = int.Parse(tokens[0]);
-            MinorVersion = tokens.Length > 1 ? int.Parse(tokens[1]) : 0;
-            BuildVersion = tokens.Length > 2 ? int.Parse(tokens[2]) : 0;
+            MajorVersion = int.Parse(tokens[0], CultureInfo.InvariantCulture);
+            MinorVersion = tokens.Length > 1 ? int.Parse(tokens[1], CultureInfo.InvariantCulture) : 0;
+            BuildVersion = tokens.Length > 2 ? int.Parse(tokens[2], CultureInfo.InvariantCulture) : 0;
         }
 
 
@@ -67,9 +68,9 @@ namespace NeeView
             }
 
             var versions = tokens[1].Trim().Split('.');
-            var major = (versions.Length > 0) ? int.Parse(versions[0]) : 0;
-            var minor = (versions.Length > 1) ? int.Parse(versions[1]) : 0;
-            var build = (versions.Length > 2) ? int.Parse(versions[2]) : 0;
+            var major = (versions.Length > 0) ? int.Parse(versions[0], CultureInfo.InvariantCulture) : 0;
+            var minor = (versions.Length > 1) ? int.Parse(versions[1], CultureInfo.InvariantCulture) : 0;
+            var build = (versions.Length > 2) ? int.Parse(versions[2], CultureInfo.InvariantCulture) : 0;
             return new FormatVersion(name, major, minor, build);
         }
 
@@ -82,7 +83,7 @@ namespace NeeView
 
             if (this.Name != other.Name)
             {
-                return this.Name.CompareTo(other.Name);
+                return string.Compare(this.Name, other.Name, StringComparison.InvariantCulture);
             }
             if (this.MajorVersion != other.MajorVersion)
             {

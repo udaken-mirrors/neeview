@@ -1,6 +1,7 @@
 ﻿using NeeLaboratory.IO;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 
@@ -45,7 +46,7 @@ namespace NeeView
 
             if (parameter.IsShowToast)
             {
-                var toast = new Toast(string.Format(Properties.TextResources.GetString("ExportImage.Message.Success"), filename));
+                var toast = new Toast(string.Format(CultureInfo.InvariantCulture, Properties.TextResources.GetString("ExportImage.Message.Success"), filename));
                 ToastService.Current.Show(toast);
             }
         }

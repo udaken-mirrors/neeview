@@ -7,7 +7,7 @@ namespace NeeView
     {
         public static string ToFormatString(this DateTime dateTime)
         {
-            return dateTime.ToString(Config.Current.System.DateTimeFormat);
+            return dateTime.ToString(Config.Current.System.DateTimeFormat, CultureInfo.CurrentCulture);
         }
     }
 

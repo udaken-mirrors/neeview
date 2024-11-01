@@ -112,7 +112,7 @@ namespace NeeView.Media.Imaging.Metadata
             {
                 if (_lowerExtraMap is null)
                 {
-                    _lowerExtraMap = _extraMap.ToDictionary(e => e.Key.Replace(" ", "").ToLower(), e => e.Value);
+                    _lowerExtraMap = _extraMap.ToDictionary(e => e.Key.Replace(" ", "", StringComparison.Ordinal).ToLowerInvariant(), e => e.Value);
                 }
                 return _lowerExtraMap;
             }

@@ -75,7 +75,7 @@ namespace NeeView
                         var match = _regexDocComment.Match(line);
                         if (match.Success)
                         {
-                            var key = match.Groups[1].Value.ToLower();
+                            var key = match.Groups[1].Value.ToLowerInvariant();
                             var value = match.Groups[2].Value.Trim();
                             switch (key)
                             {

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
@@ -67,7 +68,7 @@ namespace NeeView
 
         public override int GetHashCode()
         {
-            return Name.GetHashCode() ^ Path.GetHashCode();
+            return Name.GetHashCode(StringComparison.Ordinal) ^ Path.GetHashCode(StringComparison.Ordinal);
         }
 
         public async Task CopyAsyncNoExceptions(IEnumerable<string> paths, CancellationToken token)

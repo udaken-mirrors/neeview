@@ -64,7 +64,7 @@ namespace NeeView
             if (_format != format)
             {
                 _format = format;
-                _keys = _keywords.Where(e => format.Contains(e)).ToList();
+                _keys = _keywords.Where(e => format.Contains(e, StringComparison.Ordinal)).ToList();
                 UpdateTitle();
             }
         }

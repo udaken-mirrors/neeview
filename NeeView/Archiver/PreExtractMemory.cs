@@ -2,6 +2,7 @@
 
 using System;
 using System.Diagnostics;
+using System.Globalization;
 
 namespace NeeView
 {
@@ -100,7 +101,7 @@ namespace NeeView
         [Conditional("LOCAL_DEBUG")]
         private static void Trace(string format, params object[] args)
         {
-            Debug.WriteLine($"{nameof(PreExtractMemory)}: {string.Format(format, args)}");
+            Debug.WriteLine($"{nameof(PreExtractMemory)}: {string.Format(CultureInfo.InvariantCulture, format, args)}");
         }
 
         #endregion LOCAL_DEBUG

@@ -54,7 +54,7 @@ namespace NeeView
             return ThemeColorType switch
             {
                 ThemeColorType.Default => "",
-                ThemeColorType.Color => DecorateOpacityString(Color.ToString()),
+                ThemeColorType.Color => DecorateOpacityString(Color.ToString(CultureInfo.InvariantCulture)),
                 ThemeColorType.Link => DecorateOpacityString(Link),
                 _ => throw new InvalidOperationException(),
             };
@@ -64,7 +64,7 @@ namespace NeeView
         {
             if (Opacity == 1.0) return s;
 
-            return s + "/" + Opacity.ToString("F2");
+            return s + "/" + Opacity.ToString("F2", CultureInfo.InvariantCulture);
         }
 
         public static ThemeColor Parse(string? s)

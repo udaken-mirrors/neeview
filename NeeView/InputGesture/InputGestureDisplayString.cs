@@ -177,7 +177,7 @@ namespace NeeView
 
         public override string Convert(string value)
         {
-            return _isUppercase ? value.ToUpper() : value;
+            return _isUppercase ? value.ToUpperInvariant() : value;
         }
     }
 }

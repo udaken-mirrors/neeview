@@ -7,6 +7,7 @@ using NeeView.Text;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -627,7 +628,7 @@ namespace NeeView.Media.Imaging.Metadata
             var property = directory.XmpMeta?.GetProperty(schema, path);
             if (property != null)
             {
-                if (property.Value.Contains('/'))
+                if (property.Value.Contains('/', StringComparison.Ordinal))
                 {
                     var rational = GetRational(directory, schema, path);
                     return rational?.ToValue();
@@ -858,7 +859,7 @@ namespace NeeView.Media.Imaging.Metadata
             return value switch
             {
                 null or string _ => value,
-                _ => ExifFlashModeExtensions.ToExifFlashMode(Convert.ToInt32(value)),
+                _ => ExifFlashModeExtensions.ToExifFlashMode(Convert.ToInt32(value, CultureInfo.InvariantCulture)),
             };
         }
 

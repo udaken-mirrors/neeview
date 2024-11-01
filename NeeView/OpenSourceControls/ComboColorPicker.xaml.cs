@@ -13,6 +13,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Reflection;
 using System.Diagnostics;
+using System.Globalization;
 
 namespace OpenSourceControls
 {
@@ -54,7 +55,7 @@ namespace OpenSourceControls
                 // Add the color if not found
                 if (!cp.ListContains(newColor))
                 {
-                    cp.AddColor(newColor, newColor.ToString());
+                    cp.AddColor(newColor, newColor.ToString(CultureInfo.InvariantCulture));
                 }
             }
 

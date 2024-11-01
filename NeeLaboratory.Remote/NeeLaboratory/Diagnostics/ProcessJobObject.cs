@@ -6,6 +6,7 @@ namespace NeeLaboratory.Diagnostics
 {
     using System;
     using System.Diagnostics;
+    using System.Globalization;
     using System.Runtime.InteropServices;
 
     /// <summary>
@@ -22,7 +23,7 @@ namespace NeeLaboratory.Diagnostics
         {
             public static void Warning(string format, params object[] args)
             {
-                Debug.WriteLine("ProcessJobObject: " + string.Format(format, args));
+                Debug.WriteLine("ProcessJobObject: " + string.Format(CultureInfo.InvariantCulture, format, args));
             }
         }
 

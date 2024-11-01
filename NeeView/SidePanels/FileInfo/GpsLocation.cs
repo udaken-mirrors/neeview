@@ -29,10 +29,10 @@ namespace NeeView
             if (!_latitude.IsValid || !_longitude.IsValid) return;
 
             var s = format;
-            s = s.Replace("$LatDeg", _latitude.ToValueString("{0:F5}"));
-            s = s.Replace("$LonDeg", _longitude.ToValueString("{0:F5}"));
-            s = s.Replace("$Lat", _latitude.ToFormatString());
-            s = s.Replace("$Lon", _longitude.ToFormatString());
+            s = s.Replace("$LatDeg", _latitude.ToValueString("{0:F5}"), StringComparison.Ordinal);
+            s = s.Replace("$LonDeg", _longitude.ToValueString("{0:F5}"), StringComparison.Ordinal);
+            s = s.Replace("$Lat", _latitude.ToFormatString(), StringComparison.Ordinal);
+            s = s.Replace("$Lon", _longitude.ToFormatString(), StringComparison.Ordinal);
 
             ExternalProcess.Start(s);
         }

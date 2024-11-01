@@ -96,7 +96,7 @@ namespace NeeView
                 .Where(e => !IsExtra(e))
                 .ToList();
 
-            _nameMap = _defaultKeys.ToDictionary(e => e.ToString().ToLower());
+            _nameMap = _defaultKeys.ToDictionary(e => e.ToString().ToLowerInvariant());
 
             //foreach(var pair in _nameMap)
             //{

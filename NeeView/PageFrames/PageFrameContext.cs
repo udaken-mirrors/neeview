@@ -3,6 +3,7 @@
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Globalization;
 using System.Windows;
 using NeeLaboratory.ComponentModel;
 using NeeLaboratory.Generators;
@@ -392,7 +393,7 @@ namespace NeeView.PageFrames
         [Conditional("LOCAL_DEBUG")]
         private void Trace(string s, params object[] args)
         {
-            Debug.WriteLine($"{this.GetType().Name}: {string.Format(s, args)}");
+            Debug.WriteLine($"{this.GetType().Name}: {string.Format(CultureInfo.InvariantCulture, s, args)}");
         }
     }
 }

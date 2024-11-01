@@ -1,6 +1,7 @@
 ﻿using NeeLaboratory.ComponentModel;
 using NeeLaboratory.Windows.Input;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Windows;
 
@@ -79,7 +80,7 @@ namespace NeeView.Setting
 
                 if (token.Conflicts.Count > 0)
                 {
-                    token.OverlapsText = string.Format(Properties.TextResources.GetString("Notice.Conflict"), ResourceService.Join(token.Conflicts.Select(i => CommandTable.Current.GetElement(i).Text)));
+                    token.OverlapsText = string.Format(CultureInfo.InvariantCulture, Properties.TextResources.GetString("Notice.Conflict"), ResourceService.Join(token.Conflicts.Select(i => CommandTable.Current.GetElement(i).Text)));
                 }
             }
 

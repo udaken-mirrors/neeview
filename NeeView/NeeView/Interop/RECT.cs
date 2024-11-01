@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.Runtime.InteropServices;
 
 namespace NeeView.Interop
@@ -44,7 +45,7 @@ namespace NeeView.Interop
             var tokens = s.Split(',');
             if (tokens.Length != 4) throw new InvalidCastException();
 
-            return new RECT(int.Parse(tokens[0]), int.Parse(tokens[1]), int.Parse(tokens[2]), int.Parse(tokens[3]));
+            return new RECT(int.Parse(tokens[0], CultureInfo.InvariantCulture), int.Parse(tokens[1], CultureInfo.InvariantCulture), int.Parse(tokens[2], CultureInfo.InvariantCulture), int.Parse(tokens[3], CultureInfo.InvariantCulture));
         }
     }
 }

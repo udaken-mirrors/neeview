@@ -32,7 +32,7 @@ namespace NeeView.Media.Imaging.Metadata
 
         public override string GetFormat()
         {
-            return _meta.Format.ToUpper();
+            return _meta.Format.ToUpperInvariant();
         }
 
         public override object? GetValue(BitmapMetadataKey key)

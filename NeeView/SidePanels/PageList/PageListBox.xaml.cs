@@ -28,7 +28,7 @@ namespace NeeView
     /// </summary>
     public partial class PageListBox : UserControl, IPageListPanel, IDisposable, IToolTipService
     {
-        public static readonly string DragDropFormat = FormatVersion.CreateFormatName(Environment.ProcessId.ToString(), nameof(PageListBox));
+        public static readonly string DragDropFormat = FormatVersion.CreateFormatName(Environment.ProcessId.ToString(CultureInfo.InvariantCulture), nameof(PageListBox));
 
         private readonly PageListBoxViewModel _vm;
         private ListBoxThumbnailLoader? _thumbnailLoader;

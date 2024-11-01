@@ -112,7 +112,7 @@ namespace NeeView
 
                 case NotifyCollectionChangedAction.Add:
                     if (newItems is null) throw new InvalidOperationException();
-                    if (newItems.Any(x => x.Path.StartsWith(_book.Path)))
+                    if (newItems.Any(x => x.Path.StartsWith(_book.Path, StringComparison.Ordinal)))
                     {
                         UpdateMarkers();
                     }
@@ -120,7 +120,7 @@ namespace NeeView
 
                 case NotifyCollectionChangedAction.Remove:
                     if (oldItems is null) throw new InvalidOperationException();
-                    if (oldItems.Any(x => x.Path.StartsWith(_book.Path)))
+                    if (oldItems.Any(x => x.Path.StartsWith(_book.Path, StringComparison.Ordinal)))
                     {
                         UpdateMarkers();
                     }
@@ -129,7 +129,7 @@ namespace NeeView
                 case NotifyCollectionChangedAction.Replace:
                     if (newItems is null) throw new InvalidOperationException();
                     if (oldItems is null) throw new InvalidOperationException();
-                    if (!oldItems.SequenceEqual(newItems) && oldItems.Union(newItems).Any(x => x.Path.StartsWith(_book.Path)))
+                    if (!oldItems.SequenceEqual(newItems) && oldItems.Union(newItems).Any(x => x.Path.StartsWith(_book.Path, StringComparison.Ordinal)))
                     {
                         UpdateMarkers();
                     }

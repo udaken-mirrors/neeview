@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -72,12 +73,12 @@ namespace NeeView
 
             var title = name ?? $"[Enum] {type.Name}";
 
-            builder.Append($"<h2 id=\"{type.Name}\">{title}</h2>").AppendLine();
+            builder.Append(CultureInfo.InvariantCulture, $"<h2 id=\"{type.Name}\">{title}</h2>").AppendLine();
 
             var memberName = new DocumentMemberName(type);
             AppendSummary(memberName);
 
-            builder.Append($"<h4>{ResourceService.GetString("@Word.Fields")}</h4>").AppendLine();
+            builder.Append(CultureInfo.InvariantCulture, $"<h4>{ResourceService.GetString("@Word.Fields")}</h4>").AppendLine();
 
             AppendDictionary(type.VisibleAliasNameDictionary().ToDictionary(e => e.Key.ToString(), e => e.Value));
 
@@ -93,10 +94,10 @@ namespace NeeView
         private HtmlReferenceBuilder AppendDictionary(Dictionary<string, string> dictionary, string? style = null)
         {
             style = style ?? "table-slim";
-            builder.Append($"<p><table class=\"{style}\">").AppendLine();
+            builder.Append(CultureInfo.InvariantCulture, $"<p><table class=\"{style}\">").AppendLine();
             foreach (var member in dictionary)
             {
-                builder.Append($"<tr><td>{member.Key}</td><td>{member.Value}</td></tr>").AppendLine();
+                builder.Append(CultureInfo.InvariantCulture, $"<tr><td>{member.Key}</td><td>{member.Value}</td></tr>").AppendLine();
             }
             builder.Append("</table></p>").AppendLine();
 
@@ -112,14 +113,14 @@ namespace NeeView
         private HtmlReferenceBuilder AppendDataTable(DataTable dataTable, bool isHeader)
         {
             var tableClass = "table-slim" + (isHeader ? " table-topless" : "");
-            builder.Append($"<p><table class=\"{tableClass}\">").AppendLine();
+            builder.Append(CultureInfo.InvariantCulture, $"<p><table class=\"{tableClass}\">").AppendLine();
 
             if (isHeader)
             {
                 builder.Append("<tr>");
                 foreach (DataColumn col in dataTable.Columns)
                 {
-                    builder.Append($"<th>{col.Caption}</th>");
+                    builder.Append(CultureInfo.InvariantCulture, $"<th>{col.Caption}</th>");
                 }
                 builder.Append("</tr>").AppendLine();
             }
@@ -129,7 +130,7 @@ namespace NeeView
                 builder.Append("<tr>");
                 foreach (DataColumn col in dataTable.Columns)
                 {
-                    builder.Append($"<td>{row[col]}</td>");
+                    builder.Append(CultureInfo.InvariantCulture, $"<td>{row[col]}</td>");
                 }
                 builder.Append("</tr>").AppendLine();
             }
@@ -182,7 +183,7 @@ namespace NeeView
             var className = name ?? type.Name;
             var title = name ?? $"[Class] {type.Name}";
 
-            builder.Append($"<h2 id=\"{type.Name}\">{title}</h2>").AppendLine();
+            builder.Append(CultureInfo.InvariantCulture, $"<h2 id=\"{type.Name}\">{title}</h2>").AppendLine();
 
             var properties = type.GetProperties().Where(e => IsDocumentable(e)).OrderBy(e => e.Name);
             var methods = type.GetMethods().Where(e => IsDocumentable(e)).OrderBy(e => e.Name);
@@ -196,7 +197,7 @@ namespace NeeView
             if (attribute != null && attribute.BaseClass != type)
             {
                 Debug.Assert(type.IsSubclassOf(attribute.BaseClass));
-                builder.Append("<p>" + string.Format(ResourceService.GetString("@_ScriptManual.ClassInheritance"), TypeToString(attribute.BaseClass)) + "</p>").AppendLine();
+                builder.Append("<p>" + string.Format(CultureInfo.InvariantCulture, ResourceService.GetString("@_ScriptManual.ClassInheritance"), TypeToString(attribute.BaseClass)) + "</p>").AppendLine();
             }
 
             // derived class
@@ -204,20 +205,20 @@ namespace NeeView
             if (derivedAttribute != null && derivedAttribute.DerivedClass.Any())
             {
                 Debug.Assert(derivedAttribute.DerivedClass.All(e => e.IsSubclassOf(type)));
-                builder.Append("<p>" + string.Format(ResourceService.GetString("@_ScriptManual.ClassDerivation"), derivedAttribute.DerivedClass.Select(e => TypeToString(e))) + "</p>").AppendLine();
+                builder.Append("<p>" + string.Format(CultureInfo.InvariantCulture, ResourceService.GetString("@_ScriptManual.ClassDerivation"), derivedAttribute.DerivedClass.Select(e => TypeToString(e))) + "</p>").AppendLine();
             }
 
             // property
             if (properties.Any())
             {
-                builder.Append($"<h4>{ResourceService.GetString("@Word.Properties")}</h4>").AppendLine();
+                builder.Append(CultureInfo.InvariantCulture, $"<h4>{ResourceService.GetString("@Word.Properties")}</h4>").AppendLine();
                 AppendDataTable(PropertiesToDataTable(properties), false);
             }
 
             // method
             if (methods.Any())
             {
-                builder.Append($"<h4>{ResourceService.GetString("@Word.Methods")}</h4>").AppendLine();
+                builder.Append(CultureInfo.InvariantCulture, $"<h4>{ResourceService.GetString("@Word.Methods")}</h4>").AppendLine();
                 AppendDataTable(MethodsToDataTable(methods), false);
             }
 
@@ -261,20 +262,20 @@ namespace NeeView
             var memberName = new DocumentMemberName(method);
 
             var title = (string.IsNullOrEmpty(prefix) ? "" : prefix + ".") + (documentable?.Name ?? method.Name) + "(" + string.Join(", ", method.GetParameters().Select(e => e.Name)) + ")";
-            builder.Append($"<h3>{title}</h3>").AppendLine();
+            builder.Append(CultureInfo.InvariantCulture, $"<h3>{title}</h3>").AppendLine();
 
             AppendSummary(memberName);
 
             var parameters = method.GetParameters();
             if (parameters.Length > 0)
             {
-                builder.Append($"<h4>{ResourceService.GetString("@Word.Parameters")}</h4>").AppendLine();
+                builder.Append(CultureInfo.InvariantCulture, $"<h4>{ResourceService.GetString("@Word.Parameters")}</h4>").AppendLine();
                 AppendDataTable(ParametersToDataTable(method, parameters), false);
             }
 
             if (method.ReturnType != typeof(void))
             {
-                builder.Append($"<h4>{ResourceService.GetString("@Word.Returns")}</h4>").AppendLine();
+                builder.Append(CultureInfo.InvariantCulture, $"<h4>{ResourceService.GetString("@Word.Returns")}</h4>").AppendLine();
                 var typeString = TypeToString(method.ReturnType);
                 var summary = memberName.GetHtmlDocument(".Returns") ?? "";
                 AppendDictionary(new Dictionary<string, string> { [typeString] = summary }, "table-none");
@@ -293,7 +294,7 @@ namespace NeeView
             var examples = names.Select(e => GetDocument(e, ".Example", false)?.Trim()).Where(e => !string.IsNullOrEmpty(e));
             if (examples.Any())
             {
-                builder.Append($"<h4>{ResourceService.GetString("@Word.Example")}</h4>").AppendLine();
+                builder.Append(CultureInfo.InvariantCulture, $"<h4>{ResourceService.GetString("@Word.Example")}</h4>").AppendLine();
                 foreach (var example in examples)
                 {
                     builder.Append("<p><pre><code class=\"example\">");
@@ -650,7 +651,7 @@ namespace NeeView
 
             public string GetAltName()
             {
-                if (_attribute != null && _attribute.AltName != null && _attribute.AltName.StartsWith("@"))
+                if (_attribute != null && _attribute.AltName != null && _attribute.AltName.StartsWith("@", StringComparison.Ordinal))
                 {
                     return _attribute.AltName[1..];
                 }
@@ -662,7 +663,7 @@ namespace NeeView
 
             public string GetAltParameterName(DocumentableAttribute attr)
             {
-                if (attr.AltName != null && attr.AltName.StartsWith("@"))
+                if (attr.AltName != null && attr.AltName.StartsWith("@", StringComparison.Ordinal))
                 {
                     return attr.AltName[1..];
                 }

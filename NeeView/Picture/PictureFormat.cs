@@ -35,7 +35,7 @@ namespace NeeView
                 using (var stream = new MemoryStream(buff))
                 {
                     var bitmap = BitmapFrame.Create(stream, BitmapCreateOptions.DelayCreation, BitmapCacheOption.Default);
-                    return bitmap.Decoder.CodecInfo.FileExtensions.ToLower().Split(',', ';');
+                    return bitmap.Decoder.CodecInfo.FileExtensions.ToLowerInvariant().Split(',', ';');
                 }
             }
             catch (Exception e)

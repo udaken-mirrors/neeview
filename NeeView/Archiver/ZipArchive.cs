@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
@@ -67,7 +68,7 @@ namespace NeeView
                 // ヘッダチェック
                 if (!CheckSignature(stream))
                 {
-                    throw new FormatException(string.Format(Properties.TextResources.GetString("NotZipException.Message"), Path));
+                    throw new FormatException(string.Format(CultureInfo.InvariantCulture, Properties.TextResources.GetString("NotZipException.Message"), Path));
                 }
 
                 // 文字エンコード取得
@@ -213,7 +214,7 @@ namespace NeeView
             if (directories.Any())
             {
                 var all = await entries.First().Archive.GetEntriesAsync(CancellationToken.None);
-                var children = directories.SelectMany(d => all.Where(e => e.Id >= 0 && e.EntryName.StartsWith(LoosePath.TrimDirectoryEnd(d.EntryName))));
+                var children = directories.SelectMany(d => all.Where(e => e.Id >= 0 && e.EntryName.StartsWith(LoosePath.TrimDirectoryEnd(d.EntryName), StringComparison.Ordinal)));
                 removes = entries.Concat(children).Where(e => e.Id >= 0).Distinct().ToList();
             }
             Debug.Assert(removes.All(e => e.Id >= 0));

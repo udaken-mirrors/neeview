@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace NeeView
@@ -19,12 +20,12 @@ namespace NeeView
             _bookPaths = null;
             _folderPath = App.Current.Option.FolderListQuery?.SimpleQuery;
 
-            if (Config.Current.StartUp.LastBookPath?.StartsWith(Temporary.Current.TempRootPath) == true)
+            if (Config.Current.StartUp.LastBookPath?.StartsWith(Temporary.Current.TempRootPath, StringComparison.Ordinal) == true)
             {
                 Config.Current.StartUp.LastBookPath = null;
             }
 
-            if (Config.Current.StartUp.LastFolderPath?.StartsWith(Temporary.Current.TempRootPath) == true)
+            if (Config.Current.StartUp.LastFolderPath?.StartsWith(Temporary.Current.TempRootPath, StringComparison.Ordinal) == true)
             {
                 Config.Current.StartUp.LastFolderPath = null;
             }

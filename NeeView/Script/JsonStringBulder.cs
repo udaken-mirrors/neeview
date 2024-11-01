@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -56,7 +57,7 @@ namespace NeeView
 
             if (source is Enum enm)
             {
-                return builder.Append(Convert.ToInt32(enm).ToString());
+                return builder.Append(Convert.ToInt32(enm, CultureInfo.InvariantCulture).ToString(CultureInfo.InvariantCulture));
             }
             else if (source is bool boolean)
             {

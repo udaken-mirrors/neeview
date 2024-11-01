@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -76,11 +77,11 @@ namespace NeeView
                 }
                 catch (Exception ex)
                 {
-                    throw new FileNotFoundException(string.Format(Properties.TextResources.GetString("FileNotFoundException.Message"), path), ex);
+                    throw new FileNotFoundException(string.Format(CultureInfo.InvariantCulture, Properties.TextResources.GetString("FileNotFoundException.Message"), path), ex);
                 }
             }
 
-            throw new FileNotFoundException(string.Format(Properties.TextResources.GetString("FileNotFoundException.Message"), path));
+            throw new FileNotFoundException(string.Format(CultureInfo.InvariantCulture, Properties.TextResources.GetString("FileNotFoundException.Message"), path));
         }
 
         /// <summary>
@@ -130,7 +131,7 @@ namespace NeeView
                 if (!source.IsFileSystem && source.IsDirectory)
                 {
                     entries = (await source.Archive.GetEntriesAsync(token))
-                        .Where(e => e.EntryName.StartsWith(LoosePath.TrimDirectoryEnd(source.EntryName)))
+                        .Where(e => e.EntryName.StartsWith(LoosePath.TrimDirectoryEnd(source.EntryName), StringComparison.Ordinal))
                         .ToList();
                 }
                 else

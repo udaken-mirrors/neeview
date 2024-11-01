@@ -374,7 +374,7 @@ namespace NeeView.Windows.Media
                 return null;
             }
 
-            if (root is T result && (string.IsNullOrEmpty(name) || name.Equals(result.Name)))
+            if (root is T result && (string.IsNullOrEmpty(name) || name.Equals(result.Name, StringComparison.Ordinal)))
             {
                 return result;
             }

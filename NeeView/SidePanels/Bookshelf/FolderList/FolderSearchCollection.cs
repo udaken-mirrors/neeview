@@ -8,6 +8,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Data;
+using System.Globalization;
 
 namespace NeeView
 {
@@ -244,7 +245,7 @@ namespace NeeView
         [Conditional("LOCAL_DEBUG")]
         private void Trace(string s, params object[] args)
         {
-            Debug.WriteLine($"{this.GetType().Name}: {string.Format(s, args)}");
+            Debug.WriteLine($"{this.GetType().Name}: {string.Format(CultureInfo.InvariantCulture, s, args)}");
         }
     }
 }

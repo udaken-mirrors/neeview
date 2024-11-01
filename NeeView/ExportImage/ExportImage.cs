@@ -203,7 +203,7 @@ namespace NeeView
                 : fileNameMode;
 
             var extension = _mode == ExportImageMode.Original
-                ? LoosePath.GetExtension(_source.Pages[0].EntryLastName).ToLower()
+                ? LoosePath.GetExtension(_source.Pages[0].EntryLastName).ToLowerInvariant()
                 : format == ExportImageFormat.Png ? ".png" : ".jpg";
 
             if (nameMode == ExportImageFileNameMode.Original)

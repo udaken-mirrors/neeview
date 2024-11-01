@@ -2,6 +2,7 @@
 using NeeView.Windows.Property;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -174,8 +175,8 @@ namespace NeeView
 
         private static StringBuilder AppendScriptReference(StringBuilder builder)
         {
-            builder.Append($"<h1 class=\"sub\">{ResourceService.GetString("@_ScriptManual.S5")}</h1>");
-            builder.Append($"<p>{ResourceService.GetString("@_ScriptManual.S5.P1")}</p>").AppendLine();
+            builder.Append(CultureInfo.InvariantCulture, $"<h1 class=\"sub\">{ResourceService.GetString("@_ScriptManual.S5")}</h1>");
+            builder.Append(CultureInfo.InvariantCulture, $"<p>{ResourceService.GetString("@_ScriptManual.S5.P1")}</p>").AppendLine();
 
             var htmlBuilder = new HtmlReferenceBuilder(builder);
 
@@ -202,9 +203,9 @@ namespace NeeView
 
         private static StringBuilder AppendConfigList(StringBuilder builder)
         {
-            builder.Append($"<h1 class=\"sub\" id=\"ConfigList\">{ResourceService.GetString("@_ScriptManual.S6")}</h1>");
+            builder.Append(CultureInfo.InvariantCulture, $"<h1 class=\"sub\" id=\"ConfigList\">{ResourceService.GetString("@_ScriptManual.S6")}</h1>");
             builder.Append("<table class=\"table-slim table-topless\">");
-            builder.Append($"<tr><th>{Properties.TextResources.GetString("Word.Name")}</th><th>{Properties.TextResources.GetString("Word.Type")}</th><th>{Properties.TextResources.GetString("Word.Summary")}</th></tr>");
+            builder.Append(CultureInfo.InvariantCulture, $"<tr><th>{Properties.TextResources.GetString("Word.Name")}</th><th>{Properties.TextResources.GetString("Word.Type")}</th><th>{Properties.TextResources.GetString("Word.Summary")}</th></tr>");
             builder.Append(new ConfigMap(null).Map.CreateHelpHtml("nv.Config"));
             builder.Append("</table>");
             return builder;
@@ -214,9 +215,9 @@ namespace NeeView
         {
             var executeMethodArgTypes = new Type[] { typeof(object), typeof(CommandContext) };
 
-            builder.Append($"<h1 class=\"sub\" id=\"CommandList\">{ResourceService.GetString("@_ScriptManual.S7")}</h1>");
+            builder.Append(CultureInfo.InvariantCulture, $"<h1 class=\"sub\" id=\"CommandList\">{ResourceService.GetString("@_ScriptManual.S7")}</h1>");
             builder.Append("<table class=\"table-slim table-topless\">");
-            builder.Append($"<tr><th>{Properties.TextResources.GetString("Word.Group")}</th><th>{Properties.TextResources.GetString("Word.Command")}</th><th>{Properties.TextResources.GetString("Word.CommandName")}</th><th>{Properties.TextResources.GetString("Word.Argument")}</th><th>{Properties.TextResources.GetString("Word.CommandParameter")}</th><th>{Properties.TextResources.GetString("Word.Summary")}</th></tr>");
+            builder.Append(CultureInfo.InvariantCulture, $"<tr><th>{Properties.TextResources.GetString("Word.Group")}</th><th>{Properties.TextResources.GetString("Word.Command")}</th><th>{Properties.TextResources.GetString("Word.CommandName")}</th><th>{Properties.TextResources.GetString("Word.Argument")}</th><th>{Properties.TextResources.GetString("Word.CommandParameter")}</th><th>{Properties.TextResources.GetString("Word.Summary")}</th></tr>");
             foreach (var command in CommandTable.Current.Values.OrderBy(e => e.Order))
             {
                 string argument = "";
@@ -247,7 +248,7 @@ namespace NeeView
 
                     if (command.Share != null)
                     {
-                        properties = "<p style=\"color:red\">" + string.Format(Properties.TextResources.GetString("CommandParameter.Share"), command.Share.Name) + "</p>";
+                        properties = "<p style=\"color:red\">" + string.Format(CultureInfo.InvariantCulture, Properties.TextResources.GetString("CommandParameter.Share"), command.Share.Name) + "</p>";
                     }
 
                     foreach (PropertyInfo info in type.GetProperties())
@@ -285,7 +286,7 @@ namespace NeeView
                     }
                 }
 
-                builder.Append($"<tr><td>{command.Group}</td><td>{command.Text}</td><td><b>{command.Name}</b></td><td>{argument}</td><td>{properties}</td><td>{command.Remarks}</td></tr>");
+                builder.Append(CultureInfo.InvariantCulture, $"<tr><td>{command.Group}</td><td>{command.Text}</td><td><b>{command.Name}</b></td><td>{argument}</td><td>{properties}</td><td>{command.Remarks}</td></tr>");
             }
             builder.Append("</table>");
 
@@ -295,7 +296,7 @@ namespace NeeView
 
         private static StringBuilder AppendObsoleteList(StringBuilder builder)
         {
-            builder.Append($"<h1 class=\"sub\" id=\"ObsoleteList\">{ResourceService.GetString("@_ScriptManual.S8")}</h1>");
+            builder.Append(CultureInfo.InvariantCulture, $"<h1 class=\"sub\" id=\"ObsoleteList\">{ResourceService.GetString("@_ScriptManual.S8")}</h1>");
 
             // Obsolete levels
             builder.Append(ResourceService.Replace($"<h4>@Word.Severity</h4>"));
@@ -332,7 +333,7 @@ namespace NeeView
             // ver.40 and later
             foreach (var group in groups.Where(e => e.Key >= 40).OrderByDescending(e => e.Key))
             {
-                builder.Append($"<h2>Version {group.Key}.0</h2>");
+                builder.Append(CultureInfo.InvariantCulture, $"<h2>Version {group.Key}.0</h2>");
 
                 var table = new TagNode("table", "table-slim table-topless")
                     .AddNode(new TagNode("tr")

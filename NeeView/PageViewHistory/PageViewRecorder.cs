@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization;
@@ -80,7 +81,8 @@ namespace NeeView
                             break;
                     }
                     _writeBuffer.Append('\t');
-                    _writeBuffer.Append((now - _viewedPagesDateTime).TotalSeconds.ToString("#0.0000000"));
+                    // TODO: Cultureはこれでいいのか確認
+                    _writeBuffer.Append((now - _viewedPagesDateTime).TotalSeconds.ToString("#0.0000000", CultureInfo.InvariantCulture));
                     _writeBuffer.Append('\t');
                     _writeBuffer.Append(LoosePath.TrimDirectoryEnd(page.BookPath));
                     _writeBuffer.Append('\t');
@@ -105,7 +107,8 @@ namespace NeeView
                 _writeBuffer.Append('\t');
                 _writeBuffer.Append("Book");
                 _writeBuffer.Append('\t');
-                _writeBuffer.Append((now - _viewedBookDateTime).TotalSeconds.ToString("#0.0000000"));
+                // TODO: Cultureはこれでいいのか確認
+                _writeBuffer.Append((now - _viewedBookDateTime).TotalSeconds.ToString("#0.0000000", CultureInfo.InvariantCulture));
                 _writeBuffer.Append('\t');
                 _writeBuffer.Append(_viewedBookAddress);
                 _writeBuffer.Append('\t');
@@ -212,7 +215,7 @@ namespace NeeView
             _viewedBookAddress = book.Path;
             if (book.NotFoundStartPage != null && book.Pages.Count > 0)
             {
-                _viewedBookName = string.Format(Properties.TextResources.GetString("Notice.CannotOpen"), LoosePath.GetFileName(book.NotFoundStartPage));
+                _viewedBookName = string.Format(CultureInfo.InvariantCulture, Properties.TextResources.GetString("Notice.CannotOpen"), LoosePath.GetFileName(book.NotFoundStartPage));
             }
             else
             {

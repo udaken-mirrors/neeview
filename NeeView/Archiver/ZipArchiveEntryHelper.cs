@@ -116,7 +116,7 @@ namespace NeeView
     {
         public static List<ZipArchiveEntry> CollectEntries(this System.IO.Compression.ZipArchive archive, string entryPrefix)
         {
-            return archive.Entries.Where(e => LoosePath.NormalizeSeparator(e.FullName).StartsWith(entryPrefix)).ToList();
+            return archive.Entries.Where(e => LoosePath.NormalizeSeparator(e.FullName).StartsWith(entryPrefix, StringComparison.Ordinal)).ToList();
         }
     }
 
@@ -130,7 +130,7 @@ namespace NeeView
 
         public static string CreateExportPath(this ZipArchiveEntry entry, string entryPrefix, string exportDirectory)
         {
-            Debug.Assert(string.IsNullOrEmpty(entryPrefix) || LoosePath.ValidPath(entry.FullName).StartsWith(entryPrefix));
+            Debug.Assert(string.IsNullOrEmpty(entryPrefix) || LoosePath.ValidPath(entry.FullName).StartsWith(entryPrefix, StringComparison.Ordinal));
             return FileIO.CreateUniquePath(LoosePath.Combine(exportDirectory, LoosePath.ValidPath(entry.FullName[entryPrefix.Length..])));
         }
 

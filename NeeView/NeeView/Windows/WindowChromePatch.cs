@@ -2,6 +2,7 @@
 
 using System;
 using System.Diagnostics;
+using System.Globalization;
 using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Interop;
@@ -219,7 +220,7 @@ namespace NeeView.Windows
         [Conditional("LOCAL_DEBUG")]
         private static void Trace(string format, params object[] args)
         {
-            Debug.WriteLine($"{nameof(WindowChromePatch)}: {string.Format(format, args)}");
+            Debug.WriteLine($"{nameof(WindowChromePatch)}: {string.Format(CultureInfo.InvariantCulture, format, args)}");
         }
     }
 }

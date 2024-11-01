@@ -2,6 +2,7 @@
 using NeeView.Threading;
 using System;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -70,7 +71,7 @@ namespace NeeView
             await Task.Run(() =>
             {
                 var volumeLabel = _driveInfo.DriveType.ToDispString();
-                DispName = string.Format("{0} ({1})", volumeLabel, Name);
+                DispName = string.Format(CultureInfo.InvariantCulture, "{0} ({1})", volumeLabel, Name);
 
                 // NOTE: ドライブによってはこのプロパティの取得に時間がかかる
                 IsReady = _driveInfo.IsReady;
@@ -80,7 +81,7 @@ namespace NeeView
                     if (_driveInfo.IsReady)
                     {
                         volumeLabel = string.IsNullOrEmpty(_driveInfo.VolumeLabel) ? _driveInfo.DriveType.ToDispString() : _driveInfo.VolumeLabel;
-                        DispName = string.Format("{0} ({1})", volumeLabel, Name);
+                        DispName = string.Format(CultureInfo.InvariantCulture, "{0} ({1})", volumeLabel, Name);
                     }
                 }
                 catch (Exception ex)

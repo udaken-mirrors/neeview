@@ -105,7 +105,7 @@ namespace NeeView
                 }
                 else
                 {
-                    return CreateSymbolIcon(LoosePath.GetExtension(entry.EntryName).ToUpper());
+                    return CreateSymbolIcon(LoosePath.GetExtension(entry.EntryName).ToUpperInvariant());
                 }
             }
 

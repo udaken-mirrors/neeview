@@ -1,6 +1,7 @@
 ﻿using NeeView.Numetrics;
 using System;
 using System.Diagnostics;
+using System.Globalization;
 
 namespace NeeView.Media.Imaging.Metadata
 {
@@ -32,7 +33,7 @@ namespace NeeView.Media.Imaging.Metadata
             {
                 var tokens = s.Split(' ');
                 var newDateTime = tokens[0].Replace(':', '/') + " " + tokens[1];
-                return DateTime.Parse(newDateTime);
+                return DateTime.Parse(newDateTime, CultureInfo.InvariantCulture);
             }
 
             return src;

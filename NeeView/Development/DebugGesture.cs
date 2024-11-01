@@ -79,7 +79,7 @@ namespace NeeView
                 {
                     Debug.WriteLine($"FocusTree: {isKeyboardFocused} {name} ({typename})");
                 }
-                else if (valuestring is not null && valuestring.StartsWith(typename))
+                else if (valuestring is not null && valuestring.StartsWith(typename, StringComparison.Ordinal))
                 {
                     Debug.WriteLine($"FocusTree: {isKeyboardFocused} {name} ({valuestring})");
                 }

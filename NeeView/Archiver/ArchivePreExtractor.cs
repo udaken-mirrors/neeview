@@ -4,6 +4,7 @@ using NeeLaboratory.ComponentModel;
 using NeeLaboratory.Generators;
 using System;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -274,7 +275,7 @@ namespace NeeView
         [Conditional("LOCAL_DEBUG")]
         private void Trace(string s, params object[] args)
         {
-            Debug.WriteLine(TraceHeader() + ": " + string.Format(s, args));
+            Debug.WriteLine(TraceHeader() + ": " + string.Format(CultureInfo.InvariantCulture, s, args));
         }
     }
 

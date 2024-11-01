@@ -5,6 +5,7 @@ using NeeView.Windows;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -98,7 +99,7 @@ namespace NeeView
             if (match.Success)
             {
                 filename = match.Groups[1].Value.Trim();
-                count = int.Parse(match.Groups[2].Value);
+                count = int.Parse(match.Groups[2].Value, CultureInfo.InvariantCulture);
             }
 
             do
@@ -122,11 +123,11 @@ namespace NeeView
             var path2 = LoosePath.TrimDirectoryEnd(LoosePath.NormalizeSeparator(dir2.FullName)).ToUpperInvariant();
             if (path1.Length < path2.Length)
             {
-                return path2.StartsWith(path1);
+                return path2.StartsWith(path1, StringComparison.OrdinalIgnoreCase);
             }
             else
             {
-                return path1.StartsWith(path2);
+                return path1.StartsWith(path2, StringComparison.OrdinalIgnoreCase);
             }
         }
 
@@ -405,7 +406,7 @@ namespace NeeView
             {
                 if (showConfirmDialog)
                 {
-                    var dialog = new MessageDialog($"{Properties.TextResources.GetString("FileRenameWrongDeviceDialog.Message")}\n\n{match.Groups[1].Value.ToUpper()}", Properties.TextResources.GetString("FileRenameErrorDialog.Title"));
+                    var dialog = new MessageDialog($"{Properties.TextResources.GetString("FileRenameWrongDeviceDialog.Message")}\n\n{match.Groups[1].Value.ToUpperInvariant()}", Properties.TextResources.GetString("FileRenameErrorDialog.Title"));
                     dialog.ShowDialog();
                 }
                 return null;
@@ -423,7 +424,7 @@ namespace NeeView
             {
                 var srcExt = System.IO.Path.GetExtension(src);
                 var dstExt = System.IO.Path.GetExtension(dst);
-                if (string.Compare(srcExt, dstExt, true) != 0)
+                if (string.Compare(srcExt, dstExt, StringComparison.OrdinalIgnoreCase) != 0)
                 {
                     if (showConfirmDialog)
                     {
@@ -440,7 +441,7 @@ namespace NeeView
             }
 
             // 大文字小文字の変換は正常
-            if (string.Compare(src, dst, true) == 0)
+            if (string.Compare(src, dst, StringComparison.OrdinalIgnoreCase) == 0)
             {
                 // nop.
             }
@@ -463,7 +464,7 @@ namespace NeeView
                 // 確認
                 if (showConfirmDialog)
                 {
-                    var dialog = new MessageDialog(string.Format(Properties.TextResources.GetString("FileRenameConflictDialog.Message"), Path.GetFileName(dstBase), Path.GetFileName(dst)), Properties.TextResources.GetString("FileRenameConflictDialog.Title"));
+                    var dialog = new MessageDialog(string.Format(CultureInfo.InvariantCulture, Properties.TextResources.GetString("FileRenameConflictDialog.Message"), Path.GetFileName(dstBase), Path.GetFileName(dst)), Properties.TextResources.GetString("FileRenameConflictDialog.Title"));
                     dialog.Commands.Add(new UICommand("@Word.Rename"));
                     dialog.Commands.Add(UICommands.Cancel);
                     var answer = dialog.ShowDialog();
@@ -552,7 +553,7 @@ namespace NeeView
                     throw new FileNotFoundException();
                 }
             }
-            catch (IOException) when (string.Compare(src, dst, true) == 0)
+            catch (IOException) when (string.Compare(src, dst, StringComparison.OrdinalIgnoreCase) == 0)
             {
                 // 大文字小文字の違いだけである場合はWIN32APIで処理する
                 // .NET6 では不要？

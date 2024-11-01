@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Reflection;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 
 namespace NeeView
 {
@@ -77,13 +78,13 @@ namespace NeeView
             {
                 if (!Directory.Exists(TempRootPath))
                 {
-                    ToastService.Current.Show(new Toast(string.Format(Properties.TextResources.GetString("Notice.TemporaryErrorDirectoryNotFound"), TempRootPath), Properties.TextResources.GetString("Notice.TemporaryErrorTitle"), ToastIcon.Error));
+                    ToastService.Current.Show(new Toast(string.Format(CultureInfo.InvariantCulture, Properties.TextResources.GetString("Notice.TemporaryErrorDirectoryNotFound"), TempRootPath), Properties.TextResources.GetString("Notice.TemporaryErrorTitle"), ToastIcon.Error));
                     TempRootPath = TempRootPathDefault;
                 }
             }
 
             TempDirectoryBaseName = processName + ".Temp"; //  asmprd.Product;
-            TempDirectory = Path.Combine(TempRootPath, TempDirectoryBaseName) + processId.ToString();
+            TempDirectory = Path.Combine(TempRootPath, TempDirectoryBaseName) + processId.ToString(CultureInfo.InvariantCulture);
             TempDownloadDirectory = Path.Combine(TempDirectory, "Temporary");
             TempSystemDirectory = Path.Combine(TempDirectory, "System");
             TempCacheDirectory = Path.Combine(TempDirectory, "Cache");
@@ -107,7 +108,7 @@ namespace NeeView
             lock (_lock)
             {
                 _count = (_count + 1) % 10000;
-                return CreateTempFileName(string.Format("{0}{1:0000}{2}", prefix, _count, ext));
+                return CreateTempFileName(string.Format(CultureInfo.InvariantCulture, "{0}{1:0000}{2}", prefix, _count, ext));
             }
         }
 

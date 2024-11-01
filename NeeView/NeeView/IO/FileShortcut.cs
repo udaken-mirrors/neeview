@@ -69,7 +69,7 @@ namespace NeeView.IO
 
             try
             {
-                return Path.GetExtension(path).ToLower() == ".lnk";
+                return Path.GetExtension(path).ToLowerInvariant() == ".lnk";
             }
             catch (Exception ex)
             {

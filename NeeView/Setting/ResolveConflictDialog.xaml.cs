@@ -3,6 +3,7 @@ using NeeLaboratory.Windows.Input;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -76,7 +77,7 @@ namespace NeeView.Setting
         public string Title => $"{CommandTable.Current.GetElement(_context.Command).Text} - {Properties.TextResources.GetString("ResolveConflictDialog.Title")}";
 
         ////public string Gesture => _context.Gesture;
-        public string Note => string.Format(Properties.TextResources.GetString("ResolveConflictDialog.Message"), _context.Gesture.GetDisplayString());
+        public string Note => string.Format(CultureInfo.InvariantCulture, Properties.TextResources.GetString("ResolveConflictDialog.Message"), _context.Gesture.GetDisplayString());
 
         public List<ConflictItem> Conflicts => _context.Conflicts;
 

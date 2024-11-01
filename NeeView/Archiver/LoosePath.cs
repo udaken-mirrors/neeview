@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -65,7 +66,7 @@ namespace NeeView
         {
             if (string.IsNullOrEmpty(s)) return Array.Empty<string>();
             var parts = s.Split(Separators, StringSplitOptions.RemoveEmptyEntries);
-            if (parts.Length > 0 && (s.StartsWith("\\\\") || s.StartsWith("//")))
+            if (parts.Length > 0 && (s.StartsWith("\\\\", StringComparison.Ordinal) || s.StartsWith("//", StringComparison.Ordinal)))
             {
                 return parts.Skip(1).Prepend("\\\\" + parts.First()).ToArray();
             }
@@ -87,7 +88,7 @@ namespace NeeView
         {
             if (string.IsNullOrEmpty(s)) return "";
             if (string.IsNullOrEmpty(place)) return s;
-            if (string.Compare(s, 0, place, 0, place.Length) != 0) throw new ArgumentException("s not contain place");
+            if (string.Compare(s, 0, place, 0, place.Length, StringComparison.OrdinalIgnoreCase) != 0) throw new ArgumentException("s not contain place");
             return s[place.Length..].TrimStart(Separators);
         }
 
@@ -137,7 +138,7 @@ namespace NeeView
             string fileName = GetFileName(s);
             int index = fileName.LastIndexOf('.');
 
-            return (index >= 0) ? fileName[index..].ToLower() : "";
+            return (index >= 0) ? fileName[index..].ToLowerInvariant() : "";
         }
 
         //

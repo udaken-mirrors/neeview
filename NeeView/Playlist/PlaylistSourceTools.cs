@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
@@ -26,7 +27,7 @@ namespace NeeView
 
         private static string CreateTmpPlaylist(IEnumerable<string> files, string outputDirectory)
         {
-            string name = DateTime.Now.ToString("yyyyMMddHHmmss") + PlaylistArchive.Extension;
+            string name = DateTime.Now.ToString("yyyyMMddHHmmss", CultureInfo.InvariantCulture) + PlaylistArchive.Extension;
             string path = FileIO.CreateUniquePath(System.IO.Path.Combine(outputDirectory, name));
             Save(new PlaylistSource(files), path, true, true);
             return path;

@@ -2,6 +2,7 @@
 
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 
 namespace NeeView
@@ -46,7 +47,7 @@ namespace NeeView
         [Conditional("LOCAL_DEBUG")]
         private void Trace(string s, params object[] args)
         {
-            Debug.WriteLine($"{this.GetType().Name}({_map.Count}): {string.Format(s, args)}");
+            Debug.WriteLine($"{this.GetType().Name}({_map.Count}): {string.Format(CultureInfo.InvariantCulture, s, args)}");
         }
     }
 }

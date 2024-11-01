@@ -81,7 +81,7 @@ namespace NeeView.Media.Imaging.Metadata
         {
             _nameMap = Enum.GetValues(typeof(BitmapMetadataKey))
                 .Cast<BitmapMetadataKey>()
-                .ToDictionary(e => e.ToString().ToLower());
+                .ToDictionary(e => e.ToString().ToLowerInvariant());
         }
 
         public static bool TryParse(string key, out BitmapMetadataKey value)

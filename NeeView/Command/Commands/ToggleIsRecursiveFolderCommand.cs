@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.Windows.Data;
 
 
@@ -27,7 +28,7 @@ namespace NeeView
         {
             if (e.Args.Length > 0)
             {
-                BookSettings.Current.SetIsRecursiveFolder(Convert.ToBoolean(e.Args[0]));
+                BookSettings.Current.SetIsRecursiveFolder(Convert.ToBoolean(e.Args[0], CultureInfo.InvariantCulture));
             }
             else
             {

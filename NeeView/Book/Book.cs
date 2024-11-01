@@ -68,7 +68,7 @@ namespace NeeView
         public string SourcePath => _sourcePath;
         public bool IsMedia => _source.IsMedia;
         public bool IsPlaylist => _source.IsPlaylist;
-        public bool IsTemporary => _source.Path.StartsWith(Temporary.Current.TempDirectory);
+        public bool IsTemporary => _source.Path.StartsWith(Temporary.Current.TempDirectory, StringComparison.Ordinal);
         public PageSortModeClass PageSortModeClass => IsPlaylist ? PageSortModeClass.WithEntry : PageSortModeClass.Normal;
         public BookLoadOption LoadOption => _loadOption;
 

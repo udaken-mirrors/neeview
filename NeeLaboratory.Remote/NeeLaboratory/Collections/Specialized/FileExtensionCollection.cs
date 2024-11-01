@@ -54,7 +54,7 @@ namespace NeeLaboratory.Collections.Specialized
 
         private static string? ValidateItem(string item)
         {
-            return string.IsNullOrWhiteSpace(item) ? null : "." + item.Trim().TrimStart('.').ToLower();
+            return string.IsNullOrWhiteSpace(item) ? null : "." + item.Trim().TrimStart('.').ToLowerInvariant();
         }
 
         private static List<string> ValidateCollection(IEnumerable<string>? items)

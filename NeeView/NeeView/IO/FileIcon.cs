@@ -123,7 +123,7 @@ namespace NeeView.IO
 
                 try
                 {
-                    if ((flags & SHGetFileInfoFlags.SHGFI_ICONLOCATION) != 0 && Path.GetExtension(shinfo.szDisplayName).ToLower() == ".ico")
+                    if ((flags & SHGetFileInfoFlags.SHGFI_ICONLOCATION) != 0 && Path.GetExtension(shinfo.szDisplayName).ToLowerInvariant() == ".ico")
                     {
                         return CreateFileIconCollectionFromIconFile(shinfo.szDisplayName);
                     }

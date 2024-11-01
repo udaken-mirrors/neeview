@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 
 namespace NeeView
@@ -113,12 +114,12 @@ namespace NeeView
             if (Min.Part == 0)
             {
                 var postfix = PartSize >= 2 ? "ab" : "a";
-                return Min.Index.ToString() + postfix;
+                return Min.Index.ToString(CultureInfo.InvariantCulture) + postfix;
             }
             else
             {
                 var postfix = PartSize >= 2 ? "b+" : "b";
-                return Min.Index.ToString() + postfix;
+                return Min.Index.ToString(CultureInfo.InvariantCulture) + postfix;
             }
         }
 

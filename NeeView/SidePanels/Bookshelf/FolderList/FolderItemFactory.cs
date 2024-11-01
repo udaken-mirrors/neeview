@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Threading.Tasks;
 using NeeView.IO;
@@ -106,7 +107,7 @@ namespace NeeView
                 Place = _place,
                 Name = e.Name,
                 TargetPath = new QueryPath(e.Name),
-                DispName = string.Format("{0} ({1})", e.DriveType.ToDispString(), e.Name.TrimEnd('\\')),
+                DispName = string.Format(CultureInfo.InvariantCulture, "{0} ({1})", e.DriveType.ToDispString(), e.Name.TrimEnd('\\')),
                 Attributes = FolderItemAttribute.Directory | FolderItemAttribute.Drive,
                 IsReady = DriveReadyMap.IsDriveReady(e.Name),
             };
@@ -120,7 +121,7 @@ namespace NeeView
                 item.IsReady = isReady;
 
                 var driveName = isReady && !string.IsNullOrWhiteSpace(e.VolumeLabel) ? e.VolumeLabel : e.DriveType.ToDispString();
-                item.DispName = string.Format("{0} ({1})", driveName, e.Name.TrimEnd('\\'));
+                item.DispName = string.Format(CultureInfo.InvariantCulture, "{0} ({1})", driveName, e.Name.TrimEnd('\\'));
             });
 
             return item;

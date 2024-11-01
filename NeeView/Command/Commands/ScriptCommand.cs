@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Windows.Data;
@@ -63,7 +64,7 @@ namespace NeeView
 
         public static bool IsScriptCommandName(string name)
         {
-            return name.StartsWith(Prefix);
+            return name.StartsWith(Prefix, StringComparison.Ordinal);
         }
 
         public static string PathToScriptCommandName(string path)
@@ -124,7 +125,7 @@ namespace NeeView
                 Text = source.Text;
                 if (IsCloneCommand())
                 {
-                    Text += " " + NameSource.Number.ToString();
+                    Text += " " + NameSource.Number.ToString(CultureInfo.InvariantCulture);
                 }
 
                 Remarks = source.Remarks;

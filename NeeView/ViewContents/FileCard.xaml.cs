@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -82,14 +83,14 @@ namespace NeeView
         private void UpdateFileName()
         {
             if (ArchiveEntry is null) return;
-            this.FileNameTextBlock.Text = ArchiveEntry.EntryName?.TrimEnd('\\').Replace("\\", " > ");
+            this.FileNameTextBlock.Text = ArchiveEntry.EntryName?.TrimEnd('\\').Replace("\\", " > ", StringComparison.Ordinal);
         }
 
         private void UpdateFileTimestamp()
         {
             if (ArchiveEntry is null) return;
             var format = 256.0 < this.Root.ActualWidth ? DateTimeTools.DefaultDateTimePattern : DateTimeTools.DefaultDatePattern;
-            this.FileTimespampTextBlock.Text = ArchiveEntry.LastWriteTime.ToString(format);
+            this.FileTimespampTextBlock.Text = ArchiveEntry.LastWriteTime.ToString(format, CultureInfo.CurrentCulture);
         }
 
         private void UpdateFileSize()

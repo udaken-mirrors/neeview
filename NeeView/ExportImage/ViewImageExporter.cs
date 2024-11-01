@@ -83,7 +83,7 @@ namespace NeeView
             using (var stream = new FileStream(path, fileMode))
             {
                 // 出力ファイル名からフォーマットを決定する
-                if (System.IO.Path.GetExtension(path).ToLower() == ".png")
+                if (System.IO.Path.GetExtension(path).ToLowerInvariant() == ".png")
                 {
                     var encoder = new PngBitmapEncoder();
                     encoder.Frames.Add(BitmapFrame.Create(bitmapSource));

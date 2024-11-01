@@ -132,7 +132,7 @@ namespace NeeView
 
             foreach (var key in Keys)
             {
-                if (!key.EndsWith("Foreground") && !key.EndsWith("Background"))
+                if (!key.EndsWith("Foreground", StringComparison.Ordinal) && !key.EndsWith("Background", StringComparison.Ordinal))
                 {
                     profile.Colors[key] = new ThemeColor(System.Windows.Media.Colors.Gray, 1.0);
                 }

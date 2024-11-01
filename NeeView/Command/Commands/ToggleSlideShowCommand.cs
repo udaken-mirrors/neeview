@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.Windows.Data;
 
 
@@ -28,7 +29,7 @@ namespace NeeView
         {
             if (e.Args.Length > 0)
             {
-                SlideShow.Current.IsPlayingSlideShow = Convert.ToBoolean(e.Args[0]);
+                SlideShow.Current.IsPlayingSlideShow = Convert.ToBoolean(e.Args[0], CultureInfo.InvariantCulture);
             }
             else
             {

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.Windows.Data;
 
 
@@ -28,7 +29,7 @@ namespace NeeView
         {
             if (e.Args.Length > 0)
             {
-                SidePanelFrame.Current.SetVisiblePageList(Convert.ToBoolean(e.Args[0]), true, true);
+                SidePanelFrame.Current.SetVisiblePageList(Convert.ToBoolean(e.Args[0], CultureInfo.InvariantCulture), true, true);
             }
             else
             {

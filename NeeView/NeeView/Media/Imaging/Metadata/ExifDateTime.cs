@@ -34,7 +34,8 @@ namespace NeeView.Media.Imaging.Metadata
 
         public override string ToString()
         {
-            return ToDateTime().ToString();
+            // TODO: Culture はこれでいいのか確認する
+            return ToDateTime().ToString(CultureInfo.CurrentCulture);
         }
     }
 }

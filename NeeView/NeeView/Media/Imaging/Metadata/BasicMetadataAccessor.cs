@@ -1,6 +1,7 @@
 ﻿using NeeView.Numetrics;
 using NeeView.Text;
 using System;
+using System.Globalization;
 using System.Windows.Media.Imaging;
 
 namespace NeeView.Media.Imaging.Metadata
@@ -69,7 +70,7 @@ namespace NeeView.Media.Imaging.Metadata
 
         public override string GetFormat()
         {
-            return _metadata.Format.ToUpper();
+            return _metadata.Format.ToUpperInvariant();
         }
 
         public override object? GetValue(BitmapMetadataKey key)
@@ -151,7 +152,7 @@ namespace NeeView.Media.Imaging.Metadata
             return value switch
             {
                 null or string _ => value,
-                _ => ExifFlashModeExtensions.ToExifFlashMode(Convert.ToInt32(value)),
+                _ => ExifFlashModeExtensions.ToExifFlashMode(Convert.ToInt32(value, CultureInfo.InvariantCulture)),
             };
         }
 

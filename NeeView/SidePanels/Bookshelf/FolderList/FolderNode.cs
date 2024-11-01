@@ -229,7 +229,7 @@ namespace NeeView
         {
             if (this.FullName is null) return false;
 
-            return this.FullName.StartsWith(LoosePath.TrimDirectoryEnd(target.FullName));
+            return this.FullName.StartsWith(LoosePath.TrimDirectoryEnd(target.FullName), StringComparison.Ordinal);
         }
 
 

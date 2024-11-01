@@ -116,9 +116,9 @@ namespace NeeView
             _bookmarkEntry = _archive.GetEntry(SaveDataProfile.BookmarkFileName);
             _pagemarkEntry = _archive.GetEntry(SaveDataProfile.PagemarkFileName);
 
-            this.PlaylistEntries = _archive.Entries.Where(e => e.FullName.StartsWith(@"Playlists\")).ToList();
-            this.ThemeEntries = _archive.Entries.Where(e => e.FullName.StartsWith(@"Themes\")).ToList();
-            this.ScriptEntries = _archive.Entries.Where(e => e.FullName.StartsWith(@"Scripts\")).ToList();
+            this.PlaylistEntries = _archive.Entries.Where(e => e.FullName.StartsWith(@"Playlists\", StringComparison.Ordinal)).ToList();
+            this.ThemeEntries = _archive.Entries.Where(e => e.FullName.StartsWith(@"Themes\", StringComparison.Ordinal)).ToList();
+            this.ScriptEntries = _archive.Entries.Where(e => e.FullName.StartsWith(@"Scripts\", StringComparison.Ordinal)).ToList();
 
             this.UserSettingExists = _settingEntry != null;
             this.HistoryExists = _historyEntry != null;

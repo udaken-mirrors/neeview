@@ -1,10 +1,13 @@
-﻿namespace NeeView
+﻿using System;
+using System.Globalization;
+
+namespace NeeView
 {
     public static class MenuItemTools
     { 
         public static string IntegerToAccessKey(int value)
         {
-            var s = value.ToString();
+            var s = value.ToString(CultureInfo.InvariantCulture);
             if (s.Length == 1)
             {
                 return "_" + s;
@@ -17,7 +20,7 @@
 
         public static string EscapeMenuItemString(string source)
         {
-            return source.Replace("_", "__");
+            return source.Replace("_", "__", StringComparison.Ordinal);
         }
     }
 

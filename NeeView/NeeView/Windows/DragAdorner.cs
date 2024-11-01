@@ -2,6 +2,7 @@
 
 using System;
 using System.Diagnostics;
+using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
@@ -104,7 +105,7 @@ namespace NeeView.Windows
                     VerticalAlignment = VerticalAlignment.Center,
                     Child = new TextBlock()
                     {
-                        Text = count.ToString(),
+                        Text = count.ToString(CultureInfo.InvariantCulture),
                         Foreground = Brushes.White,
                         FontSize = 12,
                         HorizontalAlignment = HorizontalAlignment.Center,

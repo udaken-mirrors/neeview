@@ -105,7 +105,7 @@ namespace NeeView
 
         private static string ValidateArgs(string source, string file)
         {
-            var text = source.Replace("$File", file);
+            var text = source.Replace("$File", file, StringComparison.Ordinal);
             return string.IsNullOrWhiteSpace(text) ? file : text;
         }
     }

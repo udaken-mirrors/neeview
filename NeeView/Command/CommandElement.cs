@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.Linq;
 using System.Text.Json.Serialization;
 using System.Threading;
@@ -360,10 +361,10 @@ namespace NeeView
 
             if (name.Number != 0)
             {
-                clone.Text = clone.Text + " " + name.Number.ToString();
+                clone.Text = clone.Text + " " + name.Number.ToString(CultureInfo.InvariantCulture);
                 if (clone._menuText != null)
                 {
-                    clone.Menu = clone.Menu + " " + name.Number.ToString();
+                    clone.Menu = clone.Menu + " " + name.Number.ToString(CultureInfo.InvariantCulture);
                 }
             }
 

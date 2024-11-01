@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Text.RegularExpressions;
 using NeeLaboratory.ComponentModel;
 using System.Net.Http;
+using System.Globalization;
 
 namespace NeeView
 {
@@ -74,8 +75,8 @@ namespace NeeView
                     if (matches.Count <= 0) throw new ApplicationException(Properties.TextResources.GetString("VersionChecker.Message.WrongFormat"));
                     foreach (Match match in matches)
                     {
-                        var major = int.Parse(match.Groups["major"].Value);
-                        var minor = int.Parse(match.Groups["minor"].Value);
+                        var major = int.Parse(match.Groups["major"].Value, CultureInfo.InvariantCulture);
+                        var minor = int.Parse(match.Groups["minor"].Value, CultureInfo.InvariantCulture);
                         var version = new FormatVersion(Environment.SolutionName, major, minor, 0);
 
                         Debug.WriteLine($"NeeView {major}.{minor} - {version:x8}: {match.Groups["arch"]?.Value}");

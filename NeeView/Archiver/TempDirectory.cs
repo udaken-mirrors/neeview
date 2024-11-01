@@ -12,7 +12,7 @@ namespace NeeView
         public TempDirectory(string path)
         {
             // テンポラリフォルダー以外は非対応
-            Debug.Assert(path.StartsWith(Temporary.Current.TempDirectory));
+            Debug.Assert(path.StartsWith(Temporary.Current.TempDirectory, StringComparison.Ordinal));
             Path = path;
         }
 
@@ -37,7 +37,7 @@ namespace NeeView
 
                 try
                 {
-                    if (Path != null && Path.StartsWith(Temporary.Current.TempDirectory)) // 念入りチェック
+                    if (Path != null && Path.StartsWith(Temporary.Current.TempDirectory, StringComparison.Ordinal)) // 念入りチェック
                     {
                         if (Directory.Exists(Path)) Directory.Delete(Path, true);
                     }

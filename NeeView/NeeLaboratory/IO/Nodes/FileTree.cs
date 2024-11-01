@@ -9,6 +9,7 @@ using System.IO;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Linq;
+using System.Globalization;
 
 
 namespace NeeLaboratory.IO.Nodes
@@ -424,7 +425,7 @@ namespace NeeLaboratory.IO.Nodes
         [Conditional("LOCAL_DEBUG")]
         private void Trace(string s, params object[] args)
         {
-            Debug.WriteLine($"{nameof(FileTree)}: {string.Format(s, args)}");
+            Debug.WriteLine($"{nameof(FileTree)}: {string.Format(CultureInfo.InvariantCulture, s, args)}");
         }
 
 

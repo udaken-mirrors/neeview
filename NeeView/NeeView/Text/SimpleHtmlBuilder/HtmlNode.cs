@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 
@@ -61,16 +62,16 @@ namespace NeeView.Text.SimpleHtmlBuilder
 
             if (_nodes is null)
             {
-                builder.Append($"<{tagWithAttribute}/>");
+                builder.Append(CultureInfo.InvariantCulture, $"<{tagWithAttribute}/>");
             }
             else
             {
-                builder.Append($"<{tagWithAttribute}>");
+                builder.Append(CultureInfo.InvariantCulture, $"<{tagWithAttribute}>");
                 foreach (var node in _nodes)
                 {
                     builder.Append(node.ToString());
                 }
-                builder.Append($"</{tag}>");
+                builder.Append(CultureInfo.InvariantCulture, $"</{tag}>");
             }
             return builder.ToString();
         }

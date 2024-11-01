@@ -243,7 +243,7 @@ namespace NeeView
 
         public int CompareTo(DevTextElement? other)
         {
-            return this.Key.CompareTo(other?.Key);
+            return string.Compare(this.Key, other?.Key, StringComparison.InvariantCulture);
         }
 
         public override string ToString()

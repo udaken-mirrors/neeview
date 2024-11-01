@@ -252,7 +252,7 @@ namespace NeeView
                 return themeProfile;
             }
 
-            if (themeProfile.BasedOn.StartsWith(_themeProtocolHeader))
+            if (themeProfile.BasedOn.StartsWith(_themeProtocolHeader, StringComparison.Ordinal))
             {
                 var path = themeProfile.BasedOn[_themeProtocolHeader.Length..];
                 var baseTheme = ThemeProfileTools.LoadFromContent("Libraries/Themes/" + path);

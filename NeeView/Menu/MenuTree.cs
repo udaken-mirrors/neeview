@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
@@ -102,7 +103,7 @@ namespace NeeView
             set { Name = (value == DefaultLabel) ? null : value; RaisePropertyChanged(); RaisePropertyChanged(nameof(DispLabel)); }
         }
 
-        public string? DispLabel => Label?.Replace("_", "");
+        public string? DispLabel => Label?.Replace("_", "", StringComparison.Ordinal);
 
         public string DefaultLongLabel
         {
@@ -207,7 +208,7 @@ namespace NeeView
             {
                 if (CommandTable.Current.TryGetValue(cloneName.Name, out CommandElement? commandSource))
                 {
-                    return getCommandTextFunc(commandSource) + " " + cloneName.Number.ToString();
+                    return getCommandTextFunc(commandSource) + " " + cloneName.Number.ToString(CultureInfo.InvariantCulture);
                 }
             }
 

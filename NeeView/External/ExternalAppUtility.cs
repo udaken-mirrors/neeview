@@ -17,7 +17,7 @@ namespace NeeView
         {
             if (source == null) source = "";
             source = source.Trim();
-            return source.Contains(OpenExternalAppCommandParameter.KeyFile) ? source : (source + $" \"{OpenExternalAppCommandParameter.KeyFile}\"");
+            return source.Contains(OpenExternalAppCommandParameter.KeyFile, StringComparison.Ordinal) ? source : (source + $" \"{OpenExternalAppCommandParameter.KeyFile}\"");
         }
 
         /// <summary>
@@ -81,7 +81,7 @@ namespace NeeView
             }
             else
             {
-                var command = options.Command.Replace("$NeeView", Environment.AssemblyLocation);
+                var command = options.Command.Replace("$NeeView", Environment.AssemblyLocation, StringComparison.Ordinal);
                 var sentence = $"\"{command}\" {param}";
                 Debug.WriteLine($"CallProcess: {sentence}");
                 try
@@ -101,8 +101,8 @@ namespace NeeView
         {
             var uriData = Uri.EscapeDataString(filenName);
 
-            s = s.Replace(OpenExternalAppCommandParameter.KeyUri, uriData);
-            s = s.Replace(OpenExternalAppCommandParameter.KeyFile, filenName);
+            s = s.Replace(OpenExternalAppCommandParameter.KeyUri, uriData, StringComparison.Ordinal);
+            s = s.Replace(OpenExternalAppCommandParameter.KeyFile, filenName, StringComparison.Ordinal);
             return s;
         }
     }

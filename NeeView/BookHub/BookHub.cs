@@ -19,6 +19,7 @@ using System.Threading.Tasks;
 using NeeLaboratory.Threading.Jobs;
 using NeeView.Interop;
 using NeeLaboratory.Generators;
+using System.Globalization;
 
 // TODO: コマンド類の何時でも受付。ロード中だから弾く、ではない別の方法を。
 
@@ -44,7 +45,7 @@ namespace NeeView
             source = new System.Text.RegularExpressions.Regex(@"[/\\]").Replace(source, "\\").TrimEnd('\\');
 
             // ドライブレター修正
-            source = new System.Text.RegularExpressions.Regex(@"^[a-z]:").Replace(source, m => m.Value.ToUpper());
+            source = new System.Text.RegularExpressions.Regex(@"^[a-z]:").Replace(source, m => m.Value.ToUpperInvariant());
             source = new System.Text.RegularExpressions.Regex(@":$").Replace(source, ":\\");
 
             var longPath = new StringBuilder(1024);
@@ -79,7 +80,7 @@ namespace NeeView
                     var book = _book;
                     if (book?.NotFoundStartPage != null && book.Pages.Count > 0)
                     {
-                        InfoMessage.Current.SetMessage(InfoMessageType.BookName, string.Format(Properties.TextResources.GetString("Notice.CannotOpen"), LoosePath.GetFileName(book.NotFoundStartPage)), null, 2.0);
+                        InfoMessage.Current.SetMessage(InfoMessageType.BookName, string.Format(CultureInfo.InvariantCulture, Properties.TextResources.GetString("Notice.CannotOpen"), LoosePath.GetFileName(book.NotFoundStartPage)), null, 2.0);
                     }
                     else
                     {
@@ -251,7 +252,7 @@ namespace NeeView
             query = new QueryPath(GetNormalizePathName(query.SimplePath), query.Search);
 
             // Legacy:
-            if (query.SimplePath.StartsWith("pagemark:") == true)
+            if (query.SimplePath.StartsWith("pagemark:", StringComparison.Ordinal) == true)
             {
                 query = new QueryPath(Config.Current.Playlist.PagemarkPlaylist);
             }
@@ -492,7 +493,7 @@ namespace NeeView
                 isEmptyBook = (book != null && book.Pages.Count <= 0);
                 if (isEmptyBook)
                 {
-                    bookChangedEventArgs.EmptyMessage = string.Format(Properties.TextResources.GetString("Notice.NoPages"), book?.Path);
+                    bookChangedEventArgs.EmptyMessage = string.Format(CultureInfo.InvariantCulture, Properties.TextResources.GetString("Notice.NoPages"), book?.Path);
                 }
             }
             catch (OperationCanceledException)
@@ -508,7 +509,7 @@ namespace NeeView
                 else
                 {
                     // ファイル読み込み失敗通知
-                    var message = string.Format(Properties.TextResources.GetString("LoadFailedException.Message"), place, ex.Message);
+                    var message = string.Format(CultureInfo.InvariantCulture, Properties.TextResources.GetString("LoadFailedException.Message"), place, ex.Message);
                     bookChangedEventArgs.EmptyMessage = message;
                 }
 
@@ -549,7 +550,7 @@ namespace NeeView
 
             token.ThrowIfCancellationRequested();
 
-            var dialog = new MessageDialog(string.Format(Properties.TextResources.GetString("ConfirmRecursiveDialog.Message"), book.Path), Properties.TextResources.GetString("ConfirmRecursiveDialog.Title"));
+            var dialog = new MessageDialog(string.Format(CultureInfo.InvariantCulture, Properties.TextResources.GetString("ConfirmRecursiveDialog.Message"), book.Path), Properties.TextResources.GetString("ConfirmRecursiveDialog.Title"));
             dialog.Commands.Add(UICommands.Yes);
             dialog.Commands.Add(UICommands.No);
 

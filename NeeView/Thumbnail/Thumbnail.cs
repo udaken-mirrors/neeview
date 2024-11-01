@@ -6,6 +6,7 @@ using NeeView;
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Text;
 using System.Threading;
@@ -490,7 +491,7 @@ namespace NeeView
         [Conditional("LOCAL_DEBUG")]
         private void Trace(string s, params object[] args)
         {
-            Debug.WriteLine($"{this.GetType().Name}({_serialNumber}): {string.Format(s, args)}");
+            Debug.WriteLine($"{this.GetType().Name}({_serialNumber}): {string.Format(CultureInfo.InvariantCulture, s, args)}");
         }
     }
 }

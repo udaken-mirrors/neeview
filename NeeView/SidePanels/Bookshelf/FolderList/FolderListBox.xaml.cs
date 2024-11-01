@@ -163,7 +163,7 @@ namespace NeeView
         /// </summary>
         private void ToggleBookmark_CanExecute(object? sender, CanExecuteRoutedEventArgs e)
         {
-            e.CanExecute = sender is ListBox { SelectedItem: FolderItem item } && item.IsFileSystem() && !item.EntityPath.SimplePath.StartsWith(Temporary.Current.TempDirectory);
+            e.CanExecute = sender is ListBox { SelectedItem: FolderItem item } && item.IsFileSystem() && !item.EntityPath.SimplePath.StartsWith(Temporary.Current.TempDirectory, StringComparison.Ordinal);
         }
 
         /// <summary>

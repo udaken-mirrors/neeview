@@ -147,7 +147,7 @@ namespace NeeView
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             var rootWidth = (double)value;
-            var defaultWidth = double.Parse((string)parameter);
+            var defaultWidth = double.Parse((string)parameter, CultureInfo.InvariantCulture);
 
             var rate = MathUtility.Clamp((rootWidth - 300.0) / 200.0, 0.0, 1.0);
             return (defaultWidth * 0.5) * (1.0 + rate);

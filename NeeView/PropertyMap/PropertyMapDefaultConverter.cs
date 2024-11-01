@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 
 namespace NeeView
 {
@@ -11,7 +12,8 @@ namespace NeeView
 
         public override void Write(PropertyMapSource source, object? value, PropertyMapOptions options)
         {
-            source.SetValue(value != null ? Convert.ChangeType(value, source.PropertyInfo.PropertyType) : null);
+            // TODO: Culture はこれでいいのか？
+            source.SetValue(value != null ? Convert.ChangeType(value, source.PropertyInfo.PropertyType, CultureInfo.InvariantCulture) : null);
         }
     }
 

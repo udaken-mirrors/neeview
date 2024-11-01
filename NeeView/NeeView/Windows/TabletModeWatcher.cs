@@ -2,6 +2,7 @@
 using NeeView.Interop;
 using System;
 using System.Diagnostics;
+using System.Globalization;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
@@ -48,7 +49,7 @@ namespace NeeView.Windows
             RegistryKey? regKey = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\ImmersiveShell");
             if (regKey != null)
             {
-                _isTabletMode = Convert.ToBoolean(regKey.GetValue("TabletMode", 0));
+                _isTabletMode = Convert.ToBoolean(regKey.GetValue("TabletMode", 0), CultureInfo.InvariantCulture);
                 regKey.Close();
             }
 

@@ -4,6 +4,7 @@ using SevenZip;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -115,7 +116,7 @@ namespace NeeView
         [Conditional("LOCAL_DEBUG")]
         private void Trace(string s, params object[] args)
         {
-            Debug.WriteLine($"{this.GetType().Name}: {string.Format(s, args)}");
+            Debug.WriteLine($"{this.GetType().Name}: {string.Format(CultureInfo.InvariantCulture, s, args)}");
         }
 
         [Conditional("LOCAL_DEBUG")]
@@ -127,7 +128,7 @@ namespace NeeView
         [Conditional("LOCAL_DEBUG")]
         private static void StaticTrace(string format, params object[] args)
         {
-            Debug.WriteLine($"{nameof(SevenZipHybridExtractor)}: {string.Format(format, args)}");
+            Debug.WriteLine($"{nameof(SevenZipHybridExtractor)}: {string.Format(CultureInfo.InvariantCulture, format, args)}");
         }
 
         #endregion LOCAL_DEBUG

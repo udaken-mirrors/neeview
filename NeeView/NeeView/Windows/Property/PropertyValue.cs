@@ -296,7 +296,7 @@ namespace NeeView.Windows.Property
 
         public override void SetValueFromString(string value)
         {
-            Value = TimeSpan.Parse(value);
+            Value = TimeSpan.Parse(value, CultureInfo.InvariantCulture);
         }
     }
 

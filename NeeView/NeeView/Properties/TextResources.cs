@@ -93,10 +93,10 @@ namespace NeeView.Properties
             return Resource.GetString(name);
         }
 
-        public static string? GetStringRaw(string name, CultureInfo culture)
+        public static string? GetCultureStringRaw(string name, CultureInfo culture)
         {
             InitializeMinimum();
-            return Resource.GetString(name, culture);
+            return Resource.GetCultureString(name, culture);
         }
 
         public static string GetCaseString(string name, string pattern)
@@ -108,7 +108,7 @@ namespace NeeView.Properties
         public static string GetFormatString(string name, object? arg0)
         {
             var pattern = arg0?.ToString() ?? "";
-            return string.Format(GetCaseString(name, pattern), arg0);
+            return string.Format(CultureInfo.InvariantCulture, GetCaseString(name, pattern), arg0);
         }
     }
 }

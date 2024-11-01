@@ -3,6 +3,7 @@ using System.Windows;
 using System.Windows.Media.Imaging;
 using System.Diagnostics;
 using NeeLaboratory.ComponentModel;
+using System.Globalization;
 
 namespace NeeView
 {
@@ -38,9 +39,9 @@ namespace NeeView
         public void CopyVersionToClipboard()
         {
             var s = new StringBuilder();
-            s.AppendLine($"Version: {ApplicationName} {DispVersion}");
-            s.AppendLine($"Package: {Environment.PackageType} {Environment.DateVersion}");
-            s.AppendLine($"OS: {System.Environment.OSVersion}");
+            s.AppendLine(CultureInfo.InvariantCulture, $"Version: {ApplicationName} {DispVersion}");
+            s.AppendLine(CultureInfo.InvariantCulture, $"Package: {Environment.PackageType} {Environment.DateVersion}");
+            s.AppendLine(CultureInfo.InvariantCulture, $"OS: {System.Environment.OSVersion}");
 
             Debug.WriteLine(s);
 

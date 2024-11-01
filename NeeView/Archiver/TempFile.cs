@@ -12,7 +12,7 @@ namespace NeeView
         public TempFile(string path) : base(path)
         {
             // テンポラリフォルダー以外は非対応
-            Debug.Assert(path.StartsWith(Temporary.Current.TempDirectory));
+            Debug.Assert(path.StartsWith(Temporary.Current.TempDirectory, StringComparison.Ordinal));
 
             UpdateLastAccessTime();
         }
@@ -53,7 +53,7 @@ namespace NeeView
 
                 try
                 {
-                    if (Path != null && Path.StartsWith(Temporary.Current.TempDirectory)) // 念入りチェック
+                    if (Path != null && Path.StartsWith(Temporary.Current.TempDirectory, StringComparison.Ordinal)) // 念入りチェック
                     {
                         if (File.Exists(Path)) File.Delete(Path);
                     }

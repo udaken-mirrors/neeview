@@ -124,7 +124,7 @@ namespace NeeView
                 int offset;
                 do
                 {
-                    offset = modifiersToken.IndexOf(ModifierDelimiter);
+                    offset = modifiersToken.IndexOf(ModifierDelimiter, StringComparison.Ordinal);
                     string token = (offset < 0) ? modifiersToken : modifiersToken[..offset];
                     token = token.Trim();
                     token = token.ToUpper(culture);

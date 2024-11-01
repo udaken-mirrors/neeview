@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -63,7 +64,7 @@ namespace NeeView.Data
         {
             var word = key.TrimStart('-');
 
-            if (key.StartsWith("--"))
+            if (key.StartsWith("--", StringComparison.Ordinal))
             {
                 return _elements.FirstOrDefault(e => e.LongName == word);
             }
@@ -138,7 +139,7 @@ namespace NeeView.Data
                     isOptionTerminated = true;
                 }
                 // option
-                else if (!isOptionTerminated && arg.StartsWith("-"))
+                else if (!isOptionTerminated && arg.StartsWith("-", StringComparison.Ordinal))
                 {
                     var tokens = arg.Split(new char[] { '=' }, 2);
                     var value = tokens.Length >= 2 ? tokens[1] : null;
@@ -152,7 +153,7 @@ namespace NeeView.Data
                         var element = GetElement(key);
                         if (element == null)
                         {
-                            var message = string.Format(Properties.TextResources.GetString("OptionArgumentException.Unknown"), key) + "\n\n" + GetCommandLineHelpText();
+                            var message = string.Format(CultureInfo.InvariantCulture, Properties.TextResources.GetString("OptionArgumentException.Unknown"), key) + "\n\n" + GetCommandLineHelpText();
                             throw new ArgumentException(message);
                         }
 
@@ -164,7 +165,7 @@ namespace NeeView.Data
                         {
                             options.Add(key, value);
                         }
-                        else if (next == null || next.StartsWith("-") || !element.RequireParameter)
+                        else if (next == null || next.StartsWith("-", StringComparison.Ordinal) || !element.RequireParameter)
                         {
                             options.Add(key, null);
                         }
@@ -192,11 +193,11 @@ namespace NeeView.Data
         //
         private static List<string> GetKeys(string keys)
         {
-            if (keys.StartsWith("--"))
+            if (keys.StartsWith("--", StringComparison.Ordinal))
             {
                 return new List<string>() { keys };
             }
-            else if (keys.StartsWith("-"))
+            else if (keys.StartsWith("-", StringComparison.Ordinal))
             {
                 return keys.TrimStart('-').Select(e => "-" + e).ToList();
             }
@@ -214,10 +215,10 @@ namespace NeeView.Data
                 Debug.WriteLine($"Option: {item.Key} = {item.Value}");
 
                 var element = GetElement(item.Key);
-                if (element == null) throw new ArgumentException(string.Format(Properties.TextResources.GetString("OptionArgumentException.Unknown"), item.Key));
+                if (element == null) throw new ArgumentException(string.Format(CultureInfo.InvariantCulture, Properties.TextResources.GetString("OptionArgumentException.Unknown"), item.Key));
 
                 var value = item.Value ?? element.Default;
-                if (value == null) throw new ArgumentException(string.Format(Properties.TextResources.GetString("OptionArgumentException.Empty"), item.Key));
+                if (value == null) throw new ArgumentException(string.Format(CultureInfo.InvariantCulture, Properties.TextResources.GetString("OptionArgumentException.Empty"), item.Key));
 
                 try
                 {
@@ -226,7 +227,7 @@ namespace NeeView.Data
                 catch (Exception ex)
                 {
                     Debug.WriteLine(ex.Message);
-                    throw new ArgumentException(string.Format(Properties.TextResources.GetString("OptionArgumentException.Failed"), item.Key, value));
+                    throw new ArgumentException(string.Format(CultureInfo.InvariantCulture, Properties.TextResources.GetString("OptionArgumentException.Failed"), item.Key, value));
                 }
             }
 

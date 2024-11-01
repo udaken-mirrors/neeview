@@ -39,7 +39,7 @@ namespace NeeView
             return value switch
             {
                 IEnumerable<string> strings => string.Join("; ", strings),
-                DateTime dateTime => dateTime != default ? dateTime.ToString(Config.Current.Information.DateTimeFormat) : null,
+                DateTime dateTime => dateTime != default ? dateTime.ToString(Config.Current.Information.DateTimeFormat, CultureInfo.CurrentCulture) : null,
                 Enum _ => AliasNameExtensions.GetAliasName(value),
                 _ => value.ToString(),
             };

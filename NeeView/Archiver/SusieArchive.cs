@@ -83,7 +83,7 @@ namespace NeeView
             }
 
             // NOTE: サイズ0であり、他のエントリ名のパスを含む場合はディレクトリとみなし除外する。
-            list = list.Where(entry => entry.Length > 0 || list.All(e => e == entry || !e.EntryName.StartsWith(LoosePath.TrimDirectoryEnd(entry.EntryName)))).ToList();
+            list = list.Where(entry => entry.Length > 0 || list.All(e => e == entry || !e.EntryName.StartsWith(LoosePath.TrimDirectoryEnd(entry.EntryName), StringComparison.Ordinal))).ToList();
 
             // ディレクトリエントリを追加
             list.AddRange(CreateDirectoryEntries(list.Concat(directories)));

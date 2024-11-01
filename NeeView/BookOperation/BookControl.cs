@@ -119,7 +119,7 @@ namespace NeeView
         // ブックマーク登録可能？
         public bool CanBookmark()
         {
-            return !_book.Path.StartsWith(Temporary.Current.TempDirectory);
+            return !_book.Path.StartsWith(Temporary.Current.TempDirectory, StringComparison.Ordinal);
         }
 
         // ブックマーク設定
@@ -132,7 +132,7 @@ namespace NeeView
                 if (isBookmark)
                 {
                     // ignore temporary directory
-                    if (_book.Path.StartsWith(Temporary.Current.TempDirectory))
+                    if (_book.Path.StartsWith(Temporary.Current.TempDirectory, StringComparison.Ordinal))
                     {
                         ToastService.Current.Show(new Toast(Properties.TextResources.GetString("Bookmark.Message.TemporaryNotSupportedError"), "", ToastIcon.Error));
                         return;

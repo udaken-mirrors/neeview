@@ -332,7 +332,7 @@ namespace NeeView
             {
                 return;
             }
-            if (path.StartsWith(Temporary.Current.TempDirectory))
+            if (path.StartsWith(Temporary.Current.TempDirectory, StringComparison.Ordinal))
             {
                 ToastService.Current.Show(new Toast(Properties.TextResources.GetString("QuickAccessTempError.Message"), null, ToastIcon.Error));
                 return;
