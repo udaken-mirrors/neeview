@@ -15,7 +15,7 @@ namespace NeeView
             get
             {
                 Debug.Assert(_current != null, "Current is undefined.");
-                return _current;
+                return _current ??= new Config();
             }
         }
 

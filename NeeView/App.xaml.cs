@@ -10,6 +10,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
@@ -114,9 +115,6 @@ namespace NeeView
 
             Trace.WriteLine($"App.Initialized: {Stopwatch.ElapsedMilliseconds}ms");
 
-            // インスタンス確定
-            _ = ThemeManager.Current;
-
             // メインウィンドウ起動
             var mainWindow = new MainWindow();
             WindowParameters.Initialize(mainWindow);
@@ -177,45 +175,64 @@ namespace NeeView
 
             Debug.WriteLine($"App.Culture: {Stopwatch.ElapsedMilliseconds}ms");
 
-            // スプラッシュスクリーン
-            ShowSplashScreen(config);
-
-            // 設定の適用
-            UserSettingTools.Restore(setting, true);
-
-            // 画像拡張子初期化
-            if (Config.Current.Image.Standard.SupportFileTypes is null)
-            {
-                Config.Current.Image.Standard.SupportFileTypes = PictureFileExtensionTools.CreateDefaultSupportedFileTypes(Config.Current.Image.Standard.UseWicInformation);
-            }
-
-            Debug.WriteLine($"App.RestoreSettings: {Stopwatch.ElapsedMilliseconds}ms");
-
             // バージョン表示
             if (this.Option.IsVersion)
             {
+                UserSettingTools.Restore(setting, true); // ダイアログ表示用に Config 初期化
                 var dialog = new VersionWindow() { WindowStartupLocation = WindowStartupLocation.CenterScreen };
                 dialog.ShowDialog();
-                throw new OperationCanceledException("Disp Version Dialog");
+                throw new OperationCanceledException("Displayed version dialog.");
             }
 
             // 多重起動制限になる場合、サーバーにパスを送って終了
-            Debug.WriteLine($"CanStart: {CanStart(Config.Current)}: IsServerExists={_multiBootService.IsServerExists}, IsNewWindow={Option.IsNewWindow}, IsMultiBootEnabled={Config.Current.StartUp.IsMultiBootEnabled}");
-            if (!CanStart(Config.Current))
+            Debug.WriteLine($"CanStart: {CanStart(config)}: IsServerExists={_multiBootService.IsServerExists}, IsNewWindow={Option.IsNewWindow}, IsMultiBootEnabled={config.StartUp.IsMultiBootEnabled}");
+            if (!CanStart(config))
             {
                 await _multiBootService.RemoteLoadAsAsync(Option.Values);
                 throw new OperationCanceledException("Already started.");
             }
 
+            // スプラッシュスクリーン表示処理に若干(100ms)時間がかかるため、一部の初期化処理を非同期化
+            var task = Task.Run(() => InitializeSecond(setting));
+
+            // スプラッシュスクリーン表示
+            ShowSplashScreen(config);
+
+            // 初期化処理の完了を待つ
+            await task.WaitAsync(CancellationToken.None);
+        }
+
+        // 非同期で実行する初期化部
+        private void InitializeSecond(UserSetting setting)
+        {
+            Debug.WriteLine($"App.InitializeSecond...: {Stopwatch.ElapsedMilliseconds}ms");
+
+            // 設定の適用
+            UserSettingTools.Restore(setting, true);
+
+            // 画像拡張子初期化
+            var config = Config.Current;
+            if (config.Image.Standard.SupportFileTypes is null)
+            {
+                config.Image.Standard.SupportFileTypes = PictureFileExtensionTools.CreateDefaultSupportedFileTypes(config.Image.Standard.UseWicInformation);
+            }
+
+            Debug.WriteLine($"App.RestoreSettings: {Stopwatch.ElapsedMilliseconds}ms");
+
             // テンポラリーの場所
-            Config.Current.System.TemporaryDirectory = Temporary.Current.SetDirectory(Config.Current.System.TemporaryDirectory, true);
+            config.System.TemporaryDirectory = Temporary.Current.SetDirectory(config.System.TemporaryDirectory, true);
 
             // TextBox以外のコントロールのIMEを無効にする
-            if (!Config.Current.System.IsInputMethodEnabled)
+            if (!config.System.IsInputMethodEnabled)
             {
                 InputMethod.IsInputMethodEnabledProperty.OverrideMetadata(typeof(FrameworkElement), new FrameworkPropertyMetadata(false));
                 InputMethod.IsInputMethodEnabledProperty.OverrideMetadata(typeof(System.Windows.Controls.TextBox), new FrameworkPropertyMetadata(true));
             }
+
+            // テーマのインスタンス確定
+            _ = ThemeManager.Current;
+
+            Debug.WriteLine($"App.InitializeSecond.Done: {Stopwatch.ElapsedMilliseconds}ms");
         }
 
         /// <summary>
