@@ -84,8 +84,9 @@ namespace NeeView
 
         #endregion
 
-        private MainWindowModel _model;
 
+        private bool _initialized;
+        private MainWindowModel _model;
         private readonly MainViewComponent _viewComponent;
 
         /// <summary>
@@ -222,16 +223,31 @@ namespace NeeView
         }
 
         /// <summary>
-        /// 起動時処理
+        /// 初期化
+        /// </summary>
+        private void Initialize()
+        {
+            if (_initialized) return;
+            _initialized = true;
+
+            _model.Loaded();
+            _model.ContentRendered();
+        }
+
+
+        /// <summary>
+        /// Window OnLoaded
         /// </summary>
         public void Loaded()
         {
-            _model.Loaded();
         }
 
+        /// <summary>
+        /// Window OnContentRendered
+        /// </summary>
         public void ContentRendered()
         {
-            _model.ContentRendered();
+            Initialize();
         }
 
         /// <summary>
