@@ -1508,7 +1508,6 @@ PrintWindow.Printer=打印机
 PrintWindow.Row=直排
 PrintWindow.Sheets=纸张张数
 PrintWindow.Vertical=垂直对齐
-QueryScheme.File=PC
 QuickAccessFolderNodeAccessor=
 QuickAccessFolderNodeAccessor.Add=
 QuickAccessFolderNodeAccessor.Add.Parameter=

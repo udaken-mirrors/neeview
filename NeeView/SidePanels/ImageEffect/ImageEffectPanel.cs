@@ -17,11 +17,11 @@ namespace NeeView
     /// </summary>
     public class ImageEffectPanel : BindableBase, IPanel
     {
-        private readonly ImageEffectView _view;
+        private readonly Lazy<FrameworkElement> _view;
 
         public ImageEffectPanel(ImageEffect model)
         {
-            _view = new ImageEffectView(model);
+            _view = new (() =>new ImageEffectView(model));
 
             Icon = App.Current.MainWindow.Resources["pic_toy_24px"] as ImageSource
                 ?? throw new InvalidOperationException("Cannot found resource");
@@ -38,7 +38,7 @@ namespace NeeView
 
         public string IconTips => Properties.TextResources.GetString("Effect.Title");
 
-        public FrameworkElement View => _view;
+        public Lazy<FrameworkElement> View => _view;
 
         public bool IsVisibleLock => false;
 
@@ -52,7 +52,7 @@ namespace NeeView
 
         public void Focus()
         {
-            _view.FocusAtOnce();
+            ((ImageEffectView)_view.Value).FocusAtOnce();
         }
     }
 }

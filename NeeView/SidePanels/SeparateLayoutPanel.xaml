@@ -15,7 +15,7 @@
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
             <TextBlock Grid.Row="0" Text="{Binding LayoutPanel.Title}" Foreground="{DynamicResource Panel.Header}" VerticalAlignment="Center" />
-            <ContentControl Grid.Row="1" Content="{Binding LayoutPanel.Content}" Focusable="False" />
+            <ContentControl Grid.Row="1" Content="{Binding LayoutPanel.Content.Value}" Focusable="False" />
         </Grid>
     </Border>
 </UserControl>

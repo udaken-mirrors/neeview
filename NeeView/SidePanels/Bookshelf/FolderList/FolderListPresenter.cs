@@ -11,15 +11,14 @@ namespace NeeView
 
     public class FolderListPresenter
     {
-        private readonly IHasFolderListBox _folderListView;
         private readonly FolderList _folderList;
         private readonly FolderListBoxViewModel _folderListBoxViewModel;
+        private IHasFolderListBox? _folderListView;
         private FolderListBox? _folderListBox;
 
 
-        public FolderListPresenter(IHasFolderListBox folderListView, FolderList folderList)
+        public FolderListPresenter(FolderList folderList)
         {
-            _folderListView = folderListView;
             _folderList = folderList;
             _folderList.FolderListConfig.AddPropertyChanged(nameof(FolderListConfig.PanelListItemStyle), (s, e) => UpdateFolderListBox());
 
@@ -31,10 +30,19 @@ namespace NeeView
         public FolderListBox? FolderListBox => _folderListBox;
 
 
-        public void UpdateFolderListBox()
+        public void InitializeView(IHasFolderListBox folderListView)
         {
-            _folderListBox = new FolderListBox(_folderListBoxViewModel);
-            _folderListView.SetFolderListBoxContent(_folderListBox);
+            _folderListView = folderListView;
+            UpdateFolderListBox(false);
+        }
+
+        public void UpdateFolderListBox(bool rebuild = true)
+        {
+            if (rebuild || _folderListBox is null)
+            {
+                _folderListBox = new FolderListBox(_folderListBoxViewModel);
+            }
+            _folderListView?.SetFolderListBoxContent(_folderListBox);
         }
 
         public void Refresh()

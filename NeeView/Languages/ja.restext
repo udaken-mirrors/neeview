@@ -1508,7 +1508,6 @@ PrintWindow.Printer=プリンター
 PrintWindow.Row=縦
 PrintWindow.Sheets=用紙枚数
 PrintWindow.Vertical=垂直位置
-QueryScheme.File=PC
 QuickAccessFolderNodeAccessor=クイック アクセス フォルダーのアクセサ
 QuickAccessFolderNodeAccessor.Add=新しいクイック アクセスを作成して追加する
 QuickAccessFolderNodeAccessor.Add.Parameter=新しいクイック アクセスのパラメーター (省略可)

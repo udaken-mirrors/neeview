@@ -47,6 +47,6 @@
             </local:LayoutPanelHeader.ContextMenu>
         </local:LayoutPanelHeader>
 
-        <ContentControl Grid.Row="1" Content="{Binding LayoutPanel.Content}" Focusable="False" IsTabStop="False" />
+        <ContentControl Grid.Row="1" Content="{Binding LayoutPanel.Content.Value}" Focusable="False" IsTabStop="False" />
     </Grid>
 </UserControl>

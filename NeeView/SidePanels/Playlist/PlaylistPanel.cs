@@ -14,13 +14,13 @@ namespace NeeView
 {
     public class PlaylistPanel : BindableBase, IPanel
     {
-        private readonly PlaylistView _view;
+        private readonly LazyEx<PlaylistView> _view;
         private readonly PlaylistPresenter _presenter;
 
 
         public PlaylistPanel(PlaylistHub model)
         {
-            _view = new PlaylistView(model);
+            _view = new(() => new PlaylistView(model));
             _presenter = new PlaylistPresenter(_view, model);
 
             Icon = App.Current.MainWindow.Resources["pic_playlist_24px"] as ImageSource
@@ -38,7 +38,7 @@ namespace NeeView
 
         public string IconTips => Properties.TextResources.GetString("Playlist.Title");
 
-        public FrameworkElement View => _view;
+        public Lazy<FrameworkElement> View => new(() => _view.Value);
 
         public bool IsVisibleLock => false;
 

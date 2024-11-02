@@ -84,7 +84,10 @@ namespace NeeView.Runtime.LayoutPanel
 
         public bool IsPanelVisible(LayoutPanel panel)
         {
-            return (panel?.Content as UIElement)?.IsVisible == true;
+            if (panel is null) return false;
+            if (!panel.Content.IsValueCreated) return false;
+
+            return panel.Content.Value.IsVisible;
         }
 
         public bool IsPanelDock(LayoutPanel panel)

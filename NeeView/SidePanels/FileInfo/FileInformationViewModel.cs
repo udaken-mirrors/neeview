@@ -28,6 +28,8 @@ namespace NeeView
 
             _model.AddPropertyChanged(nameof(_model.FileInformationCollection),
                 Model_FileInformationCollectionChanged);
+            
+            SelectedItem = _model.GetMainFileInformation();
 
             MoreMenuDescription = new FileInformationMoreMenuDescription();
         }

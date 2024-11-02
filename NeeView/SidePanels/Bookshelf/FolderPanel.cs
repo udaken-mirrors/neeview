@@ -11,12 +11,12 @@ namespace NeeView
 {
     public class FolderPanel : BindableBase, IPanel
     {
-        private readonly FolderListView _view;
+        private readonly LazyEx<FolderListView> _view;
         private readonly BookshelfFolderListPresenter _folderListPresenter;
 
         public FolderPanel(BookshelfFolderList folderList)
         {
-            _view = new FolderListView(folderList);
+            _view = new(() => new FolderListView(folderList));
             _folderListPresenter = new BookshelfFolderListPresenter(_view, folderList);
 
             Icon = App.Current.MainWindow.Resources["pic_bookshelf"] as DrawingImage
@@ -34,7 +34,7 @@ namespace NeeView
 
         public string IconTips => Properties.TextResources.GetString("Bookshelf.Title");
 
-        public FrameworkElement View => _view;
+        public Lazy<FrameworkElement> View => new Lazy<FrameworkElement>(() => _view.Value);
 
         public bool IsVisibleLock => false;
 

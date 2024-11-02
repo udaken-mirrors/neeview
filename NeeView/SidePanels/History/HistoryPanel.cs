@@ -18,12 +18,12 @@ namespace NeeView
     /// </summary>
     public class HistoryPanel : BindableBase, IPanel
     {
-        private readonly HistoryListView _view;
+        private readonly LazyEx<HistoryListView> _view;
         private readonly HistoryListPresenter _presenter;
 
         public HistoryPanel(HistoryList model)
         {
-            _view = new HistoryListView(model);
+            _view = new(() => new HistoryListView(model));
             _presenter = new HistoryListPresenter(_view, model);
 
             Icon = App.Current.MainWindow.Resources["pic_history_24px"] as ImageSource
@@ -41,7 +41,7 @@ namespace NeeView
 
         public string IconTips => Properties.TextResources.GetString("History.Title");
 
-        public FrameworkElement View => _view;
+        public Lazy<FrameworkElement> View => new(() => _view.Value);
 
         public bool IsVisibleLock => false;
 

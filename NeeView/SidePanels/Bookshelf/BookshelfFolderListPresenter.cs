@@ -1,24 +1,39 @@
-﻿namespace NeeView
+﻿using System;
+
+namespace NeeView
 {
     public class BookshelfFolderListPresenter : FolderListPresenter
     {
-        private readonly FolderListView _folderListView;
+        private readonly LazyEx<FolderListView> _folderListView;
         private readonly BookshelfFolderList _folderList;
 
 
-        public BookshelfFolderListPresenter(FolderListView folderListView, BookshelfFolderList folderList) : base(folderListView, folderList)
+        public BookshelfFolderListPresenter(LazyEx<FolderListView> folderListView, BookshelfFolderList folderList) : base(folderList)
         {
             _folderListView = folderListView;
             _folderList = folderList;
 
-            folderListView.SearchBoxFocusChanged += FolderListView_SearchBoxFocusChanged;
+            if (_folderListView.IsValueCreated)
+            {
+                InitializeView(_folderListView.Value);
+            }
+            else
+            {
+                _folderListView.Created += (s, e) => InitializeView(e.Value);
+            }
         }
 
 
-        public FolderListView FolderListView => _folderListView;
+        public FolderListView FolderListView => _folderListView.Value;
 
         public BookshelfFolderList FolderList => _folderList;
 
+
+        private void InitializeView(FolderListView view)
+        {
+            base.InitializeView(view);
+            view.SearchBoxFocusChanged += FolderListView_SearchBoxFocusChanged;
+        }
 
         private void FolderListView_SearchBoxFocusChanged(object? sender, FocusChangedEventArgs e)
         {

@@ -6,18 +6,18 @@ namespace NeeView
     {
         public static PlaylistPresenter? Current { get; private set; }
 
-        private readonly PlaylistView _playliseView;
+        private readonly LazyEx<PlaylistView> _playlistView;
         private readonly PlaylistHub _playlistHub;
         private readonly PlaylistListBoxViewModel _playlistListBoxViewModel = new();
         private PlaylistListBox? _playlistListBox;
 
 
-        public PlaylistPresenter(PlaylistView playlistView, PlaylistHub playlistModel)
+        public PlaylistPresenter(LazyEx<PlaylistView> playlistView, PlaylistHub playlistModel)
         {
             if (Current != null) throw new InvalidOperationException();
             Current = this;
 
-            _playliseView = playlistView;
+            _playlistView = playlistView;
             _playlistHub = playlistModel;
 
             _playlistHub.AddPropertyChanged(nameof(PlaylistHub.Playlist),
@@ -27,11 +27,12 @@ namespace NeeView
                 (s, e) => UpdateListBoxContent());
 
             UpdateListBox();
+            _playlistView.Created += (s, e) => UpdateListBoxContent(false);
         }
 
 
-        public PlaylistView PlaylistView => _playliseView;
-        public PlaylistListBox? PlaylistListBox=> _playlistListBox;
+        public PlaylistView PlaylistView => _playlistView.Value;
+        public PlaylistListBox? PlaylistListBox => _playlistListBox;
         public PlaylistHub PlaylistHub => _playlistHub;
 
 
@@ -43,15 +44,20 @@ namespace NeeView
             UpdateListBoxContent();
         }
 
-        private void UpdateListBoxContent()
+        private void UpdateListBoxContent(bool rebuild = true)
         {
-            if (_playlistListBox != null)
+            if (rebuild || _playlistListBox is null)
             {
-                _playlistListBox.DataContext = null;
+                if (_playlistListBox != null)
+                {
+                    _playlistListBox.DataContext = null;
+                }
+                _playlistListBox = new PlaylistListBox(_playlistListBoxViewModel);
             }
-
-            _playlistListBox = new PlaylistListBox(_playlistListBoxViewModel);
-            _playliseView.ListBoxContent.Content = _playlistListBox;
+            if (_playlistView.IsValueCreated)
+            {
+                _playlistView.Value.ListBoxContent.Content = _playlistListBox;
+            }
         }
 
 

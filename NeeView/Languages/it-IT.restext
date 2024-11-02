@@ -1522,7 +1522,6 @@ PrintWindow.Printer=Stampante
 PrintWindow.Row=Riga
 PrintWindow.Sheets=Numero di fogli
 PrintWindow.Vertical=Allineamento verticale
-QueryScheme.File=PC
 QuickAccessFolderNodeAccessor=
 QuickAccessFolderNodeAccessor.Add=
 QuickAccessFolderNodeAccessor.Add.Parameter=

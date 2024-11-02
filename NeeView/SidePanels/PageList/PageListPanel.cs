@@ -18,12 +18,12 @@ namespace NeeView
     /// </summary>
     public class PageListPanel : BindableBase, IPanel
     {
-        private readonly PageListView _view;
+        private readonly LazyEx<PageListView> _view;
         private readonly PageListPresenter _presenter;
 
         public PageListPanel(PageList model)
         {
-            _view = new PageListView(model);
+            _view = new (() =>new PageListView(model));
             _presenter = new PageListPresenter(_view, model);
 
             Icon = App.Current.MainWindow.Resources["pic_photo_library_24px"] as ImageSource
@@ -41,7 +41,7 @@ namespace NeeView
 
         public string IconTips => Properties.TextResources.GetString("PageList.Title");
 
-        public FrameworkElement View => _view;
+        public Lazy<FrameworkElement> View => new (() =>_view.Value);
 
         public bool IsVisibleLock => false;
 

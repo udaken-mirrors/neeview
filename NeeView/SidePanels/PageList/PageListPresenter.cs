@@ -4,13 +4,13 @@ namespace NeeView
 {
     public class PageListPresenter
     {
-        private readonly PageListView _pageListView;
+        private readonly LazyEx<PageListView> _pageListView;
         private readonly PageList _pageList;
         private readonly PageListBoxViewModel _listBoxViewModel;
         private PageListBox? _pageListBox;
 
 
-        public PageListPresenter(PageListView pageListView, PageList pageList)
+        public PageListPresenter(LazyEx<PageListView> pageListView, PageList pageList)
         {
             _pageListView = pageListView;
             _pageList = pageList;
@@ -20,20 +20,27 @@ namespace NeeView
             Config.Current.PageList.AddPropertyChanged(nameof(PageListConfig.PanelListItemStyle), (s, e) => UpdateListBoxContent());
 
             UpdateListBoxContent();
+            _pageListView.Created += (s, e) => UpdateListBoxContent(false);
         }
 
 
         public PageList PageList => _pageList;
 
-        public PageListView PageListView => _pageListView;
+        public PageListView PageListView => _pageListView.Value;
 
         public PageListBox? PageListBox => _pageListBox;
 
 
-        private void UpdateListBoxContent()
+        private void UpdateListBoxContent(bool rebuild = true)
         {
-            _pageListBox = new PageListBox(_listBoxViewModel);
-            _pageListView.ListBoxContent.Content = _pageListBox;
+            if (rebuild || _pageListBox is null)
+            {
+                _pageListBox = new PageListBox(_listBoxViewModel);
+            }
+            if (_pageListView.IsValueCreated)
+            {
+                _pageListView.Value.ListBoxContent.Content = _pageListBox;
+            }
         }
 
         public void FocusAtOnce()

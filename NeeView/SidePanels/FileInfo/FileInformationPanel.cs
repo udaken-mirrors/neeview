@@ -13,12 +13,12 @@ namespace NeeView
 {
     public class FileInformationPanel : BindableBase, IPanel
     {
-        private readonly FileInformationView _view;
+        private readonly Lazy<FileInformationView> _view;
         private readonly FileInformation _model;
 
         public FileInformationPanel(FileInformation model)
         {
-            _view = new FileInformationView(model);
+            _view = new(() => new FileInformationView(model));
             _model = model;
 
             Icon = App.Current.MainWindow.Resources["pic_info_24px"] as ImageSource
@@ -36,7 +36,7 @@ namespace NeeView
 
         public string IconTips => Properties.TextResources.GetString("Information.Title");
 
-        public FrameworkElement View => _view;
+        public Lazy<FrameworkElement> View => new(() => _view.Value);
 
         public FileInformation FileInformation => _model;
 
@@ -52,7 +52,7 @@ namespace NeeView
 
         public void Focus()
         {
-            _view.FocusAtOnce();
+            _view.Value.FocusAtOnce();
         }
     }
 }

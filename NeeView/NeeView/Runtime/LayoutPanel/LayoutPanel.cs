@@ -1,15 +1,6 @@
-﻿using NeeLaboratory.ComponentModel;
-using NeeView.Windows;
+﻿using NeeView.Windows;
 using System;
-using System.ComponentModel;
-using System.Diagnostics;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Automation;
-using System.Windows.Documents;
-using System.Windows.Markup;
-using System.Xml.XPath;
 
 namespace NeeView.Runtime.LayoutPanel
 {
@@ -20,11 +11,10 @@ namespace NeeView.Runtime.LayoutPanel
             Key = key;
         }
 
-        public string Key { get; set; }
-        public string Title { get; set; } = "(Undefined)";
-        public FrameworkElement? DragGhost { get; set; }
-        public object? Content { get; set; }
-
+        public string Key { get; init; }
+        public string Title { get; init; } = "(Undefined)";
+        public FrameworkElement? DragGhost { get; init; }
+        public required Lazy<FrameworkElement> Content { get; init; }
         public GridLength GridLength { get; set; } = new GridLength(1, GridUnitType.Star);
         public WindowPlacement WindowPlacement { get; set; } = WindowPlacement.None;
 
@@ -71,6 +61,4 @@ namespace NeeView.Runtime.LayoutPanel
 
         #endregion
     }
-
-
 }

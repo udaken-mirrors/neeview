@@ -38,7 +38,7 @@ namespace NeeView
         /// <summary>
         /// パネル実体
         /// </summary>
-        FrameworkElement View { get; }
+        Lazy<FrameworkElement> View { get; }
 
         /// <summary>
         /// 表示固定フラグ

@@ -1516,7 +1516,6 @@ PrintWindow.Printer=Impressora
 PrintWindow.Row=Linha
 PrintWindow.Sheets=Número de folhas
 PrintWindow.Vertical=Alinhamento vertical
-QueryScheme.File=PC
 QuickAccessFolderNodeAccessor=
 QuickAccessFolderNodeAccessor.Add=
 QuickAccessFolderNodeAccessor.Add.Parameter=

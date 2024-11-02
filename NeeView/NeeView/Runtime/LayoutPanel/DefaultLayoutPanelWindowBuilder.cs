@@ -8,7 +8,7 @@
             window.LayoutPanelWindowManager = manager;
             window.LayoutPanel = layoutPanel;
             window.Title = layoutPanel.Title;
-            window.Content = layoutPanel.Content;
+            window.Content = layoutPanel.Content.Value;
             return window;
         }
     }

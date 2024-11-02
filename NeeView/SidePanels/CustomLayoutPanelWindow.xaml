@@ -25,7 +25,7 @@
             <RowDefinition x:Name="Row0" Height="Auto" />
             <RowDefinition x:Name="Row1" />
         </Grid.RowDefinitions>
-        <ContentControl x:Name="MainViewSocket" Grid.Row="1" Content="{Binding LayoutPanel.Content}" />
+        <ContentControl x:Name="MainViewSocket" Grid.Row="1" Content="{Binding LayoutPanel.Content.Value}" />
         <local:CaptionBar x:Name="CaptionBar" Grid.Row="0" MinHeight="30" VerticalAlignment="Top" Title="{Binding Title}" IsMinimizeEnabled="False" />
         <local:RenameManager x:Name="RenameManager"  d:IsHidden="True" />
 

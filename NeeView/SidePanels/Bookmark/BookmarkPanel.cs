@@ -11,12 +11,12 @@ namespace NeeView
 {
     public class BookmarkPanel : BindableBase, IPanel
     {
-        private readonly BookmarkListView _view;
+        private readonly LazyEx<BookmarkListView> _view;
         private readonly BookmarkFolderListPresenter _presenter;
 
         public BookmarkPanel(BookmarkFolderList folderList)
         {
-            _view = new BookmarkListView(folderList);
+            _view = new(() =>new BookmarkListView(folderList));
             _presenter = new BookmarkFolderListPresenter(_view, folderList);
 
             Icon = App.Current.MainWindow.Resources["pic_star_24px"] as DrawingImage ?? throw new InvalidOperationException("Cannot found resource `pic_star_24px`");
@@ -33,7 +33,7 @@ namespace NeeView
 
         public string IconTips => Properties.TextResources.GetString("Bookmark.Title");
 
-        public FrameworkElement View => _view;
+        public Lazy<FrameworkElement> View => new(() =>_view.Value);
 
         public bool IsVisibleLock => false;
 

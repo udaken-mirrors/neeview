@@ -1516,7 +1516,6 @@ PrintWindow.Printer=Printer
 PrintWindow.Row=Row
 PrintWindow.Sheets=Number of sheets
 PrintWindow.Vertical=Vertical alignment
-QueryScheme.File=PC
 QuickAccessFolderNodeAccessor=Quick access folder accessor
 QuickAccessFolderNodeAccessor.Add=Create and add new quick access
 QuickAccessFolderNodeAccessor.Add.Parameter=New quick access parameters (optional)

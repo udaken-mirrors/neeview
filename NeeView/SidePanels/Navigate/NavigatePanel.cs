@@ -17,11 +17,11 @@ namespace NeeView
     /// </summary>
     public class NavigatePanel : BindableBase, IPanel
     {
-        private readonly NavigateView _view;
+        private readonly Lazy<NavigateView> _view;
 
         public NavigatePanel(NavigateModel model)
         {
-            _view = new NavigateView(model);
+            _view = new(() => new NavigateView(model));
 
             Icon = App.Current.MainWindow.Resources["pic_navigate"] as ImageSource
                 ?? throw new InvalidOperationException("Cannot found resource");
@@ -42,7 +42,7 @@ namespace NeeView
 
         public string IconTips => Properties.TextResources.GetString("Navigator.Title");
 
-        public FrameworkElement View => _view;
+        public Lazy<FrameworkElement> View => new(() => _view.Value);
 
         public bool IsSelected
         {
@@ -68,7 +68,7 @@ namespace NeeView
 
         public void Focus()
         {
-            _view.FocusAtOnce();
+            _view.Value.FocusAtOnce();
         }
     }
 }
