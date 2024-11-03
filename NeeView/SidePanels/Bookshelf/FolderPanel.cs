@@ -11,6 +11,9 @@ namespace NeeView
 {
     public class FolderPanel : BindableBase, IPanel
     {
+        private static FolderPanel? _current;
+        public static FolderPanel Current => _current ?? throw new InvalidOperationException();
+
         private readonly LazyEx<FolderListView> _view;
         private readonly BookshelfFolderListPresenter _folderListPresenter;
 
@@ -21,6 +24,9 @@ namespace NeeView
 
             Icon = App.Current.MainWindow.Resources["pic_bookshelf"] as DrawingImage
                 ?? throw new InvalidOperationException("cannot found resource 'pic_bookshelf'");
+
+            Debug.Assert(_current is null);
+            _current = this;
         }
 
 #pragma warning disable CS0067
@@ -41,6 +47,9 @@ namespace NeeView
         public PanelPlace DefaultPlace => PanelPlace.Left;
 
         public BookshelfFolderListPresenter Presenter => _folderListPresenter;
+
+        public FolderTreeModel FolderTreeModel => _view.Value.FolderTree.Model;
+
 
         public void Refresh()
         {

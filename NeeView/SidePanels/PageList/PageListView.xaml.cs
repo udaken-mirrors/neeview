@@ -30,6 +30,8 @@ namespace NeeView
             this.DockPanel.DataContext = _vm;
 
             model.SearchBoxFocus += PageList_SearchBoxFocus;
+
+            Debug.WriteLine($"> Create: {nameof(PageListView)}");
         }
 
 

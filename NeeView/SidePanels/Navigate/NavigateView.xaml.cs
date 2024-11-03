@@ -37,6 +37,8 @@ namespace NeeView
             this.MediaControlView.Source = model.MediaControl;
 
             this.IsVisibleChanged += NavigateView_IsVisibleChanged;
+
+            Debug.WriteLine($"> Create: {nameof(NavigateView)}");
         }
 
 

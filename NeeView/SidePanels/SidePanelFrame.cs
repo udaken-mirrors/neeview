@@ -269,7 +269,7 @@ namespace NeeView
         public bool FocusBookshelfBookmarkList(bool byMenu)
         {
             // フォルダーツリーは「ブックマークリスト」を選択した状態にする
-            BookshelfFolderTreeModel.Current?.SelectRootBookmarkFolder();
+            FolderPanel.Current.FolderTreeModel?.SelectRootBookmarkFolder();
             BookshelfFolderList.Current.RequestPlace(new QueryPath(QueryScheme.Bookmark, null), null, FolderSetPlaceOption.UpdateHistory | FolderSetPlaceOption.Refresh);
 
             // フォルダーリスト選択
@@ -349,7 +349,7 @@ namespace NeeView
             // フォーカス要求。表示前に要求する
             if (!byMenu && isVisible)
             {
-                BookshelfFolderTreeModel.Current?.FocusAtOnce();
+                FolderPanel.Current.FolderTreeModel?.FocusAtOnce();
             }
 
             Config.Current.Bookshelf.IsFolderTreeVisible = isVisible;
@@ -375,7 +375,8 @@ namespace NeeView
             // フォーカス要求。表示前に要求する
             if (!byMenu && isVisible)
             {
-                BookmarkFolderTreeModel.Current?.FocusAtOnce();
+                //BookmarkFolderTreeModel.Current?.FocusAtOnce();
+                BookmarkPanel.Current.FolderTreeModel.FocusAtOnce();
             }
 
             Config.Current.Bookmark.IsFolderTreeVisible = isVisible;

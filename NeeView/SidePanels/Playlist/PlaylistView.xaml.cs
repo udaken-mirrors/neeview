@@ -36,6 +36,8 @@ namespace NeeView
 
             this.PlaylistComboBox.DropDownOpened +=
                 (s, e) => _vm.UpdatePlaylistCollection();
+
+            Debug.WriteLine($"> Create: {nameof(PlaylistView)}");
         }
 
 

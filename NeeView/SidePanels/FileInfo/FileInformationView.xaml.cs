@@ -1,5 +1,6 @@
 ﻿using NeeLaboratory.Linq;
 using System;
+using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Text;
@@ -87,6 +88,8 @@ namespace NeeView
             this.DataContext = _vm;
 
             this.IsVisibleChanged += FileInformationView_IsVisibleChanged;
+
+            Debug.WriteLine($"> Create: {nameof(FileInformationView)}");
         }
 
 

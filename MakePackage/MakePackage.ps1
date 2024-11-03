@@ -388,11 +388,7 @@ function New-ConfigForZip($inputDir, $config, $outputDir)
 	$jsonObject.UseLocalApplicationData = $false
 	$jsonObject.Revision = $revision
 	$jsonObject.DateVersion = $dateVersion
-
-	if ($trace)
-	{
-		$jsonObject | Add-Member NoteProperty LogFile "TraceLog.txt"
-	}
+	$jsonObject.LogFile = $trace ? "TraceLog.txt" : $null
 
 	$outputFile = Join-Path (Convert-Path $outputDir) $config
 	ConvertTo-Json $jsonObject | Out-File $outputFile
@@ -410,6 +406,7 @@ function New-ConfigForMsi($inputDir, $config, $outputDir)
 	$jsonObject.UseLocalApplicationData = $true
 	$jsonObject.Revision = $revision
 	$jsonObject.DateVersion = $dateVersion
+	$jsonObject.LogFile = $trace ? "TraceLog.txt" : $null
 
 	$outputFile = Join-Path (Convert-Path $outputDir) $config
 	ConvertTo-Json $jsonObject | Out-File $outputFile
@@ -428,6 +425,7 @@ function New-ConfigForAppx($inputDir, $config, $outputDir)
 	$jsonObject.UseLocalApplicationData = $true
 	$jsonObject.Revision = $revision
 	$jsonObject.DateVersion = $dateVersion
+	$jsonObject.LogFile = $trace ? "TraceLog.txt" : $null
 
 	$outputFile = Join-Path (Convert-Path $outputDir) $config
 	ConvertTo-Json $jsonObject | Out-File $outputFile
@@ -445,11 +443,7 @@ function New-ConfigForDevPackage($inputDir, $config, $target, $outputDir)
 	$jsonObject.UseLocalApplicationData = $false
 	$jsonObject.Revision = $revision
 	$jsonObject.DateVersion = $dateVersion
-
-	if ($trace)
-	{
-		$jsonObject | Add-Member NoteProperty LogFile "TraceLog.txt"
-	}
+	$jsonObject.LogFile = $trace ? "TraceLog.txt" : $null
 
 	$outputFile = Join-Path (Convert-Path $outputDir) $config
 	ConvertTo-Json $jsonObject | Out-File $outputFile

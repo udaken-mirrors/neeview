@@ -33,6 +33,8 @@ namespace NeeView
             this.DataContext = _vm;
 
             this.IsVisibleChanged += ImageEffectView_IsVisibleChanged;
+
+            Debug.WriteLine($"> Create: {nameof(ImageEffectView)}");
         }
 
 

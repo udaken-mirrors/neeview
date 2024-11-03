@@ -49,9 +49,9 @@ namespace NeeView
         }
 
 
-        internal WordNode CreateWordNode(string name)
+        internal static WordNode CreateWordNode(string name)
         {
-            var node = WordNodeHelper.CreateClassWordNode(name, this.GetType());
+            var node = WordNodeHelper.CreateClassWordNode(name, typeof(QuickAccessFolderNodeAccessor));
             return node;
         }
     }

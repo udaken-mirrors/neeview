@@ -24,13 +24,15 @@ namespace NeeView
         {
             InitializeComponent();
 
-            this.FolderTree.Model = new BookmarkFolderTreeModel(model);
+            this.FolderTree.Model = new FolderTreeModel(model, FolderTreeCategory.BookmarkFolder);
 
             _vm = new BookmarkListViewModel(model);
             this.Root.DataContext = _vm;
 
             model.SearchBoxFocus += FolderList_SearchBoxFocus;
             model.FolderTreeFocus += FolderList_FolderTreeFocus;
+
+            Debug.WriteLine($"> Create: {nameof(BookmarkListView)}");
         }
 
 

@@ -11,15 +11,22 @@ namespace NeeView
 {
     public class BookmarkPanel : BindableBase, IPanel
     {
+        private static BookmarkPanel? _current;
+        public static BookmarkPanel Current => _current ?? throw new InvalidOperationException();
+
+
         private readonly LazyEx<BookmarkListView> _view;
         private readonly BookmarkFolderListPresenter _presenter;
 
         public BookmarkPanel(BookmarkFolderList folderList)
         {
-            _view = new(() =>new BookmarkListView(folderList));
+            _view = new(() => new BookmarkListView(folderList));
             _presenter = new BookmarkFolderListPresenter(_view, folderList);
 
             Icon = App.Current.MainWindow.Resources["pic_star_24px"] as DrawingImage ?? throw new InvalidOperationException("Cannot found resource `pic_star_24px`");
+
+            Debug.Assert(_current is null);
+            _current = this;
         }
 
 #pragma warning disable CS0067
@@ -40,6 +47,8 @@ namespace NeeView
         public PanelPlace DefaultPlace => PanelPlace.Right;
 
         public BookmarkFolderListPresenter Presenter => _presenter;
+
+        public FolderTreeModel FolderTreeModel => _view.Value.FolderTree.Model;
 
 
         public void Refresh()

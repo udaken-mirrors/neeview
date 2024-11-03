@@ -8,19 +8,19 @@ namespace NeeView
     {
         private readonly BookmarkPanel _panel;
         private readonly BookmarkFolderList _model;
-
+        private readonly Lazy<BookmarkFolderTreeAccessor> _folderTree;
 
         public BookmarkPanelAccessor() : base(nameof(BookmarkPanel))
         {
             _panel = (BookmarkPanel)CustomLayoutPanelManager.Current.GetPanel(nameof(BookmarkPanel));
             _model = _panel.Presenter.BookmarkFolderList;
 
-            FolderTree = new BookmarkFolderTreeAccessor(BookmarkFolderTreeModel.Current ?? throw new InvalidOperationException());
+            _folderTree = new (() =>new BookmarkFolderTreeAccessor());
         }
 
 
         [WordNodeMember(IsAutoCollect = false)]
-        public BookmarkFolderTreeAccessor FolderTree { get; }
+        public BookmarkFolderTreeAccessor FolderTree => _folderTree.Value;
 
         [WordNodeMember]
         public string? Path
@@ -101,7 +101,7 @@ namespace NeeView
         internal WordNode CreateWordNode(string name)
         {
             var node = WordNodeHelper.CreateClassWordNode(name, this.GetType());
-            node.Children?.Add(FolderTree.CreateWordNode(nameof(FolderTree)));
+            node.Children?.Add(BookmarkFolderTreeAccessor.CreateWordNode(nameof(FolderTree)));
             return node;
         }
     }

@@ -37,7 +37,7 @@ namespace NeeView
         {
             InitializeComponent();
 
-            this.FolderTree.Model = new BookshelfFolderTreeModel(model);
+            this.FolderTree.Model = new FolderTreeModel(model, FolderTreeCategory.All);
 
             _vm = new FolderListViewModel(model);
             this.DockPanel.DataContext = _vm;
@@ -47,6 +47,8 @@ namespace NeeView
 
             this.SearchBox.IsKeyboardFocusedChanged +=
                 (s, e) => SearchBoxFocusChanged?.Invoke(this, new FocusChangedEventArgs((bool)e.NewValue));
+
+            Debug.WriteLine($"> Create: {nameof(FolderListView)}");
         }
 
 

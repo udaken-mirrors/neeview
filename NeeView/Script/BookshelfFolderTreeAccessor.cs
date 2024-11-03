@@ -4,12 +4,11 @@ namespace NeeView
 {
     public class BookshelfFolderTreeAccessor
     {
-        private readonly BookshelfFolderTreeModel _model;
+        private readonly FolderTreeModel _model;
 
-        public BookshelfFolderTreeAccessor(BookshelfFolderTreeModel model)
+        public BookshelfFolderTreeAccessor()
         {
-            _model = model;
-
+            _model = AppDispatcher.Invoke(() => FolderPanel.Current.FolderTreeModel);
             QuickAccessNode = new QuickAccessFolderNodeAccessor(_model, _model.RootQuickAccess ?? throw new InvalidOperationException());
             DirectoryNode = new DirectoryNodeAccessor(_model, _model.RootDirectory ?? throw new InvalidOperationException());
             BookmarkNode = new BookmarkFolderNodeAccessor(_model, _model.RootBookmarkFolder ?? throw new InvalidOperationException());
@@ -39,12 +38,12 @@ namespace NeeView
             AppDispatcher.Invoke(() => _model.SyncDirectory(path));
         }
 
-        internal WordNode CreateWordNode(string name)
+        internal static WordNode CreateWordNode(string name)
         {
-            var node = WordNodeHelper.CreateClassWordNode(name, this.GetType());
-            node.Children?.Add(QuickAccessNode.CreateWordNode(nameof(QuickAccessNode)));
-            node.Children?.Add(DirectoryNode.CreateWordNode(nameof(DirectoryNode)));
-            node.Children?.Add(BookmarkNode.CreateWordNode(nameof(BookmarkNode)));
+            var node = WordNodeHelper.CreateClassWordNode(name, typeof(BookshelfFolderTreeAccessor));
+            node.Children?.Add(QuickAccessFolderNodeAccessor.CreateWordNode(nameof(QuickAccessNode)));
+            node.Children?.Add(DirectoryNodeAccessor.CreateWordNode(nameof(DirectoryNode)));
+            node.Children?.Add(BookmarkFolderNodeAccessor.CreateWordNode(nameof(BookmarkNode)));
             return node;
         }
     }

@@ -216,7 +216,7 @@ namespace NeeView
 
             if (Config.Current.Bookshelf.IsSyncFolderTree && Place != null)
             {
-                BookshelfFolderTreeModel.Current?.SyncDirectory(Place.SimplePath);
+                FolderPanel.Current.FolderTreeModel?.SyncDirectory(Place.SimplePath);
             }
         }
 

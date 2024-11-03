@@ -32,6 +32,8 @@ namespace NeeView
             this.DockPanel.DataContext = _vm;
 
             model.SearchBoxFocus += HistoryList_SearchBoxFocus;
+
+            Debug.WriteLine($"> Create: {nameof(HistoryListView)}");
         }
 
 

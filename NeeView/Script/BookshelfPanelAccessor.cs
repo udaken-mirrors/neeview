@@ -9,6 +9,7 @@ namespace NeeView
     {
         private readonly FolderPanel _panel;
         private readonly BookshelfFolderList _model;
+        private readonly Lazy<BookshelfFolderTreeAccessor> _folderTree;
         private CancellationToken _cancellationToken;
 
         public BookshelfPanelAccessor() : base(nameof(FolderPanel))
@@ -16,12 +17,12 @@ namespace NeeView
             _panel = (FolderPanel)CustomLayoutPanelManager.Current.GetPanel(nameof(FolderPanel));
             _model = _panel.Presenter.FolderList;
 
-            FolderTree = new BookshelfFolderTreeAccessor(BookshelfFolderTreeModel.Current ?? throw new InvalidOperationException());
+            _folderTree = new (() => new BookshelfFolderTreeAccessor());
         }
 
 
         [WordNodeMember(IsAutoCollect = false)]
-        public BookshelfFolderTreeAccessor FolderTree { get; }
+        public BookshelfFolderTreeAccessor FolderTree => _folderTree.Value;
 
         [WordNodeMember]
         public string? Path
@@ -138,7 +139,7 @@ namespace NeeView
         internal WordNode CreateWordNode(string name)
         {
             var node = WordNodeHelper.CreateClassWordNode(name, this.GetType());
-            node.Children?.Add(FolderTree.CreateWordNode(nameof(FolderTree)));
+            node.Children?.Add(BookshelfFolderTreeAccessor.CreateWordNode(nameof(FolderTree)));
             return node;
         }
     }

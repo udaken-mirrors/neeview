@@ -4,5 +4,6 @@
   "Watermark": true,
   "UseLocalApplicationData": false,
   "Revision": "12345678",
-  "DateVersion": "0000"
+  "DateVersion": "0000",
+  "LogFile": null
 }

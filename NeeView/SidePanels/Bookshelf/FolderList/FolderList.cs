@@ -1050,7 +1050,7 @@ namespace NeeView
             _folderListConfig.IsFolderTreeVisible = true;
             var query = GetCurrentQueryPath();
             if (query is null) return;
-            BookshelfFolderTreeModel.Current?.AddQuickAccess(query);
+            FolderPanel.Current.FolderTreeModel?.AddQuickAccess(query);
         }
 
         public string? GetCurrentQueryPath()
