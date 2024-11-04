@@ -1,5 +1,4 @@
-﻿using NeeView.Effects;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -10,9 +9,6 @@ using System.Text;
 
 namespace NeeView
 {
-
-
-
     public class SaveData
     {
         static SaveData() => Current = new SaveData();
@@ -63,8 +59,59 @@ namespace NeeView
         #region Load
 
         /// <summary>
-        /// 設定の読み込み
+        /// 設定ファイルの読み込み (bytes)
         /// </summary>
+        /// <returns>設定ファイルのバイト列</returns>
+        public byte[]? LoadUserSettingBytes(bool cancellable)
+        {
+            byte[]? bytes;
+            using (ProcessLock.Lock())
+            {
+                var filename = App.Current.Option.SettingFilename;
+                var extension = Path.GetExtension(filename)?.ToLowerInvariant();
+                if (extension == ".json" && File.Exists(filename))
+                {
+                    var failedDialog = CreateUserSettingLoadFailedDialog(cancellable);
+                    bytes = SafetyLoad(UserSettingTools.LoadBytes, filename, failedDialog, LoadUserSettingBackupCallback);
+                }
+                else
+                {
+                    bytes = null;
+                }
+            }
+            return bytes;
+        }
+
+        /// <summary>
+        /// 設定の読み込み (from bytes)
+        /// </summary>
+        /// <param name="bytes">設定ファイルのバイト列</param>
+        /// <returns>UserSetting</returns>
+        public UserSetting LoadUserSetting(byte[] bytes, bool cancellable)
+        {
+            try
+            {
+                using var stream = new MemoryStream(bytes);
+                var setting = UserSettingTools.Load(stream);
+                return setting ?? new UserSetting();
+            }
+            catch (Exception ex)
+            {
+                var failedDialog = CreateUserSettingLoadFailedDialog(cancellable);
+                var result = AppDispatcher.Invoke(() => failedDialog.ShowDialog(ex));
+                if (result != true)
+                {
+                    throw new OperationCanceledException();
+                }
+
+                return new UserSetting();
+            }
+        }
+
+        /// <summary>
+        /// 設定の読み込み (from UserSetting.json)
+        /// </summary>
+        /// <returns>UserSetting</returns>
         public UserSetting LoadUserSetting(bool cancellable)
         {
             if (App.Current.IsMainWindowLoaded)
@@ -79,25 +126,34 @@ namespace NeeView
             {
                 var filename = App.Current.Option.SettingFilename;
                 var extension = Path.GetExtension(filename)?.ToLowerInvariant();
-
-                var failedDialog = new LoadFailedDialog("@Notice.LoadSettingFailed", "@Notice.LoadSettingFailedTitle");
-                failedDialog.OKCommand = new UICommand("@Notice.LoadSettingFailedButtonContinue") { IsPossible = true };
-                if (cancellable)
-                {
-                    failedDialog.CancelCommand = new UICommand("@Notice.LoadSettingFailedButtonQuit") { Alignment = UICommandAlignment.Left };
-                }
-
                 if (extension == ".json" && File.Exists(filename))
                 {
-                    setting = SafetyLoad(UserSettingTools.Load, filename, failedDialog, true, LoadUserSettingBackupCallback);
+                    var failedDialog = CreateUserSettingLoadFailedDialog(cancellable);
+                    setting = SafetyLoad(UserSettingTools.Load, filename, failedDialog, LoadUserSettingBackupCallback);
                 }
                 else
                 {
-                    setting = new UserSetting();
+                    setting = null;
                 }
             }
 
             return setting ?? new UserSetting();
+        }
+
+        /// <summary>
+        /// UserSetting 用エラーダイアログ生成
+        /// </summary>
+        /// <param name="cancellable">キャンセルできる？</param>
+        /// <returns></returns>
+        private static LoadFailedDialog CreateUserSettingLoadFailedDialog(bool cancellable)
+        {
+            var failedDialog = new LoadFailedDialog("@Notice.LoadSettingFailed", "@Notice.LoadSettingFailedTitle");
+            failedDialog.OKCommand = new UICommand("@Notice.LoadSettingFailedButtonContinue") { IsPossible = true };
+            if (cancellable)
+            {
+                failedDialog.CancelCommand = new UICommand("@Notice.LoadSettingFailedButtonQuit") { Alignment = UICommandAlignment.Left };
+            }
+            return failedDialog;
         }
 
         private void LoadUserSettingBackupCallback()
@@ -146,36 +202,32 @@ namespace NeeView
         /// 正規ファイルの読み込みに失敗したらバックアップからの復元を試みる。
         /// エラー時にはダイアログ表示。選択によってはOperationCancelExceptionを発生させる。
         /// </summary>
-        /// <param name="useDefault">データが読み込めなかった場合に初期化されたインスタンスを返す。falseの場合は null を返す</param>
-        private static T? SafetyLoad<T>(Func<string, T?> load, string path, LoadFailedDialog loadFailedDialog, bool useDefault = false, Action? loadBackupCallback = null)
-            where T : class, new()
+        private static T? SafetyLoad<T>(Func<string, T?> load, string path, LoadFailedDialog loadFailedDialog, Action? loadBackupCallback = null)
+            where T : class
         {
             try
             {
-                var instance = SafetyLoad(load, path, loadBackupCallback);
-                return (instance is null && useDefault) ? new T() : instance;
+                return SafetyLoad(load, path, loadBackupCallback);
             }
             catch (Exception ex)
             {
                 if (loadFailedDialog != null)
                 {
-                    var result = loadFailedDialog.ShowDialog(ex);
+                    var result = AppDispatcher.Invoke(() => loadFailedDialog.ShowDialog(ex));
                     if (result != true)
                     {
                         throw new OperationCanceledException();
                     }
                 }
-
-                return useDefault ? new T() : null;
+                return null;
             }
         }
-
 
         /// <summary>
         /// 正規ファイルの読み込みに失敗したらバックアップからの復元を試みる
         /// </summary>
         private static T? SafetyLoad<T>(Func<string, T?> load, string path, Action? loadBackupCallback)
-            where T : class, new()
+            where T : class
         {
             var old = path + ".bak";
 

@@ -9,22 +9,11 @@ namespace NeeLaboratory.Resources
 {
     public class FileLanguageResource : LanguageResource
     {
-        private string? _path;
+        private string _path;
 
 
-        public FileLanguageResource()
+        public FileLanguageResource(string path)
         {
-        }
-
-
-        /// <summary>
-        /// リソースが存在するカルチャリストを作成する
-        /// </summary>
-        /// <param name="path">言語リソースのフォルダパス</param>
-        public void Initialize(string path)
-        {
-            if (_path is not null) throw new InvalidOperationException("Already initialized");
-
             _path = path;
 
             // TODO: ファイルシステムにアクセスしているので async が望ましい

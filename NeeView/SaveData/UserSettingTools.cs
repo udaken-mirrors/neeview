@@ -1,16 +1,12 @@
 ﻿using NeeView.Text.Json;
 using System;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Reflection;
-using System.Runtime.Serialization;
 using System.Text;
 using System.Text.Encodings.Web;
 using System.Text.Json;
-using System.Text.Json.Serialization;
-using System.Text.Unicode;
-using System.Windows;
-using System.Windows.Media;
 
 namespace NeeView
 {
@@ -48,10 +44,35 @@ namespace NeeView
             File.WriteAllBytes(path, json);
         }
 
+        public static byte[] LoadBytes(string path)
+        {
+            return File.ReadAllBytes(path);
+        }
+
         public static UserSetting? Load(string path)
         {
             using var stream = File.OpenRead(path);
             return Load(stream);
+        }
+
+        public static BootSetting? LoadBootSetting(byte[] bytes)
+        {
+            try
+            {
+                var doc = JsonDocument.Parse(bytes);
+                var config = doc.RootElement.GetProperty("Config"u8);
+                var startup = config.GetProperty("StartUp"u8);
+                var boot = new BootSetting();
+                boot.Language = config.GetProperty("System"u8).GetProperty("Language"u8).GetString() ?? "en";
+                boot.IsSplashScreenEnabled = startup.GetProperty("IsSplashScreenEnabled"u8).GetBoolean();
+                boot.IsMultiBootEnabled = startup.GetProperty("IsMultiBootEnabled"u8).GetBoolean();
+                return boot;
+            }
+            catch (Exception ex)
+            {
+                Debug.Assert(false, "Failed to load BootSetting: " + ex.Message);
+                return null;
+            }
         }
 
         public static UserSetting? Load(Stream stream)
@@ -88,16 +109,18 @@ namespace NeeView
         public static void Restore(UserSetting setting, bool replaceConfig = false)
         {
             if (setting == null) return;
-            if (setting.Config == null) return;
 
             // コンフィグ反映
-            if (replaceConfig)
+            if (setting.Config != null)
             {
-                Config.SetCurrent(setting.Config);
-            }
-            else
-            { 
-                ObjectMerge.Merge(Config.Current, setting.Config);
+                if (replaceConfig)
+                {
+                    Config.SetCurrent(setting.Config);
+                }
+                else
+                {
+                    ObjectMerge.Merge(Config.Current, setting.Config);
+                }
             }
 
             // レイアウト反映

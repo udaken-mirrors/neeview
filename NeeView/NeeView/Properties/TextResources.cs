@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
@@ -15,12 +16,12 @@ namespace NeeView.Properties
     /// </summary>
     internal class TextResources
     {
+        private static readonly Lazy<FileLanguageResource> _languageResource = new(() => new FileLanguageResource(Path.Combine(Environment.AssemblyFolder, "Languages")));
         private static bool _initialized;
-
 
         public static CultureInfo Culture { get; set; } = CultureInfo.CurrentCulture;
 
-        public static FileLanguageResource LanguageResource { get; } = new();
+        public static FileLanguageResource LanguageResource => _languageResource.Value;
 
         public static TextResourceManager Resource { get; } = new(LanguageResource);
 

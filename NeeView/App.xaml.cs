@@ -9,6 +9,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
@@ -131,10 +132,7 @@ namespace NeeView
         /// </summary>
         private async Task InitializeAsync(StartupEventArgs e)
         {
-            Debug.WriteLine($"App.InitializeAsync: {Stopwatch.ElapsedMilliseconds}ms");
-
-            TextResources.LanguageResource.Initialize(Path.Combine(Environment.AssemblyFolder, "Languages"));
-            HtmlNode.DefaultTextEvaluator = ResourceService.ReplaceFallback;
+            Debug.WriteLine($"App.InitializeAsync...: {Stopwatch.ElapsedMilliseconds}ms");
 
             this.ShutdownMode = ShutdownMode.OnExplicitShutdown;
 
@@ -142,17 +140,10 @@ namespace NeeView
             Environment.CoorectLocalAppDataFolder();
 
             // コマンドライン引数処理
-            _option = ParseArguments(e.Args);
-            _option.Validate();
+            _option = ParseCommandLineOption(e.Args);
 
             // カレントディレクトリを実行ファイルの場所に変更。ファイルロック回避のため
             System.IO.Directory.SetCurrentDirectory(Environment.AssemblyFolder);
-
-            // シフトキー起動は新しいウィンドウで
-            if (Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift))
-            {
-                Option.IsNewWindow = SwitchOption.on;
-            }
 
             // 多重起動サービス起動
             _multiBootService = new MultbootService();
@@ -160,90 +151,180 @@ namespace NeeView
             // セカンドプロセス判定
             Environment.IsSecondProcess = _multiBootService.IsServerExists;
 
-            Debug.WriteLine($"App.UserSettingLoading: {Stopwatch.ElapsedMilliseconds}ms");
+            DebugStamp("UserSettingLoading...");
 
-            // 設定の読み込み 
-            var setting = SaveData.Current.LoadUserSetting(true);
-            var config = setting.Config ??= new Config();
+            // load UserSetting bytes
+            UserSetting? setting = null;
+            var settingBytes = SaveData.Current.LoadUserSettingBytes(true);
 
-            Debug.WriteLine($"App.UserSettingLoaded: {Stopwatch.ElapsedMilliseconds}ms");
-
-            // 言語適用。初期化に影響するため優先して設定
-            var culture = CultureInfo.GetCultureInfo(config.System.Language);
-            TextResources.Initialize(culture);
-            InputGestureDisplayString.Initialize(TextResources.Resource);
-
-            Debug.WriteLine($"App.Culture: {Stopwatch.ElapsedMilliseconds}ms");
-
-            // バージョン表示
-            if (this.Option.IsVersion)
+            // create boot setting
+            var boot = settingBytes is not null ? UserSettingTools.LoadBootSetting(settingBytes) : null;
+            if (boot is null)
             {
-                UserSettingTools.Restore(setting, true); // ダイアログ表示用に Config 初期化
-                var dialog = new VersionWindow() { WindowStartupLocation = WindowStartupLocation.CenterScreen };
-                dialog.ShowDialog();
-                throw new OperationCanceledException("Displayed version dialog.");
+                setting = CreateUserSetting(settingBytes);
+                Debug.Assert(setting.Config is not null);
+                boot = BootSetting.Create(setting.Config);
             }
 
-            // 多重起動制限になる場合、サーバーにパスを送って終了
-            Debug.WriteLine($"CanStart: {CanStart(config)}: IsServerExists={_multiBootService.IsServerExists}, IsNewWindow={Option.IsNewWindow}, IsMultiBootEnabled={config.StartUp.IsMultiBootEnabled}");
-            if (!CanStart(config))
+            // If multiple launches are not possible, send parameters to the main app to terminate.
+            if (!CanStart(boot.IsMultiBootEnabled))
             {
                 await _multiBootService.RemoteLoadAsAsync(Option.Values);
                 throw new OperationCanceledException("Already started.");
             }
 
-            // スプラッシュスクリーン表示処理に若干(100ms)時間がかかるため、一部の初期化処理を非同期化
-            var task = Task.Run(() => InitializeSecond(setting));
+            // show splash screen
+            ShowSplashScreen(boot);
 
-            // スプラッシュスクリーン表示
-            ShowSplashScreen(config);
+            // initialize before UserSetting
+            InitializeTextResource(boot.Language);
+            InitializeHtmlNode();
+            InitializeCommandTable();
 
-            // 初期化処理の完了を待つ
-            await task.WaitAsync(CancellationToken.None);
+            // ensure UserSetting
+            setting ??= CreateUserSetting(settingBytes);
+            UserSettingTools.Restore(setting, replaceConfig:true);
+
+            DebugStamp("UserSettingLoaded");
+
+            // show version dialog
+            if (this.Option.IsVersion)
+            {
+                ShowVersionDialog();
+                throw new OperationCanceledException("Displayed version dialog.");
+            }
+
+            // initialize after UserSetting
+            InitializeSupportFileType(Config.Current);
+            InitializeTemporary(Config.Current);
+            InitializeImeKey(Config.Current);
+            InitializeTheme();
         }
 
-        // 非同期で実行する初期化部
-        private void InitializeSecond(UserSetting setting)
+        /// <summary>
+        /// コマンドライン引数処理
+        /// </summary>
+        /// <returns></returns>
+        private CommandLineOption ParseCommandLineOption(string[] args)
         {
-            Debug.WriteLine($"App.InitializeSecond...: {Stopwatch.ElapsedMilliseconds}ms");
+            // コマンドライン引数処理
+            var option = ParseArguments(args);
+            option.Validate();
 
-            // 設定の適用
-            UserSettingTools.Restore(setting, true);
+            // シフトキー起動は新しいウィンドウで
+            if (Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift))
+            {
+                option.IsNewWindow = SwitchOption.on;
+            }
 
-            // 画像拡張子初期化
-            var config = Config.Current;
+            return option;
+        }
+
+        /// <summary>
+        /// UserSetting 生成
+        /// </summary>
+        /// <param name="bytes"></param>
+        private UserSetting CreateUserSetting(byte[]? bytes)
+        {
+            using var span = DebugSpan();
+            var ms = Stopwatch.ElapsedMilliseconds;
+            var setting = bytes is null ? new UserSetting() : SaveData.Current.LoadUserSetting(bytes, true);
+            setting.Config ??= new Config();
+            return setting;
+        }
+
+        /// <summary>
+        /// バージョンダイアログを表示
+        /// </summary>
+        private void ShowVersionDialog()
+        {
+            var dialog = new VersionWindow() { WindowStartupLocation = WindowStartupLocation.CenterScreen };
+            dialog.ShowDialog();
+        }
+
+        /// <summary>
+        /// 言語リソース初期化
+        /// </summary>
+        /// <param name="language"></param>
+        private void InitializeTextResource(string language)
+        {
+            using var span = DebugSpan();
+            var culture = CultureInfo.GetCultureInfo(language);
+            TextResources.Initialize(culture);
+            InputGestureDisplayString.Initialize(TextResources.Resource);
+        }
+
+        /// <summary>
+        /// ヘルプ用 HtmlNode 初期化
+        /// </summary>
+        private void InitializeHtmlNode()
+        {
+            HtmlNode.DefaultTextEvaluator = ResourceService.ReplaceFallback;
+        }
+
+        /// <summary>
+        /// コマンドテーブル初期化
+        /// </summary>
+        private void InitializeCommandTable()
+        {
+            using var span = DebugSpan();
+            _ = CommandTable.Current;
+        }
+
+        /// <summary>
+        /// 画像拡張子初期化
+        /// </summary>
+        private void InitializeSupportFileType(Config config)
+        {
+            using var span = DebugSpan();
             if (config.Image.Standard.SupportFileTypes is null)
             {
                 config.Image.Standard.SupportFileTypes = PictureFileExtensionTools.CreateDefaultSupportedFileTypes(config.Image.Standard.UseWicInformation);
             }
+        }
 
-            Debug.WriteLine($"App.RestoreSettings: {Stopwatch.ElapsedMilliseconds}ms");
-
-            // テンポラリーの場所
+        /// <summary>
+        /// テンポラリーの場所
+        /// </summary>
+        private void InitializeTemporary(Config config)
+        {
+            using var span = DebugSpan();
             config.System.TemporaryDirectory = Temporary.Current.SetDirectory(config.System.TemporaryDirectory, true);
+        }
 
-            // TextBox以外のコントロールのIMEを無効にする
+        /// <summary>
+        /// TextBox以外のコントロールのIMEキー設定
+        /// </summary>
+        private void InitializeImeKey(Config config)
+        {
+            using var span = DebugSpan();
             if (!config.System.IsInputMethodEnabled)
             {
                 InputMethod.IsInputMethodEnabledProperty.OverrideMetadata(typeof(FrameworkElement), new FrameworkPropertyMetadata(false));
                 InputMethod.IsInputMethodEnabledProperty.OverrideMetadata(typeof(System.Windows.Controls.TextBox), new FrameworkPropertyMetadata(true));
             }
+        }
 
-            // テーマのインスタンス確定
+        /// <summary>
+        /// テーマの初期化
+        /// </summary>
+        private void InitializeTheme()
+        {
+            using var span = DebugSpan();
             _ = ThemeManager.Current;
-
-            Debug.WriteLine($"App.InitializeSecond.Done: {Stopwatch.ElapsedMilliseconds}ms");
         }
 
         /// <summary>
         /// Show SplashScreen
         /// </summary>
-        public void ShowSplashScreen(Config config)
+        public void ShowSplashScreen(BootSetting bootSetting)
         {
-            if (config.StartUp.IsSplashScreenEnabled && CanStart(config))
+            if (bootSetting.IsSplashScreenEnabled && CanStart(bootSetting.IsMultiBootEnabled) && !this.Option.IsVersion)
             {
                 if (_isSplashScreenVisible) return;
                 _isSplashScreenVisible = true;
+
+                using var span = DebugSpan();
                 var resourceName = "Resources/SplashScreen.png";
                 var splashScreen = new SplashScreen(resourceName);
 #if DEBUG
@@ -251,18 +332,17 @@ namespace NeeView
 #else
                 splashScreen.Show(true, true);
 #endif
-                Debug.WriteLine($"App.ShowSplashScreen: {Stopwatch.ElapsedMilliseconds}ms");
             }
         }
 
         /// <summary>
         /// 多重起動用実行可能判定
         /// </summary>
-        private bool CanStart(Config config)
+        private bool CanStart(bool isMultiBootEnabled)
         {
             if (_multiBootService is null) return false;
 
-            return !_multiBootService.IsServerExists || (Option.IsNewWindow != null ? Option.IsNewWindow == SwitchOption.on : config.StartUp.IsMultiBootEnabled);
+            return !_multiBootService.IsServerExists || (Option.IsNewWindow != null ? Option.IsNewWindow == SwitchOption.on : isMultiBootEnabled);
         }
 
         /// <summary>
@@ -380,5 +460,25 @@ namespace NeeView
             Shutdown();
         }
 
+
+        #region Develop
+
+        private IDisposable? DebugSpan([CallerMemberName] string callerMethodName = "")
+        {
+#if DEBUG
+            return new DebugSpanScope(Stopwatch, "App." + callerMethodName);
+#else
+            return null;
+#endif
+        }
+
+        [Conditional("DEBUG")]
+        private void DebugStamp(string label)
+        {
+            DebugSpanScope.Dump(Stopwatch, "App." + label);
+        }
+
+        #endregion Develop
     }
+
 }
