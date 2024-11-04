@@ -147,9 +147,9 @@ namespace NeeView
             return tokens[0] switch
             {
                 nameof(Key)
-                    => Enum.TryParse<Key>(tokens[1], out var inputKey) ? inputKey.GetDisplayString() : null,
+                    => (tokens.Length >= 2 && Enum.TryParse<Key>(tokens[1], out var inputKey)) ? inputKey.GetDisplayString() : null,
                 nameof(ModifierKeys)
-                    => Enum.TryParse<ModifierKeys>(tokens[1], out var modifierKey) ? modifierKey.GetDisplayString() : null,
+                    => (tokens.Length >= 2 && Enum.TryParse<ModifierKeys>(tokens[1], out var modifierKey)) ? modifierKey.GetDisplayString() : null,
                 _
                     => Properties.TextResources.GetStringRaw(rawKey),
             };
