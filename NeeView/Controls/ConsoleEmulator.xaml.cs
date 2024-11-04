@@ -260,6 +260,12 @@ namespace NeeView
 
             //if (string.IsNullOrEmpty(text)) return;
 
+            var maxLength = 256 * 256;
+            if (text is not null && text.Length > maxLength)
+            {
+                text = text[..maxLength] + "...";
+            }
+
             this.Dispatcher.Invoke((Action)(() =>
             {
                 if (string.IsNullOrEmpty(this.OutputBlock.Text))
