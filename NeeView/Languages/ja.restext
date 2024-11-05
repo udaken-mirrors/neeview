@@ -1493,6 +1493,7 @@ PrevSizePageCommand=設定ページ数戻る
 PrevSizePageCommand.Remarks=設定されたページ数だけ前方向に移動します。
 PrintCommand.Menu=印刷(_P)...
 PrintCommand.Remarks=画像を印刷します。
+PrintErrorDialog.Title=印刷に失敗しました。
 PrintMode.RawImage=画像を印刷
 PrintMode.View=表示を印刷
 PrintMode.ViewFill=用紙サイズで表示を印刷

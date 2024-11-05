@@ -178,8 +178,8 @@ namespace NeeView
         /// </summary>
         private void UpdatePrintOrientation()
         {
-            PrintCapabilities printCapabilities = _printDialog.PrintQueue.GetPrintCapabilities();
-            if (printCapabilities.PageOrientationCapability.Contains(PageOrientation))
+            var printCapabilities = _printDialog.PrintQueue?.GetPrintCapabilities();
+            if (printCapabilities is not null && printCapabilities.PageOrientationCapability.Contains(PageOrientation))
             {
                 _printDialog.PrintTicket.PageOrientation = PageOrientation;
             }
@@ -220,7 +220,7 @@ namespace NeeView
 
             // 用紙の印刷可能領域
             // NOTE: ドライバによっては null になる可能性がある
-            _area = _printDialog.PrintQueue.GetPrintCapabilities().PageImageableArea;
+            _area = _printDialog.PrintQueue?.GetPrintCapabilities()?.PageImageableArea;
             ////Debug.WriteLine($"Origin: {_area.OriginWidth}x{_area.OriginHeight}");
             ////Debug.WriteLine($"Extent: {_area.ExtentWidth}x{_area.ExtentHeight}");
             ////Debug.WriteLine($"PrintableArea: {_printDialog.PrintableAreaWidth}x{_printDialog.PrintableAreaHeight}");

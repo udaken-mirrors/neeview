@@ -1501,6 +1501,7 @@ PrevSizePageCommand=Prev x pages
 PrevSizePageCommand.Remarks=Move previous by a set number of pages.
 PrintCommand.Menu=_Print...
 PrintCommand.Remarks=Print the image.
+PrintErrorDialog.Title=Print failed.
 PrintMode.RawImage=Image
 PrintMode.View=View
 PrintMode.ViewFill=View with paper size

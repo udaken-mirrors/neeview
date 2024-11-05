@@ -1507,6 +1507,7 @@ PrevSizePageCommand=Indietro di x pagine
 PrevSizePageCommand.Remarks=Sposta in avanti del numero di pagine indicato.
 PrintCommand.Menu=Stampa...
 PrintCommand.Remarks=Stampa immagine.
+PrintErrorDialog.Title=
 PrintMode.RawImage=Immagine
 PrintMode.View=Vedi
 PrintMode.ViewFill=Vista con dimensioni della carta

@@ -1501,6 +1501,7 @@ PrevSizePageCommand=Voltar 10 Páginas
 PrevSizePageCommand.Remarks=Ele avança pelo número definido de páginas.
 PrintCommand.Menu=_Imprimir...
 PrintCommand.Remarks=Imprimir a imagem.
+PrintErrorDialog.Title=
 PrintMode.RawImage=Imagem
 PrintMode.View=Exibir
 PrintMode.ViewFill=Exibir com tamanho de papel

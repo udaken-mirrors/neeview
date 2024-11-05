@@ -1501,6 +1501,7 @@ PrevSizePageCommand=后退十页
 PrevSizePageCommand.Remarks=向后翻设置的页数。
 PrintCommand.Menu=打印(_P)...
 PrintCommand.Remarks=打印图像。
+PrintErrorDialog.Title=
 PrintMode.RawImage=图像
 PrintMode.View=显示
 PrintMode.ViewFill=按纸张大小查看

@@ -37,7 +37,14 @@ namespace NeeView
             var transform = _presenter.GetSelectedPageFrameContent()?.ViewTransform;
             if (transform is null) return;
 
-            Print(Window.GetWindow(_mainView), pageFrameContent, frameworkElement, transform, _mainView.View.ActualWidth, _mainView.View.ActualHeight);
+            try
+            {
+                Print(Window.GetWindow(_mainView), pageFrameContent, frameworkElement, transform, _mainView.View.ActualWidth, _mainView.View.ActualHeight);
+            }
+            catch(Exception ex)
+            {
+                new MessageDialog($"{Properties.TextResources.GetString("Word.Cause")}: {ex.Message}", Properties.TextResources.GetString("PrintErrorDialog.Title")).ShowDialog();
+            }
         }
 
 
