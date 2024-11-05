@@ -14,6 +14,16 @@
         public DragActionCollection? DragActions { get; set; }
 
         public CommandCollection? Commands { get; set; }
+
+
+        public UserSetting EnsureConfig()
+        {
+            if (Config is null)
+            {
+                Config = new Config();
+            }
+            return this;
+        }
     }
 
 }

@@ -28,7 +28,7 @@ namespace NeeView.Properties
 
         public static void Initialize(CultureInfo culture)
         {
-            if (_initialized) throw new InvalidOperationException("Already initialized.");
+            if (_initialized) return;
             _initialized = true;
 
 #if false

@@ -155,13 +155,13 @@ namespace NeeView
 
             // load UserSetting bytes
             UserSetting? setting = null;
-            var settingBytes = SaveData.Current.LoadUserSettingBytes(true);
+            var settingResource = new UserSettingResource(_option.SettingFilename);
 
             // create boot setting
-            var boot = settingBytes is not null ? UserSettingTools.LoadBootSetting(settingBytes) : null;
+            var boot = settingResource.LoadBootSetting();
             if (boot is null)
             {
-                setting = CreateUserSetting(settingBytes);
+                setting = CreateUserSetting(settingResource);
                 Debug.Assert(setting.Config is not null);
                 boot = BootSetting.Create(setting.Config);
             }
@@ -182,7 +182,7 @@ namespace NeeView
             InitializeCommandTable();
 
             // ensure UserSetting
-            setting ??= CreateUserSetting(settingBytes);
+            setting ??= CreateUserSetting(settingResource);
             UserSettingTools.Restore(setting, replaceConfig:true);
 
             DebugStamp("UserSettingLoaded");
@@ -223,14 +223,24 @@ namespace NeeView
         /// <summary>
         /// UserSetting 生成
         /// </summary>
-        /// <param name="bytes"></param>
-        private UserSetting CreateUserSetting(byte[]? bytes)
+        private UserSetting CreateUserSetting(UserSettingResource settingResource)
         {
             using var span = DebugSpan();
-            var ms = Stopwatch.ElapsedMilliseconds;
-            var setting = bytes is null ? new UserSetting() : SaveData.Current.LoadUserSetting(bytes, true);
-            setting.Config ??= new Config();
-            return setting;
+            try
+            {
+                var setting = settingResource.Load() ?? new UserSetting();
+                return setting.EnsureConfig();
+            }
+            catch (Exception ex)
+            {
+                var dialog = new UserSettingLoadFailedDialog(true);
+                var result = dialog.ShowDialog(ex);
+                if (result != true)
+                {
+                    throw new OperationCanceledException();
+                }
+                return new UserSetting().EnsureConfig();
+            }
         }
 
         /// <summary>

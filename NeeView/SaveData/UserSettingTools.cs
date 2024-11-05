@@ -70,7 +70,7 @@ namespace NeeView
             }
             catch (Exception ex)
             {
-                Debug.Assert(false, "Failed to load BootSetting: " + ex.Message);
+                Debug.WriteLine("Failed to load BootSetting: " + ex.Message);
                 return null;
             }
         }

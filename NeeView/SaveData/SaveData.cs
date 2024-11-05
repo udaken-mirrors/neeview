@@ -11,6 +11,8 @@ namespace NeeView
 {
     public class SaveData
     {
+        public const string BackupExtension = ".bak";
+
         static SaveData() => Current = new SaveData();
         public static SaveData Current { get; }
 
@@ -50,6 +52,11 @@ namespace NeeView
 
         public bool IsEnableSave { get; private set; } = true;
 
+        public bool BackupOnce
+        {
+            get => _backupOnce;
+            set => _backupOnce = value;
+        }
 
         public void DisableSave()
         {
@@ -59,57 +66,7 @@ namespace NeeView
         #region Load
 
         /// <summary>
-        /// 設定ファイルの読み込み (bytes)
-        /// </summary>
-        /// <returns>設定ファイルのバイト列</returns>
-        public byte[]? LoadUserSettingBytes(bool cancellable)
-        {
-            byte[]? bytes;
-            using (ProcessLock.Lock())
-            {
-                var filename = App.Current.Option.SettingFilename;
-                var extension = Path.GetExtension(filename)?.ToLowerInvariant();
-                if (extension == ".json" && File.Exists(filename))
-                {
-                    var failedDialog = CreateUserSettingLoadFailedDialog(cancellable);
-                    bytes = SafetyLoad(UserSettingTools.LoadBytes, filename, failedDialog, LoadUserSettingBackupCallback);
-                }
-                else
-                {
-                    bytes = null;
-                }
-            }
-            return bytes;
-        }
-
-        /// <summary>
-        /// 設定の読み込み (from bytes)
-        /// </summary>
-        /// <param name="bytes">設定ファイルのバイト列</param>
-        /// <returns>UserSetting</returns>
-        public UserSetting LoadUserSetting(byte[] bytes, bool cancellable)
-        {
-            try
-            {
-                using var stream = new MemoryStream(bytes);
-                var setting = UserSettingTools.Load(stream);
-                return setting ?? new UserSetting();
-            }
-            catch (Exception ex)
-            {
-                var failedDialog = CreateUserSettingLoadFailedDialog(cancellable);
-                var result = AppDispatcher.Invoke(() => failedDialog.ShowDialog(ex));
-                if (result != true)
-                {
-                    throw new OperationCanceledException();
-                }
-
-                return new UserSetting();
-            }
-        }
-
-        /// <summary>
-        /// 設定の読み込み (from UserSetting.json)
+        /// 設定の読み込み
         /// </summary>
         /// <returns>UserSetting</returns>
         public UserSetting LoadUserSetting(bool cancellable)
@@ -128,7 +85,7 @@ namespace NeeView
                 var extension = Path.GetExtension(filename)?.ToLowerInvariant();
                 if (extension == ".json" && File.Exists(filename))
                 {
-                    var failedDialog = CreateUserSettingLoadFailedDialog(cancellable);
+                    var failedDialog = new UserSettingLoadFailedDialog(cancellable);
                     setting = SafetyLoad(UserSettingTools.Load, filename, failedDialog, LoadUserSettingBackupCallback);
                 }
                 else
@@ -138,22 +95,6 @@ namespace NeeView
             }
 
             return setting ?? new UserSetting();
-        }
-
-        /// <summary>
-        /// UserSetting 用エラーダイアログ生成
-        /// </summary>
-        /// <param name="cancellable">キャンセルできる？</param>
-        /// <returns></returns>
-        private static LoadFailedDialog CreateUserSettingLoadFailedDialog(bool cancellable)
-        {
-            var failedDialog = new LoadFailedDialog("@Notice.LoadSettingFailed", "@Notice.LoadSettingFailedTitle");
-            failedDialog.OKCommand = new UICommand("@Notice.LoadSettingFailedButtonContinue") { IsPossible = true };
-            if (cancellable)
-            {
-                failedDialog.CancelCommand = new UICommand("@Notice.LoadSettingFailedButtonQuit") { Alignment = UICommandAlignment.Left };
-            }
-            return failedDialog;
         }
 
         private void LoadUserSettingBackupCallback()
@@ -229,7 +170,7 @@ namespace NeeView
         private static T? SafetyLoad<T>(Func<string, T?> load, string path, Action? loadBackupCallback)
             where T : class
         {
-            var old = path + ".bak";
+            var old = path + BackupExtension;
 
             if (File.Exists(path))
             {
@@ -401,7 +342,7 @@ namespace NeeView
             if (string.IsNullOrWhiteSpace(path)) throw new ArgumentNullException(nameof(path));
 
             var newFileName = path + ".new.tmp";
-            var backupFileName = createBackup ? path + ".bak" : null;
+            var backupFileName = createBackup ? path + BackupExtension : null;
 
             lock (App.Current.Lock)
             {
@@ -427,49 +368,5 @@ namespace NeeView
         }
 
         #endregion Save
-    }
-
-
-    /// <summary>
-    /// データロードエラーダイアログ
-    /// </summary>
-    public class LoadFailedDialog
-    {
-        public LoadFailedDialog(string title, string message)
-        {
-            Title = title;
-            Message = message;
-        }
-
-        public string Title { get; set; }
-        public string Message { get; set; }
-        public UICommand OKCommand { get; set; } = UICommands.OK;
-        public UICommand? CancelCommand { get; set; }
-
-
-        public bool ShowDialog(Exception ex)
-        {
-            var textBox = new System.Windows.Controls.TextBox()
-            {
-                IsReadOnly = true,
-                Text = ResourceService.GetString(Message) + System.Environment.NewLine + ex.Message,
-                TextWrapping = System.Windows.TextWrapping.Wrap,
-                VerticalScrollBarVisibility = System.Windows.Controls.ScrollBarVisibility.Auto,
-                HorizontalScrollBarVisibility = System.Windows.Controls.ScrollBarVisibility.Disabled,
-            };
-
-            var dialog = new MessageDialog(textBox, ResourceService.GetString(Title));
-            dialog.SizeToContent = System.Windows.SizeToContent.Manual;
-            dialog.Height = 320.0;
-            dialog.ResizeMode = System.Windows.ResizeMode.CanResize;
-            dialog.Commands.Add(OKCommand);
-            if (CancelCommand != null)
-            {
-                dialog.Commands.Add(CancelCommand);
-            }
-
-            var result = dialog.ShowDialog();
-            return result.Command == OKCommand || CancelCommand == null;
-        }
     }
 }
