@@ -28,8 +28,9 @@ namespace NeeView.PageFrames
         private readonly ViewScrollContext _viewScrollContext;
         private readonly bool _isMediaBook;
         private PageRange _autoStretchTarget = PageRange.Empty;
+        private bool _ignoreScaleStretchTracking;
 
-        
+
         public PageFrameContext(BookShareContext shareContext, bool isMediaBook)
         {
             _shareContext = shareContext;
@@ -96,7 +97,7 @@ namespace NeeView.PageFrames
         public bool AllowEnlarge => _config.View.AllowStretchScaleUp;
         public bool AllowReduce => _config.View.AllowStretchScaleDown;
         public bool IsFlipLocked => _config.View.IsKeepFlip;
-        public bool IsScaleStretchTracking => _config.View.IsScaleStretchTracking && !_config.View.IsKeepScale;
+        public bool IsScaleStretchTracking => !_ignoreScaleStretchTracking && _config.View.IsScaleStretchTracking && !_config.View.IsKeepScale;
         public bool IsScaleLocked => _config.View.IsKeepScale;
         public bool IsAngleLocked => _config.View.IsKeepAngle;
         public bool IsIgnoreImageDpi => _config.System.IsIgnoreImageDpi;
@@ -381,6 +382,12 @@ namespace NeeView.PageFrames
         public void ResetAutoStretchTarget()
         {
             SetAutoStretchTarget(PageRange.Empty);
+        }
+
+        public IDisposable IgnoreScaleStretchTracking()
+        {
+            _ignoreScaleStretchTracking = true;
+            return new AnonymousDisposable(() =>  { _ignoreScaleStretchTracking = false; });
         }
 
         public void SetAutoStretchTarget(PageRange range)

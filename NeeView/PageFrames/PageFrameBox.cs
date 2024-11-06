@@ -621,8 +621,6 @@ namespace NeeView.PageFrames
                 case nameof(Context.DpiScale):
                 case nameof(Context.ImageCustomSizeConfig):
                 case nameof(Context.ImageTrimConfig):
-                case nameof(Context.ImageResizeFilterConfig):
-                case nameof(Context.ImageDotKeepConfig):
                 case nameof(Context.IsAspectRatioEnabled):
                 case nameof(Context.IsInsertDummyPage):
                 case nameof(Context.IsInsertDummyFirstPage):
@@ -630,6 +628,15 @@ namespace NeeView.PageFrames
                 case nameof(Context.DividePageRate):
                     UpdateContainers(PageFrameDirtyLevel.Heavy, TransformMask.None, false, false);
                     break;
+
+                case nameof(Context.ImageResizeFilterConfig):
+                case nameof(Context.ImageDotKeepConfig):
+                    using (_context.IgnoreScaleStretchTracking())
+                    {
+                        UpdateContainers(PageFrameDirtyLevel.Heavy, TransformMask.None, false, false);
+                    }
+                    break;
+
 
                 case nameof(Context.IsScaleStretchTracking):
                     UpdateScaleStretchTracking();
