@@ -259,5 +259,41 @@ namespace NeeView.UnitTest
             var result = LoosePath.ValidPath(actual);
             Assert.Equal(expected, result);
         }
+
+      
+        [Theory]
+        [InlineData(@"file:C:\Hoge\test.txt", @"C:\Hoge\test.txt")]
+        [InlineData(@"file:\C:\Hoge\test.txt\", @"C:\Hoge\test.txt")]
+        [InlineData(@"file:\\C:\Hoge\test.txt", @"C:\Hoge\test.txt")]
+        [InlineData(@"file://C:/Hoge/test.txt", @"C:\Hoge\test.txt")]
+        [InlineData(@"file:\\C:", @"C:\")]
+        [InlineData(@"file:c:\", @"C:\")]
+        public void QueryFilePathTest(string source, string path)
+        {
+            var query = new QueryPath(QueryScheme.File, path);
+            var actual = new QueryPath(source);
+
+            Assert.Equal(query, actual);
+            Assert.Equal(path, actual.Path);
+            Assert.Equal(@"file:\" + path, actual.FullPath);
+            Assert.Equal(path, actual.SimplePath);
+        }
+
+        [Theory]
+        [InlineData(@"bookmark:folder\item1")]
+        [InlineData(@"bookmark:\folder\item1\")]
+        [InlineData(@"bookmark:\\folder\item1")]
+        [InlineData(@"bookmark://folder/item1")]
+        public void QueryBookmarkPathTest(string source)
+        {
+            var path = @"folder\item1";
+            var query = new QueryPath(QueryScheme.Bookmark, path);
+            var actual = new QueryPath(source);
+
+            Assert.Equal(query, actual);
+            Assert.Equal(path, actual.Path);
+            Assert.Equal(@"bookmark:\folder\item1", actual.FullPath);
+            Assert.Equal(@"bookmark:\folder\item1", actual.SimplePath);
+        }
     }
 }

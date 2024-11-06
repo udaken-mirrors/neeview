@@ -254,7 +254,7 @@ namespace NeeView
                 return null;
             }
 
-            var s = LoosePath.NormalizeSeparator(source).Trim(LoosePath.AsciiSpaces).TrimEnd('\\');
+            var s = LoosePath.NormalizeSeparator(source).Trim(LoosePath.AsciiSpaces).Trim('\\');
 
             if (scheme == QueryScheme.File)
             {
@@ -263,10 +263,6 @@ namespace NeeView
                 {
                     return char.ToUpperInvariant(s[0]) + ":\\";
                 }
-            }
-            else
-            {
-                s = '\\' + s.TrimStart('\\');
             }
 
             return string.IsNullOrWhiteSpace(s) ? null : s;
