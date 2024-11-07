@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Windows;
+using System.Text.Json.Serialization;
 
 namespace NeeView.Runtime.LayoutPanel
 {
@@ -34,6 +34,8 @@ namespace NeeView.Runtime.LayoutPanel
         };
 
         public ILayoutPanelWindowBuilder? WindowBuilder { get; set; }
+
+        public AlternativePanelSource? AlternativePanelSource { get; set; }
 
 
         public LayoutDockPanelNode? FindLayoutDockPanelNode(LayoutPanel panel)
@@ -225,6 +227,9 @@ namespace NeeView.Runtime.LayoutPanel
             public Dictionary<string, LayoutDockPanelContent.Memento>? Docks { get; set; }
 
             public LayoutPanelWindowManager.Memento? Windows { get; set; }
+
+            [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+            public AlternativePanelSource? AlternativePanelSource { get; set; }
         }
 
 
@@ -236,6 +241,7 @@ namespace NeeView.Runtime.LayoutPanel
             memento.Panels = this.Panels.ToDictionary(e => e.Key, e => e.Value.CreateMemento());
             memento.Docks = Docks.ToDictionary(e => e.Key, e => e.Value.CreateMemento());
             memento.Windows = this.Windows.CreateMemento();
+            memento.AlternativePanelSource = AlternativePanelSource;
             return memento;
         }
 
@@ -269,6 +275,8 @@ namespace NeeView.Runtime.LayoutPanel
             }
 
             this.Windows.Restore(memento.Windows);
+
+            AlternativePanelSource = memento.AlternativePanelSource;
         }
 
         #endregion

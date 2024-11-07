@@ -443,7 +443,7 @@ namespace NeeView
 
             _dpiProvider.SetDipScale(VisualTreeHelper.GetDpi(this));
 
-            MainViewManager.Current.Update();
+            MainViewManager.Current.Update(false);
 
             // レイアウト更新
             DirtyWindowLayout();

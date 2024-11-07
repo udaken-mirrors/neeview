@@ -46,7 +46,7 @@ namespace NeeView
             BookOperation.Current.BookChanging += BookOperation_BookChanging;
             BookOperation.Current.BookChanged += BookOperation_BookChanged;
 
-            Config.Current.MainView.AddPropertyChanged(nameof(MainViewConfig.IsFloating), (s, e) => Update());
+            Config.Current.MainView.AddPropertyChanged(nameof(MainViewConfig.IsFloating), (s, e) => Update(true));
 
             Config.Current.MainView.SubscribePropertyChanged(nameof(MainViewConfig.AlternativeContent), (s, e) => UpdateAlternativeContent());
 
@@ -121,11 +121,11 @@ namespace NeeView
             }
         }
 
-        public void Update()
+        public void Update(bool storeAlternativePanelSource)
         {
             if (Config.Current.MainView.IsFloating)
             {
-                Floating();
+                Floating(storeAlternativePanelSource);
             }
             else
             {
@@ -133,7 +133,7 @@ namespace NeeView
             }
         }
 
-        private void Floating()
+        private void Floating(bool storeAlternativePanelSource)
         {
             if (_window != null)
             {
@@ -149,7 +149,7 @@ namespace NeeView
 
             _dockingLocker.Deactivate();
 
-            _alternativeContent = CreateAlternativeContent();
+            _alternativeContent = CreateAlternativeContent(storeAlternativePanelSource);
             _defaultSocket.Content = _alternativeContent.Content;
 
             InfoMessage.Current.ClearMessage(ShowMessageStyle.Normal);
@@ -196,14 +196,14 @@ namespace NeeView
             _dockingLocker.Activate();
         }
 
-        private IDisposableContent CreateAlternativeContent()
+        private IDisposableContent CreateAlternativeContent(bool storeAlternativePanelSource)
         {
             switch (Config.Current.MainView.AlternativeContent)
             {
                 case AlternativeContent.Blank:
                     return new NormalAlternativeContent(_mainViewBay);
                 case AlternativeContent.PageList:
-                    return new LayoutPanelAlternativeContent(nameof(PageListPanel));
+                    return new LayoutPanelAlternativeContent(nameof(PageListPanel), storeAlternativePanelSource);
                 default:
                     throw new NotSupportedException();
             }
@@ -214,7 +214,7 @@ namespace NeeView
             if (_window is null) return;
 
             _alternativeContent?.Dispose();
-            _alternativeContent = CreateAlternativeContent();
+            _alternativeContent = CreateAlternativeContent(true);
             _defaultSocket.Content = _alternativeContent.Content;
         }
 
