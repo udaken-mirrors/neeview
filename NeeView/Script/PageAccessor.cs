@@ -19,13 +19,17 @@ namespace NeeView
         public int Index => _page.Index;
 
         [WordNodeMember]
-        public string Path => _page.EntryFullName;
+        [Alternative("@_ScriptManual.PagePathChangeNote", 42, ErrorLevel = ScriptErrorLevel.Error, IsFullName = true)] // ver.42
+        public string Path => _page.TargetPath;
+
+        [WordNodeMember]
+        public string RawPath => _page.EntryFullName;
 
         [WordNodeMember]
         public long Size => _page.Length;
 
         [WordNodeMember]
-        [Alternative("@_ScriptManual.DateTypeChangeNote", 42, ErrorLevel = ScriptErrorLevel.Error, IsFullName = true)]
+        [Alternative("@_ScriptManual.DateTypeChangeNote", 42, ErrorLevel = ScriptErrorLevel.Error, IsFullName = true)] // ver.42
         public DateTime LastWriteTime => _page.LastWriteTime;
 
         [WordNodeMember]

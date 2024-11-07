@@ -1,5 +1,6 @@
 _ScriptManual.ClassInheritance=该分类继承自 {0}。
 _ScriptManual.DateTypeChangeNote=类型由 "字符串" 更改为 "日期"。
+_ScriptManual.PagePathChangeNote=
 _ScriptManual.S1=概述
 _ScriptManual.S1.P1=使用脚本扩展命令。您可以更改设置、一次执行多个命令、或者通过更改命令参数将它们作为单独的命令执行。
 _ScriptManual.S1.P2=默认情况下脚本处于禁用状态。可在 "选项" 的 "脚本" 页面中进行设置并启用。
@@ -1339,6 +1340,7 @@ PageAccessor.Index=页面索引。以 0 开头的数字。
 PageAccessor.IsBook=可作为书籍打开
 PageAccessor.Open=打开页面
 PageAccessor.Path=页面路径
+PageAccessor.RawPath=
 PageAccessor.Size=文件大小 (字节)
 PageEndAction.Dialog=在对话框中选择
 PageEndAction.Loop=循环

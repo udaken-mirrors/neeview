@@ -1,5 +1,6 @@
 _ScriptManual.ClassInheritance=このクラスは {0} を継承しています。
 _ScriptManual.DateTypeChangeNote=型が string から Date に変更されました。
+_ScriptManual.PagePathChangeNote=ページ実体のパスになりました。ショートカット ファイルの場合はその実体のパスになります。以前のバージョンのパスについては RawPath を参照してください。
 _ScriptManual.S1=概要
 _ScriptManual.S1.P1=スクリプトでコマンドを拡張します。設定を変更したり、複数のコマンドをまとめて実行したり、コマンドパラメーターを変更した別のコマンドとして実行することができます。
 _ScriptManual.S1.P2=スクリプト機能はデフォルトでは無効になっています。設定の「スクリプト」ページで設定して有効にします。
@@ -1331,6 +1332,7 @@ PageAccessor.Index=ページ インデックス。数字は 0 から始まる。
 PageAccessor.IsBook=ブックとして開くことができる
 PageAccessor.Open=ページを開く
 PageAccessor.Path=ページのパス
+PageAccessor.RawPath=未加工のパス
 PageAccessor.Size=ファイル サイズ (Byte)
 PageEndAction.Dialog=ダイアログで選択
 PageEndAction.Loop=ループする

@@ -1,5 +1,6 @@
 _ScriptManual.ClassInheritance=
 _ScriptManual.DateTypeChangeNote=
+_ScriptManual.PagePathChangeNote=
 _ScriptManual.S1=Panoramica
 _ScriptManual.S1.P1=Extend the command with a script. Puoi cambiare le impostazioni, eseguire comandi multipli insieme, o eseguirli come comandi separati con parametri cambiati.
 _ScriptManual.S1.P2=Scripting è disabilitato di default. Imposta e abilita la pagina Script in Opzioni.
@@ -1345,6 +1346,7 @@ PageAccessor.Index=
 PageAccessor.IsBook=
 PageAccessor.Open=
 PageAccessor.Path=Percorso pagina
+PageAccessor.RawPath=
 PageAccessor.Size=Dimensione file (Byte)
 PageEndAction.Dialog=Seleziona nella finestra di dialogo
 PageEndAction.Loop=Loop

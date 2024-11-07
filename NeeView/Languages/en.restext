@@ -1,5 +1,6 @@
 _ScriptManual.ClassInheritance=This class inherits from {0}.
 _ScriptManual.DateTypeChangeNote=Type changed from string to Date.
+_ScriptManual.PagePathChangeNote=The path is now the path of the page entity. In the case of a shortcut file, it is the path to its entity. See RawPath for paths in previous versions.
 _ScriptManual.S1=Overview
 _ScriptManual.S1.P1=Extend the command with a script. You can change the settings, execute multiple commands at once, or execute them as separate commands with changed command parameters.
 _ScriptManual.S1.P2=Scripting is disabled by default. Set and enable on the Scripts page of Options.
@@ -1339,6 +1340,7 @@ PageAccessor.Index=Page index. Numbers begin with 0.
 PageAccessor.IsBook=Can open as a book
 PageAccessor.Open=Open page
 PageAccessor.Path=Page path
+PageAccessor.RawPath=Raw path
 PageAccessor.Size=File size (Byte)
 PageEndAction.Dialog=Select in dialog
 PageEndAction.Loop=Loop

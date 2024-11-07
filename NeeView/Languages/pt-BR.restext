@@ -1,5 +1,6 @@
 _ScriptManual.ClassInheritance=Esta classe herda de {0}.
 _ScriptManual.DateTypeChangeNote=Tipo alterado de string para Data.
+_ScriptManual.PagePathChangeNote=
 _ScriptManual.S1=Visão geral
 _ScriptManual.S1.P1=Estenda o comando com um script. Você pode alterar as configurações, executar vários comandos de uma vez ou executá-los como comandos separados com parâmetros de comando alterados.
 _ScriptManual.S1.P2=Os scripts estão desabilitados por padrão. Defina e ative na página Scripts de Opções.
@@ -1339,6 +1340,7 @@ PageAccessor.Index=Índice da página. Os números começam com 0.
 PageAccessor.IsBook=Pode abrir como um livro
 PageAccessor.Open=Abrir página
 PageAccessor.Path=Caminho da página
+PageAccessor.RawPath=
 PageAccessor.Size=Tamanho do arquivo (Byte)
 PageEndAction.Dialog=Selecionar na caixa de diálogo
 PageEndAction.Loop=Repetir

@@ -1,5 +1,6 @@
 _ScriptManual.ClassInheritance=
 _ScriptManual.DateTypeChangeNote=
+_ScriptManual.PagePathChangeNote=
 _ScriptManual.S1=概述
 _ScriptManual.S1.P1=擴展腳本指令。無論是更改設定、一併執行多個指令、已更改為其他的指令參數作為另一個指令執行也都是可以做到的。
 _ScriptManual.S1.P2=腳本功能在預設下是不啟用的。可到設定的「腳本」頁面設定為啟用。
@@ -1331,6 +1332,7 @@ PageAccessor.Index=
 PageAccessor.IsBook=
 PageAccessor.Open=
 PageAccessor.Path=頁面路徑
+PageAccessor.RawPath=
 PageAccessor.Size=檔案大小 (Byte)
 PageEndAction.Dialog=使用對話框選擇
 PageEndAction.Loop=循環
