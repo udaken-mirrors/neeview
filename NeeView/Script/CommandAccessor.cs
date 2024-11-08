@@ -64,15 +64,18 @@ namespace NeeView
         {
             var parameter = _command.CreateOverwriteCommandParameter(_patch, _accessDiagnostics);
             var context = new CommandContext(parameter, args, CommandOption.None);
-            if (_command.CanExecute(this, context))
+            return AppDispatcher.Invoke(() =>
             {
-                AppDispatcher.Invoke(() => _command.Execute(this, context));
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+                if (_command.CanExecute(this, context))
+                {
+                    _command.Execute(this, context);
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            });
         }
 
         [WordNodeMember]
