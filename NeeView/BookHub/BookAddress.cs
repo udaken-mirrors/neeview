@@ -49,9 +49,14 @@ namespace NeeView
         public QueryPath Place { get; set; } = QueryPath.Empty;
 
         /// <summary>
+        /// EntryName の基準となるパス
+        /// </summary>
+        public QueryPath ArchivePath { get; set; } = QueryPath.Empty;
+
+        /// <summary>
         /// ページを含めたアーカイブパス
         /// </summary>
-        public string SystemPath => LoosePath.Combine(TargetPath?.SimplePath, EntryName);
+        public string SystemPath => LoosePath.Combine(ArchivePath?.SimplePath, EntryName);
 
 
 
@@ -106,12 +111,14 @@ namespace NeeView
             if (entryName != null)
             {
                 this.TargetPath = query;
+                this.ArchivePath = query;
                 this.EntryName = entryName;
             }
             // 検索オプションが指定されてたらブック
             else if (search != null)
             {
                 this.TargetPath = query;
+                this.ArchivePath = query;
                 this.EntryName = null;
             }
             // パスはブック
@@ -119,6 +126,7 @@ namespace NeeView
             {
                 Debug.Assert(!option.HasFlag(BookLoadOption.IsPage));
                 this.TargetPath = query;
+                this.ArchivePath = query;
                 this.EntryName = null;
             }
             // パスはページ
@@ -129,6 +137,7 @@ namespace NeeView
                     if (entry.IsFileSystem)
                     {
                         this.TargetPath = query.GetParent();
+                        this.ArchivePath = this.TargetPath;
                     }
                     else
                     {
@@ -136,24 +145,28 @@ namespace NeeView
                         {
                             case ArchiveEntryCollectionMode.CurrentDirectory:
                                 this.TargetPath = query.GetParent();
+                                this.ArchivePath = new QueryPath(entry.Archive.SystemPath);
                                 break;
                             case ArchiveEntryCollectionMode.IncludeSubDirectories:
                                 this.TargetPath = new QueryPath(entry.Archive.SystemPath);
+                                this.ArchivePath = this.TargetPath;
                                 break;
                             case ArchiveEntryCollectionMode.IncludeSubArchives:
                                 this.TargetPath = new QueryPath(entry.RootArchive.SystemPath);
+                                this.ArchivePath = this.TargetPath;
                                 break;
                             default:
                                 throw new NotSupportedException($"{nameof(ArchiveEntryCollectionMode)}.{mode} is not supported.");
                         }
                     }
-                    this.EntryName = GetEntryName(query, this.TargetPath);
+                    this.EntryName = GetEntryName(query, this.ArchivePath);
                     entry = await ArchiveEntryUtility.CreateAsync(TargetPath.SimplePath, token);
                 }
                 catch (Exception ex)
                 {
                     Debug.WriteLine(ex.Message);
                     this.TargetPath = query.GetParent();
+                    this.ArchivePath = query.GetParent();
                     this.EntryName = query.FileName;
                     entry = await ArchiveEntryUtility.CreateAsync(TargetPath.SimplePath, token);
                 }
