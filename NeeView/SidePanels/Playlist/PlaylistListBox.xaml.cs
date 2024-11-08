@@ -47,11 +47,11 @@ namespace NeeView
 
             // タッチスクロール操作の終端挙動抑制
             this.ListBox.ManipulationBoundaryFeedback += SidePanelFrame.Current.ScrollViewer_ManipulationBoundaryFeedback;
+            this.ListBox.PreviewMouseUpWithSelectionChanged += PlaylistListBox_PreviewMouseUpWithSelectionChanged;
 
             this.Loaded += PlaylistListBox_Loaded;
             this.Unloaded += PlaylistListBox_Unloaded;
         }
-
 
 
         public bool IsToolTipEnabled
@@ -487,13 +487,27 @@ namespace NeeView
             }
         }
 
+        private void PlaylistListBox_PreviewMouseUpWithSelectionChanged(object? sender, MouseButtonEventArgs e)
+        {
+            if (this.ListBox.SelectedItems.Count != 1) return;
+
+            if (this.ListBox.SelectedItem is PlaylistItem item)
+            {
+                ClickToOpen(item);
+            }
+        }
 
         private void PlaylistListItem_MouseLeftButtonDown(object? sender, MouseButtonEventArgs e)
         {
-            if (Keyboard.Modifiers != ModifierKeys.None) return;
+            if (sender is ListBoxItem { Content: PlaylistItem item })
+            {
+                ClickToOpen(item);
+            }
+        }
 
-            var item = ((sender as ListBoxItem)?.Content as PlaylistItem);
-            if (item is null) return;
+        private void ClickToOpen(PlaylistItem item)
+        { 
+            if (Keyboard.Modifiers != ModifierKeys.None) return;
 
             if (!Config.Current.Panels.OpenWithDoubleClick)
             {

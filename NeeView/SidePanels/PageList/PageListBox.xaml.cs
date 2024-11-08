@@ -55,6 +55,7 @@ namespace NeeView
 
             // タッチスクロール操作の終端挙動抑制
             this.ListBox.ManipulationBoundaryFeedback += SidePanelFrame.Current.ScrollViewer_ManipulationBoundaryFeedback;
+            this.ListBox.PreviewMouseUpWithSelectionChanged += PageList_PreviewMouseUpWithSelectionChanged;
 
             this.Loaded += PageListBox_Loaded;
             this.Unloaded += PageListBox_Unloaded;
@@ -365,16 +366,31 @@ namespace NeeView
             UpdateViewItems();
         }
 
+        // 項目クリック (複数選択解除)
+        private void PageList_PreviewMouseUpWithSelectionChanged(object? sender, MouseButtonEventArgs e)
+        {
+            if (this.ListBox.SelectedItems.Count != 1) return;
+
+            if (this.ListBox.SelectedItem is Page page)
+            {
+                ClickToMove(page);
+            }
+        }
 
         // 項目クリック
         private void PageListItem_MouseLeftButtonDown(object? sender, MouseButtonEventArgs e)
         {
+            if (sender is ListBoxItem { Content: Page page })
+            {
+                ClickToMove(page);
+            }
+        }
+
+        private void ClickToMove(Page page)
+        {
             if (Keyboard.Modifiers != ModifierKeys.None) return;
 
-            if ((sender as ListBoxItem)?.Content is Page page)
-            {
-                _vm.Model.MoveTo(page);
-            }
+            _vm.Model.MoveTo(page);
         }
 
         private void PageListItem_MouseLeftButtonUp(object? sender, MouseButtonEventArgs e)

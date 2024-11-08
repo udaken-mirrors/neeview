@@ -509,6 +509,7 @@ namespace NeeView.Windows
             {
                 listBox.SetSelectedItems(_selectedItems);
                 listBox.SetAnchorItem(null);
+                listBox.RaisePreviewMouseUpWithSelectionChanged(sender, e);
             }
 
             _selectedItems = null;

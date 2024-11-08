@@ -47,6 +47,7 @@ namespace NeeView
 
             // タッチスクロール操作の終端挙動抑制
             this.ListBox.ManipulationBoundaryFeedback += SidePanelFrame.Current.ScrollViewer_ManipulationBoundaryFeedback;
+            this.ListBox.PreviewMouseUpWithSelectionChanged += ListBox_PreviewMouseUpWithSelectionChanged;
 
             this.Loaded += FolderListBox_Loaded;
             this.Unloaded += FolderListBox_Unloaded;
@@ -59,7 +60,6 @@ namespace NeeView
                 this.ListBox.ContextMenu = menu;
             }
         }
-
 
 
         public bool IsToolTipEnabled
@@ -774,9 +774,9 @@ namespace NeeView
             _vm.SelectedChanged += ViewModel_SelectedChanged;
             _vm.BusyChanged += ViewModel_BusyChanged;
 
-            Config.Current.Panels.ContentItemProfile.PropertyChanged += PanelListtemProfile_PropertyChanged;
-            Config.Current.Panels.BannerItemProfile.PropertyChanged += PanelListtemProfile_PropertyChanged;
-            Config.Current.Panels.ThumbnailItemProfile.PropertyChanged += PanelListtemProfile_PropertyChanged;
+            Config.Current.Panels.ContentItemProfile.PropertyChanged += PanelListItemProfile_PropertyChanged;
+            Config.Current.Panels.BannerItemProfile.PropertyChanged += PanelListItemProfile_PropertyChanged;
+            Config.Current.Panels.ThumbnailItemProfile.PropertyChanged += PanelListItemProfile_PropertyChanged;
         }
 
         private void FolderListBox_Unloaded(object? sender, RoutedEventArgs e)
@@ -786,15 +786,15 @@ namespace NeeView
             _vm.SelectedChanged -= ViewModel_SelectedChanged;
             _vm.BusyChanged -= ViewModel_BusyChanged;
 
-            Config.Current.Panels.ContentItemProfile.PropertyChanged -= PanelListtemProfile_PropertyChanged;
-            Config.Current.Panels.BannerItemProfile.PropertyChanged -= PanelListtemProfile_PropertyChanged;
-            Config.Current.Panels.ThumbnailItemProfile.PropertyChanged -= PanelListtemProfile_PropertyChanged;
+            Config.Current.Panels.ContentItemProfile.PropertyChanged -= PanelListItemProfile_PropertyChanged;
+            Config.Current.Panels.BannerItemProfile.PropertyChanged -= PanelListItemProfile_PropertyChanged;
+            Config.Current.Panels.ThumbnailItemProfile.PropertyChanged -= PanelListItemProfile_PropertyChanged;
         }
 
         /// <summary>
         /// サムネイルパラメーターが変化したらアイテムをリフレッシュする
         /// </summary>
-        private void PanelListtemProfile_PropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
+        private void PanelListItemProfile_PropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             this.ListBox.Items?.Refresh();
         }
@@ -865,7 +865,7 @@ namespace NeeView
             }
         }
 
-        private void FolderList_PreviewKeyDown(object? sender, System.Windows.Input.KeyEventArgs e)
+        private void FolderList_PreviewKeyDown(object? sender, KeyEventArgs e)
         {
             if (Keyboard.Modifiers == ModifierKeys.Alt)
             {
@@ -902,7 +902,7 @@ namespace NeeView
             }
         }
 
-        private void FolderList_KeyDown(object? sender, System.Windows.Input.KeyEventArgs e)
+        private void FolderList_KeyDown(object? sender, KeyEventArgs e)
         {
             bool isLRKeyEnabled = _vm.IsLRKeyEnabled();
             if (isLRKeyEnabled && e.Key == Key.Left) // ←
@@ -916,19 +916,38 @@ namespace NeeView
         {
         }
 
-        //
-        private void FolderListItem_MouseLeftButtonDown(object? sender, System.Windows.Input.MouseButtonEventArgs e)
+        // 項目クリック (複数選択解除)
+        private void ListBox_PreviewMouseUpWithSelectionChanged(object? sender, MouseButtonEventArgs e)
+        {
+            if (this.ListBox.SelectedItems.Count != 1) return;
+
+            if (this.ListBox.SelectedItem is FolderItem item)
+            {
+                ClickToLoadBook(item);
+            }
+        }
+
+        // 項目クリック
+        private void FolderListItem_MouseLeftButtonDown(object? sender, MouseButtonEventArgs e)
+        {
+            if (sender is ListBoxItem { Content: FolderItem item })
+            {
+                ClickToLoadBook(item);
+            }
+        }
+
+        private void ClickToLoadBook(FolderItem item)
         {
             if (Keyboard.Modifiers != ModifierKeys.None) return;
 
-            if (!Config.Current.Panels.OpenWithDoubleClick && sender is ListBoxItem { Content: FolderItem item } && !item.IsEmpty())
+            if (!Config.Current.Panels.OpenWithDoubleClick && !item.IsEmpty())
             {
                 _vm.Model.LoadBook(item);
             }
         }
 
-        //
-        private void FolderListItem_MouseDoubleClick(object? sender, System.Windows.Input.MouseButtonEventArgs e)
+        // 項目ダブルクリック
+        private void FolderListItem_MouseDoubleClick(object? sender, MouseButtonEventArgs e)
         {
             var item = (sender as ListBoxItem)?.Content as FolderItem;
             if (Config.Current.Panels.OpenWithDoubleClick && item != null && !item.IsEmpty())
@@ -942,7 +961,7 @@ namespace NeeView
         }
 
         //
-        private void FolderListItem_KeyDown(object? sender, System.Windows.Input.KeyEventArgs e)
+        private void FolderListItem_KeyDown(object? sender, KeyEventArgs e)
         {
             bool isLRKeyEnabled = _vm.IsLRKeyEnabled();
             if ((sender as ListBoxItem)?.Content is not FolderItem item) return;

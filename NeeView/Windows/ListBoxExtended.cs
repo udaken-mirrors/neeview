@@ -1,7 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 
 namespace NeeView.Windows
 {
@@ -16,6 +18,8 @@ namespace NeeView.Windows
 
             this.IsKeyboardFocusWithinChanged += ListBoxExtended_IsKeyboardFocusWithinChanged;
         }
+
+        public event EventHandler<MouseButtonEventArgs>? PreviewMouseUpWithSelectionChanged;
 
         private void ListBoxExtended_IsKeyboardFocusWithinChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
@@ -77,6 +81,11 @@ namespace NeeView.Windows
         public void SetSelectedItems<T>(IEnumerable<T>? newItems)
         {
             base.SetSelectedItems(newItems);
+        }
+
+        public void RaisePreviewMouseUpWithSelectionChanged(object sender, MouseButtonEventArgs e)
+        {
+            PreviewMouseUpWithSelectionChanged?.Invoke(sender, e);
         }
     }
 }
