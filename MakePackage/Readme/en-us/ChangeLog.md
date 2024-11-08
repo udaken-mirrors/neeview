@@ -2,66 +2,101 @@
 
 ----
 
-### 41.2
-(2024-05-31)
-
-#### Changed
-
-- Update 7z.dll to ver 24.06
-
-#### Fixed
-
-- Fixed a bug that the focus was not set correctly when switching lists in the thumbnail layout. 
-- Fixed a problem updating the search filter in the PageList.
-
-----
-
-### 41.1
-(2024-05-18)
-
-#### Changed
-
-- Update various libraries
-
-#### Fixed
-
-- Fixed a bug that prevented seamless loops from working.
-- Fixed an issue where automatic background color setting is not reflected when a book is opened.
-
-----
-
-### 41.0
-(2024-05-10)
+### 42.0
+(2024-11-??)
 
 #### Added
 
-- Added Italian language.
-- Direct editing of language resources. (/Languages/*.restext) 
-- Auto scrolling is implemented. Long press also supported. By default, the wheel button toggles between modes.
-- Added a new command parameter "In panorama mode, all pages are considered as one page" to the N-type scrolling command.
-- Added book move priority setting. (Settings > Move > Book movement priority)
-- Add ability to switch display when page is ready. Suppresses temporary display on page switching. (Settings > Move > Ready to page move)
-- Added the ability to drop the bookshelf location icon and the information icon in the address bar to other apps
+- System: Dialog and toast notification text can now be copied to the clipboard.
+- System: File manager can be configured to replace Explorer.  (Settings > General)
+- System: Added the ability to select “Open as book” from the context menu of the video page.
+- System: Support for copying per archive folder.
+- System: Embedded a link to a wiki page explaining the format in the JSON file of the sample theme.
+- Command: Added toast notification flag to “Save” command parameter.
+- Commands: Added selective “External app” command. It is equivalent to the command in the page menu.
+- Commands: Added selective “Copy to folder” command. Equivalent to the command in the page menu.
+- Commands: Added selective “Move to folder” command. Equivalent to the command in the page menu.
+- Book: Added split rate setting for page splitting. (Settings > Book > Rete of divide page) 
+- Book: Added setting to determine the reference page only by number when “Two pages" is selected.  (Settings > Book)
+- Book: Added setting for how to align the size of each page in “Two pages". (Settings > Book)
+- Book: Image start position can be set horizontally and vertically respectively.  (Settings > View operation) 
+- Address bar: Add button to address bar to prohibit book switching.
+- Panels: The same operations as in the PageList context menu, such as rename, can now be performed in the Information panel and Filmstrip page context menus.
+- Panel: Selection mark displayed on side panel icon.
+- MainView window: Added setting to disable the MainView window mode when the MainView window is closed.  (Settings > Main view) 
+- MainView window: Added “MainView window auto show” setting. (Settings >Main view)
+- Playlist: Added confirmation dialog to “Sort by path” in playlist.
+- Playlist: Added the ability to move multiple specified items in the playlist panel.
+- Playlist: Playlist books are supported in “Current book only” in the Playlist panel.
+- Playlist: Ctrl-click on the move button of a playlist item to move it to the end of the playlist.
+- Playlist: “Open source file” added to context menu of playlist items only when playlist book is open.
+- Script: Added setting to call OnBookLoaded.nvjs script when renaming a book. (Settings > Script)
+- Script: Apply theme to Script Console.
+- Script: Added setting to add SQLite access to scripts. (Settings > Script)
+- Script: Added IsChecked flag for menus to command parameters of script commands.
+- Scripts: Added “script:/foobar.nvjs” in the command line startup script specification to allow specifying files in the scripts folder.
+- Script: Event script for startup OnStartup.nvjs Supported.
+- Script: Window state change event OnWindowStateChanged.nvjs Supported.
+- Script: Added "@args" to script doc comment.
+- Script: Added nv.Bookshelf.FolderTree to manipulate the Bookshelf tree view.
+- Script: Added nv.Bookmark.FolderTree to manipulate the tree view of the Bookmark panel.
+- Script: Added nv.ShowInputDialog(title, message, text).
+- Script: Added nv.Bookshelf.Wait() to wait until bookshelf display is complete.
+- Script: Added nv.Book.ViewPages[].Player to control video.
+- Script: Added nv.SusiePluginCollection to manipulate Susie plugins.
+- Script: Added nv.DestinationFolderCollection to manage move and copy destination folders.
+- Script: Added nv.ExternalAppCollection to manage external app settings.
+- Script: Added PageAccessor.Index for page index.
+- Script:  Added CommandAccessor.Name.
+- Script:  Added nv.Book.IsBookmarked.
+- Script:  Added MoveToParent(), etc. to BookshelfPanelAccessor.
+- Script:  Added file manipulation commands nv.FileCopy(), nv.FileMove(), and nv.FileDelete().
+- Script:  Maintain the package information nv.Environment.
+- Script:  Size, LastWriteTime, and CreationTime of books and pages are maintained.
+- Script:  Added accessor nv.CurrentCommand for the currently executing command.
+- Script:  Add nv.ScriptPath, the path of the currently running script file.
 
 #### Changed
 
-- ZIP version places DLL files in the Libraries folder.
-- The current view is maintained as much as possible when switching books.
-- Asynchronous pre-decompression of solid compressed archives
-- Various library updates
+- System: Window is now activated by dropping a file.
+- System: Activate at the start of the main window display.
+- System: Moved some of the copy content settings from file copy command parameters to system settings. (Settings > General > Copy Contents Policy)
+- System: Optimization of startup process.
+- Book: End-of-page judgment is now performed even when moving a set number of pages. 
+- Book: Loop notifications even for seamless loops. 
+- Address bar: The path text is now selected when the address bar is selected.
+- Address bar: When an image file path is entered in the address bar, it can now be opened as a book containing that page.
+- MainView window: The page list panel has been restored to its original state as much as possible when returning from the main view window mode.
+- Bookshelf: Reloading a book no longer changes the bookshelf selections.
+- Bookshelf: Added the ability to delete multiple histories at once from the bookshelf.
+- Playlist: When the current playlist is opened as a book, opening a playlist item will now page through the current book.
+- Playlist: When registering a playlist book page to the playlist, the entity is now registered.
+- Playlist: Enabled “Load subfolders” in playlist book.
+- Information panel: If there are no Extras, “None” is displayed.
+- Script: Change PageAccessor.Path to the entity path.
+- Script: Changed the type of date/time values, such as LastWriteTime, from string to Date.
 
-#### Fixed
+####  Fixed
 
-- Fixed a bug where the mouse button would sometimes enter long-press mode even when it was released.
-- Fixed a bug in file manipulation of network folder search results in the bookshelf.
-- Fixed a bug where an incorrect page was sometimes created when a playlist was opened as a book.
-- Fixed a bug that sometimes caused incorrect behavior in bookshelf range selection. 
-- Fixed a bug that prevented the Susie Plug-in all ON/OFF settings from working properly.
-- Fixed incorrect panel display status flag in menus. 
-- Reduced the problem of book thumbnails not being generated when files are added.
-- Fixed a bug that window dragging did not work when a book was closed.
-- Fixed a bug that shortcut archives were not recognized as pages.
-- Fixed an issue where the app would sometimes crash when creating a bookmark folder in the folder tree.
+- System: Fixed a bug that multiple launch restrictions may not work.
+- System: Fixed a bug that history may not be merged when multiple startups are performed.
+- System: Fixed a bug that videos are not included when decompressed in units of compressed files.
+- System: Fixed garbled command line help.
+- System: Fixed a bug that UI animations such as menus do not follow Windows settings.
+- System: Countermeasure for a bug that may cause an error when selecting print.
+- Book: Error when closing the page while preparing animated images has been reduced. 
+- Book: Fixed page position bug in seamless loop.
+- Book: Fixed a bug that could cause an error when moving a folder page during a seamless loop.
+- Book: Fixed an issue where the loading display sometimes did not disappear when pages were split.
+- Book: Fixed a bug that title text scale did not change after stretch change.
+- Book: Fixed a bug in which specifying the start page by archive path sometimes did not work when “Expand for each directory” was selected.
+- Panel: Fixed a bug in which single selection from multiple selections did not execute the selection process.
+- PageList: Fixed a bug that caused a huge popup with a dummy icon to appear.
+- PageList: Fixed a bug that sometimes caused an error when switching page search.
+- Playlist: Fixed a behavior bug with the + button in the playlist panel.
+- Playlist: Fixed a bug that could cause incorrect playlist item paths on drag-and-drop.
+- Playlist: File names are no longer duplicated when registering video books.
+- Playlist: Fixed bug when copying compressed file pages in playlist book.
 
 ----
 
