@@ -40,7 +40,7 @@ e.g., -Cultures en,ja
 
 param (
     [Parameter(Mandatory=$true)]
-    [ArgumentCompletions("Release", "MakeJson")]
+    [ValidateSet("Release", "MakeJson")]
     [string]$Mode,
     [string]$JsonFile = "Language.json",
     [switch]$Sort,
