@@ -12,13 +12,13 @@ using System.Windows;
 
 namespace NeeView
 {
-    public class MultbootService
+    public class MultiBootService
     {
         private readonly Process _currentProcess;
         private readonly Process? _serverProcess;
 
 
-        public MultbootService()
+        public MultiBootService()
         {
             _currentProcess = Process.GetCurrentProcess();
             _serverProcess = GetServerProcess(_currentProcess);
@@ -47,14 +47,18 @@ namespace NeeView
 
                 foreach (var p in processes)
                 {
-                    Trace.WriteLine($"GetServerProcess: FindProcess: ProcessName={p.ProcessName}, Id={p.Id}");
+                    Trace.WriteLine($"GetServerProcess: FindProcess: ProcessName={p.ProcessName}, ProcessFileName={p.MainModule?.FileName}, Id={p.Id}");
                 }
 
                 try
                 {
                     // 自身以外のプロセスをターゲットにする
                     var serverProcess = processes
-                        .Where(p => p.MainWindowHandle != IntPtr.Zero) // ウィンドウハンドルが存在しないものは除外
+                        // ウィンドウハンドルが存在しないものは除外
+                        .Where(p => p.MainWindowHandle != IntPtr.Zero)
+                        // 設定により、実行ファイルパスが一致したものに限定
+                        .Where(p => !AppSettings.Current.PathProcessGroup || p.MainModule?.FileName == currentProcess.MainModule?.FileName)
+                        // 自身以外の最も若いプロセス
                         .LastOrDefault((p) => p.Id != currentProcess.Id);
 
                     if (serverProcess == null)

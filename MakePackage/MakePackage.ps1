@@ -388,6 +388,7 @@ function New-ConfigForZip($inputDir, $config, $outputDir)
 	$jsonObject.UseLocalApplicationData = $false
 	$jsonObject.Revision = $revision
 	$jsonObject.DateVersion = $dateVersion
+	$jsonObject.PathProcessGroup = $true
 	$jsonObject.LogFile = $trace ? "TraceLog.txt" : $null
 
 	$outputFile = Join-Path (Convert-Path $outputDir) $config
@@ -406,6 +407,7 @@ function New-ConfigForMsi($inputDir, $config, $outputDir)
 	$jsonObject.UseLocalApplicationData = $true
 	$jsonObject.Revision = $revision
 	$jsonObject.DateVersion = $dateVersion
+	$jsonObject.PathProcessGroup = $true
 	$jsonObject.LogFile = $trace ? "TraceLog.txt" : $null
 
 	$outputFile = Join-Path (Convert-Path $outputDir) $config
@@ -425,6 +427,7 @@ function New-ConfigForAppx($inputDir, $config, $outputDir)
 	$jsonObject.UseLocalApplicationData = $true
 	$jsonObject.Revision = $revision
 	$jsonObject.DateVersion = $dateVersion
+	$jsonObject.PathProcessGroup = $true
 	$jsonObject.LogFile = $trace ? "TraceLog.txt" : $null
 
 	$outputFile = Join-Path (Convert-Path $outputDir) $config
@@ -443,6 +446,7 @@ function New-ConfigForDevPackage($inputDir, $config, $target, $outputDir)
 	$jsonObject.UseLocalApplicationData = $false
 	$jsonObject.Revision = $revision
 	$jsonObject.DateVersion = $dateVersion
+	$jsonObject.PathProcessGroup = $true
 	$jsonObject.LogFile = $trace ? "TraceLog.txt" : $null
 
 	$outputFile = Join-Path (Convert-Path $outputDir) $config
@@ -1053,13 +1057,13 @@ if (($Target -eq "All") -or ($Target -eq "Appx"))
 
 if (-not $x86)
 {
-	if ($Target -eq "Canary")
+	if (($Target -eq "All") -or ($Target -eq "Canary"))
 	{
 		Build-PackageSorce-x64-fd
 		Build-Canary
 	}
 
-	if ($Target -eq "Beta")
+	if (($Target -eq "All") -or ($Target -eq "Beta"))
 	{
 		Build-PackageSorce-x64
 		Build-Beta

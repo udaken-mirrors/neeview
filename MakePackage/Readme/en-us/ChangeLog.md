@@ -61,6 +61,7 @@
 - System: Window is now activated by dropping a file.
 - System: Activate at the start of the main window display.
 - System: Moved some of the copy content settings from file copy command parameters to system settings. (Settings > General > Copy Contents Policy)
+- System: Limit multiple launches only if the executable file paths are the same.
 - System: Optimization of startup process.
 - Book: End-of-page judgment is now performed even when moving a set number of pages. 
 - Book: Loop notifications even for seamless loops. 

@@ -33,7 +33,7 @@ namespace NeeView
         private bool _isTerminated;
         private readonly int _tickBase = System.Environment.TickCount;
         private CommandLineOption? _option;
-        private MultbootService? _multiBootService;
+        private MultiBootService? _multiBootService;
 
 
         // Properties
@@ -146,7 +146,7 @@ namespace NeeView
             System.IO.Directory.SetCurrentDirectory(Environment.AssemblyFolder);
 
             // 多重起動サービス起動
-            _multiBootService = new MultbootService();
+            _multiBootService = new MultiBootService();
 
             // セカンドプロセス判定
             Environment.IsSecondProcess = _multiBootService.IsServerExists;
