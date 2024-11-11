@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Windows.Media;
 
 namespace NeeView
@@ -111,8 +112,12 @@ namespace NeeView
     /// immutable.
     /// </summary>
     [Serializable]
-    public sealed class QueryPath : IEquatable<QueryPath>
+    public sealed partial class QueryPath : IEquatable<QueryPath>
     {
+
+        [GeneratedRegex(@"^\\*([a-zA-Z]):(.*)$")]
+        private static partial Regex _driveRegex();
+
         public static QueryPath Empty { get; } = new QueryPath(QueryScheme.Root);
 
         static readonly string _querySearch = "?search=";
@@ -192,7 +197,7 @@ namespace NeeView
         /// <summary>
         /// 完全パス
         /// </summary>
-        public string FullPath => LoosePath.Combine(_scheme.ToSchemeString(), _path);
+        public string FullPath => _scheme.ToSchemeString() + _path;
 
         /// <summary>
         /// 簡略化したパス
@@ -231,12 +236,7 @@ namespace NeeView
                 var schemeString = scheme.ToSchemeString();
                 if (source.StartsWith(schemeString, StringComparison.Ordinal))
                 {
-                    var length = schemeString.Length;
-                    if (length < source.Length && (source[length] == '\\' || source[length] == '/'))
-                    {
-                        length++;
-                    }
-                    return source[length..];
+                    return source[schemeString.Length..];
                 }
             }
             else
@@ -254,15 +254,25 @@ namespace NeeView
                 return null;
             }
 
-            var s = LoosePath.NormalizeSeparator(source).Trim(LoosePath.AsciiSpaces).Trim('\\');
+            var s = LoosePath.NormalizeSeparator(source).Trim(LoosePath.AsciiSpaces).TrimEnd('\\');
 
             if (scheme == QueryScheme.File)
             {
-                // is drive
-                if (s.Length == 2 && s[1] == ':')
+                // fix drive name
+                var match = _driveRegex().Match(s);
+                if (match.Success)
                 {
-                    return char.ToUpperInvariant(s[0]) + ":\\";
+                    s = match.Groups[1].Value.ToUpperInvariant() + ':' + match.Groups[2].Value;
+                    // fix end separator of drive root
+                    if (s.Length == 2 && s[1] == ':')
+                    {
+                        s += '\\';
+                    }
                 }
+            }
+            else
+            {
+                s = s.TrimStart('\\');
             }
 
             return string.IsNullOrWhiteSpace(s) ? null : s;
@@ -379,6 +389,7 @@ namespace NeeView
         {
             return !(Equals(x, y));
         }
+
 
         #endregion IEquatable Support
     }

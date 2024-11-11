@@ -268,6 +268,12 @@ namespace NeeView.UnitTest
         [InlineData(@"file://C:/Hoge/test.txt", @"C:\Hoge\test.txt")]
         [InlineData(@"file:\\C:", @"C:\")]
         [InlineData(@"file:c:\", @"C:\")]
+        [InlineData(@"\dir1\dir2", @"\dir1\dir2")]
+        [InlineData(@"dir1\dir2", @"dir1\dir2")]
+        [InlineData(@"file:\dir1\dir2", @"\dir1\dir2")]
+        [InlineData(@"file:dir1\dir2", @"dir1\dir2")]
+        [InlineData(@"\\host\any", @"\\host\any")]
+        [InlineData(@"file:\\host\any\", @"\\host\any")]
         public void QueryFilePathTest(string source, string path)
         {
             var query = new QueryPath(QueryScheme.File, path);
@@ -275,7 +281,7 @@ namespace NeeView.UnitTest
 
             Assert.Equal(query, actual);
             Assert.Equal(path, actual.Path);
-            Assert.Equal(@"file:\" + path, actual.FullPath);
+            Assert.Equal(@"file:" + path, actual.FullPath);
             Assert.Equal(path, actual.SimplePath);
         }
 
@@ -292,8 +298,8 @@ namespace NeeView.UnitTest
 
             Assert.Equal(query, actual);
             Assert.Equal(path, actual.Path);
-            Assert.Equal(@"bookmark:\folder\item1", actual.FullPath);
-            Assert.Equal(@"bookmark:\folder\item1", actual.SimplePath);
+            Assert.Equal(@"bookmark:folder\item1", actual.FullPath);
+            Assert.Equal(@"bookmark:folder\item1", actual.SimplePath);
         }
     }
 }

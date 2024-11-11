@@ -34,7 +34,7 @@
 - Script: Apply theme to Script Console.
 - Script: Added setting to add SQLite access to scripts. (Settings > Script)
 - Script: Added IsChecked flag for menus to command parameters of script commands.
-- Scripts: Added “script:/foobar.nvjs” in the command line startup script specification to allow specifying files in the scripts folder.
+- Scripts: Added “script:foobar.nvjs” in the command line startup script specification to allow specifying files in the scripts folder.
 - Script: Event script for startup OnStartup.nvjs Supported.
 - Script: Window state change event OnWindowStateChanged.nvjs Supported.
 - Script: Added "@args" to script doc comment.
