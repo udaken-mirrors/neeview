@@ -24,7 +24,7 @@ namespace NeeView
         #region Obsolete
 
         // 圧縮ファイルのときの動作
-        [Obsolete("no used"), Alternative("nv.Config.ArchiveCopyPolicy", 42, ScriptErrorLevel.Warning)] // ver.42
+        [Obsolete("no used"), Alternative("nv.Config.System.ArchiveCopyPolicy", 42, ScriptErrorLevel.Warning, IsFullName = true)] // ver.42
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         public ArchivePolicy ArchivePolicy
         {
@@ -36,7 +36,7 @@ namespace NeeView
         public ArchivePolicy ArchivePolicy_Legacy { get; private set; }
 
         // テキストコピーのヒント
-        [Obsolete("no used"), Alternative("nv.Config.TextCopyPolicy", 42, ScriptErrorLevel.Warning)] // ver.42
+        [Obsolete("no used"), Alternative("nv.Config.System.TextCopyPolicy", 42, ScriptErrorLevel.Warning, IsFullName = true)] // ver.42
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         public TextCopyPolicy TextCopyPolicy
         {
