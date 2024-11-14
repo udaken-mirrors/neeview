@@ -295,35 +295,35 @@ namespace NeeView
             ThrowIfDisposed();
 
             // キャッシュがあればそれを返す。
-            var systemPath = source.SystemPath;
-            if (!ignoreCache && _cache.TryGetValue(systemPath, out var archiver))
+            var targetPath = source.TargetPath;
+            if (!ignoreCache && _cache.TryGetValue(targetPath, out var archiver))
             {
                 // 更新日、サイズを比較して再利用するかを判定
                 if (archiver is not null && archiver.LastWriteTime == source.LastWriteTime && archiver.Length == source.Length)
                 {
-                    ////Debug.WriteLine($"Archive: Find cache: {systemPath}");
+                    ////Debug.WriteLine($"Archive: Find cache: {targetPath}");
                     return archiver;
                 }
                 else
                 {
-                    //// Debug.WriteLine($"Archive: Old cache: {systemPath}");
+                    //// Debug.WriteLine($"Archive: Old cache: {targetPath}");
                 }
             }
             else
             {
                 if (ignoreCache)
                 {
-                    ////Debug.WriteLine($"Archive: Ignore cache: {systemPath}");
+                    ////Debug.WriteLine($"Archive: Ignore cache: {targetPath}");
                 }
                 else
                 {
-                    ////Debug.WriteLine($"Archive: Cache not found: {systemPath}");
+                    ////Debug.WriteLine($"Archive: Cache not found: {targetPath}");
                 }
             }
 
             if (source.IsFileSystem)
             {
-                return CreateArchive(source.SystemPath, null);
+                return CreateArchive(targetPath, null);
             }
             else
             {
