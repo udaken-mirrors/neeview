@@ -121,7 +121,7 @@
                     <Border Style="{StaticResource PanelBorderStyle}" BorderThickness="0,0,1,0" />
                     <Border x:Name="LeftPanelContent" Background="Transparent" Margin="0,0,1,0">
                         <behaviors:Interaction.Behaviors>
-                            <nwc:AutoHideBehavior Name="LeftPanel" Screen="{Binding ElementName=Screen}" SubTarget="{Binding ElementName=LeftSplitter}" Dock="Left"
+                            <nwc:AutoHideBehavior Name="LeftPanel" Screen="{Binding ElementName=ScreenRect}" SubTarget="{Binding ElementName=LeftSplitter}" Dock="Left"
                                     IsEnabled="{Binding VM.Left.IsAutoHide}" DelayTime="{Binding VM.AutoHideConfig.AutoHideDelayTime}"
                                     DelayVisibleTime="{Binding VM.AutoHideConfig.AutoHideDelayVisibleTime}" FocusLockMode="{Binding VM.AutoHideConfig.AutoHideFocusLockMode}"
                                     IsKeyDownDelayEnabled="{Binding VM.AutoHideConfig.IsAutoHideKeyDownDelay}" HitTestMargin="{Binding VM.AutoHideConfig.AutoHideHitTestHorizontalMargin}"
@@ -145,7 +145,7 @@
                     <Border Style="{StaticResource PanelBorderStyle}" BorderThickness="1,0,0,0" />
                     <Border x:Name="RightPanelContent" Background="Transparent" Margin="1,0,0,0">
                         <behaviors:Interaction.Behaviors>
-                            <nwc:AutoHideBehavior Name="RightPanel" Screen="{Binding ElementName=Screen}" SubTarget="{Binding ElementName=RightSplitter}" Dock="Right"
+                            <nwc:AutoHideBehavior Name="RightPanel" Screen="{Binding ElementName=ScreenRect}" SubTarget="{Binding ElementName=RightSplitter}" Dock="Right"
                                     IsEnabled="{Binding VM.Right.IsAutoHide}" DelayTime="{Binding VM.AutoHideConfig.AutoHideDelayTime}"
                                     DelayVisibleTime="{Binding VM.AutoHideConfig.AutoHideDelayVisibleTime}" FocusLockMode="{Binding VM.AutoHideConfig.AutoHideFocusLockMode}"
                                     IsKeyDownDelayEnabled="{Binding VM.AutoHideConfig.IsAutoHideKeyDownDelay}" HitTestMargin="{Binding VM.AutoHideConfig.AutoHideHitTestHorizontalMargin}"
