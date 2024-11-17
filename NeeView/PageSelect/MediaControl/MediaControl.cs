@@ -11,23 +11,22 @@ namespace NeeView
 
     public class MediaControl : BindableBase
     {
-        //static MediaControl() => Current = new MediaControl();
-        //public static MediaControl Current { get; }
-
-
         public MediaControl()
         {
         }
 
         public event EventHandler<MediaPlayerChanged>? Changed;
 
+        public MediaPlayerChanged LastChangedArgs { get; private set; } = new();
+
 
         public void RaiseContentChanged(object sender, MediaPlayerChanged e)
         {
+            LastChangedArgs = e;
             Changed?.Invoke(sender, e);
         }
-
     }
+
 
     /// <summary>
     /// MediaPlayer変更通知パラメータ

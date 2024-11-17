@@ -23,6 +23,7 @@ namespace NeeView
         {
             _model = model;
             _model.Changed += Model_Changed;
+            UpdateOperator(_model.LastChangedArgs);
 
             PlayCommand = new RelayCommand(PlayCommand_Executed);
             RepeatCommand = new RelayCommand(RepeatCommand_Executed);
@@ -100,9 +101,13 @@ namespace NeeView
             Operator.IsMuted = !Operator.IsMuted;
         }
 
-
         private void Model_Changed(object? sender, MediaPlayerChanged e)
         {
+            UpdateOperator(e);
+        }
+
+        private void UpdateOperator(MediaPlayerChanged e)
+        { 
             Operator?.Dispose();
 
             if (e.IsValid)
