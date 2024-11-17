@@ -106,6 +106,8 @@ namespace NeeView
         public event EventHandler? MediaEnded;
 
 
+        public IMediaPlayer Player => _player;
+
         public Duration Duration
         {
             get { return _duration; }

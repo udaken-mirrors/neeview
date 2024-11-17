@@ -107,18 +107,22 @@ namespace NeeView
         }
 
         private void UpdateOperator(MediaPlayerChanged e)
-        { 
-            Operator?.Dispose();
-
+        {
             if (e.IsValid)
             {
                 var mediaPlayer = e.MediaPlayer ?? throw new InvalidOperationException();
-                Operator = new MediaPlayerOperator(mediaPlayer);
-                Operator.MediaEnded += Operator_MediaEnded;
-                Operator.Attach();
+
+                if (Operator?.Player != mediaPlayer)
+                {
+                    Operator?.Dispose();
+                    Operator = new MediaPlayerOperator(mediaPlayer);
+                    Operator.MediaEnded += Operator_MediaEnded;
+                    Operator.Attach();
+                }
             }
             else
             {
+                Operator?.Dispose();
                 Operator = null;
             }
 
