@@ -268,6 +268,8 @@ namespace NeeView
         /// </summary>
         private void UpdateContent(PageDataSource data)
         {
+            if (_disposedValue) return;
+
             NVDebug.AssertSTA();
             var unit = CreateContent(_sizeSource, data);
             Content = unit.Content;
@@ -282,6 +284,8 @@ namespace NeeView
 
             try
             {
+                if (_disposedValue) throw new ObjectDisposedException(this.GetType().FullName);
+
                 switch (data.DataState)
                 {
                     case DataState.None:
@@ -312,6 +316,8 @@ namespace NeeView
 
         private FrameworkElement CreateLoadedContent(object data)
         {
+            if (_disposedValue) throw new ObjectDisposedException(this.GetType().FullName);
+
             _strategy = _strategy ?? CreateStrategy(data);
             return _strategy.CreateLoadedContent(data);
         }
