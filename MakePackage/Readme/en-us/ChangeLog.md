@@ -3,7 +3,7 @@
 ----
 
 ### 42.0
-(2024-11-??)
+(2024-11-24)
 
 #### Added
 
@@ -13,15 +13,15 @@
 - System: Support for copying per archive folder.
 - System: Embedded a link to a wiki page explaining the format in the JSON file of the sample theme.
 - Command: Added toast notification flag to “Save” command parameter.
-- Commands: Added selective “External app” command. It is equivalent to the command in the page menu.
-- Commands: Added selective “Copy to folder” command. Equivalent to the command in the page menu.
-- Commands: Added selective “Move to folder” command. Equivalent to the command in the page menu.
+- Command: Added selective “External app” command. It is equivalent to the command in the page menu.
+- Command: Added selective “Copy to folder” command. Equivalent to the command in the page menu.
+- Command: Added selective “Move to folder” command. Equivalent to the command in the page menu.
 - Book: Added split rate setting for page splitting. (Settings > Book > Rete of divide page) 
 - Book: Added setting to determine the reference page only by number when “Two pages" is selected.  (Settings > Book)
 - Book: Added setting for how to align the size of each page in “Two pages". (Settings > Book)
 - Book: Image start position can be set horizontally and vertically respectively.  (Settings > View operation) 
 - Address bar: Add button to address bar to prohibit book switching.
-- Panels: The same operations as in the PageList context menu, such as rename, can now be performed in the Information panel and Filmstrip page context menus.
+- Panel: The same operations as in the PageList context menu, such as rename, can now be performed in the Information panel and Filmstrip page context menus.
 - Panel: Selection mark displayed on side panel icon.
 - MainView window: Added setting to disable the MainView window mode when the MainView window is closed.  (Settings > Main view) 
 - MainView window: Added “MainView window auto show” setting. (Settings >Main view)
@@ -34,7 +34,7 @@
 - Script: Apply theme to Script Console.
 - Script: Added setting to add SQLite access to scripts. (Settings > Script)
 - Script: Added IsChecked flag for menus to command parameters of script commands.
-- Scripts: Added “script:foobar.nvjs” in the command line startup script specification to allow specifying files in the scripts folder.
+- Script: Added “script:foobar.nvjs” in the command line startup script specification to allow specifying files in the scripts folder.
 - Script: Event script for startup OnStartup.nvjs Supported.
 - Script: Window state change event OnWindowStateChanged.nvjs Supported.
 - Script: Added "@args" to script doc comment.
@@ -85,15 +85,12 @@
 - System: Fixed garbled command line help.
 - System: Fixed a bug that UI animations such as menus do not follow Windows settings.
 - System: Countermeasure for a bug that may cause an error when selecting print.
-- Book: Error when closing the page while preparing animated images has been reduced. 
 - Book: Fixed page position bug in seamless loop.
 - Book: Fixed a bug that could cause an error when moving a folder page during a seamless loop.
 - Book: Fixed an issue where the loading display sometimes did not disappear when pages were split.
 - Book: Fixed a bug that title text scale did not change after stretch change.
 - Book: Fixed a bug in which specifying the start page by archive path sometimes did not work when “Expand for each directory” was selected.
 - Panel: Fixed a bug in which single selection from multiple selections did not execute the selection process.
-- PageList: Fixed a bug that caused a huge popup with a dummy icon to appear.
-- PageList: Fixed a bug that sometimes caused an error when switching page search.
 - Playlist: Fixed a behavior bug with the + button in the playlist panel.
 - Playlist: Fixed a bug that could cause incorrect playlist item paths on drag-and-drop.
 - Playlist: File names are no longer duplicated when registering video books.
