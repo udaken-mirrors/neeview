@@ -35,11 +35,11 @@ namespace NeeView
         }
 
 
-        public string Name { get; private set; }
+        public string Name { get; init; }
 
-        public int MajorVersion { get; private set; }
-        public int MinorVersion { get; private set; }
-        public int BuildVersion { get; private set; }
+        public int MajorVersion { get; init; }
+        public int MinorVersion { get; init; }
+        public int BuildVersion { get; init; }
 
 
         public override string ToString()

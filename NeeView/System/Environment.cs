@@ -455,7 +455,7 @@ namespace NeeView
                 if (_checkVersion is null)
                 {
                     var version = AppSettings.Current.CheckVersion;
-                    _checkVersion = version is null ? new FormatVersion(Environment.SolutionName) : new FormatVersion(Environment.SolutionName, version);
+                    _checkVersion = version is null ? new FormatVersion(Environment.SolutionName) with { BuildVersion = 0 } : new FormatVersion(Environment.SolutionName, version);
                 }
                 return _checkVersion;
             }
