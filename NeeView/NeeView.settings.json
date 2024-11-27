@@ -5,6 +5,6 @@
   "UseLocalApplicationData": false,
   "Revision": "12345678",
   "DateVersion": "0000",
-  "PathProcessGroup": false,
+  "PathProcessGroup": true,
   "LogFile": null
 }
