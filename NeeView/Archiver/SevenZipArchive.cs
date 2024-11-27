@@ -79,6 +79,7 @@ namespace NeeView
                     Id = id,
                     RawEntryName = entry.FileName,
                     Length = (long)entry.Size,
+                    CreationTime = entry.CreationTime,
                     LastWriteTime = entry.LastWriteTime,
                 };
 

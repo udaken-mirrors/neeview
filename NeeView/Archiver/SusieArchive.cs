@@ -67,6 +67,7 @@ namespace NeeView
                     Id = id,
                     RawEntryName = (entry.Path.TrimEnd('\\', '/') + "\\" + entry.FileName).TrimStart('\\', '/'),
                     Length = entry.FileSize,
+                    CreationTime = default,
                     LastWriteTime = entry.TimeStamp,
                     Instance = entry,
                 };

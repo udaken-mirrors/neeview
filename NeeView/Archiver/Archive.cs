@@ -55,6 +55,7 @@ namespace NeeView
                 if (fileSystemInfo.Exists)
                 {
                     Length = fileSystemInfo is FileInfo fileInfo ? fileInfo.Length : -1;
+                    CreationTime = fileSystemInfo.CreationTime;
                     LastWriteTime = fileSystemInfo.LastWriteTime;
                 }
             }

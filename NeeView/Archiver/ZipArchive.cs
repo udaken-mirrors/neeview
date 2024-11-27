@@ -94,6 +94,7 @@ namespace NeeView
                             Instance = null,
                             RawEntryName = entry.FullName,
                             Length = entry.Length,
+                            CreationTime = default,
                             LastWriteTime = entry.LastWriteTime.LocalDateTime,
                         };
 
