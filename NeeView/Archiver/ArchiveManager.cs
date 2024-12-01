@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Controls;
 
 namespace NeeView
 {
@@ -169,6 +170,54 @@ namespace NeeView
             }
 
             return order;
+        }
+
+        public IEnumerable<string> GetFileTypes(bool includeMedia)
+        {
+            if (Config.Current.Archive.Zip.IsEnabled)
+            {
+                foreach (var ext in _supportedFileTypes[ArchiveType.ZipArchive].Items)
+                {
+                    yield return ext;
+                }
+            }
+
+            if (Config.Current.Archive.SevenZip.IsEnabled)
+            {
+                foreach (var ext in _supportedFileTypes[ArchiveType.SevenZipArchive].Items)
+                {
+                    yield return ext;
+                }
+            }
+
+            if (Config.Current.Archive.Pdf.IsEnabled)
+            {
+                foreach (var ext in _supportedFileTypes[ArchiveType.PdfArchive].Items)
+                {
+                    yield return ext;
+                }
+            }
+
+            if (Config.Current.Archive.Media.IsEnabled && includeMedia)
+            {
+                foreach (var ext in _supportedFileTypes[ArchiveType.MediaArchive].Items)
+                {
+                    yield return ext;
+                }
+            }
+
+            if (Config.Current.Susie.IsEnabled)
+            {
+                foreach (var ext in _supportedFileTypes[ArchiveType.SusieArchive].Items)
+                {
+                    yield return ext;
+                }
+            }
+
+            foreach (var ext in _supportedFileTypes[ArchiveType.PlaylistArchive].Items)
+            {
+                yield return ext;
+            }
         }
 
         // アーカイバを指定してサポートしているかを判定

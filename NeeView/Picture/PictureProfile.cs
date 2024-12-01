@@ -1,6 +1,7 @@
 ﻿using NeeLaboratory.ComponentModel;
 using NeeView.Windows.Property;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.Serialization;
@@ -61,6 +62,38 @@ namespace NeeView
             }
 
             return false;
+        }
+
+        public IEnumerable<string> GetFileTypes(bool includeMedia)
+        {
+            foreach (var item in SupportFileTypes.Items)
+            {
+                yield return item;
+            }
+
+            if (Config.Current.Susie.IsEnabled)
+            {
+                foreach (var item in SusiePluginManager.Current.ImageExtensions.Items)
+                {
+                    yield return item;
+                }
+            }
+
+            if (Config.Current.Image.Svg.IsEnabled)
+            {
+                foreach (var item in Config.Current.Image.Svg.SupportFileTypes.Items)
+                {
+                    yield return item;
+                }
+            }
+
+            if (Config.Current.Archive.Media.IsMediaPageEnabled && includeMedia)
+            {
+                foreach (var item in Config.Current.Archive.Media.SupportFileTypes.Items)
+                {
+                    yield return item;
+                }
+            }
         }
 
         // 対応拡張子判定 (標準)

@@ -29,6 +29,11 @@ namespace NeeView.Setting
                 new SettingPageNotify(),
             };
 
+            if (!Environment.IsAppxPackage)
+            {
+                this.Children.Add(new SettingPageExplorer());
+            }
+
             this.Items = new List<SettingItem>();
 
             var section = new SettingItemSection(Properties.TextResources.GetString("SettingPage.General"));
@@ -60,10 +65,6 @@ namespace NeeView.Setting
             {
                 section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.System, nameof(SystemConfig.IsNetworkEnabled))));
             }
-            if (Environment.IsZipLikePackage)
-            {
-                section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(ExplorerContextMenu.Current, nameof(ExplorerContextMenu.IsEnabled))));
-            }
             this.Items.Add(section);
 
             section = new SettingItemSection(ResourceService.GetString("@SettingPage.General.WebBrowser"));
@@ -73,7 +74,7 @@ namespace NeeView.Setting
             section = new SettingItemSection(ResourceService.GetString("@SettingPage.General.TextEditor"));
             section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.System, nameof(SystemConfig.TextEditor))) { IsStretch = true });
             this.Items.Add(section);
-            
+
             section = new SettingItemSection(ResourceService.GetString("@SettingPage.General.FileManager"));
             section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.System, nameof(SystemConfig.FileManager))) { IsStretch = true });
             section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.System, nameof(SystemConfig.FileManagerFileArgs)))
@@ -313,6 +314,23 @@ namespace NeeView.Setting
             section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(Config.Current.Notice, nameof(NoticeConfig.IsBusyMarkEnabled))));
 
             this.Items = new List<SettingItem>() { section };
+        }
+    }
+
+
+    public class SettingPageExplorer : SettingPage
+    {
+        public SettingPageExplorer() : base(Properties.TextResources.GetString("SettingPage.Explorer"))
+        {
+            this.Items = new List<SettingItem>();
+
+            var section = new SettingItemSection(Properties.TextResources.GetString("SettingPage.Explorer.ContextMenu"));
+            section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(ExplorerContextMenu.Current, nameof(ExplorerContextMenu.IsEnabled))));
+            this.Items.Add(section);
+
+            section = new SettingItemSection(Properties.TextResources.GetString("SettingPage.Explorer.FileAssociation"));
+            section.Children.Add(new SettingItemFileAssociation());
+            this.Items.Add(section);
         }
     }
 

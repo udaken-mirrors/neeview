@@ -36,6 +36,19 @@ namespace NeeLaboratory.ComponentModel
             Add(new AnonymousDisposable(action));
         }
 
+        /// <summary>
+        /// Clear disposable items and initialize this disposed flag.
+        /// </summary>
+        /// <remarks>
+        /// overwrite Clear()
+        /// </remarks>
+        public new void Clear()
+        {
+            base.Clear();
+            _disposedValue = false;
+        }
+
+
 #if false
         public static DisposableCollection operator +(DisposableCollection a, IDisposable b)
         {

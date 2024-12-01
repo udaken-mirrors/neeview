@@ -1,7 +1,8 @@
-﻿using NeeView.Data;
-using NeeLaboratory.Linq;
+﻿using NeeLaboratory.Linq;
+using NeeView.Data;
 using NeeView.Susie;
 using NeeView.Windows.Property;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
@@ -626,6 +627,21 @@ namespace NeeView.Setting
         protected override UIElement CreateContentInner()
         {
             return new SettingItemSusiePluginControl(_pluginType);
+        }
+    }
+
+    /// <summary>
+    /// ファイル関連づけ設定項目
+    /// </summary>
+    public class SettingItemFileAssociation : SettingItem
+    {
+        public SettingItemFileAssociation() : base(null)
+        {
+        }
+
+        protected override UIElement CreateContentInner()
+        {
+            return new SettingItemFileAssociationControl();
         }
     }
 
