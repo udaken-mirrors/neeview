@@ -684,7 +684,6 @@ namespace NeeView
             return true;
         }
 
-
         /// <summary>
         /// APPXデータフォルダー移動 (ver.38)
         /// </summary>
@@ -693,9 +692,9 @@ namespace NeeView
         /// ver.38からの専用のフォルダー NeeLaboratory-NeeView に移動させる。
         /// アプリ専用の仮想フォルダとして生成されるため、アンインストールで自動削除される
         /// </remarks>
-        public static void CoorectLocalAppDataFolder()
+        public static void CorrectLocalAppDataFolder()
         {
-            // this function is spoort Appx only.
+            // this function is support Appx only.
             if (!IsAppxPackage) return;
             if (!IsUseLocalApplicationDataFolder) return;
 
@@ -716,8 +715,19 @@ namespace NeeView
             }
             catch (Exception ex)
             {
-                Debug.WriteLine(nameof(CoorectLocalAppDataFolder) + " failed: " + ex.Message);
+                Debug.WriteLine(nameof(CorrectLocalAppDataFolder) + " failed: " + ex.Message);
             }
+        }
+
+
+        // レジストリ解除
+        public static void ClearRegistry()
+        {
+            if (IsAppxPackage) return;
+
+            ExplorerContextMenu.Current.IsEnabled = false;
+            FileAssociationTools.UnassociateAll();
+            FileAssociationTools.RefreshShellIcons();
         }
     }
 }

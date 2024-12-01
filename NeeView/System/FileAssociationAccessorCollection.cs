@@ -5,11 +5,8 @@ namespace NeeView
 {
     public class FileAssociationAccessorCollection : List<FileAssociationAccessor>
     {
-        private readonly FileAssociationCollection _source;
-
         public FileAssociationAccessorCollection(FileAssociationCollection source)
         {
-            _source = source;
             this.AddRange(source.Select(e => new FileAssociationAccessor(e)));
         }
 
@@ -22,7 +19,7 @@ namespace NeeView
             }
             if (isChanged)
             {
-                _source.RefreshShellIcons();
+                FileAssociationTools.RefreshShellIcons();
             }
         }
     }

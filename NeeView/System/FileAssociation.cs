@@ -81,7 +81,7 @@ namespace NeeView
             return IsExistSubKey(root, _progId);
         }
 
-        public void Associate()
+        private void Associate()
         {
             var applicationFilePath = Environment.AssemblyLocation;
             var fileIconPath = Category.ToIconPath();
@@ -111,7 +111,7 @@ namespace NeeView
             Debug.WriteLine($"FileAssociate: ON: {Extension}");
         }
 
-        public void Unassociate()
+        private void Unassociate()
         {
             using var root = OpenClassesKey(true);
             if (root is null) return;

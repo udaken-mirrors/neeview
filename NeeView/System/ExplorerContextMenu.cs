@@ -33,7 +33,7 @@ namespace NeeView
 
         public ExplorerContextMenu()
         {
-            _root = Registry.CurrentUser.OpenSubKey(@"Software\Classes", true) ?? throw new InvalidOperationException("Cannot get registory");
+            _root = Registry.CurrentUser.OpenSubKey(@"Software\Classes", true) ?? throw new InvalidOperationException("Cannot get registry");
 
             _isEnabled = Exists();
         }

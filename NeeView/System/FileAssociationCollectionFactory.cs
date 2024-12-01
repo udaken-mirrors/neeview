@@ -6,7 +6,7 @@ namespace NeeView
 {
     public static class FileAssociationCollectionFactory
     {
-        public static FileAssociationCollection Create()
+        public static FileAssociationCollection Create(FileAssociationCollectionCreateOptions options = FileAssociationCollectionCreateOptions.None)
         {
             var collection = new FileAssociationCollection();
 
@@ -30,26 +30,29 @@ namespace NeeView
                 }
             }
 
-            // システム
-            collection.TryAdd(".nvplst", FileAssociationCategory.ForNeeView, ResourceService.GetString("@FileType.Playlist"));
-            collection.TryAdd(".nvzip", FileAssociationCategory.ForNeeView, ResourceService.GetString("@FileType.ExportData"));
-
-            // 画像拡張子
-            foreach (var ext in PictureProfile.Current.GetFileTypes(false))
+            if (!options.HasFlag(FileAssociationCollectionCreateOptions.OnlyRegistered))
             {
-                collection.TryAdd(ext.ToLower(), FileAssociationCategory.Image);
-            }
+                // システム
+                collection.TryAdd(".nvplst", FileAssociationCategory.ForNeeView, ResourceService.GetString("@FileType.Playlist"));
+                collection.TryAdd(".nvzip", FileAssociationCategory.ForNeeView, ResourceService.GetString("@FileType.ExportData"));
 
-            // アーカイブ拡張子
-            foreach (var ext in ArchiveManager.Current.GetFileTypes(false))
-            {
-                collection.TryAdd(ext.ToLower(), FileAssociationCategory.Archive);
-            }
+                // 画像拡張子
+                foreach (var ext in PictureProfile.Current.GetFileTypes(false))
+                {
+                    collection.TryAdd(ext.ToLower(), FileAssociationCategory.Image);
+                }
 
-            // 動画拡張子
-            foreach (var ext in Config.Current.Archive.Media.SupportFileTypes.Items)
-            {
-                collection.TryAdd(ext.ToLower(), FileAssociationCategory.Media);
+                // アーカイブ拡張子
+                foreach (var ext in ArchiveManager.Current.GetFileTypes(false))
+                {
+                    collection.TryAdd(ext.ToLower(), FileAssociationCategory.Archive);
+                }
+
+                // 動画拡張子
+                foreach (var ext in Config.Current.Archive.Media.SupportFileTypes.Items)
+                {
+                    collection.TryAdd(ext.ToLower(), FileAssociationCategory.Media);
+                }
             }
 
             collection.Sort((x, y) => string.Compare(x.Extension, y.Extension));
@@ -64,4 +67,10 @@ namespace NeeView
         }
     }
 
+    [Flags]
+    public enum FileAssociationCollectionCreateOptions
+    {
+        None = 0,
+        OnlyRegistered = (1 << 0),
+    }
 }

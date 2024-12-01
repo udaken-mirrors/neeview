@@ -137,7 +137,7 @@ namespace NeeView
             this.ShutdownMode = ShutdownMode.OnExplicitShutdown;
 
             // APPXデータフォルダ移動 (ver.38)
-            Environment.CoorectLocalAppDataFolder();
+            Environment.CorrectLocalAppDataFolder();
 
             // コマンドライン引数処理
             _option = ParseCommandLineOption(e.Args);

@@ -19,15 +19,6 @@ namespace NeeView
             Add(extension, category, description);
             return true;
         }
-
-        /// <summary>
-        /// ファイル関連付け変更をシェルに通知してアイコン表示を更新する
-        /// </summary>
-        public void RefreshShellIcons()
-        {
-            Debug.WriteLine($"FileAssociate: Refresh shell icons.");
-            NativeMethods.SHChangeNotify(SHChangeNotifyEvents.SHCNE_ASSOCCHANGED, SHChangeNotifyFlags.SHCNF_IDLIST, 0, 0);
-        }
     }
 
 }

@@ -71,6 +71,9 @@ namespace NeeView
         [OptionMember(null, "script", HasParameter = true, RequireParameter = true, HelpText = "@AppOption.ScriptFile")]
         public string? ScriptFile { get; set; }
 
+        [OptionMember(null, "clear-registry", Default = "true", HelpText = "@AppOption.ClearRegistry")]
+        public bool IsClearRegistry { get; set; }
+
         [OptionValues]
         public List<string> Values { get; set; } = new List<string>();
 
@@ -162,7 +165,13 @@ namespace NeeView
                 dialog.SizeToContent = SizeToContent.WidthAndHeight;
                 dialog.ContentRendered += (s, e) => dialog.InvalidateVisual();
                 dialog.ShowDialog();
-                throw new OperationCanceledException("Disp CommandLine Help");
+                throw new OperationCanceledException("Show command line help");
+            }
+
+            if (option.IsClearRegistry)
+            {
+                Environment.ClearRegistry();
+                throw new OperationCanceledException("Clear registries for shell");
             }
 
             return option;
