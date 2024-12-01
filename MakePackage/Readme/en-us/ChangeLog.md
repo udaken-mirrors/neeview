@@ -2,6 +2,16 @@
 
 ----
 
+### 42.1
+(2024-12-01)
+
+#### Fixed
+
+- System: Fixed a bug in version check.
+- Script: Fixed a bug about CreationTime. 
+
+----
+
 ### 42.0
 (2024-11-24)
 
