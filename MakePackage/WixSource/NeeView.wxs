@@ -40,6 +40,18 @@
       <ComponentGroupRef Id="MainComponents"/>
     </Feature>
 
+    <!-- for "perUser":
+      Need to change the registry used to HKCU.
+
+      A setting to adjust the default INSTALLFOLDER when InstallScope=“perUser”.
+      It is as follows.
+      "%LOCALAPPDATA%\Programs\NeeLaboratory\NeeView\"
+    -->
+    <!--
+    <Property Id="ALLUSERS" Secure="yes" Value="2"/>
+    <Property Id="MSIINSTALLPERUSER" Secure="yes" Value="1" />
+    -->
+
     <Property Id="INSTALLFOLDER">
       <RegistrySearch Id='InstallDirRegistry' Type='raw' Root='HKLM' Key='SOFTWARE\NeeLaboratory\NeeView' Name='InstallDir'/>
     </Property>
@@ -62,7 +74,7 @@
 
     <!-- CustomAction: Clear HKCU registry when uninstall -->
     <CustomAction Id="EXECUTE_CLEANUP" Execute="immediate" Impersonate="yes" Return="ignore" FileKey="EXE" ExeCommand="--clear-registry" />
-    <!-- NOTE: Need to consider due to registry manipulation to HKCU
+    <!-- HKCU does not touch with perMachine
     <InstallExecuteSequence>
       <Custom Action="EXECUTE_CLEANUP" After="InstallInitialize">(REMOVE = "ALL") AND (NOT UPGRADINGPRODUCTCODE)</Custom>
     </InstallExecuteSequence>
