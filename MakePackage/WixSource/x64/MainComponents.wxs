@@ -1213,6 +1213,12 @@
         </Component>
       </Directory>
       <Directory Id="dir767958332488D010DC9D9657D1813D0E" Name="Libraries">
+        <Component Id="cmpF797D595E18639AFD1E6B9AF6CC05E60" Guid="*">
+          <File Id="fil783F2FF1C64DDD842C5CB4C6CFC2A61F" KeyPath="yes" Source="$(var.ContentDir)\Libraries\Book.ico" />
+        </Component>
+        <Component Id="cmp78F4E8270A463D8CA65E598EE0E2B8A1" Guid="*">
+          <File Id="filF436F1C7A63EB1AD969D329EC9AB5D08" KeyPath="yes" Source="$(var.ContentDir)\Libraries\File.ico" />
+        </Component>
         <Directory Id="dirDDEF8F5C77D785C782877BFEB45EF203" Name="Susie">
           <Component Id="cmpFDD8E98AB08923F56173B6C6C5A4B937" Guid="*">
             <File Id="fil9C7782CEEE6D88F04ED6D2B8AA218D66" KeyPath="yes" Source="$(var.ContentDir)\Libraries\Susie\clretwrc.dll" />
@@ -2107,6 +2113,8 @@
       <ComponentRef Id="cmp354396F3BBFE5AA8D8F300BB7FAC836C" />
       <ComponentRef Id="cmp9FA19ABB45FE51FEEB8229218B21DCE0" />
       <ComponentRef Id="cmp66E7601A3F85F7B9D552371104360426" />
+      <ComponentRef Id="cmpF797D595E18639AFD1E6B9AF6CC05E60" />
+      <ComponentRef Id="cmp78F4E8270A463D8CA65E598EE0E2B8A1" />
       <ComponentRef Id="cmpFDD8E98AB08923F56173B6C6C5A4B937" />
       <ComponentRef Id="cmp24848F9604E0BBF5CE17A0B70E29C779" />
       <ComponentRef Id="cmpD35FD6150357E77955E3924587DCB2D5" />

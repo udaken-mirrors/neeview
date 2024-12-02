@@ -17,7 +17,10 @@ Param(
 	[switch]$updateComponent,
 
 	# Postfix. Canary や Beta での番号重複回避用
-	[string]$versionPostfix = ""
+	[string]$versionPostfix = "",
+
+	# ビルドバージョンは更新しない
+	[switch]$noVersionUp
 )
 
 # error to break

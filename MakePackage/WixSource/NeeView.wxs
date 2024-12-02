@@ -38,9 +38,6 @@
     <Feature Id="ProductFeature" Title="NeeView" Level="1" AllowAdvertise="no" Absent="disallow" Display="expand" ConfigurableDirectory="INSTALLFOLDER">
       <ComponentGroupRef Id="NeeViewComponents" />
       <ComponentGroupRef Id="MainComponents"/>
-      <Feature Id="ContextMenuFeature" Title="ContextMenu" Description="!(loc.contextMenuFeatureDescription)" Level="1" AllowAdvertise="no" >
-        <ComponentGroupRef Id="RegistoryComponents" />
-      </Feature>
     </Feature>
 
     <Property Id="INSTALLFOLDER">
@@ -48,7 +45,8 @@
     </Property>
 
     <!-- UI -->
-    <UIRef Id="WixUI_MondoEx" />
+    <UIRef Id="WixUI_InstallDirEx" />
+    <Property Id="WIXUI_INSTALLDIR" Value="INSTALLFOLDER" />
     <UIRef Id="WixUI_ErrorProgressText" />
 
     <!-- Disable advertise shortcuts -->
@@ -57,9 +55,19 @@
     <!-- The application icon displayed on the control panel -->
     <Property Id='ARPPRODUCTICON'>App.ico</Property>
 
+    <!-- Remove shortcuts -->
     <InstallExecuteSequence>
       <RemoveShortcuts>Installed AND NOT UPGRADINGPRODUCTCODE</RemoveShortcuts>
     </InstallExecuteSequence>
+
+    <!-- CustomAction: Clear HKCU registry when uninstall -->
+    <CustomAction Id="EXECUTE_CLEANUP" Execute="immediate" Impersonate="yes" Return="ignore" FileKey="EXE" ExeCommand="--clear-registry" />
+    <!-- NOTE: Need to consider due to registry manipulation to HKCU
+    <InstallExecuteSequence>
+      <Custom Action="EXECUTE_CLEANUP" After="InstallInitialize">(REMOVE = "ALL") AND (NOT UPGRADINGPRODUCTCODE)</Custom>
+    </InstallExecuteSequence>
+    -->
+
   </Product>
 
   <Fragment>
@@ -79,7 +87,7 @@
 
     <ComponentGroup Id="NeeViewComponents" Directory="INSTALLFOLDER">
       <Component Guid="*">
-        <File Source="$(var.ContentDir)NeeView.exe" KeyPath="yes" Checksum="yes" >
+        <File Id="EXE" Source="$(var.ContentDir)NeeView.exe" KeyPath="yes" Checksum="yes" >
           <Shortcut Id="MyMenuShortcut" Directory="ProgramMenuFolder" Name="$(var.ExeName)" WorkingDirectory="INSTALLFOLDER" Advertise="yes"/>
         </File>
       </Component>
@@ -91,26 +99,9 @@
      </Component>
     </ComponentGroup>
 
-    <ComponentGroup Id="RegistoryComponents" Directory="INSTALLFOLDER">
-      <Component>
-        <RegistryValue Root="HKLM" Key="SOFTWARE\Classes\*\shell\OpenIn$(var.IdentName)" Type="string" Value="!(loc.openInNeeView)" KeyPath="yes"/>
-        <RegistryValue Root="HKLM" Key="SOFTWARE\Classes\*\shell\OpenIn$(var.IdentName)" Name="Icon" Type="string" Value="&quot;[INSTALLFOLDER]\NeeView.exe&quot;,0"/>
-        <RegistryValue Root="HKLM" Key="SOFTWARE\Classes\*\shell\OpenIn$(var.IdentName)\command" Type="string" Value="&quot;[INSTALLFOLDER]\NeeView.exe&quot; &quot;%1&quot;"/>
-      </Component>
-      <Component>
-        <RegistryValue Root="HKLM" Key="SOFTWARE\Classes\Directory\shell\OpenIn$(var.IdentName)" Type="string" Value="!(loc.openInNeeView)" KeyPath="yes"/>
-        <RegistryValue Root="HKLM" Key="SOFTWARE\Classes\Directory\shell\OpenIn$(var.IdentName)" Name="Icon" Type="string" Value="&quot;[INSTALLFOLDER]\NeeView.exe&quot;,0"/>
-        <RegistryValue Root="HKLM" Key="SOFTWARE\Classes\Directory\shell\OpenIn$(var.IdentName)\command" Type="string" Value="&quot;[INSTALLFOLDER]\NeeView.exe&quot; &quot;%1&quot;"/>
-      </Component>
-      <Component>
-        <RegistryValue Root="HKLM" Key="SOFTWARE\Classes\Directory\Background\shell\OpenIn$(var.IdentName)" Type="string" Value="!(loc.openInNeeView)" KeyPath="yes"/>
-        <RegistryValue Root="HKLM" Key="SOFTWARE\Classes\Directory\Background\shell\OpenIn$(var.IdentName)" Name="Icon" Type="string" Value="&quot;[INSTALLFOLDER]\NeeView.exe&quot;,0"/>
-        <RegistryValue Root="HKLM" Key="SOFTWARE\Classes\Directory\Background\shell\OpenIn$(var.IdentName)\command" Type="string" Value="&quot;[INSTALLFOLDER]\NeeView.exe&quot; &quot;%V&quot;"/>
-      </Component>
-    </ComponentGroup>
-
     <!-- icon -->
     <Icon Id="App.ico" SourceFile="$(var.AppendDir)App.ico" />
 
   </Fragment>
+
 </Wix>
