@@ -80,8 +80,8 @@ namespace NeeView
             return key.ToInformationCategory() switch
             {
                 InformationCategory.File => CreateInformationFileValue(page, key),
-                InformationCategory.Image => CreateInformationImageValue(page.Content.PictureInfo, key),
-                InformationCategory.Metadata => CreateInformationMetaValue(page.Content.PictureInfo, key),
+                InformationCategory.Image => CreateInformationImageValue(page.GetContentPictureInfo(), key),
+                InformationCategory.Metadata => CreateInformationMetaValue(page.GetContentPictureInfo(), key),
                 _ => throw new NotSupportedException(),
             };
         }
@@ -118,7 +118,7 @@ namespace NeeView
             Debug.Assert(key.ToInformationCategory() == InformationCategory.Image);
 
             var pictureInfo = LoadPictureInfo(page, token);
-            return CreateInformationImageValue(pictureInfo, key);
+            return CreateInformationImageValue(page.GetContentPictureInfo(pictureInfo), key);
         }
 
         private static object? CreateInformationImageValue(PictureInfo? pictureInfo, InformationKey key)

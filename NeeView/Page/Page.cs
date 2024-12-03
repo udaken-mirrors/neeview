@@ -288,8 +288,18 @@ namespace NeeView
             };
         }
 
-        #region Page functions
+        /// <summary>
+        /// Page のコンテンツ PictureInfo を取得する
+        /// </summary>
+        /// <param name="pictureInfo">指定する場合にのみ設定する。Page から取得する場合は null</param>
+        /// <returns>コンテンツ PictureInfo。存在しなければ null</returns>
+        public PictureInfo? GetContentPictureInfo(PictureInfo? pictureInfo = null)
+        {
+            if (Content.IsFileContent) return null;
+            return pictureInfo ?? Content.PictureInfo;
+        }
 
+        #region Page functions
 
         // ページ名：ソート用分割
         public string[] GetEntryFullNameTokens()

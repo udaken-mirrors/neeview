@@ -11,36 +11,10 @@
         }
 
         [WordNodeMember]
-        public double Width
-        {
-            get
-            {
-                if (this.Source.Content is BitmapPageContent bitmapContent && bitmapContent.PictureInfo != null)
-                {
-                    return bitmapContent.PictureInfo.OriginalSize.Width;
-                }
-                else
-                {
-                    return 0.0;
-                }
-            }
-        }
+        public double Width => this.Source.GetContentPictureInfo()?.OriginalSize.Width ?? 0.0;
 
         [WordNodeMember]
-        public double Height
-        {
-            get
-            {
-                if (this.Source.Content is BitmapPageContent bitmapContent && bitmapContent.PictureInfo != null)
-                {
-                    return bitmapContent.PictureInfo.OriginalSize.Height;
-                }
-                else
-                {
-                    return 0.0;
-                }
-            }
-        }
+        public double Height => this.Source.GetContentPictureInfo()?.OriginalSize.Height ?? 0.0;
 
         [WordNodeMember]
         public MediaPlayerAccessor? Player => _mediaPlayer is not null ? new MediaPlayerAccessor(_mediaPlayer) : null;
