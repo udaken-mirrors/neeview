@@ -646,6 +646,7 @@ namespace NeeView
                 try
                 {
                     RemoveApplicationDataCore();
+                    ClearRegistry();
                     new MessageDialog(Properties.TextResources.GetString("DeleteApplicationDataCompleteDialog.Message"), Properties.TextResources.GetString("DeleteApplicationDataCompleteDialog.Title")).ShowDialog(owner);
                     LocalApplicationDataRemoved?.Invoke(null, EventArgs.Empty);
                 }
