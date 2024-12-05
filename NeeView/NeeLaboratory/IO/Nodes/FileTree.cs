@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Linq;
 using System.Globalization;
+using NeeView.Threading;
 
 
 namespace NeeLaboratory.IO.Nodes
@@ -301,7 +302,9 @@ namespace NeeLaboratory.IO.Nodes
             var node = Find(oldPath);
             if (node is null)
             {
-                Trace($"Cannot Rename: NofFound: {path}");
+                Trace($"Cannot Rename: Not found: {path}");
+                // リストにない項目は追加を試みる
+                Add(path, token);
                 return;
             }
 
@@ -408,7 +411,8 @@ namespace NeeLaboratory.IO.Nodes
         private void Watcher_Deleted(object sender, FileSystemEventArgs e)
         {
             Trace($"Watcher deleted: {e.FullPath}");
-            _jobEngine.Enqueue(new FileSystemJob(this, FileSystemAction.Deleted, e));
+            // 大文字・小文字のみの Rename では先に Deleted が来るので遅延させてタイミングをずらす
+            DelayActionService.Current.DelayAction(100, () => _jobEngine.Enqueue(new FileSystemJob(this, FileSystemAction.Deleted, e)));
         }
 
         private void Watcher_Renamed(object? sender, RenamedEventArgs e)

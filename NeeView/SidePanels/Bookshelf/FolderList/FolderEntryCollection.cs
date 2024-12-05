@@ -11,6 +11,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Data;
 using System.Globalization;
+using NeeView.Threading;
 
 namespace NeeView
 {
@@ -208,7 +209,7 @@ namespace NeeView
         private void Watcher_Error(object sender, ErrorEventArgs e)
         {
             var ex = e.GetException();
-            Debug.WriteLine($"FileSystemWatcher Error!! : {ex} : {ex.Message}");
+            Debug.WriteLine($"FileSystemWatcher: Error!! : {ex} : {ex.Message}");
 
             // recovery...
             ////var path = _fileSystemWatcher.Path;
@@ -270,7 +271,8 @@ namespace NeeView
         /// <param name="e"></param>
         private void Watcher_Deleted(object sender, FileSystemEventArgs e)
         {
-            RequestDelete(new QueryPath(e.FullPath));
+            // 大文字・小文字のみの Rename では先に Deleted が来るので遅延させてタイミングをずらす
+            DelayActionService.Current.DelayAction(100, () => RequestDelete(new QueryPath(e.FullPath)));
         }
 
         /// <summary>

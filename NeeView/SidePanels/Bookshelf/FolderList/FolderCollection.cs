@@ -560,7 +560,7 @@ namespace NeeView
                 return;
             }
 
-            RenameItem(item, path);
+            AppDispatcher.Invoke(() => RenameItem(item, path));
         }
 
         public void RenameItem(FolderItem item, QueryPath path)
