@@ -261,5 +261,17 @@ namespace NeeView
                 return name + " (" + parent + ")";
             }
         }
+        
+        /// <summary>
+        /// ファイル名変更。ディレクトリはそのまま。
+        /// </summary>
+        /// <param name="path"></param>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        public static string Rename(string path, string name)
+        {
+            if (string.IsNullOrWhiteSpace(name)) return path;
+            return Combine(GetDirectoryName(path), name);
+        }
     }
 }

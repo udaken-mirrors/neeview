@@ -226,7 +226,7 @@ namespace NeeView
         {
             if (entry.Archive != this) throw new ArgumentException("There are elements not registered with this archiver.", nameof(entry));
 
-            var src = entry.EntityPath;
+            var src = entry.SystemPath;
             if (src is null) return false;
 
             // TODO: 名前の補正処理をここで？UI呼ばせるのはよろしくないのでは？

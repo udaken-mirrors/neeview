@@ -72,7 +72,7 @@ namespace NeeView
         public int IndexPlusOne => Index + 1;
 
         // ページ名 : エントリ名
-        public string EntryName { get; }
+        public string EntryName { get; private set; }
 
         // ページ名：ファイル名のみ
         public string EntryLastName => LoosePath.GetFileName(EntryName);
@@ -374,8 +374,12 @@ namespace NeeView
             if (_disposedValue) return false;
 
             var isSuccess = await ArchiveEntry.RenameAsync(name);
-            RaiseNamePropertyChanged();
-            FileInformation.Current.Update(); // TODO: 伝達方法がよろしくない
+            if (isSuccess)
+            {
+                EntryName = LoosePath.Rename(EntryName, name);
+                RaiseNamePropertyChanged();
+                FileInformation.Current.Update(); // TODO: 伝達方法がよろしくない
+            }
             return isSuccess;
         }
 
