@@ -173,6 +173,13 @@ namespace NeeView
             _engine?.RequestDelete(path);
         }
 
+        public void RequestDeleteDelay(QueryPath path, int ms)
+        {
+            if (_disposedValue) return;
+
+            _engine?.RequestDelete(path, ms);
+        }
+
         public override void RequestRename(QueryPath oldPath, QueryPath path)
         {
             if (_disposedValue) return;
@@ -272,7 +279,7 @@ namespace NeeView
         private void Watcher_Deleted(object sender, FileSystemEventArgs e)
         {
             // 大文字・小文字のみの Rename では先に Deleted が来るので遅延させてタイミングをずらす
-            DelayActionService.Current.DelayAction(100, () => RequestDelete(new QueryPath(e.FullPath)));
+            RequestDeleteDelay(new QueryPath(e.FullPath), 100);
         }
 
         /// <summary>

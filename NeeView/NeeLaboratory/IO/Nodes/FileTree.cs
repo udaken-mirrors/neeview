@@ -22,7 +22,7 @@ namespace NeeLaboratory.IO.Nodes
     {
         private readonly string _path;
         private FileSystemWatcher? _fileSystemWatcher;
-        private readonly SingleJobEngine _jobEngine;
+        private readonly DelaySingleJobEngine _jobEngine;
         private readonly EnumerationOptions _enumerationOptions;
         private readonly bool _recurseSubdirectories;
         private readonly string _searchPattern;
@@ -46,7 +46,7 @@ namespace NeeLaboratory.IO.Nodes
 
             _path = path;
 
-            _jobEngine = new SingleJobEngine(nameof(FileTree));
+            _jobEngine = new DelaySingleJobEngine(nameof(FileTree));
             _jobEngine.StartEngine();
 
             _searchPattern = "*";
@@ -412,7 +412,7 @@ namespace NeeLaboratory.IO.Nodes
         {
             Trace($"Watcher deleted: {e.FullPath}");
             // 大文字・小文字のみの Rename では先に Deleted が来るので遅延させてタイミングをずらす
-            DelayActionService.Current.DelayAction(100, () => _jobEngine.Enqueue(new FileSystemJob(this, FileSystemAction.Deleted, e)));
+            _jobEngine.EnqueueDelay(new FileSystemJob(this, FileSystemAction.Deleted, e), 100);
         }
 
         private void Watcher_Renamed(object? sender, RenamedEventArgs e)

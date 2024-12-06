@@ -12,14 +12,14 @@ namespace NeeView
     public class FolderCollectionEngine : IDisposable
     {
         private readonly FolderCollection _folderCollection;
-        private readonly SingleJobEngine _engine;
+        private readonly DelaySingleJobEngine _engine;
 
 
         public FolderCollectionEngine(FolderCollection folderCollection)
         {
             _folderCollection = folderCollection;
 
-            _engine = new SingleJobEngine(nameof(FolderCollectionEngine));
+            _engine = new DelaySingleJobEngine(nameof(FolderCollectionEngine));
             _engine.JobError += JobEngine_Error;
             _engine.StartEngine();
         }
@@ -57,6 +57,18 @@ namespace NeeView
             if (_disposedValue) return;
 
             _engine.Enqueue(new DeleteJob(this, path, false));
+        }
+
+        /// <summary>
+        /// 項目削除
+        /// </summary>
+        /// <param name="path"></param>
+        /// <param name="ms">登録遅延時間</param>
+        public void RequestDelete(QueryPath path, int ms)
+        {
+            if (_disposedValue) return;
+
+            _engine.EnqueueDelay(new DeleteJob(this, path, false), ms);
         }
 
         /// <summary>
