@@ -2,6 +2,24 @@
 
 ----
 
+### 42.2
+(2024-12-08)
+
+#### Fixed
+
+- Bookshelf: Corrected a bug in file name case-only renaming.
+- PageList: Fixed a bug that the display was not updated when the file name was changed in the page list.
+- View: Corrected a bug in the behavior of automatic rotation under certain conditions in the main view window.
+- View: Reduced application error on loading corrupted GIFs.
+- Pages: Width, Height set to 0 for archive pages and other pages with no size.
+- Script: Fixed a bug that ViewPageAccessor's Width and Height could not be obtained in videos.
+
+#### Changed
+
+- Language: Updated zh-Hans.
+
+----
+
 ### 42.1
 (2024-12-01)
 
