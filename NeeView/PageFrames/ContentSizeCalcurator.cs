@@ -44,7 +44,7 @@ namespace NeeView.PageFrames
         /// <returns></returns>
         public double CalcAutoRotate(Size size, bool isFileContent)
         {
-            return CalcAutoRotate(size, isFileContent, CanvasSize);
+            return CalcAutoRotate(size, isFileContent, ReferenceSize);
         }
 
         /// <summary>
