@@ -59,7 +59,7 @@ namespace NeeView
         [PropertyStrings]
         public string Language
         {
-            get { return _language ?? (_language = Properties.TextResources.LanguageResource.ValidateCultureInfo(CultureInfo.CurrentCulture).Name); }
+            get { return _language ?? CultureInfo.CurrentCulture.Name; }
             set { SetProperty(ref _language, value); }
         }
 

@@ -19,7 +19,7 @@ namespace NeeView.Properties
         private static readonly Lazy<FileLanguageResource> _languageResource = new(() => new FileLanguageResource(Path.Combine(Environment.AssemblyFolder, "Languages")));
         private static bool _initialized;
 
-        public static CultureInfo Culture { get; set; } = CultureInfo.CurrentCulture;
+        public static CultureInfo Culture => Resource.Culture;
 
         public static FileLanguageResource LanguageResource => _languageResource.Value;
 
@@ -43,7 +43,6 @@ namespace NeeView.Properties
             }
 #endif
 
-            Culture = culture;
             Resource.Load(culture);
 
 #if false

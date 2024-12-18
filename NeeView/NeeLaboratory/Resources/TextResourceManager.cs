@@ -30,6 +30,11 @@ namespace NeeLaboratory.Resources
         public LanguageResource LanguageResource => _languageResource ?? throw new InvalidOperationException();
 
         /// <summary>
+        /// 言語カルチャ
+        /// </summary>
+        public CultureInfo Culture => _resource.Culture;
+
+        /// <summary>
         /// テキスト マップ
         /// </summary>
         public Dictionary<string, TextResourceItem> Map => _resource.Map;

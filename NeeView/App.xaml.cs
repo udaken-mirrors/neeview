@@ -185,6 +185,9 @@ namespace NeeView
             setting ??= CreateUserSetting(settingResource);
             UserSettingTools.Restore(setting, replaceConfig:true);
 
+            // fix language
+            Config.Current.System.Language = TextResources.Culture.Name;
+
             DebugStamp("UserSettingLoaded");
 
             // show version dialog
@@ -259,7 +262,15 @@ namespace NeeView
         private void InitializeTextResource(string language)
         {
             using var span = DebugSpan();
-            var culture = CultureInfo.GetCultureInfo(language);
+            CultureInfo culture;
+            try
+            {
+                culture = CultureInfo.GetCultureInfo(language);
+            }
+            catch (CultureNotFoundException)
+            {
+                culture = CultureInfo.CurrentCulture;
+            }
             TextResources.Initialize(culture);
             InputGestureDisplayString.Initialize(TextResources.Resource);
         }
