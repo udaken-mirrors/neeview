@@ -1,6 +1,6 @@
 <Project>
   <PropertyGroup>
-    <VersionPrefix>42.3.17</VersionPrefix>
+    <VersionPrefix>42.3.18</VersionPrefix>
     <Authors>NeeLaboratory</Authors>
     <Copyright>Copyright © 2016-2024 Ito Mitsuhiro (nee)</Copyright>
   </PropertyGroup>
