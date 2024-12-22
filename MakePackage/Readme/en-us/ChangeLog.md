@@ -2,6 +2,19 @@
 
 ----
 
+### 42.3
+(2024-12-22)
+
+#### 不具合修正
+
+- System: Fixed a bug that caused startup to fail with old language settings.
+
+#### 更新
+
+- Language: Updated zh-Hans.
+
+----
+
 ### 42.2
 (2024-12-08)
 
