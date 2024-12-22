@@ -2,6 +2,15 @@
 
 ----
 
+### 42.4
+(2024-12-23)
+
+#### 不具合修正
+
+- System: Fixed a bug that multiple startups may fail under certain conditions.
+
+----
+
 ### 42.3
 (2024-12-22)
 
