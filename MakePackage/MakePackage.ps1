@@ -233,6 +233,31 @@ function Build-ProjectSelfContained($platform)
 	)
 
 	Build-Project $platform "$product-$platform" $options
+
+	#=================================================================================
+	# 42.3 作成時、なぜか古い hostfxr.dll が適用されてしまい起動時エラーが発生することがあるので、 42.2 で作成されたものと差し替える。
+	# ！！！注意！！！ これは応急処置です。後日調査が必要です。
+	#=================================================================================
+	if ($platform -eq "x64")
+	{
+		$updateHostFxr = $false
+		$options = @(
+			New-Object $tChoiceDescription ("&Yes", "Update version")
+			New-Object $tChoiceDescription ("&No", "Keep version")
+		)
+		$result = $host.ui.PromptForChoice("[HOTFIX] Update HostFxr.dll", "Replace hostfxr.dll?", $options, 0)
+		switch ($result)
+		{
+			0 { $updateHostFxr = $true; break; }
+			1 { $updateHostFxr = $false; break; }
+		}
+
+		if ($updateHostFxr)
+		{
+			Write-Host "Replace hostfxr.dll ..."
+			Copy-Item "HostFxr\42.2-x64\hostfxr.dll" "Publish\$product-$platform\hostfxr.dll"
+		}
+	}
 }
 
 function Build-ProjectFrameworkDependent($platform)
@@ -1057,13 +1082,13 @@ if (($Target -eq "All") -or ($Target -eq "Appx"))
 
 if (-not $x86)
 {
-	if (($Target -eq "All") -or ($Target -eq "Canary"))
+	if ($Target -eq "Canary")
 	{
 		Build-PackageSorce-x64-fd
 		Build-Canary
 	}
 
-	if (($Target -eq "All") -or ($Target -eq "Beta"))
+	if ($Target -eq "Beta")
 	{
 		Build-PackageSorce-x64
 		Build-Beta
