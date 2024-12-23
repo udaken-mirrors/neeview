@@ -233,34 +233,6 @@ function Build-ProjectSelfContained($platform)
 	)
 
 	Build-Project $platform "$product-$platform" $options
-
-	#=================================================================================
-	# 42.3 作成時、なぜか古い hostfxr.dll が適用されてしまい起動時エラーが発生することがあるので、 42.2 で作成されたものと差し替える。
-	# ！！！注意！！！ これは応急処置です。後日調査が必要です。
-	#=================================================================================
-	if ($platform -eq "x64")
-	{
-		$updateHostFxr = $false
-		$options = @(
-			New-Object $tChoiceDescription ("&Yes", "Update version")
-			New-Object $tChoiceDescription ("&No", "Keep version")
-		)
-		$result = $host.ui.PromptForChoice("[HOTFIX] Update HostFxr.dll", "Replace hostfxr.dll?", $options, 0)
-		switch ($result)
-		{
-			0 { $updateHostFxr = $true; break; }
-			1 { $updateHostFxr = $false; break; }
-		}
-
-		if ($updateHostFxr)
-		{
-			Write-Host "Replace hostfxr.dll ..."
-
-			$origin = "Publish\$product-$platform\hostfxr.dll"
-			Copy-Item $origin "Publish\_hostfxr.dll"
-			Copy-Item "HostFxr\42.2-x64\hostfxr.dll" $origin
-		}
-	}
 }
 
 function Build-ProjectFrameworkDependent($platform)
