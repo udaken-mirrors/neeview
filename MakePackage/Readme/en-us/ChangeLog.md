@@ -5,20 +5,20 @@
 ### 42.4
 (2024-12-23)
 
-#### 不具合修正
+#### Fixed
 
-- System: Fixed a bug that multiple startups may fail under certain conditions.
+- System: Fixed a bug that caused multi-boot to fail under certain conditions.
 
 ----
 
 ### 42.3
 (2024-12-22)
 
-#### 不具合修正
+#### Fixed
 
 - System: Fixed a bug that caused startup to fail with old language settings.
 
-#### 更新
+#### Changed
 
 - Language: Updated zh-Hans.
 
