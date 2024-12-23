@@ -255,7 +255,10 @@ function Build-ProjectSelfContained($platform)
 		if ($updateHostFxr)
 		{
 			Write-Host "Replace hostfxr.dll ..."
-			Copy-Item "HostFxr\42.2-x64\hostfxr.dll" "Publish\$product-$platform\hostfxr.dll"
+
+			$origin = "Publish\$product-$platform\hostfxr.dll"
+			Copy-Item $origin "Publish\_hostfxr.dll"
+			Copy-Item "HostFxr\42.2-x64\hostfxr.dll" $origin
 		}
 	}
 }
