@@ -251,7 +251,7 @@ function New-Package($platform, $productName, $productDir, $packageDir)
 {
 	$temp = New-Item $packageDir -ItemType Directory
 
-	Copy-Item $productDir\* $packageDir -Recurse -Exclude ("*.pdb", "$product..settings.json")
+	Copy-Item $productDir\* $packageDir -Recurse -Exclude ("*.pdb", "$product.settings.json")
 
 	# fix native dll
 	if ($platform -eq "x86")
