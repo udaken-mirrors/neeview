@@ -68,7 +68,7 @@ namespace NeeView
         {
             if (_disposedValue) return;
 
-            _engine.EnqueueDelay(new DeleteJob(this, path, false), ms);
+            _engine.Enqueue(new DeleteJob(this, path, false));
         }
 
         /// <summary>

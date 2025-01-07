@@ -411,8 +411,7 @@ namespace NeeLaboratory.IO.Nodes
         private void Watcher_Deleted(object sender, FileSystemEventArgs e)
         {
             Trace($"Watcher deleted: {e.FullPath}");
-            // 大文字・小文字のみの Rename では先に Deleted が来るので遅延させてタイミングをずらす
-            _jobEngine.EnqueueDelay(new FileSystemJob(this, FileSystemAction.Deleted, e), 100);
+            _jobEngine.Enqueue(new FileSystemJob(this, FileSystemAction.Deleted, e));
         }
 
         private void Watcher_Renamed(object? sender, RenamedEventArgs e)
