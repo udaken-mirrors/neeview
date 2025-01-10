@@ -10,14 +10,14 @@ Converts between language files ([culture].restext) and Json. This is a utility 
 Convert language files to Language.json.
 
 .EXAMPLE
-> .\ConvertRestext.ps1 -Mode Release -Sort
+> .\ConvertRestext.ps1 -Mode Convert -Sort
 Generate language files from Language.json.
 -Sort by key if specified.
 
 .PARAMETER Mode
 Convert mode 
-    Release: Convert Json file to language files
-    MakeJson: Convert language files to Json file
+    Convert: Convert Json file to language files
+    Revert: Convert language files to Json file
 
 .PARAMETER JsonFile
 Json file name. Default is Language.json
@@ -26,21 +26,21 @@ Json file name. Default is Language.json
 Sort data by key
 
 .PARAMETER Clean
-For Release, clear if the text is the same as English.
+For Convert, clear if the text is the same as English.
 
 .PARAMETER Trim
-For Release, trim empty data.
+For Convert, trim empty data.
 
 .PARAMETER Cultures
-For Release, Specify the culture to be processed.
+For Convert, Specify the culture to be processed.
 Specify cultures separated by commas. If not specified, all cultures are processed.
 e.g., -Cultures en,ja
 
 #>
 
 param (
-    [Parameter(Mandatory=$true)]
-    [ValidateSet("Release", "MakeJson")]
+    [Parameter(Mandatory = $true)]
+    [ValidateSet("Convert", "Revert")]
     [string]$Mode,
     [string]$JsonFile = "Language.json",
     [switch]$Sort,
@@ -49,13 +49,26 @@ param (
     [string[]]$Cultures = @()
 )
 
-if ($Cultures.Length -ne 0)
-{
-    Write-Host Cultures: $Cultures
+$modeDetail = switch ($Mode) {
+    "Convert" { "Export *.restext" }
+    "Revert" { "Export $JsonFile" }
+    default {"Unknown"}
 }
+
+Write-Host
+Write-Host "[Properties] ..." -fore Cyan
+Write-Host "Mode: $Mode"
+Write-Host "JsonFile: $JsonFile"
+Write-Host "Sort: $Sort"
+Write-Host "Clean: $Clean"
+Write-Host "Trim: $Trim"
+Write-Host "Cultures: $Cultures"
+Write-Host
+Write-Host "[$modeDetail]" -fore Cyan
+Read-Host "Press Enter to continue"
+
+
 $Filter = $Cultures
-
-
 $defaultCulture = "en"
 
 # error to break
@@ -63,25 +76,21 @@ trap { break }
 $ErrorActionPreference = "stop"
 
 
-function Get-Restext
-{
+function Get-Restext {
     param ([string]$culture)
     $restext = "$culture.restext"
     Write-Host Read $restext
     $array = @()
-    foreach($line in Get-Content $restext) 
-    {
-        if ([string]::IsNullOrWhitespace($line))
-        {
+    foreach ($line in Get-Content $restext) {
+        if ([string]::IsNullOrWhitespace($line)) {
             continue
         }
         $tokens = $line -split "=", 2
         $key = $tokens[0]
         $value = $tokens[1]
-        if (($culture -eq $defaultCulture) -or (-not [string]::IsNullOrEmpty($value)))
-        {
+        if (($culture -eq $defaultCulture) -or (-not [string]::IsNullOrEmpty($value))) {
             $array += [PSCustomObject]@{
-                Key = $key
+                Key   = $key
                 Value = $value
             }
         }
@@ -89,39 +98,32 @@ function Get-Restext
     return $array
 }
 
-function ConvertTo-RestextMap
-{
+function ConvertTo-RestextMap {
     param ($array)
     $map = @{}
-    foreach ($obj in $array)
-    {
+    foreach ($obj in $array) {
         $map[$obj.Key] = $obj.Value
     }
     return $map
 }
 
-function Test-AdditionalKey
-{
+function Test-AdditionalKey {
     param ([string]$key)
     return ($key.Contains(':') -or $key.StartsWith("Key.") -or $key.StartsWith("ModifierKeys.") -or $key.StartsWith("MouseAction.") -or $key.StartsWith("MouseButton.") -or $key.StartsWith("MouseDirection.") -or $key.StartsWith("TouchArea."))
 }
 
-function Add-RestextToRestextTable
-{
+function Add-RestextToRestextTable {
     param([PSCustomObject]$table, [string]$culture)
     $array = Get-Restext $culture
     $map = ConvertTo-RestextMap $array
 
-    foreach ($entry in $map.GetEnumerator())
-    {
+    foreach ($entry in $map.GetEnumerator()) {
         $key = $entry.Key
         $value = $entry.Value
-        if ($null -ne $table.$key)
-        {
+        if ($null -ne $table.$key) {
             $table.$key | Add-Member -MemberType NoteProperty -Name $culture -Value $value
         }
-        elseif(Test-AdditionalKey $key)
-        {
+        elseif (Test-AdditionalKey $key) {
             $obj = [PSCustomObject]@{
                 $culture = $value
             }
@@ -130,12 +132,10 @@ function Add-RestextToRestextTable
     }
 }
 
-function ConvertTo-RestextFromRestextTable
-{
+function ConvertTo-RestextFromRestextTable {
     param ([PSCustomObject]$table, [string]$culture)
     $lines = @()
-    foreach ($property in $table.psobject.Properties)
-    {
+    foreach ($property in $table.psobject.Properties) {
         $key = $property.Name
         #$key = [regex]::Replace($property.Name, "\.([a-z])", { $args.value.toUpper() })
 
@@ -144,8 +144,7 @@ function ConvertTo-RestextFromRestextTable
 
         $isAdditionalKey = Test-AdditionalKey $key
 
-        if ($Clean -and ($culture -ne $defaultCulture) -and ($value -eq $defaultValue))
-        {
+        if ($Clean -and ($culture -ne $defaultCulture) -and ($value -eq $defaultValue)) {
             $value = $null
         }
 
@@ -153,17 +152,13 @@ function ConvertTo-RestextFromRestextTable
         $isTrimEmpty = $Trim -and $isEmpty
         $isRequired = ($null -ne $property.Value.$defaultCulture) -and (-not $isAdditionalKey)
 
-        if ($isAdditionalKey)
-        {
-            if (-not $isEmpty)
-            {
+        if ($isAdditionalKey) {
+            if (-not $isEmpty) {
                 $lines += $key + "=" + $value
             }
         }
-        else
-        {
-            if ($isRequired -and (-not $isTrimEmpty))
-            {
+        else {
+            if ($isRequired -and (-not $isTrimEmpty)) {
                 $lines += $key + "=" + $value
             }
         }
@@ -171,19 +166,16 @@ function ConvertTo-RestextFromRestextTable
     return $lines
 }
 
-function Get-RestextCultures
-{
-    $cultures = Get-ChildItem *.restext -Exclude shared.restext | ForEach-Object {[System.IO.Path]::GetFileNameWithoutExtension($_.Name)}
+function Get-RestextCultures {
+    $cultures = Get-ChildItem *.restext -Exclude shared.restext | ForEach-Object { [System.IO.Path]::GetFileNameWithoutExtension($_.Name) }
     return $cultures
 }
 
-function Get-DefaultRestextTable
-{
+function Get-DefaultRestextTable {
     param ([string]$culture)
     $array = Get-Restext $culture
     $table = [PSCustomObject]@{}
-    foreach ($pair in $array)
-    {
+    foreach ($pair in $array) {
         $obj = [PSCustomObject]@{
             $culture = $pair.Value
         }
@@ -192,53 +184,43 @@ function Get-DefaultRestextTable
     return $table
 }
 
-function Get-RestextTable
-{
+function Get-RestextTable {
     param([string[]]$cultures)
 
     $table = Get-DefaultRestextTable $defaultCulture
-    foreach ($culture in $cultures)
-    {
-        if ($culture -ne $defaultCulture)
-        {
+    foreach ($culture in $cultures) {
+        if ($culture -ne $defaultCulture) {
             Add-RestextToRestextTable $table $culture
         }
     }
     return $table
 }
 
-function Set-RestextTable
-{
+function Set-RestextTable {
     param([PSCustomObject]$table, [string[]]$cultures)
-    foreach ($culture in Get-FilteredCultures($cultures))
-    {
+    foreach ($culture in Get-FilteredCultures($cultures)) {
         $restext = "$culture.restext"
         Write-Host Write $restext 
         ConvertTo-RestextFromRestextTable $table $culture | Set-Content $restext -Encoding utf8
     }
 }
 
-function Get-FilteredCultures
-{
+function Get-FilteredCultures {
     param([string[]]$cultures)
 
-    if ($Filter.Length -eq 0)
-    {
+    if ($Filter.Length -eq 0) {
         return $cultures
     }
-    else
-    {
+    else {
         return $cultures | Where-Object { $Filter.Contains($_) }
     }
 }
 
 
-function Sort-RestextTable
-{ 
+function Sort-RestextTable { 
     param([PSCustomObject]$table)
     $newTable = [PSCustomObject]@{}
-    foreach ($property in $table.psobject.properties | Sort-Object -Property Name)
-    {
+    foreach ($property in $table.psobject.properties | Sort-Object -Property Name) {
         $key = $property.Name
         $value = $property.Value
         $newTable | Add-Member -MemberType NoteProperty -Name $key -Value $value
@@ -246,16 +228,12 @@ function Sort-RestextTable
     return $newTable
 }
 
-function Get-CulturesFromRestextTable
-{
+function Get-CulturesFromRestextTable {
     param([PSCustomObject]$table)
     $cultures = @()
-    foreach ($property in $table.psobject.properties)
-    {
-        foreach ($culture in $property.Value.psobject.properties.name)
-        {
-            if (-not $cultures.Contains($culture))
-            {
+    foreach ($property in $table.psobject.properties) {
+        foreach ($culture in $property.Value.psobject.properties.name) {
+            if (-not $cultures.Contains($culture)) {
                 $cultures += $culture
             }
         }
@@ -264,40 +242,36 @@ function Get-CulturesFromRestextTable
 }
 
 # fix typo (no used)
-function Get-ReplaceTypo
-{
+function Get-ReplaceTypo {
     $transform = [PSCustomObject]@{
-        "Confrict" = "Conflict"
-        "Deault" = "Default"
-        "Inclide" = "Include"
-        "Sceme" = "Scheme"
+        "Confrict"   = "Conflict"
+        "Deault"     = "Default"
+        "Inclide"    = "Include"
+        "Sceme"      = "Scheme"
         "Javascript" = "JavaScript"
-        "Playlsit" = "Playlist"
-        "Rerset" = "Reset"
-        "Lastest" = "Latest"
-        "Vertival" = "Vertical"
-        "Scipt" = "Script"
+        "Playlsit"   = "Playlist"
+        "Rerset"     = "Reset"
+        "Lastest"    = "Latest"
+        "Vertival"   = "Vertical"
+        "Scipt"      = "Script"
         "Manipurate" = "Manipulate"
-        "Fodler" = "Folder"
-        "Visibled" = "Visible"
-        "Openbook" = "OpenBook"
+        "Fodler"     = "Folder"
+        "Visibled"   = "Visible"
+        "Openbook"   = "OpenBook"
     }
 
     param([string]$s)
-    foreach ($pair in $transform.psobject.properties)
-    {
+    foreach ($pair in $transform.psobject.properties) {
         $s = $s -creplace $pair.Name, $pair.Value
     }
     return $s
 }
 
 # fix typo (table)
-function Get-ReplaceTypoTable
-{ 
+function Get-ReplaceTypoTable { 
     param([PSCustomObject]$table)
     $newTable = [PSCustomObject]@{}
-    foreach ($property in $table.psobject.properties)
-    {
+    foreach ($property in $table.psobject.properties) {
         $key = Get-ReplaceTypo $property.Name
         $value = $property.Value
         $newTable | Add-Member -MemberType NoteProperty -Name $key -Value $value
@@ -309,30 +283,25 @@ function Get-ReplaceTypoTable
 # MAIN
 #
 
-if ($Mode -eq "Release")
-{
+if ($Mode -eq "Convert") {
     Write-Host Read $JsonFile
     $table = Get-Content $JsonFile | ConvertFrom-Json   
-    if ($Sort)
-    {
+    if ($Sort) {
         $table = Sort-RestextTable $table
     }
     $cultures = Get-CulturesFromRestextTable $table
     Set-ResTextTable $table $cultures
 }
-elseif($Mode -eq "MakeJson")
-{
+elseif ($Mode -eq "Revert") {
     $cultures = Get-RestextCultures
     $table = Get-RestextTable $cultures
-    if ($Sort)
-    {
+    if ($Sort) {
         $table = Sort-RestextTable $table
     }
     Write-Host Write $JsonFile
     $table | ConvertTo-Json | Set-Content $JsonFile -Encoding utf8
 }
-else
-{ 
-    throw  "'$Mode' is an unknown mode. Specify 'Release' or 'MakeJson' as the mode."
+else { 
+    throw  "'$Mode' is an unknown mode. Specify 'Convert' or 'Revert' as the mode."
 }
 
