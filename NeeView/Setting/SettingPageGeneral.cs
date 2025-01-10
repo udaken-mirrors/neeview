@@ -328,7 +328,7 @@ namespace NeeView.Setting
             section.Children.Add(new SettingItemProperty(PropertyMemberElement.Create(ExplorerContextMenu.Current, nameof(ExplorerContextMenu.IsEnabled))));
             this.Items.Add(section);
 
-            section = new SettingItemSection(Properties.TextResources.GetString("SettingPage.Explorer.FileAssociation"));
+            section = new SettingItemSection(Properties.TextResources.GetString("SettingPage.Explorer.FileAssociation"), Properties.TextResources.GetString("SettingPage.Explorer.FileAssociation.Remarks"));
             section.Children.Add(new SettingItemFileAssociation());
             this.Items.Add(section);
         }
