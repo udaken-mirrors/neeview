@@ -2,6 +2,15 @@
 
 ----
 
+### 42.5
+(2025-01-12)
+
+#### Fixed
+
+- Bookshelf: Fixed a bug that compressed files may disappear from the list when they are edited.
+
+----
+
 ### 42.4
 (2024-12-23)
 
