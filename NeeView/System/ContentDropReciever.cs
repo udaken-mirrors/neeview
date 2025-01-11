@@ -117,19 +117,6 @@ namespace NeeView
 
         private void LoadFiles(List<string> files)
         {
-            // Import
-            if (files.Count == 1)
-            {
-                var file = files[0];
-                if (LoosePath.GetExtension(file) == ".nvzip" && System.IO.File.Exists(file))
-                {
-                    var param = new ImportBackupCommandParameter() { FileName = file };
-                    ExportDataPresenter.Current.Import(param);
-                    return;
-                }
-            }
-
-            // Load Book
             BookHubTools.RequestLoad(this, files);
         }
 

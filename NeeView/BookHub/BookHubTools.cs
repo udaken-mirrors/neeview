@@ -25,8 +25,19 @@ namespace NeeView
         /// </remarks>
         public static string? RequestLoad(object sender, IEnumerable<string> paths, BookLoadOption options, bool isRefreshFolderList)
         {
-            if (paths is null || !paths.Any()) return null;
+            if (paths is null) return null;
 
+            var firstFile = paths.FirstOrDefault();
+            if (firstFile is null) return null;
+
+            // Import
+            if (LoosePath.GetExtension(firstFile) == ".nvzip")
+            {
+                var parameter = new ImportBackupCommandParameter() { FileName = firstFile };
+                ExportDataPresenter.Current.Import(parameter);
+                return null;
+            }
+            
             if (paths.Count() >= 2)
             {
                 var path = PlaylistSourceTools.CreateTempPlaylist(paths);
