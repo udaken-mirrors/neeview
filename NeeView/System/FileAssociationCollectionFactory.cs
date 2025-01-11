@@ -33,7 +33,7 @@ namespace NeeView
             if (!options.HasFlag(FileAssociationCollectionCreateOptions.OnlyRegistered))
             {
                 // システム
-                collection.TryAdd(".nvplst", FileAssociationCategory.ForNeeView, ResourceService.GetString("@FileType.Playlist"));
+                collection.TryAdd(".nvpls", FileAssociationCategory.ForNeeView, ResourceService.GetString("@FileType.Playlist"));
                 collection.TryAdd(".nvzip", FileAssociationCategory.ForNeeView, ResourceService.GetString("@FileType.ExportData"));
 
                 // 画像拡張子
