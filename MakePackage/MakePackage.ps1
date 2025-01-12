@@ -38,9 +38,10 @@ Write-Host "VersionPostfix: $versionPostfix"
 Write-Host
 Read-Host "Press Enter to continue"
 
+# environment
 $product = 'NeeView'
 $Win10SDK = "C:\Program Files (x86)\Windows Kits\10\bin\10.0.22621.0\x64"
-
+$issuesUrl = "https://bitbucket.org/neelabo/neeview/issues"
 
 # sync current directory
 [System.IO.Directory]::SetCurrentDirectory((Get-Location -PSProvider FileSystem).Path)
@@ -83,12 +84,11 @@ function Get-AppVersion($version) {
 # get git log
 function Get-GitLog() {
 	$branch = Invoke-Expression "git rev-parse --abbrev-ref HEAD"
-	$descrive = Invoke-Expression "git describe --abbrev=0 --tags"
+	$descrive = Invoke-Expression "git tag" | Where-Object { $_ -match "^\d+\.\d+$" } | Select-Object -Last 1
 	$date = Invoke-Expression 'git log -1 --pretty=format:"%ad" --date=iso'
-	$result = Invoke-Expression "git log $descrive..head --encoding=Shift_JIS --pretty=format:`"%ae %s`""
-	$result = $result | Where-Object { $_ -match "^nee.laboratory" } | ForEach-Object { $_ -replace "^[\w\.@]+ ", "" }
-	$result = $result | Where-Object { -not ($_ -match '^m.rge|^開発用|^作業中|\(dev\)|^-|^\.\.') } 
-	$result = $result | ForEach-Object { $_ -replace "#(\d+)", "[#`$1](https://bitbucket.org/neelabo/neeview/issues/`$1)" }
+	$result = Invoke-Expression "git log $descrive..head --encoding=Shift_JIS --pretty=format:`"%s`""
+	$result = $result | Where-Object { -not ($_ -match '^Merged |^chore:|^docs:|^-|^\.\.') } 
+	$result = $result | ForEach-Object { $_ -replace "#(\d+)", "[#`$1]($issuesUrl/`$1)" }
 
 	return "[${branch}] $descrive to head", $date, $result
 }
