@@ -4,7 +4,6 @@ using System.Diagnostics;
 using System.Threading;
 using System;
 using System.Threading.Tasks;
-using System.Windows.Media.Effects;
 
 namespace NeeView
 {
@@ -26,21 +25,15 @@ namespace NeeView
         /// </summary>
         public static async Task<List<string>> CreateRealizedFilePathListAsync(IEnumerable<Page> pages, CancellationToken token)
         {
-            return await CreateFilePathListAsync(pages, ArchivePolicy.SendExtractFile, token);
+            return await CreateRealizedFilePathListAsync(pages, ArchivePolicy.SendExtractFile, token);
         }
 
-        public static async Task<List<string>> CreateFilePathListAsync(IEnumerable<Page> pages, ArchivePolicy archivePolicy, CancellationToken token)
+        /// <summary>
+        /// ページ群の実ファイルリストを取得
+        /// </summary>
+        public static async Task<List<string>> CreateRealizedFilePathListAsync(IEnumerable<Page> pages, ArchivePolicy archivePolicy, CancellationToken token)
         {
-            var files = new List<string>();
-            foreach (var page in pages)
-            {
-                var path = await page.ArchiveEntry.RealizeAsync(archivePolicy, token);
-                if (path != null)
-                {
-                    files.Add(path);
-                }
-            }
-            return files.Distinct().ToList();
+            return await ArchiveEntryUtility.RealizeArchiveEntry(pages.Select(e => e.ArchiveEntry), archivePolicy, token);
         }
     }
 }

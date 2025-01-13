@@ -36,8 +36,28 @@ namespace NeeView
                 ArchivePolicy.SendExtractFile
                     => @"ExtractToTempFolder\File.jpg",
                 _
-                    => throw new ArgumentOutOfRangeException($"not support self value: {self}"),
+                    => throw new ArgumentOutOfRangeException($"not support ArchivePolicy: {self}"),
             };
+        }
+
+        /// <summary>
+        /// ファイルにコピーするときのポリシー制限
+        /// </summary>
+        /// <remarks>
+        /// <see cref="ArchivePolicy.SendArchivePath"/> は実体のないパスなので <see cref="ArchivePolicy.SendExtractFile"/> にする。
+        /// </remarks>
+        /// <param name="self"></param>
+        /// <returns>限定されたポリシー</returns>
+        public static ArchivePolicy LimitedRealization(this ArchivePolicy self)
+        {
+            if (self == ArchivePolicy.SendArchivePath)
+            {
+                return ArchivePolicy.SendExtractFile;
+            }
+            else
+            {
+                return self;
+            }
         }
     }
 

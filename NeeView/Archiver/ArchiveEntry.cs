@@ -533,6 +533,9 @@ namespace NeeView
             // in archive
             switch (archivePolicy)
             {
+                case ArchivePolicy.None:
+                    return null;
+
                 case ArchivePolicy.SendArchiveFile:
                     return PlacePath;
 

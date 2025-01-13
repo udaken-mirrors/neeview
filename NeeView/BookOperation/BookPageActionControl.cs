@@ -115,7 +115,7 @@ namespace NeeView
             try
             {
                 var pages = CollectPages(_book, multiPagePolicy);
-                var paths = await PageUtility.CreateRealizedFilePathListAsync(pages, token);
+                var paths = await PageUtility.CreateRealizedFilePathListAsync(pages, Config.Current.System.ArchiveCopyPolicy.LimitedRealization(), token);
                 await parameter.CopyAsync(paths, token);
             }
             catch (OperationCanceledException)

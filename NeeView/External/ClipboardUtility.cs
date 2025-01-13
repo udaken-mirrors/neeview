@@ -55,7 +55,7 @@ namespace NeeView
             data.SetData(pages.Select(x => new QueryPath(x.EntryFullName)).ToQueryPathCollection());
 
             // realize file path
-            var files = await PageUtility.CreateFilePathListAsync(pages, policy.ArchiveCopyPolicy, token);
+            var files = await PageUtility.CreateRealizedFilePathListAsync(pages, policy.ArchiveCopyPolicy, token);
             if (files.Count > 0)
             {
                 data.SetData(DataFormats.FileDrop, files.ToArray());
@@ -65,7 +65,7 @@ namespace NeeView
             if (policy.TextCopyPolicy != TextCopyPolicy.None)
             {
                 var paths = (policy.ArchiveCopyPolicy == ArchivePolicy.SendExtractFile && policy.TextCopyPolicy == TextCopyPolicy.OriginalPath)
-                    ? await PageUtility.CreateFilePathListAsync(pages, ArchivePolicy.SendArchivePath, token)
+                    ? await PageUtility.CreateRealizedFilePathListAsync(pages, ArchivePolicy.SendArchivePath, token)
                     : files;
                 if (paths.Count > 0)
                 {

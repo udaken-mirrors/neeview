@@ -240,7 +240,7 @@ namespace NeeView
                 var items = GetSelectedPages(sender);
                 if (items is not null)
                 {
-                    var paths = await PageUtility.CreateRealizedFilePathListAsync(items, CancellationToken.None);
+                    var paths = await PageUtility.CreateRealizedFilePathListAsync(items, Config.Current.System.ArchiveCopyPolicy.LimitedRealization(), CancellationToken.None);
                     await folder.CopyAsync(paths, CancellationToken.None);
                 }
             }

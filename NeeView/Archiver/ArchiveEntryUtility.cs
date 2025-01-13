@@ -247,6 +247,28 @@ namespace NeeView
             return null;
         }
 
+
+        /// <summary>
+        /// エントリ群の実体化
+        /// </summary>
+        /// <param name="entries">エントリ群</param>
+        /// <param name="archivePolicy">実ファイルでなくアーカイブエントリである場合の方針</param>
+        /// <param name="token"></param>
+        /// <returns>実体化されたファイルパス</returns>
+        public static async Task<List<string>> RealizeArchiveEntry(IEnumerable<ArchiveEntry> entries, ArchivePolicy archivePolicy, CancellationToken token)
+        {
+            var paths = new List<string>();
+            foreach (var entry in entries)
+            {
+                var path = await entry.RealizeAsync(archivePolicy, token);
+                if (path is not null)
+                {
+                    paths.Add(path);
+                }
+            }
+            return paths.Distinct().ToList();
+        }
+
     }
 
 }

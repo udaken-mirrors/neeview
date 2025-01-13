@@ -30,7 +30,7 @@ namespace NeeView
         {
             try
             {
-                var files = await PageUtility.CreateFilePathListAsync(pages, options.ArchivePolicy, token);
+                var files = await PageUtility.CreateRealizedFilePathListAsync(pages, options.ArchivePolicy, token);
                 Call(files, options);
             }
             catch (OperationCanceledException)

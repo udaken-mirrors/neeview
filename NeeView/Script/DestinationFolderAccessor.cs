@@ -141,17 +141,8 @@ namespace NeeView
 
         private static async Task<List<string>> RealizeArchiveEntry(IEnumerable<ArchiveEntry> entries, CancellationToken token)
         {
-            var paths = new List<string>();
-            foreach (var entry in entries)
-            {
-                var path = await entry.RealizeAsync(token);
-                if (path is not null)
-                {
-                    paths.Add(path);
-                }
-            }
-            return paths.Distinct().ToList();
+            var archivePolicy = Config.Current.System.ArchiveCopyPolicy.LimitedRealization();
+            return await ArchiveEntryUtility.RealizeArchiveEntry(entries, archivePolicy, token);
         }
-
     }
 }
