@@ -50,21 +50,21 @@ param (
 )
 
 $modeDetail = switch ($Mode) {
-    "Convert" { "Export *.restext" }
-    "Revert" { "Export $JsonFile" }
+    "Convert" { "$JsonFile -> *.restext" }
+    "Revert" { "*.restext -> $JsonFile" }
     default {"Unknown"}
 }
 
 Write-Host
 Write-Host "[Properties] ..." -fore Cyan
-Write-Host "Mode: $Mode"
+Write-Host "Mode: $Mode" -NoNewline
+Write-Host " ($modeDetail)" -fore Green
 Write-Host "JsonFile: $JsonFile"
 Write-Host "Sort: $Sort"
 Write-Host "Clean: $Clean"
 Write-Host "Trim: $Trim"
 Write-Host "Cultures: $Cultures"
 Write-Host
-Write-Host "[$modeDetail]" -fore Cyan
 Read-Host "Press Enter to continue"
 
 
