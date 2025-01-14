@@ -2,6 +2,7 @@
 using NeeLaboratory.Generators;
 using NeeView.Data;
 using NeeView.Native;
+using NeeView.Setting;
 using NeeView.Threading;
 using NeeView.Windows;
 using System;
@@ -477,6 +478,12 @@ namespace NeeView
             _vm.ContentRendered();
 
             Debug.WriteLine($"App.MainWindow.ContentRendered.Done: {App.Current.Stopwatch.ElapsedMilliseconds}ms");
+
+            // 初回起動ダイアログ
+            if (!Config.Current.System.IsLoadedSettings)
+            {
+                AppDispatcher.BeginInvoke(() => WelcomeDialog.ShowDialog(this));
+            }
         }
 
         // ウィンドウアクティブ
@@ -622,7 +629,7 @@ namespace NeeView
             StoreWindowPlacement();
         }
 
-        #endregion
+#endregion
 
         #region メニューエリア、ステータスエリアマウスオーバー監視
 
@@ -825,7 +832,7 @@ namespace NeeView
             this.MessageLayerSpace.Height = Math.Max(this.DockStatusArea.ActualHeight, 30.0) + 10.0;
         }
 
-#endregion レイアウト管理
+        #endregion レイアウト管理
 
         #region ページタイトル管理
 
@@ -836,22 +843,22 @@ namespace NeeView
         {
             this.DockStatusArea.SizeChanged +=
                 (s, e) => UpdatePageCaptionLayout();
-            
+
             this.DockStatusArea.MouseEnter +=
                 (s, e) => UpdatePageCaptionVisibility();
-            
+
             this.DockStatusArea.MouseLeave +=
                 (s, e) => UpdatePageCaptionVisibility();
 
             this.LayerStatusArea.IsVisibleChanged +=
                 (s, e) => UpdatePageCaptionLayout();
-            
+
             this.LayerStatusArea.SizeChanged +=
                 (s, e) => UpdatePageCaptionLayout();
-            
+
             this.LayerStatusArea.MouseEnter +=
                 (s, e) => UpdatePageCaptionVisibility();
-            
+
             this.LayerStatusArea.MouseLeave +=
                 (s, e) => UpdatePageCaptionVisibility();
 

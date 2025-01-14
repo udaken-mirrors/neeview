@@ -282,7 +282,7 @@ namespace NeeView.Setting
             if (result == true)
             {
                 ScriptManager.Current.UpdateScriptCommands(isForce: true, isReplace: true);
-                CommandTable.Current.RestoreCommandCollection(dialog.CreateCommandMemento());
+                CommandTable.Current.RestoreCommandCollection(dialog.InputScheme);
             }
         }
 

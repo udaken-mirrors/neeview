@@ -1,4 +1,5 @@
 ﻿using NeeLaboratory.ComponentModel;
+using NeeView.Windows;
 using NeeView.Windows.Controls;
 using NeeView.Windows.Property;
 using System;
@@ -7,6 +8,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Runtime.Serialization;
 using System.Text.Json.Serialization;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.TaskbarClock;
 
 namespace NeeView
 {
@@ -303,6 +305,20 @@ namespace NeeView
             get { return _textCopyPolicy; }
             set { SetProperty(ref _textCopyPolicy, value); }
         }
+
+        #region HiddenParameters
+
+        /// <summary>
+        /// 読み込まれた設定であるか
+        /// </summary>
+        /// <remarks>
+        /// 初回起動時チェック用
+        /// </remarks>
+        [JsonIgnore]
+        [PropertyMapIgnore]
+        public bool IsLoadedSettings { get; set; }
+
+        #endregion
 
         #region Obsolete
 

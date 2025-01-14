@@ -24,9 +24,7 @@ namespace NeeView.Setting
     {
         private readonly CommandResetWindowViewModel _vm;
 
-        /// <summary>
-        /// constructor
-        /// </summary>
+
         public CommandResetWindow()
         {
             InitializeComponent();
@@ -37,6 +35,10 @@ namespace NeeView.Setting
             this.Loaded += CommandResetWindow_Loaded;
             this.KeyDown += CommandResetWindow_KeyDown;
         }
+
+
+        public InputScheme InputScheme => _vm.InputScheme;
+
 
         private void CommandResetWindow_KeyDown(object sender, KeyEventArgs e)
         {
@@ -51,65 +53,31 @@ namespace NeeView.Setting
         {
             this.OkButton.Focus();
         }
-
-        /// <summary>
-        /// 現在の設定でコマンドテーブルを生成
-        /// </summary>
-        /// <returns></returns>
-        public CommandCollection CreateCommandMemento()
-        {
-            return CommandTable.CreateDefaultMemento(_vm.InputScheme);
-        }
     }
 
-    /// <summary>
-    /// CommandResetWindow ViewModel
-    /// </summary>
+
     public class CommandResetWindowViewModel : BindableBase
     {
-        /// <summary>
-        /// InputScheme 表示テーブル
-        /// </summary>
-        public Dictionary<InputScheme, string> InputSchemeList { get; } = new Dictionary<InputScheme, string>
-        {
-            [InputScheme.TypeA] = Properties.TextResources.GetString("InputScheme.TypeA"),
-            [InputScheme.TypeB] = Properties.TextResources.GetString("InputScheme.TypeB"),
-            [InputScheme.TypeC] = Properties.TextResources.GetString("InputScheme.TypeC")
-        };
+        private InputScheme _inputScheme;
+        private RelayCommand<Window>? _okCommand;
+        private RelayCommand<Window>? _cancelCommand;
 
-        /// <summary>
-        /// InputScheme 説明テーブル
-        /// </summary>
-        public Dictionary<InputScheme, string> InputSchemeNoteList { get; } = new Dictionary<InputScheme, string>
-        {
-            [InputScheme.TypeA] = ResourceService.Replace(Properties.TextResources.GetString("InputScheme.TypeA.Remarks")),
-            [InputScheme.TypeB] = ResourceService.Replace(Properties.TextResources.GetString("InputScheme.TypeB.Remarks")),
-            [InputScheme.TypeC] = ResourceService.Replace(Properties.TextResources.GetString("InputScheme.TypeC.Remarks")),
-        };
-
-        /// <summary>
-        /// InputScheme property.
-        /// </summary>
-        private InputScheme _InputScheme;
         public InputScheme InputScheme
         {
-            get { return _InputScheme; }
-            set { if (_InputScheme != value) { _InputScheme = value; RaisePropertyChanged(); RaisePropertyChanged(nameof(InputSchemeNote)); } }
+            get { return _inputScheme; }
+            set { SetProperty(ref _inputScheme, value); }
         }
 
-        /// <summary>
-        /// InputSchemeNote property.
-        /// </summary>
-        public string InputSchemeNote => InputSchemeNoteList[InputScheme];
-
-        /// <summary>
-        /// OkCommand command.
-        /// </summary>
-        private RelayCommand<Window>? _OkCommand;
         public RelayCommand<Window> OkCommand
         {
-            get { return _OkCommand = _OkCommand ?? new RelayCommand<Window>(OkCommand_Executed); }
+            get { return _okCommand = _okCommand ?? new RelayCommand<Window>(OkCommand_Executed); }
         }
+
+        public RelayCommand<Window> CancelCommand
+        {
+            get { return _cancelCommand = _cancelCommand ?? new RelayCommand<Window>(CancelCommand_Executed); }
+        }
+
 
         private void OkCommand_Executed(Window? window)
         {
@@ -117,15 +85,6 @@ namespace NeeView.Setting
 
             window.DialogResult = true;
             window.Close();
-        }
-
-        /// <summary>
-        /// CancelCommand command.
-        /// </summary>
-        private RelayCommand<Window>? _CancelCommand;
-        public RelayCommand<Window> CancelCommand
-        {
-            get { return _CancelCommand = _CancelCommand ?? new RelayCommand<Window>(CancelCommand_Executed); }
         }
 
         private void CancelCommand_Executed(Window? window)

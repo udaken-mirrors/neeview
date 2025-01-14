@@ -167,7 +167,7 @@ namespace NeeView.Setting
             }
 
 
-            foreach (var content in CreateChildContenCollection())
+            foreach (var content in CreateChildContentCollection())
             {
                 DockPanel.SetDock(content, Dock.Top);
                 dockPanel.Children.Add(content);
@@ -176,7 +176,7 @@ namespace NeeView.Setting
             return dockPanel;
         }
 
-        protected IEnumerable<UIElement> CreateChildContenCollection()
+        protected IEnumerable<UIElement> CreateChildContentCollection()
         {
             return this.Children != null
                 ? this.Children.Select(e => e.CreateContent()).WhereNotNull()
@@ -273,7 +273,7 @@ namespace NeeView.Setting
             {
                 Margin = new Thickness(0, 5, 0, 5),
             };
-            foreach (var content in CreateChildContenCollection())
+            foreach (var content in CreateChildContentCollection())
             {
                 DockPanel.SetDock(content, Dock.Top);
                 subDockPanel.Children.Add(content);
@@ -334,6 +334,30 @@ namespace NeeView.Setting
             return this.Header + " " + this.Tips;
         }
     }
+
+
+    public class SettingItemContent : SettingItem
+    {
+        private readonly object? _content;
+
+        public SettingItemContent(string header, object content) : base(header)
+        {
+            _content = content;
+        }
+
+        public bool IsStretch { get; set; }
+
+        protected override UIElement CreateContentInner()
+        {
+            return new SettingItemControl(this.Header, this.Tips, _content, this.SubContent, this.IsStretch);
+        }
+
+        public override string GetSearchText()
+        {
+            return this.Header + " " + this.Tips;
+        }
+    }
+
 
     /// <summary>
     /// 複数の PropertyMemberElement を設定項目としたもの

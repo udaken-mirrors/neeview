@@ -21,6 +21,9 @@ namespace NeeView
             if (self.Config is null) throw new FormatException("UserSetting.Config must not be null.");
             if (self.Commands is null) throw new FormatException("UserSetting.Commands must not be null.");
 
+            // 読み込まれた設定フラグを立てる
+            self.Config.System.IsLoadedSettings = true;
+
             // 画像拡張子初期化
             if (self.Config.Image.Standard.SupportFileTypes is null)
             {

@@ -720,6 +720,11 @@ namespace NeeView
             Changed?.Invoke(this, new CommandChangedEventArgs(false));
         }
 
+        public void RestoreCommandCollection(InputScheme inputScheme)
+        {
+            RestoreCommandCollection(CreateDefaultMemento(inputScheme));
+        }
+
         #endregion
     }
 

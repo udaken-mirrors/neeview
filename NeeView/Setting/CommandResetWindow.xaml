@@ -37,10 +37,7 @@
                     <TextBlock Text="{properties:TextBinding CommandResetWindow.Message}" VerticalAlignment="Center"/>
                 </StackPanel>
                 <GroupBox Header="{properties:TextBinding CommandResetWindow.ResetType.Title}" Margin="5">
-                    <StackPanel Margin="5">
-                        <ComboBox Margin="5" ItemsSource="{Binding InputSchemeList}" SelectedValuePath="Key" DisplayMemberPath="Value" SelectedValue="{Binding InputScheme}" FocusVisualStyle="{StaticResource NVBorderFocusVisual}"/>
-                        <TextBlock Margin="5" Text="{Binding InputSchemeNote}" TextWrapping="Wrap"/>
-                    </StackPanel>
+                    <local:CommandResetControl InputScheme="{Binding InputScheme}" Margin="5" />
                 </GroupBox>
             </DockPanel>
         </DockPanel>
