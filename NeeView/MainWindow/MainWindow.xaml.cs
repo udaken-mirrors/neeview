@@ -477,6 +477,12 @@ namespace NeeView
 
             _vm.ContentRendered();
 
+            // focus
+            if (this.WindowState != WindowState.Minimized)
+            {
+                this.Focus();
+            }
+
             Debug.WriteLine($"App.MainWindow.ContentRendered.Done: {App.Current.Stopwatch.ElapsedMilliseconds}ms");
 
             // 初回起動ダイアログ
