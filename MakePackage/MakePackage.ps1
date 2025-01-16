@@ -247,7 +247,7 @@ function New-Package($platform, $productName, $productDir, $packageDir) {
 
 # generate README.html
 function New-Readme($packageDir, $culture, $target) {
-	$readmeSource = "Readme\$culture"
+	$readmeSource = "$solutionDir\docs\$culture"
 
 	$readmeDir = $packageDir + "\readme.$culture"
 
@@ -258,8 +258,11 @@ function New-Readme($packageDir, $culture, $target) {
 	Copy-Item "$readmeSource\Environment.md" $readmeDir
 	Copy-Item "$readmeSource\Contact.md" $readmeDir
 
+	if (Test-Path "$readmeSource\LicenseAppendix.md") {
+		Copy-Item "$readmeSource\LicenseAppendix.md" $readmeDir
+	}
+
 	Copy-Item "$solutionDir\LICENSE.md" $readmeDir
-	Copy-Item "$solutionDir\LICENSE.ja-jp.md" $readmeDir
 	Copy-Item "$solutionDir\THIRDPARTY_LICENSES.md" $readmeDir
 	Copy-Item "$solutionDir\NeeLaboratory.IO.Search\THIRDPARTY_LICENSES.md" "$readmeDir\NeeLaboratory.IO.Search_THIRDPARTY_LICENSES.md"
 
@@ -267,7 +270,7 @@ function New-Readme($packageDir, $culture, $target) {
 		Get-GitLogMarkdown "$product <VERSION/> - ChangeLog" | Set-Content -Encoding UTF8 "$readmeDir\ChangeLog.md"
 	}
 	else {
-		Copy-Item "$readmeSource\ChangeLog.md" $readmeDir
+		.\SelectChangeLog.ps1 -Path "$readmeSource\ChangeLog.md" -Culture $culture | Set-Content -Path "$readmeDir\ChangeLog.md"
 	}
 
 	$postfix = $appVersion
@@ -283,6 +286,7 @@ function New-Readme($packageDir, $culture, $target) {
 	Replace-Content "$readmeDir\Environment.md" "<VERSION/>" "$postfix"
 	Replace-Content "$readmeDir\Contact.md" "<VERSION/>" "$postfix"
 	Replace-Content "$readmeDir\ChangeLog.md" "<VERSION/>" "$postfix"
+	Replace-Content "$readmeDir\LICENSE.md" "@HEAD" "## License"
 
 	$readmeHtml = "README.html"
 
@@ -300,8 +304,8 @@ function New-Readme($packageDir, $culture, $target) {
 	$inputs += "$readmeDir\Contact.md"
 	$inputs += "$readmeDir\LICENSE.md"
 
-	if ($culture -eq "ja-jp") {
-		$inputs += "$readmeDir\LICENSE.ja-jp.md"
+	if (Test-Path "$readmeDir\LicenseAppendix.md") {
+		$inputs += "$readmeDir\LicenseAppendix.md"
 	}
 
 	$inputs += "$readmeDir\THIRDPARTY_LICENSES.md"
@@ -309,7 +313,7 @@ function New-Readme($packageDir, $culture, $target) {
 	$inputs += "$readmeDir\ChangeLog.md"
 
 	$output = "$packageDir\$readmeHtml"
-	$css = "Readme\Style.html"
+	$css = "Style.html"
 	
 	# markdown to html by pandoc
 	pandoc -s -t html5 -o $output --metadata title="$product $postfix" -H $css $inputs
