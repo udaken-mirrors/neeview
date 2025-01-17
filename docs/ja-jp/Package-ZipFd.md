@@ -1,10 +1,9 @@
-# NeeView ZIP-fd版について (NeeViewXX.X-fd.zip)
+# NeeView ZIP-fd版について
 
-----
+パッケージ名: `NeeViewXX.X-fd.zip`
 
-ポータブル パッケージのフレームワーク依存版です。
-
-配布パッケージ サイズは小さいですが、そのかわりに .NET Desktop Runtime - Windows x86 のインストールが必要です。
+ポータブル パッケージのフレームワーク依存版です。  
+配布パッケージ サイズは小さいですが、そのかわりに .NET Desktop Runtime - Windows x86 のインストールが必要です。  
 Susie プラグインを使用する場合は .NET Desktop Runtime - Windows x86 のインストールも必要になります。
 
 * インストール不要です。Zipを展開後、そのまま NeeView.exe を実行してください。  

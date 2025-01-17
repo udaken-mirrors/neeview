@@ -245,83 +245,127 @@ function New-Package($platform, $productName, $productDir, $packageDir) {
 	New-Readme $packageDir "ja-jp" "Zip"
 }
 
+function Edit-Markdown{
+	[CmdletBinding()]
+	param(
+		[Parameter(Mandatory=$True, ValueFromPipeline=$True)]
+		[object[]]$Value,
+		[switch]$IncrementDepth,
+		[switch]$DecrementDepth,
+		[switch]$ChopTitle,
+		[switch]$ChopLanguageHeader
+	)
+
+	process {
+		$chop = $false
+        foreach ($line in $Value) {
+			if ($line.StartsWith("#")) {
+				if ($ChopTitle -and !$chop) {
+					$chop = $true
+				}
+				elseif ($IncrementDepth){
+					"#" + $line
+				}
+				elseif ($DecrementDepth){
+					$line.Remove(0, 1)
+				}
+				else {
+					$line
+				}
+			}
+			elseif ($ChopLanguageHeader -and ($line -match "^<div\s+id=""lang""")) {
+			}
+			else {
+				$line
+			}
+        }
+    }
+}
+
 # generate README.html
-function New-Readme($packageDir, $culture, $target) {
+function New-Readme {
+	param ([string]$packageDir, [string]$culture, [string]$target) 
+	
 	$readmeSource = "$solutionDir\docs\$culture"
 
-	$readmeDir = $packageDir + "\readme.$culture"
-
-	New-Item $readmeDir -ItemType Directory > $null
-
-	Copy-Item "$readmeSource\Overview.md" $readmeDir
-	Copy-Item "$readmeSource\Canary.md" $readmeDir
-	Copy-Item "$readmeSource\Environment.md" $readmeDir
-	Copy-Item "$readmeSource\Contact.md" $readmeDir
-
-	if (Test-Path "$readmeSource\LicenseAppendix.md") {
-		Copy-Item "$readmeSource\LicenseAppendix.md" $readmeDir
-	}
-
-	Copy-Item "$solutionDir\LICENSE.md" $readmeDir
-	Copy-Item "$solutionDir\THIRDPARTY_LICENSES.md" $readmeDir
-	Copy-Item "$solutionDir\NeeLaboratory.IO.Search\THIRDPARTY_LICENSES.md" "$readmeDir\NeeLaboratory.IO.Search_THIRDPARTY_LICENSES.md"
-
-	if ($target -eq "Canary") {
-		Get-GitLogMarkdown "$product <VERSION/> - ChangeLog" | Set-Content -Encoding UTF8 "$readmeDir\ChangeLog.md"
-	}
-	else {
-		.\SelectChangeLog.ps1 -Path "$readmeSource\ChangeLog.md" -Culture $culture | Set-Content -Path "$readmeDir\ChangeLog.md"
-	}
-
 	$postfix = $appVersion
-	$announce = ""
 	if ($target -eq "Canary") {
 		$postfix = "Canary ${dateVersion}"
-		$announce = "Rev. ${revision}`r`n`r`n" + (Get-Content -Path "$readmeDir/Canary.md" -Raw -Encoding UTF8)
 	}
 
-	# edit README.md
-	Replace-Content "$readmeDir\Overview.md" "<VERSION/>" "$postfix"
-	Replace-Content "$readmeDir\Overview.md" "<ANNOUNCE/>" "$announce"
-	Replace-Content "$readmeDir\Environment.md" "<VERSION/>" "$postfix"
-	Replace-Content "$readmeDir\Contact.md" "<VERSION/>" "$postfix"
-	Replace-Content "$readmeDir\ChangeLog.md" "<VERSION/>" "$postfix"
-	Replace-Content "$readmeDir\LICENSE.md" "@HEAD" "## License"
+	$source = @()
 
-	$readmeHtml = "README.html"
+	if ($target -eq "Canary") {
+		$postfix = "Canary ${dateVersion}"
+		$source += @("Rev. ${revision}", "")
+		$source += Get-Content "$readmeSource/Canary.md"
+	}
+
+	$overviewContent = Get-Content "$readmeSource\Overview.md"
+	$source += @("")
+	$source += $overviewContent
+
+	$environmentContent = Get-Content "$readmeSource\Environment.md"
+	$environmentContent = $environmentContent -replace "<VERSION/>", $postfix
+	$source += @("")
+	$source += $environmentContent
+	
+	<#
+	if (($target -eq ".zip") -or ($target -eq ".beta")) {
+		$inputs += "$readmeDir\Package-Zip.md"
+	}
+	elseif (($target -eq ".zip-fd") -or ($target -eq ".canary")) {
+		$inputs += "$readmeDir\Package-ZipFd.md"
+	}
+	#>
+
+	$contactContent = Get-Content "$readmeSource\Contact.md" | Edit-Markdown -IncrementDepth -ChopLanguageHeader
+	$source += @("")
+	$source += $contactContent
+
+	$licenseContent = Get-Content "$solutionDir\LICENSE.md"
+	$licenseContent = @("## License") + $licenseContent
+	if (Test-Path "$readmeSource\LicenseAppendix.md") {
+		$licenseAppendixContent = Get-Content "$readmeSource\LicenseAppendix.md"
+		$licenseContent += @("")
+		$licenseContent += $licenseAppendixContent
+	}
+	$source += @("")
+	$source += $licenseContent
+
+	$thirdPartyLicenseContent = Get-Content "$solutionDir\THIRDPARTY_LICENSES.md"
+	$thirdPartyLicenseContent += Get-Content "$solutionDir\NeeLaboratory.IO.Search\THIRDPARTY_LICENSES.md"
+	$source += @("")
+	$source += $thirdPartyLicenseContent
+
+	if ($target -eq "Canary") {
+		$changeLogContent = Get-GitLogMarkdown "$product <VERSION/> - ChangeLog"
+	}
+	else {
+		$changeLogContent = .\SelectChangeLog.ps1 -Path "$readmeSource\ChangeLog.md" -Culture $culture
+	}
+	$changeLogContent = $changeLogContent -replace "<VERSION/>", $postfix
+	$source += @("")
+	$source += $changeLogContent
+
 
 	if (-not ($culture -eq "en-us")) {
 		$readmeHtml = "README.$culture.html"
 	}
-
-	$inputs = @()
-	$inputs += "$readmeDir\Overview.md"
-
-	if ($target -ne "Appx") {
-		$inputs += "$readmeDir\Environment.md"
+	else {
+		$readmeHtml = "README.html"
 	}
-
-	$inputs += "$readmeDir\Contact.md"
-	$inputs += "$readmeDir\LICENSE.md"
-
-	if (Test-Path "$readmeDir\LicenseAppendix.md") {
-		$inputs += "$readmeDir\LicenseAppendix.md"
-	}
-
-	$inputs += "$readmeDir\THIRDPARTY_LICENSES.md"
-	$inputs += "$readmeDir\NeeLaboratory.IO.Search_THIRDPARTY_LICENSES.md"
-	$inputs += "$readmeDir\ChangeLog.md"
 
 	$output = "$packageDir\$readmeHtml"
 	$css = "Style.html"
-	
+
 	# markdown to html by pandoc
-	pandoc -s -t html5 -o $output --metadata title="$product $postfix" -H $css $inputs
+	$source | pandoc -s -t html5 -o $output --metadata title="$product $postfix" -H $css
 	if ($? -ne $true) {
 		throw "pandoc error"
 	}
 
-	Remove-Item $readmeDir -Recurse
+	Replace-Alert $output
 }
 
 # remove ZIP

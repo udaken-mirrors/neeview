@@ -791,8 +791,6 @@ The MainView window now functions as a new viewing mode, not just a windowed dis
     - Removed: TogglePageListPlacement → x
 
 
-
-
 ## 37.1
 (2020-06-08)
 
@@ -921,4 +919,5 @@ The MainView window now functions as a new viewing mode, not just a windowed dis
 - Fixed a bug that the image position is changed by returning from window minimization.
 - Other minor bug fixes.
 
-
+> [!NOTE]
+> There is no English version of ChangeLog prior to 37.0.

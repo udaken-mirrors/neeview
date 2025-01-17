@@ -1,13 +1,12 @@
-## 連絡先
+<div id="lang" style="text-align: right; font-weight: bold;"><u>JA</u> / <a href="../en-us/Contact">EN</a></div>
 
- バグや要望がありましたらこちらのブログのコメントにてご連絡ください。
- 
-  * [ヨクアルナニカ](https://yokuarunanika.blogspot.jp/)
- 
- バグや要望はこちらでも受け付けております。`ErrorLog.txt`を添付する場合はこちらがお薦めです。
- 
-  * [NeeViewプロジェクト 課題投稿](https://bitbucket.org/neelabo/neeview/issues/new)
- 
-メールでの連絡先
+# 問い合わせ先
 
-  * [nee.laboratory@gmail.com](mailto:nee.laboratory@gmail.com)
+Bitbucket で課題を作成してください。
+
+* [NeeView (Bitbucket)](https://bitbucket.org/neelabo/neeview)
+
+もしくは、ブログにコメントしてください。
+
+* [ヨクアルナニカ](https://yokuarunanika.blogspot.com/) 
+

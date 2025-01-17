@@ -1,14 +1,11 @@
-## Contact
+<div id="lang" style="text-align: right; font-weight: bold;"><a href="../ja-jp/Contact">JA</a> / <u>EN</u></div>
 
- If you have any bugs or requests, please contact us at this blog comment.
- 
-  * [ヨクアルナニカ](https://yokuarunanika.blogspot.jp/)
- 
- Bugs and requests can be accepted here as well.
- When attaching `ErrorLog.txt`, we recommend this.
- 
-  * [NeeView Project - Create issue](https://bitbucket.org/neelabo/neeview/issues/new)
- 
-Contact by e-mail
+# Support Contact
 
-  * [nee.laboratory@gmail.com](mailto:nee.laboratory@gmail.com)
+Create your issue on Bitbucket.
+
+* [RealtimeSearch (Bitbucket)](https://bitbucket.org/neelabo/neeview)
+
+Or comment on our blog.
+
+* [ヨクアルナニカ](https://yokuarunanika.blogspot.com/)
