@@ -1,3 +1,10 @@
+# :warning: お知らせ
+
+**NeeView プロジェクトページは [GitHub](https://github.com/neelabo/NeeView) に移動しました。**  
+**ここのリポジトリは今後更新されません。**
+
+----
+
 # NeeView
 
 アプリの使用についてはWikiを参照してください
