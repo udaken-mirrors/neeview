@@ -1,6 +1,6 @@
 # :warning: Notice
 
-**The NeeView project page has been moved to [GitHub](https://github.com/neelabo/NeeView).**  
+**NeeView project page has been moved to [GitHub](https://github.com/neelabo/NeeView).**  
 **This repository will not be updated in the future.**
 
 ----
