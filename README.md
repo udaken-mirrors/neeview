@@ -1,7 +1,14 @@
+# :warning: Notice
+
+**The NeeView project page has been moved to [GitHub](https://github.com/neelabo/NeeView).**  
+**This repository will not be updated in the future.**
+
+----
+
 # :warning: お知らせ
 
 **NeeView プロジェクトページは [GitHub](https://github.com/neelabo/NeeView) に移動しました。**  
-**ここのリポジトリは今後更新されません。**
+**このリポジトリは今後更新されません。**
 
 ----
 
